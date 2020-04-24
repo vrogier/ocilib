@@ -32,7 +32,7 @@ static const unsigned int FileTypeValues[] = { OCI_CFILE, OCI_BFILE };
  * FileInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File * FileInit
+OCI_File * FileInitialize
 (
     OCI_Connection *con,
     OCI_File       *file,
@@ -70,7 +70,7 @@ OCI_File * FileInit
 
             file->hstate = OCI_OBJECT_ALLOCATED;
 
-            OCI_STATUS = MemDescriptorAlloc((dvoid *)file->con->env, (dvoid **)(void *)&file->handle, (ub4)OCI_DTYPE_LOB);
+            OCI_STATUS = MemoryAllocDescriptor((dvoid *)file->con->env, (dvoid **)(void *)&file->handle, (ub4)OCI_DTYPE_LOB);
         }
         else if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
         {
@@ -177,7 +177,7 @@ OCI_File * FileCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = FileInit(con, NULL, NULL, type);
+    OCI_RETVAL = FileInitialize(con, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -202,7 +202,7 @@ boolean FileFree
 
     if (OCI_OBJECT_ALLOCATED == file->hstate)
     {
-        MemDescriptorFree((dvoid *) file->handle, (ub4) OCI_DTYPE_LOB);
+        MemoryFreeDescriptor((dvoid *) file->handle, (ub4) OCI_DTYPE_LOB);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
@@ -219,7 +219,7 @@ boolean FileFree
  * FileArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File ** FileArrayCreate
+OCI_File ** FileCreateArray
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -248,7 +248,7 @@ OCI_File ** FileArrayCreate
  * FileArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean FileArrayFree
+boolean FileFreeArray
 (
     OCI_File **files
 )

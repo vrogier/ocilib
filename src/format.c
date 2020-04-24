@@ -31,7 +31,7 @@
  * ParseSqlFmt
  * --------------------------------------------------------------------------------------------- */
 
-int ParseSqlFmt
+int FormatParseSql
 (
     OCI_Statement *stmt,
     otext         *buf,
@@ -203,7 +203,7 @@ int ParseSqlFmt
 
                 if (itv)
                 {
-                    IntervalToText(itv, 3, 3, (int) osizeof(temp)- 1, temp);
+                    IntervalToString(itv, 3, 3, (int) osizeof(temp)- 1, temp);
 
                     len = (int) ostrlen(temp);
 

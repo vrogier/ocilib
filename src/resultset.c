@@ -20,31 +20,24 @@
 
 #include "resultset.h"
 
-#include "statement.h"
-#include "connection.h"
-
-#include "hash.h"
+#include "collection.h"
+#include "column.h"
+#include "date.h"
 #include "define.h"
 #include "error.h"
 #include "exception.h"
-#include "column.h"
-#include "format.h"
-#include "macro.h"
-#include "memory.h"
-#include "strings.h"
-#include "helpers.h"
-
-#include "collection.h"
-#include "date.h"
 #include "file.h"
+#include "hash.h"
 #include "interval.h"
-#include "list.h"
 #include "lob.h"
 #include "long.h"
+#include "macro.h"
+#include "memory.h"
 #include "number.h"
 #include "object.h"
 #include "ref.h"
-#include "timestamp.h"
+#include "statement.h"
+#include "strings.h"
 
 static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
 
@@ -165,13 +158,13 @@ OCI_Resultset * ResultsetCreate
 
                 /* get column description */
 
-                OCI_STATUS = ColumnDescribe(&def->col, rs->stmt->con,
+                OCI_STATUS = ColumnRetrieveInfo(&def->col, rs->stmt->con,
                                             rs->stmt, rs->stmt->stmt,
                                        i + 1, OCI_DESC_RESULTSET);
 
                 /* mapping to OCILIB internal types */
 
-                OCI_STATUS = OCI_STATUS && ColumnMap(&def->col, rs->stmt);
+                OCI_STATUS = OCI_STATUS && ColumnMapInfo(&def->col, rs->stmt);
 
              #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
@@ -267,7 +260,7 @@ OCI_Resultset * ResultsetCreate
 
                 /* map column and allocation of internal buffers for resultset content **/
 
-                OCI_STATUS = ColumnMap(&def->col, rs->stmt) && DefineAlloc(def);
+                OCI_STATUS = ColumnMapInfo(&def->col, rs->stmt) && DefineAlloc(def);
             }
         }
     }
@@ -339,7 +332,7 @@ boolean FetchPieces
         {
             for (j = 0; j < def->buf.count; j++)
             {
-                def->buf.data[j] = LongInit(rs->stmt, (OCI_Long *)def->buf.data[j], def, def->col.subtype);
+                def->buf.data[j] = LongInitialize(rs->stmt, (OCI_Long *)def->buf.data[j], def, def->col.subtype);
             }
         }
     }
@@ -405,7 +398,7 @@ boolean FetchPieces
                 {
                     lg->maxsize = (lg->size + trailing_size + bufsize) * char_fact;
 
-                    lg->buffer = (ub1 *) MemRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER, (size_t) lg->maxsize, 1, TRUE);
+                    lg->buffer = (ub1 *) MemoryRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER, (size_t) lg->maxsize, 1, TRUE);
                 }
 
                 /* update piece info */
@@ -824,13 +817,13 @@ OCI_Resultset *rs
                 {
                     for (j = 0; j < def->buf.count; j++)
                     {
-                        MemHandleFree((dvoid *)def->buf.data[j], (ub4)def->col.handletype);
+                        MemoryFreeHandle((dvoid *)def->buf.data[j], (ub4)def->col.handletype);
                     }
                 }
             }
             else
             {
-                MemDescriptorArrayFree((dvoid *)def->buf.data,  (ub4)def->col.handletype, (ub4)def->buf.count);
+                MemoryFreeDescriptorArray((dvoid *)def->buf.data,  (ub4)def->col.handletype, (ub4)def->buf.count);
             }
         }
 
@@ -1420,14 +1413,14 @@ boolean ResultsetGetStruct
 
             if (i == 1)
             {
-                ColumnGetAttrInfo(&def->col, rs->nb_defs, i - 1, &size1, &align);
+                ColumnGetAttributeInfo(&def->col, rs->nb_defs, i - 1, &size1, &align);
             }
             else
             {
                 size1 = size2;
             }         
 
-            ColumnGetAttrInfo(&rs->defs[i].col, rs->nb_defs, i, &size2, &align);
+            ColumnGetAttributeInfo(&rs->defs[i].col, rs->nb_defs, i, &size2, &align);
 
             size += size1;
 
@@ -1883,7 +1876,7 @@ const otext * ResultsetGetString
 
                 if (coll)
                 {
-                    OCI_STATUS = CollToText(coll, &bufsize, NULL);
+                    OCI_STATUS = CollectionToString(coll, &bufsize, NULL);
                 }
 
                 data = coll;
@@ -2092,7 +2085,7 @@ OCI_Date * ResultsetGetDate
     (
         rs, index, OCI_Date *, NULL, OCI_CDT_DATETIME,
 
-        DateInit(rs->stmt->con, (OCI_Date *) def->obj,
+        DateInitialize(rs->stmt->con, (OCI_Date *) def->obj,
                  (OCIDate *)DefineGetData(def), FALSE,
                  (SQLT_DAT == def->col.libcode))
     )
@@ -2157,7 +2150,7 @@ OCI_Interval * ResultsetGetInterval
     (
        rs, index, OCI_Interval *, NULL, OCI_CDT_INTERVAL,
 
-       IntervalInit(rs->stmt->con, (OCI_Interval *) def->obj,
+       IntervalInitialize(rs->stmt->con, (OCI_Interval *) def->obj,
                     (OCIInterval *) DefineGetData(def), def->col.subtype)
     )
 }
@@ -2222,7 +2215,7 @@ OCI_Coll * ResultsetGetColl
     (
        rs, index, OCI_Coll *, NULL, OCI_CDT_COLLECTION,
 
-       CollInit(rs->stmt->con, (OCI_Coll *) def->obj, DefineGetData(def), def->col.typinf)
+       CollectionInitialize(rs->stmt->con, (OCI_Coll *) def->obj, DefineGetData(def), def->col.typinf)
     )
 }
 
@@ -2316,7 +2309,7 @@ OCI_Lob * ResultsetGetLob
     (
        rs, index, OCI_Lob *, NULL, OCI_CDT_LOB,
 
-       LobInit(rs->stmt->con,(OCI_Lob *) def->obj,
+       LobInitialize(rs->stmt->con,(OCI_Lob *) def->obj,
                (OCILobLocator *) DefineGetData(def),
                def->col.subtype)
     )
@@ -2349,7 +2342,7 @@ OCI_File * ResultsetGetFile
     (
        rs, index, OCI_File *, NULL, OCI_CDT_FILE,
 
-       FileInit(rs->stmt->con, (OCI_File *) def->obj,
+       FileInitialize(rs->stmt->con, (OCI_File *) def->obj,
                 (OCILobLocator *) DefineGetData(def),
                 def->col.subtype)
     )

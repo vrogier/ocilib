@@ -22,27 +22,27 @@
 
 #include "array.h"
 #include "callback.h"
-#include "connection.h"
-#include "file.h"
-#include "date.h"
-#include "lob.h"
 #include "collection.h"
-#include "hash.h"
-#include "list.h"
+#include "connection.h"
+#include "date.h"
 #include "error.h"
-#include "pool.h"
+#include "file.h"
+#include "hash.h"
+#include "interval.h"
+#include "list.h"
+#include "lob.h"
 #include "macro.h"
 #include "mutex.h"
+#include "number.h"
+#include "object.h"
+#include "pool.h"
+#include "ref.h"
+#include "statement.h"
 #include "strings.h"
 #include "subscription.h"
 #include "threadkey.h"
-#include "statement.h"
 #include "timestamp.h"
-#include "ref.h"
 #include "transaction.h"
-#include "object.h"
-#include "interval.h"
-#include "number.h"
 
 /* ********************************************************************************************* *
  *                             INTERNAL VARIABLES
@@ -724,7 +724,7 @@ boolean FreeObjectFromType(void *obj, unsigned int type)
         }
         case OCI_CDT_COLLECTION:
         {
-            res = CollFree((OCI_Coll *)obj);
+            res = CollectionFree((OCI_Coll *)obj);
             break;
         }
         case OCI_CDT_TIMESTAMP:
@@ -837,7 +837,7 @@ void CallExit
  * GetEnvVariable
  * 
  * @note 
- * Values are allocated with MemAlloc() and need to be freed by the caller using MemFree()
+ * Values are allocated with MemoryAlloc() and need to be freed by the caller using MemoryFree()
  *
  * --------------------------------------------------------------------------------------------- */
 
@@ -862,11 +862,11 @@ char * GetEnvVariable
         unsigned int size = GetEnvironmentVariableA(name, NULL, 0);
         if (size > 0)
         {
-            value = MemAlloc(OCI_IPC_STRING, size, 1, TRUE);
+            value = MemoryAlloc(OCI_IPC_STRING, size, 1, TRUE);
             size = GetEnvironmentVariableA(name, value, size);
             if (size == 0)
             {
-                MemFree(value);
+                MemoryFree(value);
             }
         }
     }
@@ -1562,12 +1562,12 @@ boolean Initialize
         else
         {
             LIB_CLOSE(OCILib.lib_handle);
-            OCI_RAISE_EXCEPTION(ExceptionLoadingSymbols())
+            THROW(ExceptionLoadingSymbols())
         }
     }
     else
     {
-        OCI_RAISE_EXCEPTION(ExceptionLoadingSharedLib())
+        THROW(ExceptionLoadingSharedLib())
     }
 
     #if defined(OCI_BIG_UINT_ENABLED)
@@ -1617,19 +1617,19 @@ boolean Initialize
 
     OCI_STATUS = OCI_SUCCESSFUL(OCIEnvCreate(&OCILib.env, oci_mode,
                                                (dvoid *) &OCILib,
-                                               MemAllocOracleClient,
-                                               MemReallocOracleClient,
-                                               MemFreeOracleClient,
+                                               MemoryAllocOracleCallback,
+                                               MemoryReallocOracleCallback,
+                                               MemoryFreeOracleCallback,
                                                (size_t) 0, (dvoid **) NULL));
 
     /*  allocate error handle */
     if (OCI_STATUS)
     {
-        OCI_STATUS = MemHandleAlloc((dvoid *)OCILib.env, (dvoid **) (void *) &OCILib.err, OCI_HTYPE_ERROR);
+        OCI_STATUS = MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **) (void *) &OCILib.err, OCI_HTYPE_ERROR);
     }
     else
     {
-        OCI_RAISE_EXCEPTION(ExceptionOCIEnvironment())
+        THROW(ExceptionOCIEnvironment())
     }
 
     /* on success, we need to initialize OCIThread object support */
@@ -1721,7 +1721,7 @@ boolean Cleanup
 
     /* free all arrays */
 
-    ListForEach(OCILib.arrs, (POCI_LIST_FOR_EACH) ArrayClose);
+    ListForEach(OCILib.arrs, (POCI_LIST_FOR_EACH) ArrayDispose);
     ListClear(OCILib.arrs);
 
     /* free all subscriptions */
@@ -1731,7 +1731,7 @@ boolean Cleanup
 
     /* free all connections */
 
-    ListForEach(OCILib.cons, (POCI_LIST_FOR_EACH) ConnectionClose);
+    ListForEach(OCILib.cons, (POCI_LIST_FOR_EACH) ConnectionDispose);
     ListClear(OCILib.cons);
 
     /* free all pools */
@@ -1763,7 +1763,7 @@ boolean Cleanup
     if (OCI_LIB_THREADED)
     {
         /* free the memory mutex. We set its reference in the library structure to NULL first otherwise
-           it would generate an OCI error when calling MemHandleAlloc() for freeing the mutex object error handle
+           it would generate an OCI error when calling MemoryAllocHandle() for freeing the mutex object error handle
         */
 
         OCI_Mutex * mutex = OCILib.mem_mutex;
@@ -1800,12 +1800,12 @@ boolean Cleanup
 
     if (OCILib.err)
     {
-        MemHandleFree(OCILib.err, OCI_HTYPE_ERROR);
+        MemoryFreeHandle(OCILib.err, OCI_HTYPE_ERROR);
     }
 
     /* close environment handle
        => direct OCIHandleFree() because this handle was not allocated
-       with MemHandleAlloc()
+       with MemoryAllocHandle()
     */
 
     if (OCILib.env)
@@ -2013,7 +2013,7 @@ boolean DatabaseStartup
 
                 /* allocate administration handle */
 
-                OCI_STATUS = MemHandleAlloc((dvoid *)OCILib.env,  (dvoid **) (void *) &adm, OCI_HTYPE_ADMIN);
+                OCI_STATUS = MemoryAllocHandle((dvoid *)OCILib.env,  (dvoid **) (void *) &adm, OCI_HTYPE_ADMIN);
 
                 /* set client file if provided */
 
@@ -2032,7 +2032,7 @@ boolean DatabaseStartup
 
             if (adm)
             {
-                MemHandleFree(OCILib.err, OCI_HTYPE_ADMIN);
+                MemoryFreeHandle(OCILib.err, OCI_HTYPE_ADMIN);
             }
 
             /* disconnect */
@@ -2227,7 +2227,7 @@ boolean SetHAHandler
 
     if (handler)
     {
-        callback = (void*) ProcHAEvent;
+        callback = (void*) CallbackHAEvent;
     }
 
     OCI_SET_ATTRIB(OCI_HTYPE_ENV, OCI_ATTR_EVTCBK, OCILib.env, callback, 0)

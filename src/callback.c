@@ -23,10 +23,8 @@
 #include "event.h"
 #include "list.h"
 #include "macro.h"
-#include "mutex.h"
 #include "resultset.h"
 #include "strings.h"
-#include "timestamp.h"
 
 typedef struct HAEventParams
 {
@@ -40,7 +38,7 @@ typedef struct HAEventParams
  * ProcInBind
  * --------------------------------------------------------------------------------------------- */
 
-sb4 ProcInBind
+sb4 CallbackInBind
 (
     dvoid   *ictxp,
     OCIBind *bindp,
@@ -98,7 +96,7 @@ sb4 ProcInBind
  * ProcOutBind
  * --------------------------------------------------------------------------------------------- */
 
-sb4 ProcOutBind
+sb4 CallbackOutBind
 (
     dvoid   *octxp,
     OCIBind *bindp,
@@ -209,7 +207,7 @@ sb4 ProcOutBind
  * ProcNotifyMessages
  * --------------------------------------------------------------------------------------------- */
 
-ub4 ProcNotifyMessages
+ub4 CallbackNotifyMessages
 (
     void            *ctx,
     OCISubscription *subscrhp,
@@ -238,7 +236,7 @@ ub4 ProcNotifyMessages
  * ProcNotifyChanges
  * --------------------------------------------------------------------------------------------- */
 
-ub4 ProcNotifyChanges
+ub4 CallbackNotifyChanges
 (
     void            *oci_ctx,
     OCISubscription *subscrhp,
@@ -435,7 +433,7 @@ ub4 ProcNotifyChanges
  * ProcFailOver
  * --------------------------------------------------------------------------------------------- */
 
-sb4 ProcFailOver
+sb4 CallbackFailOver
 (
     dvoid *svchp,
     dvoid *envhp,
@@ -488,7 +486,7 @@ void ProcHAEventInvoke
  * ProcHAEvent
  * --------------------------------------------------------------------------------------------- */
 
-void ProcHAEvent
+void CallbackHAEvent
 (
     dvoid     *evtctx,
     dvoid     *eventptr

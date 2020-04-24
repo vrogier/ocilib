@@ -22,10 +22,10 @@
 
 #include "agent.h"
 #include "date.h"
-#include "memory.h"
 #include "macro.h"
-#include "strings.h"
+#include "memory.h"
 #include "object.h"
+#include "strings.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * MsgCreate
@@ -53,7 +53,7 @@ OCI_Msg * MsgCreate
 
         /* allocate message properties descriptor */
 
-        OCI_STATUS = MemDescriptorAlloc((dvoid *)msg->typinf->con->env, (dvoid **)&msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
+        OCI_STATUS = MemoryAllocDescriptor((dvoid *)msg->typinf->con->env, (dvoid **)&msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
 
         if (OCI_STATUS)
         {
@@ -132,7 +132,7 @@ boolean MsgFree
 
     /* free OCI descriptor */
     
-    MemDescriptorFree((dvoid *) msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
+    MemoryFreeDescriptor((dvoid *) msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
 
     OCI_FREE(msg)
 
@@ -392,7 +392,7 @@ OCI_Date * MsgGetEnqueueTime
 
     if (OCI_STATUS)
     {
-        OCI_RETVAL = msg->date = DateInit(msg->typinf->con, msg->date, &date, FALSE, FALSE);
+        OCI_RETVAL = msg->date = DateInitialize(msg->typinf->con, msg->date, &date, FALSE, FALSE);
         OCI_STATUS = (NULL != OCI_RETVAL);
     }
 
@@ -754,7 +754,7 @@ OCI_Agent * MsgGetSender
 
     if (OCI_STATUS && handle)
     {
-        OCI_RETVAL = msg->sender = AgentInit(msg->typinf->con, msg->sender, handle, NULL, NULL);
+        OCI_RETVAL = msg->sender = AgentInitialize(msg->typinf->con, msg->sender, handle, NULL, NULL);
         OCI_STATUS = (NULL != OCI_RETVAL);
     }
 

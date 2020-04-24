@@ -55,7 +55,7 @@ OCI_Enqueue * EnqueueCreate
 
         /* allocate enqueue options descriptor */
 
-        OCI_STATUS = MemDescriptorAlloc((dvoid * ) enqueue->typinf->con->env, (dvoid **) &enqueue->opth, OCI_DTYPE_AQENQ_OPTIONS);
+        OCI_STATUS = MemoryAllocDescriptor((dvoid * ) enqueue->typinf->con->env, (dvoid **) &enqueue->opth, OCI_DTYPE_AQENQ_OPTIONS);
     }
 
     /* check for failure */
@@ -87,7 +87,7 @@ boolean EnqueueFree
 
     /* free OCI descriptor */
 
-    MemDescriptorFree((dvoid *) enqueue->opth, OCI_DTYPE_AQENQ_OPTIONS);
+    MemoryFreeDescriptor((dvoid *) enqueue->opth, OCI_DTYPE_AQENQ_OPTIONS);
 
     OCI_FREE(enqueue->name)
     OCI_FREE(enqueue)

@@ -23,15 +23,9 @@
 
 #include "types.h"
 
-
 OCI_Error* ExceptionGetError
 (
     void
-);
-
-void ExceptionRaise
-(
-    OCI_Error* err
 );
 
 void ExceptionOCI

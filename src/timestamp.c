@@ -20,11 +20,9 @@
 
 #include "timestamp.h"
 
-#include "macro.h"
-#include "connection.h"
 #include "array.h"
+#include "macro.h"
 #include "strings.h"
-#include "helpers.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 static unsigned int TimestampTypeValues[] = { OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
@@ -74,7 +72,7 @@ OCI_Timestamp * TimestampInit
         {
             if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
             {
-                OCI_STATUS = MemDescriptorAlloc((dvoid  *)tmsp->env, (dvoid **)(void *)&tmsp->handle, (ub4)ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type));
+                OCI_STATUS = MemoryAllocDescriptor((dvoid  *)tmsp->env, (dvoid **)(void *)&tmsp->handle, (ub4)ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type));
                 tmsp->hstate = OCI_OBJECT_ALLOCATED;
             }
         }
@@ -153,7 +151,7 @@ boolean TimestampFree
 
     if (OCI_OBJECT_ALLOCATED == tmsp->hstate)
     {
-        MemDescriptorFree((dvoid *)tmsp->handle, ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, tmsp->type));
+        MemoryFreeDescriptor((dvoid *)tmsp->handle, ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, tmsp->type));
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
@@ -1068,7 +1066,7 @@ boolean TimestampFromCTime
 
     if (!ptm)
     {
-        OCI_RAISE_EXCEPTION(ExceptionNullPointer(OCI_IPC_TM))
+        THROW(ExceptionNullPointer(OCI_IPC_TM))
     }
 
     OCI_RETVAL = OCI_STATUS = TimestampConstruct(tmsp, ptm->tm_year + 1900,  ptm->tm_mon  + 1,

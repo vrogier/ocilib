@@ -27,10 +27,10 @@
 static const unsigned int LongTypeValues[] = { OCI_CLONG, OCI_BLONG };
 
 /* --------------------------------------------------------------------------------------------- *
- * LongInit
+ * LongInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Long * LongInit
+OCI_Long * LongInitialize
 (
     OCI_Statement *stmt,
     OCI_Long      *lg,
@@ -80,7 +80,7 @@ OCI_Long * LongCreate
     OCI_CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, LongTypeValues, OTEXT("Long Type"))
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_RETVAL = LongInit(stmt, NULL, NULL, type);
+    OCI_RETVAL = LongInitialize(stmt, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()

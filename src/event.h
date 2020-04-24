@@ -30,32 +30,32 @@ boolean EventReset
 
 unsigned int EventGetType
 (
-    OCI_Event   *evt
+    OCI_Event   * event
 );
 
 unsigned int EventGetOperation
 (
-    OCI_Event   *evt
+    OCI_Event   * event
 );
 
 const otext * EventGetDatabase
 (
-    OCI_Event   *evt
+    OCI_Event   * event
 );
 
 const otext * EventGetObject
 (
-    OCI_Event   *evt
+    OCI_Event   * event
 );
 
 const otext * EventGetRowid
 (
-    OCI_Event   *evt
+    OCI_Event   * event
 );
 
 OCI_Subscription * EventGetSubscription
 (
-    OCI_Event   *evt
+    OCI_Event   * event
 );
 
 #endif /* OCILIB_EVENT_H_INCLUDED */

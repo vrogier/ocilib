@@ -18,18 +18,16 @@
  * limitations under the License.
  */
 
-#include "macro.h"
+#include "connection.h"
 
 #include "bind.h"
-#include "connection.h"
 #include "callback.h"
 #include "error.h"
 #include "format.h"
 #include "list.h"
-#include "pool.h"
+#include "macro.h"
 #include "statement.h"
 #include "strings.h"
-#include "subscription.h"
 #include "timestamp.h"
 #include "transaction.h"
 #include "typeinfo.h"
@@ -183,7 +181,7 @@ OCI_Connection * ConnectionAllocate
 
         /*  allocate error handle */
 
-        OCI_STATUS = OCI_STATUS && MemHandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->err, OCI_HTYPE_ERROR);
+        OCI_STATUS = OCI_STATUS && MemoryAllocHandle((dvoid *)con->env, (dvoid **)(void *)&con->err, OCI_HTYPE_ERROR);
     }
 
     /* update internal status */
@@ -217,14 +215,14 @@ boolean ConnectionDeallocate
 
     if (con->err)
     {
-        MemHandleFree((dvoid *) con->err, OCI_HTYPE_ERROR);
+        MemoryFreeHandle((dvoid *) con->err, OCI_HTYPE_ERROR);
     }
 
     /* close server handle (if it had been allocated) in case of login error */
 
     if ((con->svr) && con->alloc_handles)
     {
-        MemHandleFree((dvoid *) con->svr, OCI_HTYPE_SERVER);
+        MemoryFreeHandle((dvoid *) con->svr, OCI_HTYPE_SERVER);
     }
 
     con->cxt = NULL;
@@ -259,7 +257,7 @@ boolean ConnectionAttach
         dbtext *dbstr  = NULL;
         int     dbsize = -1;
 
-        OCI_STATUS = MemHandleAlloc((dvoid *) con->env, (dvoid **) (void *) &con->svr, OCI_HTYPE_SERVER);
+        OCI_STATUS = MemoryAllocHandle((dvoid *) con->env, (dvoid **) (void *) &con->svr, OCI_HTYPE_SERVER);
 
         /* attach server handle to service name */
 
@@ -317,7 +315,7 @@ boolean ConnectionDetach
 
         /* close server handle */
 
-        MemHandleFree((dvoid *) con->svr, OCI_HTYPE_SERVER);
+        MemoryFreeHandle((dvoid *) con->svr, OCI_HTYPE_SERVER);
 
         con->svr = NULL;
     }
@@ -387,11 +385,11 @@ void ConnectionLogonRegular
 {
     /* allocate session handle */
 
-    MemHandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->ses, OCI_HTYPE_SESSION);
+    MemoryAllocHandle((dvoid *)con->env, (dvoid **)(void *)&con->ses, OCI_HTYPE_SESSION);
 
     /* allocate context handle */
 
-    MemHandleAlloc((dvoid *)con->env, (dvoid **)(void *)&con->cxt, OCI_HTYPE_SVCCTX);
+    MemoryAllocHandle((dvoid *)con->env, (dvoid **)(void *)&con->cxt, OCI_HTYPE_SVCCTX);
 
     /* set context server attribute */
 
@@ -536,8 +534,8 @@ void ConnectionLogonRegular
             {
                 /* could not start session, must free the session and context handles */
 
-                MemHandleFree((dvoid *)con->ses, OCI_HTYPE_SESSION);
-                MemHandleFree((dvoid *)con->cxt, OCI_HTYPE_SVCCTX);
+                MemoryFreeHandle((dvoid *)con->ses, OCI_HTYPE_SESSION);
+                MemoryFreeHandle((dvoid *)con->cxt, OCI_HTYPE_SVCCTX);
 
                 con->ses = NULL;
                 con->cxt = NULL;
@@ -666,7 +664,7 @@ boolean ConnectionLogon
     {
         /* get server version */
 
-        ConnectionGetVersionServer(con);
+        ConnectionGetServerVersion(con);
 
         con->cstate = OCI_CONN_LOGGED;
     }
@@ -694,7 +692,7 @@ void ConnectionLogoffRegular
 
         if (con->ses)
         {
-            MemHandleFree((dvoid *) con->ses, OCI_HTYPE_SESSION);
+            MemoryFreeHandle((dvoid *) con->ses, OCI_HTYPE_SESSION);
 
             con->ses = NULL;
         }
@@ -703,7 +701,7 @@ void ConnectionLogoffRegular
 
         if (con->cxt)
         {
-            MemHandleFree((dvoid *) con->cxt, OCI_HTYPE_SVCCTX);
+            MemoryFreeHandle((dvoid *) con->cxt, OCI_HTYPE_SVCCTX);
 
             con->cxt = NULL;
         }
@@ -846,7 +844,7 @@ boolean ConnectionLogOff
  * ConnectionClose
  * --------------------------------------------------------------------------------------------- */
 
-boolean ConnectionClose
+boolean ConnectionDispose
 (
     OCI_Connection *con
 )
@@ -867,7 +865,7 @@ boolean ConnectionClose
 
     /* clear server output resources */
 
-    ConnectionServerDisableOutput(con);
+    ConnectionDisableServerOutput(con);
 
     /* log off and detach form server */
 
@@ -1007,7 +1005,7 @@ boolean ConnectionFree
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_STATUS = ConnectionClose(con);
+    OCI_RETVAL = OCI_STATUS = ConnectionDispose(con);
 
     ListRemove(OCILib.cons, con);
     OCI_FREE(con)
@@ -1198,7 +1196,7 @@ const otext * ConnectionGetSessionTag
  * ConnectionGetDatabase
  * --------------------------------------------------------------------------------------------- */
 
-const otext * ConnectionGetDatabase
+const otext * ConnectionGetConnectionString
 (
     OCI_Connection *con
 )
@@ -1295,7 +1293,7 @@ unsigned int ConnectionGetSessionMode
  * ConnectionGetVersionServer
  * --------------------------------------------------------------------------------------------- */
 
-const otext * ConnectionGetVersionServer
+const otext * ConnectionGetServerVersion
 (
     OCI_Connection *con
 )
@@ -1407,7 +1405,7 @@ unsigned int ConnectionGetServerMajorVersion
 
     if (OCI_UNKNOWN == con->ver_num)
     {
-        ConnectionGetVersionServer(con);
+        ConnectionGetServerVersion(con);
     }
 
     OCI_RETVAL = (unsigned int) OCI_VER_MAJ(con->ver_num);
@@ -1430,7 +1428,7 @@ unsigned int ConnectionGetServerMinorVersion
 
     if (OCI_UNKNOWN == con->ver_num)
     {
-        ConnectionGetVersionServer(con);
+        ConnectionGetServerVersion(con);
     }
 
     OCI_RETVAL = (unsigned int) OCI_VER_MIN(con->ver_num);
@@ -1453,7 +1451,7 @@ unsigned int ConnectionGetServerRevisionVersion
 
     if (OCI_UNKNOWN == con->ver_num)
     {
-        ConnectionGetVersionServer(con);
+        ConnectionGetServerVersion(con);
     }
 
     OCI_RETVAL = (unsigned int) OCI_VER_REV(con->ver_num);
@@ -1506,10 +1504,10 @@ boolean ConnectionSetTransaction
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ConnectionGetVersionConnection
+ * ConnectionGetVersion
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ConnectionGetVersionConnection
+unsigned int ConnectionGetVersion
 (
     OCI_Connection *con
 )
@@ -1549,7 +1547,7 @@ boolean ConnectionBreak
  * ConnectionServerEnableOutput
  * --------------------------------------------------------------------------------------------- */
 
-boolean ConnectionServerEnableOutput
+boolean ConnectionEnableServerOutput
 (
     OCI_Connection *con,
     unsigned int    bufsize,
@@ -1633,7 +1631,7 @@ boolean ConnectionServerEnableOutput
 
     if (!OCI_STATUS)
     {
-       ConnectionServerDisableOutput(con);
+       ConnectionDisableServerOutput(con);
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -1645,7 +1643,7 @@ boolean ConnectionServerEnableOutput
  * ConnectionServerDisableOutput
  * --------------------------------------------------------------------------------------------- */
 
-boolean ConnectionServerDisableOutput
+boolean ConnectionDisableServerOutput
 (
     OCI_Connection *con
 )
@@ -1677,7 +1675,7 @@ boolean ConnectionServerDisableOutput
  * ConnectionServerGetOutput
  * --------------------------------------------------------------------------------------------- */
 
-const otext * ConnectionServerGetOutput
+const otext * ConnectionGetServerOutput
 (
     OCI_Connection *con
 )
@@ -2003,7 +2001,7 @@ unsigned int ConnectionGetTimeout
  * ConnectionGetDBName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * ConnectionGetDBName
+const otext * ConnectionGetDatabaseName
 (
     OCI_Connection *con
 )
@@ -2232,7 +2230,7 @@ boolean ConnectionSetTAFHandler
 
         if (con->taf_handler)
         {
-            fo_struct.callback_function = (OCICallbackFailover) ProcFailOver;
+            fo_struct.callback_function = (OCICallbackFailover) CallbackFailOver;
             fo_struct.fo_ctx            = (dvoid *) con;
         }
 
@@ -2476,7 +2474,7 @@ boolean ConnectionExecuteImmediateFmt
 
         /* first, get buffer size */
 
-        size = ParseSqlFmt(stmt, NULL, sql, &first_pass_args);
+        size = FormatParseSql(stmt, NULL, sql, &first_pass_args);
 
         if (size > 0)
         {
@@ -2490,7 +2488,7 @@ boolean ConnectionExecuteImmediateFmt
             {
                 /* format buffer */
 
-                if (ParseSqlFmt(stmt, sql_fmt, sql, &second_pass_args) > 0)
+                if (FormatParseSql(stmt, sql_fmt, sql, &second_pass_args) > 0)
                 {
                     /* prepare and execute SQL buffer */
 

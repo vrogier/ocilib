@@ -25,10 +25,9 @@
 #include "list.h"
 #include "macro.h"
 #include "memory.h"
-#include "mutex.h"
-#include "strings.h"
-#include "statement.h"
 #include "resultset.h"
+#include "statement.h"
+#include "strings.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * SubscriptionClose
@@ -96,13 +95,13 @@ boolean SubscriptionClose
 
     /* free OCI handle */
 
-    MemHandleFree((dvoid *) sub->subhp, OCI_HTYPE_SUBSCRIPTION);
+    MemoryFreeHandle((dvoid *) sub->subhp, OCI_HTYPE_SUBSCRIPTION);
 
     /* close error handle */
 
     if (sub->err)
     {
-        MemHandleFree(sub->err, OCI_HTYPE_ERROR);
+        MemoryFreeHandle(sub->err, OCI_HTYPE_ERROR);
     }
 
 #endif
@@ -157,11 +156,11 @@ OCI_Subscription * SubscriptionRegister
     {
         /* allocate error handle */
 
-        OCI_STATUS = MemHandleAlloc(con->env, (dvoid **)(void *)&sub->err, OCI_HTYPE_ERROR);
+        OCI_STATUS = MemoryAllocHandle(con->env, (dvoid **)(void *)&sub->err, OCI_HTYPE_ERROR);
 
         /* allocate subscription handle */
 
-        OCI_STATUS = OCI_STATUS && MemHandleAlloc(con->env, (dvoid **)(void *)&sub->subhp, OCI_HTYPE_SUBSCRIPTION);
+        OCI_STATUS = OCI_STATUS && MemoryAllocHandle(con->env, (dvoid **)(void *)&sub->subhp, OCI_HTYPE_SUBSCRIPTION);
 
         if (OCI_STATUS)
         {
@@ -219,7 +218,7 @@ OCI_Subscription * SubscriptionRegister
 
             /* internal callback handler */
 
-            OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, sub->subhp, ProcNotifyChanges, 0)
+            OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, sub->subhp, CallbackNotifyChanges, 0)
 
             #ifdef _MSC_VER
             #pragma warning(default: 4054)

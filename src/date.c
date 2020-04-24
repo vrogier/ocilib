@@ -19,17 +19,17 @@
  */
 
 #include "date.h"
-#include "macro.h"
-#include "connection.h"
+
 #include "array.h"
-#include "strings.h"
 #include "library.h"
+#include "macro.h"
+#include "strings.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * DateInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Date * DateInit
+OCI_Date * DateInitialize
 (
     OCI_Connection *con,
     OCI_Date       *date,
@@ -115,7 +115,7 @@ OCI_Date * DateCreate
     OCI_CALL_CHECK_INITIALIZED()
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = DateInit(con, NULL, NULL, TRUE, FALSE);
+    OCI_RETVAL = DateInitialize(con, NULL, NULL, TRUE, FALSE);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -154,7 +154,7 @@ boolean DateFree
  * DateArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Date ** DateArrayCreate
+OCI_Date ** DateCreateArray
 (
     OCI_Connection *con,
     unsigned int    nbelem
@@ -178,10 +178,10 @@ OCI_Date ** DateArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DateArrayFree
+ * DateFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean DateArrayFree
+boolean DateFreeArray
 (
     OCI_Date **dates
 )
@@ -329,10 +329,10 @@ int DateDaysBetween
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DateFromText
+ * DateFromString
  * --------------------------------------------------------------------------------------------- */
 
-boolean DateFromText
+boolean DateFromString
 (
     OCI_Date    *date,
     const otext *str,
@@ -593,10 +593,10 @@ boolean DateSysDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DateToText
+ * DateToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean DateToText
+boolean DateToString
 (
     OCI_Date    *date,
     const otext *fmt,
@@ -754,7 +754,7 @@ boolean DateFromCTime
 
     if (!ptm && (t == (time_t) 0))
     {
-        OCI_RAISE_EXCEPTION(ExceptionNullPointer(OCI_IPC_TM))
+        THROW(ExceptionNullPointer(OCI_IPC_TM))
     }
 
     if (!ptm)
@@ -774,7 +774,7 @@ boolean DateFromCTime
     }
     else
     {
-        OCI_RAISE_EXCEPTION(ExceptionNullPointer(OCI_IPC_TM))
+        THROW(ExceptionNullPointer(OCI_IPC_TM))
     }
 
     OCI_RETVAL = TRUE;

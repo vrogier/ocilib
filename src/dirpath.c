@@ -289,7 +289,7 @@ OCI_DirPath * DirPathCreate
 
         /* allocates direct context handle */
 
-        OCI_STATUS = MemHandleAlloc((dvoid *)dp->con->env, (dvoid **) (void *) &dp->ctx, OCI_HTYPE_DIRPATH_CTX);
+        OCI_STATUS = MemoryAllocHandle((dvoid *)dp->con->env, (dvoid **) (void *) &dp->ctx, OCI_HTYPE_DIRPATH_CTX);
 
         /* set table name attribute */
 
@@ -386,9 +386,9 @@ boolean DirPathFree
     OCI_FREE(dp->err_cols)
     OCI_FREE(dp->err_rows)
 
-    MemHandleFree(dp->strm, OCI_HTYPE_DIRPATH_STREAM);
-    MemHandleFree(dp->arr,  OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
-    MemHandleFree(dp->ctx,  OCI_HTYPE_DIRPATH_CTX);
+    MemoryFreeHandle(dp->strm, OCI_HTYPE_DIRPATH_STREAM);
+    MemoryFreeHandle(dp->arr,  OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
+    MemoryFreeHandle(dp->ctx,  OCI_HTYPE_DIRPATH_CTX);
 
     OCI_FREE(dp)
 
@@ -440,7 +440,7 @@ boolean DirPathSetColumn
 
     if (i >= dp->typinf->nb_cols)
     {
-        OCI_RAISE_EXCEPTION(ExceptionDirPathColNotFound(dp, name, dp->typinf->name))
+        THROW(ExceptionDirPathColNotFound(dp, name, dp->typinf->name))
     }
 
     /* set column information */
@@ -530,7 +530,7 @@ boolean DirPathSetColumn
             }
             default:
             {
-                OCI_RAISE_EXCEPTION(ExceptionDatatypeNotSupported(dp->con, NULL, col->libcode))
+                THROW(ExceptionDatatypeNotSupported(dp->con, NULL, col->libcode))
             }
         }
     }
@@ -632,11 +632,11 @@ boolean DirPathPrepare
 
     /* allocate column array handle */
 
-    OCI_STATUS = OCI_STATUS &&  MemHandleAlloc((dvoid *)dp->ctx, (dvoid **)(void *)&dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
+    OCI_STATUS = OCI_STATUS &&  MemoryAllocHandle((dvoid *)dp->ctx, (dvoid **)(void *)&dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
 
     /* allocate stream handle */
 
-    OCI_STATUS = OCI_STATUS && MemHandleAlloc((dvoid *)dp->ctx, (dvoid **)(void *)&dp->strm, OCI_HTYPE_DIRPATH_STREAM);
+    OCI_STATUS = OCI_STATUS && MemoryAllocHandle((dvoid *)dp->ctx, (dvoid **)(void *)&dp->strm, OCI_HTYPE_DIRPATH_STREAM);
 
     /* check the number of rows allocated */
 

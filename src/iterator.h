@@ -24,27 +24,27 @@
 
 #include "types.h"
 
-OCI_Iter * IterCreate
+OCI_Iter * IteratorCreate
 (
     OCI_Coll *coll
 );
 
-boolean IterFree
+boolean IteratorFree
 (
     OCI_Iter *iter
 );
 
-OCI_Elem* IterGetNext
+OCI_Elem* IteratorGetNext
 (
     OCI_Iter *iter
 );
 
-OCI_Elem* IterGetPrev
+OCI_Elem* IteratorGetPrev
 (
     OCI_Iter *iter
 );
 
-OCI_Elem* IterGetCurrent
+OCI_Elem* IteratorGetCurrent
 (
     OCI_Iter *iter
 );

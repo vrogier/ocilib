@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Coll * CollInit
+OCI_Coll * CollectionInitialize
 (
     OCI_Connection *con,
     OCI_Coll       *Coll,
@@ -31,103 +31,103 @@ OCI_Coll * CollInit
     OCI_TypeInfo   *typeinf
 );
 
-OCI_Coll* CollCreate
+OCI_Coll* CollectionCreate
 (
     OCI_TypeInfo* typinf
 );
 
-boolean CollFree
+boolean CollectionFree
 (
     OCI_Coll* coll
 );
 
-OCI_Coll** CollArrayCreate
+OCI_Coll** CollectionCreateArray
 (
     OCI_Connection* con,
     OCI_TypeInfo* typinf,
     unsigned int    nbelem
 );
 
-boolean CollArrayFree
+boolean CollectionFreeArray
 (
     OCI_Coll** colls
 );
 
-boolean CollAssign
+boolean CollectionAssign
 (
     OCI_Coll* coll,
     OCI_Coll* coll_src
 );
 
-unsigned int CollGetType
-(
-    OCI_Coll* coll
-);
-
-unsigned int CollGetMax
-(
-    OCI_Coll* coll
-);
-
-unsigned int CollGetSize
-(
-    OCI_Coll* coll
-);
-
-boolean CollTrim
+boolean CollectionTrim
 (
     OCI_Coll* coll,
     unsigned int  nb_elem
 );
 
-OCI_Elem* CollGetElem
+boolean CollectionClear
+(
+    OCI_Coll* coll
+);
+
+unsigned int CollectionGetType
+(
+    OCI_Coll* coll
+);
+
+unsigned int CollectionGetMax
+(
+    OCI_Coll* coll
+);
+
+unsigned int CollectionGetSize
+(
+    OCI_Coll* coll
+);
+
+unsigned int CollectionGetCount
+(
+    OCI_Coll* coll
+);
+
+OCI_Elem* CollectionGetElement
 (
     OCI_Coll* coll,
     unsigned int index
 );
 
-boolean CollGetElem2
+boolean CollectionGetElement2
 (
     OCI_Coll* coll,
     unsigned int index,
     OCI_Elem* elem
 );
 
-boolean CollSetElem
+boolean CollectionSetElement
 (
     OCI_Coll* coll,
     unsigned int  index,
     OCI_Elem* elem
 );
 
-boolean CollAppend
+boolean CollectionAddElement
 (
     OCI_Coll* coll,
     OCI_Elem* elem
 );
 
-OCI_TypeInfo* CollGetTypeInfo
-(
-    OCI_Coll* coll
-);
-
-boolean CollClear
-(
-    OCI_Coll* coll
-);
-
-boolean CollDeleteElem
+boolean CollectionRemoveElement
 (
     OCI_Coll* coll,
     unsigned int index
 );
 
-unsigned int CollGetCount
+OCI_TypeInfo* CollectionGetTypeInfo
 (
     OCI_Coll* coll
 );
 
-boolean CollToText
+boolean CollectionToString
 (
     OCI_Coll* coll,
     unsigned int* size,

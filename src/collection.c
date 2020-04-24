@@ -29,7 +29,7 @@
  * CollInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * CollInit
+OCI_Coll * CollectionInitialize
 (
     OCI_Connection *con,
     OCI_Coll       *coll,
@@ -59,7 +59,7 @@ OCI_Coll * CollInit
 
             OCI_EXEC
             (
-                MemObjectNew(coll->con->env, coll->con->err, coll->con->cxt,
+                MemoryAllocateObject(coll->con->env, coll->con->err, coll->con->cxt,
                             typinf->colcode, typinf->tdo, (void *) NULL,
                             OCI_DURATION_SESSION, TRUE, (dvoid **) &coll->handle)
             )
@@ -74,7 +74,7 @@ OCI_Coll * CollInit
 
     if (!OCI_STATUS && coll)
     {
-        CollFree(coll);
+        CollectionFree(coll);
         coll = NULL;
     }
 
@@ -85,7 +85,7 @@ OCI_Coll * CollInit
  * CollCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * CollCreate
+OCI_Coll * CollectionCreate
 (
     OCI_TypeInfo *typinf
 )
@@ -94,7 +94,7 @@ OCI_Coll * CollCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
     OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
 
-    OCI_RETVAL = CollInit(typinf->con, NULL, NULL, typinf);
+    OCI_RETVAL = CollectionInitialize(typinf->con, NULL, NULL, typinf);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -104,7 +104,7 @@ OCI_Coll * CollCreate
  * CollFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollFree
+boolean CollectionFree
 (
     OCI_Coll *coll
 )
@@ -119,7 +119,7 @@ boolean CollFree
     if (coll->elem)
     {
         coll->elem->hstate = OCI_OBJECT_FETCHED_DIRTY;
-        ElemFree(coll->elem);
+        ElementFree(coll->elem);
         coll->elem = NULL;
     }
 
@@ -127,7 +127,7 @@ boolean CollFree
 
     if ((OCI_OBJECT_ALLOCATED == coll->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == coll->hstate))
     {
-        MemObjectFree(coll->con->env, coll->typinf->con->err, coll->handle, OCI_DEFAULT);
+        MemoryFreeObject(coll->con->env, coll->typinf->con->err, coll->handle, OCI_DEFAULT);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != coll->hstate)
@@ -144,7 +144,7 @@ boolean CollFree
  * CollArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll ** CollArrayCreate
+OCI_Coll ** CollectionCreateArray
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -172,7 +172,7 @@ OCI_Coll ** CollArrayCreate
  * CollArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollArrayFree
+boolean CollectionFreeArray
 (
     OCI_Coll **colls
 )
@@ -189,7 +189,7 @@ boolean CollArrayFree
  * CollAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollAssign
+boolean CollectionAssign
 (
     OCI_Coll *coll,
     OCI_Coll *coll_src
@@ -212,7 +212,7 @@ boolean CollAssign
  * CollGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int CollGetType
+unsigned int CollectionGetType
 (
     OCI_Coll *coll
 )
@@ -246,7 +246,7 @@ unsigned int CollGetType
  * CollGetMax
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int CollGetMax
+unsigned int CollectionGetMax
 (
     OCI_Coll *coll
 )
@@ -264,7 +264,7 @@ unsigned int CollGetMax
  * CollGetSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int CollGetSize
+unsigned int CollectionGetSize
 (
     OCI_Coll *coll
 )
@@ -286,7 +286,7 @@ unsigned int CollGetSize
  * CollTrim
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollTrim
+boolean CollectionTrim
 (
     OCI_Coll     *coll,
     unsigned int  nb_elem
@@ -294,7 +294,7 @@ boolean CollTrim
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CALL_CHECK_BOUND(coll->con, (sb4) nb_elem, (sb4) 0, (sb4) CollGetSize(coll));
+    OCI_CALL_CHECK_BOUND(coll->con, (sb4) nb_elem, (sb4) 0, (sb4) CollectionGetSize(coll));
     OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     OCI_EXEC(OCICollTrim(coll->con->env, coll->con->err, (sb4) nb_elem, coll->handle))
@@ -308,7 +308,7 @@ boolean CollTrim
  * CollGetElem
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * CollGetElem
+OCI_Elem * CollectionGetElement
 (
     OCI_Coll    *coll,
     unsigned int index
@@ -326,7 +326,7 @@ OCI_Elem * CollGetElem
 
     if (OCI_STATUS && exists && data)
     {
-        OCI_RETVAL = coll->elem = ElemInit(coll->con, coll->elem, data, p_ind, coll->typinf);
+        OCI_RETVAL = coll->elem = ElementInitialize(coll->con, coll->elem, data, p_ind, coll->typinf);
     }
 
     OCI_CALL_EXIT()
@@ -336,7 +336,7 @@ OCI_Elem * CollGetElem
  * CollGetElem2
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollGetElem2
+boolean CollectionGetElement2
 (
     OCI_Coll    *coll,
     unsigned int index,
@@ -357,12 +357,12 @@ boolean CollGetElem2
 
     if (OCI_STATUS && exists && data)
     {
-        elem = ElemInit(coll->con, elem, data, p_ind, coll->typinf);
+        elem = ElementInitialize(coll->con, elem, data, p_ind, coll->typinf);
         OCI_STATUS = (NULL != elem);
     }
     else
     {
-        OCI_STATUS = ElemSetNullIndicator(elem, OCI_IND_NULL);
+        OCI_STATUS = ElementSetNullIndicator(elem, OCI_IND_NULL);
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -374,7 +374,7 @@ boolean CollGetElem2
  * CollSetElem
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollSetElem
+boolean CollectionSetElement
 (
     OCI_Coll     *coll,
     unsigned int  index,
@@ -398,7 +398,7 @@ boolean CollSetElem
  * CollAppend
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollAppend
+boolean CollectionAddElement
 (
     OCI_Coll *coll,
     OCI_Elem *elem
@@ -421,7 +421,7 @@ boolean CollAppend
  * CollGetTypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * CollGetTypeInfo
+OCI_TypeInfo * CollectionGetTypeInfo
 (
     OCI_Coll *coll
 )
@@ -433,7 +433,7 @@ OCI_TypeInfo * CollGetTypeInfo
  * CollClear
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollClear
+boolean CollectionClear
 (
     OCI_Coll *coll
 )
@@ -442,7 +442,7 @@ boolean CollClear
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
     OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    OCI_RETVAL = OCI_STATUS = CollTrim(coll, CollGetSize(coll));
+    OCI_RETVAL = OCI_STATUS = CollectionTrim(coll, CollectionGetSize(coll));
 
     OCI_CALL_EXIT()
 }
@@ -451,7 +451,7 @@ boolean CollClear
  * CollDeleteElem
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollDeleteElem
+boolean CollectionRemoveElement
 (
     OCI_Coll    *coll,
     unsigned int index
@@ -475,7 +475,7 @@ boolean CollDeleteElem
  * CollGetCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int CollGetCount
+unsigned int CollectionGetCount
 (
     OCI_Coll *coll
 )
@@ -504,7 +504,7 @@ unsigned int CollGetCount
  * CollToText
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollToText
+boolean CollectionToString
 (
     OCI_Coll     *coll,
     unsigned int *size,
@@ -530,15 +530,15 @@ boolean CollToText
     len += StringAddToBuffer(str, len, coll->typinf->name, (unsigned int) ostrlen(coll->typinf->name), FALSE);
     len += StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
 
-    const unsigned int n = CollGetSize(coll);
+    const unsigned int n = CollectionGetSize(coll);
 
     for (unsigned int i = 1; i <= n && OCI_STATUS; i++)
     {
-        OCI_Elem *elem = CollGetElem(coll, i);
+        OCI_Elem *elem = CollectionGetElement(coll, i);
 
         quote = TRUE;
 
-        if (ElemIsNull(elem))
+        if (ElementIsNull(elem))
         {
             len += StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
         }
@@ -553,7 +553,7 @@ boolean CollToText
                 case OCI_CDT_TEXT:
                 {
                     data_size = OCIStringSize(OCILib.env, elem->handle);
-                    data      = (void *) ElemGetString(elem);
+                    data      = (void *) ElementGetString(elem);
                     break;
                 }
                 case OCI_CDT_NUMERIC:
@@ -580,43 +580,43 @@ boolean CollToText
                 }
                 case OCI_CDT_DATETIME:
                 {
-                    data  = (void *) ElemGetDate(elem);
+                    data  = (void *) ElementGetDate(elem);
                     break;
                 }
                 case OCI_CDT_TIMESTAMP:
                 {
-                    data  = (void *) ElemGetTimestamp(elem);
+                    data  = (void *) ElementGetTimestamp(elem);
                     break;
                 }
                 case OCI_CDT_INTERVAL:
                 {
-                    data  = (void *) ElemGetInterval(elem);
+                    data  = (void *) ElementGetInterval(elem);
                     break;
                 }
                 case OCI_CDT_LOB:
                 {
-                    data  = (void *) ElemGetLob(elem);
+                    data  = (void *) ElementGetLob(elem);
                     break;
                 }
                 case OCI_CDT_FILE:
                 {
-                    data  = (void *) ElemGetFile(elem);
+                    data  = (void *) ElementGetFile(elem);
                     break;
                 }
                 case OCI_CDT_REF:
                 {
-                    data  = (void *) ElemGetRef(elem);
+                    data  = (void *) ElementGetReference(elem);
                     break;
                 }
                 case OCI_CDT_OBJECT:
                 {
-                    data  = (void *) ElemGetObject(elem);
+                    data  = (void *) ElementGetObject(elem);
                     quote = FALSE;
                     break;
                 }
                 case OCI_CDT_COLLECTION:
                 {
-                    data  =  (void *) ElemGetColl(elem);
+                    data  =  (void *) ElementGetCollection(elem);
                     quote = FALSE;
                 }
             }

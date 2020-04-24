@@ -40,7 +40,7 @@ OCI_Agent * DequeueListen
     int      timeout
 );
 
-OCI_Msg * DequeueGet
+OCI_Msg * DequeueGetMessage
 (
     OCI_Dequeue *dequeue
 );

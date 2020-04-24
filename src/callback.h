@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-sb4 ProcInBind
+sb4 CallbackInBind
 (
     dvoid   *ictxp,
     OCIBind *bindp,
@@ -35,7 +35,7 @@ sb4 ProcInBind
     dvoid  **indp
 );
 
-sb4 ProcOutBind
+sb4 CallbackOutBind
 (
     dvoid   *octxp,
     OCIBind *bindp,
@@ -48,7 +48,7 @@ sb4 ProcOutBind
     ub2    **rcodep
 );
 
-ub4 ProcNotifyChanges
+ub4 CallbackNotifyChanges
 (
     void            *ctx,
     OCISubscription *subscrhp,
@@ -58,7 +58,7 @@ ub4 ProcNotifyChanges
     ub4              mode
 );
 
-ub4 ProcNotifyMessages
+ub4 CallbackNotifyMessages
 (
     void            *ctx,
     OCISubscription *subscrhp,
@@ -68,7 +68,7 @@ ub4 ProcNotifyMessages
     ub4              mode
 );
 
-sb4 ProcFailOver
+sb4 CallbackFailOver
 (
     dvoid *svchp,
     dvoid *envhp,
@@ -77,7 +77,7 @@ sb4 ProcFailOver
     ub4    fo_event
 );
 
-void ProcHAEvent
+void CallbackHAEvent
 (
     dvoid     *evtctx,
     dvoid     *eventptr

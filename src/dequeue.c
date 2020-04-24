@@ -60,7 +60,7 @@ OCI_Dequeue * DequeueCreate
 
         /* allocate dequeue options descriptor */
 
-        OCI_STATUS = MemDescriptorAlloc((dvoid *)dequeue->typinf->con->env, (dvoid **)&dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
+        OCI_STATUS = MemoryAllocDescriptor((dvoid *)dequeue->typinf->con->env, (dvoid **)&dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
 
         /* create local message for OCI_DequeueGet() */
 
@@ -121,7 +121,7 @@ boolean DequeueFree
 
     /* free OCI descriptor */
 
-    MemDescriptorFree((dvoid *) dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
+    MemoryFreeDescriptor((dvoid *) dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
 
     /* free data  */
 
@@ -175,7 +175,7 @@ OCI_Agent * DequeueListen
 
             if (OCI_ERR_AQ_LISTEN_TIMEOUT != code)
             {
-                OCI_RAISE_EXCEPTION(ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE))
+                THROW(ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE))
             }
         }
 
@@ -183,7 +183,7 @@ OCI_Agent * DequeueListen
 
         if (OCI_STATUS && handle && OCI_SUCCESSFUL(ret))
         {
-            OCI_RETVAL = dequeue->agent = AgentInit(dequeue->typinf->con, dequeue->agent, handle, NULL, NULL);
+            OCI_RETVAL = dequeue->agent = AgentInitialize(dequeue->typinf->con, dequeue->agent, handle, NULL, NULL);
         }
     }
 
@@ -191,10 +191,10 @@ OCI_Agent * DequeueListen
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueGet
+ * DequeueGetMessage
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Msg * DequeueGet
+OCI_Msg * DequeueGetMessage
 (
     OCI_Dequeue *dequeue
 )
@@ -243,7 +243,7 @@ OCI_Msg * DequeueGet
 
             if (OCI_ERR_AQ_DEQUEUE_TIMEOUT != code)
             {
-                OCI_RAISE_EXCEPTION(ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE))
+                THROW(ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE))
             }
         }
     }
@@ -696,7 +696,7 @@ boolean DequeueSubscribe
 
     /* allocate subscription handle */
 
-    OCI_STATUS = MemHandleAlloc(con->env, (dvoid **) (void *) &dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
+    OCI_STATUS = MemoryAllocHandle(con->env, (dvoid **) (void *) &dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -786,7 +786,7 @@ boolean DequeueSubscribe
 
     /* internal callback handler */
 
-    OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, dequeue->subhp, ProcNotifyMessages, 0)
+    OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, dequeue->subhp, CallbackNotifyMessages, 0)
 
     #ifdef _MSC_VER
     #pragma warning(default: 4054)
@@ -840,7 +840,7 @@ boolean DequeueUnsubscribe
 
         /* free OCI handle */
 
-        MemHandleFree((dvoid *) dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
+        MemoryFreeHandle((dvoid *) dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
 
         dequeue->subhp = NULL;
     }

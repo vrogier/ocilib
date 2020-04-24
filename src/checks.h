@@ -28,6 +28,178 @@
 #define OCI_RETVAL          call_retval
 #define OCI_STATUS          ((ctx)->call_status)
 
+
+ /* --------------------------------------------------------------------------------------------- *
+  * Local helper macros
+  * --------------------------------------------------------------------------------------------- */
+
+
+/* memory management helpers */
+
+#define OCI_FREE(ptr)                   { MemoryFree(ptr), (ptr) = NULL; }
+
+
+
+/* miscellaneous */
+
+#define OCI_NB_ARG_VERSION              3
+
+#define OCI_LIB_THREADED                (OCILib.env_mode & OCI_ENV_THREADED)
+
+#define OCI_CALL_DECLARE_CONTEXT(status)                                        \
+                                                                                \
+    OCI_Context ctx_obj = { NULL, NULL, NULL, NULL, FALSE };                    \
+    OCI_Context* ctx = &ctx_obj;                                                \
+    ctx_obj.oci_err    = OCILib.err;                                            \
+    ctx_obj.call_status = (status);                                             \
+
+#define OCI_CALL_DECLARE_VARIABLES(type, value, status)                         \
+                                                                                \
+    type call_retval = (type) (value);                                          \
+    OCI_CALL_DECLARE_CONTEXT(status);                                           \
+
+#define OCI_CALL_CONTEXT_ENTER(mode)                                            \
+                                                                                \
+    if ((mode) & OCI_ENV_CONTEXT)                                               \
+    {                                                                           \
+        ctx->call_err = ErrorGet(FALSE, FALSE);                                 \
+        CallEnter(ctx);                                                         \
+    }
+
+#define OCI_CALL_CONTEXT_EXIT(mode)                                             \
+                                                                                \
+    if ((mode) & OCI_ENV_CONTEXT)                                               \
+    {                                                                           \
+        CallExit(ctx);                                                          \
+    }
+
+#define OCI_CALL_ENTER(type, value)                                             \
+                                                                                \
+    OCI_CALL_DECLARE_VARIABLES(type, value, TRUE)                               \
+    OCI_CALL_CONTEXT_ENTER(OCILib.env_mode)                                     \
+
+#define OCI_CALL_EXIT()                                                         \
+                                                                                \
+    ExitCall:                                                                   \
+    OCI_CALL_CONTEXT_EXIT(OCILib.env_mode)                                      \
+    return call_retval;
+
+#define OCI_CALL_JUMP_EXIT()                                                    \
+                                                                                \
+    goto ExitCall;                                                              \
+
+#define OCI_CALL_CONTEXT_SET(c, s, e)                                           \
+    ctx->lib_con      = (c);                                                    \
+    ctx->lib_stmt     = (s);                                                    \
+    ctx->oci_err      = (e) ? (e) : OCILib.err;                                 \
+
+#define OCI_CALL_CONTEXT_SET_FROM_CONN(con)   OCI_CALL_CONTEXT_SET((con), NULL, ((con) ? (con)->err : OCILib.err))
+#define OCI_CALL_CONTEXT_SET_FROM_OBJ(obj)    OCI_CALL_CONTEXT_SET(((obj)->con), NULL, ((obj)->err))
+#define OCI_CALL_CONTEXT_SET_FROM_ERR(err)    OCI_CALL_CONTEXT_SET(NULL, NULL, (err))
+#define OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)  OCI_CALL_CONTEXT_SET(((stmt)->con), (stmt), ((stmt)->con->err))
+
+#define THROW(exp)                                                \
+                                                                                \
+    exp;                                                                        \
+    OCI_STATUS = FALSE;                                                         \
+    OCI_CALL_JUMP_EXIT()                                                        \
+
+#define OCI_IS_PLSQL_STMT(type)                                                 \
+    ((OCI_CST_BEGIN == (type)) || (OCI_CST_DECLARE == (type)) || (OCI_CST_CALL == (type)))
+
+#define OCI_IS_OCI_NUMBER(type, subtype)                                        \
+   (OCI_CDT_NUMERIC == (type) && OCI_NUM_NUMBER == (subtype))
+
+#define OCI_IS_OCILIB_OBJECT(type, subtype)                                     \
+    ( (OCI_IS_OCI_NUMBER(type, subtype)) ||                                     \
+      (OCI_CDT_TEXT    != (type) &&                                             \
+       OCI_CDT_RAW     != (type) &&                                             \
+       OCI_CDT_BOOLEAN != (type)))
+
+#define OCI_GET_PROP(type, value, obj_type, obj, prop, con, stmt, err)          \
+                                                                                \
+    OCI_CALL_ENTER(type, value)                                                 \
+    OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
+    OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
+    OCI_RETVAL = (type) ((obj)->prop);                                          \
+    OCI_CALL_EXIT()                                                             \
+
+#define OCI_SET_PROP(type, obj_type, obj, prop, value, con, stmt, err)          \
+                                                                                \
+    OCI_CALL_ENTER(boolean, FALSE)                                              \
+    OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
+    OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
+    (obj)->prop = (type) (value);                                               \
+    OCI_RETVAL = OCI_STATUS;                                                    \
+    OCI_CALL_EXIT()                                                             \
+
+#define OCI_SET_PROP_ENUM(type, obj_type, obj, prop, value, enums, msg, con, stmt, err)\
+                                                                                \
+    OCI_CALL_ENTER(boolean, FALSE)                                              \
+    OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
+    OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
+    OCI_CALL_CHECK_ENUM_VALUE((con),(stmt), (value), (enums), (msg))            \
+    (obj)->prop = (type) (value);                                               \
+    OCI_RETVAL = OCI_STATUS;                                                    \
+    OCI_CALL_EXIT()                                                             \
+
+#define OCI_GET_LIB_PROP(type, value, prop)                                     \
+                                                                                \
+    OCI_CALL_ENTER(type, value)                                                 \
+    OCI_CALL_CHECK_INITIALIZED()                                                \
+    OCI_RETVAL = (type) (prop);                                                 \
+    OCI_CALL_EXIT()                                                             \
+
+#define OCI_SET_LIB_PROP(prop, value)                                           \
+                                                                                \
+    OCI_CALL_ENTER(boolean, FALSE)                                              \
+    OCI_CALL_CHECK_INITIALIZED()                                                \
+    (prop) = (value);                                                           \
+    OCI_RETVAL = OCI_STATUS;                                                    \
+    OCI_CALL_EXIT()                                                             \
+
+#define OCI_ALLOCATE_BUFFER(type, ptr, size, count)                             \
+                                                                                \
+    if (OCI_STATUS && !(ptr))                                                   \
+    {                                                                           \
+        (ptr) = MemoryAlloc(type, size, (size_t) (count), TRUE);                \
+                                                                                \
+        OCI_STATUS = (NULL != (ptr));                                           \
+    }                                                                           \
+
+#define OCI_REALLOCATE_BUFFER(type, ptr, size, current, allocated, requested)   \
+                                                                                \
+    if (OCI_STATUS)                                                             \
+    {                                                                           \
+        if (!(ptr))                                                             \
+        {                                                                       \
+            (ptr) = MemoryAlloc(type, size, (size_t) (requested), TRUE);        \
+            if (ptr) (allocated) = (requested);                                 \
+        }                                                                       \
+        else if ((current) >= (allocated))                                      \
+        {                                                                       \
+            (ptr) = MemoryRealloc(ptr, type, size, (size_t) (requested), TRUE); \
+            if (ptr) (allocated) = (requested);                                 \
+        }                                                                       \
+                                                                                \
+        OCI_STATUS = (NULL != (ptr));                                           \
+    }                                                                           \
+
+
+#define OCI_ALLOCATE_DATA(type, ptr, count)                                     \
+                                                                                \
+    OCI_ALLOCATE_BUFFER(type, ptr, sizeof(*(ptr)), count)
+
+#define OCI_REALLOCATE_DATA(type, ptr, cur, alloc, inc)                         \
+                                                                                \
+    OCI_REALLOCATE_BUFFER(type, ptr, sizeof(*(ptr)), cur, alloc, inc)
+
+#define OCI_ARRAY_GET_AT(ptr, size, offset)  (((ub1 *) (ptr)) + (size_t)((size)*i))
+#define OCI_ARRAY_SET_AT(ptr, type, offset, value)  *(type*)(OCI_ARRAY_GET_AT(ptr, sizeof(type), i)) = (type) (value);
+
+
+#define OCI_STRING_VALID(s) ((s) && ((s)[0]))
+
 #define OCI_EXEC(fct)                                                            \
     if (OCI_STATUS)                                                              \
     {                                                                            \
@@ -96,7 +268,7 @@
                                                                                \
     if (!(ptr))                                                                \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionNullPointer(type))                        \
+        THROW(ExceptionNullPointer(type))                        \
     }
 
 /**
@@ -126,7 +298,7 @@
             (OCI_BAM_INTERNAL == (stmt)->bind_alloc_mode) &&                        \
             ((data) != NULL))                                                       \
         {                                                                           \
-            OCI_RAISE_EXCEPTION(ExceptionExternalBindingNotAllowed(stmt, name))     \
+            THROW(ExceptionExternalBindingNotAllowed(stmt, name))     \
         }                                                                           \
                                                                                     \
         if ((ext_only_value) || OCI_BAM_EXTERNAL == (stmt)->bind_alloc_mode)        \
@@ -173,7 +345,7 @@
                                                                                \
     if (((v) < (b1)) || ((v) > (b2)))                                          \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionOutOfBounds((con), (v)))                  \
+        THROW(ExceptionOutOfBounds((con), (v)))                  \
     }
 
 /**
@@ -194,7 +366,7 @@
                                                                                \
     if ((v) < (m))                                                             \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionMinimumValue((con), (stmt), (m)))         \
+        THROW(ExceptionMinimumValue((con), (stmt), (m)))         \
     }
 
 /**
@@ -213,7 +385,7 @@
                                                                                \
     if (!(exp))                                                                \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionTypeNotCompatible((con)))                 \
+        THROW(ExceptionTypeNotCompatible((con)))                 \
     }
 
 /* ********************************************************************************************* *
@@ -254,7 +426,7 @@
                                                                                \
     if ((((st)->status) & (v)) == 0)                                           \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionStatementState((st), v))                  \
+        THROW(ExceptionStatementState((st), v))                  \
     }                                                                          \
 
 
@@ -274,7 +446,7 @@
     if (((st)->nb_rbinds > 0) ||                                               \
         ((st)->exec_mode != OCI_STMT_SCROLLABLE_READONLY))                     \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionStatementNotScrollable(st))               \
+        THROW(ExceptionStatementNotScrollable(st))               \
     }
 
 /**
@@ -294,7 +466,7 @@
                                                                                \
     if ((dp)->status != (v))                                                   \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionDirPathState((dp), (dp)->status))         \
+        THROW(ExceptionDirPathState((dp), (dp)->status))         \
     }
 
 /* ********************************************************************************************* *
@@ -314,7 +486,7 @@
                                                                                \
     if (!OCILib.loaded)                                                        \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionNotInitialized())                         \
+        THROW(ExceptionNotInitialized())                         \
     }
 
 /**
@@ -334,7 +506,7 @@
                                                                                    \
     if (OCILib.version_runtime < (ver) || ((con) && (con)->ver_num < (ver)))       \
     {                                                                              \
-        OCI_RAISE_EXCEPTION(ExceptionNotAvailable(con, feat))                      \
+        THROW(ExceptionNotAvailable(con, feat))                      \
     }
 
 /**
@@ -351,7 +523,7 @@
                                                                            \
     if (!(OCI_LIB_THREADED))                                               \
     {                                                                      \
-        OCI_RAISE_EXCEPTION(ExceptionNotMultithreaded())                   \
+        THROW(ExceptionNotMultithreaded())                   \
     }
 
 /**
@@ -428,7 +600,7 @@
                                                                                \
     if (OCILib.version_runtime < OCI_9_2)                                      \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionNotAvailable((dp)->con,                   \
+        THROW(ExceptionNotAvailable((dp)->con,                   \
                             OCI_FEATURE_STATEMENT_CACHING))                    \
     }
 
@@ -447,7 +619,7 @@
                                                                                \
     if (OCILib.version_runtime < OCI_9_2)                                      \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionNotAvailable((dp)->con,                   \
+        THROW(ExceptionNotAvailable((dp)->con,                   \
                             OCI_FEATURE_DIRPATH_DATE_CACHE)                    \
     }
 
@@ -464,7 +636,7 @@
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionNotAvailable(NULL,                        \
+        THROW(ExceptionNotAvailable(NULL,                        \
                             OCI_FEATURE_REMOTE_DBS_CONTROL))                   \
     }
 
@@ -481,7 +653,7 @@
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionNotAvailable(NULL,                        \
+        THROW(ExceptionNotAvailable(NULL,                        \
                             OCI_FEATURE_DATABASE_NOTIFY))                      \
     }
 
@@ -499,7 +671,7 @@
                                                                                \
     if (OCILib.version_runtime < OCI_10_2)                                     \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionNotAvailable(NULL,                        \
+        THROW(ExceptionNotAvailable(NULL,                        \
                             OCI_FEATURE_HIGH_AVAILABILITY))                    \
     }
 
@@ -516,7 +688,7 @@
                                                                                \
     if ( ((mode) & OCI_SESSION_XA) && (!OCILib.use_xa) )                       \
     {                                                                          \
-        OCI_RAISE_EXCEPTION(ExceptionNotAvailable(NULL, OCI_FEATURE_XA))       \
+        THROW(ExceptionNotAvailable(NULL, OCI_FEATURE_XA))       \
     }
 
 #define OCI_CALL_CHECK_ENUM_VALUE(con, stmt, mode, values, name)               \
@@ -525,7 +697,7 @@
         for (; ii < nn; ii++) { if ((mode) == (values)[ii]) break; }           \
         if (ii >= nn)                                                          \
         {                                                                      \
-            OCI_RAISE_EXCEPTION(ExceptionArgInvalidValue(con, stmt,            \
+            THROW(ExceptionArgInvalidValue(con, stmt,            \
                                                          name, mode))          \
         }                                                                      \
     }

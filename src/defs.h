@@ -372,185 +372,6 @@
 #define OCI_UTF8_BYTES_PER_CHAR 4
 #define OCI_SIZE_TMP_CVT        128
 
-/* --------------------------------------------------------------------------------------------- *
- * Local helper macros
- * --------------------------------------------------------------------------------------------- */
-
-/* check OCI status */
-
-#define OCI_FAILURE(res)                ((res) != OCI_SUCCESS)
-#define OCI_SUCCESSFUL(res)             ((res) == OCI_SUCCESS)
-
-/* memory management helpers */
-
-#define OCI_FREE(ptr)                   { MemFree(ptr), (ptr) = NULL; }
-
-/* indicator and nullity handlers */
-
-#define OCI_IND(exp)                    (sb2) ((exp) ? 0 : -1)
-
-#define OCI_NOT_USED(p)                 (p) = (p);
-
-/* miscellaneous */
-
-#define OCI_NB_ARG_VERSION              3
-
-#define OCI_LIB_THREADED                (OCILib.env_mode & OCI_ENV_THREADED)
-
-#define OCI_CALL_DECLARE_CONTEXT(status)                                        \
-                                                                                \
-    OCI_Context ctx_obj = { NULL, NULL, NULL, NULL, FALSE };                    \
-    OCI_Context* ctx = &ctx_obj;                                                \
-    ctx_obj.oci_err    = OCILib.err;                                            \
-    ctx_obj.call_status = (status);                                             \
-
-#define OCI_CALL_DECLARE_VARIABLES(type, value, status)                         \
-                                                                                \
-    type call_retval = (type) (value);                                          \
-    OCI_CALL_DECLARE_CONTEXT(status);                                           \
-
-#define OCI_CALL_CONTEXT_ENTER(mode)                                            \
-                                                                                \
-    if ((mode) & OCI_ENV_CONTEXT)                                               \
-    {                                                                           \
-        ctx->call_err = ErrorGet(FALSE, FALSE);                                 \
-        CallEnter(ctx);                                                         \
-    }
-
-#define OCI_CALL_CONTEXT_EXIT(mode)                                             \
-                                                                                \
-    if ((mode) & OCI_ENV_CONTEXT)                                               \
-    {                                                                           \
-        CallExit(ctx);                                                          \
-    }
-
-#define OCI_CALL_ENTER(type, value)                                             \
-                                                                                \
-    OCI_CALL_DECLARE_VARIABLES(type, value, TRUE)                               \
-    OCI_CALL_CONTEXT_ENTER(OCILib.env_mode)                                     \
-
-#define OCI_CALL_EXIT()                                                         \
-                                                                                \
-    ExitCall:                                                                   \
-    OCI_CALL_CONTEXT_EXIT(OCILib.env_mode)                                      \
-    return call_retval;
-
-#define OCI_CALL_JUMP_EXIT()                                                    \
-                                                                                \
-    goto ExitCall;                                                              \
-
-#define OCI_CALL_CONTEXT_SET(c, s, e)                                           \
-    ctx->lib_con      = (c);                                                    \
-    ctx->lib_stmt     = (s);                                                    \
-    ctx->oci_err      = (e) ? (e) : OCILib.err;                                 \
-
-#define OCI_CALL_CONTEXT_SET_FROM_CONN(con)   OCI_CALL_CONTEXT_SET((con), NULL, ((con) ? (con)->err : OCILib.err))
-#define OCI_CALL_CONTEXT_SET_FROM_OBJ(obj)    OCI_CALL_CONTEXT_SET(((obj)->con), NULL, ((obj)->err))
-#define OCI_CALL_CONTEXT_SET_FROM_ERR(err)    OCI_CALL_CONTEXT_SET(NULL, NULL, (err))
-#define OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)  OCI_CALL_CONTEXT_SET(((stmt)->con), (stmt), ((stmt)->con->err))
-
-#define OCI_RAISE_EXCEPTION(exp)                                                \
-                                                                                \
-    exp;                                                                        \
-    OCI_STATUS = FALSE;                                                         \
-    OCI_CALL_JUMP_EXIT()                                                        \
-
-#define OCI_IS_PLSQL_STMT(type)                                                 \
-    ((OCI_CST_BEGIN == (type)) || (OCI_CST_DECLARE == (type)) || (OCI_CST_CALL == (type)))
-
-#define OCI_IS_OCI_NUMBER(type, subtype)                                        \
-   (OCI_CDT_NUMERIC == (type) && OCI_NUM_NUMBER == (subtype))
-
-#define OCI_IS_OCILIB_OBJECT(type, subtype)                                     \
-    ( (OCI_IS_OCI_NUMBER(type, subtype)) ||                                     \
-      (OCI_CDT_TEXT    != (type) &&                                             \
-       OCI_CDT_RAW     != (type) &&                                             \
-       OCI_CDT_BOOLEAN != (type)))
-
-#define OCI_GET_PROP(type, value, obj_type, obj, prop, con, stmt, err)          \
-                                                                                \
-    OCI_CALL_ENTER(type, value)                                                 \
-    OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
-    OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
-    OCI_RETVAL = (type) ((obj)->prop);                                          \
-    OCI_CALL_EXIT()                                                             \
-
-#define OCI_SET_PROP(type, obj_type, obj, prop, value, con, stmt, err)          \
-                                                                                \
-    OCI_CALL_ENTER(boolean, FALSE)                                              \
-    OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
-    OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
-    (obj)->prop = (type) (value);                                               \
-    OCI_RETVAL = OCI_STATUS;                                                    \
-    OCI_CALL_EXIT()                                                             \
-
-#define OCI_SET_PROP_ENUM(type, obj_type, obj, prop, value, enums, msg, con, stmt, err)\
-                                                                                \
-    OCI_CALL_ENTER(boolean, FALSE)                                              \
-    OCI_CALL_CHECK_PTR(obj_type, obj)                                           \
-    OCI_CALL_CONTEXT_SET((con),(stmt), (err))                                   \
-    OCI_CALL_CHECK_ENUM_VALUE((con),(stmt), (value), (enums), (msg))            \
-    (obj)->prop = (type) (value);                                               \
-    OCI_RETVAL = OCI_STATUS;                                                    \
-    OCI_CALL_EXIT()                                                             \
-
-#define OCI_GET_LIB_PROP(type, value, prop)                                     \
-                                                                                \
-    OCI_CALL_ENTER(type, value)                                                 \
-    OCI_CALL_CHECK_INITIALIZED()                                                \
-    OCI_RETVAL = (type) (prop);                                                 \
-    OCI_CALL_EXIT()                                                             \
-
-#define OCI_SET_LIB_PROP(prop, value)                                           \
-                                                                                \
-    OCI_CALL_ENTER(boolean, FALSE)                                              \
-    OCI_CALL_CHECK_INITIALIZED()                                                \
-    (prop) = (value);                                                           \
-    OCI_RETVAL = OCI_STATUS;                                                    \
-    OCI_CALL_EXIT()                                                             \
-
-#define OCI_ALLOCATE_BUFFER(type, ptr, size, count)                             \
-                                                                                \
-    if (OCI_STATUS && !(ptr))                                                   \
-    {                                                                           \
-        (ptr) = MemAlloc(type, size, (size_t) (count), TRUE);                   \
-                                                                                \
-        OCI_STATUS = (NULL != (ptr));                                           \
-    }                                                                           \
-
-#define OCI_REALLOCATE_BUFFER(type, ptr, size, current, allocated, requested)   \
-                                                                                \
-    if (OCI_STATUS)                                                             \
-    {                                                                           \
-        if (!(ptr))                                                             \
-        {                                                                       \
-            (ptr) = MemAlloc(type, size, (size_t) (requested), TRUE);           \
-            if (ptr) (allocated) = (requested);                                 \
-        }                                                                       \
-        else if ((current) >= (allocated))                                      \
-        {                                                                       \
-            (ptr) = MemRealloc(ptr, type, size, (size_t) (requested), TRUE);\
-            if (ptr) (allocated) = (requested);                                 \
-        }                                                                       \
-                                                                                \
-        OCI_STATUS = (NULL != (ptr));                                           \
-    }                                                                           \
-
-
-#define OCI_ALLOCATE_DATA(type, ptr, count)                                     \
-                                                                                \
-    OCI_ALLOCATE_BUFFER(type, ptr, sizeof(*(ptr)), count)
-
-#define OCI_REALLOCATE_DATA(type, ptr, cur, alloc, inc)                         \
-                                                                                \
-    OCI_REALLOCATE_BUFFER(type, ptr, sizeof(*(ptr)), cur, alloc, inc)
-
-#define OCI_ARRAY_GET_AT(ptr, size, offset)  (((ub1 *) (ptr)) + (size_t)((size)*i))
-#define OCI_ARRAY_SET_AT(ptr, type, offset, value)  *(type*)(OCI_ARRAY_GET_AT(ptr, sizeof(type), i)) = (type) (value);
-
-
-#define OCI_STRING_VALID(s) ((s) && ((s)[0]))
-
 #ifdef _WINDOWS
 
     #define OCI_CVT_CHAR                  1
@@ -604,6 +425,18 @@
 #ifndef max
   #define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
+
+
+/* check OCI status */
+
+#define OCI_FAILURE(res)                ((res) != OCI_SUCCESS)
+#define OCI_SUCCESSFUL(res)             ((res) == OCI_SUCCESS)
+
+/* indicator and nullity handlers */
+
+#define OCI_IND(exp)                    (sb2) ((exp) ? 0 : -1)
+
+#define OCI_NOT_USED(p)                 (p) = (p);
 
 #endif    /* OCILIB_DEFS_H_INCLUDED */
 

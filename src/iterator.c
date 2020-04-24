@@ -19,14 +19,15 @@
  */
 
 #include "iterator.h"
-#include "macro.h"
+
 #include "element.h"
+#include "macro.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * IterCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Iter * IterCreate
+OCI_Iter * IteratorCreate
 (
 OCI_Coll *coll
 )
@@ -56,7 +57,7 @@ OCI_Coll *coll
 
         if (OCI_STATUS)
         {
-            iter->elem = ElemInit(coll->con, iter->elem, NULL, (OCIInd *)NULL, coll->typinf);
+            iter->elem = ElementInitialize(coll->con, iter->elem, NULL, (OCIInd *)NULL, coll->typinf);
             OCI_STATUS = (NULL != iter->elem);
         }
     }
@@ -69,7 +70,7 @@ OCI_Coll *coll
     }
     else if (iter)
     {
-        IterFree(iter);
+        IteratorFree(iter);
    }
 
     OCI_CALL_EXIT()
@@ -79,7 +80,7 @@ OCI_Coll *coll
  * IterFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean IterFree
+boolean IteratorFree
 (
     OCI_Iter *iter
 )
@@ -100,7 +101,7 @@ boolean IterFree
     if (iter->elem)
     {
         iter->elem->hstate = OCI_OBJECT_FETCHED_DIRTY;
-        ElemFree(iter->elem);
+        ElementFree(iter->elem);
         iter->elem = NULL;
     }
 
@@ -117,7 +118,7 @@ boolean IterFree
  * IterGetNext
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * IterGetNext
+OCI_Elem * IteratorGetNext
 (
     OCI_Iter *iter
 )
@@ -135,7 +136,7 @@ OCI_Elem * IterGetNext
 
         if (OCI_STATUS && !iter->eoc)
         {
-            OCI_RETVAL = iter->elem = ElemInit(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
+            OCI_RETVAL = iter->elem = ElementInitialize(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
 
             iter->dirty = FALSE;
             iter->boc   = FALSE;
@@ -149,7 +150,7 @@ OCI_Elem * IterGetNext
  * IterGetPrev
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * IterGetPrev
+OCI_Elem * IteratorGetPrev
 (
     OCI_Iter *iter
 )
@@ -167,7 +168,7 @@ OCI_Elem * IterGetPrev
 
         if (OCI_STATUS && !iter->boc)
         {
-            OCI_RETVAL = iter->elem = ElemInit(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
+            OCI_RETVAL = iter->elem = ElementInitialize(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
 
             iter->dirty = FALSE;
             iter->eoc   = FALSE;
@@ -181,7 +182,7 @@ OCI_Elem * IterGetPrev
  * IterGetCurrent
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * IterGetCurrent
+OCI_Elem * IteratorGetCurrent
 (
     OCI_Iter *iter
 )

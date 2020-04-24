@@ -20,8 +20,8 @@
 
 #include "error.h"
 
-#include "threadkey.h"
 #include "macro.h"
+#include "threadkey.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * ErrorCreate

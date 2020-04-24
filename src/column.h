@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-boolean ColumnGetAttrInfo
+boolean ColumnGetAttributeInfo
 (
     OCI_Column    *col,
     unsigned int   count,
@@ -32,7 +32,7 @@ boolean ColumnGetAttrInfo
     size_t        *p_align
 );
     
-boolean ColumnDescribe
+boolean ColumnRetrieveInfo
 (
     OCI_Column     *col,
     OCI_Connection *con,
@@ -42,7 +42,7 @@ boolean ColumnDescribe
     int             ptype
 );
 
-boolean ColumnMap
+boolean ColumnMapInfo
 (
     OCI_Column    *col,
     OCI_Statement *stmt
@@ -108,12 +108,12 @@ unsigned int ColumnGetCollationID
     OCI_Column* col
 );
 
-const otext* ColumnGetSQLType
+const otext* ColumnGetSqlType
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetFullSQLType
+unsigned int ColumnGetFullSqlType
 (
     OCI_Column* col,
     otext* buffer,

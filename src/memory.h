@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-void * MemAlloc
+void * MemoryAlloc
 (
     int      ptr_type,
     size_t   block_size,
@@ -31,7 +31,7 @@ void * MemAlloc
     boolean  zero_fill
 );
 
-void * MemRealloc
+void * MemoryRealloc
 (
     void   * ptr_mem,
     int      ptr_type,
@@ -40,32 +40,32 @@ void * MemRealloc
     boolean  zero_fill
 );
 
-void MemFree
+void MemoryFree
 (
     void   * ptr_mem
 );
 
-boolean MemHandleAlloc
+boolean MemoryAllocHandle
 (
     CONST dvoid *parenth,
     dvoid      **hndlpp,
     ub4          type
 );
 
-boolean MemHandleFree
+boolean MemoryFreeHandle
 (
     dvoid* hndlp,
     ub4    type
 );
 
-boolean MemDescriptorAlloc
+boolean MemoryAllocDescriptor
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
     ub4          type
 );
 
-boolean MemDescriptorArrayAlloc
+boolean MemoryAllocDescriptorArray
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
@@ -73,20 +73,20 @@ boolean MemDescriptorArrayAlloc
     ub4          nb_elem
 );
 
-boolean MemDescriptorFree
+boolean MemoryFreeDescriptor
 (
     dvoid *descp,
     ub4   type
 );
 
-boolean MemDescriptorArrayFree
+boolean MemoryFreeDescriptorArray
 (
     dvoid   **descp,
     ub4       type,
     ub4       nb_elem
 );
 
-sword MemObjectNew
+sword MemoryAllocateObject
 (
     OCIEnv          *env,
     OCIError        *err,
@@ -99,7 +99,7 @@ sword MemObjectNew
     dvoid          **instance
 );
 
-sword MemObjectFree
+sword MemoryFreeObject
 (
     OCIEnv* env,
     OCIError* err,
@@ -107,29 +107,24 @@ sword MemObjectFree
     ub2       flags
 );
 
-void * MemAllocOracleClient
+void * MemoryAllocOracleCallback
 (
     void  *ctxp,
     size_t size
 );
 
-void * MemReallocOracleClient
+void * MemoryReallocOracleCallback
 (
     void  *ctxp,
     void  *memptr,
     size_t newsize
 );
 
-void MemFreeOracleClient
+void MemoryFreeOracleCallback
 (
     void *ctxp,
     void *memptr
 );
 
-void MemUpdateBytes
-(
-    int      type,
-    big_int  size
-);
 
 #endif /* OCILIB_MEMORY_H_INCLUDED */

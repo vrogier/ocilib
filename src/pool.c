@@ -64,7 +64,7 @@ boolean PoolClose
 
         #endif
 
-            MemHandleFree((void *) pool->handle, (ub4) pool->htype);
+            MemoryFreeHandle((void *) pool->handle, (ub4) pool->htype);
         }
 
     #if OCI_VERSION_COMPILE >= OCI_11_2
@@ -73,7 +73,7 @@ boolean PoolClose
 
         if (pool->authp)
         {
-            MemHandleFree((void *) pool->authp, OCI_HTYPE_AUTHINFO);
+            MemoryFreeHandle((void *) pool->authp, OCI_HTYPE_AUTHINFO);
         }
 
     #endif
@@ -82,7 +82,7 @@ boolean PoolClose
 
         if (pool->err)
         {
-            MemHandleFree((void *) pool->err, OCI_HTYPE_ERROR);
+            MemoryFreeHandle((void *) pool->err, OCI_HTYPE_ERROR);
         }
     }
 
@@ -184,11 +184,11 @@ OCI_Pool * PoolCreate
 
         /* allocate error handle */
 
-        OCI_STATUS = OCI_STATUS && MemHandleAlloc((dvoid *)OCILib.env, (dvoid **)(void *)&pool->err, OCI_HTYPE_ERROR);
+        OCI_STATUS = OCI_STATUS && MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **)(void *)&pool->err, OCI_HTYPE_ERROR);
 
         /* allocate pool handle */
 
-        OCI_STATUS = OCI_STATUS && MemHandleAlloc((dvoid *)OCILib.env, (dvoid **)(void *)&pool->handle, (ub4)pool->htype);
+        OCI_STATUS = OCI_STATUS && MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **)(void *)&pool->handle, (ub4)pool->htype);
 
         /* allocate authentication handle only if needed */
 
@@ -215,7 +215,7 @@ OCI_Pool * PoolCreate
 
                 /* allocate authentication handle */
 
-                OCI_STATUS = MemHandleAlloc((dvoid *)OCILib.env, (dvoid **)(void *)&pool->authp, OCI_HTYPE_AUTHINFO);
+                OCI_STATUS = MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **)(void *)&pool->authp, OCI_HTYPE_AUTHINFO);
 
                 /* set OCILIB driver layer name attribute only for session pools here
                     For standalone connections and connection pool this attribute is set

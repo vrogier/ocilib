@@ -19,31 +19,24 @@
  */
 
 #include "statement.h"
-#include "connection.h"
 
 #include "bind.h"
-#include "callback.h"
+#include "collection.h"
+#include "connection.h"
+#include "date.h"
 #include "error.h"
 #include "exception.h"
-#include "hash.h"
-#include "format.h"
-#include "list.h"
-#include "macro.h"
-#include "memory.h"
-#include "resultset.h"
-#include "strings.h"
-#include "helpers.h"
-
-#include "collection.h"
-#include "date.h"
 #include "file.h"
-#include "interval.h"
+#include "format.h"
+#include "hash.h"
 #include "list.h"
 #include "lob.h"
-#include "number.h"
+#include "macro.h"
+#include "memory.h"
 #include "object.h"
 #include "ref.h"
-#include "timestamp.h"
+#include "resultset.h"
+#include "strings.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 static unsigned int TimestampTypeValues[]  = { OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
@@ -246,14 +239,14 @@ boolean StatementReset
         #endif
 
             {
-                OCI_STATUS = MemHandleFree((dvoid *)stmt->stmt, OCI_HTYPE_STMT);
+                OCI_STATUS = MemoryFreeHandle((dvoid *)stmt->stmt, OCI_HTYPE_STMT);
             }
 
             stmt->stmt = NULL;
         }
         else if (OCI_OBJECT_ALLOCATED_BIND_STMT == stmt->hstate)
         {
-            OCI_STATUS = MemHandleFree((dvoid *) stmt->stmt, OCI_HTYPE_STMT);
+            OCI_STATUS = MemoryFreeHandle((dvoid *) stmt->stmt, OCI_HTYPE_STMT);
 
             stmt->stmt = NULL;
         }
@@ -519,7 +512,7 @@ boolean StatementBindCheckAll
 
             /* allocate statement handle */
 
-            OCI_STATUS = MemHandleAlloc((dvoid *)bnd_stmt->con->env, (dvoid **)(void *)&bnd_stmt->stmt, OCI_HTYPE_STMT);
+            OCI_STATUS = MemoryAllocHandle((dvoid *)bnd_stmt->con->env, (dvoid **)(void *)&bnd_stmt->stmt, OCI_HTYPE_STMT);
 
             OCI_STATUS = OCI_STATUS && StatementSetPrefetchSize(stmt, stmt->prefetch_size);
             OCI_STATUS = OCI_STATUS && StatementSetFetchSize(stmt, stmt->fetch_size);
@@ -754,7 +747,7 @@ boolean StatementFetchIntoUserVariables
                 }
                 case OCI_ARG_COLLECTION:
                 {
-                    SET_ARG_HANDLE(OCI_Coll, ResultsetGetColl, CollAssign);
+                    SET_ARG_HANDLE(OCI_Coll, ResultsetGetColl, CollectionAssign);
                     break;
                 }
                 case OCI_ARG_REF:
@@ -983,7 +976,7 @@ boolean StatementBatchErrorInit
         {
             /* allocate OCI error handle */
 
-            OCI_STATUS = MemHandleAlloc((dvoid  *)stmt->con->env, (dvoid **)(void *)&hndl, OCI_HTYPE_ERROR);
+            OCI_STATUS = MemoryAllocHandle((dvoid  *)stmt->con->env, (dvoid **)(void *)&hndl, OCI_HTYPE_ERROR);
         }
 
         /* loop on the OCI errors to fill OCILIB error objects */
@@ -1040,7 +1033,7 @@ boolean StatementBatchErrorInit
 
         if (hndl)
         {
-            MemHandleFree(hndl, OCI_HTYPE_ERROR);
+            MemoryFreeHandle(hndl, OCI_HTYPE_ERROR);
         }
     }
 
@@ -1079,7 +1072,7 @@ boolean StatementPrepareInternal
         {
             /* allocate handle */
 
-            OCI_STATUS = MemHandleAlloc((dvoid *)stmt->con->env, (dvoid **)(void *)&stmt->stmt, OCI_HTYPE_STMT);
+            OCI_STATUS = MemoryAllocHandle((dvoid *)stmt->con->env, (dvoid **)(void *)&stmt->stmt, OCI_HTYPE_STMT);
         }
     }
 
@@ -1544,7 +1537,7 @@ boolean StatementPrepareFmt
 
     /* first, get buffer size */
 
-    const int size = ParseSqlFmt(stmt, NULL, sql, &first_pass_args);
+    const int size = FormatParseSql(stmt, NULL, sql, &first_pass_args);
 
     if (size > 0)
     {
@@ -1558,7 +1551,7 @@ boolean StatementPrepareFmt
         {
             /* format buffer */
 
-            if (ParseSqlFmt(stmt, sql_fmt, sql, &second_pass_args) > 0)
+            if (FormatParseSql(stmt, sql_fmt, sql, &second_pass_args) > 0)
             {
                 /* parse buffer */
 
@@ -1601,7 +1594,7 @@ boolean StatementExecuteStmtFmt
 
     /* first, get buffer size */
 
-   const int size = ParseSqlFmt(stmt, NULL, sql, &first_pass_args);
+   const int size = FormatParseSql(stmt, NULL, sql, &first_pass_args);
 
     if (size > 0)
     {
@@ -1615,7 +1608,7 @@ boolean StatementExecuteStmtFmt
         {
             /* format buffer */
 
-            if (ParseSqlFmt(stmt, sql_fmt, sql, &second_pass_args) > 0)
+            if (FormatParseSql(stmt, sql_fmt, sql, &second_pass_args) > 0)
             {
                 /* prepare and execute SQL buffer */
 
@@ -1658,7 +1651,7 @@ boolean StatementParseFmt
 
     /* first, get buffer size */
 
-    const int size = ParseSqlFmt(stmt, NULL, sql, &first_pass_args);
+    const int size = FormatParseSql(stmt, NULL, sql, &first_pass_args);
 
     if (size > 0)
     {
@@ -1672,7 +1665,7 @@ boolean StatementParseFmt
         {
             /* format buffer */
 
-            if (ParseSqlFmt(stmt, sql_fmt, sql, &second_pass_args) > 0)
+            if (FormatParseSql(stmt, sql_fmt, sql, &second_pass_args) > 0)
             {
                 /* prepare and execute SQL buffer */
 
@@ -1715,7 +1708,7 @@ boolean StatementDescribeFmt
 
     /* first, get buffer size */
 
-    const int size = ParseSqlFmt(stmt, NULL, sql, &first_pass_args);
+    const int size = FormatParseSql(stmt, NULL, sql, &first_pass_args);
 
     if (size > 0)
     {
@@ -1729,7 +1722,7 @@ boolean StatementDescribeFmt
         {
             /* format buffer */
 
-            if (ParseSqlFmt(stmt, sql_fmt, sql, &second_pass_args) > 0)
+            if (FormatParseSql(stmt, sql_fmt, sql, &second_pass_args) > 0)
             {
                 /* prepare and execute SQL buffer */
 
@@ -1770,7 +1763,7 @@ boolean StatementBindArraySetSize
 
     if ((stmt->nb_ubinds > 0) && (stmt->nb_iters_init < size))
     {
-        OCI_RAISE_EXCEPTION(ExceptionBindArraySize(stmt, stmt->nb_iters_init, stmt->nb_iters, size))
+        THROW(ExceptionBindArraySize(stmt, stmt->nb_iters_init, stmt->nb_iters, size))
     }
     else
     {
@@ -2132,7 +2125,7 @@ boolean StatementBindString
                An invalid length passed to the function, we do not have a valid length to
                allocate internal array, thus we need to raise an exception */
 
-            OCI_RAISE_EXCEPTION(ExceptionMinimumValue(stmt->con, stmt, 1))
+            THROW(ExceptionMinimumValue(stmt->con, stmt, 1))
         }
     }
 
@@ -2194,7 +2187,7 @@ boolean StatementBindRaw
         An invalid length passed to the function, we do not have a valid length to
         allocate internal array, thus we need to raise an exception */
 
-        OCI_RAISE_EXCEPTION(ExceptionMinimumValue(stmt->con, stmt, 1))
+        THROW(ExceptionMinimumValue(stmt->con, stmt, 1))
     }
 
     OCI_BIND_DATA(len, OCI_CDT_RAW, SQLT_BIN, 0, NULL, 0)
@@ -2974,7 +2967,7 @@ boolean StatementRegisterDate
        data with returning clause.
        It's an Oracle known bug #3269146 */
 
-    if (ConnectionGetVersionConnection(stmt->con) < OCI_10_2)
+    if (ConnectionGetVersion(stmt->con) < OCI_10_2)
     {
         code = SQLT_DAT;
         size = 7;
@@ -3555,7 +3548,7 @@ OCI_Bind * StatementGetBind2
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    index = BindGetInternalIndex(stmt, name);
+    index = BindGetIndex(stmt, name);
 
     if (index > 0)
     {
@@ -3563,7 +3556,7 @@ OCI_Bind * StatementGetBind2
     }
     else
     {
-        OCI_RAISE_EXCEPTION(ExceptionItemNotFound(stmt->con, stmt, name, OCI_IPC_BIND))
+        THROW(ExceptionItemNotFound(stmt->con, stmt, name, OCI_IPC_BIND))
     }
 
     OCI_CALL_EXIT()
@@ -3588,7 +3581,7 @@ unsigned int StatementGetBindIndex
 
     OCI_STATUS = FALSE;
 
-    index = BindGetInternalIndex(stmt, name);
+    index = BindGetIndex(stmt, name);
 
     if (index >= 0)
     {

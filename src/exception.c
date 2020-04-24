@@ -23,10 +23,6 @@
 #include "error.h"
 #include "strings.h"
 
-/* ********************************************************************************************* *
- *                            STRINGS MESSAGES
- * ********************************************************************************************* */
-
 static const otext * OCILib_TypeNames[OCI_IPC_COUNT] =
 {
     OTEXT("Oracle memory"),
@@ -237,10 +233,10 @@ OCI_Error * ExceptionGetError
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionRaise
+ * ExceptionCallHandler
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionRaise
+void ExceptionCallHandler
 (
     OCI_Error *err
 )
@@ -290,7 +286,7 @@ void ExceptionOCI
         StringReleaseOracleString(dbstr);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -312,7 +308,7 @@ void ExceptionNotInitialized
         ostrncat(err->str,  OCILib_ErrorMsg[OCI_ERR_NOT_INITIALIZED], osizeof(err->str) - (size_t) 1);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -338,7 +334,7 @@ void ExceptionLoadingSharedLib
                 OCI_DL_NAME);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 
 #endif
 }
@@ -362,7 +358,7 @@ void ExceptionLoadingSymbols
         ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_LOADING_SYMBOLS], osizeof(err->str) - (size_t) 1);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -384,7 +380,7 @@ void ExceptionNotMultithreaded
         ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_MULTITHREADED], osizeof(err->str) - (size_t) 1);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -408,7 +404,7 @@ void ExceptionNullPointer
                  OCILib_TypeNames[type+1]);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -439,7 +435,7 @@ void ExceptionMemory
                  nb_bytes);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -466,7 +462,7 @@ void ExceptionNotAvailable
                  OCILib_OraFeatures[feature-1]);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -495,7 +491,7 @@ void ExceptionDatatypeNotSupported
                  code);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -524,7 +520,7 @@ void ExceptionParsingToken
                  token);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -553,7 +549,7 @@ void ExceptionMappingArgument
                  arg);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -580,7 +576,7 @@ void ExceptionOutOfBounds
                  value);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -606,7 +602,7 @@ void ExceptionUnfreedData
                  nb_elem, OCILib_HandleNames[type_elem-1]);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -637,7 +633,7 @@ void ExceptionMaxBind
                  OCI_BIND_MAX);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -664,7 +660,7 @@ void ExceptionAttributeNotFound
                  attr);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -690,7 +686,7 @@ void ExceptionMinimumValue
         osprintf(err->str, osizeof(err->str) - (size_t) 1, OCILib_ErrorMsg[OCI_ERR_MIN_VALUE], min);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -713,7 +709,7 @@ void ExceptionTypeNotCompatible
         ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_NOT_COMPATIBLE], osizeof(err->str) - (size_t) 1);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -756,7 +752,7 @@ void ExceptionStatementState
                  OCILib_StmtStates[index].name);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -785,7 +781,7 @@ void ExceptionStatementNotScrollable
 
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -817,7 +813,7 @@ void ExceptionBindAlreadyUsed
                  bind);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -851,7 +847,7 @@ void ExceptionBindArraySize
                  maxsize, cursize, newsize);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -885,7 +881,7 @@ void ExceptionDirPathColNotFound
                   table);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -917,7 +913,7 @@ void ExceptionDirPathState
                  OCILib_DirPathStates[state-1]);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -939,7 +935,7 @@ void ExceptionOCIEnvironment
         ostrncat(err->str,  OCILib_ErrorMsg[OCI_ERR_CREATE_OCI_ENVIRONMENT], osizeof(err->str) - (size_t) 1);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -971,7 +967,7 @@ void ExceptionRebindBadDatatype
                  bind);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -999,7 +995,7 @@ void ExceptionTypeInfoWrongType
                  name);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1029,7 +1025,7 @@ void ExceptionItemNotFound
                  name, type);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1059,7 +1055,7 @@ void ExceptionArgInvalidValue
                  name, value);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1086,7 +1082,7 @@ void ExceptionEnvFromXaString
             value);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1113,7 +1109,7 @@ void ExceptionConnFromXaString
             value);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1145,5 +1141,5 @@ void ExceptionExternalBindingNotAllowed
             bind);
     }
 
-    ExceptionRaise(err);
+    ExceptionCallHandler(err);
 }

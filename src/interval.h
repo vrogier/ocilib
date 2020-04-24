@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Interval * IntervalInit
+OCI_Interval * IntervalInitialize
 (
     OCI_Connection  *con,
     OCI_Interval    *itv,
@@ -42,14 +42,14 @@ boolean IntervalFree
     OCI_Interval *itv
 );
 
-OCI_Interval ** IntervalArrayCreate
+OCI_Interval ** IntervalCreateArray
 (
     OCI_Connection  *con,
     unsigned int type,
     unsigned int nbelem
 );
 
-boolean IntervalArrayFree
+boolean IntervalFreeArray
 (
     OCI_Interval **itvs
 );
@@ -76,13 +76,13 @@ int IntervalCompare
     OCI_Interval *itv2
 );
 
-boolean IntervalFromText
+boolean IntervalFromString
 (
     OCI_Interval     *itv,
     const otext * str
 );
 
-boolean IntervalToText
+boolean IntervalToString
 (
     OCI_Interval *itv,
     int       leading_prec,

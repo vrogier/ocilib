@@ -20,21 +20,19 @@
 
 #include "object.h"
 
-#include "column.h"
-#include "helpers.h"
 #include "array.h"
-#include "list.h"
-#include "macro.h"
-#include "memory.h"
-#include "strings.h"
-
 #include "collection.h"
+#include "column.h"
 #include "date.h"
 #include "file.h"
 #include "interval.h"
+#include "list.h"
 #include "lob.h"
+#include "macro.h"
+#include "memory.h"
 #include "number.h"
 #include "ref.h"
+#include "strings.h"
 #include "timestamp.h"
 #include "typeinfo.h"
 
@@ -129,7 +127,7 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
         /* create a local REF to store a REF to the object real type */
 
-        OCI_EXEC(MemObjectNew(result->con->env, result->con->err, result->con->cxt, SQLT_REF, (OCIType *)0, NULL, OCI_DURATION_SESSION, 0, (void**)&ref))
+        OCI_EXEC(MemoryAllocateObject(result->con->env, result->con->err, result->con->cxt, SQLT_REF, (OCIType *)0, NULL, OCI_DURATION_SESSION, 0, (void**)&ref))
         OCI_EXEC(OCIObjectGetTypeRef(result->con->env, result->con->err, (dvoid*)object, ref))
         OCI_EXEC(OCITypeByRef(result->con->env, result->con->err, ref, OCI_DURATION_SESSION, OCI_TYPEGET_HEADER, &tdo))
 
@@ -152,7 +150,7 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
                 otext fullname[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
-                OCI_STATUS = MemHandleAlloc(result->con->env, (void**) &descr, OCI_HTYPE_DESCRIBE);
+                OCI_STATUS = MemoryAllocHandle(result->con->env, (void**) &descr, OCI_HTYPE_DESCRIBE);
 
                 OCI_EXEC(OCIDescribeAny(result->con->cxt, result->con->err, (dvoid *)tdo, 0, OCI_OTYPE_PTR, OCI_DEFAULT, OCI_PTYPE_UNK, descr))
                 OCI_GET_ATTRIB(OCI_HTYPE_DESCRIBE, OCI_ATTR_PARAM, descr, &param, NULL)
@@ -171,13 +169,13 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
                     result = TypeInfoGet(result->con, fullname, OCI_TIF_TYPE);
                 }
 
-                MemHandleFree(descr, OCI_HTYPE_DESCRIBE);
+                MemoryFreeHandle(descr, OCI_HTYPE_DESCRIBE);
             }
         }
 
         /* free local REF */
 
-        MemObjectFree(result->con->env, result->con->err, ref, OCI_DEFAULT);
+        MemoryFreeObject(result->con->env, result->con->err, ref, OCI_DEFAULT);
     }
 
     return result;
@@ -333,8 +331,8 @@ void ObjectGetUserStructSize
 
     for (ub2 i = 0; i < typinf->nb_cols; i++)
     {
-        ColumnGetAttrInfo(&typinf->cols[i],   typinf->nb_cols, i, &size1, &align1);
-        ColumnGetAttrInfo(&typinf->cols[i+1], typinf->nb_cols, i+1, &size2, &align2);
+        ColumnGetAttributeInfo(&typinf->cols[i],   typinf->nb_cols, i, &size1, &align1);
+        ColumnGetAttributeInfo(&typinf->cols[i+1], typinf->nb_cols, i+1, &size2, &align2);
 
         if (align < align1)
         {
@@ -538,7 +536,7 @@ OCI_Object * ObjectInit
 
             OCI_EXEC
             (
-                MemObjectNew(obj->con->env,  obj->con->err, obj->con->cxt,
+                MemoryAllocateObject(obj->con->env,  obj->con->err, obj->con->cxt,
                             (OCITypeCode) obj->typinf->typecode, obj->typinf->tdo, (dvoid *) NULL,
                             (OCIDuration) OCI_DURATION_SESSION, (boolean) TRUE,
                             (dvoid **) &obj->handle)
@@ -817,7 +815,7 @@ boolean ObjectFree
 
     if ((OCI_OBJECT_ALLOCATED == obj->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == obj->hstate))
     {
-        MemObjectFree(obj->con->env, obj->con->err, obj->handle, OCI_DEFAULT);
+        MemoryFreeObject(obj->con->env, obj->con->err, obj->handle, OCI_DEFAULT);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != obj->hstate)
@@ -1311,7 +1309,7 @@ OCI_Date * ObjectGetDate
         OCI_CDT_DATETIME,
         OCI_Date*,
         OCIDate,
-        DateInit(obj->con, (OCI_Date *) obj->objs[index], value, FALSE, FALSE)
+        DateInitialize(obj->con, (OCI_Date *) obj->objs[index], value, FALSE, FALSE)
     )
  }
 
@@ -1362,7 +1360,7 @@ OCI_Interval * ObjectGetInterval
         OCI_CDT_INTERVAL,
         OCI_Interval*,
         OCIInterval *,
-        IntervalInit(obj->con, (OCI_Interval *) obj->objs[index],
+        IntervalInitialize(obj->con, (OCI_Interval *) obj->objs[index],
                      (OCIInterval *) *value, obj->typinf->cols[index].subtype)
     )
 
@@ -1390,7 +1388,7 @@ OCI_Coll * ObjectGetColl
         OCI_CDT_COLLECTION,
         OCI_Coll*,
         OCIColl*,
-        CollInit(obj->con, (OCI_Coll *) obj->objs[index], (OCIColl *) *value, obj->typinf->cols[index].typinf)
+        CollectionInitialize(obj->con, (OCI_Coll *) obj->objs[index], (OCIColl *) *value, obj->typinf->cols[index].typinf)
     )
 }
 
@@ -1429,7 +1427,7 @@ OCI_Lob * ObjectGetLob
         OCI_CDT_LOB,
         OCI_Lob*,
         OCILobLocator*,
-        LobInit(obj->con, (OCI_Lob *) obj->objs[index], *value, obj->typinf->cols[index].subtype)
+        LobInitialize(obj->con, (OCI_Lob *) obj->objs[index], *value, obj->typinf->cols[index].subtype)
     )
 }
 
@@ -1448,7 +1446,7 @@ OCI_File * ObjectGetFile
         OCI_CDT_FILE,
         OCI_File *,
         OCILobLocator*,
-        FileInit(obj->con, (OCI_File *) obj->objs[index], *value, obj->typinf->cols[index].subtype)
+        FileInitialize(obj->con, (OCI_File *) obj->objs[index], *value, obj->typinf->cols[index].subtype)
     )
  }
 

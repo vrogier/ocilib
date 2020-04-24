@@ -30,7 +30,7 @@
 * ColumnGetAttrInfo
 * --------------------------------------------------------------------------------------------- */
 
-boolean ColumnGetAttrInfo
+boolean ColumnGetAttributeInfo
 (
     OCI_Column    *col,
     unsigned int   count,
@@ -104,10 +104,10 @@ boolean ColumnGetAttrInfo
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnDescribe
+ * ColumnRetrieveInfo
  * --------------------------------------------------------------------------------------------- */
 
-boolean ColumnDescribe
+boolean ColumnRetrieveInfo
 (
     OCI_Column     *col,
     OCI_Connection *con,
@@ -428,7 +428,7 @@ boolean ColumnDescribe
  * ColumnMap
  * --------------------------------------------------------------------------------------------- */
 
-boolean ColumnMap
+boolean ColumnMapInfo
 (
     OCI_Column    *col,
     OCI_Statement *stmt
@@ -992,7 +992,7 @@ unsigned int ColumnGetCollationID
  * ColumnGetSQLType
  * --------------------------------------------------------------------------------------------- */
 
-const otext * ColumnGetSQLType
+const otext * ColumnGetSqlType
 (
     OCI_Column *col
 )
@@ -1212,7 +1212,7 @@ const otext * ColumnGetSQLType
  * ColumnGetFullSQLType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ColumnGetFullSQLType
+unsigned int ColumnGetFullSqlType
 (
     OCI_Column  *col,
     otext       *buffer,

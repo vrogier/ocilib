@@ -55,7 +55,7 @@ boolean ConnectionLogon
     const otext* tag
 );
 
-boolean ConnectionClose
+boolean ConnectionDispose
 (
     OCI_Connection *con
 );
@@ -132,7 +132,7 @@ const otext* ConnectionGetSessionTag
     OCI_Connection* con
 );
 
-const otext* ConnectionGetDatabase
+const otext* ConnectionGetConnectionString
 (
     OCI_Connection* con
 );
@@ -158,7 +158,7 @@ unsigned int ConnectionGetSessionMode
     OCI_Connection* con
 );
 
-const otext* ConnectionGetVersionServer
+const otext* ConnectionGetServerVersion
 (
     OCI_Connection* con
 );
@@ -189,7 +189,7 @@ boolean ConnectionSetTransaction
     OCI_Transaction* trans
 );
 
-unsigned int ConnectionGetVersionConnection
+unsigned int ConnectionGetVersion
 (
     OCI_Connection* con
 );
@@ -199,7 +199,7 @@ boolean ConnectionBreak
     OCI_Connection* con
 );
 
-boolean ConnectionServerEnableOutput
+boolean ConnectionEnableServerOutput
 (
     OCI_Connection* con,
     unsigned int    bufsize,
@@ -207,12 +207,12 @@ boolean ConnectionServerEnableOutput
     unsigned int    lnsize
 );
 
-boolean ConnectionServerDisableOutput
+boolean ConnectionDisableServerOutput
 (
     OCI_Connection* con
 );
 
-const otext* ConnectionServerGetOutput
+const otext* ConnectionGetServerOutput
 (
     OCI_Connection* con
 );
@@ -248,7 +248,7 @@ unsigned int ConnectionGetTimeout
     unsigned int    type
 );
 
-const otext* ConnectionGetDBName
+const otext* ConnectionGetDatabaseName
 (
     OCI_Connection* con
 );

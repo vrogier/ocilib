@@ -43,12 +43,7 @@ boolean BindFree
     OCI_Bind* bnd
 );
 
-boolean BindAllocData
-(
-    OCI_Bind* bnd
-);
-
-int BindGetInternalIndex
+int BindGetIndex
 (
     OCI_Statement* stmt,
     const otext* name
@@ -169,6 +164,5 @@ unsigned int BindGetAllocationMode
 (
     OCI_Bind* bnd
 );
-
 
 #endif /* OCILIB_BIND_H_INCLUDED */

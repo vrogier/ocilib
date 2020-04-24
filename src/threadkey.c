@@ -20,8 +20,8 @@
 
 #include "threadkey.h"
 
-#include "macro.h"
 #include "hash.h"
+#include "macro.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * ThreadKeyCreateInternal
@@ -44,7 +44,7 @@ OCI_ThreadKey * ThreadKeyCreateInternal
     {
         /* allocate error handle */
 
-        OCI_STATUS = MemHandleAlloc(OCILib.env, (dvoid **)(void *)&key->err, OCI_HTYPE_ERROR);
+        OCI_STATUS = MemoryAllocHandle(OCILib.env, (dvoid **)(void *)&key->err, OCI_HTYPE_ERROR);
 
         /* key initialization */
 
@@ -86,7 +86,7 @@ boolean ThreadKeyFree
 
     if (key->err)
     {
-        MemHandleFree(key->err, OCI_HTYPE_ERROR);
+        MemoryFreeHandle(key->err, OCI_HTYPE_ERROR);
     }
 
     /* free key structure */

@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_File * FileInit
+OCI_File * FileInitialize
 (
     OCI_Connection    *con,
     OCI_File          *file,
@@ -47,14 +47,14 @@ boolean FileFree
     OCI_File    *file
 );
 
-OCI_File ** FileArrayCreate
+OCI_File ** FileCreateArray
 (
     OCI_Connection  *con,
     unsigned int type,
     unsigned int nbelem
 );
 
-boolean FileArrayFree
+boolean FileFreeArray
 (
     OCI_File   **files
 );

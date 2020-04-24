@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Headers">
-      <UniqueIdentifier>{7b4e72bd-746a-40d7-b757-d3f5ff256983}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources">
       <UniqueIdentifier>{41e51a6c-1c9a-47de-894f-cfe004d13868}</UniqueIdentifier>
     </Filter>
@@ -12,6 +9,15 @@
     </Filter>
     <Filter Include="Headers %28OCI%29">
       <UniqueIdentifier>{5a204776-f9e7-466f-b517-238e40b57bdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers %28Private%29">
+      <UniqueIdentifier>{7b4e72bd-746a-40d7-b757-d3f5ff256983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers %28Public%29">
+      <UniqueIdentifier>{fd2b217d-6121-4eed-be01-d73044bd9774}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers %28Core%29">
+      <UniqueIdentifier>{c9624fb7-d573-4e70-b5c5-4af3d41e0b4d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -155,157 +161,136 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\agent.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\array.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\bind.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\callback.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\checks.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\collection.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\column.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\connection.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\date.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\define.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\defs.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\dequeue.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\dirpath.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\element.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\enqueue.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\error.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\event.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\exception.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\file.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\format.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\handle.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hash.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\helpers.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\import.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\interval.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\iterator.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\library.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\list.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\loader.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\lob.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\long.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\macro.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\memory.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\msg.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\mutex.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\number.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\object.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\pool.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\queue.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ref.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\resultset.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\statement.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\subscription.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\thread.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\threadkey.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\timestamp.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\transaction.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\typeinfo.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\types.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\ocilib.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\strings.h">
-      <Filter>Headers</Filter>
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\oci\api.h">
       <Filter>Headers %28OCI%29</Filter>
@@ -315,6 +300,39 @@
     </ClInclude>
     <ClInclude Include="..\..\src\oci\types.h">
       <Filter>Headers %28OCI%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ocilib_types.h">
+      <Filter>Headers %28Public%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ocilib_config.h">
+      <Filter>Headers %28Public%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ocilib_compat.h">
+      <Filter>Headers %28Public%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ocilib_api.h">
+      <Filter>Headers %28Public%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ocilib.h">
+      <Filter>Headers %28Public%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\checks.h">
+      <Filter>Headers %28Core%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\defs.h">
+      <Filter>Headers %28Core%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\helpers.h">
+      <Filter>Headers %28Core%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\loader.h">
+      <Filter>Headers %28Core%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\macro.h">
+      <Filter>Headers %28Core%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\import.h">
+      <Filter>Headers %28Core%29</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -20,10 +20,10 @@
 
 #include "define.h"
 
+#include "connection.h"
 #include "hash.h"
 #include "macro.h"
 #include "number.h"
-#include "connection.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * DefineGet
@@ -272,12 +272,12 @@ boolean DefineAlloc
         {
             for (i = 0; (i < def->buf.count) && OCI_STATUS; i++)
             {
-                OCI_STATUS = MemHandleAlloc((dvoid  *)def->rs->stmt->con->env, (dvoid **) &(def->buf.data[i]), (ub4) def->col.handletype);
+                OCI_STATUS = MemoryAllocHandle((dvoid  *)def->rs->stmt->con->env, (dvoid **) &(def->buf.data[i]), (ub4) def->col.handletype);
             }
         }
         else
         {
-            OCI_STATUS = MemDescriptorArrayAlloc((dvoid  *)def->rs->stmt->con->env, (dvoid **)def->buf.data, (ub4)def->col.handletype, (ub4)def->buf.count);
+            OCI_STATUS = MemoryAllocDescriptorArray((dvoid  *)def->rs->stmt->con->env, (dvoid **)def->buf.data, (ub4)def->col.handletype, (ub4)def->buf.count);
 
             if (OCI_STATUS && (OCI_CDT_LOB == def->col.datatype))
             {

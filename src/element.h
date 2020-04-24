@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Elem* ElemInit
+OCI_Elem* ElementInitialize
 (
     OCI_Connection* con,
     OCI_Elem* elem,
@@ -32,38 +32,38 @@ OCI_Elem* ElemInit
     OCI_TypeInfo* typinf
 );
 
-boolean ElemSetNullIndicator
+boolean ElementSetNullIndicator
 (
     OCI_Elem* elem,
     OCIInd    value
 );
 
-OCI_Elem* ElemCreate
+OCI_Elem* ElementCreate
 (
     OCI_TypeInfo* typinf
 );
 
-boolean ElemFree
+boolean ElementFree
 (
     OCI_Elem* elem
 );
 
-boolean ElemGetBoolean
+boolean ElementGetBoolean
 (
     OCI_Elem* elem
 );
 
-OCI_Number* ElemGetNumber
+OCI_Number* ElementGetNumber
 (
     OCI_Elem* elem
 );
 
-short ElemGetShort
+short ElementGetShort
 (
     OCI_Elem* elem
 );
 
-unsigned short ElemGetUnsignedShort
+unsigned short ElementGetUnsignedShort
 (
     OCI_Elem* elem
 );
@@ -73,214 +73,214 @@ int ElemGetInt
     OCI_Elem* elem
 );
 
-unsigned int ElemGetUnsignedInt
+unsigned int ElementGetUnsignedInt
 (
     OCI_Elem* elem
 );
 
-big_int ElemGetBigInt
+big_int ElementGetBigInt
 (
     OCI_Elem* elem
 );
 
-big_uint ElemGetUnsignedBigInt
+big_uint ElementGetUnsignedBigInt
 (
     OCI_Elem* elem
 );
 
-double ElemGetDouble
+double ElementGetDouble
 (
     OCI_Elem* elem
 );
 
-float ElemGetFloat
+float ElementGetFloat
 (
     OCI_Elem* elem
 );
 
-const otext* ElemGetString
+const otext* ElementGetString
 (
     OCI_Elem* elem
 );
 
-unsigned int ElemGetRaw
+unsigned int ElementGetRaw
 (
     OCI_Elem* elem,
     void* value,
     unsigned int len
 );
 
-unsigned int ElemGetRawSize
+unsigned int ElementGetRawSize
 (
     OCI_Elem* elem
 );
 
-OCI_Date* ElemGetDate
+OCI_Date* ElementGetDate
 (
     OCI_Elem* elem
 );
 
-OCI_Timestamp* ElemGetTimestamp
+OCI_Timestamp* ElementGetTimestamp
 (
     OCI_Elem* elem
 );
 
-OCI_Interval* ElemGetInterval
+OCI_Interval* ElementGetInterval
 (
     OCI_Elem* elem
 );
 
-OCI_Lob* ElemGetLob
+OCI_Lob* ElementGetLob
 (
     OCI_Elem* elem
 );
 
-OCI_File* ElemGetFile
+OCI_File* ElementGetFile
 (
     OCI_Elem* elem
 );
 
-OCI_Ref* ElemGetRef
+OCI_Ref* ElementGetReference
 (
     OCI_Elem* elem
 );
 
-OCI_Object* ElemGetObject
+OCI_Object* ElementGetObject
 (
     OCI_Elem* elem
 );
 
-OCI_Coll* ElemGetColl
+OCI_Coll* ElementGetCollection
 (
     OCI_Elem* elem
 );
 
-boolean ElemSetBoolean
+boolean ElementSetBoolean
 (
     OCI_Elem* elem,
     boolean   value
 );
 
-boolean ElemSetNumber
+boolean ElementSetNumber
 (
     OCI_Elem* elem,
     OCI_Number* value
 );
 
-boolean ElemSetShort
+boolean ElementSetShort
 (
     OCI_Elem* elem,
     short     value
 );
 
-boolean ElemSetUnsignedShort
+boolean ElementSetUnsignedShort
 (
     OCI_Elem* elem,
     unsigned short value
 );
 
-boolean ElemSetInt
+boolean ElementSetInt
 (
     OCI_Elem* elem,
     int       value
 );
 
-boolean ElemSetUnsignedInt
+boolean ElementSetUnsignedInt
 (
     OCI_Elem* elem,
     unsigned int value
 );
 
-boolean ElemSetBigInt
+boolean ElementSetBigInt
 (
     OCI_Elem* elem,
     big_int   value
 );
 
-boolean ElemSetUnsignedBigInt
+boolean ElementSetUnsignedBigInt
 (
     OCI_Elem* elem,
     big_uint  value
 );
 
-boolean ElemSetDouble
+boolean ElementSetDouble
 (
     OCI_Elem* elem,
     double    value
 );
 
-boolean ElemSetFloat
+boolean ElementSetFloat
 (
     OCI_Elem* elem,
     float     value
 );
 
-boolean ElemSetString
+boolean ElementSetString
 (
     OCI_Elem* elem,
     const otext* value
 );
 
-boolean ElemSetRaw
+boolean ElementSetRaw
 (
     OCI_Elem* elem,
     void* value,
     unsigned int len
 );
 
-boolean ElemSetDate
+boolean ElementSetDate
 (
     OCI_Elem* elem,
     OCI_Date* value
 );
 
-boolean ElemSetTimestamp
+boolean ElementSetTimestamp
 (
     OCI_Elem* elem,
     OCI_Timestamp* value
 );
 
-boolean ElemSetInterval
+boolean ElementSetInterval
 (
     OCI_Elem* elem,
     OCI_Interval* value
 );
 
-boolean ElemSetColl
+boolean ElementSetCollection
 (
     OCI_Elem* elem,
     OCI_Coll* value
 );
 
-boolean ElemSetObject
+boolean ElementSetObject
 (
     OCI_Elem* elem,
     OCI_Object* value
 );
 
-boolean ElemSetLob
+boolean ElementSetLob
 (
     OCI_Elem* elem,
     OCI_Lob* value
 );
 
-boolean ElemSetFile
+boolean ElementSetFile
 (
     OCI_Elem* elem,
     OCI_File* value
 );
 
-boolean ElemSetRef
+boolean ElementSetReference
 (
     OCI_Elem* elem,
     OCI_Ref* value
 );
-boolean ElemIsNull
+boolean ElementIsNull
 (
     OCI_Elem* elem
 );
 
-boolean ElemSetNull
+boolean ElementSetNull
 (
     OCI_Elem* elem
 );

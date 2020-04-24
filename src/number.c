@@ -20,12 +20,10 @@
 
 #include "number.h"
 
-#include "macro.h"
 #include "array.h"
-#include "helpers.h"
-#include "connection.h"
-#include "strings.h"
 #include "library.h"
+#include "macro.h"
+#include "strings.h"
 
 typedef struct MagicNumber
 {

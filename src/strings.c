@@ -20,16 +20,14 @@
 
 #include "strings.h"
 
-#include "macro.h"
-#include "memory.h"
-
 #include "collection.h"
 #include "date.h"
 #include "file.h"
 #include "interval.h"
-#include "list.h"
 #include "lob.h"
 #include "long.h"
+#include "macro.h"
+#include "memory.h"
 #include "number.h"
 #include "object.h"
 #include "ref.h"
@@ -133,11 +131,11 @@ boolean StringRequestBuffer
 
     if (!*buffer)
     {
-       *buffer = (otext *) MemAlloc(OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
+       *buffer = (otext *) MemoryAlloc(OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
     }
     else if (*buffer_size < request_size)
     {
-        *buffer = (otext *) MemRealloc(*buffer, OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
+        *buffer = (otext *) MemoryRealloc(*buffer, OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
     }
 
     if (*buffer)
@@ -328,7 +326,7 @@ dbtext * StringGetOracleString
 
     if (OCILib.use_wide_char_conv)
     {
-        dst = (dbtext *) MemAlloc(OCI_IPC_STRING, sizeof(dbtext), len + 1, FALSE);
+        dst = (dbtext *) MemoryAlloc(OCI_IPC_STRING, sizeof(dbtext), len + 1, FALSE);
 
         if (dst)
         {
@@ -356,7 +354,7 @@ void StringReleaseOracleString
 {
     if (OCILib.use_wide_char_conv && str)
     {
-        MemFree(str);
+        MemoryFree(str);
     }
 }
 
@@ -389,7 +387,7 @@ otext* StringDuplicateFromOracleString
     int            len
 )
 {
-    otext *dst = (otext *) MemAlloc(OCI_IPC_STRING, sizeof(otext), len + 1, FALSE);
+    otext *dst = (otext *) MemoryAlloc(OCI_IPC_STRING, sizeof(otext), len + 1, FALSE);
 
     if (dst)
     {
@@ -430,11 +428,11 @@ otext * StringFromStringPtr
 
         if (!(*buffer))
         {
-            *buffer = MemAlloc(OCI_IPC_STRING, sizeof(otext), length + 1, FALSE);
+            *buffer = MemoryAlloc(OCI_IPC_STRING, sizeof(otext), length + 1, FALSE);
         }
         else if ((*buffer_size) < ((length + 1) * sizeof(otext)))
         {
-            *buffer = MemRealloc((void*)  *buffer, OCI_IPC_STRING, sizeof(otext), length + 1, FALSE);
+            *buffer = MemoryRealloc((void*)  *buffer, OCI_IPC_STRING, sizeof(otext), length + 1, FALSE);
         }
 
         if (*buffer)
@@ -700,7 +698,7 @@ unsigned int StringGetFromType
                 OCI_Date    *date = (OCI_Date*) data;
                 const otext *fmt  = GetFormat(con, OCI_FMT_DATE);
 
-                res = date ? DateToText(date, fmt, (int) buffer_size, ptr) : FALSE;
+                res = date ? DateToString(date, fmt, (int) buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -733,7 +731,7 @@ unsigned int StringGetFromType
             {
                 OCI_Interval *itv = (OCI_Interval * ) data;
 
-                res = itv ? IntervalToText(itv, OCI_STRING_DEFAULT_PREC, OCI_STRING_DEFAULT_PREC, buffer_size, ptr) : FALSE;
+                res = itv ? IntervalToString(itv, OCI_STRING_DEFAULT_PREC, OCI_STRING_DEFAULT_PREC, buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -879,7 +877,7 @@ unsigned int StringGetFromType
             OCI_Coll *coll = (OCI_Coll *) data;
             unsigned int real_size = buffer_size;
             quote = FALSE;
-            res = coll ? CollToText(coll, &real_size, ptr) : FALSE;
+            res = coll ? CollectionToString(coll, &real_size, ptr) : FALSE;
             len = real_size;
             break;
         }
@@ -1131,7 +1129,7 @@ char * ocistrdup
 {
     OCI_CHECK(NULL == src, NULL)
 
-    char *dst = (char *) MemAlloc(OCI_IPC_STRING, 1, strlen(src) + 1, 0);
+    char *dst = (char *) MemoryAlloc(OCI_IPC_STRING, 1, strlen(src) + 1, 0);
 
     if (dst)
     {
@@ -1209,7 +1207,7 @@ wchar_t * ociwcsdup
 {
     OCI_CHECK(NULL == src, NULL)
 
-    wchar_t *dst = (wchar_t *) MemAlloc(OCI_IPC_STRING, sizeof(wchar_t), wcslen(src) + 1, 0);
+    wchar_t *dst = (wchar_t *) MemoryAlloc(OCI_IPC_STRING, sizeof(wchar_t), wcslen(src) + 1, 0);
 
     if (dst)
     {

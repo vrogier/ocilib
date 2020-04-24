@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Lob * LobInit
+OCI_Lob * LobInitialize
 (
     OCI_Connection    *con,
     OCI_Lob           *lob,
@@ -42,14 +42,14 @@ boolean LobFree
     OCI_Lob     *lob
 );
 
-OCI_Lob ** LobArrayCreate
+OCI_Lob ** LobCreateArray
 (
     OCI_Connection  *con,
     unsigned int type,
     unsigned int nbelem
 );
 
-boolean LobArrayFree
+boolean LobFreeArray
 (
     OCI_Lob    **lobs
 );

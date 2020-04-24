@@ -27,7 +27,7 @@
  * AgentInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Agent * AgentInit
+OCI_Agent * AgentInitialize
 (
     OCI_Connection *con,
     OCI_Agent      *agent,
@@ -53,7 +53,7 @@ OCI_Agent * AgentInit
         {
             agent->hstate = OCI_OBJECT_ALLOCATED;
 
-            OCI_STATUS = MemDescriptorAlloc((dvoid *)agent->con->env, (dvoid **)&agent->handle, OCI_DTYPE_AQAGENT);
+            OCI_STATUS = MemoryAllocDescriptor((dvoid *)agent->con->env, (dvoid **)&agent->handle, OCI_DTYPE_AQAGENT);
         }
         else
         {
@@ -101,7 +101,7 @@ OCI_Agent * AgentCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = AgentInit(con, NULL, NULL, name, address);
+    OCI_RETVAL = AgentInitialize(con, NULL, NULL, name, address);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -122,7 +122,7 @@ boolean AgentFree
 
     if (OCI_OBJECT_ALLOCATED == agent->hstate)
     {
-        MemDescriptorFree((dvoid *) agent->handle, OCI_DTYPE_AQAGENT);
+        MemoryFreeDescriptor((dvoid *) agent->handle, OCI_DTYPE_AQAGENT);
     }
 
     OCI_FREE(agent->address)

@@ -60,7 +60,7 @@ OCI_Ref * RefInit
 
             OCI_EXEC
             (
-                MemObjectNew(ref->con->env, ref->con->err, ref->con->cxt,
+                MemoryAllocateObject(ref->con->env, ref->con->err, ref->con->cxt,
                           (OCITypeCode) SQLT_REF,
                           (OCIType*) NULL,
                           (dvoid *) NULL,
@@ -195,7 +195,7 @@ boolean RefFree
 
     if ((OCI_OBJECT_ALLOCATED == ref->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == ref->hstate))
     {
-        MemObjectFree(ref->con->env, ref->con->err, ref->handle, OCI_DEFAULT);
+        MemoryFreeObject(ref->con->env, ref->con->err, ref->handle, OCI_DEFAULT);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != ref->hstate)

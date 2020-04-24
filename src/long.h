@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Long * LongInit
+OCI_Long * LongInitialize
 (
     OCI_Statement   *stmt,
     OCI_Long        *lg,

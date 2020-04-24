@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Agent * AgentInit
+OCI_Agent * AgentInitialize
 (
     OCI_Connection *con,
     OCI_Agent      *agent,

@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Date * DateInit
+OCI_Date * DateInitialize
 (
     OCI_Connection *con,
     OCI_Date       *date,
@@ -31,7 +31,6 @@ OCI_Date * DateInit
     boolean         allocate,
     boolean         ansi
 );
-
 
 OCI_Date * DateCreate
 (
@@ -44,17 +43,16 @@ boolean DateFree
 );
 
 
-OCI_Date ** DateArrayCreate
+OCI_Date ** DateCreateArray
 (
     OCI_Connection *con,
     unsigned int    nbelem
 );
 
-boolean DateArrayFree
+boolean DateFreeArray
 (
     OCI_Date** dates
 );
-
 
 boolean DateAddDays
 (
@@ -67,7 +65,6 @@ boolean DateAddMonths
     OCI_Date* date,
     int       nb
 );
-
 
 boolean DateAssign
 (
@@ -92,11 +89,19 @@ int DateDaysBetween
     OCI_Date* date2
 );
 
-boolean DateFromText
+boolean DateFromString
 (
     OCI_Date* date,
     const otext* str,
     const otext* fmt
+);
+
+boolean DateToString
+(
+    OCI_Date* date,
+    const otext* fmt,
+    int          size,
+    otext* str
 );
 
 boolean DateGetDate
@@ -167,14 +172,6 @@ boolean DateSetDateTime
 boolean DateSysDate
 (
     OCI_Date* date
-);
-
-boolean DateToText
-(
-    OCI_Date* date,
-    const otext* fmt,
-    int          size,
-    otext* str
 );
 
 boolean DateZoneToZone

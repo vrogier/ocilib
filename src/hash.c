@@ -22,7 +22,6 @@
 
 #include "macro.h"
 #include "memory.h"
-#include "strings.h"
 
 static const unsigned int HashTypeValues[] = { OCI_HASH_STRING, OCI_HASH_INTEGER, OCI_HASH_POINTER };
 
@@ -74,7 +73,7 @@ boolean HashAdd
 
     if (e)
     {
-        v = (OCI_HashValue *)MemAlloc(OCI_IPC_HASHVALUE, sizeof(*v), (size_t)1, TRUE);
+        v = (OCI_HashValue *)MemoryAlloc(OCI_IPC_HASHVALUE, sizeof(*v), (size_t)1, TRUE);
 
         if (v)
         {
@@ -132,7 +131,7 @@ OCI_HashTable * HashCreate
 
     /* allocate table structure */
 
-    table = (OCI_HashTable *) MemAlloc(OCI_IPC_HASHTABLE, sizeof(*table), (size_t) 1, TRUE);
+    table = (OCI_HashTable *) MemoryAlloc(OCI_IPC_HASHTABLE, sizeof(*table), (size_t) 1, TRUE);
     OCI_STATUS = (NULL != table);
 
     /* set up attributes and allocate internal array of hash entry pointers */
@@ -143,7 +142,7 @@ OCI_HashTable * HashCreate
         table->size  = 0;
         table->count = 0;
 
-        table->items = (OCI_HashEntry **) MemAlloc(OCI_IPC_HASHENTRY_ARRAY, sizeof(*table->items), (size_t) size, TRUE);
+        table->items = (OCI_HashEntry **) MemoryAlloc(OCI_IPC_HASHENTRY_ARRAY, sizeof(*table->items), (size_t) size, TRUE);
         OCI_STATUS = (NULL != table->items);
         
         if (OCI_STATUS)
@@ -487,7 +486,7 @@ OCI_HashEntry * HashLookup
 
         if (!e && create)
         {
-            e = (OCI_HashEntry *) MemAlloc(OCI_IPC_HASHENTRY, sizeof(*e), (size_t) 1, TRUE);
+            e = (OCI_HashEntry *) MemoryAlloc(OCI_IPC_HASHENTRY, sizeof(*e), (size_t) 1, TRUE);
             OCI_STATUS = (NULL != e);
            
             if (OCI_STATUS)

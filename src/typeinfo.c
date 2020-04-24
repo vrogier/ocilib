@@ -175,7 +175,7 @@ OCI_TypeInfo * TypeInfoGet
             typinf->struct_size = 0;
             typinf->align       = 0;
 
-            OCI_STATUS = MemHandleAlloc(typinf->con->env, (dvoid **)(void *)&dschp, OCI_HTYPE_DESCRIBE);
+            OCI_STATUS = MemoryAllocHandle(typinf->con->env, (dvoid **)(void *)&dschp, OCI_HTYPE_DESCRIBE);
         }
 
         /* perform describe */
@@ -312,8 +312,8 @@ OCI_TypeInfo * TypeInfoGet
                          
                             /* free temporary strings */
 
-                            MemFree (sp_schema_name);
-                            MemFree (sp_object_name);
+                            MemoryFree (sp_schema_name);
+                            MemoryFree (sp_object_name);
 
                             OCI_STATUS = (NULL != typinf->parent_type);
                         }
@@ -405,9 +405,9 @@ OCI_TypeInfo * TypeInfoGet
                          
                     /* free temporary strings */
 
-                    MemFree (syn_link_name);
-                    MemFree(syn_object_name);
-                    MemFree(syn_schema_name);
+                    MemoryFree (syn_link_name);
+                    MemoryFree(syn_object_name);
+                    MemoryFree(syn_schema_name);
                     
                     /* do we have a valid object ? */
 
@@ -451,8 +451,8 @@ OCI_TypeInfo * TypeInfoGet
                     {
                         for (ub2 i = 0; i < typinf->nb_cols; i++)
                         {
-                            OCI_STATUS = OCI_STATUS && ColumnDescribe(&typinf->cols[i], con, NULL, param_cols, i + 1, ptype);
-                            OCI_STATUS = OCI_STATUS && ColumnMap(&typinf->cols[i], NULL);
+                            OCI_STATUS = OCI_STATUS && ColumnRetrieveInfo(&typinf->cols[i], con, NULL, param_cols, i + 1, ptype);
+                            OCI_STATUS = OCI_STATUS && ColumnMapInfo(&typinf->cols[i], NULL);
 
                             if (!OCI_STATUS)
                             {
@@ -471,7 +471,7 @@ OCI_TypeInfo * TypeInfoGet
 
     /* free describe handle */
 
-    MemHandleFree(dschp, OCI_HTYPE_DESCRIBE);
+    MemoryFreeHandle(dschp, OCI_HTYPE_DESCRIBE);
 
     /* increment type info reference counter on success */
 

@@ -23,13 +23,13 @@
 
 #include "types.h"
 
-boolean ArrayInit
+boolean ArrayInitialize
 (
     OCI_Array    *arr,
     OCI_TypeInfo *typinf
 );
 
-boolean ArrayClose
+boolean ArrayDispose
 (
     OCI_Array* arr
 );
@@ -47,11 +47,6 @@ OCI_Array* ArrayCreate
 );
 
 boolean ArrayFreeFromHandles
-(
-    void** handles
-);
-
-void* ArrayGetOCIHandlesFromHandles
 (
     void** handles
 );

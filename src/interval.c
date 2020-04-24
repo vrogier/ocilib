@@ -19,10 +19,10 @@
  */
 
 #include "interval.h"
-#include "macro.h"
+
 #include "array.h"
+#include "macro.h"
 #include "strings.h"
-#include "helpers.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 static const unsigned int IntervalTypeValues[] = { OCI_INTERVAL_YM, OCI_INTERVAL_DS };
@@ -32,7 +32,7 @@ static const unsigned int IntervalTypeValues[] = { OCI_INTERVAL_YM, OCI_INTERVAL
  * IntervalInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval * IntervalInit
+OCI_Interval * IntervalInitialize
 (
     OCI_Connection *con,
     OCI_Interval   *itv,
@@ -64,7 +64,7 @@ OCI_Interval * IntervalInit
         {
             if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
             {
-                OCI_STATUS = MemDescriptorAlloc((dvoid  *)itv->env, (dvoid **)(void *)&itv->handle, (ub4)ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
+                OCI_STATUS = MemoryAllocDescriptor((dvoid  *)itv->env, (dvoid **)(void *)&itv->handle, (ub4)ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
 
                 itv->hstate = OCI_OBJECT_ALLOCATED;
             }
@@ -113,7 +113,7 @@ OCI_Interval * IntervalCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"));
 #endif
 
-    OCI_RETVAL = IntervalInit(con, NULL, NULL, type);
+    OCI_RETVAL = IntervalInitialize(con, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -136,7 +136,7 @@ boolean IntervalFree
 
     if (OCI_OBJECT_ALLOCATED == itv->hstate)
     {
-        MemDescriptorFree((dvoid *)itv->handle, ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
+        MemoryFreeDescriptor((dvoid *)itv->handle, ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
@@ -153,7 +153,7 @@ boolean IntervalFree
  * IntervalArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval ** IntervalArrayCreate
+OCI_Interval ** IntervalCreateArray
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -198,7 +198,7 @@ OCI_Interval ** IntervalArrayCreate
  * IntervalArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalArrayFree
+boolean IntervalFreeArray
 (
     OCI_Interval **itvs
 )
@@ -307,7 +307,7 @@ int IntervalCompare
  * IntervalFromText
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalFromText
+boolean IntervalFromString
 (
     OCI_Interval *itv,
     const otext * str
@@ -340,7 +340,7 @@ boolean IntervalFromText
  * IntervalToText
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalToText
+boolean IntervalToString
 (
     OCI_Interval *itv,
     int           leading_prec,

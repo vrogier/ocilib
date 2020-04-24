@@ -34,7 +34,7 @@ static const unsigned int LobTypeValues[]  = { OCI_CLOB, OCI_NCLOB, OCI_BLOB };
  * LobInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Lob * LobInit
+OCI_Lob * LobInitialize
 (
     OCI_Connection *con,
     OCI_Lob        *lob,
@@ -82,7 +82,7 @@ OCI_Lob * LobInit
             {
                 lob->hstate = OCI_OBJECT_ALLOCATED;
 
-                OCI_STATUS = MemDescriptorAlloc((dvoid  *)lob->con->env, (dvoid **)(void *)&lob->handle, OCI_DTYPE_LOB);
+                OCI_STATUS = MemoryAllocDescriptor((dvoid  *)lob->con->env, (dvoid **)(void *)&lob->handle, OCI_DTYPE_LOB);
             }
 
             OCI_SET_ATTRIB(OCI_DTYPE_LOB, OCI_ATTR_LOBEMPTY, lob->handle, &empty, sizeof(empty))
@@ -120,7 +120,7 @@ OCI_Lob * LobCreate
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, LobTypeValues, OTEXT("Lob type"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = LobInit(con, NULL, NULL, type);
+    OCI_RETVAL = LobInitialize(con, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -147,7 +147,7 @@ boolean LobFree
 
     if (OCI_OBJECT_ALLOCATED == lob->hstate)
     {
-        MemDescriptorFree((dvoid *) lob->handle, (ub4) OCI_DTYPE_LOB);
+        MemoryFreeDescriptor((dvoid *) lob->handle, (ub4) OCI_DTYPE_LOB);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != lob->hstate)
@@ -161,10 +161,10 @@ boolean LobFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * LobArrayCreate
+ * LobCreateArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Lob ** LobArrayCreate
+OCI_Lob ** LobCreateArray
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -190,10 +190,10 @@ OCI_Lob ** LobArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * LobArrayFree
+ * LobFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean LobArrayFree
+boolean LobFreeArray
 (
     OCI_Lob **lobs
 )
