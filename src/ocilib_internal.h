@@ -75,25 +75,6 @@ extern "C"
 #include "transaction.h"
 #include "typeinfo.h"
 
-/* --------------------------------------------------------------------------------------------- *
- * resultset.c
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Resultset * OCI_ResultsetCreate
-(
-    OCI_Statement *stmt,
-    int            size
-);
-
-boolean OCI_ResultsetInit
-(
-    OCI_Resultset *rs
-);
-
-boolean OCI_ResultsetFree
-(
-    OCI_Resultset *rs
-);
 
 /* --------------------------------------------------------------------------------------------- *
  * statement.c

@@ -4663,16 +4663,583 @@ boolean OCI_API OCI_RefToText
  *  resultset
  * --------------------------------------------------------------------------------------------- */
 
+OCI_Resultset* OCI_API OCI_GetResultset
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(ResultsetGetResultset, stmt);
+}
+
+OCI_Resultset* OCI_API OCI_GetNextResultset
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(ResultsetGetNextResultset, stmt);
+}
+
+boolean OCI_API OCI_FetchPrev
+(
+    OCI_Resultset* rs
+)
+{
+    CALL_IMPL(ResultsetFetchPrev, rs);
+}
+
+boolean OCI_API OCI_FetchNext
+(
+    OCI_Resultset* rs
+)
+{
+    CALL_IMPL(ResultsetFetchNext, rs);
+}
+
+boolean OCI_API OCI_FetchFirst
+(
+    OCI_Resultset* rs
+)
+{
+    CALL_IMPL(ResultsetFetchFirst, rs);
+}
+
+boolean OCI_API OCI_FetchLast
+(
+    OCI_Resultset* rs
+)
+{
+    CALL_IMPL(ResultsetFetchLast, rs);
+}
+
+boolean OCI_API OCI_FetchSeek
+(
+    OCI_Resultset* rs,
+    unsigned int   mode,
+    int            offset
+)
+{
+    CALL_IMPL(ResultsetFetchSeek, rs, mode, offset);
+}
+
+unsigned int OCI_API OCI_GetRowCount
+(
+    OCI_Resultset* rs
+)
+{
+    CALL_IMPL(ResultsetGetRowCount, rs);
+}
+
+unsigned int OCI_API OCI_GetCurrentRow
+(
+    OCI_Resultset* rs
+)
+{
+    CALL_IMPL(ResultsetGetCurrentRow, rs);
+}
+
+unsigned int OCI_API OCI_GetColumnCount
+(
+    OCI_Resultset* rs
+)
+{
+    CALL_IMPL(ResultsetGetColumnCount, rs);
+}
+
+OCI_Column* OCI_API OCI_GetColumn
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetColumn, rs, index);
+}
+
+OCI_Column* OCI_API OCI_GetColumn2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetColumn2, rs, name);
+}
+
+unsigned int OCI_API OCI_GetColumnIndex
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetColumnIndex, rs, name);
+}
+
+boolean OCI_API OCI_SetStructNumericType
+(
+    OCI_Resultset* rs,
+    unsigned int   index,
+    unsigned int   type
+)
+{
+    CALL_IMPL(ResultsetSetStructNumericType, rs, index, type);
+}
+
+boolean OCI_API OCI_SetStructNumericType2
+(
+    OCI_Resultset* rs,
+    const otext* name,
+    unsigned int   type
+)
+{
+    CALL_IMPL(ResultsetSetStructNumericType2, rs, name, type);
+}
+
+boolean OCI_API OCI_GetStruct
+(
+    OCI_Resultset* rs,
+    void* row_struct,
+    void* row_struct_ind
+)
+{
+    CALL_IMPL(ResultsetGetStruct, rs, row_struct, row_struct_ind);
+}
+
+OCI_Number* OCI_API OCI_GetNumber
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetNumber, rs, index);
+}
+
+OCI_Number* OCI_API OCI_GetNumber2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetNumber2, rs, name);
+}
+
+short OCI_API OCI_GetShort
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetShort, rs, index);
+}
+
+short OCI_API OCI_GetShort2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetShort2, rs, name);
+}
+
+unsigned short OCI_API OCI_GetUnsignedShort
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetUnsignedShort, rs, index);
+}
+
+unsigned short OCI_API OCI_GetUnsignedShort2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetUnsignedShort2, rs, name);
+}
+
+int OCI_API OCI_GetInt
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetInt, rs, index);
+}
+
+int OCI_API OCI_GetInt2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetInt2, rs, name);
+}
+
+unsigned int OCI_API OCI_GetUnsignedInt
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetUnsignedInt, rs, index);
+}
+
+unsigned int OCI_API OCI_GetUnsignedInt2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetUnsignedInt2, rs, name);
+}
+
+big_int OCI_API OCI_GetBigInt
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetBigInt, rs, index);
+}
+
+big_int OCI_API OCI_GetBigInt2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetBigInt2, rs, name);
+}
+
+big_uint OCI_API OCI_GetUnsignedBigInt
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetUnsignedBigInt, rs, index);
+}
+
+big_uint OCI_API OCI_GetUnsignedBigInt2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetUnsignedBigInt2, rs, name);
+}
+
+const otext* OCI_API OCI_GetString
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetString, rs, index);
+}
+
+const otext* OCI_API OCI_GetString2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetString2, rs, name);
+}
+
+unsigned int OCI_API OCI_GetRaw
+(
+    OCI_Resultset* rs,
+    unsigned int   index,
+    void* buffer,
+    unsigned int   len
+)
+{
+    CALL_IMPL(ResultsetGetRaw, rs, index, buffer,len);
+}
+
+unsigned int OCI_API OCI_GetRaw2
+(
+    OCI_Resultset* rs,
+    const otext* name,
+    void* buffer,
+    unsigned int   len
+)
+{
+    CALL_IMPL(ResultsetGetRaw2, rs, name, buffer, len);
+}
+
+double OCI_API OCI_GetDouble
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetDouble, rs, index);
+}
+
+double OCI_API OCI_GetDouble2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetDouble2, rs, name);
+}
+
+float OCI_API OCI_GetFloat
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetFloat, rs, index);
+}
+
+float OCI_API OCI_GetFloat2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetFloat2, rs, name);
+}
+
+OCI_Date* OCI_API OCI_GetDate
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetDate, rs, index);
+}
+
+OCI_Date* OCI_API OCI_GetDate2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetDate2, rs, name);
+}
+
+OCI_Timestamp* OCI_API OCI_GetTimestamp
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetTimestamp, rs, index);
+}
+
+OCI_Timestamp* OCI_API OCI_GetTimestamp2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetTimestamp2, rs, name);
+}
+
+OCI_Interval* OCI_API OCI_GetInterval
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetInterval, rs, index);
+}
+
+OCI_Interval* OCI_API OCI_GetInterval2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetInterval2, rs, name);
+}
+
+OCI_Object* OCI_API OCI_GetObject
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetObject, rs, index);
+}
+
+OCI_Object* OCI_API OCI_GetObject2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetObject2, rs, name);
+}
+
+OCI_Coll* OCI_API OCI_GetColl
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetColl, rs, index);
+}
+
+OCI_Coll* OCI_API OCI_GetColl2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetColl2, rs, name);
+}
+
+OCI_Ref* OCI_API OCI_GetRef
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetRef, rs, index);
+}
+
+OCI_Ref* OCI_API OCI_GetRef2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetRef2, rs, name);
+}
+
+OCI_Statement* OCI_API OCI_GetStatement
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetStatement, rs, index);
+}
+
+OCI_Statement* OCI_API OCI_GetStatement2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetStatement2, rs, name);
+}
+
+OCI_Lob* OCI_API OCI_GetLob
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetLob, rs, index);
+}
+
+OCI_Lob* OCI_API OCI_GetLob2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetLob2, rs, name);
+}
+
+OCI_File* OCI_API OCI_GetFile
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetFile, rs, index);
+}
+
+OCI_File* OCI_API OCI_GetFile2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetFile2, rs, name);
+}
+
+OCI_Long* OCI_API OCI_GetLong
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetLong, rs, index);
+}
+
+OCI_Long* OCI_API OCI_GetLong2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetLong2, rs, name);
+}
+
+unsigned int OCI_API OCI_GetDataSize
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetDataSize, rs, index);
+}
+
+unsigned int OCI_API OCI_GetDataSize2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetGetDataSize2, rs, name);
+}
+
+boolean OCI_API OCI_IsNull
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetIsNull, rs, index);
+}
+
+boolean OCI_API OCI_IsNull2
+(
+    OCI_Resultset* rs,
+    const otext* name
+)
+{
+    CALL_IMPL(ResultsetIsNull2, rs, name);
+}
+
+OCI_Statement* OCI_API OCI_ResultsetGetStatement
+(
+    OCI_Resultset* rs
+)
+{
+    CALL_IMPL(ResultsetResultsetGetStatement, rs);
+}
+
+unsigned int OCI_API OCI_GetDataLength
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(ResultsetGetDataLength, rs, index);
+}
 
 /* --------------------------------------------------------------------------------------------- *
  *  statement
  * --------------------------------------------------------------------------------------------- */
-
-
-/* --------------------------------------------------------------------------------------------- *
- *  string
- * --------------------------------------------------------------------------------------------- */
-
 
 /* --------------------------------------------------------------------------------------------- *
  *  subscription

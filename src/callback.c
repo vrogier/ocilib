@@ -154,7 +154,7 @@ sb4 ProcOutBind
 
             if (OCI_STATUS)
             {
-                bnd->stmt->rsts[iter] = OCI_ResultsetCreate(bnd->stmt, rows);
+                bnd->stmt->rsts[iter] = ResultsetCreate(bnd->stmt, rows);
 
                 if (bnd->stmt->rsts[iter])
                 {

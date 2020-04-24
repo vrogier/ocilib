@@ -954,7 +954,7 @@ boolean OCI_StatementCheckImplicitResultsets
 
                     if (OCI_STATUS)
                     {
-                        stmt->rsts[i] = OCI_ResultsetCreate(stmt->stmts[i], stmt->stmts[i]->fetch_size);
+                        stmt->rsts[i] = ResultsetCreate(stmt->stmts[i], stmt->stmts[i]->fetch_size);
                         OCI_STATUS = (NULL != stmt->rsts[i]);
 
                         if (OCI_STATUS)
@@ -1227,7 +1227,7 @@ boolean OCI_API OCI_ExecuteInternal
         {
             /* just reinitialize the current resultset */
 
-            OCI_STATUS = OCI_ResultsetInit(stmt->rsts[0]);
+            OCI_STATUS = ResultsetInit(stmt->rsts[0]);
         }
         else
         {
@@ -1433,7 +1433,7 @@ boolean OCI_API OCI_ReleaseResultsets
         {
             if (stmt->rsts[i])
             {
-                OCI_ResultsetFree(stmt->rsts[i]);
+                ResultsetFree(stmt->rsts[i]);
             }
         }
 

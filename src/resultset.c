@@ -18,17 +18,34 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "resultset.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "statement.h"
+#include "connection.h"
+
+#include "hash.h"
+#include "error.h"
+#include "exception.h"
+#include "column.h"
+#include "format.h"
+#include "macro.h"
+#include "memory.h"
+#include "string.h"
+#include "helpers.h"
+
+#include "collection.h"
+#include "date.h"
+#include "file.h"
+#include "interval.h"
+#include "list.h"
+#include "lob.h"
+#include "long.h"
+#include "number.h"
+#include "object.h"
+#include "ref.h"
+#include "timestamp.h"
 
 static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
-
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
 
 #define OCI_MATCHING_TYPE(def, type) \
     ((def) && DefineIsDataNotNull(def) && ((type) == (def)->col.datatype))
@@ -76,10 +93,10 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     OCI_CALL_EXIT()
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ResultsetCreate
+ * ResultsetCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Resultset * OCI_ResultsetCreate
+OCI_Resultset * ResultsetCreate
 (
     OCI_Statement *stmt,
     int            size
@@ -256,19 +273,18 @@ OCI_Resultset * OCI_ResultsetCreate
 
     if (!OCI_STATUS && rs)
     {
-        OCI_ResultsetFree(rs);
+        ResultsetFree(rs);
         rs = NULL;
     }
 
     return rs;
 }
 
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ResultsetExpandStrings
+ * ResultsetExpandStrings
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ResultsetExpandStrings
+boolean ResultsetExpandStrings
 (
     OCI_Resultset *rs
 )
@@ -294,10 +310,10 @@ boolean OCI_ResultsetExpandStrings
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FetchPieces
+ * FetchPieces
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_FetchPieces
+boolean FetchPieces
 (
     OCI_Resultset *rs
 )
@@ -504,10 +520,10 @@ boolean OCI_FetchPieces
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ClearFetchedObjectInstances
+ * ClearFetchedObjectInstances
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ClearFetchedObjectInstances(OCI_Resultset *rs)
+boolean ClearFetchedObjectInstances(OCI_Resultset *rs)
 {
     OCI_CHECK(NULL == rs, FALSE)
 
@@ -532,10 +548,10 @@ boolean OCI_ClearFetchedObjectInstances(OCI_Resultset *rs)
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FetchData
+ * FetchData
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_FetchData
+boolean FetchData
 (
     OCI_Resultset *rs,
     int            mode,
@@ -553,7 +569,7 @@ boolean OCI_FetchData
 
     *success = FALSE;
 
-    OCI_ClearFetchedObjectInstances(rs);
+    ClearFetchedObjectInstances(rs);
 
     /* internal fetch */
 
@@ -590,14 +606,14 @@ boolean OCI_FetchData
     else if (OCI_NEED_DATA == rs->fetch_status)
     {
         /* need to do a piecewise fetch */
-        OCI_STATUS = OCI_FetchPieces(rs);
+        OCI_STATUS = FetchPieces(rs);
     }
 
     /* check string buffer for Unicode builds that need buffer expansion */
 
     if (OCILib.use_wide_char_conv)
     {
-        OCI_ResultsetExpandStrings(rs);
+        ResultsetExpandStrings(rs);
     }
 
     /* check for success */
@@ -665,10 +681,10 @@ boolean OCI_FetchData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FetchCustom
+ * FetchCustom
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_FetchCustom
+boolean FetchCustom
 (
     OCI_Resultset *rs,
     int            mode,
@@ -695,7 +711,7 @@ boolean OCI_FetchCustom
                 offset      = offset - (int) (rs->row_fetched + rs->row_cur);
                 rs->row_cur = 1;
 
-                res = OCI_FetchData(rs, mode, offset, err);
+                res = FetchData(rs, mode, offset, err);
 
                 if (res)
                 {
@@ -716,7 +732,7 @@ boolean OCI_FetchCustom
                 rs->row_abs = 1;
                 rs->row_cur = 1;
 
-                res = OCI_FetchData(rs, mode, offset, err);
+                res = FetchData(rs, mode, offset, err);
 
                 if (res)
                 {
@@ -740,10 +756,10 @@ boolean OCI_FetchCustom
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ResultsetInit
+ * ResultsetInit
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ResultsetInit
+boolean ResultsetInit
 (
 OCI_Resultset *rs
 )
@@ -760,10 +776,10 @@ OCI_Resultset *rs
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ResultsetFree
+ * ResultsetFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ResultsetFree
+boolean ResultsetFree
 (
 OCI_Resultset *rs
 )
@@ -834,7 +850,7 @@ OCI_Resultset *rs
 
         /* free object instances from object cache */
 
-        OCI_ClearFetchedObjectInstances(rs);
+        ClearFetchedObjectInstances(rs);
 
         /* free column pointers */
 
@@ -865,15 +881,12 @@ OCI_Resultset *rs
     return TRUE;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetResultset
+ * ResultsetGetResultset
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Resultset * OCI_API OCI_GetResultset
+OCI_Resultset * ResultsetGetResultset
 (
     OCI_Statement *stmt
 )
@@ -912,7 +925,7 @@ OCI_Resultset * OCI_API OCI_GetResultset
 
                 /* create resultset object */
 
-                OCI_RETVAL = stmt->rsts[0] = OCI_ResultsetCreate(stmt, stmt->fetch_size);
+                OCI_RETVAL = stmt->rsts[0] = ResultsetCreate(stmt, stmt->fetch_size);
             }
 
         }
@@ -924,10 +937,10 @@ OCI_Resultset * OCI_API OCI_GetResultset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetNextResultset
+ * ResultsetGetNextResultset
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Resultset * OCI_API OCI_GetNextResultset
+OCI_Resultset * ResultsetGetNextResultset
 (
     OCI_Statement *stmt
 )
@@ -946,10 +959,10 @@ OCI_Resultset * OCI_API OCI_GetNextResultset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FetchPrev
+ * ResultsetFetchPrev
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FetchPrev
+boolean ResultsetFetchPrev
 (
     OCI_Resultset *rs
 )
@@ -987,7 +1000,7 @@ boolean OCI_API OCI_FetchPrev
                     offset = 1 - (int) (rs->fetch_size + rs->row_fetched);
                 }
 
-                OCI_RETVAL = OCI_FetchData(rs, OCI_SFD_RELATIVE, offset, &OCI_STATUS);
+                OCI_RETVAL = FetchData(rs, OCI_SFD_RELATIVE, offset, &OCI_STATUS);
 
                 if (OCI_RETVAL)
                 {
@@ -1021,10 +1034,10 @@ boolean OCI_API OCI_FetchPrev
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FetchNext
+ * ResultsetFetchNext
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FetchNext
+boolean ResultsetFetchNext
 (
     OCI_Resultset *rs
 )
@@ -1050,7 +1063,7 @@ boolean OCI_API OCI_FetchNext
                 }
                 else
                 {
-                    OCI_RETVAL = OCI_FetchData(rs, OCI_SFD_NEXT, 0, &OCI_STATUS);
+                    OCI_RETVAL = FetchData(rs, OCI_SFD_NEXT, 0, &OCI_STATUS);
 
                     if (OCI_RETVAL)
                     {
@@ -1077,7 +1090,7 @@ boolean OCI_API OCI_FetchNext
 
                 if (OCILib.use_wide_char_conv)
                 {
-                    OCI_ResultsetExpandStrings(rs);
+                    ResultsetExpandStrings(rs);
                 }
             }
 
@@ -1099,10 +1112,10 @@ boolean OCI_API OCI_FetchNext
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FetchFirst
+ * ResultsetFetchFirst
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FetchFirst
+boolean ResultsetFetchFirst
 (
     OCI_Resultset *rs
 )
@@ -1123,7 +1136,7 @@ boolean OCI_API OCI_FetchFirst
     rs->row_abs = 1;
     rs->row_cur = 1;
 
-    OCI_RETVAL = (OCI_FetchData(rs, OCI_SFD_FIRST, 0, &OCI_STATUS) && !rs->bof);
+    OCI_RETVAL = (FetchData(rs, OCI_SFD_FIRST, 0, &OCI_STATUS) && !rs->bof);
 
 #endif
 
@@ -1131,10 +1144,10 @@ boolean OCI_API OCI_FetchFirst
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FetchLast
+ * ResultsetFetchLast
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FetchLast
+boolean ResultsetFetchLast
 (
     OCI_Resultset *rs
 )
@@ -1155,7 +1168,7 @@ boolean OCI_API OCI_FetchLast
     rs->row_abs = 0;
     rs->row_cur = 1;
 
-    OCI_RETVAL = (OCI_FetchData(rs, OCI_SFD_LAST, 0, &OCI_STATUS) && !rs->eof);
+    OCI_RETVAL = (FetchData(rs, OCI_SFD_LAST, 0, &OCI_STATUS) && !rs->eof);
 
     rs->row_abs = rs->row_count;
 
@@ -1165,10 +1178,10 @@ boolean OCI_API OCI_FetchLast
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FetchSeek
+ * ResultsetFetchSeek
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_FetchSeek
+boolean ResultsetFetchSeek
 (
     OCI_Resultset *rs,
     unsigned int   mode,
@@ -1186,7 +1199,7 @@ boolean OCI_API OCI_FetchSeek
     OCI_CALL_CHECK_ENUM_VALUE(rs->stmt->con, rs->stmt, mode, SeekModeValues, OTEXT("Fetch Seek Mode"))
     OCI_CALL_CONTEXT_SET_FROM_STMT(rs->stmt)
 
-    OCI_RETVAL = OCI_FetchCustom(rs, (int)mode, offset, &OCI_STATUS);
+    OCI_RETVAL = FetchCustom(rs, (int)mode, offset, &OCI_STATUS);
 
 #else
 
@@ -1199,10 +1212,10 @@ boolean OCI_API OCI_FetchSeek
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetRowCount
+ * ResultsetGetRowCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetRowCount
+unsigned int ResultsetGetRowCount
 (
     OCI_Resultset *rs
 )
@@ -1211,10 +1224,10 @@ unsigned int OCI_API OCI_GetRowCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetRowCount
+ * ResultsetGetRowCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetCurrentRow
+unsigned int ResultsetGetCurrentRow
 (
     OCI_Resultset *rs
 )
@@ -1223,10 +1236,10 @@ unsigned int OCI_API OCI_GetCurrentRow
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetColumnCount
+ * ResultsetGetColumnCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetColumnCount
+unsigned int ResultsetGetColumnCount
 (
     OCI_Resultset *rs
 )
@@ -1235,10 +1248,10 @@ unsigned int OCI_API OCI_GetColumnCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetColumn
+ * ResultsetGetColumn
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Column * OCI_API OCI_GetColumn
+OCI_Column * ResultsetGetColumn
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -1255,10 +1268,10 @@ OCI_Column * OCI_API OCI_GetColumn
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetColumn2
+ * ResultsetGetColumn2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Column * OCI_API OCI_GetColumn2
+OCI_Column * ResultsetGetColumn2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -1285,10 +1298,10 @@ OCI_Column * OCI_API OCI_GetColumn2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetColumnIndex
+ * ResultsetGetColumnIndex
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetColumnIndex
+unsigned int ResultsetGetColumnIndex
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -1315,10 +1328,10 @@ unsigned int OCI_API OCI_GetColumnIndex
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetStructNumericType
+ * ResultsetSetStructNumericType
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetStructNumericType
+boolean ResultsetSetStructNumericType
 (
     OCI_Resultset *rs,
     unsigned int   index,
@@ -1339,10 +1352,10 @@ boolean OCI_API OCI_SetStructNumericType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetStructNumericType2
+ * ResultsetSetStructNumericType2
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetStructNumericType2
+boolean ResultsetSetStructNumericType2
 (
     OCI_Resultset *rs,
     const otext   *name,
@@ -1369,10 +1382,10 @@ boolean OCI_API OCI_SetStructNumericType2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetStruct
+ * ResultsetGetStruct
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_GetStruct
+boolean ResultsetGetStruct
 (
     OCI_Resultset *rs,
     void          *row_struct,
@@ -1521,7 +1534,7 @@ boolean OCI_API OCI_GetStruct
 * OCI_GetNumber
 * --------------------------------------------------------------------------------------------- */
 
-OCI_Number * OCI_API OCI_GetNumber
+OCI_Number * ResultsetGetNumber
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -1536,10 +1549,10 @@ OCI_Number * OCI_API OCI_GetNumber
 }
 
 /* --------------------------------------------------------------------------------------------- * 
- * OCI_GetNumber2
+ * ResultsetGetNumber2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Number * OCI_API OCI_GetNumber2
+OCI_Number * ResultsetGetNumber2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -1549,10 +1562,10 @@ OCI_Number * OCI_API OCI_GetNumber2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetShort
+ * ResultsetGetShort
  * --------------------------------------------------------------------------------------------- */
 
-short OCI_API OCI_GetShort
+short ResultsetGetShort
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -1562,10 +1575,10 @@ short OCI_API OCI_GetShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetShort2
+ * ResultsetGetShort2
  * --------------------------------------------------------------------------------------------- */
 
-short OCI_API OCI_GetShort2
+short ResultsetGetShort2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -1575,10 +1588,10 @@ short OCI_API OCI_GetShort2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetUnsignedShort
+ * ResultsetGetUnsignedShort
  * --------------------------------------------------------------------------------------------- */
 
-unsigned short OCI_API OCI_GetUnsignedShort
+unsigned short ResultsetGetUnsignedShort
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -1588,10 +1601,10 @@ unsigned short OCI_API OCI_GetUnsignedShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetUnsignedShort2
+ * ResultsetGetUnsignedShort2
  * --------------------------------------------------------------------------------------------- */
 
-unsigned short OCI_API OCI_GetUnsignedShort2
+unsigned short ResultsetGetUnsignedShort2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -1601,10 +1614,10 @@ unsigned short OCI_API OCI_GetUnsignedShort2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetInt
+ * ResultsetGetInt
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_GetInt
+int ResultsetGetInt
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -1614,10 +1627,10 @@ int OCI_API OCI_GetInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetInt2
+ * ResultsetGetInt2
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_GetInt2
+int ResultsetGetInt2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -1627,10 +1640,10 @@ int OCI_API OCI_GetInt2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetUnsignedInt
+ * ResultsetGetUnsignedInt
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetUnsignedInt
+unsigned int ResultsetGetUnsignedInt
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -1640,10 +1653,10 @@ unsigned int OCI_API OCI_GetUnsignedInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetUnsignedInt2
+ * ResultsetGetUnsignedInt2
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetUnsignedInt2
+unsigned int ResultsetGetUnsignedInt2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -1653,10 +1666,10 @@ unsigned int OCI_API OCI_GetUnsignedInt2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetBigInt
+ * ResultsetGetBigInt
  * --------------------------------------------------------------------------------------------- */
 
-big_int OCI_API OCI_GetBigInt
+big_int ResultsetGetBigInt
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -1666,10 +1679,10 @@ big_int OCI_API OCI_GetBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetBigInt2
+ * ResultsetGetBigInt2
  * --------------------------------------------------------------------------------------------- */
 
-big_int OCI_API OCI_GetBigInt2
+big_int ResultsetGetBigInt2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -1679,10 +1692,10 @@ big_int OCI_API OCI_GetBigInt2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetUnsignedBigInt
+ * ResultsetGetUnsignedBigInt
  * --------------------------------------------------------------------------------------------- */
 
-big_uint OCI_API OCI_GetUnsignedBigInt
+big_uint ResultsetGetUnsignedBigInt
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -1692,10 +1705,10 @@ big_uint OCI_API OCI_GetUnsignedBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetUnsignedInt2
+ * ResultsetGetUnsignedInt2
  * --------------------------------------------------------------------------------------------- */
 
-big_uint OCI_API OCI_GetUnsignedBigInt2
+big_uint ResultsetGetUnsignedBigInt2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -1705,10 +1718,10 @@ big_uint OCI_API OCI_GetUnsignedBigInt2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetString
+ * ResultsetGetString
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetString
+const otext * ResultsetGetString
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -1915,10 +1928,10 @@ const otext * OCI_API OCI_GetString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetString2
+ * ResultsetGetString2
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetString2
+const otext * ResultsetGetString2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -1928,10 +1941,10 @@ const otext * OCI_API OCI_GetString2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetRaw
+ * ResultsetGetRaw
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetRaw
+unsigned int ResultsetGetRaw
 (
     OCI_Resultset *rs,
     unsigned int   index,
@@ -1968,10 +1981,10 @@ unsigned int OCI_API OCI_GetRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetRaw2
+ * ResultsetGetRaw2
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetRaw2
+unsigned int ResultsetGetRaw2
 (
     OCI_Resultset *rs,
     const otext   *name,
@@ -2013,10 +2026,10 @@ unsigned int OCI_API OCI_GetRaw2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDouble
+ * ResultsetGetDouble
  * --------------------------------------------------------------------------------------------- */
 
-double OCI_API OCI_GetDouble
+double ResultsetGetDouble
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2026,10 +2039,10 @@ double OCI_API OCI_GetDouble
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDouble2
+ * ResultsetGetDouble2
  * --------------------------------------------------------------------------------------------- */
 
-double OCI_API OCI_GetDouble2
+double ResultsetGetDouble2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2039,10 +2052,10 @@ double OCI_API OCI_GetDouble2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetFloat
+ * ResultsetGetFloat
  * --------------------------------------------------------------------------------------------- */
 
-float OCI_API OCI_GetFloat
+float ResultsetGetFloat
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2052,10 +2065,10 @@ float OCI_API OCI_GetFloat
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetFloat2
+ * ResultsetGetFloat2
  * --------------------------------------------------------------------------------------------- */
 
-float OCI_API OCI_GetFloat2
+float ResultsetGetFloat2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2065,10 +2078,10 @@ float OCI_API OCI_GetFloat2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDate
+ * ResultsetGetDate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Date * OCI_API OCI_GetDate
+OCI_Date * ResultsetGetDate
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2085,10 +2098,10 @@ OCI_Date * OCI_API OCI_GetDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDate2
+ * ResultsetGetDate2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Date * OCI_API OCI_GetDate2
+OCI_Date * ResultsetGetDate2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2098,10 +2111,10 @@ OCI_Date * OCI_API OCI_GetDate2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetTimestamp
+ * ResultsetGetTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Timestamp * OCI_API OCI_GetTimestamp
+OCI_Timestamp * ResultsetGetTimestamp
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2117,10 +2130,10 @@ OCI_Timestamp * OCI_API OCI_GetTimestamp
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetTimestamp2
+ * ResultsetGetTimestamp2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Timestamp * OCI_API OCI_GetTimestamp2
+OCI_Timestamp * ResultsetGetTimestamp2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2130,10 +2143,10 @@ OCI_Timestamp * OCI_API OCI_GetTimestamp2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetInterval
+ * ResultsetGetInterval
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval * OCI_API OCI_GetInterval
+OCI_Interval * ResultsetGetInterval
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2149,10 +2162,10 @@ OCI_Interval * OCI_API OCI_GetInterval
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetInterval2
+ * ResultsetGetInterval2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval * OCI_API OCI_GetInterval2
+OCI_Interval * ResultsetGetInterval2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2162,10 +2175,10 @@ OCI_Interval * OCI_API OCI_GetInterval2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_Object
+ * ResultsetObject
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * OCI_API OCI_GetObject
+OCI_Object * ResultsetGetObject
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2182,10 +2195,10 @@ OCI_Object * OCI_API OCI_GetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetObject2
+ * ResultsetGetObject2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * OCI_API OCI_GetObject2
+OCI_Object * ResultsetGetObject2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2195,10 +2208,10 @@ OCI_Object * OCI_API OCI_GetObject2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetColl
+ * ResultsetGetColl
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OCI_API OCI_GetColl
+OCI_Coll * ResultsetGetColl
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2213,10 +2226,10 @@ OCI_Coll * OCI_API OCI_GetColl
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetColl2
+ * ResultsetGetColl2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OCI_API OCI_GetColl2
+OCI_Coll * ResultsetGetColl2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2226,10 +2239,10 @@ OCI_Coll * OCI_API OCI_GetColl2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetRef
+ * ResultsetGetRef
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OCI_API OCI_GetRef
+OCI_Ref * ResultsetGetRef
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2244,10 +2257,10 @@ OCI_Ref * OCI_API OCI_GetRef
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetRef2
+ * ResultsetGetRef2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OCI_API OCI_GetRef2
+OCI_Ref * ResultsetGetRef2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2257,10 +2270,10 @@ OCI_Ref * OCI_API OCI_GetRef2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetStatement
+ * ResultsetGetStatement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Statement * OCI_API OCI_GetStatement
+OCI_Statement * ResultsetGetStatement
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2276,10 +2289,10 @@ OCI_Statement * OCI_API OCI_GetStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetStatement2
+ * ResultsetGetStatement2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Statement * OCI_API OCI_GetStatement2
+OCI_Statement * ResultsetGetStatement2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2289,10 +2302,10 @@ OCI_Statement * OCI_API OCI_GetStatement2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetLob
+ * ResultsetGetLob
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Lob * OCI_API OCI_GetLob
+OCI_Lob * ResultsetGetLob
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2309,10 +2322,10 @@ OCI_Lob * OCI_API OCI_GetLob
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetLob2
+ * ResultsetGetLob2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Lob * OCI_API OCI_GetLob2
+OCI_Lob * ResultsetGetLob2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2322,10 +2335,10 @@ OCI_Lob * OCI_API OCI_GetLob2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetFile
+ * ResultsetGetFile
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File * OCI_API OCI_GetFile
+OCI_File * ResultsetGetFile
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2342,10 +2355,10 @@ OCI_File * OCI_API OCI_GetFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetFile2
+ * ResultsetGetFile2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File * OCI_API OCI_GetFile2
+OCI_File * ResultsetGetFile2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2355,10 +2368,10 @@ OCI_File * OCI_API OCI_GetFile2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetLong
+ * ResultsetGetLong
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Long * OCI_API OCI_GetLong
+OCI_Long * ResultsetGetLong
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2373,10 +2386,10 @@ OCI_Long * OCI_API OCI_GetLong
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetLong2
+ * ResultsetGetLong2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Long * OCI_API OCI_GetLong2
+OCI_Long * ResultsetGetLong2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2386,10 +2399,10 @@ OCI_Long * OCI_API OCI_GetLong2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDataSize
+ * ResultsetGetDataSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetDataSize
+unsigned int ResultsetGetDataSize
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2423,10 +2436,10 @@ unsigned int OCI_API OCI_GetDataSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDataSize2
+ * ResultsetGetDataSize2
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetDataSize2
+unsigned int ResultsetGetDataSize2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2453,10 +2466,10 @@ unsigned int OCI_API OCI_GetDataSize2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IsNull
+ * ResultsetIsNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IsNull
+boolean ResultsetIsNull
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2478,10 +2491,10 @@ boolean OCI_API OCI_IsNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IsNull2
+ * ResultsetIsNull2
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IsNull2
+boolean ResultsetIsNull2
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2508,10 +2521,10 @@ boolean OCI_API OCI_IsNull2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ResultsetGetStatement
+ * ResultsetResultsetGetStatement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Statement * OCI_API OCI_ResultsetGetStatement
+OCI_Statement * ResultsetResultsetGetStatement
 (
     OCI_Resultset *rs
 )
@@ -2520,10 +2533,10 @@ OCI_Statement * OCI_API OCI_ResultsetGetStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetDataLength
+ * ResultsetGetDataLength
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetDataLength
+unsigned int ResultsetGetDataLength
 (
     OCI_Resultset *rs,
     unsigned int   index
