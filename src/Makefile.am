@@ -41,14 +41,14 @@ libocilib_la_SOURCES=   \
     lob.c               \
     long.c              \
     memory.c            \
-    msg.c               \
+    message.c           \
     mutex.c             \
     number.c            \
     object.c            \
     ocilib.c            \
     pool.c              \
     queue.c             \
-    ref.c               \
+    reference.c         \
     resultset.c         \
     statement.c         \
     strings.c           \
@@ -95,7 +95,6 @@ noinst_HEADERS=     \
     format.h        \
     handle.h        \
     hash.h          \
-    helpers.h       \
     import.h        \
     interval.h      \
     iterator.h      \
@@ -106,13 +105,13 @@ noinst_HEADERS=     \
     long.h          \
     macro.h         \
     memory.h        \
-    msg.h           \
+    message.h       \
     mutex.h         \
     number.h        \
     object.h        \
     pool.h          \
     queue.h         \
-    ref.h           \
+    reference.h     \
     resultset.h     \
     statement.h     \
     strings.h       \

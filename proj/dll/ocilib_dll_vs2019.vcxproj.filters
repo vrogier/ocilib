@@ -107,9 +107,6 @@
     <ClCompile Include="..\..\src\memory.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\msg.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\mutex.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -126,9 +123,6 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\queue.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ref.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\resultset.c">
@@ -157,6 +151,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\strings.c">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\message.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reference.c">
+      <Filter>Headers %28Private%29</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -241,9 +241,6 @@
     <ClInclude Include="..\..\src\memory.h">
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\msg.h">
-      <Filter>Headers %28Private%29</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\mutex.h">
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
@@ -257,9 +254,6 @@
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\queue.h">
-      <Filter>Headers %28Private%29</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ref.h">
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\resultset.h">

@@ -338,14 +338,14 @@
     <ClCompile Include="..\..\src\lob.c" />
     <ClCompile Include="..\..\src\long.c" />
     <ClCompile Include="..\..\src\memory.c" />
-    <ClCompile Include="..\..\src\msg.c" />
+    <ClCompile Include="..\..\src\message.c" />
     <ClCompile Include="..\..\src\mutex.c" />
     <ClCompile Include="..\..\src\number.c" />
     <ClCompile Include="..\..\src\object.c" />
     <ClCompile Include="..\..\src\ocilib.c" />
     <ClCompile Include="..\..\src\pool.c" />
     <ClCompile Include="..\..\src\queue.c" />
-    <ClCompile Include="..\..\src\ref.c" />
+    <ClCompile Include="..\..\src\reference.c" />
     <ClCompile Include="..\..\src\resultset.c" />
     <ClCompile Include="..\..\src\statement.c" />
     <ClCompile Include="..\..\src\strings.c" />
@@ -395,7 +395,6 @@
     <ClInclude Include="..\..\src\long.h" />
     <ClInclude Include="..\..\src\macro.h" />
     <ClInclude Include="..\..\src\memory.h" />
-    <ClInclude Include="..\..\src\msg.h" />
     <ClInclude Include="..\..\src\mutex.h" />
     <ClInclude Include="..\..\src\number.h" />
     <ClInclude Include="..\..\src\object.h" />
@@ -404,7 +403,6 @@
     <ClInclude Include="..\..\src\oci\types.h" />
     <ClInclude Include="..\..\src\pool.h" />
     <ClInclude Include="..\..\src\queue.h" />
-    <ClInclude Include="..\..\src\ref.h" />
     <ClInclude Include="..\..\src\resultset.h" />
     <ClInclude Include="..\..\src\statement.h" />
     <ClInclude Include="..\..\src\strings.h" />
