@@ -5241,6 +5241,1039 @@ unsigned int OCI_API OCI_GetDataLength
  *  statement
  * --------------------------------------------------------------------------------------------- */
 
+
+OCI_Statement* OCI_API OCI_StatementCreate
+(
+    OCI_Connection* con
+)
+{
+    CALL_IMPL(StatementCreate, con);
+}
+
+boolean OCI_API OCI_StatementFree
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementFree, stmt);
+}
+
+boolean OCI_API OCI_ReleaseResultsets
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementReleaseResultsets, stmt);
+}
+
+boolean OCI_API OCI_Prepare
+(
+    OCI_Statement* stmt,
+    const otext* sql
+)
+{
+    CALL_IMPL(StatementPrepare, stmt, sql);
+}
+
+boolean OCI_API OCI_Execute
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementExecute, stmt);
+}
+
+boolean OCI_API OCI_ExecuteStmt
+(
+    OCI_Statement* stmt,
+    const otext* sql
+)
+{
+    CALL_IMPL(StatementExecuteStmt, stmt, sql);
+}
+
+boolean OCI_API OCI_Parse
+(
+    OCI_Statement* stmt,
+    const otext* sql
+)
+{
+    CALL_IMPL(StatementParse, stmt, sql);
+}
+
+boolean OCI_API OCI_Describe
+(
+    OCI_Statement* stmt,
+    const otext* sql
+)
+{
+    CALL_IMPL(StatementDescribe, stmt, sql);
+}
+
+boolean OCI_PrepareFmt
+(
+    OCI_Statement* stmt,
+    const otext* sql,
+    ...
+)
+{
+    boolean res = FALSE;
+    va_list args;
+
+    va_start(args, sql);
+    res = StatementPrepareFmt(stmt, sql, args);
+    va_end(args);
+
+    return  res;
+}
+
+boolean OCI_ExecuteStmtFmt
+(
+    OCI_Statement* stmt,
+    const otext* sql,
+    ...
+)
+{
+    boolean res = FALSE;
+    va_list args;
+
+    va_start(args, sql);
+    res = StatementExecuteStmtFmt(stmt, sql, args);
+    va_end(args);
+
+    return  res;
+}
+
+boolean OCI_ParseFmt
+(
+    OCI_Statement* stmt,
+    const otext* sql,
+    ...
+)
+{
+    boolean res = FALSE;
+    va_list args;
+
+    va_start(args, sql);
+    res = StatementParseFmt(stmt, sql, args);
+    va_end(args);
+
+    return  res;
+}
+
+boolean OCI_DescribeFmt
+(
+    OCI_Statement* stmt,
+    const otext* sql,
+    ...
+)
+{
+    boolean res = FALSE;
+    va_list args;
+
+    va_start(args, sql);
+    res = StatementDescribeFmt(stmt, sql, args);
+    va_end(args);
+
+    return  res;
+}
+
+boolean OCI_API OCI_BindArraySetSize
+(
+    OCI_Statement* stmt,
+    unsigned int   size
+)
+{
+    CALL_IMPL(StatementBindArraySetSize, stmt, size);
+}
+
+unsigned int OCI_API OCI_BindArrayGetSize
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementBindArrayGetSize, stmt);
+}
+
+boolean OCI_API OCI_AllowRebinding
+(
+    OCI_Statement* stmt,
+    boolean        value
+)
+{
+    CALL_IMPL(StatementAllowRebinding, stmt, value);
+}
+
+boolean OCI_API OCI_IsRebindingAllowed
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementIsRebindingAllowed, stmt);
+}
+
+boolean OCI_API OCI_BindBoolean
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    boolean* data
+)
+{
+    CALL_IMPL(StatementBindBoolean, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindNumber
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Number* data
+)
+{
+    CALL_IMPL(StatementBindNumber, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfNumbers
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Number** data,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfNumbers, stmt, name, data, nbelem);
+}
+
+boolean OCI_API OCI_BindShort
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    short* data
+)
+{
+    CALL_IMPL(StatementBindShort, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfShorts
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    short* data,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfShorts, stmt, name, data, nbelem);
+}
+
+boolean OCI_API OCI_BindUnsignedShort
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    unsigned short* data
+)
+{
+    CALL_IMPL(StatementBindUnsignedShort, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfUnsignedShorts
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    unsigned short* data,
+    unsigned int    nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfUnsignedShorts, stmt, name, data, nbelem);
+}
+
+boolean OCI_API OCI_BindInt
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    int* data
+)
+{
+    CALL_IMPL(StatementBindInt, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfInts
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    int* data,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfInts, stmt, name, data, nbelem);
+}
+
+boolean OCI_API OCI_BindUnsignedInt
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    unsigned int* data
+)
+{
+    CALL_IMPL(StatementBindUnsignedInt, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfUnsignedInts
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    unsigned int* data,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfUnsignedInts, stmt, name, data, nbelem);
+}
+
+boolean OCI_API OCI_BindBigInt
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    big_int* data
+)
+{
+    CALL_IMPL(StatementBindBigInt, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfBigInts
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    big_int* data,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfBigInts, stmt, name, data, nbelem);
+}
+
+boolean OCI_API OCI_BindUnsignedBigInt
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    big_uint* data
+)
+{
+    CALL_IMPL(StatementBindUnsignedBigInt, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfUnsignedBigInts
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    big_uint* data,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfUnsignedBigInts, stmt, name, data, nbelem);
+}
+
+boolean OCI_API OCI_BindString
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    otext* data,
+    unsigned int   len
+)
+{
+    CALL_IMPL(StatementBindString, stmt, name, data, len);
+}
+
+boolean OCI_API OCI_BindArrayOfStrings
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    otext* data,
+    unsigned int   len,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfStrings, stmt, name, data, len, nbelem);
+}
+
+boolean OCI_API OCI_BindRaw
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    void* data,
+    unsigned int   len
+)
+{
+    CALL_IMPL(StatementBindRaw, stmt, name, data, len);
+}
+
+boolean OCI_API OCI_BindArrayOfRaws
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    void* data,
+    unsigned int   len,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfRaws, stmt, name, data, len, nbelem);
+}
+
+boolean OCI_API OCI_BindDouble
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    double* data
+)
+{
+    CALL_IMPL(StatementBindDouble, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfDoubles
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    double* data,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfDoubles, stmt, name, data, nbelem);
+}
+
+boolean OCI_API OCI_BindFloat
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    float* data
+)
+{
+    CALL_IMPL(StatementBindFloat, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfFloats
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    float* data,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfFloats, stmt, name, data, nbelem);
+}
+
+boolean OCI_API OCI_BindDate
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Date* data
+)
+{
+    CALL_IMPL(StatementBindDate, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfDates
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Date** data,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfDates, stmt, name, data, nbelem);
+}
+
+boolean OCI_API OCI_BindTimestamp
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Timestamp* data
+)
+{
+    CALL_IMPL(StatementBindTimestamp, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfTimestamps
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Timestamp** data,
+    unsigned int    type,
+    unsigned int    nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfTimestamps, stmt, name, data, type, nbelem);
+}
+
+boolean OCI_API OCI_BindInterval
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Interval* data
+)
+{
+    CALL_IMPL(StatementBindInterval, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfIntervals
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Interval** data,
+    unsigned int   type,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfIntervals, stmt, name, data, type, nbelem);
+}
+
+boolean OCI_API OCI_BindObject
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Object* data
+)
+{
+    CALL_IMPL(StatementBindObject, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfObjects
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Object** data,
+    OCI_TypeInfo* typinf,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfObjects, stmt, name, data, typinf, nbelem);
+}
+
+boolean OCI_API OCI_BindLob
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Lob* data
+)
+{
+    CALL_IMPL(StatementBindLob, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfLobs
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Lob** data,
+    unsigned int   type,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfLobs, stmt, name, data, type, nbelem);
+}
+
+boolean OCI_API OCI_BindFile
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_File* data
+)
+{
+    CALL_IMPL(StatementBindFile, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfFiles
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_File** data,
+    unsigned int   type,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfFiles, stmt, name, data, type, nbelem);
+}
+
+boolean OCI_API OCI_BindRef
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Ref* data
+)
+{
+    CALL_IMPL(StatementBindRef, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfRefs
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Ref** data,
+    OCI_TypeInfo* typinf,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfRefs, stmt, name, data, typinf, nbelem);
+}
+
+boolean OCI_API OCI_BindColl
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Coll* data
+)
+{
+    CALL_IMPL(StatementBindColl, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfColls
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Coll** data,
+    OCI_TypeInfo* typinf,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(StatementBindArrayOfColls, stmt, name, data, typinf, nbelem);
+}
+
+boolean OCI_API OCI_BindStatement
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Statement* data
+)
+{
+    CALL_IMPL(StatementBindStatement, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindLong
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_Long* data,
+    unsigned int   size
+)
+{
+    CALL_IMPL(StatementBindLong, stmt, name, data, size);
+}
+
+boolean OCI_API OCI_RegisterNumber
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    CALL_IMPL(StatementRegisterNumber, stmt, name);
+}
+
+boolean OCI_API OCI_RegisterShort
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    CALL_IMPL(StatementRegisterShort, stmt, name);
+}
+
+boolean OCI_API OCI_RegisterUnsignedShort
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    CALL_IMPL(StatementRegisterUnsignedShort, stmt, name);
+}
+
+boolean OCI_API OCI_RegisterInt
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    CALL_IMPL(StatementRegisterInt, stmt, name);
+}
+
+boolean OCI_API OCI_RegisterUnsignedInt
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    CALL_IMPL(StatementRegisterUnsignedInt, stmt, name);
+}
+
+boolean OCI_API OCI_RegisterBigInt
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    CALL_IMPL(StatementRegisterBigInt, stmt, name);
+}
+
+boolean OCI_API OCI_RegisterUnsignedBigInt
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    CALL_IMPL(StatementRegisterUnsignedBigInt, stmt, name);
+}
+
+boolean OCI_API OCI_RegisterString
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    unsigned int   len
+)
+{
+    CALL_IMPL(StatementRegisterString, stmt, name, len);
+}
+
+boolean OCI_API OCI_RegisterRaw
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    unsigned int   len
+)
+{
+    CALL_IMPL(StatementRegisterRaw, stmt, name, len);
+}
+
+boolean OCI_API OCI_RegisterDouble
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    CALL_IMPL(StatementRegisterDouble, stmt, name);
+}
+
+boolean OCI_API OCI_RegisterFloat
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    CALL_IMPL(StatementRegisterFloat, stmt, name);
+}
+
+boolean OCI_API OCI_RegisterDate
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    CALL_IMPL(StatementRegisterDate, stmt, name);
+}
+
+boolean OCI_API OCI_RegisterTimestamp
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    unsigned int   type
+)
+{
+    CALL_IMPL(StatementRegisterTimestamp, stmt, name, type);
+}
+
+boolean OCI_API OCI_RegisterInterval
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    unsigned int   type
+)
+{
+    CALL_IMPL(StatementRegisterInterval, stmt, name, type);
+}
+
+boolean OCI_API OCI_RegisterObject
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(StatementRegisterObject, stmt, name, typinf);
+}
+
+boolean OCI_API OCI_RegisterLob
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    unsigned int   type
+)
+{
+    CALL_IMPL(StatementRegisterLob, stmt, name, type);
+}
+
+boolean OCI_API OCI_RegisterFile
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    unsigned int   type
+)
+{
+    CALL_IMPL(StatementRegisterFile, stmt, name, type);
+}
+
+boolean OCI_API OCI_RegisterRef
+(
+    OCI_Statement* stmt,
+    const otext* name,
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(StatementRegisterRef, stmt, name, typinf);
+}
+
+unsigned int OCI_API OCI_GetStatementType
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetStatementType, stmt);
+}
+
+boolean OCI_API OCI_SetFetchMode
+(
+    OCI_Statement* stmt,
+    unsigned int   mode
+)
+{
+    CALL_IMPL(StatementSetFetchMode, stmt, mode);
+}
+
+unsigned int OCI_API OCI_GetFetchMode
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetFetchMode, stmt);
+}
+
+boolean OCI_API OCI_SetBindMode
+(
+    OCI_Statement* stmt,
+    unsigned int   mode
+)
+{
+    CALL_IMPL(StatementSetBindMode, stmt, mode);
+}
+
+unsigned int OCI_API OCI_GetBindMode
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetBindMode, stmt);
+}
+
+boolean OCI_API OCI_SetBindAllocation
+(
+    OCI_Statement* stmt,
+    unsigned int   mode
+)
+{
+    CALL_IMPL(StatementSetBindAllocation, stmt, mode);
+}
+
+unsigned int OCI_API OCI_GetBindAllocation
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetBindAllocation, stmt);
+}
+
+boolean OCI_API OCI_SetFetchSize
+(
+    OCI_Statement* stmt,
+    unsigned int   size
+)
+{
+    CALL_IMPL(StatementSetFetchSize, stmt, size);
+}
+
+unsigned int OCI_API OCI_GetFetchSize
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetFetchSize, stmt);
+}
+
+boolean OCI_API OCI_SetPrefetchSize
+(
+    OCI_Statement* stmt,
+    unsigned int   size
+)
+{
+    CALL_IMPL(StatementSetPrefetchSize, stmt, size);
+}
+
+unsigned int OCI_API OCI_GetPrefetchSize
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetPrefetchSize, stmt);
+}
+
+boolean OCI_API OCI_SetPrefetchMemory
+(
+    OCI_Statement* stmt,
+    unsigned int   size
+)
+{
+    CALL_IMPL(StatementSetPrefetchMemory, stmt, size);
+}
+
+unsigned int OCI_API OCI_GetPrefetchMemory
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetPrefetchMemory, stmt);
+}
+
+boolean OCI_API OCI_SetLongMaxSize
+(
+    OCI_Statement* stmt,
+    unsigned int   size
+)
+{
+    CALL_IMPL(StatementSetLongMaxSize, stmt, size);
+}
+
+unsigned int OCI_API OCI_GetLongMaxSize
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetLongMaxSize, stmt);
+}
+
+boolean OCI_API OCI_SetLongMode
+(
+    OCI_Statement* stmt,
+    unsigned int   mode
+)
+{
+    CALL_IMPL(StatementSetLongMode, stmt, mode);
+}
+
+unsigned int OCI_API OCI_GetLongMode
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetLongMode, stmt);
+}
+
+OCI_Connection* OCI_API OCI_StatementGetConnection
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetConnection, stmt);
+}
+
+const otext* OCI_API OCI_GetSql
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetSql, stmt);
+}
+
+const otext* OCI_API OCI_GetSqlIdentifier
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetSqlIdentifier, stmt);
+}
+
+unsigned int OCI_API OCI_GetSqlErrorPos
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetSqlErrorPos, stmt);
+}
+
+unsigned int OCI_API OCI_GetAffectedRows
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetAffectedRows, stmt);
+}
+
+unsigned int OCI_API OCI_GetBindCount
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetBindCount, stmt);
+}
+
+OCI_Bind* OCI_API OCI_GetBind
+(
+    OCI_Statement* stmt,
+    unsigned int   index
+)
+{
+    CALL_IMPL(StatementGetBind, stmt, index);
+}
+
+OCI_Bind* OCI_API OCI_GetBind2
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    CALL_IMPL(StatementGetBind2, stmt, name);
+}
+
+unsigned int OCI_API OCI_GetBindIndex
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    CALL_IMPL(StatementGetBindIndex, stmt, name);
+}
+
+unsigned int OCI_API OCI_GetSQLCommand
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetSQLCommand, stmt);
+}
+
+const otext* OCI_API OCI_GetSQLVerb
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetSQLVerb, stmt);
+}
+
+OCI_Error* OCI_API OCI_GetBatchError
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetBatchError, stmt);
+}
+
+unsigned int OCI_API OCI_GetBatchErrorCount
+(
+    OCI_Statement* stmt
+)
+{
+    CALL_IMPL(StatementGetBatchErrorCount, stmt);
+}
+
 /* --------------------------------------------------------------------------------------------- *
  *  subscription
  * --------------------------------------------------------------------------------------------- */

@@ -76,49 +76,6 @@ extern "C"
 #include "typeinfo.h"
 
 
-/* --------------------------------------------------------------------------------------------- *
- * statement.c
- * --------------------------------------------------------------------------------------------- */
-
-int OCI_BindGetInternalIndex
-(
-    OCI_Statement *stmt,
-    const otext   *name
-);
-
-boolean OCI_FetchIntoUserVariables
-(
-    OCI_Statement *stmt,
-    va_list        args
-);
-
-boolean OCI_StatementClose
-(
-    OCI_Statement *stmt
-);
-
-OCI_Statement * OCI_StatementInit
-(
-    OCI_Connection *con,
-    OCI_Statement  *stmt,
-    OCIStmt        *handle,
-    boolean         is_desc,
-    const otext    *sql
-);
-
-boolean OCI_API OCI_PrepareInternal
-(
-    OCI_Statement *stmt,
-    const otext   *sql
-);
-
-boolean OCI_API OCI_ExecuteInternal
-(
-    OCI_Statement *stmt,
-    ub4            mode
-);
-
-
 #ifdef  __cplusplus
 }
 #endif

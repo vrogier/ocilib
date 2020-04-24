@@ -18,11 +18,32 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "statement.h"
+#include "connection.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "bind.h"
+#include "callback.h"
+#include "error.h"
+#include "exception.h"
+#include "hash.h"
+#include "format.h"
+#include "list.h"
+#include "macro.h"
+#include "memory.h"
+#include "resultset.h"
+#include "string.h"
+#include "helpers.h"
+
+#include "collection.h"
+#include "date.h"
+#include "file.h"
+#include "interval.h"
+#include "list.h"
+#include "lob.h"
+#include "number.h"
+#include "object.h"
+#include "ref.h"
+#include "timestamp.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 static unsigned int TimestampTypeValues[]  = { OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
@@ -37,9 +58,6 @@ static unsigned int BindModeValues[]       = { OCI_BIND_BY_POS, OCI_BIND_BY_NAME
 static unsigned int BindAllocationValues[] = { OCI_BAM_EXTERNAL, OCI_BAM_INTERNAL };
 static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLICIT };
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
 
 #define SET_ARG_NUM(type, func)                                     \
     type src = func(rs, i), *dst = ( type *) va_arg(args, type *);  \
@@ -91,10 +109,10 @@ static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLI
 #define OCI_BIND_GET_BUFFER(d, t, i) ((t *)((d) + (i) * sizeof(t)))
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindGetInternalIndex
+ * StatementBindGetInternalIndex
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_BindGetInternalIndex
+int StatementBindGetInternalIndex
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -135,10 +153,10 @@ int OCI_BindGetInternalIndex
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BatchErrorClear
+ * StatementBatchErrorClear
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_BatchErrorClear
+boolean StatementBatchErrorClear
 (
     OCI_Statement *stmt
 )
@@ -158,10 +176,10 @@ boolean OCI_BatchErrorClear
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StatementFreeAllBinds
+ * StatementFreeAllBinds
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_StatementFreeAllBinds
+boolean StatementFreeAllBinds
 (
     OCI_Statement *stmt
 )
@@ -201,10 +219,10 @@ boolean OCI_StatementFreeAllBinds
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StatementReset
+ * StatementReset
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_StatementReset
+boolean StatementReset
 (
     OCI_Statement *stmt
 )
@@ -229,7 +247,6 @@ boolean OCI_StatementReset
         }
     }
 
-
 #else
 
     OCI_NOT_USED(mode)
@@ -238,7 +255,7 @@ boolean OCI_StatementReset
 
     /* reset batch errors */
 
-    OCI_STATUS = OCI_BatchErrorClear(stmt);
+    OCI_STATUS = StatementBatchErrorClear(stmt);
 
     /* free resultsets */
 
@@ -246,7 +263,7 @@ boolean OCI_StatementReset
 
     /* free in/out binds */
 
-    OCI_STATUS = OCI_STATUS && OCI_StatementFreeAllBinds(stmt);
+    OCI_STATUS = OCI_STATUS && StatementFreeAllBinds(stmt);
 
     /* free bind map */
 
@@ -317,10 +334,10 @@ boolean OCI_StatementReset
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_BindCheck
+* StatementBindCheck
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_BindCheck
+boolean StatementBindCheck
 (
     OCI_Bind    *bnd,
     ub1         *src,
@@ -432,10 +449,10 @@ boolean OCI_BindCheck
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_BindUpdate
+* StatementBindUpdate
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_BindUpdate
+boolean StatementBindUpdate
 (
     OCI_Bind    *bnd,
     ub1         *src,
@@ -517,10 +534,10 @@ boolean OCI_BindUpdate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindCheckAll
+ * StatementBindCheckAll
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_BindCheckAll
+boolean StatementBindCheckAll
 (
     OCI_Statement *stmt
 )
@@ -540,7 +557,7 @@ boolean OCI_BindCheckAll
         {
             OCI_Statement *bnd_stmt = (OCI_Statement *) bnd->buffer.data;
 
-            OCI_StatementReset(bnd_stmt);
+            StatementReset(bnd_stmt);
 
             bnd_stmt->hstate = OCI_OBJECT_ALLOCATED_BIND_STMT;
 
@@ -578,12 +595,12 @@ boolean OCI_BindCheckAll
 
                     for (j = 0; j < count && OCI_STATUS; j++)
                     {
-                        OCI_STATUS = OCI_BindCheck(bnd, (ub1*)bnd->input, (ub1*)bnd->buffer.data, j);
+                        OCI_STATUS = StatementBindCheck(bnd, (ub1*)bnd->input, (ub1*)bnd->buffer.data, j);
                     }
                 }
                 else
                 {
-                    OCI_STATUS = OCI_BindCheck(bnd, (ub1*)bnd->input, (ub1*)bnd->buffer.data, 0);
+                    OCI_STATUS = StatementBindCheck(bnd, (ub1*)bnd->input, (ub1*)bnd->buffer.data, 0);
                 }
             }
         }
@@ -593,10 +610,10 @@ boolean OCI_BindCheckAll
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindUpdateAll
+ * StatementBindUpdateAll
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_BindUpdateAll
+boolean StatementBindUpdateAll
 (
     OCI_Statement *stmt
 )
@@ -630,12 +647,12 @@ boolean OCI_BindUpdateAll
 
                     for (ub4 j = 0; j < count && OCI_STATUS; j++)
                     {
-                        OCI_STATUS = OCI_BindUpdate(bnd, (ub1*)bnd->buffer.data, (ub1*)bnd->input, j);
+                        OCI_STATUS = StatementBindUpdate(bnd, (ub1*)bnd->buffer.data, (ub1*)bnd->input, j);
                     }
                 }
                 else
                 {
-                    OCI_STATUS = OCI_BindUpdate(bnd, (ub1*)bnd->buffer.data, (ub1*)bnd->input, 0);
+                    OCI_STATUS = StatementBindUpdate(bnd, (ub1*)bnd->buffer.data, (ub1*)bnd->input, 0);
                 }
             }
         }
@@ -645,10 +662,10 @@ boolean OCI_BindUpdateAll
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_FetchIntoUserVariables
+ * StatementFetchIntoUserVariables
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_FetchIntoUserVariables
+boolean StatementFetchIntoUserVariables
 (
     OCI_Statement *stmt,
     va_list        args
@@ -805,10 +822,10 @@ boolean OCI_FetchIntoUserVariables
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StatementInit
+ * StatementInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Statement * OCI_StatementInit
+OCI_Statement * StatementInit
 (
     OCI_Connection *con,
     OCI_Statement  *stmt,
@@ -838,7 +855,7 @@ OCI_Statement * OCI_StatementInit
 
         /* reset statement */
 
-        OCI_STATUS = OCI_StatementReset(stmt);
+        OCI_STATUS = StatementReset(stmt);
 
         if (is_desc)
         {
@@ -890,10 +907,10 @@ OCI_Statement * OCI_StatementInit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StatementClose
+ * StatementClose
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_StatementClose
+boolean StatementClose
 (
     OCI_Statement *stmt
 )
@@ -913,14 +930,14 @@ boolean OCI_StatementClose
 
     /* reset data */
 
-    return OCI_StatementReset(stmt);
+    return StatementReset(stmt);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StatementCheckImplicitResultsets
+ * StatementCheckImplicitResultsets
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_StatementCheckImplicitResultsets
+boolean StatementCheckImplicitResultsets
 (
     OCI_Statement *stmt
 )
@@ -949,7 +966,7 @@ boolean OCI_StatementCheckImplicitResultsets
             {
                 if (OCI_RESULT_TYPE_SELECT == rs_type)
                 {
-                    stmt->stmts[i] = OCI_StatementInit(stmt->con, NULL, result, TRUE, NULL);
+                    stmt->stmts[i] = StatementInit(stmt->con, NULL, result, TRUE, NULL);
                     OCI_STATUS = (NULL != stmt->stmts[i]);
 
                     if (OCI_STATUS)
@@ -974,10 +991,10 @@ boolean OCI_StatementCheckImplicitResultsets
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BatchErrorsInit
+ * StatementBatchErrorsInit
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_BatchErrorInit
+boolean StatementBatchErrorInit
 (
     OCI_Statement *stmt
 )
@@ -987,7 +1004,7 @@ boolean OCI_BatchErrorInit
     OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_BatchErrorClear(stmt);
+    StatementBatchErrorClear(stmt);
 
     /* all OCI call here are not checked for errors as we already dealing
        with an array DML error */
@@ -1075,10 +1092,10 @@ boolean OCI_BatchErrorInit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PrepareInternal
+ * StatementPrepareInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_PrepareInternal
+boolean StatementPrepareInternal
 (
     OCI_Statement *stmt,
     const otext   *sql
@@ -1092,7 +1109,7 @@ boolean OCI_API OCI_PrepareInternal
 
     /* reset statement */
 
-    OCI_STATUS = OCI_StatementReset(stmt);
+    OCI_STATUS = StatementReset(stmt);
 
     if (OCI_STATUS)
     {
@@ -1174,10 +1191,10 @@ boolean OCI_API OCI_PrepareInternal
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExecuteInternal
+ * StatementExecuteInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ExecuteInternal
+boolean StatementExecuteInternal
 (
     OCI_Statement *stmt,
     ub4            mode
@@ -1209,11 +1226,11 @@ boolean OCI_API OCI_ExecuteInternal
 
     /* reset batch errors */
 
-    OCI_BatchErrorClear(stmt);
+    StatementBatchErrorClear(stmt);
 
     /* check bind objects for updating their null indicator status */
 
-    OCI_STATUS = OCI_BindCheckAll(stmt);
+    OCI_STATUS = StatementBindCheckAll(stmt);
 
     /* check current resultsets */
 
@@ -1263,7 +1280,7 @@ boolean OCI_API OCI_ExecuteInternal
     {
         /* build batch error list if the statement is array DML */
 
-        OCI_BatchErrorInit(stmt);
+        StatementBatchErrorInit(stmt);
 
         if (stmt->batch)
         {
@@ -1303,7 +1320,7 @@ boolean OCI_API OCI_ExecuteInternal
             
             /* reset binds indicators */
 
-            OCI_BindUpdateAll(stmt);
+            StatementBindUpdateAll(stmt);
 
             /* commit if necessary */
 
@@ -1314,7 +1331,7 @@ boolean OCI_API OCI_ExecuteInternal
 
             /* check if any implicit results are available */
 
-            OCI_STATUS = OCI_StatementCheckImplicitResultsets(stmt);
+            OCI_STATUS = StatementCheckImplicitResultsets(stmt);
 
         }
     }
@@ -1336,15 +1353,11 @@ boolean OCI_API OCI_ExecuteInternal
     return OCI_STATUS;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StatementCreate
+ * StatementCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Statement * OCI_API OCI_StatementCreate
+OCI_Statement * StatementCreate
 (
     OCI_Connection *con
 )
@@ -1360,7 +1373,7 @@ OCI_Statement * OCI_API OCI_StatementCreate
 
     if (OCI_STATUS)
     {
-        OCI_RETVAL = OCI_StatementInit(con, (OCI_Statement *) OCI_RETVAL, NULL, FALSE, NULL);
+        OCI_RETVAL = StatementInit(con, (OCI_Statement *) OCI_RETVAL, NULL, FALSE, NULL);
         OCI_STATUS = (NULL != OCI_RETVAL);
     }
 
@@ -1374,10 +1387,10 @@ OCI_Statement * OCI_API OCI_StatementCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StatementFree
+ * StatementFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_StatementFree
+boolean StatementFree
 (
     OCI_Statement *stmt
 )
@@ -1387,7 +1400,7 @@ boolean OCI_API OCI_StatementFree
     OCI_CALL_CHECK_OBJECT_FETCHED(stmt)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_StatementClose(stmt);
+    StatementClose(stmt);
     ListRemove(stmt->con->stmts, stmt);
 
     OCI_FREE(stmt)
@@ -1398,10 +1411,10 @@ boolean OCI_API OCI_StatementFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ReleaseResultsets
+ * StatementReleaseResultsets
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ReleaseResultsets
+boolean StatementReleaseResultsets
 (
     OCI_Statement *stmt
 )
@@ -1419,7 +1432,7 @@ boolean OCI_API OCI_ReleaseResultsets
         {
             if (stmt->rsts[i])
             {
-                OCI_StatementClose(stmt->stmts[i]);
+                StatementClose(stmt->stmts[i]);
             }
         }
 
@@ -1446,10 +1459,10 @@ boolean OCI_API OCI_ReleaseResultsets
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_Prepare
+ * StatementPrepare
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_Prepare
+boolean StatementPrepare
 (
     OCI_Statement *stmt,
     const otext   *sql
@@ -1460,16 +1473,16 @@ boolean OCI_API OCI_Prepare
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_RETVAL = OCI_STATUS = OCI_PrepareInternal(stmt, sql);
+    OCI_RETVAL = OCI_STATUS = StatementPrepareInternal(stmt, sql);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_Execute
+ * StatementExecute
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_Execute
+boolean StatementExecute
 (
     OCI_Statement *stmt
 )
@@ -1479,16 +1492,16 @@ boolean OCI_API OCI_Execute
     OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_RETVAL = OCI_STATUS = OCI_ExecuteInternal(stmt, OCI_DEFAULT);
+    OCI_RETVAL = OCI_STATUS = StatementExecuteInternal(stmt, OCI_DEFAULT);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExecuteStmt
+ * StatementExecuteStmt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ExecuteStmt
+boolean StatementExecuteStmt
 (
     OCI_Statement *stmt,
     const otext   *sql
@@ -1499,16 +1512,16 @@ boolean OCI_API OCI_ExecuteStmt
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_RETVAL = OCI_STATUS = OCI_PrepareInternal(stmt, sql) && OCI_ExecuteInternal(stmt, OCI_DEFAULT);
+    OCI_RETVAL = OCI_STATUS = StatementPrepareInternal(stmt, sql) && StatementExecuteInternal(stmt, OCI_DEFAULT);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_Parse
+ * StatementParse
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_Parse
+boolean StatementParse
 (
     OCI_Statement *stmt,
     const otext   *sql
@@ -1519,16 +1532,16 @@ boolean OCI_API OCI_Parse
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_RETVAL = OCI_STATUS = OCI_PrepareInternal(stmt, sql) && OCI_ExecuteInternal(stmt, OCI_PARSE_ONLY);
+    OCI_RETVAL = OCI_STATUS = StatementPrepareInternal(stmt, sql) && StatementExecuteInternal(stmt, OCI_PARSE_ONLY);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_Describe
+ * StatementDescribe
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_Describe
+boolean StatementDescribe
 (
     OCI_Statement *stmt,
     const otext   *sql
@@ -1539,11 +1552,11 @@ boolean OCI_API OCI_Describe
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, sql)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    OCI_STATUS = OCI_PrepareInternal(stmt, sql);
+    OCI_STATUS = StatementPrepareInternal(stmt, sql);
 
     if (OCI_STATUS && OCI_CST_SELECT == stmt->type)
     {
-        OCI_STATUS = OCI_ExecuteInternal(stmt, OCI_DESCRIBE_ONLY);
+        OCI_STATUS = StatementExecuteInternal(stmt, OCI_DESCRIBE_ONLY);
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -1552,17 +1565,17 @@ boolean OCI_API OCI_Describe
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PrepareFmt
+ * StatementPrepareFmt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_PrepareFmt
+boolean StatementPrepareFmt
 (
     OCI_Statement *stmt,
     const otext   *sql,
-    ...
+    va_list args
 )
 {
-    va_list args;
+    va_list args_save = args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -1571,11 +1584,7 @@ boolean OCI_PrepareFmt
 
     /* first, get buffer size */
 
-    va_start(args, sql);
-
     const int size = ParseSqlFmt(stmt, NULL, sql, &args);
-
-    va_end(args);
 
     if (size > 0)
     {
@@ -1589,16 +1598,12 @@ boolean OCI_PrepareFmt
         {
             /* format buffer */
 
-            va_start(args, sql);
-
-            if (ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
+            if (ParseSqlFmt(stmt, sql_fmt, sql, &args_save) > 0)
             {
                 /* parse buffer */
 
-                OCI_STATUS = OCI_PrepareInternal(stmt, sql_fmt);
+                OCI_STATUS = StatementPrepareInternal(stmt, sql_fmt);
             }
-
-            va_end(args);
 
             OCI_FREE(sql_fmt)
         }
@@ -1610,17 +1615,17 @@ boolean OCI_PrepareFmt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ExecuteStmtFmt
+ * StatementExecuteStmtFmt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ExecuteStmtFmt
+boolean StatementExecuteStmtFmt
 (
     OCI_Statement *stmt,
     const otext   *sql,
-    ...
+    va_list args
 )
 {
-    va_list args;
+    va_list args_save = args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -1628,13 +1633,9 @@ boolean OCI_ExecuteStmtFmt
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
     /* first, get buffer size */
-
-    va_start(args, sql);
 
    const int size = ParseSqlFmt(stmt, NULL, sql, &args);
 
-    va_end(args);
-
     if (size > 0)
     {
         otext *sql_fmt = NULL;
@@ -1647,16 +1648,12 @@ boolean OCI_ExecuteStmtFmt
         {
             /* format buffer */
 
-            va_start(args, sql);
-
-            if (ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
+            if (ParseSqlFmt(stmt, sql_fmt, sql, &args_save) > 0)
             {
                 /* prepare and execute SQL buffer */
 
-                OCI_STATUS = OCI_PrepareInternal(stmt, sql_fmt) && OCI_ExecuteInternal(stmt, OCI_DEFAULT);
+                OCI_STATUS = StatementPrepareInternal(stmt, sql_fmt) && StatementExecuteInternal(stmt, OCI_DEFAULT);
             }
-
-            va_end(args);
 
             OCI_FREE(sql_fmt)
         }
@@ -1668,17 +1665,17 @@ boolean OCI_ExecuteStmtFmt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ParseFmt
+ * StatementParseFmt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ParseFmt
+boolean StatementParseFmt
 (
     OCI_Statement *stmt,
     const otext   *sql,
-    ...
+    va_list args
 )
 {
-    va_list args;
+    va_list args_save = args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -1687,11 +1684,7 @@ boolean OCI_ParseFmt
 
     /* first, get buffer size */
 
-    va_start(args, sql);
-
     const int size = ParseSqlFmt(stmt, NULL, sql, &args);
-
-    va_end(args);
 
     if (size > 0)
     {
@@ -1705,16 +1698,12 @@ boolean OCI_ParseFmt
         {
             /* format buffer */
 
-            va_start(args, sql);
-
-            if (ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
+            if (ParseSqlFmt(stmt, sql_fmt, sql, &args_save) > 0)
             {
                 /* prepare and execute SQL buffer */
 
-                OCI_STATUS = OCI_PrepareInternal(stmt, sql_fmt) && OCI_ExecuteInternal(stmt, OCI_PARSE_ONLY);
+                OCI_STATUS = StatementPrepareInternal(stmt, sql_fmt) && StatementExecuteInternal(stmt, OCI_PARSE_ONLY);
             }
-
-            va_end(args);
 
             OCI_FREE(sql_fmt)
         }
@@ -1726,17 +1715,17 @@ boolean OCI_ParseFmt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DescribeFmt
+ * StatementDescribeFmt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_DescribeFmt
+boolean StatementDescribeFmt
 (
     OCI_Statement *stmt,
     const otext   *sql,
-    ...
+    va_list args
 )
 {
-    va_list args;
+    va_list args_save = args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -1745,11 +1734,7 @@ boolean OCI_DescribeFmt
 
     /* first, get buffer size */
 
-    va_start(args, sql);
-
     const int size = ParseSqlFmt(stmt, NULL, sql, &args);
-
-    va_end(args);
 
     if (size > 0)
     {
@@ -1763,16 +1748,12 @@ boolean OCI_DescribeFmt
         {
             /* format buffer */
 
-            va_start(args, sql);
-
-            if (ParseSqlFmt(stmt, sql_fmt, sql, &args) > 0)
+            if (ParseSqlFmt(stmt, sql_fmt, sql, &args_save) > 0)
             {
                 /* prepare and execute SQL buffer */
 
-                OCI_STATUS = OCI_PrepareInternal(stmt, sql_fmt) && OCI_ExecuteInternal(stmt, OCI_DESCRIBE_ONLY);
+                OCI_STATUS = StatementPrepareInternal(stmt, sql_fmt) && StatementExecuteInternal(stmt, OCI_DESCRIBE_ONLY);
             }
-
-            va_end(args);
 
             OCI_FREE(sql_fmt)
         }
@@ -1784,10 +1765,10 @@ boolean OCI_DescribeFmt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArraySetSize
+ * StatementBindArraySetSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArraySetSize
+boolean StatementBindArraySetSize
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -1824,10 +1805,10 @@ boolean OCI_API OCI_BindArraySetSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayGetSize
+ * StatementBindArrayGetSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_BindArrayGetSize
+unsigned int StatementBindArrayGetSize
 (
     OCI_Statement *stmt
 )
@@ -1836,10 +1817,10 @@ unsigned int OCI_API OCI_BindArrayGetSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_AllowRebinding
+ * StatementAllowRebinding
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_AllowRebinding
+boolean StatementAllowRebinding
 (
     OCI_Statement *stmt,
     boolean        value
@@ -1849,10 +1830,10 @@ boolean OCI_API OCI_AllowRebinding
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_IsRebindingAllowed
+ * StatementIsRebindingAllowed
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_IsRebindingAllowed
+boolean StatementIsRebindingAllowed
 (
     OCI_Statement *stmt
 )
@@ -1864,7 +1845,7 @@ boolean OCI_API OCI_IsRebindingAllowed
 * OCI_BindBoolean
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindBoolean
+boolean StatementBindBoolean
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -1893,10 +1874,10 @@ boolean OCI_API OCI_BindBoolean
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindNumber
+ * StatementBindNumber
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindNumber
+boolean StatementBindNumber
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -1913,7 +1894,7 @@ boolean OCI_API OCI_BindNumber
 * OCI_BindArrayOfNumbers
 * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfNumbers
+boolean StatementBindArrayOfNumbers
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -1928,10 +1909,10 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfNumbers
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindShort
+ * StatementBindShort
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindShort
+boolean StatementBindShort
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -1945,10 +1926,10 @@ boolean OCI_API OCI_BindShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfShorts
+ * StatementBindArrayOfShorts
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfShorts
+boolean StatementBindArrayOfShorts
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -1963,10 +1944,10 @@ boolean OCI_API OCI_BindArrayOfShorts
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindUnsignedShort
+ * StatementBindUnsignedShort
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindUnsignedShort
+boolean StatementBindUnsignedShort
 (
     OCI_Statement  *stmt,
     const otext    *name,
@@ -1980,10 +1961,10 @@ boolean OCI_API OCI_BindUnsignedShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfUnsignedShorts
+ * StatementBindArrayOfUnsignedShorts
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfUnsignedShorts
+boolean StatementBindArrayOfUnsignedShorts
 (
     OCI_Statement  *stmt,
     const otext    *name,
@@ -1998,10 +1979,10 @@ boolean OCI_API OCI_BindArrayOfUnsignedShorts
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindInt
+ * StatementBindInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindInt
+boolean StatementBindInt
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2015,10 +1996,10 @@ boolean OCI_API OCI_BindInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfInts
+ * StatementBindArrayOfInts
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfInts
+boolean StatementBindArrayOfInts
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2033,10 +2014,10 @@ boolean OCI_API OCI_BindArrayOfInts
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindUnsignedInt
+ * StatementBindUnsignedInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindUnsignedInt
+boolean StatementBindUnsignedInt
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2050,10 +2031,10 @@ boolean OCI_API OCI_BindUnsignedInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfUnsignedInts
+ * StatementBindArrayOfUnsignedInts
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfUnsignedInts
+boolean StatementBindArrayOfUnsignedInts
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2068,10 +2049,10 @@ boolean OCI_API OCI_BindArrayOfUnsignedInts
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindBigInt
+ * StatementBindBigInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindBigInt
+boolean StatementBindBigInt
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2085,10 +2066,10 @@ boolean OCI_API OCI_BindBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfBigInts
+ * StatementBindArrayOfBigInts
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfBigInts
+boolean StatementBindArrayOfBigInts
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2103,10 +2084,10 @@ boolean OCI_API OCI_BindArrayOfBigInts
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindUnsignedBigInt
+ * StatementBindUnsignedBigInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindUnsignedBigInt
+boolean StatementBindUnsignedBigInt
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2120,10 +2101,10 @@ boolean OCI_API OCI_BindUnsignedBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfUnsignedInts
+ * StatementBindArrayOfUnsignedInts
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfUnsignedBigInts
+boolean StatementBindArrayOfUnsignedBigInts
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2138,10 +2119,10 @@ boolean OCI_API OCI_BindArrayOfUnsignedBigInts
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindString
+ * StatementBindString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindString
+boolean StatementBindString
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2181,10 +2162,10 @@ boolean OCI_API OCI_BindString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfStrings
+ * StatementBindArrayOfStrings
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfStrings
+boolean StatementBindArrayOfStrings
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2208,10 +2189,10 @@ boolean OCI_API OCI_BindArrayOfStrings
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindRaw
+ * StatementBindRaw
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindRaw
+boolean StatementBindRaw
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2240,10 +2221,10 @@ boolean OCI_API OCI_BindRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfRaws
+ * StatementBindArrayOfRaws
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfRaws
+boolean StatementBindArrayOfRaws
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2265,10 +2246,10 @@ boolean OCI_API OCI_BindArrayOfRaws
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindDouble
+ * StatementBindDouble
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindDouble
+boolean StatementBindDouble
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2298,10 +2279,10 @@ boolean OCI_API OCI_BindDouble
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfDoubles
+ * StatementBindArrayOfDoubles
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfDoubles
+boolean StatementBindArrayOfDoubles
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2332,10 +2313,10 @@ boolean OCI_API OCI_BindArrayOfDoubles
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindFloat
+ * StatementBindFloat
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindFloat
+boolean StatementBindFloat
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2365,10 +2346,10 @@ boolean OCI_API OCI_BindFloat
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfFloats
+ * StatementBindArrayOfFloats
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfFloats
+boolean StatementBindArrayOfFloats
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2399,10 +2380,10 @@ boolean OCI_API OCI_BindArrayOfFloats
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindDate
+ * StatementBindDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindDate
+boolean StatementBindDate
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2416,10 +2397,10 @@ boolean OCI_API OCI_BindDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfDates
+ * StatementBindArrayOfDates
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfDates
+boolean StatementBindArrayOfDates
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2434,10 +2415,10 @@ boolean OCI_API OCI_BindArrayOfDates
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindTimestamp
+ * StatementBindTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindTimestamp
+boolean StatementBindTimestamp
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2463,10 +2444,10 @@ boolean OCI_API OCI_BindTimestamp
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfTimestamps
+ * StatementBindArrayOfTimestamps
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfTimestamps
+boolean StatementBindArrayOfTimestamps
 (
     OCI_Statement  *stmt,
     const otext    *name,
@@ -2502,10 +2483,10 @@ boolean OCI_API OCI_BindArrayOfTimestamps
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindInterval
+ * StatementBindInterval
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindInterval
+boolean StatementBindInterval
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2535,10 +2516,10 @@ boolean OCI_API OCI_BindInterval
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfIntervals
+ * StatementBindArrayOfIntervals
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfIntervals
+boolean StatementBindArrayOfIntervals
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2574,10 +2555,10 @@ boolean OCI_API OCI_BindArrayOfIntervals
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindObject
+ * StatementBindObject
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindObject
+boolean StatementBindObject
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2591,10 +2572,10 @@ boolean OCI_API OCI_BindObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfObjects
+ * StatementBindArrayOfObjects
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfObjects
+boolean StatementBindArrayOfObjects
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2616,10 +2597,10 @@ boolean OCI_API OCI_BindArrayOfObjects
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindLob
+ * StatementBindLob
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindLob
+boolean StatementBindLob
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2636,10 +2617,10 @@ boolean OCI_API OCI_BindLob
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfLobs
+ * StatementBindArrayOfLobs
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfLobs
+boolean StatementBindArrayOfLobs
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2663,10 +2644,10 @@ boolean OCI_API OCI_BindArrayOfLobs
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindFile
+ * StatementBindFile
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindFile
+boolean StatementBindFile
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2683,10 +2664,10 @@ boolean OCI_API OCI_BindFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfFiles
+ * StatementBindArrayOfFiles
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfFiles
+boolean StatementBindArrayOfFiles
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2710,10 +2691,10 @@ boolean OCI_API OCI_BindArrayOfFiles
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindRef
+ * StatementBindRef
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindRef
+boolean StatementBindRef
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2727,10 +2708,10 @@ boolean OCI_API OCI_BindRef
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfRefs
+ * StatementBindArrayOfRefs
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfRefs
+boolean StatementBindArrayOfRefs
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2746,10 +2727,10 @@ boolean OCI_API OCI_BindArrayOfRefs
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindColl
+ * StatementBindColl
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindColl
+boolean StatementBindColl
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2763,10 +2744,10 @@ boolean OCI_API OCI_BindColl
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindArrayOfColls
+ * StatementBindArrayOfColls
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindArrayOfColls
+boolean StatementBindArrayOfColls
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2782,10 +2763,10 @@ boolean OCI_API OCI_BindArrayOfColls
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindStatement
+ * StatementBindStatement
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindStatement
+boolean StatementBindStatement
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2803,10 +2784,10 @@ boolean OCI_API OCI_BindStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_BindLong
+ * StatementBindLong
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_BindLong
+boolean StatementBindLong
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2827,7 +2808,7 @@ boolean OCI_API OCI_BindLong
 * OCI_RegisterNumber
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterNumber
+boolean StatementRegisterNumber
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -2837,10 +2818,10 @@ boolean OCI_API OCI_RegisterNumber
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterShort
+ * StatementRegisterShort
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterShort
+boolean StatementRegisterShort
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -2850,10 +2831,10 @@ boolean OCI_API OCI_RegisterShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterUnsignedShort
+ * StatementRegisterUnsignedShort
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterUnsignedShort
+boolean StatementRegisterUnsignedShort
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -2863,10 +2844,10 @@ boolean OCI_API OCI_RegisterUnsignedShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterInt
+ * StatementRegisterInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterInt
+boolean StatementRegisterInt
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -2876,10 +2857,10 @@ boolean OCI_API OCI_RegisterInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterUnsignedInt
+ * StatementRegisterUnsignedInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterUnsignedInt
+boolean StatementRegisterUnsignedInt
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -2889,10 +2870,10 @@ boolean OCI_API OCI_RegisterUnsignedInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterBigInt
+ * StatementRegisterBigInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterBigInt
+boolean StatementRegisterBigInt
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -2902,10 +2883,10 @@ boolean OCI_API OCI_RegisterBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterUnsignedBigInt
+ * StatementRegisterUnsignedBigInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterUnsignedBigInt
+boolean StatementRegisterUnsignedBigInt
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -2915,10 +2896,10 @@ boolean OCI_API OCI_RegisterUnsignedBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterString
+ * StatementRegisterString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterString
+boolean StatementRegisterString
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2940,10 +2921,10 @@ boolean OCI_API OCI_RegisterString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterRaw
+ * StatementRegisterRaw
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterRaw
+boolean StatementRegisterRaw
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2963,10 +2944,10 @@ boolean OCI_API OCI_RegisterRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterDouble
+ * StatementRegisterDouble
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterDouble
+boolean StatementRegisterDouble
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -2976,10 +2957,10 @@ boolean OCI_API OCI_RegisterDouble
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterFloat
+ * StatementRegisterFloat
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterFloat
+boolean StatementRegisterFloat
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -2989,10 +2970,10 @@ boolean OCI_API OCI_RegisterFloat
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterDate
+ * StatementRegisterDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterDate
+boolean StatementRegisterDate
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -3023,10 +3004,10 @@ boolean OCI_API OCI_RegisterDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterTimestamp
+ * StatementRegisterTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterTimestamp
+boolean StatementRegisterTimestamp
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -3054,10 +3035,10 @@ boolean OCI_API OCI_RegisterTimestamp
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterInterval
+ * StatementRegisterInterval
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterInterval
+boolean StatementRegisterInterval
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -3085,10 +3066,10 @@ boolean OCI_API OCI_RegisterInterval
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterObject
+ * StatementRegisterObject
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterObject
+boolean StatementRegisterObject
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -3108,10 +3089,10 @@ boolean OCI_API OCI_RegisterObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterLob
+ * StatementRegisterLob
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterLob
+boolean StatementRegisterLob
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -3133,10 +3114,10 @@ boolean OCI_API OCI_RegisterLob
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterFile
+ * StatementRegisterFile
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterFile
+boolean StatementRegisterFile
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -3158,10 +3139,10 @@ boolean OCI_API OCI_RegisterFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_RegisterRef
+ * StatementRegisterRef
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_RegisterRef
+boolean StatementRegisterRef
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -3181,10 +3162,10 @@ boolean OCI_API OCI_RegisterRef
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetStatementType
+ * StatementGetStatementType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetStatementType
+unsigned int StatementGetStatementType
 (
     OCI_Statement *stmt
 )
@@ -3193,10 +3174,10 @@ unsigned int OCI_API OCI_GetStatementType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetFetchMode
+ * StatementSetFetchMode
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetFetchMode
+boolean StatementSetFetchMode
 (
     OCI_Statement *stmt,
     unsigned int   mode
@@ -3233,10 +3214,10 @@ boolean OCI_API OCI_SetFetchMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetFetchMode
+ * StatementGetFetchMode
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetFetchMode
+unsigned int StatementGetFetchMode
 (
     OCI_Statement *stmt
 )
@@ -3245,10 +3226,10 @@ unsigned int OCI_API OCI_GetFetchMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetBindMode
+ * StatementSetBindMode
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetBindMode
+boolean StatementSetBindMode
 (
     OCI_Statement *stmt,
     unsigned int   mode
@@ -3258,10 +3239,10 @@ boolean OCI_API OCI_SetBindMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetBindMode
+ * StatementGetBindMode
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetBindMode
+unsigned int StatementGetBindMode
 (
     OCI_Statement *stmt
 )
@@ -3270,10 +3251,10 @@ unsigned int OCI_API OCI_GetBindMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetBindAllocation
+ * StatementSetBindAllocation
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetBindAllocation
+boolean StatementSetBindAllocation
 (
     OCI_Statement *stmt,
     unsigned int   mode
@@ -3283,10 +3264,10 @@ boolean OCI_API OCI_SetBindAllocation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetBindAllocation
+ * StatementGetBindAllocation
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetBindAllocation
+unsigned int StatementGetBindAllocation
 (
     OCI_Statement *stmt
 )
@@ -3295,10 +3276,10 @@ unsigned int OCI_API OCI_GetBindAllocation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetFetchSize
+ * StatementSetFetchSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetFetchSize
+boolean StatementSetFetchSize
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -3317,10 +3298,10 @@ boolean OCI_API OCI_SetFetchSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetFetchSize
+ * StatementGetFetchSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetFetchSize
+unsigned int StatementGetFetchSize
 (
     OCI_Statement *stmt
 )
@@ -3329,10 +3310,10 @@ unsigned int OCI_API OCI_GetFetchSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_PrefetchSize
+ * StatementPrefetchSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetPrefetchSize
+boolean StatementSetPrefetchSize
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -3362,10 +3343,10 @@ boolean OCI_API OCI_SetPrefetchSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetPrefetchSize
+ * StatementGetPrefetchSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetPrefetchSize
+unsigned int StatementGetPrefetchSize
 (
     OCI_Statement *stmt
 )
@@ -3374,10 +3355,10 @@ unsigned int OCI_API OCI_GetPrefetchSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetPrefetchMemory
+ * StatementSetPrefetchMemory
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetPrefetchMemory
+boolean StatementSetPrefetchMemory
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -3400,10 +3381,10 @@ boolean OCI_API OCI_SetPrefetchMemory
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetPrefetchMemory
+ * StatementGetPrefetchMemory
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetPrefetchMemory
+unsigned int StatementGetPrefetchMemory
 (
     OCI_Statement *stmt
 )
@@ -3412,10 +3393,10 @@ unsigned int OCI_API OCI_GetPrefetchMemory
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetLongMaxSize
+ * StatementSetLongMaxSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetLongMaxSize
+boolean StatementSetLongMaxSize
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -3434,10 +3415,10 @@ boolean OCI_API OCI_SetLongMaxSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetLongMaxSize
+ * StatementGetLongMaxSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetLongMaxSize
+unsigned int StatementGetLongMaxSize
 (
     OCI_Statement *stmt
 )
@@ -3446,10 +3427,10 @@ unsigned int OCI_API OCI_GetLongMaxSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_SetLongMode
+ * StatementSetLongMode
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_SetLongMode
+boolean StatementSetLongMode
 (
     OCI_Statement *stmt,
     unsigned int   mode
@@ -3459,10 +3440,10 @@ boolean OCI_API OCI_SetLongMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetLongMode
+ * StatementGetLongMode
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetLongMode
+unsigned int StatementGetLongMode
 (
     OCI_Statement *stmt
 )
@@ -3471,10 +3452,10 @@ unsigned int OCI_API OCI_GetLongMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StatementGetConnection
+ * StatementGetConnection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * OCI_API OCI_StatementGetConnection
+OCI_Connection * StatementGetConnection
 (
     OCI_Statement *stmt
 )
@@ -3483,10 +3464,10 @@ OCI_Connection * OCI_API OCI_StatementGetConnection
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetSql
+ * StatementGetSql
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetSql
+const otext * StatementGetSql
 (
     OCI_Statement *stmt
 )
@@ -3495,10 +3476,10 @@ const otext * OCI_API OCI_GetSql
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetSqlIdentifier
+ * StatementGetSqlIdentifier
  * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT const otext* OCI_API OCI_GetSqlIdentifier
+const otext* StatementGetSqlIdentifier
 (
     OCI_Statement *stmt
 )
@@ -3508,10 +3489,10 @@ OCI_EXPORT const otext* OCI_API OCI_GetSqlIdentifier
 
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetSqlErrorPos
+ * StatementGetSqlErrorPos
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetSqlErrorPos
+unsigned int StatementGetSqlErrorPos
 (
     OCI_Statement *stmt
 )
@@ -3520,10 +3501,10 @@ unsigned int OCI_API OCI_GetSqlErrorPos
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetAffectedRows
+ * StatementGetAffectedRows
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetAffectedRows
+unsigned int StatementGetAffectedRows
 (
     OCI_Statement *stmt
 )
@@ -3542,10 +3523,10 @@ unsigned int OCI_API OCI_GetAffectedRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetBindCount
+ * StatementGetBindCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetBindCount
+unsigned int StatementGetBindCount
 (
     OCI_Statement *stmt
 )
@@ -3554,10 +3535,10 @@ unsigned int OCI_API OCI_GetBindCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetBind
+ * StatementGetBind
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Bind * OCI_API OCI_GetBind
+OCI_Bind * StatementGetBind
 (
     OCI_Statement *stmt,
     unsigned int   index
@@ -3574,10 +3555,10 @@ OCI_Bind * OCI_API OCI_GetBind
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetBind2
+ * StatementGetBind2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Bind * OCI_API OCI_GetBind2
+OCI_Bind * StatementGetBind2
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -3590,7 +3571,7 @@ OCI_Bind * OCI_API OCI_GetBind2
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    index = OCI_BindGetInternalIndex(stmt, name);
+    index = StatementBindGetInternalIndex(stmt, name);
 
     if (index > 0)
     {
@@ -3608,7 +3589,7 @@ OCI_Bind * OCI_API OCI_GetBind2
 * OCI_GetBindIndex
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetBindIndex
+unsigned int StatementGetBindIndex
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -3623,7 +3604,7 @@ unsigned int OCI_API OCI_GetBindIndex
 
     OCI_STATUS = FALSE;
 
-    index = OCI_BindGetInternalIndex(stmt, name);
+    index = StatementBindGetInternalIndex(stmt, name);
 
     if (index >= 0)
     {
@@ -3635,10 +3616,10 @@ unsigned int OCI_API OCI_GetBindIndex
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetSQLCommand
+ * StatementGetSQLCommand
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetSQLCommand
+unsigned int StatementGetSQLCommand
 (
     OCI_Statement *stmt
 )
@@ -3658,10 +3639,10 @@ unsigned int OCI_API OCI_GetSQLCommand
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetSQLVerb
+ * StatementGetSQLVerb
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_GetSQLVerb
+const otext * StatementGetSQLVerb
 (
     OCI_Statement *stmt
 )
@@ -3690,10 +3671,10 @@ const otext * OCI_API OCI_GetSQLVerb
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetBatchError
+ * StatementGetBatchError
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Error * OCI_API OCI_GetBatchError
+OCI_Error * StatementGetBatchError
 (
     OCI_Statement *stmt
 )
@@ -3711,10 +3692,10 @@ OCI_Error * OCI_API OCI_GetBatchError
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_GetBatchErrorCount
+ * StatementGetBatchErrorCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_GetBatchErrorCount
+unsigned int StatementGetBatchErrorCount
 (
     OCI_Statement *stmt
 )

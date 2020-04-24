@@ -802,7 +802,7 @@ OCI_Resultset *rs
 
             if (OCI_CDT_CURSOR == def->col.datatype)
             {
-                OCI_StatementClose((OCI_Statement *)def->obj);
+                StatementClose((OCI_Statement *)def->obj);
                 OCI_FREE(def->obj)
             }
             else
@@ -2283,8 +2283,8 @@ OCI_Statement * ResultsetGetStatement
     (
        rs, index, OCI_Statement *, NULL, OCI_CDT_CURSOR,
 
-       OCI_StatementInit(rs->stmt->con,(OCI_Statement *) def->obj,
-                         (OCIStmt *) DefineGetData(def), TRUE, def->col.name)
+       StatementInit(rs->stmt->con,(OCI_Statement *) def->obj,
+                     (OCIStmt *) DefineGetData(def), TRUE, def->col.name)
     )
 }
 

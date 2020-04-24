@@ -789,7 +789,7 @@ boolean ConnectionLogOff
 
     /* free all statements */
 
-    ListForEach(con->stmts, (POCI_LIST_FOR_EACH) OCI_StatementClose);
+    ListForEach(con->stmts, (POCI_LIST_FOR_EACH) StatementClose);
     ListClear(con->stmts);
 
     /* free all type info objects */
@@ -2432,7 +2432,7 @@ boolean ConnectionExecuteImmediate
 
         if (OCI_STATUS && (OCI_CST_SELECT == OCI_GetStatementType(stmt)))
         {
-            OCI_STATUS = OCI_FetchIntoUserVariables(stmt, args);
+            OCI_STATUS = StatementFetchIntoUserVariables(stmt, args);
         }
 
         OCI_StatementFree(stmt);
@@ -2490,13 +2490,13 @@ boolean ConnectionExecuteImmediateFmt
                 {
                     /* prepare and execute SQL buffer */
 
-                    OCI_STATUS = OCI_PrepareInternal(stmt, sql_fmt) && OCI_ExecuteInternal(stmt, OCI_DEFAULT);
+                    OCI_STATUS = StatementPrepareInternal(stmt, sql_fmt) && StatementExecuteInternal(stmt, OCI_DEFAULT);
 
                     /* get resultset and set up variables */
 
                     if (OCI_STATUS && (OCI_CST_SELECT == OCI_GetStatementType(stmt)))
                     {
-                        OCI_STATUS = OCI_FetchIntoUserVariables(stmt, args_save);
+                        OCI_STATUS = StatementFetchIntoUserVariables(stmt, args_save);
                     }
                 }
 

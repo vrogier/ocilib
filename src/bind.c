@@ -373,7 +373,7 @@ OCI_Bind* BindCreate
     {
         if (OCI_BIND_INPUT == mode)
         {
-            prev_index = OCI_BindGetInternalIndex(stmt, name);
+            prev_index = StatementBindGetInternalIndex(stmt, name);
 
             if (prev_index > 0)
             {
