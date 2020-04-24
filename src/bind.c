@@ -230,7 +230,7 @@ void BindPerformBinding
         dbtext * dbstr = NULL;
         int      dbsize = -1;
 
-        dbstr = OCI_StringGetOracleString(bnd->name, &dbsize);
+        dbstr = StringGetOracleString(bnd->name, &dbsize);
 
         OCI_EXEC
         (
@@ -253,7 +253,7 @@ void BindPerformBinding
             )
         )
 
-            OCI_StringReleaseOracleString(dbstr);
+            StringReleaseOracleString(dbstr);
     }
 
     if (SQLT_NTY == bnd->code || SQLT_REF == bnd->code)

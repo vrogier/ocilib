@@ -384,7 +384,7 @@ boolean OCI_BindCheck
                 const size_t src_offset = index * max_chars * sizeof(otext);
                 const size_t dst_offset = index * max_chars * sizeof(dbtext);
 
-                OCI_StringUTF32ToUTF16(src + src_offset, dst + dst_offset, max_chars - 1);
+                StringUTF32ToUTF16(src + src_offset, dst + dst_offset, max_chars - 1);
             }
         }
         // otherwise we have an ocilib handle based type
@@ -498,7 +498,7 @@ boolean OCI_BindUpdate
             const size_t src_offset = index * max_chars * sizeof(dbtext);
             const size_t dst_offset = index * max_chars * sizeof(otext);
 
-           OCI_StringUTF16ToUTF32(src + src_offset, dst + dst_offset, max_chars - 1);
+           StringUTF16ToUTF32(src + src_offset, dst + dst_offset, max_chars - 1);
         }
     }
     else if (OCI_CDT_OBJECT == bnd->type)
@@ -860,7 +860,7 @@ OCI_Statement * OCI_StatementInit
 
                 if (OCI_STATUS && dbstr)
                 {
-                    stmt->sql = OCI_StringDuplicateFromOracleString(dbstr, dbcharcount(dbsize));
+                    stmt->sql = StringDuplicateFromOracleString(dbstr, dbcharcount(dbsize));
                     OCI_STATUS = (NULL != stmt->sql);
                 }
             }
@@ -1049,7 +1049,7 @@ boolean OCI_BatchErrorInit
 
                 dbsize = (int) osizeof(err->str) - 1;
 
-                dbstr = OCI_StringGetOracleString(err->str, &dbsize);
+                dbstr = StringGetOracleString(err->str, &dbsize);
 
                 OCIErrorGet((dvoid *) hndl,
                             (ub4) 1,
@@ -1058,8 +1058,8 @@ boolean OCI_BatchErrorInit
                             (ub4) dbsize,
                             (ub4) OCI_HTYPE_ERROR);
 
-                OCI_StringCopyOracleStringToNativeString(dbstr, err->str, dbcharcount(dbsize));
-                OCI_StringReleaseOracleString(dbstr);
+                StringCopyOracleStringToNativeString(dbstr, err->str, dbcharcount(dbsize));
+                StringReleaseOracleString(dbstr);
             }
         }
 
@@ -1100,7 +1100,7 @@ boolean OCI_API OCI_PrepareInternal
 
         stmt->sql = ostrdup(sql);
 
-        dbstr = OCI_StringGetOracleString(stmt->sql, &dbsize);
+        dbstr = StringGetOracleString(stmt->sql, &dbsize);
 
         if (OCILib.version_runtime < OCI_9_2)
         {
@@ -1158,7 +1158,7 @@ boolean OCI_API OCI_PrepareInternal
         OCI_GET_ATTRIB(OCI_HTYPE_STMT, OCI_ATTR_STMT_TYPE, stmt->stmt, &stmt->type, NULL)
     }
 
-    OCI_StringReleaseOracleString(dbstr);
+    StringReleaseOracleString(dbstr);
 
     /* update statement status */
 

@@ -134,10 +134,10 @@ boolean FileGetInfo
         ub2    usize2  = 0;
 
         dbsize1 = (int) OCI_SIZE_DIRECTORY  * (int) sizeof(otext);
-        dbstr1  = OCI_StringGetOracleString(file->dir, &dbsize1);
+        dbstr1  = StringGetOracleString(file->dir, &dbsize1);
 
         dbsize2 = (int) OCI_SIZE_FILENAME  * (int) sizeof(otext);
-        dbstr2  = OCI_StringGetOracleString(file->name, &dbsize1);
+        dbstr2  = StringGetOracleString(file->name, &dbsize1);
 
         usize1 = (ub2) dbsize1;
         usize2 = (ub2) dbsize2;
@@ -152,11 +152,11 @@ boolean FileGetInfo
         dbsize1 = (int) usize1;
         dbsize2 = (int) usize2;
 
-        OCI_StringCopyOracleStringToNativeString(dbstr1, file->dir,  dbcharcount(dbsize1));
-        OCI_StringCopyOracleStringToNativeString(dbstr2, file->name, dbcharcount(dbsize2));
+        StringCopyOracleStringToNativeString(dbstr1, file->dir,  dbcharcount(dbsize1));
+        StringCopyOracleStringToNativeString(dbstr2, file->name, dbcharcount(dbsize2));
 
-        OCI_StringReleaseOracleString(dbstr1);
-        OCI_StringReleaseOracleString(dbstr2);
+        StringReleaseOracleString(dbstr1);
+        StringReleaseOracleString(dbstr2);
     }
 
     return OCI_STATUS;
@@ -490,8 +490,8 @@ boolean FileSetName
     OCI_CALL_CHECK_PTR(OCI_IPC_FILE, file)
     OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
-    dbstr1 = OCI_StringGetOracleString(dir,  &dbsize1);
-    dbstr2 = OCI_StringGetOracleString(name, &dbsize2);
+    dbstr1 = StringGetOracleString(dir,  &dbsize1);
+    dbstr2 = StringGetOracleString(name, &dbsize2);
 
     OCI_EXEC
     (
@@ -501,8 +501,8 @@ boolean FileSetName
                           (OraText *) dbstr2, (ub2) dbsize2)
     )
 
-    OCI_StringReleaseOracleString(dbstr1);
-    OCI_StringReleaseOracleString(dbstr2);
+    StringReleaseOracleString(dbstr1);
+    StringReleaseOracleString(dbstr2);
 
     if (OCI_STATUS)
     {

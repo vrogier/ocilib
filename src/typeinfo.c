@@ -204,7 +204,7 @@ OCI_TypeInfo * TypeInfoGet
 
             ostrncat(str, typinf->name, max_chars);
 
-            dbstr1 = OCI_StringGetOracleString(str, &dbsize1);
+            dbstr1 = StringGetOracleString(str, &dbsize1);
 
             /* set public scope to include synonyms */
                 
@@ -219,7 +219,7 @@ OCI_TypeInfo * TypeInfoGet
                                OCI_DEFAULT, OCI_PTYPE_UNK, dschp)
             )
 
-            OCI_StringReleaseOracleString(dbstr1);
+            StringReleaseOracleString(dbstr1);
 
             /* get parameter handle */
                 
@@ -304,7 +304,7 @@ OCI_TypeInfo * TypeInfoGet
 
                             /* compute super type full name */
 
-                            OCI_StringGetFullTypeName(sp_schema_name, NULL, sp_object_name, NULL, sp_fullname, (sizeof(sp_fullname) / sizeof(otext)) - 1);
+                            StringGetFullTypeName(sp_schema_name, NULL, sp_object_name, NULL, sp_fullname, (sizeof(sp_fullname) / sizeof(otext)) - 1);
 
                             /* retrieve the type info of the real object */
 
@@ -397,7 +397,7 @@ OCI_TypeInfo * TypeInfoGet
 
                     /* compute link full name */
 
-                    OCI_StringGetFullTypeName(syn_schema_name, NULL, syn_object_name, syn_link_name, syn_fullname, (sizeof(syn_fullname) / sizeof(otext)) - 1);
+                    StringGetFullTypeName(syn_schema_name, NULL, syn_object_name, syn_link_name, syn_fullname, (sizeof(syn_fullname) / sizeof(otext)) - 1);
 
                     /* retrieve the type info of the real object */
 

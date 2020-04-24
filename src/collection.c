@@ -527,8 +527,8 @@ boolean CollToText
         *str = 0;
     }
 
-    len += OCI_StringAddToBuffer(str, len, coll->typinf->name, (unsigned int) ostrlen(coll->typinf->name), FALSE);
-    len += OCI_StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
+    len += StringAddToBuffer(str, len, coll->typinf->name, (unsigned int) ostrlen(coll->typinf->name), FALSE);
+    len += StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
 
     const unsigned int n = OCI_CollGetSize(coll);
 
@@ -540,7 +540,7 @@ boolean CollToText
 
         if (OCI_ElemIsNull(elem))
         {
-            len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
+            len += StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
         }
         else
         {
@@ -634,11 +634,11 @@ boolean CollToText
 
                 if (data)
                 {
-                    len += OCI_StringGetFromType(coll->con, &coll->typinf->cols[0], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0, quote);
+                    len += StringGetFromType(coll->con, &coll->typinf->cols[0], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0, quote);
                 }
                 else
                 {
-                    len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
+                    len += StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
                 }
                 OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
             }
@@ -646,13 +646,13 @@ boolean CollToText
 
         if (OCI_STATUS && i < n)
         {
-            len += OCI_StringAddToBuffer(str, len, OTEXT(", "), 2, FALSE);
+            len += StringAddToBuffer(str, len, OTEXT(", "), 2, FALSE);
         }
     }
 
     if (OCI_STATUS)
     {
-        len += OCI_StringAddToBuffer(str, len, OTEXT(")"), 1, FALSE);
+        len += StringAddToBuffer(str, len, OTEXT(")"), 1, FALSE);
 
         *size = len;
     }

@@ -23,6 +23,137 @@
 
 #include "types.h"
 
+size_t StringLength
+(
+    void const* ptr,
+    size_t size_elem
+);
+
+unsigned int StringBinaryToString
+(
+    const unsigned char* binary,
+    unsigned int         binary_size,
+    otext* buffer
+);
+
+boolean StringRequestBuffer
+(
+    otext** buffer,
+    unsigned int* buffer_size,
+    unsigned int    request_size
+);
+
+void StringTranslate
+(
+    void* src,
+    void* dst,
+    int    len,
+    size_t size_char_in,
+    size_t size_char_out
+);
+
+#define StringAnsiToNative(s, d, l)    \
+    StringTranslate( (void *) (s), (void *) (d), l, sizeof(char),   sizeof(otext) )
+
+#define StringNativeToAnsi(s, d, l)     \
+    StringTranslate( (void *) (s), (void *) (d), l, sizeof(otext),  sizeof(char)  )
+
+#define StringUTF16ToUTF32(s, d, l)     \
+    StringTranslate( (void *) (s), (void *) (d), l, sizeof(short),  sizeof(int)   )
+
+#define StringUTF32ToUTF16(s, d, l)    \
+    StringTranslate( (void *) (s), (void *) (d), l, sizeof(int),    sizeof(short) )
+
+#define StringOracleToNative(s, d, l)  \
+    StringTranslate( (void *) (s), (void *) (d), l, sizeof(dbtext), sizeof(otext) )
+
+#define StringRawCopy(s, d, l)          \
+    StringTranslate( (void *) (s), (void *) (d), l, sizeof(otext),  sizeof(otext) )
+
+dbtext* StringGetOracleString
+(
+    const otext* src,
+    int* len
+);
+
+void StringReleaseOracleString
+(
+    dbtext* str
+);
+
+int StringCopyOracleStringToNativeString
+(
+    const dbtext* src,
+    otext* dst,
+    int            len
+);
+
+otext* StringDuplicateFromOracleString
+(
+    const dbtext* src,
+    int            len
+);
+
+otext* StringFromStringPtr
+(
+    OCIEnv* env,
+    OCIString* str,
+    otext** buffer,
+    unsigned int* buffer_size
+);
+
+boolean StringToStringPtr
+(
+    OCIEnv* env,
+    OCIString** str,
+    OCIError* err,
+    const otext* value
+);
+
+boolean StringFreeStringPtr
+(
+    OCIEnv* env,
+    OCIString** str,
+    OCIError* err
+);
+
+unsigned int StringGetFromType
+(
+    OCI_Connection* con,
+    OCI_Column* col,
+    void* data,
+    unsigned int      data_size,
+    otext* buffer,
+    unsigned int      buffer_size,
+    boolean           quote
+);
+
+unsigned int StringAddToBuffer
+(
+    otext* buffer,
+    unsigned int     offset,
+    const otext* str,
+    unsigned int     length,
+    boolean          check_quote
+);
+
+unsigned int StringGetTypeName
+(
+    const otext* source,
+    otext* dest,
+    unsigned int  length
+);
+
+unsigned int StringGetFullTypeName
+(
+    const otext* schema,
+    const otext* package,
+    const otext* type,
+    const otext* link,
+    otext* name,
+    unsigned int  length
+);
+
 boolean StringGetAttribute
 (
     OCI_Connection* con,

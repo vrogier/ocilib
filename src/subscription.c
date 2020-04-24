@@ -192,11 +192,11 @@ OCI_Subscription * SubscriptionRegister
 
             /* name  */
 
-            dbstr = OCI_StringGetOracleString(sub->name, &dbsize);
+            dbstr = StringGetOracleString(sub->name, &dbsize);
 
             OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME, sub->subhp, dbstr, dbsize)
 
-            OCI_StringReleaseOracleString(dbstr);
+            StringReleaseOracleString(dbstr);
 
             /* namespace for CDN */
 

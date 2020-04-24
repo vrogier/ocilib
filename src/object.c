@@ -162,7 +162,7 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
                 {
                     /* compute link full name */
 
-                    OCI_StringGetFullTypeName(schema_name, NULL, object_name, NULL, fullname, (sizeof(fullname) / sizeof(otext)) - 1);
+                    StringGetFullTypeName(schema_name, NULL, object_name, NULL, fullname, (sizeof(fullname) / sizeof(otext)) - 1);
 
                     /* retrieve the type info of the real object */
 
@@ -1138,7 +1138,7 @@ const otext * ObjectGetString
         {
             if (OCILib.use_wide_char_conv)
             {
-                OCI_RETVAL = OCI_StringFromStringPtr(obj->con->env, *value, &obj->tmpbufs[index], &obj->tmpsizes[index]);
+                OCI_RETVAL = StringFromStringPtr(obj->con->env, *value, &obj->tmpbufs[index], &obj->tmpsizes[index]);
             }
             else
             {
@@ -1172,16 +1172,16 @@ const otext * ObjectGetString
                 }
             }
 
-            len = OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, NULL, 0, FALSE);
+            len = StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, NULL, 0, FALSE);
             OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 
             if (OCI_STATUS && len > 0)
             {
-                OCI_STATUS = OCI_StringRequestBuffer(&obj->tmpbufs[index], &obj->tmpsizes[index], len);
+                OCI_STATUS = StringRequestBuffer(&obj->tmpbufs[index], &obj->tmpsizes[index], len);
 
                 if (OCI_STATUS)
                 {
-                    const unsigned int real_tmpsize = OCI_StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, obj->tmpbufs[index], obj->tmpsizes[index], FALSE);
+                    const unsigned int real_tmpsize = StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, obj->tmpbufs[index], obj->tmpsizes[index], FALSE);
                 
                     OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 
@@ -1670,7 +1670,7 @@ boolean ObjectSetString
             OCIInd *ind      = NULL;
             OCIString **data = (OCIString **) ObjectGetAttr(obj, index, &ind);
 
-            OCI_STATUS = OCI_StringToStringPtr(obj->con->env, data, obj->con->err, value);
+            OCI_STATUS = StringToStringPtr(obj->con->env, data, obj->con->err, value);
 
             if (OCI_STATUS)
             {
@@ -2052,8 +2052,8 @@ boolean ObjectToText
         *str = 0;
     }
 
-    len += OCI_StringAddToBuffer(str, len, obj->typinf->name, (unsigned int) ostrlen(obj->typinf->name), FALSE);
-    len += OCI_StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
+    len += StringAddToBuffer(str, len, obj->typinf->name, (unsigned int) ostrlen(obj->typinf->name), FALSE);
+    len += StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
 
     for (int i = 0; i < obj->typinf->nb_cols && OCI_STATUS; i++)
     {
@@ -2062,7 +2062,7 @@ boolean ObjectToText
 
         if (OCI_ObjectIsNull(obj, attr))
         {
-            len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
+            len += StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
         }
         else
         {
@@ -2174,11 +2174,11 @@ boolean ObjectToText
 
                 if (data)
                 {
-                    len += OCI_StringGetFromType(obj->con, &obj->typinf->cols[i], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0, quote);
+                    len += StringGetFromType(obj->con, &obj->typinf->cols[i], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0, quote);
                 }
                 else
                 {
-                    len += OCI_StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
+                    len += StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
                 }
 
                 OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
@@ -2187,13 +2187,13 @@ boolean ObjectToText
 
         if (OCI_STATUS && i < (obj->typinf->nb_cols-1))
         {
-            len += OCI_StringAddToBuffer(str, len, OTEXT(", "), 2, quote);
+            len += StringAddToBuffer(str, len, OTEXT(", "), 2, quote);
         }
     }
 
     if (OCI_STATUS)
     {
-        len += OCI_StringAddToBuffer(str, len, OTEXT(")"), 1, FALSE);
+        len += StringAddToBuffer(str, len, OTEXT(")"), 1, FALSE);
 
         *size = len;
     }

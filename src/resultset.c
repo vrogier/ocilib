@@ -285,7 +285,7 @@ boolean OCI_ResultsetExpandStrings
             {
                 ub1 * tmpbuf = ((ub1*) def->buf.data) + (def->col.bufsize * j);
 
-                OCI_StringUTF16ToUTF32(tmpbuf, tmpbuf, (def->col.bufsize / sizeof(otext) ) -1);
+                StringUTF16ToUTF32(tmpbuf, tmpbuf, (def->col.bufsize / sizeof(otext) ) -1);
             }
         }
     }
@@ -493,7 +493,7 @@ boolean OCI_FetchPieces
 
                     if (OCILib.use_wide_char_conv)
                     {
-                        OCI_StringUTF16ToUTF32(lg->buffer, lg->buffer, len);
+                        StringUTF16ToUTF32(lg->buffer, lg->buffer, len);
                     }
                 }
             }
@@ -1895,11 +1895,11 @@ const otext * OCI_API OCI_GetString
 
             OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 
-            OCI_STATUS = OCI_STATUS && OCI_StringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, bufsize);
+            OCI_STATUS = OCI_STATUS && StringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, bufsize);
 
             if (OCI_STATUS)
             {
-                OCI_StringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, def->buf.tmpsize, FALSE);
+                StringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, def->buf.tmpsize, FALSE);
                 
                 OCI_STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 

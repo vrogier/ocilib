@@ -272,7 +272,7 @@ void ExceptionOCI
     if (err)
     {
         int     dbsize = (int) (osizeof(err->str) - (size_t) 1);
-        dbtext *dbstr  =  OCI_StringGetOracleString(err->str, &dbsize);
+        dbtext *dbstr  =  StringGetOracleString(err->str, &dbsize);
 
         err->type = (warning ? OCI_ERR_WARNING : OCI_ERR_ORACLE);
         err->con  = con;
@@ -283,8 +283,8 @@ void ExceptionOCI
         OCIErrorGet((dvoid *) p_err, (ub4) 1, (OraText *) NULL, &err->sqlcode,
                     (OraText *) dbstr, (ub4) dbsize, (ub4) OCI_HTYPE_ERROR);
 
-        OCI_StringCopyOracleStringToNativeString(dbstr, err->str, dbcharcount(dbsize));
-        OCI_StringReleaseOracleString(dbstr);
+        StringCopyOracleStringToNativeString(dbstr, err->str, dbcharcount(dbsize));
+        StringReleaseOracleString(dbstr);
     }
 
     ExceptionRaise(err);

@@ -469,8 +469,8 @@ boolean TimestampFromText
         fmt = OCI_GetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
-    dbstr1 = OCI_StringGetOracleString(str, &dbsize1);
-    dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
+    dbstr1 = StringGetOracleString(str, &dbsize1);
+    dbstr2 = StringGetOracleString(fmt, &dbsize2);
 
     OCI_EXEC
     (
@@ -481,8 +481,8 @@ boolean TimestampFromText
                             tmsp->handle)
     )
 
-    OCI_StringReleaseOracleString(dbstr1);
-    OCI_StringReleaseOracleString(dbstr2);
+    StringReleaseOracleString(dbstr1);
+    StringReleaseOracleString(dbstr2);
 
 #else
 
@@ -534,8 +534,8 @@ boolean TimestampToText
         fmt = OCI_GetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
-    dbstr1 = OCI_StringGetOracleString(str, &dbsize1);
-    dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
+    dbstr1 = StringGetOracleString(str, &dbsize1);
+    dbstr2 = StringGetOracleString(fmt, &dbsize2);
 
     OCI_EXEC
     (
@@ -546,10 +546,10 @@ boolean TimestampToText
                           (ub4*) &dbsize1, (OraText *) dbstr1)
     )
 
-    OCI_StringCopyOracleStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
+    StringCopyOracleStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
 
-    OCI_StringReleaseOracleString(dbstr1);
-    OCI_StringReleaseOracleString(dbstr2);
+    StringReleaseOracleString(dbstr1);
+    StringReleaseOracleString(dbstr2);
 
     /* set null string terminator */
 
@@ -719,12 +719,12 @@ boolean TimestampGetTimeZoneName
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    dbstr = OCI_StringGetOracleString(str, &dbsize);
+    dbstr = StringGetOracleString(str, &dbsize);
 
     OCI_EXEC(OCIDateTimeGetTimeZoneName((dvoid *)tmsp->env, tmsp->err, tmsp->handle, (ub1*) dbstr, (ub4*) &dbsize))
 
-    OCI_StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
-    OCI_StringReleaseOracleString(dbstr);
+    StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
+    StringReleaseOracleString(dbstr);
 
     /* set null string terminator */
 

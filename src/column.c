@@ -312,7 +312,7 @@ boolean ColumnDescribe
 
                 if (OCI_STATUS)
                 {
-                    OCI_StringAnsiToNative(param_struct->column_info->name, col->name, (int) char_count);
+                    StringAnsiToNative(param_struct->column_info->name, col->name, (int) char_count);
                 }
             }
             else
@@ -333,7 +333,7 @@ boolean ColumnDescribe
 
             if (OCI_STATUS && dbstr)
             {
-                col->name = OCI_StringDuplicateFromOracleString(dbstr, dbcharcount(dbsize));
+                col->name = StringDuplicateFromOracleString(dbstr, dbcharcount(dbsize));
 
                 OCI_STATUS = (NULL != col->name);
             }
@@ -383,7 +383,7 @@ boolean ColumnDescribe
 
             if (dbstr_schema && (dbsize_schema > 0))
             {
-                OCI_StringOracleToNative(dbstr_schema, schema_name, dbcharcount(dbsize_schema));
+                StringOracleToNative(dbstr_schema, schema_name, dbcharcount(dbsize_schema));
 
                 if (0 == ostrcasecmp(schema_name, OTEXT("PUBLIC")))
                 {
@@ -395,19 +395,19 @@ boolean ColumnDescribe
 
             if (dbstr_package && (dbsize_package > 0))
             {
-                OCI_StringOracleToNative(dbstr_package, package_name, dbcharcount(dbsize_package));
+                StringOracleToNative(dbstr_package, package_name, dbcharcount(dbsize_package));
             }
 
             /* Retrieve correct type name */
 
             if (dbstr_name && (dbsize_name > 0))
             {
-                OCI_StringOracleToNative(dbstr_name, type_name, dbcharcount(dbsize_name));
+                StringOracleToNative(dbstr_name, type_name, dbcharcount(dbsize_name));
             }
 
             /* Format full type name respecting case sensitivity if needed in order to not fail type info retrieval.*/
 
-            OCI_StringGetFullTypeName(schema_name, package_name, type_name, NULL, full_name, (sizeof(full_name) / sizeof(otext)) - 1);
+            StringGetFullTypeName(schema_name, package_name, type_name, NULL, full_name, (sizeof(full_name) / sizeof(otext)) - 1);
 
             col->typinf = OCI_TypeInfoGet(con, full_name, OCI_TIF_TYPE);
 
@@ -1420,7 +1420,7 @@ unsigned int ColumnGetFullSQLType
             if (col->typinf)
             {
                 otext fullname[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
-                OCI_StringGetFullTypeName(col->typinf->schema, NULL, col->typinf->name, NULL, fullname, (sizeof(fullname) / sizeof(otext)) - 1);
+                StringGetFullTypeName(col->typinf->schema, NULL, col->typinf->name, NULL, fullname, (sizeof(fullname) / sizeof(otext)) - 1);
                 OCI_RETVAL = osprintf(buffer, (int)len, fullname);
             }
             else

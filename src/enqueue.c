@@ -118,7 +118,7 @@ boolean EnqueuePut
     OCI_CALL_CHECK_COMPAT(enqueue->typinf->con, enqueue->typinf->tdo == msg->typinf->tdo)
     OCI_CALL_CONTEXT_SET_FROM_CONN(enqueue->typinf->con)
 
-    dbstr = OCI_StringGetOracleString(enqueue->name, &dbsize);
+    dbstr = StringGetOracleString(enqueue->name, &dbsize);
 
     /* get payload */
 
@@ -145,7 +145,7 @@ boolean EnqueuePut
                  &payload, &ind, NULL, OCI_DEFAULT);
     )
 
-    OCI_StringReleaseOracleString(dbstr);
+    StringReleaseOracleString(dbstr);
 
     OCI_RETVAL = OCI_STATUS;
 

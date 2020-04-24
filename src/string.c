@@ -18,11 +18,22 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "string.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "macro.h"
+#include "memory.h"
+
+#include "collection.h"
+#include "date.h"
+#include "file.h"
+#include "interval.h"
+#include "list.h"
+#include "lob.h"
+#include "long.h"
+#include "number.h"
+#include "object.h"
+#include "ref.h"
+#include "timestamp.h"
 
 #define COMPUTE_LENTGH(type, ptr, size)     \
     const type *s = (const type *) (ptr);   \
@@ -31,10 +42,10 @@
     (size) = (int) (e - s - (size_t) 1);    \
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringLength
+ * StringLength
  * --------------------------------------------------------------------------------------------- */
 
-size_t OCI_StringLength
+size_t StringLength
 (
     const void  *ptr,
     size_t size_elem
@@ -70,10 +81,10 @@ size_t OCI_StringLength
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringBinaryToString
+ * StringBinaryToString
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_StringBinaryToString
+unsigned int StringBinaryToString
 (
     const unsigned char *binary,
     unsigned int         binary_size,
@@ -99,10 +110,10 @@ unsigned int OCI_StringBinaryToString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringRequestBuffer
+ * StringRequestBuffer
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_StringRequestBuffer
+boolean StringRequestBuffer
 (
     otext         **buffer,
     unsigned int   *buffer_size,
@@ -139,10 +150,10 @@ boolean OCI_StringRequestBuffer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringTranslate
+ * StringTranslate
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_StringTranslate
+void StringTranslate
 (
     void  *src,
     void  *dst,
@@ -288,10 +299,10 @@ void OCI_StringTranslate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringGetOracleString
+ * StringGetOracleString
  * --------------------------------------------------------------------------------------------- */
 
-dbtext * OCI_StringGetOracleString
+dbtext * StringGetOracleString
 (
     const otext  *src,
     int          *size
@@ -321,7 +332,7 @@ dbtext * OCI_StringGetOracleString
 
         if (dst)
         {
-            OCI_StringUTF32ToUTF16( src, dst, len );   
+            StringUTF32ToUTF16( src, dst, len );   
         }
     }
     else
@@ -335,10 +346,10 @@ dbtext * OCI_StringGetOracleString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringReleaseOracleString
+ * StringReleaseOracleString
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_StringReleaseOracleString
+void StringReleaseOracleString
 (
     dbtext *str
 )
@@ -350,10 +361,10 @@ void OCI_StringReleaseOracleString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringCopyOracleStringToNativeString
+ * StringCopyOracleStringToNativeString
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_StringCopyOracleStringToNativeString
+int StringCopyOracleStringToNativeString
 (
     const dbtext  *src,
     otext         *dst,
@@ -362,17 +373,17 @@ int OCI_StringCopyOracleStringToNativeString
 {
     if (OCILib.use_wide_char_conv)
     {
-        OCI_StringUTF16ToUTF32((void *) src, (void *) dst, len);   
+        StringUTF16ToUTF32((void *) src, (void *) dst, len);   
     }
 
     return len;
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringDuplicateFromOracleString
+ * StringDuplicateFromOracleString
  * --------------------------------------------------------------------------------------------- */
 
-otext* OCI_StringDuplicateFromOracleString
+otext* StringDuplicateFromOracleString
 (
     const dbtext  *src,
     int            len
@@ -384,11 +395,11 @@ otext* OCI_StringDuplicateFromOracleString
     {
         if (OCILib.use_wide_char_conv)
         {
-            OCI_StringUTF16ToUTF32((void *) src, (void *) dst, len);   
+            StringUTF16ToUTF32((void *) src, (void *) dst, len);   
         }
         else
         {
-            OCI_StringRawCopy((void *) src, (void *) dst, len);       
+            StringRawCopy((void *) src, (void *) dst, len);       
         }
     }
 
@@ -396,10 +407,10 @@ otext* OCI_StringDuplicateFromOracleString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringFromStringPtr
+ * StringFromStringPtr
  * --------------------------------------------------------------------------------------------- */
 
-otext * OCI_StringFromStringPtr
+otext * StringFromStringPtr
 (
     OCIEnv           *env,
     OCIString        *str,
@@ -432,11 +443,11 @@ otext * OCI_StringFromStringPtr
 
             if (OCILib.use_wide_char_conv)
             {
-                OCI_StringUTF16ToUTF32((void *)tmp, (void *)*buffer, (int) length);
+                StringUTF16ToUTF32((void *)tmp, (void *)*buffer, (int) length);
             }
             else
             {
-                OCI_StringRawCopy((void *)tmp, (void *)*buffer, (int) length);
+                StringRawCopy((void *)tmp, (void *)*buffer, (int) length);
             }
         }
     }
@@ -445,10 +456,10 @@ otext * OCI_StringFromStringPtr
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringToStringPtr
+ * StringToStringPtr
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_StringToStringPtr
+boolean StringToStringPtr
 (
     OCIEnv      *env,
     OCIString  **str,
@@ -465,21 +476,20 @@ boolean OCI_StringToStringPtr
 
     OCI_CALL_CONTEXT_SET_FROM_ERR(err)
 
-    dbstr  = OCI_StringGetOracleString(value, &dbsize);
+    dbstr  = StringGetOracleString(value, &dbsize);
 
     OCI_EXEC(OCIStringAssignText(env, err, (oratext *) dbstr, (ub4) dbsize, str))
 
-    OCI_StringReleaseOracleString(dbstr);
+    StringReleaseOracleString(dbstr);
 
     return OCI_STATUS;
 }
 
-
 /* --------------------------------------------------------------------------------------------- *
-* OCI_StringFreeStringPtr
+* StringFreeStringPtr
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_StringFreeStringPtr
+boolean StringFreeStringPtr
 (
     OCIEnv      *env,
     OCIString  **str,
@@ -549,9 +559,9 @@ boolean StringGetAttribute
             len = dbcharcount(dbsize);
         }
 
-        if (OCI_StringRequestBuffer(str, size, len))
+        if (StringRequestBuffer(str, size, len))
         {
-            OCI_StringTranslate(dbstr, *str, len, is_ansi ? sizeof(char) : sizeof(dbtext), sizeof(otext));
+            StringTranslate(dbstr, *str, len, is_ansi ? sizeof(char) : sizeof(dbtext), sizeof(otext));
         }
 
         OCI_STATUS = (NULL != *str);
@@ -580,7 +590,7 @@ boolean StringSetAttribute
     OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    dbstr = OCI_StringGetOracleString(value, &dbsize);
+    dbstr = StringGetOracleString(value, &dbsize);
 
     if (dbsize == -1)
     {
@@ -589,7 +599,7 @@ boolean StringSetAttribute
 
     OCI_SET_ATTRIB(type, attr, handle, dbstr, dbsize)
 
-    OCI_StringReleaseOracleString(dbstr);
+    StringReleaseOracleString(dbstr);
 
     if (OCI_STATUS && str)
     {
@@ -605,10 +615,10 @@ boolean StringSetAttribute
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringGetFromType
+ * StringGetFromType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_StringGetFromType
+unsigned int StringGetFromType
 (
     OCI_Connection   *con,
     OCI_Column       *col,
@@ -629,7 +639,7 @@ unsigned int OCI_StringGetFromType
 
     if (quote && data)
     {
-        len = OCI_StringAddToBuffer(ptr, len, OTEXT("'"), 1, FALSE);
+        len = StringAddToBuffer(ptr, len, OTEXT("'"), 1, FALSE);
         if (ptr)
         {
             ptr++;
@@ -641,7 +651,7 @@ unsigned int OCI_StringGetFromType
     {
         case OCI_CDT_TEXT:
         {
-            len += OCI_StringAddToBuffer(buffer, len, (otext *) data, dbcharcount(data_size), quote);
+            len += StringAddToBuffer(buffer, len, (otext *) data, dbcharcount(data_size), quote);
             break;
         }
         case OCI_CDT_BOOLEAN:
@@ -653,7 +663,7 @@ unsigned int OCI_StringGetFromType
                     otext* str_value = (*(boolean*)data) ? OCI_STRING_TRUE : OCI_STRING_FALSE;
                     const unsigned int str_length = (*(boolean*)data) ? OCI_STRING_TRUE_SIZE : OCI_STRING_FALSE_SIZE;
 
-                    len += OCI_StringAddToBuffer(buffer, len, str_value, str_length, quote);
+                    len += StringAddToBuffer(buffer, len, str_value, str_length, quote);
                 }
                 else
                 {
@@ -739,11 +749,11 @@ unsigned int OCI_StringGetFromType
             {
                 if (OCI_CLONG == col->subtype)
                 {
-                    len = OCI_StringAddToBuffer(buffer, len, (otext*) OCI_LongGetBuffer(lg), OCI_LongGetSize(lg), quote);
+                    len = StringAddToBuffer(buffer, len, (otext*) OCI_LongGetBuffer(lg), OCI_LongGetSize(lg), quote);
                 }
                 else
                 {
-                    len = OCI_StringBinaryToString((unsigned char *) data, buffer_size, ptr); 
+                    len = StringBinaryToString((unsigned char *) data, buffer_size, ptr); 
                 }
             }
             else
@@ -757,7 +767,7 @@ unsigned int OCI_StringGetFromType
         {
             if (data)
             {
-                len = OCI_StringBinaryToString((unsigned char *) data, data_size, ptr);
+                len = StringBinaryToString((unsigned char *) data, data_size, ptr);
             }
             break;
         }
@@ -783,11 +793,11 @@ unsigned int OCI_StringGetFromType
                         {
                             if (OCI_CLOB == lob->type)
                             {
-                                len += OCI_StringAddToBuffer(buffer, len, (otext*)lob_buf, ocharcount(bytes_count), quote);
+                                len += StringAddToBuffer(buffer, len, (otext*)lob_buf, ocharcount(bytes_count), quote);
                             }
                             else
                             {
-                                len += OCI_StringBinaryToString(lob_buf, bytes_count, ptr + len);
+                                len += StringBinaryToString(lob_buf, bytes_count, ptr + len);
                             }
                         }
 
@@ -828,9 +838,9 @@ unsigned int OCI_StringGetFromType
                 const otext * dir  = OCI_FileGetDirectory(file);
                 const otext * name =  OCI_FileGetName(file);
 
-                len += OCI_StringAddToBuffer(buffer, len, dir, (unsigned int) ostrlen(dir), TRUE);
-                len += OCI_StringAddToBuffer(buffer, len, OTEXT("/"), 1, TRUE);
-                len += OCI_StringAddToBuffer(buffer, len, name, (unsigned int) ostrlen(name), TRUE);
+                len += StringAddToBuffer(buffer, len, dir, (unsigned int) ostrlen(dir), TRUE);
+                len += StringAddToBuffer(buffer, len, OTEXT("/"), 1, TRUE);
+                len += StringAddToBuffer(buffer, len, name, (unsigned int) ostrlen(name), TRUE);
             }
             else
             {
@@ -879,7 +889,7 @@ unsigned int OCI_StringGetFromType
             quote = TRUE;
             if (stmt)
             {
-                len = OCI_StringAddToBuffer(buffer, len, stmt->sql, (unsigned int) ostrlen(stmt->sql), quote);
+                len = StringAddToBuffer(buffer, len, stmt->sql, (unsigned int) ostrlen(stmt->sql), quote);
             }
             else
             {
@@ -904,7 +914,7 @@ unsigned int OCI_StringGetFromType
 
         if (quote && data)
         {
-            len += OCI_StringAddToBuffer(buffer, len, OTEXT("'"), 1, FALSE); 
+            len += StringAddToBuffer(buffer, len, OTEXT("'"), 1, FALSE); 
         }
     }
     else
@@ -928,10 +938,10 @@ unsigned int OCI_StringGetFromType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_StringAddToBuffer
+ * StringAddToBuffer
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_StringAddToBuffer
+unsigned int StringAddToBuffer
 (
     otext           *buffer,
     unsigned int     offset,
@@ -1003,10 +1013,10 @@ unsigned int OCI_StringAddToBuffer
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_StringGetTypeName
+* StringGetTypeName
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_StringGetTypeName
+unsigned int StringGetTypeName
 (
     const otext *source,
     otext *dest,
@@ -1058,10 +1068,10 @@ unsigned int OCI_StringGetTypeName
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_StringGetFullTypeName
+* StringGetFullTypeName
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_StringGetFullTypeName
+unsigned int StringGetFullTypeName
 (
     const otext  *schema,
     const otext  *package,
@@ -1075,7 +1085,7 @@ unsigned int OCI_StringGetFullTypeName
 
     if (OCI_STRING_VALID(schema))
     {
-        offset += OCI_StringGetTypeName(schema, name + offset, length - offset);
+        offset += StringGetTypeName(schema, name + offset, length - offset);
         
         if (offset)
         {
@@ -1086,7 +1096,7 @@ unsigned int OCI_StringGetFullTypeName
 
     if (OCI_STRING_VALID(package))
     {
-        offset += OCI_StringGetTypeName(package, name + offset, length - offset);
+        offset += StringGetTypeName(package, name + offset, length - offset);
 
         if (offset)
         {
@@ -1097,14 +1107,14 @@ unsigned int OCI_StringGetFullTypeName
 
     if (OCI_STRING_VALID(type))
     {
-        offset += OCI_StringGetTypeName(type, name + offset, length - offset);
+        offset += StringGetTypeName(type, name + offset, length - offset);
     }
 
     if (OCI_STRING_VALID(link))
     {
         ostrncpy(name + offset, OTEXT("@"), length - offset);
         offset++;
-        offset += OCI_StringGetTypeName(link, name + offset, length - offset);
+        offset += StringGetTypeName(link, name + offset, length - offset);
     }
 
     return offset;

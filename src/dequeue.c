@@ -213,7 +213,7 @@ OCI_Msg * DequeueGet
     if (OCI_STATUS)
     {
         int     dbsize = -1;
-        dbtext *dbstr  = OCI_StringGetOracleString(dequeue->name, &dbsize);
+        dbtext *dbstr  = StringGetOracleString(dequeue->name, &dbsize);
 
         if (OCI_UNKNOWN == dequeue->typinf->typecode)
         {
@@ -227,7 +227,7 @@ OCI_Msg * DequeueGet
                        dequeue->typinf->tdo, &dequeue->msg->payload,
                        (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
 
-        OCI_StringReleaseOracleString(dbstr);
+        StringReleaseOracleString(dbstr);
 
         /* check returned error code */
 
@@ -761,11 +761,11 @@ boolean DequeueSubscribe
             *str = (otext) otoupper(*str);
         }
 
-        dbstr = OCI_StringGetOracleString(buffer, &dbsize);
+        dbstr = StringGetOracleString(buffer, &dbsize);
 
         OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME, dequeue->subhp, dbstr, dbsize)
 
-        OCI_StringReleaseOracleString(dbstr);
+        StringReleaseOracleString(dbstr);
     }
 
     /* set namespace  */

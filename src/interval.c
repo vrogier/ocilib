@@ -321,13 +321,13 @@ boolean IntervalFromText
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
-    dbstr = OCI_StringGetOracleString(str, &dbsize);
+    dbstr = StringGetOracleString(str, &dbsize);
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_EXEC(OCIIntervalFromText((dvoid *) itv->env, itv->err, (OraText *) dbstr, (size_t) dbsize, itv->handle))
 
-    OCI_StringReleaseOracleString(dbstr);
+    StringReleaseOracleString(dbstr);
 
 #endif
 
@@ -362,7 +362,7 @@ boolean IntervalToText
 
     str[0] = 0;
 
-    dbstr = OCI_StringGetOracleString(str, &dbsize);
+    dbstr = StringGetOracleString(str, &dbsize);
 
     len = (size_t) dbsize;
 
@@ -386,8 +386,8 @@ boolean IntervalToText
 
     dbsize = (int)len;
 
-    OCI_StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
-    OCI_StringReleaseOracleString(dbstr);
+    StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
+    StringReleaseOracleString(dbstr);
 
     /* set null string terminator */
 
@@ -417,7 +417,7 @@ boolean IntervalFromTimeZone
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
-    dbstr = OCI_StringGetOracleString(str, &dbsize);
+    dbstr = StringGetOracleString(str, &dbsize);
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -425,7 +425,7 @@ boolean IntervalFromTimeZone
 
 #endif
 
-    OCI_StringReleaseOracleString(dbstr);
+    StringReleaseOracleString(dbstr);
 
     OCI_RETVAL = OCI_STATUS;
 

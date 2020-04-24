@@ -160,7 +160,7 @@ OCI_Connection * ConnectionAllocate
 
                 if (OCI_STRING_VALID(con->db))
                 {
-                    OCI_StringNativeToAnsi(con->db, dbname, (int) ostrlen(con->db));
+                    StringNativeToAnsi(con->db, dbname, (int) ostrlen(con->db));
                 }
 
                 con->env = xaoEnv((OraText *) (dbname[0] ? dbname : NULL ));
@@ -267,7 +267,7 @@ boolean ConnectionAttach
 
         if (OCILib.version_runtime >= OCI_9_0 && con->pool)
         {
-            dbstr = OCI_StringGetOracleString(con->pool->name, &dbsize);
+            dbstr = StringGetOracleString(con->pool->name, &dbsize);
             cmode = OCI_CPOOL;
         }
         else
@@ -275,12 +275,12 @@ boolean ConnectionAttach
     #endif
 
         {
-            dbstr = OCI_StringGetOracleString(con->db, &dbsize);
+            dbstr = StringGetOracleString(con->db, &dbsize);
         }
 
         OCI_EXEC(OCIServerAttach(con->svr, con->err, (OraText *)dbstr, (sb4)dbsize, cmode));
 
-        OCI_StringReleaseOracleString(dbstr);
+        StringReleaseOracleString(dbstr);
     }
 
     /* handle errors */
@@ -350,7 +350,7 @@ void ConnectionLogonXA
 
     if (OCI_STRING_VALID(con->db))
     {
-        OCI_StringNativeToAnsi(con->db, dbname, (int) ostrlen(con->db));
+        StringNativeToAnsi(con->db, dbname, (int) ostrlen(con->db));
     }
 
     con->cxt = xaoSvcCtx((OraText *) (dbname[0] ? dbname : NULL ));
@@ -370,7 +370,7 @@ void ConnectionLogonXA
     {
         OCI_FREE(con->user)
 
-        con->user = OCI_StringDuplicateFromOracleString(dbstr_user, dbcharcount(dbsize_user));
+        con->user = StringDuplicateFromOracleString(dbstr_user, dbcharcount(dbsize_user));
     }
 }
 
@@ -409,9 +409,9 @@ void ConnectionLogonRegular
         dbtext *dbstr2 = NULL;
         dbtext *dbstr3 = NULL;
 
-        dbstr1 = OCI_StringGetOracleString(con->user, &dbsize1);
-        dbstr2 = OCI_StringGetOracleString(con->pwd, &dbsize2);
-        dbstr3 = OCI_StringGetOracleString(new_pwd, &dbsize3);
+        dbstr1 = StringGetOracleString(con->user, &dbsize1);
+        dbstr2 = StringGetOracleString(con->pwd, &dbsize2);
+        dbstr3 = StringGetOracleString(new_pwd, &dbsize3);
 
         OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, con->ses, sizeof(con->ses));
 
@@ -422,9 +422,9 @@ void ConnectionLogonRegular
                               (OraText *)dbstr3, (ub4)dbsize3, OCI_AUTH)
         )
 
-        OCI_StringReleaseOracleString(dbstr1);
-        OCI_StringReleaseOracleString(dbstr2);
-        OCI_StringReleaseOracleString(dbstr3);
+        StringReleaseOracleString(dbstr1);
+        StringReleaseOracleString(dbstr2);
+        StringReleaseOracleString(dbstr3);
 
         if (OCI_STATUS)
         {
@@ -442,11 +442,11 @@ void ConnectionLogonRegular
         if (OCI_STATUS && OCI_STRING_VALID(con->user))
         {
             dbsize = -1;
-            dbstr  = OCI_StringGetOracleString(con->user, &dbsize);
+            dbstr  = StringGetOracleString(con->user, &dbsize);
 
             OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_USERNAME, con->ses, dbstr, dbsize);
 
-            OCI_StringReleaseOracleString(dbstr);
+            StringReleaseOracleString(dbstr);
         }
 
         /* set session password attribute */
@@ -454,11 +454,11 @@ void ConnectionLogonRegular
         if (OCI_STATUS && OCI_STRING_VALID(con->pwd))
         {
             dbsize = -1;
-            dbstr  = OCI_StringGetOracleString(con->pwd, &dbsize);
+            dbstr  = StringGetOracleString(con->pwd, &dbsize);
 
             OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_PASSWORD, con->ses, dbstr, dbsize);
 
-            OCI_StringReleaseOracleString(dbstr);
+            StringReleaseOracleString(dbstr);
         }
 
         /* set OCILIB driver layer name attribute */
@@ -478,11 +478,11 @@ void ConnectionLogonRegular
                      OCILIB_REVISION_VERSION);
 
             dbsize = -1;
-            dbstr = OCI_StringGetOracleString(driver_version, &dbsize);
+            dbstr = StringGetOracleString(driver_version, &dbsize);
 
             OCI_SET_ATTRIB(OCI_HTYPE_SESSION, OCI_ATTR_DRIVER_NAME, con->ses, dbstr, dbsize);
 
-            OCI_StringReleaseOracleString(dbstr);
+            StringReleaseOracleString(dbstr);
         }
 
 #endif
@@ -579,13 +579,13 @@ void ConnectionLogonSessionPool
     if (OCI_STRING_VALID(con->pool->name))
     {
         dbsize = -1;
-        dbstr  = OCI_StringGetOracleString(con->pool->name, &dbsize);
+        dbstr  = StringGetOracleString(con->pool->name, &dbsize);
     }
 
     if (OCI_STRING_VALID(tag))
     {
         dbsize_tag = -1;
-        dbstr_tag  = OCI_StringGetOracleString(tag, &dbsize_tag);
+        dbstr_tag  = StringGetOracleString(tag, &dbsize_tag);
     }
 
     OCI_EXEC
@@ -595,8 +595,8 @@ void ConnectionLogonSessionPool
                       (OraText **)&dbstr_ret, &dbsize_ret, &found, sess_mode)
     )
 
-    OCI_StringReleaseOracleString(dbstr);
-    OCI_StringReleaseOracleString(dbstr_tag);
+    StringReleaseOracleString(dbstr);
+    StringReleaseOracleString(dbstr_tag);
 
     OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SERVER, con->cxt, &con->svr, NULL)
     OCI_GET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_SESSION, con->cxt, &con->ses, NULL)
@@ -744,13 +744,13 @@ void ConnectionLogoffSessionPool
         if (con->pool && con->sess_tag && ( OCI_HTYPE_SPOOL == con->pool->htype))
         {
             dbsize = -1;
-            dbstr  = OCI_StringGetOracleString(con->sess_tag, &dbsize);
+            dbstr  = StringGetOracleString(con->sess_tag, &dbsize);
             mode   = OCI_SESSRLS_RETAG;
         }
 
         OCI_EXEC(OCISessionRelease(con->cxt, con->err, (OraText*)dbstr, (ub4)dbsize, mode));
  
-        OCI_StringReleaseOracleString(dbstr);
+        StringReleaseOracleString(dbstr);
 
         con->cxt = NULL;
         con->ses = NULL;
@@ -1256,9 +1256,9 @@ boolean ConnectionSetPassword
         int dbsize2 = -1;
         int dbsize3 = -1;
 
-        dbtext *dbstr1 = OCI_StringGetOracleString(con->user, &dbsize1);
-        dbtext *dbstr2 = OCI_StringGetOracleString(con->pwd, &dbsize2);
-        dbtext *dbstr3 = OCI_StringGetOracleString(password, &dbsize3);
+        dbtext *dbstr1 = StringGetOracleString(con->user, &dbsize1);
+        dbtext *dbstr2 = StringGetOracleString(con->pwd, &dbsize2);
+        dbtext *dbstr3 = StringGetOracleString(password, &dbsize3);
 
         OCI_EXEC
         (
@@ -1269,9 +1269,9 @@ boolean ConnectionSetPassword
                               OCI_DEFAULT)
         )
 
-        OCI_StringReleaseOracleString(dbstr1);
-        OCI_StringReleaseOracleString(dbstr2);
-        OCI_StringReleaseOracleString(dbstr3);
+        StringReleaseOracleString(dbstr1);
+        StringReleaseOracleString(dbstr2);
+        StringReleaseOracleString(dbstr3);
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -1316,7 +1316,7 @@ const otext * ConnectionGetVersionServer
 
         if (OCI_STATUS)
         {    
-            dbstr = OCI_StringGetOracleString(con->ver_str, &dbsize);
+            dbstr = StringGetOracleString(con->ver_str, &dbsize);
 
          #if OCI_VERSION_COMPILE >= OCI_18_1
    
@@ -1332,8 +1332,8 @@ const otext * ConnectionGetVersionServer
                 OCI_EXEC(OCIServerVersion((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX))
             }
 
-            OCI_StringCopyOracleStringToNativeString(dbstr, con->ver_str, dbcharcount(dbsize));
-            OCI_StringReleaseOracleString(dbstr);            
+            StringCopyOracleStringToNativeString(dbstr, con->ver_str, dbcharcount(dbsize));
+            StringReleaseOracleString(dbstr);            
         }
 
         if (OCI_STATUS)
@@ -1790,12 +1790,12 @@ boolean ConnectionSetTrace
         if (str)
         {
             dbsize = -1;
-            dbstr  = OCI_StringGetOracleString(str, &dbsize);
+            dbstr  = StringGetOracleString(str, &dbsize);
         }
 
         OCI_SET_ATTRIB(OCI_HTYPE_SESSION, attrib, con->ses, dbstr, dbsize);
 
-        OCI_StringReleaseOracleString(dbstr);
+        StringReleaseOracleString(dbstr);
     }
 
 #endif

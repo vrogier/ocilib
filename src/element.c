@@ -133,7 +133,7 @@ void ElemFreeAllocatedData
         switch (elem->typinf->cols[0].datatype)
         {
         case OCI_CDT_TEXT:
-            OCI_StringFreeStringPtr(elem->con->env, (OCIString **) &elem->handle, elem->con->err);
+            StringFreeStringPtr(elem->con->env, (OCIString **) &elem->handle, elem->con->err);
             break;
         default:
             OCI_FREE(elem->handle)
@@ -552,7 +552,7 @@ const otext * ElemGetString
 
     if (elem->handle)
     {
-        OCI_RETVAL = OCI_StringFromStringPtr(elem->con->env, (OCIString *) elem->handle, &elem->tmpbuf, &elem->tmpsize);
+        OCI_RETVAL = StringFromStringPtr(elem->con->env, (OCIString *) elem->handle, &elem->tmpbuf, &elem->tmpsize);
     }
 
     OCI_CALL_EXIT()
@@ -945,7 +945,7 @@ boolean ElemSetString
     {
         elem->alloc = (elem->alloc || elem->handle == NULL);
 
-        OCI_STATUS = OCI_StringToStringPtr(elem->con->env,  (OCIString **) &elem->handle, elem->con->err, value);
+        OCI_STATUS = StringToStringPtr(elem->con->env,  (OCIString **) &elem->handle, elem->con->err, value);
 
         if (OCI_STATUS)
         {

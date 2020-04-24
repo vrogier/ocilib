@@ -300,11 +300,11 @@ OCI_DirPath * DirPathCreate
         if (OCI_STATUS)
         {
             dbsize = -1;
-            dbstr  = OCI_StringGetOracleString(dp->typinf->name, &dbsize);
+            dbstr  = StringGetOracleString(dp->typinf->name, &dbsize);
 
             OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_NAME, dp->ctx, dbstr, dbsize)
 
-            OCI_StringReleaseOracleString(dbstr);
+            StringReleaseOracleString(dbstr);
         }
 
         /* set schema name attribute */
@@ -312,11 +312,11 @@ OCI_DirPath * DirPathCreate
         if (OCI_STATUS && OCI_STRING_VALID(dp->typinf->schema))
         {
             dbsize = -1;
-            dbstr  = OCI_StringGetOracleString(dp->typinf->schema, &dbsize);
+            dbstr  = StringGetOracleString(dp->typinf->schema, &dbsize);
 
             OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_SCHEMA_NAME, dp->ctx, dbstr, dbsize)
 
-            OCI_StringReleaseOracleString(dbstr);
+            StringReleaseOracleString(dbstr);
         }
 
         /* set partition name attribute */
@@ -324,11 +324,11 @@ OCI_DirPath * DirPathCreate
         if (OCI_STATUS && OCI_STRING_VALID(partition))
         {
             dbsize = -1;
-            dbstr  = OCI_StringGetOracleString(partition, &dbsize);
+            dbstr  = StringGetOracleString(partition, &dbsize);
 
             OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_SUB_NAME, dp->ctx, dbstr, dbsize)
 
-            OCI_StringReleaseOracleString(dbstr);
+            StringReleaseOracleString(dbstr);
         }
 
         if (OCILib.version_runtime >= OCI_9_0)
@@ -556,11 +556,11 @@ boolean DirPathSetColumn
         if (OCI_STATUS)
         {
             dbsize = -1;
-            dbstr  = OCI_StringGetOracleString(name, &dbsize);
+            dbstr  = StringGetOracleString(name, &dbsize);
 
             OCI_SET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_NAME, hattr, dbstr, dbsize)
 
-            OCI_StringReleaseOracleString(dbstr);
+            StringReleaseOracleString(dbstr);
         }
 
         /* set column type */
@@ -590,11 +590,11 @@ boolean DirPathSetColumn
         if (OCI_STATUS && dpcol->format && dpcol->format[0] && (OCI_DDT_NUMBER != dpcol->type))
         {
             dbsize = -1;
-            dbstr  = OCI_StringGetOracleString(dpcol->format, &dbsize);
+            dbstr  = StringGetOracleString(dpcol->format, &dbsize);
 
             OCI_SET_ATTRIB(OCI_DTYPE_PARAM, OCI_ATTR_DATEFORMAT, hattr, dbstr, dbsize)
 
-            OCI_StringReleaseOracleString(dbstr);
+            StringReleaseOracleString(dbstr);
         }
 
         /* setup Unicode mode for Unicode user data */
@@ -761,7 +761,7 @@ boolean DirPathSetEntry
             if (OCI_DDT_TEXT == dpcol->type && OCILib.use_wide_char_conv)
             {
                 size = ocharcount(size);
-                OCI_StringUTF32ToUTF16(value, data, size);
+                StringUTF32ToUTF16(value, data, size);
             }
             else if (OCI_DDT_OTHERS == dpcol->type && OCI_CHAR_WIDE == OCILib.charset)
             {
@@ -769,7 +769,7 @@ boolean DirPathSetEntry
                    so, let's convert them to ANSI */
 
                 size = ocharcount(size);
-                OCI_StringNativeToAnsi(value, data, size);
+                StringNativeToAnsi(value, data, size);
             }
             else if (OCI_DDT_NUMBER == dpcol->type)
             {
@@ -1118,11 +1118,11 @@ boolean DirPathSetDateFormat
     OCI_CALL_CONTEXT_SET_FROM_CONN(dp->con)
 
     dbsize = -1;
-    dbstr  = OCI_StringGetOracleString(format, &dbsize);
+    dbstr  = StringGetOracleString(format, &dbsize);
 
     OCI_SET_ATTRIB(OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_DATEFORMAT, dp->ctx, dbstr, dbsize)
 
-    OCI_StringReleaseOracleString(dbstr);
+    StringReleaseOracleString(dbstr);
 
     OCI_RETVAL = OCI_STATUS;
 

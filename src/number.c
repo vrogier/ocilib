@@ -304,8 +304,8 @@ boolean NumberFromString
                 fmt = OCI_GetFormat(con, OCI_FMT_NUMERIC);
             }
 
-            dbstr1 = OCI_StringGetOracleString(in_value, &dbsize1);
-            dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
+            dbstr1 = StringGetOracleString(in_value, &dbsize1);
+            dbstr2 = StringGetOracleString(fmt, &dbsize2);
 
             memset(&number, 0, sizeof(number));
 
@@ -315,8 +315,8 @@ boolean NumberFromString
                                    (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
             )
 
-            OCI_StringReleaseOracleString(dbstr2);
-            OCI_StringReleaseOracleString(dbstr1);
+            StringReleaseOracleString(dbstr2);
+            StringReleaseOracleString(dbstr1);
 
             OCI_STATUS = OCI_STATUS && TranslateNumericValue(con, &number, OCI_NUM_NUMBER, out_value, type);
         }
@@ -433,8 +433,8 @@ boolean NumberToString
                 fmt = OCI_GetFormat(con, OCI_FMT_NUMERIC);
             }
 
-            dbstr1 = OCI_StringGetOracleString(out_value, &dbsize1);
-            dbstr2 = OCI_StringGetOracleString(fmt, &dbsize2);
+            dbstr1 = StringGetOracleString(out_value, &dbsize1);
+            dbstr2 = StringGetOracleString(fmt, &dbsize2);
 
             OCI_EXEC
             (
@@ -443,9 +443,9 @@ boolean NumberToString
                                 (ub4 *)&dbsize1, (oratext *)dbstr1)
             )
 
-            OCI_StringCopyOracleStringToNativeString(dbstr1, out_value, dbcharcount(dbsize1));
-            OCI_StringReleaseOracleString(dbstr2);
-            OCI_StringReleaseOracleString(dbstr1);
+            StringCopyOracleStringToNativeString(dbstr1, out_value, dbcharcount(dbsize1));
+            StringReleaseOracleString(dbstr2);
+            StringReleaseOracleString(dbstr1);
 
             out_value_size = (dbsize1 / (int) sizeof(dbtext));
         }

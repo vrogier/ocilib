@@ -387,12 +387,12 @@ boolean RefToText
 
     str[0] = 0;
 
-    dbstr = OCI_StringGetOracleString(str, &dbsize);
+    dbstr = StringGetOracleString(str, &dbsize);
 
     OCI_EXEC(OCIRefToHex(ref->con->env, ref->con->err, ref->handle, (OraText *) dbstr, (ub4 *) &dbsize))
 
-    OCI_StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
-    OCI_StringReleaseOracleString(dbstr);
+    StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
+    StringReleaseOracleString(dbstr);
 
     /* set null string terminator */
 

@@ -200,7 +200,7 @@ unsigned int LongWrite
     if (OCI_CLONG == lg->type)
     {
         len *= (unsigned int) sizeof(otext);
-        obuf = OCI_StringGetOracleString((const otext *) buffer, (int *) &len);
+        obuf = StringGetOracleString((const otext *) buffer, (int *) &len);
     }
     else
     {
@@ -257,7 +257,7 @@ unsigned int LongWrite
 
     if (OCI_CLONG == lg->type)
     {
-        OCI_StringReleaseOracleString((dbtext *) obuf);
+        StringReleaseOracleString((dbtext *) obuf);
     }
 
     /* update size */

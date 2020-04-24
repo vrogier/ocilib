@@ -1993,11 +1993,11 @@ boolean DatabaseStartup
 
                 /* set client file if provided */
 
-                dbstr = OCI_StringGetOracleString(spfile, &dbsize);
+                dbstr = StringGetOracleString(spfile, &dbsize);
 
                 OCI_SET_ATTRIB(OCI_HTYPE_ADMIN, OCI_ATTR_ADMIN_PFILE, adm, dbstr, dbsize)
 
-                OCI_StringReleaseOracleString(dbstr);
+                StringReleaseOracleString(dbstr);
             }
 
             /* startup DB */

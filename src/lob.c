@@ -387,7 +387,7 @@ boolean LobRead2
 
         if (OCILib.nls_utf8)
         {
-            (*char_count) = (ub4) OCI_StringLength((const char *)buffer, sizeof(char));
+            (*char_count) = (ub4) StringLength((const char *)buffer, sizeof(char));
         }
 
     #endif
@@ -406,7 +406,7 @@ boolean LobRead2
 
             if (!OCILib.nls_utf8 && OCILib.use_wide_char_conv)
             {
-                OCI_StringUTF16ToUTF32(buffer, buffer, (int) (*char_count));
+                StringUTF16ToUTF32(buffer, buffer, (int) (*char_count));
                 (*byte_count) = (ub4) (*char_count) * (ub4) sizeof(otext);
             }
         }
@@ -499,7 +499,7 @@ boolean LobWrite2
 
         #ifndef OCI_LOB2_API_ENABLED
 
-                (*char_count) = (ub4) OCI_StringLength((const char *)buffer, sizeof(char));
+                (*char_count) = (ub4) StringLength((const char *)buffer, sizeof(char));
 
         #endif
 
@@ -510,7 +510,7 @@ boolean LobWrite2
             }
         }
 
-        obuf = OCI_StringGetOracleString( (otext *) buffer, (int *) byte_count);
+        obuf = StringGetOracleString( (otext *) buffer, (int *) byte_count);
     }
     else
     {
@@ -586,7 +586,7 @@ boolean LobWrite2
 
     if (obuf != buffer)
     {
-        OCI_StringReleaseOracleString((dbtext *) obuf);
+        StringReleaseOracleString((dbtext *) obuf);
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -937,7 +937,7 @@ boolean LobAppend2
 
             #ifndef OCI_LOB2_API_ENABLED
 
-                (*char_count) = (ub4) OCI_StringLength((const char *)buffer, sizeof(char));
+                (*char_count) = (ub4) StringLength((const char *)buffer, sizeof(char));
 
             #endif
 
@@ -948,7 +948,7 @@ boolean LobAppend2
             }
         }
 
-        obuf = OCI_StringGetOracleString((const otext *) buffer, (int *) byte_count);
+        obuf = StringGetOracleString((const otext *) buffer, (int *) byte_count);
     }
     else
     {
@@ -1022,7 +1022,7 @@ boolean LobAppend2
 
     if (obuf != buffer)
     {
-        OCI_StringReleaseOracleString((dbtext *) obuf);
+        StringReleaseOracleString((dbtext *) obuf);
     }
 
     OCI_RETVAL = OCI_STATUS;

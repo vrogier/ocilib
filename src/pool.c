@@ -211,7 +211,7 @@ OCI_Pool * PoolCreate
                          OCILIB_MINOR_VERSION,
                          OCILIB_REVISION_VERSION);
 
-                dbstr = OCI_StringGetOracleString(driver_version, &dbsize);
+                dbstr = StringGetOracleString(driver_version, &dbsize);
 
                 /* allocate authentication handle */
 
@@ -223,7 +223,7 @@ OCI_Pool * PoolCreate
 
                 OCI_SET_ATTRIB(OCI_HTYPE_AUTHINFO, OCI_ATTR_DRIVER_NAME, pool->authp, dbstr, dbsize)
                 
-                OCI_StringReleaseOracleString(dbstr);
+                StringReleaseOracleString(dbstr);
 
                 /* set authentication handle on the session pool */
 
@@ -242,9 +242,9 @@ OCI_Pool * PoolCreate
             int     dbsize_user = -1;
             int     dbsize_pwd  = -1;
       
-            dbstr_db   = OCI_StringGetOracleString(pool->db,   &dbsize_db);
-            dbstr_user = OCI_StringGetOracleString(pool->user, &dbsize_user);
-            dbstr_pwd  = OCI_StringGetOracleString(pool->pwd,  &dbsize_pwd);
+            dbstr_db   = StringGetOracleString(pool->db,   &dbsize_db);
+            dbstr_user = StringGetOracleString(pool->user, &dbsize_user);
+            dbstr_pwd  = StringGetOracleString(pool->pwd,  &dbsize_pwd);
 
             if (OCI_HTYPE_CPOOL == pool->htype)
             {
@@ -287,14 +287,14 @@ OCI_Pool * PoolCreate
 
         #endif
 
-            OCI_StringReleaseOracleString(dbstr_db);
-            OCI_StringReleaseOracleString(dbstr_user);
-            OCI_StringReleaseOracleString(dbstr_pwd);
+            StringReleaseOracleString(dbstr_db);
+            StringReleaseOracleString(dbstr_user);
+            StringReleaseOracleString(dbstr_pwd);
         }
 
         if (OCI_STATUS && dbstr_name)
         {
-            pool->name = OCI_StringDuplicateFromOracleString(dbstr_name, dbcharcount(dbsize_name));
+            pool->name = StringDuplicateFromOracleString(dbstr_name, dbcharcount(dbsize_name));
 
             OCI_STATUS = (NULL != pool->name);
         }
