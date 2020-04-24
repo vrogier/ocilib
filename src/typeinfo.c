@@ -308,7 +308,7 @@ OCI_TypeInfo * TypeInfoGet
 
                             /* retrieve the type info of the real object */
 
-                            typinf->parent_type = OCI_TypeInfoGet(con, sp_fullname, type);
+                            typinf->parent_type = TypeInfoGet(con, sp_fullname, type);
                          
                             /* free temporary strings */
 
@@ -401,7 +401,7 @@ OCI_TypeInfo * TypeInfoGet
 
                     /* retrieve the type info of the real object */
 
-                    syn_typinf = OCI_TypeInfoGet (con, syn_fullname, type);
+                    syn_typinf = TypeInfoGet (con, syn_fullname, type);
                          
                     /* free temporary strings */
 
@@ -493,7 +493,7 @@ OCI_TypeInfo * TypeInfoGet
 
     if (!OCI_STATUS || syn_typinf)
     {
-        OCI_TypeInfoFree(typinf);
+        TypeInfoFree(typinf);
     }
 
 

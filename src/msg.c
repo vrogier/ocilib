@@ -61,7 +61,7 @@ OCI_Msg * MsgCreate
 
             if (OCI_UNKNOWN != msg->typinf->typecode)
             {
-                msg->obj = OCI_ObjectCreate(typinf->con, typinf);
+                msg->obj = ObjectCreate(typinf->con, typinf);
 
                 OCI_STATUS = (NULL != msg->obj);
             }
@@ -76,7 +76,7 @@ OCI_Msg * MsgCreate
     }
     else if (msg)
     {
-        OCI_MsgFree(msg);
+        MsgFree(msg);
     }
 
     OCI_CALL_EXIT()
@@ -99,7 +99,7 @@ boolean MsgFree
 
     if (msg->sender)
     {
-        OCI_AgentFree(msg->sender);
+        AgentFree(msg->sender);
     }
 
     /* free internal OCI_Object handle if payload is not RAW */
@@ -108,7 +108,7 @@ boolean MsgFree
     {
         msg->obj->hstate =  OCI_OBJECT_ALLOCATED;
 
-        OCI_ObjectFree(msg->obj);
+        ObjectFree(msg->obj);
 
         msg->obj = NULL;
     }
@@ -152,25 +152,25 @@ boolean MsgReset
 
     boolean res = 
     (
-        OCI_MsgSetExpiration(msg, -1)            &&
-        OCI_MsgSetEnqueueDelay(msg, 0)           &&
-        OCI_MsgSetPriority(msg,0)                &&
-        OCI_MsgSetOriginalID(msg, NULL, len)     &&
-        OCI_MsgSetSender(msg, NULL)              &&
-        OCI_MsgSetConsumers(msg, NULL, len)      &&
-        OCI_MsgSetCorrelation(msg, NULL)         &&
-        OCI_MsgSetExceptionQueue(msg, NULL)
+        MsgSetExpiration(msg, -1)            &&
+        MsgSetEnqueueDelay(msg, 0)           &&
+        MsgSetPriority(msg,0)                &&
+        MsgSetOriginalID(msg, NULL, len)     &&
+        MsgSetSender(msg, NULL)              &&
+        MsgSetConsumers(msg, NULL, len)      &&
+        MsgSetCorrelation(msg, NULL)         &&
+        MsgSetExceptionQueue(msg, NULL)
     );
 
     if (res)
     {
         if (OCI_UNKNOWN == msg->typinf->typecode)
         {
-            res = OCI_MsgSetRaw(msg, NULL, len);
+            res = MsgSetRaw(msg, NULL, len);
         }
         else
         {
-            res = OCI_MsgSetObject(msg, NULL);
+            res = MsgSetObject(msg, NULL);
         }
     }
 
@@ -218,7 +218,7 @@ boolean MsgSetObject
     {
         /* assign the given object to the message internal object */
 
-        OCI_STATUS = OCI_ObjectAssign((OCI_Object *) msg->obj, obj);
+        OCI_STATUS = ObjectAssign((OCI_Object *) msg->obj, obj);
 
         if (OCI_STATUS)
         {

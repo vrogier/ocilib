@@ -79,7 +79,7 @@ OCI_Interval * IntervalInit
 
     if (!OCI_STATUS && itv)
     {
-        OCI_IntervalFree(itv);
+        IntervalFree(itv);
         itv = NULL;
     }
 

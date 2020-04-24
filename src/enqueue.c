@@ -66,7 +66,7 @@ OCI_Enqueue * EnqueueCreate
     }
     else if (enqueue)
     {
-        OCI_EnqueueFree(enqueue);
+        EnqueueFree(enqueue);
    }
 
     OCI_CALL_EXIT()

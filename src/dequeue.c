@@ -66,7 +66,7 @@ OCI_Dequeue * DequeueCreate
 
         if (OCI_STATUS)
         {
-            dequeue->msg = OCI_MsgCreate(dequeue->typinf);
+            dequeue->msg = MsgCreate(dequeue->typinf);
             OCI_STATUS = (NULL != dequeue->msg);
         }
     }
@@ -79,7 +79,7 @@ OCI_Dequeue * DequeueCreate
     }
     else if (dequeue)
     {
-        OCI_DequeueFree(dequeue);
+        DequeueFree(dequeue);
     }
 
     OCI_CALL_EXIT()
@@ -102,21 +102,21 @@ boolean DequeueFree
 
     if (dequeue->subhp)
     {
-        OCI_DequeueUnsubscribe(dequeue);
+        DequeueUnsubscribe(dequeue);
     }
 
     /* free local message  */
 
     if (dequeue->msg)
     {
-        OCI_MsgFree(dequeue->msg);
+        MsgFree(dequeue->msg);
     }
 
     /* free local agent  */
 
     if (dequeue->agent)
     {
-        OCI_AgentFree(dequeue->agent);
+        AgentFree(dequeue->agent);
     }
 
     /* free OCI descriptor */
@@ -208,7 +208,7 @@ OCI_Msg * DequeueGet
 
     /* reset message */
 
-    OCI_STATUS = OCI_MsgReset(dequeue->msg);
+    OCI_STATUS = MsgReset(dequeue->msg);
 
     if (OCI_STATUS)
     {
@@ -692,7 +692,7 @@ boolean DequeueSubscribe
 
     /* clear any previous subscription */
 
-    OCI_DequeueUnsubscribe(dequeue);
+    DequeueUnsubscribe(dequeue);
 
     /* allocate subscription handle */
 
@@ -804,7 +804,7 @@ boolean DequeueSubscribe
     {
         /* clear subscription on failure */
 
-        OCI_DequeueUnsubscribe(dequeue);
+        DequeueUnsubscribe(dequeue);
     }
 
     OCI_RETVAL = OCI_STATUS;

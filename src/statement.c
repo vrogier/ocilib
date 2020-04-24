@@ -195,7 +195,7 @@ boolean StatementReset
             Because, if we execute another sql with "returning into clause",
             OCI_ProcInBind won't be called by OCI. Nice Oracle bug ! */
 
-        const unsigned int cache_size = OCI_GetStatementCacheSize(stmt->con);
+        const unsigned int cache_size = ConnectionGetStatementCacheSize(stmt->con);
 
         if (cache_size > 0)
         {
@@ -215,7 +215,7 @@ boolean StatementReset
 
     /* free resultsets */
 
-    OCI_STATUS = OCI_STATUS && OCI_ReleaseResultsets(stmt);
+    OCI_STATUS = OCI_STATUS && StatementReleaseResultsets(stmt);
 
     /* free in/out binds */
 
@@ -225,7 +225,7 @@ boolean StatementReset
 
     if (stmt->map)
     {
-        OCI_STATUS = OCI_STATUS && OCI_HashFree(stmt->map);
+        OCI_STATUS = OCI_STATUS && HashFree(stmt->map);
     }
 
     /* free handle if needed */
@@ -521,8 +521,8 @@ boolean StatementBindCheckAll
 
             OCI_STATUS = MemHandleAlloc((dvoid *)bnd_stmt->con->env, (dvoid **)(void *)&bnd_stmt->stmt, OCI_HTYPE_STMT);
 
-            OCI_STATUS = OCI_STATUS && OCI_SetPrefetchSize(stmt, stmt->prefetch_size);
-            OCI_STATUS = OCI_STATUS && OCI_SetFetchSize(stmt, stmt->fetch_size);
+            OCI_STATUS = OCI_STATUS && StatementSetPrefetchSize(stmt, stmt->prefetch_size);
+            OCI_STATUS = OCI_STATUS && StatementSetFetchSize(stmt, stmt->fetch_size);
         }
 
         if ((bnd->direction & OCI_BDM_IN) ||
@@ -632,13 +632,13 @@ boolean StatementFetchIntoUserVariables
 
     /* get resultset */
 
-    rs = OCI_GetResultset(stmt);
+    rs = ResultsetGetResultset(stmt);
 
     /* fetch data */
 
     if (rs)
     {
-        res = OCI_FetchNext(rs);
+        res = ResultsetFetchNext(rs);
     }
 
     if (res)
@@ -647,9 +647,9 @@ boolean StatementFetchIntoUserVariables
 
         /* loop on column list for updating user given placeholders */
 
-        for (i = 1, n = OCI_GetColumnCount(rs); (i <= n) && res; i++)
+        for (i = 1, n = ResultsetGetColumnCount(rs); (i <= n) && res; i++)
         {
-            OCI_Column *col = OCI_GetColumn(rs, i);
+            OCI_Column *col = ResultsetGetColumn(rs, i);
 
             const int type = va_arg(args, int);
 
@@ -657,7 +657,7 @@ boolean StatementFetchIntoUserVariables
             {
                case OCI_ARG_TEXT:
                 {
-                    const otext *src = OCI_GetString(rs, i);
+                    const otext *src = ResultsetGetString(rs, i);
                     otext *dst = va_arg(args, otext *);
 
                     if (dst)
@@ -674,92 +674,92 @@ boolean StatementFetchIntoUserVariables
                 }
                 case OCI_ARG_SHORT:
                 {
-                    SET_ARG_NUM(short, OCI_GetShort);
+                    SET_ARG_NUM(short, ResultsetGetShort);
                     break;
                 }
                 case OCI_ARG_USHORT:
                 {
-                    SET_ARG_NUM(unsigned short, OCI_GetUnsignedShort);
+                    SET_ARG_NUM(unsigned short, ResultsetGetUnsignedShort);
                     break;
                 }
                 case OCI_ARG_INT:
                 {
-                    SET_ARG_NUM(int, OCI_GetInt);
+                    SET_ARG_NUM(int, ResultsetGetInt);
                     break;
                 }
                 case OCI_ARG_UINT:
                 {
-                    SET_ARG_NUM(unsigned int, OCI_GetUnsignedInt);
+                    SET_ARG_NUM(unsigned int, ResultsetGetUnsignedInt);
                     break;
                 }
                 case OCI_ARG_BIGINT:
                 {
-                    SET_ARG_NUM(big_int, OCI_GetBigInt);
+                    SET_ARG_NUM(big_int, ResultsetGetBigInt);
                     break;
                 }
                 case OCI_ARG_BIGUINT:
                 {
-                    SET_ARG_NUM(big_uint, OCI_GetUnsignedBigInt);
+                    SET_ARG_NUM(big_uint, ResultsetGetUnsignedBigInt);
                     break;
                 }
                 case OCI_ARG_DOUBLE:
                 {
-                    SET_ARG_NUM(double, OCI_GetDouble);
+                    SET_ARG_NUM(double, ResultsetGetDouble);
                     break;
                 }
                 case OCI_ARG_FLOAT:
                 {
-                    SET_ARG_NUM(float, OCI_GetFloat);
+                    SET_ARG_NUM(float, ResultsetGetFloat);
                     break;
                 }
                 case OCI_ARG_NUMBER:
                 {
-                    SET_ARG_HANDLE(OCI_Number, OCI_GetNumber, OCI_NumberAssign);
+                    SET_ARG_HANDLE(OCI_Number, ResultsetGetNumber, NumberAssign);
                     break;
                 }
                 case OCI_ARG_DATETIME:
                 {
-                    SET_ARG_HANDLE(OCI_Date, OCI_GetDate, OCI_DateAssign);
+                    SET_ARG_HANDLE(OCI_Date, ResultsetGetDate, DateAssign);
                     break;
                 }
                 case OCI_ARG_RAW:
                 {
-                    OCI_GetRaw(rs, i, va_arg(args, otext *), col->bufsize);
+                    ResultsetGetRaw(rs, i, va_arg(args, otext *), col->bufsize);
                     break;
                 }
                 case OCI_ARG_LOB:
                 {
-                    SET_ARG_HANDLE(OCI_Lob, OCI_GetLob, OCI_LobAssign);
+                    SET_ARG_HANDLE(OCI_Lob, ResultsetGetLob, LobAssign);
                     break;
                 }
                 case OCI_ARG_FILE:
                 {
-                    SET_ARG_HANDLE(OCI_File, OCI_GetFile, OCI_FileAssign);
+                    SET_ARG_HANDLE(OCI_File, ResultsetGetFile, FileAssign);
                     break;
                 }
                 case OCI_ARG_TIMESTAMP:
                 {
-                    SET_ARG_HANDLE(OCI_Timestamp, OCI_GetTimestamp, OCI_TimestampAssign);
+                    SET_ARG_HANDLE(OCI_Timestamp, ResultsetGetTimestamp, TimestampAssign);
                     break;
                 }
                 case OCI_ARG_INTERVAL:
                 {
-                    SET_ARG_HANDLE(OCI_Interval, OCI_GetInterval, OCI_IntervalAssign);
+                    SET_ARG_HANDLE(OCI_Interval, ResultsetGetInterval, IntervalAssign);
                     break;
                 }
                 case OCI_ARG_OBJECT:
                 {
-                    SET_ARG_HANDLE(OCI_Object, OCI_GetObject, OCI_ObjectAssign);
+                    SET_ARG_HANDLE(OCI_Object, ResultsetGetObject, ObjectAssign);
                     break;
                 }
                 case OCI_ARG_COLLECTION:
                 {
-                    SET_ARG_HANDLE(OCI_Coll, OCI_GetColl, OCI_CollAssign);
+                    SET_ARG_HANDLE(OCI_Coll, ResultsetGetColl, CollAssign);
                     break;
                 }
                 case OCI_ARG_REF:
                 {
-                    SET_ARG_HANDLE(OCI_Ref, OCI_GetRef, OCI_RefAssign);
+                    SET_ARG_HANDLE(OCI_Ref, ResultsetGetRef, RefAssign);
                     break;
                 }
                 default:
@@ -840,8 +840,8 @@ OCI_Statement * StatementInit
 
             /* Setting fetch attributes here as the statement is already prepared */
 
-            OCI_STATUS = OCI_STATUS && OCI_SetPrefetchSize(stmt, stmt->prefetch_size);
-            OCI_STATUS = OCI_STATUS && OCI_SetFetchSize(stmt, stmt->fetch_size);
+            OCI_STATUS = OCI_STATUS && StatementSetPrefetchSize(stmt, stmt->prefetch_size);
+            OCI_STATUS = OCI_STATUS && StatementSetFetchSize(stmt, stmt->fetch_size);
         }
         else
         {
@@ -855,7 +855,7 @@ OCI_Statement * StatementInit
 
     if (!OCI_STATUS && stmt)
     {
-        OCI_StatementFree(stmt);
+        StatementFree(stmt);
         stmt = NULL;
     }
 
@@ -1139,8 +1139,8 @@ boolean StatementPrepareInternal
     {
         stmt->status = OCI_STMT_PREPARED;
 
-        OCI_STATUS = OCI_STATUS && OCI_SetPrefetchSize(stmt, stmt->prefetch_size);
-        OCI_STATUS = OCI_STATUS && OCI_SetFetchSize(stmt, stmt->fetch_size);
+        OCI_STATUS = OCI_STATUS && StatementSetPrefetchSize(stmt, stmt->prefetch_size);
+        OCI_STATUS = OCI_STATUS && StatementSetFetchSize(stmt, stmt->fetch_size);
     }
 
     return OCI_STATUS;
@@ -1207,7 +1207,7 @@ boolean StatementExecuteInternal
             /* Must free previous resultsets for 'returning into'
                SQL orders that can produce multiple resultsets */
 
-            OCI_STATUS = OCI_ReleaseResultsets(stmt);
+            OCI_STATUS = StatementReleaseResultsets(stmt);
         }
     }
 
@@ -1282,7 +1282,7 @@ boolean StatementExecuteInternal
 
             if (stmt->con->autocom)
             {
-                OCI_Commit(stmt->con);
+                ConnectionCommit(stmt->con);
             }
 
             /* check if any implicit results are available */
@@ -1335,7 +1335,7 @@ OCI_Statement * StatementCreate
 
     if (!OCI_STATUS && OCI_RETVAL)
     {
-        OCI_StatementFree(OCI_RETVAL);
+        StatementFree(OCI_RETVAL);
         OCI_RETVAL = NULL;
     }
 
@@ -2974,7 +2974,7 @@ boolean StatementRegisterDate
        data with returning clause.
        It's an Oracle known bug #3269146 */
 
-    if (OCI_GetVersionConnection(stmt->con) < OCI_10_2)
+    if (ConnectionGetVersionConnection(stmt->con) < OCI_10_2)
     {
         code = SQLT_DAT;
         size = 7;
@@ -3183,12 +3183,12 @@ boolean StatementSetFetchMode
         if (old_exec_mode == OCI_SFM_DEFAULT && stmt->exec_mode == OCI_SFM_SCROLLABLE)
         {
             // Disabling prefetch that causes bugs for 9iR1 for scrollable cursors
-            OCI_SetPrefetchSize(stmt, 0);
+            StatementSetPrefetchSize(stmt, 0);
         }
         else if (old_exec_mode == OCI_SFM_SCROLLABLE && stmt->exec_mode == OCI_SFM_DEFAULT)
         {
             // Re-enable prefetch previously disabled
-            OCI_SetPrefetchSize(stmt, OCI_PREFETCH_SIZE);
+            StatementSetPrefetchSize(stmt, OCI_PREFETCH_SIZE);
         }
     }
 
@@ -3570,7 +3570,7 @@ OCI_Bind * StatementGetBind2
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_GetBindIndex
+* GetBindIndex
 * --------------------------------------------------------------------------------------------- */
 
 unsigned int StatementGetBindIndex
@@ -3637,7 +3637,7 @@ const otext * StatementGetSQLVerb
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    code = OCI_GetSQLCommand(stmt);
+    code = StatementGetSQLCommand(stmt);
 
     if (OCI_UNKNOWN != code)
     {

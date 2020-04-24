@@ -642,7 +642,7 @@ boolean FetchData
     #endif
 
         {
-            row_count   = OCI_GetAffectedRows(rs->stmt);
+            row_count   = StatementGetAffectedRows(rs->stmt);
             row_fetched = row_count - rs->row_count;
         }
 
@@ -844,7 +844,7 @@ OCI_Resultset *rs
                 {
                     ((OCI_Datatype *)def->buf.data[j])->hstate = OCI_OBJECT_FETCHED_DIRTY;
 
-                    OCI_LongFree((OCI_Long *)def->buf.data[j]);
+                    LongFree((OCI_Long *)def->buf.data[j]);
                 }
             }
         }
@@ -870,7 +870,7 @@ OCI_Resultset *rs
 
     if (rs->map)
     {
-        OCI_HashFree(rs->map);
+        HashFree(rs->map);
     }
 
     /* free defines (column array) */
@@ -1376,7 +1376,7 @@ boolean ResultsetSetStructNumericType2
 
     if (index >= 0)
     {
-        OCI_RETVAL = OCI_STATUS = OCI_SetStructNumericType(rs, (unsigned int)index, type);
+        OCI_RETVAL = OCI_STATUS = ResultsetSetStructNumericType(rs, (unsigned int)index, type);
     }
 
     OCI_CALL_EXIT()
@@ -1453,7 +1453,7 @@ boolean ResultsetGetStruct
                     }
                     case OCI_CDT_TEXT:
                     {
-                        *((otext **) ptr) =  (otext * ) OCI_GetString(rs, i);
+                        *((otext **) ptr) =  (otext * ) ResultsetGetString(rs, i);
                         break;
                     }
                     case OCI_CDT_RAW:
@@ -1463,53 +1463,53 @@ boolean ResultsetGetStruct
                     }
                     case OCI_CDT_LONG:
                     {
-                        *((OCI_Long **) ptr) = OCI_GetLong(rs, i);
+                        *((OCI_Long **) ptr) = ResultsetGetLong(rs, i);
                         break;
                     }
                     case OCI_CDT_DATETIME:
                     {
-                        *((OCI_Date **) ptr) = OCI_GetDate(rs, i);
+                        *((OCI_Date **) ptr) = ResultsetGetDate(rs, i);
                         break;
                     }
                     case OCI_CDT_CURSOR:
                     {
-                        *((OCI_Statement **) ptr) = OCI_GetStatement(rs, i);
+                        *((OCI_Statement **) ptr) = ResultsetGetStatement(rs, i);
                         break;
                     }
                     case OCI_CDT_LOB:
                     {
-                        *((OCI_Lob **) ptr) = OCI_GetLob(rs, i);
+                        *((OCI_Lob **) ptr) = ResultsetGetLob(rs, i);
                         break;
                     }
                     case OCI_CDT_FILE:
                     {
-                        *((OCI_File **) ptr) = OCI_GetFile(rs, i);
+                        *((OCI_File **) ptr) = ResultsetGetFile(rs, i);
                         break;
                     }
                     case OCI_CDT_TIMESTAMP:
                     {
-                        *((OCI_Timestamp **) ptr) = OCI_GetTimestamp(rs, i);
+                        *((OCI_Timestamp **) ptr) = ResultsetGetTimestamp(rs, i);
 
                         break;
                     }
                     case OCI_CDT_INTERVAL:
                     {
-                        *((OCI_Interval **) ptr) = OCI_GetInterval(rs, i);
+                        *((OCI_Interval **) ptr) = ResultsetGetInterval(rs, i);
                         break;
                     }
                     case OCI_CDT_OBJECT:
                     {
-                        *((OCI_Object **) ptr) = OCI_GetObject(rs, i);
+                        *((OCI_Object **) ptr) = ResultsetGetObject(rs, i);
                         break;
                     }
                     case OCI_CDT_COLLECTION:
                     {
-                        *((OCI_Coll **) ptr) = OCI_GetColl(rs, i);
+                        *((OCI_Coll **) ptr) = ResultsetGetColl(rs, i);
                         break;
                     }
                     case OCI_CDT_REF:
                     {
-                        *((OCI_Ref **) ptr) = OCI_GetRef(rs, i);
+                        *((OCI_Ref **) ptr) = ResultsetGetRef(rs, i);
                         break;
                     }
                 }
@@ -1532,7 +1532,7 @@ boolean ResultsetGetStruct
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_GetNumber
+* ResultsetGetNumber
 * --------------------------------------------------------------------------------------------- */
 
 OCI_Number * ResultsetGetNumber
@@ -1559,7 +1559,7 @@ OCI_Number * ResultsetGetNumber2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetNumber, OCI_Number *, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetNumber, OCI_Number *, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1585,7 +1585,7 @@ short ResultsetGetShort2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetShort, short, 0)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetShort, short, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1611,7 +1611,7 @@ unsigned short ResultsetGetUnsignedShort2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetUnsignedShort, unsigned short, 0)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetUnsignedShort, unsigned short, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1637,7 +1637,7 @@ int ResultsetGetInt2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetInt, int, 0)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetInt, int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1663,7 +1663,7 @@ unsigned int ResultsetGetUnsignedInt2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetUnsignedInt, unsigned int, 0)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetUnsignedInt, unsigned int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1689,7 +1689,7 @@ big_int ResultsetGetBigInt2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetBigInt, big_int, 0)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetBigInt, big_int, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1715,7 +1715,7 @@ big_uint ResultsetGetUnsignedBigInt2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetUnsignedBigInt, big_uint, 0)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetUnsignedBigInt, big_uint, 0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1762,11 +1762,11 @@ const otext * ResultsetGetString
         }
         else if ((OCI_CDT_LONG == def->col.datatype) && (OCI_CLONG == def->col.subtype))
         {
-            OCI_Long *lg = OCI_GetLong(rs, index);
+            OCI_Long *lg = ResultsetGetLong(rs, index);
 
             if (lg)
             {
-                OCI_RETVAL = (otext *)OCI_LongGetBuffer(lg);
+                OCI_RETVAL = (otext *)LongGetBuffer(lg);
             }
         }
         else
@@ -1785,17 +1785,17 @@ const otext * ResultsetGetString
             }
             case OCI_CDT_DATETIME:
             {
-                data = OCI_GetDate(rs, index);
+                data = ResultsetGetDate(rs, index);
                 break;
             }
             case OCI_CDT_TIMESTAMP:
             {
-                data = OCI_GetTimestamp(rs, index);
+                data = ResultsetGetTimestamp(rs, index);
                 break;
             }
             case OCI_CDT_INTERVAL:
             {
-                data = OCI_GetInterval(rs, index);
+                data = ResultsetGetInterval(rs, index);
                 break;
             }
             case OCI_CDT_RAW:
@@ -1806,16 +1806,16 @@ const otext * ResultsetGetString
             }
             case OCI_CDT_REF:
             {
-                data = OCI_GetRef(rs, index);
+                data = ResultsetGetRef(rs, index);
                 break;
             }
             case OCI_CDT_LONG:
             {
-                OCI_Long *lg = OCI_GetLong(rs, index);
+                OCI_Long *lg = ResultsetGetLong(rs, index);
 
                 if (lg)
                 {
-                    bufsize = OCI_LongGetSize(lg);
+                    bufsize = LongGetSize(lg);
 
                     if (OCI_BLONG == def->col.subtype)
                     {
@@ -1830,11 +1830,11 @@ const otext * ResultsetGetString
 
             case OCI_CDT_LOB:
             {
-                OCI_Lob *lob = OCI_GetLob(rs, index);
+                OCI_Lob *lob = ResultsetGetLob(rs, index);
 
                 if (lob)
                 {
-                    bufsize = (unsigned int)OCI_LobGetLength(lob);
+                    bufsize = (unsigned int)LobGetLength(lob);
 
                     if (OCI_BLOB == def->col.subtype)
                     {
@@ -1850,7 +1850,7 @@ const otext * ResultsetGetString
             {
                 /* directory / name will be output */
 
-                OCI_File * file = OCI_GetFile(rs, index);
+                OCI_File * file = ResultsetGetFile(rs, index);
 
                 if (file)
                 {
@@ -1867,11 +1867,11 @@ const otext * ResultsetGetString
             }
             case OCI_CDT_OBJECT:
             {
-                OCI_Object *obj = OCI_GetObject(rs, index);
+                OCI_Object *obj = ResultsetGetObject(rs, index);
 
                 if (obj)
                 {
-                    OCI_STATUS = OCI_ObjectToText(obj, &bufsize, NULL);
+                    OCI_STATUS = ObjectToText(obj, &bufsize, NULL);
                 }
 
                 data = obj;
@@ -1879,11 +1879,11 @@ const otext * ResultsetGetString
             }
             case OCI_CDT_COLLECTION:
             {
-                OCI_Coll *coll = OCI_GetColl(rs, index);
+                OCI_Coll *coll = ResultsetGetColl(rs, index);
 
                 if (coll)
                 {
-                    OCI_STATUS = OCI_CollToText(coll, &bufsize, NULL);
+                    OCI_STATUS = CollToText(coll, &bufsize, NULL);
                 }
 
                 data = coll;
@@ -1891,7 +1891,7 @@ const otext * ResultsetGetString
             }
             case OCI_CDT_CURSOR:
             {
-                OCI_Statement *stmt = OCI_GetStatement(rs, index);
+                OCI_Statement *stmt = ResultsetGetStatement(rs, index);
 
                 if (stmt && stmt->sql)
                 {
@@ -1938,7 +1938,7 @@ const otext * ResultsetGetString2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetString, const otext *, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetString, const otext *, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2049,7 +2049,7 @@ double ResultsetGetDouble2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetDouble, double, 0.0)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetDouble, double, 0.0)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2075,7 +2075,7 @@ float ResultsetGetFloat2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetFloat, float, 0.0f)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetFloat, float, 0.0f)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2108,7 +2108,7 @@ OCI_Date * ResultsetGetDate2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetDate, OCI_Date *, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetDate, OCI_Date *, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2140,7 +2140,7 @@ OCI_Timestamp * ResultsetGetTimestamp2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetTimestamp, OCI_Timestamp*, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetTimestamp, OCI_Timestamp*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2172,7 +2172,7 @@ OCI_Interval * ResultsetGetInterval2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetInterval, OCI_Interval*, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetInterval, OCI_Interval*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2205,7 +2205,7 @@ OCI_Object * ResultsetGetObject2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetObject, OCI_Object*, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetObject, OCI_Object*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2236,7 +2236,7 @@ OCI_Coll * ResultsetGetColl2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetColl, OCI_Coll*, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetColl, OCI_Coll*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2267,7 +2267,7 @@ OCI_Ref * ResultsetGetRef2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetRef, OCI_Ref*, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetRef, OCI_Ref*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2299,7 +2299,7 @@ OCI_Statement * ResultsetGetStatement2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetStatement, OCI_Statement*, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetStatement, OCI_Statement*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2332,7 +2332,7 @@ OCI_Lob * ResultsetGetLob2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetLob, OCI_Lob*, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetLob, OCI_Lob*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2365,7 +2365,7 @@ OCI_File * ResultsetGetFile2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetFile, OCI_File*, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetFile, OCI_File*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2396,7 +2396,7 @@ OCI_Long * ResultsetGetLong2
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, OCI_GetLong, OCI_Long*, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetLong, OCI_Long*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2459,7 +2459,7 @@ unsigned int ResultsetGetDataSize2
 
     if (index >= 0)
     {
-        OCI_RETVAL = OCI_GetDataSize(rs, (unsigned int)index);
+        OCI_RETVAL = ResultsetGetDataSize(rs, (unsigned int)index);
         OCI_STATUS = TRUE;
     }
 
@@ -2514,7 +2514,7 @@ boolean ResultsetIsNull2
 
     if (index >= 0)
     {
-        OCI_RETVAL = OCI_IsNull(rs, (unsigned int)index);
+        OCI_RETVAL = ResultsetIsNull(rs, (unsigned int)index);
         OCI_STATUS = TRUE;
     }
 

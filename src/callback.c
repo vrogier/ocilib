@@ -480,7 +480,7 @@ void ProcHAEventInvoke
     if (tmsp)
     {
         tmsp->hstate = OCI_OBJECT_FETCHED_DIRTY;
-        OCI_TimestampFree(tmsp);
+        TimestampFree(tmsp);
     }          
 }
 

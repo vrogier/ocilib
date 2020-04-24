@@ -81,7 +81,7 @@ OCI_Ref * RefInit
 
     if (!OCI_STATUS && ref)
     {
-        OCI_RefFree(ref);
+        RefFree(ref);
         ref = NULL;
     }
 
@@ -149,7 +149,7 @@ boolean RefUnpin
     if (ref->obj)
     {
         ref->obj->hstate = OCI_OBJECT_FETCHED_DIRTY;
-        OCI_ObjectFree(ref->obj);
+        ObjectFree(ref->obj);
         ref->obj = NULL;
     }
 
@@ -267,7 +267,7 @@ OCI_Object * RefGetObject
     OCI_CALL_CHECK_PTR(OCI_IPC_REF, ref)
     OCI_CALL_CONTEXT_SET_FROM_CONN(ref->con)
 
-    if (!OCI_RefIsNull(ref))
+    if (!RefIsNull(ref))
     {
         OCI_STATUS = RefPin(ref);
 
@@ -302,7 +302,7 @@ boolean RefAssign
     {
         if (ref->obj)
         {
-            OCI_ObjectFree(ref->obj);
+            ObjectFree(ref->obj);
             ref->obj = NULL;
         }
 
@@ -354,7 +354,7 @@ boolean RefSetNull
 
         if (ref->obj)
         {
-            OCI_ObjectFree(ref->obj);
+            ObjectFree(ref->obj);
             ref->obj = NULL;
         }
     }

@@ -194,7 +194,7 @@ OCI_Connection * ConnectionAllocate
     }
     else if (con)
     {
-        OCI_ConnectionFree(con);
+        ConnectionFree(con);
         con = NULL;
     }
 
@@ -522,13 +522,13 @@ void ConnectionLogonRegular
                 {
                     /* create default transaction object */
 
-                    OCI_Transaction *trs = OCI_TransactionCreate(con, 1, OCI_TRANS_READWRITE, NULL);
+                    OCI_Transaction *trs = TransactionCreate(con, 1, OCI_TRANS_READWRITE, NULL);
 
-                    if (trs && OCI_SetTransaction(con, trs))
+                    if (trs && ConnectionSetTransaction(con, trs))
                     {
                         /* start transaction */
 
-                        OCI_STATUS = OCI_TransactionStart(trs);
+                        OCI_STATUS = TransactionStart(trs);
                     }
                 }
             }
@@ -603,7 +603,7 @@ void ConnectionLogonSessionPool
 
     if (OCI_STATUS && found)
     {
-        OCI_SetSessionTag(con, tag);
+        ConnectionSetSessionTag(con, tag);
     }
 }
 
@@ -666,7 +666,7 @@ boolean ConnectionLogon
     {
         /* get server version */
 
-        OCI_GetVersionServer(con);
+        ConnectionGetVersionServer(con);
 
         con->cstate = OCI_CONN_LOGGED;
     }
@@ -724,11 +724,11 @@ void ConnectionLogoffSessionPool
 
     if (con->autocom)
     {
-        OCI_Commit(con);
+        ConnectionCommit(con);
     }
     else
     {
-        OCI_Rollback(con);
+        ConnectionRollback(con);
     }
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
@@ -867,7 +867,7 @@ boolean ConnectionClose
 
     /* clear server output resources */
 
-    OCI_ServerDisableOutput(con);
+    ConnectionServerDisableOutput(con);
 
     /* log off and detach form server */
 
@@ -907,7 +907,7 @@ boolean ConnectionClose
 
     if (con->inst_startup)
     {
-        OCI_TimestampFree(con->inst_startup);
+        TimestampFree(con->inst_startup);
     }
 
     con->stmts = NULL;
@@ -939,7 +939,7 @@ OCI_Connection * ConnectionCreateInternal
     {
         if (!ConnectionAttach(con) || !ConnectionLogon(con, NULL, tag))
         {
-            OCI_ConnectionFree(con);
+            ConnectionFree(con);
             con = NULL;
         }
     }
@@ -1407,7 +1407,7 @@ unsigned int ConnectionGetServerMajorVersion
 
     if (OCI_UNKNOWN == con->ver_num)
     {
-        OCI_GetVersionServer(con);
+        ConnectionGetVersionServer(con);
     }
 
     OCI_RETVAL = (unsigned int) OCI_VER_MAJ(con->ver_num);
@@ -1430,7 +1430,7 @@ unsigned int ConnectionGetServerMinorVersion
 
     if (OCI_UNKNOWN == con->ver_num)
     {
-        OCI_GetVersionServer(con);
+        ConnectionGetVersionServer(con);
     }
 
     OCI_RETVAL = (unsigned int) OCI_VER_MIN(con->ver_num);
@@ -1453,7 +1453,7 @@ unsigned int ConnectionGetServerRevisionVersion
 
     if (OCI_UNKNOWN == con->ver_num)
     {
-        OCI_GetVersionServer(con);
+        ConnectionGetVersionServer(con);
     }
 
     OCI_RETVAL = (unsigned int) OCI_VER_REV(con->ver_num);
@@ -1490,7 +1490,7 @@ boolean ConnectionSetTransaction
 
     if (con->trs)
     {
-        OCI_STATUS = OCI_TransactionStop(con->trs);
+        OCI_STATUS = TransactionStop(con->trs);
     }
 
     OCI_SET_ATTRIB(OCI_HTYPE_SVCCTX, OCI_ATTR_TRANS, con->cxt, trans->htr, sizeof(trans->htr));
@@ -1594,7 +1594,7 @@ boolean ConnectionServerEnableOutput
     {
         if (!con->svopt->stmt)
         {
-            con->svopt->stmt = OCI_StatementCreate(con);
+            con->svopt->stmt = StatementCreate(con);
             OCI_STATUS = (NULL != con->svopt->stmt);
         }
 
@@ -1602,16 +1602,16 @@ boolean ConnectionServerEnableOutput
         {
             /* enable server output */
 
-            OCI_STATUS = OCI_Prepare(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.ENABLE(:n); END;"));
+            OCI_STATUS = StatementPrepare(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.ENABLE(:n); END;"));
 
-            OCI_STATUS = OCI_STATUS && OCI_BindUnsignedInt(con->svopt->stmt, OTEXT(":n"), &bufsize);
+            OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(con->svopt->stmt, OTEXT(":n"), &bufsize);
 
             if (0 == bufsize)
             {
-                OCI_STATUS = OCI_STATUS && OCI_BindSetNull(OCI_GetBind(con->svopt->stmt, 1));
+                OCI_STATUS = OCI_STATUS && BindSetNull(StatementGetBind(con->svopt->stmt, 1));
             }
 
-            OCI_STATUS = OCI_STATUS && OCI_Execute(con->svopt->stmt);
+            OCI_STATUS = OCI_STATUS && StatementExecute(con->svopt->stmt);
 
             /* prepare the retrieval statement call */
 
@@ -1620,20 +1620,20 @@ boolean ConnectionServerEnableOutput
                 con->svopt->cursize = con->svopt->arrsize;
             }
 
-            OCI_STATUS = OCI_STATUS && OCI_Prepare(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.GET_LINES(:s, :i); END;"));
+            OCI_STATUS = OCI_STATUS && StatementPrepare(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.GET_LINES(:s, :i); END;"));
 
-            OCI_STATUS = OCI_STATUS && OCI_BindArrayOfStrings(con->svopt->stmt, OTEXT(":s"),
-                                                              (otext *) con->svopt->arrbuf,
-                                                              con->svopt->lnsize,
-                                                              con->svopt->arrsize);
+            OCI_STATUS = OCI_STATUS && StatementBindArrayOfStrings(con->svopt->stmt, OTEXT(":s"),
+                                                                  (otext *) con->svopt->arrbuf,
+                                                                  con->svopt->lnsize,
+                                                                  con->svopt->arrsize);
 
-            OCI_STATUS = OCI_STATUS && OCI_BindUnsignedInt(con->svopt->stmt, OTEXT(":i"), &con->svopt->cursize);
+            OCI_STATUS = OCI_STATUS && StatementBindUnsignedInt(con->svopt->stmt, OTEXT(":i"), &con->svopt->cursize);
         }
     }
 
     if (!OCI_STATUS)
     {
-        OCI_ServerDisableOutput(con);
+       ConnectionServerDisableOutput(con);
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -1656,11 +1656,11 @@ boolean ConnectionServerDisableOutput
 
     if (con->svopt)
     {
-        OCI_STATUS = OCI_ExecuteStmt(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.DISABLE(); END;"));
+        OCI_STATUS = StatementExecuteStmt(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.DISABLE(); END;"));
 
         if (con->svopt->stmt)
         {
-            OCI_StatementFree(con->svopt->stmt);
+            StatementFree(con->svopt->stmt);
             con->svopt->stmt = NULL;
         }
 
@@ -1691,7 +1691,7 @@ const otext * ConnectionServerGetOutput
         if (0 == con->svopt->curpos || con->svopt->curpos >= con->svopt->cursize)
         {
             con->svopt->cursize = con->svopt->arrsize;
-            OCI_STATUS = OCI_Execute(con->svopt->stmt);
+            OCI_STATUS = StatementExecute(con->svopt->stmt);
             con->svopt->curpos = 0;
         }
 
@@ -2218,7 +2218,7 @@ boolean ConnectionSetTAFHandler
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = OCI_IsTAFCapable(con);
+    OCI_RETVAL = ConnectionIsTAFCapable(con);
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2421,21 +2421,21 @@ boolean ConnectionExecuteImmediate
 
     /* First, execute SQL */
 
-    stmt = OCI_StatementCreate(con);
+    stmt = StatementCreate(con);
     OCI_STATUS = (NULL != stmt);
     
     if (OCI_STATUS)
     {
-        OCI_STATUS = OCI_ExecuteStmt(stmt, sql);
+        OCI_STATUS = StatementExecuteStmt(stmt, sql);
 
         /* get resultset and set up variables */
 
-        if (OCI_STATUS && (OCI_CST_SELECT == OCI_GetStatementType(stmt)))
+        if (OCI_STATUS && (OCI_CST_SELECT == StatementGetStatementType(stmt)))
         {
             OCI_STATUS = StatementFetchIntoUserVariables(stmt, args);
         }
 
-        OCI_StatementFree(stmt);
+        StatementFree(stmt);
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -2467,7 +2467,7 @@ boolean ConnectionExecuteImmediateFmt
     va_copy(first_pass_args, args);
     va_copy(second_pass_args, args);
 
-    stmt = OCI_StatementCreate(con);
+    stmt = StatementCreate(con);
     OCI_STATUS = (NULL != stmt);
 
     if (OCI_STATUS)
@@ -2498,7 +2498,7 @@ boolean ConnectionExecuteImmediateFmt
 
                     /* get resultset and set up variables */
 
-                    if (OCI_STATUS && (OCI_CST_SELECT == OCI_GetStatementType(stmt)))
+                    if (OCI_STATUS && (OCI_CST_SELECT == StatementGetStatementType(stmt)))
                     {
                         OCI_STATUS = StatementFetchIntoUserVariables(stmt, second_pass_args);
                     }
@@ -2508,7 +2508,7 @@ boolean ConnectionExecuteImmediateFmt
             }
         }
 
-        OCI_StatementFree(stmt);
+        StatementFree(stmt);
     }
 
     OCI_RETVAL = OCI_STATUS;

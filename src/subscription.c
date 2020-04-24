@@ -28,6 +28,7 @@
 #include "mutex.h"
 #include "strings.h"
 #include "statement.h"
+#include "resultset.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * SubscriptionClose
@@ -54,8 +55,8 @@ boolean SubscriptionClose
     {
         if (!sub->con)
         {
-            sub->con = OCI_ConnectionCreate(sub->saved_db, sub->saved_user,
-                                            sub->saved_pwd, OCI_SESSION_DEFAULT);
+            sub->con = ConnectionCreate(sub->saved_db, sub->saved_user,
+                                        sub->saved_pwd, OCI_SESSION_DEFAULT);
 
             alloc = TRUE;
         }
@@ -88,7 +89,7 @@ boolean SubscriptionClose
 
             if (alloc)
             {
-                OCI_ConnectionFree(sub->con);
+                ConnectionFree(sub->con);
             }
         }
     }
@@ -318,7 +319,7 @@ boolean SubscriptionAddStatement
     {
         OCI_SET_ATTRIB(OCI_HTYPE_STMT, OCI_ATTR_CHNF_REGHANDLE, stmt->stmt, sub->subhp, 0)
 
-        OCI_STATUS = OCI_STATUS && OCI_Execute(stmt) && (NULL != OCI_GetResultset(stmt));
+        OCI_STATUS = OCI_STATUS && StatementExecute(stmt) && (NULL != ResultsetGetResultset(stmt));
     }
 
 #endif

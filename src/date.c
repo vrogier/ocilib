@@ -95,7 +95,7 @@ OCI_Date * DateInit
 
     if (!OCI_STATUS && date)
     {
-        OCI_DateFree(date);
+        DateFree(date);
         date = NULL;
     }
 
@@ -351,7 +351,7 @@ boolean DateFromText
 
     if (!OCI_STRING_VALID(fmt))
     {
-        fmt = OCI_GetFormat(date->con, OCI_FMT_DATE);
+        fmt = GetFormat(date->con, OCI_FMT_DATE);
     }
 
     dbstr1 = StringGetOracleString(str, &dbsize1);
@@ -456,7 +456,7 @@ boolean DateGetDateTime
     int      *sec
 )
 {
-    return (OCI_DateGetDate(date, year, month, day) && OCI_DateGetTime(date, hour, min, sec));
+    return (DateGetDate(date, year, month, day) && DateGetTime(date, hour, min, sec));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -569,7 +569,7 @@ boolean DateSetDateTime
     int       sec
 )
 {
-    return (OCI_DateSetDate(date, year, month, day) && OCI_DateSetTime(date, hour, min, sec));
+    return (DateSetDate(date, year, month, day) && DateSetTime(date, hour, min, sec));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -620,7 +620,7 @@ boolean DateToText
 
     if (!OCI_STRING_VALID(fmt))
     {
-        fmt = OCI_GetFormat(date->con, OCI_FMT_DATE);
+        fmt = GetFormat(date->con, OCI_FMT_DATE);
     }
 
     dbstr1 = StringGetOracleString(str, &dbsize1);

@@ -262,7 +262,7 @@ boolean NumberFromString
 
             if (!tmp_fmt)
             {
-                tmp_fmt = OCI_GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
+                tmp_fmt = GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
             }
 
             if (type & OCI_NUM_DOUBLE)
@@ -308,7 +308,7 @@ boolean NumberFromString
 
             if (!fmt)
             {
-                fmt = OCI_GetFormat(con, OCI_FMT_NUMERIC);
+                fmt = GetFormat(con, OCI_FMT_NUMERIC);
             }
 
             dbstr1 = StringGetOracleString(in_value, &dbsize1);
@@ -380,7 +380,7 @@ boolean NumberToString
 
             if (!tmp_fmt)
             {
-                tmp_fmt = OCI_GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
+                tmp_fmt = GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
             }
 
             if (type & OCI_NUM_DOUBLE)
@@ -437,7 +437,7 @@ boolean NumberToString
 
             if (!fmt)
             {
-                fmt = OCI_GetFormat(con, OCI_FMT_NUMERIC);
+                fmt = GetFormat(con, OCI_FMT_NUMERIC);
             }
 
             dbstr1 = StringGetOracleString(out_value, &dbsize1);
@@ -518,7 +518,7 @@ OCI_Number * NumberInit
 
     if (!OCI_STATUS && number)
     {
-        OCI_NumberFree(number);
+        NumberFree(number);
         number = NULL;
     }
 

@@ -312,14 +312,14 @@ OCI_Pool * PoolCreate
 
         /* retrieve statement cache size */
 
-        OCI_PoolGetStatementCacheSize(pool);
+        PoolGetStatementCacheSize(pool);
 
         /* for connection pools that do not handle the statement cache
            attribute, let's set the value with documented default cache size */
 
         if (pool->cache_size == 0)
         {
-            OCI_PoolSetStatementCacheSize(pool, OCI_DEFAUT_STMT_CACHE_SIZE);
+            PoolSetStatementCacheSize(pool, OCI_DEFAUT_STMT_CACHE_SIZE);
         }
 
     #endif
@@ -332,7 +332,7 @@ OCI_Pool * PoolCreate
     }
     else if (pool)
     {
-        OCI_PoolFree(pool);
+        PoolFree(pool);
     }
 
     OCI_CALL_EXIT()
@@ -385,9 +385,9 @@ OCI_Connection * PoolGetConnection
 
     if (OCI_RETVAL)
     {
-        const unsigned int cache_size = OCI_PoolGetStatementCacheSize(pool);
+        const unsigned int cache_size = PoolGetStatementCacheSize(pool);
 
-        OCI_SetStatementCacheSize(OCI_RETVAL, cache_size);
+        ConnectionSetStatementCacheSize(OCI_RETVAL, cache_size);
     }
 
 #endif

@@ -18,22 +18,23 @@
  * limitations under the License.
  */
 
-#include "exception.h"
 #include "memory.h"
+
+#include "exception.h"
 #include "mutex.h"
 
 #define OCI_MUTEXED_CALL(exp)               \
                                             \
     if (OCILib.mem_mutex)                   \
     {                                       \
-       OCI_MutexAcquire(OCILib.mem_mutex);  \
+       MutexAcquire(OCILib.mem_mutex);      \
     }                                       \
                                             \
     (exp);                                  \
                                             \
     if (OCILib.mem_mutex)                   \
     {                                       \
-       OCI_MutexRelease(OCILib.mem_mutex);  \
+       MutexRelease(OCILib.mem_mutex);      \
     }                                       \
 
 

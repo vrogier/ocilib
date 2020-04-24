@@ -98,7 +98,7 @@ OCI_Lob * LobInit
 
     if (!OCI_STATUS && lob)
     {
-        OCI_LobFree(lob);
+        LobFree(lob);
         lob = NULL;
     }
 
@@ -140,7 +140,7 @@ boolean LobFree
     OCI_CALL_CHECK_OBJECT_FETCHED(lob)
     OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
-    if (OCI_LobIsTemporary(lob))
+    if (LobIsTemporary(lob))
     {
         OCI_EXEC(OCILobFreeTemporary(lob->con->cxt, lob->con->err, lob->handle))
     }
@@ -236,7 +236,7 @@ boolean LobSeek
     OCI_CALL_CHECK_ENUM_VALUE(lob->con, NULL, mode, SeekModeValues, OTEXT("Seek Mode"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(lob->con)
 
-    size = OCI_LobGetLength(lob);
+    size = LobGetLength(lob);
 
     switch (mode)
     {
@@ -447,7 +447,7 @@ unsigned int LobRead
         }
     }
 
-    OCI_LobRead2(lob, buffer, &char_count, &byte_count);
+    LobRead2(lob, buffer, &char_count, &byte_count);
 
     return (NULL != ptr_count ? *ptr_count : 0);
 }
@@ -624,7 +624,7 @@ unsigned int LobWrite
         }
     }
 
-    OCI_LobWrite2(lob, buffer, &char_count, &byte_count);
+    LobWrite2(lob, buffer, &char_count, &byte_count);
 
     return (NULL != ptr_count ? *ptr_count : 0);
 }
@@ -661,7 +661,7 @@ boolean LobTruncate
     {
         if (lob->offset > size)
         {
-            lob->offset = OCI_LobGetLength(lob) + 1;
+            lob->offset = LobGetLength(lob) + 1;
         }
     }
 
@@ -901,8 +901,8 @@ boolean LobAppend2
 
     if (OCILib.version_runtime < OCI_10_1)
     {
-        return OCI_LobSeek(lob, OCI_LobGetLength(lob), OCI_SEEK_SET) &&
-               OCI_LobWrite2(lob, buffer, char_count, byte_count);
+        return LobSeek(lob, LobGetLength(lob), OCI_SEEK_SET) &&
+               LobWrite2(lob, buffer, char_count, byte_count);
     }
 
     OCI_CALL_CONTEXT_ENTER(OCILib.env_mode)
@@ -1060,7 +1060,7 @@ unsigned int LobAppend
         }
     }
 
-    OCI_LobAppend2(lob, buffer, &char_count, &byte_count);
+    LobAppend2(lob, buffer, &char_count, &byte_count);
 
     return (NULL != ptr_count ? *ptr_count : 0);
 }
@@ -1084,7 +1084,7 @@ boolean LobAppendLob
 
     if (OCI_STATUS)
     {
-        lob->offset += OCI_LobGetLength(lob);
+        lob->offset += LobGetLength(lob);
     }
 
     OCI_RETVAL = OCI_STATUS;

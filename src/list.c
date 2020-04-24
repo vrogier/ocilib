@@ -31,7 +31,7 @@
         OCI_Item *item = NULL;              \
         if (list->mutex )                   \
         {                                   \
-            OCI_MutexAcquire(list->mutex);  \
+            MutexAcquire(list->mutex);      \
         }                                   \
         item = list->head;                  \
         while (item)                        \
@@ -41,7 +41,7 @@
         }                                   \
         if (list->mutex)                    \
         {                                   \
-            OCI_MutexRelease(list->mutex);  \
+            MutexRelease(list->mutex);      \
         }                                   \
     }                                       \
 
@@ -128,7 +128,7 @@ boolean ListFree
 
     if (list->mutex)
     {
-        res = OCI_MutexFree(list->mutex);
+        res = MutexFree(list->mutex);
     }
 
     OCI_FREE(list)
@@ -157,7 +157,7 @@ void * ListAppend
 
     if (list->mutex)
     {
-        OCI_MutexAcquire(list->mutex);
+        MutexAcquire(list->mutex);
     }
 
     temp = list->head;
@@ -180,7 +180,7 @@ void * ListAppend
 
     if (list->mutex)
     {
-        OCI_MutexRelease(list->mutex);
+        MutexRelease(list->mutex);
     }
 
     return item->data;
@@ -201,7 +201,7 @@ boolean ListClear
 
     if (list->mutex)
     {
-        OCI_MutexAcquire(list->mutex);
+        MutexAcquire(list->mutex);
     }
 
     /* walk along the list to free item's buffer */
@@ -225,7 +225,7 @@ boolean ListClear
 
     if (list->mutex)
     {
-        OCI_MutexRelease(list->mutex);
+        MutexRelease(list->mutex);
     }
 
     return TRUE;
@@ -287,7 +287,7 @@ boolean ListRemove
 
     if (list->mutex)
     {
-        OCI_MutexAcquire(list->mutex);
+        MutexAcquire(list->mutex);
     }
 
     item = list->head;
@@ -327,7 +327,7 @@ boolean ListRemove
 
     if (list->mutex)
     {
-        OCI_MutexRelease(list->mutex);
+        MutexRelease(list->mutex);
     }
 
     return TRUE;

@@ -410,7 +410,7 @@ boolean ColumnDescribe
 
             StringGetFullTypeName(schema_name, package_name, type_name, NULL, full_name, (sizeof(full_name) / sizeof(otext)) - 1);
 
-            col->typinf = OCI_TypeInfoGet(con, full_name, OCI_TIF_TYPE);
+            col->typinf = TypeInfoGet(con, full_name, OCI_TIF_TYPE);
 
             OCI_STATUS = (NULL != col->typinf);
         }

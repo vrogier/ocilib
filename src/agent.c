@@ -64,14 +64,14 @@ OCI_Agent * AgentInit
 
         if (OCI_STATUS && OCI_STRING_VALID(name))
         {
-            OCI_STATUS = OCI_AgentSetName(agent, name);
+            OCI_STATUS = AgentSetName(agent, name);
         }
 
         /* set address attribute if provided */
 
         if (OCI_STATUS && OCI_STRING_VALID(address))
         {
-            OCI_STATUS = OCI_AgentSetAddress(agent, address);
+            OCI_STATUS = AgentSetAddress(agent, address);
         }
     }
 
@@ -79,7 +79,7 @@ OCI_Agent * AgentInit
 
     if (!OCI_STATUS && agent)
     {
-        OCI_AgentFree(agent);
+        AgentFree(agent);
         agent = NULL;
     }
 

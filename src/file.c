@@ -82,7 +82,7 @@ OCI_File * FileInit
 
     if (!OCI_STATUS && file)
     {
-        OCI_FileFree(file);
+        FileFree(file);
         file = NULL;
     }
 
@@ -279,7 +279,7 @@ boolean FileSeek
     OCI_CALL_CHECK_ENUM_VALUE(file->con, NULL, mode, SeekModeValues, OTEXT("Seek Mode"))
     OCI_CALL_CONTEXT_SET_FROM_CONN(file->con)
 
-    size = OCI_FileGetSize(file);
+    size = FileGetSize(file);
 
     switch (mode)
     {

@@ -53,7 +53,7 @@ OCI_Mutex * MutexCreateInternal
 
     if (!OCI_STATUS && mutex)
     {
-        OCI_MutexFree(mutex);
+        MutexFree(mutex);
         mutex = NULL;
     }
 

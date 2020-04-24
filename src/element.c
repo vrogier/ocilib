@@ -226,7 +226,7 @@ OCI_Elem * ElemInit
 
     if (!OCI_STATUS && elem)
     {
-        OCI_ElemFree(elem);
+        ElemFree(elem);
         elem = NULL;
     }
 
@@ -313,7 +313,7 @@ boolean ElemGetNumberInternal
     OCI_CHECK(NULL == elem, FALSE)
     OCI_CHECK(NULL == value, FALSE)
 
-    if (OCI_ElemIsNull(elem))
+    if (ElemIsNull(elem))
     {
         res = TRUE;
     }
@@ -324,7 +324,7 @@ boolean ElemGetNumberInternal
     }
     else if (OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
     {
-        res = NumberFromString(elem->con, value, flag, OCI_ElemGetString(elem), NULL);
+        res = NumberFromString(elem->con, value, flag, ElemGetString(elem), NULL);
     }
     else
     {
@@ -406,7 +406,7 @@ boolean ElemGetBoolean
     OCI_CALL_CHECK_COMPAT(elem->con, OCI_CDT_BOOLEAN == elem->typinf->cols[0].datatype)
     OCI_CALL_CONTEXT_SET_FROM_CONN(elem->con)
 
-    if (!OCI_ElemIsNull(elem))
+    if (!ElemIsNull(elem))
     {
         boolean *data = (boolean *)elem->handle;
 
@@ -972,7 +972,7 @@ boolean ElemSetRaw
 
     if (!value)
     {
-        OCI_STATUS = OCI_ElemSetNull(elem);
+        OCI_STATUS = ElemSetNull(elem);
     }
     else
     {

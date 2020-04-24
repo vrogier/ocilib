@@ -25,7 +25,7 @@
 #include "collection.h"
 #include "date.h"
 #include "file.h"
-#include "helpers.h"
+#include "hash.h"
 #include "interval.h"
 #include "lob.h"
 #include "macro.h"
@@ -313,7 +313,7 @@ void BindAddToStatement
 
             /* for user binds, add a positive index */
 
-            OCI_HashAddInt(bnd->stmt->map, bnd->name, bnd->stmt->nb_ubinds);
+            HashAddInt(bnd->stmt->map, bnd->name, bnd->stmt->nb_ubinds);
         }
     }
     else
@@ -324,7 +324,7 @@ void BindAddToStatement
 
         const int index = (int)bnd->stmt->nb_rbinds;
 
-        OCI_HashAddInt(bnd->stmt->map, bnd->name, -index);
+        HashAddInt(bnd->stmt->map, bnd->name, -index);
     }
 }
 
@@ -440,7 +440,7 @@ OCI_Bind* BindCreate
 
         if (!stmt->map)
         {
-            stmt->map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
+            stmt->map = HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
             OCI_STATUS = (NULL != stmt->map);
         }
     }
@@ -789,7 +789,7 @@ boolean BindAllocData
             {
                 if (bnd->subtype == OCI_NUM_NUMBER)
                 {
-                    OCI_Number *number = OCI_NumberCreate(bnd->stmt->con);
+                    OCI_Number *number = NumberCreate(bnd->stmt->con);
 
                     if (number)
                     {
@@ -812,7 +812,7 @@ boolean BindAllocData
             }
             case OCI_CDT_DATETIME:
             {
-                OCI_Date *date = OCI_DateCreate(bnd->stmt->con);
+                OCI_Date *date = DateCreate(bnd->stmt->con);
 
                 if (date)
                 {
@@ -837,7 +837,7 @@ boolean BindAllocData
             }
             case OCI_CDT_LOB:
             {
-                OCI_Lob *lob = OCI_LobCreate(bnd->stmt->con, bnd->subtype);
+                OCI_Lob *lob = LobCreate(bnd->stmt->con, bnd->subtype);
 
                 if (lob)
                 {
@@ -848,7 +848,7 @@ boolean BindAllocData
             }
             case OCI_CDT_FILE:
             {
-                OCI_File *file = OCI_FileCreate(bnd->stmt->con,  bnd->subtype);
+                OCI_File *file = FileCreate(bnd->stmt->con,  bnd->subtype);
 
                 if (file)
                 {
@@ -859,7 +859,7 @@ boolean BindAllocData
             }
             case OCI_CDT_TIMESTAMP:
             {
-                OCI_Timestamp *tmsp = OCI_TimestampCreate(bnd->stmt->con, bnd->subtype);
+                OCI_Timestamp *tmsp = TimestampCreate(bnd->stmt->con, bnd->subtype);
 
                 if (tmsp)
                 {
@@ -870,7 +870,7 @@ boolean BindAllocData
             }
             case OCI_CDT_INTERVAL:
             {
-                OCI_Interval *itv = OCI_IntervalCreate(bnd->stmt->con, bnd->subtype);
+                OCI_Interval *itv = IntervalCreate(bnd->stmt->con, bnd->subtype);
 
                 if (itv)
                 {
@@ -887,7 +887,7 @@ boolean BindAllocData
             }
             case OCI_CDT_OBJECT:
             {
-                OCI_Object *obj = OCI_ObjectCreate(bnd->stmt->con, bnd->typinf);
+                OCI_Object *obj = ObjectCreate(bnd->stmt->con, bnd->typinf);
 
                 if (obj)
                 {
@@ -898,7 +898,7 @@ boolean BindAllocData
             }
             case OCI_CDT_COLLECTION:
             {
-                OCI_Coll *coll = OCI_CollCreate(bnd->typinf);
+                OCI_Coll *coll = CollCreate(bnd->typinf);
 
                 if (coll)
                 {
@@ -909,7 +909,7 @@ boolean BindAllocData
             }
             case OCI_CDT_REF:
             {
-                OCI_Ref *ref = OCI_RefCreate(bnd->stmt->con, bnd->typinf);
+                OCI_Ref *ref = RefCreate(bnd->stmt->con, bnd->typinf);
 
                 if (ref)
                 {
@@ -939,7 +939,7 @@ int BindGetInternalIndex
 
     if (stmt->map)
     {
-        he = OCI_HashLookup(stmt->map, name, FALSE);
+        he = HashLookup(stmt->map, name, FALSE);
 
         while (he)
         {
@@ -972,7 +972,7 @@ int BindGetInternalIndex
  * BindSetNullIndicator
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_BindSetNullIndicator
+boolean BindSetNullIndicator
 (
     OCI_Bind    *bnd,
     unsigned int position,
@@ -1085,7 +1085,7 @@ boolean BindSetDataSize
     unsigned int size
 )
 {
-    return OCI_BindSetDataSizeAtPos(bnd, 1, size);
+    return BindSetDataSizeAtPos(bnd, 1, size);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1134,7 +1134,7 @@ unsigned int BindGetDataSize
     OCI_Bind *bnd
 )
 {
-    return OCI_BindGetDataSizeAtPos(bnd, 1);
+    return BindGetDataSizeAtPos(bnd, 1);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1185,7 +1185,7 @@ boolean BindSetNullAtPos
     OCI_CALL_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
     OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
 
-    OCI_RETVAL = OCI_STATUS = OCI_BindSetNullIndicator(bnd, position, OCI_IND_NULL);
+    OCI_RETVAL = OCI_STATUS = BindSetNullIndicator(bnd, position, OCI_IND_NULL);
 
     OCI_CALL_EXIT()
 }
@@ -1199,7 +1199,7 @@ boolean BindSetNull
     OCI_Bind *bnd
 )
 {
-    return OCI_BindSetNullAtPos(bnd, 1);
+    return BindSetNullAtPos(bnd, 1);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1217,7 +1217,7 @@ boolean BindSetNotNullAtPos
     OCI_CALL_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
     OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
 
-    OCI_RETVAL = OCI_STATUS = OCI_BindSetNullIndicator(bnd, position, OCI_IND_NOTNULL);
+    OCI_RETVAL = OCI_STATUS = BindSetNullIndicator(bnd, position, OCI_IND_NOTNULL);
 
     OCI_CALL_EXIT()
 }
@@ -1231,7 +1231,7 @@ boolean BindSetNotNull
     OCI_Bind *bnd
 )
 {
-    return OCI_BindSetNotNullAtPos(bnd, 1);
+    return BindSetNotNullAtPos(bnd, 1);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1266,7 +1266,7 @@ boolean BindIsNull
     OCI_Bind *bnd
 )
 {
-    return OCI_BindIsNullAtPos(bnd, 1);
+    return BindIsNullAtPos(bnd, 1);
 }
 
 /* --------------------------------------------------------------------------------------------- *

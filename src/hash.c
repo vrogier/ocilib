@@ -70,7 +70,7 @@ boolean HashAdd
     OCI_CHECK(NULL == key, FALSE)
     OCI_CHECK(table->type != type, FALSE)
 
-    e = OCI_HashLookup(table, key, TRUE);
+    e = HashLookup(table, key, TRUE);
 
     if (e)
     {
@@ -158,7 +158,7 @@ OCI_HashTable * HashCreate
     }
     else if (table)
     {
-        OCI_HashFree(table);
+        HashFree(table);
     }
 
     OCI_CALL_EXIT()
@@ -275,7 +275,7 @@ OCI_HashValue * HashGetValue
     OCI_CALL_ENTER(OCI_HashValue*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
-    e = OCI_HashLookup(table, key, FALSE);
+    e = HashLookup(table, key, FALSE);
 
     if (e)
     {
@@ -322,7 +322,7 @@ const otext * HashGetString
     OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
     OCI_CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
 
-    v = OCI_HashGetValue(table, key);
+    v = HashGetValue(table, key);
 
     if (v)
     {
@@ -348,7 +348,7 @@ int HashGetInt
     OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
     OCI_CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
 
-    v = OCI_HashGetValue(table, key);
+    v = HashGetValue(table, key);
 
     if (v)
     {
@@ -374,7 +374,7 @@ void * HashGetPointer
     OCI_CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
     OCI_CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
 
-    v = OCI_HashGetValue(table, key);
+    v = HashGetValue(table, key);
 
     if (v)
     {

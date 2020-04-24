@@ -23,6 +23,7 @@
 #include "exception.h"
 #include "interval.h"
 #include "macro.h"
+#include "number.h"
 #include "ref.h"
 #include "timestamp.h"
 
@@ -160,7 +161,7 @@ int ParseSqlFmt
 
                         yy = mm = dd = mi = hh = ss = ff = 0;
 
-                        OCI_TimestampGetDateTime(tmsp, &yy, &mm, &dd,
+                        TimestampGetDateTime(tmsp, &yy, &mm, &dd,
                                                  &hh, &mi, &ss, &ff);
 
                         if (ff > 0)
@@ -202,7 +203,7 @@ int ParseSqlFmt
 
                 if (itv)
                 {
-                    OCI_IntervalToText(itv, 3, 3, (int) osizeof(temp)- 1, temp);
+                    IntervalToText(itv, 3, 3, (int) osizeof(temp)- 1, temp);
 
                     len = (int) ostrlen(temp);
 
@@ -332,7 +333,7 @@ int ParseSqlFmt
 
                 temp[0] = 0;
 
-                OCI_NumberToText(va_arg(*pargs, OCI_Number*), NULL, 128, temp);
+                NumberToText(va_arg(*pargs, OCI_Number*), NULL, 128, temp);
                 len = (int) ostrlen(temp);
 
                 if (buf && (len > 0))
@@ -352,7 +353,7 @@ int ParseSqlFmt
 
                 if (ref)
                 {
-                    OCI_RefToText(ref, (unsigned int) osizeof(temp) - 1, temp);
+                    RefToText(ref, (unsigned int) osizeof(temp) - 1, temp);
 
                     len = (int) ostrlen(temp);
 

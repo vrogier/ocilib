@@ -155,7 +155,7 @@ boolean ThreadKeyCreate
         /* create the map at the first call to ThreadKeyCreate to save
            time and memory when it's not needed */
 
-        OCILib.key_map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_POINTER);
+        OCILib.key_map = HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_POINTER);
         OCI_STATUS = (NULL != OCILib.key_map);
     }
 
@@ -168,7 +168,7 @@ boolean ThreadKeyCreate
        
         /* add key to internal key hash table */
 
-        OCI_STATUS = OCI_STATUS && OCI_HashAddPointer(OCILib.key_map, name, key);
+        OCI_STATUS = OCI_STATUS && HashAddPointer(OCILib.key_map, name, key);
     }
 
     /* check errors */
@@ -198,7 +198,7 @@ boolean ThreadKeySetValue
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
 
-    key = (OCI_ThreadKey *) OCI_HashGetPointer(OCILib.key_map, name);
+    key = (OCI_ThreadKey *) HashGetPointer(OCILib.key_map, name);
 
     OCI_RETVAL = OCI_STATUS = ThreadKeySet(key, value);
 
@@ -219,7 +219,7 @@ void * ThreadKeyGetValue
     OCI_CALL_ENTER(void*, NULL)
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
 
-    key = (OCI_ThreadKey *)OCI_HashGetPointer(OCILib.key_map, name);
+    key = (OCI_ThreadKey *)HashGetPointer(OCILib.key_map, name);
 
     OCI_STATUS = ThreadKeyGet(key, &OCI_RETVAL);
 

@@ -80,7 +80,7 @@ OCI_Thread * ThreadCreate
     }
     else if (thread)
     {
-        OCI_ThreadFree(thread);
+        ThreadFree(thread);
     }
 
     OCI_CALL_EXIT()

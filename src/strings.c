@@ -698,9 +698,9 @@ unsigned int StringGetFromType
             if (ptr)
             {           
                 OCI_Date    *date = (OCI_Date*) data;
-                const otext *fmt  = OCI_GetFormat(con, OCI_FMT_DATE);
+                const otext *fmt  = GetFormat(con, OCI_FMT_DATE);
 
-                res = date ? OCI_DateToText(date, fmt, (int) buffer_size, ptr) : FALSE;
+                res = date ? DateToText(date, fmt, (int) buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -715,9 +715,9 @@ unsigned int StringGetFromType
             if (ptr)
             {
                 OCI_Timestamp *tmsp = (OCI_Timestamp *) data;
-                const otext   *fmt = OCI_GetFormat(con, tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
+                const otext   *fmt = GetFormat(con, tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
 
-                 res = tmsp ? OCI_TimestampToText(tmsp, fmt, (int) buffer_size, ptr, 0) : FALSE;
+                 res = tmsp ? TimestampToText(tmsp, fmt, (int) buffer_size, ptr, 0) : FALSE;
             }
             else
             {
@@ -733,7 +733,7 @@ unsigned int StringGetFromType
             {
                 OCI_Interval *itv = (OCI_Interval * ) data;
 
-                res = itv ? OCI_IntervalToText(itv, OCI_STRING_DEFAULT_PREC, OCI_STRING_DEFAULT_PREC, buffer_size, ptr) : FALSE;
+                res = itv ? IntervalToText(itv, OCI_STRING_DEFAULT_PREC, OCI_STRING_DEFAULT_PREC, buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -749,7 +749,7 @@ unsigned int StringGetFromType
             {
                 if (OCI_CLONG == col->subtype)
                 {
-                    len = StringAddToBuffer(buffer, len, (otext*) OCI_LongGetBuffer(lg), OCI_LongGetSize(lg), quote);
+                    len = StringAddToBuffer(buffer, len, (otext*) LongGetBuffer(lg), LongGetSize(lg), quote);
                 }
                 else
                 {
@@ -787,7 +787,7 @@ unsigned int StringGetFromType
                         unsigned int bytes_count = bytes_requested;
                         unsigned int char_count = 0;
 
-                        res = OCI_LobRead2(lob, lob_buf, &char_count, &bytes_count);
+                        res = LobRead2(lob, lob_buf, &char_count, &bytes_count);
 
                         if (bytes_count > 0)
                         {
@@ -808,11 +808,11 @@ unsigned int StringGetFromType
                         }
                     }
 
-                    OCI_LobSeek(lob, 0, OCI_SEEK_SET);
+                    LobSeek(lob, 0, OCI_SEEK_SET);
                 }
                 else
                 {
-                    len = (unsigned int)OCI_LobGetLength(lob);
+                    len = (unsigned int)LobGetLength(lob);
 
                     if (OCI_BLOB == lob->type)
                     {
@@ -835,8 +835,8 @@ unsigned int StringGetFromType
 
             if (file)
             {
-                const otext * dir  = OCI_FileGetDirectory(file);
-                const otext * name =  OCI_FileGetName(file);
+                const otext * dir  = FileGetDirectory(file);
+                const otext * name =  FileGetName(file);
 
                 len += StringAddToBuffer(buffer, len, dir, (unsigned int) ostrlen(dir), TRUE);
                 len += StringAddToBuffer(buffer, len, OTEXT("/"), 1, TRUE);
@@ -857,7 +857,7 @@ unsigned int StringGetFromType
             if (ptr)
             {
                 OCI_Ref *ref = (OCI_Ref *) data;
-                res = ref ? OCI_RefToText(ref, buffer_size, ptr) : FALSE;
+                res = ref ? RefToText(ref, buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -870,7 +870,7 @@ unsigned int StringGetFromType
             OCI_Object *obj = (OCI_Object *) data;
             unsigned int real_size = buffer_size;
             quote = FALSE;
-            res = obj ? OCI_ObjectToText(obj, &real_size, ptr) : FALSE;
+            res = obj ? ObjectToText(obj, &real_size, ptr) : FALSE;
             len = real_size;
             break;
         }
@@ -879,7 +879,7 @@ unsigned int StringGetFromType
             OCI_Coll *coll = (OCI_Coll *) data;
             unsigned int real_size = buffer_size;
             quote = FALSE;
-            res = coll ? OCI_CollToText(coll, &real_size, ptr) : FALSE;
+            res = coll ? CollToText(coll, &real_size, ptr) : FALSE;
             len = real_size;
             break;
         }

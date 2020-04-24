@@ -36,6 +36,7 @@
 #include "number.h"
 #include "ref.h"
 #include "timestamp.h"
+#include "typeinfo.h"
 
 #define OCI_OBJECT_SET_VALUE(datatype, type, func)                          \
                                                                             \
@@ -167,7 +168,7 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
                     /* retrieve the type info of the real object */
 
-                    result = OCI_TypeInfoGet(result->con, fullname, OCI_TIF_TYPE);
+                    result = TypeInfoGet(result->con, fullname, OCI_TIF_TYPE);
                 }
 
                 MemHandleFree(descr, OCI_HTYPE_DESCRIBE);
@@ -593,7 +594,7 @@ OCI_Object * ObjectInit
 
     if (!OCI_STATUS && obj)
     {
-        OCI_ObjectFree(obj);
+        ObjectFree(obj);
         obj = NULL;
     }
 
@@ -756,7 +757,7 @@ boolean ObjectGetNumberInternal
 
         if (index >= 0)
         {
-            OCI_STATUS = NumberFromString(obj->con, value, flag, OCI_ObjectGetString(obj, attr), NULL);
+            OCI_STATUS = NumberFromString(obj->con, value, flag, ObjectGetString(obj, attr), NULL);
         }
     }
 
@@ -1254,7 +1255,7 @@ int ObjectGetRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ObjectGetRawSize
+* ObjectGetRawSize
 * --------------------------------------------------------------------------------------------- */
 
 unsigned int ObjectGetRawSize
@@ -1660,7 +1661,7 @@ boolean ObjectSetString
 
     if (!value)
     {
-        OCI_STATUS = OCI_ObjectSetNull(obj, attr);
+        OCI_STATUS = ObjectSetNull(obj, attr);
     }
     else
     {
@@ -1986,7 +1987,7 @@ boolean ObjectGetSelfRef
 
     if (!OCI_STATUS && ref->obj)
     {
-        OCI_ObjectFree(ref->obj);
+        ObjectFree(ref->obj);
         ref->obj = NULL;
     }
 
@@ -2061,7 +2062,7 @@ boolean ObjectToText
         attr  = obj->typinf->cols[i].name;
         quote = TRUE;
 
-        if (OCI_ObjectIsNull(obj, attr))
+        if (ObjectIsNull(obj, attr))
         {
             len += StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
         }
@@ -2081,7 +2082,7 @@ boolean ObjectToText
                     if (data && ind && (OCI_IND_NULL != *ind))
                     {
                         data_size = OCIStringSize(OCILib.env, (*(OCIString **)data));
-                        data      = (void *)OCI_ObjectGetString(obj, attr);
+                        data      = (void *)ObjectGetString(obj, attr);
                     }
                     else
                     {
@@ -2121,43 +2122,43 @@ boolean ObjectToText
                 }
                 case OCI_CDT_DATETIME:
                 {
-                    data  = (void *) OCI_ObjectGetDate(obj, attr);
+                    data  = (void *) ObjectGetDate(obj, attr);
                     break;
                 }
                 case OCI_CDT_TIMESTAMP:
                 {
-                    data  = (void *) OCI_ObjectGetTimestamp(obj, attr);
+                    data  = (void *) ObjectGetTimestamp(obj, attr);
                     break;
                 }
                 case OCI_CDT_INTERVAL:
                 {
-                    data  = (void *) OCI_ObjectGetInterval(obj, attr);
+                    data  = (void *) ObjectGetInterval(obj, attr);
                     break;
                 }
                 case OCI_CDT_LOB:
                 {
-                    data  = (void *) OCI_ObjectGetLob(obj, attr);
+                    data  = (void *) ObjectGetLob(obj, attr);
                     break;
                 }
                 case OCI_CDT_FILE:
                 {
-                    data  = (void *) OCI_ObjectGetFile(obj, attr);
+                    data  = (void *) ObjectGetFile(obj, attr);
                     break;
                 }
                 case OCI_CDT_REF:
                 {
-                    data  = (void *) OCI_ObjectGetRef(obj, attr);
+                    data  = (void *) ObjectGetRef(obj, attr);
                     break;
                 }
                 case OCI_CDT_OBJECT:
                 {
-                    data  = (void *) OCI_ObjectGetObject(obj, attr);
+                    data  = (void *) ObjectGetObject(obj, attr);
                     quote = FALSE;
                     break;
                 }
                 case OCI_CDT_COLLECTION:
                 {
-                    data =  (void *) OCI_ObjectGetColl(obj, attr);
+                    data =  (void *) ObjectGetColl(obj, attr);
                     quote = FALSE;
                 }
             }

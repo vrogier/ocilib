@@ -88,7 +88,7 @@ OCI_Timestamp * TimestampInit
 
     if (!OCI_STATUS && tmsp)
     {
-        OCI_TimestampFree(tmsp);
+        TimestampFree(tmsp);
         tmsp = NULL;
     }
 #else
@@ -266,11 +266,11 @@ boolean TimestampAssign
 
     if (OCI_TIMESTAMP_LTZ == tmsp_src->type)
     {
-        tmp_tmsp_src = OCI_TimestampCreate(tmsp_src->con, OCI_TIMESTAMP_TZ);
-        tmp_tmsp     = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
+        tmp_tmsp_src = TimestampCreate(tmsp_src->con, OCI_TIMESTAMP_TZ);
+        tmp_tmsp     = TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
-        OCI_STATUS = OCI_STATUS && OCI_TimestampConvert(tmp_tmsp_src, tmsp_src);
-        OCI_STATUS = OCI_STATUS && OCI_TimestampConvert(tmp_tmsp, tmsp);
+        OCI_STATUS = OCI_STATUS && TimestampConvert(tmp_tmsp_src, tmsp_src);
+        OCI_STATUS = OCI_STATUS && TimestampConvert(tmp_tmsp, tmsp);
     }
     else
     {
@@ -284,18 +284,18 @@ boolean TimestampAssign
 
     if (OCI_TIMESTAMP_LTZ == tmsp_src->type)
     {
-        OCI_STATUS = OCI_STATUS && OCI_TimestampConvert(tmsp_src, tmp_tmsp_src);
-        OCI_STATUS = OCI_STATUS && OCI_TimestampConvert(tmsp, tmp_tmsp);
+        OCI_STATUS = OCI_STATUS && TimestampConvert(tmsp_src, tmp_tmsp_src);
+        OCI_STATUS = OCI_STATUS && TimestampConvert(tmsp, tmp_tmsp);
     }
 
     if (tmsp != tmp_tmsp)
     {
-        OCI_TimestampFree(tmp_tmsp);
+        TimestampFree(tmp_tmsp);
     }
 
     if (tmsp_src != tmp_tmsp_src)
     {
-        OCI_TimestampFree(tmp_tmsp_src);
+        TimestampFree(tmp_tmsp_src);
     }
 
 #endif
@@ -466,7 +466,7 @@ boolean TimestampFromText
 
     if (!OCI_STRING_VALID(fmt))
     {
-        fmt = OCI_GetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
+        fmt = GetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
     dbstr1 = StringGetOracleString(str, &dbsize1);
@@ -531,7 +531,7 @@ boolean TimestampToText
 
     if (!OCI_STRING_VALID(fmt))
     {
-        fmt = OCI_GetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
+        fmt = GetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
     dbstr1 = StringGetOracleString(str, &dbsize1);
@@ -693,8 +693,8 @@ boolean TimestampGetDateTime
     int           *fsec
 )
 {
-    return (OCI_TimestampGetDate(tmsp, year, month, day) &&
-            OCI_TimestampGetTime(tmsp, hour, min, sec, fsec));
+    return (TimestampGetDate(tmsp, year, month, day) &&
+            TimestampGetTime(tmsp, hour, min, sec, fsec));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -807,9 +807,9 @@ boolean TimestampIntervalAdd
 
     if (OCI_TIMESTAMP_TZ != tmsp->type)
     {
-        tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
+        tmp = TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
-        OCI_STATUS = OCI_TimestampConvert(tmp, tmsp);
+        OCI_STATUS = TimestampConvert(tmp, tmsp);
     }
     else
     {
@@ -822,12 +822,12 @@ boolean TimestampIntervalAdd
 
     if (OCI_STATUS && (OCI_TIMESTAMP_TZ != tmsp->type))
     {
-        OCI_STATUS = OCI_TimestampConvert(tmsp, tmp);
+        OCI_STATUS = TimestampConvert(tmsp, tmp);
     }
 
     if (tmsp != tmp)
     {
-        OCI_TimestampFree(tmp);
+        TimestampFree(tmp);
     }
 
 #else
@@ -865,9 +865,9 @@ boolean TimestampIntervalSub
 
     if (OCI_TIMESTAMP_TZ != tmsp->type)
     {
-        tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
+        tmp = TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
-        OCI_STATUS = OCI_TimestampConvert(tmp, tmsp);
+        OCI_STATUS = TimestampConvert(tmp, tmsp);
     }
     else
     {
@@ -880,12 +880,12 @@ boolean TimestampIntervalSub
 
     if (OCI_STATUS && (OCI_TIMESTAMP_TZ != tmsp->type))
     {
-        OCI_STATUS = OCI_TimestampConvert(tmsp, tmp);
+        OCI_STATUS = TimestampConvert(tmsp, tmp);
     }
 
     if (tmsp != tmp)
     {
-        OCI_TimestampFree(tmp);
+        TimestampFree(tmp);
     }
 
 #else
@@ -958,7 +958,7 @@ boolean TimestampSysTimestamp
 
     if (OCI_TIMESTAMP == tmsp->type)
     {
-        tmp = OCI_TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
+        tmp = TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
 
         handle = tmp->handle;
     }
@@ -971,12 +971,12 @@ boolean TimestampSysTimestamp
 
     if (OCI_STATUS && (OCI_TIMESTAMP == tmsp->type))
     {
-        OCI_STATUS = OCI_TimestampConvert(tmsp, tmp);
+        OCI_STATUS = TimestampConvert(tmsp, tmp);
     }
 
     if (tmp && tmsp != tmp)
     {
-        OCI_TimestampFree(tmp);
+        TimestampFree(tmp);
     }
 
 #else
@@ -1013,7 +1013,7 @@ boolean TimestampToCTime
 
     memset(&t, 0, sizeof(t));
 
-    OCI_STATUS = OCI_TimestampGetDateTime(tmsp, &t.tm_year, &t.tm_mon, &t.tm_mday,
+    OCI_STATUS = TimestampGetDateTime(tmsp, &t.tm_year, &t.tm_mon, &t.tm_mday,
                                           &t.tm_hour, &t.tm_min, &t.tm_sec, &msec);
 
     if (OCI_STATUS)
@@ -1071,7 +1071,7 @@ boolean TimestampFromCTime
         OCI_RAISE_EXCEPTION(ExceptionNullPointer(OCI_IPC_TM))
     }
 
-    OCI_RETVAL = OCI_STATUS = OCI_TimestampConstruct(tmsp, ptm->tm_year + 1900,  ptm->tm_mon  + 1,
+    OCI_RETVAL = OCI_STATUS = TimestampConstruct(tmsp, ptm->tm_year + 1900,  ptm->tm_mon  + 1,
                                                      ptm->tm_mday,  ptm->tm_hour,  ptm->tm_min,
                                                      ptm->tm_sec, (int) 0, (const otext *) NULL);
 

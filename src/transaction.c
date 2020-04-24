@@ -33,7 +33,7 @@ boolean TransactionClose
 OCI_Transaction * trans
 )
 {
-    const boolean res = OCI_TransactionStop(trans);
+    const boolean res = TransactionStop(trans);
 
     /* close transaction handle */
 
@@ -102,7 +102,7 @@ OCI_Transaction * TransactionCreate
     }
     else if (trans)
     {
-        OCI_TransactionFree(trans);
+        TransactionFree(trans);
     }
 
     OCI_CALL_EXIT()
@@ -169,7 +169,7 @@ boolean TransactionStop
 
     /* commit or rollback upon auto commit mode */
 
-    OCI_STATUS = trans->con->autocom ? OCI_Commit(trans->con) : OCI_Rollback(trans->con);
+    OCI_STATUS = trans->con->autocom ? ConnectionCommit(trans->con) : ConnectionRollback(trans->con);
 
     /* detach global transaction */
 

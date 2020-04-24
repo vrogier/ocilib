@@ -74,7 +74,7 @@ OCI_Coll * CollInit
 
     if (!OCI_STATUS && coll)
     {
-        OCI_CollFree(coll);
+        CollFree(coll);
         coll = NULL;
     }
 
@@ -119,7 +119,7 @@ boolean CollFree
     if (coll->elem)
     {
         coll->elem->hstate = OCI_OBJECT_FETCHED_DIRTY;
-        OCI_ElemFree(coll->elem);
+        ElemFree(coll->elem);
         coll->elem = NULL;
     }
 
@@ -294,7 +294,7 @@ boolean CollTrim
 {
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    OCI_CALL_CHECK_BOUND(coll->con, (sb4) nb_elem, (sb4) 0, (sb4) OCI_CollGetSize(coll));
+    OCI_CALL_CHECK_BOUND(coll->con, (sb4) nb_elem, (sb4) 0, (sb4) CollGetSize(coll));
     OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
     OCI_EXEC(OCICollTrim(coll->con->env, coll->con->err, (sb4) nb_elem, coll->handle))
@@ -442,7 +442,7 @@ boolean CollClear
     OCI_CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
     OCI_CALL_CONTEXT_SET_FROM_CONN(coll->con)
 
-    OCI_RETVAL = OCI_STATUS = OCI_CollTrim(coll, OCI_CollGetSize(coll));
+    OCI_RETVAL = OCI_STATUS = CollTrim(coll, CollGetSize(coll));
 
     OCI_CALL_EXIT()
 }
@@ -530,15 +530,15 @@ boolean CollToText
     len += StringAddToBuffer(str, len, coll->typinf->name, (unsigned int) ostrlen(coll->typinf->name), FALSE);
     len += StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
 
-    const unsigned int n = OCI_CollGetSize(coll);
+    const unsigned int n = CollGetSize(coll);
 
     for (unsigned int i = 1; i <= n && OCI_STATUS; i++)
     {
-        OCI_Elem *elem = OCI_CollGetElem(coll, i);
+        OCI_Elem *elem = CollGetElem(coll, i);
 
         quote = TRUE;
 
-        if (OCI_ElemIsNull(elem))
+        if (ElemIsNull(elem))
         {
             len += StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
         }
@@ -553,7 +553,7 @@ boolean CollToText
                 case OCI_CDT_TEXT:
                 {
                     data_size = OCIStringSize(OCILib.env, elem->handle);
-                    data      = (void *) OCI_ElemGetString(elem);
+                    data      = (void *) ElemGetString(elem);
                     break;
                 }
                 case OCI_CDT_NUMERIC:
@@ -580,43 +580,43 @@ boolean CollToText
                 }
                 case OCI_CDT_DATETIME:
                 {
-                    data  = (void *) OCI_ElemGetDate(elem);
+                    data  = (void *) ElemGetDate(elem);
                     break;
                 }
                 case OCI_CDT_TIMESTAMP:
                 {
-                    data  = (void *) OCI_ElemGetTimestamp(elem);
+                    data  = (void *) ElemGetTimestamp(elem);
                     break;
                 }
                 case OCI_CDT_INTERVAL:
                 {
-                    data  = (void *) OCI_ElemGetInterval(elem);
+                    data  = (void *) ElemGetInterval(elem);
                     break;
                 }
                 case OCI_CDT_LOB:
                 {
-                    data  = (void *) OCI_ElemGetLob(elem);
+                    data  = (void *) ElemGetLob(elem);
                     break;
                 }
                 case OCI_CDT_FILE:
                 {
-                    data  = (void *) OCI_ElemGetFile(elem);
+                    data  = (void *) ElemGetFile(elem);
                     break;
                 }
                 case OCI_CDT_REF:
                 {
-                    data  = (void *) OCI_ElemGetRef(elem);
+                    data  = (void *) ElemGetRef(elem);
                     break;
                 }
                 case OCI_CDT_OBJECT:
                 {
-                    data  = (void *) OCI_ElemGetObject(elem);
+                    data  = (void *) ElemGetObject(elem);
                     quote = FALSE;
                     break;
                 }
                 case OCI_CDT_COLLECTION:
                 {
-                    data  =  (void *) OCI_ElemGetColl(elem);
+                    data  =  (void *) ElemGetColl(elem);
                     quote = FALSE;
                 }
             }

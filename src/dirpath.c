@@ -353,7 +353,7 @@ OCI_DirPath * DirPathCreate
     }
     else if (dp)
     {
-        OCI_DirPathFree(dp);
+        DirPathFree(dp);
     }
 
     OCI_CALL_EXIT()

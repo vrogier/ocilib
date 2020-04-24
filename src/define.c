@@ -20,6 +20,7 @@
 
 #include "define.h"
 
+#include "hash.h"
 #include "macro.h"
 #include "number.h"
 #include "connection.h"
@@ -61,13 +62,13 @@ int DefineGetIndex
     {
         /* create the map at the first call to save time and memory when it's not needed */
 
-        rs->map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
+        rs->map = HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
 
         if (rs->map)
         {
             for (ub4 i = 0; i < rs->nb_defs; i++)
             {
-                OCI_HashAddInt(rs->map, rs->defs[i].col.name, (int)(i + 1));
+                HashAddInt(rs->map, rs->defs[i].col.name, (int)(i + 1));
             }
         }
     }
@@ -76,7 +77,7 @@ int DefineGetIndex
 
     OCI_CHECK(NULL == rs->map, -1);
 
-    he = OCI_HashLookup(rs->map, name, FALSE);
+    he = HashLookup(rs->map, name, FALSE);
 
     while (he)
     {

@@ -69,7 +69,7 @@ OCI_Coll *coll
     }
     else if (iter)
     {
-        OCI_IterFree(iter);
+        IterFree(iter);
    }
 
     OCI_CALL_EXIT()
@@ -100,7 +100,7 @@ boolean IterFree
     if (iter->elem)
     {
         iter->elem->hstate = OCI_OBJECT_FETCHED_DIRTY;
-        OCI_ElemFree(iter->elem);
+        ElemFree(iter->elem);
         iter->elem = NULL;
     }
 

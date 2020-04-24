@@ -23,6 +23,10 @@
 #include "array.h"
 #include "callback.h"
 #include "connection.h"
+#include "file.h"
+#include "date.h"
+#include "lob.h"
+#include "collection.h"
 #include "hash.h"
 #include "list.h"
 #include "error.h"
@@ -32,6 +36,13 @@
 #include "strings.h"
 #include "subscription.h"
 #include "threadkey.h"
+#include "statement.h"
+#include "timestamp.h"
+#include "ref.h"
+#include "transaction.h"
+#include "object.h"
+#include "interval.h"
+#include "number.h"
 
 /* ********************************************************************************************* *
  *                             INTERNAL VARIABLES
@@ -688,47 +699,47 @@ boolean FreeObjectFromType(void *obj, unsigned int type)
     {
         case OCI_CDT_NUMERIC:
         {
-            res = OCI_NumberFree((OCI_Number *)obj);
+            res = NumberFree((OCI_Number *)obj);
             break;
         }
         case OCI_CDT_DATETIME:
         {
-            res = OCI_DateFree((OCI_Date *)obj);
+            res = DateFree((OCI_Date *)obj);
             break;
         }
         case OCI_CDT_LOB:
         {
-            res = OCI_LobFree((OCI_Lob *)obj);
+            res = LobFree((OCI_Lob *)obj);
             break;
         }
         case OCI_CDT_FILE:
         {
-            res = OCI_FileFree((OCI_File *)obj);
+            res = FileFree((OCI_File *)obj);
             break;
         }
         case OCI_CDT_OBJECT:
         {
-            res = OCI_ObjectFree((OCI_Object *)obj);
+            res = ObjectFree((OCI_Object *)obj);
             break;
         }
         case OCI_CDT_COLLECTION:
         {
-            res = OCI_CollFree((OCI_Coll *)obj);
+            res = CollFree((OCI_Coll *)obj);
             break;
         }
         case OCI_CDT_TIMESTAMP:
         {
-            res = OCI_TimestampFree((OCI_Timestamp *)obj);
+            res = TimestampFree((OCI_Timestamp *)obj);
             break;
         }
         case OCI_CDT_INTERVAL:
         {
-            res = OCI_IntervalFree((OCI_Interval *)obj);
+            res = IntervalFree((OCI_Interval *)obj);
             break;
         }
         case OCI_CDT_REF:
         {
-            res= OCI_RefFree((OCI_Ref *)obj);
+            res= RefFree((OCI_Ref *)obj);
             break;
         }
     }
@@ -752,11 +763,11 @@ boolean KeyMapFree
 
     OCI_CHECK(NULL == OCILib.key_map, TRUE)
 
-    const unsigned int n = OCI_HashGetSize(OCILib.key_map);
+    const unsigned int n = HashGetSize(OCILib.key_map);
 
     for (unsigned int i = 0; i < n; i++)
     {
-        e = OCI_HashGetEntry(OCILib.key_map, i);
+        e = HashGetEntry(OCILib.key_map, i);
 
         while (e)
         {
@@ -776,7 +787,7 @@ boolean KeyMapFree
         }
     }
 
-    res = (OCI_HashFree(OCILib.key_map) && (nb_err == 0));
+    res = (HashFree(OCILib.key_map) && (nb_err == 0));
 
     OCILib.key_map = NULL;
 
@@ -1761,7 +1772,7 @@ boolean Cleanup
 
         if (mutex)
         {
-            OCI_MutexFree(mutex);
+            MutexFree(mutex);
         }
 
         res = OCI_SUCCESSFUL(OCIThreadTerm(OCILib.env, OCILib.err));
@@ -1989,7 +2000,7 @@ boolean DatabaseStartup
 
         /* connect with preliminary authentication mode */
 
-        con = OCI_ConnectionCreate(db, user, pwd, sess_mode | OCI_PRELIM_AUTH);
+        con = ConnectionCreate(db, user, pwd, sess_mode | OCI_PRELIM_AUTH);
 
         OCI_STATUS = (NULL != con);
 
@@ -2026,7 +2037,7 @@ boolean DatabaseStartup
 
             /* disconnect */
 
-            OCI_ConnectionFree(con);
+            ConnectionFree(con);
         }
     }
 
@@ -2034,7 +2045,7 @@ boolean DatabaseStartup
     {
         /* connect without preliminary mode */
 
-        con = OCI_ConnectionCreate(db, user, pwd, sess_mode);
+        con = ConnectionCreate(db, user, pwd, sess_mode);
 
         OCI_STATUS = (NULL != con);
 
@@ -2042,27 +2053,27 @@ boolean DatabaseStartup
 
         if (OCI_STATUS)
         {
-            OCI_Statement *stmt = OCI_StatementCreate(con);
+            OCI_Statement *stmt = StatementCreate(con);
 
             /* mount database */
 
             if (start_mode & OCI_DB_SPM_MOUNT)
             {
-                OCI_STATUS = OCI_STATUS && OCI_ExecuteStmt(stmt, OTEXT("ALTER DATABASE MOUNT"));
+                OCI_STATUS = OCI_STATUS && StatementExecuteStmt(stmt, OTEXT("ALTER DATABASE MOUNT"));
             }
 
             /* open database */
 
             if (start_mode & OCI_DB_SPM_OPEN)
             {
-                OCI_STATUS = OCI_STATUS && OCI_ExecuteStmt(stmt, OTEXT("ALTER DATABASE OPEN"));
+                OCI_STATUS = OCI_STATUS && StatementExecuteStmt(stmt, OTEXT("ALTER DATABASE OPEN"));
             }
 
-            OCI_StatementFree(stmt);
+            StatementFree(stmt);
 
             /* disconnect */
 
-            OCI_ConnectionFree(con);
+            ConnectionFree(con);
         }
     }
 
@@ -2107,7 +2118,7 @@ boolean DatabaseShutdown
 
     /* connect to server */
 
-    con = OCI_ConnectionCreate(db, user, pwd, sess_mode);
+    con = ConnectionCreate(db, user, pwd, sess_mode);
 
     OCI_STATUS = (NULL != con);
 
@@ -2117,7 +2128,7 @@ boolean DatabaseShutdown
 
         if (con->trs && (OCI_DB_SDF_ABORT == shut_flag))
         {
-            OCI_TransactionFree(con->trs);
+            TransactionFree(con->trs);
 
             con->trs = NULL;
         }
@@ -2135,29 +2146,29 @@ boolean DatabaseShutdown
 
         if (OCI_STATUS && (OCI_DB_SDF_ABORT != shut_flag))
         {
-            OCI_Statement *stmt = OCI_StatementCreate(con);
+            OCI_Statement *stmt = StatementCreate(con);
 
             /* close database */
 
             if (shut_mode & OCI_DB_SDM_CLOSE)
             {
-                OCI_STATUS = OCI_STATUS && OCI_ExecuteStmt(stmt, OTEXT("ALTER DATABASE CLOSE NORMAL"));
+                OCI_STATUS = OCI_STATUS && StatementExecuteStmt(stmt, OTEXT("ALTER DATABASE CLOSE NORMAL"));
             }
 
             /* unmount database */
 
             if (shut_mode & OCI_DB_SDM_DISMOUNT)
             {
-                OCI_STATUS = OCI_STATUS && OCI_ExecuteStmt(stmt, OTEXT("ALTER DATABASE DISMOUNT"));
+                OCI_STATUS = OCI_STATUS && StatementExecuteStmt(stmt, OTEXT("ALTER DATABASE DISMOUNT"));
             }
 
-            OCI_StatementFree(stmt);
+            StatementFree(stmt);
 
             /* delete current transaction before the shutdown */
 
             if (con->trs)
             {
-                OCI_TransactionFree(con->trs);
+                TransactionFree(con->trs);
 
                 con->trs = NULL;
             }
@@ -2169,7 +2180,7 @@ boolean DatabaseShutdown
 
         /* disconnect */
 
-        OCI_ConnectionFree(con);
+        ConnectionFree(con);
     }
 
 #else
@@ -2289,7 +2300,7 @@ const otext * GetFormat
 
     if (!*value)
     {
-        OCI_SetFormat(con, type, NULL);
+        SetFormat(con, type, NULL);
     }
 
     call_retval = *value;
@@ -2326,7 +2337,7 @@ boolean SetUserPassword
     {
         if (!ConnectionAttach(con) || !ConnectionLogon(con, new_pwd, NULL))
         {
-            OCI_ConnectionFree(con);
+            ConnectionFree(con);
             con = NULL;
         }
     }
