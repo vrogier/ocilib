@@ -794,7 +794,7 @@ boolean ConnectionLogOff
 
     /* free all type info objects */
 
-    ListForEach(con->tinfs, (POCI_LIST_FOR_EACH) OCI_TypeInfoClose);
+    ListForEach(con->tinfs, (POCI_LIST_FOR_EACH) TypeInfoClose);
     ListClear(con->tinfs);
 
     /* free all transactions */

@@ -18,11 +18,13 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "typeinfo.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "column.h"
+#include "list.h"
+#include "macro.h"
+#include "memory.h"
+#include "string.h"
 
 static unsigned int TypeInfoTypeValues[] = { OCI_TIF_TABLE, OCI_TIF_VIEW, OCI_TIF_TYPE };
 
@@ -33,15 +35,11 @@ typedef struct TypeInfoFindParams
     otext * name;
 } TypeInfoFindParams;
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TypeInfoFind
+ * TypeInfoFind
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_TypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find_params)
+boolean TypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find_params)
 {
     return  
         typinf && 
@@ -52,10 +50,10 @@ boolean OCI_TypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find_params)
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TypeInfoClose
+ * TypeInfoClose
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_TypeInfoClose
+boolean TypeInfoClose
 (
     OCI_TypeInfo *typinf
 )
@@ -75,15 +73,11 @@ boolean OCI_TypeInfoClose
     return TRUE;
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TypeInfoGet
+ * TypeInfoGet
  * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * OCI_API OCI_TypeInfoGet
+OCI_TypeInfo * TypeInfoGet
 (
     OCI_Connection *con,
     const otext    *name,
@@ -162,7 +156,7 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
     find_params.name = obj_name;
     find_params.schema = obj_schema;
 
-    typinf = ListFind(con->tinfs, (POCI_LIST_FIND) OCI_TypeInfoFind, &find_params);
+    typinf = ListFind(con->tinfs, (POCI_LIST_FIND) TypeInfoFind, &find_params);
   
     /* Not found, so create type object */
 
@@ -512,10 +506,10 @@ OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TypeInfoFree
+ * TypeInfoFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TypeInfoFree
+boolean TypeInfoFree
 (
     OCI_TypeInfo *typinf
 )
@@ -530,7 +524,7 @@ boolean OCI_API OCI_TypeInfoFree
     {
         ListRemove(typinf->con->tinfs, typinf);
 
-        OCI_TypeInfoClose(typinf);
+        TypeInfoClose(typinf);
 
         OCI_FREE(typinf)
     }
@@ -541,10 +535,10 @@ boolean OCI_API OCI_TypeInfoFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TypeInfoGetType
+ * TypeInfoGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_TypeInfoGetType
+unsigned int TypeInfoGetType
 (
     OCI_TypeInfo *typinf
 )
@@ -553,10 +547,10 @@ unsigned int OCI_API OCI_TypeInfoGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TypeInfoGetConnection
+ * TypeInfoGetConnection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * OCI_API OCI_TypeInfoGetConnection
+OCI_Connection * TypeInfoGetConnection
 (
     OCI_TypeInfo *typinf
 )
@@ -565,10 +559,10 @@ OCI_Connection * OCI_API OCI_TypeInfoGetConnection
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TypeInfoGetColumnCount
+ * TypeInfoGetColumnCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_TypeInfoGetColumnCount
+unsigned int TypeInfoGetColumnCount
 (
     OCI_TypeInfo *typinf
 )
@@ -577,10 +571,10 @@ unsigned int OCI_API OCI_TypeInfoGetColumnCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TypeInfoGetColumn
+ * TypeInfoGetColumn
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Column * OCI_API OCI_TypeInfoGetColumn
+OCI_Column * TypeInfoGetColumn
 (
     OCI_TypeInfo *typinf,
     unsigned int  index
@@ -597,10 +591,10 @@ OCI_Column * OCI_API OCI_TypeInfoGetColumn
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TypeInfoGetName
+ * TypeInfoGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_TypeInfoGetName
+const otext * TypeInfoGetName
 (
     OCI_TypeInfo *typinf
 )
@@ -612,7 +606,7 @@ const otext * OCI_API OCI_TypeInfoGetName
 * OCI_TypeInfoIsFinalType
 * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT boolean OCI_API OCI_TypeInfoIsFinalType
+OCI_EXPORT boolean TypeInfoIsFinalType
 (
     OCI_TypeInfo *typinf
 )
@@ -624,7 +618,7 @@ OCI_EXPORT boolean OCI_API OCI_TypeInfoIsFinalType
 * OCI_TypeInfoGetSuperType
 * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo* OCI_API OCI_TypeInfoGetSuperType
+OCI_TypeInfo* TypeInfoGetSuperType
 (
     OCI_TypeInfo *typinf
 )

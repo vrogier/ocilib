@@ -4887,8 +4887,65 @@ unsigned int OCI_API OCI_TransactionGetTimeout
     CALL_IMPL(TransactionGetTimeout, trans);
 }
 
-
 /* --------------------------------------------------------------------------------------------- *
  *  typeinfo
  * --------------------------------------------------------------------------------------------- */
 
+OCI_TypeInfo* OCI_API OCI_TypeInfoGet
+(
+    OCI_Connection* con,
+    const otext* name,
+    unsigned int    type
+)
+{
+    CALL_IMPL(TypeInfoGet, con, name, type);
+}
+
+unsigned int OCI_API OCI_TypeInfoGetType
+(
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(TypeInfoGetType, typinf);
+}
+
+OCI_Connection* OCI_API OCI_TypeInfoGetConnection
+(
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(TypeInfoGetConnection, typinf);
+}
+
+boolean OCI_API OCI_TypeInfoFree
+(
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(TypeInfoFree, typinf);
+}
+
+unsigned int OCI_API OCI_TypeInfoGetColumnCount
+(
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(TypeInfoGetColumnCount, typinf);
+}
+
+OCI_Column* OCI_API OCI_TypeInfoGetColumn
+(
+    OCI_TypeInfo* typinf,
+    unsigned int  index
+)
+{
+    CALL_IMPL(TypeInfoGetColumn, typinf, index);
+}
+
+const otext* OCI_API OCI_TypeInfoGetName
+(
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(TypeInfoGetName, typinf);
+}

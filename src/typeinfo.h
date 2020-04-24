@@ -21,6 +21,49 @@
 #ifndef OCILIB_TYPEINFO_H_INCLUDED
 #define OCILIB_TYPEINFO_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "types.h"
+
+boolean TypeInfoClose
+(
+    OCI_TypeInfo* typinf
+);
+
+OCI_TypeInfo * TypeInfoGet
+(
+    OCI_Connection  *con,
+    const otext *name,
+    unsigned int type
+);
+
+boolean TypeInfoFree
+(
+    OCI_TypeInfo *typinf
+);
+
+unsigned int TypeInfoGetType
+(
+    OCI_TypeInfo *typinf
+);
+
+OCI_Connection * TypeInfoGetConnection
+(
+    OCI_TypeInfo *typinf
+);
+
+unsigned int TypeInfoGetColumnCount
+(
+    OCI_TypeInfo *typinf
+);
+
+OCI_Column * TypeInfoGetColumn
+(
+    OCI_TypeInfo    *typinf,
+    unsigned int index
+);
+
+const otext * TypeInfoGetName
+(
+    OCI_TypeInfo *typinf
+);
 
 #endif /* OCILIB_TYPEINFO_H_INCLUDED */
