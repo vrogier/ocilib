@@ -1531,7 +1531,8 @@ boolean StatementPrepareFmt
     va_list args
 )
 {
-    va_list args_save = args;
+    va_list first_pass_args = args;
+    va_list second_pass_args = args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -1540,7 +1541,7 @@ boolean StatementPrepareFmt
 
     /* first, get buffer size */
 
-    const int size = ParseSqlFmt(stmt, NULL, sql, &args);
+    const int size = ParseSqlFmt(stmt, NULL, sql, &first_pass_args);
 
     if (size > 0)
     {
@@ -1554,7 +1555,7 @@ boolean StatementPrepareFmt
         {
             /* format buffer */
 
-            if (ParseSqlFmt(stmt, sql_fmt, sql, &args_save) > 0)
+            if (ParseSqlFmt(stmt, sql_fmt, sql, &second_pass_args) > 0)
             {
                 /* parse buffer */
 
@@ -1581,7 +1582,8 @@ boolean StatementExecuteStmtFmt
     va_list args
 )
 {
-    va_list args_save = args;
+    va_list first_pass_args = args;
+    va_list second_pass_args = args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -1590,7 +1592,7 @@ boolean StatementExecuteStmtFmt
 
     /* first, get buffer size */
 
-   const int size = ParseSqlFmt(stmt, NULL, sql, &args);
+   const int size = ParseSqlFmt(stmt, NULL, sql, &first_pass_args);
 
     if (size > 0)
     {
@@ -1604,7 +1606,7 @@ boolean StatementExecuteStmtFmt
         {
             /* format buffer */
 
-            if (ParseSqlFmt(stmt, sql_fmt, sql, &args_save) > 0)
+            if (ParseSqlFmt(stmt, sql_fmt, sql, &second_pass_args) > 0)
             {
                 /* prepare and execute SQL buffer */
 
@@ -1631,7 +1633,8 @@ boolean StatementParseFmt
     va_list args
 )
 {
-    va_list args_save = args;
+    va_list first_pass_args = args;
+    va_list second_pass_args = args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -1640,7 +1643,7 @@ boolean StatementParseFmt
 
     /* first, get buffer size */
 
-    const int size = ParseSqlFmt(stmt, NULL, sql, &args);
+    const int size = ParseSqlFmt(stmt, NULL, sql, &first_pass_args);
 
     if (size > 0)
     {
@@ -1654,7 +1657,7 @@ boolean StatementParseFmt
         {
             /* format buffer */
 
-            if (ParseSqlFmt(stmt, sql_fmt, sql, &args_save) > 0)
+            if (ParseSqlFmt(stmt, sql_fmt, sql, &second_pass_args) > 0)
             {
                 /* prepare and execute SQL buffer */
 
@@ -1681,7 +1684,8 @@ boolean StatementDescribeFmt
     va_list args
 )
 {
-    va_list args_save = args;
+    va_list first_pass_args = args;
+    va_list second_pass_args = args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
@@ -1690,7 +1694,7 @@ boolean StatementDescribeFmt
 
     /* first, get buffer size */
 
-    const int size = ParseSqlFmt(stmt, NULL, sql, &args);
+    const int size = ParseSqlFmt(stmt, NULL, sql, &first_pass_args);
 
     if (size > 0)
     {
@@ -1704,7 +1708,7 @@ boolean StatementDescribeFmt
         {
             /* format buffer */
 
-            if (ParseSqlFmt(stmt, sql_fmt, sql, &args_save) > 0)
+            if (ParseSqlFmt(stmt, sql_fmt, sql, &second_pass_args) > 0)
             {
                 /* prepare and execute SQL buffer */
 

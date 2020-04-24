@@ -2456,7 +2456,8 @@ boolean ConnectionExecuteImmediateFmt
 {
     OCI_Statement  *stmt = NULL;
 
-    va_list args_save = args;
+    va_list first_pass_args = args;
+    va_list second_pass_args = args;
 
     OCI_CALL_ENTER(boolean, FALSE)
     OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
@@ -2472,7 +2473,7 @@ boolean ConnectionExecuteImmediateFmt
 
         /* first, get buffer size */
 
-        size = ParseSqlFmt(stmt, NULL, sql, &args);
+        size = ParseSqlFmt(stmt, NULL, sql, &first_pass_args);
 
         if (size > 0)
         {
@@ -2486,7 +2487,7 @@ boolean ConnectionExecuteImmediateFmt
             {
                 /* format buffer */
 
-                if (ParseSqlFmt(stmt, sql_fmt, sql, &args_save) > 0)
+                if (ParseSqlFmt(stmt, sql_fmt, sql, &second_pass_args) > 0)
                 {
                     /* prepare and execute SQL buffer */
 
@@ -2496,7 +2497,7 @@ boolean ConnectionExecuteImmediateFmt
 
                     if (OCI_STATUS && (OCI_CST_SELECT == OCI_GetStatementType(stmt)))
                     {
-                        OCI_STATUS = StatementFetchIntoUserVariables(stmt, args_save);
+                        OCI_STATUS = StatementFetchIntoUserVariables(stmt, second_pass_args);
                     }
                 }
 
