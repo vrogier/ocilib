@@ -3721,7 +3721,7 @@ OCI_Number** OCI_API OCI_NumberArrayCreate
     CALL_IMPL(NumberArrayCreate, con, nbelem);
 }
 
-OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
+boolean OCI_API OCI_NumberArrayFree
 (
     OCI_Number** numbmers
 )
@@ -4569,7 +4569,7 @@ boolean OCI_API OCI_QueueTableAlter
     unsigned int    secondary_instance
 )
 {
-    CALL_IMPL(QueueTableAlter, con, queue_table, queue_table, primary_instance, secondary_instance);
+    CALL_IMPL(QueueTableAlter, con, queue_table, comment, primary_instance, secondary_instance);
 }
 
 boolean OCI_API OCI_QueueTableDrop
@@ -6825,4 +6825,20 @@ const otext* OCI_API OCI_TypeInfoGetName
 )
 {
     CALL_IMPL(TypeInfoGetName, typinf);
+}
+
+boolean OCI_API OCI_TypeInfoIsFinalType
+(
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(TypeInfoIsFinalType, typinf);
+}
+
+OCI_TypeInfo* OCI_API OCI_TypeInfoGetSuperType
+(
+    OCI_TypeInfo* typinf
+)
+{
+    CALL_IMPL(TypeInfoGetSuperType, typinf);
 }

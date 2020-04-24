@@ -603,7 +603,7 @@ OCI_Number ** NumberArrayCreate
  * NumberArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT boolean NumberArrayFree
+boolean NumberArrayFree
 (
     OCI_Number **numbmers
 )

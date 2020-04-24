@@ -74,7 +74,7 @@ OCI_Number** NumberArrayCreate
     unsigned int    nbelem
 );
 
-OCI_EXPORT boolean NumberArrayFree
+boolean NumberArrayFree
 (
     OCI_Number** numbmers
 );

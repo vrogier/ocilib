@@ -308,8 +308,9 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\ocilib.c" />
-    <ClCompile Include="main.c" />
+    <ResourceCompile Include="main.rc" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="..\..\src\agent.c" />
     <ClCompile Include="..\..\src\array.c" />
     <ClCompile Include="..\..\src\bind.c" />
@@ -341,6 +342,7 @@
     <ClCompile Include="..\..\src\mutex.c" />
     <ClCompile Include="..\..\src\number.c" />
     <ClCompile Include="..\..\src\object.c" />
+    <ClCompile Include="..\..\src\ocilib.c" />
     <ClCompile Include="..\..\src\pool.c" />
     <ClCompile Include="..\..\src\queue.c" />
     <ClCompile Include="..\..\src\ref.c" />
@@ -355,20 +357,57 @@
     <ClCompile Include="..\..\src\typeinfo.c" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="main.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\include\ocilib.h" />
-    <ClInclude Include="..\..\src\ocilib_checks.h" />
-    <ClInclude Include="..\..\src\ocilib_defs.h" />
-    <ClInclude Include="..\..\src\ocilib_internal.h" />
-    <ClInclude Include="..\..\src\ocilib_types.h" />
-    <ClInclude Include="..\..\src\oci_api.h" />
-    <ClInclude Include="..\..\src\oci_defs.h" />
-    <ClInclude Include="..\..\src\oci_import.h" />
-    <ClInclude Include="..\..\src\oci_loader.h" />
-    <ClInclude Include="..\..\src\oci_types.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\..\src\agent.h" />
+    <ClInclude Include="..\..\src\array.h" />
+    <ClInclude Include="..\..\src\bind.h" />
+    <ClInclude Include="..\..\src\callback.h" />
+    <ClInclude Include="..\..\src\checks.h" />
+    <ClInclude Include="..\..\src\collection.h" />
+    <ClInclude Include="..\..\src\column.h" />
+    <ClInclude Include="..\..\src\connection.h" />
+    <ClInclude Include="..\..\src\date.h" />
+    <ClInclude Include="..\..\src\define.h" />
+    <ClInclude Include="..\..\src\defs.h" />
+    <ClInclude Include="..\..\src\dequeue.h" />
+    <ClInclude Include="..\..\src\dirpath.h" />
+    <ClInclude Include="..\..\src\element.h" />
+    <ClInclude Include="..\..\src\enqueue.h" />
+    <ClInclude Include="..\..\src\error.h" />
+    <ClInclude Include="..\..\src\event.h" />
+    <ClInclude Include="..\..\src\exception.h" />
+    <ClInclude Include="..\..\src\file.h" />
+    <ClInclude Include="..\..\src\format.h" />
+    <ClInclude Include="..\..\src\handle.h" />
+    <ClInclude Include="..\..\src\hash.h" />
+    <ClInclude Include="..\..\src\helpers.h" />
+    <ClInclude Include="..\..\src\import.h" />
+    <ClInclude Include="..\..\src\interval.h" />
+    <ClInclude Include="..\..\src\iterator.h" />
+    <ClInclude Include="..\..\src\library.h" />
+    <ClInclude Include="..\..\src\list.h" />
+    <ClInclude Include="..\..\src\loader.h" />
+    <ClInclude Include="..\..\src\lob.h" />
+    <ClInclude Include="..\..\src\long.h" />
+    <ClInclude Include="..\..\src\macro.h" />
+    <ClInclude Include="..\..\src\memory.h" />
+    <ClInclude Include="..\..\src\msg.h" />
+    <ClInclude Include="..\..\src\mutex.h" />
+    <ClInclude Include="..\..\src\number.h" />
+    <ClInclude Include="..\..\src\object.h" />
+    <ClInclude Include="..\..\src\pool.h" />
+    <ClInclude Include="..\..\src\queue.h" />
+    <ClInclude Include="..\..\src\ref.h" />
+    <ClInclude Include="..\..\src\resultset.h" />
+    <ClInclude Include="..\..\src\statement.h" />
+    <ClInclude Include="..\..\src\string.h" />
+    <ClInclude Include="..\..\src\subscription.h" />
+    <ClInclude Include="..\..\src\thread.h" />
+    <ClInclude Include="..\..\src\threadkey.h" />
+    <ClInclude Include="..\..\src\timestamp.h" />
+    <ClInclude Include="..\..\src\transaction.h" />
+    <ClInclude Include="..\..\src\typeinfo.h" />
+    <ClInclude Include="..\..\src\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

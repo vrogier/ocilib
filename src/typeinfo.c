@@ -606,7 +606,7 @@ const otext * TypeInfoGetName
 * OCI_TypeInfoIsFinalType
 * --------------------------------------------------------------------------------------------- */
 
-OCI_EXPORT boolean TypeInfoIsFinalType
+boolean TypeInfoIsFinalType
 (
     OCI_TypeInfo *typinf
 )

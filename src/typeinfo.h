@@ -66,4 +66,14 @@ const otext * TypeInfoGetName
     OCI_TypeInfo *typinf
 );
 
+boolean TypeInfoIsFinalType
+(
+    OCI_TypeInfo* typinf
+);
+
+OCI_TypeInfo* TypeInfoGetSuperType
+(
+    OCI_TypeInfo* typinf
+);
+
 #endif /* OCILIB_TYPEINFO_H_INCLUDED */
