@@ -62,7 +62,16 @@ libocilib_la_SOURCES=   \
 libocilib_la_CFLAGS= -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
 libocilib_la_LDFLAGS= @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
-include_HEADERS= $(top_srcdir)/include/ocilib.h $(top_srcdir)/include/ocilib.hpp $(top_srcdir)/include/ocilib_core.hpp $(top_srcdir)/include/ocilib_impl.hpp
+include_HEADERS=                            \
+    $(top_srcdir)/include/ocilib.h          \
+    $(top_srcdir)/include/ocilib_api.h      \
+    $(top_srcdir)/include/ocilib_compat.h   \
+    $(top_srcdir)/include/ocilib_config.h   \
+    $(top_srcdir)/include/ocilib_types.h    \
+    $(top_srcdir)/include/ocilib.hpp        \
+    $(top_srcdir)/include/ocilib_core.hpp   \
+    $(top_srcdir)/include/ocilib_impl.hpp
+    
 noinst_HEADERS=     \
 	agent.h         \
     array.h         \
