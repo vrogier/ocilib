@@ -334,7 +334,7 @@ boolean ColumnRetrieveInfo
 
             if (OCI_STATUS && dbstr)
             {
-                col->name = StringDuplicateFromOracleString(dbstr, dbcharcount(dbsize));
+                col->name = StringDuplicateFromDBString(dbstr, dbcharcount(dbsize));
 
                 OCI_STATUS = (NULL != col->name);
             }

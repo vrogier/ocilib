@@ -38,6 +38,7 @@
 #include "reference.h"
 #include "statement.h"
 #include "strings.h"
+#include "timestamp.h"
 
 static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
 
@@ -750,10 +751,10 @@ boolean FetchCustom
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ResultsetInit
+ * ResultsetInitialize
  * --------------------------------------------------------------------------------------------- */
 
-boolean ResultsetInit
+boolean ResultsetInitialize
 (
 OCI_Resultset *rs
 )
@@ -796,7 +797,7 @@ OCI_Resultset *rs
 
             if (OCI_CDT_CURSOR == def->col.datatype)
             {
-                StatementClose((OCI_Statement *)def->obj);
+                StatementDispose((OCI_Statement *)def->obj);
                 OCI_FREE(def->obj)
             }
             else
@@ -873,83 +874,6 @@ OCI_Resultset *rs
     OCI_FREE(rs)
 
     return TRUE;
-}
-
-
-/* --------------------------------------------------------------------------------------------- *
- * ResultsetGetResultset
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Resultset * ResultsetGetResultset
-(
-    OCI_Statement *stmt
-)
-{
-    OCI_CALL_ENTER(OCI_Resultset*, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_DESCRIBED)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
-
-    /* if the sql statement does not return a result, we just return NULL and not
-       throwing any exception
-       statements that can return a resultset are "SELECT..." and "... RETURNING INTO..."
-    */
-
-    if ((OCI_CST_SELECT == stmt->type) || (stmt->nb_rbinds > 0) || (stmt->nb_stmt > 0))
-    {
-        /* if the resultset exists, let's use it */
-
-        if (stmt->rsts && stmt->rsts[0])
-        {
-            OCI_RETVAL = stmt->rsts[0];
-        }
-
-        /* allocate resultset for select statements only */
-
-        if (!OCI_RETVAL && (OCI_CST_SELECT == stmt->type))
-        {
-            /* allocate memory for one resultset handle */
-
-            OCI_ALLOCATE_DATA(OCI_IPC_RESULTSET_ARRAY, stmt->rsts, 1)
-           
-            if (OCI_STATUS)
-            {
-                stmt->nb_rs  = 1;
-                stmt->cur_rs = 0;
-
-                /* create resultset object */
-
-                OCI_RETVAL = stmt->rsts[0] = ResultsetCreate(stmt, stmt->fetch_size);
-            }
-
-        }
-
-        OCI_STATUS = (NULL != OCI_RETVAL);
-    }
-
-    OCI_CALL_EXIT()
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * ResultsetGetNextResultset
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Resultset * ResultsetGetNextResultset
-(
-    OCI_Statement *stmt
-)
-{
-    OCI_CALL_ENTER(OCI_Resultset*, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_DESCRIBED)
-    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
-
-    if (stmt->cur_rs < (stmt->nb_rs-1))
-    {
-        OCI_RETVAL = stmt->rsts[++stmt->cur_rs];
-    }
-
-    OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1502,7 +1426,7 @@ boolean ResultsetGetStruct
                     }
                     case OCI_CDT_REF:
                     {
-                        *((OCI_Ref **) ptr) = ResultsetGetRef(rs, i);
+                        *((OCI_Ref **) ptr) = ResultsetGetReference(rs, i);
                         break;
                     }
                 }
@@ -1538,7 +1462,7 @@ OCI_Number * ResultsetGetNumber
     (
         rs, index, OCI_Number *, NULL, OCI_CDT_NUMERIC,
 
-        NumberInit(rs->stmt->con, (OCI_Number *) def->obj, (OCINumber *) DefineGetData(def))
+        NumberInitialize(rs->stmt->con, (OCI_Number *) def->obj, (OCINumber *) DefineGetData(def))
     )
 }
 
@@ -1799,7 +1723,7 @@ const otext * ResultsetGetString
             }
             case OCI_CDT_REF:
             {
-                data = ResultsetGetRef(rs, index);
+                data = ResultsetGetReference(rs, index);
                 break;
             }
             case OCI_CDT_LONG:
@@ -1864,7 +1788,7 @@ const otext * ResultsetGetString
 
                 if (obj)
                 {
-                    OCI_STATUS = ObjectToText(obj, &bufsize, NULL);
+                    OCI_STATUS = ObjectToString(obj, &bufsize, NULL);
                 }
 
                 data = obj;
@@ -2118,8 +2042,8 @@ OCI_Timestamp * ResultsetGetTimestamp
     (
         rs, index, OCI_Timestamp *, NULL, OCI_CDT_TIMESTAMP,
 
-        TimestampInit(rs->stmt->con, (OCI_Timestamp *) def->obj,
-                      (OCIDateTime *) DefineGetData(def), def->col.subtype)
+        TimestampInitialize(rs->stmt->con, (OCI_Timestamp *) def->obj,
+                            (OCIDateTime *) DefineGetData(def), def->col.subtype)
     )
 }
 
@@ -2182,7 +2106,7 @@ OCI_Object * ResultsetGetObject
     (
        rs, index, OCI_Object *, NULL, OCI_CDT_OBJECT,
 
-       ObjectInit(rs->stmt->con, (OCI_Object *) def->obj,
+       ObjectInitialize(rs->stmt->con, (OCI_Object *) def->obj,
                   DefineGetData(def), def->col.typinf,
                   NULL, -1, TRUE)
     )
@@ -2233,10 +2157,10 @@ OCI_Coll * ResultsetGetColl2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ResultsetGetRef
+ * ResultsetGetReference
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * ResultsetGetRef
+OCI_Ref * ResultsetGetReference
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -2246,21 +2170,21 @@ OCI_Ref * ResultsetGetRef
     (
        rs, index, OCI_Ref *, NULL, OCI_CDT_REF,
 
-       RefInit(rs->stmt->con, def->col.typinf, (OCI_Ref *) def->obj, DefineGetData(def))
+       ReferenceInitialize(rs->stmt->con, def->col.typinf, (OCI_Ref *) def->obj, DefineGetData(def))
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ResultsetGetRef2
+ * ResultsetGetReference2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * ResultsetGetRef2
+OCI_Ref * ResultsetGetReference2
 (
     OCI_Resultset *rs,
     const otext   *name
 )
 {
-    OCI_GET_BY_NAME(rs, name, ResultsetGetRef, OCI_Ref*, NULL)
+    OCI_GET_BY_NAME(rs, name, ResultsetGetReference, OCI_Ref*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2277,7 +2201,7 @@ OCI_Statement * ResultsetGetStatement
     (
        rs, index, OCI_Statement *, NULL, OCI_CDT_CURSOR,
 
-       StatementInit(rs->stmt->con,(OCI_Statement *) def->obj,
+       StatementInitialize(rs->stmt->con,(OCI_Statement *) def->obj,
                      (OCIStmt *) DefineGetData(def), TRUE, def->col.name)
     )
 }

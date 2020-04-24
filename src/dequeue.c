@@ -66,7 +66,7 @@ OCI_Dequeue * DequeueCreate
 
         if (OCI_STATUS)
         {
-            dequeue->msg = MsgCreate(dequeue->typinf);
+            dequeue->msg = MessageCreate(dequeue->typinf);
             OCI_STATUS = (NULL != dequeue->msg);
         }
     }
@@ -109,7 +109,7 @@ boolean DequeueFree
 
     if (dequeue->msg)
     {
-        MsgFree(dequeue->msg);
+        MessageFree(dequeue->msg);
     }
 
     /* free local agent  */
@@ -208,12 +208,12 @@ OCI_Msg * DequeueGetMessage
 
     /* reset message */
 
-    OCI_STATUS = MsgReset(dequeue->msg);
+    OCI_STATUS = MessageReset(dequeue->msg);
 
     if (OCI_STATUS)
     {
         int     dbsize = -1;
-        dbtext *dbstr  = StringGetOracleString(dequeue->name, &dbsize);
+        dbtext *dbstr  = StringGetDBString(dequeue->name, &dbsize);
 
         if (OCI_UNKNOWN == dequeue->typinf->typecode)
         {
@@ -227,7 +227,7 @@ OCI_Msg * DequeueGetMessage
                        dequeue->typinf->tdo, &dequeue->msg->payload,
                        (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
 
-        StringReleaseOracleString(dbstr);
+        StringReleaseDBString(dbstr);
 
         /* check returned error code */
 
@@ -260,7 +260,7 @@ OCI_Msg * DequeueGetMessage
             {
                 dequeue->msg->ind = *(OCIInd *) p_ind;
 
-                dequeue->msg->obj = ObjectInit(dequeue->typinf->con,
+                dequeue->msg->obj = ObjectInitialize(dequeue->typinf->con,
                                                    (OCI_Object *) dequeue->msg->obj,
                                                    dequeue->msg->payload, dequeue->typinf,
                                                    NULL, -1, TRUE);
@@ -761,11 +761,11 @@ boolean DequeueSubscribe
             *str = (otext) otoupper(*str);
         }
 
-        dbstr = StringGetOracleString(buffer, &dbsize);
+        dbstr = StringGetDBString(buffer, &dbsize);
 
         OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME, dequeue->subhp, dbstr, dbsize)
 
-        StringReleaseOracleString(dbstr);
+        StringReleaseDBString(dbstr);
     }
 
     /* set namespace  */

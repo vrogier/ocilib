@@ -23,149 +23,149 @@
 
 #include "types.h"
 
-OCI_Msg* MsgCreate
+OCI_Msg* MessageCreate
 (
     OCI_TypeInfo* typinf
 );
 
-boolean MsgFree
+boolean MessageFree
 (
     OCI_Msg* msg
 );
 
-boolean MsgReset
+boolean MessageReset
 (
     OCI_Msg* msg
 );
 
-OCI_Object* MsgGetObject
+OCI_Object* MessageGetObject
 (
     OCI_Msg* msg
 );
 
-boolean MsgSetObject
+boolean MessageSetObject
 (
     OCI_Msg* msg,
     OCI_Object* obj
 );
 
-boolean MsgGetRaw
+boolean MessageGetRaw
 (
     OCI_Msg* msg,
     void* raw,
     unsigned int* size
 );
 
-boolean MsgSetRaw
+boolean MessageSetRaw
 (
     OCI_Msg* msg,
     const void* raw,
     unsigned int size
 );
 
-int MsgGetAttemptCount
+int MessageGetAttemptCount
 (
     OCI_Msg* msg
 );
 
-int MsgGetEnqueueDelay
+int MessageGetEnqueueDelay
 (
     OCI_Msg* msg
 );
 
-boolean MsgSetEnqueueDelay
+boolean MessageSetEnqueueDelay
 (
     OCI_Msg* msg,
     int      value
 );
 
-OCI_Date* MsgGetEnqueueTime
+OCI_Date* MessageGetEnqueueTime
 (
     OCI_Msg* msg
 );
 
-int MsgGetExpiration
+int MessageGetExpiration
 (
     OCI_Msg* msg
 );
 
-boolean MsgSetExpiration
+boolean MessageSetExpiration
 (
     OCI_Msg* msg,
     int      value
 );
 
-unsigned int MsgGetState
+unsigned int MessageGetState
 (
     OCI_Msg* msg
 );
 
-int MsgGetPriority
+int MessageGetPriority
 (
     OCI_Msg* msg
 );
 
-boolean MsgSetPriority
+boolean MessageSetPriority
 (
     OCI_Msg* msg,
     int      value
 );
 
-boolean MsgGetID
+boolean MessageGetID
 (
     OCI_Msg* msg,
     void* id,
     unsigned int* len
 );
 
-boolean MsgGetOriginalID
+boolean MessageGetOriginalID
 (
     OCI_Msg* msg,
     void* id,
     unsigned int* len
 );
 
-boolean MsgSetOriginalID
+boolean MessageSetOriginalID
 (
     OCI_Msg* msg,
     const void* id,
     unsigned int len
 );
 
-const otext* MsgGetCorrelation
+const otext* MessageGetCorrelation
 (
     OCI_Msg* msg
 );
 
-boolean MsgSetCorrelation
+boolean MessageSetCorrelation
 (
     OCI_Msg* msg,
     const otext* correlation
 );
 
-const otext* MsgGetExceptionQueue
+const otext* MessageGetExceptionQueue
 (
     OCI_Msg* msg
 );
 
-boolean MsgSetExceptionQueue
+boolean MessageSetExceptionQueue
 (
     OCI_Msg* msg,
     const otext* queue
 );
 
-OCI_Agent* MsgGetSender
+OCI_Agent* MessageGetSender
 (
     OCI_Msg* msg
 );
 
-boolean MsgSetSender
+boolean MessageSetSender
 (
     OCI_Msg* msg,
     OCI_Agent* sender
 );
 
-boolean MsgSetConsumers
+boolean MessageSetConsumers
 (
     OCI_Msg* msg,
     OCI_Agent** consumers,

@@ -284,7 +284,7 @@ boolean ElemSetNumberInternal
 )
 {
     OCI_Column *col = &elem->typinf->cols[0];
-    const boolean res = TranslateNumericValue(elem->typinf->con, value, flag,
+    const boolean res = NumberTranslateValue(elem->typinf->con, value, flag,
                                               elem->handle, col->subtype);
 
     if (res)
@@ -318,11 +318,11 @@ boolean ElemGetNumberInternal
     else if (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)
     {
         OCI_Column *col = &elem->typinf->cols[0];
-        res = TranslateNumericValue(elem->typinf->con, elem->handle, col->subtype, value, flag);
+        res = NumberTranslateValue(elem->typinf->con, elem->handle, col->subtype, value, flag);
     }
     else if (OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
     {
-        res = NumberFromString(elem->con, value, flag, ElementGetString(elem), NULL);
+        res = NumberFromStringInternal(elem->con, value, flag, ElementGetString(elem), NULL);
     }
     else
     {
@@ -430,7 +430,7 @@ OCI_Number * ElementGetNumber
     (
         OCI_CDT_NUMERIC,
         OCI_Number *,
-        NumberInit(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle)
+        NumberInitialize(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle)
     )
 }
 
@@ -641,7 +641,7 @@ OCI_Timestamp * ElementGetTimestamp
     (
         OCI_CDT_TIMESTAMP,
         OCI_Timestamp *,
-        TimestampInit(elem->con, (OCI_Timestamp *) elem->obj, (OCIDateTime *) elem->handle, elem->typinf->cols[0].subtype)
+        TimestampInitialize(elem->con, (OCI_Timestamp *) elem->obj, (OCIDateTime *) elem->handle, elem->typinf->cols[0].subtype)
     )
 
 #else
@@ -714,7 +714,7 @@ OCI_File * ElementGetFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetRef
+ * ElementGetReference
  * --------------------------------------------------------------------------------------------- */
 
 OCI_Ref * ElementGetReference
@@ -726,7 +726,7 @@ OCI_Ref * ElementGetReference
     (
         OCI_CDT_REF,
         OCI_Ref*,
-        RefInit(elem->con, elem->typinf->cols[0].typinf, (OCI_Ref *) elem->obj, (OCIRef *) elem->handle)
+        ReferenceInitialize(elem->con, elem->typinf->cols[0].typinf, (OCI_Ref *) elem->obj, (OCIRef *) elem->handle)
     )
 }
 
@@ -743,7 +743,7 @@ OCI_Object * ElementGetObject
     (
         OCI_CDT_OBJECT,
         OCI_Object*,
-        ObjectInit(elem->con, (OCI_Object *) elem->obj, elem->handle, elem->typinf->cols[0].typinf, NULL, -1, TRUE)
+        ObjectInitialize(elem->con, (OCI_Object *) elem->obj, elem->handle, elem->typinf->cols[0].typinf, NULL, -1, TRUE)
     )
 }
 
@@ -807,7 +807,7 @@ boolean ElementSetNumber
     (
         OCI_CDT_NUMERIC,
         OCI_Number*,
-        NumberInit(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle),
+        NumberInitialize(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle),
         NumberAssign((OCI_Number *) elem->obj, value)
     )
 }
@@ -1022,7 +1022,7 @@ boolean ElementSetTimestamp
     (
         OCI_CDT_TIMESTAMP, 
         OCI_Timestamp*,
-        TimestampInit(elem->con, (OCI_Timestamp *) elem->obj, (OCIDateTime *) elem->handle,  elem->typinf->cols[0].subtype),
+        TimestampInitialize(elem->con, (OCI_Timestamp *) elem->obj, (OCIDateTime *) elem->handle,  elem->typinf->cols[0].subtype),
         TimestampAssign((OCI_Timestamp *) elem->obj, value)
     )
 
@@ -1098,7 +1098,7 @@ boolean ElementSetObject
     (
         OCI_CDT_OBJECT,
         OCI_Object*,
-        ObjectInit(elem->con, (OCI_Object *) elem->obj, elem->handle, elem->typinf->cols[0].typinf, NULL, -1, TRUE),
+        ObjectInitialize(elem->con, (OCI_Object *) elem->obj, elem->handle, elem->typinf->cols[0].typinf, NULL, -1, TRUE),
         ObjectAssign((OCI_Object *) elem->obj, value)
     )
  }
@@ -1142,7 +1142,7 @@ boolean ElementSetFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetRef
+ * ElementSetReference
  * --------------------------------------------------------------------------------------------- */
 
 boolean ElementSetReference
@@ -1155,8 +1155,8 @@ boolean ElementSetReference
     (
         OCI_CDT_REF,
         OCI_Ref*,
-        RefInit(elem->con, elem->typinf->cols[0].typinf, (OCI_Ref *) elem->obj, (OCIRef *) elem->handle),
-        RefAssign((OCI_Ref *) elem->obj, value)
+        ReferenceInitialize(elem->con, elem->typinf->cols[0].typinf, (OCI_Ref *) elem->obj, (OCIRef *) elem->handle),
+        ReferenceAssign((OCI_Ref *) elem->obj, value)
     )
 }
 

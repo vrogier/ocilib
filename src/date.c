@@ -354,8 +354,8 @@ boolean DateFromString
         fmt = GetFormat(date->con, OCI_FMT_DATE);
     }
 
-    dbstr1 = StringGetOracleString(str, &dbsize1);
-    dbstr2 = StringGetOracleString(fmt, &dbsize2);
+    dbstr1 = StringGetDBString(str, &dbsize1);
+    dbstr2 = StringGetDBString(fmt, &dbsize2);
 
     OCI_EXEC
     (
@@ -365,8 +365,8 @@ boolean DateFromString
                         (oratext *) NULL,  (ub4) 0, date->handle)
     )
 
-    StringReleaseOracleString(dbstr1);
-    StringReleaseOracleString(dbstr2);
+    StringReleaseDBString(dbstr1);
+    StringReleaseDBString(dbstr2);
 
     OCI_RETVAL = OCI_STATUS;
 
@@ -497,11 +497,11 @@ boolean DateNextDay
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, day)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
-    dbstr = StringGetOracleString(day, &dbsize);
+    dbstr = StringGetDBString(day, &dbsize);
 
     OCI_EXEC(OCIDateNextDay(date->err, date->handle, (oratext *) dbstr, (ub4) dbsize, date->handle))
 
-    StringReleaseOracleString(dbstr);
+    StringReleaseDBString(dbstr);
 
     OCI_RETVAL = OCI_STATUS;
 
@@ -623,8 +623,8 @@ boolean DateToString
         fmt = GetFormat(date->con, OCI_FMT_DATE);
     }
 
-    dbstr1 = StringGetOracleString(str, &dbsize1);
-    dbstr2 = StringGetOracleString(fmt, &dbsize2);
+    dbstr1 = StringGetDBString(str, &dbsize1);
+    dbstr2 = StringGetDBString(fmt, &dbsize2);
 
     OCI_EXEC
     (
@@ -633,10 +633,10 @@ boolean DateToString
                       (ub4*) &dbsize1, (oratext *) dbstr1)
     )
 
-    StringCopyOracleStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
+    StringCopyDBStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
 
-    StringReleaseOracleString(dbstr1);
-    StringReleaseOracleString(dbstr2);
+    StringReleaseDBString(dbstr1);
+    StringReleaseDBString(dbstr2);
 
     /* set null string terminator */
 
@@ -669,8 +669,8 @@ boolean DateZoneToZone
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, zone2)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(date)
 
-    dbstr1 = StringGetOracleString(zone1, &dbsize1);
-    dbstr2 = StringGetOracleString(zone2, &dbsize2);
+    dbstr1 = StringGetDBString(zone1, &dbsize1);
+    dbstr2 = StringGetDBString(zone2, &dbsize2);
 
     OCI_EXEC
     (
@@ -680,8 +680,8 @@ boolean DateZoneToZone
                           date->handle)
     )
 
-    StringReleaseOracleString(dbstr1);
-    StringReleaseOracleString(dbstr2);
+    StringReleaseDBString(dbstr1);
+    StringReleaseDBString(dbstr2);
 
     OCI_RETVAL = OCI_STATUS;
 

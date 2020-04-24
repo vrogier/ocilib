@@ -23,53 +23,10 @@
 
 #include "types.h"
 
-
- /*
-  * OCILIB - C Driver for Oracle (C Wrapper for Oracle OCI)
-  *
-  * Website: http://www.ocilib.net
-  *
-  * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *      http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
-
-#include "resultset.h"
-
-#include "statement.h"
-#include "connection.h"
-
-#include "hash.h"
-#include "error.h"
-#include "exception.h"
-#include "column.h"
-#include "format.h"
-#include "macro.h"
-#include "memory.h"
-#include "strings.h"
-#include "helpers.h"
-
-#include "collection.h"
-#include "date.h"
-#include "file.h"
-#include "interval.h"
-#include "list.h"
-#include "lob.h"
-#include "long.h"
-#include "number.h"
-#include "object.h"
-#include "reference.h"
-#include "timestamp.h"
+boolean ResultsetInitialize
+(
+    OCI_Resultset* rs
+);
 
 OCI_Resultset* ResultsetCreate
 (
@@ -77,24 +34,9 @@ OCI_Resultset* ResultsetCreate
     int            size
 );
 
-boolean ResultsetInit
-(
-    OCI_Resultset* rs
-);
-
 boolean ResultsetFree
 (
     OCI_Resultset* rs
-);
-
-OCI_Resultset* ResultsetGetResultset
-(
-    OCI_Statement* stmt
-);
-
-OCI_Resultset* ResultsetGetNextResultset
-(
-    OCI_Statement* stmt
 );
 
 boolean ResultsetFetchPrev
@@ -375,13 +317,13 @@ OCI_Coll* ResultsetGetColl2
     const otext* name
 );
 
-OCI_Ref* ResultsetGetRef
+OCI_Ref* ResultsetGetReference
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Ref* ResultsetGetRef2
+OCI_Ref* ResultsetGetReference2
 (
     OCI_Resultset* rs,
     const otext* name

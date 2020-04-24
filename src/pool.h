@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-boolean PoolClose
+boolean PoolDispose
 (
     OCI_Pool    *pool
 );

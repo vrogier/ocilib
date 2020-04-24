@@ -337,7 +337,7 @@ boolean BindAllocateInternalData
             }
             case OCI_CDT_REF:
             {
-                OCI_Ref* ref = RefCreate(bnd->stmt->con, bnd->typinf);
+                OCI_Ref* ref = ReferenceCreate(bnd->stmt->con, bnd->typinf);
 
                 if (ref)
                 {
@@ -545,7 +545,7 @@ void BindPerformBinding
         dbtext * dbstr = NULL;
         int      dbsize = -1;
 
-        dbstr = StringGetOracleString(bnd->name, &dbsize);
+        dbstr = StringGetDBString(bnd->name, &dbsize);
 
         OCI_EXEC
         (
@@ -568,7 +568,7 @@ void BindPerformBinding
             )
         )
 
-            StringReleaseOracleString(dbstr);
+            StringReleaseDBString(dbstr);
     }
 
     if (SQLT_NTY == bnd->code || SQLT_REF == bnd->code)

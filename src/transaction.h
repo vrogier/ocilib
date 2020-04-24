@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-boolean TransactionClose
+boolean TransactionDispose
 (
     OCI_Transaction * trans
 );

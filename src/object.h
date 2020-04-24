@@ -23,14 +23,6 @@
 
 #include "types.h"
 
-boolean ObjectGetAttrInfo
-(
-    OCI_TypeInfo* typinf,
-    int           index,
-    size_t* p_size,
-    size_t* p_align
-);
-
 void ObjectGetUserStructSize
 (
     OCI_TypeInfo* typinf,
@@ -38,7 +30,7 @@ void ObjectGetUserStructSize
     size_t* p_align
 );
 
-OCI_Object * ObjectInit
+OCI_Object * ObjectInitialize
 (
     OCI_Connection *con,
     OCI_Object     *obj,
@@ -47,42 +39,6 @@ OCI_Object * ObjectInit
     OCI_Object     *parent,
     int         index,
     boolean     reset
-);
-
-void ObjectReset
-(
-    OCI_Object* obj
-);
-
-int ObjectGetAttrIndex
-(
-    OCI_Object      *obj,
-    const otext *attr,
-    int          type,
-    boolean      check
-);
-
-void * ObjectGetAttr
-(
-    OCI_Object      *obj,
-    unsigned int index,
-    OCIInd     **pind
-);
-
-boolean ObjectSetNumberInternal
-(
-    OCI_Object      *obj,
-    const otext *attr,
-    void        *value,
-    uword        flag
-);
-
-boolean ObjectGetNumberInternal
-(
-    OCI_Object      *obj,
-    const otext *attr,
-    void        *value,
-    uword        flag
 );
 
 OCI_Object * ObjectCreate
@@ -96,14 +52,14 @@ boolean ObjectFree
     OCI_Object  *obj
 );
 
-OCI_Object ** ObjectArrayCreate
+OCI_Object ** ObjectCreateArray
 (
     OCI_Connection  *con,
     OCI_TypeInfo    *typinf,
     unsigned int nbelem
 );
 
-boolean ObjectArrayFree
+boolean ObjectFreeArray
 (
     OCI_Object **objs
 );
@@ -236,7 +192,7 @@ OCI_File * ObjectGetFile
     const otext *attr
 );
 
-OCI_Ref * ObjectGetRef
+OCI_Ref * ObjectGetReference
 (
     OCI_Object      *obj,
     const otext *attr
@@ -376,7 +332,7 @@ boolean ObjectSetFile
     OCI_File        *value
 );
 
-boolean ObjectSetRef
+boolean ObjectSetReference
 (
     OCI_Object      *obj,
     const otext *attr,
@@ -418,7 +374,7 @@ boolean ObjectGetStruct
     void   **pp_ind
 );
 
-boolean ObjectToText
+boolean ObjectToString
 (
     OCI_Object       *obj,
     unsigned int *size,

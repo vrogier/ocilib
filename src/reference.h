@@ -24,7 +24,7 @@
 
 #include "types.h"
 
-OCI_Ref * RefInit
+OCI_Ref * ReferenceInitialize
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -32,73 +32,73 @@ OCI_Ref * RefInit
     void       *handle
 );
 
-boolean RefPin
+boolean ReferencePin
 (
     OCI_Ref* ref
 );
 
-boolean RefUnpin
+boolean ReferenceUnpin
 (
     OCI_Ref* ref
 );
 
-OCI_Ref * RefCreate
+OCI_Ref * ReferenceCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf
 );
 
-boolean RefFree
+boolean ReferenceFree
 (
     OCI_Ref *ref
 );
 
-OCI_Ref ** RefArrayCreate
+OCI_Ref ** ReferenceCreateArray
 (
     OCI_Connection  *con,
     OCI_TypeInfo    *typinf,
     unsigned int nbelem
 );
 
-boolean RefArrayFree
+boolean ReferenceFreeArray
 (
     OCI_Ref **refs
 );
 
-OCI_Object * RefGetObject
+OCI_Object * ReferenceGetObject
 (
     OCI_Ref *ref
 );
 
-boolean RefAssign
+boolean ReferenceAssign
 (
     OCI_Ref *ref,
     OCI_Ref *ref_src
 );
 
-boolean RefIsNull
+boolean ReferenceIsNull
 (
     OCI_Ref *ref
 );
 
-boolean RefSetNull
+boolean ReferenceSetNull
 (
     OCI_Ref *ref
 );
 
-boolean RefToText
+boolean ReferenceToString
 (
     OCI_Ref   *ref,
     unsigned int size,
     otext       *str
 );
 
-unsigned int RefGetHexSize
+unsigned int ReferenceGetHexSize
 (
     OCI_Ref *ref
 );
 
-OCI_TypeInfo * RefGetTypeInfo
+OCI_TypeInfo * ReferenceGetTypeInfo
 (
     OCI_Ref *ref
 );

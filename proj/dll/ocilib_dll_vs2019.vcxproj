@@ -395,6 +395,7 @@
     <ClInclude Include="..\..\src\long.h" />
     <ClInclude Include="..\..\src\macro.h" />
     <ClInclude Include="..\..\src\memory.h" />
+    <ClInclude Include="..\..\src\message.h" />
     <ClInclude Include="..\..\src\mutex.h" />
     <ClInclude Include="..\..\src\number.h" />
     <ClInclude Include="..\..\src\object.h" />
@@ -403,6 +404,7 @@
     <ClInclude Include="..\..\src\oci\types.h" />
     <ClInclude Include="..\..\src\pool.h" />
     <ClInclude Include="..\..\src\queue.h" />
+    <ClInclude Include="..\..\src\reference.h" />
     <ClInclude Include="..\..\src\resultset.h" />
     <ClInclude Include="..\..\src\statement.h" />
     <ClInclude Include="..\..\src\strings.h" />

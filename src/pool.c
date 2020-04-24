@@ -28,10 +28,10 @@
 static unsigned int PoolTypeValues[] = { OCI_POOL_CONNECTION, OCI_POOL_SESSION };
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolClose
+ * PoolDispose
  * --------------------------------------------------------------------------------------------- */
 
-boolean PoolClose
+boolean PoolDispose
 (
     OCI_Pool *pool
 )
@@ -211,7 +211,7 @@ OCI_Pool * PoolCreate
                          OCILIB_MINOR_VERSION,
                          OCILIB_REVISION_VERSION);
 
-                dbstr = StringGetOracleString(driver_version, &dbsize);
+                dbstr = StringGetDBString(driver_version, &dbsize);
 
                 /* allocate authentication handle */
 
@@ -223,7 +223,7 @@ OCI_Pool * PoolCreate
 
                 OCI_SET_ATTRIB(OCI_HTYPE_AUTHINFO, OCI_ATTR_DRIVER_NAME, pool->authp, dbstr, dbsize)
                 
-                StringReleaseOracleString(dbstr);
+                StringReleaseDBString(dbstr);
 
                 /* set authentication handle on the session pool */
 
@@ -242,9 +242,9 @@ OCI_Pool * PoolCreate
             int     dbsize_user = -1;
             int     dbsize_pwd  = -1;
       
-            dbstr_db   = StringGetOracleString(pool->db,   &dbsize_db);
-            dbstr_user = StringGetOracleString(pool->user, &dbsize_user);
-            dbstr_pwd  = StringGetOracleString(pool->pwd,  &dbsize_pwd);
+            dbstr_db   = StringGetDBString(pool->db,   &dbsize_db);
+            dbstr_user = StringGetDBString(pool->user, &dbsize_user);
+            dbstr_pwd  = StringGetDBString(pool->pwd,  &dbsize_pwd);
 
             if (OCI_HTYPE_CPOOL == pool->htype)
             {
@@ -287,14 +287,14 @@ OCI_Pool * PoolCreate
 
         #endif
 
-            StringReleaseOracleString(dbstr_db);
-            StringReleaseOracleString(dbstr_user);
-            StringReleaseOracleString(dbstr_pwd);
+            StringReleaseDBString(dbstr_db);
+            StringReleaseDBString(dbstr_user);
+            StringReleaseDBString(dbstr_pwd);
         }
 
         if (OCI_STATUS && dbstr_name)
         {
-            pool->name = StringDuplicateFromOracleString(dbstr_name, dbcharcount(dbsize_name));
+            pool->name = StringDuplicateFromDBString(dbstr_name, dbcharcount(dbsize_name));
 
             OCI_STATUS = (NULL != pool->name);
         }
@@ -351,7 +351,7 @@ boolean PoolFree
     OCI_CALL_CHECK_PTR(OCI_IPC_POOL, pool)
     OCI_CALL_CONTEXT_SET_FROM_ERR(pool->err)
 
-    OCI_STATUS = PoolClose(pool);
+    OCI_STATUS = PoolDispose(pool);
 
     ListRemove(OCILib.pools, pool);
 

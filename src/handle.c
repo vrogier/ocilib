@@ -199,7 +199,7 @@ const void * HandleGetColl
  * HandleGetReference
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetRef
+const void * HandleGetReference
 (
     OCI_Ref *ref
 )

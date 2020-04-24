@@ -511,7 +511,7 @@ boolean LobWrite2
             }
         }
 
-        obuf = StringGetOracleString( (otext *) buffer, (int *) byte_count);
+        obuf = StringGetDBString( (otext *) buffer, (int *) byte_count);
     }
     else
     {
@@ -587,7 +587,7 @@ boolean LobWrite2
 
     if (obuf != buffer)
     {
-        StringReleaseOracleString((dbtext *) obuf);
+        StringReleaseDBString((dbtext *) obuf);
     }
 
     OCI_RETVAL = OCI_STATUS;
@@ -949,7 +949,7 @@ boolean LobAppend2
             }
         }
 
-        obuf = StringGetOracleString((const otext *) buffer, (int *) byte_count);
+        obuf = StringGetDBString((const otext *) buffer, (int *) byte_count);
     }
     else
     {
@@ -1023,7 +1023,7 @@ boolean LobAppend2
 
     if (obuf != buffer)
     {
-        StringReleaseOracleString((dbtext *) obuf);
+        StringReleaseDBString((dbtext *) obuf);
     }
 
     OCI_RETVAL = OCI_STATUS;

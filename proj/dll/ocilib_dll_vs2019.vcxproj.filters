@@ -156,7 +156,7 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\reference.c">
-      <Filter>Headers %28Private%29</Filter>
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -327,6 +327,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\import.h">
       <Filter>Headers %28Core%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\message.h">
+      <Filter>Headers %28Private%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reference.h">
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

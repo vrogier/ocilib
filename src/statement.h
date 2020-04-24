@@ -29,12 +29,12 @@ boolean StatementFetchIntoUserVariables
     va_list        args
 );
 
-boolean StatementClose
+boolean StatementDispose
 (
     OCI_Statement* stmt
 );
 
-OCI_Statement* StatementInit
+OCI_Statement* StatementInitialize
 (
     OCI_Connection* con,
     OCI_Statement* stmt,
@@ -61,6 +61,16 @@ OCI_Statement* StatementCreate
 );
 
 boolean StatementFree
+(
+    OCI_Statement* stmt
+);
+
+OCI_Resultset* StatementGetResultset
+(
+    OCI_Statement* stmt
+);
+
+OCI_Resultset* StatementGetNextResultset
 (
     OCI_Statement* stmt
 );
@@ -127,13 +137,13 @@ boolean StatementDescribeFmt
     va_list args
 );
 
-boolean StatementBindArraySetSize
+boolean StatementSetBindArraySize
 (
     OCI_Statement* stmt,
     unsigned int   size
 );
 
-unsigned int StatementBindArrayGetSize
+unsigned int StatementGetBindArraySize
 (
     OCI_Statement* stmt
 );
@@ -420,14 +430,14 @@ boolean StatementBindArrayOfFiles
     unsigned int   nbelem
 );
 
-boolean StatementBindRef
+boolean StatementBindReference
 (
     OCI_Statement* stmt,
     const otext* name,
     OCI_Ref* data
 );
 
-boolean StatementBindArrayOfRefs
+boolean StatementBindArrayOfReferences
 (
     OCI_Statement* stmt,
     const otext* name,
@@ -436,14 +446,14 @@ boolean StatementBindArrayOfRefs
     unsigned int   nbelem
 );
 
-boolean StatementBindColl
+boolean StatementBindCollection
 (
     OCI_Statement* stmt,
     const otext* name,
     OCI_Coll* data
 );
 
-boolean StatementBindArrayOfColls
+boolean StatementBindArrayOfCollections
 (
     OCI_Statement* stmt,
     const otext* name,
@@ -576,7 +586,7 @@ boolean StatementRegisterFile
     unsigned int   type
 );
 
-boolean StatementRegisterRef
+boolean StatementRegisterReference
 (
     OCI_Statement* stmt,
     const otext* name,
@@ -724,12 +734,12 @@ unsigned int StatementGetBindIndex
     const otext* name
 );
 
-unsigned int StatementGetSQLCommand
+unsigned int StatementGetSqlCommand
 (
     OCI_Statement* stmt
 );
 
-const otext* StatementGetSQLVerb
+const otext* StatementGetSqlVerb
 (
     OCI_Statement* stmt
 );

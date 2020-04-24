@@ -25,10 +25,10 @@
 #include "macro.h"
 
 /* --------------------------------------------------------------------------------------------- *
-* TransactionClose
+* TransactionDispose
 * --------------------------------------------------------------------------------------------- */
 
-boolean TransactionClose
+boolean TransactionDispose
 (
 OCI_Transaction * trans
 )
@@ -121,7 +121,7 @@ boolean TransactionFree
     OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
     OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
 
-    OCI_STATUS = TransactionClose(trans);
+    OCI_STATUS = TransactionDispose(trans);
 
     /* remove transaction from internal list */
 

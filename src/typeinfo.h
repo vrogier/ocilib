@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-boolean TypeInfoClose
+boolean TypeInfoDispose
 (
     OCI_TypeInfo* typinf
 );

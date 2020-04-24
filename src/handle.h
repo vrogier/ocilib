@@ -92,7 +92,7 @@ const void * HandleGetColl
     OCI_Coll *coll
 );
 
-const void * HandleGetRef
+const void * HandleGetReference
 (
     OCI_Ref *ref
 );

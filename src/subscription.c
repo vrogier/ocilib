@@ -30,10 +30,10 @@
 #include "strings.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * SubscriptionClose
+ * SubscriptionDispose
  * --------------------------------------------------------------------------------------------- */
 
-boolean SubscriptionClose
+boolean SubscriptionDispose
 (
     OCI_Subscription *sub
 )
@@ -192,11 +192,11 @@ OCI_Subscription * SubscriptionRegister
 
             /* name  */
 
-            dbstr = StringGetOracleString(sub->name, &dbsize);
+            dbstr = StringGetDBString(sub->name, &dbsize);
 
             OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME, sub->subhp, dbstr, dbsize)
 
-            StringReleaseOracleString(dbstr);
+            StringReleaseDBString(dbstr);
 
             /* namespace for CDN */
 
@@ -252,7 +252,7 @@ OCI_Subscription * SubscriptionRegister
     } 
     else if (sub)
     {
-        SubscriptionClose(sub);
+        SubscriptionDispose(sub);
         ListRemove(OCILib.subs, sub);
         OCI_FREE(sub)
     }
@@ -284,7 +284,7 @@ boolean SubscriptionUnregister
     OCI_CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
     OCI_CALL_CONTEXT_SET(sub->con, NULL, sub->err)
 
-    OCI_RETVAL = OCI_STATUS = SubscriptionClose(sub);
+    OCI_RETVAL = OCI_STATUS = SubscriptionDispose(sub);
 
     ListRemove(OCILib.subs, sub);
 
@@ -318,7 +318,7 @@ boolean SubscriptionAddStatement
     {
         OCI_SET_ATTRIB(OCI_HTYPE_STMT, OCI_ATTR_CHNF_REGHANDLE, stmt->stmt, sub->subhp, 0)
 
-        OCI_STATUS = OCI_STATUS && StatementExecute(stmt) && (NULL != ResultsetGetResultset(stmt));
+        OCI_STATUS = OCI_STATUS && StatementExecute(stmt) && (NULL != StatementGetResultset(stmt));
     }
 
 #endif

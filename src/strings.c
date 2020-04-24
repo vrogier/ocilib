@@ -297,10 +297,10 @@ void StringTranslate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringGetOracleString
+ * StringGetDBString
  * --------------------------------------------------------------------------------------------- */
 
-dbtext * StringGetOracleString
+dbtext * StringGetDBString
 (
     const otext  *src,
     int          *size
@@ -344,10 +344,10 @@ dbtext * StringGetOracleString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringReleaseOracleString
+ * StringReleaseDBString
  * --------------------------------------------------------------------------------------------- */
 
-void StringReleaseOracleString
+void StringReleaseDBString
 (
     dbtext *str
 )
@@ -359,10 +359,10 @@ void StringReleaseOracleString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringCopyOracleStringToNativeString
+ * StringCopyDBStringToNativeString
  * --------------------------------------------------------------------------------------------- */
 
-int StringCopyOracleStringToNativeString
+int StringCopyDBStringToNativeString
 (
     const dbtext  *src,
     otext         *dst,
@@ -378,10 +378,10 @@ int StringCopyOracleStringToNativeString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringDuplicateFromOracleString
+ * StringDuplicateFromDBString
  * --------------------------------------------------------------------------------------------- */
 
-otext* StringDuplicateFromOracleString
+otext* StringDuplicateFromDBString
 (
     const dbtext  *src,
     int            len
@@ -474,11 +474,11 @@ boolean StringToStringPtr
 
     OCI_CALL_CONTEXT_SET_FROM_ERR(err)
 
-    dbstr  = StringGetOracleString(value, &dbsize);
+    dbstr  = StringGetDBString(value, &dbsize);
 
     OCI_EXEC(OCIStringAssignText(env, err, (oratext *) dbstr, (ub4) dbsize, str))
 
-    StringReleaseOracleString(dbstr);
+    StringReleaseDBString(dbstr);
 
     return OCI_STATUS;
 }
@@ -588,7 +588,7 @@ boolean StringSetAttribute
     OCI_CALL_DECLARE_CONTEXT(TRUE)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    dbstr = StringGetOracleString(value, &dbsize);
+    dbstr = StringGetDBString(value, &dbsize);
 
     if (dbsize == -1)
     {
@@ -597,7 +597,7 @@ boolean StringSetAttribute
 
     OCI_SET_ATTRIB(type, attr, handle, dbstr, dbsize)
 
-    StringReleaseOracleString(dbstr);
+    StringReleaseDBString(dbstr);
 
     if (OCI_STATUS && str)
     {
@@ -681,7 +681,7 @@ unsigned int StringGetFromType
 
             if (ptr)
             {
-                res = NumberToString(con, data, col->subtype, ptr, (int) buffer_size, NULL);
+                res = NumberToStringInternal(con, data, col->subtype, ptr, (int) buffer_size, NULL);
             }    
             else
             {
@@ -715,7 +715,7 @@ unsigned int StringGetFromType
                 OCI_Timestamp *tmsp = (OCI_Timestamp *) data;
                 const otext   *fmt = GetFormat(con, tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
 
-                 res = tmsp ? TimestampToText(tmsp, fmt, (int) buffer_size, ptr, 0) : FALSE;
+                 res = tmsp ? TimestampToString(tmsp, fmt, (int) buffer_size, ptr, 0) : FALSE;
             }
             else
             {
@@ -855,7 +855,7 @@ unsigned int StringGetFromType
             if (ptr)
             {
                 OCI_Ref *ref = (OCI_Ref *) data;
-                res = ref ? RefToText(ref, buffer_size, ptr) : FALSE;
+                res = ref ? ReferenceToString(ref, buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -868,7 +868,7 @@ unsigned int StringGetFromType
             OCI_Object *obj = (OCI_Object *) data;
             unsigned int real_size = buffer_size;
             quote = FALSE;
-            res = obj ? ObjectToText(obj, &real_size, ptr) : FALSE;
+            res = obj ? ObjectToString(obj, &real_size, ptr) : FALSE;
             len = real_size;
             break;
         }

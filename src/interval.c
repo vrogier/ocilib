@@ -304,7 +304,7 @@ int IntervalCompare
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalFromText
+ * IntervalFromString
  * --------------------------------------------------------------------------------------------- */
 
 boolean IntervalFromString
@@ -321,13 +321,13 @@ boolean IntervalFromString
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
-    dbstr = StringGetOracleString(str, &dbsize);
+    dbstr = StringGetDBString(str, &dbsize);
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
     OCI_EXEC(OCIIntervalFromText((dvoid *) itv->env, itv->err, (OraText *) dbstr, (size_t) dbsize, itv->handle))
 
-    StringReleaseOracleString(dbstr);
+    StringReleaseDBString(dbstr);
 
 #endif
 
@@ -337,7 +337,7 @@ boolean IntervalFromString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalToText
+ * IntervalToString
  * --------------------------------------------------------------------------------------------- */
 
 boolean IntervalToString
@@ -362,7 +362,7 @@ boolean IntervalToString
 
     str[0] = 0;
 
-    dbstr = StringGetOracleString(str, &dbsize);
+    dbstr = StringGetDBString(str, &dbsize);
 
     len = (size_t) dbsize;
 
@@ -386,8 +386,8 @@ boolean IntervalToString
 
     dbsize = (int)len;
 
-    StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
-    StringReleaseOracleString(dbstr);
+    StringCopyDBStringToNativeString(dbstr, str, dbcharcount(dbsize));
+    StringReleaseDBString(dbstr);
 
     /* set null string terminator */
 
@@ -417,7 +417,7 @@ boolean IntervalFromTimeZone
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, str)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(itv)
 
-    dbstr = StringGetOracleString(str, &dbsize);
+    dbstr = StringGetDBString(str, &dbsize);
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -425,7 +425,7 @@ boolean IntervalFromTimeZone
 
 #endif
 
-    StringReleaseOracleString(dbstr);
+    StringReleaseDBString(dbstr);
 
     OCI_RETVAL = OCI_STATUS;
 

@@ -25,6 +25,7 @@
 #include "macro.h"
 #include "resultset.h"
 #include "strings.h"
+#include "timestamp.h"
 
 typedef struct HAEventParams
 {
@@ -470,7 +471,7 @@ void ProcHAEventInvoke
 
     if (con && (con->svr == ha_params->srvhp))
     {
-        tmsp = TimestampInit(NULL, tmsp, ha_params->dthp, OCI_TIMESTAMP);
+        tmsp = TimestampInitialize(NULL, tmsp, ha_params->dthp, OCI_TIMESTAMP);
 
         OCILib.ha_handler(con, (unsigned int)ha_params->source, (unsigned int)ha_params->event, tmsp);
     }

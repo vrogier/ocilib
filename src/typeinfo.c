@@ -50,10 +50,10 @@ boolean TypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find_params)
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TypeInfoClose
+ * TypeInfoDispose
  * --------------------------------------------------------------------------------------------- */
 
-boolean TypeInfoClose
+boolean TypeInfoDispose
 (
     OCI_TypeInfo *typinf
 )
@@ -204,7 +204,7 @@ OCI_TypeInfo * TypeInfoGet
 
             ostrncat(str, typinf->name, max_chars);
 
-            dbstr1 = StringGetOracleString(str, &dbsize1);
+            dbstr1 = StringGetDBString(str, &dbsize1);
 
             /* set public scope to include synonyms */
                 
@@ -219,7 +219,7 @@ OCI_TypeInfo * TypeInfoGet
                                OCI_DEFAULT, OCI_PTYPE_UNK, dschp)
             )
 
-            StringReleaseOracleString(dbstr1);
+            StringReleaseDBString(dbstr1);
 
             /* get parameter handle */
                 
@@ -524,7 +524,7 @@ boolean TypeInfoFree
     {
         ListRemove(typinf->con->tinfs, typinf);
 
-        TypeInfoClose(typinf);
+        TypeInfoDispose(typinf);
 
         OCI_FREE(typinf)
     }

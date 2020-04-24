@@ -50,7 +50,7 @@
     }                                                                       \
     else                                                                    \
     {                                                                       \
-        int index = ObjectGetAttrIndex(obj, attr, datatype, TRUE);          \
+        int index = ObjectGetAttributeIndex(obj, attr, datatype, TRUE);          \
                                                                             \
         if (index >= 0)                                                     \
         {                                                                   \
@@ -81,7 +81,7 @@
                                                                             \
     OCI_STATUS = FALSE;                                                     \
                                                                             \
-    index = ObjectGetAttrIndex(obj, attr, datatype, TRUE);                  \
+    index = ObjectGetAttributeIndex(obj, attr, datatype, TRUE);                  \
     if (index >= 0)                                                         \
     {                                                                       \
         OCIInd *ind   = NULL;                                               \
@@ -99,6 +99,16 @@
     }                                                                       \
                                                                             \
     OCI_CALL_EXIT()
+
+// pre declaration
+
+boolean ObjectGetAttributeInfo
+(
+    OCI_TypeInfo * typinf,
+    int           index,
+    size_t * p_size,
+    size_t * p_align
+);
 
 
  /* --------------------------------------------------------------------------------------------- *
@@ -268,7 +278,7 @@ void ObjectGetStructSize
 
                 /* get current type self first member information (after parent type) */
 
-                ObjectGetAttrInfo(typinf, i, &size2, &next_align);
+                ObjectGetAttributeInfo(typinf, i, &size2, &next_align);
 
                 /* make sure that parent field is aligned */
 
@@ -286,12 +296,12 @@ void ObjectGetStructSize
             }
             else
             {
-                ObjectGetAttrInfo(typinf, i, &size1, &align);
+                ObjectGetAttributeInfo(typinf, i, &size1, &align);
 
                 typinf->offsets[i] = 0;
             }
 
-            ObjectGetAttrInfo(typinf, i + 1, &size2, &align);
+            ObjectGetAttributeInfo(typinf, i + 1, &size2, &align);
 
             size += size1;
 
@@ -354,10 +364,10 @@ void ObjectGetUserStructSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetAttrInfo
+ * ObjectGetAttributeInfo
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectGetAttrInfo
+boolean ObjectGetAttributeInfo
 (
     OCI_TypeInfo *typinf,
     int           index,
@@ -481,10 +491,10 @@ void ObjectReset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectInit
+ * ObjectInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * ObjectInit
+OCI_Object * ObjectInitialize
 (
     OCI_Connection *con,
     OCI_Object     *obj,
@@ -600,10 +610,10 @@ OCI_Object * ObjectInit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetAttrIndex
+ * ObjectGetAttributeIndex
  * --------------------------------------------------------------------------------------------- */
 
-int ObjectGetAttrIndex
+int ObjectGetAttributeIndex
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -691,7 +701,7 @@ boolean ObjectSetNumberInternal
 
     OCI_STATUS = FALSE;
 
-    index = ObjectGetAttrIndex(obj, attr, OCI_CDT_NUMERIC, TRUE);
+    index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_NUMERIC, TRUE);
 
     if (index >= 0)
     {
@@ -699,7 +709,7 @@ boolean ObjectSetNumberInternal
         void       *num = ObjectGetAttr(obj, index, &ind);
         OCI_Column *col = &obj->typinf->cols[index];
 
-        OCI_STATUS = TranslateNumericValue(obj->con, value, flag, num, col->subtype);
+        OCI_STATUS = NumberTranslateValue(obj->con, value, flag, num, col->subtype);
 
         if (OCI_STATUS)
         {
@@ -733,7 +743,7 @@ boolean ObjectGetNumberInternal
 
     OCI_STATUS = FALSE;
 
-    index = ObjectGetAttrIndex(obj, attr, OCI_CDT_NUMERIC, FALSE);
+    index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_NUMERIC, FALSE);
 
     if (index >= 0)
     {
@@ -746,16 +756,16 @@ boolean ObjectGetNumberInternal
         {
             OCI_Column *col = &obj->typinf->cols[index];
 
-            OCI_STATUS = TranslateNumericValue(obj->con, ptr, col->subtype, value, flag);
+            OCI_STATUS = NumberTranslateValue(obj->con, ptr, col->subtype, value, flag);
         }
     }
     else
     {
-        index = ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT, FALSE);
+        index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_TEXT, FALSE);
 
         if (index >= 0)
         {
-            OCI_STATUS = NumberFromString(obj->con, value, flag, ObjectGetString(obj, attr), NULL);
+            OCI_STATUS = NumberFromStringInternal(obj->con, value, flag, ObjectGetString(obj, attr), NULL);
         }
     }
 
@@ -784,7 +794,7 @@ OCI_Object * ObjectCreate
     OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = ObjectInit(con, NULL, NULL, typinf, NULL, -1, TRUE);
+    OCI_RETVAL = ObjectInitialize(con, NULL, NULL, typinf, NULL, -1, TRUE);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -829,10 +839,10 @@ boolean ObjectFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectArrayCreate
+ * ObjectCreateArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object ** ObjectArrayCreate
+OCI_Object ** ObjectCreateArray
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -858,10 +868,10 @@ OCI_Object ** ObjectArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectArrayFree
+ * ObjectFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectArrayFree
+boolean ObjectFreeArray
 (
     OCI_Object **objs
 )
@@ -929,7 +939,7 @@ boolean ObjectGetBoolean
 
     OCI_STATUS = FALSE;
 
-    index = ObjectGetAttrIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
+    index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
 
     if (index >= 0)
     {
@@ -964,7 +974,7 @@ OCI_Number * ObjectGetNumber
         OCI_CDT_NUMERIC,
         OCI_Number*,
         OCINumber*,
-        NumberInit(obj->con, (OCI_Number *) obj->objs[index], (OCINumber *) value)
+        NumberInitialize(obj->con, (OCI_Number *) obj->objs[index], (OCINumber *) value)
     )
 }
 
@@ -1123,7 +1133,7 @@ const otext * ObjectGetString
 
     OCI_STATUS = FALSE;
 
-    index = ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT, FALSE);
+    index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_TEXT, FALSE);
 
     if (index >= 0)
     {
@@ -1148,7 +1158,7 @@ const otext * ObjectGetString
     }
     else
     {
-        index = ObjectGetAttrIndex(obj, attr, -1, FALSE);
+        index = ObjectGetAttributeIndex(obj, attr, -1, FALSE);
 
         if (index >= 0)
         {
@@ -1223,7 +1233,7 @@ int ObjectGetRaw
 
     OCI_STATUS = FALSE;
 
-    index = ObjectGetAttrIndex(obj, attr, OCI_CDT_RAW, TRUE);
+    index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_RAW, TRUE);
 
     if (index >= 0)
     {
@@ -1272,7 +1282,7 @@ unsigned int ObjectGetRawSize
 
     OCI_STATUS = FALSE;
 
-    index = ObjectGetAttrIndex(obj, attr, OCI_CDT_RAW, TRUE);
+    index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_RAW, TRUE);
 
     if (index >= 0)
     {
@@ -1330,7 +1340,7 @@ OCI_Timestamp * ObjectGetTimestamp
         OCI_CDT_TIMESTAMP,
         OCI_Timestamp*,
         OCIDateTime*,
-        TimestampInit(obj->con, (OCI_Timestamp *) obj->objs[index],
+        TimestampInitialize(obj->con, (OCI_Timestamp *) obj->objs[index],
                      (OCIDateTime *) *value, obj->typinf->cols[index].subtype)
     )
 
@@ -1407,7 +1417,7 @@ OCI_Object * ObjectGetObject
         OCI_CDT_OBJECT,
         OCI_Object*,
         void,
-        ObjectInit(obj->con, (OCI_Object *) obj->objs[index], value,
+        ObjectInitialize(obj->con, (OCI_Object *) obj->objs[index], value,
                    obj->typinf->cols[index].typinf,  obj, index, FALSE)
     )
  }
@@ -1451,10 +1461,10 @@ OCI_File * ObjectGetFile
  }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetRef
+ * ObjectGetReference
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * ObjectGetRef
+OCI_Ref * ObjectGetReference
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1465,7 +1475,7 @@ OCI_Ref * ObjectGetRef
         OCI_CDT_REF,
         OCI_Ref*,
         OCIRef*,
-        RefInit(obj->con, NULL, (OCI_Ref *) obj->objs[index], *value)
+        ReferenceInitialize(obj->con, NULL, (OCI_Ref *) obj->objs[index], *value)
     )
 }
 
@@ -1487,7 +1497,7 @@ boolean ObjectSetBoolean
 
     OCI_STATUS = FALSE;
 
-    const int index = ObjectGetAttrIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
+    const int index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
 
     if (index >= 0)
     {
@@ -1663,7 +1673,7 @@ boolean ObjectSetString
     }
     else
     {
-        const int index = ObjectGetAttrIndex(obj, attr, OCI_CDT_TEXT, TRUE);
+        const int index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_TEXT, TRUE);
 
         if (index >= 0)
         {
@@ -1861,10 +1871,10 @@ boolean ObjectSetFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetRef
+ * ObjectSetReference
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetRef
+boolean ObjectSetReference
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1894,7 +1904,7 @@ boolean ObjectSetNull
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
     OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
-    const int index = ObjectGetAttrIndex(obj, attr, -1, TRUE);
+    const int index = ObjectGetAttributeIndex(obj, attr, -1, TRUE);
 
     if (index >= 0)
     {
@@ -1927,7 +1937,7 @@ boolean ObjectIsNull
     OCI_CALL_CHECK_PTR(OCI_IPC_STRING, attr)
     OCI_CALL_CONTEXT_SET_FROM_CONN(obj->con)
 
-    index = ObjectGetAttrIndex(obj, attr, -1, TRUE);
+    index = ObjectGetAttributeIndex(obj, attr, -1, TRUE);
 
     if (index >= 0)
     {
@@ -2025,10 +2035,10 @@ boolean ObjectGetStruct
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectToText
+ * ObjectToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectToText
+boolean ObjectToString
 (
     OCI_Object   *obj,
     unsigned int *size,
@@ -2145,7 +2155,7 @@ boolean ObjectToText
                 }
                 case OCI_CDT_REF:
                 {
-                    data  = (void *) ObjectGetRef(obj, attr);
+                    data  = (void *) ObjectGetReference(obj, attr);
                     break;
                 }
                 case OCI_CDT_OBJECT:

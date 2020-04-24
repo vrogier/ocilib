@@ -29,14 +29,17 @@
 #include "file.h"
 #include "format.h"
 #include "hash.h"
+#include "interval.h"
 #include "list.h"
 #include "lob.h"
 #include "macro.h"
 #include "memory.h"
+#include "number.h"
 #include "object.h"
 #include "reference.h"
 #include "resultset.h"
 #include "strings.h"
+#include "timestamp.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 static unsigned int TimestampTypeValues[]  = { OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
@@ -327,7 +330,7 @@ boolean StatementBindCheck
                 big_int   *src_bint = OCI_BIND_GET_SCALAR(src, big_int, index);
                 OCINumber *dst_num  = OCI_BIND_GET_BUFFER(dst, OCINumber, index);
 
-                OCI_STATUS = TranslateNumericValue(bnd->stmt->con, src_bint, bnd->subtype, dst_num, OCI_NUM_NUMBER);
+                OCI_STATUS = NumberTranslateValue(bnd->stmt->con, src_bint, bnd->subtype, dst_num, OCI_NUM_NUMBER);
             }
         }
         // OCI_Date binds
@@ -440,7 +443,7 @@ boolean StatementBindUpdate
 
             if (dst_bint)
             {
-                OCI_STATUS = TranslateNumericValue(bnd->stmt->con, src_number, OCI_NUM_NUMBER, dst_bint, bnd->subtype);
+                OCI_STATUS = NumberTranslateValue(bnd->stmt->con, src_number, OCI_NUM_NUMBER, dst_bint, bnd->subtype);
             }
         }
     }
@@ -625,7 +628,7 @@ boolean StatementFetchIntoUserVariables
 
     /* get resultset */
 
-    rs = ResultsetGetResultset(stmt);
+    rs = StatementGetResultset(stmt);
 
     /* fetch data */
 
@@ -752,7 +755,7 @@ boolean StatementFetchIntoUserVariables
                 }
                 case OCI_ARG_REF:
                 {
-                    SET_ARG_HANDLE(OCI_Ref, ResultsetGetRef, RefAssign);
+                    SET_ARG_HANDLE(OCI_Ref, ResultsetGetReference, ReferenceAssign);
                     break;
                 }
                 default:
@@ -771,10 +774,10 @@ boolean StatementFetchIntoUserVariables
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StatementInit
+ * StatementInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Statement * StatementInit
+OCI_Statement * StatementInitialize
 (
     OCI_Connection *con,
     OCI_Statement  *stmt,
@@ -826,7 +829,7 @@ OCI_Statement * StatementInit
 
                 if (OCI_STATUS && dbstr)
                 {
-                    stmt->sql = StringDuplicateFromOracleString(dbstr, dbcharcount(dbsize));
+                    stmt->sql = StringDuplicateFromDBString(dbstr, dbcharcount(dbsize));
                     OCI_STATUS = (NULL != stmt->sql);
                 }
             }
@@ -856,10 +859,10 @@ OCI_Statement * StatementInit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StatementClose
+ * StatementDispose
  * --------------------------------------------------------------------------------------------- */
 
-boolean StatementClose
+boolean StatementDispose
 (
     OCI_Statement *stmt
 )
@@ -915,7 +918,7 @@ boolean StatementCheckImplicitResultsets
             {
                 if (OCI_RESULT_TYPE_SELECT == rs_type)
                 {
-                    stmt->stmts[i] = StatementInit(stmt->con, NULL, result, TRUE, NULL);
+                    stmt->stmts[i] = StatementInitialize(stmt->con, NULL, result, TRUE, NULL);
                     OCI_STATUS = (NULL != stmt->stmts[i]);
 
                     if (OCI_STATUS)
@@ -1015,7 +1018,7 @@ boolean StatementBatchErrorInit
 
                 dbsize = (int) osizeof(err->str) - 1;
 
-                dbstr = StringGetOracleString(err->str, &dbsize);
+                dbstr = StringGetDBString(err->str, &dbsize);
 
                 OCIErrorGet((dvoid *) hndl,
                             (ub4) 1,
@@ -1024,8 +1027,8 @@ boolean StatementBatchErrorInit
                             (ub4) dbsize,
                             (ub4) OCI_HTYPE_ERROR);
 
-                StringCopyOracleStringToNativeString(dbstr, err->str, dbcharcount(dbsize));
-                StringReleaseOracleString(dbstr);
+                StringCopyDBStringToNativeString(dbstr, err->str, dbcharcount(dbsize));
+                StringReleaseDBString(dbstr);
             }
         }
 
@@ -1066,7 +1069,7 @@ boolean StatementPrepareInternal
 
         stmt->sql = ostrdup(sql);
 
-        dbstr = StringGetOracleString(stmt->sql, &dbsize);
+        dbstr = StringGetDBString(stmt->sql, &dbsize);
 
         if (OCILib.version_runtime < OCI_9_2)
         {
@@ -1124,7 +1127,7 @@ boolean StatementPrepareInternal
         OCI_GET_ATTRIB(OCI_HTYPE_STMT, OCI_ATTR_STMT_TYPE, stmt->stmt, &stmt->type, NULL)
     }
 
-    StringReleaseOracleString(dbstr);
+    StringReleaseDBString(dbstr);
 
     /* update statement status */
 
@@ -1193,7 +1196,7 @@ boolean StatementExecuteInternal
         {
             /* just reinitialize the current resultset */
 
-            OCI_STATUS = ResultsetInit(stmt->rsts[0]);
+            OCI_STATUS = ResultsetInitialize(stmt->rsts[0]);
         }
         else
         {
@@ -1322,7 +1325,7 @@ OCI_Statement * StatementCreate
 
     if (OCI_STATUS)
     {
-        OCI_RETVAL = StatementInit(con, (OCI_Statement *) OCI_RETVAL, NULL, FALSE, NULL);
+        OCI_RETVAL = StatementInitialize(con, (OCI_Statement *) OCI_RETVAL, NULL, FALSE, NULL);
         OCI_STATUS = (NULL != OCI_RETVAL);
     }
 
@@ -1349,12 +1352,88 @@ boolean StatementFree
     OCI_CALL_CHECK_OBJECT_FETCHED(stmt)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    StatementClose(stmt);
+    StatementDispose(stmt);
     ListRemove(stmt->con->stmts, stmt);
 
     OCI_FREE(stmt)
 
     OCI_RETVAL = TRUE;
+
+    OCI_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * StatementGetResultset
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Resultset * StatementGetResultset
+(
+    OCI_Statement *stmt
+)
+{
+    OCI_CALL_ENTER(OCI_Resultset*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_DESCRIBED)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
+
+    /* if the sql statement does not return a result, we just return NULL and not
+       throwing any exception
+       statements that can return a resultset are "SELECT..." and "... RETURNING INTO..."
+    */
+
+    if ((OCI_CST_SELECT == stmt->type) || (stmt->nb_rbinds > 0) || (stmt->nb_stmt > 0))
+    {
+        /* if the resultset exists, let's use it */
+
+        if (stmt->rsts && stmt->rsts[0])
+        {
+            OCI_RETVAL = stmt->rsts[0];
+        }
+
+        /* allocate resultset for select statements only */
+
+        if (!OCI_RETVAL && (OCI_CST_SELECT == stmt->type))
+        {
+            /* allocate memory for one resultset handle */
+
+            OCI_ALLOCATE_DATA(OCI_IPC_RESULTSET_ARRAY, stmt->rsts, 1)
+           
+            if (OCI_STATUS)
+            {
+                stmt->nb_rs  = 1;
+                stmt->cur_rs = 0;
+
+                /* create resultset object */
+
+                OCI_RETVAL = stmt->rsts[0] = ResultsetCreate(stmt, stmt->fetch_size);
+            }
+
+        }
+
+        OCI_STATUS = (NULL != OCI_RETVAL);
+    }
+
+    OCI_CALL_EXIT()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * StatementGetNextResultset
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Resultset * StatementGetNextResultset
+(
+    OCI_Statement *stmt
+)
+{
+    OCI_CALL_ENTER(OCI_Resultset*, NULL)
+    OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    OCI_CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_DESCRIBED)
+    OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
+
+    if (stmt->cur_rs < (stmt->nb_rs-1))
+    {
+        OCI_RETVAL = stmt->rsts[++stmt->cur_rs];
+    }
 
     OCI_CALL_EXIT()
 }
@@ -1381,7 +1460,7 @@ boolean StatementReleaseResultsets
         {
             if (stmt->rsts[i])
             {
-                StatementClose(stmt->stmts[i]);
+                StatementDispose(stmt->stmts[i]);
             }
         }
 
@@ -1742,10 +1821,10 @@ boolean StatementDescribeFmt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StatementBindArraySetSize
+ * StatementSetBindArraySize
  * --------------------------------------------------------------------------------------------- */
 
-boolean StatementBindArraySetSize
+boolean StatementSetBindArraySize
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -1782,10 +1861,10 @@ boolean StatementBindArraySetSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StatementBindArrayGetSize
+ * StatementGetBindArraySize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int StatementBindArrayGetSize
+unsigned int StatementGetBindArraySize
 (
     OCI_Statement *stmt
 )
@@ -2668,10 +2747,10 @@ boolean StatementBindArrayOfFiles
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StatementBindRef
+ * StatementBindReference
  * --------------------------------------------------------------------------------------------- */
 
-boolean StatementBindRef
+boolean StatementBindReference
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2685,10 +2764,10 @@ boolean StatementBindRef
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StatementBindArrayOfRefs
+ * StatementBindArrayOfReferences
  * --------------------------------------------------------------------------------------------- */
 
-boolean StatementBindArrayOfRefs
+boolean StatementBindArrayOfReferences
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2704,10 +2783,10 @@ boolean StatementBindArrayOfRefs
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StatementBindColl
+ * StatementBindCollection
  * --------------------------------------------------------------------------------------------- */
 
-boolean StatementBindColl
+boolean StatementBindCollection
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -2721,10 +2800,10 @@ boolean StatementBindColl
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StatementBindArrayOfColls
+ * StatementBindArrayOfCollections
  * --------------------------------------------------------------------------------------------- */
 
-boolean StatementBindArrayOfColls
+boolean StatementBindArrayOfCollections
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -3116,10 +3195,10 @@ boolean StatementRegisterFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StatementRegisterRef
+ * StatementRegisterReference
  * --------------------------------------------------------------------------------------------- */
 
-boolean StatementRegisterRef
+boolean StatementRegisterReference
 (
     OCI_Statement *stmt,
     const otext   *name,
@@ -3593,10 +3672,10 @@ unsigned int StatementGetBindIndex
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StatementGetSQLCommand
+ * StatementGetSqlCommand
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int StatementGetSQLCommand
+unsigned int StatementGetSqlCommand
 (
     OCI_Statement *stmt
 )
@@ -3616,10 +3695,10 @@ unsigned int StatementGetSQLCommand
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StatementGetSQLVerb
+ * StatementGetSqlVerb
  * --------------------------------------------------------------------------------------------- */
 
-const otext * StatementGetSQLVerb
+const otext * StatementGetSqlVerb
 (
     OCI_Statement *stmt
 )
@@ -3630,7 +3709,7 @@ const otext * StatementGetSQLVerb
     OCI_CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     OCI_CALL_CONTEXT_SET_FROM_STMT(stmt)
 
-    code = StatementGetSQLCommand(stmt);
+    code = StatementGetSqlCommand(stmt);
 
     if (OCI_UNKNOWN != code)
     {

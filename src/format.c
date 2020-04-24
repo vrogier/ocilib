@@ -333,7 +333,7 @@ int FormatParseSql
 
                 temp[0] = 0;
 
-                NumberToText(va_arg(*pargs, OCI_Number*), NULL, 128, temp);
+                NumberToString(va_arg(*pargs, OCI_Number*), NULL, 128, temp);
                 len = (int) ostrlen(temp);
 
                 if (buf && (len > 0))
@@ -353,7 +353,7 @@ int FormatParseSql
 
                 if (ref)
                 {
-                    RefToText(ref, (unsigned int) osizeof(temp) - 1, temp);
+                    ReferenceToString(ref, (unsigned int) osizeof(temp) - 1, temp);
 
                     len = (int) ostrlen(temp);
 

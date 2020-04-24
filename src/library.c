@@ -739,7 +739,7 @@ boolean FreeObjectFromType(void *obj, unsigned int type)
         }
         case OCI_CDT_REF:
         {
-            res= RefFree((OCI_Ref *)obj);
+            res= ReferenceFree((OCI_Ref *)obj);
             break;
         }
     }
@@ -1726,7 +1726,7 @@ boolean Cleanup
 
     /* free all subscriptions */
 
-    ListForEach(OCILib.subs, (POCI_LIST_FOR_EACH) SubscriptionClose);
+    ListForEach(OCILib.subs, (POCI_LIST_FOR_EACH) SubscriptionDispose);
     ListClear(OCILib.subs);
 
     /* free all connections */
@@ -1736,7 +1736,7 @@ boolean Cleanup
 
     /* free all pools */
 
-    ListForEach(OCILib.pools, (POCI_LIST_FOR_EACH) PoolClose);
+    ListForEach(OCILib.pools, (POCI_LIST_FOR_EACH) PoolDispose);
     ListClear(OCILib.pools);
 
     /* free objects */
@@ -2017,11 +2017,11 @@ boolean DatabaseStartup
 
                 /* set client file if provided */
 
-                dbstr = StringGetOracleString(spfile, &dbsize);
+                dbstr = StringGetDBString(spfile, &dbsize);
 
                 OCI_SET_ATTRIB(OCI_HTYPE_ADMIN, OCI_ATTR_ADMIN_PFILE, adm, dbstr, dbsize)
 
-                StringReleaseOracleString(dbstr);
+                StringReleaseDBString(dbstr);
             }
 
             /* startup DB */

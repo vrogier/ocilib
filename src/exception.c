@@ -271,7 +271,7 @@ void ExceptionOCI
     if (err)
     {
         int     dbsize = (int) (osizeof(err->str) - (size_t) 1);
-        dbtext *dbstr  =  StringGetOracleString(err->str, &dbsize);
+        dbtext *dbstr  =  StringGetDBString(err->str, &dbsize);
 
         err->type = (warning ? OCI_ERR_WARNING : OCI_ERR_ORACLE);
         err->con  = con;
@@ -282,8 +282,8 @@ void ExceptionOCI
         OCIErrorGet((dvoid *) p_err, (ub4) 1, (OraText *) NULL, &err->sqlcode,
                     (OraText *) dbstr, (ub4) dbsize, (ub4) OCI_HTYPE_ERROR);
 
-        StringCopyOracleStringToNativeString(dbstr, err->str, dbcharcount(dbsize));
-        StringReleaseOracleString(dbstr);
+        StringCopyDBStringToNativeString(dbstr, err->str, dbcharcount(dbsize));
+        StringReleaseDBString(dbstr);
     }
 
     ExceptionCallHandler(err);

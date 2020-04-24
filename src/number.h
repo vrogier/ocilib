@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-boolean TranslateNumericValue
+boolean NumberTranslateValue
 (
     OCI_Connection* con,
     void* in_value,
@@ -32,14 +32,14 @@ boolean TranslateNumericValue
     uword           out_type
 );
 
-OCI_Number* NumberInit
+OCI_Number* NumberInitialize
 (
     OCI_Connection* con,
     OCI_Number* number,
     OCINumber* buffer
 );
 
-boolean NumberFromString
+boolean NumberFromStringInternal
 (
     OCI_Connection* con,
     void* out_value,
@@ -48,7 +48,7 @@ boolean NumberFromString
     const otext* fmt
 );
 
-boolean NumberToString
+boolean NumberToStringInternal
 (
     OCI_Connection* con,
     void* number,
@@ -68,13 +68,13 @@ boolean NumberFree
     OCI_Number* number
 );
 
-OCI_Number** NumberArrayCreate
+OCI_Number** NumberCreateArray
 (
     OCI_Connection* con,
     unsigned int    nbelem
 );
 
-boolean NumberArrayFree
+boolean NumberFreeArray
 (
     OCI_Number** numbmers
 );
@@ -85,7 +85,7 @@ boolean NumberAssign
     OCI_Number* number_src
 );
 
-boolean NumberToText
+boolean NumberToString
 (
     OCI_Number* number,
     const otext* fmt,
@@ -93,7 +93,7 @@ boolean NumberToText
     otext* str
 );
 
-boolean NumberFromText
+boolean NumberFromString
 (
     OCI_Number* number,
     const otext* str,

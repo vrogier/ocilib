@@ -48,7 +48,7 @@ static const MagicNumber MagicNumbers[] =
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)                                      \
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)                                           \
                                                                                     \
-    OCI_STATUS = TranslateNumericValue(number->con, value, type,                    \
+    OCI_STATUS = NumberTranslateValue(number->con, value, type,                     \
                                        &src_num, OCI_NUM_NUMBER);                   \
                                                                                     \
     OCI_EXEC(func(number->err, number->handle, &src_num, number->handle))           \
@@ -96,10 +96,10 @@ uword GetNumericTypeSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TranslateNumericValue
+ * NumberTranslateValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean TranslateNumericValue
+boolean NumberTranslateValue
 (
     OCI_Connection *con,
     void           *in_value,
@@ -216,10 +216,10 @@ boolean TranslateNumericValue
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberFromString
+ * NumberFromStringInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberFromString
+boolean NumberFromStringInternal
 (
     OCI_Connection *con,
     void           *out_value,
@@ -309,8 +309,8 @@ boolean NumberFromString
                 fmt = GetFormat(con, OCI_FMT_NUMERIC);
             }
 
-            dbstr1 = StringGetOracleString(in_value, &dbsize1);
-            dbstr2 = StringGetOracleString(fmt, &dbsize2);
+            dbstr1 = StringGetDBString(in_value, &dbsize1);
+            dbstr2 = StringGetDBString(fmt, &dbsize2);
 
             memset(&number, 0, sizeof(number));
 
@@ -320,10 +320,10 @@ boolean NumberFromString
                                    (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
             )
 
-            StringReleaseOracleString(dbstr2);
-            StringReleaseOracleString(dbstr1);
+            StringReleaseDBString(dbstr2);
+            StringReleaseDBString(dbstr1);
 
-            OCI_STATUS = OCI_STATUS && TranslateNumericValue(con, &number, OCI_NUM_NUMBER, out_value, type);
+            OCI_STATUS = OCI_STATUS && NumberTranslateValue(con, &number, OCI_NUM_NUMBER, out_value, type);
         }
     }
 
@@ -331,10 +331,10 @@ boolean NumberFromString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberToString
+ * NumberToStringInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberToString
+boolean NumberToStringInternal
 (
     OCI_Connection *con,
     void           *number,
@@ -438,8 +438,8 @@ boolean NumberToString
                 fmt = GetFormat(con, OCI_FMT_NUMERIC);
             }
 
-            dbstr1 = StringGetOracleString(out_value, &dbsize1);
-            dbstr2 = StringGetOracleString(fmt, &dbsize2);
+            dbstr1 = StringGetDBString(out_value, &dbsize1);
+            dbstr2 = StringGetDBString(fmt, &dbsize2);
 
             OCI_EXEC
             (
@@ -448,9 +448,9 @@ boolean NumberToString
                                 (ub4 *)&dbsize1, (oratext *)dbstr1)
             )
 
-            StringCopyOracleStringToNativeString(dbstr1, out_value, dbcharcount(dbsize1));
-            StringReleaseOracleString(dbstr2);
-            StringReleaseOracleString(dbstr1);
+            StringCopyDBStringToNativeString(dbstr1, out_value, dbcharcount(dbsize1));
+            StringReleaseDBString(dbstr2);
+            StringReleaseDBString(dbstr1);
 
             out_value_size = (dbsize1 / (int) sizeof(dbtext));
         }
@@ -471,10 +471,10 @@ boolean NumberToString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberInit
+ * NumberInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Number * NumberInit
+OCI_Number * NumberInitialize
 (
     OCI_Connection  *con,
     OCI_Number      *number,
@@ -536,7 +536,7 @@ OCI_Number * NumberCreate
     OCI_CALL_CHECK_INITIALIZED()
     OCI_CALL_CONTEXT_SET_FROM_CONN(con)
 
-    OCI_RETVAL = NumberInit(con, NULL, NULL);
+    OCI_RETVAL = NumberInitialize(con, NULL, NULL);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
     OCI_CALL_EXIT()
@@ -572,10 +572,10 @@ boolean NumberFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberArrayCreate
+ * NumberCreateArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Number ** NumberArrayCreate
+OCI_Number ** NumberCreateArray
 (
     OCI_Connection *con,
     unsigned int    nbelem
@@ -598,10 +598,10 @@ OCI_Number ** NumberArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberArrayFree
+ * NumberFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberArrayFree
+boolean NumberFreeArray
 (
     OCI_Number **numbmers
 )
@@ -637,10 +637,10 @@ boolean NumberAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberToText
+ * NumberToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberToText
+boolean NumberToString
 (
     OCI_Number  *number,
     const otext *fmt,
@@ -652,16 +652,16 @@ boolean NumberToText
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = NumberToString(number->con, number->handle, OCI_NUM_NUMBER, str, size, fmt);
+    OCI_RETVAL = NumberToStringInternal(number->con, number->handle, OCI_NUM_NUMBER, str, size, fmt);
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberFromText
+ * NumberFromString
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberFromText
+boolean NumberFromString
 (
     OCI_Number  *number,
     const otext *str,
@@ -672,7 +672,7 @@ boolean NumberFromText
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = NumberFromString(number->con, number->handle, OCI_NUM_NUMBER, str, fmt);
+    OCI_RETVAL = NumberFromStringInternal(number->con, number->handle, OCI_NUM_NUMBER, str, fmt);
 
     OCI_CALL_EXIT()
 }
@@ -738,7 +738,7 @@ boolean NumberSetValue
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = OCI_STATUS = TranslateNumericValue(number->con, value, type, number->handle, OCI_NUM_NUMBER);
+    OCI_RETVAL = OCI_STATUS = NumberTranslateValue(number->con, value, type, number->handle, OCI_NUM_NUMBER);
 
     OCI_CALL_EXIT()
 }
@@ -758,7 +758,7 @@ boolean NumberGetValue
     OCI_CALL_CHECK_PTR(OCI_IPC_NUMBER, number)
     OCI_CALL_CONTEXT_SET_FROM_OBJ(number)
 
-    OCI_RETVAL = OCI_STATUS = TranslateNumericValue(number->con, number->handle, OCI_NUM_NUMBER, value, type);
+    OCI_RETVAL = OCI_STATUS = NumberTranslateValue(number->con, number->handle, OCI_NUM_NUMBER, value, type);
 
     OCI_CALL_EXIT()
 }

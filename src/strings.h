@@ -47,7 +47,7 @@ void StringTranslate
 (
     void* src,
     void* dst,
-    int    len,
+    int    char_count,
     size_t size_char_in,
     size_t size_char_out
 );
@@ -70,25 +70,25 @@ void StringTranslate
 #define StringRawCopy(s, d, l)          \
     StringTranslate( (void *) (s), (void *) (d), l, sizeof(otext),  sizeof(otext) )
 
-dbtext* StringGetOracleString
+dbtext* StringGetDBString
 (
     const otext* src,
-    int* len
+    int* size
 );
 
-void StringReleaseOracleString
+void StringReleaseDBString
 (
     dbtext* str
 );
 
-int StringCopyOracleStringToNativeString
+int StringCopyDBStringToNativeString
 (
     const dbtext* src,
     otext* dst,
     int            len
 );
 
-otext* StringDuplicateFromOracleString
+otext* StringDuplicateFromDBString
 (
     const dbtext* src,
     int            len

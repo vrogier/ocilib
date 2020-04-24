@@ -23,14 +23,9 @@
 
 #include "types.h"
 
-boolean SubscriptionClose
+boolean SubscriptionDispose
 (
     OCI_Subscription *sub
-);
-
-boolean SubscriptionDetachConnection
-(
-    OCI_Connection *con
 );
 
 OCI_Subscription * SubscriptionRegister

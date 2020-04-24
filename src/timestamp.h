@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Timestamp * TimestampInit
+OCI_Timestamp * TimestampInitialize
 (
     OCI_Connection  *con,
     OCI_Timestamp   *tmsp,
@@ -42,14 +42,14 @@ boolean TimestampFree
     OCI_Timestamp *tmsp
 );
 
-OCI_Timestamp ** TimestampArrayCreate
+OCI_Timestamp ** TimestampCreateArray
 (
     OCI_Connection  *con,
     unsigned int type,
     unsigned int nbelem
 );
 
-boolean TimestampArrayFree
+boolean TimestampFreeArray
 (
     OCI_Timestamp **tmsps
 );
@@ -95,14 +95,14 @@ boolean TimestampConvert
     OCI_Timestamp *tmsp_src
 );
 
-boolean TimestampFromText
+boolean TimestampFromString
 (
     OCI_Timestamp   *tmsp,
     const otext *str,
     const otext *fmt
 );
 
-boolean TimestampToText
+boolean TimestampToString
 (
     OCI_Timestamp   *tmsp,
     const otext *fmt,

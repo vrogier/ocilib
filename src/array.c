@@ -101,7 +101,7 @@ boolean ArrayInitialize
             {
                 if (OCI_NUM_NUMBER == arr->elem_subtype)
                 {
-                    arr->tab_obj[i] = NumberInit(arr->con, (OCI_Number *) arr->tab_obj[i], (OCINumber *) handle);
+                    arr->tab_obj[i] = NumberInitialize(arr->con, (OCI_Number *) arr->tab_obj[i], (OCINumber *) handle);
                 }
                 break;
             }
@@ -122,7 +122,7 @@ boolean ArrayInitialize
             }
             case OCI_CDT_TIMESTAMP:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Timestamp, TimestampInit(arr->con, (OCI_Timestamp *) arr->tab_obj[i], (OCIDateTime *) handle, arr->elem_subtype))
+                OCI_ARRAY_INIT_HANDLE(OCI_Timestamp, TimestampInitialize(arr->con, (OCI_Timestamp *) arr->tab_obj[i], (OCIDateTime *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_INTERVAL:
@@ -132,7 +132,7 @@ boolean ArrayInitialize
             }
             case OCI_CDT_OBJECT:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Object, ObjectInit(arr->con, (OCI_Object *)arr->tab_obj[i], handle, typinf, NULL, -1, TRUE))
+                OCI_ARRAY_INIT_HANDLE(OCI_Object, ObjectInitialize(arr->con, (OCI_Object *)arr->tab_obj[i], handle, typinf, NULL, -1, TRUE))
                 break;
             }
             case OCI_CDT_COLLECTION:
@@ -142,7 +142,7 @@ boolean ArrayInitialize
             }
             case OCI_CDT_REF:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Ref, RefInit(arr->con, typinf, (OCI_Ref *) arr->tab_obj[i], handle))
+                OCI_ARRAY_INIT_HANDLE(OCI_Ref, ReferenceInitialize(arr->con, typinf, (OCI_Ref *) arr->tab_obj[i], handle))
                 break;
             }
         }

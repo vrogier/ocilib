@@ -29,10 +29,10 @@ static unsigned int TimestampTypeValues[] = { OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, O
 #endif
 
 /* --------------------------------------------------------------------------------------------- *
- * TimestampInit
+ * TimestampInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Timestamp * TimestampInit
+OCI_Timestamp * TimestampInitialize
 (
     OCI_Connection *con,
     OCI_Timestamp  *tmsp,
@@ -119,7 +119,7 @@ OCI_Timestamp * TimestampCreate
 
     OCI_CALL_CHECK_ENUM_VALUE(con, NULL, type, TimestampTypeValues, OTEXT("Timestamp type"))
 
-    OCI_RETVAL = TimestampInit(con, NULL, NULL, type);
+    OCI_RETVAL = TimestampInitialize(con, NULL, NULL, type);
     OCI_STATUS = (NULL != OCI_RETVAL);
 
 #else
@@ -167,10 +167,10 @@ boolean TimestampFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TimestampArrayCreate
+ * TimestampCreateArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Timestamp ** TimestampArrayCreate
+OCI_Timestamp ** TimestampCreateArray
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -210,10 +210,10 @@ OCI_Timestamp ** TimestampArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TimestampArrayFree
+ * TimestampFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean TimestampArrayFree
+boolean TimestampFreeArray
 (
     OCI_Timestamp **tmsps
 )
@@ -439,10 +439,10 @@ boolean TimestampConvert
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TimestampFromText
+ * TimestampFromString
  * --------------------------------------------------------------------------------------------- */
 
-boolean TimestampFromText
+boolean TimestampFromString
 (
     OCI_Timestamp *tmsp,
     const otext   *str,
@@ -467,8 +467,8 @@ boolean TimestampFromText
         fmt = GetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
-    dbstr1 = StringGetOracleString(str, &dbsize1);
-    dbstr2 = StringGetOracleString(fmt, &dbsize2);
+    dbstr1 = StringGetDBString(str, &dbsize1);
+    dbstr2 = StringGetDBString(fmt, &dbsize2);
 
     OCI_EXEC
     (
@@ -479,8 +479,8 @@ boolean TimestampFromText
                             tmsp->handle)
     )
 
-    StringReleaseOracleString(dbstr1);
-    StringReleaseOracleString(dbstr2);
+    StringReleaseDBString(dbstr1);
+    StringReleaseDBString(dbstr2);
 
 #else
 
@@ -497,10 +497,10 @@ boolean TimestampFromText
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TimestampToText
+ * TimestampToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean TimestampToText
+boolean TimestampToString
 (
     OCI_Timestamp *tmsp,
     const otext   *fmt,
@@ -532,8 +532,8 @@ boolean TimestampToText
         fmt = GetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
-    dbstr1 = StringGetOracleString(str, &dbsize1);
-    dbstr2 = StringGetOracleString(fmt, &dbsize2);
+    dbstr1 = StringGetDBString(str, &dbsize1);
+    dbstr2 = StringGetDBString(fmt, &dbsize2);
 
     OCI_EXEC
     (
@@ -544,10 +544,10 @@ boolean TimestampToText
                           (ub4*) &dbsize1, (OraText *) dbstr1)
     )
 
-    StringCopyOracleStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
+    StringCopyDBStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
 
-    StringReleaseOracleString(dbstr1);
-    StringReleaseOracleString(dbstr2);
+    StringReleaseDBString(dbstr1);
+    StringReleaseDBString(dbstr2);
 
     /* set null string terminator */
 
@@ -717,12 +717,12 @@ boolean TimestampGetTimeZoneName
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    dbstr = StringGetOracleString(str, &dbsize);
+    dbstr = StringGetDBString(str, &dbsize);
 
     OCI_EXEC(OCIDateTimeGetTimeZoneName((dvoid *)tmsp->env, tmsp->err, tmsp->handle, (ub1*) dbstr, (ub4*) &dbsize))
 
-    StringCopyOracleStringToNativeString(dbstr, str, dbcharcount(dbsize));
-    StringReleaseOracleString(dbstr);
+    StringCopyDBStringToNativeString(dbstr, str, dbcharcount(dbsize));
+    StringReleaseDBString(dbstr);
 
     /* set null string terminator */
 

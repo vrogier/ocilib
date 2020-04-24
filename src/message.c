@@ -28,10 +28,10 @@
 #include "strings.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgCreate
+ * MessageCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Msg * MsgCreate
+OCI_Msg * MessageCreate
 (
     OCI_TypeInfo *typinf
 )
@@ -76,17 +76,17 @@ OCI_Msg * MsgCreate
     }
     else if (msg)
     {
-        MsgFree(msg);
+        MessageFree(msg);
     }
 
     OCI_CALL_EXIT()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgFree
+ * MessageFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgFree
+boolean MessageFree
 (
     OCI_Msg *msg
 )
@@ -140,10 +140,10 @@ boolean MsgFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgReset
+ * MessageReset
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgReset
+boolean MessageReset
 (
     OCI_Msg *msg
 )
@@ -152,25 +152,25 @@ boolean MsgReset
 
     boolean res = 
     (
-        MsgSetExpiration(msg, -1)            &&
-        MsgSetEnqueueDelay(msg, 0)           &&
-        MsgSetPriority(msg,0)                &&
-        MsgSetOriginalID(msg, NULL, len)     &&
-        MsgSetSender(msg, NULL)              &&
-        MsgSetConsumers(msg, NULL, len)      &&
-        MsgSetCorrelation(msg, NULL)         &&
-        MsgSetExceptionQueue(msg, NULL)
+        MessageSetExpiration(msg, -1)            &&
+        MessageSetEnqueueDelay(msg, 0)           &&
+        MessageSetPriority(msg,0)                &&
+        MessageSetOriginalID(msg, NULL, len)     &&
+        MessageSetSender(msg, NULL)              &&
+        MessageSetConsumers(msg, NULL, len)      &&
+        MessageSetCorrelation(msg, NULL)         &&
+        MessageSetExceptionQueue(msg, NULL)
     );
 
     if (res)
     {
         if (OCI_UNKNOWN == msg->typinf->typecode)
         {
-            res = MsgSetRaw(msg, NULL, len);
+            res = MessageSetRaw(msg, NULL, len);
         }
         else
         {
-            res = MsgSetObject(msg, NULL);
+            res = MessageSetObject(msg, NULL);
         }
     }
 
@@ -178,10 +178,10 @@ boolean MsgReset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetObject
+ * MessageGetObject
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * MsgGetObject
+OCI_Object * MessageGetObject
 (
     OCI_Msg *msg
 )
@@ -200,10 +200,10 @@ OCI_Object * MsgGetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetObject
+ * MessageGetObject
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgSetObject
+boolean MessageSetObject
 (
     OCI_Msg    *msg,
     OCI_Object *obj
@@ -237,10 +237,10 @@ boolean MsgSetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetRaw
+ * MessageGetRaw
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgGetRaw
+boolean MessageGetRaw
 (
     OCI_Msg      *msg,
     void         *raw,
@@ -276,10 +276,10 @@ boolean MsgGetRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgSetRaw
+ * MessageSetRaw
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgSetRaw
+boolean MessageSetRaw
 (
     OCI_Msg      *msg,
     const void   *raw,
@@ -307,10 +307,10 @@ boolean MsgSetRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetAttemptCount
+ * MessageGetAttemptCount
  * --------------------------------------------------------------------------------------------- */
 
-int MsgGetAttemptCount
+int MessageGetAttemptCount
 (
     OCI_Msg *msg
 )
@@ -329,10 +329,10 @@ int MsgGetAttemptCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetEnqueueDelay
+ * MessageGetEnqueueDelay
  * --------------------------------------------------------------------------------------------- */
 
-int MsgGetEnqueueDelay
+int MessageGetEnqueueDelay
 (
     OCI_Msg *msg
 )
@@ -351,10 +351,10 @@ int MsgGetEnqueueDelay
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgSetEnqueueDelay
+ * MessageSetEnqueueDelay
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgSetEnqueueDelay
+boolean MessageSetEnqueueDelay
 (
     OCI_Msg *msg,
     int      value
@@ -374,10 +374,10 @@ boolean MsgSetEnqueueDelay
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetEnqueueTime
+ * MessageGetEnqueueTime
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Date * MsgGetEnqueueTime
+OCI_Date * MessageGetEnqueueTime
 (
     OCI_Msg *msg
 )
@@ -400,10 +400,10 @@ OCI_Date * MsgGetEnqueueTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetExpiration
+ * MessageGetExpiration
  * --------------------------------------------------------------------------------------------- */
 
-int MsgGetExpiration
+int MessageGetExpiration
 (
     OCI_Msg *msg
 )
@@ -422,10 +422,10 @@ int MsgGetExpiration
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgSetExpiration
+ * MessageSetExpiration
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgSetExpiration
+boolean MessageSetExpiration
 (
     OCI_Msg *msg,
     int      value
@@ -445,10 +445,10 @@ boolean MsgSetExpiration
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetState
+ * MessageGetState
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int MsgGetState
+unsigned int MessageGetState
 (
     OCI_Msg *msg
 )
@@ -472,10 +472,10 @@ unsigned int MsgGetState
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetPriority
+ * MessageGetPriority
  * --------------------------------------------------------------------------------------------- */
 
-int MsgGetPriority
+int MessageGetPriority
 (
     OCI_Msg *msg
 )
@@ -494,10 +494,10 @@ int MsgGetPriority
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgSetPriority
+ * MessageSetPriority
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgSetPriority
+boolean MessageSetPriority
 (
     OCI_Msg *msg,
     int      value
@@ -518,10 +518,10 @@ boolean MsgSetPriority
 
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetID
+ * MessageGetID
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgGetID
+boolean MessageGetID
 (
     OCI_Msg      *msg,
     void         *id,
@@ -556,10 +556,10 @@ boolean MsgGetID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetOriginalID
+ * MessageGetOriginalID
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgGetOriginalID
+boolean MessageGetOriginalID
 (
     OCI_Msg      *msg,
     void         *id,
@@ -596,10 +596,10 @@ boolean MsgGetOriginalID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgSetOriginalID
+ * MessageSetOriginalID
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgSetOriginalID
+boolean MessageSetOriginalID
 (
     OCI_Msg      *msg,
     const void   *id,
@@ -621,10 +621,10 @@ boolean MsgSetOriginalID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetCorrelation
+ * MessageGetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-const otext * MsgGetCorrelation
+const otext * MessageGetCorrelation
 (
     OCI_Msg *msg
 )
@@ -651,10 +651,10 @@ const otext * MsgGetCorrelation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgSetCorrelation
+ * MessageSetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgSetCorrelation
+boolean MessageSetCorrelation
 (
     OCI_Msg     *msg,
     const otext *correlation
@@ -677,10 +677,10 @@ boolean MsgSetCorrelation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetExceptionQueue
+ * MessageGetExceptionQueue
  * --------------------------------------------------------------------------------------------- */
 
-const otext * MsgGetExceptionQueue
+const otext * MessageGetExceptionQueue
 (
     OCI_Msg *msg
 )
@@ -710,10 +710,10 @@ const otext * MsgGetExceptionQueue
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgSetExceptionQueue
+ * MessageSetExceptionQueue
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgSetExceptionQueue
+boolean MessageSetExceptionQueue
 (
     OCI_Msg     *msg,
     const otext *queue
@@ -736,10 +736,10 @@ boolean MsgSetExceptionQueue
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgGetSender
+ * MessageGetSender
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Agent * MsgGetSender
+OCI_Agent * MessageGetSender
 (
     OCI_Msg   *msg
 )
@@ -762,10 +762,10 @@ OCI_Agent * MsgGetSender
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgSetSender
+ * MessageSetSender
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgSetSender
+boolean MessageSetSender
 (
     OCI_Msg   *msg,
     OCI_Agent *sender
@@ -783,10 +783,10 @@ boolean MsgSetSender
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MsgSetConsumers
+ * MessageSetConsumers
  * --------------------------------------------------------------------------------------------- */
 
-boolean MsgSetConsumers
+boolean MessageSetConsumers
 (
     OCI_Msg     *msg,
     OCI_Agent  **consumers,
