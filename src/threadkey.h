@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_THREADKEY_H_INCLUDED
 #define OCILIB_THREADKEY_H_INCLUDED
 
@@ -30,7 +30,7 @@ OCI_ThreadKey* ThreadKeyCreateInternal
 
 boolean ThreadKeyCreate
 (
-    const otext* name,
+    const otext      * name,
     POCI_THREADKEYDEST destfunc
 );
 
@@ -42,13 +42,13 @@ boolean ThreadKeyFree
 boolean ThreadKeySet
 (
     OCI_ThreadKey* key,
-    void* value
+    void         * value
 );
 
 boolean ThreadKeyGet
 (
     OCI_ThreadKey* key,
-    void** value
+    void        ** value
 );
 
 boolean ThreadKeySetValue

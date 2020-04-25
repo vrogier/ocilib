@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_ENQUEUE_H_INCLUDED
 #define OCILIB_ENQUEUE_H_INCLUDED
 
@@ -25,8 +25,8 @@
 
 OCI_Enqueue * EnqueueCreate
 (
-    OCI_TypeInfo    *typinf,
-    const otext *name
+    OCI_TypeInfo *typinf,
+    const otext  *name
 );
 
 boolean EnqueueFree
@@ -37,7 +37,7 @@ boolean EnqueueFree
 boolean EnqueuePut
 (
     OCI_Enqueue *enqueue,
-    OCI_Msg *msg
+    OCI_Msg     *msg
 );
 
 unsigned int EnqueueGetVisibility
@@ -47,7 +47,7 @@ unsigned int EnqueueGetVisibility
 
 boolean EnqueueSetVisibility
 (
-    OCI_Enqueue     *enqueue,
+    OCI_Enqueue *enqueue,
     unsigned int visibility
 );
 
@@ -58,23 +58,22 @@ unsigned int EnqueueGetSequenceDeviation
 
 boolean EnqueueSetSequenceDeviation
 (
-    OCI_Enqueue     *enqueue,
+    OCI_Enqueue *enqueue,
     unsigned int sequence
 );
 
 boolean EnqueueGetRelativeMsgID
 (
-    OCI_Enqueue      *enqueue,
+    OCI_Enqueue  *enqueue,
     void         *id,
     unsigned int *len
 );
 
 boolean EnqueueSetRelativeMsgID
 (
-    OCI_Enqueue     *enqueue,
+    OCI_Enqueue *enqueue,
     const void  *id,
     unsigned int len
 );
 
 #endif /* OCILIB_ENQUEUE_H_INCLUDED */
-

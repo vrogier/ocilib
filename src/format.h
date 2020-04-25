@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_FORMAT_H_INCLUDED
 #define OCILIB_FORMAT_H_INCLUDED
 
@@ -26,9 +26,9 @@
 int FormatParseSql
 (
     OCI_Statement* stmt,
-    otext* buffer,
-    const otext* format,
-    va_list* pargs
+    otext        * buffer,
+    const otext  * format,
+    va_list      * pargs
 );
 
 #endif /* OCILIB_FORMAT_H_INCLUDED */

@@ -17,7 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
 
 #ifndef OCILIB_REF_H_INCLUDED
 #define OCILIB_REF_H_INCLUDED
@@ -28,8 +27,8 @@ OCI_Ref * ReferenceInitialize
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
-    OCI_Ref  *ref,
-    void       *handle
+    OCI_Ref        *ref,
+    void           *handle
 );
 
 boolean ReferencePin
@@ -55,9 +54,9 @@ boolean ReferenceFree
 
 OCI_Ref ** ReferenceCreateArray
 (
-    OCI_Connection  *con,
-    OCI_TypeInfo    *typinf,
-    unsigned int nbelem
+    OCI_Connection *con,
+    OCI_TypeInfo   *typinf,
+    unsigned int    nbelem
 );
 
 boolean ReferenceFreeArray
@@ -88,7 +87,7 @@ boolean ReferenceSetNull
 
 boolean ReferenceToString
 (
-    OCI_Ref   *ref,
+    OCI_Ref     *ref,
     unsigned int size,
     otext       *str
 );

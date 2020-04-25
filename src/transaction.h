@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_TRANSACTION_H_INCLUDED
 #define OCILIB_TRANSACTION_H_INCLUDED
 
@@ -30,10 +30,10 @@ boolean TransactionDispose
 
 OCI_Transaction * TransactionCreate
 (
-    OCI_Connection  *con,
-    unsigned int timeout,
-    unsigned int mode,
-    OCI_XID         *pxid
+    OCI_Connection *con,
+    unsigned int    timeout,
+    unsigned int    mode,
+    OCI_XID        *pxid
 );
 
 boolean TransactionFree

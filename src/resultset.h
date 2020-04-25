@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_RESULTSET_H_INCLUDED
 #define OCILIB_RESULTSET_H_INCLUDED
 
@@ -31,7 +31,7 @@ boolean ResultsetInitialize
 OCI_Resultset* ResultsetCreate
 (
     OCI_Statement * stmt,
-    int            size
+    int             size
 );
 
 boolean ResultsetFree
@@ -90,13 +90,13 @@ OCI_Column* ResultsetGetColumn
 OCI_Column* ResultsetGetColumn2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 unsigned int ResultsetGetColumnIndex
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 boolean ResultsetSetStructNumericType
@@ -109,15 +109,15 @@ boolean ResultsetSetStructNumericType
 boolean ResultsetSetStructNumericType2
 (
     OCI_Resultset* rs,
-    const otext* name,
+    const otext  * name,
     unsigned int   type
 );
 
 boolean ResultsetGetStruct
 (
     OCI_Resultset* rs,
-    void* row_struct,
-    void* row_struct_ind
+    void         * row_struct,
+    void         * row_struct_ind
 );
 
 OCI_Number* ResultsetGetNumber
@@ -129,7 +129,7 @@ OCI_Number* ResultsetGetNumber
 OCI_Number* ResultsetGetNumber2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 short ResultsetGetShort
@@ -141,7 +141,7 @@ short ResultsetGetShort
 short ResultsetGetShort2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 unsigned short ResultsetGetUnsignedShort
@@ -153,7 +153,7 @@ unsigned short ResultsetGetUnsignedShort
 unsigned short ResultsetGetUnsignedShort2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 int ResultsetGetInt
@@ -165,7 +165,7 @@ int ResultsetGetInt
 int ResultsetGetInt2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 unsigned int ResultsetGetUnsignedInt
@@ -177,7 +177,7 @@ unsigned int ResultsetGetUnsignedInt
 unsigned int ResultsetGetUnsignedInt2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 big_int ResultsetGetBigInt
@@ -189,7 +189,7 @@ big_int ResultsetGetBigInt
 big_int ResultsetGetBigInt2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 big_uint ResultsetGetUnsignedBigInt
@@ -201,7 +201,7 @@ big_uint ResultsetGetUnsignedBigInt
 big_uint ResultsetGetUnsignedBigInt2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 const otext* ResultsetGetString
@@ -213,22 +213,22 @@ const otext* ResultsetGetString
 const otext* ResultsetGetString2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 unsigned int ResultsetGetRaw
 (
     OCI_Resultset* rs,
     unsigned int   index,
-    void* buffer,
+    void         * buffer,
     unsigned int   len
 );
 
 unsigned int ResultsetGetRaw2
 (
     OCI_Resultset* rs,
-    const otext* name,
-    void* buffer,
+    const otext  * name,
+    void         * buffer,
     unsigned int   len
 );
 
@@ -241,7 +241,7 @@ double ResultsetGetDouble
 double ResultsetGetDouble2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 float ResultsetGetFloat
@@ -253,7 +253,7 @@ float ResultsetGetFloat
 float ResultsetGetFloat2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 OCI_Date* ResultsetGetDate
@@ -265,7 +265,7 @@ OCI_Date* ResultsetGetDate
 OCI_Date* ResultsetGetDate2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 OCI_Timestamp* ResultsetGetTimestamp
@@ -277,7 +277,7 @@ OCI_Timestamp* ResultsetGetTimestamp
 OCI_Timestamp* ResultsetGetTimestamp2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 OCI_Interval* ResultsetGetInterval
@@ -289,9 +289,8 @@ OCI_Interval* ResultsetGetInterval
 OCI_Interval* ResultsetGetInterval2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
-
 
 OCI_Object* ResultsetGetObject
 (
@@ -302,7 +301,7 @@ OCI_Object* ResultsetGetObject
 OCI_Object* ResultsetGetObject2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 OCI_Coll* ResultsetGetColl
@@ -314,7 +313,7 @@ OCI_Coll* ResultsetGetColl
 OCI_Coll* ResultsetGetColl2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 OCI_Ref* ResultsetGetReference
@@ -326,7 +325,7 @@ OCI_Ref* ResultsetGetReference
 OCI_Ref* ResultsetGetReference2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 OCI_Statement* ResultsetGetStatement
@@ -338,7 +337,7 @@ OCI_Statement* ResultsetGetStatement
 OCI_Statement* ResultsetGetStatement2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 OCI_Lob* ResultsetGetLob
@@ -350,7 +349,7 @@ OCI_Lob* ResultsetGetLob
 OCI_Lob* ResultsetGetLob2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 OCI_File* ResultsetGetFile
@@ -362,7 +361,7 @@ OCI_File* ResultsetGetFile
 OCI_File* ResultsetGetFile2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 OCI_Long* ResultsetGetLong
@@ -374,7 +373,7 @@ OCI_Long* ResultsetGetLong
 OCI_Long* ResultsetGetLong2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 unsigned int ResultsetGetDataSize
@@ -386,7 +385,7 @@ unsigned int ResultsetGetDataSize
 unsigned int ResultsetGetDataSize2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 boolean ResultsetIsNull
@@ -398,7 +397,7 @@ boolean ResultsetIsNull
 boolean ResultsetIsNull2
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 OCI_Statement* ResultsetResultsetGetStatement

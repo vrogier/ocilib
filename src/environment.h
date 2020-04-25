@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_ENVIRONMENT_H_INCLUDED
 #define OCILIB_ENVIRONMENT_H_INCLUDED
 
@@ -92,14 +92,14 @@ boolean EnvironmentSetErrorHandler
 
 boolean EnvironmentSetHAHandler
 (
-    POCI_HA_HANDLER  handler
+    POCI_HA_HANDLER handler
 );
 
 boolean EnvironmentSetFormat
 (
     OCI_Connection* con,
     unsigned int    type,
-    const otext* format
+    const otext   * format
 );
 
 const otext* EnvironmentGetFormat

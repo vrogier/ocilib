@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_TYPEINFO_H_INCLUDED
 #define OCILIB_TYPEINFO_H_INCLUDED
 
@@ -30,9 +30,9 @@ boolean TypeInfoDispose
 
 OCI_TypeInfo * TypeInfoGet
 (
-    OCI_Connection  *con,
-    const otext *name,
-    unsigned int type
+    OCI_Connection *con,
+    const otext    *name,
+    unsigned int    type
 );
 
 boolean TypeInfoFree
@@ -57,8 +57,8 @@ unsigned int TypeInfoGetColumnCount
 
 OCI_Column * TypeInfoGetColumn
 (
-    OCI_TypeInfo    *typinf,
-    unsigned int index
+    OCI_TypeInfo *typinf,
+    unsigned int  index
 );
 
 const otext * TypeInfoGetName

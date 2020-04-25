@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_HELPERS_H_INCLUDED
 #define OCILIB_HELPERS_H_INCLUDED
 
@@ -37,7 +37,7 @@ unsigned int ExternalSubTypeToHandleType
 
 boolean FreeObjectFromType
 (
-    void* obj,
+    void       * obj,
     unsigned int type
 );
 

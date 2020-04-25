@@ -25,16 +25,16 @@
 
 OCI_Bind* BindCreate
 (
-    OCI_Context* ctx,
+    OCI_Context  * ctx,
     OCI_Statement* stmt,
-    void* data,
-    const otext* name,
+    void         * data,
+    const otext  * name,
     unsigned int   mode,
     ub4            size,
     ub1            type,
     unsigned int   code,
     unsigned int   subtype,
-    OCI_TypeInfo* typinf,
+    OCI_TypeInfo * typinf,
     unsigned int   nbelem
 );
 
@@ -46,12 +46,12 @@ boolean BindFree
 int BindGetIndex
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 boolean BindSetNullIndicator
 (
-    OCI_Bind* bnd,
+    OCI_Bind   * bnd,
     unsigned int position,
     sb2          value
 );
@@ -88,13 +88,13 @@ OCI_Statement* BindGetStatement
 
 boolean BindSetDataSize
 (
-    OCI_Bind* bnd,
+    OCI_Bind   * bnd,
     unsigned int size
 );
 
 boolean BindSetDataSizeAtPos
 (
-    OCI_Bind* bnd,
+    OCI_Bind   * bnd,
     unsigned int position,
     unsigned int size
 );
@@ -106,13 +106,13 @@ unsigned int BindGetDataSize
 
 unsigned int BindGetDataSizeAtPos
 (
-    OCI_Bind* bnd,
+    OCI_Bind   * bnd,
     unsigned int position
 );
 
 boolean BindSetNullAtPos
 (
-    OCI_Bind* bnd,
+    OCI_Bind   * bnd,
     unsigned int position
 );
 
@@ -123,7 +123,7 @@ boolean BindSetNull
 
 boolean BindSetNotNullAtPos
 (
-    OCI_Bind* bnd,
+    OCI_Bind   * bnd,
     unsigned int position
 );
 
@@ -134,7 +134,7 @@ boolean BindSetNotNull
 
 boolean BindIsNullAtPos
 (
-    OCI_Bind* bnd,
+    OCI_Bind   * bnd,
     unsigned int position
 );
 
@@ -145,13 +145,13 @@ boolean BindIsNull
 
 boolean BindSetCharsetForm
 (
-    OCI_Bind *bnd,
+    OCI_Bind    *bnd,
     unsigned int csfrm
 );
 
 boolean BindSetDirection
 (
-    OCI_Bind *bnd,
+    OCI_Bind    *bnd,
     unsigned int direction
 );
 

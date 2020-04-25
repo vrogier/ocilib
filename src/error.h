@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_ERROR_H_INCLUDED
 #define OCILIB_ERROR_H_INCLUDED
 
@@ -30,12 +30,12 @@ OCI_Error * ErrorCreate
 
 void ErrorFree
 (
-    OCI_Error   *err
+    OCI_Error *err
 );
 
 void ErrorReset
 (
-    OCI_Error   *err
+    OCI_Error *err
 );
 
 OCI_Error * ErrorGet
@@ -78,6 +78,5 @@ unsigned int ErrorGetRow
 (
     OCI_Error* err
 );
-
 
 #endif /* OCILIB_ERROR_H_INCLUDED */

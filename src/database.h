@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_DATABASE_H_INCLUDED
 #define OCILIB_DATABASE_H_INCLUDED
 
@@ -51,6 +51,5 @@ boolean DatabaseShutdown
     unsigned int shut_mode,
     unsigned int shut_flag
 );
-
 
 #endif /* OCILIB_DATABASE_H_INCLUDED */

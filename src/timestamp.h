@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_TIMESTAMP_H_INCLUDED
 #define OCILIB_TIMESTAMP_INCLUDED
 
@@ -25,16 +25,16 @@
 
 OCI_Timestamp * TimestampInitialize
 (
-    OCI_Connection  *con,
-    OCI_Timestamp   *tmsp,
-    OCIDateTime *buffer,
-    ub4          type
+    OCI_Connection *con,
+    OCI_Timestamp  *tmsp,
+    OCIDateTime    *buffer,
+    ub4             type
 );
 
 OCI_Timestamp * TimestampCreate
 (
-    OCI_Connection  *con,
-    unsigned int type
+    OCI_Connection *con,
+    unsigned int    type
 );
 
 boolean TimestampFree
@@ -44,9 +44,9 @@ boolean TimestampFree
 
 OCI_Timestamp ** TimestampCreateArray
 (
-    OCI_Connection  *con,
-    unsigned int type,
-    unsigned int nbelem
+    OCI_Connection *con,
+    unsigned int    type,
+    unsigned int    nbelem
 );
 
 boolean TimestampFreeArray
@@ -78,15 +78,15 @@ int TimestampCompare
 
 boolean TimestampConstruct
 (
-    OCI_Timestamp   *tmsp,
-    int          year,
-    int          month,
-    int          day,
-    int          hour,
-    int          min,
-    int          sec,
-    int          fsec,
-    const otext *time_zone
+    OCI_Timestamp *tmsp,
+    int            year,
+    int            month,
+    int            day,
+    int            hour,
+    int            min,
+    int            sec,
+    int            fsec,
+    const otext   *time_zone
 );
 
 boolean TimestampConvert
@@ -97,61 +97,61 @@ boolean TimestampConvert
 
 boolean TimestampFromString
 (
-    OCI_Timestamp   *tmsp,
-    const otext *str,
-    const otext *fmt
+    OCI_Timestamp *tmsp,
+    const otext   *str,
+    const otext   *fmt
 );
 
 boolean TimestampToString
 (
-    OCI_Timestamp   *tmsp,
-    const otext *fmt,
-    int          size,
-    otext       *str,
-    int          precision
+    OCI_Timestamp *tmsp,
+    const otext   *fmt,
+    int            size,
+    otext         *str,
+    int            precision
 );
 
 boolean TimestampGetDate
 (
     OCI_Timestamp *tmsp,
-    int       *year,
-    int       *month,
-    int       *day
+    int           *year,
+    int           *month,
+    int           *day
 );
 
 boolean TimestampGetTime
 (
     OCI_Timestamp *tmsp,
-    int       *hour,
-    int       *min,
-    int       *sec,
-    int       *fsec
+    int           *hour,
+    int           *min,
+    int           *sec,
+    int           *fsec
 );
 
 boolean TimestampGetDateTime
 (
     OCI_Timestamp *tmsp,
-    int       *year,
-    int       *month,
-    int       *day,
-    int       *hour,
-    int       *min,
-    int       *sec,
-    int       *fsec
+    int           *year,
+    int           *month,
+    int           *day,
+    int           *hour,
+    int           *min,
+    int           *sec,
+    int           *fsec
 );
 
 boolean TimestampGetTimeZoneName
 (
     OCI_Timestamp *tmsp,
-    int        size,
-    otext     *str
+    int            size,
+    otext         *str
 );
 
 boolean TimestampGetTimeZoneOffset
 (
     OCI_Timestamp *tmsp,
-    int       *hour,
-    int       *min
+    int           *hour,
+    int           *min
 );
 
 boolean TimestampIntervalAdd
@@ -181,15 +181,15 @@ boolean TimestampSysTimestamp
 boolean TimestampToCTime
 (
     OCI_Timestamp *tmsp,
-    struct tm *ptm,
-    time_t    *pt
+    struct tm     *ptm,
+    time_t        *pt
 );
 
 boolean TimestampFromCTime
 (
     OCI_Timestamp *tmsp,
-    struct tm *ptm,
-    time_t     t
+    struct tm     *ptm,
+    time_t         t
 );
 
 #endif /* OCILIB_TIMESTAMP_H_INCLUDED */

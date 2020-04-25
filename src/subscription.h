@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_SUBSCRIPTION_H_INCLUDED
 #define OCILIB_SUBSCRIPTION_H_INCLUDED
 
@@ -30,12 +30,12 @@ boolean SubscriptionDispose
 
 OCI_Subscription * SubscriptionRegister
 (
-    OCI_Connection   *con,
-    const otext  *name,
-    unsigned int  type,
-    POCI_NOTIFY handler,
-    unsigned int  port,
-    unsigned int  timeout
+    OCI_Connection *con,
+    const otext    *name,
+    unsigned int    type,
+    POCI_NOTIFY     handler,
+    unsigned int    port,
+    unsigned int    timeout
 );
 
 boolean SubscriptionUnregister

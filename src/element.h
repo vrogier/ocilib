@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_ELEMENT_H_INCLUDED
 #define OCILIB_ELEMENT_H_INCLUDED
 
@@ -26,10 +26,10 @@
 OCI_Elem* ElementInitialize
 (
     OCI_Connection* con,
-    OCI_Elem* elem,
-    void* handle,
-    OCIInd* pind,
-    OCI_TypeInfo* typinf
+    OCI_Elem      * elem,
+    void          * handle,
+    OCIInd        * pind,
+    OCI_TypeInfo  * typinf
 );
 
 boolean ElementSetNullIndicator
@@ -105,8 +105,8 @@ const otext* ElementGetString
 
 unsigned int ElementGetRaw
 (
-    OCI_Elem* elem,
-    void* value,
+    OCI_Elem   * elem,
+    void       * value,
     unsigned int len
 );
 
@@ -163,7 +163,7 @@ boolean ElementSetBoolean
 
 boolean ElementSetNumber
 (
-    OCI_Elem* elem,
+    OCI_Elem  * elem,
     OCI_Number* value
 );
 
@@ -175,7 +175,7 @@ boolean ElementSetShort
 
 boolean ElementSetUnsignedShort
 (
-    OCI_Elem* elem,
+    OCI_Elem     * elem,
     unsigned short value
 );
 
@@ -187,7 +187,7 @@ boolean ElementSetInt
 
 boolean ElementSetUnsignedInt
 (
-    OCI_Elem* elem,
+    OCI_Elem   * elem,
     unsigned int value
 );
 
@@ -217,14 +217,14 @@ boolean ElementSetFloat
 
 boolean ElementSetString
 (
-    OCI_Elem* elem,
+    OCI_Elem   * elem,
     const otext* value
 );
 
 boolean ElementSetRaw
 (
-    OCI_Elem* elem,
-    void* value,
+    OCI_Elem   * elem,
+    void       * value,
     unsigned int len
 );
 
@@ -236,13 +236,13 @@ boolean ElementSetDate
 
 boolean ElementSetTimestamp
 (
-    OCI_Elem* elem,
+    OCI_Elem     * elem,
     OCI_Timestamp* value
 );
 
 boolean ElementSetInterval
 (
-    OCI_Elem* elem,
+    OCI_Elem    * elem,
     OCI_Interval* value
 );
 
@@ -254,14 +254,14 @@ boolean ElementSetCollection
 
 boolean ElementSetObject
 (
-    OCI_Elem* elem,
+    OCI_Elem  * elem,
     OCI_Object* value
 );
 
 boolean ElementSetLob
 (
     OCI_Elem* elem,
-    OCI_Lob* value
+    OCI_Lob * value
 );
 
 boolean ElementSetFile
@@ -273,7 +273,7 @@ boolean ElementSetFile
 boolean ElementSetReference
 (
     OCI_Elem* elem,
-    OCI_Ref* value
+    OCI_Ref * value
 );
 boolean ElementIsNull
 (

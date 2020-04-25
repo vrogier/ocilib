@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_HANDLE_H_INCLUDED
 #define OCILIB_HANDLE_H_INCLUDED
 
@@ -59,17 +59,17 @@ const void * HandleGetStatement
 
 const void * HandleGetLob
 (
-    OCI_Lob     *lob
+    OCI_Lob *lob
 );
 
 const void * HandleGetFile
 (
-    OCI_File    *file
+    OCI_File *file
 );
 
 const void * HandleGetDate
 (
-    OCI_Date    *date
+    OCI_Date *date
 );
 
 const void * HandleGetTimestamp
@@ -84,7 +84,7 @@ const void * HandleGetInterval
 
 const void * HandleGetObject
 (
-    OCI_Object  *obj
+    OCI_Object *obj
 );
 
 const void * HandleGetColl
@@ -99,17 +99,17 @@ const void * HandleGetReference
 
 const void * HandleGetMutex
 (
-    OCI_Mutex   *mutex
+    OCI_Mutex *mutex
 );
 
 const void * HandleGetThreadID
 (
-    OCI_Thread  *thread
+    OCI_Thread *thread
 );
 
 const void * HandleGetThread
 (
-    OCI_Thread  *thread
+    OCI_Thread *thread
 );
 
 const void * HandleGetDirPathCtx

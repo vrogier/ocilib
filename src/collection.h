@@ -44,7 +44,7 @@ boolean CollectionFree
 OCI_Coll** CollectionCreateArray
 (
     OCI_Connection* con,
-    OCI_TypeInfo* typinf,
+    OCI_TypeInfo  * typinf,
     unsigned int    nbelem
 );
 
@@ -61,8 +61,8 @@ boolean CollectionAssign
 
 boolean CollectionTrim
 (
-    OCI_Coll* coll,
-    unsigned int  nb_elem
+    OCI_Coll   * coll,
+    unsigned int nb_elem
 );
 
 boolean CollectionClear
@@ -92,22 +92,22 @@ unsigned int CollectionGetCount
 
 OCI_Elem* CollectionGetElement
 (
-    OCI_Coll* coll,
+    OCI_Coll   * coll,
     unsigned int index
 );
 
 boolean CollectionGetElement2
 (
-    OCI_Coll* coll,
+    OCI_Coll   * coll,
     unsigned int index,
-    OCI_Elem* elem
+    OCI_Elem   * elem
 );
 
 boolean CollectionSetElement
 (
-    OCI_Coll* coll,
-    unsigned int  index,
-    OCI_Elem* elem
+    OCI_Coll   * coll,
+    unsigned int index,
+    OCI_Elem   * elem
 );
 
 boolean CollectionAddElement
@@ -118,7 +118,7 @@ boolean CollectionAddElement
 
 boolean CollectionRemoveElement
 (
-    OCI_Coll* coll,
+    OCI_Coll   * coll,
     unsigned int index
 );
 
@@ -129,9 +129,9 @@ OCI_TypeInfo* CollectionGetTypeInfo
 
 boolean CollectionToString
 (
-    OCI_Coll* coll,
+    OCI_Coll    * coll,
     unsigned int* size,
-    otext* str
+    otext       * str
 );
 
 #endif /* OCILIB_COLLECTION_H_INCLUDED */

@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_MUTEX_H_INCLUDED
 #define OCILIB_MUTEX_H_INCLUDED
 
@@ -34,17 +34,17 @@ OCI_Mutex * MutexCreate
 
 boolean MutexFree
 (
-    OCI_Mutex   *mutex
+    OCI_Mutex *mutex
 );
 
 boolean MutexAcquire
 (
-    OCI_Mutex   *mutex
+    OCI_Mutex *mutex
 );
 
 boolean MutexRelease
 (
-    OCI_Mutex   *mutex
+    OCI_Mutex *mutex
 );
 
 #endif /* OCILIB_MUTEX_H_INCLUDED */

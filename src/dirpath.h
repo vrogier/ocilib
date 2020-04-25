@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_DIRPATH_H_INCLUDED
 #define OCILIB_DIRPATH_H_INCLUDED
 
@@ -25,10 +25,10 @@
 
 OCI_DirPath * DirPathCreate
 (
-    OCI_TypeInfo    *typinf,
-    const otext *partition,
-    unsigned int nb_cols,
-    unsigned int nb_rows
+    OCI_TypeInfo *typinf,
+    const otext  *partition,
+    unsigned int  nb_cols,
+    unsigned int  nb_rows
 );
 
 boolean DirPathFree
@@ -38,7 +38,7 @@ boolean DirPathFree
 
 boolean DirPathSetColumn
 (
-    OCI_DirPath  *dp,
+    OCI_DirPath *dp,
     unsigned int index,
     const otext *name,
     unsigned int maxsize,
@@ -52,7 +52,7 @@ boolean DirPathPrepare
 
 boolean DirPathSetEntry
 (
-    OCI_DirPath  *dp,
+    OCI_DirPath *dp,
     unsigned int row,
     unsigned int index,
     void        *value,
@@ -97,7 +97,7 @@ boolean DirPathFlushRow
 
 boolean DirPathSetCurrentRows
 (
-    OCI_DirPath  *dp,
+    OCI_DirPath *dp,
     unsigned int nb_rows
 );
 
@@ -113,37 +113,37 @@ unsigned int DirPathGetMaxRows
 
 boolean DirPathSetDateFormat
 (
-    OCI_DirPath  *dp,
+    OCI_DirPath *dp,
     const otext *format
 );
 
 boolean DirPathSetParallel
 (
     OCI_DirPath *dp,
-    boolean     value
+    boolean      value
 );
 
 boolean DirPathSetNoLog
 (
     OCI_DirPath *dp,
-    boolean     value
+    boolean      value
 );
 
 boolean DirPathSetCacheSize
 (
-    OCI_DirPath  *dp,
+    OCI_DirPath *dp,
     unsigned int size
 );
 
 boolean DirPathSetBufferSize
 (
-    OCI_DirPath  *dp,
+    OCI_DirPath *dp,
     unsigned int size
 );
 
 boolean DirPathSetConvertMode
 (
-    OCI_DirPath  *dp,
+    OCI_DirPath *dp,
     unsigned int mode
 );
 

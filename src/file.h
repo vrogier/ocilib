@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_FILE_H_INCLUDED
 #define OCILIB_FILE_H_INCLUDED
 
@@ -25,10 +25,10 @@
 
 OCI_File * FileInitialize
 (
-    OCI_Connection    *con,
-    OCI_File          *file,
-    OCILobLocator *handle,
-    ub4            type
+    OCI_Connection *con,
+    OCI_File       *file,
+    OCILobLocator  *handle,
+    ub4             type
 );
 
 boolean FileGetInfo
@@ -38,103 +38,103 @@ boolean FileGetInfo
 
 OCI_File * FileCreate
 (
-    OCI_Connection  *con,
-    unsigned int type
+    OCI_Connection *con,
+    unsigned int    type
 );
 
 boolean FileFree
 (
-    OCI_File    *file
+    OCI_File *file
 );
 
 OCI_File ** FileCreateArray
 (
-    OCI_Connection  *con,
-    unsigned int type,
-    unsigned int nbelem
+    OCI_Connection *con,
+    unsigned int    type,
+    unsigned int    nbelem
 );
 
 boolean FileFreeArray
 (
-    OCI_File   **files
+    OCI_File **files
 );
 
 boolean FileSeek
 (
-    OCI_File        *file,
+    OCI_File    *file,
     big_uint     offset,
     unsigned int mode
 );
 
 big_uint FileGetOffset
 (
-    OCI_File    *file
+    OCI_File *file
 );
 
 unsigned int FileRead
 (
-    OCI_File        *file,
+    OCI_File    *file,
     void        *buffer,
     unsigned int len
 );
 
 unsigned int FileGetType
 (
-    OCI_File    *file
+    OCI_File *file
 );
 
 big_uint FileGetSize
 (
-    OCI_File    *file
+    OCI_File *file
 );
 
 boolean FileExists
 (
-    OCI_File    *file
+    OCI_File *file
 );
 
 boolean FileSetName
 (
-    OCI_File        *file,
+    OCI_File    *file,
     const otext *dir,
     const otext *name
 );
 
 const otext * FileGetDirectory
 (
-    OCI_File    *file
+    OCI_File *file
 );
 
 const otext * FileGetName
 (
-    OCI_File    *file
+    OCI_File *file
 );
 
 boolean FileOpen
 (
-    OCI_File    *file
+    OCI_File *file
 );
 
 boolean FileIsOpen
 (
-    OCI_File    *file
+    OCI_File *file
 );
 
 boolean FileClose
 (
-    OCI_File    *file
+    OCI_File *file
 );
 
 boolean FileIsEqual
 (
-    OCI_File    *file,
-    OCI_File    *file2
+    OCI_File *file,
+    OCI_File *file2
 );
 
 boolean FileAssign
 (
-    OCI_File    *file,
-    OCI_File    *file_src
+    OCI_File *file,
+    OCI_File *file_src
 );
 
 OCI_Connection* FileGetConnection

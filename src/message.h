@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_MSG_H_INCLUDED
 #define OCILIB_MSG_H_INCLUDED
 
@@ -45,21 +45,21 @@ OCI_Object* MessageGetObject
 
 boolean MessageSetObject
 (
-    OCI_Msg* msg,
+    OCI_Msg   * msg,
     OCI_Object* obj
 );
 
 boolean MessageGetRaw
 (
-    OCI_Msg* msg,
-    void* raw,
+    OCI_Msg     * msg,
+    void        * raw,
     unsigned int* size
 );
 
 boolean MessageSetRaw
 (
-    OCI_Msg* msg,
-    const void* raw,
+    OCI_Msg    * msg,
+    const void * raw,
     unsigned int size
 );
 
@@ -113,22 +113,22 @@ boolean MessageSetPriority
 
 boolean MessageGetID
 (
-    OCI_Msg* msg,
-    void* id,
+    OCI_Msg     * msg,
+    void        * id,
     unsigned int* len
 );
 
 boolean MessageGetOriginalID
 (
-    OCI_Msg* msg,
-    void* id,
+    OCI_Msg     * msg,
+    void        * id,
     unsigned int* len
 );
 
 boolean MessageSetOriginalID
 (
-    OCI_Msg* msg,
-    const void* id,
+    OCI_Msg    * msg,
+    const void * id,
     unsigned int len
 );
 
@@ -139,7 +139,7 @@ const otext* MessageGetCorrelation
 
 boolean MessageSetCorrelation
 (
-    OCI_Msg* msg,
+    OCI_Msg    * msg,
     const otext* correlation
 );
 
@@ -150,7 +150,7 @@ const otext* MessageGetExceptionQueue
 
 boolean MessageSetExceptionQueue
 (
-    OCI_Msg* msg,
+    OCI_Msg    * msg,
     const otext* queue
 );
 
@@ -161,14 +161,14 @@ OCI_Agent* MessageGetSender
 
 boolean MessageSetSender
 (
-    OCI_Msg* msg,
+    OCI_Msg  * msg,
     OCI_Agent* sender
 );
 
 boolean MessageSetConsumers
 (
-    OCI_Msg* msg,
-    OCI_Agent** consumers,
+    OCI_Msg    * msg,
+    OCI_Agent ** consumers,
     unsigned int count
 );
 

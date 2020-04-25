@@ -43,7 +43,7 @@ OCI_Array* ArrayCreate
     unsigned int    elem_size,
     unsigned int    struct_size,
     unsigned int    handle_type,
-    OCI_TypeInfo* typinf
+    OCI_TypeInfo  * typinf
 );
 
 boolean ArrayFreeFromHandles

@@ -21,58 +21,58 @@
 #ifndef OCILIB_OCI_IMPORT_H_INCLUDED
 #define OCILIB_OCI_IMPORT_H_INCLUDED
 
-#ifdef OCI_IMPORT_LINKAGE
+  #ifdef OCI_IMPORT_LINKAGE
 
 /* this is necessary because some Oracle headers do NOT include C++ checks !
    By example, the file orid.h is not protected !
 */
 
-  #ifdef __cplusplus
+    #ifdef __cplusplus
 extern "C" {
-  #endif /* __cplusplus */
+    #endif /* __cplusplus */
 
-  #include <oci.h>
-  #include <orid.h>
-  #include <oci8dp.h>
+    #include <oci.h>
+    #include <orid.h>
+    #include <oci8dp.h>
 
-  #ifdef  __cplusplus
+    #ifdef  __cplusplus
 }
-  #endif
+    #endif
 
-  #ifdef _MSC_VER
-    #pragma comment(lib, "oci.lib")
-  #endif
+    #ifdef _MSC_VER
+      #pragma comment(lib, "oci.lib")
+    #endif
 
-#else
+  #else
 
-  #include "loader.h"
-  #include "oci/api.h"
+    #include "loader.h"
+    #include "oci/api.h"
 
 /* Setup Oracle shared library name if not provided */
 
-  #ifndef OCI_DL
-    #if defined(_WINDOWS)
-      #define OCI_DL                   oci.dll
-    #elif defined(__APPLE__)
-      #define OCI_DL                   libclntsh.dylib
-    #elif defined(__hppa)
-      #define OCI_DL                   libclntsh.sl
-    #else
-      #define OCI_DL                   libclntsh.so
+    #ifndef OCI_DL
+      #if defined(_WINDOWS)
+#define OCI_DL                   oci.dll
+      #elif defined(__APPLE__)
+#define OCI_DL                   libclntsh.dylib
+      #elif defined(__hppa)
+#define OCI_DL                   libclntsh.sl
+      #else
+#define OCI_DL                   libclntsh.so
+      #endif
     #endif
-  #endif
 
 /* ANSI string version of Oracle shared lib */
 
-  #define OCI_DL_ANSI_GET(s)  OCI_DL_ANSI_CVT(s)
-  #define OCI_DL_ANSI_CVT(s)  # s
-  #define OCI_DL_ANSI_NAME    OCI_DL_ANSI_GET(OCI_DL)
+#define OCI_DL_ANSI_GET(s)  OCI_DL_ANSI_CVT(s)
+#define OCI_DL_ANSI_CVT(s)  # s
+#define OCI_DL_ANSI_NAME    OCI_DL_ANSI_GET(OCI_DL)
 
 /* Meta string version of Oracle shared lib */
 
-  #define OCI_DL_GET(s)  OCI_DL_CVT(s)
-  #define OCI_DL_CVT(s)  OTEXT(# s)
-  #define OCI_DL_NAME    OCI_DL_GET(OCI_DL)
+#define OCI_DL_GET(s)  OCI_DL_CVT(s)
+#define OCI_DL_CVT(s)  OTEXT(# s)
+#define OCI_DL_NAME    OCI_DL_GET(OCI_DL)
 
 /* symbol list */
 
@@ -243,7 +243,7 @@ extern OCITHREADKEYSET              OCIThreadKeySet;
 extern OCITHREADKEYGET              OCIThreadKeyGet;
 extern OCICONNECTIONPOOLCREATE      OCIConnectionPoolCreate;
 extern OCICONNECTIONPOOLDESTROY     OCIConnectionPoolDestroy;
-extern OCISESSIONPOOLCREATE         OCISessionPoolCreate ;
+extern OCISESSIONPOOLCREATE         OCISessionPoolCreate;
 extern OCISESSIONPOOLDESTROY        OCISessionPoolDestroy;
 extern OCISESSIONGET                OCISessionGet;
 extern OCISESSIONRELEASE            OCISessionRelease;
@@ -289,48 +289,47 @@ extern OCISTMTGETNEXTRESULT         OCIStmtGetNextResult;
 extern OCISERVERRELEASE2            OCIServerRelease2;
 extern OCISODAOPERKEYSSET           OCISodaOperKeysSet;
 
-#ifdef ORAXB8_DEFINED
+    #ifdef ORAXB8_DEFINED
 
-extern OCILOBCOPY2                  OCILobCopy2;
-extern OCILOBERASE2                 OCILobErase2;
-extern OCILOBGETLENGTH2             OCILobGetLength2;
-extern OCILOBLOADFROMFILE2          OCILobLoadFromFile2;
-extern OCILOBREAD2                  OCILobRead2;
-extern OCILOBTRIM2                  OCILobTrim2;
-extern OCILOBWRITE2                 OCILobWrite2;
-extern OCILOBWRITEAPPEND2           OCILobWriteAppend2;
+extern OCILOBCOPY2         OCILobCopy2;
+extern OCILOBERASE2        OCILobErase2;
+extern OCILOBGETLENGTH2    OCILobGetLength2;
+extern OCILOBLOADFROMFILE2 OCILobLoadFromFile2;
+extern OCILOBREAD2         OCILobRead2;
+extern OCILOBTRIM2         OCILobTrim2;
+extern OCILOBWRITE2        OCILobWrite2;
+extern OCILOBWRITEAPPEND2  OCILobWriteAppend2;
 
-#endif
+    #endif
 
-  #define OCIDateGetTime(date, hour, min, sec)   \
+#define OCIDateGetTime(date, hour, min, sec)   \
     {                                            \
         *(hour) = (date)->OCIDateTime.OCITimeHH; \
         *(min)  = (date)->OCIDateTime.OCITimeMI; \
         *(sec)  = (date)->OCIDateTime.OCITimeSS; \
     }
 
-  #define OCIDateGetDate(date, year, month, day) \
+#define OCIDateGetDate(date, year, month, day) \
     {                                            \
         *(year)  = (date)->OCIDateYYYY;          \
         *(month) = (date)->OCIDateMM;            \
         *(day)   = (date)->OCIDateDD;            \
     }
 
-  #define OCIDateSetTime(date, hour, min, sec)   \
+#define OCIDateSetTime(date, hour, min, sec)   \
     {                                            \
         (date)->OCIDateTime.OCITimeHH = hour;    \
         (date)->OCIDateTime.OCITimeMI = min;     \
         (date)->OCIDateTime.OCITimeSS = sec;     \
     }
 
-  #define OCIDateSetDate(date, year, month, day) \
+#define OCIDateSetDate(date, year, month, day) \
     {                                            \
         (date)->OCIDateYYYY = year;              \
         (date)->OCIDateMM   = month;             \
         (date)->OCIDateDD   = day;               \
     }
 
-#endif
+  #endif
 
 #endif    /* OCILIB_OCI_IMPORT_H_INCLUDED */
-

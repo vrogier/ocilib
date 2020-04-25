@@ -42,7 +42,6 @@ boolean DateFree
     OCI_Date* date
 );
 
-
 OCI_Date ** DateCreateArray
 (
     OCI_Connection *con,
@@ -91,44 +90,44 @@ int DateDaysBetween
 
 boolean DateFromString
 (
-    OCI_Date* date,
+    OCI_Date   * date,
     const otext* str,
     const otext* fmt
 );
 
 boolean DateToString
 (
-    OCI_Date* date,
+    OCI_Date   * date,
     const otext* fmt,
     int          size,
-    otext* str
+    otext      * str
 );
 
 boolean DateGetDate
 (
     OCI_Date* date,
-    int* year,
-    int* month,
-    int* day
+    int     * year,
+    int     * month,
+    int     * day
 );
 
 boolean DateGetTime
 (
     OCI_Date* date,
-    int* hour,
-    int* min,
-    int* sec
+    int     * hour,
+    int     * min,
+    int     * sec
 );
 
 boolean DateGetDateTime
 (
     OCI_Date* date,
-    int* year,
-    int* month,
-    int* day,
-    int* hour,
-    int* min,
-    int* sec
+    int     * year,
+    int     * month,
+    int     * day,
+    int     * hour,
+    int     * min,
+    int     * sec
 );
 
 boolean DateLastDay
@@ -138,7 +137,7 @@ boolean DateLastDay
 
 boolean DateNextDay
 (
-    OCI_Date* date,
+    OCI_Date   * date,
     const otext* day
 );
 
@@ -176,21 +175,21 @@ boolean DateSysDate
 
 boolean DateZoneToZone
 (
-    OCI_Date* date,
+    OCI_Date   * date,
     const otext* zone1,
     const otext* zone2
 );
 
 boolean DateToCTime
 (
-    OCI_Date* date,
+    OCI_Date * date,
     struct tm* ptm,
-    time_t* pt
+    time_t   * pt
 );
 
 boolean DateFromCTime
 (
-    OCI_Date* date,
+    OCI_Date * date,
     struct tm* ptm,
     time_t     t
 );

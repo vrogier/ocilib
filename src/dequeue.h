@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_DEQUEUE_H_INCLUDED
 #define OCILIB_DEQUEUE_H_INCLUDED
 
@@ -25,8 +25,8 @@
 
 OCI_Dequeue * DequeueCreate
 (
-    OCI_TypeInfo    *typinf,
-    const otext *name
+    OCI_TypeInfo *typinf,
+    const otext  *name
 );
 
 boolean DequeueFree
@@ -37,7 +37,7 @@ boolean DequeueFree
 OCI_Agent * DequeueListen
 (
     OCI_Dequeue *dequeue,
-    int      timeout
+    int          timeout
 );
 
 OCI_Msg * DequeueGetMessage
@@ -52,7 +52,7 @@ const otext * DequeueGetConsumer
 
 boolean DequeueSetConsumer
 (
-    OCI_Dequeue     *dequeue,
+    OCI_Dequeue *dequeue,
     const otext *consumer
 );
 
@@ -63,20 +63,20 @@ const otext * DequeueGetCorrelation
 
 boolean DequeueSetCorrelation
 (
-    OCI_Dequeue     *dequeue,
+    OCI_Dequeue *dequeue,
     const otext *pattern
 );
 
 boolean DequeueGetRelativeMsgID
 (
-    OCI_Dequeue      *dequeue,
+    OCI_Dequeue  *dequeue,
     void         *id,
     unsigned int *len
 );
 
 boolean DequeueSetRelativeMsgID
 (
-    OCI_Dequeue     *dequeue,
+    OCI_Dequeue *dequeue,
     const void  *id,
     unsigned int len
 );
@@ -88,7 +88,7 @@ unsigned int DequeueGetVisibility
 
 boolean DequeueSetVisibility
 (
-    OCI_Dequeue     *dequeue,
+    OCI_Dequeue *dequeue,
     unsigned int visibility
 );
 
@@ -99,7 +99,7 @@ unsigned int DequeueGetMode
 
 boolean DequeueSetMode
 (
-    OCI_Dequeue     *dequeue,
+    OCI_Dequeue *dequeue,
     unsigned int mode
 );
 
@@ -110,7 +110,7 @@ unsigned int DequeueGetNavigation
 
 boolean DequeueSetNavigation
 (
-    OCI_Dequeue     *dequeue,
+    OCI_Dequeue *dequeue,
     unsigned int position
 );
 
@@ -122,21 +122,21 @@ int DequeueGetWaitTime
 boolean DequeueSetWaitTime
 (
     OCI_Dequeue *dequeue,
-    int      timeout
+    int          timeout
 );
 
 boolean DequeueSetAgentList
 (
-    OCI_Dequeue     *dequeue,
-    OCI_Agent      **consumers,
+    OCI_Dequeue *dequeue,
+    OCI_Agent  **consumers,
     unsigned int count
 );
 
 boolean DequeueSubscribe
 (
-    OCI_Dequeue        *dequeue,
-    unsigned int    port,
-    unsigned int    timeout,
+    OCI_Dequeue   *dequeue,
+    unsigned int   port,
+    unsigned int   timeout,
     POCI_NOTIFY_AQ callback
 );
 

@@ -35,8 +35,8 @@ OCI_Agent * AgentInitialize
 OCI_Agent* AgentCreate
 (
     OCI_Connection* con,
-    const otext* name,
-    const otext* address
+    const otext   * name,
+    const otext   * address
 );
 
 boolean AgentFree
@@ -51,7 +51,7 @@ const otext* AgentGetName
 
 boolean AgentSetName
 (
-    OCI_Agent* agent,
+    OCI_Agent  * agent,
     const otext* name
 );
 
@@ -62,7 +62,7 @@ const otext* AgentGetAddress
 
 boolean AgentSetAddress
 (
-    OCI_Agent* agent,
+    OCI_Agent  * agent,
     const otext* address
 );
 

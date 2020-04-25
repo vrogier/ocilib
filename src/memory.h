@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_MEMORY_H_INCLUDED
 #define OCILIB_MEMORY_H_INCLUDED
 
@@ -25,24 +25,24 @@
 
 void * MemoryAlloc
 (
-    int      ptr_type,
-    size_t   block_size,
-    size_t   block_count,
-    boolean  zero_fill
+    int     ptr_type,
+    size_t  block_size,
+    size_t  block_count,
+    boolean zero_fill
 );
 
 void * MemoryRealloc
 (
-    void   * ptr_mem,
-    int      ptr_type,
-    size_t   block_size,
-    size_t   block_count,
-    boolean  zero_fill
+    void  * ptr_mem,
+    int     ptr_type,
+    size_t  block_size,
+    size_t  block_count,
+    boolean zero_fill
 );
 
 void MemoryFree
 (
-    void   * ptr_mem
+    void * ptr_mem
 );
 
 boolean MemoryAllocHandle
@@ -76,14 +76,14 @@ boolean MemoryAllocDescriptorArray
 boolean MemoryFreeDescriptor
 (
     dvoid *descp,
-    ub4   type
+    ub4    type
 );
 
 boolean MemoryFreeDescriptorArray
 (
-    dvoid   **descp,
-    ub4       type,
-    ub4       nb_elem
+    dvoid **descp,
+    ub4     type,
+    ub4     nb_elem
 );
 
 sword MemoryAllocateObject
@@ -101,9 +101,9 @@ sword MemoryAllocateObject
 
 sword MemoryFreeObject
 (
-    OCIEnv* env,
+    OCIEnv  * env,
     OCIError* err,
-    dvoid* instance,
+    dvoid   * instance,
     ub2       flags
 );
 
@@ -125,6 +125,5 @@ void MemoryFreeOracleCallback
     void *ctxp,
     void *memptr
 );
-
 
 #endif /* OCILIB_MEMORY_H_INCLUDED */

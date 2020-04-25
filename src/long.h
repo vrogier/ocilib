@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_LONG_H_INCLUDED
 #define OCILIB_LONG_H_INCLUDED
 
@@ -25,50 +25,50 @@
 
 OCI_Long * LongInitialize
 (
-    OCI_Statement   *stmt,
-    OCI_Long        *lg,
-    OCI_Define      *def,
-    unsigned int type
+    OCI_Statement *stmt,
+    OCI_Long      *lg,
+    OCI_Define    *def,
+    unsigned int   type
 );
 
 OCI_Long * LongCreate
 (
-    OCI_Statement   *stmt,
-    unsigned int type
+    OCI_Statement *stmt,
+    unsigned int   type
 );
 
 boolean LongFree
 (
-    OCI_Long    *lg
+    OCI_Long *lg
 );
 
 unsigned int LongGetType
 (
-    OCI_Long    *lg
+    OCI_Long *lg
 );
 
 unsigned int LongRead
 (
-    OCI_Long        *lg,
+    OCI_Long    *lg,
     void        *buffer,
     unsigned int len
 );
 
 unsigned int LongWrite
 (
-    OCI_Long        *lg,
+    OCI_Long    *lg,
     void        *buffer,
     unsigned int len
 );
 
 unsigned int LongGetSize
 (
-    OCI_Long    *lg
+    OCI_Long *lg
 );
 
 void * LongGetBuffer
 (
-    OCI_Long    *lg
+    OCI_Long *lg
 );
 
 #endif /* OCILIB_LONG_H_INCLUDED */

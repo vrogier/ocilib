@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_NUMBER_H_INCLUDED
 #define OCILIB_NUMBER_H_INCLUDED
 
@@ -26,36 +26,36 @@
 boolean NumberTranslateValue
 (
     OCI_Connection* con,
-    void* in_value,
+    void          * in_value,
     uword           in_type,
-    void* out_value,
+    void          * out_value,
     uword           out_type
 );
 
 OCI_Number* NumberInitialize
 (
     OCI_Connection* con,
-    OCI_Number* number,
-    OCINumber* buffer
+    OCI_Number    * number,
+    OCINumber     * buffer
 );
 
 boolean NumberFromStringInternal
 (
     OCI_Connection* con,
-    void* out_value,
+    void          * out_value,
     uword           type,
-    const otext* in_value,
-    const otext* fmt
+    const otext   * in_value,
+    const otext   * fmt
 );
 
 boolean NumberToStringInternal
 (
     OCI_Connection* con,
-    void* number,
+    void          * number,
     unsigned int    type,
-    otext* out_value,
+    otext         * out_value,
     int             out_value_size,
-    const otext* fmt
+    const otext   * fmt
 );
 
 OCI_Number* NumberCreate
@@ -87,15 +87,15 @@ boolean NumberAssign
 
 boolean NumberToString
 (
-    OCI_Number* number,
+    OCI_Number * number,
     const otext* fmt,
     int          size,
-    otext* str
+    otext      * str
 );
 
 boolean NumberFromString
 (
-    OCI_Number* number,
+    OCI_Number * number,
     const otext* str,
     const otext* fmt
 );
@@ -107,50 +107,50 @@ unsigned char* NumberGetContent
 
 boolean NumberSetContent
 (
-    OCI_Number* number,
+    OCI_Number   * number,
     unsigned char* content
 );
 
 boolean NumberSetValue
 (
-    OCI_Number* number,
-    unsigned int    type,
-    void* value
+    OCI_Number * number,
+    unsigned int type,
+    void       * value
 );
 
 boolean NumberGetValue
 (
-    OCI_Number* number,
-    unsigned int    type,
-    void* value
+    OCI_Number * number,
+    unsigned int type,
+    void       * value
 );
 
 boolean NumberAdd
 (
-    OCI_Number* number,
-    unsigned int    type,
-    void* value
+    OCI_Number * number,
+    unsigned int type,
+    void       * value
 );
 
 boolean NumberSub
 (
-    OCI_Number* number,
-    unsigned int    type,
-    void* value
+    OCI_Number * number,
+    unsigned int type,
+    void       * value
 );
 
 boolean NumberMultiply
 (
-    OCI_Number* number,
-    unsigned int    type,
-    void* value
+    OCI_Number * number,
+    unsigned int type,
+    void       * value
 );
 
 boolean NumberDivide
 (
-    OCI_Number* number,
-    unsigned int    type,
-    void* value
+    OCI_Number * number,
+    unsigned int type,
+    void       * value
 );
 
 int NumberCompare

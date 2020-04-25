@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_INTERVAL_H_INCLUDED
 #define OCILIB_INTERVAL_H_INCLUDED
 
@@ -25,16 +25,16 @@
 
 OCI_Interval * IntervalInitialize
 (
-    OCI_Connection  *con,
-    OCI_Interval    *itv,
-    OCIInterval *buffer,
-    ub4          type
+    OCI_Connection *con,
+    OCI_Interval   *itv,
+    OCIInterval    *buffer,
+    ub4             type
 );
 
 OCI_Interval * IntervalCreate
 (
-    OCI_Connection  *con,
-    unsigned int type
+    OCI_Connection *con,
+    unsigned int    type
 );
 
 boolean IntervalFree
@@ -44,9 +44,9 @@ boolean IntervalFree
 
 OCI_Interval ** IntervalCreateArray
 (
-    OCI_Connection  *con,
-    unsigned int type,
-    unsigned int nbelem
+    OCI_Connection *con,
+    unsigned int    type,
+    unsigned int    nbelem
 );
 
 boolean IntervalFreeArray
@@ -78,57 +78,57 @@ int IntervalCompare
 
 boolean IntervalFromString
 (
-    OCI_Interval     *itv,
+    OCI_Interval *itv,
     const otext * str
 );
 
 boolean IntervalToString
 (
     OCI_Interval *itv,
-    int       leading_prec,
-    int       fraction_prec,
-    int       size,
-    otext    *str
+    int           leading_prec,
+    int           fraction_prec,
+    int           size,
+    otext        *str
 );
 
 boolean IntervalFromTimeZone
 (
-    OCI_Interval     *itv,
+    OCI_Interval *itv,
     const otext * str
 );
 
 boolean IntervalGetDaySecond
 (
     OCI_Interval *itv,
-    int      *day,
-    int      *hour,
-    int      *min,
-    int      *sec,
-    int      *fsec
+    int          *day,
+    int          *hour,
+    int          *min,
+    int          *sec,
+    int          *fsec
 );
 
 boolean IntervalGetYearMonth
 (
     OCI_Interval *itv,
-    int      *year,
-    int      *month
+    int          *year,
+    int          *month
 );
 
 boolean IntervalSetDaySecond
 (
     OCI_Interval *itv,
-    int       day,
-    int       hour,
-    int       min,
-    int       sec,
-    int       fsec
+    int           day,
+    int           hour,
+    int           min,
+    int           sec,
+    int           fsec
 );
 
 boolean IntervalSetYearMonth
 (
     OCI_Interval *itv,
-    int       year,
-    int       month
+    int           year,
+    int           month
 );
 
 boolean IntervalAdd

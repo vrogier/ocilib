@@ -18,7 +18,6 @@
  * limitations under the License.
  */
 
-
 #ifndef OCILIB_CONNECTION_H_INCLUDED
 #define OCILIB_CONNECTION_H_INCLUDED
 
@@ -36,7 +35,7 @@ OCI_Connection * ConnectionCreateInternal
 
 OCI_Connection* ConnectionAllocate
 (
-    OCI_Pool* pool,
+    OCI_Pool   * pool,
     const otext* db,
     const otext* user,
     const otext* pwd,
@@ -51,8 +50,8 @@ boolean ConnectionAttach
 boolean ConnectionLogon
 (
     OCI_Connection* con,
-    const otext* new_pwd,
-    const otext* tag
+    const otext   * new_pwd,
+    const otext   * tag
 );
 
 boolean ConnectionDispose
@@ -118,13 +117,13 @@ void* ConnectionGetUserData
 boolean ConnectionSetUserData
 (
     OCI_Connection* con,
-    void* data
+    void          * data
 );
 
 boolean ConnectionSetSessionTag
 (
     OCI_Connection* con,
-    const otext* tag
+    const otext   * tag
 );
 
 const otext* ConnectionGetSessionTag
@@ -150,7 +149,7 @@ const otext* ConnectionGetPassword
 boolean ConnectionSetPassword
 (
     OCI_Connection* con,
-    const otext* password
+    const otext   * password
 );
 
 unsigned int ConnectionGetSessionMode
@@ -185,7 +184,7 @@ OCI_Transaction* ConnectionGetTransaction
 
 boolean ConnectionSetTransaction
 (
-    OCI_Connection* con,
+    OCI_Connection * con,
     OCI_Transaction* trans
 );
 
@@ -221,7 +220,7 @@ boolean ConnectionSetTrace
 (
     OCI_Connection* con,
     unsigned int    trace,
-    const otext* value
+    const otext   * value
 );
 
 const otext* ConnectionGetTrace
@@ -285,7 +284,7 @@ boolean ConnectionIsTAFCapable
 
 boolean ConnectionSetTAFHandler
 (
-    OCI_Connection* con,
+    OCI_Connection * con,
     POCI_TAF_HANDLER handler
 );
 
@@ -297,7 +296,7 @@ unsigned int ConnectionGetStatementCacheSize
 boolean ConnectionSetStatementCacheSize
 (
     OCI_Connection* con,
-    unsigned int     value
+    unsigned int    value
 );
 
 unsigned int ConnectionGetDefaultLobPrefetchSize
@@ -308,7 +307,7 @@ unsigned int ConnectionGetDefaultLobPrefetchSize
 boolean ConnectionSetDefaultLobPrefetchSize
 (
     OCI_Connection* con,
-    unsigned int     value
+    unsigned int    value
 );
 
 unsigned int ConnectionGetMaxCursors
@@ -319,14 +318,14 @@ unsigned int ConnectionGetMaxCursors
 boolean ConnectionExecuteImmediate
 (
     OCI_Connection* con,
-    const otext*    sql,
+    const otext   * sql,
     va_list         args
 );
 
 boolean ConnectionExecuteImmediateFmt
 (
     OCI_Connection* con,
-    const otext*    sql,
+    const otext   * sql,
     va_list         args
 );
 

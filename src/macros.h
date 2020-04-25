@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_MACROS_H_INCLUDED
 #define OCILIB_MACROS_H_INCLUDED
 
@@ -46,7 +46,7 @@
                                                                                 \
     OCI_Context ctx_obj = { NULL, NULL, NULL, NULL, FALSE };                    \
     OCI_Context* ctx = &ctx_obj;                                                \
-    ctx_obj.oci_err    = Env.err;                                               \
+    ctx_obj.oci_err     = Env.err;                                              \
     ctx_obj.call_status = (status);                                             \
 
 #define DECLARE_VARS(type, value, status)                                       \
@@ -76,7 +76,7 @@
 
 #define CALL_EXIT()                                                             \
                                                                                 \
-    ExitCall:                                                                   \
+ExitCall:                                                                   \
     CTX_EXIT(Env.env_mode)                                                      \
     return call_retval;
 
@@ -86,13 +86,13 @@
 
 #define CTX_SET(c, s, e)                                                        \
                                                                                 \
-    ctx->lib_con      = (c);                                                    \
-    ctx->lib_stmt     = (s);                                                    \
-    ctx->oci_err      = (e) ? (e) : Env.err;                                    \
+    ctx->lib_con  = (c);                                                        \
+    ctx->lib_stmt = (s);                                                        \
+    ctx->oci_err  = (e) ? (e) : Env.err;                                        \
 
 #define CALL_CONTEXT_FROM_CON(con)                                              \
                                                                                 \
-   CTX_SET((con), NULL, ((con) ? (con)->err : Env.err))
+    CTX_SET((con), NULL, ((con) ? (con)->err : Env.err))
 
 #define CALL_CONTEXT_FROM_OBJ(obj)                                              \
                                                                                 \
@@ -120,11 +120,11 @@
 
 #define IS_OCI_NUMBER(type, subtype)                                            \
                                                                                 \
-   (OCI_CDT_NUMERIC == (type) && OCI_NUM_NUMBER == (subtype))
+    (OCI_CDT_NUMERIC == (type) && OCI_NUM_NUMBER == (subtype))
 
 #define IS_OCILIB_OBJECT(type, subtype)                                         \
                                                                                 \
-   ( (IS_OCI_NUMBER(type, subtype)) ||                                          \
+    ( (IS_OCI_NUMBER(type, subtype)) ||                                          \
       (OCI_CDT_TEXT    != (type) &&                                             \
        OCI_CDT_RAW     != (type) &&                                             \
        OCI_CDT_BOOLEAN != (type)))
@@ -143,7 +143,7 @@
     CALL_CHECK_PTR(objtype, obj)                                                \
     CTX_SET((con),(stmt), (err))                                                \
     (obj)->prop = (type) (val);                                                 \
-    RETVAL = STATUS;                                                            \
+    RETVAL      = STATUS;                                                       \
     CALL_EXIT()                                                                 \
 
 #define SET_PROP_ENUM(type, objtype, obj, prop, val, enms, msg, con, stmt, err) \
@@ -153,7 +153,7 @@
     CTX_SET((con),(stmt), (err))                                                \
     CALL_CHECK_ENUM_VALUE((con),(stmt), (val), (enms), (msg))                   \
     (obj)->prop = (type) (val);                                                 \
-    RETVAL = STATUS;                                                            \
+    RETVAL      = STATUS;                                                       \
     CALL_EXIT()                                                                 \
 
 #define GET_LIB_PROP(type, value, prop)                                         \
@@ -208,7 +208,7 @@
 
 #define ARRAY_GET_AT(ptr, size, offset)                                         \
                                                                                 \
-    (((ub1 *) (ptr)) + (size_t)((size)*i))                                      
+    (((ub1 *) (ptr)) + (size_t)((size)*i))
 
 #define ARRAY_SET_AT(ptr, type, offset, value)                                  \
                                                                                 \
@@ -228,7 +228,7 @@
         }                                                                       \
         else                                                                    \
         {                                                                       \
-           STATUS = TRUE;                                                       \
+            STATUS = TRUE;                                                      \
         }                                                                       \
     }
 
@@ -249,10 +249,9 @@
     )                                                                           \
 
 
- /* --------------------------------------------------------------------------------------------- *
+/* --------------------------------------------------------------------------------------------- *
   * CHECKING MACROS
   * --------------------------------------------------------------------------------------------- */
-
 
 #define CHECK(exp, ret) if (exp) return (ret);
 
@@ -361,11 +360,11 @@
 
 #define CALL_CHECK_TIMESTAMP_ENABLED(con)                                       \
                                                                                 \
-    CALL_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0)  
+    CALL_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0)
 
 #define CALL_CHECK_INTERVAL_ENABLED(con)                                        \
                                                                                 \
-    CALL_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0)  
+    CALL_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0)
 
 #define CALL_CHECK_SCROLLABLE_CURSOR_ENABLED(con)                               \
                                                                                 \
@@ -387,7 +386,7 @@
     if (Env.version_runtime < OCI_9_2)                                          \
     {                                                                           \
         THROW(ExceptionNotAvailable((dp)->con, OCI_FEATURE_DIRPATH_DATE_CACHE)  \
-    }
+              }
 
 #define CALL_CHECK_REMOTE_DBS_CONTROL_ENABLED()                                 \
                                                                                 \
@@ -422,12 +421,10 @@
     {                                                                           \
         size_t ii = 0, nn = sizeof(values) / sizeof((values)[0]);               \
         for (; ii < nn; ii++) { if ((mode) == (values)[ii]) break; }            \
-        if (ii >= nn)                                                           \
-        {                                                                       \
-            THROW(ExceptionArgInvalidValue(con, stmt, name, mode))              \
-        }                                                                       \
-    }
-
-
+                                if (ii >= nn)                                                           \
+                                {                                                                       \
+                                    THROW(ExceptionArgInvalidValue(con, stmt, name, mode))              \
+                                }                                                                       \
+        }
 
 #endif /* OCILIB_MACROS_H_INCLUDED */

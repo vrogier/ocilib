@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_DEFINES_H_INCLUDED
 #define OCILIB_DEFINES_H_INCLUDED
 
@@ -32,7 +32,7 @@ OCI_Define* DefineGet
 int DefineGetIndex
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 void* DefineGetData
@@ -49,7 +49,7 @@ boolean DefineGetNumber
 (
     OCI_Resultset* rs,
     unsigned int   index,
-    void* value,
+    void         * value,
     uword          type
 );
 
@@ -63,6 +63,5 @@ boolean DefineDef
     OCI_Define* def,
     ub4         position
 );
-
 
 #endif /* OCILIB_DEFINES_H_INCLUDED */

@@ -25,13 +25,13 @@
 
 boolean ColumnGetAttributeInfo
 (
-    OCI_Column    *col,
-    unsigned int   count,
-    unsigned int   index,
-    size_t        *p_size,
-    size_t        *p_align
+    OCI_Column  *col,
+    unsigned int count,
+    unsigned int index,
+    size_t      *p_size,
+    size_t      *p_align
 );
-    
+
 boolean ColumnRetrieveInfo
 (
     OCI_Column     *col,
@@ -115,8 +115,8 @@ const otext* ColumnGetSqlType
 
 unsigned int ColumnGetFullSqlType
 (
-    OCI_Column* col,
-    otext* buffer,
+    OCI_Column * col,
+    otext      * buffer,
     unsigned int len
 );
 

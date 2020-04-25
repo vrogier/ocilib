@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef OCILIB_STRING_H_INCLUDED
 #define OCILIB_STRING_H_INCLUDED
 
@@ -26,27 +26,27 @@
 size_t StringLength
 (
     void const* ptr,
-    size_t size_elem
+    size_t      size_elem
 );
 
 unsigned int StringBinaryToString
 (
     const unsigned char* binary,
     unsigned int         binary_size,
-    otext* buffer
+    otext              * buffer
 );
 
 boolean StringRequestBuffer
 (
-    otext** buffer,
+    otext      ** buffer,
     unsigned int* buffer_size,
-    unsigned int    request_size
+    unsigned int  request_size
 );
 
 void StringTranslate
 (
-    void* src,
-    void* dst,
+    void * src,
+    void * dst,
     int    char_count,
     size_t size_char_in,
     size_t size_char_out
@@ -73,7 +73,7 @@ void StringTranslate
 dbtext* StringGetDBString
 (
     const otext* src,
-    int* size
+    int        * size
 );
 
 void StringReleaseDBString
@@ -84,64 +84,64 @@ void StringReleaseDBString
 int StringCopyDBStringToNativeString
 (
     const dbtext* src,
-    otext* dst,
-    int            len
+    otext       * dst,
+    int           len
 );
 
 otext* StringDuplicateFromDBString
 (
     const dbtext* src,
-    int            len
+    int           len
 );
 
 otext* StringFromStringPtr
 (
-    OCIEnv* env,
-    OCIString* str,
-    otext** buffer,
+    OCIEnv      * env,
+    OCIString   * str,
+    otext      ** buffer,
     unsigned int* buffer_size
 );
 
 boolean StringToStringPtr
 (
-    OCIEnv* env,
-    OCIString** str,
-    OCIError* err,
+    OCIEnv     * env,
+    OCIString ** str,
+    OCIError   * err,
     const otext* value
 );
 
 boolean StringFreeStringPtr
 (
-    OCIEnv* env,
+    OCIEnv    * env,
     OCIString** str,
-    OCIError* err
+    OCIError  * err
 );
 
 unsigned int StringGetFromType
 (
     OCI_Connection* con,
-    OCI_Column* col,
-    void* data,
-    unsigned int      data_size,
-    otext* buffer,
-    unsigned int      buffer_size,
-    boolean           quote
+    OCI_Column    * col,
+    void          * data,
+    unsigned int    data_size,
+    otext         * buffer,
+    unsigned int    buffer_size,
+    boolean         quote
 );
 
 unsigned int StringAddToBuffer
 (
-    otext* buffer,
-    unsigned int     offset,
+    otext      * buffer,
+    unsigned int offset,
     const otext* str,
-    unsigned int     length,
-    boolean          check_quote
+    unsigned int length,
+    boolean      check_quote
 );
 
 unsigned int StringGetTypeName
 (
     const otext* source,
-    otext* dest,
-    unsigned int  length
+    otext      * dest,
+    unsigned int length
 );
 
 unsigned int StringGetFullTypeName
@@ -150,28 +150,28 @@ unsigned int StringGetFullTypeName
     const otext* package,
     const otext* type,
     const otext* link,
-    otext* name,
-    unsigned int  length
+    otext      * name,
+    unsigned int length
 );
 
 boolean StringGetAttribute
 (
     OCI_Connection* con,
-    void* handle,
+    void          * handle,
     unsigned int    type,
     unsigned int    attr,
-    otext** str,
-    unsigned int* size
+    otext        ** str,
+    unsigned int  * size
 );
 
 boolean StringSetAttribute
 (
     OCI_Connection* con,
-    void* handle,
+    void          * handle,
     unsigned int    type,
     unsigned int    attr,
-    otext** str,
-    const otext* value
+    otext        ** str,
+    const otext   * value
 );
 
 #endif /* OCILIB_STRING_H_INCLUDED */
