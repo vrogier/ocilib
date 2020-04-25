@@ -103,10 +103,10 @@ OCI_TypeInfo * TypeInfoGet
     otext obj_name[OCI_SIZE_OBJ_NAME + 1];
 
     CALL_ENTER(OCI_TypeInfo*, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, name)
-    CHECK_ENUM_VALUE(con, NULL, type, TypeInfoTypeValues, OTEXT("Type"))
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    CALL_CHECK_ENUM_VALUE(con, NULL, type, TypeInfoTypeValues, OTEXT("Type"))
+    CALL_CONTEXT_FROM_CON(con)
 
     obj_schema[0] = 0;
     obj_name[0]   = 0;
@@ -515,8 +515,8 @@ boolean TypeInfoFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CTX_SET_FROM_CON(typinf->con)
+    CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CALL_CONTEXT_FROM_CON(typinf->con)
 
     typinf->refcount--;
 
@@ -581,9 +581,9 @@ OCI_Column * TypeInfoGetColumn
 )
 {
     CALL_ENTER(OCI_Column *, NULL)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CHECK_BOUND(typinf->con, index, 1,  typinf->nb_cols)
-    CTX_SET_FROM_CON(typinf->con)
+    CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CALL_CHECK_BOUND(typinf->con, index, 1,  typinf->nb_cols)
+    CALL_CONTEXT_FROM_CON(typinf->con)
 
     RETVAL = &(typinf->cols[index - 1]);
 

@@ -25,7 +25,6 @@
 #include "list.h"
 #include "macros.h"
 #include "memory.h"
-#include "resultset.h"
 #include "statement.h"
 #include "strings.h"
 
@@ -139,11 +138,11 @@ OCI_Subscription * SubscriptionRegister
     OCI_Subscription *sub = NULL;
 
     CALL_ENTER(OCI_Subscription*, NULL)
-    CHECK_DATABASE_NOTIFY_ENABLED()
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_PROC, handler)
-    CHECK_PTR(OCI_IPC_STRING, name)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_DATABASE_NOTIFY_ENABLED()
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_PROC, handler)
+    CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -281,7 +280,7 @@ boolean SubscriptionUnregister
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_NOTIFY, sub)
+    CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
     CTX_SET(sub->con, NULL, sub->err)
 
     RETVAL = STATUS = SubscriptionDispose(sub);
@@ -304,9 +303,9 @@ boolean SubscriptionAddStatement
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_NOTIFY, sub)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
+    CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
     
     CTX_SET(sub->con, stmt, sub->err)
 

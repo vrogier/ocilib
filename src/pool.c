@@ -40,7 +40,7 @@ boolean PoolDispose
 
     CHECK(NULL == pool, FALSE)
 
-    CTX_SET_FROM_ERR(pool->err);
+    CALL_CONTEXT_FROM_ERR(pool->err);
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -121,9 +121,9 @@ OCI_Pool * PoolCreate
     OCI_Pool *pool = NULL;
 
     CALL_ENTER(OCI_Pool*, NULL)
-    CHECK_INITIALIZED()
-    CHECK_ENUM_VALUE(NULL, NULL, type, PoolTypeValues, OTEXT("Pool Type"))
-    CHECK_MIN(NULL, NULL, max_con, 1)
+    CALL_CHECK_INITIALIZED()
+    CALL_CHECK_ENUM_VALUE(NULL, NULL, type, PoolTypeValues, OTEXT("Pool Type"))
+    CALL_CHECK_MIN(NULL, NULL, max_con, 1)
 
     STATUS = FALSE;
 
@@ -348,8 +348,8 @@ boolean PoolFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_POOL, pool)
-    CTX_SET_FROM_ERR(pool->err)
+    CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    CALL_CONTEXT_FROM_ERR(pool->err)
 
     STATUS = PoolDispose(pool);
 
@@ -373,8 +373,8 @@ OCI_Connection * PoolGetConnection
 )
 {
     CALL_ENTER(OCI_Connection*, NULL)
-    CHECK_PTR(OCI_IPC_POOL, pool)
-    CTX_SET_FROM_ERR(pool->err)
+    CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    CALL_CONTEXT_FROM_ERR(pool->err)
 
     RETVAL = ConnectionCreateInternal(pool, pool->db, pool->user, pool->pwd, pool->mode, tag);
 
@@ -409,8 +409,8 @@ unsigned int PoolGetTimeout
     ub4 value = 0;
 
     CALL_ENTER(unsigned int, value)
-    CHECK_PTR(OCI_IPC_POOL, pool)
-    CTX_SET_FROM_ERR(pool->err)
+    CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    CALL_CONTEXT_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -453,8 +453,8 @@ boolean PoolSetTimeout
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_POOL, pool)
-    CTX_SET_FROM_ERR(pool->err)
+    CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    CALL_CONTEXT_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -499,8 +499,8 @@ boolean PoolGetNoWait
     ub1 value = 0;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_POOL, pool)
-    CTX_SET_FROM_ERR(pool->err)
+    CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    CALL_CONTEXT_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -544,8 +544,8 @@ boolean PoolSetNoWait
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_POOL, pool)
-    CTX_SET_FROM_ERR(pool->err)
+    CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    CALL_CONTEXT_FROM_ERR(pool->err)
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -593,8 +593,8 @@ unsigned int PoolGetBusyCount
     ub4 value = 0;
 
     CALL_ENTER(unsigned int, value)
-    CHECK_PTR(OCI_IPC_POOL, pool)
-    CTX_SET_FROM_ERR(pool->err)
+    CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    CALL_CONTEXT_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -638,8 +638,8 @@ unsigned int PoolGetOpenedCount
     ub4 value = 0;
 
     CALL_ENTER(unsigned int, value)
-    CHECK_PTR(OCI_IPC_POOL, pool)
-    CTX_SET_FROM_ERR(pool->err)
+    CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    CALL_CONTEXT_FROM_ERR(pool->err)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -720,8 +720,8 @@ boolean PoolSetStatementCacheSize
     ub4 cache_size = value;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_POOL, pool)
-    CTX_SET_FROM_ERR(pool->err)
+    CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    CALL_CONTEXT_FROM_ERR(pool->err)
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -757,8 +757,8 @@ unsigned int PoolGetStatementCacheSize
     ub4 cache_size = 0;
 
     CALL_ENTER(unsigned int, cache_size)
-    CHECK_PTR(OCI_IPC_POOL, pool)
-    CTX_SET_FROM_ERR(pool->err)
+    CALL_CHECK_PTR(OCI_IPC_POOL, pool)
+    CALL_CONTEXT_FROM_ERR(pool->err)
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 

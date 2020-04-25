@@ -65,8 +65,8 @@ OCI_Transaction * TransactionCreate
     OCI_Transaction *trans = NULL;
 
     CALL_ENTER(OCI_Transaction *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     /* create transaction object */
 
@@ -118,8 +118,8 @@ boolean TransactionFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    CTX_SET_FROM_CON(trans->con)
+    CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
+    CALL_CONTEXT_FROM_CON(trans->con)
 
     STATUS = TransactionDispose(trans);
 
@@ -144,8 +144,8 @@ boolean TransactionStart
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    CTX_SET_FROM_CON(trans->con)
+    CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
+    CALL_CONTEXT_FROM_CON(trans->con)
 
     EXEC(OCITransStart(trans->con->cxt, trans->con->err, (uword) trans->timeout,  (ub4) trans->mode))
 
@@ -164,8 +164,8 @@ boolean TransactionStop
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    CTX_SET_FROM_CON(trans->con)
+    CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
+    CALL_CONTEXT_FROM_CON(trans->con)
 
     /* commit or rollback upon auto commit mode */
 
@@ -193,8 +193,8 @@ boolean TransactionResume
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    CTX_SET_FROM_CON(trans->con)
+    CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
+    CALL_CONTEXT_FROM_CON(trans->con)
 
     EXEC(OCITransStart(trans->con->cxt, trans->con->err, (uword) trans->timeout, (ub4) OCI_TRANS_RESUME))
 
@@ -213,8 +213,8 @@ boolean TransactionPrepare
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    CTX_SET_FROM_CON(trans->con)
+    CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
+    CALL_CONTEXT_FROM_CON(trans->con)
 
     EXEC(OCITransPrepare(trans->con->cxt, trans->con->err, (ub4) OCI_DEFAULT))
 
@@ -233,8 +233,8 @@ boolean TransactionForget
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    CTX_SET_FROM_CON(trans->con)
+    CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
+    CALL_CONTEXT_FROM_CON(trans->con)
 
     EXEC(OCITransForget(trans->con->cxt, trans->con->err, (ub4) OCI_DEFAULT))
 

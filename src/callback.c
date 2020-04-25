@@ -128,7 +128,7 @@ sb4 CallbackOutBind
     CHECK(NULL == bnd, OCI_ERROR)
     CHECK(iter >= bnd->buffer.count, OCI_ERROR)
 
-    CTX_SET_FROM_STMT(bnd->stmt)
+    CALL_CONTEXT_FROM_STMT(bnd->stmt)
 
     /* update statement status */
 
@@ -259,7 +259,7 @@ ub4 CallbackNotifyChanges
 
     CHECK(NULL == sub, OCI_SUCCESS)
 
-    CTX_SET_FROM_ERR(sub->err)
+    CALL_CONTEXT_FROM_ERR(sub->err)
 
     EventReset(&sub->event);
 

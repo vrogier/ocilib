@@ -32,7 +32,7 @@ const void * HandleGetEnvironment
 )
 {
     CALL_ENTER(const void *, NULL)
-    CHECK_INITIALIZED()
+    CALL_CHECK_INITIALIZED()
 
     RETVAL = OCILib.env;
 

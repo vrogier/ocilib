@@ -38,7 +38,7 @@ OCI_Coll * CollectionInitialize
 )
 {
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_CON(con)
+    CALL_CONTEXT_FROM_CON(con)
 
     ALLOC_DATA(OCI_IPC_COLLECTION, coll, 1);
 
@@ -91,8 +91,8 @@ OCI_Coll * CollectionCreate
 )
 {
     CALL_ENTER(OCI_Coll *, NULL)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CTX_SET_FROM_CON(typinf->con)
+    CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CALL_CONTEXT_FROM_CON(typinf->con)
 
     RETVAL = CollectionInitialize(typinf->con, NULL, NULL, typinf);
     STATUS = (NULL != RETVAL);
@@ -110,9 +110,9 @@ boolean CollectionFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CHECK_OBJECT_FETCHED(coll)
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CALL_CHECK_OBJECT_FETCHED(coll)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     /* free data element */
 
@@ -154,8 +154,8 @@ OCI_Coll ** CollectionCreateArray
     OCI_Array *arr = NULL;
 
     CALL_ENTER(OCI_Coll **, NULL)    
-    CHECK_PTR(OCI_IPC_CONNECTION, con)        
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)        
+    CALL_CONTEXT_FROM_CON(con)
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0, sizeof(OCIColl *), sizeof(OCI_Coll), 0, typinf);
     STATUS = (arr != NULL);
@@ -178,7 +178,7 @@ boolean CollectionFreeArray
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_ARRAY, colls)
+    CALL_CHECK_PTR(OCI_IPC_ARRAY, colls)
 
     RETVAL = STATUS = ArrayFreeFromHandles((void **)colls);
 
@@ -196,10 +196,10 @@ boolean CollectionAssign
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll_src)
-    CHECK_COMPAT(coll->con, coll->typinf->cols[0].libcode == coll_src->typinf->cols[0].libcode)
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll_src)
+    CALL_CHECK_COMPAT(coll->con, coll->typinf->cols[0].libcode == coll_src->typinf->cols[0].libcode)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     EXEC(OCICollAssign(coll->con->env, coll->con->err, coll_src->handle, coll->handle))
 
@@ -218,8 +218,8 @@ unsigned int CollectionGetType
 )
 {
     CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     if (OCI_TYPECODE_TABLE == coll->typinf->colcode)
     {
@@ -252,8 +252,8 @@ unsigned int CollectionGetMax
 )
 {
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     RETVAL = (unsigned int) OCICollMax(coll->con->env, coll->handle);
 
@@ -272,8 +272,8 @@ unsigned int CollectionGetSize
     sb4 value = 0;
 
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     EXEC(OCICollSize(coll->con->env, coll->con->err, coll->handle, &value))
 
@@ -293,9 +293,9 @@ boolean CollectionTrim
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CHECK_BOUND(coll->con, (sb4) nb_elem, (sb4) 0, (sb4) CollectionGetSize(coll));
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CALL_CHECK_BOUND(coll->con, (sb4) nb_elem, (sb4) 0, (sb4) CollectionGetSize(coll));
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     EXEC(OCICollTrim(coll->con->env, coll->con->err, (sb4) nb_elem, coll->handle))
 
@@ -319,8 +319,8 @@ OCI_Elem * CollectionGetElement
     OCIInd  *p_ind  = NULL;
 
     CALL_ENTER(OCI_Elem*, NULL)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     EXEC(OCICollGetElem(coll->con->env, coll->con->err, coll->handle, (sb4) index-1, &exists, &data, (dvoid **) (dvoid *) &p_ind))
 
@@ -348,10 +348,10 @@ boolean CollectionGetElement2
     OCIInd  *p_ind  = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-	CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+	CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    CALL_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     EXEC(OCICollGetElem(coll->con->env, coll->con->err, coll->handle, (sb4) index-1, &exists, &data, (dvoid **) (dvoid *) &p_ind))
 
@@ -382,10 +382,10 @@ boolean CollectionSetElement
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    CALL_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     EXEC(OCICollAssignElem(coll->con->env, coll->con->err, (sb4) index-1, elem->handle, elem->pind, coll->handle))
 
@@ -405,10 +405,10 @@ boolean CollectionAddElement
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    CALL_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     EXEC(OCICollAppend(coll->con->env, coll->con->err, elem->handle, elem->pind, coll->handle))
 
@@ -439,8 +439,8 @@ boolean CollectionClear
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     RETVAL = STATUS = CollectionTrim(coll, CollectionGetSize(coll));
 
@@ -458,8 +458,8 @@ boolean CollectionRemoveElement
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-	CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+	CALL_CONTEXT_FROM_CON(coll->con)
 
     if (OCI_TYPECODE_TABLE == coll->typinf->colcode)
     {
@@ -483,8 +483,8 @@ unsigned int CollectionGetCount
     sb4 value = 0;
 
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     if (OCI_TYPECODE_TABLE == coll->typinf->colcode)
     {
@@ -516,9 +516,9 @@ boolean CollectionToString
     unsigned int len = 0;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CHECK_PTR(OCI_IPC_VOID, size)
-    CTX_SET_FROM_CON(coll->con)
+    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CALL_CHECK_PTR(OCI_IPC_VOID, size)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     err = ErrorGet(TRUE, TRUE);
 

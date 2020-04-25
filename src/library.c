@@ -55,7 +55,6 @@ const char * EnvironmentVarNames[OCI_VARS_COUNT] =
     VAR_OCILIB_WORKAROUND_UTF16_COLUMN_NAME
 };
 
-
 const OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
 {
     {OCI_UNKNOWN                             , OTEXT("UNKNOWN")                        },
@@ -1909,7 +1908,7 @@ big_uint GetAllocatedBytes
 )
 {
     CALL_ENTER(big_uint, 0)
-    CHECK_INITIALIZED()
+    CALL_CHECK_INITIALIZED()
 
     if (mem_type & OCI_MEM_ORACLE)
     {
@@ -1990,7 +1989,7 @@ boolean DatabaseStartup
     OCI_Connection *con = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_REMOTE_DBS_CONTROL_ENABLED()
+    CALL_CHECK_REMOTE_DBS_CONTROL_ENABLED()
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2112,7 +2111,7 @@ boolean DatabaseShutdown
     OCI_Connection *con = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_REMOTE_DBS_CONTROL_ENABLED()
+    CALL_CHECK_REMOTE_DBS_CONTROL_ENABLED()
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2212,8 +2211,8 @@ boolean SetHAHandler
     void *callback = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_INITIALIZED()
-    CHECK_HIGH_AVAILABILITY_ENABLED()
+    CALL_CHECK_INITIALIZED()
+    CALL_CHECK_HIGH_AVAILABILITY_ENABLED()
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2266,8 +2265,8 @@ boolean SetFormat
     otext **value = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_INITIALIZED()
-    CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"))
+    CALL_CHECK_INITIALIZED()
+    CALL_CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"))
 
     value = con ? &con->formats[type - 1] : &OCILib.formats[type - 1];
 
@@ -2293,8 +2292,8 @@ const otext * GetFormat
     otext **value = NULL;
 
     CALL_ENTER(const otext *, NULL)
-    CHECK_INITIALIZED()
-    CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"))
+    CALL_CHECK_INITIALIZED()
+    CALL_CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"))
 
     value = con ? &con->formats[type-1] : &OCILib.formats[type-1];
 
@@ -2327,9 +2326,9 @@ boolean SetUserPassword
 
     /* let's be sure OCI_Initialize() has been called */
 
-    CHECK_INITIALIZED()
-    CHECK_PTR(OCI_IPC_STRING, pwd)
-    CHECK_PTR(OCI_IPC_STRING, new_pwd)
+    CALL_CHECK_INITIALIZED()
+    CALL_CHECK_PTR(OCI_IPC_STRING, pwd)
+    CALL_CHECK_PTR(OCI_IPC_STRING, new_pwd)
 
     con = ConnectionAllocate(NULL, db, user, pwd, OCI_AUTH);
 

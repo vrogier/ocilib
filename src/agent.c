@@ -37,7 +37,7 @@ OCI_Agent * AgentInitialize
 )
 {
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_CON(con)
+    CALL_CONTEXT_FROM_CON(con)
 
     ALLOC_DATA(OCI_IPC_AGENT, agent, 1);
 
@@ -98,8 +98,8 @@ OCI_Agent * AgentCreate
 )
 {
     CALL_ENTER(OCI_Agent *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     RETVAL = AgentInitialize(con, NULL, NULL, name, address);
     STATUS = (NULL != RETVAL);
@@ -117,8 +117,8 @@ boolean AgentFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_AGENT, agent)
-    CTX_SET_FROM_CON(agent->con)
+    CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
+    CALL_CONTEXT_FROM_CON(agent->con)
 
     if (OCI_OBJECT_ALLOCATED == agent->hstate)
     {
@@ -142,8 +142,8 @@ const otext * AgentGetName
 )
 {
     CALL_ENTER(otext *, NULL)
-    CHECK_PTR(OCI_IPC_AGENT, agent)
-    CTX_SET_FROM_CON(agent->con)
+    CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
+    CALL_CONTEXT_FROM_CON(agent->con)
 
     if (!agent->name)
     {
@@ -169,8 +169,8 @@ boolean AgentSetName
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_AGENT, agent)
-    CTX_SET_FROM_CON(agent->con)
+    CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
+    CALL_CONTEXT_FROM_CON(agent->con)
 
     STATUS = StringSetAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_NAME, &agent->name, name);
     RETVAL = STATUS;
@@ -188,8 +188,8 @@ const otext * AgentGetAddress
 )
 {
     CALL_ENTER(otext *, NULL)
-    CHECK_PTR(OCI_IPC_AGENT, agent)
-    CTX_SET_FROM_CON(agent->con)
+    CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
+    CALL_CONTEXT_FROM_CON(agent->con)
 
     if (!agent->address)
     {
@@ -215,8 +215,8 @@ boolean AgentSetAddress
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_AGENT, agent)
-    CTX_SET_FROM_CON(agent->con)
+    CALL_CHECK_PTR(OCI_IPC_AGENT, agent)
+    CALL_CONTEXT_FROM_CON(agent->con)
 
     STATUS = StringSetAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_ADDRESS, &agent->address, address);
     RETVAL = STATUS;

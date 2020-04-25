@@ -52,8 +52,8 @@ OCI_Thread * ThreadCreate
     OCI_Thread *thread = NULL;
 
     CALL_ENTER(OCI_Thread*, NULL)
-    CHECK_INITIALIZED()
-    CHECK_THREAD_ENABLED()
+    CALL_CHECK_INITIALIZED()
+    CALL_CHECK_THREAD_ENABLED()
 
     /* allocate thread structure */
 
@@ -96,9 +96,9 @@ boolean ThreadFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_THREAD_ENABLED()
-    CHECK_PTR(OCI_IPC_THREAD, thread)
-    CTX_SET_FROM_ERR(thread->err)
+    CALL_CHECK_THREAD_ENABLED()
+    CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
+    CALL_CONTEXT_FROM_ERR(thread->err)
 
     /* close thread handle */
 
@@ -143,9 +143,9 @@ boolean ThreadRun
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_THREAD, thread)
-    CHECK_PTR(OCI_IPC_PROC, proc)
-    CTX_SET_FROM_ERR(thread->err)
+    CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
+    CALL_CHECK_PTR(OCI_IPC_PROC, proc)
+    CALL_CONTEXT_FROM_ERR(thread->err)
 
     thread->proc = proc;
     thread->arg  = arg;
@@ -167,8 +167,8 @@ boolean ThreadJoin
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_THREAD, thread)
-    CTX_SET_FROM_ERR(thread->err)
+    CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
+    CALL_CONTEXT_FROM_ERR(thread->err)
 
     EXEC(OCIThreadJoin(OCILib.env, thread->err, thread->handle))
 

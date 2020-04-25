@@ -39,8 +39,8 @@
 #define OBJECT_SET_VALUE(datatype, type, func)                              \
                                                                             \
     CALL_ENTER(boolean, FALSE)                                              \
-    CHECK_PTR(OCI_IPC_OBJECT, obj)                                          \
-    CTX_SET_FROM_CON(obj->con)                                              \
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)                                     \
+    CALL_CONTEXT_FROM_CON(obj->con)                                         \
                                                                             \
     STATUS = FALSE;                                                         \
                                                                             \
@@ -76,8 +76,8 @@
     int index = 0;                                                          \
                                                                             \
     CALL_ENTER(object_type, NULL)                                           \
-    CHECK_PTR(OCI_IPC_OBJECT, obj)                                          \
-    CTX_SET_FROM_CON(obj->con)                                              \
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)                                     \
+    CALL_CONTEXT_FROM_CON(obj->con)                                         \
                                                                             \
     STATUS = FALSE;                                                         \
                                                                             \
@@ -125,7 +125,7 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
         return result;
     }
 
-    CTX_SET_FROM_CON(result->con)
+    CALL_CONTEXT_FROM_CON(result->con)
 
     /* if the type is related to UTDs and is virtual (e.g. non final), we must find the real type of the instance */
 
@@ -508,7 +508,7 @@ OCI_Object * ObjectInitialize
     
     DECLARE_CTX(TRUE)
 
-    CTX_SET_FROM_CON(con)
+    CALL_CONTEXT_FROM_CON(con)
 
     real_typinf = ObjectGetRealTypeInfo(typinf, handle);
     STATUS = (NULL != real_typinf);
@@ -694,9 +694,9 @@ boolean ObjectSetNumberInternal
     int index   = 0;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_STRING, attr)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_STRING, attr)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     STATUS = FALSE;
 
@@ -736,9 +736,9 @@ boolean ObjectGetNumberInternal
     int index   = 0;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_STRING, attr)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_STRING, attr)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     STATUS = FALSE;
 
@@ -789,9 +789,9 @@ OCI_Object * ObjectCreate
 )
 {
     CALL_ENTER(OCI_Object *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CALL_CONTEXT_FROM_CON(con)
 
     RETVAL = ObjectInitialize(con, NULL, NULL, typinf, NULL, -1, TRUE);
     STATUS = (NULL != RETVAL);
@@ -809,9 +809,9 @@ boolean ObjectFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_OBJECT_FETCHED(obj)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_OBJECT_FETCHED(obj)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     /* if the object has sub-objects that have been fetched, we need to free
        these objects */
@@ -851,9 +851,9 @@ OCI_Object ** ObjectCreateArray
     OCI_Array *arr = NULL;
 
     CALL_ENTER(OCI_Object **, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CALL_CONTEXT_FROM_CON(con)
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0, sizeof(void *), sizeof(OCI_Object), 0, typinf);
     STATUS = (NULL != arr);
@@ -876,7 +876,7 @@ boolean ObjectFreeArray
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_ARRAY, objs)
+    CALL_CHECK_PTR(OCI_IPC_ARRAY, objs)
 
     RETVAL = STATUS = ArrayFreeFromHandles((void **)objs);
 
@@ -894,10 +894,10 @@ boolean ObjectAssign
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_OBJECT, obj_src);
-    CHECK_COMPAT(obj->con, obj->typinf->tdo == obj_src->typinf->tdo)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj_src);
+    CALL_CHECK_COMPAT(obj->con, obj->typinf->tdo == obj_src->typinf->tdo)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     EXEC
     (
@@ -932,9 +932,9 @@ boolean ObjectGetBoolean
     int index = -1;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_STRING, attr)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_STRING, attr)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     STATUS = FALSE;
 
@@ -1126,9 +1126,9 @@ const otext * ObjectGetString
     int index = -1;
 
     CALL_ENTER(const otext *, NULL)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_STRING, attr)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_STRING, attr)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     STATUS = FALSE;
 
@@ -1226,9 +1226,9 @@ int ObjectGetRaw
     int index = -1;
 
     CALL_ENTER(int, 0);
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_STRING, attr)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_STRING, attr)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     STATUS = FALSE;
 
@@ -1275,9 +1275,9 @@ unsigned int ObjectGetRawSize
     int index = -1;
 
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_STRING, attr)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_STRING, attr)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     STATUS = FALSE;
 
@@ -1346,7 +1346,7 @@ OCI_Timestamp * ObjectGetTimestamp
 #else
 
     CALL_ENTER( OCI_Timestamp *, NULL)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     CALL_EXIT()
 
 #endif
@@ -1376,7 +1376,7 @@ OCI_Interval * ObjectGetInterval
 #else
 
     CALL_ENTER(OCI_Interval *, NULL)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     CALL_EXIT()
 
 #endif
@@ -1490,9 +1490,9 @@ boolean ObjectSetBoolean
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_STRING, attr)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_STRING, attr)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     STATUS = FALSE;
 
@@ -1660,9 +1660,9 @@ boolean ObjectSetString
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_STRING, attr)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_STRING, attr)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     STATUS = FALSE;
 
@@ -1755,7 +1755,7 @@ boolean ObjectSetTimestamp
 #else
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     CALL_EXIT()
 
 #endif
@@ -1784,7 +1784,7 @@ boolean ObjectSetInterval
 #else
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
     CALL_EXIT()
 
 #endif
@@ -1899,9 +1899,9 @@ boolean ObjectSetNull
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_STRING, attr)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_STRING, attr)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     const int index = ObjectGetAttributeIndex(obj, attr, -1, TRUE);
 
@@ -1932,9 +1932,9 @@ boolean ObjectIsNull
     int index   = 0;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_STRING, attr)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_STRING, attr)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     index = ObjectGetAttributeIndex(obj, attr, -1, TRUE);
 
@@ -1985,10 +1985,10 @@ boolean ObjectGetSelfRef
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_REF, ref)
-    CHECK_COMPAT(obj->con, obj->typinf->tdo == ref->typinf->tdo)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    CALL_CHECK_COMPAT(obj->con, obj->typinf->tdo == ref->typinf->tdo)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     EXEC(OCIObjectGetObjectRef(obj->con->env, obj->con->err, obj->handle, ref->handle))
 
@@ -2015,8 +2015,8 @@ boolean ObjectGetStruct
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     if (pp_struct)
     {
@@ -2050,9 +2050,9 @@ boolean ObjectToString
     unsigned int len   = 0;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_VOID, size)
-    CTX_SET_FROM_CON(obj->con)
+    CALL_CHECK_PTR(OCI_IPC_OBJECT, obj)
+    CALL_CHECK_PTR(OCI_IPC_VOID, size)
+    CALL_CONTEXT_FROM_CON(obj->con)
 
     err = ErrorGet(TRUE, TRUE);
 

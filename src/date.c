@@ -39,7 +39,7 @@ OCI_Date * DateInitialize
 )
 {
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_CON(con)
+    CALL_CONTEXT_FROM_CON(con)
 
     ALLOC_DATA(OCI_IPC_DATE, date, 1);
 
@@ -112,8 +112,8 @@ OCI_Date * DateCreate
 )
 {
     CALL_ENTER(OCI_Date*, NULL)
-    CHECK_INITIALIZED()
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_INITIALIZED()
+    CALL_CONTEXT_FROM_CON(con)
 
     RETVAL = DateInitialize(con, NULL, NULL, TRUE, FALSE);
     STATUS = (NULL != RETVAL);
@@ -131,9 +131,9 @@ boolean DateFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_OBJECT_FETCHED(date)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CHECK_OBJECT_FETCHED(date)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     if (date->allocated)
     {
@@ -163,8 +163,8 @@ OCI_Date ** DateCreateArray
     OCI_Array *arr = NULL;
 
     CALL_ENTER(OCI_Date **, NULL)
-    CHECK_INITIALIZED()
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_INITIALIZED()
+    CALL_CONTEXT_FROM_CON(con)
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0, sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
     STATUS = (NULL != arr);
@@ -187,7 +187,7 @@ boolean DateFreeArray
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_ARRAY, dates)
+    CALL_CHECK_PTR(OCI_IPC_ARRAY, dates)
  
     RETVAL = STATUS = ArrayFreeFromHandles((void **)dates);
 
@@ -205,8 +205,8 @@ boolean DateAddDays
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CONTEXT_FROM_OBJ(date)
     
     EXEC(OCIDateAddDays(date->err, date->handle, (sb4)nb, date->handle))
 
@@ -226,8 +226,8 @@ boolean DateAddMonths
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     EXEC(OCIDateAddMonths(date->err, date->handle, (sb4) nb, date->handle) )
 
@@ -247,9 +247,9 @@ boolean DateAssign
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_DATE, date_src)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date_src)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     EXEC(OCIDateAssign(date->err, date_src->handle, date->handle))
 
@@ -270,8 +270,8 @@ int DateCheck
     uword valid = 0;
 
     CALL_ENTER(int, valid)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     EXEC(OCIDateCheck(date->err, date->handle, &valid))
     
@@ -293,9 +293,9 @@ int DateCompare
     sword value = OCI_ERROR;
 
     CALL_ENTER(int, value)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_DATE, date2)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date2)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     EXEC(OCIDateCompare(date->err, date->handle, date2->handle, &value))
 
@@ -317,9 +317,9 @@ int DateDaysBetween
     sb4 diff = 0;
 
     CALL_ENTER(int, diff)
-    CHECK_PTR(OCI_IPC_DATE, date);
-    CHECK_PTR(OCI_IPC_DATE, date2);
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date);
+    CALL_CHECK_PTR(OCI_IPC_DATE, date2);
+    CALL_CONTEXT_FROM_OBJ(date)
 
     EXEC(OCIDateDaysBetween(date->err, date->handle, date2->handle, &diff))
 
@@ -345,9 +345,9 @@ boolean DateFromString
     int     dbsize2 = -1;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_STRING, str)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CHECK_PTR(OCI_IPC_STRING, str)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     if (!IS_STRING_VALID(fmt))
     {
@@ -390,11 +390,11 @@ boolean DateGetDate
     ub1 dy = 0;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_INT, year)
-    CHECK_PTR(OCI_IPC_INT, month)
-    CHECK_PTR(OCI_IPC_INT, day)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CHECK_PTR(OCI_IPC_INT, year)
+    CALL_CHECK_PTR(OCI_IPC_INT, month)
+    CALL_CHECK_PTR(OCI_IPC_INT, day)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     OCIDateGetDate(date->handle, &yr, &mt, &dy);
 
@@ -424,11 +424,11 @@ boolean DateGetTime
     ub1 sc = 0;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_INT, hour)
-    CHECK_PTR(OCI_IPC_INT, min)
-    CHECK_PTR(OCI_IPC_INT, sec)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CHECK_PTR(OCI_IPC_INT, hour)
+    CALL_CHECK_PTR(OCI_IPC_INT, min)
+    CALL_CHECK_PTR(OCI_IPC_INT, sec)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     OCIDateGetTime(date->handle, &hr, &mn, &sc);
 
@@ -469,8 +469,8 @@ boolean DateLastDay
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     EXEC(OCIDateLastDay(date->err, date->handle, date->handle))
 
@@ -493,9 +493,9 @@ boolean DateNextDay
     int     dbsize = -1;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_STRING, day)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CHECK_PTR(OCI_IPC_STRING, day)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     dbstr = StringGetDBString(day, &dbsize);
 
@@ -521,8 +521,8 @@ boolean DateSetDate
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     OCIDateSetDate(date->handle, (sb2) year, (ub1) month, (ub1) day);
 
@@ -544,8 +544,8 @@ boolean DateSetTime
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     OCIDateSetTime(date->handle, (ub1) hour, (ub1) min, (ub1) sec);
 
@@ -582,8 +582,8 @@ boolean DateSysDate
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     EXEC(OCIDateSysDate(date->err, date->handle))
 
@@ -610,9 +610,9 @@ boolean DateToString
     int     dbsize2 = -1;
   
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_STRING, str)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CHECK_PTR(OCI_IPC_STRING, str)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     /* initialize output buffer in case of OCI failure */
 
@@ -664,10 +664,10 @@ boolean DateZoneToZone
     int     dbsize2 = -1;
  
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_STRING, zone1)
-    CHECK_PTR(OCI_IPC_STRING, zone2)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CHECK_PTR(OCI_IPC_STRING, zone1)
+    CALL_CHECK_PTR(OCI_IPC_STRING, zone2)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     dbstr1 = StringGetDBString(zone1, &dbsize1);
     dbstr2 = StringGetDBString(zone2, &dbsize2);
@@ -703,8 +703,8 @@ boolean DateToCTime
     struct tm t;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     memset(&t, 0, sizeof(t));
 
@@ -749,8 +749,8 @@ boolean DateFromCTime
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CTX_SET_FROM_OBJ(date)
+    CALL_CHECK_PTR(OCI_IPC_DATE, date)
+    CALL_CONTEXT_FROM_OBJ(date)
 
     if (!ptm && (t == (time_t) 0))
     {

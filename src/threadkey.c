@@ -147,8 +147,8 @@ boolean ThreadKeyCreate
     OCI_ThreadKey *key = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STRING, name)
-    CHECK_INITIALIZED()
+    CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    CALL_CHECK_INITIALIZED()
 
     if (!OCILib.key_map)
     {
@@ -196,7 +196,7 @@ boolean ThreadKeySetValue
     OCI_ThreadKey *key = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CALL_CHECK_PTR(OCI_IPC_STRING, name)
 
     key = (OCI_ThreadKey *) HashGetPointer(OCILib.key_map, name);
 
@@ -217,7 +217,7 @@ void * ThreadKeyGetValue
     OCI_ThreadKey* key = NULL;
 
     CALL_ENTER(void*, NULL)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CALL_CHECK_PTR(OCI_IPC_STRING, name)
 
     key = (OCI_ThreadKey *)HashGetPointer(OCILib.key_map, name);
 

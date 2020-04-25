@@ -40,9 +40,9 @@ OCI_Enqueue * EnqueueCreate
     OCI_Enqueue *enqueue = NULL;
 
     CALL_ENTER(OCI_Enqueue*, enqueue)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CHECK_PTR(OCI_IPC_STRING, name)
-    CTX_SET_FROM_CON(typinf->con)
+    CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    CALL_CONTEXT_FROM_CON(typinf->con)
 
     /* allocate enqueue structure */
 
@@ -82,8 +82,8 @@ boolean EnqueueFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CTX_SET_FROM_CON(enqueue->typinf->con)
+    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
 
     /* free OCI descriptor */
 
@@ -113,10 +113,10 @@ boolean EnqueuePut
     void   *ind      = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CHECK_PTR(OCI_IPC_MSG, msg)
-    CHECK_COMPAT(enqueue->typinf->con, enqueue->typinf->tdo == msg->typinf->tdo)
-    CTX_SET_FROM_CON(enqueue->typinf->con)
+    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CALL_CHECK_PTR(OCI_IPC_MSG, msg)
+    CALL_CHECK_COMPAT(enqueue->typinf->con, enqueue->typinf->tdo == msg->typinf->tdo)
+    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
 
     dbstr = StringGetDBString(enqueue->name, &dbsize);
 
@@ -164,8 +164,8 @@ unsigned int EnqueueGetVisibility
     ub4 ret = OCI_UNKNOWN;
 
     CALL_ENTER(unsigned int, ret)
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CTX_SET_FROM_CON(enqueue->typinf->con)
+    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
 
     ATTRIB_GET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY, enqueue->opth, &ret, NULL)
     
@@ -187,9 +187,9 @@ boolean EnqueueSetVisibility
     ub4 value = (ub4) visibility;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CHECK_ENUM_VALUE(NULL, NULL, visibility, VisibilityModeValues, OTEXT("Visibility Mode"))
-    CTX_SET_FROM_CON(enqueue->typinf->con)
+    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CALL_CHECK_ENUM_VALUE(NULL, NULL, visibility, VisibilityModeValues, OTEXT("Visibility Mode"))
+    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
 
     ATTRIB_SET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY, enqueue->opth, &value, 0)
 
@@ -210,8 +210,8 @@ unsigned int EnqueueGetSequenceDeviation
     ub4 ret = OCI_UNKNOWN;
 
     CALL_ENTER(unsigned int, ret)
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CTX_SET_FROM_CON(enqueue->typinf->con)
+    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
 
     ATTRIB_GET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_SEQUENCE_DEVIATION, enqueue->opth, &ret, NULL)
 
@@ -233,9 +233,9 @@ boolean EnqueueSetSequenceDeviation
     ub4 value = (ub4) sequence;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CHECK_ENUM_VALUE(NULL, NULL, sequence, EnqueueModeValues, OTEXT("Sequence Deviation"))
-    CTX_SET_FROM_CON(enqueue->typinf->con)
+    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CALL_CHECK_ENUM_VALUE(NULL, NULL, sequence, EnqueueModeValues, OTEXT("Sequence Deviation"))
+    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
 
     ATTRIB_SET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_SEQUENCE_DEVIATION, enqueue->opth, &value, 0)
 
@@ -258,10 +258,10 @@ boolean EnqueueGetRelativeMsgID
     OCIRaw *value = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CHECK_PTR(OCI_IPC_VOID, id);
-    CHECK_PTR(OCI_IPC_VOID, len);
-    CTX_SET_FROM_CON(enqueue->typinf->con)
+    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CALL_CHECK_PTR(OCI_IPC_VOID, id);
+    CALL_CHECK_PTR(OCI_IPC_VOID, len);
+    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
 
     ATTRIB_GET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID, enqueue->opth, &value, NULL)
     
@@ -300,8 +300,8 @@ boolean EnqueueSetRelativeMsgID
     OCIRaw *value = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CTX_SET_FROM_CON(enqueue->typinf->con)
+    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
 
     EXEC(OCIRawAssignBytes(enqueue->typinf->con->env, enqueue->typinf->con->err,  (ub1*) id, (ub4) len, (OCIRaw **) &value))
     ATTRIB_SET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID, enqueue->opth, &value, 0)

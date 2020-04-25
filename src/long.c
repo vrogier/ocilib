@@ -39,7 +39,7 @@ OCI_Long * LongInitialize
 )
 {
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     ALLOC_DATA(OCI_IPC_LONG, lg, 1);
 
@@ -76,9 +76,9 @@ OCI_Long * LongCreate
 )
 {
     CALL_ENTER(OCI_Long*, NULL)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_ENUM_VALUE(stmt->con, stmt, type, LongTypeValues, OTEXT("Long Type"))
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, LongTypeValues, OTEXT("Long Type"))
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     RETVAL = LongInitialize(stmt, NULL, NULL, type);
     STATUS = (NULL != RETVAL);
@@ -96,9 +96,9 @@ boolean LongFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_LONG, lg)
-    CHECK_OBJECT_FETCHED(lg)
-    CTX_SET_FROM_STMT(lg->stmt)
+    CALL_CHECK_PTR(OCI_IPC_LONG, lg)
+    CALL_CHECK_OBJECT_FETCHED(lg)
+    CALL_CONTEXT_FROM_STMT(lg->stmt)
 
     FREE(lg->buffer)
     FREE(lg)
@@ -132,9 +132,9 @@ unsigned int LongRead
 )
 {
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_LONG, lg)
-    CHECK_PTR(OCI_IPC_VOID, buffer)
-    CTX_SET_FROM_STMT(lg->stmt)
+    CALL_CHECK_PTR(OCI_IPC_LONG, lg)
+    CALL_CHECK_PTR(OCI_IPC_VOID, buffer)
+    CALL_CONTEXT_FROM_STMT(lg->stmt)
 
     STATUS = TRUE;
     RETVAL = len;
@@ -193,9 +193,9 @@ unsigned int LongWrite
     ub4 count    = 0;
 
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_VOID, buffer)
-    CHECK_PTR(OCI_IPC_LONG, lg)
-    CTX_SET_FROM_STMT(lg->stmt)
+    CALL_CHECK_PTR(OCI_IPC_VOID, buffer)
+    CALL_CHECK_PTR(OCI_IPC_LONG, lg)
+    CALL_CONTEXT_FROM_STMT(lg->stmt)
 
     if (OCI_CLONG == lg->type)
     {
@@ -291,8 +291,8 @@ unsigned int LongGetSize
 )
 {
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_LONG, lg)
-    CTX_SET_FROM_STMT(lg->stmt)
+    CALL_CHECK_PTR(OCI_IPC_LONG, lg)
+    CALL_CONTEXT_FROM_STMT(lg->stmt)
 
     RETVAL = lg->size;
 

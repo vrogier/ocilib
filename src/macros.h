@@ -90,19 +90,19 @@
     ctx->lib_stmt     = (s);                                                    \
     ctx->oci_err      = (e) ? (e) : OCILib.err;                                 \
 
-#define CTX_SET_FROM_CON(con)                                                   \
+#define CALL_CONTEXT_FROM_CON(con)                                              \
                                                                                 \
    CTX_SET((con), NULL, ((con) ? (con)->err : OCILib.err))
 
-#define CTX_SET_FROM_OBJ(obj)                                                   \
+#define CALL_CONTEXT_FROM_OBJ(obj)                                              \
                                                                                 \
     CTX_SET(((obj)->con), NULL, ((obj)->err))
 
-#define CTX_SET_FROM_ERR(err)                                                   \
+#define CALL_CONTEXT_FROM_ERR(err)                                              \
                                                                                 \
     CTX_SET(NULL, NULL, (err))
 
-#define CTX_SET_FROM_STMT(stmt)                                                 \
+#define CALL_CONTEXT_FROM_STMT(stmt)                                            \
                                                                                 \
     CTX_SET(((stmt)->con), (stmt), ((stmt)->con->err))
 
@@ -132,7 +132,7 @@
 #define GET_PROP(type, val, objtype, obj, prop, con, stmt, err)                 \
                                                                                 \
     CALL_ENTER(type, val)                                                       \
-    CHECK_PTR(objtype, obj)                                                     \
+    CALL_CHECK_PTR(objtype, obj)                                                \
     CTX_SET((con),(stmt), (err))                                                \
     RETVAL = (type) ((obj)->prop);                                              \
     CALL_EXIT()                                                                 \
@@ -140,7 +140,7 @@
 #define SET_PROP(type, objtype, obj, prop, val, con, stmt, err)                 \
                                                                                 \
     CALL_ENTER(boolean, FALSE)                                                  \
-    CHECK_PTR(objtype, obj)                                                     \
+    CALL_CHECK_PTR(objtype, obj)                                                \
     CTX_SET((con),(stmt), (err))                                                \
     (obj)->prop = (type) (val);                                                 \
     RETVAL = STATUS;                                                            \
@@ -149,9 +149,9 @@
 #define SET_PROP_ENUM(type, objtype, obj, prop, val, enms, msg, con, stmt, err) \
                                                                                 \
     CALL_ENTER(boolean, FALSE)                                                  \
-    CHECK_PTR(objtype, obj)                                                     \
+    CALL_CHECK_PTR(objtype, obj)                                                \
     CTX_SET((con),(stmt), (err))                                                \
-    CHECK_ENUM_VALUE((con),(stmt), (val), (enms), (msg))                        \
+    CALL_CHECK_ENUM_VALUE((con),(stmt), (val), (enms), (msg))                   \
     (obj)->prop = (type) (val);                                                 \
     RETVAL = STATUS;                                                            \
     CALL_EXIT()                                                                 \
@@ -159,14 +159,14 @@
 #define GET_LIB_PROP(type, value, prop)                                         \
                                                                                 \
     CALL_ENTER(type, value)                                                     \
-    CHECK_INITIALIZED()                                                         \
+    CALL_CHECK_INITIALIZED()                                                    \
     RETVAL = (type) (prop);                                                     \
     CALL_EXIT()                                                                 \
 
 #define SET_LIB_PROP(prop, value)                                               \
                                                                                 \
     CALL_ENTER(boolean, FALSE)                                                  \
-    CHECK_INITIALIZED()                                                         \
+    CALL_CHECK_INITIALIZED()                                                    \
     (prop) = (value);                                                           \
     RETVAL = STATUS;                                                            \
     CALL_EXIT()                                                                 \
@@ -256,18 +256,18 @@
 
 #define CHECK(exp, ret) if (exp) return (ret);
 
-#define CHECK_PTR(type, ptr)                                                    \
+#define CALL_CHECK_PTR(type, ptr)                                               \
                                                                                 \
     if (!(ptr))                                                                 \
     {                                                                           \
         THROW(ExceptionNullPointer(type))                                       \
     }
 
-#define CHECK_BIND(stmt, name, data, type, ext_only)                            \
+#define CALL_CHECK_BIND(stmt, name, data, type, ext_only)                       \
                                                                                 \
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)                                          \
-    CHECK_PTR(OCI_IPC_STRING, name)                                             \
-    CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)                                  \
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)                                     \
+    CALL_CHECK_PTR(OCI_IPC_STRING, name)                                        \
+    CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)                             \
     {                                                                           \
         const boolean ext_only_value = (ext_only);                              \
         if ((ext_only_value) &&                                                 \
@@ -279,51 +279,51 @@
                                                                                 \
         if ((ext_only_value) || OCI_BAM_EXTERNAL == (stmt)->bind_alloc_mode)    \
         {                                                                       \
-            CHECK_PTR(type, data)                                               \
+            CALL_CHECK_PTR(type, data)                                          \
         }                                                                       \
     }                                                                           \
 
-#define CHECK_REGISTER(stmt, name)                                              \
+#define CALL_CHECK_REGISTER(stmt, name)                                         \
                                                                                 \
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)                                          \
-    CHECK_PTR(OCI_IPC_STRING, name)                                             \
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)                                     \
+    CALL_CHECK_PTR(OCI_IPC_STRING, name)                                        \
 
-#define CHECK_BOUND(con, v, b1, b2)                                             \
+#define CALL_CHECK_BOUND(con, v, b1, b2)                                        \
                                                                                 \
     if (((v) < (b1)) || ((v) > (b2)))                                           \
     {                                                                           \
         THROW(ExceptionOutOfBounds((con), (v)))                                 \
     }
 
-#define CHECK_MIN(con, stmt, v, m)                                              \
+#define CALL_CHECK_MIN(con, stmt, v, m)                                         \
                                                                                 \
     if ((v) < (m))                                                              \
     {                                                                           \
         THROW(ExceptionMinimumValue((con), (stmt), (m)))                        \
     }
 
-#define CHECK_COMPAT(con, exp)                                                  \
+#define CALL_CHECK_COMPAT(con, exp)                                             \
                                                                                 \
     if (!(exp))                                                                 \
     {                                                                           \
         THROW(ExceptionTypeNotCompatible((con)))                                \
     }
 
-#define CHECK_OBJECT_FETCHED(obj)                                               \
+#define CALL_CHECK_OBJECT_FETCHED(obj)                                          \
                                                                                 \
     if (OCI_OBJECT_FETCHED_CLEAN == (obj)->hstate)                              \
     {                                                                           \
         JUMP_EXIT()                                                             \
     }                                                                           \
 
-#define CHECK_STMT_STATUS(st, v)                                                \
+#define CALL_CHECK_STMT_STATUS(st, v)                                           \
                                                                                 \
     if ((((st)->status) & (v)) == 0)                                            \
     {                                                                           \
         THROW(ExceptionStatementState((st), v))                                 \
     }                                                                           \
 
-#define CHECK_SCROLLABLE_CURSOR_ACTIVATED(st)                                   \
+#define CALL_CHECK_SCROLLABLE_CURSOR_ACTIVATED(st)                              \
                                                                                 \
     if (((st)->nb_rbinds > 0) ||                                                \
         ((st)->exec_mode != OCI_STMT_SCROLLABLE_READONLY))                      \
@@ -331,93 +331,93 @@
         THROW(ExceptionStatementNotScrollable(st))                              \
     }
 
-#define CHECK_DIRPATH_STATUS(dp, v)                                             \
+#define CALL_CHECK_DIRPATH_STATUS(dp, v)                                        \
                                                                                 \
     if ((dp)->status != (v))                                                    \
     {                                                                           \
         THROW(ExceptionDirPathState((dp), (dp)->status))                        \
     }
 
-#define CHECK_INITIALIZED()                                                     \
+#define CALL_CHECK_INITIALIZED()                                                \
                                                                                 \
     if (!OCILib.loaded)                                                         \
     {                                                                           \
         THROW(ExceptionNotInitialized())                                        \
     }
 
-#define CHECK_FEATURE(con, feat, ver)                                           \
+#define CALL_CHECK_FEATURE(con, feat, ver)                                      \
                                                                                 \
     if (OCILib.version_runtime < (ver) || ((con) && (con)->ver_num < (ver)))    \
     {                                                                           \
         THROW(ExceptionNotAvailable(con, feat))                                 \
     }
 
-#define CHECK_THREAD_ENABLED()                                                  \
+#define CALL_CHECK_THREAD_ENABLED()                                             \
                                                                                 \
     if (!(LIB_THREADED))                                                        \
     {                                                                           \
         THROW(ExceptionNotMultithreaded())                                      \
     }
 
-#define CHECK_TIMESTAMP_ENABLED(con)                                            \
+#define CALL_CHECK_TIMESTAMP_ENABLED(con)                                       \
                                                                                 \
-    CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0)  
+    CALL_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0)  
 
-#define CHECK_INTERVAL_ENABLED(con)                                             \
+#define CALL_CHECK_INTERVAL_ENABLED(con)                                        \
                                                                                 \
-    CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0)  
+    CALL_CHECK_FEATURE(con, OCI_FEATURE_TIMESTAMP, OCI_9_0)  
 
-#define CHECK_SCROLLABLE_CURSOR_ENABLED(con)                                    \
+#define CALL_CHECK_SCROLLABLE_CURSOR_ENABLED(con)                               \
                                                                                 \
-    CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9_0)
+    CALL_CHECK_FEATURE(con, OCI_FEATURE_SCROLLABLE_CURSOR, OCI_9_0)
 
-#define CHECK_EXTENDED_PLSQLTYPES_ENABLED(con)                                  \
+#define CALL_CHECK_EXTENDED_PLSQLTYPES_ENABLED(con)                             \
                                                                                 \
-    CHECK_FEATURE(con, OCI_FEATURE_EXTENDED_PLSQLTYPES, OCI_12_1)
+    CALL_CHECK_FEATURE(con, OCI_FEATURE_EXTENDED_PLSQLTYPES, OCI_12_1)
 
-#define CHECK_STATEMENT_CACHING_ENABLED()                                       \
+#define CALL_CHECK_STATEMENT_CACHING_ENABLED()                                  \
                                                                                 \
     if (OCILib.version_runtime < OCI_9_2)                                       \
     {                                                                           \
         THROW(ExceptionNotAvailable((dp)->con, OCI_FEATURE_STATEMENT_CACHING))  \
     }
 
-#define CHECK_DIRPATH_DATE_CACHE_ENABLED(dp)                                    \
+#define CALL_CHECK_DIRPATH_DATE_CACHE_ENABLED(dp)                               \
                                                                                 \
     if (OCILib.version_runtime < OCI_9_2)                                       \
     {                                                                           \
         THROW(ExceptionNotAvailable((dp)->con, OCI_FEATURE_DIRPATH_DATE_CACHE)  \
     }
 
-#define CHECK_REMOTE_DBS_CONTROL_ENABLED()                                      \
+#define CALL_CHECK_REMOTE_DBS_CONTROL_ENABLED()                                 \
                                                                                 \
     if (OCILib.version_runtime < OCI_10_2)                                      \
     {                                                                           \
         THROW(ExceptionNotAvailable(NULL, OCI_FEATURE_REMOTE_DBS_CONTROL))      \
     }
 
-#define CHECK_DATABASE_NOTIFY_ENABLED()                                         \
+#define CALL_CHECK_DATABASE_NOTIFY_ENABLED()                                    \
                                                                                 \
     if (OCILib.version_runtime < OCI_10_2)                                      \
     {                                                                           \
         THROW(ExceptionNotAvailable(NULL, OCI_FEATURE_DATABASE_NOTIFY))         \
     }
 
-#define CHECK_HIGH_AVAILABILITY_ENABLED()                                       \
+#define CALL_CHECK_HIGH_AVAILABILITY_ENABLED()                                  \
                                                                                 \
     if (OCILib.version_runtime < OCI_10_2)                                      \
     {                                                                           \
         THROW(ExceptionNotAvailable(NULL, OCI_FEATURE_HIGH_AVAILABILITY))       \
     }
 
-#define CHECK_XA_ENABLED(mode)                                                  \
+#define CALL_CHECK_XA_ENABLED(mode)                                             \
                                                                                 \
     if ( ((mode) & OCI_SESSION_XA) && (!OCILib.use_xa) )                        \
     {                                                                           \
         THROW(ExceptionNotAvailable(NULL, OCI_FEATURE_XA))                      \
     }
 
-#define CHECK_ENUM_VALUE(con, stmt, mode, values, name)                         \
+#define CALL_CHECK_ENUM_VALUE(con, stmt, mode, values, name)                    \
                                                                                 \
     {                                                                           \
         size_t ii = 0, nn = sizeof(values) / sizeof((values)[0]);               \

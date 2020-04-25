@@ -123,11 +123,11 @@ boolean ColumnRetrieveInfo
 
     if (stmt)
     {
-        CTX_SET_FROM_STMT(stmt);
+        CALL_CONTEXT_FROM_STMT(stmt);
     }
     else
     {
-        CTX_SET_FROM_CON(con);
+        CALL_CONTEXT_FROM_CON(con);
     }
 
     /* get descriptor */
@@ -824,7 +824,7 @@ unsigned int ColumnGetCharsetForm
 )
 {
     CALL_ENTER(unsigned int, OCI_CSF_NONE)
-    CHECK_PTR(OCI_IPC_COLUMN, col)
+    CALL_CHECK_PTR(OCI_IPC_COLUMN, col)
 
     if (SQLCS_NCHAR == col->csfrm)
     {
@@ -849,7 +849,7 @@ unsigned int ColumnGetSize
 {
     CALL_ENTER(unsigned int, 0)
 
-    CHECK_PTR(OCI_IPC_COLUMN, col)
+    CALL_CHECK_PTR(OCI_IPC_COLUMN, col)
 
     /* Oracle 9i introduced CHAR attribute on string columns to indicate the
        size of the column is not in bytes (default) but in chars
@@ -886,7 +886,7 @@ int ColumnGetPrecision
 )
 {
     CALL_ENTER(int, 0)
-    CHECK_PTR(OCI_IPC_COLUMN, col)
+    CALL_CHECK_PTR(OCI_IPC_COLUMN, col)
 
     RETVAL = (OCI_CDT_NUMERIC == col->datatype) ? (int) col->prec : 0;
 
@@ -903,7 +903,7 @@ int ColumnGetFractionalPrecision
 )
 {
     CALL_ENTER(int, 0)
-    CHECK_PTR(OCI_IPC_COLUMN, col)
+    CALL_CHECK_PTR(OCI_IPC_COLUMN, col)
 
     if (OCI_CDT_TIMESTAMP == col->datatype)
     {
@@ -927,7 +927,7 @@ int ColumnGetLeadingPrecision
 )
 {
     CALL_ENTER(int, 0)
-    CHECK_PTR(OCI_IPC_COLUMN, col)
+    CALL_CHECK_PTR(OCI_IPC_COLUMN, col)
 
     RETVAL = (OCI_CDT_INTERVAL == col->datatype) ? (int) col->prec : 0;
     STATUS = TRUE;
@@ -945,7 +945,7 @@ boolean ColumnGetNullable
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_COLUMN, col)
+    CALL_CHECK_PTR(OCI_IPC_COLUMN, col)
 
     RETVAL = (1 == col->nullable);
 
@@ -998,7 +998,7 @@ const otext * ColumnGetSqlType
 )
 {
     CALL_ENTER(const otext*, NULL)
-    CHECK_PTR(OCI_IPC_COLUMN, col)
+    CALL_CHECK_PTR(OCI_IPC_COLUMN, col)
 
     /* VARCHAR type will not be returned because Oracle does not make any
        difference with VARCHAR2. If a column is created with VARCHAR, it is
@@ -1221,8 +1221,8 @@ unsigned int ColumnGetFullSqlType
 {
     CALL_ENTER(unsigned int, 0)
 
-    CHECK_PTR(OCI_IPC_COLUMN, col)
-    CHECK_PTR(OCI_IPC_STRING, buffer)
+    CALL_CHECK_PTR(OCI_IPC_COLUMN, col)
+    CALL_CHECK_PTR(OCI_IPC_STRING, buffer)
 
     buffer[0] = 0;
 
@@ -1499,7 +1499,7 @@ unsigned int ColumnGetSubType
 )
 {
     CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    CHECK_PTR(OCI_IPC_COLUMN, col)
+    CALL_CHECK_PTR(OCI_IPC_COLUMN, col)
 
     if (OCI_CDT_LONG      == col->datatype  ||
         OCI_CDT_LOB       == col->datatype  ||

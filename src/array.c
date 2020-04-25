@@ -33,7 +33,7 @@
 #include "reference.h"
 #include "timestamp.h"
 
-#define OCI_ARRAY_INIT_HANDLE(type, func)                                   \
+#define ARRAY_INIT_HANDLE(type, func)                                       \
     arr->tab_obj[i] = func;                                                 \
     ((void **)(arr->mem_handle))[i] = ((type *) arr->tab_obj[i])->handle;   \
 
@@ -112,37 +112,37 @@ boolean ArrayInitialize
             }
             case OCI_CDT_LOB:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Lob, LobInitialize(arr->con, (OCI_Lob *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype))
+                ARRAY_INIT_HANDLE(OCI_Lob, LobInitialize(arr->con, (OCI_Lob *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_FILE:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_File, FileInitialize(arr->con, (OCI_File *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype))
+                ARRAY_INIT_HANDLE(OCI_File, FileInitialize(arr->con, (OCI_File *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_TIMESTAMP:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Timestamp, TimestampInitialize(arr->con, (OCI_Timestamp *) arr->tab_obj[i], (OCIDateTime *) handle, arr->elem_subtype))
+                ARRAY_INIT_HANDLE(OCI_Timestamp, TimestampInitialize(arr->con, (OCI_Timestamp *) arr->tab_obj[i], (OCIDateTime *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_INTERVAL:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Interval, IntervalInitialize(arr->con, (OCI_Interval *) arr->tab_obj[i], (OCIInterval *) handle, arr->elem_subtype))
+                ARRAY_INIT_HANDLE(OCI_Interval, IntervalInitialize(arr->con, (OCI_Interval *) arr->tab_obj[i], (OCIInterval *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_OBJECT:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Object, ObjectInitialize(arr->con, (OCI_Object *)arr->tab_obj[i], handle, typinf, NULL, -1, TRUE))
+                ARRAY_INIT_HANDLE(OCI_Object, ObjectInitialize(arr->con, (OCI_Object *)arr->tab_obj[i], handle, typinf, NULL, -1, TRUE))
                 break;
             }
             case OCI_CDT_COLLECTION:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Coll, CollectionInitialize(arr->con, (OCI_Coll *) arr->tab_obj[i], handle, typinf))
+                ARRAY_INIT_HANDLE(OCI_Coll, CollectionInitialize(arr->con, (OCI_Coll *) arr->tab_obj[i], handle, typinf))
                 break;
             }
             case OCI_CDT_REF:
             {
-                OCI_ARRAY_INIT_HANDLE(OCI_Ref, ReferenceInitialize(arr->con, typinf, (OCI_Ref *) arr->tab_obj[i], handle))
+                ARRAY_INIT_HANDLE(OCI_Ref, ReferenceInitialize(arr->con, typinf, (OCI_Ref *) arr->tab_obj[i], handle))
                 break;
             }
         }
@@ -205,7 +205,7 @@ OCI_Array * ArrayCreate
     OCI_Array *arr = NULL;
 
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_CON(con)
+    CALL_CONTEXT_FROM_CON(con)
 
     /* create array object */
 

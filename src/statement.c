@@ -83,8 +83,8 @@ static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLI
 #define OCI_BIND_CALL(type, check, ...)                             \
                                                                     \
     CALL_ENTER(boolean, FALSE)                                      \
-    CHECK_BIND(stmt, name, data, type, check)                       \
-    CTX_SET_FROM_STMT(stmt)                                         \
+    CALL_CHECK_BIND(stmt, name, data, type, check)                  \
+    CALL_CONTEXT_FROM_STMT(stmt)                                    \
     BIND_DATA(__VA_ARGS__)                                          \
     RETVAL = STATUS;                                                \
     CALL_EXIT()                                                     \
@@ -100,9 +100,9 @@ static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLI
 #define REGISTER_CALL(...)                                          \
                                                                     \
     CALL_ENTER(boolean, FALSE)                                      \
-    CHECK_REGISTER(stmt, name)                                      \
-    CTX_SET_FROM_STMT(stmt)                                         \
-    REGISTER_DATA(__VA_ARGS__)                                  \
+    CALL_CHECK_REGISTER(stmt, name)                                 \
+    CALL_CONTEXT_FROM_STMT(stmt)                                    \
+    REGISTER_DATA(__VA_ARGS__)                                      \
     RETVAL = STATUS;                                                \
     CALL_EXIT()                                                     \
 
@@ -310,7 +310,7 @@ boolean StatementBindCheck
         return FALSE;
     }
 
-    CTX_SET_FROM_STMT(bnd->stmt)
+    CALL_CONTEXT_FROM_STMT(bnd->stmt)
 
     // Non-scalar type binds
     if (bnd->alloc && src)
@@ -424,7 +424,7 @@ boolean StatementBindUpdate
         return FALSE;
     }
 
-    CTX_SET_FROM_STMT(bnd->stmt)
+    CALL_CONTEXT_FROM_STMT(bnd->stmt)
 
     // OCI_Number binds
     if ((OCI_CDT_NUMERIC == bnd->type) && (SQLT_VNU == bnd->code))
@@ -793,7 +793,7 @@ OCI_Statement * StatementInitialize
 )
 {
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_CON(con)
+    CALL_CONTEXT_FROM_CON(con)
 
     ALLOC_DATA(OCI_IPC_STATEMENT, stmt, 1);
 
@@ -901,7 +901,7 @@ boolean StatementCheckImplicitResultsets
 )
 {
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
@@ -960,7 +960,7 @@ boolean StatementBatchErrorInit
     ub4 err_count = 0;
 
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     StatementBatchErrorClear(stmt);
 
@@ -1063,7 +1063,7 @@ boolean StatementPrepareInternal
     int     dbsize = -1;
 
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     /* reset statement */
 
@@ -1162,7 +1162,7 @@ boolean StatementExecuteInternal
     ub4 iters = 0;
 
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     /* set up iterations and mode values for execution */
 
@@ -1321,8 +1321,8 @@ OCI_Statement * StatementCreate
 )
 {
     CALL_ENTER(OCI_Statement *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     /* create statement object */
 
@@ -1354,9 +1354,9 @@ boolean StatementFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_OBJECT_FETCHED(stmt)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_OBJECT_FETCHED(stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     StatementDispose(stmt);
     ListRemove(stmt->con->stmts, stmt);
@@ -1378,9 +1378,9 @@ OCI_Resultset * StatementGetResultset
 )
 {
     CALL_ENTER(OCI_Resultset*, NULL)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_STMT_STATUS(stmt, OCI_STMT_DESCRIBED)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_DESCRIBED)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     /* if the sql statement does not return a result, we just return NULL and not
        throwing any exception
@@ -1432,9 +1432,9 @@ OCI_Resultset * StatementGetNextResultset
 )
 {
     CALL_ENTER(OCI_Resultset*, NULL)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_STMT_STATUS(stmt, OCI_STMT_DESCRIBED)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_DESCRIBED)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     if (stmt->cur_rs < (stmt->nb_rs-1))
     {
@@ -1456,8 +1456,8 @@ boolean StatementReleaseResultsets
     ub4 i;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     /* Release statements for implicit resultsets */
     if (stmt->stmts)
@@ -1503,9 +1503,9 @@ boolean StatementPrepare
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_PTR(OCI_IPC_STRING, sql)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     RETVAL = STATUS = StatementPrepareInternal(stmt, sql);
 
@@ -1522,9 +1522,9 @@ boolean StatementExecute
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     RETVAL = STATUS = StatementExecuteInternal(stmt, OCI_DEFAULT);
 
@@ -1542,9 +1542,9 @@ boolean StatementExecuteStmt
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_PTR(OCI_IPC_STRING, sql)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     RETVAL = STATUS = StatementPrepareInternal(stmt, sql) && StatementExecuteInternal(stmt, OCI_DEFAULT);
 
@@ -1562,9 +1562,9 @@ boolean StatementParse
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_PTR(OCI_IPC_STRING, sql)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     RETVAL = STATUS = StatementPrepareInternal(stmt, sql) && StatementExecuteInternal(stmt, OCI_PARSE_ONLY);
 
@@ -1582,9 +1582,9 @@ boolean StatementDescribe
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_PTR(OCI_IPC_STRING, sql)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     STATUS = StatementPrepareInternal(stmt, sql);
 
@@ -1613,9 +1613,9 @@ boolean StatementPrepareFmt
     va_list second_pass_args;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_PTR(OCI_IPC_STRING, sql)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     va_copy(first_pass_args, args);
     va_copy(second_pass_args, args);
@@ -1670,9 +1670,9 @@ boolean StatementExecuteStmtFmt
     va_list second_pass_args;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_PTR(OCI_IPC_STRING, sql)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     va_copy(first_pass_args, args);
     va_copy(second_pass_args, args);
@@ -1727,9 +1727,9 @@ boolean StatementParseFmt
     va_list second_pass_args;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_PTR(OCI_IPC_STRING, sql)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     va_copy(first_pass_args, args);
     va_copy(second_pass_args, args);
@@ -1784,9 +1784,9 @@ boolean StatementDescribeFmt
     va_list second_pass_args;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_PTR(OCI_IPC_STRING, sql)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     va_copy(first_pass_args, args);
     va_copy(second_pass_args, args);
@@ -1837,10 +1837,10 @@ boolean StatementSetBindArraySize
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_MIN(stmt->con, stmt, size, 1)
-    CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_MIN(stmt->con, stmt, size, 1)
+    CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     /* if the statements already has binds, we need to check if the new size is
        not greater than the initial size
@@ -1915,9 +1915,9 @@ boolean StatementBindBoolean
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_BOOLEAN, TRUE)
-    CHECK_EXTENDED_PLSQLTYPES_ENABLED(stmt->con)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_BOOLEAN, TRUE)
+    CALL_CHECK_EXTENDED_PLSQLTYPES_ENABLED(stmt->con)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
@@ -2193,8 +2193,8 @@ boolean StatementBindString
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_STRING, FALSE)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_STRING, FALSE)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     if ((len == 0) || len == (UINT_MAX))
     {
@@ -2237,9 +2237,9 @@ boolean StatementBindArrayOfStrings
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_STRING, FALSE)
-    CHECK_MIN(stmt->con, stmt, len, 1)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_STRING, FALSE)
+    CALL_CHECK_MIN(stmt->con, stmt, len, 1)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     const unsigned int size = (len + 1) * (ub4) sizeof(dbtext);
 
@@ -2263,8 +2263,8 @@ boolean StatementBindRaw
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_VOID, FALSE)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_VOID, FALSE)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     if (len == 0 && !data)
     {
@@ -2296,9 +2296,9 @@ boolean StatementBindArrayOfRaws
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_VOID, FALSE)
-    CHECK_MIN(stmt->con, stmt, len, 1)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_VOID, FALSE)
+    CALL_CHECK_MIN(stmt->con, stmt, len, 1)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     BIND_DATA(len, OCI_CDT_RAW, SQLT_BIN, 0, NULL, nbelem)
 
@@ -2321,8 +2321,8 @@ boolean StatementBindDouble
     unsigned int code = SQLT_FLT;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_DOUBLE, FALSE)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_DOUBLE, FALSE)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -2355,8 +2355,8 @@ boolean StatementBindArrayOfDoubles
     unsigned int code = SQLT_FLT;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_DOUBLE, FALSE)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_DOUBLE, FALSE)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -2388,8 +2388,8 @@ boolean StatementBindFloat
     unsigned int code = SQLT_FLT;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_FLOAT, FALSE);
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_FLOAT, FALSE);
+    CALL_CONTEXT_FROM_STMT(stmt)
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -2422,8 +2422,8 @@ boolean StatementBindArrayOfFloats
     unsigned int code = SQLT_FLT;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_FLOAT, FALSE)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_FLOAT, FALSE)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -2488,9 +2488,9 @@ boolean StatementBindTimestamp
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_TIMESTAMP, TRUE)
-    CHECK_TIMESTAMP_ENABLED(stmt->con)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_TIMESTAMP, TRUE)
+    CALL_CHECK_TIMESTAMP_ENABLED(stmt->con)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -2519,13 +2519,13 @@ boolean StatementBindArrayOfTimestamps
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_TIMESTAMP, FALSE)
-    CHECK_TIMESTAMP_ENABLED(stmt->con)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_TIMESTAMP, FALSE)
+    CALL_CHECK_TIMESTAMP_ENABLED(stmt->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    CHECK_ENUM_VALUE(stmt->con, stmt, type, TimestampTypeValues, OTEXT("Timestamp type"))
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, TimestampTypeValues, OTEXT("Timestamp type"))
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     BIND_DATA(sizeof(OCIDateTime *), OCI_CDT_TIMESTAMP,
                   ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, type),
@@ -2556,9 +2556,9 @@ boolean StatementBindInterval
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_INTERVAL, TRUE)
-    CHECK_INTERVAL_ENABLED(stmt->con)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_INTERVAL, TRUE)
+    CALL_CHECK_INTERVAL_ENABLED(stmt->con)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -2591,13 +2591,13 @@ boolean StatementBindArrayOfIntervals
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_INTERVAL, FALSE)
-    CHECK_INTERVAL_ENABLED(stmt->con)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_INTERVAL, FALSE)
+    CALL_CHECK_INTERVAL_ENABLED(stmt->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    CHECK_ENUM_VALUE(stmt->con, stmt, type, IntervalTypeValues, OTEXT("Interval type"))
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, IntervalTypeValues, OTEXT("Interval type"))
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     BIND_DATA(sizeof(OCIInterval *), OCI_CDT_INTERVAL,
                   ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, type),
@@ -2647,9 +2647,9 @@ boolean StatementBindArrayOfObjects
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_OBJECT, FALSE)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_OBJECT, FALSE)
+    CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     BIND_DATA(sizeof(void *), OCI_CDT_OBJECT, SQLT_NTY, 0, typinf, nbelem)
 
@@ -2692,9 +2692,9 @@ boolean StatementBindArrayOfLobs
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_LOB, FALSE)
-    CTX_SET_FROM_STMT(stmt)
-    CHECK_ENUM_VALUE(stmt->con, stmt, type, LobTypeValues, OTEXT("Lob type"))
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_LOB, FALSE)
+    CALL_CONTEXT_FROM_STMT(stmt)
+    CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, LobTypeValues, OTEXT("Lob type"))
 
     BIND_DATA(sizeof(OCILobLocator*), OCI_CDT_LOB,
                   ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
@@ -2739,9 +2739,9 @@ boolean StatementBindArrayOfFiles
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_LOB, OCI_IPC_FILE)
-    CHECK_ENUM_VALUE(stmt->con, stmt, type, FileTypeValues, OTEXT("File type"))
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_LOB, OCI_IPC_FILE)
+    CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, FileTypeValues, OTEXT("File type"))
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     BIND_DATA(sizeof(OCILobLocator*), OCI_CDT_FILE,
                   ExternalSubTypeToSQLType(OCI_CDT_FILE, type),
@@ -2836,8 +2836,8 @@ boolean StatementBindStatement
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_BIND(stmt, name, data, OCI_IPC_STATEMENT, TRUE)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_BIND(stmt, name, data, OCI_IPC_STATEMENT, TRUE)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     BIND_DATA(sizeof(OCIStmt*), OCI_CDT_CURSOR, SQLT_RSET, 0, NULL, 0)
 
@@ -2969,9 +2969,9 @@ boolean StatementRegisterString
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_REGISTER(stmt, name)
-    CHECK_MIN(stmt->con, stmt, len, 1)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_REGISTER(stmt, name)
+    CALL_CHECK_MIN(stmt->con, stmt, len, 1)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     const int size = (len + 1) * (ub4) sizeof(dbtext);
 
@@ -2994,9 +2994,9 @@ boolean StatementRegisterRaw
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_REGISTER(stmt, name)
-    CHECK_MIN(stmt->con, stmt, len, 1)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_REGISTER(stmt, name)
+    CALL_CHECK_MIN(stmt->con, stmt, len, 1)
+    CALL_CONTEXT_FROM_STMT(stmt)
         
     REGISTER_DATA(len, OCI_CDT_RAW, SQLT_BIN, 0, NULL, 0)
 
@@ -3045,8 +3045,8 @@ boolean StatementRegisterDate
     unsigned int size = sizeof(OCIDate);
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_REGISTER(stmt, name)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_REGISTER(stmt, name)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     /* versions of OCI (< 10.2) crashes if SQLT_ODT is passed for output
        data with returning clause.
@@ -3077,13 +3077,13 @@ boolean StatementRegisterTimestamp
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_REGISTER(stmt, name)
-    CHECK_TIMESTAMP_ENABLED(stmt->con)
+    CALL_CHECK_REGISTER(stmt, name)
+    CALL_CHECK_TIMESTAMP_ENABLED(stmt->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    CHECK_ENUM_VALUE(stmt->con, stmt, type, TimestampTypeValues, OTEXT("Timestamp type"))
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, TimestampTypeValues, OTEXT("Timestamp type"))
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     REGISTER_DATA(sizeof(OCIDateTime *), OCI_CDT_TIMESTAMP,
                       ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, type),
@@ -3108,13 +3108,13 @@ boolean StatementRegisterInterval
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_REGISTER(stmt, name)
-    CHECK_INTERVAL_ENABLED(stmt->con)
+    CALL_CHECK_REGISTER(stmt, name)
+    CALL_CHECK_INTERVAL_ENABLED(stmt->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    CHECK_ENUM_VALUE(stmt->con, stmt, type, IntervalTypeValues, OTEXT("Interval type"))
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, IntervalTypeValues, OTEXT("Interval type"))
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     REGISTER_DATA(sizeof(OCIInterval *), OCI_CDT_INTERVAL,
                       ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, type),
@@ -3139,9 +3139,9 @@ boolean StatementRegisterObject
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_REGISTER(stmt, name)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_REGISTER(stmt, name)
+    CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     REGISTER_DATA(sizeof(void *), OCI_CDT_OBJECT, SQLT_NTY, 0, typinf, 0)
 
@@ -3162,9 +3162,9 @@ boolean StatementRegisterLob
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_REGISTER(stmt, name)
-    CHECK_ENUM_VALUE(stmt->con, stmt, type, LobTypeValues, OTEXT("Lob type"))
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_REGISTER(stmt, name)
+    CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, LobTypeValues, OTEXT("Lob type"))
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     REGISTER_DATA(sizeof(OCILobLocator*), OCI_CDT_LOB,
                       ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
@@ -3187,9 +3187,9 @@ boolean StatementRegisterFile
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_REGISTER(stmt, name)
-    CHECK_ENUM_VALUE(stmt->con, stmt, type, FileTypeValues, OTEXT("File type"))
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_REGISTER(stmt, name)
+    CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, FileTypeValues, OTEXT("File type"))
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     REGISTER_DATA(sizeof(OCILobLocator*), OCI_CDT_FILE,
                       ExternalSubTypeToSQLType(OCI_CDT_FILE, type),
@@ -3212,9 +3212,9 @@ boolean StatementRegisterReference
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_REGISTER(stmt, name)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_REGISTER(stmt, name)
+    CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     REGISTER_DATA(sizeof(OCIRef *), OCI_CDT_REF, SQLT_REF, 0, typinf, 0)
 
@@ -3248,10 +3248,10 @@ boolean StatementSetFetchMode
     unsigned int old_exec_mode = OCI_UNKNOWN;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_SCROLLABLE_CURSOR_ENABLED(stmt->con)
-    CHECK_ENUM_VALUE(stmt->con, stmt, mode, FetchModeValues, OTEXT("Fetch mode"))
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_SCROLLABLE_CURSOR_ENABLED(stmt->con)
+    CALL_CHECK_ENUM_VALUE(stmt->con, stmt, mode, FetchModeValues, OTEXT("Fetch mode"))
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     old_exec_mode = stmt->exec_mode;
     stmt->exec_mode = mode;
@@ -3348,9 +3348,9 @@ boolean StatementSetFetchSize
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_MIN(stmt->con, stmt, size, 1)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_MIN(stmt->con, stmt, size, 1)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     stmt->fetch_size = size;
 
@@ -3382,8 +3382,8 @@ boolean StatementSetPrefetchSize
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     stmt->prefetch_size = size;
 
@@ -3427,8 +3427,8 @@ boolean StatementSetPrefetchMemory
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     stmt->prefetch_mem = size;
 
@@ -3465,9 +3465,9 @@ boolean StatementSetLongMaxSize
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_MIN(stmt->con, stmt, size, 1)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_MIN(stmt->con, stmt, size, 1)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     stmt->long_size = size;
 
@@ -3574,8 +3574,8 @@ unsigned int StatementGetAffectedRows
     ub4 count = 0;
 
     CALL_ENTER(unsigned int, count)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     ATTRIB_GET(OCI_HTYPE_STMT, OCI_ATTR_ROW_COUNT, stmt->stmt, &count, NULL)
 
@@ -3607,9 +3607,9 @@ OCI_Bind * StatementGetBind
 )
 {
     CALL_ENTER(OCI_Bind*, NULL)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_BOUND(stmt->con, index, 1, stmt->nb_ubinds)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_BOUND(stmt->con, index, 1, stmt->nb_ubinds)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     RETVAL = stmt->ubinds[index - 1];
 
@@ -3629,9 +3629,9 @@ OCI_Bind * StatementGetBind2
     int index = -1;
 
     CALL_ENTER(OCI_Bind*, NULL)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, name)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     index = BindGetIndex(stmt, name);
 
@@ -3660,9 +3660,9 @@ unsigned int StatementGetBindIndex
     int index = -1;
 
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, name)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     STATUS = FALSE;
 
@@ -3689,9 +3689,9 @@ unsigned int StatementGetSqlCommand
     ub2 code = OCI_UNKNOWN;
 
     CALL_ENTER(unsigned int, code)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_STMT_STATUS(stmt, OCI_STMT_EXECUTED)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_EXECUTED)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     ATTRIB_GET(OCI_HTYPE_STMT, OCI_ATTR_SQLFNCODE, stmt->stmt, &code, NULL)
 
@@ -3712,8 +3712,8 @@ const otext * StatementGetSqlVerb
     unsigned int code = OCI_UNKNOWN;
 
     CALL_ENTER(const otext *, NULL)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     code = StatementGetSqlCommand(stmt);
 
@@ -3742,8 +3742,8 @@ OCI_Error * StatementGetBatchError
 )
 {
     CALL_ENTER(OCI_Error*, NULL)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     if (stmt->batch && (stmt->batch->cur < stmt->batch->count))
     {
@@ -3763,8 +3763,8 @@ unsigned int StatementGetBatchErrorCount
 )
 {
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CTX_SET_FROM_STMT(stmt)
+    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CALL_CONTEXT_FROM_STMT(stmt)
 
     if (stmt->batch)
     {

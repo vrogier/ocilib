@@ -127,7 +127,7 @@ OCI_HashTable * HashCreate
     OCI_HashTable *table = NULL;
 
     CALL_ENTER(OCI_HashTable*, table)
-    CHECK_ENUM_VALUE(NULL, NULL, type, HashTypeValues, OTEXT("Hash type"));
+    CALL_CHECK_ENUM_VALUE(NULL, NULL, type, HashTypeValues, OTEXT("Hash type"));
 
     /* allocate table structure */
 
@@ -176,7 +176,7 @@ boolean HashFree
     OCI_HashValue *v1 = NULL, *v2 = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
     if (table->items)
     {
@@ -236,7 +236,7 @@ unsigned int HashGetSize
 )
 {
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
     RETVAL = table->size;
 
@@ -253,7 +253,7 @@ unsigned int HashGetType
 )
 {
     CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
     RETVAL = table->type;
 
@@ -272,7 +272,7 @@ OCI_HashValue * HashGetValue
     OCI_HashEntry *e = NULL;
 
     CALL_ENTER(OCI_HashValue*, NULL)
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
     e = HashLookup(table, key, FALSE);
 
@@ -295,7 +295,7 @@ OCI_HashEntry * HashGetEntry
 )
 {
     CALL_ENTER(OCI_HashEntry*, NULL)
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
     
     if (index < table->size)
     {
@@ -318,8 +318,8 @@ const otext * HashGetString
     OCI_HashValue *v = NULL;
 
     CALL_ENTER(const otext *, NULL)
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
+    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
 
     v = HashGetValue(table, key);
 
@@ -344,8 +344,8 @@ int HashGetInt
     OCI_HashValue *v = NULL;
 
     CALL_ENTER(int, 0)
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
+    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
 
     v = HashGetValue(table, key);
 
@@ -370,8 +370,8 @@ void * HashGetPointer
     OCI_HashValue *v = NULL;
 
     CALL_ENTER(void *, NULL)
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
+    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
 
     v = HashGetValue(table, key);
 
@@ -397,8 +397,8 @@ boolean HashAddString
     OCI_Variant v;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
+    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
 
     v.p_text = (otext *) value;
 
@@ -421,8 +421,8 @@ boolean HashAddInt
     OCI_Variant v;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
+    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
 
     v.num = value;
 
@@ -445,8 +445,8 @@ boolean HashAddPointer
     OCI_Variant v;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
+    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
 
     v.p_void = value;
 
@@ -469,8 +469,8 @@ OCI_HashEntry * HashLookup
     OCI_HashEntry *e = NULL, *e1 = NULL, *e2 = NULL;
 
     CALL_ENTER(OCI_HashEntry*, NULL)
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_PTR(OCI_IPC_STRING, key)
+    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CALL_CHECK_PTR(OCI_IPC_STRING, key)
 
     const unsigned int i = HashCompute(table, key);
 

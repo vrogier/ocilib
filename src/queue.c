@@ -47,11 +47,11 @@ boolean QueueCreate
     OCI_Statement *st = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_name)
-    CHECK_PTR(OCI_IPC_STRING, queue_table)
-    CHECK_ENUM_VALUE(con, NULL, queue_type, QueueTypeValues, OTEXT("Queue type"))
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CALL_CHECK_ENUM_VALUE(con, NULL, queue_type, QueueTypeValues, OTEXT("Queue type"))
+    CALL_CONTEXT_FROM_CON(con)
 
     st = StatementCreate(con);
 
@@ -116,9 +116,9 @@ boolean QueueAlter
     OCI_Statement *st = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_name)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CALL_CONTEXT_FROM_CON(con)
 
     st = StatementCreate(con);
 
@@ -168,9 +168,9 @@ boolean QueueDrop
     OCI_Statement *st = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_name)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CALL_CONTEXT_FROM_CON(con)
 
     st = StatementCreate(con);
 
@@ -214,9 +214,9 @@ boolean QueueStart
     OCI_Statement *st = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_name)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CALL_CONTEXT_FROM_CON(con)
 
     st = StatementCreate(con);
 
@@ -274,9 +274,9 @@ boolean QueueStop
     OCI_Statement *st = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_name)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CALL_CONTEXT_FROM_CON(con)
 
     st = StatementCreate(con);
 
@@ -347,11 +347,11 @@ boolean QueueTableCreate
 
     CALL_ENTER(boolean, FALSE)
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_table)
-    CHECK_PTR(OCI_IPC_STRING, queue_payload_type)
-    CHECK_ENUM_VALUE(con, NULL, message_grouping, GroupingModeValues, OTEXT("Grouping mode"))
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CALL_CHECK_PTR(OCI_IPC_STRING, queue_payload_type)
+    CALL_CHECK_ENUM_VALUE(con, NULL, message_grouping, GroupingModeValues, OTEXT("Grouping mode"))
+    CALL_CONTEXT_FROM_CON(con)
 
     st = StatementCreate(con);
 
@@ -419,9 +419,9 @@ boolean QueueTableAlter
     OCI_Statement *st = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_table)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CALL_CONTEXT_FROM_CON(con)
 
     st = StatementCreate(con);
 
@@ -470,9 +470,9 @@ boolean QueueTableDrop
     OCI_Statement *st = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_table)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CALL_CONTEXT_FROM_CON(con)
 
     st = StatementCreate(con);
 
@@ -522,10 +522,10 @@ boolean QueueTablePurge
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_table)
-    CHECK_ENUM_VALUE(con, NULL, delivery_mode, DeliveryModeValues, OTEXT("Delivery mode"))
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CALL_CHECK_ENUM_VALUE(con, NULL, delivery_mode, DeliveryModeValues, OTEXT("Delivery mode"))
+    CALL_CONTEXT_FROM_CON(con)
 
     if (con->ver_num >= OCI_10_1)
     {
@@ -591,10 +591,10 @@ boolean QueueTableMigrate
     OCI_Statement *st = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_table)
-    CHECK_PTR(OCI_IPC_STRING, compatible)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CALL_CHECK_PTR(OCI_IPC_STRING, compatible)
+    CALL_CONTEXT_FROM_CON(con)
 
     st = StatementCreate(con);
 

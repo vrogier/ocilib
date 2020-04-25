@@ -41,7 +41,7 @@ OCI_Interval * IntervalInitialize
 )
 {
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_CON(con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
  
@@ -105,12 +105,12 @@ OCI_Interval * IntervalCreate
 )
 {
     CALL_ENTER(OCI_Interval*, NULL)
-    CHECK_INITIALIZED()
-    CHECK_INTERVAL_ENABLED(con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_INITIALIZED()
+    CALL_CHECK_INTERVAL_ENABLED(con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
-    CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"));
+    CALL_CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"));
 #endif
 
     RETVAL = IntervalInitialize(con, NULL, NULL, type);
@@ -129,10 +129,10 @@ boolean IntervalFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_INTERVAL_ENABLED(itv->con)
-    CHECK_OBJECT_FETCHED(itv);
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CHECK_INTERVAL_ENABLED(itv->con)
+    CALL_CHECK_OBJECT_FETCHED(itv);
+    CALL_CONTEXT_FROM_OBJ(itv)
 
     if (OCI_OBJECT_ALLOCATED == itv->hstate)
     {
@@ -163,11 +163,11 @@ OCI_Interval ** IntervalCreateArray
     OCI_Array *arr = NULL;
 
     CALL_ENTER(OCI_Interval **, NULL)
-    CHECK_INTERVAL_ENABLED(con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_INTERVAL_ENABLED(con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
-    CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"))
+    CALL_CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"))
 #endif
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -204,7 +204,7 @@ boolean IntervalFreeArray
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_ARRAY, itvs)
+    CALL_CHECK_PTR(OCI_IPC_ARRAY, itvs)
 
     RETVAL = STATUS = ArrayFreeFromHandles((void **)itvs);
 
@@ -234,9 +234,9 @@ boolean IntervalAssign
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv_src)
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv_src)
+    CALL_CONTEXT_FROM_OBJ(itv)
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -261,8 +261,8 @@ int IntervalCheck
     ub4 value = (ub4) OCI_ERROR;
     
     CALL_ENTER(int, value)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CONTEXT_FROM_OBJ(itv)
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -288,9 +288,9 @@ int IntervalCompare
     sword value = OCI_ERROR;
     
     CALL_ENTER(int, value)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv2)
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv2)
+    CALL_CONTEXT_FROM_OBJ(itv)
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -317,9 +317,9 @@ boolean IntervalFromString
     int     dbsize = -1;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_STRING, str)
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CHECK_PTR(OCI_IPC_STRING, str)
+    CALL_CONTEXT_FROM_OBJ(itv)
 
     dbstr = StringGetDBString(str, &dbsize);
 
@@ -354,9 +354,9 @@ boolean IntervalToString
     size_t  len    = 0;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_STRING, str)
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CHECK_PTR(OCI_IPC_STRING, str)
+    CALL_CONTEXT_FROM_OBJ(itv)
 
     /* initialize output buffer in case of OCI failure */
 
@@ -413,9 +413,9 @@ boolean IntervalFromTimeZone
     int     dbsize = -1;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_STRING, str)
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CHECK_PTR(OCI_IPC_STRING, str)
+    CALL_CONTEXT_FROM_OBJ(itv)
 
     dbstr = StringGetDBString(str, &dbsize);
 
@@ -447,12 +447,12 @@ boolean IntervalGetDaySecond
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_INT, hour)
-    CHECK_PTR(OCI_IPC_INT, min)
-    CHECK_PTR(OCI_IPC_INT, sec)
-    CHECK_PTR(OCI_IPC_INT, fsec)
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CHECK_PTR(OCI_IPC_INT, hour)
+    CALL_CHECK_PTR(OCI_IPC_INT, min)
+    CALL_CHECK_PTR(OCI_IPC_INT, sec)
+    CALL_CHECK_PTR(OCI_IPC_INT, fsec)
+    CALL_CONTEXT_FROM_OBJ(itv)
 
     *day  = 0;
     *hour = 0;
@@ -496,10 +496,10 @@ boolean IntervalGetYearMonth
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_INT, year)
-    CHECK_PTR(OCI_IPC_INT, month)
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CHECK_PTR(OCI_IPC_INT, year)
+    CALL_CHECK_PTR(OCI_IPC_INT, month)
+    CALL_CONTEXT_FROM_OBJ(itv)
 
     *year  = 0;
     *month = 0;
@@ -530,8 +530,8 @@ boolean IntervalSetDaySecond
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CONTEXT_FROM_OBJ(itv)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -569,8 +569,8 @@ boolean IntervalSetYearMonth
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CONTEXT_FROM_OBJ(itv)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -599,9 +599,9 @@ boolean IntervalAdd
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv2)
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv2)
+    CALL_CONTEXT_FROM_OBJ(itv)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -625,9 +625,9 @@ boolean IntervalSubtract
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv2)
-    CTX_SET_FROM_OBJ(itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv2)
+    CALL_CONTEXT_FROM_OBJ(itv)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 

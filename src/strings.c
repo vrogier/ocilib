@@ -472,7 +472,7 @@ boolean StringToStringPtr
 
     CHECK(NULL == str, FALSE);
 
-    CTX_SET_FROM_ERR(err)
+    CALL_CONTEXT_FROM_ERR(err)
 
     dbstr  = StringGetDBString(value, &dbsize);
 
@@ -496,7 +496,7 @@ boolean StringFreeStringPtr
 {
     DECLARE_CTX(TRUE)    
     CHECK(NULL == str, FALSE);    
-    CTX_SET_FROM_ERR(err)
+    CALL_CONTEXT_FROM_ERR(err)
 
     EXEC(OCIStringResize(env, err, (ub4)0, str))
 
@@ -526,7 +526,7 @@ boolean StringGetAttribute
     CHECK(NULL == str,  FALSE)
     CHECK(NULL == size, FALSE)
 
-    CTX_SET_FROM_CON(con)
+    CALL_CONTEXT_FROM_CON(con)
 
     ATTRIB_GET(type, attr, handle, &dbstr, &dbsize)
 
@@ -586,7 +586,7 @@ boolean StringSetAttribute
     int     dbsize = -1;
 
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_CON(con)
+    CALL_CONTEXT_FROM_CON(con)
 
     dbstr = StringGetDBString(value, &dbsize);
 

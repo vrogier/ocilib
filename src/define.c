@@ -223,7 +223,7 @@ boolean DefineAlloc
 
     CHECK(NULL == def, FALSE)
 
-    CTX_SET_FROM_STMT(def->rs->stmt)
+    CALL_CONTEXT_FROM_STMT(def->rs->stmt)
 
     /* Allocate indicators */
 
@@ -310,7 +310,7 @@ boolean DefineDef
 
     CHECK(NULL == def, FALSE)
 
-    CTX_SET_FROM_STMT(def->rs->stmt)
+    CALL_CONTEXT_FROM_STMT(def->rs->stmt)
 
     /*check define mode for long columns */
 

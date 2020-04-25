@@ -39,7 +39,6 @@
 static const unsigned int CharsetFormValues[]   = { OCI_CSF_DEFAULT, OCI_CSF_NATIONAL };
 static const unsigned int BindDirectionValues[] = { OCI_BDM_IN, OCI_BDM_OUT, OCI_BDM_IN_OUT };
 
-
 /* --------------------------------------------------------------------------------------------- *
  * BindAllocateInternalData
  * --------------------------------------------------------------------------------------------- */
@@ -1024,8 +1023,8 @@ unsigned int BindGetSubtype
 )
 {
     CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    CHECK_PTR(OCI_IPC_BIND, bnd)
-    CTX_SET_FROM_STMT(bnd->stmt)
+    CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
+    CALL_CONTEXT_FROM_STMT(bnd->stmt)
 
     if (OCI_CDT_NUMERIC   == bnd->type ||
         OCI_CDT_LONG      == bnd->type ||
@@ -1101,10 +1100,10 @@ boolean BindSetDataSizeAtPos
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_BIND, bnd)
-    CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
-    CHECK_MIN(bnd->stmt->con, bnd->stmt, size, 1)
-    CTX_SET_FROM_STMT(bnd->stmt)
+    CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
+    CALL_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
+    CALL_CHECK_MIN(bnd->stmt->con, bnd->stmt, size, 1)
+    CALL_CONTEXT_FROM_STMT(bnd->stmt)
 
     if (bnd->buffer.lens)
     {
@@ -1149,9 +1148,9 @@ unsigned int BindGetDataSizeAtPos
 )
 {
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_BIND, bnd)
-    CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
-    CTX_SET_FROM_STMT(bnd->stmt)
+    CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
+    CALL_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
+    CALL_CONTEXT_FROM_STMT(bnd->stmt)
 
     if (bnd->buffer.lens)
     {
@@ -1182,9 +1181,9 @@ boolean BindSetNullAtPos
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_BIND, bnd)
-    CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
-    CTX_SET_FROM_STMT(bnd->stmt)
+    CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
+    CALL_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
+    CALL_CONTEXT_FROM_STMT(bnd->stmt)
 
     RETVAL = STATUS = BindSetNullIndicator(bnd, position, OCI_IND_NULL);
 
@@ -1214,9 +1213,9 @@ boolean BindSetNotNullAtPos
 )
 {   
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_BIND, bnd)
-    CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
-    CTX_SET_FROM_STMT(bnd->stmt)
+    CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
+    CALL_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
+    CALL_CONTEXT_FROM_STMT(bnd->stmt)
 
     RETVAL = STATUS = BindSetNullIndicator(bnd, position, OCI_IND_NOTNULL);
 
@@ -1246,9 +1245,9 @@ boolean BindIsNullAtPos
 )
 {
     CALL_ENTER(boolean, TRUE)
-    CHECK_PTR(OCI_IPC_BIND, bnd)
-    CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
-    CTX_SET_FROM_STMT(bnd->stmt)
+    CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
+    CALL_CHECK_BOUND(bnd->stmt->con, position, 1, bnd->buffer.count)
+    CALL_CONTEXT_FROM_STMT(bnd->stmt)
 
     if (bnd->buffer.inds)
     {
@@ -1281,9 +1280,9 @@ boolean BindSetCharsetForm
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_BIND, bnd)
-    CHECK_ENUM_VALUE(bnd->stmt->con, bnd->stmt, csfrm, CharsetFormValues, OTEXT("CharsetForm"))
-    CTX_SET_FROM_STMT(bnd->stmt)
+    CALL_CHECK_PTR(OCI_IPC_BIND, bnd)
+    CALL_CHECK_ENUM_VALUE(bnd->stmt->con, bnd->stmt, csfrm, CharsetFormValues, OTEXT("CharsetForm"))
+    CALL_CONTEXT_FROM_STMT(bnd->stmt)
 
     if ((OCI_CDT_TEXT == bnd->type) || (OCI_CDT_LONG == bnd->type))
     {

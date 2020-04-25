@@ -70,7 +70,7 @@ OCI_Mutex * MutexCreate
 )
 {
     CALL_ENTER(OCI_Mutex*, NULL)
-    CHECK_INITIALIZED()
+    CALL_CHECK_INITIALIZED()
 
     RETVAL = MutexCreateInternal();
     STATUS = (NULL != RETVAL);
@@ -88,8 +88,8 @@ boolean MutexFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_MUTEX, mutex)
-    CTX_SET_FROM_ERR(mutex->err)
+    CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    CALL_CONTEXT_FROM_ERR(mutex->err)
 
     /* close mutex handle */
 
@@ -124,8 +124,8 @@ boolean MutexAcquire
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_MUTEX, mutex)
-    CTX_SET_FROM_ERR(mutex->err)
+    CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    CALL_CONTEXT_FROM_ERR(mutex->err)
 
     EXEC(OCIThreadMutexAcquire(OCILib.env, mutex->err, mutex->handle))
 
@@ -144,8 +144,8 @@ boolean MutexRelease
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_MUTEX, mutex)
-    CTX_SET_FROM_ERR(mutex->err)
+    CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
+    CALL_CONTEXT_FROM_ERR(mutex->err)
 
     EXEC(OCIThreadMutexRelease(OCILib.env, mutex->err, mutex->handle))
  

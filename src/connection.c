@@ -49,6 +49,7 @@ static const unsigned int TimeoutTypeValues[] =
 };
 
 #define SET_TRACE(prop)                                                  \
+                                                                         \
     con->trace->prop[0] = 0;                                             \
     if (value)                                                           \
     {                                                                    \
@@ -56,7 +57,8 @@ static const unsigned int TimeoutTypeValues[] =
         str = con->trace->prop;                                          \
     }
 
-#define GET_TRACE(prop)                                                 \
+#define GET_TRACE(prop)                                                  \
+                                                                         \
     RETVAL = con->trace->prop[0] ? con->trace->prop : NULL;
 
 /* --------------------------------------------------------------------------------------------- *
@@ -247,7 +249,7 @@ boolean ConnectionAttach
     CHECK(NULL == con, FALSE)
     CHECK(con->cstate != OCI_CONN_ALLOCATED, FALSE)
 
-    CTX_SET_FROM_CON(con);
+    CALL_CONTEXT_FROM_CON(con);
 
     /* allocate server handle for non session pooled connection */
 
@@ -305,7 +307,7 @@ boolean ConnectionDetach
     CHECK(NULL == con, FALSE)
     CHECK(con->cstate != OCI_CONN_ATTACHED, FALSE)
 
-    CTX_SET_FROM_CON(con);
+    CALL_CONTEXT_FROM_CON(con);
 
     if (con->alloc_handles && con->svr)
     {
@@ -620,7 +622,7 @@ boolean ConnectionLogon
 
     CHECK(NULL == con, FALSE)
 
-    CTX_SET_FROM_CON(con);
+    CALL_CONTEXT_FROM_CON(con);
 
 #if OCI_VERSION_COMPILE < OCI_9_2
 
@@ -772,7 +774,7 @@ boolean ConnectionLogOff
     CHECK(NULL == con, FALSE)
     CHECK(con->cstate != OCI_CONN_LOGGED, FALSE)
 
-    CTX_SET_FROM_CON(con);
+    CALL_CONTEXT_FROM_CON(con);
 
     /* close opened files */
 
@@ -983,8 +985,8 @@ OCI_Connection * ConnectionCreate
 )
 {
     CALL_ENTER(OCI_Connection *, NULL)
-    CHECK_INITIALIZED()
-    CHECK_XA_ENABLED(mode)
+    CALL_CHECK_INITIALIZED()
+    CALL_CHECK_XA_ENABLED(mode)
 
     RETVAL = ConnectionCreateInternal(NULL, db, user, pwd, mode, NULL);
     STATUS = (NULL != RETVAL);
@@ -1002,8 +1004,8 @@ boolean ConnectionFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     RETVAL = STATUS = ConnectionDispose(con);
 
@@ -1023,8 +1025,8 @@ boolean ConnectionCommit
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     EXEC(OCITransCommit(con->cxt, con->err, (ub4)OCI_DEFAULT));
 
@@ -1043,8 +1045,8 @@ boolean ConnectionRollback
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     EXEC(OCITransRollback(con->cxt, con->err, (ub4)OCI_DEFAULT));
 
@@ -1091,8 +1093,8 @@ boolean ConnectionIsConnected
     ub4 size    = (ub4) sizeof(status);
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_SERVER_STATUS, con->svr, &status, &size)
 
@@ -1111,7 +1113,7 @@ void * ConnectionGetUserData
 )
 {
     CALL_ENTER(void*, NULL)
-    CHECK_INITIALIZED()
+    CALL_CHECK_INITIALIZED()
 
     RETVAL = (void*) (con ? con->usrdata : OCILib.usrdata);
     
@@ -1129,7 +1131,7 @@ boolean ConnectionSetUserData
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_INITIALIZED()
+    CALL_CHECK_INITIALIZED()
 
     if (con)
     {
@@ -1156,8 +1158,8 @@ boolean ConnectionSetSessionTag
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     FREE(con->sess_tag)
 
@@ -1240,9 +1242,9 @@ boolean ConnectionSetPassword
 {
     CALL_ENTER(boolean, FALSE)
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, password)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, password)
+    CALL_CONTEXT_FROM_CON(con)
 
     if (OCI_CONN_LOGGED != con->cstate)
     {
@@ -1299,8 +1301,8 @@ const otext * ConnectionGetServerVersion
 )
 {
     CALL_ENTER(const otext *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     /* no version available in preliminary authentication mode */
 
@@ -1400,8 +1402,8 @@ unsigned int ConnectionGetServerMajorVersion
 )
 {
     CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     if (OCI_UNKNOWN == con->ver_num)
     {
@@ -1423,8 +1425,8 @@ unsigned int ConnectionGetServerMinorVersion
 )
 {
     CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     if (OCI_UNKNOWN == con->ver_num)
     {
@@ -1446,8 +1448,8 @@ unsigned int ConnectionGetServerRevisionVersion
 )
 {
     CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     if (OCI_UNKNOWN == con->ver_num)
     {
@@ -1482,9 +1484,9 @@ boolean ConnectionSetTransaction
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
+    CALL_CONTEXT_FROM_CON(con)
 
     if (con->trs)
     {
@@ -1513,8 +1515,8 @@ unsigned int ConnectionGetVersion
 )
 {
     CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     /* return the minimum supported version */
   
@@ -1533,8 +1535,8 @@ boolean ConnectionBreak
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     EXEC(OCIBreak((dvoid *) con->cxt, con->err))
 
@@ -1556,8 +1558,8 @@ boolean ConnectionEnableServerOutput
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     /* initialize the output buffer on server side */
 
@@ -1649,8 +1651,8 @@ boolean ConnectionDisableServerOutput
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     if (con->svopt)
     {
@@ -1681,8 +1683,8 @@ const otext * ConnectionGetServerOutput
 )
 {
     CALL_ENTER(const otext *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     if (con->svopt)
     {
@@ -1719,9 +1721,9 @@ boolean ConnectionSetTrace
     ub4 attrib = OCI_UNKNOWN;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_ENUM_VALUE(con, NULL, trace, TraceTypeValues, OTEXT("Trace Type"))
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_ENUM_VALUE(con, NULL, trace, TraceTypeValues, OTEXT("Trace Type"))
+    CALL_CONTEXT_FROM_CON(con)
 
     /* allocate trace info structure only if trace functions are used */
 
@@ -1814,9 +1816,9 @@ const otext * ConnectionGetTrace
 )
 {
     CALL_ENTER(const otext *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_ENUM_VALUE(con, NULL, trace, TraceTypeValues, OTEXT("Trace Type"))
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_ENUM_VALUE(con, NULL, trace, TraceTypeValues, OTEXT("Trace Type"))
+    CALL_CONTEXT_FROM_CON(con)
 
     if (con->trace)
     {
@@ -1863,8 +1865,8 @@ boolean ConnectionPing
 )
 {
     CALL_ENTER(boolean , FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -1894,9 +1896,9 @@ boolean ConnectionSetTimeout
     ub4 timeout = value;
 
     CALL_ENTER(boolean , FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_ENUM_VALUE(con, FALSE, type, TimeoutTypeValues, OTEXT("timeout type"))
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_ENUM_VALUE(con, FALSE, type, TimeoutTypeValues, OTEXT("timeout type"))
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
@@ -1953,9 +1955,9 @@ unsigned int ConnectionGetTimeout
     ub4 timeout = 0;
 
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_ENUM_VALUE(con, 0, type, TimeoutTypeValues, OTEXT("timeout type"))
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_ENUM_VALUE(con, 0, type, TimeoutTypeValues, OTEXT("timeout type"))
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
@@ -2007,8 +2009,8 @@ const otext * ConnectionGetDatabaseName
 )
 {
     CALL_ENTER(const otext *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2036,8 +2038,8 @@ const otext * ConnectionGetInstanceName
 )
 {
     CALL_ENTER(const otext *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2065,8 +2067,8 @@ const otext * ConnectionGetServiceName
 )
 {
     CALL_ENTER(const otext *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2094,8 +2096,8 @@ const otext * ConnectionGetServerName
 )
 {
     CALL_ENTER(const otext *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2123,8 +2125,8 @@ const otext * ConnectionGetDomainName
 )
 {
     CALL_ENTER(const otext *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2152,8 +2154,8 @@ OCI_Timestamp * ConnectionGetInstanceStartTime
 )
 {
     CALL_ENTER(OCI_Timestamp*, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2185,8 +2187,8 @@ boolean ConnectionIsTAFCapable
     boolean value = FALSE;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -2213,8 +2215,8 @@ boolean ConnectionSetTAFHandler
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     RETVAL = ConnectionIsTAFCapable(con);
 
@@ -2256,8 +2258,8 @@ unsigned int ConnectionGetStatementCacheSize
     ub4 cache_size = 0;
 
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
@@ -2286,8 +2288,8 @@ boolean ConnectionSetStatementCacheSize
     ub4 cache_size = value;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
@@ -2319,8 +2321,8 @@ unsigned int ConnectionGetDefaultLobPrefetchSize
     ub4 prefetch_size = 0;
 
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
@@ -2349,8 +2351,8 @@ boolean ConnectionSetDefaultLobPrefetchSize
     ub4 prefetch_size = value;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
@@ -2382,8 +2384,8 @@ unsigned int ConnectionGetMaxCursors
     ub4 max_cursors = 0;
 
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
@@ -2413,9 +2415,9 @@ boolean ConnectionExecuteImmediate
     OCI_Statement *stmt = NULL;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, sql)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, sql)
+    CALL_CONTEXT_FROM_CON(con)
 
     /* First, execute SQL */
 
@@ -2458,9 +2460,9 @@ boolean ConnectionExecuteImmediateFmt
     va_list second_pass_args;
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, sql)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_STRING, sql)
+    CALL_CONTEXT_FROM_CON(con)
 
     va_copy(first_pass_args, args);
     va_copy(second_pass_args, args);

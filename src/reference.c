@@ -39,7 +39,7 @@ OCI_Ref * ReferenceInitialize
 )
 {
     DECLARE_CTX(TRUE)
-    CTX_SET_FROM_CON(con)
+    CALL_CONTEXT_FROM_CON(con)
 
     ALLOC_DATA(OCI_IPC_REF, ref, 1);
 
@@ -103,7 +103,7 @@ boolean ReferencePin
 
     CHECK(NULL == ref, FALSE)
 
-    CTX_SET_FROM_CON(ref->con);
+    CALL_CONTEXT_FROM_CON(ref->con);
 
     ReferenceUnpin(ref);
 
@@ -137,7 +137,7 @@ boolean ReferenceUnpin
     CHECK(NULL == ref, FALSE)
     CHECK(NULL == ref->obj, TRUE)
 
-    CTX_SET_FROM_CON(ref->con);
+    CALL_CONTEXT_FROM_CON(ref->con);
 
     if (ref->pinned)
     {
@@ -167,9 +167,9 @@ OCI_Ref * ReferenceCreate
 )
 {
     CALL_ENTER(OCI_Ref *, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CALL_CONTEXT_FROM_CON(con)
 
     RETVAL = ReferenceInitialize(con, typinf, NULL, NULL);
     STATUS = (NULL != RETVAL);
@@ -187,9 +187,9 @@ boolean ReferenceFree
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_REF, ref)
-    CHECK_OBJECT_FETCHED(ref)
-    CTX_SET_FROM_CON(ref->con)
+    CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    CALL_CHECK_OBJECT_FETCHED(ref)
+    CALL_CONTEXT_FROM_CON(ref->con)
 
     ReferenceUnpin(ref);
 
@@ -222,9 +222,9 @@ OCI_Ref ** ReferenceCreateArray
     OCI_Array *arr = NULL;
 
     CALL_ENTER(OCI_Ref **, NULL)
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, con)
-    CTX_SET_FROM_CON(con)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, con)
+    CALL_CONTEXT_FROM_CON(con)
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_REF, 0, sizeof(OCIRef *), sizeof(OCI_Ref), 0, typinf);
     STATUS = (NULL != arr);
@@ -247,7 +247,7 @@ boolean ReferenceFreeArray
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_ARRAY, refs)
+    CALL_CHECK_PTR(OCI_IPC_ARRAY, refs)
 
     RETVAL = STATUS = ArrayFreeFromHandles((void **)refs);
 
@@ -264,8 +264,8 @@ OCI_Object * ReferenceGetObject
 )
 {
     CALL_ENTER(OCI_Object*, NULL)
-    CHECK_PTR(OCI_IPC_REF, ref)
-    CTX_SET_FROM_CON(ref->con)
+    CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    CALL_CONTEXT_FROM_CON(ref->con)
 
     if (!ReferenceIsNull(ref))
     {
@@ -291,10 +291,10 @@ boolean ReferenceAssign
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_REF, ref)
-    CHECK_PTR(OCI_IPC_REF, ref_src)
-    CHECK_COMPAT(ref->con, ref->typinf->tdo == ref_src->typinf->tdo)
-    CTX_SET_FROM_CON(ref->con)
+    CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    CALL_CHECK_PTR(OCI_IPC_REF, ref_src)
+    CALL_CHECK_COMPAT(ref->con, ref->typinf->tdo == ref_src->typinf->tdo)
+    CALL_CONTEXT_FROM_CON(ref->con)
 
     EXEC(OCIRefAssign(ref->con->env, ref->con->err, ref_src->handle, &ref->handle))
 
@@ -325,8 +325,8 @@ boolean ReferenceIsNull
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_REF, ref)
-    CTX_SET_FROM_CON(ref->con)
+    CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    CALL_CONTEXT_FROM_CON(ref->con)
 
     RETVAL = OCIRefIsNull(ref->con->env, ref->handle);
 
@@ -343,8 +343,8 @@ boolean ReferenceSetNull
 )
 {
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_REF, ref)
-    CTX_SET_FROM_CON(ref->con)
+    CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    CALL_CONTEXT_FROM_CON(ref->con)
 
     STATUS = ReferenceUnpin(ref);
 
@@ -379,9 +379,9 @@ boolean ReferenceToString
     int     dbsize = (int) size * (int) sizeof(otext);
 
     CALL_ENTER(boolean, FALSE)
-    CHECK_PTR(OCI_IPC_REF, ref)
-    CHECK_PTR(OCI_IPC_STRING, str)
-    CTX_SET_FROM_CON(ref->con)
+    CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    CALL_CHECK_PTR(OCI_IPC_STRING, str)
+    CALL_CONTEXT_FROM_CON(ref->con)
 
     /* initialize output buffer in case of OCI failure */
 
@@ -415,8 +415,8 @@ unsigned int ReferenceGetHexSize
     ub4 size = 0;
 
     CALL_ENTER(unsigned int, 0)
-    CHECK_PTR(OCI_IPC_REF, ref)
-    CTX_SET_FROM_CON(ref->con)
+    CALL_CHECK_PTR(OCI_IPC_REF, ref)
+    CALL_CONTEXT_FROM_CON(ref->con)
 
     size = OCIRefHexSize(ref->con->env, (const OCIRef *)ref->handle) / (ub4) sizeof(dbtext);
 
