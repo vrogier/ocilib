@@ -44,7 +44,7 @@ void ErrorFree
     OCI_Error *err
 )
 {
-    if (err == &OCILib.lib_err)
+    if (err == &Env.lib_err)
     {
         return;
     }
@@ -89,9 +89,9 @@ OCI_Error * ErrorGet
 {
     OCI_Error *err = NULL;
 
-    if (OCILib.loaded && LIB_THREADED)
+    if (Env.loaded && LIB_THREADED)
     {
-        if (ThreadKeyGet(OCILib.key_errs, (void **)(dvoid *)&err))
+        if (ThreadKeyGet(Env.key_errs, (void **)(dvoid *)&err))
         {
             if (!err)
             {
@@ -99,14 +99,14 @@ OCI_Error * ErrorGet
 
                 if (err)
                 {
-                    ThreadKeySet(OCILib.key_errs, err);
+                    ThreadKeySet(Env.key_errs, err);
                 }
             }
         }
     }
     else
     {
-        err = &OCILib.lib_err;
+        err = &Env.lib_err;
     }
 
     if (check && err && err->active)

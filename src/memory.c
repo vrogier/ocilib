@@ -26,16 +26,16 @@
 
 #define MUTEXED_CALL(exp)                   \
                                             \
-    if (OCILib.mem_mutex)                   \
+    if (Env.mem_mutex)                      \
     {                                       \
-       MutexAcquire(OCILib.mem_mutex);      \
+       MutexAcquire(Env.mem_mutex);         \
     }                                       \
                                             \
     (exp);                                  \
                                             \
-    if (OCILib.mem_mutex)                   \
+    if (Env.mem_mutex)                      \
     {                                       \
-       MutexRelease(OCILib.mem_mutex);      \
+       MutexRelease(Env.mem_mutex);         \
     }                                       \
 
  /* --------------------------------------------------------------------------------------------- *
@@ -50,11 +50,11 @@ void MemoryUpdateBytes
 {
     if (OCI_IPC_ORACLE == type)
     {
-        MUTEXED_CALL(OCILib.mem_bytes_oci += size)
+        MUTEXED_CALL(Env.mem_bytes_oci += size)
     }
     else
     {
-        MUTEXED_CALL(OCILib.mem_bytes_lib += size)
+        MUTEXED_CALL(Env.mem_bytes_lib += size)
     }
 }
 
@@ -189,7 +189,7 @@ boolean MemoryAllocHandle
 
     if (OCI_SUCCESSFUL(ret))
     {
-        MUTEXED_CALL(OCILib.nb_hndlp++)
+        MUTEXED_CALL(Env.nb_hndlp++)
     }
 
     return OCI_SUCCESSFUL(ret);
@@ -209,7 +209,7 @@ boolean MemoryFreeHandle
 
     if (hndlp)
     {
-        MUTEXED_CALL(OCILib.nb_hndlp--)
+        MUTEXED_CALL(Env.nb_hndlp--)
 
         ret = OCIHandleFree(hndlp, type);
     }
@@ -232,7 +232,7 @@ boolean MemoryAllocDescriptor
 
     if (OCI_SUCCESSFUL(ret))
     {
-        MUTEXED_CALL(OCILib.nb_descp++)
+        MUTEXED_CALL(Env.nb_descp++)
     }
 
     return OCI_SUCCESSFUL(ret);
@@ -254,7 +254,7 @@ boolean MemoryAllocDescriptorArray
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
-    if (OCILib.version_runtime >= OCI_11_1)
+    if (Env.version_runtime >= OCI_11_1)
     {
         ret = OCIArrayDescriptorAlloc(parenth, descpp, type, nb_elem, 0, NULL);
 
@@ -272,7 +272,7 @@ boolean MemoryAllocDescriptorArray
 
     if (OCI_SUCCESSFUL(ret))
     {
-        MUTEXED_CALL(OCILib.nb_descp += nb_elem)
+        MUTEXED_CALL(Env.nb_descp += nb_elem)
     }
 
     return OCI_SUCCESSFUL(ret);
@@ -292,7 +292,7 @@ boolean MemoryFreeDescriptor
 
     if (descp)
     {
-        MUTEXED_CALL(OCILib.nb_descp--)
+        MUTEXED_CALL(Env.nb_descp--)
 
         ret = OCIDescriptorFree(descp, type);
     }
@@ -318,7 +318,7 @@ boolean MemoryFreeDescriptorArray
 
     #if OCI_VERSION_COMPILE >= OCI_11_1
 
-        if (OCILib.version_runtime >= OCI_11_1)
+        if (Env.version_runtime >= OCI_11_1)
         {
             ret = OCIArrayDescriptorFree(descp, type);
 
@@ -334,7 +334,7 @@ boolean MemoryFreeDescriptorArray
             }
         }
 
-        MUTEXED_CALL(OCILib.nb_descp -= nb_elem)
+        MUTEXED_CALL(Env.nb_descp -= nb_elem)
     }
 
     return OCI_SUCCESSFUL(ret);
@@ -361,7 +361,7 @@ sword MemoryAllocateObject
 
     if (OCI_SUCCESSFUL(ret))
     {
-        MUTEXED_CALL(OCILib.nb_objinst++)
+        MUTEXED_CALL(Env.nb_objinst++)
     }
 
     return ret;
@@ -383,7 +383,7 @@ sword MemoryFreeObject
 
     if (instance)
     {
-        MUTEXED_CALL(OCILib.nb_objinst--)
+        MUTEXED_CALL(Env.nb_objinst--)
 
         ret = OCIObjectFree(env, err, instance, flags);
     }

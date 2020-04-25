@@ -148,7 +148,7 @@ OCI_Subscription * SubscriptionRegister
 
     /* create subscription object */
 
-    sub = ListAppend(OCILib.subs, sizeof(*sub));
+    sub = ListAppend(Env.subs, sizeof(*sub));
     STATUS = (NULL != sub);
 
     if (sub)
@@ -252,7 +252,7 @@ OCI_Subscription * SubscriptionRegister
     else if (sub)
     {
         SubscriptionDispose(sub);
-        ListRemove(OCILib.subs, sub);
+        ListRemove(Env.subs, sub);
         FREE(sub)
     }
 
@@ -285,7 +285,7 @@ boolean SubscriptionUnregister
 
     RETVAL = STATUS = SubscriptionDispose(sub);
 
-    ListRemove(OCILib.subs, sub);
+    ListRemove(Env.subs, sub);
 
     FREE(sub);
 

@@ -314,14 +314,14 @@ boolean LobRead2
 
     if (OCI_BLOB != lob->type)
     {
-        if (OCI_CHAR_WIDE == OCILib.charset)
+        if (OCI_CHAR_WIDE == Env.charset)
         {
             csid = OCI_UTF16ID;
         }
 
         if (((*byte_count) == 0) && ((*char_count) > 0))
         {
-            if (OCILib.nls_utf8)
+            if (Env.nls_utf8)
             {
                 (*byte_count) = (*char_count) * (ub4)OCI_UTF8_BYTES_PER_CHAR;
             }
@@ -336,7 +336,7 @@ boolean LobRead2
 
 #ifdef OCI_LOB2_API_ENABLED
 
-    if (OCILib.use_lob_ub8)
+    if (Env.use_lob_ub8)
     {        
         ub8 size_in_out_char = (ub8) (*char_count);
         ub8 size_in_out_byte = (ub8) (*byte_count);
@@ -377,7 +377,7 @@ boolean LobRead2
     {
         ub4 ora_byte_count = (ub4) *byte_count;
 
-        if (!OCILib.use_lob_ub8 && !OCILib.nls_utf8)
+        if (!Env.use_lob_ub8 && !Env.nls_utf8)
         {
             ora_byte_count *= sizeof(dbtext);
         }
@@ -386,7 +386,7 @@ boolean LobRead2
 
     #ifndef OCI_LOB2_API_ENABLED
 
-        if (OCILib.nls_utf8)
+        if (Env.nls_utf8)
         {
             (*char_count) = (ub4) StringLength((const char *)buffer, sizeof(char));
         }
@@ -405,7 +405,7 @@ boolean LobRead2
         {
             lob->offset += (big_uint) (*char_count);
 
-            if (!OCILib.nls_utf8 && OCILib.use_wide_char_conv)
+            if (!Env.nls_utf8 && Env.use_wide_char_conv)
             {
                 StringUTF16ToUTF32(buffer, buffer, (int) (*char_count));
                 (*byte_count) = (ub4) (*char_count) * (ub4) sizeof(otext);
@@ -476,14 +476,14 @@ boolean LobWrite2
 
     if (OCI_BLOB != lob->type)
     {
-        if (OCI_CHAR_WIDE == OCILib.charset)
+        if (OCI_CHAR_WIDE == Env.charset)
         {
             csid = OCI_UTF16ID;
         }
 
         if (((*byte_count) == 0) && ((*char_count) > 0))
         {
-            if (OCILib.nls_utf8)
+            if (Env.nls_utf8)
             {
                 (*byte_count) = (unsigned int) strlen((const char *) buffer);
             }
@@ -495,7 +495,7 @@ boolean LobWrite2
 
         if (((*char_count) == 0) && ((*byte_count) > 0))
         {
-            if (OCILib.nls_utf8 )
+            if (Env.nls_utf8 )
             {
 
         #ifndef OCI_LOB2_API_ENABLED
@@ -522,7 +522,7 @@ boolean LobWrite2
 
 #ifdef OCI_LOB2_API_ENABLED
 
-    if (OCILib.use_lob_ub8)
+    if (Env.use_lob_ub8)
     {
         ub8 size_in_out_char = (ub8) (*char_count);
         ub8 size_in_out_byte = (ub8) (*byte_count);
@@ -547,7 +547,7 @@ boolean LobWrite2
     {
         ub4 size_in_out_char_byte = 0;
 
-        if ((OCI_BLOB == lob->type) || OCILib.nls_utf8)
+        if ((OCI_BLOB == lob->type) || Env.nls_utf8)
         {
             size_in_out_char_byte = (*byte_count);
         }
@@ -567,7 +567,7 @@ boolean LobWrite2
         (*char_count) = (ub4) size_in_out_char_byte;
         (*byte_count) = (ub4) size_in_out_char_byte;
 
-        if ((OCI_CLOB == lob->type) && !OCILib.nls_utf8)
+        if ((OCI_CLOB == lob->type) && !Env.nls_utf8)
         {
              (*byte_count) *= (ub4) sizeof(otext);
         }
@@ -645,7 +645,7 @@ boolean LobTruncate
 
 #ifdef OCI_LOB2_API_ENABLED
 
-    if (OCILib.use_lob_ub8)
+    if (Env.use_lob_ub8)
     {
         EXEC(OCILobTrim2(lob->con->cxt, lob->con->err, lob->handle, (ub8) size))
     }
@@ -689,7 +689,7 @@ big_uint LobErase
 
 #ifdef OCI_LOB2_API_ENABLED
 
-    if (OCILib.use_lob_ub8)
+    if (Env.use_lob_ub8)
     {
         ub8 lob_size = (ub8) size;
 
@@ -732,7 +732,7 @@ big_uint LobGetLength
 
 #ifdef OCI_LOB2_API_ENABLED
 
-    if (OCILib.use_lob_ub8)
+    if (Env.use_lob_ub8)
     {
         ub8 lob_size = 0;
 
@@ -797,7 +797,7 @@ boolean LobCopy
 
 #ifdef OCI_LOB2_API_ENABLED
 
-    if (OCILib.use_lob_ub8)
+    if (Env.use_lob_ub8)
     {
         EXEC
         (
@@ -846,7 +846,7 @@ boolean LobCopyFromFile
 
 #ifdef OCI_LOB2_API_ENABLED
 
-    if (OCILib.use_lob_ub8)
+    if (Env.use_lob_ub8)
     {
         EXEC
         (
@@ -899,13 +899,13 @@ boolean LobAppend2
     It's an Oracle known bug #886191
     So we use OCI_LobSeek() + OCI_LobWrite() instead */
 
-    if (OCILib.version_runtime < OCI_10_1)
+    if (Env.version_runtime < OCI_10_1)
     {
         return LobSeek(lob, LobGetLength(lob), OCI_SEEK_SET) &&
                LobWrite2(lob, buffer, char_count, byte_count);
     }
 
-    CTX_ENTER(OCILib.env_mode)
+    CTX_ENTER(Env.env_mode)
 
     CALL_CHECK_PTR(OCI_IPC_LOB, lob)
     CALL_CHECK_PTR(OCI_IPC_INT, char_count)
@@ -914,14 +914,14 @@ boolean LobAppend2
 
     if (OCI_BLOB != lob->type)
     {
-        if (OCI_CHAR_WIDE == OCILib.charset)
+        if (OCI_CHAR_WIDE == Env.charset)
         {
             csid = OCI_UTF16ID;
         }
 
         if (((*byte_count) == 0) && ((*char_count) > 0))
         {
-            if (OCILib.nls_utf8)
+            if (Env.nls_utf8)
             {
                 (*byte_count) = (unsigned int) strlen( (char *) buffer);
             }
@@ -933,7 +933,7 @@ boolean LobAppend2
 
         if (((*char_count) == 0) && ((*byte_count) > 0))
         {
-            if (OCILib.nls_utf8)
+            if (Env.nls_utf8)
             {
 
             #ifndef OCI_LOB2_API_ENABLED
@@ -960,7 +960,7 @@ boolean LobAppend2
   
 #ifdef OCI_LOB2_API_ENABLED
 
-    if (OCILib.use_lob_ub8)
+    if (Env.use_lob_ub8)
     {
         ub8 size_in_out_char = (ub8) (*char_count);
         ub8 size_in_out_byte = (ub8) (*byte_count);
@@ -984,7 +984,7 @@ boolean LobAppend2
     {
         ub4 size_in_out_char_byte = 0;
 
-        if ((OCI_BLOB == lob->type) || !OCILib.nls_utf8)
+        if ((OCI_BLOB == lob->type) || !Env.nls_utf8)
         {
             size_in_out_char_byte = (*byte_count);
         }
@@ -1003,7 +1003,7 @@ boolean LobAppend2
         (*char_count) = (ub4) size_in_out_char_byte;
         (*byte_count) = (ub4) size_in_out_char_byte;
 
-        if ((OCI_CLOB == lob->type) && !OCILib.nls_utf8)
+        if ((OCI_CLOB == lob->type) && !Env.nls_utf8)
         {
              (*byte_count) *= (ub4) sizeof(otext);
         }
@@ -1216,7 +1216,7 @@ big_uint LobGetMaxSize
 
 #ifdef OCI_LOB2_API_ENABLED
 
-    if (OCILib.use_lob_ub8)
+    if (Env.use_lob_ub8)
     {
         ub8 size = 0;
 

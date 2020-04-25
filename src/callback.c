@@ -473,7 +473,7 @@ void ProcHAEventInvoke
     {
         tmsp = TimestampInitialize(NULL, tmsp, ha_params->dthp, OCI_TIMESTAMP);
 
-        OCILib.ha_handler(con, (unsigned int)ha_params->source, (unsigned int)ha_params->event, tmsp);
+        Env.ha_handler(con, (unsigned int)ha_params->source, (unsigned int)ha_params->event, tmsp);
     }
 
     if (tmsp)
@@ -499,12 +499,12 @@ void CallbackHAEvent
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    if (!OCILib.ha_handler)
+    if (!Env.ha_handler)
     {
         return;    
     }    
 
-    if (OCILib.version_runtime >= OCI_10_2)
+    if (Env.version_runtime >= OCI_10_2)
     {       
         HAEventParams params;
 
@@ -534,7 +534,7 @@ void CallbackHAEvent
 
             if (STATUS)
             {
-                ListForEachWithParam(OCILib.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM) ProcHAEventInvoke);
+                ListForEachWithParam(Env.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM) ProcHAEventInvoke);
             }
  
             ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT, (OCIEvent *)eventptr, &params.srvhp, NULL)

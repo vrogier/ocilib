@@ -44,11 +44,11 @@ OCI_Mutex * MutexCreateInternal
     {
         /* allocate error handle */
 
-        STATUS = MemoryAllocHandle(OCILib.env, (dvoid **)(void *)&mutex->err, OCI_HTYPE_ERROR);
+        STATUS = MemoryAllocHandle(Env.env, (dvoid **)(void *)&mutex->err, OCI_HTYPE_ERROR);
 
         /* allocate mutex handle */
 
-        EXEC(OCIThreadMutexInit(OCILib.env, mutex->err, &mutex->handle))
+        EXEC(OCIThreadMutexInit(Env.env, mutex->err, &mutex->handle))
     }
 
     if (!STATUS && mutex)
@@ -95,7 +95,7 @@ boolean MutexFree
 
     if (mutex->handle)
     {
-        EXEC(OCIThreadMutexDestroy(OCILib.env, mutex->err, &mutex->handle))
+        EXEC(OCIThreadMutexDestroy(Env.env, mutex->err, &mutex->handle))
     }
 
     /* close error handle */
@@ -127,7 +127,7 @@ boolean MutexAcquire
     CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
     CALL_CONTEXT_FROM_ERR(mutex->err)
 
-    EXEC(OCIThreadMutexAcquire(OCILib.env, mutex->err, mutex->handle))
+    EXEC(OCIThreadMutexAcquire(Env.env, mutex->err, mutex->handle))
 
     RETVAL = STATUS;
 
@@ -147,7 +147,7 @@ boolean MutexRelease
     CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
     CALL_CONTEXT_FROM_ERR(mutex->err)
 
-    EXEC(OCIThreadMutexRelease(OCILib.env, mutex->err, mutex->handle))
+    EXEC(OCIThreadMutexRelease(Env.env, mutex->err, mutex->handle))
  
     RETVAL = STATUS;
 

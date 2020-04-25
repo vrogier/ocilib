@@ -28,6 +28,7 @@
 #include "exception.h"
 #include "file.h"
 #include "hash.h"
+#include "helpers.h"
 #include "interval.h"
 #include "lob.h"
 #include "long.h"
@@ -438,7 +439,7 @@ boolean FetchPieces
 
     #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
-        if (OCILib.use_scrollable_cursors)
+        if (Env.use_scrollable_cursors)
         {
             rs->fetch_status = OCIStmtFetch2(rs->stmt->stmt, rs->stmt->con->err,
                                              rs->fetch_size, (ub2) OCI_FETCH_NEXT,
@@ -506,7 +507,7 @@ boolean FetchPieces
 
                     ((dbtext *)lg->buffer)[len] = 0;
 
-                    if (OCILib.use_wide_char_conv)
+                    if (Env.use_wide_char_conv)
                     {
                         StringUTF16ToUTF32(lg->buffer, lg->buffer, len);
                     }
@@ -574,7 +575,7 @@ boolean FetchData
 
  #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
-    if (OCILib.use_scrollable_cursors)
+    if (Env.use_scrollable_cursors)
     {
         rs->fetch_status = OCIStmtFetch2(rs->stmt->stmt, rs->stmt->con->err,
                                          rs->fetch_size, (ub2) mode, (sb4) offset,
@@ -610,7 +611,7 @@ boolean FetchData
 
     /* check string buffer for Unicode builds that need buffer expansion */
 
-    if (OCILib.use_wide_char_conv)
+    if (Env.use_wide_char_conv)
     {
         ResultsetExpandStrings(rs);
     }
@@ -1010,7 +1011,7 @@ boolean ResultsetFetchNext
             {
                 /* check string buffer once for Unicode build */
 
-                if (OCILib.use_wide_char_conv)
+                if (Env.use_wide_char_conv)
                 {
                     ResultsetExpandStrings(rs);
                 }

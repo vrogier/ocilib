@@ -21,6 +21,7 @@
 #include "timestamp.h"
 
 #include "array.h"
+#include "helpers.h"
 #include "macros.h"
 #include "strings.h"
 
@@ -62,8 +63,8 @@ OCI_Timestamp * TimestampInitialize
         }
         else
         {
-            tmsp->err = OCILib.err;
-            tmsp->env = OCILib.env;
+            tmsp->err = Env.err;
+            tmsp->env = Env.env;
         }
 
         /* allocate buffer if needed */
@@ -464,7 +465,7 @@ boolean TimestampFromString
 
     if (!IS_STRING_VALID(fmt))
     {
-        fmt = GetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
+        fmt = EnvironmentGetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
     dbstr1 = StringGetDBString(str, &dbsize1);
@@ -529,7 +530,7 @@ boolean TimestampToString
 
     if (!IS_STRING_VALID(fmt))
     {
-        fmt = GetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
+        fmt = EnvironmentGetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
     dbstr1 = StringGetDBString(str, &dbsize1);

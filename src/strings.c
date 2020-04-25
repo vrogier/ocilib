@@ -53,7 +53,7 @@ size_t StringLength
 
     CHECK(NULL == ptr, 0);
 
-    if (OCILib.nls_utf8)
+    if (Env.nls_utf8)
     {
         const char *s = (char *) ptr;
         while (*s)
@@ -127,7 +127,7 @@ boolean StringRequestBuffer
 
     request_size++;
 
-    request_size *= OCILib.nls_utf8 ? OCI_UTF8_BYTES_PER_CHAR :  sizeof(otext);
+    request_size *= Env.nls_utf8 ? OCI_UTF8_BYTES_PER_CHAR :  sizeof(otext);
 
     if (!*buffer)
     {
@@ -324,7 +324,7 @@ dbtext * StringGetDBString
         len = (int) ((*size) / sizeof(otext));
     }
 
-    if (OCILib.use_wide_char_conv)
+    if (Env.use_wide_char_conv)
     {
         dst = (dbtext *) MemoryAlloc(OCI_IPC_STRING, sizeof(dbtext), len + 1, FALSE);
 
@@ -352,7 +352,7 @@ void StringReleaseDBString
     dbtext *str
 )
 {
-    if (OCILib.use_wide_char_conv && str)
+    if (Env.use_wide_char_conv && str)
     {
         MemoryFree(str);
     }
@@ -369,7 +369,7 @@ int StringCopyDBStringToNativeString
     int            len
 )
 {
-    if (OCILib.use_wide_char_conv)
+    if (Env.use_wide_char_conv)
     {
         StringUTF16ToUTF32((void *) src, (void *) dst, len);   
     }
@@ -391,7 +391,7 @@ otext* StringDuplicateFromDBString
 
     if (dst)
     {
-        if (OCILib.use_wide_char_conv)
+        if (Env.use_wide_char_conv)
         {
             StringUTF16ToUTF32((void *) src, (void *) dst, len);   
         }
@@ -424,7 +424,7 @@ otext * StringFromStringPtr
 
     if (tmp)
     {
-        const size_t length = OCIStringSize(OCILib.env, str) / sizeof(dbtext);
+        const size_t length = OCIStringSize(Env.env, str) / sizeof(dbtext);
 
         if (!(*buffer))
         {
@@ -439,7 +439,7 @@ otext * StringFromStringPtr
         {
             *buffer_size = (unsigned int) ( (length + 1) * sizeof(otext) );
 
-            if (OCILib.use_wide_char_conv)
+            if (Env.use_wide_char_conv)
             {
                 StringUTF16ToUTF32((void *)tmp, (void *)*buffer, (int) length);
             }
@@ -539,7 +539,7 @@ boolean StringGetAttribute
             Some we check if the first character slot has any zero bytes set 
             to detect this defect ! */
     
-        if ((OCI_CHAR_WIDE == OCILib.charset) && dbsize > 1)
+        if ((OCI_CHAR_WIDE == Env.charset) && dbsize > 1)
         {
             char *ptr = (char*) dbstr;
 
@@ -696,7 +696,7 @@ unsigned int StringGetFromType
             if (ptr)
             {           
                 OCI_Date    *date = (OCI_Date*) data;
-                const otext *fmt  = GetFormat(con, OCI_FMT_DATE);
+                const otext *fmt  = EnvironmentGetFormat(con, OCI_FMT_DATE);
 
                 res = date ? DateToString(date, fmt, (int) buffer_size, ptr) : FALSE;
             }
@@ -713,7 +713,7 @@ unsigned int StringGetFromType
             if (ptr)
             {
                 OCI_Timestamp *tmsp = (OCI_Timestamp *) data;
-                const otext   *fmt = GetFormat(con, tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
+                const otext   *fmt = EnvironmentGetFormat(con, tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
 
                  res = tmsp ? TimestampToString(tmsp, fmt, (int) buffer_size, ptr, 0) : FALSE;
             }

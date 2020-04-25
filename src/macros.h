@@ -25,7 +25,7 @@
 #include "exception.h"
 #include "memory.h"
 #include "error.h"
-#include "library.h"
+#include "environment.h"
 
 /* status management  */
 
@@ -40,13 +40,13 @@
 
 #define NB_ARG_VERSION              3
 
-#define LIB_THREADED                (OCILib.env_mode & OCI_ENV_THREADED)
+#define LIB_THREADED                (Env.env_mode & OCI_ENV_THREADED)
 
 #define DECLARE_CTX(status)                                                     \
                                                                                 \
     OCI_Context ctx_obj = { NULL, NULL, NULL, NULL, FALSE };                    \
     OCI_Context* ctx = &ctx_obj;                                                \
-    ctx_obj.oci_err    = OCILib.err;                                            \
+    ctx_obj.oci_err    = Env.err;                                               \
     ctx_obj.call_status = (status);                                             \
 
 #define DECLARE_VARS(type, value, status)                                       \
@@ -72,12 +72,12 @@
 #define CALL_ENTER(type, value)                                                 \
                                                                                 \
     DECLARE_VARS(type, value, TRUE)                                             \
-    CTX_ENTER(OCILib.env_mode)                                                  \
+    CTX_ENTER(Env.env_mode)                                                     \
 
 #define CALL_EXIT()                                                             \
                                                                                 \
     ExitCall:                                                                   \
-    CTX_EXIT(OCILib.env_mode)                                                   \
+    CTX_EXIT(Env.env_mode)                                                      \
     return call_retval;
 
 #define JUMP_EXIT()                                                             \
@@ -88,11 +88,11 @@
                                                                                 \
     ctx->lib_con      = (c);                                                    \
     ctx->lib_stmt     = (s);                                                    \
-    ctx->oci_err      = (e) ? (e) : OCILib.err;                                 \
+    ctx->oci_err      = (e) ? (e) : Env.err;                                    \
 
 #define CALL_CONTEXT_FROM_CON(con)                                              \
                                                                                 \
-   CTX_SET((con), NULL, ((con) ? (con)->err : OCILib.err))
+   CTX_SET((con), NULL, ((con) ? (con)->err : Env.err))
 
 #define CALL_CONTEXT_FROM_OBJ(obj)                                              \
                                                                                 \
@@ -340,14 +340,14 @@
 
 #define CALL_CHECK_INITIALIZED()                                                \
                                                                                 \
-    if (!OCILib.loaded)                                                         \
+    if (!Env.loaded)                                                            \
     {                                                                           \
         THROW(ExceptionNotInitialized())                                        \
     }
 
 #define CALL_CHECK_FEATURE(con, feat, ver)                                      \
                                                                                 \
-    if (OCILib.version_runtime < (ver) || ((con) && (con)->ver_num < (ver)))    \
+    if (Env.version_runtime < (ver) || ((con) && (con)->ver_num < (ver)))       \
     {                                                                           \
         THROW(ExceptionNotAvailable(con, feat))                                 \
     }
@@ -377,42 +377,42 @@
 
 #define CALL_CHECK_STATEMENT_CACHING_ENABLED()                                  \
                                                                                 \
-    if (OCILib.version_runtime < OCI_9_2)                                       \
+    if (Env.version_runtime < OCI_9_2)                                          \
     {                                                                           \
         THROW(ExceptionNotAvailable((dp)->con, OCI_FEATURE_STATEMENT_CACHING))  \
     }
 
 #define CALL_CHECK_DIRPATH_DATE_CACHE_ENABLED(dp)                               \
                                                                                 \
-    if (OCILib.version_runtime < OCI_9_2)                                       \
+    if (Env.version_runtime < OCI_9_2)                                          \
     {                                                                           \
         THROW(ExceptionNotAvailable((dp)->con, OCI_FEATURE_DIRPATH_DATE_CACHE)  \
     }
 
 #define CALL_CHECK_REMOTE_DBS_CONTROL_ENABLED()                                 \
                                                                                 \
-    if (OCILib.version_runtime < OCI_10_2)                                      \
+    if (Env.version_runtime < OCI_10_2)                                         \
     {                                                                           \
         THROW(ExceptionNotAvailable(NULL, OCI_FEATURE_REMOTE_DBS_CONTROL))      \
     }
 
 #define CALL_CHECK_DATABASE_NOTIFY_ENABLED()                                    \
                                                                                 \
-    if (OCILib.version_runtime < OCI_10_2)                                      \
+    if (Env.version_runtime < OCI_10_2)                                         \
     {                                                                           \
         THROW(ExceptionNotAvailable(NULL, OCI_FEATURE_DATABASE_NOTIFY))         \
     }
 
 #define CALL_CHECK_HIGH_AVAILABILITY_ENABLED()                                  \
                                                                                 \
-    if (OCILib.version_runtime < OCI_10_2)                                      \
+    if (Env.version_runtime < OCI_10_2)                                         \
     {                                                                           \
         THROW(ExceptionNotAvailable(NULL, OCI_FEATURE_HIGH_AVAILABILITY))       \
     }
 
 #define CALL_CHECK_XA_ENABLED(mode)                                             \
                                                                                 \
-    if ( ((mode) & OCI_SESSION_XA) && (!OCILib.use_xa) )                        \
+    if ( ((mode) & OCI_SESSION_XA) && (!Env.use_xa) )                           \
     {                                                                           \
         THROW(ExceptionNotAvailable(NULL, OCI_FEATURE_XA))                      \
     }

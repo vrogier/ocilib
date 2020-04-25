@@ -92,9 +92,6 @@
     <ClCompile Include="..\..\src\iterator.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\library.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\list.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -156,6 +153,15 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\reference.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\environment.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\database.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\helpers.c">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -224,9 +230,6 @@
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\iterator.h">
-      <Filter>Headers %28Private%29</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\library.h">
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\list.h">
@@ -327,6 +330,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\macros.h">
       <Filter>Headers %28Core%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\environment.h">
+      <Filter>Headers %28Private%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\database.h">
+      <Filter>Headers %28Private%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\helpers.h">
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

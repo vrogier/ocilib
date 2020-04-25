@@ -181,14 +181,14 @@ struct OCI_ThreadKey
 typedef struct OCI_ThreadKey OCI_ThreadKey;
 
 /*
- * OCI_Library : Internal OCILIB library encapsulation.
+ * OCI_Environment : Internal OCILIB library encapsulation.
  *
  * It's a static, local and unique object that collects all the global variables
  * needed by the library
  *
  */
 
-struct OCI_Library
+struct OCI_Environment
 {
     OCI_List            *cons;                    /* list of connection objects */
     OCI_List            *pools;                   /* list of pools objects */
@@ -227,7 +227,7 @@ struct OCI_Library
 #endif
 };
 
-typedef struct OCI_Library OCI_Library;
+typedef struct OCI_Environment OCI_Environment;
 
 /*
  * Pool object
@@ -935,9 +935,9 @@ struct OCI_Context
 
 typedef struct OCI_Context OCI_Context;
 
-/* static and unique OCI_Library object */
+/* static and unique OCI_Environment object */
 
-extern OCI_Library OCILib;
+extern OCI_Environment Env;
 extern const OCI_SQLCmdInfo SQLCmds[];
 
 /* Start of Experimental section containing some Oracle opaque structure definitions 

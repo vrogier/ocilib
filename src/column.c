@@ -301,7 +301,7 @@ boolean ColumnRetrieveInfo
 
         // Ugly workaround for Oracle Bug 9838993
 
-        if ((OCI_DESC_RESULTSET == ptype) && (OCILib.env_vars[OCI_VARS_WORKAROUND_UTF16_COLUMN_NAME]))
+        if ((OCI_DESC_RESULTSET == ptype) && (Env.env_vars[OCI_VARS_WORKAROUND_UTF16_COLUMN_NAME]))
         {
             OCIParamStruct *param_struct = (OCIParamStruct*) param;
 
@@ -434,7 +434,7 @@ boolean ColumnMapInfo
     OCI_Statement *stmt
 )
 {
-    const ub2 char_size = (ub2) ( (OCILib.nls_utf8 ) ? OCI_UTF8_BYTES_PER_CHAR : sizeof(otext) );
+    const ub2 char_size = (ub2) ( (Env.nls_utf8 ) ? OCI_UTF8_BYTES_PER_CHAR : sizeof(otext) );
 
     CHECK(NULL == col, FALSE)
 

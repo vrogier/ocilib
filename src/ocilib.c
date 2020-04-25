@@ -26,6 +26,7 @@
 #include "collection.h"
 #include "column.h"
 #include "connection.h"
+#include "database.h"
 #include "date.h"
 #include "dequeue.h"
 #include "dirpath.h"
@@ -38,7 +39,7 @@
 #include "hash.h"
 #include "interval.h"
 #include "iterator.h"
-#include "library.h"
+#include "environment.h"
 #include "lob.h"
 #include "long.h"
 #include "message.h"
@@ -2932,7 +2933,7 @@ boolean OCI_API OCI_Initialize
     unsigned int mode
 )
 {
-    CALL_IMPL(Initialize, err_handler, lib_path, mode)
+    CALL_IMPL(EnvironmentInitialize, err_handler, lib_path, mode)
 }
 
 boolean OCI_API OCI_Cleanup
@@ -2940,7 +2941,7 @@ boolean OCI_API OCI_Cleanup
     void
 )
 {
-    CALL_IMPL(Cleanup)
+    CALL_IMPL(EnvironmentCleanup)
 }
 
 unsigned int OCI_API OCI_GetOCICompileVersion
@@ -2948,7 +2949,7 @@ unsigned int OCI_API OCI_GetOCICompileVersion
     void
 )
 {
-    CALL_IMPL(GetOCICompileVersion)
+    CALL_IMPL(EnvironmentGetOCICompileVersion)
 }
 
 unsigned int OCI_API OCI_GetOCIRuntimeVersion
@@ -2956,7 +2957,7 @@ unsigned int OCI_API OCI_GetOCIRuntimeVersion
     void
 )
 {
-    CALL_IMPL(GetOCIRuntimeVersion)
+    CALL_IMPL(EnvironmentGetOCIRuntimeVersion)
 }
 
 unsigned int OCI_API OCI_GetImportMode
@@ -2964,7 +2965,7 @@ unsigned int OCI_API OCI_GetImportMode
     void
 )
 {
-    CALL_IMPL(GetImportMode)
+    CALL_IMPL(EnvironmentGetOCIRuntimeImportMode)
 }
 
 unsigned int OCI_API OCI_GetCharset
@@ -2972,7 +2973,7 @@ unsigned int OCI_API OCI_GetCharset
     void
 )
 {
-    CALL_IMPL(GetCharset)
+    CALL_IMPL(EnvironmentGetCharset)
 }
 
 
@@ -2981,7 +2982,7 @@ big_uint OCI_API OCI_GetAllocatedBytes
     unsigned int mem_type
 )
 {
-    CALL_IMPL(GetAllocatedBytes, mem_type)
+    CALL_IMPL(EnvironmentGetAllocatedBytes, mem_type)
 }
 
 OCI_Error* OCI_API OCI_GetLastError
@@ -2997,7 +2998,7 @@ boolean OCI_API OCI_EnableWarnings
     boolean value
 )
 {
-    CALL_IMPL(EnableWarnings, value)
+    CALL_IMPL(EnvironmentEnableWarnings, value)
 }
 
 boolean OCI_API OCI_SetErrorHandler
@@ -3005,7 +3006,7 @@ boolean OCI_API OCI_SetErrorHandler
     POCI_ERROR handler
 )
 {
-    CALL_IMPL(SetErrorHandler, handler)
+    CALL_IMPL(EnvironmentSetErrorHandler, handler)
 }
 
 boolean OCI_API OCI_DatabaseStartup
@@ -3040,7 +3041,7 @@ boolean OCI_API OCI_SetHAHandler
     POCI_HA_HANDLER  handler
 )
 {
-    CALL_IMPL(SetHAHandler, handler)
+    CALL_IMPL(EnvironmentSetHAHandler, handler)
 }
 
 boolean OCI_API OCI_SetFormat
@@ -3050,7 +3051,7 @@ boolean OCI_API OCI_SetFormat
     const otext* format
 )
 {
-    CALL_IMPL(SetFormat, con, type, format)
+    CALL_IMPL(EnvironmentSetFormat, con, type, format)
 }
 
 const otext* OCI_API OCI_GetFormat
@@ -3059,7 +3060,7 @@ const otext* OCI_API OCI_GetFormat
     unsigned int    type
 )
 {
-    CALL_IMPL(GetFormat, con, type)
+    CALL_IMPL(EnvironmentGetFormat, con, type)
 }
 
 boolean OCI_API OCI_SetUserPassword
@@ -3070,7 +3071,7 @@ boolean OCI_API OCI_SetUserPassword
     const otext* new_pwd
 )
 {
-    CALL_IMPL(SetUserPassword, db, user, pwd, new_pwd);
+    CALL_IMPL(DatabaseSetUserPassword, db, user, pwd, new_pwd);
 }
 
 /* --------------------------------------------------------------------------------------------- *

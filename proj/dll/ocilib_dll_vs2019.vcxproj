@@ -318,12 +318,14 @@
     <ClCompile Include="..\..\src\collection.c" />
     <ClCompile Include="..\..\src\column.c" />
     <ClCompile Include="..\..\src\connection.c" />
+    <ClCompile Include="..\..\src\database.c" />
     <ClCompile Include="..\..\src\date.c" />
     <ClCompile Include="..\..\src\define.c" />
     <ClCompile Include="..\..\src\dequeue.c" />
     <ClCompile Include="..\..\src\dirpath.c" />
     <ClCompile Include="..\..\src\element.c" />
     <ClCompile Include="..\..\src\enqueue.c" />
+    <ClCompile Include="..\..\src\environment.c" />
     <ClCompile Include="..\..\src\error.c" />
     <ClCompile Include="..\..\src\event.c" />
     <ClCompile Include="..\..\src\exception.c" />
@@ -331,9 +333,9 @@
     <ClCompile Include="..\..\src\format.c" />
     <ClCompile Include="..\..\src\handle.c" />
     <ClCompile Include="..\..\src\hash.c" />
+    <ClCompile Include="..\..\src\helpers.c" />
     <ClCompile Include="..\..\src\interval.c" />
     <ClCompile Include="..\..\src\iterator.c" />
-    <ClCompile Include="..\..\src\library.c" />
     <ClCompile Include="..\..\src\list.c" />
     <ClCompile Include="..\..\src\lob.c" />
     <ClCompile Include="..\..\src\long.c" />
@@ -369,6 +371,7 @@
     <ClInclude Include="..\..\src\collection.h" />
     <ClInclude Include="..\..\src\column.h" />
     <ClInclude Include="..\..\src\connection.h" />
+    <ClInclude Include="..\..\src\database.h" />
     <ClInclude Include="..\..\src\date.h" />
     <ClInclude Include="..\..\src\define.h" />
     <ClInclude Include="..\..\src\defs.h" />
@@ -376,6 +379,7 @@
     <ClInclude Include="..\..\src\dirpath.h" />
     <ClInclude Include="..\..\src\element.h" />
     <ClInclude Include="..\..\src\enqueue.h" />
+    <ClInclude Include="..\..\src\environment.h" />
     <ClInclude Include="..\..\src\error.h" />
     <ClInclude Include="..\..\src\event.h" />
     <ClInclude Include="..\..\src\exception.h" />
@@ -383,10 +387,10 @@
     <ClInclude Include="..\..\src\format.h" />
     <ClInclude Include="..\..\src\handle.h" />
     <ClInclude Include="..\..\src\hash.h" />
+    <ClInclude Include="..\..\src\helpers.h" />
     <ClInclude Include="..\..\src\import.h" />
     <ClInclude Include="..\..\src\interval.h" />
     <ClInclude Include="..\..\src\iterator.h" />
-    <ClInclude Include="..\..\src\library.h" />
     <ClInclude Include="..\..\src\list.h" />
     <ClInclude Include="..\..\src\loader.h" />
     <ClInclude Include="..\..\src\lob.h" />

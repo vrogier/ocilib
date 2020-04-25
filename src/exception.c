@@ -245,9 +245,9 @@ void ExceptionCallHandler
     {
         err->active = TRUE;
 
-        if (OCILib.error_handler)
+        if (Env.error_handler)
         {
-            OCILib.error_handler(err);
+            Env.error_handler(err);
         }
 
         err->active = FALSE;

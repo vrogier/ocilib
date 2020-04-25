@@ -96,7 +96,7 @@ OCI_Connection * ConnectionAllocate
 
     /* create connection object */
 
-    con = ListAppend(OCILib.cons, sizeof(*con));
+    con = ListAppend(Env.cons, sizeof(*con));
     STATUS = (NULL != con);
 
     if (STATUS)
@@ -175,7 +175,7 @@ OCI_Connection * ConnectionAllocate
         #endif
 
             {
-                con->env = OCILib.env;
+                con->env = Env.env;
             }
 
             STATUS = (NULL != con->env);
@@ -265,7 +265,7 @@ boolean ConnectionAttach
 
     #if OCI_VERSION_COMPILE >= OCI_9_0
 
-        if (OCILib.version_runtime >= OCI_9_0 && con->pool)
+        if (Env.version_runtime >= OCI_9_0 && con->pool)
         {
             dbstr = StringGetDBString(con->pool->name, &dbsize);
             cmode = OCI_CPOOL;
@@ -465,7 +465,7 @@ void ConnectionLogonRegular
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
-        if (STATUS && (OCILib.version_runtime >= OCI_11_1))
+        if (STATUS && (Env.version_runtime >= OCI_11_1))
         {
             otext driver_version[OCI_SIZE_FORMAT];
 
@@ -503,7 +503,7 @@ void ConnectionLogonRegular
 
             /* activate statement cache is the OCI version supports it */
 
-            if (OCILib.version_runtime >= OCI_9_2)
+            if (Env.version_runtime >= OCI_9_2)
             {
                 mode |= OCI_STMT_CACHE;
             }
@@ -653,7 +653,7 @@ boolean ConnectionLogon
 
    /* 3 - connection from session pool */
 
-    else if (OCILib.version_runtime >= OCI_9_2)
+    else if (Env.version_runtime >= OCI_9_2)
     {
         ConnectionLogonSessionPool(ctx, con, tag);
     }
@@ -733,7 +733,7 @@ void ConnectionLogoffSessionPool
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
-    if (OCILib.version_runtime >= OCI_9_2)
+    if (Env.version_runtime >= OCI_9_2)
     {
         dbtext *dbstr  = NULL;
         int     dbsize = 0;
@@ -785,7 +785,7 @@ boolean ConnectionLogOff
 
     /* dissociate connection from existing subscriptions */
 
-    ListForEachWithParam(OCILib.subs, con, (POCI_LIST_FOR_EACH_WITH_PARAM) ConnectionDetachSubscriptions);
+    ListForEachWithParam(Env.subs, con, (POCI_LIST_FOR_EACH_WITH_PARAM) ConnectionDetachSubscriptions);
 
     /* free all statements */
 
@@ -825,7 +825,7 @@ boolean ConnectionLogOff
 
    /* 3 - connection from session pool */
 
-    else if (OCILib.version_runtime >= OCI_9_0)
+    else if (Env.version_runtime >= OCI_9_0)
     {
         ConnectionLogoffSessionPool(ctx, con);
     }
@@ -956,7 +956,7 @@ unsigned int ConnectionGetMinSupportedVersion
     OCI_Connection *con
 )
 {
-    return (OCILib.version_runtime > con->ver_num) ? con->ver_num : OCILib.version_runtime;
+    return (Env.version_runtime > con->ver_num) ? con->ver_num : Env.version_runtime;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1009,7 +1009,7 @@ boolean ConnectionFree
 
     RETVAL = STATUS = ConnectionDispose(con);
 
-    ListRemove(OCILib.cons, con);
+    ListRemove(Env.cons, con);
     FREE(con)
 
     CALL_EXIT()
@@ -1115,7 +1115,7 @@ void * ConnectionGetUserData
     CALL_ENTER(void*, NULL)
     CALL_CHECK_INITIALIZED()
 
-    RETVAL = (void*) (con ? con->usrdata : OCILib.usrdata);
+    RETVAL = (void*) (con ? con->usrdata : Env.usrdata);
     
     CALL_EXIT()
 }
@@ -1139,7 +1139,7 @@ boolean ConnectionSetUserData
     }
     else
     {
-        OCILib.usrdata = data;
+        Env.usrdata = data;
     }
 
     RETVAL = TRUE;
@@ -1320,7 +1320,7 @@ const otext * ConnectionGetServerVersion
 
          #if OCI_VERSION_COMPILE >= OCI_18_1
    
-            if (OCILib.version_runtime >= OCI_18_1)
+            if (Env.version_runtime >= OCI_18_1)
             {
                 EXEC(OCIServerRelease2((dvoid *)con->cxt, con->err, (OraText *)dbstr, (ub4)dbsize, (ub1)OCI_HTYPE_SVCCTX, &version, OCI_DEFAULT))
             }
@@ -1342,7 +1342,7 @@ const otext * ConnectionGetServerVersion
 
         #if OCI_VERSION_COMPILE >= OCI_18_1
 
-            if (OCILib.version_runtime >= OCI_18_1)
+            if (Env.version_runtime >= OCI_18_1)
             {
                 ver_maj = OCI_SERVER_RELEASE_REL(version);
                 ver_min = OCI_SERVER_RELEASE_REL_UPD(version);
@@ -1870,7 +1870,7 @@ boolean ConnectionPing
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    if (OCILib.version_runtime >= OCI_10_2)
+    if (Env.version_runtime >= OCI_10_2)
     {
         EXEC(OCIPing(con->cxt, con->err, (ub4)OCI_DEFAULT))
 
@@ -1902,7 +1902,7 @@ boolean ConnectionSetTimeout
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
-    if (OCILib.version_runtime >= OCI_12_1)
+    if (Env.version_runtime >= OCI_12_1)
     {
         switch (type)
         {
@@ -1923,7 +1923,7 @@ boolean ConnectionSetTimeout
 
             case OCI_NTO_CALL:
             {
-                if (OCILib.version_runtime >= OCI_18_1)
+                if (Env.version_runtime >= OCI_18_1)
                 {
                     ATTRIB_SET(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
                     RETVAL = STATUS;
@@ -1961,7 +1961,7 @@ unsigned int ConnectionGetTimeout
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
-    if (OCILib.version_runtime >= OCI_12_1)
+    if (Env.version_runtime >= OCI_12_1)
     {
         switch (type)
         {
@@ -1980,7 +1980,7 @@ unsigned int ConnectionGetTimeout
 
             case OCI_NTO_CALL:
             {
-                if (OCILib.version_runtime >= OCI_18_3)
+                if (Env.version_runtime >= OCI_18_3)
                 {
                     ATTRIB_GET(OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT, con->cxt, &timeout, sizeof(timeout))
                 }
@@ -2192,7 +2192,7 @@ boolean ConnectionIsTAFCapable
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    if (OCILib.version_runtime >= OCI_10_2)
+    if (Env.version_runtime >= OCI_10_2)
     {
         ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_TAF_ENABLED, con->svr, &value, NULL);
     }
@@ -2222,7 +2222,7 @@ boolean ConnectionSetTAFHandler
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    if (RETVAL && OCILib.version_runtime >= OCI_10_2)
+    if (RETVAL && Env.version_runtime >= OCI_10_2)
     {
         OCIFocbkStruct fo_struct;
 
@@ -2263,7 +2263,7 @@ unsigned int ConnectionGetStatementCacheSize
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
-    if (OCILib.version_runtime >= OCI_9_2)
+    if (Env.version_runtime >= OCI_9_2)
     {
         ATTRIB_GET(OCI_HTYPE_SVCCTX, OCI_ATTR_STMTCACHESIZE, con->cxt, &cache_size, NULL);
     }
@@ -2293,7 +2293,7 @@ boolean ConnectionSetStatementCacheSize
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
-    if (OCILib.version_runtime >= OCI_9_2)
+    if (Env.version_runtime >= OCI_9_2)
     {
         ATTRIB_SET(OCI_HTYPE_SVCCTX, OCI_ATTR_STMTCACHESIZE, con->cxt, &cache_size, sizeof(cache_size));
     }

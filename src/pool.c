@@ -44,7 +44,7 @@ boolean PoolDispose
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.version_runtime >= OCI_9_0)
+    if (Env.version_runtime >= OCI_9_0)
     {
         /* close pool handle */
 
@@ -133,7 +133,7 @@ OCI_Pool * PoolCreate
     
     /* create pool object */
 
-    pool = ListAppend(OCILib.pools, sizeof(*pool));
+    pool = ListAppend(Env.pools, sizeof(*pool));
     STATUS = (NULL != pool);
 
     if (STATUS)
@@ -174,7 +174,7 @@ OCI_Pool * PoolCreate
 
     }
 
-    if (OCILib.version_runtime >= OCI_9_0)
+    if (Env.version_runtime >= OCI_9_0)
     {
         int dbsize_name = -1;
         int dbsize_db   = -1;
@@ -184,11 +184,11 @@ OCI_Pool * PoolCreate
 
         /* allocate error handle */
 
-        STATUS = STATUS && MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **)(void *)&pool->err, OCI_HTYPE_ERROR);
+        STATUS = STATUS && MemoryAllocHandle((dvoid *)Env.env, (dvoid **)(void *)&pool->err, OCI_HTYPE_ERROR);
 
         /* allocate pool handle */
 
-        STATUS = STATUS && MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **)(void *)&pool->handle, (ub4)pool->htype);
+        STATUS = STATUS && MemoryAllocHandle((dvoid *)Env.env, (dvoid **)(void *)&pool->handle, (ub4)pool->htype);
 
         /* allocate authentication handle only if needed */
 
@@ -196,7 +196,7 @@ OCI_Pool * PoolCreate
 
         if (STATUS)
         {       
-            if ((OCI_HTYPE_SPOOL == pool->htype) && (OCILib.version_runtime >= OCI_11_1))
+            if ((OCI_HTYPE_SPOOL == pool->htype) && (Env.version_runtime >= OCI_11_1))
             {
                 int     dbsize = -1;
                 dbtext *dbstr  = NULL;
@@ -215,7 +215,7 @@ OCI_Pool * PoolCreate
 
                 /* allocate authentication handle */
 
-                STATUS = MemoryAllocHandle((dvoid *)OCILib.env, (dvoid **)(void *)&pool->authp, OCI_HTYPE_AUTHINFO);
+                STATUS = MemoryAllocHandle((dvoid *)Env.env, (dvoid **)(void *)&pool->authp, OCI_HTYPE_AUTHINFO);
 
                 /* set OCILIB driver layer name attribute only for session pools here
                     For standalone connections and connection pool this attribute is set
@@ -250,7 +250,7 @@ OCI_Pool * PoolCreate
             {
                 EXEC
                 (
-                    OCIConnectionPoolCreate(OCILib.env, pool->err, (OCICPool *) pool->handle,
+                    OCIConnectionPoolCreate(Env.env, pool->err, (OCICPool *) pool->handle,
                                             (OraText **) (dvoid *) &dbstr_name,
                                             (sb4*) &dbsize_name,
                                             (OraText *) dbstr_db, (sb4) dbsize_db,
@@ -274,7 +274,7 @@ OCI_Pool * PoolCreate
 
                 EXEC
                 (
-                    OCISessionPoolCreate(OCILib.env, pool->err, (OCISPool *) pool->handle,
+                    OCISessionPoolCreate(Env.env, pool->err, (OCISPool *) pool->handle,
                                          (OraText **) (dvoid *) &dbstr_name,
                                          (ub4*) &dbsize_name,
                                          (OraText *) dbstr_db, (sb4) dbsize_db,
@@ -353,7 +353,7 @@ boolean PoolFree
 
     STATUS = PoolDispose(pool);
 
-    ListRemove(OCILib.pools, pool);
+    ListRemove(Env.pools, pool);
 
     FREE(pool)
 
@@ -414,7 +414,7 @@ unsigned int PoolGetTimeout
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.version_runtime >= OCI_9_0)
+    if (Env.version_runtime >= OCI_9_0)
     {
         ub4 attr = 0;
 
@@ -458,7 +458,7 @@ boolean PoolSetTimeout
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.version_runtime >= OCI_9_0)
+    if (Env.version_runtime >= OCI_9_0)
     {
         ub4 timeout = value;
         ub4 attr    = 0;
@@ -504,7 +504,7 @@ boolean PoolGetNoWait
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.version_runtime >= OCI_9_0)
+    if (Env.version_runtime >= OCI_9_0)
     {
         ub4 attr = 0;
 
@@ -549,7 +549,7 @@ boolean PoolSetNoWait
 
  #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.version_runtime >= OCI_9_0)
+    if (Env.version_runtime >= OCI_9_0)
     {
         ub1 nowait = (ub1) value;
         ub4 attr   = 0;
@@ -598,7 +598,7 @@ unsigned int PoolGetBusyCount
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.version_runtime >= OCI_9_0)
+    if (Env.version_runtime >= OCI_9_0)
     {
         ub4 attr  = 0;
 
@@ -643,7 +643,7 @@ unsigned int PoolGetOpenedCount
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    if (OCILib.version_runtime >= OCI_9_0)
+    if (Env.version_runtime >= OCI_9_0)
     {
         ub4 attr  = 0;
 
@@ -725,7 +725,7 @@ boolean PoolSetStatementCacheSize
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (OCILib.version_runtime >= OCI_10_1)
+    if (Env.version_runtime >= OCI_10_1)
     {
         if (OCI_HTYPE_SPOOL == pool->htype)
         {
@@ -762,7 +762,7 @@ unsigned int PoolGetStatementCacheSize
 
  #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    if (OCILib.version_runtime >= OCI_10_1)
+    if (Env.version_runtime >= OCI_10_1)
     {
         if (OCI_HTYPE_SPOOL == pool->htype)
         {

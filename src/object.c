@@ -25,6 +25,7 @@
 #include "column.h"
 #include "date.h"
 #include "file.h"
+#include "helpers.h"
 #include "interval.h"
 #include "list.h"
 #include "lob.h"
@@ -1145,7 +1146,7 @@ const otext * ObjectGetString
 
         if (value && ind && (OCI_IND_NULL != *ind))
         {
-            if (OCILib.use_wide_char_conv)
+            if (Env.use_wide_char_conv)
             {
                 RETVAL = StringFromStringPtr(obj->con->env, *value, &obj->tmpbufs[index], &obj->tmpsizes[index]);
             }
@@ -2088,7 +2089,7 @@ boolean ObjectToString
 
                     if (data && ind && (OCI_IND_NULL != *ind))
                     {
-                        data_size = OCIStringSize(OCILib.env, (*(OCIString **)data));
+                        data_size = OCIStringSize(Env.env, (*(OCIString **)data));
                         data      = (void *)ObjectGetString(obj, attr);
                     }
                     else

@@ -360,7 +360,7 @@ boolean DefineDef
        ((OCI_CDT_LONG == def->col.datatype)  && (OCI_BLONG != def->col.subtype)))
     {
 
-        if ((SQLCS_NCHAR == def->col.csfrm) || OCILib.nls_utf8)
+        if ((SQLCS_NCHAR == def->col.csfrm) || Env.nls_utf8)
         {
             ub1 csfrm = SQLCS_NCHAR;
 

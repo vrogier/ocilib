@@ -18,33 +18,10 @@
  * limitations under the License.
  */
  
-#ifndef OCILIB_LIBRARY_H_INCLUDED
-#define OCILIB_LIBRARY_H_INCLUDED
+#ifndef OCILIB_ENVIRONMENT_H_INCLUDED
+#define OCILIB_ENVIRONMENT_H_INCLUDED
 
 #include "types.h"
-
-unsigned int ExternalSubTypeToSQLType
-(
-    unsigned int type,
-    unsigned int subtype
-);
-
-unsigned int ExternalSubTypeToHandleType
-(
-    unsigned int type,
-    unsigned int subtype
-);
-
-boolean FreeObjectFromType
-(
-    void* obj, 
-    unsigned int type
-);
-
-boolean KeyMapFree
-(
-    void
-);
 
 void CallEnter
 (
@@ -56,7 +33,7 @@ void CallExit
     OCI_Context* ctx
 );
 
-char* GetEnvVariable
+char* EnvironmentGetVariable
 (
     const char* name
 );
@@ -66,99 +43,69 @@ OCI_Error* EnvironmentGetLastError
     void
 );
 
-boolean Initialize
+boolean EnvironmentInitialize
 (
     POCI_ERROR   err_handler,
     const otext* lib_path,
     unsigned int mode
 );
 
-boolean Cleanup
+boolean EnvironmentCleanup
 (
     void
 );
 
-unsigned int GetOCICompileVersion
+unsigned int EnvironmentGetOCICompileVersion
 (
     void
 );
 
-unsigned int GetOCIRuntimeVersion
+unsigned int EnvironmentGetOCIRuntimeVersion
 (
     void
 );
 
-unsigned int GetImportMode
+unsigned int EnvironmentGetOCIRuntimeImportMode
 (
     void
 );
 
-unsigned int GetCharset
+unsigned int EnvironmentGetCharset
 (
     void
 );
 
-big_uint GetAllocatedBytes
+big_uint EnvironmentGetAllocatedBytes
 (
     unsigned int mem_type
 );
 
-boolean EnableWarnings
+boolean EnvironmentEnableWarnings
 (
     boolean value
 );
 
-boolean SetErrorHandler
+boolean EnvironmentSetErrorHandler
 (
     POCI_ERROR handler
 );
 
-boolean DatabaseStartup
-(
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    unsigned int sess_mode,
-    unsigned int start_mode,
-    unsigned int start_flag,
-    const otext* spfile
-);
-
-boolean DatabaseShutdown
-(
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    unsigned int sess_mode,
-    unsigned int shut_mode,
-    unsigned int shut_flag
-);
-
-boolean SetHAHandler
+boolean EnvironmentSetHAHandler
 (
     POCI_HA_HANDLER  handler
 );
 
-boolean SetFormat
+boolean EnvironmentSetFormat
 (
     OCI_Connection* con,
     unsigned int    type,
     const otext* format
 );
 
-const otext* GetFormat
+const otext* EnvironmentGetFormat
 (
     OCI_Connection* con,
     unsigned int    type
 );
 
-boolean SetUserPassword
-(
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    const otext* new_pwd
-);
-
-
-#endif /* OCILIB_LIBRARY_H_INCLUDED */
+#endif /* OCILIB_ENVIRONMENT_H_INCLUDED */

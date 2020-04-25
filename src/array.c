@@ -23,6 +23,7 @@
 #include "collection.h"
 #include "date.h"
 #include "file.h"
+#include "helpers.h"
 #include "interval.h"
 #include "list.h"
 #include "lob.h"
@@ -209,14 +210,14 @@ OCI_Array * ArrayCreate
 
     /* create array object */
 
-    arr = ListAppend(OCILib.arrs, sizeof(*arr));
+    arr = ListAppend(Env.arrs, sizeof(*arr));
     STATUS = (NULL != arr);
 
     if (STATUS)
     {
         arr->con          = con;
-        arr->err          = con ? con->err : OCILib.err;
-        arr->env          = con ? con->env : OCILib.env;
+        arr->err          = con ? con->err : Env.err;
+        arr->env          = con ? con->env : Env.env;
         arr->elem_type    = elem_type;
         arr->elem_subtype = elem_subtype;
         arr->elem_size    = elem_size;
@@ -268,11 +269,11 @@ boolean ArrayFreeFromHandles
 )
 {
     boolean    res = FALSE;
-    OCI_Array *arr = ListFind(OCILib.arrs, (POCI_LIST_FIND) ArrayFindAny, handles);
+    OCI_Array *arr = ListFind(Env.arrs, (POCI_LIST_FIND) ArrayFindAny, handles);
 
     if (arr)
     {
-        res = ListRemove(OCILib.arrs, arr);
+        res = ListRemove(Env.arrs, arr);
        ArrayDispose(arr);
         FREE(arr)
     }

@@ -26,6 +26,7 @@
 #include "date.h"
 #include "file.h"
 #include "hash.h"
+#include "helpers.h"
 #include "interval.h"
 #include "lob.h"
 #include "macros.h"
@@ -83,7 +84,7 @@ boolean BindAllocateInternalData
             {
                 struct_size = bnd->size;
 
-                if (OCILib.use_wide_char_conv)
+                if (Env.use_wide_char_conv)
                 {
                     elem_size = bnd->size * (sizeof(otext) / sizeof(dbtext));
                 }
@@ -172,7 +173,7 @@ boolean BindAllocateInternalData
                 }
                 case OCI_CDT_TEXT:
                 {
-                    if (OCILib.use_wide_char_conv)
+                    if (Env.use_wide_char_conv)
                     {
                         bnd->buffer.data = (void**)arr->mem_handle;
                         bnd->input = (void**)arr->mem_struct;
@@ -250,7 +251,7 @@ boolean BindAllocateInternalData
             }
             case OCI_CDT_TEXT:
             {
-                if (OCILib.use_wide_char_conv)
+                if (Env.use_wide_char_conv)
                 {
                     bnd->buffer.data = (void**)MemoryAlloc(OCI_IPC_STRING, bnd->size * (sizeof(otext) / sizeof(dbtext)), 1, TRUE);
                     bnd->input = (void**)MemoryAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
@@ -405,7 +406,7 @@ void BindAllocateBuffers
                 (OCI_CDT_LONG    != bnd->type)  &&
                 (OCI_CDT_BOOLEAN != bnd->type)  &&
                 (OCI_CDT_NUMERIC != bnd->type || SQLT_VNU == bnd->code) &&
-                (OCI_CDT_TEXT    != bnd->type || OCILib.use_wide_char_conv))
+                (OCI_CDT_TEXT    != bnd->type || Env.use_wide_char_conv))
             {
                 bnd->alloc = TRUE;
 

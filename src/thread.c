@@ -63,15 +63,15 @@ OCI_Thread * ThreadCreate
     {
         /* allocate error handle */
 
-        STATUS = MemoryAllocHandle(OCILib.env, (dvoid **)(void *)&thread->err, OCI_HTYPE_ERROR);
+        STATUS = MemoryAllocHandle(Env.env, (dvoid **)(void *)&thread->err, OCI_HTYPE_ERROR);
 
         /* allocate thread handle */
 
-        EXEC(OCIThreadHndInit(OCILib.env, thread->err, &thread->handle))
+        EXEC(OCIThreadHndInit(Env.env, thread->err, &thread->handle))
 
         /* allocate thread ID */
 
-        EXEC(OCIThreadIdInit(OCILib.env, thread->err, &thread->id))
+        EXEC(OCIThreadIdInit(Env.env, thread->err, &thread->id))
     }
 
     if (STATUS)
@@ -104,15 +104,15 @@ boolean ThreadFree
 
     if (thread->handle)
     {
-        EXEC(OCIThreadClose(OCILib.env, thread->err, thread->handle))
-        EXEC(OCIThreadHndDestroy(OCILib.env, thread->err, &thread->handle))
+        EXEC(OCIThreadClose(Env.env, thread->err, thread->handle))
+        EXEC(OCIThreadHndDestroy(Env.env, thread->err, &thread->handle))
     }
 
     /* close thread id */
 
     if (thread->id)
     {
-        EXEC(OCIThreadIdDestroy(OCILib.env, thread->err, &thread->id))
+        EXEC(OCIThreadIdDestroy(Env.env, thread->err, &thread->id))
     }
 
     /* close error handle */
@@ -150,7 +150,7 @@ boolean ThreadRun
     thread->proc = proc;
     thread->arg  = arg;
 
-    EXEC(OCIThreadCreate(OCILib.env, thread->err, ThreadProc, thread, thread->id, thread->handle))
+    EXEC(OCIThreadCreate(Env.env, thread->err, ThreadProc, thread, thread->id, thread->handle))
 
     RETVAL = STATUS;
 
@@ -170,7 +170,7 @@ boolean ThreadJoin
     CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
     CALL_CONTEXT_FROM_ERR(thread->err)
 
-    EXEC(OCIThreadJoin(OCILib.env, thread->err, thread->handle))
+    EXEC(OCIThreadJoin(Env.env, thread->err, thread->handle))
 
     RETVAL = STATUS;
 

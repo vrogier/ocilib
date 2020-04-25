@@ -358,7 +358,7 @@ unsigned int FileRead
 
 #ifdef OCI_LOB2_API_ENABLED
 
-    if (OCILib.use_lob_ub8)
+    if (Env.use_lob_ub8)
     {
         ub8 size_char = (ub8) len;
         ub8 size_byte = (ub8) size_in;
@@ -431,7 +431,7 @@ big_uint FileGetSize
 
 #ifdef OCI_LOB2_API_ENABLED
 
-    if (OCILib.use_lob_ub8)
+    if (Env.use_lob_ub8)
     {
         EXEC(OCILobGetLength2(file->con->cxt, file->con->err, file->handle, (ub8 *) &size))
     }

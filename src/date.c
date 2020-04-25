@@ -21,7 +21,7 @@
 #include "date.h"
 
 #include "array.h"
-#include "library.h"
+#include "environment.h"
 #include "macros.h"
 #include "strings.h"
 
@@ -49,8 +49,8 @@ OCI_Date * DateInitialize
 
         /* get the right error handle */
 
-        date->err = con ? con->err : OCILib.err;
-        date->env = con ? con->env : OCILib.env;
+        date->err = con ? con->err : Env.err;
+        date->env = con ? con->env : Env.env;
 
         /* allocate buffer if needed */
 
@@ -351,7 +351,7 @@ boolean DateFromString
 
     if (!IS_STRING_VALID(fmt))
     {
-        fmt = GetFormat(date->con, OCI_FMT_DATE);
+        fmt = EnvironmentGetFormat(date->con, OCI_FMT_DATE);
     }
 
     dbstr1 = StringGetDBString(str, &dbsize1);
@@ -620,7 +620,7 @@ boolean DateToString
 
     if (!IS_STRING_VALID(fmt))
     {
-        fmt = GetFormat(date->con, OCI_FMT_DATE);
+        fmt = EnvironmentGetFormat(date->con, OCI_FMT_DATE);
     }
 
     dbstr1 = StringGetDBString(str, &dbsize1);

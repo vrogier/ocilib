@@ -24,6 +24,7 @@
 #include "date.h"
 #include "exception.h"
 #include "file.h"
+#include "helpers.h"
 #include "interval.h"
 #include "lob.h"
 #include "macros.h"

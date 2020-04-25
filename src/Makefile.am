@@ -22,6 +22,7 @@ libocilib_la_SOURCES=   \
     column.c            \
     connection.c        \
     date.c              \
+    database.c          \
     define.c            \
     dequeue.c           \
     dirpath.c           \
@@ -29,14 +30,15 @@ libocilib_la_SOURCES=   \
     enqueue.c           \
     error.c             \
     event.c             \
+    environment.c       \
     exception.c         \
     file.c              \
     format.c            \
     handle.c            \
     hash.c              \
+    helpers.c           \
     interval.c          \
     iterator.c          \
-    library.c           \
     list.c              \
     lob.c               \
     long.c              \
@@ -81,6 +83,7 @@ noinst_HEADERS=     \
     column.h        \
     connection.h    \
     date.h          \
+    database.h      \
     define.h        \
     defs.h          \
     dequeue.h       \
@@ -89,15 +92,16 @@ noinst_HEADERS=     \
     enqueue.h       \
     error.h         \
     event.h         \
+    environment.h   \
     exception.h     \
     file.h          \
     format.h        \
     handle.h        \
     hash.h          \
+    helpers.h       \
     import.h        \
     interval.h      \
     iterator.h      \
-    library.h       \
     list.h          \
     loader.h        \
     lob.h           \

@@ -327,7 +327,7 @@ OCI_DirPath * DirPathCreate
             StringReleaseDBString(dbstr);
         }
 
-        if (OCILib.version_runtime >= OCI_9_0)
+        if (Env.version_runtime >= OCI_9_0)
         {
             ub4 num_rows = dp->nb_rows;
 
@@ -466,7 +466,7 @@ boolean DirPathSetColumn
                 dpcol->maxsize *= sizeof(otext);
                 dpcol->bufsize *= sizeof(otext);
 
-                if (OCILib.nls_utf8)
+                if (Env.nls_utf8)
                 {
                     dpcol->bufsize *= OCI_UTF8_BYTES_PER_CHAR;
                 }
@@ -595,7 +595,7 @@ boolean DirPathSetColumn
 
         /* setup Unicode mode for Unicode user data */
 
-        if (OCI_DDT_TEXT == dpcol->type && OCI_CHAR_WIDE == OCILib.charset)
+        if (OCI_DDT_TEXT == dpcol->type && OCI_CHAR_WIDE == Env.charset)
         {
             ub2 csid = OCI_UTF16ID;
 
@@ -754,12 +754,12 @@ boolean DirPathSetEntry
 
             /* we weed to pack the buffer if wchar_t is 4 bytes */
 
-            if (OCI_DDT_TEXT == dpcol->type && OCILib.use_wide_char_conv)
+            if (OCI_DDT_TEXT == dpcol->type && Env.use_wide_char_conv)
             {
                 size = ocharcount(size);
                 StringUTF32ToUTF16(value, data, size);
             }
-            else if (OCI_DDT_OTHERS == dpcol->type && OCI_CHAR_WIDE == OCILib.charset)
+            else if (OCI_DDT_OTHERS == dpcol->type && OCI_CHAR_WIDE == Env.charset)
             {
                 /* input Unicode numeric values causes oracle conversion error.
                    so, let's convert them to ANSI */

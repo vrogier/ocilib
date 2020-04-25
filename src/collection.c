@@ -552,7 +552,7 @@ boolean CollectionToString
             {
                 case OCI_CDT_TEXT:
                 {
-                    data_size = OCIStringSize(OCILib.env, elem->handle);
+                    data_size = OCIStringSize(Env.env, elem->handle);
                     data      = (void *) ElementGetString(elem);
                     break;
                 }

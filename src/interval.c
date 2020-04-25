@@ -21,6 +21,7 @@
 #include "interval.h"
 
 #include "array.h"
+#include "helpers.h"
 #include "macros.h"
 #include "strings.h"
 
@@ -55,8 +56,8 @@ OCI_Interval * IntervalInitialize
 
         /* get the right error handle */
 
-        itv->err = con ? con->err : OCILib.err;
-        itv->env = con ? con->env : OCILib.env;
+        itv->err = con ? con->err : Env.err;
+        itv->env = con ? con->env : Env.env;
 
         /* allocate buffer if needed */
 

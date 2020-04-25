@@ -29,6 +29,7 @@
 #include "file.h"
 #include "format.h"
 #include "hash.h"
+#include "helpers.h"
 #include "interval.h"
 #include "list.h"
 #include "lob.h"
@@ -191,7 +192,7 @@ boolean StatementReset
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
-    if ((OCILib.version_runtime >= OCI_9_2) && (stmt->nb_rbinds > 0))
+    if ((Env.version_runtime >= OCI_9_2) && (stmt->nb_rbinds > 0))
     {
         /*  if we had registered binds, we must delete the statement from the cache.
             Because, if we execute another sql with "returning into clause",
@@ -239,7 +240,7 @@ boolean StatementReset
 
         #if OCI_VERSION_COMPILE >= OCI_9_2
 
-            if (OCILib.version_runtime >= OCI_9_2)
+            if (Env.version_runtime >= OCI_9_2)
             {
                 EXEC(OCIStmtRelease(stmt->stmt, stmt->con->err, NULL, 0, mode))
             }
@@ -353,7 +354,7 @@ boolean StatementBindCheck
         // String binds that may required conversion on systems where wchar_t is UTF32
         else if (OCI_CDT_TEXT == bnd->type)
         {
-            if (OCILib.use_wide_char_conv)
+            if (Env.use_wide_char_conv)
             {
                 const int    max_chars  = (int) (bnd->size / sizeof(dbtext));
                 const size_t src_offset = index * max_chars * sizeof(otext);
@@ -467,7 +468,7 @@ boolean StatementBindUpdate
     // String binds that may required conversion on systems where wchar_t is UTF32
     else if (OCI_CDT_TEXT == bnd->type)
     {
-        if (OCILib.use_wide_char_conv)
+        if (Env.use_wide_char_conv)
         {
             const int    max_chars  = (int) (bnd->size / sizeof(dbtext));
             const size_t src_offset = index * max_chars * sizeof(dbtext);
@@ -905,7 +906,7 @@ boolean StatementCheckImplicitResultsets
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
-    if (OCILib.version_runtime >= OCI_12_1)
+    if (Env.version_runtime >= OCI_12_1)
     {
         ATTRIB_GET(OCI_HTYPE_STMT, OCI_ATTR_IMPLICIT_RESULT_COUNT, stmt->stmt, &stmt->nb_stmt, NULL)
 
@@ -1077,7 +1078,7 @@ boolean StatementPrepareInternal
 
         dbstr = StringGetDBString(stmt->sql, &dbsize);
 
-        if (OCILib.version_runtime < OCI_9_2)
+        if (Env.version_runtime < OCI_9_2)
         {
             /* allocate handle */
 
@@ -1091,7 +1092,7 @@ boolean StatementPrepareInternal
 
     #if OCI_VERSION_COMPILE >= OCI_9_2
 
-        if (OCILib.version_runtime >= OCI_9_2)
+        if (Env.version_runtime >= OCI_9_2)
         {
             ub4 mode = OCI_DEFAULT;
 

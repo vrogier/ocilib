@@ -21,7 +21,7 @@
 #include "number.h"
 
 #include "array.h"
-#include "library.h"
+#include "environment.h"
 #include "macros.h"
 #include "strings.h"
 
@@ -165,7 +165,7 @@ boolean NumberTranslateValue
 
         #if OCI_VERSION_COMPILE >= OCI_10_1
 
-            if (OCILib.version_runtime >= OCI_10_1)
+            if (Env.version_runtime >= OCI_10_1)
             {
                 if (in_type & OCI_NUM_FLOAT && (out_type & OCI_NUM_DOUBLE))
                 {
@@ -254,13 +254,13 @@ boolean NumberFromStringInternal
 
     #if OCI_VERSION_COMPILE >= OCI_10_1
 
-        if (!done && OCILib.version_runtime >= OCI_10_1)
+        if (!done && Env.version_runtime >= OCI_10_1)
         {
             const otext *tmp_fmt = fmt;
 
             if (!tmp_fmt)
             {
-                tmp_fmt = GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
+                tmp_fmt = EnvironmentGetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
             }
 
             if (type & OCI_NUM_DOUBLE)
@@ -306,7 +306,7 @@ boolean NumberFromStringInternal
 
             if (!fmt)
             {
-                fmt = GetFormat(con, OCI_FMT_NUMERIC);
+                fmt = EnvironmentGetFormat(con, OCI_FMT_NUMERIC);
             }
 
             dbstr1 = StringGetDBString(in_value, &dbsize1);
@@ -372,13 +372,13 @@ boolean NumberToStringInternal
 
     #if OCI_VERSION_COMPILE >= OCI_10_1
 
-        if (!done && (OCILib.version_runtime >= OCI_10_1))
+        if (!done && (Env.version_runtime >= OCI_10_1))
         {
             const otext *tmp_fmt = fmt;
 
             if (!tmp_fmt)
             {
-                tmp_fmt = GetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
+                tmp_fmt = EnvironmentGetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
             }
 
             if (type & OCI_NUM_DOUBLE)
@@ -435,7 +435,7 @@ boolean NumberToStringInternal
 
             if (!fmt)
             {
-                fmt = GetFormat(con, OCI_FMT_NUMERIC);
+                fmt = EnvironmentGetFormat(con, OCI_FMT_NUMERIC);
             }
 
             dbstr1 = StringGetDBString(out_value, &dbsize1);
@@ -493,8 +493,8 @@ OCI_Number * NumberInitialize
 
         /* get the right error handle */
 
-        number->err = con ? con->err : OCILib.err;
-        number->env = con ? con->env : OCILib.env;
+        number->err = con ? con->err : Env.err;
+        number->env = con ? con->env : Env.env;
 
         /* allocate buffer if needed */
 

@@ -34,7 +34,7 @@ const void * HandleGetEnvironment
     CALL_ENTER(const void *, NULL)
     CALL_CHECK_INITIALIZED()
 
-    RETVAL = OCILib.env;
+    RETVAL = Env.env;
 
     CALL_EXIT()
 }
