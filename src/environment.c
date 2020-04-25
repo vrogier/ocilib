@@ -523,18 +523,18 @@ OCISTMTGETNEXTRESULT         OCIStmtGetNextResult         = NULL;
 OCISERVERRELEASE2            OCIServerRelease2            = NULL;
 OCISODAOPERKEYSSET           OCISodaOperKeysSet           = NULL;
 
-#ifdef ORAXB8_DEFINED
+  #ifdef ORAXB8_DEFINED
 
-OCILOBCOPY2                  OCILobCopy2                  = NULL;
-OCILOBERASE2                 OCILobErase2                 = NULL;
-OCILOBGETLENGTH2             OCILobGetLength2             = NULL;
-OCILOBLOADFROMFILE2          OCILobLoadFromFile2          = NULL;
-OCILOBREAD2                  OCILobRead2                  = NULL;
-OCILOBTRIM2                  OCILobTrim2                  = NULL;
-OCILOBWRITE2                 OCILobWrite2                 = NULL;
-OCILOBWRITEAPPEND2           OCILobWriteAppend2           = NULL;
+OCILOBCOPY2         OCILobCopy2         = NULL;
+OCILOBERASE2        OCILobErase2        = NULL;
+OCILOBGETLENGTH2    OCILobGetLength2    = NULL;
+OCILOBLOADFROMFILE2 OCILobLoadFromFile2 = NULL;
+OCILOBREAD2         OCILobRead2         = NULL;
+OCILOBTRIM2         OCILobTrim2         = NULL;
+OCILOBWRITE2        OCILobWrite2        = NULL;
+OCILOBWRITEAPPEND2  OCILobWriteAppend2  = NULL;
 
-#endif /* ORAXB8_DEFINED */
+  #endif /* ORAXB8_DEFINED */
 
 #endif /* OCI_IMPORT_RUNTIME */
 
@@ -547,10 +547,10 @@ boolean KeyMapFree
     void
 )
 {
-    boolean res      = TRUE;
-    OCI_HashEntry *e = NULL;
-    OCI_HashValue *v = NULL;
-    int nb_err       = 0;
+    boolean        res    = TRUE;
+    OCI_HashEntry *e      = NULL;
+    OCI_HashValue *v      = NULL;
+    int            nb_err = 0;
 
     CHECK(NULL == Env.key_map, TRUE)
 
@@ -621,13 +621,13 @@ void CallExit
         ctx->call_err->raise = (ctx->call_err->depth == 0) &&
                                (ctx->call_err->type != OCI_UNKNOWN) &&
                                (!ctx->call_status || (OCI_ERR_WARNING == ctx->call_err->type && Env.warnings_on));
-    } 
+    }
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * EnvironmentGetVariable
- * 
- * @note 
+ *
+ * @note
  * Values are allocated with MemoryAlloc() and need to be freed by the caller using MemoryFree()
  *
  * --------------------------------------------------------------------------------------------- */
@@ -648,13 +648,15 @@ char * EnvironmentGetVariable
 
     else
     {
-        // Variables set using SetEnvironmentVariable() on Windows are not seen by MSVC implementation of getenv() !!
-        // Thus, let's check if they can be retrieved using GetEnvironmentVariable()   
+        /* Variables set using SetEnvironmentVariable() on Windows are not seen by MSVC
+         * implementation of getenv() !! */
+
+        /* Thus, let's check if they can be retrieved using GetEnvironmentVariable() */
         unsigned int size = GetEnvironmentVariableA(name, NULL, 0);
         if (size > 0)
         {
             value = MemoryAlloc(OCI_IPC_STRING, size, 1, TRUE);
-            size = GetEnvironmentVariableA(name, value, size);
+            size  = GetEnvironmentVariableA(name, value, size);
             if (size == 0)
             {
                 MemoryFree(value);
@@ -662,7 +664,7 @@ char * EnvironmentGetVariable
         }
     }
 
-#endif 
+#endif
 
     return value;
 }
@@ -678,8 +680,8 @@ boolean EnvironmentInitialize
     unsigned int mode
 )
 {
-    unsigned int i = 0;
-    ub4 oci_mode = OCI_ENV_MODE | OCI_OBJECT;
+    unsigned int i        = 0;
+    ub4          oci_mode = OCI_ENV_MODE | OCI_OBJECT;
 
 #ifdef OCI_IMPORT_RUNTIME
 
@@ -709,14 +711,14 @@ boolean EnvironmentInitialize
 
     memset(&Env, 0, sizeof(struct OCI_Environment));
 
-    Env.error_handler        = err_handler;
+    Env.error_handler = err_handler;
 
-    Env.version_compile      = OCI_VERSION_COMPILE;
-    Env.version_runtime      = OCI_VERSION_RUNTIME;
+    Env.version_compile = OCI_VERSION_COMPILE;
+    Env.version_runtime = OCI_VERSION_RUNTIME;
 
-    Env.env_mode             = mode;
-    Env.charset              = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_ANSI;
-    Env.use_wide_char_conv   = (Env.charset == OCI_CHAR_WIDE && (WCHAR_MAX == WCHAR_4_BYTES));
+    Env.env_mode           = mode;
+    Env.charset            = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_ANSI;
+    Env.use_wide_char_conv = (Env.charset == OCI_CHAR_WIDE && (WCHAR_MAX == WCHAR_4_BYTES));
 
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
@@ -761,30 +763,30 @@ boolean EnvironmentInitialize
 
     OCI_NOT_USED(lib_path)
 
-    #if defined(OCI_BIG_UINT_ENABLED)
+  #if defined(OCI_BIG_UINT_ENABLED)
 
     Env.use_lob_ub8 = TRUE;
 
-    #endif
+  #endif
 
-    #if defined(OCI_STMT_SCROLLABLE_READONLY)
+  #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
     Env.use_scrollable_cursors = TRUE;
 
-    #endif
+  #endif
 
 #else
 
     memset(path, 0, sizeof(path));
 
-    #if defined(OCI_CHARSET_WIDE)
+  #if defined(OCI_CHARSET_WIDE)
 
     if (lib_path && lib_path[0])
     {
         len = wcstombs(path, lib_path, sizeof(path));
     }
 
-    #else
+  #else
 
     if (lib_path && lib_path[0])
     {
@@ -793,7 +795,7 @@ boolean EnvironmentInitialize
         len = strlen(path);
     }
 
-    #endif
+  #endif
 
     if ((len > (size_t) 0) && (len < sizeof(path) -1) && (OCI_CHAR_SLASH != path[len - (size_t) 1]))
     {
@@ -924,7 +926,7 @@ boolean EnvironmentInitialize
         LIB_SYMBOL(Env.lib_handle, "OCILobClose", OCILobClose,
                    OCILOBCLOSE);
 
-    #ifdef ORAXB8_DEFINED
+  #ifdef ORAXB8_DEFINED
 
         LIB_SYMBOL(Env.lib_handle, "OCILobCopy2", OCILobCopy2,
                    OCILOBCOPY2);
@@ -943,7 +945,7 @@ boolean EnvironmentInitialize
         LIB_SYMBOL(Env.lib_handle, "OCILobWriteAppend2", OCILobWriteAppend2,
                    OCILOBWRITEAPPEND2);
 
-    #endif
+  #endif
 
         LIB_SYMBOL(Env.lib_handle, "OCILobFileOpen", OCILobFileOpen,
                    OCILOBFILEOPEN);
@@ -1133,7 +1135,7 @@ boolean EnvironmentInitialize
         LIB_SYMBOL(Env.lib_handle, "OCIObjectGetInd", OCIObjectGetInd,
                    OCIOBJECTGETIND);
         LIB_SYMBOL(Env.lib_handle, "OCIObjectGetTypeRef", OCIObjectGetTypeRef,
-            OCIOBJECTGETOBJECTREF);
+                   OCIOBJECTGETOBJECTREF);
 
         LIB_SYMBOL(Env.lib_handle, "OCIRefAssign", OCIRefAssign,
                    OCIREFASSIGN);
@@ -1302,7 +1304,7 @@ boolean EnvironmentInitialize
                    OCISERVERRELEASE2);
 
         LIB_SYMBOL(Env.lib_handle, "OCISodaOperKeysSet", OCISodaOperKeysSet,
-            OCISODAOPERKEYSSET);
+                   OCISODAOPERKEYSSET);
 
         /* API Version checking */
 
@@ -1361,23 +1363,23 @@ boolean EnvironmentInitialize
         THROW(ExceptionLoadingSharedLib())
     }
 
-    #if defined(OCI_BIG_UINT_ENABLED)
+  #if defined(OCI_BIG_UINT_ENABLED)
 
     if ((Env.version_runtime >= OCI_10_1) && OCILobCopy2)
     {
         Env.use_lob_ub8 = TRUE;
     }
 
-    #endif
+  #endif
 
-    #if defined(OCI_STMT_SCROLLABLE_READONLY)
+  #if defined(OCI_STMT_SCROLLABLE_READONLY)
 
     if ((Env.version_runtime >= OCI_9_0) && OCIStmtFetch2)
     {
         Env.use_scrollable_cursors = TRUE;
     }
 
-    #endif
+  #endif
 
 #endif
 
@@ -1407,11 +1409,11 @@ boolean EnvironmentInitialize
     /* create environment on success */
 
     STATUS = OCI_SUCCESSFUL(OCIEnvCreate(&Env.env, oci_mode,
-                                               (dvoid *) &Env,
-                                               MemoryAllocOracleCallback,
-                                               MemoryReallocOracleCallback,
-                                               MemoryFreeOracleCallback,
-                                               (size_t) 0, (dvoid **) NULL));
+                                         (dvoid *) &Env,
+                                         MemoryAllocOracleCallback,
+                                         MemoryReallocOracleCallback,
+                                         MemoryFreeOracleCallback,
+                                         (size_t) 0, (dvoid **) NULL));
 
     /*  allocate error handle */
     if (STATUS)
@@ -1434,7 +1436,7 @@ boolean EnvironmentInitialize
             STATUS = OCI_SUCCESSFUL(OCIThreadInit(Env.env, Env.err));
 
             Env.mem_mutex = MutexCreateInternal();
-            STATUS = (NULL != Env.mem_mutex);
+            STATUS        = (NULL != Env.mem_mutex);
         }
 
         /* create thread key for thread errors */
@@ -1442,7 +1444,7 @@ boolean EnvironmentInitialize
         if (STATUS)
         {
             Env.key_errs = ThreadKeyCreateInternal((POCI_THREADKEYDEST) ErrorFree);
-            STATUS = (NULL != Env.key_errs);
+            STATUS       = (NULL != Env.key_errs);
         }
 
         /* allocate connections internal list */
@@ -1450,7 +1452,7 @@ boolean EnvironmentInitialize
         if (STATUS)
         {
             Env.cons = ListCreate(OCI_IPC_CONNECTION);
-            STATUS = (NULL != Env.cons);
+            STATUS   = (NULL != Env.cons);
         }
 
         /* allocate pools internal list */
@@ -1458,10 +1460,10 @@ boolean EnvironmentInitialize
         if (STATUS)
         {
             Env.pools = ListCreate(OCI_IPC_POOL);
-            STATUS = (NULL != Env.pools);
+            STATUS    = (NULL != Env.pools);
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_10_2
+#if OCI_VERSION_COMPILE >= OCI_10_2
 
         /* allocate connection pools internal list */
 
@@ -1472,12 +1474,12 @@ boolean EnvironmentInitialize
             STATUS = (NULL != Env.subs);
         }
 
-    #endif
+#endif
 
         if (STATUS)
         {
             Env.arrs = ListCreate(OCI_IPC_ARRAY);
-            STATUS = (NULL != Env.arrs);
+            STATUS   = (NULL != Env.arrs);
         }
     }
 
@@ -1486,11 +1488,11 @@ boolean EnvironmentInitialize
     /* test for XA support */
 
 #ifdef _WINDOWS
-    #if OCI_VERSION_COMPILE >= OCI_10_1
-        Env.use_xa = (NULL != xaoEnv);
-    #else
-        Env.use_xa = FALSE;
-    #endif
+  #if OCI_VERSION_COMPILE >= OCI_10_1
+    Env.use_xa = (NULL != xaoEnv);
+  #else
+    Env.use_xa = FALSE;
+  #endif
 #else
     Env.use_xa = TRUE;
 #endif
@@ -1572,7 +1574,7 @@ boolean EnvironmentCleanup
     /* free error thread key */
 
     if (Env.key_errs)
-    {        
+    {
         OCI_ThreadKey *key = Env.key_errs;
         OCI_Error     *err = ErrorGet(FALSE, FALSE);
 
@@ -1675,7 +1677,7 @@ unsigned int EnvironmentGetOCIRuntimeImportMode
     void
 )
 {
-     GET_LIB_PROP(unsigned int, OCI_UNKNOWN, OCI_IMPORT_MODE)
+    GET_LIB_PROP(unsigned int, OCI_UNKNOWN, OCI_IMPORT_MODE)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1749,7 +1751,7 @@ boolean EnvironmentEnableWarnings
 )
 {
     SET_LIB_PROP(Env.warnings_on, value)
- }
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * EnvironmentSetErrorHandler
@@ -1769,7 +1771,7 @@ boolean EnvironmentSetErrorHandler
 
 boolean EnvironmentSetHAHandler
 (
-    POCI_HA_HANDLER  handler
+    POCI_HA_HANDLER handler
 )
 {
     void *callback = NULL;
@@ -1784,9 +1786,9 @@ boolean EnvironmentSetHAHandler
        As there is no other to way to do regarding the OCI API, let's disable this
        warning just the time to set the callback attribute to the environment handle */
 
-    #ifdef _MSC_VER
+  #ifdef _MSC_VER
     #pragma warning(disable: 4054)
-    #endif
+  #endif
 
     if (handler)
     {
@@ -1800,9 +1802,9 @@ boolean EnvironmentSetHAHandler
         Env.ha_handler = handler;
     }
 
-    #ifdef _MSC_VER
+  #ifdef _MSC_VER
     #pragma warning(default: 4054)
-    #endif
+  #endif
 
 #else
 
@@ -1836,7 +1838,7 @@ boolean EnvironmentSetFormat
 
     FREE(*value)
 
-   *value = ostrdup(format ? format : FormatDefaultValues[type-1]);
+    *value = ostrdup(format ? format : FormatDefaultValues[type-1]);
 
     call_retval = STATUS;
 

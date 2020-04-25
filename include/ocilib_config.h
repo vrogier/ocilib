@@ -66,19 +66,19 @@
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef _WINDOWS
-  #if defined(_WIN32)|| defined(WIN32) || defined(_WIN64) || defined(WIN64) || defined(_WIN32_WINNT)
+#if defined(_WIN32)|| defined(WIN32) || defined(_WIN64) || defined(WIN64) || defined(_WIN32_WINNT)
     #define _WINDOWS
-  #endif
+#endif
 #endif
 
 #ifdef _WINDOWS
-  #ifdef boolean
+#ifdef boolean
     #undef boolean
-  #endif
-  #include <Windows.h>
-  #ifdef boolean
+#endif
+#include <Windows.h>
+#ifdef boolean
     #undef boolean
-  #endif
+#endif
 #endif
 
 /* --------------------------------------------------------------------------------------------- *
@@ -95,7 +95,7 @@
 #define OCI_IMPORT_MODE_RUNTIME  2
 
 #ifdef OCI_IMPORT_RUNTIME
-  #undef OCI_IMPORT_LINKAGE
+#undef OCI_IMPORT_LINKAGE
 #endif
 
 #ifdef OCI_IMPORT_LINKAGE
@@ -107,7 +107,7 @@
 #endif
 
 #ifdef OCI_IMPORT_RUNTIME
-  #define OCI_IMPORT_MODE OCI_IMPORT_MODE_RUNTIME
+#define OCI_IMPORT_MODE OCI_IMPORT_MODE_RUNTIME
 #else
   #define OCI_IMPORT_MODE OCI_IMPORT_MODE_LINKAGE
 #endif
@@ -119,7 +119,7 @@
 #endif
 
 #ifdef OCI_CHARSET_WIDE
-  #undef OCI_CHARSET_ANSI
+#undef OCI_CHARSET_ANSI
 #endif
 
 #ifdef OCI_CHARSET_ANSI
@@ -133,11 +133,11 @@
 /* Calling convention */
 
 #ifndef OCI_API
-  #ifdef _MSC_VER
+#ifdef _MSC_VER
     #define OCI_API __stdcall
-  #else
+#else
     #define OCI_API
-  #endif
+#endif
 #endif
 
 /* Build mode */
@@ -251,13 +251,13 @@ extern "C++" {
 #define OCI_CHAR_WIDE       2
 
 #ifdef OCI_CHARSET_ANSI
-  typedef char              otext;
-  #define OTEXT(x)          x
-  #define OCI_CHAR_TEXT     OCI_CHAR_ANSI
+typedef char              otext;
+#define OTEXT(x)          x
+#define OCI_CHAR_TEXT     OCI_CHAR_ANSI
 #else
-  typedef wchar_t           otext;
-  #define OTEXT(x)          L ## x
-  #define OCI_CHAR_TEXT     OCI_CHAR_WIDE
+typedef wchar_t           otext;
+#define OTEXT(x)          L ## x
+#define OCI_CHAR_TEXT     OCI_CHAR_WIDE
 #endif
 
 /*
@@ -270,7 +270,7 @@ extern "C++" {
 
 OCI_EXPORT int ocisprintf
 (
-    char       *str,
+    char *      str,
     int         size,
     const char *format,
     ...
@@ -278,7 +278,7 @@ OCI_EXPORT int ocisprintf
 
 OCI_EXPORT char * ocistrdup
 (
-    const char * src
+    const char *src
 );
 
 OCI_EXPORT int ocistrcasecmp
@@ -289,7 +289,7 @@ OCI_EXPORT int ocistrcasecmp
 
 OCI_EXPORT wchar_t * ociwcsdup
 (
-    const wchar_t * src
+    const wchar_t *src
 );
 
 OCI_EXPORT int ociwcscasecmp
@@ -302,8 +302,8 @@ OCI_EXPORT int ociwcscasecmp
 
 #ifdef _WINDOWS
 
-  #define vsnprintf  _vsnprintf
-  #define swprintf _snwprintf
+#define vsnprintf  _vsnprintf
+#define swprintf _snwprintf
 
 #endif
 
@@ -324,19 +324,19 @@ OCI_EXPORT int ociwcscasecmp
   #define otoupper         toupper
   #define oisdigit         isdigit
 #else
-  #define ostrdup          ociwcsdup
-  #define ostrcpy          wcscpy
-  #define ostrncpy         wcsncpy
-  #define ostrcat          wcscat
-  #define ostrncat         wcsncat
-  #define ostrlen          wcslen
-  #define ostrcmp          wcscmp
-  #define ostrcasecmp      ociwcscasecmp
-  #define osprintf         swprintf
-  #define ostrtol          wcstol
-  #define osscanf          swscanf
-  #define otoupper         towupper
-  #define oisdigit         iswdigit
+#define ostrdup          ociwcsdup
+#define ostrcpy          wcscpy
+#define ostrncpy         wcsncpy
+#define ostrcat          wcscat
+#define ostrncat         wcsncat
+#define ostrlen          wcslen
+#define ostrcmp          wcscmp
+#define ostrcasecmp      ociwcscasecmp
+#define osprintf         swprintf
+#define ostrtol          wcstol
+#define osscanf          swscanf
+#define otoupper         towupper
+#define oisdigit         iswdigit
 
 #endif
 
@@ -363,10 +363,10 @@ OCI_EXPORT int ociwcscasecmp
 
 /* C99 long long supported */
 
-typedef long long big_int;
+typedef long long          big_int;
 typedef unsigned long long big_uint;
 
-  #define OCI_BIG_UINT_ENABLED
+#define OCI_BIG_UINT_ENABLED
 
 #elif defined(_WINDOWS)
 
@@ -396,7 +396,7 @@ typedef unsigned int big_uint;
 #endif
 
 #ifndef boolean
-  #define boolean int
+#define boolean int
 #endif
 
 /* versions extract macros */
@@ -423,7 +423,7 @@ typedef unsigned int big_uint;
 #define OCI_18_2                            OCI_VER_MAKE(18, 2, 0)
 #define OCI_18_3                            OCI_VER_MAKE(18, 3, 0)
 #define OCI_18_4                            OCI_VER_MAKE(18, 4, 0)
-#define OCI_18_5                            OCI_VER_MAKE(18, 5, 0) 
+#define OCI_18_5                            OCI_VER_MAKE(18, 5, 0)
 #define OCI_19_3                            OCI_VER_MAKE(19, 3, 0)
 
 /* OCILIB Error types */
@@ -466,8 +466,7 @@ typedef unsigned int big_uint;
 #define OCI_ERR_XA_CONN_FROM_STRING         29
 #define OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED   30
 
-#define OCI_ERR_COUNT                       31   
-
+#define OCI_ERR_COUNT                       31
 
 /* allocated bytes types */
 
@@ -671,7 +670,6 @@ typedef unsigned int big_uint;
 #define OCI_CCI_BINARY                      0x00003FFF
 #define OCI_CCI_BINARY_CI                   0x00023FFF
 #define OCI_CCI_BINARY_AI                   0x00013FFF
-
 
 /* Integer sign flag */
 
@@ -1131,8 +1129,6 @@ typedef unsigned int big_uint;
 #define OCI_SFC_DROP_ANALYTIC_VIEW              251
 #define OCI_SFC_ALTER_PUBLIC_DATABASE_LINK      305
 
-               
-
 /* size constants */
 
 #define OCI_SIZE_FORMAT                     64
@@ -1177,7 +1173,7 @@ typedef unsigned int big_uint;
 #define OCI_STRING_NULL_SIZE                4
 
 #ifdef _WINDOWS
-  #define OCI_CHAR_SLASH                    '\\'
+#define OCI_CHAR_SLASH                    '\\'
 #else
   #define OCI_CHAR_SLASH                    '/'
 #endif

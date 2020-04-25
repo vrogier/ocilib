@@ -39,11 +39,11 @@ int FormatParseSql
     va_list       *pargs
 )
 {
-    int size        = 0;
-    int len         = 0;
-    boolean quote   = FALSE;
-    otext *pb       = buf;
-    const otext *pf = format;
+    int          size  = 0;
+    int          len   = 0;
+    boolean      quote = FALSE;
+    otext       *pb    = buf;
+    const otext *pf    = format;
 
     CHECK(NULL == format, 0);
 
@@ -126,14 +126,14 @@ int FormatParseSql
                     if (date)
                     {
                         len = osprintf(pb, OCI_SIZE_DATE,
-                                        OTEXT("to_date('%02i%02i%04i%02i%02i%02i',")
-                                        OTEXT("'DDMMYYYYHH24MISS')"),
-                                        date->handle->OCIDateDD,
-                                        date->handle->OCIDateMM,
-                                        date->handle->OCIDateYYYY,
-                                        date->handle->OCIDateTime.OCITimeHH,
-                                        date->handle->OCIDateTime.OCITimeMI,
-                                        date->handle->OCIDateTime.OCITimeSS);
+                                       OTEXT("to_date('%02i%02i%04i%02i%02i%02i',")
+                                       OTEXT("'DDMMYYYYHH24MISS')"),
+                                       date->handle->OCIDateDD,
+                                       date->handle->OCIDateMM,
+                                       date->handle->OCIDateYYYY,
+                                       date->handle->OCIDateTime.OCITimeHH,
+                                       date->handle->OCIDateTime.OCITimeMI,
+                                       date->handle->OCIDateTime.OCITimeSS);
                     }
                     else
                     {
@@ -157,12 +157,12 @@ int FormatParseSql
                     if (tmsp)
                     {
                         otext str_ff[12];
-                        int yy, mm, dd, hh, mi, ss, ff;
+                        int   yy, mm, dd, hh, mi, ss, ff;
 
                         yy = mm = dd = mi = hh = ss = ff = 0;
 
                         TimestampGetDateTime(tmsp, &yy, &mm, &dd,
-                                                 &hh, &mi, &ss, &ff);
+                                             &hh, &mi, &ss, &ff);
 
                         if (ff > 0)
                         {
@@ -176,9 +176,9 @@ int FormatParseSql
                         str_ff[2] = 0;
 
                         len = osprintf(pb, OCI_SIZE_TIMESTAMP,
-                                        OTEXT("to_timestamp('%02i%02i%04i%02i%02i%02i%s',")
-                                        OTEXT("'DDMMYYYYHH24MISSFF')"),
-                                        dd, mm, yy, hh, mi, ss, str_ff);
+                                       OTEXT("to_timestamp('%02i%02i%04i%02i%02i%02i%s',")
+                                       OTEXT("'DDMMYYYYHH24MISSFF')"),
+                                       dd, mm, yy, hh, mi, ss, str_ff);
                     }
                     else
                     {
@@ -299,7 +299,7 @@ int FormatParseSql
                 else if (OTEXT('u') == *pf)
                 {
                     len = (int) osprintf(temp, (int) osizeof(temp) - 1, OTEXT("%hu"), va_arg(*pargs, unsigned int));
-                }           
+                }
                 else
                 {
                     len = 0;

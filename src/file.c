@@ -116,7 +116,7 @@ boolean FileGetInfo
     /* file name */
 
     ALLOC_DATA(OCI_IPC_STRING, file->name, OCI_SIZE_FILENAME + 1)
-    
+
     if (STATUS)
     {
         file->name[0] = 0;
@@ -126,12 +126,12 @@ boolean FileGetInfo
 
     if (STATUS)
     {
-        dbtext *dbstr1 = NULL;
-        dbtext *dbstr2 = NULL;
-        int    dbsize1 = 0;
-        int    dbsize2 = 0;
-        ub2    usize1  = 0;
-        ub2    usize2  = 0;
+        dbtext *dbstr1  = NULL;
+        dbtext *dbstr2  = NULL;
+        int     dbsize1 = 0;
+        int     dbsize2 = 0;
+        ub2     usize1  = 0;
+        ub2     usize2  = 0;
 
         dbsize1 = (int) OCI_SIZE_DIRECTORY  * (int) sizeof(otext);
         dbstr1  = StringGetDBString(file->dir, &dbsize1);
@@ -234,6 +234,7 @@ OCI_File ** FileCreateArray
     CALL_CONTEXT_FROM_CON(con)
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_FILE, type, sizeof(OCILobLocator *), sizeof(OCI_File), OCI_DTYPE_LOB, NULL);
+
     STATUS = (NULL != arr);
 
     if (arr)
@@ -285,28 +286,31 @@ boolean FileSeek
     {
         case OCI_SEEK_CUR:
         {
-            if ((offset + file->offset - 1) <= size) 
+            if ((offset + file->offset - 1) <= size)
             {
                 file->offset += offset;
-                RETVAL   = TRUE;
+
+                RETVAL = TRUE;
             }
             break;
         }
         case OCI_SEEK_SET:
         {
-            if (offset <= size) 
+            if (offset <= size)
             {
                 file->offset = offset + 1;
-                RETVAL  = TRUE;
+
+                RETVAL = TRUE;
             }
             break;
         }
         case OCI_SEEK_END:
         {
-            if (offset <= size) 
+            if (offset <= size)
             {
                 file->offset = size - offset + 1;
-                RETVAL  = TRUE;
+
+                RETVAL = TRUE;
             }
             break;
         }
@@ -378,7 +382,7 @@ unsigned int FileRead
 
     else
 
- #endif
+#endif
 
     {
         const ub4 offset = (ub4) file->offset;
@@ -395,7 +399,7 @@ unsigned int FileRead
     if (STATUS)
     {
         file->offset += (big_uint) size_out;
-        
+
         RETVAL = size_out;
     }
 
@@ -556,7 +560,7 @@ const otext * FileGetName
     }
 
     RETVAL = file->name;
-   
+
     CALL_EXIT()
 }
 
@@ -599,7 +603,7 @@ boolean FileIsOpen
     CALL_CONTEXT_FROM_CON(file->con)
 
     EXEC(OCILobFileIsOpen(file->con->cxt, file->con->err, file->handle, &RETVAL))
-    
+
     CALL_EXIT()
 }
 

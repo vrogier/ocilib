@@ -60,8 +60,8 @@ OCI_Coll * CollectionInitialize
             EXEC
             (
                 MemoryAllocateObject(coll->con->env, coll->con->err, coll->con->cxt,
-                            typinf->colcode, typinf->tdo, (void *) NULL,
-                            OCI_DURATION_SESSION, TRUE, (dvoid **) &coll->handle)
+                                     typinf->colcode, typinf->tdo, (void *) NULL,
+                                     OCI_DURATION_SESSION, TRUE, (dvoid **) &coll->handle)
             )
         }
         else
@@ -153,11 +153,12 @@ OCI_Coll ** CollectionCreateArray
 {
     OCI_Array *arr = NULL;
 
-    CALL_ENTER(OCI_Coll **, NULL)    
-    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)        
+    CALL_ENTER(OCI_Coll **, NULL)
+    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
     CALL_CONTEXT_FROM_CON(con)
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0, sizeof(OCIColl *), sizeof(OCI_Coll), 0, typinf);
+
     STATUS = (arr != NULL);
 
     if (STATUS)
@@ -288,8 +289,8 @@ unsigned int CollectionGetSize
 
 boolean CollectionTrim
 (
-    OCI_Coll     *coll,
-    unsigned int  nb_elem
+    OCI_Coll    *coll,
+    unsigned int nb_elem
 )
 {
     CALL_ENTER(boolean, FALSE)
@@ -314,9 +315,9 @@ OCI_Elem * CollectionGetElement
     unsigned int index
 )
 {
-    boolean  exists = FALSE;
-    void    *data   = NULL;
-    OCIInd  *p_ind  = NULL;
+    boolean exists = FALSE;
+    void   *data   = NULL;
+    OCIInd *p_ind  = NULL;
 
     CALL_ENTER(OCI_Elem*, NULL)
     CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
@@ -343,13 +344,13 @@ boolean CollectionGetElement2
     OCI_Elem    *elem
 )
 {
-    boolean  exists = FALSE;
-    void    *data   = NULL;
-    OCIInd  *p_ind  = NULL;
+    boolean exists = FALSE;
+    void   *data   = NULL;
+    OCIInd *p_ind  = NULL;
 
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-	CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    CALL_CHECK_PTR(OCI_IPC_ELEMENT, elem)
     CALL_CHECK_COMPAT(coll->con, elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
     CALL_CONTEXT_FROM_CON(coll->con)
 
@@ -358,6 +359,7 @@ boolean CollectionGetElement2
     if (STATUS && exists && data)
     {
         elem = ElementInitialize(coll->con, elem, data, p_ind, coll->typinf);
+
         STATUS = (NULL != elem);
     }
     else
@@ -376,9 +378,9 @@ boolean CollectionGetElement2
 
 boolean CollectionSetElement
 (
-    OCI_Coll     *coll,
-    unsigned int  index,
-    OCI_Elem     *elem
+    OCI_Coll    *coll,
+    unsigned int index,
+    OCI_Elem    *elem
 )
 {
     CALL_ENTER(boolean, FALSE)
@@ -459,7 +461,7 @@ boolean CollectionRemoveElement
 {
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-	CALL_CONTEXT_FROM_CON(coll->con)
+    CALL_CONTEXT_FROM_CON(coll->con)
 
     if (OCI_TYPECODE_TABLE == coll->typinf->colcode)
     {
@@ -511,9 +513,9 @@ boolean CollectionToString
     otext        *str
 )
 {
-    OCI_Error *err = NULL;
-    boolean quote  = TRUE;
-    unsigned int len = 0;
+    OCI_Error   *err   = NULL;
+    boolean      quote = TRUE;
+    unsigned int len   = 0;
 
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
@@ -544,8 +546,8 @@ boolean CollectionToString
         }
         else
         {
-            void *data = NULL;
-            unsigned int data_size = 0;
+            void              *data      = NULL;
+            unsigned int       data_size = 0;
             const unsigned int data_type = coll->typinf->cols[0].datatype;
 
             switch (data_type)
@@ -564,7 +566,7 @@ boolean CollectionToString
                 }
                 case OCI_CDT_BOOLEAN:
                 {
-                    data = (void *)elem->handle;
+                    data  = (void *)elem->handle;
                     quote = FALSE;
                     break;
                 }
@@ -580,32 +582,32 @@ boolean CollectionToString
                 }
                 case OCI_CDT_DATETIME:
                 {
-                    data  = (void *) ElementGetDate(elem);
+                    data = (void *) ElementGetDate(elem);
                     break;
                 }
                 case OCI_CDT_TIMESTAMP:
                 {
-                    data  = (void *) ElementGetTimestamp(elem);
+                    data = (void *) ElementGetTimestamp(elem);
                     break;
                 }
                 case OCI_CDT_INTERVAL:
                 {
-                    data  = (void *) ElementGetInterval(elem);
+                    data = (void *) ElementGetInterval(elem);
                     break;
                 }
                 case OCI_CDT_LOB:
                 {
-                    data  = (void *) ElementGetLob(elem);
+                    data = (void *) ElementGetLob(elem);
                     break;
                 }
                 case OCI_CDT_FILE:
                 {
-                    data  = (void *) ElementGetFile(elem);
+                    data = (void *) ElementGetFile(elem);
                     break;
                 }
                 case OCI_CDT_REF:
                 {
-                    data  = (void *) ElementGetReference(elem);
+                    data = (void *) ElementGetReference(elem);
                     break;
                 }
                 case OCI_CDT_OBJECT:
@@ -634,7 +636,8 @@ boolean CollectionToString
 
                 if (data)
                 {
-                    len += StringGetFromType(coll->con, &coll->typinf->cols[0], data, data_size, tmpbuf, tmpbuf && size ? *size - len : 0, quote);
+                    len += StringGetFromType(coll->con, &coll->typinf->cols[0], data, data_size, tmpbuf,
+                                             tmpbuf && size ? *size - len : 0, quote);
                 }
                 else
                 {

@@ -32,11 +32,11 @@
 
 boolean ColumnGetAttributeInfo
 (
-    OCI_Column    *col,
-    unsigned int   count,
-    unsigned int   index,
-    size_t        *p_size,
-    size_t        *p_align
+    OCI_Column  *col,
+    unsigned int count,
+    unsigned int index,
+    size_t      *p_size,
+    size_t      *p_align
 )
 {
     if (index >= count)
@@ -67,7 +67,7 @@ boolean ColumnGetAttributeInfo
             }
             else if (type & OCI_NUM_BIGUINT)
             {
-	            *p_size = sizeof(big_int);
+                *p_size = sizeof(big_int);
             }
             else if (type & OCI_NUM_DOUBLE)
             {
@@ -263,7 +263,7 @@ boolean ColumnRetrieveInfo
                 col->props |=  OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL;
             }
 
-        #if OCI_VERSION_COMPILE >= OCI_18_1
+  #if OCI_VERSION_COMPILE >= OCI_18_1
 
             if (value & OCI_ATTR_COL_PROPERTY_IS_LPART)
             {
@@ -275,7 +275,7 @@ boolean ColumnRetrieveInfo
                 col->props |= OCI_CPF_IS_CONID;
             }
 
-        #endif 
+  #endif
         }
     }
 
@@ -299,13 +299,14 @@ boolean ColumnRetrieveInfo
 
 #if defined(OCI_CHARSET_WIDE)
 
-        // Ugly workaround for Oracle Bug 9838993
+        /* Ugly workaround for Oracle Bug 9838993 */
 
         if ((OCI_DESC_RESULTSET == ptype) && (Env.env_vars[OCI_VARS_WORKAROUND_UTF16_COLUMN_NAME]))
         {
             OCIParamStruct *param_struct = (OCIParamStruct*) param;
 
-            if (param_struct && param_struct->column_info && param_struct->column_info->name && (param_struct->column_info->attributes[1] != 0))
+            if (param_struct && param_struct->column_info && param_struct->column_info->name &&
+                (param_struct->column_info->attributes[1] != 0))
             {
                 size_t char_count = param_struct->column_info->attributes[1];
 
@@ -350,34 +351,32 @@ boolean ColumnRetrieveInfo
         || SQLT_REC == col->sqlcode
         || SQLT_TAB == col->sqlcode
 #endif
-    )
+        )
     {
-        dbtext *dbstr_name    = NULL;
-        dbtext *dbstr_schema  = NULL;
-        dbtext *dbstr_package = NULL;
-        int    dbsize_name    = 0;
-        int    dbsize_schema  = 0;
-        int    dbsize_package = 0;
+        dbtext *dbstr_name     = NULL;
+        dbtext *dbstr_schema   = NULL;
+        dbtext *dbstr_package  = NULL;
+        int     dbsize_name    = 0;
+        int     dbsize_schema  = 0;
+        int     dbsize_package = 0;
 
         ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_TYPE_NAME, param, &dbstr_name, &dbsize_name)
         ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_SCHEMA_NAME, param, &dbstr_schema, &dbsize_schema)
 
-    #if OCI_VERSION_COMPILE >= OCI_12_1
-
+#if OCI_VERSION_COMPILE >= OCI_12_1
 
         if (SQLT_REC == col->sqlcode || SQLT_TAB == col->sqlcode)
         {
             ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_PACKAGE_NAME, handle, &dbstr_package, &dbsize_package)
         }
 
-    #endif
-
+#endif
 
         if (STATUS)
         {
-            otext schema_name[OCI_SIZE_OBJ_NAME + 1] = OTEXT("");
-            otext package_name[OCI_SIZE_OBJ_NAME + 1] = OTEXT("");
-            otext type_name[OCI_SIZE_OBJ_NAME + 1] = OTEXT("");
+            otext schema_name[OCI_SIZE_OBJ_NAME + 1]     = OTEXT("");
+            otext package_name[OCI_SIZE_OBJ_NAME + 1]    = OTEXT("");
+            otext type_name[OCI_SIZE_OBJ_NAME + 1]       = OTEXT("");
             otext full_name[(OCI_SIZE_OBJ_NAME * 3) + 3] = OTEXT("");
 
             /* Retrieve correct schema name */
@@ -406,7 +405,8 @@ boolean ColumnRetrieveInfo
                 StringOracleToNative(dbstr_name, type_name, dbcharcount(dbsize_name));
             }
 
-            /* Format full type name respecting case sensitivity if needed in order to not fail type info retrieval.*/
+            /* Format full type name respecting case sensitivity if needed in order to not fail type
+             * info retrieval.*/
 
             StringGetFullTypeName(schema_name, package_name, type_name, NULL, full_name, (sizeof(full_name) / sizeof(otext)) - 1);
 
@@ -452,6 +452,7 @@ boolean ColumnMapInfo
         {
             col->datatype = OCI_CDT_NUMERIC;
             col->libcode  = SQLT_INT;
+
             /* set buffer size only if it's not a "returning into" placeholder */
 
             if (0 == col->bufsize)
@@ -501,7 +502,7 @@ boolean ColumnMapInfo
             break;
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_12_1
+#if OCI_VERSION_COMPILE >= OCI_12_1
 
         case SQLT_BOL:
 
@@ -518,9 +519,9 @@ boolean ColumnMapInfo
             break;
         }
 
-    #endif
+#endif
 
-    #if OCI_VERSION_COMPILE >= OCI_10_1
+#if OCI_VERSION_COMPILE >= OCI_10_1
 
         case SQLT_BFLOAT:
         case SQLT_IBFLOAT:
@@ -537,9 +538,9 @@ boolean ColumnMapInfo
             break;
         }
 
-    #endif
+#endif
 
-    #if OCI_VERSION_COMPILE >= OCI_10_1
+#if OCI_VERSION_COMPILE >= OCI_10_1
 
         case SQLT_BDOUBLE:
         case SQLT_IBDOUBLE:
@@ -556,7 +557,7 @@ boolean ColumnMapInfo
             break;
         }
 
-    #endif
+#endif
 
         case SQLT_DAT:
         case SQLT_ODT:
@@ -691,7 +692,7 @@ boolean ColumnMapInfo
             break;
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
         case SQLT_TIMESTAMP:
         {
@@ -734,13 +735,13 @@ boolean ColumnMapInfo
             break;
         }
 
-    #endif
+#endif
 
-    #if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
         case SQLT_PNTY:
 
-    #endif
+#endif
 
         case SQLT_NTY:
         {
@@ -757,7 +758,7 @@ boolean ColumnMapInfo
             break;
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_12_1
+#if OCI_VERSION_COMPILE >= OCI_12_1
 
         case SQLT_REC:
         {
@@ -767,7 +768,7 @@ boolean ColumnMapInfo
             break;
         }
 
-    #endif
+#endif
 
         case SQLT_CHR:
         case SQLT_STR:
@@ -1016,8 +1017,8 @@ const otext * ColumnGetSqlType
         case SQLT_STR:
         case SQLT_CHR:
         {
-             RETVAL = (SQLCS_NCHAR == col->csfrm) ? OTEXT("NVARCHAR2") : OTEXT("VARCHAR2");
-             break;
+            RETVAL = (SQLCS_NCHAR == col->csfrm) ? OTEXT("NVARCHAR2") : OTEXT("VARCHAR2");
+            break;
         }
         case SQLT_NUM:
         {
@@ -1035,7 +1036,7 @@ const otext * ColumnGetSqlType
             break;
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_10_1
+#if OCI_VERSION_COMPILE >= OCI_10_1
 
         case SQLT_BFLOAT:
         case SQLT_IBFLOAT:
@@ -1050,7 +1051,7 @@ const otext * ColumnGetSqlType
             break;
         }
 
-    #endif
+#endif
 
         case SQLT_LNG:
         {
@@ -1111,7 +1112,7 @@ const otext * ColumnGetSqlType
             break;
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
         case SQLT_TIMESTAMP:
         {
@@ -1139,7 +1140,7 @@ const otext * ColumnGetSqlType
             break;
         }
 
-    #endif
+#endif
 
         case SQLT_REF:
         {
@@ -1147,19 +1148,17 @@ const otext * ColumnGetSqlType
             break;
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
         case SQLT_PNTY:
 
-    #endif
+#endif
 
         case SQLT_NTY:
         {
             RETVAL = col->typinf ? col->typinf->name : OTEXT("NAMED TYPE");
             break;
         }
-
-
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
@@ -1239,29 +1238,29 @@ unsigned int ColumnGetFullSqlType
         case SQLT_AFC:
         {
 
-        #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
+#if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
             RETVAL = osprintf(buffer, (int)len, OTEXT("%lsCHAR(%i%ls)"),
-        #else
+#else
             RETVAL = osprintf(buffer, (int)len, OTEXT("%sCHAR(%i%s)"),
-        #endif
-                            SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
-                            (int) (col->charused ? col->charsize : col->size),
-                            col->charused && SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
+#endif
+                              SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
+                              (int) (col->charused ? col->charsize : col->size),
+                              col->charused && SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
             break;
         }
         case SQLT_AVC:
         case SQLT_STR:
         case SQLT_CHR:
         {
-         #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
+#if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
             const otext *fmt = OTEXT("%lsVARCHAR(%i%ls)");
-         #else
+#else
             const otext *fmt = OTEXT("%sVARCHAR(%i%s)");
-         #endif
+#endif
 
             RETVAL = osprintf(buffer, (int)len, fmt, SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
-                                   (int) (col->charused ? col->charsize : col->size),
-                                   col->charused &&  SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
+                              (int) (col->charused ? col->charsize : col->size),
+                              col->charused &&  SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
             break;
         }
         case SQLT_NUM:
@@ -1296,7 +1295,7 @@ unsigned int ColumnGetFullSqlType
             break;
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_10_1
+#if OCI_VERSION_COMPILE >= OCI_10_1
 
         case SQLT_BFLOAT:
         case SQLT_IBFLOAT:
@@ -1311,7 +1310,7 @@ unsigned int ColumnGetFullSqlType
             break;
         }
 
-    #endif
+#endif
 
         case SQLT_LNG:
         {
@@ -1372,7 +1371,7 @@ unsigned int ColumnGetFullSqlType
             break;
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
         case SQLT_TIMESTAMP:
         {
@@ -1392,17 +1391,17 @@ unsigned int ColumnGetFullSqlType
         case SQLT_INTERVAL_YM:
         {
             RETVAL = osprintf(buffer, (int)len,  OTEXT("INTERVAL(%i) YEAR TO MONTH(%i)"),
-                                  (int) col->prec, (int) col->prec2);
+                              (int) col->prec, (int) col->prec2);
             break;
         }
         case SQLT_INTERVAL_DS:
         {
             RETVAL = osprintf(buffer, (int)len,  OTEXT("INTERVAL(%i) DAY TO SECOND(%i)"),
-                                  (int) col->prec, (int) col->prec2);
+                              (int) col->prec, (int) col->prec2);
             break;
         }
 
-    #endif
+#endif
 
         case SQLT_REF:
         {
@@ -1410,11 +1409,11 @@ unsigned int ColumnGetFullSqlType
             break;
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
         case SQLT_PNTY:
 
-    #endif
+#endif
 
         case SQLT_NTY:
         {
@@ -1430,7 +1429,6 @@ unsigned int ColumnGetFullSqlType
             }
             break;
         }
-
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
@@ -1470,7 +1468,7 @@ unsigned int ColumnGetFullSqlType
         default:
         {
             RETVAL = osprintf(buffer, (int)len, OTEXT("?"));
-            break;
+                              break;
         }
     }
 
@@ -1513,4 +1511,3 @@ unsigned int ColumnGetSubType
 
     CALL_EXIT()
 }
-

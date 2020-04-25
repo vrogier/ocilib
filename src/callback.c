@@ -29,10 +29,10 @@
 
 typedef struct HAEventParams
 {
-    OCIServer *srvhp;
+    OCIServer   *srvhp;
     OCIDateTime *dthp;
-    ub4 source;
-    ub4 event;
+    ub4          source;
+    ub4          event;
 } HAEventParams;
 
 /* --------------------------------------------------------------------------------------------- *
@@ -109,7 +109,7 @@ sb4 CallbackOutBind
     dvoid  **indp,
     ub2    **rcodep
 )
-{        
+{
     OCI_Bind      *bnd  = (OCI_Bind *)octxp;
     OCI_Define    *def  = NULL;
     OCI_Resultset *rs   = NULL;
@@ -227,9 +227,9 @@ ub4 CallbackNotifyMessages
     OCI_NOT_USED(desc)
 
     CHECK(NULL == dequeue, OCI_SUCCESS)
-  
+
     dequeue->callback(dequeue);
-    
+
     return OCI_SUCCESS;
 }
 
@@ -248,6 +248,7 @@ ub4 CallbackNotifyChanges
 )
 {
     OCI_Subscription *sub = (OCI_Subscription *)oci_ctx;
+
     ub4 type = 0;
 
     DECLARE_CTX(TRUE)
@@ -348,7 +349,8 @@ ub4 CallbackNotifyChanges
 
                 /* get table name */
 
-                StringGetAttribute(sub->con, *tbl_elem, OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_NAME, &sub->event.objname, &sub->event.objname_size);
+                StringGetAttribute(sub->con, *tbl_elem, OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_NAME,
+                                   &sub->event.objname, &sub->event.objname_size);
 
                 /* get table modification type */
 
@@ -395,10 +397,11 @@ ub4 CallbackNotifyChanges
 
                             /* get rowid  */
 
-                            StringGetAttribute(sub->con, *row_elem, OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_ROWID, &sub->event.rowid, &sub->event.rowid_size);
+                            StringGetAttribute(sub->con, *row_elem, OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_ROWID,
+                                               &sub->event.rowid, &sub->event.rowid_size);
 
                             /* get opcode  */
-                   
+
                             ATTRIB_GET(OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_OPFLAGS, *row_elem, &sub->event.op, NULL)
 
                             sub->handler(&sub->event);
@@ -444,6 +447,7 @@ sb4 CallbackFailOver
 )
 {
     OCI_Connection *cn = (OCI_Connection *) fo_ctx;
+
     sb4 ret = OCI_FOC_OK;
 
     OCI_NOT_USED(envhp)
@@ -480,7 +484,7 @@ void ProcHAEventInvoke
     {
         tmsp->hstate = OCI_OBJECT_FETCHED_DIRTY;
         TimestampFree(tmsp);
-    }          
+    }
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -489,8 +493,8 @@ void ProcHAEventInvoke
 
 void CallbackHAEvent
 (
-    dvoid     *evtctx,
-    dvoid     *eventptr
+    dvoid *evtctx,
+    dvoid *eventptr
 )
 {
     DECLARE_CTX(TRUE)
@@ -501,11 +505,11 @@ void CallbackHAEvent
 
     if (!Env.ha_handler)
     {
-        return;    
-    }    
+        return;
+    }
 
     if (Env.version_runtime >= OCI_10_2)
-    {       
+    {
         HAEventParams params;
 
         memset(&params, 0, sizeof(params));
@@ -513,7 +517,7 @@ void CallbackHAEvent
         ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVFIRST, (OCIEvent *)eventptr, &params.srvhp, NULL)
 
         while (STATUS && params.srvhp)
-        {   
+        {
             params.dthp   = NULL;
             params.event  = OCI_HA_STATUS_DOWN;
             params.source = OCI_HA_SOURCE_INSTANCE;
@@ -536,7 +540,7 @@ void CallbackHAEvent
             {
                 ListForEachWithParam(Env.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM) ProcHAEventInvoke);
             }
- 
+
             ATTRIB_GET(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT, (OCIEvent *)eventptr, &params.srvhp, NULL)
         }
     }

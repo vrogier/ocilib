@@ -40,9 +40,9 @@ boolean SubscriptionDispose
     boolean alloc = FALSE;
 
     DECLARE_CTX(TRUE)
-        
+
     CHECK(NULL == sub, FALSE);
-  
+
     CTX_SET(sub->con, NULL, sub->err)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
@@ -61,12 +61,14 @@ boolean SubscriptionDispose
 
         if (sub->con)
         {
-            // OCISubscriptionUnRegister() seems to partially fail when OCI is initialized in UTF16 mode as it returns ORA-24915
-            // Thus, if using OCI in Unicode mode, discard  error ORA-24915
+            /* OCISubscriptionUnRegister() seems to partially fail when OCI is initialized in UTF16
+             * mode as it returns ORA-24915 */
+
+            /* Thus, if using OCI in Unicode mode, discard  error ORA-24915 */
 
             const sword res = OCISubscriptionUnRegister(sub->con->cxt, sub->subhp, sub->err, (ub4) OCI_DEFAULT);
 
-#if defined(OCI_CHARSET_WIDE)
+  #if defined(OCI_CHARSET_WIDE)
 
             if (OCI_FAILURE(res))
             {
@@ -80,10 +82,10 @@ boolean SubscriptionDispose
                     STATUS = FALSE;
                 }
             }
-#else
+  #else
 
             EXEC(res);
-#endif
+  #endif
 
             if (alloc)
             {
@@ -149,6 +151,7 @@ OCI_Subscription * SubscriptionRegister
     /* create subscription object */
 
     sub = ListAppend(Env.subs, sizeof(*sub));
+
     STATUS = (NULL != sub);
 
     if (sub)
@@ -169,7 +172,7 @@ OCI_Subscription * SubscriptionRegister
 
             sub->con       = con;
             sub->env       = con->env;
-            sub->timeout = (ub4)timeout;
+            sub->timeout   = (ub4)timeout;
             sub->handler   = handler;
             sub->type      = type;
             sub->name      = ostrdup(name);
@@ -207,21 +210,21 @@ OCI_Subscription * SubscriptionRegister
             attr =  OCI_SUBSCR_PROTO_OCI;
             ATTRIB_SET(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPROTO, sub->subhp, &attr, sizeof(attr))
 
-           /* On MSVC, casting a function pointer to a data pointer generates a warning.
-              As there is no other to way to do regarding the OCI API, let's disable this
-              warning just the time to set the callback attribute to the subscription handle */
+            /* On MSVC, casting a function pointer to a data pointer generates a warning.
+               As there is no other to way to do regarding the OCI API, let's disable this
+               warning just the time to set the callback attribute to the subscription handle */
 
-            #ifdef _MSC_VER
-            #pragma warning(disable: 4054)
-            #endif
+  #ifdef _MSC_VER
+    #pragma warning(disable: 4054)
+  #endif
 
             /* internal callback handler */
 
             ATTRIB_SET(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, sub->subhp, CallbackNotifyChanges, 0)
 
-            #ifdef _MSC_VER
-            #pragma warning(default: 4054)
-            #endif
+  #ifdef _MSC_VER
+    #pragma warning(default: 4054)
+  #endif
 
             /* RowIds handling */
 
@@ -248,7 +251,7 @@ OCI_Subscription * SubscriptionRegister
     if (STATUS)
     {
         RETVAL = sub;
-    } 
+    }
     else if (sub)
     {
         SubscriptionDispose(sub);
@@ -306,7 +309,7 @@ boolean SubscriptionAddStatement
     CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
     CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
-    
+
     CTX_SET(sub->con, stmt, sub->err)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
@@ -374,4 +377,3 @@ OCI_Connection * SubscriptionGetConnection
 {
     GET_PROP(OCI_Connection*, NULL, OCI_IPC_NOTIFY, sub, con, sub->con, NULL, sub->err)
 }
-

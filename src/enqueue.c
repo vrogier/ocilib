@@ -51,7 +51,7 @@ OCI_Enqueue * EnqueueCreate
     if (STATUS)
     {
         enqueue->typinf = typinf;
-        enqueue->name = ostrdup(name);
+        enqueue->name   = ostrdup(name);
 
         /* allocate enqueue options descriptor */
 
@@ -67,7 +67,7 @@ OCI_Enqueue * EnqueueCreate
     else if (enqueue)
     {
         EnqueueFree(enqueue);
-   }
+    }
 
     CALL_EXIT()
 }
@@ -107,10 +107,10 @@ boolean EnqueuePut
     OCI_Msg     *msg
 )
 {
-    dbtext *dbstr    = NULL;
-    int     dbsize   = -1;
-    void   *payload  = NULL;
-    void   *ind      = NULL;
+    dbtext *dbstr   = NULL;
+    int     dbsize  = -1;
+    void   *payload = NULL;
+    void   *ind     = NULL;
 
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
@@ -168,9 +168,9 @@ unsigned int EnqueueGetVisibility
     CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
 
     ATTRIB_GET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY, enqueue->opth, &ret, NULL)
-    
+
     RETVAL = ret;
- 
+
     CALL_EXIT()
 }
 
@@ -264,7 +264,7 @@ boolean EnqueueGetRelativeMsgID
     CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
 
     ATTRIB_GET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID, enqueue->opth, &value, NULL)
-    
+
     if (STATUS && value)
     {
         const ub4 raw_len = OCIRawSize(enqueue->typinf->con->env, value);
@@ -292,9 +292,9 @@ boolean EnqueueGetRelativeMsgID
 
 boolean EnqueueSetRelativeMsgID
 (
-    OCI_Enqueue  *enqueue,
-    const void   *id,
-    unsigned int  len
+    OCI_Enqueue *enqueue,
+    const void  *id,
+    unsigned int len
 )
 {
     OCIRaw *value = NULL;
@@ -305,7 +305,7 @@ boolean EnqueueSetRelativeMsgID
 
     EXEC(OCIRawAssignBytes(enqueue->typinf->con->env, enqueue->typinf->con->err,  (ub1*) id, (ub4) len, (OCIRaw **) &value))
     ATTRIB_SET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID, enqueue->opth, &value, 0)
-    
+
     RETVAL = STATUS;
 
     CALL_EXIT()

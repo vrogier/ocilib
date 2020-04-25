@@ -33,12 +33,11 @@ typedef struct MagicNumber
 
 static const MagicNumber MagicNumbers[] =
 {
-    { { 2, 255, 101 }, OTEXT("~") },
-    { { 1,   0,   0 }, OTEXT("-~") }
+    { { 2, 255, 101 }, OTEXT("~")  },
+    { { 1, 0,   0   }, OTEXT("-~") }
 };
 
 #define MAGIC_NUMBER_COUNT 2
-
 
 #define NUMBER_OPERATION(func)                                                  \
                                                                                 \
@@ -49,7 +48,7 @@ static const MagicNumber MagicNumbers[] =
     CALL_CONTEXT_FROM_OBJ(number)                                               \
                                                                                 \
     STATUS = NumberTranslateValue(number->con, value, type,                     \
-                                       &src_num, OCI_NUM_NUMBER);               \
+                                  &src_num, OCI_NUM_NUMBER);                    \
                                                                                 \
     EXEC(func(number->err, number->handle, &src_num, number->handle))           \
                                                                                 \
@@ -159,11 +158,11 @@ boolean NumberTranslateValue
 
             EXEC(OCINumberFromReal(ctx->oci_err, in_value, in_size, (OCINumber *)out_value))
         }
-        else  if (out_type & OCI_NUM_DOUBLE || out_type & OCI_NUM_FLOAT)
+        else if (out_type & OCI_NUM_DOUBLE || out_type & OCI_NUM_FLOAT)
         {
             /* double to float and float to double */
 
-        #if OCI_VERSION_COMPILE >= OCI_10_1
+#if OCI_VERSION_COMPILE >= OCI_10_1
 
             if (Env.version_runtime >= OCI_10_1)
             {
@@ -177,7 +176,7 @@ boolean NumberTranslateValue
                 }
             }
 
-        #endif     
+#endif
 
         }
         else
@@ -191,7 +190,7 @@ boolean NumberTranslateValue
     else
     {
         EXEC(OCINumberFromInt(ctx->oci_err, in_value, in_size, in_sign, (OCINumber *)&tmp))
-            
+
         if (out_type == OCI_NUM_NUMBER)
         {
             /* integers to OCINumber */
@@ -205,7 +204,7 @@ boolean NumberTranslateValue
             EXEC(OCINumberToReal(ctx->oci_err, &tmp, out_size, out_value))
         }
         else
-        {    
+        {
             /* only for conversions between integers with different sizes or sign */
 
             EXEC(OCINumberToInt(ctx->oci_err, &tmp, out_size, out_sign, out_value))
@@ -244,15 +243,15 @@ boolean NumberFromStringInternal
         if (type & OCI_NUM_SHORT)
         {
             STATUS = (osscanf(in_value, OCI_STRING_FORMAT_NUM_SHORT, (short *)out_value) == 1);
-            done = TRUE;
+            done   = TRUE;
         }
         else if (type & OCI_NUM_INT)
         {
             STATUS = (osscanf(in_value, OCI_STRING_FORMAT_NUM_INT, (int *)out_value) == 1);
-            done = TRUE;
+            done   = TRUE;
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_10_1
+#if OCI_VERSION_COMPILE >= OCI_10_1
 
         if (!done && Env.version_runtime >= OCI_10_1)
         {
@@ -266,16 +265,16 @@ boolean NumberFromStringInternal
             if (type & OCI_NUM_DOUBLE)
             {
                 STATUS = (osscanf(in_value, tmp_fmt, (double *)out_value) == 1);
-                done = TRUE;
+                done   = TRUE;
             }
             else if (type & OCI_NUM_FLOAT)
             {
                 STATUS = (osscanf(in_value, tmp_fmt, (float *)out_value) == 1);
-                done = TRUE;
+                done   = TRUE;
             }
         }
 
-    #endif
+#endif
 
     }
 
@@ -298,10 +297,10 @@ boolean NumberFromStringInternal
 
         if (!done)
         {
-            dbtext *dbstr1  = NULL;
-            dbtext *dbstr2  = NULL;
-            int     dbsize1 = -1;
-            int     dbsize2 = -1;
+            dbtext   *dbstr1  = NULL;
+            dbtext   *dbstr2  = NULL;
+            int       dbsize1 = -1;
+            int       dbsize2 = -1;
             OCINumber number;
 
             if (!fmt)
@@ -317,7 +316,7 @@ boolean NumberFromStringInternal
             EXEC
             (
                 OCINumberFromText(ctx->oci_err, (oratext *) dbstr1, (ub4) dbsize1, (oratext *) dbstr2,
-                                   (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
+                                  (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number)
             )
 
             StringReleaseDBString(dbstr2);
@@ -344,7 +343,7 @@ boolean NumberToStringInternal
     const otext   * fmt
 )
 {
-    boolean   done = FALSE;
+    boolean done = FALSE;
 
     DECLARE_CTX(TRUE)
 
@@ -362,15 +361,17 @@ boolean NumberToStringInternal
         if (type & OCI_NUM_SHORT)
         {
             out_value_size = osprintf(out_value, out_value_size, OCI_STRING_FORMAT_NUM_SHORT, *((short *)number));
+
             done = TRUE;
         }
         else if (type & OCI_NUM_INT)
         {
             out_value_size = osprintf(out_value, out_value_size, OCI_STRING_FORMAT_NUM_INT, *((int *)number));
+
             done = TRUE;
         }
 
-    #if OCI_VERSION_COMPILE >= OCI_10_1
+#if OCI_VERSION_COMPILE >= OCI_10_1
 
         if (!done && (Env.version_runtime >= OCI_10_1))
         {
@@ -384,11 +385,13 @@ boolean NumberToStringInternal
             if (type & OCI_NUM_DOUBLE)
             {
                 out_value_size = osprintf(out_value, out_value_size, tmp_fmt, *((double *)number));
+
                 done = TRUE;
             }
             else if (type & OCI_NUM_FLOAT)
             {
                 out_value_size = osprintf(out_value, out_value_size, tmp_fmt, *((float *)number));
+
                 done = TRUE;
             }
 
@@ -406,7 +409,7 @@ boolean NumberToStringInternal
             }
         }
 
-    #endif
+#endif
 
     }
 
@@ -428,8 +431,8 @@ boolean NumberToStringInternal
 
         if (!done)
         {
-            dbtext *dbstr1 = NULL;
-            dbtext *dbstr2 = NULL;
+            dbtext *dbstr1  = NULL;
+            dbtext *dbstr2  = NULL;
             int     dbsize1 = out_value_size * (int) sizeof(otext);
             int     dbsize2 = -1;
 
@@ -476,9 +479,9 @@ boolean NumberToStringInternal
 
 OCI_Number * NumberInitialize
 (
-    OCI_Connection  *con,
-    OCI_Number      *number,
-    OCINumber       *buffer
+    OCI_Connection *con,
+    OCI_Number     *number,
+    OCINumber      *buffer
 )
 {
     DECLARE_CTX(TRUE)
@@ -488,7 +491,7 @@ OCI_Number * NumberInitialize
 
     if (STATUS)
     {
-        number->con = con;
+        number->con    = con;
         number->handle = buffer;
 
         /* get the right error handle */
@@ -587,6 +590,7 @@ OCI_Number ** NumberCreateArray
     CALL_CHECK_INITIALIZED()
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_NUMERIC, OCI_NUM_NUMBER, sizeof(OCINumber), sizeof(OCI_Number), 0, NULL);
+
     STATUS = (NULL != arr);
 
     if (STATUS)
@@ -704,8 +708,8 @@ unsigned char * NumberGetContent
 
 boolean NumberSetContent
 (
-    OCI_Number     *number,
-    unsigned char  *content
+    OCI_Number    *number,
+    unsigned char *content
 )
 {
     CALL_ENTER(boolean, FALSE)
@@ -729,9 +733,9 @@ boolean NumberSetContent
 
 boolean NumberSetValue
 (
-    OCI_Number     *number,
-    unsigned int    type,
-    void           *value
+    OCI_Number  *number,
+    unsigned int type,
+    void        *value
 )
 {
     CALL_ENTER(boolean, FALSE)
@@ -749,9 +753,9 @@ boolean NumberSetValue
 
 boolean NumberGetValue
 (
-    OCI_Number     *number,
-    unsigned int    type,
-    void           *value
+    OCI_Number  *number,
+    unsigned int type,
+    void        *value
 )
 {
     CALL_ENTER(boolean, FALSE)
@@ -769,9 +773,9 @@ boolean NumberGetValue
 
 boolean NumberAdd
 (
-    OCI_Number     *number,
-    unsigned int    type,
-    void           *value
+    OCI_Number  *number,
+    unsigned int type,
+    void        *value
 )
 {
     NUMBER_OPERATION(OCINumberAdd)
@@ -783,9 +787,9 @@ boolean NumberAdd
 
 boolean NumberSub
 (
-    OCI_Number     *number,
-    unsigned int    type,
-    void           *value
+    OCI_Number  *number,
+    unsigned int type,
+    void        *value
 )
 {
     NUMBER_OPERATION(OCINumberSub)
@@ -797,9 +801,9 @@ boolean NumberSub
 
 boolean NumberMultiply
 (
-    OCI_Number     *number,
-    unsigned int    type,
-    void           *value
+    OCI_Number  *number,
+    unsigned int type,
+    void        *value
 )
 {
     NUMBER_OPERATION(OCINumberMul)
@@ -811,9 +815,9 @@ boolean NumberMultiply
 
 boolean NumberDivide
 (
-    OCI_Number     *number,
-    unsigned int    type,
-    void           *value
+    OCI_Number  *number,
+    unsigned int type,
+    void        *value
 )
 {
     NUMBER_OPERATION(OCINumberDiv)
@@ -842,6 +846,3 @@ int NumberCompare
 
     CALL_EXIT()
 }
-
-
-

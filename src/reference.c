@@ -61,12 +61,12 @@ OCI_Ref * ReferenceInitialize
             EXEC
             (
                 MemoryAllocateObject(ref->con->env, ref->con->err, ref->con->cxt,
-                          (OCITypeCode) SQLT_REF,
-                          (OCIType*) NULL,
-                          (dvoid *) NULL,
-                          (OCIDuration) OCI_DURATION_SESSION,
-                          (boolean) FALSE,
-                          (dvoid **) &ref->handle)
+                                     (OCITypeCode) SQLT_REF,
+                                     (OCIType*) NULL,
+                                     (dvoid *) NULL,
+                                     (OCIDuration) OCI_DURATION_SESSION,
+                                     (boolean) FALSE,
+                                     (dvoid **) &ref->handle)
             )
         }
         else
@@ -109,7 +109,7 @@ boolean ReferencePin
 
     EXEC
     (
-        OCIObjectPin(ref->con->env, ref->con->err, ref->handle, (OCIComplexObject *) 0, 
+        OCIObjectPin(ref->con->env, ref->con->err, ref->handle, (OCIComplexObject *) 0,
                      OCI_PIN_ANY, OCI_DURATION_SESSION, OCI_LOCK_NONE, &obj_handle)
     )
 
@@ -227,6 +227,7 @@ OCI_Ref ** ReferenceCreateArray
     CALL_CONTEXT_FROM_CON(con)
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_REF, 0, sizeof(OCIRef *), sizeof(OCI_Ref), 0, typinf);
+
     STATUS = (NULL != arr);
 
     if (STATUS)
@@ -436,4 +437,3 @@ OCI_TypeInfo * ReferenceGetTypeInfo
 {
     GET_PROP(OCI_TypeInfo*, NULL, OCI_IPC_REF, ref, typinf, ref->con, NULL, ref->con->err)
 }
-

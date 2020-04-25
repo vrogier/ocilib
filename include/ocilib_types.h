@@ -496,7 +496,7 @@ typedef void (*POCI_ERROR)
 typedef void (*POCI_THREAD)
 (
     OCI_Thread *thread,
-    void       *arg
+    void *      arg
 );
 
 /**
@@ -618,7 +618,7 @@ typedef void (*POCI_HA_HANDLER)
     OCI_Connection *con,
     unsigned int    source,
     unsigned int    event,
-    OCI_Timestamp  *time
+    OCI_Timestamp * time
 );
 
 /* public structures */
@@ -631,7 +631,8 @@ typedef void (*POCI_HA_HANDLER)
  *
  */
 
-typedef struct OCI_XID {
+typedef struct OCI_XID
+{
     long formatID;
     long gtrid_length;
     long bqual_length;
@@ -649,7 +650,8 @@ typedef struct OCI_XID {
  *
  */
 
-typedef union OCI_Variant {
+typedef union OCI_Variant
+{
     /* integers */
     int num;
 
@@ -657,25 +659,25 @@ typedef union OCI_Variant {
     unsigned char *p_bytes;
 
     /* pointer to c natives types */
-    void          *p_void;
-    int           *p_int;
-    float         *p_float;
-    double        *p_double;
-    otext         *p_text;
+    void *  p_void;
+    int *   p_int;
+    float * p_float;
+    double *p_double;
+    otext * p_text;
 
     /* ocilib object types */
-    OCI_Date      *p_date;
-    OCI_Interval  *p_interval;
+    OCI_Date *     p_date;
+    OCI_Interval * p_interval;
     OCI_Timestamp *p_timestamp;
-    OCI_Long      *p_long;
-    OCI_Lob       *p_lob;
-    OCI_File      *p_file;
+    OCI_Long *     p_long;
+    OCI_Lob *      p_lob;
+    OCI_File *     p_file;
     OCI_Statement *p_stmt;
-    OCI_Column    *p_col;
-    OCI_Object    *p_obj;
-    OCI_Coll      *p_coll;
-    OCI_Iter      *p_iter;
-    OCI_Elem      *p_elem;
+    OCI_Column *   p_col;
+    OCI_Object *   p_obj;
+    OCI_Coll *     p_coll;
+    OCI_Iter *     p_iter;
+    OCI_Elem *     p_elem;
 } OCI_Variant;
 
 /**
@@ -688,8 +690,9 @@ typedef union OCI_Variant {
 *
 */
 
-typedef struct OCI_HashValue {
-    OCI_Variant value;
+typedef struct OCI_HashValue
+{
+    OCI_Variant           value;
     struct OCI_HashValue *next;
 } OCI_HashValue;
 
@@ -701,10 +704,11 @@ typedef struct OCI_HashValue {
  *
  */
 
-typedef struct OCI_HashEntry {
-    otext                 *key;
-    struct OCI_HashValue  *values;
-    struct OCI_HashEntry  *next;
+typedef struct OCI_HashEntry
+{
+    otext *               key;
+    struct OCI_HashValue *values;
+    struct OCI_HashEntry *next;
 } OCI_HashEntry;
 
 /**

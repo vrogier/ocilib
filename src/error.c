@@ -66,14 +66,14 @@ void ErrorReset
 {
     if (err)
     {
-        err->raise      = FALSE;
-        err->active     = FALSE;
-        err->con        = NULL;
-        err->stmt       = NULL;
-        err->sqlcode    = 0;
-        err->libcode    = 0;
-        err->type       = 0;
-        err->str[0]     = 0;
+        err->raise   = FALSE;
+        err->active  = FALSE;
+        err->con     = NULL;
+        err->stmt    = NULL;
+        err->sqlcode = 0;
+        err->libcode = 0;
+        err->type    = 0;
+        err->str[0]  = 0;
     }
 }
 
@@ -114,7 +114,7 @@ OCI_Error * ErrorGet
         err = NULL;
     }
 
-    // Reset error in case OCI_ENV_CONTEXT is no used
+    /* Reset error in case OCI_ENV_CONTEXT is no used */
     if (reset && err && err->depth == 0 && err->type != OCI_UNKNOWN)
     {
         ErrorReset(err);

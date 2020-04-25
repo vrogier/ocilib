@@ -148,9 +148,9 @@ const otext * AgentGetName
     if (!agent->name)
     {
         unsigned int size = 0;
-        
+
         STATUS = StringGetAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
-                                        OCI_ATTR_AGENT_NAME,  &agent->name, &size);
+                                    OCI_ATTR_AGENT_NAME,  &agent->name, &size);
     }
 
     RETVAL = agent->name;
@@ -194,9 +194,9 @@ const otext * AgentGetAddress
     if (!agent->address)
     {
         unsigned int size = 0;
-        
+
         STATUS = StringGetAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT,
-                                        OCI_ATTR_AGENT_ADDRESS, &agent->address, &size);
+                                    OCI_ATTR_AGENT_ADDRESS, &agent->address, &size);
     }
 
     RETVAL = agent->address;
@@ -220,6 +220,6 @@ boolean AgentSetAddress
 
     STATUS = StringSetAttribute(agent->con, agent->handle, OCI_DTYPE_AQAGENT, OCI_ATTR_AGENT_ADDRESS, &agent->address, address);
     RETVAL = STATUS;
-    
+
     CALL_EXIT()
 }

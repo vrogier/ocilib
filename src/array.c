@@ -34,9 +34,10 @@
 #include "reference.h"
 #include "timestamp.h"
 
-#define ARRAY_INIT_HANDLE(type, func)                                       \
-    arr->tab_obj[i] = func;                                                 \
+#define ARRAY_INIT(type, func)                                              \
+    arr->tab_obj[i]                 = func;                                 \
     ((void **)(arr->mem_handle))[i] = ((type *) arr->tab_obj[i])->handle;   \
+
 
 /* --------------------------------------------------------------------------------------------- *
  * ArrayFindAny
@@ -78,6 +79,7 @@ boolean ArrayInitialize
     for (unsigned int i = 0; i < arr->nb_elem; i++)
     {
         void *handle = NULL;
+        void *data   = ((char*)arr->mem_struct) + (arr->struct_size * i);;
 
         if (OCI_CDT_DATETIME == arr->elem_type)
         {
@@ -92,9 +94,9 @@ boolean ArrayInitialize
             handle = ((void **)(arr->mem_handle))[i];
         }
 
-        arr->tab_obj[i] = ((char *) arr->mem_struct) + (arr->struct_size * i);
+        arr->tab_obj[i] = data;
 
-        ((OCI_Datatype *) (arr->tab_obj[i]))->hstate = OCI_OBJECT_ALLOCATED_ARRAY;
+        ((OCI_Datatype *) data)->hstate = OCI_OBJECT_ALLOCATED_ARRAY;
 
         switch (arr->elem_type)
         {
@@ -102,48 +104,72 @@ boolean ArrayInitialize
             {
                 if (OCI_NUM_NUMBER == arr->elem_subtype)
                 {
-                    arr->tab_obj[i] = NumberInitialize(arr->con, (OCI_Number *) arr->tab_obj[i], (OCINumber *) handle);
+                    arr->tab_obj[i] = NumberInitialize(arr->con,
+                                                       (OCI_Number *)data,
+                                                       (OCINumber *) handle);
                 }
                 break;
             }
             case OCI_CDT_DATETIME:
             {
-                arr->tab_obj[i] = DateInitialize(arr->con, (OCI_Date *) arr->tab_obj[i], (OCIDate *) handle, FALSE, FALSE);
+                arr->tab_obj[i] =
+                    DateInitialize(arr->con, (OCI_Date *)data,
+                                   (OCIDate *) handle,
+                                   FALSE, FALSE);
                 break;
             }
             case OCI_CDT_LOB:
             {
-                ARRAY_INIT_HANDLE(OCI_Lob, LobInitialize(arr->con, (OCI_Lob *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype))
+                ARRAY_INIT(OCI_Lob,
+                           LobInitialize(arr->con, (OCI_Lob *)data,
+                                         (OCILobLocator *) handle,
+                                         arr->elem_subtype))
                 break;
             }
             case OCI_CDT_FILE:
             {
-                ARRAY_INIT_HANDLE(OCI_File, FileInitialize(arr->con, (OCI_File *) arr->tab_obj[i], (OCILobLocator *) handle, arr->elem_subtype))
+                ARRAY_INIT(OCI_File,
+                           FileInitialize(arr->con, (OCI_File *)data,
+                                          (OCILobLocator *) handle,
+                                          arr->elem_subtype))
                 break;
             }
             case OCI_CDT_TIMESTAMP:
             {
-                ARRAY_INIT_HANDLE(OCI_Timestamp, TimestampInitialize(arr->con, (OCI_Timestamp *) arr->tab_obj[i], (OCIDateTime *) handle, arr->elem_subtype))
+                ARRAY_INIT(OCI_Timestamp,
+                           TimestampInitialize(arr->con, (OCI_Timestamp *)data,
+                                               (OCIDateTime *) handle,
+                                               arr->elem_subtype))
                 break;
             }
             case OCI_CDT_INTERVAL:
             {
-                ARRAY_INIT_HANDLE(OCI_Interval, IntervalInitialize(arr->con, (OCI_Interval *) arr->tab_obj[i], (OCIInterval *) handle, arr->elem_subtype))
+                ARRAY_INIT(OCI_Interval,
+                           IntervalInitialize(arr->con, (OCI_Interval *)data,
+                                              (OCIInterval *) handle,
+                                              arr->elem_subtype))
                 break;
             }
             case OCI_CDT_OBJECT:
             {
-                ARRAY_INIT_HANDLE(OCI_Object, ObjectInitialize(arr->con, (OCI_Object *)arr->tab_obj[i], handle, typinf, NULL, -1, TRUE))
+                ARRAY_INIT(OCI_Object,
+                           ObjectInitialize(arr->con, (OCI_Object *)data,
+                                            handle, typinf,
+                                            NULL, -1, TRUE))
                 break;
             }
             case OCI_CDT_COLLECTION:
             {
-                ARRAY_INIT_HANDLE(OCI_Coll, CollectionInitialize(arr->con, (OCI_Coll *) arr->tab_obj[i], handle, typinf))
+                ARRAY_INIT(OCI_Coll,
+                           CollectionInitialize(arr->con, (OCI_Coll *)data,
+                                                handle, typinf))
                 break;
             }
             case OCI_CDT_REF:
             {
-                ARRAY_INIT_HANDLE(OCI_Ref, ReferenceInitialize(arr->con, typinf, (OCI_Ref *) arr->tab_obj[i], handle))
+                ARRAY_INIT(OCI_Ref,
+                           ReferenceInitialize(arr->con, typinf,
+                                               (OCI_Ref *) data, handle))
                 break;
             }
         }
@@ -177,7 +203,9 @@ boolean ArrayDispose
 
     if (OCI_UNKNOWN != arr->handle_type)
     {
-        MemoryFreeDescriptorArray((dvoid **) arr->mem_handle, (ub4) arr->handle_type, (ub4) arr->nb_elem);
+        MemoryFreeDescriptorArray((dvoid **) arr->mem_handle,
+                                  (ub4) arr->handle_type,
+                                  (ub4) arr->nb_elem);
     }
 
     FREE(arr->mem_handle)
@@ -202,7 +230,7 @@ OCI_Array * ArrayCreate
     unsigned int    handle_type,
     OCI_TypeInfo   *typinf
 )
-{   
+{
     OCI_Array *arr = NULL;
 
     DECLARE_CTX(TRUE)
@@ -211,6 +239,7 @@ OCI_Array * ArrayCreate
     /* create array object */
 
     arr = ListAppend(Env.arrs, sizeof(*arr));
+
     STATUS = (NULL != arr);
 
     if (STATUS)
@@ -239,7 +268,10 @@ OCI_Array * ArrayCreate
 
         if (STATUS && handle_type != 0)
         {
-            STATUS = MemoryAllocDescriptorArray((dvoid  *)arr->env, (dvoid **)arr->mem_handle, (ub4)handle_type, (ub4)nb_elem);
+            STATUS = MemoryAllocDescriptorArray((dvoid  *)arr->env,
+                                                (dvoid **)arr->mem_handle,
+                                                (ub4)handle_type,
+                                                (ub4)nb_elem);
         }
 
         if (STATUS && arr->tab_obj && arr->mem_handle)
@@ -274,7 +306,7 @@ boolean ArrayFreeFromHandles
     if (arr)
     {
         res = ListRemove(Env.arrs, arr);
-       ArrayDispose(arr);
+        ArrayDispose(arr);
         FREE(arr)
     }
 

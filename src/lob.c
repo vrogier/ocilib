@@ -57,9 +57,9 @@ OCI_Lob * LobInitialize
         if (!lob->handle || (OCI_OBJECT_ALLOCATED_ARRAY == lob->hstate))
         {
             const ub2 csid    = OCI_DEFAULT;
-            ub1 csfrm   = OCI_DEFAULT;
-            ub1 lobtype = 0;
-            ub4 empty   = 0;
+            ub1       csfrm   = OCI_DEFAULT;
+            ub1       lobtype = 0;
+            ub4       empty   = 0;
 
             if (OCI_NCLOB == lob->type)
             {
@@ -93,7 +93,7 @@ OCI_Lob * LobInitialize
             lob->hstate = OCI_OBJECT_FETCHED_CLEAN;
         }
     }
- 
+
     /* check for failure */
 
     if (!STATUS && lob)
@@ -179,6 +179,7 @@ OCI_Lob ** LobCreateArray
     CALL_CONTEXT_FROM_CON(con)
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_LOB, type, sizeof(OCILobLocator *), sizeof(OCI_Lob), OCI_DTYPE_LOB, NULL);
+
     STATUS = (NULL != arr);
 
     if (STATUS)
@@ -242,33 +243,36 @@ boolean LobSeek
     {
         case OCI_SEEK_CUR:
         {
-            if ((offset + lob->offset - 1) <= size) 
+            if ((offset + lob->offset - 1) <= size)
             {
                 lob->offset += offset;
-                RETVAL   = TRUE;
+
+                RETVAL = TRUE;
             }
             break;
         }
         case OCI_SEEK_SET:
         {
-            if (offset <= size) 
+            if (offset <= size)
             {
                 lob->offset = offset + 1;
-                RETVAL  = TRUE;
+
+                RETVAL = TRUE;
             }
             break;
         }
         case OCI_SEEK_END:
         {
-            if (offset <= size) 
+            if (offset <= size)
             {
                 lob->offset = size - offset + 1;
-                RETVAL  = TRUE;
+
+                RETVAL = TRUE;
             }
             break;
         }
     }
-    
+
     CALL_EXIT()
 }
 
@@ -303,8 +307,8 @@ boolean LobRead2
     unsigned int *byte_count
 )
 {
-    ub1 csfrm   = 0;
-    ub2 csid    = 0;
+    ub1 csfrm = 0;
+    ub2 csid  = 0;
 
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_LOB, lob)
@@ -337,7 +341,7 @@ boolean LobRead2
 #ifdef OCI_LOB2_API_ENABLED
 
     if (Env.use_lob_ub8)
-    {        
+    {
         ub8 size_in_out_char = (ub8) (*char_count);
         ub8 size_in_out_byte = (ub8) (*byte_count);
 
@@ -348,7 +352,7 @@ boolean LobRead2
                         (ub8) lob->offset, buffer,(ub8) (*byte_count),
                         (ub1) OCI_ONE_PIECE, (void *) NULL,
                         NULL, csid, csfrm)
-        )
+        );
 
         (*char_count) = (ub4) size_in_out_char;
         (*byte_count) = (ub4) size_in_out_byte;
@@ -367,7 +371,7 @@ boolean LobRead2
                        &size_in_out_char_byte, (ub4) lob->offset,
                        buffer, (ub4) (*byte_count), (void *) NULL,
                        NULL, csid, csfrm)
-        )
+        );
 
         (*char_count) = (ub4) size_in_out_char_byte;
         (*byte_count) = (ub4) size_in_out_char_byte;
@@ -384,14 +388,14 @@ boolean LobRead2
 
         memset(((char *) buffer) + ora_byte_count, 0, sizeof(dbtext));
 
-    #ifndef OCI_LOB2_API_ENABLED
+#ifndef OCI_LOB2_API_ENABLED
 
         if (Env.nls_utf8)
         {
             (*char_count) = (ub4) StringLength((const char *)buffer, sizeof(char));
         }
 
-    #endif
+#endif
 
     }
 
@@ -429,9 +433,9 @@ unsigned int LobRead
     unsigned int len
 )
 {
-    unsigned int char_count = 0;
-    unsigned int byte_count = 0;
-    unsigned int *ptr_count = NULL;
+    unsigned int  char_count = 0;
+    unsigned int  byte_count = 0;
+    unsigned int *ptr_count  = NULL;
 
     if (lob)
     {
@@ -464,9 +468,9 @@ boolean LobWrite2
     unsigned int *byte_count
 )
 {
-    ub1     csfrm = 0;
-    ub2     csid  = 0;
-    void   *obuf  = NULL;
+    ub1   csfrm = 0;
+    ub2   csid  = 0;
+    void *obuf  = NULL;
 
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_LOB, lob)
@@ -498,11 +502,11 @@ boolean LobWrite2
             if (Env.nls_utf8 )
             {
 
-        #ifndef OCI_LOB2_API_ENABLED
+#ifndef OCI_LOB2_API_ENABLED
 
                 (*char_count) = (ub4) StringLength((const char *)buffer, sizeof(char));
 
-        #endif
+#endif
 
             }
             else
@@ -536,8 +540,8 @@ boolean LobWrite2
                          NULL, csid, csfrm)
         )
 
-        (*char_count) = (ub4) size_in_out_char;
-        (*byte_count) = (ub4) size_in_out_byte;
+            (*char_count) = (ub4) size_in_out_char;
+        (*byte_count)     = (ub4) size_in_out_byte;
     }
 
     else
@@ -562,14 +566,14 @@ boolean LobWrite2
                         &size_in_out_char_byte, (ub4) lob->offset,
                         obuf, (ub4) (*byte_count), (ub1) OCI_ONE_PIECE,
                         (void *) NULL, NULL, csid, csfrm)
-        )
+        );
 
         (*char_count) = (ub4) size_in_out_char_byte;
         (*byte_count) = (ub4) size_in_out_char_byte;
 
         if ((OCI_CLOB == lob->type) && !Env.nls_utf8)
         {
-             (*byte_count) *= (ub4) sizeof(otext);
+            (*byte_count) *= (ub4) sizeof(otext);
         }
     }
 
@@ -606,9 +610,9 @@ unsigned int LobWrite
     unsigned int len
 )
 {
-    unsigned int char_count = 0;
-    unsigned int byte_count = 0;
-    unsigned int *ptr_count = NULL;
+    unsigned int  char_count = 0;
+    unsigned int  byte_count = 0;
+    unsigned int *ptr_count  = NULL;
 
     if (lob)
     {
@@ -666,7 +670,6 @@ boolean LobTruncate
     }
 
     RETVAL = STATUS;
-
 
     CALL_EXIT()
 }
@@ -811,7 +814,7 @@ boolean LobCopy
 
 #endif
 
-{
+    {
         EXEC
         (
             OCILobCopy(lob->con->cxt, lob->con->err, lob->handle,
@@ -889,9 +892,9 @@ boolean LobAppend2
     unsigned int *byte_count
 )
 {
-    ub1     csfrm = 0;
-    ub2     csid  = 0;
-    void   *obuf  = NULL;
+    ub1   csfrm = 0;
+    ub2   csid  = 0;
+    void *obuf  = NULL;
 
     DECLARE_VARS(boolean, FALSE, TRUE)
 
@@ -936,11 +939,11 @@ boolean LobAppend2
             if (Env.nls_utf8)
             {
 
-            #ifndef OCI_LOB2_API_ENABLED
+#ifndef OCI_LOB2_API_ENABLED
 
                 (*char_count) = (ub4) StringLength((const char *)buffer, sizeof(char));
 
-            #endif
+#endif
 
             }
             else
@@ -957,7 +960,7 @@ boolean LobAppend2
     }
 
     csfrm = (OCI_NCLOB == lob->type) ? SQLCS_NCHAR : SQLCS_IMPLICIT;
-  
+
 #ifdef OCI_LOB2_API_ENABLED
 
     if (Env.use_lob_ub8)
@@ -971,7 +974,7 @@ boolean LobAppend2
                                &size_in_out_byte, &size_in_out_char,
                                obuf, (ub8)  (*byte_count), (ub1) OCI_ONE_PIECE,
                                (dvoid *) NULL, NULL, csid, csfrm)
-        )
+        );
 
         (*char_count) = (ub4) size_in_out_char;
         (*byte_count) = (ub4) size_in_out_byte;
@@ -998,14 +1001,14 @@ boolean LobAppend2
             OCILobWriteAppend(lob->con->cxt, lob->con->err, lob->handle,
                               &size_in_out_char_byte, obuf,  (*byte_count),
                               (ub1) OCI_ONE_PIECE, (dvoid *) NULL, NULL, csid, csfrm)
-        )
+        );
 
         (*char_count) = (ub4) size_in_out_char_byte;
         (*byte_count) = (ub4) size_in_out_char_byte;
 
         if ((OCI_CLOB == lob->type) && !Env.nls_utf8)
         {
-             (*byte_count) *= (ub4) sizeof(otext);
+            (*byte_count) *= (ub4) sizeof(otext);
         }
     }
 
@@ -1042,9 +1045,9 @@ unsigned int LobAppend
     unsigned int len
 )
 {
-    unsigned int char_count = 0;
-    unsigned int byte_count = 0;
-    unsigned int *ptr_count = NULL;
+    unsigned int  char_count = 0;
+    unsigned int  byte_count = 0;
+    unsigned int *ptr_count  = NULL;
 
     if (lob)
     {

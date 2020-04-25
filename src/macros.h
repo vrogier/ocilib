@@ -76,7 +76,7 @@
 
 #define CALL_EXIT()                                                             \
                                                                                 \
-ExitCall:                                                                   \
+ExitCall:                                                                       \
     CTX_EXIT(Env.env_mode)                                                      \
     return call_retval;
 
@@ -124,7 +124,7 @@ ExitCall:                                                                   \
 
 #define IS_OCILIB_OBJECT(type, subtype)                                         \
                                                                                 \
-    ( (IS_OCI_NUMBER(type, subtype)) ||                                          \
+    ( (IS_OCI_NUMBER(type, subtype)) ||                                         \
       (OCI_CDT_TEXT    != (type) &&                                             \
        OCI_CDT_RAW     != (type) &&                                             \
        OCI_CDT_BOOLEAN != (type)))
@@ -186,12 +186,14 @@ ExitCall:                                                                   \
     {                                                                           \
         if (!(ptr))                                                             \
         {                                                                       \
-            (ptr) = MemoryAlloc(type, size, (size_t) (requested), TRUE);        \
+            (ptr) = MemoryAlloc(type, size,                                     \
+                                (size_t) (requested), TRUE);                    \
             if (ptr) (allocated) = (requested);                                 \
         }                                                                       \
         else if ((current) >= (allocated))                                      \
         {                                                                       \
-            (ptr) = MemoryRealloc(ptr, type, size, (size_t) (requested), TRUE); \
+            (ptr) = MemoryRealloc(ptr, type, size,                              \
+                                  (size_t) (requested), TRUE);                  \
             if (ptr) (allocated) = (requested);                                 \
         }                                                                       \
                                                                                 \
@@ -421,10 +423,10 @@ ExitCall:                                                                   \
     {                                                                           \
         size_t ii = 0, nn = sizeof(values) / sizeof((values)[0]);               \
         for (; ii < nn; ii++) { if ((mode) == (values)[ii]) break; }            \
-                                if (ii >= nn)                                                           \
-                                {                                                                       \
-                                    THROW(ExceptionArgInvalidValue(con, stmt, name, mode))              \
-                                }                                                                       \
-        }
+        if (ii >= nn)                                                           \
+        {                                                                       \
+            THROW(ExceptionArgInvalidValue(con, stmt, name, mode))              \
+        }                                                                       \
+    }
 
 #endif /* OCILIB_MACROS_H_INCLUDED */

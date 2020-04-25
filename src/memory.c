@@ -28,23 +28,24 @@
                                             \
     if (Env.mem_mutex)                      \
     {                                       \
-       MutexAcquire(Env.mem_mutex);         \
+        MutexAcquire(Env.mem_mutex);        \
     }                                       \
                                             \
     (exp);                                  \
                                             \
     if (Env.mem_mutex)                      \
     {                                       \
-       MutexRelease(Env.mem_mutex);         \
+        MutexRelease(Env.mem_mutex);        \
     }                                       \
 
- /* --------------------------------------------------------------------------------------------- *
+
+/* --------------------------------------------------------------------------------------------- *
  * MemoryUpdateBytes
  * --------------------------------------------------------------------------------------------- */
 
 void MemoryUpdateBytes
 (
-    int type,
+    int     type,
     big_int size
 )
 {
@@ -71,6 +72,7 @@ void * MemoryAlloc
 )
 {
     OCI_MemoryBlock * mem_block = NULL;
+
     const size_t size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
 
     mem_block = (OCI_MemoryBlock *)malloc(size);
@@ -101,14 +103,15 @@ void * MemoryAlloc
 
 void * MemoryRealloc
 (
-    void * ptr_mem,
-    int    ptr_type,
-    size_t block_size,
-    size_t block_count,
+    void  * ptr_mem,
+    int     ptr_type,
+    size_t  block_size,
+    size_t  block_count,
     boolean zero_fill
 )
 {
     OCI_MemoryBlock * mem_block = NULL;
+
     size_t size = 0;
 
     if (ptr_mem)
@@ -140,7 +143,7 @@ void * MemoryRealloc
             MemoryUpdateBytes(mem_block->type, size_diff);
         }
         else if (ptr_mem)
-        { 
+        {
             MemoryFree(ptr_mem);
 
             ExceptionMemory(ptr_type, size, NULL, NULL);
@@ -164,7 +167,7 @@ void MemoryFree
     if (ptr_mem)
     {
         OCI_MemoryBlock *mem_block = (OCI_MemoryBlock *)(((unsigned char*)ptr_mem) - sizeof(*mem_block));
-       
+
         if (mem_block)
         {
             MemoryUpdateBytes(mem_block->type, (big_int) 0 - mem_block->size);
@@ -183,7 +186,7 @@ boolean MemoryAllocHandle
     CONST dvoid *parenth,
     dvoid      **hndlpp,
     ub4          type
- )
+)
 {
     const sword ret = OCIHandleAlloc(parenth, hndlpp, type, 0, NULL);
 
@@ -226,7 +229,7 @@ boolean MemoryAllocDescriptor
     CONST dvoid *parenth,
     dvoid      **descpp,
     ub4          type
- )
+)
 {
     const sword ret = OCIDescriptorAlloc(parenth, descpp, type, 0, NULL);
 
@@ -285,7 +288,7 @@ boolean MemoryAllocDescriptorArray
 boolean MemoryFreeDescriptor
 (
     dvoid *descp,
-    ub4   type
+    ub4    type
 )
 {
     sword ret = OCI_SUCCESS;
@@ -306,9 +309,9 @@ boolean MemoryFreeDescriptor
 
 boolean MemoryFreeDescriptorArray
 (
-    dvoid   **descp,
-    ub4       type,
-    ub4       nb_elem
+    dvoid **descp,
+    ub4     type,
+    ub4     nb_elem
 )
 {
     sword ret = OCI_SUCCESS;
@@ -316,7 +319,7 @@ boolean MemoryFreeDescriptorArray
     if (descp)
     {
 
-    #if OCI_VERSION_COMPILE >= OCI_11_1
+#if OCI_VERSION_COMPILE >= OCI_11_1
 
         if (Env.version_runtime >= OCI_11_1)
         {
@@ -325,7 +328,7 @@ boolean MemoryFreeDescriptorArray
         }
         else
 
-    #endif
+#endif
 
         {
             for (ub4 i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
@@ -397,12 +400,12 @@ sword MemoryFreeObject
 
 void * MemoryAllocOracleCallback
 (
-    void *ctxp, 
+    void  *ctxp,
     size_t size
 )
 {
     OCI_NOT_USED(ctxp)
-        
+
     return MemoryAlloc(OCI_IPC_ORACLE, size, 1, FALSE);
 }
 
@@ -412,13 +415,13 @@ void * MemoryAllocOracleCallback
 
 void * MemoryReallocOracleCallback
 (
-    void *ctxp, 
-    void *memptr, 
+    void  *ctxp,
+    void  *memptr,
     size_t newsize
 )
 {
     OCI_NOT_USED(ctxp)
-        
+
     return MemoryRealloc(memptr, OCI_IPC_ORACLE, newsize, 1, FALSE);
 }
 

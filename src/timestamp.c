@@ -73,7 +73,9 @@ OCI_Timestamp * TimestampInitialize
         {
             if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
             {
-                STATUS = MemoryAllocDescriptor((dvoid  *)tmsp->env, (dvoid **)(void *)&tmsp->handle, (ub4)ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type));
+                STATUS = MemoryAllocDescriptor((dvoid  *)tmsp->env,
+                                               (dvoid **)(void *)&tmsp->handle,
+                                               (ub4)ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type));
                 tmsp->hstate = OCI_OBJECT_ALLOCATED;
             }
         }
@@ -249,7 +251,7 @@ boolean TimestampAssign
     OCI_Timestamp *tmsp_src
 )
 {
-    OCI_Timestamp *tmp_tmsp = NULL;
+    OCI_Timestamp *tmp_tmsp     = NULL;
     OCI_Timestamp *tmp_tmsp_src = NULL;
 
     CALL_ENTER(boolean, FALSE)
@@ -450,10 +452,10 @@ boolean TimestampFromString
     const otext   *fmt
 )
 {
-    dbtext  *dbstr1  = NULL;
-    dbtext  *dbstr2  = NULL;
-    int      dbsize1 = -1;
-    int      dbsize2 = -1;
+    dbtext *dbstr1  = NULL;
+    dbtext *dbstr2  = NULL;
+    int     dbsize1 = -1;
+    int     dbsize2 = -1;
 
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
@@ -708,7 +710,7 @@ boolean TimestampGetTimeZoneName
 )
 {
     dbtext *dbstr  = NULL;
-    int     dbsize  = size * (int) sizeof(otext);
+    int     dbsize = size * (int) sizeof(otext);
 
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
@@ -937,8 +939,8 @@ boolean TimestampSysTimestamp
     OCI_Timestamp *tmsp
 )
 {
-    OCI_Timestamp *tmp  = NULL;
-    OCIDateTime *handle = NULL;
+    OCI_Timestamp *tmp    = NULL;
+    OCIDateTime   *handle = NULL;
 
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
@@ -1001,8 +1003,8 @@ boolean TimestampToCTime
     time_t        *pt
 )
 {
-    time_t time = (time_t) -1;
-    int    msec = 0;
+    time_t    time = (time_t) -1;
+    int       msec = 0;
     struct tm t;
 
     CALL_ENTER(boolean, FALSE)
@@ -1013,7 +1015,7 @@ boolean TimestampToCTime
     memset(&t, 0, sizeof(t));
 
     STATUS = TimestampGetDateTime(tmsp, &t.tm_year, &t.tm_mon, &t.tm_mday,
-                                          &t.tm_hour, &t.tm_min, &t.tm_sec, &msec);
+                                  &t.tm_hour, &t.tm_min, &t.tm_sec, &msec);
 
     if (STATUS)
     {
@@ -1071,8 +1073,8 @@ boolean TimestampFromCTime
     }
 
     RETVAL = STATUS = TimestampConstruct(tmsp, ptm->tm_year + 1900,  ptm->tm_mon  + 1,
-                                                     ptm->tm_mday,  ptm->tm_hour,  ptm->tm_min,
-                                                     ptm->tm_sec, (int) 0, (const otext *) NULL);
+                                         ptm->tm_mday,  ptm->tm_hour,  ptm->tm_min,
+                                         ptm->tm_sec, (int) 0, (const otext *) NULL);
 
-   CALL_EXIT()
+    CALL_EXIT()
 }

@@ -35,7 +35,7 @@ OCI_ThreadKey * ThreadKeyCreateInternal
     OCI_ThreadKey *key = NULL;
 
     DECLARE_CTX(TRUE)
-        
+
     /* allocate key structure */
 
     ALLOC_DATA(OCI_IPC_THREADKEY, key, 1)
@@ -57,7 +57,7 @@ OCI_ThreadKey * ThreadKeyCreateInternal
             ThreadKeyFree(key);
             key = NULL;
         }
-    } 
+    }
 
     return key;
 }
@@ -156,16 +156,18 @@ boolean ThreadKeyCreate
            time and memory when it's not needed */
 
         Env.key_map = HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_POINTER);
+
         STATUS = (NULL != Env.key_map);
     }
 
     /* create key */
 
-    if (STATUS)
+    if (STATUS) 
     {
         key = ThreadKeyCreateInternal(destfunc);
+
         STATUS = (NULL != key);
-       
+
         /* add key to internal key hash table */
 
         STATUS = STATUS && HashAddPointer(Env.key_map, name, key);

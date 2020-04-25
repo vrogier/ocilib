@@ -93,7 +93,6 @@
                                                                                         \
     CALL_EXIT()
 
-
 #define ELEM_GET_NUMBER(elem, number_type, type, value)                                 \
                                                                                         \
     CALL_ENTER(type, value)                                                             \
@@ -102,7 +101,7 @@
     CALL_CONTEXT_FROM_CON((elem)->con)                                                  \
                                                                                         \
     STATUS = ElemGetNumberInternal(elem, (void *) (&RETVAL),                            \
-                                       (uword) (number_type));                          \
+                                   (uword) (number_type));                              \
                                                                                         \
     CALL_EXIT()
 
@@ -114,7 +113,7 @@
     CALL_CONTEXT_FROM_CON((elem)->con)                                                  \
                                                                                         \
     RETVAL = STATUS = ElementSetNumberInternal(elem, (void *) &(value),                 \
-                                                        (uword) (number_type));         \
+                                               (uword) (number_type));                  \
                                                                                         \
     CALL_EXIT()
 
@@ -131,11 +130,11 @@ void ElemFreeAllocatedData
     {
         switch (elem->typinf->cols[0].datatype)
         {
-        case OCI_CDT_TEXT:
-            StringFreeStringPtr(elem->con->env, (OCIString **) &elem->handle, elem->con->err);
-            break;
-        default:
-            FREE(elem->handle)
+            case OCI_CDT_TEXT:
+                StringFreeStringPtr(elem->con->env, (OCIString **) &elem->handle, elem->con->err);
+                break;
+            default:
+                FREE(elem->handle)
                 break;
         }
     }
@@ -160,20 +159,20 @@ OCI_Elem * ElementInitialize
     ALLOC_DATA(OCI_IPC_ELEMENT, elem, 1);
 
     if (STATUS)
-    {   
+    {
         elem->con = con;
 
-        // Free previously allocated data before reassign new one
+        /* Free previously allocated data before reassign new one */
         ElemFreeAllocatedData(elem);
 
-        // Reset members
+        /* Reset members */
         elem->ind    = OCI_IND_NULL;
         elem->typinf = typinf;
         elem->handle = handle;
         elem->init   = FALSE;
         elem->alloc  = FALSE;
         elem->hstate = handle ? OCI_OBJECT_FETCHED_CLEAN : OCI_OBJECT_ALLOCATED;
-    
+
         switch (elem->typinf->cols[0].datatype)
         {
             case OCI_CDT_NUMERIC:
@@ -256,7 +255,8 @@ boolean ElementSetNullIndicator
         if (obj)
         {
             elem->pind = obj->tab_ind;
-            set = TRUE;            
+
+            set = TRUE;
         }
         else
         {
@@ -264,7 +264,7 @@ boolean ElementSetNullIndicator
         }
 
     }
-    
+
     if (!set)
     {
         *elem->pind = value;
@@ -284,9 +284,9 @@ boolean ElementSetNumberInternal
     uword     flag
 )
 {
-    OCI_Column *col = &elem->typinf->cols[0];
+    OCI_Column   *col = &elem->typinf->cols[0];
     const boolean res = NumberTranslateValue(elem->typinf->con, value, flag,
-                                              elem->handle, col->subtype);
+                                             elem->handle, col->subtype);
 
     if (res)
     {
@@ -348,7 +348,7 @@ OCI_Elem * ElementCreate
 
     RETVAL = ElementInitialize(typinf->con, NULL, NULL, (OCIInd *)NULL, typinf);
     STATUS = (NULL != RETVAL);
-  
+
     CALL_EXIT()
 }
 
@@ -571,7 +571,7 @@ unsigned int ElementGetRaw
 
     if (elem->handle)
     {
-        OCIRaw *raw = (OCIRaw *) elem->handle;
+        OCIRaw   *raw     = (OCIRaw *) elem->handle;
         const ub4 raw_len = OCIRawSize(elem->con->env, raw);
 
         if (len > raw_len)
@@ -580,7 +580,7 @@ unsigned int ElementGetRaw
         }
 
         memcpy(value, OCIRawPtr(elem->con->env, raw), (size_t) len);
-        
+
         RETVAL = raw_len;
     }
 
@@ -593,7 +593,7 @@ unsigned int ElementGetRaw
 
 unsigned int ElementGetRawSize
 (
-    OCI_Elem    *elem
+    OCI_Elem *elem
 )
 {
     CALL_ENTER(unsigned int, 0)
@@ -691,7 +691,7 @@ OCI_Lob * ElementGetLob
 {
     ELEM_GET_VALUE
     (
-        OCI_CDT_LOB, 
+        OCI_CDT_LOB,
         OCI_Lob*,
         LobInitialize(elem->con, (OCI_Lob *) elem->obj, (OCILobLocator *) elem->handle, elem->typinf->cols[0].subtype)
     )
@@ -783,9 +783,9 @@ boolean ElementSetBoolean
     if (elem->handle)
     {
         boolean *data = (boolean *) elem->handle;
- 
+
         *data = value;
-     
+
         ElementSetNullIndicator(elem, OCI_IND_NOTNULL);
     }
 
@@ -1021,7 +1021,7 @@ boolean ElementSetTimestamp
 
     ELEM_SET_VALUE
     (
-        OCI_CDT_TIMESTAMP, 
+        OCI_CDT_TIMESTAMP,
         OCI_Timestamp*,
         TimestampInitialize(elem->con, (OCI_Timestamp *) elem->obj, (OCIDateTime *) elem->handle,  elem->typinf->cols[0].subtype),
         TimestampAssign((OCI_Timestamp *) elem->obj, value)
@@ -1050,7 +1050,7 @@ boolean ElementSetInterval
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     ELEM_SET_VALUE
-    ( 
+    (
         OCI_CDT_INTERVAL,
         OCI_Interval*,
         IntervalInitialize(elem->con, (OCI_Interval *) elem->obj, (OCIInterval *) elem->handle, elem->typinf->cols[0].subtype),
@@ -1102,7 +1102,7 @@ boolean ElementSetObject
         ObjectInitialize(elem->con, (OCI_Object *) elem->obj, elem->handle, elem->typinf->cols[0].typinf, NULL, -1, TRUE),
         ObjectAssign((OCI_Object *) elem->obj, value)
     )
- }
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * ElemSetLob

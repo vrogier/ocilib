@@ -43,18 +43,17 @@
 #include "timestamp.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
-static unsigned int TimestampTypeValues[]  = { OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
-static unsigned int IntervalTypeValues[]   = { OCI_INTERVAL_YM, OCI_INTERVAL_DS };
+static unsigned int TimestampTypeValues[] = { OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
+static unsigned int IntervalTypeValues[]  = { OCI_INTERVAL_YM, OCI_INTERVAL_DS };
 #endif
 
-static unsigned int LobTypeValues[]        = { OCI_CLOB, OCI_NCLOB, OCI_BLOB };
-static unsigned int FileTypeValues[]       = { OCI_CFILE, OCI_BFILE };
+static unsigned int LobTypeValues[]  = { OCI_CLOB, OCI_NCLOB, OCI_BLOB };
+static unsigned int FileTypeValues[] = { OCI_CFILE, OCI_BFILE };
 
 static unsigned int FetchModeValues[]      = { OCI_SFM_DEFAULT, OCI_SFM_SCROLLABLE };
 static unsigned int BindModeValues[]       = { OCI_BIND_BY_POS, OCI_BIND_BY_NAME };
 static unsigned int BindAllocationValues[] = { OCI_BAM_EXTERNAL, OCI_BAM_INTERNAL };
 static unsigned int LongModeValues[]       = { OCI_LONG_EXPLICIT, OCI_LONG_IMPLICIT };
-
 
 #define SET_ARG_NUM(type, func)                                     \
     type src = func(rs, i), *dst = ( type *) va_arg(args, type *);  \
@@ -238,7 +237,7 @@ boolean StatementReset
         if (OCI_OBJECT_ALLOCATED == stmt->hstate)
         {
 
-        #if OCI_VERSION_COMPILE >= OCI_9_2
+#if OCI_VERSION_COMPILE >= OCI_9_2
 
             if (Env.version_runtime >= OCI_9_2)
             {
@@ -246,7 +245,7 @@ boolean StatementReset
             }
             else
 
-        #endif
+#endif
 
             {
                 STATUS = MemoryFreeHandle((dvoid *)stmt->stmt, OCI_HTYPE_STMT);
@@ -269,19 +268,19 @@ boolean StatementReset
         FREE(stmt->sql)
         FREE(stmt->sql_id)
 
-        stmt->rsts          = NULL;
-        stmt->stmts         = NULL;
-        stmt->sql           = NULL;
-        stmt->sql_id        = NULL;
-        stmt->map           = NULL;
-        stmt->batch         = NULL;
+        stmt->rsts   = NULL;
+        stmt->stmts  = NULL;
+        stmt->sql    = NULL;
+        stmt->sql_id = NULL;
+        stmt->map    = NULL;
+        stmt->batch  = NULL;
 
-        stmt->nb_rs         = 0;
-        stmt->nb_stmt       = 0;
+        stmt->nb_rs   = 0;
+        stmt->nb_stmt = 0;
 
-        stmt->status        = OCI_STMT_CLOSED;
-        stmt->type          = OCI_UNKNOWN;
-        stmt->bind_array    = FALSE;
+        stmt->status     = OCI_STMT_CLOSED;
+        stmt->type       = OCI_UNKNOWN;
+        stmt->bind_array = FALSE;
 
         stmt->nb_iters      = 1;
         stmt->nb_iters_init = 1;
@@ -313,10 +312,10 @@ boolean StatementBindCheck
 
     CALL_CONTEXT_FROM_STMT(bnd->stmt)
 
-    // Non-scalar type binds
+    /* Non-scalar type binds */
     if (bnd->alloc && src)
     {
-        // OCI_Number binds
+        /* OCI_Number binds */
         if ((OCI_CDT_NUMERIC == bnd->type) && (SQLT_VNU == bnd->code))
         {
             if (OCI_NUM_NUMBER & bnd->subtype)
@@ -340,7 +339,8 @@ boolean StatementBindCheck
                 STATUS = NumberTranslateValue(bnd->stmt->con, src_bint, bnd->subtype, dst_num, OCI_NUM_NUMBER);
             }
         }
-        // OCI_Date binds
+
+        /* OCI_Date binds */
         else if (OCI_CDT_DATETIME == bnd->type)
         {
             OCI_Date *src_date = OCI_BIND_GET_HANDLE(src, OCI_Date, index);
@@ -351,7 +351,8 @@ boolean StatementBindCheck
                 EXEC(OCIDateAssign(bnd->stmt->con->err, src_date->handle, dst_date))
             }
         }
-        // String binds that may required conversion on systems where wchar_t is UTF32
+
+        /* String binds that may required conversion on systems where wchar_t is UTF32 */
         else if (OCI_CDT_TEXT == bnd->type)
         {
             if (Env.use_wide_char_conv)
@@ -363,7 +364,8 @@ boolean StatementBindCheck
                 StringUTF32ToUTF16(src + src_offset, dst + dst_offset, max_chars - 1);
             }
         }
-        // otherwise we have an ocilib handle based type
+
+        /* otherwise we have an ocilib handle based type */
         else
         {
             OCI_Datatype *src_handle = OCI_BIND_GET_HANDLE(src, OCI_Datatype, index);
@@ -427,7 +429,7 @@ boolean StatementBindUpdate
 
     CALL_CONTEXT_FROM_STMT(bnd->stmt)
 
-    // OCI_Number binds
+    /* OCI_Number binds */
     if ((OCI_CDT_NUMERIC == bnd->type) && (SQLT_VNU == bnd->code))
     {
         if (OCI_NUM_NUMBER & bnd->subtype)
@@ -446,7 +448,7 @@ boolean StatementBindUpdate
         else if (OCI_NUM_BIGINT & bnd->subtype)
         {
             OCINumber *src_number = OCI_BIND_GET_BUFFER(src, OCINumber, index);
-            big_int   *dst_bint = OCI_BIND_GET_SCALAR(dst, big_int, index);
+            big_int   *dst_bint   = OCI_BIND_GET_SCALAR(dst, big_int, index);
 
             if (dst_bint)
             {
@@ -454,7 +456,8 @@ boolean StatementBindUpdate
             }
         }
     }
-    // OCI_Date binds
+
+    /* OCI_Date binds */
     else if (OCI_CDT_DATETIME == bnd->type)
     {
         OCIDate  *src_date = OCI_BIND_GET_BUFFER(src, OCIDate, index);
@@ -465,7 +468,8 @@ boolean StatementBindUpdate
             EXEC(OCIDateAssign(bnd->stmt->con->err, src_date, dst_date->handle))
         }
     }
-    // String binds that may required conversion on systems where wchar_t is UTF32
+
+    /* String binds that may required conversion on systems where wchar_t is UTF32 */
     else if (OCI_CDT_TEXT == bnd->type)
     {
         if (Env.use_wide_char_conv)
@@ -474,7 +478,7 @@ boolean StatementBindUpdate
             const size_t src_offset = index * max_chars * sizeof(dbtext);
             const size_t dst_offset = index * max_chars * sizeof(otext);
 
-           StringUTF16ToUTF32(src + src_offset, dst + dst_offset, max_chars - 1);
+            StringUTF16ToUTF32(src + src_offset, dst + dst_offset, max_chars - 1);
         }
     }
     else if (OCI_CDT_OBJECT == bnd->type)
@@ -529,9 +533,9 @@ boolean StatementBindCheckAll
         }
 
         if ((bnd->direction & OCI_BDM_IN) ||
-            (bnd->alloc && 
+            (bnd->alloc &&
              (OCI_CDT_DATETIME != bnd->type) &&
-             (OCI_CDT_TEXT != bnd->type) && 
+             (OCI_CDT_TEXT != bnd->type) &&
              (OCI_CDT_NUMERIC != bnd->type || SQLT_VNU == bnd->code)))
         {
             /* for strings, re-initialize length array with buffer default size */
@@ -593,7 +597,7 @@ boolean StatementBindUpdateAll
             bnd_stmt->status = OCI_STMT_PREPARED  | OCI_STMT_PARSED |
                                OCI_STMT_DESCRIBED | OCI_STMT_EXECUTED;
 
-            bnd_stmt->type   = OCI_CST_SELECT;
+            bnd_stmt->type = OCI_CST_SELECT;
         }
 
         if ((bnd->direction & OCI_BDM_OUT) && (bnd->input) && (bnd->buffer.data))
@@ -630,8 +634,8 @@ boolean StatementFetchIntoUserVariables
     va_list        args
 )
 {
-    OCI_Resultset *rs = NULL;
-    boolean res       = FALSE;
+    OCI_Resultset *rs  = NULL;
+    boolean        res = FALSE;
 
     /* get resultset */
 
@@ -658,10 +662,10 @@ boolean StatementFetchIntoUserVariables
 
             switch (type)
             {
-               case OCI_ARG_TEXT:
+                case OCI_ARG_TEXT:
                 {
                     const otext *src = ResultsetGetString(rs, i);
-                    otext *dst = va_arg(args, otext *);
+                    otext       *dst = va_arg(args, otext *);
 
                     if (dst)
                     {
@@ -821,7 +825,7 @@ OCI_Statement * StatementInitialize
             stmt->hstate = OCI_OBJECT_FETCHED_CLEAN;
             stmt->status = OCI_STMT_PREPARED  | OCI_STMT_PARSED |
                            OCI_STMT_DESCRIBED | OCI_STMT_EXECUTED;
-            stmt->type   = OCI_CST_SELECT;
+            stmt->type = OCI_CST_SELECT;
 
             if (sql)
             {
@@ -829,15 +833,15 @@ OCI_Statement * StatementInitialize
             }
             else
             {
-                dbtext *dbstr    = NULL;
-                int     dbsize   = 0;
+                dbtext *dbstr  = NULL;
+                int     dbsize = 0;
 
                 ATTRIB_GET(OCI_HTYPE_STMT, OCI_ATTR_STATEMENT, stmt->stmt, &dbstr, &dbsize)
 
                 if (STATUS && dbstr)
                 {
                     stmt->sql = StringDuplicateFromDBString(dbstr, dbcharcount(dbsize));
-                    STATUS = (NULL != stmt->sql);
+                    STATUS    = (NULL != stmt->sql);
                 }
             }
 
@@ -926,11 +930,13 @@ boolean StatementCheckImplicitResultsets
                 if (OCI_RESULT_TYPE_SELECT == rs_type)
                 {
                     stmt->stmts[i] = StatementInitialize(stmt->con, NULL, result, TRUE, NULL);
+
                     STATUS = (NULL != stmt->stmts[i]);
 
                     if (STATUS)
                     {
                         stmt->rsts[i] = ResultsetCreate(stmt->stmts[i], stmt->stmts[i]->fetch_size);
+
                         STATUS = (NULL != stmt->rsts[i]);
 
                         if (STATUS)
@@ -997,8 +1003,8 @@ boolean StatementBatchErrorInit
 
             for (ub4 i = 0; i < stmt->batch->count; i++)
             {
-                int dbsize  = -1;
-                dbtext *dbstr = NULL;
+                int     dbsize = -1;
+                dbtext *dbstr  = NULL;
 
                 OCI_Error *err = &stmt->batch->errs[i];
 
@@ -1060,7 +1066,7 @@ boolean StatementPrepareInternal
     const otext   *sql
 )
 {
-    dbtext *dbstr = NULL;
+    dbtext *dbstr  = NULL;
     int     dbsize = -1;
 
     DECLARE_CTX(TRUE)
@@ -1090,20 +1096,20 @@ boolean StatementPrepareInternal
     {
         /* prepare SQL */
 
-    #if OCI_VERSION_COMPILE >= OCI_9_2
+#if OCI_VERSION_COMPILE >= OCI_9_2
 
         if (Env.version_runtime >= OCI_9_2)
         {
             ub4 mode = OCI_DEFAULT;
 
-        #if OCI_VERSION_COMPILE >= OCI_12_2
+  #if OCI_VERSION_COMPILE >= OCI_12_2
 
             if (ConnectionIsVersionSupported(stmt->con, OCI_12_2))
             {
                 mode |= OCI_PREP2_GET_SQL_ID;
             }
 
-        #endif
+  #endif
 
             EXEC
             (
@@ -1116,7 +1122,7 @@ boolean StatementPrepareInternal
         }
         else
 
-    #endif
+#endif
 
         {
             EXEC
@@ -1160,7 +1166,7 @@ boolean StatementExecuteInternal
 )
 {
     sword status = OCI_SUCCESS;
-    ub4 iters = 0;
+    ub4   iters  = 0;
 
     DECLARE_CTX(TRUE)
     CALL_CONTEXT_FROM_STMT(stmt)
@@ -1226,7 +1232,7 @@ boolean StatementExecuteInternal
     /* check result */
 
     STATUS = ((OCI_SUCCESS   == status) || (OCI_SUCCESS_WITH_INFO == status) ||
-                  (OCI_NEED_DATA == status) || (OCI_NO_DATA == status));
+              (OCI_NEED_DATA == status) || (OCI_NO_DATA == status));
 
     if (OCI_SUCCESS_WITH_INFO == status)
     {
@@ -1266,7 +1272,7 @@ boolean StatementExecuteInternal
             stmt->status |= OCI_STMT_DESCRIBED;
             stmt->status |= OCI_STMT_EXECUTED;
 
-    #if OCI_VERSION_COMPILE >= OCI_12_2
+#if OCI_VERSION_COMPILE >= OCI_12_2
 
             if (ConnectionIsVersionSupported(stmt->con, OCI_12_2))
             {
@@ -1275,8 +1281,8 @@ boolean StatementExecuteInternal
                 StringGetAttribute(stmt->con, stmt->stmt, OCI_HTYPE_STMT, OCI_ATTR_SQL_ID, &stmt->sql_id, &size_id);
             }
 
-    #endif
-            
+#endif
+
             /* reset binds indicators */
 
             StatementBindUpdateAll(stmt);
@@ -1301,8 +1307,8 @@ boolean StatementExecuteInternal
         /* (one of the rare OCI call not enclosed with a OCI_CALL macro ...) */
 
         OCIAttrGet((dvoid *)stmt->stmt, (ub4)OCI_HTYPE_STMT,
-                  (dvoid *)&stmt->err_pos, (ub4 *)NULL,
-                  (ub4)OCI_ATTR_PARSE_ERROR_OFFSET, stmt->con->err);
+                   (dvoid *)&stmt->err_pos, (ub4 *)NULL,
+                   (ub4)OCI_ATTR_PARSE_ERROR_OFFSET, stmt->con->err);
 
         /* raise exception */
 
@@ -1404,7 +1410,7 @@ OCI_Resultset * StatementGetResultset
             /* allocate memory for one resultset handle */
 
             ALLOC_DATA(OCI_IPC_RESULTSET_ARRAY, stmt->rsts, 1)
-           
+
             if (STATUS)
             {
                 stmt->nb_rs  = 1;
@@ -1607,7 +1613,7 @@ boolean StatementPrepareFmt
 (
     OCI_Statement *stmt,
     const otext   *sql,
-    va_list args
+    va_list        args
 )
 {
     va_list first_pass_args;
@@ -1664,7 +1670,7 @@ boolean StatementExecuteStmtFmt
 (
     OCI_Statement *stmt,
     const otext   *sql,
-    va_list args
+    va_list        args
 )
 {
     va_list first_pass_args;
@@ -1680,7 +1686,7 @@ boolean StatementExecuteStmtFmt
 
     /* first, get buffer size */
 
-   const int size = FormatParseSql(stmt, NULL, sql, &first_pass_args);
+    const int size = FormatParseSql(stmt, NULL, sql, &first_pass_args);
 
     if (size > 0)
     {
@@ -1721,7 +1727,7 @@ boolean StatementParseFmt
 (
     OCI_Statement *stmt,
     const otext   *sql,
-    va_list args
+    va_list        args
 )
 {
     va_list first_pass_args;
@@ -1778,7 +1784,7 @@ boolean StatementDescribeFmt
 (
     OCI_Statement *stmt,
     const otext   *sql,
-    va_list args
+    va_list        args
 )
 {
     va_list first_pass_args;
@@ -2143,7 +2149,7 @@ boolean StatementBindArrayOfBigInts
     BIND_CALL_NULL_ALLOWED
     (
         OCI_IPC_BIGINT, sizeof(OCINumber), OCI_CDT_NUMERIC, SQLT_VNU, OCI_NUM_BIGINT, NULL, nbelem
-     )
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2496,8 +2502,8 @@ boolean StatementBindTimestamp
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     BIND_DATA(sizeof(OCIDateTime *), OCI_CDT_TIMESTAMP,
-                  ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, data->type),
-                  data->type, NULL, 0)
+              ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, data->type),
+              data->type, NULL, 0)
 
 #endif
 
@@ -2529,8 +2535,8 @@ boolean StatementBindArrayOfTimestamps
     CALL_CONTEXT_FROM_STMT(stmt)
 
     BIND_DATA(sizeof(OCIDateTime *), OCI_CDT_TIMESTAMP,
-                  ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, type),
-                  type, NULL, nbelem)
+              ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, type),
+              type, NULL, nbelem)
 
 #else
 
@@ -2564,8 +2570,8 @@ boolean StatementBindInterval
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     BIND_DATA(sizeof(OCIInterval *), OCI_CDT_INTERVAL,
-                  ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, data->type),
-                  data->type, NULL, 0)
+              ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, data->type),
+              data->type, NULL, 0)
 
 #else
 
@@ -2601,8 +2607,8 @@ boolean StatementBindArrayOfIntervals
     CALL_CONTEXT_FROM_STMT(stmt)
 
     BIND_DATA(sizeof(OCIInterval *), OCI_CDT_INTERVAL,
-                  ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, type),
-                  type, NULL, nbelem)
+              ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, type),
+              type, NULL, nbelem)
 
 #else
 
@@ -2672,7 +2678,7 @@ boolean StatementBindLob
 {
     BIND_CALL_NULL_FORBIDDEN
     (
-        OCI_IPC_LOB, 
+        OCI_IPC_LOB,
         sizeof(OCILobLocator*), OCI_CDT_LOB,
         ExternalSubTypeToSQLType(OCI_CDT_LOB, data->type),
         data->type, NULL, 0
@@ -2698,8 +2704,8 @@ boolean StatementBindArrayOfLobs
     CALL_CHECK_ENUM_VALUE(stmt->con, stmt, type, LobTypeValues, OTEXT("Lob type"))
 
     BIND_DATA(sizeof(OCILobLocator*), OCI_CDT_LOB,
-                  ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
-                  type, NULL, nbelem)
+              ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
+              type, NULL, nbelem)
 
     RETVAL = STATUS;
 
@@ -2745,8 +2751,8 @@ boolean StatementBindArrayOfFiles
     CALL_CONTEXT_FROM_STMT(stmt)
 
     BIND_DATA(sizeof(OCILobLocator*), OCI_CDT_FILE,
-                  ExternalSubTypeToSQLType(OCI_CDT_FILE, type),
-                  type, NULL, nbelem)
+              ExternalSubTypeToSQLType(OCI_CDT_FILE, type),
+              type, NULL, nbelem)
 
     RETVAL = STATUS;
 
@@ -2860,7 +2866,7 @@ boolean StatementBindLong
 {
     BIND_CALL_NULL_FORBIDDEN
     (
-        OCI_IPC_LONG, 
+        OCI_IPC_LONG,
         size, OCI_CDT_LONG,
         ExternalSubTypeToSQLType(OCI_CDT_LONG, data->type),
         data->type, NULL, 0
@@ -2998,7 +3004,7 @@ boolean StatementRegisterRaw
     CALL_CHECK_REGISTER(stmt, name)
     CALL_CHECK_MIN(stmt->con, stmt, len, 1)
     CALL_CONTEXT_FROM_STMT(stmt)
-        
+
     REGISTER_DATA(len, OCI_CDT_RAW, SQLT_BIN, 0, NULL, 0)
 
     RETVAL = STATUS;
@@ -3087,8 +3093,8 @@ boolean StatementRegisterTimestamp
     CALL_CONTEXT_FROM_STMT(stmt)
 
     REGISTER_DATA(sizeof(OCIDateTime *), OCI_CDT_TIMESTAMP,
-                      ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, type),
-                      type, NULL, 0)
+                  ExternalSubTypeToSQLType(OCI_CDT_TIMESTAMP, type),
+                  type, NULL, 0)
 
 #endif
 
@@ -3118,8 +3124,8 @@ boolean StatementRegisterInterval
     CALL_CONTEXT_FROM_STMT(stmt)
 
     REGISTER_DATA(sizeof(OCIInterval *), OCI_CDT_INTERVAL,
-                      ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, type),
-                      type, NULL, 0)
+                  ExternalSubTypeToSQLType(OCI_CDT_INTERVAL, type),
+                  type, NULL, 0)
 
 #endif
 
@@ -3168,8 +3174,8 @@ boolean StatementRegisterLob
     CALL_CONTEXT_FROM_STMT(stmt)
 
     REGISTER_DATA(sizeof(OCILobLocator*), OCI_CDT_LOB,
-                      ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
-                      type, NULL, 0)
+                  ExternalSubTypeToSQLType(OCI_CDT_LOB, type),
+                  type, NULL, 0)
 
     RETVAL = STATUS;
 
@@ -3193,8 +3199,8 @@ boolean StatementRegisterFile
     CALL_CONTEXT_FROM_STMT(stmt)
 
     REGISTER_DATA(sizeof(OCILobLocator*), OCI_CDT_FILE,
-                      ExternalSubTypeToSQLType(OCI_CDT_FILE, type),
-                      type, NULL, 0)
+                  ExternalSubTypeToSQLType(OCI_CDT_FILE, type),
+                  type, NULL, 0)
 
     RETVAL = STATUS;
 
@@ -3254,19 +3260,19 @@ boolean StatementSetFetchMode
     CALL_CHECK_ENUM_VALUE(stmt->con, stmt, mode, FetchModeValues, OTEXT("Fetch mode"))
     CALL_CONTEXT_FROM_STMT(stmt)
 
-    old_exec_mode = stmt->exec_mode;
+    old_exec_mode   = stmt->exec_mode;
     stmt->exec_mode = mode;
 
     if (stmt->con->ver_num == OCI_9_0)
     {
         if (old_exec_mode == OCI_SFM_DEFAULT && stmt->exec_mode == OCI_SFM_SCROLLABLE)
         {
-            // Disabling prefetch that causes bugs for 9iR1 for scrollable cursors
+            /* Disabling prefetch that causes bugs for 9iR1 for scrollable cursors */
             StatementSetPrefetchSize(stmt, 0);
         }
         else if (old_exec_mode == OCI_SFM_SCROLLABLE && stmt->exec_mode == OCI_SFM_DEFAULT)
         {
-            // Re-enable prefetch previously disabled
+            /* Re-enable prefetch previously disabled */
             StatementSetPrefetchSize(stmt, OCI_PREFETCH_SIZE);
         }
     }
@@ -3323,7 +3329,8 @@ boolean StatementSetBindAllocation
     unsigned int   mode
 )
 {
-    SET_PROP_ENUM(ub1, OCI_IPC_STATEMENT, stmt, bind_alloc_mode, mode, BindAllocationValues, OTEXT("Bind Allocation"), stmt->con, stmt, stmt->con->err)
+    SET_PROP_ENUM(ub1, OCI_IPC_STATEMENT, stmt, bind_alloc_mode, mode, BindAllocationValues, OTEXT(
+                      "Bind Allocation"), stmt->con, stmt, stmt->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3550,7 +3557,6 @@ const otext* StatementGetSqlIdentifier
     GET_PROP(const otext*, NULL, OCI_IPC_STATEMENT, stmt, sql_id, stmt->con, stmt, stmt->con->err)
 }
 
-
 /* --------------------------------------------------------------------------------------------- *
  * StatementGetSqlErrorPos
  * --------------------------------------------------------------------------------------------- */
@@ -3774,4 +3780,3 @@ unsigned int StatementGetBatchErrorCount
 
     CALL_EXIT()
 }
-

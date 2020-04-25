@@ -67,6 +67,7 @@ OCI_Dequeue * DequeueCreate
         if (STATUS)
         {
             dequeue->msg = MessageCreate(dequeue->typinf);
+
             STATUS = (NULL != dequeue->msg);
         }
     }
@@ -199,8 +200,8 @@ OCI_Msg * DequeueGetMessage
     OCI_Dequeue *dequeue
 )
 {
-    sword  ret   = OCI_SUCCESS;
-    void  *p_ind = NULL;
+    sword ret   = OCI_SUCCESS;
+    void *p_ind = NULL;
 
     CALL_ENTER(OCI_Msg*, NULL)
     CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
@@ -261,9 +262,9 @@ OCI_Msg * DequeueGetMessage
                 dequeue->msg->ind = *(OCIInd *) p_ind;
 
                 dequeue->msg->obj = ObjectInitialize(dequeue->typinf->con,
-                                                   (OCI_Object *) dequeue->msg->obj,
-                                                   dequeue->msg->payload, dequeue->typinf,
-                                                   NULL, -1, TRUE);
+                                                     (OCI_Object *) dequeue->msg->obj,
+                                                     dequeue->msg->payload, dequeue->typinf,
+                                                     NULL, -1, TRUE);
 
                 STATUS = (NULL != dequeue->msg->obj);
             }
@@ -296,11 +297,11 @@ const otext * DequeueGetConsumer
     if (!dequeue->consumer)
     {
         unsigned int size = 0;
-        
+
         STATUS = StringGetAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                        OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, &size);
+                                    OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, &size);
     }
- 
+
     RETVAL = dequeue->consumer;
 
     CALL_EXIT()
@@ -321,7 +322,7 @@ boolean DequeueSetConsumer
     CALL_CONTEXT_FROM_CON(dequeue->typinf->con)
 
     RETVAL = STATUS = StringSetAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                                 OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, consumer);
+                                         OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, consumer);
     CALL_EXIT()
 }
 
@@ -342,11 +343,11 @@ const otext * DequeueGetCorrelation
     if (!dequeue->pattern)
     {
         unsigned int size = 0;
-        
+
         STATUS = StringGetAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                         OCI_ATTR_CORRELATION, &dequeue->pattern, &size);
+                                    OCI_ATTR_CORRELATION, &dequeue->pattern, &size);
     }
- 
+
     RETVAL = dequeue->pattern;
 
     CALL_EXIT()
@@ -367,7 +368,7 @@ boolean DequeueSetCorrelation
     CALL_CONTEXT_FROM_CON(dequeue->typinf->con)
 
     RETVAL = STATUS = StringSetAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                                  OCI_ATTR_CORRELATION, &dequeue->pattern, pattern);
+                                         OCI_ATTR_CORRELATION, &dequeue->pattern, pattern);
 
     CALL_EXIT()
 }
@@ -418,9 +419,9 @@ boolean DequeueGetRelativeMsgID
 
 boolean DequeueSetRelativeMsgID
 (
-    OCI_Dequeue  *dequeue,
-    const void   *id,
-    unsigned int  len
+    OCI_Dequeue *dequeue,
+    const void  *id,
+    unsigned int len
 )
 {
     OCIRaw *value = NULL;
@@ -664,20 +665,20 @@ boolean DequeueSetAgentList
 
 boolean DequeueSubscribe
 (
-    OCI_Dequeue    *dequeue,
-    unsigned int    port,
-    unsigned int    timeout,
-    POCI_NOTIFY_AQ  callback
+    OCI_Dequeue   *dequeue,
+    unsigned int   port,
+    unsigned int   timeout,
+    POCI_NOTIFY_AQ callback
 )
 {
-    ub4     oci_namespace   = OCI_SUBSCR_NAMESPACE_AQ;
+    ub4 oci_namespace = OCI_SUBSCR_NAMESPACE_AQ;
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    ub4     oci_port        = (ub4) port;
-    ub4     oci_timeout     = (ub4) timeout;
-    ub4     oci_protocol    = OCI_SUBSCR_PROTO_OCI;
-    ub4     oci_msgpres     = OCI_SUBSCR_PRES_DEFAULT;
+    ub4 oci_port     = (ub4) port;
+    ub4 oci_timeout  = (ub4) timeout;
+    ub4 oci_protocol = OCI_SUBSCR_PROTO_OCI;
+    ub4 oci_msgpres  = OCI_SUBSCR_PRES_DEFAULT;
 
 #endif
 
@@ -737,11 +738,12 @@ boolean DequeueSubscribe
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
-        otext *str  = NULL;
+        otext *str = NULL;
+
         size_t max_chars = sizeof(buffer) / sizeof(otext) - 1;
 
-        dbtext *dbstr    = NULL;
-        int     dbsize   = -1;
+        dbtext *dbstr  = NULL;
+        int     dbsize = -1;
 
         ostrncat(buffer, dequeue->name, max_chars);
 
@@ -780,17 +782,17 @@ boolean DequeueSubscribe
         As there is no other to way to do regarding the OCI API, let's disable this
         warning just the time to set the callback attribute to the dequeue handle */
 
-    #ifdef _MSC_VER
-    #pragma warning(disable: 4054)
-    #endif
+#ifdef _MSC_VER
+  #pragma warning(disable: 4054)
+#endif
 
     /* internal callback handler */
 
     ATTRIB_SET(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, dequeue->subhp, CallbackNotifyMessages, 0)
 
-    #ifdef _MSC_VER
-    #pragma warning(default: 4054)
-    #endif
+#ifdef _MSC_VER
+  #pragma warning(default: 4054)
+#endif
 
     /* set callback */
 

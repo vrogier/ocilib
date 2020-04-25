@@ -45,12 +45,12 @@ OCI_Long * LongInitialize
 
     if (STATUS)
     {
-        lg->size        = 0;
-        lg->maxsize     = 0;
-        lg->stmt        = stmt;
-        lg->def         = def;
-        lg->type        = type;
-        lg->offset      = 0;
+        lg->size    = 0;
+        lg->maxsize = 0;
+        lg->stmt    = stmt;
+        lg->def     = def;
+        lg->type    = type;
+        lg->offset  = 0;
 
         if (def)
         {
@@ -185,12 +185,12 @@ unsigned int LongWrite
     sword code   = OCI_SUCCESS;
     void *obuf   = NULL;
     void *handle = NULL;
-    ub1 in_out   = OCI_PARAM_IN;
-    ub1 piece    = OCI_ONE_PIECE;
-    ub4 type     = 0;
-    ub4 iter     = 0;
-    ub4 dx       = 0;
-    ub4 count    = 0;
+    ub1   in_out = OCI_PARAM_IN;
+    ub1   piece  = OCI_ONE_PIECE;
+    ub4   type   = 0;
+    ub4   iter   = 0;
+    ub4   dx     = 0;
+    ub4   count  = 0;
 
     CALL_ENTER(unsigned int, 0)
     CALL_CHECK_PTR(OCI_IPC_VOID, buffer)

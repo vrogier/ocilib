@@ -186,7 +186,7 @@ static const otext * OCILib_OraFeatures[OCI_FEATURE_COUNT] =
 
 typedef struct OCI_StmtStateTable
 {
-    int state;
+    int          state;
     const otext *name;
 } OCI_StmtStateTable;
 
@@ -198,7 +198,6 @@ static const OCI_StmtStateTable OCILib_StmtStates[OCI_STMT_STATES_COUNT] =
     { OCI_STMT_DESCRIBED, OTEXT("described")     },
     { OCI_STMT_EXECUTED,  OTEXT("executed")      }
 };
-
 static const otext * OCILib_DirPathStates[OCI_DPS_COUNT] =
 {
     OTEXT("non prepared"),
@@ -330,8 +329,8 @@ void ExceptionLoadingSharedLib
         err->libcode = OCI_ERR_LOADING_SHARED_LIB;
 
         osprintf(err->str, osizeof(err->str) - (size_t) 1,
-                OCILib_ErrorMsg[OCI_ERR_LOADING_SHARED_LIB],
-                OCI_DL_NAME);
+                 OCILib_ErrorMsg[OCI_ERR_LOADING_SHARED_LIB],
+                 OCI_DL_NAME);
     }
 
     ExceptionCallHandler(err);
@@ -875,10 +874,10 @@ void ExceptionDirPathColNotFound
         }
 
         osprintf(err->str,
-                  osizeof(err->str) - (size_t) 1,
-                  OCILib_ErrorMsg[OCI_ERR_COLUMN_NOT_FOUND],
-                  column,
-                  table);
+                 osizeof(err->str) - (size_t) 1,
+                 OCILib_ErrorMsg[OCI_ERR_COLUMN_NOT_FOUND],
+                 column,
+                 table);
     }
 
     ExceptionCallHandler(err);
@@ -900,7 +899,7 @@ void ExceptionDirPathState
     {
         err->type    = OCI_ERR_OCILIB;
         err->libcode = OCI_ERR_DIRPATH_STATE;
-        err->stmt  = NULL;
+        err->stmt    = NULL;
 
         if (dp)
         {
@@ -977,7 +976,7 @@ void ExceptionRebindBadDatatype
 void ExceptionTypeInfoWrongType
 (
     OCI_Connection *con,
-    const otext  * name
+    const otext   * name
 )
 {
     OCI_Error *err = ExceptionGetError();
@@ -1077,9 +1076,9 @@ void ExceptionEnvFromXaString
         err->con     = NULL;
 
         osprintf(err->str,
-            osizeof(err->str) - (size_t)1,
-            OCILib_ErrorMsg[OCI_ERR_XA_ENV_FROM_STRING],
-            value);
+                 osizeof(err->str) - (size_t)1,
+                 OCILib_ErrorMsg[OCI_ERR_XA_ENV_FROM_STRING],
+                 value);
     }
 
     ExceptionCallHandler(err);
@@ -1104,9 +1103,9 @@ void ExceptionConnFromXaString
         err->con     = NULL;
 
         osprintf(err->str,
-            osizeof(err->str) - (size_t)1,
-            OCILib_ErrorMsg[OCI_ERR_XA_CONN_FROM_STRING],
-            value);
+                 osizeof(err->str) - (size_t)1,
+                 OCILib_ErrorMsg[OCI_ERR_XA_CONN_FROM_STRING],
+                 value);
     }
 
     ExceptionCallHandler(err);
@@ -1126,9 +1125,9 @@ void ExceptionExternalBindingNotAllowed
 
     if (err)
     {
-        err->type = OCI_ERR_OCILIB;
+        err->type    = OCI_ERR_OCILIB;
         err->libcode = OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED;
-        err->stmt = stmt;
+        err->stmt    = stmt;
 
         if (stmt)
         {
@@ -1136,9 +1135,9 @@ void ExceptionExternalBindingNotAllowed
         }
 
         osprintf(err->str,
-            osizeof(err->str) - (size_t)1,
-            OCILib_ErrorMsg[OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED],
-            bind);
+                 osizeof(err->str) - (size_t)1,
+                 OCILib_ErrorMsg[OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED],
+                 bind);
     }
 
     ExceptionCallHandler(err);

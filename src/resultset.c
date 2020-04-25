@@ -47,7 +47,6 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
                                                                                    \
     ((def) && DefineIsDataNotNull(def) && ((type) == (def)->col.datatype))
 
-
 #define GET_BY_NAME(rs, name, func, type, res)                                     \
                                                                                    \
     int index = -1;                                                                \
@@ -56,15 +55,15 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     CALL_CHECK_PTR(OCI_IPC_STRING, name)                                           \
     CALL_CONTEXT_FROM_STMT((rs)->stmt)                                             \
     STATUS = FALSE;                                                                \
-    index = DefineGetIndex(rs, name);                                              \
+    index  = DefineGetIndex(rs, name);                                             \
     if (index > 0)                                                                 \
     {                                                                              \
         if (!ctx->call_err) ctx->call_err = ErrorGet(FALSE, FALSE);                \
+                                                                                   \
         RETVAL = func(rs, (unsigned int) index);                                   \
         STATUS = !ctx->call_err->raise;                                            \
     }                                                                              \
     CALL_EXIT()
-
 
 #define GET_NUMBER(rs, index, num_type, type, res)                                 \
                                                                                    \
@@ -75,7 +74,6 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     STATUS = DefineGetNumber(rs, index, &RETVAL, num_type);                        \
     CALL_EXIT()
 
-
 #define GET_HANDLE(rs, index, type, res, lib_type, func)                           \
                                                                                    \
     OCI_Define *def = NULL;                                                        \
@@ -84,11 +82,11 @@ static unsigned int SeekModeValues[] = { OCI_SFD_ABSOLUTE, OCI_SFD_RELATIVE };
     CALL_CHECK_BOUND((rs)->stmt->con, index, 1, (rs)->nb_defs)                     \
     CALL_CONTEXT_FROM_STMT((rs)->stmt)                                             \
     STATUS = FALSE;                                                                \
-    def = DefineGet(rs, index);                                                    \
+    def    = DefineGet(rs, index);                                                 \
     if (MATCHING_TYPE(def, lib_type))                                              \
     {                                                                              \
         def->obj = RETVAL = func;                                                  \
-        STATUS = (NULL != RETVAL);                                                 \
+        STATUS   = (NULL != RETVAL);                                               \
     }                                                                              \
     CALL_EXIT()
 
@@ -105,7 +103,7 @@ OCI_Resultset * ResultsetCreate
     OCI_Resultset* rs = NULL;
 
     DECLARE_CTX(TRUE)
-        
+
     CHECK(stmt == NULL, NULL)
 
     CALL_CONTEXT_FROM_STMT(stmt)
@@ -118,8 +116,8 @@ OCI_Resultset * ResultsetCreate
 
     if (STATUS)
     {
-        ub4     nb  = 0;
-        ub4     i;
+        ub4 nb = 0;
+        ub4 i;
 
         rs->stmt         = stmt;
         rs->bof          = TRUE;
@@ -166,13 +164,13 @@ OCI_Resultset * ResultsetCreate
 
                 STATUS = ColumnRetrieveInfo(&def->col, rs->stmt->con,
                                             rs->stmt, rs->stmt->stmt,
-                                       i + 1, OCI_DESC_RESULTSET);
+                                            i + 1, OCI_DESC_RESULTSET);
 
                 /* mapping to OCILIB internal types */
 
                 STATUS = STATUS && ColumnMapInfo(&def->col, rs->stmt);
 
-             #if defined(OCI_STMT_SCROLLABLE_READONLY)
+#if defined(OCI_STMT_SCROLLABLE_READONLY)
 
                 if (OCI_SFM_SCROLLABLE == rs->stmt->exec_mode)
                 {
@@ -182,7 +180,7 @@ OCI_Resultset * ResultsetCreate
                     }
                 }
 
-            #endif
+#endif
 
             }
 
@@ -207,8 +205,8 @@ OCI_Resultset * ResultsetCreate
 
             for (i=0; i < stmt->nb_rbinds; i++)
             {
-                OCI_Bind   *bnd  = stmt->rbinds[i];
-                OCI_Define *def  = &rs->defs[bnd->dynpos];
+                OCI_Bind   *bnd = stmt->rbinds[i];
+                OCI_Define *def = &rs->defs[bnd->dynpos];
 
                 def->buf.count   = size;
                 def->buf.sizelen = sizeof(ub4);
@@ -219,13 +217,13 @@ OCI_Resultset * ResultsetCreate
 
                 /* columns info */
 
-                def->col.sqlcode    = bnd->code;
-                def->col.libcode    = bnd->code;
-                def->col.name       = ostrdup(bnd->name);
-                def->col.size       = (ub2) bnd->size;
-                def->col.datatype   = bnd->type;
-                def->col.subtype    = bnd->subtype;
-                def->col.typinf     = bnd->typinf;
+                def->col.sqlcode  = bnd->code;
+                def->col.libcode  = bnd->code;
+                def->col.name     = ostrdup(bnd->name);
+                def->col.size     = (ub2) bnd->size;
+                def->col.datatype = bnd->type;
+                def->col.subtype  = bnd->subtype;
+                def->col.typinf   = bnd->typinf;
 
                 switch (def->col.datatype)
                 {
@@ -437,7 +435,7 @@ boolean FetchPieces
 
         /* fetch data */
 
-    #if defined(OCI_STMT_SCROLLABLE_READONLY)
+#if defined(OCI_STMT_SCROLLABLE_READONLY)
 
         if (Env.use_scrollable_cursors)
         {
@@ -447,7 +445,7 @@ boolean FetchPieces
         }
         else
 
-    #endif
+#endif
 
         {
             rs->fetch_status = OCIStmtFetch(rs->stmt->stmt, rs->stmt->con->err,
@@ -503,7 +501,7 @@ boolean FetchPieces
 
                 if (lg->buffer)
                 {
-                    const int len  = (int) ( lg->size / sizeof(dbtext) );
+                    const int len = (int) ( lg->size / sizeof(dbtext) );
 
                     ((dbtext *)lg->buffer)[len] = 0;
 
@@ -573,7 +571,7 @@ boolean FetchData
 
     /* internal fetch */
 
- #if defined(OCI_STMT_SCROLLABLE_READONLY)
+#if defined(OCI_STMT_SCROLLABLE_READONLY)
 
     if (Env.use_scrollable_cursors)
     {
@@ -590,7 +588,6 @@ boolean FetchData
                                         rs->fetch_size, (ub2) OCI_FETCH_NEXT,
                                         (ub4) OCI_DEFAULT);
     }
-
 
     if (OCI_ERROR == rs->fetch_status)
     {
@@ -619,8 +616,8 @@ boolean FetchData
     /* check for success */
 
     STATUS = (STATUS && ((OCI_SUCCESS           == rs->fetch_status) ||
-                                 (OCI_NO_DATA           == rs->fetch_status) ||
-                                 (OCI_SUCCESS_WITH_INFO == rs->fetch_status)));
+                         (OCI_NO_DATA           == rs->fetch_status) ||
+                         (OCI_SUCCESS_WITH_INFO == rs->fetch_status)));
 
     /* update internal fetch status and variables */
 
@@ -629,7 +626,7 @@ boolean FetchData
         ub4 row_count   = 0;
         ub4 row_fetched = 0;
 
-    #if defined(OCI_STMT_SCROLLABLE_READONLY)
+#if defined(OCI_STMT_SCROLLABLE_READONLY)
 
         if (OCI_SFM_SCROLLABLE == rs->stmt->exec_mode)
         {
@@ -638,7 +635,7 @@ boolean FetchData
         }
         else
 
-    #endif
+#endif
 
         {
             row_count   = StatementGetAffectedRows(rs->stmt);
@@ -761,7 +758,7 @@ boolean FetchCustom
 
 boolean ResultsetInitialize
 (
-OCI_Resultset *rs
+    OCI_Resultset *rs
 )
 {
     rs->bof          = TRUE;
@@ -781,7 +778,7 @@ OCI_Resultset *rs
 
 boolean ResultsetFree
 (
-OCI_Resultset *rs
+    OCI_Resultset *rs
 )
 {
     ub4 j;
@@ -1315,7 +1312,7 @@ boolean ResultsetGetStruct
     void          *row_struct_ind
 )
 {
-    char *ptr     = NULL;
+    char    *ptr  = NULL;
     boolean *inds = NULL;
 
     CALL_ENTER(boolean, FALSE)
@@ -1347,14 +1344,14 @@ boolean ResultsetGetStruct
             else
             {
                 size1 = size2;
-            }         
+            }
 
             ColumnGetAttributeInfo(&rs->defs[i].col, rs->nb_defs, i, &size2, &align);
 
             size += size1;
 
             size = ROUNDUP(size, align);
-                
+
             memset(ptr, 0, size1);
 
             if (is_not_null)
@@ -1471,7 +1468,7 @@ OCI_Number * ResultsetGetNumber
     )
 }
 
-/* --------------------------------------------------------------------------------------------- * 
+/* --------------------------------------------------------------------------------------------- *
  * ResultsetGetNumber2
  * --------------------------------------------------------------------------------------------- */
 
@@ -1695,138 +1692,138 @@ const otext * ResultsetGetString
         {
             OCI_Error *err = ErrorGet(TRUE, TRUE);
 
-            unsigned int bufsize = OCI_SIZE_TMP_CVT;
+            unsigned int bufsize   = OCI_SIZE_TMP_CVT;
             unsigned int data_size = 0;
 
             switch (def->col.datatype)
             {
-            case OCI_CDT_NUMERIC:
-            {
-                data = DefineGetData(def);
-                break;
-            }
-            case OCI_CDT_DATETIME:
-            {
-                data = ResultsetGetDate(rs, index);
-                break;
-            }
-            case OCI_CDT_TIMESTAMP:
-            {
-                data = ResultsetGetTimestamp(rs, index);
-                break;
-            }
-            case OCI_CDT_INTERVAL:
-            {
-                data = ResultsetGetInterval(rs, index);
-                break;
-            }
-            case OCI_CDT_RAW:
-            {
-                data = DefineGetData(def);
-                data_size = ((ub2*)def->buf.lens)[def->rs->row_cur - 1];
-                break;
-            }
-            case OCI_CDT_REF:
-            {
-                data = ResultsetGetReference(rs, index);
-                break;
-            }
-            case OCI_CDT_LONG:
-            {
-                OCI_Long *lg = ResultsetGetLong(rs, index);
-
-                if (lg)
+                case OCI_CDT_NUMERIC:
                 {
-                    bufsize = LongGetSize(lg);
+                    data = DefineGetData(def);
+                    break;
+                }
+                case OCI_CDT_DATETIME:
+                {
+                    data = ResultsetGetDate(rs, index);
+                    break;
+                }
+                case OCI_CDT_TIMESTAMP:
+                {
+                    data = ResultsetGetTimestamp(rs, index);
+                    break;
+                }
+                case OCI_CDT_INTERVAL:
+                {
+                    data = ResultsetGetInterval(rs, index);
+                    break;
+                }
+                case OCI_CDT_RAW:
+                {
+                    data      = DefineGetData(def);
+                    data_size = ((ub2*)def->buf.lens)[def->rs->row_cur - 1];
+                    break;
+                }
+                case OCI_CDT_REF:
+                {
+                    data = ResultsetGetReference(rs, index);
+                    break;
+                }
+                case OCI_CDT_LONG:
+                {
+                    OCI_Long *lg = ResultsetGetLong(rs, index);
 
-                    if (OCI_BLONG == def->col.subtype)
+                    if (lg)
                     {
-                        /* here we have binary long, it will be output in hexadecimal */
-                        bufsize *= 2;
+                        bufsize = LongGetSize(lg);
+
+                        if (OCI_BLONG == def->col.subtype)
+                        {
+                            /* here we have binary long, it will be output in hexadecimal */
+                            bufsize *= 2;
+                        }
                     }
+
+                    data = lg;
+                    break;
                 }
 
-                data = lg;
-                break;
-            }
-
-            case OCI_CDT_LOB:
-            {
-                OCI_Lob *lob = ResultsetGetLob(rs, index);
-
-                if (lob)
+                case OCI_CDT_LOB:
                 {
-                    bufsize = (unsigned int)LobGetLength(lob);
+                    OCI_Lob *lob = ResultsetGetLob(rs, index);
 
-                    if (OCI_BLOB == def->col.subtype)
+                    if (lob)
                     {
-                        /* here we have binary blob, it will be output in hexadecimal */
-                        bufsize *= 2;
+                        bufsize = (unsigned int)LobGetLength(lob);
+
+                        if (OCI_BLOB == def->col.subtype)
+                        {
+                            /* here we have binary blob, it will be output in hexadecimal */
+                            bufsize *= 2;
+                        }
                     }
+
+                    data = lob;
+                    break;
                 }
-
-                data = lob;
-                break;
-            }
-            case OCI_CDT_FILE:
-            {
-                /* directory / name will be output */
-
-                OCI_File * file = ResultsetGetFile(rs, index);
-
-                if (file)
+                case OCI_CDT_FILE:
                 {
-                    bufsize = (unsigned int) ostrlen(OTEXT("/"));
+                    /* directory / name will be output */
 
-                    FileGetInfo(file);
+                    OCI_File * file = ResultsetGetFile(rs, index);
 
-                    bufsize += (unsigned int) (file->dir ? ostrlen(file->dir) : 0);
-                    bufsize += (unsigned int) (file->name ? ostrlen(file->name) : 0);
+                    if (file)
+                    {
+                        bufsize = (unsigned int) ostrlen(OTEXT("/"));
+
+                        FileGetInfo(file);
+
+                        bufsize += (unsigned int) (file->dir ? ostrlen(file->dir) : 0);
+                        bufsize += (unsigned int) (file->name ? ostrlen(file->name) : 0);
+                    }
+
+                    data = file;
+                    break;
                 }
-
-                data = file;
-                break;
-            }
-            case OCI_CDT_OBJECT:
-            {
-                OCI_Object *obj = ResultsetGetObject(rs, index);
-
-                if (obj)
+                case OCI_CDT_OBJECT:
                 {
-                    STATUS = ObjectToString(obj, &bufsize, NULL);
+                    OCI_Object *obj = ResultsetGetObject(rs, index);
+
+                    if (obj)
+                    {
+                        STATUS = ObjectToString(obj, &bufsize, NULL);
+                    }
+
+                    data = obj;
+                    break;
                 }
-
-                data = obj;
-                break;
-            }
-            case OCI_CDT_COLLECTION:
-            {
-                OCI_Coll *coll = ResultsetGetColl(rs, index);
-
-                if (coll)
+                case OCI_CDT_COLLECTION:
                 {
-                    STATUS = CollectionToString(coll, &bufsize, NULL);
+                    OCI_Coll *coll = ResultsetGetColl(rs, index);
+
+                    if (coll)
+                    {
+                        STATUS = CollectionToString(coll, &bufsize, NULL);
+                    }
+
+                    data = coll;
+                    break;
                 }
-
-                data = coll;
-                break;
-            }
-            case OCI_CDT_CURSOR:
-            {
-                OCI_Statement *stmt = ResultsetGetStatement(rs, index);
-
-                if (stmt && stmt->sql)
+                case OCI_CDT_CURSOR:
                 {
-                    bufsize = (unsigned int) ostrlen(stmt->sql);
-                }
+                    OCI_Statement *stmt = ResultsetGetStatement(rs, index);
 
-                data = stmt;
-                break;
-            }
-            default:
-            {
-                break;
-            }
+                    if (stmt && stmt->sql)
+                    {
+                        bufsize = (unsigned int) ostrlen(stmt->sql);
+                    }
+
+                    data = stmt;
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
             }
 
             STATUS = (NULL == err || OCI_UNKNOWN == err->type);
@@ -1836,7 +1833,7 @@ const otext * ResultsetGetString
             if (STATUS)
             {
                 StringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, def->buf.tmpsize, FALSE);
-                
+
                 STATUS = (NULL == err || OCI_UNKNOWN == err->type);
 
                 if (STATUS)
@@ -1916,6 +1913,7 @@ unsigned int ResultsetGetRaw2
 )
 {
     OCI_Define *def = NULL;
+
     int index = -1;
 
     CALL_ENTER(unsigned int, 0)
@@ -2015,8 +2013,8 @@ OCI_Date * ResultsetGetDate
         rs, index, OCI_Date *, NULL, OCI_CDT_DATETIME,
 
         DateInitialize(rs->stmt->con, (OCI_Date *) def->obj,
-                 (OCIDate *)DefineGetData(def), FALSE,
-                 (SQLT_DAT == def->col.libcode))
+                       (OCIDate *)DefineGetData(def), FALSE,
+                       (SQLT_DAT == def->col.libcode))
     )
 }
 
@@ -2077,10 +2075,10 @@ OCI_Interval * ResultsetGetInterval
 {
     GET_HANDLE
     (
-       rs, index, OCI_Interval *, NULL, OCI_CDT_INTERVAL,
+        rs, index, OCI_Interval *, NULL, OCI_CDT_INTERVAL,
 
-       IntervalInitialize(rs->stmt->con, (OCI_Interval *) def->obj,
-                    (OCIInterval *) DefineGetData(def), def->col.subtype)
+        IntervalInitialize(rs->stmt->con, (OCI_Interval *) def->obj,
+                           (OCIInterval *) DefineGetData(def), def->col.subtype)
     )
 }
 
@@ -2109,11 +2107,11 @@ OCI_Object * ResultsetGetObject
 {
     GET_HANDLE
     (
-       rs, index, OCI_Object *, NULL, OCI_CDT_OBJECT,
+        rs, index, OCI_Object *, NULL, OCI_CDT_OBJECT,
 
-       ObjectInitialize(rs->stmt->con, (OCI_Object *) def->obj,
-                  DefineGetData(def), def->col.typinf,
-                  NULL, -1, TRUE)
+        ObjectInitialize(rs->stmt->con, (OCI_Object *) def->obj,
+                         DefineGetData(def), def->col.typinf,
+                         NULL, -1, TRUE)
     )
 }
 
@@ -2142,9 +2140,9 @@ OCI_Coll * ResultsetGetColl
 {
     GET_HANDLE
     (
-       rs, index, OCI_Coll *, NULL, OCI_CDT_COLLECTION,
+        rs, index, OCI_Coll *, NULL, OCI_CDT_COLLECTION,
 
-       CollectionInitialize(rs->stmt->con, (OCI_Coll *) def->obj, DefineGetData(def), def->col.typinf)
+        CollectionInitialize(rs->stmt->con, (OCI_Coll *) def->obj, DefineGetData(def), def->col.typinf)
     )
 }
 
@@ -2173,9 +2171,9 @@ OCI_Ref * ResultsetGetReference
 {
     GET_HANDLE
     (
-       rs, index, OCI_Ref *, NULL, OCI_CDT_REF,
+        rs, index, OCI_Ref *, NULL, OCI_CDT_REF,
 
-       ReferenceInitialize(rs->stmt->con, def->col.typinf, (OCI_Ref *) def->obj, DefineGetData(def))
+        ReferenceInitialize(rs->stmt->con, def->col.typinf, (OCI_Ref *) def->obj, DefineGetData(def))
     )
 }
 
@@ -2204,10 +2202,10 @@ OCI_Statement * ResultsetGetStatement
 {
     GET_HANDLE
     (
-       rs, index, OCI_Statement *, NULL, OCI_CDT_CURSOR,
+        rs, index, OCI_Statement *, NULL, OCI_CDT_CURSOR,
 
-       StatementInitialize(rs->stmt->con,(OCI_Statement *) def->obj,
-                     (OCIStmt *) DefineGetData(def), TRUE, def->col.name)
+        StatementInitialize(rs->stmt->con,(OCI_Statement *) def->obj,
+                            (OCIStmt *) DefineGetData(def), TRUE, def->col.name)
     )
 }
 
@@ -2236,11 +2234,11 @@ OCI_Lob * ResultsetGetLob
 {
     GET_HANDLE
     (
-       rs, index, OCI_Lob *, NULL, OCI_CDT_LOB,
+        rs, index, OCI_Lob *, NULL, OCI_CDT_LOB,
 
-       LobInitialize(rs->stmt->con,(OCI_Lob *) def->obj,
-               (OCILobLocator *) DefineGetData(def),
-               def->col.subtype)
+        LobInitialize(rs->stmt->con,(OCI_Lob *) def->obj,
+                      (OCILobLocator *) DefineGetData(def),
+                      def->col.subtype)
     )
 }
 
@@ -2269,11 +2267,11 @@ OCI_File * ResultsetGetFile
 {
     GET_HANDLE
     (
-       rs, index, OCI_File *, NULL, OCI_CDT_FILE,
+        rs, index, OCI_File *, NULL, OCI_CDT_FILE,
 
-       FileInitialize(rs->stmt->con, (OCI_File *) def->obj,
-                (OCILobLocator *) DefineGetData(def),
-                def->col.subtype)
+        FileInitialize(rs->stmt->con, (OCI_File *) def->obj,
+                       (OCILobLocator *) DefineGetData(def),
+                       def->col.subtype)
     )
 }
 
@@ -2302,9 +2300,9 @@ OCI_Long * ResultsetGetLong
 {
     GET_HANDLE
     (
-       rs, index, OCI_Long *, NULL, OCI_CDT_LONG,
+        rs, index, OCI_Long *, NULL, OCI_CDT_LONG,
 
-       (OCI_Long *) DefineGetData(def)
+        (OCI_Long *) DefineGetData(def)
     )
 }
 
@@ -2337,7 +2335,7 @@ unsigned int ResultsetGetDataSize
     CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
     CALL_CHECK_BOUND(rs->stmt->con, index, 1, rs->nb_defs)
     CALL_CONTEXT_FROM_STMT(rs->stmt)
-    
+
     def = DefineGet(rs, index);
 
     if (def && DefineIsDataNotNull(def))
@@ -2370,7 +2368,7 @@ unsigned int ResultsetGetDataSize2
 {
     int index = -1;
 
-    CALL_ENTER(unsigned int, 0)        
+    CALL_ENTER(unsigned int, 0)
     CALL_CHECK_PTR(OCI_IPC_RESULTSET, rs)
     CALL_CHECK_PTR(OCI_IPC_STRING, name)
     CALL_CONTEXT_FROM_STMT(rs->stmt)

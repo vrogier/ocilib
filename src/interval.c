@@ -45,7 +45,7 @@ OCI_Interval * IntervalInitialize
     CALL_CONTEXT_FROM_CON(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
- 
+
     ALLOC_DATA(OCI_IPC_INTERVAL, itv, 1);
 
     if (STATUS)
@@ -65,7 +65,9 @@ OCI_Interval * IntervalInitialize
         {
             if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
             {
-                STATUS = MemoryAllocDescriptor((dvoid  *)itv->env, (dvoid **)(void *)&itv->handle, (ub4)ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
+                STATUS = MemoryAllocDescriptor((dvoid  *)itv->env,
+                                               (dvoid **)(void *)&itv->handle,
+                                               (ub4)ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
 
                 itv->hstate = OCI_OBJECT_ALLOCATED;
             }
@@ -174,7 +176,7 @@ OCI_Interval ** IntervalCreateArray
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type,
-                      sizeof(OCIInterval *), sizeof(OCI_Interval), 
+                      sizeof(OCIInterval *), sizeof(OCI_Interval),
                       ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, type), NULL);
 
     STATUS = (NULL != arr);
@@ -239,11 +241,11 @@ boolean IntervalAssign
     CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv_src)
     CALL_CONTEXT_FROM_OBJ(itv)
 
- #if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     EXEC(OCIIntervalAssign((dvoid *) itv->env, itv->err, itv_src->handle, itv->handle))
 
- #endif
+#endif
 
     RETVAL = STATUS;
 
@@ -260,16 +262,16 @@ int IntervalCheck
 )
 {
     ub4 value = (ub4) OCI_ERROR;
-    
+
     CALL_ENTER(int, value)
     CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     CALL_CONTEXT_FROM_OBJ(itv)
 
- #if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     EXEC(OCIIntervalCheck((dvoid *) itv->env, itv->err, itv->handle, &value))
 
- #endif
+#endif
 
     RETVAL = value;
 
@@ -287,17 +289,17 @@ int IntervalCompare
 )
 {
     sword value = OCI_ERROR;
-    
+
     CALL_ENTER(int, value)
     CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
     CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv2)
     CALL_CONTEXT_FROM_OBJ(itv)
 
- #if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     EXEC(OCIIntervalCompare((dvoid *) itv->env, itv->err, itv->handle, itv2->handle, &value))
 
- #endif
+#endif
 
     RETVAL = value;
 
@@ -324,7 +326,7 @@ boolean IntervalFromString
 
     dbstr = StringGetDBString(str, &dbsize);
 
- #if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_9_0
 
     EXEC(OCIIntervalFromText((dvoid *) itv->env, itv->err, (OraText *) dbstr, (size_t) dbsize, itv->handle))
 
@@ -333,7 +335,7 @@ boolean IntervalFromString
 #endif
 
     RETVAL = STATUS;
-    
+
     CALL_EXIT()
 }
 
@@ -378,12 +380,12 @@ boolean IntervalToString
                           (size_t *) &len)
     )
 
- #else
+#else
 
     OCI_NOT_USED(leading_prec)
     OCI_NOT_USED(fraction_prec)
 
- #endif
+#endif
 
     dbsize = (int)len;
 
@@ -394,9 +396,8 @@ boolean IntervalToString
 
     str[dbcharcount(dbsize)] = 0;
 
-
     RETVAL = STATUS;
-    
+
     CALL_EXIT()
 }
 

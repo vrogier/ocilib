@@ -131,7 +131,7 @@ boolean MessageFree
     msg->id = NULL;
 
     /* free OCI descriptor */
-    
+
     MemoryFreeDescriptor((dvoid *) msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
 
     FREE(msg)
@@ -148,19 +148,19 @@ boolean MessageReset
     OCI_Msg *msg
 )
 {
-    const unsigned int  len = 0;
+    const unsigned int len = 0;
 
-    boolean res = 
-    (
-        MessageSetExpiration(msg, -1)            &&
-        MessageSetEnqueueDelay(msg, 0)           &&
-        MessageSetPriority(msg,0)                &&
-        MessageSetOriginalID(msg, NULL, len)     &&
-        MessageSetSender(msg, NULL)              &&
-        MessageSetConsumers(msg, NULL, len)      &&
-        MessageSetCorrelation(msg, NULL)         &&
-        MessageSetExceptionQueue(msg, NULL)
-    );
+    boolean res =
+        (
+            MessageSetExpiration(msg, -1)       &&
+            MessageSetEnqueueDelay(msg, 0)      &&
+            MessageSetPriority(msg,0)           &&
+            MessageSetOriginalID(msg, NULL, len)     &&
+            MessageSetSender(msg, NULL)              &&
+            MessageSetConsumers(msg, NULL, len)      &&
+            MessageSetCorrelation(msg, NULL)         &&
+            MessageSetExceptionQueue(msg, NULL)
+        );
 
     if (res)
     {
@@ -227,8 +227,8 @@ boolean MessageSetObject
     }
     else
     {
-        STATUS = TRUE;
-        msg->ind    = OCI_IND_NULL;
+        STATUS   = TRUE;
+        msg->ind = OCI_IND_NULL;
     }
 
     RETVAL = STATUS;
@@ -281,9 +281,9 @@ boolean MessageGetRaw
 
 boolean MessageSetRaw
 (
-    OCI_Msg      *msg,
-    const void   *raw,
-    unsigned int  size
+    OCI_Msg     *msg,
+    const void  *raw,
+    unsigned int size
 )
 {
     CALL_ENTER(boolean, FALSE)
@@ -516,7 +516,6 @@ boolean MessageSetPriority
     CALL_EXIT()
 }
 
-
 /* --------------------------------------------------------------------------------------------- *
  * MessageGetID
  * --------------------------------------------------------------------------------------------- */
@@ -601,8 +600,8 @@ boolean MessageGetOriginalID
 
 boolean MessageSetOriginalID
 (
-    OCI_Msg      *msg,
-    const void   *id,
+    OCI_Msg     *msg,
+    const void  *id,
     unsigned int len
 )
 {
@@ -614,7 +613,7 @@ boolean MessageSetOriginalID
 
     EXEC(OCIRawAssignBytes(msg->typinf->con->env, msg->typinf->con->err, (ub1*) id, (ub4) len, (OCIRaw **) &value))
     ATTRIB_SET(OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ORIGINAL_MSGID, msg->proph, &value, 0)
- 
+
     RETVAL = STATUS;
 
     CALL_EXIT()
@@ -636,13 +635,13 @@ const otext * MessageGetCorrelation
     if (!msg->correlation)
     {
         unsigned int size = 0;
-        
+
         STATUS = StringGetAttribute(msg->typinf->con,
-                                        msg->proph,
-                                        OCI_DTYPE_AQMSG_PROPERTIES,
-                                        OCI_ATTR_CORRELATION,
-                                        &msg->correlation,
-                                        &size);
+                                    msg->proph,
+                                    OCI_DTYPE_AQMSG_PROPERTIES,
+                                    OCI_ATTR_CORRELATION,
+                                    &msg->correlation,
+                                    &size);
     }
 
     RETVAL = msg->correlation;
@@ -665,11 +664,11 @@ boolean MessageSetCorrelation
     CALL_CONTEXT_FROM_CON(msg->typinf->con)
 
     STATUS = StringSetAttribute(msg->typinf->con,
-                                    msg->proph,
-                                    OCI_DTYPE_AQMSG_PROPERTIES,
-                                    OCI_ATTR_CORRELATION,
-                                    &msg->correlation,
-                                    correlation);
+                                msg->proph,
+                                OCI_DTYPE_AQMSG_PROPERTIES,
+                                OCI_ATTR_CORRELATION,
+                                &msg->correlation,
+                                correlation);
 
     RETVAL = STATUS;
 
@@ -692,16 +691,16 @@ const otext * MessageGetExceptionQueue
     if (!msg->except_queue)
     {
         unsigned int size = 0;
-        
+
         STATUS = StringGetAttribute
-                        (
-                            msg->typinf->con,
-                            msg->proph,
-                            OCI_DTYPE_AQMSG_PROPERTIES,
-                            OCI_ATTR_EXCEPTION_QUEUE,
-                            &msg->except_queue,
-                            &size
-                        );
+                 (
+            msg->typinf->con,
+            msg->proph,
+            OCI_DTYPE_AQMSG_PROPERTIES,
+            OCI_ATTR_EXCEPTION_QUEUE,
+            &msg->except_queue,
+            &size
+                 );
     }
 
     RETVAL = msg->except_queue;
@@ -724,11 +723,11 @@ boolean MessageSetExceptionQueue
     CALL_CONTEXT_FROM_CON(msg->typinf->con)
 
     STATUS = StringSetAttribute(msg->typinf->con,
-                                    msg->proph,
-                                    OCI_DTYPE_AQMSG_PROPERTIES,
-                                    OCI_ATTR_EXCEPTION_QUEUE,
-                                    &msg->except_queue,
-                                    queue);
+                                msg->proph,
+                                OCI_DTYPE_AQMSG_PROPERTIES,
+                                OCI_ATTR_EXCEPTION_QUEUE,
+                                &msg->except_queue,
+                                queue);
 
     RETVAL = STATUS;
 
@@ -741,7 +740,7 @@ boolean MessageSetExceptionQueue
 
 OCI_Agent * MessageGetSender
 (
-    OCI_Msg   *msg
+    OCI_Msg *msg
 )
 {
     OCIAQAgent *handle = NULL;

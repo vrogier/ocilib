@@ -45,6 +45,7 @@
         }                                   \
     }                                       \
 
+
 /* --------------------------------------------------------------------------------------------- *
  * ListCreateItem
  * --------------------------------------------------------------------------------------------- */
@@ -211,7 +212,7 @@ boolean ListClear
     while (item)
     {
         OCI_Item *temp = item;
-        
+
         item = item->next;
 
         /* free data */
@@ -255,8 +256,8 @@ boolean ListForEach
 
 boolean ListForEachWithParam
 (
-    OCI_List          *list,
-    void              *param,
+    OCI_List                     *list,
+    void                         *param,
     POCI_LIST_FOR_EACH_WITH_PARAM proc
 )
 {
@@ -365,9 +366,9 @@ boolean ListExists
 
 void * ListFind
 (
-    OCI_List        *list,
-    POCI_LIST_FIND   proc,
-    void            *param
+    OCI_List      *list,
+    POCI_LIST_FIND proc,
+    void          *param
 )
 {
     void * result = NULL;

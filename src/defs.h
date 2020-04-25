@@ -32,80 +32,81 @@
 
 #ifdef OCI_IMPORT_RUNTIME
 
-    /* for runtime loading, set compile time version to the highest minimum
+/* for runtime loading, set compile time version to the highest minimum
        version needed by OCILIB encapsulation of OCI */
 
-    #define OCI_VERSION_COMPILE OCI_18_3
+#define OCI_VERSION_COMPILE OCI_18_3
 
-    /* set runtime version to unknown, it will be guessed from symbols loading */
+/* set runtime version to unknown, it will be guessed from symbols loading */
 
-    #define OCI_VERSION_RUNTIME OCI_UNKNOWN
+#define OCI_VERSION_RUNTIME OCI_UNKNOWN
 
 #else
 
-    #if defined(OCI_MAJOR_VERSION)  
+  #if defined(OCI_MAJOR_VERSION)
 
-        #define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
-        #if OCI_VERSION_COMPILE == OCI_VER_MAKE(18, 0, 0)   /* Oracle headers not updated for Windows 18.3 release ! */
-            #undef  OCI_VERSION_COMPILE
-            #define OCI_VERSION_COMPILE OCI_18_3
-        #endif 
-
-    #elif defined(OCI_FNCODE_SODAOPERKEYSSET)  /* = OCI_18_3 */
-
-        #define OCI_VERSION_COMPILE OCI_18_3
-
-    #elif defined(OCI_FNCODE_SERVERRELEASE2)  /* = OCI_18_1 */
-
-        #define OCI_VERSION_COMPILE OCI_18_1
-
-    #elif defined(OCI_FNCODE_LOBGETCHUNKSIZE)  /* = OCI_12_2 */
-
-        #define OCI_VERSION_COMPILE OCI_12_2
-
-    #elif defined(OCI_FNCODE_BINDBYPOS2)  /* = OCI_12_1 */
-
-        #define OCI_VERSION_COMPILE OCI_12_1
-
-    #elif defined(OCI_FNCODE_LOBGETCONTENTTYPE)  /* = OCI_11_2 */
-
-        #define OCI_VERSION_COMPILE OCI_11_2
-
-    #elif defined(OCI_FNCODE_LOBGETOPT)        /* = OCI_11_1 */
-
-        #define OCI_VERSION_COMPILE OCI_11_1
-
-    #elif defined(OCI_FNCODE_DBSHUTDOWN)       /* = OCI_10_2 */
-
-        #define OCI_VERSION_COMPILE OCI_10_2
-
-    #elif defined(OCI_FNCODE_LOBREAD2)         /* = OCI_10_1 */
-
-        #define OCI_VERSION_COMPILE OCI_10_1
-
-    #elif defined(OCI_FNCODE_STMTPREPARE2)     /* = OCI_9_2 */
-
-        #define OCI_VERSION_COMPILE OCI_9_2
-
-    #elif defined(OCI_FNCODE_CPOOLCREATE)      /* = OCI_9_0 */
-
-        #define OCI_VERSION_COMPILE OCI_9_0
-
-    #elif defined(OCIThreadHandle)             /* = OCI_8_1 */
-
-        #define OCI_VERSION_COMPILE OCI_8_1
-
-    #elif defined(OCIEnv)                      /* = OCI_8_0 */
-
-        #define OCI_VERSION_COMPILE OCI_8_0
-
-    #else                                      /* OCI_UNKNOWN */
-
-        #define OCI_VERSION_COMPILE OCI_UNKNOWN
-
+#define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
+    #if OCI_VERSION_COMPILE == OCI_VER_MAKE(18, 0, 0)       /* Oracle headers not updated for
+                                                             * Windows 18.3 release ! */
+      #undef  OCI_VERSION_COMPILE
+#define OCI_VERSION_COMPILE OCI_18_3
     #endif
 
-    #define OCI_VERSION_RUNTIME OCI_VERSION_COMPILE
+  #elif defined(OCI_FNCODE_SODAOPERKEYSSET)    /* = OCI_18_3 */
+
+#define OCI_VERSION_COMPILE OCI_18_3
+
+  #elif defined(OCI_FNCODE_SERVERRELEASE2)    /* = OCI_18_1 */
+
+#define OCI_VERSION_COMPILE OCI_18_1
+
+  #elif defined(OCI_FNCODE_LOBGETCHUNKSIZE)    /* = OCI_12_2 */
+
+#define OCI_VERSION_COMPILE OCI_12_2
+
+  #elif defined(OCI_FNCODE_BINDBYPOS2)    /* = OCI_12_1 */
+
+#define OCI_VERSION_COMPILE OCI_12_1
+
+  #elif defined(OCI_FNCODE_LOBGETCONTENTTYPE)    /* = OCI_11_2 */
+
+#define OCI_VERSION_COMPILE OCI_11_2
+
+  #elif defined(OCI_FNCODE_LOBGETOPT)          /* = OCI_11_1 */
+
+#define OCI_VERSION_COMPILE OCI_11_1
+
+  #elif defined(OCI_FNCODE_DBSHUTDOWN)         /* = OCI_10_2 */
+
+#define OCI_VERSION_COMPILE OCI_10_2
+
+  #elif defined(OCI_FNCODE_LOBREAD2)           /* = OCI_10_1 */
+
+#define OCI_VERSION_COMPILE OCI_10_1
+
+  #elif defined(OCI_FNCODE_STMTPREPARE2)       /* = OCI_9_2 */
+
+#define OCI_VERSION_COMPILE OCI_9_2
+
+  #elif defined(OCI_FNCODE_CPOOLCREATE)        /* = OCI_9_0 */
+
+#define OCI_VERSION_COMPILE OCI_9_0
+
+  #elif defined(OCIThreadHandle)               /* = OCI_8_1 */
+
+#define OCI_VERSION_COMPILE OCI_8_1
+
+  #elif defined(OCIEnv)                        /* = OCI_8_0 */
+
+#define OCI_VERSION_COMPILE OCI_8_0
+
+  #else                                        /* OCI_UNKNOWN */
+
+#define OCI_VERSION_COMPILE OCI_UNKNOWN
+
+  #endif
+
+#define OCI_VERSION_RUNTIME OCI_VERSION_COMPILE
 
 #endif
 
@@ -113,7 +114,7 @@
 
 #if defined(OCI_BIG_UINT_ENABLED) && defined(ORAXB8_DEFINED)
 
-    #define OCI_LOB2_API_ENABLED
+#define OCI_LOB2_API_ENABLED
 
 #endif
 
@@ -134,11 +135,11 @@
 
 #if  defined (OCI_CHARSET_ANSI)
 
-    typedef otext           dbtext;
+typedef otext dbtext;
 
 #else
 
-    typedef unsigned short  dbtext;
+typedef unsigned short dbtext;
 
 #endif
 
@@ -152,11 +153,11 @@
 
 #ifdef OCI_CHARSET_WIDE
 
-    #define OCI_ENV_MODE    OCI_UTF16
+#define OCI_ENV_MODE    OCI_UTF16
 
 #else
 
-    #define OCI_ENV_MODE    OCI_DEFAULT
+#define OCI_ENV_MODE    OCI_DEFAULT
 
 #endif
 
@@ -364,21 +365,20 @@
 
 #ifndef OCI_UTF16ID
 
-    #define OCI_UTF16ID OCI_UCS2ID
+#define OCI_UTF16ID OCI_UCS2ID
 
 #endif
-
 
 #define OCI_UTF8_BYTES_PER_CHAR 4
 #define OCI_SIZE_TMP_CVT        128
 
 #ifdef _WINDOWS
 
-    #define OCI_CVT_CHAR                  1
+#define OCI_CVT_CHAR                  1
 
 #else
 
-    #define OCI_CVT_CHAR                  0
+#define OCI_CVT_CHAR                  0
 
 #endif
 
@@ -419,13 +419,12 @@
 #define OCI_VARS_WORKAROUND_UTF16_COLUMN_NAME  0
 
 #ifndef min
-  #define min(a, b) (((a) < (b)) ? (a) : (b))
+#define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
 #ifndef max
-  #define max(a, b) (((a) > (b)) ? (a) : (b))
+#define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
-
 
 /* check OCI status */
 
@@ -439,4 +438,3 @@
 #define OCI_NOT_USED(p)                 (p) = (p);
 
 #endif    /* OCILIB_DEFS_H_INCLUDED */
-

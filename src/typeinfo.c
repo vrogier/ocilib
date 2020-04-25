@@ -31,8 +31,8 @@ static unsigned int TypeInfoTypeValues[] = { OCI_TIF_TABLE, OCI_TIF_VIEW, OCI_TI
 typedef struct TypeInfoFindParams
 {
     unsigned int type;
-    otext * schema;
-    otext * name;
+    otext      * schema;
+    otext      * name;
 } TypeInfoFindParams;
 
 /* --------------------------------------------------------------------------------------------- *
@@ -41,8 +41,8 @@ typedef struct TypeInfoFindParams
 
 boolean TypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find_params)
 {
-    return  
-        typinf && 
+    return
+        typinf &&
         find_params &&
         typinf->type == find_params->type &&
         ostrcasecmp(typinf->name, find_params->name) == 0 &&
@@ -86,18 +86,18 @@ OCI_TypeInfo * TypeInfoGet
 {
     TypeInfoFindParams find_params;
 
-    OCI_TypeInfo *typinf        = NULL;
-    OCI_TypeInfo *syn_typinf    = NULL;
-    OCIDescribe *dschp          = NULL;
-    OCIParam *param_root        = NULL;
-    OCIParam *param_type        = NULL;
-    OCIParam *param_cols        = NULL;
-    OCIParam *param_list        = NULL;
-    otext *str                  = NULL;
-    int ptype                   = 0;
-    ub1 desc_type               = 0;
-    ub4 attr_type               = 0;
-    ub4 num_type                = 0;
+    OCI_TypeInfo *typinf     = NULL;
+    OCI_TypeInfo *syn_typinf = NULL;
+    OCIDescribe  *dschp      = NULL;
+    OCIParam     *param_root = NULL;
+    OCIParam     *param_type = NULL;
+    OCIParam     *param_cols = NULL;
+    OCIParam     *param_list = NULL;
+    otext        *str        = NULL;
+    int           ptype      = 0;
+    ub1           desc_type  = 0;
+    ub4           attr_type  = 0;
+    ub4           num_type   = 0;
 
     otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
     otext obj_name[OCI_SIZE_OBJ_NAME + 1];
@@ -148,16 +148,16 @@ OCI_TypeInfo * TypeInfoGet
         {
             *str = (otext)otoupper(*str);
         }
-    }    
+    }
 
     /* first try to find it in list */
 
-    find_params.type = type;
-    find_params.name = obj_name;
+    find_params.type   = type;
+    find_params.name   = obj_name;
     find_params.schema = obj_schema;
 
     typinf = ListFind(con->tinfs, (POCI_LIST_FIND) TypeInfoFind, &find_params);
-  
+
     /* Not found, so create type object */
 
     if (!typinf)
@@ -185,9 +185,9 @@ OCI_TypeInfo * TypeInfoGet
             otext buffer[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
             size_t  max_chars = sizeof(buffer) / sizeof(otext) - 1;
-            dbtext *dbstr1  = NULL;
-            int     dbsize1 = -1;
-            sb4     pbsp    = 1;
+            dbtext *dbstr1    = NULL;
+            int     dbsize1   = -1;
+            sb4     pbsp      = 1;
 
             str = buffer;
 
@@ -195,10 +195,10 @@ OCI_TypeInfo * TypeInfoGet
 
             if (IS_STRING_VALID(typinf->schema))
             {
-                str = ostrncat(buffer, typinf->schema, max_chars);
+                str        = ostrncat(buffer, typinf->schema, max_chars);
                 max_chars -= ostrlen(typinf->schema);
 
-                str = ostrncat(str, OTEXT("."), max_chars);
+                str        = ostrncat(str, OTEXT("."), max_chars);
                 max_chars -= (size_t)1;
             }
 
@@ -207,9 +207,9 @@ OCI_TypeInfo * TypeInfoGet
             dbstr1 = StringGetDBString(str, &dbsize1);
 
             /* set public scope to include synonyms */
-                
+
             ATTRIB_SET(OCI_HTYPE_DESCRIBE, OCI_ATTR_DESC_PUBLIC, dschp, &pbsp, sizeof(pbsp))
- 
+
             /* describe call */
 
             EXEC
@@ -222,15 +222,15 @@ OCI_TypeInfo * TypeInfoGet
             StringReleaseDBString(dbstr1);
 
             /* get parameter handle */
-                
+
             ATTRIB_GET(OCI_HTYPE_DESCRIBE, OCI_ATTR_PARAM, dschp, &param_root, NULL)
-          
+
             /* get describe type */
 
             ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_PTYPE, param_root, &desc_type, NULL)
         }
 
-        /* on successful describe call, retrieve all information about the object 
+        /* on successful describe call, retrieve all information about the object
            if it is not a synonym */
 
         if (STATUS)
@@ -240,10 +240,10 @@ OCI_TypeInfo * TypeInfoGet
                 case OCI_PTYPE_TYPE:
                 case OCI_PTYPE_LIST:
                 {
-                    ub1 pdt = 0; // Is Predefined Type
-                    ub1 ist = 0; // Is Sub Type 
+                    ub1     pdt = 0; /* Is Predefined Type */
+                    ub1     ist = 0; /* Is Sub Type */
                     OCIRef *ref = NULL;
-                    
+
                     STATUS = (OCI_TIF_TYPE == type);
 
                     if (STATUS)
@@ -269,7 +269,8 @@ OCI_TypeInfo * TypeInfoGet
 
                         ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_IS_FINAL_TYPE, param_type, &typinf->is_final, NULL)
 
-                        /* check if it's system predefined type if order to avoid the next call that is not allowed on system types */
+                        /* check if it's system predefined type if order to avoid the next call that
+                         * is not allowed on system types */
 
                         ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_IS_PREDEFINED_TYPE, param_type, &pdt, NULL)
 
@@ -284,8 +285,8 @@ OCI_TypeInfo * TypeInfoGet
 
                         if (ist)
                         {
-                            otext *sp_schema_name   = NULL;
-                            otext *sp_object_name   = NULL;
+                            otext *sp_schema_name = NULL;
+                            otext *sp_object_name = NULL;
 
                             unsigned int size_schema = 0;
                             unsigned int size_object = 0;
@@ -295,21 +296,22 @@ OCI_TypeInfo * TypeInfoGet
                             /* get super type schema and name */
 
                             STATUS = STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
-                                                                              OCI_ATTR_SUPERTYPE_SCHEMA_NAME, 
-                                                                              &sp_schema_name, &size_schema);
-                    
+                                                                  OCI_ATTR_SUPERTYPE_SCHEMA_NAME,
+                                                                  &sp_schema_name, &size_schema);
+
                             STATUS = STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
-                                                                              OCI_ATTR_SUPERTYPE_NAME, 
-                                                                              &sp_object_name, &size_object);
+                                                                  OCI_ATTR_SUPERTYPE_NAME,
+                                                                  &sp_object_name, &size_object);
 
                             /* compute super type full name */
 
-                            StringGetFullTypeName(sp_schema_name, NULL, sp_object_name, NULL, sp_fullname, (sizeof(sp_fullname) / sizeof(otext)) - 1);
+                            StringGetFullTypeName(sp_schema_name, NULL, sp_object_name, NULL, sp_fullname,
+                                                  (sizeof(sp_fullname) / sizeof(otext)) - 1);
 
                             /* retrieve the type info of the real object */
 
                             typinf->parent_type = TypeInfoGet(con, sp_fullname, type);
-                         
+
                             /* free temporary strings */
 
                             MemoryFree (sp_schema_name);
@@ -321,9 +323,9 @@ OCI_TypeInfo * TypeInfoGet
                         switch (typinf->typecode)
                         {
                             case  SQLT_NTY:
-                        #if OCI_VERSION_COMPILE >= OCI_12_1
+#if OCI_VERSION_COMPILE >= OCI_12_1
                             case  SQLT_REC:
-                        #endif
+#endif
                             {
                                 param_list = param_type;
                                 ptype      = OCI_DESC_TYPE;
@@ -340,7 +342,7 @@ OCI_TypeInfo * TypeInfoGet
 
                                 ATTRIB_GET(OCI_DTYPE_PARAM, OCI_ATTR_COLLECTION_TYPECODE, param_type, &typinf->colcode, NULL)
                                 break;
-                            }  
+                            }
                             default:
                             {
                                 STATUS = FALSE;
@@ -349,66 +351,67 @@ OCI_TypeInfo * TypeInfoGet
                             }
                         }
                     }
-                    
+
                     break;
                 }
                 case OCI_PTYPE_TABLE:
                 case OCI_PTYPE_VIEW:
-            #if OCI_VERSION_COMPILE >= OCI_10_1
+#if OCI_VERSION_COMPILE >= OCI_10_1
                 case OCI_PTYPE_TABLE_ALIAS:
-            #endif
+#endif
                 {
                     STATUS = (((OCI_TIF_TABLE == type) && (OCI_PTYPE_VIEW != desc_type)) ||
-                                  ((OCI_TIF_VIEW  == type) && (OCI_PTYPE_VIEW == desc_type)));
- 
+                              ((OCI_TIF_VIEW  == type) && (OCI_PTYPE_VIEW == desc_type)));
+
                     if (STATUS)
                     {
                         typinf->type = (OCI_PTYPE_VIEW == desc_type ? OCI_TIF_VIEW : OCI_TIF_TABLE);
                         attr_type    = OCI_ATTR_LIST_COLUMNS;
                         num_type     = OCI_ATTR_NUM_COLS;
-                        ptype        = OCI_DESC_TABLE; 
+                        ptype        = OCI_DESC_TABLE;
                         param_list   = param_root;
                     }
-                    
+
                     break;
                 }
                 case OCI_PTYPE_SYN:
                 {
-                    otext *syn_schema_name   = NULL;
-                    otext *syn_object_name   = NULL;
-                    otext *syn_link_name     = NULL;
+                    otext *syn_schema_name = NULL;
+                    otext *syn_object_name = NULL;
+                    otext *syn_link_name   = NULL;
 
                     unsigned int size_schema = 0;
                     unsigned int size_object = 0;
-                    unsigned int size_link = 0;
+                    unsigned int size_link   = 0;
 
                     otext syn_fullname[(OCI_SIZE_OBJ_NAME * 3) + 3] = OTEXT("");
 
                     /* get link schema, object and database link names */
 
                     STATUS = STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
-                                                                      OCI_ATTR_SCHEMA_NAME, &syn_schema_name, &size_schema);
-                    
+                                                          OCI_ATTR_SCHEMA_NAME, &syn_schema_name, &size_schema);
+
                     STATUS = STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
-                                                                      OCI_ATTR_NAME, &syn_object_name, &size_object);
- 
+                                                          OCI_ATTR_NAME, &syn_object_name, &size_object);
+
                     STATUS = STATUS && StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
-                                                                         OCI_ATTR_LINK, &syn_link_name, &size_link);
+                                                          OCI_ATTR_LINK, &syn_link_name, &size_link);
 
                     /* compute link full name */
 
-                    StringGetFullTypeName(syn_schema_name, NULL, syn_object_name, syn_link_name, syn_fullname, (sizeof(syn_fullname) / sizeof(otext)) - 1);
+                    StringGetFullTypeName(syn_schema_name, NULL, syn_object_name, syn_link_name, syn_fullname,
+                                          (sizeof(syn_fullname) / sizeof(otext)) - 1);
 
                     /* retrieve the type info of the real object */
 
                     syn_typinf = TypeInfoGet (con, syn_fullname, type);
-                         
+
                     /* free temporary strings */
 
                     MemoryFree (syn_link_name);
                     MemoryFree(syn_object_name);
                     MemoryFree(syn_schema_name);
-                    
+
                     /* do we have a valid object ? */
 
                     STATUS = (NULL != syn_typinf);
@@ -488,14 +491,13 @@ OCI_TypeInfo * TypeInfoGet
             STATUS = FALSE;
         }
     }
-        
+
     /* handle errors */
 
     if (!STATUS || syn_typinf)
     {
         TypeInfoFree(typinf);
     }
-
 
     if (STATUS)
     {

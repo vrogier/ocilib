@@ -36,6 +36,7 @@ unsigned int HashCompute
 )
 {
     unsigned int h;
+
     otext *p;
 
     CHECK(NULL == table, 0);
@@ -63,6 +64,7 @@ boolean HashAdd
 {
     OCI_HashEntry * e = NULL;
     OCI_HashValue * v = NULL, *v1 = NULL, *v2 = NULL;
+
     boolean res = FALSE;
 
     CHECK(NULL == table, FALSE)
@@ -131,7 +133,7 @@ OCI_HashTable * HashCreate
 
     /* allocate table structure */
 
-    table = (OCI_HashTable *) MemoryAlloc(OCI_IPC_HASHTABLE, sizeof(*table), (size_t) 1, TRUE);
+    table  = (OCI_HashTable *) MemoryAlloc(OCI_IPC_HASHTABLE, sizeof(*table), (size_t) 1, TRUE);
     STATUS = (NULL != table);
 
     /* set up attributes and allocate internal array of hash entry pointers */
@@ -143,11 +145,12 @@ OCI_HashTable * HashCreate
         table->count = 0;
 
         table->items = (OCI_HashEntry **) MemoryAlloc(OCI_IPC_HASHENTRY_ARRAY, sizeof(*table->items), (size_t) size, TRUE);
+
         STATUS = (NULL != table->items);
-        
+
         if (STATUS)
         {
-            table->size = size;           
+            table->size = size;
         }
     }
 
@@ -257,7 +260,8 @@ unsigned int HashGetType
 
     RETVAL = table->type;
 
-    CALL_EXIT()}
+    CALL_EXIT()
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * HashGetValue
@@ -296,7 +300,7 @@ OCI_HashEntry * HashGetEntry
 {
     CALL_ENTER(OCI_HashEntry*, NULL)
     CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    
+
     if (index < table->size)
     {
         RETVAL = table->items[index];
@@ -325,7 +329,7 @@ const otext * HashGetString
 
     if (v)
     {
-        RETVAL = v->value.p_text;     
+        RETVAL = v->value.p_text;
     }
 
     CALL_EXIT()
@@ -487,8 +491,9 @@ OCI_HashEntry * HashLookup
         if (!e && create)
         {
             e = (OCI_HashEntry *) MemoryAlloc(OCI_IPC_HASHENTRY, sizeof(*e), (size_t) 1, TRUE);
+
             STATUS = (NULL != e);
-           
+
             if (STATUS)
             {
                 e->key = ostrdup(key);

@@ -30,7 +30,7 @@
 
 boolean TransactionDispose
 (
-OCI_Transaction * trans
+    OCI_Transaction * trans
 )
 {
     const boolean res = TransactionStop(trans);
@@ -70,15 +70,15 @@ OCI_Transaction * TransactionCreate
 
     /* create transaction object */
 
-    trans = ListAppend(con->trsns, sizeof(*trans));
+    trans  = ListAppend(con->trsns, sizeof(*trans));
     STATUS = (NULL != trans);
-    
+
     if (STATUS)
     {
-        trans->con = con;
-        trans->mode = mode;
+        trans->con     = con;
+        trans->mode    = mode;
         trans->timeout = timeout;
-        trans->local = (NULL == pxid);
+        trans->local   = (NULL == pxid);
 
         /* allocate transaction handle */
 

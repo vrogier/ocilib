@@ -43,7 +43,7 @@ OCI_Date * DateInitialize
 
     ALLOC_DATA(OCI_IPC_DATE, date, 1);
 
-    if (STATUS) 
+    if (STATUS)
     {
         date->con = con;
 
@@ -167,6 +167,7 @@ OCI_Date ** DateCreateArray
     CALL_CONTEXT_FROM_CON(con)
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0, sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
+
     STATUS = (NULL != arr);
 
     if (STATUS)
@@ -188,7 +189,7 @@ boolean DateFreeArray
 {
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_ARRAY, dates)
- 
+
     RETVAL = STATUS = ArrayFreeFromHandles((void **)dates);
 
     CALL_EXIT()
@@ -207,7 +208,7 @@ boolean DateAddDays
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_DATE, date)
     CALL_CONTEXT_FROM_OBJ(date)
-    
+
     EXEC(OCIDateAddDays(date->err, date->handle, (sb4)nb, date->handle))
 
     RETVAL = STATUS;
@@ -274,7 +275,7 @@ int DateCheck
     CALL_CONTEXT_FROM_OBJ(date)
 
     EXEC(OCIDateCheck(date->err, date->handle, &valid))
-    
+
     RETVAL = (int) valid;
 
     CALL_EXIT()
@@ -608,7 +609,7 @@ boolean DateToString
     dbtext *dbstr2  = NULL;
     int     dbsize1 = size * (int) sizeof(otext);
     int     dbsize2 = -1;
-  
+
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_DATE, date)
     CALL_CHECK_PTR(OCI_IPC_STRING, str)
@@ -662,7 +663,7 @@ boolean DateZoneToZone
     dbtext *dbstr2  = NULL;
     int     dbsize1 = -1;
     int     dbsize2 = -1;
- 
+
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_DATE, date)
     CALL_CHECK_PTR(OCI_IPC_STRING, zone1)
@@ -700,6 +701,7 @@ boolean DateToCTime
 )
 {
     time_t time = (time_t) -1;
+
     struct tm t;
 
     CALL_ENTER(boolean, FALSE)

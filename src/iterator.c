@@ -29,7 +29,7 @@
 
 OCI_Iter * IteratorCreate
 (
-OCI_Coll *coll
+    OCI_Coll *coll
 )
 {
     OCI_Iter *iter = NULL;
@@ -58,6 +58,7 @@ OCI_Coll *coll
         if (STATUS)
         {
             iter->elem = ElementInitialize(coll->con, iter->elem, NULL, (OCIInd *)NULL, coll->typinf);
+
             STATUS = (NULL != iter->elem);
         }
     }
@@ -71,7 +72,7 @@ OCI_Coll *coll
     else if (iter)
     {
         IteratorFree(iter);
-   }
+    }
 
     CALL_EXIT()
 }
@@ -110,7 +111,7 @@ boolean IteratorFree
     FREE(iter)
 
     RETVAL = STATUS;
-    
+
     CALL_EXIT()
 }
 
@@ -123,8 +124,8 @@ OCI_Elem * IteratorGetNext
     OCI_Iter *iter
 )
 {
-    void     *data  = NULL;
-    OCIInd   *p_ind = NULL;
+    void   *data  = NULL;
+    OCIInd *p_ind = NULL;
 
     CALL_ENTER(OCI_Elem *, NULL)
     CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
@@ -155,8 +156,8 @@ OCI_Elem * IteratorGetPrev
     OCI_Iter *iter
 )
 {
-    void     *data  = NULL;
-    OCIInd   *p_ind = NULL;
+    void   *data  = NULL;
+    OCIInd *p_ind = NULL;
 
     CALL_ENTER(OCI_Elem *, NULL)
     CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)

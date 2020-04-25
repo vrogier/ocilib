@@ -56,7 +56,8 @@ int DefineGetIndex
 )
 {
     OCI_HashEntry *he = NULL;
-    int index         = -1;
+
+    int index = -1;
 
     if (!rs->map)
     {
@@ -168,7 +169,6 @@ boolean DefineIsDataNotNull
     return res;
 }
 
-
 /* --------------------------------------------------------------------------------------------- *
  * DefineGetNumber
  * --------------------------------------------------------------------------------------------- */
@@ -277,7 +277,8 @@ boolean DefineAlloc
         }
         else
         {
-            STATUS = MemoryAllocDescriptorArray((dvoid  *)def->rs->stmt->con->env, (dvoid **)def->buf.data, (ub4)def->col.handletype, (ub4)def->buf.count);
+            STATUS = MemoryAllocDescriptorArray((dvoid  *)def->rs->stmt->con->env, (dvoid **)def->buf.data, (ub4)def->col.handletype,
+                                                (ub4)def->buf.count);
 
             if (STATUS && (OCI_CDT_LOB == def->col.datatype))
             {
@@ -324,18 +325,18 @@ boolean DefineDef
     EXEC
     (
         OCIDefineByPos(
-                        def->rs->stmt->stmt,
-                        (OCIDefine **) &def->buf.handle,
-                        def->rs->stmt->con->err,
-                        position,
-                        (void *) def->buf.data,
-                        (sb4   ) def->col.bufsize,
-                        (ub2   ) def->col.libcode,
-                        (void *) def->buf.inds,
-                        (ub2  *) def->buf.lens,
-                        (ub2  *) NULL,
-                        (ub4   ) mode
-                      )
+            def->rs->stmt->stmt,
+            (OCIDefine **) &def->buf.handle,
+            def->rs->stmt->con->err,
+            position,
+            (void *) def->buf.data,
+            (sb4   ) def->col.bufsize,
+            (ub2   ) def->col.libcode,
+            (void *) def->buf.inds,
+            (ub2  *) def->buf.lens,
+            (ub2  *) NULL,
+            (ub4   ) mode
+            )
     )
 
     if (SQLT_NTY == def->col.sqlcode || SQLT_REF == def->col.sqlcode)
@@ -343,14 +344,14 @@ boolean DefineDef
         EXEC
         (
             OCIDefineObject(
-                                (OCIDefine *)def->buf.handle,
-                                def->rs->stmt->con->err,
-                                def->col.typinf->tdo,
-                                (void **) def->buf.data,
-                                (ub4   *) NULL,
-                                (void **) def->buf.obj_inds,
-                                (ub4   *) NULL
-                            )
+                (OCIDefine *)def->buf.handle,
+                def->rs->stmt->con->err,
+                def->col.typinf->tdo,
+                (void **) def->buf.data,
+                (ub4   *) NULL,
+                (void **) def->buf.obj_inds,
+                (ub4   *) NULL
+                )
         )
     }
 

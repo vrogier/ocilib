@@ -36,8 +36,9 @@
 #define COMPUTE_LENTGH(type, ptr, size)     \
     const type *s = (const type *) (ptr);   \
     const type *e = (const type *) (ptr);   \
-    while (*e++) ;                          \
+    while (*e++);                           \
     (size) = (int) (e - s - (size_t) 1);    \
+
 
 /* --------------------------------------------------------------------------------------------- *
  * StringLength
@@ -45,8 +46,8 @@
 
 size_t StringLength
 (
-    const void  *ptr,
-    size_t size_elem
+    const void *ptr,
+    size_t      size_elem
 )
 {
     int size = 0;
@@ -99,7 +100,7 @@ unsigned int StringBinaryToString
         {
             buffer[i * 2 + 0] = hex_str[binary[i] >> 4  ];
             buffer[i * 2 + 1] = hex_str[binary[i] & 0x0F];
-        }  
+        }
 
         buffer[len] = 0;
     }
@@ -113,9 +114,9 @@ unsigned int StringBinaryToString
 
 boolean StringRequestBuffer
 (
-    otext         **buffer,
-    unsigned int   *buffer_size,
-    unsigned int    request_size
+    otext       **buffer,
+    unsigned int *buffer_size,
+    unsigned int  request_size
 )
 {
     boolean res = FALSE;
@@ -131,7 +132,7 @@ boolean StringRequestBuffer
 
     if (!*buffer)
     {
-       *buffer = (otext *) MemoryAlloc(OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
+        *buffer = (otext *) MemoryAlloc(OCI_IPC_STRING, (size_t) request_size, (size_t) 1, TRUE);
     }
     else if (*buffer_size < request_size)
     {
@@ -141,6 +142,7 @@ boolean StringRequestBuffer
     if (*buffer)
     {
         *buffer_size = request_size;
+
         res = TRUE;
     }
 
@@ -178,7 +180,7 @@ void StringTranslate
             /* 2 => 4 bytes */
 
             unsigned short *str1 = (unsigned short *) src;
-            unsigned int *str2   = (unsigned int   *) dst;
+            unsigned int   *str2 = (unsigned int   *) dst;
 
             if (*str1 == 0)
             {
@@ -195,7 +197,7 @@ void StringTranslate
         {
             /* 1 => 2 bytes */
 
-            unsigned char *str1  = (unsigned char  *) src;
+            unsigned char  *str1 = (unsigned char  *) src;
             unsigned short *str2 = (unsigned short *) dst;
 
             if (*str1 == 0)
@@ -213,7 +215,7 @@ void StringTranslate
             /* 1 => 4 bytes */
 
             unsigned char *str1 = (unsigned char *) src;
-            unsigned int *str2  = (unsigned int  *) dst;
+            unsigned int  *str2 = (unsigned int  *) dst;
 
             if (*str1 == 0)
             {
@@ -222,7 +224,7 @@ void StringTranslate
 
             while (char_count--)
             {
-               str2[char_count] = (unsigned int) str1[char_count];
+                str2[char_count] = (unsigned int) str1[char_count];
             }
         }
     }
@@ -234,9 +236,10 @@ void StringTranslate
         {
             /* 4 => 2 bytes */
 
-            unsigned int *str1   = (unsigned int   *) src;
+            unsigned int   *str1 = (unsigned int   *) src;
             unsigned short *str2 = (unsigned short *) dst;
-            int i                = 0;
+
+            int i = 0;
 
             if (*str1 == 0)
             {
@@ -246,7 +249,7 @@ void StringTranslate
             while (i < char_count)
             {
                 str2[i] = (unsigned short) str1[i];
-                 i++;
+                i++;
             }
         }
         else if ((size_char_in == sizeof(short)) && (size_char_out == sizeof(char)))
@@ -254,8 +257,9 @@ void StringTranslate
             /* 2 => 1 bytes */
 
             unsigned short *str1 = (unsigned short *) src;
-            unsigned char *str2  = (unsigned char  *) dst;
-            int i                = 0;
+            unsigned char  *str2 = (unsigned char  *) dst;
+
+            int i= 0;
 
             if (*str1 == 0)
             {
@@ -272,9 +276,10 @@ void StringTranslate
         {
             /* 4 => 1 bytes */
 
-            unsigned int *str1  = (unsigned int  *) src;
+            unsigned int  *str1 = (unsigned int  *) src;
             unsigned char *str2 = (unsigned char *) dst;
-            int i               = 0;
+
+            int i = 0;
 
             if (*str1 == 0)
             {
@@ -302,12 +307,12 @@ void StringTranslate
 
 dbtext * StringGetDBString
 (
-    const otext  *src,
-    int          *size
+    const otext *src,
+    int         *size
 )
 {
-    dbtext  *dst = NULL;
-    int      len = 0;
+    dbtext *dst = NULL;
+    int     len = 0;
 
     if (!src)
     {
@@ -330,7 +335,7 @@ dbtext * StringGetDBString
 
         if (dst)
         {
-            StringUTF32ToUTF16( src, dst, len );   
+            StringUTF32ToUTF16( src, dst, len );
         }
     }
     else
@@ -364,14 +369,14 @@ void StringReleaseDBString
 
 int StringCopyDBStringToNativeString
 (
-    const dbtext  *src,
-    otext         *dst,
-    int            len
+    const dbtext *src,
+    otext        *dst,
+    int           len
 )
 {
     if (Env.use_wide_char_conv)
     {
-        StringUTF16ToUTF32((void *) src, (void *) dst, len);   
+        StringUTF16ToUTF32((void *) src, (void *) dst, len);
     }
 
     return len;
@@ -383,8 +388,8 @@ int StringCopyDBStringToNativeString
 
 otext* StringDuplicateFromDBString
 (
-    const dbtext  *src,
-    int            len
+    const dbtext *src,
+    int           len
 )
 {
     otext *dst = (otext *) MemoryAlloc(OCI_IPC_STRING, sizeof(otext), len + 1, FALSE);
@@ -393,11 +398,11 @@ otext* StringDuplicateFromDBString
     {
         if (Env.use_wide_char_conv)
         {
-            StringUTF16ToUTF32((void *) src, (void *) dst, len);   
+            StringUTF16ToUTF32((void *) src, (void *) dst, len);
         }
         else
         {
-            StringRawCopy((void *) src, (void *) dst, len);       
+            StringRawCopy((void *) src, (void *) dst, len);
         }
     }
 
@@ -410,10 +415,10 @@ otext* StringDuplicateFromDBString
 
 otext * StringFromStringPtr
 (
-    OCIEnv           *env,
-    OCIString        *str,
-    otext          **buffer,
-    unsigned int     *buffer_size
+    OCIEnv       *env,
+    OCIString    *str,
+    otext       **buffer,
+    unsigned int *buffer_size
 )
 {
     dbtext *tmp = NULL;
@@ -465,7 +470,7 @@ boolean StringToStringPtr
     const otext *value
 )
 {
-    dbtext *dbstr = NULL;
+    dbtext *dbstr  = NULL;
     int     dbsize = -1;
 
     DECLARE_CTX(TRUE)
@@ -474,7 +479,7 @@ boolean StringToStringPtr
 
     CALL_CONTEXT_FROM_ERR(err)
 
-    dbstr  = StringGetDBString(value, &dbsize);
+    dbstr = StringGetDBString(value, &dbsize);
 
     EXEC(OCIStringAssignText(env, err, (oratext *) dbstr, (ub4) dbsize, str))
 
@@ -489,13 +494,13 @@ boolean StringToStringPtr
 
 boolean StringFreeStringPtr
 (
-    OCIEnv      *env,
-    OCIString  **str,
-    OCIError    *err
+    OCIEnv     *env,
+    OCIString **str,
+    OCIError   *err
 )
 {
-    DECLARE_CTX(TRUE)    
-    CHECK(NULL == str, FALSE);    
+    DECLARE_CTX(TRUE)
+    CHECK(NULL == str, FALSE);
     CALL_CONTEXT_FROM_ERR(err)
 
     EXEC(OCIStringResize(env, err, (ub4)0, str))
@@ -522,7 +527,7 @@ boolean StringGetAttribute
     int     len    = 0;
 
     DECLARE_CTX(TRUE)
-        
+
     CHECK(NULL == str,  FALSE)
     CHECK(NULL == size, FALSE)
 
@@ -534,11 +539,11 @@ boolean StringGetAttribute
     {
         boolean is_ansi = FALSE;
 
-        /*  Oracle BUG using OCI in Unicode mode (once again...) 
+        /*  Oracle BUG using OCI in Unicode mode (once again...)
             Some attributes are returned as ANSI buffer even when OCI is initialized in UTF16 mode
-            Some we check if the first character slot has any zero bytes set 
+            Some we check if the first character slot has any zero bytes set
             to detect this defect ! */
-    
+
         if ((OCI_CHAR_WIDE == Env.charset) && dbsize > 1)
         {
             char *ptr = (char*) dbstr;
@@ -547,11 +552,12 @@ boolean StringGetAttribute
             {
                 /* ANSI buffer returned instead of an UTF16 one ! */
                 is_ansi = TRUE;
-                len = dbsize;
+                len     = dbsize;
             }
         }
 
-        // if the input buffer was not ANSI while using an UTF16 environment, compute string length from returned buffer size
+        /* if the input buffer was not ANSI while using an UTF16 environment, compute string length
+         * from returned buffer size */
         if (len == 0)
         {
             len = dbcharcount(dbsize);
@@ -582,7 +588,7 @@ boolean StringSetAttribute
     const otext    *value
 )
 {
-    dbtext *dbstr = NULL;
+    dbtext *dbstr  = NULL;
     int     dbsize = -1;
 
     DECLARE_CTX(TRUE)
@@ -618,13 +624,13 @@ boolean StringSetAttribute
 
 unsigned int StringGetFromType
 (
-    OCI_Connection   *con,
-    OCI_Column       *col,
-    void             *data,
-    unsigned int      data_size,
-    otext            *buffer,
-    unsigned int      buffer_size,
-    boolean           quote
+    OCI_Connection *con,
+    OCI_Column     *col,
+    void           *data,
+    unsigned int    data_size,
+    otext          *buffer,
+    unsigned int    buffer_size,
+    boolean         quote
 )
 {
     boolean      res   = TRUE;
@@ -644,7 +650,7 @@ unsigned int StringGetFromType
             buffer_size--;
         }
     }
-  
+
     switch (col->datatype)
     {
         case OCI_CDT_TEXT:
@@ -658,7 +664,8 @@ unsigned int StringGetFromType
             {
                 if (data)
                 {
-                    otext* str_value = (*(boolean*)data) ? OCI_STRING_TRUE : OCI_STRING_FALSE;
+                    otext * str_value = (*(boolean*)data) ? OCI_STRING_TRUE : OCI_STRING_FALSE;
+
                     const unsigned int str_length = (*(boolean*)data) ? OCI_STRING_TRUE_SIZE : OCI_STRING_FALSE_SIZE;
 
                     len += StringAddToBuffer(buffer, len, str_value, str_length, quote);
@@ -672,7 +679,7 @@ unsigned int StringGetFromType
             {
                 len = OCI_STRING_FALSE_SIZE;
             }
-           
+
             break;
         }
         case OCI_CDT_NUMERIC:
@@ -682,7 +689,7 @@ unsigned int StringGetFromType
             if (ptr)
             {
                 res = NumberToStringInternal(con, data, col->subtype, ptr, (int) buffer_size, NULL);
-            }    
+            }
             else
             {
                 len = OCI_SIZE_TMP_CVT;
@@ -694,7 +701,7 @@ unsigned int StringGetFromType
             check = TRUE;
 
             if (ptr)
-            {           
+            {
                 OCI_Date    *date = (OCI_Date*) data;
                 const otext *fmt  = EnvironmentGetFormat(con, OCI_FMT_DATE);
 
@@ -713,9 +720,12 @@ unsigned int StringGetFromType
             if (ptr)
             {
                 OCI_Timestamp *tmsp = (OCI_Timestamp *) data;
-                const otext   *fmt = EnvironmentGetFormat(con, tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
 
-                 res = tmsp ? TimestampToString(tmsp, fmt, (int) buffer_size, ptr, 0) : FALSE;
+                int fmt_type = tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP;
+
+                const otext *fmt = EnvironmentGetFormat(con, fmt_type);
+
+                res = tmsp ? TimestampToString(tmsp, fmt, (int) buffer_size, ptr, 0) : FALSE;
             }
             else
             {
@@ -751,7 +761,7 @@ unsigned int StringGetFromType
                 }
                 else
                 {
-                    len = StringBinaryToString((unsigned char *) data, buffer_size, ptr); 
+                    len = StringBinaryToString((unsigned char *) data, buffer_size, ptr);
                 }
             }
             else
@@ -781,9 +791,10 @@ unsigned int StringGetFromType
 
                     while (res)
                     {
-	                    const unsigned int bytes_requested = sizeof(lob_buf) - sizeof(otext);
+                        const unsigned int bytes_requested = sizeof(lob_buf) - sizeof(otext);
+
                         unsigned int bytes_count = bytes_requested;
-                        unsigned int char_count = 0;
+                        unsigned int char_count  = 0;
 
                         res = LobRead2(lob, lob_buf, &char_count, &bytes_count);
 
@@ -801,7 +812,7 @@ unsigned int StringGetFromType
 
                         if (bytes_count < bytes_requested)
                         {
-                            // lob eof reached
+                            /* lob eof reached */
                             break;
                         }
                     }
@@ -866,19 +877,23 @@ unsigned int StringGetFromType
         case OCI_CDT_OBJECT:
         {
             OCI_Object *obj = (OCI_Object *) data;
+
             unsigned int real_size = buffer_size;
+
             quote = FALSE;
-            res = obj ? ObjectToString(obj, &real_size, ptr) : FALSE;
-            len = real_size;
+            res   = obj ? ObjectToString(obj, &real_size, ptr) : FALSE;
+            len   = real_size;
             break;
         }
         case OCI_CDT_COLLECTION:
         {
             OCI_Coll *coll = (OCI_Coll *) data;
+
             unsigned int real_size = buffer_size;
+
             quote = FALSE;
-            res = coll ? CollectionToString(coll, &real_size, ptr) : FALSE;
-            len = real_size;
+            res   = coll ? CollectionToString(coll, &real_size, ptr) : FALSE;
+            len   = real_size;
             break;
         }
         case OCI_CDT_CURSOR:
@@ -897,7 +912,7 @@ unsigned int StringGetFromType
         }
         default:
         {
-            res = FALSE;
+            res   = FALSE;
             quote = FALSE;
         }
     }
@@ -912,7 +927,7 @@ unsigned int StringGetFromType
 
         if (quote && data)
         {
-            len += StringAddToBuffer(buffer, len, OTEXT("'"), 1, FALSE); 
+            len += StringAddToBuffer(buffer, len, OTEXT("'"), 1, FALSE);
         }
     }
     else
@@ -941,15 +956,16 @@ unsigned int StringGetFromType
 
 unsigned int StringAddToBuffer
 (
-    otext           *buffer,
-    unsigned int     offset,
-    const otext     *str,
-    unsigned int     length,
-    boolean          check_quote
+    otext       *buffer,
+    unsigned int offset,
+    const otext *str,
+    unsigned int length,
+    boolean      check_quote
 )
 {
-	const unsigned int  len_in = length;
-    unsigned int len_out  = 0;
+    const unsigned int len_in = length;
+
+    unsigned int len_out = 0;
 
     if (!str)
     {
@@ -961,7 +977,9 @@ unsigned int StringAddToBuffer
         if (buffer)
         {
             const otext *src = str;
-            otext       *dst = buffer + offset;
+
+            otext *dst = buffer + offset;
+
             unsigned int src_len = len_in;
 
             while (src && *src && src_len)
@@ -994,7 +1012,7 @@ unsigned int StringAddToBuffer
                 {
                     len_out++;
                 }
-            }       
+            }
         }
     }
     else
@@ -1017,7 +1035,7 @@ unsigned int StringAddToBuffer
 unsigned int StringGetTypeName
 (
     const otext *source,
-    otext *dest,
+    otext       *dest,
     unsigned int length
 )
 {
@@ -1071,20 +1089,20 @@ unsigned int StringGetTypeName
 
 unsigned int StringGetFullTypeName
 (
-    const otext  *schema,
-    const otext  *package,
-    const otext  *type,
-    const otext  *link,
-    otext        *name,
-    unsigned int  length
-    )
+    const otext *schema,
+    const otext *package,
+    const otext *type,
+    const otext *link,
+    otext       *name,
+    unsigned int length
+)
 {
     unsigned int offset = 0;
 
     if (IS_STRING_VALID(schema))
     {
         offset += StringGetTypeName(schema, name + offset, length - offset);
-        
+
         if (offset)
         {
             ostrncpy(name + offset, OTEXT("."), length - offset);
@@ -1250,4 +1268,3 @@ int ociwcscasecmp
 
     return (towlower((wint_t) *str1) - towlower((wint_t) *str2));
 }
-

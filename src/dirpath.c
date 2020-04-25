@@ -34,17 +34,17 @@ static const unsigned int ConversionModeValues[] = { OCI_DCM_DEFAULT, OCI_DCM_FO
 boolean DirPathSetArray
 (
     OCI_DirPath *dp,
-    ub4 row_from
+    ub4          row_from
 )
 {
-    ub1     *data    = NULL;
-    ub4      size    = 0;
-    ub1      flag    = 0;
-    ub2      col     = 0;
-    ub4      row     = 0;
+    ub1 *data = NULL;
+    ub4  size = 0;
+    ub1  flag = 0;
+    ub2  col  = 0;
+    ub4  row  = 0;
 
     DECLARE_CTX(TRUE)
-  
+
     CHECK(NULL == dp, FALSE)
 
     CALL_CONTEXT_FROM_CON(dp->con)
@@ -77,7 +77,7 @@ boolean DirPathSetArray
             /* set entry value */
 
             EXEC(OCIDirPathColArrayEntrySet(dp->arr, dp->con->err, (ub4) dp->nb_entries,
-                                                (ub2) (col), (ub1*) data, (ub4) size, flag))
+                                            (ub2) (col), (ub1*) data, (ub4) size, flag))
         }
 
         /* increment number of item set */
@@ -98,7 +98,7 @@ boolean DirPathSetArray
 unsigned int DirPathArrayToStream
 (
     OCI_DirPath *dp,
-    ub4 row_from
+    ub4          row_from
 )
 {
     unsigned int res = OCI_DPR_COMPLETE;
@@ -188,11 +188,11 @@ unsigned int DirPathArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
 unsigned int DirPathLoadStream(OCI_DirPath *dp)
-{       
-    unsigned int res = OCI_DPR_COMPLETE;
-    sword ret        = OCI_SUCCESS;
-    ub4 nb_loaded    = 0;
-    ub4 size         = sizeof(nb_loaded);
+{
+    unsigned int res       = OCI_DPR_COMPLETE;
+    sword        ret       = OCI_SUCCESS;
+    ub4          nb_loaded = 0;
+    ub4          size      = sizeof(nb_loaded);
 
     DECLARE_CTX(TRUE)
 
@@ -206,8 +206,8 @@ unsigned int DirPathLoadStream(OCI_DirPath *dp)
     {
         case OCI_SUCCESS:
         {
-            res         = OCI_DPR_COMPLETE;
-            dp->status  = OCI_DPS_PREPARED;
+            res        = OCI_DPR_COMPLETE;
+            dp->status = OCI_DPS_PREPARED;
             break;
         }
         case OCI_ERROR:
@@ -277,15 +277,15 @@ OCI_DirPath * DirPathCreate
         dbtext *dbstr  = NULL;
         int     dbsize = -1;
 
-        dp->con        = typinf->con;
-        dp->status     = OCI_DPS_NOT_PREPARED;
-        dp->cvt_mode   = OCI_DCM_DEFAULT;
-        dp->res_conv   = OCI_DPR_EMPTY;
-        dp->res_load   = OCI_DPR_EMPTY;
-        dp->typinf     = typinf;
-        dp->nb_rows    = (ub2)nb_rows;
-        dp->nb_cols    = (ub2)nb_cols;
-        dp->nb_cur     = (ub2)dp->nb_rows;
+        dp->con      = typinf->con;
+        dp->status   = OCI_DPS_NOT_PREPARED;
+        dp->cvt_mode = OCI_DCM_DEFAULT;
+        dp->res_conv = OCI_DPR_EMPTY;
+        dp->res_load = OCI_DPR_EMPTY;
+        dp->typinf   = typinf;
+        dp->nb_rows  = (ub2)nb_rows;
+        dp->nb_cols  = (ub2)nb_cols;
+        dp->nb_cur   = (ub2)dp->nb_rows;
 
         /* allocates direct context handle */
 
@@ -655,7 +655,6 @@ boolean DirPathPrepare
 
     ALLOC_DATA(OCI_IPC_BUFF_ARRAY, dp->err_rows, dp->nb_cur)
 
-
     /* allocate array of errs cols */
 
     ALLOC_DATA(OCI_IPC_BUFF_ARRAY, dp->err_cols, dp->nb_cur)
@@ -709,12 +708,12 @@ boolean DirPathSetEntry
     CALL_CHECK_BOUND(dp->con, row, 1, dp->nb_cur)
     CALL_CONTEXT_FROM_CON(dp->con)
 
-    dpcol = &dp->cols[index-1];
+    dpcol  = &dp->cols[index-1];
     STATUS = (NULL != dpcol);
 
     if (STATUS)
     {
-       /* check size */
+        /* check size */
 
         if (size > dpcol->maxsize)
         {
@@ -769,8 +768,8 @@ boolean DirPathSetEntry
             }
             else if (OCI_DDT_NUMBER == dpcol->type)
             {
-               /* if a format was provided for a numeric column, we convert the input
-               buffer to a OCINumber */
+                /* if a format was provided for a numeric column, we convert the input
+                buffer to a OCINumber */
 
                 OCINumber *num = (OCINumber *) data;
 
@@ -811,11 +810,11 @@ boolean DirPathReset
 
     /* reset conversion and loading variables */
 
-    dp->nb_processed    = 0;
-    dp->nb_converted    = 0;
-    dp->nb_err          = 0;
-    dp->idx_err_row     = 0;
-    dp->idx_err_col     = 0;
+    dp->nb_processed = 0;
+    dp->nb_converted = 0;
+    dp->nb_err       = 0;
+    dp->idx_err_row  = 0;
+    dp->idx_err_col  = 0;
 
     /* reset array */
 
@@ -896,9 +895,9 @@ unsigned int DirPathConvert
 
                 if (STATUS)
                 {
-                     /* perform conversion again */
+                    /* perform conversion again */
 
-                     dp->res_conv = DirPathArrayToStream(dp, row_from);
+                    dp->res_conv = DirPathArrayToStream(dp, row_from);
                 }
             }
         }
@@ -930,12 +929,12 @@ unsigned int DirPathLoad
 
     dp->nb_processed = 0;
 
-   /* reset errors variables as OCI_DirPathLoad() is not re-entrant */
+    /* reset errors variables as OCI_DirPathLoad() is not re-entrant */
 
-    dp->nb_err       = 0;
-    dp->idx_err_col  = 0;
-    dp->idx_err_row  = 0;
-    dp->res_load     = OCI_DPR_COMPLETE;
+    dp->nb_err      = 0;
+    dp->idx_err_col = 0;
+    dp->idx_err_row = 0;
+    dp->res_load    = OCI_DPR_COMPLETE;
 
     /* load the stream */
 
@@ -1092,7 +1091,7 @@ unsigned int DirPathGetMaxRows
     OCI_DirPath *dp
 )
 {
-   GET_PROP(unsigned int, 0, OCI_IPC_DIRPATH, dp, nb_rows, dp->con, NULL, dp->con->err)
+    GET_PROP(unsigned int, 0, OCI_IPC_DIRPATH, dp, nb_rows, dp->con, NULL, dp->con->err)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1105,7 +1104,7 @@ boolean DirPathSetDateFormat
     const otext *format
 )
 {
-    dbtext  *dbstr = NULL;
+    dbtext *dbstr  = NULL;
     int     dbsize = -1;
 
     CALL_ENTER(boolean, FALSE)
@@ -1183,8 +1182,8 @@ boolean DirPathSetCacheSize
     unsigned int size
 )
 {
-    ub4 cache_size  = size;
-    boolean enabled = FALSE;
+    ub4     cache_size = size;
+    boolean enabled    = FALSE;
 
     CALL_ENTER(boolean, FALSE)
     CALL_CHECK_PTR(OCI_IPC_DIRPATH, dp)

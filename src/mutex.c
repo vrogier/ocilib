@@ -23,7 +23,7 @@
 #include "macros.h"
 #include "memory.h"
 
- /* --------------------------------------------------------------------------------------------- *
+/* --------------------------------------------------------------------------------------------- *
   * MutexCreateInternal
   * --------------------------------------------------------------------------------------------- */
 
@@ -34,7 +34,7 @@ OCI_Mutex * MutexCreateInternal
 {
     OCI_Mutex *mutex = NULL;
 
-    DECLARE_CTX(TRUE)        
+    DECLARE_CTX(TRUE)
 
     /* allocate mutex structure */
 
@@ -110,7 +110,7 @@ boolean MutexFree
     FREE(mutex)
 
     RETVAL = STATUS;
-    
+
     CALL_EXIT()
 }
 
@@ -148,7 +148,7 @@ boolean MutexRelease
     CALL_CONTEXT_FROM_ERR(mutex->err)
 
     EXEC(OCIThreadMutexRelease(Env.env, mutex->err, mutex->handle))
- 
+
     RETVAL = STATUS;
 
     CALL_EXIT()

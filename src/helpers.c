@@ -44,75 +44,75 @@ unsigned int ExternalSubTypeToSQLType
 
     switch (type)
     {
-    case OCI_CDT_TIMESTAMP:
-    {
-        switch (subtype)
+        case OCI_CDT_TIMESTAMP:
         {
-        case OCI_TIMESTAMP:
-            res = SQLT_TIMESTAMP;
-            break;
-        case OCI_TIMESTAMP_TZ:
-            res = SQLT_TIMESTAMP_TZ;
-            break;
-        case OCI_TIMESTAMP_LTZ:
-            res = SQLT_TIMESTAMP_LTZ;
+            switch (subtype)
+            {
+                case OCI_TIMESTAMP:
+                    res = SQLT_TIMESTAMP;
+                    break;
+                case OCI_TIMESTAMP_TZ:
+                    res = SQLT_TIMESTAMP_TZ;
+                    break;
+                case OCI_TIMESTAMP_LTZ:
+                    res = SQLT_TIMESTAMP_LTZ;
+                    break;
+            }
             break;
         }
-        break;
-    }
-    case OCI_CDT_INTERVAL:
-    {
-        switch (subtype)
+        case OCI_CDT_INTERVAL:
         {
-        case OCI_INTERVAL_YM:
-            res = SQLT_INTERVAL_YM;
-            break;
-        case OCI_INTERVAL_DS:
-            res = SQLT_INTERVAL_DS;
+            switch (subtype)
+            {
+                case OCI_INTERVAL_YM:
+                    res = SQLT_INTERVAL_YM;
+                    break;
+                case OCI_INTERVAL_DS:
+                    res = SQLT_INTERVAL_DS;
+                    break;
+            }
             break;
         }
-        break;
-    }
-    case OCI_CDT_LOB:
-    {
-        switch (subtype)
+        case OCI_CDT_LOB:
         {
-        case OCI_CLOB:
-        case OCI_NCLOB:
-            res = SQLT_CLOB;
-            break;
-        case OCI_BLOB:
-            res = SQLT_BLOB;
+            switch (subtype)
+            {
+                case OCI_CLOB:
+                case OCI_NCLOB:
+                    res = SQLT_CLOB;
+                    break;
+                case OCI_BLOB:
+                    res = SQLT_BLOB;
+                    break;
+            }
             break;
         }
-        break;
-    }
-    case OCI_CDT_FILE:
-    {
-        switch (subtype)
+        case OCI_CDT_FILE:
         {
-        case OCI_CFILE:
-            res = SQLT_CFILE;
-            break;
-        case OCI_BFILE:
-            res = SQLT_BFILE;
+            switch (subtype)
+            {
+                case OCI_CFILE:
+                    res = SQLT_CFILE;
+                    break;
+                case OCI_BFILE:
+                    res = SQLT_BFILE;
+                    break;
+            }
             break;
         }
-        break;
-    }
-    case OCI_CDT_LONG:
-    {
-        switch (subtype)
+        case OCI_CDT_LONG:
         {
-        case OCI_CLONG:
-            res = SQLT_LNG;
-            break;
-        case OCI_BLONG:
-            res = SQLT_LBI;
+            switch (subtype)
+            {
+                case OCI_CLONG:
+                    res = SQLT_LNG;
+                    break;
+                case OCI_BLONG:
+                    res = SQLT_LBI;
+                    break;
+            }
             break;
         }
-        break;
-    }
     }
 
     return res;
@@ -132,35 +132,35 @@ unsigned int ExternalSubTypeToHandleType
 
     switch (type)
     {
-    case OCI_CDT_TIMESTAMP:
-    {
-        switch (subtype)
+        case OCI_CDT_TIMESTAMP:
         {
-        case OCI_TIMESTAMP:
-            res = OCI_DTYPE_TIMESTAMP;
-            break;
-        case OCI_TIMESTAMP_TZ:
-            res = OCI_DTYPE_TIMESTAMP_TZ;
-            break;
-        case OCI_TIMESTAMP_LTZ:
-            res = OCI_DTYPE_TIMESTAMP_LTZ;
+            switch (subtype)
+            {
+                case OCI_TIMESTAMP:
+                    res = OCI_DTYPE_TIMESTAMP;
+                    break;
+                case OCI_TIMESTAMP_TZ:
+                    res = OCI_DTYPE_TIMESTAMP_TZ;
+                    break;
+                case OCI_TIMESTAMP_LTZ:
+                    res = OCI_DTYPE_TIMESTAMP_LTZ;
+                    break;
+            }
             break;
         }
-        break;
-    }
-    case OCI_CDT_INTERVAL:
-    {
-        switch (subtype)
+        case OCI_CDT_INTERVAL:
         {
-        case OCI_INTERVAL_YM:
-            res = OCI_DTYPE_INTERVAL_YM;
-            break;
-        case OCI_INTERVAL_DS:
-            res = OCI_DTYPE_INTERVAL_DS;
+            switch (subtype)
+            {
+                case OCI_INTERVAL_YM:
+                    res = OCI_DTYPE_INTERVAL_YM;
+                    break;
+                case OCI_INTERVAL_DS:
+                    res = OCI_DTYPE_INTERVAL_DS;
+                    break;
+            }
             break;
         }
-        break;
-    }
     }
 
     return res;
@@ -176,51 +176,51 @@ boolean FreeObjectFromType(void* obj, unsigned int type)
 
     switch (type)
     {
-    case OCI_CDT_NUMERIC:
-    {
-        res = NumberFree((OCI_Number*)obj);
-        break;
-    }
-    case OCI_CDT_DATETIME:
-    {
-        res = DateFree((OCI_Date*)obj);
-        break;
-    }
-    case OCI_CDT_LOB:
-    {
-        res = LobFree((OCI_Lob*)obj);
-        break;
-    }
-    case OCI_CDT_FILE:
-    {
-        res = FileFree((OCI_File*)obj);
-        break;
-    }
-    case OCI_CDT_OBJECT:
-    {
-        res = ObjectFree((OCI_Object*)obj);
-        break;
-    }
-    case OCI_CDT_COLLECTION:
-    {
-        res = CollectionFree((OCI_Coll*)obj);
-        break;
-    }
-    case OCI_CDT_TIMESTAMP:
-    {
-        res = TimestampFree((OCI_Timestamp*)obj);
-        break;
-    }
-    case OCI_CDT_INTERVAL:
-    {
-        res = IntervalFree((OCI_Interval*)obj);
-        break;
-    }
-    case OCI_CDT_REF:
-    {
-        res = ReferenceFree((OCI_Ref*)obj);
-        break;
-    }
+        case OCI_CDT_NUMERIC:
+        {
+            res = NumberFree((OCI_Number*)obj);
+            break;
+        }
+        case OCI_CDT_DATETIME:
+        {
+            res = DateFree((OCI_Date*)obj);
+            break;
+        }
+        case OCI_CDT_LOB:
+        {
+            res = LobFree((OCI_Lob*)obj);
+            break;
+        }
+        case OCI_CDT_FILE:
+        {
+            res = FileFree((OCI_File*)obj);
+            break;
+        }
+        case OCI_CDT_OBJECT:
+        {
+            res = ObjectFree((OCI_Object*)obj);
+            break;
+        }
+        case OCI_CDT_COLLECTION:
+        {
+            res = CollectionFree((OCI_Coll*)obj);
+            break;
+        }
+        case OCI_CDT_TIMESTAMP:
+        {
+            res = TimestampFree((OCI_Timestamp*)obj);
+            break;
+        }
+        case OCI_CDT_INTERVAL:
+        {
+            res = IntervalFree((OCI_Interval*)obj);
+            break;
+        }
+        case OCI_CDT_REF:
+        {
+            res = ReferenceFree((OCI_Ref*)obj);
+            break;
+        }
     }
 
     return res;
