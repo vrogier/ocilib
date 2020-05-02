@@ -39,15 +39,14 @@ void ErrorReset
 
 void ErrorSet
 (
-    OCI_Error *err,
+    OCI_Error   *err,
     unsigned int type,
-    int code,
-    void *source_ptr,
+    int          code,
+    void        *source_ptr,
     unsigned int source_type,
-    char *location,
-    otext *message,
-    unsigned int row
-);
+    const char  *location,
+    otext       *message,
+    unsigned int row);
 
 OCI_Error * ErrorGet
 (

@@ -71,12 +71,12 @@ void ErrorReset
 {
     if (err)
     {
-        err->active         = FALSE;
-        err->source_ptr     = NULL;
-        err->source_type    = OCI_UNKNOWN;
-        err->type           = OCI_UNKNOWN;
-        err->code           = 0;
-        err->row            = 0;
+        err->active      = FALSE;
+        err->source_ptr  = NULL;
+        err->source_type = OCI_UNKNOWN;
+        err->type        = OCI_UNKNOWN;
+        err->code        = 0;
+        err->row         = 0;
 
         if (NULL != err->message)
         {
@@ -96,21 +96,21 @@ void ErrorReset
 
 void ErrorSet
 (
-    OCI_Error *err,
+    OCI_Error   *err,
     unsigned int type,
-    int code,
-    void *source_ptr,
+    int          code,
+    void        *source_ptr,
     unsigned int source_type,
-    char *location,
-    otext *message,
+    const char  *location,
+    otext       *message,
     unsigned int row
 )
 {
-    err->type       = type;
-    err->code       = code;
-    err->source_ptr = source_ptr;
+    err->type        = type;
+    err->code        = code;
+    err->source_ptr  = source_ptr;
     err->source_type = source_type;
-    err->row        = row;
+    err->row         = row;
 
     size_t len = ostrlen(message);
     if (err->message_len < len)
@@ -128,7 +128,7 @@ void ErrorSet
     }
 
     StringAnsiToNative(location, err->location, (unsigned int) len);
-    err->location_len = (unsigned int) len;   
+    err->location_len = (unsigned int) len;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -168,7 +168,6 @@ OCI_Error * ErrorGet
     {
         ErrorReset(err);
     }
-
 
     return err;
 }
@@ -360,12 +359,12 @@ OCI_Statement * ErrorGetStatement
 
     switch (err->source_type)
     {
-    case OCI_IPC_STATEMENT:
-        return (OCI_Statement*) err->source_ptr;
-    case OCI_IPC_RESULTSET:
-        return ((OCI_Resultset*)err->source_ptr)->stmt;
-    case OCI_IPC_BIND:
-        return ((OCI_Bind*)err->source_ptr)->stmt;
+        case OCI_IPC_STATEMENT:
+            return (OCI_Statement*) err->source_ptr;
+        case OCI_IPC_RESULTSET:
+            return ((OCI_Resultset*)err->source_ptr)->stmt;
+        case OCI_IPC_BIND:
+            return ((OCI_Bind*)err->source_ptr)->stmt;
     }
 
     return NULL;
