@@ -124,16 +124,16 @@ typedef struct OCI_TraceInfo OCI_TraceInfo;
 
 struct OCI_Error
 {
-    boolean         active;         /* to avoid recursive exceptions */
-    void           *source_ptr;     /* pointer to source ptr */
-    unsigned int    source_type;    /* source type */
-    int             code;           /* Oracle OCI or OCILIB internal error code */
-    unsigned int    type;           /* OCILIB error type */
-    ub4             row;            /* Error row offset (array DML) */
-    otext          *location;       /* location (method) */
-    otext          *message;        /* error message */
-    unsigned int    location_len;   /* length of error message */
-    unsigned int    message_len;    /* length of error location */
+    boolean      active;            /* to avoid recursive exceptions */
+    void        *source_ptr;        /* pointer to source ptr */
+    unsigned int source_type;       /* source type */
+    int          code;              /* Oracle OCI or OCILIB internal error code */
+    unsigned int type;              /* OCILIB error type */
+    ub4          row;               /* Error row offset (array DML) */
+    otext       *location;          /* location (method) */
+    otext       *message;           /* error message */
+    unsigned int location_len;      /* length of error message */
+    unsigned int message_len;       /* length of error location */
 };
 
 /*
@@ -928,9 +928,9 @@ typedef struct OCI_SQLCmdInfo OCI_SQLCmdInfo;
 
 struct OCI_Context
 {
-    void* source_ptr;
     unsigned int source_type;
-    char* location;
+    void       * source_ptr;
+    const char * location;
 };
 
 typedef struct OCI_Context OCI_Context;
