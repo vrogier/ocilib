@@ -39,13 +39,20 @@ int FormatParseSql
     va_list       *pargs
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ int, 0,
+        /* context */ OCI_IPC_STATEMENT, stmt
+    )
+
     int          size  = 0;
     int          len   = 0;
     boolean      quote = FALSE;
     otext       *pb    = buf;
     const otext *pf    = format;
 
-    CHECK(NULL == format, 0);
+    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CHECK_PTR(OCI_IPC_STRING, format)
 
     for (; *pf; pf++)
     {
@@ -157,12 +164,9 @@ int FormatParseSql
                     if (tmsp)
                     {
                         otext str_ff[12];
-                        int   yy, mm, dd, hh, mi, ss, ff;
+                        int yy = 0, mm = 0, dd = 0, hh = 0, mi = 0, ss = 0, ff = 0;
 
-                        yy = mm = dd = mi = hh = ss = ff = 0;
-
-                        TimestampGetDateTime(tmsp, &yy, &mm, &dd,
-                                             &hh, &mi, &ss, &ff);
+                        CHECK(TimestampGetDateTime(tmsp, &yy, &mm, &dd,  &hh, &mi, &ss, &ff))
 
                         if (ff > 0)
                         {
@@ -203,7 +207,7 @@ int FormatParseSql
 
                 if (itv)
                 {
-                    IntervalToString(itv, 3, 3, (int) osizeof(temp)- 1, temp);
+                    CHECK(IntervalToString(itv, 3, 3, (int) osizeof(temp)- 1, temp))
 
                     len = (int) ostrlen(temp);
 
@@ -333,7 +337,7 @@ int FormatParseSql
 
                 temp[0] = 0;
 
-                NumberToString(va_arg(*pargs, OCI_Number*), NULL, 128, temp);
+                CHECK(NumberToString(va_arg(*pargs, OCI_Number*), NULL, 128, temp))
                 len = (int) ostrlen(temp);
 
                 if (buf && (len > 0))
@@ -353,7 +357,7 @@ int FormatParseSql
 
                 if (ref)
                 {
-                    ReferenceToString(ref, (unsigned int) osizeof(temp) - 1, temp);
+                    CHECK(ReferenceToString( ref, (unsigned int) osizeof(temp) - 1, temp))
 
                     len = (int) ostrlen(temp);
 
@@ -376,9 +380,9 @@ int FormatParseSql
             }
             default:
             {
-                ExceptionParsingToken(stmt->con, stmt, *pf);
+                THROW(ExceptionParsingToken, *pf)
 
-                return 0;
+                break;
             }
         }
 
@@ -395,5 +399,7 @@ int FormatParseSql
         *pb = 0;
     }
 
-    return size;
+    SET_RETVAL(size)
+
+    EXIT_FUNC()
 }

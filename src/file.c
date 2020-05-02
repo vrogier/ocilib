@@ -25,8 +25,18 @@
 #include "memory.h"
 #include "strings.h"
 
-static const unsigned int SeekModeValues[] = { OCI_SEEK_SET, OCI_SEEK_END, OCI_SEEK_CUR };
-static const unsigned int FileTypeValues[] = { OCI_CFILE, OCI_BFILE };
+static const unsigned int SeekModeValues[] =
+{
+    OCI_SEEK_SET,
+    OCI_SEEK_END,
+    OCI_SEEK_CUR
+};
+
+static const unsigned int FileTypeValues[] = 
+{
+    OCI_CFILE,
+    OCI_BFILE
+};
 
 /* --------------------------------------------------------------------------------------------- *
  * FileInit
@@ -40,53 +50,58 @@ OCI_File * FileInitialize
     ub4             type
 )
 {
-    DECLARE_CTX(TRUE)
-    CALL_CONTEXT_FROM_CON(con)
+    ENTER_FUNC
+    (
+        /* returns */ OCI_File*, file,
+        /* context */ OCI_IPC_FILE, file
+    )
 
-    ALLOC_DATA(OCI_IPC_FILE, file, 1);
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    if (STATUS)
+    ALLOC_DATA(OCI_IPC_FILE, file, 1)
+
+    file->type   = type;
+    file->con    = con;
+    file->handle = handle;
+    file->offset = 1;
+
+    /* reset file info */
+
+    if (NULL != file->dir)
     {
-        file->type   = type;
-        file->con    = con;
-        file->handle = handle;
-        file->offset = 1;
-
-        /* reset file info */
-
-        if (file->dir)
-        {
-            file->dir[0] = 0;
-        }
-
-        if (file->name)
-        {
-            file->name[0] = 0;
-        }
-
-        if (!file->handle)
-        {
-            /* allocate handle for non fetched file (local file object) */
-
-            file->hstate = OCI_OBJECT_ALLOCATED;
-
-            STATUS = MemoryAllocDescriptor((dvoid *)file->con->env, (dvoid **)(void *)&file->handle, (ub4)OCI_DTYPE_LOB);
-        }
-        else if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
-        {
-            file->hstate = OCI_OBJECT_FETCHED_CLEAN;
-        }
+        file->dir[0] = 0;
     }
 
-    /* check for failure */
-
-    if (!STATUS && file)
+    if (NULL != file->name)
     {
-        FileFree(file);
-        file = NULL;
+        file->name[0] = 0;
     }
 
-    return file;
+    if (NULL == file->handle)
+    {
+        /* allocate handle for non fetched file (local file object) */
+
+        file->hstate = OCI_OBJECT_ALLOCATED;
+
+        CHECK(MemoryAllocDescriptor((dvoid *)file->con->env,
+                                    (dvoid **)(void *)&file->handle,
+                                    (ub4)OCI_DTYPE_LOB))
+    }
+    else if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
+    {
+        file->hstate = OCI_OBJECT_FETCHED_CLEAN;
+    }
+
+    CLEANUP_AND_EXIT_FUNC
+    (  
+        if (FAILURE)
+        {
+            FileFree(file);
+            file = NULL;
+        }
+
+        SET_RETVAL(file)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -98,68 +113,68 @@ boolean FileGetInfo
     OCI_File *file
 )
 {
-    DECLARE_CTX(TRUE)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_FILE, file
+    )
 
-    CHECK(NULL == file, FALSE)
+    dbtext* dbstr1 = NULL;
+    dbtext* dbstr2 = NULL;
 
-    CALL_CONTEXT_FROM_CON(file->con)
+    int     dbsize1 = 0;
+    int     dbsize2 = 0;
+
+    ub2     usize1 = 0;
+    ub2     usize2 = 0;
+
+    CHECK_PTR(OCI_IPC_FILE, file)
 
     /* directory name */
 
     ALLOC_DATA(OCI_IPC_STRING, file->dir, OCI_SIZE_DIRECTORY + 1)
 
-    if (STATUS)
-    {
-        file->dir[0] = 0;
-    }
+    file->dir[0] = 0;
 
     /* file name */
 
     ALLOC_DATA(OCI_IPC_STRING, file->name, OCI_SIZE_FILENAME + 1)
 
-    if (STATUS)
-    {
-        file->name[0] = 0;
-    }
+    file->name[0] = 0;
 
     /* retrieve name */
 
-    if (STATUS)
-    {
-        dbtext *dbstr1  = NULL;
-        dbtext *dbstr2  = NULL;
-        int     dbsize1 = 0;
-        int     dbsize2 = 0;
-        ub2     usize1  = 0;
-        ub2     usize2  = 0;
+    dbsize1 = (int) OCI_SIZE_DIRECTORY  * (int) sizeof(otext);
+    dbstr1  = StringGetDBString(file->dir, &dbsize1);
 
-        dbsize1 = (int) OCI_SIZE_DIRECTORY  * (int) sizeof(otext);
-        dbstr1  = StringGetDBString(file->dir, &dbsize1);
+    dbsize2 = (int) OCI_SIZE_FILENAME  * (int) sizeof(otext);
+    dbstr2  = StringGetDBString(file->name, &dbsize1);
 
-        dbsize2 = (int) OCI_SIZE_FILENAME  * (int) sizeof(otext);
-        dbstr2  = StringGetDBString(file->name, &dbsize1);
+    usize1 = (ub2) dbsize1;
+    usize2 = (ub2) dbsize2;
 
-        usize1 = (ub2) dbsize1;
-        usize2 = (ub2) dbsize2;
+    CHECK_OCI
+    (
+        file->con->err,
+        OCILobFileGetName,
+        file->con->env, file->con->err, file->handle,
+        (OraText *) dbstr1, (ub2*) &usize1,
+        (OraText *) dbstr2, (ub2*) &usize2
+    )
 
-        EXEC
-        (
-            OCILobFileGetName(file->con->env, file->con->err, file->handle,
-                              (OraText *) dbstr1, (ub2*) &usize1,
-                              (OraText *) dbstr2, (ub2*) &usize2)
-        )
+    dbsize1 = (int) usize1;
+    dbsize2 = (int) usize2;
 
-        dbsize1 = (int) usize1;
-        dbsize2 = (int) usize2;
+    StringCopyDBStringToNativeString(dbstr1, file->dir,  dbcharcount(dbsize1));
+    StringCopyDBStringToNativeString(dbstr2, file->name, dbcharcount(dbsize2));
 
-        StringCopyDBStringToNativeString(dbstr1, file->dir,  dbcharcount(dbsize1));
-        StringCopyDBStringToNativeString(dbstr2, file->name, dbcharcount(dbsize2));
+    SET_SUCCESS()
 
+    CLEANUP_AND_EXIT_FUNC
+    (
         StringReleaseDBString(dbstr1);
         StringReleaseDBString(dbstr2);
-    }
-
-    return STATUS;
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -172,15 +187,18 @@ OCI_File * FileCreate
     unsigned int    type
 )
 {
-    CALL_ENTER(OCI_File *, NULL)
-    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CALL_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"))
-    CALL_CONTEXT_FROM_CON(con)
+    ENTER_FUNC
+    (
+        /* returns */ OCI_File*, NULL,
+        /* context */ OCI_IPC_CONNECTION, con
+    )
 
-    RETVAL = FileInitialize(con, NULL, NULL, type);
-    STATUS = (NULL != RETVAL);
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_ENUM_VALUE(type, FileTypeValues, OTEXT("File Type"))
 
-    CALL_EXIT()
+    SET_RETVAL(FileInitialize(con, NULL, NULL, type))
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -192,17 +210,21 @@ boolean FileFree
     OCI_File *file
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CHECK_OBJECT_FETCHED(file)
-    CALL_CONTEXT_FROM_CON(file->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_FILE, file
+    )
+
+    CHECK_PTR(OCI_IPC_FILE, file)
+    CHECK_OBJECT_FETCHED(file)
 
     FREE(file->dir)
     FREE(file->name)
 
     if (OCI_OBJECT_ALLOCATED == file->hstate)
     {
-        MemoryFreeDescriptor((dvoid *) file->handle, (ub4) OCI_DTYPE_LOB);
+        MemoryFreeDescriptor((dvoid*)file->handle, (ub4)OCI_DTYPE_LOB);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
@@ -210,9 +232,9 @@ boolean FileFree
         FREE(file)
     }
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -226,23 +248,26 @@ OCI_File ** FileCreateArray
     unsigned int    nbelem
 )
 {
-    OCI_Array *arr = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ OCI_File**, NULL,
+        /* context */ OCI_IPC_CONNECTION, con
+    )
 
-    CALL_ENTER(OCI_File **, NULL)
-    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CALL_CHECK_ENUM_VALUE(con, NULL, type, FileTypeValues, OTEXT("File Type"))
-    CALL_CONTEXT_FROM_CON(con)
+    OCI_Array* arr = NULL;
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_FILE, type, sizeof(OCILobLocator *), sizeof(OCI_File), OCI_DTYPE_LOB, NULL);
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_ENUM_VALUE(type, FileTypeValues, OTEXT("File Type"))
 
-    STATUS = (NULL != arr);
+    arr = ArrayCreate(con, nbelem, OCI_CDT_FILE, type,
+                      sizeof(OCILobLocator*), sizeof(OCI_File),
+                      OCI_DTYPE_LOB, NULL);
 
-    if (arr)
-    {
-        RETVAL = (OCI_File **)arr->tab_obj;
-    }
+    CHECK_NULL(arr)
+   
+    SET_RETVAL((OCI_File**)arr->tab_obj)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -254,12 +279,17 @@ boolean FileFreeArray
     OCI_File **files
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_ARRAY, files)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    RETVAL = STATUS = ArrayFreeFromHandles((void **)files);
+    CHECK_PTR(OCI_IPC_ARRAY, files)
 
-    CALL_EXIT()
+    SET_RETVAL(ArrayFreeFromHandles((void**)files))
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -273,12 +303,16 @@ boolean FileSeek
     unsigned int mode
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_FILE, file
+    )
+
     big_uint size = 0;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CHECK_ENUM_VALUE(file->con, NULL, mode, SeekModeValues, OTEXT("Seek Mode"))
-    CALL_CONTEXT_FROM_CON(file->con)
+    CHECK_PTR(OCI_IPC_FILE, file)
+    CHECK_ENUM_VALUE(mode, SeekModeValues, OTEXT("Seek Mode"))
 
     size = FileGetSize(file);
 
@@ -290,7 +324,7 @@ boolean FileSeek
             {
                 file->offset += offset;
 
-                RETVAL = TRUE;
+                SET_SUCCESS()
             }
             break;
         }
@@ -300,7 +334,7 @@ boolean FileSeek
             {
                 file->offset = offset + 1;
 
-                RETVAL = TRUE;
+                SET_SUCCESS()
             }
             break;
         }
@@ -310,13 +344,13 @@ boolean FileSeek
             {
                 file->offset = size - offset + 1;
 
-                RETVAL = TRUE;
+                SET_SUCCESS()
             }
             break;
         }
     }
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -328,13 +362,17 @@ big_uint FileGetOffset
     OCI_File *file
 )
 {
-    CALL_ENTER(big_uint, 0)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CONTEXT_FROM_CON(file->con)
+    ENTER_FUNC
+    (
+        /* returns */ big_uint, 0,
+        /* context */ OCI_IPC_FILE, file
+    )
 
-    RETVAL = file->offset - 1;
+    CHECK_PTR(OCI_IPC_FILE, file)
 
-    CALL_EXIT()
+    SET_RETVAL(file->offset - 1)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -348,17 +386,19 @@ unsigned int FileRead
     unsigned int len
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ unsigned int, 0,
+        /* context */ OCI_IPC_FILE, file
+    )
+
     ub4 size_in  = 0;
     ub4 size_out = 0;
 
-    CALL_ENTER(unsigned int, 0)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CHECK_MIN(file->con, NULL, len, 1)
-    CALL_CONTEXT_FROM_CON(file->con)
+    CHECK_PTR(OCI_IPC_FILE, file)
+    CHECK_MIN(len, 1)
 
     size_out = size_in = len;
-
-    STATUS = TRUE;
 
 #ifdef OCI_LOB2_API_ENABLED
 
@@ -367,14 +407,16 @@ unsigned int FileRead
         ub8 size_char = (ub8) len;
         ub8 size_byte = (ub8) size_in;
 
-        EXEC
+        CHECK_OCI
         (
-            OCILobRead2(file->con->cxt, file->con->err,
-                        file->handle, &size_byte,
-                        &size_char, (ub8) file->offset,
-                        buffer, (ub8) size_in,
-                        (ub1) OCI_ONE_PIECE, (dvoid *) NULL,
-                        NULL, (ub2) 0, (ub1) SQLCS_IMPLICIT)
+            file->con->err,
+            OCILobRead2,
+            file->con->cxt, file->con->err,
+            file->handle, &size_byte,
+            &size_char, (ub8) file->offset,
+            buffer, (ub8) size_in,
+            (ub1) OCI_ONE_PIECE, (dvoid *) NULL,
+            NULL, (ub2) 0, (ub1) SQLCS_IMPLICIT
         )
 
         size_out = (ub4) size_byte;
@@ -387,23 +429,22 @@ unsigned int FileRead
     {
         const ub4 offset = (ub4) file->offset;
 
-        EXEC
+        CHECK_OCI
         (
-            OCILobRead(file->con->cxt, file->con->err,
-                       file->handle,  &size_out, offset,
-                       buffer, size_in, (dvoid *) NULL,
-                       NULL, (ub2) 0, (ub1) SQLCS_IMPLICIT)
+            file->con->err,
+            OCILobRead,
+            file->con->cxt, file->con->err,
+            file->handle,  &size_out, offset,
+            buffer, size_in, (dvoid *) NULL,
+            NULL, (ub2) 0, (ub1) SQLCS_IMPLICIT
         )
     }
 
-    if (STATUS)
-    {
-        file->offset += (big_uint) size_out;
+    file->offset += (big_uint) size_out;
 
-        RETVAL = size_out;
-    }
+    SET_RETVAL(size_out)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -415,7 +456,12 @@ unsigned int FileGetType
     OCI_File *file
 )
 {
-    GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_FILE, file, type, file->con, NULL, file->con->err)
+    GET_PROP
+    (
+        /* result */ unsigned int, OCI_UNKNOWN,
+        /* handle */ OCI_IPC_FILE, file,
+        /* member */ type
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -427,17 +473,27 @@ big_uint FileGetSize
     OCI_File *file
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ big_uint, 0,
+        /* context */ OCI_IPC_FILE, file
+    )
+
     big_uint size = 0;
 
-    CALL_ENTER(big_uint, 0)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CONTEXT_FROM_CON(file->con)
+    CHECK_PTR(OCI_IPC_FILE, file)
 
 #ifdef OCI_LOB2_API_ENABLED
 
     if (Env.use_lob_ub8)
     {
-        EXEC(OCILobGetLength2(file->con->cxt, file->con->err, file->handle, (ub8 *) &size))
+        CHECK_OCI
+        (
+            file->con->err,
+            OCILobGetLength2,
+            file->con->cxt, file->con->err,
+            file->handle, (ub8 *) &size
+        )
     }
     else
 
@@ -446,14 +502,20 @@ big_uint FileGetSize
     {
         ub4 size32 = (ub4) size;
 
-        EXEC(OCILobGetLength(file->con->cxt, file->con->err, file->handle, &size32))
+        CHECK_OCI
+        (
+            file->con->err,
+            OCILobGetLength,
+            file->con->cxt, file->con->err, 
+            file->handle, &size32
+        )
 
         size = (big_uint) size32;
     }
 
-    RETVAL = size;
+    SET_RETVAL(size)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -465,13 +527,27 @@ boolean FileExists
     OCI_File *file
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CONTEXT_FROM_CON(file->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_FILE, file
+    )
 
-    EXEC(OCILobFileExists(file->con->cxt, file->con->err, file->handle, &RETVAL))
+    CHECK_PTR(OCI_IPC_FILE, file)
 
-    CALL_EXIT()
+    boolean exists = FALSE;
+
+    CHECK_OCI
+    (
+        file->con->err,
+        OCILobFileExists, file->con->cxt, 
+        file->con->err, file->handle,
+        &exists
+    )
+
+    SET_RETVAL(exists)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -485,37 +561,42 @@ boolean FileSetName
     const otext *name
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_FILE, file
+    )
+
     dbtext *dbstr1  = NULL;
     dbtext *dbstr2  = NULL;
     int     dbsize1 = -1;
     int     dbsize2 = -1;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CONTEXT_FROM_CON(file->con)
+    CHECK_PTR(OCI_IPC_FILE, file)
 
     dbstr1 = StringGetDBString(dir,  &dbsize1);
     dbstr2 = StringGetDBString(name, &dbsize2);
 
-    EXEC
+    CHECK_OCI
     (
-        OCILobFileSetName(file->con->env, file->con->err,
-                          &file->handle,
-                          (OraText *) dbstr1, (ub2) dbsize1,
-                          (OraText *) dbstr2, (ub2) dbsize2)
+        file->con->err,
+        OCILobFileSetName,
+        file->con->env,
+        file->con->err,
+        &file->handle,
+        (OraText *) dbstr1, (ub2) dbsize1,
+        (OraText *) dbstr2, (ub2) dbsize2
     )
 
-    StringReleaseDBString(dbstr1);
-    StringReleaseDBString(dbstr2);
+    CHECK(FileGetInfo(file))
 
-    if (STATUS)
-    {
-        STATUS = FileGetInfo(file);
-    }
+    SET_SUCCESS()
 
-    RETVAL = STATUS;
-
-    CALL_EXIT()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr1);
+        StringReleaseDBString(dbstr2);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -527,18 +608,22 @@ const otext * FileGetDirectory
     OCI_File *file
 )
 {
-    CALL_ENTER(const otext *, NULL)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CONTEXT_FROM_CON(file->con)
+    ENTER_FUNC
+    (
+        /* returns */ const otext*, NULL,
+        /* context */ OCI_IPC_FILE, file
+    )
+
+    CHECK_PTR(OCI_IPC_FILE, file)
 
     if (!IS_STRING_VALID(file->dir))
     {
-        STATUS = FileGetInfo(file);
+        CHECK(FileGetInfo(file))
     }
 
-    RETVAL = file->dir;
+    SET_RETVAL(file->dir)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -550,18 +635,22 @@ const otext * FileGetName
     OCI_File *file
 )
 {
-    CALL_ENTER(const otext *, NULL)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CONTEXT_FROM_CON(file->con)
+    ENTER_FUNC
+    (
+        /* returns */ const otext *, NULL,
+        /* context */ OCI_IPC_FILE, file
+    )
+
+    CHECK_PTR(OCI_IPC_FILE, file)
 
     if (!IS_STRING_VALID(file->name))
     {
-        STATUS = FileGetInfo(file);
+        CHECK(FileGetInfo(file))
     }
 
-    RETVAL = file->name;
+    SET_RETVAL(file->name)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -573,20 +662,27 @@ boolean FileOpen
     OCI_File *file
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CONTEXT_FROM_CON(file->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_FILE, file
+    )
 
-    EXEC(OCILobFileOpen(file->con->cxt, file->con->err, file->handle, (ub1) OCI_LOB_READONLY))
+    CHECK_PTR(OCI_IPC_FILE, file)
 
-    if (STATUS)
-    {
-        file->con->nb_files++;
-    }
+    CHECK_OCI
+    (
+        file->con->err,
+        OCILobFileOpen, 
+        file->con->cxt, file->con->err, 
+        file->handle, (ub1) OCI_LOB_READONLY
+    )
 
-    RETVAL = STATUS;
+    file->con->nb_files++;
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -598,13 +694,27 @@ boolean FileIsOpen
     OCI_File *file
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CONTEXT_FROM_CON(file->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_FILE, file
+    )
 
-    EXEC(OCILobFileIsOpen(file->con->cxt, file->con->err, file->handle, &RETVAL))
+    CHECK_PTR(OCI_IPC_FILE, file)
 
-    CALL_EXIT()
+    boolean is_opened = FALSE;
+
+    CHECK_OCI
+    (
+        file->con->err,
+        OCILobFileIsOpen, file->con->cxt, 
+        file->con->err, file->handle,
+        &is_opened
+    )
+
+    SET_RETVAL(is_opened)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -616,20 +726,27 @@ boolean FileClose
     OCI_File *file
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CONTEXT_FROM_CON(file->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_FILE, file
+    )
 
-    EXEC(OCILobFileClose(file->con->cxt, file->con->err, file->handle))
+    CHECK_PTR(OCI_IPC_FILE, file)
 
-    if (STATUS)
-    {
-        file->con->nb_files--;
-    }
+    CHECK_OCI
+    (
+        file->con->err,
+        OCILobFileClose, 
+        file->con->cxt, file->con->err, 
+        file->handle
+    )
 
-    RETVAL = STATUS;
+    file->con->nb_files--;
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -642,14 +759,28 @@ boolean FileIsEqual
     OCI_File *file2
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file2)
-    CALL_CONTEXT_FROM_CON(file->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_FILE, file
+    )
 
-    EXEC(OCILobIsEqual(file->con->env, file->handle, file2->handle, &RETVAL))
+    CHECK_PTR(OCI_IPC_FILE, file)
+    CHECK_PTR(OCI_IPC_FILE, file2)
 
-    CALL_EXIT()
+    boolean is_equal = FALSE;
+
+    CHECK_OCI
+    (
+        file->con->err,
+        OCILobIsEqual, 
+        file->con->env, file->handle, 
+        file2->handle, &is_equal
+    )
+
+    SET_RETVAL(is_equal)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -662,23 +793,41 @@ boolean FileAssign
     OCI_File *file_src
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file)
-    CALL_CHECK_PTR(OCI_IPC_FILE, file_src)
-    CALL_CONTEXT_FROM_CON(file->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_FILE, file
+    )
+
+    CHECK_PTR(OCI_IPC_FILE, file)
+    CHECK_PTR(OCI_IPC_FILE, file_src)
 
     if ((OCI_OBJECT_ALLOCATED == file->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == file->hstate))
     {
-        EXEC(OCILobLocatorAssign(file->con->cxt, file->con->err, file_src->handle, &file->handle))
+        CHECK_OCI
+        (
+            file->con->err,
+            OCILobLocatorAssign,
+            file->con->cxt, file->con->err, 
+            file_src->handle, &file->handle
+        )
     }
     else
     {
-        EXEC(OCILobAssign(file->con->env, file->con->err, file_src->handle, &file->handle))
+        CHECK_OCI
+        (
+            file->con->err,
+            OCILobAssign, 
+            file->con->env, file->con->err,
+            file_src->handle, &file->handle
+        )
     }
 
-    RETVAL = STATUS = STATUS && FileGetInfo(file);
+    CHECK(FileGetInfo(file))
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -690,5 +839,10 @@ OCI_Connection * FileGetConnection
     OCI_File *file
 )
 {
-    GET_PROP(OCI_Connection *, NULL, OCI_IPC_FILE, file, con, file->con, NULL, file->con->err)
+    GET_PROP
+    (
+        /* result */ OCI_Connection *, NULL,
+        /* handle */ OCI_IPC_FILE, file, 
+        /* member */ con
+    )
 }

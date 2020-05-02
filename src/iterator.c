@@ -24,7 +24,7 @@
 #include "macros.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * IterCreate
+ * IteratorCreate
  * --------------------------------------------------------------------------------------------- */
 
 OCI_Iter * IteratorCreate
@@ -32,53 +32,55 @@ OCI_Iter * IteratorCreate
     OCI_Coll *coll
 )
 {
-    OCI_Iter *iter = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Iter*, NULL,
+        /* context */ OCI_IPC_COLLECTION, coll
+    )
 
-    CALL_ENTER(OCI_Iter*, iter);
-    CALL_CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CALL_CONTEXT_FROM_CON(coll->con)
+    OCI_Iter* iter = NULL;
+
+    CHECK_PTR(OCI_IPC_COLLECTION, coll)
 
     /* allocate iterator structure */
 
     ALLOC_DATA(OCI_IPC_ITERATOR, iter, 1)
 
-    if (STATUS)
-    {
-        iter->coll  = coll;
-        iter->eoc   = FALSE;
-        iter->boc   = TRUE;
-        iter->dirty = TRUE;
+    iter->coll  = coll;
+    iter->eoc   = FALSE;
+    iter->boc   = TRUE;
+    iter->dirty = TRUE;
 
-        /* create iterator */
+    /* create iterator */
 
-        EXEC(OCIIterCreate(iter->coll->con->env, iter->coll->con->err, coll->handle, &iter->handle))
+    CHECK_OCI
+    (
+        iter->coll->con->err,
+        OCIIterCreate,
+        iter->coll->con->env,
+        iter->coll->con->err, 
+        iter->coll->handle,
+        &iter->handle
+    )
 
-        /* create data element */
+    /* create data element */
 
-        if (STATUS)
+    CHECK_NULL(ElementInitialize(coll->con, iter->elem, NULL, (OCIInd *)NULL, coll->typinf))
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (FAILURE)
         {
-            iter->elem = ElementInitialize(coll->con, iter->elem, NULL, (OCIInd *)NULL, coll->typinf);
-
-            STATUS = (NULL != iter->elem);
+            IteratorFree(iter);
+            iter = NULL;
         }
-    }
 
-    /* check for success */
-
-    if (STATUS)
-    {
-        RETVAL = iter;
-    }
-    else if (iter)
-    {
-        IteratorFree(iter);
-    }
-
-    CALL_EXIT()
+        SET_RETVAL(iter)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IterFree
+ * IteratorFree
  * --------------------------------------------------------------------------------------------- */
 
 boolean IteratorFree
@@ -86,20 +88,31 @@ boolean IteratorFree
     OCI_Iter *iter
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
-    CALL_CONTEXT_FROM_CON(iter->coll->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_ITERATOR, iter
+    )
+
+    CHECK_PTR(OCI_IPC_ITERATOR, iter)
 
     /* close iterator handle */
 
-    if (iter->handle)
+    if (NULL != iter->handle)
     {
-        EXEC(OCIIterDelete(iter->coll->con->env, iter->coll->con->err, &iter->handle))
+        CHECK_OCI
+        (
+            iter->coll->con->err,
+            OCIIterDelete,
+            iter->coll->con->env,
+            iter->coll->con->err,
+            &iter->handle
+        )
     }
 
     /* free data element */
 
-    if (iter->elem)
+    if (NULL != iter->elem)
     {
         iter->elem->hstate = OCI_OBJECT_FETCHED_DIRTY;
         ElementFree(iter->elem);
@@ -110,13 +123,13 @@ boolean IteratorFree
 
     FREE(iter)
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IterGetNext
+ * IteratorGetNext
  * --------------------------------------------------------------------------------------------- */
 
 OCI_Elem * IteratorGetNext
@@ -124,31 +137,43 @@ OCI_Elem * IteratorGetNext
     OCI_Iter *iter
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Elem*, NULL,
+        /* context */ OCI_IPC_ITERATOR, iter
+    )
+
     void   *data  = NULL;
     OCIInd *p_ind = NULL;
 
-    CALL_ENTER(OCI_Elem *, NULL)
-    CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
-    CALL_CONTEXT_FROM_CON(iter->coll->con)
+    CHECK_PTR(OCI_IPC_ITERATOR, iter)
 
-    if (!iter->eoc)
-    {
-        EXEC(OCIIterNext(iter->coll->con->env, iter->coll->con->err, iter->handle, &data, (dvoid **) &p_ind, &iter->eoc))
+    CHECK(!iter->eoc)
 
-        if (STATUS && !iter->eoc)
-        {
-            RETVAL = iter->elem = ElementInitialize(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
+    CHECK_OCI
+    (
+        iter->coll->con->err,
+        OCIIterNext, 
+        iter->coll->con->env,
+        iter->coll->con->err,
+        iter->handle, &data,
+        (dvoid **) &p_ind,
+        &iter->eoc
+    )
 
-            iter->dirty = FALSE;
-            iter->boc   = FALSE;
-        }
-    }
+    CHECK(!iter->eoc)
 
-    CALL_EXIT()
+    iter->elem = ElementInitialize(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
+    iter->dirty = FALSE;
+    iter->boc = FALSE;
+
+    SET_RETVAL(iter->elem)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IterGetPrev
+ * IteratorGetPrev
  * --------------------------------------------------------------------------------------------- */
 
 OCI_Elem * IteratorGetPrev
@@ -156,31 +181,43 @@ OCI_Elem * IteratorGetPrev
     OCI_Iter *iter
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Elem*, NULL,
+        /* context */ OCI_IPC_ITERATOR, iter
+    )
+
     void   *data  = NULL;
     OCIInd *p_ind = NULL;
 
-    CALL_ENTER(OCI_Elem *, NULL)
-    CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
-    CALL_CONTEXT_FROM_CON(iter->coll->con)
+    CHECK_PTR(OCI_IPC_ITERATOR, iter)
 
-    if (!iter->boc)
-    {
-        EXEC(OCIIterPrev(iter->coll->con->env, iter->coll->con->err, iter->handle, &data, (dvoid **) &p_ind, &iter->boc))
+    CHECK(!iter->boc)
 
-        if (STATUS && !iter->boc)
-        {
-            RETVAL = iter->elem = ElementInitialize(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
+    CHECK_OCI
+    (
+        iter->coll->con->err,
+        OCIIterPrev,
+        iter->coll->con->env,
+        iter->coll->con->err, 
+        iter->handle, &data, 
+        (dvoid **) &p_ind,
+        &iter->boc
+    )
 
-            iter->dirty = FALSE;
-            iter->eoc   = FALSE;
-        }
-    }
+    CHECK(!iter->boc)
 
-    CALL_EXIT()
+    iter->elem = ElementInitialize(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
+    iter->dirty = FALSE;
+    iter->eoc = FALSE;
+
+    SET_RETVAL(iter->elem)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IterGetCurrent
+ * IteratorGetCurrent
  * --------------------------------------------------------------------------------------------- */
 
 OCI_Elem * IteratorGetCurrent
@@ -188,14 +225,17 @@ OCI_Elem * IteratorGetCurrent
     OCI_Iter *iter
 )
 {
-    CALL_ENTER(OCI_Elem*, NULL)
-    CALL_CHECK_PTR(OCI_IPC_ITERATOR, iter)
-    CALL_CONTEXT_FROM_CON(iter->coll->con)
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Elem*, NULL,
+        /* context */ OCI_IPC_ITERATOR, iter
+    )
 
-    if (iter->elem && !iter->boc && !iter->eoc && !iter->dirty)
-    {
-        RETVAL = iter->elem;
-    }
+    CHECK_PTR(OCI_IPC_ITERATOR, iter)
 
-    CALL_EXIT()
+    CHECK(NULL != iter->elem && !iter->boc && !iter->eoc && !iter->dirty)
+ 
+    SET_RETVAL(iter->elem)
+
+    EXIT_FUNC()
 }

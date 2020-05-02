@@ -23,7 +23,12 @@
 #include "macros.h"
 #include "memory.h"
 
-static const unsigned int HashTypeValues[] = { OCI_HASH_STRING, OCI_HASH_INTEGER, OCI_HASH_POINTER };
+static const unsigned int HashTypeValues[] =
+{
+    OCI_HASH_STRING,
+    OCI_HASH_INTEGER,
+    OCI_HASH_POINTER
+};
 
 /* --------------------------------------------------------------------------------------------- *
  * HashCompute
@@ -39,8 +44,8 @@ unsigned int HashCompute
 
     otext *p;
 
-    CHECK(NULL == table, 0);
-    CHECK(NULL == str, 0);
+    CHECK_FALSE(NULL == table, 0);
+    CHECK_FALSE(NULL == str, 0);
 
     for(h = 0, p = (otext *) str; (*p) != 0; p++)
     {
@@ -62,22 +67,27 @@ boolean HashAdd
     unsigned int   type
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
+
     OCI_HashEntry * e = NULL;
     OCI_HashValue * v = NULL, *v1 = NULL, *v2 = NULL;
 
-    boolean res = FALSE;
-
-    CHECK(NULL == table, FALSE)
-    CHECK(NULL == key, FALSE)
-    CHECK(table->type != type, FALSE)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_PTR(OCI_IPC_STRING, key)
+    CHECK_COMPAT(table->type == type)
 
     e = HashLookup(table, key, TRUE);
 
-    if (e)
+    if (NULL != e)
     {
-        v = (OCI_HashValue *)MemoryAlloc(OCI_IPC_HASHVALUE, sizeof(*v), (size_t)1, TRUE);
+        v = (OCI_HashValue *)MemoryAlloc(OCI_IPC_HASHVALUE, sizeof(*v),
+                                         (size_t)1, TRUE);
 
-        if (v)
+        if (NULL != v)
         {
             if (OCI_HASH_STRING == table->type && value.p_text)
             {
@@ -94,13 +104,13 @@ boolean HashAdd
 
             v1 = v2 = e->values;
 
-            while (v1)
+            while (NULL != v1)
             {
                 v2 = v1;
                 v1 = v1->next;
             }
 
-            if (v2)
+            if (NULL != v2)
             {
                 v2->next = v;
             }
@@ -109,11 +119,11 @@ boolean HashAdd
                 e->values = v;
             }
 
-            res = TRUE;
+            SET_SUCCESS()
         }
     }
 
-    return res;
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -126,44 +136,46 @@ OCI_HashTable * HashCreate
     unsigned int type
 )
 {
-    OCI_HashTable *table = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ OCI_HashTable*, NULL,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    CALL_ENTER(OCI_HashTable*, table)
-    CALL_CHECK_ENUM_VALUE(NULL, NULL, type, HashTypeValues, OTEXT("Hash type"));
+    OCI_HashTable* table = NULL;
+
+    CHECK_ENUM_VALUE(type, HashTypeValues, OTEXT("Hash type"));
 
     /* allocate table structure */
 
-    table  = (OCI_HashTable *) MemoryAlloc(OCI_IPC_HASHTABLE, sizeof(*table), (size_t) 1, TRUE);
-    STATUS = (NULL != table);
+   table = (OCI_HashTable *) MemoryAlloc(OCI_IPC_HASHTABLE, 
+                                         sizeof(*table),
+                                         (size_t) 1, TRUE);
+    CHECK_NULL(table)
 
     /* set up attributes and allocate internal array of hash entry pointers */
 
-    if (STATUS)
-    {
-        table->type  = type;
-        table->size  = 0;
-        table->count = 0;
+    table->type  = type;
+    table->size  = 0;
+    table->count = 0;
 
-        table->items = (OCI_HashEntry **) MemoryAlloc(OCI_IPC_HASHENTRY_ARRAY, sizeof(*table->items), (size_t) size, TRUE);
+    table->items = (OCI_HashEntry **) MemoryAlloc(OCI_IPC_HASHENTRY_ARRAY, 
+                                                  sizeof(*table->items), 
+                                                  (size_t) size, TRUE);
+    CHECK_NULL(table->items);
 
-        STATUS = (NULL != table->items);
+    table->size = size;
 
-        if (STATUS)
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (FAILURE)
         {
-            table->size = size;
+            HashFree(table);
+            table = NULL;
         }
-    }
 
-    if (STATUS)
-    {
-        RETVAL = table;
-    }
-    else if (table)
-    {
-        HashFree(table);
-    }
-
-    CALL_EXIT()
+        SET_RETVAL(table)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -175,26 +187,31 @@ boolean HashFree
     OCI_HashTable *table
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
+
     OCI_HashEntry *e1 = NULL, *e2 = NULL;
     OCI_HashValue *v1 = NULL, *v2 = NULL;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
-    if (table->items)
+    if (NULL != table->items)
     {
         for (unsigned int i = 0; i < table->size; i++)
         {
             e1 = table->items[i];
 
-            while (e1)
+            while (NULL != e1)
             {
                 e2 = e1;
                 e1 = e1->next;
 
                 v1 = e2->values;
 
-                while (v1)
+                while (NULL != v1)
                 {
                     v2 = v1;
                     v1 = v1->next;
@@ -207,26 +224,23 @@ boolean HashFree
                     FREE(v2)
                 }
 
-                if (e2->key)
+                if (NULL != e2->key)
                 {
                     FREE(e2->key)
                 }
 
-                if (e2)
-                {
-                    FREE(e2)
-                }
+                FREE(e2)
             }
         }
 
         FREE(table->items)
     }
 
-    RETVAL = TRUE;
-
     FREE(table)
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -238,12 +252,17 @@ unsigned int HashGetSize
     OCI_HashTable *table
 )
 {
-    CALL_ENTER(unsigned int, 0)
-    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    ENTER_FUNC
+    (
+        /* returns */ unsigned int, 0,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
 
-    RETVAL = table->size;
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
-    CALL_EXIT()
+    SET_RETVAL(table->size)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -255,12 +274,17 @@ unsigned int HashGetType
     OCI_HashTable *table
 )
 {
-    CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    ENTER_FUNC
+    (
+        /* returns */ unsigned int, OCI_UNKNOWN,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
 
-    RETVAL = table->type;
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
-    CALL_EXIT()
+    SET_RETVAL(table->type;)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -273,19 +297,20 @@ OCI_HashValue * HashGetValue
     const otext   *key
 )
 {
-    OCI_HashEntry *e = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ OCI_HashValue*, NULL,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
 
-    CALL_ENTER(OCI_HashValue*, NULL)
-    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
-    e = HashLookup(table, key, FALSE);
+    OCI_HashEntry* e = HashLookup(table, key, FALSE);
+    CHECK_NULL(e)
 
-    if (e)
-    {
-        RETVAL = e->values;
-    }
+    SET_RETVAL(e->values)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -298,15 +323,19 @@ OCI_HashEntry * HashGetEntry
     unsigned int   index
 )
 {
-    CALL_ENTER(OCI_HashEntry*, NULL)
-    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    ENTER_FUNC
+    (
+        /* returns */ OCI_HashEntry*, NULL,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
 
-    if (index < table->size)
-    {
-        RETVAL = table->items[index];
-    }
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
-    CALL_EXIT()
+    CHECK(index < table->size)
+ 
+    SET_RETVAL(table->items[index])
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -319,20 +348,21 @@ const otext * HashGetString
     const otext   *key
 )
 {
-    OCI_HashValue *v = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ const otext*, NULL,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
 
-    CALL_ENTER(const otext *, NULL)
-    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_COMPAT(table->type == OCI_HASH_STRING)
 
-    v = HashGetValue(table, key);
+    OCI_HashValue *v = HashGetValue(table, key);
+    CHECK_NULL(v)
 
-    if (v)
-    {
-        RETVAL = v->value.p_text;
-    }
+    SET_RETVAL(v->value.p_text)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -345,20 +375,21 @@ int HashGetInt
     const otext   *key
 )
 {
-    OCI_HashValue *v = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ int, 0,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
 
-    CALL_ENTER(int, 0)
-    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_COMPAT(table->type == OCI_HASH_INTEGER)
 
-    v = HashGetValue(table, key);
+    OCI_HashValue * v = HashGetValue(table, key);
+    CHECK_NULL(v)
 
-    if (v)
-    {
-        RETVAL = v->value.num;
-    }
+    SET_RETVAL(v->value.num)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -371,20 +402,21 @@ void * HashGetPointer
     const otext   *key
 )
 {
-    OCI_HashValue *v = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ void*, NULL,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
 
-    CALL_ENTER(void *, NULL)
-    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_COMPAT(table->type == OCI_HASH_POINTER)
 
-    v = HashGetValue(table, key);
+    OCI_HashValue *v = HashGetValue(table, key);
+    CHECK_NULL(v)
 
-    if (v)
-    {
-        RETVAL = v->value.p_void;
-    }
+    SET_RETVAL(v->value.p_void)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -398,17 +430,24 @@ boolean HashAddString
     const otext   *value
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
+
     OCI_Variant v;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_STRING)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_COMPAT(table->type == OCI_HASH_STRING)
 
     v.p_text = (otext *) value;
 
-    RETVAL = STATUS = HashAdd(table, key, v, OCI_HASH_STRING);
+    CHECK(HashAdd(table, key, v, OCI_HASH_STRING))
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -422,17 +461,24 @@ boolean HashAddInt
     int            value
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
+
     OCI_Variant v;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_INTEGER)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_COMPAT(table->type == OCI_HASH_INTEGER)
 
     v.num = value;
 
-    RETVAL = STATUS = HashAdd(table, key, v, OCI_HASH_INTEGER);
+    CHECK(HashAdd(table, key, v, OCI_HASH_INTEGER))
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -446,17 +492,24 @@ boolean HashAddPointer
     void          *value
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
+
     OCI_Variant v;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CALL_CHECK_COMPAT(NULL, table->type == OCI_HASH_POINTER)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_COMPAT(table->type == OCI_HASH_POINTER)
 
     v.p_void = value;
 
-    RETVAL = STATUS = HashAdd(table, key, v, OCI_HASH_POINTER);
+    CHECK(HashAdd(table, key, v, OCI_HASH_POINTER))
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -470,11 +523,16 @@ OCI_HashEntry * HashLookup
     boolean        create
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ OCI_HashEntry*, NULL,
+        /* context */ OCI_IPC_HASHTABLE, table
+    )
+
     OCI_HashEntry *e = NULL, *e1 = NULL, *e2 = NULL;
 
-    CALL_ENTER(OCI_HashEntry*, NULL)
-    CALL_CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CALL_CHECK_PTR(OCI_IPC_STRING, key)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_PTR(OCI_IPC_STRING, key)
 
     const unsigned int i = HashCompute(table, key);
 
@@ -488,44 +546,42 @@ OCI_HashEntry * HashLookup
             }
         }
 
-        if (!e && create)
+        if (NULL == e && create)
         {
-            e = (OCI_HashEntry *) MemoryAlloc(OCI_IPC_HASHENTRY, sizeof(*e), (size_t) 1, TRUE);
+            e = (OCI_HashEntry *) MemoryAlloc(OCI_IPC_HASHENTRY,
+                                              sizeof(*e), 
+                                              (size_t) 1,
+                                              TRUE);
+           CHECK_NULL(e)
 
-            STATUS = (NULL != e);
+            e->key = ostrdup(key);
 
-            if (STATUS)
+            e1 = e2 = table->items[i];
+
+            while (NULL != e1)
             {
-                e->key = ostrdup(key);
+                e2 = e1;
+                e1 = e1->next;
+            }
 
-                e1 = e2 = table->items[i];
-
-                while (e1)
-                {
-                    e2 = e1;
-                    e1 = e1->next;
-                }
-
-                if (e2)
-                {
-                    e2->next = e;
-                }
-                else
-                {
-                    table->items[i] = e;
-                }
+            if (NULL != e2)
+            {
+                e2->next = e;
+            }
+            else
+            {
+                table->items[i] = e;
             }
         }
     }
 
-    if (STATUS)
-    {
-        RETVAL = e;
-    }
-    else if (e)
-    {
-        FREE(e)
-    }
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (FAILURE && create)
+        {
+            FREE(e)
+        }
 
-    CALL_EXIT()
+        SET_RETVAL(e)
+    )
 }

@@ -23,16 +23,6 @@
 
 #include "types.h"
 
-void CallEnter
-(
-    OCI_Context* ctx
-);
-
-void CallExit
-(
-    OCI_Context* ctx
-);
-
 char* EnvironmentGetVariable
 (
     const char* name

@@ -453,6 +453,22 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
 );
 
 /**
+ * @brief
+ * Return the location where the error occured
+ *
+ * @param err - Error handle
+ *
+ * @return
+ * The method name that has generated the error
+ *
+ */
+
+OCI_EXPORT const otext * OCI_API OCI_ErrorGetLocation
+(
+    OCI_Error* err
+);
+
+/**
  * @}
  */
 

@@ -30,6 +30,7 @@ OCI_Mutex* MutexCreateInternal
 
 OCI_Mutex * MutexCreate
 (
+    void
 );
 
 boolean MutexFree

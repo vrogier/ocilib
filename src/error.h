@@ -25,7 +25,6 @@
 
 OCI_Error * ErrorCreate
 (
-    void
 );
 
 void ErrorFree
@@ -38,10 +37,22 @@ void ErrorReset
     OCI_Error *err
 );
 
+void ErrorSet
+(
+    OCI_Error *err,
+    unsigned int type,
+    int code,
+    void *source_ptr,
+    unsigned int source_type,
+    char *location,
+    otext *message,
+    unsigned int row
+);
+
 OCI_Error * ErrorGet
 (
-    boolean check,
-    boolean reset
+    boolean check_state,
+    boolean reset_err
 );
 
 const otext* ErrorGetString
@@ -60,6 +71,21 @@ int ErrorGetOCICode
 );
 
 int ErrorGetInternalCode
+(
+    OCI_Error* err
+);
+
+void* ErrorGetSource
+(
+    OCI_Error* err
+);
+
+unsigned int ErrorGetSourceType
+(
+    OCI_Error* err
+);
+
+const otext* ErrorGetLocation
 (
     OCI_Error* err
 );

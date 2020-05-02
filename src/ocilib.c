@@ -58,9 +58,18 @@
 #include "transaction.h"
 #include "typeinfo.h"
 
+
+void CheckContext()
+{
+    if (Env.env_mode & OCI_ENV_CONTEXT)
+    {
+        ErrorReset(ErrorGet(TRUE, TRUE));
+    }
+}
+
 #define CALL_IMPL(impl, ...)                                                    \
-                                                                                \
-    return impl(__VA_ARGS__);                                                  \
+    CheckContext();                                                             \
+    return impl(__VA_ARGS__);                                                   \
 
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1433,7 +1442,7 @@ OCI_Agent * OCI_API OCI_DequeueListen
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * dirpath
+ * direct path
  * --------------------------------------------------------------------------------------------- */
 
 OCI_DirPath* OCI_API OCI_DirPathCreate
@@ -2185,6 +2194,15 @@ unsigned int OCI_API OCI_ErrorGetRow
 {
     CALL_IMPL(ErrorGetRow, err)
 }
+
+const otext* OCI_API OCI_ErrorGetLocation
+(
+    OCI_Error* err
+)
+{
+    CALL_IMPL(ErrorGetLocation, err)
+}
+
 
 /* --------------------------------------------------------------------------------------------- *
  * event
@@ -2985,7 +3003,7 @@ OCI_Error* OCI_API OCI_GetLastError
     void
 )
 {
-    CALL_IMPL(EnvironmentGetLastError)
+    return EnvironmentGetLastError();
 }
 
 boolean OCI_API OCI_EnableWarnings
@@ -6372,7 +6390,7 @@ OCI_Connection* OCI_API OCI_SubscriptionGetConnection
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * timstamp
+ * timestamp
  * --------------------------------------------------------------------------------------------- */
 
 OCI_Timestamp* OCI_API OCI_TimestampCreate
@@ -6644,7 +6662,7 @@ boolean OCI_API OCI_ThreadJoin
 }
 
 /* --------------------------------------------------------------------------------------------- *
- *  threadkey
+ *  thread key
  * --------------------------------------------------------------------------------------------- */
 
 boolean OCI_API OCI_ThreadKeyCreate
@@ -6753,7 +6771,7 @@ unsigned int OCI_API OCI_TransactionGetTimeout
 }
 
 /* --------------------------------------------------------------------------------------------- *
- *  typeinfo
+ *  type info
  * --------------------------------------------------------------------------------------------- */
 
 OCI_TypeInfo* OCI_API OCI_TypeInfoGet

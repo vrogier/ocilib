@@ -21,6 +21,8 @@
 #ifndef OCILIB_TYPES_H_INCLUDED
 #define OCILIB_TYPES_H_INCLUDED
 
+#include "ocilib_types.h"
+
 #include "defs.h"
 
 /* ********************************************************************************************* *
@@ -122,16 +124,16 @@ typedef struct OCI_TraceInfo OCI_TraceInfo;
 
 struct OCI_Error
 {
-    unsigned int    depth;
-    boolean         raise;                    /* Must be raised to user */
-    boolean         active;                   /* to avoid recursive exceptions */
-    OCI_Connection *con;                      /* pointer to connection object */
-    OCI_Statement  *stmt;                     /* pointer to statement object */
-    sb4             sqlcode;                  /* Oracle OCI error code */
-    int             libcode;                  /* OCILIB internal error code */
-    unsigned int    type;                     /* OCILIB error type */
-    ub4             row;                      /* Error row offset (array DML) */
-    otext           str[OCI_ERR_MSG_SIZE+1];  /* error message */
+    boolean         active;         /* to avoid recursive exceptions */
+    void           *source_ptr;     /* pointer to source ptr */
+    unsigned int    source_type;    /* source type */
+    int             code;           /* Oracle OCI or OCILIB internal error code */
+    unsigned int    type;           /* OCILIB error type */
+    ub4             row;            /* Error row offset (array DML) */
+    otext          *location;       /* location (method) */
+    otext          *message;        /* error message */
+    unsigned int    location_len;   /* length of error message */
+    unsigned int    message_len;    /* length of error location */
 };
 
 /*
@@ -208,7 +210,7 @@ struct OCI_Environment
     unsigned int    charset;                      /* charset type */
     boolean         use_wide_char_conv;           /* are we on a unix like platform with unicode */
     boolean         warnings_on;                  /* warnings enabled ? */
-    OCI_Error       lib_err;                      /* Global error */
+    OCI_Error      *lib_err;                      /* Global error */
     OCI_HashTable  *key_map;                      /* hash table for mapping name/key */
     OCI_ThreadKey  *key_errs;                     /* Thread key to store thread errors */
     unsigned int    nb_hndlp;                     /* number of OCI handles allocated */
@@ -926,11 +928,9 @@ typedef struct OCI_SQLCmdInfo OCI_SQLCmdInfo;
 
 struct OCI_Context
 {
-    OCI_Connection *lib_con;
-    OCI_Statement  *lib_stmt;
-    OCIError       *oci_err;
-    OCI_Error      *call_err;
-    boolean         call_status;
+    void* source_ptr;
+    unsigned int source_type;
+    char* location;
 };
 
 typedef struct OCI_Context OCI_Context;

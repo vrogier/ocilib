@@ -44,7 +44,7 @@ boolean TimestampFree
 
 OCI_Timestamp ** TimestampCreateArray
 (
-    OCI_Connection *con,
+    OCI_Connection* con,
     unsigned int    type,
     unsigned int    nbelem
 );
@@ -162,7 +162,7 @@ boolean TimestampIntervalAdd
 
 boolean TimestampIntervalSub
 (
-    OCI_Timestamp *tmsp,
+    OCI_Timestamp* tmsp,
     OCI_Interval  *itv
 );
 

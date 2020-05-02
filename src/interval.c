@@ -26,7 +26,13 @@
 #include "strings.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
-static const unsigned int IntervalTypeValues[] = { OCI_INTERVAL_YM, OCI_INTERVAL_DS };
+
+static const unsigned int IntervalTypeValues[] =
+{
+    OCI_INTERVAL_YM,
+    OCI_INTERVAL_DS
+};
+
 #endif
 
 /* --------------------------------------------------------------------------------------------- *
@@ -41,50 +47,58 @@ OCI_Interval * IntervalInitialize
     ub4             type
 )
 {
-    DECLARE_CTX(TRUE)
-    CALL_CONTEXT_FROM_CON(con)
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Interval*, itv,
+        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
+    )
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     ALLOC_DATA(OCI_IPC_INTERVAL, itv, 1);
 
-    if (STATUS)
+    itv->con    = con;
+    itv->handle = buffer;
+    itv->type   = type;
+
+    /* get the right error handle */
+
+    itv->err = con ? con->err : Env.err;
+    itv->env = con ? con->env : Env.env;
+
+    /* allocate buffer if needed */
+
+    if (NULL == itv->handle || (OCI_OBJECT_ALLOCATED_ARRAY == itv->hstate))
     {
-        itv->con    = con;
-        itv->handle = buffer;
-        itv->type   = type;
-
-        /* get the right error handle */
-
-        itv->err = con ? con->err : Env.err;
-        itv->env = con ? con->env : Env.env;
-
-        /* allocate buffer if needed */
-
-        if (!itv->handle || (OCI_OBJECT_ALLOCATED_ARRAY == itv->hstate))
+        if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
         {
-            if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
-            {
-                STATUS = MemoryAllocDescriptor((dvoid  *)itv->env,
-                                               (dvoid **)(void *)&itv->handle,
-                                               (ub4)ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
+            CHECK
+            (
+                MemoryAllocDescriptor
+                (
+                     (dvoid  *)itv->env, (dvoid **)(void *)&itv->handle,
+                     (ub4)ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type)
+                )
+            )
 
                 itv->hstate = OCI_OBJECT_ALLOCATED;
-            }
-        }
-        else
-        {
-            itv->hstate = OCI_OBJECT_FETCHED_CLEAN;
         }
     }
-
-    /* check for failure */
-
-    if (!STATUS && itv)
+    else
     {
-        IntervalFree(itv);
-        itv = NULL;
+        itv->hstate = OCI_OBJECT_FETCHED_CLEAN;
     }
+
+    CLEANUP_AND_EXIT_FUNC
+    (       
+        if (FAILURE)
+        {
+            IntervalFree(itv);
+            itv = NULL;
+        }
+
+        SET_RETVAL(itv)
+    )
 
 #else
 
@@ -92,9 +106,11 @@ OCI_Interval * IntervalInitialize
     OCI_NOT_USED(type)
     OCI_NOT_USED(buffer)
 
-#endif
+    CHECK(FALSE)
 
-    return itv;
+    EXIT_FUNC()
+
+#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -107,19 +123,21 @@ OCI_Interval * IntervalCreate
     unsigned int    type
 )
 {
-    CALL_ENTER(OCI_Interval*, NULL)
-    CALL_CHECK_INITIALIZED()
-    CALL_CHECK_INTERVAL_ENABLED(con)
-    CALL_CONTEXT_FROM_CON(con)
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Interval*, NULL,
+        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
+    )
+    CHECK_INITIALIZED()
+    CHECK_INTERVAL_ENABLED(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
-    CALL_CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"));
+    CHECK_ENUM_VALUE(type, IntervalTypeValues, OTEXT("Interval type"))
 #endif
 
-    RETVAL = IntervalInitialize(con, NULL, NULL, type);
-    STATUS = (NULL != RETVAL);
+    SET_RETVAL(IntervalInitialize(con, NULL, NULL, type))
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -131,15 +149,23 @@ boolean IntervalFree
     OCI_Interval *itv
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CHECK_INTERVAL_ENABLED(itv->con)
-    CALL_CHECK_OBJECT_FETCHED(itv);
-    CALL_CONTEXT_FROM_OBJ(itv)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_INTERVAL_ENABLED(itv->con)
+    CHECK_OBJECT_FETCHED(itv);
 
     if (OCI_OBJECT_ALLOCATED == itv->hstate)
     {
-        MemoryFreeDescriptor((dvoid *)itv->handle, ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type));
+        MemoryFreeDescriptor
+        (
+            (dvoid*)itv->handle,
+            ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type)
+        );
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
@@ -147,9 +173,9 @@ boolean IntervalFree
         FREE(itv)
     }
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -163,28 +189,29 @@ OCI_Interval ** IntervalCreateArray
     unsigned int    nbelem
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Interval**, NULL,
+        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
+    )
+
     OCI_Array *arr = NULL;
 
-    CALL_ENTER(OCI_Interval **, NULL)
-    CALL_CHECK_INTERVAL_ENABLED(con)
-    CALL_CONTEXT_FROM_CON(con)
+    CHECK_INTERVAL_ENABLED(con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
-    CALL_CHECK_ENUM_VALUE(con, NULL, type, IntervalTypeValues, OTEXT("Interval type"))
+    CHECK_ENUM_VALUE(type, IntervalTypeValues, OTEXT("Interval type"))
 #endif
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type,
-                      sizeof(OCIInterval *), sizeof(OCI_Interval),
+                      sizeof(OCIInterval*), sizeof(OCI_Interval),
                       ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, type), NULL);
 
-    STATUS = (NULL != arr);
+    CHECK_NULL(arr)
 
-    if (STATUS)
-    {
-        RETVAL = (OCI_Interval **) arr->tab_obj;
-    }
+    SET_RETVAL((OCI_Interval**)arr->tab_obj)
 
 #else
 
@@ -194,7 +221,7 @@ OCI_Interval ** IntervalCreateArray
 
 #endif
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -206,12 +233,17 @@ boolean IntervalFreeArray
     OCI_Interval **itvs
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_ARRAY, itvs)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    RETVAL = STATUS = ArrayFreeFromHandles((void **)itvs);
+    CHECK_PTR(OCI_IPC_ARRAY, itvs)
 
-    CALL_EXIT()
+    SET_RETVAL(ArrayFreeFromHandles((void**)itvs))
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -223,7 +255,12 @@ unsigned int IntervalGetType
     OCI_Interval *itv
 )
 {
-    GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_INTERVAL, itv, type, itv->con, NULL, itv->err)
+    GET_PROP
+    (
+        /* result */ unsigned int, OCI_UNKNOWN,
+        /* handle */ OCI_IPC_INTERVAL, itv,
+        /* member */ type
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -236,20 +273,30 @@ boolean IntervalAssign
     OCI_Interval *itv_src
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv_src)
-    CALL_CONTEXT_FROM_OBJ(itv)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_PTR(OCI_IPC_INTERVAL, itv_src)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    EXEC(OCIIntervalAssign((dvoid *) itv->env, itv->err, itv_src->handle, itv->handle))
+    CHECK_OCI
+    (
+        itv->err,
+        OCIIntervalAssign, 
+        (dvoid *) itv->env, itv->err, 
+        itv_src->handle, itv->handle
+    )
 
 #endif
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -261,21 +308,31 @@ int IntervalCheck
     OCI_Interval *itv
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ int , OCI_ERROR,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
     ub4 value = (ub4) OCI_ERROR;
 
-    CALL_ENTER(int, value)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CONTEXT_FROM_OBJ(itv)
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    EXEC(OCIIntervalCheck((dvoid *) itv->env, itv->err, itv->handle, &value))
+    CHECK_OCI
+    (
+        itv->err, 
+        OCIIntervalCheck, 
+        (dvoid *) itv->env, itv->err,
+        itv->handle, &value
+    )
 
 #endif
 
-    RETVAL = value;
+    SET_RETVAL(value)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -288,22 +345,33 @@ int IntervalCompare
     OCI_Interval *itv2
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ int, 0,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
     sword value = OCI_ERROR;
 
-    CALL_ENTER(int, value)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv2)
-    CALL_CONTEXT_FROM_OBJ(itv)
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_PTR(OCI_IPC_INTERVAL, itv2)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    EXEC(OCIIntervalCompare((dvoid *) itv->env, itv->err, itv->handle, itv2->handle, &value))
+    CHECK_OCI
+    (
+        itv->err, 
+        OCIIntervalCompare,
+        (dvoid *) itv->env, itv->err, 
+        itv->handle, itv2->handle, 
+        &value
+    )
 
 #endif
 
-    RETVAL = value;
+    SET_RETVAL(value)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -312,31 +380,43 @@ int IntervalCompare
 
 boolean IntervalFromString
 (
-    OCI_Interval *itv,
+    OCI_Interval* itv,
     const otext * str
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
     dbtext *dbstr  = NULL;
     int     dbsize = -1;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CHECK_PTR(OCI_IPC_STRING, str)
-    CALL_CONTEXT_FROM_OBJ(itv)
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_PTR(OCI_IPC_STRING, str)
 
     dbstr = StringGetDBString(str, &dbsize);
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    EXEC(OCIIntervalFromText((dvoid *) itv->env, itv->err, (OraText *) dbstr, (size_t) dbsize, itv->handle))
-
-    StringReleaseDBString(dbstr);
+    CHECK_OCI
+    (
+        itv->err,
+        OCIIntervalFromText,
+        (dvoid *) itv->env, itv->err, 
+        (OraText *) dbstr, (size_t) dbsize,
+        itv->handle
+    )
 
 #endif
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -352,14 +432,18 @@ boolean IntervalToString
     otext        *str
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
     dbtext *dbstr  = NULL;
     int     dbsize = size * (int)   sizeof(otext);
     size_t  len    = 0;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CHECK_PTR(OCI_IPC_STRING, str)
-    CALL_CONTEXT_FROM_OBJ(itv)
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_PTR(OCI_IPC_STRING, str)
 
     /* initialize output buffer in case of OCI failure */
 
@@ -371,13 +455,15 @@ boolean IntervalToString
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    EXEC
+    CHECK_OCI
     (
-        OCIIntervalToText((dvoid *) itv->env, itv->err,
-                          (OCIInterval *) itv->handle,
-                          (ub1) leading_prec, (ub1) fraction_prec,
-                          (OraText *) dbstr, (size_t) dbsize,
-                          (size_t *) &len)
+        itv->err,
+        OCIIntervalToText,
+        (dvoid *) itv->env, itv->err,
+        (OCIInterval *) itv->handle,
+        (ub1) leading_prec, (ub1) fraction_prec,
+        (OraText *) dbstr, (size_t) dbsize,
+        (size_t *) &len
     )
 
 #else
@@ -390,15 +476,17 @@ boolean IntervalToString
     dbsize = (int)len;
 
     StringCopyDBStringToNativeString(dbstr, str, dbcharcount(dbsize));
-    StringReleaseDBString(dbstr);
 
     /* set null string terminator */
 
     str[dbcharcount(dbsize)] = 0;
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -411,27 +499,39 @@ boolean IntervalFromTimeZone
     const otext * str
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
     dbtext *dbstr  = NULL;
     int     dbsize = -1;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CHECK_PTR(OCI_IPC_STRING, str)
-    CALL_CONTEXT_FROM_OBJ(itv)
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_PTR(OCI_IPC_STRING, str)
 
     dbstr = StringGetDBString(str, &dbsize);
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    EXEC(OCIIntervalFromTZ((dvoid *) itv->env, itv->err, (CONST OraText *) dbstr, (size_t) dbsize, itv->handle))
+    CHECK_OCI
+    (
+        itv->err,
+        OCIIntervalFromTZ,
+        (dvoid *) itv->env, itv->err,
+        (CONST OraText *) dbstr, 
+        (size_t) dbsize, itv->handle
+    )
 
 #endif
 
-    StringReleaseDBString(dbstr);
+    SET_SUCCESS()
 
-    RETVAL = STATUS;
-
-    CALL_EXIT()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -448,13 +548,17 @@ boolean IntervalGetDaySecond
     int          *fsec
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CHECK_PTR(OCI_IPC_INT, hour)
-    CALL_CHECK_PTR(OCI_IPC_INT, min)
-    CALL_CHECK_PTR(OCI_IPC_INT, sec)
-    CALL_CHECK_PTR(OCI_IPC_INT, fsec)
-    CALL_CONTEXT_FROM_OBJ(itv)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_PTR(OCI_IPC_INT, hour)
+    CHECK_PTR(OCI_IPC_INT, min)
+    CHECK_PTR(OCI_IPC_INT, sec)
+    CHECK_PTR(OCI_IPC_INT, fsec)
 
     *day  = 0;
     *hour = 0;
@@ -464,11 +568,13 @@ boolean IntervalGetDaySecond
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    EXEC
+    CHECK_OCI
     (
-        OCIIntervalGetDaySecond((dvoid *) itv->env, itv->err,
-                                (sb4 *) day, (sb4 *) hour, (sb4 *) min,
-                                (sb4 *) sec, (sb4 *) fsec, itv->handle)
+        itv->err,
+        OCIIntervalGetDaySecond,
+        (dvoid *) itv->env, itv->err,
+        (sb4 *) day, (sb4 *) hour, (sb4 *) min,
+        (sb4 *) sec, (sb4 *) fsec, itv->handle
     )
 
 #else
@@ -481,9 +587,9 @@ boolean IntervalGetDaySecond
 
 #endif
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -497,24 +603,35 @@ boolean IntervalGetYearMonth
     int          *month
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CHECK_PTR(OCI_IPC_INT, year)
-    CALL_CHECK_PTR(OCI_IPC_INT, month)
-    CALL_CONTEXT_FROM_OBJ(itv)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_PTR(OCI_IPC_INT, year)
+    CHECK_PTR(OCI_IPC_INT, month)
 
     *year  = 0;
     *month = 0;
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    EXEC(OCIIntervalGetYearMonth((dvoid *) itv->env, itv->err, (sb4 *) year, (sb4 *) month, itv->handle))
+    CHECK_OCI
+    (
+        itv->err,
+        OCIIntervalGetYearMonth,
+        (dvoid *) itv->env, itv->err,
+        (sb4 *) year, (sb4 *) month,
+        itv->handle
+    )
 
 #endif
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -531,17 +648,24 @@ boolean IntervalSetDaySecond
     int           fsec
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CONTEXT_FROM_OBJ(itv)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    EXEC
+    CHECK_OCI
     (
-        OCIIntervalSetDaySecond((dvoid *) itv->env, itv->err,
-                                (sb4) day, (sb4) hour, (sb4) min,
-                                (sb4) sec, (sb4) fsec, itv->handle)
+        itv->err,
+        OCIIntervalSetDaySecond,
+        (dvoid *) itv->env, itv->err,
+        (sb4) day, (sb4) hour, (sb4) min,
+        (sb4) sec, (sb4) fsec, itv->handle
     )
 
 #else
@@ -554,9 +678,9 @@ boolean IntervalSetDaySecond
 
 #endif
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -570,13 +694,23 @@ boolean IntervalSetYearMonth
     int           month
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CONTEXT_FROM_OBJ(itv)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    EXEC(OCIIntervalSetYearMonth((dvoid *) itv->env, itv->err, (sb4) year, (sb4) month, itv->handle))
+    CHECK_OCI
+    (
+        itv->err,
+        OCIIntervalSetYearMonth, 
+        (dvoid *) itv->env, itv->err, 
+        (sb4) year, (sb4) month, itv->handle
+    )
 
 #else
 
@@ -585,9 +719,9 @@ boolean IntervalSetYearMonth
 
 #endif
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -600,20 +734,30 @@ boolean IntervalAdd
     OCI_Interval *itv2
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv2)
-    CALL_CONTEXT_FROM_OBJ(itv)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_PTR(OCI_IPC_INTERVAL, itv2)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    EXEC(OCIIntervalAdd((dvoid *) itv->env, itv->err, itv->handle, itv2->handle, itv->handle))
+    CHECK_OCI
+    (
+        itv->err,
+        OCIIntervalAdd,
+        (dvoid *) itv->env, itv->err, itv->handle,
+        itv2->handle, itv->handle
+    )
 
 #endif
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -626,18 +770,28 @@ boolean IntervalSubtract
     OCI_Interval *itv2
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CALL_CHECK_PTR(OCI_IPC_INTERVAL, itv2)
-    CALL_CONTEXT_FROM_OBJ(itv)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_INTERVAL, itv
+    )
+
+    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_PTR(OCI_IPC_INTERVAL, itv2)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    EXEC(OCIIntervalSubtract((dvoid *) itv->env, itv->err, itv->handle, itv2->handle, itv->handle))
+    CHECK_OCI
+    (
+        itv->err,
+        OCIIntervalSubtract,
+        (dvoid *) itv->env, itv->err, itv->handle,
+        itv2->handle, itv->handle
+    )
 
 #endif
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }

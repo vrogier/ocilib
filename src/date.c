@@ -38,68 +38,69 @@ OCI_Date * DateInitialize
     boolean         ansi
 )
 {
-    DECLARE_CTX(TRUE)
-    CALL_CONTEXT_FROM_CON(con)
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Date*, NULL,
+        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
+    )
 
     ALLOC_DATA(OCI_IPC_DATE, date, 1);
 
-    if (STATUS)
+    date->con = con;
+
+    /* get the right error handle */
+
+    date->err = con ? con->err : Env.err;
+    date->env = con ? con->env : Env.env;
+
+    /* allocate buffer if needed */
+
+    if (NULL == date->handle && (allocate || ansi))
     {
-        date->con = con;
+        date->allocated = TRUE;
 
-        /* get the right error handle */
-
-        date->err = con ? con->err : Env.err;
-        date->env = con ? con->env : Env.env;
-
-        /* allocate buffer if needed */
-
-        if (!date->handle && (allocate || ansi))
+        if (allocate)
         {
-            date->allocated = TRUE;
-
-            if (allocate)
-            {
-                date->hstate = OCI_OBJECT_ALLOCATED;
-            }
-
-            ALLOC_DATA(OCI_IPC_OCIDATE, date->handle, 1);
-        }
-        else
-        {
-            if (OCI_OBJECT_ALLOCATED_ARRAY != date->hstate)
-            {
-                date->hstate = OCI_OBJECT_FETCHED_CLEAN;
-            }
-
-            date->handle = buffer;
+            date->hstate = OCI_OBJECT_ALLOCATED;
         }
 
-        /* if the input buffer is an SQLT_DAT buffer, we need to convert it */
-
-        if (ansi && date->handle && buffer)
+        ALLOC_DATA(OCI_IPC_OCIDATE, date->handle, 1);
+    }
+    else
+    {
+        if (OCI_OBJECT_ALLOCATED_ARRAY != date->hstate)
         {
-            unsigned char *d = (unsigned char *) buffer;
-
-            date->handle->OCIDateYYYY = (sb2) (((d[0] - 100) * 100) + (d[1] - 100));
-            date->handle->OCIDateMM   = (ub1) d[2];
-            date->handle->OCIDateDD   = (ub1) d[3];
-
-            date->handle->OCIDateTime.OCITimeHH = (ub1) (d[4] - 1);
-            date->handle->OCIDateTime.OCITimeMI = (ub1) (d[5] - 1);
-            date->handle->OCIDateTime.OCITimeSS = (ub1) (d[6] - 1);
+            date->hstate = OCI_OBJECT_FETCHED_CLEAN;
         }
+
+        date->handle = buffer;
     }
 
-    /* check for failure */
+    /* if the input buffer is an SQLT_DAT buffer, we need to convert it */
 
-    if (!STATUS && date)
+    if (ansi && NULL != date->handle && NULL != buffer)
     {
-        DateFree(date);
-        date = NULL;
+        unsigned char *d = (unsigned char *) buffer;
+
+        date->handle->OCIDateYYYY = (sb2) (((d[0] - 100) * 100) + (d[1] - 100));
+        date->handle->OCIDateMM   = (ub1) d[2];
+        date->handle->OCIDateDD   = (ub1) d[3];
+
+        date->handle->OCIDateTime.OCITimeHH = (ub1) (d[4] - 1);
+        date->handle->OCIDateTime.OCITimeMI = (ub1) (d[5] - 1);
+        date->handle->OCIDateTime.OCITimeSS = (ub1) (d[6] - 1);
     }
 
-    return date;
+    CLEANUP_AND_EXIT_FUNC
+    (   
+        if (FAILURE)
+        {
+            DateFree(date);
+            date = NULL;
+        }
+
+        SET_RETVAL(date)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -111,14 +112,17 @@ OCI_Date * DateCreate
     OCI_Connection *con
 )
 {
-    CALL_ENTER(OCI_Date*, NULL)
-    CALL_CHECK_INITIALIZED()
-    CALL_CONTEXT_FROM_CON(con)
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Date*, NULL,
+        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
+    )
 
-    RETVAL = DateInitialize(con, NULL, NULL, TRUE, FALSE);
-    STATUS = (NULL != RETVAL);
+    CHECK_INITIALIZED()
 
-    CALL_EXIT()
+    SET_RETVAL(DateInitialize(con, NULL, NULL, TRUE, FALSE))
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -130,10 +134,14 @@ boolean DateFree
     OCI_Date *date
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CHECK_OBJECT_FETCHED(date)
-    CALL_CONTEXT_FROM_OBJ(date)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
+
+    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_OBJECT_FETCHED(date)
 
     if (date->allocated)
     {
@@ -145,9 +153,9 @@ boolean DateFree
         FREE(date)
     }
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -160,22 +168,24 @@ OCI_Date ** DateCreateArray
     unsigned int    nbelem
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Date**, FALSE,
+        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
+    )
+
     OCI_Array *arr = NULL;
 
-    CALL_ENTER(OCI_Date **, NULL)
-    CALL_CHECK_INITIALIZED()
-    CALL_CONTEXT_FROM_CON(con)
+    CHECK_INITIALIZED()
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0, sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
+    arr = ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0,
+            sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
 
-    STATUS = (NULL != arr);
+    CHECK_NULL(arr)
 
-    if (STATUS)
-    {
-        RETVAL = (OCI_Date **) arr->tab_obj;
-    }
+    SET_RETVAL((OCI_Date**)arr->tab_obj)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -187,12 +197,17 @@ boolean DateFreeArray
     OCI_Date **dates
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_ARRAY, dates)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    RETVAL = STATUS = ArrayFreeFromHandles((void **)dates);
+    CHECK_PTR(OCI_IPC_ARRAY, dates)
 
-    CALL_EXIT()
+    SET_RETVAL(ArrayFreeFromHandles((void**)dates))
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -205,15 +220,25 @@ boolean DateAddDays
     int       nb
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CONTEXT_FROM_OBJ(date)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
 
-    EXEC(OCIDateAddDays(date->err, date->handle, (sb4)nb, date->handle))
+    CHECK_PTR(OCI_IPC_DATE, date)
 
-    RETVAL = STATUS;
+    CHECK_OCI
+    (
+        date->err,
+        OCIDateAddDays,
+        date->err, date->handle,
+        (sb4)nb, date->handle
+    )
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -226,15 +251,25 @@ boolean DateAddMonths
     int       nb
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CONTEXT_FROM_OBJ(date)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
 
-    EXEC(OCIDateAddMonths(date->err, date->handle, (sb4) nb, date->handle) )
+    CHECK_PTR(OCI_IPC_DATE, date)
 
-    RETVAL = STATUS;
+    CHECK_OCI
+    (
+        date->err,
+        OCIDateAddMonths, 
+        date->err, date->handle, 
+        (sb4) nb, date->handle
+    )
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -247,16 +282,26 @@ boolean DateAssign
     OCI_Date *date_src
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date_src)
-    CALL_CONTEXT_FROM_OBJ(date)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
 
-    EXEC(OCIDateAssign(date->err, date_src->handle, date->handle))
+    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE, date_src)
 
-    RETVAL = STATUS;
+    CHECK_OCI
+    (
+        date->err,
+        OCIDateAssign, 
+        date->err, date_src->handle,
+        date->handle
+    )
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -268,17 +313,27 @@ int DateCheck
     OCI_Date *date
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ int, OCI_ERROR,
+        /* context */ OCI_IPC_DATE, date
+    )
+
     uword valid = 0;
 
-    CALL_ENTER(int, valid)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CONTEXT_FROM_OBJ(date)
+    CHECK_PTR(OCI_IPC_DATE, date)
 
-    EXEC(OCIDateCheck(date->err, date->handle, &valid))
+    CHECK_OCI
+    (
+        date->err,
+        OCIDateCheck,
+        date->err, date->handle, 
+        &valid
+    )
 
-    RETVAL = (int) valid;
+    SET_RETVAL((int) valid)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -291,18 +346,28 @@ int DateCompare
     OCI_Date *date2
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ int, 0,
+        /* context */ OCI_IPC_DATE, date
+    )
+
     sword value = OCI_ERROR;
 
-    CALL_ENTER(int, value)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date2)
-    CALL_CONTEXT_FROM_OBJ(date)
+    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE, date2)
 
-    EXEC(OCIDateCompare(date->err, date->handle, date2->handle, &value))
+    CHECK_OCI
+    (
+        date->err,
+        OCIDateCompare,
+        date->err, date->handle, 
+        date2->handle, &value
+    )
 
-    RETVAL = (int) value;
+    SET_RETVAL((int) value)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -315,18 +380,28 @@ int DateDaysBetween
     OCI_Date *date2
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ int, 0,
+        /* context */ OCI_IPC_DATE, date
+    )
+
     sb4 diff = 0;
 
-    CALL_ENTER(int, diff)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date);
-    CALL_CHECK_PTR(OCI_IPC_DATE, date2);
-    CALL_CONTEXT_FROM_OBJ(date)
+    CHECK_PTR(OCI_IPC_DATE, date);
+    CHECK_PTR(OCI_IPC_DATE, date2);
 
-    EXEC(OCIDateDaysBetween(date->err, date->handle, date2->handle, &diff))
+    CHECK_OCI
+    (
+        date->err,
+        OCIDateDaysBetween,
+        date->err, date->handle,
+        date2->handle, &diff
+    )
 
-    RETVAL = (int) diff;
+    SET_RETVAL((int) diff)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -340,38 +415,47 @@ boolean DateFromString
     const otext *fmt
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
+
     dbtext *dbstr1  = NULL;
     dbtext *dbstr2  = NULL;
     int     dbsize1 = -1;
     int     dbsize2 = -1;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CHECK_PTR(OCI_IPC_STRING, str)
-    CALL_CONTEXT_FROM_OBJ(date)
+    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_STRING, str)
 
     if (!IS_STRING_VALID(fmt))
     {
         fmt = EnvironmentGetFormat(date->con, OCI_FMT_DATE);
+        CHECK_NULL(fmt)
     }
 
     dbstr1 = StringGetDBString(str, &dbsize1);
     dbstr2 = StringGetDBString(fmt, &dbsize2);
 
-    EXEC
+    CHECK_OCI
     (
-        OCIDateFromText(date->err,
-                        (oratext *) dbstr1, (ub4) dbsize1,
-                        (oratext *) dbstr2, (ub1) dbsize2,
-                        (oratext *) NULL,  (ub4) 0, date->handle)
+        date->err,
+        OCIDateFromText,
+        date->err,
+        (oratext *) dbstr1, (ub4) dbsize1,
+        (oratext *) dbstr2, (ub1) dbsize2,
+        (oratext *) NULL,  (ub4) 0, 
+        date->handle
     )
 
-    StringReleaseDBString(dbstr1);
-    StringReleaseDBString(dbstr2);
+    SET_SUCCESS()
 
-    RETVAL = STATUS;
-
-    CALL_EXIT()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr1);
+        StringReleaseDBString(dbstr2);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -386,16 +470,21 @@ boolean DateGetDate
     int      *day
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
+
+
     sb2 yr = 0;
     ub1 mt = 0;
     ub1 dy = 0;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CHECK_PTR(OCI_IPC_INT, year)
-    CALL_CHECK_PTR(OCI_IPC_INT, month)
-    CALL_CHECK_PTR(OCI_IPC_INT, day)
-    CALL_CONTEXT_FROM_OBJ(date)
+    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_INT, year)
+    CHECK_PTR(OCI_IPC_INT, month)
+    CHECK_PTR(OCI_IPC_INT, day)
 
     OCIDateGetDate(date->handle, &yr, &mt, &dy);
 
@@ -403,9 +492,9 @@ boolean DateGetDate
     *month = (int) mt;
     *day   = (int) dy;
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -420,16 +509,20 @@ boolean DateGetTime
     int      *sec
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
+
     ub1 hr = 0;
     ub1 mn = 0;
     ub1 sc = 0;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CHECK_PTR(OCI_IPC_INT, hour)
-    CALL_CHECK_PTR(OCI_IPC_INT, min)
-    CALL_CHECK_PTR(OCI_IPC_INT, sec)
-    CALL_CONTEXT_FROM_OBJ(date)
+    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_INT, hour)
+    CHECK_PTR(OCI_IPC_INT, min)
+    CHECK_PTR(OCI_IPC_INT, sec)
 
     OCIDateGetTime(date->handle, &hr, &mn, &sc);
 
@@ -437,9 +530,9 @@ boolean DateGetTime
     *min  = (int) mn;
     *sec  = (int) sc;
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -469,15 +562,26 @@ boolean DateLastDay
     OCI_Date *date
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CONTEXT_FROM_OBJ(date)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
 
-    EXEC(OCIDateLastDay(date->err, date->handle, date->handle))
 
-    RETVAL = STATUS;
+    CHECK_PTR(OCI_IPC_DATE, date)
 
-    CALL_EXIT()
+    CHECK_OCI
+    (
+        date->err,
+        OCIDateLastDay,
+        date->err, date->handle,
+        date->handle
+    )
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -490,23 +594,35 @@ boolean DateNextDay
     const otext *day
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
+
     dbtext *dbstr  = NULL;
     int     dbsize = -1;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CHECK_PTR(OCI_IPC_STRING, day)
-    CALL_CONTEXT_FROM_OBJ(date)
+    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_STRING, day)
 
     dbstr = StringGetDBString(day, &dbsize);
 
-    EXEC(OCIDateNextDay(date->err, date->handle, (oratext *) dbstr, (ub4) dbsize, date->handle))
+    CHECK_OCI
+    (
+        date->err,
+        OCIDateNextDay,
+        date->err, date->handle, 
+        (oratext *) dbstr, (ub4) dbsize, 
+        date->handle
+    )
 
-    StringReleaseDBString(dbstr);
+    SET_SUCCESS()
 
-    RETVAL = STATUS;
-
-    CALL_EXIT()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -521,15 +637,19 @@ boolean DateSetDate
     int       day
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CONTEXT_FROM_OBJ(date)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
+
+    CHECK_PTR(OCI_IPC_DATE, date)
 
     OCIDateSetDate(date->handle, (sb2) year, (ub1) month, (ub1) day);
 
-    RETVAL = TRUE;
+    SET_RETVAL(DateCheck(date))
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -544,15 +664,19 @@ boolean DateSetTime
     int       sec
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CONTEXT_FROM_OBJ(date)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
+
+    CHECK_PTR(OCI_IPC_DATE, date)
 
     OCIDateSetTime(date->handle, (ub1) hour, (ub1) min, (ub1) sec);
 
-    RETVAL = TRUE;
+    SET_RETVAL(DateCheck(date))
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -582,15 +706,24 @@ boolean DateSysDate
     OCI_Date *date
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CONTEXT_FROM_OBJ(date)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
 
-    EXEC(OCIDateSysDate(date->err, date->handle))
+    CHECK_PTR(OCI_IPC_DATE, date)
 
-    RETVAL = STATUS;
+    CHECK_OCI
+    (
+        date->err,
+        OCIDateSysDate, 
+        date->err, date->handle
+    )
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -605,15 +738,19 @@ boolean DateToString
     otext       *str
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
+
     dbtext *dbstr1  = NULL;
     dbtext *dbstr2  = NULL;
     int     dbsize1 = size * (int) sizeof(otext);
     int     dbsize2 = -1;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CHECK_PTR(OCI_IPC_STRING, str)
-    CALL_CONTEXT_FROM_OBJ(date)
+    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_STRING, str)
 
     /* initialize output buffer in case of OCI failure */
 
@@ -622,30 +759,34 @@ boolean DateToString
     if (!IS_STRING_VALID(fmt))
     {
         fmt = EnvironmentGetFormat(date->con, OCI_FMT_DATE);
+        CHECK_NULL(fmt)
     }
 
     dbstr1 = StringGetDBString(str, &dbsize1);
     dbstr2 = StringGetDBString(fmt, &dbsize2);
 
-    EXEC
+    CHECK_OCI
     (
-        OCIDateToText(date->err, date->handle, (oratext *) dbstr2,
-                      (ub1) dbsize2, (oratext *) NULL, (ub4) 0,
-                      (ub4*) &dbsize1, (oratext *) dbstr1)
+        date->err,
+        OCIDateToText,
+        date->err, date->handle, (oratext *) dbstr2,
+        (ub1) dbsize2, (oratext *) NULL, (ub4) 0,
+        (ub4*) &dbsize1, (oratext *) dbstr1
     )
 
     StringCopyDBStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
-
-    StringReleaseDBString(dbstr1);
-    StringReleaseDBString(dbstr2);
 
     /* set null string terminator */
 
     str[dbcharcount(dbsize1)] = 0;
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr1);
+        StringReleaseDBString(dbstr2);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -659,34 +800,41 @@ boolean DateZoneToZone
     const otext *zone2
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
+
     dbtext *dbstr1  = NULL;
     dbtext *dbstr2  = NULL;
     int     dbsize1 = -1;
     int     dbsize2 = -1;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CHECK_PTR(OCI_IPC_STRING, zone1)
-    CALL_CHECK_PTR(OCI_IPC_STRING, zone2)
-    CALL_CONTEXT_FROM_OBJ(date)
+    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_STRING, zone1)
+    CHECK_PTR(OCI_IPC_STRING, zone2)
 
     dbstr1 = StringGetDBString(zone1, &dbsize1);
     dbstr2 = StringGetDBString(zone2, &dbsize2);
 
-    EXEC
+    CHECK_OCI
     (
-        OCIDateZoneToZone(date->err, date->handle,
-                          (oratext *) dbstr1, (ub4) dbsize1,
-                          (oratext *) dbstr2, (ub4) dbsize2,
-                          date->handle)
+        date->err,
+        OCIDateZoneToZone,
+        date->err, date->handle,
+        (oratext *) dbstr1, (ub4) dbsize1,
+        (oratext *) dbstr2, (ub4) dbsize2,
+        date->handle
     )
 
-    StringReleaseDBString(dbstr1);
-    StringReleaseDBString(dbstr2);
+    SET_SUCCESS()
 
-    RETVAL = STATUS;
-
-    CALL_EXIT()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr1);
+        StringReleaseDBString(dbstr2);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -700,13 +848,17 @@ boolean DateToCTime
     time_t    *pt
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
+
     time_t time = (time_t) -1;
 
     struct tm t;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CONTEXT_FROM_OBJ(date)
+    CHECK_PTR(OCI_IPC_DATE, date)
 
     memset(&t, 0, sizeof(t));
 
@@ -724,19 +876,19 @@ boolean DateToCTime
 
     time = mktime(&t);
 
-    if (ptm)
+    if (NULL != ptm)
     {
         memcpy(ptm, &t, sizeof(t));
     }
 
-    if (pt)
+    if (NULL != pt)
     {
         *pt = time;
     }
 
-    RETVAL = (time != (time_t)-1);
+    SET_RETVAL((time != (time_t)-1))
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -750,21 +902,25 @@ boolean DateFromCTime
     time_t     t
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_DATE, date)
-    CALL_CONTEXT_FROM_OBJ(date)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DATE, date
+    )
 
-    if (!ptm && (t == (time_t) 0))
+    CHECK_PTR(OCI_IPC_DATE, date)
+
+    if (NULL == ptm && (t == (time_t) 0))
     {
-        THROW(ExceptionNullPointer(OCI_IPC_TM))
+        THROW(ExceptionNullPointer, OCI_IPC_TM)
     }
 
-    if (!ptm)
+    if (NULL == ptm)
     {
         ptm = localtime(&t);
     }
 
-    if (ptm)
+    if (NULL != ptm)
     {
         date->handle->OCIDateYYYY = (sb2) ptm->tm_year + 1900;
         date->handle->OCIDateMM   = (ub1) ptm->tm_mon  + 1;
@@ -776,10 +932,10 @@ boolean DateFromCTime
     }
     else
     {
-        THROW(ExceptionNullPointer(OCI_IPC_TM))
+        THROW(ExceptionNullPointer, OCI_IPC_TM)
     }
 
-    RETVAL = TRUE;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }

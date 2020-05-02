@@ -23,7 +23,7 @@
 #include "error.h"
 #include "strings.h"
 
-static const otext * OCILib_TypeNames[OCI_IPC_COUNT] =
+static const otext * TypeNames[OCI_IPC_COUNT] =
 {
     OTEXT("Oracle memory"),
 
@@ -96,7 +96,7 @@ static const otext * OCILib_TypeNames[OCI_IPC_COUNT] =
 
 #if defined(OCI_CHARSET_WIDE) && !defined(_MSC_VER)
 
-static const otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
+static const otext * ErrorMessages[OCI_ERR_COUNT] =
 {
     OTEXT("No error"),
     OTEXT("OCILIB has not been initialized"),
@@ -133,7 +133,7 @@ static const otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
 
 #else
 
-static const otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
+static const otext * ErrorMessages[OCI_ERR_COUNT] =
 {
     OTEXT("No error"),
     OTEXT("OCILIB has not been initialized"),
@@ -170,7 +170,7 @@ static const otext * OCILib_ErrorMsg[OCI_ERR_COUNT] =
 
 #endif
 
-static const otext * OCILib_OraFeatures[OCI_FEATURE_COUNT] =
+static const otext * OracleFeatures[OCI_FEATURE_COUNT] =
 {
     OTEXT("Oracle 9.0 support for Unicode data"),
     OTEXT("Oracle 9.0 Timestamps and Intervals"),
@@ -184,13 +184,13 @@ static const otext * OCILib_OraFeatures[OCI_FEATURE_COUNT] =
     OTEXT("Oracle 12c R1 PL/SQL extended support")
 };
 
-typedef struct OCI_StmtStateTable
+typedef struct StatementState
 {
     int          state;
     const otext *name;
-} OCI_StmtStateTable;
+} StatementState;
 
-static const OCI_StmtStateTable OCILib_StmtStates[OCI_STMT_STATES_COUNT] =
+static const StatementState StatementStates[OCI_STMT_STATES_COUNT] =
 {
     { OCI_STMT_CLOSED,    OTEXT("closed")        },
     { OCI_STMT_PARSED,    OTEXT("parsed")        },
@@ -198,7 +198,7 @@ static const OCI_StmtStateTable OCILib_StmtStates[OCI_STMT_STATES_COUNT] =
     { OCI_STMT_DESCRIBED, OTEXT("described")     },
     { OCI_STMT_EXECUTED,  OTEXT("executed")      }
 };
-static const otext * OCILib_DirPathStates[OCI_DPS_COUNT] =
+static const otext * DirPathStates[OCI_DPS_COUNT] =
 {
     OTEXT("non prepared"),
     OTEXT("prepared"),
@@ -206,12 +206,36 @@ static const otext * OCILib_DirPathStates[OCI_DPS_COUNT] =
     OTEXT("terminated")
 };
 
-static const otext * OCILib_HandleNames[OCI_HDLE_COUNT] =
+static const otext * HandleNames[OCI_HDLE_COUNT] =
 {
     OTEXT("OCI handle"),
     OTEXT("OCI descriptors"),
     OTEXT("OCI Object handles")
 };
+
+#define EXCEPTION_IMPL(err_code, ...)                   \
+                                                        \
+    OCI_Error *err = ExceptionGetError();               \
+    if (err)                                            \
+    {                                                   \
+        otext message[512];                             \
+        osprintf(message, osizeof(message) - (size_t)1, \
+                 ErrorMessages[err_code], __VA_ARGS__); \
+                                                        \
+        ErrorSet                                        \
+        (                                               \
+            err,                                        \
+            OCI_ERR_OCILIB,                             \
+            (int)err_code,                              \
+            ctx->source_ptr,                            \
+            ctx->source_type,                           \
+            ctx->location,                              \
+            message,                                    \
+            0                                           \
+        );                                              \
+                                                        \
+        ExceptionCallHandler(err);                      \
+    }                                                   \
 
 /* --------------------------------------------------------------------------------------------- *
  * ExceptionGetError
@@ -222,13 +246,7 @@ OCI_Error * ExceptionGetError
     void
 )
 {
-    OCI_Error *err = ErrorGet(TRUE, FALSE);
-
-    if (err)
-    {
-        ErrorReset(err);
-    }
-    return err;
+    return ErrorGet(TRUE, TRUE);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -259,33 +277,75 @@ void ExceptionCallHandler
 
 void ExceptionOCI
 (
-    OCIError       *p_err,
-    OCI_Connection *con,
-    OCI_Statement  *stmt,
-    boolean         warning
+    OCI_Context *ctx,
+    OCIError* oci_err,
+    sword call_ret
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
+    OCI_Error *err = ExceptionGetError(); 
+    if (err) 
     {
-        int     dbsize = (int) (osizeof(err->str) - (size_t) 1);
-        dbtext *dbstr  =  StringGetDBString(err->str, &dbsize);
+        sb4 err_code = 0;
+        otext buffer[512];
+        int err_size = osizeof(buffer);
+        const boolean warning = OCI_SUCCESS_WITH_INFO == call_ret;
 
-        err->type = (warning ? OCI_ERR_WARNING : OCI_ERR_ORACLE);
-        err->con  = con;
-        err->stmt = stmt;
+        dbtext * err_msg = StringGetDBString(buffer, &err_size);
 
-        /* get oracle description */
+        buffer[0] = 0;
 
-        OCIErrorGet((dvoid *) p_err, (ub4) 1, (OraText *) NULL, &err->sqlcode,
-                    (OraText *) dbstr, (ub4) dbsize, (ub4) OCI_HTYPE_ERROR);
+        OCIErrorGet((dvoid *)oci_err, (ub4)1, (OraText *)NULL, &err_code,
+                    (OraText *)err_msg, (ub4)err_size, (ub4)OCI_HTYPE_ERROR);
 
-        StringCopyDBStringToNativeString(dbstr, err->str, dbcharcount(dbsize));
-        StringReleaseDBString(dbstr);
+
+        if (err_code == 0 && err_msg[0] == 0)
+        {
+            /* for some OCI call might return an error but OCIErrorGet() not giving more
+             * information. thus let's provide a message in this case known OCI errors */
+
+            switch (call_ret)
+            {
+                case OCI_SUCCESS:
+                    ostrcpy(buffer, OTEXT("Oracle Client error: OCI_SUCCESS"));
+                    break;
+                case OCI_SUCCESS_WITH_INFO:
+                    ostrcpy(buffer, OTEXT("Oracle Client error: OCI_SUCCESS_WITH_INFO"));
+                    break;
+                case OCI_ERROR:
+                    ostrcpy(buffer, OTEXT("Oracle Client error: OCI_ERROR"));
+                    break;
+                case OCI_INVALID_HANDLE:
+                    ostrcpy(buffer, OTEXT("Oracle Client error: OCI_INVALID_HANDLE"));
+                    break;
+                case OCI_NEED_DATA:
+                    ostrcpy(buffer, OTEXT("Oracle Client error: OCI_NEED_DATA"));
+                    break;
+                case OCI_STILL_EXECUTING:
+                    ostrcpy(buffer, OTEXT("Oracle Client error: OCI_STILL_EXECUTING"));
+                    break;
+                default:
+                    osprintf(buffer, osizeof(buffer) - (size_t)1,
+                             OTEXT("Oracle Client error: OCI error code [%d]"), call_ret);
+                    break;
+            }
+        }
+
+        ErrorSet
+        (
+            err,
+            (warning ? OCI_ERR_WARNING : OCI_ERR_ORACLE),
+            (int)err_code,
+            ctx->source_ptr,
+            ctx->source_type,
+            ctx->location,
+            buffer,
+            0
+        );
+
+        StringReleaseDBString(err_msg);
+
+        ExceptionCallHandler(err);
     }
-
-    ExceptionCallHandler(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -294,20 +354,10 @@ void ExceptionOCI
 
 void ExceptionNotInitialized
 (
-    void
+    OCI_Context* ctx
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_NOT_INITIALIZED;
-
-        ostrncat(err->str,  OCILib_ErrorMsg[OCI_ERR_NOT_INITIALIZED], osizeof(err->str) - (size_t) 1);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_NOT_INITIALIZED)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -316,24 +366,12 @@ void ExceptionNotInitialized
 
 void ExceptionLoadingSharedLib
 (
-    void
+    OCI_Context* ctx
 )
 {
 #ifdef OCI_IMPORT_RUNTIME
 
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_LOADING_SHARED_LIB;
-
-        osprintf(err->str, osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_LOADING_SHARED_LIB],
-                 OCI_DL_NAME);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_LOADING_SHARED_LIB, OCI_DL_NAME)
 
 #endif
 }
@@ -344,20 +382,10 @@ void ExceptionLoadingSharedLib
 
 void ExceptionLoadingSymbols
 (
-    void
+    OCI_Context* ctx
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_LOADING_SYMBOLS;
-
-        ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_LOADING_SYMBOLS], osizeof(err->str) - (size_t) 1);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_LOADING_SYMBOLS)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -366,20 +394,10 @@ void ExceptionLoadingSymbols
 
 void ExceptionNotMultithreaded
 (
-    void
+    OCI_Context* ctx
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_MULTITHREADED;
-
-        ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_MULTITHREADED], osizeof(err->str) - (size_t) 1);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_MULTITHREADED)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -388,22 +406,11 @@ void ExceptionNotMultithreaded
 
 void ExceptionNullPointer
 (
+    OCI_Context* ctx,
     int type
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_NULL_POINTER;
-
-        osprintf(err->str, osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_NULL_POINTER],
-                 OCILib_TypeNames[type+1]);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_NULL_POINTER, TypeNames[type + 1])
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -412,29 +419,12 @@ void ExceptionNullPointer
 
 void ExceptionMemory
 (
+    OCI_Context* ctx,
     int             type,
-    size_t          nb_bytes,
-    OCI_Connection *con,
-    OCI_Statement  *stmt
+    size_t          nb_bytes
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_MEMORY;
-        err->con     = con;
-        err->stmt    = stmt;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_MEMORY],
-                 OCILib_TypeNames[type+1],
-                 nb_bytes);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_MEMORY, TypeNames[type + 1], nb_bytes)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -443,25 +433,11 @@ void ExceptionMemory
 
 void ExceptionNotAvailable
 (
-    OCI_Connection *con,
+    OCI_Context* ctx,
     int             feature
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_NOT_AVAILABLE;
-        err->con     = con;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_NOT_AVAILABLE],
-                 OCILib_OraFeatures[feature-1]);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_NOT_AVAILABLE, OracleFeatures[feature - 1])
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -470,27 +446,11 @@ void ExceptionNotAvailable
 
 void ExceptionDatatypeNotSupported
 (
-    OCI_Connection *con,
-    OCI_Statement  *stmt,
+    OCI_Context* ctx,
     int             code
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_DATATYPE_NOT_SUPPORTED;
-        err->con     = con;
-        err->stmt    = stmt;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_DATATYPE_NOT_SUPPORTED],
-                 code);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_DATATYPE_NOT_SUPPORTED, code)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -499,27 +459,11 @@ void ExceptionDatatypeNotSupported
 
 void ExceptionParsingToken
 (
-    OCI_Connection *con,
-    OCI_Statement  *stmt,
+    OCI_Context* ctx,
     otext           token
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_PARSE_TOKEN;
-        err->con     = con;
-        err->stmt    = stmt;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_PARSE_TOKEN],
-                 token);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_PARSE_TOKEN, token)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -528,27 +472,11 @@ void ExceptionParsingToken
 
 void ExceptionMappingArgument
 (
-    OCI_Connection *con,
-    OCI_Statement  *stmt,
+    OCI_Context* ctx,
     int             arg
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_MAP_ARGUMENT;
-        err->con     = con;
-        err->stmt    = stmt;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_MAP_ARGUMENT],
-                 arg);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_MAP_ARGUMENT, arg)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -557,25 +485,11 @@ void ExceptionMappingArgument
 
 void ExceptionOutOfBounds
 (
-    OCI_Connection *con,
+    OCI_Context* ctx,
     int             value
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_OUT_OF_BOUNDS;
-        err->con     = con;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_OUT_OF_BOUNDS],
-                 value);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_OUT_OF_BOUNDS, value)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -584,24 +498,12 @@ void ExceptionOutOfBounds
 
 void ExceptionUnfreedData
 (
+    OCI_Context* ctx,
     int type_elem,
     int nb_elem
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_UNFREED_DATA;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_UNFREED_DATA],
-                 nb_elem, OCILib_HandleNames[type_elem-1]);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_UNFREED_DATA, nb_elem, HandleNames[type_elem - 1])
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -610,29 +512,10 @@ void ExceptionUnfreedData
 
 void ExceptionMaxBind
 (
-    OCI_Statement *stmt
+    OCI_Context* ctx
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_MAX_BIND;
-        err->stmt    = stmt;
-
-        if (stmt)
-        {
-            err->con = stmt->con;
-        }
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_MAX_BIND],
-                 OCI_BIND_MAX);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_MAX_BIND, OCI_BIND_MAX)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -641,25 +524,11 @@ void ExceptionMaxBind
 
 void ExceptionAttributeNotFound
 (
-    OCI_Connection *con,
+    OCI_Context* ctx,
     const otext    *attr
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_ATTR_NOT_FOUND;
-        err->con     = con;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_ATTR_NOT_FOUND],
-                 attr);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_ATTR_NOT_FOUND, attr)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -668,24 +537,11 @@ void ExceptionAttributeNotFound
 
 void ExceptionMinimumValue
 (
-    OCI_Connection *con,
-    OCI_Statement  *stmt,
+    OCI_Context* ctx,
     int             min
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_MIN_VALUE;
-        err->con     = con;
-        err->stmt    = stmt;
-
-        osprintf(err->str, osizeof(err->str) - (size_t) 1, OCILib_ErrorMsg[OCI_ERR_MIN_VALUE], min);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_MIN_VALUE, min)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -694,21 +550,10 @@ void ExceptionMinimumValue
 
 void ExceptionTypeNotCompatible
 (
-    OCI_Connection *con
+    OCI_Context* ctx
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_NOT_COMPATIBLE;
-        err->con     = con;
-
-        ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_NOT_COMPATIBLE], osizeof(err->str) - (size_t) 1);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_NOT_COMPATIBLE)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -717,41 +562,23 @@ void ExceptionTypeNotCompatible
 
 void ExceptionStatementState
 (
-    OCI_Statement *stmt,
+    OCI_Context* ctx,
     int            state
 )
 {
-    OCI_Error *err = ExceptionGetError();
+    int i = 0, index = 0;
 
-    if (err)
+    for (; i < OCI_STMT_STATES_COUNT; i++)
     {
-        int index = 0;
-
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_STMT_STATE;
-        err->stmt    = stmt;
-
-        if (stmt)
+        if (state == StatementStates[i].state)
         {
-            err->con = stmt->con;
+            index = i;
+            break;
         }
-
-        for(int i = 0; i < OCI_STMT_STATES_COUNT; i++)
-        {
-            if (state == OCILib_StmtStates[i].state)
-            {
-                index = i;
-                break;
-            }
-        }
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_STMT_STATE],
-                 OCILib_StmtStates[index].name);
     }
 
-    ExceptionCallHandler(err);
+
+    EXCEPTION_IMPL(OCI_ERR_STMT_STATE, StatementStates[index].name)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -760,27 +587,10 @@ void ExceptionStatementState
 
 void ExceptionStatementNotScrollable
 (
-    OCI_Statement *stmt
+    OCI_Context* ctx
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_STMT_NOT_SCROLLABLE;
-        err->stmt    = stmt;
-
-        if (stmt)
-        {
-            err->con = stmt->con;
-        }
-
-        ostrncat(err->str, OCILib_ErrorMsg[OCI_ERR_STMT_NOT_SCROLLABLE], osizeof(err->str) - (size_t) 1);
-
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_STMT_NOT_SCROLLABLE)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -789,30 +599,11 @@ void ExceptionStatementNotScrollable
 
 void ExceptionBindAlreadyUsed
 (
-    OCI_Statement *stmt,
+    OCI_Context* ctx,
     const otext  * bind
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_BIND_ALREADY_USED;
-        err->stmt    = stmt;
-
-        if (stmt)
-        {
-            err->con = stmt->con;
-        }
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_BIND_ALREADY_USED],
-                 bind);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_BIND_ALREADY_USED, bind)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -821,32 +612,13 @@ void ExceptionBindAlreadyUsed
 
 void ExceptionBindArraySize
 (
-    OCI_Statement *stmt,
+    OCI_Context* ctx,
     unsigned int   maxsize,
     unsigned int   cursize,
     unsigned int   newsize
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_BIND_ARRAY_SIZE;
-        err->stmt    = stmt;
-
-        if (stmt)
-        {
-            err->con =  stmt->con;
-        }
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_BIND_ARRAY_SIZE],
-                 maxsize, cursize, newsize);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_BIND_ARRAY_SIZE, maxsize, cursize, newsize)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -855,32 +627,12 @@ void ExceptionBindArraySize
 
 void ExceptionDirPathColNotFound
 (
-    OCI_DirPath  *dp,
+    OCI_Context* ctx,
     const otext * column,
     const otext  *table
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_COLUMN_NOT_FOUND;
-        err->stmt    = NULL;
-
-        if (dp)
-        {
-            err->con =  dp->con;
-        }
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_COLUMN_NOT_FOUND],
-                 column,
-                 table);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_COLUMN_NOT_FOUND , column, table)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -889,30 +641,11 @@ void ExceptionDirPathColNotFound
 
 void ExceptionDirPathState
 (
-    OCI_DirPath *dp,
+    OCI_Context* ctx,
     int          state
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_DIRPATH_STATE;
-        err->stmt    = NULL;
-
-        if (dp)
-        {
-            err->con =  dp->con;
-        }
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_DIRPATH_STATE],
-                 OCILib_DirPathStates[state-1]);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_DIRPATH_STATE, DirPathStates[state - 1])
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -921,20 +654,10 @@ void ExceptionDirPathState
 
 void ExceptionOCIEnvironment
 (
-    void
+    OCI_Context* ctx
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_CREATE_OCI_ENVIRONMENT;
-
-        ostrncat(err->str,  OCILib_ErrorMsg[OCI_ERR_CREATE_OCI_ENVIRONMENT], osizeof(err->str) - (size_t) 1);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_CREATE_OCI_ENVIRONMENT)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -943,30 +666,11 @@ void ExceptionOCIEnvironment
 
 void ExceptionRebindBadDatatype
 (
-    OCI_Statement *stmt,
+    OCI_Context* ctx,
     const otext  * bind
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_REBIND_BAD_DATATYPE;
-        err->stmt    = stmt;
-
-        if (stmt)
-        {
-            err->con = stmt->con;
-        }
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_REBIND_BAD_DATATYPE],
-                 bind);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_REBIND_BAD_DATATYPE, bind)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -975,26 +679,11 @@ void ExceptionRebindBadDatatype
 
 void ExceptionTypeInfoWrongType
 (
-    OCI_Connection *con,
+    OCI_Context* ctx,
     const otext   * name
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_TYPEINFO_DATATYPE;
-        err->stmt    = NULL;
-        err->con     = con;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t) 1,
-                 OCILib_ErrorMsg[OCI_ERR_TYPEINFO_DATATYPE],
-                 name);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_TYPEINFO_DATATYPE, name)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1003,28 +692,12 @@ void ExceptionTypeInfoWrongType
 
 void ExceptionItemNotFound
 (
-    OCI_Connection *con,
-    OCI_Statement  *stmt,
+    OCI_Context* ctx,
     const otext    *name,
     unsigned int    type
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_ITEM_NOT_FOUND;
-        err->stmt    = stmt;
-        err->con     = con;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t)1,
-                 OCILib_ErrorMsg[OCI_ERR_ITEM_NOT_FOUND],
-                 name, type);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_ITEM_NOT_FOUND, name, type)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1033,28 +706,12 @@ void ExceptionItemNotFound
 
 void ExceptionArgInvalidValue
 (
-    OCI_Connection *con,
-    OCI_Statement  *stmt,
+    OCI_Context* ctx,
     const otext    *name,
     unsigned int    value
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_ARG_INVALID_VALUE;
-        err->stmt    = stmt;
-        err->con     = con;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t)1,
-                 OCILib_ErrorMsg[OCI_ERR_ARG_INVALID_VALUE],
-                 name, value);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_ARG_INVALID_VALUE, name, value)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1063,25 +720,11 @@ void ExceptionArgInvalidValue
 
 void ExceptionEnvFromXaString
 (
+    OCI_Context* ctx,
     const otext *value
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_XA_ENV_FROM_STRING;
-        err->stmt    = NULL;
-        err->con     = NULL;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t)1,
-                 OCILib_ErrorMsg[OCI_ERR_XA_ENV_FROM_STRING],
-                 value);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_XA_ENV_FROM_STRING, value)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1090,25 +733,11 @@ void ExceptionEnvFromXaString
 
 void ExceptionConnFromXaString
 (
+    OCI_Context* ctx,
     const otext *value
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_XA_CONN_FROM_STRING;
-        err->stmt    = NULL;
-        err->con     = NULL;
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t)1,
-                 OCILib_ErrorMsg[OCI_ERR_XA_CONN_FROM_STRING],
-                 value);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_XA_CONN_FROM_STRING, value)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1117,28 +746,9 @@ void ExceptionConnFromXaString
 
 void ExceptionExternalBindingNotAllowed
 (
-    OCI_Statement *stmt,
+    OCI_Context* ctx,
     const otext   *bind
 )
 {
-    OCI_Error *err = ExceptionGetError();
-
-    if (err)
-    {
-        err->type    = OCI_ERR_OCILIB;
-        err->libcode = OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED;
-        err->stmt    = stmt;
-
-        if (stmt)
-        {
-            err->con = stmt->con;
-        }
-
-        osprintf(err->str,
-                 osizeof(err->str) - (size_t)1,
-                 OCILib_ErrorMsg[OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED],
-                 bind);
-    }
-
-    ExceptionCallHandler(err);
+    EXCEPTION_IMPL(OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED, bind)
 }

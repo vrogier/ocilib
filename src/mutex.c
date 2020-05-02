@@ -32,32 +32,42 @@ OCI_Mutex * MutexCreateInternal
     void
 )
 {
-    OCI_Mutex *mutex = NULL;
-
-    DECLARE_CTX(TRUE)
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Mutex*, NULL,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
     /* allocate mutex structure */
 
+    OCI_Mutex *mutex = NULL;
+
     ALLOC_DATA(OCI_IPC_MUTEX, mutex, 1)
 
-    if (STATUS)
-    {
-        /* allocate error handle */
+    /* allocate error handle */
 
-        STATUS = MemoryAllocHandle(Env.env, (dvoid **)(void *)&mutex->err, OCI_HTYPE_ERROR);
+    CHECK(MemoryAllocHandle(Env.env, (dvoid **)(void *)&mutex->err, OCI_HTYPE_ERROR))
 
-        /* allocate mutex handle */
+    /* allocate mutex handle */
 
-        EXEC(OCIThreadMutexInit(Env.env, mutex->err, &mutex->handle))
-    }
+    CHECK_OCI
+    (
+        mutex->err,
+        OCIThreadMutexInit, 
+        Env.env, mutex->err, 
+        &mutex->handle
+    )
 
-    if (!STATUS && mutex)
-    {
-        MutexFree(mutex);
-        mutex = NULL;
-    }
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (FAILURE)
+        {
+            MutexFree(mutex);
+            mutex = NULL;
+        }
 
-    return mutex;
+        SET_RETVAL(mutex)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -69,13 +79,17 @@ OCI_Mutex * MutexCreate
     void
 )
 {
-    CALL_ENTER(OCI_Mutex*, NULL)
-    CALL_CHECK_INITIALIZED()
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Mutex*, NULL,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    RETVAL = MutexCreateInternal();
-    STATUS = (NULL != RETVAL);
+    CHECK_INITIALIZED()
 
-    CALL_EXIT()
+    SET_RETVAL(MutexCreateInternal())
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -87,20 +101,29 @@ boolean MutexFree
     OCI_Mutex *mutex
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
-    CALL_CONTEXT_FROM_ERR(mutex->err)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_MUTEX, mutex
+    )
+
+    CHECK_PTR(OCI_IPC_MUTEX, mutex)
 
     /* close mutex handle */
 
-    if (mutex->handle)
+    if (NULL != mutex->handle)
     {
-        EXEC(OCIThreadMutexDestroy(Env.env, mutex->err, &mutex->handle))
+        CHECK_OCI
+        (
+            mutex->err,
+            OCIThreadMutexDestroy,
+            Env.env, mutex->err, &mutex->handle
+        )
     }
 
     /* close error handle */
 
-    if (mutex->err)
+    if (NULL != mutex->err)
     {
         MemoryFreeHandle(mutex->err, OCI_HTYPE_ERROR);
     }
@@ -109,9 +132,9 @@ boolean MutexFree
 
     FREE(mutex)
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -123,15 +146,24 @@ boolean MutexAcquire
     OCI_Mutex *mutex
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
-    CALL_CONTEXT_FROM_ERR(mutex->err)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_MUTEX, mutex
+    )
 
-    EXEC(OCIThreadMutexAcquire(Env.env, mutex->err, mutex->handle))
+    CHECK_PTR(OCI_IPC_MUTEX, mutex)
 
-    RETVAL = STATUS;
+    CHECK_OCI
+    (
+        mutex->err,
+        OCIThreadMutexAcquire, 
+        Env.env, mutex->err, mutex->handle
+    )
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -143,13 +175,22 @@ boolean MutexRelease
     OCI_Mutex *mutex
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_MUTEX, mutex)
-    CALL_CONTEXT_FROM_ERR(mutex->err)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_MUTEX, mutex
+    )
 
-    EXEC(OCIThreadMutexRelease(Env.env, mutex->err, mutex->handle))
+    CHECK_PTR(OCI_IPC_MUTEX, mutex)
 
-    RETVAL = STATUS;
+    CHECK_OCI
+    (
+        mutex->err,
+        OCIThreadMutexRelease, 
+        Env.env, mutex->err, mutex->handle
+    )
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }

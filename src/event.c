@@ -31,7 +31,13 @@ boolean EventReset
     OCI_Event *event
 )
 {
-    CHECK(NULL == event, FALSE)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_EVENT, event
+    )
+
+    CHECK_PTR(OCI_IPC_EVENT, event)
 
     event->op   = OCI_UNKNOWN;
     event->type = OCI_UNKNOWN;
@@ -51,7 +57,9 @@ boolean EventReset
         event->rowid[0] = 0;
     }
 
-    return TRUE;
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -63,7 +71,12 @@ unsigned int EventGetType
     OCI_Event *event
 )
 {
-    GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_EVENT, event, type, event->sub->con, NULL, event->sub->err)
+    GET_PROP
+    (
+        /* result */ unsigned int, OCI_UNKNOWN,
+        /* handle */ OCI_IPC_EVENT, event,
+        /* member */ type
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -75,7 +88,12 @@ unsigned int EventGetOperation
     OCI_Event *event
 )
 {
-    GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_EVENT, event, op, event->sub->con, NULL, event->sub->err)
+    GET_PROP
+    (
+        /* result */ unsigned int, OCI_UNKNOWN,
+        /* handle */ OCI_IPC_EVENT, event,
+        /* member */ op
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -87,7 +105,12 @@ const otext * EventGetDatabase
     OCI_Event *event
 )
 {
-    GET_PROP(const otext *, NULL, OCI_IPC_EVENT, event, dbname, event->sub->con, NULL, event->sub->err)
+    GET_PROP
+    (
+        /* result */ const otext *, NULL,
+        /* handle */ OCI_IPC_EVENT, event,
+        /* member */ dbname
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -99,7 +122,12 @@ const otext * EventGetObject
     OCI_Event *event
 )
 {
-    GET_PROP(const otext *, NULL, OCI_IPC_EVENT, event, objname, event->sub->con, NULL, event->sub->err)
+    GET_PROP
+    (
+        /* result */ const otext *, NULL,
+        /* handle */ OCI_IPC_EVENT, event,
+        /* member */ objname
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -111,7 +139,12 @@ const otext * EventGetRowid
     OCI_Event *event
 )
 {
-    GET_PROP(const otext *, NULL, OCI_IPC_EVENT, event, rowid, event->sub->con, NULL, event->sub->err)
+    GET_PROP
+    (
+        /* result */ const otext *, NULL,
+        /* handle */ OCI_IPC_EVENT, event,
+        /* member */ rowid
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -123,5 +156,10 @@ OCI_Subscription * EventGetSubscription
     OCI_Event *event
 )
 {
-    GET_PROP(OCI_Subscription *, NULL, OCI_IPC_EVENT, event, sub, event->sub->con, NULL, event->sub->err)
+    GET_PROP
+    (
+        /* result */ OCI_Subscription *, NULL,
+        /* handle */ OCI_IPC_EVENT, event,
+        /* member */ sub
+    )
 }

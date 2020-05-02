@@ -170,7 +170,11 @@ unsigned int ExternalSubTypeToHandleType
  * FreeObjectFromType
  * --------------------------------------------------------------------------------------------- */
 
-boolean FreeObjectFromType(void* obj, unsigned int type)
+boolean FreeObjectFromType
+(
+    void* obj, 
+    unsigned int type
+)
 {
     boolean res = FALSE;
 

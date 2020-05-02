@@ -47,9 +47,6 @@
     <ClCompile Include="..\..\src\connection.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\date.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\define.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -155,13 +152,16 @@
     <ClCompile Include="..\..\src\reference.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\environment.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\database.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\helpers.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\environment.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\date.c">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>

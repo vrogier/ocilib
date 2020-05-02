@@ -25,7 +25,6 @@
 
 OCI_Bind* BindCreate
 (
-    OCI_Context  * ctx,
     OCI_Statement* stmt,
     void         * data,
     const otext  * name,

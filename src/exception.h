@@ -30,127 +30,123 @@ OCI_Error* ExceptionGetError
 
 void ExceptionOCI
 (
-    OCIError      * p_err,
-    OCI_Connection* con,
-    OCI_Statement * stmt,
-    boolean         warning
+    OCI_Context* ctx,
+    OCIError *oci_err,
+    sword call_ret
 );
 
 void ExceptionMemory
 (
+    OCI_Context* ctx,
     int             type,
-    size_t          nb_bytes,
-    OCI_Connection* con,
-    OCI_Statement * stmt
+    size_t          nb_bytes
 );
 
 void ExceptionNotAvailable
 (
-    OCI_Connection* con,
+    OCI_Context* ctx,
     int             feature
 );
 
 void ExceptionNullPointer
 (
+    OCI_Context* ctx,
     int type
 );
 
 void ExceptionDatatypeNotSupported
 (
-    OCI_Connection* con,
-    OCI_Statement * stmt,
+    OCI_Context* ctx,
     int             code
 );
 
 void ExceptionParsingToken
 (
-    OCI_Connection* con,
-    OCI_Statement * stmt,
+    OCI_Context* ctx,
     otext           token
 );
 
 void ExceptionMappingArgument
 (
-    OCI_Connection* con,
-    OCI_Statement * stmt,
+    OCI_Context* ctx,
     int             arg
 );
 
 void ExceptionNotInitialized
 (
-    void
+    OCI_Context* ctx
 );
 
 void ExceptionLoadingSharedLib
 (
-    void
+    OCI_Context* ctx
 );
 
 void ExceptionLoadingSymbols
 (
-    void
+    OCI_Context* ctx
 );
 
 void ExceptionNotMultithreaded
 (
-    void
+    OCI_Context* ctx
 );
 
 void ExceptionOutOfBounds
 (
-    OCI_Connection* con,
+    OCI_Context* ctx,
     int             value
 );
 
 void ExceptionUnfreedData
 (
+    OCI_Context* ctx,
     int type_elem,
     int nb_elem
 );
 
 void ExceptionMaxBind
 (
-    OCI_Statement* stmt
+    OCI_Context* ctx
 );
 
 void ExceptionAttributeNotFound
 (
-    OCI_Connection* con,
+    OCI_Context* ctx,
     const otext   * attr
 );
 
 void ExceptionMinimumValue
 (
-    OCI_Connection* con,
-    OCI_Statement * stmt,
+    OCI_Context* ctx,
     int             min
 );
 
 void ExceptionTypeNotCompatible
 (
-    OCI_Connection* con
+    OCI_Context* ctx
 );
 
 void ExceptionStatementState
 (
-    OCI_Statement* stmt,
+    OCI_Context* ctx,
     int            state
 );
 
 void ExceptionStatementNotScrollable
 (
-    OCI_Statement* stmt
+    OCI_Context* ctx
 );
 
 void ExceptionBindAlreadyUsed
 (
-    OCI_Statement* stmt,
+    OCI_Context* ctx,
     const otext  * bind
 );
 
 void ExceptionBindArraySize
 (
-    OCI_Statement* stmt,
+    OCI_Context* ctx,
     unsigned int   maxsize,
     unsigned int   cursize,
     unsigned int   newsize
@@ -158,63 +154,63 @@ void ExceptionBindArraySize
 
 void ExceptionDirPathColNotFound
 (
-    OCI_DirPath* dp,
+    OCI_Context* ctx,
     const otext* column,
     const otext* table
 );
 
 void ExceptionDirPathState
 (
-    OCI_DirPath* dp,
+    OCI_Context* ctx,
     int          state
 );
 
 void ExceptionOCIEnvironment
 (
-    void
+    OCI_Context* ctx
 );
 
 void ExceptionRebindBadDatatype
 (
-    OCI_Statement* stmt,
+    OCI_Context* ctx,
     const otext  * bind
 );
 
 void ExceptionTypeInfoWrongType
 (
-    OCI_Connection* con,
+    OCI_Context* ctx,
     const otext   * name
 );
 
 void ExceptionItemNotFound
 (
-    OCI_Connection* con,
-    OCI_Statement * stmt,
+    OCI_Context* ctx,
     const otext   * name,
     unsigned int    type
 );
 
 void ExceptionArgInvalidValue
 (
-    OCI_Connection* con,
-    OCI_Statement * stmt,
+    OCI_Context* ctx,
     const otext   * name,
     unsigned int    value
 );
 
 void ExceptionEnvFromXaString
 (
+    OCI_Context* ctx,
     const otext* value
 );
 
 void ExceptionConnFromXaString
 (
+    OCI_Context* ctx,
     const otext* value
 );
 
 void ExceptionExternalBindingNotAllowed
 (
-    OCI_Statement* stmt,
+    OCI_Context* ctx,
     const otext  * bind
 );
 

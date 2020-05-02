@@ -37,39 +37,43 @@ boolean SubscriptionDispose
     OCI_Subscription *sub
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_NOTIFY, sub
+    )
+
     boolean alloc = FALSE;
 
-    DECLARE_CTX(TRUE)
-
-    CHECK(NULL == sub, FALSE);
-
-    CTX_SET(sub->con, NULL, sub->err)
+    CHECK_PTR(OCI_IPC_NOTIFY, sub)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* unregister the subscription if connection still alive */
 
-    if (sub->subhp)
+    if (NULL != sub->subhp)
     {
-        if (!sub->con)
+        if (NULL == sub->con)
         {
             sub->con = ConnectionCreate(sub->saved_db, sub->saved_user,
                                         sub->saved_pwd, OCI_SESSION_DEFAULT);
 
+            CHECK_NULL(sub->con)
+
             alloc = TRUE;
         }
 
-        if (sub->con)
+        if (NULL != sub->con)
         {
             /* OCISubscriptionUnRegister() seems to partially fail when OCI is initialized in UTF16
              * mode as it returns ORA-24915 */
 
             /* Thus, if using OCI in Unicode mode, discard  error ORA-24915 */
 
-            const sword res = OCISubscriptionUnRegister(sub->con->cxt, sub->subhp, sub->err, (ub4) OCI_DEFAULT);
 
   #if defined(OCI_CHARSET_WIDE)
 
+            const sword res = OCISubscriptionUnRegister(sub->con->cxt, sub->subhp, sub->err, (ub4)OCI_DEFAULT);
             if (OCI_FAILURE(res))
             {
                 sb4 code = 0;
@@ -78,16 +82,22 @@ boolean SubscriptionDispose
 
                 if (OCI_ERR_SUB_BUG_OCI_UTF16 != code)
                 {
-                    ExceptionOCI(sub->err, sub->con, NULL, FALSE);
-                    STATUS = FALSE;
+                    THROW(ExceptionOCI, sub->err, res)
                 }
             }
   #else
 
-            EXEC(res);
+            CHECK_OCI
+            (
+                sub->err,
+                OCISubscriptionUnRegister,
+                sub->con->cxt, sub->subhp,
+                sub->err, (ub4)OCI_DEFAULT
+            )
+
   #endif
 
-            if (alloc)
+            if (alloc && NULL != sub->con)
             {
                 ConnectionFree(sub->con);
             }
@@ -96,11 +106,11 @@ boolean SubscriptionDispose
 
     /* free OCI handle */
 
-    MemoryFreeHandle((dvoid *) sub->subhp, OCI_HTYPE_SUBSCRIPTION);
+    MemoryFreeHandle((dvoid*)sub->subhp, OCI_HTYPE_SUBSCRIPTION);
 
     /* close error handle */
 
-    if (sub->err)
+    if (NULL != sub->err)
     {
         MemoryFreeHandle(sub->err, OCI_HTYPE_ERROR);
     }
@@ -120,7 +130,9 @@ boolean SubscriptionDispose
     FREE(sub->saved_pwd)
     FREE(sub->name)
 
-    return STATUS;
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -137,127 +149,163 @@ OCI_Subscription * SubscriptionRegister
     unsigned int    timeout
 )
 {
-    OCI_Subscription *sub = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Subscription*, NULL,
+        /* context */ OCI_IPC_CONNECTION, con
+    )
 
-    CALL_ENTER(OCI_Subscription*, NULL)
-    CALL_CHECK_DATABASE_NOTIFY_ENABLED()
-    CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CALL_CHECK_PTR(OCI_IPC_PROC, handler)
-    CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    CALL_CONTEXT_FROM_CON(con)
+    ub4     attr   = 0;
+    int     dbsize = -1;
+    dbtext *dbstr  = NULL;
+
+    OCI_Subscription* sub = NULL;
+
+    CHECK_DATABASE_NOTIFY_ENABLED()
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_PROC, handler)
+    CHECK_PTR(OCI_IPC_STRING, name)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* create subscription object */
 
     sub = ListAppend(Env.subs, sizeof(*sub));
+    CHECK_NULL(sub)
 
-    STATUS = (NULL != sub);
+    /* allocate error handle */
 
-    if (sub)
+    CHECK(MemoryAllocHandle(con->env, (dvoid **)(void *)&sub->err, OCI_HTYPE_ERROR))
+
+    /* allocate subscription handle */
+
+    CHECK(MemoryAllocHandle(con->env, (dvoid **)(void *)&sub->subhp, OCI_HTYPE_SUBSCRIPTION))
+
+    sub->con       = con;
+    sub->env       = con->env;
+    sub->timeout   = (ub4)timeout;
+    sub->handler   = handler;
+    sub->type      = type;
+    sub->name      = ostrdup(name);
+    sub->event.sub = sub;
+
+    /* set port number */
+
+    if (port > 0)
     {
-        /* allocate error handle */
-
-        STATUS = MemoryAllocHandle(con->env, (dvoid **)(void *)&sub->err, OCI_HTYPE_ERROR);
-
-        /* allocate subscription handle */
-
-        STATUS = STATUS && MemoryAllocHandle(con->env, (dvoid **)(void *)&sub->subhp, OCI_HTYPE_SUBSCRIPTION);
-
-        if (STATUS)
-        {
-            ub4     attr   = 0;
-            int     dbsize = -1;
-            dbtext *dbstr  = NULL;
-
-            sub->con       = con;
-            sub->env       = con->env;
-            sub->timeout   = (ub4)timeout;
-            sub->handler   = handler;
-            sub->type      = type;
-            sub->name      = ostrdup(name);
-            sub->event.sub = sub;
-
-            /* set port number */
-
-            if (port > 0)
-            {
-                ATTRIB_SET(OCI_HTYPE_ENV, OCI_ATTR_SUBSCR_PORTNO, sub->env, &port, sizeof(port))
-            }
-
-            /* set timeout */
-
-            if (sub->timeout > 0)
-            {
-                ATTRIB_SET(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_TIMEOUT, sub->subhp, &sub->timeout, sizeof(sub->timeout))
-            }
-
-            /* name  */
-
-            dbstr = StringGetDBString(sub->name, &dbsize);
-
-            ATTRIB_SET(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME, sub->subhp, dbstr, dbsize)
-
-            StringReleaseDBString(dbstr);
-
-            /* namespace for CDN */
-
-            attr =  OCI_SUBSCR_NAMESPACE_DBCHANGE;
-            ATTRIB_SET(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAMESPACE, sub->subhp, &attr, sizeof(attr))
-
-            /* protocol for CDN */
-
-            attr =  OCI_SUBSCR_PROTO_OCI;
-            ATTRIB_SET(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPROTO, sub->subhp, &attr, sizeof(attr))
-
-            /* On MSVC, casting a function pointer to a data pointer generates a warning.
-               As there is no other to way to do regarding the OCI API, let's disable this
-               warning just the time to set the callback attribute to the subscription handle */
-
-  #ifdef _MSC_VER
-    #pragma warning(disable: 4054)
-  #endif
-
-            /* internal callback handler */
-
-            ATTRIB_SET(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, sub->subhp, CallbackNotifyChanges, 0)
-
-  #ifdef _MSC_VER
-    #pragma warning(default: 4054)
-  #endif
-
-            /* RowIds handling */
-
-            if (sub->type & OCI_CNT_ROWS)
-            {
-                attr = TRUE;
-                ATTRIB_SET(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_CHNF_ROWIDS, sub->subhp, &attr, sizeof(attr))
-            }
-
-            /* set subscription context pointer to our subscription structure */
-
-            ATTRIB_SET(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CTX, sub->subhp, sub, 0)
-
-            /* all attributes set, let's register the subscription ! */
-
-            EXEC(OCISubscriptionRegister(sub->con->cxt, &sub->subhp, (ub2) 1, sub->err,(ub4) OCI_DEFAULT))
-
-            /* get real port number */
-
-            ATTRIB_GET(OCI_HTYPE_ENV, OCI_ATTR_SUBSCR_PORTNO, sub->env, &sub->port, sizeof(sub->port))
-        }
+        CHECK_ATTRIB_SET
+        (
+            OCI_HTYPE_ENV, OCI_ATTR_SUBSCR_PORTNO, 
+            sub->env, &port, sizeof(port),
+            sub->con->err
+        )
     }
 
-    if (STATUS)
+    /* set timeout */
+
+    if (sub->timeout > 0)
     {
-        RETVAL = sub;
+        CHECK_ATTRIB_SET
+        (
+            OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_TIMEOUT,
+            sub->subhp, &sub->timeout,
+            sizeof(sub->timeout),
+            sub->con->err
+        )
     }
-    else if (sub)
+
+    /* name  */
+
+    dbstr = StringGetDBString(sub->name, &dbsize);
+
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME,
+        sub->subhp, dbstr, dbsize,
+        sub->con->err
+    )
+
+    /* namespace for CDN */
+
+    attr =  OCI_SUBSCR_NAMESPACE_DBCHANGE;
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAMESPACE, 
+        sub->subhp, &attr, sizeof(attr),
+        sub->con->err
+    )
+
+    /* protocol for CDN */
+
+    attr =  OCI_SUBSCR_PROTO_OCI;
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPROTO,
+        sub->subhp, &attr, sizeof(attr),
+        sub->con->err
+    )
+
+    /* On MSVC, casting a function pointer to a data pointer generates a warning.
+       As there is no other to way to do regarding the OCI API, let's disable this
+       warning just the time to set the callback attribute to the subscription handle */
+
+#ifdef _MSC_VER
+#pragma warning(disable: 4054)
+#endif
+
+    /* internal callback handler */
+
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, 
+        sub->subhp, CallbackNotifyChanges, 0,
+        sub->con->err
+    )
+
+#ifdef _MSC_VER
+#pragma warning(default: 4054)
+#endif
+
+    /* RowIds handling */
+
+    if (sub->type & OCI_CNT_ROWS)
     {
-        SubscriptionDispose(sub);
-        ListRemove(Env.subs, sub);
-        FREE(sub)
+        attr = TRUE;
+        CHECK_ATTRIB_SET
+        (
+            OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_CHNF_ROWIDS, 
+            sub->subhp, &attr, sizeof(attr),
+            sub->con->err
+        )
     }
+
+    /* set subscription context pointer to our subscription structure */
+
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CTX,
+        sub->subhp, sub, 0,
+        sub->con->err
+    )
+
+        /* all attributes set, let's register the subscription ! */
+
+    CHECK_OCI
+    (
+        sub->con->err,
+        OCISubscriptionRegister,
+        sub->con->cxt, &sub->subhp,
+        (ub2)1, sub->err, (ub4)OCI_DEFAULT
+    )
+
+    /* get real port number */
+
+    CHECK_ATTRIB_GET
+    (
+        OCI_HTYPE_ENV, OCI_ATTR_SUBSCR_PORTNO,
+        sub->env, &sub->port, sizeof(sub->port),
+        sub->con->err
+    )
 
 #else
 
@@ -270,7 +318,17 @@ OCI_Subscription * SubscriptionRegister
 
 #endif
 
-    CALL_EXIT()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (FAILURE)
+        {
+            StringReleaseDBString(dbstr);
+
+            SubscriptionDispose(sub);
+            ListRemove(Env.subs, sub);
+            FREE(sub)
+        }
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -282,17 +340,22 @@ boolean SubscriptionUnregister
     OCI_Subscription *sub
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
-    CTX_SET(sub->con, NULL, sub->err)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_NOTIFY, sub
+    )
 
-    RETVAL = STATUS = SubscriptionDispose(sub);
+    CHECK_PTR(OCI_IPC_NOTIFY, sub)
 
+    SubscriptionDispose(sub);
     ListRemove(Env.subs, sub);
 
     FREE(sub);
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -305,12 +368,15 @@ boolean SubscriptionAddStatement
     OCI_Statement    *stmt
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_NOTIFY, sub)
-    CALL_CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CALL_CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_NOTIFY, sub
+    )
 
-    CTX_SET(sub->con, stmt, sub->err)
+    CHECK_PTR(OCI_IPC_NOTIFY, sub)
+    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -318,16 +384,22 @@ boolean SubscriptionAddStatement
 
     if (sub->type & OCI_CNT_OBJECTS)
     {
-        ATTRIB_SET(OCI_HTYPE_STMT, OCI_ATTR_CHNF_REGHANDLE, stmt->stmt, sub->subhp, 0)
+        CHECK_ATTRIB_SET
+        (
+            OCI_HTYPE_STMT, OCI_ATTR_CHNF_REGHANDLE,
+            stmt->stmt, sub->subhp, 0,
+            stmt->con->err
+        )
 
-        STATUS = STATUS && StatementExecute(stmt) && (NULL != StatementGetResultset(stmt));
+        CHECK(StatementExecute(stmt))
+        CHECK_NULL(StatementGetResultset(stmt))
     }
 
 #endif
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -339,7 +411,12 @@ const otext * SubscriptionGetName
     OCI_Subscription *sub
 )
 {
-    GET_PROP(const otext*, NULL, OCI_IPC_NOTIFY, sub, name, sub->con, NULL, sub->err)
+    GET_PROP
+    (
+        const otext*, NULL, 
+        OCI_IPC_NOTIFY, sub, 
+        name
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -351,7 +428,12 @@ unsigned int SubscriptionGetPort
     OCI_Subscription *sub
 )
 {
-    GET_PROP(unsigned int, 0, OCI_IPC_NOTIFY, sub, port, sub->con, NULL, sub->err)
+    GET_PROP
+    (
+        unsigned int, 0,
+        OCI_IPC_NOTIFY, sub, 
+        port
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -363,7 +445,12 @@ unsigned int SubscriptionGetTimeout
     OCI_Subscription *sub
 )
 {
-    GET_PROP(unsigned int, 0, OCI_IPC_NOTIFY, sub, timeout, sub->con, NULL, sub->err)
+    GET_PROP
+    (
+        unsigned int, 0,
+        OCI_IPC_NOTIFY, sub, 
+        timeout
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -375,5 +462,10 @@ OCI_Connection * SubscriptionGetConnection
     OCI_Subscription *sub
 )
 {
-    GET_PROP(OCI_Connection*, NULL, OCI_IPC_NOTIFY, sub, con, sub->con, NULL, sub->err)
+    GET_PROP
+    (
+        OCI_Connection*, NULL,
+        OCI_IPC_NOTIFY, sub,
+        con
+    )
 }

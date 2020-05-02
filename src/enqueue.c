@@ -24,8 +24,17 @@
 #include "memory.h"
 #include "strings.h"
 
-static const unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };
-static const unsigned int EnqueueModeValues[]    = { OCI_ASD_BEFORE, OCI_ASD_TOP };
+static const unsigned int VisibilityModeValues[] =
+{
+    OCI_AMV_IMMEDIATE,
+    OCI_AMV_ON_COMMIT
+};
+
+static const unsigned int EnqueueModeValues[] = 
+{
+    OCI_ASD_BEFORE,
+    OCI_ASD_TOP
+};
 
 /* --------------------------------------------------------------------------------------------- *
  * EnqueueCreate
@@ -37,39 +46,40 @@ OCI_Enqueue * EnqueueCreate
     const otext  *name
 )
 {
-    OCI_Enqueue *enqueue = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Enqueue*, NULL,
+        /* context */ OCI_IPC_TYPE_INFO, typinf
+    )
 
-    CALL_ENTER(OCI_Enqueue*, enqueue)
-    CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    CALL_CONTEXT_FROM_CON(typinf->con)
+    OCI_Enqueue* enqueue = NULL;
+
+    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CHECK_PTR(OCI_IPC_STRING, name)
 
     /* allocate enqueue structure */
 
     ALLOC_DATA(OCI_IPC_ENQUEUE, enqueue, 1)
 
-    if (STATUS)
-    {
-        enqueue->typinf = typinf;
-        enqueue->name   = ostrdup(name);
+    enqueue->typinf = typinf;
+    enqueue->name   = ostrdup(name);
 
-        /* allocate enqueue options descriptor */
+    /* allocate enqueue options descriptor */
 
-        STATUS = MemoryAllocDescriptor((dvoid * ) enqueue->typinf->con->env, (dvoid **) &enqueue->opth, OCI_DTYPE_AQENQ_OPTIONS);
-    }
+    CHECK(MemoryAllocDescriptor((dvoid * )enqueue->typinf->con->env,
+                                (dvoid **) &enqueue->opth, 
+                                OCI_DTYPE_AQENQ_OPTIONS))
 
-    /* check for failure */
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (FAILURE)
+        {
+            EnqueueFree(enqueue);
+            enqueue = NULL;
+        }
 
-    if (STATUS)
-    {
-        RETVAL = enqueue;
-    }
-    else if (enqueue)
-    {
-        EnqueueFree(enqueue);
-    }
-
-    CALL_EXIT()
+        SET_RETVAL(enqueue)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -81,9 +91,13 @@ boolean EnqueueFree
     OCI_Enqueue *enqueue
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_ENQUEUE, enqueue
+    )
+
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
 
     /* free OCI descriptor */
 
@@ -92,9 +106,9 @@ boolean EnqueueFree
     FREE(enqueue->name)
     FREE(enqueue)
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -107,16 +121,20 @@ boolean EnqueuePut
     OCI_Msg     *msg
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_ENQUEUE, enqueue
+    )
+
     dbtext *dbstr   = NULL;
     int     dbsize  = -1;
     void   *payload = NULL;
     void   *ind     = NULL;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CALL_CHECK_PTR(OCI_IPC_MSG, msg)
-    CALL_CHECK_COMPAT(enqueue->typinf->con, enqueue->typinf->tdo == msg->typinf->tdo)
-    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CHECK_PTR(OCI_IPC_MSG, msg)
+    CHECK_COMPAT(enqueue->typinf->tdo == msg->typinf->tdo)
 
     dbstr = StringGetDBString(enqueue->name, &dbsize);
 
@@ -138,18 +156,21 @@ boolean EnqueuePut
 
     /* enqueue message */
 
-    EXEC
+    CHECK_OCI
     (
-        OCIAQEnq(enqueue->typinf->con->cxt, enqueue->typinf->con->err,
-                 (OraText *) dbstr, enqueue->opth, msg->proph, enqueue->typinf->tdo,
-                 &payload, &ind, NULL, OCI_DEFAULT);
+        enqueue->typinf->con->err,
+        OCIAQEnq,
+        enqueue->typinf->con->cxt, enqueue->typinf->con->err,
+        (OraText *) dbstr, enqueue->opth, msg->proph, 
+        enqueue->typinf->tdo, &payload, &ind, NULL, OCI_DEFAULT
     )
 
-    StringReleaseDBString(dbstr);
+    SET_SUCCESS()
 
-    RETVAL = STATUS;
-
-    CALL_EXIT()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -161,17 +182,26 @@ unsigned int EnqueueGetVisibility
     OCI_Enqueue *enqueue
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ unsigned int, OCI_UNKNOWN,
+        /* context */ OCI_IPC_ENQUEUE, enqueue
+    )
+
     ub4 ret = OCI_UNKNOWN;
 
-    CALL_ENTER(unsigned int, ret)
-    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
 
-    ATTRIB_GET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY, enqueue->opth, &ret, NULL)
+    CHECK_ATTRIB_GET
+    (
+        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY, 
+        enqueue->opth, &ret, NULL,
+        enqueue->typinf->con->err
+    )
 
-    RETVAL = ret;
+    SET_RETVAL(ret)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -184,18 +214,27 @@ boolean EnqueueSetVisibility
     unsigned int visibility
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_ENQUEUE, enqueue
+    )
+
     ub4 value = (ub4) visibility;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CALL_CHECK_ENUM_VALUE(NULL, NULL, visibility, VisibilityModeValues, OTEXT("Visibility Mode"))
-    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CHECK_ENUM_VALUE(visibility, VisibilityModeValues, OTEXT("Visibility Mode"))
 
-    ATTRIB_SET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY, enqueue->opth, &value, 0)
+    CHECK_ATTRIB_SET
+    (
+        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY, 
+        enqueue->opth, &value, 0,
+        enqueue->typinf->con->err
+    )
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -207,17 +246,25 @@ unsigned int EnqueueGetSequenceDeviation
     OCI_Enqueue *enqueue
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ unsigned int, OCI_UNKNOWN,
+        /* context */ OCI_IPC_ENQUEUE, enqueue
+    )
+
     ub4 ret = OCI_UNKNOWN;
 
-    CALL_ENTER(unsigned int, ret)
-    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
 
-    ATTRIB_GET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_SEQUENCE_DEVIATION, enqueue->opth, &ret, NULL)
+    CHECK_ATTRIB_GET
+    (
+        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_SEQUENCE_DEVIATION, 
+        enqueue->opth, &ret, NULL, enqueue->typinf->con->err
+    )
 
-    RETVAL = (unsigned int) ret;
+    SET_RETVAL((unsigned int) ret)
 
-    CALL_EXIT();
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -230,18 +277,26 @@ boolean EnqueueSetSequenceDeviation
     unsigned int sequence
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_ENQUEUE, enqueue
+    )
+
     ub4 value = (ub4) sequence;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CALL_CHECK_ENUM_VALUE(NULL, NULL, sequence, EnqueueModeValues, OTEXT("Sequence Deviation"))
-    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CHECK_ENUM_VALUE(sequence, EnqueueModeValues, OTEXT("Sequence Deviation"))
 
-    ATTRIB_SET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_SEQUENCE_DEVIATION, enqueue->opth, &value, 0)
+    CHECK_ATTRIB_SET
+    (
+        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_SEQUENCE_DEVIATION,
+        enqueue->opth, &value, 0, enqueue->typinf->con->err
+    )
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -255,17 +310,26 @@ boolean EnqueueGetRelativeMsgID
     unsigned int *len
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_ENQUEUE, enqueue
+    )
+
     OCIRaw *value = NULL;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CALL_CHECK_PTR(OCI_IPC_VOID, id);
-    CALL_CHECK_PTR(OCI_IPC_VOID, len);
-    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CHECK_PTR(OCI_IPC_VOID, id);
+    CHECK_PTR(OCI_IPC_VOID, len);
 
-    ATTRIB_GET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID, enqueue->opth, &value, NULL)
+    CHECK_ATTRIB_GET
+    (
+        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID, 
+        enqueue->opth, &value, NULL,
+        enqueue->typinf->con->err
+    )
 
-    if (STATUS && value)
+    if (NULL != value)
     {
         const ub4 raw_len = OCIRawSize(enqueue->typinf->con->env, value);
 
@@ -281,9 +345,9 @@ boolean EnqueueGetRelativeMsgID
         *len = 0;
     }
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -297,16 +361,32 @@ boolean EnqueueSetRelativeMsgID
     unsigned int len
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_ENQUEUE, enqueue
+    )
+
     OCIRaw *value = NULL;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CALL_CONTEXT_FROM_CON(enqueue->typinf->con)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
 
-    EXEC(OCIRawAssignBytes(enqueue->typinf->con->env, enqueue->typinf->con->err,  (ub1*) id, (ub4) len, (OCIRaw **) &value))
-    ATTRIB_SET(OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID, enqueue->opth, &value, 0)
+    CHECK_OCI
+    (
+        enqueue->typinf->con->err,
+        OCIRawAssignBytes,
+        enqueue->typinf->con->env, enqueue->typinf->con->err,  
+        (ub1*) id, (ub4) len, (OCIRaw **) &value
+    )
 
-    RETVAL = STATUS;
+    CHECK_ATTRIB_SET
+    (
+        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID,
+        enqueue->opth, &value, 0,
+        enqueue->typinf->con->err
+    )
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }

@@ -34,7 +34,7 @@ void ThreadProc
 {
     OCI_Thread *thread = (OCI_Thread *) arg;
 
-    if (thread)
+    if (NULL != thread)
     {
         thread->proc(thread, thread->arg);
     }
@@ -46,44 +46,58 @@ void ThreadProc
 
 OCI_Thread * ThreadCreate
 (
-    void
+   void
 )
 {
-    OCI_Thread *thread = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Thread*, NULL,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    CALL_ENTER(OCI_Thread*, NULL)
-    CALL_CHECK_INITIALIZED()
-    CALL_CHECK_THREAD_ENABLED()
+    OCI_Thread* thread = NULL;
+
+    CHECK_INITIALIZED()
+    CHECK_THREAD_ENABLED()
 
     /* allocate thread structure */
 
     ALLOC_DATA(OCI_IPC_THREAD, thread, 1)
 
-    if (STATUS)
-    {
-        /* allocate error handle */
+    /* allocate error handle */
 
-        STATUS = MemoryAllocHandle(Env.env, (dvoid **)(void *)&thread->err, OCI_HTYPE_ERROR);
+    CHECK(MemoryAllocHandle(Env.env, (dvoid **)(void *)&thread->err, OCI_HTYPE_ERROR))
 
-        /* allocate thread handle */
+    /* allocate thread handle */
 
-        EXEC(OCIThreadHndInit(Env.env, thread->err, &thread->handle))
+    CHECK_OCI
+    (
+        thread->err,
+        OCIThreadHndInit, 
+        Env.env, thread->err, 
+        &thread->handle
+    )
 
-        /* allocate thread ID */
+    /* allocate thread ID */
 
-        EXEC(OCIThreadIdInit(Env.env, thread->err, &thread->id))
-    }
+    CHECK_OCI
+    (
+        thread->err,
+        OCIThreadIdInit, 
+        Env.env, thread->err, 
+        &thread->id
+    )
 
-    if (STATUS)
-    {
-        RETVAL = thread;
-    }
-    else if (thread)
-    {
-        ThreadFree(thread);
-    }
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (FAILURE)
+        {
+            ThreadFree(thread);
+            thread = NULL;
+        }
 
-    CALL_EXIT()
+        SET_RETVAL(thread)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -95,29 +109,52 @@ boolean ThreadFree
     OCI_Thread *thread
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_THREAD_ENABLED()
-    CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
-    CALL_CONTEXT_FROM_ERR(thread->err)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_THREAD, thread
+    )
+
+    CHECK_THREAD_ENABLED()
+    CHECK_PTR(OCI_IPC_THREAD, thread)
 
     /* close thread handle */
 
-    if (thread->handle)
+    if (NULL != thread->handle)
     {
-        EXEC(OCIThreadClose(Env.env, thread->err, thread->handle))
-        EXEC(OCIThreadHndDestroy(Env.env, thread->err, &thread->handle))
+        CHECK_OCI
+        (
+            thread->err,
+            OCIThreadClose,
+            Env.env, thread->err, 
+            thread->handle
+        )
+
+        CHECK_OCI
+        (
+            thread->err, 
+            OCIThreadHndDestroy,
+            Env.env, thread->err,
+            &thread->handle
+        )
     }
 
     /* close thread id */
 
-    if (thread->id)
+    if (NULL != thread->id)
     {
-        EXEC(OCIThreadIdDestroy(Env.env, thread->err, &thread->id))
+        CHECK_OCI
+        (
+            thread->err, 
+            OCIThreadIdDestroy,
+            Env.env, thread->err, 
+            &thread->id
+        )
     }
 
     /* close error handle */
 
-    if (thread->err)
+    if (NULL != thread->err)
     {
         MemoryFreeHandle(thread->err, OCI_HTYPE_ERROR);
     }
@@ -126,9 +163,9 @@ boolean ThreadFree
 
     FREE(thread)
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -142,19 +179,29 @@ boolean ThreadRun
     void       *arg
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
-    CALL_CHECK_PTR(OCI_IPC_PROC, proc)
-    CALL_CONTEXT_FROM_ERR(thread->err)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_THREAD, thread
+    )
+
+    CHECK_PTR(OCI_IPC_THREAD, thread)
+    CHECK_PTR(OCI_IPC_PROC, proc)
 
     thread->proc = proc;
     thread->arg  = arg;
 
-    EXEC(OCIThreadCreate(Env.env, thread->err, ThreadProc, thread, thread->id, thread->handle))
+    CHECK_OCI
+    (
+        thread->err, 
+        OCIThreadCreate, 
+        Env.env, thread->err, ThreadProc, 
+        thread, thread->id, thread->handle
+    )
 
-    RETVAL = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -166,13 +213,23 @@ boolean ThreadJoin
     OCI_Thread *thread
 )
 {
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_PTR(OCI_IPC_THREAD, thread)
-    CALL_CONTEXT_FROM_ERR(thread->err)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_THREAD, thread
+    )
 
-    EXEC(OCIThreadJoin(Env.env, thread->err, thread->handle))
+    CHECK_PTR(OCI_IPC_THREAD, thread)
 
-    RETVAL = STATUS;
+    CHECK_OCI
+    (
+        thread->err, 
+        OCIThreadJoin,
+        Env.env, thread->err, 
+        thread->handle
+    )
 
-    CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }

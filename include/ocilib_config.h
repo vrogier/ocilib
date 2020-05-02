@@ -425,6 +425,7 @@ typedef unsigned int big_uint;
 #define OCI_18_4                            OCI_VER_MAKE(18, 4, 0)
 #define OCI_18_5                            OCI_VER_MAKE(18, 5, 0)
 #define OCI_19_3                            OCI_VER_MAKE(19, 3, 0)
+#define OCI_19_5                            OCI_VER_MAKE(19, 5, 0)
 
 /* OCILIB Error types */
 
@@ -467,6 +468,40 @@ typedef unsigned int big_uint;
 #define OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED   30
 
 #define OCI_ERR_COUNT                       31
+
+/* Public OCILIB handles */
+
+#define OCI_IPC_TYPE_INFO        10
+#define OCI_IPC_CONNECTION       11
+#define OCI_IPC_POOL             12
+#define OCI_IPC_TRANSACTION      13
+#define OCI_IPC_STATEMENT        14
+#define OCI_IPC_RESULTSET        15
+#define OCI_IPC_COLUMN           16
+#define OCI_IPC_DATE             17
+#define OCI_IPC_TIMESTAMP        18
+#define OCI_IPC_INTERVAL         19
+#define OCI_IPC_LOB              20
+#define OCI_IPC_FILE             21
+#define OCI_IPC_LONG             22
+#define OCI_IPC_OBJECT           23
+#define OCI_IPC_COLLECTION       24
+#define OCI_IPC_ITERATOR         25
+#define OCI_IPC_ELEMENT          26
+#define OCI_IPC_NUMBER           27
+#define OCI_IPC_HASHTABLE        28
+#define OCI_IPC_THREAD           29
+#define OCI_IPC_MUTEX            30
+#define OCI_IPC_BIND             31
+#define OCI_IPC_REF              32
+#define OCI_IPC_DIRPATH          33
+#define OCI_IPC_NOTIFY           34
+#define OCI_IPC_EVENT            35
+#define OCI_IPC_ARRAY            36
+#define OCI_IPC_MSG              37
+#define OCI_IPC_ENQUEUE          38
+#define OCI_IPC_DEQUEUE          39
+#define OCI_IPC_AGENT            40
 
 /* allocated bytes types */
 

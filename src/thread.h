@@ -25,6 +25,7 @@
 
 OCI_Thread * ThreadCreate
 (
+    void
 );
 
 boolean ThreadFree
@@ -41,7 +42,7 @@ boolean ThreadRun
 
 boolean ThreadJoin
 (
-    OCI_Thread *thread
+    OCI_Thread* thread
 );
 
 #endif /* OCILIB_THREAD_H_INCLUDED */

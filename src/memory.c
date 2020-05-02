@@ -22,6 +22,7 @@
 
 #include "defs.h"
 #include "exception.h"
+#include "macros.h"
 #include "mutex.h"
 
 #define MUTEXED_CALL(exp)                   \
@@ -71,30 +72,34 @@ void * MemoryAlloc
     boolean zero_fill
 )
 {
-    OCI_MemoryBlock * mem_block = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ void*, NULL,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
     const size_t size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
 
-    mem_block = (OCI_MemoryBlock *)malloc(size);
+    OCI_MemoryBlock* mem_block = (OCI_MemoryBlock *)malloc(size);
 
-    if (mem_block)
+    if (NULL == mem_block)
     {
-        if (zero_fill)
-        {
-            memset(mem_block, 0, size);
-        }
-
-        mem_block->type = ptr_type;
-        mem_block->size = (unsigned int) size;
-
-        MemoryUpdateBytes(mem_block->type, mem_block->size);
-    }
-    else
-    {
-        ExceptionMemory(ptr_type, size, NULL, NULL);
+        THROW(ExceptionMemory, ptr_type, size)
     }
 
-    return ((unsigned char *) mem_block) + sizeof(*mem_block);
+    if (zero_fill)
+    {
+        memset(mem_block, 0, size);
+    }
+
+    mem_block->type = ptr_type;
+    mem_block->size = (unsigned int) size;
+
+    MemoryUpdateBytes(mem_block->type, mem_block->size);
+
+    SET_RETVAL(((unsigned char*)mem_block) + sizeof(*mem_block))
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -110,49 +115,53 @@ void * MemoryRealloc
     boolean zero_fill
 )
 {
-    OCI_MemoryBlock * mem_block = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ void*, NULL,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    size_t size = 0;
-
-    if (ptr_mem)
+    if (ptr_mem != NULL)
     {
-        mem_block = (OCI_MemoryBlock *) (((unsigned char*)ptr_mem) - sizeof(*mem_block));
-    }
+        OCI_MemoryBlock* block = (OCI_MemoryBlock*)(((unsigned char*)ptr_mem) - sizeof(*block));
 
-    size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
+        const size_t size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
 
-    if (!mem_block || mem_block->size < size)
-    {
-        void *ptr_new = realloc(mem_block, size);
-
-        if (ptr_new)
+        if (block->size < size)
         {
-            big_int size_diff = 0;
-            mem_block = (OCI_MemoryBlock *) ptr_new;
+            void* ptr_new = realloc(block, size);
 
-            size_diff = (big_int) size - mem_block->size;
+            if (NULL == ptr_new)
+            {
+                MemoryFree(ptr_mem);
+                THROW(ExceptionMemory, ptr_type, size);
+            }
+
+            block = (OCI_MemoryBlock*)ptr_new;
+
+            const big_int size_diff = (big_int)size - block->size;
+
+            block->type = ptr_type;
+            block->size = (unsigned int)size;
 
             if (zero_fill)
             {
-                memset(((unsigned char *)mem_block) + mem_block->size, 0, size - mem_block->size);
+                memset(((unsigned char*)block) + block->size, 0, size - block->size);
             }
 
-            mem_block->type = ptr_type;
-            mem_block->size = (unsigned int) size;
-
-            MemoryUpdateBytes(mem_block->type, size_diff);
+            MemoryUpdateBytes(block->type, size_diff);
         }
-        else if (ptr_mem)
-        {
-            MemoryFree(ptr_mem);
 
-            ExceptionMemory(ptr_type, size, NULL, NULL);
-
-            mem_block = NULL;
-        }
+        ptr_mem = ((unsigned char*)block) + sizeof(*block);
+    }
+    else
+    {
+        ptr_mem = MemoryAlloc(ptr_type, block_size, block_count, zero_fill);
     }
 
-    return mem_block ? ((unsigned char *)mem_block) + sizeof(*mem_block) : NULL;
+    SET_RETVAL(ptr_mem)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -166,13 +175,13 @@ void MemoryFree
 {
     if (ptr_mem)
     {
-        OCI_MemoryBlock *mem_block = (OCI_MemoryBlock *)(((unsigned char*)ptr_mem) - sizeof(*mem_block));
+        OCI_MemoryBlock *block = (OCI_MemoryBlock *)(((unsigned char*)ptr_mem) - sizeof(*block));
 
-        if (mem_block)
+        if (block)
         {
-            MemoryUpdateBytes(mem_block->type, (big_int) 0 - mem_block->size);
+            MemoryUpdateBytes(block->type, (big_int) 0 - block->size);
 
-            free(mem_block);
+            free(block);
         }
     }
 }
@@ -188,14 +197,23 @@ boolean MemoryAllocHandle
     ub4          type
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
+    CHECK_NULL(hndlpp)
+
     const sword ret = OCIHandleAlloc(parenth, hndlpp, type, 0, NULL);
 
     if (OCI_SUCCESSFUL(ret))
     {
         MUTEXED_CALL(Env.nb_hndlp++)
+        SET_SUCCESS()
     }
 
-    return OCI_SUCCESSFUL(ret);
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -208,16 +226,22 @@ boolean MemoryFreeHandle
     ub4    type
 )
 {
-    sword ret = OCI_SUCCESS;
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    if (hndlp)
+    CHECK_NULL(hndlp)
+    const sword ret = OCIHandleFree(hndlp, type);
+
+    if (OCI_SUCCESSFUL(ret))
     {
         MUTEXED_CALL(Env.nb_hndlp--)
-
-        ret = OCIHandleFree(hndlp, type);
+        SET_SUCCESS()
     }
 
-    return OCI_SUCCESSFUL(ret);
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -231,14 +255,23 @@ boolean MemoryAllocDescriptor
     ub4          type
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
+    CHECK_NULL(descpp)
+
     const sword ret = OCIDescriptorAlloc(parenth, descpp, type, 0, NULL);
 
     if (OCI_SUCCESSFUL(ret))
     {
         MUTEXED_CALL(Env.nb_descp++)
+        SET_SUCCESS()
     }
 
-    return OCI_SUCCESSFUL(ret);
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -253,7 +286,15 @@ boolean MemoryAllocDescriptorArray
     ub4          nb_elem
 )
 {
-    sword ret = OCI_SUCCESS;
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
+    CHECK_NULL(descpp)
+
+    sword ret = OCI_ERROR;
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
@@ -276,9 +317,10 @@ boolean MemoryAllocDescriptorArray
     if (OCI_SUCCESSFUL(ret))
     {
         MUTEXED_CALL(Env.nb_descp += nb_elem)
+        SET_SUCCESS()
     }
 
-    return OCI_SUCCESSFUL(ret);
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -291,16 +333,23 @@ boolean MemoryFreeDescriptor
     ub4    type
 )
 {
-    sword ret = OCI_SUCCESS;
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    if (descp)
+    CHECK_NULL(descp)
+
+    const sword ret = OCIDescriptorFree(descp, type);
+
+    if (OCI_SUCCESSFUL(ret))
     {
         MUTEXED_CALL(Env.nb_descp--)
-
-        ret = OCIDescriptorFree(descp, type);
+        SET_SUCCESS()
     }
 
-    return OCI_SUCCESSFUL(ret);
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -314,7 +363,15 @@ boolean MemoryFreeDescriptorArray
     ub4     nb_elem
 )
 {
-    sword ret = OCI_SUCCESS;
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
+    CHECK_NULL(descp)
+
+    sword ret = OCI_ERROR;
 
     if (descp)
     {
@@ -324,7 +381,6 @@ boolean MemoryFreeDescriptorArray
         if (Env.version_runtime >= OCI_11_1)
         {
             ret = OCIArrayDescriptorFree(descp, type);
-
         }
         else
 
@@ -336,18 +392,22 @@ boolean MemoryFreeDescriptorArray
                 ret = OCIDescriptorFree(descp[i], type);
             }
         }
-
-        MUTEXED_CALL(Env.nb_descp -= nb_elem)
     }
 
-    return OCI_SUCCESSFUL(ret);
+    if (OCI_SUCCESSFUL(ret))
+    {
+        MUTEXED_CALL(Env.nb_descp -= nb_elem)
+        SET_SUCCESS()
+    }
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * MemoryAllocateObject
  * --------------------------------------------------------------------------------------------- */
 
-sword MemoryAllocateObject
+boolean MemoryAllocateObject
 (
     OCIEnv          *env,
     OCIError        *err,
@@ -360,21 +420,32 @@ sword MemoryAllocateObject
     dvoid          **instance
 )
 {
-    const sword ret = OCIObjectNew(env, err, svc, typecode, tdo, table, duration, value, instance);
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    if (OCI_SUCCESSFUL(ret))
-    {
-        MUTEXED_CALL(Env.nb_objinst++)
-    }
+    CHECK_OCI
+    (
+        err,
+        OCIObjectNew,
+        env, err, svc, typecode, tdo, table,
+        duration, value, instance
+    )
 
-    return ret;
+    SET_SUCCESS()
+
+    MUTEXED_CALL(Env.nb_objinst++)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * MemoryFreeObject
  * --------------------------------------------------------------------------------------------- */
 
-sword MemoryFreeObject
+boolean MemoryFreeObject
 (
     OCIEnv   *env,
     OCIError *err,
@@ -382,16 +453,26 @@ sword MemoryFreeObject
     ub2       flags
 )
 {
-    sword ret = OCI_SUCCESS;
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    if (instance)
-    {
-        MUTEXED_CALL(Env.nb_objinst--)
+    CHECK_PTR(OCI_IPC_VOID, instance)
 
-        ret = OCIObjectFree(env, err, instance, flags);
-    }
+    CHECK_OCI
+    (
+        err,
+        OCIObjectFree,
+        env, err, instance, flags
+    )
 
-    return ret;
+    SET_SUCCESS()
+
+    MUTEXED_CALL(Env.nb_objinst--)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *

@@ -22,6 +22,7 @@
 
 #include "collection.h"
 #include "date.h"
+#include "environment.h"
 #include "file.h"
 #include "interval.h"
 #include "lob.h"
@@ -52,7 +53,7 @@ size_t StringLength
 {
     int size = 0;
 
-    CHECK(NULL == ptr, 0);
+    CHECK_FALSE(NULL == ptr, 0);
 
     if (Env.nls_utf8)
     {
@@ -423,7 +424,7 @@ otext * StringFromStringPtr
 {
     dbtext *tmp = NULL;
 
-    CHECK(NULL == buffer, NULL);
+    CHECK_FALSE(NULL == buffer, NULL);
 
     tmp = (dbtext *) OCIStringPtr(env, str);
 
@@ -470,22 +471,32 @@ boolean StringToStringPtr
     const otext *value
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
     dbtext *dbstr  = NULL;
     int     dbsize = -1;
 
-    DECLARE_CTX(TRUE)
-
-    CHECK(NULL == str, FALSE);
-
-    CALL_CONTEXT_FROM_ERR(err)
+    CHECK_PTR(OCI_IPC_STRING, value)
 
     dbstr = StringGetDBString(value, &dbsize);
 
-    EXEC(OCIStringAssignText(env, err, (oratext *) dbstr, (ub4) dbsize, str))
+    CHECK_OCI
+    (
+        err,
+        OCIStringAssignText,
+        env, err, (oratext*)dbstr, (ub4)dbsize, str
+    )
 
-    StringReleaseDBString(dbstr);
+    SET_SUCCESS()
 
-    return STATUS;
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -499,13 +510,24 @@ boolean StringFreeStringPtr
     OCIError   *err
 )
 {
-    DECLARE_CTX(TRUE)
-    CHECK(NULL == str, FALSE);
-    CALL_CONTEXT_FROM_ERR(err)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    EXEC(OCIStringResize(env, err, (ub4)0, str))
+    CHECK_PTR(OCI_IPC_STRING, str)
 
-    return STATUS;
+    CHECK_OCI
+    (
+        err,
+        OCIStringResize,
+        env, err, (ub4)0, str
+    )
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -522,20 +544,26 @@ boolean StringGetAttribute
     unsigned int   *size
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_CONNECTION, con
+    )
+
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_STRING, str)
+    CHECK_PTR(OCI_IPC_INT, size)
+
     dbtext *dbstr  = NULL;
     int     dbsize = -1;
     int     len    = 0;
 
-    DECLARE_CTX(TRUE)
+    CHECK_ATTRIB_GET
+    (
+        type, attr, handle, &dbstr, &dbsize, con->err
+    )
 
-    CHECK(NULL == str,  FALSE)
-    CHECK(NULL == size, FALSE)
-
-    CALL_CONTEXT_FROM_CON(con)
-
-    ATTRIB_GET(type, attr, handle, &dbstr, &dbsize)
-
-    if (STATUS && dbstr)
+    if (NULL !=  dbstr)
     {
         boolean is_ansi = FALSE;
 
@@ -568,10 +596,12 @@ boolean StringGetAttribute
             StringTranslate(dbstr, *str, len, is_ansi ? sizeof(char) : sizeof(dbtext), sizeof(otext));
         }
 
-        STATUS = (NULL != *str);
+        CHECK_NULL(*str)
     }
 
-    return STATUS;
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -588,11 +618,16 @@ boolean StringSetAttribute
     const otext    *value
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_CONNECTION, con
+    )
+
     dbtext *dbstr  = NULL;
     int     dbsize = -1;
 
-    DECLARE_CTX(TRUE)
-    CALL_CONTEXT_FROM_CON(con)
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
 
     dbstr = StringGetDBString(value, &dbsize);
 
@@ -601,11 +636,12 @@ boolean StringSetAttribute
         dbsize = 0;
     }
 
-    ATTRIB_SET(type, attr, handle, dbstr, dbsize)
+    CHECK_ATTRIB_SET
+    (
+        type, attr, handle, dbstr, dbsize, con->err
+    )
 
-    StringReleaseDBString(dbstr);
-
-    if (STATUS && str)
+    if (str)
     {
         FREE(*str)
 
@@ -615,7 +651,12 @@ boolean StringSetAttribute
         }
     }
 
-    return STATUS;
+    SET_SUCCESS()
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -664,7 +705,7 @@ unsigned int StringGetFromType
             {
                 if (data)
                 {
-                    otext * str_value = (*(boolean*)data) ? OCI_STRING_TRUE : OCI_STRING_FALSE;
+                    otext * str_value = *(boolean*)data ? OCI_STRING_TRUE : OCI_STRING_FALSE;
 
                     const unsigned int str_length = (*(boolean*)data) ? OCI_STRING_TRUE_SIZE : OCI_STRING_FALSE_SIZE;
 
@@ -1145,7 +1186,7 @@ char * ocistrdup
     const char * src
 )
 {
-    CHECK(NULL == src, NULL)
+    CHECK_FALSE(NULL == src, NULL)
 
     char *dst = (char *) MemoryAlloc(OCI_IPC_STRING, 1, strlen(src) + 1, 0);
 
@@ -1223,7 +1264,7 @@ wchar_t * ociwcsdup
     const wchar_t * src
 )
 {
-    CHECK(NULL == src, NULL)
+    CHECK_FALSE(NULL == src, NULL)
 
     wchar_t *dst = (wchar_t *) MemoryAlloc(OCI_IPC_STRING, sizeof(wchar_t), wcslen(src) + 1, 0);
 

@@ -32,7 +32,6 @@
 #include "subscription.h"
 #include "threadkey.h"
 
-
 OCI_Environment Env;
 
 const char * EnvironmentVarNames[OCI_VARS_COUNT] =
@@ -307,253 +306,271 @@ static const otext * FormatDefaultValues[OCI_FMT_COUNT] =
 
 /* OCI function pointers */
 
-OCIENVCREATE                 OCIEnvCreate                 = NULL;
-OCISERVERATTACH              OCIServerAttach              = NULL;
-OCISERVERDETACH              OCIServerDetach              = NULL;
-OCIHANDLEALLOC               OCIHandleAlloc               = NULL;
-OCIHANDLEFREE                OCIHandleFree                = NULL;
-OCIDESCRIPTORALLOC           OCIDescriptorAlloc           = NULL;
-OCIDESCRIPTORFREE            OCIDescriptorFree            = NULL;
-OCISESSIONBEGIN              OCISessionBegin              = NULL;
-OCISESSIONEND                OCISessionEnd                = NULL;
-OCIPASSWORDCHANGE            OCIPasswordChange            = NULL;
-OCIBINDBYPOS                 OCIBindByPos                 = NULL;
-OCIBINDBYNAME                OCIBindByName                = NULL;
-OCIBINDDYNAMIC               OCIBindDynamic               = NULL;
-OCIBINDOBJECT                OCIBindObject                = NULL;
-OCIDEFINEBYPOS               OCIDefineByPos               = NULL;
-OCIDEFINEOBJECT              OCIDefineObject              = NULL;
-OCISTMTPREPARE               OCIStmtPrepare               = NULL;
-OCISTMTEXECUTE               OCIStmtExecute               = NULL;
-OCISTMTFETCH                 OCIStmtFetch                 = NULL;
-OCISTMTFETCH2                OCIStmtFetch2                = NULL;
-OCISTMTGETPIECEINFO          OCIStmtGetPieceInfo          = NULL;
-OCISTMTSETPIECEINFO          OCIStmtSetPieceInfo          = NULL;
-OCIPARAMGET                  OCIParamGet                  = NULL;
-OCIPARAMSET                  OCIParamSet                  = NULL;
-OCITRANSSTART                OCITransStart                = NULL;
-OCITRANSDETACH               OCITransDetach               = NULL;
-OCITRANSPREPARE              OCITransPrepare              = NULL;
-OCITRANSFORGET               OCITransForget               = NULL;
-OCITRANSCOMMIT               OCITransCommit               = NULL;
-OCITRANSROLLBACK             OCITransRollback             = NULL;
-OCIERRORGET                  OCIErrorGet                  = NULL;
-OCILOBCREATETEMPORARY        OCILobCreateTemporary        = NULL;
-OCILOBFREETEMPORARY          OCILobFreeTemporary          = NULL;
-OCILOBISTEMPORARY            OCILobIsTemporary            = NULL;
-OCILOBAPPEND                 OCILobAppend                 = NULL;
-OCILOBCOPY                   OCILobCopy                   = NULL;
-OCILOBGETLENGTH              OCILobGetLength              = NULL;
-OCILOBGETCHUNKSIZE           OCILobGetChunkSize           = NULL;
-OCILOBREAD                   OCILobRead                   = NULL;
-OCILOBWRITE                  OCILobWrite                  = NULL;
-OCILOBTRIM                   OCILobTrim                   = NULL;
-OCILOBERASE                  OCILobErase                  = NULL;
-OCILOBOPEN                   OCILobOpen                   = NULL;
-OCILOBCLOSE                  OCILobClose                  = NULL;
-OCILOBLOCATORASSIGN          OCILobLocatorAssign          = NULL;
-OCILOBASSIGN                 OCILobAssign                 = NULL;
-OCILOBISEQUAL                OCILobIsEqual                = NULL;
-OCILOBFLUSHBUFFER            OCILobFlushBuffer            = NULL;
-OCILOBENABLEBUFFERING        OCILobEnableBuffering        = NULL;
-OCILOBDISABLEBUFFERING       OCILobDisableBuffering       = NULL;
-OCILOBGETSTORAGELIMIT        OCILobGetStorageLimit        = NULL;
-OCILOBFILEOPEN               OCILobFileOpen               = NULL;
-OCILOBFILECLOSE              OCILobFileClose              = NULL;
-OCILOBFILECLOSEALL           OCILobFileCloseAll           = NULL;
-OCILOBFILEISOPEN             OCILobFileIsOpen             = NULL;
-OCILOBFILEEXISTS             OCILobFileExists             = NULL;
-OCILOBFIELGETNAME            OCILobFileGetName            = NULL;
-OCILOBFILESETNAME            OCILobFileSetName            = NULL;
-OCILOBLOADFROMFILE           OCILobLoadFromFile           = NULL;
-OCILOBWRITEAPPEND            OCILobWriteAppend            = NULL;
-OCISERVERVERSION             OCIServerVersion             = NULL;
-OCIBREAK                     OCIBreak                     = NULL;
-OCIATTRGET                   OCIAttrGet                   = NULL;
-OCIATTRSET                   OCIAttrSet                   = NULL;
-OCIDATEASSIGN                OCIDateAssign                = NULL;
-OCIDATETOTEXT                OCIDateToText                = NULL;
-OCIDATEFROMTEXT              OCIDateFromText              = NULL;
-OCIDATECOMPARE               OCIDateCompare               = NULL;
-OCIDATEADDMONTHS             OCIDateAddMonths             = NULL;
-OCIDATEADDDAYS               OCIDateAddDays               = NULL;
-OCIDATELASTDAY               OCIDateLastDay               = NULL;
-OCIDATEDAYSBETWEEN           OCIDateDaysBetween           = NULL;
-OCIDATEZONETOZONE            OCIDateZoneToZone            = NULL;
-OCIDATENEXTDAY               OCIDateNextDay               = NULL;
-OCIDATECHECK                 OCIDateCheck                 = NULL;
-OCIDATESYSDATE               OCIDateSysDate               = NULL;
-OCIDESCRIBEANY               OCIDescribeAny               = NULL;
-OCIINTERVALASSIGN            OCIIntervalAssign            = NULL;
-OCIINTERVALCHECK             OCIIntervalCheck             = NULL;
-OCIINTERVALCOMPARE           OCIIntervalCompare           = NULL;
-OCIINTERVALFROMTEXT          OCIIntervalFromText          = NULL;
-OCIINTERVALTOTEXT            OCIIntervalToText            = NULL;
-OCIINTERVALFROMTZ            OCIIntervalFromTZ            = NULL;
-OCIINTERVALGETDAYSECOND      OCIIntervalGetDaySecond      = NULL;
-OCIINTERVALGETYEARMONTH      OCIIntervalGetYearMonth      = NULL;
-OCIINTERVALSETDAYSECOND      OCIIntervalSetDaySecond      = NULL;
-OCIINTERVALSETYEARMONTH      OCIIntervalSetYearMonth      = NULL;
-OCIINTERVALSUBTRACT          OCIIntervalSubtract          = NULL;
-OCIINTERVALADD               OCIIntervalAdd               = NULL;
-OCIDATETIMEASSIGN            OCIDateTimeAssign            = NULL;
-OCIDATETIMECHECK             OCIDateTimeCheck             = NULL;
-OCIDATETIMECOMPARE           OCIDateTimeCompare           = NULL;
-OCIDATETIMECONSTRUCT         OCIDateTimeConstruct         = NULL;
-OCIDATETIMECONVERT           OCIDateTimeConvert           = NULL;
-OCIDATETIMEFROMARRAY         OCIDateTimeFromArray         = NULL;
-OCIDATETIMETOARRAY           OCIDateTimeToArray           = NULL;
-OCIDATETIMEFROMTEXT          OCIDateTimeFromText          = NULL;
-OCIDATETIMETOTEXT            OCIDateTimeToText            = NULL;
-OCIDATETIMEGETDATE           OCIDateTimeGetDate           = NULL;
-OCIDATETIMEGETTIME           OCIDateTimeGetTime           = NULL;
-OCIDATETIMEGETTIMEZONENAME   OCIDateTimeGetTimeZoneName   = NULL;
-OCIDATETIMEGETTIMEZONEOFFSET OCIDateTimeGetTimeZoneOffset = NULL;
-OCIDATETIMEINTERVALADD       OCIDateTimeIntervalAdd       = NULL;
-OCIDATETIMEINTERVALSUB       OCIDateTimeIntervalSub       = NULL;
-OCIDATETIMESUBTRACT          OCIDateTimeSubtract          = NULL;
-OCIDATETIMESYSTIMESTAMP      OCIDateTimeSysTimeStamp      = NULL;
-OCIARRAYDESCRIPTORALLOC      OCIArrayDescriptorAlloc      = NULL;
-OCIARRAYDESCRIPTORFREE       OCIArrayDescriptorFree       = NULL;
-OCICLIENTVERSION             OCIClientVersion             = NULL;
-OCITYPEBYREF                 OCITypeByRef                 = NULL;
-OCINUMBERTOINT               OCINumberToInt               = NULL;
-OCINUMBERFROMINT             OCINumberFromInt             = NULL;
-OCINUMBERTOREAL              OCINumberToReal              = NULL;
-OCINUMBERFROMREAL            OCINumberFromReal            = NULL;
-OCINUMBERTOTEXT              OCINumberToText              = NULL;
-OCINUMBERFROMTEXT            OCINumberFromText            = NULL;
-OCINUMBERASSIGN              OCINumberAssign              = NULL;
-OCINUMBERADD                 OCINumberAdd                 = NULL;
-OCINUMBERSUB                 OCINumberSub                 = NULL;
-OCINUMBERMUL                 OCINumberMul                 = NULL;
-OCINUMBERDIV                 OCINumberDiv                 = NULL;
-OCINUMBERCMP                 OCINumberCmp                 = NULL;
-OCISTRINGPTR                 OCIStringPtr                 = NULL;
-OCISTRINGSIZE                OCIStringSize                = NULL;
-OCISTRINGASSIGNTEXT          OCIStringAssignText          = NULL;
-OCISTRINGRESIZE              OCIStringResize              = NULL;
-OCIRAWPTR                    OCIRawPtr                    = NULL;
-OCIRAWASSIGNBYTES            OCIRawAssignBytes            = NULL;
-OCIRAWRESIZE                 OCIRawResize                 = NULL;
-OCIRAWALLOCSIZE              OCIRawAllocSize              = NULL;
-OCIRAWSIZE                   OCIRawSize                   = NULL;
-OCIOBJECTNEW                 OCIObjectNew                 = NULL;
-OCIOBJECTFREE                OCIObjectFree                = NULL;
-OCIOBJECTSETATTR             OCIObjectSetAttr             = NULL;
-OCIOBJECTGETATTR             OCIObjectGetAttr             = NULL;
-OCIOBJECTPIN                 OCIObjectPin                 = NULL;
-OCIOBJECTUNPIN               OCIObjectUnpin               = NULL;
-OCIOBJECTCOPY                OCIObjectCopy                = NULL;
-OCIOBJECTGETOBJECTREF        OCIObjectGetObjectRef        = NULL;
-OCIOBJECTGETTYPEREF          OCIObjectGetTypeRef          = NULL;
-OCIOBJECTGETPROPERTY         OCIObjectGetProperty         = NULL;
-OCIOBJECTGETIND              OCIObjectGetInd              = NULL;
-OCIREFASSIGN                 OCIRefAssign                 = NULL;
-OCIREFISNULL                 OCIRefIsNull                 = NULL;
-OCIREFCLEAR                  OCIRefClear                  = NULL;
-OCIREFTOHEX                  OCIRefToHex                  = NULL;
-OCIREFHEXSIZE                OCIRefHexSize                = NULL;
-OCITHREADPROCESSINIT         OCIThreadProcessInit         = NULL;
-OCITHREADINIT                OCIThreadInit                = NULL;
-OCITHREADTERM                OCIThreadTerm                = NULL;
-OCITHREADIDINIT              OCIThreadIdInit              = NULL;
-OCITHREADIDDESTROY           OCIThreadIdDestroy           = NULL;
-OCITHREADHNDINIT             OCIThreadHndInit             = NULL;
-OCITHREADHNDDESTROY          OCIThreadHndDestroy          = NULL;
-OCITHREADCREATE              OCIThreadCreate              = NULL;
-OCITHREADJOIN                OCIThreadJoin                = NULL;
-OCITHREADCLOSE               OCIThreadClose               = NULL;
-OCITHREADMUTEXINIT           OCIThreadMutexInit           = NULL;
-OCITHREADMUTEXDESTROY        OCIThreadMutexDestroy        = NULL;
-OCITHREADMUTEXACQUIRE        OCIThreadMutexAcquire        = NULL;
-OCITHREADMUTEXRELEASE        OCIThreadMutexRelease        = NULL;
-OCITHREADKEYINIT             OCIThreadKeyInit             = NULL;
-OCITHREADKEYDESTROY          OCIThreadKeyDestroy          = NULL;
-OCITHREADKEYSET              OCIThreadKeySet              = NULL;
-OCITHREADKEYGET              OCIThreadKeyGet              = NULL;
-OCICONNECTIONPOOLCREATE      OCIConnectionPoolCreate      = NULL;
-OCICONNECTIONPOOLDESTROY     OCIConnectionPoolDestroy     = NULL;
-OCISESSIONPOOLCREATE         OCISessionPoolCreate         = NULL;
-OCISESSIONPOOLDESTROY        OCISessionPoolDestroy        = NULL;
-OCISESSIONGET                OCISessionGet                = NULL;
-OCISESSIONRELEASE            OCISessionRelease            = NULL;
-OCICOLLSIZE                  OCICollSize                  = NULL;
-OCICOLLMAX                   OCICollMax                   = NULL;
-OCICOLLGETITEM               OCICollGetElem               = NULL;
-OCICOLLASSIGNELEM            OCICollAssignElem            = NULL;
-OCICOLLASSIGN                OCICollAssign                = NULL;
-OCICOLLAPPEND                OCICollAppend                = NULL;
-OCICOLLTRIM                  OCICollTrim                  = NULL;
-OCITABLESIZE                 OCITableSize                 = NULL;
-OCITABLEDELETE               OCITableDelete               = NULL;
-OCIITERCREATE                OCIIterCreate                = NULL;
-OCIITERDELETE                OCIIterDelete                = NULL;
-OCIITERINIT                  OCIIterInit                  = NULL;
-OCIITERNEXT                  OCIIterNext                  = NULL;
-OCIITERPREV                  OCIIterPrev                  = NULL;
-OCIDIRPATHABORT              OCIDirPathAbort              = NULL;
-OCIDIRPATHDATASAVE           OCIDirPathDataSave           = NULL;
-OCIDIRPATHFINISH             OCIDirPathFinish             = NULL;
-OCIDIRPATHPREPARE            OCIDirPathPrepare            = NULL;
-OCIDIRPATHLOADSTREAM         OCIDirPathLoadStream         = NULL;
-OCIDIRPATHCOLARRAYENTRYSET   OCIDirPathColArrayEntrySet   = NULL;
-OCIDIRPATHCOLARRAYRESET      OCIDirPathColArrayReset      = NULL;
-OCIDIRPATHCOLARRAYTOSTREAM   OCIDirPathColArrayToStream   = NULL;
-OCIDIRPATHSTREAMRESET        OCIDirPathStreamReset        = NULL;
-OCIDIRPATHFLUSHROW           OCIDirPathFlushRow           = NULL;
-OCICACHEFREE                 OCICacheFree                 = NULL;
-OCIPING                      OCIPing                      = NULL;
-OCIDBSTARTUP                 OCIDBStartup                 = NULL;
-OCIDBSHUTDOWN                OCIDBShutdown                = NULL;
-OCISTMTPREPARE2              OCIStmtPrepare2              = NULL;
-OCISTMTRELEASE               OCIStmtRelease               = NULL;
-OCISUBSCRIPTIONREGISTER      OCISubscriptionRegister      = NULL;
-OCISUBSCRIPTIONUNREGISTER    OCISubscriptionUnRegister    = NULL;
-OCIAQENQ                     OCIAQEnq                     = NULL;
-OCIAQDEQ                     OCIAQDeq                     = NULL;
-OCIAQLISTEN                  OCIAQListen                  = NULL;
-XAOSVCCTX                    xaoSvcCtx                    = NULL;
-XAOENV                       xaoEnv                       = NULL;
-OCILOBGETCONTENTTYPE         OCILobGetContentType         = NULL;
-OCISTMTGETNEXTRESULT         OCIStmtGetNextResult         = NULL;
-OCISERVERRELEASE2            OCIServerRelease2            = NULL;
-OCISODAOPERKEYSSET           OCISodaOperKeysSet           = NULL;
+OCIENVCREATE                    OCIEnvCreate                    = NULL;
+OCISERVERATTACH                 OCIServerAttach                 = NULL;
+OCISERVERDETACH                 OCIServerDetach                 = NULL;
+OCIHANDLEALLOC                  OCIHandleAlloc                  = NULL;
+OCIHANDLEFREE                   OCIHandleFree                   = NULL;
+OCIDESCRIPTORALLOC              OCIDescriptorAlloc              = NULL;
+OCIDESCRIPTORFREE               OCIDescriptorFree               = NULL;
+OCISESSIONBEGIN                 OCISessionBegin                 = NULL;
+OCISESSIONEND                   OCISessionEnd                   = NULL;
+OCIPASSWORDCHANGE               OCIPasswordChange               = NULL;
+OCIBINDBYPOS                    OCIBindByPos                    = NULL;
+OCIBINDBYNAME                   OCIBindByName                   = NULL;
+OCIBINDDYNAMIC                  OCIBindDynamic                  = NULL;
+OCIBINDOBJECT                   OCIBindObject                   = NULL;
+OCIDEFINEBYPOS                  OCIDefineByPos                  = NULL;
+OCIDEFINEOBJECT                 OCIDefineObject                 = NULL;
+OCISTMTPREPARE                  OCIStmtPrepare                  = NULL;
+OCISTMTEXECUTE                  OCIStmtExecute                  = NULL;
+OCISTMTFETCH                    OCIStmtFetch                    = NULL;
+OCISTMTFETCH2                   OCIStmtFetch2                   = NULL;
+OCISTMTGETPIECEINFO             OCIStmtGetPieceInfo             = NULL;
+OCISTMTSETPIECEINFO             OCIStmtSetPieceInfo             = NULL;
+OCIPARAMGET                     OCIParamGet                     = NULL;
+OCIPARAMSET                     OCIParamSet                     = NULL;
+OCITRANSSTART                   OCITransStart                   = NULL;
+OCITRANSDETACH                  OCITransDetach                  = NULL;
+OCITRANSPREPARE                 OCITransPrepare                 = NULL;
+OCITRANSFORGET                  OCITransForget                  = NULL;
+OCITRANSCOMMIT                  OCITransCommit                  = NULL;
+OCITRANSROLLBACK                OCITransRollback                = NULL;
+OCIERRORGET                     OCIErrorGet                     = NULL;
+OCILOBCREATETEMPORARY           OCILobCreateTemporary           = NULL;
+OCILOBFREETEMPORARY             OCILobFreeTemporary             = NULL;
+OCILOBISTEMPORARY               OCILobIsTemporary               = NULL;
+OCILOBAPPEND                    OCILobAppend                    = NULL;
+OCILOBCOPY                      OCILobCopy                      = NULL;
+OCILOBGETLENGTH                 OCILobGetLength                 = NULL;
+OCILOBGETCHUNKSIZE              OCILobGetChunkSize              = NULL;
+OCILOBREAD                      OCILobRead                      = NULL;
+OCILOBWRITE                     OCILobWrite                     = NULL;
+OCILOBTRIM                      OCILobTrim                      = NULL;
+OCILOBERASE                     OCILobErase                     = NULL;
+OCILOBOPEN                      OCILobOpen                      = NULL;
+OCILOBCLOSE                     OCILobClose                     = NULL;
+OCILOBLOCATORASSIGN             OCILobLocatorAssign             = NULL;
+OCILOBASSIGN                    OCILobAssign                    = NULL;
+OCILOBISEQUAL                   OCILobIsEqual                   = NULL;
+OCILOBFLUSHBUFFER               OCILobFlushBuffer               = NULL;
+OCILOBENABLEBUFFERING           OCILobEnableBuffering           = NULL;
+OCILOBDISABLEBUFFERING          OCILobDisableBuffering          = NULL;
+OCILOBGETSTORAGELIMIT           OCILobGetStorageLimit           = NULL;
+OCILOBFILEOPEN                  OCILobFileOpen                  = NULL;
+OCILOBFILECLOSE                 OCILobFileClose                 = NULL;
+OCILOBFILECLOSEALL              OCILobFileCloseAll              = NULL;
+OCILOBFILEISOPEN                OCILobFileIsOpen                = NULL;
+OCILOBFILEEXISTS                OCILobFileExists                = NULL;
+OCILOBFIELGETNAME               OCILobFileGetName               = NULL;
+OCILOBFILESETNAME               OCILobFileSetName               = NULL;
+OCILOBLOADFROMFILE              OCILobLoadFromFile              = NULL;
+OCILOBWRITEAPPEND               OCILobWriteAppend               = NULL;
+OCISERVERVERSION                OCIServerVersion                = NULL;
+OCIBREAK                        OCIBreak                        = NULL;
+OCIATTRGET                      OCIAttrGet                      = NULL;
+OCIATTRSET                      OCIAttrSet                      = NULL;
+OCIDATEASSIGN                   OCIDateAssign                   = NULL;
+OCIDATETOTEXT                   OCIDateToText                   = NULL;
+OCIDATEFROMTEXT                 OCIDateFromText                 = NULL;
+OCIDATECOMPARE                  OCIDateCompare                  = NULL;
+OCIDATEADDMONTHS                OCIDateAddMonths                = NULL;
+OCIDATEADDDAYS                  OCIDateAddDays                  = NULL;
+OCIDATELASTDAY                  OCIDateLastDay                  = NULL;
+OCIDATEDAYSBETWEEN              OCIDateDaysBetween              = NULL;
+OCIDATEZONETOZONE               OCIDateZoneToZone               = NULL;
+OCIDATENEXTDAY                  OCIDateNextDay                  = NULL;
+OCIDATECHECK                    OCIDateCheck                    = NULL;
+OCIDATESYSDATE                  OCIDateSysDate                  = NULL;
+OCIDESCRIBEANY                  OCIDescribeAny                  = NULL;
+OCIINTERVALASSIGN               OCIIntervalAssign               = NULL;
+OCIINTERVALCHECK                OCIIntervalCheck                = NULL;
+OCIINTERVALCOMPARE              OCIIntervalCompare              = NULL;
+OCIINTERVALFROMTEXT             OCIIntervalFromText             = NULL;
+OCIINTERVALTOTEXT               OCIIntervalToText               = NULL;
+OCIINTERVALFROMTZ               OCIIntervalFromTZ               = NULL;
+OCIINTERVALGETDAYSECOND         OCIIntervalGetDaySecond         = NULL;
+OCIINTERVALGETYEARMONTH         OCIIntervalGetYearMonth         = NULL;
+OCIINTERVALSETDAYSECOND         OCIIntervalSetDaySecond         = NULL;
+OCIINTERVALSETYEARMONTH         OCIIntervalSetYearMonth         = NULL;
+OCIINTERVALSUBTRACT             OCIIntervalSubtract             = NULL;
+OCIINTERVALADD                  OCIIntervalAdd                  = NULL;
+OCIDATETIMEASSIGN               OCIDateTimeAssign               = NULL;
+OCIDATETIMECHECK                OCIDateTimeCheck                = NULL;
+OCIDATETIMECOMPARE              OCIDateTimeCompare              = NULL;
+OCIDATETIMECONSTRUCT            OCIDateTimeConstruct            = NULL;
+OCIDATETIMECONVERT              OCIDateTimeConvert              = NULL;
+OCIDATETIMEFROMARRAY            OCIDateTimeFromArray            = NULL;
+OCIDATETIMETOARRAY              OCIDateTimeToArray              = NULL;
+OCIDATETIMEFROMTEXT             OCIDateTimeFromText             = NULL;
+OCIDATETIMETOTEXT               OCIDateTimeToText               = NULL;
+OCIDATETIMEGETDATE              OCIDateTimeGetDate              = NULL;
+OCIDATETIMEGETTIME              OCIDateTimeGetTime              = NULL;
+OCIDATETIMEGETTIMEZONENAME      OCIDateTimeGetTimeZoneName      = NULL;
+OCIDATETIMEGETTIMEZONEOFFSET    OCIDateTimeGetTimeZoneOffset    = NULL;
+OCIDATETIMEINTERVALADD          OCIDateTimeIntervalAdd          = NULL;
+OCIDATETIMEINTERVALSUB          OCIDateTimeIntervalSub          = NULL;
+OCIDATETIMESUBTRACT             OCIDateTimeSubtract             = NULL;
+OCIDATETIMESYSTIMESTAMP         OCIDateTimeSysTimeStamp         = NULL;
+OCIARRAYDESCRIPTORALLOC         OCIArrayDescriptorAlloc         = NULL;
+OCIARRAYDESCRIPTORFREE          OCIArrayDescriptorFree          = NULL;
+OCICLIENTVERSION                OCIClientVersion                = NULL;
+OCITYPEBYREF                    OCITypeByRef                    = NULL;
+OCINUMBERTOINT                  OCINumberToInt                  = NULL;
+OCINUMBERFROMINT                OCINumberFromInt                = NULL;
+OCINUMBERTOREAL                 OCINumberToReal                 = NULL;
+OCINUMBERFROMREAL               OCINumberFromReal               = NULL;
+OCINUMBERTOTEXT                 OCINumberToText                 = NULL;
+OCINUMBERFROMTEXT               OCINumberFromText               = NULL;
+OCINUMBERASSIGN                 OCINumberAssign                 = NULL;
+OCINUMBERADD                    OCINumberAdd                    = NULL;
+OCINUMBERSUB                    OCINumberSub                    = NULL;
+OCINUMBERMUL                    OCINumberMul                    = NULL;
+OCINUMBERDIV                    OCINumberDiv                    = NULL;
+OCINUMBERCMP                    OCINumberCmp                    = NULL;
+OCISTRINGPTR                    OCIStringPtr                    = NULL;
+OCISTRINGSIZE                   OCIStringSize                   = NULL;
+OCISTRINGASSIGNTEXT             OCIStringAssignText             = NULL;
+OCISTRINGRESIZE                 OCIStringResize                 = NULL;
+OCIRAWPTR                       OCIRawPtr                       = NULL;
+OCIRAWASSIGNBYTES               OCIRawAssignBytes               = NULL;
+OCIRAWRESIZE                    OCIRawResize                    = NULL;
+OCIRAWALLOCSIZE                 OCIRawAllocSize                 = NULL;
+OCIRAWSIZE                      OCIRawSize                      = NULL;
+OCIOBJECTNEW                    OCIObjectNew                    = NULL;
+OCIOBJECTFREE                   OCIObjectFree                   = NULL;
+OCIOBJECTSETATTR                OCIObjectSetAttr                = NULL;
+OCIOBJECTGETATTR                OCIObjectGetAttr                = NULL;
+OCIOBJECTPIN                    OCIObjectPin                    = NULL;
+OCIOBJECTUNPIN                  OCIObjectUnpin                  = NULL;
+OCIOBJECTCOPY                   OCIObjectCopy                   = NULL;
+OCIOBJECTGETOBJECTREF           OCIObjectGetObjectRef           = NULL;
+OCIOBJECTGETTYPEREF             OCIObjectGetTypeRef             = NULL;
+OCIOBJECTGETPROPERTY            OCIObjectGetProperty            = NULL;
+OCIOBJECTGETIND                 OCIObjectGetInd                 = NULL;
+OCIREFASSIGN                    OCIRefAssign                    = NULL;
+OCIREFISNULL                    OCIRefIsNull                    = NULL;
+OCIREFCLEAR                     OCIRefClear                     = NULL;
+OCIREFTOHEX                     OCIRefToHex                     = NULL;
+OCIREFHEXSIZE                   OCIRefHexSize                   = NULL;
+OCITHREADPROCESSINIT            OCIThreadProcessInit            = NULL;
+OCITHREADINIT                   OCIThreadInit                   = NULL;
+OCITHREADTERM                   OCIThreadTerm                   = NULL;
+OCITHREADIDINIT                 OCIThreadIdInit                 = NULL;
+OCITHREADIDDESTROY              OCIThreadIdDestroy              = NULL;
+OCITHREADHNDINIT                OCIThreadHndInit                = NULL;
+OCITHREADHNDDESTROY             OCIThreadHndDestroy             = NULL;
+OCITHREADCREATE                 OCIThreadCreate                 = NULL;
+OCITHREADJOIN                   OCIThreadJoin                   = NULL;
+OCITHREADCLOSE                  OCIThreadClose                  = NULL;
+OCITHREADMUTEXINIT              OCIThreadMutexInit              = NULL;
+OCITHREADMUTEXDESTROY           OCIThreadMutexDestroy           = NULL;
+OCITHREADMUTEXACQUIRE           OCIThreadMutexAcquire           = NULL;
+OCITHREADMUTEXRELEASE           OCIThreadMutexRelease           = NULL;
+OCITHREADKEYINIT                OCIThreadKeyInit                = NULL;
+OCITHREADKEYDESTROY             OCIThreadKeyDestroy             = NULL;
+OCITHREADKEYSET                 OCIThreadKeySet                 = NULL;
+OCITHREADKEYGET                 OCIThreadKeyGet                 = NULL;
+OCICONNECTIONPOOLCREATE         OCIConnectionPoolCreate         = NULL;
+OCICONNECTIONPOOLDESTROY        OCIConnectionPoolDestroy        = NULL;
+OCISESSIONPOOLCREATE            OCISessionPoolCreate            = NULL;
+OCISESSIONPOOLDESTROY           OCISessionPoolDestroy           = NULL;
+OCISESSIONGET                   OCISessionGet                   = NULL;
+OCISESSIONRELEASE               OCISessionRelease               = NULL;
+OCICOLLSIZE                     OCICollSize                     = NULL;
+OCICOLLMAX                      OCICollMax                      = NULL;
+OCICOLLGETITEM                  OCICollGetElem                  = NULL;
+OCICOLLASSIGNELEM               OCICollAssignElem               = NULL;
+OCICOLLASSIGN                   OCICollAssign                   = NULL;
+OCICOLLAPPEND                   OCICollAppend                   = NULL;
+OCICOLLTRIM                     OCICollTrim                     = NULL;
+OCITABLESIZE                    OCITableSize                    = NULL;
+OCITABLEDELETE                  OCITableDelete                  = NULL;
+OCIITERCREATE                   OCIIterCreate                   = NULL;
+OCIITERDELETE                   OCIIterDelete                   = NULL;
+OCIITERINIT                     OCIIterInit                     = NULL;
+OCIITERNEXT                     OCIIterNext                     = NULL;
+OCIITERPREV                     OCIIterPrev                     = NULL;
+OCIDIRPATHABORT                 OCIDirPathAbort                 = NULL;
+OCIDIRPATHDATASAVE              OCIDirPathDataSave              = NULL;
+OCIDIRPATHFINISH                OCIDirPathFinish                = NULL;
+OCIDIRPATHPREPARE               OCIDirPathPrepare               = NULL;
+OCIDIRPATHLOADSTREAM            OCIDirPathLoadStream            = NULL;
+OCIDIRPATHCOLARRAYENTRYSET      OCIDirPathColArrayEntrySet      = NULL;
+OCIDIRPATHCOLARRAYRESET         OCIDirPathColArrayReset         = NULL;
+OCIDIRPATHCOLARRAYTOSTREAM      OCIDirPathColArrayToStream      = NULL;
+OCIDIRPATHSTREAMRESET           OCIDirPathStreamReset           = NULL;
+OCIDIRPATHFLUSHROW              OCIDirPathFlushRow              = NULL;
+OCICACHEFREE                    OCICacheFree                    = NULL;
+OCIPING                         OCIPing                         = NULL;
+OCIDBSTARTUP                    OCIDBStartup                    = NULL;
+OCIDBSHUTDOWN                   OCIDBShutdown                   = NULL;
+OCISTMTPREPARE2                 OCIStmtPrepare2                 = NULL;
+OCISTMTRELEASE                  OCIStmtRelease                  = NULL;
+OCISUBSCRIPTIONREGISTER         OCISubscriptionRegister         = NULL;
+OCISUBSCRIPTIONUNREGISTER       OCISubscriptionUnRegister       = NULL;
+OCIAQENQ                        OCIAQEnq                        = NULL;
+OCIAQDEQ                        OCIAQDeq                        = NULL;
+OCIAQLISTEN                     OCIAQListen                     = NULL;
+OCILOBGETCONTENTTYPE            OCILobGetContentType            = NULL;
+OCISTMTGETNEXTRESULT            OCIStmtGetNextResult            = NULL;
+OCISERVERRELEASE2               OCIServerRelease2               = NULL;
+OCISODAOPERKEYSSET              OCISodaOperKeysSet              = NULL;
+
+XAOSVCCTX                       xaoSvcCtx                       = NULL;
+XAOENV                          xaoEnv                          = NULL;
 
   #ifdef ORAXB8_DEFINED
 
-OCILOBCOPY2         OCILobCopy2         = NULL;
-OCILOBERASE2        OCILobErase2        = NULL;
-OCILOBGETLENGTH2    OCILobGetLength2    = NULL;
-OCILOBLOADFROMFILE2 OCILobLoadFromFile2 = NULL;
-OCILOBREAD2         OCILobRead2         = NULL;
-OCILOBTRIM2         OCILobTrim2         = NULL;
-OCILOBWRITE2        OCILobWrite2        = NULL;
-OCILOBWRITEAPPEND2  OCILobWriteAppend2  = NULL;
+OCILOBCOPY2                     OCILobCopy2                     = NULL;
+OCILOBERASE2                    OCILobErase2                    = NULL;
+OCILOBGETLENGTH2                OCILobGetLength2                = NULL;
+OCILOBLOADFROMFILE2             OCILobLoadFromFile2             = NULL;
+OCILOBREAD2                     OCILobRead2                     = NULL;
+OCILOBTRIM2                     OCILobTrim2                     = NULL;
+OCILOBWRITE2                    OCILobWrite2                    = NULL;
+OCILOBWRITEAPPEND2              OCILobWriteAppend2              = NULL;
 
   #endif /* ORAXB8_DEFINED */
 
 #endif /* OCI_IMPORT_RUNTIME */
 
+
+/* --------------------------------------------------------------------------------------------- *
+ * EnvironmentFreeErrors
+ * --------------------------------------------------------------------------------------------- */
+
+void EnvironmentFreeError(OCI_Error *err)
+{
+    if (err != Env.lib_err)
+    {
+        ErrorFree(err);
+    }
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * KeyMapFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean KeyMapFree
+void KeyMapFree
 (
-    void
 )
 {
-    boolean        res    = TRUE;
-    OCI_HashEntry *e      = NULL;
-    OCI_HashValue *v      = NULL;
-    int            nb_err = 0;
+    OCI_HashEntry *e = NULL;
+    OCI_HashValue *v = NULL;
 
-    CHECK(NULL == Env.key_map, TRUE)
+    int nb_err = 0;
 
-    const unsigned int n = HashGetSize(Env.key_map);
+    unsigned int count = 0;
 
-    for (unsigned int i = 0; i < n; i++)
+    if (NULL == Env.key_map)
+    {
+        return;
+    }
+
+    count = HashGetSize(Env.key_map);
+
+    for (unsigned int i = 0; i < count; i++)
     {
         e = HashGetEntry(Env.key_map, i);
 
@@ -575,50 +592,9 @@ boolean KeyMapFree
         }
     }
 
-    res = (HashFree(Env.key_map) && (nb_err == 0));
+    HashFree(Env.key_map);
 
     Env.key_map = NULL;
-
-    return res;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * CallEnter
- * --------------------------------------------------------------------------------------------- */
-
-void CallEnter
-(
-    OCI_Context *ctx
-)
-{
-    if (ctx && ctx->call_err)
-    {
-        if (ctx->call_err->depth == 0 && ctx->call_err->type != OCI_UNKNOWN)
-        {
-            ErrorReset(ctx->call_err);
-        }
-
-        ctx->call_err->depth++;
-    }
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * CallExit
- * --------------------------------------------------------------------------------------------- */
-
-void CallExit
-(
-    OCI_Context *ctx
-)
-{
-    if (ctx && ctx->call_err)
-    {
-        if (ctx->call_err->depth > 0) ctx->call_err->depth--;
-
-        ctx->call_err->raise = (ctx->call_err->depth == 0) &&
-                               (ctx->call_err->type != OCI_UNKNOWN) &&
-                               (!ctx->call_status || (OCI_ERR_WARNING == ctx->call_err->type && Env.warnings_on));
-    }
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -634,11 +610,20 @@ char * EnvironmentGetVariable
     const char *name
 )
 {
-    char *value = getenv(name);
+    ENTER_FUNC
+    (
+        /* returns */ char*, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    if (value)
+    CHECK_PTR(OCI_IPC_STRING, name)
+
+    char* value = NULL;
+    char *str = getenv(name);
+
+    if (NULL != str)
     {
-        value = ocistrdup(value);
+        value = ocistrdup(str);
     }
 
 #if defined(_WINDOWS)
@@ -663,7 +648,9 @@ char * EnvironmentGetVariable
 
 #endif
 
-    return value;
+    SET_RETVAL(value)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -677,8 +664,17 @@ boolean EnvironmentInitialize
     unsigned int mode
 )
 {
-    unsigned int i        = 0;
-    ub4          oci_mode = OCI_ENV_MODE | OCI_OBJECT;
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
+    unsigned int i = 0;
+
+    sword ret = OCI_SUCCESS;
+
+    ub4 oci_mode = OCI_ENV_MODE | OCI_OBJECT;
 
 #ifdef OCI_IMPORT_RUNTIME
 
@@ -688,14 +684,12 @@ boolean EnvironmentInitialize
 
 #endif
 
-    DECLARE_VARS(boolean, FALSE, TRUE)
-    CTX_ENTER(mode)
-
     /* check if it was already initialized */
 
     if (Env.loaded)
     {
-        return TRUE;
+        SET_SUCCESS()
+        JUMP_EXIT()
     }
 
 #if defined(OCI_CHARSET_WIDE) && (OCI_VERSION_COMPILE >= OCI_10_2)
@@ -716,6 +710,10 @@ boolean EnvironmentInitialize
     Env.env_mode           = mode;
     Env.charset            = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_ANSI;
     Env.use_wide_char_conv = (Env.charset == OCI_CHAR_WIDE && (WCHAR_MAX == WCHAR_4_BYTES));
+
+    /* create environment error */
+
+    Env.lib_err = ErrorCreate();
 
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
@@ -1352,12 +1350,12 @@ boolean EnvironmentInitialize
         else
         {
             LIB_CLOSE(Env.lib_handle);
-            THROW(ExceptionLoadingSymbols())
+            THROW(ExceptionLoadingSymbols)
         }
     }
     else
     {
-        THROW(ExceptionLoadingSharedLib())
+        THROW(ExceptionLoadingSharedLib)
     }
 
   #if defined(OCI_BIG_UINT_ENABLED)
@@ -1386,7 +1384,7 @@ boolean EnvironmentInitialize
 
     if (Env.version_runtime < OCI_9_0)
     {
-        THROW(ExceptionNotAvailable(NULL, OCI_FEATURE_WIDE_USERDATA))
+        THROW(ExceptionNotAvailable, OCI_FEATURE_WIDE_USERDATA)
     }
 
 #endif
@@ -1405,82 +1403,77 @@ boolean EnvironmentInitialize
 
     /* create environment on success */
 
-    STATUS = OCI_SUCCESSFUL(OCIEnvCreate(&Env.env, oci_mode,
-                                         (dvoid *) &Env,
-                                         MemoryAllocOracleCallback,
-                                         MemoryReallocOracleCallback,
-                                         MemoryFreeOracleCallback,
-                                         (size_t) 0, (dvoid **) NULL));
+    ret = OCIEnvCreate(&Env.env, oci_mode,
+                       (dvoid *) &Env,
+                       MemoryAllocOracleCallback,
+                       MemoryReallocOracleCallback,
+                       MemoryFreeOracleCallback,
+                       (size_t) 0, (dvoid **) NULL);
 
     /*  allocate error handle */
-    if (STATUS)
+    if (OCI_SUCCESSFUL(ret))
     {
-        STATUS = MemoryAllocHandle((dvoid *)Env.env, (dvoid **) (void *) &Env.err, OCI_HTYPE_ERROR);
+        CHECK
+        (
+            MemoryAllocHandle
+            (
+                (dvoid *)Env.env,
+                (dvoid **) (void *) &Env.err, 
+                OCI_HTYPE_ERROR
+            )
+        )
     }
     else
     {
-        THROW(ExceptionOCIEnvironment())
+        THROW(ExceptionOCIEnvironment)
     }
 
     /* on success, we need to initialize OCIThread object support */
 
-    if (STATUS)
+    if (LIB_THREADED)
     {
-        if (LIB_THREADED)
-        {
-            OCIThreadProcessInit();
+        OCIThreadProcessInit();
 
-            STATUS = OCI_SUCCESSFUL(OCIThreadInit(Env.env, Env.err));
+        CHECK_OCI
+        (
+            Env.err,
+            OCIThreadInit, Env.env, Env.err
+        )
 
-            Env.mem_mutex = MutexCreateInternal();
-            STATUS        = (NULL != Env.mem_mutex);
-        }
+        Env.mem_mutex= MutexCreateInternal();
+        CHECK_NULL(Env.mem_mutex)
+    }
 
-        /* create thread key for thread errors */
+    /* create thread key for thread errors */
 
-        if (STATUS)
-        {
-            Env.key_errs = ThreadKeyCreateInternal((POCI_THREADKEYDEST) ErrorFree);
-            STATUS       = (NULL != Env.key_errs);
-        }
+    Env.key_errs = ThreadKeyCreateInternal((POCI_THREADKEYDEST)EnvironmentFreeError);
+    CHECK_NULL(Env.key_errs)
 
-        /* allocate connections internal list */
+    /* allocate connections internal list */
 
-        if (STATUS)
-        {
-            Env.cons = ListCreate(OCI_IPC_CONNECTION);
-            STATUS   = (NULL != Env.cons);
-        }
+    Env.cons = ListCreate(OCI_IPC_CONNECTION);
+    CHECK_NULL(Env.cons)
 
-        /* allocate pools internal list */
+    /* allocate pools internal list */
 
-        if (STATUS)
-        {
-            Env.pools = ListCreate(OCI_IPC_POOL);
-            STATUS    = (NULL != Env.pools);
-        }
+    Env.pools = ListCreate(OCI_IPC_POOL);
+    CHECK_NULL(Env.pools)
+
+    /* allocate array internal list */
+
+    Env.arrs = ListCreate(OCI_IPC_ARRAY);
+    CHECK_NULL(Env.arrs)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-        /* allocate connection pools internal list */
+    /* allocate connection pools internal list */
 
-        if (STATUS)
-        {
-            Env.subs = ListCreate(OCI_IPC_NOTIFY);
-
-            STATUS = (NULL != Env.subs);
-        }
+    Env.subs = ListCreate(OCI_IPC_NOTIFY);
+    CHECK_NULL(Env.subs)
 
 #endif
 
-        if (STATUS)
-        {
-            Env.arrs = ListCreate(OCI_IPC_ARRAY);
-            STATUS   = (NULL != Env.arrs);
-        }
-    }
-
-    Env.loaded = RETVAL = STATUS;
+    Env.loaded = TRUE;
 
     /* test for XA support */
 
@@ -1494,7 +1487,9 @@ boolean EnvironmentInitialize
     Env.use_xa = TRUE;
 #endif
 
-    CALL_EXIT()
+    SET_RETVAL(Env.loaded)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1506,37 +1501,52 @@ boolean EnvironmentCleanup
     void
 )
 {
-    boolean      res = TRUE;
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
+    boolean success = FALSE;
+
     unsigned int i   = 0;
+
+    /* exit if the environment is not loaded */
+
+    CHECK(Env.loaded)
+
+    success = TRUE;
+
+    /* dispose list items */
+
+    ListForEach(Env.arrs, (POCI_LIST_FOR_EACH)ArrayDispose);
+    ListForEach(Env.subs, (POCI_LIST_FOR_EACH)SubscriptionDispose);
+    ListForEach(Env.cons, (POCI_LIST_FOR_EACH)ConnectionDispose);
+    ListForEach(Env.pools, (POCI_LIST_FOR_EACH)PoolDispose);
 
     /* free all arrays */
 
-    ListForEach(Env.arrs, (POCI_LIST_FOR_EACH) ArrayDispose);
     ListClear(Env.arrs);
+    ListFree(Env.arrs);
 
     /* free all subscriptions */
 
-    ListForEach(Env.subs, (POCI_LIST_FOR_EACH) SubscriptionDispose);
     ListClear(Env.subs);
+    ListFree(Env.subs);
 
     /* free all connections */
 
-    ListForEach(Env.cons, (POCI_LIST_FOR_EACH) ConnectionDispose);
     ListClear(Env.cons);
+    ListFree(Env.cons);
 
     /* free all pools */
 
-    ListForEach(Env.pools, (POCI_LIST_FOR_EACH) PoolDispose);
     ListClear(Env.pools);
+    ListFree(Env.pools);
 
-    /* free objects */
+    /* free key map */
 
     KeyMapFree();
-
-    ListFree(Env.cons);
-    ListFree(Env.pools);
-    ListFree(Env.subs);
-    ListFree(Env.arrs);
 
     Env.cons    = NULL;
     Env.pools   = NULL;
@@ -1565,19 +1575,20 @@ boolean EnvironmentCleanup
             MutexFree(mutex);
         }
 
-        res = OCI_SUCCESSFUL(OCIThreadTerm(Env.env, Env.err));
+        success = OCI_SUCCESSFUL(OCIThreadTerm(Env.env, Env.err));
     }
 
     /* free error thread key */
 
-    if (Env.key_errs)
+    if (NULL != Env.key_errs)
     {
         OCI_ThreadKey *key = Env.key_errs;
         OCI_Error     *err = ErrorGet(FALSE, FALSE);
 
         Env.key_errs = NULL;
 
-        ErrorFree(err);
+        EnvironmentFreeError(err);
+
         ThreadKeySet(key, NULL);
         ThreadKeyFree(key);
     }
@@ -1588,7 +1599,7 @@ boolean EnvironmentCleanup
 
     /* close error handle */
 
-    if (Env.err)
+    if (NULL != Env.err)
     {
         MemoryFreeHandle(Env.err, OCI_HTYPE_ERROR);
     }
@@ -1616,29 +1627,38 @@ boolean EnvironmentCleanup
 
     if (Env.nb_hndlp > 0)
     {
-        ExceptionUnfreedData(OCI_HDLE_HANDLE, (int) Env.nb_hndlp);
-        res = FALSE;
+        ExceptionUnfreedData(&call_context, OCI_HDLE_HANDLE, (int) Env.nb_hndlp);
+        success = FALSE;
     }
 
     /* checks for non freed descriptors */
 
     if (Env.nb_descp > 0)
     {
-        ExceptionUnfreedData(OCI_HDLE_DESCRIPTOR, (int) Env.nb_descp);
-        res = FALSE;
+        ExceptionUnfreedData(&call_context, OCI_HDLE_DESCRIPTOR, (int) Env.nb_descp);
+        success = FALSE;
     }
 
     /* checks for non freed objects */
 
     if (Env.nb_objinst > 0)
     {
-        ExceptionUnfreedData(OCI_HDLE_OBJECT, (int) Env.nb_objinst);
-        res = FALSE;
+        ExceptionUnfreedData(&call_context, OCI_HDLE_OBJECT, (int) Env.nb_objinst);
+        success = FALSE;
     }
+
+    /* free environment errors */
+
+    ErrorFree(Env.lib_err);
+
+    /* reset environment object */
 
     memset(&Env, 0, sizeof(Env));
 
-    return res;
+    CLEANUP_AND_EXIT_FUNC
+    (
+        SET_RETVAL(success)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1650,7 +1670,11 @@ unsigned int EnvironmentGetOCICompileVersion
     void
 )
 {
-    GET_LIB_PROP(unsigned int, OCI_UNKNOWN, Env.version_compile)
+    GET_LIB_PROP
+    (
+        /* result */ unsigned int, OCI_UNKNOWN,
+        /* value  */ Env.version_compile
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1662,7 +1686,11 @@ unsigned int EnvironmentGetOCIRuntimeVersion
     void
 )
 {
-    GET_LIB_PROP(unsigned int, OCI_UNKNOWN, Env.version_runtime)
+    GET_LIB_PROP
+    (
+        /* result */ unsigned int, OCI_UNKNOWN,
+        /* value  */ Env.version_runtime
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1674,7 +1702,11 @@ unsigned int EnvironmentGetOCIRuntimeImportMode
     void
 )
 {
-    GET_LIB_PROP(unsigned int, OCI_UNKNOWN, OCI_IMPORT_MODE)
+    GET_LIB_PROP
+    (
+        /* result */ unsigned int, OCI_UNKNOWN,
+        /* value  */ OCI_IMPORT_MODE
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1686,7 +1718,11 @@ unsigned int EnvironmentGetCharset
     void
 )
 {
-    GET_LIB_PROP(unsigned int, OCI_UNKNOWN, OCI_CHAR_TEXT)
+    GET_LIB_PROP
+    (
+        /* result */ unsigned int, OCI_UNKNOWN,
+        /* value  */ OCI_CHAR_TEXT
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1698,20 +1734,29 @@ big_uint EnvironmentGetAllocatedBytes
     unsigned int mem_type
 )
 {
-    CALL_ENTER(big_uint, 0)
-    CALL_CHECK_INITIALIZED()
+    ENTER_FUNC
+    (
+        /* returns */ big_uint, 0,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
+    big_uint bytes_count = 0;
+
+    CHECK_INITIALIZED()
 
     if (mem_type & OCI_MEM_ORACLE)
     {
-        call_retval += Env.mem_bytes_oci;
+        bytes_count += Env.mem_bytes_oci;
     }
 
     if (mem_type & OCI_MEM_OCILIB)
     {
-        call_retval += Env.mem_bytes_lib;
+        bytes_count += Env.mem_bytes_lib;
     }
 
-    CALL_EXIT()
+    SET_RETVAL(bytes_count)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1729,10 +1774,11 @@ OCI_Error * EnvironmentGetLastError
     {
         err = ErrorGet(TRUE, FALSE);
 
-        if (err && (!err->raise))
+        if (NULL != err && OCI_UNKNOWN == err->code)
         {
             err = NULL;
         }
+
     }
 
     return err;
@@ -1747,7 +1793,11 @@ boolean EnvironmentEnableWarnings
     boolean value
 )
 {
-    SET_LIB_PROP(Env.warnings_on, value)
+    SET_LIB_PROP
+    (
+        /* member */ Env.warnings_on,
+        /* value  */ value
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1759,7 +1809,11 @@ boolean EnvironmentSetErrorHandler
     POCI_ERROR handler
 )
 {
-    SET_LIB_PROP(Env.error_handler, handler)
+    SET_LIB_PROP
+    (
+        /* member */ Env.error_handler,
+        /* value  */ handler
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1771,11 +1825,16 @@ boolean EnvironmentSetHAHandler
     POCI_HA_HANDLER handler
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
     void *callback = NULL;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_INITIALIZED()
-    CALL_CHECK_HIGH_AVAILABILITY_ENABLED()
+    CHECK_INITIALIZED()
+    CHECK_HIGH_AVAILABILITY_ENABLED()
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -1787,17 +1846,19 @@ boolean EnvironmentSetHAHandler
     #pragma warning(disable: 4054)
   #endif
 
-    if (handler)
+    if (NULL != handler)
     {
         callback = (void*) CallbackHAEvent;
     }
 
-    ATTRIB_SET(OCI_HTYPE_ENV, OCI_ATTR_EVTCBK, Env.env, callback, 0)
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_ENV, OCI_ATTR_EVTCBK, 
+        Env.env, callback, 0,
+        Env.err
+    )
 
-    if (STATUS)
-    {
-        Env.ha_handler = handler;
-    }
+    Env.ha_handler = handler;
 
   #ifdef _MSC_VER
     #pragma warning(default: 4054)
@@ -1809,9 +1870,9 @@ boolean EnvironmentSetHAHandler
 
 #endif
 
-    call_retval = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+   EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1825,11 +1886,16 @@ boolean EnvironmentSetFormat
     const otext    *format
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
     otext **value = NULL;
 
-    CALL_ENTER(boolean, FALSE)
-    CALL_CHECK_INITIALIZED()
-    CALL_CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"))
+    CHECK_INITIALIZED()
+    CHECK_ENUM_VALUE(type, FormatTypeValues, OTEXT("Format Type"))
 
     value = con ? &con->formats[type - 1] : &Env.formats[type - 1];
 
@@ -1837,9 +1903,9 @@ boolean EnvironmentSetFormat
 
     *value = ostrdup(format ? format : FormatDefaultValues[type-1]);
 
-    call_retval = STATUS;
+    SET_SUCCESS()
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1852,20 +1918,25 @@ const otext * EnvironmentGetFormat
     unsigned int    type
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ const otext*, NULL, 
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
     otext **value = NULL;
 
-    CALL_ENTER(const otext *, NULL)
-    CALL_CHECK_INITIALIZED()
-    CALL_CHECK_ENUM_VALUE(con, NULL, type, FormatTypeValues, OTEXT("Format Type"))
+    CHECK_INITIALIZED()
+    CHECK_ENUM_VALUE(type, FormatTypeValues, OTEXT("Format Type"))
 
     value = con ? &con->formats[type-1] : &Env.formats[type-1];
 
-    if (!*value)
+    if (NULL == *value)
     {
-        EnvironmentSetFormat(con, type, NULL);
+        CHECK(EnvironmentSetFormat(con, type, NULL))
     }
 
-    call_retval = *value;
+    SET_RETVAL(*value)
 
-    CALL_EXIT()
+    EXIT_FUNC()
 }

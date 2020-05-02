@@ -56,7 +56,7 @@ boolean ConnectionLogon
 
 boolean ConnectionDispose
 (
-    OCI_Connection *con
+    OCI_Connection* con
 );
 
 unsigned int ConnectionGetMinSupportedVersion

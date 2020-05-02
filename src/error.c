@@ -21,6 +21,7 @@
 #include "error.h"
 
 #include "macros.h"
+#include "strings.h"
 #include "threadkey.h"
 
 /* --------------------------------------------------------------------------------------------- *
@@ -29,7 +30,6 @@
 
 OCI_Error * ErrorCreate
 (
-    void
 )
 {
     return (OCI_Error *) calloc(1, sizeof(OCI_Error));
@@ -44,13 +44,18 @@ void ErrorFree
     OCI_Error *err
 )
 {
-    if (err == &Env.lib_err)
+    if (NULL != err)
     {
-        return;
-    }
+        if (NULL != err->message)
+        {
+            free(err->message);
+        }
 
-    if (err)
-    {
+        if (NULL != err->location)
+        {
+            free(err->location);
+        }
+
         free(err);
     }
 }
@@ -66,15 +71,64 @@ void ErrorReset
 {
     if (err)
     {
-        err->raise   = FALSE;
-        err->active  = FALSE;
-        err->con     = NULL;
-        err->stmt    = NULL;
-        err->sqlcode = 0;
-        err->libcode = 0;
-        err->type    = 0;
-        err->str[0]  = 0;
+        err->active         = FALSE;
+        err->source_ptr     = NULL;
+        err->source_type    = OCI_UNKNOWN;
+        err->type           = OCI_UNKNOWN;
+        err->code           = 0;
+        err->row            = 0;
+
+        if (NULL != err->message)
+        {
+            err->message[0] = 0;
+        }
+
+        if (NULL != err->location)
+        {
+            err->location[0] = 0;
+        }
     }
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * ErrorGet
+ * --------------------------------------------------------------------------------------------- */
+
+void ErrorSet
+(
+    OCI_Error *err,
+    unsigned int type,
+    int code,
+    void *source_ptr,
+    unsigned int source_type,
+    char *location,
+    otext *message,
+    unsigned int row
+)
+{
+    err->type       = type;
+    err->code       = code;
+    err->source_ptr = source_ptr;
+    err->source_type = source_type;
+    err->row        = row;
+
+    size_t len = ostrlen(message);
+    if (err->message_len < len)
+    {
+        err->message = realloc(err->message, len + 1);
+    }
+
+    ostrcpy(err->message, message);
+    err->message_len = (unsigned int) len;
+
+    len = strlen(location);
+    if (err->location_len < len)
+    {
+        err->location = realloc(err->location, len + 1);
+    }
+
+    StringAnsiToNative(location, err->location, (unsigned int) len);
+    err->location_len = (unsigned int) len;   
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -83,42 +137,38 @@ void ErrorReset
 
 OCI_Error * ErrorGet
 (
-    boolean check,
-    boolean reset
+    boolean check_state,
+    boolean reset_err
 )
 {
-    OCI_Error *err = NULL;
+    OCI_Error *err = Env.lib_err;
 
     if (Env.loaded && LIB_THREADED)
     {
         if (ThreadKeyGet(Env.key_errs, (void **)(dvoid *)&err))
         {
-            if (!err)
+            if (NULL == err)
             {
                 err = ErrorCreate();
 
-                if (err)
+                if (NULL != err)
                 {
                     ThreadKeySet(Env.key_errs, err);
                 }
             }
         }
     }
-    else
-    {
-        err = &Env.lib_err;
-    }
 
-    if (check && err && err->active)
+    if (err != NULL && check_state && err->active)
     {
         err = NULL;
     }
 
-    /* Reset error in case OCI_ENV_CONTEXT is no used */
-    if (reset && err && err->depth == 0 && err->type != OCI_UNKNOWN)
+    if (err != NULL && reset_err)
     {
         ErrorReset(err);
     }
+
 
     return err;
 }
@@ -132,9 +182,9 @@ const otext * ErrorGetString
     OCI_Error *err
 )
 {
-    CHECK(NULL == err, NULL);
+    CHECK_FALSE(NULL == err, NULL);
 
-    return err->str;
+    return err->message;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -146,7 +196,7 @@ unsigned int ErrorGetType
     OCI_Error *err
 )
 {
-    CHECK(NULL == err, OCI_UNKNOWN);
+    CHECK_FALSE(NULL == err, OCI_UNKNOWN);
 
     return err->type;
 }
@@ -160,9 +210,9 @@ int ErrorGetOCICode
     OCI_Error *err
 )
 {
-    CHECK(NULL == err, OCI_UNKNOWN);
+    CHECK_FALSE(NULL == err, OCI_UNKNOWN);
 
-    return (int) err->sqlcode;
+    return err->type == OCI_ERR_OCILIB ? 0 : err->code;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -174,9 +224,53 @@ int ErrorGetInternalCode
     OCI_Error *err
 )
 {
-    CHECK(NULL == err, 0);
+    CHECK_FALSE(NULL == err, 0);
 
-    return err->libcode;
+    return err->type == OCI_ERR_OCILIB ? err->code : 0;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * ErrorGetSource
+ * --------------------------------------------------------------------------------------------- */
+
+void* ErrorGetSource
+(
+    OCI_Error* err
+)
+{
+    CHECK_FALSE(NULL == err, NULL);
+
+    return err->source_ptr;
+
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * ErrorGetSourceType
+ * --------------------------------------------------------------------------------------------- */
+
+unsigned int ErrorGetSourceType
+(
+    OCI_Error* err
+)
+{
+    CHECK_FALSE(NULL == err, OCI_UNKNOWN);
+
+    return err->source_type;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * ErrorGetLocation
+ * --------------------------------------------------------------------------------------------- */
+
+const otext* ErrorGetLocation
+(
+    OCI_Error* err
+)
+{
+    CHECK_FALSE(NULL == err, NULL);
+
+    return err->location;
+
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -188,9 +282,64 @@ OCI_Connection * ErrorGetConnection
     OCI_Error *err
 )
 {
-    CHECK(NULL == err, NULL);
+    CHECK_FALSE(NULL == err, NULL);
 
-    return err->con;
+    if (NULL == err->source_ptr)
+    {
+        return NULL;
+    }
+
+    switch (err->source_type)
+    {
+        case OCI_IPC_TYPE_INFO:
+            return ((OCI_TypeInfo*)err->source_ptr)->con;
+        case OCI_IPC_CONNECTION:
+            return (OCI_Connection*)err->source_ptr;
+        case OCI_IPC_TRANSACTION:
+            return ((OCI_Transaction*)err->source_ptr)->con;
+        case OCI_IPC_STATEMENT:
+            return ((OCI_Statement*)err->source_ptr)->con;
+        case OCI_IPC_RESULTSET:
+            return ((OCI_Resultset*)err->source_ptr)->stmt->con;
+        case OCI_IPC_DATE:
+            return ((OCI_Date*)err->source_ptr)->con;
+        case OCI_IPC_TIMESTAMP:
+            return ((OCI_Timestamp*)err->source_ptr)->con;
+        case OCI_IPC_INTERVAL:
+            return ((OCI_Interval*)err->source_ptr)->con;
+        case OCI_IPC_LOB:
+            return ((OCI_Lob*)err->source_ptr)->con;
+        case OCI_IPC_FILE:
+            return ((OCI_File*)err->source_ptr)->con;
+        case OCI_IPC_LONG:
+            return ((OCI_Long*)err->source_ptr)->stmt->con;
+        case OCI_IPC_OBJECT:
+            return ((OCI_Statement*)err->source_ptr)->con;
+        case OCI_IPC_COLLECTION:
+            return ((OCI_Coll*)err->source_ptr)->con;
+        case OCI_IPC_ITERATOR:
+            return ((OCI_Iter*)err->source_ptr)->coll->con;
+        case OCI_IPC_ELEMENT:
+            return ((OCI_Elem*)err->source_ptr)->con;
+        case OCI_IPC_NUMBER:
+            return ((OCI_Number*)err->source_ptr)->con;
+        case OCI_IPC_BIND:
+            return ((OCI_Bind*)err->source_ptr)->stmt->con;
+        case OCI_IPC_REF:
+            return ((OCI_Ref*)err->source_ptr)->con;
+        case OCI_IPC_DIRPATH:
+            return ((OCI_DirPath*)err->source_ptr)->con;
+        case OCI_IPC_MSG:
+            return ((OCI_Msg*)err->source_ptr)->typinf->con;
+        case OCI_IPC_ENQUEUE:
+            return ((OCI_Enqueue*)err->source_ptr)->typinf->con;
+        case OCI_IPC_DEQUEUE:
+            return ((OCI_Dequeue*)err->source_ptr)->typinf->con;
+        case OCI_IPC_AGENT:
+            return ((OCI_Agent*)err->source_ptr)->con;
+    }
+
+    return NULL;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -202,9 +351,24 @@ OCI_Statement * ErrorGetStatement
     OCI_Error *err
 )
 {
-    CHECK(NULL == err, NULL);
+    CHECK_FALSE(NULL == err, NULL);
 
-    return err->stmt;
+    if (NULL == err->source_ptr)
+    {
+        return NULL;
+    }
+
+    switch (err->source_type)
+    {
+    case OCI_IPC_STATEMENT:
+        return (OCI_Statement*) err->source_ptr;
+    case OCI_IPC_RESULTSET:
+        return ((OCI_Resultset*)err->source_ptr)->stmt;
+    case OCI_IPC_BIND:
+        return ((OCI_Bind*)err->source_ptr)->stmt;
+    }
+
+    return NULL;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -216,7 +380,7 @@ unsigned int ErrorGetRow
     OCI_Error *err
 )
 {
-    CHECK(NULL == err, 0);
+    CHECK_FALSE(NULL == err, 0);
 
     return err->row;
 }

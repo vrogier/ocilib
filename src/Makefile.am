@@ -28,9 +28,9 @@ libocilib_la_SOURCES=   \
     dirpath.c           \
     element.c           \
     enqueue.c           \
+    environment.c       \
     error.c             \
     event.c             \
-    environment.c       \
     exception.c         \
     file.c              \
     format.c            \
@@ -82,17 +82,17 @@ noinst_HEADERS=     \
     collection.h    \
     column.h        \
     connection.h    \
-    date.h          \
     database.h      \
+    date.h          \
     define.h        \
     defs.h          \
     dequeue.h       \
     dirpath.h       \
     element.h       \
     enqueue.h       \
+    environment.h   \
     error.h         \
     event.h         \
-    environment.h   \
     exception.h     \
     file.h          \
     format.h        \

@@ -22,7 +22,6 @@
 #define OCILIB_DEFS_H_INCLUDED
 
 #include "ocilib_config.h"
-#include "ocilib_types.h"
 
 #include "import.h"
 
@@ -32,85 +31,89 @@
 
 #ifdef OCI_IMPORT_RUNTIME
 
-/* for runtime loading, set compile time version to the highest minimum
-       version needed by OCILIB encapsulation of OCI */
+  /* for runtime loading, set compile time version to the highest minimum
+     version needed by OCILIB encapsulation of OCI */
 
-#define OCI_VERSION_COMPILE OCI_18_3
+  #define OCI_VERSION_COMPILE OCI_19_5
 
-/* set runtime version to unknown, it will be guessed from symbols loading */
+  /* set runtime version to unknown, it will be guessed from symbols loading */
 
-#define OCI_VERSION_RUNTIME OCI_UNKNOWN
+  #define OCI_VERSION_RUNTIME OCI_UNKNOWN
 
 #else
 
   #if defined(OCI_MAJOR_VERSION)
 
-#define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
-    #if OCI_VERSION_COMPILE == OCI_VER_MAKE(18, 0, 0)       /* Oracle headers not updated for
-                                                             * Windows 18.3 release ! */
-      #undef  OCI_VERSION_COMPILE
-#define OCI_VERSION_COMPILE OCI_18_3
+    #define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
+
+    #if OCI_VERSION_COMPILE == OCI_VER_MAKE(18, 0, 0)     
+
+        /* Oracle headers not updated for Windows 18.3 release ! */
+        #undef  OCI_VERSION_COMPILE
+
+        #define OCI_VERSION_COMPILE OCI_18_3
+
     #endif
 
-  #elif defined(OCI_FNCODE_SODAOPERKEYSSET)    /* = OCI_18_3 */
+  #elif defined(OCI_FNCODE_SODAOPERKEYSSET)     /* = OCI_18_3 */
 
-#define OCI_VERSION_COMPILE OCI_18_3
+    #define OCI_VERSION_COMPILE OCI_18_3
 
-  #elif defined(OCI_FNCODE_SERVERRELEASE2)    /* = OCI_18_1 */
+  #elif defined(OCI_FNCODE_SERVERRELEASE2)      /* = OCI_18_1 */
 
-#define OCI_VERSION_COMPILE OCI_18_1
+    #define OCI_VERSION_COMPILE OCI_18_1
 
-  #elif defined(OCI_FNCODE_LOBGETCHUNKSIZE)    /* = OCI_12_2 */
+  #elif defined(OCI_FNCODE_LOBGETCHUNKSIZE)     /* = OCI_12_2 */
 
-#define OCI_VERSION_COMPILE OCI_12_2
+    #define OCI_VERSION_COMPILE OCI_12_2
 
-  #elif defined(OCI_FNCODE_BINDBYPOS2)    /* = OCI_12_1 */
+  #elif defined(OCI_FNCODE_BINDBYPOS2)          /* = OCI_12_1 */
 
-#define OCI_VERSION_COMPILE OCI_12_1
+    #define OCI_VERSION_COMPILE OCI_12_1
 
-  #elif defined(OCI_FNCODE_LOBGETCONTENTTYPE)    /* = OCI_11_2 */
+  #elif defined(OCI_FNCODE_LOBGETCONTENTTYPE)   /* = OCI_11_2 */
 
-#define OCI_VERSION_COMPILE OCI_11_2
+    #define OCI_VERSION_COMPILE OCI_11_2
 
-  #elif defined(OCI_FNCODE_LOBGETOPT)          /* = OCI_11_1 */
+  #elif defined(OCI_FNCODE_LOBGETOPT)           /* = OCI_11_1 */
 
-#define OCI_VERSION_COMPILE OCI_11_1
+    #define OCI_VERSION_COMPILE OCI_11_1
 
-  #elif defined(OCI_FNCODE_DBSHUTDOWN)         /* = OCI_10_2 */
+  #elif defined(OCI_FNCODE_DBSHUTDOWN)          /* = OCI_10_2 */
 
-#define OCI_VERSION_COMPILE OCI_10_2
+    #define OCI_VERSION_COMPILE OCI_10_2
 
-  #elif defined(OCI_FNCODE_LOBREAD2)           /* = OCI_10_1 */
+  #elif defined(OCI_FNCODE_LOBREAD2)            /* = OCI_10_1 */
 
-#define OCI_VERSION_COMPILE OCI_10_1
+    #define OCI_VERSION_COMPILE OCI_10_1
 
-  #elif defined(OCI_FNCODE_STMTPREPARE2)       /* = OCI_9_2 */
+  #elif defined(OCI_FNCODE_STMTPREPARE2)        /* = OCI_9_2 */
 
-#define OCI_VERSION_COMPILE OCI_9_2
+    #define OCI_VERSION_COMPILE OCI_9_2
 
-  #elif defined(OCI_FNCODE_CPOOLCREATE)        /* = OCI_9_0 */
+  #elif defined(OCI_FNCODE_CPOOLCREATE)         /* = OCI_9_0 */
 
-#define OCI_VERSION_COMPILE OCI_9_0
+    #define OCI_VERSION_COMPILE OCI_9_0
 
-  #elif defined(OCIThreadHandle)               /* = OCI_8_1 */
+  #elif defined(OCIThreadHandle)                /* = OCI_8_1 */
 
-#define OCI_VERSION_COMPILE OCI_8_1
+    #define OCI_VERSION_COMPILE OCI_8_1
 
-  #elif defined(OCIEnv)                        /* = OCI_8_0 */
+  #elif defined(OCIEnv)                         /* = OCI_8_0 */
 
-#define OCI_VERSION_COMPILE OCI_8_0
+    #define OCI_VERSION_COMPILE OCI_8_0
 
-  #else                                        /* OCI_UNKNOWN */
+  #else                                         /* OCI_UNKNOWN */
 
-#define OCI_VERSION_COMPILE OCI_UNKNOWN
+    #define OCI_VERSION_COMPILE OCI_UNKNOWN
 
   #endif
 
-#define OCI_VERSION_RUNTIME OCI_VERSION_COMPILE
+    #define OCI_VERSION_RUNTIME OCI_VERSION_COMPILE
 
 #endif
 
-/* tries to enable Oracle 10g support for lobs > 4Go with OCILobxxx2() calls */
+/* tries to enable Oracle 10g support for lobs > 4Go */
 
 #if defined(OCI_BIG_UINT_ENABLED) && defined(ORAXB8_DEFINED)
 
@@ -178,40 +181,9 @@ typedef unsigned short dbtext;
 #define OCI_IPC_STRING           7
 #define OCI_IPC_PROC             8
 
-/* -- external OCILIB handles - */
+/* internal OCILIB handles - */
 
 #define OCI_IPC_ERROR            9
-#define OCI_IPC_TYPE_INFO        10
-#define OCI_IPC_CONNECTION       11
-#define OCI_IPC_POOL             12
-#define OCI_IPC_TRANSACTION      13
-#define OCI_IPC_STATEMENT        14
-#define OCI_IPC_RESULTSET        15
-#define OCI_IPC_COLUMN           16
-#define OCI_IPC_DATE             17
-#define OCI_IPC_TIMESTAMP        18
-#define OCI_IPC_INTERVAL         19
-#define OCI_IPC_LOB              20
-#define OCI_IPC_FILE             21
-#define OCI_IPC_LONG             22
-#define OCI_IPC_OBJECT           23
-#define OCI_IPC_COLLECTION       24
-#define OCI_IPC_ITERATOR         25
-#define OCI_IPC_ELEMENT          26
-#define OCI_IPC_NUMBER           27
-#define OCI_IPC_HASHTABLE        28
-#define OCI_IPC_THREAD           29
-#define OCI_IPC_MUTEX            30
-#define OCI_IPC_BIND             31
-#define OCI_IPC_REF              32
-#define OCI_IPC_DIRPATH          33
-#define OCI_IPC_NOTIFY           34
-#define OCI_IPC_EVENT            35
-#define OCI_IPC_ARRAY            36
-#define OCI_IPC_MSG              37
-#define OCI_IPC_ENQUEUE          38
-#define OCI_IPC_DEQUEUE          39
-#define OCI_IPC_AGENT            40
 
 /* ---- Internal pointers ----- */
 
@@ -386,8 +358,6 @@ typedef unsigned short dbtext;
 
 #define OCI_FMT_COUNT                   6
 
-#define OCI_ERR_MSG_SIZE                512
-
 #define OCI_BIND_ARRAY_GROWTH_FACTOR    128
 
 #define OCI_DEF_ALIGN                   sizeof(void *)
@@ -436,5 +406,26 @@ typedef unsigned short dbtext;
 #define OCI_IND(exp)                    (sb2) ((exp) ? 0 : -1)
 
 #define OCI_NOT_USED(p)                 (p) = (p);
+
+#define NB_ARG_VERSION                  3
+
+#define LIB_THREADED                    (Env.env_mode & OCI_ENV_THREADED)
+
+#define IS_PLSQL_STMT(type)                                                     \
+                                                                                \
+    ((OCI_CST_BEGIN   == (type)) ||                                             \
+     (OCI_CST_DECLARE == (type)) ||                                             \
+     (OCI_CST_CALL    == (type)))
+
+#define IS_OCI_NUMBER(type, subtype)                                            \
+                                                                                \
+    (OCI_CDT_NUMERIC == (type) && OCI_NUM_NUMBER == (subtype))
+
+#define IS_OCILIB_OBJECT(type, subtype)                                         \
+                                                                                \
+    ( (IS_OCI_NUMBER(type, subtype)) ||                                         \
+      (OCI_CDT_TEXT    != (type) &&                                             \
+       OCI_CDT_RAW     != (type) &&                                             \
+       OCI_CDT_BOOLEAN != (type)))
 
 #endif    /* OCILIB_DEFS_H_INCLUDED */
