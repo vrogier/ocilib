@@ -198,6 +198,7 @@ static const StatementState StatementStates[OCI_STMT_STATES_COUNT] =
     { OCI_STMT_DESCRIBED, OTEXT("described")     },
     { OCI_STMT_EXECUTED,  OTEXT("executed")      }
 };
+
 static const otext * DirPathStates[OCI_DPS_COUNT] =
 {
     OTEXT("non prepared"),
@@ -221,6 +222,31 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
         otext message[512];                             \
         osprintf(message, osizeof(message) - (size_t)1, \
                  ErrorMessages[err_code], __VA_ARGS__); \
+                                                        \
+        ErrorSet                                        \
+        (                                               \
+            err,                                        \
+            OCI_ERR_OCILIB,                             \
+            (int)err_code,                              \
+            ctx->source_ptr,                            \
+            ctx->source_type,                           \
+            ctx->location,                              \
+            message,                                    \
+            0                                           \
+        );                                              \
+                                                        \
+        ExceptionCallHandler(err);                      \
+    }                                                   \
+
+
+#define EXCEPTION_IMPL_NO_ARGS(err_code)                \
+                                                        \
+    OCI_Error *err = ExceptionGetError();               \
+    if (err)                                            \
+    {                                                   \
+        otext message[512];                             \
+        osprintf(message, osizeof(message) - (size_t)1, \
+                 ErrorMessages[err_code]);              \
                                                         \
         ErrorSet                                        \
         (                                               \
@@ -278,17 +304,17 @@ void ExceptionCallHandler
 void ExceptionOCI
 (
     OCI_Context *ctx,
-    OCIError* oci_err,
-    sword call_ret
+    OCIError   * oci_err,
+    sword        call_ret
 )
 {
-    OCI_Error *err = ExceptionGetError(); 
-    if (err) 
+    OCI_Error *err = ExceptionGetError();
+    if (err)
     {
-        sb4 err_code = 0;
-        otext buffer[512];
-        int err_size = osizeof(buffer);
-        const boolean warning = OCI_SUCCESS_WITH_INFO == call_ret;
+        sb4           err_code = 0;
+        otext         buffer[512];
+        int           err_size = osizeof(buffer);
+        const boolean warning  = OCI_SUCCESS_WITH_INFO == call_ret;
 
         dbtext * err_msg = StringGetDBString(buffer, &err_size);
 
@@ -296,7 +322,6 @@ void ExceptionOCI
 
         OCIErrorGet((dvoid *)oci_err, (ub4)1, (OraText *)NULL, &err_code,
                     (OraText *)err_msg, (ub4)err_size, (ub4)OCI_HTYPE_ERROR);
-
 
         if (err_code == 0 && err_msg[0] == 0)
         {
@@ -357,7 +382,7 @@ void ExceptionNotInitialized
     OCI_Context* ctx
 )
 {
-    EXCEPTION_IMPL(OCI_ERR_NOT_INITIALIZED)
+    EXCEPTION_IMPL_NO_ARGS(OCI_ERR_NOT_INITIALIZED)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -385,7 +410,7 @@ void ExceptionLoadingSymbols
     OCI_Context* ctx
 )
 {
-    EXCEPTION_IMPL(OCI_ERR_LOADING_SYMBOLS)
+    EXCEPTION_IMPL_NO_ARGS(OCI_ERR_LOADING_SYMBOLS)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -397,7 +422,7 @@ void ExceptionNotMultithreaded
     OCI_Context* ctx
 )
 {
-    EXCEPTION_IMPL(OCI_ERR_MULTITHREADED)
+    EXCEPTION_IMPL_NO_ARGS(OCI_ERR_MULTITHREADED)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -407,7 +432,7 @@ void ExceptionNotMultithreaded
 void ExceptionNullPointer
 (
     OCI_Context* ctx,
-    int type
+    int          type
 )
 {
     EXCEPTION_IMPL(OCI_ERR_NULL_POINTER, TypeNames[type + 1])
@@ -420,8 +445,8 @@ void ExceptionNullPointer
 void ExceptionMemory
 (
     OCI_Context* ctx,
-    int             type,
-    size_t          nb_bytes
+    int          type,
+    size_t       nb_bytes
 )
 {
     EXCEPTION_IMPL(OCI_ERR_MEMORY, TypeNames[type + 1], nb_bytes)
@@ -434,7 +459,7 @@ void ExceptionMemory
 void ExceptionNotAvailable
 (
     OCI_Context* ctx,
-    int             feature
+    int          feature
 )
 {
     EXCEPTION_IMPL(OCI_ERR_NOT_AVAILABLE, OracleFeatures[feature - 1])
@@ -447,7 +472,7 @@ void ExceptionNotAvailable
 void ExceptionDatatypeNotSupported
 (
     OCI_Context* ctx,
-    int             code
+    int          code
 )
 {
     EXCEPTION_IMPL(OCI_ERR_DATATYPE_NOT_SUPPORTED, code)
@@ -460,7 +485,7 @@ void ExceptionDatatypeNotSupported
 void ExceptionParsingToken
 (
     OCI_Context* ctx,
-    otext           token
+    otext        token
 )
 {
     EXCEPTION_IMPL(OCI_ERR_PARSE_TOKEN, token)
@@ -473,7 +498,7 @@ void ExceptionParsingToken
 void ExceptionMappingArgument
 (
     OCI_Context* ctx,
-    int             arg
+    int          arg
 )
 {
     EXCEPTION_IMPL(OCI_ERR_MAP_ARGUMENT, arg)
@@ -486,7 +511,7 @@ void ExceptionMappingArgument
 void ExceptionOutOfBounds
 (
     OCI_Context* ctx,
-    int             value
+    int          value
 )
 {
     EXCEPTION_IMPL(OCI_ERR_OUT_OF_BOUNDS, value)
@@ -499,8 +524,8 @@ void ExceptionOutOfBounds
 void ExceptionUnfreedData
 (
     OCI_Context* ctx,
-    int type_elem,
-    int nb_elem
+    int          type_elem,
+    int          nb_elem
 )
 {
     EXCEPTION_IMPL(OCI_ERR_UNFREED_DATA, nb_elem, HandleNames[type_elem - 1])
@@ -525,7 +550,7 @@ void ExceptionMaxBind
 void ExceptionAttributeNotFound
 (
     OCI_Context* ctx,
-    const otext    *attr
+    const otext *attr
 )
 {
     EXCEPTION_IMPL(OCI_ERR_ATTR_NOT_FOUND, attr)
@@ -538,7 +563,7 @@ void ExceptionAttributeNotFound
 void ExceptionMinimumValue
 (
     OCI_Context* ctx,
-    int             min
+    int          min
 )
 {
     EXCEPTION_IMPL(OCI_ERR_MIN_VALUE, min)
@@ -553,7 +578,7 @@ void ExceptionTypeNotCompatible
     OCI_Context* ctx
 )
 {
-    EXCEPTION_IMPL(OCI_ERR_NOT_COMPATIBLE)
+    EXCEPTION_IMPL_NO_ARGS(OCI_ERR_NOT_COMPATIBLE)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -563,7 +588,7 @@ void ExceptionTypeNotCompatible
 void ExceptionStatementState
 (
     OCI_Context* ctx,
-    int            state
+    int          state
 )
 {
     int i = 0, index = 0;
@@ -577,7 +602,6 @@ void ExceptionStatementState
         }
     }
 
-
     EXCEPTION_IMPL(OCI_ERR_STMT_STATE, StatementStates[index].name)
 }
 
@@ -590,7 +614,7 @@ void ExceptionStatementNotScrollable
     OCI_Context* ctx
 )
 {
-    EXCEPTION_IMPL(OCI_ERR_STMT_NOT_SCROLLABLE)
+    EXCEPTION_IMPL_NO_ARGS(OCI_ERR_STMT_NOT_SCROLLABLE)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -599,8 +623,8 @@ void ExceptionStatementNotScrollable
 
 void ExceptionBindAlreadyUsed
 (
-    OCI_Context* ctx,
-    const otext  * bind
+    OCI_Context * ctx,
+    const otext * bind
 )
 {
     EXCEPTION_IMPL(OCI_ERR_BIND_ALREADY_USED, bind)
@@ -613,9 +637,9 @@ void ExceptionBindAlreadyUsed
 void ExceptionBindArraySize
 (
     OCI_Context* ctx,
-    unsigned int   maxsize,
-    unsigned int   cursize,
-    unsigned int   newsize
+    unsigned int maxsize,
+    unsigned int cursize,
+    unsigned int newsize
 )
 {
     EXCEPTION_IMPL(OCI_ERR_BIND_ARRAY_SIZE, maxsize, cursize, newsize)
@@ -627,12 +651,12 @@ void ExceptionBindArraySize
 
 void ExceptionDirPathColNotFound
 (
-    OCI_Context* ctx,
+    OCI_Context * ctx,
     const otext * column,
     const otext  *table
 )
 {
-    EXCEPTION_IMPL(OCI_ERR_COLUMN_NOT_FOUND , column, table)
+    EXCEPTION_IMPL(OCI_ERR_COLUMN_NOT_FOUND, column, table)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -657,7 +681,7 @@ void ExceptionOCIEnvironment
     OCI_Context* ctx
 )
 {
-    EXCEPTION_IMPL(OCI_ERR_CREATE_OCI_ENVIRONMENT)
+    EXCEPTION_IMPL_NO_ARGS(OCI_ERR_CREATE_OCI_ENVIRONMENT)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -666,8 +690,8 @@ void ExceptionOCIEnvironment
 
 void ExceptionRebindBadDatatype
 (
-    OCI_Context* ctx,
-    const otext  * bind
+    OCI_Context * ctx,
+    const otext * bind
 )
 {
     EXCEPTION_IMPL(OCI_ERR_REBIND_BAD_DATATYPE, bind)
@@ -679,8 +703,8 @@ void ExceptionRebindBadDatatype
 
 void ExceptionTypeInfoWrongType
 (
-    OCI_Context* ctx,
-    const otext   * name
+    OCI_Context * ctx,
+    const otext * name
 )
 {
     EXCEPTION_IMPL(OCI_ERR_TYPEINFO_DATATYPE, name)
@@ -693,8 +717,8 @@ void ExceptionTypeInfoWrongType
 void ExceptionItemNotFound
 (
     OCI_Context* ctx,
-    const otext    *name,
-    unsigned int    type
+    const otext *name,
+    unsigned int type
 )
 {
     EXCEPTION_IMPL(OCI_ERR_ITEM_NOT_FOUND, name, type)
@@ -707,8 +731,8 @@ void ExceptionItemNotFound
 void ExceptionArgInvalidValue
 (
     OCI_Context* ctx,
-    const otext    *name,
-    unsigned int    value
+    const otext *name,
+    unsigned int value
 )
 {
     EXCEPTION_IMPL(OCI_ERR_ARG_INVALID_VALUE, name, value)
@@ -747,7 +771,7 @@ void ExceptionConnFromXaString
 void ExceptionExternalBindingNotAllowed
 (
     OCI_Context* ctx,
-    const otext   *bind
+    const otext *bind
 )
 {
     EXCEPTION_IMPL(OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED, bind)
