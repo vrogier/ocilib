@@ -306,235 +306,234 @@ static const otext * FormatDefaultValues[OCI_FMT_COUNT] =
 
 /* OCI function pointers */
 
-OCIENVCREATE                    OCIEnvCreate                    = NULL;
-OCISERVERATTACH                 OCIServerAttach                 = NULL;
-OCISERVERDETACH                 OCIServerDetach                 = NULL;
-OCIHANDLEALLOC                  OCIHandleAlloc                  = NULL;
-OCIHANDLEFREE                   OCIHandleFree                   = NULL;
-OCIDESCRIPTORALLOC              OCIDescriptorAlloc              = NULL;
-OCIDESCRIPTORFREE               OCIDescriptorFree               = NULL;
-OCISESSIONBEGIN                 OCISessionBegin                 = NULL;
-OCISESSIONEND                   OCISessionEnd                   = NULL;
-OCIPASSWORDCHANGE               OCIPasswordChange               = NULL;
-OCIBINDBYPOS                    OCIBindByPos                    = NULL;
-OCIBINDBYNAME                   OCIBindByName                   = NULL;
-OCIBINDDYNAMIC                  OCIBindDynamic                  = NULL;
-OCIBINDOBJECT                   OCIBindObject                   = NULL;
-OCIDEFINEBYPOS                  OCIDefineByPos                  = NULL;
-OCIDEFINEOBJECT                 OCIDefineObject                 = NULL;
-OCISTMTPREPARE                  OCIStmtPrepare                  = NULL;
-OCISTMTEXECUTE                  OCIStmtExecute                  = NULL;
-OCISTMTFETCH                    OCIStmtFetch                    = NULL;
-OCISTMTFETCH2                   OCIStmtFetch2                   = NULL;
-OCISTMTGETPIECEINFO             OCIStmtGetPieceInfo             = NULL;
-OCISTMTSETPIECEINFO             OCIStmtSetPieceInfo             = NULL;
-OCIPARAMGET                     OCIParamGet                     = NULL;
-OCIPARAMSET                     OCIParamSet                     = NULL;
-OCITRANSSTART                   OCITransStart                   = NULL;
-OCITRANSDETACH                  OCITransDetach                  = NULL;
-OCITRANSPREPARE                 OCITransPrepare                 = NULL;
-OCITRANSFORGET                  OCITransForget                  = NULL;
-OCITRANSCOMMIT                  OCITransCommit                  = NULL;
-OCITRANSROLLBACK                OCITransRollback                = NULL;
-OCIERRORGET                     OCIErrorGet                     = NULL;
-OCILOBCREATETEMPORARY           OCILobCreateTemporary           = NULL;
-OCILOBFREETEMPORARY             OCILobFreeTemporary             = NULL;
-OCILOBISTEMPORARY               OCILobIsTemporary               = NULL;
-OCILOBAPPEND                    OCILobAppend                    = NULL;
-OCILOBCOPY                      OCILobCopy                      = NULL;
-OCILOBGETLENGTH                 OCILobGetLength                 = NULL;
-OCILOBGETCHUNKSIZE              OCILobGetChunkSize              = NULL;
-OCILOBREAD                      OCILobRead                      = NULL;
-OCILOBWRITE                     OCILobWrite                     = NULL;
-OCILOBTRIM                      OCILobTrim                      = NULL;
-OCILOBERASE                     OCILobErase                     = NULL;
-OCILOBOPEN                      OCILobOpen                      = NULL;
-OCILOBCLOSE                     OCILobClose                     = NULL;
-OCILOBLOCATORASSIGN             OCILobLocatorAssign             = NULL;
-OCILOBASSIGN                    OCILobAssign                    = NULL;
-OCILOBISEQUAL                   OCILobIsEqual                   = NULL;
-OCILOBFLUSHBUFFER               OCILobFlushBuffer               = NULL;
-OCILOBENABLEBUFFERING           OCILobEnableBuffering           = NULL;
-OCILOBDISABLEBUFFERING          OCILobDisableBuffering          = NULL;
-OCILOBGETSTORAGELIMIT           OCILobGetStorageLimit           = NULL;
-OCILOBFILEOPEN                  OCILobFileOpen                  = NULL;
-OCILOBFILECLOSE                 OCILobFileClose                 = NULL;
-OCILOBFILECLOSEALL              OCILobFileCloseAll              = NULL;
-OCILOBFILEISOPEN                OCILobFileIsOpen                = NULL;
-OCILOBFILEEXISTS                OCILobFileExists                = NULL;
-OCILOBFIELGETNAME               OCILobFileGetName               = NULL;
-OCILOBFILESETNAME               OCILobFileSetName               = NULL;
-OCILOBLOADFROMFILE              OCILobLoadFromFile              = NULL;
-OCILOBWRITEAPPEND               OCILobWriteAppend               = NULL;
-OCISERVERVERSION                OCIServerVersion                = NULL;
-OCIBREAK                        OCIBreak                        = NULL;
-OCIATTRGET                      OCIAttrGet                      = NULL;
-OCIATTRSET                      OCIAttrSet                      = NULL;
-OCIDATEASSIGN                   OCIDateAssign                   = NULL;
-OCIDATETOTEXT                   OCIDateToText                   = NULL;
-OCIDATEFROMTEXT                 OCIDateFromText                 = NULL;
-OCIDATECOMPARE                  OCIDateCompare                  = NULL;
-OCIDATEADDMONTHS                OCIDateAddMonths                = NULL;
-OCIDATEADDDAYS                  OCIDateAddDays                  = NULL;
-OCIDATELASTDAY                  OCIDateLastDay                  = NULL;
-OCIDATEDAYSBETWEEN              OCIDateDaysBetween              = NULL;
-OCIDATEZONETOZONE               OCIDateZoneToZone               = NULL;
-OCIDATENEXTDAY                  OCIDateNextDay                  = NULL;
-OCIDATECHECK                    OCIDateCheck                    = NULL;
-OCIDATESYSDATE                  OCIDateSysDate                  = NULL;
-OCIDESCRIBEANY                  OCIDescribeAny                  = NULL;
-OCIINTERVALASSIGN               OCIIntervalAssign               = NULL;
-OCIINTERVALCHECK                OCIIntervalCheck                = NULL;
-OCIINTERVALCOMPARE              OCIIntervalCompare              = NULL;
-OCIINTERVALFROMTEXT             OCIIntervalFromText             = NULL;
-OCIINTERVALTOTEXT               OCIIntervalToText               = NULL;
-OCIINTERVALFROMTZ               OCIIntervalFromTZ               = NULL;
-OCIINTERVALGETDAYSECOND         OCIIntervalGetDaySecond         = NULL;
-OCIINTERVALGETYEARMONTH         OCIIntervalGetYearMonth         = NULL;
-OCIINTERVALSETDAYSECOND         OCIIntervalSetDaySecond         = NULL;
-OCIINTERVALSETYEARMONTH         OCIIntervalSetYearMonth         = NULL;
-OCIINTERVALSUBTRACT             OCIIntervalSubtract             = NULL;
-OCIINTERVALADD                  OCIIntervalAdd                  = NULL;
-OCIDATETIMEASSIGN               OCIDateTimeAssign               = NULL;
-OCIDATETIMECHECK                OCIDateTimeCheck                = NULL;
-OCIDATETIMECOMPARE              OCIDateTimeCompare              = NULL;
-OCIDATETIMECONSTRUCT            OCIDateTimeConstruct            = NULL;
-OCIDATETIMECONVERT              OCIDateTimeConvert              = NULL;
-OCIDATETIMEFROMARRAY            OCIDateTimeFromArray            = NULL;
-OCIDATETIMETOARRAY              OCIDateTimeToArray              = NULL;
-OCIDATETIMEFROMTEXT             OCIDateTimeFromText             = NULL;
-OCIDATETIMETOTEXT               OCIDateTimeToText               = NULL;
-OCIDATETIMEGETDATE              OCIDateTimeGetDate              = NULL;
-OCIDATETIMEGETTIME              OCIDateTimeGetTime              = NULL;
-OCIDATETIMEGETTIMEZONENAME      OCIDateTimeGetTimeZoneName      = NULL;
-OCIDATETIMEGETTIMEZONEOFFSET    OCIDateTimeGetTimeZoneOffset    = NULL;
-OCIDATETIMEINTERVALADD          OCIDateTimeIntervalAdd          = NULL;
-OCIDATETIMEINTERVALSUB          OCIDateTimeIntervalSub          = NULL;
-OCIDATETIMESUBTRACT             OCIDateTimeSubtract             = NULL;
-OCIDATETIMESYSTIMESTAMP         OCIDateTimeSysTimeStamp         = NULL;
-OCIARRAYDESCRIPTORALLOC         OCIArrayDescriptorAlloc         = NULL;
-OCIARRAYDESCRIPTORFREE          OCIArrayDescriptorFree          = NULL;
-OCICLIENTVERSION                OCIClientVersion                = NULL;
-OCITYPEBYREF                    OCITypeByRef                    = NULL;
-OCINUMBERTOINT                  OCINumberToInt                  = NULL;
-OCINUMBERFROMINT                OCINumberFromInt                = NULL;
-OCINUMBERTOREAL                 OCINumberToReal                 = NULL;
-OCINUMBERFROMREAL               OCINumberFromReal               = NULL;
-OCINUMBERTOTEXT                 OCINumberToText                 = NULL;
-OCINUMBERFROMTEXT               OCINumberFromText               = NULL;
-OCINUMBERASSIGN                 OCINumberAssign                 = NULL;
-OCINUMBERADD                    OCINumberAdd                    = NULL;
-OCINUMBERSUB                    OCINumberSub                    = NULL;
-OCINUMBERMUL                    OCINumberMul                    = NULL;
-OCINUMBERDIV                    OCINumberDiv                    = NULL;
-OCINUMBERCMP                    OCINumberCmp                    = NULL;
-OCISTRINGPTR                    OCIStringPtr                    = NULL;
-OCISTRINGSIZE                   OCIStringSize                   = NULL;
-OCISTRINGASSIGNTEXT             OCIStringAssignText             = NULL;
-OCISTRINGRESIZE                 OCIStringResize                 = NULL;
-OCIRAWPTR                       OCIRawPtr                       = NULL;
-OCIRAWASSIGNBYTES               OCIRawAssignBytes               = NULL;
-OCIRAWRESIZE                    OCIRawResize                    = NULL;
-OCIRAWALLOCSIZE                 OCIRawAllocSize                 = NULL;
-OCIRAWSIZE                      OCIRawSize                      = NULL;
-OCIOBJECTNEW                    OCIObjectNew                    = NULL;
-OCIOBJECTFREE                   OCIObjectFree                   = NULL;
-OCIOBJECTSETATTR                OCIObjectSetAttr                = NULL;
-OCIOBJECTGETATTR                OCIObjectGetAttr                = NULL;
-OCIOBJECTPIN                    OCIObjectPin                    = NULL;
-OCIOBJECTUNPIN                  OCIObjectUnpin                  = NULL;
-OCIOBJECTCOPY                   OCIObjectCopy                   = NULL;
-OCIOBJECTGETOBJECTREF           OCIObjectGetObjectRef           = NULL;
-OCIOBJECTGETTYPEREF             OCIObjectGetTypeRef             = NULL;
-OCIOBJECTGETPROPERTY            OCIObjectGetProperty            = NULL;
-OCIOBJECTGETIND                 OCIObjectGetInd                 = NULL;
-OCIREFASSIGN                    OCIRefAssign                    = NULL;
-OCIREFISNULL                    OCIRefIsNull                    = NULL;
-OCIREFCLEAR                     OCIRefClear                     = NULL;
-OCIREFTOHEX                     OCIRefToHex                     = NULL;
-OCIREFHEXSIZE                   OCIRefHexSize                   = NULL;
-OCITHREADPROCESSINIT            OCIThreadProcessInit            = NULL;
-OCITHREADINIT                   OCIThreadInit                   = NULL;
-OCITHREADTERM                   OCIThreadTerm                   = NULL;
-OCITHREADIDINIT                 OCIThreadIdInit                 = NULL;
-OCITHREADIDDESTROY              OCIThreadIdDestroy              = NULL;
-OCITHREADHNDINIT                OCIThreadHndInit                = NULL;
-OCITHREADHNDDESTROY             OCIThreadHndDestroy             = NULL;
-OCITHREADCREATE                 OCIThreadCreate                 = NULL;
-OCITHREADJOIN                   OCIThreadJoin                   = NULL;
-OCITHREADCLOSE                  OCIThreadClose                  = NULL;
-OCITHREADMUTEXINIT              OCIThreadMutexInit              = NULL;
-OCITHREADMUTEXDESTROY           OCIThreadMutexDestroy           = NULL;
-OCITHREADMUTEXACQUIRE           OCIThreadMutexAcquire           = NULL;
-OCITHREADMUTEXRELEASE           OCIThreadMutexRelease           = NULL;
-OCITHREADKEYINIT                OCIThreadKeyInit                = NULL;
-OCITHREADKEYDESTROY             OCIThreadKeyDestroy             = NULL;
-OCITHREADKEYSET                 OCIThreadKeySet                 = NULL;
-OCITHREADKEYGET                 OCIThreadKeyGet                 = NULL;
-OCICONNECTIONPOOLCREATE         OCIConnectionPoolCreate         = NULL;
-OCICONNECTIONPOOLDESTROY        OCIConnectionPoolDestroy        = NULL;
-OCISESSIONPOOLCREATE            OCISessionPoolCreate            = NULL;
-OCISESSIONPOOLDESTROY           OCISessionPoolDestroy           = NULL;
-OCISESSIONGET                   OCISessionGet                   = NULL;
-OCISESSIONRELEASE               OCISessionRelease               = NULL;
-OCICOLLSIZE                     OCICollSize                     = NULL;
-OCICOLLMAX                      OCICollMax                      = NULL;
-OCICOLLGETITEM                  OCICollGetElem                  = NULL;
-OCICOLLASSIGNELEM               OCICollAssignElem               = NULL;
-OCICOLLASSIGN                   OCICollAssign                   = NULL;
-OCICOLLAPPEND                   OCICollAppend                   = NULL;
-OCICOLLTRIM                     OCICollTrim                     = NULL;
-OCITABLESIZE                    OCITableSize                    = NULL;
-OCITABLEDELETE                  OCITableDelete                  = NULL;
-OCIITERCREATE                   OCIIterCreate                   = NULL;
-OCIITERDELETE                   OCIIterDelete                   = NULL;
-OCIITERINIT                     OCIIterInit                     = NULL;
-OCIITERNEXT                     OCIIterNext                     = NULL;
-OCIITERPREV                     OCIIterPrev                     = NULL;
-OCIDIRPATHABORT                 OCIDirPathAbort                 = NULL;
-OCIDIRPATHDATASAVE              OCIDirPathDataSave              = NULL;
-OCIDIRPATHFINISH                OCIDirPathFinish                = NULL;
-OCIDIRPATHPREPARE               OCIDirPathPrepare               = NULL;
-OCIDIRPATHLOADSTREAM            OCIDirPathLoadStream            = NULL;
-OCIDIRPATHCOLARRAYENTRYSET      OCIDirPathColArrayEntrySet      = NULL;
-OCIDIRPATHCOLARRAYRESET         OCIDirPathColArrayReset         = NULL;
-OCIDIRPATHCOLARRAYTOSTREAM      OCIDirPathColArrayToStream      = NULL;
-OCIDIRPATHSTREAMRESET           OCIDirPathStreamReset           = NULL;
-OCIDIRPATHFLUSHROW              OCIDirPathFlushRow              = NULL;
-OCICACHEFREE                    OCICacheFree                    = NULL;
-OCIPING                         OCIPing                         = NULL;
-OCIDBSTARTUP                    OCIDBStartup                    = NULL;
-OCIDBSHUTDOWN                   OCIDBShutdown                   = NULL;
-OCISTMTPREPARE2                 OCIStmtPrepare2                 = NULL;
-OCISTMTRELEASE                  OCIStmtRelease                  = NULL;
-OCISUBSCRIPTIONREGISTER         OCISubscriptionRegister         = NULL;
-OCISUBSCRIPTIONUNREGISTER       OCISubscriptionUnRegister       = NULL;
-OCIAQENQ                        OCIAQEnq                        = NULL;
-OCIAQDEQ                        OCIAQDeq                        = NULL;
-OCIAQLISTEN                     OCIAQListen                     = NULL;
-OCILOBGETCONTENTTYPE            OCILobGetContentType            = NULL;
-OCISTMTGETNEXTRESULT            OCIStmtGetNextResult            = NULL;
-OCISERVERRELEASE2               OCIServerRelease2               = NULL;
-OCISODAOPERKEYSSET              OCISodaOperKeysSet              = NULL;
+OCIENVCREATE                 OCIEnvCreate                 = NULL;
+OCISERVERATTACH              OCIServerAttach              = NULL;
+OCISERVERDETACH              OCIServerDetach              = NULL;
+OCIHANDLEALLOC               OCIHandleAlloc               = NULL;
+OCIHANDLEFREE                OCIHandleFree                = NULL;
+OCIDESCRIPTORALLOC           OCIDescriptorAlloc           = NULL;
+OCIDESCRIPTORFREE            OCIDescriptorFree            = NULL;
+OCISESSIONBEGIN              OCISessionBegin              = NULL;
+OCISESSIONEND                OCISessionEnd                = NULL;
+OCIPASSWORDCHANGE            OCIPasswordChange            = NULL;
+OCIBINDBYPOS                 OCIBindByPos                 = NULL;
+OCIBINDBYNAME                OCIBindByName                = NULL;
+OCIBINDDYNAMIC               OCIBindDynamic               = NULL;
+OCIBINDOBJECT                OCIBindObject                = NULL;
+OCIDEFINEBYPOS               OCIDefineByPos               = NULL;
+OCIDEFINEOBJECT              OCIDefineObject              = NULL;
+OCISTMTPREPARE               OCIStmtPrepare               = NULL;
+OCISTMTEXECUTE               OCIStmtExecute               = NULL;
+OCISTMTFETCH                 OCIStmtFetch                 = NULL;
+OCISTMTFETCH2                OCIStmtFetch2                = NULL;
+OCISTMTGETPIECEINFO          OCIStmtGetPieceInfo          = NULL;
+OCISTMTSETPIECEINFO          OCIStmtSetPieceInfo          = NULL;
+OCIPARAMGET                  OCIParamGet                  = NULL;
+OCIPARAMSET                  OCIParamSet                  = NULL;
+OCITRANSSTART                OCITransStart                = NULL;
+OCITRANSDETACH               OCITransDetach               = NULL;
+OCITRANSPREPARE              OCITransPrepare              = NULL;
+OCITRANSFORGET               OCITransForget               = NULL;
+OCITRANSCOMMIT               OCITransCommit               = NULL;
+OCITRANSROLLBACK             OCITransRollback             = NULL;
+OCIERRORGET                  OCIErrorGet                  = NULL;
+OCILOBCREATETEMPORARY        OCILobCreateTemporary        = NULL;
+OCILOBFREETEMPORARY          OCILobFreeTemporary          = NULL;
+OCILOBISTEMPORARY            OCILobIsTemporary            = NULL;
+OCILOBAPPEND                 OCILobAppend                 = NULL;
+OCILOBCOPY                   OCILobCopy                   = NULL;
+OCILOBGETLENGTH              OCILobGetLength              = NULL;
+OCILOBGETCHUNKSIZE           OCILobGetChunkSize           = NULL;
+OCILOBREAD                   OCILobRead                   = NULL;
+OCILOBWRITE                  OCILobWrite                  = NULL;
+OCILOBTRIM                   OCILobTrim                   = NULL;
+OCILOBERASE                  OCILobErase                  = NULL;
+OCILOBOPEN                   OCILobOpen                   = NULL;
+OCILOBCLOSE                  OCILobClose                  = NULL;
+OCILOBLOCATORASSIGN          OCILobLocatorAssign          = NULL;
+OCILOBASSIGN                 OCILobAssign                 = NULL;
+OCILOBISEQUAL                OCILobIsEqual                = NULL;
+OCILOBFLUSHBUFFER            OCILobFlushBuffer            = NULL;
+OCILOBENABLEBUFFERING        OCILobEnableBuffering        = NULL;
+OCILOBDISABLEBUFFERING       OCILobDisableBuffering       = NULL;
+OCILOBGETSTORAGELIMIT        OCILobGetStorageLimit        = NULL;
+OCILOBFILEOPEN               OCILobFileOpen               = NULL;
+OCILOBFILECLOSE              OCILobFileClose              = NULL;
+OCILOBFILECLOSEALL           OCILobFileCloseAll           = NULL;
+OCILOBFILEISOPEN             OCILobFileIsOpen             = NULL;
+OCILOBFILEEXISTS             OCILobFileExists             = NULL;
+OCILOBFIELGETNAME            OCILobFileGetName            = NULL;
+OCILOBFILESETNAME            OCILobFileSetName            = NULL;
+OCILOBLOADFROMFILE           OCILobLoadFromFile           = NULL;
+OCILOBWRITEAPPEND            OCILobWriteAppend            = NULL;
+OCISERVERVERSION             OCIServerVersion             = NULL;
+OCIBREAK                     OCIBreak                     = NULL;
+OCIATTRGET                   OCIAttrGet                   = NULL;
+OCIATTRSET                   OCIAttrSet                   = NULL;
+OCIDATEASSIGN                OCIDateAssign                = NULL;
+OCIDATETOTEXT                OCIDateToText                = NULL;
+OCIDATEFROMTEXT              OCIDateFromText              = NULL;
+OCIDATECOMPARE               OCIDateCompare               = NULL;
+OCIDATEADDMONTHS             OCIDateAddMonths             = NULL;
+OCIDATEADDDAYS               OCIDateAddDays               = NULL;
+OCIDATELASTDAY               OCIDateLastDay               = NULL;
+OCIDATEDAYSBETWEEN           OCIDateDaysBetween           = NULL;
+OCIDATEZONETOZONE            OCIDateZoneToZone            = NULL;
+OCIDATENEXTDAY               OCIDateNextDay               = NULL;
+OCIDATECHECK                 OCIDateCheck                 = NULL;
+OCIDATESYSDATE               OCIDateSysDate               = NULL;
+OCIDESCRIBEANY               OCIDescribeAny               = NULL;
+OCIINTERVALASSIGN            OCIIntervalAssign            = NULL;
+OCIINTERVALCHECK             OCIIntervalCheck             = NULL;
+OCIINTERVALCOMPARE           OCIIntervalCompare           = NULL;
+OCIINTERVALFROMTEXT          OCIIntervalFromText          = NULL;
+OCIINTERVALTOTEXT            OCIIntervalToText            = NULL;
+OCIINTERVALFROMTZ            OCIIntervalFromTZ            = NULL;
+OCIINTERVALGETDAYSECOND      OCIIntervalGetDaySecond      = NULL;
+OCIINTERVALGETYEARMONTH      OCIIntervalGetYearMonth      = NULL;
+OCIINTERVALSETDAYSECOND      OCIIntervalSetDaySecond      = NULL;
+OCIINTERVALSETYEARMONTH      OCIIntervalSetYearMonth      = NULL;
+OCIINTERVALSUBTRACT          OCIIntervalSubtract          = NULL;
+OCIINTERVALADD               OCIIntervalAdd               = NULL;
+OCIDATETIMEASSIGN            OCIDateTimeAssign            = NULL;
+OCIDATETIMECHECK             OCIDateTimeCheck             = NULL;
+OCIDATETIMECOMPARE           OCIDateTimeCompare           = NULL;
+OCIDATETIMECONSTRUCT         OCIDateTimeConstruct         = NULL;
+OCIDATETIMECONVERT           OCIDateTimeConvert           = NULL;
+OCIDATETIMEFROMARRAY         OCIDateTimeFromArray         = NULL;
+OCIDATETIMETOARRAY           OCIDateTimeToArray           = NULL;
+OCIDATETIMEFROMTEXT          OCIDateTimeFromText          = NULL;
+OCIDATETIMETOTEXT            OCIDateTimeToText            = NULL;
+OCIDATETIMEGETDATE           OCIDateTimeGetDate           = NULL;
+OCIDATETIMEGETTIME           OCIDateTimeGetTime           = NULL;
+OCIDATETIMEGETTIMEZONENAME   OCIDateTimeGetTimeZoneName   = NULL;
+OCIDATETIMEGETTIMEZONEOFFSET OCIDateTimeGetTimeZoneOffset = NULL;
+OCIDATETIMEINTERVALADD       OCIDateTimeIntervalAdd       = NULL;
+OCIDATETIMEINTERVALSUB       OCIDateTimeIntervalSub       = NULL;
+OCIDATETIMESUBTRACT          OCIDateTimeSubtract          = NULL;
+OCIDATETIMESYSTIMESTAMP      OCIDateTimeSysTimeStamp      = NULL;
+OCIARRAYDESCRIPTORALLOC      OCIArrayDescriptorAlloc      = NULL;
+OCIARRAYDESCRIPTORFREE       OCIArrayDescriptorFree       = NULL;
+OCICLIENTVERSION             OCIClientVersion             = NULL;
+OCITYPEBYREF                 OCITypeByRef                 = NULL;
+OCINUMBERTOINT               OCINumberToInt               = NULL;
+OCINUMBERFROMINT             OCINumberFromInt             = NULL;
+OCINUMBERTOREAL              OCINumberToReal              = NULL;
+OCINUMBERFROMREAL            OCINumberFromReal            = NULL;
+OCINUMBERTOTEXT              OCINumberToText              = NULL;
+OCINUMBERFROMTEXT            OCINumberFromText            = NULL;
+OCINUMBERASSIGN              OCINumberAssign              = NULL;
+OCINUMBERADD                 OCINumberAdd                 = NULL;
+OCINUMBERSUB                 OCINumberSub                 = NULL;
+OCINUMBERMUL                 OCINumberMul                 = NULL;
+OCINUMBERDIV                 OCINumberDiv                 = NULL;
+OCINUMBERCMP                 OCINumberCmp                 = NULL;
+OCISTRINGPTR                 OCIStringPtr                 = NULL;
+OCISTRINGSIZE                OCIStringSize                = NULL;
+OCISTRINGASSIGNTEXT          OCIStringAssignText          = NULL;
+OCISTRINGRESIZE              OCIStringResize              = NULL;
+OCIRAWPTR                    OCIRawPtr                    = NULL;
+OCIRAWASSIGNBYTES            OCIRawAssignBytes            = NULL;
+OCIRAWRESIZE                 OCIRawResize                 = NULL;
+OCIRAWALLOCSIZE              OCIRawAllocSize              = NULL;
+OCIRAWSIZE                   OCIRawSize                   = NULL;
+OCIOBJECTNEW                 OCIObjectNew                 = NULL;
+OCIOBJECTFREE                OCIObjectFree                = NULL;
+OCIOBJECTSETATTR             OCIObjectSetAttr             = NULL;
+OCIOBJECTGETATTR             OCIObjectGetAttr             = NULL;
+OCIOBJECTPIN                 OCIObjectPin                 = NULL;
+OCIOBJECTUNPIN               OCIObjectUnpin               = NULL;
+OCIOBJECTCOPY                OCIObjectCopy                = NULL;
+OCIOBJECTGETOBJECTREF        OCIObjectGetObjectRef        = NULL;
+OCIOBJECTGETTYPEREF          OCIObjectGetTypeRef          = NULL;
+OCIOBJECTGETPROPERTY         OCIObjectGetProperty         = NULL;
+OCIOBJECTGETIND              OCIObjectGetInd              = NULL;
+OCIREFASSIGN                 OCIRefAssign                 = NULL;
+OCIREFISNULL                 OCIRefIsNull                 = NULL;
+OCIREFCLEAR                  OCIRefClear                  = NULL;
+OCIREFTOHEX                  OCIRefToHex                  = NULL;
+OCIREFHEXSIZE                OCIRefHexSize                = NULL;
+OCITHREADPROCESSINIT         OCIThreadProcessInit         = NULL;
+OCITHREADINIT                OCIThreadInit                = NULL;
+OCITHREADTERM                OCIThreadTerm                = NULL;
+OCITHREADIDINIT              OCIThreadIdInit              = NULL;
+OCITHREADIDDESTROY           OCIThreadIdDestroy           = NULL;
+OCITHREADHNDINIT             OCIThreadHndInit             = NULL;
+OCITHREADHNDDESTROY          OCIThreadHndDestroy          = NULL;
+OCITHREADCREATE              OCIThreadCreate              = NULL;
+OCITHREADJOIN                OCIThreadJoin                = NULL;
+OCITHREADCLOSE               OCIThreadClose               = NULL;
+OCITHREADMUTEXINIT           OCIThreadMutexInit           = NULL;
+OCITHREADMUTEXDESTROY        OCIThreadMutexDestroy        = NULL;
+OCITHREADMUTEXACQUIRE        OCIThreadMutexAcquire        = NULL;
+OCITHREADMUTEXRELEASE        OCIThreadMutexRelease        = NULL;
+OCITHREADKEYINIT             OCIThreadKeyInit             = NULL;
+OCITHREADKEYDESTROY          OCIThreadKeyDestroy          = NULL;
+OCITHREADKEYSET              OCIThreadKeySet              = NULL;
+OCITHREADKEYGET              OCIThreadKeyGet              = NULL;
+OCICONNECTIONPOOLCREATE      OCIConnectionPoolCreate      = NULL;
+OCICONNECTIONPOOLDESTROY     OCIConnectionPoolDestroy     = NULL;
+OCISESSIONPOOLCREATE         OCISessionPoolCreate         = NULL;
+OCISESSIONPOOLDESTROY        OCISessionPoolDestroy        = NULL;
+OCISESSIONGET                OCISessionGet                = NULL;
+OCISESSIONRELEASE            OCISessionRelease            = NULL;
+OCICOLLSIZE                  OCICollSize                  = NULL;
+OCICOLLMAX                   OCICollMax                   = NULL;
+OCICOLLGETITEM               OCICollGetElem               = NULL;
+OCICOLLASSIGNELEM            OCICollAssignElem            = NULL;
+OCICOLLASSIGN                OCICollAssign                = NULL;
+OCICOLLAPPEND                OCICollAppend                = NULL;
+OCICOLLTRIM                  OCICollTrim                  = NULL;
+OCITABLESIZE                 OCITableSize                 = NULL;
+OCITABLEDELETE               OCITableDelete               = NULL;
+OCIITERCREATE                OCIIterCreate                = NULL;
+OCIITERDELETE                OCIIterDelete                = NULL;
+OCIITERINIT                  OCIIterInit                  = NULL;
+OCIITERNEXT                  OCIIterNext                  = NULL;
+OCIITERPREV                  OCIIterPrev                  = NULL;
+OCIDIRPATHABORT              OCIDirPathAbort              = NULL;
+OCIDIRPATHDATASAVE           OCIDirPathDataSave           = NULL;
+OCIDIRPATHFINISH             OCIDirPathFinish             = NULL;
+OCIDIRPATHPREPARE            OCIDirPathPrepare            = NULL;
+OCIDIRPATHLOADSTREAM         OCIDirPathLoadStream         = NULL;
+OCIDIRPATHCOLARRAYENTRYSET   OCIDirPathColArrayEntrySet   = NULL;
+OCIDIRPATHCOLARRAYRESET      OCIDirPathColArrayReset      = NULL;
+OCIDIRPATHCOLARRAYTOSTREAM   OCIDirPathColArrayToStream   = NULL;
+OCIDIRPATHSTREAMRESET        OCIDirPathStreamReset        = NULL;
+OCIDIRPATHFLUSHROW           OCIDirPathFlushRow           = NULL;
+OCICACHEFREE                 OCICacheFree                 = NULL;
+OCIPING                      OCIPing                      = NULL;
+OCIDBSTARTUP                 OCIDBStartup                 = NULL;
+OCIDBSHUTDOWN                OCIDBShutdown                = NULL;
+OCISTMTPREPARE2              OCIStmtPrepare2              = NULL;
+OCISTMTRELEASE               OCIStmtRelease               = NULL;
+OCISUBSCRIPTIONREGISTER      OCISubscriptionRegister      = NULL;
+OCISUBSCRIPTIONUNREGISTER    OCISubscriptionUnRegister    = NULL;
+OCIAQENQ                     OCIAQEnq                     = NULL;
+OCIAQDEQ                     OCIAQDeq                     = NULL;
+OCIAQLISTEN                  OCIAQListen                  = NULL;
+OCILOBGETCONTENTTYPE         OCILobGetContentType         = NULL;
+OCISTMTGETNEXTRESULT         OCIStmtGetNextResult         = NULL;
+OCISERVERRELEASE2            OCIServerRelease2            = NULL;
+OCISODAOPERKEYSSET           OCISodaOperKeysSet           = NULL;
 
-XAOSVCCTX                       xaoSvcCtx                       = NULL;
-XAOENV                          xaoEnv                          = NULL;
+XAOSVCCTX xaoSvcCtx = NULL;
+XAOENV    xaoEnv    = NULL;
 
   #ifdef ORAXB8_DEFINED
 
-OCILOBCOPY2                     OCILobCopy2                     = NULL;
-OCILOBERASE2                    OCILobErase2                    = NULL;
-OCILOBGETLENGTH2                OCILobGetLength2                = NULL;
-OCILOBLOADFROMFILE2             OCILobLoadFromFile2             = NULL;
-OCILOBREAD2                     OCILobRead2                     = NULL;
-OCILOBTRIM2                     OCILobTrim2                     = NULL;
-OCILOBWRITE2                    OCILobWrite2                    = NULL;
-OCILOBWRITEAPPEND2              OCILobWriteAppend2              = NULL;
+OCILOBCOPY2         OCILobCopy2         = NULL;
+OCILOBERASE2        OCILobErase2        = NULL;
+OCILOBGETLENGTH2    OCILobGetLength2    = NULL;
+OCILOBLOADFROMFILE2 OCILobLoadFromFile2 = NULL;
+OCILOBREAD2         OCILobRead2         = NULL;
+OCILOBTRIM2         OCILobTrim2         = NULL;
+OCILOBWRITE2        OCILobWrite2        = NULL;
+OCILOBWRITEAPPEND2  OCILobWriteAppend2  = NULL;
 
   #endif /* ORAXB8_DEFINED */
 
 #endif /* OCI_IMPORT_RUNTIME */
-
 
 /* --------------------------------------------------------------------------------------------- *
  * EnvironmentFreeErrors
@@ -810,495 +809,495 @@ boolean EnvironmentInitialize
            Oracle and compatible library ...
         */
 
-        LIB_SYMBOL(Env.lib_handle, "OCIEnvCreate", OCIEnvCreate,
+        LIB_SYMBOL(Env.lib_handle, "OCIEnvCreate",          OCIEnvCreate,
                    OCIENVCREATE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIServerAttach", OCIServerAttach,
+        LIB_SYMBOL(Env.lib_handle, "OCIServerAttach",       OCIServerAttach,
                    OCISERVERATTACH);
-        LIB_SYMBOL(Env.lib_handle, "OCIServerDetach", OCIServerDetach,
+        LIB_SYMBOL(Env.lib_handle, "OCIServerDetach",       OCIServerDetach,
                    OCISERVERDETACH);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIHandleAlloc", OCIHandleAlloc,
+        LIB_SYMBOL(Env.lib_handle, "OCIHandleAlloc",        OCIHandleAlloc,
                    OCIHANDLEALLOC);
-        LIB_SYMBOL(Env.lib_handle, "OCIHandleFree",  OCIHandleFree,
+        LIB_SYMBOL(Env.lib_handle, "OCIHandleFree",         OCIHandleFree,
                    OCIHANDLEFREE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIDescriptorAlloc", OCIDescriptorAlloc,
+        LIB_SYMBOL(Env.lib_handle, "OCIDescriptorAlloc",    OCIDescriptorAlloc,
                    OCIDESCRIPTORALLOC);
-        LIB_SYMBOL(Env.lib_handle, "OCIDescriptorFree", OCIDescriptorFree,
+        LIB_SYMBOL(Env.lib_handle, "OCIDescriptorFree",     OCIDescriptorFree,
                    OCIDESCRIPTORFREE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIAttrSet", OCIAttrSet,
+        LIB_SYMBOL(Env.lib_handle, "OCIAttrSet",            OCIAttrSet,
                    OCIATTRSET);
-        LIB_SYMBOL(Env.lib_handle, "OCIAttrGet", OCIAttrGet,
+        LIB_SYMBOL(Env.lib_handle, "OCIAttrGet",            OCIAttrGet,
                    OCIATTRGET);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIParamSet", OCIParamSet,
+        LIB_SYMBOL(Env.lib_handle, "OCIParamSet",           OCIParamSet,
                    OCIPARAMSET);
-        LIB_SYMBOL(Env.lib_handle, "OCIParamGet", OCIParamGet,
+        LIB_SYMBOL(Env.lib_handle, "OCIParamGet",           OCIParamGet,
                    OCIPARAMGET);
 
-        LIB_SYMBOL(Env.lib_handle, "OCISessionBegin", OCISessionBegin,
+        LIB_SYMBOL(Env.lib_handle, "OCISessionBegin",       OCISessionBegin,
                    OCISESSIONBEGIN);
-        LIB_SYMBOL(Env.lib_handle, "OCISessionEnd", OCISessionEnd,
+        LIB_SYMBOL(Env.lib_handle, "OCISessionEnd",         OCISessionEnd,
                    OCISESSIONEND);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIPasswordChange", OCIPasswordChange,
+        LIB_SYMBOL(Env.lib_handle, "OCIPasswordChange",     OCIPasswordChange,
                    OCIPASSWORDCHANGE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCITransStart", OCITransStart,
+        LIB_SYMBOL(Env.lib_handle, "OCITransStart",         OCITransStart,
                    OCITRANSSTART);
-        LIB_SYMBOL(Env.lib_handle, "OCITransDetach", OCITransDetach,
+        LIB_SYMBOL(Env.lib_handle, "OCITransDetach",        OCITransDetach,
                    OCITRANSDETACH);
-        LIB_SYMBOL(Env.lib_handle, "OCITransPrepare", OCITransPrepare,
+        LIB_SYMBOL(Env.lib_handle, "OCITransPrepare",       OCITransPrepare,
                    OCITRANSPREPARE);
-        LIB_SYMBOL(Env.lib_handle, "OCITransForget", OCITransForget,
+        LIB_SYMBOL(Env.lib_handle, "OCITransForget",        OCITransForget,
                    OCITRANSFORGET);
-        LIB_SYMBOL(Env.lib_handle, "OCITransCommit", OCITransCommit,
+        LIB_SYMBOL(Env.lib_handle, "OCITransCommit",        OCITransCommit,
                    OCITRANSCOMMIT);
-        LIB_SYMBOL(Env.lib_handle, "OCITransRollback", OCITransRollback,
+        LIB_SYMBOL(Env.lib_handle, "OCITransRollback",      OCITransRollback,
                    OCITRANSROLLBACK);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIErrorGet",  OCIErrorGet,
+        LIB_SYMBOL(Env.lib_handle, "OCIErrorGet",           OCIErrorGet,
                    OCIERRORGET);
-        LIB_SYMBOL(Env.lib_handle, "OCIServerVersion", OCIServerVersion,
+        LIB_SYMBOL(Env.lib_handle, "OCIServerVersion",      OCIServerVersion,
                    OCISERVERVERSION);
-        LIB_SYMBOL(Env.lib_handle, "OCIBreak", OCIBreak,
+        LIB_SYMBOL(Env.lib_handle, "OCIBreak",              OCIBreak,
                    OCIBREAK);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIBindByPos", OCIBindByPos,
+        LIB_SYMBOL(Env.lib_handle, "OCIBindByPos",          OCIBindByPos,
                    OCIBINDBYPOS);
-        LIB_SYMBOL(Env.lib_handle, "OCIBindByName", OCIBindByName,
+        LIB_SYMBOL(Env.lib_handle, "OCIBindByName",         OCIBindByName,
                    OCIBINDBYNAME);
-        LIB_SYMBOL(Env.lib_handle, "OCIBindDynamic", OCIBindDynamic,
+        LIB_SYMBOL(Env.lib_handle, "OCIBindDynamic",        OCIBindDynamic,
                    OCIBINDDYNAMIC);
-        LIB_SYMBOL(Env.lib_handle, "OCIBindObject", OCIBindObject,
+        LIB_SYMBOL(Env.lib_handle, "OCIBindObject",         OCIBindObject,
                    OCIBINDOBJECT);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIDefineByPos", OCIDefineByPos,
+        LIB_SYMBOL(Env.lib_handle, "OCIDefineByPos",        OCIDefineByPos,
                    OCIDEFINEBYPOS);
-        LIB_SYMBOL(Env.lib_handle, "OCIDefineObject", OCIDefineObject,
+        LIB_SYMBOL(Env.lib_handle, "OCIDefineObject",       OCIDefineObject,
                    OCIDEFINEOBJECT);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIStmtPrepare", OCIStmtPrepare,
+        LIB_SYMBOL(Env.lib_handle, "OCIStmtPrepare",        OCIStmtPrepare,
                    OCISTMTPREPARE);
-        LIB_SYMBOL(Env.lib_handle, "OCIStmtExecute", OCIStmtExecute,
+        LIB_SYMBOL(Env.lib_handle, "OCIStmtExecute",        OCIStmtExecute,
                    OCISTMTEXECUTE);
-        LIB_SYMBOL(Env.lib_handle, "OCIStmtFetch", OCIStmtFetch,
+        LIB_SYMBOL(Env.lib_handle, "OCIStmtFetch",          OCIStmtFetch,
                    OCISTMTFETCH);
-        LIB_SYMBOL(Env.lib_handle, "OCIStmtFetch2", OCIStmtFetch2,
+        LIB_SYMBOL(Env.lib_handle, "OCIStmtFetch2",         OCIStmtFetch2,
                    OCISTMTFETCH2);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIStmtGetPieceInfo", OCIStmtGetPieceInfo,
+        LIB_SYMBOL(Env.lib_handle, "OCIStmtGetPieceInfo",   OCIStmtGetPieceInfo,
                    OCISTMTGETPIECEINFO);
-        LIB_SYMBOL(Env.lib_handle, "OCIStmtSetPieceInfo", OCIStmtSetPieceInfo,
+        LIB_SYMBOL(Env.lib_handle, "OCIStmtSetPieceInfo",   OCIStmtSetPieceInfo,
                    OCISTMTSETPIECEINFO);
 
         LIB_SYMBOL(Env.lib_handle, "OCILobCreateTemporary", OCILobCreateTemporary,
                    OCILOBCREATETEMPORARY);
-        LIB_SYMBOL(Env.lib_handle, "OCILobFreeTemporary", OCILobFreeTemporary,
+        LIB_SYMBOL(Env.lib_handle, "OCILobFreeTemporary",   OCILobFreeTemporary,
                    OCILOBFREETEMPORARY);
-        LIB_SYMBOL(Env.lib_handle, "OCILobIsTemporary", OCILobIsTemporary,
+        LIB_SYMBOL(Env.lib_handle, "OCILobIsTemporary",     OCILobIsTemporary,
                    OCILOBISTEMPORARY);
-        LIB_SYMBOL(Env.lib_handle, "OCILobRead", OCILobRead,
+        LIB_SYMBOL(Env.lib_handle, "OCILobRead",            OCILobRead,
                    OCILOBREAD);
-        LIB_SYMBOL(Env.lib_handle, "OCILobWrite", OCILobWrite,
+        LIB_SYMBOL(Env.lib_handle, "OCILobWrite",           OCILobWrite,
                    OCILOBWRITE);
-        LIB_SYMBOL(Env.lib_handle, "OCILobCopy", OCILobCopy,
+        LIB_SYMBOL(Env.lib_handle, "OCILobCopy",            OCILobCopy,
                    OCILOBCOPY);
-        LIB_SYMBOL(Env.lib_handle, "OCILobTrim", OCILobTrim,
+        LIB_SYMBOL(Env.lib_handle, "OCILobTrim",            OCILobTrim,
                    OCILOBTRIM);
-        LIB_SYMBOL(Env.lib_handle, "OCILobErase", OCILobErase,
+        LIB_SYMBOL(Env.lib_handle, "OCILobErase",           OCILobErase,
                    OCILOBERASE);
-        LIB_SYMBOL(Env.lib_handle, "OCILobAppend", OCILobAppend,
+        LIB_SYMBOL(Env.lib_handle, "OCILobAppend",          OCILobAppend,
                    OCILOBAPPEND);
-        LIB_SYMBOL(Env.lib_handle, "OCILobGetLength", OCILobGetLength,
+        LIB_SYMBOL(Env.lib_handle, "OCILobGetLength",       OCILobGetLength,
                    OCILOBGETLENGTH);
-        LIB_SYMBOL(Env.lib_handle, "OCILobGetChunkSize", OCILobGetChunkSize,
+        LIB_SYMBOL(Env.lib_handle, "OCILobGetChunkSize",    OCILobGetChunkSize,
                    OCILOBGETCHUNKSIZE);
-        LIB_SYMBOL(Env.lib_handle, "OCILobOpen", OCILobOpen,
+        LIB_SYMBOL(Env.lib_handle, "OCILobOpen",            OCILobOpen,
                    OCILOBOPEN);
-        LIB_SYMBOL(Env.lib_handle, "OCILobClose", OCILobClose,
+        LIB_SYMBOL(Env.lib_handle, "OCILobClose",           OCILobClose,
                    OCILOBCLOSE);
 
   #ifdef ORAXB8_DEFINED
 
-        LIB_SYMBOL(Env.lib_handle, "OCILobCopy2", OCILobCopy2,
+        LIB_SYMBOL(Env.lib_handle, "OCILobCopy2",         OCILobCopy2,
                    OCILOBCOPY2);
-        LIB_SYMBOL(Env.lib_handle, "OCILobErase2", OCILobErase2,
+        LIB_SYMBOL(Env.lib_handle, "OCILobErase2",        OCILobErase2,
                    OCILOBERASE2);
-        LIB_SYMBOL(Env.lib_handle, "OCILobGetLength2", OCILobGetLength2,
+        LIB_SYMBOL(Env.lib_handle, "OCILobGetLength2",    OCILobGetLength2,
                    OCILOBGETLENGTH2);
         LIB_SYMBOL(Env.lib_handle, "OCILobLoadFromFile2", OCILobLoadFromFile2,
                    OCILOBLOADFROMFILE2);
-        LIB_SYMBOL(Env.lib_handle, "OCILobRead2", OCILobRead2,
+        LIB_SYMBOL(Env.lib_handle, "OCILobRead2",         OCILobRead2,
                    OCILOBREAD2);
-        LIB_SYMBOL(Env.lib_handle, "OCILobTrim2", OCILobTrim2,
+        LIB_SYMBOL(Env.lib_handle, "OCILobTrim2",         OCILobTrim2,
                    OCILOBTRIM2);
-        LIB_SYMBOL(Env.lib_handle, "OCILobWrite2", OCILobWrite2,
+        LIB_SYMBOL(Env.lib_handle, "OCILobWrite2",        OCILobWrite2,
                    OCILOBWRITE2);
-        LIB_SYMBOL(Env.lib_handle, "OCILobWriteAppend2", OCILobWriteAppend2,
+        LIB_SYMBOL(Env.lib_handle, "OCILobWriteAppend2",  OCILobWriteAppend2,
                    OCILOBWRITEAPPEND2);
 
   #endif
 
-        LIB_SYMBOL(Env.lib_handle, "OCILobFileOpen", OCILobFileOpen,
+        LIB_SYMBOL(Env.lib_handle, "OCILobFileOpen",               OCILobFileOpen,
                    OCILOBFILEOPEN);
-        LIB_SYMBOL(Env.lib_handle, "OCILobFileClose", OCILobFileClose,
+        LIB_SYMBOL(Env.lib_handle, "OCILobFileClose",              OCILobFileClose,
                    OCILOBFILECLOSE);
-        LIB_SYMBOL(Env.lib_handle, "OCILobFileCloseAll", OCILobFileCloseAll,
+        LIB_SYMBOL(Env.lib_handle, "OCILobFileCloseAll",           OCILobFileCloseAll,
                    OCILOBFILECLOSEALL);
-        LIB_SYMBOL(Env.lib_handle, "OCILobFileIsOpen", OCILobFileIsOpen,
+        LIB_SYMBOL(Env.lib_handle, "OCILobFileIsOpen",             OCILobFileIsOpen,
                    OCILOBFILEISOPEN);
-        LIB_SYMBOL(Env.lib_handle, "OCILobFileExists", OCILobFileExists,
+        LIB_SYMBOL(Env.lib_handle, "OCILobFileExists",             OCILobFileExists,
                    OCILOBFILEEXISTS);
-        LIB_SYMBOL(Env.lib_handle, "OCILobFileGetName", OCILobFileGetName,
+        LIB_SYMBOL(Env.lib_handle, "OCILobFileGetName",            OCILobFileGetName,
                    OCILOBFIELGETNAME);
-        LIB_SYMBOL(Env.lib_handle, "OCILobFileSetName", OCILobFileSetName,
+        LIB_SYMBOL(Env.lib_handle, "OCILobFileSetName",            OCILobFileSetName,
                    OCILOBFILESETNAME);
-        LIB_SYMBOL(Env.lib_handle, "OCILobLoadFromFile", OCILobLoadFromFile,
+        LIB_SYMBOL(Env.lib_handle, "OCILobLoadFromFile",           OCILobLoadFromFile,
                    OCILOBLOADFROMFILE);
-        LIB_SYMBOL(Env.lib_handle, "OCILobWriteAppend", OCILobWriteAppend,
+        LIB_SYMBOL(Env.lib_handle, "OCILobWriteAppend",            OCILobWriteAppend,
                    OCILOBWRITEAPPEND);
-        LIB_SYMBOL(Env.lib_handle, "OCILobIsEqual", OCILobIsEqual,
+        LIB_SYMBOL(Env.lib_handle, "OCILobIsEqual",                OCILobIsEqual,
                    OCILOBISEQUAL);
-        LIB_SYMBOL(Env.lib_handle, "OCILobAssign", OCILobAssign,
+        LIB_SYMBOL(Env.lib_handle, "OCILobAssign",                 OCILobAssign,
                    OCILOBASSIGN);
-        LIB_SYMBOL(Env.lib_handle, "OCILobLocatorAssign", OCILobLocatorAssign,
+        LIB_SYMBOL(Env.lib_handle, "OCILobLocatorAssign",          OCILobLocatorAssign,
                    OCILOBLOCATORASSIGN);
-        LIB_SYMBOL(Env.lib_handle, "OCILobFlushBuffer", OCILobFlushBuffer,
+        LIB_SYMBOL(Env.lib_handle, "OCILobFlushBuffer",            OCILobFlushBuffer,
                    OCILOBFLUSHBUFFER);
-        LIB_SYMBOL(Env.lib_handle, "OCILobGetStorageLimit", OCILobGetStorageLimit,
+        LIB_SYMBOL(Env.lib_handle, "OCILobGetStorageLimit",        OCILobGetStorageLimit,
                    OCILOBGETSTORAGELIMIT);
-        LIB_SYMBOL(Env.lib_handle, "OCILobEnableBuffering", OCILobEnableBuffering,
+        LIB_SYMBOL(Env.lib_handle, "OCILobEnableBuffering",        OCILobEnableBuffering,
                    OCILOBENABLEBUFFERING);
-        LIB_SYMBOL(Env.lib_handle, "OCILobDisableBuffering", OCILobDisableBuffering,
+        LIB_SYMBOL(Env.lib_handle, "OCILobDisableBuffering",       OCILobDisableBuffering,
                    OCILOBDISABLEBUFFERING);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIDateAssign", OCIDateAssign,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateAssign",                OCIDateAssign,
                    OCIDATEASSIGN);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateToText", OCIDateToText,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateToText",                OCIDateToText,
                    OCIDATETOTEXT);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateFromText", OCIDateFromText,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateFromText",              OCIDateFromText,
                    OCIDATEFROMTEXT);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateCompare", OCIDateCompare,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateCompare",               OCIDateCompare,
                    OCIDATECOMPARE);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateAddMonths", OCIDateAddMonths,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateAddMonths",             OCIDateAddMonths,
                    OCIDATEADDMONTHS);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateAddDays", OCIDateAddDays,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateAddDays",               OCIDateAddDays,
                    OCIDATEADDDAYS);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateLastDay", OCIDateLastDay,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateLastDay",               OCIDateLastDay,
                    OCIDATELASTDAY);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateDaysBetween", OCIDateDaysBetween,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateDaysBetween",           OCIDateDaysBetween,
                    OCIDATEDAYSBETWEEN);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateZoneToZone", OCIDateZoneToZone,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateZoneToZone",            OCIDateZoneToZone,
                    OCIDATEZONETOZONE);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateNextDay", OCIDateNextDay,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateNextDay",               OCIDateNextDay,
                    OCIDATENEXTDAY);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateCheck", OCIDateCheck,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateCheck",                 OCIDateCheck,
                    OCIDATECHECK);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateSysDate", OCIDateSysDate,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateSysDate",               OCIDateSysDate,
                    OCIDATESYSDATE);
-        LIB_SYMBOL(Env.lib_handle, "OCIDescribeAny", OCIDescribeAny,
+        LIB_SYMBOL(Env.lib_handle, "OCIDescribeAny",               OCIDescribeAny,
                    OCIDESCRIBEANY);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIIntervalAssign", OCIIntervalAssign,
+        LIB_SYMBOL(Env.lib_handle, "OCIIntervalAssign",            OCIIntervalAssign,
                    OCIINTERVALASSIGN);
-        LIB_SYMBOL(Env.lib_handle, "OCIIntervalCheck", OCIIntervalCheck,
+        LIB_SYMBOL(Env.lib_handle, "OCIIntervalCheck",             OCIIntervalCheck,
                    OCIINTERVALCHECK);
-        LIB_SYMBOL(Env.lib_handle, "OCIIntervalCompare", OCIIntervalCompare,
+        LIB_SYMBOL(Env.lib_handle, "OCIIntervalCompare",           OCIIntervalCompare,
                    OCIINTERVALCOMPARE);
-        LIB_SYMBOL(Env.lib_handle, "OCIIntervalFromText", OCIIntervalFromText,
+        LIB_SYMBOL(Env.lib_handle, "OCIIntervalFromText",          OCIIntervalFromText,
                    OCIINTERVALFROMTEXT);
-        LIB_SYMBOL(Env.lib_handle, "OCIIntervalToText", OCIIntervalToText,
+        LIB_SYMBOL(Env.lib_handle, "OCIIntervalToText",            OCIIntervalToText,
                    OCIINTERVALTOTEXT);
-        LIB_SYMBOL(Env.lib_handle, "OCIIntervalFromTZ", OCIIntervalFromTZ,
+        LIB_SYMBOL(Env.lib_handle, "OCIIntervalFromTZ",            OCIIntervalFromTZ,
                    OCIINTERVALFROMTZ);
-        LIB_SYMBOL(Env.lib_handle, "OCIIntervalGetDaySecond", OCIIntervalGetDaySecond,
+        LIB_SYMBOL(Env.lib_handle, "OCIIntervalGetDaySecond",      OCIIntervalGetDaySecond,
                    OCIINTERVALGETDAYSECOND);
-        LIB_SYMBOL(Env.lib_handle, "OCIIntervalGetYearMonth", OCIIntervalGetYearMonth,
+        LIB_SYMBOL(Env.lib_handle, "OCIIntervalGetYearMonth",      OCIIntervalGetYearMonth,
                    OCIINTERVALGETYEARMONTH);
-        LIB_SYMBOL(Env.lib_handle, "OCIIntervalSetDaySecond", OCIIntervalSetDaySecond,
+        LIB_SYMBOL(Env.lib_handle, "OCIIntervalSetDaySecond",      OCIIntervalSetDaySecond,
                    OCIINTERVALSETDAYSECOND);
-        LIB_SYMBOL(Env.lib_handle, "OCIIntervalSetYearMonth", OCIIntervalSetYearMonth,
+        LIB_SYMBOL(Env.lib_handle, "OCIIntervalSetYearMonth",      OCIIntervalSetYearMonth,
                    OCIINTERVALSETYEARMONTH);
-        LIB_SYMBOL(Env.lib_handle, "OCIIntervalSubtract", OCIIntervalSubtract,
+        LIB_SYMBOL(Env.lib_handle, "OCIIntervalSubtract",          OCIIntervalSubtract,
                    OCIINTERVALSUBTRACT);
-        LIB_SYMBOL(Env.lib_handle, "OCIIntervalAdd", OCIIntervalAdd,
+        LIB_SYMBOL(Env.lib_handle, "OCIIntervalAdd",               OCIIntervalAdd,
                    OCIINTERVALADD);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeAssign", OCIDateTimeAssign,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeAssign",            OCIDateTimeAssign,
                    OCIDATETIMEASSIGN);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeCheck", OCIDateTimeCheck,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeCheck",             OCIDateTimeCheck,
                    OCIDATETIMECHECK);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeCompare", OCIDateTimeCompare,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeCompare",           OCIDateTimeCompare,
                    OCIDATETIMECOMPARE);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeConstruct", OCIDateTimeConstruct,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeConstruct",         OCIDateTimeConstruct,
                    OCIDATETIMECONSTRUCT);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeConvert", OCIDateTimeConvert,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeConvert",           OCIDateTimeConvert,
                    OCIDATETIMECONVERT);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeFromArray", OCIDateTimeFromArray,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeFromArray",         OCIDateTimeFromArray,
                    OCIDATETIMEFROMARRAY);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeToArray", OCIDateTimeToArray,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeToArray",           OCIDateTimeToArray,
                    OCIDATETIMETOARRAY);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeFromText", OCIDateTimeFromText,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeFromText",          OCIDateTimeFromText,
                    OCIDATETIMEFROMTEXT);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeToText", OCIDateTimeToText,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeToText",            OCIDateTimeToText,
                    OCIDATETIMETOTEXT);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeGetDate", OCIDateTimeGetDate,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeGetDate",           OCIDateTimeGetDate,
                    OCIDATETIMEGETDATE);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeGetTime", OCIDateTimeGetTime,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeGetTime",           OCIDateTimeGetTime,
                    OCIDATETIMEGETTIME);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeGetTimeZoneName", OCIDateTimeGetTimeZoneName,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeGetTimeZoneName",   OCIDateTimeGetTimeZoneName,
                    OCIDATETIMEGETTIMEZONENAME);
         LIB_SYMBOL(Env.lib_handle, "OCIDateTimeGetTimeZoneOffset", OCIDateTimeGetTimeZoneOffset,
                    OCIDATETIMEGETTIMEZONEOFFSET);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeIntervalAdd", OCIDateTimeIntervalAdd,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeIntervalAdd",       OCIDateTimeIntervalAdd,
                    OCIDATETIMEINTERVALADD);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeIntervalSub", OCIDateTimeIntervalSub,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeIntervalSub",       OCIDateTimeIntervalSub,
                    OCIDATETIMEINTERVALSUB);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeSubtract", OCIDateTimeSubtract,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeSubtract",          OCIDateTimeSubtract,
                    OCIDATETIMESUBTRACT);
-        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeSysTimeStamp", OCIDateTimeSysTimeStamp,
+        LIB_SYMBOL(Env.lib_handle, "OCIDateTimeSysTimeStamp",      OCIDateTimeSysTimeStamp,
                    OCIDATETIMESYSTIMESTAMP);
 
-        LIB_SYMBOL(Env.lib_handle, "OCITypeByRef", OCITypeByRef,
+        LIB_SYMBOL(Env.lib_handle, "OCITypeByRef",                 OCITypeByRef,
                    OCITYPEBYREF);
 
-        LIB_SYMBOL(Env.lib_handle, "OCINumberToInt", OCINumberToInt,
+        LIB_SYMBOL(Env.lib_handle, "OCINumberToInt",               OCINumberToInt,
                    OCINUMBERTOINT);
-        LIB_SYMBOL(Env.lib_handle, "OCINumberFromInt", OCINumberFromInt,
+        LIB_SYMBOL(Env.lib_handle, "OCINumberFromInt",             OCINumberFromInt,
                    OCINUMBERFROMINT);
-        LIB_SYMBOL(Env.lib_handle, "OCINumberToReal", OCINumberToReal,
+        LIB_SYMBOL(Env.lib_handle, "OCINumberToReal",              OCINumberToReal,
                    OCINUMBERTOREAL);
-        LIB_SYMBOL(Env.lib_handle, "OCINumberFromReal", OCINumberFromReal,
+        LIB_SYMBOL(Env.lib_handle, "OCINumberFromReal",            OCINumberFromReal,
                    OCINUMBERFROMREAL);
-        LIB_SYMBOL(Env.lib_handle, "OCINumberToText", OCINumberToText,
+        LIB_SYMBOL(Env.lib_handle, "OCINumberToText",              OCINumberToText,
                    OCINUMBERTOTEXT);
-        LIB_SYMBOL(Env.lib_handle, "OCINumberFromText", OCINumberFromText,
+        LIB_SYMBOL(Env.lib_handle, "OCINumberFromText",            OCINumberFromText,
                    OCINUMBERFROMTEXT);
-        LIB_SYMBOL(Env.lib_handle, "OCINumberAssign", OCINumberAssign,
+        LIB_SYMBOL(Env.lib_handle, "OCINumberAssign",              OCINumberAssign,
                    OCINUMBERASSIGN);
-        LIB_SYMBOL(Env.lib_handle, "OCINumberAdd", OCINumberAdd,
+        LIB_SYMBOL(Env.lib_handle, "OCINumberAdd",                 OCINumberAdd,
                    OCINUMBERADD);
-        LIB_SYMBOL(Env.lib_handle, "OCINumberSub", OCINumberSub,
+        LIB_SYMBOL(Env.lib_handle, "OCINumberSub",                 OCINumberSub,
                    OCINUMBERSUB);
-        LIB_SYMBOL(Env.lib_handle, "OCINumberMul", OCINumberMul,
+        LIB_SYMBOL(Env.lib_handle, "OCINumberMul",                 OCINumberMul,
                    OCINUMBERMUL);
-        LIB_SYMBOL(Env.lib_handle, "OCINumberDiv", OCINumberDiv,
+        LIB_SYMBOL(Env.lib_handle, "OCINumberDiv",                 OCINumberDiv,
                    OCINUMBERDIV);
-        LIB_SYMBOL(Env.lib_handle, "OCINumberCmp", OCINumberCmp,
+        LIB_SYMBOL(Env.lib_handle, "OCINumberCmp",                 OCINumberCmp,
                    OCINUMBERCMP);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIStringPtr", OCIStringPtr,
+        LIB_SYMBOL(Env.lib_handle, "OCIStringPtr",                 OCIStringPtr,
                    OCISTRINGPTR);
-        LIB_SYMBOL(Env.lib_handle, "OCIStringSize", OCIStringSize,
+        LIB_SYMBOL(Env.lib_handle, "OCIStringSize",                OCIStringSize,
                    OCISTRINGSIZE);
-        LIB_SYMBOL(Env.lib_handle, "OCIStringAssignText", OCIStringAssignText,
+        LIB_SYMBOL(Env.lib_handle, "OCIStringAssignText",          OCIStringAssignText,
                    OCISTRINGASSIGNTEXT);
-        LIB_SYMBOL(Env.lib_handle, "OCIStringResize", OCIStringResize,
+        LIB_SYMBOL(Env.lib_handle, "OCIStringResize",              OCIStringResize,
                    OCISTRINGRESIZE);
-        LIB_SYMBOL(Env.lib_handle, "OCIRawPtr", OCIRawPtr,
+        LIB_SYMBOL(Env.lib_handle, "OCIRawPtr",                    OCIRawPtr,
                    OCIRAWPTR);
-        LIB_SYMBOL(Env.lib_handle, "OCIRawAssignBytes", OCIRawAssignBytes,
+        LIB_SYMBOL(Env.lib_handle, "OCIRawAssignBytes",            OCIRawAssignBytes,
                    OCIRAWASSIGNBYTES);
-        LIB_SYMBOL(Env.lib_handle, "OCIRawResize", OCIRawResize,
+        LIB_SYMBOL(Env.lib_handle, "OCIRawResize",                 OCIRawResize,
                    OCIRAWRESIZE);
-        LIB_SYMBOL(Env.lib_handle, "OCIRawAllocSize", OCIRawAllocSize,
+        LIB_SYMBOL(Env.lib_handle, "OCIRawAllocSize",              OCIRawAllocSize,
                    OCIRAWALLOCSIZE);
-        LIB_SYMBOL(Env.lib_handle, "OCIRawSize", OCIRawSize,
+        LIB_SYMBOL(Env.lib_handle, "OCIRawSize",                   OCIRawSize,
                    OCIRAWSIZE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIObjectNew", OCIObjectNew,
+        LIB_SYMBOL(Env.lib_handle, "OCIObjectNew",                 OCIObjectNew,
                    OCIOBJECTNEW);
-        LIB_SYMBOL(Env.lib_handle, "OCIObjectFree", OCIObjectFree,
+        LIB_SYMBOL(Env.lib_handle, "OCIObjectFree",                OCIObjectFree,
                    OCIOBJECTFREE);
-        LIB_SYMBOL(Env.lib_handle, "OCIObjectSetAttr", OCIObjectSetAttr,
+        LIB_SYMBOL(Env.lib_handle, "OCIObjectSetAttr",             OCIObjectSetAttr,
                    OCIOBJECTSETATTR);
-        LIB_SYMBOL(Env.lib_handle, "OCIObjectGetAttr", OCIObjectGetAttr,
+        LIB_SYMBOL(Env.lib_handle, "OCIObjectGetAttr",             OCIObjectGetAttr,
                    OCIOBJECTGETATTR);
-        LIB_SYMBOL(Env.lib_handle, "OCIObjectPin", OCIObjectPin,
+        LIB_SYMBOL(Env.lib_handle, "OCIObjectPin",                 OCIObjectPin,
                    OCIOBJECTPIN);
-        LIB_SYMBOL(Env.lib_handle, "OCIObjectUnpin", OCIObjectUnpin,
+        LIB_SYMBOL(Env.lib_handle, "OCIObjectUnpin",               OCIObjectUnpin,
                    OCIOBJECTUNPIN);
-        LIB_SYMBOL(Env.lib_handle, "OCIObjectCopy", OCIObjectCopy,
+        LIB_SYMBOL(Env.lib_handle, "OCIObjectCopy",                OCIObjectCopy,
                    OCIOBJECTCOPY);
-        LIB_SYMBOL(Env.lib_handle, "OCIObjectGetObjectRef", OCIObjectGetObjectRef,
+        LIB_SYMBOL(Env.lib_handle, "OCIObjectGetObjectRef",        OCIObjectGetObjectRef,
                    OCIOBJECTGETOBJECTREF);
-        LIB_SYMBOL(Env.lib_handle, "OCIObjectGetProperty", OCIObjectGetProperty,
+        LIB_SYMBOL(Env.lib_handle, "OCIObjectGetProperty",         OCIObjectGetProperty,
                    OCIOBJECTGETPROPERTY);
-        LIB_SYMBOL(Env.lib_handle, "OCIObjectGetInd", OCIObjectGetInd,
+        LIB_SYMBOL(Env.lib_handle, "OCIObjectGetInd",              OCIObjectGetInd,
                    OCIOBJECTGETIND);
-        LIB_SYMBOL(Env.lib_handle, "OCIObjectGetTypeRef", OCIObjectGetTypeRef,
+        LIB_SYMBOL(Env.lib_handle, "OCIObjectGetTypeRef",          OCIObjectGetTypeRef,
                    OCIOBJECTGETOBJECTREF);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIRefAssign", OCIRefAssign,
+        LIB_SYMBOL(Env.lib_handle, "OCIRefAssign",                 OCIRefAssign,
                    OCIREFASSIGN);
-        LIB_SYMBOL(Env.lib_handle, "OCIRefIsNull", OCIRefIsNull,
+        LIB_SYMBOL(Env.lib_handle, "OCIRefIsNull",                 OCIRefIsNull,
                    OCIREFISNULL);
-        LIB_SYMBOL(Env.lib_handle, "OCIRefClear", OCIRefClear,
+        LIB_SYMBOL(Env.lib_handle, "OCIRefClear",                  OCIRefClear,
                    OCIREFCLEAR);
-        LIB_SYMBOL(Env.lib_handle, "OCIRefToHex", OCIRefToHex,
+        LIB_SYMBOL(Env.lib_handle, "OCIRefToHex",                  OCIRefToHex,
                    OCIREFTOHEX);
-        LIB_SYMBOL(Env.lib_handle, "OCIRefHexSize", OCIRefHexSize,
+        LIB_SYMBOL(Env.lib_handle, "OCIRefHexSize",                OCIRefHexSize,
                    OCIREFHEXSIZE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIArrayDescriptorAlloc", OCIArrayDescriptorAlloc,
+        LIB_SYMBOL(Env.lib_handle, "OCIArrayDescriptorAlloc",      OCIArrayDescriptorAlloc,
                    OCIARRAYDESCRIPTORALLOC);
-        LIB_SYMBOL(Env.lib_handle, "OCIArrayDescriptorFree", OCIArrayDescriptorFree,
+        LIB_SYMBOL(Env.lib_handle, "OCIArrayDescriptorFree",       OCIArrayDescriptorFree,
                    OCIARRAYDESCRIPTORFREE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIClientVersion", OCIClientVersion,
+        LIB_SYMBOL(Env.lib_handle, "OCIClientVersion",             OCIClientVersion,
                    OCICLIENTVERSION);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadProcessInit", OCIThreadProcessInit,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadProcessInit",         OCIThreadProcessInit,
                    OCITHREADPROCESSINIT);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadInit", OCIThreadInit,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadInit",                OCIThreadInit,
                    OCITHREADINIT);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadTerm", OCIThreadTerm,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadTerm",                OCIThreadTerm,
                    OCITHREADTERM);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadIdInit", OCIThreadIdInit,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadIdInit",              OCIThreadIdInit,
                    OCITHREADIDINIT);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadIdDestroy", OCIThreadIdDestroy,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadIdDestroy",           OCIThreadIdDestroy,
                    OCITHREADIDDESTROY);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadHndInit", OCIThreadHndInit,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadHndInit",             OCIThreadHndInit,
                    OCITHREADHNDINIT);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadHndDestroy", OCIThreadHndDestroy,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadHndDestroy",          OCIThreadHndDestroy,
                    OCITHREADHNDDESTROY);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadCreate", OCIThreadCreate,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadCreate",              OCIThreadCreate,
                    OCITHREADCREATE);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadJoin", OCIThreadJoin,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadJoin",                OCIThreadJoin,
                    OCITHREADJOIN);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadClose", OCIThreadClose,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadClose",               OCIThreadClose,
                    OCITHREADCLOSE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadMutexInit", OCIThreadMutexInit,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadMutexInit",           OCIThreadMutexInit,
                    OCITHREADMUTEXINIT);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadMutexDestroy", OCIThreadMutexDestroy,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadMutexDestroy",        OCIThreadMutexDestroy,
                    OCITHREADMUTEXDESTROY);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadMutexAcquire", OCIThreadMutexAcquire,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadMutexAcquire",        OCIThreadMutexAcquire,
                    OCITHREADMUTEXACQUIRE);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadMutexRelease", OCIThreadMutexRelease,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadMutexRelease",        OCIThreadMutexRelease,
                    OCITHREADMUTEXRELEASE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadKeyInit", OCIThreadKeyInit,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadKeyInit",             OCIThreadKeyInit,
                    OCITHREADKEYINIT);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadKeyDestroy", OCIThreadKeyDestroy,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadKeyDestroy",          OCIThreadKeyDestroy,
                    OCITHREADKEYDESTROY);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadKeySet", OCIThreadKeySet,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadKeySet",              OCIThreadKeySet,
                    OCITHREADKEYSET);
-        LIB_SYMBOL(Env.lib_handle, "OCIThreadKeyGet", OCIThreadKeyGet,
+        LIB_SYMBOL(Env.lib_handle, "OCIThreadKeyGet",              OCIThreadKeyGet,
                    OCITHREADKEYGET);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIConnectionPoolCreate", OCIConnectionPoolCreate,
+        LIB_SYMBOL(Env.lib_handle, "OCIConnectionPoolCreate",      OCIConnectionPoolCreate,
                    OCICONNECTIONPOOLCREATE);
-        LIB_SYMBOL(Env.lib_handle, "OCIConnectionPoolDestroy", OCIConnectionPoolDestroy,
+        LIB_SYMBOL(Env.lib_handle, "OCIConnectionPoolDestroy",     OCIConnectionPoolDestroy,
                    OCICONNECTIONPOOLDESTROY);
 
-        LIB_SYMBOL(Env.lib_handle, "OCISessionPoolCreate", OCISessionPoolCreate,
+        LIB_SYMBOL(Env.lib_handle, "OCISessionPoolCreate",         OCISessionPoolCreate,
                    OCISESSIONPOOLCREATE);
-        LIB_SYMBOL(Env.lib_handle, "OCISessionPoolDestroy", OCISessionPoolDestroy,
+        LIB_SYMBOL(Env.lib_handle, "OCISessionPoolDestroy",        OCISessionPoolDestroy,
                    OCISESSIONPOOLDESTROY);
 
-        LIB_SYMBOL(Env.lib_handle, "OCISessionGet", OCISessionGet,
+        LIB_SYMBOL(Env.lib_handle, "OCISessionGet",                OCISessionGet,
                    OCISESSIONGET);
-        LIB_SYMBOL(Env.lib_handle, "OCISessionRelease", OCISessionRelease,
+        LIB_SYMBOL(Env.lib_handle, "OCISessionRelease",            OCISessionRelease,
                    OCISESSIONRELEASE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCICollSize", OCICollSize,
+        LIB_SYMBOL(Env.lib_handle, "OCICollSize",                  OCICollSize,
                    OCICOLLSIZE);
-        LIB_SYMBOL(Env.lib_handle, "OCICollMax", OCICollMax,
+        LIB_SYMBOL(Env.lib_handle, "OCICollMax",                   OCICollMax,
                    OCICOLLMAX);
-        LIB_SYMBOL(Env.lib_handle, "OCICollGetElem", OCICollGetElem,
+        LIB_SYMBOL(Env.lib_handle, "OCICollGetElem",               OCICollGetElem,
                    OCICOLLGETITEM);
-        LIB_SYMBOL(Env.lib_handle, "OCICollAssignElem", OCICollAssignElem,
+        LIB_SYMBOL(Env.lib_handle, "OCICollAssignElem",            OCICollAssignElem,
                    OCICOLLASSIGNELEM);
-        LIB_SYMBOL(Env.lib_handle, "OCICollAssign", OCICollAssign,
+        LIB_SYMBOL(Env.lib_handle, "OCICollAssign",                OCICollAssign,
                    OCICOLLASSIGN);
-        LIB_SYMBOL(Env.lib_handle, "OCICollAppend", OCICollAppend,
+        LIB_SYMBOL(Env.lib_handle, "OCICollAppend",                OCICollAppend,
                    OCICOLLAPPEND);
-        LIB_SYMBOL(Env.lib_handle, "OCICollTrim", OCICollTrim,
+        LIB_SYMBOL(Env.lib_handle, "OCICollTrim",                  OCICollTrim,
                    OCICOLLTRIM);
-        LIB_SYMBOL(Env.lib_handle, "OCITableDelete", OCITableDelete,
+        LIB_SYMBOL(Env.lib_handle, "OCITableDelete",               OCITableDelete,
                    OCITABLEDELETE);
-        LIB_SYMBOL(Env.lib_handle, "OCITableSize", OCITableSize,
+        LIB_SYMBOL(Env.lib_handle, "OCITableSize",                 OCITableSize,
                    OCITABLESIZE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIIterCreate", OCIIterCreate,
+        LIB_SYMBOL(Env.lib_handle, "OCIIterCreate",                OCIIterCreate,
                    OCIITERCREATE);
-        LIB_SYMBOL(Env.lib_handle, "OCIIterDelete", OCIIterDelete,
+        LIB_SYMBOL(Env.lib_handle, "OCIIterDelete",                OCIIterDelete,
                    OCIITERDELETE);
-        LIB_SYMBOL(Env.lib_handle, "OCIIterInit", OCIIterInit,
+        LIB_SYMBOL(Env.lib_handle, "OCIIterInit",                  OCIIterInit,
                    OCIITERINIT);
-        LIB_SYMBOL(Env.lib_handle, "OCIIterNext", OCIIterNext,
+        LIB_SYMBOL(Env.lib_handle, "OCIIterNext",                  OCIIterNext,
                    OCIITERNEXT);
-        LIB_SYMBOL(Env.lib_handle, "OCIIterPrev", OCIIterPrev,
+        LIB_SYMBOL(Env.lib_handle, "OCIIterPrev",                  OCIIterPrev,
                    OCIITERPREV);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIDirPathAbort", OCIDirPathAbort,
+        LIB_SYMBOL(Env.lib_handle, "OCIDirPathAbort",              OCIDirPathAbort,
                    OCIDIRPATHABORT);
-        LIB_SYMBOL(Env.lib_handle, "OCIDirPathDataSave", OCIDirPathDataSave,
+        LIB_SYMBOL(Env.lib_handle, "OCIDirPathDataSave",           OCIDirPathDataSave,
                    OCIDIRPATHDATASAVE);
-        LIB_SYMBOL(Env.lib_handle, "OCIDirPathFinish", OCIDirPathFinish,
+        LIB_SYMBOL(Env.lib_handle, "OCIDirPathFinish",             OCIDirPathFinish,
                    OCIDIRPATHFINISH);
-        LIB_SYMBOL(Env.lib_handle, "OCIDirPathPrepare", OCIDirPathPrepare,
+        LIB_SYMBOL(Env.lib_handle, "OCIDirPathPrepare",            OCIDirPathPrepare,
                    OCIDIRPATHPREPARE);
-        LIB_SYMBOL(Env.lib_handle, "OCIDirPathLoadStream", OCIDirPathLoadStream,
+        LIB_SYMBOL(Env.lib_handle, "OCIDirPathLoadStream",         OCIDirPathLoadStream,
                    OCIDIRPATHLOADSTREAM);
-        LIB_SYMBOL(Env.lib_handle, "OCIDirPathColArrayEntrySet", OCIDirPathColArrayEntrySet,
+        LIB_SYMBOL(Env.lib_handle, "OCIDirPathColArrayEntrySet",   OCIDirPathColArrayEntrySet,
                    OCIDIRPATHCOLARRAYENTRYSET);
-        LIB_SYMBOL(Env.lib_handle, "OCIDirPathColArrayReset", OCIDirPathColArrayReset,
+        LIB_SYMBOL(Env.lib_handle, "OCIDirPathColArrayReset",      OCIDirPathColArrayReset,
                    OCIDIRPATHCOLARRAYRESET);
-        LIB_SYMBOL(Env.lib_handle, "OCIDirPathColArrayToStream", OCIDirPathColArrayToStream,
+        LIB_SYMBOL(Env.lib_handle, "OCIDirPathColArrayToStream",   OCIDirPathColArrayToStream,
                    OCIDIRPATHCOLARRAYTOSTREAM);
-        LIB_SYMBOL(Env.lib_handle, "OCIDirPathStreamReset", OCIDirPathStreamReset,
+        LIB_SYMBOL(Env.lib_handle, "OCIDirPathStreamReset",        OCIDirPathStreamReset,
                    OCIDIRPATHSTREAMRESET);
-        LIB_SYMBOL(Env.lib_handle, "OCIDirPathFlushRow", OCIDirPathFlushRow,
+        LIB_SYMBOL(Env.lib_handle, "OCIDirPathFlushRow",           OCIDirPathFlushRow,
                    OCIDIRPATHFLUSHROW);
 
-        LIB_SYMBOL(Env.lib_handle, "OCICacheFree", OCICacheFree,
+        LIB_SYMBOL(Env.lib_handle, "OCICacheFree",                 OCICacheFree,
                    OCICACHEFREE);
-        LIB_SYMBOL(Env.lib_handle, "OCIPing", OCIPing,
+        LIB_SYMBOL(Env.lib_handle, "OCIPing",                      OCIPing,
                    OCIPING);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIDBStartup", OCIDBStartup,
+        LIB_SYMBOL(Env.lib_handle, "OCIDBStartup",                 OCIDBStartup,
                    OCIDBSTARTUP);
-        LIB_SYMBOL(Env.lib_handle, "OCIDBShutdown", OCIDBShutdown,
+        LIB_SYMBOL(Env.lib_handle, "OCIDBShutdown",                OCIDBShutdown,
                    OCIDBSHUTDOWN);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIStmtPrepare2", OCIStmtPrepare2,
+        LIB_SYMBOL(Env.lib_handle, "OCIStmtPrepare2",              OCIStmtPrepare2,
                    OCISTMTPREPARE2);
-        LIB_SYMBOL(Env.lib_handle, "OCIStmtRelease", OCIStmtRelease,
+        LIB_SYMBOL(Env.lib_handle, "OCIStmtRelease",               OCIStmtRelease,
                    OCISTMTRELEASE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCISubscriptionRegister", OCISubscriptionRegister,
+        LIB_SYMBOL(Env.lib_handle, "OCISubscriptionRegister",      OCISubscriptionRegister,
                    OCISUBSCRIPTIONREGISTER);
-        LIB_SYMBOL(Env.lib_handle, "OCISubscriptionUnRegister", OCISubscriptionUnRegister,
+        LIB_SYMBOL(Env.lib_handle, "OCISubscriptionUnRegister",    OCISubscriptionUnRegister,
                    OCISUBSCRIPTIONUNREGISTER);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIAQEnq", OCIAQEnq,
+        LIB_SYMBOL(Env.lib_handle, "OCIAQEnq",                     OCIAQEnq,
                    OCIAQENQ);
-        LIB_SYMBOL(Env.lib_handle, "OCIAQDeq", OCIAQDeq,
+        LIB_SYMBOL(Env.lib_handle, "OCIAQDeq",                     OCIAQDeq,
                    OCIAQDEQ);
-        LIB_SYMBOL(Env.lib_handle, "OCIAQListen", OCIAQListen,
+        LIB_SYMBOL(Env.lib_handle, "OCIAQListen",                  OCIAQListen,
                    OCIAQLISTEN);
 
-        LIB_SYMBOL(Env.lib_handle, "xaoSvcCtx", xaoSvcCtx,
+        LIB_SYMBOL(Env.lib_handle, "xaoSvcCtx",                    xaoSvcCtx,
                    XAOSVCCTX);
-        LIB_SYMBOL(Env.lib_handle, "xaoEnv", xaoEnv,
+        LIB_SYMBOL(Env.lib_handle, "xaoEnv",                       xaoEnv,
                    XAOENV);
 
-        LIB_SYMBOL(Env.lib_handle, "OCILobGetContentType", OCILobGetContentType,
+        LIB_SYMBOL(Env.lib_handle, "OCILobGetContentType",         OCILobGetContentType,
                    OCILOBGETCONTENTTYPE);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIStmtGetNextResult", OCIStmtGetNextResult,
+        LIB_SYMBOL(Env.lib_handle, "OCIStmtGetNextResult",         OCIStmtGetNextResult,
                    OCISTMTGETNEXTRESULT);
 
-        LIB_SYMBOL(Env.lib_handle, "OCIServerRelease2", OCIServerRelease2,
+        LIB_SYMBOL(Env.lib_handle, "OCIServerRelease2",            OCIServerRelease2,
                    OCISERVERRELEASE2);
 
-        LIB_SYMBOL(Env.lib_handle, "OCISodaOperKeysSet", OCISodaOperKeysSet,
+        LIB_SYMBOL(Env.lib_handle, "OCISodaOperKeysSet",           OCISodaOperKeysSet,
                    OCISODAOPERKEYSSET);
 
         /* API Version checking */
@@ -1350,12 +1349,12 @@ boolean EnvironmentInitialize
         else
         {
             LIB_CLOSE(Env.lib_handle);
-            THROW(ExceptionLoadingSymbols)
+            THROW_NO_ARGS(ExceptionLoadingSymbols)
         }
     }
     else
     {
-        THROW(ExceptionLoadingSharedLib)
+    THROW_NO_ARGS(ExceptionLoadingSharedLib)
     }
 
   #if defined(OCI_BIG_UINT_ENABLED)
@@ -1418,14 +1417,14 @@ boolean EnvironmentInitialize
             MemoryAllocHandle
             (
                 (dvoid *)Env.env,
-                (dvoid **) (void *) &Env.err, 
+                (dvoid **) (void *) &Env.err,
                 OCI_HTYPE_ERROR
             )
         )
     }
     else
     {
-        THROW(ExceptionOCIEnvironment)
+        THROW_NO_ARGS(ExceptionOCIEnvironment)
     }
 
     /* on success, we need to initialize OCIThread object support */
@@ -1509,7 +1508,7 @@ boolean EnvironmentCleanup
 
     boolean success = FALSE;
 
-    unsigned int i   = 0;
+    unsigned int i = 0;
 
     /* exit if the environment is not loaded */
 
@@ -1519,9 +1518,9 @@ boolean EnvironmentCleanup
 
     /* dispose list items */
 
-    ListForEach(Env.arrs, (POCI_LIST_FOR_EACH)ArrayDispose);
-    ListForEach(Env.subs, (POCI_LIST_FOR_EACH)SubscriptionDispose);
-    ListForEach(Env.cons, (POCI_LIST_FOR_EACH)ConnectionDispose);
+    ListForEach(Env.arrs,  (POCI_LIST_FOR_EACH)ArrayDispose);
+    ListForEach(Env.subs,  (POCI_LIST_FOR_EACH)SubscriptionDispose);
+    ListForEach(Env.cons,  (POCI_LIST_FOR_EACH)ConnectionDispose);
     ListForEach(Env.pools, (POCI_LIST_FOR_EACH)PoolDispose);
 
     /* free all arrays */
@@ -1853,7 +1852,7 @@ boolean EnvironmentSetHAHandler
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_ENV, OCI_ATTR_EVTCBK, 
+        OCI_HTYPE_ENV, OCI_ATTR_EVTCBK,
         Env.env, callback, 0,
         Env.err
     )
@@ -1872,7 +1871,7 @@ boolean EnvironmentSetHAHandler
 
     SET_SUCCESS()
 
-   EXIT_FUNC()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1920,7 +1919,7 @@ const otext * EnvironmentGetFormat
 {
     ENTER_FUNC
     (
-        /* returns */ const otext*, NULL, 
+        /* returns */ const otext*, NULL,
         /* context */ OCI_IPC_VOID, &Env
     )
 

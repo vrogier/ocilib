@@ -92,14 +92,16 @@ ExitLabel:                \
 
 /* invoke exception and jump to cleanup */
 
-#define EXCEPTION_FUNC(func, ...)     \
+#define THROW_NO_ARGS(func)           \
                                       \
-    func(__VA_ARGS__);                \
+    func(&call_context);              \
+    CHECK(FALSE)                      \
 
-#define THROW(func, ...)                                \
-                                                        \
-    EXCEPTION_FUNC(func, &call_context, __VA_ARGS__);   \
-    CHECK(FALSE)               
+#define THROW(func, ...)              \
+                                      \
+    func(&call_context, __VA_ARGS__); \
+    CHECK(FALSE)                      \
+
 
 /* exit a call */
 
@@ -167,7 +169,7 @@ ExitLabel:                \
                                           \
     if (!(exp))                           \
     {                                     \
-        THROW(ExceptionTypeNotCompatible) \
+        THROW_NO_ARGS(ExceptionTypeNotCompatible) \
     }
 
 #define CHECK_STMT_STATUS(st, v)            \
@@ -196,7 +198,7 @@ ExitLabel:                \
     if (((st)->nb_rbinds > 0) ||                           \
         ((st)->exec_mode != OCI_STMT_SCROLLABLE_READONLY)) \
     {                                                      \
-        THROW(ExceptionStatementNotScrollable)             \
+        THROW_NO_ARGS(ExceptionStatementNotScrollable)             \
     }
 
 #define CHECK_DIRPATH_STATUS(dp, v)                \
@@ -210,7 +212,7 @@ ExitLabel:                \
                                        \
     if (!Env.loaded)                   \
     {                                  \
-        THROW(ExceptionNotInitialized) \
+        THROW_NO_ARGS(ExceptionNotInitialized) \
     }
 
 #define CHECK_FEATURE(con, feat, ver)                                     \
@@ -224,7 +226,7 @@ ExitLabel:                \
                                          \
     if (!(LIB_THREADED))                 \
     {                                    \
-        THROW(ExceptionNotMultithreaded) \
+        THROW_NO_ARGS(ExceptionNotMultithreaded) \
     }
 
 #define CHECK_TIMESTAMP_ENABLED(con) \

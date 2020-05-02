@@ -37,13 +37,13 @@
 #include "strings.h"
 #include "timestamp.h"
 
-static const unsigned int CharsetFormValues[] = 
+static const unsigned int CharsetFormValues[] =
 {
     OCI_CSF_DEFAULT,
     OCI_CSF_NATIONAL
 };
 
-static const unsigned int BindDirectionValues[] = 
+static const unsigned int BindDirectionValues[] =
 {
     OCI_BDM_IN,
     OCI_BDM_OUT,
@@ -160,7 +160,7 @@ boolean BindAllocateInternalData
         }
 
         arr = ArrayCreate(bnd->stmt->con, bnd->buffer.count,
-                  bnd->type, bnd->subtype, elem_size,
+                          bnd->type, bnd->subtype, elem_size,
                           struct_size, handle_type, bnd->typinf);
 
         CHECK_NULL(arr)
@@ -494,7 +494,7 @@ boolean BindCheckAvailability
         {
             if (stmt->nb_ubinds >= OCI_BIND_MAX)
             {
-                THROW(ExceptionMaxBind)
+                THROW_NO_ARGS(ExceptionMaxBind)
             }
 
             /* allocate user bind array if necessary */
@@ -512,7 +512,7 @@ boolean BindCheckAvailability
         {
             if (stmt->nb_rbinds >= OCI_BIND_MAX)
             {
-                THROW(ExceptionMaxBind)
+                THROW_NO_ARGS(ExceptionMaxBind)
             }
 
             /* allocate register bind array if necessary */
@@ -715,7 +715,8 @@ OCI_Bind* BindCreate
         /* context */ OCI_IPC_STATEMENT, stmt
     )
 
-    OCI_Bind    *bnd         = NULL;
+    OCI_Bind    *bnd = NULL;
+
     ub4          exec_mode   = OCI_DEFAULT;
     boolean      plsql_table = FALSE;
     boolean      is_array    = FALSE;
@@ -748,7 +749,7 @@ OCI_Bind* BindCreate
         {
             if (!stmt->bind_reuse)
             {
-                THROW(ExceptionBindAlreadyUsed,  name)
+                THROW(ExceptionBindAlreadyUsed, name)
             }
             else
             {
@@ -867,7 +868,7 @@ OCI_Bind* BindCreate
 
         CHECK_ATTRIB_SET
         (
-            OCI_HTYPE_BIND, OCI_ATTR_CHARSET_FORM, 
+            OCI_HTYPE_BIND, OCI_ATTR_CHARSET_FORM,
             bnd->buffer.handle, &csfrm, sizeof(csfrm),
             bnd->stmt->con->err
         )
@@ -881,9 +882,9 @@ OCI_Bind* BindCreate
     CHECK(BindAddToStatement(bnd, mode, reused))
 
     CLEANUP_AND_EXIT_FUNC
-    (    
+    (
         /* on error, only free the bind if it was a new one */
-        
+
         if (FAILURE && NULL != bnd && prev_index == -1)
         {
             BindFree(bnd);
@@ -986,7 +987,7 @@ int BindGetIndex
     )
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_STRING,    name)
 
     CHECK_NULL(stmt->map)
 
@@ -1147,7 +1148,7 @@ void * BindGetData
 {
     GET_PROP
     (
-        /* result */ void *, NULL, 
+        /* result */ void *, NULL,
         /* handle */ OCI_IPC_BIND, bnd,
         /* member */ input
     )
@@ -1290,7 +1291,6 @@ boolean BindSetNullAtPos
         /* context */ OCI_IPC_BIND, bnd
     )
 
-
     CHECK_PTR(OCI_IPC_BIND, bnd)
     CHECK_BOUND(position, 1, bnd->buffer.count)
 
@@ -1421,7 +1421,7 @@ boolean BindSetCharsetForm
 
         CHECK_ATTRIB_SET
         (
-            OCI_HTYPE_BIND, OCI_ATTR_CHARSET_FORM, 
+            OCI_HTYPE_BIND, OCI_ATTR_CHARSET_FORM,
             bnd->buffer.handle, &bnd->csfrm, sizeof(bnd->csfrm),
             bnd->stmt->con->err
         )
