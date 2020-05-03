@@ -53,7 +53,7 @@ OCI_ThreadKey * ThreadKeyCreateInternal
     CHECK_OCI
     (
         key->err,
-        OCIThreadKeyInit, 
+        OCIThreadKeyInit,
         Env.env, key->err, &key->handle, destfunc
     )
 
@@ -92,8 +92,8 @@ boolean ThreadKeyFree
     {
         CHECK_OCI
         (
-            key->err, 
-            OCIThreadKeyDestroy, 
+            key->err,
+            OCIThreadKeyDestroy,
             Env.env, key->err,
             &key->handle
         )
@@ -109,6 +109,8 @@ boolean ThreadKeyFree
     /* free key structure */
 
     FREE(key)
+
+    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -133,9 +135,9 @@ boolean ThreadKeySet
 
     CHECK_OCI
     (
-        key->err, 
+        key->err,
         OCIThreadKeySet,
-        Env.env, key->err, 
+        Env.env, key->err,
         key->handle, value
     )
 
@@ -161,12 +163,12 @@ boolean ThreadKeyGet
     )
 
     CHECK_PTR(OCI_IPC_THREADKEY, key)
-    CHECK_PTR(OCI_IPC_VOID, value)
+    CHECK_PTR(OCI_IPC_VOID,      value)
 
     CHECK_OCI
     (
-        key->err, 
-        OCIThreadKeyGet, 
+        key->err,
+        OCIThreadKeyGet,
         Env.env, key->err,
         key->handle, value
     )

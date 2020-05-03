@@ -24,7 +24,7 @@
 #include "memory.h"
 #include "strings.h"
 
-static const unsigned int LongTypeValues[] = 
+static const unsigned int LongTypeValues[] =
 {
     OCI_CLONG,
     OCI_BLONG
@@ -67,7 +67,7 @@ OCI_Long * LongInitialize
     }
 
     CLEANUP_AND_EXIT_FUNC
-    (  
+    (
         if (FAILURE)
         {
             LongFree(lg);
@@ -216,7 +216,7 @@ unsigned int LongWrite
         /* context */ OCI_IPC_LONG, lg
     )
 
-    sword code   = OCI_SUCCESS;
+    sword code = OCI_SUCCESS;
     void *obuf   = NULL;
     void *handle = NULL;
     ub1   in_out = OCI_PARAM_IN;
@@ -244,7 +244,7 @@ unsigned int LongWrite
     CHECK_OCI
     (
         lg->stmt->con->err,
-        OCIStmtGetPieceInfo, 
+        OCIStmtGetPieceInfo,
         lg->stmt->stmt, lg->stmt->con->err,
         &handle, &type, &in_out, &iter, &dx, &piece
     )
@@ -277,7 +277,7 @@ unsigned int LongWrite
     CHECK_OCI
     (
         lg->stmt->con->err,
-        OCIStmtSetPieceInfo, 
+        OCIStmtSetPieceInfo,
         handle, type, lg->stmt->con->err,
         (dvoid *) obuf, &count,  piece,
         (dvoid *) NULL, (ub2 *) NULL

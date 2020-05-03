@@ -51,7 +51,7 @@ OCI_Define * DefineGet
     }
 
     SET_RETVAL(def)
-    
+
     EXIT_FUNC()
 }
 
@@ -67,7 +67,7 @@ int DefineGetIndex
 {
     ENTER_FUNC
     (
-        /* returns */ int, -1, 
+        /* returns */ int, -1,
         /* context */ OCI_IPC_RESULTSET, rs
     )
 
@@ -126,7 +126,7 @@ void * DefineGetData
 {
     ENTER_FUNC
     (
-        /* returns */ void*, NULL, 
+        /* returns */ void*, NULL,
         /* context */ OCI_IPC_DEFINE, def
     )
 
@@ -233,14 +233,14 @@ boolean DefineGetNumber
         {
             case OCI_CDT_NUMERIC:
             {
-                CHECK(NumberTranslateValue(rs->stmt->con, data, 
-                                           def->col.subtype, value, 
+                CHECK(NumberTranslateValue(rs->stmt->con, data,
+                                           def->col.subtype, value,
                                            type))
                 break;
             }
             case OCI_CDT_TEXT:
             {
-                CHECK(NumberFromStringInternal(rs->stmt->con, value, type, 
+                CHECK(NumberFromStringInternal(rs->stmt->con, value, type,
                                                (const otext*)data, NULL))
                 break;
             }
@@ -315,15 +315,15 @@ boolean DefineAlloc
         {
             for (i = 0; i < def->buf.count; i++)
             {
-                CHECK(MemoryAllocHandle((dvoid  *)def->rs->stmt->con->env, 
-                                        (dvoid **) &(def->buf.data[i]), 
+                CHECK(MemoryAllocHandle((dvoid  *)def->rs->stmt->con->env,
+                                        (dvoid **) &(def->buf.data[i]),
                                         (ub4) def->col.handletype))
             }
         }
         else
         {
-            CHECK(MemoryAllocDescriptorArray((dvoid  *)def->rs->stmt->con->env, 
-                                             (dvoid **)def->buf.data, (ub4)def->col.handletype, 
+            CHECK(MemoryAllocDescriptorArray((dvoid  *)def->rs->stmt->con->env,
+                                             (dvoid **)def->buf.data, (ub4)def->col.handletype,
                                              (ub4)def->buf.count))
 
             if (OCI_CDT_LOB == def->col.datatype)
@@ -398,7 +398,7 @@ boolean DefineDef
     {
         CHECK_OCI
         (
-            def->rs->stmt->con->err, 
+            def->rs->stmt->con->err,
             OCIDefineObject,
             (OCIDefine *)def->buf.handle,
             def->rs->stmt->con->err,
@@ -422,7 +422,7 @@ boolean DefineDef
 
             CHECK_ATTRIB_SET
             (
-                OCI_HTYPE_DEFINE, OCI_ATTR_CHARSET_FORM, 
+                OCI_HTYPE_DEFINE, OCI_ATTR_CHARSET_FORM,
                 def->buf.handle, &csfrm, sizeof(csfrm),
                 def->rs->stmt->con->err
             )
@@ -439,7 +439,7 @@ boolean DefineDef
 
             CHECK_ATTRIB_SET
             (
-                OCI_HTYPE_DEFINE, OCI_ATTR_LOBPREFETCH_LENGTH, 
+                OCI_HTYPE_DEFINE, OCI_ATTR_LOBPREFETCH_LENGTH,
                 def->buf.handle, &value, sizeof(value),
                 def->rs->stmt->con->err
             )

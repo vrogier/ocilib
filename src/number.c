@@ -33,28 +33,28 @@ typedef struct MagicNumber
 
 static const MagicNumber MagicNumbers[] =
 {
-    { { 2, 255, 101 }, OTEXT("~")  },
-    { { 1, 0,   0   }, OTEXT("-~") }
+    { { 2, 255, 101       }, OTEXT("~")  },
+    { { 1, 0,   0         }, OTEXT("-~") }
 };
 
 #define MAGIC_NUMBER_COUNT 2
 
-#define NUMBER_OPERATION(func)                                                  \
-                                                                                \
-    ENTER_FUNC(boolean, FALSE, OCI_IPC_NUMBER, number)                          \
-                                                                                \
-    OCINumber src_num = { {0} };                                                \
-    CHECK_PTR(OCI_IPC_NUMBER, number)                                           \
-                                                                                \
-    CHECK(NumberTranslateValue(number->con, value, type,                        \
-          &src_num, OCI_NUM_NUMBER))                                            \
-                                                                                \
-    CHECK_OCI(number->err, func, number->err, number->handle,                    \
-             &src_num, number->handle)                                          \
-                                                                                \
-    SET_SUCCESS()                                                         \
-                                                                                \
-    EXIT_FUNC()                                                                 \
+#define NUMBER_OPERATION(func)                                \
+                                                              \
+    ENTER_FUNC(boolean, FALSE, OCI_IPC_NUMBER, number)        \
+                                                              \
+    OCINumber src_num = { {0} };                              \
+    CHECK_PTR(OCI_IPC_NUMBER, number)                         \
+                                                              \
+    CHECK(NumberTranslateValue(number->con, value, type,      \
+                               &src_num, OCI_NUM_NUMBER))     \
+                                                              \
+    CHECK_OCI(number->err, func, number->err, number->handle, \
+              &src_num, number->handle)                       \
+                                                              \
+    SET_SUCCESS()                                             \
+                                                              \
+    EXIT_FUNC()                                               \
 
 
 /* --------------------------------------------------------------------------------------------- *
@@ -92,6 +92,7 @@ uword GetNumericTypeSize
     {
         size = sizeof(OCINumber);
     }
+
     return size;
 }
 
@@ -120,7 +121,7 @@ boolean NumberTranslateValue
         - OCINumber to signed/unsigned integers, double, and float
     */
 
-    const uword in_size  = GetNumericTypeSize(in_type);
+    const uword in_size = GetNumericTypeSize(in_type);
     const uword out_size = GetNumericTypeSize(out_type);
     const uword in_sign  = (in_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
     const uword out_sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
@@ -150,7 +151,7 @@ boolean NumberTranslateValue
             (
                 err,
                 OCINumberToReal,
-                err, in_value, 
+                err, in_value,
                 out_size, out_value
             )
         }
@@ -210,7 +211,7 @@ boolean NumberTranslateValue
             (
                 err,
                 OCINumberFromReal,
-                err, in_value, in_size, 
+                err, in_value, in_size,
                 (OCINumber *)&tmp
             )
 
@@ -218,7 +219,7 @@ boolean NumberTranslateValue
             (
                 err,
                 OCINumberToInt,
-                err, &tmp, out_size, 
+                err, &tmp, out_size,
                 out_sign, out_value
             )
         }
@@ -257,7 +258,7 @@ boolean NumberTranslateValue
             (
                 err,
                 OCINumberToInt,
-                err, &tmp, out_size, 
+                err, &tmp, out_size,
                 out_sign, out_value
             )
         }
@@ -383,7 +384,6 @@ boolean NumberFromStringInternal
                 (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number
             )
 
- 
             CHECK(NumberTranslateValue(con, &number, OCI_NUM_NUMBER, out_value, type))
         }
     }
@@ -418,7 +418,7 @@ boolean NumberToStringInternal
     )
 
     dbtext* dbstr1 = NULL;
-    dbtext* dbstr2 = NULL;
+    dbtext* dbstr2  = NULL;
     int     dbsize1 = out_value_size * (int)sizeof(otext);
     int     dbsize2 = -1;
 
@@ -438,7 +438,7 @@ boolean NumberToStringInternal
         if (type & OCI_NUM_SHORT)
         {
             out_value_size = osprintf(out_value, out_value_size,
-                                      OCI_STRING_FORMAT_NUM_SHORT, 
+                                      OCI_STRING_FORMAT_NUM_SHORT,
                                       *((short *)number));
 
             done = TRUE;
@@ -446,7 +446,7 @@ boolean NumberToStringInternal
         else if (type & OCI_NUM_INT)
         {
             out_value_size = osprintf(out_value, out_value_size,
-                                      OCI_STRING_FORMAT_NUM_INT, 
+                                      OCI_STRING_FORMAT_NUM_INT,
                                       *((int *)number));
 
             done = TRUE;
@@ -602,7 +602,7 @@ OCI_Number * NumberInitialize
     /* check for failure */
 
     CLEANUP_AND_EXIT_FUNC
-    (    
+    (
         if (FAILURE)
         {
             NumberFree(number);
@@ -821,7 +821,7 @@ unsigned char * NumberGetContent
     CHECK_PTR(OCI_IPC_NUMBER, number)
 
     CHECK_NULL(number->handle)
-   
+
     SET_RETVAL(number->handle->OCINumberPart)
 
     EXIT_FUNC()
@@ -844,7 +844,7 @@ boolean NumberSetContent
     )
 
     CHECK_PTR(OCI_IPC_NUMBER, number)
-    CHECK_PTR(OCI_IPC_VOID, content)
+    CHECK_PTR(OCI_IPC_VOID,   content)
 
     if (NULL != number->handle)
     {
@@ -986,7 +986,7 @@ int NumberCompare
     CHECK_OCI
     (
         number1->err,
-        OCINumberCmp, 
+        OCINumberCmp,
         number1->err, number1->handle,
         number2->handle, &value
     )

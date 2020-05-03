@@ -25,7 +25,7 @@
 #include "macros.h"
 #include "strings.h"
 
-static unsigned int PoolTypeValues[] = 
+static unsigned int PoolTypeValues[] =
 {
     OCI_POOL_CONNECTION, OCI_POOL_SESSION
 };
@@ -72,7 +72,7 @@ boolean PoolDispose
                 (
                     pool->err,
                     OCISessionPoolDestroy,
-                    (OCISPool*)pool->handle, 
+                    (OCISPool*)pool->handle,
                     pool->err, (ub4)OCI_SPD_FORCE
                 )
             }
@@ -114,7 +114,7 @@ boolean PoolDispose
     FREE(pool->user)
     FREE(pool->pwd)
 
-    CHECK(FALSE)
+    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -141,17 +141,17 @@ OCI_Pool * PoolCreate
         /* context */ OCI_IPC_VOID, &Env
     )
 
-    dbtext *dbstr  = NULL;
+    dbtext *dbstr = NULL;
     dbtext* dbstr_name = NULL;
-    dbtext* dbstr_db = NULL;
+    dbtext* dbstr_db   = NULL;
     dbtext* dbstr_user = NULL;
-    dbtext* dbstr_pwd = NULL;
+    dbtext* dbstr_pwd  = NULL;
 
-    int dbsize = -1;
+    int dbsize      = -1;
     int dbsize_name = -1;
-    int dbsize_db = -1;
+    int dbsize_db   = -1;
     int dbsize_user = -1;
-    int dbsize_pwd = -1;
+    int dbsize_pwd  = -1;
 
     OCI_Pool* pool = NULL;
 
@@ -203,7 +203,7 @@ OCI_Pool * PoolCreate
     {
         /* allocate error handle */
 
-        CHECK(MemoryAllocHandle((dvoid *)Env.env, 
+        CHECK(MemoryAllocHandle((dvoid *)Env.env,
                                 (dvoid **)(void *)&pool->err,
                                 OCI_HTYPE_ERROR))
 
@@ -234,7 +234,7 @@ OCI_Pool * PoolCreate
             /* allocate authentication handle */
 
             CHECK(MemoryAllocHandle((dvoid *)Env.env,
-                                    (dvoid **)(void *)&pool->authp, 
+                                    (dvoid **)(void *)&pool->authp,
                                     OCI_HTYPE_AUTHINFO))
 
             /* set OCILIB driver layer name attribute only for session pools here
@@ -290,9 +290,9 @@ OCI_Pool * PoolCreate
         {
             ub4 sess_mode = OCI_DEFAULT;
 
-            if (!(pool->mode & OCI_SESSION_SYSDBA) && 
-                 IS_STRING_VALID(pool->user) && 
-                 IS_STRING_VALID(pool->pwd))
+            if (!(pool->mode & OCI_SESSION_SYSDBA) &&
+                IS_STRING_VALID(pool->user) &&
+                IS_STRING_VALID(pool->pwd))
             {
                 sess_mode |= OCI_SPC_HOMOGENEOUS;
             }
@@ -300,7 +300,7 @@ OCI_Pool * PoolCreate
             CHECK_OCI
             (
                 pool->err,
-                OCISessionPoolCreate, 
+                OCISessionPoolCreate,
                 Env.env, pool->err, (OCISPool *)pool->handle,
                 (OraText **) (dvoid *) &dbstr_name,
                 (ub4*) &dbsize_name,
@@ -345,18 +345,18 @@ OCI_Pool * PoolCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-       StringReleaseDBString(dbstr);
-       StringReleaseDBString(dbstr_db);
-       StringReleaseDBString(dbstr_user);
-       StringReleaseDBString(dbstr_pwd);
+        StringReleaseDBString(dbstr);
+        StringReleaseDBString(dbstr_db);
+        StringReleaseDBString(dbstr_user);
+        StringReleaseDBString(dbstr_pwd);
 
-       if (FAILURE)
-       {
-           PoolFree(pool);
-           pool = NULL;
-       }
+        if (FAILURE)
+        {
+            PoolFree(pool);
+            pool = NULL;
+        }
 
-       SET_RETVAL(pool)
+        SET_RETVAL(pool)
     )
 }
 
@@ -465,7 +465,7 @@ unsigned int PoolGetTimeout
 
         CHECK_ATTRIB_GET
         (
-            pool->htype, attr, 
+            pool->htype, attr,
             pool->handle, &value, NULL,
             pool->err
         )
@@ -529,7 +529,7 @@ boolean PoolSetTimeout
 
     SET_SUCCESS()
 
-   EXIT_FUNC()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -631,7 +631,7 @@ boolean PoolSetNoWait
 
         CHECK_ATTRIB_SET
         (
-            pool->htype, attr, 
+            pool->htype, attr,
             pool->handle, &nowait, sizeof(nowait),
             pool->err
         )
@@ -685,7 +685,7 @@ unsigned int PoolGetBusyCount
 
         CHECK_ATTRIB_GET
         (
-            pool->htype, attr, 
+            pool->htype, attr,
             pool->handle, &value, NULL,
             pool->err
         )
@@ -763,8 +763,8 @@ unsigned int PoolGetMin
 {
     GET_PROP
     (
-        unsigned int, 0, 
-        OCI_IPC_POOL, pool, 
+        unsigned int, 0,
+        OCI_IPC_POOL, pool,
         min
     )
 }
@@ -781,7 +781,7 @@ unsigned int PoolGetMax
     GET_PROP
     (
         unsigned int, 0,
-        OCI_IPC_POOL, pool, 
+        OCI_IPC_POOL, pool,
         max
     )
 }
@@ -797,7 +797,7 @@ unsigned int PoolGetIncrement
 {
     GET_PROP
     (
-        unsigned int, 0, 
+        unsigned int, 0,
         OCI_IPC_POOL, pool,
         incr
     )
@@ -894,5 +894,5 @@ unsigned int PoolGetStatementCacheSize
 
     SET_RETVAL(pool->cache_size)
 
-   EXIT_FUNC()
+    EXIT_FUNC()
 }

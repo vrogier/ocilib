@@ -92,7 +92,7 @@ OCI_Date * DateInitialize
     }
 
     CLEANUP_AND_EXIT_FUNC
-    (   
+    (
         if (FAILURE)
         {
             DateFree(date);
@@ -179,7 +179,7 @@ OCI_Date ** DateCreateArray
     CHECK_INITIALIZED()
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0,
-            sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
+                      sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
 
     CHECK_NULL(arr)
 
@@ -262,8 +262,8 @@ boolean DateAddMonths
     CHECK_OCI
     (
         date->err,
-        OCIDateAddMonths, 
-        date->err, date->handle, 
+        OCIDateAddMonths,
+        date->err, date->handle,
         (sb4) nb, date->handle
     )
 
@@ -294,7 +294,7 @@ boolean DateAssign
     CHECK_OCI
     (
         date->err,
-        OCIDateAssign, 
+        OCIDateAssign,
         date->err, date_src->handle,
         date->handle
     )
@@ -327,7 +327,7 @@ int DateCheck
     (
         date->err,
         OCIDateCheck,
-        date->err, date->handle, 
+        date->err, date->handle,
         &valid
     )
 
@@ -361,7 +361,7 @@ int DateCompare
     (
         date->err,
         OCIDateCompare,
-        date->err, date->handle, 
+        date->err, date->handle,
         date2->handle, &value
     )
 
@@ -421,12 +421,12 @@ boolean DateFromString
         /* context */ OCI_IPC_DATE, date
     )
 
-    dbtext *dbstr1  = NULL;
+    dbtext *dbstr1 = NULL;
     dbtext *dbstr2  = NULL;
     int     dbsize1 = -1;
     int     dbsize2 = -1;
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE,   date)
     CHECK_PTR(OCI_IPC_STRING, str)
 
     if (!IS_STRING_VALID(fmt))
@@ -445,7 +445,7 @@ boolean DateFromString
         date->err,
         (oratext *) dbstr1, (ub4) dbsize1,
         (oratext *) dbstr2, (ub1) dbsize2,
-        (oratext *) NULL,  (ub4) 0, 
+        (oratext *) NULL,  (ub4) 0,
         date->handle
     )
 
@@ -476,15 +476,14 @@ boolean DateGetDate
         /* context */ OCI_IPC_DATE, date
     )
 
-
     sb2 yr = 0;
     ub1 mt = 0;
     ub1 dy = 0;
 
     CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_INT, year)
-    CHECK_PTR(OCI_IPC_INT, month)
-    CHECK_PTR(OCI_IPC_INT, day)
+    CHECK_PTR(OCI_IPC_INT,  year)
+    CHECK_PTR(OCI_IPC_INT,  month)
+    CHECK_PTR(OCI_IPC_INT,  day)
 
     OCIDateGetDate(date->handle, &yr, &mt, &dy);
 
@@ -520,9 +519,9 @@ boolean DateGetTime
     ub1 sc = 0;
 
     CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_INT, hour)
-    CHECK_PTR(OCI_IPC_INT, min)
-    CHECK_PTR(OCI_IPC_INT, sec)
+    CHECK_PTR(OCI_IPC_INT,  hour)
+    CHECK_PTR(OCI_IPC_INT,  min)
+    CHECK_PTR(OCI_IPC_INT,  sec)
 
     OCIDateGetTime(date->handle, &hr, &mn, &sc);
 
@@ -568,7 +567,6 @@ boolean DateLastDay
         /* context */ OCI_IPC_DATE, date
     )
 
-
     CHECK_PTR(OCI_IPC_DATE, date)
 
     CHECK_OCI
@@ -600,10 +598,10 @@ boolean DateNextDay
         /* context */ OCI_IPC_DATE, date
     )
 
-    dbtext *dbstr  = NULL;
-    int     dbsize = -1;
+    dbtext *dbstr = NULL;
+    int dbsize = -1;
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE,   date)
     CHECK_PTR(OCI_IPC_STRING, day)
 
     dbstr = StringGetDBString(day, &dbsize);
@@ -612,8 +610,8 @@ boolean DateNextDay
     (
         date->err,
         OCIDateNextDay,
-        date->err, date->handle, 
-        (oratext *) dbstr, (ub4) dbsize, 
+        date->err, date->handle,
+        (oratext *) dbstr, (ub4) dbsize,
         date->handle
     )
 
@@ -717,7 +715,7 @@ boolean DateSysDate
     CHECK_OCI
     (
         date->err,
-        OCIDateSysDate, 
+        OCIDateSysDate,
         date->err, date->handle
     )
 
@@ -744,12 +742,12 @@ boolean DateToString
         /* context */ OCI_IPC_DATE, date
     )
 
-    dbtext *dbstr1  = NULL;
+    dbtext *dbstr1 = NULL;
     dbtext *dbstr2  = NULL;
     int     dbsize1 = size * (int) sizeof(otext);
     int     dbsize2 = -1;
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE,   date)
     CHECK_PTR(OCI_IPC_STRING, str)
 
     /* initialize output buffer in case of OCI failure */
@@ -806,12 +804,12 @@ boolean DateZoneToZone
         /* context */ OCI_IPC_DATE, date
     )
 
-    dbtext *dbstr1  = NULL;
+    dbtext *dbstr1 = NULL;
     dbtext *dbstr2  = NULL;
     int     dbsize1 = -1;
     int     dbsize2 = -1;
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE,   date)
     CHECK_PTR(OCI_IPC_STRING, zone1)
     CHECK_PTR(OCI_IPC_STRING, zone2)
 

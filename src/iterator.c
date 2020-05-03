@@ -58,7 +58,7 @@ OCI_Iter * IteratorCreate
         iter->coll->con->err,
         OCIIterCreate,
         iter->coll->con->env,
-        iter->coll->con->err, 
+        iter->coll->con->err,
         iter->coll->handle,
         &iter->handle
     )
@@ -143,7 +143,7 @@ OCI_Elem * IteratorGetNext
         /* context */ OCI_IPC_ITERATOR, iter
     )
 
-    void   *data  = NULL;
+    void   *data = NULL;
     OCIInd *p_ind = NULL;
 
     CHECK_PTR(OCI_IPC_ITERATOR, iter)
@@ -153,7 +153,7 @@ OCI_Elem * IteratorGetNext
     CHECK_OCI
     (
         iter->coll->con->err,
-        OCIIterNext, 
+        OCIIterNext,
         iter->coll->con->env,
         iter->coll->con->err,
         iter->handle, &data,
@@ -163,9 +163,10 @@ OCI_Elem * IteratorGetNext
 
     CHECK(!iter->eoc)
 
-    iter->elem = ElementInitialize(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
+    iter->elem  = ElementInitialize(iter->coll->con, iter->elem, 
+                                    data, p_ind, iter->coll->typinf);
     iter->dirty = FALSE;
-    iter->boc = FALSE;
+    iter->boc   = FALSE;
 
     SET_RETVAL(iter->elem)
 
@@ -187,7 +188,7 @@ OCI_Elem * IteratorGetPrev
         /* context */ OCI_IPC_ITERATOR, iter
     )
 
-    void   *data  = NULL;
+    void   *data = NULL;
     OCIInd *p_ind = NULL;
 
     CHECK_PTR(OCI_IPC_ITERATOR, iter)
@@ -199,17 +200,17 @@ OCI_Elem * IteratorGetPrev
         iter->coll->con->err,
         OCIIterPrev,
         iter->coll->con->env,
-        iter->coll->con->err, 
-        iter->handle, &data, 
+        iter->coll->con->err,
+        iter->handle, &data,
         (dvoid **) &p_ind,
         &iter->boc
     )
 
     CHECK(!iter->boc)
 
-    iter->elem = ElementInitialize(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
+    iter->elem  = ElementInitialize(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
     iter->dirty = FALSE;
-    iter->eoc = FALSE;
+    iter->eoc   = FALSE;
 
     SET_RETVAL(iter->elem)
 
@@ -234,7 +235,7 @@ OCI_Elem * IteratorGetCurrent
     CHECK_PTR(OCI_IPC_ITERATOR, iter)
 
     CHECK(NULL != iter->elem && !iter->boc && !iter->eoc && !iter->dirty)
- 
+
     SET_RETVAL(iter->elem)
 
     EXIT_FUNC()

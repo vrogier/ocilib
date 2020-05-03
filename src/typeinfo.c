@@ -26,7 +26,7 @@
 #include "memory.h"
 #include "strings.h"
 
-static unsigned int TypeInfoTypeValues[] = 
+static unsigned int TypeInfoTypeValues[] =
 {
     OCI_TIF_TABLE,
     OCI_TIF_VIEW,
@@ -50,7 +50,7 @@ static boolean TypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find_param
         typinf &&
         find_params &&
         typinf->type == find_params->type &&
-        ostrcasecmp(typinf->name, find_params->name) == 0 &&
+        ostrcasecmp(typinf->name,   find_params->name) == 0 &&
         ostrcasecmp(typinf->schema, find_params->schema) == 0;
 }
 
@@ -120,11 +120,11 @@ OCI_TypeInfo * TypeInfoGet
 
     otext* syn_schema_name = NULL;
     otext* syn_object_name = NULL;
-    otext* syn_link_name = NULL;
+    otext* syn_link_name   = NULL;
 
     unsigned int size_schema = 0;
     unsigned int size_object = 0;
-    unsigned int size_link = 0;
+    unsigned int size_link   = 0;
 
     otext* sp_schema_name = NULL;
     otext* sp_object_name = NULL;
@@ -135,15 +135,15 @@ OCI_TypeInfo * TypeInfoGet
     otext buffer[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
     size_t  max_chars = sizeof(buffer) / sizeof(otext) - 1;
-    dbtext* dbstr1 = NULL;
-    int     dbsize1 = -1;
-    sb4     pbsp = 1;
+    dbtext* dbstr1    = NULL;
+    int     dbsize1   = -1;
+    sb4     pbsp      = 1;
 
     otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
     otext obj_name[OCI_SIZE_OBJ_NAME + 1];
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_STRING,     name)
     CHECK_ENUM_VALUE(type, TypeInfoTypeValues, OTEXT("Type"))
 
     obj_schema[0] = 0;
@@ -155,8 +155,8 @@ OCI_TypeInfo * TypeInfoGet
     {
         if (*str == OTEXT('.'))
         {
-            ostrncat(obj_schema, name, str-name);
-            ostrncat(obj_name, ++str, (size_t) OCI_SIZE_OBJ_NAME);
+            ostrncat(obj_schema, name,  str-name);
+            ostrncat(obj_name,   ++str, (size_t) OCI_SIZE_OBJ_NAME);
             break;
         }
     }
@@ -236,7 +236,7 @@ OCI_TypeInfo * TypeInfoGet
 
         CHECK_ATTRIB_SET
         (
-            OCI_HTYPE_DESCRIBE, OCI_ATTR_DESC_PUBLIC, 
+            OCI_HTYPE_DESCRIBE, OCI_ATTR_DESC_PUBLIC,
             dschp, &pbsp, sizeof(pbsp),
             con->err
         )
@@ -265,7 +265,7 @@ OCI_TypeInfo * TypeInfoGet
 
         CHECK_ATTRIB_GET
         (
-            OCI_DTYPE_PARAM, OCI_ATTR_PTYPE, 
+            OCI_DTYPE_PARAM, OCI_ATTR_PTYPE,
             param_root, &desc_type, NULL,
             con->err
         )
@@ -291,7 +291,7 @@ OCI_TypeInfo * TypeInfoGet
                     CHECK_OCI
                     (
                         con->err,
-                        OCIParamGet, 
+                        OCIParamGet,
                         (dvoid*)param_root, OCI_DTYPE_PARAM,
                         con->err, (void**)&param_type, (ub4) 0
                     )
@@ -313,8 +313,8 @@ OCI_TypeInfo * TypeInfoGet
                 CHECK_OCI
                 (
                     con->err,
-                    OCITypeByRef, 
-                    typinf->con->env, con->err, ref, 
+                    OCITypeByRef,
+                    typinf->con->env, con->err, ref,
                     OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
                     &typinf->tdo
                 )
@@ -323,7 +323,7 @@ OCI_TypeInfo * TypeInfoGet
 
                 CHECK_ATTRIB_GET
                 (
-                    OCI_DTYPE_PARAM, OCI_ATTR_IS_FINAL_TYPE, 
+                    OCI_DTYPE_PARAM, OCI_ATTR_IS_FINAL_TYPE,
                     param_type, &typinf->is_final, NULL,
                     con->err
                 )
@@ -341,7 +341,7 @@ OCI_TypeInfo * TypeInfoGet
                 {
                     CHECK_ATTRIB_GET
                     (
-                        OCI_DTYPE_PARAM, OCI_ATTR_TYPECODE, 
+                        OCI_DTYPE_PARAM, OCI_ATTR_TYPECODE,
                         param_type, &typinf->typecode, NULL,
                         con->err
                     )
@@ -351,7 +351,7 @@ OCI_TypeInfo * TypeInfoGet
 
                 CHECK_ATTRIB_GET
                 (
-                    OCI_DTYPE_PARAM, OCI_ATTR_IS_SUBTYPE, 
+                    OCI_DTYPE_PARAM, OCI_ATTR_IS_SUBTYPE,
                     param_type, &ist, NULL,
                     con->err
                 )
@@ -373,7 +373,7 @@ OCI_TypeInfo * TypeInfoGet
                     /* compute super type full name */
 
                     StringGetFullTypeName(sp_schema_name, NULL, sp_object_name, NULL, sp_fullname,
-                        (sizeof(sp_fullname) / sizeof(otext)) - 1);
+                                          (sizeof(sp_fullname) / sizeof(otext)) - 1);
 
                     /* retrieve the type info of the real object */
 
@@ -390,22 +390,22 @@ OCI_TypeInfo * TypeInfoGet
 #endif
                     {
                         param_list = param_type;
-                        ptype = OCI_DESC_TYPE;
-                        attr_type = OCI_ATTR_LIST_TYPE_ATTRS;
-                        num_type = OCI_ATTR_NUM_TYPE_ATTRS;
+                        ptype      = OCI_DESC_TYPE;
+                        attr_type  = OCI_ATTR_LIST_TYPE_ATTRS;
+                        num_type   = OCI_ATTR_NUM_TYPE_ATTRS;
                         break;
                     }
                     case SQLT_NCO:
                     {
                         typinf->nb_cols = 1;
 
-                        ptype = OCI_DESC_COLLECTION;
+                        ptype      = OCI_DESC_COLLECTION;
                         param_cols = param_type;
 
                         CHECK_ATTRIB_GET
                         (
                             OCI_DTYPE_PARAM, OCI_ATTR_COLLECTION_TYPECODE,
-                            param_type, &typinf->colcode, NULL, 
+                            param_type, &typinf->colcode, NULL,
                             con->err
                         )
                         break;
@@ -426,13 +426,13 @@ OCI_TypeInfo * TypeInfoGet
 #endif
             {
                 CHECK(((OCI_TIF_TABLE == type) && (OCI_PTYPE_VIEW != desc_type)) ||
-                       ((OCI_TIF_VIEW == type) && (OCI_PTYPE_VIEW == desc_type)))
+                      ((OCI_TIF_VIEW == type) && (OCI_PTYPE_VIEW == desc_type)))
 
                 typinf->type = (OCI_PTYPE_VIEW == desc_type ? OCI_TIF_VIEW : OCI_TIF_TABLE);
-                attr_type = OCI_ATTR_LIST_COLUMNS;
-                num_type = OCI_ATTR_NUM_COLS;
-                ptype = OCI_DESC_TABLE;
-                param_list = param_root;
+                attr_type    = OCI_ATTR_LIST_COLUMNS;
+                num_type     = OCI_ATTR_NUM_COLS;
+                ptype        = OCI_DESC_TABLE;
+                param_list   = param_root;
 
                 break;
             }
@@ -442,28 +442,28 @@ OCI_TypeInfo * TypeInfoGet
 
                 /* get link schema, object and database link names */
 
-                CHECK(StringGetAttribute(con, param_root, 
+                CHECK(StringGetAttribute(con, param_root,
                                          OCI_DTYPE_PARAM,
-                                         OCI_ATTR_SCHEMA_NAME, 
+                                         OCI_ATTR_SCHEMA_NAME,
                                          &syn_schema_name,
                                          &size_schema))
 
-                CHECK(StringGetAttribute(con, param_root, 
+                CHECK(StringGetAttribute(con, param_root,
                                          OCI_DTYPE_PARAM,
                                          OCI_ATTR_NAME,
-                                         &syn_object_name, 
+                                         &syn_object_name,
                                          &size_object))
 
-                CHECK(StringGetAttribute(con, param_root, 
+                CHECK(StringGetAttribute(con, param_root,
                                          OCI_DTYPE_PARAM,
                                          OCI_ATTR_LINK,
-                                         &syn_link_name, 
+                                         &syn_link_name,
                                          &size_link))
 
                 /* compute link full name */
 
                 StringGetFullTypeName(syn_schema_name, NULL, syn_object_name, syn_link_name, syn_fullname,
-                    (sizeof(syn_fullname) / sizeof(otext)) - 1);
+                                      (sizeof(syn_fullname) / sizeof(otext)) - 1);
 
                 /* retrieve the type info of the real object */
 
@@ -487,7 +487,7 @@ OCI_TypeInfo * TypeInfoGet
                 CHECK_ATTRIB_GET
                 (
                     OCI_DTYPE_PARAM, attr_type,
-                    param_list, &param_cols, NULL, 
+                    param_list, &param_cols, NULL,
                     con->err
                 )
 
@@ -558,7 +558,7 @@ OCI_TypeInfo * TypeInfoGet
 
         if (FAILURE || syn_typinf)
         {
-            TypeInfoFree(typinf);          
+            TypeInfoFree(typinf);
         }
     )
 }
@@ -607,7 +607,7 @@ unsigned int TypeInfoGetType
     GET_PROP
     (
         unsigned int, OCI_UNKNOWN,
-        OCI_IPC_TYPE_INFO, typinf, 
+        OCI_IPC_TYPE_INFO, typinf,
         type
     )
 }
@@ -640,7 +640,7 @@ unsigned int TypeInfoGetColumnCount
 {
     GET_PROP
     (
-        unsigned int, 0, 
+        unsigned int, 0,
         OCI_IPC_TYPE_INFO, typinf,
         nb_cols
     )
@@ -663,7 +663,7 @@ OCI_Column * TypeInfoGetColumn
     )
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CHECK_BOUND(index, 1,  typinf->nb_cols)
+    CHECK_BOUND(index, 1, typinf->nb_cols)
 
     SET_RETVAL(&(typinf->cols[index - 1]))
 
@@ -681,7 +681,7 @@ const otext * TypeInfoGetName
 {
     GET_PROP
     (
-        const otext*, NULL, 
+        const otext*, NULL,
         OCI_IPC_TYPE_INFO, typinf,
         name
     )
@@ -699,7 +699,7 @@ boolean TypeInfoIsFinalType
     GET_PROP
     (
         boolean, TRUE,
-        OCI_IPC_TYPE_INFO, typinf, 
+        OCI_IPC_TYPE_INFO, typinf,
         is_final
     )
 }
@@ -715,8 +715,8 @@ OCI_TypeInfo* TypeInfoGetSuperType
 {
     GET_PROP
     (
-        OCI_TypeInfo*, NULL, 
-        OCI_IPC_TYPE_INFO, typinf, 
+        OCI_TypeInfo*, NULL,
+        OCI_IPC_TYPE_INFO, typinf,
         parent_type
     )
 }

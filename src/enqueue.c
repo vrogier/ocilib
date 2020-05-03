@@ -30,7 +30,7 @@ static const unsigned int VisibilityModeValues[] =
     OCI_AMV_ON_COMMIT
 };
 
-static const unsigned int EnqueueModeValues[] = 
+static const unsigned int EnqueueModeValues[] =
 {
     OCI_ASD_BEFORE,
     OCI_ASD_TOP
@@ -55,7 +55,7 @@ OCI_Enqueue * EnqueueCreate
     OCI_Enqueue* enqueue = NULL;
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_STRING,    name)
 
     /* allocate enqueue structure */
 
@@ -67,7 +67,7 @@ OCI_Enqueue * EnqueueCreate
     /* allocate enqueue options descriptor */
 
     CHECK(MemoryAllocDescriptor((dvoid * )enqueue->typinf->con->env,
-                                (dvoid **) &enqueue->opth, 
+                                (dvoid **) &enqueue->opth,
                                 OCI_DTYPE_AQENQ_OPTIONS))
 
     CLEANUP_AND_EXIT_FUNC
@@ -127,13 +127,13 @@ boolean EnqueuePut
         /* context */ OCI_IPC_ENQUEUE, enqueue
     )
 
-    dbtext *dbstr   = NULL;
-    int     dbsize  = -1;
-    void   *payload = NULL;
-    void   *ind     = NULL;
+    dbtext *dbstr = NULL;
+    int   dbsize  = -1;
+    void *payload = NULL;
+    void *ind     = NULL;
 
     CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CHECK_PTR(OCI_IPC_MSG, msg)
+    CHECK_PTR(OCI_IPC_MSG,     msg)
     CHECK_COMPAT(enqueue->typinf->tdo == msg->typinf->tdo)
 
     dbstr = StringGetDBString(enqueue->name, &dbsize);
@@ -161,7 +161,7 @@ boolean EnqueuePut
         enqueue->typinf->con->err,
         OCIAQEnq,
         enqueue->typinf->con->cxt, enqueue->typinf->con->err,
-        (OraText *) dbstr, enqueue->opth, msg->proph, 
+        (OraText *) dbstr, enqueue->opth, msg->proph,
         enqueue->typinf->tdo, &payload, &ind, NULL, OCI_DEFAULT
     )
 
@@ -194,7 +194,7 @@ unsigned int EnqueueGetVisibility
 
     CHECK_ATTRIB_GET
     (
-        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY, 
+        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY,
         enqueue->opth, &ret, NULL,
         enqueue->typinf->con->err
     )
@@ -227,7 +227,7 @@ boolean EnqueueSetVisibility
 
     CHECK_ATTRIB_SET
     (
-        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY, 
+        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY,
         enqueue->opth, &value, 0,
         enqueue->typinf->con->err
     )
@@ -258,7 +258,7 @@ unsigned int EnqueueGetSequenceDeviation
 
     CHECK_ATTRIB_GET
     (
-        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_SEQUENCE_DEVIATION, 
+        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_SEQUENCE_DEVIATION,
         enqueue->opth, &ret, NULL, enqueue->typinf->con->err
     )
 
@@ -319,12 +319,12 @@ boolean EnqueueGetRelativeMsgID
     OCIRaw *value = NULL;
 
     CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CHECK_PTR(OCI_IPC_VOID, id);
-    CHECK_PTR(OCI_IPC_VOID, len);
+    CHECK_PTR(OCI_IPC_VOID,    id);
+    CHECK_PTR(OCI_IPC_VOID,    len);
 
     CHECK_ATTRIB_GET
     (
-        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID, 
+        OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID,
         enqueue->opth, &value, NULL,
         enqueue->typinf->con->err
     )
@@ -375,7 +375,7 @@ boolean EnqueueSetRelativeMsgID
     (
         enqueue->typinf->con->err,
         OCIRawAssignBytes,
-        enqueue->typinf->con->env, enqueue->typinf->con->err,  
+        enqueue->typinf->con->env, enqueue->typinf->con->err,
         (ub1*) id, (ub4) len, (OCIRaw **) &value
     )
 

@@ -45,14 +45,14 @@ int FormatParseSql
         /* context */ OCI_IPC_STATEMENT, stmt
     )
 
-    int          size  = 0;
+    int size = 0;
     int          len   = 0;
     boolean      quote = FALSE;
     otext       *pb    = buf;
     const otext *pf    = format;
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, format)
+    CHECK_PTR(OCI_IPC_STRING,    format)
 
     for (; *pf; pf++)
     {
@@ -164,7 +164,7 @@ int FormatParseSql
                     if (tmsp)
                     {
                         otext str_ff[12];
-                        int yy = 0, mm = 0, dd = 0, hh = 0, mi = 0, ss = 0, ff = 0;
+                        int   yy = 0, mm = 0, dd = 0, hh = 0, mi = 0, ss = 0, ff = 0;
 
                         CHECK(TimestampGetDateTime(tmsp, &yy, &mm, &dd,  &hh, &mi, &ss, &ff))
 

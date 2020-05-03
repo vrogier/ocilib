@@ -344,25 +344,26 @@ boolean ElemGetNumberInternal
     CHECK_PTR(OCI_IPC_ELEMENT, elem)
     CHECK_PTR(OCI_IPC_VOID,    value)
 
-    if (ElementIsNull(elem))
+    if (!ElementIsNull(elem))
     {
-        SET_SUCCESS()
+        if (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)
+        {
+            CHECK(NumberTranslateValue(elem->typinf->con, elem->handle,
+                                       elem->typinf->cols[0].subtype,
+                                       value, flag))
+        }
+        else if (OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
+        {
+            CHECK(NumberFromStringInternal(elem->con, value, flag,
+                                           ElementGetString(elem), NULL))
+        }
+        else
+        {
+            THROW_NO_ARGS(ExceptionTypeNotCompatible)
+        }
     }
-    else if (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)
-    {
-        CHECK(NumberTranslateValue(elem->typinf->con, elem->handle,
-                                   elem->typinf->cols[0].subtype,
-                                   value, flag))
-    }
-    else if (OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
-    {
-        CHECK(NumberFromStringInternal(elem->con, value, flag,
-                                       ElementGetString(elem), NULL))
-    }
-    else
-    {
-        THROW_NO_ARGS(ExceptionTypeNotCompatible)
-    }
+
+    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -726,7 +727,8 @@ OCI_Interval * ElementGetInterval
     (
         OCI_CDT_INTERVAL,
         OCI_Interval *,
-        IntervalInitialize(elem->con, (OCI_Interval *) elem->obj, (OCIInterval *) elem->handle,
+        IntervalInitialize(elem->con, (OCI_Interval *) elem->obj, 
+                           (OCIInterval *) elem->handle,
                            elem->typinf->cols[0].subtype)
     )
 #else
@@ -757,7 +759,8 @@ OCI_Lob * ElementGetLob
     (
         OCI_CDT_LOB,
         OCI_Lob*,
-        LobInitialize(elem->con, (OCI_Lob *) elem->obj, (OCILobLocator *) elem->handle,
+        LobInitialize(elem->con, (OCI_Lob *) elem->obj, 
+                      (OCILobLocator *) elem->handle,
                       elem->typinf->cols[0].subtype)
     )
 }
@@ -775,7 +778,8 @@ OCI_File * ElementGetFile
     (
         OCI_CDT_FILE,
         OCI_File*,
-        FileInitialize(elem->con, (OCI_File *) elem->obj, (OCILobLocator *) elem->handle,
+        FileInitialize(elem->con, (OCI_File *) elem->obj,
+                       (OCILobLocator *) elem->handle,
                        elem->typinf->cols[0].subtype)
     )
 }
@@ -829,7 +833,8 @@ OCI_Coll * ElementGetCollection
     (
         OCI_CDT_COLLECTION,
         OCI_Coll*,
-        CollectionInitialize(elem->con, (OCI_Coll *) elem->obj, (OCIColl *) elem->handle,
+        CollectionInitialize(elem->con, (OCI_Coll *) elem->obj,
+                             (OCIColl *) elem->handle,
                              elem->typinf->cols[0].typinf)
     )
 }
@@ -1085,7 +1090,8 @@ boolean ElementSetDate
     (
         OCI_CDT_DATETIME,
         OCI_Date*,
-        DateInitialize(elem->con, (OCI_Date *) elem->obj, (OCIDate *) elem->handle, TRUE, FALSE),
+        DateInitialize(elem->con, (OCI_Date *) elem->obj,
+                       (OCIDate *) elem->handle, TRUE, FALSE),
         DateAssign((OCI_Date *) elem->obj, value)
     )
 }
@@ -1144,7 +1150,8 @@ boolean ElementSetInterval
     (
         OCI_CDT_INTERVAL,
         OCI_Interval*,
-        IntervalInitialize(elem->con, (OCI_Interval *) elem->obj, (OCIInterval *) elem->handle,
+        IntervalInitialize(elem->con, (OCI_Interval *) elem->obj,
+                           (OCIInterval *) elem->handle,
                            elem->typinf->cols[0].subtype),
         IntervalAssign((OCI_Interval *) elem->obj, value)
     )
@@ -1218,7 +1225,8 @@ boolean ElementSetLob
     (
         OCI_CDT_LOB,
         OCI_Lob*,
-        LobInitialize(elem->con, (OCI_Lob *) elem->obj, (OCILobLocator *) elem->handle,
+        LobInitialize(elem->con, (OCI_Lob *) elem->obj,
+                      (OCILobLocator *) elem->handle,
                       elem->typinf->cols[0].subtype),
         LobAssign((OCI_Lob *) elem->obj, value)
     )
@@ -1238,7 +1246,8 @@ boolean ElementSetFile
     (
         OCI_CDT_FILE,
         OCI_File*,
-        FileInitialize(elem->con, (OCI_File *) elem->obj, (OCILobLocator *) elem->handle,
+        FileInitialize(elem->con, (OCI_File *) elem->obj, 
+                       (OCILobLocator *) elem->handle,
                        elem->typinf->cols[0].subtype),
         FileAssign((OCI_File *) elem->obj, value)
     )

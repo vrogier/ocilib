@@ -24,35 +24,34 @@
 #include "memory.h"
 #include "mutex.h"
 
-#define ACQUIRE_LOCK()                          \
-                                                \
-    if (NULL != list->mutex)                    \
-    {                                           \
-        CHECK(MutexAcquire(list->mutex))        \
+#define ACQUIRE_LOCK()                   \
+                                         \
+    if (NULL != list->mutex)             \
+    {                                    \
+        CHECK(MutexAcquire(list->mutex)) \
     }
 
-#define RELEASE_LOCK()                          \
-                                                \
-    if (NULL != list->mutex)                    \
-    {                                           \
-        CHECK(MutexRelease(list->mutex))        \
+#define RELEASE_LOCK()                   \
+                                         \
+    if (NULL != list->mutex)             \
+    {                                    \
+        CHECK(MutexRelease(list->mutex)) \
     }
 
-#define LIST_FOR_EACH(exp)                          \
-                                                    \
-    if (list)                                       \
-    {                                               \
-        OCI_Item *item = NULL;                      \
-        ACQUIRE_LOCK()                              \
-        item = list->head;                          \
-        while (item)                                \
-        {                                           \
-            exp;                                    \
-            item = item->next;                      \
-        }                                           \
-        RELEASE_LOCK()                              \
+#define LIST_FOR_EACH(exp)     \
+                               \
+    if (list)                  \
+    {                          \
+        OCI_Item *item = NULL; \
+        ACQUIRE_LOCK()         \
+        item = list->head;     \
+        while (item)           \
+        {                      \
+            exp;               \
+            item = item->next; \
+        }                      \
+        RELEASE_LOCK()         \
     }
-
 
 /* --------------------------------------------------------------------------------------------- *
  * ListCreateItem
@@ -76,7 +75,7 @@ OCI_Item * ListCreateItem
 
     /* allocate list item entry */
 
-    item =  (OCI_Item *) MemoryAlloc(OCI_IPC_LIST_ITEM, 
+    item =  (OCI_Item *) MemoryAlloc(OCI_IPC_LIST_ITEM,
                                      sizeof(*item),
                                      (size_t) 1, TRUE);
 
@@ -85,7 +84,7 @@ OCI_Item * ListCreateItem
     /* allocate item data buffer */
 
     item->data = (void *) MemoryAlloc(type, (size_t) size,
-                                             (size_t) 1, TRUE);
+                                      (size_t) 1, TRUE);
 
     CHECK_NULL(item->data)
 
@@ -125,8 +124,8 @@ OCI_List* ListCreate
 
     /* allocate list */
 
-    OCI_List *list = (OCI_List *) MemoryAlloc(OCI_IPC_LIST, 
-                                              sizeof(*list), 
+    OCI_List *list = (OCI_List *) MemoryAlloc(OCI_IPC_LIST,
+                                              sizeof(*list),
                                               (size_t) 1, TRUE);
 
     CHECK_NULL(list)
@@ -349,8 +348,8 @@ boolean ListRemove
         /* context */ OCI_IPC_LIST, list
     )
 
-    OCI_Item *item  = NULL;
-    OCI_Item *temp  = NULL;
+    OCI_Item *item = NULL;
+    OCI_Item *temp = NULL;
 
     CHECK_PTR(OCI_IPC_LIST, list)
     CHECK_PTR(OCI_IPC_VOID, data)
@@ -449,7 +448,7 @@ void * ListFind
         /* context */ OCI_IPC_LIST, list
     )
 
-    CHECK_PTR(OCI_IPC_LIST, list)
+    CHECK_PTR(OCI_IPC_LIST,  list)
     CHECK_PTR(OCI_IPC_VOID, param)
 
     void* data = NULL;

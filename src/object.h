@@ -285,14 +285,14 @@ boolean ObjectSetRaw
 
 boolean ObjectSetDate
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext *attr,
     OCI_Date    *value
 );
 
 boolean ObjectSetTimestamp
 (
-    OCI_Object* obj,
+    OCI_Object   * obj,
     const otext   *attr,
     OCI_Timestamp *value
 );

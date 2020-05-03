@@ -70,7 +70,6 @@ boolean SubscriptionDispose
 
             /* Thus, if using OCI in Unicode mode, discard  error ORA-24915 */
 
-
   #if defined(OCI_CHARSET_WIDE)
 
             const sword res = OCISubscriptionUnRegister(sub->con->cxt, sub->subhp, sub->err, (ub4)OCI_DEFAULT);
@@ -155,7 +154,7 @@ OCI_Subscription * SubscriptionRegister
         /* context */ OCI_IPC_CONNECTION, con
     )
 
-    ub4     attr   = 0;
+    ub4 attr = 0;
     int     dbsize = -1;
     dbtext *dbstr  = NULL;
 
@@ -163,8 +162,8 @@ OCI_Subscription * SubscriptionRegister
 
     CHECK_DATABASE_NOTIFY_ENABLED()
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_PROC, handler)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_PROC,       handler)
+    CHECK_PTR(OCI_IPC_STRING,     name)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -195,7 +194,7 @@ OCI_Subscription * SubscriptionRegister
     {
         CHECK_ATTRIB_SET
         (
-            OCI_HTYPE_ENV, OCI_ATTR_SUBSCR_PORTNO, 
+            OCI_HTYPE_ENV, OCI_ATTR_SUBSCR_PORTNO,
             sub->env, &port, sizeof(port),
             sub->con->err
         )
@@ -230,7 +229,7 @@ OCI_Subscription * SubscriptionRegister
     attr =  OCI_SUBSCR_NAMESPACE_DBCHANGE;
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAMESPACE, 
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAMESPACE,
         sub->subhp, &attr, sizeof(attr),
         sub->con->err
     )
@@ -249,22 +248,22 @@ OCI_Subscription * SubscriptionRegister
        As there is no other to way to do regarding the OCI API, let's disable this
        warning just the time to set the callback attribute to the subscription handle */
 
-#ifdef _MSC_VER
-#pragma warning(disable: 4054)
-#endif
+  #ifdef _MSC_VER
+    #pragma warning(disable: 4054)
+  #endif
 
     /* internal callback handler */
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, 
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK,
         sub->subhp, CallbackNotifyChanges, 0,
         sub->con->err
     )
 
-#ifdef _MSC_VER
-#pragma warning(default: 4054)
-#endif
+  #ifdef _MSC_VER
+    #pragma warning(default: 4054)
+  #endif
 
     /* RowIds handling */
 
@@ -273,7 +272,7 @@ OCI_Subscription * SubscriptionRegister
         attr = TRUE;
         CHECK_ATTRIB_SET
         (
-            OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_CHNF_ROWIDS, 
+            OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_CHNF_ROWIDS,
             sub->subhp, &attr, sizeof(attr),
             sub->con->err
         )
@@ -288,7 +287,7 @@ OCI_Subscription * SubscriptionRegister
         sub->con->err
     )
 
-        /* all attributes set, let's register the subscription ! */
+    /* all attributes set, let's register the subscription ! */
 
     CHECK_OCI
     (
@@ -374,7 +373,7 @@ boolean SubscriptionAddStatement
         /* context */ OCI_IPC_NOTIFY, sub
     )
 
-    CHECK_PTR(OCI_IPC_NOTIFY, sub)
+    CHECK_PTR(OCI_IPC_NOTIFY,    sub)
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
 
@@ -413,8 +412,8 @@ const otext * SubscriptionGetName
 {
     GET_PROP
     (
-        const otext*, NULL, 
-        OCI_IPC_NOTIFY, sub, 
+        const otext*, NULL,
+        OCI_IPC_NOTIFY, sub,
         name
     )
 }
@@ -431,7 +430,7 @@ unsigned int SubscriptionGetPort
     GET_PROP
     (
         unsigned int, 0,
-        OCI_IPC_NOTIFY, sub, 
+        OCI_IPC_NOTIFY, sub,
         port
     )
 }
@@ -448,7 +447,7 @@ unsigned int SubscriptionGetTimeout
     GET_PROP
     (
         unsigned int, 0,
-        OCI_IPC_NOTIFY, sub, 
+        OCI_IPC_NOTIFY, sub,
         timeout
     )
 }

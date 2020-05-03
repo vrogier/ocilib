@@ -27,12 +27,14 @@
 #include "strings.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
+
 static unsigned int TimestampTypeValues[] =
 {
     OCI_TIMESTAMP,
     OCI_TIMESTAMP_TZ,
     OCI_TIMESTAMP_LTZ
 };
+
 #endif
 
 /* --------------------------------------------------------------------------------------------- *
@@ -80,7 +82,7 @@ OCI_Timestamp * TimestampInitialize
     {
         if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
         {
-           CHECK
+            CHECK
             (
                 MemoryAllocDescriptor
                 (
@@ -274,8 +276,8 @@ unsigned int TimestampGetType
 {
     GET_PROP
     (
-        unsigned int, OCI_UNKNOWN, 
-        OCI_IPC_TIMESTAMP, tmsp, 
+        unsigned int, OCI_UNKNOWN,
+        OCI_IPC_TIMESTAMP, tmsp,
         type
     )
 }
@@ -296,7 +298,7 @@ boolean TimestampAssign
         /* context */ OCI_IPC_TIMESTAMP, tmsp
     )
 
-    OCI_Timestamp *tmp_tmsp     = NULL;
+    OCI_Timestamp *tmp_tmsp = NULL;
     OCI_Timestamp *tmp_tmsp_src = NULL;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
@@ -313,7 +315,7 @@ boolean TimestampAssign
         tmp_tmsp_src = TimestampCreate(tmsp_src->con, OCI_TIMESTAMP_TZ);
         CHECK_NULL(tmp_tmsp_src)
 
-        tmp_tmsp    =  TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
+        tmp_tmsp =  TimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
         CHECK_NULL(tmp_tmsp)
 
         CHECK(TimestampConvert(tmp_tmsp_src, tmsp_src))
@@ -341,9 +343,9 @@ boolean TimestampAssign
         CHECK(TimestampConvert(tmsp, tmp_tmsp))
     }
 
-#endif
-
     SET_SUCCESS()
+
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -383,7 +385,7 @@ int TimestampCheck
 
     CHECK_OCI
     (
-        tmsp->err, 
+        tmsp->err,
         OCIDateTimeCheck,
         (dvoid *)tmsp->env, tmsp->err,
         tmsp->handle, &value
@@ -422,10 +424,10 @@ int TimestampCompare
 
     CHECK_OCI
     (
-        tmsp->err, 
+        tmsp->err,
         OCIDateTimeCompare,
-        (dvoid *)tmsp->env, tmsp->err, 
-        tmsp->handle, tmsp2->handle, 
+        (dvoid *)tmsp->env, tmsp->err,
+        tmsp->handle, tmsp2->handle,
         &value
     )
 
@@ -466,7 +468,7 @@ boolean TimestampConstruct
 
     CHECK_OCI
     (
-        tmsp->err, 
+        tmsp->err,
         OCIDateTimeConstruct,
         (dvoid *) tmsp->env, tmsp->err,
         tmsp->handle,
@@ -475,6 +477,8 @@ boolean TimestampConstruct
         (ub4) fsec, (OraText *) time_zone,
         (size_t) (time_zone ? otextsize(time_zone) : 0)
     )
+
+    SET_SUCCESS()
 
 #else
 
@@ -488,8 +492,6 @@ boolean TimestampConstruct
     OCI_NOT_USED(time_zone)
 
 #endif
-
-    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -518,15 +520,15 @@ boolean TimestampConvert
 
     CHECK_OCI
     (
-        tmsp->err, 
+        tmsp->err,
         OCIDateTimeConvert,
         (dvoid *)tmsp->env, tmsp->err,
         tmsp_src->handle, tmsp->handle
     )
 
-#endif
-
     SET_SUCCESS()
+
+#endif
 
     EXIT_FUNC()
 }
@@ -548,13 +550,13 @@ boolean TimestampFromString
         /* context */ OCI_IPC_TIMESTAMP, tmsp
     )
 
-    dbtext *dbstr1  = NULL;
+    dbtext *dbstr1 = NULL;
     dbtext *dbstr2  = NULL;
     int     dbsize1 = -1;
     int     dbsize2 = -1;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_STRING, str)
+    CHECK_PTR(OCI_IPC_STRING,    str)
     CHECK_TIMESTAMP_ENABLED(tmsp->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -570,7 +572,7 @@ boolean TimestampFromString
 
     CHECK_OCI
     (
-        tmsp->err, 
+        tmsp->err,
         OCIDateTimeFromText,
         (dvoid *) tmsp->env, tmsp->err,
         (OraText *) dbstr1, (size_t) dbsize1,
@@ -578,6 +580,8 @@ boolean TimestampFromString
         (OraText *) NULL, (size_t) 0,
         tmsp->handle
     )
+
+    SET_SUCCESS()
 
 #else
 
@@ -587,8 +591,6 @@ boolean TimestampFromString
     OCI_NOT_USED(dbsize2)
 
 #endif
-
-    SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -616,13 +618,13 @@ boolean TimestampToString
         /* context */ OCI_IPC_TIMESTAMP, tmsp
     )
 
-    dbtext *dbstr1  = NULL;
+    dbtext *dbstr1 = NULL;
     dbtext *dbstr2  = NULL;
     int     dbsize1 = size * (int) sizeof(otext);
     int     dbsize2 = -1;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_STRING, str)
+    CHECK_PTR(OCI_IPC_STRING,    str)
 
     /* initialize output buffer in case of OCI failure */
 
@@ -642,7 +644,7 @@ boolean TimestampToString
 
     CHECK_OCI
     (
-        tmsp->err, 
+        tmsp->err,
         OCIDateTimeToText,
         (dvoid *) tmsp->env, tmsp->err,
         tmsp->handle, (OraText *) dbstr2,
@@ -653,10 +655,11 @@ boolean TimestampToString
 
     StringCopyDBStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
 
-
     /* set null string terminator */
 
     str[dbcharcount(dbsize1)] = 0;
+
+    SET_SUCCESS()
 
 #else
 
@@ -668,10 +671,8 @@ boolean TimestampToString
 
 #endif
 
-    SET_SUCCESS()
-
     CLEANUP_AND_EXIT_FUNC
-    (   
+    (
         StringReleaseDBString(dbstr1);
         StringReleaseDBString(dbstr2);
     )
@@ -700,17 +701,17 @@ boolean TimestampGetDate
     ub1 dy = 0;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_INT, year)
-    CHECK_PTR(OCI_IPC_INT, month)
-    CHECK_PTR(OCI_IPC_INT, day)
+    CHECK_PTR(OCI_IPC_INT,       year)
+    CHECK_PTR(OCI_IPC_INT,       month)
+    CHECK_PTR(OCI_IPC_INT,       day)
     CHECK_TIMESTAMP_ENABLED(tmsp->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     CHECK_OCI
     (
-        tmsp->err, 
-        OCIDateTimeGetDate, 
+        tmsp->err,
+        OCIDateTimeGetDate,
         (dvoid *)tmsp->env, tmsp->err,
         tmsp->handle, &yr, &mt, &dy
     )
@@ -718,6 +719,8 @@ boolean TimestampGetDate
     *year  = (int) yr;
     *month = (int) mt;
     *day   = (int) dy;
+
+    SET_SUCCESS()
 
 #else
 
@@ -729,8 +732,6 @@ boolean TimestampGetDate
     OCI_NOT_USED(dy)
 
 #endif
-
-    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -760,10 +761,10 @@ boolean TimestampGetTime
     ub4 fs = 0;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_INT, hour)
-    CHECK_PTR(OCI_IPC_INT, min)
-    CHECK_PTR(OCI_IPC_INT, sec)
-    CHECK_PTR(OCI_IPC_INT, fsec)
+    CHECK_PTR(OCI_IPC_INT,       hour)
+    CHECK_PTR(OCI_IPC_INT,       min)
+    CHECK_PTR(OCI_IPC_INT,       sec)
+    CHECK_PTR(OCI_IPC_INT,       fsec)
     CHECK_TIMESTAMP_ENABLED(tmsp->con)
 
     *hour = 0;
@@ -775,9 +776,9 @@ boolean TimestampGetTime
 
     CHECK_OCI
     (
-        tmsp->err, 
+        tmsp->err,
         OCIDateTimeGetTime,
-        (dvoid *)tmsp->env, tmsp->err, 
+        (dvoid *)tmsp->env, tmsp->err,
         tmsp->handle, &hr, &mn, &sc, &fs
     )
 
@@ -785,6 +786,8 @@ boolean TimestampGetTime
     *min  = (int) mn;
     *sec  = (int) sc;
     *fsec = (int) fs;
+
+    SET_SUCCESS()
 
 #else
 
@@ -798,8 +801,6 @@ boolean TimestampGetTime
     OCI_NOT_USED(fs)
 
 #endif
-
-    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -841,11 +842,11 @@ boolean TimestampGetTimeZoneName
         /* context */ OCI_IPC_TIMESTAMP, tmsp
     )
 
-    dbtext *dbstr  = NULL;
-    int     dbsize = size * (int) sizeof(otext);
+    dbtext *dbstr = NULL;
+    int dbsize = size * (int) sizeof(otext);
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_STRING, str)
+    CHECK_PTR(OCI_IPC_STRING,    str)
     CHECK_TIMESTAMP_ENABLED(tmsp->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -854,10 +855,10 @@ boolean TimestampGetTimeZoneName
 
     CHECK_OCI
     (
-        tmsp->err, 
+        tmsp->err,
         OCIDateTimeGetTimeZoneName,
         (dvoid *)tmsp->env, tmsp->err,
-        tmsp->handle, (ub1*) dbstr, 
+        tmsp->handle, (ub1*) dbstr,
         (ub4*) &dbsize
     )
 
@@ -867,6 +868,8 @@ boolean TimestampGetTimeZoneName
 
     str[dbcharcount(dbsize)] = 0;
 
+    SET_SUCCESS()
+
 #else
 
     OCI_NOT_USED(str)
@@ -875,8 +878,6 @@ boolean TimestampGetTimeZoneName
     OCI_NOT_USED(dbsize)
 
 #endif
-
-    SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -904,8 +905,8 @@ boolean TimestampGetTimeZoneOffset
     sb1 sb_hour = 0, sb_min = 0;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_INT, hour)
-    CHECK_PTR(OCI_IPC_INT, min)
+    CHECK_PTR(OCI_IPC_INT,       hour)
+    CHECK_PTR(OCI_IPC_INT,       min)
     CHECK_TIMESTAMP_ENABLED(tmsp->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -921,14 +922,14 @@ boolean TimestampGetTimeZoneOffset
     *hour = sb_hour;
     *min  = sb_min;
 
+    SET_SUCCESS()
+
 #else
 
     OCI_NOT_USED(hour)
     OCI_NOT_USED(min)
 
 #endif
-
-    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -952,7 +953,7 @@ boolean TimestampIntervalAdd
     OCI_Timestamp *tmp = NULL;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_PTR(OCI_IPC_INTERVAL,  itv)
     CHECK_TIMESTAMP_ENABLED(tmsp->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -987,13 +988,13 @@ boolean TimestampIntervalAdd
         CHECK(TimestampConvert(tmsp, tmp))
     }
 
+    SET_SUCCESS()
+
 #else
 
     OCI_NOT_USED(tmp)
 
 #endif
-
-    SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1023,7 +1024,7 @@ boolean TimestampIntervalSub
     OCI_Timestamp *tmp = NULL;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_PTR(OCI_IPC_INTERVAL,  itv)
     CHECK_TIMESTAMP_ENABLED(tmsp->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -1058,13 +1059,13 @@ boolean TimestampIntervalSub
         CHECK(TimestampConvert(tmsp, tmp))
     }
 
+    SET_SUCCESS()
+
 #else
 
     OCI_NOT_USED(tmp)
 
 #endif
-
-    SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1092,10 +1093,9 @@ boolean TimestampSubtract
         /* context */ OCI_IPC_TIMESTAMP, tmsp
     )
 
-
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp2)
-    CHECK_PTR(OCI_IPC_INTERVAL, itv)
+    CHECK_PTR(OCI_IPC_INTERVAL,  itv)
     CHECK_TIMESTAMP_ENABLED(tmsp->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -1104,14 +1104,14 @@ boolean TimestampSubtract
     (
         tmsp->err,
         OCIDateTimeSubtract,
-        (dvoid *)tmsp->env, tmsp->err, 
-        tmsp->handle, tmsp2->handle, 
+        (dvoid *)tmsp->env, tmsp->err,
+        tmsp->handle, tmsp2->handle,
         itv->handle
     )
 
-#endif
-
     SET_SUCCESS()
+
+#endif
 
     EXIT_FUNC()
 }
@@ -1131,8 +1131,8 @@ boolean TimestampSysTimestamp
         /* context */ OCI_IPC_TIMESTAMP, tmsp
     )
 
-    OCI_Timestamp *tmp    = NULL;
-    OCIDateTime   *handle = NULL;
+    OCI_Timestamp *tmp = NULL;
+    OCIDateTime *handle = NULL;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     CHECK_TIMESTAMP_ENABLED(tmsp->con)
@@ -1162,7 +1162,7 @@ boolean TimestampSysTimestamp
     CHECK_OCI
     (
         tmsp->err,
-        OCIDateTimeSysTimeStamp, 
+        OCIDateTimeSysTimeStamp,
         (dvoid *) tmsp->env, tmsp->err, handle
     )
 
@@ -1171,14 +1171,14 @@ boolean TimestampSysTimestamp
         CHECK(TimestampConvert(tmsp, tmp))
     }
 
+    SET_SUCCESS()
+
 #else
 
     OCI_NOT_USED(tmp)
     OCI_NOT_USED(handle)
 
 #endif
-
-    SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1206,7 +1206,7 @@ boolean TimestampToCTime
         /* context */ OCI_IPC_TIMESTAMP, tmsp
     )
 
-    time_t    time = (time_t) -1;
+    time_t time = (time_t) -1;
     int       msec = 0;
     struct tm t;
 

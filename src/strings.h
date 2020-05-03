@@ -52,22 +52,22 @@ void StringTranslate
     size_t size_char_out
 );
 
-#define StringAnsiToNative(s, d, l)    \
+#define StringAnsiToNative(s, d, l) \
     StringTranslate( (void *) (s), (void *) (d), l, sizeof(char),   sizeof(otext) )
 
-#define StringNativeToAnsi(s, d, l)     \
+#define StringNativeToAnsi(s, d, l) \
     StringTranslate( (void *) (s), (void *) (d), l, sizeof(otext),  sizeof(char)  )
 
-#define StringUTF16ToUTF32(s, d, l)     \
+#define StringUTF16ToUTF32(s, d, l) \
     StringTranslate( (void *) (s), (void *) (d), l, sizeof(short),  sizeof(int)   )
 
-#define StringUTF32ToUTF16(s, d, l)    \
+#define StringUTF32ToUTF16(s, d, l) \
     StringTranslate( (void *) (s), (void *) (d), l, sizeof(int),    sizeof(short) )
 
-#define StringOracleToNative(s, d, l)  \
+#define StringOracleToNative(s, d, l) \
     StringTranslate( (void *) (s), (void *) (d), l, sizeof(dbtext), sizeof(otext) )
 
-#define StringRawCopy(s, d, l)          \
+#define StringRawCopy(s, d, l) \
     StringTranslate( (void *) (s), (void *) (d), l, sizeof(otext),  sizeof(otext) )
 
 dbtext* StringGetDBString

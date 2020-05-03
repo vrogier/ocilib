@@ -76,12 +76,12 @@ OCI_Interval * IntervalInitialize
             (
                 MemoryAllocDescriptor
                 (
-                     (dvoid  *)itv->env, (dvoid **)(void *)&itv->handle,
-                     (ub4)ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type)
+                    (dvoid  *)itv->env, (dvoid **)(void *)&itv->handle,
+                    (ub4)ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type)
                 )
             )
 
-                itv->hstate = OCI_OBJECT_ALLOCATED;
+            itv->hstate = OCI_OBJECT_ALLOCATED;
         }
     }
     else
@@ -90,7 +90,7 @@ OCI_Interval * IntervalInitialize
     }
 
     CLEANUP_AND_EXIT_FUNC
-    (       
+    (
         if (FAILURE)
         {
             IntervalFree(itv);
@@ -287,14 +287,14 @@ boolean IntervalAssign
     CHECK_OCI
     (
         itv->err,
-        OCIIntervalAssign, 
-        (dvoid *) itv->env, itv->err, 
+        OCIIntervalAssign,
+        (dvoid *) itv->env, itv->err,
         itv_src->handle, itv->handle
     )
 
-#endif
-
     SET_SUCCESS()
+
+#endif
 
     EXIT_FUNC()
 }
@@ -310,7 +310,7 @@ int IntervalCheck
 {
     ENTER_FUNC
     (
-        /* returns */ int , OCI_ERROR,
+        /* returns */ int, OCI_ERROR,
         /* context */ OCI_IPC_INTERVAL, itv
     )
 
@@ -322,8 +322,8 @@ int IntervalCheck
 
     CHECK_OCI
     (
-        itv->err, 
-        OCIIntervalCheck, 
+        itv->err,
+        OCIIntervalCheck,
         (dvoid *) itv->env, itv->err,
         itv->handle, &value
     )
@@ -360,10 +360,10 @@ int IntervalCompare
 
     CHECK_OCI
     (
-        itv->err, 
+        itv->err,
         OCIIntervalCompare,
-        (dvoid *) itv->env, itv->err, 
-        itv->handle, itv2->handle, 
+        (dvoid *) itv->env, itv->err,
+        itv->handle, itv2->handle,
         &value
     )
 
@@ -390,11 +390,11 @@ boolean IntervalFromString
         /* context */ OCI_IPC_INTERVAL, itv
     )
 
-    dbtext *dbstr  = NULL;
-    int     dbsize = -1;
+    dbtext *dbstr = NULL;
+    int dbsize = -1;
 
     CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_STRING, str)
+    CHECK_PTR(OCI_IPC_STRING,   str)
 
     dbstr = StringGetDBString(str, &dbsize);
 
@@ -404,14 +404,14 @@ boolean IntervalFromString
     (
         itv->err,
         OCIIntervalFromText,
-        (dvoid *) itv->env, itv->err, 
+        (dvoid *) itv->env, itv->err,
         (OraText *) dbstr, (size_t) dbsize,
         itv->handle
     )
 
-#endif
-
     SET_SUCCESS()
+
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -438,12 +438,12 @@ boolean IntervalToString
         /* context */ OCI_IPC_INTERVAL, itv
     )
 
-    dbtext *dbstr  = NULL;
-    int     dbsize = size * (int)   sizeof(otext);
-    size_t  len    = 0;
+    dbtext *dbstr = NULL;
+    int    dbsize = size * (int)   sizeof(otext);
+    size_t len    = 0;
 
     CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_STRING, str)
+    CHECK_PTR(OCI_IPC_STRING,   str)
 
     /* initialize output buffer in case of OCI failure */
 
@@ -505,11 +505,11 @@ boolean IntervalFromTimeZone
         /* context */ OCI_IPC_INTERVAL, itv
     )
 
-    dbtext *dbstr  = NULL;
-    int     dbsize = -1;
+    dbtext *dbstr = NULL;
+    int dbsize = -1;
 
     CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_STRING, str)
+    CHECK_PTR(OCI_IPC_STRING,   str)
 
     dbstr = StringGetDBString(str, &dbsize);
 
@@ -520,13 +520,13 @@ boolean IntervalFromTimeZone
         itv->err,
         OCIIntervalFromTZ,
         (dvoid *) itv->env, itv->err,
-        (CONST OraText *) dbstr, 
+        (CONST OraText *) dbstr,
         (size_t) dbsize, itv->handle
     )
 
-#endif
-
     SET_SUCCESS()
+
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -555,10 +555,10 @@ boolean IntervalGetDaySecond
     )
 
     CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_INT, hour)
-    CHECK_PTR(OCI_IPC_INT, min)
-    CHECK_PTR(OCI_IPC_INT, sec)
-    CHECK_PTR(OCI_IPC_INT, fsec)
+    CHECK_PTR(OCI_IPC_INT,      hour)
+    CHECK_PTR(OCI_IPC_INT,      min)
+    CHECK_PTR(OCI_IPC_INT,      sec)
+    CHECK_PTR(OCI_IPC_INT,      fsec)
 
     *day  = 0;
     *hour = 0;
@@ -577,6 +577,8 @@ boolean IntervalGetDaySecond
         (sb4 *) sec, (sb4 *) fsec, itv->handle
     )
 
+    SET_SUCCESS()
+
 #else
 
     OCI_NOT_USED(day)
@@ -586,8 +588,6 @@ boolean IntervalGetDaySecond
     OCI_NOT_USED(fsec)
 
 #endif
-
-    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -610,8 +610,8 @@ boolean IntervalGetYearMonth
     )
 
     CHECK_PTR(OCI_IPC_INTERVAL, itv)
-    CHECK_PTR(OCI_IPC_INT, year)
-    CHECK_PTR(OCI_IPC_INT, month)
+    CHECK_PTR(OCI_IPC_INT,      year)
+    CHECK_PTR(OCI_IPC_INT,      month)
 
     *year  = 0;
     *month = 0;
@@ -627,9 +627,9 @@ boolean IntervalGetYearMonth
         itv->handle
     )
 
-#endif
-
     SET_SUCCESS()
+
+#endif
 
     EXIT_FUNC()
 }
@@ -656,7 +656,6 @@ boolean IntervalSetDaySecond
 
     CHECK_PTR(OCI_IPC_INTERVAL, itv)
 
-
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     CHECK_OCI
@@ -668,6 +667,8 @@ boolean IntervalSetDaySecond
         (sb4) sec, (sb4) fsec, itv->handle
     )
 
+    SET_SUCCESS()
+
 #else
 
     OCI_NOT_USED(day)
@@ -677,8 +678,6 @@ boolean IntervalSetDaySecond
     OCI_NOT_USED(fsec)
 
 #endif
-
-    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -707,10 +706,12 @@ boolean IntervalSetYearMonth
     CHECK_OCI
     (
         itv->err,
-        OCIIntervalSetYearMonth, 
-        (dvoid *) itv->env, itv->err, 
+        OCIIntervalSetYearMonth,
+        (dvoid *) itv->env, itv->err,
         (sb4) year, (sb4) month, itv->handle
     )
+
+    SET_SUCCESS()
 
 #else
 
@@ -718,8 +719,6 @@ boolean IntervalSetYearMonth
     OCI_NOT_USED(month)
 
 #endif
-
-    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -753,9 +752,9 @@ boolean IntervalAdd
         itv2->handle, itv->handle
     )
 
-#endif
-
     SET_SUCCESS()
+
+#endif
 
     EXIT_FUNC()
 }
@@ -789,9 +788,9 @@ boolean IntervalSubtract
         itv2->handle, itv->handle
     )
 
-#endif
-
     SET_SUCCESS()
+
+#endif
 
     EXIT_FUNC()
 }

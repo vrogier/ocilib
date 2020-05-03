@@ -36,7 +36,7 @@ static unsigned int GroupingModeValues[] =
     OCI_AGM_TRANSACTIONNAL
 };
 
-static unsigned int QueueTypeValues[] = 
+static unsigned int QueueTypeValues[] =
 {
     OCI_AQT_NORMAL,
     OCI_AQT_EXCEPTION,
@@ -69,8 +69,8 @@ boolean QueueCreate
     OCI_Statement *st = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_name)
-    CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CHECK_PTR(OCI_IPC_STRING,     queue_name)
+    CHECK_PTR(OCI_IPC_STRING,     queue_table)
     CHECK_ENUM_VALUE(queue_type, QueueTypeValues, OTEXT("Queue type"))
 
     st = StatementCreate(con);
@@ -113,7 +113,6 @@ boolean QueueCreate
 
     CHECK(StatementExecute(st))
 
-
     SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
@@ -148,7 +147,7 @@ boolean QueueAlter
     OCI_Statement *st = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CHECK_PTR(OCI_IPC_STRING,     queue_name)
 
     st = StatementCreate(con);
     CHECK_NULL(st)
@@ -209,7 +208,7 @@ boolean QueueDrop
     OCI_Statement *st = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CHECK_PTR(OCI_IPC_STRING,     queue_name)
 
     st = StatementCreate(con);
     CHECK_NULL(st)
@@ -264,7 +263,7 @@ boolean QueueStart
     OCI_Statement *st = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CHECK_PTR(OCI_IPC_STRING,     queue_name)
 
     st = StatementCreate(con);
     CHECK_NULL(st)
@@ -333,11 +332,10 @@ boolean QueueStop
     OCI_Statement *st = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_name)
+    CHECK_PTR(OCI_IPC_STRING,     queue_name)
 
     st = StatementCreate(con);
     CHECK_NULL(st)
-
 
     CHECK
     (
@@ -415,11 +413,11 @@ boolean QueueTableCreate
     OCI_Statement *st = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_table)
-    CHECK_PTR(OCI_IPC_STRING, queue_payload_type)
+    CHECK_PTR(OCI_IPC_STRING,     queue_table)
+    CHECK_PTR(OCI_IPC_STRING,     queue_payload_type)
     CHECK_ENUM_VALUE(message_grouping, GroupingModeValues, OTEXT("Grouping mode"))
 
-        st = StatementCreate(con);
+    st = StatementCreate(con);
     CHECK_NULL(st)
 
     CHECK
@@ -496,7 +494,7 @@ boolean QueueTableAlter
     OCI_Statement *st = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CHECK_PTR(OCI_IPC_STRING,     queue_table)
 
     st = StatementCreate(con);
     CHECK_NULL(st)
@@ -556,7 +554,7 @@ boolean QueueTableDrop
     OCI_Statement *st = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CHECK_PTR(OCI_IPC_STRING,     queue_table)
 
     st = StatementCreate(con);
     CHECK_NULL(st)
@@ -619,7 +617,7 @@ boolean QueueTablePurge
     OCI_Statement *st = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_table)
+    CHECK_PTR(OCI_IPC_STRING,     queue_table)
     CHECK_ENUM_VALUE(delivery_mode, DeliveryModeValues, OTEXT("Delivery mode"))
     CHECK(con->ver_num >= OCI_10_1)
 
@@ -688,8 +686,8 @@ boolean QueueTableMigrate
     OCI_Statement *st = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING, queue_table)
-    CHECK_PTR(OCI_IPC_STRING, compatible)
+    CHECK_PTR(OCI_IPC_STRING,     queue_table)
+    CHECK_PTR(OCI_IPC_STRING,     compatible)
 
     st = StatementCreate(con);
     CHECK_NULL(st)

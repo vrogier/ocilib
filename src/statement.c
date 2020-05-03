@@ -43,32 +43,34 @@
 #include "timestamp.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
+
 static unsigned int TimestampTypeValues[] =
 {
     OCI_TIMESTAMP,
     OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ
 };
 
-static unsigned int IntervalTypeValues[]  =
+static unsigned int IntervalTypeValues[] =
 {
     OCI_INTERVAL_YM,
     OCI_INTERVAL_DS
 };
+
 #endif
 
-static unsigned int LobTypeValues[]  = 
+static unsigned int LobTypeValues[] =
 {
     OCI_CLOB,
     OCI_NCLOB, OCI_BLOB
 };
 
-static unsigned int FileTypeValues[] = 
+static unsigned int FileTypeValues[] =
 {
     OCI_CFILE,
     OCI_BFILE
 };
 
-static unsigned int FetchModeValues[] = 
+static unsigned int FetchModeValues[] =
 {
     OCI_SFM_DEFAULT,
     OCI_SFM_SCROLLABLE
@@ -86,96 +88,96 @@ static unsigned int BindAllocationValues[] =
     OCI_BAM_INTERNAL
 };
 
-static unsigned int LongModeValues[] = 
+static unsigned int LongModeValues[] =
 {
     OCI_LONG_EXPLICIT,
     OCI_LONG_IMPLICIT
 };
 
-#define CHECK_BIND(stmt, name, data, type, ext_only)                            \
-                                                                                \
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)                                          \
-    CHECK_PTR(OCI_IPC_STRING, name)                                             \
-    CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)                                  \
-    {                                                                           \
-        const boolean ext_only_value = (ext_only);                              \
-        if ((ext_only_value) &&                                                 \
-            (OCI_BAM_INTERNAL == (stmt)->bind_alloc_mode) &&                    \
-            ((data) != NULL))                                                   \
-        {                                                                       \
-            THROW(ExceptionExternalBindingNotAllowed, (name))                   \
-        }                                                                       \
-                                                                                \
-        if ((ext_only_value) || OCI_BAM_EXTERNAL == (stmt)->bind_alloc_mode)    \
-        {                                                                       \
-            CHECK_PTR(type, data)                                               \
-        }                                                                       \
-    }                                                                           \
+#define CHECK_BIND(stmt, name, data, type, ext_only)                         \
+                                                                             \
+    CHECK_PTR(OCI_IPC_STATEMENT, stmt)                                       \
+    CHECK_PTR(OCI_IPC_STRING,    name)                                       \
+    CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)                               \
+    {                                                                        \
+        const boolean ext_only_value = (ext_only);                           \
+        if ((ext_only_value) &&                                              \
+            (OCI_BAM_INTERNAL == (stmt)->bind_alloc_mode) &&                 \
+            ((data) != NULL))                                                \
+        {                                                                    \
+            THROW(ExceptionExternalBindingNotAllowed, (name))                \
+        }                                                                    \
+                                                                             \
+        if ((ext_only_value) || OCI_BAM_EXTERNAL == (stmt)->bind_alloc_mode) \
+        {                                                                    \
+            CHECK_PTR(type, data)                                            \
+        }                                                                    \
+    }                                                                        \
 
-#define CHECK_REGISTER(stmt, name)                                              \
-                                                                                \
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)                                          \
-    CHECK_PTR(OCI_IPC_STRING, name)                                             \
-
-
-#define SET_ARG_NUM(type, func)                                     \
-                                                                    \
-    type src = func(rs, i), *dst = ( type *) va_arg(args, type *);  \
-    if (dst)                                                        \
-    {                                                               \
-        *dst = src;                                                 \
-    }                                                               \
-
-#define SET_ARG_HANDLE(type, func, assign)                          \
-                                                                    \
-    type *src = func(rs, i), *dst = (type *) va_arg(args, type *);  \
-    if (src && dst)                                                 \
-    {                                                               \
-        res = assign(dst, src);                                     \
-    }                                                               \
-
-#define BIND_DATA(...)                                              \
-                                                                    \
-    CHECK_NULL(BindCreate(stmt, data, name,                         \
-                          OCI_BIND_INPUT, __VA_ARGS__))             \
-
-#define REGISTER_DATA(...)                                          \
-                                                                    \
-    CHECK_NULL(BindCreate(stmt, NULL, name,                         \
-                          OCI_BIND_OUTPUT, __VA_ARGS__))            \
+#define CHECK_REGISTER(stmt, name)     \
+                                       \
+    CHECK_PTR(OCI_IPC_STATEMENT, stmt) \
+    CHECK_PTR(OCI_IPC_STRING,    name) \
 
 
-#define OCI_BIND_CALL(type, check, ...)                             \
-                                                                    \
-    ENTER_FUNC(boolean, FALSE, OCI_IPC_STATEMENT, stmt)             \
-                                                                    \
-    CHECK_BIND(stmt, name, data, type, check)                       \
-                                                                    \
-    BIND_DATA(__VA_ARGS__)                                          \
-                                                                    \
-    SET_SUCCESS()                                             \
-                                                                    \
-    EXIT_FUNC()                                                     \
+#define SET_ARG_NUM(type, func)                                    \
+                                                                   \
+    type src = func(rs, i), *dst = ( type *) va_arg(args, type *); \
+    if (dst)                                                       \
+    {                                                              \
+        *dst = src;                                                \
+    }                                                              \
 
-#define BIND_CALL_NULL_ALLOWED(type, ...)                           \
-                                                                    \
+#define SET_ARG_HANDLE(type, func, assign)                         \
+                                                                   \
+    type *src = func(rs, i), *dst = (type *) va_arg(args, type *); \
+    if (src && dst)                                                \
+    {                                                              \
+        res = assign(dst, src);                                    \
+    }                                                              \
+
+#define BIND_DATA(...)                                  \
+                                                        \
+    CHECK_NULL(BindCreate(stmt, data, name,             \
+                          OCI_BIND_INPUT, __VA_ARGS__)) \
+
+#define REGISTER_DATA(...)                               \
+                                                         \
+    CHECK_NULL(BindCreate(stmt, NULL, name,              \
+                          OCI_BIND_OUTPUT, __VA_ARGS__)) \
+
+
+#define OCI_BIND_CALL(type, check, ...)                 \
+                                                        \
+    ENTER_FUNC(boolean, FALSE, OCI_IPC_STATEMENT, stmt) \
+                                                        \
+    CHECK_BIND(stmt, name, data, type, check)           \
+                                                        \
+    BIND_DATA(__VA_ARGS__)                              \
+                                                        \
+    SET_SUCCESS()                                       \
+                                                        \
+    EXIT_FUNC()                                         \
+
+#define BIND_CALL_NULL_ALLOWED(type, ...) \
+                                          \
     OCI_BIND_CALL(type, FALSE, __VA_ARGS__)
 
-#define BIND_CALL_NULL_FORBIDDEN(type, ...)                         \
-                                                                    \
+#define BIND_CALL_NULL_FORBIDDEN(type, ...) \
+                                            \
     OCI_BIND_CALL(type, TRUE, __VA_ARGS__)
 
-#define REGISTER_CALL(...)                                          \
-                                                                    \
-    ENTER_FUNC(boolean, FALSE, OCI_IPC_STATEMENT, stmt)             \
-                                                                    \
-    CHECK_REGISTER(stmt, name)                                      \
-                                                                    \
-    REGISTER_DATA(__VA_ARGS__)                                      \
-                                                                    \
-    SET_SUCCESS()                                             \
-                                                                    \
-    EXIT_FUNC()                                                     \
+#define REGISTER_CALL(...)                              \
+                                                        \
+    ENTER_FUNC(boolean, FALSE, OCI_IPC_STATEMENT, stmt) \
+                                                        \
+    CHECK_REGISTER(stmt, name)                          \
+                                                        \
+    REGISTER_DATA(__VA_ARGS__)                          \
+                                                        \
+    SET_SUCCESS()                                       \
+                                                        \
+    EXIT_FUNC()                                         \
 
 #define OCI_BIND_GET_SCALAR(s, t, i) (bnd->is_array ? ((t *) (s)) + (i) : (t *) (s))
 #define OCI_BIND_GET_HANDLE(s, t, i) (bnd->is_array ? ((t **) (s))[i] : (t *) (s))
@@ -209,7 +211,7 @@ boolean StatementBatchErrorClear
         FREE(stmt->batch)
     }
 
-    SET_SUCCESS() 
+    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -561,7 +563,7 @@ boolean StatementBindUpdate
                     (
                         bnd->stmt->con->err,
                         OCINumberAssign,
-                        bnd->stmt->con->err, 
+                        bnd->stmt->con->err,
                         src_num, dst_num->handle
                     )
                 }
@@ -574,7 +576,7 @@ boolean StatementBindUpdate
 
             if (dst_bint)
             {
-                CHECK(NumberTranslateValue(bnd->stmt->con, src_number, 
+                CHECK(NumberTranslateValue(bnd->stmt->con, src_number,
                                            OCI_NUM_NUMBER, dst_bint, bnd->subtype))
             }
         }
@@ -592,7 +594,7 @@ boolean StatementBindUpdate
             (
                 bnd->stmt->con->err,
                 OCIDateAssign,
-                bnd->stmt->con->err, src_date, 
+                bnd->stmt->con->err, src_date,
                 dst_date->handle
             )
         }
@@ -623,7 +625,7 @@ boolean StatementBindUpdate
     }
 
     SET_SUCCESS()
-    
+
     EXIT_FUNC()
 }
 
@@ -731,7 +733,6 @@ boolean StatementBindUpdateAll
         /* context */ OCI_IPC_STATEMENT, stmt
     )
 
-
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
 
     for (ub4 i = 0; i < stmt->nb_ubinds; i++)
@@ -792,8 +793,8 @@ boolean StatementFetchIntoUserVariables
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
 
-    OCI_Resultset *rs  = NULL;
-    boolean        res = FALSE;
+    OCI_Resultset *rs = NULL;
+    boolean res = FALSE;
 
     /* get resultset */
 
@@ -1108,7 +1109,7 @@ boolean StatementCheckImplicitResultsets
             /* allocate resultset handles array */
 
             ALLOC_DATA(OCI_IPC_STATEMENT_ARRAY, stmt->stmts, stmt->nb_stmt)
-            ALLOC_DATA(OCI_IPC_RESULTSET_ARRAY, stmt->rsts, stmt->nb_stmt)
+            ALLOC_DATA(OCI_IPC_RESULTSET_ARRAY, stmt->rsts,  stmt->nb_stmt)
 
             while (OCI_SUCCESS == OCIStmtGetNextResult(stmt->stmt, stmt->con->err, (dvoid  **)&result, &rs_type, OCI_DEFAULT))
             {
@@ -1164,7 +1165,7 @@ boolean StatementBatchErrorInit
 
     CHECK_ATTRIB_GET
     (
-        OCI_HTYPE_STMT, OCI_ATTR_NUM_DML_ERRORS, 
+        OCI_HTYPE_STMT, OCI_ATTR_NUM_DML_ERRORS,
         stmt->stmt, &err_count, NULL,
         stmt->con->err
     )
@@ -1198,18 +1199,18 @@ boolean StatementBatchErrorInit
 
             if (NULL != hndl)
             {
-                sb4 err_code = 0;
+                sb4   err_code = 0;
                 otext buffer[512];
-                int err_size = osizeof(buffer);
+                int   err_size = osizeof(buffer);
 
                 dbtext * err_msg = StringGetDBString(buffer, &err_size);
 
                 OCIAttrGet((dvoid *)hndl, (ub4)OCI_HTYPE_ERROR,
-                    (void *)&row, (ub4 *)NULL,
-                    (ub4)OCI_ATTR_DML_ROW_OFFSET, stmt->con->err);
+                           (void *)&row, (ub4 *)NULL,
+                           (ub4)OCI_ATTR_DML_ROW_OFFSET, stmt->con->err);
 
                 OCIErrorGet((dvoid *)hndl, (ub4)1, (OraText *)NULL, &err_code,
-                    (OraText *)err_msg, (ub4)err_size, (ub4)OCI_HTYPE_ERROR);
+                            (OraText *)err_msg, (ub4)err_size, (ub4)OCI_HTYPE_ERROR);
 
                 ErrorSet
                 (
@@ -1231,11 +1232,11 @@ boolean StatementBatchErrorInit
     SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
-    (     
+    (
         if (NULL != hndl)
         {
             MemoryFreeHandle(hndl, OCI_HTYPE_ERROR);
-        }   
+        }
     )
 }
 
@@ -1255,8 +1256,8 @@ boolean StatementPrepareInternal
         /* context */ OCI_IPC_STATEMENT, stmt
     )
 
-    dbtext *dbstr  = NULL;
-    int     dbsize = -1;
+    dbtext *dbstr = NULL;
+    int dbsize = -1;
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
 
@@ -1285,14 +1286,14 @@ boolean StatementPrepareInternal
     {
         ub4 mode = OCI_DEFAULT;
 
-#if OCI_VERSION_COMPILE >= OCI_12_2
+  #if OCI_VERSION_COMPILE >= OCI_12_2
 
         if (ConnectionIsVersionSupported(stmt->con, OCI_12_2))
         {
             mode |= OCI_PREP2_GET_SQL_ID;
         }
 
-#endif
+  #endif
 
         CHECK_OCI
         (
@@ -1357,8 +1358,8 @@ boolean StatementExecuteInternal
     )
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    
-    ub4   iters  = 0;
+
+    ub4 iters = 0;
 
     /* set up iterations and mode values for execution */
 
@@ -1380,11 +1381,11 @@ boolean StatementExecuteInternal
 
     /* reset batch errors */
 
-   CHECK(StatementBatchErrorClear(stmt))
+    CHECK(StatementBatchErrorClear(stmt))
 
     /* check bind objects for updating their null indicator status */
 
-   CHECK(StatementBindCheckAll(stmt))
+    CHECK(StatementBindCheckAll(stmt))
 
     /* check current resultsets */
 
@@ -1411,8 +1412,9 @@ boolean StatementExecuteInternal
 
     /* Oracle execute call */
 
-    sword ret = OCIStmtExecute(stmt->con->cxt, stmt->stmt, stmt->con->err, iters,
-                               (ub4)0, (OCISnapshot *)NULL, (OCISnapshot *)NULL, mode);
+    const sword ret = OCIStmtExecute(stmt->con->cxt, stmt->stmt, stmt->con->err, 
+                                     iters, (ub4)0, (OCISnapshot *)NULL, 
+                                     (OCISnapshot *)NULL, mode);
 
     /* check result */
 
@@ -1711,7 +1713,7 @@ boolean StatementPrepare
     )
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
+    CHECK_PTR(OCI_IPC_STRING,    sql)
 
     CHECK(StatementPrepareInternal(stmt, sql))
 
@@ -1762,7 +1764,7 @@ boolean StatementExecuteStmt
     )
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
+    CHECK_PTR(OCI_IPC_STRING,    sql)
 
     CHECK(StatementPrepareInternal(stmt, sql))
     CHECK(StatementExecuteInternal(stmt, OCI_DEFAULT))
@@ -1789,8 +1791,8 @@ boolean StatementParse
     )
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
-    
+    CHECK_PTR(OCI_IPC_STRING,    sql)
+
     CHECK(StatementPrepareInternal(stmt, sql))
     CHECK(StatementExecuteInternal(stmt, OCI_PARSE_ONLY))
 
@@ -1816,7 +1818,7 @@ boolean StatementDescribe
     )
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
+    CHECK_PTR(OCI_IPC_STRING,    sql)
 
     CHECK(StatementPrepareInternal(stmt, sql))
 
@@ -1853,9 +1855,9 @@ boolean StatementPrepareFmt
     va_list second_pass_args;
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
+    CHECK_PTR(OCI_IPC_STRING,    sql)
 
-    va_copy(first_pass_args, args);
+    va_copy(first_pass_args,  args);
     va_copy(second_pass_args, args);
 
     /* first, get buffer size */
@@ -1912,9 +1914,9 @@ boolean StatementExecuteStmtFmt
     otext* sql_fmt = NULL;
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
+    CHECK_PTR(OCI_IPC_STRING,    sql)
 
-    va_copy(first_pass_args, args);
+    va_copy(first_pass_args,  args);
     va_copy(second_pass_args, args);
 
     /* first, get buffer size */
@@ -1973,9 +1975,9 @@ boolean StatementParseFmt
     otext* sql_fmt = NULL;
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
+    CHECK_PTR(OCI_IPC_STRING,    sql)
 
-    va_copy(first_pass_args, args);
+    va_copy(first_pass_args,  args);
     va_copy(second_pass_args, args);
 
     /* first, get buffer size */
@@ -1988,7 +1990,7 @@ boolean StatementParseFmt
 
         ALLOC_DATA(OCI_IPC_STRING, sql_fmt, size + 1)
 
-       /* format buffer */
+        /* format buffer */
 
         if (FormatParseSql(stmt, sql_fmt, sql, &second_pass_args) > 0)
         {
@@ -2033,9 +2035,9 @@ boolean StatementDescribeFmt
     otext* sql_fmt = NULL;
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, sql)
+    CHECK_PTR(OCI_IPC_STRING,    sql)
 
-    va_copy(first_pass_args, args);
+    va_copy(first_pass_args,  args);
     va_copy(second_pass_args, args);
 
     /* first, get buffer size */
@@ -2125,7 +2127,7 @@ unsigned int StatementGetBindArraySize
 {
     GET_PROP
     (
-        unsigned int, 0, 
+        unsigned int, 0,
         OCI_IPC_STATEMENT, stmt,
         nb_iters
     )
@@ -2199,7 +2201,7 @@ boolean StatementBindBoolean
 
     SET_SUCCESS()
 
-   EXIT_FUNC()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3077,7 +3079,7 @@ boolean StatementBindArrayOfFiles
 
     SET_SUCCESS()
 
-   EXIT_FUNC()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3504,7 +3506,7 @@ boolean StatementRegisterObject
 
     SET_SUCCESS()
 
-   EXIT_FUNC()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3603,8 +3605,8 @@ unsigned int StatementGetStatementType
 {
     GET_PROP
     (
-        unsigned int, OCI_UNKNOWN, 
-        OCI_IPC_STATEMENT, stmt, 
+        unsigned int, OCI_UNKNOWN,
+        OCI_IPC_STATEMENT, stmt,
         type
     )
 }
@@ -3663,7 +3665,7 @@ unsigned int StatementGetFetchMode
 {
     GET_PROP
     (
-        unsigned int, OCI_UNKNOWN, 
+        unsigned int, OCI_UNKNOWN,
         OCI_IPC_STATEMENT, stmt,
         exec_mode
     )
@@ -3698,7 +3700,7 @@ unsigned int StatementGetBindMode
 {
     GET_PROP
     (
-        unsigned int, OCI_UNKNOWN, 
+        unsigned int, OCI_UNKNOWN,
         OCI_IPC_STATEMENT, stmt,
         bind_mode
     )
@@ -3734,7 +3736,7 @@ unsigned int StatementGetBindAllocation
     GET_PROP
     (
         unsigned int, OCI_UNKNOWN,
-        OCI_IPC_STATEMENT, stmt, 
+        OCI_IPC_STATEMENT, stmt,
         bind_alloc_mode
     )
 }
@@ -3757,7 +3759,6 @@ boolean StatementSetFetchSize
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     CHECK_MIN(size, 1)
-
 
     stmt->fetch_size = size;
 
@@ -3866,7 +3867,7 @@ boolean StatementSetPrefetchMemory
     {
         CHECK_ATTRIB_SET
         (
-            OCI_HTYPE_STMT, OCI_ATTR_PREFETCH_MEMORY, 
+            OCI_HTYPE_STMT, OCI_ATTR_PREFETCH_MEMORY,
             stmt->stmt, &stmt->prefetch_mem, sizeof(stmt->prefetch_mem),
             stmt->con->err
         )
@@ -3932,7 +3933,7 @@ unsigned int StatementGetLongMaxSize
     GET_PROP
     (
         unsigned int, 0,
-        OCI_IPC_STATEMENT, stmt, 
+        OCI_IPC_STATEMENT, stmt,
         long_size
     )
 }
@@ -3966,8 +3967,8 @@ unsigned int StatementGetLongMode
 {
     GET_PROP
     (
-        unsigned int, OCI_UNKNOWN, 
-        OCI_IPC_STATEMENT, stmt, 
+        unsigned int, OCI_UNKNOWN,
+        OCI_IPC_STATEMENT, stmt,
         long_mode
     )
 }
@@ -4082,7 +4083,7 @@ unsigned int StatementGetBindCount
 {
     GET_PROP
     (
-        unsigned int, 0, 
+        unsigned int, 0,
         OCI_IPC_STATEMENT, stmt,
         nb_ubinds
     )
@@ -4131,7 +4132,7 @@ OCI_Bind * StatementGetBind2
     int index = -1;
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_STRING,    name)
 
     index = BindGetIndex(stmt, name);
     if (index <= 0)
@@ -4163,7 +4164,7 @@ unsigned int StatementGetBindIndex
     int index = -1;
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_STRING,    name)
 
     index = BindGetIndex(stmt, name);
     CHECK(index >= 0)
@@ -4195,7 +4196,7 @@ unsigned int StatementGetSqlCommand
 
     CHECK_ATTRIB_GET
     (
-        OCI_HTYPE_STMT, OCI_ATTR_SQLFNCODE, 
+        OCI_HTYPE_STMT, OCI_ATTR_SQLFNCODE,
         stmt->stmt, &code, NULL,
         stmt->con->err
     )
@@ -4266,7 +4267,7 @@ OCI_Error * StatementGetBatchError
 
     SET_RETVAL(&stmt->batch->errs[stmt->batch->cur++])
 
-   EXIT_FUNC()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *

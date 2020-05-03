@@ -46,7 +46,7 @@ void ThreadProc
 
 OCI_Thread * ThreadCreate
 (
-   void
+    void
 )
 {
     ENTER_FUNC
@@ -73,8 +73,8 @@ OCI_Thread * ThreadCreate
     CHECK_OCI
     (
         thread->err,
-        OCIThreadHndInit, 
-        Env.env, thread->err, 
+        OCIThreadHndInit,
+        Env.env, thread->err,
         &thread->handle
     )
 
@@ -83,8 +83,8 @@ OCI_Thread * ThreadCreate
     CHECK_OCI
     (
         thread->err,
-        OCIThreadIdInit, 
-        Env.env, thread->err, 
+        OCIThreadIdInit,
+        Env.env, thread->err,
         &thread->id
     )
 
@@ -126,13 +126,13 @@ boolean ThreadFree
         (
             thread->err,
             OCIThreadClose,
-            Env.env, thread->err, 
+            Env.env, thread->err,
             thread->handle
         )
 
         CHECK_OCI
         (
-            thread->err, 
+            thread->err,
             OCIThreadHndDestroy,
             Env.env, thread->err,
             &thread->handle
@@ -145,9 +145,9 @@ boolean ThreadFree
     {
         CHECK_OCI
         (
-            thread->err, 
+            thread->err,
             OCIThreadIdDestroy,
-            Env.env, thread->err, 
+            Env.env, thread->err,
             &thread->id
         )
     }
@@ -186,16 +186,16 @@ boolean ThreadRun
     )
 
     CHECK_PTR(OCI_IPC_THREAD, thread)
-    CHECK_PTR(OCI_IPC_PROC, proc)
+    CHECK_PTR(OCI_IPC_PROC,   proc)
 
     thread->proc = proc;
     thread->arg  = arg;
 
     CHECK_OCI
     (
-        thread->err, 
-        OCIThreadCreate, 
-        Env.env, thread->err, ThreadProc, 
+        thread->err,
+        OCIThreadCreate,
+        Env.env, thread->err, ThreadProc,
         thread, thread->id, thread->handle
     )
 
@@ -223,9 +223,9 @@ boolean ThreadJoin
 
     CHECK_OCI
     (
-        thread->err, 
+        thread->err,
         OCIThreadJoin,
-        Env.env, thread->err, 
+        Env.env, thread->err,
         thread->handle
     )
 

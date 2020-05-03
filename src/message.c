@@ -274,7 +274,7 @@ boolean MessageGetRaw
         /* context */ OCI_IPC_MSG, msg
     )
 
-    CHECK_PTR(OCI_IPC_MSG, msg)
+    CHECK_PTR(OCI_IPC_MSG,  msg)
     CHECK_PTR(OCI_IPC_VOID, raw)
     CHECK_PTR(OCI_IPC_VOID, size)
     CHECK_COMPAT(OCI_UNKNOWN == msg->typinf->typecode)
@@ -297,7 +297,7 @@ boolean MessageGetRaw
 
     SET_SUCCESS()
 
-   EXIT_FUNC()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -323,7 +323,7 @@ boolean MessageSetRaw
     (
         msg->typinf->con->err,
         OCIRawAssignBytes,
-        msg->typinf->con->env, msg->typinf->con->err, 
+        msg->typinf->con->env, msg->typinf->con->err,
         (ub1*) raw, (ub4) size, (OCIRaw **) &msg->payload
     )
 
@@ -362,7 +362,7 @@ int MessageGetAttemptCount
 
     CHECK_ATTRIB_GET
     (
-        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ATTEMPTS, 
+        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ATTEMPTS,
         msg->proph, &value, NULL,
         msg->typinf->con->err
     )
@@ -425,7 +425,7 @@ boolean MessageSetEnqueueDelay
 
     CHECK_ATTRIB_SET
     (
-        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_DELAY, 
+        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_DELAY,
         msg->proph, &sval, sizeof(sval),
         msg->typinf->con->err
     )
@@ -456,7 +456,7 @@ OCI_Date * MessageGetEnqueueTime
 
     CHECK_ATTRIB_GET
     (
-        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ENQ_TIME, 
+        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ENQ_TIME,
         msg->proph, &date, NULL,
         msg->typinf->con->err
     )
@@ -491,7 +491,7 @@ int MessageGetExpiration
     CHECK_ATTRIB_GET
     (
         OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_EXPIRATION,
-        msg->proph, &value, NULL, 
+        msg->proph, &value, NULL,
         msg->typinf->con->err
     )
 
@@ -522,7 +522,7 @@ boolean MessageSetExpiration
 
     CHECK_ATTRIB_SET
     (
-        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_EXPIRATION, 
+        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_EXPIRATION,
         msg->proph, &sval, sizeof(sval),
         msg->typinf->con->err
     )
@@ -586,7 +586,7 @@ int MessageGetPriority
 
     CHECK_ATTRIB_GET
     (
-        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_PRIORITY, 
+        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_PRIORITY,
         msg->proph, &value, NULL,
         msg->typinf->con->err
     )
@@ -618,8 +618,8 @@ boolean MessageSetPriority
 
     CHECK_ATTRIB_SET
     (
-        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_PRIORITY, 
-        msg->proph, &sval, sizeof(sval), 
+        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_PRIORITY,
+        msg->proph, &sval, sizeof(sval),
         msg->typinf->con->err
     )
 
@@ -645,7 +645,7 @@ boolean MessageGetID
         /* context */ OCI_IPC_MSG, msg
     )
 
-    CHECK_PTR(OCI_IPC_MSG, msg)
+    CHECK_PTR(OCI_IPC_MSG,  msg)
     CHECK_PTR(OCI_IPC_VOID, id)
     CHECK_PTR(OCI_IPC_VOID, len)
 
@@ -689,7 +689,7 @@ boolean MessageGetOriginalID
 
     OCIRaw *value = NULL;
 
-    CHECK_PTR(OCI_IPC_MSG, msg)
+    CHECK_PTR(OCI_IPC_MSG,  msg)
     CHECK_PTR(OCI_IPC_VOID, id)
     CHECK_PTR(OCI_IPC_VOID, len)
 
@@ -698,7 +698,7 @@ boolean MessageGetOriginalID
     CHECK_ATTRIB_GET
     (
         OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ORIGINAL_MSGID,
-        msg->proph, &value, NULL, 
+        msg->proph, &value, NULL,
         msg->typinf->con->err
     )
 
@@ -750,7 +750,7 @@ boolean MessageSetOriginalID
 
     CHECK_ATTRIB_SET
     (
-        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ORIGINAL_MSGID, 
+        OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ORIGINAL_MSGID,
         msg->proph, &value, 0,
         msg->typinf->con->err
     )
@@ -882,7 +882,6 @@ boolean MessageSetExceptionQueue
                              OCI_ATTR_EXCEPTION_QUEUE,
                              &msg->except_queue,
                              queue))
-
 
     SET_SUCCESS()
 

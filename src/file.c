@@ -32,7 +32,7 @@ static const unsigned int SeekModeValues[] =
     OCI_SEEK_CUR
 };
 
-static const unsigned int FileTypeValues[] = 
+static const unsigned int FileTypeValues[] =
 {
     OCI_CFILE,
     OCI_BFILE
@@ -93,7 +93,7 @@ OCI_File * FileInitialize
     }
 
     CLEANUP_AND_EXIT_FUNC
-    (  
+    (
         if (FAILURE)
         {
             FileFree(file);
@@ -122,11 +122,11 @@ boolean FileGetInfo
     dbtext* dbstr1 = NULL;
     dbtext* dbstr2 = NULL;
 
-    int     dbsize1 = 0;
-    int     dbsize2 = 0;
+    int dbsize1 = 0;
+    int dbsize2 = 0;
 
-    ub2     usize1 = 0;
-    ub2     usize2 = 0;
+    ub2 usize1 = 0;
+    ub2 usize2 = 0;
 
     CHECK_PTR(OCI_IPC_FILE, file)
 
@@ -264,7 +264,7 @@ OCI_File ** FileCreateArray
                       OCI_DTYPE_LOB, NULL);
 
     CHECK_NULL(arr)
-   
+
     SET_RETVAL((OCI_File**)arr->tab_obj)
 
     EXIT_FUNC()
@@ -311,6 +311,8 @@ boolean FileSeek
 
     big_uint size = 0;
 
+    boolean success = FALSE;
+
     CHECK_PTR(OCI_IPC_FILE, file)
     CHECK_ENUM_VALUE(mode, SeekModeValues, OTEXT("Seek Mode"))
 
@@ -324,7 +326,7 @@ boolean FileSeek
             {
                 file->offset += offset;
 
-                SET_SUCCESS()
+                success = TRUE;
             }
             break;
         }
@@ -334,7 +336,7 @@ boolean FileSeek
             {
                 file->offset = offset + 1;
 
-                SET_SUCCESS()
+                success = TRUE;
             }
             break;
         }
@@ -344,11 +346,13 @@ boolean FileSeek
             {
                 file->offset = size - offset + 1;
 
-                SET_SUCCESS()
+                success = TRUE;
             }
             break;
         }
     }
+
+    SET_RETVAL(success)
 
     EXIT_FUNC()
 }
@@ -392,7 +396,7 @@ unsigned int FileRead
         /* context */ OCI_IPC_FILE, file
     )
 
-    ub4 size_in  = 0;
+    ub4 size_in = 0;
     ub4 size_out = 0;
 
     CHECK_PTR(OCI_IPC_FILE, file)
@@ -506,7 +510,7 @@ big_uint FileGetSize
         (
             file->con->err,
             OCILobGetLength,
-            file->con->cxt, file->con->err, 
+            file->con->cxt, file->con->err,
             file->handle, &size32
         )
 
@@ -540,7 +544,7 @@ boolean FileExists
     CHECK_OCI
     (
         file->con->err,
-        OCILobFileExists, file->con->cxt, 
+        OCILobFileExists, file->con->cxt,
         file->con->err, file->handle,
         &exists
     )
@@ -567,7 +571,7 @@ boolean FileSetName
         /* context */ OCI_IPC_FILE, file
     )
 
-    dbtext *dbstr1  = NULL;
+    dbtext *dbstr1 = NULL;
     dbtext *dbstr2  = NULL;
     int     dbsize1 = -1;
     int     dbsize2 = -1;
@@ -673,8 +677,8 @@ boolean FileOpen
     CHECK_OCI
     (
         file->con->err,
-        OCILobFileOpen, 
-        file->con->cxt, file->con->err, 
+        OCILobFileOpen,
+        file->con->cxt, file->con->err,
         file->handle, (ub1) OCI_LOB_READONLY
     )
 
@@ -707,7 +711,7 @@ boolean FileIsOpen
     CHECK_OCI
     (
         file->con->err,
-        OCILobFileIsOpen, file->con->cxt, 
+        OCILobFileIsOpen, file->con->cxt,
         file->con->err, file->handle,
         &is_opened
     )
@@ -737,8 +741,8 @@ boolean FileClose
     CHECK_OCI
     (
         file->con->err,
-        OCILobFileClose, 
-        file->con->cxt, file->con->err, 
+        OCILobFileClose,
+        file->con->cxt, file->con->err,
         file->handle
     )
 
@@ -773,8 +777,8 @@ boolean FileIsEqual
     CHECK_OCI
     (
         file->con->err,
-        OCILobIsEqual, 
-        file->con->env, file->handle, 
+        OCILobIsEqual,
+        file->con->env, file->handle,
         file2->handle, &is_equal
     )
 
@@ -808,7 +812,7 @@ boolean FileAssign
         (
             file->con->err,
             OCILobLocatorAssign,
-            file->con->cxt, file->con->err, 
+            file->con->cxt, file->con->err,
             file_src->handle, &file->handle
         )
     }
@@ -817,7 +821,7 @@ boolean FileAssign
         CHECK_OCI
         (
             file->con->err,
-            OCILobAssign, 
+            OCILobAssign,
             file->con->env, file->con->err,
             file_src->handle, &file->handle
         )
@@ -842,7 +846,7 @@ OCI_Connection * FileGetConnection
     GET_PROP
     (
         /* result */ OCI_Connection *, NULL,
-        /* handle */ OCI_IPC_FILE, file, 
+        /* handle */ OCI_IPC_FILE, file,
         /* member */ con
     )
 }

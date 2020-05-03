@@ -142,7 +142,7 @@ boolean ColumnRetrieveInfo
     {
         CHECK_ATTRIB_GET
         (
-            OCI_DTYPE_PARAM, OCI_ATTR_COLLECTION_ELEMENT, 
+            OCI_DTYPE_PARAM, OCI_ATTR_COLLECTION_ELEMENT,
             handle, &param, NULL,
             con->err
         )
@@ -205,7 +205,7 @@ boolean ColumnRetrieveInfo
 
         CHECK_ATTRIB_GET
         (
-            OCI_DTYPE_PARAM, OCI_ATTR_PRECISION, 
+            OCI_DTYPE_PARAM, OCI_ATTR_PRECISION,
             param, &prec, NULL,
             con->err
         )
@@ -230,7 +230,7 @@ boolean ColumnRetrieveInfo
 
     CHECK_ATTRIB_GET
     (
-        OCI_DTYPE_PARAM, OCI_ATTR_CHARSET_FORM, 
+        OCI_DTYPE_PARAM, OCI_ATTR_CHARSET_FORM,
         param, &col->csfrm, NULL,
         con->err
     )
@@ -255,7 +255,7 @@ boolean ColumnRetrieveInfo
     {
         CHECK_ATTRIB_GET
         (
-            OCI_DTYPE_PARAM, OCI_ATTR_CHAR_SIZE, 
+            OCI_DTYPE_PARAM, OCI_ATTR_CHAR_SIZE,
             param, &col->charsize, NULL,
             con->err
         )
@@ -273,7 +273,7 @@ boolean ColumnRetrieveInfo
         {
             CHECK_ATTRIB_GET
             (
-                OCI_DTYPE_PARAM, OCI_ATTR_FSPRECISION, 
+                OCI_DTYPE_PARAM, OCI_ATTR_FSPRECISION,
                 param, &col->prec, NULL,
                 con->err
             )
@@ -285,7 +285,7 @@ boolean ColumnRetrieveInfo
         {
             CHECK_ATTRIB_GET
             (
-                OCI_DTYPE_PARAM, OCI_ATTR_LFPRECISION, 
+                OCI_DTYPE_PARAM, OCI_ATTR_LFPRECISION,
                 param, &col->prec, NULL,
                 con->err
             )
@@ -382,7 +382,6 @@ boolean ColumnRetrieveInfo
 
     /* name */
 
-
 #if defined(OCI_CHARSET_WIDE)
 
     /* Ugly workaround for Oracle Bug 9838993 */
@@ -417,7 +416,7 @@ boolean ColumnRetrieveInfo
         CHECK_ATTRIB_GET
         (
             OCI_DTYPE_PARAM, attrname,
-            param, &dbstr, &dbsize, 
+            param, &dbstr, &dbsize,
             con->err
         )
 
@@ -447,9 +446,9 @@ boolean ColumnRetrieveInfo
         int     dbsize_schema  = 0;
         int     dbsize_package = 0;
 
-        otext schema_name[OCI_SIZE_OBJ_NAME + 1] = OTEXT("");
-        otext package_name[OCI_SIZE_OBJ_NAME + 1] = OTEXT("");
-        otext type_name[OCI_SIZE_OBJ_NAME + 1] = OTEXT("");
+        otext schema_name[OCI_SIZE_OBJ_NAME + 1]     = OTEXT("");
+        otext package_name[OCI_SIZE_OBJ_NAME + 1]    = OTEXT("");
+        otext type_name[OCI_SIZE_OBJ_NAME + 1]       = OTEXT("");
         otext full_name[(OCI_SIZE_OBJ_NAME * 3) + 3] = OTEXT("");
 
         CHECK_ATTRIB_GET
@@ -460,7 +459,7 @@ boolean ColumnRetrieveInfo
         )
         CHECK_ATTRIB_GET
         (
-            OCI_DTYPE_PARAM, OCI_ATTR_SCHEMA_NAME, 
+            OCI_DTYPE_PARAM, OCI_ATTR_SCHEMA_NAME,
             param, &dbstr_schema, &dbsize_schema,
             con->err
         )
@@ -514,14 +513,15 @@ boolean ColumnRetrieveInfo
         CHECK_NULL(col->typinf);
     }
 
-    if (NULL != param)
-    {
-        CHECK(OCI_SUCCESS == OCIDescriptorFree(param, OCI_DTYPE_PARAM))
-    }
-
     SET_SUCCESS()
 
-    EXIT_FUNC()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != param)
+        {
+            OCIDescriptorFree(param, OCI_DTYPE_PARAM);
+        }
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1432,9 +1432,9 @@ unsigned int ColumnGetFullSqlType
 #else
             size = osprintf(buffer, (int)len, OTEXT("%sCHAR(%i%s)"),
 #endif
-                              SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
-                              (int) (col->charused ? col->charsize : col->size),
-                              col->charused && SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
+                            SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
+                            (int) (col->charused ? col->charsize : col->size),
+                            col->charused && SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
             break;
         }
         case SQLT_AVC:
@@ -1448,8 +1448,8 @@ unsigned int ColumnGetFullSqlType
 #endif
 
             size = osprintf(buffer, (int)len, fmt, SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
-                              (int) (col->charused ? col->charsize : col->size),
-                              col->charused &&  SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
+                            (int) (col->charused ? col->charsize : col->size),
+                            col->charused &&  SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
             break;
         }
         case SQLT_NUM:
@@ -1580,13 +1580,13 @@ unsigned int ColumnGetFullSqlType
         case SQLT_INTERVAL_YM:
         {
             size = osprintf(buffer, (int)len,  OTEXT("INTERVAL(%i) YEAR TO MONTH(%i)"),
-                              (int) col->prec, (int) col->prec2);
+                            (int) col->prec, (int) col->prec2);
             break;
         }
         case SQLT_INTERVAL_DS:
         {
             size = osprintf(buffer, (int)len,  OTEXT("INTERVAL(%i) DAY TO SECOND(%i)"),
-                              (int) col->prec, (int) col->prec2);
+                            (int) col->prec, (int) col->prec2);
             break;
         }
 
@@ -1657,7 +1657,7 @@ unsigned int ColumnGetFullSqlType
         default:
         {
             size = osprintf(buffer, (int)len, OTEXT("?"));
-            break;
+                            break;
         }
     }
 

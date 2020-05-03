@@ -25,19 +25,19 @@
 #include "macros.h"
 #include "mutex.h"
 
-#define MUTEXED_CALL(exp)                   \
-                                            \
-    if (Env.mem_mutex)                      \
-    {                                       \
-        MutexAcquire(Env.mem_mutex);        \
-    }                                       \
-                                            \
-    (exp);                                  \
-                                            \
-    if (Env.mem_mutex)                      \
-    {                                       \
-        MutexRelease(Env.mem_mutex);        \
-    }                                       \
+#define MUTEXED_CALL(exp)            \
+                                     \
+    if (Env.mem_mutex)               \
+    {                                \
+        MutexAcquire(Env.mem_mutex); \
+    }                                \
+                                     \
+    (exp);                           \
+                                     \
+    if (Env.mem_mutex)               \
+    {                                \
+        MutexRelease(Env.mem_mutex); \
+    }                                \
 
 
 /* --------------------------------------------------------------------------------------------- *

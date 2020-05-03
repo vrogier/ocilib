@@ -34,10 +34,10 @@
 #include "reference.h"
 #include "timestamp.h"
 
-#define ARRAY_INIT(type, exp)                                               \
-    data = exp;                                                             \
-    CHECK_NULL(data)                                                        \
-    ((void **)(arr->mem_handle))[i] = ((type *) data)->handle;              \
+#define ARRAY_INIT(type, exp)                                  \
+    data = exp;                                                \
+    CHECK_NULL(data)                                           \
+    ((void **)(arr->mem_handle))[i] = ((type *) data)->handle; \
 
 
 /* --------------------------------------------------------------------------------------------- *
@@ -207,6 +207,8 @@ boolean ArrayDispose
     FREE(arr->mem_struct)
     FREE(arr->tab_obj)
 
+    SET_SUCCESS()
+
     EXIT_FUNC()
 }
 
@@ -258,7 +260,7 @@ OCI_Array * ArrayCreate
         ALLOC_DATA(OCI_IPC_VOID, arr->tab_obj, nb_elem)
     }
 
-    ALLOC_BUFFER(OCI_IPC_VOID, arr->mem_handle, elem_size, nb_elem)
+    ALLOC_BUFFER(OCI_IPC_VOID, arr->mem_handle, elem_size,   nb_elem)
     ALLOC_BUFFER(OCI_IPC_VOID, arr->mem_struct, struct_size, nb_elem)
 
     /* allocate OCI handle descriptors */

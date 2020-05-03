@@ -48,10 +48,10 @@ boolean DirPathSetArray
     )
 
     ub1 *data = NULL;
-    ub4  size = 0;
-    ub1  flag = 0;
-    ub2  col  = 0;
-    ub4  row  = 0;
+    ub4 size = 0;
+    ub1 flag = 0;
+    ub2 col  = 0;
+    ub4 row  = 0;
 
     CHECK_PTR(OCI_IPC_DIRPATH, dp)
 
@@ -85,7 +85,7 @@ boolean DirPathSetArray
             CHECK_OCI
             (
                 dp->con->err,
-                OCIDirPathColArrayEntrySet, 
+                OCIDirPathColArrayEntrySet,
                 dp->arr, dp->con->err, (ub4) dp->nb_entries,
                 (ub2) (col), (ub1*) data, (ub4) size, flag
             )
@@ -130,8 +130,8 @@ unsigned int DirPathArrayToStream
     {
         case OCI_SUCCESS:
         {
-            status = OCI_DPR_COMPLETE;
-            dp->status  = OCI_DPS_CONVERTED;
+            status     = OCI_DPR_COMPLETE;
+            dp->status = OCI_DPS_CONVERTED;
             break;
         }
         case OCI_ERROR:
@@ -148,8 +148,8 @@ unsigned int DirPathArrayToStream
         }
         case OCI_CONTINUE:
         {
-            status = OCI_DPR_FULL;
-            dp->status  = OCI_DPS_CONVERTED;
+            status     = OCI_DPR_FULL;
+            dp->status = OCI_DPS_CONVERTED;
             break;
         }
         case OCI_NEED_DATA:
@@ -178,7 +178,7 @@ unsigned int DirPathArrayToStream
 
         CHECK_ATTRIB_GET
         (
-            OCI_HTYPE_DIRPATH_COLUMN_ARRAY, OCI_ATTR_ROW_COUNT, 
+            OCI_HTYPE_DIRPATH_COLUMN_ARRAY, OCI_ATTR_ROW_COUNT,
             dp->arr, &err_row, &size,
             dp->con->err
         )
@@ -224,7 +224,7 @@ unsigned int DirPathLoadStream
 
     sword ret = OCI_SUCCESS;
     ub4 nb_loaded = 0;
-    ub4 size = sizeof(nb_loaded);
+    ub4 size      = sizeof(nb_loaded);
 
     CHECK_PTR(OCI_IPC_DIRPATH, dp)
 
@@ -238,8 +238,8 @@ unsigned int DirPathLoadStream
     {
         case OCI_SUCCESS:
         {
-            status = OCI_DPR_COMPLETE;
-            dp->status  = OCI_DPS_PREPARED;
+            status     = OCI_DPR_COMPLETE;
+            dp->status = OCI_DPS_PREPARED;
             break;
         }
         case OCI_ERROR:
@@ -339,18 +339,18 @@ OCI_DirPath * DirPathCreate
         MemoryAllocHandle
         (
             (dvoid *) dp->con->env,
-            (dvoid **) (void *) &dp->ctx, 
+            (dvoid **) (void *) &dp->ctx,
             OCI_HTYPE_DIRPATH_CTX
         )
     )
 
     /* set table name attribute */
 
-    dbstr1  = StringGetDBString(dp->typinf->name, &dbsize1);
+    dbstr1 = StringGetDBString(dp->typinf->name, &dbsize1);
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_NAME, 
+        OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_NAME,
         dp->ctx, dbstr1, dbsize1,
         typinf->con->err
     )
@@ -363,7 +363,7 @@ OCI_DirPath * DirPathCreate
 
         CHECK_ATTRIB_SET
         (
-            OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_SCHEMA_NAME, 
+            OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_SCHEMA_NAME,
             dp->ctx, dbstr2, dbsize2,
             typinf->con->err
         )
@@ -373,11 +373,11 @@ OCI_DirPath * DirPathCreate
 
     if (IS_STRING_VALID(partition))
     {
-        dbstr3  = StringGetDBString(partition, &dbsize3);
+        dbstr3 = StringGetDBString(partition, &dbsize3);
 
         CHECK_ATTRIB_SET
         (
-            OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_SUB_NAME, 
+            OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_SUB_NAME,
             dp->ctx, dbstr3, dbsize3,
             typinf->con->err
         )
@@ -391,7 +391,7 @@ OCI_DirPath * DirPathCreate
 
         CHECK_ATTRIB_SET
         (
-            OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_NUM_ROWS, 
+            OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_NUM_ROWS,
             dp->ctx, &num_rows, sizeof(num_rows),
             typinf->con->err
         )
@@ -401,7 +401,7 @@ OCI_DirPath * DirPathCreate
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_NUM_COLS, 
+        OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_NUM_COLS,
         dp->ctx, &dp->nb_cols, sizeof(dp->nb_cols),
         typinf->con->err
     )
@@ -458,13 +458,13 @@ boolean DirPathFree
     FREE(dp->err_rows)
 
     MemoryFreeHandle(dp->strm, OCI_HTYPE_DIRPATH_STREAM);
-    MemoryFreeHandle(dp->arr, OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
-    MemoryFreeHandle(dp->ctx, OCI_HTYPE_DIRPATH_CTX);
+    MemoryFreeHandle(dp->arr,  OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
+    MemoryFreeHandle(dp->ctx,  OCI_HTYPE_DIRPATH_CTX);
 
     FREE(dp)
 
     SET_SUCCESS()
- 
+
     EXIT_FUNC()
 }
 
@@ -487,14 +487,14 @@ boolean DirPathSetColumn
         /* context */ OCI_IPC_DIRPATH, dp
     )
 
-    OCI_DirPathColumn *dpcol  = NULL;
-    OCI_Column        *col    = NULL;
-    OCIParam          *hattr  = NULL;
-    OCIParam          *hlist  = NULL;
-    dbtext            *dbstr1  = NULL;
-    int                dbsize1 = -1;
-    dbtext            *dbstr2  = NULL;
-    int                dbsize2 = -1;
+    OCI_DirPathColumn *dpcol = NULL;
+    OCI_Column *col     = NULL;
+    OCIParam   *hattr   = NULL;
+    OCIParam   *hlist   = NULL;
+    dbtext     *dbstr1  = NULL;
+    int         dbsize1 = -1;
+    dbtext     *dbstr2  = NULL;
+    int         dbsize2 = -1;
 
     ub2 i = 0;
 
@@ -609,7 +609,7 @@ boolean DirPathSetColumn
         }
     }
 
-     /* get column parameter list handle */
+    /* get column parameter list handle */
 
     CHECK_ATTRIB_GET
     (
@@ -623,9 +623,9 @@ boolean DirPathSetColumn
     CHECK_OCI
     (
         dp->typinf->con->err,
-        OCIParamGet, 
-        (dvoid *) hlist, OCI_DTYPE_PARAM, 
-        dp->con->err, 
+        OCIParamGet,
+        (dvoid *) hlist, OCI_DTYPE_PARAM,
+        dp->con->err,
         (dvoid** ) (dvoid *) &hattr,
         (ub4) index
     )
@@ -636,7 +636,7 @@ boolean DirPathSetColumn
 
     CHECK_ATTRIB_SET
     (
-        OCI_DTYPE_PARAM, OCI_ATTR_NAME, 
+        OCI_DTYPE_PARAM, OCI_ATTR_NAME,
         hattr, dbstr1, dbsize1,
         dp->typinf->con->err
     )
@@ -665,7 +665,7 @@ boolean DirPathSetColumn
     {
         CHECK_ATTRIB_SET
         (
-            OCI_DTYPE_PARAM, OCI_ATTR_PRECISION, 
+            OCI_DTYPE_PARAM, OCI_ATTR_PRECISION,
             hattr, &col->prec, sizeof(col->prec),
             dp->typinf->con->err
         )
@@ -677,7 +677,7 @@ boolean DirPathSetColumn
     {
         CHECK_ATTRIB_SET
         (
-            OCI_DTYPE_PARAM, OCI_ATTR_SCALE, 
+            OCI_DTYPE_PARAM, OCI_ATTR_SCALE,
             hattr, &col->scale, sizeof(col->scale),
             dp->typinf->con->err
         )
@@ -687,11 +687,11 @@ boolean DirPathSetColumn
 
     if (dpcol->format && dpcol->format[0] && (OCI_DDT_NUMBER != dpcol->type))
     {
-        dbstr2  = StringGetDBString(dpcol->format, &dbsize2);
+        dbstr2 = StringGetDBString(dpcol->format, &dbsize2);
 
         CHECK_ATTRIB_SET
         (
-            OCI_DTYPE_PARAM, OCI_ATTR_DATEFORMAT, 
+            OCI_DTYPE_PARAM, OCI_ATTR_DATEFORMAT,
             hattr, dbstr2, dbsize2,
             dp->typinf->con->err
         )
@@ -705,15 +705,11 @@ boolean DirPathSetColumn
 
         CHECK_ATTRIB_SET
         (
-            OCI_DTYPE_PARAM, OCI_ATTR_CHARSET_ID, 
+            OCI_DTYPE_PARAM, OCI_ATTR_CHARSET_ID,
             hattr, &csid, sizeof(csid),
             dp->typinf->con->err
         )
     }
-
-    /* free param handle */
-
-    OCIDescriptorFree(hattr, OCI_DTYPE_PARAM);
 
     SET_SUCCESS()
 
@@ -721,6 +717,11 @@ boolean DirPathSetColumn
     (
         StringReleaseDBString(dbstr1);
         StringReleaseDBString(dbstr2);
+
+        if (NULL != hattr)
+        {
+            OCIDescriptorFree(hattr, OCI_DTYPE_PARAM);
+        }
     )
 }
 
@@ -750,8 +751,8 @@ boolean DirPathPrepare
     CHECK_OCI
     (
         dp->typinf->con->err,
-        OCIDirPathPrepare, 
-        dp->ctx, dp->con->cxt, 
+        OCIDirPathPrepare,
+        dp->ctx, dp->con->cxt,
         dp->con->err
     )
 
@@ -761,7 +762,7 @@ boolean DirPathPrepare
     (
         MemoryAllocHandle
         (
-            (dvoid *)dp->ctx, 
+            (dvoid *)dp->ctx,
             (dvoid **)(void *)&dp->arr,
             OCI_HTYPE_DIRPATH_COLUMN_ARRAY
         )
@@ -774,7 +775,7 @@ boolean DirPathPrepare
         MemoryAllocHandle
         (
             (dvoid *)dp->ctx,
-            (dvoid **)(void *)&dp->strm, 
+            (dvoid **)(void *)&dp->strm,
             OCI_HTYPE_DIRPATH_STREAM
         )
     )
@@ -783,8 +784,8 @@ boolean DirPathPrepare
 
     CHECK_ATTRIB_GET
     (
-        OCI_HTYPE_DIRPATH_COLUMN_ARRAY, OCI_ATTR_NUM_ROWS, 
-        dp->arr, &num_rows, &size, 
+        OCI_HTYPE_DIRPATH_COLUMN_ARRAY, OCI_ATTR_NUM_ROWS,
+        dp->arr, &num_rows, &size,
         dp->typinf->con->err
     )
 
@@ -805,9 +806,9 @@ boolean DirPathPrepare
     {
         OCI_DirPathColumn *col = &dp->cols[i];
 
-        ALLOC_BUFFER(OCI_IPC_BUFF_ARRAY, col->data, col->bufsize, dp->nb_cur)
-        ALLOC_BUFFER(OCI_IPC_BUFF_ARRAY, col->lens, sizeof(ub4),  dp->nb_cur)
-        ALLOC_BUFFER(OCI_IPC_BUFF_ARRAY, col->flags, sizeof(ub1), dp->nb_cur)
+        ALLOC_BUFFER(OCI_IPC_BUFF_ARRAY, col->data,  col->bufsize, dp->nb_cur)
+        ALLOC_BUFFER(OCI_IPC_BUFF_ARRAY, col->lens,  sizeof(ub4),  dp->nb_cur)
+        ALLOC_BUFFER(OCI_IPC_BUFF_ARRAY, col->flags, sizeof(ub1),  dp->nb_cur)
     }
 
     dp->status = OCI_DPS_PREPARED;
@@ -844,7 +845,7 @@ boolean DirPathSetEntry
     CHECK_PTR(OCI_IPC_DIRPATH, dp)
     CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED)
     CHECK_BOUND(index, 1, dp->nb_cols)
-    CHECK_BOUND(row, 1, dp->nb_cur)
+    CHECK_BOUND(row,   1, dp->nb_cur)
 
     dpcol = &dp->cols[index-1];
     CHECK_NULL(dpcol)
@@ -909,7 +910,7 @@ boolean DirPathSetEntry
 
             OCINumber *num = (OCINumber *) data;
 
-            CHECK(NumberFromStringInternal(dp->con, num, OCI_NUM_NUMBER, 
+            CHECK(NumberFromStringInternal(dp->con, num, OCI_NUM_NUMBER,
                                            (otext *)value, dpcol->format))
 
             size = (unsigned int) num->OCINumberPart[0];
@@ -958,7 +959,7 @@ boolean DirPathReset
     CHECK_OCI
     (
         dp->typinf->con->err,
-        OCIDirPathColArrayReset, 
+        OCIDirPathColArrayReset,
         dp->arr, dp->con->err
     )
 
@@ -967,7 +968,7 @@ boolean DirPathReset
     CHECK_OCI
     (
         dp->typinf->con->err,
-        OCIDirPathStreamReset, 
+        OCIDirPathStreamReset,
         dp->strm, dp->con->err
     )
 
@@ -1015,7 +1016,7 @@ unsigned int DirPathConvert
         CHECK_OCI
         (
             dp->typinf->con->err,
-            OCIDirPathStreamReset, 
+            OCIDirPathStreamReset,
             dp->strm, dp->con->err
         )
     }
@@ -1128,7 +1129,7 @@ boolean DirPathFinish
     CHECK_OCI
     (
         dp->typinf->con->err,
-        OCIDirPathFinish, 
+        OCIDirPathFinish,
         dp->ctx, dp->con->err
     )
 
@@ -1160,7 +1161,7 @@ boolean DirPathAbort
     CHECK_OCI
     (
         dp->typinf->con->err,
-        OCIDirPathAbort, 
+        OCIDirPathAbort,
         dp->ctx, dp->con->err
     )
 
@@ -1192,8 +1193,8 @@ boolean DirPathSave
     CHECK_OCI
     (
         dp->typinf->con->err,
-        OCIDirPathDataSave, 
-        dp->ctx, dp->con->err, 
+        OCIDirPathDataSave,
+        dp->ctx, dp->con->err,
         OCI_DIRPATH_DATASAVE_SAVEONLY
     )
 
@@ -1309,18 +1310,18 @@ boolean DirPathSetDateFormat
         /* context */ OCI_IPC_DIRPATH, dp
     )
 
-    dbtext *dbstr  = NULL;
-    int     dbsize = -1;
+    dbtext *dbstr = NULL;
+    int dbsize = -1;
 
     CHECK_PTR(OCI_IPC_DIRPATH, dp)
     CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
 
-    dbstr  = StringGetDBString(format, &dbsize);
+    dbstr = StringGetDBString(format, &dbsize);
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_DATEFORMAT, 
-        dp->ctx, dbstr, dbsize, 
+        OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_DATEFORMAT,
+        dp->ctx, dbstr, dbsize,
         dp->typinf->con->err
     )
 
@@ -1355,7 +1356,7 @@ boolean DirPathSetParallel
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_DIRPATH_PARALLEL, 
+        OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_DIRPATH_PARALLEL,
         dp->ctx, &enabled, sizeof(enabled),
         dp->typinf->con->err
     )
@@ -1414,8 +1415,8 @@ boolean DirPathSetCacheSize
         /* context */ OCI_IPC_DIRPATH, dp
     )
 
-    ub4     cache_size = size;
-    boolean enabled    = FALSE;
+    ub4 cache_size = size;
+    boolean enabled = FALSE;
 
     CHECK_PTR(OCI_IPC_DIRPATH, dp)
     CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
@@ -1471,8 +1472,8 @@ boolean DirPathSetBufferSize
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_BUF_SIZE, 
-        dp->ctx, &bufsize, sizeof(bufsize), 
+        OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_BUF_SIZE,
+        dp->ctx, &bufsize, sizeof(bufsize),
         dp->typinf->con->err
     )
 

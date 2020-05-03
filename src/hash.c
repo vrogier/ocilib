@@ -45,7 +45,7 @@ unsigned int HashCompute
     otext *p;
 
     CHECK_FALSE(NULL == table, 0);
-    CHECK_FALSE(NULL == str, 0);
+    CHECK_FALSE(NULL == str,   0);
 
     for(h = 0, p = (otext *) str; (*p) != 0; p++)
     {
@@ -77,8 +77,10 @@ boolean HashAdd
     OCI_HashValue * v = NULL, *v1 = NULL, *v2 = NULL;
 
     CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_PTR(OCI_IPC_STRING, key)
+    CHECK_PTR(OCI_IPC_STRING,      key)
     CHECK_COMPAT(table->type == type)
+
+    boolean success = FALSE;
 
     e = HashLookup(table, key, TRUE);
 
@@ -119,9 +121,11 @@ boolean HashAdd
                 e->values = v;
             }
 
-            SET_SUCCESS()
+            success = TRUE;
         }
     }
+
+    SET_RETVAL(success)
 
     EXIT_FUNC()
 }
@@ -148,9 +152,9 @@ OCI_HashTable * HashCreate
 
     /* allocate table structure */
 
-   table = (OCI_HashTable *) MemoryAlloc(OCI_IPC_HASHTABLE, 
-                                         sizeof(*table),
-                                         (size_t) 1, TRUE);
+    table = (OCI_HashTable *) MemoryAlloc(OCI_IPC_HASHTABLE,
+                                          sizeof(*table),
+                                          (size_t) 1, TRUE);
     CHECK_NULL(table)
 
     /* set up attributes and allocate internal array of hash entry pointers */
@@ -159,8 +163,8 @@ OCI_HashTable * HashCreate
     table->size  = 0;
     table->count = 0;
 
-    table->items = (OCI_HashEntry **) MemoryAlloc(OCI_IPC_HASHENTRY_ARRAY, 
-                                                  sizeof(*table->items), 
+    table->items = (OCI_HashEntry **) MemoryAlloc(OCI_IPC_HASHENTRY_ARRAY,
+                                                  sizeof(*table->items),
                                                   (size_t) size, TRUE);
     CHECK_NULL(table->items);
 
@@ -282,7 +286,7 @@ unsigned int HashGetType
 
     CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
-    SET_RETVAL(table->type;)
+    SET_RETVAL(table->type; )
 
     EXIT_FUNC()
 }
@@ -332,7 +336,7 @@ OCI_HashEntry * HashGetEntry
     CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
     CHECK(index < table->size)
- 
+
     SET_RETVAL(table->items[index])
 
     EXIT_FUNC()
@@ -532,7 +536,7 @@ OCI_HashEntry * HashLookup
     OCI_HashEntry *e = NULL, *e1 = NULL, *e2 = NULL;
 
     CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_PTR(OCI_IPC_STRING, key)
+    CHECK_PTR(OCI_IPC_STRING,      key)
 
     const unsigned int i = HashCompute(table, key);
 
@@ -549,10 +553,10 @@ OCI_HashEntry * HashLookup
         if (NULL == e && create)
         {
             e = (OCI_HashEntry *) MemoryAlloc(OCI_IPC_HASHENTRY,
-                                              sizeof(*e), 
+                                              sizeof(*e),
                                               (size_t) 1,
                                               TRUE);
-           CHECK_NULL(e)
+            CHECK_NULL(e)
 
             e->key = ostrdup(key);
 

@@ -77,7 +77,7 @@ OCI_Ref * ReferenceInitialize
     }
 
     CLEANUP_AND_EXIT_FUNC
-    (   
+    (
         if (FAILURE)
         {
             ReferenceFree(ref);
@@ -117,7 +117,7 @@ boolean ReferencePin
         OCI_PIN_ANY, OCI_DURATION_SESSION, OCI_LOCK_NONE, &obj_handle
     )
 
-    ref->obj =  ObjectInitialize(ref->con, (OCI_Object *) ref->obj, 
+    ref->obj =  ObjectInitialize(ref->con, (OCI_Object *) ref->obj,
                                  obj_handle, ref->typinf, NULL,
                                  -1, TRUE);
 
@@ -146,7 +146,7 @@ boolean ReferenceUnpin
     )
 
     CHECK_PTR(OCI_IPC_REF, ref)
- 
+
     if (NULL != ref->obj)
     {
         if (ref->pinned)
@@ -189,7 +189,7 @@ OCI_Ref * ReferenceCreate
     )
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CHECK_PTR(OCI_IPC_TYPE_INFO,  typinf)
 
     SET_RETVAL(ReferenceInitialize(con, typinf, NULL, NULL))
 
@@ -251,10 +251,10 @@ OCI_Ref ** ReferenceCreateArray
     OCI_Array *arr = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, con)
+    CHECK_PTR(OCI_IPC_TYPE_INFO,  con)
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_REF, 0, 
-                      sizeof(OCIRef *), sizeof(OCI_Ref), 
+    arr = ArrayCreate(con, nbelem, OCI_CDT_REF, 0,
+                      sizeof(OCIRef *), sizeof(OCI_Ref),
                       0, typinf);
 
     CHECK_NULL(arr)
@@ -333,7 +333,7 @@ boolean ReferenceAssign
     CHECK_OCI
     (
         ref->con->err,
-        OCIRefAssign, 
+        OCIRefAssign,
         ref->con->env, ref->con->err,
         ref_src->handle, &ref->handle
     )
@@ -423,10 +423,10 @@ boolean ReferenceToString
         /* context */ OCI_IPC_REF, ref
     )
 
-    dbtext *dbstr  = NULL;
-    int     dbsize = (int) size * (int) sizeof(otext);
+    dbtext *dbstr = NULL;
+    int dbsize = (int) size * (int) sizeof(otext);
 
-    CHECK_PTR(OCI_IPC_REF, ref)
+    CHECK_PTR(OCI_IPC_REF,    ref)
     CHECK_PTR(OCI_IPC_STRING, str)
 
     /* initialize output buffer in case of OCI failure */
@@ -491,7 +491,7 @@ OCI_TypeInfo * ReferenceGetTypeInfo
     GET_PROP
     (
         OCI_TypeInfo*, NULL,
-        OCI_IPC_REF, ref, 
+        OCI_IPC_REF, ref,
         typinf
     )
 }

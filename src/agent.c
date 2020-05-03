@@ -78,7 +78,7 @@ OCI_Agent * AgentInitialize
     }
 
     CLEANUP_AND_EXIT_FUNC
-    (    
+    (
         if (FAILURE)
         {
             AgentFree(agent);
@@ -160,16 +160,16 @@ const otext * AgentGetName
     )
 
     CHECK_PTR(OCI_IPC_AGENT, agent)
-            
+
     if (NULL == agent->name)
     {
         unsigned int size = 0;
 
         CHECK(StringGetAttribute(agent->con,
-                                 agent->handle, 
+                                 agent->handle,
                                  OCI_DTYPE_AQAGENT,
                                  OCI_ATTR_AGENT_NAME,
-                                 &agent->name, 
+                                 &agent->name,
                                  &size))
     }
 
@@ -196,11 +196,11 @@ boolean AgentSetName
 
     CHECK_PTR(OCI_IPC_AGENT, agent)
 
-    CHECK(StringSetAttribute(agent->con, 
+    CHECK(StringSetAttribute(agent->con,
                              agent->handle,
                              OCI_DTYPE_AQAGENT,
                              OCI_ATTR_AGENT_NAME,
-                             &agent->name, 
+                             &agent->name,
                              name))
 
     SET_SUCCESS()
@@ -229,11 +229,11 @@ const otext * AgentGetAddress
     {
         unsigned int size = 0;
 
-        CHECK(StringGetAttribute(agent->con, 
+        CHECK(StringGetAttribute(agent->con,
                                  agent->handle,
                                  OCI_DTYPE_AQAGENT,
                                  OCI_ATTR_AGENT_ADDRESS,
-                                 &agent->address, 
+                                 &agent->address,
                                  &size))
     }
 
@@ -262,7 +262,7 @@ boolean AgentSetAddress
 
     CHECK(StringSetAttribute(agent->con,
                              agent->handle,
-                             OCI_DTYPE_AQAGENT, 
+                             OCI_DTYPE_AQAGENT,
                              OCI_ATTR_AGENT_ADDRESS,
                              &agent->address,
                              address))

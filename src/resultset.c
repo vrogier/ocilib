@@ -47,68 +47,68 @@ static unsigned int SeekModeValues[] =
     OCI_SFD_RELATIVE
 };
 
-#define MATCHING_TYPE(def, type)                                                    \
-                                                                                    \
-    ((def) && DefineIsDataNotNull(def) && ((type) == (def)->col.datatype))  
+#define MATCHING_TYPE(def, type) \
+                                 \
+    ((def) && DefineIsDataNotNull(def) && ((type) == (def)->col.datatype))
 
-#define GET_BY_NAME(rs, name, func, type, res)                                      \
-                                                                                    \
-    ENTER_FUNC(type, res, OCI_IPC_RESULTSET, rs)                                    \
-                                                                                    \
-    CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                \
-    CHECK_PTR(OCI_IPC_STRING, name)                                                 \
-                                                                                    \
-    int index = DefineGetIndex(rs, name);                                           \
-    CHECK(index >= 0)                                                               \
-                                                                                    \
-    OCI_Error *err = ErrorGet(TRUE, TRUE);                                          \
-                                                                                    \
-    type tmp = func(rs, (unsigned int) index);                                      \
-                                                                                    \
-    CHECK_ERROR(err)                                                                \
-                                                                                    \
-    SET_RETVAL(tmp)                                                                 \
-                                                                                    \
+#define GET_BY_NAME(rs, name, func, type, res)   \
+                                                 \
+    ENTER_FUNC(type, res, OCI_IPC_RESULTSET, rs) \
+                                                 \
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)             \
+    CHECK_PTR(OCI_IPC_STRING,    name)           \
+                                                 \
+    int index = DefineGetIndex(rs, name);        \
+    CHECK(index >= 0)                            \
+                                                 \
+    OCI_Error *err = ErrorGet(TRUE, TRUE);       \
+                                                 \
+    type tmp = func(rs, (unsigned int) index);   \
+                                                 \
+    CHECK_ERROR(err)                             \
+                                                 \
+    SET_RETVAL(tmp)                              \
+                                                 \
     EXIT_FUNC()
 
-#define GET_NUMBER(rs, index, num_type, type, res)                                  \
-                                                                                    \
-    ENTER_FUNC(type, res, OCI_IPC_RESULTSET, rs)                                    \
-                                                                                    \
-    CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                \
-    CHECK_BOUND(index, 1, (rs)->nb_defs)                                            \
-                                                                                    \
-    type tmp = res;                                                                 \
-                                                                                    \
-    CHECK(DefineGetNumber(rs, index, &tmp, num_type))                               \
-                                                                                    \
-    SET_RETVAL(tmp)                                                                 \
-                                                                                    \
+#define GET_NUMBER(rs, index, num_type, type, res)    \
+                                                      \
+    ENTER_FUNC(type, res, OCI_IPC_RESULTSET, rs)      \
+                                                      \
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)                  \
+    CHECK_BOUND(index, 1, (rs)->nb_defs)              \
+                                                      \
+    type tmp = res;                                   \
+                                                      \
+    CHECK(DefineGetNumber(rs, index, &tmp, num_type)) \
+                                                      \
+    SET_RETVAL(tmp)                                   \
+                                                      \
     EXIT_FUNC()
 
-#define GET_HANDLE(rs, index, type, res, lib_type, func)                            \
-                                                                                    \
-    ENTER_FUNC(type, res, OCI_IPC_RESULTSET, rs)                                    \
-                                                                                    \
-    OCI_Define *def = NULL;                                                         \
-                                                                                    \
-    CHECK_PTR(OCI_IPC_RESULTSET, rs)                                                \
-    CHECK_BOUND(index, 1, (rs)->nb_defs)                                            \
-                                                                                    \
-    def = DefineGet(rs, index);                                                     \
-    CHECK_NULL(def)                                                                 \
-                                                                                    \
-    type tmp = res;                                                                 \
-                                                                                    \
-    if (MATCHING_TYPE(def, lib_type))                                               \
-    {                                                                               \
-        def->obj = func;                                                            \
-        CHECK_NULL(def->obj)                                                        \
-        tmp = def->obj;                                                             \
-    }                                                                               \
-                                                                                    \
-    SET_RETVAL(tmp)                                                                 \
-                                                                                    \
+#define GET_HANDLE(rs, index, type, res, lib_type, func) \
+                                                         \
+    ENTER_FUNC(type, res, OCI_IPC_RESULTSET, rs)         \
+                                                         \
+    OCI_Define *def = NULL;                              \
+                                                         \
+    CHECK_PTR(OCI_IPC_RESULTSET, rs)                     \
+    CHECK_BOUND(index, 1, (rs)->nb_defs)                 \
+                                                         \
+    def = DefineGet(rs, index);                          \
+    CHECK_NULL(def)                                      \
+                                                         \
+    type tmp = res;                                      \
+                                                         \
+    if (MATCHING_TYPE(def, lib_type))                    \
+    {                                                    \
+        def->obj = func;                                 \
+        CHECK_NULL(def->obj)                             \
+        tmp = def->obj;                                  \
+    }                                                    \
+                                                         \
+    SET_RETVAL(tmp)                                      \
+                                                         \
     EXIT_FUNC()
 
 /* --------------------------------------------------------------------------------------------- *
@@ -396,9 +396,9 @@ boolean FetchPieces
         CHECK_OCI
         (
             rs->stmt->con->err,
-            OCIStmtGetPieceInfo, 
+            OCIStmtGetPieceInfo,
             rs->stmt->stmt, rs->stmt->con->err,
-            &handle,  &type, &in_out, 
+            &handle,  &type, &in_out,
             &iter, &dx, &piece
         )
 
@@ -452,7 +452,7 @@ boolean FetchPieces
                     lg->maxsize = (lg->size + trailing_size + bufsize) * char_fact;
 
                     lg->buffer = (ub1 *) MemoryRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER,
-                                             (size_t) lg->maxsize, 1, TRUE);
+                                                       (size_t) lg->maxsize, 1, TRUE);
                 }
 
                 /* update piece info */
@@ -623,7 +623,7 @@ boolean FetchData
 
     /* let's initialize the success flag to FALSE until the process completes */
 
-   CHECK(ClearFetchedObjectInstances(rs))
+    CHECK(ClearFetchedObjectInstances(rs))
 
     /* internal fetch */
 
@@ -664,7 +664,7 @@ boolean FetchData
 
     if (Env.use_wide_char_conv)
     {
-       CHECK(ResultsetExpandStrings(rs))
+        CHECK(ResultsetExpandStrings(rs))
     }
 
     /* update internal fetch status and variables */
@@ -678,7 +678,7 @@ boolean FetchData
     {
         CHECK_ATTRIB_GET
         (
-            OCI_HTYPE_STMT, OCI_ATTR_CURRENT_POSITION, 
+            OCI_HTYPE_STMT, OCI_ATTR_CURRENT_POSITION,
             rs->stmt->stmt, &row_count, NULL,
             rs->stmt->con->err
         )
@@ -897,7 +897,7 @@ boolean ResultsetFree
             }
             else
             {
-                MemoryFreeDescriptorArray((dvoid *)def->buf.data,  (ub4)def->col.handletype, (ub4)def->buf.count);
+                MemoryFreeDescriptorArray((dvoid *)def->buf.data, (ub4)def->col.handletype, (ub4)def->buf.count);
             }
         }
 
@@ -1020,7 +1020,6 @@ boolean ResultsetFetchPrev
     SET_SUCCESS()
 
 #endif
-
 
     EXIT_FUNC()
 }
@@ -1185,7 +1184,6 @@ boolean ResultsetFetchLast
 
 #endif
 
-
     SET_RETVAL(result)
 
     EXIT_FUNC()
@@ -1242,7 +1240,7 @@ unsigned int ResultsetGetRowCount
 {
     GET_PROP
     (
-        unsigned int, 0, 
+        unsigned int, 0,
         OCI_IPC_RESULTSET, rs,
         row_count
     )
@@ -1276,7 +1274,7 @@ unsigned int ResultsetGetColumnCount
 {
     GET_PROP
     (
-        unsigned int, 0, 
+        unsigned int, 0,
         OCI_IPC_RESULTSET, rs,
         nb_defs
     )
@@ -1323,7 +1321,7 @@ OCI_Column * ResultsetGetColumn2
     )
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_STRING,    name)
 
     const int index = DefineGetIndex(rs, name);
     CHECK(index >= 0)
@@ -1350,7 +1348,7 @@ unsigned int ResultsetGetColumnIndex
     )
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_STRING,    name)
 
     const int index = DefineGetIndex(rs, name);
     CHECK(index >= 0)
@@ -1378,7 +1376,7 @@ boolean ResultsetSetStructNumericType
     )
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    CHECK_BOUND(index,  1,  rs->nb_defs)
+    CHECK_BOUND(index, 1, rs->nb_defs)
     CHECK_COMPAT(OCI_CDT_NUMERIC == rs->defs[index - 1].col.datatype);
 
     rs->defs[index-1].col.struct_subtype = (ub2) type;
@@ -1406,7 +1404,7 @@ boolean ResultsetSetStructNumericType2
     )
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_STRING,    name)
 
     const int index = DefineGetIndex(rs, name);
     CHECK(index >= 0)
@@ -1435,11 +1433,11 @@ boolean ResultsetGetStruct
         /* context */ OCI_IPC_RESULTSET, rs
     )
 
-    char    *ptr  = NULL;
+    char    *ptr = NULL;
     boolean *inds = NULL;
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    CHECK_PTR(OCI_IPC_VOID, row_struct)
+    CHECK_PTR(OCI_IPC_VOID,      row_struct)
 
     ptr  = (char    *) row_struct;
     inds = (boolean *) row_struct_ind;
@@ -1568,7 +1566,7 @@ boolean ResultsetGetStruct
 
     SET_SUCCESS()
 
-   EXIT_FUNC()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2000,7 +1998,7 @@ unsigned int ResultsetGetRaw
     )
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    CHECK_PTR(OCI_IPC_VOID, buffer);
+    CHECK_PTR(OCI_IPC_VOID,      buffer);
     CHECK_BOUND(index, 1, rs->nb_defs)
 
     OCI_Define*def = DefineGet(rs, index);
@@ -2044,8 +2042,8 @@ unsigned int ResultsetGetRaw2
     )
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    CHECK_PTR(OCI_IPC_VOID, buffer)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_VOID,      buffer)
+    CHECK_PTR(OCI_IPC_STRING,    name)
 
     const int index = DefineGetIndex(rs, name);
     CHECK(index >= 0)
@@ -2506,13 +2504,13 @@ unsigned int ResultsetGetDataSize2
     )
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_STRING,    name)
 
     const int index = DefineGetIndex(rs, name);
     CHECK(index >= 0)
 
     SET_RETVAL(ResultsetGetDataSize(rs, (unsigned int)index))
- 
+
     EXIT_FUNC()
 }
 
@@ -2560,7 +2558,7 @@ boolean ResultsetIsNull2
     )
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_STRING,    name)
 
     const int index = DefineGetIndex(rs, name);
     CHECK(index >= 0)
@@ -2609,7 +2607,7 @@ unsigned int ResultsetGetDataLength
     OCI_Define *def = DefineGet(rs, index);
     CHECK_NULL(def)
     CHECK(rs->row_cur > 0)
-   
+
     SET_RETVAL((unsigned int)((ub2 *)def->buf.lens)[rs->row_cur - 1])
 
     EXIT_FUNC()

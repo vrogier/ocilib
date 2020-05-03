@@ -50,7 +50,7 @@ sb4 CallbackOutBind
 
 ub4 CallbackNotifyChanges
 (
-    void            * oci_ctx,
+    void            *oci_ctx,
     OCISubscription *subscrhp,
     void            *payload,
     ub4              paylen,
@@ -60,7 +60,7 @@ ub4 CallbackNotifyChanges
 
 ub4 CallbackNotifyMessages
 (
-    void            * oci_ctx,
+    void            *oci_ctx,
     OCISubscription *subscrhp,
     void            *payload,
     ub4              paylen,

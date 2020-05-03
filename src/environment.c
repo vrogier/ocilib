@@ -936,7 +936,7 @@ boolean EnvironmentInitialize
                    OCILOBTRIM2);
         LIB_SYMBOL(Env.lib_handle, "OCILobWrite2",        OCILobWrite2,
                    OCILOBWRITE2);
-        LIB_SYMBOL(Env.lib_handle, "OCILobWriteAppend2",  OCILobWriteAppend2,
+        LIB_SYMBOL(Env.lib_handle, "OCILobWriteAppend2",    OCILobWriteAppend2,
                    OCILOBWRITEAPPEND2);
 
   #endif
@@ -1512,8 +1512,6 @@ boolean EnvironmentCleanup
 
     /* exit if the environment is not loaded */
 
-    CHECK(Env.loaded)
-
     success = TRUE;
 
     /* dispose list items */
@@ -1569,7 +1567,7 @@ boolean EnvironmentCleanup
 
         Env.mem_mutex = NULL;
 
-        if (mutex)
+        if (NULL != mutex)
         {
             MutexFree(mutex);
         }
@@ -1603,10 +1601,7 @@ boolean EnvironmentCleanup
         MemoryFreeHandle(Env.err, OCI_HTYPE_ERROR);
     }
 
-    /* close environment handle
-       => direct OCIHandleFree() because this handle was not allocated
-       with MemoryAllocHandle()
-    */
+    /* close environment handle */
 
     if (Env.env)
     {
@@ -1615,7 +1610,7 @@ boolean EnvironmentCleanup
 
 #ifdef OCI_IMPORT_RUNTIME
 
-    if (Env.lib_handle)
+    if (NULL != Env.lib_handle)
     {
         LIB_CLOSE(Env.lib_handle);
     }
@@ -1648,11 +1643,16 @@ boolean EnvironmentCleanup
 
     /* free environment errors */
 
-    ErrorFree(Env.lib_err);
+    if (NULL != Env.lib_err)
+    {
+        ErrorFree(Env.lib_err);
+    }
 
     /* reset environment object */
 
     memset(&Env, 0, sizeof(Env));
+
+    CHECK(TRUE)
 
     CLEANUP_AND_EXIT_FUNC
     (

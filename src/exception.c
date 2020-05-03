@@ -227,7 +227,7 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
         (                                               \
             err,                                        \
             OCI_ERR_OCILIB,                             \
-            (int)err_code,                              \
+            (int)(err_code),                            \
             ctx->source_ptr,                            \
             ctx->source_type,                           \
             ctx->location,                              \
@@ -252,7 +252,7 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
         (                                               \
             err,                                        \
             OCI_ERR_OCILIB,                             \
-            (int)err_code,                              \
+            (int)(err_code),                            \
             ctx->source_ptr,                            \
             ctx->source_type,                           \
             ctx->location,                              \

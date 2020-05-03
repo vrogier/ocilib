@@ -53,8 +53,8 @@ OCI_Mutex * MutexCreateInternal
     CHECK_OCI
     (
         mutex->err,
-        OCIThreadMutexInit, 
-        Env.env, mutex->err, 
+        OCIThreadMutexInit,
+        Env.env, mutex->err,
         &mutex->handle
     )
 
@@ -157,7 +157,7 @@ boolean MutexAcquire
     CHECK_OCI
     (
         mutex->err,
-        OCIThreadMutexAcquire, 
+        OCIThreadMutexAcquire,
         Env.env, mutex->err, mutex->handle
     )
 
@@ -186,7 +186,7 @@ boolean MutexRelease
     CHECK_OCI
     (
         mutex->err,
-        OCIThreadMutexRelease, 
+        OCIThreadMutexRelease,
         Env.env, mutex->err, mutex->handle
     )
 

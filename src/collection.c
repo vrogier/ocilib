@@ -76,7 +76,7 @@ OCI_Coll * CollectionInitialize
     }
 
     CLEANUP_AND_EXIT_FUNC
-    (       
+    (
         if (FAILURE)
         {
             CollectionFree(coll);
@@ -177,7 +177,7 @@ OCI_Coll ** CollectionCreateArray
     CHECK_PTR(OCI_IPC_CONNECTION, con)
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0,
-              sizeof(OCIColl*), sizeof(OCI_Coll), 0, typinf);
+                      sizeof(OCIColl*), sizeof(OCI_Coll), 0, typinf);
 
     CHECK_NULL(arr)
 
@@ -230,9 +230,9 @@ boolean CollectionAssign
 
     CHECK_OCI
     (
-        coll->con->err, 
+        coll->con->err,
         OCICollAssign,
-        coll->con->env, coll->con->err, 
+        coll->con->env, coll->con->err,
         coll_src->handle, coll->handle
     )
 
@@ -326,8 +326,8 @@ unsigned int CollectionGetSize
 
     CHECK_OCI
     (
-        coll->con->err, 
-        OCICollSize, 
+        coll->con->err,
+        OCICollSize,
         coll->con->env, coll->con->err,
         coll->handle, &value
     )
@@ -359,8 +359,8 @@ boolean CollectionTrim
     CHECK_OCI
     (
         coll->con->err,
-        OCICollTrim, 
-        coll->con->env, coll->con->err, 
+        OCICollTrim,
+        coll->con->env, coll->con->err,
         (sb4) nb_elem, coll->handle
     )
 
@@ -388,8 +388,8 @@ OCI_Elem * CollectionGetElement
     CHECK_PTR(OCI_IPC_COLLECTION, coll)
 
     boolean exists = FALSE;
-    void* data = NULL;
-    OCIInd* ind = NULL;
+    void  * data = NULL;
+    OCIInd* ind  = NULL;
 
     CHECK_OCI
     (
@@ -431,18 +431,18 @@ boolean CollectionGetElement2
     )
 
     boolean exists = FALSE;
-    void   *data   = NULL;
-    OCIInd *ind    = NULL;
+    void   *data = NULL;
+    OCIInd *ind  = NULL;
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    CHECK_PTR(OCI_IPC_ELEMENT,    elem)
     CHECK_COMPAT(elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
 
     CHECK_OCI
     (
         coll->con->err,
-        OCICollGetElem, 
-        coll->con->env, coll->con->err, 
+        OCICollGetElem,
+        coll->con->env, coll->con->err,
         coll->handle, (sb4) index-1, &exists,
         &data, (dvoid **) (dvoid *) &ind
     )
@@ -480,14 +480,14 @@ boolean CollectionSetElement
     )
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    CHECK_PTR(OCI_IPC_ELEMENT,    elem)
     CHECK_COMPAT(elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
 
     CHECK_OCI
     (
         coll->con->err,
         OCICollAssignElem,
-        coll->con->env, coll->con->err, 
+        coll->con->env, coll->con->err,
         (sb4) index-1, elem->handle,
         elem->pind, coll->handle
     )
@@ -514,14 +514,14 @@ boolean CollectionAddElement
     )
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CHECK_PTR(OCI_IPC_ELEMENT, elem)
+    CHECK_PTR(OCI_IPC_ELEMENT,    elem)
     CHECK_COMPAT(elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype)
 
     CHECK_OCI
     (
         coll->con->err,
         OCICollAppend,
-        coll->con->env, coll->con->err, 
+        coll->con->env, coll->con->err,
         elem->handle, elem->pind, coll->handle
     )
 
@@ -594,8 +594,8 @@ boolean CollectionRemoveElement
         CHECK_OCI
         (
             coll->con->err,
-            OCITableDelete, 
-            coll->con->env, coll->con->err, 
+            OCITableDelete,
+            coll->con->env, coll->con->err,
             (sb4) index-1, coll->handle
         )
     }
@@ -620,7 +620,7 @@ unsigned int CollectionGetCount
         /* context */ OCI_IPC_COLLECTION, coll
     )
 
-     sb4 value = 0;
+    sb4 value = 0;
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll)
 
@@ -629,7 +629,7 @@ unsigned int CollectionGetCount
         CHECK_OCI
         (
             coll->con->err,
-            OCITableSize, 
+            OCITableSize,
             coll->con->env, coll->con->err,
             coll->handle, &value
         )
@@ -639,7 +639,7 @@ unsigned int CollectionGetCount
         CHECK_OCI
         (
             coll->con->err,
-            OCICollSize, 
+            OCICollSize,
             coll->con->env, coll->con->err,
             coll->handle, &value
         )
@@ -667,14 +667,14 @@ boolean CollectionToString
         /* context */ OCI_IPC_COLLECTION, coll
     )
 
-    OCI_Error   *err   = NULL;
-    boolean      quote = TRUE;
+    OCI_Error *err = NULL;
+    boolean quote = TRUE;
 
     unsigned int len   = 0;
     unsigned int count = 0;
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CHECK_PTR(OCI_IPC_VOID, size)
+    CHECK_PTR(OCI_IPC_VOID,       size)
 
     err = ErrorGet(TRUE, TRUE);
 
@@ -683,8 +683,8 @@ boolean CollectionToString
         *str = 0;
     }
 
-    len += StringAddToBuffer(str, len, coll->typinf->name, 
-                       (unsigned int)ostrlen(coll->typinf->name), FALSE);
+    len += StringAddToBuffer(str, len, coll->typinf->name,
+                             (unsigned int)ostrlen(coll->typinf->name), FALSE);
 
     len += StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
 
@@ -713,7 +713,7 @@ boolean CollectionToString
                 case OCI_CDT_TEXT:
                 {
                     data_size = OCIStringSize(Env.env, elem->handle);
-                    data = (void*) ElementGetString(elem);
+                    data      = (void*) ElementGetString(elem);
                     break;
                 }
                 case OCI_CDT_NUMERIC:
@@ -770,13 +770,13 @@ boolean CollectionToString
                 }
                 case OCI_CDT_OBJECT:
                 {
-                    data = (void*) ElementGetObject(elem);
+                    data  = (void*) ElementGetObject(elem);
                     quote = FALSE;
                     break;
                 }
                 case OCI_CDT_COLLECTION:
                 {
-                    data = (void*) ElementGetCollection(elem);
+                    data  = (void*) ElementGetCollection(elem);
                     quote = FALSE;
                 }
             }
@@ -799,7 +799,7 @@ boolean CollectionToString
             else
             {
                 len += StringAddToBuffer(str, len, OCI_STRING_NULL,
-                    OCI_STRING_NULL_SIZE, FALSE);
+                                         OCI_STRING_NULL_SIZE, FALSE);
             }
 
             CHECK(NULL == err || OCI_UNKNOWN == err->type)

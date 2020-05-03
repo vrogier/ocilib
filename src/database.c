@@ -56,7 +56,7 @@ boolean DatabaseStartup
 
     OCIAdmin* adm = NULL;
 
-    dbtext* dbstr = NULL;
+    dbtext* dbstr  = NULL;
     int     dbsize = -1;
 
 #endif
@@ -84,7 +84,7 @@ boolean DatabaseStartup
 
             CHECK_ATTRIB_SET
             (
-                OCI_HTYPE_ADMIN, OCI_ATTR_ADMIN_PFILE, 
+                OCI_HTYPE_ADMIN, OCI_ATTR_ADMIN_PFILE,
                 adm, dbstr, dbsize,
                 Env.err
             )
@@ -96,8 +96,8 @@ boolean DatabaseStartup
         (
             Env.err,
             OCIDBStartup,
-            con->cxt, con->err, 
-            (OCIAdmin *) adm, OCI_DEFAULT, 
+            con->cxt, con->err,
+            (OCIAdmin *) adm, OCI_DEFAULT,
             start_flag
         )
 
@@ -133,7 +133,7 @@ boolean DatabaseStartup
     CLEANUP_AND_EXIT_FUNC
     (
         StringReleaseDBString(dbstr);
-    
+
         if (NULL != stmt)
         {
             StatementFree(stmt);
@@ -219,9 +219,9 @@ boolean DatabaseShutdown
         CHECK_OCI
         (
             Env.err,
-            OCIDBShutdown, 
-            con->cxt, con->err, 
-            (OCIAdmin *) NULL, 
+            OCIDBShutdown,
+            con->cxt, con->err,
+            (OCIAdmin *) NULL,
             shut_flag
         )
     }
@@ -250,7 +250,7 @@ boolean DatabaseShutdown
         StatementFree(stmt);
         stmt = NULL;
 
-       /* delete current transaction before the shutdown */
+        /* delete current transaction before the shutdown */
 
         if (NULL != con->trs)
         {
@@ -263,7 +263,7 @@ boolean DatabaseShutdown
         CHECK_OCI
         (
             Env.err,
-            OCIDBShutdown, 
+            OCIDBShutdown,
             con->cxt, con->err,
             (OCIAdmin *) 0,
             OCI_DBSHUTDOWN_FINAL
@@ -272,6 +272,8 @@ boolean DatabaseShutdown
         ConnectionFree(con);
         con = NULL;
     }
+
+    SET_SUCCESS()
 
 #else
 
@@ -285,10 +287,8 @@ boolean DatabaseShutdown
 
 #endif
 
-    SET_SUCCESS()
-
     CLEANUP_AND_EXIT_FUNC
-    (    
+    (
         if (NULL != stmt)
         {
             StatementFree(stmt);

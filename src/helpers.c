@@ -172,7 +172,7 @@ unsigned int ExternalSubTypeToHandleType
 
 boolean FreeObjectFromType
 (
-    void* obj, 
+    void       * obj,
     unsigned int type
 )
 {

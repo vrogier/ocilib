@@ -58,8 +58,8 @@ sb4 CallbackInBind
     )
 
     OCI_Bind * bnd = (OCI_Bind *) ictxp;
-    sb2       *ind = (sb2 *) bnd ? bnd->buffer.inds : NULL;
-    ub4        i   = 0;
+    sb2 *ind = (sb2 *) bnd ? bnd->buffer.inds : NULL;
+    ub4  i   = 0;
 
     /* those checks may be not necessary but they keep away compilers warning
        away if the warning level is set to maximum !
@@ -123,7 +123,7 @@ sb4 CallbackOutBind
         /* context */ OCI_IPC_BIND, octxp
     )
 
-    OCI_Bind      *bnd  = (OCI_Bind *)octxp;
+    OCI_Bind      *bnd = (OCI_Bind *)octxp;
     OCI_Define    *def  = NULL;
     OCI_Resultset *rs   = NULL;
     ub4            rows = 0;
@@ -159,7 +159,7 @@ sb4 CallbackOutBind
         {
             CHECK_ATTRIB_GET
             (
-                OCI_HTYPE_BIND, OCI_ATTR_ROWS_RETURNED, 
+                OCI_HTYPE_BIND, OCI_ATTR_ROWS_RETURNED,
                 bnd->buffer.handle, &rows, NULL,
                 bnd->stmt->con->err
             )
@@ -216,7 +216,7 @@ sb4 CallbackOutBind
 
 ub4 CallbackNotifyMessages
 (
-    void            * oci_ctx,
+    void            *oci_ctx,
     OCISubscription *subscrhp,
     void            *payload,
     ub4              paylen,
@@ -241,6 +241,8 @@ ub4 CallbackNotifyMessages
     CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
     dequeue->callback(dequeue);
+
+    SET_RETVAL(OCI_SUCCESS)
 
     EXIT_FUNC()
 }
@@ -282,7 +284,7 @@ ub4 CallbackNotifyChanges
 
     /* get database that generated the notification */
 
-    CHECK(StringGetAttribute(sub->con, desc, OCI_DTYPE_CHDES, OCI_ATTR_CHDES_DBNAME, 
+    CHECK(StringGetAttribute(sub->con, desc, OCI_DTYPE_CHDES, OCI_ATTR_CHDES_DBNAME,
                              &sub->event.dbname, &sub->event.dbname_size))
 
     /* get notification type */
@@ -335,7 +337,7 @@ ub4 CallbackNotifyChanges
 
         CHECK_ATTRIB_GET
         (
-            OCI_DTYPE_CHDES, OCI_ATTR_CHDES_TABLE_CHANGES, 
+            OCI_DTYPE_CHDES, OCI_ATTR_CHDES_TABLE_CHANGES,
             desc, &tables, NULL,
             sub->err
         )
@@ -372,23 +374,23 @@ ub4 CallbackNotifyChanges
 
                 CHECK_OCI
                 (
-                    sub->err, 
-                    OCICollGetElem, 
-                    sub->env, sub->err,  tables, i, &tbl_exist, 
+                    sub->err,
+                    OCICollGetElem,
+                    sub->env, sub->err,  tables, i, &tbl_exist,
                     (dvoid**) (dvoid*) &tbl_elem, (dvoid**) &tbl_ind
                 )
 
                 /* get table name */
 
                 CHECK(StringGetAttribute(sub->con, *tbl_elem, OCI_DTYPE_TABLE_CHDES,
-                                         OCI_ATTR_CHDES_TABLE_NAME, &sub->event.objname, 
+                                         OCI_ATTR_CHDES_TABLE_NAME, &sub->event.objname,
                                          &sub->event.objname_size))
 
                 /* get table modification type */
 
                 CHECK_ATTRIB_GET
                 (
-                    OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_OPFLAGS, 
+                    OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_OPFLAGS,
                     *tbl_elem, &sub->event.op, NULL,
                     sub->err
                 )
@@ -406,7 +408,7 @@ ub4 CallbackNotifyChanges
 
                     CHECK_ATTRIB_GET
                     (
-                        OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_ROW_CHANGES, 
+                        OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_ROW_CHANGES,
                         *tbl_elem, &rows, NULL,
                         sub->err
                     )
@@ -421,8 +423,8 @@ ub4 CallbackNotifyChanges
 
                         CHECK_OCI
                         (
-                            sub->err, 
-                            OCICollSize, 
+                            sub->err,
+                            OCICollSize,
                             sub->env, sub->err,
                             rows, &nb_rows
                         )
@@ -441,14 +443,14 @@ ub4 CallbackNotifyChanges
                             CHECK_OCI
                             (
                                 sub->err,
-                                OCICollGetElem, 
-                                sub->env, sub->err, rows, j, &row_exist, 
+                                OCICollGetElem,
+                                sub->env, sub->err, rows, j, &row_exist,
                                 (dvoid**) (dvoid*) &row_elem, (dvoid**) &row_ind
                             )
 
                             /* get rowid  */
 
-                            CHECK(StringGetAttribute(sub->con, *row_elem, OCI_DTYPE_ROW_CHDES, 
+                            CHECK(StringGetAttribute(sub->con, *row_elem, OCI_DTYPE_ROW_CHDES,
                                                      OCI_ATTR_CHDES_ROW_ROWID, &sub->event.rowid,
                                                      &sub->event.rowid_size))
 
@@ -477,6 +479,8 @@ ub4 CallbackNotifyChanges
     {
         sub->handler(&sub->event);
     }
+
+    SET_RETVAL(OCI_SUCCESS)
 
 #else
 
@@ -612,8 +616,8 @@ void CallbackHAEvent
 
             CHECK_ATTRIB_GET
             (
-                OCI_HTYPE_SERVER, OCI_ATTR_HA_STATUS, 
-                params.srvhp, &params.event, NULL, 
+                OCI_HTYPE_SERVER, OCI_ATTR_HA_STATUS,
+                params.srvhp, &params.event, NULL,
                 Env.err
             )
 
@@ -634,7 +638,7 @@ void CallbackHAEvent
 
             CHECK_ATTRIB_GET
             (
-                OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT, 
+                OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT,
                 eventptr, &params.srvhp, NULL,
                 Env.err
             )
@@ -647,5 +651,5 @@ void CallbackHAEvent
 
 #endif
 
-   EXIT_VOID()
+    EXIT_VOID()
 }

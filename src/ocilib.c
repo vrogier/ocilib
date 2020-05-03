@@ -58,7 +58,6 @@
 #include "transaction.h"
 #include "typeinfo.h"
 
-
 void CheckContext()
 {
     if (Env.env_mode & OCI_ENV_CONTEXT)
@@ -67,9 +66,9 @@ void CheckContext()
     }
 }
 
-#define CALL_IMPL(impl, ...)                                                    \
-    CheckContext();                                                             \
-    return impl(__VA_ARGS__);                                                   \
+#define CALL_IMPL(impl, ...)  \
+    CheckContext();           \
+    return impl(__VA_ARGS__); \
 
 
 /* --------------------------------------------------------------------------------------------- *
@@ -328,7 +327,7 @@ OCI_Coll ** OCI_API OCI_CollArrayCreate
     unsigned int    nbelem
 )
 {
-    CALL_IMPL(CollectionCreateArray, con,  typinf, nbelem)
+    CALL_IMPL(CollectionCreateArray, con, typinf, nbelem)
 }
 
 boolean OCI_API OCI_CollArrayFree
@@ -641,7 +640,7 @@ boolean OCI_API OCI_SetAutoCommit
     boolean         enable
 )
 {
-    CALL_IMPL(ConnectionSetAutoCommit, con,  enable)
+    CALL_IMPL(ConnectionSetAutoCommit, con, enable)
 }
 
 boolean OCI_API OCI_GetAutoCommit
@@ -674,7 +673,7 @@ boolean OCI_API OCI_SetUserData
     void           *data
 )
 {
-    CALL_IMPL(ConnectionSetUserData, con,  data)
+    CALL_IMPL(ConnectionSetUserData, con, data)
 }
 
 boolean OCI_API OCI_SetSessionTag
@@ -683,7 +682,7 @@ boolean OCI_API OCI_SetSessionTag
     const otext    *tag
 )
 {
-    CALL_IMPL(ConnectionSetSessionTag, con,  tag)
+    CALL_IMPL(ConnectionSetSessionTag, con, tag)
 }
 
 const otext * OCI_API OCI_GetSessionTag
@@ -724,7 +723,7 @@ boolean OCI_API OCI_SetPassword
     const otext    *password
 )
 {
-    CALL_IMPL(ConnectionSetPassword, con,  password)
+    CALL_IMPL(ConnectionSetPassword, con, password)
 }
 
 unsigned int OCI_API OCI_GetSessionMode
@@ -781,7 +780,7 @@ boolean OCI_API OCI_SetTransaction
     OCI_Transaction *trans
 )
 {
-    CALL_IMPL(ConnectionSetTransaction, con,  trans)
+    CALL_IMPL(ConnectionSetTransaction, con, trans)
 }
 
 unsigned int OCI_API OCI_GetVersionConnection
@@ -808,7 +807,7 @@ boolean OCI_API OCI_ServerEnableOutput
     unsigned int    lnsize
 )
 {
-    CALL_IMPL(ConnectionEnableServerOutput, con,  bufsize, arrsize, lnsize)
+    CALL_IMPL(ConnectionEnableServerOutput, con, bufsize, arrsize, lnsize)
 }
 
 boolean OCI_API OCI_ServerDisableOutput
@@ -834,7 +833,7 @@ boolean OCI_API OCI_SetTrace
     const otext    *value
 )
 {
-    CALL_IMPL(ConnectionSetTrace, con,  trace, value)
+    CALL_IMPL(ConnectionSetTrace, con, trace, value)
 }
 
 const otext * OCI_API OCI_GetTrace
@@ -843,7 +842,7 @@ const otext * OCI_API OCI_GetTrace
     unsigned int    trace
 )
 {
-    CALL_IMPL(ConnectionGetTrace, con,  trace)
+    CALL_IMPL(ConnectionGetTrace, con, trace)
 }
 
 boolean OCI_API OCI_Ping
@@ -861,7 +860,7 @@ boolean OCI_API OCI_SetTimeout
     unsigned int    value
 )
 {
-    CALL_IMPL(ConnectionSetTimeout, con,  type, value)
+    CALL_IMPL(ConnectionSetTimeout, con, type, value)
 }
 
 unsigned int OCI_API OCI_GetTimeout
@@ -870,7 +869,7 @@ unsigned int OCI_API OCI_GetTimeout
     unsigned int    type
 )
 {
-    CALL_IMPL(ConnectionGetTimeout, con,  type)
+    CALL_IMPL(ConnectionGetTimeout, con, type)
 }
 
 const otext * OCI_API OCI_GetDBName
@@ -935,7 +934,7 @@ boolean OCI_API OCI_SetTAFHandler
     POCI_TAF_HANDLER handler
 )
 {
-    CALL_IMPL(ConnectionSetTAFHandler, con,  handler)
+    CALL_IMPL(ConnectionSetTAFHandler, con, handler)
 }
 
 unsigned int OCI_API OCI_GetStatementCacheSize
@@ -952,7 +951,7 @@ boolean OCI_API OCI_SetStatementCacheSize
     unsigned int    value
 )
 {
-    CALL_IMPL(ConnectionSetStatementCacheSize, con,  value)
+    CALL_IMPL(ConnectionSetStatementCacheSize, con, value)
 }
 
 unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
@@ -969,7 +968,7 @@ boolean OCI_API OCI_SetDefaultLobPrefetchSize
     unsigned int    value
 )
 {
-    CALL_IMPL(ConnectionSetDefaultLobPrefetchSize, con,  value)
+    CALL_IMPL(ConnectionSetDefaultLobPrefetchSize, con, value)
 }
 
 unsigned int OCI_API OCI_GetMaxCursors
@@ -2202,7 +2201,6 @@ const otext* OCI_API OCI_ErrorGetLocation
 {
     CALL_IMPL(ErrorGetLocation, err)
 }
-
 
 /* --------------------------------------------------------------------------------------------- *
  * event

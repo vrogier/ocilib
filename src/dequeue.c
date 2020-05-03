@@ -35,13 +35,13 @@ static const unsigned int NavigationModeValues[] =
     OCI_ADN_NEXT_TRANSACTION
 };
 
-static const unsigned int VisibilityModeValues[] = 
+static const unsigned int VisibilityModeValues[] =
 {
     OCI_AMV_IMMEDIATE,
     OCI_AMV_ON_COMMIT
 };
 
-static const unsigned int DequeueModeValues[]= 
+static const unsigned int DequeueModeValues[]=
 {
     OCI_ADM_BROWSE,
     OCI_ADM_LOCKED,
@@ -68,7 +68,7 @@ OCI_Dequeue * DequeueCreate
     OCI_Dequeue* dequeue = NULL;
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_STRING,    name)
 
     /* allocate dequeue structure */
 
@@ -79,8 +79,8 @@ OCI_Dequeue * DequeueCreate
 
     /* allocate dequeue options descriptor */
 
-    CHECK(MemoryAllocDescriptor((dvoid *)dequeue->typinf->con->env, 
-                                (dvoid **)&dequeue->opth, 
+    CHECK(MemoryAllocDescriptor((dvoid *)dequeue->typinf->con->env,
+                                (dvoid **)&dequeue->opth,
                                 OCI_DTYPE_AQDEQ_OPTIONS))
 
     /* create local message for OCI_DequeueGet() */
@@ -89,7 +89,7 @@ OCI_Dequeue * DequeueCreate
     CHECK_NULL(dequeue->msg)
 
     CLEANUP_AND_EXIT_FUNC
-    (   
+    (
         if (FAILURE)
         {
             DequeueFree(dequeue);
@@ -177,8 +177,8 @@ OCI_Agent * DequeueListen
 
     CHECK_NULL(dequeue->agent_list)
 
-    sword ret  = OCI_SUCCESS;
-    sb4   code = OCI_SUCCESS;
+    sword ret = OCI_SUCCESS;
+    sb4 code = OCI_SUCCESS;
 
     OCIAQAgent *handle = NULL;
 
@@ -237,11 +237,11 @@ OCI_Msg * DequeueGetMessage
         /* context */ OCI_IPC_DEQUEUE, dequeue
     )
 
-    sword ret   = OCI_SUCCESS;
+    sword ret = OCI_SUCCESS;
     void *p_ind = NULL;
 
     int     dbsize = -1;
-    dbtext* dbstr = NULL;
+    dbtext* dbstr  = NULL;
 
     CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
@@ -296,10 +296,10 @@ OCI_Msg * DequeueGetMessage
                 dequeue->msg->ind = *(OCIInd *) p_ind;
 
                 dequeue->msg->obj = ObjectInitialize
-                (
+                                    (
                     dequeue->typinf->con, (OCI_Object*)dequeue->msg->obj,
                     dequeue->msg->payload, dequeue->typinf, NULL, -1, TRUE
-                );
+                                    );
 
                 CHECK_NULL(dequeue->msg->obj)
 
@@ -338,7 +338,7 @@ const otext * DequeueGetConsumer
         unsigned int size = 0;
 
         CHECK(StringGetAttribute(dequeue->typinf->con, dequeue->opth,
-                                 OCI_DTYPE_AQDEQ_OPTIONS, 
+                                 OCI_DTYPE_AQDEQ_OPTIONS,
                                  OCI_ATTR_CONSUMER_NAME,
                                  &dequeue->consumer, &size))
     }
@@ -368,8 +368,10 @@ boolean DequeueSetConsumer
 
     CHECK(StringSetAttribute(dequeue->typinf->con, dequeue->opth,
                              OCI_DTYPE_AQDEQ_OPTIONS,
-                             OCI_ATTR_CONSUMER_NAME, 
+                             OCI_ATTR_CONSUMER_NAME,
                              &dequeue->consumer, consumer))
+
+    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -395,7 +397,7 @@ const otext * DequeueGetCorrelation
     {
         unsigned int size = 0;
 
-        CHECK(StringGetAttribute(dequeue->typinf->con, dequeue->opth, 
+        CHECK(StringGetAttribute(dequeue->typinf->con, dequeue->opth,
                                  OCI_DTYPE_AQDEQ_OPTIONS,
                                  OCI_ATTR_CORRELATION,
                                  &dequeue->pattern, &size))
@@ -424,10 +426,12 @@ boolean DequeueSetCorrelation
 
     CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    CHECK(StringSetAttribute(dequeue->typinf->con, dequeue->opth, 
+    CHECK(StringSetAttribute(dequeue->typinf->con, dequeue->opth,
                              OCI_DTYPE_AQDEQ_OPTIONS,
                              OCI_ATTR_CORRELATION,
                              &dequeue->pattern, pattern))
+
+    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -452,14 +456,14 @@ boolean DequeueGetRelativeMsgID
     OCIRaw *value = NULL;
 
     CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    CHECK_PTR(OCI_IPC_VOID, id)
-    CHECK_PTR(OCI_IPC_VOID, len)
+    CHECK_PTR(OCI_IPC_VOID,    id)
+    CHECK_PTR(OCI_IPC_VOID,    len)
 
     *len = 0;
 
     CHECK_ATTRIB_GET
     (
-        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MSGID, 
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MSGID,
         dequeue->opth, &value, NULL,
         dequeue->typinf->con->err
     )
@@ -505,8 +509,8 @@ boolean DequeueSetRelativeMsgID
     CHECK_OCI
     (
         dequeue->typinf->con->err,
-        OCIRawAssignBytes, 
-        dequeue->typinf->con->env, dequeue->typinf->con->err, 
+        OCIRawAssignBytes,
+        dequeue->typinf->con->env, dequeue->typinf->con->err,
         (ub1*) id, (ub4) len, (OCIRaw **) &value
     )
 
@@ -543,7 +547,7 @@ unsigned int DequeueGetVisibility
 
     CHECK_ATTRIB_GET
     (
-        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_VISIBILITY, 
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_VISIBILITY,
         dequeue->opth, &value, NULL,
         dequeue->typinf->con->err
     )
@@ -576,7 +580,7 @@ boolean DequeueSetVisibility
 
     CHECK_ATTRIB_SET
     (
-        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_VISIBILITY, 
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_VISIBILITY,
         dequeue->opth, &value, 0,
         dequeue->typinf->con->err
     )
@@ -640,7 +644,7 @@ boolean DequeueSetMode
 
     CHECK_ATTRIB_SET
     (
-        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MODE, 
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MODE,
         dequeue->opth, &value, 0,
         dequeue->typinf->con->err
     )
@@ -705,7 +709,7 @@ boolean DequeueSetNavigation
     CHECK_ATTRIB_SET
     (
         OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_NAVIGATION,
-        dequeue->opth, &value, 0, 
+        dequeue->opth, &value, 0,
         dequeue->typinf->con->err
     )
 
@@ -735,7 +739,7 @@ int DequeueGetWaitTime
 
     CHECK_ATTRIB_GET
     (
-        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_WAIT, 
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_WAIT,
         dequeue->opth, &value, NULL,
         dequeue->typinf->con->err
     )
@@ -767,7 +771,7 @@ boolean DequeueSetWaitTime
 
     CHECK_ATTRIB_SET
     (
-        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_WAIT, 
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_WAIT,
         dequeue->opth, &value, 0,
         dequeue->typinf->con->err
     )
@@ -802,7 +806,7 @@ boolean DequeueSetAgentList
     {
         ALLOC_DATA(OCI_IPC_ARRAY, dequeue->agent_list, count)
 
-       for (unsigned int i = 0; i < count; i++)
+        for (unsigned int i = 0; i < count; i++)
         {
             dequeue->agent_list[i] = consumers[i]->handle;
         }
@@ -835,7 +839,7 @@ boolean DequeueSubscribe
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    ub4 oci_port     = (ub4) port;
+    ub4 oci_port = (ub4) port;
     ub4 oci_timeout  = (ub4) timeout;
     ub4 oci_protocol = OCI_SUBSCR_PROTO_OCI;
     ub4 oci_msgpres  = OCI_SUBSCR_PRES_DEFAULT;
@@ -846,7 +850,7 @@ boolean DequeueSubscribe
 
     OCI_Connection *con = NULL;
 
-    dbtext* dbstr = NULL;
+    dbtext* dbstr  = NULL;
     int     dbsize = -1;
 
     CHECK_DATABASE_NOTIFY_ENABLED()
@@ -860,7 +864,7 @@ boolean DequeueSubscribe
 
     /* allocate subscription handle */
 
-    CHECK(MemoryAllocHandle(con->env, 
+    CHECK(MemoryAllocHandle(con->env,
                             (dvoid **) (void *) &dequeue->subhp,
                             OCI_HTYPE_SUBSCRIPTION))
 
@@ -884,7 +888,7 @@ boolean DequeueSubscribe
     {
         CHECK_ATTRIB_GET
         (
-            OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_TIMEOUT, 
+            OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_TIMEOUT,
             dequeue->subhp, &oci_timeout, sizeof(oci_timeout),
             dequeue->typinf->con->err
         )
@@ -894,7 +898,7 @@ boolean DequeueSubscribe
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPROTO, 
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPROTO,
         dequeue->subhp, &oci_protocol, sizeof(oci_protocol),
         dequeue->typinf->con->err
     )
@@ -903,7 +907,7 @@ boolean DequeueSubscribe
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPRES, 
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPRES,
         dequeue->subhp, &oci_msgpres, sizeof(oci_msgpres),
         dequeue->typinf->con->err
     )
@@ -932,7 +936,7 @@ boolean DequeueSubscribe
         if (dequeue->consumer)
         {
             max_chars -= ostrlen(dequeue->name);
-            ostrncat(buffer, OTEXT(":"), max_chars);
+            ostrncat(buffer, OTEXT(":"),        max_chars);
             max_chars -= (size_t)1;
 
             ostrncat(buffer, dequeue->consumer, max_chars);
@@ -949,7 +953,7 @@ boolean DequeueSubscribe
 
         CHECK_ATTRIB_SET
         (
-            OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME, 
+            OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME,
             dequeue->subhp, dbstr, dbsize,
             dequeue->typinf->con->err
         )
@@ -959,7 +963,7 @@ boolean DequeueSubscribe
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAMESPACE, 
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAMESPACE,
         dequeue->subhp, &oci_namespace, oci_namespace,
         dequeue->typinf->con->err
     )
@@ -968,7 +972,7 @@ boolean DequeueSubscribe
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CTX, 
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CTX,
         dequeue->subhp, dequeue, 0,
         dequeue->typinf->con->err
     )
@@ -985,8 +989,8 @@ boolean DequeueSubscribe
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, 
-        dequeue->subhp, CallbackNotifyMessages, 0, 
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK,
+        dequeue->subhp, CallbackNotifyMessages, 0,
         dequeue->typinf->con->err
     )
 
@@ -1003,8 +1007,8 @@ boolean DequeueSubscribe
     CHECK_OCI
     (
         dequeue->typinf->con->err,
-        OCISubscriptionRegister, 
-        con->cxt, &dequeue->subhp, (ub2) 1, 
+        OCISubscriptionRegister,
+        con->cxt, &dequeue->subhp, (ub2) 1,
         con->err,(ub4) OCI_DEFAULT
     )
 
@@ -1017,7 +1021,7 @@ boolean DequeueSubscribe
         if (FAILURE && NULL != dequeue)
         {
             DequeueUnsubscribe(dequeue);
-        }    
+        }
     )
 }
 

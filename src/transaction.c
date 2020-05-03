@@ -173,7 +173,7 @@ boolean TransactionStart
     (
         trans->con->err,
         OCITransStart,
-        trans->con->cxt, trans->con->err, 
+        trans->con->cxt, trans->con->err,
         (uword) trans->timeout,  (ub4) trans->mode
     )
 
@@ -216,7 +216,7 @@ boolean TransactionStop
     {
         CHECK_OCI
         (
-            trans->con->err, 
+            trans->con->err,
             OCITransDetach,
             trans->con->cxt, trans->con->err,
             (ub4) OCI_DEFAULT
@@ -247,8 +247,8 @@ boolean TransactionResume
 
     CHECK_OCI
     (
-        trans->con->err, 
-        OCITransStart, 
+        trans->con->err,
+        OCITransStart,
         trans->con->cxt, trans->con->err,
         (uword) trans->timeout, (ub4) OCI_TRANS_RESUME
     )
@@ -277,9 +277,9 @@ boolean TransactionPrepare
 
     CHECK_OCI
     (
-        trans->con->err, 
+        trans->con->err,
         OCITransPrepare,
-        trans->con->cxt, trans->con->err, 
+        trans->con->cxt, trans->con->err,
         (ub4) OCI_DEFAULT
     )
 
@@ -307,7 +307,7 @@ boolean TransactionForget
 
     CHECK_OCI
     (
-        trans->con->err, 
+        trans->con->err,
         OCITransForget,
         trans->con->cxt, trans->con->err,
         (ub4) OCI_DEFAULT
@@ -329,7 +329,7 @@ unsigned int TransactionGetMode
 {
     GET_PROP
     (
-        unsigned int, OCI_UNKNOWN, 
+        unsigned int, OCI_UNKNOWN,
         OCI_IPC_TRANSACTION, trans,
         mode
     )
@@ -346,7 +346,7 @@ unsigned int TransactionGetTimeout
 {
     GET_PROP
     (
-        unsigned int, 0, 
+        unsigned int, 0,
         OCI_IPC_TRANSACTION, trans,
         timeout
     )

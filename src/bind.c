@@ -967,6 +967,8 @@ boolean BindFree
     FREE(bnd->name)
     FREE(bnd)
 
+    SET_SUCCESS()
+
     EXIT_FUNC()
 }
 
@@ -1205,22 +1207,21 @@ boolean BindSetDataSizeAtPos
     CHECK_BOUND(position, 1, bnd->buffer.count)
     CHECK_MIN(size, 1)
 
-    if (bnd->buffer.lens)
-    {
-        if (OCI_CDT_TEXT == bnd->type)
-        {
-            if (bnd->size == (sb4) size)
-            {
-                size += (unsigned int) (size_t) sizeof(dbtext);
-            }
+    CHECK_NULL(bnd->buffer.lens)
 
-            size *= (unsigned int) sizeof(dbtext);
+    if (OCI_CDT_TEXT == bnd->type)
+    {
+        if (bnd->size == (sb4) size)
+        {
+            size += (unsigned int) (size_t) sizeof(dbtext);
         }
 
-        ((ub2 *) bnd->buffer.lens)[position-1] = (ub2) size;
-
-        SET_SUCCESS()
+        size *= (unsigned int) sizeof(dbtext);
     }
+
+    ((ub2 *) bnd->buffer.lens)[position-1] = (ub2) size;
+
+    SET_SUCCESS()
 
     EXIT_FUNC()
 }

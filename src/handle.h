@@ -127,7 +127,7 @@ const void * HandleGetDirPathStream
 (
     OCI_DirPath *dp
 );
-    
+
 const void * HandleGetSubscription
 (
     OCI_Subscription *sub

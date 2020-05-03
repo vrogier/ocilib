@@ -26,20 +26,20 @@
 #include "memory.h"
 #include "strings.h"
 
-static const unsigned int SeekModeValues[] = 
+static const unsigned int SeekModeValues[] =
 {
     OCI_SEEK_SET,
     OCI_SEEK_END,
     OCI_SEEK_CUR
 };
 
-static const unsigned int OpenModeValues[] = 
+static const unsigned int OpenModeValues[] =
 {
     OCI_LOB_READONLY,
     OCI_LOB_READWRITE
 };
 
-static const unsigned int LobTypeValues[]  =
+static const unsigned int LobTypeValues[] =
 {
     OCI_CLOB,
     OCI_NCLOB,
@@ -65,7 +65,7 @@ OCI_Lob * LobInitialize
     )
 
     ALLOC_DATA(OCI_IPC_LOB, lob, 1);
-   
+
     lob->type   = type;
     lob->con    = con;
     lob->handle = handle;
@@ -119,7 +119,7 @@ OCI_Lob * LobInitialize
         CHECK_OCI
         (
             lob->con->err,
-            OCILobCreateTemporary, 
+            OCILobCreateTemporary,
             lob->con->cxt, lob->con->err, lob->handle,
             csid, csfrm, lobtype, FALSE, OCI_DURATION_SESSION
         )
@@ -130,7 +130,7 @@ OCI_Lob * LobInitialize
     }
 
     CLEANUP_AND_EXIT_FUNC
-    (    
+    (
         if (FAILURE)
         {
             LobFree(lob);
@@ -189,7 +189,7 @@ boolean LobFree
         CHECK_OCI
         (
             lob->con->err,
-            OCILobFreeTemporary, 
+            OCILobFreeTemporary,
             lob->con->cxt, lob->con->err,
             lob->handle
         )
@@ -232,8 +232,8 @@ OCI_Lob ** LobCreateArray
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_ENUM_VALUE(type, LobTypeValues, OTEXT("Lob type"))
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_LOB, type, 
-                      sizeof(OCILobLocator*), sizeof(OCI_Lob), 
+    arr = ArrayCreate(con, nbelem, OCI_CDT_LOB, type,
+                      sizeof(OCILobLocator*), sizeof(OCI_Lob),
                       OCI_DTYPE_LOB, NULL);
 
     CHECK_NULL(arr)
@@ -304,6 +304,8 @@ boolean LobSeek
 
     const big_uint size = LobGetLength(lob);
 
+    boolean success = FALSE;
+
     switch (mode)
     {
         case OCI_SEEK_CUR:
@@ -312,7 +314,7 @@ boolean LobSeek
             {
                 lob->offset += offset;
 
-                SET_SUCCESS()
+                success = FALSE;
             }
             break;
         }
@@ -322,7 +324,7 @@ boolean LobSeek
             {
                 lob->offset = offset + 1;
 
-                SET_SUCCESS()
+                success = FALSE;
             }
             break;
         }
@@ -332,13 +334,15 @@ boolean LobSeek
             {
                 lob->offset = size - offset + 1;
 
-                SET_SUCCESS()
+                success = FALSE;
             }
             break;
         }
     }
 
-   EXIT_FUNC()
+    SET_RETVAL(success)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -382,7 +386,7 @@ boolean LobRead2
     )
 
     ub1 csfrm = 0;
-    ub2 csid  = 0;
+    ub2 csid = 0;
 
     CHECK_PTR(OCI_IPC_LOB, lob)
     CHECK_PTR(OCI_IPC_INT, char_count)
@@ -428,8 +432,8 @@ boolean LobRead2
             NULL, csid, csfrm
         )
 
-        (*char_count) = (ub4) size_in_out_char;
-        (*byte_count) = (ub4) size_in_out_byte;
+            (*char_count) = (ub4) size_in_out_char;
+        (*byte_count)     = (ub4) size_in_out_byte;
     }
 
     else
@@ -449,8 +453,8 @@ boolean LobRead2
             NULL, csid, csfrm
         )
 
-        (*char_count) = (ub4) size_in_out_char_byte;
-        (*byte_count) = (ub4) size_in_out_char_byte;
+            (*char_count) = (ub4) size_in_out_char_byte;
+        (*byte_count)     = (ub4) size_in_out_char_byte;
     }
 
     if (OCI_BLOB != lob->type)
@@ -547,13 +551,14 @@ boolean LobWrite2
         /* context */ OCI_IPC_LOB, lob
     )
 
-    ub1   csfrm = 0;
-    ub2   csid  = 0;
-    void *obuf  = NULL;
+    ub1 csfrm = 0;
+    ub2   csid = 0;
+    void *obuf = NULL;
 
     CHECK_PTR(OCI_IPC_LOB, lob)
     CHECK_PTR(OCI_IPC_INT, char_count)
     CHECK_PTR(OCI_IPC_INT, byte_count)
+
     if (OCI_BLOB != lob->type)
     {
         if (OCI_CHAR_WIDE == Env.charset)
@@ -618,8 +623,8 @@ boolean LobWrite2
             NULL, csid, csfrm
         )
 
-        (*char_count)   = (ub4) size_in_out_char;
-        (*byte_count)   = (ub4) size_in_out_byte;
+            (*char_count) = (ub4) size_in_out_char;
+        (*byte_count)     = (ub4) size_in_out_byte;
     }
 
     else
@@ -648,8 +653,8 @@ boolean LobWrite2
             (void *) NULL, NULL, csid, csfrm
         )
 
-        (*char_count) = (ub4) size_in_out_char_byte;
-        (*byte_count) = (ub4) size_in_out_char_byte;
+            (*char_count) = (ub4) size_in_out_char_byte;
+        (*byte_count)     = (ub4) size_in_out_char_byte;
 
         if ((OCI_CLOB == lob->type) && !Env.nls_utf8)
         {
@@ -794,7 +799,7 @@ big_uint LobErase
         CHECK_OCI
         (
             lob->con->err,
-            OCILobErase2, 
+            OCILobErase2,
             lob->con->cxt, lob->con->err,
             lob->handle, (ub8 *) &lob_size,
             (ub8) (offset + 1)
@@ -905,8 +910,8 @@ unsigned int LobGetChunkSize
     CHECK_OCI
     (
         lob->con->err,
-        OCILobGetChunkSize, 
-        lob->con->cxt, lob->con->err, 
+        OCILobGetChunkSize,
+        lob->con->cxt, lob->con->err,
         lob->handle, &size
     )
 
@@ -943,7 +948,7 @@ boolean LobCopy
     {
         CHECK_OCI
         (
-            lob->con->err, 
+            lob->con->err,
             OCILobCopy2,
             lob->con->cxt, lob->con->err, lob->handle,
             lob_src->handle, (ub8) count,
@@ -958,7 +963,7 @@ boolean LobCopy
     {
         CHECK_OCI
         (
-            lob->con->err, 
+            lob->con->err,
             OCILobCopy,
             lob->con->cxt, lob->con->err, lob->handle,
             lob_src->handle, (ub4) count,
@@ -991,7 +996,7 @@ boolean LobCopyFromFile
         /* context */ OCI_IPC_LOB, lob
     )
 
-    CHECK_PTR(OCI_IPC_LOB, lob)
+    CHECK_PTR(OCI_IPC_LOB,  lob)
     CHECK_PTR(OCI_IPC_FILE, file)
 
 #ifdef OCI_LOB2_API_ENABLED
@@ -1000,7 +1005,7 @@ boolean LobCopyFromFile
     {
         CHECK_OCI
         (
-            lob->con->err, 
+            lob->con->err,
             OCILobLoadFromFile2,
             lob->con->cxt, lob->con->err,
             lob->handle, file->handle,
@@ -1016,7 +1021,7 @@ boolean LobCopyFromFile
     {
         CHECK_OCI
         (
-            lob->con->err, 
+            lob->con->err,
             OCILobLoadFromFile,
             lob->con->cxt, lob->con->err,
             lob->handle, file->handle,
@@ -1049,9 +1054,9 @@ boolean LobAppend2
         /* context */ OCI_IPC_LOB, lob
     )
 
-    ub1   csfrm = 0;
-    ub2   csid  = 0;
-    void *obuf  = NULL;
+    ub1 csfrm = 0;
+    ub2   csid = 0;
+    void *obuf = NULL;
 
     /* OCILobWriteAppend() seems to cause problems on Oracle client 8.1 and 9.0
     It's an Oracle known bug #886191
@@ -1124,7 +1129,7 @@ boolean LobAppend2
 
         CHECK_OCI
         (
-            lob->con->err, 
+            lob->con->err,
             OCILobWriteAppend2,
             lob->con->cxt, lob->con->err, lob->handle,
             &size_in_out_byte, &size_in_out_char,
@@ -1154,7 +1159,7 @@ boolean LobAppend2
 
         CHECK_OCI
         (
-            lob->con->err, 
+            lob->con->err,
             OCILobWriteAppend,
             lob->con->cxt, lob->con->err, lob->handle,
             &size_in_out_char_byte, obuf,  (*byte_count),
@@ -1246,7 +1251,7 @@ boolean LobAppendLob
     CHECK_OCI
     (
         lob->con->err,
-        OCILobAppend, 
+        OCILobAppend,
         lob->con->cxt, lob->con->err,
         lob->handle, lob_src->handle
     )
@@ -1279,8 +1284,8 @@ boolean LobIsTemporary
 
     CHECK_OCI
     (
-        lob->con->err, 
-        OCILobIsTemporary, 
+        lob->con->err,
+        OCILobIsTemporary,
         lob->con->env, lob->con->err,
         lob->handle, &is_temp
     )
@@ -1311,7 +1316,7 @@ boolean LobOpen
 
     CHECK_OCI
     (
-        lob->con->err, 
+        lob->con->err,
         OCILobOpen,
         lob->con->cxt, lob->con->err,
         lob->handle, (ub1) mode
@@ -1341,8 +1346,8 @@ boolean LobClose
 
     CHECK_OCI
     (
-        lob->con->err, 
-        OCILobClose, 
+        lob->con->err,
+        OCILobClose,
         lob->con->cxt, lob->con->err,
         lob->handle
     )
@@ -1375,7 +1380,7 @@ boolean LobIsEqual
 
     CHECK_OCI
     (
-        lob->con->err, 
+        lob->con->err,
         OCILobIsEqual,
         lob->con->env, lob->handle,
         lob2->handle, &is_equal
@@ -1409,8 +1414,8 @@ boolean LobAssign
     {
         CHECK_OCI
         (
-            lob->con->err, 
-            OCILobLocatorAssign, 
+            lob->con->err,
+            OCILobLocatorAssign,
             lob->con->cxt, lob->con->err,
             lob_src->handle, &lob->handle
         )
@@ -1419,8 +1424,8 @@ boolean LobAssign
     {
         CHECK_OCI
         (
-            lob->con->err, 
-            OCILobAssign, lob->con->env, 
+            lob->con->err,
+            OCILobAssign, lob->con->env,
             lob->con->err, lob_src->handle,
             &lob->handle
         )
@@ -1458,7 +1463,7 @@ big_uint LobGetMaxSize
 
         CHECK_OCI
         (
-            lob->con->err, 
+            lob->con->err,
             OCILobGetStorageLimit,
             lob->con->cxt, lob->con->err,
             lob->handle, (ub8 *) &size
@@ -1493,7 +1498,7 @@ boolean LobFlush
 
     CHECK_OCI
     (
-        lob->con->err, 
+        lob->con->err,
         OCILobFlushBuffer,
         lob->con->cxt, lob->con->err,
         lob->handle, (ub4) OCI_DEFAULT
@@ -1526,9 +1531,9 @@ boolean LobEnableBuffering
     {
         CHECK_OCI
         (
-            lob->con->err, 
-            OCILobEnableBuffering, 
-            lob->con->cxt, lob->con->err, 
+            lob->con->err,
+            OCILobEnableBuffering,
+            lob->con->cxt, lob->con->err,
             lob->handle
         )
     }
@@ -1536,9 +1541,9 @@ boolean LobEnableBuffering
     {
         CHECK_OCI
         (
-            lob->con->err, 
-            OCILobDisableBuffering, 
-            lob->con->cxt, lob->con->err, 
+            lob->con->err,
+            OCILobDisableBuffering,
+            lob->con->cxt, lob->con->err,
             lob->handle
         )
     }

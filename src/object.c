@@ -37,90 +37,90 @@
 #include "timestamp.h"
 #include "typeinfo.h"
 
-#define OBJECT_SET_VALUE(datatype, type, func, ...)                         \
-                                                                            \
-    ENTER_FUNC(boolean, FALSE, OCI_IPC_OBJECT, obj)                         \
-                                                                            \
-    CHECK_PTR(OCI_IPC_OBJECT, obj)                                          \
-                                                                            \
-    if (NULL == value)                                                      \
-    {                                                                       \
-        CHECK(ObjectSetNull(obj, attr) )                                    \
-    }                                                                       \
-    else                                                                    \
-    {                                                                       \
-        int index = ObjectGetAttributeIndex(obj, attr, datatype, TRUE);     \
-                                                                            \
-        if (index >= 0)                                                     \
-        {                                                                   \
-            OCIInd *ind  = NULL;                                            \
-            type   *data = (type *) ObjectGetAttr(obj, index, &ind);        \
-                                                                            \
-            CHECK_OCI(obj->con->err, func, __VA_ARGS__)                     \
-                                                                            \
-            *ind = OCI_IND_NOTNULL;                                         \
-        }                                                                   \
-    }                                                                       \
-                                                                            \
-    SET_SUCCESS()                                                           \
-                                                                            \
+#define OBJECT_SET_VALUE(datatype, type, func, ...)                     \
+                                                                        \
+    ENTER_FUNC(boolean, FALSE, OCI_IPC_OBJECT, obj)                     \
+                                                                        \
+    CHECK_PTR(OCI_IPC_OBJECT, obj)                                      \
+                                                                        \
+    if (NULL == value)                                                  \
+    {                                                                   \
+        CHECK(ObjectSetNull(obj, attr) )                                \
+    }                                                                   \
+    else                                                                \
+    {                                                                   \
+        int index = ObjectGetAttributeIndex(obj, attr, datatype, TRUE); \
+                                                                        \
+        if (index >= 0)                                                 \
+        {                                                               \
+            OCIInd *ind  = NULL;                                        \
+            type   *data = (type *) ObjectGetAttr(obj, index, &ind);    \
+                                                                        \
+            CHECK_OCI(obj->con->err, func, __VA_ARGS__)                 \
+                                                                        \
+            *ind = OCI_IND_NOTNULL;                                     \
+        }                                                               \
+    }                                                                   \
+                                                                        \
+    SET_SUCCESS()                                                       \
+                                                                        \
     EXIT_FUNC()
 
-#define OBJECT_GET_VALUE(datatype, object_type, type, func, ...)            \
-                                                                            \
-    ENTER_FUNC(object_type, NULL, OCI_IPC_OBJECT, obj)                      \
-                                                                            \
-    int index = 0;                                                          \
-                                                                            \
-    CHECK_PTR(OCI_IPC_OBJECT, obj)                                          \
-                                                                            \
-    index = ObjectGetAttributeIndex(obj, attr, datatype, TRUE);             \
-    CHECK(index >= 0)                                                       \
-                                                                            \
-    OCIInd *ind   = NULL;                                                   \
-    type   *value = NULL;                                                   \
-                                                                            \
-    value = (type *) ObjectGetAttr(obj, index, &ind);                       \
-                                                                            \
-    object_type tmp = NULL;                                                 \
-                                                                            \
-    if (value && ind && (OCI_IND_NULL != *ind))                             \
-    {                                                                       \
-        tmp = obj->objs[index] = func(__VA_ARGS__);                         \
-        CHECK_NULL(tmp)                                                     \
-    }                                                                       \
-                                                                            \
-    SET_RETVAL(tmp)                                                         \
-                                                                            \
+#define OBJECT_GET_VALUE(datatype, object_type, type, func, ...) \
+                                                                 \
+    ENTER_FUNC(object_type, NULL, OCI_IPC_OBJECT, obj)           \
+                                                                 \
+    int index = 0;                                               \
+                                                                 \
+    CHECK_PTR(OCI_IPC_OBJECT, obj)                               \
+                                                                 \
+    index = ObjectGetAttributeIndex(obj, attr, datatype, TRUE);  \
+    CHECK(index >= 0)                                            \
+                                                                 \
+    OCIInd *ind = NULL;                                          \
+    type *value = NULL;                                          \
+                                                                 \
+    value = (type *) ObjectGetAttr(obj, index, &ind);            \
+                                                                 \
+    object_type tmp = NULL;                                      \
+                                                                 \
+    if (value && ind && (OCI_IND_NULL != *ind))                  \
+    {                                                            \
+        tmp = obj->objs[index] = func(__VA_ARGS__);              \
+        CHECK_NULL(tmp)                                          \
+    }                                                            \
+                                                                 \
+    SET_RETVAL(tmp)                                              \
+                                                                 \
     EXIT_FUNC()
 
-#define OBJECT_GET_NUMBER(number_type, type, value)                         \
-                                                                            \
-    ENTER_FUNC(type, value, OCI_IPC_OBJECT, obj)                            \
-                                                                            \
-    CHECK_PTR(OCI_IPC_OBJECT, obj)                                          \
-                                                                            \
-    type tmp = value;                                                       \
-                                                                            \
-    CHECK(ObjectGetNumberInternal(obj, attr,                                \
-                                  (void *) (&tmp),                          \
-                                  (uword) (number_type)));                  \
-                                                                            \
-    SET_RETVAL(tmp)                                                         \
-                                                                            \
+#define OBJECT_GET_NUMBER(number_type, type, value)        \
+                                                           \
+    ENTER_FUNC(type, value, OCI_IPC_OBJECT, obj)           \
+                                                           \
+    CHECK_PTR(OCI_IPC_OBJECT, obj)                         \
+                                                           \
+    type tmp = value;                                      \
+                                                           \
+    CHECK(ObjectGetNumberInternal(obj, attr,               \
+                                  (void *) (&tmp),         \
+                                  (uword) (number_type))); \
+                                                           \
+    SET_RETVAL(tmp)                                        \
+                                                           \
     EXIT_FUNC()
 
-#define OBJECT_SET_NUMBER(number_type, value)                               \
-                                                                            \
-    ENTER_FUNC(boolean, FALSE,OCI_IPC_OBJECT, obj)                          \
-                                                                            \
-    CHECK_PTR(OCI_IPC_OBJECT, obj)                                          \
-                                                                            \
-    CHECK(ObjectSetNumberInternal(obj, attr, (void *) &(value),             \
-                                 (uword) (number_type)))                    \
-                                                                            \
-    SET_SUCCESS()                                                           \
-                                                                            \
+#define OBJECT_SET_NUMBER(number_type, value)                   \
+                                                                \
+    ENTER_FUNC(boolean, FALSE,OCI_IPC_OBJECT, obj)              \
+                                                                \
+    CHECK_PTR(OCI_IPC_OBJECT, obj)                              \
+                                                                \
+    CHECK(ObjectSetNumberInternal(obj, attr, (void *) &(value), \
+                                  (uword) (number_type)))       \
+                                                                \
+    SET_SUCCESS()                                               \
+                                                                \
     EXIT_FUNC()
 
 /* pre declaration */
@@ -155,8 +155,8 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
     )
 
     OCIRef* ref = NULL;
-    OCIType* tdo = NULL;
-    OCIDescribe* descr = NULL;
+    OCIType     * tdo    = NULL;
+    OCIDescribe * descr  = NULL;
     OCI_TypeInfo* parent = NULL;
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
@@ -195,7 +195,8 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
     CHECK_NULL(tdo)
 
-    /* the object instance type pointer is different only if the instance is from an inherited  type */
+    /* the object instance type pointer is different only if the instance is from an inherited  type
+     * */
 
     CHECK(tdo != typinf->tdo)
 
@@ -207,9 +208,9 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
     CHECK(parent == NULL)
 
-    OCIParam    *param       = NULL;
-    otext       *schema_name = NULL;
-    otext       *object_name = NULL;
+    OCIParam    *param = NULL;
+    otext *schema_name = NULL;
+    otext *object_name = NULL;
 
     unsigned int size_schema = 0;
     unsigned int size_object = 0;
@@ -229,7 +230,7 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
     CHECK_ATTRIB_GET
     (
-        OCI_HTYPE_DESCRIBE, OCI_ATTR_PARAM, 
+        OCI_HTYPE_DESCRIBE, OCI_ATTR_PARAM,
         descr, &param, NULL,
         typinf->con->err
     )
@@ -277,11 +278,12 @@ ub2 ObjectGetIndOffset
     int           index
 )
 {
-    ub2 i = 0, j = 1;
+    int i = 0;
+    ub2 j = 1;
 
     CHECK_FALSE(typinf == NULL, 0);
 
-    for (i = 0; i < (int) index; i++)
+    for (i = 0; i < index; i++)
     {
         if (OCI_CDT_OBJECT == typinf->cols[i].datatype)
         {
@@ -308,7 +310,7 @@ void ObjectGetStructSize
     size_t       *p_align
 )
 {
-    if (!typinf || !p_size || !p_align)
+    if (NULL == typinf || NULL == p_size || NULL == p_align)
     {
         return;
     }
@@ -419,7 +421,7 @@ void ObjectGetUserStructSize
 
     for (ub2 i = 0; i < typinf->nb_cols; i++)
     {
-        ColumnGetAttributeInfo(&typinf->cols[i],   typinf->nb_cols, i, &size1, &align1);
+        ColumnGetAttributeInfo(&typinf->cols[i],   typinf->nb_cols, i,   &size1, &align1);
         ColumnGetAttributeInfo(&typinf->cols[i+1], typinf->nb_cols, i+1, &size2, &align2);
 
         if (align < align1)
@@ -539,7 +541,7 @@ void ObjectReset
     OCI_Object *obj
 )
 {
-    if (!obj)
+    if (NULL == obj)
     {
         return;
     }
@@ -603,9 +605,9 @@ OCI_Object * ObjectInitialize
         FREE(obj->tmpsizes)
     }
 
-    ALLOC_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpbufs, obj->typinf->nb_cols)
+    ALLOC_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpbufs,  obj->typinf->nb_cols)
     ALLOC_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpsizes, obj->typinf->nb_cols)
-    ALLOC_DATA(OCI_IPC_BUFF_ARRAY, obj->objs, obj->typinf->nb_cols)
+    ALLOC_DATA(OCI_IPC_BUFF_ARRAY, obj->objs,     obj->typinf->nb_cols)
 
     ObjectReset(obj);
 
@@ -620,7 +622,7 @@ OCI_Object * ObjectInitialize
 
         CHECK(MemoryAllocateObject(obj->con->env, obj->con->err, obj->con->cxt,
                                    (OCITypeCode)obj->typinf->typecode, obj->typinf->tdo,
-                                   (dvoid *) NULL, (OCIDuration) OCI_DURATION_SESSION, 
+                                   (dvoid *) NULL, (OCIDuration) OCI_DURATION_SESSION,
                                    (boolean) TRUE, (dvoid **) &obj->handle))
     }
     else
@@ -638,7 +640,7 @@ OCI_Object * ObjectInitialize
            values, if the parent indicator array is not null, let's assign
            the object type properties ourselves */
 
-        if (!parent)
+        if (NULL == parent)
         {
             OCIObjectGetProperty(obj->con->env, obj->con->err,
                                  obj->handle,
@@ -672,7 +674,7 @@ OCI_Object * ObjectInitialize
     }
 
     CLEANUP_AND_EXIT_FUNC
-    (   
+    (
         if (FAILURE)
         {
             ObjectFree(obj);
@@ -745,11 +747,11 @@ void * ObjectGetAttr
     )
 
     size_t offset = 0;
-    size_t size   = 0;
-    size_t align  = 0;
+    size_t size  = 0;
+    size_t align = 0;
 
     CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_VOID, pind)
+    CHECK_PTR(OCI_IPC_VOID,   pind)
 
     if (obj->typinf->struct_size == 0)
     {
@@ -806,7 +808,7 @@ boolean ObjectSetNumberInternal
 
     CHECK(NumberTranslateValue(obj->con, value, flag, num, col->subtype))
 
-   *ind = OCI_IND_NOTNULL;
+    *ind = OCI_IND_NOTNULL;
 
     SET_SUCCESS()
 
@@ -889,7 +891,7 @@ OCI_Object * ObjectCreate
     )
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CHECK_PTR(OCI_IPC_TYPE_INFO,  typinf)
 
     SET_RETVAL(ObjectInitialize(con, NULL, NULL, typinf, NULL, -1, TRUE))
 
@@ -958,10 +960,10 @@ OCI_Object ** ObjectCreateArray
     OCI_Array *arr = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CHECK_PTR(OCI_IPC_TYPE_INFO,  typinf)
 
     arr = ArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0,
-                      sizeof(void *), sizeof(OCI_Object), 
+                      sizeof(void *), sizeof(OCI_Object),
                       0, typinf);
 
     CHECK_NULL(arr)
@@ -1059,8 +1061,8 @@ boolean ObjectGetBoolean
         THROW(ExceptionAttributeNotFound, attr)
     }
 
-    OCIInd  *ind  = NULL;
-    void    *ptr  = NULL;
+    OCIInd *ind = NULL;
+    void   *ptr = NULL;
 
     boolean value = FALSE;
 
@@ -1225,7 +1227,6 @@ const otext * ObjectGetString
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_STRING, attr)
 
-
     index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_TEXT, FALSE);
 
     if (index >= 0)
@@ -1283,7 +1284,7 @@ const otext * ObjectGetString
                                                                     &obj->typinf->cols[index],
                                                                     value, size,
                                                                     obj->tmpbufs[index],
-                                                                    obj->tmpsizes[index], 
+                                                                    obj->tmpsizes[index],
                                                                     FALSE);
 
                 CHECK(NULL == err || OCI_UNKNOWN == err->type)
@@ -1325,7 +1326,7 @@ int ObjectGetRaw
     )
 
     int index = -1;
-    int size  = 0;
+    int size = 0;
 
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_STRING, attr)
@@ -1378,7 +1379,7 @@ unsigned int ObjectGetRawSize
     )
 
     ub4 raw_len = 0;
-    int index   = -1;
+    int index = -1;
 
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_STRING, attr)
@@ -1423,8 +1424,8 @@ OCI_Date * ObjectGetDate
         DateInitialize,
         obj->con,
         (OCI_Date *) obj->objs[index],
-        value, 
-        FALSE, 
+        value,
+        FALSE,
         FALSE
     )
 }
@@ -1447,7 +1448,7 @@ OCI_Timestamp * ObjectGetTimestamp
         OCI_Timestamp*,
         OCIDateTime*,
         TimestampInitialize,
-        obj->con, 
+        obj->con,
         (OCI_Timestamp *) obj->objs[index],
         (OCIDateTime *) *value,
         obj->typinf->cols[index].subtype
@@ -1524,8 +1525,8 @@ OCI_Coll * ObjectGetColl
         OCIColl*,
         CollectionInitialize,
         obj->con,
-        (OCI_Coll *) obj->objs[index], 
-        (OCIColl *) *value, 
+        (OCI_Coll *) obj->objs[index],
+        (OCIColl *) *value,
         obj->typinf->cols[index].typinf
     )
 }
@@ -1547,9 +1548,9 @@ OCI_Object * ObjectGetObject
         void,
         ObjectInitialize,
         obj->con,
-        (OCI_Object *) obj->objs[index], 
+        (OCI_Object *) obj->objs[index],
         value,
-        obj->typinf->cols[index].typinf, 
+        obj->typinf->cols[index].typinf,
         obj, index, FALSE
     )
 }
@@ -1570,8 +1571,8 @@ OCI_Lob * ObjectGetLob
         OCI_Lob*,
         OCILobLocator*,
         LobInitialize,
-        obj->con, 
-        (OCI_Lob *) obj->objs[index], 
+        obj->con,
+        (OCI_Lob *) obj->objs[index],
         *value,
         obj->typinf->cols[index].subtype
     )
@@ -1593,8 +1594,8 @@ OCI_File * ObjectGetFile
         OCI_File *,
         OCILobLocator*,
         FileInitialize,
-        obj->con, 
-        (OCI_File *) obj->objs[index], 
+        obj->con,
+        (OCI_File *) obj->objs[index],
         *value,
         obj->typinf->cols[index].subtype
     )
@@ -1616,9 +1617,9 @@ OCI_Ref * ObjectGetReference
         OCI_Ref*,
         OCIRef*,
         ReferenceInitialize,
-        obj->con, 
+        obj->con,
         NULL,
-        (OCI_Ref *) obj->objs[index], 
+        (OCI_Ref *) obj->objs[index],
         *value
     )
 }
@@ -1680,8 +1681,8 @@ boolean ObjectSetNumber
         OCI_CDT_NUMERIC,
         OCINumber,
         OCINumberAssign,
-        obj->con->err, 
-        value->handle, 
+        obj->con->err,
+        value->handle,
         data
     )
 }
@@ -1863,7 +1864,7 @@ boolean ObjectSetRaw
         obj->con->env,
         obj->con->err,
         (ub1*) value,
-        len, 
+        len,
         data
     )
 }
@@ -1909,7 +1910,7 @@ boolean ObjectSetTimestamp
         OCIDateTime*,
         OCIDateTimeAssign,
         (dvoid *) obj->con->env,
-        obj->con->err, 
+        obj->con->err,
         value->handle, *data
     )
 
@@ -1947,8 +1948,8 @@ boolean ObjectSetInterval
         OCIInterval*,
         OCIIntervalAssign,
         (dvoid *) obj->con->env,
-        obj->con->err, 
-        value->handle, 
+        obj->con->err,
+        value->handle,
         *data
     )
 
@@ -1984,7 +1985,7 @@ boolean ObjectSetColl
         OCIColl*,
         OCICollAssign,
         obj->con->env,
-        obj->con->err, 
+        obj->con->err,
         value->handle,
         *data
     )
@@ -2009,12 +2010,12 @@ boolean ObjectSetObject
         obj->con->env,
         obj->con->err,
         obj->con->cxt,
-        value->handle, 
+        value->handle,
         (value->tab_ind + value->idx_ind),
         data,
         ind,
         obj->typinf->cols[index].typinf->tdo,
-        OCI_DURATION_SESSION, 
+        OCI_DURATION_SESSION,
         OCI_DEFAULT
     )
 }
@@ -2035,7 +2036,7 @@ boolean ObjectSetLob
         OCI_CDT_LOB,
         OCILobLocator*,
         OCILobLocatorAssign,
-        obj->con->cxt, 
+        obj->con->cxt,
         obj->con->err,
         value->handle,
         (OCILobLocator **) data
@@ -2060,7 +2061,7 @@ boolean ObjectSetFile
         OCILobLocatorAssign,
         obj->con->cxt,
         obj->con->err,
-        value->handle, 
+        value->handle,
         (OCILobLocator **) data
     )
 }
@@ -2082,8 +2083,8 @@ boolean ObjectSetReference
         OCIRef*,
         OCIRefAssign,
         obj->con->env,
-        obj->con->err, 
-        value->handle, 
+        obj->con->err,
+        value->handle,
         data
     )
 }
@@ -2168,7 +2169,7 @@ OCI_TypeInfo * ObjectGetTypeInfo
 {
     GET_PROP
     (
-        OCI_TypeInfo*, NULL, 
+        OCI_TypeInfo*, NULL,
         OCI_IPC_OBJECT, obj,
         typinf
     )
@@ -2185,7 +2186,7 @@ unsigned int ObjectGetType
 {
     GET_PROP
     (
-        unsigned int, OCI_UNKNOWN, 
+        unsigned int, OCI_UNKNOWN,
         OCI_IPC_OBJECT, obj,
         type
     )
@@ -2208,7 +2209,7 @@ boolean ObjectGetSelfRef
     )
 
     CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_REF, ref)
+    CHECK_PTR(OCI_IPC_REF,    ref)
     CHECK_COMPAT(obj->typinf->tdo == ref->typinf->tdo)
 
     CHECK_OCI
@@ -2280,13 +2281,13 @@ boolean ObjectToString
         /* context */ OCI_IPC_OBJECT, obj
     )
 
-    OCI_Error   *err   = NULL;
+    OCI_Error   *err = NULL;
     otext       *attr  = NULL;
     boolean      quote = TRUE;
     unsigned int len   = 0;
 
     CHECK_PTR(OCI_IPC_OBJECT, obj)
-    CHECK_PTR(OCI_IPC_VOID, size)
+    CHECK_PTR(OCI_IPC_VOID,   size)
 
     err = ErrorGet(TRUE, TRUE);
 
