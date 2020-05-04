@@ -33,6 +33,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
+    <ClCompile Include="Array.cpp" />
     <ClCompile Include="connection.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -41,6 +42,7 @@
     <ClCompile Include="date.cpp" />
     <ClCompile Include="interval.cpp" />
     <ClCompile Include="lob.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="number.cpp" />
     <ClCompile Include="ref.cpp" />
     <ClCompile Include="ReportedIssues.cpp" />
@@ -113,6 +115,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

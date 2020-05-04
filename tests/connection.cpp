@@ -38,7 +38,6 @@ TEST(TestConnection, InvalidUser)
     ASSERT_TRUE(OCI_Cleanup());
 }
 
-
 TEST(TestConnection, InvalidPassword)
 {
     Guard guard(context.Lock);
@@ -47,7 +46,6 @@ TEST(TestConnection, InvalidPassword)
     ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD_WRONG, OCI_SESSION_DEFAULT);
-
     ASSERT_EQ(nullptr, conn);
 
     ASSERT_EQ(1, context.Errs.size());
@@ -55,5 +53,43 @@ TEST(TestConnection, InvalidPassword)
     ASSERT_EQ(1017, context.Errs[0].OCICode);
 
     ASSERT_FALSE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_Cleanup());
+}
+
+TEST(TestConnection, Abort)
+{
+    Guard guard(context.Lock);
+    context.Errs.clear();
+
+    ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT | OCI_ENV_THREADED));
+
+    const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+    ASSERT_NE(nullptr, conn);
+  
+    const auto thrd = OCI_ThreadCreate();
+    ASSERT_NE(nullptr, thrd);
+
+    const auto stmt = OCI_StatementCreate(conn);
+    ASSERT_NE(nullptr, stmt);
+
+    auto callback = [](OCI_Thread* thread, void* data)
+    {
+        ASSERT_FALSE(OCI_ExecuteStmt(static_cast<OCI_Statement*>(data), "begin dbms_lock.sleep(10); end;"));
+    };
+
+    OCI_ThreadRun(thrd, callback, stmt);
+
+    Sleep(500);
+    ASSERT_TRUE(OCI_Break(conn));
+
+    ASSERT_TRUE(OCI_ThreadJoin(thrd));
+    ASSERT_TRUE(OCI_ThreadFree(thrd));
+
+    ASSERT_EQ(1, context.Errs.size());
+    ASSERT_EQ(0, context.Errs[0].LibCode);
+    ASSERT_EQ(1013, context.Errs[0].OCICode);
+
+    ASSERT_TRUE(OCI_StatementFree(stmt));
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
 }

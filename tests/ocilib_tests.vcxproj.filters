@@ -25,6 +25,12 @@
     <ClCompile Include="ReportedIssues.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="Array.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

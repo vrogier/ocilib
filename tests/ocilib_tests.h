@@ -26,6 +26,7 @@
 #define HOME OTEXT("")
 #define PWD_WRONG OTEXT("pwd_wrong")
 #define ARRAY_SIZE 10
+#define STRING_SIZE 20
 #define NLS_LANGUAGE_SUNDAY_NAME OTEXT("Dimanche")
 
 #include "mutex"
@@ -62,3 +63,4 @@ struct Context
 #define Sleep(x) usleep(x * 1000);
 #endif
 
+void ExecDML(ostring dml);

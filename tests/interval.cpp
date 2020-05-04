@@ -1,6 +1,5 @@
 #include "ocilib_tests.h"
 
-
 static Context context;
 
 static inline void AddError(OCI_Error *err)
