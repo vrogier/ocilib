@@ -331,7 +331,7 @@ OCI_Pool * PoolCreate
 
     /* retrieve statement cache size */
 
-    CHECK(PoolGetStatementCacheSize(pool))
+    PoolGetStatementCacheSize(pool);
 
     /* for connection pools that do not handle the statement cache
        attribute, let's set the value with documented default cache size */

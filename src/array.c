@@ -236,8 +236,6 @@ OCI_Array * ArrayCreate
 
     OCI_Array* arr = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-
     /* create array object */
 
     arr = ListAppend(Env.arrs, sizeof(*arr));

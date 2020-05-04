@@ -314,7 +314,7 @@ boolean LobSeek
             {
                 lob->offset += offset;
 
-                success = FALSE;
+                success = TRUE;
             }
             break;
         }
@@ -324,7 +324,7 @@ boolean LobSeek
             {
                 lob->offset = offset + 1;
 
-                success = FALSE;
+                success = TRUE;
             }
             break;
         }
@@ -334,7 +334,7 @@ boolean LobSeek
             {
                 lob->offset = size - offset + 1;
 
-                success = FALSE;
+                success = TRUE;
             }
             break;
         }

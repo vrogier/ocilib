@@ -645,7 +645,7 @@ boolean DateSetDate
 
     OCIDateSetDate(date->handle, (sb2) year, (ub1) month, (ub1) day);
 
-    SET_RETVAL(DateCheck(date))
+    SET_RETVAL(DateCheck(date) == 0)
 
     EXIT_FUNC()
 }
@@ -672,7 +672,7 @@ boolean DateSetTime
 
     OCIDateSetTime(date->handle, (ub1) hour, (ub1) min, (ub1) sec);
 
-    SET_RETVAL(DateCheck(date))
+    SET_RETVAL(DateCheck(date) == 0)
 
     EXIT_FUNC()
 }
