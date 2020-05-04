@@ -18,28 +18,36 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "transaction.h"
 
-/* ********************************************************************************************* *
- *                            PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "connection.h"
+#include "list.h"
+#include "macros.h"
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_TransactionClose
+* TransactionDispose
 * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_TransactionClose
+boolean TransactionDispose
 (
-OCI_Transaction * trans
+    OCI_Transaction * trans
 )
 {
-    const boolean res = OCI_TransactionStop(trans);
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_TRANSACTION, trans
+    )
+
+    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
+
+    CHECK(TransactionStop(trans))
 
     /* close transaction handle */
 
     if (trans->htr)
     {
-        OCI_HandleFree((dvoid *)trans->htr, OCI_HTYPE_TRANS);
+        MemoryFreeHandle((dvoid*)trans->htr, OCI_HTYPE_TRANS);
     }
 
     if (trans->con->trs == trans)
@@ -47,18 +55,16 @@ OCI_Transaction * trans
         trans->con->trs = NULL;
     }
 
-    return res;
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionCreate
+ * TransactionCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Transaction * OCI_API OCI_TransactionCreate
+OCI_Transaction * TransactionCreate
 (
     OCI_Connection *con,
     unsigned int    timeout,
@@ -66,207 +72,282 @@ OCI_Transaction * OCI_API OCI_TransactionCreate
     OCI_XID        *pxid
 )
 {
-    OCI_Transaction *trans = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Transaction*, NULL,
+        /* context */ OCI_IPC_CONNECTION, con
+    )
 
-    OCI_CALL_ENTER(OCI_Transaction *, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_CONNECTION, con)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(con)
+    OCI_Transaction* trans = NULL;
+
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
 
     /* create transaction object */
 
-    trans = OCI_ListAppend(con->trsns, sizeof(*trans));
-    OCI_STATUS = (NULL != trans);
-    
-    if (OCI_STATUS)
+    trans = ListAppend(con->trsns, sizeof(*trans));
+    CHECK_NULL(trans)
+
+    trans->con     = con;
+    trans->mode    = mode;
+    trans->timeout = timeout;
+    trans->local   = (NULL == pxid);
+
+    /* allocate transaction handle */
+
+    CHECK(MemoryAllocHandle((dvoid *)trans->con->env, (dvoid **)&trans->htr, OCI_HTYPE_TRANS))
+
+    /* set XID attribute for global transaction */
+
+    if (pxid)
     {
-        trans->con = con;
-        trans->mode = mode;
-        trans->timeout = timeout;
-        trans->local = (NULL == pxid);
+        memcpy(&trans->xid, pxid, sizeof(trans->xid));
 
-        /* allocate transaction handle */
+        CHECK_ATTRIB_SET
+        (
+            OCI_HTYPE_TRANS, OCI_ATTR_XID,
+            trans->htr, &trans->xid, sizeof(trans->xid),
+            trans->con->err
+        )
+    }
 
-        OCI_STATUS = OCI_HandleAlloc((dvoid *)trans->con->env, (dvoid **)&trans->htr, OCI_HTYPE_TRANS);
-
-        /* set XID attribute for global transaction */
-
-        if (OCI_STATUS && pxid)
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (FAILURE)
         {
-            memcpy(&trans->xid, pxid, sizeof(trans->xid));
-
-            OCI_SET_ATTRIB(OCI_HTYPE_TRANS, OCI_ATTR_XID, trans->htr, &trans->xid, sizeof(trans->xid))
+            TransactionFree(trans);
+            trans = NULL;
         }
-    }
 
-    /* handle errors */
-
-    if (OCI_STATUS)
-    {
-        OCI_RETVAL = trans;
-    }
-    else if (trans)
-    {
-        OCI_TransactionFree(trans);
-    }
-
-    OCI_CALL_EXIT()
+        SET_RETVAL(trans)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionFree
+ * TransactionFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionFree
+boolean TransactionFree
 (
     OCI_Transaction * trans
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_TRANSACTION, trans
+    )
 
-    OCI_STATUS = OCI_TransactionClose(trans);
+    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
+
+    TransactionDispose(trans);
 
     /* remove transaction from internal list */
 
-    OCI_ListRemove(trans->con->trsns, trans);
+    ListRemove(trans->con->trsns, trans);
 
-    OCI_FREE(trans)
+    FREE(trans)
 
-    OCI_RETVAL = OCI_STATUS;
+    SET_SUCCESS()
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionStart
+ * TransactionStart
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionStart
+boolean TransactionStart
 (
     OCI_Transaction * trans
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_TRANSACTION, trans
+    )
 
-    OCI_EXEC(OCITransStart(trans->con->cxt, trans->con->err, (uword) trans->timeout,  (ub4) trans->mode))
+    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
 
-    OCI_RETVAL = OCI_STATUS;
+    CHECK_OCI
+    (
+        trans->con->err,
+        OCITransStart,
+        trans->con->cxt, trans->con->err,
+        (uword) trans->timeout,  (ub4) trans->mode
+    )
 
-    OCI_CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionStop
+ * TransactionStop
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionStop
+boolean TransactionStop
 (
     OCI_Transaction * trans
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_TRANSACTION, trans
+    )
+
+    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
 
     /* commit or rollback upon auto commit mode */
 
-    OCI_STATUS = trans->con->autocom ? OCI_Commit(trans->con) : OCI_Rollback(trans->con);
+    if (trans->con->autocom)
+    {
+        ConnectionCommit(trans->con);
+    }
+    else
+    {
+        ConnectionRollback(trans->con);
+    }
 
     /* detach global transaction */
 
-    if (OCI_STATUS && !trans->local)
+    if (!trans->local)
     {
-        OCI_EXEC(OCITransDetach(trans->con->cxt, trans->con->err, (ub4) OCI_DEFAULT))
+        CHECK_OCI
+        (
+            trans->con->err,
+            OCITransDetach,
+            trans->con->cxt, trans->con->err,
+            (ub4) OCI_DEFAULT
+        )
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    SET_SUCCESS()
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionResume
+ * TransactionResume
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionResume
+boolean TransactionResume
 (
     OCI_Transaction * trans
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_TRANSACTION, trans
+    )
 
-    OCI_EXEC(OCITransStart(trans->con->cxt, trans->con->err, (uword) trans->timeout, (ub4) OCI_TRANS_RESUME))
+    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
 
-    OCI_RETVAL = OCI_STATUS;
+    CHECK_OCI
+    (
+        trans->con->err,
+        OCITransStart,
+        trans->con->cxt, trans->con->err,
+        (uword) trans->timeout, (ub4) OCI_TRANS_RESUME
+    )
 
-    OCI_CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionPrepare
+ * TransactionPrepare
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionPrepare
+boolean TransactionPrepare
 (
     OCI_Transaction * trans
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_TRANSACTION, trans
+    )
 
-    OCI_EXEC(OCITransPrepare(trans->con->cxt, trans->con->err, (ub4) OCI_DEFAULT))
+    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
 
-    OCI_RETVAL = OCI_STATUS;
+    CHECK_OCI
+    (
+        trans->con->err,
+        OCITransPrepare,
+        trans->con->cxt, trans->con->err,
+        (ub4) OCI_DEFAULT
+    )
 
-    OCI_CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionForget
+ * TransactionForget
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_TransactionForget
+boolean TransactionForget
 (
     OCI_Transaction * trans
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TRANSACTION, trans)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(trans->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_TRANSACTION, trans
+    )
 
-    OCI_EXEC(OCITransForget(trans->con->cxt, trans->con->err, (ub4) OCI_DEFAULT))
+    CHECK_PTR(OCI_IPC_TRANSACTION, trans)
 
-    OCI_RETVAL = OCI_STATUS;
+    CHECK_OCI
+    (
+        trans->con->err,
+        OCITransForget,
+        trans->con->cxt, trans->con->err,
+        (ub4) OCI_DEFAULT
+    )
 
-    OCI_CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionGetMode
+ * TransactionGetMode
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_TransactionGetMode
+unsigned int TransactionGetMode
 (
     OCI_Transaction * trans
 )
 {
-    OCI_GET_PROP(unsigned int, OCI_UNKNOWN, OCI_IPC_TRANSACTION, trans, mode, trans->con, NULL, trans->con->err);
+    GET_PROP
+    (
+        unsigned int, OCI_UNKNOWN,
+        OCI_IPC_TRANSACTION, trans,
+        mode
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_TransactionGetTimeout
+ * TransactionGetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_TransactionGetTimeout
+unsigned int TransactionGetTimeout
 (
     OCI_Transaction * trans
 )
 {
-    OCI_GET_PROP(unsigned int, 0, OCI_IPC_TRANSACTION, trans, timeout, trans->con, NULL, trans->con->err);
+    GET_PROP
+    (
+        unsigned int, 0,
+        OCI_IPC_TRANSACTION, trans,
+        timeout
+    )
 }

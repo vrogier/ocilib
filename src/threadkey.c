@@ -18,215 +18,271 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "threadkey.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "hash.h"
+#include "macros.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeyCreateInternal
+ * ThreadKeyCreateInternal
  * --------------------------------------------------------------------------------------------- */
 
-OCI_ThreadKey * OCI_ThreadKeyCreateInternal
+OCI_ThreadKey * ThreadKeyCreateInternal
 (
     POCI_THREADKEYDEST destfunc
 )
 {
-    OCI_ThreadKey *key = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ OCI_ThreadKey*, NULL,
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
-        
     /* allocate key structure */
 
-    OCI_ALLOCATE_DATA(OCI_IPC_THREADKEY, key, 1)
+    OCI_ThreadKey *key = NULL;
 
-    if (OCI_STATUS)
-    {
-        /* allocate error handle */
+    ALLOC_DATA(OCI_IPC_THREADKEY, key, 1)
 
-        OCI_STATUS = OCI_HandleAlloc(OCILib.env, (dvoid **)(void *)&key->err, OCI_HTYPE_ERROR);
+    /* allocate error handle */
 
-        /* key initialization */
+    CHECK(MemoryAllocHandle(Env.env, (dvoid **)(void *)&key->err, OCI_HTYPE_ERROR))
 
-        OCI_EXEC(OCIThreadKeyInit(OCILib.env, key->err, &key->handle, destfunc))
+    /* key initialization */
 
-        /* check errors */
+    CHECK_OCI
+    (
+        key->err,
+        OCIThreadKeyInit,
+        Env.env, key->err, &key->handle, destfunc
+    )
 
-        if (!OCI_STATUS)
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (FAILURE)
         {
-            OCI_ThreadKeyFree(key);
+            ThreadKeyFree(key);
             key = NULL;
         }
-    } 
 
-    return key;
+        SET_RETVAL(key)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeyFree
+ * ThreadKeyFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ThreadKeyFree
+boolean ThreadKeyFree
 (
     OCI_ThreadKey *key
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_THREADKEY, key
+    )
 
-    OCI_CHECK(NULL == key, FALSE);
+    CHECK_PTR(OCI_IPC_THREADKEY, key)
 
     /* close key handle */
 
-    if (key->handle)
+    if (NULL != key->handle)
     {
-        OCI_EXEC(OCIThreadKeyDestroy(OCILib.env, key->err, &key->handle))
+        CHECK_OCI
+        (
+            key->err,
+            OCIThreadKeyDestroy,
+            Env.env, key->err,
+            &key->handle
+        )
     }
 
     /* close error handle */
 
-    if (key->err)
+    if (NULL !=  key->err)
     {
-        OCI_HandleFree(key->err, OCI_HTYPE_ERROR);
+        MemoryFreeHandle(key->err, OCI_HTYPE_ERROR);
     }
 
     /* free key structure */
 
-    OCI_FREE(key)
+    FREE(key)
 
-    return OCI_STATUS;
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeySet
+ * ThreadKeySet
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ThreadKeySet
+boolean ThreadKeySet
 (
     OCI_ThreadKey *key,
     void          *value
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_THREADKEY, key
+    )
 
-    OCI_CHECK(NULL == key, FALSE);
+    CHECK_PTR(OCI_IPC_THREADKEY, key)
 
-    OCI_EXEC(OCIThreadKeySet(OCILib.env, key->err, key->handle, value))
+    CHECK_OCI
+    (
+        key->err,
+        OCIThreadKeySet,
+        Env.env, key->err,
+        key->handle, value
+    )
 
-    return OCI_STATUS;
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeyGet
+ * ThreadKeyGet
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_ThreadKeyGet
+boolean ThreadKeyGet
 (
     OCI_ThreadKey* key,
     void         **value
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_THREADKEY, key
+    )
 
-    OCI_CHECK(NULL == key, FALSE);
+    CHECK_PTR(OCI_IPC_THREADKEY, key)
+    CHECK_PTR(OCI_IPC_VOID,      value)
 
-    OCI_EXEC(OCIThreadKeyGet(OCILib.env, key->err, key->handle, value))
+    CHECK_OCI
+    (
+        key->err,
+        OCIThreadKeyGet,
+        Env.env, key->err,
+        key->handle, value
+    )
 
-    return OCI_STATUS;
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
-
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeyCreate
+ * ThreadKeyCreate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ThreadKeyCreate
+boolean ThreadKeyCreate
 (
     const otext       *name,
     POCI_THREADKEYDEST destfunc
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
     OCI_ThreadKey *key = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CALL_CHECK_INITIALIZED()
+    CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_INITIALIZED()
 
-    if (!OCILib.key_map)
+    if (NULL == Env.key_map)
     {
-        /* create the map at the first call to OCI_ThreadKeyCreate to save
+        /* create the map at the first call to ThreadKeyCreate to save
            time and memory when it's not needed */
 
-        OCILib.key_map = OCI_HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_POINTER);
-        OCI_STATUS = (NULL != OCILib.key_map);
+        Env.key_map = HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_POINTER);
+        CHECK_NULL(Env.key_map)
     }
 
     /* create key */
 
-    if (OCI_STATUS)
-    {
-        key = OCI_ThreadKeyCreateInternal(destfunc);
-        OCI_STATUS = (NULL != key);
-       
-        /* add key to internal key hash table */
+    key = ThreadKeyCreateInternal(destfunc);
+    CHECK_NULL(key)
 
-        OCI_STATUS = OCI_STATUS && OCI_HashAddPointer(OCILib.key_map, name, key);
-    }
+    /* add key to internal key hash table */
 
-    /* check errors */
+    CHECK(HashAddPointer(Env.key_map, name, key))
 
-    if (!OCI_STATUS && key)
-    {
-        OCI_ThreadKeyFree(key);
-    }
+    SET_SUCCESS()
 
-    OCI_RETVAL = OCI_STATUS;
-
-    OCI_CALL_EXIT()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (FAILURE && NULL != key)
+        {
+            ThreadKeyFree(key);
+        }
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeySetValue
+ * ThreadKeySetValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_ThreadKeySetValue
+boolean ThreadKeySetValue
 (
     const otext *name,
     void        *value
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
     OCI_ThreadKey *key = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    CHECK_PTR(OCI_IPC_STRING, name)
 
-    key = (OCI_ThreadKey *) OCI_HashGetPointer(OCILib.key_map, name);
+    key = (OCI_ThreadKey*) HashGetPointer(Env.key_map, name);
+    CHECK_NULL(key)
 
-    OCI_RETVAL = OCI_STATUS = OCI_ThreadKeySet(key, value);
+    CHECK(ThreadKeySet(key, value))
 
-    OCI_CALL_EXIT()
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ThreadKeyGetValue
+ * ThreadKeyGetValue
  * --------------------------------------------------------------------------------------------- */
 
-void * OCI_API OCI_ThreadKeyGetValue
+void * ThreadKeyGetValue
 (
     const otext *name
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ void*, NULL,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
     OCI_ThreadKey* key = NULL;
+    CHECK_PTR(OCI_IPC_STRING, name)
 
-    OCI_CALL_ENTER(void*, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
+    key = (OCI_ThreadKey*)HashGetPointer(Env.key_map, name);
+    CHECK_NULL(key)
 
-    key = (OCI_ThreadKey *)OCI_HashGetPointer(OCILib.key_map, name);
+    void *data = NULL;
+    CHECK(ThreadKeyGet(key, &data))
 
-    OCI_STATUS = OCI_ThreadKeyGet(key, &OCI_RETVAL);
+    SET_RETVAL(data)
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }

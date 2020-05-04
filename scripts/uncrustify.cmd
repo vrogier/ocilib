@@ -1,0 +1,1 @@
+uncrustify.exe --replace --nobackup -c uncrustify.cfg -F uncrustify.txt

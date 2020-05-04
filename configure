@@ -592,7 +592,7 @@ PACKAGE_STRING='ocilib 4.2.0'
 PACKAGE_BUGREPORT=''
 PACKAGE_URL=''
 
-ac_unique_file="src/library.c"
+ac_unique_file="src/ocilib.c"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>

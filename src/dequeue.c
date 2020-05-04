@@ -18,239 +18,274 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "dequeue.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE VARIABLES
- * ********************************************************************************************* */
+#include "agent.h"
+#include "callback.h"
+#include "macros.h"
+#include "memory.h"
+#include "message.h"
+#include "object.h"
+#include "strings.h"
 
-static const unsigned int NavigationModeValues[] = { OCI_ADN_FIRST_MSG, OCI_ADN_NEXT_MSG, OCI_ADN_NEXT_TRANSACTION };
-static const unsigned int VisibilityModeValues[] = { OCI_AMV_IMMEDIATE, OCI_AMV_ON_COMMIT };
-static const unsigned int DequeueModeValues[]    = { OCI_ADM_BROWSE, OCI_ADM_LOCKED, OCI_ADM_REMOVE, OCI_ADM_REMOVE_NODATA };
+static const unsigned int NavigationModeValues[] =
+{
+    OCI_ADN_FIRST_MSG,
+    OCI_ADN_NEXT_MSG,
+    OCI_ADN_NEXT_TRANSACTION
+};
 
-/* ********************************************************************************************* *
- *                            PUBLIC FUNCTIONS
- * ********************************************************************************************* */
+static const unsigned int VisibilityModeValues[] =
+{
+    OCI_AMV_IMMEDIATE,
+    OCI_AMV_ON_COMMIT
+};
+
+static const unsigned int DequeueModeValues[]=
+{
+    OCI_ADM_BROWSE,
+    OCI_ADM_LOCKED,
+    OCI_ADM_REMOVE,
+    OCI_ADM_REMOVE_NODATA
+};
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueCreate
+ * DequeueCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Dequeue * OCI_API OCI_DequeueCreate
+OCI_Dequeue * DequeueCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *name
 )
 {
-    OCI_Dequeue *dequeue = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Dequeue*, NULL,
+        /* context */ OCI_IPC_TYPE_INFO, typinf
+    )
 
-    OCI_CALL_ENTER(OCI_Dequeue*, dequeue)
-    OCI_CALL_CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    OCI_CALL_CHECK_PTR(OCI_IPC_STRING, name)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(typinf->con)
+    OCI_Dequeue* dequeue = NULL;
+
+    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
+    CHECK_PTR(OCI_IPC_STRING,    name)
 
     /* allocate dequeue structure */
 
-    OCI_ALLOCATE_DATA(OCI_IPC_DEQUEUE, dequeue, 1)
+    ALLOC_DATA(OCI_IPC_DEQUEUE, dequeue, 1)
 
-    if (OCI_STATUS)
-    {
-        dequeue->typinf = typinf;
-        dequeue->name   = ostrdup(name);
+    dequeue->typinf = typinf;
+    dequeue->name   = ostrdup(name);
 
-        /* allocate dequeue options descriptor */
+    /* allocate dequeue options descriptor */
 
-        OCI_STATUS = OCI_DescriptorAlloc((dvoid *)dequeue->typinf->con->env, (dvoid **)&dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
+    CHECK(MemoryAllocDescriptor((dvoid *)dequeue->typinf->con->env,
+                                (dvoid **)&dequeue->opth,
+                                OCI_DTYPE_AQDEQ_OPTIONS))
 
-        /* create local message for OCI_DequeueGet() */
+    /* create local message for OCI_DequeueGet() */
 
-        if (OCI_STATUS)
+    dequeue->msg = MessageCreate(dequeue->typinf);
+    CHECK_NULL(dequeue->msg)
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (FAILURE)
         {
-            dequeue->msg = OCI_MsgCreate(dequeue->typinf);
-            OCI_STATUS = (NULL != dequeue->msg);
+            DequeueFree(dequeue);
+            dequeue = NULL;
         }
-    }
 
-    /* check for failure */
-
-    if (OCI_STATUS)
-    {
-        OCI_RETVAL = dequeue;
-    }
-    else if (dequeue)
-    {
-        OCI_DequeueFree(dequeue);
-    }
-
-    OCI_CALL_EXIT()
+        SET_RETVAL(dequeue)
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueFree
+ * DequeueFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueFree
+boolean DequeueFree
 (
     OCI_Dequeue *dequeue
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
+
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
     /* Unsubscribe notification if needed */
 
-    if (dequeue->subhp)
+    if (NULL != dequeue->subhp)
     {
-        OCI_DequeueUnsubscribe(dequeue);
+        DequeueUnsubscribe(dequeue);
     }
 
     /* free local message  */
 
-    if (dequeue->msg)
+    if (NULL != dequeue->msg)
     {
-        OCI_MsgFree(dequeue->msg);
+        MessageFree(dequeue->msg);
     }
 
     /* free local agent  */
 
-    if (dequeue->agent)
+    if (NULL != dequeue->agent)
     {
-        OCI_AgentFree(dequeue->agent);
+        AgentFree(dequeue->agent);
     }
 
     /* free OCI descriptor */
 
-    OCI_DescriptorFree((dvoid *) dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
+    MemoryFreeDescriptor((dvoid*)dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
 
     /* free data  */
 
-    OCI_FREE(dequeue->name)
-    OCI_FREE(dequeue->pattern)
-    OCI_FREE(dequeue->consumer)
-    OCI_FREE(dequeue->agent_list)
-    OCI_FREE(dequeue)
+    FREE(dequeue->name)
+    FREE(dequeue->pattern)
+    FREE(dequeue->consumer)
+    FREE(dequeue->agent_list)
+    FREE(dequeue)
 
-    OCI_RETVAL = OCI_STATUS;
+    SET_SUCCESS()
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueListen
+ * DequeueListen
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Agent * OCI_API OCI_DequeueListen
+OCI_Agent * DequeueListen
 (
     OCI_Dequeue *dequeue,
     int          timeout
 )
 {
-    OCIAQAgent *handle = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Agent*, NULL,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
 
-    OCI_CALL_ENTER(OCI_Agent*, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
     /* listen only if OCI_DequeueSetAgentList has been called */
 
-    if (dequeue->agent_list)
+    CHECK_NULL(dequeue->agent_list)
+
+    sword ret = OCI_SUCCESS;
+    sb4 code = OCI_SUCCESS;
+
+    OCIAQAgent *handle = NULL;
+
+    ret =  OCIAQListen(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
+                       dequeue->agent_list, (ub4) dequeue->agent_count,
+                       (sb4) timeout, &handle, OCI_DEFAULT);
+
+    /* check returned error code */
+
+    if (OCI_ERROR == ret)
     {
-        sword ret  = OCI_SUCCESS;
-        sb4   code = OCI_SUCCESS;
+        OCIErrorGet((dvoid *) dequeue->typinf->con->err, (ub4) 1,
+                    (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
+                    (ub4) OCI_HTYPE_ERROR);
 
-        ret =  OCIAQListen(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
-                           dequeue->agent_list, (ub4) dequeue->agent_count,
-                           (sb4) timeout, &handle, OCI_DEFAULT);
+        /* raise error only if the call has not been timed out */
 
-        /* check returned error code */
-
-        if (OCI_ERROR == ret)
+        if (OCI_ERR_AQ_LISTEN_TIMEOUT != code)
         {
-            OCIErrorGet((dvoid *) dequeue->typinf->con->err, (ub4) 1,
-                        (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
-                        (ub4) OCI_HTYPE_ERROR);
-
-            /* raise error only if the call has not been timed out */
-
-            if (OCI_ERR_AQ_LISTEN_TIMEOUT != code)
-            {
-                OCI_RAISE_EXCEPTION(OCI_ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE))
-            }
-        }
-
-        /* initialize local agent object */
-
-        if (OCI_STATUS && handle && OCI_SUCCESSFUL(ret))
-        {
-            OCI_RETVAL = dequeue->agent = OCI_AgentInit(dequeue->typinf->con, dequeue->agent, handle, NULL, NULL);
+            THROW(ExceptionOCI, dequeue->typinf->con->err, ret)
         }
     }
 
-    OCI_CALL_EXIT()
+    /* initialize local agent object */
+
+    OCI_Agent* agent = NULL;
+
+    if (NULL != handle && OCI_SUCCESSFUL(ret))
+    {
+        dequeue->agent= AgentInitialize(dequeue->typinf->con,
+                                        dequeue->agent, handle,
+                                        NULL, NULL);
+
+        CHECK_NULL(dequeue->agent)
+
+        agent = dequeue->agent;
+    }
+
+    SET_RETVAL(agent)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGet
+ * DequeueGetMessage
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Msg * OCI_API OCI_DequeueGet
+OCI_Msg * DequeueGetMessage
 (
     OCI_Dequeue *dequeue
 )
 {
-    sword  ret   = OCI_SUCCESS;
-    void  *p_ind = NULL;
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Msg*, NULL,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
 
-    OCI_CALL_ENTER(OCI_Msg*, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    sword ret = OCI_SUCCESS;
+    void *p_ind = NULL;
+
+    int     dbsize = -1;
+    dbtext* dbstr  = NULL;
+
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
     /* reset message */
 
-    OCI_STATUS = OCI_MsgReset(dequeue->msg);
+    CHECK(MessageReset(dequeue->msg))
 
-    if (OCI_STATUS)
+    /* dequeue message */
+
+    StringGetDBString(dequeue->name, &dbsize);
+
+    if (OCI_UNKNOWN == dequeue->typinf->typecode)
     {
-        int     dbsize = -1;
-        dbtext *dbstr  = OCI_StringGetOracleString(dequeue->name, &dbsize);
+        p_ind = &dequeue->msg->ind;
+    }
 
-        if (OCI_UNKNOWN == dequeue->typinf->typecode)
+    ret = OCIAQDeq(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
+                   (OraText *) dbstr, dequeue->opth, dequeue->msg->proph,
+                   dequeue->typinf->tdo, &dequeue->msg->payload,
+                   (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
+
+    /* check returned error code */
+
+    if (OCI_ERROR == ret)
+    {
+        sb4 code = 0;
+
+        OCIErrorGet((dvoid *) dequeue->typinf->con->err, (ub4) 1,
+                    (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
+                    (ub4) OCI_HTYPE_ERROR);
+
+        /* raise error only if the call has not been timed out */
+
+        if (OCI_ERR_AQ_DEQUEUE_TIMEOUT != code)
         {
-            p_ind = &dequeue->msg->ind;
-        }
-
-        /* dequeue message */
-
-        ret = OCIAQDeq(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
-                       (OraText *) dbstr, dequeue->opth, dequeue->msg->proph,
-                       dequeue->typinf->tdo, &dequeue->msg->payload,
-                       (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
-
-        OCI_StringReleaseOracleString(dbstr);
-
-        /* check returned error code */
-
-        if (OCI_ERROR == ret)
-        {
-            sb4 code = 0;
-
-            OCIErrorGet((dvoid *) dequeue->typinf->con->err, (ub4) 1,
-                        (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
-                        (ub4) OCI_HTYPE_ERROR);
-
-            /* raise error only if the call has not been timed out */
-
-            if (OCI_ERR_AQ_DEQUEUE_TIMEOUT != code)
-            {
-                OCI_RAISE_EXCEPTION(OCI_ExceptionOCI(dequeue->typinf->con->err, dequeue->typinf->con, NULL, FALSE))
-            }
+            THROW(ExceptionOCI, dequeue->typinf->con->err, ret)
         }
     }
 
     /* reset message */
 
-    if (OCI_STATUS && OCI_SUCCESSFUL(ret))
+    OCI_Msg* msg = NULL;
+
+    if (OCI_SUCCESSFUL(ret))
     {
         /* get payload */
 
@@ -260,142 +295,180 @@ OCI_Msg * OCI_API OCI_DequeueGet
             {
                 dequeue->msg->ind = *(OCIInd *) p_ind;
 
-                dequeue->msg->obj = OCI_ObjectInit(dequeue->typinf->con,
-                                                   (OCI_Object *) dequeue->msg->obj,
-                                                   dequeue->msg->payload, dequeue->typinf,
-                                                   NULL, -1, TRUE);
+                dequeue->msg->obj = ObjectInitialize
+                                    (
+                    dequeue->typinf->con, (OCI_Object*)dequeue->msg->obj,
+                    dequeue->msg->payload, dequeue->typinf, NULL, -1, TRUE
+                                    );
 
-                OCI_STATUS = (NULL != dequeue->msg->obj);
+                CHECK_NULL(dequeue->msg->obj)
+
+                msg = dequeue->msg;
             }
         }
     }
 
-    /* on success return internal message handle */
+    SET_RETVAL(msg)
 
-    if (OCI_STATUS && OCI_SUCCESSFUL(ret))
-    {
-        OCI_RETVAL = dequeue->msg;
-    }
-
-    OCI_CALL_EXIT()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetConsumerName
+ * DequeueGetConsumerName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_DequeueGetConsumer
+const otext * DequeueGetConsumer
 (
     OCI_Dequeue *dequeue
 )
 {
-    OCI_CALL_ENTER(const otext*, NULL)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    ENTER_FUNC
+    (
+        /* returns */ const otext*, NULL,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
 
-    if (!dequeue->consumer)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+
+    if (NULL == dequeue->consumer)
     {
         unsigned int size = 0;
-        
-        OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                            OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, &size);
-    }
- 
-    OCI_RETVAL = dequeue->consumer;
 
-    OCI_CALL_EXIT()
+        CHECK(StringGetAttribute(dequeue->typinf->con, dequeue->opth,
+                                 OCI_DTYPE_AQDEQ_OPTIONS,
+                                 OCI_ATTR_CONSUMER_NAME,
+                                 &dequeue->consumer, &size))
+    }
+
+    SET_RETVAL(dequeue->consumer)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetConsumerName
+ * DequeueSetConsumerName
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetConsumer
+boolean DequeueSetConsumer
 (
     OCI_Dequeue *dequeue,
     const otext *consumer
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
 
-    OCI_RETVAL = OCI_STATUS = OCI_SetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                                     OCI_ATTR_CONSUMER_NAME, &dequeue->consumer, consumer);
-    OCI_CALL_EXIT()
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+
+    CHECK(StringSetAttribute(dequeue->typinf->con, dequeue->opth,
+                             OCI_DTYPE_AQDEQ_OPTIONS,
+                             OCI_ATTR_CONSUMER_NAME,
+                             &dequeue->consumer, consumer))
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetCorrelation
+ * DequeueGetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OCI_API OCI_DequeueGetCorrelation
+const otext * DequeueGetCorrelation
 (
     OCI_Dequeue *dequeue
 )
 {
-    OCI_CALL_ENTER(const otext*, NULL)
+    ENTER_FUNC
+    (
+        /* returns */ const otext*, NULL,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
 
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    if (!dequeue->pattern)
+    if (NULL == dequeue->pattern)
     {
         unsigned int size = 0;
-        
-        OCI_STATUS = OCI_GetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                            OCI_ATTR_CORRELATION, &dequeue->pattern, &size);
-    }
- 
-    OCI_RETVAL = dequeue->pattern;
 
-    OCI_CALL_EXIT()
+        CHECK(StringGetAttribute(dequeue->typinf->con, dequeue->opth,
+                                 OCI_DTYPE_AQDEQ_OPTIONS,
+                                 OCI_ATTR_CORRELATION,
+                                 &dequeue->pattern, &size))
+    }
+
+    SET_RETVAL(dequeue->pattern)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetCorrelation
+ * DequeueSetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetCorrelation
+boolean DequeueSetCorrelation
 (
     OCI_Dequeue *dequeue,
     const otext *pattern
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
 
-    OCI_RETVAL = OCI_STATUS = OCI_SetStringAttribute(dequeue->typinf->con, dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS,
-                                                     OCI_ATTR_CORRELATION, &dequeue->pattern, pattern);
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    OCI_CALL_EXIT()
+    CHECK(StringSetAttribute(dequeue->typinf->con, dequeue->opth,
+                             OCI_DTYPE_AQDEQ_OPTIONS,
+                             OCI_ATTR_CORRELATION,
+                             &dequeue->pattern, pattern))
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetRelativeMsgID
+ * DequeueGetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueGetRelativeMsgID
+boolean DequeueGetRelativeMsgID
 (
     OCI_Dequeue  *dequeue,
     void         *id,
     unsigned int *len
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
+
     OCIRaw *value = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, id)
-    OCI_CALL_CHECK_PTR(OCI_IPC_VOID, len)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+    CHECK_PTR(OCI_IPC_VOID,    id)
+    CHECK_PTR(OCI_IPC_VOID,    len)
 
     *len = 0;
 
-    OCI_GET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MSGID, dequeue->opth, &value, NULL)
+    CHECK_ATTRIB_GET
+    (
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MSGID,
+        dequeue->opth, &value, NULL,
+        dequeue->typinf->con->err
+    )
 
-    if (OCI_STATUS && value)
+    if (NULL != value)
     {
         const ub4 raw_len = OCIRawSize(dequeue->typinf->con->env, value);
 
@@ -407,296 +480,393 @@ boolean OCI_API OCI_DequeueGetRelativeMsgID
         memcpy(id, OCIRawPtr(dequeue->typinf->con->env, value), (size_t) (*len));
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    SET_SUCCESS()
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetRelativeMsgID
+ * DequeueSetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetRelativeMsgID
+boolean DequeueSetRelativeMsgID
 (
-    OCI_Dequeue  *dequeue,
-    const void   *id,
-    unsigned int  len
+    OCI_Dequeue *dequeue,
+    const void  *id,
+    unsigned int len
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
+
     OCIRaw *value = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    OCI_EXEC(OCIRawAssignBytes(dequeue->typinf->con->env, dequeue->typinf->con->err, (ub1*) id, (ub4) len, (OCIRaw **) &value))
+    CHECK_OCI
+    (
+        dequeue->typinf->con->err,
+        OCIRawAssignBytes,
+        dequeue->typinf->con->env, dequeue->typinf->con->err,
+        (ub1*) id, (ub4) len, (OCIRaw **) &value
+    )
 
-    OCI_SET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MSGID, dequeue->opth, &value, 0)
+    CHECK_ATTRIB_SET
+    (
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MSGID,
+        dequeue->opth, &value, 0,
+        dequeue->typinf->con->err
+    )
 
-    OCI_RETVAL = OCI_STATUS;
+    SET_SUCCESS()
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetVisibility
+ * DequeueGetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DequeueGetVisibility
+unsigned int DequeueGetVisibility
 (
     OCI_Dequeue *dequeue
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ unsigned int, OCI_UNKNOWN,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
+
     ub4 value = OCI_UNKNOWN;
 
-    OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    OCI_GET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_VISIBILITY, dequeue->opth, &value, NULL)
+    CHECK_ATTRIB_GET
+    (
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_VISIBILITY,
+        dequeue->opth, &value, NULL,
+        dequeue->typinf->con->err
+    )
 
-    OCI_RETVAL = (unsigned int)value;
+    SET_RETVAL((unsigned int)value)
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetVisibility
+ * DequeueSetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetVisibility
+boolean DequeueSetVisibility
 (
     OCI_Dequeue *dequeue,
     unsigned int visibility
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
+
     ub4 value = (ub4) visibility;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CHECK_ENUM_VALUE(NULL, NULL, visibility, VisibilityModeValues, OTEXT("Visibility Mode"))
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+    CHECK_ENUM_VALUE(visibility, VisibilityModeValues, OTEXT("Visibility Mode"))
 
-    OCI_SET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_VISIBILITY, dequeue->opth, &value, 0)
+    CHECK_ATTRIB_SET
+    (
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_VISIBILITY,
+        dequeue->opth, &value, 0,
+        dequeue->typinf->con->err
+    )
 
-    OCI_RETVAL = OCI_STATUS;
+    SET_SUCCESS()
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetMode
+ * DequeueGetMode
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DequeueGetMode
+unsigned int DequeueGetMode
 (
     OCI_Dequeue *dequeue
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ unsigned int, OCI_UNKNOWN,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
+
     ub4 value = OCI_UNKNOWN;
 
-    OCI_CALL_ENTER(unsigned int, OCI_UNKNOWN)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    OCI_GET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MODE, dequeue->opth, &value, NULL)
+    CHECK_ATTRIB_GET
+    (
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MODE,
+        dequeue->opth, &value, NULL,
+        dequeue->typinf->con->err
+    )
 
-    OCI_RETVAL = value;
+    SET_RETVAL(value)
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetMode
+ * DequeueSetMode
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetMode
+boolean DequeueSetMode
 (
     OCI_Dequeue *dequeue,
     unsigned int mode
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
+
     ub4 value = (ub4) mode;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CHECK_ENUM_VALUE(NULL, NULL, mode, DequeueModeValues, OTEXT("Dequeue Mode"))
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+    CHECK_ENUM_VALUE(mode, DequeueModeValues, OTEXT("Dequeue Mode"))
 
-    OCI_SET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MODE, dequeue->opth, &value, 0)
+    CHECK_ATTRIB_SET
+    (
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_DEQ_MODE,
+        dequeue->opth, &value, 0,
+        dequeue->typinf->con->err
+    )
 
-    OCI_RETVAL = OCI_STATUS;
+    SET_SUCCESS()
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetNavigation
+ * DequeueGetNavigation
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OCI_API OCI_DequeueGetNavigation
+unsigned int DequeueGetNavigation
 (
     OCI_Dequeue *dequeue
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ unsigned int, OCI_UNKNOWN,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
+
     ub4 value = OCI_UNKNOWN;
 
-    OCI_CALL_ENTER(unsigned int, value)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    OCI_GET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_NAVIGATION, dequeue->opth, &value, NULL)
+    CHECK_ATTRIB_GET
+    (
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_NAVIGATION,
+        dequeue->opth, &value, NULL,
+        dequeue->typinf->con->err
+    )
 
-    OCI_RETVAL = value;
+    SET_RETVAL(value)
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetNavigation
+ * DequeueSetNavigation
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetNavigation
+boolean DequeueSetNavigation
 (
     OCI_Dequeue *dequeue,
     unsigned int position
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
+
     ub4 value = (ub4) position;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CHECK_ENUM_VALUE(NULL, NULL, position, NavigationModeValues, OTEXT("Navigation Mode"))
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+    CHECK_ENUM_VALUE(position, NavigationModeValues, OTEXT("Navigation Mode"))
 
-    OCI_SET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_NAVIGATION, dequeue->opth, &value, 0)
+    CHECK_ATTRIB_SET
+    (
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_NAVIGATION,
+        dequeue->opth, &value, 0,
+        dequeue->typinf->con->err
+    )
 
-    OCI_RETVAL = OCI_STATUS;
+    SET_SUCCESS()
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueGetWaitTime
+ * DequeueGetWaitTime
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_API OCI_DequeueGetWaitTime
+int DequeueGetWaitTime
 (
     OCI_Dequeue *dequeue
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ unsigned int, 0,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
+
     sb4 value = 0;
 
-    OCI_CALL_ENTER(unsigned int, value)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    OCI_GET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_WAIT, dequeue->opth, &value, NULL)
+    CHECK_ATTRIB_GET
+    (
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_WAIT,
+        dequeue->opth, &value, NULL,
+        dequeue->typinf->con->err
+    )
 
-    OCI_RETVAL = value;
+    SET_RETVAL(value)
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetWaitTime
+ * DequeueSetWaitTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetWaitTime
+boolean DequeueSetWaitTime
 (
     OCI_Dequeue *dequeue,
     int          timeout
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
+
     sb4 value = (ub4) timeout;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    OCI_SET_ATTRIB(OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_WAIT, dequeue->opth, &value, 0)
+    CHECK_ATTRIB_SET
+    (
+        OCI_DTYPE_AQDEQ_OPTIONS, OCI_ATTR_WAIT,
+        dequeue->opth, &value, 0,
+        dequeue->typinf->con->err
+    )
 
-    OCI_RETVAL = OCI_STATUS;
+    SET_SUCCESS()
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSetAgentList
+ * DequeueSetAgentList
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueSetAgentList
+boolean DequeueSetAgentList
 (
     OCI_Dequeue *dequeue,
     OCI_Agent  **consumers,
     unsigned int count
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_PTR(OCI_IPC_ENQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
 
-    OCI_FREE(dequeue->agent_list)
+    CHECK_PTR(OCI_IPC_ENQUEUE, dequeue)
 
-    if (consumers && (count > 0))
+    FREE(dequeue->agent_list)
+
+    if (NULL != consumers && count > 0)
     {
-        OCI_ALLOCATE_DATA(OCI_IPC_ARRAY, dequeue->agent_list, count)
+        ALLOC_DATA(OCI_IPC_ARRAY, dequeue->agent_list, count)
 
-        if (OCI_STATUS)
+        for (unsigned int i = 0; i < count; i++)
         {
-            for (unsigned int i = 0; i < count; i++)
-            {
-                dequeue->agent_list[i] = consumers[i]->handle;
-            }
-
-            dequeue->agent_count = (ub4)count;
+            dequeue->agent_list[i] = consumers[i]->handle;
         }
+
+        dequeue->agent_count = (ub4)count;
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    SET_SUCCESS()
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueSubscribe
+ * DequeueSubscribe
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API  OCI_DequeueSubscribe
+boolean DequeueSubscribe
 (
-    OCI_Dequeue    *dequeue,
-    unsigned int    port,
-    unsigned int    timeout,
-    POCI_NOTIFY_AQ  callback
+    OCI_Dequeue   *dequeue,
+    unsigned int   port,
+    unsigned int   timeout,
+    POCI_NOTIFY_AQ callback
 )
 {
-    ub4     oci_namespace   = OCI_SUBSCR_NAMESPACE_AQ;
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    ub4     oci_port        = (ub4) port;
-    ub4     oci_timeout     = (ub4) timeout;
-    ub4     oci_protocol    = OCI_SUBSCR_PROTO_OCI;
-    ub4     oci_msgpres     = OCI_SUBSCR_PRES_DEFAULT;
+    ub4 oci_port = (ub4) port;
+    ub4 oci_timeout  = (ub4) timeout;
+    ub4 oci_protocol = OCI_SUBSCR_PROTO_OCI;
+    ub4 oci_msgpres  = OCI_SUBSCR_PRES_DEFAULT;
 
 #endif
 
+    ub4 oci_namespace = OCI_SUBSCR_NAMESPACE_AQ;
+
     OCI_Connection *con = NULL;
 
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_DATABASE_NOTIFY_ENABLED()
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    dbtext* dbstr  = NULL;
+    int     dbsize = -1;
+
+    CHECK_DATABASE_NOTIFY_ENABLED()
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
     con = dequeue->typinf->con;
 
     /* clear any previous subscription */
 
-    OCI_DequeueUnsubscribe(dequeue);
+    CHECK(DequeueUnsubscribe(dequeue))
 
     /* allocate subscription handle */
 
-    OCI_STATUS = OCI_HandleAlloc(con->env, (dvoid **) (void *) &dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
+    CHECK(MemoryAllocHandle(con->env,
+                            (dvoid **) (void *) &dequeue->subhp,
+                            OCI_HTYPE_SUBSCRIPTION))
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -704,23 +874,43 @@ boolean OCI_API  OCI_DequeueSubscribe
 
     if (oci_port > 0)
     {
-        OCI_GET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_PORTNO, dequeue->subhp, &oci_port, sizeof(oci_port))
+        CHECK_ATTRIB_GET
+        (
+            OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_PORTNO,
+            dequeue->subhp, &oci_port, sizeof(oci_port),
+            dequeue->typinf->con->err
+        )
     }
 
     /* set timeout */
 
     if (oci_timeout > 0)
     {
-        OCI_GET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_TIMEOUT, dequeue->subhp, &oci_timeout, sizeof(oci_timeout))
+        CHECK_ATTRIB_GET
+        (
+            OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_TIMEOUT,
+            dequeue->subhp, &oci_timeout, sizeof(oci_timeout),
+            dequeue->typinf->con->err
+        )
     }
 
     /* set protocol  */
 
-    OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPROTO, dequeue->subhp, &oci_protocol, sizeof(oci_protocol))
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPROTO,
+        dequeue->subhp, &oci_protocol, sizeof(oci_protocol),
+        dequeue->typinf->con->err
+    )
 
     /* set presentation  */
 
-    OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPRES, dequeue->subhp, &oci_msgpres, sizeof(oci_msgpres))
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPRES,
+        dequeue->subhp, &oci_msgpres, sizeof(oci_msgpres),
+        dequeue->typinf->con->err
+    )
 
 #else
 
@@ -731,24 +921,22 @@ boolean OCI_API  OCI_DequeueSubscribe
 
     /* set name  */
 
-    if (dequeue->name)
+    if (NULL != dequeue->name)
     {
         /* for AQ subscription, the name should be "[schema.]queue[:consumer]" */
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
-        otext *str  = NULL;
-        size_t max_chars = sizeof(buffer) / sizeof(otext) - 1;
+        otext *str = NULL;
 
-        dbtext *dbstr    = NULL;
-        int     dbsize   = -1;
+        size_t max_chars = sizeof(buffer) / sizeof(otext) - 1;
 
         ostrncat(buffer, dequeue->name, max_chars);
 
         if (dequeue->consumer)
         {
             max_chars -= ostrlen(dequeue->name);
-            ostrncat(buffer, OTEXT(":"), max_chars);
+            ostrncat(buffer, OTEXT(":"),        max_chars);
             max_chars -= (size_t)1;
 
             ostrncat(buffer, dequeue->consumer, max_chars);
@@ -761,36 +949,54 @@ boolean OCI_API  OCI_DequeueSubscribe
             *str = (otext) otoupper(*str);
         }
 
-        dbstr = OCI_StringGetOracleString(buffer, &dbsize);
+        dbstr = StringGetDBString(buffer, &dbsize);
 
-        OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME, dequeue->subhp, dbstr, dbsize)
-
-        OCI_StringReleaseOracleString(dbstr);
+        CHECK_ATTRIB_SET
+        (
+            OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME,
+            dequeue->subhp, dbstr, dbsize,
+            dequeue->typinf->con->err
+        )
     }
 
     /* set namespace  */
 
-    OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAMESPACE, dequeue->subhp, &oci_namespace, oci_namespace)
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAMESPACE,
+        dequeue->subhp, &oci_namespace, oci_namespace,
+        dequeue->typinf->con->err
+    )
 
     /* set context pointer to dequeue structure */
 
-    OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CTX, dequeue->subhp, dequeue, 0)
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CTX,
+        dequeue->subhp, dequeue, 0,
+        dequeue->typinf->con->err
+    )
 
     /* On MSVC, casting a function pointer to a data pointer generates a warning.
         As there is no other to way to do regarding the OCI API, let's disable this
         warning just the time to set the callback attribute to the dequeue handle */
 
-    #ifdef _MSC_VER
-    #pragma warning(disable: 4054)
-    #endif
+#ifdef _MSC_VER
+  #pragma warning(disable: 4054)
+#endif
 
     /* internal callback handler */
 
-    OCI_SET_ATTRIB(OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK, dequeue->subhp, OCI_ProcNotifyMessages, 0)
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK,
+        dequeue->subhp, CallbackNotifyMessages, 0,
+        dequeue->typinf->con->err
+    )
 
-    #ifdef _MSC_VER
-    #pragma warning(default: 4054)
-    #endif
+#ifdef _MSC_VER
+  #pragma warning(default: 4054)
+#endif
 
     /* set callback */
 
@@ -798,54 +1004,67 @@ boolean OCI_API  OCI_DequeueSubscribe
 
     /* all attributes set, let's register the subscription ! */
 
-    OCI_EXEC(OCISubscriptionRegister(con->cxt, &dequeue->subhp, (ub2) 1, con->err,(ub4) OCI_DEFAULT))
+    CHECK_OCI
+    (
+        dequeue->typinf->con->err,
+        OCISubscriptionRegister,
+        con->cxt, &dequeue->subhp, (ub2) 1,
+        con->err,(ub4) OCI_DEFAULT
+    )
 
-    if (!OCI_STATUS)
-    {
-        /* clear subscription on failure */
+    SET_SUCCESS()
 
-        OCI_DequeueUnsubscribe(dequeue);
-    }
+    CLEANUP_AND_EXIT_FUNC
+    (
+        StringReleaseDBString(dbstr);
 
-    OCI_RETVAL = OCI_STATUS;
-
-    OCI_CALL_EXIT()
+        if (FAILURE && NULL != dequeue)
+        {
+            DequeueUnsubscribe(dequeue);
+        }
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_DequeueUnsubscribe
+ * DequeueUnsubscribe
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_DequeueUnsubscribe
+boolean DequeueUnsubscribe
 (
     OCI_Dequeue *dequeue
 )
 {
-    OCI_CALL_ENTER(boolean, FALSE)
-    OCI_CALL_CHECK_DATABASE_NOTIFY_ENABLED()
-    OCI_CALL_CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    OCI_CALL_CONTEXT_SET_FROM_CONN(dequeue->typinf->con)
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_DEQUEUE, dequeue
+    )
+
+    CHECK_DATABASE_NOTIFY_ENABLED()
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
     dequeue->callback = NULL;
 
-    if (dequeue->subhp)
+    if (NULL != dequeue->subhp)
     {
         /* unregister the subscription */
 
-        OCI_EXEC
+        CHECK_OCI
         (
-            OCISubscriptionUnRegister(dequeue->typinf->con->cxt, dequeue->subhp,
-                                      dequeue->typinf->con->err,(ub4) OCI_DEFAULT)
+            dequeue->typinf->con->err,
+            OCISubscriptionUnRegister,
+            dequeue->typinf->con->cxt, dequeue->subhp,
+            dequeue->typinf->con->err,(ub4) OCI_DEFAULT
         )
 
         /* free OCI handle */
 
-        OCI_HandleFree((dvoid *) dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
+        MemoryFreeHandle((dvoid *) dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
 
         dequeue->subhp = NULL;
     }
 
-    OCI_RETVAL = OCI_STATUS;
+    SET_SUCCESS()
 
-    OCI_CALL_EXIT()
+    EXIT_FUNC()
 }
