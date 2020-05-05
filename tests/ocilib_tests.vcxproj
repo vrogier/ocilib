@@ -100,6 +100,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TestDate.cpp" />
+    <ClCompile Include="TestDescribe.cpp" />
+    <ClCompile Include="TestImplicitResultset.cpp" />
     <ClCompile Include="Testinterval.cpp" />
     <ClCompile Include="TestLob.cpp" />
     <ClCompile Include="main.cpp" />
