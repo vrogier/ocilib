@@ -49,15 +49,6 @@ struct Context
 };
 
 
-#ifdef _MSC_VER
-
-#if defined(OCI_CHARSET_WIDE)
-#pragma comment(lib, "../lib64/ocilibw.lib")
-#elif defined(OCI_CHARSET_ANSI)
-#pragma comment(lib, "../lib64/ociliba.lib")
-#endif
-#endif
-
 #ifndef _WINDOWS
 #include <unistd.h>
 #define Sleep(x) usleep(x * 1000);
