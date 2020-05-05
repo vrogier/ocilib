@@ -154,6 +154,8 @@ boolean MessageFree
 
     FREE(msg)
 
+    SET_SUCCESS()
+
     EXIT_FUNC()
 }
 

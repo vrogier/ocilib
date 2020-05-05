@@ -251,7 +251,7 @@ OCI_Msg * DequeueGetMessage
 
     /* dequeue message */
 
-    StringGetDBString(dequeue->name, &dbsize);
+    dbstr = StringGetDBString(dequeue->name, &dbsize);
 
     if (OCI_UNKNOWN == dequeue->typinf->typecode)
     {
