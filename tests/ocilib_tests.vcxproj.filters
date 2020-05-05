@@ -184,6 +184,9 @@
     <ClCompile Include="TestQueue.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestObjectInheritance.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
