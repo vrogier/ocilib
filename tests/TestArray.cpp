@@ -16,7 +16,7 @@ TEST(TestArray, InsertArray)
     int tab_int[ARRAY_SIZE];
     char tab_str[ARRAY_SIZE][STRING_SIZE + 1];
 
-    ASSERT_TRUE(OCI_Prepare(stmt, "insert into TestArrayInsertArray values(:i, :s)"));
+    ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestArrayInsertArray values(:i, :s)")));
     ASSERT_TRUE(OCI_BindArraySetSize(stmt, ARRAY_SIZE));
     ASSERT_TRUE(OCI_BindArrayOfInts(stmt, ":i", static_cast<int*>(tab_int), 0));
     ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, ":s", reinterpret_cast<char*>(tab_str), STRING_SIZE, 0));
@@ -54,7 +54,7 @@ TEST(TestArray, InsertArrayError)
     int tab_int[ARRAY_SIZE];
     char tab_str[ARRAY_SIZE][STRING_SIZE + 1];
 
-    ASSERT_TRUE(OCI_Prepare(stmt, "insert into TestArrayInsertArrayError values(:i, :s)"));
+    ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestArrayInsertArrayError values(:i, :s)")));
     ASSERT_TRUE(OCI_BindArraySetSize(stmt, ARRAY_SIZE));
     ASSERT_TRUE(OCI_BindArrayOfInts(stmt, ":i", static_cast<int*>(tab_int), 0));
     ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, ":s", reinterpret_cast<char*>(tab_str), STRING_SIZE, 0));

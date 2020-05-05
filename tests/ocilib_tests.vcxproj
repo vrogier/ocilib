@@ -91,6 +91,7 @@
     <ClCompile Include="..\src\timestamp.c" />
     <ClCompile Include="..\src\transaction.c" />
     <ClCompile Include="..\src\typeinfo.c" />
+    <ClCompile Include="TestCursor.cpp" />
     <ClCompile Include="TestArray.cpp" />
     <ClCompile Include="TestCollection.cpp" />
     <ClCompile Include="TestConnection.cpp">
