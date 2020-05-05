@@ -1,7 +1,5 @@
 #include "ocilib_tests.h"
 
-// requires DDL from /demo/product.sql
-
 TEST(TestArray, InsertArray)
 {
     ExecDML(OTEXT("create table TestArrayInsertArray(code int, name varchar2(50))"));

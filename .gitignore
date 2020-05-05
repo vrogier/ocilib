@@ -172,8 +172,8 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 *.opendb
+
+# Unit test files
 /tests/packages/*.*
-/tests/.vs/ocilib_tests/v16/TestStore/0/testlog.manifest
-/tests/.vs/ocilib_tests/v16/TestStore/0/002.testlog
-/proj/dll/.vs/ocilib_dll_vs2019/v16/TestStore/0/testlog.manifest
-/proj/dll/.vs/ocilib_dll_vs2019/v16/TestStore/0/000.testlog
+testlog.manifest
+*.testlog

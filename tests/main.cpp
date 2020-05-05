@@ -6,6 +6,7 @@ void ExecDML(ostring dml)
     OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT);
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     OCI_Immediate(conn, dml.data());
+    OCI_Commit(conn);
     OCI_Cleanup();
 }   
 

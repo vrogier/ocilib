@@ -91,6 +91,8 @@
     <ClCompile Include="..\src\timestamp.c" />
     <ClCompile Include="..\src\transaction.c" />
     <ClCompile Include="..\src\typeinfo.c" />
+    <ClCompile Include="TestArray.cpp" />
+    <ClCompile Include="TestCollection.cpp" />
     <ClCompile Include="TestConnection.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

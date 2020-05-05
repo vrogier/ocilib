@@ -166,6 +166,12 @@
     <ClCompile Include="..\src\dirpath.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="TestCollection.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArray.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
