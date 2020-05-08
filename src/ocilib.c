@@ -2143,7 +2143,7 @@ const otext* OCI_API OCI_ErrorGetString
     OCI_Error* err
 )
 {
-    CALL_IMPL(ErrorGetString, err)
+    return ErrorGetString(err);
 }
 
 unsigned int OCI_API OCI_ErrorGetType
@@ -2151,7 +2151,7 @@ unsigned int OCI_API OCI_ErrorGetType
     OCI_Error* err
 )
 {
-    CALL_IMPL(ErrorGetType, err)
+    return ErrorGetType(err);
 }
 
 int OCI_API OCI_ErrorGetOCICode
@@ -2159,7 +2159,7 @@ int OCI_API OCI_ErrorGetOCICode
     OCI_Error* err
 )
 {
-    CALL_IMPL(ErrorGetOCICode, err)
+    return ErrorGetOCICode(err);
 }
 
 int OCI_API OCI_ErrorGetInternalCode
@@ -2167,7 +2167,7 @@ int OCI_API OCI_ErrorGetInternalCode
     OCI_Error* err
 )
 {
-    CALL_IMPL(ErrorGetInternalCode, err)
+    return ErrorGetInternalCode(err);
 }
 
 OCI_Connection* OCI_API OCI_ErrorGetConnection
@@ -2175,7 +2175,7 @@ OCI_Connection* OCI_API OCI_ErrorGetConnection
     OCI_Error* err
 )
 {
-    CALL_IMPL(ErrorGetConnection, err)
+    return ErrorGetConnection(err);
 }
 
 OCI_Statement* OCI_API OCI_ErrorGetStatement
@@ -2183,7 +2183,7 @@ OCI_Statement* OCI_API OCI_ErrorGetStatement
     OCI_Error* err
 )
 {
-    CALL_IMPL(ErrorGetStatement, err)
+    return ErrorGetStatement(err);
 }
 
 unsigned int OCI_API OCI_ErrorGetRow
@@ -2191,7 +2191,7 @@ unsigned int OCI_API OCI_ErrorGetRow
     OCI_Error* err
 )
 {
-    CALL_IMPL(ErrorGetRow, err)
+    return ErrorGetRow(err);
 }
 
 const otext* OCI_API OCI_ErrorGetLocation
@@ -2199,7 +2199,7 @@ const otext* OCI_API OCI_ErrorGetLocation
     OCI_Error* err
 )
 {
-    CALL_IMPL(ErrorGetLocation, err)
+    return ErrorGetLocation(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
