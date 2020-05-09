@@ -360,10 +360,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\ocilib.h" />
-    <ClInclude Include="..\..\include\ocilib_api.h" />
-    <ClInclude Include="..\..\include\ocilib_compat.h" />
-    <ClInclude Include="..\..\include\ocilib_config.h" />
-    <ClInclude Include="..\..\include\ocilib_types.h" />
+    <ClInclude Include="..\..\include\ocilibc\api.h" />
+    <ClInclude Include="..\..\include\ocilibc\compat.h" />
+    <ClInclude Include="..\..\include\ocilibc\config.h" />
+    <ClInclude Include="..\..\include\ocilibc\types.h" />
     <ClInclude Include="..\..\src\agent.h" />
     <ClInclude Include="..\..\src\array.h" />
     <ClInclude Include="..\..\src\bind.h" />

@@ -21,7 +21,7 @@
 #ifndef OCILIB_TYPES_H_INCLUDED
 #define OCILIB_TYPES_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "ocilibc/types.h"
 
 #include "defs.h"
 

@@ -34,7 +34,7 @@
 #ifndef OCILIB_COMPAT_H_INCLUDED
 #define OCILIB_COMPAT_H_INCLUDED
 
-#include "ocilib_api.h"
+#include "ocilibc/api.h"
 
 /**
  * @defgroup OcilibCApi C API

@@ -228,7 +228,7 @@ typedef void * CallbackPointer;
 
 /* Including core classes  */
 
-#include "ocilib_core.hpp"
+#include "ocilibcpp/core.hpp"
 
 /* Defining public classes  */
 
@@ -9212,7 +9212,7 @@ public:
 
 }
 
-#include "ocilib_impl.hpp"
+#include "ocilibcpp/impl.hpp"
 
 #endif
 

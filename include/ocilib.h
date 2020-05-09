@@ -38,10 +38,10 @@
 extern "C" {
 #endif  /* __cplusplus */
 
-#include "ocilib_config.h"
-#include "ocilib_types.h"
-#include "ocilib_api.h"
-#include "ocilib_compat.h"
+#include "ocilibc/config.h"
+#include "ocilibc/types.h"
+#include "ocilibc/api.h"
+#include "ocilibc/compat.h"
 
 #ifdef  __cplusplus
 }

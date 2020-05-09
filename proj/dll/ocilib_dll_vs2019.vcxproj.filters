@@ -298,18 +298,6 @@
     <ClInclude Include="..\..\src\oci\types.h">
       <Filter>Headers %28OCI%29</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\ocilib_types.h">
-      <Filter>Headers %28Public%29</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\ocilib_config.h">
-      <Filter>Headers %28Public%29</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\ocilib_compat.h">
-      <Filter>Headers %28Public%29</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\ocilib_api.h">
-      <Filter>Headers %28Public%29</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\ocilib.h">
       <Filter>Headers %28Public%29</Filter>
     </ClInclude>
@@ -339,6 +327,18 @@
     </ClInclude>
     <ClInclude Include="..\..\src\helpers.h">
       <Filter>Headers %28Private%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ocilibc\api.h">
+      <Filter>Headers %28Public%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ocilibc\compat.h">
+      <Filter>Headers %28Public%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ocilibc\config.h">
+      <Filter>Headers %28Public%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ocilibc\types.h">
+      <Filter>Headers %28Public%29</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

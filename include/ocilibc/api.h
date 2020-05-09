@@ -34,7 +34,7 @@
 #ifndef OCILIB_API_H_INCLUDED
 #define OCILIB_API_H_INCLUDED
 
-#include "ocilib_types.h"
+#include "ocilibc/types.h"
 
 /**
  * @defgroup OcilibCApiInitialization Initializing the library

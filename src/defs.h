@@ -21,7 +21,7 @@
 #ifndef OCILIB_DEFS_H_INCLUDED
 #define OCILIB_DEFS_H_INCLUDED
 
-#include "ocilib_config.h"
+#include "ocilibc/config.h"
 
 #include "import.h"
 

@@ -34,7 +34,7 @@
 #ifndef OCILIB_OCILIB_TYPES_H_INCLUDED
 #define OCILIB_OCILIB_TYPES_H_INCLUDED
 
-#include "ocilib_config.h"
+#include "ocilibc/config.h"
 
 /**
  * @defgroup OcilibCApi C API
