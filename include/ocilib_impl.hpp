@@ -48,7 +48,6 @@
 // ReSharper disable CppClangTidyBugproneUnhandledSelfAssignment
 //
 
-
 #pragma once
 
 #include <algorithm>
@@ -59,6 +58,87 @@ namespace ocilib
 /* ********************************************************************************************* *
  *                                         IMPLEMENTATION
  * ********************************************************************************************* */
+
+#ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
+
+struct MemoryAllocation
+{
+    void* Address;
+    const char* Name;
+    size_t Size;
+    size_t Count;
+};
+
+class MemoryDebugInfo
+{
+private:
+    std::vector<MemoryAllocation> Allocations;
+public:
+
+    template<class T>
+    void OnAllocate(T* address, size_t count)
+    {
+        Allocations.push_back({ address, typeid(T).name(), sizeof(T), count });
+    }
+
+    template<class T>
+    void OnDeallocate(T* address)
+    {
+        auto it = std::find_if(std::begin(Allocations), std::end(Allocations), [address](const auto& alloc)
+        {
+            return alloc.Address == address;
+        });
+        if (it != std::end(Allocations))
+        {
+            Allocations.erase(it);
+        }
+    }
+
+    void PrintAllocations()
+    {
+        if (Allocations.empty()) return;
+
+        std::cout << "Unfreed memory found" << std::endl;
+
+        for (auto& alloc : Allocations)
+        {
+            std::cout << "=> Address " << alloc.Address
+                      << " - Size "    << alloc.Count
+                      << " - Count "   << alloc.Size
+                      << " - Type "    << alloc.Name 
+                      << std::endl;
+        }
+    }
+};
+
+inline MemoryDebugInfo& GetMemoryDebugInfo()
+{
+    static MemoryDebugInfo memoryDebugInfo;
+
+    return memoryDebugInfo;
+}
+
+#endif
+
+template<class T>
+static T* OnAllocate(T* address, size_t count = 1)
+{
+#ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
+    GetMemoryDebugInfo().OnAllocate(address, count);
+#endif
+
+    return address;
+}
+
+template<class T>
+static T* OnDeallocate(T* address)
+{
+#ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
+    GetMemoryDebugInfo().OnDeallocate(address);
+#endif
+
+    return address;
+}
 
  /**
  * Catch silently any exception thrown in the given expression
@@ -449,14 +529,14 @@ ManagedBuffer<T>::ManagedBuffer(T *buffer, size_t size) : _buffer(buffer), _size
 }
 
 template<typename T>
-ManagedBuffer<T>::ManagedBuffer(size_t size) : _buffer(new T[size]), _size(size)
+ManagedBuffer<T>::ManagedBuffer(size_t size) : _buffer(OnAllocate(new T[size], size)), _size(size)
 {
     memset(_buffer, 0, sizeof(T) * _size);
 }
 template<typename T>
 ManagedBuffer<T>::~ManagedBuffer() noexcept
 {
-    delete [] _buffer;
+   delete OnDeallocate(_buffer);
 }
 
 template<typename T>
@@ -549,7 +629,7 @@ void HandleHolder<T>::Acquire(T handle, HandleFreeFunc handleFreefunc, SmartHand
 
         if (!_smartHandle)
         {
-            _smartHandle = new SmartHandle(this, handle, handleFreefunc, freeNotifyFunc, parent);
+            _smartHandle = OnAllocate(new SmartHandle(this, handle, handleFreefunc, freeNotifyFunc, parent));
         }
         else
         {
@@ -871,7 +951,7 @@ void HandleHolder<T>::SmartHandle::DeleteHandle(Handle *handle)
         handle->DetachFromParent();
         handle->DetachFromHolders();
 
-        delete handle;
+        delete OnDeallocate(handle);
     }
 }
 
@@ -897,7 +977,7 @@ void HandleHolder<T>::SmartHandle::Release(HandleHolder *holder)
 
     if (_holders.GetSize() == 0)
     {
-        delete this;
+        delete OnDeallocate(this);
     }
 
     holder->_smartHandle = nullptr;
@@ -1066,6 +1146,13 @@ inline void Environment::Cleanup()
 
 	Environment* handle = static_cast<Environment*>(OCI_GetUserData(nullptr));	
 	OCI_SetUserData(nullptr, handle);
+
+#ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
+
+    ocilib::GetMemoryDebugInfo().PrintAllocations();
+
+#endif
+
 }
 
 inline Environment::EnvironmentFlags Environment::GetMode()
@@ -4670,12 +4757,12 @@ inline BindArray::BindArray(const Statement &statement, const ostring& name, uns
 template<class T>
 void BindArray::SetVector(std::vector<T> & vector, bool isPlSqlTable, unsigned int elemSize)
 {
-    _object = new BindArrayObject<T>(_statement, GetName(), vector, isPlSqlTable, GetMode(), elemSize);
+    _object = OnAllocate(new BindArrayObject<T>(_statement, GetName(), vector, isPlSqlTable, GetMode(), elemSize));
 }
 
 inline BindArray::~BindArray() noexcept
 {
-    delete _object;
+    delete OnDeallocate(_object);
 }
 
 template<class T>
@@ -4727,7 +4814,7 @@ BindArray::BindArrayObject<T>::~BindArrayObject() noexcept
 template<class T>
 void BindArray::BindArrayObject<T>::AllocData()
 {
-    _data = new NativeType[_elemCount];
+    _data = OnAllocate(new NativeType[_elemCount], _elemCount);
 
     memset(_data, 0, sizeof(NativeType) * _elemCount);
 }
@@ -4735,23 +4822,27 @@ void BindArray::BindArrayObject<T>::AllocData()
 template<>
 inline void BindArray::BindArrayObject<ostring>::AllocData()
 {
-    _data = new otext[_elemSize * _elemCount];
+    const size_t count = _elemSize * _elemCount;
 
-    memset(_data, 0, _elemSize * _elemCount * sizeof(otext));
+    _data = OnAllocate(new otext[count], count);
+
+    memset(_data, 0, count * sizeof(otext));
 }
 
 template<>
 inline void BindArray::BindArrayObject<Raw> ::AllocData()
 {
-    _data = new unsigned char[_elemSize * _elemCount];
+    const size_t count = _elemSize * _elemCount;
 
-    memset(_data, 0, _elemSize * _elemCount * sizeof(unsigned char));
+    _data = OnAllocate(new unsigned char[count], count);
+
+    memset(_data, 0, count * sizeof(unsigned char));
 }
 
 template<class T>
 void BindArray::BindArrayObject<T>::FreeData() const
 {
-    delete [] _data ;
+    delete [] OnDeallocate(_data);
 }
 
 template<class T>
@@ -4931,16 +5022,16 @@ template<class T>
 BindObjectAdaptor<T>::BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object, unsigned int size) :
      BindObject(statement, name, mode),
      _object(object),
-     _data(new NativeType[size + 1]),
+     _data(OnAllocate(new NativeType[size+1], size+1)),
      _size(size)
 {
-    memset(_data, 0, _size * sizeof(NativeType));
+    memset(_data, 0, (_size+1) * sizeof(NativeType));
 }
 
 template<class T>
 BindObjectAdaptor<T>::~BindObjectAdaptor() noexcept
 {
-    delete [] _data;
+    delete OnDeallocate(_data);
 }
 
 template<class T>
@@ -4975,7 +5066,7 @@ template<class T>
 BindTypeAdaptor<T>::BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object) :
 BindObject(statement, name, mode),
 _object(object),
-_data(new NativeType)
+_data(OnAllocate(new NativeType))
 {
 
 }
@@ -4983,7 +5074,7 @@ _data(new NativeType)
 template<class T>
 BindTypeAdaptor<T>::~BindTypeAdaptor() noexcept
 {
-    delete _data;
+    delete OnDeallocate(_data);
 }
 
 template<class T>
@@ -5030,7 +5121,7 @@ inline void BindsHolder::Clear()
 
     for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; ++it)
     {
-        delete (*it);
+        delete OnDeallocate(*it);
     }
 
     _bindObjects.clear();
@@ -5044,9 +5135,11 @@ inline void BindsHolder::AddBindObject(BindObject *bindObject)
 
         for(it = _bindObjects.begin(), it_end = _bindObjects.end(); it != it_end; ++it)
         {
-            if ((*it)->GetName() == bindObject->GetName())
+            BindObject *previousBindObject = *it;
+            if (previousBindObject->GetName() == bindObject->GetName())
             {
                 _bindObjects.erase(it);
+                delete OnDeallocate(previousBindObject);
                 break;
             }
         }
@@ -5341,7 +5434,7 @@ void Statement::Bind2(M &method, const ostring& name, T& value, BindInfo::BindDi
 template<typename M, class T>
 void Statement::BindVector1(M &method, const ostring& name, std::vector<T> &values,  BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindArray * bnd = new BindArray(*this, name, mode);
+    BindArray * bnd = OnAllocate(new BindArray(*this, name, mode));
     bnd->SetVector<T>(values, type == BindInfo::AsPlSqlTable, sizeof(typename BindResolver<T>::OutputType));
 
     const boolean res = method(*this, name.c_str(), bnd->GetData<T>(), bnd->GetSizeForBindCall());
@@ -5354,7 +5447,7 @@ void Statement::BindVector1(M &method, const ostring& name, std::vector<T> &valu
     }
     else
     {
-        delete bnd;
+        delete OnDeallocate(bnd);
     }
 
     Check(res);
@@ -5363,7 +5456,7 @@ void Statement::BindVector1(M &method, const ostring& name, std::vector<T> &valu
 template<typename M, class T, class U>
 void Statement::BindVector2(M &method, const ostring& name, std::vector<T> &values, BindInfo::BindDirection mode, U subType, BindInfo::VectorType type)
 {
-    BindArray * bnd = new BindArray(*this, name, mode);
+    BindArray * bnd = OnAllocate(new BindArray(*this, name, mode));
     bnd->SetVector<T>(values, type == BindInfo::AsPlSqlTable, sizeof(typename BindResolver<T>::OutputType));
 
     const boolean res = method(*this, name.c_str(), bnd->GetData<T>(), subType, bnd->GetSizeForBindCall());
@@ -5376,7 +5469,7 @@ void Statement::BindVector2(M &method, const ostring& name, std::vector<T> &valu
     }
     else
     {
-        delete bnd;
+        delete OnDeallocate(bnd);
     }
 
     Check(res);
@@ -5385,7 +5478,7 @@ void Statement::BindVector2(M &method, const ostring& name, std::vector<T> &valu
 template<>
 inline void Statement::Bind<bool>(const ostring& name, bool &value, BindInfo::BindDirection mode)
 {
-    BindTypeAdaptor<bool> * bnd = new BindTypeAdaptor<bool>(*this, name, mode, value);
+    BindTypeAdaptor<bool> * bnd = OnAllocate(new BindTypeAdaptor<bool>(*this, name, mode, value));
 
     const boolean res = OCI_BindBoolean(*this, name.c_str(), static_cast<boolean *>(*bnd));
 
@@ -5397,7 +5490,7 @@ inline void Statement::Bind<bool>(const ostring& name, bool &value, BindInfo::Bi
     }
     else
     {
-        delete bnd;
+        delete OnDeallocate(bnd);
     }
 
     Check(res);
@@ -5553,7 +5646,7 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, ostring 
 
     value.reserve(maxSize);
 
-    BindObjectAdaptor<ostring> * bnd = new BindObjectAdaptor<ostring>(*this, name, mode, value, maxSize + 1);
+    BindObjectAdaptor<ostring> * bnd = OnAllocate(new BindObjectAdaptor<ostring>(*this, name, mode, value, maxSize + 1));
 
     const boolean res = OCI_BindString(*this, name.c_str(), static_cast<otext *>(*bnd), maxSize);
 
@@ -5565,7 +5658,7 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, ostring 
     }
     else
     {
-        delete bnd;
+        delete OnDeallocate(bnd);
     }
 
     Check(res);
@@ -5587,7 +5680,7 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, Raw &value, 
 
     value.reserve(maxSize);
 
-    BindObjectAdaptor<Raw> * bnd = new BindObjectAdaptor<Raw>(*this, name, mode, value, maxSize);
+    BindObjectAdaptor<Raw> * bnd = OnAllocate(new BindObjectAdaptor<Raw>(*this, name, mode, value, maxSize));
 
     const boolean res = OCI_BindRaw(*this, name.c_str(), static_cast<unsigned char *>(*bnd), maxSize);
 
@@ -5599,7 +5692,7 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, Raw &value, 
     }
     else
     {
-        delete bnd;
+        delete OnDeallocate(bnd);
     }
 
     Check(res);
@@ -5747,7 +5840,7 @@ void Statement::Bind(const ostring& name, std::vector<Collection<T> > &values, T
 template<>
 inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vector<ostring> &values,  unsigned int maxSize, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindArray * bnd = new BindArray(*this, name, mode);
+    BindArray * bnd = OnAllocate(new BindArray(*this, name, mode));
     bnd->SetVector<ostring>(values, type == BindInfo::AsPlSqlTable, maxSize+1);
 
     const boolean res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring>(), maxSize, bnd->GetSizeForBindCall());
@@ -5760,7 +5853,7 @@ inline void Statement::Bind<ostring, unsigned int>(const ostring& name, std::vec
     }
     else
     {
-        delete bnd;
+        delete OnDeallocate(bnd);
     }
 
     Check(res);
@@ -5775,7 +5868,7 @@ inline void Statement::Bind<ostring, int>(const ostring& name, std::vector<ostri
 template<>
 inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<Raw> &values, unsigned int maxSize, BindInfo::BindDirection mode, BindInfo::VectorType type)
 {
-    BindArray * bnd = new BindArray(*this, name, mode);
+    BindArray * bnd = OnAllocate(new BindArray(*this, name, mode));
     bnd->SetVector<Raw>(values, type == BindInfo::AsPlSqlTable, maxSize);
 
     const boolean res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw>(), maxSize, bnd->GetSizeForBindCall());
@@ -5788,7 +5881,7 @@ inline void Statement::Bind<Raw, unsigned int>(const ostring& name, std::vector<
     }
     else
     {
-        delete bnd;
+        delete OnDeallocate(bnd);
     }
 
     Check(res);
@@ -6090,7 +6183,7 @@ inline void Statement::ReleaseResultsets() const
             {
                 handle->DetachFromHolders();
 
-                delete handle;
+                delete OnDeallocate(handle);
 
                 handle = nullptr;
             }
@@ -6113,7 +6206,7 @@ inline void Statement::OnFreeSmartHandle(SmartHandle *smartHandle)
 
         smartHandle->SetExtraInfos(nullptr);
 
-        delete bindsHolder;
+        delete OnDeallocate(bindsHolder);
     }
 }
 
@@ -6128,7 +6221,7 @@ inline BindsHolder * Statement::GetBindsHolder(bool create) const
 
     if (bindsHolder == nullptr && create)
     {
-        bindsHolder = new BindsHolder(*this);
+        bindsHolder = OnAllocate(new BindsHolder(*this));
         _smartHandle->SetExtraInfos(bindsHolder);
     }
 

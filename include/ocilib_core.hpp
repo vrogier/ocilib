@@ -42,30 +42,78 @@
 
 #include <map>
 
-namespace ocilib
-{
 
 /* Try to guess C++ Compiler capabilities ... */
 
-#define CPP_98 199711L
-#define CPP_11 201103L
-#define CPP_14 201402L
+#define OCILIBPP_CPP_98 199711L
+#define OCILIBPP_CPP_11 201103L
+#define OCILIBPP_CPP_14 201402L
 
-#if __cplusplus < CPP_11
+#if __cplusplus < OCILIBPP_CPP_11
+
+    // GCC
     #if defined(__GNUC__)
         #if defined(__GXX_EXPERIMENTAL_CXX0X__)
-            #define HAS_CXX
+            #define OCILIBPP_HAS_CXX
         #endif
+    // MSVC
     #elif defined(_MSC_VER)
-        #if _MSC_VER >= 1600
-            #define HAS_CXX
-       #endif
+        #if _MSVC_LANG >= OCILIBPP_CPP_11
+            #define OCILIBPP_HAS_CXX
+        #endif
     #endif
+
 #else
-    #define HAS_CXX
+
+    #define OCILIBPP_HAS_CXX
+
 #endif
 
-#ifdef HAS_CXX
+#ifdef OCILIBPP_HAS_CXX
+
+    #define OCILIBPP_HAS_ENABLEIF
+    #define OCILIBPP_HAS_VARIADIC
+
+    #ifdef  OCILIBCPP_DEBUG_MEMORY
+
+        #include <iostream>
+        #define OCILIBPP_DEBUG_MEMORY_ENABLED
+
+    #endif
+
+#else
+
+    #define OCILIBPP_DEFINE_CXX_KEYWORDS
+
+#endif
+
+#ifdef OCILIBPP_TEST_CPP98
+
+    #ifdef OCILIBPP_DEFINE_CXX_KEYWORDS
+    #undef OCILIBPP_DEFINE_CXX_KEYWORDS
+    #endif
+
+    #ifdef OCILIBPP_HAS_ENABLEIF
+    #undef OCILIBPP_HAS_ENABLEIF
+    #endif
+
+    #ifdef OCILIBPP_HAS_VARIADIC
+    #undef OCILIBPP_HAS_VARIADIC
+    #endif
+
+#endif
+
+#ifdef OCILIBPP_DEFINE_CXX_KEYWORDS
+
+    #define nullptr 0
+    #define override
+    #define noexcept
+
+#endif
+
+namespace ocilib
+{
+#ifdef OCILIBPP_HAS_ENABLEIF
 
     template<bool B, class T = void>
     using EnableIf  =  std::enable_if<B, T>;
@@ -74,12 +122,7 @@ namespace ocilib
     using IsSame = std::is_same<T, U>;
 
 #else
-    
-    #define nullptr 0
-
-    #define override
-    #define noexcept
-
+  
     template<bool B, class T = void>
     struct EnableIf {};
 
