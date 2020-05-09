@@ -141,7 +141,7 @@ void ErrorSet
 
     osprintf(err->message, (int)total_len, format, err->location, message);
 
-    err->message_len = max(err->message_len, (unsigned int) location_len);
+    err->message_len = max(err->message_len, (unsigned int)total_len);
 }
 
 /* --------------------------------------------------------------------------------------------- *
