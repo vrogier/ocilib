@@ -112,23 +112,36 @@ void ErrorSet
     err->source_type = source_type;
     err->row         = row;
 
-    size_t len = ostrlen(message);
-    if (err->message_len < len)
+    const otext* format = OTEXT("Error occured at %s: %s");
+
+    const size_t format_len = ostrlen(format);
+    const size_t message_len = message ? ostrlen(message) : 0;
+    const size_t location_len = location ? strlen(location) : 0;
+    const size_t total_len = format_len + message_len + location_len;
+
+    /* allocate storage for location */
+    if (err->location_len < location_len)
     {
-        err->message = realloc(err->message, len + 1);
+        err->location = realloc(err->location, location_len + 1);
     }
 
-    ostrcpy(err->message, message);
-    err->message_len = (unsigned int) len;
+    /* convert location if needed */
 
-    len = strlen(location);
-    if (err->location_len < len)
+    StringAnsiToNative(location, err->location, (unsigned int) location_len);
+    err->location_len = max(err->location_len, (unsigned int) location_len);
+
+    /* allocate storage for message */
+
+    if (err->message_len < total_len)
     {
-        err->location = realloc(err->location, len + 1);
+        err->message = realloc(err->message, total_len + 1);
     }
 
-    StringAnsiToNative(location, err->location, (unsigned int) len);
-    err->location_len = (unsigned int) len;
+    /* format message */
+
+    osprintf(err->message, (int)total_len, format, err->location, message);
+
+    err->message_len = max(err->message_len, (unsigned int) location_len);
 }
 
 /* --------------------------------------------------------------------------------------------- *
