@@ -64,15 +64,14 @@ libocilib_la_SOURCES=   \
 libocilib_la_CFLAGS= -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
 libocilib_la_LDFLAGS= @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
-include_HEADERS=                             \
-    $(top_srcdir)/include/ocilib.h           \
-    $(top_srcdir)/include/ocilibc/api.h      \
-    $(top_srcdir)/include/ocilibc/compat.h   \
-    $(top_srcdir)/include/ocilibc/config.h   \
-    $(top_srcdir)/include/ocilibc/types.h    \
-    $(top_srcdir)/include/ocilib.hpp         \
-    $(top_srcdir)/include/ocilibcpp/core.hpp \
-    $(top_srcdir)/include/ocilibcpp/impl.hpp
+nobase_include_HEADERS=                                         \
+    $(top_srcdir)/include/*.h                                   \
+    $(top_srcdir)/include/*.hpp                                 \
+    $(top_srcdir)/include/ocilibc/*.h                           \
+    $(top_srcdir)/include/ocilibcpp/*.hpp                       \
+    $(top_srcdir)/include/ocilibcpp/detail/*.hpp                \
+    $(top_srcdir)/include/ocilibcpp/detail/core/*.hpp           \
+    $(top_srcdir)/include/ocilibcpp/detail/support/*.hpp   
     
 noinst_HEADERS=     \
 	agent.h         \
