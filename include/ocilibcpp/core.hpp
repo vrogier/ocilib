@@ -18,675 +18,371 @@
  * limitations under the License.
  */
 
-/*
- * IMPORTANT NOTICE
- *
- * This C++ header defines C++ wrapper classes around the OCILIB C API
- * It requires a compatible version of OCILIB
- *
- */
-
-//
-// ReSharper inspection rules customization (mainly for C98 backward compatibility)
-//
-// ReSharper disable CppClassCanBeFinal
-// ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
-// ReSharper disable CppClangTidyHicppSpecialMemberFunctions
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
-// ReSharper disable CppClangTidyModernizePassByValue
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-//
-
 #pragma once
 
+#include <list>
 #include <map>
 
-
-/* Try to guess C++ Compiler capabilities ... */
-
-#define OCILIBPP_CPP_98 199711L
-#define OCILIBPP_CPP_11 201103L
-#define OCILIBPP_CPP_14 201402L
-
-#if __cplusplus < OCILIBPP_CPP_11
-
-    // GCC
-    #if defined(__GNUC__)
-        #if defined(__GXX_EXPERIMENTAL_CXX0X__)
-            #define OCILIBPP_HAS_CXX
-        #endif
-    // MSVC
-    #elif defined(_MSC_VER)
-        #if _MSVC_LANG >= OCILIBPP_CPP_11
-            #define OCILIBPP_HAS_CXX
-        #endif
-    #endif
-
-#else
-
-    #define OCILIBPP_HAS_CXX
-
-#endif
-
-#ifdef OCILIBPP_HAS_CXX
-
-    #define OCILIBPP_HAS_ENABLEIF
-    #define OCILIBPP_HAS_VARIADIC
-
-    #ifdef  OCILIBCPP_DEBUG_MEMORY
-
-        #include <iostream>
-        #define OCILIBPP_DEBUG_MEMORY_ENABLED
-
-    #endif
-
-#else
-
-    #define OCILIBPP_DEFINE_CXX_KEYWORDS
-
-#endif
-
-#ifdef OCILIBPP_TEST_CPP98
-
-    #ifdef OCILIBPP_DEFINE_CXX_KEYWORDS
-    #undef OCILIBPP_DEFINE_CXX_KEYWORDS
-    #endif
-
-    #ifdef OCILIBPP_HAS_ENABLEIF
-    #undef OCILIBPP_HAS_ENABLEIF
-    #endif
-
-    #ifdef OCILIBPP_HAS_VARIADIC
-    #undef OCILIBPP_HAS_VARIADIC
-    #endif
-
-#endif
-
-#ifdef OCILIBPP_DEFINE_CXX_KEYWORDS
-
-    #define nullptr 0
-    #define override
-    #define noexcept
-
-#endif
+#include "ocilibcpp/config.hpp"
 
 namespace ocilib
 {
+    namespace core
+    {
 #ifdef OCILIBPP_HAS_ENABLEIF
 
-    template<bool B, class T = void>
-    using EnableIf  =  std::enable_if<B, T>;
+        template<bool B, class T = void>
+        using EnableIf = std::enable_if<B, T>;
 
-    template<class T, class U>
-    using IsSame = std::is_same<T, U>;
+        template<class T, class U>
+        using IsSame = std::is_same<T, U>;
 
 #else
-  
-    template<bool B, class T = void>
-    struct EnableIf {};
 
-    template<class T>
-    struct EnableIf<true, T> { typedef T type; };
+        template<bool B, class T = void>
+        struct EnableIf {};
 
-    template<bool B>
-    struct BoolConstant { static const bool value = B; };
+        template<class T>
+        struct EnableIf<true, T> { typedef T type; };
 
-    template<class T, class U>
-    struct IsSame : BoolConstant<false> {};
+        template<bool B>
+        struct BoolConstant { static const bool value = B; };
 
-    template<class T>
-    struct IsSame<T, T> : BoolConstant<true> {};
+        template<class T, class U>
+        struct IsSame : BoolConstant<false> {};
+
+        template<class T>
+        struct IsSame<T, T> : BoolConstant<true> {};
 
 #endif
 
-
 #define ARG_NOT_USED(a) (a) = (a)
 
-/* class forward declarations */
-
-class Exception;
-class Connection;
-class Transaction;
-class Environment;
-class Statement;
-class Resultset;
-class Date;
-class Timestamp;
-class Interval;
-class Number;
-class TypeInfo;
-class Reference;
-class Object;
-template<class>
-class Element;
-template<class>
-class Iterator;
-template<class>
-class Collection;
-template<class, int>
-class Lob;
-class File;
-class Pool;
-template<class, int>
-class Long;
-class Column;
-class Subscription;
-class Event;
-class Agent;
-class Message;
-class Enqueue;
-class Dequeue;
-class Queue;
-class QueueTable;
-class DirectPath;
-class Thread;
-class ThreadKey;
-class Mutex;
-class BindInfo;
-
-template<class T>
-struct SupportedNumeric
-{
-    typedef EnableIf<IsSame<T, short>::value ||
-        IsSame<T, unsigned short>::value ||
-        IsSame<T, int>::value ||
-        IsSame<T, unsigned int>::value ||
-        IsSame<T, big_int>::value ||
-        IsSame<T, big_uint>::value ||
-        IsSame<T, float>::value ||
-        IsSame<T, double>::value ||
-        IsSame<T, Number>::value> Type;
-};
-
-/**
-* @brief Internal usage.
-* Allow resolving a native type used by C API from a C++ type in binding operations
-*/
-template<class T> struct BindResolver {};
-
-/**
- * @brief Internal usage.
- * Checks if the last OCILIB function call has raised an error.
- * If so, it raises a C++ exception using the retrieved error handle
- */
-template<class T>
-static T Check(T result);
-
-/**
- * @brief Internal usage.
- * Constructs a C++ string object from the given OCILIB string pointer
- */
-ostring MakeString(const otext *result, int size = -1);
-
-/**
-* @brief Internal usage.
-* Constructs a C++ Raw object from the given OCILIB raw buffer
-*/
-Raw MakeRaw(AnyPointer result, unsigned int size);
-
-/**
- * @brief
- * Template class providing OCILIB handles auto memory, life cycle and scope management
- */
-template<class>
-class HandleHolder;
-
-/**
- * @brief
- * Template Enumeration template class providing some type safety to some extends for manipulating enumerated variables
- */
-template<class T>
-class Enum
-{
-public:
-
-    typedef T Type;
-
-    Enum();
-    Enum(T value);
+        /**
+         * @brief Internal usage.
+         * Checks if the last OCILIB function call has raised an error.
+         * If so, it raises a C++ exception using the retrieved error handle
+         */
+        template<class T>
+        static T Check(T result);
+
+        /**
+         * @brief Internal usage.
+         * Constructs a C++ string object from the given OCILIB string pointer
+         */
+        ostring MakeString(const otext* result, int size = -1);
+
+        /**
+        * @brief Internal usage.
+        * Constructs a C++ Raw object from the given OCILIB raw buffer
+        */
+        Raw MakeRaw(AnyPointer result, unsigned int size);
+
+        template<class T>
+        struct SupportedNumeric
+        {
+            typedef EnableIf<IsSame<T, short>::value ||
+                IsSame<T, unsigned short>::value ||
+                IsSame<T, int>::value ||
+                IsSame<T, unsigned int>::value ||
+                IsSame<T, big_int>::value ||
+                IsSame<T, big_uint>::value ||
+                IsSame<T, float>::value ||
+                IsSame<T, double>::value ||
+                IsSame<T, Number>::value> Type;
+        };
+
+        /**
+         * @brief
+         * Template Enumeration template class providing some type safety to some extends for manipulating enumerated variables
+         */
+        template<class T>
+        class Enum
+        {
+        public:
 
-    T GetValue();
+            typedef T Type;
 
-    operator T ();
-    operator unsigned int () const;
+            Enum();
+            Enum(T value);
 
-    bool operator == (const Enum& other) const;
-    bool operator != (const Enum& other) const;
+            T GetValue();
 
-    bool operator == (const T& other) const;
-    bool operator != (const T& other) const;
+            operator T ();
+            operator unsigned int() const;
 
-private:
+            bool operator == (const Enum& other) const;
+            bool operator != (const Enum& other) const;
 
-    T _value;
-};
+            bool operator == (const T& other) const;
+            bool operator != (const T& other) const;
 
-/**
- * @brief
- * Template Flags template class providing some type safety to some extends for manipulating flags set variables
- */
-template<class T>
-class Flags
-{
-public:
+        private:
 
-	typedef T Type;
+            T _value;
+        };
 
-    Flags();
-    Flags(T flag);
-    Flags(const Flags& other);
+        /**
+         * @brief
+         * Template Flags template class providing some type safety to some extends for manipulating flags set variables
+         */
+        template<class T>
+        class Flags
+        {
+        public:
 
-    Flags& operator = (const Flags& other) noexcept;
+            typedef T Type;
 
-    Flags operator~ () const;
+            Flags();
+            Flags(T flag);
+            Flags(const Flags& other);
 
-    Flags operator | (T other) const;
-    Flags operator & (T other) const;
-    Flags operator ^ (T other) const;
+            Flags& operator = (const Flags& other) noexcept;
 
-    Flags operator | (const Flags& other) const;
-    Flags operator & (const Flags& other) const;
-    Flags operator ^ (const Flags& other) const;
+            Flags operator~ () const;
 
-    Flags& operator |= (T other);
-    Flags& operator &= (T other);
-    Flags& operator ^= (T other);
+            Flags operator | (T other) const;
+            Flags operator & (T other) const;
+            Flags operator ^ (T other) const;
 
-    Flags& operator |= (const Flags& other);
-    Flags& operator &= (const Flags& other);
-    Flags& operator ^= (const Flags& other);
+            Flags operator | (const Flags& other) const;
+            Flags operator & (const Flags& other) const;
+            Flags operator ^ (const Flags& other) const;
 
-    bool operator == (T other) const;
-    bool operator == (const Flags& other) const;
+            Flags& operator |= (T other);
+            Flags& operator &= (T other);
+            Flags& operator ^= (T other);
 
-    unsigned int GetValues() const;
+            Flags& operator |= (const Flags& other);
+            Flags& operator &= (const Flags& other);
+            Flags& operator ^= (const Flags& other);
 
-    bool IsSet(T other) const;
+            bool operator == (T other) const;
+            bool operator == (const Flags& other) const;
 
-private:
+            unsigned int GetValues() const;
 
-    Flags(unsigned int flags);
+            bool IsSet(T other) const;
 
-    unsigned int _flags;
-};
+        private:
 
-template< typename T>
-class ManagedBuffer
-{
-public:
-    ManagedBuffer();
-    ManagedBuffer(size_t size);
-    ManagedBuffer(T *buffer, size_t size);
+            Flags(unsigned int flags);
 
-    ~ManagedBuffer() noexcept;
+            unsigned int _flags;
+        };
 
-    operator T* ();
+        template< typename T>
+        class ManagedBuffer
+        {
+        public:
+            ManagedBuffer();
+            ManagedBuffer(size_t size);
+            ManagedBuffer(T* buffer, size_t size);
 
-private:
+            ~ManagedBuffer() noexcept;
 
-    T* _buffer;
-    size_t _size;
-};
+            operator T* ();
 
-class Locker
-{
-public:
+        private:
 
-    Locker();
-    virtual ~Locker() noexcept;
+            T* _buffer;
+            size_t _size;
+        };
 
-    void Lock() const;
-    void Unlock() const;
+        class Locker
+        {
+        public:
 
-    void SetAccessMode(bool threaded);
+            Locker();
+            virtual ~Locker() noexcept;
 
-private:
+            void Lock() const;
+            void Unlock() const;
 
-    MutexHandle _mutex;
-};
+            void SetAccessMode(bool threaded);
 
-class Lockable
-{
-public:
+        private:
 
-    Lockable();
-    virtual  ~Lockable() noexcept;
+            MutexHandle _mutex;
+        };
 
-    void SetLocker(Locker *locker);
+        class Lockable
+        {
+        public:
 
-    void Lock() const;
-    void Unlock() const;
+            Lockable();
+            virtual  ~Lockable() noexcept;
 
-private:
+            void SetLocker(Locker* locker);
 
-    Locker *_locker;
-};
+            void Lock() const;
+            void Unlock() const;
 
-template<class K, class V>
-class ConcurrentMap : public Lockable
-{
-public:
+        private:
 
-    ConcurrentMap();
-    virtual ~ConcurrentMap() noexcept;
+            Locker* _locker;
+        };
 
-    void Remove(K key);
-    V Get(K key);
-    void Set(K key, V value);
-    void Clear();
-    size_t GetSize();
+        template<class K, class V>
+        class ConcurrentMap : public Lockable
+        {
+        public:
 
-private:
+            ConcurrentMap();
+            virtual ~ConcurrentMap() noexcept;
 
-    std::map<K, V> _map;
+            void Remove(K key);
+            V Get(K key);
+            void Set(K key, V value);
+            void Clear();
+            size_t GetSize();
 
-};
+        private:
 
-template<class T>
-class ConcurrentList : public Lockable
-{
-public:
+            std::map<K, V> _map;
 
-    ConcurrentList();
-    virtual ~ConcurrentList() noexcept;
+        };
 
-    void Add(T value);
-    void Remove(T value);
-    void Clear();
-    size_t GetSize();
-    bool Exists(const T &value);
+        template<class T>
+        class ConcurrentList : public Lockable
+        {
+        public:
 
-    template<class P>
-    bool FindIf(P predicate, T &value);
+            ConcurrentList();
+            virtual ~ConcurrentList() noexcept;
 
-    template<class A>
-    void ForEach(A action);
+            void Add(T value);
+            void Remove(T value);
+            void Clear();
+            size_t GetSize();
+            bool Exists(const T& value);
 
-private:
+            template<class P>
+            bool FindIf(P predicate, T& value);
 
-    std::list<T> _list;
-};
+            template<class A>
+            void ForEach(A action);
 
-class Handle
-{
-public:
+        private:
 
-    virtual ~Handle() noexcept {}
-    virtual ConcurrentList<Handle *> & GetChildren() = 0;
-    virtual void DetachFromHolders() = 0;
-    virtual void DetachFromParent() = 0;
-};
+            std::list<T> _list;
+        };
 
-/**
-* @brief
-* Smart pointer class with reference counting for managing OCILIB object handles
-*/
-template<class T>
-class HandleHolder
-{
-public:
+        class Handle
+        {
+        public:
 
-    bool IsNull() const;
+            virtual ~Handle() noexcept {}
+            virtual ConcurrentList<Handle*>& GetChildren() = 0;
+            virtual void DetachFromHolders() = 0;
+            virtual void DetachFromParent() = 0;
+        };
 
-    operator bool();
-    operator bool() const;
+        /**
+        * @brief
+        * Smart pointer class with reference counting for managing OCILIB object handles
+        */
+        template<class T>
+        class HandleHolder
+        {
+        public:
 
-    operator T();
-    operator T() const;
+            bool IsNull() const;
 
-protected:
+            operator bool();
+            operator bool() const;
 
-    class SmartHandle;
+            operator T();
+            operator T() const;
 
-    HandleHolder(const HandleHolder &other);
-	HandleHolder();
-    ~HandleHolder() noexcept;
+        protected:
 
-    HandleHolder& operator= (const HandleHolder& other) noexcept;
+            class SmartHandle;
 
-    typedef boolean(OCI_API *HandleFreeFunc)(AnyPointer handle);
+            HandleHolder(const HandleHolder& other);
+            HandleHolder();
+            ~HandleHolder() noexcept;
 
-    typedef void(*SmartHandleFreeNotifyFunc)(SmartHandle *smartHandle);
+            HandleHolder& operator= (const HandleHolder& other) noexcept;
 
-    Handle* GetHandle() const;
+            typedef boolean(OCI_API* HandleFreeFunc)(AnyPointer handle);
 
-    void Acquire(T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent);
-    void Acquire(HandleHolder &other);
-    void Release();
+            typedef void(*SmartHandleFreeNotifyFunc)(SmartHandle* smartHandle);
 
-    class SmartHandle : public Handle
-    {
-    public:
+            Handle* GetHandle() const;
 
-        SmartHandle(HandleHolder *holder, T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle *parent);
-        virtual ~SmartHandle() noexcept;
+            void Acquire(T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent);
+            void Acquire(HandleHolder& other);
+            void Release();
 
-        void Acquire(HandleHolder *holder);
-        void Release(HandleHolder *holder);
+            class SmartHandle : public Handle
+            {
+            public:
 
-        void Destroy();
+                SmartHandle(HandleHolder* holder, T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent);
+                virtual ~SmartHandle() noexcept;
 
-        T GetHandle() const;
+                void Acquire(HandleHolder* holder);
+                void Release(HandleHolder* holder);
 
-        Handle *GetParent() const;
+                void Destroy();
 
-        AnyPointer GetExtraInfos() const;
-        void  SetExtraInfos(AnyPointer extraInfo);
+                T GetHandle() const;
 
-        ConcurrentList<Handle *> & GetChildren() override;
-        void DetachFromHolders() override;
-        void DetachFromParent() override;
+                Handle* GetParent() const;
 
-    private:
+                AnyPointer GetExtraInfos() const;
+                void  SetExtraInfos(AnyPointer extraInfo);
 
-        static void DeleteHandle(Handle *handle);
-        static void ResetHolder(HandleHolder *holder);
+                ConcurrentList<Handle*>& GetChildren() override;
+                void DetachFromHolders() override;
+                void DetachFromParent() override;
 
-        ConcurrentList<HandleHolder *> _holders;
-        ConcurrentList<Handle *>  _children;
+            private:
 
-        Locker _locker;
+                static void DeleteHandle(Handle* handle);
+                static void ResetHolder(HandleHolder* holder);
 
-        T _handle;
-        HandleFreeFunc _handleFreeFunc;
-        SmartHandleFreeNotifyFunc _freeNotifyFunc;
-        Handle *_parent;
-        AnyPointer _extraInfo;
-    };
+                ConcurrentList<HandleHolder*> _holders;
+                ConcurrentList<Handle*>  _children;
 
-    SmartHandle *_smartHandle;
- };
+                Locker _locker;
 
-/**
-* @brief
-* Abstract class allowing derived classes to be compatible
-* with any type supporting the operator << ocilib::ostring
-*/
-class Streamable
-{
-public:
+                T _handle;
+                HandleFreeFunc _handleFreeFunc;
+                SmartHandleFreeNotifyFunc _freeNotifyFunc;
+                Handle* _parent;
+                AnyPointer _extraInfo;
+            };
 
-    virtual ~Streamable() noexcept {}
+            SmartHandle* _smartHandle;
+        };
 
-    operator ostring() const
-    {
-        return ToString();
+        /**
+        * @brief
+        * Abstract class allowing derived classes to be compatible
+        * with any type supporting the operator << ocilib::ostring
+        */
+        class Streamable
+        {
+        public:
+
+            virtual ~Streamable() noexcept {}
+
+            operator ostring() const
+            {
+                return ToString();
+            }
+
+            virtual ostring ToString() const = 0;
+
+            template<class T>
+            friend T& operator << (T& lhs, const Streamable& rhs)
+            {
+                lhs << static_cast<ostring>(rhs);
+                return lhs;
+            }
+        };
+
     }
-
-    virtual ostring ToString() const = 0;
-
-    template<class T>
-    friend T& operator << (T &lhs, const Streamable &rhs)
-    {
-        lhs << static_cast<ostring>(rhs);
-        return lhs;
-    }
-};
-
-class BindObject
-{
-public:
-
-    BindObject(const Statement &statement, const ostring& name, unsigned int mode);
-
-    virtual ~BindObject() noexcept;
-
-    ostring GetName() const;
-
-    Statement GetStatement() const;
-
-    unsigned int GetMode() const;
-
-    virtual void SetInData()  = 0;
-    virtual void SetOutData() = 0;
-
-protected:
-
-    const Statement& _statement;
-    ostring _name;
-    unsigned int _mode;
-};
-
-class BindArray : public BindObject
-{
-public:
-
-     BindArray(const Statement &statement, const ostring& name, unsigned int mode);
-     virtual ~BindArray() noexcept;
-
-     template<class T>
-     void SetVector(std::vector<T> & vector, bool isPlSqlTable, unsigned int elemSize);
-  
-     template<class T>
-     typename BindResolver<T>::OutputType * GetData() const;
-
-     void SetInData() override;
-     void SetOutData() override;
-
-     unsigned int GetSize() const;
-     unsigned int GetSizeForBindCall() const;
-
-private:
-
-    class AbstractBindArrayObject
-    {
-    public:
-        virtual ~AbstractBindArrayObject() {};
-        virtual void SetInData() = 0;
-        virtual void SetOutData() = 0;
-        virtual ostring GetName() const = 0;
-        virtual bool IsHandleObject() const = 0;
-        virtual unsigned int GetSize() const = 0;
-        virtual unsigned int GetSizeForBindCall() const = 0;
-    };
-
-    template<class T>
-    class BindArrayObject : public  AbstractBindArrayObject
-    {
-    public:
-
-		typedef T ObjectType;
-		typedef std::vector<ObjectType> ObjectVector;
-        typedef typename BindResolver<ObjectType>::OutputType NativeType;
-
-        BindArrayObject(const Statement &statement, const ostring &name, ObjectVector &vector, bool isPlSqlTable, unsigned int mode, unsigned int elemSize);
-        virtual ~BindArrayObject() noexcept;
-        void SetInData() override;
-        void SetOutData() override;
-        ostring GetName()const  override;
-        bool IsHandleObject() const override;
-        unsigned int GetSize() const override;
-        unsigned int GetSizeForBindCall() const override;
-
-        operator ObjectVector & () const;
-        operator NativeType * () const;
-
-    private:
-
-        void AllocData();
-        void FreeData() const;
-
-        const Statement& _statement;
-        ostring _name;
-        ObjectVector& _vector;
-        NativeType *_data;
-        bool _isPlSqlTable;
-        unsigned int _mode;
-        unsigned int _elemCount;
-        unsigned int _elemSize;
-    };
-
-    AbstractBindArrayObject * _object;
-};
-
-template<class T>
-class BindObjectAdaptor : public BindObject
-{
-    friend class Statement;
-
-public:
-
-    typedef T ObjectType;
-    typedef typename BindResolver<ObjectType>::OutputType NativeType;
-
-    operator NativeType *()  const;
-
-    void SetInData() override;
-    void SetOutData() override;
-
-    BindObjectAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object, unsigned int size);
-    virtual ~BindObjectAdaptor() noexcept;
-
-private:
-
-    ObjectType&    _object;
-    NativeType*    _data;
-    unsigned int   _size;
-};
-
-template<class T>
-class BindTypeAdaptor : public BindObject
-{
-    friend class Statement;
-
-public:
-
-    typedef T ObjectType;
-    typedef typename BindResolver<ObjectType>::OutputType NativeType;
-
-    operator NativeType *()  const;
-
-    void SetInData() override;
-    void SetOutData() override;
-
-    BindTypeAdaptor(const Statement &statement, const ostring& name, unsigned int mode, ObjectType &object);
-    virtual ~BindTypeAdaptor() noexcept;
-
-private:
-
-    ObjectType& _object;
-    NativeType* _data;
-};
-
-class BindsHolder
-{
-public:
-
-    BindsHolder(const Statement &statement);
-    ~BindsHolder() noexcept;
-
-    void Clear();
-
-    void AddBindObject(BindObject *bindObject);
-
-    void SetOutData();
-    void SetInData();
-
-private:
-
-    std::vector<BindObject *> _bindObjects;
-    const Statement& _statement;
-};
-
 }
