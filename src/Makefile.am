@@ -65,22 +65,22 @@ libocilib_la_CFLAGS= -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@
 libocilib_la_LDFLAGS= @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 
-ocilibcsubdir=$(pkgincludedir)/ocilibc
+ocilibcsubdir=$(includedir)/ocilibc
 ocilibcsub_HEADERS = $(top_srcdir)/include/ocilibc/*.h
 
-ocilibcppsubdir=$(pkgincludedir)/ocilibcpp
+ocilibcppsubdir=$(includedir)/ocilibcpp
 ocilibcppsub_HEADERS = $(top_srcdir)/include/ocilibcpp/*.hpp
 
-ocilibcppdetailsubdir=$(pkgincludedir)/ocilibcpp/detail
+ocilibcppdetailsubdir=$(includedir)/ocilibcpp/detail
 ocilibcppdetailsub_HEADERS = $(top_srcdir)/include/ocilibcpp/detail/*.hpp
 
-ocilibcppdetailcoresubdir=$(pkgincludedir)/ocilibcpp/detail/core
+ocilibcppdetailcoresubdir=$(includedir)/ocilibcpp/detail/core
 ocilibcppdetailcoresub_HEADERS = $(top_srcdir)/include/ocilibcpp/detail/core/*.hpp
 
-ocilibcppdetailsupportsubdir=$(pkgincludedir)/ocilibcpp/detail/support
+ocilibcppdetailsupportsubdir=$(includedir)/ocilibcpp/detail/support
 ocilibcppdetailsupportsub_HEADERS = $(top_srcdir)/include/ocilibcpp/detail/support/*.hpp
 
-pkginclude_HEADERS=                      	\
+include_HEADERS=                      	    \
     $(top_srcdir)/include/ocilib.h       	\
     $(top_srcdir)/include/ocilib.hpp
    
