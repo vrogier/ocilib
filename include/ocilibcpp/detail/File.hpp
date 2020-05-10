@@ -22,6 +22,9 @@
 
 #include "ocilibcpp/types.hpp"
 
+// ReSharper disable CppClangTidyHicppUseEqualsDefault
+// ReSharper disable CppClangTidyModernizeUseEqualsDefault
+
 namespace ocilib
 {
 

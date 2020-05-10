@@ -27,6 +27,12 @@
 #include "ocilibcpp/core.hpp"
 #include "ocilibcpp/support.hpp"
 
+// ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
+// ReSharper disable CppClangTidyModernizeUseNodiscard
+// ReSharper disable CppClangTidyHicppSpecialMemberFunctions
+// ReSharper disable CppClangTidyReadabilityRedundantDeclaration
+// ReSharper disable CppFunctionIsNotImplemented
+
 namespace ocilib
 {
 

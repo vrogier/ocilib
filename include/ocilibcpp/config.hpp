@@ -23,6 +23,8 @@
 #include <string>
 #include <vector>
 
+// ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
+
 /* Including C API declarations  */
 
 extern "C" {

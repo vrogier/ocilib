@@ -22,6 +22,8 @@
 
 #include "ocilibcpp/types.hpp"
 
+// ReSharper disable CppClangTidyBugproneUnhandledSelfAssignment
+
 namespace ocilib
 {
 

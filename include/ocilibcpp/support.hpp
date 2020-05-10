@@ -22,6 +22,12 @@
 
 #include "ocilibcpp/core.hpp"
 
+// ReSharper disable CppClangTidyModernizeUseNodiscard
+// ReSharper disable CppClangTidyHicppUseEqualsDefault
+// ReSharper disable CppClangTidyHicppSpecialMemberFunctions
+// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
+// ReSharper disable CppClangTidyModernizePassByValue
+
 namespace ocilib
 {
     namespace support

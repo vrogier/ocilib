@@ -120,7 +120,7 @@ namespace ocilib
 #include "ocilibcpp/detail/core/SmartHandle.hpp"
 #include "ocilibcpp/detail/core/MemoryDebugInfo.hpp"
 
-/* Including supoprt implementations  */
+/* Including support implementations  */
 
 #include "ocilibcpp/detail/support/BindResolver.hpp"
 #include "ocilibcpp/detail/support/BindObject.hpp"

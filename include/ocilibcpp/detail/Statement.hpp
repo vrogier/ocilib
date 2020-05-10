@@ -22,9 +22,24 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyPerformanceUnnecessaryValueParam
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-
+ // ReSharper disable CppUseAuto
+ // ReSharper disable CppParameterMayBeConst
+ // ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
+ // ReSharper disable CppClangTidyModernizeReturnBracedInitList
+ // ReSharper disable CppClangTidyModernizePassByValue
+ // ReSharper disable CppClangTidyHicppUseAuto
+ // ReSharper disable CppClangTidyModernizeUseAuto
+ // ReSharper disable CppClangTidyReadabilityInconsistentDeclarationParameterName
+ // ReSharper disable CppClangTidyPerformanceUnnecessaryValueParam
+ // ReSharper disable CppClangTidyHicppUseEqualsDefault
+ // ReSharper disable CppClangTidyModernizeLoopConvert
+ // ReSharper disable CppClangTidyModernizeUseEmplace
+ // ReSharper disable CppClangTidyModernizeUseEqualsDefault
+ // ReSharper disable CppClangTidyHicppUseEmplace
+ // ReSharper disable CppClangTidyCertOop54Cpp
+ // ReSharper disable CppClangTidyMiscMisplacedConst
+ // ReSharper disable CppClangTidyBugproneUnhandledSelfAssignment
+ 
 namespace ocilib
 {
 

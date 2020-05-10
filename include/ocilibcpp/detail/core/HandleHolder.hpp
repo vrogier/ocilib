@@ -22,6 +22,8 @@
 
 #include "ocilibcpp/core.hpp"
 
+// ReSharper disable CppClangTidyBugproneUnhandledSelfAssignment
+
 namespace ocilib
 {
     namespace core
