@@ -34,7 +34,12 @@ It requires Oracle Client libraries (Regular or instant client).
     <file src="ocilib.targets" target="build\native" />	
 	
 	<file src="..\include\ocilib*" target="build\native\include" />    
-   
+	<file src="..\include\ocilibc\*" target="build\native\include\ocilibc" />    
+	<file src="..\include\ocilibcpp\*" target="build\native\include\ocilibcpp" />    
+ 	<file src="..\include\ocilibcpp\detail\*" target="build\native\include\ocilibcpp\detail" />    
+  	<file src="..\include\ocilibcpp\detail\core\*" target="build\native\include\ocilibcpp\detail\core" />    
+ 	<file src="..\include\ocilibcpp\detail\support\*" target="build\native\include\ocilibcpp\detail\support" />    
+  
 	<file src="..\lib32\ocilib*.lib" target="build\native\lib\x86" />
     <file src="..\lib64\ocilib*.lib" target="build\native\lib\x64" />
 	
