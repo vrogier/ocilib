@@ -45,7 +45,7 @@ namespace ocilib
         }
 
         template<class T>
-        BindTypeAdaptor<T>::BindTypeAdaptor(const Statement& statement, const ostring& name, unsigned int mode, ObjectType& object) :
+        BindTypeAdaptor<T>::BindTypeAdaptor(const ocilib::Statement& statement, const ostring& name, unsigned int mode, ObjectType& object) :
             BindObject(statement, name, mode),
             _object(object),
             _data(core::OnAllocate(new NativeType))

@@ -64,20 +64,20 @@ namespace ocilib
         template<> struct BindResolver<big_uint> : BindResolverScalarType<big_uint> {};
         template<> struct BindResolver<float> : BindResolverScalarType<float> {};
         template<> struct BindResolver<double> : BindResolverScalarType<double> {};
-        template<> struct BindResolver<ostring> : BindResolverType<ostring, otext, false> {};
-        template<> struct BindResolver<Raw> : BindResolverType<ostring, unsigned char, false> {};
-        template<> struct BindResolver<Number> : BindResolverHandleType<Number, OCI_Number*> {};
-        template<> struct BindResolver<Date> : BindResolverHandleType<Date, OCI_Date*> {};
-        template<> struct BindResolver<Timestamp> : BindResolverHandleType<Timestamp, OCI_Timestamp*> {};
-        template<> struct BindResolver<Interval> : BindResolverHandleType<Interval, OCI_Interval*> {};
-        template<> struct BindResolver<Clob> : BindResolverHandleType<Clob, OCI_Lob*> {};
-        template<> struct BindResolver<NClob> : BindResolverHandleType<NClob, OCI_Lob*> {};
-        template<> struct BindResolver<Blob> : BindResolverHandleType<Blob, OCI_Lob*> {};
-        template<> struct BindResolver<File> : BindResolverHandleType<File, OCI_File*> {};
-        template<> struct BindResolver<Clong> : BindResolverHandleType<Clong, OCI_Long*> {};
-        template<> struct BindResolver<Blong> : BindResolverHandleType<Blong, OCI_Long*> {};
-        template<> struct BindResolver<Reference> : BindResolverHandleType<Reference, OCI_Ref*> {};
-        template<> struct BindResolver<Object> : BindResolverHandleType<Object, OCI_Object*> {};
-        template<> struct BindResolver<Statement> : BindResolverHandleType<Statement, OCI_Statement*> {};
+        template<> struct BindResolver<ocilib::ostring> : BindResolverType<ocilib::ostring, otext, false> {};
+        template<> struct BindResolver<ocilib::Raw> : BindResolverType<ocilib::ostring, unsigned char, false> {};
+        template<> struct BindResolver<ocilib::Number> : BindResolverHandleType<ocilib::Number, OCI_Number*> {};
+        template<> struct BindResolver<ocilib::Date> : BindResolverHandleType<ocilib::Date, OCI_Date*> {};
+        template<> struct BindResolver<ocilib::Timestamp> : BindResolverHandleType<ocilib::Timestamp, OCI_Timestamp*> {};
+        template<> struct BindResolver<ocilib::Interval> : BindResolverHandleType<ocilib::Interval, OCI_Interval*> {};
+        template<> struct BindResolver<ocilib::Clob> : BindResolverHandleType<ocilib::Clob, OCI_Lob*> {};
+        template<> struct BindResolver<ocilib::NClob> : BindResolverHandleType<ocilib::NClob, OCI_Lob*> {};
+        template<> struct BindResolver<ocilib::Blob> : BindResolverHandleType<ocilib::Blob, OCI_Lob*> {};
+        template<> struct BindResolver<ocilib::File> : BindResolverHandleType<ocilib::File, OCI_File*> {};
+        template<> struct BindResolver<ocilib::Clong> : BindResolverHandleType<ocilib::Clong, OCI_Long*> {};
+        template<> struct BindResolver<ocilib::Blong> : BindResolverHandleType<ocilib::Blong, OCI_Long*> {};
+        template<> struct BindResolver<ocilib::Reference> : BindResolverHandleType<ocilib::Reference, OCI_Ref*> {};
+        template<> struct BindResolver<ocilib::Object> : BindResolverHandleType<ocilib::Object, OCI_Object*> {};
+        template<> struct BindResolver<ocilib::Statement> : BindResolverHandleType<ocilib::Statement, OCI_Statement*> {};
     }
 }

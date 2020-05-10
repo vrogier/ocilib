@@ -26,7 +26,7 @@ namespace ocilib
 {
     namespace support
     {
-        inline BindsHolder::BindsHolder(const Statement& statement) : _statement(statement)
+        inline BindsHolder::BindsHolder(const ocilib::Statement& statement) : _statement(statement)
         {
 
         }

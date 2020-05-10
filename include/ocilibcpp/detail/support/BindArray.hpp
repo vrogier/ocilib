@@ -28,7 +28,7 @@ namespace ocilib
 {
     namespace support
     {
-        inline BindArray::BindArray(const Statement& statement, const ostring& name, unsigned int mode) : BindObject(statement, name, mode), _object(nullptr)
+        inline BindArray::BindArray(const ocilib::Statement& statement, const ostring& name, unsigned int mode) : BindObject(statement, name, mode), _object(nullptr)
         {
 
         }
@@ -79,7 +79,7 @@ namespace ocilib
 
 
         template<class T>
-        BindArray::BindArrayObject<T>::BindArrayObject(const Statement& statement, const ostring& name, ObjectVector& vector, bool isPlSqlTable, unsigned int mode, unsigned int elemSize)
+        BindArray::BindArrayObject<T>::BindArrayObject(const ocilib::Statement& statement, const ostring& name, ObjectVector& vector, bool isPlSqlTable, unsigned int mode, unsigned int elemSize)
             : _statement(statement), _name(name), _vector(vector), _data(nullptr), _isPlSqlTable(isPlSqlTable), _mode(mode), _elemCount(BindArrayObject<T>::GetSize()), _elemSize(elemSize)
         {
             AllocData();
@@ -100,7 +100,7 @@ namespace ocilib
         }
 
         template<>
-        inline void BindArray::BindArrayObject<ostring>::AllocData()
+        inline void BindArray::BindArrayObject<ocilib::ostring>::AllocData()
         {
             const size_t count = _elemSize * _elemCount;
 
@@ -110,7 +110,7 @@ namespace ocilib
         }
 
         template<>
-        inline void BindArray::BindArrayObject<Raw> ::AllocData()
+        inline void BindArray::BindArrayObject<ocilib::Raw> ::AllocData()
         {
             const size_t count = _elemSize * _elemCount;
 
@@ -140,7 +140,7 @@ namespace ocilib
         }
 
         template<>
-        inline void BindArray::BindArrayObject<ostring>::SetInData()
+        inline void BindArray::BindArrayObject<ocilib::ostring>::SetInData()
         {
             std::vector<ostring>::iterator it, it_end;
 
@@ -156,7 +156,7 @@ namespace ocilib
         }
 
         template<>
-        inline void BindArray::BindArrayObject<Raw>::SetInData()
+        inline void BindArray::BindArrayObject<ocilib::Raw>::SetInData()
         {
             std::vector<Raw>::iterator it, it_end;
 
@@ -191,7 +191,7 @@ namespace ocilib
         }
 
         template<>
-        inline void BindArray::BindArrayObject<ostring>::SetOutData()
+        inline void BindArray::BindArrayObject<ocilib::ostring>::SetOutData()
         {
             std::vector<ostring>::iterator it, it_end;
 
@@ -209,7 +209,7 @@ namespace ocilib
         }
 
         template<>
-        inline void BindArray::BindArrayObject<Raw>::SetOutData()
+        inline void BindArray::BindArrayObject<ocilib::Raw>::SetOutData()
         {
             std::vector<Raw>::iterator it, it_end;
 

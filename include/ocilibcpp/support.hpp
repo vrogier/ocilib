@@ -37,13 +37,13 @@ namespace ocilib
         {
         public:
 
-            BindObject(const Statement& statement, const ostring& name, unsigned int mode);
+            BindObject(const ocilib::Statement& statement, const ostring& name, unsigned int mode);
 
             virtual ~BindObject() noexcept;
 
             ostring GetName() const;
 
-            Statement GetStatement() const;
+            ocilib::Statement GetStatement() const;
 
             unsigned int GetMode() const;
 
@@ -52,7 +52,7 @@ namespace ocilib
 
         protected:
 
-            const Statement& _statement;
+            const ocilib::Statement& _statement;
             ostring _name;
             unsigned int _mode;
         };
@@ -61,7 +61,7 @@ namespace ocilib
         {
         public:
 
-            BindArray(const Statement& statement, const ostring& name, unsigned int mode);
+            BindArray(const ocilib::Statement& statement, const ostring& name, unsigned int mode);
             virtual ~BindArray() noexcept;
 
             template<class T>
@@ -99,7 +99,7 @@ namespace ocilib
                 typedef std::vector<ObjectType> ObjectVector;
                 typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
-                BindArrayObject(const Statement& statement, const ostring& name, ObjectVector& vector, bool isPlSqlTable, unsigned int mode, unsigned int elemSize);
+                BindArrayObject(const ocilib::Statement& statement, const ostring& name, ObjectVector& vector, bool isPlSqlTable, unsigned int mode, unsigned int elemSize);
                 virtual ~BindArrayObject() noexcept;
                 void SetInData() override;
                 void SetOutData() override;
@@ -116,7 +116,7 @@ namespace ocilib
                 void AllocData();
                 void FreeData() const;
 
-                const Statement& _statement;
+                const ocilib::Statement& _statement;
                 ostring _name;
                 ObjectVector& _vector;
                 NativeType* _data;
@@ -132,7 +132,7 @@ namespace ocilib
         template<class T>
         class BindObjectAdaptor : public BindObject
         {
-            friend class Statement;
+            friend class ocilib::Statement;
 
         public:
 
@@ -144,7 +144,7 @@ namespace ocilib
             void SetInData() override;
             void SetOutData() override;
 
-            BindObjectAdaptor(const Statement& statement, const ostring& name, unsigned int mode, ObjectType& object, unsigned int size);
+            BindObjectAdaptor(const ocilib::Statement& statement, const ostring& name, unsigned int mode, ObjectType& object, unsigned int size);
             virtual ~BindObjectAdaptor() noexcept;
 
         private:
@@ -157,7 +157,7 @@ namespace ocilib
         template<class T>
         class BindTypeAdaptor : public BindObject
         {
-            friend class Statement;
+            friend class ocilib::Statement;
 
         public:
 
@@ -182,7 +182,7 @@ namespace ocilib
         {
         public:
 
-            BindsHolder(const Statement& statement);
+            BindsHolder(const ocilib::Statement& statement);
             ~BindsHolder() noexcept;
 
             void Clear();
@@ -195,7 +195,7 @@ namespace ocilib
         private:
 
             std::vector<BindObject*> _bindObjects;
-            const Statement& _statement;
+            const ocilib::Statement& _statement;
         };
     }
 }
