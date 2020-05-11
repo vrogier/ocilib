@@ -348,10 +348,10 @@ boolean ResultsetExpandStrings
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FetchPieces
+ * ResultsetFetchPieces
  * --------------------------------------------------------------------------------------------- */
 
-boolean FetchPieces
+boolean ResultsetFetchPieces
 (
     OCI_Resultset *rs
 )
@@ -567,10 +567,10 @@ boolean FetchPieces
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ClearFetchedObjectInstances
+ * ResultsetClearFetchedObjectInstances
  * --------------------------------------------------------------------------------------------- */
 
-boolean ClearFetchedObjectInstances(OCI_Resultset *rs)
+boolean ResultsetClearFetchedObjectInstances(OCI_Resultset *rs)
 {
     ENTER_FUNC
     (
@@ -603,10 +603,10 @@ boolean ClearFetchedObjectInstances(OCI_Resultset *rs)
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FetchData
+ * ResultsetFetchData
  * --------------------------------------------------------------------------------------------- */
 
-boolean FetchData
+boolean ResultsetFetchData
 (
     OCI_Resultset *rs,
     int            mode,
@@ -623,7 +623,7 @@ boolean FetchData
 
     /* let's initialize the success flag to FALSE until the process completes */
 
-    CHECK(ClearFetchedObjectInstances(rs))
+    CHECK(ResultsetClearFetchedObjectInstances(rs))
 
     /* internal fetch */
 
@@ -657,7 +657,7 @@ boolean FetchData
     else if (OCI_NEED_DATA == rs->fetch_status)
     {
         /* need to do a piecewise fetch */
-        CHECK(FetchPieces(rs))
+        CHECK(ResultsetFetchPieces(rs))
     }
 
     /* check string buffer for Unicode builds that need buffer expansion */
@@ -734,10 +734,10 @@ boolean FetchData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FetchCustom
+ * ResultsetFetchCustom
  * --------------------------------------------------------------------------------------------- */
 
-boolean FetchCustom
+boolean ResultsetFetchCustom
 (
     OCI_Resultset *rs,
     int            mode,
@@ -752,67 +752,42 @@ boolean FetchCustom
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs)
 
-    boolean result = FALSE;
-
     switch (mode)
     {
         case OCI_SFD_RELATIVE:
         {
-            if (((offset > 0) && (rs->eof)) ||
-                ((offset < 0) && (rs->bof)) ||
-                (offset == 0))
-            {
-                result = FALSE;
-            }
-            else
-            {
-                const int offset_save = offset;
+            const boolean isOutOfBound = (offset > 0) && (rs->eof) ||
+                                         (offset < 0) && (rs->bof) ||
+                                         (offset == 0);
 
-                offset      = offset - (int) (rs->row_fetched + rs->row_cur);
-                rs->row_cur = 1;
+            CHECK(isOutOfBound == FALSE)
 
-                result = FetchData(rs, mode, offset);
-
-                if (result)
-                {
-                    rs->row_abs += offset_save;
-                }
-            }
-
+            offset += rs->row_abs;
             break;
         }
         case OCI_SFD_ABSOLUTE:
         {
-            if (offset == 0)
-            {
-                result = FALSE;
-            }
-            else
-            {
-                rs->row_abs = 1;
-                rs->row_cur = 1;
-
-                result = FetchData(rs, mode, offset);
-
-                if (result)
-                {
-                    rs->row_abs = offset;
-
-                    rs->bof = FALSE;
-                    rs->eof = FALSE;
-                }
-            }
-
+            CHECK(offset != 0)          
             break;
         }
         default:
         {
-            result = FALSE;
+            CHECK(FALSE)
             break;
         }
     }
 
-    SET_RETVAL(result)
+    rs->row_abs = 1;
+    rs->row_cur = 1;
+
+    CHECK(ResultsetFetchData(rs, OCI_SFD_ABSOLUTE, offset))
+
+    rs->row_abs = offset;
+
+    rs->bof = FALSE;
+    rs->eof = FALSE;
+
+    SET_SUCCESS()
 
     EXIT_FUNC()
 }
@@ -918,7 +893,7 @@ boolean ResultsetFree
 
         /* free object instances from object cache */
 
-        ClearFetchedObjectInstances(rs);
+        CHECK(ResultsetClearFetchedObjectInstances(rs))
 
         /* free column pointers */
 
@@ -993,7 +968,7 @@ boolean ResultsetFetchPrev
                 offset = 1 - (int) (rs->fetch_size + rs->row_fetched);
             }
 
-            CHECK(FetchData(rs, OCI_SFD_RELATIVE, offset))
+            CHECK(ResultsetFetchData(rs, OCI_SFD_RELATIVE, offset))
 
             if (rs->fetch_size > rs->row_abs)
             {
@@ -1056,7 +1031,7 @@ boolean ResultsetFetchNext
             }
             else
             {
-                CHECK(FetchData(rs, OCI_SFD_NEXT, 0))
+                CHECK(ResultsetFetchData(rs, OCI_SFD_NEXT, 0))
 
                 rs->bof     = FALSE;
                 rs->row_cur = 1;
@@ -1131,7 +1106,7 @@ boolean ResultsetFetchFirst
     rs->row_abs = 1;
     rs->row_cur = 1;
 
-    CHECK(FetchData(rs, OCI_SFD_FIRST, 0))
+    CHECK(ResultsetFetchData(rs, OCI_SFD_FIRST, 0))
 
     CHECK(!rs->bof)
 
@@ -1173,7 +1148,7 @@ boolean ResultsetFetchLast
     rs->row_abs = 0;
     rs->row_cur = 1;
 
-    result = FetchData(rs, OCI_SFD_LAST, 0);
+    result = ResultsetFetchData(rs, OCI_SFD_LAST, 0);
 
     if (result)
     {
@@ -1215,7 +1190,7 @@ boolean ResultsetFetchSeek
     CHECK_SCROLLABLE_CURSOR_ACTIVATED(rs->stmt)
     CHECK_ENUM_VALUE(mode, SeekModeValues, OTEXT("Fetch Seek Mode"))
 
-    CHECK(FetchCustom(rs, (int)mode, offset))
+    CHECK(ResultsetFetchCustom(rs, (int)mode, offset))
 
     SET_SUCCESS()
 
