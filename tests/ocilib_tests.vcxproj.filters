@@ -187,6 +187,12 @@
     <ClCompile Include="TestObjectInheritance.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestReturningInto.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScrollabeCursor.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

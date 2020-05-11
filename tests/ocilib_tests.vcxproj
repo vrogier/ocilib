@@ -110,6 +110,8 @@
     <ClCompile Include="TestQueue.cpp" />
     <ClCompile Include="TestReference.cpp" />
     <ClCompile Include="TestReportedIssues.cpp" />
+    <ClCompile Include="TestReturningInto.cpp" />
+    <ClCompile Include="TestScrollabeCursor.cpp" />
     <ClCompile Include="TestTimestamp.cpp" />
   </ItemGroup>
   <ItemGroup>
