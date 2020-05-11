@@ -30,6 +30,12 @@
 
 namespace ocilib
 {
+    /**
+     * @namespace ocilib::support
+     * @brief OCILIB internal support classes 
+     *
+     */
+     
     namespace support
     {
         /**
@@ -38,7 +44,10 @@ namespace ocilib
         */
         template<class T> struct BindResolver {};
 
-
+       /**
+        * @brief Internal usage.
+        * Base class for implementing bind translations for C++ objects and their counter parts in the C API
+        */ 
         class BindObject
         {
         public:
@@ -63,6 +72,10 @@ namespace ocilib
             unsigned int _mode;
         };
 
+       /**
+        * @brief Internal usage.
+        * Class implementing bind translations between C++ vectors and C API arrays
+        */ 
         class BindArray : public BindObject
         {
         public:
@@ -135,6 +148,10 @@ namespace ocilib
             AbstractBindArrayObject* _object;
         };
 
+       /**
+        * @brief Internal usage.
+        * Class implementing bind adapters between C++ class and C API types
+        */ 
         template<class T>
         class BindObjectAdaptor : public BindObject
         {
@@ -159,7 +176,11 @@ namespace ocilib
             NativeType* _data;
             unsigned int   _size;
         };
-
+        
+       /**
+        * @brief Internal usage.
+        * Class implementing bind adapters between C++ types and C API types when C++ types do not exist in C 
+        */ 
         template<class T>
         class BindTypeAdaptor : public BindObject
         {
@@ -184,6 +205,10 @@ namespace ocilib
             NativeType* _data;
         };
 
+       /**
+        * @brief Internal usage.
+        * Class owning bind objects allowing to set/get C data prior/after a statement execution
+        */ 
         class BindsHolder
         {
         public:

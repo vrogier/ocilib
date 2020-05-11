@@ -37,6 +37,12 @@
 #include "ocilibc/types.h"
 
 /**
+ * @addtogroup OcilibCApi
+ * @{
+ *
+ */
+ 
+/**
  * @defgroup OcilibCApiInitialization Initializing the library
  * @{
  *
@@ -269,7 +275,7 @@ OCI_EXPORT boolean OCI_API OCI_SetHAHandler
 );
 
 /**
- * @}
+ * @} OcilibCApiInitialization
  */
 
 /**
@@ -469,7 +475,7 @@ OCI_EXPORT const otext * OCI_API OCI_ErrorGetLocation
 );
 
 /**
- * @}
+ * @} OcilibCApiErrorHandling
  */
 
 /**
@@ -1392,7 +1398,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetMaxCursors
 );
 
 /**
- * @}
+ * @} OcilibCApiConnections
  */
 
 /**
@@ -1718,7 +1724,7 @@ OCI_EXPORT boolean OCI_API OCI_PoolSetStatementCacheSize
 );
 
 /**
- * @}
+ * @} OcilibCApiPools
  */
 
 /**
@@ -1990,7 +1996,7 @@ OCI_EXPORT unsigned int OCI_API OCI_TransactionGetTimeout
 );
 
 /**
- * @}
+ * @} OcilibCApiTransactions
  */
 
 /**
@@ -2323,7 +2329,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetSQLVerb
 );
 
 /**
- * @}
+ * @} OcilibCApiStatements
  */
 
 /**
@@ -4265,7 +4271,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetAllocationMode
 );
 
 /**
- * @}
+ * @} OcilibCApiBinding
  */
 
 /**
@@ -6175,7 +6181,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDataLength
 );
 
 /**
- * @}
+ * @} OcilibCApiFetching
  */
 
 /**
@@ -6286,7 +6292,7 @@ OCI_EXPORT const otext * OCI_API OCI_ServerGetOutput
 );
 
 /**
- * @}
+ * @} OcilibCApiPlSql
  */
 
 /**
@@ -7584,7 +7590,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetNull
 );
 
 /**
- * @}
+ * @} OcilibCApiCollections
  */
 
 /**
@@ -8010,7 +8016,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterRef
 );
 
 /**
- * @}
+ * @} OcilibCApiFeatureReturningInto
  */
 
 /**
@@ -8027,7 +8033,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterRef
  * @par Example
  * @include rowid.c
  *
- * @}
+ * @} OcilibCApiRowIds
  */
 
 /**
@@ -8415,7 +8421,7 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_StatementGetConnection
 );
 
 /**
- * @}
+ * @} OcilibCApiStatementControl
  */
 
 /**
@@ -9158,7 +9164,7 @@ OCI_EXPORT boolean OCI_API OCI_LobIsRemote
 );
 
 /**
- * @}
+ * @} OcilibCApiLobs
  */
 
 /**
@@ -9547,7 +9553,7 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_FileGetConnection
 );
 
 /**
- * @}
+ * @} OcilibCApiFiles
  */
 
 /**
@@ -9722,8 +9728,8 @@ OCI_EXPORT void * OCI_API OCI_LongGetBuffer
 );
 
 /**
-* @}
-*/
+ * @} OcilibCApiLongs
+ */
 
 /**
 * @defgroup OcilibCApiOracleNumber Oracle NUMBER manipulation (optional)
@@ -10099,12 +10105,9 @@ OCI_EXPORT int OCI_API OCI_NumberCompare
 );
 
 /**
-* @}
-*/
-
-/**
- * @}
+ * @} OcilibCApiOracleNumber
  */
+
 
 /**
  * @defgroup OcilibCApiDatetimes Date/time manipulation
@@ -10614,7 +10617,7 @@ OCI_EXPORT boolean OCI_API OCI_DateFromCTime
 );
 
 /**
- * @}
+ * @} OcilibCApiDatetimes
  */
 
 /**
@@ -11489,7 +11492,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalSubtract
 );
 
 /**
- * @}
+ * @} OcilibCApiTimestamps
  */
 
 /**
@@ -12927,7 +12930,7 @@ OCI_EXPORT boolean OCI_API OCI_RefToText
 );
 
 /**
- * @}
+ * @} OcilibCApiUserTypes
  */
 
 /**
@@ -12977,7 +12980,7 @@ OCI_EXPORT boolean OCI_API OCI_Break
 );
 
 /**
- * @}
+ * @} OcilibCApiAbort
  */
 
 /**
@@ -13170,7 +13173,7 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_TypeInfoGetSuperType
 );
 
 /**
- * @}
+ * @} OcilibCApiMetadata
  */
 
 /**
@@ -13418,7 +13421,7 @@ OCI_EXPORT boolean OCI_DescribeFmt
 );
 
 /**
- * @}
+ * @} OcilibCApiFormatting
  */
 
 /**
@@ -13710,7 +13713,7 @@ OCI_EXPORT OCI_HashEntry * OCI_API OCI_HashGetEntry
 );
 
 /**
- * @}
+ * @} OcilibCApiHashTables
  */
 
 /**
@@ -13938,7 +13941,7 @@ OCI_EXPORT void * OCI_API OCI_ThreadKeyGetValue
 );
 
 /**
- * @}
+ * @} OcilibCApiThreading
  */
 
 /**
@@ -14647,7 +14650,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
 );
 
 /**
- * @}
+ * @} OcilibCApiDirectPath
  */
 
 /**
@@ -16486,7 +16489,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
 );
 
 /**
- * @}
+ * @} OcilibCApiAdvancedQueuing
  */
 
 /**
@@ -16873,7 +16876,7 @@ OCI_EXPORT OCI_Subscription * OCI_API OCI_EventGetSubscription
 );
 
 /**
- * @}
+ * @} OcilibCApiSubscriptions
  */
 
 /**
@@ -17011,7 +17014,7 @@ OCI_EXPORT boolean OCI_API OCI_DatabaseShutdown
 );
 
 /**
- * @}
+ * @} OcilibCApiInstancesManagement
  */
 
 /**
@@ -17396,7 +17399,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 );
 
 /**
- * @}
+ * @} OcilibCApiRawHandles
  */
 
 /**
@@ -17409,11 +17412,11 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
  * Portable Main demo application source
  * @include ocilib_demo.c
  *
- * @}
+ * @} OcilibCApiDemoApplication
  */
 
 /**
-* @}
+* @} OcilibCApi
 */
 
 #endif /* OCILIB_API_H_INCLUDED */

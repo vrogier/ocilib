@@ -34,6 +34,7 @@
  * @brief OCILIB ++ Namespace
  *
  */
+ 
 namespace ocilib
 {
 
@@ -86,7 +87,52 @@ namespace ocilib
  *  - Each C OCILIB object handle has its C++ class counter part.
  *  - The whole OCILIB C Documentation (concepts, use cases, features) is still valid for OCILIB++
  *
- * @}
+ * @} OcilibCppApiOverview
+ */
+ 
+/**
+ * @defgroup OcilibCppApiMainDemoApplication OCILIB main C++ demo application code
+ * @{
+ *
+ * Main C++ demo  source
+ * @include ocilib_demo.cpp
+ *
+ * @} OcilibCppApiMainDemoApplication
+ */
+
+ /**
+  * @defgroup OcilibCppApiDemoListApplication Some OCILIB C++ sample codes
+  * @{
+  *
+  * Here are some C++ samples code. More samples can be found under the demo folder of ocilib packages.
+  *
+  * @par Fetching data
+  * @include fetch.cpp
+  *
+  * @par Binding vectors
+  * @include array.cpp
+  *
+  * @par Using collections
+  * @include coll.cpp
+  *
+  * @par Using connection pools
+  * @include pool.cpp
+  *
+  * @par Oracle 12c Implicit resultsets
+  * @include implicit_resultset.cpp
+  *
+  * @par Using Oracle objects
+  * @include object.cpp
+  *
+  * @par Database notifications
+  * @include notification.cpp
+  *
+  * @} OcilibCppApiDemoListApplication
+  */
+
+ /**
+ *
+ * @} OcilibCppApi
  */
 
 }
@@ -166,51 +212,6 @@ namespace ocilib
 #include "ocilibcpp/detail/DirectPath.hpp"
 #include "ocilibcpp/detail/Queue.hpp"
 #include "ocilibcpp/detail/QueueTable.hpp"
-
-/**
- * @defgroup OcilibCppApiMainDemoApplication OCILIB main C++ demo application code
- * @{
- *
- * Main C++ demo  source
- * @include ocilib_demo.cpp
- *
- * @}
- */
-
- /**
-  * @defgroup OcilibCppApiDemoListApplication Some OCILIB C++ sample codes
-  * @{
-  *
-  * Here are some C++ samples code. More samples can be found under the demo folder of ocilib packages.
-  *
-  * @par Fetching data
-  * @include fetch.cpp
-  *
-  * @par Binding vectors
-  * @include array.cpp
-  *
-  * @par Using collections
-  * @include coll.cpp
-  *
-  * @par Using connection pools
-  * @include pool.cpp
-  *
-  * @par Oracle 12c Implicit resultsets
-  * @include implicit_resultset.cpp
-  *
-  * @par Using Oracle objects
-  * @include object.cpp
-  *
-  * @par Database notifications
-  * @include notification.cpp
-  *
-  * @}
-  */
-
- /**
- *
- * @}
- */
 
 
 #endif

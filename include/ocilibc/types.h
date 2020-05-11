@@ -37,13 +37,13 @@
 #include "ocilibc/config.h"
 
 /**
- * @defgroup OcilibCApi C API
+ * @addtogroup OcilibCApi
  * @{
  *
  */
 
 /**
- * @defgroup OcilibCApiDatatypes Data types
+ * @addtogroup OcilibCApiDatatypes
  * @{
  *
  * OCILIB implements:
@@ -712,7 +712,11 @@ typedef struct OCI_HashEntry
 } OCI_HashEntry;
 
 /**
- * @}
+ * @} OcilibCApiDatatypes
+ */
+ 
+/**
+ * @} OcilibCApi
  */
 
 #endif    /* OCILIB_OCILIB_TYPES_H_INCLUDED */

@@ -37,7 +37,7 @@
 #include "ocilibc/api.h"
 
 /**
- * @defgroup OcilibCApi C API
+ * @addtogroup OcilibCApi
  * @{
  *
  */

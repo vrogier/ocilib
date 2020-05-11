@@ -35,7 +35,7 @@
 #define OCILIB_CONFIG_H_INCLUDED
 
 /**
- * @defgroup OcilibCApi C API
+ * @addtogroup OcilibCApi
  * @{
  *
  */
@@ -147,7 +147,7 @@
 #endif
 
 /**
- * @defgroup OcilibCApiSupportedCharsets Character sets
+ * @addtogroup OcilibCApiSupportedCharsets
  * @{
  *
  * OCILIB supports both ANSI and Unicode.
@@ -310,19 +310,19 @@ OCI_EXPORT int ociwcscasecmp
 /* helpers mapping macros */
 
 #ifdef OCI_CHARSET_ANSI
-  #define ostrdup          ocistrdup
-  #define ostrcpy          strcpy
-  #define ostrncpy         strncpy
-  #define ostrcat          strcat
-  #define ostrncat         strncat
-  #define ostrlen          strlen
-  #define ostrcmp          strcmp
-  #define ostrcasecmp      ocistrcasecmp
-  #define osprintf         ocisprintf
-  #define ostrtol          strtol
-  #define osscanf          sscanf
-  #define otoupper         toupper
-  #define oisdigit         isdigit
+#define ostrdup          ocistrdup
+#define ostrcpy          strcpy
+#define ostrncpy         strncpy
+#define ostrcat          strcat
+#define ostrncat         strncat
+#define ostrlen          strlen
+#define ostrcmp          strcmp
+#define ostrcasecmp      ocistrcasecmp
+#define osprintf         ocisprintf
+#define ostrtol          strtol
+#define osscanf          sscanf
+#define otoupper         toupper
+#define oisdigit         isdigit
 #else
 #define ostrdup          ociwcsdup
 #define ostrcpy          wcscpy
@@ -337,7 +337,6 @@ OCI_EXPORT int ociwcscasecmp
 #define osscanf          swscanf
 #define otoupper         towupper
 #define oisdigit         iswdigit
-
 #endif
 
 /* string size macros */
@@ -345,9 +344,13 @@ OCI_EXPORT int ociwcscasecmp
 #define otextsize(s) (ostrlen(s) * sizeof(otext))
 
 /**
- * @}
+ * @} OcilibCApiSupportedCharsets
  */
 
+/**
+ * @addtogroup OcilibCApiDatatypes
+ * @{
+     
 /**
  * @typedef big_int
  *
@@ -384,10 +387,6 @@ typedef unsigned int big_uint;
 
 #endif
 
-/**
- * @}
- */
-
 /* boolean values */
 
 #ifndef TRUE
@@ -398,6 +397,10 @@ typedef unsigned int big_uint;
 #ifndef boolean
 #define boolean int
 #endif
+
+/**
+ * @} OcilibCApiDatatypes
+ */
 
 /* versions extract macros */
 
@@ -1216,11 +1219,7 @@ typedef unsigned int big_uint;
 #define OCI_STRING_FORMAT_NUM_BIN               OCI_STRING_FORMAT_NUM_BDOUBLE
 
 /**
-* @}
-*/
-
-/**
-* @defgroup OcilibCApiEnvironmentVariables Environment Variables
+* @addtogroup OcilibCApiEnvironmentVariables
 * @{
 *
 * Some environment variables can be defined in order to activate specific features
@@ -1238,11 +1237,11 @@ typedef unsigned int big_uint;
 #define VAR_OCILIB_WORKAROUND_UTF16_COLUMN_NAME "OCILIB_WORKAROUND_UTF16_COLUMN_NAME"
 
 /**
-* @}
+* @} OcilibCApiEnvironmentVariables
 */
 
 /**
- * @}
+ * @} OcilibCApi
  */
 
 #endif /* OCILIB_CONFIG_H_INCLUDED */

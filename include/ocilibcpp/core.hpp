@@ -34,6 +34,12 @@
 
 namespace ocilib
 {
+    /**
+     * @namespace ocilib::core
+     * @brief OCILIB internal core classes 
+     *
+     */
+     
     namespace core
     {
 #ifdef OCILIBPP_HAS_ENABLEIF
@@ -85,6 +91,10 @@ namespace ocilib
         */
         Raw MakeRaw(AnyPointer result, unsigned int size);
 
+       /**
+        * @brief Internal usage.
+        * Determine if the given type is a supported numeric type
+        */   
         template<class T>
         struct SupportedNumeric
         {
@@ -178,6 +188,10 @@ namespace ocilib
             unsigned int _flags;
         };
 
+       /**
+        * @brief Internal usage.
+        * Provide a buffer class with RAII capabilities
+        */  
         template< typename T>
         class ManagedBuffer
         {
@@ -196,6 +210,10 @@ namespace ocilib
             size_t _size;
         };
 
+       /**
+        * @brief Internal usage.
+        * Locker object
+        */ 
         class Locker
         {
         public:
@@ -213,6 +231,10 @@ namespace ocilib
             MutexHandle _mutex;
         };
 
+       /**
+        * @brief Internal usage.
+        * Base class for types that can be locked
+        */ 
         class Lockable
         {
         public:
@@ -230,6 +252,10 @@ namespace ocilib
             Locker* _locker;
         };
 
+       /**
+        * @brief Internal usage.
+        * Map supporting conccurent access from multiple threads
+        */ 
         template<class K, class V>
         class ConcurrentMap : public Lockable
         {
@@ -250,6 +276,10 @@ namespace ocilib
 
         };
 
+       /**
+        * @brief Internal usage.
+        * List supporting conccurent access from multiple threads
+        */ 
         template<class T>
         class ConcurrentList : public Lockable
         {
@@ -275,6 +305,10 @@ namespace ocilib
             std::list<T> _list;
         };
 
+       /**
+        * @brief Internal usage.
+        * Interface for handling ownership and relationship of a C API handle
+        */ 
         class Handle
         {
         public:
@@ -286,7 +320,7 @@ namespace ocilib
         };
 
         /**
-        * @brief
+        * @brief Internal usage.
         * Smart pointer class with reference counting for managing OCILIB object handles
         */
         template<class T>

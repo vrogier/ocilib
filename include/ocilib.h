@@ -38,6 +38,18 @@
 extern "C" {
 #endif  /* __cplusplus */
 
+/**
+ * @defgroup OcilibCApi C API
+ * @{
+ *
+ */
+
+/**
+* @defgroup OcilibCApiSupportedCharsets Character sets
+* @defgroup OcilibCApiDatatypes Data types
+* @defgroup OcilibCApiEnvironmentVariables Environment Variables
+*/
+
 #include "ocilibc/config.h"
 #include "ocilibc/types.h"
 #include "ocilibc/api.h"
@@ -46,5 +58,10 @@ extern "C" {
 #ifdef  __cplusplus
 }
 #endif
+
+/**
+ * @} OcilibCApi
+ */
+
 
 #endif  /* OCILIB_H_INCLUDED */
