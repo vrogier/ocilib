@@ -1,8 +1,6 @@
 ﻿/**
  @mainpage Introduction
 
- @image html logo-160x120.png
-
  @section Intro Description
 
  OCILIB is an open source and portable Oracle C and C++ Driver that delivers really fast
