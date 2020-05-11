@@ -32,6 +32,8 @@
 // ReSharper disable CppClangTidyHicppSpecialMemberFunctions
 // ReSharper disable CppClangTidyReadabilityRedundantDeclaration
 // ReSharper disable CppFunctionIsNotImplemented
+// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
+// ReSharper disable CppClassCanBeFinal
 
 namespace ocilib
 {

@@ -254,7 +254,7 @@ namespace ocilib
 
        /**
         * @brief Internal usage.
-        * Map supporting conccurent access from multiple threads
+        * Map supporting concurrent access from multiple threads
         */ 
         template<class K, class V>
         class ConcurrentMap : public Lockable
@@ -278,7 +278,7 @@ namespace ocilib
 
        /**
         * @brief Internal usage.
-        * List supporting conccurent access from multiple threads
+        * List supporting concurrent access from multiple threads
         */ 
         template<class T>
         class ConcurrentList : public Lockable
