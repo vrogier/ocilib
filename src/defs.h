@@ -425,6 +425,7 @@ typedef unsigned short dbtext;
                                         \
     ( (IS_OCI_NUMBER(type, subtype)) || \
       (OCI_CDT_TEXT    != (type) &&     \
+       OCI_CDT_NUMERIC != (type) &&     \
        OCI_CDT_RAW     != (type) &&     \
        OCI_CDT_BOOLEAN != (type)))
 
