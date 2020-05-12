@@ -73,7 +73,7 @@ TEST(TestQueue, SingleMessage)
     ExecDML(OTEXT("drop type TestQueueSingleMessageType"));
 }
 
-void OnMessage(OCI_Dequeue* deq)
+static void OnMessage(OCI_Dequeue* deq)
 {
     ++MessageWithConsumersCount;
     const auto msg_out = OCI_DequeueGet(deq);

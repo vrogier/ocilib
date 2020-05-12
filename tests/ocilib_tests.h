@@ -20,7 +20,7 @@
 #define OCI_API __stdcall
 #include "../include/ocilib.h"
 
-#define DBS OTEXT("")
+#define DBS OTEXT("db18c")
 #define USR OTEXT("usr")
 #define PWD OTEXT("pwd")
 #define HOME OTEXT("")

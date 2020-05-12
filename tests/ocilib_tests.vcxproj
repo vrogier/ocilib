@@ -111,7 +111,10 @@
     <ClCompile Include="TestReference.cpp" />
     <ClCompile Include="TestReportedIssues.cpp" />
     <ClCompile Include="TestReturningInto.cpp" />
+    <ClCompile Include="TestRowId.cpp" />
     <ClCompile Include="TestScrollabeCursor.cpp" />
+    <ClCompile Include="TestThread.cpp" />
+    <ClCompile Include="TestThreadKey.cpp" />
     <ClCompile Include="TestTimestamp.cpp" />
   </ItemGroup>
   <ItemGroup>

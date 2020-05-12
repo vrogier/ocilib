@@ -193,6 +193,15 @@
     <ClCompile Include="TestScrollabeCursor.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestThreadKey.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestThread.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestRowId.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
