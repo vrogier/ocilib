@@ -106,6 +106,7 @@
     <ClCompile Include="TestLob.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TestNumber.cpp" />
+    <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="TestObjectInheritance.cpp" />
     <ClCompile Include="TestPlSqlTables.cpp" />
     <ClCompile Include="TestPool.cpp" />
@@ -136,7 +137,6 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -153,7 +153,6 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>X64;_DEBUG;_CONSOLE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
