@@ -14,12 +14,12 @@ TEST(TestArray, InsertExternalArray)
     ASSERT_NE(nullptr, stmt);
 
     int tab_int[ARRAY_SIZE];
-    char tab_str[ARRAY_SIZE][STRING_SIZE + 1];
+    otext tab_str[ARRAY_SIZE][STRING_SIZE + 1];
 
     ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestExternalArrayInsertArray values(:i, :s)")));
     ASSERT_TRUE(OCI_BindArraySetSize(stmt, ARRAY_SIZE));
-    ASSERT_TRUE(OCI_BindArrayOfInts(stmt, ":i", static_cast<int*>(tab_int), 0));
-    ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, ":s", reinterpret_cast<char*>(tab_str), STRING_SIZE, 0));
+    ASSERT_TRUE(OCI_BindArrayOfInts(stmt, OTEXT(":i"), static_cast<int*>(tab_int), 0));
+    ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, OTEXT(":s"), reinterpret_cast<otext*>(tab_str), STRING_SIZE, 0));
 
     for (int i = 0; i < ARRAY_SIZE; i++)
     {
@@ -52,12 +52,12 @@ TEST(TestArray, InsertExternalArrayError)
     ASSERT_NE(nullptr, stmt);
 
     int tab_int[ARRAY_SIZE];
-    char tab_str[ARRAY_SIZE][STRING_SIZE + 1];
+    otext tab_str[ARRAY_SIZE][STRING_SIZE + 1];
 
     ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestExternalArrayInsertArrayError values(:i, :s)")));
     ASSERT_TRUE(OCI_BindArraySetSize(stmt, ARRAY_SIZE));
-    ASSERT_TRUE(OCI_BindArrayOfInts(stmt, ":i", static_cast<int*>(tab_int), 0));
-    ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, ":s", reinterpret_cast<char*>(tab_str), STRING_SIZE, 0));
+    ASSERT_TRUE(OCI_BindArrayOfInts(stmt, OTEXT(":i"), static_cast<int*>(tab_int), 0));
+    ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, OTEXT(":s"), reinterpret_cast<otext*>(tab_str), STRING_SIZE, 0));
 
     for (int i = 0; i < ARRAY_SIZE; i++)
     {
@@ -106,9 +106,9 @@ TEST(TestArray, InsertInternalArray)
 
     ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestInternalArrayInsertArray values(:i, :s, :d)")));
     ASSERT_TRUE(OCI_BindArraySetSize(stmt, ARRAY_SIZE));
-    ASSERT_TRUE(OCI_BindArrayOfInts(stmt, ":i", NULL, 0));
-    ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, ":s", NULL, STRING_SIZE, 0));
-    ASSERT_TRUE(OCI_BindArrayOfDates(stmt, ":d", NULL, 0));
+    ASSERT_TRUE(OCI_BindArrayOfInts(stmt, OTEXT(":i"), NULL, 0));
+    ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, OTEXT(":s"), NULL, STRING_SIZE, 0));
+    ASSERT_TRUE(OCI_BindArrayOfDates(stmt, OTEXT(":d"), NULL, 0));
 
     auto sysdate = OCI_DateCreate(nullptr);
     ASSERT_NE(nullptr, sysdate);
@@ -140,7 +140,7 @@ TEST(TestArray, InsertInternalArray)
     while (OCI_FetchNext(rslt))
     {
         count++;
-        ostring str = "Name " + std::to_string(count);
+        ostring str = OTEXT("Name ") + TO_STRING(count);
         ASSERT_EQ(count, OCI_GetInt(rslt, 1));
         ASSERT_EQ(str, OCI_GetString(rslt, 2));
         ASSERT_EQ(0, OCI_DateCompare(sysdate, OCI_GetDate(rslt, 3)));

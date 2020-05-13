@@ -120,7 +120,7 @@ TEST(ReportedIssues, Issue225)
         ASSERT_TRUE(OCI_NumberFromText(numbers[i], TO_STRING(i+1).data(), nullptr));
     }
 
-    ASSERT_TRUE(OCI_BindArrayOfNumbers(stmt, ":v", numbers.data(), static_cast<unsigned int>(numbers.size())));
+    ASSERT_TRUE(OCI_BindArrayOfNumbers(stmt, OTEXT(":v"), numbers.data(), static_cast<unsigned int>(numbers.size())));
     ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN_OUT));
     ASSERT_TRUE(OCI_Execute(stmt));
 
@@ -129,7 +129,7 @@ TEST(ReportedIssues, Issue225)
     for (size_t i = 0; i < numbers.size(); i++)
     {
         otext buffer[100];
-        osprintf(buffer, 100, OTEXT("v(%d) = %d"), i + 1, i + 1 + 10);
+        osprintf(buffer, 100, OTEXT("v(%d) = %d"), static_cast<int>(i) + 1, static_cast<int>(i) + 1 + 10);
         ASSERT_EQ(ostring(buffer), ostring(OCI_ServerGetOutput(conn)));
     }
 

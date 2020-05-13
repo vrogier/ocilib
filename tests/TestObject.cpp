@@ -21,7 +21,7 @@ TEST(TestObject, SetGetBasicProps)
     ASSERT_TRUE(OCI_ObjectSetInt(vendor, OTEXT("CODE"), 134));
     ASSERT_TRUE(OCI_ObjectSetString(vendor, OTEXT("NAME"), OTEXT("JOHN SMITH")));
 
-    const auto sale = OCI_ObjectCreate(conn, OCI_TypeInfoGet(conn, "TestObjectSetGetBasicPropsSale", OCI_TIF_TYPE));
+    const auto sale = OCI_ObjectCreate(conn, OCI_TypeInfoGet(conn, OTEXT("TestObjectSetGetBasicPropsSale"), OCI_TIF_TYPE));
     ASSERT_NE(nullptr, vendor);
 
     ASSERT_TRUE(OCI_ObjectSetInt(sale, OTEXT("CODE"), 1));

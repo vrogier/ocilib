@@ -15,7 +15,7 @@ TEST(TestObjectInheritance, OCI_TypeInfoGetSuperType)
     const auto stmt = OCI_StatementCreate(conn);
     ASSERT_NE(nullptr, stmt);
 
-    char buffer[512];
+    otext buffer[512];
     unsigned int size = sizeof(buffer) - 1;
 
     const auto racingCar = OCI_ObjectCreate(conn, OCI_TypeInfoGet(conn, OTEXT("TestObjectInheritanceRacingCar"), OCI_TIF_TYPE));

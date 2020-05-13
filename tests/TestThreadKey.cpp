@@ -34,7 +34,7 @@ TEST(TestThreadKey, GetSetValue)
 {
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT | OCI_ENV_THREADED));
 
-    OCI_ThreadKeyCreate("ID", KeyCleanup);
+    OCI_ThreadKeyCreate(OTEXT("ID"), KeyCleanup);
 
     std::array<OCI_Thread*, MaxThread> threads{};
 

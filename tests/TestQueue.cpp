@@ -119,14 +119,14 @@ TEST(TestQueue, MessageWithConsumers)
 
     OCI_Agent* agents[2];
 
-    agents[0] = OCI_AgentCreate(conn, "C1", nullptr);
+    agents[0] = OCI_AgentCreate(conn, OTEXT("C1"), nullptr);
     ASSERT_NE(nullptr, agents[0]);
-    agents[1] = OCI_AgentCreate(conn, "C2", nullptr);
+    agents[1] = OCI_AgentCreate(conn, OTEXT("C2"), nullptr);
     ASSERT_NE(nullptr, agents[1]);
 
-    ASSERT_TRUE(OCI_DequeueSetConsumer(deq1, "C1"));
+    ASSERT_TRUE(OCI_DequeueSetConsumer(deq1, OTEXT("C1")));
     ASSERT_TRUE(OCI_DequeueSetNavigation(deq1, OCI_ADN_FIRST_MSG));
-    ASSERT_TRUE(OCI_DequeueSetConsumer(deq2, "C2"));
+    ASSERT_TRUE(OCI_DequeueSetConsumer(deq2, OTEXT("C2")));
     ASSERT_TRUE(OCI_DequeueSetNavigation(deq2, OCI_ADN_FIRST_MSG));
 
     ASSERT_TRUE(OCI_DequeueSubscribe(deq1, 9998, 0, OnMessage));

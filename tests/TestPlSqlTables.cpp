@@ -46,17 +46,17 @@ TEST(TestPlSqlTables, BasicInOutStringTableBinding)
 
     for (unsigned int i = 0; i < ArraySize; i++)
     {
-        sprintf(tab_names[i], "name  %03d", i + 1);
-        sprintf(tab_values[i], "value %03d", i + 1);
+        osprintf(tab_names[i], StringSize, OTEXT("name  %03d"), i + 1);
+        osprintf(tab_values[i], StringSize, OTEXT("value %03d"), i + 1);
 
         tab_results[i][0] = 0;
     }
 
     /* prepare call and bind local arrays */
 
-    ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, OTEXT(":tab_names"), reinterpret_cast<char*>(tab_names), StringSize, ArraySize));
-    ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, OTEXT(":tab_values"), reinterpret_cast<char*>(tab_values), StringSize, ArraySize));
-    ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, OTEXT(":tab_results"), reinterpret_cast<char*>(tab_results), StringSize, ArraySize));
+    ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, OTEXT(":tab_names"), reinterpret_cast<otext*>(tab_names), StringSize, ArraySize));
+    ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, OTEXT(":tab_values"), reinterpret_cast<otext*>(tab_values), StringSize, ArraySize));
+    ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, OTEXT(":tab_results"), reinterpret_cast<otext*>(tab_results), StringSize, ArraySize));
 
     ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN));
     ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 2), OCI_BDM_IN));
@@ -70,7 +70,7 @@ TEST(TestPlSqlTables, BasicInOutStringTableBinding)
 
     for (unsigned int i = 0; i < ArraySize; i++)
     {
-        sprintf(buffer, "name  %03d - value %03d", i + 1, i + 1);
+        osprintf(buffer, StringSize, OTEXT("name  %03d - value %03d"), i + 1, i + 1);
         ASSERT_EQ(ostring(buffer), tab_results[i]);
     }
 

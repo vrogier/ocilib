@@ -468,7 +468,6 @@ TEST(TestNumber, TestPositiveInfinity)
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
-    int value_test = 123456789, value_out = 0;
 
     ASSERT_TRUE(OCI_NumberFromText(number, OTEXT("~"), OCI_STRING_FORMAT_NUM));
     ASSERT_TRUE(OCI_NumberToText(number, OCI_STRING_FORMAT_NUM, 512, buffer));
@@ -487,7 +486,6 @@ TEST(TestNumber, TestNegativeInfinity)
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto number = OCI_NumberCreate(nullptr);
-    int value_test = 123456789, value_out = 0;
 
     ASSERT_TRUE(OCI_NumberFromText(number, OTEXT("-~"), OCI_STRING_FORMAT_NUM));
     ASSERT_TRUE(OCI_NumberToText(number, OCI_STRING_FORMAT_NUM, 512, buffer));

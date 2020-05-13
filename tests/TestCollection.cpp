@@ -26,7 +26,7 @@ void SelectCollection(ostring sql)
     {
         nbRows++;
 
-        ostring category = "category " + std::to_string(nbRows);
+        ostring category = OTEXT("category ") + TO_STRING(nbRows);
         ASSERT_EQ(category, ostring(OCI_GetString(rset, 1)));
 
         const auto coll = OCI_GetColl(rset, 2);
@@ -48,10 +48,10 @@ void SelectCollection(ostring sql)
             const auto obj = OCI_ElemGetObject(elem);
             ASSERT_NE(nullptr, obj);
 
-            ostring itemName = "name " + std::to_string(itemIndex);
+            ostring itemName = OTEXT("name ") + TO_STRING(itemIndex);
 
-            ASSERT_EQ(itemIndex, OCI_ObjectGetInt(obj, "code"));
-            ASSERT_EQ(itemName, OCI_ObjectGetString(obj, "name"));
+            ASSERT_EQ(itemIndex, OCI_ObjectGetInt(obj, OTEXT("code")));
+            ASSERT_EQ(itemName, OCI_ObjectGetString(obj, OTEXT("name")));
             elem = OCI_IterGetNext(iter);
         }
     }
@@ -101,10 +101,10 @@ void BindOutCollection(ostring type, ostring sql)
         const auto obj = OCI_ElemGetObject(elem);
         ASSERT_NE(nullptr, obj);
 
-        ostring itemName = "name " + std::to_string(itemIndex);
+        ostring itemName = OTEXT("name ") + TO_STRING(itemIndex);
 
-        ASSERT_EQ(itemIndex, OCI_ObjectGetInt(obj, "code"));
-        ASSERT_EQ(itemName, OCI_ObjectGetString(obj, "name"));
+        ASSERT_EQ(itemIndex, OCI_ObjectGetInt(obj, OTEXT("code")));
+        ASSERT_EQ(itemName, OCI_ObjectGetString(obj, OTEXT("name")));
         elem = OCI_IterGetNext(iter);
     }
 

@@ -74,7 +74,7 @@ TEST(TestConnection, Abort)
 
     auto callback = [](OCI_Thread* thread, void* data)
     {
-        ASSERT_FALSE(OCI_ExecuteStmt(static_cast<OCI_Statement*>(data), "begin dbms_lock.sleep(10); end;"));
+        ASSERT_FALSE(OCI_ExecuteStmt(static_cast<OCI_Statement*>(data), OTEXT("begin dbms_lock.sleep(10); end;")));
     };
 
     OCI_ThreadRun(thrd, callback, stmt);

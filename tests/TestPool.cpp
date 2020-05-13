@@ -12,7 +12,7 @@ static void WorkerProc(OCI_Thread* thread, void* data)
     ASSERT_NE(nullptr, conn);
 
     int anwser = 0;
-    OCI_Immediate(conn, "select 42 from dual", OCI_ARG_INT, &anwser);
+    OCI_Immediate(conn, OTEXT("select 42 from dual"), OCI_ARG_INT, &anwser);
     ASSERT_EQ(42, anwser);
 
     ASSERT_TRUE(OCI_ConnectionFree(conn));

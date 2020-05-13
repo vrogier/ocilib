@@ -17,7 +17,7 @@ TEST(TestReturningInto, RegisterInt)
     ASSERT_NE(nullptr, stmt);
 
     ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("update TestReturningIntoRegisterInt set code = code + 10, name = name || ' updated' returning code into :code")));
-    ASSERT_TRUE(OCI_RegisterInt(stmt, ":code"));
+    ASSERT_TRUE(OCI_RegisterInt(stmt, OTEXT(":code")));
     ASSERT_TRUE(OCI_Execute(stmt));
 
     auto rslt = OCI_GetResultset(stmt);
