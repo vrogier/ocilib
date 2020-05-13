@@ -107,6 +107,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TestNumber.cpp" />
     <ClCompile Include="TestObjectInheritance.cpp" />
+    <ClCompile Include="TestPlSqlTables.cpp" />
     <ClCompile Include="TestPool.cpp" />
     <ClCompile Include="TestQueue.cpp" />
     <ClCompile Include="TestReference.cpp" />
