@@ -122,7 +122,7 @@ void ErrorSet
     /* allocate storage for location */
     if (err->location_len < location_len)
     {
-        err->location = realloc(err->location, location_len + 1);
+        err->location = realloc(err->location, (location_len + 1) * sizeof(otext));
     }
 
     /* convert location if needed */
@@ -134,7 +134,7 @@ void ErrorSet
 
     if (err->message_len < total_len)
     {
-        err->message = realloc(err->message, total_len + 1);
+        err->message = realloc(err->message, (total_len + 1) * sizeof(otext));
     }
 
     /* format message */
