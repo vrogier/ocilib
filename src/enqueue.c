@@ -127,16 +127,19 @@ boolean EnqueuePut
         /* context */ OCI_IPC_ENQUEUE, enqueue
     )
 
-    dbtext *dbstr = NULL;
-    int   dbsize  = -1;
     void *payload = NULL;
     void *ind     = NULL;
+
+    sword ret = OCI_ERROR;
+
+    int     dbsize = -1;
+    dbtext* dbstr = NULL;
+
+    char* ansi_queue_name = NULL;
 
     CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
     CHECK_PTR(OCI_IPC_MSG,     msg)
     CHECK_COMPAT(enqueue->typinf->tdo == msg->typinf->tdo)
-
-    dbstr = StringGetDBString(enqueue->name, &dbsize);
 
     /* get payload */
 
@@ -156,20 +159,74 @@ boolean EnqueuePut
 
     /* enqueue message */
 
-    CHECK_OCI
-    (
-        enqueue->typinf->con->err,
-        OCIAQEnq,
-        enqueue->typinf->con->cxt, enqueue->typinf->con->err,
-        (OraText *) dbstr, enqueue->opth, msg->proph,
-        enqueue->typinf->tdo, &payload, &ind, NULL, OCI_DEFAULT
-    )
+    dbstr = StringGetDBString(enqueue->name, &dbsize);
 
+    /* OCIAQEnq() parameter  'queue_name' is supposed to be either ANSI or UTF16 depending on the
+    * environment. It appears that whatever mode is used, OCIAQEnq() only takes ANSI strings !
+    * Oracle might fix this issue at some point.
+    * Thus let's try to handle oracle future version fixing this issue.
+    * Make a first attempt using the correct way.
+    * If an error is reported let's try again using an ANSI string.
+    */
+
+
+#ifdef OCI_CHARSET_WIDE
+    const size_t attempt_max = 2;
+#else
+    const size_t attempt_max = 1;
+#endif
+
+    size_t attempt_count = 0;
+
+    while (OCI_ERROR == ret && ++attempt_count <= attempt_max)
+    {
+        void* name = attempt_count == 1 ? (void*)dbstr : (void*) ansi_queue_name;
+
+        ret = OCIAQEnq(enqueue->typinf->con->cxt, enqueue->typinf->con->err,
+                       (OraText*)name, enqueue->opth, msg->proph,
+                       enqueue->typinf->tdo, &payload, &ind, NULL, OCI_DEFAULT);
+
+        /* check returned error code */
+
+        if (OCI_ERROR == ret)
+        {
+            sb4 code = 0;
+
+            OCIErrorGet((dvoid *)enqueue->typinf->con->err, (ub4) 1,
+                        (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
+                        (ub4) OCI_HTYPE_ERROR);
+
+        #ifdef OCI_CHARSET_WIDE
+
+            if (dbstr == name && (OCI_ERR_AQ_QUEUE_NAME_INVALID == code ||
+                                  OCI_ERR_AQ_QUEUE_NOT_EXIST == code))
+            {
+                /* non valid queue name in UTF16 mode, we have an Oracle client with OCIAQDeq()
+                 * accepting only ANSI strings.* Let's try again with an ANSI string for queue name
+                 */
+
+                const int len = (int)ostrlen(enqueue->name);
+                ansi_queue_name = MemoryAlloc(OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
+                StringNativeToAnsi(enqueue->name, ansi_queue_name, len);
+            }
+            else
+
+#endif
+            /* raise error only if the call has not been timed out */
+
+            {
+                THROW(ExceptionOCI, enqueue->typinf->con->err, ret)
+            }
+        }
+    }
+                
     SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
     (
         StringReleaseDBString(dbstr);
+
+        FREE(ansi_queue_name)
     )
 }
 

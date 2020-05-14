@@ -237,11 +237,13 @@ OCI_Msg * DequeueGetMessage
         /* context */ OCI_IPC_DEQUEUE, dequeue
     )
 
-    sword ret = OCI_SUCCESS;
+    sword ret = OCI_ERROR;
     void *p_ind = NULL;
 
     int     dbsize = -1;
     dbtext* dbstr  = NULL;
+
+    char* ansi_queue_name = NULL;
 
     CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
@@ -258,26 +260,63 @@ OCI_Msg * DequeueGetMessage
         p_ind = &dequeue->msg->ind;
     }
 
-    ret = OCIAQDeq(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
-                   (OraText *) dbstr, dequeue->opth, dequeue->msg->proph,
-                   dequeue->typinf->tdo, &dequeue->msg->payload,
-                   (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
+    /* OCIAQDeq() parameter  'queue_name' is supposed to be either ANSI or UTF16 depending on the
+    * environment. It appears that whatever mode is used, OCIAQDeq() only takes ANSI strings !
+    * Oracle might fix this issue at some point.
+    * Thus let's try to handle oracle future version fixing this issue.
+    * Make a first attempt using the correct way.
+    * If an error is reported let's try again using an ANSI string.
+    */
 
-    /* check returned error code */
+#ifdef OCI_CHARSET_WIDE
+    const size_t attempt_max = 2;
+#else
+    const size_t attempt_max = 1;
+#endif
 
-    if (OCI_ERROR == ret)
+    size_t attempt_count = 0;
+
+    while (OCI_ERROR == ret && ++attempt_count <= attempt_max)
     {
-        sb4 code = 0;
+        void* name = attempt_count == 1 ? (void*)dbstr : (void*) ansi_queue_name;
 
-        OCIErrorGet((dvoid *) dequeue->typinf->con->err, (ub4) 1,
-                    (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
-                    (ub4) OCI_HTYPE_ERROR);
+        ret = OCIAQDeq(dequeue->typinf->con->cxt, dequeue->typinf->con->err,
+                       (OraText *)name, dequeue->opth, dequeue->msg->proph,
+                       dequeue->typinf->tdo, &dequeue->msg->payload,
+                       (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
 
-        /* raise error only if the call has not been timed out */
+        /* check returned error code */
 
-        if (OCI_ERR_AQ_DEQUEUE_TIMEOUT != code)
+        if (OCI_ERROR == ret)
         {
-            THROW(ExceptionOCI, dequeue->typinf->con->err, ret)
+            sb4 code = 0;
+
+            OCIErrorGet((dvoid *) dequeue->typinf->con->err, (ub4) 1,
+                        (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
+                        (ub4) OCI_HTYPE_ERROR);
+
+        #ifdef OCI_CHARSET_WIDE
+
+            if (dbstr == name && (OCI_ERR_AQ_QUEUE_NAME_INVALID == code ||
+                                  OCI_ERR_AQ_QUEUE_NOT_EXIST == code))
+            {
+                /* non valid queue name in UTF16 mode, we have an Oracle client with OCIAQDeq()
+                 * accepting only ANSI strings.* Let's try again with an ANSI string for queue name
+                 */
+
+                const int len = (int)ostrlen(dequeue->name);
+                ansi_queue_name = MemoryAlloc(OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
+                StringNativeToAnsi(dequeue->name, ansi_queue_name, len);
+            }
+            else
+
+#endif
+            /* raise error only if the call has not been timed out */
+
+            if (OCI_ERR_AQ_DEQUEUE_TIMEOUT != code)
+            {
+                THROW(ExceptionOCI, dequeue->typinf->con->err, ret)
+            }
         }
     }
 
@@ -297,8 +336,11 @@ OCI_Msg * DequeueGetMessage
 
                 dequeue->msg->obj = ObjectInitialize
                                     (
-                    dequeue->typinf->con, (OCI_Object*)dequeue->msg->obj,
-                    dequeue->msg->payload, dequeue->typinf, NULL, -1, TRUE
+                                        dequeue->typinf->con, 
+                                        (OCI_Object*)dequeue->msg->obj,
+                                        dequeue->msg->payload, 
+                                        dequeue->typinf,
+                                        NULL, -1, TRUE
                                     );
 
                 CHECK_NULL(dequeue->msg->obj)
@@ -313,6 +355,8 @@ OCI_Msg * DequeueGetMessage
     CLEANUP_AND_EXIT_FUNC
     (
         StringReleaseDBString(dbstr);
+        
+        FREE(ansi_queue_name)
     )
 }
 
