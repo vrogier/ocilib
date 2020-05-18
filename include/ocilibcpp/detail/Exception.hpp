@@ -49,9 +49,9 @@ inline Exception::Exception(OCI_Error *err) noexcept
     SetWhat(OCI_ErrorGetString(err));
 }
 
-inline Exception::Exception(const Exception& other) noexcept : Exception(nullptr)
+inline Exception::Exception(const Exception& other) noexcept : Exception()
 {
-    SetWhat(other._what);
+    *this = other;
 }
 
 inline Exception::~Exception() noexcept
@@ -63,7 +63,14 @@ inline Exception& Exception::operator = (const Exception& other) noexcept
 {
     if (this != &other)
     {
-        _what = ostrdup(other._what);
+        _pStatement = other._pStatement;
+        _pConnnection = other._pConnnection;
+        _row = other._row;
+        _type = other._type;
+        _errLib = other._errLib;
+        _errOracle = other._errOracle;
+
+        SetWhat(other._what);
     }
 
     return *this;
@@ -71,6 +78,12 @@ inline Exception& Exception::operator = (const Exception& other) noexcept
 
 inline void Exception::SetWhat(const otext* value) noexcept
 {
+    if (_what)
+    {
+        delete[] _what;
+        _what = nullptr;
+    }
+
     if (!value)
     {
         return;
