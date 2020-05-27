@@ -108,7 +108,7 @@ void ExceptionUnfreedData
 void ExceptionUnfreedBytes
 (
     OCI_Context* ctx,
-    size_t       nb_bytes
+    big_uint     nb_bytes
 );
 
 void ExceptionMaxBind
