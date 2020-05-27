@@ -1641,6 +1641,14 @@ boolean EnvironmentCleanup
         success = FALSE;
     }
 
+    /* checks for non freed library memory */
+
+    if (Env.mem_bytes_lib > 0)
+    {
+        ExceptionUnfreedBytes(&call_context, Env.mem_bytes_lib);
+        success = FALSE;
+    }
+
     /* free environment errors */
 
     if (NULL != Env.lib_err)

@@ -128,7 +128,8 @@ static const otext * ErrorMessages[OCI_ERR_COUNT] =
     OTEXT("Argument '%ls' : Invalid value %d"),
     OTEXT("Cannot retrieve OCI environment from XA connection string '%ls'"),
     OTEXT("Cannot connect to database using XA connection string '%ls'"),
-    OTEXT("Binding '%ls': Passing non NULL host variable is not allowed when bind allocation mode is internal")
+    OTEXT("Binding '%ls': Passing non NULL host variable is not allowed when bind allocation mode is internal"),
+    OTEXT("Found %d non freed allocated bytes")
 };
 
 #else
@@ -165,7 +166,8 @@ static const otext * ErrorMessages[OCI_ERR_COUNT] =
     OTEXT("Argument '%s' : Invalid value %d"),
     OTEXT("Cannot retrieve OCI environment from XA connection string '%s'"),
     OTEXT("Cannot connect to database using XA connection string '%s'"),
-    OTEXT("Binding '%s': Passing non NULL host variable is not allowed when bind allocation mode is internal")
+    OTEXT("Binding '%s': Passing non NULL host variable is not allowed when bind allocation mode is internal"),
+    OTEXT("Found %d non freed allocated bytes")
 };
 
 #endif
@@ -518,7 +520,7 @@ void ExceptionOutOfBounds
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ExceptionUnfreedData
+* ExceptionUnfreedData
 * --------------------------------------------------------------------------------------------- */
 
 void ExceptionUnfreedData
@@ -529,6 +531,19 @@ void ExceptionUnfreedData
 )
 {
     EXCEPTION_IMPL(OCI_ERR_UNFREED_DATA, nb_elem, HandleNames[type_elem - 1])
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* ExceptionUnfreedBytes
+* --------------------------------------------------------------------------------------------- */
+
+void ExceptionUnfreedBytes
+(
+    OCI_Context* ctx,
+    big_uint     nb_bytes
+)
+{
+    EXCEPTION_IMPL(OCI_ERR_UNFREED_BYTES, nb_bytes)
 }
 
 /* --------------------------------------------------------------------------------------------- *

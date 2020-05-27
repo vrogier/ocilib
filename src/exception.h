@@ -105,6 +105,12 @@ void ExceptionUnfreedData
     int          nb_elem
 );
 
+void ExceptionUnfreedBytes
+(
+    OCI_Context* ctx,
+    size_t       nb_bytes
+);
+
 void ExceptionMaxBind
 (
     OCI_Context* ctx
