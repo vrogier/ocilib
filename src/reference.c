@@ -223,6 +223,8 @@ boolean ReferenceFree
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != ref->hstate)
     {
+        ErrorResetSource(NULL, ref);
+
         FREE(ref)
     }
 

@@ -174,6 +174,8 @@ boolean ListFree
         MutexFree(list->mutex);
     }
 
+    ErrorResetSource(NULL, list);
+
     FREE(list)
 
     SET_SUCCESS()

@@ -120,6 +120,8 @@ boolean LongFree
     CHECK_PTR(OCI_IPC_LONG, lg)
     CHECK_OBJECT_FETCHED(lg)
 
+    ErrorResetSource(NULL, lg);
+
     FREE(lg->buffer)
     FREE(lg)
 

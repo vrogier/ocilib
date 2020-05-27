@@ -108,6 +108,8 @@ boolean ThreadKeyFree
 
     /* free key structure */
 
+    ErrorResetSource(NULL, key);
+
     FREE(key)
 
     SET_SUCCESS()

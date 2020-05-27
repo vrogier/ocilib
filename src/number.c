@@ -660,6 +660,8 @@ boolean NumberFree
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != number->hstate)
     {
+        ErrorResetSource(NULL, number);
+
         FREE(number)
     }
 

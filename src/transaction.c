@@ -55,6 +55,8 @@ boolean TransactionDispose
         trans->con->trs = NULL;
     }
 
+    ErrorResetSource(NULL, trans);
+
     SET_SUCCESS()
 
     EXIT_FUNC()

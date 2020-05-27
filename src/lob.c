@@ -202,6 +202,8 @@ boolean LobFree
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != lob->hstate)
     {
+        ErrorResetSource(NULL, lob);
+
         FREE(lob)
     }
 

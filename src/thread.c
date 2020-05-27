@@ -158,8 +158,10 @@ boolean ThreadFree
     {
         MemoryFreeHandle(thread->err, OCI_HTYPE_ERROR);
     }
-
+    
     /* free thread structure */
+
+    ErrorResetSource(NULL, thread);
 
     FREE(thread)
 

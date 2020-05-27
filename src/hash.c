@@ -240,6 +240,8 @@ boolean HashFree
         FREE(table->items)
     }
 
+    ErrorResetSource(NULL, table);
+
     FREE(table)
 
     SET_SUCCESS()

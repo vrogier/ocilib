@@ -135,6 +135,8 @@ boolean AgentFree
         MemoryFreeDescriptor((dvoid*)agent->handle, OCI_DTYPE_AQAGENT);
     }
 
+    ErrorResetSource(NULL, agent);
+
     FREE(agent->address)
     FREE(agent->name)
     FREE(agent)

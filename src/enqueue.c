@@ -103,6 +103,8 @@ boolean EnqueueFree
 
     MemoryFreeDescriptor((dvoid *) enqueue->opth, OCI_DTYPE_AQENQ_OPTIONS);
 
+    ErrorResetSource(NULL, enqueue);
+
     FREE(enqueue->name)
     FREE(enqueue)
 

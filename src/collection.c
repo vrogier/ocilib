@@ -147,6 +147,8 @@ boolean CollectionFree
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != coll->hstate)
     {
+        ErrorResetSource(NULL, coll);
+
         FREE(coll)
     }
 

@@ -121,6 +121,8 @@ boolean IteratorFree
 
     /* free iterator structure */
 
+    ErrorResetSource(NULL, iter);
+
     FREE(iter)
 
     SET_SUCCESS()

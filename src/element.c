@@ -425,6 +425,8 @@ boolean ElementFree
 
     ElemFreeAllocatedData(elem);
 
+    ErrorResetSource(NULL, elem);
+
     FREE(elem->tmpbuf)
     FREE(elem)
 

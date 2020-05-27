@@ -114,6 +114,8 @@ boolean PoolDispose
     FREE(pool->user)
     FREE(pool->pwd)
 
+    ErrorResetSource(NULL, pool);
+
     SET_SUCCESS()
 
     EXIT_FUNC()

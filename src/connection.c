@@ -962,7 +962,7 @@ boolean ConnectionLogOff
     /* free all type info objects */
 
     ListForEach(con->tinfs, (POCI_LIST_FOR_EACH)TypeInfoDispose);
-    ListClear(con->tinfs),
+    ListClear(con->tinfs);
 
     /* free all transactions */
 
@@ -1028,14 +1028,6 @@ boolean ConnectionDispose
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    /* clear connection reference from current error object */
-
-    err = ErrorGet(FALSE, FALSE);
-    if (NULL != err && err->source_ptr == con)
-    {
-        err->source_ptr = NULL;
-    }
-
     /* clear server output resources */
 
     ConnectionDisableServerOutput(con);
@@ -1084,6 +1076,8 @@ boolean ConnectionDispose
     con->stmts = NULL;
     con->trsns = NULL;
     con->tinfs = NULL;
+
+    ErrorResetSource(NULL, con);
 
     SET_SUCCESS()
 

@@ -144,6 +144,8 @@ boolean DequeueFree
 
     /* free data  */
 
+    ErrorResetSource(NULL, dequeue);
+
     FREE(dequeue->name)
     FREE(dequeue->pattern)
     FREE(dequeue->consumer)

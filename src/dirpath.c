@@ -461,6 +461,8 @@ boolean DirPathFree
     MemoryFreeHandle(dp->arr,  OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
     MemoryFreeHandle(dp->ctx,  OCI_HTYPE_DIRPATH_CTX);
 
+    ErrorResetSource(NULL, dp);
+
     FREE(dp)
 
     SET_SUCCESS()

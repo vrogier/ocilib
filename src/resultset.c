@@ -919,6 +919,8 @@ boolean ResultsetFree
 
     FREE(rs->defs)
 
+    ErrorResetSource(NULL, rs);
+
     FREE(rs)
 
     EXIT_FUNC()

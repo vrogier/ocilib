@@ -152,6 +152,8 @@ boolean MessageFree
 
     MemoryFreeDescriptor((dvoid*)msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
 
+    ErrorResetSource(NULL, msg);
+
     FREE(msg)
 
     SET_SUCCESS()

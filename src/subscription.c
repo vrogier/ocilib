@@ -131,7 +131,10 @@ boolean SubscriptionDispose
 
     SET_SUCCESS()
 
-    EXIT_FUNC()
+    CLEANUP_AND_EXIT_FUNC
+    (
+        ErrorResetSource(NULL, sub);
+    )
 }
 
 /* --------------------------------------------------------------------------------------------- *

@@ -150,6 +150,8 @@ boolean DateFree
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != date->hstate)
     {
+        ErrorResetSource(NULL, date);
+
         FREE(date)
     }
 

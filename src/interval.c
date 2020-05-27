@@ -170,6 +170,8 @@ boolean IntervalFree
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
     {
+        ErrorResetSource(NULL, itv);
+
         FREE(itv)
     }
 

@@ -189,6 +189,8 @@ boolean TimestampFree
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != tmsp->hstate)
     {
+        ErrorResetSource(NULL, tmsp);
+
         FREE(tmsp)
     }
 

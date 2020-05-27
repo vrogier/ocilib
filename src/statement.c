@@ -1052,20 +1052,11 @@ boolean StatementDispose
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
 
-    OCI_Error* err = NULL;
-
-    /* clear statement reference from current error object */
-
-    err = ErrorGet(FALSE, FALSE);
-
-    if (NULL != err && err->source_ptr == stmt)
-    {
-        err->source_ptr = NULL;
-    }
-
     /* reset data */
 
     StatementReset(stmt);
+
+    ErrorResetSource(NULL, stmt);
 
     SET_SUCCESS()
 

@@ -932,6 +932,8 @@ boolean ObjectFree
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != obj->hstate)
     {
+        ErrorResetSource(NULL, obj);
+
         FREE(obj)
     }
 

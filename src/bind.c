@@ -959,6 +959,8 @@ boolean BindFree
         }
     }
 
+    ErrorResetSource(NULL, bnd);
+
     FREE(bnd->buffer.inds)
     FREE(bnd->buffer.obj_inds)
     FREE(bnd->buffer.lens)

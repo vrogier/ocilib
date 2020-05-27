@@ -130,6 +130,8 @@ boolean MutexFree
 
     /* free mutex structure */
 
+    ErrorResetSource(NULL, mutex);
+
     FREE(mutex)
 
     SET_SUCCESS()

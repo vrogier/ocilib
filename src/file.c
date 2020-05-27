@@ -229,6 +229,8 @@ boolean FileFree
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
     {
+        ErrorResetSource(NULL, file);
+
         FREE(file)
     }
 

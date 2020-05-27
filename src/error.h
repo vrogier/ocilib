@@ -46,7 +46,14 @@ void ErrorSet
     unsigned int source_type,
     const char  *location,
     otext       *message,
-    unsigned int row);
+    unsigned int row
+);
+
+void ErrorResetSource
+(
+    OCI_Error* err,
+    void* source_ptr
+);
 
 OCI_Error * ErrorGet
 (

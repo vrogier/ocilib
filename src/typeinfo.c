@@ -81,6 +81,8 @@ boolean TypeInfoDispose
     FREE(typinf->schema)
     FREE(typinf->offsets)
 
+    ErrorResetSource(NULL, typinf);
+
     SET_SUCCESS()
 
     EXIT_FUNC();
