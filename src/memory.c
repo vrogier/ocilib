@@ -80,24 +80,24 @@ void * MemoryAlloc
 
     const size_t size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
 
-    OCI_MemoryBlock* mem_block = (OCI_MemoryBlock *)malloc(size);
+    OCI_MemoryBlock* block = (OCI_MemoryBlock *)malloc(size);
 
-    if (NULL == mem_block)
+    if (NULL == block)
     {
         THROW(ExceptionMemory, ptr_type, size)
     }
 
     if (zero_fill)
     {
-        memset(mem_block, 0, size);
+        memset(block, 0, size);
     }
 
-    mem_block->type = ptr_type;
-    mem_block->size = (unsigned int) size;
+    block->type = ptr_type;
+    block->size = (unsigned int) size;
 
-    MemoryUpdateBytes(mem_block->type, mem_block->size);
+    MemoryUpdateBytes(block->type, block->size);
 
-    SET_RETVAL(((unsigned char*)mem_block) + sizeof(*mem_block))
+    SET_RETVAL(((unsigned char*)block) + sizeof(*block))
 
     EXIT_FUNC()
 }
