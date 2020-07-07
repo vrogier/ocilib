@@ -845,23 +845,19 @@ unsigned int StringGetFromType
 
                         res = LobRead2(lob, lob_buf, &char_count, &bytes_count);
 
-                        if (bytes_count > 0)
+                        if (bytes_count == 0)
                         {
-                            if (OCI_CLOB == lob->type)
-                            {
-                                len += StringAddToBuffer(buffer, len, (otext*)lob_buf,
-                                                         ocharcount(bytes_count), quote);
-                            }
-                            else
-                            {
-                                len += StringBinaryToString(lob_buf, bytes_count, ptr + len);
-                            }
+                            break;
                         }
 
-                        if (bytes_count < bytes_requested)
+                        if (OCI_CLOB == lob->type)
                         {
-                            /* lob eof reached */
-                            break;
+                            len += StringAddToBuffer(buffer, len, (otext*)lob_buf,
+                                                     ocharcount(bytes_count), quote);
+                        }
+                        else
+                        {
+                            len += StringBinaryToString(lob_buf, bytes_count, ptr + len);
                         }
                     }
 
