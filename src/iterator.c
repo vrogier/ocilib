@@ -65,7 +65,8 @@ OCI_Iter * IteratorCreate
 
     /* create data element */
 
-    CHECK_NULL(ElementInitialize(coll->con, iter->elem, NULL, (OCIInd *)NULL, coll->typinf))
+    iter->elem = ElementInitialize(coll->con, iter->elem, NULL, (OCIInd*)NULL, coll->typinf);
+    CHECK_NULL(iter->elem)
 
     CLEANUP_AND_EXIT_FUNC
     (
