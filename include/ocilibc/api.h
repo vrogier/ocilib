@@ -233,22 +233,6 @@ OCI_EXPORT boolean OCI_API OCI_EnableWarnings
 
 /**
  * @brief
- * Set the global error user handler
- *
- * @param handler  - Pointer to error handler procedure
- *
- * @note
- * Use this call to change or remove the user callback error handler installed by OCI_Initialize()
- *
- */
-
-OCI_EXPORT boolean OCI_API OCI_SetErrorHandler
-(
-    POCI_ERROR handler
-);
-
-/**
- * @brief
  * Set the High availability (HA) user handler
  *
  * @param handler - Pointer to HA handler procedure
@@ -326,6 +310,22 @@ OCI_EXPORT boolean OCI_API OCI_SetHAHandler
  * @include err_warning.c
  *
  */
+
+/**
+ * @brief
+ * Set the global error user handler
+ *
+ * @param handler  - Pointer to error handler procedure
+ *
+ * @note
+ * Use this call to change or remove the user callback error handler installed by OCI_Initialize()
+ *
+ */
+
+OCI_EXPORT boolean OCI_API OCI_SetErrorHandler
+(
+    POCI_ERROR handler
+);
 
 /**
  * @brief
