@@ -178,7 +178,7 @@ OCI_Error * ErrorGet
 {
     OCI_Error *err = Env.lib_err;
 
-    if (Env.loaded && LIB_THREADED)
+    if (Env.loaded && LIB_THREADED && Env.key_errs != NULL)
     {
         if (ThreadKeyGet(Env.key_errs, (void **)(dvoid *)&err))
         {
