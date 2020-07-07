@@ -1654,26 +1654,27 @@ boolean StatementReleaseResultsets
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
 
-    /* Release statements for implicit resultsets */
+    /* release statements for implicit resultsets */
     if (NULL != stmt->stmts)
     {
-        for (i = 0; i  < stmt->nb_stmt; i++)
+        for (i = 0; i < stmt->nb_stmt; i++)
         {
-            if (stmt->rsts[i])
+            if (stmt->stmts[i] != NULL)
             {
                 StatementDispose(stmt->stmts[i]);
+                FREE(stmt->stmts[i])
             }
         }
 
-        FREE(stmt->rsts)
+        FREE(stmt->stmts)
     }
 
     /* release resultsets */
     if (NULL != stmt->rsts)
     {
-        for (i = 0; i  < stmt->nb_rs; i++)
+        for (i = 0; i < stmt->nb_rs; i++)
         {
-            if (stmt->rsts[i])
+            if (stmt->rsts[i] != NULL)
             {
                 ResultsetFree(stmt->rsts[i]);
             }
