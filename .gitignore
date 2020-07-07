@@ -177,3 +177,4 @@ $RECYCLE.BIN/
 /tests/packages/*.*
 testlog.manifest
 *.testlog
+/nuget/*.nupkg
