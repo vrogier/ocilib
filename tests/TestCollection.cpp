@@ -54,6 +54,8 @@ void SelectCollection(ostring sql)
             ASSERT_EQ(itemName, OCI_ObjectGetString(obj, OTEXT("name")));
             elem = OCI_IterGetNext(iter);
         }
+
+        ASSERT_TRUE(OCI_IterFree(iter));
     }
 
     ASSERT_EQ(expectedRows, nbRows);
@@ -110,6 +112,7 @@ void BindOutCollection(ostring type, ostring sql)
 
     ASSERT_EQ(expectedItems, itemIndex);
 
+    ASSERT_TRUE(OCI_IterFree(iter));
     ASSERT_TRUE(OCI_CollFree(coll));
     ASSERT_TRUE(OCI_StatementFree(stmt));
     ASSERT_TRUE(OCI_ConnectionFree(conn));

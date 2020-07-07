@@ -145,9 +145,6 @@
     <ClCompile Include="TestDate.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
-    <ClCompile Include="Testinterval.cpp">
-      <Filter>Tests suite</Filter>
-    </ClCompile>
     <ClCompile Include="TestLob.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
@@ -209,6 +206,9 @@
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestObject.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInterval.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
   </ItemGroup>

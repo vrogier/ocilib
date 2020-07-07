@@ -8,11 +8,15 @@
 #include <string>
 
 #ifdef _UNICODE
+    #ifndef OCI_CHARSET_WIDE
     #define OCI_CHARSET_WIDE
+    #endif
     #define TO_STRING std::to_wstring
     using ostring = std::wstring;
 #else
+    #ifndef OCI_CHARSET_ANSI
     #define OCI_CHARSET_ANSI
+    #endif
     #define TO_STRING std::to_string
     using ostring = std::string;
 #endif

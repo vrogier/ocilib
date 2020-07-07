@@ -102,7 +102,7 @@
     <ClCompile Include="TestDate.cpp" />
     <ClCompile Include="TestDescribe.cpp" />
     <ClCompile Include="TestImplicitResultset.cpp" />
-    <ClCompile Include="Testinterval.cpp" />
+    <ClCompile Include="TestInterval.cpp" />
     <ClCompile Include="TestLob.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TestNumber.cpp" />
@@ -152,7 +152,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>X64;_DEBUG;_CONSOLE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64;__DEBUG;_CONSOLE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>

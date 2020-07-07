@@ -79,7 +79,7 @@ TEST(TestConnection, Abort)
 
     OCI_ThreadRun(thrd, callback, stmt);
 
-    Sleep(500);
+    Sleep(1000);
     ASSERT_TRUE(OCI_Break(conn));
 
     ASSERT_TRUE(OCI_ThreadJoin(thrd));
