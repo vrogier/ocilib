@@ -139,8 +139,57 @@ TEST(ReportedIssues, Issue225)
         otext buffer[100];
         ASSERT_NE(0, OCI_NumberToText(numbers[i], NULL, 100, buffer));
         ASSERT_EQ(expected, ostring(buffer));
+        ASSERT_TRUE(OCI_NumberFree(numbers[i]));
     }
  
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
 }
+
+
+#ifdef OCI_CHARSET_ANSI
+
+TEST(ReportedIssues, Issue238)
+{
+    ExecDML(OTEXT("create table FetchLobAsString(value clob)"));
+
+    const char* nsl_lang = getenv("NLS_LANG");
+    putenv("NLS_LANG=American_America.UTF8");
+
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+    const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+    ASSERT_NE(nullptr, conn);
+
+    const auto stmt = OCI_StatementCreate(conn);
+    ASSERT_NE(nullptr, stmt);
+
+    ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("declare c clob;  begin  c := c||rpad('a', 32767, 'a'); insert into FetchLobAsString values (c); end;")));
+    ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select value from FetchLobAsString")));
+
+    auto rslt = OCI_GetResultset(stmt);
+    ASSERT_NE(nullptr, rslt);
+
+    ASSERT_TRUE(OCI_FetchNext(rslt));
+
+    auto value = OCI_GetString(rslt, 1);
+    ASSERT_NE(nullptr, value);
+    auto len = strlen(value);
+    ASSERT_EQ(32767, len);
+
+    ASSERT_TRUE(OCI_StatementFree(stmt));
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_Cleanup());
+
+    std::string new_nls_lang = "NLS_LANG=";
+
+    if (nsl_lang)
+    {
+        new_nls_lang += nsl_lang;
+    }
+    putenv(new_nls_lang.data());
+
+    ExecDML(OTEXT("drop table FetchLobAsString;"));
+}
+
+#endif
