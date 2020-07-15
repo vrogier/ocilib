@@ -850,14 +850,14 @@ unsigned int StringGetFromType
                             break;
                         }
 
-                        if (OCI_CLOB == lob->type)
+                        if (OCI_BLOB == lob->type)
                         {
-                            len += StringAddToBuffer(buffer, len, (otext*)lob_buf,
-                                                     ocharcount(bytes_count), quote);
+                            len += StringBinaryToString(lob_buf, bytes_count, ptr + len);
                         }
                         else
                         {
-                            len += StringBinaryToString(lob_buf, bytes_count, ptr + len);
+                            len += StringAddToBuffer(buffer, len, (otext*)lob_buf,
+                                                     ocharcount(bytes_count), quote);
                         }
                     }
 

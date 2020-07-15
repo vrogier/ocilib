@@ -47,7 +47,8 @@
 static unsigned int TimestampTypeValues[] =
 {
     OCI_TIMESTAMP,
-    OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ
+    OCI_TIMESTAMP_TZ,
+    OCI_TIMESTAMP_LTZ
 };
 
 static unsigned int IntervalTypeValues[] =
@@ -61,7 +62,8 @@ static unsigned int IntervalTypeValues[] =
 static unsigned int LobTypeValues[] =
 {
     OCI_CLOB,
-    OCI_NCLOB, OCI_BLOB
+    OCI_NCLOB,
+    OCI_BLOB
 };
 
 static unsigned int FileTypeValues[] =
