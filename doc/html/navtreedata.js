@@ -52,8 +52,7 @@ var NAVTREE =
         [ "Functions", "functions_func.html", "functions_func" ],
         [ "Typedefs", "functions_type.html", null ],
         [ "Enumerations", "functions_enum.html", null ],
-        [ "Enumerator", "functions_eval.html", null ],
-        [ "Related Functions", "functions_rela.html", null ]
+        [ "Enumerator", "functions_eval.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -64,14 +63,14 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"annotated.html",
-"classocilib_1_1_direct_path.html#a03e7c618a67e0ac9194b554cec657c04",
-"classocilib_1_1_lob.html#a2ae09886df7a6d96eeae84b71bdfc253",
-"classocilib_1_1_statement.html#af38d5b8a835741953eb6534e1f242627",
-"group___ocilib_c_api_advanced_queuing.html#gaf2f1c8dfec7a6a7255feefb67c9b32c7",
-"group___ocilib_c_api_datetimes.html#gadc1fad15bca1a1780d22148a104bcdbd",
-"group___ocilib_c_api_oracle_number.html#ga1fa6ccecc2847238439a6f9209e50ffe",
-"index.html#License"
+"_agent_8hpp_source.html",
+"classocilib_1_1_date.html#ad0246e3fdcc0f73b612f1c052d85d35f",
+"classocilib_1_1_file.html#affa5f35720e5de2e950990918b7bc4d1",
+"classocilib_1_1_statement.html#a2898cd27d31c30347db1fd9931ebbad8",
+"group___ocilib_c_api_advanced_queuing.html#ga10a882608aa49b26ab9aa0583d6e709b",
+"group___ocilib_c_api_connections.html#gaf6001f3ffc1e8537a4e02bbfe8549d3f",
+"group___ocilib_c_api_hash_tables.html#gadfb699332bcbf683f21986e2b2ef8bae",
+"group___ocilib_c_api_user_types.html#ga18173b7edcb189ac084d4a292061e380"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

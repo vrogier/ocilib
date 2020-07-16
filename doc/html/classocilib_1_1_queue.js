@@ -1,6 +1,6 @@
 var classocilib_1_1_queue =
 [
-    [ "QueueType", "classocilib_1_1_queue.html#ae29ddcb62790ec86b98dd40dd4911347", null ],
+    [ "QueueType", "classocilib_1_1_queue.html#a8074ef24dffb31cc777d747b66082391", null ],
     [ "QueueTypeValues", "classocilib_1_1_queue.html#a3b76471a9d4ade9395fd9d96a822e217", [
       [ "NormalQueue", "classocilib_1_1_queue.html#a3b76471a9d4ade9395fd9d96a822e217a6508482ad94920ac0ae9bb5de5b515a2", null ],
       [ "ExceptionQueue", "classocilib_1_1_queue.html#a3b76471a9d4ade9395fd9d96a822e217a97a2db1d08615011207877192840ad78", null ],

@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2019-02-25 20:00:00+01:00
+date: 2020-07-16 12:00:00+01:00
 layout: page
 slug: download
 title: Download
@@ -12,6 +12,12 @@ title: Download
 ## Installation
 
 ### Windows platforms
+
+Since version 4.6.4, OCILIB is also available as a nuget packages available on nuget.org.
+Thus, in your VS project, add a dependency to the package "ocilib".
+Your project will be automatically configured to reference ocilib headers and link ocilib shared librairies.
+ 
+Otherwise, you can still process the old way:
 
 {% highlight bash %}
 - unzip the archive

@@ -1,6 +1,6 @@
 var classocilib_1_1_transaction =
 [
-    [ "TransactionFlags", "classocilib_1_1_transaction.html#a0a91dd5392871791c3687f7a6b49a9f5", null ],
+    [ "TransactionFlags", "classocilib_1_1_transaction.html#aa9510b8c28b4614eea2f56e120cc7639", null ],
     [ "TransactionFlagsValues", "classocilib_1_1_transaction.html#aad56be300eb5c62bea0e622eb25416b4", [
       [ "New", "classocilib_1_1_transaction.html#aad56be300eb5c62bea0e622eb25416b4a569001e3a5a3d415b756c242b298c3ec", null ],
       [ "Tight", "classocilib_1_1_transaction.html#aad56be300eb5c62bea0e622eb25416b4a165c1301bce197492f9c1898cce6bf23", null ],

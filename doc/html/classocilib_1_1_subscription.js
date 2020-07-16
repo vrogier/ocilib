@@ -1,7 +1,7 @@
 var classocilib_1_1_subscription =
 [
     [ "NotifyHandlerProc", "classocilib_1_1_subscription.html#aa557f2ff8b04b1c465f4fb2c901fe8e7", null ],
-    [ "ChangeTypes", "classocilib_1_1_subscription.html#a9eeec89f2f59ad49a7db7501a41b96f9", null ],
+    [ "ChangeTypes", "classocilib_1_1_subscription.html#a929919f394eaba498043864a2b6e2aec", null ],
     [ "ChangeTypesValues", "classocilib_1_1_subscription.html#aa2667ca0384af70f0c17d6bdc28ed082", [
       [ "ObjectChanges", "classocilib_1_1_subscription.html#aa2667ca0384af70f0c17d6bdc28ed082aecdfb6fffabfbdf15eae6d80ad04a0d2", null ],
       [ "RowChanges", "classocilib_1_1_subscription.html#aa2667ca0384af70f0c17d6bdc28ed082a0c4a4ff11ff9e8dd7a06167e42c73ef8", null ],

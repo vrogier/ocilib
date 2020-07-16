@@ -158,7 +158,6 @@ var menudata={children:[
 {text:"u",url:"functions_eval.html#index_u"},
 {text:"v",url:"functions_eval.html#index_v"},
 {text:"w",url:"functions_eval.html#index_w"},
-{text:"y",url:"functions_eval.html#index_y"}]},
-{text:"Related Functions",url:"functions_rela.html"}]}]},
+{text:"y",url:"functions_eval.html#index_y"}]}]}]},
 {text:"Files",url:"files.html",children:[
 {text:"File List",url:"files.html"}]}]}

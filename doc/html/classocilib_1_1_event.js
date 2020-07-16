@@ -1,7 +1,7 @@
 var classocilib_1_1_event =
 [
-    [ "EventType", "classocilib_1_1_event.html#ab1ad2443de7d59c7fcd11912ce7b204c", null ],
-    [ "ObjectEvent", "classocilib_1_1_event.html#a4271828f7e60552f635b0154a2c25554", null ],
+    [ "EventType", "classocilib_1_1_event.html#a551cedefbdf14b7623ac694fd816760c", null ],
+    [ "ObjectEvent", "classocilib_1_1_event.html#a09689b89be5cfeac9800dfc2db64f6d1", null ],
     [ "EventTypeValues", "classocilib_1_1_event.html#a870a4e6122a5258f3a2291414581383e", [
       [ "DatabaseStart", "classocilib_1_1_event.html#a870a4e6122a5258f3a2291414581383ea830b8a12508b6691d83a62689e07d643", null ],
       [ "DatabaseShutdown", "classocilib_1_1_event.html#a870a4e6122a5258f3a2291414581383eacef7d0bc6849aed59c435d39bb753665", null ],

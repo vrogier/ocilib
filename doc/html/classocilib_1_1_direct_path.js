@@ -1,7 +1,7 @@
 var classocilib_1_1_direct_path =
 [
-    [ "ConversionMode", "classocilib_1_1_direct_path.html#a002ecefd9c9e27101985cefd3cfa3e13", null ],
-    [ "Result", "classocilib_1_1_direct_path.html#a00017fd39733527ca3c69c3e3e32d17d", null ],
+    [ "ConversionMode", "classocilib_1_1_direct_path.html#a8e0d555b0f3952a3c9d727aadd8852ea", null ],
+    [ "Result", "classocilib_1_1_direct_path.html#a9603892529adb8219639d4f6cfdf19f6", null ],
     [ "ConversionModeValues", "classocilib_1_1_direct_path.html#af8deca8c305d4b2d8bc642b73e3148a5", [
       [ "Default", "classocilib_1_1_direct_path.html#af8deca8c305d4b2d8bc642b73e3148a5aef9f72e8fea69befdd15188304205eec", null ],
       [ "Force", "classocilib_1_1_direct_path.html#af8deca8c305d4b2d8bc642b73e3148a5a8d9afee6856ab9bc25637df47829c911", null ]

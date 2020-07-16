@@ -1,10 +1,10 @@
 var classocilib_1_1_connection =
 [
-    [ "TimeoutType", "classocilib_1_1_connection.html#a0aeff9065ffc4bb5890c52adc2efddc8", null ],
-    [ "FailoverRequest", "classocilib_1_1_connection.html#a2d463d1a09bef7ceeb8b18c0c880ab95", null ],
-    [ "FailoverEvent", "classocilib_1_1_connection.html#a474638b06cc140cde3b6cb7bc8212ae5", null ],
-    [ "FailoverResult", "classocilib_1_1_connection.html#a4d2ea6149d4d38adaef41bfc98950676", null ],
-    [ "SessionTrace", "classocilib_1_1_connection.html#a721d1de749a6e6849b30928c2227556c", null ],
+    [ "TimeoutType", "classocilib_1_1_connection.html#a896662971974b39a1700197fe7359c55", null ],
+    [ "FailoverRequest", "classocilib_1_1_connection.html#a93dec3c9ea5203ab3c3b0ad07bd13287", null ],
+    [ "FailoverEvent", "classocilib_1_1_connection.html#abc25ab895d27f67b08eb81d63ff99fb4", null ],
+    [ "FailoverResult", "classocilib_1_1_connection.html#a89261e788d840e5c1f5d3aff532aa2a4", null ],
+    [ "SessionTrace", "classocilib_1_1_connection.html#a732812cae822313d1a24b91d449cb63f", null ],
     [ "TAFHandlerProc", "classocilib_1_1_connection.html#a5e5c2e19a29bfedc7d0ea538884eea31", null ],
     [ "TimeoutTypeValues", "classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9ad", [
       [ "TimeoutSend", "classocilib_1_1_connection.html#ae396b27f72ebf09567a3bef79552e9adac74d1e28ac893980301957cf4b614d09", null ],

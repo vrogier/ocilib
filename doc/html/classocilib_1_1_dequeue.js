@@ -1,9 +1,9 @@
 var classocilib_1_1_dequeue =
 [
     [ "NotifyAQHandlerProc", "classocilib_1_1_dequeue.html#a89f222924d1a0f551678d7b30b3953ea", null ],
-    [ "DequeueMode", "classocilib_1_1_dequeue.html#a50cde9f5085fdc02087bb794b50c73e4", null ],
-    [ "DequeueVisibility", "classocilib_1_1_dequeue.html#a82d9ad9e541f7b40a9a71a1560a5abac", null ],
-    [ "NavigationMode", "classocilib_1_1_dequeue.html#afd8814eefbf39a9beb875a97caaca89b", null ],
+    [ "DequeueMode", "classocilib_1_1_dequeue.html#ab9d8614c30e3f50335b3b0b8edf06aeb", null ],
+    [ "DequeueVisibility", "classocilib_1_1_dequeue.html#a58cf94528c637cc2816cd1c95d1f0344", null ],
+    [ "NavigationMode", "classocilib_1_1_dequeue.html#af9ab2121be03ff05e9d95112a2b94ff7", null ],
     [ "DequeueModeValues", "classocilib_1_1_dequeue.html#a905f0addefd1d1092009985009cbceb8", [
       [ "Browse", "classocilib_1_1_dequeue.html#a905f0addefd1d1092009985009cbceb8ad0416d9bf9c8dbd4bd295e527a2b610d", null ],
       [ "Locked", "classocilib_1_1_dequeue.html#a905f0addefd1d1092009985009cbceb8a8d7301b995da78db4f15b06a2b6caa90", null ],

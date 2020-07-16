@@ -1,9 +1,9 @@
 var classocilib_1_1_statement =
 [
-    [ "StatementType", "classocilib_1_1_statement.html#a7695e9e2becdbc289b8abcb3db8f19d1", null ],
-    [ "FetchMode", "classocilib_1_1_statement.html#af8071a5e9db312a9ca162830e9ff8a60", null ],
-    [ "BindMode", "classocilib_1_1_statement.html#ae0908e3d1e6b702fc184fb2be88826f7", null ],
-    [ "LongMode", "classocilib_1_1_statement.html#a2813d30230a7c0e27c348b6d9d604793", null ],
+    [ "StatementType", "classocilib_1_1_statement.html#ab51ec370d22d5375304bdf1d05912c47", null ],
+    [ "FetchMode", "classocilib_1_1_statement.html#a913d4621fe4b843c98f3a63ad87f3fb7", null ],
+    [ "BindMode", "classocilib_1_1_statement.html#a1f3772f55d49cbbbab736bfe3f33dc2d", null ],
+    [ "LongMode", "classocilib_1_1_statement.html#ab3b6a01a57de9631f9c430b427665dbb", null ],
     [ "StatementTypeValues", "classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832", [
       [ "TypeSelect", "classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832a3c5b49fd5750f89b1db3a971fd5cd5bb", null ],
       [ "TypeUpdate", "classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832ae8df59963aa1b5fa2f3e3be3326e2240", null ],
