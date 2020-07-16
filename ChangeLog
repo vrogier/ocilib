@@ -1,10 +1,44 @@
-2020-05-16 Version 4.7.0 Vincent Rogier vince.rogier@ocilib.net
+2020-07-09 Version 4.7.0 Vincent Rogier vince.rogier@ocilib.net
 
     * Enhancements (C API)
     
+        - Library internal design changes (preparing v5.0.0)
+            * OCILIB code base has been layered in 2 distinct API layers:
+                - Internal API which has now its own separate design
+                    - v4.7.0 internal API, while matching the public one in this version, has most of its methods renamed
+                    - It will evolve differently, preparing new public APIs for future versions
+                - Public APIs exposing features to clients
+                    - v4.7.0 is exposing the same public API as previous versions
+                    - v5.0.0 will expose a different API
+                    - Both will use same internal API
+                - Contextual error management enhancements
+                    - As internal APIs cannot be called from outside the library, last error management has been simplified and improved             
+            * Public headers reorganizatoion:
+                * Broke up ocilib.h content into multiple headers located in /include/ocilibc/
+                * Broke up C++ headers content into multiple headers located in /include/ocilibcpp/            
+    
+        - Enhanced Error handing:
+            * Updated OCI_Cleanup(): if there are any unfreed allocated bytes by the library itself (e.g. OCILIB user objects not freed)
+                - it raises an error of type OCI_ERR_UNFREED_BYTES (with the amount of bytes in the error message)
+                - it completes cleanup and returns FALSE
+            * Added method OCI_ErrorGetLocation() to return the method name where the exception occured
+            * Updated method OCI_ErrorGetString() to return a string using the following format "Error occured at {Location}: {Description}"
+      
     * Fixes (C API)
     
+        - Issue 239: Fetching nclobs as strings return value in hexa format truncated values when nsl_lang is UTF8
+        - Issue 238: Fetching clobs as strings return truncated values when nsl_lang is UTF8
+        - Issue 236: Memory issue with OCI_BAM_INTERNAL and OCI_CDT_NUMERIC        
+        - Fixed OCI_EnqueuePut() and OCI_DequeueGet() in OCI_CHARSET_WIDE charset mode (added a workaround for a known oracle client UTF16 bug)
+        - Fixed a minor memory leak when using implicit resultsets     
+   
     * Fixes (C++ API)
+    
+        - Issue 230: Memory leaks while rebinding vectors
+    
+    * Miscellaneous
+    
+        - Extended C API Test suite that has now a much wider coverage
 
 2020-04-18 Version 4.6.4 Vincent Rogier vince.rogier@ocilib.net
 
