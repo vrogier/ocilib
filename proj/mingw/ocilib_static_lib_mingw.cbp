@@ -72,6 +72,9 @@
 		<Unit filename="../../src/connection.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../src/database.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../src/date.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -90,7 +93,10 @@
 		<Unit filename="../../src/enqueue.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../src/error.c">
+		<Unit filename="../../src/environment.c">
+			<Option compilerVar="CC" />
+		</Unit>
+        <Unit filename="../../src/error.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../src/event.c">
@@ -111,13 +117,13 @@
 		<Unit filename="../../src/hash.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../src/helpers.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../src/interval.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../src/iterator.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../src/library.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../src/list.c">
@@ -132,7 +138,7 @@
 		<Unit filename="../../src/memory.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../src/msg.c">
+		<Unit filename="../../src/message.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../src/mutex.c">
@@ -144,22 +150,16 @@
 		<Unit filename="../../src/object.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../src/oci_api.h" />
-		<Unit filename="../../src/oci_defs.h" />
-		<Unit filename="../../src/oci_import.h" />
-		<Unit filename="../../src/oci_loader.h" />
-		<Unit filename="../../src/oci_types.h" />
-		<Unit filename="../../src/ocilib_checks.h" />
-		<Unit filename="../../src/ocilib_defs.h" />
-		<Unit filename="../../src/ocilib_internal.h" />
-		<Unit filename="../../src/ocilib_types.h" />
+		<Unit filename="../../src/ocilib.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../src/pool.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../src/queue.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../src/ref.c">
+		<Unit filename="../../src/reference.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../src/resultset.c">
@@ -168,7 +168,7 @@
 		<Unit filename="../../src/statement.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../src/string.c">
+		<Unit filename="../../src/strings.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../src/subscription.c">
