@@ -14,7 +14,7 @@ AC_INIT(ocilib, m4_esyscmd([tr -d '\n' < VERSION]))
 
 m4_pattern_allow([LT_MAJOR])
 
-AC_CONFIG_SRCDIR([src/library.c])
+AC_CONFIG_SRCDIR([src/ocilib.c])
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])

@@ -308,7 +308,9 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.c" />
+    <ResourceCompile Include="main.rc" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="..\..\src\agent.c" />
     <ClCompile Include="..\..\src\array.c" />
     <ClCompile Include="..\..\src\bind.c" />
@@ -316,12 +318,14 @@
     <ClCompile Include="..\..\src\collection.c" />
     <ClCompile Include="..\..\src\column.c" />
     <ClCompile Include="..\..\src\connection.c" />
+    <ClCompile Include="..\..\src\database.c" />
     <ClCompile Include="..\..\src\date.c" />
     <ClCompile Include="..\..\src\define.c" />
     <ClCompile Include="..\..\src\dequeue.c" />
     <ClCompile Include="..\..\src\dirpath.c" />
     <ClCompile Include="..\..\src\element.c" />
     <ClCompile Include="..\..\src\enqueue.c" />
+    <ClCompile Include="..\..\src\environment.c" />
     <ClCompile Include="..\..\src\error.c" />
     <ClCompile Include="..\..\src\event.c" />
     <ClCompile Include="..\..\src\exception.c" />
@@ -329,23 +333,24 @@
     <ClCompile Include="..\..\src\format.c" />
     <ClCompile Include="..\..\src\handle.c" />
     <ClCompile Include="..\..\src\hash.c" />
+    <ClCompile Include="..\..\src\helpers.c" />
     <ClCompile Include="..\..\src\interval.c" />
     <ClCompile Include="..\..\src\iterator.c" />
-    <ClCompile Include="..\..\src\library.c" />
     <ClCompile Include="..\..\src\list.c" />
     <ClCompile Include="..\..\src\lob.c" />
     <ClCompile Include="..\..\src\long.c" />
     <ClCompile Include="..\..\src\memory.c" />
-    <ClCompile Include="..\..\src\msg.c" />
+    <ClCompile Include="..\..\src\message.c" />
     <ClCompile Include="..\..\src\mutex.c" />
     <ClCompile Include="..\..\src\number.c" />
     <ClCompile Include="..\..\src\object.c" />
+    <ClCompile Include="..\..\src\ocilib.c" />
     <ClCompile Include="..\..\src\pool.c" />
     <ClCompile Include="..\..\src\queue.c" />
-    <ClCompile Include="..\..\src\ref.c" />
+    <ClCompile Include="..\..\src\reference.c" />
     <ClCompile Include="..\..\src\resultset.c" />
     <ClCompile Include="..\..\src\statement.c" />
-    <ClCompile Include="..\..\src\string.c" />
+    <ClCompile Include="..\..\src\strings.c" />
     <ClCompile Include="..\..\src\subscription.c" />
     <ClCompile Include="..\..\src\thread.c" />
     <ClCompile Include="..\..\src\threadkey.c" />
@@ -354,20 +359,64 @@
     <ClCompile Include="..\..\src\typeinfo.c" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="main.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\include\ocilib.h" />
-    <ClInclude Include="..\..\src\ocilib_checks.h" />
-    <ClInclude Include="..\..\src\ocilib_defs.h" />
-    <ClInclude Include="..\..\src\ocilib_internal.h" />
-    <ClInclude Include="..\..\src\ocilib_types.h" />
-    <ClInclude Include="..\..\src\oci_api.h" />
-    <ClInclude Include="..\..\src\oci_defs.h" />
-    <ClInclude Include="..\..\src\oci_import.h" />
-    <ClInclude Include="..\..\src\oci_loader.h" />
-    <ClInclude Include="..\..\src\oci_types.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\..\include\ocilibc\api.h" />
+    <ClInclude Include="..\..\include\ocilibc\compat.h" />
+    <ClInclude Include="..\..\include\ocilibc\config.h" />
+    <ClInclude Include="..\..\include\ocilibc\types.h" />
+    <ClInclude Include="..\..\src\agent.h" />
+    <ClInclude Include="..\..\src\array.h" />
+    <ClInclude Include="..\..\src\bind.h" />
+    <ClInclude Include="..\..\src\callback.h" />
+    <ClInclude Include="..\..\src\collection.h" />
+    <ClInclude Include="..\..\src\column.h" />
+    <ClInclude Include="..\..\src\connection.h" />
+    <ClInclude Include="..\..\src\database.h" />
+    <ClInclude Include="..\..\src\date.h" />
+    <ClInclude Include="..\..\src\define.h" />
+    <ClInclude Include="..\..\src\defs.h" />
+    <ClInclude Include="..\..\src\dequeue.h" />
+    <ClInclude Include="..\..\src\dirpath.h" />
+    <ClInclude Include="..\..\src\element.h" />
+    <ClInclude Include="..\..\src\enqueue.h" />
+    <ClInclude Include="..\..\src\environment.h" />
+    <ClInclude Include="..\..\src\error.h" />
+    <ClInclude Include="..\..\src\event.h" />
+    <ClInclude Include="..\..\src\exception.h" />
+    <ClInclude Include="..\..\src\file.h" />
+    <ClInclude Include="..\..\src\format.h" />
+    <ClInclude Include="..\..\src\handle.h" />
+    <ClInclude Include="..\..\src\hash.h" />
+    <ClInclude Include="..\..\src\helpers.h" />
+    <ClInclude Include="..\..\src\import.h" />
+    <ClInclude Include="..\..\src\interval.h" />
+    <ClInclude Include="..\..\src\iterator.h" />
+    <ClInclude Include="..\..\src\list.h" />
+    <ClInclude Include="..\..\src\loader.h" />
+    <ClInclude Include="..\..\src\lob.h" />
+    <ClInclude Include="..\..\src\long.h" />
+    <ClInclude Include="..\..\src\macros.h" />
+    <ClInclude Include="..\..\src\memory.h" />
+    <ClInclude Include="..\..\src\message.h" />
+    <ClInclude Include="..\..\src\mutex.h" />
+    <ClInclude Include="..\..\src\number.h" />
+    <ClInclude Include="..\..\src\object.h" />
+    <ClInclude Include="..\..\src\oci\api.h" />
+    <ClInclude Include="..\..\src\oci\defs.h" />
+    <ClInclude Include="..\..\src\oci\types.h" />
+    <ClInclude Include="..\..\src\pool.h" />
+    <ClInclude Include="..\..\src\queue.h" />
+    <ClInclude Include="..\..\src\reference.h" />
+    <ClInclude Include="..\..\src\resultset.h" />
+    <ClInclude Include="..\..\src\statement.h" />
+    <ClInclude Include="..\..\src\strings.h" />
+    <ClInclude Include="..\..\src\subscription.h" />
+    <ClInclude Include="..\..\src\thread.h" />
+    <ClInclude Include="..\..\src\threadkey.h" />
+    <ClInclude Include="..\..\src\timestamp.h" />
+    <ClInclude Include="..\..\src\transaction.h" />
+    <ClInclude Include="..\..\src\typeinfo.h" />
+    <ClInclude Include="..\..\src\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

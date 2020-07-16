@@ -32,19 +32,93 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>..\src;..\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>..\src;..\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>..\src;..\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>..\src;..\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemGroup>
-    <ClCompile Include="connection.cpp">
+    <ClCompile Include="..\src\agent.c" />
+    <ClCompile Include="..\src\array.c" />
+    <ClCompile Include="..\src\bind.c" />
+    <ClCompile Include="..\src\callback.c" />
+    <ClCompile Include="..\src\collection.c" />
+    <ClCompile Include="..\src\column.c" />
+    <ClCompile Include="..\src\connection.c" />
+    <ClCompile Include="..\src\database.c" />
+    <ClCompile Include="..\src\date.c" />
+    <ClCompile Include="..\src\define.c" />
+    <ClCompile Include="..\src\dequeue.c" />
+    <ClCompile Include="..\src\dirpath.c" />
+    <ClCompile Include="..\src\element.c" />
+    <ClCompile Include="..\src\enqueue.c" />
+    <ClCompile Include="..\src\environment.c" />
+    <ClCompile Include="..\src\error.c" />
+    <ClCompile Include="..\src\event.c" />
+    <ClCompile Include="..\src\exception.c" />
+    <ClCompile Include="..\src\file.c" />
+    <ClCompile Include="..\src\format.c" />
+    <ClCompile Include="..\src\handle.c" />
+    <ClCompile Include="..\src\hash.c" />
+    <ClCompile Include="..\src\helpers.c" />
+    <ClCompile Include="..\src\interval.c" />
+    <ClCompile Include="..\src\iterator.c" />
+    <ClCompile Include="..\src\list.c" />
+    <ClCompile Include="..\src\lob.c" />
+    <ClCompile Include="..\src\long.c" />
+    <ClCompile Include="..\src\memory.c" />
+    <ClCompile Include="..\src\message.c" />
+    <ClCompile Include="..\src\mutex.c" />
+    <ClCompile Include="..\src\number.c" />
+    <ClCompile Include="..\src\object.c" />
+    <ClCompile Include="..\src\ocilib.c" />
+    <ClCompile Include="..\src\pool.c" />
+    <ClCompile Include="..\src\queue.c" />
+    <ClCompile Include="..\src\reference.c" />
+    <ClCompile Include="..\src\resultset.c" />
+    <ClCompile Include="..\src\statement.c" />
+    <ClCompile Include="..\src\strings.c" />
+    <ClCompile Include="..\src\subscription.c" />
+    <ClCompile Include="..\src\thread.c" />
+    <ClCompile Include="..\src\threadkey.c" />
+    <ClCompile Include="..\src\timestamp.c" />
+    <ClCompile Include="..\src\transaction.c" />
+    <ClCompile Include="..\src\typeinfo.c" />
+    <ClCompile Include="TestCursor.cpp" />
+    <ClCompile Include="TestArray.cpp" />
+    <ClCompile Include="TestCollection.cpp" />
+    <ClCompile Include="TestConnection.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="date.cpp" />
-    <ClCompile Include="interval.cpp" />
-    <ClCompile Include="lob.cpp" />
-    <ClCompile Include="number.cpp" />
-    <ClCompile Include="ref.cpp" />
-    <ClCompile Include="ReportedIssues.cpp" />
-    <ClCompile Include="timestamp.cpp" />
+    <ClCompile Include="TestDate.cpp" />
+    <ClCompile Include="TestDescribe.cpp" />
+    <ClCompile Include="TestImplicitResultset.cpp" />
+    <ClCompile Include="TestInterval.cpp" />
+    <ClCompile Include="TestLob.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="TestNumber.cpp" />
+    <ClCompile Include="TestObject.cpp" />
+    <ClCompile Include="TestObjectInheritance.cpp" />
+    <ClCompile Include="TestPlSqlTables.cpp" />
+    <ClCompile Include="TestPool.cpp" />
+    <ClCompile Include="TestQueue.cpp" />
+    <ClCompile Include="TestReference.cpp" />
+    <ClCompile Include="TestReportedIssues.cpp" />
+    <ClCompile Include="TestReturningInto.cpp" />
+    <ClCompile Include="TestRowId.cpp" />
+    <ClCompile Include="TestScrollabeCursor.cpp" />
+    <ClCompile Include="TestThread.cpp" />
+    <ClCompile Include="TestThreadKey.cpp" />
+    <ClCompile Include="TestTimestamp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -62,11 +136,11 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -78,11 +152,11 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>X64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <PreprocessorDefinitions>X64;__DEBUG;_CONSOLE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -93,10 +167,11 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE; OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -109,10 +184,11 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PreprocessorDefinitions>X64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64;NDEBUG;_CONSOLE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

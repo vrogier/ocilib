@@ -18,17 +18,20 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "format.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "exception.h"
+#include "interval.h"
+#include "macros.h"
+#include "number.h"
+#include "reference.h"
+#include "timestamp.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ParseSqlFmt
+ * ParseSqlFmt
  * --------------------------------------------------------------------------------------------- */
 
-int OCI_ParseSqlFmt
+int FormatParseSql
 (
     OCI_Statement *stmt,
     otext         *buf,
@@ -36,13 +39,20 @@ int OCI_ParseSqlFmt
     va_list       *pargs
 )
 {
-    int size        = 0;
-    int len         = 0;
-    boolean quote   = FALSE;
-    otext *pb       = buf;
-    const otext *pf = format;
+    ENTER_FUNC
+    (
+        /* returns */ int, 0,
+        /* context */ OCI_IPC_STATEMENT, stmt
+    )
 
-    OCI_CHECK(NULL == format, 0);
+    int size = 0;
+    int          len   = 0;
+    boolean      quote = FALSE;
+    otext       *pb    = buf;
+    const otext *pf    = format;
+
+    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CHECK_PTR(OCI_IPC_STRING,    format)
 
     for (; *pf; pf++)
     {
@@ -80,7 +90,7 @@ int OCI_ParseSqlFmt
             {
                 const otext *str = (const otext *) va_arg(*pargs, const otext *);
 
-                if (OCI_STRING_VALID(str))
+                if (IS_STRING_VALID(str))
                 {
                     len = (int) ostrlen(str);
 
@@ -123,14 +133,14 @@ int OCI_ParseSqlFmt
                     if (date)
                     {
                         len = osprintf(pb, OCI_SIZE_DATE,
-                                        OTEXT("to_date('%02i%02i%04i%02i%02i%02i',")
-                                        OTEXT("'DDMMYYYYHH24MISS')"),
-                                        date->handle->OCIDateDD,
-                                        date->handle->OCIDateMM,
-                                        date->handle->OCIDateYYYY,
-                                        date->handle->OCIDateTime.OCITimeHH,
-                                        date->handle->OCIDateTime.OCITimeMI,
-                                        date->handle->OCIDateTime.OCITimeSS);
+                                       OTEXT("to_date('%02i%02i%04i%02i%02i%02i',")
+                                       OTEXT("'DDMMYYYYHH24MISS')"),
+                                       date->handle->OCIDateDD,
+                                       date->handle->OCIDateMM,
+                                       date->handle->OCIDateYYYY,
+                                       date->handle->OCIDateTime.OCITimeHH,
+                                       date->handle->OCIDateTime.OCITimeMI,
+                                       date->handle->OCIDateTime.OCITimeSS);
                     }
                     else
                     {
@@ -154,12 +164,9 @@ int OCI_ParseSqlFmt
                     if (tmsp)
                     {
                         otext str_ff[12];
-                        int yy, mm, dd, hh, mi, ss, ff;
+                        int   yy = 0, mm = 0, dd = 0, hh = 0, mi = 0, ss = 0, ff = 0;
 
-                        yy = mm = dd = mi = hh = ss = ff = 0;
-
-                        OCI_TimestampGetDateTime(tmsp, &yy, &mm, &dd,
-                                                 &hh, &mi, &ss, &ff);
+                        CHECK(TimestampGetDateTime(tmsp, &yy, &mm, &dd,  &hh, &mi, &ss, &ff))
 
                         if (ff > 0)
                         {
@@ -173,9 +180,9 @@ int OCI_ParseSqlFmt
                         str_ff[2] = 0;
 
                         len = osprintf(pb, OCI_SIZE_TIMESTAMP,
-                                        OTEXT("to_timestamp('%02i%02i%04i%02i%02i%02i%s',")
-                                        OTEXT("'DDMMYYYYHH24MISSFF')"),
-                                        dd, mm, yy, hh, mi, ss, str_ff);
+                                       OTEXT("to_timestamp('%02i%02i%04i%02i%02i%02i%s',")
+                                       OTEXT("'DDMMYYYYHH24MISSFF')"),
+                                       dd, mm, yy, hh, mi, ss, str_ff);
                     }
                     else
                     {
@@ -200,7 +207,7 @@ int OCI_ParseSqlFmt
 
                 if (itv)
                 {
-                    OCI_IntervalToText(itv, 3, 3, (int) osizeof(temp)- 1, temp);
+                    CHECK(IntervalToString(itv, 3, 3, (int) osizeof(temp)- 1, temp))
 
                     len = (int) ostrlen(temp);
 
@@ -296,7 +303,7 @@ int OCI_ParseSqlFmt
                 else if (OTEXT('u') == *pf)
                 {
                     len = (int) osprintf(temp, (int) osizeof(temp) - 1, OTEXT("%hu"), va_arg(*pargs, unsigned int));
-                }           
+                }
                 else
                 {
                     len = 0;
@@ -330,7 +337,7 @@ int OCI_ParseSqlFmt
 
                 temp[0] = 0;
 
-                OCI_NumberToText(va_arg(*pargs, OCI_Number*), NULL, 128, temp);
+                CHECK(NumberToString(va_arg(*pargs, OCI_Number*), NULL, 128, temp))
                 len = (int) ostrlen(temp);
 
                 if (buf && (len > 0))
@@ -350,7 +357,7 @@ int OCI_ParseSqlFmt
 
                 if (ref)
                 {
-                    OCI_RefToText(ref, (unsigned int) osizeof(temp) - 1, temp);
+                    CHECK(ReferenceToString( ref, (unsigned int) osizeof(temp) - 1, temp))
 
                     len = (int) ostrlen(temp);
 
@@ -373,9 +380,9 @@ int OCI_ParseSqlFmt
             }
             default:
             {
-                OCI_ExceptionParsingToken(stmt->con, stmt, *pf);
+                THROW(ExceptionParsingToken, *pf)
 
-                return 0;
+                break;
             }
         }
 
@@ -392,5 +399,7 @@ int OCI_ParseSqlFmt
         *pb = 0;
     }
 
-    return size;
+    SET_RETVAL(size)
+
+    EXIT_FUNC()
 }

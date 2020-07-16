@@ -18,25 +18,28 @@
  * limitations under the License.
  */
 
-#include "ocilib_internal.h"
+#include "callback.h"
 
-/* ********************************************************************************************* *
- *                             PRIVATE FUNCTIONS
- * ********************************************************************************************* */
+#include "event.h"
+#include "list.h"
+#include "macros.h"
+#include "resultset.h"
+#include "strings.h"
+#include "timestamp.h"
 
 typedef struct HAEventParams
 {
-    OCIServer *srvhp;
+    OCIServer   *srvhp;
     OCIDateTime *dthp;
-    ub4 source;
-    ub4 event;
+    ub4          source;
+    ub4          event;
 } HAEventParams;
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ProcInBind
+ * ProcInBind
  * --------------------------------------------------------------------------------------------- */
 
-sb4 OCI_ProcInBind
+sb4 CallbackInBind
 (
     dvoid   *ictxp,
     OCIBind *bindp,
@@ -48,9 +51,15 @@ sb4 OCI_ProcInBind
     dvoid  **indp
 )
 {
+    ENTER_FUNC
+    (
+        /* returns */ sb4, OCI_ERROR,
+        /* context */ OCI_IPC_BIND, ictxp
+    )
+
     OCI_Bind * bnd = (OCI_Bind *) ictxp;
-    sb2       *ind = (sb2 *) bnd ? bnd->buffer.inds : NULL;
-    ub4        i   = 0;
+    sb2 *ind = (sb2 *) bnd ? bnd->buffer.inds : NULL;
+    ub4  i   = 0;
 
     /* those checks may be not necessary but they keep away compilers warning
        away if the warning level is set to maximum !
@@ -61,8 +70,7 @@ sb4 OCI_ProcInBind
 
     /* check objects and bounds */
 
-    OCI_CHECK(NULL == bnd, OCI_ERROR)
-    OCI_CHECK(iter >= bnd->buffer.count, OCI_ERROR)
+    CHECK_PTR(OCI_IPC_BIND, bnd)
 
     /* indicators must be set to -1 depending on data type,
        so let's do it for all */
@@ -87,14 +95,16 @@ sb4 OCI_ProcInBind
     *indp   = (dvoid *) bnd->buffer.inds;
     *piecep = (ub1    ) OCI_ONE_PIECE;
 
-    return OCI_CONTINUE;
+    SET_RETVAL(OCI_CONTINUE)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ProcOutBind
+ * ProcOutBind
  * --------------------------------------------------------------------------------------------- */
 
-sb4 OCI_ProcOutBind
+sb4 CallbackOutBind
 (
     dvoid   *octxp,
     OCIBind *bindp,
@@ -106,13 +116,17 @@ sb4 OCI_ProcOutBind
     dvoid  **indp,
     ub2    **rcodep
 )
-{        
-    OCI_Bind      *bnd  = (OCI_Bind *)octxp;
+{
+    ENTER_FUNC
+    (
+        /* returns */ sb4, OCI_ERROR,
+        /* context */ OCI_IPC_BIND, octxp
+    )
+
+    OCI_Bind      *bnd = (OCI_Bind *)octxp;
     OCI_Define    *def  = NULL;
     OCI_Resultset *rs   = NULL;
     ub4            rows = 0;
-
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
 
     /* those checks may be not necessary but they keep away compilers warning
        away if the warning level is set to maximum !
@@ -120,12 +134,9 @@ sb4 OCI_ProcOutBind
 
     OCI_NOT_USED(bindp)
 
-    /* check objects and bounds */
+    /* check objects  */
 
-    OCI_CHECK(NULL == bnd, OCI_ERROR)
-    OCI_CHECK(iter >= bnd->buffer.count, OCI_ERROR)
-
-    OCI_CALL_CONTEXT_SET_FROM_STMT(bnd->stmt)
+    CHECK_PTR(OCI_IPC_BIND, bnd)
 
     /* update statement status */
 
@@ -140,101 +151,70 @@ sb4 OCI_ProcOutBind
 
         /* allocate resultset handles array */
 
-        OCI_ALLOCATE_DATA(OCI_IPC_RESULTSET_ARRAY, bnd->stmt->rsts, bnd->stmt->nb_rs)
+        ALLOC_DATA(OCI_IPC_RESULTSET_ARRAY, bnd->stmt->rsts, bnd->stmt->nb_rs)
 
         /* create resultset as needed */
 
-        if (OCI_STATUS && !bnd->stmt->rsts[iter])
+        if (NULL == bnd->stmt->rsts[iter])
         {
-            OCI_GET_ATTRIB(OCI_HTYPE_BIND, OCI_ATTR_ROWS_RETURNED, bnd->buffer.handle, &rows, NULL)
+            CHECK_ATTRIB_GET
+            (
+                OCI_HTYPE_BIND, OCI_ATTR_ROWS_RETURNED,
+                bnd->buffer.handle, &rows, NULL,
+                bnd->stmt->con->err
+            )
 
-            if (OCI_STATUS)
-            {
-                bnd->stmt->rsts[iter] = OCI_ResultsetCreate(bnd->stmt, rows);
+            bnd->stmt->rsts[iter] = ResultsetCreate(bnd->stmt, rows);
 
-                if (bnd->stmt->rsts[iter])
-                {
-                    bnd->stmt->rsts[iter]->row_count = rows;
-                }
-            }
+            CHECK_NULL(bnd->stmt->rsts[iter])
+
+            bnd->stmt->rsts[iter]->row_count = rows;
         }
     }
 
-    OCI_CHECK(NULL == bnd->stmt->rsts, OCI_ERROR)
+    CHECK_NULL(bnd->stmt->rsts)
 
     rs = bnd->stmt->rsts[iter];
 
-    OCI_CHECK(NULL == rs, OCI_ERROR)
+    CHECK_NULL(rs)
 
     /* Let's Oracle update its buffers */
 
-    if (OCI_STATUS)
+    def = &rs->defs[bnd->dynpos];
+
+    switch (def->col.datatype)
     {
-        /* update pointers contents */
-
-        def = &rs->defs[bnd->dynpos];
-
-        switch (def->col.datatype)
+        case OCI_CDT_CURSOR:
+        case OCI_CDT_TIMESTAMP:
+        case OCI_CDT_INTERVAL:
+        case OCI_CDT_LOB:
+        case OCI_CDT_FILE:
         {
-            case OCI_CDT_CURSOR:
-            case OCI_CDT_TIMESTAMP:
-            case OCI_CDT_INTERVAL:
-            case OCI_CDT_LOB:
-            case OCI_CDT_FILE:
-            {
-                *bufpp = def->buf.data[index];
-                break;
-            }
-            default:
-            {
-                *bufpp = (((ub1*)def->buf.data) + (size_t) (def->col.bufsize * index));
-                break;
-            }
+            *bufpp = def->buf.data[index];
+            break;
         }
-
-        *alenp  = (ub4   *) (((ub1 *) def->buf.lens) + (size_t) ((ub4) def->buf.sizelen * index));
-        *indp   = (dvoid *) (((ub1 *) def->buf.inds) + (size_t) ((ub4) sizeof(sb2)      * index));
-        *piecep = (ub1    ) OCI_ONE_PIECE;
-        *rcodep = (ub2   *) NULL;
+        default:
+        {
+            *bufpp = (((ub1*)def->buf.data) + (size_t) (def->col.bufsize * index));
+            break;
+        }
     }
 
-    return (OCI_STATUS ? OCI_CONTINUE : OCI_ERROR);
+    *alenp  = (ub4   *) (((ub1 *) def->buf.lens) + (size_t) ((ub4) def->buf.sizelen * index));
+    *indp   = (dvoid *) (((ub1 *) def->buf.inds) + (size_t) ((ub4) sizeof(sb2)      * index));
+    *piecep = (ub1    ) OCI_ONE_PIECE;
+    *rcodep = (ub2   *) NULL;
+
+    SET_RETVAL(OCI_CONTINUE)
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ProcNotifyMessages
+ * ProcNotifyMessages
  * --------------------------------------------------------------------------------------------- */
 
-ub4 OCI_ProcNotifyMessages
-(
-    void            *ctx,
-    OCISubscription *subscrhp,
-    void            *payload,
-    ub4              paylen,
-    void            *desc,
-    ub4              mode
-)
-{
-    OCI_Dequeue *dequeue = (OCI_Dequeue *)ctx;
-
-    OCI_NOT_USED(paylen)
-    OCI_NOT_USED(payload)
-    OCI_NOT_USED(mode)
-    OCI_NOT_USED(subscrhp)
-    OCI_NOT_USED(desc)
-
-    OCI_CHECK(NULL == dequeue, OCI_SUCCESS)
-  
-    dequeue->callback(dequeue);
-    
-    return OCI_SUCCESS;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OCI_ProcNotifyChanges
- * --------------------------------------------------------------------------------------------- */
-
-ub4 OCI_ProcNotifyChanges
+ub4 CallbackNotifyMessages
 (
     void            *oci_ctx,
     OCISubscription *subscrhp,
@@ -244,31 +224,77 @@ ub4 OCI_ProcNotifyChanges
     ub4              mode
 )
 {
-    OCI_Subscription *sub = (OCI_Subscription *)oci_ctx;
-    ub4 type = 0;
+    ENTER_FUNC
+    (
+        /* returns */ ub4, OCI_SUCCESS,
+        /* context */ OCI_IPC_DEQUEUE, oci_ctx
+    )
 
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    OCI_Dequeue *dequeue = (OCI_Dequeue *)oci_ctx;
+
+    OCI_NOT_USED(paylen)
+    OCI_NOT_USED(payload)
+    OCI_NOT_USED(mode)
+    OCI_NOT_USED(subscrhp)
+    OCI_NOT_USED(desc)
+
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+
+    dequeue->callback(dequeue);
+
+    SET_RETVAL(OCI_SUCCESS)
+
+    EXIT_FUNC()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * ProcNotifyChanges
+ * --------------------------------------------------------------------------------------------- */
+
+ub4 CallbackNotifyChanges
+(
+    void            *oci_ctx,
+    OCISubscription *subscrhp,
+    void            *payload,
+    ub4              paylen,
+    void            *desc,
+    ub4              mode
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ ub4, OCI_SUCCESS,
+        /* context */ OCI_IPC_NOTIFY, oci_ctx
+    )
+
+    OCI_Subscription* sub = (OCI_Subscription*)oci_ctx;
+
+    ub4 type = 0;
 
     OCI_NOT_USED(paylen)
     OCI_NOT_USED(payload)
     OCI_NOT_USED(mode)
     OCI_NOT_USED(subscrhp)
 
-    OCI_CHECK(NULL == sub, OCI_SUCCESS)
+    CHECK_PTR(OCI_IPC_VOID, sub)
 
-    OCI_CALL_CONTEXT_SET_FROM_ERR(sub->err)
-
-    OCI_EventReset(&sub->event);
+    CHECK(EventReset(&sub->event))
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* get database that generated the notification */
 
-    OCI_GetStringAttribute(sub->con, desc, OCI_DTYPE_CHDES,    OCI_ATTR_CHDES_DBNAME, &sub->event.dbname, &sub->event.dbname_size);
+    CHECK(StringGetAttribute(sub->con, desc, OCI_DTYPE_CHDES, OCI_ATTR_CHDES_DBNAME,
+                             &sub->event.dbname, &sub->event.dbname_size))
 
     /* get notification type */
 
-    OCI_GET_ATTRIB(OCI_DTYPE_CHDES, OCI_ATTR_CHDES_NFYTYPE, desc, &type, NULL)
+    CHECK_ATTRIB_GET
+    (
+        OCI_DTYPE_CHDES, OCI_ATTR_CHDES_NFYTYPE,
+        desc, &type, NULL,
+        sub->err
+    )
 
     switch(type)
     {
@@ -309,7 +335,12 @@ ub4 OCI_ProcNotifyChanges
 
         /* get collection of modified tables */
 
-        OCI_GET_ATTRIB(OCI_DTYPE_CHDES, OCI_ATTR_CHDES_TABLE_CHANGES, desc, &tables, NULL)
+        CHECK_ATTRIB_GET
+        (
+            OCI_DTYPE_CHDES, OCI_ATTR_CHDES_TABLE_CHANGES,
+            desc, &tables, NULL,
+            sub->err
+        )
 
         if (tables)
         {
@@ -321,7 +352,7 @@ ub4 OCI_ProcNotifyChanges
 
             /* get number of tables in the collection */
 
-            OCI_EXEC(OCICollSize(sub->env, sub->err, tables, &nb_tables))
+            CHECK_OCI(sub->err, OCICollSize, sub->env, sub->err, tables, &nb_tables)
 
             for (sb4 i = 0; i < nb_tables; i++)
             {
@@ -341,15 +372,28 @@ ub4 OCI_ProcNotifyChanges
 
                 /* get table element */
 
-                OCI_EXEC(OCICollGetElem(sub->env, sub->err,  tables, i, &tbl_exist, (dvoid**) (dvoid*) &tbl_elem, (dvoid**) &tbl_ind))
+                CHECK_OCI
+                (
+                    sub->err,
+                    OCICollGetElem,
+                    sub->env, sub->err,  tables, i, &tbl_exist,
+                    (dvoid**) (dvoid*) &tbl_elem, (dvoid**) &tbl_ind
+                )
 
                 /* get table name */
 
-                OCI_GetStringAttribute(sub->con, *tbl_elem, OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_NAME, &sub->event.objname, &sub->event.objname_size);
+                CHECK(StringGetAttribute(sub->con, *tbl_elem, OCI_DTYPE_TABLE_CHDES,
+                                         OCI_ATTR_CHDES_TABLE_NAME, &sub->event.objname,
+                                         &sub->event.objname_size))
 
                 /* get table modification type */
 
-                OCI_GET_ATTRIB(OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_OPFLAGS, *tbl_elem, &sub->event.op, NULL)
+                CHECK_ATTRIB_GET
+                (
+                    OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_OPFLAGS,
+                    *tbl_elem, &sub->event.op, NULL,
+                    sub->err
+                )
 
                 sub->event.op = sub->event.op & (~OCI_OPCODE_ALLROWS);
                 sub->event.op = sub->event.op & (~OCI_OPCODE_ALLOPS);
@@ -362,7 +406,12 @@ ub4 OCI_ProcNotifyChanges
 
                     /* get collection of modified rows */
 
-                    OCI_GET_ATTRIB(OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_ROW_CHANGES, *tbl_elem, &rows, NULL)
+                    CHECK_ATTRIB_GET
+                    (
+                        OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_ROW_CHANGES,
+                        *tbl_elem, &rows, NULL,
+                        sub->err
+                    )
 
                     if (rows)
                     {
@@ -372,7 +421,13 @@ ub4 OCI_ProcNotifyChanges
 
                         /* get number of rows */
 
-                        OCI_EXEC(OCICollSize(sub->env, sub->err, rows, &nb_rows))
+                        CHECK_OCI
+                        (
+                            sub->err,
+                            OCICollSize,
+                            sub->env, sub->err,
+                            rows, &nb_rows
+                        )
 
                         for (sb4 j = 0; j < nb_rows; j++)
                         {
@@ -385,18 +440,28 @@ ub4 OCI_ProcNotifyChanges
 
                             /* get row element */
 
-                            OCI_EXEC
+                            CHECK_OCI
                             (
-                                OCICollGetElem(sub->env, sub->err, rows, j, &row_exist, (dvoid**) (dvoid*) &row_elem, (dvoid**) &row_ind)
+                                sub->err,
+                                OCICollGetElem,
+                                sub->env, sub->err, rows, j, &row_exist,
+                                (dvoid**) (dvoid*) &row_elem, (dvoid**) &row_ind
                             )
 
                             /* get rowid  */
 
-                            OCI_GetStringAttribute(sub->con, *row_elem, OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_ROWID, &sub->event.rowid, &sub->event.rowid_size);
+                            CHECK(StringGetAttribute(sub->con, *row_elem, OCI_DTYPE_ROW_CHDES,
+                                                     OCI_ATTR_CHDES_ROW_ROWID, &sub->event.rowid,
+                                                     &sub->event.rowid_size))
 
                             /* get opcode  */
-                   
-                            OCI_GET_ATTRIB(OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_OPFLAGS, *row_elem, &sub->event.op, NULL)
+
+                            CHECK_ATTRIB_GET
+                            (
+                                OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_OPFLAGS,
+                                *row_elem, &sub->event.op, NULL,
+                                sub->err
+                            )
 
                             sub->handler(&sub->event);
                         }
@@ -415,23 +480,24 @@ ub4 OCI_ProcNotifyChanges
         sub->handler(&sub->event);
     }
 
+    SET_RETVAL(OCI_SUCCESS)
+
 #else
 
-    OCI_NOT_USED(ctx)
     OCI_NOT_USED(desc)
     OCI_NOT_USED(subscrhp)
     OCI_NOT_USED(type)
 
 #endif
 
-    return OCI_SUCCESS;
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ProcFailOver
+ * ProcFailOver
  * --------------------------------------------------------------------------------------------- */
 
-sb4 OCI_ProcFailOver
+sb4 CallbackFailOver
 (
     dvoid *svchp,
     dvoid *envhp,
@@ -440,101 +506,142 @@ sb4 OCI_ProcFailOver
     ub4    fo_event
 )
 {
-    OCI_Connection *cn = (OCI_Connection *) fo_ctx;
-    sb4 ret = OCI_FOC_OK;
+    ENTER_FUNC
+    (
+        /* returns */ sb4, OCI_FOC_OK,
+        /* context */ OCI_IPC_CONNECTION, fo_ctx
+    )
+
+    OCI_Connection* con = (OCI_Connection*)fo_ctx;
 
     OCI_NOT_USED(envhp)
     OCI_NOT_USED(svchp)
 
-    if (cn && cn->taf_handler)
-    {
-        ret = (sb4) cn->taf_handler(cn, fo_type, fo_event);
-    }
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    return ret;
+    CHECK_NULL(con->taf_handler)
+
+    SET_RETVAL((sb4)con->taf_handler(con, fo_type, fo_event))
+
+    EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ProcHAEventInvoke
+* ProcHAEventInvoke
 * --------------------------------------------------------------------------------------------- */
 
-void OCI_ProcHAEventInvoke
+void ProcHAEventInvoke
 (
     OCI_Connection *con,
     HAEventParams * ha_params
 )
 {
-    OCI_Timestamp *tmsp = NULL;
+    ENTER_VOID
+    (
+        /* context */ OCI_IPC_CONNECTION, con
+    )
 
-    if (con && (con->svr == ha_params->srvhp))
+    OCI_Timestamp* tmsp = NULL;
+
+    CHECK_PTR(OCI_IPC_CONNECTION, con)
+
+    if (NULL != con && con->svr == ha_params->srvhp)
     {
-        tmsp = OCI_TimestampInit(NULL, tmsp, ha_params->dthp, OCI_TIMESTAMP);
+        tmsp = TimestampInitialize(NULL, tmsp, ha_params->dthp, OCI_TIMESTAMP);
 
-        OCILib.ha_handler(con, (unsigned int)ha_params->source, (unsigned int)ha_params->event, tmsp);
+        CHECK_NULL(tmsp)
+
+        Env.ha_handler(con, (unsigned int)ha_params->source, (unsigned int)ha_params->event, tmsp);
     }
 
-    if (tmsp)
+    if (NULL != tmsp)
     {
         tmsp->hstate = OCI_OBJECT_FETCHED_DIRTY;
-        OCI_TimestampFree(tmsp);
-    }          
+        TimestampFree(tmsp);
+    }
+
+    EXIT_VOID()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ProcHAEvent
+ * ProcHAEvent
  * --------------------------------------------------------------------------------------------- */
 
-void OCI_ProcHAEvent
+void CallbackHAEvent
 (
-    dvoid     *evtctx,
-    dvoid     *eventptr
+    dvoid *evtctx,
+    dvoid *eventptr
 )
 {
-    OCI_CALL_DECLARE_CONTEXT(TRUE)
+    ENTER_VOID
+    (
+        /* context */ OCI_IPC_VOID, &Env
+    )
 
-    OCI_NOT_USED(evtctx)
+    CHECK_PTR(OCI_IPC_VOID, evtctx)
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    if (!OCILib.ha_handler)
-    {
-        return;    
-    }    
+    CHECK_PTR(OCI_IPC_VOID, Env.ha_handler)
 
-    if (OCILib.version_runtime >= OCI_10_2)
-    {       
+    if (Env.version_runtime >= OCI_10_2)
+    {
         HAEventParams params;
 
         memset(&params, 0, sizeof(params));
 
-        OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVFIRST, (OCIEvent *)eventptr, &params.srvhp, NULL)
+        CHECK_ATTRIB_GET
+        (
+            OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVFIRST,
+            (OCIEvent *)eventptr, &params.srvhp, NULL,
+            Env.err
+        )
 
-        while (OCI_STATUS && params.srvhp)
-        {   
+        while (params.srvhp)
+        {
             params.dthp   = NULL;
             params.event  = OCI_HA_STATUS_DOWN;
             params.source = OCI_HA_SOURCE_INSTANCE;
 
             /* get event timestamp */
 
-            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_TIMESTAMP, params.srvhp, &params.dthp, NULL)
+            CHECK_ATTRIB_GET
+            (
+                OCI_HTYPE_SERVER, OCI_ATTR_HA_TIMESTAMP,
+                params.srvhp, &params.dthp, NULL,
+                Env.err
+            )
 
             /* get status */
 
-            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_STATUS, params.srvhp, &params.event, NULL)
+            CHECK_ATTRIB_GET
+            (
+                OCI_HTYPE_SERVER, OCI_ATTR_HA_STATUS,
+                params.srvhp, &params.event, NULL,
+                Env.err
+            )
 
             /* get source */
 
-            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SOURCE, params.srvhp, &params.source, NULL)
+            CHECK_ATTRIB_GET
+            (
+                OCI_HTYPE_SERVER, OCI_ATTR_HA_SOURCE,
+                params.srvhp, &params.source, NULL,
+                Env.err
+            )
 
             /* notify all related connections */
 
-            if (OCI_STATUS)
-            {
-                OCI_ListForEachWithParam(OCILib.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM)OCI_ProcHAEventInvoke);
-            }
- 
-            OCI_GET_ATTRIB(OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT, (OCIEvent *)eventptr, &params.srvhp, NULL)
+            ListForEachWithParam(Env.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM) ProcHAEventInvoke);
+
+            /* get next server */
+
+            CHECK_ATTRIB_GET
+            (
+                OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT,
+                eventptr, &params.srvhp, NULL,
+                Env.err
+            )
         }
     }
 
@@ -544,4 +651,5 @@ void OCI_ProcHAEvent
 
 #endif
 
+    EXIT_VOID()
 }

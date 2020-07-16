@@ -1,8 +1,6 @@
 ﻿/**
  @mainpage Introduction
 
- @image html logo-160x120.png
-
  @section Intro Description
 
  OCILIB is an open source and portable Oracle C and C++ Driver that delivers really fast
@@ -19,7 +17,7 @@
 
  @section Version Version information
 
-Current version :  <b>4.6.4</b>
+Current version :  <b>4.7.0</b>
 
  @section Features Main features
 

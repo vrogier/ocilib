@@ -172,4 +172,9 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 *.opendb
+
+# Unit test files
 /tests/packages/*.*
+testlog.manifest
+*.testlog
+/nuget/*.nupkg

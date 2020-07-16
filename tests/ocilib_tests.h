@@ -8,11 +8,15 @@
 #include <string>
 
 #ifdef _UNICODE
+    #ifndef OCI_CHARSET_WIDE
     #define OCI_CHARSET_WIDE
+    #endif
     #define TO_STRING std::to_wstring
     using ostring = std::wstring;
 #else
+    #ifndef OCI_CHARSET_ANSI
     #define OCI_CHARSET_ANSI
+    #endif
     #define TO_STRING std::to_string
     using ostring = std::string;
 #endif
@@ -20,12 +24,13 @@
 #define OCI_API __stdcall
 #include "../include/ocilib.h"
 
-#define DBS OTEXT("")
+#define DBS OTEXT("db18c")
 #define USR OTEXT("usr")
 #define PWD OTEXT("pwd")
 #define HOME OTEXT("")
 #define PWD_WRONG OTEXT("pwd_wrong")
 #define ARRAY_SIZE 10
+#define STRING_SIZE 20
 #define NLS_LANGUAGE_SUNDAY_NAME OTEXT("Dimanche")
 
 #include "mutex"
@@ -48,17 +53,9 @@ struct Context
 };
 
 
-#ifdef _MSC_VER
-
-#if defined(OCI_CHARSET_WIDE)
-#pragma comment(lib, "../lib64/ocilibw.lib")
-#elif defined(OCI_CHARSET_ANSI)
-#pragma comment(lib, "../lib64/ociliba.lib")
-#endif
-#endif
-
 #ifndef _WINDOWS
 #include <unistd.h>
 #define Sleep(x) usleep(x * 1000);
 #endif
 
+void ExecDML(ostring dml);
