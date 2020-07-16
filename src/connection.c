@@ -1023,7 +1023,6 @@ boolean ConnectionDispose
         /* context */ OCI_IPC_CONNECTION, con
     )
 
-    OCI_Error* err = NULL;
     unsigned int i = 0;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
