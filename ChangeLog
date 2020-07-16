@@ -1,10 +1,10 @@
-2020-07-09 Version 4.7.0 Vincent Rogier vince.rogier@ocilib.net
+2020-07-16 Version 4.7.0 Vincent Rogier vince.rogier@ocilib.net
 
     * Enhancements (C API)
     
         - Library internal design changes (preparing v5.0.0)
             * OCILIB code base has been layered in 2 distinct API layers:
-                - Internal API which has now its own separate design
+                - Internal API that has now its own separate design
                     - v4.7.0 internal API, while matching the public one in this version, has most of its methods renamed
                     - It will evolve differently, preparing new public APIs for future versions
                 - Public APIs exposing features to clients
