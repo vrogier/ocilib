@@ -12,10 +12,19 @@
                     - v5.0.0 will expose a different API
                     - Both will use same internal API
                 - Contextual error management enhancements
-                    - As internal APIs cannot be called from outside the library, last error management has been simplified and improved             
-            * Public headers reorganization:
-                * Broke up ocilib.h content into multiple headers located in /include/ocilibc/
-                * Broke up C++ headers content into multiple headers located in /include/ocilibcpp/            
+                    - As internal APIs cannot be called from outside the library, last error management has been simplified and improved    
+                - Enhancements on internal methods implementation:
+                    - Since v3.0.0 (back in 2008), OCILIB methods implementations are standardized to follow the same single exit point pattern
+                    - Standardized entry point checks and exit points are based on extentive macros usage
+                    - But the control flow was handled by a status variable leading to continuous and nested checks
+                    - With 4.7.0, no more "if (STATUS) {...}" in the code.
+                    - Instead, in case of errors, code directly jumps to exit points that can have cleanup code sections.
+                    - See it as try {...} finally{...}  
+                    - Thus, code is now very sequential, much easier to read, with no nested error management/branching.
+                    
+        - Public headers reorganization:
+            * Broke up ocilib.h content into multiple headers located in /include/ocilibc/
+            * Broke up C++ headers content into multiple headers located in /include/ocilibcpp/            
     
         - Enhanced Error handing:
             * Updated OCI_Cleanup(): if there are any unfreed allocated bytes by the library itself (e.g. OCILIB user objects not freed)
