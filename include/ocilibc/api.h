@@ -31,8 +31,8 @@
  *  - Oracle Streams - Advanced Queuing User's Guide
  */
 
-#ifndef OCILIB_API_H_INCLUDED
-#define OCILIB_API_H_INCLUDED
+#ifndef OCILIB_OCILIBC_API_H_INCLUDED
+#define OCILIB_OCILIBC_API_H_INCLUDED
 
 #include "ocilibc/types.h"
 
@@ -17419,4 +17419,4 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
 * @} OcilibCApi
 */
 
-#endif /* OCILIB_API_H_INCLUDED */
+#endif /* OCILIB_OCILIBC_API_H_INCLUDED */
