@@ -27,7 +27,7 @@
 #include "list.h"
 #include "macros.h"
 #include "statement.h"
-#include "strings.h"
+#include "stringutils.h"
 #include "timestamp.h"
 #include "transaction.h"
 #include "typeinfo.h"
@@ -1941,7 +1941,7 @@ boolean ConnectionEnableServerOutput
         OCI_Bind* bnd = StatementGetBind(con->svopt->stmt, 1);
         CHECK_NULL(bnd);
 
-        CHECK(BindSetNull(bnd))
+        CHECK(OcilibBindSetNull(bnd))
     }
 
     CHECK(StatementExecute(con->svopt->stmt))

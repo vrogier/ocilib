@@ -23,7 +23,7 @@
 #include "array.h"
 #include "environment.h"
 #include "macros.h"
-#include "strings.h"
+#include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * DateInit
@@ -180,8 +180,8 @@ OCI_Date ** DateCreateArray
 
     CHECK_INITIALIZED()
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0,
-                      sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0,
+                            sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
 
     CHECK_NULL(arr)
 
@@ -207,7 +207,7 @@ boolean DateFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, dates)
 
-    SET_RETVAL(ArrayFreeFromHandles((void**)dates))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void**)dates))
 
     EXIT_FUNC()
 }

@@ -25,7 +25,7 @@
 #include "macros.h"
 #include "memory.h"
 #include "object.h"
-#include "strings.h"
+#include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * MessageCreate
@@ -106,7 +106,7 @@ boolean MessageFree
 
     if (NULL != msg->sender)
     {
-        AgentFree(msg->sender);
+        OcilibAgentFree(msg->sender);
     }
 
     /* free internal OCI_Object handle if payload is not RAW */
@@ -920,7 +920,7 @@ OCI_Agent * MessageGetSender
 
     if (NULL != handle)
     {
-        msg->sender = AgentInitialize(msg->typinf->con, msg->sender, handle, NULL, NULL);
+        msg->sender = OcilibAgentInitialize(msg->typinf->con, msg->sender, handle, NULL, NULL);
         CHECK_NULL(msg->sender)
     }
 

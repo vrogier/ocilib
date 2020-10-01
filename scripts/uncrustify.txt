@@ -79,8 +79,8 @@ c:\Perso\Git\ocilib\src\resultset.c
 c:\Perso\Git\ocilib\src\resultset.h
 c:\Perso\Git\ocilib\src\statement.c
 c:\Perso\Git\ocilib\src\statement.h
-c:\Perso\Git\ocilib\src\strings.c
-c:\Perso\Git\ocilib\src\strings.h
+c:\Perso\Git\ocilib\src\stringutils.c
+c:\Perso\Git\ocilib\src\stringutils.h
 c:\Perso\Git\ocilib\src\subscription.c
 c:\Perso\Git\ocilib\src\subscription.h
 c:\Perso\Git\ocilib\src\thread.c

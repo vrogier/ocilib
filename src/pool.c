@@ -23,7 +23,7 @@
 #include "connection.h"
 #include "list.h"
 #include "macros.h"
-#include "strings.h"
+#include "stringutils.h"
 
 static unsigned int PoolTypeValues[] =
 {

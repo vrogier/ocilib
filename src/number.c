@@ -23,7 +23,7 @@
 #include "array.h"
 #include "environment.h"
 #include "macros.h"
-#include "strings.h"
+#include "stringutils.h"
 
 typedef struct MagicNumber
 {
@@ -690,8 +690,8 @@ OCI_Number ** NumberCreateArray
 
     CHECK_INITIALIZED()
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_NUMERIC, OCI_NUM_NUMBER,
-                      sizeof(OCINumber), sizeof(OCI_Number), 0, NULL);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_NUMERIC, OCI_NUM_NUMBER,
+                            sizeof(OCINumber), sizeof(OCI_Number), 0, NULL);
 
     CHECK_NULL(arr)
 
@@ -717,7 +717,7 @@ boolean NumberFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, nummers)
 
-    SET_RETVAL(ArrayFreeFromHandles((void**)nummers))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void**)nummers))
 
     EXIT_FUNC()
 }

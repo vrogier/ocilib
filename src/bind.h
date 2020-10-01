@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Bind* BindCreate
+OCI_Bind* OcilibBindCreate
 (
     OCI_Statement* stmt,
     void         * data,
@@ -37,129 +37,129 @@ OCI_Bind* BindCreate
     unsigned int   nbelem
 );
 
-boolean BindFree
+boolean OcilibBindFree
 (
     OCI_Bind* bnd
 );
 
-int BindGetIndex
+int OcilibBindGetIndex
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-boolean BindSetNullIndicator
+boolean OcilibBindSetNullIndicator
 (
     OCI_Bind   * bnd,
     unsigned int position,
     sb2          value
 );
 
-const otext* BindGetName
+const otext* OcilibBindGetName
 (
     OCI_Bind* bnd
 );
 
-unsigned int BindGetType
+unsigned int OcilibBindGetType
 (
     OCI_Bind* bnd
 );
 
-unsigned int BindGetSubtype
+unsigned int OcilibBindGetSubtype
 (
     OCI_Bind* bnd
 );
 
-unsigned int BindGetDataCount
+unsigned int OcilibBindGetDataCount
 (
     OCI_Bind* bnd
 );
 
-void* BindGetData
+void* OcilibBindGetData
 (
     OCI_Bind* bnd
 );
 
-OCI_Statement* BindGetStatement
+OCI_Statement* OcilibBindGetStatement
 (
     OCI_Bind* bnd
 );
 
-boolean BindSetDataSize
+boolean OcilibBindSetDataSize
 (
     OCI_Bind   * bnd,
     unsigned int size
 );
 
-boolean BindSetDataSizeAtPos
+boolean OcilibBindSetDataSizeAtPos
 (
     OCI_Bind   * bnd,
     unsigned int position,
     unsigned int size
 );
 
-unsigned int BindGetDataSize
+unsigned int OcilibBindGetDataSize
 (
     OCI_Bind* bnd
 );
 
-unsigned int BindGetDataSizeAtPos
+unsigned int OcilibBindGetDataSizeAtPos
 (
     OCI_Bind   * bnd,
     unsigned int position
 );
 
-boolean BindSetNullAtPos
+boolean OcilibBindSetNullAtPos
 (
     OCI_Bind   * bnd,
     unsigned int position
 );
 
-boolean BindSetNull
+boolean OcilibBindSetNull
 (
     OCI_Bind* bnd
 );
 
-boolean BindSetNotNullAtPos
+boolean OcilibBindSetNotNullAtPos
 (
     OCI_Bind   * bnd,
     unsigned int position
 );
 
-boolean BindSetNotNull
+boolean OcilibBindSetNotNull
 (
     OCI_Bind* bnd
 );
 
-boolean BindIsNullAtPos
+boolean OcilibBindIsNullAtPos
 (
     OCI_Bind   * bnd,
     unsigned int position
 );
 
-boolean BindIsNull
+boolean OcilibBindIsNull
 (
     OCI_Bind* bnd
 );
 
-boolean BindSetCharsetForm
+boolean OcilibBindSetCharsetForm
 (
     OCI_Bind    *bnd,
     unsigned int csfrm
 );
 
-boolean BindSetDirection
+boolean OcilibBindSetDirection
 (
     OCI_Bind    *bnd,
     unsigned int direction
 );
 
-unsigned int BindGetDirection
+unsigned int OcilibBindGetDirection
 (
     OCI_Bind* bnd
 );
 
-unsigned int BindGetAllocationMode
+unsigned int OcilibBindGetAllocationMode
 (
     OCI_Bind* bnd
 );

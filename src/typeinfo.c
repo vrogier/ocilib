@@ -24,7 +24,7 @@
 #include "list.h"
 #include "macros.h"
 #include "memory.h"
-#include "strings.h"
+#include "stringutils.h"
 
 static unsigned int TypeInfoTypeValues[] =
 {

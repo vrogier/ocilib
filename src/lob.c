@@ -24,7 +24,7 @@
 #include "connection.h"
 #include "macros.h"
 #include "memory.h"
-#include "strings.h"
+#include "stringutils.h"
 
 static const unsigned int SeekModeValues[] =
 {
@@ -234,9 +234,9 @@ OCI_Lob ** LobCreateArray
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_ENUM_VALUE(type, LobTypeValues, OTEXT("Lob type"))
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_LOB, type,
-                      sizeof(OCILobLocator*), sizeof(OCI_Lob),
-                      OCI_DTYPE_LOB, NULL);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_LOB, type,
+                            sizeof(OCILobLocator*), sizeof(OCI_Lob),
+                            OCI_DTYPE_LOB, NULL);
 
     CHECK_NULL(arr)
 
@@ -262,7 +262,7 @@ boolean LobFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, lobs)
 
-    SET_RETVAL(ArrayFreeFromHandles((void**)lobs))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void**)lobs))
 
     EXIT_FUNC()
 }

@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-#include "strings.h"
+#include "stringutils.h"
 
 #include "collection.h"
 #include "date.h"

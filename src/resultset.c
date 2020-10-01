@@ -38,7 +38,7 @@
 #include "object.h"
 #include "reference.h"
 #include "statement.h"
-#include "strings.h"
+#include "stringutils.h"
 #include "timestamp.h"
 
 static unsigned int SeekModeValues[] =

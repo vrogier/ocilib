@@ -24,7 +24,7 @@
 #include "macros.h"
 #include "memory.h"
 #include "object.h"
-#include "strings.h"
+#include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * ReferenceInitialize
@@ -255,9 +255,9 @@ OCI_Ref ** ReferenceCreateArray
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_PTR(OCI_IPC_TYPE_INFO,  con)
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_REF, 0,
-                      sizeof(OCIRef *), sizeof(OCI_Ref),
-                      0, typinf);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_REF, 0,
+                            sizeof(OCIRef *), sizeof(OCI_Ref),
+                            0, typinf);
 
     CHECK_NULL(arr)
 
@@ -283,7 +283,7 @@ boolean ReferenceFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, refs)
 
-    SET_RETVAL(ArrayFreeFromHandles((void **)refs))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void **)refs))
 
     EXIT_FUNC()
 }

@@ -23,7 +23,7 @@
 #include "array.h"
 #include "helpers.h"
 #include "macros.h"
-#include "strings.h"
+#include "stringutils.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -207,9 +207,9 @@ OCI_Interval ** IntervalCreateArray
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type,
-                      sizeof(OCIInterval*), sizeof(OCI_Interval),
-                      ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, type), NULL);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type,
+                            sizeof(OCIInterval*), sizeof(OCI_Interval),
+                            ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, type), NULL);
 
     CHECK_NULL(arr)
 
@@ -243,7 +243,7 @@ boolean IntervalFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, itvs)
 
-    SET_RETVAL(ArrayFreeFromHandles((void**)itvs))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void**)itvs))
 
     EXIT_FUNC()
 }

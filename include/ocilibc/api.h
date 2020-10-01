@@ -104,7 +104,7 @@
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_Initialize
+OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize
 (
     POCI_ERROR   err_handler,
     const otext *lib_path,
@@ -126,7 +126,7 @@ OCI_EXPORT boolean OCI_API OCI_Initialize
  * @return TRUE
  */
 
-OCI_EXPORT boolean OCI_API OCI_Cleanup
+OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup
 (
     void
 );
@@ -142,7 +142,7 @@ OCI_EXPORT boolean OCI_API OCI_Cleanup
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetOCICompileVersion
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCICompileVersion
 (
     void
 );
@@ -159,7 +159,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetOCICompileVersion
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetOCIRuntimeVersion
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCIRuntimeVersion
 (
     void
 );
@@ -175,7 +175,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetOCIRuntimeVersion
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetImportMode
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetImportMode
 (
     void
 );
@@ -191,7 +191,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetImportMode
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetCharset
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetCharset
 (
     void
 );
@@ -210,7 +210,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetCharset
 *
 */
 
-OCI_EXPORT big_uint OCI_API OCI_GetAllocatedBytes
+OCI_SYM_PUBLIC big_uint OCI_API OCI_GetAllocatedBytes
 (
     unsigned int mem_type
 );
@@ -226,7 +226,7 @@ OCI_EXPORT big_uint OCI_API OCI_GetAllocatedBytes
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_EnableWarnings
+OCI_SYM_PUBLIC boolean OCI_API OCI_EnableWarnings
 (
     boolean value
 );
@@ -253,7 +253,7 @@ OCI_EXPORT boolean OCI_API OCI_EnableWarnings
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetHAHandler
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetHAHandler
 (
     POCI_HA_HANDLER handler
 );
@@ -322,7 +322,7 @@ OCI_EXPORT boolean OCI_API OCI_SetHAHandler
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetErrorHandler
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetErrorHandler
 (
     POCI_ERROR handler
 );
@@ -342,7 +342,7 @@ OCI_EXPORT boolean OCI_API OCI_SetErrorHandler
  *
  */
 
-OCI_EXPORT OCI_Error * OCI_API OCI_GetLastError
+OCI_SYM_PUBLIC OCI_Error * OCI_API OCI_GetLastError
 (
     void
 );
@@ -355,7 +355,7 @@ OCI_EXPORT OCI_Error * OCI_API OCI_GetLastError
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_ErrorGetString
+OCI_SYM_PUBLIC const otext * OCI_API OCI_ErrorGetString
 (
     OCI_Error *err
 );
@@ -378,7 +378,7 @@ OCI_EXPORT const otext * OCI_API OCI_ErrorGetString
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ErrorGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ErrorGetType
 (
     OCI_Error *err
 );
@@ -391,7 +391,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetType
  *
  */
 
-OCI_EXPORT int OCI_API OCI_ErrorGetOCICode
+OCI_SYM_PUBLIC int OCI_API OCI_ErrorGetOCICode
 (
     OCI_Error *err
 );
@@ -404,7 +404,7 @@ OCI_EXPORT int OCI_API OCI_ErrorGetOCICode
  *
  */
 
-OCI_EXPORT int OCI_API OCI_ErrorGetInternalCode
+OCI_SYM_PUBLIC int OCI_API OCI_ErrorGetInternalCode
 (
     OCI_Error *err
 );
@@ -417,7 +417,7 @@ OCI_EXPORT int OCI_API OCI_ErrorGetInternalCode
  *
  */
 
-OCI_EXPORT OCI_Connection * OCI_API OCI_ErrorGetConnection
+OCI_SYM_PUBLIC OCI_Connection * OCI_API OCI_ErrorGetConnection
 (
     OCI_Error *err
 );
@@ -433,7 +433,7 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_ErrorGetConnection
  *
  */
 
-OCI_EXPORT OCI_Statement * OCI_API OCI_ErrorGetStatement
+OCI_SYM_PUBLIC OCI_Statement * OCI_API OCI_ErrorGetStatement
 (
     OCI_Error *err
 );
@@ -453,7 +453,7 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_ErrorGetStatement
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ErrorGetRow
 (
     OCI_Error *err
 );
@@ -469,7 +469,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ErrorGetRow
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_ErrorGetLocation
+OCI_SYM_PUBLIC const otext * OCI_API OCI_ErrorGetLocation
 (
     OCI_Error* err
 );
@@ -551,7 +551,7 @@ OCI_EXPORT const otext * OCI_API OCI_ErrorGetLocation
  *
  */
 
-OCI_EXPORT OCI_Connection * OCI_API OCI_ConnectionCreate
+OCI_SYM_PUBLIC OCI_Connection * OCI_API OCI_ConnectionCreate
 (
     const otext *db,
     const otext *user,
@@ -570,7 +570,7 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_ConnectionCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ConnectionFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_ConnectionFree
 (
     OCI_Connection *con
 );
@@ -583,7 +583,7 @@ OCI_EXPORT boolean OCI_API OCI_ConnectionFree
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IsConnected
+OCI_SYM_PUBLIC boolean OCI_API OCI_IsConnected
 (
     OCI_Connection *con
 );
@@ -600,7 +600,7 @@ OCI_EXPORT boolean OCI_API OCI_IsConnected
  *
  */
 
-OCI_EXPORT void * OCI_API OCI_GetUserData
+OCI_SYM_PUBLIC void * OCI_API OCI_GetUserData
 (
     OCI_Connection *con
 );
@@ -621,7 +621,7 @@ OCI_EXPORT void * OCI_API OCI_GetUserData
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetUserData
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetUserData
 (
     OCI_Connection *con,
     void *          data
@@ -650,7 +650,7 @@ OCI_EXPORT boolean OCI_API OCI_SetUserData
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetSessionTag
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetSessionTag
 (
     OCI_Connection *con,
     const otext *   tag
@@ -664,7 +664,7 @@ OCI_EXPORT boolean OCI_API OCI_SetSessionTag
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetSessionTag
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetSessionTag
 (
     OCI_Connection *con
 );
@@ -677,7 +677,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetSessionTag
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetDatabase
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetDatabase
 (
     OCI_Connection *con
 );
@@ -690,7 +690,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetDatabase
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetUserName
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetUserName
 (
     OCI_Connection *con
 );
@@ -703,7 +703,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetUserName
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetPassword
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetPassword
 (
     OCI_Connection *con
 );
@@ -720,7 +720,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetPassword
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetPassword
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetPassword
 (
     OCI_Connection *con,
     const otext *   password
@@ -740,7 +740,7 @@ OCI_EXPORT boolean OCI_API OCI_SetPassword
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetUserPassword
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetUserPassword
 (
     const otext *db,
     const otext *user,
@@ -759,7 +759,7 @@ OCI_EXPORT boolean OCI_API OCI_SetUserPassword
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetSessionMode
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSessionMode
 (
     OCI_Connection *con
 );
@@ -772,7 +772,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetSessionMode
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetVersionServer
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetVersionServer
 (
     OCI_Connection *con
 );
@@ -788,7 +788,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetVersionServer
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetServerMajorVersion
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerMajorVersion
 (
     OCI_Connection *con
 );
@@ -804,7 +804,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetServerMajorVersion
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetServerMinorVersion
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerMinorVersion
 (
     OCI_Connection *con
 );
@@ -820,7 +820,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetServerMinorVersion
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetServerRevisionVersion
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerRevisionVersion
 (
     OCI_Connection *con
 );
@@ -869,7 +869,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetServerRevisionVersion
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetFormat
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetFormat
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -888,7 +888,7 @@ OCI_EXPORT boolean OCI_API OCI_SetFormat
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetFormat
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetFormat
 (
     OCI_Connection *con,
     unsigned int    type
@@ -905,7 +905,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetFormat
  *
  */
 
-OCI_EXPORT OCI_Transaction * OCI_API OCI_GetTransaction
+OCI_SYM_PUBLIC OCI_Transaction * OCI_API OCI_GetTransaction
 (
     OCI_Connection *con
 );
@@ -926,7 +926,7 @@ OCI_EXPORT OCI_Transaction * OCI_API OCI_GetTransaction
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetTransaction
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetTransaction
 (
     OCI_Connection * con,
     OCI_Transaction *trans
@@ -958,7 +958,7 @@ OCI_EXPORT boolean OCI_API OCI_SetTransaction
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetVersionConnection
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetVersionConnection
 (
     OCI_Connection *con
 );
@@ -1012,7 +1012,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetVersionConnection
  * 
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetTrace
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetTrace
 (
     OCI_Connection *con,
     unsigned int    trace,
@@ -1031,7 +1031,7 @@ OCI_EXPORT boolean OCI_API OCI_SetTrace
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetTrace
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetTrace
 (
     OCI_Connection *con,
     unsigned int    trace
@@ -1052,7 +1052,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetTrace
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_Ping
+OCI_SYM_PUBLIC boolean OCI_API OCI_Ping
 (
     OCI_Connection *con
 );
@@ -1100,7 +1100,7 @@ OCI_EXPORT boolean OCI_API OCI_Ping
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetTimeout
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetTimeout
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -1122,7 +1122,7 @@ OCI_EXPORT boolean OCI_API OCI_SetTimeout
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetTimeout
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetTimeout
 (
     OCI_Connection *con,
     unsigned int    type
@@ -1140,7 +1140,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetTimeout
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetDBName
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetDBName
 (
     OCI_Connection *con
 );
@@ -1157,7 +1157,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetDBName
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetInstanceName
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetInstanceName
 (
     OCI_Connection *con
 );
@@ -1174,7 +1174,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetInstanceName
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetServiceName
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetServiceName
 (
     OCI_Connection *con
 );
@@ -1191,7 +1191,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetServiceName
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetServerName
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetServerName
 (
     OCI_Connection *con
 );
@@ -1208,7 +1208,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetServerName
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetDomainName
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetDomainName
 (
     OCI_Connection *con
 );
@@ -1226,7 +1226,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetDomainName
  *
  */
 
-OCI_EXPORT OCI_Timestamp * OCI_API OCI_GetInstanceStartTime
+OCI_SYM_PUBLIC OCI_Timestamp * OCI_API OCI_GetInstanceStartTime
 (
     OCI_Connection *con
 );
@@ -1246,7 +1246,7 @@ OCI_EXPORT OCI_Timestamp * OCI_API OCI_GetInstanceStartTime
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IsTAFCapable
+OCI_SYM_PUBLIC boolean OCI_API OCI_IsTAFCapable
 (
     OCI_Connection *con
 );
@@ -1270,7 +1270,7 @@ OCI_EXPORT boolean OCI_API OCI_IsTAFCapable
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetTAFHandler
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetTAFHandler
 (
     OCI_Connection * con,
     POCI_TAF_HANDLER handler
@@ -1290,7 +1290,7 @@ OCI_EXPORT boolean OCI_API OCI_SetTAFHandler
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetStatementCacheSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetStatementCacheSize
 (
     OCI_Connection *con
 );
@@ -1310,7 +1310,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetStatementCacheSize
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetStatementCacheSize
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetStatementCacheSize
 (
     OCI_Connection *con,
     unsigned int    value
@@ -1335,7 +1335,7 @@ OCI_EXPORT boolean OCI_API OCI_SetStatementCacheSize
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
 (
     OCI_Connection *con
 );
@@ -1369,7 +1369,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetDefaultLobPrefetchSize
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetDefaultLobPrefetchSize
 (
     OCI_Connection *con,
     unsigned int    value
@@ -1392,7 +1392,7 @@ OCI_EXPORT boolean OCI_API OCI_SetDefaultLobPrefetchSize
 *
 */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetMaxCursors
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetMaxCursors
 (
     OCI_Connection *con
 );
@@ -1478,7 +1478,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetMaxCursors
  *
  */
 
-OCI_EXPORT OCI_Pool * OCI_API OCI_PoolCreate
+OCI_SYM_PUBLIC OCI_Pool * OCI_API OCI_PoolCreate
 (
     const otext *db,
     const otext *user,
@@ -1501,7 +1501,7 @@ OCI_EXPORT OCI_Pool * OCI_API OCI_PoolCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_PoolFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_PoolFree
 (
     OCI_Pool *pool
 );
@@ -1538,7 +1538,7 @@ OCI_EXPORT boolean OCI_API OCI_PoolFree
  * Connection handle otherwise NULL on failure
  */
 
-OCI_EXPORT OCI_Connection * OCI_API OCI_PoolGetConnection
+OCI_SYM_PUBLIC OCI_Connection * OCI_API OCI_PoolGetConnection
 (
     OCI_Pool *   pool,
     const otext *tag
@@ -1558,7 +1558,7 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_PoolGetConnection
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_PoolGetTimeout
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetTimeout
 (
     OCI_Pool *pool
 );
@@ -1578,7 +1578,7 @@ OCI_EXPORT unsigned int OCI_API OCI_PoolGetTimeout
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_PoolSetTimeout
+OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetTimeout
 (
     OCI_Pool *   pool,
     unsigned int value
@@ -1597,7 +1597,7 @@ OCI_EXPORT boolean OCI_API OCI_PoolSetTimeout
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_PoolGetNoWait
+OCI_SYM_PUBLIC boolean OCI_API OCI_PoolGetNoWait
 (
     OCI_Pool *pool
 );
@@ -1617,7 +1617,7 @@ OCI_EXPORT boolean OCI_API OCI_PoolGetNoWait
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_PoolSetNoWait
+OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetNoWait
 (
     OCI_Pool *pool,
     boolean   value
@@ -1631,7 +1631,7 @@ OCI_EXPORT boolean OCI_API OCI_PoolSetNoWait
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_PoolGetBusyCount
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetBusyCount
 (
     OCI_Pool *pool
 );
@@ -1644,7 +1644,7 @@ OCI_EXPORT unsigned int OCI_API OCI_PoolGetBusyCount
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_PoolGetOpenedCount
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetOpenedCount
 (
     OCI_Pool *pool
 );
@@ -1657,7 +1657,7 @@ OCI_EXPORT unsigned int OCI_API OCI_PoolGetOpenedCount
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_PoolGetMin
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetMin
 (
     OCI_Pool *pool
 );
@@ -1670,7 +1670,7 @@ OCI_EXPORT unsigned int OCI_API OCI_PoolGetMin
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_PoolGetMax
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetMax
 (
     OCI_Pool *pool
 );
@@ -1684,7 +1684,7 @@ OCI_EXPORT unsigned int OCI_API OCI_PoolGetMax
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_PoolGetIncrement
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetIncrement
 (
     OCI_Pool *pool
 );
@@ -1700,7 +1700,7 @@ OCI_EXPORT unsigned int OCI_API OCI_PoolGetIncrement
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_PoolGetStatementCacheSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetStatementCacheSize
 (
     OCI_Pool *pool
 );
@@ -1717,7 +1717,7 @@ OCI_EXPORT unsigned int OCI_API OCI_PoolGetStatementCacheSize
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_PoolSetStatementCacheSize
+OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetStatementCacheSize
 (
     OCI_Pool *   pool,
     unsigned int value
@@ -1770,7 +1770,7 @@ OCI_EXPORT boolean OCI_API OCI_PoolSetStatementCacheSize
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_Commit
+OCI_SYM_PUBLIC boolean OCI_API OCI_Commit
 (
     OCI_Connection *con
 );
@@ -1786,7 +1786,7 @@ OCI_EXPORT boolean OCI_API OCI_Commit
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_Rollback
+OCI_SYM_PUBLIC boolean OCI_API OCI_Rollback
 (
     OCI_Connection *con
 );
@@ -1805,7 +1805,7 @@ OCI_EXPORT boolean OCI_API OCI_Rollback
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetAutoCommit
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetAutoCommit
 (
     OCI_Connection *con,
     boolean         enable
@@ -1822,7 +1822,7 @@ OCI_EXPORT boolean OCI_API OCI_SetAutoCommit
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_GetAutoCommit
+OCI_SYM_PUBLIC boolean OCI_API OCI_GetAutoCommit
 (
     OCI_Connection *con
 );
@@ -1857,7 +1857,7 @@ OCI_EXPORT boolean OCI_API OCI_GetAutoCommit
  *
  */
 
-OCI_EXPORT OCI_Transaction * OCI_API OCI_TransactionCreate
+OCI_SYM_PUBLIC OCI_Transaction * OCI_API OCI_TransactionCreate
 (
     OCI_Connection *con,
     unsigned int    timeout,
@@ -1876,7 +1876,7 @@ OCI_EXPORT OCI_Transaction * OCI_API OCI_TransactionCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TransactionFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionFree
 (
     OCI_Transaction *trans
 );
@@ -1892,7 +1892,7 @@ OCI_EXPORT boolean OCI_API OCI_TransactionFree
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TransactionStart
+OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionStart
 (
     OCI_Transaction *trans
 );
@@ -1908,7 +1908,7 @@ OCI_EXPORT boolean OCI_API OCI_TransactionStart
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TransactionStop
+OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionStop
 (
     OCI_Transaction *trans
 );
@@ -1923,7 +1923,7 @@ OCI_EXPORT boolean OCI_API OCI_TransactionStop
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_TransactionResume
+OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionResume
 (
     OCI_Transaction *trans
 );
@@ -1939,7 +1939,7 @@ OCI_EXPORT boolean OCI_API OCI_TransactionResume
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TransactionPrepare
+OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionPrepare
 (
     OCI_Transaction *trans
 );
@@ -1955,7 +1955,7 @@ OCI_EXPORT boolean OCI_API OCI_TransactionPrepare
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TransactionForget
+OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionForget
 (
     OCI_Transaction *trans
 );
@@ -1974,7 +1974,7 @@ OCI_EXPORT boolean OCI_API OCI_TransactionForget
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_TransactionGetMode
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_TransactionGetMode
 (
     OCI_Transaction *trans
 );
@@ -1990,7 +1990,7 @@ OCI_EXPORT unsigned int OCI_API OCI_TransactionGetMode
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_TransactionGetTimeout
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_TransactionGetTimeout
 (
     OCI_Transaction *trans
 );
@@ -2048,7 +2048,7 @@ OCI_EXPORT unsigned int OCI_API OCI_TransactionGetTimeout
  *
  */
 
-OCI_EXPORT OCI_Statement * OCI_API OCI_StatementCreate
+OCI_SYM_PUBLIC OCI_Statement * OCI_API OCI_StatementCreate
 (
     OCI_Connection *con
 );
@@ -2064,7 +2064,7 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_StatementCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_StatementFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree
 (
     OCI_Statement *stmt
 );
@@ -2083,7 +2083,7 @@ OCI_EXPORT boolean OCI_API OCI_StatementFree
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_Prepare
+OCI_SYM_PUBLIC boolean OCI_API OCI_Prepare
 (
     OCI_Statement *stmt,
     const otext *  sql
@@ -2108,7 +2108,7 @@ OCI_EXPORT boolean OCI_API OCI_Prepare
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_Execute
+OCI_SYM_PUBLIC boolean OCI_API OCI_Execute
 (
     OCI_Statement *stmt
 );
@@ -2133,7 +2133,7 @@ OCI_EXPORT boolean OCI_API OCI_Execute
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ExecuteStmt
+OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt
 (
     OCI_Statement *stmt,
     const otext *  sql
@@ -2167,7 +2167,7 @@ OCI_EXPORT boolean OCI_API OCI_ExecuteStmt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_Parse
+OCI_SYM_PUBLIC boolean OCI_API OCI_Parse
 (
     OCI_Statement *stmt,
     const otext *  sql
@@ -2205,7 +2205,7 @@ OCI_EXPORT boolean OCI_API OCI_Parse
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_Describe
+OCI_SYM_PUBLIC boolean OCI_API OCI_Describe
 (
     OCI_Statement *stmt,
     const otext *  sql
@@ -2219,7 +2219,7 @@ OCI_EXPORT boolean OCI_API OCI_Describe
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetSql
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetSql
 (
     OCI_Statement *stmt
 );
@@ -2238,7 +2238,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetSql
 * 
 */
 
-OCI_EXPORT const otext * OCI_API OCI_GetSqlIdentifier
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetSqlIdentifier
 (
     OCI_Statement *stmt
 );
@@ -2255,7 +2255,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetSqlIdentifier
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetSqlErrorPos
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSqlErrorPos
 (
     OCI_Statement *stmt
 );
@@ -2282,7 +2282,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetSqlErrorPos
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetAffectedRows
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetAffectedRows
 (
     OCI_Statement *stmt
 );
@@ -2301,7 +2301,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetAffectedRows
  * The SQL command code of the statement otherwise OCI_UNKOWN
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetSQLCommand
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSQLCommand
 (
     OCI_Statement *stmt
 );
@@ -2323,7 +2323,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetSQLCommand
  * The SQL command verb of the statement otherwise NULL
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetSQLVerb
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetSQLVerb
 (
     OCI_Statement *stmt
 );
@@ -2475,7 +2475,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetSQLVerb
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArraySetSize
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArraySetSize
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -2492,7 +2492,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArraySetSize
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_BindArrayGetSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindArrayGetSize
 (
     OCI_Statement *stmt
 );
@@ -2516,7 +2516,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindArrayGetSize
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_AllowRebinding
+OCI_SYM_PUBLIC boolean OCI_API OCI_AllowRebinding
 (
     OCI_Statement *stmt,
     boolean        value
@@ -2535,7 +2535,7 @@ OCI_EXPORT boolean OCI_API OCI_AllowRebinding
  * TRUE if allowed otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_IsRebindingAllowed
+OCI_SYM_PUBLIC boolean OCI_API OCI_IsRebindingAllowed
 (
     OCI_Statement *stmt
 );
@@ -2559,7 +2559,7 @@ OCI_EXPORT boolean OCI_API OCI_IsRebindingAllowed
 * @return
 * TRUE on success otherwise FALSE
 */
-OCI_EXPORT boolean OCI_API OCI_BindBoolean
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindBoolean
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2582,7 +2582,7 @@ OCI_EXPORT boolean OCI_API OCI_BindBoolean
 * TRUE on success otherwise FALSE
 */
 
-OCI_EXPORT boolean OCI_API OCI_BindNumber
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindNumber
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2610,7 +2610,7 @@ OCI_EXPORT boolean OCI_API OCI_BindNumber
 * TRUE on success otherwise FALSE
 */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfNumbers
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfNumbers
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2634,7 +2634,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfNumbers
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindShort
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindShort
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2662,7 +2662,7 @@ OCI_EXPORT boolean OCI_API OCI_BindShort
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfShorts
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfShorts
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2686,7 +2686,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfShorts
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindUnsignedShort
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindUnsignedShort
 (
     OCI_Statement * stmt,
     const otext *   name,
@@ -2714,7 +2714,7 @@ OCI_EXPORT boolean OCI_API OCI_BindUnsignedShort
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedShorts
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfUnsignedShorts
 (
     OCI_Statement * stmt,
     const otext *   name,
@@ -2738,7 +2738,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedShorts
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindInt
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2766,7 +2766,7 @@ OCI_EXPORT boolean OCI_API OCI_BindInt
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfInts
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfInts
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2790,7 +2790,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfInts
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindUnsignedInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindUnsignedInt
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2818,7 +2818,7 @@ OCI_EXPORT boolean OCI_API OCI_BindUnsignedInt
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedInts
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfUnsignedInts
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2842,7 +2842,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedInts
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindBigInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindBigInt
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2870,7 +2870,7 @@ OCI_EXPORT boolean OCI_API OCI_BindBigInt
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfBigInts
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfBigInts
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2894,7 +2894,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfBigInts
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindUnsignedBigInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindUnsignedBigInt
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2922,7 +2922,7 @@ OCI_EXPORT boolean OCI_API OCI_BindUnsignedBigInt
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedBigInts
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfUnsignedBigInts
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2951,7 +2951,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfUnsignedBigInts
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindString
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindString
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -2985,7 +2985,7 @@ OCI_EXPORT boolean OCI_API OCI_BindString
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfStrings
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfStrings
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3014,7 +3014,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfStrings
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindRaw
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindRaw
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3050,7 +3050,7 @@ OCI_EXPORT boolean OCI_API OCI_BindRaw
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfRaws
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfRaws
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3075,7 +3075,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfRaws
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindDouble
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindDouble
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3103,7 +3103,7 @@ OCI_EXPORT boolean OCI_API OCI_BindDouble
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfDoubles
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfDoubles
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3127,7 +3127,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfDoubles
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindFloat
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindFloat
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3155,7 +3155,7 @@ OCI_EXPORT boolean OCI_API OCI_BindFloat
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfFloats
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfFloats
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3179,7 +3179,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfFloats
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindDate
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindDate
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3207,7 +3207,7 @@ OCI_EXPORT boolean OCI_API OCI_BindDate
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfDates
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfDates
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3230,7 +3230,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfDates
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindTimestamp
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindTimestamp
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3262,7 +3262,7 @@ OCI_EXPORT boolean OCI_API OCI_BindTimestamp
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfTimestamps
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfTimestamps
 (
     OCI_Statement * stmt,
     const otext *   name,
@@ -3287,7 +3287,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfTimestamps
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindInterval
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindInterval
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3320,7 +3320,7 @@ OCI_EXPORT boolean OCI_API OCI_BindInterval
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfIntervals
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfIntervals
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3344,7 +3344,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfIntervals
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindLob
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindLob
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3376,7 +3376,7 @@ OCI_EXPORT boolean OCI_API OCI_BindLob
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfLobs
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfLobs
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3400,7 +3400,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfLobs
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindFile
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindFile
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3432,7 +3432,7 @@ OCI_EXPORT boolean OCI_API OCI_BindFile
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfFiles
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfFiles
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3457,7 +3457,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfFiles
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindObject
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindObject
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3487,7 +3487,7 @@ OCI_EXPORT boolean OCI_API OCI_BindObject
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfObjects
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfObjects
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3511,7 +3511,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfObjects
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindColl
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindColl
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3544,7 +3544,7 @@ OCI_EXPORT boolean OCI_API OCI_BindColl
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfColls
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfColls
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3568,7 +3568,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfColls
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindRef
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindRef
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3598,7 +3598,7 @@ OCI_EXPORT boolean OCI_API OCI_BindRef
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindArrayOfRefs
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfRefs
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3622,7 +3622,7 @@ OCI_EXPORT boolean OCI_API OCI_BindArrayOfRefs
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindStatement
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindStatement
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3650,7 +3650,7 @@ OCI_EXPORT boolean OCI_API OCI_BindStatement
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindLong
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindLong
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -3668,7 +3668,7 @@ OCI_EXPORT boolean OCI_API OCI_BindLong
  * The first or next error handle otherwise NULL
  */
 
-OCI_EXPORT OCI_Error * OCI_API OCI_GetBatchError
+OCI_SYM_PUBLIC OCI_Error * OCI_API OCI_GetBatchError
 (
     OCI_Statement *stmt
 );
@@ -3681,7 +3681,7 @@ OCI_EXPORT OCI_Error * OCI_API OCI_GetBatchError
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetBatchErrorCount
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBatchErrorCount
 (
     OCI_Statement *stmt
 );
@@ -3694,7 +3694,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBatchErrorCount
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetBindCount
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBindCount
 (
     OCI_Statement *stmt
 );
@@ -3719,7 +3719,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBindCount
  *
  */
 
-OCI_EXPORT OCI_Bind * OCI_API OCI_GetBind
+OCI_SYM_PUBLIC OCI_Bind * OCI_API OCI_GetBind
 (
     OCI_Statement *stmt,
     unsigned int   index
@@ -3740,7 +3740,7 @@ OCI_EXPORT OCI_Bind * OCI_API OCI_GetBind
  *
  */
 
-OCI_EXPORT OCI_Bind * OCI_API OCI_GetBind2
+OCI_SYM_PUBLIC OCI_Bind * OCI_API OCI_GetBind2
 (
     OCI_Statement *stmt,
     const otext *  name
@@ -3764,7 +3764,7 @@ OCI_EXPORT OCI_Bind * OCI_API OCI_GetBind2
 *
 */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetBindIndex
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBindIndex
 (
     OCI_Statement *stmt,
     const otext *  name
@@ -3778,7 +3778,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBindIndex
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_BindGetName
+OCI_SYM_PUBLIC const otext * OCI_API OCI_BindGetName
 (
     OCI_Bind *bnd
 );
@@ -3804,7 +3804,7 @@ OCI_EXPORT const otext * OCI_API OCI_BindGetName
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindSetDirection
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetDirection
 (
     OCI_Bind *   bnd,
     unsigned int direction
@@ -3823,7 +3823,7 @@ OCI_EXPORT boolean OCI_API OCI_BindSetDirection
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_BindGetDirection
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetDirection
 (
     OCI_Bind *bnd
 );
@@ -3857,7 +3857,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetDirection
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_BindGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetType
 (
     OCI_Bind *bnd
 );
@@ -3915,7 +3915,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetType
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_BindGetSubtype
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetSubtype
 (
     OCI_Bind *bnd
 );
@@ -3932,7 +3932,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetSubtype
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_BindGetDataCount
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetDataCount
 (
     OCI_Bind *bnd
 );
@@ -3949,7 +3949,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetDataCount
  *
  */
 
-OCI_EXPORT void * OCI_API OCI_BindGetData
+OCI_SYM_PUBLIC void * OCI_API OCI_BindGetData
 (
     OCI_Bind *bnd
 );
@@ -3962,7 +3962,7 @@ OCI_EXPORT void * OCI_API OCI_BindGetData
  *
  */
 
-OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement
+OCI_SYM_PUBLIC OCI_Statement * OCI_API OCI_BindGetStatement
 (
     OCI_Bind *bnd
 );
@@ -3992,7 +3992,7 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_BindGetStatement
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindSetDataSize
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetDataSize
 (
     OCI_Bind *   bnd,
     unsigned int size
@@ -4024,7 +4024,7 @@ OCI_EXPORT boolean OCI_API OCI_BindSetDataSize
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindSetDataSizeAtPos
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetDataSizeAtPos
 (
     OCI_Bind *   bnd,
     unsigned int position,
@@ -4046,7 +4046,7 @@ OCI_EXPORT boolean OCI_API OCI_BindSetDataSizeAtPos
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_BindGetDataSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetDataSize
 (
     OCI_Bind *bnd
 );
@@ -4068,7 +4068,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetDataSize
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_BindGetDataSizeAtPos
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetDataSizeAtPos
 (
     OCI_Bind *   bnd,
     unsigned int position
@@ -4093,7 +4093,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetDataSizeAtPos
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindSetNull
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNull
 (
     OCI_Bind *bnd
 );
@@ -4121,7 +4121,7 @@ OCI_EXPORT boolean OCI_API OCI_BindSetNull
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindSetNullAtPos
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNullAtPos
 (
     OCI_Bind *   bnd,
     unsigned int position
@@ -4146,7 +4146,7 @@ OCI_EXPORT boolean OCI_API OCI_BindSetNullAtPos
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindSetNotNull
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNotNull
 (
     OCI_Bind *bnd
 );
@@ -4174,7 +4174,7 @@ OCI_EXPORT boolean OCI_API OCI_BindSetNotNull
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindSetNotNullAtPos
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNotNullAtPos
 (
     OCI_Bind *   bnd,
     unsigned int position
@@ -4191,7 +4191,7 @@ OCI_EXPORT boolean OCI_API OCI_BindSetNotNullAtPos
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindIsNull
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindIsNull
 (
     OCI_Bind *bnd
 );
@@ -4212,7 +4212,7 @@ OCI_EXPORT boolean OCI_API OCI_BindIsNull
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_BindIsNullAtPos
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindIsNullAtPos
 (
     OCI_Bind *   bnd,
     unsigned int position
@@ -4265,7 +4265,7 @@ boolean OCI_API OCI_BindSetCharsetForm
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_BindGetAllocationMode
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetAllocationMode
 (
     OCI_Bind *bnd
 );
@@ -4441,7 +4441,7 @@ OCI_EXPORT unsigned int OCI_API OCI_BindGetAllocationMode
  *
  */
 
-OCI_EXPORT OCI_Resultset * OCI_API OCI_GetResultset
+OCI_SYM_PUBLIC OCI_Resultset * OCI_API OCI_GetResultset
 (
     OCI_Statement *stmt
 );
@@ -4466,7 +4466,7 @@ OCI_EXPORT OCI_Resultset * OCI_API OCI_GetResultset
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ReleaseResultsets
+OCI_SYM_PUBLIC boolean OCI_API OCI_ReleaseResultsets
 (
     OCI_Statement *stmt
 );
@@ -4488,7 +4488,7 @@ OCI_EXPORT boolean OCI_API OCI_ReleaseResultsets
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FetchNext
+OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext
 (
     OCI_Resultset *rs
 );
@@ -4510,7 +4510,7 @@ OCI_EXPORT boolean OCI_API OCI_FetchNext
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FetchPrev
+OCI_SYM_PUBLIC boolean OCI_API OCI_FetchPrev
 (
     OCI_Resultset *rs
 );
@@ -4531,7 +4531,7 @@ OCI_EXPORT boolean OCI_API OCI_FetchPrev
  *f
  */
 
-OCI_EXPORT boolean OCI_API OCI_FetchFirst
+OCI_SYM_PUBLIC boolean OCI_API OCI_FetchFirst
 (
     OCI_Resultset *rs
 );
@@ -4552,7 +4552,7 @@ OCI_EXPORT boolean OCI_API OCI_FetchFirst
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FetchLast
+OCI_SYM_PUBLIC boolean OCI_API OCI_FetchLast
 (
     OCI_Resultset *rs
 );
@@ -4587,7 +4587,7 @@ OCI_EXPORT boolean OCI_API OCI_FetchLast
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FetchSeek
+OCI_SYM_PUBLIC boolean OCI_API OCI_FetchSeek
 (
     OCI_Resultset *rs,
     unsigned int   mode,
@@ -4602,7 +4602,7 @@ OCI_EXPORT boolean OCI_API OCI_FetchSeek
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetRowCount
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetRowCount
 (
     OCI_Resultset *rs
 );
@@ -4620,7 +4620,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetRowCount
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetCurrentRow
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetCurrentRow
 (
     OCI_Resultset *rs
 );
@@ -4633,7 +4633,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetCurrentRow
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetColumnCount
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetColumnCount
 (
     OCI_Resultset *rs
 );
@@ -4651,7 +4651,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetColumnCount
  *
  */
 
-OCI_EXPORT OCI_Column * OCI_API OCI_GetColumn
+OCI_SYM_PUBLIC OCI_Column * OCI_API OCI_GetColumn
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -4673,7 +4673,7 @@ OCI_EXPORT OCI_Column * OCI_API OCI_GetColumn
  *
  */
 
-OCI_EXPORT OCI_Column * OCI_API OCI_GetColumn2
+OCI_SYM_PUBLIC OCI_Column * OCI_API OCI_GetColumn2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -4697,7 +4697,7 @@ OCI_EXPORT OCI_Column * OCI_API OCI_GetColumn2
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetColumnIndex
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetColumnIndex
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -4711,7 +4711,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetColumnIndex
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_ColumnGetName
+OCI_SYM_PUBLIC const otext * OCI_API OCI_ColumnGetName
 (
     OCI_Column *col
 );
@@ -4745,7 +4745,7 @@ OCI_EXPORT const otext * OCI_API OCI_ColumnGetName
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ColumnGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetType
 (
     OCI_Column *col
 );
@@ -4764,7 +4764,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetType
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ColumnGetCharsetForm
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetCharsetForm
 (
     OCI_Column *col
 );
@@ -4780,7 +4780,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetCharsetForm
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_ColumnGetSQLType
+OCI_SYM_PUBLIC const otext * OCI_API OCI_ColumnGetSQLType
 (
     OCI_Column *col
 );
@@ -4802,7 +4802,7 @@ OCI_EXPORT const otext * OCI_API OCI_ColumnGetSQLType
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ColumnGetFullSQLType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetFullSQLType
 (
     OCI_Column * col,
     otext *      buffer,
@@ -4821,7 +4821,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetFullSQLType
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ColumnGetSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetSize
 (
     OCI_Column *col
 );
@@ -4834,7 +4834,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetSize
  *
  */
 
-OCI_EXPORT int OCI_API OCI_ColumnGetScale
+OCI_SYM_PUBLIC int OCI_API OCI_ColumnGetScale
 (
     OCI_Column *col
 );
@@ -4847,7 +4847,7 @@ OCI_EXPORT int OCI_API OCI_ColumnGetScale
  *
  */
 
-OCI_EXPORT int OCI_API OCI_ColumnGetPrecision
+OCI_SYM_PUBLIC int OCI_API OCI_ColumnGetPrecision
 (
     OCI_Column *col
 );
@@ -4860,7 +4860,7 @@ OCI_EXPORT int OCI_API OCI_ColumnGetPrecision
  *
  */
 
-OCI_EXPORT int OCI_API OCI_ColumnGetFractionalPrecision
+OCI_SYM_PUBLIC int OCI_API OCI_ColumnGetFractionalPrecision
 (
     OCI_Column *col
 );
@@ -4873,7 +4873,7 @@ OCI_EXPORT int OCI_API OCI_ColumnGetFractionalPrecision
  *
  */
 
-OCI_EXPORT int OCI_API OCI_ColumnGetLeadingPrecision
+OCI_SYM_PUBLIC int OCI_API OCI_ColumnGetLeadingPrecision
 (
     OCI_Column *col
 );
@@ -4889,7 +4889,7 @@ OCI_EXPORT int OCI_API OCI_ColumnGetLeadingPrecision
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ColumnGetNullable
+OCI_SYM_PUBLIC boolean OCI_API OCI_ColumnGetNullable
 (
     OCI_Column *col
 );
@@ -4907,7 +4907,7 @@ OCI_EXPORT boolean OCI_API OCI_ColumnGetNullable
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ColumnGetCharUsed
+OCI_SYM_PUBLIC boolean OCI_API OCI_ColumnGetCharUsed
 (
     OCI_Column *col
 );
@@ -4939,7 +4939,7 @@ OCI_EXPORT boolean OCI_API OCI_ColumnGetCharUsed
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ColumnGetPropertyFlags
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetPropertyFlags
 (
     OCI_Column *col
 );
@@ -4971,7 +4971,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetPropertyFlags
 *
 */
 
-OCI_EXPORT unsigned int OCI_API OCI_ColumnGetCollationID
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetCollationID
 (
     OCI_Column *col
 );
@@ -4988,7 +4988,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetCollationID
  *
  */
 
-OCI_EXPORT OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
+OCI_SYM_PUBLIC OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
 (
     OCI_Column *col
 );
@@ -5056,7 +5056,7 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ColumnGetSubType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetSubType
 (
     OCI_Column *col
 );
@@ -5087,7 +5087,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ColumnGetSubType
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetStructNumericType
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetStructNumericType
 (
     OCI_Resultset *rs,
     unsigned int   index,
@@ -5120,7 +5120,7 @@ OCI_EXPORT boolean OCI_API OCI_SetStructNumericType
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetStructNumericType2
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetStructNumericType2
 (
     OCI_Resultset *rs,
     const otext *  name,
@@ -5178,7 +5178,7 @@ OCI_EXPORT boolean OCI_API OCI_SetStructNumericType2
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_GetStruct
+OCI_SYM_PUBLIC boolean OCI_API OCI_GetStruct
 (
     OCI_Resultset *rs,
     void *         row_struct,
@@ -5199,7 +5199,7 @@ OCI_EXPORT boolean OCI_API OCI_GetStruct
 * The column current row value or 0 if index is out of bounds
 *
 */
-OCI_EXPORT OCI_Number * OCI_API OCI_GetNumber
+OCI_SYM_PUBLIC OCI_Number * OCI_API OCI_GetNumber
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5220,7 +5220,7 @@ OCI_EXPORT OCI_Number * OCI_API OCI_GetNumber
 *
 */
 
-OCI_EXPORT OCI_Number * OCI_API OCI_GetNumber2
+OCI_SYM_PUBLIC OCI_Number * OCI_API OCI_GetNumber2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5241,7 +5241,7 @@ OCI_EXPORT OCI_Number * OCI_API OCI_GetNumber2
  *
  */
 
-OCI_EXPORT short OCI_API OCI_GetShort
+OCI_SYM_PUBLIC short OCI_API OCI_GetShort
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5262,7 +5262,7 @@ OCI_EXPORT short OCI_API OCI_GetShort
  *
  */
 
-OCI_EXPORT short OCI_API OCI_GetShort2
+OCI_SYM_PUBLIC short OCI_API OCI_GetShort2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5283,7 +5283,7 @@ OCI_EXPORT short OCI_API OCI_GetShort2
  *
  */
 
-OCI_EXPORT unsigned short OCI_API OCI_GetUnsignedShort
+OCI_SYM_PUBLIC unsigned short OCI_API OCI_GetUnsignedShort
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5304,7 +5304,7 @@ OCI_EXPORT unsigned short OCI_API OCI_GetUnsignedShort
  *
  */
 
-OCI_EXPORT unsigned short OCI_API OCI_GetUnsignedShort2
+OCI_SYM_PUBLIC unsigned short OCI_API OCI_GetUnsignedShort2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5325,7 +5325,7 @@ OCI_EXPORT unsigned short OCI_API OCI_GetUnsignedShort2
  *
  */
 
-OCI_EXPORT int OCI_API OCI_GetInt
+OCI_SYM_PUBLIC int OCI_API OCI_GetInt
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5346,7 +5346,7 @@ OCI_EXPORT int OCI_API OCI_GetInt
  *
  */
 
-OCI_EXPORT int OCI_API OCI_GetInt2
+OCI_SYM_PUBLIC int OCI_API OCI_GetInt2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5367,7 +5367,7 @@ OCI_EXPORT int OCI_API OCI_GetInt2
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetUnsignedInt
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetUnsignedInt
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5388,7 +5388,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetUnsignedInt
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetUnsignedInt2
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetUnsignedInt2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5409,7 +5409,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetUnsignedInt2
  *
  */
 
-OCI_EXPORT big_int OCI_API OCI_GetBigInt
+OCI_SYM_PUBLIC big_int OCI_API OCI_GetBigInt
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5430,7 +5430,7 @@ OCI_EXPORT big_int OCI_API OCI_GetBigInt
  *
  */
 
-OCI_EXPORT big_int OCI_API OCI_GetBigInt2
+OCI_SYM_PUBLIC big_int OCI_API OCI_GetBigInt2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5451,7 +5451,7 @@ OCI_EXPORT big_int OCI_API OCI_GetBigInt2
  *
  */
 
-OCI_EXPORT big_uint OCI_API OCI_GetUnsignedBigInt
+OCI_SYM_PUBLIC big_uint OCI_API OCI_GetUnsignedBigInt
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5472,7 +5472,7 @@ OCI_EXPORT big_uint OCI_API OCI_GetUnsignedBigInt
  *
  */
 
-OCI_EXPORT big_uint OCI_API OCI_GetUnsignedBigInt2
+OCI_SYM_PUBLIC big_uint OCI_API OCI_GetUnsignedBigInt2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5511,7 +5511,7 @@ OCI_EXPORT big_uint OCI_API OCI_GetUnsignedBigInt2
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetString
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetString
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5532,7 +5532,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetString
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_GetString2
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetString2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5555,7 +5555,7 @@ OCI_EXPORT const otext * OCI_API OCI_GetString2
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetRaw
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetRaw
 (
     OCI_Resultset *rs,
     unsigned int   index,
@@ -5580,7 +5580,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetRaw
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetRaw2
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetRaw2
 (
     OCI_Resultset *rs,
     const otext *  name,
@@ -5603,7 +5603,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetRaw2
  *
  */
 
-OCI_EXPORT double OCI_API OCI_GetDouble
+OCI_SYM_PUBLIC double OCI_API OCI_GetDouble
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5624,7 +5624,7 @@ OCI_EXPORT double OCI_API OCI_GetDouble
  *
  */
 
-OCI_EXPORT double OCI_API OCI_GetDouble2
+OCI_SYM_PUBLIC double OCI_API OCI_GetDouble2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5645,7 +5645,7 @@ OCI_EXPORT double OCI_API OCI_GetDouble2
  *
  */
 
-OCI_EXPORT float OCI_API OCI_GetFloat
+OCI_SYM_PUBLIC float OCI_API OCI_GetFloat
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5666,7 +5666,7 @@ OCI_EXPORT float OCI_API OCI_GetFloat
  *
  */
 
-OCI_EXPORT float OCI_API OCI_GetFloat2
+OCI_SYM_PUBLIC float OCI_API OCI_GetFloat2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5687,7 +5687,7 @@ OCI_EXPORT float OCI_API OCI_GetFloat2
  *
  */
 
-OCI_EXPORT OCI_Date * OCI_API OCI_GetDate
+OCI_SYM_PUBLIC OCI_Date * OCI_API OCI_GetDate
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5705,7 +5705,7 @@ OCI_EXPORT OCI_Date * OCI_API OCI_GetDate
  *
  */
 
-OCI_EXPORT OCI_Date * OCI_API OCI_GetDate2
+OCI_SYM_PUBLIC OCI_Date * OCI_API OCI_GetDate2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5726,7 +5726,7 @@ OCI_EXPORT OCI_Date * OCI_API OCI_GetDate2
  *
  */
 
-OCI_EXPORT OCI_Timestamp * OCI_API OCI_GetTimestamp
+OCI_SYM_PUBLIC OCI_Timestamp * OCI_API OCI_GetTimestamp
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5744,7 +5744,7 @@ OCI_EXPORT OCI_Timestamp * OCI_API OCI_GetTimestamp
  *
  */
 
-OCI_EXPORT OCI_Timestamp * OCI_API OCI_GetTimestamp2
+OCI_SYM_PUBLIC OCI_Timestamp * OCI_API OCI_GetTimestamp2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5765,7 +5765,7 @@ OCI_EXPORT OCI_Timestamp * OCI_API OCI_GetTimestamp2
  *
  */
 
-OCI_EXPORT OCI_Interval * OCI_API OCI_GetInterval
+OCI_SYM_PUBLIC OCI_Interval * OCI_API OCI_GetInterval
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5783,7 +5783,7 @@ OCI_EXPORT OCI_Interval * OCI_API OCI_GetInterval
  *
  */
 
-OCI_EXPORT OCI_Interval * OCI_API OCI_GetInterval2
+OCI_SYM_PUBLIC OCI_Interval * OCI_API OCI_GetInterval2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5804,7 +5804,7 @@ OCI_EXPORT OCI_Interval * OCI_API OCI_GetInterval2
  *
  */
 
-OCI_EXPORT OCI_Statement * OCI_API OCI_GetStatement
+OCI_SYM_PUBLIC OCI_Statement * OCI_API OCI_GetStatement
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5822,7 +5822,7 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_GetStatement
  *
  */
 
-OCI_EXPORT OCI_Statement * OCI_API OCI_GetStatement2
+OCI_SYM_PUBLIC OCI_Statement * OCI_API OCI_GetStatement2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5843,7 +5843,7 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_GetStatement2
  *
  */
 
-OCI_EXPORT OCI_Lob * OCI_API OCI_GetLob
+OCI_SYM_PUBLIC OCI_Lob * OCI_API OCI_GetLob
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5861,7 +5861,7 @@ OCI_EXPORT OCI_Lob * OCI_API OCI_GetLob
  *
  */
 
-OCI_EXPORT OCI_Lob * OCI_API OCI_GetLob2
+OCI_SYM_PUBLIC OCI_Lob * OCI_API OCI_GetLob2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5882,7 +5882,7 @@ OCI_EXPORT OCI_Lob * OCI_API OCI_GetLob2
  *
  */
 
-OCI_EXPORT OCI_File * OCI_API OCI_GetFile
+OCI_SYM_PUBLIC OCI_File * OCI_API OCI_GetFile
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5900,7 +5900,7 @@ OCI_EXPORT OCI_File * OCI_API OCI_GetFile
  *
  */
 
-OCI_EXPORT OCI_File * OCI_API OCI_GetFile2
+OCI_SYM_PUBLIC OCI_File * OCI_API OCI_GetFile2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5921,7 +5921,7 @@ OCI_EXPORT OCI_File * OCI_API OCI_GetFile2
  *
  */
 
-OCI_EXPORT OCI_Object * OCI_API OCI_GetObject
+OCI_SYM_PUBLIC OCI_Object * OCI_API OCI_GetObject
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5939,7 +5939,7 @@ OCI_EXPORT OCI_Object * OCI_API OCI_GetObject
  *
  */
 
-OCI_EXPORT OCI_Object * OCI_API OCI_GetObject2
+OCI_SYM_PUBLIC OCI_Object * OCI_API OCI_GetObject2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5960,7 +5960,7 @@ OCI_EXPORT OCI_Object * OCI_API OCI_GetObject2
  *
  */
 
-OCI_EXPORT OCI_Coll * OCI_API OCI_GetColl
+OCI_SYM_PUBLIC OCI_Coll * OCI_API OCI_GetColl
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -5978,7 +5978,7 @@ OCI_EXPORT OCI_Coll * OCI_API OCI_GetColl
  *
  */
 
-OCI_EXPORT OCI_Coll * OCI_API OCI_GetColl2
+OCI_SYM_PUBLIC OCI_Coll * OCI_API OCI_GetColl2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -5999,7 +5999,7 @@ OCI_EXPORT OCI_Coll * OCI_API OCI_GetColl2
  *
  */
 
-OCI_EXPORT OCI_Ref * OCI_API OCI_GetRef
+OCI_SYM_PUBLIC OCI_Ref * OCI_API OCI_GetRef
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -6017,7 +6017,7 @@ OCI_EXPORT OCI_Ref * OCI_API OCI_GetRef
  *
  */
 
-OCI_EXPORT OCI_Ref * OCI_API OCI_GetRef2
+OCI_SYM_PUBLIC OCI_Ref * OCI_API OCI_GetRef2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -6038,7 +6038,7 @@ OCI_EXPORT OCI_Ref * OCI_API OCI_GetRef2
  *
  */
 
-OCI_EXPORT OCI_Long * OCI_API OCI_GetLong
+OCI_SYM_PUBLIC OCI_Long * OCI_API OCI_GetLong
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -6056,7 +6056,7 @@ OCI_EXPORT OCI_Long * OCI_API OCI_GetLong
  *
  */
 
-OCI_EXPORT OCI_Long * OCI_API OCI_GetLong2
+OCI_SYM_PUBLIC OCI_Long * OCI_API OCI_GetLong2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -6077,7 +6077,7 @@ OCI_EXPORT OCI_Long * OCI_API OCI_GetLong2
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IsNull
+OCI_SYM_PUBLIC boolean OCI_API OCI_IsNull
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -6101,7 +6101,7 @@ OCI_EXPORT boolean OCI_API OCI_IsNull
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetDataSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDataSize
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -6122,7 +6122,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDataSize
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetDataSize2
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDataSize2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -6140,7 +6140,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDataSize2
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IsNull2
+OCI_SYM_PUBLIC boolean OCI_API OCI_IsNull2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -6154,7 +6154,7 @@ OCI_EXPORT boolean OCI_API OCI_IsNull2
  *
  */
 
-OCI_EXPORT OCI_Statement * OCI_API OCI_ResultsetGetStatement
+OCI_SYM_PUBLIC OCI_Statement * OCI_API OCI_ResultsetGetStatement
 (
     OCI_Resultset *rs
 );
@@ -6174,7 +6174,7 @@ OCI_EXPORT OCI_Statement * OCI_API OCI_ResultsetGetStatement
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetDataLength
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDataLength
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -6244,7 +6244,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetDataLength
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ServerEnableOutput
+OCI_SYM_PUBLIC boolean OCI_API OCI_ServerEnableOutput
 (
     OCI_Connection *con,
     unsigned int    bufsize,
@@ -6266,7 +6266,7 @@ OCI_EXPORT boolean OCI_API OCI_ServerEnableOutput
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ServerDisableOutput
+OCI_SYM_PUBLIC boolean OCI_API OCI_ServerDisableOutput
 (
     OCI_Connection *con
 );
@@ -6286,7 +6286,7 @@ OCI_EXPORT boolean OCI_API OCI_ServerDisableOutput
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_ServerGetOutput
+OCI_SYM_PUBLIC const otext * OCI_API OCI_ServerGetOutput
 (
     OCI_Connection *con
 );
@@ -6342,7 +6342,7 @@ OCI_EXPORT const otext * OCI_API OCI_ServerGetOutput
  *
  */
 
-OCI_EXPORT OCI_Coll * OCI_API OCI_CollCreate
+OCI_SYM_PUBLIC OCI_Coll * OCI_API OCI_CollCreate
 (
     OCI_TypeInfo *typinf
 );
@@ -6362,7 +6362,7 @@ OCI_EXPORT OCI_Coll * OCI_API OCI_CollCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_CollFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_CollFree
 (
     OCI_Coll *coll
 );
@@ -6383,7 +6383,7 @@ OCI_EXPORT boolean OCI_API OCI_CollFree
  *
  */
 
-OCI_EXPORT OCI_Coll ** OCI_API OCI_CollArrayCreate
+OCI_SYM_PUBLIC OCI_Coll ** OCI_API OCI_CollArrayCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo *  typinf,
@@ -6405,7 +6405,7 @@ OCI_EXPORT OCI_Coll ** OCI_API OCI_CollArrayCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_CollArrayFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_CollArrayFree
 (
     OCI_Coll **colls
 );
@@ -6425,7 +6425,7 @@ OCI_EXPORT boolean OCI_API OCI_CollArrayFree
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_CollAssign
+OCI_SYM_PUBLIC boolean OCI_API OCI_CollAssign
 (
     OCI_Coll *coll,
     OCI_Coll *coll_src
@@ -6439,7 +6439,7 @@ OCI_EXPORT boolean OCI_API OCI_CollAssign
  *
  */
 
-OCI_EXPORT OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo
+OCI_SYM_PUBLIC OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo
 (
     OCI_Coll *coll
 );
@@ -6461,7 +6461,7 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_CollGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_CollGetType
 (
     OCI_Coll *coll
 );
@@ -6474,7 +6474,7 @@ OCI_EXPORT unsigned int OCI_API OCI_CollGetType
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_CollGetMax
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_CollGetMax
 (
     OCI_Coll *coll
 );
@@ -6487,7 +6487,7 @@ OCI_EXPORT unsigned int OCI_API OCI_CollGetMax
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_CollGetSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_CollGetSize
 (
     OCI_Coll *coll
 );
@@ -6505,7 +6505,7 @@ OCI_EXPORT unsigned int OCI_API OCI_CollGetSize
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_CollGetCount
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_CollGetCount
 (
     OCI_Coll *coll
 );
@@ -6522,7 +6522,7 @@ OCI_EXPORT unsigned int OCI_API OCI_CollGetCount
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_CollTrim
+OCI_SYM_PUBLIC boolean OCI_API OCI_CollTrim
 (
     OCI_Coll *   coll,
     unsigned int nb_elem
@@ -6539,7 +6539,7 @@ OCI_EXPORT boolean OCI_API OCI_CollTrim
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_CollClear
+OCI_SYM_PUBLIC boolean OCI_API OCI_CollClear
 (
     OCI_Coll *coll
 );
@@ -6559,7 +6559,7 @@ OCI_EXPORT boolean OCI_API OCI_CollClear
  *
  */
 
-OCI_EXPORT OCI_Elem * OCI_API OCI_CollGetElem
+OCI_SYM_PUBLIC OCI_Elem * OCI_API OCI_CollGetElem
 (
     OCI_Coll *   coll,
     unsigned int index
@@ -6581,7 +6581,7 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_CollGetElem
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_CollGetElem2
+OCI_SYM_PUBLIC boolean OCI_API OCI_CollGetElem2
 (
     OCI_Coll *   coll,
     unsigned int index,
@@ -6605,7 +6605,7 @@ OCI_EXPORT boolean OCI_API OCI_CollGetElem2
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_CollSetElem
+OCI_SYM_PUBLIC boolean OCI_API OCI_CollSetElem
 (
     OCI_Coll *   coll,
     unsigned int index,
@@ -6624,7 +6624,7 @@ OCI_EXPORT boolean OCI_API OCI_CollSetElem
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_CollAppend
+OCI_SYM_PUBLIC boolean OCI_API OCI_CollAppend
 (
     OCI_Coll *coll,
     OCI_Elem *elem
@@ -6655,7 +6655,7 @@ OCI_EXPORT boolean OCI_API OCI_CollAppend
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_CollToText
+OCI_SYM_PUBLIC boolean OCI_API OCI_CollToText
 (
     OCI_Coll *    coll,
     unsigned int *size,
@@ -6682,7 +6682,7 @@ OCI_EXPORT boolean OCI_API OCI_CollToText
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_CollDeleteElem
+OCI_SYM_PUBLIC boolean OCI_API OCI_CollDeleteElem
 (
     OCI_Coll *   coll,
     unsigned int index
@@ -6699,7 +6699,7 @@ OCI_EXPORT boolean OCI_API OCI_CollDeleteElem
  *
  */
 
-OCI_EXPORT OCI_Iter * OCI_API OCI_IterCreate
+OCI_SYM_PUBLIC OCI_Iter * OCI_API OCI_IterCreate
 (
     OCI_Coll *coll
 );
@@ -6715,7 +6715,7 @@ OCI_EXPORT OCI_Iter * OCI_API OCI_IterCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IterFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_IterFree
 (
     OCI_Iter *iter
 );
@@ -6734,7 +6734,7 @@ OCI_EXPORT boolean OCI_API OCI_IterFree
  *
  */
 
-OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetNext
+OCI_SYM_PUBLIC OCI_Elem * OCI_API OCI_IterGetNext
 (
     OCI_Iter *iter
 );
@@ -6753,7 +6753,7 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetNext
  *
  */
 
-OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetPrev
+OCI_SYM_PUBLIC OCI_Elem * OCI_API OCI_IterGetPrev
 (
     OCI_Iter *iter
 );
@@ -6772,7 +6772,7 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetPrev
  *
  */
 
-OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetCurrent
+OCI_SYM_PUBLIC OCI_Elem * OCI_API OCI_IterGetCurrent
 (
     OCI_Iter *iter
 );
@@ -6789,7 +6789,7 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_IterGetCurrent
  *
  */
 
-OCI_EXPORT OCI_Elem * OCI_API OCI_ElemCreate
+OCI_SYM_PUBLIC OCI_Elem * OCI_API OCI_ElemCreate
 (
     OCI_TypeInfo *typinf
 );
@@ -6809,7 +6809,7 @@ OCI_EXPORT OCI_Elem * OCI_API OCI_ElemCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemFree
 (
     OCI_Elem *elem
 );
@@ -6828,7 +6828,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemFree
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_ElemGetBoolean
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemGetBoolean
 (
     OCI_Elem *elem
 );
@@ -6844,7 +6844,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemGetBoolean
 *
 */
 
-OCI_EXPORT OCI_Number * OCI_API OCI_ElemGetNumber
+OCI_SYM_PUBLIC OCI_Number * OCI_API OCI_ElemGetNumber
 (
     OCI_Elem *elem
 );
@@ -6860,7 +6860,7 @@ OCI_EXPORT OCI_Number * OCI_API OCI_ElemGetNumber
  *
  */
 
-OCI_EXPORT short OCI_API OCI_ElemGetShort
+OCI_SYM_PUBLIC short OCI_API OCI_ElemGetShort
 (
     OCI_Elem *elem
 );
@@ -6876,7 +6876,7 @@ OCI_EXPORT short OCI_API OCI_ElemGetShort
  *
  */
 
-OCI_EXPORT unsigned short OCI_API OCI_ElemGetUnsignedShort
+OCI_SYM_PUBLIC unsigned short OCI_API OCI_ElemGetUnsignedShort
 (
     OCI_Elem *elem
 );
@@ -6892,7 +6892,7 @@ OCI_EXPORT unsigned short OCI_API OCI_ElemGetUnsignedShort
  *
  */
 
-OCI_EXPORT int OCI_API OCI_ElemGetInt
+OCI_SYM_PUBLIC int OCI_API OCI_ElemGetInt
 (
     OCI_Elem *elem
 );
@@ -6908,7 +6908,7 @@ OCI_EXPORT int OCI_API OCI_ElemGetInt
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ElemGetUnsignedInt
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ElemGetUnsignedInt
 (
     OCI_Elem *elem
 );
@@ -6924,7 +6924,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ElemGetUnsignedInt
  *
  */
 
-OCI_EXPORT big_int OCI_API OCI_ElemGetBigInt
+OCI_SYM_PUBLIC big_int OCI_API OCI_ElemGetBigInt
 (
     OCI_Elem *elem
 );
@@ -6940,7 +6940,7 @@ OCI_EXPORT big_int OCI_API OCI_ElemGetBigInt
  *
  */
 
-OCI_EXPORT big_uint OCI_API OCI_ElemGetUnsignedBigInt
+OCI_SYM_PUBLIC big_uint OCI_API OCI_ElemGetUnsignedBigInt
 (
     OCI_Elem *elem
 );
@@ -6956,7 +6956,7 @@ OCI_EXPORT big_uint OCI_API OCI_ElemGetUnsignedBigInt
  *
  */
 
-OCI_EXPORT double OCI_API OCI_ElemGetDouble
+OCI_SYM_PUBLIC double OCI_API OCI_ElemGetDouble
 (
     OCI_Elem *elem
 );
@@ -6972,7 +6972,7 @@ OCI_EXPORT double OCI_API OCI_ElemGetDouble
  *
  */
 
-OCI_EXPORT float OCI_API OCI_ElemGetFloat
+OCI_SYM_PUBLIC float OCI_API OCI_ElemGetFloat
 (
     OCI_Elem *elem
 );
@@ -6988,7 +6988,7 @@ OCI_EXPORT float OCI_API OCI_ElemGetFloat
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_ElemGetString
+OCI_SYM_PUBLIC const otext * OCI_API OCI_ElemGetString
 (
     OCI_Elem *elem
 );
@@ -7006,7 +7006,7 @@ OCI_EXPORT const otext * OCI_API OCI_ElemGetString
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ElemGetRaw
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ElemGetRaw
 (
     OCI_Elem *   elem,
     void *       value,
@@ -7024,7 +7024,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ElemGetRaw
 *
 */
 
-OCI_EXPORT unsigned int OCI_API OCI_ElemGetRawSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ElemGetRawSize
 (
     OCI_Elem *elem
 );
@@ -7040,7 +7040,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ElemGetRawSize
  *
  */
 
-OCI_EXPORT OCI_Date * OCI_API OCI_ElemGetDate
+OCI_SYM_PUBLIC OCI_Date * OCI_API OCI_ElemGetDate
 (
     OCI_Elem *elem
 );
@@ -7056,7 +7056,7 @@ OCI_EXPORT OCI_Date * OCI_API OCI_ElemGetDate
  *
  */
 
-OCI_EXPORT OCI_Timestamp * OCI_API OCI_ElemGetTimestamp
+OCI_SYM_PUBLIC OCI_Timestamp * OCI_API OCI_ElemGetTimestamp
 (
     OCI_Elem *elem
 );
@@ -7072,7 +7072,7 @@ OCI_EXPORT OCI_Timestamp * OCI_API OCI_ElemGetTimestamp
  *
  */
 
-OCI_EXPORT OCI_Interval * OCI_API OCI_ElemGetInterval
+OCI_SYM_PUBLIC OCI_Interval * OCI_API OCI_ElemGetInterval
 (
     OCI_Elem *elem
 );
@@ -7088,7 +7088,7 @@ OCI_EXPORT OCI_Interval * OCI_API OCI_ElemGetInterval
  *
  */
 
-OCI_EXPORT OCI_Lob * OCI_API OCI_ElemGetLob
+OCI_SYM_PUBLIC OCI_Lob * OCI_API OCI_ElemGetLob
 (
     OCI_Elem *elem
 );
@@ -7104,7 +7104,7 @@ OCI_EXPORT OCI_Lob * OCI_API OCI_ElemGetLob
  *
  */
 
-OCI_EXPORT OCI_File * OCI_API OCI_ElemGetFile
+OCI_SYM_PUBLIC OCI_File * OCI_API OCI_ElemGetFile
 (
     OCI_Elem *elem
 );
@@ -7120,7 +7120,7 @@ OCI_EXPORT OCI_File * OCI_API OCI_ElemGetFile
  *
  */
 
-OCI_EXPORT OCI_Object * OCI_API OCI_ElemGetObject
+OCI_SYM_PUBLIC OCI_Object * OCI_API OCI_ElemGetObject
 (
     OCI_Elem *elem
 );
@@ -7136,7 +7136,7 @@ OCI_EXPORT OCI_Object * OCI_API OCI_ElemGetObject
  *
  */
 
-OCI_EXPORT OCI_Coll * OCI_API OCI_ElemGetColl
+OCI_SYM_PUBLIC OCI_Coll * OCI_API OCI_ElemGetColl
 (
     OCI_Elem *elem
 );
@@ -7152,7 +7152,7 @@ OCI_EXPORT OCI_Coll * OCI_API OCI_ElemGetColl
  *
  */
 
-OCI_EXPORT OCI_Ref * OCI_API OCI_ElemGetRef
+OCI_SYM_PUBLIC OCI_Ref * OCI_API OCI_ElemGetRef
 (
     OCI_Elem *elem
 );
@@ -7172,7 +7172,7 @@ OCI_EXPORT OCI_Ref * OCI_API OCI_ElemGetRef
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetBoolean
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetBoolean
 (
     OCI_Elem *elem,
     boolean   value
@@ -7190,7 +7190,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetBoolean
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetNumber
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetNumber
 (
     OCI_Elem *  elem,
     OCI_Number *value
@@ -7208,7 +7208,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetNumber
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetShort
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetShort
 (
     OCI_Elem *elem,
     short     value
@@ -7226,7 +7226,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetShort
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetUnsignedShort
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetUnsignedShort
 (
     OCI_Elem *     elem,
     unsigned short value
@@ -7244,7 +7244,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetUnsignedShort
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetInt
 (
     OCI_Elem *elem,
     int       value
@@ -7262,7 +7262,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetUnsignedInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetUnsignedInt
 (
     OCI_Elem *   elem,
     unsigned int value
@@ -7280,7 +7280,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetUnsignedInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetBigInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetBigInt
 (
     OCI_Elem *elem,
     big_int   value
@@ -7298,7 +7298,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetBigInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetUnsignedBigInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetUnsignedBigInt
 (
     OCI_Elem *elem,
     big_uint  value
@@ -7316,7 +7316,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetUnsignedBigInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetDouble
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetDouble
 (
     OCI_Elem *elem,
     double    value
@@ -7334,7 +7334,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetDouble
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetFloat
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetFloat
 (
     OCI_Elem *elem,
     float     value
@@ -7355,7 +7355,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetFloat
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetString
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetString
 (
     OCI_Elem *   elem,
     const otext *value
@@ -7377,7 +7377,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetString
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetRaw
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetRaw
 (
     OCI_Elem *   elem,
     void *       value,
@@ -7399,7 +7399,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetRaw
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetDate
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetDate
 (
     OCI_Elem *elem,
     OCI_Date *value
@@ -7420,7 +7420,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetDate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetTimestamp
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetTimestamp
 (
     OCI_Elem *     elem,
     OCI_Timestamp *value
@@ -7441,7 +7441,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetTimestamp
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetInterval
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetInterval
 (
     OCI_Elem *    elem,
     OCI_Interval *value
@@ -7462,7 +7462,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetInterval
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetColl
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetColl
 (
     OCI_Elem *elem,
     OCI_Coll *value
@@ -7488,7 +7488,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetColl
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetObject
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetObject
 (
     OCI_Elem *  elem,
     OCI_Object *value
@@ -7509,7 +7509,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetObject
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetLob
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetLob
 (
     OCI_Elem *elem,
     OCI_Lob * value
@@ -7530,7 +7530,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetLob
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetFile
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetFile
 (
     OCI_Elem *elem,
     OCI_File *value
@@ -7551,7 +7551,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetFile
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetRef
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetRef
 (
     OCI_Elem *elem,
     OCI_Ref * value
@@ -7568,7 +7568,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetRef
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemIsNull
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemIsNull
 (
     OCI_Elem *elem
 );
@@ -7584,7 +7584,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemIsNull
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ElemSetNull
+OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetNull
 (
     OCI_Elem *elem
 );
@@ -7668,7 +7668,7 @@ OCI_EXPORT boolean OCI_API OCI_ElemSetNull
  *
  */
 
-OCI_EXPORT OCI_Resultset * OCI_API OCI_GetNextResultset
+OCI_SYM_PUBLIC OCI_Resultset * OCI_API OCI_GetNextResultset
 (
     OCI_Statement *stmt
 );
@@ -7685,7 +7685,7 @@ OCI_EXPORT OCI_Resultset * OCI_API OCI_GetNextResultset
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterNumber
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterNumber
 (
     OCI_Statement *stmt,
     const otext *  name
@@ -7703,7 +7703,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterNumber
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterShort
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterShort
 (
     OCI_Statement *stmt,
     const otext *  name
@@ -7721,7 +7721,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterShort
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedShort
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterUnsignedShort
 (
     OCI_Statement *stmt,
     const otext *  name
@@ -7739,7 +7739,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedShort
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterInt
 (
     OCI_Statement *stmt,
     const otext *  name
@@ -7757,7 +7757,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterUnsignedInt
 (
     OCI_Statement *stmt,
     const otext *  name
@@ -7775,7 +7775,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterBigInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterBigInt
 (
     OCI_Statement *stmt,
     const otext *  name
@@ -7793,7 +7793,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterBigInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedBigInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterUnsignedBigInt
 (
     OCI_Statement *stmt,
     const otext *  name
@@ -7812,7 +7812,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedBigInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterString
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterString
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -7831,7 +7831,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterString
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterRaw
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterRaw
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -7849,7 +7849,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterRaw
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterDouble
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterDouble
 (
     OCI_Statement *stmt,
     const otext *  name
@@ -7866,7 +7866,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterDouble
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterFloat
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterFloat
 (
     OCI_Statement *stmt,
     const otext *  name
@@ -7883,7 +7883,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterFloat
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterDate
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterDate
 (
     OCI_Statement *stmt,
     const otext *  name
@@ -7904,7 +7904,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterDate
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterTimestamp
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterTimestamp
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -7926,7 +7926,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterTimestamp
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterInterval
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterInterval
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -7945,7 +7945,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterInterval
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterObject
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterObject
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -7967,7 +7967,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterObject
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterLob
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterLob
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -7989,7 +7989,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterLob
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterFile
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterFile
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -8008,7 +8008,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterFile
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_RegisterRef
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterRef
 (
     OCI_Statement *stmt,
     const otext *  name,
@@ -8070,7 +8070,7 @@ OCI_EXPORT boolean OCI_API OCI_RegisterRef
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetStatementType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetStatementType
 (
     OCI_Statement *stmt
 );
@@ -8099,7 +8099,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetStatementType
  * 
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetFetchMode
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetFetchMode
 (
     OCI_Statement *stmt,
     unsigned int   mode
@@ -8117,7 +8117,7 @@ OCI_EXPORT boolean OCI_API OCI_SetFetchMode
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetFetchMode
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetFetchMode
 (
     OCI_Statement *stmt
 );
@@ -8136,7 +8136,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetFetchMode
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetBindMode
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetBindMode
 (
     OCI_Statement *stmt,
     unsigned int   mode
@@ -8157,7 +8157,7 @@ OCI_EXPORT boolean OCI_API OCI_SetBindMode
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetBindMode
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBindMode
 (
     OCI_Statement *stmt
 );
@@ -8185,7 +8185,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBindMode
  * 
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetBindAllocation
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetBindAllocation
 (
     OCI_Statement *stmt,
     unsigned int   mode
@@ -8209,7 +8209,7 @@ OCI_EXPORT boolean OCI_API OCI_SetBindAllocation
  * if stmt is NULL, the return value is OCI_UNKNOWN
  *
  */
-OCI_EXPORT unsigned int OCI_API OCI_GetBindAllocation
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBindAllocation
 (
     OCI_Statement *stmt
 );
@@ -8226,7 +8226,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetBindAllocation
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetFetchSize
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetFetchSize
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -8243,7 +8243,7 @@ OCI_EXPORT boolean OCI_API OCI_SetFetchSize
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetFetchSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetFetchSize
 (
     OCI_Statement *stmt
 );
@@ -8267,7 +8267,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetFetchSize
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetPrefetchSize
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetPrefetchSize
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -8284,7 +8284,7 @@ OCI_EXPORT boolean OCI_API OCI_SetPrefetchSize
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetPrefetchSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPrefetchSize
 (
     OCI_Statement *stmt
 );
@@ -8312,7 +8312,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetPrefetchSize
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetPrefetchMemory
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetPrefetchMemory
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -8329,7 +8329,7 @@ OCI_EXPORT boolean OCI_API OCI_SetPrefetchMemory
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetPrefetchMemory
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPrefetchMemory
 (
     OCI_Statement *stmt
 );
@@ -8346,7 +8346,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetPrefetchMemory
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetLongMaxSize
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetLongMaxSize
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -8363,7 +8363,7 @@ OCI_EXPORT boolean OCI_API OCI_SetLongMaxSize
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetLongMaxSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetLongMaxSize
 (
     OCI_Statement *stmt
 );
@@ -8385,7 +8385,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetLongMaxSize
  *  LONG RAWs cannot be handled with OCI_LONG_IMPLICIT
  */
 
-OCI_EXPORT boolean OCI_API OCI_SetLongMode
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetLongMode
 (
     OCI_Statement *stmt,
     unsigned int   mode
@@ -8402,7 +8402,7 @@ OCI_EXPORT boolean OCI_API OCI_SetLongMode
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_GetLongMode
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetLongMode
 (
     OCI_Statement *stmt
 );
@@ -8415,7 +8415,7 @@ OCI_EXPORT unsigned int OCI_API OCI_GetLongMode
  *
  */
 
-OCI_EXPORT OCI_Connection * OCI_API OCI_StatementGetConnection
+OCI_SYM_PUBLIC OCI_Connection * OCI_API OCI_StatementGetConnection
 (
     OCI_Statement *stmt
 );
@@ -8491,7 +8491,7 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_StatementGetConnection
  *
  */
 
-OCI_EXPORT OCI_Lob * OCI_API OCI_LobCreate
+OCI_SYM_PUBLIC OCI_Lob * OCI_API OCI_LobCreate
 (
     OCI_Connection *con,
     unsigned int    type
@@ -8511,7 +8511,7 @@ OCI_EXPORT OCI_Lob * OCI_API OCI_LobCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobFree
 (
     OCI_Lob *lob
 );
@@ -8532,7 +8532,7 @@ OCI_EXPORT boolean OCI_API OCI_LobFree
  *
  */
 
-OCI_EXPORT OCI_Lob ** OCI_API OCI_LobArrayCreate
+OCI_SYM_PUBLIC OCI_Lob ** OCI_API OCI_LobArrayCreate
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -8554,7 +8554,7 @@ OCI_EXPORT OCI_Lob ** OCI_API OCI_LobArrayCreate
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_LobArrayFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobArrayFree
 (
     OCI_Lob **lobs
 );
@@ -8573,7 +8573,7 @@ OCI_EXPORT boolean OCI_API OCI_LobArrayFree
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_LobGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobGetType
 (
     OCI_Lob *lob
 );
@@ -8605,7 +8605,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LobGetType
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobSeek
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobSeek
 (
     OCI_Lob *    lob,
     big_uint     offset,
@@ -8622,7 +8622,7 @@ OCI_EXPORT boolean OCI_API OCI_LobSeek
  * Lob position (starting with 0) or 0 on failure
  */
 
-OCI_EXPORT big_uint OCI_API OCI_LobGetOffset
+OCI_SYM_PUBLIC big_uint OCI_API OCI_LobGetOffset
 (
     OCI_Lob *lob
 );
@@ -8648,7 +8648,7 @@ OCI_EXPORT big_uint OCI_API OCI_LobGetOffset
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_LobRead
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobRead
 (
     OCI_Lob *    lob,
     void *       buffer,
@@ -8680,7 +8680,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LobRead
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobRead2
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobRead2
 (
     OCI_Lob *     lob,
     void *        buffer,
@@ -8709,7 +8709,7 @@ OCI_EXPORT boolean OCI_API OCI_LobRead2
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_LobWrite
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobWrite
 (
     OCI_Lob *    lob,
     void *       buffer,
@@ -8741,7 +8741,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LobWrite
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobWrite2
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobWrite2
 (
     OCI_Lob *     lob,
     void *        buffer,
@@ -8769,7 +8769,7 @@ OCI_EXPORT boolean OCI_API OCI_LobWrite2
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobTruncate
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobTruncate
 (
     OCI_Lob *lob,
     big_uint size
@@ -8786,7 +8786,7 @@ OCI_EXPORT boolean OCI_API OCI_LobTruncate
  *
  */
 
-OCI_EXPORT big_uint OCI_API OCI_LobGetLength
+OCI_SYM_PUBLIC big_uint OCI_API OCI_LobGetLength
 (
     OCI_Lob *lob
 );
@@ -8808,7 +8808,7 @@ OCI_EXPORT big_uint OCI_API OCI_LobGetLength
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_LobGetChunkSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobGetChunkSize
 (
     OCI_Lob *lob
 );
@@ -8833,7 +8833,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LobGetChunkSize
  *
  */
 
-OCI_EXPORT big_uint OCI_API OCI_LobErase
+OCI_SYM_PUBLIC big_uint OCI_API OCI_LobErase
 (
     OCI_Lob *lob,
     big_uint offset,
@@ -8858,7 +8858,7 @@ OCI_EXPORT big_uint OCI_API OCI_LobErase
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_LobAppend
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobAppend
 (
     OCI_Lob *    lob,
     void *       buffer,
@@ -8890,7 +8890,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LobAppend
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobAppend2
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobAppend2
 (
     OCI_Lob *     lob,
     void *        buffer,
@@ -8910,7 +8910,7 @@ OCI_EXPORT boolean OCI_API OCI_LobAppend2
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobAppendLob
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobAppendLob
 (
     OCI_Lob *lob,
     OCI_Lob *lob_src
@@ -8927,7 +8927,7 @@ OCI_EXPORT boolean OCI_API OCI_LobAppendLob
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobIsTemporary
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsTemporary
 (
     OCI_Lob *lob
 );
@@ -8951,7 +8951,7 @@ OCI_EXPORT boolean OCI_API OCI_LobIsTemporary
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobCopy
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobCopy
 (
     OCI_Lob *lob,
     OCI_Lob *lob_src,
@@ -8980,7 +8980,7 @@ OCI_EXPORT boolean OCI_API OCI_LobCopy
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobCopyFromFile
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobCopyFromFile
 (
     OCI_Lob * lob,
     OCI_File *file,
@@ -9011,7 +9011,7 @@ OCI_EXPORT boolean OCI_API OCI_LobCopyFromFile
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobOpen
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobOpen
 (
     OCI_Lob *    lob,
     unsigned int mode
@@ -9031,7 +9031,7 @@ OCI_EXPORT boolean OCI_API OCI_LobOpen
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobClose
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobClose
 (
     OCI_Lob *lob
 );
@@ -9048,7 +9048,7 @@ OCI_EXPORT boolean OCI_API OCI_LobClose
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobIsEqual
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsEqual
 (
     OCI_Lob *lob,
     OCI_Lob *lob2
@@ -9066,7 +9066,7 @@ OCI_EXPORT boolean OCI_API OCI_LobIsEqual
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobAssign
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobAssign
 (
     OCI_Lob *lob,
     OCI_Lob *lob_src
@@ -9083,7 +9083,7 @@ OCI_EXPORT boolean OCI_API OCI_LobAssign
  *
  */
 
-OCI_EXPORT big_uint OCI_API OCI_LobGetMaxSize
+OCI_SYM_PUBLIC big_uint OCI_API OCI_LobGetMaxSize
 (
     OCI_Lob *lob
 );
@@ -9099,7 +9099,7 @@ OCI_EXPORT big_uint OCI_API OCI_LobGetMaxSize
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobFlush
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobFlush
 (
     OCI_Lob *lob
 );
@@ -9128,7 +9128,7 @@ OCI_EXPORT boolean OCI_API OCI_LobFlush
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LobEnableBuffering
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobEnableBuffering
 (
     OCI_Lob *lob,
     boolean  value
@@ -9142,7 +9142,7 @@ OCI_EXPORT boolean OCI_API OCI_LobEnableBuffering
 *
 */
 
-OCI_EXPORT OCI_Connection * OCI_API OCI_LobGetConnection
+OCI_SYM_PUBLIC OCI_Connection * OCI_API OCI_LobGetConnection
 (
     OCI_Lob *lob
 );
@@ -9158,7 +9158,7 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_LobGetConnection
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_LobIsRemote
+OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsRemote
 (
     OCI_Lob *lob
 );
@@ -9222,7 +9222,7 @@ OCI_EXPORT boolean OCI_API OCI_LobIsRemote
  *
  */
 
-OCI_EXPORT OCI_File * OCI_API OCI_FileCreate
+OCI_SYM_PUBLIC OCI_File * OCI_API OCI_FileCreate
 (
     OCI_Connection *con,
     unsigned int    type
@@ -9242,7 +9242,7 @@ OCI_EXPORT OCI_File * OCI_API OCI_FileCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FileFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_FileFree
 (
     OCI_File *file
 );
@@ -9263,7 +9263,7 @@ OCI_EXPORT boolean OCI_API OCI_FileFree
  *
  */
 
-OCI_EXPORT OCI_File ** OCI_API OCI_FileArrayCreate
+OCI_SYM_PUBLIC OCI_File ** OCI_API OCI_FileArrayCreate
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -9284,7 +9284,7 @@ OCI_EXPORT OCI_File ** OCI_API OCI_FileArrayCreate
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_FileArrayFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_FileArrayFree
 (
     OCI_File **files
 );
@@ -9303,7 +9303,7 @@ OCI_EXPORT boolean OCI_API OCI_FileArrayFree
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_FileGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_FileGetType
 (
     OCI_File *file
 );
@@ -9331,7 +9331,7 @@ OCI_EXPORT unsigned int OCI_API OCI_FileGetType
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FileSeek
+OCI_SYM_PUBLIC boolean OCI_API OCI_FileSeek
 (
     OCI_File *   file,
     big_uint     offset,
@@ -9348,7 +9348,7 @@ OCI_EXPORT boolean OCI_API OCI_FileSeek
  * File position (starting with 0) or 0 on failure
  */
 
-OCI_EXPORT big_uint OCI_API OCI_FileGetOffset
+OCI_SYM_PUBLIC big_uint OCI_API OCI_FileGetOffset
 (
     OCI_File *file
 );
@@ -9366,7 +9366,7 @@ OCI_EXPORT big_uint OCI_API OCI_FileGetOffset
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_FileRead
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_FileRead
 (
     OCI_File *   file,
     void *       buffer,
@@ -9381,7 +9381,7 @@ OCI_EXPORT unsigned int OCI_API OCI_FileRead
  *
  */
 
-OCI_EXPORT big_uint OCI_API OCI_FileGetSize
+OCI_SYM_PUBLIC big_uint OCI_API OCI_FileGetSize
 (
     OCI_File *file
 );
@@ -9400,7 +9400,7 @@ OCI_EXPORT big_uint OCI_API OCI_FileGetSize
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FileExists
+OCI_SYM_PUBLIC boolean OCI_API OCI_FileExists
 (
     OCI_File *file
 );
@@ -9422,7 +9422,7 @@ OCI_EXPORT boolean OCI_API OCI_FileExists
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FileSetName
+OCI_SYM_PUBLIC boolean OCI_API OCI_FileSetName
 (
     OCI_File *   file,
     const otext *dir,
@@ -9437,7 +9437,7 @@ OCI_EXPORT boolean OCI_API OCI_FileSetName
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_FileGetDirectory
+OCI_SYM_PUBLIC const otext * OCI_API OCI_FileGetDirectory
 (
     OCI_File *file
 );
@@ -9450,7 +9450,7 @@ OCI_EXPORT const otext * OCI_API OCI_FileGetDirectory
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_FileGetName
+OCI_SYM_PUBLIC const otext * OCI_API OCI_FileGetName
 (
     OCI_File *file
 );
@@ -9466,7 +9466,7 @@ OCI_EXPORT const otext * OCI_API OCI_FileGetName
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FileOpen
+OCI_SYM_PUBLIC boolean OCI_API OCI_FileOpen
 (
     OCI_File *file
 );
@@ -9482,7 +9482,7 @@ OCI_EXPORT boolean OCI_API OCI_FileOpen
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FileIsOpen
+OCI_SYM_PUBLIC boolean OCI_API OCI_FileIsOpen
 (
     OCI_File *file
 );
@@ -9498,7 +9498,7 @@ OCI_EXPORT boolean OCI_API OCI_FileIsOpen
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FileClose
+OCI_SYM_PUBLIC boolean OCI_API OCI_FileClose
 (
     OCI_File *file
 );
@@ -9515,7 +9515,7 @@ OCI_EXPORT boolean OCI_API OCI_FileClose
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FileIsEqual
+OCI_SYM_PUBLIC boolean OCI_API OCI_FileIsEqual
 (
     OCI_File *file,
     OCI_File *file2
@@ -9533,7 +9533,7 @@ OCI_EXPORT boolean OCI_API OCI_FileIsEqual
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_FileAssign
+OCI_SYM_PUBLIC boolean OCI_API OCI_FileAssign
 (
     OCI_File *file,
     OCI_File *file_src
@@ -9547,7 +9547,7 @@ OCI_EXPORT boolean OCI_API OCI_FileAssign
 *
 */
 
-OCI_EXPORT OCI_Connection * OCI_API OCI_FileGetConnection
+OCI_SYM_PUBLIC OCI_Connection * OCI_API OCI_FileGetConnection
 (
     OCI_File *file
 );
@@ -9604,7 +9604,7 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_FileGetConnection
  *
  */
 
-OCI_EXPORT OCI_Long * OCI_API OCI_LongCreate
+OCI_SYM_PUBLIC OCI_Long * OCI_API OCI_LongCreate
 (
     OCI_Statement *stmt,
     unsigned int   type
@@ -9624,7 +9624,7 @@ OCI_EXPORT OCI_Long * OCI_API OCI_LongCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_LongFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_LongFree
 (
     OCI_Long *lg
 );
@@ -9643,7 +9643,7 @@ OCI_EXPORT boolean OCI_API OCI_LongFree
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_LongGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongGetType
 (
     OCI_Long *lg
 );
@@ -9673,7 +9673,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LongGetType
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_LongRead
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongRead
 (
     OCI_Long *   lg,
     void *       buffer,
@@ -9694,7 +9694,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LongRead
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_LongWrite
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongWrite
 (
     OCI_Long *   lg,
     void *       buffer,
@@ -9709,7 +9709,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LongWrite
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_LongGetSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongGetSize
 (
     OCI_Long *lg
 );
@@ -9722,7 +9722,7 @@ OCI_EXPORT unsigned int OCI_API OCI_LongGetSize
  *
  */
 
-OCI_EXPORT void * OCI_API OCI_LongGetBuffer
+OCI_SYM_PUBLIC void * OCI_API OCI_LongGetBuffer
 (
     OCI_Long *lg
 );
@@ -9760,7 +9760,7 @@ OCI_EXPORT void * OCI_API OCI_LongGetBuffer
 *
 */
 
-OCI_EXPORT OCI_Number * OCI_API OCI_NumberCreate
+OCI_SYM_PUBLIC OCI_Number * OCI_API OCI_NumberCreate
 (
     OCI_Connection *con
 );
@@ -9779,7 +9779,7 @@ OCI_EXPORT OCI_Number * OCI_API OCI_NumberCreate
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_NumberFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_NumberFree
 (
     OCI_Number *number
 );
@@ -9799,7 +9799,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberFree
 *
 */
 
-OCI_EXPORT OCI_Number ** OCI_API OCI_NumberArrayCreate
+OCI_SYM_PUBLIC OCI_Number ** OCI_API OCI_NumberArrayCreate
 (
     OCI_Connection *con,
     unsigned int    nbelem
@@ -9819,7 +9819,7 @@ OCI_EXPORT OCI_Number ** OCI_API OCI_NumberArrayCreate
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_NumberArrayFree
 (
     OCI_Number **numbers
 );
@@ -9836,7 +9836,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberArrayFree
 *
 */
 
-OCI_EXPORT int OCI_API OCI_NumberAssign
+OCI_SYM_PUBLIC int OCI_API OCI_NumberAssign
 (
     OCI_Number *number,
     OCI_Number *number_src
@@ -9861,7 +9861,7 @@ OCI_EXPORT int OCI_API OCI_NumberAssign
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_NumberToText
+OCI_SYM_PUBLIC boolean OCI_API OCI_NumberToText
 (
     OCI_Number * number,
     const otext *fmt,
@@ -9887,7 +9887,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberToText
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_NumberFromText
+OCI_SYM_PUBLIC boolean OCI_API OCI_NumberFromText
 (
     OCI_Number * number,
     const otext *str,
@@ -9910,7 +9910,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberFromText
 *
 */
 
-OCI_EXPORT unsigned char * OCI_API OCI_NumberGetContent
+OCI_SYM_PUBLIC unsigned char * OCI_API OCI_NumberGetContent
 (
     OCI_Number *number
 );
@@ -9930,7 +9930,7 @@ OCI_EXPORT unsigned char * OCI_API OCI_NumberGetContent
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_NumberSetContent
+OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSetContent
 (
     OCI_Number *   number,
     unsigned char *content
@@ -9962,7 +9962,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberSetContent
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_NumberSetValue
+OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSetValue
 (
     OCI_Number * number,
     unsigned int type,
@@ -9985,7 +9985,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberSetValue
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_NumberGetValue
+OCI_SYM_PUBLIC boolean OCI_API OCI_NumberGetValue
 (
     OCI_Number * number,
     unsigned int type,
@@ -10008,7 +10008,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberGetValue
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_NumberAdd
+OCI_SYM_PUBLIC boolean OCI_API OCI_NumberAdd
 (
     OCI_Number * number,
     unsigned int type,
@@ -10031,7 +10031,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberAdd
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_NumberSub
+OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSub
 (
     OCI_Number * number,
     unsigned int type,
@@ -10054,7 +10054,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberSub
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_NumberMultiply
+OCI_SYM_PUBLIC boolean OCI_API OCI_NumberMultiply
 (
     OCI_Number * number,
     unsigned int type,
@@ -10077,7 +10077,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberMultiply
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_NumberDivide
+OCI_SYM_PUBLIC boolean OCI_API OCI_NumberDivide
 (
     OCI_Number * number,
     unsigned int type,
@@ -10098,7 +10098,7 @@ OCI_EXPORT boolean OCI_API OCI_NumberDivide
  *
  */
 
-OCI_EXPORT int OCI_API OCI_NumberCompare
+OCI_SYM_PUBLIC int OCI_API OCI_NumberCompare
 (
     OCI_Number *number1,
     OCI_Number *number2
@@ -10137,7 +10137,7 @@ OCI_EXPORT int OCI_API OCI_NumberCompare
  *
  */
 
-OCI_EXPORT OCI_Date * OCI_API OCI_DateCreate
+OCI_SYM_PUBLIC OCI_Date * OCI_API OCI_DateCreate
 (
     OCI_Connection *con
 );
@@ -10156,7 +10156,7 @@ OCI_EXPORT OCI_Date * OCI_API OCI_DateCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateFree
 (
     OCI_Date *date
 );
@@ -10176,7 +10176,7 @@ OCI_EXPORT boolean OCI_API OCI_DateFree
  *
  */
 
-OCI_EXPORT OCI_Date ** OCI_API OCI_DateArrayCreate
+OCI_SYM_PUBLIC OCI_Date ** OCI_API OCI_DateArrayCreate
 (
     OCI_Connection *con,
     unsigned int    nbelem
@@ -10196,7 +10196,7 @@ OCI_EXPORT OCI_Date ** OCI_API OCI_DateArrayCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateArrayFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateArrayFree
 (
     OCI_Date **dates
 );
@@ -10213,7 +10213,7 @@ OCI_EXPORT boolean OCI_API OCI_DateArrayFree
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateAddDays
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateAddDays
 (
     OCI_Date *date,
     int       nb
@@ -10231,7 +10231,7 @@ OCI_EXPORT boolean OCI_API OCI_DateAddDays
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateAddMonths
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateAddMonths
 (
     OCI_Date *date,
     int       nb
@@ -10249,7 +10249,7 @@ OCI_EXPORT boolean OCI_API OCI_DateAddMonths
  *
  */
 
-OCI_EXPORT int OCI_API OCI_DateAssign
+OCI_SYM_PUBLIC int OCI_API OCI_DateAssign
 (
     OCI_Date *date,
     OCI_Date *date_src
@@ -10267,7 +10267,7 @@ OCI_EXPORT int OCI_API OCI_DateAssign
  *
  */
 
-OCI_EXPORT int OCI_API OCI_DateCheck
+OCI_SYM_PUBLIC int OCI_API OCI_DateCheck
 (
     OCI_Date *date
 );
@@ -10286,7 +10286,7 @@ OCI_EXPORT int OCI_API OCI_DateCheck
  *
  */
 
-OCI_EXPORT int OCI_API OCI_DateCompare
+OCI_SYM_PUBLIC int OCI_API OCI_DateCompare
 (
     OCI_Date *date,
     OCI_Date *date2
@@ -10306,7 +10306,7 @@ OCI_EXPORT int OCI_API OCI_DateCompare
  *
  */
 
-OCI_EXPORT int OCI_API OCI_DateDaysBetween
+OCI_SYM_PUBLIC int OCI_API OCI_DateDaysBetween
 (
     OCI_Date *date,
     OCI_Date *date2
@@ -10325,7 +10325,7 @@ OCI_EXPORT int OCI_API OCI_DateDaysBetween
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateFromText
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateFromText
 (
     OCI_Date *   date,
     const otext *str,
@@ -10346,7 +10346,7 @@ OCI_EXPORT boolean OCI_API OCI_DateFromText
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateToText
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateToText
 (
     OCI_Date *   date,
     const otext *fmt,
@@ -10368,7 +10368,7 @@ OCI_EXPORT boolean OCI_API OCI_DateToText
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateGetDate
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateGetDate
 (
     OCI_Date *date,
     int *     year,
@@ -10390,7 +10390,7 @@ OCI_EXPORT boolean OCI_API OCI_DateGetDate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateGetTime
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateGetTime
 (
     OCI_Date *date,
     int *     hour,
@@ -10415,7 +10415,7 @@ OCI_EXPORT boolean OCI_API OCI_DateGetTime
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateGetDateTime
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateGetDateTime
 (
     OCI_Date *date,
     int *     year,
@@ -10440,7 +10440,7 @@ OCI_EXPORT boolean OCI_API OCI_DateGetDateTime
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateSetDate
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateSetDate
 (
     OCI_Date *date,
     int       year,
@@ -10462,7 +10462,7 @@ OCI_EXPORT boolean OCI_API OCI_DateSetDate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateSetTime
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateSetTime
 (
     OCI_Date *date,
     int       hour,
@@ -10487,7 +10487,7 @@ OCI_EXPORT boolean OCI_API OCI_DateSetTime
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateSetDateTime
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateSetDateTime
 (
     OCI_Date *date,
     int       year,
@@ -10509,7 +10509,7 @@ OCI_EXPORT boolean OCI_API OCI_DateSetDateTime
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateLastDay
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateLastDay
 (
     OCI_Date *date
 );
@@ -10526,7 +10526,7 @@ OCI_EXPORT boolean OCI_API OCI_DateLastDay
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateNextDay
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateNextDay
 (
     OCI_Date *   date,
     const otext *day
@@ -10543,7 +10543,7 @@ OCI_EXPORT boolean OCI_API OCI_DateNextDay
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateSysDate
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateSysDate
 (
     OCI_Date *date
 );
@@ -10561,7 +10561,7 @@ OCI_EXPORT boolean OCI_API OCI_DateSysDate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateZoneToZone
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateZoneToZone
 (
     OCI_Date *   date,
     const otext *zone1,
@@ -10584,7 +10584,7 @@ OCI_EXPORT boolean OCI_API OCI_DateZoneToZone
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateToCTime
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateToCTime
 (
     OCI_Date * date,
     struct tm *ptm,
@@ -10609,7 +10609,7 @@ OCI_EXPORT boolean OCI_API OCI_DateToCTime
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DateFromCTime
+OCI_SYM_PUBLIC boolean OCI_API OCI_DateFromCTime
 (
     OCI_Date * date,
     struct tm *ptm,
@@ -10660,7 +10660,7 @@ OCI_EXPORT boolean OCI_API OCI_DateFromCTime
  *
  */
 
-OCI_EXPORT OCI_Timestamp * OCI_API OCI_TimestampCreate
+OCI_SYM_PUBLIC OCI_Timestamp * OCI_API OCI_TimestampCreate
 (
     OCI_Connection *con,
     unsigned int    type
@@ -10680,7 +10680,7 @@ OCI_EXPORT OCI_Timestamp * OCI_API OCI_TimestampCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampFree
 (
     OCI_Timestamp *tmsp
 );
@@ -10701,7 +10701,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampFree
  *
  */
 
-OCI_EXPORT OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
+OCI_SYM_PUBLIC OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -10723,7 +10723,7 @@ OCI_EXPORT OCI_Timestamp ** OCI_API OCI_TimestampArrayCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampArrayFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampArrayFree
 (
     OCI_Timestamp **tmsps
 );
@@ -10742,7 +10742,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampArrayFree
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_TimestampGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_TimestampGetType
 (
     OCI_Timestamp *tmsp
 );
@@ -10762,7 +10762,7 @@ OCI_EXPORT unsigned int OCI_API OCI_TimestampGetType
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampAssign
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampAssign
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp_src
@@ -10780,7 +10780,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampAssign
  *
  */
 
-OCI_EXPORT int OCI_API OCI_TimestampCheck
+OCI_SYM_PUBLIC int OCI_API OCI_TimestampCheck
 (
     OCI_Timestamp *tmsp
 );
@@ -10799,7 +10799,7 @@ OCI_EXPORT int OCI_API OCI_TimestampCheck
  *
  */
 
-OCI_EXPORT int OCI_API OCI_TimestampCompare
+OCI_SYM_PUBLIC int OCI_API OCI_TimestampCompare
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp2
@@ -10824,7 +10824,7 @@ OCI_EXPORT int OCI_API OCI_TimestampCompare
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampConstruct
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampConstruct
 (
     OCI_Timestamp *tmsp,
     int            year,
@@ -10849,7 +10849,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampConstruct
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampConvert
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampConvert
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp_src
@@ -10868,7 +10868,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampConvert
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampFromText
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampFromText
 (
     OCI_Timestamp *tmsp,
     const otext *  str,
@@ -10890,7 +10890,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampFromText
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampToText
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampToText
 (
     OCI_Timestamp *tmsp,
     const otext *  fmt,
@@ -10913,7 +10913,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampToText
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampGetDate
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetDate
 (
     OCI_Timestamp *tmsp,
     int *          year,
@@ -10936,7 +10936,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampGetDate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampGetTime
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetTime
 (
     OCI_Timestamp *tmsp,
     int *          hour,
@@ -10963,7 +10963,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampGetTime
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampGetDateTime
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetDateTime
 (
     OCI_Timestamp *tmsp,
     int *          year,
@@ -10988,7 +10988,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampGetDateTime
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampGetTimeZoneName
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetTimeZoneName
 (
     OCI_Timestamp *tmsp,
     int            size,
@@ -11008,7 +11008,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampGetTimeZoneName
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampGetTimeZoneOffset
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetTimeZoneOffset
 (
     OCI_Timestamp *tmsp,
     int *          hour,
@@ -11027,7 +11027,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampGetTimeZoneOffset
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampIntervalAdd
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampIntervalAdd
 (
     OCI_Timestamp *tmsp,
     OCI_Interval * itv
@@ -11045,7 +11045,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampIntervalAdd
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampIntervalSub
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampIntervalSub
 (
     OCI_Timestamp *tmsp,
     OCI_Interval * itv
@@ -11067,7 +11067,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampIntervalSub
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampSubtract
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampSubtract
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp2,
@@ -11086,7 +11086,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampSubtract
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampSysTimestamp
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampSysTimestamp
 (
     OCI_Timestamp *tmsp
 );
@@ -11107,7 +11107,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampSysTimestamp
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampToCTime
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampToCTime
 (
     OCI_Timestamp *tmsp,
     struct tm *    ptm,
@@ -11132,7 +11132,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampToCTime
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TimestampFromCTime
+OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampFromCTime
 (
     OCI_Timestamp *tmsp,
     struct tm *    ptm,
@@ -11160,7 +11160,7 @@ OCI_EXPORT boolean OCI_API OCI_TimestampFromCTime
  *
  */
 
-OCI_EXPORT OCI_Interval * OCI_API OCI_IntervalCreate
+OCI_SYM_PUBLIC OCI_Interval * OCI_API OCI_IntervalCreate
 (
     OCI_Connection *con,
     unsigned int    type
@@ -11181,7 +11181,7 @@ OCI_EXPORT OCI_Interval * OCI_API OCI_IntervalCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IntervalFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalFree
 (
     OCI_Interval *itv
 );
@@ -11202,7 +11202,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalFree
  *
  */
 
-OCI_EXPORT OCI_Interval ** OCI_API OCI_IntervalArrayCreate
+OCI_SYM_PUBLIC OCI_Interval ** OCI_API OCI_IntervalArrayCreate
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -11224,7 +11224,7 @@ OCI_EXPORT OCI_Interval ** OCI_API OCI_IntervalArrayCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IntervalArrayFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalArrayFree
 (
     OCI_Interval **itvs
 );
@@ -11243,7 +11243,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalArrayFree
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_IntervalGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_IntervalGetType
 (
     OCI_Interval *itv
 );
@@ -11260,7 +11260,7 @@ OCI_EXPORT unsigned int OCI_API OCI_IntervalGetType
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IntervalAssign
+OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalAssign
 (
     OCI_Interval *itv,
     OCI_Interval *itv_src
@@ -11278,7 +11278,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalAssign
  *
  */
 
-OCI_EXPORT int OCI_API OCI_IntervalCheck
+OCI_SYM_PUBLIC int OCI_API OCI_IntervalCheck
 (
     OCI_Interval *itv
 );
@@ -11297,7 +11297,7 @@ OCI_EXPORT int OCI_API OCI_IntervalCheck
  *
  */
 
-OCI_EXPORT int OCI_API OCI_IntervalCompare
+OCI_SYM_PUBLIC int OCI_API OCI_IntervalCompare
 (
     OCI_Interval *itv,
     OCI_Interval *itv2
@@ -11315,7 +11315,7 @@ OCI_EXPORT int OCI_API OCI_IntervalCompare
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IntervalFromText
+OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalFromText
 (
     OCI_Interval *itv,
     const otext * str
@@ -11336,7 +11336,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalFromText
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IntervalToText
+OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalToText
 (
     OCI_Interval *itv,
     int           leading_prec,
@@ -11357,7 +11357,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalToText
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IntervalFromTimeZone
+OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalFromTimeZone
 (
     OCI_Interval *itv,
     const otext * str
@@ -11379,7 +11379,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalFromTimeZone
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IntervalGetDaySecond
+OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalGetDaySecond
 (
     OCI_Interval *itv,
     int *         day,
@@ -11402,7 +11402,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalGetDaySecond
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IntervalGetYearMonth
+OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalGetYearMonth
 (
     OCI_Interval *itv,
     int *         year,
@@ -11425,7 +11425,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalGetYearMonth
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IntervalSetDaySecond
+OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSetDaySecond
 (
     OCI_Interval *itv,
     int           day,
@@ -11448,7 +11448,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalSetDaySecond
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IntervalSetYearMonth
+OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSetYearMonth
 (
     OCI_Interval *itv,
     int           year,
@@ -11467,7 +11467,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalSetYearMonth
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IntervalAdd
+OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalAdd
 (
     OCI_Interval *itv,
     OCI_Interval *itv2
@@ -11485,7 +11485,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalAdd
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_IntervalSubtract
+OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSubtract
 (
     OCI_Interval *itv,
     OCI_Interval *itv2
@@ -11550,7 +11550,7 @@ OCI_EXPORT boolean OCI_API OCI_IntervalSubtract
  *
  */
 
-OCI_EXPORT OCI_Object * OCI_API OCI_ObjectCreate
+OCI_SYM_PUBLIC OCI_Object * OCI_API OCI_ObjectCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo *  typinf
@@ -11571,7 +11571,7 @@ OCI_EXPORT OCI_Object * OCI_API OCI_ObjectCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectFree
 (
     OCI_Object *obj
 );
@@ -11592,7 +11592,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectFree
  *
  */
 
-OCI_EXPORT OCI_Object ** OCI_API OCI_ObjectArrayCreate
+OCI_SYM_PUBLIC OCI_Object ** OCI_API OCI_ObjectArrayCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo *  typinf,
@@ -11614,7 +11614,7 @@ OCI_EXPORT OCI_Object ** OCI_API OCI_ObjectArrayCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectArrayFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectArrayFree
 (
     OCI_Object **objs
 );
@@ -11637,7 +11637,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectArrayFree
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectAssign
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectAssign
 (
     OCI_Object *obj,
     OCI_Object *obj_src
@@ -11661,7 +11661,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectAssign
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ObjectGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ObjectGetType
 (
     OCI_Object *obj
 );
@@ -11683,7 +11683,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ObjectGetType
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectGetSelfRef
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectGetSelfRef
 (
     OCI_Object *obj,
     OCI_Ref *   ref
@@ -11697,7 +11697,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectGetSelfRef
  *
  */
 
-OCI_EXPORT OCI_TypeInfo * OCI_API OCI_ObjectGetTypeInfo
+OCI_SYM_PUBLIC OCI_TypeInfo * OCI_API OCI_ObjectGetTypeInfo
 (
     OCI_Object *obj
 );
@@ -11722,7 +11722,7 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_ObjectGetTypeInfo
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectGetBoolean
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectGetBoolean
 (
     OCI_Object * obj,
     const otext *attr
@@ -11745,7 +11745,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectGetBoolean
 *
 */
 
-OCI_EXPORT OCI_Number * OCI_API OCI_ObjectGetNumber
+OCI_SYM_PUBLIC OCI_Number * OCI_API OCI_ObjectGetNumber
 (
     OCI_Object * obj,
     const otext *attr
@@ -11768,7 +11768,7 @@ OCI_EXPORT OCI_Number * OCI_API OCI_ObjectGetNumber
  *
  */
 
-OCI_EXPORT short OCI_API OCI_ObjectGetShort
+OCI_SYM_PUBLIC short OCI_API OCI_ObjectGetShort
 (
     OCI_Object * obj,
     const otext *attr
@@ -11791,7 +11791,7 @@ OCI_EXPORT short OCI_API OCI_ObjectGetShort
  *
  */
 
-OCI_EXPORT unsigned short OCI_API OCI_ObjectGetUnsignedShort
+OCI_SYM_PUBLIC unsigned short OCI_API OCI_ObjectGetUnsignedShort
 (
     OCI_Object * obj,
     const otext *attr
@@ -11814,7 +11814,7 @@ OCI_EXPORT unsigned short OCI_API OCI_ObjectGetUnsignedShort
  *
  */
 
-OCI_EXPORT int OCI_API OCI_ObjectGetInt
+OCI_SYM_PUBLIC int OCI_API OCI_ObjectGetInt
 (
     OCI_Object * obj,
     const otext *attr
@@ -11837,7 +11837,7 @@ OCI_EXPORT int OCI_API OCI_ObjectGetInt
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_ObjectGetUnsignedInt
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ObjectGetUnsignedInt
 (
     OCI_Object * obj,
     const otext *attr
@@ -11860,7 +11860,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ObjectGetUnsignedInt
  *
  */
 
-OCI_EXPORT big_int OCI_API OCI_ObjectGetBigInt
+OCI_SYM_PUBLIC big_int OCI_API OCI_ObjectGetBigInt
 (
     OCI_Object * obj,
     const otext *attr
@@ -11883,7 +11883,7 @@ OCI_EXPORT big_int OCI_API OCI_ObjectGetBigInt
  *
  */
 
-OCI_EXPORT big_uint OCI_API OCI_ObjectGetUnsignedBigInt
+OCI_SYM_PUBLIC big_uint OCI_API OCI_ObjectGetUnsignedBigInt
 (
     OCI_Object * obj,
     const otext *attr
@@ -11906,7 +11906,7 @@ OCI_EXPORT big_uint OCI_API OCI_ObjectGetUnsignedBigInt
  *
  */
 
-OCI_EXPORT double OCI_API OCI_ObjectGetDouble
+OCI_SYM_PUBLIC double OCI_API OCI_ObjectGetDouble
 (
     OCI_Object * obj,
     const otext *attr
@@ -11929,7 +11929,7 @@ OCI_EXPORT double OCI_API OCI_ObjectGetDouble
  *
  */
 
-OCI_EXPORT float OCI_API OCI_ObjectGetFloat
+OCI_SYM_PUBLIC float OCI_API OCI_ObjectGetFloat
 (
     OCI_Object * obj,
     const otext *attr
@@ -11952,7 +11952,7 @@ OCI_EXPORT float OCI_API OCI_ObjectGetFloat
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_ObjectGetString
+OCI_SYM_PUBLIC const otext * OCI_API OCI_ObjectGetString
 (
     OCI_Object * obj,
     const otext *attr
@@ -11978,7 +11978,7 @@ OCI_EXPORT const otext * OCI_API OCI_ObjectGetString
  *
  */
 
-OCI_EXPORT int OCI_API OCI_ObjectGetRaw
+OCI_SYM_PUBLIC int OCI_API OCI_ObjectGetRaw
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12003,7 +12003,7 @@ OCI_EXPORT int OCI_API OCI_ObjectGetRaw
 *
 */
 
-OCI_EXPORT unsigned int OCI_API OCI_ObjectGetRawSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ObjectGetRawSize
 (
     OCI_Object * obj,
     const otext *attr
@@ -12026,7 +12026,7 @@ OCI_EXPORT unsigned int OCI_API OCI_ObjectGetRawSize
  *
  */
 
-OCI_EXPORT OCI_Date * OCI_API OCI_ObjectGetDate
+OCI_SYM_PUBLIC OCI_Date * OCI_API OCI_ObjectGetDate
 (
     OCI_Object * obj,
     const otext *attr
@@ -12049,7 +12049,7 @@ OCI_EXPORT OCI_Date * OCI_API OCI_ObjectGetDate
  *
  */
 
-OCI_EXPORT OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp
+OCI_SYM_PUBLIC OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp
 (
     OCI_Object * obj,
     const otext *attr
@@ -12072,7 +12072,7 @@ OCI_EXPORT OCI_Timestamp * OCI_API OCI_ObjectGetTimestamp
  *
  */
 
-OCI_EXPORT OCI_Interval * OCI_API OCI_ObjectGetInterval
+OCI_SYM_PUBLIC OCI_Interval * OCI_API OCI_ObjectGetInterval
 (
     OCI_Object * obj,
     const otext *attr
@@ -12095,7 +12095,7 @@ OCI_EXPORT OCI_Interval * OCI_API OCI_ObjectGetInterval
  *
  */
 
-OCI_EXPORT OCI_Coll * OCI_API OCI_ObjectGetColl
+OCI_SYM_PUBLIC OCI_Coll * OCI_API OCI_ObjectGetColl
 (
     OCI_Object * obj,
     const otext *attr
@@ -12118,7 +12118,7 @@ OCI_EXPORT OCI_Coll * OCI_API OCI_ObjectGetColl
  *
  */
 
-OCI_EXPORT OCI_Ref * OCI_API OCI_ObjectGetRef
+OCI_SYM_PUBLIC OCI_Ref * OCI_API OCI_ObjectGetRef
 (
     OCI_Object * obj,
     const otext *attr
@@ -12141,7 +12141,7 @@ OCI_EXPORT OCI_Ref * OCI_API OCI_ObjectGetRef
  *
  */
 
-OCI_EXPORT OCI_Object * OCI_API OCI_ObjectGetObject
+OCI_SYM_PUBLIC OCI_Object * OCI_API OCI_ObjectGetObject
 (
     OCI_Object * obj,
     const otext *attr
@@ -12164,7 +12164,7 @@ OCI_EXPORT OCI_Object * OCI_API OCI_ObjectGetObject
  *
  */
 
-OCI_EXPORT OCI_Lob * OCI_API OCI_ObjectGetLob
+OCI_SYM_PUBLIC OCI_Lob * OCI_API OCI_ObjectGetLob
 (
     OCI_Object * obj,
     const otext *attr
@@ -12187,7 +12187,7 @@ OCI_EXPORT OCI_Lob * OCI_API OCI_ObjectGetLob
  *
  */
 
-OCI_EXPORT OCI_File * OCI_API OCI_ObjectGetFile
+OCI_SYM_PUBLIC OCI_File * OCI_API OCI_ObjectGetFile
 (
     OCI_Object * obj,
     const otext *attr
@@ -12209,7 +12209,7 @@ OCI_EXPORT OCI_File * OCI_API OCI_ObjectGetFile
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetBoolean
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetBoolean
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12229,7 +12229,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetBoolean
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetNumber
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetNumber
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12249,7 +12249,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetNumber
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetShort
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetShort
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12269,7 +12269,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetShort
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetUnsignedShort
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetUnsignedShort
 (
     OCI_Object *   obj,
     const otext *  attr,
@@ -12289,7 +12289,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetUnsignedShort
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetInt
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12309,7 +12309,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetUnsignedInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetUnsignedInt
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12329,7 +12329,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetUnsignedInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetBigInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetBigInt
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12349,7 +12349,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetBigInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetUnsignedBigInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetUnsignedBigInt
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12369,7 +12369,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetUnsignedBigInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetDouble
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetDouble
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12389,7 +12389,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetDouble
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetFloat
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetFloat
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12412,7 +12412,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetFloat
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetString
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetString
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12436,7 +12436,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetString
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetRaw
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetRaw
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12460,7 +12460,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetRaw
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetDate
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetDate
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12483,7 +12483,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetDate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetTimestamp
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetTimestamp
 (
     OCI_Object *   obj,
     const otext *  attr,
@@ -12506,7 +12506,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetTimestamp
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetInterval
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetInterval
 (
     OCI_Object *  obj,
     const otext * attr,
@@ -12529,7 +12529,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetInterval
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetColl
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetColl
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12557,7 +12557,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetColl
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetObject
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetObject
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12580,7 +12580,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetObject
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetLob
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetLob
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12603,7 +12603,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetLob
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetFile
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetFile
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12626,7 +12626,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetFile
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetRef
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetRef
 (
     OCI_Object * obj,
     const otext *attr,
@@ -12645,7 +12645,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetRef
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectIsNull
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectIsNull
 (
     OCI_Object * obj,
     const otext *attr
@@ -12663,7 +12663,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectIsNull
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectSetNull
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetNull
 (
     OCI_Object * obj,
     const otext *attr
@@ -12688,7 +12688,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectSetNull
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectGetStruct
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectGetStruct
 (
     OCI_Object *obj,
     void **     pp_struct,
@@ -12720,7 +12720,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectGetStruct
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ObjectToText
+OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectToText
 (
     OCI_Object *  obj,
     unsigned int *size,
@@ -12739,7 +12739,7 @@ OCI_EXPORT boolean OCI_API OCI_ObjectToText
  *
  */
 
-OCI_EXPORT OCI_Ref * OCI_API OCI_RefCreate
+OCI_SYM_PUBLIC OCI_Ref * OCI_API OCI_RefCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo *  typinf
@@ -12760,7 +12760,7 @@ OCI_EXPORT OCI_Ref * OCI_API OCI_RefCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_RefFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_RefFree
 (
     OCI_Ref *ref
 );
@@ -12781,7 +12781,7 @@ OCI_EXPORT boolean OCI_API OCI_RefFree
  *
  */
 
-OCI_EXPORT OCI_Ref ** OCI_API OCI_RefArrayCreate
+OCI_SYM_PUBLIC OCI_Ref ** OCI_API OCI_RefArrayCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo *  typinf,
@@ -12803,7 +12803,7 @@ OCI_EXPORT OCI_Ref ** OCI_API OCI_RefArrayCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_RefArrayFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_RefArrayFree
 (
     OCI_Ref **refs
 );
@@ -12823,7 +12823,7 @@ OCI_EXPORT boolean OCI_API OCI_RefArrayFree
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_RefAssign
+OCI_SYM_PUBLIC boolean OCI_API OCI_RefAssign
 (
     OCI_Ref *ref,
     OCI_Ref *ref_src
@@ -12837,7 +12837,7 @@ OCI_EXPORT boolean OCI_API OCI_RefAssign
  *
  */
 
-OCI_EXPORT OCI_TypeInfo * OCI_API OCI_RefGetTypeInfo
+OCI_SYM_PUBLIC OCI_TypeInfo * OCI_API OCI_RefGetTypeInfo
 (
     OCI_Ref *ref
 );
@@ -12853,7 +12853,7 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_RefGetTypeInfo
  *
  */
 
-OCI_EXPORT OCI_Object * OCI_API OCI_RefGetObject
+OCI_SYM_PUBLIC OCI_Object * OCI_API OCI_RefGetObject
 (
     OCI_Ref *ref
 );
@@ -12869,7 +12869,7 @@ OCI_EXPORT OCI_Object * OCI_API OCI_RefGetObject
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_RefIsNull
+OCI_SYM_PUBLIC boolean OCI_API OCI_RefIsNull
 (
     OCI_Ref *ref
 );
@@ -12887,7 +12887,7 @@ OCI_EXPORT boolean OCI_API OCI_RefIsNull
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_RefSetNull
+OCI_SYM_PUBLIC boolean OCI_API OCI_RefSetNull
 (
     OCI_Ref *ref
 );
@@ -12904,7 +12904,7 @@ OCI_EXPORT boolean OCI_API OCI_RefSetNull
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_RefGetHexSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_RefGetHexSize
 (
     OCI_Ref *ref
 );
@@ -12922,7 +12922,7 @@ OCI_EXPORT unsigned int OCI_API OCI_RefGetHexSize
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_RefToText
+OCI_SYM_PUBLIC boolean OCI_API OCI_RefToText
 (
     OCI_Ref *    ref,
     unsigned int size,
@@ -12974,7 +12974,7 @@ OCI_EXPORT boolean OCI_API OCI_RefToText
  * Returns FALSE if connection handle is NULL otherwise TRUE
  */
 
-OCI_EXPORT boolean OCI_API OCI_Break
+OCI_SYM_PUBLIC boolean OCI_API OCI_Break
 (
     OCI_Connection *con
 );
@@ -13016,7 +13016,7 @@ OCI_EXPORT boolean OCI_API OCI_Break
  *
  */
 
-OCI_EXPORT OCI_TypeInfo * OCI_API OCI_TypeInfoGet
+OCI_SYM_PUBLIC OCI_TypeInfo * OCI_API OCI_TypeInfoGet
 (
     OCI_Connection *con,
     const otext *   name,
@@ -13042,7 +13042,7 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_TypeInfoGet
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_TypeInfoGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_TypeInfoGetType
 (
     OCI_TypeInfo *typinf
 );
@@ -13055,7 +13055,7 @@ OCI_EXPORT unsigned int OCI_API OCI_TypeInfoGetType
  *
  */
 
-OCI_EXPORT OCI_Connection * OCI_API OCI_TypeInfoGetConnection
+OCI_SYM_PUBLIC OCI_Connection * OCI_API OCI_TypeInfoGetConnection
 (
     OCI_TypeInfo *typinf
 );
@@ -13076,7 +13076,7 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_TypeInfoGetConnection
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_TypeInfoFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_TypeInfoFree
 (
     OCI_TypeInfo *typinf
 );
@@ -13089,7 +13089,7 @@ OCI_EXPORT boolean OCI_API OCI_TypeInfoFree
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_TypeInfoGetColumnCount
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_TypeInfoGetColumnCount
 (
     OCI_TypeInfo *typinf
 );
@@ -13107,7 +13107,7 @@ OCI_EXPORT unsigned int OCI_API OCI_TypeInfoGetColumnCount
  *
  */
 
-OCI_EXPORT OCI_Column * OCI_API OCI_TypeInfoGetColumn
+OCI_SYM_PUBLIC OCI_Column * OCI_API OCI_TypeInfoGetColumn
 (
     OCI_TypeInfo *typinf,
     unsigned int  index
@@ -13121,7 +13121,7 @@ OCI_EXPORT OCI_Column * OCI_API OCI_TypeInfoGetColumn
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_TypeInfoGetName
+OCI_SYM_PUBLIC const otext * OCI_API OCI_TypeInfoGetName
 (
     OCI_TypeInfo *typinf
 );
@@ -13144,7 +13144,7 @@ OCI_EXPORT const otext * OCI_API OCI_TypeInfoGetName
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_TypeInfoIsFinalType
+OCI_SYM_PUBLIC boolean OCI_API OCI_TypeInfoIsFinalType
 (
     OCI_TypeInfo *typinf
 );
@@ -13167,7 +13167,7 @@ OCI_EXPORT boolean OCI_API OCI_TypeInfoIsFinalType
 *
 */
 
-OCI_EXPORT OCI_TypeInfo * OCI_API OCI_TypeInfoGetSuperType
+OCI_SYM_PUBLIC OCI_TypeInfo * OCI_API OCI_TypeInfoGetSuperType
 (
     OCI_TypeInfo *typinf
 );
@@ -13271,7 +13271,7 @@ OCI_EXPORT OCI_TypeInfo * OCI_API OCI_TypeInfoGetSuperType
  *
  */
 
-OCI_EXPORT boolean OCI_Immediate
+OCI_SYM_PUBLIC boolean OCI_Immediate
 (
     OCI_Connection *con,
     const otext *   sql,
@@ -13291,7 +13291,7 @@ OCI_EXPORT boolean OCI_Immediate
  *
  */
 
-OCI_EXPORT boolean OCI_ImmediateFmt
+OCI_SYM_PUBLIC boolean OCI_ImmediateFmt
 (
     OCI_Connection *con,
     const otext *   sql,
@@ -13310,7 +13310,7 @@ OCI_EXPORT boolean OCI_ImmediateFmt
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_PrepareFmt
+OCI_SYM_PUBLIC boolean OCI_PrepareFmt
 (
     OCI_Statement *stmt,
     const otext *  sql,
@@ -13338,7 +13338,7 @@ OCI_EXPORT boolean OCI_PrepareFmt
  *
  */
 
-OCI_EXPORT boolean OCI_ExecuteStmtFmt
+OCI_SYM_PUBLIC boolean OCI_ExecuteStmtFmt
 (
     OCI_Statement *stmt,
     const otext *  sql,
@@ -13374,7 +13374,7 @@ OCI_EXPORT boolean OCI_ExecuteStmtFmt
  *
  */
 
-OCI_EXPORT boolean OCI_ParseFmt
+OCI_SYM_PUBLIC boolean OCI_ParseFmt
 (
     OCI_Statement *stmt,
     const otext *  sql,
@@ -13413,7 +13413,7 @@ OCI_EXPORT boolean OCI_ParseFmt
  * TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_DescribeFmt
+OCI_SYM_PUBLIC boolean OCI_DescribeFmt
 (
     OCI_Statement *stmt,
     const otext *  sql,
@@ -13481,7 +13481,7 @@ OCI_EXPORT boolean OCI_DescribeFmt
  *
  */
 
-OCI_EXPORT OCI_HashTable * OCI_API OCI_HashCreate
+OCI_SYM_PUBLIC OCI_HashTable * OCI_API OCI_HashCreate
 (
     unsigned int size,
     unsigned int type
@@ -13498,7 +13498,7 @@ OCI_EXPORT OCI_HashTable * OCI_API OCI_HashCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_HashFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_HashFree
 (
     OCI_HashTable *table
 );
@@ -13511,7 +13511,7 @@ OCI_EXPORT boolean OCI_API OCI_HashFree
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_HashGetSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_HashGetSize
 (
     OCI_HashTable *table
 );
@@ -13534,7 +13534,7 @@ OCI_EXPORT unsigned int OCI_API OCI_HashGetSize
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_HashGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_HashGetType
 (
     OCI_HashTable *table
 );
@@ -13552,7 +13552,7 @@ OCI_EXPORT unsigned int OCI_API OCI_HashGetType
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_HashAddString
+OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddString
 (
     OCI_HashTable *table,
     const otext *  key,
@@ -13571,7 +13571,7 @@ OCI_EXPORT boolean OCI_API OCI_HashAddString
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_HashGetString
+OCI_SYM_PUBLIC const otext * OCI_API OCI_HashGetString
 (
     OCI_HashTable *table,
     const otext *  key
@@ -13590,7 +13590,7 @@ OCI_EXPORT const otext * OCI_API OCI_HashGetString
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_HashAddInt
+OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddInt
 (
     OCI_HashTable *table,
     const otext *  key,
@@ -13609,7 +13609,7 @@ OCI_EXPORT boolean OCI_API OCI_HashAddInt
  *
  */
 
-OCI_EXPORT int OCI_API OCI_HashGetInt
+OCI_SYM_PUBLIC int OCI_API OCI_HashGetInt
 (
     OCI_HashTable *table,
     const otext *  key
@@ -13628,7 +13628,7 @@ OCI_EXPORT int OCI_API OCI_HashGetInt
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_HashAddPointer
+OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddPointer
 (
     OCI_HashTable *table,
     const otext *  key,
@@ -13647,7 +13647,7 @@ OCI_EXPORT boolean OCI_API OCI_HashAddPointer
  *
  */
 
-OCI_EXPORT void * OCI_API OCI_HashGetPointer
+OCI_SYM_PUBLIC void * OCI_API OCI_HashGetPointer
 (
     OCI_HashTable *table,
     const otext *  key
@@ -13666,7 +13666,7 @@ OCI_EXPORT void * OCI_API OCI_HashGetPointer
  *
  */
 
-OCI_EXPORT OCI_HashEntry * OCI_API OCI_HashLookup
+OCI_SYM_PUBLIC OCI_HashEntry * OCI_API OCI_HashLookup
 (
     OCI_HashTable *table,
     const otext *  key,
@@ -13685,7 +13685,7 @@ OCI_EXPORT OCI_HashEntry * OCI_API OCI_HashLookup
  *
  */
 
-OCI_EXPORT OCI_HashValue * OCI_API OCI_HashGetValue
+OCI_SYM_PUBLIC OCI_HashValue * OCI_API OCI_HashGetValue
 (
     OCI_HashTable *table,
     const otext *  key
@@ -13706,7 +13706,7 @@ OCI_EXPORT OCI_HashValue * OCI_API OCI_HashGetValue
  *
  */
 
-OCI_EXPORT OCI_HashEntry * OCI_API OCI_HashGetEntry
+OCI_SYM_PUBLIC OCI_HashEntry * OCI_API OCI_HashGetEntry
 (
     OCI_HashTable *table,
     unsigned int   index
@@ -13762,7 +13762,7 @@ OCI_EXPORT OCI_HashEntry * OCI_API OCI_HashGetEntry
  *
  */
 
-OCI_EXPORT OCI_Mutex * OCI_API OCI_MutexCreate
+OCI_SYM_PUBLIC OCI_Mutex * OCI_API OCI_MutexCreate
 (
     void
 );
@@ -13778,7 +13778,7 @@ OCI_EXPORT OCI_Mutex * OCI_API OCI_MutexCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MutexFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_MutexFree
 (
     OCI_Mutex *mutex
 );
@@ -13794,7 +13794,7 @@ OCI_EXPORT boolean OCI_API OCI_MutexFree
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MutexAcquire
+OCI_SYM_PUBLIC boolean OCI_API OCI_MutexAcquire
 (
     OCI_Mutex *mutex
 );
@@ -13810,7 +13810,7 @@ OCI_EXPORT boolean OCI_API OCI_MutexAcquire
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MutexRelease
+OCI_SYM_PUBLIC boolean OCI_API OCI_MutexRelease
 (
     OCI_Mutex *mutex
 );
@@ -13824,7 +13824,7 @@ OCI_EXPORT boolean OCI_API OCI_MutexRelease
  *
  */
 
-OCI_EXPORT OCI_Thread * OCI_API OCI_ThreadCreate
+OCI_SYM_PUBLIC OCI_Thread * OCI_API OCI_ThreadCreate
 (
     void
 );
@@ -13840,7 +13840,7 @@ OCI_EXPORT OCI_Thread * OCI_API OCI_ThreadCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ThreadFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadFree
 (
     OCI_Thread *thread
 );
@@ -13858,7 +13858,7 @@ OCI_EXPORT boolean OCI_API OCI_ThreadFree
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ThreadRun
+OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadRun
 (
     OCI_Thread *thread,
     POCI_THREAD proc,
@@ -13879,7 +13879,7 @@ OCI_EXPORT boolean OCI_API OCI_ThreadRun
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ThreadJoin
+OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadJoin
 (
     OCI_Thread *thread
 );
@@ -13900,7 +13900,7 @@ OCI_EXPORT boolean OCI_API OCI_ThreadJoin
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ThreadKeyCreate
+OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadKeyCreate
 (
     const otext *      name,
     POCI_THREADKEYDEST destfunc
@@ -13918,7 +13918,7 @@ OCI_EXPORT boolean OCI_API OCI_ThreadKeyCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_ThreadKeySetValue
+OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadKeySetValue
 (
     const otext *name,
     void *       value
@@ -13935,7 +13935,7 @@ OCI_EXPORT boolean OCI_API OCI_ThreadKeySetValue
  *
  */
 
-OCI_EXPORT void * OCI_API OCI_ThreadKeyGetValue
+OCI_SYM_PUBLIC void * OCI_API OCI_ThreadKeyGetValue
 (
     const otext *name
 );
@@ -14034,7 +14034,7 @@ OCI_EXPORT void * OCI_API OCI_ThreadKeyGetValue
  *
  */
 
-OCI_EXPORT OCI_DirPath * OCI_API OCI_DirPathCreate
+OCI_SYM_PUBLIC OCI_DirPath * OCI_API OCI_DirPathCreate
 (
     OCI_TypeInfo *typinf,
     const otext * partition,
@@ -14052,7 +14052,7 @@ OCI_EXPORT OCI_DirPath * OCI_API OCI_DirPathCreate
  * TRUE on success otherwise FALSE
  *
  */
-OCI_EXPORT boolean OCI_API OCI_DirPathFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathFree
 (
     OCI_DirPath *dp
 );
@@ -14078,7 +14078,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathFree
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathSetColumn
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetColumn
 (
     OCI_DirPath *dp,
     unsigned int index,
@@ -14099,7 +14099,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetColumn
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathPrepare
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathPrepare
 (
     OCI_DirPath *dp
 );
@@ -14144,7 +14144,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathPrepare
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathSetEntry
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetEntry
 (
     OCI_DirPath *dp,
     unsigned int row,
@@ -14184,7 +14184,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetEntry
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_DirPathConvert
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathConvert
 (
     OCI_DirPath *dp
 );
@@ -14211,7 +14211,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathConvert
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_DirPathLoad
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathLoad
 (
     OCI_DirPath *dp
 );
@@ -14232,7 +14232,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathLoad
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathReset
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathReset
 (
     OCI_DirPath *dp
 );
@@ -14256,7 +14256,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathReset
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathFinish
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathFinish
 (
     OCI_DirPath *dp
 );
@@ -14280,7 +14280,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathFinish
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathAbort
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathAbort
 (
     OCI_DirPath *dp
 );
@@ -14299,7 +14299,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathAbort
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathSave
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSave
 (
     OCI_DirPath *dp
 );
@@ -14315,7 +14315,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSave
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathFlushRow
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathFlushRow
 (
     OCI_DirPath *dp
 );
@@ -14336,7 +14336,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathFlushRow
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathSetCurrentRows
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetCurrentRows
 (
     OCI_DirPath *dp,
     unsigned int nb_rows
@@ -14354,7 +14354,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetCurrentRows
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_DirPathGetCurrentRows
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetCurrentRows
 (
     OCI_DirPath *dp
 );
@@ -14371,7 +14371,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetCurrentRows
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_DirPathGetMaxRows
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetMaxRows
 (
     OCI_DirPath *dp
 );
@@ -14394,7 +14394,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetMaxRows
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathSetDateFormat
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetDateFormat
 (
     OCI_DirPath *dp,
     const otext *format
@@ -14431,7 +14431,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetDateFormat
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathSetParallel
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetParallel
 (
     OCI_DirPath *dp,
     boolean      value
@@ -14456,7 +14456,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetParallel
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathSetNoLog
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetNoLog
 (
     OCI_DirPath *dp,
     boolean      value
@@ -14481,7 +14481,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetNoLog
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathSetCacheSize
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetCacheSize
 (
     OCI_DirPath *dp,
     unsigned int size
@@ -14502,7 +14502,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetCacheSize
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathSetBufferSize
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetBufferSize
 (
     OCI_DirPath *dp,
     unsigned int size
@@ -14531,7 +14531,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetBufferSize
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DirPathSetConvertMode
+OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetConvertMode
 (
     OCI_DirPath *dp,
     unsigned int mode
@@ -14548,7 +14548,7 @@ OCI_EXPORT boolean OCI_API OCI_DirPathSetConvertMode
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_DirPathGetRowCount
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetRowCount
 (
     OCI_DirPath *dp
 );
@@ -14568,7 +14568,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetRowCount
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_DirPathGetAffectedRows
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetAffectedRows
 (
     OCI_DirPath *dp
 );
@@ -14602,7 +14602,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetAffectedRows
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorColumn
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetErrorColumn
 (
     OCI_DirPath *dp
 );
@@ -14644,7 +14644,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorColumn
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetErrorRow
 (
     OCI_DirPath *dp
 );
@@ -14745,7 +14745,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow
  *
  */
 
-OCI_EXPORT OCI_Msg * OCI_API OCI_MsgCreate
+OCI_SYM_PUBLIC OCI_Msg * OCI_API OCI_MsgCreate
 (
     OCI_TypeInfo *typinf
 );
@@ -14764,7 +14764,7 @@ OCI_EXPORT OCI_Msg * OCI_API OCI_MsgCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgFree
 (
     OCI_Msg *msg
 );
@@ -14788,7 +14788,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgFree
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgReset
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgReset
 (
     OCI_Msg *msg
 );
@@ -14804,7 +14804,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgReset
  *
  */
 
-OCI_EXPORT OCI_Object * OCI_API OCI_MsgGetObject
+OCI_SYM_PUBLIC OCI_Object * OCI_API OCI_MsgGetObject
 (
     OCI_Msg *msg
 );
@@ -14821,7 +14821,7 @@ OCI_EXPORT OCI_Object * OCI_API OCI_MsgGetObject
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgSetObject
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetObject
 (
     OCI_Msg *   msg,
     OCI_Object *obj
@@ -14843,7 +14843,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetObject
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgGetRaw
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgGetRaw
 (
     OCI_Msg *     msg,
     void *        raw,
@@ -14863,7 +14863,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgGetRaw
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgSetRaw
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetRaw
 (
     OCI_Msg *    msg,
     const void * raw,
@@ -14878,7 +14878,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetRaw
  *
  */
 
-OCI_EXPORT int OCI_API OCI_MsgGetAttemptCount
+OCI_SYM_PUBLIC int OCI_API OCI_MsgGetAttemptCount
 (
     OCI_Msg *msg
 );
@@ -14894,7 +14894,7 @@ OCI_EXPORT int OCI_API OCI_MsgGetAttemptCount
  *
  */
 
-OCI_EXPORT int OCI_API OCI_MsgGetEnqueueDelay
+OCI_SYM_PUBLIC int OCI_API OCI_MsgGetEnqueueDelay
 (
     OCI_Msg *msg
 );
@@ -14926,7 +14926,7 @@ OCI_EXPORT int OCI_API OCI_MsgGetEnqueueDelay
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgSetEnqueueDelay
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetEnqueueDelay
 (
     OCI_Msg *msg,
     int      value
@@ -14943,7 +14943,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetEnqueueDelay
  *
  */
 
-OCI_EXPORT OCI_Date * OCI_API OCI_MsgGetEnqueueTime
+OCI_SYM_PUBLIC OCI_Date * OCI_API OCI_MsgGetEnqueueTime
 (
     OCI_Msg *msg
 );
@@ -14959,7 +14959,7 @@ OCI_EXPORT OCI_Date * OCI_API OCI_MsgGetEnqueueTime
  *
  */
 
-OCI_EXPORT int OCI_API OCI_MsgGetExpiration
+OCI_SYM_PUBLIC int OCI_API OCI_MsgGetExpiration
 (
     OCI_Msg *msg
 );
@@ -14988,7 +14988,7 @@ OCI_EXPORT int OCI_API OCI_MsgGetExpiration
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgSetExpiration
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetExpiration
 (
     OCI_Msg *msg,
     int      value
@@ -15009,7 +15009,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetExpiration
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_MsgGetState
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_MsgGetState
 (
     OCI_Msg *msg
 );
@@ -15025,7 +15025,7 @@ OCI_EXPORT unsigned int OCI_API OCI_MsgGetState
  *
  */
 
-OCI_EXPORT int OCI_API OCI_MsgGetPriority
+OCI_SYM_PUBLIC int OCI_API OCI_MsgGetPriority
 (
     OCI_Msg *msg
 );
@@ -15047,7 +15047,7 @@ OCI_EXPORT int OCI_API OCI_MsgGetPriority
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgSetPriority
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetPriority
 (
     OCI_Msg *msg,
     int      value
@@ -15074,7 +15074,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetPriority
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgGetID
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgGetID
 (
     OCI_Msg *     msg,
     void *        id,
@@ -15101,7 +15101,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgGetID
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgGetOriginalID
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgGetOriginalID
 (
     OCI_Msg *     msg,
     void *        id,
@@ -15125,7 +15125,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgGetOriginalID
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgSetOriginalID
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetOriginalID
 (
     OCI_Msg *    msg,
     const void * id,
@@ -15143,7 +15143,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetOriginalID
  *
  */
 
-OCI_EXPORT OCI_Agent * OCI_API OCI_MsgGetSender
+OCI_SYM_PUBLIC OCI_Agent * OCI_API OCI_MsgGetSender
 (
     OCI_Msg *msg
 );
@@ -15160,7 +15160,7 @@ OCI_EXPORT OCI_Agent * OCI_API OCI_MsgGetSender
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgSetSender
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetSender
 (
     OCI_Msg *  msg,
     OCI_Agent *sender
@@ -15183,7 +15183,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetSender
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgSetConsumers
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetConsumers
 (
     OCI_Msg *    msg,
     OCI_Agent ** consumers,
@@ -15201,7 +15201,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetConsumers
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_MsgGetCorrelation
+OCI_SYM_PUBLIC const otext * OCI_API OCI_MsgGetCorrelation
 (
     OCI_Msg *msg
 );
@@ -15221,7 +15221,7 @@ OCI_EXPORT const otext * OCI_API OCI_MsgGetCorrelation
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgSetCorrelation
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetCorrelation
 (
     OCI_Msg *    msg,
     const otext *correlation
@@ -15242,7 +15242,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetCorrelation
  * see OCI_MsgSetExceptionQueue() for more details
  *
  */
-OCI_EXPORT const otext * OCI_API OCI_MsgGetExceptionQueue
+OCI_SYM_PUBLIC const otext * OCI_API OCI_MsgGetExceptionQueue
 (
     OCI_Msg *msg
 );
@@ -15278,7 +15278,7 @@ OCI_EXPORT const otext * OCI_API OCI_MsgGetExceptionQueue
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_MsgSetExceptionQueue
+OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetExceptionQueue
 (
     OCI_Msg *    msg,
     const otext *queue
@@ -15311,7 +15311,7 @@ OCI_EXPORT boolean OCI_API OCI_MsgSetExceptionQueue
  *
  */
 
-OCI_EXPORT OCI_Enqueue * OCI_API OCI_EnqueueCreate
+OCI_SYM_PUBLIC OCI_Enqueue * OCI_API OCI_EnqueueCreate
 (
     OCI_TypeInfo *typinf,
     const otext * name
@@ -15328,7 +15328,7 @@ OCI_EXPORT OCI_Enqueue * OCI_API OCI_EnqueueCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_EnqueueFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueFree
 (
     OCI_Enqueue *enqueue
 );
@@ -15345,7 +15345,7 @@ OCI_EXPORT boolean OCI_API OCI_EnqueueFree
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_EnqueuePut
+OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueuePut
 (
     OCI_Enqueue *enqueue,
     OCI_Msg *    msg
@@ -15379,7 +15379,7 @@ OCI_EXPORT boolean OCI_API OCI_EnqueuePut
 *
 */
 
-OCI_EXPORT boolean OCI_API OCI_EnqueueSetSequenceDeviation
+OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueSetSequenceDeviation
 (
     OCI_Enqueue *enqueue,
     unsigned int sequence
@@ -15396,7 +15396,7 @@ OCI_EXPORT boolean OCI_API OCI_EnqueueSetSequenceDeviation
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
 (
     OCI_Enqueue *enqueue
 );
@@ -15421,7 +15421,7 @@ OCI_EXPORT unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_EnqueueSetVisibility
+OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueSetVisibility
 (
     OCI_Enqueue *enqueue,
     unsigned int visibility
@@ -15438,7 +15438,7 @@ OCI_EXPORT boolean OCI_API OCI_EnqueueSetVisibility
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_EnqueueGetVisibility
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_EnqueueGetVisibility
 (
     OCI_Enqueue *enqueue
 );
@@ -15466,7 +15466,7 @@ OCI_EXPORT unsigned int OCI_API OCI_EnqueueGetVisibility
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_EnqueueSetRelativeMsgID
+OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueSetRelativeMsgID
 (
     OCI_Enqueue *enqueue,
     const void * id,
@@ -15493,7 +15493,7 @@ OCI_EXPORT boolean OCI_API OCI_EnqueueSetRelativeMsgID
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_EnqueueGetRelativeMsgID
+OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueGetRelativeMsgID
 (
     OCI_Enqueue * enqueue,
     void *        id,
@@ -15527,7 +15527,7 @@ OCI_EXPORT boolean OCI_API OCI_EnqueueGetRelativeMsgID
  *
  */
 
-OCI_EXPORT OCI_Dequeue * OCI_API OCI_DequeueCreate
+OCI_SYM_PUBLIC OCI_Dequeue * OCI_API OCI_DequeueCreate
 (
     OCI_TypeInfo *typinf,
     const otext * name
@@ -15544,7 +15544,7 @@ OCI_EXPORT OCI_Dequeue * OCI_API OCI_DequeueCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueFree
 (
     OCI_Dequeue *dequeue
 );
@@ -15569,7 +15569,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueFree
  *
  */
 
-OCI_EXPORT OCI_Msg * OCI_API OCI_DequeueGet
+OCI_SYM_PUBLIC OCI_Msg * OCI_API OCI_DequeueGet
 (
     OCI_Dequeue *dequeue
 );
@@ -15595,7 +15595,7 @@ OCI_EXPORT OCI_Msg * OCI_API OCI_DequeueGet
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueSubscribe
+OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSubscribe
 (
     OCI_Dequeue *  dequeue,
     unsigned int   port,
@@ -15614,7 +15614,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSubscribe
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueUnsubscribe
+OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueUnsubscribe
 (
     OCI_Dequeue *dequeue
 );
@@ -15635,7 +15635,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueUnsubscribe
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueSetConsumer
+OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetConsumer
 (
     OCI_Dequeue *dequeue,
     const otext *consumer
@@ -15652,7 +15652,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetConsumer
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_DequeueGetConsumer
+OCI_SYM_PUBLIC const otext * OCI_API OCI_DequeueGetConsumer
 (
     OCI_Dequeue *dequeue
 );
@@ -15673,7 +15673,7 @@ OCI_EXPORT const otext * OCI_API OCI_DequeueGetConsumer
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueSetCorrelation
+OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetCorrelation
 (
     OCI_Dequeue *dequeue,
     const otext *pattern
@@ -15690,7 +15690,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetCorrelation
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_DequeueGetCorrelation
+OCI_SYM_PUBLIC const otext * OCI_API OCI_DequeueGetCorrelation
 (
     OCI_Dequeue *dequeue
 );
@@ -15711,7 +15711,7 @@ OCI_EXPORT const otext * OCI_API OCI_DequeueGetCorrelation
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueSetRelativeMsgID
+OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetRelativeMsgID
 (
     OCI_Dequeue *dequeue,
     const void * id,
@@ -15734,7 +15734,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetRelativeMsgID
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueGetRelativeMsgID
+OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueGetRelativeMsgID
 (
     OCI_Dequeue * dequeue,
     void *        id,
@@ -15765,7 +15765,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueGetRelativeMsgID
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueSetVisibility
+OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetVisibility
 (
     OCI_Dequeue *dequeue,
     unsigned int visibility
@@ -15782,7 +15782,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetVisibility
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_DequeueGetVisibility
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_DequeueGetVisibility
 (
     OCI_Dequeue *dequeue
 );
@@ -15810,7 +15810,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DequeueGetVisibility
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueSetMode
+OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetMode
 (
     OCI_Dequeue *dequeue,
     unsigned int mode
@@ -15827,7 +15827,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetMode
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_DequeueGetMode
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_DequeueGetMode
 (
     OCI_Dequeue *dequeue
 );
@@ -15864,7 +15864,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DequeueGetMode
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueSetNavigation
+OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetNavigation
 (
     OCI_Dequeue *dequeue,
     unsigned int position
@@ -15881,7 +15881,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetNavigation
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_DequeueGetNavigation
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_DequeueGetNavigation
 (
     OCI_Dequeue *dequeue
 );
@@ -15909,7 +15909,7 @@ OCI_EXPORT unsigned int OCI_API OCI_DequeueGetNavigation
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueSetWaitTime
+OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetWaitTime
 (
     OCI_Dequeue *dequeue,
     int          timeout
@@ -15926,7 +15926,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetWaitTime
  *
  */
 
-OCI_EXPORT int OCI_API OCI_DequeueGetWaitTime
+OCI_SYM_PUBLIC int OCI_API OCI_DequeueGetWaitTime
 (
     OCI_Dequeue *dequeue
 );
@@ -15943,7 +15943,7 @@ OCI_EXPORT int OCI_API OCI_DequeueGetWaitTime
  * return TRUE on success otherwise FALSE
  */
 
-OCI_EXPORT boolean OCI_API OCI_DequeueSetAgentList
+OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetAgentList
 (
     OCI_Dequeue *dequeue,
     OCI_Agent ** consumers,
@@ -15973,7 +15973,7 @@ OCI_EXPORT boolean OCI_API OCI_DequeueSetAgentList
  * An Agent handle for who messages are available on success otherwise NULL
  */
 
-OCI_EXPORT OCI_Agent * OCI_API OCI_DequeueListen
+OCI_SYM_PUBLIC OCI_Agent * OCI_API OCI_DequeueListen
 (
     OCI_Dequeue *dequeue,
     int          timeout
@@ -16002,7 +16002,7 @@ OCI_EXPORT OCI_Agent * OCI_API OCI_DequeueListen
  *
  */
 
-OCI_EXPORT OCI_Agent * OCI_API OCI_AgentCreate
+OCI_SYM_PUBLIC OCI_Agent * OCI_API OCI_AgentCreate
 (
     OCI_Connection *con,
     const otext *   name,
@@ -16023,7 +16023,7 @@ OCI_EXPORT OCI_Agent * OCI_API OCI_AgentCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_AgentFree
+OCI_SYM_PUBLIC boolean OCI_API OCI_AgentFree
 (
     OCI_Agent *agent
 );
@@ -16047,7 +16047,7 @@ OCI_EXPORT boolean OCI_API OCI_AgentFree
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_AgentSetName
+OCI_SYM_PUBLIC boolean OCI_API OCI_AgentSetName
 (
     OCI_Agent *  agent,
     const otext *name
@@ -16064,7 +16064,7 @@ OCI_EXPORT boolean OCI_API OCI_AgentSetName
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_AgentGetName
+OCI_SYM_PUBLIC const otext * OCI_API OCI_AgentGetName
 (
     OCI_Agent *agent
 );
@@ -16087,7 +16087,7 @@ OCI_EXPORT const otext * OCI_API OCI_AgentGetName
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_AgentSetAddress
+OCI_SYM_PUBLIC boolean OCI_API OCI_AgentSetAddress
 (
     OCI_Agent *  agent,
     const otext *address
@@ -16107,7 +16107,7 @@ OCI_EXPORT boolean OCI_API OCI_AgentSetAddress
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_AgentGetAddress
+OCI_SYM_PUBLIC const otext * OCI_API OCI_AgentGetAddress
 (
     OCI_Agent *agent
 );
@@ -16153,7 +16153,7 @@ OCI_EXPORT const otext * OCI_API OCI_AgentGetAddress
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_QueueCreate
+OCI_SYM_PUBLIC boolean OCI_API OCI_QueueCreate
 (
     OCI_Connection *con,
     const otext *   queue_name,
@@ -16193,7 +16193,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_QueueAlter
+OCI_SYM_PUBLIC boolean OCI_API OCI_QueueAlter
 (
     OCI_Connection *con,
     const otext *   queue_name,
@@ -16222,7 +16222,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueAlter
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_QueueDrop
+OCI_SYM_PUBLIC boolean OCI_API OCI_QueueDrop
 (
     OCI_Connection *con,
     const otext *   queue_name
@@ -16249,7 +16249,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueDrop
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_QueueStart
+OCI_SYM_PUBLIC boolean OCI_API OCI_QueueStart
 (
     OCI_Connection *con,
     const otext *   queue_name,
@@ -16279,7 +16279,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueStart
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_QueueStop
+OCI_SYM_PUBLIC boolean OCI_API OCI_QueueStop
 (
     OCI_Connection *con,
     const otext *   queue_name,
@@ -16341,7 +16341,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueStop
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_QueueTableCreate
+OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableCreate
 (
     OCI_Connection *con,
     const otext *   queue_table,
@@ -16378,7 +16378,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableCreate
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_QueueTableAlter
+OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableAlter
 (
     OCI_Connection *con,
     const otext *   queue_table,
@@ -16411,7 +16411,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableAlter
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_QueueTableDrop
+OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableDrop
 (
     OCI_Connection *con,
     const otext *   queue_table,
@@ -16451,7 +16451,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableDrop
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_QueueTablePurge
+OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTablePurge
 (
     OCI_Connection *con,
     const otext *   queue_table,
@@ -16481,7 +16481,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTablePurge
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
+OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableMigrate
 (
     OCI_Connection *con,
     const otext *   queue_table,
@@ -16597,7 +16597,7 @@ OCI_EXPORT boolean OCI_API OCI_QueueTableMigrate
  *
  */
 
-OCI_EXPORT OCI_Subscription * OCI_API OCI_SubscriptionRegister
+OCI_SYM_PUBLIC OCI_Subscription * OCI_API OCI_SubscriptionRegister
 (
     OCI_Connection *con,
     const otext *   name,
@@ -16631,7 +16631,7 @@ OCI_EXPORT OCI_Subscription * OCI_API OCI_SubscriptionRegister
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SubscriptionUnregister
+OCI_SYM_PUBLIC boolean OCI_API OCI_SubscriptionUnregister
 (
     OCI_Subscription *sub
 );
@@ -16659,7 +16659,7 @@ OCI_EXPORT boolean OCI_API OCI_SubscriptionUnregister
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_SubscriptionAddStatement
+OCI_SYM_PUBLIC boolean OCI_API OCI_SubscriptionAddStatement
 (
     OCI_Subscription *sub,
     OCI_Statement *   stmt
@@ -16677,7 +16677,7 @@ OCI_EXPORT boolean OCI_API OCI_SubscriptionAddStatement
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_SubscriptionGetName
+OCI_SYM_PUBLIC const otext * OCI_API OCI_SubscriptionGetName
 (
     OCI_Subscription *sub
 );
@@ -16694,7 +16694,7 @@ OCI_EXPORT const otext * OCI_API OCI_SubscriptionGetName
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_SubscriptionGetPort
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_SubscriptionGetPort
 (
     OCI_Subscription *sub
 );
@@ -16711,7 +16711,7 @@ OCI_EXPORT unsigned int OCI_API OCI_SubscriptionGetPort
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_SubscriptionGetTimeout
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_SubscriptionGetTimeout
 (
     OCI_Subscription *sub
 );
@@ -16727,7 +16727,7 @@ OCI_EXPORT unsigned int OCI_API OCI_SubscriptionGetTimeout
  *
  */
 
-OCI_EXPORT OCI_Connection * OCI_API OCI_SubscriptionGetConnection
+OCI_SYM_PUBLIC OCI_Connection * OCI_API OCI_SubscriptionGetConnection
 (
     OCI_Subscription *sub
 );
@@ -16761,7 +16761,7 @@ OCI_EXPORT OCI_Connection * OCI_API OCI_SubscriptionGetConnection
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_EventGetType
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetType
 (
     OCI_Event *event
 );
@@ -16802,7 +16802,7 @@ OCI_EXPORT unsigned int OCI_API OCI_EventGetType
  *
  */
 
-OCI_EXPORT unsigned int OCI_API OCI_EventGetOperation
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetOperation
 (
     OCI_Event *event
 );
@@ -16819,7 +16819,7 @@ OCI_EXPORT unsigned int OCI_API OCI_EventGetOperation
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_EventGetDatabase
+OCI_SYM_PUBLIC const otext * OCI_API OCI_EventGetDatabase
 (
     OCI_Event *event
 );
@@ -16836,7 +16836,7 @@ OCI_EXPORT const otext * OCI_API OCI_EventGetDatabase
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_EventGetObject
+OCI_SYM_PUBLIC const otext * OCI_API OCI_EventGetObject
 (
     OCI_Event *event
 );
@@ -16853,7 +16853,7 @@ OCI_EXPORT const otext * OCI_API OCI_EventGetObject
  *
  */
 
-OCI_EXPORT const otext * OCI_API OCI_EventGetRowid
+OCI_SYM_PUBLIC const otext * OCI_API OCI_EventGetRowid
 (
     OCI_Event *event
 );
@@ -16870,7 +16870,7 @@ OCI_EXPORT const otext * OCI_API OCI_EventGetRowid
  *
  */
 
-OCI_EXPORT OCI_Subscription * OCI_API OCI_EventGetSubscription
+OCI_SYM_PUBLIC OCI_Subscription * OCI_API OCI_EventGetSubscription
 (
     OCI_Event *event
 );
@@ -16938,7 +16938,7 @@ OCI_EXPORT OCI_Subscription * OCI_API OCI_EventGetSubscription
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DatabaseStartup
+OCI_SYM_PUBLIC boolean OCI_API OCI_DatabaseStartup
 (
     const otext *db,
     const otext *user,
@@ -17003,7 +17003,7 @@ OCI_EXPORT boolean OCI_API OCI_DatabaseStartup
  *
  */
 
-OCI_EXPORT boolean OCI_API OCI_DatabaseShutdown
+OCI_SYM_PUBLIC boolean OCI_API OCI_DatabaseShutdown
 (
     const otext *db,
     const otext *user,
@@ -17057,7 +17057,7 @@ OCI_EXPORT boolean OCI_API OCI_DatabaseShutdown
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetEnvironment
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetEnvironment
 (
     void
 );
@@ -17073,7 +17073,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetEnvironment
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetContext
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetContext
 (
     OCI_Connection *con
 );
@@ -17089,7 +17089,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetContext
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetServer
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetServer
 (
     OCI_Connection *con
 );
@@ -17105,7 +17105,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetServer
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetError
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetError
 (
     OCI_Connection *con
 );
@@ -17121,7 +17121,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetError
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetSession
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetSession
 (
     OCI_Connection *con
 );
@@ -17137,7 +17137,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetSession
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetTransaction
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetTransaction
 (
     OCI_Transaction *trans
 );
@@ -17153,7 +17153,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetTransaction
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetStatement
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetStatement
 (
     OCI_Statement *stmt
 );
@@ -17169,7 +17169,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetStatement
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetLob
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetLob
 (
     OCI_Lob *lob
 );
@@ -17185,7 +17185,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetLob
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetFile
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetFile
 (
     OCI_File *file
 );
@@ -17201,7 +17201,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetFile
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetDate
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetDate
 (
     OCI_Date *date
 );
@@ -17217,7 +17217,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDate
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetTimestamp
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetTimestamp
 (
     OCI_Timestamp *tmsp
 );
@@ -17233,7 +17233,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetTimestamp
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetInterval
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetInterval
 (
     OCI_Interval *itv
 );
@@ -17249,7 +17249,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetInterval
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetObject
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetObject
 (
     OCI_Object *obj
 );
@@ -17265,7 +17265,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetObject
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetColl
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetColl
 (
     OCI_Coll *coll
 );
@@ -17281,7 +17281,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetColl
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetRef
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetRef
 (
     OCI_Ref *ref
 );
@@ -17297,7 +17297,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetRef
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetMutex
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetMutex
 (
     OCI_Mutex *mutex
 );
@@ -17313,7 +17313,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetMutex
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetThreadID
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetThreadID
 (
     OCI_Thread *thread
 );
@@ -17329,7 +17329,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetThreadID
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetThread
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetThread
 (
     OCI_Thread *thread
 );
@@ -17345,7 +17345,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetThread
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathCtx
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetDirPathCtx
 (
     OCI_DirPath *dp
 );
@@ -17361,7 +17361,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathCtx
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathColArray
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetDirPathColArray
 (
     OCI_DirPath *dp
 );
@@ -17377,7 +17377,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathColArray
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetDirPathStream
 (
     OCI_DirPath *dp
 );
@@ -17393,7 +17393,7 @@ OCI_EXPORT const void * OCI_API OCI_HandleGetDirPathStream
  *
  */
 
-OCI_EXPORT const void * OCI_API OCI_HandleGetSubscription
+OCI_SYM_PUBLIC const void * OCI_API OCI_HandleGetSubscription
 (
     OCI_Subscription *sub
 );

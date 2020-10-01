@@ -33,7 +33,7 @@
 #include "memory.h"
 #include "number.h"
 #include "reference.h"
-#include "strings.h"
+#include "stringutils.h"
 #include "timestamp.h"
 #include "typeinfo.h"
 
@@ -964,9 +964,9 @@ OCI_Object ** ObjectCreateArray
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_PTR(OCI_IPC_TYPE_INFO,  typinf)
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0,
-                      sizeof(void *), sizeof(OCI_Object),
-                      0, typinf);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0,
+                            sizeof(void *), sizeof(OCI_Object),
+                            0, typinf);
 
     CHECK_NULL(arr)
 
@@ -992,7 +992,7 @@ boolean ObjectFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, objs)
 
-    SET_RETVAL(ArrayFreeFromHandles((void **)objs))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void **)objs))
 
     EXIT_FUNC()
 }

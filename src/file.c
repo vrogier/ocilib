@@ -23,7 +23,7 @@
 #include "array.h"
 #include "macros.h"
 #include "memory.h"
-#include "strings.h"
+#include "stringutils.h"
 
 static const unsigned int SeekModeValues[] =
 {
@@ -261,9 +261,9 @@ OCI_File ** FileCreateArray
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_ENUM_VALUE(type, FileTypeValues, OTEXT("File Type"))
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_FILE, type,
-                      sizeof(OCILobLocator*), sizeof(OCI_File),
-                      OCI_DTYPE_LOB, NULL);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_FILE, type,
+                            sizeof(OCILobLocator*), sizeof(OCI_File),
+                            OCI_DTYPE_LOB, NULL);
 
     CHECK_NULL(arr)
 
@@ -289,7 +289,7 @@ boolean FileFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, files)
 
-    SET_RETVAL(ArrayFreeFromHandles((void**)files))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void**)files))
 
     EXIT_FUNC()
 }

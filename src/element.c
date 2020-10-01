@@ -32,7 +32,7 @@
 #include "number.h"
 #include "object.h"
 #include "reference.h"
-#include "strings.h"
+#include "stringutils.h"
 #include "timestamp.h"
 
 #define ELEM_SET_VALUE(elemtype, type, func_init, func_assign)   \

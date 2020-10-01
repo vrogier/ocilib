@@ -26,7 +26,7 @@
 #include "macros.h"
 #include "memory.h"
 #include "statement.h"
-#include "strings.h"
+#include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * SubscriptionDispose

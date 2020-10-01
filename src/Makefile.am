@@ -53,7 +53,7 @@ libocilib_la_SOURCES=   \
     reference.c         \
     resultset.c         \
     statement.c         \
-    strings.c           \
+    stringutils.c       \
     subscription.c      \
     thread.c            \
     threadkey.c         \
@@ -127,7 +127,7 @@ noinst_HEADERS=     \
     reference.h     \
     resultset.h     \
     statement.h     \
-    strings.h       \
+    stringutils.h   \
     subscription.h  \
     thread.h        \
     threadkey.h     \

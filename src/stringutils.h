@@ -18,8 +18,8 @@
  * limitations under the License.
  */
 
-#ifndef OCILIB_STRING_H_INCLUDED
-#define OCILIB_STRING_H_INCLUDED
+#ifndef OCILIB_STRING_UTILS_H_INCLUDED
+#define OCILIB_STRING_UTILS_H_INCLUDED
 
 #include "types.h"
 
@@ -174,4 +174,4 @@ boolean StringSetAttribute
     const otext   * value
 );
 
-#endif /* OCILIB_STRING_H_INCLUDED */
+#endif /* OCILIB_STRING_UTILS_H_INCLUDED */

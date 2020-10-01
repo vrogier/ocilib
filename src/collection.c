@@ -23,7 +23,7 @@
 #include "array.h"
 #include "element.h"
 #include "macros.h"
-#include "strings.h"
+#include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * CollInit
@@ -178,8 +178,8 @@ OCI_Coll ** CollectionCreateArray
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0,
-                      sizeof(OCIColl*), sizeof(OCI_Coll), 0, typinf);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0,
+                            sizeof(OCIColl*), sizeof(OCI_Coll), 0, typinf);
 
     CHECK_NULL(arr)
 
@@ -205,7 +205,7 @@ boolean CollectionFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, colls)
 
-    SET_RETVAL(ArrayFreeFromHandles((void **)colls))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void **)colls))
 
     EXIT_FUNC()
 }

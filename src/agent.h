@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Agent * AgentInitialize
+OCI_Agent * OcilibAgentInitialize
 (
     OCI_Connection *con,
     OCI_Agent      *agent,
@@ -32,35 +32,35 @@ OCI_Agent * AgentInitialize
     const otext    *address
 );
 
-OCI_Agent* AgentCreate
+OCI_Agent* OcilibAgentCreate
 (
     OCI_Connection* con,
     const otext   * name,
     const otext   * address
 );
 
-boolean AgentFree
+boolean OcilibAgentFree
 (
     OCI_Agent* agent
 );
 
-const otext* AgentGetName
+const otext* OcilibAgentGetName
 (
     OCI_Agent* agent
 );
 
-boolean AgentSetName
+boolean OcilibAgentSetName
 (
     OCI_Agent  * agent,
     const otext* name
 );
 
-const otext* AgentGetAddress
+const otext* OcilibAgentGetAddress
 (
     OCI_Agent* agent
 );
 
-boolean AgentSetAddress
+boolean OcilibAgentSetAddress
 (
     OCI_Agent  * agent,
     const otext* address

@@ -41,10 +41,10 @@
 
 
 /* --------------------------------------------------------------------------------------------- *
- * ArrayFindAny
+ * OcilibArrayFindAny
  * --------------------------------------------------------------------------------------------- */
 
-boolean ArrayFindAny
+OCI_SYM_LOCAL boolean OcilibArrayFindAny
 (
     OCI_Array *arr,
     void     **handles
@@ -54,10 +54,10 @@ boolean ArrayFindAny
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ArrayFindObjects
+* OcilibArrayFindObjects
 * --------------------------------------------------------------------------------------------- */
 
-boolean ArrayFindObjects
+OCI_SYM_LOCAL boolean OcilibArrayFindObjects
 (
     OCI_Array *arr,
     void     **handles
@@ -67,10 +67,10 @@ boolean ArrayFindObjects
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ArrayInitialize
+ * OcilibArrayInitialize
  * --------------------------------------------------------------------------------------------- */
 
-boolean ArrayInitialize
+OCI_SYM_LOCAL boolean OcilibArrayInitialize
 (
     OCI_Array    *arr,
     OCI_TypeInfo *typinf
@@ -165,10 +165,10 @@ boolean ArrayInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ArrayClose
+ * OcilibArrayClose
  * --------------------------------------------------------------------------------------------- */
 
-boolean ArrayDispose
+OCI_SYM_LOCAL boolean OcilibArrayDispose
 (
     OCI_Array *arr
 )
@@ -213,10 +213,10 @@ boolean ArrayDispose
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ArrayCreate
+ * OcilibArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Array * ArrayCreate
+OCI_SYM_LOCAL OCI_Array * OcilibArrayCreate
 (
     OCI_Connection *con,
     unsigned int    nb_elem,
@@ -278,14 +278,14 @@ OCI_Array * ArrayCreate
 
     if (arr->tab_obj && arr->mem_handle)
     {
-        CHECK(ArrayInitialize(arr, typinf))
+        CHECK(OcilibArrayInitialize(arr, typinf))
     }
 
     CLEANUP_AND_EXIT_FUNC
     (
         if (FAILURE)
         {
-            ArrayDispose(arr);
+            OcilibArrayDispose(arr);
             arr = NULL;
         }
 
@@ -294,10 +294,10 @@ OCI_Array * ArrayCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_ArrayFreeFromHandles
+ * OcilibArrayFreeFromHandles
  * --------------------------------------------------------------------------------------------- */
 
-boolean ArrayFreeFromHandles
+OCI_SYM_LOCAL boolean OcilibArrayFreeFromHandles
 (
     void **handles
 )
@@ -312,11 +312,11 @@ boolean ArrayFreeFromHandles
 
     CHECK_PTR(OCI_IPC_VOID, handles)
 
-    arr = ListFind(Env.arrs, (POCI_LIST_FIND)ArrayFindAny, handles);
+    arr = ListFind(Env.arrs, (POCI_LIST_FIND) OcilibArrayFindAny, handles);
     CHECK_NULL(arr)
 
     ListRemove(Env.arrs, arr);
-    ArrayDispose(arr);
+    OcilibArrayDispose(arr);
     FREE(arr)
 
     SET_SUCCESS()

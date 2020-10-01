@@ -39,7 +39,7 @@
 #include "object.h"
 #include "reference.h"
 #include "resultset.h"
-#include "strings.h"
+#include "stringutils.h"
 #include "timestamp.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -140,12 +140,12 @@ static unsigned int LongModeValues[] =
 
 #define BIND_DATA(...)                                  \
                                                         \
-    CHECK_NULL(BindCreate(stmt, data, name,             \
+    CHECK_NULL(OcilibBindCreate(stmt, data, name,       \
                           OCI_BIND_INPUT, __VA_ARGS__)) \
 
 #define REGISTER_DATA(...)                               \
                                                          \
-    CHECK_NULL(BindCreate(stmt, NULL, name,              \
+    CHECK_NULL(OcilibBindCreate(stmt, NULL, name,        \
                           OCI_BIND_OUTPUT, __VA_ARGS__)) \
 
 
@@ -243,7 +243,7 @@ boolean StatementFreeAllBinds
     {
         for(i = 0; i < stmt->nb_ubinds; i++)
         {
-            BindFree(stmt->ubinds[i]);
+            OcilibBindFree(stmt->ubinds[i]);
         }
 
         FREE(stmt->ubinds)
@@ -255,7 +255,7 @@ boolean StatementFreeAllBinds
     {
         for(i = 0; i < stmt->nb_rbinds; i++)
         {
-            BindFree(stmt->rbinds[i]);
+            OcilibBindFree(stmt->rbinds[i]);
         }
 
         FREE(stmt->rbinds)
@@ -4128,7 +4128,7 @@ OCI_Bind * StatementGetBind2
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     CHECK_PTR(OCI_IPC_STRING,    name)
 
-    index = BindGetIndex(stmt, name);
+    index = OcilibBindGetIndex(stmt, name);
     if (index <= 0)
     {
         THROW(ExceptionItemNotFound, name, OCI_IPC_BIND)
@@ -4160,7 +4160,7 @@ unsigned int StatementGetBindIndex
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     CHECK_PTR(OCI_IPC_STRING,    name)
 
-    index = BindGetIndex(stmt, name);
+    index = OcilibBindGetIndex(stmt, name);
     CHECK(index >= 0)
 
     SET_RETVAL(index)

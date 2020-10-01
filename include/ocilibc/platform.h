@@ -112,6 +112,58 @@
   #define OCI_IMPORT_MODE OCI_IMPORT_MODE_LINKAGE
 #endif
 
+
+/* Calling convention */
+
+#ifndef OCI_API
+#ifdef _MSC_VER
+  #define OCI_API __stdcall
+#else
+  #define OCI_API
+#endif
+#endif
+
+/* Build modes */
+
+#ifndef OCI_EXPORT
+  #define OCI_EXPORT
+#endif
+
+#define OCI_LIB_TYPE_SHARED  1
+#define OCI_LIB_TYPE_STATIC  2
+
+#ifndef OCI_LIB_TYPE
+  #define OCI_LIB_TYPE OCI_LIB_TYPE_SHARED
+#endif
+
+/* Control of symbol visibility for shared libraries */
+
+#if defined _WINDOWS
+  #define OCI_SYM_PUBLIC_IMPORT     __declspec(dllimport)
+  #define OCI_SYM_PUBLIC_EXPORT     __declspec(dllexport)
+  #define OCI_SYM_LOCAL
+#else
+  #if __GNUC__ >= 4
+    #define OCI_SYM_PUBLIC_IMPORT   __attribute__ ((visibility ("default")))
+    #define OCI_SYM_PUBLIC_EXPORT   __attribute__ ((visibility ("default")))
+    #define OCI_SYM_LOCAL           __attribute__ ((visibility ("hidden")))
+  #else
+    #define OCI_SYM_PUBLIC_IMPORT
+    #define OCI_SYM_PUBLIC_EXPORT
+    #define OCI_SYM_LOCAL
+  #endif
+#endif
+
+#if OCI_LIB_TYPE == OCI_LIB_TYPE_SHARED
+  #ifdef OCI_EXPORT
+    #define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_EXPORT
+  #else
+    #define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_IMPORT
+  #endif 
+#else 
+  #define OCI_SYM_PUBLIC
+#endif 
+
 /* Charset modes */
 
 #ifdef  OCI_CHARSET_UNICODE
@@ -128,22 +180,6 @@
 
 #if !defined(OCI_CHARSET_ANSI)  && !defined(OCI_CHARSET_WIDE)
   #define OCI_CHARSET_ANSI
-#endif
-
-/* Calling convention */
-
-#ifndef OCI_API
-#ifdef _MSC_VER
-    #define OCI_API __stdcall
-#else
-    #define OCI_API
-#endif
-#endif
-
-/* Build mode */
-
-#ifndef OCI_EXPORT
-  #define OCI_EXPORT
 #endif
 
 /**

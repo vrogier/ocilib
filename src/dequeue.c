@@ -26,7 +26,7 @@
 #include "memory.h"
 #include "message.h"
 #include "object.h"
-#include "strings.h"
+#include "stringutils.h"
 
 static const unsigned int NavigationModeValues[] =
 {
@@ -135,7 +135,7 @@ boolean DequeueFree
 
     if (NULL != dequeue->agent)
     {
-        AgentFree(dequeue->agent);
+        OcilibAgentFree(dequeue->agent);
     }
 
     /* free OCI descriptor */
@@ -210,9 +210,9 @@ OCI_Agent * DequeueListen
 
     if (NULL != handle && OCI_SUCCESSFUL(ret))
     {
-        dequeue->agent= AgentInitialize(dequeue->typinf->con,
-                                        dequeue->agent, handle,
-                                        NULL, NULL);
+        dequeue->agent= OcilibAgentInitialize(dequeue->typinf->con,
+                                              dequeue->agent, handle,
+                                              NULL, NULL);
 
         CHECK_NULL(dequeue->agent)
 

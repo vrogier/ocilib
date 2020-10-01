@@ -21,13 +21,13 @@
 #include "agent.h"
 
 #include "macros.h"
-#include "strings.h"
+#include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * AgentInit
+ * OcilibAgentInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Agent * AgentInitialize
+OCI_Agent * OcilibAgentInitialize
 (
     OCI_Connection *con,
     OCI_Agent      *agent,
@@ -67,21 +67,21 @@ OCI_Agent * AgentInitialize
 
     if (IS_STRING_VALID(name))
     {
-        CHECK(AgentSetName(agent, name))
+        CHECK(OcilibAgentSetName(agent, name))
     }
 
     /* set address attribute if provided */
 
     if (IS_STRING_VALID(address))
     {
-        CHECK(AgentSetAddress(agent, address))
+        CHECK(OcilibAgentSetAddress(agent, address))
     }
 
     CLEANUP_AND_EXIT_FUNC
     (
         if (FAILURE)
         {
-            AgentFree(agent);
+            OcilibAgentFree(agent);
             agent = NULL;
         }
 
@@ -90,10 +90,10 @@ OCI_Agent * AgentInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * AgentCreate
+ * OcilibAgentCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Agent * AgentCreate
+OCI_Agent * OcilibAgentCreate
 (
     OCI_Connection *con,
     const otext    *name,
@@ -108,16 +108,16 @@ OCI_Agent * AgentCreate
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    SET_RETVAL(AgentInitialize(con, NULL, NULL, name, address))
+    SET_RETVAL(OcilibAgentInitialize(con, NULL, NULL, name, address))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * AgentFree
+ * OcilibAgentFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean AgentFree
+boolean OcilibAgentFree
 (
     OCI_Agent *agent
 )
@@ -147,10 +147,10 @@ boolean AgentFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * AgentGetName
+ * OcilibAgentGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * AgentGetName
+const otext * OcilibAgentGetName
 (
     OCI_Agent *agent
 )
@@ -181,10 +181,10 @@ const otext * AgentGetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * AgentSetName
+ * OcilibAgentSetName
  * --------------------------------------------------------------------------------------------- */
 
-boolean AgentSetName
+boolean OcilibAgentSetName
 (
     OCI_Agent   *agent,
     const otext *name
@@ -211,10 +211,10 @@ boolean AgentSetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * AgentGetAddress
+ * OcilibAgentGetAddress
  * --------------------------------------------------------------------------------------------- */
 
-const otext * AgentGetAddress
+const otext * OcilibAgentGetAddress
 (
     OCI_Agent *agent
 )
@@ -245,10 +245,10 @@ const otext * AgentGetAddress
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * AgentSetAddress
+ * OcilibAgentSetAddress
  * --------------------------------------------------------------------------------------------- */
 
-boolean AgentSetAddress
+boolean OcilibAgentSetAddress
 (
     OCI_Agent   *agent,
     const otext *address

@@ -24,7 +24,7 @@
 #include "environment.h"
 #include "helpers.h"
 #include "macros.h"
-#include "strings.h"
+#include "stringutils.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -226,9 +226,9 @@ OCI_Timestamp ** TimestampCreateArray
 
     CHECK_ENUM_VALUE(type, TimestampTypeValues, OTEXT("Timestamp type"))
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type,
-                      sizeof(OCIDateTime*), sizeof(OCI_Timestamp),
-                      ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type), NULL);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type,
+                            sizeof(OCIDateTime*), sizeof(OCI_Timestamp),
+                            ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type), NULL);
 
     CHECK_NULL(arr)
 
@@ -262,7 +262,7 @@ boolean TimestampFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, tmsps)
 
-    SET_RETVAL(ArrayFreeFromHandles((void **) tmsps))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void **) tmsps))
 
     EXIT_FUNC()
 }

@@ -21,7 +21,7 @@
 #include "exception.h"
 
 #include "error.h"
-#include "strings.h"
+#include "stringutils.h"
 
 static const otext * TypeNames[OCI_IPC_COUNT] =
 {

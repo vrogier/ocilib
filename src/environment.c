@@ -1516,7 +1516,7 @@ boolean EnvironmentCleanup
 
     /* dispose list items */
 
-    ListForEach(Env.arrs,  (POCI_LIST_FOR_EACH)ArrayDispose);
+    ListForEach(Env.arrs,  (POCI_LIST_FOR_EACH)OcilibArrayDispose);
     ListForEach(Env.subs,  (POCI_LIST_FOR_EACH)SubscriptionDispose);
     ListForEach(Env.cons,  (POCI_LIST_FOR_EACH)ConnectionDispose);
     ListForEach(Env.pools, (POCI_LIST_FOR_EACH)PoolDispose);

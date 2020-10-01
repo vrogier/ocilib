@@ -82,7 +82,7 @@ OCI_Agent* OCI_API OCI_AgentCreate
     const otext   * address
 )
 {
-    CALL_IMPL(AgentCreate, con, name, address)
+    CALL_IMPL(OcilibAgentCreate, con, name, address)
 }
 
 boolean OCI_API OCI_AgentFree
@@ -90,7 +90,7 @@ boolean OCI_API OCI_AgentFree
     OCI_Agent* agent
 )
 {
-    CALL_IMPL(AgentFree, agent)
+    CALL_IMPL(OcilibAgentFree, agent)
 }
 
 const otext* OCI_API OCI_AgentGetName
@@ -98,7 +98,7 @@ const otext* OCI_API OCI_AgentGetName
     OCI_Agent* agent
 )
 {
-    CALL_IMPL(AgentGetName, agent)
+    CALL_IMPL(OcilibAgentGetName, agent)
 }
 
 boolean OCI_API OCI_AgentSetName
@@ -107,7 +107,7 @@ boolean OCI_API OCI_AgentSetName
     const otext* name
 )
 {
-    CALL_IMPL(AgentSetName, agent, name)
+    CALL_IMPL(OcilibAgentSetName, agent, name)
 }
 
 const otext* OCI_API OCI_AgentGetAddress
@@ -115,7 +115,7 @@ const otext* OCI_API OCI_AgentGetAddress
     OCI_Agent* agent
 )
 {
-    CALL_IMPL(AgentGetAddress, agent)
+    CALL_IMPL(OcilibAgentGetAddress, agent)
 }
 
 boolean OCI_API OCI_AgentSetAddress
@@ -124,7 +124,7 @@ boolean OCI_API OCI_AgentSetAddress
     const otext* address
 )
 {
-    CALL_IMPL(AgentSetAddress, agent, address)
+    CALL_IMPL(OcilibAgentSetAddress, agent, address)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -136,7 +136,7 @@ const otext* OCI_API OCI_BindGetName
     OCI_Bind* bnd
 )
 {
-    CALL_IMPL(BindGetName, bnd)
+    CALL_IMPL(OcilibBindGetName, bnd)
 }
 
 unsigned int OCI_API OCI_BindGetType
@@ -144,7 +144,7 @@ unsigned int OCI_API OCI_BindGetType
     OCI_Bind* bnd
 )
 {
-    CALL_IMPL(BindGetType, bnd)
+    CALL_IMPL(OcilibBindGetType, bnd)
 }
 
 unsigned int OCI_API OCI_BindGetSubtype
@@ -152,7 +152,7 @@ unsigned int OCI_API OCI_BindGetSubtype
     OCI_Bind* bnd
 )
 {
-    CALL_IMPL(BindGetSubtype, bnd)
+    CALL_IMPL(OcilibBindGetSubtype, bnd)
 }
 
 unsigned int OCI_API OCI_BindGetDataCount
@@ -160,7 +160,7 @@ unsigned int OCI_API OCI_BindGetDataCount
     OCI_Bind* bnd
 )
 {
-    CALL_IMPL(BindGetDataCount, bnd)
+    CALL_IMPL(OcilibBindGetDataCount, bnd)
 }
 
 void* OCI_API OCI_BindGetData
@@ -168,7 +168,7 @@ void* OCI_API OCI_BindGetData
     OCI_Bind* bnd
 )
 {
-    CALL_IMPL(BindGetData, bnd)
+    CALL_IMPL(OcilibBindGetData, bnd)
 }
 
 OCI_Statement* OCI_API OCI_BindGetStatement
@@ -176,7 +176,7 @@ OCI_Statement* OCI_API OCI_BindGetStatement
     OCI_Bind* bnd
 )
 {
-    CALL_IMPL(BindGetStatement, bnd)
+    CALL_IMPL(OcilibBindGetStatement, bnd)
 }
 
 boolean OCI_API OCI_BindSetDataSize
@@ -185,7 +185,7 @@ boolean OCI_API OCI_BindSetDataSize
     unsigned int size
 )
 {
-    CALL_IMPL(BindSetDataSize, bnd, size)
+    CALL_IMPL(OcilibBindSetDataSize, bnd, size)
 }
 
 boolean OCI_API OCI_BindSetDataSizeAtPos
@@ -195,7 +195,7 @@ boolean OCI_API OCI_BindSetDataSizeAtPos
     unsigned int size
 )
 {
-    CALL_IMPL(BindSetDataSizeAtPos, bnd, position, size)
+    CALL_IMPL(OcilibBindSetDataSizeAtPos, bnd, position, size)
 }
 
 unsigned int OCI_API OCI_BindGetDataSize
@@ -203,7 +203,7 @@ unsigned int OCI_API OCI_BindGetDataSize
     OCI_Bind* bnd
 )
 {
-    CALL_IMPL(BindGetDataSize, bnd)
+    CALL_IMPL(OcilibBindGetDataSize, bnd)
 }
 
 unsigned int OCI_API OCI_BindGetDataSizeAtPos
@@ -212,7 +212,7 @@ unsigned int OCI_API OCI_BindGetDataSizeAtPos
     unsigned int position
 )
 {
-    CALL_IMPL(BindGetDataSizeAtPos, bnd, position)
+    CALL_IMPL(OcilibBindGetDataSizeAtPos, bnd, position)
 }
 
 boolean OCI_API OCI_BindSetNullAtPos
@@ -221,7 +221,7 @@ boolean OCI_API OCI_BindSetNullAtPos
     unsigned int position
 )
 {
-    CALL_IMPL(BindSetNullAtPos, bnd, position)
+    CALL_IMPL(OcilibBindSetNullAtPos, bnd, position)
 }
 
 boolean OCI_API OCI_BindSetNull
@@ -229,7 +229,7 @@ boolean OCI_API OCI_BindSetNull
     OCI_Bind* bnd
 )
 {
-    CALL_IMPL(BindSetNull, bnd)
+    CALL_IMPL(OcilibBindSetNull, bnd)
 }
 
 boolean OCI_API OCI_BindSetNotNullAtPos
@@ -238,7 +238,7 @@ boolean OCI_API OCI_BindSetNotNullAtPos
     unsigned int position
 )
 {
-    CALL_IMPL(BindSetNotNullAtPos, bnd, position)
+    CALL_IMPL(OcilibBindSetNotNullAtPos, bnd, position)
 }
 
 boolean OCI_API OCI_BindSetNotNull
@@ -246,7 +246,7 @@ boolean OCI_API OCI_BindSetNotNull
     OCI_Bind* bnd
 )
 {
-    CALL_IMPL(BindSetNotNull, bnd)
+    CALL_IMPL(OcilibBindSetNotNull, bnd)
 }
 
 boolean OCI_API OCI_BindIsNullAtPos
@@ -255,7 +255,7 @@ boolean OCI_API OCI_BindIsNullAtPos
     unsigned int position
 )
 {
-    CALL_IMPL(BindIsNullAtPos, bnd, position)
+    CALL_IMPL(OcilibBindIsNullAtPos, bnd, position)
 }
 
 boolean OCI_API OCI_BindIsNull
@@ -263,7 +263,7 @@ boolean OCI_API OCI_BindIsNull
     OCI_Bind* bnd
 )
 {
-    CALL_IMPL(BindIsNull, bnd)
+    CALL_IMPL(OcilibBindIsNull, bnd)
 }
 
 boolean OCI_API OCI_BindSetCharsetForm
@@ -272,7 +272,7 @@ boolean OCI_API OCI_BindSetCharsetForm
     unsigned int csfrm
 )
 {
-    CALL_IMPL(BindSetCharsetForm, bnd, csfrm)
+    CALL_IMPL(OcilibBindSetCharsetForm, bnd, csfrm)
 }
 
 boolean OCI_API OCI_BindSetDirection
@@ -281,7 +281,7 @@ boolean OCI_API OCI_BindSetDirection
     unsigned int direction
 )
 {
-    CALL_IMPL(BindSetDirection, bnd, direction)
+    CALL_IMPL(OcilibBindSetDirection, bnd, direction)
 }
 
 unsigned int OCI_API OCI_BindGetDirection
@@ -289,7 +289,7 @@ unsigned int OCI_API OCI_BindGetDirection
     OCI_Bind* bnd
 )
 {
-    CALL_IMPL(BindGetDirection, bnd)
+    CALL_IMPL(OcilibBindGetDirection, bnd)
 }
 
 unsigned int OCI_API OCI_BindGetAllocationMode
@@ -297,7 +297,7 @@ unsigned int OCI_API OCI_BindGetAllocationMode
     OCI_Bind* bnd
 )
 {
-    CALL_IMPL(BindGetAllocationMode, bnd)
+    CALL_IMPL(OcilibBindGetAllocationMode, bnd)
 }
 
 /* --------------------------------------------------------------------------------------------- *

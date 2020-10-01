@@ -25,7 +25,7 @@
 #include "error.h"
 #include "macros.h"
 #include "statement.h"
-#include "strings.h"
+#include "stringutils.h"
 #include "transaction.h"
 
 /* --------------------------------------------------------------------------------------------- *
