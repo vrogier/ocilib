@@ -92,7 +92,7 @@
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Pool OCI_Pool;
+typedef struct OCI_Pool OCI_Pool;
 
 /**
  * @typedef OCI_Connection
@@ -109,7 +109,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Pool OCI_Pool;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Connection OCI_Connection;
+typedef struct OCI_Connection OCI_Connection;
 
 /**
  * @typedef OCI_Statement
@@ -121,7 +121,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Connection OCI_Connection;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Statement OCI_Statement;
+typedef struct OCI_Statement OCI_Statement;
 
 /**
  * @typedef OCI_Bind
@@ -133,7 +133,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Statement OCI_Statement;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Bind OCI_Bind;
+typedef struct OCI_Bind OCI_Bind;
 
 /**
  * @typedef OCI_Resultset
@@ -148,7 +148,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Bind OCI_Bind;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Resultset OCI_Resultset;
+typedef struct OCI_Resultset OCI_Resultset;
 
 /**
  * @typedef OCI_Column
@@ -160,7 +160,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Resultset OCI_Resultset;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Column OCI_Column;
+typedef struct OCI_Column OCI_Column;
 
 /**
  * @typedef OCI_Lob
@@ -183,7 +183,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Column OCI_Column;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Lob OCI_Lob;
+typedef struct OCI_Lob OCI_Lob;
 
 /**
  * @typedef OCI_File
@@ -208,7 +208,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Lob OCI_Lob;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_File OCI_File;
+typedef struct OCI_File OCI_File;
 
 /**
  * @typedef OCI_Transaction
@@ -223,7 +223,7 @@ OCI_SYM_PUBLIC typedef struct OCI_File OCI_File;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Transaction OCI_Transaction;
+typedef struct OCI_Transaction OCI_Transaction;
 
 /**
  * @typedef OCI_Long
@@ -245,7 +245,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Transaction OCI_Transaction;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Long OCI_Long;
+typedef struct OCI_Long OCI_Long;
 
 /**
 * @typedef OCI_Number
@@ -254,7 +254,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Long OCI_Long;
 * Oracle NUMBER representation.
 *
 */
-OCI_SYM_PUBLIC typedef struct OCI_Number OCI_Number;
+typedef struct OCI_Number OCI_Number;
 
 /**
  * @typedef OCI_Date
@@ -264,7 +264,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Number OCI_Number;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Date OCI_Date;
+typedef struct OCI_Date OCI_Date;
 
 /**
  * @typedef OCI_Timestamp
@@ -274,7 +274,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Date OCI_Date;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Timestamp OCI_Timestamp;
+typedef struct OCI_Timestamp OCI_Timestamp;
 
 /**
  * @typedef OCI_Interval
@@ -284,7 +284,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Timestamp OCI_Timestamp;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Interval OCI_Interval;
+typedef struct OCI_Interval OCI_Interval;
 
 /**
  * @typedef OCI_Object
@@ -294,7 +294,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Interval OCI_Interval;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Object OCI_Object;
+typedef struct OCI_Object OCI_Object;
 
 /**
  * @typedef OCI_Coll
@@ -304,7 +304,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Object OCI_Object;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Coll OCI_Coll;
+typedef struct OCI_Coll OCI_Coll;
 
 /**
  * @typedef OCI_Elem
@@ -314,7 +314,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Coll OCI_Coll;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Elem OCI_Elem;
+typedef struct OCI_Elem OCI_Elem;
 
 /**
  * @typedef OCI_Iter
@@ -323,7 +323,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Elem OCI_Elem;
  * Oracle Collection iterator representation.
  *
  */
-OCI_SYM_PUBLIC typedef struct OCI_Iter OCI_Iter;
+typedef struct OCI_Iter OCI_Iter;
 
 /**
  * @typedef OCI_TypeInfo
@@ -341,7 +341,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Iter OCI_Iter;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Ref OCI_Ref;
+typedef struct OCI_Ref OCI_Ref;
 
 /**
  * @typedef OCI_TypeInfo
@@ -351,7 +351,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Ref OCI_Ref;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_TypeInfo OCI_TypeInfo;
+typedef struct OCI_TypeInfo OCI_TypeInfo;
 
 /**
  * @typedef OCI_HashTable
@@ -361,7 +361,7 @@ OCI_SYM_PUBLIC typedef struct OCI_TypeInfo OCI_TypeInfo;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_HashTable OCI_HashTable;
+typedef struct OCI_HashTable OCI_HashTable;
 
 /**
  * @typedef OCI_Error
@@ -375,7 +375,7 @@ OCI_SYM_PUBLIC typedef struct OCI_HashTable OCI_HashTable;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Error OCI_Error;
+typedef struct OCI_Error OCI_Error;
 
 /**
  * @typedef OCI_Mutex
@@ -385,7 +385,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Error OCI_Error;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Mutex OCI_Mutex;
+typedef struct OCI_Mutex OCI_Mutex;
 
 /**
  * @typedef OCI_Thread
@@ -395,7 +395,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Mutex OCI_Mutex;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Thread OCI_Thread;
+typedef struct OCI_Thread OCI_Thread;
 
 /**
  * @typedef OCI_DirPath
@@ -405,7 +405,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Thread OCI_Thread;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_DirPath OCI_DirPath;
+typedef struct OCI_DirPath OCI_DirPath;
 
 /**
  * @typedef OCI_Subscription
@@ -415,7 +415,7 @@ OCI_SYM_PUBLIC typedef struct OCI_DirPath OCI_DirPath;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Subscription OCI_Subscription;
+typedef struct OCI_Subscription OCI_Subscription;
 
 /**
  * @typedef OCI_Event
@@ -425,7 +425,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Subscription OCI_Subscription;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Event OCI_Event;
+typedef struct OCI_Event OCI_Event;
 
 /**
  * @typedef OCI_Msg
@@ -435,7 +435,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Event OCI_Event;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Msg OCI_Msg;
+typedef struct OCI_Msg OCI_Msg;
 
 /**
  * @typedef OCI_Agent
@@ -445,7 +445,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Msg OCI_Msg;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Agent OCI_Agent;
+typedef struct OCI_Agent OCI_Agent;
 
 /**
  * @typedef OCI_Dequeue
@@ -455,7 +455,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Agent OCI_Agent;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Dequeue OCI_Dequeue;
+typedef struct OCI_Dequeue OCI_Dequeue;
 
 /**
  * @typedef OCI_Enqueue
@@ -465,7 +465,7 @@ OCI_SYM_PUBLIC typedef struct OCI_Dequeue OCI_Dequeue;
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_Enqueue OCI_Enqueue;
+typedef struct OCI_Enqueue OCI_Enqueue;
 
 /**
  * @var POCI_ERROR
@@ -631,7 +631,7 @@ typedef void (*POCI_HA_HANDLER)
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_XID
+typedef struct OCI_XID
 {
     long formatID;
     long gtrid_length;
@@ -690,7 +690,7 @@ typedef union OCI_Variant
 *
 */
 
-OCI_SYM_PUBLIC typedef struct OCI_HashValue
+typedef struct OCI_HashValue
 {
     OCI_Variant           value;
     struct OCI_HashValue *next;
@@ -704,7 +704,7 @@ OCI_SYM_PUBLIC typedef struct OCI_HashValue
  *
  */
 
-OCI_SYM_PUBLIC typedef struct OCI_HashEntry
+typedef struct OCI_HashEntry
 {
     otext *               key;
     struct OCI_HashValue *values;
