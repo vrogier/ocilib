@@ -27,10 +27,10 @@
 #include "typeinfo.h"
 
 /* --------------------------------------------------------------------------------------------- *
-* ColumnGetAttrInfo
+* OcilibColumnGetAttrInfo
 * --------------------------------------------------------------------------------------------- */
 
-boolean ColumnGetAttributeInfo
+OCI_SYM_LOCAL boolean OcilibColumnGetAttributeInfo
 (
     OCI_Column  *col,
     unsigned int count,
@@ -96,7 +96,7 @@ boolean ColumnGetAttributeInfo
         }
         case OCI_CDT_OBJECT:
         {
-            ObjectGetUserStructSize(col->typinf, p_size, p_align);
+            OcilibObjectGetUserStructSize(col->typinf, p_size, p_align);
             break;
         }
         default:
@@ -113,10 +113,10 @@ boolean ColumnGetAttributeInfo
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnRetrieveInfo
+ * OcilibColumnRetrieveInfo
  * --------------------------------------------------------------------------------------------- */
 
-boolean ColumnRetrieveInfo
+OCI_SYM_LOCAL boolean OcilibColumnRetrieveInfo
 (
     OCI_Column     *col,
     OCI_Connection *con,
@@ -168,7 +168,7 @@ boolean ColumnRetrieveInfo
         con->err
     )
 
-    /* when the column is a record from a PL/SQL table, OCI returns an undocumented SQLT code */
+    /* when the OcilibColumn is a record from a PL/SQL table, OCI returns an undocumented SQLT code */
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
@@ -235,11 +235,11 @@ boolean ColumnRetrieveInfo
         con->err
     )
 
-    /* type of column length for string based column */
+    /* type of OcilibColumn length for string based OcilibColumn */
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
-    if (ConnectionIsVersionSupported(con, OCI_9_2))
+    if (OcilibConnectionIsVersionSupported(con, OCI_9_2))
     {
         CHECK_ATTRIB_GET
         (
@@ -263,7 +263,7 @@ boolean ColumnRetrieveInfo
 
 #endif
 
-    if (ConnectionIsVersionSupported(con, OCI_9_0))
+    if (OcilibConnectionIsVersionSupported(con, OCI_9_0))
     {
         /* fractional time precision for timestamps */
 
@@ -301,7 +301,7 @@ boolean ColumnRetrieveInfo
 
 #if OCI_VERSION_COMPILE >= OCI_12_2
 
-    if (ConnectionIsVersionSupported(con, OCI_12_2))
+    if (OcilibConnectionIsVersionSupported(con, OCI_12_2))
     {
         if (OCI_DESC_RESULTSET == ptype)
         {
@@ -318,7 +318,7 @@ boolean ColumnRetrieveInfo
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
-    if (ConnectionIsVersionSupported(con, OCI_12_1))
+    if (OcilibConnectionIsVersionSupported(con, OCI_12_1))
     {
         if (ptype < OCI_DESC_TYPE)
         {
@@ -364,7 +364,7 @@ boolean ColumnRetrieveInfo
 
 #endif
 
-    /* check nullable only for table based column */
+    /* check nullable only for table based OcilibColumn */
 
     if (ptype < OCI_DESC_TYPE)
     {
@@ -422,7 +422,7 @@ boolean ColumnRetrieveInfo
 
         if (dbstr)
         {
-            col->name = StringDuplicateFromDBString(dbstr, dbcharcount(dbsize));
+            col->name = OcilibStringDuplicateFromDBString(dbstr, dbcharcount(dbsize));
 
             CHECK_NULL(col->name)
         }
@@ -482,7 +482,7 @@ boolean ColumnRetrieveInfo
 
         if (NULL != dbstr_schema && (dbsize_schema > 0))
         {
-            StringOracleToNative(dbstr_schema, schema_name, dbcharcount(dbsize_schema));
+            OcilibStringOracleToNative(dbstr_schema, schema_name, dbcharcount(dbsize_schema));
 
             if (0 == ostrcasecmp(schema_name, OTEXT("PUBLIC")))
             {
@@ -494,22 +494,23 @@ boolean ColumnRetrieveInfo
 
         if (NULL != dbstr_package && (dbsize_package > 0))
         {
-            StringOracleToNative(dbstr_package, package_name, dbcharcount(dbsize_package));
+            OcilibStringOracleToNative(dbstr_package, package_name, dbcharcount(dbsize_package));
         }
 
         /* Retrieve correct type name */
 
         if (NULL != dbstr_name && (dbsize_name > 0))
         {
-            StringOracleToNative(dbstr_name, type_name, dbcharcount(dbsize_name));
+            OcilibStringOracleToNative(dbstr_name, type_name, dbcharcount(dbsize_name));
         }
 
         /* Format full type name respecting case sensitivity if needed in order to not fail type
          * info retrieval.*/
 
-        StringGetFullTypeName(schema_name, package_name, type_name, NULL, full_name, (sizeof(full_name) / sizeof(otext)) - 1);
+        OcilibStringGetFullTypeName(schema_name, package_name, type_name, NULL, full_name,
+                              (sizeof(full_name) / sizeof(otext)) - 1);
 
-        col->typinf = TypeInfoGet(con, full_name, OCI_TIF_TYPE);
+        col->typinf = OcilibTypeInfoGet(con, full_name, OCI_TIF_TYPE);
         CHECK_NULL(col->typinf);
     }
 
@@ -525,10 +526,10 @@ boolean ColumnRetrieveInfo
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnMap
+ * OcilibColumnMapInfo
  * --------------------------------------------------------------------------------------------- */
 
-boolean ColumnMapInfo
+OCI_SYM_LOCAL boolean OcilibColumnMapInfo
 (
     OCI_Column    *col,
     OCI_Statement *stmt
@@ -670,7 +671,7 @@ boolean ColumnMapInfo
         {
             col->datatype = OCI_CDT_DATETIME;
 
-            /* We map to SQLT_ODT only it the column is not part of a
+            /* We map to SQLT_ODT only it the OcilibColumn is not part of a
                "returning into" clause (workaround for Oracle
                known bug #3269146
             */
@@ -707,9 +708,9 @@ boolean ColumnMapInfo
             }
             else
             {
-                /*  For ROWID descriptor, if column size is bigger than the size
-                    of the descriptor, it means that an UROWID column and then
-                    the column size is the maximum size needed for representing
+                /*  For ROWID descriptor, if OcilibColumn size is bigger than the size
+                    of the descriptor, it means that an UROWID OcilibColumn and then
+                    the OcilibColumn size is the maximum size needed for representing
                     its value as an hex string
                 */
 
@@ -900,10 +901,10 @@ boolean ColumnMapInfo
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetName
+ * OcilibColumnGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * ColumnGetName
+OCI_SYM_LOCAL const otext * OcilibColumnGetName
 (
     OCI_Column *col
 )
@@ -917,10 +918,10 @@ const otext * ColumnGetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetType
+ * OcilibColumnGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ColumnGetType
+unsigned int OcilibColumnGetType
 (
     OCI_Column *col
 )
@@ -934,10 +935,10 @@ unsigned int ColumnGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetCharsetForm
+ * OcilibColumnGetCharsetForm
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ColumnGetCharsetForm
+OCI_SYM_LOCAL unsigned int OcilibColumnGetCharsetForm
 (
     OCI_Column *col
 )
@@ -967,10 +968,10 @@ unsigned int ColumnGetCharsetForm
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetSize
+ * OcilibColumnGetSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ColumnGetSize
+OCI_SYM_LOCAL unsigned int OcilibColumnGetSize
 (
     OCI_Column *col
 )
@@ -983,11 +984,11 @@ unsigned int ColumnGetSize
 
     CHECK_PTR(OCI_IPC_COLUMN, col)
 
-    /* Oracle 9i introduced CHAR attribute on string columns to indicate the
-       size of the column is not in bytes (default) but in chars
+    /* Oracle 9i introduced CHAR attribute on string OcilibColumns to indicate the
+       size of the OcilibColumn is not in bytes (default) but in chars
        OCI_ColumnDescribe() already managed the Oracle compatibility
-       version, so if the column character size member is zero it means :
-       - the column is not a string column
+       version, so if the OcilibColumn character size member is zero it means :
+       - the OcilibColumn is not a string OcilibColumn
        - the size is not in char
        - client does not support the OCI_ATTR_CHAR_SIZE attribute */
 
@@ -997,10 +998,10 @@ unsigned int ColumnGetSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetScale
+ * OcilibColumnGetScale
  * --------------------------------------------------------------------------------------------- */
 
-int ColumnGetScale
+OCI_SYM_LOCAL int OcilibColumnGetScale
 (
     OCI_Column *col
 )
@@ -1014,10 +1015,10 @@ int ColumnGetScale
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetPrecision
+ * OcilibColumnGetPrecision
  * --------------------------------------------------------------------------------------------- */
 
-int ColumnGetPrecision
+OCI_SYM_LOCAL int OcilibColumnGetPrecision
 (
     OCI_Column *col
 )
@@ -1036,10 +1037,10 @@ int ColumnGetPrecision
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetFractionalPrecision
+ * OcilibColumnGetFractionalPrecision
  * --------------------------------------------------------------------------------------------- */
 
-int ColumnGetFractionalPrecision
+OCI_SYM_LOCAL int OcilibColumnGetFractionalPrecision
 (
     OCI_Column *col
 )
@@ -1069,10 +1070,10 @@ int ColumnGetFractionalPrecision
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetLeadingPrecision
+ * OcilibColumnGetLeadingPrecision
  * --------------------------------------------------------------------------------------------- */
 
-int ColumnGetLeadingPrecision
+OCI_SYM_LOCAL int OcilibColumnGetLeadingPrecision
 (
     OCI_Column *col
 )
@@ -1091,10 +1092,10 @@ int ColumnGetLeadingPrecision
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetNullable
+ * OcilibColumnGetNullable
  * --------------------------------------------------------------------------------------------- */
 
-boolean ColumnGetNullable
+OCI_SYM_LOCAL boolean OcilibColumnGetNullable
 (
     OCI_Column *col
 )
@@ -1113,10 +1114,10 @@ boolean ColumnGetNullable
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetCharUsed
+ * OcilibColumnGetCharUsed
  * --------------------------------------------------------------------------------------------- */
 
-boolean ColumnGetCharUsed
+OCI_SYM_LOCAL boolean OcilibColumnGetCharUsed
 (
     OCI_Column *col
 )
@@ -1130,10 +1131,10 @@ boolean ColumnGetCharUsed
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetPropertyFlags
+ * OcilibColumnGetPropertyFlags
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ColumnGetPropertyFlags
+OCI_SYM_LOCAL unsigned int OcilibColumnGetPropertyFlags
 (
     OCI_Column *col
 )
@@ -1150,7 +1151,7 @@ unsigned int ColumnGetPropertyFlags
 * OCI_ColumnGetCollationID
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int ColumnGetCollationID
+OCI_SYM_LOCAL unsigned int OcilibColumnGetCollationID
 (
     OCI_Column *col
 )
@@ -1164,10 +1165,10 @@ unsigned int ColumnGetCollationID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetSQLType
+ * OcilibColumnGetSQLType
  * --------------------------------------------------------------------------------------------- */
 
-const otext * ColumnGetSqlType
+OCI_SYM_LOCAL const otext * OcilibColumnGetSqlType
 (
     OCI_Column *col
 )
@@ -1183,7 +1184,7 @@ const otext * ColumnGetSqlType
     const otext *type = NULL;
 
     /* VARCHAR type will not be returned because Oracle does not make any
-       difference with VARCHAR2. If a column is created with VARCHAR, it is
+       difference with VARCHAR2. If a OcilibColumn is created with VARCHAR, it is
        internally created as VARCHAR2
     */
 
@@ -1391,10 +1392,10 @@ const otext * ColumnGetSqlType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetFullSQLType
+ * OcilibColumnGetFullSQLType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ColumnGetFullSqlType
+OCI_SYM_LOCAL unsigned int OcilibColumnGetFullSqlType
 (
     OCI_Column  *col,
     otext       *buffer,
@@ -1609,7 +1610,10 @@ unsigned int ColumnGetFullSqlType
             if (col->typinf)
             {
                 otext fullname[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
-                StringGetFullTypeName(col->typinf->schema, NULL, col->typinf->name, NULL, fullname, (sizeof(fullname) / sizeof(otext)) - 1);
+
+                OcilibStringGetFullTypeName(col->typinf->schema, NULL, col->typinf->name, NULL,
+                                            fullname, (sizeof(fullname) / sizeof(otext)) - 1);
+
                 size = osprintf(buffer, (int)len, fullname);
             }
             else
@@ -1667,10 +1671,10 @@ unsigned int ColumnGetFullSqlType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetTypeInfo
+ * OcilibColumnGetTypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * ColumnGetTypeInfo
+OCI_SYM_LOCAL OCI_TypeInfo * OcilibColumnGetTypeInfo
 (
     OCI_Column *col
 )
@@ -1684,10 +1688,10 @@ OCI_TypeInfo * ColumnGetTypeInfo
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ColumnGetSubType
+ * OcilibColumnGetSubType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ColumnGetSubType
+OCI_SYM_LOCAL unsigned int OcilibColumnGetSubType
 (
     OCI_Column *col
 )

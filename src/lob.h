@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Lob * LobInitialize
+OCI_Lob * OcilibLobInitialize
 (
     OCI_Connection *con,
     OCI_Lob        *lob,
@@ -31,47 +31,47 @@ OCI_Lob * LobInitialize
     ub4             type
 );
 
-OCI_Lob * LobCreate
+OCI_Lob * OcilibLobCreate
 (
     OCI_Connection *con,
     unsigned int    type
 );
 
-boolean LobFree
+boolean OcilibLobFree
 (
     OCI_Lob *lob
 );
 
-OCI_Lob ** LobCreateArray
+OCI_Lob ** OcilibLobCreateArray
 (
     OCI_Connection *con,
     unsigned int    type,
     unsigned int    nbelem
 );
 
-boolean LobFreeArray
+boolean OcilibLobFreeArray
 (
     OCI_Lob **lobs
 );
 
-unsigned int LobGetType
+unsigned int OcilibLobGetType
 (
     OCI_Lob *lob
 );
 
-boolean LobSeek
+boolean OcilibLobSeek
 (
     OCI_Lob     *lob,
     big_uint     offset,
     unsigned int mode
 );
 
-big_uint LobGetOffset
+big_uint OcilibLobGetOffset
 (
     OCI_Lob *lob
 );
 
-boolean LobRead2
+boolean OcilibLobRead2
 (
     OCI_Lob      *lob,
     void         *buffer,
@@ -79,14 +79,14 @@ boolean LobRead2
     unsigned int *byte_count
 );
 
-unsigned int LobRead
+unsigned int OcilibLobRead
 (
     OCI_Lob     *lob,
     void        *buffer,
     unsigned int len
 );
 
-boolean LobWrite2
+boolean OcilibLobWrite2
 (
     OCI_Lob      *lob,
     void         *buffer,
@@ -94,37 +94,37 @@ boolean LobWrite2
     unsigned int *byte_count
 );
 
-unsigned int LobWrite
+unsigned int OcilibLobWrite
 (
     OCI_Lob     *lob,
     void        *buffer,
     unsigned int len
 );
 
-boolean LobTruncate
+boolean OcilibLobTruncate
 (
     OCI_Lob *lob,
     big_uint size
 );
 
-big_uint LobErase
+big_uint OcilibLobErase
 (
     OCI_Lob *lob,
     big_uint offset,
     big_uint size
 );
 
-big_uint LobGetLength
+big_uint OcilibLobGetLength
 (
     OCI_Lob *lob
 );
 
-unsigned int LobGetChunkSize
+unsigned int OcilibLobGetChunkSize
 (
     OCI_Lob *lob
 );
 
-boolean LobCopy
+boolean OcilibLobCopy
 (
     OCI_Lob *lob,
     OCI_Lob *lob_src,
@@ -133,7 +133,7 @@ boolean LobCopy
     big_uint count
 );
 
-boolean LobCopyFromFile
+boolean OcilibLobCopyFromFile
 (
     OCI_Lob  *lob,
     OCI_File *file,
@@ -142,7 +142,7 @@ boolean LobCopyFromFile
     big_uint  count
 );
 
-boolean LobAppend2
+boolean OcilibLobAppend2
 (
     OCI_Lob      *lob,
     void         *buffer,
@@ -150,69 +150,69 @@ boolean LobAppend2
     unsigned int *byte_count
 );
 
-unsigned int LobAppend
+unsigned int OcilibLobAppend
 (
     OCI_Lob     *lob,
     void        *buffer,
     unsigned int len
 );
 
-boolean LobAppendLob
+boolean OcilibLobAppendLob
 (
     OCI_Lob *lob,
     OCI_Lob *lob_src
 );
 
-boolean LobIsTemporary
+boolean OcilibLobIsTemporary
 (
     OCI_Lob *lob
 );
 
-boolean LobOpen
+boolean OcilibLobOpen
 (
     OCI_Lob     *lob,
     unsigned int mode
 );
 
-boolean LobClose
+boolean OcilibLobClose
 (
     OCI_Lob *lob
 );
 
-boolean LobIsEqual
+boolean OcilibLobIsEqual
 (
     OCI_Lob *lob,
     OCI_Lob *lob2
 );
 
-boolean LobAssign
+boolean OcilibLobAssign
 (
     OCI_Lob *lob,
     OCI_Lob *lob_src
 );
 
-big_uint LobGetMaxSize
+big_uint OcilibLobGetMaxSize
 (
     OCI_Lob *lob
 );
 
-boolean LobFlush
+boolean OcilibLobFlush
 (
     OCI_Lob *lob
 );
 
-boolean LobEnableBuffering
+boolean OcilibLobEnableBuffering
 (
     OCI_Lob *lob,
     boolean  value
 );
 
-OCI_Connection * LobGetConnection
+OCI_Connection * OcilibLobGetConnection
 (
     OCI_Lob *lob
 );
 
-boolean LobIsRemote
+boolean OcilibLobIsRemote
 (
     OCI_Lob* lob
 );

@@ -23,80 +23,80 @@
 
 #include "types.h"
 
-OCI_HashTable * HashCreate
+OCI_HashTable * OcilibHashCreate
 (
     unsigned int size,
     unsigned int type
 );
 
-boolean HashFree
+boolean OcilibHashFree
 (
     OCI_HashTable *table
 );
 
-unsigned int HashGetSize
+unsigned int OcilibHashGetSize
 (
     OCI_HashTable *table
 );
 
-unsigned int HashGetType
+unsigned int OcilibHashGetType
 (
     OCI_HashTable *table
 );
 
-boolean HashAddString
+boolean OcilibHashAddString
 (
     OCI_HashTable *table,
     const otext   *key,
     const otext   *value
 );
 
-const otext * HashGetString
+const otext * OcilibHashGetString
 (
     OCI_HashTable *table,
     const otext   *key
 );
 
-boolean HashAddInt
+boolean OcilibHashAddInt
 (
     OCI_HashTable *table,
     const otext   *key,
     int            value
 );
 
-int HashGetInt
+int OcilibHashGetInt
 (
     OCI_HashTable *table,
     const otext   *key
 );
 
-boolean HashAddPointer
+boolean OcilibHashAddPointer
 (
     OCI_HashTable *table,
     const otext   *key,
     void          *value
 );
 
-void * HashGetPointer
+void * OcilibHashGetPointer
 (
     OCI_HashTable *table,
     const otext   *key
 );
 
-OCI_HashEntry * HashLookup
+OCI_HashEntry * OcilibHashLookup
 (
     OCI_HashTable *table,
     const otext   *key,
     boolean        create
 );
 
-OCI_HashValue * HashGetValue
+OCI_HashValue * OcilibHashGetValue
 (
     OCI_HashTable *table,
     const otext   *key
 );
 
-OCI_HashEntry * HashGetEntry
+OCI_HashEntry * OcilibHashGetEntry
 (
     OCI_HashTable *table,
     unsigned int   index

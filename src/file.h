@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_File * FileInitialize
+OCI_File * OcilibFileInitialize
 (
     OCI_Connection *con,
     OCI_File       *file,
@@ -31,113 +31,113 @@ OCI_File * FileInitialize
     ub4             type
 );
 
-boolean FileGetInfo
+boolean OcilibFileGetInfo
 (
     OCI_File* file
 );
 
-OCI_File * FileCreate
+OCI_File * OcilibFileCreate
 (
     OCI_Connection *con,
     unsigned int    type
 );
 
-boolean FileFree
+boolean OcilibFileFree
 (
     OCI_File *file
 );
 
-OCI_File ** FileCreateArray
+OCI_File ** OcilibFileCreateArray
 (
     OCI_Connection *con,
     unsigned int    type,
     unsigned int    nbelem
 );
 
-boolean FileFreeArray
+boolean OcilibFileFreeArray
 (
     OCI_File **files
 );
 
-boolean FileSeek
+boolean OcilibFileSeek
 (
     OCI_File    *file,
     big_uint     offset,
     unsigned int mode
 );
 
-big_uint FileGetOffset
+big_uint OcilibFileGetOffset
 (
     OCI_File *file
 );
 
-unsigned int FileRead
+unsigned int OcilibFileRead
 (
     OCI_File    *file,
     void        *buffer,
     unsigned int len
 );
 
-unsigned int FileGetType
+unsigned int OcilibFileGetType
 (
     OCI_File *file
 );
 
-big_uint FileGetSize
+big_uint OcilibFileGetSize
 (
     OCI_File *file
 );
 
-boolean FileExists
+boolean OcilibFileExists
 (
     OCI_File *file
 );
 
-boolean FileSetName
+boolean OcilibFileSetName
 (
     OCI_File    *file,
     const otext *dir,
     const otext *name
 );
 
-const otext * FileGetDirectory
+const otext * OcilibFileGetDirectory
 (
     OCI_File *file
 );
 
-const otext * FileGetName
+const otext * OcilibFileGetName
 (
     OCI_File *file
 );
 
-boolean FileOpen
+boolean OcilibFileOpen
 (
     OCI_File *file
 );
 
-boolean FileIsOpen
+boolean OcilibFileIsOpen
 (
     OCI_File *file
 );
 
-boolean FileClose
+boolean OcilibFileClose
 (
     OCI_File *file
 );
 
-boolean FileIsEqual
+boolean OcilibFileIsEqual
 (
     OCI_File *file,
     OCI_File *file2
 );
 
-boolean FileAssign
+boolean OcilibFileAssign
 (
     OCI_File *file,
     OCI_File *file_src
 );
 
-OCI_Connection* FileGetConnection
+OCI_Connection* OcilibFileGetConnection
 (
     OCI_File* file
 );

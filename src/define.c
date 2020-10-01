@@ -26,10 +26,10 @@
 #include "number.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * DefineGet
+ * OcilibDefineGet
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Define * DefineGet
+OCI_SYM_LOCAL OCI_Define * OcilibDefineGet
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -56,10 +56,10 @@ OCI_Define * DefineGet
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DefineGetIndex
+ * OcilibDefineGetIndex
  * --------------------------------------------------------------------------------------------- */
 
-int DefineGetIndex
+OCI_SYM_LOCAL int OcilibDefineGetIndex
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -77,12 +77,12 @@ int DefineGetIndex
     {
         /* create the map at the first call to save time and memory when it's not needed */
 
-        rs->map = HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
+        rs->map = OcilibHashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
         CHECK_NULL(rs->map)
 
         for (ub4 i = 0; i < rs->nb_defs; i++)
         {
-            CHECK(HashAddInt(rs->map, rs->defs[i].col.name, (int)(i + 1)))
+            CHECK(OcilibHashAddInt(rs->map, rs->defs[i].col.name, (int)(i + 1)))
         }
     }
 
@@ -90,7 +90,7 @@ int DefineGetIndex
 
     int index = -1;
 
-    OCI_HashEntry *he = HashLookup(rs->map, name, FALSE);
+    OCI_HashEntry *he = OcilibHashLookup(rs->map, name, FALSE);
 
     while (NULL != he)
     {
@@ -107,7 +107,7 @@ int DefineGetIndex
 
     if (index < 0)
     {
-        THROW(ExceptionItemNotFound, name, OCI_IPC_COLUMN)
+        THROW(OcilibExceptionItemNotFound, name, OCI_IPC_COLUMN)
     }
 
     SET_RETVAL(index)
@@ -116,10 +116,10 @@ int DefineGetIndex
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DefineGetData
+ * OcilibDefineGetData
  * --------------------------------------------------------------------------------------------- */
 
-void * DefineGetData
+OCI_SYM_LOCAL void * OcilibDefineGetData
 (
     OCI_Define *def
 )
@@ -165,10 +165,10 @@ void * DefineGetData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DefineIsDataNotNull
+ * OcilibDefineIsDataNotNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean DefineIsDataNotNull
+OCI_SYM_LOCAL boolean OcilibDefineIsDataNotNull
 (
     OCI_Define *def
 )
@@ -201,10 +201,10 @@ boolean DefineIsDataNotNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DefineGetNumber
+ * OcilibDefineGetNumber
  * --------------------------------------------------------------------------------------------- */
 
-boolean DefineGetNumber
+OCI_SYM_LOCAL boolean OcilibDefineGetNumber
 (
     OCI_Resultset *rs,
     unsigned int   index,
@@ -222,26 +222,26 @@ boolean DefineGetNumber
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs)
 
-    def = DefineGet(rs, index);
+    def = OcilibDefineGet(rs, index);
     CHECK_NULL(def)
 
-    if (DefineIsDataNotNull(def))
+    if (OcilibDefineIsDataNotNull(def))
     {
-        void* data = DefineGetData(def);
+        void* data = OcilibDefineGetData(def);
 
         switch (def->col.datatype)
         {
             case OCI_CDT_NUMERIC:
             {
-                CHECK(NumberTranslateValue(rs->stmt->con, data,
-                                           def->col.subtype, value,
-                                           type))
+                CHECK(OcilibNumberTranslateValue(rs->stmt->con, data,
+                                                 def->col.subtype, value,
+                                                 type))
                 break;
             }
             case OCI_CDT_TEXT:
             {
-                CHECK(NumberFromStringInternal(rs->stmt->con, value, type,
-                                               (const otext*)data, NULL))
+                CHECK(OcilibNumberFromStringInternal(rs->stmt->con, value, type,
+                                                     (const otext*)data, NULL))
                 break;
             }
         }
@@ -253,10 +253,10 @@ boolean DefineGetNumber
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DefineAlloc
+ * OcilibDefineAlloc
  * --------------------------------------------------------------------------------------------- */
 
-boolean DefineAlloc
+OCI_SYM_LOCAL boolean OcilibDefineAlloc
 (
     OCI_Define *def
 )
@@ -315,16 +315,16 @@ boolean DefineAlloc
         {
             for (i = 0; i < def->buf.count; i++)
             {
-                CHECK(MemoryAllocHandle((dvoid  *)def->rs->stmt->con->env,
-                                        (dvoid **) &(def->buf.data[i]),
-                                        (ub4) def->col.handletype))
+                CHECK(OcilibMemoryAllocHandle((dvoid  *)def->rs->stmt->con->env,
+                                              (dvoid **) &(def->buf.data[i]),
+                                              (ub4) def->col.handletype))
             }
         }
         else
         {
-            CHECK(MemoryAllocDescriptorArray((dvoid  *)def->rs->stmt->con->env,
-                                             (dvoid **)def->buf.data, (ub4)def->col.handletype,
-                                             (ub4)def->buf.count))
+            CHECK(OcilibMemoryAllocDescriptorArray((dvoid  *)def->rs->stmt->con->env,
+                                                   (dvoid **)def->buf.data, (ub4)def->col.handletype,
+                                                   (ub4)def->buf.count))
 
             if (OCI_CDT_LOB == def->col.datatype)
             {
@@ -349,10 +349,10 @@ boolean DefineAlloc
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DefineDef
+ * OcilibDefineDef
  * --------------------------------------------------------------------------------------------- */
 
-boolean DefineDef
+OCI_SYM_LOCAL boolean OcilibDefineDef
 (
     OCI_Define *def,
     ub4         position
@@ -431,7 +431,7 @@ boolean DefineDef
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
-    if (ConnectionIsVersionSupported(def->rs->stmt->con, OCI_11_1))
+    if (OcilibConnectionIsVersionSupported(def->rs->stmt->con, OCI_11_1))
     {
         if (OCI_CDT_LOB == def->col.datatype)
         {

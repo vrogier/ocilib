@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Interval * IntervalInitialize
+OCI_Interval * OcilibIntervalInitialize
 (
     OCI_Connection *con,
     OCI_Interval   *itv,
@@ -31,58 +31,58 @@ OCI_Interval * IntervalInitialize
     ub4             type
 );
 
-OCI_Interval * IntervalCreate
+OCI_Interval * OcilibIntervalCreate
 (
     OCI_Connection *con,
     unsigned int    type
 );
 
-boolean IntervalFree
+boolean OcilibIntervalFree
 (
     OCI_Interval *itv
 );
 
-OCI_Interval ** IntervalCreateArray
+OCI_Interval ** OcilibIntervalCreateArray
 (
     OCI_Connection *con,
     unsigned int    type,
     unsigned int    nbelem
 );
 
-boolean IntervalFreeArray
+boolean OcilibIntervalFreeArray
 (
     OCI_Interval **itvs
 );
 
-unsigned int IntervalGetType
+unsigned int OcilibIntervalGetType
 (
     OCI_Interval *itv
 );
 
-boolean IntervalAssign
+boolean OcilibIntervalAssign
 (
     OCI_Interval *itv,
     OCI_Interval *itv_src
 );
 
-int IntervalCheck
+int OcilibIntervalCheck
 (
     OCI_Interval *itv
 );
 
-int IntervalCompare
+int OcilibIntervalCompare
 (
     OCI_Interval *itv,
     OCI_Interval *itv2
 );
 
-boolean IntervalFromString
+boolean OcilibIntervalFromString
 (
     OCI_Interval *itv,
     const otext * str
 );
 
-boolean IntervalToString
+boolean OcilibIntervalToString
 (
     OCI_Interval *itv,
     int           leading_prec,
@@ -91,13 +91,13 @@ boolean IntervalToString
     otext        *str
 );
 
-boolean IntervalFromTimeZone
+boolean OcilibIntervalFromTimeZone
 (
     OCI_Interval *itv,
     const otext * str
 );
 
-boolean IntervalGetDaySecond
+boolean OcilibIntervalGetDaySecond
 (
     OCI_Interval *itv,
     int          *day,
@@ -107,14 +107,14 @@ boolean IntervalGetDaySecond
     int          *fsec
 );
 
-boolean IntervalGetYearMonth
+boolean OcilibIntervalGetYearMonth
 (
     OCI_Interval *itv,
     int          *year,
     int          *month
 );
 
-boolean IntervalSetDaySecond
+boolean OcilibIntervalSetDaySecond
 (
     OCI_Interval *itv,
     int           day,
@@ -124,20 +124,20 @@ boolean IntervalSetDaySecond
     int           fsec
 );
 
-boolean IntervalSetYearMonth
+boolean OcilibIntervalSetYearMonth
 (
     OCI_Interval *itv,
     int           year,
     int           month
 );
 
-boolean IntervalAdd
+boolean OcilibIntervalAdd
 (
     OCI_Interval *itv,
     OCI_Interval *itv2
 );
 
-boolean IntervalSubtract
+boolean OcilibIntervalSubtract
 (
     OCI_Interval *itv,
     OCI_Interval *itv2

@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Long * LongInitialize
+OCI_Long * OcilibLongInitialize
 (
     OCI_Statement *stmt,
     OCI_Long      *lg,
@@ -31,42 +31,42 @@ OCI_Long * LongInitialize
     unsigned int   type
 );
 
-OCI_Long * LongCreate
+OCI_Long * OcilibLongCreate
 (
     OCI_Statement *stmt,
     unsigned int   type
 );
 
-boolean LongFree
+boolean OcilibLongFree
 (
     OCI_Long *lg
 );
 
-unsigned int LongGetType
+unsigned int OcilibLongGetType
 (
     OCI_Long *lg
 );
 
-unsigned int LongRead
+unsigned int OcilibLongRead
 (
     OCI_Long    *lg,
     void        *buffer,
     unsigned int len
 );
 
-unsigned int LongWrite
+unsigned int OcilibLongWrite
 (
     OCI_Long    *lg,
     void        *buffer,
     unsigned int len
 );
 
-unsigned int LongGetSize
+unsigned int OcilibLongGetSize
 (
     OCI_Long *lg
 );
 
-void * LongGetBuffer
+void * OcilibLongGetBuffer
 (
     OCI_Long *lg
 );

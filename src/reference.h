@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Ref * ReferenceInitialize
+OCI_Ref * OcilibReferenceInitialize
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -31,73 +31,73 @@ OCI_Ref * ReferenceInitialize
     void           *handle
 );
 
-boolean ReferencePin
+boolean OcilibReferencePin
 (
     OCI_Ref* ref
 );
 
-boolean ReferenceUnpin
+boolean OcilibReferenceUnpin
 (
     OCI_Ref* ref
 );
 
-OCI_Ref * ReferenceCreate
+OCI_Ref * OcilibReferenceCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf
 );
 
-boolean ReferenceFree
+boolean OcilibReferenceFree
 (
     OCI_Ref *ref
 );
 
-OCI_Ref ** ReferenceCreateArray
+OCI_Ref ** OcilibReferenceCreateArray
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
     unsigned int    nbelem
 );
 
-boolean ReferenceFreeArray
+boolean OcilibReferenceFreeArray
 (
     OCI_Ref **refs
 );
 
-OCI_Object * ReferenceGetObject
+OCI_Object * OcilibReferenceGetObject
 (
     OCI_Ref *ref
 );
 
-boolean ReferenceAssign
+boolean OcilibReferenceAssign
 (
     OCI_Ref *ref,
     OCI_Ref *ref_src
 );
 
-boolean ReferenceIsNull
+boolean OcilibReferenceIsNull
 (
     OCI_Ref *ref
 );
 
-boolean ReferenceSetNull
+boolean OcilibReferenceSetNull
 (
     OCI_Ref *ref
 );
 
-boolean ReferenceToString
+boolean OcilibReferenceToString
 (
     OCI_Ref     *ref,
     unsigned int size,
     otext       *str
 );
 
-unsigned int ReferenceGetHexSize
+unsigned int OcilibReferenceGetHexSize
 (
     OCI_Ref *ref
 );
 
-OCI_TypeInfo * ReferenceGetTypeInfo
+OCI_TypeInfo * OcilibReferenceGetTypeInfo
 (
     OCI_Ref *ref
 );

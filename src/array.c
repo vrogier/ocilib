@@ -110,50 +110,50 @@ OCI_SYM_LOCAL boolean OcilibArrayInitialize
             {
                 if (OCI_NUM_NUMBER == arr->elem_subtype)
                 {
-                    data = NumberInitialize(arr->con, (OCI_Number*)data, (OCINumber*)handle);
+                    data = OcilibNumberInitialize(arr->con, (OCI_Number*)data, (OCINumber*)handle);
                     CHECK_NULL(data)
                 }
                 break;
             }
             case OCI_CDT_DATETIME:
             {
-                data = DateInitialize(arr->con, (OCI_Date*)data, (OCIDate*)handle, FALSE, FALSE);
+                data = OcilibDateInitialize(arr->con, (OCI_Date*)data, (OCIDate*)handle, FALSE, FALSE);
                 CHECK_NULL(data)
                 break;
             }
             case OCI_CDT_LOB:
             {
-                ARRAY_INIT(OCI_Lob, LobInitialize(arr->con, (OCI_Lob *)data,  (OCILobLocator *) handle, arr->elem_subtype))
+                ARRAY_INIT(OCI_Lob, OcilibLobInitialize(arr->con, (OCI_Lob *)data,  (OCILobLocator *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_FILE:
             {
-                ARRAY_INIT(OCI_File, FileInitialize(arr->con, (OCI_File *)data, (OCILobLocator *) handle, arr->elem_subtype))
+                ARRAY_INIT(OCI_File, OcilibFileInitialize(arr->con, (OCI_File *)data, (OCILobLocator *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_TIMESTAMP:
             {
-                ARRAY_INIT(OCI_Timestamp, TimestampInitialize(arr->con, (OCI_Timestamp *)data, (OCIDateTime *) handle, arr->elem_subtype))
+                ARRAY_INIT(OCI_Timestamp, OcilibTimestampInitialize(arr->con, (OCI_Timestamp *)data, (OCIDateTime *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_INTERVAL:
             {
-                ARRAY_INIT(OCI_Interval, IntervalInitialize(arr->con, (OCI_Interval *)data, (OCIInterval *) handle, arr->elem_subtype))
+                ARRAY_INIT(OCI_Interval, OcilibIntervalInitialize(arr->con, (OCI_Interval *)data, (OCIInterval *) handle, arr->elem_subtype))
                 break;
             }
             case OCI_CDT_OBJECT:
             {
-                ARRAY_INIT(OCI_Object, ObjectInitialize(arr->con, (OCI_Object *)data, handle, typinf, NULL, -1, TRUE))
+                ARRAY_INIT(OCI_Object, OcilibObjectInitialize(arr->con, (OCI_Object *)data, handle, typinf, NULL, -1, TRUE))
                 break;
             }
             case OCI_CDT_COLLECTION:
             {
-                ARRAY_INIT(OCI_Coll, CollectionInitialize(arr->con, (OCI_Coll *)data, handle, typinf))
+                ARRAY_INIT(OCI_Coll, OcilibCollectionInitialize(arr->con, (OCI_Coll *)data, handle, typinf))
                 break;
             }
             case OCI_CDT_REF:
             {
-                ARRAY_INIT(OCI_Ref, ReferenceInitialize(arr->con, typinf, (OCI_Ref *) data, handle))
+                ARRAY_INIT(OCI_Ref, OcilibReferenceInitialize(arr->con, typinf, (OCI_Ref *) data, handle))
                 break;
             }
         }
@@ -187,7 +187,7 @@ OCI_SYM_LOCAL boolean OcilibArrayDispose
 
         for (unsigned int i = 0; i < arr->nb_elem; i++)
         {
-            FreeObjectFromType(arr->tab_obj[i], arr->elem_type);
+            OcilibFreeObjectFromType(arr->tab_obj[i], arr->elem_type);
         }
     }
 
@@ -195,7 +195,7 @@ OCI_SYM_LOCAL boolean OcilibArrayDispose
 
     if (OCI_UNKNOWN != arr->handle_type)
     {
-        MemoryFreeDescriptorArray
+        OcilibMemoryFreeDescriptorArray
         (
             (dvoid**)arr->mem_handle,
             (ub4)arr->handle_type,
@@ -238,7 +238,7 @@ OCI_SYM_LOCAL OCI_Array * OcilibArrayCreate
 
     /* create array object */
 
-    arr = ListAppend(Env.arrs, sizeof(*arr));
+    arr = OcilibListAppend(Env.arrs, sizeof(*arr));
     CHECK_NULL(arr)
 
     arr->con          = con;
@@ -267,7 +267,7 @@ OCI_SYM_LOCAL OCI_Array * OcilibArrayCreate
     {
         CHECK
         (
-            MemoryAllocDescriptorArray
+            OcilibMemoryAllocDescriptorArray
             (
                 (dvoid  *)arr->env,
                 (dvoid **)arr->mem_handle,
@@ -312,10 +312,10 @@ OCI_SYM_LOCAL boolean OcilibArrayFreeFromHandles
 
     CHECK_PTR(OCI_IPC_VOID, handles)
 
-    arr = ListFind(Env.arrs, (POCI_LIST_FIND) OcilibArrayFindAny, handles);
+    arr = OcilibListFind(Env.arrs, (POCI_LIST_FIND) OcilibArrayFindAny, handles);
     CHECK_NULL(arr)
 
-    ListRemove(Env.arrs, arr);
+    OcilibListRemove(Env.arrs, arr);
     OcilibArrayDispose(arr);
     FREE(arr)
 

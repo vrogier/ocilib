@@ -23,21 +23,21 @@
 
 #include "types.h"
 
-OCI_Error * ErrorCreate
+OCI_Error * OcilibErrorCreate
 (
 );
 
-void ErrorFree
-(
-    OCI_Error *err
-);
-
-void ErrorReset
+void OcilibErrorFree
 (
     OCI_Error *err
 );
 
-void ErrorSet
+void OcilibErrorReset
+(
+    OCI_Error *err
+);
+
+void OcilibErrorSet
 (
     OCI_Error   *err,
     unsigned int type,
@@ -49,64 +49,64 @@ void ErrorSet
     unsigned int row
 );
 
-void ErrorResetSource
+void OcilibErrorResetSource
 (
     OCI_Error* err,
     void* source_ptr
 );
 
-OCI_Error * ErrorGet
+OCI_Error * OcilibErrorGet
 (
     boolean check_state,
     boolean reset_err
 );
 
-const otext* ErrorGetString
+const otext* OcilibErrorGetString
 (
     OCI_Error* err
 );
 
-unsigned int ErrorGetType
+unsigned int OcilibErrorGetType
 (
     OCI_Error* err
 );
 
-int ErrorGetOCICode
+int OcilibErrorGetOCICode
 (
     OCI_Error* err
 );
 
-int ErrorGetInternalCode
+int OcilibErrorGetInternalCode
 (
     OCI_Error* err
 );
 
-void* ErrorGetSource
+void* OcilibErrorGetSource
 (
     OCI_Error* err
 );
 
-unsigned int ErrorGetSourceType
+unsigned int OcilibErrorGetSourceType
 (
     OCI_Error* err
 );
 
-const otext* ErrorGetLocation
+const otext* OcilibErrorGetLocation
 (
     OCI_Error* err
 );
 
-OCI_Connection* ErrorGetConnection
+OCI_Connection* OcilibErrorGetConnection
 (
     OCI_Error* err
 );
 
-OCI_Statement* ErrorGetStatement
+OCI_Statement* OcilibErrorGetStatement
 (
     OCI_Error* err
 );
 
-unsigned int ErrorGetRow
+unsigned int OcilibErrorGetRow
 (
     OCI_Error* err
 );

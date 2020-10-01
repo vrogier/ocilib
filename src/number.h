@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-boolean NumberTranslateValue
+boolean OcilibNumberTranslateValue
 (
     OCI_Connection* con,
     void          * in_value,
@@ -32,14 +32,14 @@ boolean NumberTranslateValue
     uword           out_type
 );
 
-OCI_Number* NumberInitialize
+OCI_Number* OcilibNumberInitialize
 (
     OCI_Connection* con,
     OCI_Number    * number,
     OCINumber     * buffer
 );
 
-boolean NumberFromStringInternal
+boolean OcilibNumberFromStringInternal
 (
     OCI_Connection* con,
     void          * out_value,
@@ -48,7 +48,7 @@ boolean NumberFromStringInternal
     const otext   * fmt
 );
 
-boolean NumberToStringInternal
+boolean OcilibNumberToStringInternal
 (
     OCI_Connection* con,
     void          * number,
@@ -58,34 +58,34 @@ boolean NumberToStringInternal
     const otext   * fmt
 );
 
-OCI_Number* NumberCreate
+OCI_Number* OcilibNumberCreate
 (
     OCI_Connection* con
 );
 
-boolean NumberFree
+boolean OcilibNumberFree
 (
     OCI_Number* number
 );
 
-OCI_Number** NumberCreateArray
+OCI_Number** OcilibNumberCreateArray
 (
     OCI_Connection* con,
     unsigned int    nbelem
 );
 
-boolean NumberFreeArray
+boolean OcilibNumberFreeArray
 (
     OCI_Number** numbmers
 );
 
-boolean NumberAssign
+boolean OcilibNumberAssign
 (
     OCI_Number* number,
     OCI_Number* number_src
 );
 
-boolean NumberToString
+boolean OcilibNumberToString
 (
     OCI_Number * number,
     const otext* fmt,
@@ -93,67 +93,67 @@ boolean NumberToString
     otext      * str
 );
 
-boolean NumberFromString
+boolean OcilibNumberFromString
 (
     OCI_Number * number,
     const otext* str,
     const otext* fmt
 );
 
-unsigned char* NumberGetContent
+unsigned char* OcilibNumberGetContent
 (
     OCI_Number* number
 );
 
-boolean NumberSetContent
+boolean OcilibNumberSetContent
 (
     OCI_Number   * number,
     unsigned char* content
 );
 
-boolean NumberSetValue
+boolean OcilibNumberSetValue
 (
     OCI_Number * number,
     unsigned int type,
     void       * value
 );
 
-boolean NumberGetValue
+boolean OcilibNumberGetValue
 (
     OCI_Number * number,
     unsigned int type,
     void       * value
 );
 
-boolean NumberAdd
+boolean OcilibNumberAdd
 (
     OCI_Number * number,
     unsigned int type,
     void       * value
 );
 
-boolean NumberSub
+boolean OcilibNumberSub
 (
     OCI_Number * number,
     unsigned int type,
     void       * value
 );
 
-boolean NumberMultiply
+boolean OcilibNumberMultiply
 (
     OCI_Number * number,
     unsigned int type,
     void       * value
 );
 
-boolean NumberDivide
+boolean OcilibNumberDivide
 (
     OCI_Number * number,
     unsigned int type,
     void       * value
 );
 
-int NumberCompare
+int OcilibNumberCompare
 (
     OCI_Number* number1,
     OCI_Number* number2

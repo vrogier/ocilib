@@ -23,134 +23,134 @@
 
 #include "types.h"
 
-OCI_Error* ExceptionGetError
+OCI_Error* OcilibExceptionGetError
 (
     void
 );
 
-void ExceptionOCI
+void OcilibExceptionOCI
 (
     OCI_Context* ctx,
     OCIError    *oci_err,
     sword        call_ret
 );
 
-void ExceptionMemory
+void OcilibExceptionMemory
 (
     OCI_Context* ctx,
     int          type,
     size_t       nb_bytes
 );
 
-void ExceptionNotAvailable
+void OcilibExceptionNotAvailable
 (
     OCI_Context* ctx,
     int          feature
 );
 
-void ExceptionNullPointer
+void OcilibExceptionNullPointer
 (
     OCI_Context* ctx,
     int          type
 );
 
-void ExceptionDatatypeNotSupported
+void OcilibExceptionDatatypeNotSupported
 (
     OCI_Context* ctx,
     int          code
 );
 
-void ExceptionParsingToken
+void OcilibExceptionParsingToken
 (
     OCI_Context* ctx,
     otext        token
 );
 
-void ExceptionMappingArgument
+void OcilibExceptionMappingArgument
 (
     OCI_Context* ctx,
     int          arg
 );
 
-void ExceptionNotInitialized
+void OcilibExceptionNotInitialized
 (
     OCI_Context* ctx
 );
 
-void ExceptionLoadingSharedLib
+void OcilibExceptionLoadingSharedLib
 (
     OCI_Context* ctx
 );
 
-void ExceptionLoadingSymbols
+void OcilibExceptionLoadingSymbols
 (
     OCI_Context* ctx
 );
 
-void ExceptionNotMultithreaded
+void OcilibExceptionNotMultithreaded
 (
     OCI_Context* ctx
 );
 
-void ExceptionOutOfBounds
+void OcilibExceptionOutOfBounds
 (
     OCI_Context* ctx,
     int          value
 );
 
-void ExceptionUnfreedData
+void OcilibExceptionUnfreedData
 (
     OCI_Context* ctx,
     int          type_elem,
     int          nb_elem
 );
 
-void ExceptionUnfreedBytes
+void OcilibExceptionUnfreedBytes
 (
     OCI_Context* ctx,
     big_uint     nb_bytes
 );
 
-void ExceptionMaxBind
+void OcilibExceptionMaxBind
 (
     OCI_Context* ctx
 );
 
-void ExceptionAttributeNotFound
+void OcilibExceptionAttributeNotFound
 (
     OCI_Context * ctx,
     const otext * attr
 );
 
-void ExceptionMinimumValue
+void OcilibExceptionMinimumValue
 (
     OCI_Context* ctx,
     int          min
 );
 
-void ExceptionTypeNotCompatible
+void OcilibExceptionTypeNotCompatible
 (
     OCI_Context* ctx
 );
 
-void ExceptionStatementState
+void OcilibExceptionStatementState
 (
     OCI_Context* ctx,
     int          state
 );
 
-void ExceptionStatementNotScrollable
+void OcilibExceptionStatementNotScrollable
 (
     OCI_Context* ctx
 );
 
-void ExceptionBindAlreadyUsed
+void OcilibExceptionBindAlreadyUsed
 (
     OCI_Context * ctx,
     const otext * bind
 );
 
-void ExceptionBindArraySize
+void OcilibExceptionBindArraySize
 (
     OCI_Context* ctx,
     unsigned int maxsize,
@@ -158,63 +158,63 @@ void ExceptionBindArraySize
     unsigned int newsize
 );
 
-void ExceptionDirPathColNotFound
+void OcilibExceptionDirPathColNotFound
 (
     OCI_Context* ctx,
     const otext* column,
     const otext* table
 );
 
-void ExceptionDirPathState
+void OcilibExceptionDirPathState
 (
     OCI_Context* ctx,
     int          state
 );
 
-void ExceptionOCIEnvironment
+void OcilibExceptionOCIEnvironment
 (
     OCI_Context* ctx
 );
 
-void ExceptionRebindBadDatatype
+void OcilibExceptionRebindBadDatatype
 (
     OCI_Context * ctx,
     const otext * bind
 );
 
-void ExceptionTypeInfoWrongType
+void OcilibExceptionTypeInfoWrongType
 (
     OCI_Context * ctx,
     const otext * name
 );
 
-void ExceptionItemNotFound
+void OcilibExceptionItemNotFound
 (
     OCI_Context * ctx,
     const otext * name,
     unsigned int  type
 );
 
-void ExceptionArgInvalidValue
+void OcilibExceptionArgInvalidValue
 (
     OCI_Context * ctx,
     const otext * name,
     unsigned int  value
 );
 
-void ExceptionEnvFromXaString
+void OcilibExceptionEnvFromXaString
 (
     OCI_Context* ctx,
     const otext* value
 );
 
-void ExceptionConnFromXaString
+void OcilibExceptionConnFromXaString
 (
     OCI_Context* ctx,
     const otext* value
 );
 
-void ExceptionExternalBindingNotAllowed
+void OcilibExceptionExternalBindingNotAllowed
 (
     OCI_Context * ctx,
     const otext * bind

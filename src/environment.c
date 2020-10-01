@@ -32,14 +32,14 @@
 #include "subscription.h"
 #include "threadkey.h"
 
-OCI_Environment Env;
+OCI_SYM_LOCAL OCI_Environment Env;
 
-const char * EnvironmentVarNames[OCI_VARS_COUNT] =
+OCI_SYM_LOCAL const char * EnvironmentVarNames[OCI_VARS_COUNT] =
 {
     VAR_OCILIB_WORKAROUND_UTF16_COLUMN_NAME
 };
 
-const OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
+OCI_SYM_LOCAL const OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
 {
     {OCI_UNKNOWN                             , OTEXT("UNKNOWN")                        },
     {OCI_SFC_CREATE_TABLE                    , OTEXT("CREATE TABLE")                   },

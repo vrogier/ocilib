@@ -23,149 +23,149 @@
 
 #include "types.h"
 
-OCI_Msg* MessageCreate
+OCI_Msg* OcilibMessageCreate
 (
     OCI_TypeInfo* typinf
 );
 
-boolean MessageFree
+boolean OcilibMessageFree
 (
     OCI_Msg* msg
 );
 
-boolean MessageReset
+boolean OcilibMessageReset
 (
     OCI_Msg* msg
 );
 
-OCI_Object* MessageGetObject
+OCI_Object* OcilibMessageGetObject
 (
     OCI_Msg* msg
 );
 
-boolean MessageSetObject
+boolean OcilibMessageSetObject
 (
     OCI_Msg   * msg,
     OCI_Object* obj
 );
 
-boolean MessageGetRaw
+boolean OcilibMessageGetRaw
 (
     OCI_Msg     * msg,
     void        * raw,
     unsigned int* size
 );
 
-boolean MessageSetRaw
+boolean OcilibMessageSetRaw
 (
     OCI_Msg    * msg,
     const void * raw,
     unsigned int size
 );
 
-int MessageGetAttemptCount
+int OcilibMessageGetAttemptCount
 (
     OCI_Msg* msg
 );
 
-int MessageGetEnqueueDelay
+int OcilibMessageGetEnqueueDelay
 (
     OCI_Msg* msg
 );
 
-boolean MessageSetEnqueueDelay
+boolean OcilibMessageSetEnqueueDelay
 (
     OCI_Msg* msg,
     int      value
 );
 
-OCI_Date* MessageGetEnqueueTime
+OCI_Date* OcilibMessageGetEnqueueTime
 (
     OCI_Msg* msg
 );
 
-int MessageGetExpiration
+int OcilibMessageGetExpiration
 (
     OCI_Msg* msg
 );
 
-boolean MessageSetExpiration
+boolean OcilibMessageSetExpiration
 (
     OCI_Msg* msg,
     int      value
 );
 
-unsigned int MessageGetState
+unsigned int OcilibMessageGetState
 (
     OCI_Msg* msg
 );
 
-int MessageGetPriority
+int OcilibMessageGetPriority
 (
     OCI_Msg* msg
 );
 
-boolean MessageSetPriority
+boolean OcilibMessageSetPriority
 (
     OCI_Msg* msg,
     int      value
 );
 
-boolean MessageGetID
+boolean OcilibMessageGetID
 (
     OCI_Msg     * msg,
     void        * id,
     unsigned int* len
 );
 
-boolean MessageGetOriginalID
+boolean OcilibMessageGetOriginalID
 (
     OCI_Msg     * msg,
     void        * id,
     unsigned int* len
 );
 
-boolean MessageSetOriginalID
+boolean OcilibMessageSetOriginalID
 (
     OCI_Msg    * msg,
     const void * id,
     unsigned int len
 );
 
-const otext* MessageGetCorrelation
+const otext* OcilibMessageGetCorrelation
 (
     OCI_Msg* msg
 );
 
-boolean MessageSetCorrelation
+boolean OcilibMessageSetCorrelation
 (
     OCI_Msg    * msg,
     const otext* correlation
 );
 
-const otext* MessageGetExceptionQueue
+const otext* OcilibMessageGetExceptionQueue
 (
     OCI_Msg* msg
 );
 
-boolean MessageSetExceptionQueue
+boolean OcilibMessageSetExceptionQueue
 (
     OCI_Msg    * msg,
     const otext* queue
 );
 
-OCI_Agent* MessageGetSender
+OCI_Agent* OcilibMessageGetSender
 (
     OCI_Msg* msg
 );
 
-boolean MessageSetSender
+boolean OcilibMessageSetSender
 (
     OCI_Msg  * msg,
     OCI_Agent* sender
 );
 
-boolean MessageSetConsumers
+boolean OcilibMessageSetConsumers
 (
     OCI_Msg    * msg,
     OCI_Agent ** consumers,

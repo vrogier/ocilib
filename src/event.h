@@ -28,32 +28,32 @@ boolean EventReset
     OCI_Event *evt
 );
 
-unsigned int EventGetType
+unsigned int OcilibEventGetType
 (
     OCI_Event * event
 );
 
-unsigned int EventGetOperation
+unsigned int OcilibEventGetOperation
 (
     OCI_Event * event
 );
 
-const otext * EventGetDatabase
+const otext * OcilibEventGetDatabase
 (
     OCI_Event * event
 );
 
-const otext * EventGetObject
+const otext * OcilibEventGetObject
 (
     OCI_Event * event
 );
 
-const otext * EventGetRowid
+const otext * OcilibEventGetRowid
 (
     OCI_Event * event
 );
 
-OCI_Subscription * EventGetSubscription
+OCI_Subscription * OcilibEventGetSubscription
 (
     OCI_Event * event
 );

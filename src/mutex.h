@@ -23,27 +23,27 @@
 
 #include "types.h"
 
-OCI_Mutex* MutexCreateInternal
+OCI_Mutex* OcilibMutexCreateInternal
 (
     void
 );
 
-OCI_Mutex * MutexCreate
+OCI_Mutex * OcilibMutexCreate
 (
     void
 );
 
-boolean MutexFree
+boolean OcilibMutexFree
 (
     OCI_Mutex *mutex
 );
 
-boolean MutexAcquire
+boolean OcilibMutexAcquire
 (
     OCI_Mutex *mutex
 );
 
-boolean MutexRelease
+boolean OcilibMutexRelease
 (
     OCI_Mutex *mutex
 );

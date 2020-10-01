@@ -23,76 +23,76 @@
 
 #include "types.h"
 
-char* EnvironmentGetVariable
+char* OcilibEnvironmentGetVariable
 (
     const char* name
 );
 
-OCI_Error* EnvironmentGetLastError
+OCI_Error* OcilibEnvironmentGetLastError
 (
     void
 );
 
-boolean EnvironmentInitialize
+boolean OcilibEnvironmentInitialize
 (
     POCI_ERROR   err_handler,
     const otext* lib_path,
     unsigned int mode
 );
 
-boolean EnvironmentCleanup
+boolean OcilibEnvironmentCleanup
 (
     void
 );
 
-unsigned int EnvironmentGetOCICompileVersion
+unsigned int OcilibEnvironmentGetOCICompileVersion
 (
     void
 );
 
-unsigned int EnvironmentGetOCIRuntimeVersion
+unsigned int OcilibEnvironmentGetOCIRuntimeVersion
 (
     void
 );
 
-unsigned int EnvironmentGetOCIRuntimeImportMode
+unsigned int OcilibEnvironmentGetOCIRuntimeImportMode
 (
     void
 );
 
-unsigned int EnvironmentGetCharset
+unsigned int OcilibEnvironmentGetCharset
 (
     void
 );
 
-big_uint EnvironmentGetAllocatedBytes
+big_uint OcilibEnvironmentGetAllocatedBytes
 (
     unsigned int mem_type
 );
 
-boolean EnvironmentEnableWarnings
+boolean OcilibEnvironmentEnableWarnings
 (
     boolean value
 );
 
-boolean EnvironmentSetErrorHandler
+boolean OcilibEnvironmentSetErrorHandler
 (
     POCI_ERROR handler
 );
 
-boolean EnvironmentSetHAHandler
+boolean OcilibEnvironmentSetHAHandler
 (
     POCI_HA_HANDLER handler
 );
 
-boolean EnvironmentSetFormat
+boolean OcilibEnvironmentSetFormat
 (
     OCI_Connection* con,
     unsigned int    type,
     const otext   * format
 );
 
-const otext* EnvironmentGetFormat
+const otext* OcilibEnvironmentGetFormat
 (
     OCI_Connection* con,
     unsigned int    type

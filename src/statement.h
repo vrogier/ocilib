@@ -23,18 +23,18 @@
 
 #include "types.h"
 
-boolean StatementFetchIntoUserVariables
+boolean OcilibStatementFetchIntoUserVariables
 (
     OCI_Statement* stmt,
     va_list        args
 );
 
-boolean StatementDispose
+boolean OcilibStatementDispose
 (
     OCI_Statement* stmt
 );
 
-OCI_Statement* StatementInitialize
+OCI_Statement* OcilibStatementInitialize
 (
     OCI_Connection* con,
     OCI_Statement * stmt,
@@ -43,137 +43,137 @@ OCI_Statement* StatementInitialize
     const otext   * sql
 );
 
-boolean StatementPrepareInternal
+boolean OcilibStatementPrepareInternal
 (
     OCI_Statement* stmt,
     const otext  * sql
 );
 
-boolean StatementExecuteInternal
+boolean OcilibStatementExecuteInternal
 (
     OCI_Statement* stmt,
     ub4            mode
 );
 
-OCI_Statement* StatementCreate
+OCI_Statement* OcilibStatementCreate
 (
     OCI_Connection* con
 );
 
-boolean StatementFree
+boolean OcilibStatementFree
 (
     OCI_Statement* stmt
 );
 
-OCI_Resultset* StatementGetResultset
+OCI_Resultset* OcilibStatementGetResultset
 (
     OCI_Statement* stmt
 );
 
-OCI_Resultset* StatementGetNextResultset
+OCI_Resultset* OcilibStatementGetNextResultset
 (
     OCI_Statement* stmt
 );
 
-boolean StatementReleaseResultsets
+boolean OcilibStatementReleaseResultsets
 (
     OCI_Statement* stmt
 );
 
-boolean StatementPrepare
+boolean OcilibStatementPrepare
 (
     OCI_Statement* stmt,
     const otext  * sql
 );
 
-boolean StatementExecute
+boolean OcilibStatementExecute
 (
     OCI_Statement* stmt
 );
 
-boolean StatementExecuteStmt
+boolean OcilibStatementExecuteStmt
 (
     OCI_Statement* stmt,
     const otext  * sql
 );
 
-boolean StatementParse
+boolean OcilibStatementParse
 (
     OCI_Statement* stmt,
     const otext  * sql
 );
 
-boolean StatementDescribe
+boolean OcilibStatementDescribe
 (
     OCI_Statement* stmt,
     const otext  * sql
 );
 
-boolean StatementPrepareFmt
+boolean OcilibStatementPrepareFmt
 (
     OCI_Statement* stmt,
     const otext  * sql,
     va_list        args
 );
 
-boolean StatementExecuteStmtFmt
+boolean OcilibStatementExecuteStmtFmt
 (
     OCI_Statement* stmt,
     const otext  * sql,
     va_list        args
 );
 
-boolean StatementParseFmt
+boolean OcilibStatementParseFmt
 (
     OCI_Statement* stmt,
     const otext  * sql,
     va_list        args
 );
 
-boolean StatementDescribeFmt
+boolean OcilibStatementDescribeFmt
 (
     OCI_Statement* stmt,
     const otext  * sql,
     va_list        args
 );
 
-boolean StatementSetBindArraySize
+boolean OcilibStatementSetBindArraySize
 (
     OCI_Statement* stmt,
     unsigned int   size
 );
 
-unsigned int StatementGetBindArraySize
+unsigned int OcilibStatementGetBindArraySize
 (
     OCI_Statement* stmt
 );
 
-boolean StatementAllowRebinding
+boolean OcilibStatementAllowRebinding
 (
     OCI_Statement* stmt,
     boolean        value
 );
 
-boolean StatementIsRebindingAllowed
+boolean OcilibStatementIsRebindingAllowed
 (
     OCI_Statement* stmt
 );
 
-boolean StatementBindBoolean
+boolean OcilibStatementBindBoolean
 (
     OCI_Statement* stmt,
     const otext  * name,
     boolean      * data
 );
 
-boolean StatementBindNumber
+boolean OcilibStatementBindNumber
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Number   * data
 );
 
-boolean StatementBindArrayOfNumbers
+boolean OcilibStatementBindArrayOfNumbers
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -181,14 +181,14 @@ boolean StatementBindArrayOfNumbers
     unsigned int   nbelem
 );
 
-boolean StatementBindShort
+boolean OcilibStatementBindShort
 (
     OCI_Statement* stmt,
     const otext  * name,
     short        * data
 );
 
-boolean StatementBindArrayOfShorts
+boolean OcilibStatementBindArrayOfShorts
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -196,14 +196,14 @@ boolean StatementBindArrayOfShorts
     unsigned int   nbelem
 );
 
-boolean StatementBindUnsignedShort
+boolean OcilibStatementBindUnsignedShort
 (
     OCI_Statement * stmt,
     const otext   * name,
     unsigned short* data
 );
 
-boolean StatementBindArrayOfUnsignedShorts
+boolean OcilibStatementBindArrayOfUnsignedShorts
 (
     OCI_Statement * stmt,
     const otext   * name,
@@ -211,14 +211,14 @@ boolean StatementBindArrayOfUnsignedShorts
     unsigned int    nbelem
 );
 
-boolean StatementBindInt
+boolean OcilibStatementBindInt
 (
     OCI_Statement* stmt,
     const otext  * name,
     int          * data
 );
 
-boolean StatementBindArrayOfInts
+boolean OcilibStatementBindArrayOfInts
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -226,14 +226,14 @@ boolean StatementBindArrayOfInts
     unsigned int   nbelem
 );
 
-boolean StatementBindUnsignedInt
+boolean OcilibStatementBindUnsignedInt
 (
     OCI_Statement* stmt,
     const otext  * name,
     unsigned int * data
 );
 
-boolean StatementBindArrayOfUnsignedInts
+boolean OcilibStatementBindArrayOfUnsignedInts
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -241,14 +241,14 @@ boolean StatementBindArrayOfUnsignedInts
     unsigned int   nbelem
 );
 
-boolean StatementBindBigInt
+boolean OcilibStatementBindBigInt
 (
     OCI_Statement* stmt,
     const otext  * name,
     big_int      * data
 );
 
-boolean StatementBindArrayOfBigInts
+boolean OcilibStatementBindArrayOfBigInts
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -256,14 +256,14 @@ boolean StatementBindArrayOfBigInts
     unsigned int   nbelem
 );
 
-boolean StatementBindUnsignedBigInt
+boolean OcilibStatementBindUnsignedBigInt
 (
     OCI_Statement* stmt,
     const otext  * name,
     big_uint     * data
 );
 
-boolean StatementBindArrayOfUnsignedBigInts
+boolean OcilibStatementBindArrayOfUnsignedBigInts
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -271,7 +271,7 @@ boolean StatementBindArrayOfUnsignedBigInts
     unsigned int   nbelem
 );
 
-boolean StatementBindString
+boolean OcilibStatementBindString
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -279,7 +279,7 @@ boolean StatementBindString
     unsigned int   len
 );
 
-boolean StatementBindArrayOfStrings
+boolean OcilibStatementBindArrayOfStrings
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -288,7 +288,7 @@ boolean StatementBindArrayOfStrings
     unsigned int   nbelem
 );
 
-boolean StatementBindRaw
+boolean OcilibStatementBindRaw
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -296,7 +296,7 @@ boolean StatementBindRaw
     unsigned int   len
 );
 
-boolean StatementBindArrayOfRaws
+boolean OcilibStatementBindArrayOfRaws
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -305,14 +305,14 @@ boolean StatementBindArrayOfRaws
     unsigned int   nbelem
 );
 
-boolean StatementBindDouble
+boolean OcilibStatementBindDouble
 (
     OCI_Statement* stmt,
     const otext  * name,
     double       * data
 );
 
-boolean StatementBindArrayOfDoubles
+boolean OcilibStatementBindArrayOfDoubles
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -320,14 +320,14 @@ boolean StatementBindArrayOfDoubles
     unsigned int   nbelem
 );
 
-boolean StatementBindFloat
+boolean OcilibStatementBindFloat
 (
     OCI_Statement* stmt,
     const otext  * name,
     float        * data
 );
 
-boolean StatementBindArrayOfFloats
+boolean OcilibStatementBindArrayOfFloats
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -335,14 +335,14 @@ boolean StatementBindArrayOfFloats
     unsigned int   nbelem
 );
 
-boolean StatementBindDate
+boolean OcilibStatementBindDate
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Date     * data
 );
 
-boolean StatementBindArrayOfDates
+boolean OcilibStatementBindArrayOfDates
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -350,14 +350,14 @@ boolean StatementBindArrayOfDates
     unsigned int   nbelem
 );
 
-boolean StatementBindTimestamp
+boolean OcilibStatementBindTimestamp
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Timestamp* data
 );
 
-boolean StatementBindArrayOfTimestamps
+boolean OcilibStatementBindArrayOfTimestamps
 (
     OCI_Statement * stmt,
     const otext   * name,
@@ -366,14 +366,14 @@ boolean StatementBindArrayOfTimestamps
     unsigned int    nbelem
 );
 
-boolean StatementBindInterval
+boolean OcilibStatementBindInterval
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Interval * data
 );
 
-boolean StatementBindArrayOfIntervals
+boolean OcilibStatementBindArrayOfIntervals
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -382,14 +382,14 @@ boolean StatementBindArrayOfIntervals
     unsigned int   nbelem
 );
 
-boolean StatementBindObject
+boolean OcilibStatementBindObject
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Object   * data
 );
 
-boolean StatementBindArrayOfObjects
+boolean OcilibStatementBindArrayOfObjects
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -398,14 +398,14 @@ boolean StatementBindArrayOfObjects
     unsigned int   nbelem
 );
 
-boolean StatementBindLob
+boolean OcilibStatementBindLob
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Lob      * data
 );
 
-boolean StatementBindArrayOfLobs
+boolean OcilibStatementBindArrayOfLobs
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -414,14 +414,14 @@ boolean StatementBindArrayOfLobs
     unsigned int   nbelem
 );
 
-boolean StatementBindFile
+boolean OcilibStatementBindFile
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_File     * data
 );
 
-boolean StatementBindArrayOfFiles
+boolean OcilibStatementBindArrayOfFiles
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -430,14 +430,14 @@ boolean StatementBindArrayOfFiles
     unsigned int   nbelem
 );
 
-boolean StatementBindReference
+boolean OcilibStatementBindReference
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Ref      * data
 );
 
-boolean StatementBindArrayOfReferences
+boolean OcilibStatementBindArrayOfReferences
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -446,14 +446,14 @@ boolean StatementBindArrayOfReferences
     unsigned int   nbelem
 );
 
-boolean StatementBindCollection
+boolean OcilibStatementBindCollection
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Coll     * data
 );
 
-boolean StatementBindArrayOfCollections
+boolean OcilibStatementBindArrayOfCollections
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -462,14 +462,14 @@ boolean StatementBindArrayOfCollections
     unsigned int   nbelem
 );
 
-boolean StatementBindStatement
+boolean OcilibStatementBindStatement
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Statement* data
 );
 
-boolean StatementBindLong
+boolean OcilibStatementBindLong
 (
     OCI_Statement* stmt,
     const otext  * name,
@@ -477,279 +477,279 @@ boolean StatementBindLong
     unsigned int   size
 );
 
-boolean StatementRegisterNumber
+boolean OcilibStatementRegisterNumber
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-boolean StatementRegisterShort
+boolean OcilibStatementRegisterShort
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-boolean StatementRegisterUnsignedShort
+boolean OcilibStatementRegisterUnsignedShort
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-boolean StatementRegisterInt
+boolean OcilibStatementRegisterInt
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-boolean StatementRegisterUnsignedInt
+boolean OcilibStatementRegisterUnsignedInt
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-boolean StatementRegisterBigInt
+boolean OcilibStatementRegisterBigInt
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-boolean StatementRegisterUnsignedBigInt
+boolean OcilibStatementRegisterUnsignedBigInt
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-boolean StatementRegisterString
+boolean OcilibStatementRegisterString
 (
     OCI_Statement* stmt,
     const otext  * name,
     unsigned int   len
 );
 
-boolean StatementRegisterRaw
+boolean OcilibStatementRegisterRaw
 (
     OCI_Statement* stmt,
     const otext  * name,
     unsigned int   len
 );
 
-boolean StatementRegisterDouble
+boolean OcilibStatementRegisterDouble
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-boolean StatementRegisterFloat
+boolean OcilibStatementRegisterFloat
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-boolean StatementRegisterDate
+boolean OcilibStatementRegisterDate
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-boolean StatementRegisterTimestamp
+boolean OcilibStatementRegisterTimestamp
 (
     OCI_Statement* stmt,
     const otext  * name,
     unsigned int   type
 );
 
-boolean StatementRegisterInterval
+boolean OcilibStatementRegisterInterval
 (
     OCI_Statement* stmt,
     const otext  * name,
     unsigned int   type
 );
 
-boolean StatementRegisterObject
+boolean OcilibStatementRegisterObject
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_TypeInfo * typinf
 );
 
-boolean StatementRegisterLob
+boolean OcilibStatementRegisterLob
 (
     OCI_Statement* stmt,
     const otext  * name,
     unsigned int   type
 );
 
-boolean StatementRegisterFile
+boolean OcilibStatementRegisterFile
 (
     OCI_Statement* stmt,
     const otext  * name,
     unsigned int   type
 );
 
-boolean StatementRegisterReference
+boolean OcilibStatementRegisterReference
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_TypeInfo * typinf
 );
 
-unsigned int StatementGetStatementType
+unsigned int OcilibStatementGetStatementType
 (
     OCI_Statement* stmt
 );
 
-boolean StatementSetFetchMode
+boolean OcilibStatementSetFetchMode
 (
     OCI_Statement* stmt,
     unsigned int   mode
 );
 
-unsigned int StatementGetFetchMode
+unsigned int OcilibStatementGetFetchMode
 (
     OCI_Statement* stmt
 );
 
-boolean StatementSetBindMode
+boolean OcilibStatementSetBindMode
 (
     OCI_Statement* stmt,
     unsigned int   mode
 );
 
-unsigned int StatementGetBindMode
+unsigned int OcilibStatementGetBindMode
 (
     OCI_Statement* stmt
 );
 
-boolean StatementSetBindAllocation
+boolean OcilibStatementSetBindAllocation
 (
     OCI_Statement* stmt,
     unsigned int   mode
 );
 
-unsigned int StatementGetBindAllocation
+unsigned int OcilibStatementGetBindAllocation
 (
     OCI_Statement* stmt
 );
 
-boolean StatementSetFetchSize
+boolean OcilibStatementSetFetchSize
 (
     OCI_Statement* stmt,
     unsigned int   size
 );
 
-unsigned int StatementGetFetchSize
+unsigned int OcilibStatementGetFetchSize
 (
     OCI_Statement* stmt
 );
 
-boolean StatementSetPrefetchSize
+boolean OcilibStatementSetPrefetchSize
 (
     OCI_Statement* stmt,
     unsigned int   size
 );
 
-unsigned int StatementGetPrefetchSize
+unsigned int OcilibStatementGetPrefetchSize
 (
     OCI_Statement* stmt
 );
 
-boolean StatementSetPrefetchMemory
+boolean OcilibStatementSetPrefetchMemory
 (
     OCI_Statement* stmt,
     unsigned int   size
 );
 
-unsigned int StatementGetPrefetchMemory
+unsigned int OcilibStatementGetPrefetchMemory
 (
     OCI_Statement* stmt
 );
 
-boolean StatementSetLongMaxSize
+boolean OcilibStatementSetLongMaxSize
 (
     OCI_Statement* stmt,
     unsigned int   size
 );
 
-unsigned int StatementGetLongMaxSize
+unsigned int OcilibStatementGetLongMaxSize
 (
     OCI_Statement* stmt
 );
 
-boolean StatementSetLongMode
+boolean OcilibStatementSetLongMode
 (
     OCI_Statement* stmt,
     unsigned int   mode
 );
 
-unsigned int StatementGetLongMode
+unsigned int OcilibStatementGetLongMode
 (
     OCI_Statement* stmt
 );
 
-OCI_Connection* StatementGetConnection
+OCI_Connection* OcilibStatementGetConnection
 (
     OCI_Statement* stmt
 );
 
-const otext* StatementGetSql
+const otext* OcilibStatementGetSql
 (
     OCI_Statement* stmt
 );
 
-const otext* StatementGetSqlIdentifier
+const otext* OcilibStatementGetSqlIdentifier
 (
     OCI_Statement* stmt
 );
 
-unsigned int StatementGetSqlErrorPos
+unsigned int OcilibStatementGetSqlErrorPos
 (
     OCI_Statement* stmt
 );
 
-unsigned int StatementGetAffectedRows
+unsigned int OcilibStatementGetAffectedRows
 (
     OCI_Statement* stmt
 );
 
-unsigned int StatementGetBindCount
+unsigned int OcilibStatementGetBindCount
 (
     OCI_Statement* stmt
 );
 
-OCI_Bind* StatementGetBind
+OCI_Bind* OcilibStatementGetBind
 (
     OCI_Statement* stmt,
     unsigned int   index
 );
 
-OCI_Bind* StatementGetBind2
+OCI_Bind* OcilibStatementGetBind2
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-unsigned int StatementGetBindIndex
+unsigned int OcilibStatementGetBindIndex
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-unsigned int StatementGetSqlCommand
+unsigned int OcilibStatementGetSqlCommand
 (
     OCI_Statement* stmt
 );
 
-const otext* StatementGetSqlVerb
+const otext* OcilibStatementGetSqlVerb
 (
     OCI_Statement* stmt
 );
 
-OCI_Error* StatementGetBatchError
+OCI_Error* OcilibStatementGetBatchError
 (
     OCI_Statement* stmt
 );
 
-unsigned int StatementGetBatchErrorCount
+unsigned int OcilibStatementGetBatchErrorCount
 (
     OCI_Statement* stmt
 );

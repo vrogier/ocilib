@@ -23,53 +23,53 @@
 
 #include "types.h"
 
-OCI_Enqueue * EnqueueCreate
+OCI_Enqueue * OcilibEnqueueCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *name
 );
 
-boolean EnqueueFree
+boolean OcilibEnqueueFree
 (
     OCI_Enqueue *enqueue
 );
 
-boolean EnqueuePut
+boolean OcilibEnqueuePut
 (
     OCI_Enqueue *enqueue,
     OCI_Msg     *msg
 );
 
-unsigned int EnqueueGetVisibility
+unsigned int OcilibEnqueueGetVisibility
 (
     OCI_Enqueue *enqueue
 );
 
-boolean EnqueueSetVisibility
+boolean OcilibEnqueueSetVisibility
 (
     OCI_Enqueue *enqueue,
     unsigned int visibility
 );
 
-unsigned int EnqueueGetSequenceDeviation
+unsigned int OcilibEnqueueGetSequenceDeviation
 (
     OCI_Enqueue *enqueue
 );
 
-boolean EnqueueSetSequenceDeviation
+boolean OcilibEnqueueSetSequenceDeviation
 (
     OCI_Enqueue *enqueue,
     unsigned int sequence
 );
 
-boolean EnqueueGetRelativeMsgID
+boolean OcilibEnqueueGetRelativeMsgID
 (
     OCI_Enqueue  *enqueue,
     void         *id,
     unsigned int *len
 );
 
-boolean EnqueueSetRelativeMsgID
+boolean OcilibEnqueueSetRelativeMsgID
 (
     OCI_Enqueue *enqueue,
     const void  *id,

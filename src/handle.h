@@ -23,112 +23,112 @@
 
 #include "types.h"
 
-const void * HandleGetEnvironment
+const void * OcilibHandleGetEnvironment
 (
     void
 );
 
-const void * HandleGetContext
+const void * OcilibHandleGetContext
 (
     OCI_Connection *con
 );
 
-const void * HandleGetServer
+const void * OcilibHandleGetServer
 (
     OCI_Connection *con
 );
 
-const void * HandleGetError
+const void * OcilibHandleGetError
 (
     OCI_Connection *con
 );
 
-const void * HandleGetSession
+const void * OcilibHandleGetSession
 (
     OCI_Connection *con
 );
 
-const void * HandleGetTransaction
+const void * OcilibHandleGetTransaction
 (
     OCI_Transaction *trans
 );
 
-const void * HandleGetStatement
+const void * OcilibHandleGetStatement
 (
     OCI_Statement *stmt
 );
 
-const void * HandleGetLob
+const void * OcilibHandleGetLob
 (
     OCI_Lob *lob
 );
 
-const void * HandleGetFile
+const void * OcilibHandleGetFile
 (
     OCI_File *file
 );
 
-const void * HandleGetDate
+const void * OcilibHandleGetDate
 (
     OCI_Date *date
 );
 
-const void * HandleGetTimestamp
+const void * OcilibHandleGetTimestamp
 (
     OCI_Timestamp *tmsp
 );
 
-const void * HandleGetInterval
+const void * OcilibHandleGetInterval
 (
     OCI_Interval *itv
 );
 
-const void * HandleGetObject
+const void * OcilibHandleGetObject
 (
     OCI_Object *obj
 );
 
-const void * HandleGetColl
+const void * OcilibHandleGetColl
 (
     OCI_Coll *coll
 );
 
-const void * HandleGetReference
+const void * OcilibHandleGetReference
 (
     OCI_Ref *ref
 );
 
-const void * HandleGetMutex
+const void * OcilibHandleGetMutex
 (
     OCI_Mutex *mutex
 );
 
-const void * HandleGetThreadID
+const void * OcilibHandleGetThreadID
 (
     OCI_Thread *thread
 );
 
-const void * HandleGetThread
+const void * OcilibHandleGetThread
 (
     OCI_Thread *thread
 );
 
-const void * HandleGetDirPathCtx
+const void * OcilibHandleGetDirPathCtx
 (
     OCI_DirPath *dp
 );
 
-const void * HandleGetDirPathColArray
+const void * OcilibHandleGetDirPathColArray
 (
     OCI_DirPath *dp
 );
 
-const void * HandleGetDirPathStream
+const void * OcilibHandleGetDirPathStream
 (
     OCI_DirPath *dp
 );
 
-const void * HandleGetSubscription
+const void * OcilibHandleGetSubscription
 (
     OCI_Subscription *sub
 );

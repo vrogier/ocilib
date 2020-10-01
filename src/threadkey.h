@@ -23,41 +23,41 @@
 
 #include "types.h"
 
-OCI_ThreadKey* ThreadKeyCreateInternal
+OCI_ThreadKey* OcilibThreadKeyCreateInternal
 (
     POCI_THREADKEYDEST destfunc
 );
 
-boolean ThreadKeyCreate
+boolean OcilibThreadKeyCreate
 (
     const otext      * name,
     POCI_THREADKEYDEST destfunc
 );
 
-boolean ThreadKeyFree
+boolean OcilibThreadKeyFree
 (
     OCI_ThreadKey* key
 );
 
-boolean ThreadKeySet
+boolean OcilibThreadKeySet
 (
     OCI_ThreadKey* key,
     void         * value
 );
 
-boolean ThreadKeyGet
+boolean OcilibThreadKeyGet
 (
     OCI_ThreadKey* key,
     void        ** value
 );
 
-boolean ThreadKeySetValue
+boolean OcilibThreadKeySetValue
 (
     const otext *name,
     void        *value
 );
 
-void * ThreadKeyGetValue
+void * OcilibThreadKeyGetValue
 (
     const otext *name
 );

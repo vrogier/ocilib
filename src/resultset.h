@@ -23,200 +23,200 @@
 
 #include "types.h"
 
-boolean ResultsetInitialize
+boolean OcilibResultsetInitialize
 (
     OCI_Resultset* rs
 );
 
-OCI_Resultset* ResultsetCreate
+OCI_Resultset* OcilibResultsetCreate
 (
     OCI_Statement * stmt,
     int             size
 );
 
-boolean ResultsetFree
+boolean OcilibResultsetFree
 (
     OCI_Resultset* rs
 );
 
-boolean ResultsetFetchPrev
+boolean OcilibResultsetFetchPrev
 (
     OCI_Resultset* rs
 );
 
-boolean ResultsetFetchNext
+boolean OcilibResultsetFetchNext
 (
     OCI_Resultset* rs
 );
 
-boolean ResultsetFetchFirst
+boolean OcilibResultsetFetchFirst
 (
     OCI_Resultset* rs
 );
 
-boolean ResultsetFetchLast
+boolean OcilibResultsetFetchLast
 (
     OCI_Resultset* rs
 );
 
-boolean ResultsetFetchSeek
+boolean OcilibResultsetFetchSeek
 (
     OCI_Resultset* rs,
     unsigned int   mode,
     int            offset
 );
 
-unsigned int ResultsetGetRowCount
+unsigned int OcilibResultsetGetRowCount
 (
     OCI_Resultset* rs
 );
 
-unsigned int ResultsetGetCurrentRow
+unsigned int OcilibResultsetGetCurrentRow
 (
     OCI_Resultset* rs
 );
 
-unsigned int ResultsetGetColumnCount
+unsigned int OcilibResultsetGetColumnCount
 (
     OCI_Resultset* rs
 );
 
-OCI_Column* ResultsetGetColumn
+OCI_Column* OcilibResultsetGetColumn
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Column* ResultsetGetColumn2
+OCI_Column* OcilibResultsetGetColumn2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-unsigned int ResultsetGetColumnIndex
+unsigned int OcilibResultsetGetColumnIndex
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-boolean ResultsetSetStructNumericType
+boolean OcilibResultsetSetStructNumericType
 (
     OCI_Resultset* rs,
     unsigned int   index,
     unsigned int   type
 );
 
-boolean ResultsetSetStructNumericType2
+boolean OcilibResultsetSetStructNumericType2
 (
     OCI_Resultset* rs,
     const otext  * name,
     unsigned int   type
 );
 
-boolean ResultsetGetStruct
+boolean OcilibResultsetGetStruct
 (
     OCI_Resultset* rs,
     void         * row_struct,
     void         * row_struct_ind
 );
 
-OCI_Number* ResultsetGetNumber
+OCI_Number* OcilibResultsetGetNumber
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Number* ResultsetGetNumber2
+OCI_Number* OcilibResultsetGetNumber2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-short ResultsetGetShort
+short OcilibResultsetGetShort
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-short ResultsetGetShort2
+short OcilibResultsetGetShort2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-unsigned short ResultsetGetUnsignedShort
+unsigned short OcilibResultsetGetUnsignedShort
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-unsigned short ResultsetGetUnsignedShort2
+unsigned short OcilibResultsetGetUnsignedShort2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-int ResultsetGetInt
+int OcilibResultsetGetInt
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-int ResultsetGetInt2
+int OcilibResultsetGetInt2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-unsigned int ResultsetGetUnsignedInt
+unsigned int OcilibResultsetGetUnsignedInt
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-unsigned int ResultsetGetUnsignedInt2
+unsigned int OcilibResultsetGetUnsignedInt2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-big_int ResultsetGetBigInt
+big_int OcilibResultsetGetBigInt
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-big_int ResultsetGetBigInt2
+big_int OcilibResultsetGetBigInt2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-big_uint ResultsetGetUnsignedBigInt
+big_uint OcilibResultsetGetUnsignedBigInt
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-big_uint ResultsetGetUnsignedBigInt2
+big_uint OcilibResultsetGetUnsignedBigInt2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-const otext* ResultsetGetString
+const otext* OcilibResultsetGetString
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-const otext* ResultsetGetString2
+const otext* OcilibResultsetGetString2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-unsigned int ResultsetGetRaw
+unsigned int OcilibResultsetGetRaw
 (
     OCI_Resultset* rs,
     unsigned int   index,
@@ -224,7 +224,7 @@ unsigned int ResultsetGetRaw
     unsigned int   len
 );
 
-unsigned int ResultsetGetRaw2
+unsigned int OcilibResultsetGetRaw2
 (
     OCI_Resultset* rs,
     const otext  * name,
@@ -232,180 +232,180 @@ unsigned int ResultsetGetRaw2
     unsigned int   len
 );
 
-double ResultsetGetDouble
+double OcilibResultsetGetDouble
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-double ResultsetGetDouble2
+double OcilibResultsetGetDouble2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-float ResultsetGetFloat
+float OcilibResultsetGetFloat
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-float ResultsetGetFloat2
+float OcilibResultsetGetFloat2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Date* ResultsetGetDate
+OCI_Date* OcilibResultsetGetDate
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Date* ResultsetGetDate2
+OCI_Date* OcilibResultsetGetDate2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Timestamp* ResultsetGetTimestamp
+OCI_Timestamp* OcilibResultsetGetTimestamp
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Timestamp* ResultsetGetTimestamp2
+OCI_Timestamp* OcilibResultsetGetTimestamp2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Interval* ResultsetGetInterval
+OCI_Interval* OcilibResultsetGetInterval
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Interval* ResultsetGetInterval2
+OCI_Interval* OcilibResultsetGetInterval2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Object* ResultsetGetObject
+OCI_Object* OcilibResultsetGetObject
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Object* ResultsetGetObject2
+OCI_Object* OcilibResultsetGetObject2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Coll* ResultsetGetColl
+OCI_Coll* OcilibResultsetGetColl
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Coll* ResultsetGetColl2
+OCI_Coll* OcilibResultsetGetColl2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Ref* ResultsetGetReference
+OCI_Ref* OcilibResultsetGetReference
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Ref* ResultsetGetReference2
+OCI_Ref* OcilibResultsetGetReference2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Statement* ResultsetGetStatement
+OCI_Statement* OcilibResultsetGetStatement
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Statement* ResultsetGetStatement2
+OCI_Statement* OcilibResultsetGetStatement2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Lob* ResultsetGetLob
+OCI_Lob* OcilibResultsetGetLob
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Lob* ResultsetGetLob2
+OCI_Lob* OcilibResultsetGetLob2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_File* ResultsetGetFile
+OCI_File* OcilibResultsetGetFile
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_File* ResultsetGetFile2
+OCI_File* OcilibResultsetGetFile2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Long* ResultsetGetLong
+OCI_Long* OcilibResultsetGetLong
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Long* ResultsetGetLong2
+OCI_Long* OcilibResultsetGetLong2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-unsigned int ResultsetGetDataSize
+unsigned int OcilibResultsetGetDataSize
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-unsigned int ResultsetGetDataSize2
+unsigned int OcilibResultsetGetDataSize2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-boolean ResultsetIsNull
+boolean OcilibResultsetIsNull
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-boolean ResultsetIsNull2
+boolean OcilibResultsetIsNull2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Statement* ResultsetResultsetGetStatement
+OCI_Statement* OcilibResultsetResultsetGetStatement
 (
     OCI_Resultset* rs
 );
 
-unsigned int ResultsetGetDataLength
+unsigned int OcilibResultsetGetDataLength
 (
     OCI_Resultset* rs,
     unsigned int   index

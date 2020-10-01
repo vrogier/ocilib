@@ -28,50 +28,50 @@ boolean TypeInfoDispose
     OCI_TypeInfo* typinf
 );
 
-OCI_TypeInfo * TypeInfoGet
+OCI_TypeInfo * OcilibTypeInfoGet
 (
     OCI_Connection *con,
     const otext    *name,
     unsigned int    type
 );
 
-boolean TypeInfoFree
+boolean OcilibTypeInfoFree
 (
     OCI_TypeInfo *typinf
 );
 
-unsigned int TypeInfoGetType
+unsigned int OcilibTypeInfoGetType
 (
     OCI_TypeInfo *typinf
 );
 
-OCI_Connection * TypeInfoGetConnection
+OCI_Connection * OcilibTypeInfoGetConnection
 (
     OCI_TypeInfo *typinf
 );
 
-unsigned int TypeInfoGetColumnCount
+unsigned int OcilibTypeInfoGetColumnCount
 (
     OCI_TypeInfo *typinf
 );
 
-OCI_Column * TypeInfoGetColumn
+OCI_Column * OcilibTypeInfoGetColumn
 (
     OCI_TypeInfo *typinf,
     unsigned int  index
 );
 
-const otext * TypeInfoGetName
+const otext * OcilibTypeInfoGetName
 (
     OCI_TypeInfo *typinf
 );
 
-boolean TypeInfoIsFinalType
+boolean OcilibTypeInfoIsFinalType
 (
     OCI_TypeInfo* typinf
 );
 
-OCI_TypeInfo* TypeInfoGetSuperType
+OCI_TypeInfo* OcilibTypeInfoGetSuperType
 (
     OCI_TypeInfo* typinf
 );

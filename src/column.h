@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-boolean ColumnGetAttributeInfo
+boolean OcilibColumnGetAttributeInfo
 (
     OCI_Column  *col,
     unsigned int count,
@@ -32,7 +32,7 @@ boolean ColumnGetAttributeInfo
     size_t      *p_align
 );
 
-boolean ColumnRetrieveInfo
+boolean OcilibColumnRetrieveInfo
 (
     OCI_Column     *col,
     OCI_Connection *con,
@@ -42,90 +42,90 @@ boolean ColumnRetrieveInfo
     int             ptype
 );
 
-boolean ColumnMapInfo
+boolean OcilibColumnMapInfo
 (
     OCI_Column    *col,
     OCI_Statement *stmt
 );
 
-const otext* ColumnGetName
+const otext* OcilibColumnGetName
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetType
+unsigned int OcilibColumnGetType
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetCharsetForm
+unsigned int OcilibColumnGetCharsetForm
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetSize
+unsigned int OcilibColumnGetSize
 (
     OCI_Column* col
 );
 
-int ColumnGetScale
+int OcilibColumnGetScale
 (
     OCI_Column* col
 );
 
-int ColumnGetPrecision
+int OcilibColumnGetPrecision
 (
     OCI_Column* col
 );
 
-int ColumnGetFractionalPrecision
+int OcilibColumnGetFractionalPrecision
 (
     OCI_Column* col
 );
 
-int ColumnGetLeadingPrecision
+int OcilibColumnGetLeadingPrecision
 (
     OCI_Column* col
 );
 
-boolean ColumnGetNullable
+boolean OcilibColumnGetNullable
 (
     OCI_Column* col
 );
 
-boolean ColumnGetCharUsed
+boolean OcilibColumnGetCharUsed
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetPropertyFlags
+unsigned int OcilibColumnGetPropertyFlags
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetCollationID
+unsigned int OcilibColumnGetCollationID
 (
     OCI_Column* col
 );
 
-const otext* ColumnGetSqlType
+const otext* OcilibColumnGetSqlType
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetFullSqlType
+unsigned int OcilibColumnGetFullSqlType
 (
     OCI_Column * col,
     otext      * buffer,
     unsigned int len
 );
 
-OCI_TypeInfo* ColumnGetTypeInfo
+OCI_TypeInfo* OcilibColumnGetTypeInfo
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetSubType
+unsigned int OcilibColumnGetSubType
 (
     OCI_Column* col
 );

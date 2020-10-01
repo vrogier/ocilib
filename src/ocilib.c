@@ -58,16 +58,16 @@
 #include "transaction.h"
 #include "typeinfo.h"
 
-void CheckContext()
+OCI_SYM_LOCAL void OcilibCheckContext()
 {
     if (Env.env_mode & OCI_ENV_CONTEXT)
     {
-        ErrorReset(ErrorGet(TRUE, TRUE));
+        OcilibErrorReset(OcilibErrorGet(TRUE, TRUE));
     }
 }
 
 #define CALL_IMPL(impl, ...)  \
-    CheckContext();           \
+    OcilibCheckContext();     \
     return impl(__VA_ARGS__); \
 
 
@@ -309,7 +309,7 @@ OCI_Coll * OCI_API OCI_CollCreate
     OCI_TypeInfo *typinf
 )
 {
-    CALL_IMPL(CollectionCreate, typinf)
+    CALL_IMPL(OcilibCollectionCreate, typinf)
 }
 
 boolean OCI_API OCI_CollFree
@@ -317,7 +317,7 @@ boolean OCI_API OCI_CollFree
     OCI_Coll *coll
 )
 {
-    CALL_IMPL(CollectionFree, coll)
+    CALL_IMPL(OcilibCollectionFree, coll)
 }
 
 OCI_Coll ** OCI_API OCI_CollArrayCreate
@@ -327,7 +327,7 @@ OCI_Coll ** OCI_API OCI_CollArrayCreate
     unsigned int    nbelem
 )
 {
-    CALL_IMPL(CollectionCreateArray, con, typinf, nbelem)
+    CALL_IMPL(OcilibCollectionCreateArray, con, typinf, nbelem)
 }
 
 boolean OCI_API OCI_CollArrayFree
@@ -335,7 +335,7 @@ boolean OCI_API OCI_CollArrayFree
     OCI_Coll **colls
 )
 {
-    CALL_IMPL(CollectionFreeArray, colls)
+    CALL_IMPL(OcilibCollectionFreeArray, colls)
 }
 
 boolean OCI_API OCI_CollAssign
@@ -344,7 +344,7 @@ boolean OCI_API OCI_CollAssign
     OCI_Coll *coll_src
 )
 {
-    CALL_IMPL(CollectionAssign, coll, coll_src)
+    CALL_IMPL(OcilibCollectionAssign, coll, coll_src)
 }
 
 unsigned int OCI_API OCI_CollGetType
@@ -352,7 +352,7 @@ unsigned int OCI_API OCI_CollGetType
     OCI_Coll *coll
 )
 {
-    CALL_IMPL(CollectionGetType, coll)
+    CALL_IMPL(OcilibCollectionGetType, coll)
 }
 
 unsigned int OCI_API OCI_CollGetMax
@@ -360,7 +360,7 @@ unsigned int OCI_API OCI_CollGetMax
     OCI_Coll *coll
 )
 {
-    CALL_IMPL(CollectionGetMax, coll)
+    CALL_IMPL(OcilibCollectionGetMax, coll)
 }
 
 unsigned int OCI_API OCI_CollGetSize
@@ -368,7 +368,7 @@ unsigned int OCI_API OCI_CollGetSize
     OCI_Coll *coll
 )
 {
-    CALL_IMPL(CollectionGetSize, coll)
+    CALL_IMPL(OcilibCollectionGetSize, coll)
 }
 
 boolean OCI_API OCI_CollTrim
@@ -377,7 +377,7 @@ boolean OCI_API OCI_CollTrim
     unsigned int nb_elem
 )
 {
-    CALL_IMPL(CollectionTrim, coll, nb_elem)
+    CALL_IMPL(OcilibCollectionTrim, coll, nb_elem)
 }
 
 OCI_Elem * OCI_API OCI_CollGetElem
@@ -386,7 +386,7 @@ OCI_Elem * OCI_API OCI_CollGetElem
     unsigned int index
 )
 {
-    CALL_IMPL(CollectionGetElement, coll, index)
+    CALL_IMPL(OcilibCollectionGetElement, coll, index)
 }
 
 boolean OCI_API OCI_CollGetElem2
@@ -396,7 +396,7 @@ boolean OCI_API OCI_CollGetElem2
     OCI_Elem    *elem
 )
 {
-    CALL_IMPL(CollectionGetElement2, coll, index, elem)
+    CALL_IMPL(OcilibCollectionGetElement2, coll, index, elem)
 }
 
 boolean OCI_API OCI_CollSetElem
@@ -406,7 +406,7 @@ boolean OCI_API OCI_CollSetElem
     OCI_Elem    *elem
 )
 {
-    CALL_IMPL(CollectionSetElement, coll, index, elem)
+    CALL_IMPL(OcilibCollectionSetElement, coll, index, elem)
 }
 
 boolean OCI_API OCI_CollAppend
@@ -415,7 +415,7 @@ boolean OCI_API OCI_CollAppend
     OCI_Elem *elem
 )
 {
-    CALL_IMPL(CollectionAddElement, coll, elem)
+    CALL_IMPL(OcilibCollectionAddElement, coll, elem)
 }
 
 OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo
@@ -423,7 +423,7 @@ OCI_TypeInfo * OCI_API OCI_CollGetTypeInfo
     OCI_Coll *coll
 )
 {
-    CALL_IMPL(CollectionGetTypeInfo, coll)
+    CALL_IMPL(OcilibCollectionGetTypeInfo, coll)
 }
 
 boolean OCI_API OCI_CollClear
@@ -431,7 +431,7 @@ boolean OCI_API OCI_CollClear
     OCI_Coll *coll
 )
 {
-    CALL_IMPL(CollectionClear, coll)
+    CALL_IMPL(OcilibCollectionClear, coll)
 }
 
 boolean OCI_API OCI_CollDeleteElem
@@ -440,7 +440,7 @@ boolean OCI_API OCI_CollDeleteElem
     unsigned int index
 )
 {
-    CALL_IMPL(CollectionRemoveElement, coll, index)
+    CALL_IMPL(OcilibCollectionRemoveElement, coll, index)
 }
 
 unsigned int OCI_API OCI_CollGetCount
@@ -448,7 +448,7 @@ unsigned int OCI_API OCI_CollGetCount
     OCI_Coll *coll
 )
 {
-    CALL_IMPL(CollectionGetCount, coll)
+    CALL_IMPL(OcilibCollectionGetCount, coll)
 }
 
 boolean OCI_API OCI_CollToText
@@ -458,7 +458,7 @@ boolean OCI_API OCI_CollToText
     otext        *str
 )
 {
-    CALL_IMPL(CollectionToString, coll, size, str)
+    CALL_IMPL(OcilibCollectionToString, coll, size, str)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -470,7 +470,7 @@ const otext* OCI_API OCI_ColumnGetName
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetName, col)
+    CALL_IMPL(OcilibColumnGetName, col)
 }
 
 unsigned int OCI_API OCI_ColumnGetType
@@ -478,7 +478,7 @@ unsigned int OCI_API OCI_ColumnGetType
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetType, col)
+    CALL_IMPL(OcilibColumnGetType, col)
 }
 
 unsigned int OCI_API OCI_ColumnGetCharsetForm
@@ -486,7 +486,7 @@ unsigned int OCI_API OCI_ColumnGetCharsetForm
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetCharsetForm, col)
+    CALL_IMPL(OcilibColumnGetCharsetForm, col)
 }
 
 unsigned int OCI_API OCI_ColumnGetSize
@@ -494,7 +494,7 @@ unsigned int OCI_API OCI_ColumnGetSize
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetSize, col)
+    CALL_IMPL(OcilibColumnGetSize, col)
 }
 
 int OCI_API OCI_ColumnGetScale
@@ -502,7 +502,7 @@ int OCI_API OCI_ColumnGetScale
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetScale, col)
+    CALL_IMPL(OcilibColumnGetScale, col)
 }
 
 int OCI_API OCI_ColumnGetPrecision
@@ -510,7 +510,7 @@ int OCI_API OCI_ColumnGetPrecision
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetPrecision, col)
+    CALL_IMPL(OcilibColumnGetPrecision, col)
 }
 
 int OCI_API OCI_ColumnGetFractionalPrecision
@@ -518,7 +518,7 @@ int OCI_API OCI_ColumnGetFractionalPrecision
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetFractionalPrecision, col)
+    CALL_IMPL(OcilibColumnGetFractionalPrecision, col)
 }
 
 int OCI_API OCI_ColumnGetLeadingPrecision
@@ -526,7 +526,7 @@ int OCI_API OCI_ColumnGetLeadingPrecision
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetLeadingPrecision, col)
+    CALL_IMPL(OcilibColumnGetLeadingPrecision, col)
 }
 
 boolean OCI_API OCI_ColumnGetNullable
@@ -534,7 +534,7 @@ boolean OCI_API OCI_ColumnGetNullable
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetNullable, col)
+    CALL_IMPL(OcilibColumnGetNullable, col)
 }
 
 boolean OCI_API OCI_ColumnGetCharUsed
@@ -542,7 +542,7 @@ boolean OCI_API OCI_ColumnGetCharUsed
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetCharUsed, col)
+    CALL_IMPL(OcilibColumnGetCharUsed, col)
 }
 
 unsigned int OCI_API OCI_ColumnGetPropertyFlags
@@ -550,7 +550,7 @@ unsigned int OCI_API OCI_ColumnGetPropertyFlags
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetPropertyFlags, col)
+    CALL_IMPL(OcilibColumnGetPropertyFlags, col)
 }
 
 unsigned int OCI_API OCI_ColumnGetCollationID
@@ -558,7 +558,7 @@ unsigned int OCI_API OCI_ColumnGetCollationID
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetCollationID, col)
+    CALL_IMPL(OcilibColumnGetCollationID, col)
 }
 
 const otext* OCI_API OCI_ColumnGetSQLType
@@ -566,7 +566,7 @@ const otext* OCI_API OCI_ColumnGetSQLType
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetSqlType, col)
+    CALL_IMPL(OcilibColumnGetSqlType, col)
 }
 
 unsigned int OCI_API OCI_ColumnGetFullSQLType
@@ -576,7 +576,7 @@ unsigned int OCI_API OCI_ColumnGetFullSQLType
     unsigned int len
 )
 {
-    CALL_IMPL(ColumnGetFullSqlType, col, buffer, len)
+    CALL_IMPL(OcilibColumnGetFullSqlType, col, buffer, len)
 }
 
 OCI_TypeInfo* OCI_API OCI_ColumnGetTypeInfo
@@ -584,7 +584,7 @@ OCI_TypeInfo* OCI_API OCI_ColumnGetTypeInfo
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetTypeInfo, col)
+    CALL_IMPL(OcilibColumnGetTypeInfo, col)
 }
 
 unsigned int OCI_API OCI_ColumnGetSubType
@@ -592,7 +592,7 @@ unsigned int OCI_API OCI_ColumnGetSubType
     OCI_Column* col
 )
 {
-    CALL_IMPL(ColumnGetSubType, col)
+    CALL_IMPL(OcilibColumnGetSubType, col)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -607,7 +607,7 @@ OCI_Connection * OCI_API OCI_ConnectionCreate
     unsigned int mode
 )
 {
-    CALL_IMPL(ConnectionCreate, db, user, pwd, mode)
+    CALL_IMPL(OcilibConnectionCreate, db, user, pwd, mode)
 }
 
 boolean OCI_API OCI_ConnectionFree
@@ -615,7 +615,7 @@ boolean OCI_API OCI_ConnectionFree
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionFree, con)
+    CALL_IMPL(OcilibConnectionFree, con)
 }
 
 boolean OCI_API OCI_Commit
@@ -623,7 +623,7 @@ boolean OCI_API OCI_Commit
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionCommit, con)
+    CALL_IMPL(OcilibConnectionCommit, con)
 }
 
 boolean OCI_API OCI_Rollback
@@ -631,7 +631,7 @@ boolean OCI_API OCI_Rollback
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionRollback, con)
+    CALL_IMPL(OcilibConnectionRollback, con)
 }
 
 boolean OCI_API OCI_SetAutoCommit
@@ -640,7 +640,7 @@ boolean OCI_API OCI_SetAutoCommit
     boolean         enable
 )
 {
-    CALL_IMPL(ConnectionSetAutoCommit, con, enable)
+    CALL_IMPL(OcilibConnectionSetAutoCommit, con, enable)
 }
 
 boolean OCI_API OCI_GetAutoCommit
@@ -648,7 +648,7 @@ boolean OCI_API OCI_GetAutoCommit
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetAutoCommit, con)
+    CALL_IMPL(OcilibConnectionGetAutoCommit, con)
 }
 
 boolean OCI_API OCI_IsConnected
@@ -656,7 +656,7 @@ boolean OCI_API OCI_IsConnected
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionIsConnected, con)
+    CALL_IMPL(OcilibConnectionIsConnected, con)
 }
 
 void * OCI_API OCI_GetUserData
@@ -664,7 +664,7 @@ void * OCI_API OCI_GetUserData
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetUserData, con)
+    CALL_IMPL(OcilibConnectionGetUserData, con)
 }
 
 boolean OCI_API OCI_SetUserData
@@ -673,7 +673,7 @@ boolean OCI_API OCI_SetUserData
     void           *data
 )
 {
-    CALL_IMPL(ConnectionSetUserData, con, data)
+    CALL_IMPL(OcilibConnectionSetUserData, con, data)
 }
 
 boolean OCI_API OCI_SetSessionTag
@@ -682,7 +682,7 @@ boolean OCI_API OCI_SetSessionTag
     const otext    *tag
 )
 {
-    CALL_IMPL(ConnectionSetSessionTag, con, tag)
+    CALL_IMPL(OcilibConnectionSetSessionTag, con, tag)
 }
 
 const otext * OCI_API OCI_GetSessionTag
@@ -690,7 +690,7 @@ const otext * OCI_API OCI_GetSessionTag
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetSessionTag, con)
+    CALL_IMPL(OcilibConnectionGetSessionTag, con)
 }
 
 const otext * OCI_API OCI_GetDatabase
@@ -698,7 +698,7 @@ const otext * OCI_API OCI_GetDatabase
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetConnectionString, con)
+    CALL_IMPL(OcilibConnectionGetConnectionString, con)
 }
 
 const otext * OCI_API OCI_GetUserName
@@ -706,7 +706,7 @@ const otext * OCI_API OCI_GetUserName
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetUserName, con)
+    CALL_IMPL(OcilibConnectionGetUserName, con)
 }
 
 const otext * OCI_API OCI_GetPassword
@@ -714,7 +714,7 @@ const otext * OCI_API OCI_GetPassword
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetPassword, con)
+    CALL_IMPL(OcilibConnectionGetPassword, con)
 }
 
 boolean OCI_API OCI_SetPassword
@@ -723,7 +723,7 @@ boolean OCI_API OCI_SetPassword
     const otext    *password
 )
 {
-    CALL_IMPL(ConnectionSetPassword, con, password)
+    CALL_IMPL(OcilibConnectionSetPassword, con, password)
 }
 
 unsigned int OCI_API OCI_GetSessionMode
@@ -731,7 +731,7 @@ unsigned int OCI_API OCI_GetSessionMode
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetSessionMode, con)
+    CALL_IMPL(OcilibConnectionGetSessionMode, con)
 }
 
 const otext * OCI_API OCI_GetVersionServer
@@ -739,7 +739,7 @@ const otext * OCI_API OCI_GetVersionServer
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetServerVersion, con)
+    CALL_IMPL(OcilibConnectionGetServerVersion, con)
 }
 
 unsigned int OCI_API OCI_GetServerMajorVersion
@@ -747,7 +747,7 @@ unsigned int OCI_API OCI_GetServerMajorVersion
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetServerMajorVersion, con)
+    CALL_IMPL(OcilibConnectionGetServerMajorVersion, con)
 }
 
 unsigned int OCI_API OCI_GetServerMinorVersion
@@ -755,7 +755,7 @@ unsigned int OCI_API OCI_GetServerMinorVersion
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetServerMinorVersion, con)
+    CALL_IMPL(OcilibConnectionGetServerMinorVersion, con)
 }
 
 unsigned int OCI_API OCI_GetServerRevisionVersion
@@ -763,7 +763,7 @@ unsigned int OCI_API OCI_GetServerRevisionVersion
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetServerRevisionVersion, con)
+    CALL_IMPL(OcilibConnectionGetServerRevisionVersion, con)
 }
 
 OCI_Transaction * OCI_API OCI_GetTransaction
@@ -771,7 +771,7 @@ OCI_Transaction * OCI_API OCI_GetTransaction
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetTransaction, con)
+    CALL_IMPL(OcilibConnectionGetTransaction, con)
 }
 
 boolean OCI_API OCI_SetTransaction
@@ -780,7 +780,7 @@ boolean OCI_API OCI_SetTransaction
     OCI_Transaction *trans
 )
 {
-    CALL_IMPL(ConnectionSetTransaction, con, trans)
+    CALL_IMPL(OcilibConnectionSetTransaction, con, trans)
 }
 
 unsigned int OCI_API OCI_GetVersionConnection
@@ -788,7 +788,7 @@ unsigned int OCI_API OCI_GetVersionConnection
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetVersion, con)
+    CALL_IMPL(OcilibConnectionGetVersion, con)
 }
 
 boolean OCI_API OCI_Break
@@ -796,7 +796,7 @@ boolean OCI_API OCI_Break
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionBreak, con)
+    CALL_IMPL(OcilibConnectionBreak, con)
 }
 
 boolean OCI_API OCI_ServerEnableOutput
@@ -807,7 +807,7 @@ boolean OCI_API OCI_ServerEnableOutput
     unsigned int    lnsize
 )
 {
-    CALL_IMPL(ConnectionEnableServerOutput, con, bufsize, arrsize, lnsize)
+    CALL_IMPL(OcilibConnectionEnableServerOutput, con, bufsize, arrsize, lnsize)
 }
 
 boolean OCI_API OCI_ServerDisableOutput
@@ -815,7 +815,7 @@ boolean OCI_API OCI_ServerDisableOutput
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionDisableServerOutput, con)
+    CALL_IMPL(OcilibConnectionDisableServerOutput, con)
 }
 
 const otext * OCI_API OCI_ServerGetOutput
@@ -823,7 +823,7 @@ const otext * OCI_API OCI_ServerGetOutput
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetServerOutput, con)
+    CALL_IMPL(OcilibConnectionGetServerOutput, con)
 }
 
 boolean OCI_API OCI_SetTrace
@@ -833,7 +833,7 @@ boolean OCI_API OCI_SetTrace
     const otext    *value
 )
 {
-    CALL_IMPL(ConnectionSetTrace, con, trace, value)
+    CALL_IMPL(OcilibConnectionSetTrace, con, trace, value)
 }
 
 const otext * OCI_API OCI_GetTrace
@@ -842,7 +842,7 @@ const otext * OCI_API OCI_GetTrace
     unsigned int    trace
 )
 {
-    CALL_IMPL(ConnectionGetTrace, con, trace)
+    CALL_IMPL(OcilibConnectionGetTrace, con, trace)
 }
 
 boolean OCI_API OCI_Ping
@@ -850,7 +850,7 @@ boolean OCI_API OCI_Ping
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionPing, con)
+    CALL_IMPL(OcilibConnectionPing, con)
 }
 
 boolean OCI_API OCI_SetTimeout
@@ -860,7 +860,7 @@ boolean OCI_API OCI_SetTimeout
     unsigned int    value
 )
 {
-    CALL_IMPL(ConnectionSetTimeout, con, type, value)
+    CALL_IMPL(OcilibConnectionSetTimeout, con, type, value)
 }
 
 unsigned int OCI_API OCI_GetTimeout
@@ -869,7 +869,7 @@ unsigned int OCI_API OCI_GetTimeout
     unsigned int    type
 )
 {
-    CALL_IMPL(ConnectionGetTimeout, con, type)
+    CALL_IMPL(OcilibConnectionGetTimeout, con, type)
 }
 
 const otext * OCI_API OCI_GetDBName
@@ -877,7 +877,7 @@ const otext * OCI_API OCI_GetDBName
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetDatabaseName, con)
+    CALL_IMPL(OcilibConnectionGetDatabaseName, con)
 }
 
 const otext * OCI_API OCI_GetInstanceName
@@ -885,7 +885,7 @@ const otext * OCI_API OCI_GetInstanceName
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetInstanceName, con)
+    CALL_IMPL(OcilibConnectionGetInstanceName, con)
 }
 
 const otext * OCI_API OCI_GetServiceName
@@ -893,7 +893,7 @@ const otext * OCI_API OCI_GetServiceName
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetServiceName, con)
+    CALL_IMPL(OcilibConnectionGetServiceName, con)
 }
 
 const otext * OCI_API OCI_GetServerName
@@ -901,7 +901,7 @@ const otext * OCI_API OCI_GetServerName
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetServerName, con)
+    CALL_IMPL(OcilibConnectionGetServerName, con)
 }
 
 const otext * OCI_API OCI_GetDomainName
@@ -909,7 +909,7 @@ const otext * OCI_API OCI_GetDomainName
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetDomainName, con)
+    CALL_IMPL(OcilibConnectionGetDomainName, con)
 }
 
 OCI_Timestamp * OCI_API OCI_GetInstanceStartTime
@@ -917,7 +917,7 @@ OCI_Timestamp * OCI_API OCI_GetInstanceStartTime
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetInstanceStartTime, con)
+    CALL_IMPL(OcilibConnectionGetInstanceStartTime, con)
 }
 
 boolean OCI_API OCI_IsTAFCapable
@@ -925,7 +925,7 @@ boolean OCI_API OCI_IsTAFCapable
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionIsTAFCapable, con)
+    CALL_IMPL(OcilibConnectionIsTAFCapable, con)
 }
 
 boolean OCI_API OCI_SetTAFHandler
@@ -934,7 +934,7 @@ boolean OCI_API OCI_SetTAFHandler
     POCI_TAF_HANDLER handler
 )
 {
-    CALL_IMPL(ConnectionSetTAFHandler, con, handler)
+    CALL_IMPL(OcilibConnectionSetTAFHandler, con, handler)
 }
 
 unsigned int OCI_API OCI_GetStatementCacheSize
@@ -942,7 +942,7 @@ unsigned int OCI_API OCI_GetStatementCacheSize
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetStatementCacheSize, con)
+    CALL_IMPL(OcilibConnectionGetStatementCacheSize, con)
 }
 
 boolean OCI_API OCI_SetStatementCacheSize
@@ -951,7 +951,7 @@ boolean OCI_API OCI_SetStatementCacheSize
     unsigned int    value
 )
 {
-    CALL_IMPL(ConnectionSetStatementCacheSize, con, value)
+    CALL_IMPL(OcilibConnectionSetStatementCacheSize, con, value)
 }
 
 unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
@@ -959,7 +959,7 @@ unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetDefaultLobPrefetchSize, con)
+    CALL_IMPL(OcilibConnectionGetDefaultLobPrefetchSize, con)
 }
 
 boolean OCI_API OCI_SetDefaultLobPrefetchSize
@@ -968,7 +968,7 @@ boolean OCI_API OCI_SetDefaultLobPrefetchSize
     unsigned int    value
 )
 {
-    CALL_IMPL(ConnectionSetDefaultLobPrefetchSize, con, value)
+    CALL_IMPL(OcilibConnectionSetDefaultLobPrefetchSize, con, value)
 }
 
 unsigned int OCI_API OCI_GetMaxCursors
@@ -976,7 +976,7 @@ unsigned int OCI_API OCI_GetMaxCursors
     OCI_Connection *con
 )
 {
-    CALL_IMPL(ConnectionGetMaxCursors, con)
+    CALL_IMPL(OcilibConnectionGetMaxCursors, con)
 }
 
 boolean OCI_Immediate
@@ -990,7 +990,7 @@ boolean OCI_Immediate
     va_list args;
 
     va_start(args, sql);
-    res = ConnectionExecuteImmediate(con, sql, args);
+    res = OcilibConnectionExecuteImmediate(con, sql, args);
     va_end(args);
 
     return res;
@@ -1007,7 +1007,7 @@ boolean OCI_ImmediateFmt
     va_list args;
 
     va_start(args, sql);
-    res = ConnectionExecuteImmediateFmt(con, sql, args);
+    res = OcilibConnectionExecuteImmediateFmt(con, sql, args);
     va_end(args);
 
     return res;
@@ -1022,7 +1022,7 @@ OCI_Date* OCI_API OCI_DateCreate
     OCI_Connection* con
 )
 {
-    CALL_IMPL(DateCreate, con)
+    CALL_IMPL(OcilibDateCreate, con)
 }
 
 boolean OCI_API OCI_DateFree
@@ -1030,7 +1030,7 @@ boolean OCI_API OCI_DateFree
     OCI_Date* date
 )
 {
-    CALL_IMPL(DateFree, date)
+    CALL_IMPL(OcilibDateFree, date)
 }
 
 OCI_Date** OCI_API OCI_DateArrayCreate
@@ -1039,7 +1039,7 @@ OCI_Date** OCI_API OCI_DateArrayCreate
     unsigned int    nbelem
 )
 {
-    CALL_IMPL(DateCreateArray, con, nbelem)
+    CALL_IMPL(OcilibDateCreateArray, con, nbelem)
 }
 
 boolean OCI_API OCI_DateArrayFree
@@ -1047,7 +1047,7 @@ boolean OCI_API OCI_DateArrayFree
     OCI_Date** dates
 )
 {
-    CALL_IMPL(DateFreeArray, dates)
+    CALL_IMPL(OcilibDateFreeArray, dates)
 }
 
 boolean OCI_API OCI_DateAddDays
@@ -1056,7 +1056,7 @@ boolean OCI_API OCI_DateAddDays
     int       nb
 )
 {
-    CALL_IMPL(DateAddDays, date, nb)
+    CALL_IMPL(OcilibDateAddDays, date, nb)
 }
 
 boolean OCI_API OCI_DateAddMonths
@@ -1065,7 +1065,7 @@ boolean OCI_API OCI_DateAddMonths
     int       nb
 )
 {
-    CALL_IMPL(DateAddMonths, date, nb)
+    CALL_IMPL(OcilibDateAddMonths, date, nb)
 }
 
 boolean OCI_API OCI_DateAssign
@@ -1074,7 +1074,7 @@ boolean OCI_API OCI_DateAssign
     OCI_Date* date_src
 )
 {
-    CALL_IMPL(DateAssign, date, date_src)
+    CALL_IMPL(OcilibDateAssign, date, date_src)
 }
 
 int OCI_API OCI_DateCheck
@@ -1082,7 +1082,7 @@ int OCI_API OCI_DateCheck
     OCI_Date* date
 )
 {
-    CALL_IMPL(DateCheck, date)
+    CALL_IMPL(OcilibDateCheck, date)
 }
 
 int OCI_API OCI_DateCompare
@@ -1091,7 +1091,7 @@ int OCI_API OCI_DateCompare
     OCI_Date* date2
 )
 {
-    CALL_IMPL(DateCompare, date, date2)
+    CALL_IMPL(OcilibDateCompare, date, date2)
 }
 
 int OCI_API OCI_DateDaysBetween
@@ -1100,7 +1100,7 @@ int OCI_API OCI_DateDaysBetween
     OCI_Date* date2
 )
 {
-    CALL_IMPL(DateDaysBetween, date, date2)
+    CALL_IMPL(OcilibDateDaysBetween, date, date2)
 }
 
 boolean OCI_API OCI_DateFromText
@@ -1110,7 +1110,7 @@ boolean OCI_API OCI_DateFromText
     const otext* fmt
 )
 {
-    CALL_IMPL(DateFromString, date, str, fmt)
+    CALL_IMPL(OcilibDateFromString, date, str, fmt)
 }
 
 boolean OCI_API OCI_DateGetDate
@@ -1121,7 +1121,7 @@ boolean OCI_API OCI_DateGetDate
     int     * day
 )
 {
-    CALL_IMPL(DateGetDate, date, year, month, day)
+    CALL_IMPL(OcilibDateGetDate, date, year, month, day)
 }
 
 boolean OCI_API OCI_DateGetTime
@@ -1132,7 +1132,7 @@ boolean OCI_API OCI_DateGetTime
     int     * sec
 )
 {
-    CALL_IMPL(DateGetTime, date, hour, min, sec)
+    CALL_IMPL(OcilibDateGetTime, date, hour, min, sec)
 }
 
 boolean OCI_API OCI_DateGetDateTime
@@ -1146,7 +1146,7 @@ boolean OCI_API OCI_DateGetDateTime
     int     * sec
 )
 {
-    CALL_IMPL(DateGetDateTime, date, year, month, day, hour, min, sec)
+    CALL_IMPL(OcilibDateGetDateTime, date, year, month, day, hour, min, sec)
 }
 
 boolean OCI_API OCI_DateLastDay
@@ -1154,7 +1154,7 @@ boolean OCI_API OCI_DateLastDay
     OCI_Date* date
 )
 {
-    CALL_IMPL(DateLastDay, date)
+    CALL_IMPL(OcilibDateLastDay, date)
 }
 
 boolean OCI_API OCI_DateNextDay
@@ -1163,7 +1163,7 @@ boolean OCI_API OCI_DateNextDay
     const otext* day
 )
 {
-    CALL_IMPL(DateNextDay, date, day)
+    CALL_IMPL(OcilibDateNextDay, date, day)
 }
 
 boolean OCI_API OCI_DateSetDate
@@ -1174,7 +1174,7 @@ boolean OCI_API OCI_DateSetDate
     int       day
 )
 {
-    CALL_IMPL(DateSetDate, date, year, month, day)
+    CALL_IMPL(OcilibDateSetDate, date, year, month, day)
 }
 
 boolean OCI_API OCI_DateSetTime
@@ -1185,7 +1185,7 @@ boolean OCI_API OCI_DateSetTime
     int       sec
 )
 {
-    CALL_IMPL(DateSetTime, date, hour, min, sec)
+    CALL_IMPL(OcilibDateSetTime, date, hour, min, sec)
 }
 
 boolean OCI_API OCI_DateSetDateTime
@@ -1199,7 +1199,7 @@ boolean OCI_API OCI_DateSetDateTime
     int       sec
 )
 {
-    CALL_IMPL(DateSetDateTime, date, year, month, day, hour, min,sec)
+    CALL_IMPL(OcilibDateSetDateTime, date, year, month, day, hour, min,sec)
 }
 
 boolean OCI_API OCI_DateSysDate
@@ -1207,7 +1207,7 @@ boolean OCI_API OCI_DateSysDate
     OCI_Date* date
 )
 {
-    CALL_IMPL(DateSysDate, date)
+    CALL_IMPL(OcilibDateSysDate, date)
 }
 
 boolean OCI_API OCI_DateToText
@@ -1218,7 +1218,7 @@ boolean OCI_API OCI_DateToText
     otext      * str
 )
 {
-    CALL_IMPL(DateToString, date, fmt, size, str)
+    CALL_IMPL(OcilibDateToString, date, fmt, size, str)
 }
 
 boolean OCI_API OCI_DateZoneToZone
@@ -1228,7 +1228,7 @@ boolean OCI_API OCI_DateZoneToZone
     const otext* zone2
 )
 {
-    CALL_IMPL(DateZoneToZone, date, zone1, zone2)
+    CALL_IMPL(OcilibDateZoneToZone, date, zone1, zone2)
 }
 
 boolean OCI_API OCI_DateToCTime
@@ -1238,7 +1238,7 @@ boolean OCI_API OCI_DateToCTime
     time_t   * pt
 )
 {
-    CALL_IMPL(DateToCTime, date, ptm, pt)
+    CALL_IMPL(OcilibDateToCTime, date, ptm, pt)
 }
 
 boolean OCI_API OCI_DateFromCTime
@@ -1248,7 +1248,7 @@ boolean OCI_API OCI_DateFromCTime
     time_t     t
 )
 {
-    CALL_IMPL(DateFromCTime, date, ptm, t)
+    CALL_IMPL(OcilibDateFromCTime, date, ptm, t)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1261,7 +1261,7 @@ OCI_Dequeue * OCI_API OCI_DequeueCreate
     const otext  *name
 )
 {
-    CALL_IMPL(DequeueCreate,typinf, name)
+    CALL_IMPL(OcilibDequeueCreate,typinf, name)
 }
 
 boolean OCI_API OCI_DequeueFree
@@ -1269,7 +1269,7 @@ boolean OCI_API OCI_DequeueFree
     OCI_Dequeue *dequeue
 )
 {
-    CALL_IMPL(DequeueFree, dequeue)
+    CALL_IMPL(OcilibDequeueFree, dequeue)
 }
 
 OCI_Msg * OCI_API OCI_DequeueGet
@@ -1277,7 +1277,7 @@ OCI_Msg * OCI_API OCI_DequeueGet
     OCI_Dequeue *dequeue
 )
 {
-    CALL_IMPL(DequeueGetMessage, dequeue)
+    CALL_IMPL(OcilibDequeueGetMessage, dequeue)
 }
 
 boolean OCI_API OCI_DequeueSubscribe
@@ -1288,7 +1288,7 @@ boolean OCI_API OCI_DequeueSubscribe
     POCI_NOTIFY_AQ callback
 )
 {
-    CALL_IMPL(DequeueSubscribe, dequeue, port, timeout, callback)
+    CALL_IMPL(OcilibDequeueSubscribe, dequeue, port, timeout, callback)
 }
 
 boolean OCI_API OCI_DequeueUnsubscribe
@@ -1296,7 +1296,7 @@ boolean OCI_API OCI_DequeueUnsubscribe
     OCI_Dequeue *dequeue
 )
 {
-    CALL_IMPL(DequeueUnsubscribe, dequeue)
+    CALL_IMPL(OcilibDequeueUnsubscribe, dequeue)
 }
 
 boolean OCI_API OCI_DequeueSetConsumer
@@ -1305,7 +1305,7 @@ boolean OCI_API OCI_DequeueSetConsumer
     const otext *consumer
 )
 {
-    CALL_IMPL(DequeueSetConsumer, dequeue, consumer)
+    CALL_IMPL(OcilibDequeueSetConsumer, dequeue, consumer)
 }
 
 const otext * OCI_API OCI_DequeueGetConsumer
@@ -1313,7 +1313,7 @@ const otext * OCI_API OCI_DequeueGetConsumer
     OCI_Dequeue *dequeue
 )
 {
-    CALL_IMPL(DequeueGetConsumer, dequeue)
+    CALL_IMPL(OcilibDequeueGetConsumer, dequeue)
 }
 
 boolean OCI_API OCI_DequeueSetCorrelation
@@ -1322,7 +1322,7 @@ boolean OCI_API OCI_DequeueSetCorrelation
     const otext *pattern
 )
 {
-    CALL_IMPL(DequeueSetCorrelation, dequeue, pattern)
+    CALL_IMPL(OcilibDequeueSetCorrelation, dequeue, pattern)
 }
 
 const otext * OCI_API OCI_DequeueGetCorrelation
@@ -1330,7 +1330,7 @@ const otext * OCI_API OCI_DequeueGetCorrelation
     OCI_Dequeue *dequeue
 )
 {
-    CALL_IMPL(DequeueGetCorrelation, dequeue)
+    CALL_IMPL(OcilibDequeueGetCorrelation, dequeue)
 }
 
 boolean OCI_API OCI_DequeueSetRelativeMsgID
@@ -1340,7 +1340,7 @@ boolean OCI_API OCI_DequeueSetRelativeMsgID
     unsigned int len
 )
 {
-    CALL_IMPL(DequeueSetRelativeMsgID, dequeue, id, len)
+    CALL_IMPL(OcilibDequeueSetRelativeMsgID, dequeue, id, len)
 }
 
 boolean OCI_API OCI_DequeueGetRelativeMsgID
@@ -1350,7 +1350,7 @@ boolean OCI_API OCI_DequeueGetRelativeMsgID
     unsigned int *len
 )
 {
-    CALL_IMPL(DequeueGetRelativeMsgID, dequeue, id, len)
+    CALL_IMPL(OcilibDequeueGetRelativeMsgID, dequeue, id, len)
 }
 
 boolean OCI_API OCI_DequeueSetVisibility
@@ -1359,7 +1359,7 @@ boolean OCI_API OCI_DequeueSetVisibility
     unsigned int visibility
 )
 {
-    CALL_IMPL(DequeueSetVisibility, dequeue, visibility)
+    CALL_IMPL(OcilibDequeueSetVisibility, dequeue, visibility)
 }
 
 unsigned int OCI_API OCI_DequeueGetVisibility
@@ -1367,7 +1367,7 @@ unsigned int OCI_API OCI_DequeueGetVisibility
     OCI_Dequeue *dequeue
 )
 {
-    CALL_IMPL(DequeueGetVisibility, dequeue)
+    CALL_IMPL(OcilibDequeueGetVisibility, dequeue)
 }
 
 boolean OCI_API OCI_DequeueSetMode
@@ -1376,7 +1376,7 @@ boolean OCI_API OCI_DequeueSetMode
     unsigned int mode
 )
 {
-    CALL_IMPL(DequeueSetMode, dequeue, mode)
+    CALL_IMPL(OcilibDequeueSetMode, dequeue, mode)
 }
 
 unsigned int OCI_API OCI_DequeueGetMode
@@ -1384,7 +1384,7 @@ unsigned int OCI_API OCI_DequeueGetMode
     OCI_Dequeue *dequeue
 )
 {
-    CALL_IMPL(DequeueGetMode, dequeue)
+    CALL_IMPL(OcilibDequeueGetMode, dequeue)
 }
 
 boolean OCI_API OCI_DequeueSetNavigation
@@ -1393,7 +1393,7 @@ boolean OCI_API OCI_DequeueSetNavigation
     unsigned int position
 )
 {
-    CALL_IMPL(DequeueSetNavigation, dequeue, position)
+    CALL_IMPL(OcilibDequeueSetNavigation, dequeue, position)
 }
 
 unsigned int OCI_API OCI_DequeueGetNavigation
@@ -1401,7 +1401,7 @@ unsigned int OCI_API OCI_DequeueGetNavigation
     OCI_Dequeue *dequeue
 )
 {
-    CALL_IMPL(DequeueGetNavigation, dequeue)
+    CALL_IMPL(OcilibDequeueGetNavigation, dequeue)
 }
 
 boolean OCI_API OCI_DequeueSetWaitTime
@@ -1410,7 +1410,7 @@ boolean OCI_API OCI_DequeueSetWaitTime
     int          timeout
 )
 {
-    CALL_IMPL(DequeueSetWaitTime, dequeue, timeout)
+    CALL_IMPL(OcilibDequeueSetWaitTime, dequeue, timeout)
 }
 
 int OCI_API OCI_DequeueGetWaitTime
@@ -1418,7 +1418,7 @@ int OCI_API OCI_DequeueGetWaitTime
     OCI_Dequeue *dequeue
 )
 {
-    CALL_IMPL(DequeueGetWaitTime, dequeue)
+    CALL_IMPL(OcilibDequeueGetWaitTime, dequeue)
 }
 
 boolean OCI_API OCI_DequeueSetAgentList
@@ -1428,7 +1428,7 @@ boolean OCI_API OCI_DequeueSetAgentList
     unsigned int count
 )
 {
-    CALL_IMPL(DequeueSetAgentList, dequeue, consumers, count)
+    CALL_IMPL(OcilibDequeueSetAgentList, dequeue, consumers, count)
 }
 
 OCI_Agent * OCI_API OCI_DequeueListen
@@ -1437,7 +1437,7 @@ OCI_Agent * OCI_API OCI_DequeueListen
     int          timeout
 )
 {
-    CALL_IMPL(DequeueListen, dequeue, timeout)
+    CALL_IMPL(OcilibDequeueListen, dequeue, timeout)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1452,7 +1452,7 @@ OCI_DirPath* OCI_API OCI_DirPathCreate
     unsigned int  nb_rows
 )
 {
-    CALL_IMPL(DirPathCreate, typinf, partition, nb_cols, nb_rows)
+    CALL_IMPL(OcilibDirPathCreate, typinf, partition, nb_cols, nb_rows)
 }
 
 boolean OCI_API OCI_DirPathFree
@@ -1460,7 +1460,7 @@ boolean OCI_API OCI_DirPathFree
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathFree, dp)
+    CALL_IMPL(OcilibDirPathFree, dp)
 }
 
 boolean OCI_API OCI_DirPathSetColumn
@@ -1472,7 +1472,7 @@ boolean OCI_API OCI_DirPathSetColumn
     const otext* format
 )
 {
-    CALL_IMPL(DirPathSetColumn, dp, index, name, maxsize, format)
+    CALL_IMPL(OcilibDirPathSetColumn, dp, index, name, maxsize, format)
 }
 
 boolean OCI_API OCI_DirPathPrepare
@@ -1480,7 +1480,7 @@ boolean OCI_API OCI_DirPathPrepare
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathPrepare, dp)
+    CALL_IMPL(OcilibDirPathPrepare, dp)
 }
 
 boolean OCI_API OCI_DirPathSetEntry
@@ -1493,7 +1493,7 @@ boolean OCI_API OCI_DirPathSetEntry
     boolean      complete
 )
 {
-    CALL_IMPL(DirPathSetEntry, dp, row, index, value, size, complete)
+    CALL_IMPL(OcilibDirPathSetEntry, dp, row, index, value, size, complete)
 }
 
 unsigned int OCI_API OCI_DirPathConvert
@@ -1501,7 +1501,7 @@ unsigned int OCI_API OCI_DirPathConvert
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathConvert, dp)
+    CALL_IMPL(OcilibDirPathConvert, dp)
 }
 
 unsigned int OCI_API OCI_DirPathLoad
@@ -1509,7 +1509,7 @@ unsigned int OCI_API OCI_DirPathLoad
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathLoad, dp)
+    CALL_IMPL(OcilibDirPathLoad, dp)
 }
 
 boolean OCI_API OCI_DirPathReset
@@ -1517,7 +1517,7 @@ boolean OCI_API OCI_DirPathReset
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathReset, dp)
+    CALL_IMPL(OcilibDirPathReset, dp)
 }
 
 boolean OCI_API OCI_DirPathFinish
@@ -1525,7 +1525,7 @@ boolean OCI_API OCI_DirPathFinish
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathFinish, dp)
+    CALL_IMPL(OcilibDirPathFinish, dp)
 }
 
 boolean OCI_API OCI_DirPathAbort
@@ -1533,7 +1533,7 @@ boolean OCI_API OCI_DirPathAbort
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathAbort, dp)
+    CALL_IMPL(OcilibDirPathAbort, dp)
 }
 
 boolean OCI_API OCI_DirPathSave
@@ -1541,7 +1541,7 @@ boolean OCI_API OCI_DirPathSave
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathSave, dp)
+    CALL_IMPL(OcilibDirPathSave, dp)
 }
 
 boolean OCI_API OCI_DirPathFlushRow
@@ -1549,7 +1549,7 @@ boolean OCI_API OCI_DirPathFlushRow
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathFlushRow, dp)
+    CALL_IMPL(OcilibDirPathFlushRow, dp)
 }
 
 boolean OCI_API OCI_DirPathSetCurrentRows
@@ -1558,7 +1558,7 @@ boolean OCI_API OCI_DirPathSetCurrentRows
     unsigned int nb_rows
 )
 {
-    CALL_IMPL(DirPathSetCurrentRows, dp, nb_rows)
+    CALL_IMPL(OcilibDirPathSetCurrentRows, dp, nb_rows)
 }
 
 unsigned int OCI_API OCI_DirPathGetCurrentRows
@@ -1566,7 +1566,7 @@ unsigned int OCI_API OCI_DirPathGetCurrentRows
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathGetCurrentRows, dp)
+    CALL_IMPL(OcilibDirPathGetCurrentRows, dp)
 }
 
 unsigned int OCI_API OCI_DirPathGetMaxRows
@@ -1574,7 +1574,7 @@ unsigned int OCI_API OCI_DirPathGetMaxRows
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathGetMaxRows, dp)
+    CALL_IMPL(OcilibDirPathGetMaxRows, dp)
 }
 
 boolean OCI_API OCI_DirPathSetDateFormat
@@ -1583,7 +1583,7 @@ boolean OCI_API OCI_DirPathSetDateFormat
     const otext* format
 )
 {
-    CALL_IMPL(DirPathSetDateFormat, dp, format)
+    CALL_IMPL(OcilibDirPathSetDateFormat, dp, format)
 }
 
 boolean OCI_API OCI_DirPathSetParallel
@@ -1592,7 +1592,7 @@ boolean OCI_API OCI_DirPathSetParallel
     boolean      value
 )
 {
-    CALL_IMPL(DirPathSetParallel, dp, value)
+    CALL_IMPL(OcilibDirPathSetParallel, dp, value)
 }
 
 boolean OCI_API OCI_DirPathSetNoLog
@@ -1601,7 +1601,7 @@ boolean OCI_API OCI_DirPathSetNoLog
     boolean      value
 )
 {
-    CALL_IMPL(DirPathSetNoLog, dp, value)
+    CALL_IMPL(OcilibDirPathSetNoLog, dp, value)
 }
 
 boolean OCI_API OCI_DirPathSetCacheSize
@@ -1610,7 +1610,7 @@ boolean OCI_API OCI_DirPathSetCacheSize
     unsigned int size
 )
 {
-    CALL_IMPL(DirPathSetCacheSize, dp, size)
+    CALL_IMPL(OcilibDirPathSetCacheSize, dp, size)
 }
 
 boolean OCI_API OCI_DirPathSetBufferSize
@@ -1619,7 +1619,7 @@ boolean OCI_API OCI_DirPathSetBufferSize
     unsigned int size
 )
 {
-    CALL_IMPL(DirPathSetBufferSize, dp, size)
+    CALL_IMPL(OcilibDirPathSetBufferSize, dp, size)
 }
 
 boolean OCI_API OCI_DirPathSetConvertMode
@@ -1628,7 +1628,7 @@ boolean OCI_API OCI_DirPathSetConvertMode
     unsigned int mode
 )
 {
-    CALL_IMPL(DirPathSetConvertMode, dp, mode)
+    CALL_IMPL(OcilibDirPathSetConvertMode, dp, mode)
 }
 
 unsigned int OCI_API OCI_DirPathGetRowCount
@@ -1636,7 +1636,7 @@ unsigned int OCI_API OCI_DirPathGetRowCount
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathGetRowCount, dp)
+    CALL_IMPL(OcilibDirPathGetRowCount, dp)
 }
 
 unsigned int OCI_API OCI_DirPathGetAffectedRows
@@ -1644,7 +1644,7 @@ unsigned int OCI_API OCI_DirPathGetAffectedRows
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathGetAffectedRows, dp)
+    CALL_IMPL(OcilibDirPathGetAffectedRows, dp)
 }
 
 unsigned int OCI_API OCI_DirPathGetErrorColumn
@@ -1652,7 +1652,7 @@ unsigned int OCI_API OCI_DirPathGetErrorColumn
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathGetErrorColumn, dp)
+    CALL_IMPL(OcilibDirPathGetErrorColumn, dp)
 }
 
 unsigned int OCI_API OCI_DirPathGetErrorRow
@@ -1660,7 +1660,7 @@ unsigned int OCI_API OCI_DirPathGetErrorRow
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(DirPathGetErrorRow, dp)
+    CALL_IMPL(OcilibDirPathGetErrorRow, dp)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1672,7 +1672,7 @@ OCI_Elem* OCI_API OCI_ElemCreate
     OCI_TypeInfo* typinf
 )
 {
-    CALL_IMPL(ElementCreate, typinf)
+    CALL_IMPL(OcilibElementCreate, typinf)
 }
 
 boolean OCI_API OCI_ElemFree
@@ -1680,7 +1680,7 @@ boolean OCI_API OCI_ElemFree
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementFree, elem)
+    CALL_IMPL(OcilibElementFree, elem)
 }
 
 boolean OCI_API OCI_ElemGetBoolean
@@ -1688,7 +1688,7 @@ boolean OCI_API OCI_ElemGetBoolean
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetBoolean, elem)
+    CALL_IMPL(OcilibElementGetBoolean, elem)
 }
 
 OCI_Number* OCI_API OCI_ElemGetNumber
@@ -1696,7 +1696,7 @@ OCI_Number* OCI_API OCI_ElemGetNumber
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetNumber, elem)
+    CALL_IMPL(OcilibElementGetNumber, elem)
 }
 
 short OCI_API OCI_ElemGetShort
@@ -1704,7 +1704,7 @@ short OCI_API OCI_ElemGetShort
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetShort, elem)
+    CALL_IMPL(OcilibElementGetShort, elem)
 }
 
 unsigned short OCI_API OCI_ElemGetUnsignedShort
@@ -1712,7 +1712,7 @@ unsigned short OCI_API OCI_ElemGetUnsignedShort
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetUnsignedShort, elem)
+    CALL_IMPL(OcilibElementGetUnsignedShort, elem)
 }
 
 int OCI_API OCI_ElemGetInt
@@ -1720,7 +1720,7 @@ int OCI_API OCI_ElemGetInt
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElemGetInt, elem)
+    CALL_IMPL(OcilibElemGetInt, elem)
 }
 
 unsigned int OCI_API OCI_ElemGetUnsignedInt
@@ -1728,7 +1728,7 @@ unsigned int OCI_API OCI_ElemGetUnsignedInt
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetUnsignedInt, elem)
+    CALL_IMPL(OcilibElementGetUnsignedInt, elem)
 }
 
 big_int OCI_API OCI_ElemGetBigInt
@@ -1736,7 +1736,7 @@ big_int OCI_API OCI_ElemGetBigInt
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetBigInt, elem)
+    CALL_IMPL(OcilibElementGetBigInt, elem)
 }
 
 big_uint OCI_API OCI_ElemGetUnsignedBigInt
@@ -1744,7 +1744,7 @@ big_uint OCI_API OCI_ElemGetUnsignedBigInt
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetUnsignedBigInt, elem)
+    CALL_IMPL(OcilibElementGetUnsignedBigInt, elem)
 }
 
 double OCI_API OCI_ElemGetDouble
@@ -1752,7 +1752,7 @@ double OCI_API OCI_ElemGetDouble
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetDouble, elem)
+    CALL_IMPL(OcilibElementGetDouble, elem)
 }
 
 float OCI_API OCI_ElemGetFloat
@@ -1760,7 +1760,7 @@ float OCI_API OCI_ElemGetFloat
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetFloat, elem)
+    CALL_IMPL(OcilibElementGetFloat, elem)
 }
 
 const otext* OCI_API OCI_ElemGetString
@@ -1768,7 +1768,7 @@ const otext* OCI_API OCI_ElemGetString
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetString, elem)
+    CALL_IMPL(OcilibElementGetString, elem)
 }
 
 unsigned int OCI_API OCI_ElemGetRaw
@@ -1778,7 +1778,7 @@ unsigned int OCI_API OCI_ElemGetRaw
     unsigned int len
 )
 {
-    CALL_IMPL(ElementGetRaw, elem, value, len)
+    CALL_IMPL(OcilibElementGetRaw, elem, value, len)
 }
 
 unsigned int OCI_API OCI_ElemGetRawSize
@@ -1786,7 +1786,7 @@ unsigned int OCI_API OCI_ElemGetRawSize
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetRawSize, elem)
+    CALL_IMPL(OcilibElementGetRawSize, elem)
 }
 
 OCI_Date* OCI_API OCI_ElemGetDate
@@ -1794,7 +1794,7 @@ OCI_Date* OCI_API OCI_ElemGetDate
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetDate, elem)
+    CALL_IMPL(OcilibElementGetDate, elem)
 }
 
 OCI_Timestamp* OCI_API OCI_ElemGetTimestamp
@@ -1802,7 +1802,7 @@ OCI_Timestamp* OCI_API OCI_ElemGetTimestamp
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetTimestamp, elem)
+    CALL_IMPL(OcilibElementGetTimestamp, elem)
 }
 
 OCI_Interval* OCI_API OCI_ElemGetInterval
@@ -1810,7 +1810,7 @@ OCI_Interval* OCI_API OCI_ElemGetInterval
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetInterval, elem)
+    CALL_IMPL(OcilibElementGetInterval, elem)
 }
 
 OCI_Lob* OCI_API OCI_ElemGetLob
@@ -1818,7 +1818,7 @@ OCI_Lob* OCI_API OCI_ElemGetLob
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetLob, elem)
+    CALL_IMPL(OcilibElementGetLob, elem)
 }
 
 OCI_File* OCI_API OCI_ElemGetFile
@@ -1826,7 +1826,7 @@ OCI_File* OCI_API OCI_ElemGetFile
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetFile, elem)
+    CALL_IMPL(OcilibElementGetFile, elem)
 }
 
 OCI_Ref* OCI_API OCI_ElemGetRef
@@ -1834,7 +1834,7 @@ OCI_Ref* OCI_API OCI_ElemGetRef
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetReference, elem)
+    CALL_IMPL(OcilibElementGetReference, elem)
 }
 
 OCI_Object* OCI_API OCI_ElemGetObject
@@ -1842,7 +1842,7 @@ OCI_Object* OCI_API OCI_ElemGetObject
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetObject, elem)
+    CALL_IMPL(OcilibElementGetObject, elem)
 }
 
 OCI_Coll* OCI_API OCI_ElemGetColl
@@ -1850,7 +1850,7 @@ OCI_Coll* OCI_API OCI_ElemGetColl
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementGetCollection, elem)
+    CALL_IMPL(OcilibElementGetCollection, elem)
 }
 
 boolean OCI_API OCI_ElemSetBoolean
@@ -1859,7 +1859,7 @@ boolean OCI_API OCI_ElemSetBoolean
     boolean   value
 )
 {
-    CALL_IMPL(ElementSetBoolean, elem, value)
+    CALL_IMPL(OcilibElementSetBoolean, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetNumber
@@ -1868,7 +1868,7 @@ boolean OCI_API OCI_ElemSetNumber
     OCI_Number* value
 )
 {
-    CALL_IMPL(ElementSetNumber, elem, value)
+    CALL_IMPL(OcilibElementSetNumber, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetShort
@@ -1877,7 +1877,7 @@ boolean OCI_API OCI_ElemSetShort
     short     value
 )
 {
-    CALL_IMPL(ElementSetShort, elem, value)
+    CALL_IMPL(OcilibElementSetShort, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetUnsignedShort
@@ -1886,7 +1886,7 @@ boolean OCI_API OCI_ElemSetUnsignedShort
     unsigned short value
 )
 {
-    CALL_IMPL(ElementSetUnsignedShort, elem, value)
+    CALL_IMPL(OcilibElementSetUnsignedShort, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetInt
@@ -1895,7 +1895,7 @@ boolean OCI_API OCI_ElemSetInt
     int       value
 )
 {
-    CALL_IMPL(ElementSetInt, elem, value)
+    CALL_IMPL(OcilibElementSetInt, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetUnsignedInt
@@ -1904,7 +1904,7 @@ boolean OCI_API OCI_ElemSetUnsignedInt
     unsigned int value
 )
 {
-    CALL_IMPL(ElementSetUnsignedInt, elem, value)
+    CALL_IMPL(OcilibElementSetUnsignedInt, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetBigInt
@@ -1913,7 +1913,7 @@ boolean OCI_API OCI_ElemSetBigInt
     big_int   value
 )
 {
-    CALL_IMPL(ElementSetBigInt, elem, value)
+    CALL_IMPL(OcilibElementSetBigInt, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetUnsignedBigInt
@@ -1922,7 +1922,7 @@ boolean OCI_API OCI_ElemSetUnsignedBigInt
     big_uint  value
 )
 {
-    CALL_IMPL(ElementSetUnsignedBigInt, elem, value)
+    CALL_IMPL(OcilibElementSetUnsignedBigInt, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetDouble
@@ -1931,7 +1931,7 @@ boolean OCI_API OCI_ElemSetDouble
     double    value
 )
 {
-    CALL_IMPL(ElementSetDouble, elem, value)
+    CALL_IMPL(OcilibElementSetDouble, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetFloat
@@ -1940,7 +1940,7 @@ boolean OCI_API OCI_ElemSetFloat
     float     value
 )
 {
-    CALL_IMPL(ElementSetFloat, elem, value)
+    CALL_IMPL(OcilibElementSetFloat, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetString
@@ -1949,7 +1949,7 @@ boolean OCI_API OCI_ElemSetString
     const otext* value
 )
 {
-    CALL_IMPL(ElementSetString, elem, value)
+    CALL_IMPL(OcilibElementSetString, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetRaw
@@ -1959,7 +1959,7 @@ boolean OCI_API OCI_ElemSetRaw
     unsigned int len
 )
 {
-    CALL_IMPL(ElementSetRaw, elem, value, len)
+    CALL_IMPL(OcilibElementSetRaw, elem, value, len)
 }
 
 boolean OCI_API OCI_ElemSetDate
@@ -1968,7 +1968,7 @@ boolean OCI_API OCI_ElemSetDate
     OCI_Date* value
 )
 {
-    CALL_IMPL(ElementSetDate, elem, value)
+    CALL_IMPL(OcilibElementSetDate, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetTimestamp
@@ -1977,7 +1977,7 @@ boolean OCI_API OCI_ElemSetTimestamp
     OCI_Timestamp* value
 )
 {
-    CALL_IMPL(ElementSetTimestamp, elem, value)
+    CALL_IMPL(OcilibElementSetTimestamp, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetInterval
@@ -1986,7 +1986,7 @@ boolean OCI_API OCI_ElemSetInterval
     OCI_Interval* value
 )
 {
-    CALL_IMPL(ElementSetInterval, elem, value)
+    CALL_IMPL(OcilibElementSetInterval, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetColl
@@ -1995,7 +1995,7 @@ boolean OCI_API OCI_ElemSetColl
     OCI_Coll* value
 )
 {
-    CALL_IMPL(ElementSetCollection, elem, value)
+    CALL_IMPL(OcilibElementSetCollection, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetObject
@@ -2004,7 +2004,7 @@ boolean OCI_API OCI_ElemSetObject
     OCI_Object* value
 )
 {
-    CALL_IMPL(ElementSetObject, elem, value)
+    CALL_IMPL(OcilibElementSetObject, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetLob
@@ -2013,7 +2013,7 @@ boolean OCI_API OCI_ElemSetLob
     OCI_Lob * value
 )
 {
-    CALL_IMPL(ElementSetLob, elem, value)
+    CALL_IMPL(OcilibElementSetLob, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetFile
@@ -2022,7 +2022,7 @@ boolean OCI_API OCI_ElemSetFile
     OCI_File* value
 )
 {
-    CALL_IMPL(ElementSetFile, elem, value)
+    CALL_IMPL(OcilibElementSetFile, elem, value)
 }
 
 boolean OCI_API OCI_ElemSetRef
@@ -2031,7 +2031,7 @@ boolean OCI_API OCI_ElemSetRef
     OCI_Ref * value
 )
 {
-    CALL_IMPL(ElementSetReference, elem, value)
+    CALL_IMPL(OcilibElementSetReference, elem, value)
 }
 
 boolean OCI_API OCI_ElemIsNull
@@ -2039,7 +2039,7 @@ boolean OCI_API OCI_ElemIsNull
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementIsNull, elem)
+    CALL_IMPL(OcilibElementIsNull, elem)
 }
 
 boolean OCI_API OCI_ElemSetNull
@@ -2047,7 +2047,7 @@ boolean OCI_API OCI_ElemSetNull
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(ElementSetNull, elem)
+    CALL_IMPL(OcilibElementSetNull, elem)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2060,7 +2060,7 @@ OCI_Enqueue* OCI_API OCI_EnqueueCreate
     const otext * name
 )
 {
-    CALL_IMPL(EnqueueCreate, typinf, name)
+    CALL_IMPL(OcilibEnqueueCreate, typinf, name)
 }
 
 boolean OCI_API OCI_EnqueueFree
@@ -2068,7 +2068,7 @@ boolean OCI_API OCI_EnqueueFree
     OCI_Enqueue* enqueue
 )
 {
-    CALL_IMPL(EnqueueFree, enqueue)
+    CALL_IMPL(OcilibEnqueueFree, enqueue)
 }
 
 boolean OCI_API OCI_EnqueuePut
@@ -2077,7 +2077,7 @@ boolean OCI_API OCI_EnqueuePut
     OCI_Msg    * msg
 )
 {
-    CALL_IMPL(EnqueuePut, enqueue, msg)
+    CALL_IMPL(OcilibEnqueuePut, enqueue, msg)
 }
 
 boolean OCI_API OCI_EnqueueSetSequenceDeviation
@@ -2086,7 +2086,7 @@ boolean OCI_API OCI_EnqueueSetSequenceDeviation
     unsigned int sequence
 )
 {
-    CALL_IMPL(EnqueueSetSequenceDeviation, enqueue, sequence)
+    CALL_IMPL(OcilibEnqueueSetSequenceDeviation, enqueue, sequence)
 }
 
 unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
@@ -2094,7 +2094,7 @@ unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
     OCI_Enqueue* enqueue
 )
 {
-    CALL_IMPL(EnqueueGetSequenceDeviation, enqueue)
+    CALL_IMPL(OcilibEnqueueGetSequenceDeviation, enqueue)
 }
 
 boolean OCI_API OCI_EnqueueSetVisibility
@@ -2103,7 +2103,7 @@ boolean OCI_API OCI_EnqueueSetVisibility
     unsigned int visibility
 )
 {
-    CALL_IMPL(EnqueueSetVisibility, enqueue, visibility)
+    CALL_IMPL(OcilibEnqueueSetVisibility, enqueue, visibility)
 }
 
 unsigned int OCI_API OCI_EnqueueGetVisibility
@@ -2111,7 +2111,7 @@ unsigned int OCI_API OCI_EnqueueGetVisibility
     OCI_Enqueue* enqueue
 )
 {
-    CALL_IMPL(EnqueueGetVisibility, enqueue)
+    CALL_IMPL(OcilibEnqueueGetVisibility, enqueue)
 }
 
 boolean OCI_API OCI_EnqueueSetRelativeMsgID
@@ -2121,7 +2121,7 @@ boolean OCI_API OCI_EnqueueSetRelativeMsgID
     unsigned int len
 )
 {
-    CALL_IMPL(EnqueueSetRelativeMsgID, enqueue, id, len)
+    CALL_IMPL(OcilibEnqueueSetRelativeMsgID, enqueue, id, len)
 }
 
 boolean OCI_API OCI_EnqueueGetRelativeMsgID
@@ -2131,7 +2131,7 @@ boolean OCI_API OCI_EnqueueGetRelativeMsgID
     unsigned int* len
 )
 {
-    CALL_IMPL(EnqueueGetRelativeMsgID, enqueue, id, len)
+    CALL_IMPL(OcilibEnqueueGetRelativeMsgID, enqueue, id, len)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2143,7 +2143,7 @@ const otext* OCI_API OCI_ErrorGetString
     OCI_Error* err
 )
 {
-    return ErrorGetString(err);
+    return OcilibErrorGetString(err);
 }
 
 unsigned int OCI_API OCI_ErrorGetType
@@ -2151,7 +2151,7 @@ unsigned int OCI_API OCI_ErrorGetType
     OCI_Error* err
 )
 {
-    return ErrorGetType(err);
+    return OcilibErrorGetType(err);
 }
 
 int OCI_API OCI_ErrorGetOCICode
@@ -2159,7 +2159,7 @@ int OCI_API OCI_ErrorGetOCICode
     OCI_Error* err
 )
 {
-    return ErrorGetOCICode(err);
+    return OcilibErrorGetOCICode(err);
 }
 
 int OCI_API OCI_ErrorGetInternalCode
@@ -2167,7 +2167,7 @@ int OCI_API OCI_ErrorGetInternalCode
     OCI_Error* err
 )
 {
-    return ErrorGetInternalCode(err);
+    return OcilibErrorGetInternalCode(err);
 }
 
 OCI_Connection* OCI_API OCI_ErrorGetConnection
@@ -2175,7 +2175,7 @@ OCI_Connection* OCI_API OCI_ErrorGetConnection
     OCI_Error* err
 )
 {
-    return ErrorGetConnection(err);
+    return OcilibErrorGetConnection(err);
 }
 
 OCI_Statement* OCI_API OCI_ErrorGetStatement
@@ -2183,7 +2183,7 @@ OCI_Statement* OCI_API OCI_ErrorGetStatement
     OCI_Error* err
 )
 {
-    return ErrorGetStatement(err);
+    return OcilibErrorGetStatement(err);
 }
 
 unsigned int OCI_API OCI_ErrorGetRow
@@ -2191,7 +2191,7 @@ unsigned int OCI_API OCI_ErrorGetRow
     OCI_Error* err
 )
 {
-    return ErrorGetRow(err);
+    return OcilibErrorGetRow(err);
 }
 
 const otext* OCI_API OCI_ErrorGetLocation
@@ -2199,7 +2199,7 @@ const otext* OCI_API OCI_ErrorGetLocation
     OCI_Error* err
 )
 {
-    return ErrorGetLocation(err);
+    return OcilibErrorGetLocation(err);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2211,7 +2211,7 @@ unsigned int OCI_API OCI_EventGetType
     OCI_Event* event
 )
 {
-    CALL_IMPL(EventGetType, event)
+    CALL_IMPL(OcilibEventGetType, event)
 }
 
 unsigned int OCI_API OCI_EventGetOperation
@@ -2219,7 +2219,7 @@ unsigned int OCI_API OCI_EventGetOperation
     OCI_Event* event
 )
 {
-    CALL_IMPL(EventGetOperation, event)
+    CALL_IMPL(OcilibEventGetOperation, event)
 }
 
 const otext* OCI_API OCI_EventGetDatabase
@@ -2227,7 +2227,7 @@ const otext* OCI_API OCI_EventGetDatabase
     OCI_Event* event
 )
 {
-    CALL_IMPL(EventGetDatabase, event)
+    CALL_IMPL(OcilibEventGetDatabase, event)
 }
 
 const otext* OCI_API OCI_EventGetObject
@@ -2235,7 +2235,7 @@ const otext* OCI_API OCI_EventGetObject
     OCI_Event* event
 )
 {
-    CALL_IMPL(EventGetObject, event)
+    CALL_IMPL(OcilibEventGetObject, event)
 }
 
 const otext* OCI_API OCI_EventGetRowid
@@ -2243,7 +2243,7 @@ const otext* OCI_API OCI_EventGetRowid
     OCI_Event* event
 )
 {
-    CALL_IMPL(EventGetRowid, event)
+    CALL_IMPL(OcilibEventGetRowid, event)
 }
 
 OCI_Subscription* OCI_API OCI_EventGetSubscription
@@ -2251,7 +2251,7 @@ OCI_Subscription* OCI_API OCI_EventGetSubscription
     OCI_Event* event
 )
 {
-    CALL_IMPL(EventGetSubscription, event)
+    CALL_IMPL(OcilibEventGetSubscription, event)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2264,7 +2264,7 @@ OCI_File* OCI_API OCI_FileCreate
     unsigned int    type
 )
 {
-    CALL_IMPL(FileCreate, con, type)
+    CALL_IMPL(OcilibFileCreate, con, type)
 }
 
 boolean OCI_API OCI_FileFree
@@ -2272,7 +2272,7 @@ boolean OCI_API OCI_FileFree
     OCI_File* file
 )
 {
-    CALL_IMPL(FileFree, file)
+    CALL_IMPL(OcilibFileFree, file)
 }
 
 OCI_File** OCI_API OCI_FileArrayCreate
@@ -2282,7 +2282,7 @@ OCI_File** OCI_API OCI_FileArrayCreate
     unsigned int    nbelem
 )
 {
-    CALL_IMPL(FileCreateArray, con, type, nbelem)
+    CALL_IMPL(OcilibFileCreateArray, con, type, nbelem)
 }
 
 boolean OCI_API OCI_FileArrayFree
@@ -2290,7 +2290,7 @@ boolean OCI_API OCI_FileArrayFree
     OCI_File** files
 )
 {
-    CALL_IMPL(FileFreeArray, files)
+    CALL_IMPL(OcilibFileFreeArray, files)
 }
 
 unsigned int OCI_API OCI_FileGetType
@@ -2298,7 +2298,7 @@ unsigned int OCI_API OCI_FileGetType
     OCI_File* file
 )
 {
-    CALL_IMPL(FileGetType, file)
+    CALL_IMPL(OcilibFileGetType, file)
 }
 
 boolean OCI_API OCI_FileSeek
@@ -2308,7 +2308,7 @@ boolean OCI_API OCI_FileSeek
     unsigned int mode
 )
 {
-    CALL_IMPL(FileSeek, file, offset, mode)
+    CALL_IMPL(OcilibFileSeek, file, offset, mode)
 }
 
 big_uint OCI_API OCI_FileGetOffset
@@ -2316,7 +2316,7 @@ big_uint OCI_API OCI_FileGetOffset
     OCI_File* file
 )
 {
-    CALL_IMPL(FileGetOffset, file)
+    CALL_IMPL(OcilibFileGetOffset, file)
 }
 
 unsigned int OCI_API OCI_FileRead
@@ -2326,7 +2326,7 @@ unsigned int OCI_API OCI_FileRead
     unsigned int len
 )
 {
-    CALL_IMPL(FileRead, file, buffer, len)
+    CALL_IMPL(OcilibFileRead, file, buffer, len)
 }
 
 big_uint OCI_API OCI_FileGetSize
@@ -2334,7 +2334,7 @@ big_uint OCI_API OCI_FileGetSize
     OCI_File* file
 )
 {
-    CALL_IMPL(FileGetSize, file)
+    CALL_IMPL(OcilibFileGetSize, file)
 }
 
 boolean OCI_API OCI_FileExists
@@ -2342,7 +2342,7 @@ boolean OCI_API OCI_FileExists
     OCI_File* file
 )
 {
-    CALL_IMPL(FileExists, file)
+    CALL_IMPL(OcilibFileExists, file)
 }
 
 boolean OCI_API OCI_FileSetName
@@ -2352,7 +2352,7 @@ boolean OCI_API OCI_FileSetName
     const otext* name
 )
 {
-    CALL_IMPL(FileSetName, file, dir, name)
+    CALL_IMPL(OcilibFileSetName, file, dir, name)
 }
 
 const otext* OCI_API OCI_FileGetDirectory
@@ -2360,7 +2360,7 @@ const otext* OCI_API OCI_FileGetDirectory
     OCI_File* file
 )
 {
-    CALL_IMPL(FileGetDirectory, file)
+    CALL_IMPL(OcilibFileGetDirectory, file)
 }
 
 const otext* OCI_API OCI_FileGetName
@@ -2368,7 +2368,7 @@ const otext* OCI_API OCI_FileGetName
     OCI_File* file
 )
 {
-    CALL_IMPL(FileGetName, file)
+    CALL_IMPL(OcilibFileGetName, file)
 }
 
 boolean OCI_API OCI_FileOpen
@@ -2376,7 +2376,7 @@ boolean OCI_API OCI_FileOpen
     OCI_File* file
 )
 {
-    CALL_IMPL(FileOpen, file)
+    CALL_IMPL(OcilibFileOpen, file)
 }
 
 boolean OCI_API OCI_FileIsOpen
@@ -2384,7 +2384,7 @@ boolean OCI_API OCI_FileIsOpen
     OCI_File* file
 )
 {
-    CALL_IMPL(FileIsOpen, file)
+    CALL_IMPL(OcilibFileIsOpen, file)
 }
 
 boolean OCI_API OCI_FileClose
@@ -2392,7 +2392,7 @@ boolean OCI_API OCI_FileClose
     OCI_File* file
 )
 {
-    CALL_IMPL(FileClose, file)
+    CALL_IMPL(OcilibFileClose, file)
 }
 
 boolean OCI_API OCI_FileIsEqual
@@ -2401,7 +2401,7 @@ boolean OCI_API OCI_FileIsEqual
     OCI_File* file2
 )
 {
-    CALL_IMPL(FileIsEqual, file, file2)
+    CALL_IMPL(OcilibFileIsEqual, file, file2)
 }
 
 boolean OCI_API OCI_FileAssign
@@ -2410,7 +2410,7 @@ boolean OCI_API OCI_FileAssign
     OCI_File* file_src
 )
 {
-    CALL_IMPL(FileAssign, file, file_src)
+    CALL_IMPL(OcilibFileAssign, file, file_src)
 }
 
 OCI_Connection* OCI_API OCI_FileGetConnection
@@ -2418,7 +2418,7 @@ OCI_Connection* OCI_API OCI_FileGetConnection
     OCI_File* file
 )
 {
-    CALL_IMPL(FileGetConnection, file)
+    CALL_IMPL(OcilibFileGetConnection, file)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2430,7 +2430,7 @@ const void* OCI_API OCI_HandleGetEnvironment
     void
 )
 {
-    CALL_IMPL(HandleGetEnvironment)
+    CALL_IMPL(OcilibHandleGetEnvironment)
 }
 
 const void* OCI_API OCI_HandleGetContext
@@ -2438,7 +2438,7 @@ const void* OCI_API OCI_HandleGetContext
     OCI_Connection* con
 )
 {
-    CALL_IMPL(HandleGetContext, con)
+    CALL_IMPL(OcilibHandleGetContext, con)
 }
 
 const void* OCI_API OCI_HandleGetServer
@@ -2446,7 +2446,7 @@ const void* OCI_API OCI_HandleGetServer
     OCI_Connection* con
 )
 {
-    CALL_IMPL(HandleGetServer, con)
+    CALL_IMPL(OcilibHandleGetServer, con)
 }
 
 const void* OCI_API OCI_HandleGetError
@@ -2454,7 +2454,7 @@ const void* OCI_API OCI_HandleGetError
     OCI_Connection* con
 )
 {
-    CALL_IMPL(HandleGetError, con)
+    CALL_IMPL(OcilibHandleGetError, con)
 }
 
 const void* OCI_API OCI_HandleGetSession
@@ -2462,7 +2462,7 @@ const void* OCI_API OCI_HandleGetSession
     OCI_Connection* con
 )
 {
-    CALL_IMPL(HandleGetSession, con)
+    CALL_IMPL(OcilibHandleGetSession, con)
 }
 
 const void* OCI_API OCI_HandleGetTransaction
@@ -2470,7 +2470,7 @@ const void* OCI_API OCI_HandleGetTransaction
     OCI_Transaction* trans
 )
 {
-    CALL_IMPL(HandleGetTransaction, trans)
+    CALL_IMPL(OcilibHandleGetTransaction, trans)
 }
 
 const void* OCI_API OCI_HandleGetStatement
@@ -2478,7 +2478,7 @@ const void* OCI_API OCI_HandleGetStatement
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(HandleGetStatement, stmt)
+    CALL_IMPL(OcilibHandleGetStatement, stmt)
 }
 
 const void* OCI_API OCI_HandleGetLob
@@ -2486,7 +2486,7 @@ const void* OCI_API OCI_HandleGetLob
     OCI_Lob* lob
 )
 {
-    CALL_IMPL(HandleGetLob, lob)
+    CALL_IMPL(OcilibHandleGetLob, lob)
 }
 
 const void* OCI_API OCI_HandleGetFile
@@ -2494,7 +2494,7 @@ const void* OCI_API OCI_HandleGetFile
     OCI_File* file
 )
 {
-    CALL_IMPL(HandleGetFile, file)
+    CALL_IMPL(OcilibHandleGetFile, file)
 }
 
 const void* OCI_API OCI_HandleGetDate
@@ -2502,7 +2502,7 @@ const void* OCI_API OCI_HandleGetDate
     OCI_Date* date
 )
 {
-    CALL_IMPL(HandleGetDate, date)
+    CALL_IMPL(OcilibHandleGetDate, date)
 }
 
 const void* OCI_API OCI_HandleGetTimestamp
@@ -2510,7 +2510,7 @@ const void* OCI_API OCI_HandleGetTimestamp
     OCI_Timestamp* tmsp
 )
 {
-    CALL_IMPL(HandleGetTimestamp, tmsp)
+    CALL_IMPL(OcilibHandleGetTimestamp, tmsp)
 }
 
 const void* OCI_API OCI_HandleGetInterval
@@ -2518,7 +2518,7 @@ const void* OCI_API OCI_HandleGetInterval
     OCI_Interval* itv
 )
 {
-    CALL_IMPL(HandleGetInterval, itv)
+    CALL_IMPL(OcilibHandleGetInterval, itv)
 }
 
 const void* OCI_API OCI_HandleGetObject
@@ -2526,7 +2526,7 @@ const void* OCI_API OCI_HandleGetObject
     OCI_Object* obj
 )
 {
-    CALL_IMPL(HandleGetObject, obj)
+    CALL_IMPL(OcilibHandleGetObject, obj)
 }
 
 const void* OCI_API OCI_HandleGetColl
@@ -2534,7 +2534,7 @@ const void* OCI_API OCI_HandleGetColl
     OCI_Coll* coll
 )
 {
-    CALL_IMPL(HandleGetColl, coll)
+    CALL_IMPL(OcilibHandleGetColl, coll)
 }
 
 const void* OCI_API OCI_HandleGetRef
@@ -2542,7 +2542,7 @@ const void* OCI_API OCI_HandleGetRef
     OCI_Ref* ref
 )
 {
-    CALL_IMPL(HandleGetReference, ref)
+    CALL_IMPL(OcilibHandleGetReference, ref)
 }
 
 const void* OCI_API OCI_HandleGetMutex
@@ -2550,7 +2550,7 @@ const void* OCI_API OCI_HandleGetMutex
     OCI_Mutex* mutex
 )
 {
-    CALL_IMPL(HandleGetMutex, mutex)
+    CALL_IMPL(OcilibHandleGetMutex, mutex)
 }
 
 const void* OCI_API OCI_HandleGetThreadID
@@ -2558,7 +2558,7 @@ const void* OCI_API OCI_HandleGetThreadID
     OCI_Thread* thread
 )
 {
-    CALL_IMPL(HandleGetThreadID, thread)
+    CALL_IMPL(OcilibHandleGetThreadID, thread)
 }
 
 const void* OCI_API OCI_HandleGetThread
@@ -2566,7 +2566,7 @@ const void* OCI_API OCI_HandleGetThread
     OCI_Thread* thread
 )
 {
-    CALL_IMPL(HandleGetThread, thread)
+    CALL_IMPL(OcilibHandleGetThread, thread)
 }
 
 const void* OCI_API OCI_HandleGetDirPathCtx
@@ -2574,7 +2574,7 @@ const void* OCI_API OCI_HandleGetDirPathCtx
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(HandleGetDirPathCtx, dp)
+    CALL_IMPL(OcilibHandleGetDirPathCtx, dp)
 }
 
 const void* OCI_API OCI_HandleGetDirPathColArray
@@ -2582,7 +2582,7 @@ const void* OCI_API OCI_HandleGetDirPathColArray
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(HandleGetDirPathColArray, dp)
+    CALL_IMPL(OcilibHandleGetDirPathColArray, dp)
 }
 
 const void* OCI_API OCI_HandleGetDirPathStream
@@ -2590,7 +2590,7 @@ const void* OCI_API OCI_HandleGetDirPathStream
     OCI_DirPath* dp
 )
 {
-    CALL_IMPL(HandleGetDirPathStream, dp)
+    CALL_IMPL(OcilibHandleGetDirPathStream, dp)
 }
 
 const void* OCI_API OCI_HandleGetSubscription
@@ -2598,7 +2598,7 @@ const void* OCI_API OCI_HandleGetSubscription
     OCI_Subscription* sub
 )
 {
-    CALL_IMPL(HandleGetSubscription, sub)
+    CALL_IMPL(OcilibHandleGetSubscription, sub)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2611,7 +2611,7 @@ OCI_HashTable* OCI_API OCI_HashCreate
     unsigned int type
 )
 {
-    CALL_IMPL(HashCreate, size, type)
+    CALL_IMPL(OcilibHashCreate, size, type)
 }
 
 boolean OCI_API OCI_HashFree
@@ -2619,7 +2619,7 @@ boolean OCI_API OCI_HashFree
     OCI_HashTable* table
 )
 {
-    CALL_IMPL(HashFree, table)
+    CALL_IMPL(OcilibHashFree, table)
 }
 
 unsigned int OCI_API OCI_HashGetSize
@@ -2627,7 +2627,7 @@ unsigned int OCI_API OCI_HashGetSize
     OCI_HashTable* table
 )
 {
-    CALL_IMPL(HashGetSize, table)
+    CALL_IMPL(OcilibHashGetSize, table)
 }
 
 unsigned int OCI_API OCI_HashGetType
@@ -2635,7 +2635,7 @@ unsigned int OCI_API OCI_HashGetType
     OCI_HashTable* table
 )
 {
-    CALL_IMPL(HashGetType, table)
+    CALL_IMPL(OcilibHashGetType, table)
 }
 
 boolean OCI_API OCI_HashAddString
@@ -2645,7 +2645,7 @@ boolean OCI_API OCI_HashAddString
     const otext  * value
 )
 {
-    CALL_IMPL(HashAddString, table, key, value)
+    CALL_IMPL(OcilibHashAddString, table, key, value)
 }
 
 const otext* OCI_API OCI_HashGetString
@@ -2654,7 +2654,7 @@ const otext* OCI_API OCI_HashGetString
     const otext  * key
 )
 {
-    CALL_IMPL(HashGetString, table, key)
+    CALL_IMPL(OcilibHashGetString, table, key)
 }
 
 boolean OCI_API OCI_HashAddInt
@@ -2664,7 +2664,7 @@ boolean OCI_API OCI_HashAddInt
     int            value
 )
 {
-    CALL_IMPL(HashAddInt, table, key, value)
+    CALL_IMPL(OcilibHashAddInt, table, key, value)
 }
 
 int OCI_API OCI_HashGetInt
@@ -2673,7 +2673,7 @@ int OCI_API OCI_HashGetInt
     const otext  * key
 )
 {
-    CALL_IMPL(HashGetInt, table, key)
+    CALL_IMPL(OcilibHashGetInt, table, key)
 }
 
 boolean OCI_API OCI_HashAddPointer
@@ -2683,7 +2683,7 @@ boolean OCI_API OCI_HashAddPointer
     void         * value
 )
 {
-    CALL_IMPL(HashAddPointer, table, key, value)
+    CALL_IMPL(OcilibHashAddPointer, table, key, value)
 }
 
 void* OCI_API OCI_HashGetPointer
@@ -2692,7 +2692,7 @@ void* OCI_API OCI_HashGetPointer
     const otext  * key
 )
 {
-    CALL_IMPL(HashGetPointer, table, key)
+    CALL_IMPL(OcilibHashGetPointer, table, key)
 }
 
 OCI_HashEntry* OCI_API OCI_HashLookup
@@ -2702,7 +2702,7 @@ OCI_HashEntry* OCI_API OCI_HashLookup
     boolean        create
 )
 {
-    CALL_IMPL(HashLookup, table, key, create)
+    CALL_IMPL(OcilibHashLookup, table, key, create)
 }
 
 OCI_HashValue* OCI_API OCI_HashGetValue
@@ -2711,7 +2711,7 @@ OCI_HashValue* OCI_API OCI_HashGetValue
     const otext  * key
 )
 {
-    CALL_IMPL(HashGetValue, table, key)
+    CALL_IMPL(OcilibHashGetValue, table, key)
 }
 
 OCI_HashEntry* OCI_API OCI_HashGetEntry
@@ -2720,7 +2720,7 @@ OCI_HashEntry* OCI_API OCI_HashGetEntry
     unsigned int   index
 )
 {
-    CALL_IMPL(HashGetEntry, table, index)
+    CALL_IMPL(OcilibHashGetEntry, table, index)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2733,7 +2733,7 @@ OCI_Interval* OCI_API OCI_IntervalCreate
     unsigned int    type
 )
 {
-    CALL_IMPL(IntervalCreate, con, type)
+    CALL_IMPL(OcilibIntervalCreate, con, type)
 }
 
 boolean OCI_API OCI_IntervalFree
@@ -2741,7 +2741,7 @@ boolean OCI_API OCI_IntervalFree
     OCI_Interval* itv
 )
 {
-    CALL_IMPL(IntervalFree, itv)
+    CALL_IMPL(OcilibIntervalFree, itv)
 }
 
 OCI_Interval** OCI_API OCI_IntervalArrayCreate
@@ -2751,7 +2751,7 @@ OCI_Interval** OCI_API OCI_IntervalArrayCreate
     unsigned int    nbelem
 )
 {
-    CALL_IMPL(IntervalCreateArray, con, type, nbelem)
+    CALL_IMPL(OcilibIntervalCreateArray, con, type, nbelem)
 }
 
 boolean OCI_API OCI_IntervalArrayFree
@@ -2759,7 +2759,7 @@ boolean OCI_API OCI_IntervalArrayFree
     OCI_Interval** itvs
 )
 {
-    CALL_IMPL(IntervalFreeArray, itvs)
+    CALL_IMPL(OcilibIntervalFreeArray, itvs)
 }
 
 unsigned int OCI_API OCI_IntervalGetType
@@ -2767,7 +2767,7 @@ unsigned int OCI_API OCI_IntervalGetType
     OCI_Interval* itv
 )
 {
-    CALL_IMPL(IntervalGetType, itv)
+    CALL_IMPL(OcilibIntervalGetType, itv)
 }
 
 boolean OCI_API OCI_IntervalAssign
@@ -2776,7 +2776,7 @@ boolean OCI_API OCI_IntervalAssign
     OCI_Interval* itv_src
 )
 {
-    CALL_IMPL(IntervalAssign, itv, itv_src)
+    CALL_IMPL(OcilibIntervalAssign, itv, itv_src)
 }
 
 int OCI_API OCI_IntervalCheck
@@ -2784,7 +2784,7 @@ int OCI_API OCI_IntervalCheck
     OCI_Interval* itv
 )
 {
-    CALL_IMPL(IntervalCheck, itv)
+    CALL_IMPL(OcilibIntervalCheck, itv)
 }
 
 int OCI_API OCI_IntervalCompare
@@ -2793,7 +2793,7 @@ int OCI_API OCI_IntervalCompare
     OCI_Interval* itv2
 )
 {
-    CALL_IMPL(IntervalCompare, itv, itv2)
+    CALL_IMPL(OcilibIntervalCompare, itv, itv2)
 }
 
 boolean OCI_API OCI_IntervalFromText
@@ -2802,7 +2802,7 @@ boolean OCI_API OCI_IntervalFromText
     const otext * str
 )
 {
-    CALL_IMPL(IntervalFromString, itv, str)
+    CALL_IMPL(OcilibIntervalFromString, itv, str)
 }
 
 boolean OCI_API OCI_IntervalToText
@@ -2814,7 +2814,7 @@ boolean OCI_API OCI_IntervalToText
     otext       * str
 )
 {
-    CALL_IMPL(IntervalToString, itv, leading_prec, fraction_prec, size, str)
+    CALL_IMPL(OcilibIntervalToString, itv, leading_prec, fraction_prec, size, str)
 }
 
 boolean OCI_API OCI_IntervalFromTimeZone
@@ -2823,7 +2823,7 @@ boolean OCI_API OCI_IntervalFromTimeZone
     const otext * str
 )
 {
-    CALL_IMPL(IntervalFromTimeZone, itv, str)
+    CALL_IMPL(OcilibIntervalFromTimeZone, itv, str)
 }
 
 boolean OCI_API OCI_IntervalGetDaySecond
@@ -2836,7 +2836,7 @@ boolean OCI_API OCI_IntervalGetDaySecond
     int         * fsec
 )
 {
-    CALL_IMPL(IntervalGetDaySecond, itv, day, hour, min, sec, fsec)
+    CALL_IMPL(OcilibIntervalGetDaySecond, itv, day, hour, min, sec, fsec)
 }
 
 boolean OCI_API OCI_IntervalGetYearMonth
@@ -2846,7 +2846,7 @@ boolean OCI_API OCI_IntervalGetYearMonth
     int         * month
 )
 {
-    CALL_IMPL(IntervalGetYearMonth, itv, year, month)
+    CALL_IMPL(OcilibIntervalGetYearMonth, itv, year, month)
 }
 
 boolean OCI_API OCI_IntervalSetDaySecond
@@ -2859,7 +2859,7 @@ boolean OCI_API OCI_IntervalSetDaySecond
     int           fsec
 )
 {
-    CALL_IMPL(IntervalSetDaySecond, itv, day, hour, min, sec, fsec)
+    CALL_IMPL(OcilibIntervalSetDaySecond, itv, day, hour, min, sec, fsec)
 }
 
 boolean OCI_API OCI_IntervalSetYearMonth
@@ -2869,7 +2869,7 @@ boolean OCI_API OCI_IntervalSetYearMonth
     int           month
 )
 {
-    CALL_IMPL(IntervalSetYearMonth, itv, year, month)
+    CALL_IMPL(OcilibIntervalSetYearMonth, itv, year, month)
 }
 
 boolean OCI_API OCI_IntervalAdd
@@ -2878,7 +2878,7 @@ boolean OCI_API OCI_IntervalAdd
     OCI_Interval* itv2
 )
 {
-    CALL_IMPL(IntervalAdd, itv, itv2)
+    CALL_IMPL(OcilibIntervalAdd, itv, itv2)
 }
 
 boolean OCI_API OCI_IntervalSubtract
@@ -2887,7 +2887,7 @@ boolean OCI_API OCI_IntervalSubtract
     OCI_Interval* itv2
 )
 {
-    CALL_IMPL(IntervalSubtract, itv, itv2)
+    CALL_IMPL(OcilibIntervalSubtract, itv, itv2)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2899,7 +2899,7 @@ OCI_Iter* OCI_API OCI_IterCreate
     OCI_Coll* coll
 )
 {
-    CALL_IMPL(IteratorCreate, coll)
+    CALL_IMPL(OcilibIteratorCreate, coll)
 }
 
 boolean OCI_API OCI_IterFree
@@ -2907,7 +2907,7 @@ boolean OCI_API OCI_IterFree
     OCI_Iter* iter
 )
 {
-    CALL_IMPL(IteratorFree, iter)
+    CALL_IMPL(OcilibIteratorFree, iter)
 }
 
 OCI_Elem* OCI_API OCI_IterGetNext
@@ -2915,7 +2915,7 @@ OCI_Elem* OCI_API OCI_IterGetNext
     OCI_Iter* iter
 )
 {
-    CALL_IMPL(IteratorGetNext, iter)
+    CALL_IMPL(OcilibIteratorGetNext, iter)
 }
 
 OCI_Elem* OCI_API OCI_IterGetPrev
@@ -2923,7 +2923,7 @@ OCI_Elem* OCI_API OCI_IterGetPrev
     OCI_Iter* iter
 )
 {
-    CALL_IMPL(IteratorGetPrev, iter)
+    CALL_IMPL(OcilibIteratorGetPrev, iter)
 }
 
 OCI_Elem* OCI_API OCI_IterGetCurrent
@@ -2931,7 +2931,7 @@ OCI_Elem* OCI_API OCI_IterGetCurrent
     OCI_Iter* iter
 )
 {
-    CALL_IMPL(IteratorGetCurrent, iter)
+    CALL_IMPL(OcilibIteratorGetCurrent, iter)
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2945,7 +2945,7 @@ boolean OCI_API OCI_Initialize
     unsigned int mode
 )
 {
-    CALL_IMPL(EnvironmentInitialize, err_handler, lib_path, mode)
+    CALL_IMPL(OcilibEnvironmentInitialize, err_handler, lib_path, mode)
 }
 
 boolean OCI_API OCI_Cleanup
@@ -2953,7 +2953,7 @@ boolean OCI_API OCI_Cleanup
     void
 )
 {
-    CALL_IMPL(EnvironmentCleanup)
+    CALL_IMPL(OcilibEnvironmentCleanup)
 }
 
 unsigned int OCI_API OCI_GetOCICompileVersion
@@ -2961,7 +2961,7 @@ unsigned int OCI_API OCI_GetOCICompileVersion
     void
 )
 {
-    CALL_IMPL(EnvironmentGetOCICompileVersion)
+    CALL_IMPL(OcilibEnvironmentGetOCICompileVersion)
 }
 
 unsigned int OCI_API OCI_GetOCIRuntimeVersion
@@ -2969,7 +2969,7 @@ unsigned int OCI_API OCI_GetOCIRuntimeVersion
     void
 )
 {
-    CALL_IMPL(EnvironmentGetOCIRuntimeVersion)
+    CALL_IMPL(OcilibEnvironmentGetOCIRuntimeVersion)
 }
 
 unsigned int OCI_API OCI_GetImportMode
@@ -2977,7 +2977,7 @@ unsigned int OCI_API OCI_GetImportMode
     void
 )
 {
-    CALL_IMPL(EnvironmentGetOCIRuntimeImportMode)
+    CALL_IMPL(OcilibEnvironmentGetOCIRuntimeImportMode)
 }
 
 unsigned int OCI_API OCI_GetCharset
@@ -2985,7 +2985,7 @@ unsigned int OCI_API OCI_GetCharset
     void
 )
 {
-    CALL_IMPL(EnvironmentGetCharset)
+    CALL_IMPL(OcilibEnvironmentGetCharset)
 }
 
 big_uint OCI_API OCI_GetAllocatedBytes
@@ -2993,7 +2993,7 @@ big_uint OCI_API OCI_GetAllocatedBytes
     unsigned int mem_type
 )
 {
-    CALL_IMPL(EnvironmentGetAllocatedBytes, mem_type)
+    CALL_IMPL(OcilibEnvironmentGetAllocatedBytes, mem_type)
 }
 
 OCI_Error* OCI_API OCI_GetLastError
@@ -3001,7 +3001,7 @@ OCI_Error* OCI_API OCI_GetLastError
     void
 )
 {
-    return EnvironmentGetLastError();
+    return OcilibEnvironmentGetLastError();
 }
 
 boolean OCI_API OCI_EnableWarnings
@@ -3009,7 +3009,7 @@ boolean OCI_API OCI_EnableWarnings
     boolean value
 )
 {
-    CALL_IMPL(EnvironmentEnableWarnings, value)
+    CALL_IMPL(OcilibEnvironmentEnableWarnings, value)
 }
 
 boolean OCI_API OCI_SetErrorHandler
@@ -3017,7 +3017,7 @@ boolean OCI_API OCI_SetErrorHandler
     POCI_ERROR handler
 )
 {
-    CALL_IMPL(EnvironmentSetErrorHandler, handler)
+    CALL_IMPL(OcilibEnvironmentSetErrorHandler, handler)
 }
 
 boolean OCI_API OCI_DatabaseStartup
@@ -3031,7 +3031,7 @@ boolean OCI_API OCI_DatabaseStartup
     const otext* spfile
 )
 {
-    CALL_IMPL(DatabaseStartup, db, user, pwd, sess_mode, start_mode, start_flag, spfile)
+    CALL_IMPL(OcilibDatabaseStartup, db, user, pwd, sess_mode, start_mode, start_flag, spfile)
 }
 
 boolean OCI_API OCI_DatabaseShutdown
@@ -3044,7 +3044,7 @@ boolean OCI_API OCI_DatabaseShutdown
     unsigned int shut_flag
 )
 {
-    CALL_IMPL(DatabaseShutdown, db, user, pwd, sess_mode, shut_mode, shut_flag)
+    CALL_IMPL(OcilibDatabaseShutdown, db, user, pwd, sess_mode, shut_mode, shut_flag)
 }
 
 boolean OCI_API OCI_SetHAHandler
@@ -3052,7 +3052,7 @@ boolean OCI_API OCI_SetHAHandler
     POCI_HA_HANDLER handler
 )
 {
-    CALL_IMPL(EnvironmentSetHAHandler, handler)
+    CALL_IMPL(OcilibEnvironmentSetHAHandler, handler)
 }
 
 boolean OCI_API OCI_SetFormat
@@ -3062,7 +3062,7 @@ boolean OCI_API OCI_SetFormat
     const otext   * format
 )
 {
-    CALL_IMPL(EnvironmentSetFormat, con, type, format)
+    CALL_IMPL(OcilibEnvironmentSetFormat, con, type, format)
 }
 
 const otext* OCI_API OCI_GetFormat
@@ -3071,7 +3071,7 @@ const otext* OCI_API OCI_GetFormat
     unsigned int    type
 )
 {
-    CALL_IMPL(EnvironmentGetFormat, con, type)
+    CALL_IMPL(OcilibEnvironmentGetFormat, con, type)
 }
 
 boolean OCI_API OCI_SetUserPassword
@@ -3082,7 +3082,7 @@ boolean OCI_API OCI_SetUserPassword
     const otext* new_pwd
 )
 {
-    CALL_IMPL(DatabaseSetUserPassword, db, user, pwd, new_pwd);
+    CALL_IMPL(OcilibDatabaseSetUserPassword, db, user, pwd, new_pwd);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3095,7 +3095,7 @@ OCI_Lob* OCI_API OCI_LobCreate
     unsigned int    type
 )
 {
-    CALL_IMPL(LobCreate, con, type);
+    CALL_IMPL(OcilibLobCreate, con, type);
 }
 
 boolean OCI_API OCI_LobFree
@@ -3103,7 +3103,7 @@ boolean OCI_API OCI_LobFree
     OCI_Lob* lob
 )
 {
-    CALL_IMPL(LobFree, lob);
+    CALL_IMPL(OcilibLobFree, lob);
 }
 
 OCI_Lob** OCI_API OCI_LobArrayCreate
@@ -3113,7 +3113,7 @@ OCI_Lob** OCI_API OCI_LobArrayCreate
     unsigned int    nbelem
 )
 {
-    CALL_IMPL(LobCreateArray, con, type, nbelem);
+    CALL_IMPL(OcilibLobCreateArray, con, type, nbelem);
 }
 
 boolean OCI_API OCI_LobArrayFree
@@ -3121,7 +3121,7 @@ boolean OCI_API OCI_LobArrayFree
     OCI_Lob** lobs
 )
 {
-    CALL_IMPL(LobFreeArray, lobs);
+    CALL_IMPL(OcilibLobFreeArray, lobs);
 }
 
 unsigned int OCI_API OCI_LobGetType
@@ -3129,7 +3129,7 @@ unsigned int OCI_API OCI_LobGetType
     OCI_Lob* lob
 )
 {
-    CALL_IMPL(LobGetType, lob);
+    CALL_IMPL(OcilibLobGetType, lob);
 }
 
 boolean OCI_API OCI_LobSeek
@@ -3139,7 +3139,7 @@ boolean OCI_API OCI_LobSeek
     unsigned int mode
 )
 {
-    CALL_IMPL(LobSeek, lob, offset, mode);
+    CALL_IMPL(OcilibLobSeek, lob, offset, mode);
 }
 
 big_uint OCI_API OCI_LobGetOffset
@@ -3147,7 +3147,7 @@ big_uint OCI_API OCI_LobGetOffset
     OCI_Lob* lob
 )
 {
-    CALL_IMPL(LobGetOffset, lob);
+    CALL_IMPL(OcilibLobGetOffset, lob);
 }
 
 unsigned int OCI_API OCI_LobRead
@@ -3157,7 +3157,7 @@ unsigned int OCI_API OCI_LobRead
     unsigned int len
 )
 {
-    CALL_IMPL(LobRead, lob, buffer, len);
+    CALL_IMPL(OcilibLobRead, lob, buffer, len);
 }
 
 boolean OCI_API OCI_LobRead2
@@ -3168,7 +3168,7 @@ boolean OCI_API OCI_LobRead2
     unsigned int* byte_count
 )
 {
-    CALL_IMPL(LobRead2, lob, buffer, char_count, byte_count);
+    CALL_IMPL(OcilibLobRead2, lob, buffer, char_count, byte_count);
 }
 
 unsigned int OCI_API OCI_LobWrite
@@ -3178,7 +3178,7 @@ unsigned int OCI_API OCI_LobWrite
     unsigned int len
 )
 {
-    CALL_IMPL(LobWrite, lob, buffer, len);
+    CALL_IMPL(OcilibLobWrite, lob, buffer, len);
 }
 
 boolean OCI_API OCI_LobWrite2
@@ -3189,7 +3189,7 @@ boolean OCI_API OCI_LobWrite2
     unsigned int* byte_count
 )
 {
-    CALL_IMPL(LobWrite2, lob, buffer, char_count, byte_count);
+    CALL_IMPL(OcilibLobWrite2, lob, buffer, char_count, byte_count);
 }
 
 boolean OCI_API OCI_LobTruncate
@@ -3198,7 +3198,7 @@ boolean OCI_API OCI_LobTruncate
     big_uint size
 )
 {
-    CALL_IMPL(LobTruncate, lob, size);
+    CALL_IMPL(OcilibLobTruncate, lob, size);
 }
 
 big_uint OCI_API OCI_LobGetLength
@@ -3206,7 +3206,7 @@ big_uint OCI_API OCI_LobGetLength
     OCI_Lob* lob
 )
 {
-    CALL_IMPL(LobGetLength, lob);
+    CALL_IMPL(OcilibLobGetLength, lob);
 }
 
 unsigned int OCI_API OCI_LobGetChunkSize
@@ -3214,7 +3214,7 @@ unsigned int OCI_API OCI_LobGetChunkSize
     OCI_Lob* lob
 )
 {
-    CALL_IMPL(LobGetChunkSize, lob);
+    CALL_IMPL(OcilibLobGetChunkSize, lob);
 }
 
 big_uint OCI_API OCI_LobErase
@@ -3224,7 +3224,7 @@ big_uint OCI_API OCI_LobErase
     big_uint len
 )
 {
-    CALL_IMPL(LobErase, lob, offset, len);
+    CALL_IMPL(OcilibLobErase, lob, offset, len);
 }
 
 unsigned int OCI_API OCI_LobAppend
@@ -3234,7 +3234,7 @@ unsigned int OCI_API OCI_LobAppend
     unsigned int len
 )
 {
-    CALL_IMPL(LobAppend, lob, buffer, len);
+    CALL_IMPL(OcilibLobAppend, lob, buffer, len);
 }
 
 boolean OCI_API OCI_LobAppend2
@@ -3245,7 +3245,7 @@ boolean OCI_API OCI_LobAppend2
     unsigned int* byte_count
 )
 {
-    CALL_IMPL(LobAppend2, lob, buffer, char_count, byte_count);
+    CALL_IMPL(OcilibLobAppend2, lob, buffer, char_count, byte_count);
 }
 
 boolean OCI_API OCI_LobAppendLob
@@ -3254,7 +3254,7 @@ boolean OCI_API OCI_LobAppendLob
     OCI_Lob* lob_src
 )
 {
-    CALL_IMPL(LobAppendLob, lob, lob_src);
+    CALL_IMPL(OcilibLobAppendLob, lob, lob_src);
 }
 
 boolean OCI_API OCI_LobIsTemporary
@@ -3262,7 +3262,7 @@ boolean OCI_API OCI_LobIsTemporary
     OCI_Lob* lob
 )
 {
-    CALL_IMPL(LobIsTemporary, lob);
+    CALL_IMPL(OcilibLobIsTemporary, lob);
 }
 
 boolean OCI_API OCI_LobCopy
@@ -3274,7 +3274,7 @@ boolean OCI_API OCI_LobCopy
     big_uint count
 )
 {
-    CALL_IMPL(LobCopy, lob, lob_src, offset_dst, offset_src, count);
+    CALL_IMPL(OcilibLobCopy, lob, lob_src, offset_dst, offset_src, count);
 }
 
 boolean OCI_API OCI_LobCopyFromFile
@@ -3286,7 +3286,7 @@ boolean OCI_API OCI_LobCopyFromFile
     big_uint  count
 )
 {
-    CALL_IMPL(LobCopyFromFile, lob, file, offset_dst, offset_src, count);
+    CALL_IMPL(OcilibLobCopyFromFile, lob, file, offset_dst, offset_src, count);
 }
 
 boolean OCI_API OCI_LobOpen
@@ -3295,7 +3295,7 @@ boolean OCI_API OCI_LobOpen
     unsigned int mode
 )
 {
-    CALL_IMPL(LobOpen, lob, mode);
+    CALL_IMPL(OcilibLobOpen, lob, mode);
 }
 
 boolean OCI_API OCI_LobClose
@@ -3303,7 +3303,7 @@ boolean OCI_API OCI_LobClose
     OCI_Lob* lob
 )
 {
-    CALL_IMPL(LobClose, lob);
+    CALL_IMPL(OcilibLobClose, lob);
 }
 
 boolean OCI_API OCI_LobIsEqual
@@ -3312,7 +3312,7 @@ boolean OCI_API OCI_LobIsEqual
     OCI_Lob* lob2
 )
 {
-    CALL_IMPL(LobIsEqual, lob, lob2);
+    CALL_IMPL(OcilibLobIsEqual, lob, lob2);
 }
 
 boolean OCI_API OCI_LobAssign
@@ -3321,7 +3321,7 @@ boolean OCI_API OCI_LobAssign
     OCI_Lob* lob_src
 )
 {
-    CALL_IMPL(LobAssign, lob, lob_src);
+    CALL_IMPL(OcilibLobAssign, lob, lob_src);
 }
 
 big_uint OCI_API OCI_LobGetMaxSize
@@ -3329,7 +3329,7 @@ big_uint OCI_API OCI_LobGetMaxSize
     OCI_Lob* lob
 )
 {
-    CALL_IMPL(LobGetMaxSize, lob);
+    CALL_IMPL(OcilibLobGetMaxSize, lob);
 }
 
 boolean OCI_API OCI_LobFlush
@@ -3337,7 +3337,7 @@ boolean OCI_API OCI_LobFlush
     OCI_Lob* lob
 )
 {
-    CALL_IMPL(LobFlush, lob);
+    CALL_IMPL(OcilibLobFlush, lob);
 }
 
 boolean OCI_API OCI_LobEnableBuffering
@@ -3346,7 +3346,7 @@ boolean OCI_API OCI_LobEnableBuffering
     boolean  value
 )
 {
-    CALL_IMPL(LobEnableBuffering, lob, value);
+    CALL_IMPL(OcilibLobEnableBuffering, lob, value);
 }
 
 OCI_Connection* OCI_API OCI_LobGetConnection
@@ -3354,7 +3354,7 @@ OCI_Connection* OCI_API OCI_LobGetConnection
     OCI_Lob* lob
 )
 {
-    CALL_IMPL(LobGetConnection, lob);
+    CALL_IMPL(OcilibLobGetConnection, lob);
 }
 
 boolean OCI_API OCI_LobIsRemote
@@ -3362,7 +3362,7 @@ boolean OCI_API OCI_LobIsRemote
     OCI_Lob* lob
 )
 {
-    CALL_IMPL(LobIsRemote, lob);
+    CALL_IMPL(OcilibLobIsRemote, lob);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3375,7 +3375,7 @@ OCI_Long* OCI_API OCI_LongCreate
     unsigned int   type
 )
 {
-    CALL_IMPL(LongCreate, stmt, type);
+    CALL_IMPL(OcilibLongCreate, stmt, type);
 }
 
 boolean OCI_API OCI_LongFree
@@ -3383,7 +3383,7 @@ boolean OCI_API OCI_LongFree
     OCI_Long* lg
 )
 {
-    CALL_IMPL(LongFree, lg);
+    CALL_IMPL(OcilibLongFree, lg);
 }
 
 unsigned int OCI_API OCI_LongGetType
@@ -3391,7 +3391,7 @@ unsigned int OCI_API OCI_LongGetType
     OCI_Long* lg
 )
 {
-    CALL_IMPL(LongGetType, lg);
+    CALL_IMPL(OcilibLongGetType, lg);
 }
 
 unsigned int OCI_API OCI_LongRead
@@ -3401,7 +3401,7 @@ unsigned int OCI_API OCI_LongRead
     unsigned int len
 )
 {
-    CALL_IMPL(LongRead, lg, buffer, len);
+    CALL_IMPL(OcilibLongRead, lg, buffer, len);
 }
 
 unsigned int OCI_API OCI_LongWrite
@@ -3411,7 +3411,7 @@ unsigned int OCI_API OCI_LongWrite
     unsigned int len
 )
 {
-    CALL_IMPL(LongWrite, lg, buffer, len);
+    CALL_IMPL(OcilibLongWrite, lg, buffer, len);
 }
 
 unsigned int OCI_API OCI_LongGetSize
@@ -3419,7 +3419,7 @@ unsigned int OCI_API OCI_LongGetSize
     OCI_Long* lg
 )
 {
-    CALL_IMPL(LongGetSize, lg);
+    CALL_IMPL(OcilibLongGetSize, lg);
 }
 
 void* OCI_API OCI_LongGetBuffer
@@ -3427,7 +3427,7 @@ void* OCI_API OCI_LongGetBuffer
     OCI_Long* lg
 )
 {
-    CALL_IMPL(LongGetBuffer, lg);
+    CALL_IMPL(OcilibLongGetBuffer, lg);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3439,7 +3439,7 @@ OCI_Msg* OCI_API OCI_MsgCreate
     OCI_TypeInfo* typinf
 )
 {
-    CALL_IMPL(MessageCreate, typinf);
+    CALL_IMPL(OcilibMessageCreate, typinf);
 }
 
 boolean OCI_API OCI_MsgFree
@@ -3447,7 +3447,7 @@ boolean OCI_API OCI_MsgFree
     OCI_Msg* msg
 )
 {
-    CALL_IMPL(MessageFree, msg);
+    CALL_IMPL(OcilibMessageFree, msg);
 }
 
 boolean OCI_API OCI_MsgReset
@@ -3455,7 +3455,7 @@ boolean OCI_API OCI_MsgReset
     OCI_Msg* msg
 )
 {
-    CALL_IMPL(MessageReset, msg);
+    CALL_IMPL(OcilibMessageReset, msg);
 }
 
 OCI_Object* OCI_API OCI_MsgGetObject
@@ -3463,7 +3463,7 @@ OCI_Object* OCI_API OCI_MsgGetObject
     OCI_Msg* msg
 )
 {
-    CALL_IMPL(MessageGetObject, msg);
+    CALL_IMPL(OcilibMessageGetObject, msg);
 }
 
 boolean OCI_API OCI_MsgSetObject
@@ -3472,7 +3472,7 @@ boolean OCI_API OCI_MsgSetObject
     OCI_Object* obj
 )
 {
-    CALL_IMPL(MessageSetObject, msg, obj);
+    CALL_IMPL(OcilibMessageSetObject, msg, obj);
 }
 
 boolean OCI_API OCI_MsgGetRaw
@@ -3482,7 +3482,7 @@ boolean OCI_API OCI_MsgGetRaw
     unsigned int* size
 )
 {
-    CALL_IMPL(MessageGetRaw, msg, raw, size);
+    CALL_IMPL(OcilibMessageGetRaw, msg, raw, size);
 }
 
 boolean OCI_API OCI_MsgSetRaw
@@ -3492,7 +3492,7 @@ boolean OCI_API OCI_MsgSetRaw
     unsigned int size
 )
 {
-    CALL_IMPL(MessageSetRaw, msg, raw, size);
+    CALL_IMPL(OcilibMessageSetRaw, msg, raw, size);
 }
 
 int OCI_API OCI_MsgGetAttemptCount
@@ -3500,7 +3500,7 @@ int OCI_API OCI_MsgGetAttemptCount
     OCI_Msg* msg
 )
 {
-    CALL_IMPL(MessageGetAttemptCount, msg);
+    CALL_IMPL(OcilibMessageGetAttemptCount, msg);
 }
 
 int OCI_API OCI_MsgGetEnqueueDelay
@@ -3508,7 +3508,7 @@ int OCI_API OCI_MsgGetEnqueueDelay
     OCI_Msg* msg
 )
 {
-    CALL_IMPL(MessageGetEnqueueDelay, msg);
+    CALL_IMPL(OcilibMessageGetEnqueueDelay, msg);
 }
 
 boolean OCI_API OCI_MsgSetEnqueueDelay
@@ -3517,7 +3517,7 @@ boolean OCI_API OCI_MsgSetEnqueueDelay
     int      value
 )
 {
-    CALL_IMPL(MessageSetEnqueueDelay, msg, value);
+    CALL_IMPL(OcilibMessageSetEnqueueDelay, msg, value);
 }
 
 OCI_Date* OCI_API OCI_MsgGetEnqueueTime
@@ -3525,7 +3525,7 @@ OCI_Date* OCI_API OCI_MsgGetEnqueueTime
     OCI_Msg* msg
 )
 {
-    CALL_IMPL(MessageGetEnqueueTime, msg);
+    CALL_IMPL(OcilibMessageGetEnqueueTime, msg);
 }
 
 int OCI_API OCI_MsgGetExpiration
@@ -3533,7 +3533,7 @@ int OCI_API OCI_MsgGetExpiration
     OCI_Msg* msg
 )
 {
-    CALL_IMPL(MessageGetExpiration, msg);
+    CALL_IMPL(OcilibMessageGetExpiration, msg);
 }
 
 boolean OCI_API OCI_MsgSetExpiration
@@ -3542,7 +3542,7 @@ boolean OCI_API OCI_MsgSetExpiration
     int      value
 )
 {
-    CALL_IMPL(MessageSetExpiration, msg, value);
+    CALL_IMPL(OcilibMessageSetExpiration, msg, value);
 }
 
 unsigned int OCI_API OCI_MsgGetState
@@ -3550,7 +3550,7 @@ unsigned int OCI_API OCI_MsgGetState
     OCI_Msg* msg
 )
 {
-    CALL_IMPL(MessageGetState, msg);
+    CALL_IMPL(OcilibMessageGetState, msg);
 }
 
 int OCI_API OCI_MsgGetPriority
@@ -3558,7 +3558,7 @@ int OCI_API OCI_MsgGetPriority
     OCI_Msg* msg
 )
 {
-    CALL_IMPL(MessageGetPriority, msg);
+    CALL_IMPL(OcilibMessageGetPriority, msg);
 }
 
 boolean OCI_API OCI_MsgSetPriority
@@ -3567,7 +3567,7 @@ boolean OCI_API OCI_MsgSetPriority
     int      value
 )
 {
-    CALL_IMPL(MessageSetPriority, msg, value);
+    CALL_IMPL(OcilibMessageSetPriority, msg, value);
 }
 
 boolean OCI_API OCI_MsgGetID
@@ -3577,7 +3577,7 @@ boolean OCI_API OCI_MsgGetID
     unsigned int* len
 )
 {
-    CALL_IMPL(MessageGetID, msg, id, len);
+    CALL_IMPL(OcilibMessageGetID, msg, id, len);
 }
 
 boolean OCI_API OCI_MsgGetOriginalID
@@ -3587,7 +3587,7 @@ boolean OCI_API OCI_MsgGetOriginalID
     unsigned int* len
 )
 {
-    CALL_IMPL(MessageGetOriginalID, msg, id, len);
+    CALL_IMPL(OcilibMessageGetOriginalID, msg, id, len);
 }
 
 boolean OCI_API OCI_MsgSetOriginalID
@@ -3597,7 +3597,7 @@ boolean OCI_API OCI_MsgSetOriginalID
     unsigned int len
 )
 {
-    CALL_IMPL(MessageSetOriginalID, msg, id, len);
+    CALL_IMPL(OcilibMessageSetOriginalID, msg, id, len);
 }
 
 OCI_Agent* OCI_API OCI_MsgGetSender
@@ -3605,7 +3605,7 @@ OCI_Agent* OCI_API OCI_MsgGetSender
     OCI_Msg* msg
 )
 {
-    CALL_IMPL(MessageGetSender, msg);
+    CALL_IMPL(OcilibMessageGetSender, msg);
 }
 
 boolean OCI_API OCI_MsgSetSender
@@ -3614,7 +3614,7 @@ boolean OCI_API OCI_MsgSetSender
     OCI_Agent* sender
 )
 {
-    CALL_IMPL(MessageSetSender, msg, sender);
+    CALL_IMPL(OcilibMessageSetSender, msg, sender);
 }
 
 boolean OCI_API OCI_MsgSetConsumers
@@ -3624,7 +3624,7 @@ boolean OCI_API OCI_MsgSetConsumers
     unsigned int count
 )
 {
-    CALL_IMPL(MessageSetConsumers, msg, consumers, count);
+    CALL_IMPL(OcilibMessageSetConsumers, msg, consumers, count);
 }
 
 const otext* OCI_API OCI_MsgGetCorrelation
@@ -3632,7 +3632,7 @@ const otext* OCI_API OCI_MsgGetCorrelation
     OCI_Msg* msg
 )
 {
-    CALL_IMPL(MessageGetCorrelation, msg);
+    CALL_IMPL(OcilibMessageGetCorrelation, msg);
 }
 
 boolean OCI_API OCI_MsgSetCorrelation
@@ -3641,7 +3641,7 @@ boolean OCI_API OCI_MsgSetCorrelation
     const otext* correlation
 )
 {
-    CALL_IMPL(MessageSetCorrelation, msg, correlation);
+    CALL_IMPL(OcilibMessageSetCorrelation, msg, correlation);
 }
 
 const otext* OCI_API OCI_MsgGetExceptionQueue
@@ -3649,7 +3649,7 @@ const otext* OCI_API OCI_MsgGetExceptionQueue
     OCI_Msg* msg
 )
 {
-    CALL_IMPL(MessageGetExceptionQueue, msg);
+    CALL_IMPL(OcilibMessageGetExceptionQueue, msg);
 }
 
 boolean OCI_API OCI_MsgSetExceptionQueue
@@ -3658,7 +3658,7 @@ boolean OCI_API OCI_MsgSetExceptionQueue
     const otext* queue
 )
 {
-    CALL_IMPL(MessageSetExceptionQueue, msg, queue);
+    CALL_IMPL(OcilibMessageSetExceptionQueue, msg, queue);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3670,7 +3670,7 @@ OCI_Mutex* OCI_API OCI_MutexCreate
     void
 )
 {
-    CALL_IMPL(MutexCreate);
+    CALL_IMPL(OcilibMutexCreate);
 }
 
 boolean OCI_API OCI_MutexFree
@@ -3678,7 +3678,7 @@ boolean OCI_API OCI_MutexFree
     OCI_Mutex* mutex
 )
 {
-    CALL_IMPL(MutexFree, mutex);
+    CALL_IMPL(OcilibMutexFree, mutex);
 }
 
 boolean OCI_API OCI_MutexAcquire
@@ -3686,7 +3686,7 @@ boolean OCI_API OCI_MutexAcquire
     OCI_Mutex* mutex
 )
 {
-    CALL_IMPL(MutexAcquire, mutex);
+    CALL_IMPL(OcilibMutexAcquire, mutex);
 }
 
 boolean OCI_API OCI_MutexRelease
@@ -3694,7 +3694,7 @@ boolean OCI_API OCI_MutexRelease
     OCI_Mutex* mutex
 )
 {
-    CALL_IMPL(MutexRelease, mutex);
+    CALL_IMPL(OcilibMutexRelease, mutex);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3706,7 +3706,7 @@ OCI_Number* OCI_API OCI_NumberCreate
     OCI_Connection* con
 )
 {
-    CALL_IMPL(NumberCreate, con);
+    CALL_IMPL(OcilibNumberCreate, con);
 }
 
 boolean OCI_API OCI_NumberFree
@@ -3714,7 +3714,7 @@ boolean OCI_API OCI_NumberFree
     OCI_Number* number
 )
 {
-    CALL_IMPL(NumberFree, number);
+    CALL_IMPL(OcilibNumberFree, number);
 }
 
 OCI_Number** OCI_API OCI_NumberArrayCreate
@@ -3723,7 +3723,7 @@ OCI_Number** OCI_API OCI_NumberArrayCreate
     unsigned int    nbelem
 )
 {
-    CALL_IMPL(NumberCreateArray, con, nbelem);
+    CALL_IMPL(OcilibNumberCreateArray, con, nbelem);
 }
 
 boolean OCI_API OCI_NumberArrayFree
@@ -3731,7 +3731,7 @@ boolean OCI_API OCI_NumberArrayFree
     OCI_Number** numbmers
 )
 {
-    CALL_IMPL(NumberFreeArray, numbmers);
+    CALL_IMPL(OcilibNumberFreeArray, numbmers);
 }
 
 boolean OCI_API OCI_NumberAssign
@@ -3740,7 +3740,7 @@ boolean OCI_API OCI_NumberAssign
     OCI_Number* number_src
 )
 {
-    CALL_IMPL(NumberAssign, number, number_src);
+    CALL_IMPL(OcilibNumberAssign, number, number_src);
 }
 
 boolean OCI_API OCI_NumberToText
@@ -3751,7 +3751,7 @@ boolean OCI_API OCI_NumberToText
     otext      * str
 )
 {
-    CALL_IMPL(NumberToString, number, fmt, size, str);
+    CALL_IMPL(OcilibNumberToString, number, fmt, size, str);
 }
 
 boolean OCI_API OCI_NumberFromText
@@ -3761,7 +3761,7 @@ boolean OCI_API OCI_NumberFromText
     const otext* fmt
 )
 {
-    CALL_IMPL(NumberFromString, number, str, fmt);
+    CALL_IMPL(OcilibNumberFromString, number, str, fmt);
 }
 
 unsigned char* OCI_API OCI_NumberGetContent
@@ -3769,7 +3769,7 @@ unsigned char* OCI_API OCI_NumberGetContent
     OCI_Number* number
 )
 {
-    CALL_IMPL(NumberGetContent, number);
+    CALL_IMPL(OcilibNumberGetContent, number);
 }
 
 boolean OCI_API OCI_NumberSetContent
@@ -3778,7 +3778,7 @@ boolean OCI_API OCI_NumberSetContent
     unsigned char* content
 )
 {
-    CALL_IMPL(NumberSetContent, number, content);
+    CALL_IMPL(OcilibNumberSetContent, number, content);
 }
 
 boolean OCI_API OCI_NumberSetValue
@@ -3788,7 +3788,7 @@ boolean OCI_API OCI_NumberSetValue
     void       * value
 )
 {
-    CALL_IMPL(NumberSetValue, number, type, value);
+    CALL_IMPL(OcilibNumberSetValue, number, type, value);
 }
 
 boolean OCI_API OCI_NumberGetValue
@@ -3798,7 +3798,7 @@ boolean OCI_API OCI_NumberGetValue
     void       * value
 )
 {
-    CALL_IMPL(NumberGetValue, number, type, value);
+    CALL_IMPL(OcilibNumberGetValue, number, type, value);
 }
 
 boolean OCI_API OCI_NumberAdd
@@ -3808,7 +3808,7 @@ boolean OCI_API OCI_NumberAdd
     void       * value
 )
 {
-    CALL_IMPL(NumberAdd, number, type, value);
+    CALL_IMPL(OcilibNumberAdd, number, type, value);
 }
 
 boolean OCI_API OCI_NumberSub
@@ -3818,7 +3818,7 @@ boolean OCI_API OCI_NumberSub
     void       * value
 )
 {
-    CALL_IMPL(NumberSub, number, type, value);
+    CALL_IMPL(OcilibNumberSub, number, type, value);
 }
 
 boolean OCI_API OCI_NumberMultiply
@@ -3828,7 +3828,7 @@ boolean OCI_API OCI_NumberMultiply
     void       * value
 )
 {
-    CALL_IMPL(NumberMultiply, number, type, value);
+    CALL_IMPL(OcilibNumberMultiply, number, type, value);
 }
 
 boolean OCI_API OCI_NumberDivide
@@ -3838,7 +3838,7 @@ boolean OCI_API OCI_NumberDivide
     void       * value
 )
 {
-    CALL_IMPL(NumberDivide, number, type, value);
+    CALL_IMPL(OcilibNumberDivide, number, type, value);
 }
 
 int OCI_API OCI_NumberCompare
@@ -3847,7 +3847,7 @@ int OCI_API OCI_NumberCompare
     OCI_Number* number2
 )
 {
-    CALL_IMPL(NumberCompare, number1, number2);
+    CALL_IMPL(OcilibNumberCompare, number1, number2);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3860,7 +3860,7 @@ OCI_Object* OCI_API OCI_ObjectCreate
     OCI_TypeInfo  * typinf
 )
 {
-    CALL_IMPL(ObjectCreate, con, typinf);
+    CALL_IMPL(OcilibObjectCreate, con, typinf);
 }
 
 boolean OCI_API OCI_ObjectFree
@@ -3868,7 +3868,7 @@ boolean OCI_API OCI_ObjectFree
     OCI_Object* obj
 )
 {
-    CALL_IMPL(ObjectFree, obj);
+    CALL_IMPL(OcilibObjectFree, obj);
 }
 
 OCI_Object** OCI_API OCI_ObjectArrayCreate
@@ -3878,7 +3878,7 @@ OCI_Object** OCI_API OCI_ObjectArrayCreate
     unsigned int    nbelem
 )
 {
-    CALL_IMPL(ObjectCreateArray, con,typinf, nbelem);
+    CALL_IMPL(OcilibObjectCreateArray, con,typinf, nbelem);
 }
 
 boolean OCI_API OCI_ObjectArrayFree
@@ -3886,7 +3886,7 @@ boolean OCI_API OCI_ObjectArrayFree
     OCI_Object** objs
 )
 {
-    CALL_IMPL(ObjectFreeArray, objs);
+    CALL_IMPL(OcilibObjectFreeArray, objs);
 }
 
 boolean OCI_API OCI_ObjectAssign
@@ -3895,7 +3895,7 @@ boolean OCI_API OCI_ObjectAssign
     OCI_Object* obj_src
 )
 {
-    CALL_IMPL(ObjectAssign, obj, obj_src);
+    CALL_IMPL(OcilibObjectAssign, obj, obj_src);
 }
 
 unsigned int OCI_API OCI_ObjectGetType
@@ -3903,7 +3903,7 @@ unsigned int OCI_API OCI_ObjectGetType
     OCI_Object* obj
 )
 {
-    CALL_IMPL(ObjectGetType, obj);
+    CALL_IMPL(OcilibObjectGetType, obj);
 }
 
 boolean OCI_API OCI_ObjectGetSelfRef
@@ -3912,7 +3912,7 @@ boolean OCI_API OCI_ObjectGetSelfRef
     OCI_Ref   * ref
 )
 {
-    CALL_IMPL(ObjectGetSelfRef, obj, ref);
+    CALL_IMPL(OcilibObjectGetSelfRef, obj, ref);
 }
 
 OCI_TypeInfo* OCI_API OCI_ObjectGetTypeInfo
@@ -3920,7 +3920,7 @@ OCI_TypeInfo* OCI_API OCI_ObjectGetTypeInfo
     OCI_Object* obj
 )
 {
-    CALL_IMPL(ObjectGetTypeInfo, obj);
+    CALL_IMPL(OcilibObjectGetTypeInfo, obj);
 }
 
 boolean OCI_API OCI_ObjectGetBoolean
@@ -3929,7 +3929,7 @@ boolean OCI_API OCI_ObjectGetBoolean
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetBoolean, obj, attr);
+    CALL_IMPL(OcilibObjectGetBoolean, obj, attr);
 }
 
 OCI_Number* OCI_API OCI_ObjectGetNumber
@@ -3938,7 +3938,7 @@ OCI_Number* OCI_API OCI_ObjectGetNumber
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetNumber, obj, attr);
+    CALL_IMPL(OcilibObjectGetNumber, obj, attr);
 }
 
 short OCI_API OCI_ObjectGetShort
@@ -3947,7 +3947,7 @@ short OCI_API OCI_ObjectGetShort
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetShort, obj, attr);
+    CALL_IMPL(OcilibObjectGetShort, obj, attr);
 }
 
 unsigned short OCI_API OCI_ObjectGetUnsignedShort
@@ -3956,7 +3956,7 @@ unsigned short OCI_API OCI_ObjectGetUnsignedShort
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetUnsignedShort, obj, attr);
+    CALL_IMPL(OcilibObjectGetUnsignedShort, obj, attr);
 }
 
 int OCI_API OCI_ObjectGetInt
@@ -3965,7 +3965,7 @@ int OCI_API OCI_ObjectGetInt
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetInt, obj, attr);
+    CALL_IMPL(OcilibObjectGetInt, obj, attr);
 }
 
 unsigned int OCI_API OCI_ObjectGetUnsignedInt
@@ -3974,7 +3974,7 @@ unsigned int OCI_API OCI_ObjectGetUnsignedInt
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetUnsignedInt, obj, attr);
+    CALL_IMPL(OcilibObjectGetUnsignedInt, obj, attr);
 }
 
 big_int OCI_API OCI_ObjectGetBigInt
@@ -3983,7 +3983,7 @@ big_int OCI_API OCI_ObjectGetBigInt
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetBigInt, obj, attr);
+    CALL_IMPL(OcilibObjectGetBigInt, obj, attr);
 }
 
 big_uint OCI_API OCI_ObjectGetUnsignedBigInt
@@ -3992,7 +3992,7 @@ big_uint OCI_API OCI_ObjectGetUnsignedBigInt
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetUnsignedBigInt, obj, attr);
+    CALL_IMPL(OcilibObjectGetUnsignedBigInt, obj, attr);
 }
 
 double OCI_API OCI_ObjectGetDouble
@@ -4001,7 +4001,7 @@ double OCI_API OCI_ObjectGetDouble
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetDouble, obj, attr);
+    CALL_IMPL(OcilibObjectGetDouble, obj, attr);
 }
 
 float OCI_API OCI_ObjectGetFloat
@@ -4010,7 +4010,7 @@ float OCI_API OCI_ObjectGetFloat
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetFloat, obj, attr);
+    CALL_IMPL(OcilibObjectGetFloat, obj, attr);
 }
 
 const otext* OCI_API OCI_ObjectGetString
@@ -4019,7 +4019,7 @@ const otext* OCI_API OCI_ObjectGetString
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetString, obj, attr);
+    CALL_IMPL(OcilibObjectGetString, obj, attr);
 }
 
 int OCI_API OCI_ObjectGetRaw
@@ -4030,7 +4030,7 @@ int OCI_API OCI_ObjectGetRaw
     unsigned int len
 )
 {
-    CALL_IMPL(ObjectGetRaw, obj, attr, value, len);
+    CALL_IMPL(OcilibObjectGetRaw, obj, attr, value, len);
 }
 
 unsigned int OCI_API OCI_ObjectGetRawSize
@@ -4039,7 +4039,7 @@ unsigned int OCI_API OCI_ObjectGetRawSize
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetRawSize, obj, attr);
+    CALL_IMPL(OcilibObjectGetRawSize, obj, attr);
 }
 
 OCI_Date* OCI_API OCI_ObjectGetDate
@@ -4048,7 +4048,7 @@ OCI_Date* OCI_API OCI_ObjectGetDate
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetDate, obj, attr);
+    CALL_IMPL(OcilibObjectGetDate, obj, attr);
 }
 
 OCI_Timestamp* OCI_API OCI_ObjectGetTimestamp
@@ -4057,7 +4057,7 @@ OCI_Timestamp* OCI_API OCI_ObjectGetTimestamp
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetTimestamp, obj, attr);
+    CALL_IMPL(OcilibObjectGetTimestamp, obj, attr);
 }
 
 OCI_Interval* OCI_API OCI_ObjectGetInterval
@@ -4066,7 +4066,7 @@ OCI_Interval* OCI_API OCI_ObjectGetInterval
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetInterval, obj, attr);
+    CALL_IMPL(OcilibObjectGetInterval, obj, attr);
 }
 
 OCI_Coll* OCI_API OCI_ObjectGetColl
@@ -4074,7 +4074,7 @@ OCI_Coll* OCI_API OCI_ObjectGetColl
     OCI_Object * obj,
     const otext* attr)
 {
-    CALL_IMPL(ObjectGetColl, obj, attr);
+    CALL_IMPL(OcilibObjectGetColl, obj, attr);
 }
 
 OCI_Ref* OCI_API OCI_ObjectGetRef
@@ -4083,7 +4083,7 @@ OCI_Ref* OCI_API OCI_ObjectGetRef
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetReference, obj, attr);
+    CALL_IMPL(OcilibObjectGetReference, obj, attr);
 }
 
 OCI_Object* OCI_API OCI_ObjectGetObject
@@ -4092,7 +4092,7 @@ OCI_Object* OCI_API OCI_ObjectGetObject
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetObject, obj, attr);
+    CALL_IMPL(OcilibObjectGetObject, obj, attr);
 }
 
 OCI_Lob* OCI_API OCI_ObjectGetLob
@@ -4101,7 +4101,7 @@ OCI_Lob* OCI_API OCI_ObjectGetLob
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetLob, obj, attr);
+    CALL_IMPL(OcilibObjectGetLob, obj, attr);
 }
 
 OCI_File* OCI_API OCI_ObjectGetFile
@@ -4110,7 +4110,7 @@ OCI_File* OCI_API OCI_ObjectGetFile
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectGetFile, obj, attr);
+    CALL_IMPL(OcilibObjectGetFile, obj, attr);
 }
 
 boolean OCI_API OCI_ObjectSetBoolean
@@ -4120,7 +4120,7 @@ boolean OCI_API OCI_ObjectSetBoolean
     boolean      value
 )
 {
-    CALL_IMPL(ObjectSetBoolean, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetBoolean, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetNumber
@@ -4130,7 +4130,7 @@ boolean OCI_API OCI_ObjectSetNumber
     OCI_Number * value
 )
 {
-    CALL_IMPL(ObjectSetNumber, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetNumber, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetShort
@@ -4140,7 +4140,7 @@ boolean OCI_API OCI_ObjectSetShort
     short        value
 )
 {
-    CALL_IMPL(ObjectSetShort, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetShort, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetUnsignedShort
@@ -4150,7 +4150,7 @@ boolean OCI_API OCI_ObjectSetUnsignedShort
     unsigned short value
 )
 {
-    CALL_IMPL(ObjectSetUnsignedShort, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetUnsignedShort, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetInt
@@ -4160,7 +4160,7 @@ boolean OCI_API OCI_ObjectSetInt
     int          value
 )
 {
-    CALL_IMPL(ObjectSetInt, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetInt, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetUnsignedInt
@@ -4170,7 +4170,7 @@ boolean OCI_API OCI_ObjectSetUnsignedInt
     unsigned int value
 )
 {
-    CALL_IMPL(ObjectSetUnsignedInt, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetUnsignedInt, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetBigInt
@@ -4180,7 +4180,7 @@ boolean OCI_API OCI_ObjectSetBigInt
     big_int      value
 )
 {
-    CALL_IMPL(ObjectSetBigInt, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetBigInt, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetUnsignedBigInt
@@ -4190,7 +4190,7 @@ boolean OCI_API OCI_ObjectSetUnsignedBigInt
     big_uint     value
 )
 {
-    CALL_IMPL(ObjectSetUnsignedBigInt, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetUnsignedBigInt, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetDouble
@@ -4200,7 +4200,7 @@ boolean OCI_API OCI_ObjectSetDouble
     double       value
 )
 {
-    CALL_IMPL(ObjectSetDouble, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetDouble, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetFloat
@@ -4210,7 +4210,7 @@ boolean OCI_API OCI_ObjectSetFloat
     float        value
 )
 {
-    CALL_IMPL(ObjectSetFloat, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetFloat, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetString
@@ -4220,7 +4220,7 @@ boolean OCI_API OCI_ObjectSetString
     const otext* value
 )
 {
-    CALL_IMPL(ObjectSetString, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetString, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetRaw
@@ -4231,7 +4231,7 @@ boolean OCI_API OCI_ObjectSetRaw
     unsigned int len
 )
 {
-    CALL_IMPL(ObjectSetRaw, obj, attr, value, len);
+    CALL_IMPL(OcilibObjectSetRaw, obj, attr, value, len);
 }
 
 boolean OCI_API OCI_ObjectSetDate
@@ -4241,7 +4241,7 @@ boolean OCI_API OCI_ObjectSetDate
     OCI_Date   * value
 )
 {
-    CALL_IMPL(ObjectSetDate, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetDate, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetTimestamp
@@ -4251,7 +4251,7 @@ boolean OCI_API OCI_ObjectSetTimestamp
     OCI_Timestamp* value
 )
 {
-    CALL_IMPL(ObjectSetTimestamp, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetTimestamp, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetInterval
@@ -4261,7 +4261,7 @@ boolean OCI_API OCI_ObjectSetInterval
     OCI_Interval* value
 )
 {
-    CALL_IMPL(ObjectSetInterval, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetInterval, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetColl
@@ -4271,7 +4271,7 @@ boolean OCI_API OCI_ObjectSetColl
     OCI_Coll   * value
 )
 {
-    CALL_IMPL(ObjectSetColl, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetColl, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetObject
@@ -4281,7 +4281,7 @@ boolean OCI_API OCI_ObjectSetObject
     OCI_Object * value
 )
 {
-    CALL_IMPL(ObjectSetObject, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetObject, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetLob
@@ -4291,7 +4291,7 @@ boolean OCI_API OCI_ObjectSetLob
     OCI_Lob    * value
 )
 {
-    CALL_IMPL(ObjectSetLob, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetLob, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetFile
@@ -4301,7 +4301,7 @@ boolean OCI_API OCI_ObjectSetFile
     OCI_File   * value
 )
 {
-    CALL_IMPL(ObjectSetFile, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetFile, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectSetRef
@@ -4311,7 +4311,7 @@ boolean OCI_API OCI_ObjectSetRef
     OCI_Ref    * value
 )
 {
-    CALL_IMPL(ObjectSetReference, obj, attr, value);
+    CALL_IMPL(OcilibObjectSetReference, obj, attr, value);
 }
 
 boolean OCI_API OCI_ObjectIsNull
@@ -4320,7 +4320,7 @@ boolean OCI_API OCI_ObjectIsNull
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectIsNull, obj, attr);
+    CALL_IMPL(OcilibObjectIsNull, obj, attr);
 }
 
 boolean OCI_API OCI_ObjectSetNull
@@ -4329,7 +4329,7 @@ boolean OCI_API OCI_ObjectSetNull
     const otext* attr
 )
 {
-    CALL_IMPL(ObjectSetNull, obj, attr);
+    CALL_IMPL(OcilibObjectSetNull, obj, attr);
 }
 
 boolean OCI_API OCI_ObjectGetStruct
@@ -4339,7 +4339,7 @@ boolean OCI_API OCI_ObjectGetStruct
     void     ** pp_ind
 )
 {
-    CALL_IMPL(ObjectGetStruct, obj, pp_struct, pp_ind);
+    CALL_IMPL(OcilibObjectGetStruct, obj, pp_struct, pp_ind);
 }
 
 boolean OCI_API OCI_ObjectToText
@@ -4349,7 +4349,7 @@ boolean OCI_API OCI_ObjectToText
     otext       * str
 )
 {
-    CALL_IMPL(ObjectToString, obj, size, str);
+    CALL_IMPL(OcilibObjectToString, obj, size, str);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -4368,7 +4368,7 @@ OCI_Pool* OCI_API OCI_PoolCreate
     unsigned int incr_con
 )
 {
-    CALL_IMPL(PoolCreate, db, user, pwd, type, mode, min_con, max_con, incr_con);
+    CALL_IMPL(OcilibPoolCreate, db, user, pwd, type, mode, min_con, max_con, incr_con);
 }
 
 boolean OCI_API OCI_PoolFree
@@ -4376,7 +4376,7 @@ boolean OCI_API OCI_PoolFree
     OCI_Pool* pool
 )
 {
-    CALL_IMPL(PoolFree, pool);
+    CALL_IMPL(OcilibPoolFree, pool);
 }
 
 OCI_Connection* OCI_API OCI_PoolGetConnection
@@ -4385,7 +4385,7 @@ OCI_Connection* OCI_API OCI_PoolGetConnection
     const otext* tag
 )
 {
-    CALL_IMPL(PoolGetConnection, pool, tag);
+    CALL_IMPL(OcilibPoolGetConnection, pool, tag);
 }
 
 unsigned int OCI_API OCI_PoolGetTimeout
@@ -4393,7 +4393,7 @@ unsigned int OCI_API OCI_PoolGetTimeout
     OCI_Pool* pool
 )
 {
-    CALL_IMPL(PoolGetTimeout, pool);
+    CALL_IMPL(OcilibPoolGetTimeout, pool);
 }
 
 boolean OCI_API OCI_PoolSetTimeout
@@ -4402,7 +4402,7 @@ boolean OCI_API OCI_PoolSetTimeout
     unsigned int value
 )
 {
-    CALL_IMPL(PoolSetTimeout, pool, value);
+    CALL_IMPL(OcilibPoolSetTimeout, pool, value);
 }
 
 boolean OCI_API OCI_PoolGetNoWait
@@ -4410,7 +4410,7 @@ boolean OCI_API OCI_PoolGetNoWait
     OCI_Pool* pool
 )
 {
-    CALL_IMPL(PoolGetNoWait, pool);
+    CALL_IMPL(OcilibPoolGetNoWait, pool);
 }
 
 boolean OCI_API OCI_PoolSetNoWait
@@ -4419,7 +4419,7 @@ boolean OCI_API OCI_PoolSetNoWait
     boolean   value
 )
 {
-    CALL_IMPL(PoolSetNoWait, pool, value);
+    CALL_IMPL(OcilibPoolSetNoWait, pool, value);
 }
 
 unsigned int OCI_API OCI_PoolGetBusyCount
@@ -4427,7 +4427,7 @@ unsigned int OCI_API OCI_PoolGetBusyCount
     OCI_Pool* pool
 )
 {
-    CALL_IMPL(PoolGetBusyCount, pool);
+    CALL_IMPL(OcilibPoolGetBusyCount, pool);
 }
 
 unsigned int OCI_API OCI_PoolGetOpenedCount
@@ -4435,7 +4435,7 @@ unsigned int OCI_API OCI_PoolGetOpenedCount
     OCI_Pool* pool
 )
 {
-    CALL_IMPL(PoolGetOpenedCount, pool);
+    CALL_IMPL(OcilibPoolGetOpenedCount, pool);
 }
 
 unsigned int OCI_API OCI_PoolGetMin
@@ -4443,7 +4443,7 @@ unsigned int OCI_API OCI_PoolGetMin
     OCI_Pool* pool
 )
 {
-    CALL_IMPL(PoolGetMin, pool);
+    CALL_IMPL(OcilibPoolGetMin, pool);
 }
 
 unsigned int OCI_API OCI_PoolGetMax
@@ -4451,7 +4451,7 @@ unsigned int OCI_API OCI_PoolGetMax
     OCI_Pool* pool
 )
 {
-    CALL_IMPL(PoolGetMax, pool);
+    CALL_IMPL(OcilibPoolGetMax, pool);
 }
 
 unsigned int OCI_API OCI_PoolGetIncrement
@@ -4459,7 +4459,7 @@ unsigned int OCI_API OCI_PoolGetIncrement
     OCI_Pool* pool
 )
 {
-    CALL_IMPL(PoolGetIncrement, pool);
+    CALL_IMPL(OcilibPoolGetIncrement, pool);
 }
 
 unsigned int OCI_API OCI_PoolGetStatementCacheSize
@@ -4467,7 +4467,7 @@ unsigned int OCI_API OCI_PoolGetStatementCacheSize
     OCI_Pool* pool
 )
 {
-    CALL_IMPL(PoolGetStatementCacheSize, pool);
+    CALL_IMPL(OcilibPoolGetStatementCacheSize, pool);
 }
 
 boolean OCI_API OCI_PoolSetStatementCacheSize
@@ -4476,7 +4476,7 @@ boolean OCI_API OCI_PoolSetStatementCacheSize
     unsigned int value
 )
 {
-    CALL_IMPL(PoolSetStatementCacheSize, pool, value);
+    CALL_IMPL(OcilibPoolSetStatementCacheSize, pool, value);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -4496,7 +4496,7 @@ boolean OCI_API OCI_QueueCreate
     const otext   * comment
 )
 {
-    CALL_IMPL(QueueCreate, con, queue_name, queue_table, queue_type, max_retries,
+    CALL_IMPL(OcilibQueueCreate, con, queue_name, queue_table, queue_type, max_retries,
               retry_delay, retention_time, dependency_tracking, comment);
 }
 
@@ -4510,7 +4510,7 @@ boolean OCI_API OCI_QueueAlter
     const otext   * comment
 )
 {
-    CALL_IMPL(QueueAlter, con, queue_name, max_retries, retry_delay, retention_time, comment);
+    CALL_IMPL(OcilibQueueAlter, con, queue_name, max_retries, retry_delay, retention_time, comment);
 }
 
 boolean OCI_API OCI_QueueDrop
@@ -4519,7 +4519,7 @@ boolean OCI_API OCI_QueueDrop
     const otext   * queue_name
 )
 {
-    CALL_IMPL(QueueDrop, con, queue_name);
+    CALL_IMPL(OcilibQueueDrop, con, queue_name);
 }
 
 boolean OCI_API OCI_QueueStart
@@ -4530,7 +4530,7 @@ boolean OCI_API OCI_QueueStart
     boolean         dequeue
 )
 {
-    CALL_IMPL(QueueStart, con, queue_name, enqueue, dequeue);
+    CALL_IMPL(OcilibQueueStart, con, queue_name, enqueue, dequeue);
 }
 
 boolean OCI_API OCI_QueueStop
@@ -4542,7 +4542,7 @@ boolean OCI_API OCI_QueueStop
     boolean         wait
 )
 {
-    CALL_IMPL(QueueStop, con, queue_name, enqueue, dequeue, wait);
+    CALL_IMPL(OcilibQueueStop, con, queue_name, enqueue, dequeue, wait);
 }
 
 boolean OCI_API OCI_QueueTableCreate
@@ -4560,7 +4560,7 @@ boolean OCI_API OCI_QueueTableCreate
     const otext   * compatible
 )
 {
-    CALL_IMPL(QueueTableCreate, con, queue_table, queue_payload_type, storage_clause,
+    CALL_IMPL(OcilibQueueTableCreate, con, queue_table, queue_payload_type, storage_clause,
               sort_list, multiple_consumers, message_grouping, comment, primary_instance,
               secondary_instance, compatible);
 }
@@ -4574,7 +4574,7 @@ boolean OCI_API OCI_QueueTableAlter
     unsigned int    secondary_instance
 )
 {
-    CALL_IMPL(QueueTableAlter, con, queue_table, comment, primary_instance, secondary_instance);
+    CALL_IMPL(OcilibQueueTableAlter, con, queue_table, comment, primary_instance, secondary_instance);
 }
 
 boolean OCI_API OCI_QueueTableDrop
@@ -4584,7 +4584,7 @@ boolean OCI_API OCI_QueueTableDrop
     boolean         force
 )
 {
-    CALL_IMPL(QueueTableDrop, con, queue_table, force);
+    CALL_IMPL(OcilibQueueTableDrop, con, queue_table, force);
 }
 
 boolean OCI_API OCI_QueueTablePurge
@@ -4596,7 +4596,7 @@ boolean OCI_API OCI_QueueTablePurge
     unsigned int    delivery_mode
 )
 {
-    CALL_IMPL(QueueTablePurge, con, queue_table, purge_condition, block, delivery_mode);
+    CALL_IMPL(OcilibQueueTablePurge, con, queue_table, purge_condition, block, delivery_mode);
 }
 
 boolean OCI_API OCI_QueueTableMigrate
@@ -4606,7 +4606,7 @@ boolean OCI_API OCI_QueueTableMigrate
     const otext   * compatible
 )
 {
-    CALL_IMPL(QueueTableMigrate, con, queue_table, compatible);
+    CALL_IMPL(OcilibQueueTableMigrate, con, queue_table, compatible);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -4619,7 +4619,7 @@ OCI_Ref* OCI_API OCI_RefCreate
     OCI_TypeInfo  * typinf
 )
 {
-    CALL_IMPL(ReferenceCreate, con, typinf);
+    CALL_IMPL(OcilibReferenceCreate, con, typinf);
 }
 
 boolean OCI_API OCI_RefFree
@@ -4627,7 +4627,7 @@ boolean OCI_API OCI_RefFree
     OCI_Ref* ref
 )
 {
-    CALL_IMPL(ReferenceFree, ref);
+    CALL_IMPL(OcilibReferenceFree, ref);
 }
 
 OCI_Ref** OCI_API OCI_RefArrayCreate
@@ -4637,7 +4637,7 @@ OCI_Ref** OCI_API OCI_RefArrayCreate
     unsigned int    nbelem
 )
 {
-    CALL_IMPL(ReferenceCreateArray, con, typinf, nbelem);
+    CALL_IMPL(OcilibReferenceCreateArray, con, typinf, nbelem);
 }
 
 boolean OCI_API OCI_RefArrayFree
@@ -4645,7 +4645,7 @@ boolean OCI_API OCI_RefArrayFree
     OCI_Ref** refs
 )
 {
-    CALL_IMPL(ReferenceFreeArray, refs);
+    CALL_IMPL(OcilibReferenceFreeArray, refs);
 }
 
 boolean OCI_API OCI_RefAssign
@@ -4654,7 +4654,7 @@ boolean OCI_API OCI_RefAssign
     OCI_Ref* ref_src
 )
 {
-    CALL_IMPL(ReferenceAssign, ref, ref_src);
+    CALL_IMPL(OcilibReferenceAssign, ref, ref_src);
 }
 
 OCI_TypeInfo* OCI_API OCI_RefGetTypeInfo
@@ -4662,7 +4662,7 @@ OCI_TypeInfo* OCI_API OCI_RefGetTypeInfo
     OCI_Ref* ref
 )
 {
-    CALL_IMPL(ReferenceGetTypeInfo, ref);
+    CALL_IMPL(OcilibReferenceGetTypeInfo, ref);
 }
 
 OCI_Object* OCI_API OCI_RefGetObject
@@ -4670,7 +4670,7 @@ OCI_Object* OCI_API OCI_RefGetObject
     OCI_Ref* ref
 )
 {
-    CALL_IMPL(ReferenceGetObject, ref);
+    CALL_IMPL(OcilibReferenceGetObject, ref);
 }
 
 boolean OCI_API OCI_RefIsNull
@@ -4678,7 +4678,7 @@ boolean OCI_API OCI_RefIsNull
     OCI_Ref* ref
 )
 {
-    CALL_IMPL(ReferenceIsNull, ref);
+    CALL_IMPL(OcilibReferenceIsNull, ref);
 }
 
 boolean OCI_API OCI_RefSetNull
@@ -4686,7 +4686,7 @@ boolean OCI_API OCI_RefSetNull
     OCI_Ref* ref
 )
 {
-    CALL_IMPL(ReferenceSetNull, ref);
+    CALL_IMPL(OcilibReferenceSetNull, ref);
 }
 
 unsigned int OCI_API OCI_RefGetHexSize
@@ -4694,7 +4694,7 @@ unsigned int OCI_API OCI_RefGetHexSize
     OCI_Ref* ref
 )
 {
-    CALL_IMPL(ReferenceGetHexSize, ref);
+    CALL_IMPL(OcilibReferenceGetHexSize, ref);
 }
 
 boolean OCI_API OCI_RefToText
@@ -4704,7 +4704,7 @@ boolean OCI_API OCI_RefToText
     otext      * str
 )
 {
-    CALL_IMPL(ReferenceToString, ref, size, str);
+    CALL_IMPL(OcilibReferenceToString, ref, size, str);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -4716,7 +4716,7 @@ OCI_Resultset* OCI_API OCI_GetResultset
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetResultset, stmt);
+    CALL_IMPL(OcilibStatementGetResultset, stmt);
 }
 
 OCI_Resultset* OCI_API OCI_GetNextResultset
@@ -4724,7 +4724,7 @@ OCI_Resultset* OCI_API OCI_GetNextResultset
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetNextResultset, stmt);
+    CALL_IMPL(OcilibStatementGetNextResultset, stmt);
 }
 
 boolean OCI_API OCI_FetchPrev
@@ -4732,7 +4732,7 @@ boolean OCI_API OCI_FetchPrev
     OCI_Resultset* rs
 )
 {
-    CALL_IMPL(ResultsetFetchPrev, rs);
+    CALL_IMPL(OcilibResultsetFetchPrev, rs);
 }
 
 boolean OCI_API OCI_FetchNext
@@ -4740,7 +4740,7 @@ boolean OCI_API OCI_FetchNext
     OCI_Resultset* rs
 )
 {
-    CALL_IMPL(ResultsetFetchNext, rs);
+    CALL_IMPL(OcilibResultsetFetchNext, rs);
 }
 
 boolean OCI_API OCI_FetchFirst
@@ -4748,7 +4748,7 @@ boolean OCI_API OCI_FetchFirst
     OCI_Resultset* rs
 )
 {
-    CALL_IMPL(ResultsetFetchFirst, rs);
+    CALL_IMPL(OcilibResultsetFetchFirst, rs);
 }
 
 boolean OCI_API OCI_FetchLast
@@ -4756,7 +4756,7 @@ boolean OCI_API OCI_FetchLast
     OCI_Resultset* rs
 )
 {
-    CALL_IMPL(ResultsetFetchLast, rs);
+    CALL_IMPL(OcilibResultsetFetchLast, rs);
 }
 
 boolean OCI_API OCI_FetchSeek
@@ -4766,7 +4766,7 @@ boolean OCI_API OCI_FetchSeek
     int            offset
 )
 {
-    CALL_IMPL(ResultsetFetchSeek, rs, mode, offset);
+    CALL_IMPL(OcilibResultsetFetchSeek, rs, mode, offset);
 }
 
 unsigned int OCI_API OCI_GetRowCount
@@ -4774,7 +4774,7 @@ unsigned int OCI_API OCI_GetRowCount
     OCI_Resultset* rs
 )
 {
-    CALL_IMPL(ResultsetGetRowCount, rs);
+    CALL_IMPL(OcilibResultsetGetRowCount, rs);
 }
 
 unsigned int OCI_API OCI_GetCurrentRow
@@ -4782,7 +4782,7 @@ unsigned int OCI_API OCI_GetCurrentRow
     OCI_Resultset* rs
 )
 {
-    CALL_IMPL(ResultsetGetCurrentRow, rs);
+    CALL_IMPL(OcilibResultsetGetCurrentRow, rs);
 }
 
 unsigned int OCI_API OCI_GetColumnCount
@@ -4790,7 +4790,7 @@ unsigned int OCI_API OCI_GetColumnCount
     OCI_Resultset* rs
 )
 {
-    CALL_IMPL(ResultsetGetColumnCount, rs);
+    CALL_IMPL(OcilibResultsetGetColumnCount, rs);
 }
 
 OCI_Column* OCI_API OCI_GetColumn
@@ -4799,7 +4799,7 @@ OCI_Column* OCI_API OCI_GetColumn
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetColumn, rs, index);
+    CALL_IMPL(OcilibResultsetGetColumn, rs, index);
 }
 
 OCI_Column* OCI_API OCI_GetColumn2
@@ -4808,7 +4808,7 @@ OCI_Column* OCI_API OCI_GetColumn2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetColumn2, rs, name);
+    CALL_IMPL(OcilibResultsetGetColumn2, rs, name);
 }
 
 unsigned int OCI_API OCI_GetColumnIndex
@@ -4817,7 +4817,7 @@ unsigned int OCI_API OCI_GetColumnIndex
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetColumnIndex, rs, name);
+    CALL_IMPL(OcilibResultsetGetColumnIndex, rs, name);
 }
 
 boolean OCI_API OCI_SetStructNumericType
@@ -4827,7 +4827,7 @@ boolean OCI_API OCI_SetStructNumericType
     unsigned int   type
 )
 {
-    CALL_IMPL(ResultsetSetStructNumericType, rs, index, type);
+    CALL_IMPL(OcilibResultsetSetStructNumericType, rs, index, type);
 }
 
 boolean OCI_API OCI_SetStructNumericType2
@@ -4837,7 +4837,7 @@ boolean OCI_API OCI_SetStructNumericType2
     unsigned int   type
 )
 {
-    CALL_IMPL(ResultsetSetStructNumericType2, rs, name, type);
+    CALL_IMPL(OcilibResultsetSetStructNumericType2, rs, name, type);
 }
 
 boolean OCI_API OCI_GetStruct
@@ -4847,7 +4847,7 @@ boolean OCI_API OCI_GetStruct
     void         * row_struct_ind
 )
 {
-    CALL_IMPL(ResultsetGetStruct, rs, row_struct, row_struct_ind);
+    CALL_IMPL(OcilibResultsetGetStruct, rs, row_struct, row_struct_ind);
 }
 
 OCI_Number* OCI_API OCI_GetNumber
@@ -4856,7 +4856,7 @@ OCI_Number* OCI_API OCI_GetNumber
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetNumber, rs, index);
+    CALL_IMPL(OcilibResultsetGetNumber, rs, index);
 }
 
 OCI_Number* OCI_API OCI_GetNumber2
@@ -4865,7 +4865,7 @@ OCI_Number* OCI_API OCI_GetNumber2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetNumber2, rs, name);
+    CALL_IMPL(OcilibResultsetGetNumber2, rs, name);
 }
 
 short OCI_API OCI_GetShort
@@ -4874,7 +4874,7 @@ short OCI_API OCI_GetShort
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetShort, rs, index);
+    CALL_IMPL(OcilibResultsetGetShort, rs, index);
 }
 
 short OCI_API OCI_GetShort2
@@ -4883,7 +4883,7 @@ short OCI_API OCI_GetShort2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetShort2, rs, name);
+    CALL_IMPL(OcilibResultsetGetShort2, rs, name);
 }
 
 unsigned short OCI_API OCI_GetUnsignedShort
@@ -4892,7 +4892,7 @@ unsigned short OCI_API OCI_GetUnsignedShort
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetUnsignedShort, rs, index);
+    CALL_IMPL(OcilibResultsetGetUnsignedShort, rs, index);
 }
 
 unsigned short OCI_API OCI_GetUnsignedShort2
@@ -4901,7 +4901,7 @@ unsigned short OCI_API OCI_GetUnsignedShort2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetUnsignedShort2, rs, name);
+    CALL_IMPL(OcilibResultsetGetUnsignedShort2, rs, name);
 }
 
 int OCI_API OCI_GetInt
@@ -4910,7 +4910,7 @@ int OCI_API OCI_GetInt
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetInt, rs, index);
+    CALL_IMPL(OcilibResultsetGetInt, rs, index);
 }
 
 int OCI_API OCI_GetInt2
@@ -4919,7 +4919,7 @@ int OCI_API OCI_GetInt2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetInt2, rs, name);
+    CALL_IMPL(OcilibResultsetGetInt2, rs, name);
 }
 
 unsigned int OCI_API OCI_GetUnsignedInt
@@ -4928,7 +4928,7 @@ unsigned int OCI_API OCI_GetUnsignedInt
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetUnsignedInt, rs, index);
+    CALL_IMPL(OcilibResultsetGetUnsignedInt, rs, index);
 }
 
 unsigned int OCI_API OCI_GetUnsignedInt2
@@ -4937,7 +4937,7 @@ unsigned int OCI_API OCI_GetUnsignedInt2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetUnsignedInt2, rs, name);
+    CALL_IMPL(OcilibResultsetGetUnsignedInt2, rs, name);
 }
 
 big_int OCI_API OCI_GetBigInt
@@ -4946,7 +4946,7 @@ big_int OCI_API OCI_GetBigInt
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetBigInt, rs, index);
+    CALL_IMPL(OcilibResultsetGetBigInt, rs, index);
 }
 
 big_int OCI_API OCI_GetBigInt2
@@ -4955,7 +4955,7 @@ big_int OCI_API OCI_GetBigInt2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetBigInt2, rs, name);
+    CALL_IMPL(OcilibResultsetGetBigInt2, rs, name);
 }
 
 big_uint OCI_API OCI_GetUnsignedBigInt
@@ -4964,7 +4964,7 @@ big_uint OCI_API OCI_GetUnsignedBigInt
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetUnsignedBigInt, rs, index);
+    CALL_IMPL(OcilibResultsetGetUnsignedBigInt, rs, index);
 }
 
 big_uint OCI_API OCI_GetUnsignedBigInt2
@@ -4973,7 +4973,7 @@ big_uint OCI_API OCI_GetUnsignedBigInt2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetUnsignedBigInt2, rs, name);
+    CALL_IMPL(OcilibResultsetGetUnsignedBigInt2, rs, name);
 }
 
 const otext* OCI_API OCI_GetString
@@ -4982,7 +4982,7 @@ const otext* OCI_API OCI_GetString
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetString, rs, index);
+    CALL_IMPL(OcilibResultsetGetString, rs, index);
 }
 
 const otext* OCI_API OCI_GetString2
@@ -4991,7 +4991,7 @@ const otext* OCI_API OCI_GetString2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetString2, rs, name);
+    CALL_IMPL(OcilibResultsetGetString2, rs, name);
 }
 
 unsigned int OCI_API OCI_GetRaw
@@ -5002,7 +5002,7 @@ unsigned int OCI_API OCI_GetRaw
     unsigned int   len
 )
 {
-    CALL_IMPL(ResultsetGetRaw, rs, index, buffer,len);
+    CALL_IMPL(OcilibResultsetGetRaw, rs, index, buffer,len);
 }
 
 unsigned int OCI_API OCI_GetRaw2
@@ -5013,7 +5013,7 @@ unsigned int OCI_API OCI_GetRaw2
     unsigned int   len
 )
 {
-    CALL_IMPL(ResultsetGetRaw2, rs, name, buffer, len);
+    CALL_IMPL(OcilibResultsetGetRaw2, rs, name, buffer, len);
 }
 
 double OCI_API OCI_GetDouble
@@ -5022,7 +5022,7 @@ double OCI_API OCI_GetDouble
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetDouble, rs, index);
+    CALL_IMPL(OcilibResultsetGetDouble, rs, index);
 }
 
 double OCI_API OCI_GetDouble2
@@ -5031,7 +5031,7 @@ double OCI_API OCI_GetDouble2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetDouble2, rs, name);
+    CALL_IMPL(OcilibResultsetGetDouble2, rs, name);
 }
 
 float OCI_API OCI_GetFloat
@@ -5040,7 +5040,7 @@ float OCI_API OCI_GetFloat
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetFloat, rs, index);
+    CALL_IMPL(OcilibResultsetGetFloat, rs, index);
 }
 
 float OCI_API OCI_GetFloat2
@@ -5049,7 +5049,7 @@ float OCI_API OCI_GetFloat2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetFloat2, rs, name);
+    CALL_IMPL(OcilibResultsetGetFloat2, rs, name);
 }
 
 OCI_Date* OCI_API OCI_GetDate
@@ -5058,7 +5058,7 @@ OCI_Date* OCI_API OCI_GetDate
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetDate, rs, index);
+    CALL_IMPL(OcilibResultsetGetDate, rs, index);
 }
 
 OCI_Date* OCI_API OCI_GetDate2
@@ -5067,7 +5067,7 @@ OCI_Date* OCI_API OCI_GetDate2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetDate2, rs, name);
+    CALL_IMPL(OcilibResultsetGetDate2, rs, name);
 }
 
 OCI_Timestamp* OCI_API OCI_GetTimestamp
@@ -5076,7 +5076,7 @@ OCI_Timestamp* OCI_API OCI_GetTimestamp
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetTimestamp, rs, index);
+    CALL_IMPL(OcilibResultsetGetTimestamp, rs, index);
 }
 
 OCI_Timestamp* OCI_API OCI_GetTimestamp2
@@ -5085,7 +5085,7 @@ OCI_Timestamp* OCI_API OCI_GetTimestamp2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetTimestamp2, rs, name);
+    CALL_IMPL(OcilibResultsetGetTimestamp2, rs, name);
 }
 
 OCI_Interval* OCI_API OCI_GetInterval
@@ -5094,7 +5094,7 @@ OCI_Interval* OCI_API OCI_GetInterval
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetInterval, rs, index);
+    CALL_IMPL(OcilibResultsetGetInterval, rs, index);
 }
 
 OCI_Interval* OCI_API OCI_GetInterval2
@@ -5103,7 +5103,7 @@ OCI_Interval* OCI_API OCI_GetInterval2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetInterval2, rs, name);
+    CALL_IMPL(OcilibResultsetGetInterval2, rs, name);
 }
 
 OCI_Object* OCI_API OCI_GetObject
@@ -5112,7 +5112,7 @@ OCI_Object* OCI_API OCI_GetObject
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetObject, rs, index);
+    CALL_IMPL(OcilibResultsetGetObject, rs, index);
 }
 
 OCI_Object* OCI_API OCI_GetObject2
@@ -5121,7 +5121,7 @@ OCI_Object* OCI_API OCI_GetObject2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetObject2, rs, name);
+    CALL_IMPL(OcilibResultsetGetObject2, rs, name);
 }
 
 OCI_Coll* OCI_API OCI_GetColl
@@ -5130,7 +5130,7 @@ OCI_Coll* OCI_API OCI_GetColl
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetColl, rs, index);
+    CALL_IMPL(OcilibResultsetGetColl, rs, index);
 }
 
 OCI_Coll* OCI_API OCI_GetColl2
@@ -5139,7 +5139,7 @@ OCI_Coll* OCI_API OCI_GetColl2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetColl2, rs, name);
+    CALL_IMPL(OcilibResultsetGetColl2, rs, name);
 }
 
 OCI_Ref* OCI_API OCI_GetRef
@@ -5148,7 +5148,7 @@ OCI_Ref* OCI_API OCI_GetRef
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetReference, rs, index);
+    CALL_IMPL(OcilibResultsetGetReference, rs, index);
 }
 
 OCI_Ref* OCI_API OCI_GetRef2
@@ -5157,7 +5157,7 @@ OCI_Ref* OCI_API OCI_GetRef2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetReference2, rs, name);
+    CALL_IMPL(OcilibResultsetGetReference2, rs, name);
 }
 
 OCI_Statement* OCI_API OCI_GetStatement
@@ -5166,7 +5166,7 @@ OCI_Statement* OCI_API OCI_GetStatement
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetStatement, rs, index);
+    CALL_IMPL(OcilibResultsetGetStatement, rs, index);
 }
 
 OCI_Statement* OCI_API OCI_GetStatement2
@@ -5175,7 +5175,7 @@ OCI_Statement* OCI_API OCI_GetStatement2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetStatement2, rs, name);
+    CALL_IMPL(OcilibResultsetGetStatement2, rs, name);
 }
 
 OCI_Lob* OCI_API OCI_GetLob
@@ -5184,7 +5184,7 @@ OCI_Lob* OCI_API OCI_GetLob
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetLob, rs, index);
+    CALL_IMPL(OcilibResultsetGetLob, rs, index);
 }
 
 OCI_Lob* OCI_API OCI_GetLob2
@@ -5193,7 +5193,7 @@ OCI_Lob* OCI_API OCI_GetLob2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetLob2, rs, name);
+    CALL_IMPL(OcilibResultsetGetLob2, rs, name);
 }
 
 OCI_File* OCI_API OCI_GetFile
@@ -5202,7 +5202,7 @@ OCI_File* OCI_API OCI_GetFile
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetFile, rs, index);
+    CALL_IMPL(OcilibResultsetGetFile, rs, index);
 }
 
 OCI_File* OCI_API OCI_GetFile2
@@ -5211,7 +5211,7 @@ OCI_File* OCI_API OCI_GetFile2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetFile2, rs, name);
+    CALL_IMPL(OcilibResultsetGetFile2, rs, name);
 }
 
 OCI_Long* OCI_API OCI_GetLong
@@ -5220,7 +5220,7 @@ OCI_Long* OCI_API OCI_GetLong
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetLong, rs, index);
+    CALL_IMPL(OcilibResultsetGetLong, rs, index);
 }
 
 OCI_Long* OCI_API OCI_GetLong2
@@ -5229,7 +5229,7 @@ OCI_Long* OCI_API OCI_GetLong2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetLong2, rs, name);
+    CALL_IMPL(OcilibResultsetGetLong2, rs, name);
 }
 
 unsigned int OCI_API OCI_GetDataSize
@@ -5238,7 +5238,7 @@ unsigned int OCI_API OCI_GetDataSize
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetDataSize, rs, index);
+    CALL_IMPL(OcilibResultsetGetDataSize, rs, index);
 }
 
 unsigned int OCI_API OCI_GetDataSize2
@@ -5247,7 +5247,7 @@ unsigned int OCI_API OCI_GetDataSize2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetGetDataSize2, rs, name);
+    CALL_IMPL(OcilibResultsetGetDataSize2, rs, name);
 }
 
 boolean OCI_API OCI_IsNull
@@ -5256,7 +5256,7 @@ boolean OCI_API OCI_IsNull
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetIsNull, rs, index);
+    CALL_IMPL(OcilibResultsetIsNull, rs, index);
 }
 
 boolean OCI_API OCI_IsNull2
@@ -5265,7 +5265,7 @@ boolean OCI_API OCI_IsNull2
     const otext  * name
 )
 {
-    CALL_IMPL(ResultsetIsNull2, rs, name);
+    CALL_IMPL(OcilibResultsetIsNull2, rs, name);
 }
 
 OCI_Statement* OCI_API OCI_ResultsetGetStatement
@@ -5273,7 +5273,7 @@ OCI_Statement* OCI_API OCI_ResultsetGetStatement
     OCI_Resultset* rs
 )
 {
-    CALL_IMPL(ResultsetResultsetGetStatement, rs);
+    CALL_IMPL(OcilibResultsetResultsetGetStatement, rs);
 }
 
 unsigned int OCI_API OCI_GetDataLength
@@ -5282,7 +5282,7 @@ unsigned int OCI_API OCI_GetDataLength
     unsigned int   index
 )
 {
-    CALL_IMPL(ResultsetGetDataLength, rs, index);
+    CALL_IMPL(OcilibResultsetGetDataLength, rs, index);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -5294,7 +5294,7 @@ OCI_Statement* OCI_API OCI_StatementCreate
     OCI_Connection* con
 )
 {
-    CALL_IMPL(StatementCreate, con);
+    CALL_IMPL(OcilibStatementCreate, con);
 }
 
 boolean OCI_API OCI_StatementFree
@@ -5302,7 +5302,7 @@ boolean OCI_API OCI_StatementFree
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementFree, stmt);
+    CALL_IMPL(OcilibStatementFree, stmt);
 }
 
 boolean OCI_API OCI_ReleaseResultsets
@@ -5310,7 +5310,7 @@ boolean OCI_API OCI_ReleaseResultsets
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementReleaseResultsets, stmt);
+    CALL_IMPL(OcilibStatementReleaseResultsets, stmt);
 }
 
 boolean OCI_API OCI_Prepare
@@ -5319,7 +5319,7 @@ boolean OCI_API OCI_Prepare
     const otext  * sql
 )
 {
-    CALL_IMPL(StatementPrepare, stmt, sql);
+    CALL_IMPL(OcilibStatementPrepare, stmt, sql);
 }
 
 boolean OCI_API OCI_Execute
@@ -5327,7 +5327,7 @@ boolean OCI_API OCI_Execute
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementExecute, stmt);
+    CALL_IMPL(OcilibStatementExecute, stmt);
 }
 
 boolean OCI_API OCI_ExecuteStmt
@@ -5336,7 +5336,7 @@ boolean OCI_API OCI_ExecuteStmt
     const otext  * sql
 )
 {
-    CALL_IMPL(StatementExecuteStmt, stmt, sql);
+    CALL_IMPL(OcilibStatementExecuteStmt, stmt, sql);
 }
 
 boolean OCI_API OCI_Parse
@@ -5345,7 +5345,7 @@ boolean OCI_API OCI_Parse
     const otext  * sql
 )
 {
-    CALL_IMPL(StatementParse, stmt, sql);
+    CALL_IMPL(OcilibStatementParse, stmt, sql);
 }
 
 boolean OCI_API OCI_Describe
@@ -5354,7 +5354,7 @@ boolean OCI_API OCI_Describe
     const otext  * sql
 )
 {
-    CALL_IMPL(StatementDescribe, stmt, sql);
+    CALL_IMPL(OcilibStatementDescribe, stmt, sql);
 }
 
 boolean OCI_PrepareFmt
@@ -5368,7 +5368,7 @@ boolean OCI_PrepareFmt
     va_list args;
 
     va_start(args, sql);
-    res = StatementPrepareFmt(stmt, sql, args);
+    res = OcilibStatementPrepareFmt(stmt, sql, args);
     va_end(args);
 
     return res;
@@ -5385,7 +5385,7 @@ boolean OCI_ExecuteStmtFmt
     va_list args;
 
     va_start(args, sql);
-    res = StatementExecuteStmtFmt(stmt, sql, args);
+    res = OcilibStatementExecuteStmtFmt(stmt, sql, args);
     va_end(args);
 
     return res;
@@ -5402,7 +5402,7 @@ boolean OCI_ParseFmt
     va_list args;
 
     va_start(args, sql);
-    res = StatementParseFmt(stmt, sql, args);
+    res = OcilibStatementParseFmt(stmt, sql, args);
     va_end(args);
 
     return res;
@@ -5419,7 +5419,7 @@ boolean OCI_DescribeFmt
     va_list args;
 
     va_start(args, sql);
-    res = StatementDescribeFmt(stmt, sql, args);
+    res = OcilibStatementDescribeFmt(stmt, sql, args);
     va_end(args);
 
     return res;
@@ -5431,7 +5431,7 @@ boolean OCI_API OCI_BindArraySetSize
     unsigned int   size
 )
 {
-    CALL_IMPL(StatementSetBindArraySize, stmt, size);
+    CALL_IMPL(OcilibStatementSetBindArraySize, stmt, size);
 }
 
 unsigned int OCI_API OCI_BindArrayGetSize
@@ -5439,7 +5439,7 @@ unsigned int OCI_API OCI_BindArrayGetSize
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetBindArraySize, stmt);
+    CALL_IMPL(OcilibStatementGetBindArraySize, stmt);
 }
 
 boolean OCI_API OCI_AllowRebinding
@@ -5448,7 +5448,7 @@ boolean OCI_API OCI_AllowRebinding
     boolean        value
 )
 {
-    CALL_IMPL(StatementAllowRebinding, stmt, value);
+    CALL_IMPL(OcilibStatementAllowRebinding, stmt, value);
 }
 
 boolean OCI_API OCI_IsRebindingAllowed
@@ -5456,7 +5456,7 @@ boolean OCI_API OCI_IsRebindingAllowed
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementIsRebindingAllowed, stmt);
+    CALL_IMPL(OcilibStatementIsRebindingAllowed, stmt);
 }
 
 boolean OCI_API OCI_BindBoolean
@@ -5466,7 +5466,7 @@ boolean OCI_API OCI_BindBoolean
     boolean      * data
 )
 {
-    CALL_IMPL(StatementBindBoolean, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindBoolean, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindNumber
@@ -5476,7 +5476,7 @@ boolean OCI_API OCI_BindNumber
     OCI_Number   * data
 )
 {
-    CALL_IMPL(StatementBindNumber, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindNumber, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfNumbers
@@ -5487,7 +5487,7 @@ boolean OCI_API OCI_BindArrayOfNumbers
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfNumbers, stmt, name, data, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfNumbers, stmt, name, data, nbelem);
 }
 
 boolean OCI_API OCI_BindShort
@@ -5497,7 +5497,7 @@ boolean OCI_API OCI_BindShort
     short        * data
 )
 {
-    CALL_IMPL(StatementBindShort, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindShort, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfShorts
@@ -5508,7 +5508,7 @@ boolean OCI_API OCI_BindArrayOfShorts
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfShorts, stmt, name, data, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfShorts, stmt, name, data, nbelem);
 }
 
 boolean OCI_API OCI_BindUnsignedShort
@@ -5518,7 +5518,7 @@ boolean OCI_API OCI_BindUnsignedShort
     unsigned short* data
 )
 {
-    CALL_IMPL(StatementBindUnsignedShort, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindUnsignedShort, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfUnsignedShorts
@@ -5529,7 +5529,7 @@ boolean OCI_API OCI_BindArrayOfUnsignedShorts
     unsigned int    nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfUnsignedShorts, stmt, name, data, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfUnsignedShorts, stmt, name, data, nbelem);
 }
 
 boolean OCI_API OCI_BindInt
@@ -5539,7 +5539,7 @@ boolean OCI_API OCI_BindInt
     int          * data
 )
 {
-    CALL_IMPL(StatementBindInt, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindInt, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfInts
@@ -5550,7 +5550,7 @@ boolean OCI_API OCI_BindArrayOfInts
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfInts, stmt, name, data, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfInts, stmt, name, data, nbelem);
 }
 
 boolean OCI_API OCI_BindUnsignedInt
@@ -5560,7 +5560,7 @@ boolean OCI_API OCI_BindUnsignedInt
     unsigned int * data
 )
 {
-    CALL_IMPL(StatementBindUnsignedInt, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindUnsignedInt, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfUnsignedInts
@@ -5571,7 +5571,7 @@ boolean OCI_API OCI_BindArrayOfUnsignedInts
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfUnsignedInts, stmt, name, data, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfUnsignedInts, stmt, name, data, nbelem);
 }
 
 boolean OCI_API OCI_BindBigInt
@@ -5581,7 +5581,7 @@ boolean OCI_API OCI_BindBigInt
     big_int      * data
 )
 {
-    CALL_IMPL(StatementBindBigInt, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindBigInt, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfBigInts
@@ -5592,7 +5592,7 @@ boolean OCI_API OCI_BindArrayOfBigInts
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfBigInts, stmt, name, data, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfBigInts, stmt, name, data, nbelem);
 }
 
 boolean OCI_API OCI_BindUnsignedBigInt
@@ -5602,7 +5602,7 @@ boolean OCI_API OCI_BindUnsignedBigInt
     big_uint     * data
 )
 {
-    CALL_IMPL(StatementBindUnsignedBigInt, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindUnsignedBigInt, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfUnsignedBigInts
@@ -5613,7 +5613,7 @@ boolean OCI_API OCI_BindArrayOfUnsignedBigInts
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfUnsignedBigInts, stmt, name, data, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfUnsignedBigInts, stmt, name, data, nbelem);
 }
 
 boolean OCI_API OCI_BindString
@@ -5624,7 +5624,7 @@ boolean OCI_API OCI_BindString
     unsigned int   len
 )
 {
-    CALL_IMPL(StatementBindString, stmt, name, data, len);
+    CALL_IMPL(OcilibStatementBindString, stmt, name, data, len);
 }
 
 boolean OCI_API OCI_BindArrayOfStrings
@@ -5636,7 +5636,7 @@ boolean OCI_API OCI_BindArrayOfStrings
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfStrings, stmt, name, data, len, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfStrings, stmt, name, data, len, nbelem);
 }
 
 boolean OCI_API OCI_BindRaw
@@ -5647,7 +5647,7 @@ boolean OCI_API OCI_BindRaw
     unsigned int   len
 )
 {
-    CALL_IMPL(StatementBindRaw, stmt, name, data, len);
+    CALL_IMPL(OcilibStatementBindRaw, stmt, name, data, len);
 }
 
 boolean OCI_API OCI_BindArrayOfRaws
@@ -5659,7 +5659,7 @@ boolean OCI_API OCI_BindArrayOfRaws
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfRaws, stmt, name, data, len, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfRaws, stmt, name, data, len, nbelem);
 }
 
 boolean OCI_API OCI_BindDouble
@@ -5669,7 +5669,7 @@ boolean OCI_API OCI_BindDouble
     double       * data
 )
 {
-    CALL_IMPL(StatementBindDouble, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindDouble, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfDoubles
@@ -5680,7 +5680,7 @@ boolean OCI_API OCI_BindArrayOfDoubles
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfDoubles, stmt, name, data, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfDoubles, stmt, name, data, nbelem);
 }
 
 boolean OCI_API OCI_BindFloat
@@ -5690,7 +5690,7 @@ boolean OCI_API OCI_BindFloat
     float        * data
 )
 {
-    CALL_IMPL(StatementBindFloat, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindFloat, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfFloats
@@ -5701,7 +5701,7 @@ boolean OCI_API OCI_BindArrayOfFloats
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfFloats, stmt, name, data, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfFloats, stmt, name, data, nbelem);
 }
 
 boolean OCI_API OCI_BindDate
@@ -5711,7 +5711,7 @@ boolean OCI_API OCI_BindDate
     OCI_Date     * data
 )
 {
-    CALL_IMPL(StatementBindDate, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindDate, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfDates
@@ -5722,7 +5722,7 @@ boolean OCI_API OCI_BindArrayOfDates
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfDates, stmt, name, data, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfDates, stmt, name, data, nbelem);
 }
 
 boolean OCI_API OCI_BindTimestamp
@@ -5732,7 +5732,7 @@ boolean OCI_API OCI_BindTimestamp
     OCI_Timestamp* data
 )
 {
-    CALL_IMPL(StatementBindTimestamp, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindTimestamp, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfTimestamps
@@ -5744,7 +5744,7 @@ boolean OCI_API OCI_BindArrayOfTimestamps
     unsigned int    nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfTimestamps, stmt, name, data, type, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfTimestamps, stmt, name, data, type, nbelem);
 }
 
 boolean OCI_API OCI_BindInterval
@@ -5754,7 +5754,7 @@ boolean OCI_API OCI_BindInterval
     OCI_Interval * data
 )
 {
-    CALL_IMPL(StatementBindInterval, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindInterval, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfIntervals
@@ -5766,7 +5766,7 @@ boolean OCI_API OCI_BindArrayOfIntervals
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfIntervals, stmt, name, data, type, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfIntervals, stmt, name, data, type, nbelem);
 }
 
 boolean OCI_API OCI_BindObject
@@ -5776,7 +5776,7 @@ boolean OCI_API OCI_BindObject
     OCI_Object   * data
 )
 {
-    CALL_IMPL(StatementBindObject, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindObject, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfObjects
@@ -5788,7 +5788,7 @@ boolean OCI_API OCI_BindArrayOfObjects
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfObjects, stmt, name, data, typinf, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfObjects, stmt, name, data, typinf, nbelem);
 }
 
 boolean OCI_API OCI_BindLob
@@ -5798,7 +5798,7 @@ boolean OCI_API OCI_BindLob
     OCI_Lob      * data
 )
 {
-    CALL_IMPL(StatementBindLob, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindLob, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfLobs
@@ -5810,7 +5810,7 @@ boolean OCI_API OCI_BindArrayOfLobs
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfLobs, stmt, name, data, type, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfLobs, stmt, name, data, type, nbelem);
 }
 
 boolean OCI_API OCI_BindFile
@@ -5820,7 +5820,7 @@ boolean OCI_API OCI_BindFile
     OCI_File     * data
 )
 {
-    CALL_IMPL(StatementBindFile, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindFile, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfFiles
@@ -5832,7 +5832,7 @@ boolean OCI_API OCI_BindArrayOfFiles
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfFiles, stmt, name, data, type, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfFiles, stmt, name, data, type, nbelem);
 }
 
 boolean OCI_API OCI_BindRef
@@ -5842,7 +5842,7 @@ boolean OCI_API OCI_BindRef
     OCI_Ref      * data
 )
 {
-    CALL_IMPL(StatementBindReference, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindReference, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfRefs
@@ -5854,7 +5854,7 @@ boolean OCI_API OCI_BindArrayOfRefs
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfReferences, stmt, name, data, typinf, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfReferences, stmt, name, data, typinf, nbelem);
 }
 
 boolean OCI_API OCI_BindColl
@@ -5864,7 +5864,7 @@ boolean OCI_API OCI_BindColl
     OCI_Coll     * data
 )
 {
-    CALL_IMPL(StatementBindCollection, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindCollection, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindArrayOfColls
@@ -5876,7 +5876,7 @@ boolean OCI_API OCI_BindArrayOfColls
     unsigned int   nbelem
 )
 {
-    CALL_IMPL(StatementBindArrayOfCollections, stmt, name, data, typinf, nbelem);
+    CALL_IMPL(OcilibStatementBindArrayOfCollections, stmt, name, data, typinf, nbelem);
 }
 
 boolean OCI_API OCI_BindStatement
@@ -5886,7 +5886,7 @@ boolean OCI_API OCI_BindStatement
     OCI_Statement* data
 )
 {
-    CALL_IMPL(StatementBindStatement, stmt, name, data);
+    CALL_IMPL(OcilibStatementBindStatement, stmt, name, data);
 }
 
 boolean OCI_API OCI_BindLong
@@ -5897,7 +5897,7 @@ boolean OCI_API OCI_BindLong
     unsigned int   size
 )
 {
-    CALL_IMPL(StatementBindLong, stmt, name, data, size);
+    CALL_IMPL(OcilibStatementBindLong, stmt, name, data, size);
 }
 
 boolean OCI_API OCI_RegisterNumber
@@ -5906,7 +5906,7 @@ boolean OCI_API OCI_RegisterNumber
     const otext  * name
 )
 {
-    CALL_IMPL(StatementRegisterNumber, stmt, name);
+    CALL_IMPL(OcilibStatementRegisterNumber, stmt, name);
 }
 
 boolean OCI_API OCI_RegisterShort
@@ -5915,7 +5915,7 @@ boolean OCI_API OCI_RegisterShort
     const otext  * name
 )
 {
-    CALL_IMPL(StatementRegisterShort, stmt, name);
+    CALL_IMPL(OcilibStatementRegisterShort, stmt, name);
 }
 
 boolean OCI_API OCI_RegisterUnsignedShort
@@ -5924,7 +5924,7 @@ boolean OCI_API OCI_RegisterUnsignedShort
     const otext  * name
 )
 {
-    CALL_IMPL(StatementRegisterUnsignedShort, stmt, name);
+    CALL_IMPL(OcilibStatementRegisterUnsignedShort, stmt, name);
 }
 
 boolean OCI_API OCI_RegisterInt
@@ -5933,7 +5933,7 @@ boolean OCI_API OCI_RegisterInt
     const otext  * name
 )
 {
-    CALL_IMPL(StatementRegisterInt, stmt, name);
+    CALL_IMPL(OcilibStatementRegisterInt, stmt, name);
 }
 
 boolean OCI_API OCI_RegisterUnsignedInt
@@ -5942,7 +5942,7 @@ boolean OCI_API OCI_RegisterUnsignedInt
     const otext  * name
 )
 {
-    CALL_IMPL(StatementRegisterUnsignedInt, stmt, name);
+    CALL_IMPL(OcilibStatementRegisterUnsignedInt, stmt, name);
 }
 
 boolean OCI_API OCI_RegisterBigInt
@@ -5951,7 +5951,7 @@ boolean OCI_API OCI_RegisterBigInt
     const otext  * name
 )
 {
-    CALL_IMPL(StatementRegisterBigInt, stmt, name);
+    CALL_IMPL(OcilibStatementRegisterBigInt, stmt, name);
 }
 
 boolean OCI_API OCI_RegisterUnsignedBigInt
@@ -5960,7 +5960,7 @@ boolean OCI_API OCI_RegisterUnsignedBigInt
     const otext  * name
 )
 {
-    CALL_IMPL(StatementRegisterUnsignedBigInt, stmt, name);
+    CALL_IMPL(OcilibStatementRegisterUnsignedBigInt, stmt, name);
 }
 
 boolean OCI_API OCI_RegisterString
@@ -5970,7 +5970,7 @@ boolean OCI_API OCI_RegisterString
     unsigned int   len
 )
 {
-    CALL_IMPL(StatementRegisterString, stmt, name, len);
+    CALL_IMPL(OcilibStatementRegisterString, stmt, name, len);
 }
 
 boolean OCI_API OCI_RegisterRaw
@@ -5980,7 +5980,7 @@ boolean OCI_API OCI_RegisterRaw
     unsigned int   len
 )
 {
-    CALL_IMPL(StatementRegisterRaw, stmt, name, len);
+    CALL_IMPL(OcilibStatementRegisterRaw, stmt, name, len);
 }
 
 boolean OCI_API OCI_RegisterDouble
@@ -5989,7 +5989,7 @@ boolean OCI_API OCI_RegisterDouble
     const otext  * name
 )
 {
-    CALL_IMPL(StatementRegisterDouble, stmt, name);
+    CALL_IMPL(OcilibStatementRegisterDouble, stmt, name);
 }
 
 boolean OCI_API OCI_RegisterFloat
@@ -5998,7 +5998,7 @@ boolean OCI_API OCI_RegisterFloat
     const otext  * name
 )
 {
-    CALL_IMPL(StatementRegisterFloat, stmt, name);
+    CALL_IMPL(OcilibStatementRegisterFloat, stmt, name);
 }
 
 boolean OCI_API OCI_RegisterDate
@@ -6007,7 +6007,7 @@ boolean OCI_API OCI_RegisterDate
     const otext  * name
 )
 {
-    CALL_IMPL(StatementRegisterDate, stmt, name);
+    CALL_IMPL(OcilibStatementRegisterDate, stmt, name);
 }
 
 boolean OCI_API OCI_RegisterTimestamp
@@ -6017,7 +6017,7 @@ boolean OCI_API OCI_RegisterTimestamp
     unsigned int   type
 )
 {
-    CALL_IMPL(StatementRegisterTimestamp, stmt, name, type);
+    CALL_IMPL(OcilibStatementRegisterTimestamp, stmt, name, type);
 }
 
 boolean OCI_API OCI_RegisterInterval
@@ -6027,7 +6027,7 @@ boolean OCI_API OCI_RegisterInterval
     unsigned int   type
 )
 {
-    CALL_IMPL(StatementRegisterInterval, stmt, name, type);
+    CALL_IMPL(OcilibStatementRegisterInterval, stmt, name, type);
 }
 
 boolean OCI_API OCI_RegisterObject
@@ -6037,7 +6037,7 @@ boolean OCI_API OCI_RegisterObject
     OCI_TypeInfo * typinf
 )
 {
-    CALL_IMPL(StatementRegisterObject, stmt, name, typinf);
+    CALL_IMPL(OcilibStatementRegisterObject, stmt, name, typinf);
 }
 
 boolean OCI_API OCI_RegisterLob
@@ -6047,7 +6047,7 @@ boolean OCI_API OCI_RegisterLob
     unsigned int   type
 )
 {
-    CALL_IMPL(StatementRegisterLob, stmt, name, type);
+    CALL_IMPL(OcilibStatementRegisterLob, stmt, name, type);
 }
 
 boolean OCI_API OCI_RegisterFile
@@ -6057,7 +6057,7 @@ boolean OCI_API OCI_RegisterFile
     unsigned int   type
 )
 {
-    CALL_IMPL(StatementRegisterFile, stmt, name, type);
+    CALL_IMPL(OcilibStatementRegisterFile, stmt, name, type);
 }
 
 boolean OCI_API OCI_RegisterRef
@@ -6067,7 +6067,7 @@ boolean OCI_API OCI_RegisterRef
     OCI_TypeInfo * typinf
 )
 {
-    CALL_IMPL(StatementRegisterReference, stmt, name, typinf);
+    CALL_IMPL(OcilibStatementRegisterReference, stmt, name, typinf);
 }
 
 unsigned int OCI_API OCI_GetStatementType
@@ -6075,7 +6075,7 @@ unsigned int OCI_API OCI_GetStatementType
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetStatementType, stmt);
+    CALL_IMPL(OcilibStatementGetStatementType, stmt);
 }
 
 boolean OCI_API OCI_SetFetchMode
@@ -6084,7 +6084,7 @@ boolean OCI_API OCI_SetFetchMode
     unsigned int   mode
 )
 {
-    CALL_IMPL(StatementSetFetchMode, stmt, mode);
+    CALL_IMPL(OcilibStatementSetFetchMode, stmt, mode);
 }
 
 unsigned int OCI_API OCI_GetFetchMode
@@ -6092,7 +6092,7 @@ unsigned int OCI_API OCI_GetFetchMode
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetFetchMode, stmt);
+    CALL_IMPL(OcilibStatementGetFetchMode, stmt);
 }
 
 boolean OCI_API OCI_SetBindMode
@@ -6101,7 +6101,7 @@ boolean OCI_API OCI_SetBindMode
     unsigned int   mode
 )
 {
-    CALL_IMPL(StatementSetBindMode, stmt, mode);
+    CALL_IMPL(OcilibStatementSetBindMode, stmt, mode);
 }
 
 unsigned int OCI_API OCI_GetBindMode
@@ -6109,7 +6109,7 @@ unsigned int OCI_API OCI_GetBindMode
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetBindMode, stmt);
+    CALL_IMPL(OcilibStatementGetBindMode, stmt);
 }
 
 boolean OCI_API OCI_SetBindAllocation
@@ -6118,7 +6118,7 @@ boolean OCI_API OCI_SetBindAllocation
     unsigned int   mode
 )
 {
-    CALL_IMPL(StatementSetBindAllocation, stmt, mode);
+    CALL_IMPL(OcilibStatementSetBindAllocation, stmt, mode);
 }
 
 unsigned int OCI_API OCI_GetBindAllocation
@@ -6126,7 +6126,7 @@ unsigned int OCI_API OCI_GetBindAllocation
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetBindAllocation, stmt);
+    CALL_IMPL(OcilibStatementGetBindAllocation, stmt);
 }
 
 boolean OCI_API OCI_SetFetchSize
@@ -6135,7 +6135,7 @@ boolean OCI_API OCI_SetFetchSize
     unsigned int   size
 )
 {
-    CALL_IMPL(StatementSetFetchSize, stmt, size);
+    CALL_IMPL(OcilibStatementSetFetchSize, stmt, size);
 }
 
 unsigned int OCI_API OCI_GetFetchSize
@@ -6143,7 +6143,7 @@ unsigned int OCI_API OCI_GetFetchSize
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetFetchSize, stmt);
+    CALL_IMPL(OcilibStatementGetFetchSize, stmt);
 }
 
 boolean OCI_API OCI_SetPrefetchSize
@@ -6152,7 +6152,7 @@ boolean OCI_API OCI_SetPrefetchSize
     unsigned int   size
 )
 {
-    CALL_IMPL(StatementSetPrefetchSize, stmt, size);
+    CALL_IMPL(OcilibStatementSetPrefetchSize, stmt, size);
 }
 
 unsigned int OCI_API OCI_GetPrefetchSize
@@ -6160,7 +6160,7 @@ unsigned int OCI_API OCI_GetPrefetchSize
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetPrefetchSize, stmt);
+    CALL_IMPL(OcilibStatementGetPrefetchSize, stmt);
 }
 
 boolean OCI_API OCI_SetPrefetchMemory
@@ -6169,7 +6169,7 @@ boolean OCI_API OCI_SetPrefetchMemory
     unsigned int   size
 )
 {
-    CALL_IMPL(StatementSetPrefetchMemory, stmt, size);
+    CALL_IMPL(OcilibStatementSetPrefetchMemory, stmt, size);
 }
 
 unsigned int OCI_API OCI_GetPrefetchMemory
@@ -6177,7 +6177,7 @@ unsigned int OCI_API OCI_GetPrefetchMemory
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetPrefetchMemory, stmt);
+    CALL_IMPL(OcilibStatementGetPrefetchMemory, stmt);
 }
 
 boolean OCI_API OCI_SetLongMaxSize
@@ -6186,7 +6186,7 @@ boolean OCI_API OCI_SetLongMaxSize
     unsigned int   size
 )
 {
-    CALL_IMPL(StatementSetLongMaxSize, stmt, size);
+    CALL_IMPL(OcilibStatementSetLongMaxSize, stmt, size);
 }
 
 unsigned int OCI_API OCI_GetLongMaxSize
@@ -6194,7 +6194,7 @@ unsigned int OCI_API OCI_GetLongMaxSize
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetLongMaxSize, stmt);
+    CALL_IMPL(OcilibStatementGetLongMaxSize, stmt);
 }
 
 boolean OCI_API OCI_SetLongMode
@@ -6203,7 +6203,7 @@ boolean OCI_API OCI_SetLongMode
     unsigned int   mode
 )
 {
-    CALL_IMPL(StatementSetLongMode, stmt, mode);
+    CALL_IMPL(OcilibStatementSetLongMode, stmt, mode);
 }
 
 unsigned int OCI_API OCI_GetLongMode
@@ -6211,7 +6211,7 @@ unsigned int OCI_API OCI_GetLongMode
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetLongMode, stmt);
+    CALL_IMPL(OcilibStatementGetLongMode, stmt);
 }
 
 OCI_Connection* OCI_API OCI_StatementGetConnection
@@ -6219,7 +6219,7 @@ OCI_Connection* OCI_API OCI_StatementGetConnection
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetConnection, stmt);
+    CALL_IMPL(OcilibStatementGetConnection, stmt);
 }
 
 const otext* OCI_API OCI_GetSql
@@ -6227,7 +6227,7 @@ const otext* OCI_API OCI_GetSql
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetSql, stmt);
+    CALL_IMPL(OcilibStatementGetSql, stmt);
 }
 
 const otext* OCI_API OCI_GetSqlIdentifier
@@ -6235,7 +6235,7 @@ const otext* OCI_API OCI_GetSqlIdentifier
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetSqlIdentifier, stmt);
+    CALL_IMPL(OcilibStatementGetSqlIdentifier, stmt);
 }
 
 unsigned int OCI_API OCI_GetSqlErrorPos
@@ -6243,7 +6243,7 @@ unsigned int OCI_API OCI_GetSqlErrorPos
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetSqlErrorPos, stmt);
+    CALL_IMPL(OcilibStatementGetSqlErrorPos, stmt);
 }
 
 unsigned int OCI_API OCI_GetAffectedRows
@@ -6251,7 +6251,7 @@ unsigned int OCI_API OCI_GetAffectedRows
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetAffectedRows, stmt);
+    CALL_IMPL(OcilibStatementGetAffectedRows, stmt);
 }
 
 unsigned int OCI_API OCI_GetBindCount
@@ -6259,7 +6259,7 @@ unsigned int OCI_API OCI_GetBindCount
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetBindCount, stmt);
+    CALL_IMPL(OcilibStatementGetBindCount, stmt);
 }
 
 OCI_Bind* OCI_API OCI_GetBind
@@ -6268,7 +6268,7 @@ OCI_Bind* OCI_API OCI_GetBind
     unsigned int   index
 )
 {
-    CALL_IMPL(StatementGetBind, stmt, index);
+    CALL_IMPL(OcilibStatementGetBind, stmt, index);
 }
 
 OCI_Bind* OCI_API OCI_GetBind2
@@ -6277,7 +6277,7 @@ OCI_Bind* OCI_API OCI_GetBind2
     const otext  * name
 )
 {
-    CALL_IMPL(StatementGetBind2, stmt, name);
+    CALL_IMPL(OcilibStatementGetBind2, stmt, name);
 }
 
 unsigned int OCI_API OCI_GetBindIndex
@@ -6286,7 +6286,7 @@ unsigned int OCI_API OCI_GetBindIndex
     const otext  * name
 )
 {
-    CALL_IMPL(StatementGetBindIndex, stmt, name);
+    CALL_IMPL(OcilibStatementGetBindIndex, stmt, name);
 }
 
 unsigned int OCI_API OCI_GetSQLCommand
@@ -6294,7 +6294,7 @@ unsigned int OCI_API OCI_GetSQLCommand
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetSqlCommand, stmt);
+    CALL_IMPL(OcilibStatementGetSqlCommand, stmt);
 }
 
 const otext* OCI_API OCI_GetSQLVerb
@@ -6302,7 +6302,7 @@ const otext* OCI_API OCI_GetSQLVerb
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetSqlVerb, stmt);
+    CALL_IMPL(OcilibStatementGetSqlVerb, stmt);
 }
 
 OCI_Error* OCI_API OCI_GetBatchError
@@ -6310,7 +6310,7 @@ OCI_Error* OCI_API OCI_GetBatchError
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetBatchError, stmt);
+    CALL_IMPL(OcilibStatementGetBatchError, stmt);
 }
 
 unsigned int OCI_API OCI_GetBatchErrorCount
@@ -6318,7 +6318,7 @@ unsigned int OCI_API OCI_GetBatchErrorCount
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(StatementGetBatchErrorCount, stmt);
+    CALL_IMPL(OcilibStatementGetBatchErrorCount, stmt);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -6335,7 +6335,7 @@ OCI_Subscription* OCI_API OCI_SubscriptionRegister
     unsigned int    timeout
 )
 {
-    CALL_IMPL(SubscriptionRegister, con, name, type, handler, port, timeout);
+    CALL_IMPL(OcilibSubscriptionRegister, con, name, type, handler, port, timeout);
 }
 
 boolean OCI_API OCI_SubscriptionUnregister
@@ -6343,7 +6343,7 @@ boolean OCI_API OCI_SubscriptionUnregister
     OCI_Subscription* sub
 )
 {
-    CALL_IMPL(SubscriptionUnregister, sub);
+    CALL_IMPL(OcilibSubscriptionUnregister, sub);
 }
 
 boolean OCI_API OCI_SubscriptionAddStatement
@@ -6352,7 +6352,7 @@ boolean OCI_API OCI_SubscriptionAddStatement
     OCI_Statement   * stmt
 )
 {
-    CALL_IMPL(SubscriptionAddStatement, sub, stmt);
+    CALL_IMPL(OcilibSubscriptionAddStatement, sub, stmt);
 }
 
 const otext* OCI_API OCI_SubscriptionGetName
@@ -6360,7 +6360,7 @@ const otext* OCI_API OCI_SubscriptionGetName
     OCI_Subscription* sub
 )
 {
-    CALL_IMPL(SubscriptionGetName, sub);
+    CALL_IMPL(OcilibSubscriptionGetName, sub);
 }
 
 unsigned int OCI_API OCI_SubscriptionGetPort
@@ -6368,7 +6368,7 @@ unsigned int OCI_API OCI_SubscriptionGetPort
     OCI_Subscription* sub
 )
 {
-    CALL_IMPL(SubscriptionGetPort, sub);
+    CALL_IMPL(OcilibSubscriptionGetPort, sub);
 }
 
 unsigned int OCI_API OCI_SubscriptionGetTimeout
@@ -6376,7 +6376,7 @@ unsigned int OCI_API OCI_SubscriptionGetTimeout
     OCI_Subscription* sub
 )
 {
-    CALL_IMPL(SubscriptionGetTimeout, sub);
+    CALL_IMPL(OcilibSubscriptionGetTimeout, sub);
 }
 
 OCI_Connection* OCI_API OCI_SubscriptionGetConnection
@@ -6384,7 +6384,7 @@ OCI_Connection* OCI_API OCI_SubscriptionGetConnection
     OCI_Subscription* sub
 )
 {
-    CALL_IMPL(SubscriptionGetConnection, sub);
+    CALL_IMPL(OcilibSubscriptionGetConnection, sub);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -6397,7 +6397,7 @@ OCI_Timestamp* OCI_API OCI_TimestampCreate
     unsigned int    type
 )
 {
-    CALL_IMPL(TimestampCreate, con, type);
+    CALL_IMPL(OcilibTimestampCreate, con, type);
 }
 
 boolean OCI_API OCI_TimestampFree
@@ -6405,7 +6405,7 @@ boolean OCI_API OCI_TimestampFree
     OCI_Timestamp* tmsp
 )
 {
-    CALL_IMPL(TimestampFree, tmsp);
+    CALL_IMPL(OcilibTimestampFree, tmsp);
 }
 
 OCI_Timestamp** OCI_API OCI_TimestampArrayCreate
@@ -6415,7 +6415,7 @@ OCI_Timestamp** OCI_API OCI_TimestampArrayCreate
     unsigned int    nbelem
 )
 {
-    CALL_IMPL(TimestampCreateArray, con, type, nbelem);
+    CALL_IMPL(OcilibTimestampCreateArray, con, type, nbelem);
 }
 
 boolean OCI_API OCI_TimestampArrayFree
@@ -6423,7 +6423,7 @@ boolean OCI_API OCI_TimestampArrayFree
     OCI_Timestamp** tmsps
 )
 {
-    CALL_IMPL(TimestampFreeArray, tmsps);
+    CALL_IMPL(OcilibTimestampFreeArray, tmsps);
 }
 
 unsigned int OCI_API OCI_TimestampGetType
@@ -6431,7 +6431,7 @@ unsigned int OCI_API OCI_TimestampGetType
     OCI_Timestamp* tmsp
 )
 {
-    CALL_IMPL(TimestampGetType, tmsp);
+    CALL_IMPL(OcilibTimestampGetType, tmsp);
 }
 
 boolean OCI_API OCI_TimestampAssign
@@ -6440,7 +6440,7 @@ boolean OCI_API OCI_TimestampAssign
     OCI_Timestamp* tmsp_src
 )
 {
-    CALL_IMPL(TimestampAssign, tmsp, tmsp_src);
+    CALL_IMPL(OcilibTimestampAssign, tmsp, tmsp_src);
 }
 
 int OCI_API OCI_TimestampCheck
@@ -6448,7 +6448,7 @@ int OCI_API OCI_TimestampCheck
     OCI_Timestamp* tmsp
 )
 {
-    CALL_IMPL(TimestampCheck, tmsp);
+    CALL_IMPL(OcilibTimestampCheck, tmsp);
 }
 
 int OCI_API OCI_TimestampCompare
@@ -6457,7 +6457,7 @@ int OCI_API OCI_TimestampCompare
     OCI_Timestamp* tmsp2
 )
 {
-    CALL_IMPL(TimestampCompare, tmsp, tmsp2);
+    CALL_IMPL(OcilibTimestampCompare, tmsp, tmsp2);
 }
 
 boolean OCI_API OCI_TimestampConstruct
@@ -6473,7 +6473,7 @@ boolean OCI_API OCI_TimestampConstruct
     const otext  * time_zone
 )
 {
-    CALL_IMPL(TimestampConstruct, tmsp, year, month, day, hour, min, sec,fsec, time_zone);
+    CALL_IMPL(OcilibTimestampConstruct, tmsp, year, month, day, hour, min, sec,fsec, time_zone);
 }
 
 boolean OCI_API OCI_TimestampConvert
@@ -6482,7 +6482,7 @@ boolean OCI_API OCI_TimestampConvert
     OCI_Timestamp* tmsp_src
 )
 {
-    CALL_IMPL(TimestampConvert, tmsp, tmsp_src);
+    CALL_IMPL(OcilibTimestampConvert, tmsp, tmsp_src);
 }
 
 boolean OCI_API OCI_TimestampFromText
@@ -6492,7 +6492,7 @@ boolean OCI_API OCI_TimestampFromText
     const otext  * fmt
 )
 {
-    CALL_IMPL(TimestampFromString, tmsp, str, fmt);
+    CALL_IMPL(OcilibTimestampFromString, tmsp, str, fmt);
 }
 
 boolean OCI_API OCI_TimestampToText
@@ -6504,7 +6504,7 @@ boolean OCI_API OCI_TimestampToText
     int            precision
 )
 {
-    CALL_IMPL(TimestampToString, tmsp, fmt, size, str, precision);
+    CALL_IMPL(OcilibTimestampToString, tmsp, fmt, size, str, precision);
 }
 
 boolean OCI_API OCI_TimestampGetDate
@@ -6515,7 +6515,7 @@ boolean OCI_API OCI_TimestampGetDate
     int          * day
 )
 {
-    CALL_IMPL(TimestampGetDate, tmsp, year, month, day);
+    CALL_IMPL(OcilibTimestampGetDate, tmsp, year, month, day);
 }
 
 boolean OCI_API OCI_TimestampGetTime
@@ -6527,7 +6527,7 @@ boolean OCI_API OCI_TimestampGetTime
     int          * fsec
 )
 {
-    CALL_IMPL(TimestampGetTime, tmsp, hour, min, sec, fsec);
+    CALL_IMPL(OcilibTimestampGetTime, tmsp, hour, min, sec, fsec);
 }
 
 boolean OCI_API OCI_TimestampGetDateTime
@@ -6542,7 +6542,7 @@ boolean OCI_API OCI_TimestampGetDateTime
     int          * fsec
 )
 {
-    CALL_IMPL(TimestampGetDateTime, tmsp, year, month, day, hour, min, sec, fsec);
+    CALL_IMPL(OcilibTimestampGetDateTime, tmsp, year, month, day, hour, min, sec, fsec);
 }
 
 boolean OCI_API OCI_TimestampGetTimeZoneName
@@ -6552,7 +6552,7 @@ boolean OCI_API OCI_TimestampGetTimeZoneName
     otext        * str
 )
 {
-    CALL_IMPL(TimestampGetTimeZoneName, tmsp, size, str);
+    CALL_IMPL(OcilibTimestampGetTimeZoneName, tmsp, size, str);
 }
 
 boolean OCI_API OCI_TimestampGetTimeZoneOffset
@@ -6562,7 +6562,7 @@ boolean OCI_API OCI_TimestampGetTimeZoneOffset
     int          * min
 )
 {
-    CALL_IMPL(TimestampGetTimeZoneOffset, tmsp, hour,min);
+    CALL_IMPL(OcilibTimestampGetTimeZoneOffset, tmsp, hour,min);
 }
 
 boolean OCI_API OCI_TimestampIntervalAdd
@@ -6571,7 +6571,7 @@ boolean OCI_API OCI_TimestampIntervalAdd
     OCI_Interval * itv
 )
 {
-    CALL_IMPL(TimestampIntervalAdd, tmsp, itv);
+    CALL_IMPL(OcilibTimestampIntervalAdd, tmsp, itv);
 }
 
 boolean OCI_API OCI_TimestampIntervalSub
@@ -6580,7 +6580,7 @@ boolean OCI_API OCI_TimestampIntervalSub
     OCI_Interval * itv
 )
 {
-    CALL_IMPL(TimestampIntervalSub, tmsp, itv);
+    CALL_IMPL(OcilibTimestampIntervalSub, tmsp, itv);
 }
 
 boolean OCI_API OCI_TimestampSubtract
@@ -6590,7 +6590,7 @@ boolean OCI_API OCI_TimestampSubtract
     OCI_Interval * itv
 )
 {
-    CALL_IMPL(TimestampSubtract, tmsp, tmsp2, itv);
+    CALL_IMPL(OcilibTimestampSubtract, tmsp, tmsp2, itv);
 }
 
 boolean OCI_API OCI_TimestampSysTimestamp
@@ -6598,7 +6598,7 @@ boolean OCI_API OCI_TimestampSysTimestamp
     OCI_Timestamp* tmsp
 )
 {
-    CALL_IMPL(TimestampSysTimestamp, tmsp);
+    CALL_IMPL(OcilibTimestampSysTimestamp, tmsp);
 }
 
 boolean OCI_API OCI_TimestampToCTime
@@ -6608,7 +6608,7 @@ boolean OCI_API OCI_TimestampToCTime
     time_t       * pt
 )
 {
-    CALL_IMPL(TimestampToCTime, tmsp, ptm, pt);
+    CALL_IMPL(OcilibTimestampToCTime, tmsp, ptm, pt);
 }
 
 boolean OCI_API OCI_TimestampFromCTime
@@ -6618,7 +6618,7 @@ boolean OCI_API OCI_TimestampFromCTime
     time_t         t
 )
 {
-    CALL_IMPL(TimestampFromCTime, tmsp, ptm, t);
+    CALL_IMPL(OcilibTimestampFromCTime, tmsp, ptm, t);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -6630,7 +6630,7 @@ OCI_Thread* OCI_API OCI_ThreadCreate
     void
 )
 {
-    CALL_IMPL(ThreadCreate);
+    CALL_IMPL(OcilibThreadCreate);
 }
 
 boolean OCI_API OCI_ThreadFree
@@ -6638,7 +6638,7 @@ boolean OCI_API OCI_ThreadFree
     OCI_Thread* thread
 )
 {
-    CALL_IMPL(ThreadFree, thread);
+    CALL_IMPL(OcilibThreadFree, thread);
 }
 
 boolean OCI_API OCI_ThreadRun
@@ -6648,7 +6648,7 @@ boolean OCI_API OCI_ThreadRun
     void      * arg
 )
 {
-    CALL_IMPL(ThreadRun, thread, proc, arg);
+    CALL_IMPL(OcilibThreadRun, thread, proc, arg);
 }
 
 boolean OCI_API OCI_ThreadJoin
@@ -6656,7 +6656,7 @@ boolean OCI_API OCI_ThreadJoin
     OCI_Thread* thread
 )
 {
-    CALL_IMPL(ThreadJoin, thread);
+    CALL_IMPL(OcilibThreadJoin, thread);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -6669,7 +6669,7 @@ boolean OCI_API OCI_ThreadKeyCreate
     POCI_THREADKEYDEST destfunc
 )
 {
-    CALL_IMPL(ThreadKeyCreate, name, destfunc);
+    CALL_IMPL(OcilibThreadKeyCreate, name, destfunc);
 }
 
 boolean OCI_API OCI_ThreadKeySetValue
@@ -6678,7 +6678,7 @@ boolean OCI_API OCI_ThreadKeySetValue
     void       * value
 )
 {
-    CALL_IMPL(ThreadKeySetValue, name, value);
+    CALL_IMPL(OcilibThreadKeySetValue, name, value);
 }
 
 void* OCI_API OCI_ThreadKeyGetValue
@@ -6686,7 +6686,7 @@ void* OCI_API OCI_ThreadKeyGetValue
     const otext* name
 )
 {
-    CALL_IMPL(ThreadKeyGetValue, name);
+    CALL_IMPL(OcilibThreadKeyGetValue, name);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -6701,7 +6701,7 @@ OCI_Transaction* OCI_API OCI_TransactionCreate
     OCI_XID       * pxid
 )
 {
-    CALL_IMPL(TransactionCreate, con, timeout, mode, pxid);
+    CALL_IMPL(OcilibTransactionCreate, con, timeout, mode, pxid);
 }
 
 boolean OCI_API OCI_TransactionFree
@@ -6709,7 +6709,7 @@ boolean OCI_API OCI_TransactionFree
     OCI_Transaction* trans
 )
 {
-    CALL_IMPL(TransactionFree, trans);
+    CALL_IMPL(OcilibTransactionFree, trans);
 }
 
 boolean OCI_API OCI_TransactionStart
@@ -6717,7 +6717,7 @@ boolean OCI_API OCI_TransactionStart
     OCI_Transaction* trans
 )
 {
-    CALL_IMPL(TransactionStart, trans);
+    CALL_IMPL(OcilibTransactionStart, trans);
 }
 
 boolean OCI_API OCI_TransactionStop
@@ -6725,7 +6725,7 @@ boolean OCI_API OCI_TransactionStop
     OCI_Transaction* trans
 )
 {
-    CALL_IMPL(TransactionStop, trans);
+    CALL_IMPL(OcilibTransactionStop, trans);
 }
 
 boolean OCI_API OCI_TransactionResume
@@ -6733,7 +6733,7 @@ boolean OCI_API OCI_TransactionResume
     OCI_Transaction* trans
 )
 {
-    CALL_IMPL(TransactionResume, trans);
+    CALL_IMPL(OcilibTransactionResume, trans);
 }
 
 boolean OCI_API OCI_TransactionPrepare
@@ -6741,7 +6741,7 @@ boolean OCI_API OCI_TransactionPrepare
     OCI_Transaction* trans
 )
 {
-    CALL_IMPL(TransactionPrepare, trans);
+    CALL_IMPL(OcilibTransactionPrepare, trans);
 }
 
 boolean OCI_API OCI_TransactionForget
@@ -6749,7 +6749,7 @@ boolean OCI_API OCI_TransactionForget
     OCI_Transaction* trans
 )
 {
-    CALL_IMPL(TransactionForget, trans);
+    CALL_IMPL(OcilibTransactionForget, trans);
 }
 
 unsigned int OCI_API OCI_TransactionGetMode
@@ -6757,7 +6757,7 @@ unsigned int OCI_API OCI_TransactionGetMode
     OCI_Transaction* trans
 )
 {
-    CALL_IMPL(TransactionGetMode, trans);
+    CALL_IMPL(OcilibTransactionGetMode, trans);
 }
 
 unsigned int OCI_API OCI_TransactionGetTimeout
@@ -6765,7 +6765,7 @@ unsigned int OCI_API OCI_TransactionGetTimeout
     OCI_Transaction* trans
 )
 {
-    CALL_IMPL(TransactionGetTimeout, trans);
+    CALL_IMPL(OcilibTransactionGetTimeout, trans);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -6779,7 +6779,7 @@ OCI_TypeInfo* OCI_API OCI_TypeInfoGet
     unsigned int    type
 )
 {
-    CALL_IMPL(TypeInfoGet, con, name, type);
+    CALL_IMPL(OcilibTypeInfoGet, con, name, type);
 }
 
 unsigned int OCI_API OCI_TypeInfoGetType
@@ -6787,7 +6787,7 @@ unsigned int OCI_API OCI_TypeInfoGetType
     OCI_TypeInfo* typinf
 )
 {
-    CALL_IMPL(TypeInfoGetType, typinf);
+    CALL_IMPL(OcilibTypeInfoGetType, typinf);
 }
 
 OCI_Connection* OCI_API OCI_TypeInfoGetConnection
@@ -6795,7 +6795,7 @@ OCI_Connection* OCI_API OCI_TypeInfoGetConnection
     OCI_TypeInfo* typinf
 )
 {
-    CALL_IMPL(TypeInfoGetConnection, typinf);
+    CALL_IMPL(OcilibTypeInfoGetConnection, typinf);
 }
 
 boolean OCI_API OCI_TypeInfoFree
@@ -6803,7 +6803,7 @@ boolean OCI_API OCI_TypeInfoFree
     OCI_TypeInfo* typinf
 )
 {
-    CALL_IMPL(TypeInfoFree, typinf);
+    CALL_IMPL(OcilibTypeInfoFree, typinf);
 }
 
 unsigned int OCI_API OCI_TypeInfoGetColumnCount
@@ -6811,7 +6811,7 @@ unsigned int OCI_API OCI_TypeInfoGetColumnCount
     OCI_TypeInfo* typinf
 )
 {
-    CALL_IMPL(TypeInfoGetColumnCount, typinf);
+    CALL_IMPL(OcilibTypeInfoGetColumnCount, typinf);
 }
 
 OCI_Column* OCI_API OCI_TypeInfoGetColumn
@@ -6820,7 +6820,7 @@ OCI_Column* OCI_API OCI_TypeInfoGetColumn
     unsigned int  index
 )
 {
-    CALL_IMPL(TypeInfoGetColumn, typinf, index);
+    CALL_IMPL(OcilibTypeInfoGetColumn, typinf, index);
 }
 
 const otext* OCI_API OCI_TypeInfoGetName
@@ -6828,7 +6828,7 @@ const otext* OCI_API OCI_TypeInfoGetName
     OCI_TypeInfo* typinf
 )
 {
-    CALL_IMPL(TypeInfoGetName, typinf);
+    CALL_IMPL(OcilibTypeInfoGetName, typinf);
 }
 
 boolean OCI_API OCI_TypeInfoIsFinalType
@@ -6836,7 +6836,7 @@ boolean OCI_API OCI_TypeInfoIsFinalType
     OCI_TypeInfo* typinf
 )
 {
-    CALL_IMPL(TypeInfoIsFinalType, typinf);
+    CALL_IMPL(OcilibTypeInfoIsFinalType, typinf);
 }
 
 OCI_TypeInfo* OCI_API OCI_TypeInfoGetSuperType
@@ -6844,5 +6844,5 @@ OCI_TypeInfo* OCI_API OCI_TypeInfoGetSuperType
     OCI_TypeInfo* typinf
 )
 {
-    CALL_IMPL(TypeInfoGetSuperType, typinf);
+    CALL_IMPL(OcilibTypeInfoGetSuperType, typinf);
 }

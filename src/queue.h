@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-boolean QueueCreate
+boolean OcilibQueueCreate
 (
     OCI_Connection *con,
     const otext    *queue_name,
@@ -36,7 +36,7 @@ boolean QueueCreate
     const otext    *comment
 );
 
-boolean QueueAlter
+boolean OcilibQueueAlter
 (
     OCI_Connection *con,
     const otext    *queue_name,
@@ -46,13 +46,13 @@ boolean QueueAlter
     const otext    *comment
 );
 
-boolean QueueDrop
+boolean OcilibQueueDrop
 (
     OCI_Connection *con,
     const otext    *queue_name
 );
 
-boolean QueueStart
+boolean OcilibQueueStart
 (
     OCI_Connection *con,
     const otext    *queue_name,
@@ -60,7 +60,7 @@ boolean QueueStart
     boolean         dequeue
 );
 
-boolean QueueStop
+boolean OcilibQueueStop
 (
     OCI_Connection *con,
     const otext    *queue_name,
@@ -69,7 +69,7 @@ boolean QueueStop
     boolean         wait
 );
 
-boolean QueueTableCreate
+boolean OcilibQueueTableCreate
 (
     OCI_Connection *con,
     const otext    *queue_table,
@@ -84,7 +84,7 @@ boolean QueueTableCreate
     const otext    *compatible
 );
 
-boolean QueueTableAlter
+boolean OcilibQueueTableAlter
 (
     OCI_Connection *con,
     const otext    *queue_table,
@@ -93,14 +93,14 @@ boolean QueueTableAlter
     unsigned int    secondary_instance
 );
 
-boolean QueueTableDrop
+boolean OcilibQueueTableDrop
 (
     OCI_Connection *con,
     const otext    *queue_table,
     boolean         force
 );
 
-boolean QueueTablePurge
+boolean OcilibQueueTablePurge
 (
     OCI_Connection *con,
     const otext    *queue_table,
@@ -109,7 +109,7 @@ boolean QueueTablePurge
     unsigned int    delivery_mode
 );
 
-boolean QueueTableMigrate
+boolean OcilibQueueTableMigrate
 (
     OCI_Connection *con,
     const otext    *queue_table,

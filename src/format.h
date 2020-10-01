@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-int FormatParseSql
+int OcilibFormatParseSql
 (
     OCI_Statement* stmt,
     otext        * buffer,

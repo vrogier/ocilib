@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Connection * ConnectionCreateInternal
+OCI_Connection * OcilibConnectionCreateInternal
 (
     OCI_Pool    *pool,
     const otext *db,
@@ -33,7 +33,7 @@ OCI_Connection * ConnectionCreateInternal
     const otext *tag
 );
 
-OCI_Connection* ConnectionAllocate
+OCI_Connection* OcilibConnectionAllocate
 (
     OCI_Pool   * pool,
     const otext* db,
@@ -42,35 +42,35 @@ OCI_Connection* ConnectionAllocate
     unsigned int mode
 );
 
-boolean ConnectionAttach
+boolean OcilibConnectionAttach
 (
     OCI_Connection* con
 );
 
-boolean ConnectionLogon
+boolean OcilibConnectionLogon
 (
     OCI_Connection* con,
     const otext   * new_pwd,
     const otext   * tag
 );
 
-boolean ConnectionDispose
+boolean OcilibConnectionDispose
 (
     OCI_Connection* con
 );
 
-unsigned int ConnectionGetMinSupportedVersion
+unsigned int OcilibConnectionGetMinSupportedVersion
 (
     OCI_Connection *con
 );
 
-boolean ConnectionIsVersionSupported
+boolean OcilibConnectionIsVersionSupported
 (
     OCI_Connection *con,
     unsigned int    version
 );
 
-OCI_Connection* ConnectionCreate
+OCI_Connection* OcilibConnectionCreate
 (
     const otext* db,
     const otext* user,
@@ -78,127 +78,127 @@ OCI_Connection* ConnectionCreate
     unsigned int mode
 );
 
-boolean ConnectionFree
+boolean OcilibConnectionFree
 (
     OCI_Connection* con
 );
 
-boolean ConnectionCommit
+boolean OcilibConnectionCommit
 (
     OCI_Connection* con
 );
 
-boolean ConnectionRollback
+boolean OcilibConnectionRollback
 (
     OCI_Connection* con
 );
 
-boolean ConnectionSetAutoCommit
+boolean OcilibConnectionSetAutoCommit
 (
     OCI_Connection* con,
     boolean         enable
 );
 
-boolean ConnectionGetAutoCommit
+boolean OcilibConnectionGetAutoCommit
 (
     OCI_Connection* con
 );
 
-boolean ConnectionIsConnected
+boolean OcilibConnectionIsConnected
 (
     OCI_Connection* con
 );
 
-void* ConnectionGetUserData
+void* OcilibConnectionGetUserData
 (
     OCI_Connection* con
 );
 
-boolean ConnectionSetUserData
+boolean OcilibConnectionSetUserData
 (
     OCI_Connection* con,
     void          * data
 );
 
-boolean ConnectionSetSessionTag
+boolean OcilibConnectionSetSessionTag
 (
     OCI_Connection* con,
     const otext   * tag
 );
 
-const otext* ConnectionGetSessionTag
+const otext* OcilibConnectionGetSessionTag
 (
     OCI_Connection* con
 );
 
-const otext* ConnectionGetConnectionString
+const otext* OcilibConnectionGetConnectionString
 (
     OCI_Connection* con
 );
 
-const otext* ConnectionGetUserName
+const otext* OcilibConnectionGetUserName
 (
     OCI_Connection* con
 );
 
-const otext* ConnectionGetPassword
+const otext* OcilibConnectionGetPassword
 (
     OCI_Connection* con
 );
 
-boolean ConnectionSetPassword
+boolean OcilibConnectionSetPassword
 (
     OCI_Connection* con,
     const otext   * password
 );
 
-unsigned int ConnectionGetSessionMode
+unsigned int OcilibConnectionGetSessionMode
 (
     OCI_Connection* con
 );
 
-const otext* ConnectionGetServerVersion
+const otext* OcilibConnectionGetServerVersion
 (
     OCI_Connection* con
 );
 
-unsigned int ConnectionGetServerMajorVersion
+unsigned int OcilibConnectionGetServerMajorVersion
 (
     OCI_Connection* con
 );
 
-unsigned int ConnectionGetServerMinorVersion
+unsigned int OcilibConnectionGetServerMinorVersion
 (
     OCI_Connection* con
 );
 
-unsigned int ConnectionGetServerRevisionVersion
+unsigned int OcilibConnectionGetServerRevisionVersion
 (
     OCI_Connection* con
 );
 
-OCI_Transaction* ConnectionGetTransaction
+OCI_Transaction* OcilibConnectionGetTransaction
 (
     OCI_Connection* con
 );
 
-boolean ConnectionSetTransaction
+boolean OcilibConnectionSetTransaction
 (
     OCI_Connection * con,
     OCI_Transaction* trans
 );
 
-unsigned int ConnectionGetVersion
+unsigned int OcilibConnectionGetVersion
 (
     OCI_Connection* con
 );
 
-boolean ConnectionBreak
+boolean OcilibConnectionBreak
 (
     OCI_Connection* con
 );
 
-boolean ConnectionEnableServerOutput
+boolean OcilibConnectionEnableServerOutput
 (
     OCI_Connection* con,
     unsigned int    bufsize,
@@ -206,123 +206,123 @@ boolean ConnectionEnableServerOutput
     unsigned int    lnsize
 );
 
-boolean ConnectionDisableServerOutput
+boolean OcilibConnectionDisableServerOutput
 (
     OCI_Connection* con
 );
 
-const otext* ConnectionGetServerOutput
+const otext* OcilibConnectionGetServerOutput
 (
     OCI_Connection* con
 );
 
-boolean ConnectionSetTrace
+boolean OcilibConnectionSetTrace
 (
     OCI_Connection* con,
     unsigned int    trace,
     const otext   * value
 );
 
-const otext* ConnectionGetTrace
+const otext* OcilibConnectionGetTrace
 (
     OCI_Connection* con,
     unsigned int    trace
 );
 
-boolean ConnectionPing
+boolean OcilibConnectionPing
 (
     OCI_Connection* con
 );
 
-boolean ConnectionSetTimeout
+boolean OcilibConnectionSetTimeout
 (
     OCI_Connection* con,
     unsigned int    type,
     unsigned int    value
 );
 
-unsigned int ConnectionGetTimeout
+unsigned int OcilibConnectionGetTimeout
 (
     OCI_Connection* con,
     unsigned int    type
 );
 
-const otext* ConnectionGetDatabaseName
+const otext* OcilibConnectionGetDatabaseName
 (
     OCI_Connection* con
 );
 
-const otext* ConnectionGetInstanceName
+const otext* OcilibConnectionGetInstanceName
 (
     OCI_Connection* con
 );
 
-const otext* ConnectionGetServiceName
+const otext* OcilibConnectionGetServiceName
 (
     OCI_Connection* con
 );
 
-const otext* ConnectionGetServerName
+const otext* OcilibConnectionGetServerName
 (
     OCI_Connection* con
 );
 
-const otext* ConnectionGetDomainName
+const otext* OcilibConnectionGetDomainName
 (
     OCI_Connection* con
 );
 
-OCI_Timestamp* ConnectionGetInstanceStartTime
+OCI_Timestamp* OcilibConnectionGetInstanceStartTime
 (
     OCI_Connection* con
 );
 
-boolean ConnectionIsTAFCapable
+boolean OcilibConnectionIsTAFCapable
 (
     OCI_Connection* con
 );
 
-boolean ConnectionSetTAFHandler
+boolean OcilibConnectionSetTAFHandler
 (
     OCI_Connection * con,
     POCI_TAF_HANDLER handler
 );
 
-unsigned int ConnectionGetStatementCacheSize
+unsigned int OcilibConnectionGetStatementCacheSize
 (
     OCI_Connection* con
 );
 
-boolean ConnectionSetStatementCacheSize
+boolean OcilibConnectionSetStatementCacheSize
 (
     OCI_Connection* con,
     unsigned int    value
 );
 
-unsigned int ConnectionGetDefaultLobPrefetchSize
+unsigned int OcilibConnectionGetDefaultLobPrefetchSize
 (
     OCI_Connection* con
 );
 
-boolean ConnectionSetDefaultLobPrefetchSize
+boolean OcilibConnectionSetDefaultLobPrefetchSize
 (
     OCI_Connection* con,
     unsigned int    value
 );
 
-unsigned int ConnectionGetMaxCursors
+unsigned int OcilibConnectionGetMaxCursors
 (
     OCI_Connection* con
 );
 
-boolean ConnectionExecuteImmediate
+boolean OcilibConnectionExecuteImmediate
 (
     OCI_Connection* con,
     const otext   * sql,
     va_list         args
 );
 
-boolean ConnectionExecuteImmediateFmt
+boolean OcilibConnectionExecuteImmediateFmt
 (
     OCI_Connection* con,
     const otext   * sql,
