@@ -1134,7 +1134,7 @@ static boolean OcilibStatementCheckImplicitResultsets
  * OcilibStatementBatchErrorsInit
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibStatementBatchErrorInit
+static boolean OcilibStatementBatchErrorInit
 (
     OCI_Statement *stmt
 )
