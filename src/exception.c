@@ -281,7 +281,7 @@ OCI_Error * OcilibExceptionGetError
  * OcilibExceptionCallHandler
  * --------------------------------------------------------------------------------------------- */
 
-void OcilibExceptionCallHandler
+static void OcilibExceptionCallHandler
 (
     OCI_Error *err
 )

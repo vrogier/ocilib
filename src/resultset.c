@@ -314,7 +314,7 @@ OCI_Resultset * OcilibResultsetCreate
  * OcilibResultsetExpandStrings
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibResultsetExpandStrings
+static boolean OcilibResultsetExpandStrings
 (
     OCI_Resultset *rs
 )
@@ -351,7 +351,7 @@ boolean OcilibResultsetExpandStrings
  * OcilibResultsetFetchPieces
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibResultsetFetchPieces
+static boolean OcilibResultsetFetchPieces
 (
     OCI_Resultset *rs
 )
@@ -572,7 +572,7 @@ boolean OcilibResultsetFetchPieces
  * OcilibResultsetClearFetchedObjectInstances
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibResultsetClearFetchedObjectInstances(OCI_Resultset *rs)
+static boolean OcilibResultsetClearFetchedObjectInstances(OCI_Resultset *rs)
 {
     ENTER_FUNC
     (
@@ -608,7 +608,7 @@ boolean OcilibResultsetClearFetchedObjectInstances(OCI_Resultset *rs)
  * OcilibResultsetFetchData
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibResultsetFetchData
+static boolean OcilibResultsetFetchData
 (
     OCI_Resultset *rs,
     int            mode,
@@ -739,7 +739,7 @@ boolean OcilibResultsetFetchData
  * OcilibResultsetFetchCustom
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibResultsetFetchCustom
+static boolean OcilibResultsetFetchCustom
 (
     OCI_Resultset *rs,
     int            mode,

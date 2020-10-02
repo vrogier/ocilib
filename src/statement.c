@@ -1069,7 +1069,7 @@ boolean OcilibStatementDispose
  * OcilibStatementCheckImplicitResultsets
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibStatementCheckImplicitResultsets
+static boolean OcilibStatementCheckImplicitResultsets
 (
     OCI_Statement *stmt
 )

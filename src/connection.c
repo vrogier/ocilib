@@ -65,7 +65,7 @@ static const unsigned int TimeoutTypeValues[] =
  * OcilibConnectionDetachSubscriptions
  * --------------------------------------------------------------------------------------------- */
 
-void OcilibConnectionDetachSubscriptions
+static void OcilibConnectionDetachSubscriptions
 (
     OCI_Subscription *sub,
     OCI_Connection   *con
@@ -217,7 +217,7 @@ OCI_Connection * OcilibConnectionAllocate
  * OcilibConnectionDeallocate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibConnectionDeallocate
+static boolean OcilibConnectionDeallocate
 (
     OCI_Connection *con
 )
@@ -326,7 +326,7 @@ boolean OcilibConnectionAttach
  * OcilibConnectionDetach
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibConnectionDetach
+static boolean OcilibConnectionDetach
 (
     OCI_Connection *con
 )
@@ -371,7 +371,7 @@ boolean OcilibConnectionDetach
  * OcilibConnectionLogonXA
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibConnectionLogonXA
+static boolean OcilibConnectionLogonXA
 (
     OCI_Connection *con
 )
@@ -440,7 +440,7 @@ boolean OcilibConnectionLogonXA
  * OcilibConnectionLogonRegular
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibConnectionLogonRegular
+static boolean OcilibConnectionLogonRegular
 (
     OCI_Connection *con,
     const otext    *new_pwd
@@ -649,7 +649,7 @@ boolean OcilibConnectionLogonRegular
  * OcilibConnectionLogonSessionPool
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibConnectionLogonSessionPool
+static boolean OcilibConnectionLogonSessionPool
 (
     OCI_Connection *con,
     const otext    *tag
@@ -807,7 +807,7 @@ boolean OcilibConnectionLogon
  * OcilibConnectionLogoffRegular
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibConnectionLogoffRegular
+static boolean OcilibConnectionLogoffRegular
 (
     OCI_Connection *con
 )
@@ -859,7 +859,7 @@ boolean OcilibConnectionLogoffRegular
  * OcilibConnectionLogoffSessionPool
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibConnectionLogoffSessionPool
+static boolean OcilibConnectionLogoffSessionPool
 (
     OCI_Connection *con
 )
@@ -929,7 +929,7 @@ boolean OcilibConnectionLogoffSessionPool
  * OcilibConnectionLogOff
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibConnectionLogOff
+static boolean OcilibConnectionLogOff
 (
     OCI_Connection *con
 )

@@ -351,7 +351,7 @@ OCI_SYM_LOCAL boolean OcilibObjectIsNull
     const otext *attr
 );
 
-OCI_TypeInfo * OcilibObjectGetTypeInfo
+OCI_SYM_LOCAL OCI_TypeInfo * OcilibObjectGetTypeInfo
 (
     OCI_Object *obj
 );

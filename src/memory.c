@@ -44,7 +44,7 @@
  * OcilibMemoryUpdateBytes
  * --------------------------------------------------------------------------------------------- */
 
-void OcilibMemoryUpdateBytes
+static void OcilibMemoryUpdateBytes
 (
     int     type,
     big_int size

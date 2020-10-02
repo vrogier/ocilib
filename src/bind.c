@@ -54,7 +54,7 @@ static const unsigned int BindDirectionValues[] =
  * OcilibBindAllocateInternalData
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibBindAllocateInternalData
+static boolean OcilibBindAllocateInternalData
 (
     OCI_Bind* bnd
 )
@@ -374,7 +374,7 @@ boolean OcilibBindAllocateInternalData
  * OcilibBindAllocateBuffers
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibBindAllocateBuffers
+static boolean OcilibBindAllocateBuffers
 (
     OCI_Bind    *bnd,
     unsigned int mode,
@@ -477,7 +477,7 @@ boolean OcilibBindAllocateBuffers
 * OcilibBindCheckAvailability
 * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibBindCheckAvailability
+    static boolean OcilibBindCheckAvailability
 (
     OCI_Statement *stmt,
     unsigned int   mode,
@@ -541,7 +541,7 @@ boolean OcilibBindCheckAvailability
   * OcilibBindPerformBinding
   * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibBindPerformBinding
+static boolean OcilibBindPerformBinding
 (
     OCI_Bind    *bnd,
     unsigned int mode,
@@ -653,7 +653,7 @@ boolean OcilibBindPerformBinding
   * OcilibBindAddToStatement
   * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibBindAddToStatement
+static boolean OcilibBindAddToStatement
 (
     OCI_Bind    *bnd,
     unsigned int mode,

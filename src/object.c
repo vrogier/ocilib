@@ -689,7 +689,7 @@ OCI_Object * OcilibObjectInitialize
  * OcilibObjectGetAttributeIndex
  * --------------------------------------------------------------------------------------------- */
 
-int OcilibObjectGetAttributeIndex
+static int OcilibObjectGetAttributeIndex
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -733,7 +733,7 @@ int OcilibObjectGetAttributeIndex
  * OcilibObjectGetAttr
  * --------------------------------------------------------------------------------------------- */
 
-void * OcilibObjectGetAttr
+static void * OcilibObjectGetAttr
 (
     OCI_Object  *obj,
     unsigned int index,
@@ -776,7 +776,7 @@ void * OcilibObjectGetAttr
  * OcilibObjectSetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibObjectSetNumberInternal
+static boolean OcilibObjectSetNumberInternal
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -819,7 +819,7 @@ boolean OcilibObjectSetNumberInternal
  * OcilibObjectGetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibObjectGetNumberInternal
+static boolean OcilibObjectGetNumberInternal
 (
     OCI_Object  *obj,
     const otext *attr,

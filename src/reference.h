@@ -64,7 +64,7 @@ OCI_SYM_LOCAL boolean OcilibReferenceFreeArray
     OCI_Ref **refs
 );
 
-OCI_Object * OcilibReferenceGetObject
+OCI_SYM_LOCAL OCI_Object * OcilibReferenceGetObject
 (
     OCI_Ref *ref
 );

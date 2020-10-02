@@ -59,7 +59,7 @@ static unsigned int OcilibHashCompute
 * OcilibHashAdd
 * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibHashAdd
+static boolean OcilibHashAdd
 (
     OCI_HashTable *table,
     const otext   *key,

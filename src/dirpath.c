@@ -35,7 +35,7 @@ static const unsigned int ConversionModeValues[] =
  * OcilibDirPathSetArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDirPathSetArray
+static boolean OcilibDirPathSetArray
 (
     OCI_DirPath *dp,
     ub4          row_from
@@ -104,7 +104,7 @@ boolean OcilibDirPathSetArray
  * DirPahArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibDirPathArrayToStream
+static unsigned int OcilibDirPathArrayToStream
 (
     OCI_DirPath *dp,
     ub4          row_from
@@ -211,7 +211,7 @@ unsigned int OcilibDirPathArrayToStream
  * DirPahArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibDirPathLoadStream
+static unsigned int OcilibDirPathLoadStream
 (
     OCI_DirPath *dp
 )

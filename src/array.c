@@ -44,7 +44,7 @@
  * OcilibArrayFindAny
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibArrayFindAny
+static boolean OcilibArrayFindAny
 (
     OCI_Array *arr,
     void     **handles
@@ -57,7 +57,7 @@ boolean OcilibArrayFindAny
 * OcilibArrayFindObjects
 * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibArrayFindObjects
+static boolean OcilibArrayFindObjects
 (
     OCI_Array *arr,
     void     **handles

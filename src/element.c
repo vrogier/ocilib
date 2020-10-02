@@ -123,7 +123,7 @@
 * OcilibElementFreeAllocatedData
 * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibElementFreeAllocatedData
+static boolean OcilibElementFreeAllocatedData
 (
     OCI_Elem *elem
 )
@@ -299,7 +299,7 @@ boolean OcilibElementSetNullIndicator
  * OcilibElementSetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibElementSetNumberInternal
+static boolean OcilibElementSetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -328,7 +328,7 @@ boolean OcilibElementSetNumberInternal
  * OcilibElementGetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibElementGetNumberInternal
+static boolean OcilibElementGetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,

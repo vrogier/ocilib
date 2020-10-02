@@ -530,7 +530,7 @@ sb4 OcilibCallbackFailOver
 * OcilibProcHAEventInvoke
 * --------------------------------------------------------------------------------------------- */
 
-void OcilibProcHAEventInvoke
+static void OcilibProcHAEventInvoke
 (
     OCI_Connection *con,
     HAEventParams * ha_params
