@@ -23,12 +23,12 @@
 
 #include "types.h"
 
-boolean OcilibTransactionDispose
+OCI_SYM_LOCAL boolean OcilibTransactionDispose
 (
     OCI_Transaction * trans
 );
 
-OCI_Transaction * OcilibTransactionCreate
+OCI_SYM_LOCAL OCI_Transaction * OcilibTransactionCreate
 (
     OCI_Connection *con,
     unsigned int    timeout,
@@ -36,42 +36,42 @@ OCI_Transaction * OcilibTransactionCreate
     OCI_XID        *pxid
 );
 
-boolean OcilibTransactionFree
+OCI_SYM_LOCAL boolean OcilibTransactionFree
 (
     OCI_Transaction * trans
 );
 
-boolean OcilibTransactionStart
+OCI_SYM_LOCAL boolean OcilibTransactionStart
 (
     OCI_Transaction * trans
 );
 
-boolean OcilibTransactionStop
+OCI_SYM_LOCAL boolean OcilibTransactionStop
 (
     OCI_Transaction * trans
 );
 
-boolean OcilibTransactionResume
+OCI_SYM_LOCAL boolean OcilibTransactionResume
 (
     OCI_Transaction * trans
 );
 
-boolean OcilibTransactionPrepare
+OCI_SYM_LOCAL boolean OcilibTransactionPrepare
 (
     OCI_Transaction * trans
 );
 
-boolean OcilibTransactionForget
+OCI_SYM_LOCAL boolean OcilibTransactionForget
 (
     OCI_Transaction * trans
 );
 
-unsigned int OcilibTransactionGetMode
+OCI_SYM_LOCAL unsigned int OcilibTransactionGetMode
 (
     OCI_Transaction * trans
 );
 
-unsigned int OcilibTransactionGetTimeout
+OCI_SYM_LOCAL unsigned int OcilibTransactionGetTimeout
 (
     OCI_Transaction * trans
 );

@@ -218,14 +218,14 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
 
 #define EXCEPTION_IMPL(err_code, ...)                   \
                                                         \
-    OCI_Error *err = ExceptionGetError();               \
+    OCI_Error *err = OcilibExceptionGetError();         \
     if (err)                                            \
     {                                                   \
         otext message[512];                             \
         osprintf(message, osizeof(message) - (size_t)1, \
                  ErrorMessages[err_code], __VA_ARGS__); \
                                                         \
-        ErrorSet                                        \
+        OcilibErrorSet                                  \
         (                                               \
             err,                                        \
             OCI_ERR_OCILIB,                             \
@@ -237,20 +237,20 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
             0                                           \
         );                                              \
                                                         \
-        ExceptionCallHandler(err);                      \
+        OcilibExceptionCallHandler(err);                \
     }                                                   \
 
 
 #define EXCEPTION_IMPL_NO_ARGS(err_code)                \
                                                         \
-    OCI_Error *err = ExceptionGetError();               \
+    OCI_Error *err = OcilibExceptionGetError();         \
     if (err)                                            \
     {                                                   \
         otext message[512];                             \
         osprintf(message, osizeof(message) - (size_t)1, \
                  ErrorMessages[err_code]);              \
                                                         \
-        ErrorSet                                        \
+        OcilibErrorSet                                  \
         (                                               \
             err,                                        \
             OCI_ERR_OCILIB,                             \
@@ -262,26 +262,26 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
             0                                           \
         );                                              \
                                                         \
-        ExceptionCallHandler(err);                      \
+        OcilibExceptionCallHandler(err);                \
     }                                                   \
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionGetError
+ * OcilibExceptionGetError
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Error * ExceptionGetError
+OCI_Error * OcilibExceptionGetError
 (
     void
 )
 {
-    return ErrorGet(TRUE, TRUE);
+    return OcilibErrorGet(TRUE, TRUE);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionCallHandler
+ * OcilibExceptionCallHandler
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionCallHandler
+void OcilibExceptionCallHandler
 (
     OCI_Error *err
 )
@@ -300,17 +300,17 @@ void ExceptionCallHandler
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionOCI
+ * OcilibExceptionOCI
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionOCI
+void OcilibExceptionOCI
 (
     OCI_Context *ctx,
     OCIError   * oci_err,
     sword        call_ret
 )
 {
-    OCI_Error *err = ExceptionGetError();
+    OCI_Error *err = OcilibExceptionGetError();
     if (err)
     {
         sb4           err_code = 0;
@@ -318,7 +318,7 @@ void ExceptionOCI
         int           err_size = osizeof(buffer);
         const boolean warning  = OCI_SUCCESS_WITH_INFO == call_ret;
 
-        dbtext * err_msg = StringGetDBString(buffer, &err_size);
+        dbtext * err_msg = OcilibStringGetDBString(buffer, &err_size);
 
         buffer[0] = 0;
 
@@ -357,7 +357,7 @@ void ExceptionOCI
             }
         }
 
-        ErrorSet
+        OcilibErrorSet
         (
             err,
             (warning ? OCI_ERR_WARNING : OCI_ERR_ORACLE),
@@ -369,17 +369,17 @@ void ExceptionOCI
             0
         );
 
-        StringReleaseDBString(err_msg);
+        OcilibStringReleaseDBString(err_msg);
 
-        ExceptionCallHandler(err);
+        OcilibExceptionCallHandler(err);
     }
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionNotInitialized
+ * OcilibExceptionNotInitialized
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionNotInitialized
+void OcilibExceptionNotInitialized
 (
     OCI_Context* ctx
 )
@@ -388,10 +388,10 @@ void ExceptionNotInitialized
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionLoadingShareLib
+ * OcilibExceptionLoadingShareLib
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionLoadingSharedLib
+void OcilibExceptionLoadingSharedLib
 (
     OCI_Context* ctx
 )
@@ -404,10 +404,10 @@ void ExceptionLoadingSharedLib
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionLoadingSymbols
+ * OcilibExceptionLoadingSymbols
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionLoadingSymbols
+void OcilibExceptionLoadingSymbols
 (
     OCI_Context* ctx
 )
@@ -416,10 +416,10 @@ void ExceptionLoadingSymbols
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionNotMultithreaded
+ * OcilibExceptionNotMultithreaded
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionNotMultithreaded
+void OcilibExceptionNotMultithreaded
 (
     OCI_Context* ctx
 )
@@ -428,10 +428,10 @@ void ExceptionNotMultithreaded
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionNullPointer
+ * OcilibExceptionNullPointer
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionNullPointer
+void OcilibExceptionNullPointer
 (
     OCI_Context* ctx,
     int          type
@@ -441,10 +441,10 @@ void ExceptionNullPointer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionMemory
+ * OcilibExceptionMemory
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionMemory
+void OcilibExceptionMemory
 (
     OCI_Context* ctx,
     int          type,
@@ -455,10 +455,10 @@ void ExceptionMemory
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionNotAvailable
+ * OcilibExceptionNotAvailable
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionNotAvailable
+void OcilibExceptionNotAvailable
 (
     OCI_Context* ctx,
     int          feature
@@ -468,10 +468,10 @@ void ExceptionNotAvailable
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionDatatypeNotSupported
+ * OcilibExceptionDatatypeNotSupported
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionDatatypeNotSupported
+void OcilibExceptionDatatypeNotSupported
 (
     OCI_Context* ctx,
     int          code
@@ -481,10 +481,10 @@ void ExceptionDatatypeNotSupported
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionParsingError
+ * OcilibExceptionParsingError
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionParsingToken
+void OcilibExceptionParsingToken
 (
     OCI_Context* ctx,
     otext        token
@@ -494,10 +494,10 @@ void ExceptionParsingToken
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionMappingArgument
+ * OcilibExceptionMappingArgument
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionMappingArgument
+void OcilibExceptionMappingArgument
 (
     OCI_Context* ctx,
     int          arg
@@ -507,10 +507,10 @@ void ExceptionMappingArgument
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionOutOfBounds
+ * OcilibExceptionOutOfBounds
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionOutOfBounds
+void OcilibExceptionOutOfBounds
 (
     OCI_Context* ctx,
     int          value
@@ -520,10 +520,10 @@ void ExceptionOutOfBounds
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ExceptionUnfreedData
+* OcilibExceptionUnfreedData
 * --------------------------------------------------------------------------------------------- */
 
-void ExceptionUnfreedData
+void OcilibExceptionUnfreedData
 (
     OCI_Context* ctx,
     int          type_elem,
@@ -534,10 +534,10 @@ void ExceptionUnfreedData
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ExceptionUnfreedBytes
+* OcilibExceptionUnfreedBytes
 * --------------------------------------------------------------------------------------------- */
 
-void ExceptionUnfreedBytes
+void OcilibExceptionUnfreedBytes
 (
     OCI_Context* ctx,
     big_uint     nb_bytes
@@ -547,10 +547,10 @@ void ExceptionUnfreedBytes
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionRuntimeLoading
+ * OcilibExceptionRuntimeLoading
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionMaxBind
+void OcilibExceptionMaxBind
 (
     OCI_Context* ctx
 )
@@ -559,10 +559,10 @@ void ExceptionMaxBind
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionAttributeNotFound
+ * OcilibExceptionAttributeNotFound
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionAttributeNotFound
+void OcilibExceptionAttributeNotFound
 (
     OCI_Context* ctx,
     const otext *attr
@@ -572,10 +572,10 @@ void ExceptionAttributeNotFound
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionMinimumValue
+ * OcilibExceptionMinimumValue
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionMinimumValue
+void OcilibExceptionMinimumValue
 (
     OCI_Context* ctx,
     int          min
@@ -585,10 +585,10 @@ void ExceptionMinimumValue
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionTypeNotCompatible
+ * OcilibExceptionTypeNotCompatible
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionTypeNotCompatible
+void OcilibExceptionTypeNotCompatible
 (
     OCI_Context* ctx
 )
@@ -597,10 +597,10 @@ void ExceptionTypeNotCompatible
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionStatementState
+ * OcilibExceptionStatementState
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionStatementState
+void OcilibExceptionStatementState
 (
     OCI_Context* ctx,
     int          state
@@ -621,10 +621,10 @@ void ExceptionStatementState
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionStatementNotScrollable
+ * OcilibExceptionStatementNotScrollable
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionStatementNotScrollable
+void OcilibExceptionStatementNotScrollable
 (
     OCI_Context* ctx
 )
@@ -633,10 +633,10 @@ void ExceptionStatementNotScrollable
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionBindAlreadyUsed
+ * OcilibExceptionBindAlreadyUsed
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionBindAlreadyUsed
+void OcilibExceptionBindAlreadyUsed
 (
     OCI_Context * ctx,
     const otext * bind
@@ -646,10 +646,10 @@ void ExceptionBindAlreadyUsed
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionBindArraySize
+ * OcilibExceptionBindArraySize
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionBindArraySize
+void OcilibExceptionBindArraySize
 (
     OCI_Context* ctx,
     unsigned int maxsize,
@@ -661,10 +661,10 @@ void ExceptionBindArraySize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionDirPathColNotFound
+ * OcilibExceptionDirPathColNotFound
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionDirPathColNotFound
+void OcilibExceptionDirPathColNotFound
 (
     OCI_Context * ctx,
     const otext * column,
@@ -675,10 +675,10 @@ void ExceptionDirPathColNotFound
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionDirPathState
+ * OcilibExceptionDirPathState
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionDirPathState
+void OcilibExceptionDirPathState
 (
     OCI_Context* ctx,
     int          state
@@ -688,10 +688,10 @@ void ExceptionDirPathState
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionOCIEnvironment
+ * OcilibExceptionOCIEnvironment
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionOCIEnvironment
+void OcilibExceptionOCIEnvironment
 (
     OCI_Context* ctx
 )
@@ -700,10 +700,10 @@ void ExceptionOCIEnvironment
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionRebindBadDatatype
+ * OcilibExceptionRebindBadDatatype
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionRebindBadDatatype
+void OcilibExceptionRebindBadDatatype
 (
     OCI_Context * ctx,
     const otext * bind
@@ -713,10 +713,10 @@ void ExceptionRebindBadDatatype
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExceptionTypeInfoWrongType
+ * OcilibExceptionTypeInfoWrongType
  * --------------------------------------------------------------------------------------------- */
 
-void ExceptionTypeInfoWrongType
+void OcilibExceptionTypeInfoWrongType
 (
     OCI_Context * ctx,
     const otext * name
@@ -726,10 +726,10 @@ void ExceptionTypeInfoWrongType
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ExceptionItemNotFound
+* OcilibExceptionItemNotFound
 * --------------------------------------------------------------------------------------------- */
 
-void ExceptionItemNotFound
+void OcilibExceptionItemNotFound
 (
     OCI_Context* ctx,
     const otext *name,
@@ -740,10 +740,10 @@ void ExceptionItemNotFound
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ExceptionArgInvalidValue
+* OcilibExceptionArgInvalidValue
 * --------------------------------------------------------------------------------------------- */
 
-void ExceptionArgInvalidValue
+void OcilibExceptionArgInvalidValue
 (
     OCI_Context* ctx,
     const otext *name,
@@ -754,10 +754,10 @@ void ExceptionArgInvalidValue
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ExceptionEnvFromXaString
+* OcilibExceptionEnvFromXaString
 * --------------------------------------------------------------------------------------------- */
 
-void ExceptionEnvFromXaString
+void OcilibExceptionEnvFromXaString
 (
     OCI_Context* ctx,
     const otext *value
@@ -767,10 +767,10 @@ void ExceptionEnvFromXaString
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ExceptionConnFromXaString
+* OcilibExceptionConnFromXaString
 * --------------------------------------------------------------------------------------------- */
 
-void ExceptionConnFromXaString
+void OcilibExceptionConnFromXaString
 (
     OCI_Context* ctx,
     const otext *value
@@ -780,10 +780,10 @@ void ExceptionConnFromXaString
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ExceptionExternalBindingNotAllowed
+* OcilibExceptionExternalBindingNotAllowed
 * --------------------------------------------------------------------------------------------- */
 
-void ExceptionExternalBindingNotAllowed
+void OcilibExceptionExternalBindingNotAllowed
 (
     OCI_Context* ctx,
     const otext *bind

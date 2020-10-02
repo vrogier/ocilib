@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Lob * OcilibLobInitialize
+OCI_SYM_LOCAL OCI_Lob * OcilibLobInitialize
 (
     OCI_Connection *con,
     OCI_Lob        *lob,
@@ -31,47 +31,47 @@ OCI_Lob * OcilibLobInitialize
     ub4             type
 );
 
-OCI_Lob * OcilibLobCreate
+OCI_SYM_LOCAL OCI_Lob * OcilibLobCreate
 (
     OCI_Connection *con,
     unsigned int    type
 );
 
-boolean OcilibLobFree
+OCI_SYM_LOCAL boolean OcilibLobFree
 (
     OCI_Lob *lob
 );
 
-OCI_Lob ** OcilibLobCreateArray
+OCI_SYM_LOCAL OCI_Lob ** OcilibLobCreateArray
 (
     OCI_Connection *con,
     unsigned int    type,
     unsigned int    nbelem
 );
 
-boolean OcilibLobFreeArray
+OCI_SYM_LOCAL boolean OcilibLobFreeArray
 (
     OCI_Lob **lobs
 );
 
-unsigned int OcilibLobGetType
+OCI_SYM_LOCAL unsigned int OcilibLobGetType
 (
     OCI_Lob *lob
 );
 
-boolean OcilibLobSeek
+OCI_SYM_LOCAL boolean OcilibLobSeek
 (
     OCI_Lob     *lob,
     big_uint     offset,
     unsigned int mode
 );
 
-big_uint OcilibLobGetOffset
+OCI_SYM_LOCAL big_uint OcilibLobGetOffset
 (
     OCI_Lob *lob
 );
 
-boolean OcilibLobRead2
+OCI_SYM_LOCAL boolean OcilibLobRead2
 (
     OCI_Lob      *lob,
     void         *buffer,
@@ -79,14 +79,14 @@ boolean OcilibLobRead2
     unsigned int *byte_count
 );
 
-unsigned int OcilibLobRead
+OCI_SYM_LOCAL unsigned int OcilibLobRead
 (
     OCI_Lob     *lob,
     void        *buffer,
     unsigned int len
 );
 
-boolean OcilibLobWrite2
+OCI_SYM_LOCAL boolean OcilibLobWrite2
 (
     OCI_Lob      *lob,
     void         *buffer,
@@ -94,37 +94,37 @@ boolean OcilibLobWrite2
     unsigned int *byte_count
 );
 
-unsigned int OcilibLobWrite
+OCI_SYM_LOCAL unsigned int OcilibLobWrite
 (
     OCI_Lob     *lob,
     void        *buffer,
     unsigned int len
 );
 
-boolean OcilibLobTruncate
+OCI_SYM_LOCAL boolean OcilibLobTruncate
 (
     OCI_Lob *lob,
     big_uint size
 );
 
-big_uint OcilibLobErase
+OCI_SYM_LOCAL big_uint OcilibLobErase
 (
     OCI_Lob *lob,
     big_uint offset,
     big_uint size
 );
 
-big_uint OcilibLobGetLength
+OCI_SYM_LOCAL big_uint OcilibLobGetLength
 (
     OCI_Lob *lob
 );
 
-unsigned int OcilibLobGetChunkSize
+OCI_SYM_LOCAL unsigned int OcilibLobGetChunkSize
 (
     OCI_Lob *lob
 );
 
-boolean OcilibLobCopy
+OCI_SYM_LOCAL boolean OcilibLobCopy
 (
     OCI_Lob *lob,
     OCI_Lob *lob_src,
@@ -133,7 +133,7 @@ boolean OcilibLobCopy
     big_uint count
 );
 
-boolean OcilibLobCopyFromFile
+OCI_SYM_LOCAL boolean OcilibLobCopyFromFile
 (
     OCI_Lob  *lob,
     OCI_File *file,
@@ -142,7 +142,7 @@ boolean OcilibLobCopyFromFile
     big_uint  count
 );
 
-boolean OcilibLobAppend2
+OCI_SYM_LOCAL boolean OcilibLobAppend2
 (
     OCI_Lob      *lob,
     void         *buffer,
@@ -150,69 +150,69 @@ boolean OcilibLobAppend2
     unsigned int *byte_count
 );
 
-unsigned int OcilibLobAppend
+OCI_SYM_LOCAL unsigned int OcilibLobAppend
 (
     OCI_Lob     *lob,
     void        *buffer,
     unsigned int len
 );
 
-boolean OcilibLobAppendLob
+OCI_SYM_LOCAL boolean OcilibLobAppendLob
 (
     OCI_Lob *lob,
     OCI_Lob *lob_src
 );
 
-boolean OcilibLobIsTemporary
+OCI_SYM_LOCAL boolean OcilibLobIsTemporary
 (
     OCI_Lob *lob
 );
 
-boolean OcilibLobOpen
+OCI_SYM_LOCAL boolean OcilibLobOpen
 (
     OCI_Lob     *lob,
     unsigned int mode
 );
 
-boolean OcilibLobClose
+OCI_SYM_LOCAL boolean OcilibLobClose
 (
     OCI_Lob *lob
 );
 
-boolean OcilibLobIsEqual
+OCI_SYM_LOCAL boolean OcilibLobIsEqual
 (
     OCI_Lob *lob,
     OCI_Lob *lob2
 );
 
-boolean OcilibLobAssign
+OCI_SYM_LOCAL boolean OcilibLobAssign
 (
     OCI_Lob *lob,
     OCI_Lob *lob_src
 );
 
-big_uint OcilibLobGetMaxSize
+OCI_SYM_LOCAL big_uint OcilibLobGetMaxSize
 (
     OCI_Lob *lob
 );
 
-boolean OcilibLobFlush
+OCI_SYM_LOCAL boolean OcilibLobFlush
 (
     OCI_Lob *lob
 );
 
-boolean OcilibLobEnableBuffering
+OCI_SYM_LOCAL boolean OcilibLobEnableBuffering
 (
     OCI_Lob *lob,
     boolean  value
 );
 
-OCI_Connection * OcilibLobGetConnection
+OCI_SYM_LOCAL OCI_Connection * OcilibLobGetConnection
 (
     OCI_Lob *lob
 );
 
-boolean OcilibLobIsRemote
+OCI_SYM_LOCAL boolean OcilibLobIsRemote
 (
     OCI_Lob* lob
 );

@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Date * OcilibDateInitialize
+OCI_SYM_LOCAL OCI_Date * OcilibDateInitialize
 (
     OCI_Connection *con,
     OCI_Date       *date,
@@ -32,70 +32,70 @@ OCI_Date * OcilibDateInitialize
     boolean         ansi
 );
 
-OCI_Date * OcilibDateCreate
+OCI_SYM_LOCAL OCI_Date * OcilibDateCreate
 (
     OCI_Connection *con
 );
 
-boolean OcilibDateFree
+OCI_SYM_LOCAL boolean OcilibDateFree
 (
     OCI_Date* date
 );
 
-OCI_Date ** OcilibDateCreateArray
+OCI_SYM_LOCAL OCI_Date ** OcilibDateCreateArray
 (
     OCI_Connection *con,
     unsigned int    nbelem
 );
 
-boolean OcilibDateFreeArray
+OCI_SYM_LOCAL boolean OcilibDateFreeArray
 (
     OCI_Date** dates
 );
 
-boolean OcilibDateAddDays
+OCI_SYM_LOCAL boolean OcilibDateAddDays
 (
     OCI_Date* date,
     int       nb
 );
 
-boolean OcilibDateAddMonths
+OCI_SYM_LOCAL boolean OcilibDateAddMonths
 (
     OCI_Date* date,
     int       nb
 );
 
-boolean OcilibDateAssign
+OCI_SYM_LOCAL boolean OcilibDateAssign
 (
     OCI_Date* date,
     OCI_Date* date_src
 );
 
-int OcilibDateCheck
+OCI_SYM_LOCAL int OcilibDateCheck
 (
     OCI_Date* date
 );
 
-int OcilibDateCompare
+OCI_SYM_LOCAL int OcilibDateCompare
 (
     OCI_Date* date,
     OCI_Date* date2
 );
 
-int OcilibDateDaysBetween
+OCI_SYM_LOCAL int OcilibDateDaysBetween
 (
     OCI_Date* date,
     OCI_Date* date2
 );
 
-boolean OcilibDateFromString
+OCI_SYM_LOCAL boolean OcilibDateFromString
 (
     OCI_Date   * date,
     const otext* str,
     const otext* fmt
 );
 
-boolean OcilibDateToString
+OCI_SYM_LOCAL boolean OcilibDateToString
 (
     OCI_Date   * date,
     const otext* fmt,
@@ -103,7 +103,7 @@ boolean OcilibDateToString
     otext      * str
 );
 
-boolean OcilibDateGetDate
+OCI_SYM_LOCAL boolean OcilibDateGetDate
 (
     OCI_Date* date,
     int     * year,
@@ -111,7 +111,7 @@ boolean OcilibDateGetDate
     int     * day
 );
 
-boolean OcilibDateGetTime
+OCI_SYM_LOCAL boolean OcilibDateGetTime
 (
     OCI_Date* date,
     int     * hour,
@@ -119,7 +119,7 @@ boolean OcilibDateGetTime
     int     * sec
 );
 
-boolean OcilibDateGetDateTime
+OCI_SYM_LOCAL boolean OcilibDateGetDateTime
 (
     OCI_Date* date,
     int     * year,
@@ -130,18 +130,18 @@ boolean OcilibDateGetDateTime
     int     * sec
 );
 
-boolean OcilibDateLastDay
+OCI_SYM_LOCAL boolean OcilibDateLastDay
 (
     OCI_Date* date
 );
 
-boolean OcilibDateNextDay
+OCI_SYM_LOCAL boolean OcilibDateNextDay
 (
     OCI_Date   * date,
     const otext* day
 );
 
-boolean OcilibDateSetDate
+OCI_SYM_LOCAL boolean OcilibDateSetDate
 (
     OCI_Date* date,
     int       year,
@@ -149,7 +149,7 @@ boolean OcilibDateSetDate
     int       day
 );
 
-boolean OcilibDateSetTime
+OCI_SYM_LOCAL boolean OcilibDateSetTime
 (
     OCI_Date* date,
     int       hour,
@@ -157,7 +157,7 @@ boolean OcilibDateSetTime
     int       sec
 );
 
-boolean OcilibDateSetDateTime
+OCI_SYM_LOCAL boolean OcilibDateSetDateTime
 (
     OCI_Date* date,
     int       year,
@@ -168,26 +168,26 @@ boolean OcilibDateSetDateTime
     int       sec
 );
 
-boolean OcilibDateSysDate
+OCI_SYM_LOCAL boolean OcilibDateSysDate
 (
     OCI_Date* date
 );
 
-boolean OcilibDateZoneToZone
+OCI_SYM_LOCAL boolean OcilibDateZoneToZone
 (
     OCI_Date   * date,
     const otext* zone1,
     const otext* zone2
 );
 
-boolean OcilibDateToCTime
+OCI_SYM_LOCAL boolean OcilibDateToCTime
 (
     OCI_Date * date,
     struct tm* ptm,
     time_t   * pt
 );
 
-boolean OcilibDateFromCTime
+OCI_SYM_LOCAL boolean OcilibDateFromCTime
 (
     OCI_Date * date,
     struct tm* ptm,

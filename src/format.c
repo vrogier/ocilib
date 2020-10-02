@@ -28,10 +28,10 @@
 #include "timestamp.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * ParseSqlFmt
+ * OcilibParseSqlFmt
  * --------------------------------------------------------------------------------------------- */
 
-int FormatParseSql
+int OcilibFormatParseSql
 (
     OCI_Statement *stmt,
     otext         *buf,
@@ -166,7 +166,7 @@ int FormatParseSql
                         otext str_ff[12];
                         int   yy = 0, mm = 0, dd = 0, hh = 0, mi = 0, ss = 0, ff = 0;
 
-                        CHECK(TimestampGetDateTime(tmsp, &yy, &mm, &dd,  &hh, &mi, &ss, &ff))
+                        CHECK(OcilibTimestampGetDateTime(tmsp, &yy, &mm, &dd,  &hh, &mi, &ss, &ff))
 
                         if (ff > 0)
                         {
@@ -207,7 +207,7 @@ int FormatParseSql
 
                 if (itv)
                 {
-                    CHECK(IntervalToString(itv, 3, 3, (int) osizeof(temp)- 1, temp))
+                    CHECK(OcilibIntervalToString(itv, 3, 3, (int) osizeof(temp)- 1, temp))
 
                     len = (int) ostrlen(temp);
 
@@ -337,7 +337,7 @@ int FormatParseSql
 
                 temp[0] = 0;
 
-                CHECK(NumberToString(va_arg(*pargs, OCI_Number*), NULL, 128, temp))
+                CHECK(OcilibNumberToString(va_arg(*pargs, OCI_Number*), NULL, 128, temp))
                 len = (int) ostrlen(temp);
 
                 if (buf && (len > 0))
@@ -357,7 +357,7 @@ int FormatParseSql
 
                 if (ref)
                 {
-                    CHECK(ReferenceToString( ref, (unsigned int) osizeof(temp) - 1, temp))
+                    CHECK(OcilibReferenceToString( ref, (unsigned int) osizeof(temp) - 1, temp))
 
                     len = (int) ostrlen(temp);
 
@@ -380,7 +380,7 @@ int FormatParseSql
             }
             default:
             {
-                THROW(ExceptionParsingToken, *pf)
+                THROW(OcilibExceptionParsingToken, *pf)
 
                 break;
             }

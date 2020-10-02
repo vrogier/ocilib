@@ -31,10 +31,10 @@ static unsigned int PoolTypeValues[] =
 };
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolDispose
+ * OcilibPoolDispose
  * --------------------------------------------------------------------------------------------- */
 
-boolean PoolDispose
+boolean OcilibPoolDispose
 (
     OCI_Pool *pool
 )
@@ -79,7 +79,7 @@ boolean PoolDispose
 
   #endif
 
-            MemoryFreeHandle((void *) pool->handle, (ub4) pool->htype);
+            OcilibMemoryFreeHandle((void *) pool->handle, (ub4) pool->htype);
         }
 
   #if OCI_VERSION_COMPILE >= OCI_11_2
@@ -88,7 +88,7 @@ boolean PoolDispose
 
         if (NULL != pool->authp)
         {
-            MemoryFreeHandle((void *) pool->authp, OCI_HTYPE_AUTHINFO);
+            OcilibMemoryFreeHandle((void *) pool->authp, OCI_HTYPE_AUTHINFO);
         }
 
   #endif
@@ -97,7 +97,7 @@ boolean PoolDispose
 
         if (NULL != pool->err)
         {
-            MemoryFreeHandle((void *) pool->err, OCI_HTYPE_ERROR);
+            OcilibMemoryFreeHandle((void *) pool->err, OCI_HTYPE_ERROR);
         }
     }
 
@@ -114,7 +114,7 @@ boolean PoolDispose
     FREE(pool->user)
     FREE(pool->pwd)
 
-    ErrorResetSource(NULL, pool);
+    OcilibErrorResetSource(NULL, pool);
 
     SET_SUCCESS()
 
@@ -122,10 +122,10 @@ boolean PoolDispose
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolCreate
+ * OcilibPoolCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Pool * PoolCreate
+OCI_Pool * OcilibPoolCreate
 (
     const otext *db,
     const otext *user,
@@ -167,7 +167,7 @@ OCI_Pool * PoolCreate
 
     /* create pool object */
 
-    pool = ListAppend(Env.pools, sizeof(*pool));
+    pool = OcilibListAppend(Env.pools, sizeof(*pool));
     CHECK_NULL(pool)
 
     pool->mode = mode;
@@ -205,15 +205,15 @@ OCI_Pool * PoolCreate
     {
         /* allocate error handle */
 
-        CHECK(MemoryAllocHandle((dvoid *)Env.env,
-                                (dvoid **)(void *)&pool->err,
-                                OCI_HTYPE_ERROR))
+        CHECK(OcilibMemoryAllocHandle((dvoid *)Env.env,
+                                      (dvoid **)(void *)&pool->err,
+                                      OCI_HTYPE_ERROR))
 
         /* allocate pool handle */
 
-        CHECK(MemoryAllocHandle((dvoid *)Env.env,
-                                (dvoid **)(void *)&pool->handle,
-                                (ub4)pool->htype))
+        CHECK(OcilibMemoryAllocHandle((dvoid *)Env.env,
+                                      (dvoid **)(void *)&pool->handle,
+                                      (ub4)pool->htype))
 
         /* allocate authentication handle only if needed */
 
@@ -231,13 +231,13 @@ OCI_Pool * PoolCreate
                      OCILIB_MINOR_VERSION,
                      OCILIB_REVISION_VERSION);
 
-            dbstr = StringGetDBString(driver_version, &dbsize);
+            dbstr = OcilibStringGetDBString(driver_version, &dbsize);
 
             /* allocate authentication handle */
 
-            CHECK(MemoryAllocHandle((dvoid *)Env.env,
-                                    (dvoid **)(void *)&pool->authp,
-                                    OCI_HTYPE_AUTHINFO))
+            CHECK(OcilibMemoryAllocHandle((dvoid *)Env.env,
+                                          (dvoid **)(void *)&pool->authp,
+                                          OCI_HTYPE_AUTHINFO))
 
             /* set OCILIB driver layer name attribute only for session pools here
                 For standalone connections and connection pool this attribute is set
@@ -265,9 +265,9 @@ OCI_Pool * PoolCreate
 
         /* create the pool */
 
-        dbstr_db   = StringGetDBString(pool->db,   &dbsize_db);
-        dbstr_user = StringGetDBString(pool->user, &dbsize_user);
-        dbstr_pwd  = StringGetDBString(pool->pwd,  &dbsize_pwd);
+        dbstr_db   = OcilibStringGetDBString(pool->db,   &dbsize_db);
+        dbstr_user = OcilibStringGetDBString(pool->user, &dbsize_user);
+        dbstr_pwd  = OcilibStringGetDBString(pool->pwd,  &dbsize_pwd);
 
         if (OCI_HTYPE_CPOOL == pool->htype)
         {
@@ -318,7 +318,7 @@ OCI_Pool * PoolCreate
 
         if (NULL != dbstr_name)
         {
-            pool->name = StringDuplicateFromDBString(dbstr_name, dbcharcount(dbsize_name));
+            pool->name = OcilibStringDuplicateFromDBString(dbstr_name, dbcharcount(dbsize_name));
 
             CHECK(NULL != pool->name)
         }
@@ -333,28 +333,28 @@ OCI_Pool * PoolCreate
 
     /* retrieve statement cache size */
 
-    PoolGetStatementCacheSize(pool);
+    OcilibPoolGetStatementCacheSize(pool);
 
     /* for connection pools that do not handle the statement cache
        attribute, let's set the value with documented default cache size */
 
     if (pool->cache_size == 0)
     {
-        CHECK(PoolSetStatementCacheSize(pool, OCI_DEFAUT_STMT_CACHE_SIZE))
+        CHECK(OcilibPoolSetStatementCacheSize(pool, OCI_DEFAUT_STMT_CACHE_SIZE))
     }
 
 #endif
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
-        StringReleaseDBString(dbstr_db);
-        StringReleaseDBString(dbstr_user);
-        StringReleaseDBString(dbstr_pwd);
+        OcilibStringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(dbstr_db);
+        OcilibStringReleaseDBString(dbstr_user);
+        OcilibStringReleaseDBString(dbstr_pwd);
 
         if (FAILURE)
         {
-            PoolFree(pool);
+            OcilibPoolFree(pool);
             pool = NULL;
         }
 
@@ -363,10 +363,10 @@ OCI_Pool * PoolCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolFree
+ * OcilibPoolFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean PoolFree
+boolean OcilibPoolFree
 (
     OCI_Pool *pool
 )
@@ -379,8 +379,8 @@ boolean PoolFree
 
     CHECK_PTR(OCI_IPC_POOL, pool)
 
-    PoolDispose(pool);
-    ListRemove(Env.pools, pool);
+    OcilibPoolDispose(pool);
+    OcilibListRemove(Env.pools, pool);
 
     FREE(pool)
 
@@ -390,10 +390,10 @@ boolean PoolFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolGetConnection
+ * OcilibPoolGetConnection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * PoolGetConnection
+OCI_Connection * OcilibPoolGetConnection
 (
     OCI_Pool    *pool,
     const otext *tag
@@ -407,7 +407,8 @@ OCI_Connection * PoolGetConnection
 
     CHECK_PTR(OCI_IPC_POOL, pool)
 
-    OCI_Connection *con = ConnectionCreateInternal(pool, pool->db, pool->user, pool->pwd, pool->mode, tag);
+    OCI_Connection *con = OcilibConnectionCreateInternal(pool, pool->db, pool->user,
+                                                         pool->pwd, pool->mode, tag);
     CHECK_NULL(con)
 
     /* for regular connection pool, set the statement cache size to
@@ -415,9 +416,9 @@ OCI_Connection * PoolGetConnection
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
-    const unsigned int cache_size = PoolGetStatementCacheSize(pool);
+    const unsigned int cache_size = OcilibPoolGetStatementCacheSize(pool);
 
-    CHECK(ConnectionSetStatementCacheSize(con, cache_size))
+    CHECK(OcilibConnectionSetStatementCacheSize(con, cache_size))
 
 #endif
 
@@ -427,10 +428,10 @@ OCI_Connection * PoolGetConnection
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolGetTimeout
+ * OcilibPoolGetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int PoolGetTimeout
+unsigned int OcilibPoolGetTimeout
 (
     OCI_Pool *pool
 )
@@ -481,10 +482,10 @@ unsigned int PoolGetTimeout
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolSetTimeout
+ * OcilibPoolSetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-boolean PoolSetTimeout
+boolean OcilibPoolSetTimeout
 (
     OCI_Pool    *pool,
     unsigned int value
@@ -535,10 +536,10 @@ boolean PoolSetTimeout
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolGetNoWait
+ * OcilibPoolGetNoWait
  * --------------------------------------------------------------------------------------------- */
 
-boolean PoolGetNoWait
+boolean OcilibPoolGetNoWait
 (
     OCI_Pool *pool
 )
@@ -590,10 +591,10 @@ boolean PoolGetNoWait
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolSetNoWait
+ * OcilibPoolSetNoWait
  * --------------------------------------------------------------------------------------------- */
 
-boolean PoolSetNoWait
+boolean OcilibPoolSetNoWait
 (
     OCI_Pool *pool,
     boolean   value
@@ -647,10 +648,10 @@ boolean PoolSetNoWait
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolGetBusyCount
+ * OcilibPoolGetBusyCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int PoolGetBusyCount
+unsigned int OcilibPoolGetBusyCount
 (
     OCI_Pool *pool
 )
@@ -701,10 +702,10 @@ unsigned int PoolGetBusyCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolGetOpenedCount
+ * OcilibPoolGetOpenedCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int PoolGetOpenedCount
+unsigned int OcilibPoolGetOpenedCount
 (
     OCI_Pool *pool
 )
@@ -755,10 +756,10 @@ unsigned int PoolGetOpenedCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolGetMin
+ * OcilibPoolGetMin
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int PoolGetMin
+unsigned int OcilibPoolGetMin
 (
     OCI_Pool *pool
 )
@@ -772,10 +773,10 @@ unsigned int PoolGetMin
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolGetMax
+ * OcilibPoolGetMax
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int PoolGetMax
+unsigned int OcilibPoolGetMax
 (
     OCI_Pool *pool
 )
@@ -789,10 +790,10 @@ unsigned int PoolGetMax
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolGetIncrement
+ * OcilibPoolGetIncrement
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int PoolGetIncrement
+unsigned int OcilibPoolGetIncrement
 (
     OCI_Pool *pool
 )
@@ -806,10 +807,10 @@ unsigned int PoolGetIncrement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolSetStatementCacheSize
+ * OcilibPoolSetStatementCacheSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean PoolSetStatementCacheSize
+boolean OcilibPoolSetStatementCacheSize
 (
     OCI_Pool    *pool,
     unsigned int value
@@ -850,10 +851,10 @@ boolean PoolSetStatementCacheSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * PoolGetStatementCacheSize
+ * OcilibPoolGetStatementCacheSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int PoolGetStatementCacheSize
+unsigned int OcilibPoolGetStatementCacheSize
 (
     OCI_Pool *pool
 )

@@ -58,7 +58,7 @@
 #include "transaction.h"
 #include "typeinfo.h"
 
-OCI_SYM_LOCAL void OcilibCheckContext()
+void OcilibCheckContext()
 {
     if (Env.env_mode & OCI_ENV_CONTEXT)
     {
@@ -1720,7 +1720,7 @@ int OCI_API OCI_ElemGetInt
     OCI_Elem* elem
 )
 {
-    CALL_IMPL(OcilibElemGetInt, elem)
+    CALL_IMPL(OcilibElementGetInt, elem)
 }
 
 unsigned int OCI_API OCI_ElemGetUnsignedInt

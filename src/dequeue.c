@@ -53,7 +53,7 @@ static const unsigned int OcilibDequeueModeValues[]=
  * OcilibDequeueCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Dequeue * OcilibDequeueCreate
+OCI_Dequeue * OcilibDequeueCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *name
@@ -104,7 +104,7 @@ OCI_SYM_LOCAL OCI_Dequeue * OcilibDequeueCreate
  * OcilibDequeueFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDequeueFree
+boolean OcilibDequeueFree
 (
     OCI_Dequeue *dequeue
 )
@@ -161,7 +161,7 @@ OCI_SYM_LOCAL boolean OcilibDequeueFree
  * OcilibDequeueListen
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Agent * OcilibDequeueListen
+OCI_Agent * OcilibDequeueListen
 (
     OCI_Dequeue *dequeue,
     int          timeout
@@ -228,7 +228,7 @@ OCI_SYM_LOCAL OCI_Agent * OcilibDequeueListen
  * OcilibDequeueGetMessage
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Msg * OcilibDequeueGetMessage
+OCI_Msg * OcilibDequeueGetMessage
 (
     OCI_Dequeue *dequeue
 )
@@ -366,7 +366,7 @@ OCI_SYM_LOCAL OCI_Msg * OcilibDequeueGetMessage
  * OcilibDequeueGetConsumerName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibDequeueGetConsumer
+const otext * OcilibDequeueGetConsumer
 (
     OCI_Dequeue *dequeue
 )
@@ -398,7 +398,7 @@ OCI_SYM_LOCAL const otext * OcilibDequeueGetConsumer
  * OcilibDequeueSetConsumerName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDequeueSetConsumer
+boolean OcilibDequeueSetConsumer
 (
     OCI_Dequeue *dequeue,
     const otext *consumer
@@ -426,7 +426,7 @@ OCI_SYM_LOCAL boolean OcilibDequeueSetConsumer
  * OcilibDequeueGetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibDequeueGetCorrelation
+const otext * OcilibDequeueGetCorrelation
 (
     OCI_Dequeue *dequeue
 )
@@ -458,7 +458,7 @@ OCI_SYM_LOCAL const otext * OcilibDequeueGetCorrelation
  * OcilibDequeueSetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDequeueSetCorrelation
+boolean OcilibDequeueSetCorrelation
 (
     OCI_Dequeue *dequeue,
     const otext *pattern
@@ -486,7 +486,7 @@ OCI_SYM_LOCAL boolean OcilibDequeueSetCorrelation
  * OcilibDequeueGetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDequeueGetRelativeMsgID
+boolean OcilibDequeueGetRelativeMsgID
 (
     OCI_Dequeue  *dequeue,
     void         *id,
@@ -535,7 +535,7 @@ OCI_SYM_LOCAL boolean OcilibDequeueGetRelativeMsgID
  * OcilibDequeueSetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDequeueSetRelativeMsgID
+boolean OcilibDequeueSetRelativeMsgID
 (
     OCI_Dequeue *dequeue,
     const void  *id,
@@ -576,7 +576,7 @@ OCI_SYM_LOCAL boolean OcilibDequeueSetRelativeMsgID
  * OcilibDequeueGetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDequeueGetVisibility
+unsigned int OcilibDequeueGetVisibility
 (
     OCI_Dequeue *dequeue
 )
@@ -607,7 +607,7 @@ OCI_SYM_LOCAL unsigned int OcilibDequeueGetVisibility
  * OcilibDequeueSetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDequeueSetVisibility
+boolean OcilibDequeueSetVisibility
 (
     OCI_Dequeue *dequeue,
     unsigned int visibility
@@ -640,7 +640,7 @@ OCI_SYM_LOCAL boolean OcilibDequeueSetVisibility
  * OcilibDequeueGetMode
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDequeueGetMode
+unsigned int OcilibDequeueGetMode
 (
     OCI_Dequeue *dequeue
 )
@@ -671,7 +671,7 @@ OCI_SYM_LOCAL unsigned int OcilibDequeueGetMode
  * OcilibDequeueSetMode
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDequeueSetMode
+boolean OcilibDequeueSetMode
 (
     OCI_Dequeue *dequeue,
     unsigned int mode
@@ -704,7 +704,7 @@ OCI_SYM_LOCAL boolean OcilibDequeueSetMode
  * OcilibDequeueGetNavigation
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDequeueGetNavigation
+unsigned int OcilibDequeueGetNavigation
 (
     OCI_Dequeue *dequeue
 )
@@ -735,7 +735,7 @@ OCI_SYM_LOCAL unsigned int OcilibDequeueGetNavigation
  * OcilibDequeueSetNavigation
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDequeueSetNavigation
+boolean OcilibDequeueSetNavigation
 (
     OCI_Dequeue *dequeue,
     unsigned int position
@@ -768,7 +768,7 @@ OCI_SYM_LOCAL boolean OcilibDequeueSetNavigation
  * OcilibDequeueGetWaitTime
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL int OcilibDequeueGetWaitTime
+int OcilibDequeueGetWaitTime
 (
     OCI_Dequeue *dequeue
 )
@@ -799,7 +799,7 @@ OCI_SYM_LOCAL int OcilibDequeueGetWaitTime
  * OcilibDequeueSetWaitTime
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDequeueSetWaitTime
+boolean OcilibDequeueSetWaitTime
 (
     OCI_Dequeue *dequeue,
     int          timeout
@@ -831,7 +831,7 @@ OCI_SYM_LOCAL boolean OcilibDequeueSetWaitTime
  * OcilibDequeueSetAgentList
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDequeueSetAgentList
+boolean OcilibDequeueSetAgentList
 (
     OCI_Dequeue *dequeue,
     OCI_Agent  **consumers,
@@ -869,7 +869,7 @@ OCI_SYM_LOCAL boolean OcilibDequeueSetAgentList
  * OcilibDequeueSubscribe
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDequeueSubscribe
+boolean OcilibDequeueSubscribe
 (
     OCI_Dequeue   *dequeue,
     unsigned int   port,
@@ -1075,7 +1075,7 @@ OCI_SYM_LOCAL boolean OcilibDequeueSubscribe
  * OcilibDequeueUnsubscribe
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDequeueUnsubscribe
+boolean OcilibDequeueUnsubscribe
 (
     OCI_Dequeue *dequeue
 )

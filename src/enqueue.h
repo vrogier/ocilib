@@ -23,53 +23,53 @@
 
 #include "types.h"
 
-OCI_Enqueue * OcilibEnqueueCreate
+OCI_SYM_LOCAL OCI_Enqueue * OcilibEnqueueCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *name
 );
 
-boolean OcilibEnqueueFree
+OCI_SYM_LOCAL boolean OcilibEnqueueFree
 (
     OCI_Enqueue *enqueue
 );
 
-boolean OcilibEnqueuePut
+OCI_SYM_LOCAL boolean OcilibEnqueuePut
 (
     OCI_Enqueue *enqueue,
     OCI_Msg     *msg
 );
 
-unsigned int OcilibEnqueueGetVisibility
+OCI_SYM_LOCAL unsigned int OcilibEnqueueGetVisibility
 (
     OCI_Enqueue *enqueue
 );
 
-boolean OcilibEnqueueSetVisibility
+OCI_SYM_LOCAL boolean OcilibEnqueueSetVisibility
 (
     OCI_Enqueue *enqueue,
     unsigned int visibility
 );
 
-unsigned int OcilibEnqueueGetSequenceDeviation
+OCI_SYM_LOCAL unsigned int OcilibEnqueueGetSequenceDeviation
 (
     OCI_Enqueue *enqueue
 );
 
-boolean OcilibEnqueueSetSequenceDeviation
+OCI_SYM_LOCAL boolean OcilibEnqueueSetSequenceDeviation
 (
     OCI_Enqueue *enqueue,
     unsigned int sequence
 );
 
-boolean OcilibEnqueueGetRelativeMsgID
+OCI_SYM_LOCAL boolean OcilibEnqueueGetRelativeMsgID
 (
     OCI_Enqueue  *enqueue,
     void         *id,
     unsigned int *len
 );
 
-boolean OcilibEnqueueSetRelativeMsgID
+OCI_SYM_LOCAL boolean OcilibEnqueueSetRelativeMsgID
 (
     OCI_Enqueue *enqueue,
     const void  *id,

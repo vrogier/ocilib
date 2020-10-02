@@ -39,7 +39,7 @@ typedef struct HAEventParams
  * OcilibCallbackInBind
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL sb4 OcilibCallbackInBind
+sb4 OcilibCallbackInBind
 (
     dvoid   *ictxp,
     OCIBind *bindp,
@@ -104,7 +104,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackInBind
  * OcilibCallbackOutBind
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL sb4 OcilibCallbackOutBind
+sb4 OcilibCallbackOutBind
 (
     dvoid   *octxp,
     OCIBind *bindp,
@@ -214,7 +214,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackOutBind
  * OcilibCallbackNotifyMessages
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL ub4 OcilibCallbackNotifyMessages
+ub4 OcilibCallbackNotifyMessages
 (
     void            *oci_ctx,
     OCISubscription *subscrhp,
@@ -251,7 +251,7 @@ OCI_SYM_LOCAL ub4 OcilibCallbackNotifyMessages
  * OcilibCallbackNotifyChanges
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL ub4 OcilibCallbackNotifyChanges
+ub4 OcilibCallbackNotifyChanges
 (
     void            *oci_ctx,
     OCISubscription *subscrhp,
@@ -278,7 +278,7 @@ OCI_SYM_LOCAL ub4 OcilibCallbackNotifyChanges
 
     CHECK_PTR(OCI_IPC_VOID, sub)
 
-    CHECK(EventReset(&sub->event))
+    CHECK(OcilibEventReset(&sub->event))
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -497,7 +497,7 @@ OCI_SYM_LOCAL ub4 OcilibCallbackNotifyChanges
  * OcilibCallbackFailOver
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL sb4 OcilibCallbackFailOver
+sb4 OcilibCallbackFailOver
 (
     dvoid *svchp,
     dvoid *envhp,
@@ -530,7 +530,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackFailOver
 * OcilibProcHAEventInvoke
 * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL void OcilibProcHAEventInvoke
+void OcilibProcHAEventInvoke
 (
     OCI_Connection *con,
     HAEventParams * ha_params
@@ -567,7 +567,7 @@ OCI_SYM_LOCAL void OcilibProcHAEventInvoke
  * OcilibCallbackHAEvent
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL void OcilibCallbackHAEvent
+void OcilibCallbackHAEvent
 (
     dvoid *evtctx,
     dvoid *eventptr

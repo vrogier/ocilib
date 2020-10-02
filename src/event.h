@@ -23,37 +23,37 @@
 
 #include "types.h"
 
-boolean EventReset
+OCI_SYM_LOCAL boolean OcilibEventReset
 (
     OCI_Event *evt
 );
 
-unsigned int OcilibEventGetType
+OCI_SYM_LOCAL unsigned int OcilibEventGetType
 (
     OCI_Event * event
 );
 
-unsigned int OcilibEventGetOperation
+OCI_SYM_LOCAL unsigned int OcilibEventGetOperation
 (
     OCI_Event * event
 );
 
-const otext * OcilibEventGetDatabase
+OCI_SYM_LOCAL const otext * OcilibEventGetDatabase
 (
     OCI_Event * event
 );
 
-const otext * OcilibEventGetObject
+OCI_SYM_LOCAL const otext * OcilibEventGetObject
 (
     OCI_Event * event
 );
 
-const otext * OcilibEventGetRowid
+OCI_SYM_LOCAL const otext * OcilibEventGetRowid
 (
     OCI_Event * event
 );
 
-OCI_Subscription * OcilibEventGetSubscription
+OCI_SYM_LOCAL OCI_Subscription * OcilibEventGetSubscription
 (
     OCI_Event * event
 );

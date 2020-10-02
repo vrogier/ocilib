@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Elem* OcilibElementInitialize
+OCI_SYM_LOCAL OCI_Elem* OcilibElementInitialize
 (
     OCI_Connection* con,
     OCI_Elem      * elem,
@@ -32,255 +32,256 @@ OCI_Elem* OcilibElementInitialize
     OCI_TypeInfo  * typinf
 );
 
-boolean OcilibElementSetNullIndicator
+OCI_SYM_LOCAL boolean OcilibElementSetNullIndicator
 (
     OCI_Elem* elem,
     OCIInd    value
 );
 
-OCI_Elem* OcilibElementCreate
+OCI_SYM_LOCAL OCI_Elem* OcilibElementCreate
 (
     OCI_TypeInfo* typinf
 );
 
-boolean OcilibElementFree
+OCI_SYM_LOCAL boolean OcilibElementFree
 (
     OCI_Elem* elem
 );
 
-boolean OcilibElementGetBoolean
+OCI_SYM_LOCAL boolean OcilibElementGetBoolean
 (
     OCI_Elem* elem
 );
 
-OCI_Number* OcilibElementGetNumber
+OCI_SYM_LOCAL OCI_Number* OcilibElementGetNumber
 (
     OCI_Elem* elem
 );
 
-short OcilibElementGetShort
+OCI_SYM_LOCAL short OcilibElementGetShort
 (
     OCI_Elem* elem
 );
 
-unsigned short OcilibElementGetUnsignedShort
+OCI_SYM_LOCAL unsigned short OcilibElementGetUnsignedShort
 (
     OCI_Elem* elem
 );
 
-int OcilibElemGetInt
+OCI_SYM_LOCAL int OcilibElementGetInt
 (
     OCI_Elem* elem
 );
 
-unsigned int OcilibElementGetUnsignedInt
+OCI_SYM_LOCAL unsigned int OcilibElementGetUnsignedInt
 (
     OCI_Elem* elem
 );
 
-big_int OcilibElementGetBigInt
+OCI_SYM_LOCAL big_int OcilibElementGetBigInt
 (
     OCI_Elem* elem
 );
 
-big_uint OcilibElementGetUnsignedBigInt
+OCI_SYM_LOCAL big_uint OcilibElementGetUnsignedBigInt
 (
     OCI_Elem* elem
 );
 
-double OcilibElementGetDouble
+OCI_SYM_LOCAL double OcilibElementGetDouble
 (
     OCI_Elem* elem
 );
 
-float OcilibElementGetFloat
+OCI_SYM_LOCAL float OcilibElementGetFloat
 (
     OCI_Elem* elem
 );
 
-const otext* OcilibElementGetString
+OCI_SYM_LOCAL const otext* OcilibElementGetString
 (
     OCI_Elem* elem
 );
 
-unsigned int OcilibElementGetRaw
+OCI_SYM_LOCAL unsigned int OcilibElementGetRaw
 (
     OCI_Elem   * elem,
     void       * value,
     unsigned int len
 );
 
-unsigned int OcilibElementGetRawSize
+OCI_SYM_LOCAL unsigned int OcilibElementGetRawSize
 (
     OCI_Elem* elem
 );
 
-OCI_Date* OcilibElementGetDate
+OCI_SYM_LOCAL OCI_Date* OcilibElementGetDate
 (
     OCI_Elem* elem
 );
 
-OCI_Timestamp* OcilibElementGetTimestamp
+OCI_SYM_LOCAL OCI_Timestamp* OcilibElementGetTimestamp
 (
     OCI_Elem* elem
 );
 
-OCI_Interval* OcilibElementGetInterval
+OCI_SYM_LOCAL OCI_Interval* OcilibElementGetInterval
 (
     OCI_Elem* elem
 );
 
-OCI_Lob* OcilibElementGetLob
+OCI_SYM_LOCAL OCI_Lob* OcilibElementGetLob
 (
     OCI_Elem* elem
 );
 
-OCI_File* OcilibElementGetFile
+OCI_SYM_LOCAL OCI_File* OcilibElementGetFile
 (
     OCI_Elem* elem
 );
 
-OCI_Ref* OcilibElementGetReference
+OCI_SYM_LOCAL OCI_Ref* OcilibElementGetReference
 (
     OCI_Elem* elem
 );
 
-OCI_Object* OcilibElementGetObject
+OCI_SYM_LOCAL OCI_Object* OcilibElementGetObject
 (
     OCI_Elem* elem
 );
 
-OCI_Coll* OcilibElementGetCollection
+OCI_SYM_LOCAL OCI_Coll* OcilibElementGetCollection
 (
     OCI_Elem* elem
 );
 
-boolean OcilibElementSetBoolean
+OCI_SYM_LOCAL boolean OcilibElementSetBoolean
 (
     OCI_Elem* elem,
     boolean   value
 );
 
-boolean OcilibElementSetNumber
+OCI_SYM_LOCAL boolean OcilibElementSetNumber
 (
     OCI_Elem  * elem,
     OCI_Number* value
 );
 
-boolean OcilibElementSetShort
+OCI_SYM_LOCAL boolean OcilibElementSetShort
 (
     OCI_Elem* elem,
     short     value
 );
 
-boolean OcilibElementSetUnsignedShort
+OCI_SYM_LOCAL boolean OcilibElementSetUnsignedShort
 (
     OCI_Elem     * elem,
     unsigned short value
 );
 
-boolean OcilibElementSetInt
+OCI_SYM_LOCAL boolean OcilibElementSetInt
 (
     OCI_Elem* elem,
     int       value
 );
 
-boolean OcilibElementSetUnsignedInt
+OCI_SYM_LOCAL boolean OcilibElementSetUnsignedInt
 (
     OCI_Elem   * elem,
     unsigned int value
 );
 
-boolean OcilibElementSetBigInt
+OCI_SYM_LOCAL boolean OcilibElementSetBigInt
 (
     OCI_Elem* elem,
     big_int   value
 );
 
-boolean OcilibElementSetUnsignedBigInt
+OCI_SYM_LOCAL boolean OcilibElementSetUnsignedBigInt
 (
     OCI_Elem* elem,
     big_uint  value
 );
 
-boolean OcilibElementSetDouble
+OCI_SYM_LOCAL boolean OcilibElementSetDouble
 (
     OCI_Elem* elem,
     double    value
 );
 
-boolean OcilibElementSetFloat
+OCI_SYM_LOCAL boolean OcilibElementSetFloat
 (
     OCI_Elem* elem,
     float     value
 );
 
-boolean OcilibElementSetString
+OCI_SYM_LOCAL boolean OcilibElementSetString
 (
     OCI_Elem   * elem,
     const otext* value
 );
 
-boolean OcilibElementSetRaw
+OCI_SYM_LOCAL boolean OcilibElementSetRaw
 (
     OCI_Elem   * elem,
     void       * value,
     unsigned int len
 );
 
-boolean OcilibElementSetDate
+OCI_SYM_LOCAL boolean OcilibElementSetDate
 (
     OCI_Elem* elem,
     OCI_Date* value
 );
 
-boolean OcilibElementSetTimestamp
+OCI_SYM_LOCAL boolean OcilibElementSetTimestamp
 (
     OCI_Elem     * elem,
     OCI_Timestamp* value
 );
 
-boolean OcilibElementSetInterval
+OCI_SYM_LOCAL boolean OcilibElementSetInterval
 (
     OCI_Elem    * elem,
     OCI_Interval* value
 );
 
-boolean OcilibElementSetCollection
+OCI_SYM_LOCAL boolean OcilibElementSetCollection
 (
     OCI_Elem* elem,
     OCI_Coll* value
 );
 
-boolean OcilibElementSetObject
+OCI_SYM_LOCAL boolean OcilibElementSetObject
 (
     OCI_Elem  * elem,
     OCI_Object* value
 );
 
-boolean OcilibElementSetLob
+OCI_SYM_LOCAL boolean OcilibElementSetLob
 (
     OCI_Elem* elem,
     OCI_Lob * value
 );
 
-boolean OcilibElementSetFile
+OCI_SYM_LOCAL boolean OcilibElementSetFile
 (
     OCI_Elem* elem,
     OCI_File* value
 );
 
-boolean OcilibElementSetReference
+OCI_SYM_LOCAL boolean OcilibElementSetReference
 (
     OCI_Elem* elem,
     OCI_Ref * value
 );
-boolean OcilibElementIsNull
+
+OCI_SYM_LOCAL boolean OcilibElementIsNull
 (
     OCI_Elem* elem
 );
 
-boolean OcilibElementSetNull
+OCI_SYM_LOCAL boolean OcilibElementSetNull
 (
     OCI_Elem* elem
 );

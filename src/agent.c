@@ -27,7 +27,7 @@
  * OcilibAgentInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Agent * OcilibAgentInitialize
+OCI_Agent * OcilibAgentInitialize
 (
     OCI_Connection *con,
     OCI_Agent      *agent,
@@ -95,7 +95,7 @@ OCI_SYM_LOCAL OCI_Agent * OcilibAgentInitialize
  * OcilibAgentCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Agent * OcilibAgentCreate
+OCI_Agent * OcilibAgentCreate
 (
     OCI_Connection *con,
     const otext    *name,
@@ -119,7 +119,7 @@ OCI_SYM_LOCAL OCI_Agent * OcilibAgentCreate
  * OcilibAgentFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibAgentFree
+boolean OcilibAgentFree
 (
     OCI_Agent *agent
 )
@@ -152,7 +152,7 @@ OCI_SYM_LOCAL boolean OcilibAgentFree
  * OcilibAgentGetName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibAgentGetName
+const otext * OcilibAgentGetName
 (
     OCI_Agent *agent
 )
@@ -186,7 +186,7 @@ OCI_SYM_LOCAL const otext * OcilibAgentGetName
  * OcilibAgentSetName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibAgentSetName
+boolean OcilibAgentSetName
 (
     OCI_Agent   *agent,
     const otext *name
@@ -216,7 +216,7 @@ OCI_SYM_LOCAL boolean OcilibAgentSetName
  * OcilibAgentGetAddress
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibAgentGetAddress
+const otext * OcilibAgentGetAddress
 (
     OCI_Agent *agent
 )
@@ -250,7 +250,7 @@ OCI_SYM_LOCAL const otext * OcilibAgentGetAddress
  * OcilibAgentSetAddress
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibAgentSetAddress
+boolean OcilibAgentSetAddress
 (
     OCI_Agent   *agent,
     const otext *address

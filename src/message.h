@@ -23,149 +23,149 @@
 
 #include "types.h"
 
-OCI_Msg* OcilibMessageCreate
+OCI_SYM_LOCAL OCI_Msg* OcilibMessageCreate
 (
     OCI_TypeInfo* typinf
 );
 
-boolean OcilibMessageFree
+OCI_SYM_LOCAL boolean OcilibMessageFree
 (
     OCI_Msg* msg
 );
 
-boolean OcilibMessageReset
+OCI_SYM_LOCAL boolean OcilibMessageReset
 (
     OCI_Msg* msg
 );
 
-OCI_Object* OcilibMessageGetObject
+OCI_SYM_LOCAL OCI_Object* OcilibMessageGetObject
 (
     OCI_Msg* msg
 );
 
-boolean OcilibMessageSetObject
+OCI_SYM_LOCAL boolean OcilibMessageSetObject
 (
     OCI_Msg   * msg,
     OCI_Object* obj
 );
 
-boolean OcilibMessageGetRaw
+OCI_SYM_LOCAL boolean OcilibMessageGetRaw
 (
     OCI_Msg     * msg,
     void        * raw,
     unsigned int* size
 );
 
-boolean OcilibMessageSetRaw
+OCI_SYM_LOCAL boolean OcilibMessageSetRaw
 (
     OCI_Msg    * msg,
     const void * raw,
     unsigned int size
 );
 
-int OcilibMessageGetAttemptCount
+OCI_SYM_LOCAL int OcilibMessageGetAttemptCount
 (
     OCI_Msg* msg
 );
 
-int OcilibMessageGetEnqueueDelay
+OCI_SYM_LOCAL int OcilibMessageGetEnqueueDelay
 (
     OCI_Msg* msg
 );
 
-boolean OcilibMessageSetEnqueueDelay
+OCI_SYM_LOCAL boolean OcilibMessageSetEnqueueDelay
 (
     OCI_Msg* msg,
     int      value
 );
 
-OCI_Date* OcilibMessageGetEnqueueTime
+OCI_SYM_LOCAL OCI_Date* OcilibMessageGetEnqueueTime
 (
     OCI_Msg* msg
 );
 
-int OcilibMessageGetExpiration
+OCI_SYM_LOCAL int OcilibMessageGetExpiration
 (
     OCI_Msg* msg
 );
 
-boolean OcilibMessageSetExpiration
+OCI_SYM_LOCAL boolean OcilibMessageSetExpiration
 (
     OCI_Msg* msg,
     int      value
 );
 
-unsigned int OcilibMessageGetState
+OCI_SYM_LOCAL unsigned int OcilibMessageGetState
 (
     OCI_Msg* msg
 );
 
-int OcilibMessageGetPriority
+OCI_SYM_LOCAL int OcilibMessageGetPriority
 (
     OCI_Msg* msg
 );
 
-boolean OcilibMessageSetPriority
+OCI_SYM_LOCAL boolean OcilibMessageSetPriority
 (
     OCI_Msg* msg,
     int      value
 );
 
-boolean OcilibMessageGetID
+OCI_SYM_LOCAL boolean OcilibMessageGetID
 (
     OCI_Msg     * msg,
     void        * id,
     unsigned int* len
 );
 
-boolean OcilibMessageGetOriginalID
+OCI_SYM_LOCAL boolean OcilibMessageGetOriginalID
 (
     OCI_Msg     * msg,
     void        * id,
     unsigned int* len
 );
 
-boolean OcilibMessageSetOriginalID
+OCI_SYM_LOCAL boolean OcilibMessageSetOriginalID
 (
     OCI_Msg    * msg,
     const void * id,
     unsigned int len
 );
 
-const otext* OcilibMessageGetCorrelation
+OCI_SYM_LOCAL const otext * OcilibMessageGetCorrelation
 (
     OCI_Msg* msg
 );
 
-boolean OcilibMessageSetCorrelation
+OCI_SYM_LOCAL boolean OcilibMessageSetCorrelation
 (
     OCI_Msg    * msg,
     const otext* correlation
 );
 
-const otext* OcilibMessageGetExceptionQueue
+OCI_SYM_LOCAL const otext * OcilibMessageGetExceptionQueue
 (
     OCI_Msg* msg
 );
 
-boolean OcilibMessageSetExceptionQueue
+OCI_SYM_LOCAL boolean OcilibMessageSetExceptionQueue
 (
     OCI_Msg    * msg,
     const otext* queue
 );
 
-OCI_Agent* OcilibMessageGetSender
+OCI_SYM_LOCAL OCI_Agent * OcilibMessageGetSender
 (
     OCI_Msg* msg
 );
 
-boolean OcilibMessageSetSender
+OCI_SYM_LOCAL boolean OcilibMessageSetSender
 (
     OCI_Msg  * msg,
     OCI_Agent* sender
 );
 
-boolean OcilibMessageSetConsumers
+OCI_SYM_LOCAL boolean OcilibMessageSetConsumers
 (
     OCI_Msg    * msg,
     OCI_Agent ** consumers,

@@ -27,10 +27,10 @@
 #include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferenceInitialize
+ * OcilibReferenceInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * ReferenceInitialize
+OCI_Ref * OcilibReferenceInitialize
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -59,28 +59,28 @@ OCI_Ref * ReferenceInitialize
             ref->hstate = OCI_OBJECT_ALLOCATED;
         }
 
-        CHECK(MemoryAllocateObject(ref->con->env,
-                                   ref->con->err,
-                                   ref->con->cxt,
-                                   (OCITypeCode) SQLT_REF,
-                                   (OCIType*) NULL,
-                                   (dvoid *) NULL,
-                                   (OCIDuration) OCI_DURATION_SESSION,
-                                   (boolean) FALSE,
-                                   (dvoid **) &ref->handle))
+        CHECK(OcilibMemoryAllocateObject(ref->con->env,
+                                         ref->con->err,
+                                         ref->con->cxt,
+                                         (OCITypeCode) SQLT_REF,
+                                         (OCIType*) NULL,
+                                         (dvoid *) NULL,
+                                         (OCIDuration) OCI_DURATION_SESSION,
+                                         (boolean) FALSE,
+                                         (dvoid **) &ref->handle))
     }
     else
     {
         ref->hstate = OCI_OBJECT_FETCHED_CLEAN;
 
-        CHECK(ReferenceUnpin(ref))
+        CHECK(OcilibReferenceUnpin(ref))
     }
 
     CLEANUP_AND_EXIT_FUNC
     (
         if (FAILURE)
         {
-            ReferenceFree(ref);
+            OcilibReferenceFree(ref);
             ref = NULL;
         }
 
@@ -89,10 +89,10 @@ OCI_Ref * ReferenceInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferencePin
+ * OcilibReferencePin
  * --------------------------------------------------------------------------------------------- */
 
-boolean ReferencePin
+boolean OcilibReferencePin
 (
     OCI_Ref *ref
 )
@@ -107,7 +107,7 @@ boolean ReferencePin
 
     CHECK_PTR(OCI_IPC_REF, ref)
 
-    CHECK(ReferenceUnpin(ref))
+    CHECK(OcilibReferenceUnpin(ref))
 
     CHECK_OCI
     (
@@ -117,9 +117,9 @@ boolean ReferencePin
         OCI_PIN_ANY, OCI_DURATION_SESSION, OCI_LOCK_NONE, &obj_handle
     )
 
-    ref->obj =  ObjectInitialize(ref->con, (OCI_Object *) ref->obj,
-                                 obj_handle, ref->typinf, NULL,
-                                 -1, TRUE);
+    ref->obj = OcilibObjectInitialize(ref->con, (OCI_Object *) ref->obj,
+                                      obj_handle, ref->typinf, NULL,
+                                      -1, TRUE);
 
     CHECK_NULL(ref->obj)
 
@@ -131,10 +131,10 @@ boolean ReferencePin
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferenceUnpin
+ * OcilibReferenceUnpin
  * --------------------------------------------------------------------------------------------- */
 
-boolean ReferenceUnpin
+boolean OcilibReferenceUnpin
 (
     OCI_Ref *ref
 )
@@ -163,7 +163,7 @@ boolean ReferenceUnpin
         }
 
         ref->obj->hstate = OCI_OBJECT_FETCHED_DIRTY;
-        ObjectFree(ref->obj);
+        OcilibObjectFree(ref->obj);
         ref->obj = NULL;
     }
 
@@ -173,10 +173,10 @@ boolean ReferenceUnpin
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferenceCreate
+ * OcilibReferenceCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * ReferenceCreate
+OCI_Ref * OcilibReferenceCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf
@@ -191,16 +191,16 @@ OCI_Ref * ReferenceCreate
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_PTR(OCI_IPC_TYPE_INFO,  typinf)
 
-    SET_RETVAL(ReferenceInitialize(con, typinf, NULL, NULL))
+    SET_RETVAL(OcilibReferenceInitialize(con, typinf, NULL, NULL))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferenceFree
+ * OcilibReferenceFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean ReferenceFree
+boolean OcilibReferenceFree
 (
     OCI_Ref *ref
 )
@@ -214,16 +214,16 @@ boolean ReferenceFree
     CHECK_PTR(OCI_IPC_REF, ref)
     CHECK_OBJECT_FETCHED(ref)
 
-    CHECK(ReferenceUnpin(ref))
+    CHECK(OcilibReferenceUnpin(ref))
 
     if ((OCI_OBJECT_ALLOCATED == ref->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == ref->hstate))
     {
-        MemoryFreeObject(ref->con->env, ref->con->err, ref->handle, OCI_DEFAULT);
+        OcilibMemoryFreeObject(ref->con->env, ref->con->err, ref->handle, OCI_DEFAULT);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != ref->hstate)
     {
-        ErrorResetSource(NULL, ref);
+        OcilibErrorResetSource(NULL, ref);
 
         FREE(ref)
     }
@@ -234,10 +234,10 @@ boolean ReferenceFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferenceCreateArray
+ * OcilibReferenceCreateArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref ** ReferenceCreateArray
+OCI_Ref ** OcilibReferenceCreateArray
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -267,10 +267,10 @@ OCI_Ref ** ReferenceCreateArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferenceFreeArray
+ * OcilibReferenceFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean ReferenceFreeArray
+boolean OcilibReferenceFreeArray
 (
     OCI_Ref **refs
 )
@@ -289,10 +289,10 @@ boolean ReferenceFreeArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferenceGetObject
+ * OcilibReferenceGetObject
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * ReferenceGetObject
+OCI_Object * OcilibReferenceGetObject
 (
     OCI_Ref *ref
 )
@@ -304,8 +304,8 @@ OCI_Object * ReferenceGetObject
     )
 
     CHECK_PTR(OCI_IPC_REF, ref)
-    CHECK(!ReferenceIsNull(ref))
-    CHECK(ReferencePin(ref))
+    CHECK(!OcilibReferenceIsNull(ref))
+    CHECK(OcilibReferencePin(ref))
 
     SET_RETVAL(ref->obj)
 
@@ -313,10 +313,10 @@ OCI_Object * ReferenceGetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferenceAssign
+ * OcilibReferenceAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean ReferenceAssign
+boolean OcilibReferenceAssign
 (
     OCI_Ref *ref,
     OCI_Ref *ref_src
@@ -342,7 +342,7 @@ boolean ReferenceAssign
 
     if (NULL != ref->obj)
     {
-        ObjectFree(ref->obj);
+        OcilibObjectFree(ref->obj);
         ref->obj = NULL;
     }
 
@@ -355,10 +355,10 @@ boolean ReferenceAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferenceIsNull
+ * OcilibReferenceIsNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean ReferenceIsNull
+boolean OcilibReferenceIsNull
 (
     OCI_Ref *ref
 )
@@ -377,10 +377,10 @@ boolean ReferenceIsNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferenceSetNull
+ * OcilibReferenceSetNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean ReferenceSetNull
+boolean OcilibReferenceSetNull
 (
     OCI_Ref *ref
 )
@@ -393,13 +393,13 @@ boolean ReferenceSetNull
 
     CHECK_PTR(OCI_IPC_REF, ref)
 
-    CHECK(ReferenceUnpin(ref))
+    CHECK(OcilibReferenceUnpin(ref))
 
     OCIRefClear(ref->con->env, ref->handle);
 
     if (NULL != ref->obj)
     {
-        ObjectFree(ref->obj);
+        OcilibObjectFree(ref->obj);
         ref->obj = NULL;
     }
 
@@ -409,10 +409,10 @@ boolean ReferenceSetNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferenceToString
+ * OcilibReferenceToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean ReferenceToString
+boolean OcilibReferenceToString
 (
     OCI_Ref     *ref,
     unsigned int size,
@@ -435,7 +435,7 @@ boolean ReferenceToString
 
     str[0] = 0;
 
-    dbstr = StringGetDBString(str, &dbsize);
+    dbstr = OcilibStringGetDBString(str, &dbsize);
 
     CHECK_OCI
     (
@@ -445,7 +445,7 @@ boolean ReferenceToString
         (OraText *) dbstr, (ub4 *) &dbsize
     )
 
-    StringCopyDBStringToNativeString(dbstr, str, dbcharcount(dbsize));
+    OcilibStringCopyDBStringToNativeString(dbstr, str, dbcharcount(dbsize));
 
     /* set null string terminator */
 
@@ -455,15 +455,15 @@ boolean ReferenceToString
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(dbstr);
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ReferenceGetHexSize
+ * OcilibReferenceGetHexSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ReferenceGetHexSize
+unsigned int OcilibReferenceGetHexSize
 (
     OCI_Ref *ref
 )
@@ -482,10 +482,10 @@ unsigned int ReferenceGetHexSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_CollRefGetTypeInfo
+ * OcilibReferenceGetTypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * ReferenceGetTypeInfo
+OCI_TypeInfo * OcilibReferenceGetTypeInfo
 (
     OCI_Ref *ref
 )

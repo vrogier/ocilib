@@ -23,76 +23,76 @@
 
 #include "types.h"
 
-char* OcilibEnvironmentGetVariable
+OCI_SYM_LOCAL char* OcilibEnvironmentGetVariable
 (
     const char* name
 );
 
-OCI_Error* OcilibEnvironmentGetLastError
+OCI_SYM_LOCAL OCI_Error* OcilibEnvironmentGetLastError
 (
     void
 );
 
-boolean OcilibEnvironmentInitialize
+OCI_SYM_LOCAL boolean OcilibEnvironmentInitialize
 (
     POCI_ERROR   err_handler,
     const otext* lib_path,
     unsigned int mode
 );
 
-boolean OcilibEnvironmentCleanup
+OCI_SYM_LOCAL boolean OcilibEnvironmentCleanup
 (
     void
 );
 
-unsigned int OcilibEnvironmentGetOCICompileVersion
+OCI_SYM_LOCAL unsigned int OcilibEnvironmentGetOCICompileVersion
 (
     void
 );
 
-unsigned int OcilibEnvironmentGetOCIRuntimeVersion
+OCI_SYM_LOCAL unsigned int OcilibEnvironmentGetOCIRuntimeVersion
 (
     void
 );
 
-unsigned int OcilibEnvironmentGetOCIRuntimeImportMode
+OCI_SYM_LOCAL unsigned int OcilibEnvironmentGetOCIRuntimeImportMode
 (
     void
 );
 
-unsigned int OcilibEnvironmentGetCharset
+OCI_SYM_LOCAL unsigned int OcilibEnvironmentGetCharset
 (
     void
 );
 
-big_uint OcilibEnvironmentGetAllocatedBytes
+OCI_SYM_LOCAL big_uint OcilibEnvironmentGetAllocatedBytes
 (
     unsigned int mem_type
 );
 
-boolean OcilibEnvironmentEnableWarnings
+OCI_SYM_LOCAL boolean OcilibEnvironmentEnableWarnings
 (
     boolean value
 );
 
-boolean OcilibEnvironmentSetErrorHandler
+OCI_SYM_LOCAL boolean OcilibEnvironmentSetErrorHandler
 (
     POCI_ERROR handler
 );
 
-boolean OcilibEnvironmentSetHAHandler
+OCI_SYM_LOCAL boolean OcilibEnvironmentSetHAHandler
 (
     POCI_HA_HANDLER handler
 );
 
-boolean OcilibEnvironmentSetFormat
+OCI_SYM_LOCAL boolean OcilibEnvironmentSetFormat
 (
     OCI_Connection* con,
     unsigned int    type,
     const otext   * format
 );
 
-const otext* OcilibEnvironmentGetFormat
+OCI_SYM_LOCAL const otext* OcilibEnvironmentGetFormat
 (
     OCI_Connection* con,
     unsigned int    type

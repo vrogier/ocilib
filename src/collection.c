@@ -29,7 +29,7 @@
  * OcilibCollectionInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Coll * OcilibCollectionInitialize
+OCI_Coll * OcilibCollectionInitialize
 (
     OCI_Connection *con,
     OCI_Coll       *coll,
@@ -91,7 +91,7 @@ OCI_SYM_LOCAL OCI_Coll * OcilibCollectionInitialize
  * OcilibCollectionCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Coll * OcilibCollectionCreate
+OCI_Coll * OcilibCollectionCreate
 (
     OCI_TypeInfo *typinf
 )
@@ -113,7 +113,7 @@ OCI_SYM_LOCAL OCI_Coll * OcilibCollectionCreate
  * OcilibCollectionFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_SYM_LOCAL boolean OcilibCollectionFree
+boolean OcilibCollectionFree
 (
     OCI_Coll *coll
 )
@@ -161,7 +161,7 @@ OCI_SYM_LOCAL OCI_SYM_LOCAL boolean OcilibCollectionFree
  * OcilibCollectionCreateArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Coll ** OcilibCollectionCreateArray
+OCI_Coll ** OcilibCollectionCreateArray
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -192,7 +192,7 @@ OCI_SYM_LOCAL OCI_Coll ** OcilibCollectionCreateArray
  * OcilibCollectionFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibCollectionFreeArray
+boolean OcilibCollectionFreeArray
 (
     OCI_Coll **colls
 )
@@ -214,7 +214,7 @@ OCI_SYM_LOCAL boolean OcilibCollectionFreeArray
  * OcilibCollectionAssign
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibCollectionAssign
+boolean OcilibCollectionAssign
 (
     OCI_Coll *coll,
     OCI_Coll *coll_src
@@ -247,7 +247,7 @@ OCI_SYM_LOCAL boolean OcilibCollectionAssign
  * OcilibCollectionGetType
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibCollectionGetType
+unsigned int OcilibCollectionGetType
 (
     OCI_Coll *coll
 )
@@ -289,7 +289,7 @@ OCI_SYM_LOCAL unsigned int OcilibCollectionGetType
  * OcilibCollectionGetMax
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibCollectionGetMax
+unsigned int OcilibCollectionGetMax
 (
     OCI_Coll *coll
 )
@@ -311,7 +311,7 @@ OCI_SYM_LOCAL unsigned int OcilibCollectionGetMax
  * OcilibCollectionGetSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int  OcilibCollectionGetSize
+unsigned int  OcilibCollectionGetSize
 (
     OCI_Coll *coll
 )
@@ -343,7 +343,7 @@ OCI_SYM_LOCAL unsigned int  OcilibCollectionGetSize
  * OcilibCollectionTrim
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibCollectionTrim
+boolean OcilibCollectionTrim
 (
     OCI_Coll    *coll,
     unsigned int nb_elem
@@ -375,7 +375,7 @@ OCI_SYM_LOCAL boolean OcilibCollectionTrim
  * OcilibCollectionGetElement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Elem * OcilibCollectionGetElement
+OCI_Elem * OcilibCollectionGetElement
 (
     OCI_Coll    *coll,
     unsigned int index
@@ -419,7 +419,7 @@ OCI_SYM_LOCAL OCI_Elem * OcilibCollectionGetElement
  * OcilibCollectionGetElement2
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibCollectionGetElement2
+boolean OcilibCollectionGetElement2
 (
     OCI_Coll    *coll,
     unsigned int index,
@@ -468,7 +468,7 @@ OCI_SYM_LOCAL boolean OcilibCollectionGetElement2
  * OcilibCollectionSetElement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibCollectionSetElement
+boolean OcilibCollectionSetElement
 (
     OCI_Coll    *coll,
     unsigned int index,
@@ -503,7 +503,7 @@ OCI_SYM_LOCAL boolean OcilibCollectionSetElement
  * OcilibCollectionAddElement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibCollectionAddElement
+boolean OcilibCollectionAddElement
 (
     OCI_Coll *coll,
     OCI_Elem *elem
@@ -536,7 +536,7 @@ OCI_SYM_LOCAL boolean OcilibCollectionAddElement
  * OcilibCollectionGetTypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_TypeInfo * OcilibCollectionGetTypeInfo
+OCI_TypeInfo * OcilibCollectionGetTypeInfo
 (
     OCI_Coll *coll
 )
@@ -553,7 +553,7 @@ OCI_SYM_LOCAL OCI_TypeInfo * OcilibCollectionGetTypeInfo
  * OcilibCollectionClear
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibCollectionClear
+boolean OcilibCollectionClear
 (
     OCI_Coll *coll
 )
@@ -577,7 +577,7 @@ OCI_SYM_LOCAL boolean OcilibCollectionClear
  * OcilibCollectionRemoveElement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibCollectionRemoveElement
+boolean OcilibCollectionRemoveElement
 (
     OCI_Coll    *coll,
     unsigned int index
@@ -611,7 +611,7 @@ OCI_SYM_LOCAL boolean OcilibCollectionRemoveElement
  * OcilibCollectionGetCount
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int  OcilibCollectionGetCount
+unsigned int  OcilibCollectionGetCount
 (
     OCI_Coll *coll
 )
@@ -656,7 +656,7 @@ OCI_SYM_LOCAL unsigned int  OcilibCollectionGetCount
  * OcilibCollectionToString
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibCollectionToString
+boolean OcilibCollectionToString
 (
     OCI_Coll     *coll,
     unsigned int *size,

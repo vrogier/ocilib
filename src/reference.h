@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Ref * OcilibReferenceInitialize
+OCI_SYM_LOCAL OCI_Ref * OcilibReferenceInitialize
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -31,35 +31,35 @@ OCI_Ref * OcilibReferenceInitialize
     void           *handle
 );
 
-boolean OcilibReferencePin
+OCI_SYM_LOCAL boolean OcilibReferencePin
 (
     OCI_Ref* ref
 );
 
-boolean OcilibReferenceUnpin
+OCI_SYM_LOCAL boolean OcilibReferenceUnpin
 (
     OCI_Ref* ref
 );
 
-OCI_Ref * OcilibReferenceCreate
+OCI_SYM_LOCAL OCI_Ref * OcilibReferenceCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf
 );
 
-boolean OcilibReferenceFree
+OCI_SYM_LOCAL boolean OcilibReferenceFree
 (
     OCI_Ref *ref
 );
 
-OCI_Ref ** OcilibReferenceCreateArray
+OCI_SYM_LOCAL OCI_Ref ** OcilibReferenceCreateArray
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
     unsigned int    nbelem
 );
 
-boolean OcilibReferenceFreeArray
+OCI_SYM_LOCAL boolean OcilibReferenceFreeArray
 (
     OCI_Ref **refs
 );
@@ -69,35 +69,35 @@ OCI_Object * OcilibReferenceGetObject
     OCI_Ref *ref
 );
 
-boolean OcilibReferenceAssign
+OCI_SYM_LOCAL boolean OcilibReferenceAssign
 (
     OCI_Ref *ref,
     OCI_Ref *ref_src
 );
 
-boolean OcilibReferenceIsNull
+OCI_SYM_LOCAL boolean OcilibReferenceIsNull
 (
     OCI_Ref *ref
 );
 
-boolean OcilibReferenceSetNull
+OCI_SYM_LOCAL boolean OcilibReferenceSetNull
 (
     OCI_Ref *ref
 );
 
-boolean OcilibReferenceToString
+OCI_SYM_LOCAL boolean OcilibReferenceToString
 (
     OCI_Ref     *ref,
     unsigned int size,
     otext       *str
 );
 
-unsigned int OcilibReferenceGetHexSize
+OCI_SYM_LOCAL unsigned int OcilibReferenceGetHexSize
 (
     OCI_Ref *ref
 );
 
-OCI_TypeInfo * OcilibReferenceGetTypeInfo
+OCI_SYM_LOCAL OCI_TypeInfo * OcilibReferenceGetTypeInfo
 (
     OCI_Ref *ref
 );

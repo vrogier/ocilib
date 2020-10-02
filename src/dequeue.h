@@ -23,116 +23,116 @@
 
 #include "types.h"
 
-OCI_Dequeue * OcilibDequeueCreate
+OCI_SYM_LOCAL OCI_Dequeue * OcilibDequeueCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *name
 );
 
-boolean OcilibDequeueFree
+OCI_SYM_LOCAL boolean OcilibDequeueFree
 (
     OCI_Dequeue *dequeue
 );
 
-OCI_Agent * OcilibDequeueListen
+OCI_SYM_LOCAL OCI_Agent * OcilibDequeueListen
 (
     OCI_Dequeue *dequeue,
     int          timeout
 );
 
-OCI_Msg * OcilibDequeueGetMessage
+OCI_SYM_LOCAL OCI_Msg * OcilibDequeueGetMessage
 (
     OCI_Dequeue *dequeue
 );
 
-const otext * OcilibDequeueGetConsumer
+OCI_SYM_LOCAL const otext * OcilibDequeueGetConsumer
 (
     OCI_Dequeue *dequeue
 );
 
-boolean OcilibDequeueSetConsumer
+OCI_SYM_LOCAL boolean OcilibDequeueSetConsumer
 (
     OCI_Dequeue *dequeue,
     const otext *consumer
 );
 
-const otext * OcilibDequeueGetCorrelation
+OCI_SYM_LOCAL const otext * OcilibDequeueGetCorrelation
 (
     OCI_Dequeue *dequeue
 );
 
-boolean OcilibDequeueSetCorrelation
+OCI_SYM_LOCAL boolean OcilibDequeueSetCorrelation
 (
     OCI_Dequeue *dequeue,
     const otext *pattern
 );
 
-boolean OcilibDequeueGetRelativeMsgID
+OCI_SYM_LOCAL boolean OcilibDequeueGetRelativeMsgID
 (
     OCI_Dequeue  *dequeue,
     void         *id,
     unsigned int *len
 );
 
-boolean OcilibDequeueSetRelativeMsgID
+OCI_SYM_LOCAL boolean OcilibDequeueSetRelativeMsgID
 (
     OCI_Dequeue *dequeue,
     const void  *id,
     unsigned int len
 );
 
-unsigned int OcilibDequeueGetVisibility
+OCI_SYM_LOCAL unsigned int OcilibDequeueGetVisibility
 (
     OCI_Dequeue *dequeue
 );
 
-boolean OcilibDequeueSetVisibility
+OCI_SYM_LOCAL boolean OcilibDequeueSetVisibility
 (
     OCI_Dequeue *dequeue,
     unsigned int visibility
 );
 
-unsigned int OcilibDequeueGetMode
+OCI_SYM_LOCAL unsigned int OcilibDequeueGetMode
 (
     OCI_Dequeue *dequeue
 );
 
-boolean OcilibDequeueSetMode
+OCI_SYM_LOCAL boolean OcilibDequeueSetMode
 (
     OCI_Dequeue *dequeue,
     unsigned int mode
 );
 
-unsigned int OcilibDequeueGetNavigation
+OCI_SYM_LOCAL unsigned int OcilibDequeueGetNavigation
 (
     OCI_Dequeue *dequeue
 );
 
-boolean OcilibDequeueSetNavigation
+OCI_SYM_LOCAL boolean OcilibDequeueSetNavigation
 (
     OCI_Dequeue *dequeue,
     unsigned int position
 );
 
-int OcilibDequeueGetWaitTime
+OCI_SYM_LOCAL int OcilibDequeueGetWaitTime
 (
     OCI_Dequeue *dequeue
 );
 
-boolean OcilibDequeueSetWaitTime
+OCI_SYM_LOCAL boolean OcilibDequeueSetWaitTime
 (
     OCI_Dequeue *dequeue,
     int          timeout
 );
 
-boolean OcilibDequeueSetAgentList
+OCI_SYM_LOCAL boolean OcilibDequeueSetAgentList
 (
     OCI_Dequeue *dequeue,
     OCI_Agent  **consumers,
     unsigned int count
 );
 
-boolean OcilibDequeueSubscribe
+OCI_SYM_LOCAL boolean OcilibDequeueSubscribe
 (
     OCI_Dequeue   *dequeue,
     unsigned int   port,
@@ -140,7 +140,7 @@ boolean OcilibDequeueSubscribe
     POCI_NOTIFY_AQ callback
 );
 
-boolean OcilibDequeueUnsubscribe
+OCI_SYM_LOCAL boolean OcilibDequeueUnsubscribe
 (
     OCI_Dequeue *dequeue
 );

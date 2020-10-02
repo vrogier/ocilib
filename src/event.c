@@ -23,10 +23,10 @@
 #include "macros.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * EventReset
+ * OcilibEventReset
  * --------------------------------------------------------------------------------------------- */
 
-boolean EventReset
+boolean OcilibEventReset
 (
     OCI_Event *event
 )
@@ -63,10 +63,10 @@ boolean EventReset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EventGetType
+ * OcilibEventGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int EventGetType
+unsigned int OcilibEventGetType
 (
     OCI_Event *event
 )
@@ -80,10 +80,10 @@ unsigned int EventGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EventGetOperation
+ * OcilibEventGetOperation
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int EventGetOperation
+unsigned int OcilibEventGetOperation
 (
     OCI_Event *event
 )
@@ -97,10 +97,10 @@ unsigned int EventGetOperation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EventGetDatabase
+ * OcilibEventGetDatabase
  * --------------------------------------------------------------------------------------------- */
 
-const otext * EventGetDatabase
+const otext * OcilibEventGetDatabase
 (
     OCI_Event *event
 )
@@ -114,10 +114,10 @@ const otext * EventGetDatabase
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EventGetObject
+ * OcilibEventGetObject
  * --------------------------------------------------------------------------------------------- */
 
-const otext * EventGetObject
+const otext * OcilibEventGetObject
 (
     OCI_Event *event
 )
@@ -131,10 +131,10 @@ const otext * EventGetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EventGetRowid
+ * OcilibEventGetRowid
  * --------------------------------------------------------------------------------------------- */
 
-const otext * EventGetRowid
+const otext * OcilibEventGetRowid
 (
     OCI_Event *event
 )
@@ -148,10 +148,10 @@ const otext * EventGetRowid
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EventGetSubscription
+ * OcilibEventGetSubscription
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Subscription * EventGetSubscription
+OCI_Subscription * OcilibEventGetSubscription
 (
     OCI_Event *event
 )

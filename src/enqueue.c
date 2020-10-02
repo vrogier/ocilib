@@ -37,10 +37,10 @@ static const unsigned int EnqueueModeValues[] =
 };
 
 /* --------------------------------------------------------------------------------------------- *
- * EnqueueCreate
+ * OcilibEnqueueCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Enqueue * EnqueueCreate
+OCI_Enqueue * OcilibEnqueueCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *name
@@ -66,15 +66,15 @@ OCI_Enqueue * EnqueueCreate
 
     /* allocate enqueue options descriptor */
 
-    CHECK(MemoryAllocDescriptor((dvoid * )enqueue->typinf->con->env,
-                                (dvoid **) &enqueue->opth,
-                                OCI_DTYPE_AQENQ_OPTIONS))
+    CHECK(OcilibMemoryAllocDescriptor((dvoid * )enqueue->typinf->con->env,
+                                      (dvoid **) &enqueue->opth,
+                                      OCI_DTYPE_AQENQ_OPTIONS))
 
     CLEANUP_AND_EXIT_FUNC
     (
         if (FAILURE)
         {
-            EnqueueFree(enqueue);
+            OcilibEnqueueFree(enqueue);
             enqueue = NULL;
         }
 
@@ -83,10 +83,10 @@ OCI_Enqueue * EnqueueCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EnqueueFree
+ * OcilibEnqueueFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean EnqueueFree
+boolean OcilibEnqueueFree
 (
     OCI_Enqueue *enqueue
 )
@@ -101,9 +101,9 @@ boolean EnqueueFree
 
     /* free OCI descriptor */
 
-    MemoryFreeDescriptor((dvoid *) enqueue->opth, OCI_DTYPE_AQENQ_OPTIONS);
+    OcilibMemoryFreeDescriptor((dvoid *) enqueue->opth, OCI_DTYPE_AQENQ_OPTIONS);
 
-    ErrorResetSource(NULL, enqueue);
+    OcilibErrorResetSource(NULL, enqueue);
 
     FREE(enqueue->name)
     FREE(enqueue)
@@ -114,10 +114,10 @@ boolean EnqueueFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EnqueuePut
+ * OcilibEnqueuePut
  * --------------------------------------------------------------------------------------------- */
 
-boolean EnqueuePut
+boolean OcilibEnqueuePut
 (
     OCI_Enqueue *enqueue,
     OCI_Msg     *msg
@@ -161,7 +161,7 @@ boolean EnqueuePut
 
     /* enqueue message */
 
-    dbstr = StringGetDBString(enqueue->name, &dbsize);
+    dbstr = OcilibStringGetDBString(enqueue->name, &dbsize);
 
     /* OCIAQEnq() parameter  'queue_name' is supposed to be either ANSI or UTF16 depending on the
     * environment. It appears that whatever mode is used, OCIAQEnq() only takes ANSI strings !
@@ -217,7 +217,7 @@ boolean EnqueuePut
             /* raise error only if the call has not been timed out */
 
             {
-                THROW(ExceptionOCI, enqueue->typinf->con->err, ret)
+                THROW(OcilibExceptionOCI, enqueue->typinf->con->err, ret)
             }
         }
     }
@@ -226,17 +226,17 @@ boolean EnqueuePut
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(dbstr);
 
         FREE(ansi_queue_name)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EnqueueGetVisibility
+ * OcilibEnqueueGetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int EnqueueGetVisibility
+unsigned int OcilibEnqueueGetVisibility
 (
     OCI_Enqueue *enqueue
 )
@@ -264,10 +264,10 @@ unsigned int EnqueueGetVisibility
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EnqueueSetVisibility
+ * OcilibEnqueueSetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-boolean EnqueueSetVisibility
+boolean OcilibEnqueueSetVisibility
 (
     OCI_Enqueue *enqueue,
     unsigned int visibility
@@ -297,10 +297,10 @@ boolean EnqueueSetVisibility
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EnqueueGetSequenceDeviation
+ * OcilibEnqueueGetSequenceDeviation
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int EnqueueGetSequenceDeviation
+unsigned int OcilibEnqueueGetSequenceDeviation
 (
     OCI_Enqueue *enqueue
 )
@@ -327,10 +327,10 @@ unsigned int EnqueueGetSequenceDeviation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EnqueueSetDeviation
+ * OcilibEnqueueSetDeviation
  * --------------------------------------------------------------------------------------------- */
 
-boolean EnqueueSetSequenceDeviation
+boolean OcilibEnqueueSetSequenceDeviation
 (
     OCI_Enqueue *enqueue,
     unsigned int sequence
@@ -359,10 +359,10 @@ boolean EnqueueSetSequenceDeviation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EnqueueSetRelativeMsgID
+ * OcilibEnqueueSetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-boolean EnqueueGetRelativeMsgID
+boolean OcilibEnqueueGetRelativeMsgID
 (
     OCI_Enqueue  *enqueue,
     void         *id,
@@ -410,10 +410,10 @@ boolean EnqueueGetRelativeMsgID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * EnqueueSetRelativeMsgID
+ * OcilibEnqueueSetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-boolean EnqueueSetRelativeMsgID
+boolean OcilibEnqueueSetRelativeMsgID
 (
     OCI_Enqueue *enqueue,
     const void  *id,

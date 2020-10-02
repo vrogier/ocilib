@@ -23,24 +23,24 @@
 
 #include "types.h"
 
-OCI_Thread * OcilibThreadCreate
+OCI_SYM_LOCAL OCI_Thread * OcilibThreadCreate
 (
     void
 );
 
-boolean OcilibThreadFree
+OCI_SYM_LOCAL boolean OcilibThreadFree
 (
     OCI_Thread *thread
 );
 
-boolean OcilibThreadRun
+OCI_SYM_LOCAL boolean OcilibThreadRun
 (
     OCI_Thread *thread,
     POCI_THREAD proc,
     void       *arg
 );
 
-boolean OcilibThreadJoin
+OCI_SYM_LOCAL boolean OcilibThreadJoin
 (
     OCI_Thread* thread
 );

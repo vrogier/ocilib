@@ -23,200 +23,200 @@
 
 #include "types.h"
 
-boolean OcilibResultsetInitialize
+OCI_SYM_LOCAL boolean OcilibResultsetInitialize
 (
     OCI_Resultset* rs
 );
 
-OCI_Resultset* OcilibResultsetCreate
+OCI_SYM_LOCAL OCI_Resultset* OcilibResultsetCreate
 (
     OCI_Statement * stmt,
     int             size
 );
 
-boolean OcilibResultsetFree
+OCI_SYM_LOCAL boolean OcilibResultsetFree
 (
     OCI_Resultset* rs
 );
 
-boolean OcilibResultsetFetchPrev
+OCI_SYM_LOCAL boolean OcilibResultsetFetchPrev
 (
     OCI_Resultset* rs
 );
 
-boolean OcilibResultsetFetchNext
+OCI_SYM_LOCAL boolean OcilibResultsetFetchNext
 (
     OCI_Resultset* rs
 );
 
-boolean OcilibResultsetFetchFirst
+OCI_SYM_LOCAL boolean OcilibResultsetFetchFirst
 (
     OCI_Resultset* rs
 );
 
-boolean OcilibResultsetFetchLast
+OCI_SYM_LOCAL boolean OcilibResultsetFetchLast
 (
     OCI_Resultset* rs
 );
 
-boolean OcilibResultsetFetchSeek
+OCI_SYM_LOCAL boolean OcilibResultsetFetchSeek
 (
     OCI_Resultset* rs,
     unsigned int   mode,
     int            offset
 );
 
-unsigned int OcilibResultsetGetRowCount
+OCI_SYM_LOCAL unsigned int OcilibResultsetGetRowCount
 (
     OCI_Resultset* rs
 );
 
-unsigned int OcilibResultsetGetCurrentRow
+OCI_SYM_LOCAL unsigned int OcilibResultsetGetCurrentRow
 (
     OCI_Resultset* rs
 );
 
-unsigned int OcilibResultsetGetColumnCount
+OCI_SYM_LOCAL unsigned int OcilibResultsetGetColumnCount
 (
     OCI_Resultset* rs
 );
 
-OCI_Column* OcilibResultsetGetColumn
+OCI_SYM_LOCAL OCI_Column* OcilibResultsetGetColumn
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Column* OcilibResultsetGetColumn2
+OCI_SYM_LOCAL OCI_Column* OcilibResultsetGetColumn2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-unsigned int OcilibResultsetGetColumnIndex
+OCI_SYM_LOCAL unsigned int OcilibResultsetGetColumnIndex
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-boolean OcilibResultsetSetStructNumericType
+OCI_SYM_LOCAL boolean OcilibResultsetSetStructNumericType
 (
     OCI_Resultset* rs,
     unsigned int   index,
     unsigned int   type
 );
 
-boolean OcilibResultsetSetStructNumericType2
+OCI_SYM_LOCAL boolean OcilibResultsetSetStructNumericType2
 (
     OCI_Resultset* rs,
     const otext  * name,
     unsigned int   type
 );
 
-boolean OcilibResultsetGetStruct
+OCI_SYM_LOCAL boolean OcilibResultsetGetStruct
 (
     OCI_Resultset* rs,
     void         * row_struct,
     void         * row_struct_ind
 );
 
-OCI_Number* OcilibResultsetGetNumber
+OCI_SYM_LOCAL OCI_Number* OcilibResultsetGetNumber
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Number* OcilibResultsetGetNumber2
+OCI_SYM_LOCAL OCI_Number* OcilibResultsetGetNumber2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-short OcilibResultsetGetShort
+OCI_SYM_LOCAL short OcilibResultsetGetShort
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-short OcilibResultsetGetShort2
+OCI_SYM_LOCAL short OcilibResultsetGetShort2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-unsigned short OcilibResultsetGetUnsignedShort
+OCI_SYM_LOCAL unsigned short OcilibResultsetGetUnsignedShort
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-unsigned short OcilibResultsetGetUnsignedShort2
+OCI_SYM_LOCAL unsigned short OcilibResultsetGetUnsignedShort2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-int OcilibResultsetGetInt
+OCI_SYM_LOCAL int OcilibResultsetGetInt
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-int OcilibResultsetGetInt2
+OCI_SYM_LOCAL int OcilibResultsetGetInt2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-unsigned int OcilibResultsetGetUnsignedInt
+OCI_SYM_LOCAL unsigned int OcilibResultsetGetUnsignedInt
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-unsigned int OcilibResultsetGetUnsignedInt2
+OCI_SYM_LOCAL unsigned int OcilibResultsetGetUnsignedInt2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-big_int OcilibResultsetGetBigInt
+OCI_SYM_LOCAL big_int OcilibResultsetGetBigInt
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-big_int OcilibResultsetGetBigInt2
+OCI_SYM_LOCAL big_int OcilibResultsetGetBigInt2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-big_uint OcilibResultsetGetUnsignedBigInt
+OCI_SYM_LOCAL big_uint OcilibResultsetGetUnsignedBigInt
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-big_uint OcilibResultsetGetUnsignedBigInt2
+OCI_SYM_LOCAL big_uint OcilibResultsetGetUnsignedBigInt2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-const otext* OcilibResultsetGetString
+OCI_SYM_LOCAL const otext * OcilibResultsetGetString
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-const otext* OcilibResultsetGetString2
+OCI_SYM_LOCAL const otext * OcilibResultsetGetString2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-unsigned int OcilibResultsetGetRaw
+OCI_SYM_LOCAL unsigned int OcilibResultsetGetRaw
 (
     OCI_Resultset* rs,
     unsigned int   index,
@@ -224,7 +224,7 @@ unsigned int OcilibResultsetGetRaw
     unsigned int   len
 );
 
-unsigned int OcilibResultsetGetRaw2
+OCI_SYM_LOCAL unsigned int OcilibResultsetGetRaw2
 (
     OCI_Resultset* rs,
     const otext  * name,
@@ -232,180 +232,180 @@ unsigned int OcilibResultsetGetRaw2
     unsigned int   len
 );
 
-double OcilibResultsetGetDouble
+OCI_SYM_LOCAL double OcilibResultsetGetDouble
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-double OcilibResultsetGetDouble2
+OCI_SYM_LOCAL double OcilibResultsetGetDouble2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-float OcilibResultsetGetFloat
+OCI_SYM_LOCAL float OcilibResultsetGetFloat
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-float OcilibResultsetGetFloat2
+OCI_SYM_LOCAL float OcilibResultsetGetFloat2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Date* OcilibResultsetGetDate
+OCI_SYM_LOCAL OCI_Date * OcilibResultsetGetDate
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Date* OcilibResultsetGetDate2
+OCI_SYM_LOCAL OCI_Date * OcilibResultsetGetDate2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Timestamp* OcilibResultsetGetTimestamp
+OCI_SYM_LOCAL OCI_Timestamp * OcilibResultsetGetTimestamp
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Timestamp* OcilibResultsetGetTimestamp2
+OCI_SYM_LOCAL OCI_Timestamp * OcilibResultsetGetTimestamp2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Interval* OcilibResultsetGetInterval
+OCI_SYM_LOCAL OCI_Interval * OcilibResultsetGetInterval
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Interval* OcilibResultsetGetInterval2
+OCI_SYM_LOCAL OCI_Interval * OcilibResultsetGetInterval2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Object* OcilibResultsetGetObject
+OCI_SYM_LOCAL OCI_Object * OcilibResultsetGetObject
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Object* OcilibResultsetGetObject2
+OCI_SYM_LOCAL OCI_Object * OcilibResultsetGetObject2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Coll* OcilibResultsetGetColl
+OCI_SYM_LOCAL OCI_Coll * OcilibResultsetGetColl
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Coll* OcilibResultsetGetColl2
+OCI_SYM_LOCAL OCI_Coll * OcilibResultsetGetColl2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Ref* OcilibResultsetGetReference
+OCI_SYM_LOCAL OCI_Ref * OcilibResultsetGetReference
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Ref* OcilibResultsetGetReference2
+OCI_SYM_LOCAL OCI_Ref * OcilibResultsetGetReference2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Statement* OcilibResultsetGetStatement
+OCI_SYM_LOCAL OCI_Statement * OcilibResultsetGetStatement
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Statement* OcilibResultsetGetStatement2
+OCI_SYM_LOCAL OCI_Statement * OcilibResultsetGetStatement2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Lob* OcilibResultsetGetLob
+OCI_SYM_LOCAL OCI_Lob * OcilibResultsetGetLob
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Lob* OcilibResultsetGetLob2
+OCI_SYM_LOCAL OCI_Lob * OcilibResultsetGetLob2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_File* OcilibResultsetGetFile
+OCI_SYM_LOCAL OCI_File * OcilibResultsetGetFile
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_File* OcilibResultsetGetFile2
+OCI_SYM_LOCAL OCI_File * OcilibResultsetGetFile2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Long* OcilibResultsetGetLong
+OCI_SYM_LOCAL OCI_Long * OcilibResultsetGetLong
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-OCI_Long* OcilibResultsetGetLong2
+OCI_SYM_LOCAL OCI_Long * OcilibResultsetGetLong2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-unsigned int OcilibResultsetGetDataSize
+OCI_SYM_LOCAL unsigned int OcilibResultsetGetDataSize
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-unsigned int OcilibResultsetGetDataSize2
+OCI_SYM_LOCAL unsigned int OcilibResultsetGetDataSize2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-boolean OcilibResultsetIsNull
+OCI_SYM_LOCAL boolean OcilibResultsetIsNull
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-boolean OcilibResultsetIsNull2
+OCI_SYM_LOCAL boolean OcilibResultsetIsNull2
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_Statement* OcilibResultsetResultsetGetStatement
+OCI_SYM_LOCAL OCI_Statement * OcilibResultsetResultsetGetStatement
 (
     OCI_Resultset* rs
 );
 
-unsigned int OcilibResultsetGetDataLength
+OCI_SYM_LOCAL unsigned int OcilibResultsetGetDataLength
 (
     OCI_Resultset* rs,
     unsigned int   index

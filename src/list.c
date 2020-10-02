@@ -24,18 +24,18 @@
 #include "memory.h"
 #include "mutex.h"
 
-#define ACQUIRE_LOCK()                   \
-                                         \
-    if (NULL != list->mutex)             \
-    {                                    \
-        CHECK(MutexAcquire(list->mutex)) \
+#define ACQUIRE_LOCK()                          \
+                                                \
+    if (NULL != list->mutex)                    \
+    {                                           \
+        CHECK(OcilibMutexAcquire(list->mutex))  \
     }
 
-#define RELEASE_LOCK()                   \
-                                         \
-    if (NULL != list->mutex)             \
-    {                                    \
-        CHECK(MutexRelease(list->mutex)) \
+#define RELEASE_LOCK()                          \
+                                                \
+    if (NULL != list->mutex)                    \
+    {                                           \
+        CHECK(OcilibMutexRelease(list->mutex)) \
     }
 
 #define LIST_FOR_EACH(exp)     \
@@ -54,10 +54,10 @@
     }
 
 /* --------------------------------------------------------------------------------------------- *
- * ListCreateItem
+ * OcilibListCreateItem
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Item * ListCreateItem
+static OCI_Item * OcilibListCreateItem
 (
     int type,
     int size
@@ -75,16 +75,16 @@ OCI_Item * ListCreateItem
 
     /* allocate list item entry */
 
-    item =  (OCI_Item *) MemoryAlloc(OCI_IPC_LIST_ITEM,
-                                     sizeof(*item),
-                                     (size_t) 1, TRUE);
+    item =  (OCI_Item *)OcilibMemoryAlloc(OCI_IPC_LIST_ITEM,
+                                          sizeof(*item),
+                                          (size_t) 1, TRUE);
 
     CHECK_NULL(item)
 
     /* allocate item data buffer */
 
-    item->data = (void *) MemoryAlloc(type, (size_t) size,
-                                      (size_t) 1, TRUE);
+    item->data = (void *)OcilibMemoryAlloc(type, (size_t) size,
+                                           (size_t) 1, TRUE);
 
     CHECK_NULL(item->data)
 
@@ -108,10 +108,10 @@ OCI_Item * ListCreateItem
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ListCreate
+ * OcilibListCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_List* ListCreate
+OCI_List* OcilibListCreate
 (
     int type
 )
@@ -124,9 +124,9 @@ OCI_List* ListCreate
 
     /* allocate list */
 
-    OCI_List *list = (OCI_List *) MemoryAlloc(OCI_IPC_LIST,
-                                              sizeof(*list),
-                                              (size_t) 1, TRUE);
+    OCI_List *list = (OCI_List *)OcilibMemoryAlloc(OCI_IPC_LIST,
+                                                   sizeof(*list),
+                                                   (size_t) 1, TRUE);
 
     CHECK_NULL(list)
 
@@ -136,7 +136,7 @@ OCI_List* ListCreate
 
     if (LIB_THREADED)
     {
-        list->mutex = MutexCreateInternal();
+        list->mutex = OcilibMutexCreateInternal();
     }
 
     CLEANUP_AND_EXIT_FUNC
@@ -151,10 +151,10 @@ OCI_List* ListCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ListFree
+ * OcilibListFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean ListFree
+boolean OcilibListFree
 (
     OCI_List *list
 )
@@ -167,14 +167,14 @@ boolean ListFree
 
     CHECK_PTR(OCI_IPC_LIST, list)
 
-    ListClear(list);
+    OcilibListClear(list);
 
     if (NULL!= list->mutex)
     {
-        MutexFree(list->mutex);
+        OcilibMutexFree(list->mutex);
     }
 
-    ErrorResetSource(NULL, list);
+    OcilibErrorResetSource(NULL, list);
 
     FREE(list)
 
@@ -184,10 +184,10 @@ boolean ListFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ListAppend
+ * OcilibListAppend
  * --------------------------------------------------------------------------------------------- */
 
-void * ListAppend
+void * OcilibListAppend
 (
     OCI_List *list,
     int       size
@@ -204,7 +204,7 @@ void * ListAppend
 
     CHECK_PTR(OCI_IPC_LIST, list)
 
-    item = ListCreateItem(list->type, size);
+    item = OcilibListCreateItem(list->type, size);
     CHECK_NULL(item)
 
     ACQUIRE_LOCK()
@@ -235,10 +235,10 @@ void * ListAppend
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ListClear
+ * OcilibListClear
  * --------------------------------------------------------------------------------------------- */
 
-boolean ListClear
+boolean OcilibListClear
 (
     OCI_List *list
 )
@@ -282,10 +282,10 @@ boolean ListClear
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ListForEach
+ * OcilibListForEach
  * --------------------------------------------------------------------------------------------- */
 
-boolean ListForEach
+boolean OcilibListForEach
 (
     OCI_List          *list,
     POCI_LIST_FOR_EACH proc
@@ -308,10 +308,10 @@ boolean ListForEach
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ListForEachWithParam
+* OcilibListForEachWithParam
 * --------------------------------------------------------------------------------------------- */
 
-boolean ListForEachWithParam
+boolean OcilibListForEachWithParam
 (
     OCI_List                     *list,
     void                         *param,
@@ -335,10 +335,10 @@ boolean ListForEachWithParam
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ListRemove
+ * OcilibListRemove
  * --------------------------------------------------------------------------------------------- */
 
-boolean ListRemove
+boolean OcilibListRemove
 (
     OCI_List *list,
     void     *data
@@ -403,10 +403,10 @@ boolean ListRemove
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ListExists
+* OcilibListExists
 * --------------------------------------------------------------------------------------------- */
 
-boolean ListExists
+boolean OcilibListExists
 (
     OCI_List *list,
     void     *data
@@ -434,10 +434,10 @@ boolean ListExists
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ListFind
+* OcilibListFind
 * --------------------------------------------------------------------------------------------- */
 
-void * ListFind
+void * OcilibListFind
 (
     OCI_List      *list,
     POCI_LIST_FIND proc,

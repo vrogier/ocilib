@@ -44,7 +44,7 @@
  * OcilibArrayFindAny
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibArrayFindAny
+boolean OcilibArrayFindAny
 (
     OCI_Array *arr,
     void     **handles
@@ -57,7 +57,7 @@ OCI_SYM_LOCAL boolean OcilibArrayFindAny
 * OcilibArrayFindObjects
 * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibArrayFindObjects
+boolean OcilibArrayFindObjects
 (
     OCI_Array *arr,
     void     **handles
@@ -70,7 +70,7 @@ OCI_SYM_LOCAL boolean OcilibArrayFindObjects
  * OcilibArrayInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibArrayInitialize
+boolean OcilibArrayInitialize
 (
     OCI_Array    *arr,
     OCI_TypeInfo *typinf
@@ -168,7 +168,7 @@ OCI_SYM_LOCAL boolean OcilibArrayInitialize
  * OcilibArrayClose
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibArrayDispose
+boolean OcilibArrayDispose
 (
     OCI_Array *arr
 )
@@ -216,7 +216,7 @@ OCI_SYM_LOCAL boolean OcilibArrayDispose
  * OcilibArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Array * OcilibArrayCreate
+OCI_Array * OcilibArrayCreate
 (
     OCI_Connection *con,
     unsigned int    nb_elem,
@@ -297,7 +297,7 @@ OCI_SYM_LOCAL OCI_Array * OcilibArrayCreate
  * OcilibArrayFreeFromHandles
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibArrayFreeFromHandles
+boolean OcilibArrayFreeFromHandles
 (
     void **handles
 )

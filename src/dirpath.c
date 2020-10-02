@@ -35,7 +35,7 @@ static const unsigned int ConversionModeValues[] =
  * OcilibDirPathSetArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetArray
+boolean OcilibDirPathSetArray
 (
     OCI_DirPath *dp,
     ub4          row_from
@@ -104,7 +104,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathSetArray
  * DirPahArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathArrayToStream
+unsigned int OcilibDirPathArrayToStream
 (
     OCI_DirPath *dp,
     ub4          row_from
@@ -211,7 +211,7 @@ OCI_SYM_LOCAL unsigned int OcilibDirPathArrayToStream
  * DirPahArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathLoadStream
+unsigned int OcilibDirPathLoadStream
 (
     OCI_DirPath *dp
 )
@@ -290,7 +290,7 @@ OCI_SYM_LOCAL unsigned int OcilibDirPathLoadStream
  * OcilibDirPathCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_DirPath * OcilibDirPathCreate
+OCI_DirPath * OcilibDirPathCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *partition,
@@ -430,7 +430,7 @@ OCI_SYM_LOCAL OCI_DirPath * OcilibDirPathCreate
  * OcilibDirPathFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathFree
+boolean OcilibDirPathFree
 (
     OCI_DirPath *dp
 )
@@ -474,7 +474,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathFree
  * OcilibDirPathSetColumn
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetColumn
+boolean OcilibDirPathSetColumn
 (
     OCI_DirPath *dp,
     unsigned int index,
@@ -731,7 +731,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathSetColumn
  * OcilibDirPathPrepare
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathPrepare
+boolean OcilibDirPathPrepare
 (
     OCI_DirPath *dp
 )
@@ -824,7 +824,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathPrepare
  * OcilibDirPathSetEntry
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetEntry
+boolean OcilibDirPathSetEntry
 (
     OCI_DirPath *dp,
     unsigned int row,
@@ -935,7 +935,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathSetEntry
  * OcilibDirPathReset
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathReset
+boolean OcilibDirPathReset
 (
     OCI_DirPath *dp
 )
@@ -983,7 +983,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathReset
  * OcilibDirPathConvert
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathConvert
+unsigned int OcilibDirPathConvert
 (
     OCI_DirPath *dp
 )
@@ -1069,7 +1069,7 @@ OCI_SYM_LOCAL unsigned int OcilibDirPathConvert
  * OcilibDirPathLoad
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathLoad
+unsigned int OcilibDirPathLoad
 (
     OCI_DirPath *dp
 )
@@ -1114,7 +1114,7 @@ OCI_SYM_LOCAL unsigned int OcilibDirPathLoad
  * OcilibDirPathFinish
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathFinish
+boolean OcilibDirPathFinish
 (
     OCI_DirPath *dp
 )
@@ -1146,7 +1146,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathFinish
  * OcilibDirPathAbort
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathAbort
+boolean OcilibDirPathAbort
 (
     OCI_DirPath *dp
 )
@@ -1178,7 +1178,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathAbort
  * OcilibDirPathSave
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathSave
+boolean OcilibDirPathSave
 (
     OCI_DirPath *dp
 )
@@ -1209,7 +1209,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathSave
  * OcilibDirPathFlushRow
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathFlushRow
+boolean OcilibDirPathFlushRow
 (
     OCI_DirPath *dp
 )
@@ -1239,7 +1239,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathFlushRow
  * OcilibDirPathSetCurrentRows
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetCurrentRows
+boolean OcilibDirPathSetCurrentRows
 (
     OCI_DirPath *dp,
     unsigned int nb_rows
@@ -1266,7 +1266,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathSetCurrentRows
  * OcilibDirPathGetCurrentRows
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathGetCurrentRows
+unsigned int OcilibDirPathGetCurrentRows
 (
     OCI_DirPath *dp
 )
@@ -1283,7 +1283,7 @@ OCI_SYM_LOCAL unsigned int OcilibDirPathGetCurrentRows
  * OcilibDirPathGetMaxRows
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathGetMaxRows
+unsigned int OcilibDirPathGetMaxRows
 (
     OCI_DirPath *dp
 )
@@ -1300,7 +1300,7 @@ OCI_SYM_LOCAL unsigned int OcilibDirPathGetMaxRows
  * OcilibDirPathSetDateFormat
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetDateFormat
+boolean OcilibDirPathSetDateFormat
 (
     OCI_DirPath *dp,
     const otext *format
@@ -1339,7 +1339,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathSetDateFormat
  * OcilibDirPathSetParallel
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetParallel
+boolean OcilibDirPathSetParallel
 (
     OCI_DirPath *dp,
     boolean      value
@@ -1372,7 +1372,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathSetParallel
  * OcilibDirPathSetNoLog
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetNoLog
+boolean OcilibDirPathSetNoLog
 (
     OCI_DirPath *dp,
     boolean      value
@@ -1405,7 +1405,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathSetNoLog
  * OcilibDirPathSetCacheSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetCacheSize
+boolean OcilibDirPathSetCacheSize
 (
     OCI_DirPath *dp,
     unsigned int size
@@ -1455,7 +1455,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathSetCacheSize
  * OcilibDirPathSetBufferSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetBufferSize
+boolean OcilibDirPathSetBufferSize
 (
     OCI_DirPath *dp,
     unsigned int size
@@ -1488,7 +1488,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathSetBufferSize
  * OcilibDirPathSetConvertMode
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetConvertMode
+boolean OcilibDirPathSetConvertMode
 (
     OCI_DirPath *dp,
     unsigned int mode
@@ -1515,7 +1515,7 @@ OCI_SYM_LOCAL boolean OcilibDirPathSetConvertMode
  * OcilibDirPathGetRowCount
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathGetRowCount
+unsigned int OcilibDirPathGetRowCount
 (
     OCI_DirPath *dp
 )
@@ -1532,7 +1532,7 @@ OCI_SYM_LOCAL unsigned int OcilibDirPathGetRowCount
  * OcilibDirPathGetAffectedRows
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathGetAffectedRows
+unsigned int OcilibDirPathGetAffectedRows
 (
     OCI_DirPath *dp
 )
@@ -1549,7 +1549,7 @@ OCI_SYM_LOCAL unsigned int OcilibDirPathGetAffectedRows
  * OcilibDirPathGetErrorColumn
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathGetErrorColumn
+unsigned int OcilibDirPathGetErrorColumn
 (
     OCI_DirPath *dp
 )
@@ -1573,7 +1573,7 @@ OCI_SYM_LOCAL unsigned int OcilibDirPathGetErrorColumn
  * OcilibDirPathGetErrorRow
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathGetErrorRow
+unsigned int OcilibDirPathGetErrorRow
 (
     OCI_DirPath *dp
 )

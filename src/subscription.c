@@ -29,10 +29,10 @@
 #include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * SubscriptionDispose
+ * OcilibSubscriptionDispose
  * --------------------------------------------------------------------------------------------- */
 
-boolean SubscriptionDispose
+boolean OcilibSubscriptionDispose
 (
     OCI_Subscription *sub
 )
@@ -55,8 +55,8 @@ boolean SubscriptionDispose
     {
         if (NULL == sub->con)
         {
-            sub->con = ConnectionCreate(sub->saved_db, sub->saved_user,
-                                        sub->saved_pwd, OCI_SESSION_DEFAULT);
+            sub->con = OcilibConnectionCreate(sub->saved_db, sub->saved_user,
+                                              sub->saved_pwd, OCI_SESSION_DEFAULT);
 
             CHECK_NULL(sub->con)
 
@@ -98,20 +98,20 @@ boolean SubscriptionDispose
 
             if (alloc && NULL != sub->con)
             {
-                ConnectionFree(sub->con);
+                OcilibConnectionFree(sub->con);
             }
         }
     }
 
     /* free OCI handle */
 
-    MemoryFreeHandle((dvoid*)sub->subhp, OCI_HTYPE_SUBSCRIPTION);
+    OcilibMemoryFreeHandle((dvoid*)sub->subhp, OCI_HTYPE_SUBSCRIPTION);
 
     /* close error handle */
 
     if (NULL != sub->err)
     {
-        MemoryFreeHandle(sub->err, OCI_HTYPE_ERROR);
+        OcilibMemoryFreeHandle(sub->err, OCI_HTYPE_ERROR);
     }
 
 #endif
@@ -133,15 +133,15 @@ boolean SubscriptionDispose
 
     CLEANUP_AND_EXIT_FUNC
     (
-        ErrorResetSource(NULL, sub);
+        OcilibErrorResetSource(NULL, sub);
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * SubscriptionRegister
+ * OcilibSubscriptionRegister
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Subscription * SubscriptionRegister
+OCI_Subscription * OcilibSubscriptionRegister
 (
     OCI_Connection *con,
     const otext    *name,
@@ -172,16 +172,16 @@ OCI_Subscription * SubscriptionRegister
 
     /* create subscription object */
 
-    sub = ListAppend(Env.subs, sizeof(*sub));
+    sub = OcilibListAppend(Env.subs, sizeof(*sub));
     CHECK_NULL(sub)
 
     /* allocate error handle */
 
-    CHECK(MemoryAllocHandle(con->env, (dvoid **)(void *)&sub->err, OCI_HTYPE_ERROR))
+    CHECK(OcilibMemoryAllocHandle(con->env, (dvoid **)(void *)&sub->err, OCI_HTYPE_ERROR))
 
     /* allocate subscription handle */
 
-    CHECK(MemoryAllocHandle(con->env, (dvoid **)(void *)&sub->subhp, OCI_HTYPE_SUBSCRIPTION))
+    CHECK(OcilibMemoryAllocHandle(con->env, (dvoid **)(void *)&sub->subhp, OCI_HTYPE_SUBSCRIPTION))
 
     sub->con       = con;
     sub->env       = con->env;
@@ -218,7 +218,7 @@ OCI_Subscription * SubscriptionRegister
 
     /* name  */
 
-    dbstr = StringGetDBString(sub->name, &dbsize);
+    dbstr = OcilibStringGetDBString(sub->name, &dbsize);
 
     CHECK_ATTRIB_SET
     (
@@ -260,7 +260,7 @@ OCI_Subscription * SubscriptionRegister
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK,
-        sub->subhp, CallbackNotifyChanges, 0,
+        sub->subhp, OcilibCallbackNotifyChanges, 0,
         sub->con->err
     )
 
@@ -324,20 +324,20 @@ OCI_Subscription * SubscriptionRegister
     (
         if (FAILURE)
         {
-            StringReleaseDBString(dbstr);
+            OcilibStringReleaseDBString(dbstr);
 
-            SubscriptionDispose(sub);
-            ListRemove(Env.subs, sub);
+            OcilibSubscriptionDispose(sub);
+            OcilibListRemove(Env.subs, sub);
             FREE(sub)
         }
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * SubscriptionUnregister
+ * OcilibSubscriptionUnregister
  * --------------------------------------------------------------------------------------------- */
 
-boolean SubscriptionUnregister
+boolean OcilibSubscriptionUnregister
 (
     OCI_Subscription *sub
 )
@@ -350,8 +350,8 @@ boolean SubscriptionUnregister
 
     CHECK_PTR(OCI_IPC_NOTIFY, sub)
 
-    SubscriptionDispose(sub);
-    ListRemove(Env.subs, sub);
+    OcilibSubscriptionDispose(sub);
+    OcilibListRemove(Env.subs, sub);
 
     FREE(sub);
 
@@ -361,10 +361,10 @@ boolean SubscriptionUnregister
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * SubscriptionAddStatement
+ * OcilibSubscriptionAddStatement
  * --------------------------------------------------------------------------------------------- */
 
-boolean SubscriptionAddStatement
+boolean OcilibSubscriptionAddStatement
 (
     OCI_Subscription *sub,
     OCI_Statement    *stmt
@@ -393,8 +393,8 @@ boolean SubscriptionAddStatement
             stmt->con->err
         )
 
-        CHECK(StatementExecute(stmt))
-        CHECK_NULL(StatementGetResultset(stmt))
+        CHECK(OcilibStatementExecute(stmt))
+        CHECK_NULL(OcilibStatementGetResultset(stmt))
     }
 
 #endif
@@ -405,10 +405,10 @@ boolean SubscriptionAddStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * SubscriptionGetName
+ * OcilibSubscriptionGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * SubscriptionGetName
+const otext * OcilibSubscriptionGetName
 (
     OCI_Subscription *sub
 )
@@ -422,10 +422,10 @@ const otext * SubscriptionGetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * SubscriptionGetPort
+ * OcilibSubscriptionGetPort
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int SubscriptionGetPort
+unsigned int OcilibSubscriptionGetPort
 (
     OCI_Subscription *sub
 )
@@ -439,10 +439,10 @@ unsigned int SubscriptionGetPort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * SubscriptionGetTimeout
+ * OcilibSubscriptionGetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int SubscriptionGetTimeout
+unsigned int OcilibSubscriptionGetTimeout
 (
     OCI_Subscription *sub
 )
@@ -456,10 +456,10 @@ unsigned int SubscriptionGetTimeout
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * SubscriptionGetConnection
+ * OcilibSubscriptionGetConnection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * SubscriptionGetConnection
+OCI_Connection * OcilibSubscriptionGetConnection
 (
     OCI_Subscription *sub
 )

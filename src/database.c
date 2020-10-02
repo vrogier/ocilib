@@ -32,7 +32,7 @@
  * OcilibDatabaseStartup
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDatabaseStartup
+boolean OcilibDatabaseStartup
 (
     const otext *db,
     const otext *user,
@@ -174,7 +174,7 @@ OCI_SYM_LOCAL boolean OcilibDatabaseStartup
  * OcilibDatabaseShutdown
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDatabaseShutdown
+boolean OcilibDatabaseShutdown
 (
     const otext *db,
     const otext *user,
@@ -305,7 +305,7 @@ OCI_SYM_LOCAL boolean OcilibDatabaseShutdown
  * OcilibDatabaseSetUserPassword
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDatabaseSetUserPassword
+boolean OcilibDatabaseSetUserPassword
 (
     const otext* db,
     const otext* user,

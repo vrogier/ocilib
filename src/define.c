@@ -29,7 +29,7 @@
  * OcilibDefineGet
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Define * OcilibDefineGet
+OCI_Define * OcilibDefineGet
 (
     OCI_Resultset *rs,
     unsigned int   index
@@ -59,7 +59,7 @@ OCI_SYM_LOCAL OCI_Define * OcilibDefineGet
  * OcilibDefineGetIndex
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL int OcilibDefineGetIndex
+int OcilibDefineGetIndex
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -119,7 +119,7 @@ OCI_SYM_LOCAL int OcilibDefineGetIndex
  * OcilibDefineGetData
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL void * OcilibDefineGetData
+void * OcilibDefineGetData
 (
     OCI_Define *def
 )
@@ -168,7 +168,7 @@ OCI_SYM_LOCAL void * OcilibDefineGetData
  * OcilibDefineIsDataNotNull
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDefineIsDataNotNull
+boolean OcilibDefineIsDataNotNull
 (
     OCI_Define *def
 )
@@ -204,7 +204,7 @@ OCI_SYM_LOCAL boolean OcilibDefineIsDataNotNull
  * OcilibDefineGetNumber
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDefineGetNumber
+boolean OcilibDefineGetNumber
 (
     OCI_Resultset *rs,
     unsigned int   index,
@@ -256,7 +256,7 @@ OCI_SYM_LOCAL boolean OcilibDefineGetNumber
  * OcilibDefineAlloc
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDefineAlloc
+boolean OcilibDefineAlloc
 (
     OCI_Define *def
 )
@@ -352,7 +352,7 @@ OCI_SYM_LOCAL boolean OcilibDefineAlloc
  * OcilibDefineDef
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDefineDef
+boolean OcilibDefineDef
 (
     OCI_Define *def,
     ub4         position

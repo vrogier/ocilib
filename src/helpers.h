@@ -23,19 +23,19 @@
 
 #include "types.h"
 
-unsigned int OcilibExternalSubTypeToSQLType
+OCI_SYM_LOCAL unsigned int OcilibExternalSubTypeToSQLType
 (
     unsigned int type,
     unsigned int subtype
 );
 
-unsigned int OcilibExternalSubTypeToHandleType
+OCI_SYM_LOCAL unsigned int OcilibExternalSubTypeToHandleType
 (
     unsigned int type,
     unsigned int subtype
 );
 
-boolean OcilibFreeObjectFromType
+OCI_SYM_LOCAL boolean OcilibFreeObjectFromType
 (
     void       * obj,
     unsigned int type

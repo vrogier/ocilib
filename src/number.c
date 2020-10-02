@@ -39,29 +39,29 @@ static const MagicNumber MagicNumbers[] =
 
 #define MAGIC_NUMBER_COUNT 2
 
-#define NUMBER_OPERATION(func)                                \
-                                                              \
-    ENTER_FUNC(boolean, FALSE, OCI_IPC_NUMBER, number)        \
-                                                              \
-    OCINumber src_num = { {0} };                              \
-    CHECK_PTR(OCI_IPC_NUMBER, number)                         \
-                                                              \
-    CHECK(NumberTranslateValue(number->con, value, type,      \
-                               &src_num, OCI_NUM_NUMBER))     \
-                                                              \
-    CHECK_OCI(number->err, func, number->err, number->handle, \
-              &src_num, number->handle)                       \
-                                                              \
-    SET_SUCCESS()                                             \
-                                                              \
-    EXIT_FUNC()                                               \
+#define NUMBER_OPERATION(func)                                  \
+                                                                \
+    ENTER_FUNC(boolean, FALSE, OCI_IPC_NUMBER, number)          \
+                                                                \
+    OCINumber src_num = { {0} };                                \
+    CHECK_PTR(OCI_IPC_NUMBER, number)                           \
+                                                                \
+    CHECK(OcilibNumberTranslateValue(number->con, value, type,  \
+                               &src_num, OCI_NUM_NUMBER))       \
+                                                                \
+    CHECK_OCI(number->err, func, number->err, number->handle,   \
+              &src_num, number->handle)                         \
+                                                                \
+    SET_SUCCESS()                                               \
+                                                                \
+    EXIT_FUNC()                                                 \
 
 
 /* --------------------------------------------------------------------------------------------- *
-* GetNumericTypeSize
+* OcilibGetNumericTypeSize
 * --------------------------------------------------------------------------------------------- */
 
-uword GetNumericTypeSize
+static uword OcilibGetNumericTypeSize
 (
     unsigned int type
 )
@@ -97,10 +97,10 @@ uword GetNumericTypeSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberTranslateValue
+ * OcilibNumberTranslateValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberTranslateValue
+boolean OcilibNumberTranslateValue
 (
     OCI_Connection *con,
     void           *in_value,
@@ -121,8 +121,8 @@ boolean NumberTranslateValue
         - OCINumber to signed/unsigned integers, double, and float
     */
 
-    const uword in_size = GetNumericTypeSize(in_type);
-    const uword out_size = GetNumericTypeSize(out_type);
+    const uword in_size = OcilibGetNumericTypeSize(in_type);
+    const uword out_size = OcilibGetNumericTypeSize(out_type);
     const uword in_sign  = (in_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
     const uword out_sign = (out_type & OCI_NUM_UNSIGNED) ? OCI_NUMBER_UNSIGNED : OCI_NUMBER_SIGNED;
 
@@ -270,10 +270,10 @@ boolean NumberTranslateValue
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberFromStringInternal
+ * OcilibNumberFromStringInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberFromStringInternal
+boolean OcilibNumberFromStringInternal
 (
     OCI_Connection *con,
     void           *out_value,
@@ -324,7 +324,7 @@ boolean NumberFromStringInternal
 
             if (NULL == tmp_fmt)
             {
-                tmp_fmt = EnvironmentGetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
+                tmp_fmt = OcilibEnvironmentGetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
                 CHECK_NULL(tmp_fmt)
             }
 
@@ -367,12 +367,12 @@ boolean NumberFromStringInternal
 
             if (NULL == fmt)
             {
-                fmt = EnvironmentGetFormat(con, OCI_FMT_NUMERIC);
+                fmt = OcilibEnvironmentGetFormat(con, OCI_FMT_NUMERIC);
                 CHECK_NULL(fmt)
             }
 
-            dbstr1 = StringGetDBString(in_value, &dbsize1);
-            dbstr2 = StringGetDBString(fmt, &dbsize2);
+            dbstr1 = OcilibStringGetDBString(in_value, &dbsize1);
+            dbstr2 = OcilibStringGetDBString(fmt, &dbsize2);
 
             memset(&number, 0, sizeof(number));
 
@@ -384,7 +384,7 @@ boolean NumberFromStringInternal
                 (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number
             )
 
-            CHECK(NumberTranslateValue(con, &number, OCI_NUM_NUMBER, out_value, type))
+            CHECK(OcilibNumberTranslateValue(con, &number, OCI_NUM_NUMBER, out_value, type))
         }
     }
 
@@ -392,16 +392,16 @@ boolean NumberFromStringInternal
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr1);
-        StringReleaseDBString(dbstr2);
+        OcilibStringReleaseDBString(dbstr1);
+    OcilibStringReleaseDBString(dbstr2);
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberToStringInternal
+ * OcilibNumberToStringInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberToStringInternal
+boolean OcilibNumberToStringInternal
 (
     OCI_Connection *con,
     void           *number,
@@ -460,7 +460,7 @@ boolean NumberToStringInternal
 
             if (NULL == tmp_fmt)
             {
-                tmp_fmt = EnvironmentGetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
+                tmp_fmt = OcilibEnvironmentGetFormat(con, type & OCI_NUM_DOUBLE ? OCI_FMT_BINARY_DOUBLE : OCI_FMT_BINARY_FLOAT);
                 CHECK_NULL(tmp_fmt)
             }
 
@@ -515,12 +515,12 @@ boolean NumberToStringInternal
         {
             if (NULL == fmt)
             {
-                fmt = EnvironmentGetFormat(con, OCI_FMT_NUMERIC);
+                fmt = OcilibEnvironmentGetFormat(con, OCI_FMT_NUMERIC);
                 CHECK_NULL(fmt)
             }
 
-            dbstr1 = StringGetDBString(out_value, &dbsize1);
-            dbstr2 = StringGetDBString(fmt, &dbsize2);
+            dbstr1 = OcilibStringGetDBString(out_value, &dbsize1);
+            dbstr2 = OcilibStringGetDBString(fmt, &dbsize2);
 
             CHECK_OCI
             (
@@ -531,7 +531,7 @@ boolean NumberToStringInternal
                 (ub4 *)&dbsize1, (oratext *)dbstr1
             )
 
-            StringCopyDBStringToNativeString(dbstr1, out_value, dbcharcount(dbsize1));
+                OcilibStringCopyDBStringToNativeString(dbstr1, out_value, dbcharcount(dbsize1));
 
             out_value_size = (dbsize1 / (int) sizeof(dbtext));
         }
@@ -552,16 +552,16 @@ boolean NumberToStringInternal
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr2);
-        StringReleaseDBString(dbstr1);
+        OcilibStringReleaseDBString(dbstr2);
+    OcilibStringReleaseDBString(dbstr1);
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberInitialize
+ *Ocilib NumberInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Number * NumberInitialize
+OCI_Number * OcilibNumberInitialize
 (
     OCI_Connection *con,
     OCI_Number     *number,
@@ -605,7 +605,7 @@ OCI_Number * NumberInitialize
     (
         if (FAILURE)
         {
-            NumberFree(number);
+            OcilibNumberFree(number);
             number = NULL;
         }
 
@@ -614,10 +614,10 @@ OCI_Number * NumberInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberCreate
+ * OcilibNumberCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Number * NumberCreate
+OCI_Number * OcilibNumberCreate
 (
     OCI_Connection *con
 )
@@ -630,16 +630,16 @@ OCI_Number * NumberCreate
 
     CHECK_INITIALIZED()
 
-    SET_RETVAL(NumberInitialize(con, NULL, NULL))
+    SET_RETVAL(OcilibNumberInitialize(con, NULL, NULL))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberAssign
+ * OcilibNumberAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberFree
+boolean OcilibNumberFree
 (
     OCI_Number *number
 )
@@ -660,7 +660,7 @@ boolean NumberFree
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != number->hstate)
     {
-        ErrorResetSource(NULL, number);
+        OcilibErrorResetSource(NULL, number);
 
         FREE(number)
     }
@@ -671,10 +671,10 @@ boolean NumberFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberCreateArray
+ * OcilibNumberCreateArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Number ** NumberCreateArray
+OCI_Number ** OcilibNumberCreateArray
 (
     OCI_Connection *con,
     unsigned int    nbelem
@@ -701,10 +701,10 @@ OCI_Number ** NumberCreateArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberFreeArray
+ * OcilibNumberFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberFreeArray
+boolean OcilibNumberFreeArray
 (
     OCI_Number **nummers
 )
@@ -723,10 +723,10 @@ boolean NumberFreeArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberAssign
+ * OcilibNumberAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberAssign
+boolean OcilibNumberAssign
 (
     OCI_Number *number,
     OCI_Number *number_src
@@ -755,10 +755,10 @@ boolean NumberAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberToString
+ * OcilibNumberToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberToString
+boolean OcilibNumberToString
 (
     OCI_Number  *number,
     const otext *fmt,
@@ -774,17 +774,17 @@ boolean NumberToString
 
     CHECK_PTR(OCI_IPC_NUMBER, number)
 
-    SET_RETVAL(NumberToStringInternal(number->con, number->handle,
-                                      OCI_NUM_NUMBER, str, size, fmt))
+    SET_RETVAL(OcilibNumberToStringInternal(number->con, number->handle,
+                                            OCI_NUM_NUMBER, str, size, fmt))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberFromString
+ * OcilibNumberFromString
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberFromString
+boolean OcilibNumberFromString
 (
     OCI_Number  *number,
     const otext *str,
@@ -799,17 +799,17 @@ boolean NumberFromString
 
     CHECK_PTR(OCI_IPC_NUMBER, number)
 
-    SET_RETVAL(NumberFromStringInternal(number->con, number->handle,
-                                        OCI_NUM_NUMBER, str, fmt))
+    SET_RETVAL(OcilibNumberFromStringInternal(number->con, number->handle,
+                                              OCI_NUM_NUMBER, str, fmt))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberGetContent
+ * OcilibNumberGetContent
  * --------------------------------------------------------------------------------------------- */
 
-unsigned char * NumberGetContent
+unsigned char * OcilibNumberGetContent
 (
     OCI_Number *number
 )
@@ -830,10 +830,10 @@ unsigned char * NumberGetContent
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberSetContent
+ * OcilibNumberSetContent
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberSetContent
+boolean OcilibNumberSetContent
 (
     OCI_Number    *number,
     unsigned char *content
@@ -859,10 +859,10 @@ boolean NumberSetContent
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberSetValue
+ * OcilibNumberSetValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberSetValue
+boolean OcilibNumberSetValue
 (
     OCI_Number  *number,
     unsigned int type,
@@ -877,17 +877,17 @@ boolean NumberSetValue
 
     CHECK_PTR(OCI_IPC_NUMBER, number)
 
-    SET_RETVAL(NumberTranslateValue(number->con, value, type,
-                                    number->handle, OCI_NUM_NUMBER))
+    SET_RETVAL(OcilibNumberTranslateValue(number->con, value, type,
+                                          number->handle, OCI_NUM_NUMBER))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberGetValue
+ * OcilibNumberGetValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberGetValue
+boolean OcilibNumberGetValue
 (
     OCI_Number  *number,
     unsigned int type,
@@ -902,17 +902,17 @@ boolean NumberGetValue
 
     CHECK_PTR(OCI_IPC_NUMBER, number)
 
-    SET_RETVAL(NumberTranslateValue(number->con, number->handle,
-                                    OCI_NUM_NUMBER, value, type))
+    SET_RETVAL(OcilibNumberTranslateValue(number->con, number->handle,
+                                          OCI_NUM_NUMBER, value, type))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberAdd
+ * OcilibNumberAdd
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberAdd
+boolean OcilibNumberAdd
 (
     OCI_Number  *number,
     unsigned int type,
@@ -923,10 +923,10 @@ boolean NumberAdd
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberSub
+ * OcilibNumberSub
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberSub
+boolean OcilibNumberSub
 (
     OCI_Number  *number,
     unsigned int type,
@@ -937,10 +937,10 @@ boolean NumberSub
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberMultiply
+ * OcilibNumberMultiply
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberMultiply
+boolean OcilibNumberMultiply
 (
     OCI_Number  *number,
     unsigned int type,
@@ -951,10 +951,10 @@ boolean NumberMultiply
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberDivide
+ * OcilibNumberDivide
  * --------------------------------------------------------------------------------------------- */
 
-boolean NumberDivide
+boolean OcilibNumberDivide
 (
     OCI_Number  *number,
     unsigned int type,
@@ -965,10 +965,10 @@ boolean NumberDivide
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * NumberCompare
+ * OcilibNumberCompare
  * --------------------------------------------------------------------------------------------- */
 
-int NumberCompare
+int OcilibNumberCompare
 (
     OCI_Number *number1,
     OCI_Number *number2

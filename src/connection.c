@@ -65,7 +65,7 @@ static const unsigned int TimeoutTypeValues[] =
  * OcilibConnectionDetachSubscriptions
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL void OcilibConnectionDetachSubscriptions
+void OcilibConnectionDetachSubscriptions
 (
     OCI_Subscription *sub,
     OCI_Connection   *con
@@ -95,7 +95,7 @@ OCI_SYM_LOCAL void OcilibConnectionDetachSubscriptions
  * OcilibConnectionAllocate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Connection * OcilibConnectionAllocate
+OCI_Connection * OcilibConnectionAllocate
 (
     OCI_Pool    *pool,
     const otext *db,
@@ -217,7 +217,7 @@ OCI_SYM_LOCAL OCI_Connection * OcilibConnectionAllocate
  * OcilibConnectionDeallocate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionDeallocate
+boolean OcilibConnectionDeallocate
 (
     OCI_Connection *con
 )
@@ -259,7 +259,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionDeallocate
  * OcilibConnectionAttach
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionAttach
+boolean OcilibConnectionAttach
 (
     OCI_Connection *con
 )
@@ -326,7 +326,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionAttach
  * OcilibConnectionDetach
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionDetach
+boolean OcilibConnectionDetach
 (
     OCI_Connection *con
 )
@@ -371,7 +371,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionDetach
  * OcilibConnectionLogonXA
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionLogonXA
+boolean OcilibConnectionLogonXA
 (
     OCI_Connection *con
 )
@@ -440,7 +440,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionLogonXA
  * OcilibConnectionLogonRegular
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionLogonRegular
+boolean OcilibConnectionLogonRegular
 (
     OCI_Connection *con,
     const otext    *new_pwd
@@ -649,7 +649,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionLogonRegular
  * OcilibConnectionLogonSessionPool
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionLogonSessionPool
+boolean OcilibConnectionLogonSessionPool
 (
     OCI_Connection *con,
     const otext    *tag
@@ -739,7 +739,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionLogonSessionPool
  * OcilibConnectionLogon
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionLogon
+boolean OcilibConnectionLogon
 (
     OCI_Connection *con,
     const otext    *new_pwd,
@@ -807,7 +807,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionLogon
  * OcilibConnectionLogoffRegular
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionLogoffRegular
+boolean OcilibConnectionLogoffRegular
 (
     OCI_Connection *con
 )
@@ -859,7 +859,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionLogoffRegular
  * OcilibConnectionLogoffSessionPool
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionLogoffSessionPool
+boolean OcilibConnectionLogoffSessionPool
 (
     OCI_Connection *con
 )
@@ -929,7 +929,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionLogoffSessionPool
  * OcilibConnectionLogOff
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionLogOff
+boolean OcilibConnectionLogOff
 (
     OCI_Connection *con
 )
@@ -961,7 +961,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionLogOff
 
     /* free all type info objects */
 
-    OcilibListForEach(con->tinfs, (POCI_LIST_FOR_EACH)TypeInfoDispose);
+    OcilibListForEach(con->tinfs, (POCI_LIST_FOR_EACH)OcilibTypeInfoDispose);
     OcilibListClear(con->tinfs);
 
     /* free all transactions */
@@ -1012,7 +1012,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionLogOff
  * OcilibConnectionDispose
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionDispose
+boolean OcilibConnectionDispose
 (
     OCI_Connection *con
 )
@@ -1087,7 +1087,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionDispose
  * OcilibConnectionCreateInternal
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Connection * OcilibConnectionCreateInternal
+OCI_Connection * OcilibConnectionCreateInternal
 (
     OCI_Pool    *pool,
     const otext *db,
@@ -1127,7 +1127,7 @@ OCI_SYM_LOCAL OCI_Connection * OcilibConnectionCreateInternal
  * OcilibConnectionGetMinSupportedVersion
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetMinSupportedVersion
+unsigned int OcilibConnectionGetMinSupportedVersion
 (
     OCI_Connection *con
 )
@@ -1149,7 +1149,7 @@ OCI_SYM_LOCAL unsigned int OcilibConnectionGetMinSupportedVersion
  * OcilibConnectionIsVersionSupported
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionIsVersionSupported
+boolean OcilibConnectionIsVersionSupported
 (
     OCI_Connection *con,
     unsigned int    version
@@ -1162,7 +1162,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionIsVersionSupported
  * OcilibConnectionCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Connection * OcilibConnectionCreate
+OCI_Connection * OcilibConnectionCreate
 (
     const otext *db,
     const otext *user,
@@ -1188,7 +1188,7 @@ OCI_SYM_LOCAL OCI_Connection * OcilibConnectionCreate
  * OcilibConnectionFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionFree
+boolean OcilibConnectionFree
 (
     OCI_Connection *con
 )
@@ -1215,7 +1215,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionFree
  * OcilibConnectionCommit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionCommit
+boolean OcilibConnectionCommit
 (
     OCI_Connection *con
 )
@@ -1244,7 +1244,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionCommit
  * OcilibConnectionRollback
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionRollback
+boolean OcilibConnectionRollback
 (
     OCI_Connection *con
 )
@@ -1273,7 +1273,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionRollback
  * OcilibConnectionSetAutoCommit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetAutoCommit
+boolean OcilibConnectionSetAutoCommit
 (
     OCI_Connection *con,
     boolean         enable
@@ -1291,7 +1291,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionSetAutoCommit
  * OcilibConnectionGetAutoCommit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionGetAutoCommit
+boolean OcilibConnectionGetAutoCommit
 (
     OCI_Connection *con
 )
@@ -1308,7 +1308,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionGetAutoCommit
  * OcilibConnectionIsConnected
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionIsConnected
+boolean OcilibConnectionIsConnected
 (
     OCI_Connection *con
 )
@@ -1340,7 +1340,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionIsConnected
  * OcilibConnectionGetUserData
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL void * OcilibConnectionGetUserData
+void * OcilibConnectionGetUserData
 (
     OCI_Connection *con
 )
@@ -1362,7 +1362,7 @@ OCI_SYM_LOCAL void * OcilibConnectionGetUserData
  * OcilibConnectionSetSetData
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetUserData
+boolean OcilibConnectionSetUserData
 (
     OCI_Connection *con,
     void           *data
@@ -1394,7 +1394,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionSetUserData
  * OcilibConnectionSetSessionTag
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetSessionTag
+boolean OcilibConnectionSetSessionTag
 (
     OCI_Connection *con,
     const otext    *tag
@@ -1433,7 +1433,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionSetSessionTag
  * OcilibConnectionGetSessionTag
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibConnectionGetSessionTag
+const otext * OcilibConnectionGetSessionTag
 (
     OCI_Connection *con
 )
@@ -1450,7 +1450,7 @@ OCI_SYM_LOCAL const otext * OcilibConnectionGetSessionTag
  * OcilibConnectionGetDatabase
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibConnectionGetConnectionString
+const otext * OcilibConnectionGetConnectionString
 (
     OCI_Connection *con
 )
@@ -1467,7 +1467,7 @@ OCI_SYM_LOCAL const otext * OcilibConnectionGetConnectionString
  * OcilibConnectionGetUserName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibConnectionGetUserName
+const otext * OcilibConnectionGetUserName
 (
     OCI_Connection *con
 )
@@ -1484,7 +1484,7 @@ OCI_SYM_LOCAL const otext * OcilibConnectionGetUserName
  * OcilibConnectionGetPassword
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibConnectionGetPassword
+const otext * OcilibConnectionGetPassword
 (
     OCI_Connection *con
 )
@@ -1501,7 +1501,7 @@ OCI_SYM_LOCAL const otext * OcilibConnectionGetPassword
  * OcilibConnectionSetPassword
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetPassword
+boolean OcilibConnectionSetPassword
 (
     OCI_Connection *con,
     const otext    *password
@@ -1556,7 +1556,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionSetPassword
  * OcilibConnectionGetSessionMode
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetSessionMode
+unsigned int OcilibConnectionGetSessionMode
 (
     OCI_Connection *con
 )
@@ -1573,7 +1573,7 @@ OCI_SYM_LOCAL unsigned int OcilibConnectionGetSessionMode
  * OcilibConnectionGetServerVersion
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibConnectionGetServerVersion
+const otext * OcilibConnectionGetServerVersion
 (
     OCI_Connection *con
 )
@@ -1691,7 +1691,7 @@ OCI_SYM_LOCAL const otext * OcilibConnectionGetServerVersion
  * OcilibConnectionGetServerMajorVersion
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetServerMajorVersion
+unsigned int OcilibConnectionGetServerMajorVersion
 (
     OCI_Connection *con
 )
@@ -1718,7 +1718,7 @@ OCI_SYM_LOCAL unsigned int OcilibConnectionGetServerMajorVersion
  * OcilibConnectionGetServerMinorVersion
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetServerMinorVersion
+unsigned int OcilibConnectionGetServerMinorVersion
 (
     OCI_Connection *con
 )
@@ -1745,7 +1745,7 @@ OCI_SYM_LOCAL unsigned int OcilibConnectionGetServerMinorVersion
  * OcilibConnectionGetServerRevisionVersion
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetServerRevisionVersion
+unsigned int OcilibConnectionGetServerRevisionVersion
 (
     OCI_Connection *con
 )
@@ -1772,7 +1772,7 @@ OCI_SYM_LOCAL unsigned int OcilibConnectionGetServerRevisionVersion
  * OcilibConnectionGetTransaction
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Transaction * OcilibConnectionGetTransaction
+OCI_Transaction * OcilibConnectionGetTransaction
 (
     OCI_Connection *con
 )
@@ -1789,7 +1789,7 @@ OCI_SYM_LOCAL OCI_Transaction * OcilibConnectionGetTransaction
  * OcilibConnectionSetTransaction
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetTransaction
+boolean OcilibConnectionSetTransaction
 (
     OCI_Connection  *con,
     OCI_Transaction *trans
@@ -1827,7 +1827,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionSetTransaction
  * OcilibConnectionGetVersion
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetVersion
+unsigned int OcilibConnectionGetVersion
 (
     OCI_Connection *con
 )
@@ -1851,7 +1851,7 @@ OCI_SYM_LOCAL unsigned int OcilibConnectionGetVersion
  * OcilibConnectionBreak
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionBreak
+boolean OcilibConnectionBreak
 (
     OCI_Connection *con
 )
@@ -1880,7 +1880,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionBreak
  * OcilibConnectionEnableServerOutput
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionEnableServerOutput
+boolean OcilibConnectionEnableServerOutput
 (
     OCI_Connection *con,
     unsigned int    bufsize,
@@ -1987,7 +1987,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionEnableServerOutput
  * OcilibConnectionDisableServerOutput
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionDisableServerOutput
+boolean OcilibConnectionDisableServerOutput
 (
     OCI_Connection *con
 )
@@ -2023,7 +2023,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionDisableServerOutput
  * OcilibConnectionGetServerOutput
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibConnectionGetServerOutput
+const otext * OcilibConnectionGetServerOutput
 (
     OCI_Connection *con
 )
@@ -2066,7 +2066,7 @@ OCI_SYM_LOCAL const otext * OcilibConnectionGetServerOutput
  * OcilibConnectionSetTrace
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetTrace
+boolean OcilibConnectionSetTrace
 (
     OCI_Connection *con,
     unsigned int    trace,
@@ -2176,7 +2176,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionSetTrace
  * OcilibConnectionGetTrace
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibConnectionGetTrace
+const otext * OcilibConnectionGetTrace
 (
     OCI_Connection *con,
     unsigned int    trace
@@ -2234,7 +2234,7 @@ OCI_SYM_LOCAL const otext * OcilibConnectionGetTrace
  * OcilibConnectionPing
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionPing
+boolean OcilibConnectionPing
 (
     OCI_Connection *con
 )
@@ -2270,7 +2270,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionPing
  * OcilibConnectionSetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetTimeout
+boolean OcilibConnectionSetTimeout
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -2352,7 +2352,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionSetTimeout
  * OcilibConnectionGetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetTimeout
+unsigned int OcilibConnectionGetTimeout
 (
     OCI_Connection *con,
     unsigned int    type
@@ -2428,7 +2428,7 @@ OCI_SYM_LOCAL unsigned int OcilibConnectionGetTimeout
  * OcilibConnectionGetDatabaseName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibConnectionGetDatabaseName
+const otext * OcilibConnectionGetDatabaseName
 (
     OCI_Connection *con
 )
@@ -2462,7 +2462,7 @@ OCI_SYM_LOCAL const otext * OcilibConnectionGetDatabaseName
  * OcilibConnectionGetInstanceName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibConnectionGetInstanceName
+const otext * OcilibConnectionGetInstanceName
 (
     OCI_Connection *con
 )
@@ -2495,7 +2495,7 @@ OCI_SYM_LOCAL const otext * OcilibConnectionGetInstanceName
  * OcilibConnectionGetServiceName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibConnectionGetServiceName
+const otext * OcilibConnectionGetServiceName
 (
     OCI_Connection *con
 )
@@ -2528,7 +2528,7 @@ OCI_SYM_LOCAL const otext * OcilibConnectionGetServiceName
  * OcilibConnectionGetServerName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibConnectionGetServerName
+const otext * OcilibConnectionGetServerName
 (
     OCI_Connection *con
 )
@@ -2562,7 +2562,7 @@ OCI_SYM_LOCAL const otext * OcilibConnectionGetServerName
  * OcilibConnectionGetDomainName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibConnectionGetDomainName
+const otext * OcilibConnectionGetDomainName
 (
     OCI_Connection *con
 )
@@ -2595,7 +2595,7 @@ OCI_SYM_LOCAL const otext * OcilibConnectionGetDomainName
  * OcilibConnectionGetInstanceStartTime
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Timestamp * OcilibConnectionGetInstanceStartTime
+OCI_Timestamp * OcilibConnectionGetInstanceStartTime
 (
     OCI_Connection *con
 )
@@ -2636,7 +2636,7 @@ OCI_SYM_LOCAL OCI_Timestamp * OcilibConnectionGetInstanceStartTime
  * OcilibConnectionIsTAFCapable
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionIsTAFCapable
+boolean OcilibConnectionIsTAFCapable
 (
     OCI_Connection *con
 )
@@ -2674,7 +2674,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionIsTAFCapable
  * OcilibConnectionSetTAFHandler
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetTAFHandler
+boolean OcilibConnectionSetTAFHandler
 (
     OCI_Connection  *con,
     POCI_TAF_HANDLER handler
@@ -2725,7 +2725,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionSetTAFHandler
  * OcilibConnectionGetStatementCacheSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetStatementCacheSize
+unsigned int OcilibConnectionGetStatementCacheSize
 (
     OCI_Connection *con
 )
@@ -2763,7 +2763,7 @@ OCI_SYM_LOCAL unsigned int OcilibConnectionGetStatementCacheSize
  * OcilibConnectionSetStatementCacheSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetStatementCacheSize
+boolean OcilibConnectionSetStatementCacheSize
 (
     OCI_Connection *con,
     unsigned int    value
@@ -2806,7 +2806,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionSetStatementCacheSize
  * OcilibConnectionGetDefaultLobPrefetchSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetDefaultLobPrefetchSize
+unsigned int OcilibConnectionGetDefaultLobPrefetchSize
 (
     OCI_Connection *con
 )
@@ -2844,7 +2844,7 @@ OCI_SYM_LOCAL unsigned int OcilibConnectionGetDefaultLobPrefetchSize
  * OcilibConnectionSetDefaultLobPrefetchSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetDefaultLobPrefetchSize
+boolean OcilibConnectionSetDefaultLobPrefetchSize
 (
     OCI_Connection *con,
     unsigned int    value
@@ -2891,7 +2891,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionSetDefaultLobPrefetchSize
  * OcilibConnectionGetMaxCursors
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetMaxCursors
+unsigned int OcilibConnectionGetMaxCursors
 (
     OCI_Connection *con
 )
@@ -2929,7 +2929,7 @@ OCI_SYM_LOCAL unsigned int OcilibConnectionGetMaxCursors
  * OcilibConnectionExecuteImmediate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionExecuteImmediate
+boolean OcilibConnectionExecuteImmediate
 (
     OCI_Connection *con,
     const otext    *sql,
@@ -2978,7 +2978,7 @@ OCI_SYM_LOCAL boolean OcilibConnectionExecuteImmediate
  * OcilibConnectionExecuteImmediateFmt
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibConnectionExecuteImmediateFmt
+boolean OcilibConnectionExecuteImmediateFmt
 (
     OCI_Connection *con,
     const otext    *sql,

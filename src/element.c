@@ -123,7 +123,7 @@
 * OcilibElementFreeAllocatedData
 * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementFreeAllocatedData
+boolean OcilibElementFreeAllocatedData
 (
     OCI_Elem *elem
 )
@@ -158,7 +158,7 @@ OCI_SYM_LOCAL boolean OcilibElementFreeAllocatedData
  * OcilibElementInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Elem * OcilibElementInitialize
+OCI_Elem * OcilibElementInitialize
 (
     OCI_Connection *con,
     OCI_Elem       *elem,
@@ -252,7 +252,7 @@ OCI_SYM_LOCAL OCI_Elem * OcilibElementInitialize
  * OcilibElementSetNullIndicator
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetNullIndicator
+boolean OcilibElementSetNullIndicator
 (
     OCI_Elem *elem,
     OCIInd    value
@@ -299,7 +299,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetNullIndicator
  * OcilibElementSetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetNumberInternal
+boolean OcilibElementSetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -328,7 +328,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetNumberInternal
  * OcilibElementGetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementGetNumberInternal
+boolean OcilibElementGetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -372,7 +372,7 @@ OCI_SYM_LOCAL boolean OcilibElementGetNumberInternal
  * OcilibElementCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Elem * OcilibElementCreate
+OCI_Elem * OcilibElementCreate
 (
     OCI_TypeInfo *typinf
 )
@@ -394,7 +394,7 @@ OCI_SYM_LOCAL OCI_Elem * OcilibElementCreate
  * OcilibElementFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementFree
+boolean OcilibElementFree
 (
     OCI_Elem *elem
 )
@@ -439,7 +439,7 @@ OCI_SYM_LOCAL boolean OcilibElementFree
  * OcilibElementGetBoolean
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementGetBoolean
+boolean OcilibElementGetBoolean
 (
     OCI_Elem *elem
 )
@@ -464,7 +464,7 @@ OCI_SYM_LOCAL boolean OcilibElementGetBoolean
  * OcilibElementGetNumber
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Number * OcilibElementGetNumber
+OCI_Number * OcilibElementGetNumber
 (
     OCI_Elem *elem
 )
@@ -481,7 +481,7 @@ OCI_SYM_LOCAL OCI_Number * OcilibElementGetNumber
  * OcilibElementGetShort
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL short OcilibElementGetShort
+short OcilibElementGetShort
 (
     OCI_Elem *elem
 )
@@ -493,7 +493,7 @@ OCI_SYM_LOCAL short OcilibElementGetShort
  * OcilibElementGetUnsignedShort
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned short OcilibElementGetUnsignedShort
+unsigned short OcilibElementGetUnsignedShort
 (
     OCI_Elem *elem
 )
@@ -505,7 +505,7 @@ OCI_SYM_LOCAL unsigned short OcilibElementGetUnsignedShort
  * OcilibElementGetInt
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL int OcilibElementGetInt
+int OcilibElementGetInt
 (
     OCI_Elem *elem
 )
@@ -517,7 +517,7 @@ OCI_SYM_LOCAL int OcilibElementGetInt
  * OcilibElementGetUnsignedInt
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibElementGetUnsignedInt
+unsigned int OcilibElementGetUnsignedInt
 (
     OCI_Elem *elem
 )
@@ -541,7 +541,7 @@ big_int OcilibElementGetBigInt
  * OcilibElementGetUnsignedBigInt
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL big_uint OcilibElementGetUnsignedBigInt
+big_uint OcilibElementGetUnsignedBigInt
 (
     OCI_Elem *elem
 )
@@ -553,7 +553,7 @@ OCI_SYM_LOCAL big_uint OcilibElementGetUnsignedBigInt
  * OcilibElementGetDouble
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL double OcilibElementGetDouble
+double OcilibElementGetDouble
 (
     OCI_Elem *elem
 )
@@ -565,7 +565,7 @@ OCI_SYM_LOCAL double OcilibElementGetDouble
  * OcilibElementGetFloat
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL float OcilibElementGetFloat
+float OcilibElementGetFloat
 (
     OCI_Elem *elem
 )
@@ -577,7 +577,7 @@ OCI_SYM_LOCAL float OcilibElementGetFloat
  * OcilibElementGetString
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibElementGetString
+const otext * OcilibElementGetString
 (
     OCI_Elem *elem
 )
@@ -604,7 +604,7 @@ OCI_SYM_LOCAL const otext * OcilibElementGetString
  * OcilibElementGetRaw
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibElementGetRaw
+unsigned int OcilibElementGetRaw
 (
     OCI_Elem    *elem,
     void        *value,
@@ -641,7 +641,7 @@ OCI_SYM_LOCAL unsigned int OcilibElementGetRaw
 * OcilibElementGetRawSize
 * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibElementGetRawSize
+unsigned int OcilibElementGetRawSize
 (
     OCI_Elem *elem
 )
@@ -666,7 +666,7 @@ OCI_SYM_LOCAL unsigned int OcilibElementGetRawSize
  * OcilibElementGetDate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Date * OcilibElementGetDate
+OCI_Date * OcilibElementGetDate
 (
     OCI_Elem *elem
 )
@@ -683,7 +683,7 @@ OCI_SYM_LOCAL OCI_Date * OcilibElementGetDate
  * OcilibElementGetTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Timestamp * OcilibElementGetTimestamp
+OCI_Timestamp * OcilibElementGetTimestamp
 (
     OCI_Elem *elem
 )
@@ -718,7 +718,7 @@ OCI_SYM_LOCAL OCI_Timestamp * OcilibElementGetTimestamp
  * OcilibElementGetInterval
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Interval * OcilibElementGetInterval
+OCI_Interval * OcilibElementGetInterval
 (
     OCI_Elem *elem
 )
@@ -752,7 +752,7 @@ OCI_SYM_LOCAL OCI_Interval * OcilibElementGetInterval
  * OcilibElementGetLob
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Lob * OcilibElementGetLob
+OCI_Lob * OcilibElementGetLob
 (
     OCI_Elem *elem
 )
@@ -771,7 +771,7 @@ OCI_SYM_LOCAL OCI_Lob * OcilibElementGetLob
  * OcilibElementGetFile
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_File * OcilibElementGetFile
+OCI_File * OcilibElementGetFile
 (
     OCI_Elem *elem
 )
@@ -790,7 +790,7 @@ OCI_SYM_LOCAL OCI_File * OcilibElementGetFile
  * OcilibElementGetReference
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Ref * OcilibElementGetReference
+OCI_Ref * OcilibElementGetReference
 (
     OCI_Elem *elem
 )
@@ -808,7 +808,7 @@ OCI_SYM_LOCAL OCI_Ref * OcilibElementGetReference
  * OcilibElementGetObject
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Object * OcilibElementGetObject
+OCI_Object * OcilibElementGetObject
 (
     OCI_Elem *elem
 )
@@ -826,7 +826,7 @@ OCI_SYM_LOCAL OCI_Object * OcilibElementGetObject
  * OcilibElementGetCollection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Coll * OcilibElementGetCollection
+OCI_Coll * OcilibElementGetCollection
 (
     OCI_Elem *elem
 )
@@ -845,7 +845,7 @@ OCI_SYM_LOCAL OCI_Coll * OcilibElementGetCollection
  * OcilibElementSetBoolean
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetBoolean
+boolean OcilibElementSetBoolean
 (
     OCI_Elem *elem,
     boolean   value
@@ -878,7 +878,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetBoolean
  * OcilibElementSetNumber
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetNumber
+boolean OcilibElementSetNumber
 (
     OCI_Elem   *elem,
     OCI_Number *value
@@ -897,7 +897,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetNumber
  * OcilibElementSetShort
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetShort
+boolean OcilibElementSetShort
 (
     OCI_Elem *elem,
     short     value
@@ -910,7 +910,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetShort
  * OcilibElementSetUnsignedShort
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetUnsignedShort
+boolean OcilibElementSetUnsignedShort
 (
     OCI_Elem      *elem,
     unsigned short value
@@ -923,7 +923,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetUnsignedShort
  * OcilibElementSetInt
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetInt
+boolean OcilibElementSetInt
 (
     OCI_Elem *elem,
     int       value
@@ -936,7 +936,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetInt
  * OcilibElementSetUnsignedInt
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetUnsignedInt
+boolean OcilibElementSetUnsignedInt
 (
     OCI_Elem    *elem,
     unsigned int value
@@ -949,7 +949,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetUnsignedInt
  * OcilibElementSetBigInt
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetBigInt
+boolean OcilibElementSetBigInt
 (
     OCI_Elem *elem,
     big_int   value
@@ -962,7 +962,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetBigInt
  * OcilibElementSetUnsignedBigInt
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetUnsignedBigInt
+boolean OcilibElementSetUnsignedBigInt
 (
     OCI_Elem *elem,
     big_uint  value
@@ -975,7 +975,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetUnsignedBigInt
  * OcilibElementSetDouble
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetDouble
+boolean OcilibElementSetDouble
 (
     OCI_Elem *elem,
     double    value
@@ -988,7 +988,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetDouble
  * OcilibElementSetFloat
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetFloat
+boolean OcilibElementSetFloat
 (
     OCI_Elem *elem,
     float     value
@@ -1001,7 +1001,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetFloat
  * OcilibElementSetString
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetString
+boolean OcilibElementSetString
 (
     OCI_Elem    *elem,
     const otext *value
@@ -1040,7 +1040,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetString
  * OcilibElementSetRaw
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetRaw
+boolean OcilibElementSetRaw
 (
     OCI_Elem    *elem,
     void       * value,
@@ -1082,7 +1082,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetRaw
  * OcilibElementSetDate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetDate
+boolean OcilibElementSetDate
 (
     OCI_Elem *elem,
     OCI_Date *value
@@ -1102,7 +1102,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetDate
  * OcilibElementSetTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetTimestamp
+boolean OcilibElementSetTimestamp
 (
     OCI_Elem      *elem,
     OCI_Timestamp *value
@@ -1139,7 +1139,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetTimestamp
  * OcilibElementSetInterval
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetInterval
+boolean OcilibElementSetInterval
 (
     OCI_Elem     *elem,
     OCI_Interval *value
@@ -1177,7 +1177,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetInterval
  * OcilibElementSetCollection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetCollection
+boolean OcilibElementSetCollection
 (
     OCI_Elem *elem,
     OCI_Coll *value
@@ -1197,7 +1197,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetCollection
  * OcilibElementSetObject
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetObject
+boolean OcilibElementSetObject
 (
     OCI_Elem   *elem,
     OCI_Object *value
@@ -1217,7 +1217,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetObject
  * OcilibElementSetLob
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetLob
+boolean OcilibElementSetLob
 (
     OCI_Elem *elem,
     OCI_Lob  *value
@@ -1238,7 +1238,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetLob
  * OcilibElementSetFile
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetFile
+boolean OcilibElementSetFile
 (
     OCI_Elem *elem,
     OCI_File *value
@@ -1259,7 +1259,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetFile
  * OcilibElementSetReference
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetReference
+boolean OcilibElementSetReference
 (
     OCI_Elem *elem,
     OCI_Ref  *value
@@ -1279,7 +1279,7 @@ OCI_SYM_LOCAL boolean OcilibElementSetReference
  * OcilibElementIsNull
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementIsNull
+boolean OcilibElementIsNull
 (
     OCI_Elem *elem
 )
@@ -1303,7 +1303,7 @@ OCI_SYM_LOCAL boolean OcilibElementIsNull
  * OcilibElementSetNull
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibElementSetNull
+boolean OcilibElementSetNull
 (
     OCI_Elem *elem
 )

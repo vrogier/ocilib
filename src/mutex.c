@@ -24,10 +24,10 @@
 #include "memory.h"
 
 /* --------------------------------------------------------------------------------------------- *
-  * MutexCreateInternal
+  * OcilibMutexCreateInternal
   * --------------------------------------------------------------------------------------------- */
 
-OCI_Mutex * MutexCreateInternal
+OCI_Mutex * OcilibMutexCreateInternal
 (
     void
 )
@@ -46,7 +46,7 @@ OCI_Mutex * MutexCreateInternal
 
     /* allocate error handle */
 
-    CHECK(MemoryAllocHandle(Env.env, (dvoid **)(void *)&mutex->err, OCI_HTYPE_ERROR))
+    CHECK(OcilibMemoryAllocHandle(Env.env, (dvoid **)(void *)&mutex->err, OCI_HTYPE_ERROR))
 
     /* allocate mutex handle */
 
@@ -62,7 +62,7 @@ OCI_Mutex * MutexCreateInternal
     (
         if (FAILURE)
         {
-            MutexFree(mutex);
+            OcilibMutexFree(mutex);
             mutex = NULL;
         }
 
@@ -71,10 +71,10 @@ OCI_Mutex * MutexCreateInternal
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MutexCreate
+ * OcilibMutexCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Mutex * MutexCreate
+OCI_Mutex * OcilibMutexCreate
 (
     void
 )
@@ -87,16 +87,16 @@ OCI_Mutex * MutexCreate
 
     CHECK_INITIALIZED()
 
-    SET_RETVAL(MutexCreateInternal())
+    SET_RETVAL(OcilibMutexCreateInternal())
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MutexFree
+ * OcilibMutexFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean MutexFree
+boolean OcilibMutexFree
 (
     OCI_Mutex *mutex
 )
@@ -125,12 +125,12 @@ boolean MutexFree
 
     if (NULL != mutex->err)
     {
-        MemoryFreeHandle(mutex->err, OCI_HTYPE_ERROR);
+        OcilibMemoryFreeHandle(mutex->err, OCI_HTYPE_ERROR);
     }
 
     /* free mutex structure */
 
-    ErrorResetSource(NULL, mutex);
+    OcilibErrorResetSource(NULL, mutex);
 
     FREE(mutex)
 
@@ -140,10 +140,10 @@ boolean MutexFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MutexAcquire
+ * OcilibMutexAcquire
  * --------------------------------------------------------------------------------------------- */
 
-boolean MutexAcquire
+boolean OcilibMutexAcquire
 (
     OCI_Mutex *mutex
 )
@@ -169,10 +169,10 @@ boolean MutexAcquire
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MutexRelease
+ * OcilibMutexRelease
  * --------------------------------------------------------------------------------------------- */
 
-boolean MutexRelease
+boolean OcilibMutexRelease
 (
     OCI_Mutex *mutex
 )

@@ -29,7 +29,7 @@
  * OcilibDateInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Date * OcilibDateInitialize
+OCI_Date * OcilibDateInitialize
 (
     OCI_Connection *con,
     OCI_Date       *date,
@@ -107,7 +107,7 @@ OCI_SYM_LOCAL OCI_Date * OcilibDateInitialize
  * OcilibDateCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Date * OcilibDateCreate
+OCI_Date * OcilibDateCreate
 (
     OCI_Connection *con
 )
@@ -129,7 +129,7 @@ OCI_SYM_LOCAL OCI_Date * OcilibDateCreate
  * OcilibDateFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateFree
+boolean OcilibDateFree
 (
     OCI_Date *date
 )
@@ -164,7 +164,7 @@ OCI_SYM_LOCAL boolean OcilibDateFree
  * OcilibDateCreateArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_Date ** OcilibDateCreateArray
+OCI_Date ** OcilibDateCreateArray
 (
     OCI_Connection *con,
     unsigned int    nbelem
@@ -194,7 +194,7 @@ OCI_SYM_LOCAL OCI_Date ** OcilibDateCreateArray
  * OcilibDateFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateFreeArray
+boolean OcilibDateFreeArray
 (
     OCI_Date **dates
 )
@@ -216,7 +216,7 @@ OCI_SYM_LOCAL boolean OcilibDateFreeArray
  * OcilibDateAddDays
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateAddDays
+boolean OcilibDateAddDays
 (
     OCI_Date *date,
     int       nb
@@ -247,7 +247,7 @@ OCI_SYM_LOCAL boolean OcilibDateAddDays
  * OcilibDateAddMonths
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateAddMonths
+boolean OcilibDateAddMonths
 (
     OCI_Date *date,
     int       nb
@@ -278,7 +278,7 @@ OCI_SYM_LOCAL boolean OcilibDateAddMonths
  * OcilibDateAssign
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateAssign
+boolean OcilibDateAssign
 (
     OCI_Date *date,
     OCI_Date *date_src
@@ -310,7 +310,7 @@ OCI_SYM_LOCAL boolean OcilibDateAssign
  * OcilibDateCheck
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL int OcilibDateCheck
+int OcilibDateCheck
 (
     OCI_Date *date
 )
@@ -342,7 +342,7 @@ OCI_SYM_LOCAL int OcilibDateCheck
  * OcilibDateCompare
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL int OcilibDateCompare
+int OcilibDateCompare
 (
     OCI_Date *date,
     OCI_Date *date2
@@ -376,7 +376,7 @@ OCI_SYM_LOCAL int OcilibDateCompare
  * OcilibDateDaysBetween
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL int OcilibDateDaysBetween
+int OcilibDateDaysBetween
 (
     OCI_Date *date,
     OCI_Date *date2
@@ -410,7 +410,7 @@ OCI_SYM_LOCAL int OcilibDateDaysBetween
  * OcilibDateFromString
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateFromString
+boolean OcilibDateFromString
 (
     OCI_Date    *date,
     const otext *str,
@@ -464,7 +464,7 @@ OCI_SYM_LOCAL boolean OcilibDateFromString
  * OcilibDateGetDate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateGetDate
+boolean OcilibDateGetDate
 (
     OCI_Date *date,
     int      *year,
@@ -502,7 +502,7 @@ OCI_SYM_LOCAL boolean OcilibDateGetDate
  * OcilibDateGetTime
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateGetTime
+boolean OcilibDateGetTime
 (
     OCI_Date *date,
     int      *hour,
@@ -540,7 +540,7 @@ OCI_SYM_LOCAL boolean OcilibDateGetTime
  * OcilibDateGetDateTime
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateGetDateTime
+boolean OcilibDateGetDateTime
 (
     OCI_Date *date,
     int      *year,
@@ -558,7 +558,7 @@ OCI_SYM_LOCAL boolean OcilibDateGetDateTime
  * OcilibDateLastDay
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateLastDay
+boolean OcilibDateLastDay
 (
     OCI_Date *date
 )
@@ -588,7 +588,7 @@ OCI_SYM_LOCAL boolean OcilibDateLastDay
  * OcilibDateNextDay
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateNextDay
+boolean OcilibDateNextDay
 (
     OCI_Date    *date,
     const otext *day
@@ -629,7 +629,7 @@ OCI_SYM_LOCAL boolean OcilibDateNextDay
  * OcilibDateSetDate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateSetDate
+boolean OcilibDateSetDate
 (
     OCI_Date *date,
     int       year,
@@ -656,7 +656,7 @@ OCI_SYM_LOCAL boolean OcilibDateSetDate
  * OcilibDateSetTime
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateSetTime
+boolean OcilibDateSetTime
 (
     OCI_Date *date,
     int       hour,
@@ -683,7 +683,7 @@ OCI_SYM_LOCAL boolean OcilibDateSetTime
  * OcilibDateSetDateTime
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateSetDateTime
+boolean OcilibDateSetDateTime
 (
     OCI_Date *date,
     int       year,
@@ -701,7 +701,7 @@ OCI_SYM_LOCAL boolean OcilibDateSetDateTime
  * OcilibDateSysDate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateSysDate
+boolean OcilibDateSysDate
 (
     OCI_Date *date
 )
@@ -730,7 +730,7 @@ OCI_SYM_LOCAL boolean OcilibDateSysDate
  * OcilibDateToString
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateToString
+boolean OcilibDateToString
 (
     OCI_Date    *date,
     const otext *fmt,
@@ -793,7 +793,7 @@ OCI_SYM_LOCAL boolean OcilibDateToString
  * OcilibDateZoneToZone
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateZoneToZone
+boolean OcilibDateZoneToZone
 (
     OCI_Date    *date,
     const otext *zone1,
@@ -841,7 +841,7 @@ OCI_SYM_LOCAL boolean OcilibDateZoneToZone
  * OcilibDateToCTime
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateToCTime
+boolean OcilibDateToCTime
 (
     OCI_Date  *date,
     struct tm *ptm,
@@ -895,7 +895,7 @@ OCI_SYM_LOCAL boolean OcilibDateToCTime
  * OcilibDateFromCTime
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibDateFromCTime
+boolean OcilibDateFromCTime
 (
     OCI_Date  *date,
     struct tm *ptm,

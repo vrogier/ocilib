@@ -30,7 +30,7 @@
 * OcilibColumnGetAttrInfo
 * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibColumnGetAttributeInfo
+boolean OcilibColumnGetAttributeInfo
 (
     OCI_Column  *col,
     unsigned int count,
@@ -116,7 +116,7 @@ OCI_SYM_LOCAL boolean OcilibColumnGetAttributeInfo
  * OcilibColumnRetrieveInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibColumnRetrieveInfo
+boolean OcilibColumnRetrieveInfo
 (
     OCI_Column     *col,
     OCI_Connection *con,
@@ -529,7 +529,7 @@ OCI_SYM_LOCAL boolean OcilibColumnRetrieveInfo
  * OcilibColumnMapInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibColumnMapInfo
+boolean OcilibColumnMapInfo
 (
     OCI_Column    *col,
     OCI_Statement *stmt
@@ -904,7 +904,7 @@ OCI_SYM_LOCAL boolean OcilibColumnMapInfo
  * OcilibColumnGetName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibColumnGetName
+const otext * OcilibColumnGetName
 (
     OCI_Column *col
 )
@@ -938,7 +938,7 @@ unsigned int OcilibColumnGetType
  * OcilibColumnGetCharsetForm
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetCharsetForm
+unsigned int OcilibColumnGetCharsetForm
 (
     OCI_Column *col
 )
@@ -971,7 +971,7 @@ OCI_SYM_LOCAL unsigned int OcilibColumnGetCharsetForm
  * OcilibColumnGetSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetSize
+unsigned int OcilibColumnGetSize
 (
     OCI_Column *col
 )
@@ -1001,7 +1001,7 @@ OCI_SYM_LOCAL unsigned int OcilibColumnGetSize
  * OcilibColumnGetScale
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL int OcilibColumnGetScale
+int OcilibColumnGetScale
 (
     OCI_Column *col
 )
@@ -1018,7 +1018,7 @@ OCI_SYM_LOCAL int OcilibColumnGetScale
  * OcilibColumnGetPrecision
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL int OcilibColumnGetPrecision
+int OcilibColumnGetPrecision
 (
     OCI_Column *col
 )
@@ -1040,7 +1040,7 @@ OCI_SYM_LOCAL int OcilibColumnGetPrecision
  * OcilibColumnGetFractionalPrecision
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL int OcilibColumnGetFractionalPrecision
+int OcilibColumnGetFractionalPrecision
 (
     OCI_Column *col
 )
@@ -1073,7 +1073,7 @@ OCI_SYM_LOCAL int OcilibColumnGetFractionalPrecision
  * OcilibColumnGetLeadingPrecision
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL int OcilibColumnGetLeadingPrecision
+int OcilibColumnGetLeadingPrecision
 (
     OCI_Column *col
 )
@@ -1095,7 +1095,7 @@ OCI_SYM_LOCAL int OcilibColumnGetLeadingPrecision
  * OcilibColumnGetNullable
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibColumnGetNullable
+boolean OcilibColumnGetNullable
 (
     OCI_Column *col
 )
@@ -1117,7 +1117,7 @@ OCI_SYM_LOCAL boolean OcilibColumnGetNullable
  * OcilibColumnGetCharUsed
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibColumnGetCharUsed
+boolean OcilibColumnGetCharUsed
 (
     OCI_Column *col
 )
@@ -1134,7 +1134,7 @@ OCI_SYM_LOCAL boolean OcilibColumnGetCharUsed
  * OcilibColumnGetPropertyFlags
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetPropertyFlags
+unsigned int OcilibColumnGetPropertyFlags
 (
     OCI_Column *col
 )
@@ -1151,7 +1151,7 @@ OCI_SYM_LOCAL unsigned int OcilibColumnGetPropertyFlags
 * OCI_ColumnGetCollationID
 * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetCollationID
+unsigned int OcilibColumnGetCollationID
 (
     OCI_Column *col
 )
@@ -1168,7 +1168,7 @@ OCI_SYM_LOCAL unsigned int OcilibColumnGetCollationID
  * OcilibColumnGetSQLType
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL const otext * OcilibColumnGetSqlType
+const otext * OcilibColumnGetSqlType
 (
     OCI_Column *col
 )
@@ -1395,7 +1395,7 @@ OCI_SYM_LOCAL const otext * OcilibColumnGetSqlType
  * OcilibColumnGetFullSQLType
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetFullSqlType
+unsigned int OcilibColumnGetFullSqlType
 (
     OCI_Column  *col,
     otext       *buffer,
@@ -1674,7 +1674,7 @@ OCI_SYM_LOCAL unsigned int OcilibColumnGetFullSqlType
  * OcilibColumnGetTypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL OCI_TypeInfo * OcilibColumnGetTypeInfo
+OCI_TypeInfo * OcilibColumnGetTypeInfo
 (
     OCI_Column *col
 )
@@ -1691,7 +1691,7 @@ OCI_SYM_LOCAL OCI_TypeInfo * OcilibColumnGetTypeInfo
  * OcilibColumnGetSubType
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetSubType
+unsigned int OcilibColumnGetSubType
 (
     OCI_Column *col
 )

@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Connection * OcilibConnectionCreateInternal
+OCI_SYM_LOCAL OCI_Connection * OcilibConnectionCreateInternal
 (
     OCI_Pool    *pool,
     const otext *db,
@@ -33,7 +33,7 @@ OCI_Connection * OcilibConnectionCreateInternal
     const otext *tag
 );
 
-OCI_Connection* OcilibConnectionAllocate
+OCI_SYM_LOCAL OCI_Connection* OcilibConnectionAllocate
 (
     OCI_Pool   * pool,
     const otext* db,
@@ -42,35 +42,35 @@ OCI_Connection* OcilibConnectionAllocate
     unsigned int mode
 );
 
-boolean OcilibConnectionAttach
+OCI_SYM_LOCAL boolean OcilibConnectionAttach
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionLogon
+OCI_SYM_LOCAL boolean OcilibConnectionLogon
 (
     OCI_Connection* con,
     const otext   * new_pwd,
     const otext   * tag
 );
 
-boolean OcilibConnectionDispose
+OCI_SYM_LOCAL boolean OcilibConnectionDispose
 (
     OCI_Connection* con
 );
 
-unsigned int OcilibConnectionGetMinSupportedVersion
+OCI_SYM_LOCAL unsigned int OcilibConnectionGetMinSupportedVersion
 (
     OCI_Connection *con
 );
 
-boolean OcilibConnectionIsVersionSupported
+OCI_SYM_LOCAL boolean OcilibConnectionIsVersionSupported
 (
     OCI_Connection *con,
     unsigned int    version
 );
 
-OCI_Connection* OcilibConnectionCreate
+OCI_SYM_LOCAL OCI_Connection* OcilibConnectionCreate
 (
     const otext* db,
     const otext* user,
@@ -78,127 +78,127 @@ OCI_Connection* OcilibConnectionCreate
     unsigned int mode
 );
 
-boolean OcilibConnectionFree
+OCI_SYM_LOCAL boolean OcilibConnectionFree
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionCommit
+OCI_SYM_LOCAL boolean OcilibConnectionCommit
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionRollback
+OCI_SYM_LOCAL boolean OcilibConnectionRollback
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionSetAutoCommit
+OCI_SYM_LOCAL boolean OcilibConnectionSetAutoCommit
 (
     OCI_Connection* con,
     boolean         enable
 );
 
-boolean OcilibConnectionGetAutoCommit
+OCI_SYM_LOCAL boolean OcilibConnectionGetAutoCommit
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionIsConnected
+OCI_SYM_LOCAL boolean OcilibConnectionIsConnected
 (
     OCI_Connection* con
 );
 
-void* OcilibConnectionGetUserData
+OCI_SYM_LOCAL void* OcilibConnectionGetUserData
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionSetUserData
+OCI_SYM_LOCAL boolean OcilibConnectionSetUserData
 (
     OCI_Connection* con,
     void          * data
 );
 
-boolean OcilibConnectionSetSessionTag
+OCI_SYM_LOCAL boolean OcilibConnectionSetSessionTag
 (
     OCI_Connection* con,
     const otext   * tag
 );
 
-const otext* OcilibConnectionGetSessionTag
+OCI_SYM_LOCAL const otext* OcilibConnectionGetSessionTag
 (
     OCI_Connection* con
 );
 
-const otext* OcilibConnectionGetConnectionString
+OCI_SYM_LOCAL const otext* OcilibConnectionGetConnectionString
 (
     OCI_Connection* con
 );
 
-const otext* OcilibConnectionGetUserName
+OCI_SYM_LOCAL const otext* OcilibConnectionGetUserName
 (
     OCI_Connection* con
 );
 
-const otext* OcilibConnectionGetPassword
+OCI_SYM_LOCAL const otext* OcilibConnectionGetPassword
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionSetPassword
+OCI_SYM_LOCAL boolean OcilibConnectionSetPassword
 (
     OCI_Connection* con,
     const otext   * password
 );
 
-unsigned int OcilibConnectionGetSessionMode
+OCI_SYM_LOCAL unsigned int OcilibConnectionGetSessionMode
 (
     OCI_Connection* con
 );
 
-const otext* OcilibConnectionGetServerVersion
+OCI_SYM_LOCAL const otext* OcilibConnectionGetServerVersion
 (
     OCI_Connection* con
 );
 
-unsigned int OcilibConnectionGetServerMajorVersion
+OCI_SYM_LOCAL unsigned int OcilibConnectionGetServerMajorVersion
 (
     OCI_Connection* con
 );
 
-unsigned int OcilibConnectionGetServerMinorVersion
+OCI_SYM_LOCAL unsigned int OcilibConnectionGetServerMinorVersion
 (
     OCI_Connection* con
 );
 
-unsigned int OcilibConnectionGetServerRevisionVersion
+OCI_SYM_LOCAL unsigned int OcilibConnectionGetServerRevisionVersion
 (
     OCI_Connection* con
 );
 
-OCI_Transaction* OcilibConnectionGetTransaction
+OCI_SYM_LOCAL OCI_Transaction* OcilibConnectionGetTransaction
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionSetTransaction
+OCI_SYM_LOCAL boolean OcilibConnectionSetTransaction
 (
     OCI_Connection * con,
     OCI_Transaction* trans
 );
 
-unsigned int OcilibConnectionGetVersion
+OCI_SYM_LOCAL unsigned int OcilibConnectionGetVersion
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionBreak
+OCI_SYM_LOCAL boolean OcilibConnectionBreak
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionEnableServerOutput
+OCI_SYM_LOCAL boolean OcilibConnectionEnableServerOutput
 (
     OCI_Connection* con,
     unsigned int    bufsize,
@@ -206,123 +206,123 @@ boolean OcilibConnectionEnableServerOutput
     unsigned int    lnsize
 );
 
-boolean OcilibConnectionDisableServerOutput
+OCI_SYM_LOCAL boolean OcilibConnectionDisableServerOutput
 (
     OCI_Connection* con
 );
 
-const otext* OcilibConnectionGetServerOutput
+OCI_SYM_LOCAL const otext* OcilibConnectionGetServerOutput
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionSetTrace
+OCI_SYM_LOCAL boolean OcilibConnectionSetTrace
 (
     OCI_Connection* con,
     unsigned int    trace,
     const otext   * value
 );
 
-const otext* OcilibConnectionGetTrace
+OCI_SYM_LOCAL const otext* OcilibConnectionGetTrace
 (
     OCI_Connection* con,
     unsigned int    trace
 );
 
-boolean OcilibConnectionPing
+OCI_SYM_LOCAL boolean OcilibConnectionPing
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionSetTimeout
+OCI_SYM_LOCAL boolean OcilibConnectionSetTimeout
 (
     OCI_Connection* con,
     unsigned int    type,
     unsigned int    value
 );
 
-unsigned int OcilibConnectionGetTimeout
+OCI_SYM_LOCAL unsigned int OcilibConnectionGetTimeout
 (
     OCI_Connection* con,
     unsigned int    type
 );
 
-const otext* OcilibConnectionGetDatabaseName
+OCI_SYM_LOCAL const otext* OcilibConnectionGetDatabaseName
 (
     OCI_Connection* con
 );
 
-const otext* OcilibConnectionGetInstanceName
+OCI_SYM_LOCAL const otext* OcilibConnectionGetInstanceName
 (
     OCI_Connection* con
 );
 
-const otext* OcilibConnectionGetServiceName
+OCI_SYM_LOCAL const otext* OcilibConnectionGetServiceName
 (
     OCI_Connection* con
 );
 
-const otext* OcilibConnectionGetServerName
+OCI_SYM_LOCAL const otext* OcilibConnectionGetServerName
 (
     OCI_Connection* con
 );
 
-const otext* OcilibConnectionGetDomainName
+OCI_SYM_LOCAL const otext* OcilibConnectionGetDomainName
 (
     OCI_Connection* con
 );
 
-OCI_Timestamp* OcilibConnectionGetInstanceStartTime
+OCI_SYM_LOCAL OCI_Timestamp* OcilibConnectionGetInstanceStartTime
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionIsTAFCapable
+OCI_SYM_LOCAL boolean OcilibConnectionIsTAFCapable
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionSetTAFHandler
+OCI_SYM_LOCAL boolean OcilibConnectionSetTAFHandler
 (
     OCI_Connection * con,
     POCI_TAF_HANDLER handler
 );
 
-unsigned int OcilibConnectionGetStatementCacheSize
+OCI_SYM_LOCAL unsigned int OcilibConnectionGetStatementCacheSize
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionSetStatementCacheSize
+OCI_SYM_LOCAL boolean OcilibConnectionSetStatementCacheSize
 (
     OCI_Connection* con,
     unsigned int    value
 );
 
-unsigned int OcilibConnectionGetDefaultLobPrefetchSize
+OCI_SYM_LOCAL unsigned int OcilibConnectionGetDefaultLobPrefetchSize
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionSetDefaultLobPrefetchSize
+OCI_SYM_LOCAL boolean OcilibConnectionSetDefaultLobPrefetchSize
 (
     OCI_Connection* con,
     unsigned int    value
 );
 
-unsigned int OcilibConnectionGetMaxCursors
+OCI_SYM_LOCAL unsigned int OcilibConnectionGetMaxCursors
 (
     OCI_Connection* con
 );
 
-boolean OcilibConnectionExecuteImmediate
+OCI_SYM_LOCAL boolean OcilibConnectionExecuteImmediate
 (
     OCI_Connection* con,
     const otext   * sql,
     va_list         args
 );
 
-boolean OcilibConnectionExecuteImmediateFmt
+OCI_SYM_LOCAL boolean OcilibConnectionExecuteImmediateFmt
 (
     OCI_Connection* con,
     const otext   * sql,

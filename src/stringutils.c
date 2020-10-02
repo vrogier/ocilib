@@ -42,10 +42,10 @@
 
 
 /* --------------------------------------------------------------------------------------------- *
- * StringLength
+ * OcilibStringLength
  * --------------------------------------------------------------------------------------------- */
 
-size_t StringLength
+size_t OcilibStringLength
 (
     const void *ptr,
     size_t      size_elem
@@ -81,10 +81,10 @@ size_t StringLength
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringBinaryToString
+ * OcilibStringBinaryToString
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int StringBinaryToString
+unsigned int OcilibStringBinaryToString
 (
     const unsigned char *binary,
     unsigned int         binary_size,
@@ -110,10 +110,10 @@ unsigned int StringBinaryToString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringRequestBuffer
+ * OcilibStringRequestBuffer
  * --------------------------------------------------------------------------------------------- */
 
-boolean StringRequestBuffer
+boolean OcilibStringRequestBuffer
 (
     otext       **buffer,
     unsigned int *buffer_size,
@@ -133,13 +133,13 @@ boolean StringRequestBuffer
 
     if (!*buffer)
     {
-        *buffer = (otext *) MemoryAlloc(OCI_IPC_STRING, (size_t) request_size, 
-                                        (size_t) 1, TRUE);
+        *buffer = (otext *)OcilibMemoryAlloc(OCI_IPC_STRING, (size_t) request_size,
+                                             (size_t) 1, TRUE);
     }
     else if (*buffer_size < request_size)
     {
-        *buffer = (otext *) MemoryRealloc(*buffer, OCI_IPC_STRING, (size_t) request_size,
-                                          (size_t) 1, TRUE);
+        *buffer = (otext *)OcilibMemoryRealloc(*buffer, OCI_IPC_STRING, (size_t) request_size,
+                                               (size_t) 1, TRUE);
     }
 
     if (*buffer)
@@ -153,10 +153,10 @@ boolean StringRequestBuffer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringTranslate
+ * OcilibStringTranslate
  * --------------------------------------------------------------------------------------------- */
 
-void StringTranslate
+void OcilibStringTranslate
 (
     void  *src,
     void  *dst,
@@ -305,10 +305,10 @@ void StringTranslate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringGetDBString
+ * OcilibStringGetDBString
  * --------------------------------------------------------------------------------------------- */
 
-dbtext * StringGetDBString
+dbtext * OcilibStringGetDBString
 (
     const otext *src,
     int         *size
@@ -334,11 +334,12 @@ dbtext * StringGetDBString
 
     if (Env.use_wide_char_conv)
     {
-        dst = (dbtext *) MemoryAlloc(OCI_IPC_STRING, sizeof(dbtext), len + 1, FALSE);
+        dst = (dbtext *)OcilibMemoryAlloc(OCI_IPC_STRING, sizeof(dbtext),
+                                          len + 1, FALSE);
 
         if (NULL != dst)
         {
-            StringUTF32ToUTF16( src, dst, len );
+            OcilibStringUTF32ToUTF16( src, dst, len );
         }
     }
     else
@@ -352,25 +353,25 @@ dbtext * StringGetDBString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringReleaseDBString
+ * OcilibStringReleaseDBString
  * --------------------------------------------------------------------------------------------- */
 
-void StringReleaseDBString
+void OcilibStringReleaseDBString
 (
     dbtext *str
 )
 {
     if (Env.use_wide_char_conv && NULL != str)
     {
-        MemoryFree(str);
+        OcilibMemoryFree(str);
     }
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringCopyDBStringToNativeString
+ * OcilibStringCopyDBStringToNativeString
  * --------------------------------------------------------------------------------------------- */
 
-int StringCopyDBStringToNativeString
+int OcilibStringCopyDBStringToNativeString
 (
     const dbtext *src,
     otext        *dst,
@@ -379,33 +380,33 @@ int StringCopyDBStringToNativeString
 {
     if (Env.use_wide_char_conv)
     {
-        StringUTF16ToUTF32((void *) src, (void *) dst, len);
+        OcilibStringUTF16ToUTF32((void *) src, (void *) dst, len);
     }
 
     return len;
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringDuplicateFromDBString
+ * OcilibStringDuplicateFromDBString
  * --------------------------------------------------------------------------------------------- */
 
-otext* StringDuplicateFromDBString
+otext* OcilibStringDuplicateFromDBString
 (
     const dbtext *src,
     int           len
 )
 {
-    otext *dst = (otext *) MemoryAlloc(OCI_IPC_STRING, sizeof(otext), len + 1, FALSE);
+    otext *dst = (otext *)OcilibMemoryAlloc(OCI_IPC_STRING, sizeof(otext), len + 1, FALSE);
 
     if (NULL != dst)
     {
         if (Env.use_wide_char_conv)
         {
-            StringUTF16ToUTF32((void *) src, (void *) dst, len);
+            OcilibStringUTF16ToUTF32((void *) src, (void *) dst, len);
         }
         else
         {
-            StringRawCopy((void *) src, (void *) dst, len);
+            OcilibStringRawCopy((void *) src, (void *) dst, len);
         }
     }
 
@@ -413,10 +414,10 @@ otext* StringDuplicateFromDBString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringFromStringPtr
+ * OcilibStringFromStringPtr
  * --------------------------------------------------------------------------------------------- */
 
-otext * StringFromStringPtr
+otext * OcilibStringFromStringPtr
 (
     OCIEnv       *env,
     OCIString    *str,
@@ -436,13 +437,13 @@ otext * StringFromStringPtr
 
         if (NULL == *buffer)
         {
-            *buffer = MemoryAlloc(OCI_IPC_STRING, sizeof(otext), 
-                                  length + 1, FALSE);
+            *buffer = OcilibMemoryAlloc(OCI_IPC_STRING, sizeof(otext),
+                                        length + 1, FALSE);
         }
         else if ((*buffer_size) < ((length + 1) * sizeof(otext)))
         {
-            *buffer = MemoryRealloc((void*)  *buffer, OCI_IPC_STRING, sizeof(otext),
-                                    length + 1, FALSE);
+            *buffer = OcilibMemoryRealloc((void*)  *buffer, OCI_IPC_STRING, sizeof(otext),
+                                          length + 1, FALSE);
         }
 
         if (NULL != *buffer)
@@ -451,11 +452,11 @@ otext * StringFromStringPtr
 
             if (Env.use_wide_char_conv)
             {
-                StringUTF16ToUTF32((void *)tmp, (void *)*buffer, (int) length);
+                OcilibStringUTF16ToUTF32((void *)tmp, (void *)*buffer, (int) length);
             }
             else
             {
-                StringRawCopy((void *)tmp, (void *)*buffer, (int) length);
+                OcilibStringRawCopy((void *)tmp, (void *)*buffer, (int) length);
             }
         }
     }
@@ -464,10 +465,10 @@ otext * StringFromStringPtr
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringToStringPtr
+ * OcilibStringToStringPtr
  * --------------------------------------------------------------------------------------------- */
 
-boolean StringToStringPtr
+boolean OcilibStringToStringPtr
 (
     OCIEnv      *env,
     OCIString  **str,
@@ -486,7 +487,7 @@ boolean StringToStringPtr
 
     CHECK_PTR(OCI_IPC_STRING, value)
 
-    dbstr = StringGetDBString(value, &dbsize);
+    dbstr = OcilibStringGetDBString(value, &dbsize);
 
     CHECK_OCI
     (
@@ -499,15 +500,15 @@ boolean StringToStringPtr
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(dbstr);
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* StringFreeStringPtr
+* OcilibStringFreeStringPtr
 * --------------------------------------------------------------------------------------------- */
 
-boolean StringFreeStringPtr
+boolean OcilibStringFreeStringPtr
 (
     OCIEnv     *env,
     OCIString **str,
@@ -535,10 +536,10 @@ boolean StringFreeStringPtr
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringGetAttribute
+ * OcilibStringGetAttribute
  * --------------------------------------------------------------------------------------------- */
 
-boolean StringGetAttribute
+boolean OcilibStringGetAttribute
 (
     OCI_Connection *con,
     void           *handle,
@@ -595,10 +596,11 @@ boolean StringGetAttribute
             len = dbcharcount(dbsize);
         }
 
-        if (StringRequestBuffer(str, size, len))
+        if (OcilibStringRequestBuffer(str, size, len))
         {
-            StringTranslate(dbstr, *str, len, is_ansi ? sizeof(char) : sizeof(dbtext),
-                            sizeof(otext));
+            OcilibStringTranslate(dbstr, *str, len, 
+                                  is_ansi ? sizeof(char) : sizeof(dbtext),
+                                  sizeof(otext));
         }
 
         CHECK_NULL(*str)
@@ -610,10 +612,10 @@ boolean StringGetAttribute
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringSetAttribute
+ * OcilibStringSetAttribute
  * --------------------------------------------------------------------------------------------- */
 
-boolean StringSetAttribute
+boolean OcilibStringSetAttribute
 (
     OCI_Connection *con,
     void           *handle,
@@ -634,7 +636,7 @@ boolean StringSetAttribute
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    dbstr = StringGetDBString(value, &dbsize);
+    dbstr = OcilibStringGetDBString(value, &dbsize);
 
     if (dbsize == -1)
     {
@@ -660,15 +662,15 @@ boolean StringSetAttribute
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(dbstr);
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringGetFromType
+ * OcilibStringGetFromType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int StringGetFromType
+unsigned int OcilibStringGetFromType
 (
     OCI_Connection *con,
     OCI_Column     *col,
@@ -689,7 +691,7 @@ unsigned int StringGetFromType
 
     if (quote && NULL != data)
     {
-        len = StringAddToBuffer(ptr, len, OTEXT("'"), 1, FALSE);
+        len = OcilibStringAddToBuffer(ptr, len, OTEXT("'"), 1, FALSE);
         if (ptr)
         {
             ptr++;
@@ -701,7 +703,7 @@ unsigned int StringGetFromType
     {
         case OCI_CDT_TEXT:
         {
-            len += StringAddToBuffer(buffer, len, (otext *) data, dbcharcount(data_size), quote);
+            len += OcilibStringAddToBuffer(buffer, len, (otext *) data, dbcharcount(data_size), quote);
             break;
         }
         case OCI_CDT_BOOLEAN:
@@ -714,7 +716,7 @@ unsigned int StringGetFromType
 
                     const unsigned int str_length = (*(boolean*)data) ? OCI_STRING_TRUE_SIZE : OCI_STRING_FALSE_SIZE;
 
-                    len += StringAddToBuffer(buffer, len, str_value, str_length, quote);
+                    len += OcilibStringAddToBuffer(buffer, len, str_value, str_length, quote);
                 }
                 else
                 {
@@ -734,7 +736,7 @@ unsigned int StringGetFromType
 
             if (NULL != ptr)
             {
-                res = NumberToStringInternal(con, data, col->subtype, ptr, (int) buffer_size, NULL);
+                res = OcilibNumberToStringInternal(con, data, col->subtype, ptr, (int) buffer_size, NULL);
             }
             else
             {
@@ -749,9 +751,9 @@ unsigned int StringGetFromType
             if (ptr)
             {
                 OCI_Date    *date = (OCI_Date*) data;
-                const otext *fmt  = EnvironmentGetFormat(con, OCI_FMT_DATE);
+                const otext *fmt  = OcilibEnvironmentGetFormat(con, OCI_FMT_DATE);
 
-                res = date ? DateToString(date, fmt, (int) buffer_size, ptr) : FALSE;
+                res = date ? OcilibDateToString(date, fmt, (int) buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -768,9 +770,9 @@ unsigned int StringGetFromType
                 OCI_Timestamp *tmsp = (OCI_Timestamp *) data;
                 const int fmt_type = tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP;
 
-                const otext *fmt = EnvironmentGetFormat(con, fmt_type);
+                const otext *fmt = OcilibEnvironmentGetFormat(con, fmt_type);
 
-                res = tmsp ? TimestampToString(tmsp, fmt, (int) buffer_size, ptr, 0) : FALSE;
+                res = tmsp ? OcilibTimestampToString(tmsp, fmt, (int) buffer_size, ptr, 0) : FALSE;
             }
             else
             {
@@ -786,8 +788,9 @@ unsigned int StringGetFromType
             {
                 OCI_Interval *itv = (OCI_Interval * ) data;
 
-                res = itv ? IntervalToString(itv, OCI_STRING_DEFAULT_PREC,
-                                 OCI_STRING_DEFAULT_PREC, (int) buffer_size, ptr) : FALSE;
+                res = itv ? OcilibIntervalToString(itv, OCI_STRING_DEFAULT_PREC,
+                                                   OCI_STRING_DEFAULT_PREC,
+                                                   (int) buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -803,12 +806,13 @@ unsigned int StringGetFromType
             {
                 if (OCI_CLONG == col->subtype)
                 {
-                    len = StringAddToBuffer(buffer, len, (otext*) LongGetBuffer(lg),
-                                      LongGetSize(lg), quote);
+                    len = OcilibStringAddToBuffer(buffer, len, 
+                                                  (otext*)OcilibLongGetBuffer(lg),
+                                                  OcilibLongGetSize(lg), quote);
                 }
                 else
                 {
-                    len = StringBinaryToString((unsigned char *) data, buffer_size, ptr);
+                    len = OcilibStringBinaryToString((unsigned char *) data, buffer_size, ptr);
                 }
             }
             else
@@ -822,7 +826,7 @@ unsigned int StringGetFromType
         {
             if (NULL != data)
             {
-                len = StringBinaryToString((unsigned char *) data, data_size, ptr);
+                len = OcilibStringBinaryToString((unsigned char *) data, data_size, ptr);
             }
             break;
         }
@@ -843,7 +847,7 @@ unsigned int StringGetFromType
                         unsigned int bytes_count = bytes_requested;
                         unsigned int char_count  = 0;
 
-                        res = LobRead2(lob, lob_buf, &char_count, &bytes_count);
+                        res = OcilibLobRead2(lob, lob_buf, &char_count, &bytes_count);
 
                         if (bytes_count == 0)
                         {
@@ -852,20 +856,20 @@ unsigned int StringGetFromType
 
                         if (OCI_BLOB == lob->type)
                         {
-                            len += StringBinaryToString(lob_buf, bytes_count, ptr + len);
+                            len += OcilibStringBinaryToString(lob_buf, bytes_count, ptr + len);
                         }
                         else
                         {
-                            len += StringAddToBuffer(buffer, len, (otext*)lob_buf,
-                                                     ocharcount(bytes_count), quote);
+                            len += OcilibStringAddToBuffer(buffer, len, (otext*)lob_buf,
+                                                           ocharcount(bytes_count), quote);
                         }
                     }
 
-                    LobSeek(lob, 0, OCI_SEEK_SET);
+                    OcilibLobSeek(lob, 0, OCI_SEEK_SET);
                 }
                 else
                 {
-                    len = (unsigned int)LobGetLength(lob);
+                    len = (unsigned int)OcilibLobGetLength(lob);
 
                     if (OCI_BLOB == lob->type)
                     {
@@ -888,12 +892,12 @@ unsigned int StringGetFromType
 
             if (NULL != file)
             {
-                const otext * dir  = FileGetDirectory(file);
-                const otext * name =  FileGetName(file);
+                const otext * dir  = OcilibFileGetDirectory(file);
+                const otext * name = OcilibFileGetName(file);
 
-                len += StringAddToBuffer(buffer, len, dir, (unsigned int) ostrlen(dir), TRUE);
-                len += StringAddToBuffer(buffer, len, OTEXT("/"), 1, TRUE);
-                len += StringAddToBuffer(buffer, len, name, (unsigned int) ostrlen(name), TRUE);
+                len += OcilibStringAddToBuffer(buffer, len, dir, (unsigned int) ostrlen(dir), TRUE);
+                len += OcilibStringAddToBuffer(buffer, len, OTEXT("/"), 1, TRUE);
+                len += OcilibStringAddToBuffer(buffer, len, name, (unsigned int) ostrlen(name), TRUE);
             }
             else
             {
@@ -910,7 +914,7 @@ unsigned int StringGetFromType
             if (NULL != ptr)
             {
                 OCI_Ref *ref = (OCI_Ref *) data;
-                res = ref ? ReferenceToString(ref, buffer_size, ptr) : FALSE;
+                res = ref ? OcilibReferenceToString(ref, buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -925,7 +929,7 @@ unsigned int StringGetFromType
             unsigned int real_size = buffer_size;
 
             quote = FALSE;
-            res   = obj ? ObjectToString(obj, &real_size, ptr) : FALSE;
+            res   = obj ? OcilibObjectToString(obj, &real_size, ptr) : FALSE;
             len   = real_size;
             break;
         }
@@ -936,7 +940,7 @@ unsigned int StringGetFromType
             unsigned int real_size = buffer_size;
 
             quote = FALSE;
-            res   = coll ? CollectionToString(coll, &real_size, ptr) : FALSE;
+            res   = coll ? OcilibCollectionToString(coll, &real_size, ptr) : FALSE;
             len   = real_size;
             break;
         }
@@ -948,8 +952,8 @@ unsigned int StringGetFromType
 
             if (NULL != stmt)
             {
-                len = StringAddToBuffer(buffer, len, stmt->sql,
-                                        (unsigned int) ostrlen(stmt->sql), quote);
+                len = OcilibStringAddToBuffer(buffer, len, stmt->sql,
+                                              (unsigned int) ostrlen(stmt->sql), quote);
             }
             else
             {
@@ -974,7 +978,7 @@ unsigned int StringGetFromType
 
         if (quote && NULL != data)
         {
-            len += StringAddToBuffer(buffer, len, OTEXT("'"), 1, FALSE);
+            len += OcilibStringAddToBuffer(buffer, len, OTEXT("'"), 1, FALSE);
         }
     }
     else
@@ -998,10 +1002,10 @@ unsigned int StringGetFromType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * StringAddToBuffer
+ * OcilibStringAddToBuffer
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int StringAddToBuffer
+unsigned int OcilibStringAddToBuffer
 (
     otext       *buffer,
     unsigned int offset,
@@ -1076,10 +1080,10 @@ unsigned int StringAddToBuffer
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* StringGetTypeName
+* OcilibStringGetTypeName
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int StringGetTypeName
+unsigned int OcilibStringGetTypeName
 (
     const otext *source,
     otext       *dest,
@@ -1131,10 +1135,10 @@ unsigned int StringGetTypeName
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* StringGetFullTypeName
+* OcilibStringGetFullTypeName
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int StringGetFullTypeName
+unsigned int OcilibStringGetFullTypeName
 (
     const otext *schema,
     const otext *package,
@@ -1148,7 +1152,7 @@ unsigned int StringGetFullTypeName
 
     if (IS_STRING_VALID(schema))
     {
-        offset += StringGetTypeName(schema, name + offset, length - offset);
+        offset += OcilibStringGetTypeName(schema, name + offset, length - offset);
 
         if (offset)
         {
@@ -1159,7 +1163,7 @@ unsigned int StringGetFullTypeName
 
     if (IS_STRING_VALID(package))
     {
-        offset += StringGetTypeName(package, name + offset, length - offset);
+        offset += OcilibStringGetTypeName(package, name + offset, length - offset);
 
         if (offset)
         {
@@ -1170,14 +1174,14 @@ unsigned int StringGetFullTypeName
 
     if (IS_STRING_VALID(type))
     {
-        offset += StringGetTypeName(type, name + offset, length - offset);
+        offset += OcilibStringGetTypeName(type, name + offset, length - offset);
     }
 
     if (IS_STRING_VALID(link))
     {
         ostrncpy(name + offset, OTEXT("@"), length - offset);
         offset++;
-        offset += StringGetTypeName(link, name + offset, length - offset);
+        offset += OcilibStringGetTypeName(link, name + offset, length - offset);
     }
 
     return offset;
@@ -1194,7 +1198,7 @@ char * ocistrdup
 {
     CHECK_FALSE(NULL == src, NULL)
 
-    char *dst = (char *) MemoryAlloc(OCI_IPC_STRING, 1, strlen(src) + 1, 0);
+    char *dst = (char *)OcilibMemoryAlloc(OCI_IPC_STRING, 1, strlen(src) + 1, 0);
 
     if (NULL != dst)
     {
@@ -1272,8 +1276,8 @@ wchar_t * ociwcsdup
 {
     CHECK_FALSE(NULL == src, NULL)
 
-    wchar_t *dst = (wchar_t *) MemoryAlloc(OCI_IPC_STRING, sizeof(wchar_t),
-                                           wcslen(src) + 1, 0);
+    wchar_t *dst = (wchar_t *)OcilibMemoryAlloc(OCI_IPC_STRING, sizeof(wchar_t),
+                                                wcslen(src) + 1, 0);
 
     if (NULL != dst)
     {

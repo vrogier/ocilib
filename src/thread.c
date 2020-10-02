@@ -24,10 +24,10 @@
 #include "memory.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * ThreadProc
+ * OcilibThreadProc
  * --------------------------------------------------------------------------------------------- */
 
-void ThreadProc
+static void OcilibThreadProc
 (
     dvoid *arg
 )
@@ -41,10 +41,10 @@ void ThreadProc
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ThreadCreate
+ * OcilibThreadCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Thread * ThreadCreate
+OCI_Thread * OcilibThreadCreate
 (
     void
 )
@@ -66,7 +66,7 @@ OCI_Thread * ThreadCreate
 
     /* allocate error handle */
 
-    CHECK(MemoryAllocHandle(Env.env, (dvoid **)(void *)&thread->err, OCI_HTYPE_ERROR))
+    CHECK(OcilibMemoryAllocHandle(Env.env, (dvoid **)(void *)&thread->err, OCI_HTYPE_ERROR))
 
     /* allocate thread handle */
 
@@ -92,7 +92,7 @@ OCI_Thread * ThreadCreate
     (
         if (FAILURE)
         {
-            ThreadFree(thread);
+            OcilibThreadFree(thread);
             thread = NULL;
         }
 
@@ -101,10 +101,10 @@ OCI_Thread * ThreadCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ThreadFree
+ * OcilibThreadFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean ThreadFree
+boolean OcilibThreadFree
 (
     OCI_Thread *thread
 )
@@ -156,12 +156,12 @@ boolean ThreadFree
 
     if (NULL != thread->err)
     {
-        MemoryFreeHandle(thread->err, OCI_HTYPE_ERROR);
+        OcilibMemoryFreeHandle(thread->err, OCI_HTYPE_ERROR);
     }
     
     /* free thread structure */
 
-    ErrorResetSource(NULL, thread);
+    OcilibErrorResetSource(NULL, thread);
 
     FREE(thread)
 
@@ -171,10 +171,10 @@ boolean ThreadFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ThreadRun
+ * OcilibThreadRun
  * --------------------------------------------------------------------------------------------- */
 
-boolean ThreadRun
+boolean OcilibThreadRun
 (
     OCI_Thread *thread,
     POCI_THREAD proc,
@@ -197,7 +197,7 @@ boolean ThreadRun
     (
         thread->err,
         OCIThreadCreate,
-        Env.env, thread->err, ThreadProc,
+        Env.env, thread->err, OcilibThreadProc,
         thread, thread->id, thread->handle
     )
 
@@ -207,10 +207,10 @@ boolean ThreadRun
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ThreadJoin
+ * OcilibThreadJoin
  * --------------------------------------------------------------------------------------------- */
 
-boolean ThreadJoin
+boolean OcilibThreadJoin
 (
     OCI_Thread *thread
 )

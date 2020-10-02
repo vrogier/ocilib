@@ -25,10 +25,10 @@
 #include "macros.h"
 
 /* --------------------------------------------------------------------------------------------- *
-* TransactionDispose
+* OcilibTransactionDispose
 * --------------------------------------------------------------------------------------------- */
 
-boolean TransactionDispose
+boolean OcilibTransactionDispose
 (
     OCI_Transaction * trans
 )
@@ -41,13 +41,13 @@ boolean TransactionDispose
 
     CHECK_PTR(OCI_IPC_TRANSACTION, trans)
 
-    CHECK(TransactionStop(trans))
+    CHECK(OcilibTransactionStop(trans))
 
     /* close transaction handle */
 
     if (trans->htr)
     {
-        MemoryFreeHandle((dvoid*)trans->htr, OCI_HTYPE_TRANS);
+        OcilibMemoryFreeHandle((dvoid*)trans->htr, OCI_HTYPE_TRANS);
     }
 
     if (trans->con->trs == trans)
@@ -55,7 +55,7 @@ boolean TransactionDispose
         trans->con->trs = NULL;
     }
 
-    ErrorResetSource(NULL, trans);
+    OcilibErrorResetSource(NULL, trans);
 
     SET_SUCCESS()
 
@@ -63,10 +63,10 @@ boolean TransactionDispose
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TransactionCreate
+ * OcilibTransactionCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Transaction * TransactionCreate
+OCI_Transaction * OcilibTransactionCreate
 (
     OCI_Connection *con,
     unsigned int    timeout,
@@ -86,7 +86,7 @@ OCI_Transaction * TransactionCreate
 
     /* create transaction object */
 
-    trans = ListAppend(con->trsns, sizeof(*trans));
+    trans = OcilibListAppend(con->trsns, sizeof(*trans));
     CHECK_NULL(trans)
 
     trans->con     = con;
@@ -96,7 +96,7 @@ OCI_Transaction * TransactionCreate
 
     /* allocate transaction handle */
 
-    CHECK(MemoryAllocHandle((dvoid *)trans->con->env, (dvoid **)&trans->htr, OCI_HTYPE_TRANS))
+    CHECK(OcilibMemoryAllocHandle((dvoid *)trans->con->env, (dvoid **)&trans->htr, OCI_HTYPE_TRANS))
 
     /* set XID attribute for global transaction */
 
@@ -116,7 +116,7 @@ OCI_Transaction * TransactionCreate
     (
         if (FAILURE)
         {
-            TransactionFree(trans);
+            OcilibTransactionFree(trans);
             trans = NULL;
         }
 
@@ -125,10 +125,10 @@ OCI_Transaction * TransactionCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TransactionFree
+ * OcilibTransactionFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean TransactionFree
+boolean OcilibTransactionFree
 (
     OCI_Transaction * trans
 )
@@ -141,11 +141,11 @@ boolean TransactionFree
 
     CHECK_PTR(OCI_IPC_TRANSACTION, trans)
 
-    TransactionDispose(trans);
+    OcilibTransactionDispose(trans);
 
     /* remove transaction from internal list */
 
-    ListRemove(trans->con->trsns, trans);
+    OcilibListRemove(trans->con->trsns, trans);
 
     FREE(trans)
 
@@ -155,10 +155,10 @@ boolean TransactionFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TransactionStart
+ * OcilibTransactionStart
  * --------------------------------------------------------------------------------------------- */
 
-boolean TransactionStart
+boolean OcilibTransactionStart
 (
     OCI_Transaction * trans
 )
@@ -185,10 +185,10 @@ boolean TransactionStart
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TransactionStop
+ * OcilibTransactionStop
  * --------------------------------------------------------------------------------------------- */
 
-boolean TransactionStop
+boolean OcilibTransactionStop
 (
     OCI_Transaction * trans
 )
@@ -205,11 +205,11 @@ boolean TransactionStop
 
     if (trans->con->autocom)
     {
-        ConnectionCommit(trans->con);
+        OcilibConnectionCommit(trans->con);
     }
     else
     {
-        ConnectionRollback(trans->con);
+        OcilibConnectionRollback(trans->con);
     }
 
     /* detach global transaction */
@@ -231,10 +231,10 @@ boolean TransactionStop
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TransactionResume
+ * OcilibTransactionResume
  * --------------------------------------------------------------------------------------------- */
 
-boolean TransactionResume
+boolean OcilibTransactionResume
 (
     OCI_Transaction * trans
 )
@@ -261,10 +261,10 @@ boolean TransactionResume
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TransactionPrepare
+ * OcilibTransactionPrepare
  * --------------------------------------------------------------------------------------------- */
 
-boolean TransactionPrepare
+boolean OcilibTransactionPrepare
 (
     OCI_Transaction * trans
 )
@@ -291,10 +291,10 @@ boolean TransactionPrepare
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TransactionForget
+ * OcilibTransactionForget
  * --------------------------------------------------------------------------------------------- */
 
-boolean TransactionForget
+boolean OcilibTransactionForget
 (
     OCI_Transaction * trans
 )
@@ -321,10 +321,10 @@ boolean TransactionForget
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TransactionGetMode
+ * OcilibTransactionGetMode
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int TransactionGetMode
+unsigned int OcilibTransactionGetMode
 (
     OCI_Transaction * trans
 )
@@ -338,10 +338,10 @@ unsigned int TransactionGetMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TransactionGetTimeout
+ * OcilibTransactionGetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int TransactionGetTimeout
+unsigned int OcilibTransactionGetTimeout
 (
     OCI_Transaction * trans
 )

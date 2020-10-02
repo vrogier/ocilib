@@ -23,10 +23,10 @@
 #include "macros.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetEnvironment
+ * OcilibHandleGetEnvironment
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetEnvironment
+const void * OcilibHandleGetEnvironment
 (
 )
 {
@@ -34,10 +34,10 @@ const void * HandleGetEnvironment
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetContext
+ * OcilibHandleGetContext
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetContext
+const void * OcilibHandleGetContext
 (
     OCI_Connection *con
 )
@@ -46,10 +46,10 @@ const void * HandleGetContext
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetServer
+ * OcilibHandleGetServer
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetServer
+const void * OcilibHandleGetServer
 (
     OCI_Connection *con
 )
@@ -58,10 +58,10 @@ const void * HandleGetServer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetError
+ * OcilibHandleGetError
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetError
+const void * OcilibHandleGetError
 (
     OCI_Connection *con
 )
@@ -70,10 +70,10 @@ const void * HandleGetError
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetSession
+ * OcilibHandleGetSession
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetSession
+const void * OcilibHandleGetSession
 (
     OCI_Connection *con
 )
@@ -82,10 +82,10 @@ const void * HandleGetSession
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetTransaction
+ * OcilibHandleGetTransaction
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetTransaction
+const void * OcilibHandleGetTransaction
 (
     OCI_Transaction *trans
 )
@@ -94,10 +94,10 @@ const void * HandleGetTransaction
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetStatement
+ * OcilibHandleGetStatement
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetStatement
+const void * OcilibHandleGetStatement
 (
     OCI_Statement *stmt
 )
@@ -106,10 +106,10 @@ const void * HandleGetStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetLob
+ * OcilibHandleGetLob
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetLob
+const void * OcilibHandleGetLob
 (
     OCI_Lob *lob
 )
@@ -118,10 +118,10 @@ const void * HandleGetLob
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetFile
+ * OcilibHandleGetFile
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetFile
+const void * OcilibHandleGetFile
 (
     OCI_File *file
 )
@@ -130,10 +130,10 @@ const void * HandleGetFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetDate
+ * OcilibHandleGetDate
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetDate
+const void * OcilibHandleGetDate
 (
     OCI_Date *date
 )
@@ -142,10 +142,10 @@ const void * HandleGetDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetTimestamp
+ * OcilibHandleGetTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetTimestamp
+const void * OcilibHandleGetTimestamp
 (
     OCI_Timestamp *tmsp
 )
@@ -154,10 +154,10 @@ const void * HandleGetTimestamp
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetInterval
+ * OcilibHandleGetInterval
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetInterval
+const void * OcilibHandleGetInterval
 (
     OCI_Interval *itv
 )
@@ -166,10 +166,10 @@ const void * HandleGetInterval
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetObject
+ * OcilibHandleGetObject
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetObject
+const void * OcilibHandleGetObject
 (
     OCI_Object *obj
 )
@@ -178,10 +178,10 @@ const void * HandleGetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetCollection
+ * OcilibHandleGetCollection
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetColl
+const void * OcilibHandleGetColl
 (
     OCI_Coll *coll
 )
@@ -190,10 +190,10 @@ const void * HandleGetColl
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetReference
+ * OcilibHandleGetReference
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetReference
+const void * OcilibHandleGetReference
 (
     OCI_Ref *ref
 )
@@ -202,10 +202,10 @@ const void * HandleGetReference
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetMutex
+ * OcilibHandleGetMutex
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetMutex
+const void * OcilibHandleGetMutex
 (
     OCI_Mutex *mutex
 )
@@ -214,10 +214,10 @@ const void * HandleGetMutex
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetThreadID
+ * OcilibHandleGetThreadID
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetThreadID
+const void * OcilibHandleGetThreadID
 (
     OCI_Thread *thread
 )
@@ -226,10 +226,10 @@ const void * HandleGetThreadID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetThread
+ * OcilibHandleGetThread
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetThread
+const void * OcilibHandleGetThread
 (
     OCI_Thread *thread
 )
@@ -238,10 +238,10 @@ const void * HandleGetThread
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetDirPathCtx
+ * OcilibHandleGetDirPathCtx
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetDirPathCtx
+const void * OcilibHandleGetDirPathCtx
 (
     OCI_DirPath *dp
 )
@@ -250,10 +250,10 @@ const void * HandleGetDirPathCtx
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetDirPathColArray
+ * OcilibHandleGetDirPathColArray
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetDirPathColArray
+const void * OcilibHandleGetDirPathColArray
 (
     OCI_DirPath *dp
 )
@@ -262,10 +262,10 @@ const void * HandleGetDirPathColArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetDirPathStream
+ * OcilibHandleGetDirPathStream
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetDirPathStream
+const void * OcilibHandleGetDirPathStream
 (
     OCI_DirPath *dp
 )
@@ -274,10 +274,10 @@ const void * HandleGetDirPathStream
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HandleGetSubscription
+ * OcilibHandleGetSubscription
  * --------------------------------------------------------------------------------------------- */
 
-const void * HandleGetSubscription
+const void * OcilibHandleGetSubscription
 (
     OCI_Subscription *sub
 )
