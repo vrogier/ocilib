@@ -22,6 +22,7 @@
 
 #include "macros.h"
 #include "memory.h"
+#include "stringutils.h"
 
 static const unsigned int HashTypeValues[] =
 {
@@ -93,7 +94,7 @@ static boolean OcilibHashAdd
         {
             if (OCI_HASH_STRING == table->type && value.p_text)
             {
-                v->value.p_text = ostrdup(value.p_text);
+                v->value.p_text = OcilibStringDuplicate(value.p_text);
             }
             else if (OCI_HASH_INTEGER == table->type)
             {
@@ -546,7 +547,7 @@ OCI_HashEntry * OcilibHashLookup
     {
         for(e = table->items[i]; e; e = e->next)
         {
-            if (ostrcasecmp(e->key, key) == 0)
+            if (OcilibStringCaseCompare(e->key, key) == 0)
             {
                 break;
             }
@@ -560,7 +561,7 @@ OCI_HashEntry * OcilibHashLookup
                                                    TRUE);
             CHECK_NULL(e)
 
-            e->key = ostrdup(key);
+            e->key = OcilibStringDuplicate(key);
 
             e1 = e2 = table->items[i];
 

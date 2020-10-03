@@ -222,8 +222,12 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
     if (err)                                            \
     {                                                   \
         otext message[512];                             \
-        osprintf(message, osizeof(message) - (size_t)1, \
-                 ErrorMessages[err_code], __VA_ARGS__); \
+        OcilibStringFormat                              \
+        (                                               \
+            message, osizeof(message) - (size_t)1,      \
+            ErrorMessages[err_code],                    \
+            __VA_ARGS__                                 \
+        );                                              \
                                                         \
         OcilibErrorSet                                  \
         (                                               \
@@ -247,8 +251,12 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
     if (err)                                            \
     {                                                   \
         otext message[512];                             \
-        osprintf(message, osizeof(message) - (size_t)1, \
-                 ErrorMessages[err_code]);              \
+        OcilibStringFormat                              \
+        (                                               \
+            message,                                    \
+            osizeof(message) - (size_t)1,               \
+            ErrorMessages[err_code]                     \
+        );                                              \
                                                         \
         OcilibErrorSet                                  \
         (                                               \
@@ -351,7 +359,7 @@ void OcilibExceptionOCI
                     ostrcpy(buffer, OTEXT("Oracle Client error: OCI_STILL_EXECUTING"));
                     break;
                 default:
-                    osprintf(buffer, osizeof(buffer) - (size_t)1,
+                    OcilibStringFormat(buffer, osizeof(buffer) - (size_t)1,
                              OTEXT("Oracle Client error: OCI error code [%d]"), call_ret);
                     break;
             }

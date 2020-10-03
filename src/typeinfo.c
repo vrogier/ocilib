@@ -50,8 +50,8 @@ static boolean OcilibTypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find
         typinf &&
         find_params &&
         typinf->type == find_params->type &&
-        ostrcasecmp(typinf->name,   find_params->name) == 0 &&
-        ostrcasecmp(typinf->schema, find_params->schema) == 0;
+        OcilibStringCaseCompare(typinf->name,   find_params->name) == 0 &&
+        OcilibStringCaseCompare(typinf->schema, find_params->schema) == 0;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -208,8 +208,8 @@ OCI_TypeInfo * OcilibTypeInfoGet
         /* allocate describe handle */
 
         typinf->con         = con;
-        typinf->name        = ostrdup(obj_name);
-        typinf->schema      = ostrdup(obj_schema);
+        typinf->name        = OcilibStringDuplicate(obj_name);
+        typinf->schema      = OcilibStringDuplicate(obj_schema);
         typinf->struct_size = 0;
         typinf->align       = 0;
 

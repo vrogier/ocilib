@@ -62,7 +62,7 @@ OCI_Enqueue * OcilibEnqueueCreate
     ALLOC_DATA(OCI_IPC_ENQUEUE, enqueue, 1)
 
     enqueue->typinf = typinf;
-    enqueue->name   = ostrdup(name);
+    enqueue->name   = OcilibStringDuplicate(name);
 
     /* allocate enqueue options descriptor */
 
@@ -208,8 +208,8 @@ boolean OcilibEnqueuePut
                  */
 
                 const int len = (int)ostrlen(enqueue->name);
-                ansi_queue_name = MemoryAlloc(OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
-                StringNativeToAnsi(enqueue->name, ansi_queue_name, len);
+                ansi_queue_name = OcilibMemoryAlloc(OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
+                OcilibStringNativeToAnsi(enqueue->name, ansi_queue_name, len);
             }
             else
 

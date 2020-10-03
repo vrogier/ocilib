@@ -175,9 +175,9 @@ OCI_Pool * OcilibPoolCreate
     pool->max  = max_con;
     pool->incr = incr_con;
 
-    pool->db   = ostrdup(db   ? db   : OTEXT(""));
-    pool->user = ostrdup(user ? user : OTEXT(""));
-    pool->pwd  = ostrdup(pwd  ? pwd  : OTEXT(""));
+    pool->db   = OcilibStringDuplicate(db   ? db   : OTEXT(""));
+    pool->user = OcilibStringDuplicate(user ? user : OTEXT(""));
+    pool->pwd  = OcilibStringDuplicate(pwd  ? pwd  : OTEXT(""));
 
 #if OCI_VERSION_COMPILE < OCI_9_2
 
@@ -223,13 +223,16 @@ OCI_Pool * OcilibPoolCreate
         {
             otext driver_version[OCI_SIZE_FORMAT];
 
-            osprintf(driver_version,
-                     osizeof(driver_version) - (size_t)1,
-                     OTEXT("%s : %d.%d.%d"),
-                     OCILIB_DRIVER_NAME,
-                     OCILIB_MAJOR_VERSION,
-                     OCILIB_MINOR_VERSION,
-                     OCILIB_REVISION_VERSION);
+            OcilibStringFormat
+            (
+                driver_version,
+                osizeof(driver_version) - (size_t)1,
+                OTEXT("%s : %d.%d.%d"),
+                OCILIB_DRIVER_NAME,
+                OCILIB_MAJOR_VERSION,
+                OCILIB_MINOR_VERSION,
+                OCILIB_REVISION_VERSION
+            );
 
             dbstr = OcilibStringGetDBString(driver_version, &dbsize);
 

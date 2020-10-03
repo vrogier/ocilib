@@ -139,7 +139,7 @@ void OcilibErrorSet
 
     /* format message */
 
-    osprintf(err->message, (int)total_len, format, err->location, message);
+    OcilibStringFormat(err->message, (int)total_len, format, err->location, message);
 
     err->message_len = max(err->message_len, (unsigned int)total_len);
 }

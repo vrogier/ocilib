@@ -240,28 +240,7 @@
  * - Within OCI_CHARSET_ANSI builds
  * - NLS_LANG environment variable must be set to any valid UTF8 Oracle charset string
  *
- * @par Charset mapping macros
- *
- * OCILIB main header file provides macro around most common string functions of
- * the C standard library.
- *
- * these macros are based on the model: ostr[libc function name]()
- *
- * xxx is the standard C library string function name without the character type prefix (str/wcs).
- *
- * List of available macros:
- * - ostrdup
- * - ostrcpy
- * - ostrncpy
- * - ostrcat
- * - ostrncat
- * - ostrlen
- * - ostrcmp
- * - ostrcasecmp
- * - osprintf
- * - ostol
- *
-**/
+ **/
 
 #if defined(__cplusplus) && defined(_MSC_VER) && (_MSC_VER < 1300)
 extern "C++" {
@@ -287,89 +266,6 @@ typedef wchar_t           otext;
 #define OTEXT(x)          L ## x
 #define OCI_CHAR_TEXT     OCI_CHAR_WIDE
 #endif
-
-/*
-   For ISO conformance, strdup/wcsdup/stricmp/strncasecmp are not used.
-   All wide char routines are part of the 1995 Normative Addendum 1 to the ISO C90 standard.
-   OCILIB also needs an ANSI equivalent to swprintf => ocisprintf
-   Thus OCILIB exports the following helper functions
-
-*/
-
-OCI_EXPORT int ocisprintf
-(
-    char *      str,
-    int         size,
-    const char *format,
-    ...
-);
-
-OCI_EXPORT char * ocistrdup
-(
-    const char *src
-);
-
-OCI_EXPORT int ocistrcasecmp
-(
-    const char *str1,
-    const char *str2
-);
-
-OCI_EXPORT wchar_t * ociwcsdup
-(
-    const wchar_t *src
-);
-
-OCI_EXPORT int ociwcscasecmp
-(
-    const wchar_t *str1,
-    const wchar_t *str2
-);
-
-/* special defines for Microsoft C runtime that is not C ISO compliant */
-
-#ifdef _WINDOWS
-
-#define vsnprintf  _vsnprintf
-#define swprintf _snwprintf
-
-#endif
-
-/* helpers mapping macros */
-
-#ifdef OCI_CHARSET_ANSI
-#define ostrdup          ocistrdup
-#define ostrcpy          strcpy
-#define ostrncpy         strncpy
-#define ostrcat          strcat
-#define ostrncat         strncat
-#define ostrlen          strlen
-#define ostrcmp          strcmp
-#define ostrcasecmp      ocistrcasecmp
-#define osprintf         ocisprintf
-#define ostrtol          strtol
-#define osscanf          sscanf
-#define otoupper         toupper
-#define oisdigit         isdigit
-#else
-#define ostrdup          ociwcsdup
-#define ostrcpy          wcscpy
-#define ostrncpy         wcsncpy
-#define ostrcat          wcscat
-#define ostrncat         wcsncat
-#define ostrlen          wcslen
-#define ostrcmp          wcscmp
-#define ostrcasecmp      ociwcscasecmp
-#define osprintf         swprintf
-#define ostrtol          wcstol
-#define osscanf          swscanf
-#define otoupper         towupper
-#define oisdigit         iswdigit
-#endif
-
-/* string size macros */
-
-#define otextsize(s) (ostrlen(s) * sizeof(otext))
 
 /**
  * @} OcilibCApiSupportedCharsets

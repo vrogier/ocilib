@@ -248,7 +248,7 @@ OCI_Resultset * OcilibResultsetCreate
 
             def->col.sqlcode  = bnd->code;
             def->col.libcode  = bnd->code;
-            def->col.name     = ostrdup(bnd->name);
+            def->col.name     = OcilibStringDuplicate(bnd->name);
             def->col.size     = (ub2) bnd->size;
             def->col.datatype = bnd->type;
             def->col.subtype  = bnd->subtype;

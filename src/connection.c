@@ -83,9 +83,9 @@ static void OcilibConnectionDetachSubscriptions
     {
         sub->con = NULL;
 
-        sub->saved_db   = ostrdup(con->db);
-        sub->saved_user = ostrdup(con->user);
-        sub->saved_pwd  = ostrdup(con->pwd);
+        sub->saved_db   = OcilibStringDuplicate(con->db);
+        sub->saved_user = OcilibStringDuplicate(con->user);
+        sub->saved_pwd  = OcilibStringDuplicate(con->pwd);
     }
 
     EXIT_VOID()
@@ -152,9 +152,9 @@ OCI_Connection * OcilibConnectionAllocate
     }
     else
     {
-        con->db   = ostrdup(db   ? db   : OTEXT(""));
-        con->user = ostrdup(user ? user : OTEXT(""));
-        con->pwd  = ostrdup(pwd  ? pwd  : OTEXT(""));
+        con->db   = OcilibStringDuplicate(db   ? db   : OTEXT(""));
+        con->user = OcilibStringDuplicate(user ? user : OTEXT(""));
+        con->pwd  = OcilibStringDuplicate(pwd  ? pwd  : OTEXT(""));
     }
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
@@ -509,7 +509,7 @@ static boolean OcilibConnectionLogonRegular
         /* replace OcilibConnection password */
 
         FREE(con->pwd)
-        con->pwd = ostrdup(new_pwd);
+        con->pwd = OcilibStringDuplicate(new_pwd);
     }
     else
     {
@@ -554,13 +554,16 @@ static boolean OcilibConnectionLogonRegular
         {
             otext driver_version[OCI_SIZE_FORMAT];
 
-            osprintf(driver_version,
-                     osizeof(driver_version) - (size_t)1,
-                     OTEXT("%s : %d.%d.%d"),
-                     OCILIB_DRIVER_NAME,
-                     OCILIB_MAJOR_VERSION,
-                     OCILIB_MINOR_VERSION,
-                     OCILIB_REVISION_VERSION);
+            OcilibStringFormat
+            (
+                driver_version,
+                osizeof(driver_version) - (size_t)1,
+                OTEXT("%s : %d.%d.%d"),
+                OCILIB_DRIVER_NAME,
+                OCILIB_MAJOR_VERSION,
+                OCILIB_MINOR_VERSION,
+                OCILIB_REVISION_VERSION
+            );
 
             dbsize3 = -1;
             dbstr3  = OcilibStringGetDBString(driver_version, &dbsize3);
@@ -1414,7 +1417,7 @@ boolean OcilibConnectionSetSessionTag
 
     if (tag && con->pool && (OCI_HTYPE_SPOOL == con->pool->htype))
     {
-        con->sess_tag = ostrdup(tag);
+        con->sess_tag = OcilibStringDuplicate(tag);
         CHECK_NULL(con->sess_tag)
     }
 

@@ -75,7 +75,7 @@ OCI_Dequeue * OcilibDequeueCreate
     ALLOC_DATA(OCI_IPC_DEQUEUE, dequeue, 1)
 
     dequeue->typinf = typinf;
-    dequeue->name   = ostrdup(name);
+    dequeue->name   = OcilibStringDuplicate(name);
 
     /* allocate dequeue options descriptor */
 
@@ -307,8 +307,8 @@ OCI_Msg * OcilibDequeueGetMessage
                  */
 
                 const int len = (int)ostrlen(dequeue->name);
-                ansi_queue_name = MemoryAlloc(OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
-                StringNativeToAnsi(dequeue->name, ansi_queue_name, len);
+                ansi_queue_name = OcilibMemoryAlloc(OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
+                OcilibStringNativeToAnsi(dequeue->name, ansi_queue_name, len);
             }
             else
 

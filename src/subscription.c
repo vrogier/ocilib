@@ -81,7 +81,7 @@ boolean OcilibSubscriptionDispose
 
                 if (OCI_ERR_SUB_BUG_OCI_UTF16 != code)
                 {
-                    THROW(ExceptionOCI, sub->err, res)
+                    THROW(OcilibExceptionOCI, sub->err, res)
                 }
             }
   #else
@@ -188,7 +188,7 @@ OCI_Subscription * OcilibSubscriptionRegister
     sub->timeout   = (ub4)timeout;
     sub->handler   = handler;
     sub->type      = type;
-    sub->name      = ostrdup(name);
+    sub->name      = OcilibStringDuplicate(name);
     sub->event.sub = sub;
 
     /* set port number */

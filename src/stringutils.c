@@ -654,7 +654,7 @@ boolean OcilibStringSetAttribute
 
         if (NULL != value)
         {
-            *str = ostrdup(value);
+            *str = OcilibStringDuplicate(value);
         }
     }
 
@@ -1188,17 +1188,50 @@ unsigned int OcilibStringGetFullTypeName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ocistrdup
+ * OcilibStringDuplicate
  * --------------------------------------------------------------------------------------------- */
 
-char * ocistrdup
+otext* OcilibStringDuplicate
 (
-    const char * src
+    const otext* src
 )
 {
     CHECK_FALSE(NULL == src, NULL)
 
-    char *dst = (char *)OcilibMemoryAlloc(OCI_IPC_STRING, 1, strlen(src) + 1, 0);
+    otext *dst = (otext*)OcilibMemoryAlloc
+    (
+        OCI_IPC_STRING, 
+        sizeof(otext), 
+        ostrlen(src) + 1,
+        0
+    );
+
+    if (NULL != dst)
+    {
+        ostrcpy(dst, src);
+    }
+
+    return dst;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStringAnsiDuplicate
+ * --------------------------------------------------------------------------------------------- */
+
+char* OcilibStringAnsiDuplicate
+(
+    const char* src
+)
+{
+    CHECK_FALSE(NULL == src, NULL)
+
+    char* dst = (char*)OcilibMemoryAlloc
+    (
+        OCI_IPC_STRING,
+        sizeof(char),
+        strlen(src) + 1,
+        0
+    );
 
     if (NULL != dst)
     {
@@ -1209,13 +1242,13 @@ char * ocistrdup
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ocistrcasecmp
+ * OcilibStringCaseCompare
  * --------------------------------------------------------------------------------------------- */
 
-int ocistrcasecmp
+int OcilibStringCaseCompare
 (
-    const char *str1,
-    const char *str2
+    const otext* str1,
+    const otext* str2
 )
 {
     if (NULL == str1 && NULL == str2)
@@ -1233,24 +1266,58 @@ int ocistrcasecmp
         return -1;
     }
 
-    while (((*str1) != 0) && ((*str2) != 0) && (tolower((int)(*str1)) == tolower((int)(*str2))))
+    while (((*str1) != 0) && ((*str2) != 0) && (otoupper(*str1) == otoupper(*str2)))
     {
         str1++;
         str2++;
     }
 
-    return (tolower((int) (*str1)) - tolower((int) (*str2)));
+    return (otoupper(*str1) - otoupper(*str2));
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ocisprintf
+ * OcilibStringAnsiCaseCompare
  * --------------------------------------------------------------------------------------------- */
 
-int ocisprintf
+int OcilibStringAnsiCaseCompare
 (
-    char       *str,
-    int         size,
-    const char *format,
+    const char* str1,
+    const char* str2
+)
+{
+    if (NULL == str1 && NULL == str2)
+    {
+        return 0;
+    }
+
+    if (NULL == str1)
+    {
+        return 1;
+    }
+
+    if (NULL == str2)
+    {
+        return -1;
+    }
+
+    while (((*str1) != 0) && ((*str2) != 0) && (toupper(*str1) == toupper(*str2)))
+    {
+        str1++;
+        str2++;
+    }
+
+    return (toupper(*str1) - toupper(*str2));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStringFormat
+ * --------------------------------------------------------------------------------------------- */
+
+int OcilibStringFormat
+(
+    otext       * str,
+    int           size,
+    const otext * format,
     ...
 )
 {
@@ -1258,65 +1325,17 @@ int ocisprintf
 
     va_start(args, format);
 
-    const int n = (int) vsnprintf(str, (size_t) size, format, args);
+#ifdef OCI_CHARSET_ANSI
+
+    const int n = (int)vsnprintf(str, (size_t)size, format, args);
+
+#else
+
+    const int n = (int)vsnwprintf(str, (size_t)size, format, args);
+
+#endif
 
     va_end(args);
 
     return n;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * ociwcsdup
- * --------------------------------------------------------------------------------------------- */
-
-wchar_t * ociwcsdup
-(
-    const wchar_t * src
-)
-{
-    CHECK_FALSE(NULL == src, NULL)
-
-    wchar_t *dst = (wchar_t *)OcilibMemoryAlloc(OCI_IPC_STRING, sizeof(wchar_t),
-                                                wcslen(src) + 1, 0);
-
-    if (NULL != dst)
-    {
-        wcscpy(dst, src);
-    }
-
-    return dst;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * ociwcscasecmp
- * --------------------------------------------------------------------------------------------- */
-
-int ociwcscasecmp
-(
-    const wchar_t *str1,
-    const wchar_t *str2
-)
-{
-    if (NULL == str1 && NULL == str2)
-    {
-        return 0;
-    }
-
-    if (NULL == str1)
-    {
-        return 1;
-    }
-
-    if (NULL == str2)
-    {
-        return -1;
-    }
-
-    while (((*str1) != 0) && ((*str2) != 0) && (towlower((wint_t)*str1) == towlower((wint_t)*str2)))
-    {
-        str1++;
-        str2++;
-    }
-
-    return (towlower((wint_t) *str1) - towlower((wint_t) *str2));
 }

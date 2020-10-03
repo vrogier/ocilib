@@ -992,7 +992,7 @@ OCI_Statement * OcilibStatementInitialize
 
         if (NULL != sql)
         {
-            stmt->sql = ostrdup(sql);
+            stmt->sql = OcilibStringDuplicate(sql);
         }
         else
         {
@@ -1260,7 +1260,7 @@ boolean OcilibStatementPrepareInternal
 
     /* store SQL */
 
-    stmt->sql = ostrdup(sql);
+    stmt->sql = OcilibStringDuplicate(sql);
 
     dbstr = OcilibStringGetDBString(stmt->sql, &dbsize);
 

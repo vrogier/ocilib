@@ -712,7 +712,7 @@ static int OcilibObjectGetAttributeIndex
     {
         OCI_Column *col = &obj->typinf->cols[i];
 
-        if (((type == -1) || (col->datatype == type))  && (ostrcasecmp(col->name, attr) == 0))
+        if (((type == -1) || (col->datatype == type))  && (OcilibStringCaseCompare(col->name, attr) == 0))
         {
             index = (int) i;
             break;

@@ -24,6 +24,7 @@
 #include "hash.h"
 #include "macros.h"
 #include "number.h"
+#include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDefineGet
@@ -96,7 +97,7 @@ int OcilibDefineGetIndex
     {
         /* no more entries or key matched => so we got it ! */
 
-        if (NULL == he->next || 0 == ostrcasecmp(he->key, name))
+        if (NULL == he->next || 0 == OcilibStringCaseCompare(he->key, name))
         {
             index = he->values->value.num;
             break;

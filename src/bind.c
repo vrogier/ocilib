@@ -829,7 +829,7 @@ OCI_Bind* OcilibBindCreate
 
     if (NULL == bnd->name)
     {
-        bnd->name = ostrdup(name);
+        bnd->name = OcilibStringDuplicate(name);
     }
 
     /* initialize buffer */
@@ -1007,7 +1007,7 @@ int OcilibBindGetIndex
     {
         /* no more entries or key matched => so we got it ! */
 
-        if (NULL == he->next || ostrcasecmp(he->key, name) == 0)
+        if (NULL == he->next || OcilibStringCaseCompare(he->key, name) == 0)
         {
             /* in order to use the same map for user binds and
                register binds :

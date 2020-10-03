@@ -509,7 +509,7 @@ boolean OcilibDirPathSetColumn
 
     for (i = 0; i < dp->typinf->nb_cols; i++)
     {
-        if (0 == ostrcasecmp(name, dp->typinf->cols[i].name))
+        if (0 == OcilibStringCaseCompare(name, dp->typinf->cols[i].name))
         {
             break;
         }
@@ -553,7 +553,7 @@ boolean OcilibDirPathSetColumn
         {
             if (IS_STRING_VALID(format))
             {
-                dpcol->format      = ostrdup(format);
+                dpcol->format      = OcilibStringDuplicate(format);
                 dpcol->format_size = (ub4) ostrlen(format);
                 dpcol->type        = OCI_DDT_NUMBER;
                 dpcol->sqlcode     = SQLT_NUM;
@@ -574,7 +574,7 @@ boolean OcilibDirPathSetColumn
 
             if (IS_STRING_VALID(format))
             {
-                dpcol->format      = ostrdup(format);
+                dpcol->format      = OcilibStringDuplicate(format);
                 dpcol->format_size = (ub4) ostrlen(format);
                 dpcol->maxsize     = (ub2) max(dpcol->format_size, maxsize);
                 dpcol->bufsize    *= sizeof(otext);

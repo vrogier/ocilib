@@ -437,17 +437,17 @@ boolean OcilibNumberToStringInternal
     {
         if (type & OCI_NUM_SHORT)
         {
-            out_value_size = osprintf(out_value, out_value_size,
-                                      OCI_STRING_FORMAT_NUM_SHORT,
-                                      *((short *)number));
+            out_value_size = OcilibStringFormat(out_value, out_value_size,
+                                               OCI_STRING_FORMAT_NUM_SHORT,
+                                               *((short *)number));
 
             done = TRUE;
         }
         else if (type & OCI_NUM_INT)
         {
-            out_value_size = osprintf(out_value, out_value_size,
-                                      OCI_STRING_FORMAT_NUM_INT,
-                                      *((int *)number));
+            out_value_size = OcilibStringFormat(out_value, out_value_size,
+                                                OCI_STRING_FORMAT_NUM_INT,
+                                                *((int *)number));
 
             done = TRUE;
         }
@@ -466,13 +466,13 @@ boolean OcilibNumberToStringInternal
 
             if (type & OCI_NUM_DOUBLE)
             {
-                out_value_size = osprintf(out_value, out_value_size, tmp_fmt, *((double *)number));
+                out_value_size = OcilibStringFormat(out_value, out_value_size, tmp_fmt, *((double *)number));
 
                 done = TRUE;
             }
             else if (type & OCI_NUM_FLOAT)
             {
-                out_value_size = osprintf(out_value, out_value_size, tmp_fmt, *((float *)number));
+                out_value_size = OcilibStringFormat(out_value, out_value_size, tmp_fmt, *((float *)number));
 
                 done = TRUE;
             }

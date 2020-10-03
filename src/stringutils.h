@@ -174,4 +174,35 @@ OCI_SYM_LOCAL boolean OcilibStringSetAttribute
     const otext   * value
 );
 
+OCI_SYM_LOCAL otext * OcilibStringDuplicate
+(
+    const otext * src
+);
+
+OCI_SYM_LOCAL char * OcilibStringAnsiDuplicate
+(
+    const char * src
+);
+
+
+OCI_SYM_LOCAL int OcilibStringCaseCompare
+(
+    const otext* str1,
+    const otext* str2
+);
+
+OCI_SYM_LOCAL int OcilibStringAnsiCaseCompare
+(
+    const char* str1,
+    const char* str2
+);
+
+OCI_SYM_LOCAL int OcilibStringFormat
+(
+    otext       * str,
+    int           size,
+    const otext * format,
+    ...
+);
+
 #endif /* OCILIB_STRING_UTILS_H_INCLUDED */

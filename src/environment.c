@@ -29,6 +29,7 @@
 #include "macros.h"
 #include "mutex.h"
 #include "pool.h"
+#include "stringutils.h"
 #include "subscription.h"
 #include "threadkey.h"
 
@@ -622,7 +623,7 @@ char * OcilibEnvironmentGetVariable
 
     if (NULL != str)
     {
-        value = ocistrdup(str);
+        value = OcilibStringAnsiDuplicate(str);
     }
 
 #if defined(_WINDOWS)
@@ -716,7 +717,7 @@ boolean OcilibEnvironmentInitialize
 
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
-        Env.formats[i] = ostrdup(FormatDefaultValues[i]);
+        Env.formats[i] = OcilibStringDuplicate(FormatDefaultValues[i]);
     }
 
     /* load any specific environment variable */
@@ -725,7 +726,7 @@ boolean OcilibEnvironmentInitialize
     {
         char *value = OcilibEnvironmentGetVariable(EnvironmentVarNames[i]);
 
-        Env.env_vars[i] = value && (ocistrcasecmp(value, OCI_VARS_TRUE_VALUE) == 0 || atoi(value) == 1);
+        Env.env_vars[i] = value && (OcilibStringAnsiCaseCompare(value, OCI_VARS_TRUE_VALUE) == 0 || atoi(value) == 1);
 
         FREE(value);
     }
@@ -1383,7 +1384,7 @@ boolean OcilibEnvironmentInitialize
 
     if (Env.version_runtime < OCI_9_0)
     {
-        THROW(ExceptionNotAvailable, OCI_FEATURE_WIDE_USERDATA)
+        THROW(OcilibExceptionNotAvailable, OCI_FEATURE_WIDE_USERDATA)
     }
 
 #endif
@@ -1908,7 +1909,7 @@ boolean OcilibEnvironmentSetFormat
 
     FREE(*value)
 
-    *value = ostrdup(format ? format : FormatDefaultValues[type-1]);
+    *value = OcilibStringDuplicate(format ? format : FormatDefaultValues[type-1]);
 
     SET_SUCCESS()
 
