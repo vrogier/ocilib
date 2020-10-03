@@ -58,6 +58,33 @@ AC_DEFUN([OCILIB_PATH],
 ])
 
 dnl ------------------------------------------------------------------------
+dnl OCILIB_COMPILER_FLAGS()
+dnl ------------------------------------------------------------------------
+dnl
+
+AC_DEFUN([OCILIB_COMPILER_FLAGS],
+[
+  AC_MSG_CHECKING([for OCILIB compiler specific flags])
+
+  OCILIB_EXTRA_FLAGS=""
+
+  ac_saved_cflags="$CFLAGS"                                                       
+  CFLAGS="-fvisibility=hidden $1"                                                               
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],                                            
+    [
+		OCILIB_EXTRA_FLAGS="$OCILIB_EXTRA_FLAGS -fvisibility=hidden"
+	],                                                           
+    []                                                              
+  )                                                                                   
+  CFLAGS="$ac_saved_cflags"    
+
+  AC_MSG_RESULT([$OCILIB_EXTRA_FLAGS])
+
+  AC_SUBST(OCILIB_EXTRA_FLAGS)
+ 
+])
+
+dnl ------------------------------------------------------------------------
 dnl OCILIB_VERSION()
 dnl ------------------------------------------------------------------------
 dnl
