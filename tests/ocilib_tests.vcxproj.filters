@@ -118,9 +118,6 @@
     <ClCompile Include="..\src\statement.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\strings.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\subscription.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -210,6 +207,9 @@
     </ClCompile>
     <ClCompile Include="TestInterval.cpp">
       <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\stringutils.c">
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

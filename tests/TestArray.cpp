@@ -24,7 +24,7 @@ TEST(TestArray, InsertExternalArray)
     for (int i = 0; i < ARRAY_SIZE; i++)
     {
         tab_int[i] = i + 1;
-        osprintf(tab_str[i], STRING_SIZE, OTEXT("Name %d"), i + 1);
+        osprintf(tab_str[i], OTEXT("Name %d"), i + 1);
     }
 
     ASSERT_TRUE(OCI_Execute(stmt));
@@ -62,7 +62,7 @@ TEST(TestArray, InsertExternalArrayError)
     for (int i = 0; i < ARRAY_SIZE; i++)
     {
         tab_int[i] = i + 1;
-        osprintf(tab_str[i], STRING_SIZE, OTEXT("Name %d"), i + 1);
+        osprintf(tab_str[i], OTEXT("Name %d"), i + 1);
     }
 
     const auto bnd = OCI_GetBind(stmt, 1);
@@ -123,7 +123,7 @@ TEST(TestArray, InsertInternalArray)
     for (int i = 0; i < ARRAY_SIZE; i++)
     {
         tab_int[i] = i + 1;
-        osprintf(tab_str + (i * (STRING_SIZE + 1)), STRING_SIZE, OTEXT("Name %d"), i + 1);
+        osprintf(tab_str + (i * (STRING_SIZE + 1)), OTEXT("Name %d"), i + 1);
         ASSERT_TRUE(OCI_DateAssign(tab_date[i], sysdate));
     }
 
