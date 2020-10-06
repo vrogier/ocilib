@@ -350,7 +350,7 @@
     <ClCompile Include="..\..\src\reference.c" />
     <ClCompile Include="..\..\src\resultset.c" />
     <ClCompile Include="..\..\src\statement.c" />
-    <ClCompile Include="..\..\src\strings.c" />
+    <ClCompile Include="..\..\src\stringutils.c" />
     <ClCompile Include="..\..\src\subscription.c" />
     <ClCompile Include="..\..\src\thread.c" />
     <ClCompile Include="..\..\src\threadkey.c" />
@@ -361,8 +361,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\ocilib.h" />
     <ClInclude Include="..\..\include\ocilibc\api.h" />
-    <ClInclude Include="..\..\include\ocilibc\compat.h" />
-    <ClInclude Include="..\..\include\ocilibc\config.h" />
+    <ClInclude Include="..\..\include\ocilibc\defines.h" />
+    <ClInclude Include="..\..\include\ocilibc\platform.h" />
     <ClInclude Include="..\..\include\ocilibc\types.h" />
     <ClInclude Include="..\..\src\agent.h" />
     <ClInclude Include="..\..\src\array.h" />
@@ -409,7 +409,7 @@
     <ClInclude Include="..\..\src\reference.h" />
     <ClInclude Include="..\..\src\resultset.h" />
     <ClInclude Include="..\..\src\statement.h" />
-    <ClInclude Include="..\..\src\strings.h" />
+    <ClInclude Include="..\..\src\stringutils.h" />
     <ClInclude Include="..\..\src\subscription.h" />
     <ClInclude Include="..\..\src\thread.h" />
     <ClInclude Include="..\..\src\threadkey.h" />

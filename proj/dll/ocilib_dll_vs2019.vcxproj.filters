@@ -143,9 +143,6 @@
     <ClCompile Include="..\..\src\typeinfo.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\strings.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\message.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -162,6 +159,9 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\date.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stringutils.c">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -286,9 +286,6 @@
     <ClInclude Include="..\..\src\types.h">
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\strings.h">
-      <Filter>Headers %28Private%29</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\oci\api.h">
       <Filter>Headers %28OCI%29</Filter>
     </ClInclude>
@@ -331,14 +328,17 @@
     <ClInclude Include="..\..\include\ocilibc\api.h">
       <Filter>Headers %28Public%29</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\ocilibc\compat.h">
-      <Filter>Headers %28Public%29</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\ocilibc\config.h">
-      <Filter>Headers %28Public%29</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\ocilibc\types.h">
       <Filter>Headers %28Public%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ocilibc\defines.h">
+      <Filter>Headers %28Public%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ocilibc\platform.h">
+      <Filter>Headers %28Public%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\stringutils.h">
+      <Filter>Headers %28Private%29</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
