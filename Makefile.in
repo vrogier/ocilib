@@ -205,10 +205,10 @@ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/README.in \
 	$(top_srcdir)/config/compile $(top_srcdir)/config/config.guess \
 	$(top_srcdir)/config/config.sub \
 	$(top_srcdir)/config/install-sh $(top_srcdir)/config/ltmain.sh \
-	$(top_srcdir)/config/missing AUTHORS ChangeLog INSTALL \
-	README THANKS LICENSE config/compile config/config.guess \
-	config/config.sub config/install-sh config/ltmain.sh \
-	config/missing
+	$(top_srcdir)/config/missing AUTHORS COPYING ChangeLog INSTALL \
+	NEWS README THANKS config/compile config/config.guess \
+	config/config.sub config/depcomp config/install-sh \
+	config/ltmain.sh config/missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -305,6 +305,7 @@ OBJEXT = @OBJEXT@
 OCILIB_CHARSET = @OCILIB_CHARSET@
 OCILIB_DEMO_SOURCES = @OCILIB_DEMO_SOURCES@
 OCILIB_DOCS = @OCILIB_DOCS@
+OCILIB_EXTRA_FLAGS = @OCILIB_EXTRA_FLAGS@
 OCILIB_IMPORT = @OCILIB_IMPORT@
 OCILIB_LD_FLAG = @OCILIB_LD_FLAG@
 OCILIB_PREFIX = @OCILIB_PREFIX@
@@ -372,6 +373,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
