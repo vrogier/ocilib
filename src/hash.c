@@ -30,6 +30,20 @@ static const unsigned int HashTypeValues[] =
     OCI_HASH_POINTER
 };
 
+unsigned int HashCompute
+(
+    OCI_HashTable *table,
+    const otext   *str
+);
+
+boolean HashAdd
+(
+    OCI_HashTable *table,
+    const otext   *key,
+    OCI_Variant    value,
+    unsigned int   type
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * HashCompute
  * --------------------------------------------------------------------------------------------- */

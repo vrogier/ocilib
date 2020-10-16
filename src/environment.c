@@ -535,6 +535,16 @@ OCILOBWRITEAPPEND2  OCILobWriteAppend2  = NULL;
 
 #endif /* OCI_IMPORT_RUNTIME */
 
+void EnvironmentFreeError
+(
+    OCI_Error *err
+);
+
+void KeyMapFree
+(
+    void
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * EnvironmentFreeErrors
  * --------------------------------------------------------------------------------------------- */
@@ -553,6 +563,7 @@ void EnvironmentFreeError(OCI_Error *err)
 
 void KeyMapFree
 (
+    void
 )
 {
     OCI_HashEntry *e = NULL;

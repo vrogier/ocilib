@@ -61,6 +61,54 @@ static const unsigned int TimeoutTypeValues[] =
                         \
     value = con->trace->prop[0] ? con->trace->prop : NULL;
 
+boolean ConnectionDetach
+(
+    OCI_Connection *con
+);
+
+boolean ConnectionLogonXA
+(
+    OCI_Connection *con
+);
+
+boolean ConnectionLogonRegular
+(
+    OCI_Connection *con,
+    const otext    *new_pwd
+);
+
+boolean ConnectionLogonSessionPool
+(
+    OCI_Connection *con,
+    const otext    *tag
+);
+
+boolean ConnectionLogoffRegular
+(
+    OCI_Connection *con
+);
+
+boolean ConnectionLogoffSessionPool
+(
+    OCI_Connection *con
+);
+
+boolean ConnectionLogOff
+(
+    OCI_Connection *con
+);
+
+boolean ConnectionDeallocate
+(
+    OCI_Connection *con
+);
+
+void ConnectionDetachSubscriptions
+(
+    OCI_Subscription *sub,
+    OCI_Connection   *con
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * ConnectionDetachSubscriptions
  * --------------------------------------------------------------------------------------------- */

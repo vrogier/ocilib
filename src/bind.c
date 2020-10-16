@@ -50,6 +50,44 @@ static const unsigned int BindDirectionValues[] =
     OCI_BDM_IN_OUT
 };
 
+boolean BindAllocateInternalData
+(
+    OCI_Bind* bnd
+);
+
+boolean BindAllocateBuffers
+(
+    OCI_Bind    *bnd,
+    unsigned int mode,
+    boolean      reused,
+    unsigned int nballoc,
+    unsigned int nbelem,
+    boolean      plsql_table
+);
+
+boolean BindCheckAvailability
+(
+    OCI_Statement *stmt,
+    unsigned int   mode,
+    boolean        reused
+);
+
+boolean BindPerformBinding
+(
+    OCI_Bind    *bnd,
+    unsigned int mode,
+    unsigned int index,
+    unsigned int exec_mode,
+    boolean      plsql_table
+);
+
+boolean BindAddToStatement
+(
+    OCI_Bind    *bnd,
+    unsigned int mode,
+    boolean      reused
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * BindAllocateInternalData
  * --------------------------------------------------------------------------------------------- */

@@ -25,6 +25,7 @@
 
 OCI_Error * ErrorCreate
 (
+    void
 );
 
 void ErrorFree

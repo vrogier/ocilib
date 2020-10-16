@@ -31,6 +31,23 @@ static const unsigned int ConversionModeValues[] =
     OCI_DCM_FORCE
 };
 
+boolean DirPathSetArray
+(
+    OCI_DirPath *dp,
+    ub4          row_from
+);
+
+unsigned int DirPathArrayToStream
+(
+    OCI_DirPath *dp,
+    ub4          row_from
+);
+
+unsigned int DirPathLoadStream
+(
+    OCI_DirPath *dp
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * DirPathSetArray
  * --------------------------------------------------------------------------------------------- */

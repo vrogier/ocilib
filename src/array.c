@@ -40,6 +40,18 @@
     ((void **)(arr->mem_handle))[i] = ((type *) data)->handle; \
 
 
+boolean ArrayFindAny
+(
+    OCI_Array *arr,
+    void     **handles
+);
+
+boolean ArrayFindObjects
+(
+    OCI_Array *arr,
+    void     **handles
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * ArrayFindAny
  * --------------------------------------------------------------------------------------------- */

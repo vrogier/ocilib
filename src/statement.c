@@ -185,6 +185,57 @@ static unsigned int LongModeValues[] =
 #define OCI_BIND_GET_HANDLE(s, t, i) (bnd->is_array ? ((t **) (s))[i] : (t *) (s))
 #define OCI_BIND_GET_BUFFER(d, t, i) ((t *)((d) + (i) * sizeof(t)))
 
+boolean StatementBatchErrorClear
+(
+    OCI_Statement *stmt
+);
+
+boolean StatementFreeAllBinds
+(
+    OCI_Statement *stmt
+);
+
+boolean StatementReset
+(
+    OCI_Statement *stmt
+);
+
+boolean StatementBindCheck
+(
+    OCI_Bind    *bnd,
+    ub1         *src,
+    ub1         *dst,
+    unsigned int index
+);
+
+boolean StatementBindUpdate
+(
+    OCI_Bind    *bnd,
+    ub1         *src,
+    ub1         *dst,
+    unsigned int index
+);
+
+boolean StatementBindCheckAll
+(
+    OCI_Statement *stmt
+);
+
+boolean StatementBindUpdateAll
+(
+    OCI_Statement *stmt
+);
+
+boolean StatementCheckImplicitResultsets
+(
+    OCI_Statement *stmt
+);
+
+boolean StatementBatchErrorInit
+(
+    OCI_Statement *stmt
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * StatementBatchErrorClear
  * --------------------------------------------------------------------------------------------- */

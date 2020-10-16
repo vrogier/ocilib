@@ -37,6 +37,56 @@
 #include "timestamp.h"
 #include "typeinfo.h"
 
+OCI_TypeInfo * ObjectGetRealTypeInfo
+(
+    OCI_TypeInfo *typinf,
+    void *object
+);
+
+ub2 ObjectGetIndOffset
+(
+    OCI_TypeInfo *typinf,
+    int           index
+);
+
+void ObjectGetStructSize
+(
+    OCI_TypeInfo *typinf,
+    size_t       *p_size,
+    size_t       *p_align
+);
+
+int ObjectGetAttributeIndex
+(
+    OCI_Object  *obj,
+    const otext *attr,
+    int          type,
+    boolean      check
+);
+
+void * ObjectGetAttr
+(
+    OCI_Object  *obj,
+    unsigned int index,
+    OCIInd     **pind
+);
+
+boolean ObjectSetNumberInternal
+(
+    OCI_Object  *obj,
+    const otext *attr,
+    void        *value,
+    uword        flag
+);
+
+boolean ObjectGetNumberInternal
+(
+    OCI_Object  *obj,
+    const otext *attr,
+    void        *value,
+    uword        flag
+);
+
 #define OBJECT_SET_VALUE(datatype, type, func, ...)                     \
                                                                         \
     ENTER_FUNC(boolean, FALSE, OCI_IPC_OBJECT, obj)                     \
@@ -131,6 +181,11 @@ boolean ObjectGetAttributeInfo
     int            index,
     size_t       * p_size,
     size_t       * p_align
+);
+
+void ObjectReset
+(
+    OCI_Object *obj
 );
 
 /* --------------------------------------------------------------------------------------------- *

@@ -58,7 +58,12 @@
 #include "transaction.h"
 #include "typeinfo.h"
 
-void CheckContext()
+void CheckContext
+(
+    void
+);
+
+void CheckContext(void)
 {
     if (Env.env_mode & OCI_ENV_CONTEXT)
     {

@@ -23,6 +23,11 @@
 #include "error.h"
 #include "strings.h"
 
+void ExceptionCallHandler
+(
+    OCI_Error *err
+);
+
 static const otext * TypeNames[OCI_IPC_COUNT] =
 {
     OTEXT("Oracle memory"),

@@ -119,6 +119,25 @@
                                                                                     \
     EXIT_FUNC()
 
+boolean ElementSetNumberInternal
+(
+    OCI_Elem *elem,
+    void     *value,
+    uword     flag
+);
+
+boolean ElemGetNumberInternal
+(
+    OCI_Elem *elem,
+    void     *value,
+    uword     flag
+);
+
+boolean ElemFreeAllocatedData
+(
+    OCI_Elem *elem
+);
+
 /* --------------------------------------------------------------------------------------------- *
 * ElemFreeAllocatedData
 * --------------------------------------------------------------------------------------------- */

@@ -28,6 +28,7 @@
 
 const void * HandleGetEnvironment
 (
+    void
 )
 {
     GET_LIB_PROP(const void*, NULL, Env.env)
