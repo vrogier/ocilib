@@ -350,7 +350,8 @@ OCI_EXPORT int ociwcscasecmp
 /**
  * @addtogroup OcilibCApiDatatypes
  * @{
-     
+ */
+
 /**
  * @typedef big_int
  *

@@ -39,6 +39,11 @@
         MutexRelease(Env.mem_mutex); \
     }                                \
 
+void MemoryUpdateBytes
+(
+    int     type,
+    big_int size
+);
 
 /* --------------------------------------------------------------------------------------------- *
  * MemoryUpdateBytes

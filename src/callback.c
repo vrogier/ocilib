@@ -35,6 +35,14 @@ typedef struct HAEventParams
     ub4          event;
 } HAEventParams;
 
+
+void ProcHAEventInvoke
+(
+    OCI_Connection *con,
+    HAEventParams * ha_params
+);
+
+
 /* --------------------------------------------------------------------------------------------- *
  * ProcInBind
  * --------------------------------------------------------------------------------------------- */

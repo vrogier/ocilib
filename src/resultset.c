@@ -111,6 +111,35 @@ static unsigned int SeekModeValues[] =
                                                          \
     EXIT_FUNC()
 
+boolean ResultsetExpandStrings
+(
+    OCI_Resultset *rs
+);
+
+boolean ResultsetFetchPieces
+(
+    OCI_Resultset *rs
+);
+
+boolean ResultsetClearFetchedObjectInstances
+(
+    OCI_Resultset *rs
+);
+
+boolean ResultsetFetchData
+(
+    OCI_Resultset *rs,
+    int            mode,
+    int            offset
+);
+
+boolean ResultsetFetchCustom
+(
+    OCI_Resultset *rs,
+    int            mode,
+    int            offset
+);
+
 /* --------------------------------------------------------------------------------------------- *
  * ResultsetCreate
  * --------------------------------------------------------------------------------------------- */
@@ -756,8 +785,8 @@ boolean ResultsetFetchCustom
     {
         case OCI_SFD_RELATIVE:
         {
-            const boolean isOutOfBound = (offset > 0) && (rs->eof) ||
-                                         (offset < 0) && (rs->bof) ||
+            const boolean isOutOfBound = ((offset > 0) && (rs->eof)) ||
+                                         ((offset < 0) && (rs->bof)) ||
                                          (offset == 0);
 
             CHECK(isOutOfBound == FALSE)

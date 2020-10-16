@@ -56,6 +56,10 @@ static const MagicNumber MagicNumbers[] =
                                                               \
     EXIT_FUNC()                                               \
 
+uword GetNumericTypeSize
+(
+    unsigned int type
+);
 
 /* --------------------------------------------------------------------------------------------- *
 * GetNumericTypeSize

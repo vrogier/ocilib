@@ -30,6 +30,7 @@
 
 OCI_Error * ErrorCreate
 (
+    void
 )
 {
     return (OCI_Error *) calloc(1, sizeof(OCI_Error));
