@@ -40,7 +40,7 @@
 
 #elif defined(__GNUC__)
 
-    #define DO_PRAGMA(X) _Pragma(#X)
+    #define DO_PRAGMA(exp) _Pragma(#exp)
 
     #define WARNING_DISABLE(w)                  \
         DO_PRAGMA(GCC diagnostic push)          \
@@ -49,9 +49,15 @@
     #define WARNING_RESTORE(w)                  \
         DO_PRAGMA(GCC diagnostic pop)           \
 
-    #define WARNING_DISABLE_CAST_FUNC_TYPE      WARNING_DISABLE(-Wcast-function-type)
-    #define WARNING_RESTORE_CAST_FUNC_TYPE      WARNING_RESTORE(-Wcast-function-type)
-    #define WARNING_DISABLE_PEDANTIC            WARNING_DISABLE(-Wpedantic)
+	#if __GNUC__ > 7
+      #define WARNING_DISABLE_CAST_FUNC_TYPE      WARNING_DISABLE(-Wcast-function-type)
+      #define WARNING_RESTORE_CAST_FUNC_TYPE      WARNING_RESTORE(-Wcast-function-type)
+    #else
+      #define WARNING_DISABLE_CAST_FUNC_TYPE
+      #define WARNING_RESTORE_CAST_FUNC_TYPE
+	#endif
+
+	#define WARNING_DISABLE_PEDANTIC            WARNING_DISABLE(-Wpedantic)
     #define WARNING_RESTORE_PEDANTIC            WARNING_RESTORE(-Wpedantic)
 
 #endif
