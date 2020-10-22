@@ -26,6 +26,36 @@
 #include "memory.h"
 #include "types.h"
 
+/* Global warning macro specific warnings macro */
+
+#if defined(_MSC_VER)
+
+    #define WARNING_DISABLE(w)              __pragma(warning( disable : w ))
+    #define WARNING_RESTORE(w)              __pragma(warning( default : w ))
+
+    #define WARNING_DISABLE_CAST_FUNC_TYPE  WARNING_DISABLE(4054)
+    #define WARNING_RESTORE_CAST_FUNC_TYPE  WARNING_RESTORE(4054)
+    #define WARNING_DISABLE_PEDANTIC
+    #define WARNING_RESTORE_PEDANTIC
+
+#elif defined(__GNUC__)
+
+    #define DO_PRAGMA(X) _Pragma(#X)
+
+    #define WARNING_DISABLE(w)                  \
+        DO_PRAGMA(GCC diagnostic push)          \
+        DO_PRAGMA(GCC diagnostic ignored #w)
+
+    #define WARNING_RESTORE(w)                  \
+        DO_PRAGMA(GCC diagnostic pop)           \
+
+    #define WARNING_DISABLE_CAST_FUNC_TYPE      WARNING_DISABLE(-Wcast-function-type)
+    #define WARNING_RESTORE_CAST_FUNC_TYPE      WARNING_RESTORE(-Wcast-function-type)
+    #define WARNING_DISABLE_PEDANTIC            WARNING_DISABLE(-Wpedantic)
+    #define WARNING_RESTORE_PEDANTIC            WARNING_RESTORE(-Wpedantic)
+
+#endif
+
 /* declare a call context */
 
 #define CONTEXT(src_type, src_ptr)       \
@@ -42,6 +72,11 @@
     ret_type call_retval = ret_value;                      \
     boolean call_status = TRUE;                            \
     CONTEXT(src_type, src_ptr)                             \
+
+#define ENTER_FUNC_NO_CONTEXT(ret_type, ret_value)         \
+                                                           \
+    ret_type call_retval = ret_value;                      \
+    boolean call_status = TRUE;                            \
 
 #define ENTER_VOID(src_type, src_ptr) \
                                       \
@@ -68,14 +103,14 @@ CleanupLabel:              \
 
 /* return to the caller */
 
-#define LABEL_EXIT_VOID() \
-                          \
-ExitLabel:                \
+#define LABEL_EXIT_VOID()           \
+                                    \
+ExitLabel:                          \
     return;
 
-#define LABEL_EXIT_FUNC() \
-                          \
-ExitLabel:                \
+#define LABEL_EXIT_FUNC()           \
+                                    \
+ExitLabel:                          \
     return call_retval;
 
 /* status management */

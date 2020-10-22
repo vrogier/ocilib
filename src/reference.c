@@ -38,10 +38,9 @@ OCI_Ref * OcilibReferenceInitialize
     void           *handle
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ OCI_Ref*, ref,
-        /* context */ OCI_IPC_CONNECTION, con
+        /* returns */ OCI_Ref*, ref
     )
 
     ALLOC_DATA(OCI_IPC_REF, ref, 1);

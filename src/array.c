@@ -54,19 +54,6 @@ static boolean OcilibArrayFindAny
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OcilibArrayFindObjects
-* --------------------------------------------------------------------------------------------- */
-
-static boolean OcilibArrayFindObjects
-(
-    OCI_Array *arr,
-    void     **handles
-)
-{
-    return arr && arr->tab_obj == handles;
-}
-
-/* --------------------------------------------------------------------------------------------- *
  * OcilibArrayInitialize
  * --------------------------------------------------------------------------------------------- */
 
@@ -76,10 +63,9 @@ boolean OcilibArrayInitialize
     OCI_TypeInfo *typinf
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_CONNECTION, arr ? arr->con : NULL
+        /* returns */ boolean, FALSE
     )
 
     for (unsigned int i = 0; i < arr->nb_elem; i++)
@@ -228,10 +214,9 @@ OCI_Array * OcilibArrayCreate
     OCI_TypeInfo   *typinf
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ OCI_Array*, NULL,
-        /* context */ OCI_IPC_CONNECTION, con
+        /* returns */ OCI_Array*, NULL
     )
 
     OCI_Array* arr = NULL;

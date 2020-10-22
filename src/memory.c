@@ -197,10 +197,9 @@ boolean OcilibMemoryAllocHandle
     ub4          type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ boolean, FALSE
     )
 
     CHECK_NULL(hndlpp)
@@ -226,10 +225,9 @@ boolean OcilibMemoryFreeHandle
     ub4    type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ boolean, FALSE
     )
 
     CHECK_NULL(hndlp)
@@ -255,10 +253,9 @@ boolean OcilibMemoryAllocDescriptor
     ub4          type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ boolean, FALSE
     )
 
     CHECK_NULL(descpp)
@@ -286,10 +283,9 @@ boolean OcilibMemoryAllocDescriptorArray
     ub4          nb_elem
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ boolean, FALSE
     )
 
     CHECK_NULL(descpp)
@@ -333,10 +329,9 @@ boolean OcilibMemoryFreeDescriptor
     ub4    type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ boolean, FALSE
     )
 
     CHECK_NULL(descp)
@@ -363,10 +358,9 @@ boolean OcilibMemoryFreeDescriptorArray
     ub4     nb_elem
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ boolean, FALSE
     )
 
     CHECK_NULL(descp)

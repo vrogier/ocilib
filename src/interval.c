@@ -47,10 +47,9 @@ OCI_Interval * OcilibIntervalInitialize
     ub4             type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ OCI_Interval*, itv,
-        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
+        /* returns */ OCI_Interval*, itv
     )
 
 #if OCI_VERSION_COMPILE >= OCI_9_0

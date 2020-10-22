@@ -758,9 +758,9 @@ static boolean OcilibResultsetFetchCustom
     {
         case OCI_SFD_RELATIVE:
         {
-            const boolean isOutOfBound = (offset > 0) && (rs->eof) ||
-                                         (offset < 0) && (rs->bof) ||
-                                         (offset == 0);
+            const boolean isOutOfBound = ((offset > 0) && (rs->eof)) ||
+                                         ((offset < 0) && (rs->bof)) ||
+                                         ((offset == 0));
 
             CHECK(isOutOfBound == FALSE)
 
@@ -769,7 +769,7 @@ static boolean OcilibResultsetFetchCustom
         }
         case OCI_SFD_ABSOLUTE:
         {
-            CHECK(offset != 0)          
+            CHECK(offset != 0)
             break;
         }
         default:
@@ -874,8 +874,8 @@ boolean OcilibResultsetFree
             }
             else
             {
-                OcilibMemoryFreeDescriptorArray((dvoid *)def->buf.data, 
-                                                (ub4)def->col.handletype, 
+                OcilibMemoryFreeDescriptorArray((dvoid *)def->buf.data,
+                                                (ub4)def->col.handletype,
                                                 (ub4)def->buf.count);
             }
         }
@@ -2252,7 +2252,7 @@ OCI_Coll * OcilibResultsetGetColl
     (
         rs, index, OCI_Coll *, NULL, OCI_CDT_COLLECTION,
 
-        OcilibCollectionInitialize(rs->stmt->con, (OCI_Coll *) def->obj, 
+        OcilibCollectionInitialize(rs->stmt->con, (OCI_Coll *) def->obj,
                                    OcilibDefineGetData(def), def->col.typinf)
     )
 }
@@ -2320,8 +2320,8 @@ OCI_Statement * OcilibResultsetGetStatement
         (
             rs->stmt->con,
             (OCI_Statement *) def->obj,
-            (OCIStmt *)OcilibDefineGetData(def), 
-            TRUE, 
+            (OCIStmt *)OcilibDefineGetData(def),
+            TRUE,
             def->col.name
         )
     )

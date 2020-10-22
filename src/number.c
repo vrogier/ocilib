@@ -568,10 +568,9 @@ OCI_Number * OcilibNumberInitialize
     OCINumber      *buffer
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ OCI_Number*, number,
-        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
+        /* returns */ OCI_Number*, number
     )
 
     ALLOC_DATA(OCI_IPC_NUMBER, number, 1);

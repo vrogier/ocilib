@@ -251,9 +251,8 @@ OCI_Subscription * OcilibSubscriptionRegister
        As there is no other to way to do regarding the OCI API, let's disable this
        warning just the time to set the callback attribute to the subscription handle */
 
-  #ifdef _MSC_VER
-    #pragma warning(disable: 4054)
-  #endif
+    WARNING_DISABLE_CAST_FUNC_TYPE
+    WARNING_DISABLE_PEDANTIC
 
     /* internal callback handler */
 
@@ -264,9 +263,8 @@ OCI_Subscription * OcilibSubscriptionRegister
         sub->con->err
     )
 
-  #ifdef _MSC_VER
-    #pragma warning(default: 4054)
-  #endif
+    WARNING_RESTORE_CAST_FUNC_TYPE
+    WARNING_RESTORE_PEDANTIC
 
     /* RowIds handling */
 

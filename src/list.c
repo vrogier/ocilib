@@ -116,10 +116,9 @@ OCI_List* OcilibListCreate
     int type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ OCI_List*, NULL,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ OCI_List*, NULL
     )
 
     /* allocate list */

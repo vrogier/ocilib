@@ -66,10 +66,14 @@ static void OcilibCheckContext()
     }
 }
 
-#define CALL_IMPL(impl, ...)  \
-    OcilibCheckContext();     \
-    return impl(__VA_ARGS__); \
+#define CALL_IMPL(impl, ...)        \
+    OcilibCheckContext();           \
+    return impl(__VA_ARGS__);       \
 
+
+#define CALL_IMPL_NO_ARGS(impl)     \
+    OcilibCheckContext();           \
+    return impl();                  \
 
 /* --------------------------------------------------------------------------------------------- *
   * agent
@@ -2430,7 +2434,7 @@ const void* OCI_API OCI_HandleGetEnvironment
     void
 )
 {
-    CALL_IMPL(OcilibHandleGetEnvironment)
+    CALL_IMPL_NO_ARGS(OcilibHandleGetEnvironment)
 }
 
 const void* OCI_API OCI_HandleGetContext
@@ -2953,7 +2957,7 @@ boolean OCI_API OCI_Cleanup
     void
 )
 {
-    CALL_IMPL(OcilibEnvironmentCleanup)
+    CALL_IMPL_NO_ARGS(OcilibEnvironmentCleanup)
 }
 
 unsigned int OCI_API OCI_GetOCICompileVersion
@@ -2961,7 +2965,7 @@ unsigned int OCI_API OCI_GetOCICompileVersion
     void
 )
 {
-    CALL_IMPL(OcilibEnvironmentGetOCICompileVersion)
+    CALL_IMPL_NO_ARGS(OcilibEnvironmentGetOCICompileVersion)
 }
 
 unsigned int OCI_API OCI_GetOCIRuntimeVersion
@@ -2969,7 +2973,7 @@ unsigned int OCI_API OCI_GetOCIRuntimeVersion
     void
 )
 {
-    CALL_IMPL(OcilibEnvironmentGetOCIRuntimeVersion)
+    CALL_IMPL_NO_ARGS(OcilibEnvironmentGetOCIRuntimeVersion)
 }
 
 unsigned int OCI_API OCI_GetImportMode
@@ -2977,7 +2981,7 @@ unsigned int OCI_API OCI_GetImportMode
     void
 )
 {
-    CALL_IMPL(OcilibEnvironmentGetOCIRuntimeImportMode)
+    CALL_IMPL_NO_ARGS(OcilibEnvironmentGetOCIRuntimeImportMode)
 }
 
 unsigned int OCI_API OCI_GetCharset
@@ -2985,7 +2989,7 @@ unsigned int OCI_API OCI_GetCharset
     void
 )
 {
-    CALL_IMPL(OcilibEnvironmentGetCharset)
+    CALL_IMPL_NO_ARGS(OcilibEnvironmentGetCharset)
 }
 
 big_uint OCI_API OCI_GetAllocatedBytes
@@ -3670,7 +3674,7 @@ OCI_Mutex* OCI_API OCI_MutexCreate
     void
 )
 {
-    CALL_IMPL(OcilibMutexCreate);
+    CALL_IMPL_NO_ARGS(OcilibMutexCreate);
 }
 
 boolean OCI_API OCI_MutexFree
@@ -6630,7 +6634,7 @@ OCI_Thread* OCI_API OCI_ThreadCreate
     void
 )
 {
-    CALL_IMPL(OcilibThreadCreate);
+    CALL_IMPL_NO_ARGS(OcilibThreadCreate);
 }
 
 boolean OCI_API OCI_ThreadFree

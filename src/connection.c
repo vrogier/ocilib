@@ -110,7 +110,7 @@ OCI_Connection * OcilibConnectionAllocate
         /* context */ (pool ? OCI_IPC_POOL : OCI_IPC_VOID), (pool ? (void*)pool : (void*)&Env)
     )
 
-    /* create OcilibConnection object */
+    /* create connection object */
 
     OCI_Connection *con = OcilibListAppend(Env.cons, sizeof(*con));
     CHECK_NULL(con)
@@ -276,7 +276,7 @@ boolean OcilibConnectionAttach
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_CON_STATUS(con, OCI_CONN_ALLOCATED)
 
-    /* allocate server handle for non session pooled OcilibConnection */
+    /* allocate server handle for non session pooled connection */
 
     if (con->alloc_handles)
     {
@@ -506,7 +506,7 @@ static boolean OcilibConnectionLogonRegular
             OCI_AUTH
         )
 
-        /* replace OcilibConnection password */
+        /* replace connection password */
 
         FREE(con->pwd)
         con->pwd = OcilibStringDuplicate(new_pwd);
@@ -763,7 +763,7 @@ boolean OcilibConnectionLogon
 
 #endif
 
-    /* 1 - XA OcilibConnection */
+    /* 1 - XA connection */
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -775,7 +775,7 @@ boolean OcilibConnectionLogon
 
 #endif
 
-    /* 2 - regular OcilibConnection and OcilibConnection from OcilibConnection pool */
+    /* 2 - regular connectionq and connections from pool */
 
     if (con->alloc_handles)
     {
@@ -784,7 +784,7 @@ boolean OcilibConnectionLogon
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
-    /* 3 - OcilibConnection from session pool */
+    /* 3 - connection from session pool */
 
     else if (Env.version_runtime >= OCI_9_2)
     {
@@ -895,7 +895,7 @@ static boolean OcilibConnectionLogoffSessionPool
     {
         ub4 mode = OCI_DEFAULT;
 
-        /* Clear session tag if OcilibConnection was retrieved from session pool */
+        /* Clear session tag if connection was retrieved from session pool */
 
         if (NULL != con->pool && NULL != con->sess_tag && ( OCI_HTYPE_SPOOL == con->pool->htype))
         {
@@ -953,9 +953,11 @@ static boolean OcilibConnectionLogOff
         OCILobFileCloseAll(con->cxt, con->err);
     }
 
-    /* dissociate OcilibConnection from existing subscriptions */
+    /* dissociate connection from existing subscriptions */
 
     OcilibListForEachWithParam(Env.subs, con, (POCI_LIST_FOR_EACH_WITH_PARAM) OcilibConnectionDetachSubscriptions);
+
+    WARNING_DISABLE_CAST_FUNC_TYPE
 
     /* free all statements */
 
@@ -972,7 +974,9 @@ static boolean OcilibConnectionLogOff
     OcilibListForEach(con->trsns, (POCI_LIST_FOR_EACH)OcilibTransactionDispose);
     OcilibListClear(con->trsns);
 
-    /* 1 - XA OcilibConnection */
+    WARNING_RESTORE_CAST_FUNC_TYPE
+
+    /* 1 - XA Connection */
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -984,7 +988,7 @@ static boolean OcilibConnectionLogOff
 
 #endif
 
-    /* 2 - regular OcilibConnection and OcilibConnection from OcilibConnection pool */
+    /* 2 - regular Connection and Connection from Connection pool */
 
     if (con->alloc_handles)
     {
@@ -993,7 +997,7 @@ static boolean OcilibConnectionLogOff
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
-    /* 3 - OcilibConnection from session pool */
+    /* 3 - Connection from session pool */
 
     else if (Env.version_runtime >= OCI_9_0)
     {
@@ -1100,13 +1104,12 @@ OCI_Connection * OcilibConnectionCreateInternal
     const otext *tag
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ OCI_Connection*, NULL,
-        /* context */ (pool ? OCI_IPC_POOL : OCI_IPC_VOID), (pool ? (void*)pool : (void*)&Env)
+        /* returns */ OCI_Connection*, NULL
     )
 
-    /* create OcilibConnection */
+    /* create Connection */
 
     OCI_Connection *con = OcilibConnectionAllocate(pool, db, user, pwd, mode);
     CHECK_NULL(con)

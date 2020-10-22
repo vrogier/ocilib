@@ -49,10 +49,9 @@ OCI_Timestamp * OcilibTimestampInitialize
     ub4             type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ OCI_Timestamp*, tmsp,
-        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
+        /* returns */ OCI_Timestamp*, tmsp
     )
 
 #if OCI_VERSION_COMPILE >= OCI_9_0

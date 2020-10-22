@@ -338,9 +338,9 @@ OCI_Msg * OcilibDequeueGetMessage
 
                 dequeue->msg->obj = OcilibObjectInitialize
                                     (
-                                        dequeue->typinf->con, 
+                                        dequeue->typinf->con,
                                         (OCI_Object*)dequeue->msg->obj,
-                                        dequeue->msg->payload, 
+                                        dequeue->msg->payload,
                                         dequeue->typinf,
                                         NULL, -1, TRUE
                                     );
@@ -357,7 +357,7 @@ OCI_Msg * OcilibDequeueGetMessage
     CLEANUP_AND_EXIT_FUNC
     (
         OcilibStringReleaseDBString(dbstr);
-        
+
         FREE(ansi_queue_name)
     )
 }
@@ -1027,9 +1027,8 @@ boolean OcilibDequeueSubscribe
         As there is no other to way to do regarding the OCI API, let's disable this
         warning just the time to set the callback attribute to the dequeue handle */
 
-#ifdef _MSC_VER
-  #pragma warning(disable: 4054)
-#endif
+    WARNING_DISABLE_CAST_FUNC_TYPE
+    WARNING_DISABLE_PEDANTIC
 
     /* internal callback handler */
 
@@ -1040,9 +1039,8 @@ boolean OcilibDequeueSubscribe
         dequeue->typinf->con->err
     )
 
-#ifdef _MSC_VER
-  #pragma warning(default: 4054)
-#endif
+    WARNING_RESTORE_CAST_FUNC_TYPE
+    WARNING_RESTORE_PEDANTIC
 
     /* set callback */
 

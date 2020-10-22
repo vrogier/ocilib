@@ -33,6 +33,8 @@
 #include "subscription.h"
 #include "threadkey.h"
 
+WARNING_DISABLE_CAST_FUNC_TYPE
+
 OCI_Environment Env;
 
 const char * EnvironmentVarNames[OCI_VARS_COUNT] =
@@ -1850,9 +1852,8 @@ boolean OcilibEnvironmentSetHAHandler
        As there is no other to way to do regarding the OCI API, let's disable this
        warning just the time to set the callback attribute to the environment handle */
 
-  #ifdef _MSC_VER
-    #pragma warning(disable: 4054)
-  #endif
+    WARNING_DISABLE_CAST_FUNC_TYPE
+    WARNING_DISABLE_PEDANTIC
 
     if (NULL != handler)
     {
@@ -1868,9 +1869,8 @@ boolean OcilibEnvironmentSetHAHandler
 
     Env.ha_handler = handler;
 
-  #ifdef _MSC_VER
-    #pragma warning(default: 4054)
-  #endif
+    WARNING_RESTORE_CAST_FUNC_TYPE
+    WARNING_RESTORE_PEDANTIC
 
 #else
 
@@ -1948,3 +1948,5 @@ const otext * OcilibEnvironmentGetFormat
 
     EXIT_FUNC()
 }
+
+WARNING_RESTORE_CAST_FUNC_TYPE

@@ -20,12 +20,12 @@
 
 /* IMPORTANT NOTICE
  *
- * This file contains explanations about Oracle and OCI technologies. 
- * OCILIB is a wrapper around OCI and thus exposes OCI features. 
+ * This file contains explanations about Oracle and OCI technologies.
+ * OCILIB is a wrapper around OCI and thus exposes OCI features.
  * The OCILIB documentation intends to explain Oracle / OCI concepts
- * and is naturally based on the official Oracle OCI documentation. 
- * 
- * Some parts of OCILIB documentation may include some information 
+ * and is naturally based on the official Oracle OCI documentation.
+ *
+ * Some parts of OCILIB documentation may include some information
  * taken and adapted from the following Oracle documentations :
  *  - Oracle Call Interface Programmer's Guide
  *  - Oracle Streams - Advanced Queuing User's Guide
@@ -151,10 +151,10 @@
     #define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_EXPORT
   #else
     #define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_IMPORT
-  #endif 
-#else 
+  #endif
+#else
   #define OCI_SYM_PUBLIC
-#endif 
+#endif
 
 /* Charset modes */
 
@@ -274,7 +274,8 @@ typedef wchar_t           otext;
 /**
  * @addtogroup OcilibCApiDatatypes
  * @{
-     
+*/
+
 /**
  * @typedef big_int
  *

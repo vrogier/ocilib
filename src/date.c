@@ -38,10 +38,9 @@ OCI_Date * OcilibDateInitialize
     boolean         ansi
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ OCI_Date*, NULL,
-        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
+        /* returns */ OCI_Date*, NULL
     )
 
     ALLOC_DATA(OCI_IPC_DATE, date, 1);

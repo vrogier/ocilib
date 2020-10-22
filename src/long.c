@@ -42,10 +42,9 @@ OCI_Long * OcilibLongInitialize
     unsigned int   type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ OCI_Long*, lg,
-        /* context */ OCI_IPC_STATEMENT, stmt
+        /* returns */ OCI_Long*, lg
     )
 
     ALLOC_DATA(OCI_IPC_LONG, lg, 1);
