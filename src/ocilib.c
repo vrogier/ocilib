@@ -58,7 +58,10 @@
 #include "transaction.h"
 #include "typeinfo.h"
 
-static void OcilibCheckContext()
+static void OcilibCheckContext
+(
+    void
+)
 {
     if (Env.env_mode & OCI_ENV_CONTEXT)
     {

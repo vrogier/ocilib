@@ -523,7 +523,7 @@ OCISODAOPERKEYSSET           OCISodaOperKeysSet           = NULL;
 XAOSVCCTX xaoSvcCtx = NULL;
 XAOENV    xaoEnv    = NULL;
 
-  #ifdef ORAXB8_DEFINED
+#ifdef ORAXB8_DEFINED
 
 OCILOBCOPY2         OCILobCopy2         = NULL;
 OCILOBERASE2        OCILobErase2        = NULL;
@@ -534,7 +534,7 @@ OCILOBTRIM2         OCILobTrim2         = NULL;
 OCILOBWRITE2        OCILobWrite2        = NULL;
 OCILOBWRITEAPPEND2  OCILobWriteAppend2  = NULL;
 
-  #endif /* ORAXB8_DEFINED */
+#endif /* ORAXB8_DEFINED */
 
 #endif /* OCI_IMPORT_RUNTIME */
 
@@ -542,7 +542,10 @@ OCILOBWRITEAPPEND2  OCILobWriteAppend2  = NULL;
  * OcilibEnvironmentFreeErrors
  * --------------------------------------------------------------------------------------------- */
 
-static void OcilibEnvironmentFreeError(OCI_Error *err)
+static void OcilibEnvironmentFreeError
+(
+    OCI_Error *err
+)
 {
     if (err != Env.lib_err)
     {
@@ -556,6 +559,7 @@ static void OcilibEnvironmentFreeError(OCI_Error *err)
 
 static void OcilibEnvironmentKeyMapFree
 (
+    void
 )
 {
     OCI_HashEntry *e = NULL;

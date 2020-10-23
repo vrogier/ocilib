@@ -25,6 +25,7 @@
 
 OCI_SYM_LOCAL OCI_Error * OcilibErrorCreate
 (
+    void
 );
 
 OCI_SYM_LOCAL void OcilibErrorFree
