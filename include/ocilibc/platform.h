@@ -58,19 +58,19 @@
  * --------------------------------------------------------------------------------------------- */
 
 #ifndef _WINDOWS
-#if defined(_WIN32)|| defined(WIN32) || defined(_WIN64) || defined(WIN64) || defined(_WIN32_WINNT)
+  #if defined(_WIN32)|| defined(WIN32) || defined(_WIN64) || defined(WIN64) || defined(_WIN32_WINNT)
     #define _WINDOWS
-#endif
+  #endif
 #endif
 
 #ifdef _WINDOWS
-#ifdef boolean
+  #ifdef boolean
     #undef boolean
-#endif
-#include <Windows.h>
-#ifdef boolean
+  #endif
+  #include <Windows.h>
+  #ifdef boolean
     #undef boolean
-#endif
+  #endif
 #endif
 
 /* --------------------------------------------------------------------------------------------- *
@@ -87,7 +87,7 @@
 #define OCI_IMPORT_MODE_RUNTIME  2
 
 #ifdef OCI_IMPORT_RUNTIME
-#undef OCI_IMPORT_LINKAGE
+  #undef OCI_IMPORT_LINKAGE
 #endif
 
 #ifdef OCI_IMPORT_LINKAGE
@@ -99,7 +99,7 @@
 #endif
 
 #ifdef OCI_IMPORT_RUNTIME
-#define OCI_IMPORT_MODE OCI_IMPORT_MODE_RUNTIME
+  #define OCI_IMPORT_MODE OCI_IMPORT_MODE_RUNTIME
 #else
   #define OCI_IMPORT_MODE OCI_IMPORT_MODE_LINKAGE
 #endif
@@ -108,11 +108,11 @@
 /* Calling convention */
 
 #ifndef OCI_API
-#ifdef _MSC_VER
-  #define OCI_API __stdcall
-#else
-  #define OCI_API
-#endif
+  #ifdef _MSC_VER
+    #define OCI_API __stdcall
+  #else
+    #define OCI_API
+  #endif
 #endif
 
 /* Build modes */
@@ -143,7 +143,7 @@
     #define OCI_SYM_PUBLIC_IMPORT
     #define OCI_SYM_PUBLIC_EXPORT
     #define OCI_SYM_LOCAL
-#endif
+  #endif
 #endif
 
 #if OCI_LIB_TYPE == OCI_LIB_TYPE_SHARED
@@ -163,7 +163,7 @@
 #endif
 
 #ifdef OCI_CHARSET_WIDE
-#undef OCI_CHARSET_ANSI
+  #undef OCI_CHARSET_ANSI
 #endif
 
 #ifdef OCI_CHARSET_ANSI
@@ -258,13 +258,13 @@ extern "C++" {
 #define OCI_CHAR_WIDE       2
 
 #ifdef OCI_CHARSET_ANSI
-typedef char              otext;
-#define OTEXT(x)          x
-#define OCI_CHAR_TEXT     OCI_CHAR_ANSI
+  typedef char              otext;
+  #define OTEXT(x)          x
+  #define OCI_CHAR_TEXT     OCI_CHAR_ANSI
 #else
-typedef wchar_t           otext;
-#define OTEXT(x)          L ## x
-#define OCI_CHAR_TEXT     OCI_CHAR_WIDE
+  typedef wchar_t           otext;
+  #define OTEXT(x)          L ## x
+  #define OCI_CHAR_TEXT     OCI_CHAR_WIDE
 #endif
 
 /**

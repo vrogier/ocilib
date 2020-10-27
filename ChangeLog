@@ -1,11 +1,11 @@
-2020-10-23 Version 4.7.1 Vincent Rogier vince.rogier@ocilib.net
+2020-10-27 Version 4.7.1 Vincent Rogier vince.rogier@ocilib.net
 
   * Enhancements (C API)
     
         - OCILIB internal and public symbols management
             * For static library:
-                - All internal symbols that can have local scope are now declared static
-                - All internal non static symbols are now prefixed with "Ocilib" to avoid collisions 
+                - All private symbols that can have local scope are now declared static
+                - All private non static symbols are now prefixed with "Ocilib" to avoid collisions 
             * For shared library:
                 - No change for Windows platform as __declspec(dllimport) and  __declspec(dllexport) were already handled
                 - When using GNUC compatible compiler:
@@ -25,7 +25,12 @@
     
         - Removed useless old macros for mapping lib C string function to ansi or wide char versions (ostrXXX)
         - Removed symbols ocisprintf(), ocistrdup(), ocistrcasecmp(), ociwcsdup(), ociwcscasecmp() from OCILIB shared library
- 
+  
+    * Miscellaneous
+  
+        - Updated compilers for MS Windows prebuilt binaries
+            * VS2019 16.7.6 for 32/64 bit DLLs
+            
 2020-07-16 Version 4.7.0 Vincent Rogier vince.rogier@ocilib.net
 
     * Enhancements (C API)
