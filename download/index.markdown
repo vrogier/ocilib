@@ -7,10 +7,10 @@ slug: download
 title: Download
 ---
 
-Latest version is {{site.ocilib_current_release_version}} ({{site.ocilib_current_release_date}})
-
+**Latest version is {{site.ocilib_current_release_version}} ({{site.ocilib_current_release_date}})**
+<br/>
 You can get OCILIB from the following sources:
-
+<br/>
 * [Windows, Linux/Unix distribution archives from GitHub]({{site.projecturl}}/releases/)
 * [Windows Nuget package from nuget.org](https://www.nuget.org/packages/ocilib/)
 
