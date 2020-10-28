@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -98,68 +98,68 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_oracle_number.htm
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiLongs</p>
 <p>OCILIB encapsulates Oracle SQL all Numeric types using C native data types. But it also provides an optional OCI_Number handle for manipulating and accessing Oracle NUMBER type. OCI_Number provides management for some special value that cannot be addressed in C such as positive and negative infinity.</p>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/number.sql */</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a>  *st = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a>  *rs = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a>   *tc = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a>   *to = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>     *nm = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a>       *cl = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a>       *el = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a>     *ob = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>     *no = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>     *nt = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>    **ar = NULL;</div><div class="line"></div><div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i, n;</div><div class="line">    otext buf[128] = <span class="stringliteral">&quot;&quot;</span>;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#ga335822f983af0fb5c529431f06a9a17b">OCI_StatementCreate</a>(cn);</div><div class="line"></div><div class="line">    tc = <a class="code" href="group___ocilib_c_api_metadata.html#ga541bb34a0a86c6296f59605f85931039">OCI_TypeInfoGet</a>(cn, <span class="stringliteral">&quot;test_num_coll_t&quot;</span>, OCI_TIF_TYPE);</div><div class="line">    to = <a class="code" href="group___ocilib_c_api_metadata.html#ga541bb34a0a86c6296f59605f85931039">OCI_TypeInfoGet</a>(cn, <span class="stringliteral">&quot;test_num_t&quot;</span>, OCI_TIF_TYPE);</div><div class="line">    cl = <a class="code" href="group___ocilib_c_api_collections.html#gaa2c5c18fa416fe1f955ccb5dbff43046">OCI_CollCreate</a>(tc);</div><div class="line">    ob = <a class="code" href="group___ocilib_c_api_user_types.html#ga5e8f1db675e2b4fe74c82bdc79be8294">OCI_ObjectCreate</a>(cn, to);</div><div class="line">    el = <a class="code" href="group___ocilib_c_api_collections.html#ga2103a0d8230001c7fc217189688244cb">OCI_ElemCreate</a>(tc);</div><div class="line">    nm = <a class="code" href="group___ocilib_c_api_oracle_number.html#ga9e87d52f8415f92b0b723165c4f68850">OCI_NumberCreate</a>(cn);</div><div class="line">    ar = <a class="code" href="group___ocilib_c_api_oracle_number.html#ga7539b88e0253c561488c0ebb24d8bc82">OCI_NumberArrayCreate</a>(cn, 5);</div><div class="line"></div><div class="line">    <span class="comment">// Testing fetching numbers (as number and using implicit conversion number to string)</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af">OCI_Prepare</a>(st, <span class="stringliteral">&quot;select value from test_number&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450">OCI_Execute</a>(st);</div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gaf2a9e28b66a9538ba0ffb62bffb87c16">OCI_GetResultset</a>(st);</div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga36ac26dcea78f6074421781e401f97ba">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>  *n = <a class="code" href="group___ocilib_c_api_fetching.html#ga780c4c0eac2932be03ded727f4973f4d">OCI_GetNumber</a>(rs, 1);</div><div class="line">        <span class="keyword">const</span> otext *s = <a class="code" href="group___ocilib_c_api_fetching.html#ga2a3252984f674fab5358c94d58c689b2">OCI_GetString</a>(rs, 1);</div><div class="line"></div><div class="line">        <a class="code" href="group___ocilib_c_api_oracle_number.html#gad96dc5365df97f5167df47990207987a">OCI_NumberToText</a>(n, NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line"></div><div class="line">        printf(<span class="stringliteral">&quot;%s - %s\n&quot;</span>, buf, s);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// Testing binding external single number</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af">OCI_Prepare</a>(st, <span class="stringliteral">&quot;begin :1 := :1 *2 ; end;&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_binding.html#ga424b99d1f260854febd37746ece9bd59">OCI_BindNumber</a>(st, <span class="stringliteral">&quot;:1&quot;</span>, nm);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga636c9afded7d6f73fb699b8a9d6ee243">OCI_NumberFromText</a>(nm, <span class="stringliteral">&quot;1234.4321&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450">OCI_Execute</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gad96dc5365df97f5167df47990207987a">OCI_NumberToText</a>(nm, NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line"></div><div class="line">    <span class="comment">// Testing binding internal single number</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af">OCI_Prepare</a>(st, <span class="stringliteral">&quot;begin :1 := :1 *2 ; end;&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statement_control.html#ga3d36730fe81e7bdaef5d5bbb066265a6">OCI_SetBindAllocation</a>(st, OCI_BAM_INTERNAL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_binding.html#ga424b99d1f260854febd37746ece9bd59">OCI_BindNumber</a>(st, <span class="stringliteral">&quot;:1&quot;</span>, NULL);</div><div class="line">    nt = <a class="code" href="group___ocilib_c_api_binding.html#gaeb67c6ebd7cfa3ef22ec71ea1933fabf">OCI_BindGetData</a>(<a class="code" href="group___ocilib_c_api_binding.html#ga4eb6c1d2ff0cd4ee7ee4a015c5693129">OCI_GetBind</a>(st, 1));</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga636c9afded7d6f73fb699b8a9d6ee243">OCI_NumberFromText</a>(nt, <span class="stringliteral">&quot;1234.4321&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450">OCI_Execute</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gad96dc5365df97f5167df47990207987a">OCI_NumberToText</a>(nt, NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statement_control.html#ga3d36730fe81e7bdaef5d5bbb066265a6">OCI_SetBindAllocation</a>(st, OCI_BAM_EXTERNAL);</div><div class="line"></div><div class="line">    <span class="comment">// Testing registering number for a returning into statement</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af">OCI_Prepare</a>(st, <span class="stringliteral">&quot;update test_number set value  = value *2 returning value into :1&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_feature_returning_into.html#gaaf3b03d15c93a0441473f2bcf86453d6">OCI_RegisterNumber</a>(st, <span class="stringliteral">&quot;:1&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450">OCI_Execute</a>(st);</div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gaf2a9e28b66a9538ba0ffb62bffb87c16">OCI_GetResultset</a>(st);</div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga36ac26dcea78f6074421781e401f97ba">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#ga2a3252984f674fab5358c94d58c689b2">OCI_GetString</a>(rs, 1));</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// testing Collections</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga636c9afded7d6f73fb699b8a9d6ee243">OCI_NumberFromText</a>(nm, <span class="stringliteral">&quot;1111.2222&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_collections.html#gaa193f3da4519d558eee3251e40a38b7e">OCI_ElemSetNumber</a>(el, nm);</div><div class="line">    <a class="code" href="group___ocilib_c_api_collections.html#ga8b92db49c038ae235ef85743194ace83">OCI_CollAppend</a>(cl, el);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga636c9afded7d6f73fb699b8a9d6ee243">OCI_NumberFromText</a>(nm, <span class="stringliteral">&quot;3333.4444&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_collections.html#gaa193f3da4519d558eee3251e40a38b7e">OCI_ElemSetNumber</a>(el, nm);</div><div class="line">    <a class="code" href="group___ocilib_c_api_collections.html#ga8b92db49c038ae235ef85743194ace83">OCI_CollAppend</a>(cl, el);</div><div class="line">    printf(<span class="stringliteral">&quot;%d\n&quot;</span>, <a class="code" href="group___ocilib_c_api_collections.html#ga2ee3beec271bcc152035aa82b0f474ab">OCI_CollGetCount</a>(cl));</div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 1, n = <a class="code" href="group___ocilib_c_api_collections.html#ga2ee3beec271bcc152035aa82b0f474ab">OCI_CollGetCount</a>(cl); i &lt;= n; i++)</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a>   *e = <a class="code" href="group___ocilib_c_api_collections.html#ga7b1907d092d699217382a80a70e90064">OCI_CollGetElem</a>(cl, i);</div><div class="line">        <a class="code" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *n = <a class="code" href="group___ocilib_c_api_collections.html#gab6db237a2095708d9aa368d6e9710bf8">OCI_ElemGetNumber</a>(e);</div><div class="line">        <a class="code" href="group___ocilib_c_api_oracle_number.html#gad96dc5365df97f5167df47990207987a">OCI_NumberToText</a>(n, NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">        printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// Testing objects</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga636c9afded7d6f73fb699b8a9d6ee243">OCI_NumberFromText</a>(nm, <span class="stringliteral">&quot;5555.6666&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gad96dc5365df97f5167df47990207987a">OCI_NumberToText</a>(nm, NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    <a class="code" href="group___ocilib_c_api_user_types.html#gac6785c302901d89963a1b960f4221d10">OCI_ObjectSetNumber</a>(ob, <span class="stringliteral">&quot;value&quot;</span>, nm);</div><div class="line">    no = <a class="code" href="group___ocilib_c_api_user_types.html#gab2163d06f86f2f69a94aa769f25f69d0">OCI_ObjectGetNumber</a>(ob, <span class="stringliteral">&quot;value&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gad96dc5365df97f5167df47990207987a">OCI_NumberToText</a>(no, NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line"></div><div class="line">    <span class="comment">// Testing fetching infinite values to string</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af">OCI_Prepare</a>(st, <span class="stringliteral">&quot;SELECT utl_raw.cast_to_number(&#39;FF65&#39;), utl_raw.cast_to_number(&#39;00&#39;) from dual&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450">OCI_Execute</a>(st);</div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gaf2a9e28b66a9538ba0ffb62bffb87c16">OCI_GetResultset</a>(st);</div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga36ac26dcea78f6074421781e401f97ba">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        printf(<span class="stringliteral">&quot;pos infinite = [%s]\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#ga2a3252984f674fab5358c94d58c689b2">OCI_GetString</a>(rs, 1));</div><div class="line">        printf(<span class="stringliteral">&quot;neg infinite = [%s]\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#ga2a3252984f674fab5358c94d58c689b2">OCI_GetString</a>(rs, 2));</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// Testing array of numbers</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga636c9afded7d6f73fb699b8a9d6ee243">OCI_NumberFromText</a>(ar[0], <span class="stringliteral">&quot;1.2&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga636c9afded7d6f73fb699b8a9d6ee243">OCI_NumberFromText</a>(ar[1], <span class="stringliteral">&quot;~&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga636c9afded7d6f73fb699b8a9d6ee243">OCI_NumberFromText</a>(ar[2], <span class="stringliteral">&quot;5.6&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga636c9afded7d6f73fb699b8a9d6ee243">OCI_NumberFromText</a>(ar[3], <span class="stringliteral">&quot;-~&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga636c9afded7d6f73fb699b8a9d6ee243">OCI_NumberFromText</a>(ar[4], <span class="stringliteral">&quot;9.2&quot;</span>, NULL);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gad96dc5365df97f5167df47990207987a">OCI_NumberToText</a>(ar[0], NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gad96dc5365df97f5167df47990207987a">OCI_NumberToText</a>(ar[1], NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gad96dc5365df97f5167df47990207987a">OCI_NumberToText</a>(ar[2], NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gad96dc5365df97f5167df47990207987a">OCI_NumberToText</a>(ar[3], NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gad96dc5365df97f5167df47990207987a">OCI_NumberToText</a>(ar[4], NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga5477b7ee15f573135d4de8d8ac02d9db">OCI_NumberArrayFree</a>(ar);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gab251ada1166ec3624da9ffc3dbd9aa41">OCI_NumberFree</a>(nm);</div><div class="line">    <a class="code" href="group___ocilib_c_api_collections.html#gadf1010d812aa53c3b27d991fa47b4f98">OCI_ElemFree</a>(el);</div><div class="line">    <a class="code" href="group___ocilib_c_api_collections.html#ga8663babe980c99ff0441feedff973912">OCI_CollFree</a>(cl);</div><div class="line">    <a class="code" href="group___ocilib_c_api_user_types.html#ga3fd2c9dfdcab2c56400c95c31cc0851e">OCI_ObjectFree</a>(ob);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga487b4f90f1fd4aee18f3d901f5aed104">OCI_StatementFree</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/number.sql */</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a>  *st = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a>  *rs = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a>   *tc = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a>   *to = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>     *nm = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a>       *cl = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a>       *el = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a>     *ob = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>     *no = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>     *nt = NULL;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>    **ar = NULL;</div><div class="line"></div><div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i, n;</div><div class="line">    otext buf[128] = <span class="stringliteral">&quot;&quot;</span>;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#gab62065db373d58337fa92948d5a8eba1">OCI_StatementCreate</a>(cn);</div><div class="line"></div><div class="line">    tc = <a class="code" href="group___ocilib_c_api_metadata.html#ga125c7527524c8a4505348f056bfcb14f">OCI_TypeInfoGet</a>(cn, <span class="stringliteral">&quot;test_num_coll_t&quot;</span>, OCI_TIF_TYPE);</div><div class="line">    to = <a class="code" href="group___ocilib_c_api_metadata.html#ga125c7527524c8a4505348f056bfcb14f">OCI_TypeInfoGet</a>(cn, <span class="stringliteral">&quot;test_num_t&quot;</span>, OCI_TIF_TYPE);</div><div class="line">    cl = <a class="code" href="group___ocilib_c_api_collections.html#gad8242295eb13ba5f68617949a795ce7f">OCI_CollCreate</a>(tc);</div><div class="line">    ob = <a class="code" href="group___ocilib_c_api_user_types.html#gae7db2d0ef1f957dd05cf087f701367f5">OCI_ObjectCreate</a>(cn, to);</div><div class="line">    el = <a class="code" href="group___ocilib_c_api_collections.html#ga4835aa646c906e7aa28ddb4db83cf4d7">OCI_ElemCreate</a>(tc);</div><div class="line">    nm = <a class="code" href="group___ocilib_c_api_oracle_number.html#ga28019a85d617e8686a5dc6a888be68c8">OCI_NumberCreate</a>(cn);</div><div class="line">    ar = <a class="code" href="group___ocilib_c_api_oracle_number.html#ga89f43519a69f966cd31efd8ed6dd4f2b">OCI_NumberArrayCreate</a>(cn, 5);</div><div class="line"></div><div class="line">    <span class="comment">// Testing fetching numbers (as number and using implicit conversion number to string)</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a>(st, <span class="stringliteral">&quot;select value from test_number&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a>(st);</div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gace8269c905b60b758358025d61e7fce7">OCI_GetResultset</a>(st);</div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>  *n = <a class="code" href="group___ocilib_c_api_fetching.html#ga2271104964aa67a6d87133842f6b426d">OCI_GetNumber</a>(rs, 1);</div><div class="line">        <span class="keyword">const</span> otext *s = <a class="code" href="group___ocilib_c_api_fetching.html#gaf219a5c34765ad6c75f7cc95ce41be2d">OCI_GetString</a>(rs, 1);</div><div class="line"></div><div class="line">        <a class="code" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText</a>(n, NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line"></div><div class="line">        printf(<span class="stringliteral">&quot;%s - %s\n&quot;</span>, buf, s);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// Testing binding external single number</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a>(st, <span class="stringliteral">&quot;begin :1 := :1 *2 ; end;&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_binding.html#gafbbd89897d747b4935146dc317f8071e">OCI_BindNumber</a>(st, <span class="stringliteral">&quot;:1&quot;</span>, nm);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gaa34870402fb69d90842840010920050f">OCI_NumberFromText</a>(nm, <span class="stringliteral">&quot;1234.4321&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText</a>(nm, NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line"></div><div class="line">    <span class="comment">// Testing binding internal single number</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a>(st, <span class="stringliteral">&quot;begin :1 := :1 *2 ; end;&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statement_control.html#ga4f4811d4d8174cfaf9ef99be6f4c37d6">OCI_SetBindAllocation</a>(st, OCI_BAM_INTERNAL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_binding.html#gafbbd89897d747b4935146dc317f8071e">OCI_BindNumber</a>(st, <span class="stringliteral">&quot;:1&quot;</span>, NULL);</div><div class="line">    nt = <a class="code" href="group___ocilib_c_api_binding.html#gacf222b3965374e56ceea428ce3044de6">OCI_BindGetData</a>(<a class="code" href="group___ocilib_c_api_binding.html#ga2f9058da39c571b96bf8b6a38a165f5d">OCI_GetBind</a>(st, 1));</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gaa34870402fb69d90842840010920050f">OCI_NumberFromText</a>(nt, <span class="stringliteral">&quot;1234.4321&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText</a>(nt, NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statement_control.html#ga4f4811d4d8174cfaf9ef99be6f4c37d6">OCI_SetBindAllocation</a>(st, OCI_BAM_EXTERNAL);</div><div class="line"></div><div class="line">    <span class="comment">// Testing registering number for a returning into statement</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a>(st, <span class="stringliteral">&quot;update test_number set value  = value *2 returning value into :1&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_feature_returning_into.html#gae3f953259ed63f97e7f568e1bef366d5">OCI_RegisterNumber</a>(st, <span class="stringliteral">&quot;:1&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a>(st);</div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gace8269c905b60b758358025d61e7fce7">OCI_GetResultset</a>(st);</div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#gaf219a5c34765ad6c75f7cc95ce41be2d">OCI_GetString</a>(rs, 1));</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// testing Collections</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gaa34870402fb69d90842840010920050f">OCI_NumberFromText</a>(nm, <span class="stringliteral">&quot;1111.2222&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_collections.html#ga04fec50152380144f17afb77677684d0">OCI_ElemSetNumber</a>(el, nm);</div><div class="line">    <a class="code" href="group___ocilib_c_api_collections.html#ga05ed9274f0b42c42786c4501e23d37a7">OCI_CollAppend</a>(cl, el);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gaa34870402fb69d90842840010920050f">OCI_NumberFromText</a>(nm, <span class="stringliteral">&quot;3333.4444&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_collections.html#ga04fec50152380144f17afb77677684d0">OCI_ElemSetNumber</a>(el, nm);</div><div class="line">    <a class="code" href="group___ocilib_c_api_collections.html#ga05ed9274f0b42c42786c4501e23d37a7">OCI_CollAppend</a>(cl, el);</div><div class="line">    printf(<span class="stringliteral">&quot;%d\n&quot;</span>, <a class="code" href="group___ocilib_c_api_collections.html#ga5e4349c27bcb3ce53e18d1a141e24ee2">OCI_CollGetCount</a>(cl));</div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 1, n = <a class="code" href="group___ocilib_c_api_collections.html#ga5e4349c27bcb3ce53e18d1a141e24ee2">OCI_CollGetCount</a>(cl); i &lt;= n; i++)</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a>   *e = <a class="code" href="group___ocilib_c_api_collections.html#ga6480346fd524f2c6a2de529397c29dbc">OCI_CollGetElem</a>(cl, i);</div><div class="line">        <a class="code" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *n = <a class="code" href="group___ocilib_c_api_collections.html#ga73136d04f556162262e0f81cc13e7eba">OCI_ElemGetNumber</a>(e);</div><div class="line">        <a class="code" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText</a>(n, NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">        printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// Testing objects</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gaa34870402fb69d90842840010920050f">OCI_NumberFromText</a>(nm, <span class="stringliteral">&quot;5555.6666&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText</a>(nm, NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    <a class="code" href="group___ocilib_c_api_user_types.html#ga69ad15fac33e93ecee2d67be75aaf99e">OCI_ObjectSetNumber</a>(ob, <span class="stringliteral">&quot;value&quot;</span>, nm);</div><div class="line">    no = <a class="code" href="group___ocilib_c_api_user_types.html#gabf2ab2da143e393b916054865ee0d66c">OCI_ObjectGetNumber</a>(ob, <span class="stringliteral">&quot;value&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText</a>(no, NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line"></div><div class="line">    <span class="comment">// Testing fetching infinite values to string</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a>(st, <span class="stringliteral">&quot;SELECT utl_raw.cast_to_number(&#39;FF65&#39;), utl_raw.cast_to_number(&#39;00&#39;) from dual&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a>(st);</div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gace8269c905b60b758358025d61e7fce7">OCI_GetResultset</a>(st);</div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        printf(<span class="stringliteral">&quot;pos infinite = [%s]\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#gaf219a5c34765ad6c75f7cc95ce41be2d">OCI_GetString</a>(rs, 1));</div><div class="line">        printf(<span class="stringliteral">&quot;neg infinite = [%s]\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#gaf219a5c34765ad6c75f7cc95ce41be2d">OCI_GetString</a>(rs, 2));</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// Testing array of numbers</span></div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gaa34870402fb69d90842840010920050f">OCI_NumberFromText</a>(ar[0], <span class="stringliteral">&quot;1.2&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gaa34870402fb69d90842840010920050f">OCI_NumberFromText</a>(ar[1], <span class="stringliteral">&quot;~&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gaa34870402fb69d90842840010920050f">OCI_NumberFromText</a>(ar[2], <span class="stringliteral">&quot;5.6&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gaa34870402fb69d90842840010920050f">OCI_NumberFromText</a>(ar[3], <span class="stringliteral">&quot;-~&quot;</span>, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gaa34870402fb69d90842840010920050f">OCI_NumberFromText</a>(ar[4], <span class="stringliteral">&quot;9.2&quot;</span>, NULL);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText</a>(ar[0], NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText</a>(ar[1], NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText</a>(ar[2], NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText</a>(ar[3], NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText</a>(ar[4], NULL, <span class="keyword">sizeof</span>(buf), buf);</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, buf);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga1ffb5857696512ec556406434a4e2803">OCI_NumberArrayFree</a>(ar);</div><div class="line">    <a class="code" href="group___ocilib_c_api_oracle_number.html#ga8d0378575508a6f57141988686ac76eb">OCI_NumberFree</a>(nm);</div><div class="line">    <a class="code" href="group___ocilib_c_api_collections.html#ga19926a53d166b2e2052ce9ed3b79a7fb">OCI_ElemFree</a>(el);</div><div class="line">    <a class="code" href="group___ocilib_c_api_collections.html#ga26d876b21cff8960f88bc413034f332f">OCI_CollFree</a>(cl);</div><div class="line">    <a class="code" href="group___ocilib_c_api_user_types.html#ga1e7e875b6a5a3e67bd5cf7a8c0486202">OCI_ObjectFree</a>(ob);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga9e87d52f8415f92b0b723165c4f68850"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga9e87d52f8415f92b0b723165c4f68850">OCI_NumberCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga9e87d52f8415f92b0b723165c4f68850"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a local number object.  <a href="#ga9e87d52f8415f92b0b723165c4f68850">More...</a><br /></td></tr>
-<tr class="separator:ga9e87d52f8415f92b0b723165c4f68850"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab251ada1166ec3624da9ffc3dbd9aa41"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#gab251ada1166ec3624da9ffc3dbd9aa41">OCI_NumberFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number)</td></tr>
-<tr class="memdesc:gab251ada1166ec3624da9ffc3dbd9aa41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a number object.  <a href="#gab251ada1166ec3624da9ffc3dbd9aa41">More...</a><br /></td></tr>
-<tr class="separator:gab251ada1166ec3624da9ffc3dbd9aa41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7539b88e0253c561488c0ebb24d8bc82"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga7539b88e0253c561488c0ebb24d8bc82">OCI_NumberArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int nbelem)</td></tr>
-<tr class="memdesc:ga7539b88e0253c561488c0ebb24d8bc82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of number object.  <a href="#ga7539b88e0253c561488c0ebb24d8bc82">More...</a><br /></td></tr>
-<tr class="separator:ga7539b88e0253c561488c0ebb24d8bc82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5477b7ee15f573135d4de8d8ac02d9db"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga5477b7ee15f573135d4de8d8ac02d9db">OCI_NumberArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> **numbers)</td></tr>
-<tr class="memdesc:ga5477b7ee15f573135d4de8d8ac02d9db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of number objects.  <a href="#ga5477b7ee15f573135d4de8d8ac02d9db">More...</a><br /></td></tr>
-<tr class="separator:ga5477b7ee15f573135d4de8d8ac02d9db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7b9c9cab014954fbe7f1a2e4a022cb2d"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga7b9c9cab014954fbe7f1a2e4a022cb2d">OCI_NumberAssign</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number_src)</td></tr>
-<tr class="memdesc:ga7b9c9cab014954fbe7f1a2e4a022cb2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign the value of a number handle to another one.  <a href="#ga7b9c9cab014954fbe7f1a2e4a022cb2d">More...</a><br /></td></tr>
-<tr class="separator:ga7b9c9cab014954fbe7f1a2e4a022cb2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad96dc5365df97f5167df47990207987a"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#gad96dc5365df97f5167df47990207987a">OCI_NumberToText</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, const otext *fmt, int size, otext *str)</td></tr>
-<tr class="memdesc:gad96dc5365df97f5167df47990207987a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a number value from the given number handle to a string.  <a href="#gad96dc5365df97f5167df47990207987a">More...</a><br /></td></tr>
-<tr class="separator:gad96dc5365df97f5167df47990207987a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga636c9afded7d6f73fb699b8a9d6ee243"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga636c9afded7d6f73fb699b8a9d6ee243">OCI_NumberFromText</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, const otext *str, const otext *fmt)</td></tr>
-<tr class="memdesc:ga636c9afded7d6f73fb699b8a9d6ee243"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a string to a number and store it in the given number handle.  <a href="#ga636c9afded7d6f73fb699b8a9d6ee243">More...</a><br /></td></tr>
-<tr class="separator:ga636c9afded7d6f73fb699b8a9d6ee243"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2c2f7257e40bbcaeeeee2b4ad99861b0"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned char *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga2c2f7257e40bbcaeeeee2b4ad99861b0">OCI_NumberGetContent</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number)</td></tr>
-<tr class="memdesc:ga2c2f7257e40bbcaeeeee2b4ad99861b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number value content.  <a href="#ga2c2f7257e40bbcaeeeee2b4ad99861b0">More...</a><br /></td></tr>
-<tr class="separator:ga2c2f7257e40bbcaeeeee2b4ad99861b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1fa6ccecc2847238439a6f9209e50ffe"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga1fa6ccecc2847238439a6f9209e50ffe">OCI_NumberSetContent</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned char *content)</td></tr>
-<tr class="memdesc:ga1fa6ccecc2847238439a6f9209e50ffe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign the number value content.  <a href="#ga1fa6ccecc2847238439a6f9209e50ffe">More...</a><br /></td></tr>
-<tr class="separator:ga1fa6ccecc2847238439a6f9209e50ffe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6b10d83add268c55fbc5515a822da503"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga6b10d83add268c55fbc5515a822da503">OCI_NumberSetValue</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned int type, void *value)</td></tr>
-<tr class="memdesc:ga6b10d83add268c55fbc5515a822da503"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign the number value with the value of a native C numeric type.  <a href="#ga6b10d83add268c55fbc5515a822da503">More...</a><br /></td></tr>
-<tr class="separator:ga6b10d83add268c55fbc5515a822da503"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gabc9882633298b7049ad4bb54ca33cf7b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#gabc9882633298b7049ad4bb54ca33cf7b">OCI_NumberGetValue</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned int type, void *value)</td></tr>
-<tr class="memdesc:gabc9882633298b7049ad4bb54ca33cf7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign the number value to a native C numeric type.  <a href="#gabc9882633298b7049ad4bb54ca33cf7b">More...</a><br /></td></tr>
-<tr class="separator:gabc9882633298b7049ad4bb54ca33cf7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa4f8cf489461f8df0948b1008306fe9a"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#gaa4f8cf489461f8df0948b1008306fe9a">OCI_NumberAdd</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned int type, void *value)</td></tr>
-<tr class="memdesc:gaa4f8cf489461f8df0948b1008306fe9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the value of a native C numeric type to the given number.  <a href="#gaa4f8cf489461f8df0948b1008306fe9a">More...</a><br /></td></tr>
-<tr class="separator:gaa4f8cf489461f8df0948b1008306fe9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaaa0d30de674c467b3065242445e86ec7"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#gaaa0d30de674c467b3065242445e86ec7">OCI_NumberSub</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned int type, void *value)</td></tr>
-<tr class="memdesc:gaaa0d30de674c467b3065242445e86ec7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtract the value of a native C numeric type to the given number.  <a href="#gaaa0d30de674c467b3065242445e86ec7">More...</a><br /></td></tr>
-<tr class="separator:gaaa0d30de674c467b3065242445e86ec7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8cbd197ebb81995394d2af7cf181f72c"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga8cbd197ebb81995394d2af7cf181f72c">OCI_NumberMultiply</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned int type, void *value)</td></tr>
-<tr class="memdesc:ga8cbd197ebb81995394d2af7cf181f72c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply the given number with the value of a native C numeric.  <a href="#ga8cbd197ebb81995394d2af7cf181f72c">More...</a><br /></td></tr>
-<tr class="separator:ga8cbd197ebb81995394d2af7cf181f72c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9a457b9e399739bbb524b4b7b0ff3967"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga9a457b9e399739bbb524b4b7b0ff3967">OCI_NumberDivide</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned int type, void *value)</td></tr>
-<tr class="memdesc:ga9a457b9e399739bbb524b4b7b0ff3967"><td class="mdescLeft">&#160;</td><td class="mdescRight">Divide the given number with the value of a native C numeric.  <a href="#ga9a457b9e399739bbb524b4b7b0ff3967">More...</a><br /></td></tr>
-<tr class="separator:ga9a457b9e399739bbb524b4b7b0ff3967"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga02fc55dbd0ef6be3cab18713f2366840"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga02fc55dbd0ef6be3cab18713f2366840">OCI_NumberCompare</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number1, <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number2)</td></tr>
-<tr class="memdesc:ga02fc55dbd0ef6be3cab18713f2366840"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares two number handles.  <a href="#ga02fc55dbd0ef6be3cab18713f2366840">More...</a><br /></td></tr>
-<tr class="separator:ga02fc55dbd0ef6be3cab18713f2366840"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga28019a85d617e8686a5dc6a888be68c8"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga28019a85d617e8686a5dc6a888be68c8">OCI_NumberCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga28019a85d617e8686a5dc6a888be68c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a local number object.  <a href="#ga28019a85d617e8686a5dc6a888be68c8">More...</a><br /></td></tr>
+<tr class="separator:ga28019a85d617e8686a5dc6a888be68c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8d0378575508a6f57141988686ac76eb"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga8d0378575508a6f57141988686ac76eb">OCI_NumberFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number)</td></tr>
+<tr class="memdesc:ga8d0378575508a6f57141988686ac76eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a number object.  <a href="#ga8d0378575508a6f57141988686ac76eb">More...</a><br /></td></tr>
+<tr class="separator:ga8d0378575508a6f57141988686ac76eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga89f43519a69f966cd31efd8ed6dd4f2b"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga89f43519a69f966cd31efd8ed6dd4f2b">OCI_NumberArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int nbelem)</td></tr>
+<tr class="memdesc:ga89f43519a69f966cd31efd8ed6dd4f2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of number object.  <a href="#ga89f43519a69f966cd31efd8ed6dd4f2b">More...</a><br /></td></tr>
+<tr class="separator:ga89f43519a69f966cd31efd8ed6dd4f2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1ffb5857696512ec556406434a4e2803"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga1ffb5857696512ec556406434a4e2803">OCI_NumberArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> **numbers)</td></tr>
+<tr class="memdesc:ga1ffb5857696512ec556406434a4e2803"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of number objects.  <a href="#ga1ffb5857696512ec556406434a4e2803">More...</a><br /></td></tr>
+<tr class="separator:ga1ffb5857696512ec556406434a4e2803"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaed7cf75ee3af6cac734f1963f486d5e9"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#gaed7cf75ee3af6cac734f1963f486d5e9">OCI_NumberAssign</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number_src)</td></tr>
+<tr class="memdesc:gaed7cf75ee3af6cac734f1963f486d5e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign the value of a number handle to another one.  <a href="#gaed7cf75ee3af6cac734f1963f486d5e9">More...</a><br /></td></tr>
+<tr class="separator:gaed7cf75ee3af6cac734f1963f486d5e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac8cb94d41a6ca3e77e586523d5e3126e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, const otext *fmt, int size, otext *str)</td></tr>
+<tr class="memdesc:gac8cb94d41a6ca3e77e586523d5e3126e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a number value from the given number handle to a string.  <a href="#gac8cb94d41a6ca3e77e586523d5e3126e">More...</a><br /></td></tr>
+<tr class="separator:gac8cb94d41a6ca3e77e586523d5e3126e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa34870402fb69d90842840010920050f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#gaa34870402fb69d90842840010920050f">OCI_NumberFromText</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, const otext *str, const otext *fmt)</td></tr>
+<tr class="memdesc:gaa34870402fb69d90842840010920050f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a string to a number and store it in the given number handle.  <a href="#gaa34870402fb69d90842840010920050f">More...</a><br /></td></tr>
+<tr class="separator:gaa34870402fb69d90842840010920050f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga408d0bedec3051e1cf82058418fccf0a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned char *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga408d0bedec3051e1cf82058418fccf0a">OCI_NumberGetContent</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number)</td></tr>
+<tr class="memdesc:ga408d0bedec3051e1cf82058418fccf0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number value content.  <a href="#ga408d0bedec3051e1cf82058418fccf0a">More...</a><br /></td></tr>
+<tr class="separator:ga408d0bedec3051e1cf82058418fccf0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga73243d97ac054a7fc1463dbc75a7ec86"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga73243d97ac054a7fc1463dbc75a7ec86">OCI_NumberSetContent</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned char *content)</td></tr>
+<tr class="memdesc:ga73243d97ac054a7fc1463dbc75a7ec86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign the number value content.  <a href="#ga73243d97ac054a7fc1463dbc75a7ec86">More...</a><br /></td></tr>
+<tr class="separator:ga73243d97ac054a7fc1463dbc75a7ec86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga063ff2f32c8777d124f6fb02e57f51bf"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga063ff2f32c8777d124f6fb02e57f51bf">OCI_NumberSetValue</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned int type, void *value)</td></tr>
+<tr class="memdesc:ga063ff2f32c8777d124f6fb02e57f51bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign the number value with the value of a native C numeric type.  <a href="#ga063ff2f32c8777d124f6fb02e57f51bf">More...</a><br /></td></tr>
+<tr class="separator:ga063ff2f32c8777d124f6fb02e57f51bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae50a55dc028b3c28db82bcb8701086ef"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#gae50a55dc028b3c28db82bcb8701086ef">OCI_NumberGetValue</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned int type, void *value)</td></tr>
+<tr class="memdesc:gae50a55dc028b3c28db82bcb8701086ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign the number value to a native C numeric type.  <a href="#gae50a55dc028b3c28db82bcb8701086ef">More...</a><br /></td></tr>
+<tr class="separator:gae50a55dc028b3c28db82bcb8701086ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab50d04111a9ba8649758a41cf532e847"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#gab50d04111a9ba8649758a41cf532e847">OCI_NumberAdd</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned int type, void *value)</td></tr>
+<tr class="memdesc:gab50d04111a9ba8649758a41cf532e847"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the value of a native C numeric type to the given number.  <a href="#gab50d04111a9ba8649758a41cf532e847">More...</a><br /></td></tr>
+<tr class="separator:gab50d04111a9ba8649758a41cf532e847"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga06548838ee310ee51ea87ab04fffb42d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga06548838ee310ee51ea87ab04fffb42d">OCI_NumberSub</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned int type, void *value)</td></tr>
+<tr class="memdesc:ga06548838ee310ee51ea87ab04fffb42d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtract the value of a native C numeric type to the given number.  <a href="#ga06548838ee310ee51ea87ab04fffb42d">More...</a><br /></td></tr>
+<tr class="separator:ga06548838ee310ee51ea87ab04fffb42d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2b2d62cd254e2398e1f974b9be1421fb"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga2b2d62cd254e2398e1f974b9be1421fb">OCI_NumberMultiply</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned int type, void *value)</td></tr>
+<tr class="memdesc:ga2b2d62cd254e2398e1f974b9be1421fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply the given number with the value of a native C numeric.  <a href="#ga2b2d62cd254e2398e1f974b9be1421fb">More...</a><br /></td></tr>
+<tr class="separator:ga2b2d62cd254e2398e1f974b9be1421fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa1dea6ef965992cd7e9d4a12c2613098"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#gaa1dea6ef965992cd7e9d4a12c2613098">OCI_NumberDivide</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number, unsigned int type, void *value)</td></tr>
+<tr class="memdesc:gaa1dea6ef965992cd7e9d4a12c2613098"><td class="mdescLeft">&#160;</td><td class="mdescRight">Divide the given number with the value of a native C numeric.  <a href="#gaa1dea6ef965992cd7e9d4a12c2613098">More...</a><br /></td></tr>
+<tr class="separator:gaa1dea6ef965992cd7e9d4a12c2613098"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1a49652dde79614d14f739ba3ec7a78f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_oracle_number.html#ga1a49652dde79614d14f739ba3ec7a78f">OCI_NumberCompare</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number1, <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *number2)</td></tr>
+<tr class="memdesc:ga1a49652dde79614d14f739ba3ec7a78f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares two number handles.  <a href="#ga1a49652dde79614d14f739ba3ec7a78f">More...</a><br /></td></tr>
+<tr class="separator:ga1a49652dde79614d14f739ba3ec7a78f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga9e87d52f8415f92b0b723165c4f68850"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga9e87d52f8415f92b0b723165c4f68850">&#9670;&nbsp;</a></span>OCI_NumberCreate()</h2>
+<a id="ga28019a85d617e8686a5dc6a888be68c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga28019a85d617e8686a5dc6a888be68c8">&#9670;&nbsp;</a></span>OCI_NumberCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>* OCI_API OCI_NumberCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>* OCI_API OCI_NumberCreate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -182,14 +182,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gab251ada1166ec3624da9ffc3dbd9aa41"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab251ada1166ec3624da9ffc3dbd9aa41">&#9670;&nbsp;</a></span>OCI_NumberFree()</h2>
+<a id="ga8d0378575508a6f57141988686ac76eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8d0378575508a6f57141988686ac76eb">&#9670;&nbsp;</a></span>OCI_NumberFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_NumberFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_NumberFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number</em></td><td>)</td>
@@ -207,19 +207,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only Numbers created with <a class="el" href="group___ocilib_c_api_oracle_number.html#ga9e87d52f8415f92b0b723165c4f68850" title="Create a local number object.">OCI_NumberCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_oracle_number.html#gab251ada1166ec3624da9ffc3dbd9aa41" title="Free a number object.">OCI_NumberFree()</a></dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only Numbers created with <a class="el" href="group___ocilib_c_api_oracle_number.html#ga28019a85d617e8686a5dc6a888be68c8" title="Create a local number object.">OCI_NumberCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_oracle_number.html#ga8d0378575508a6f57141988686ac76eb" title="Free a number object.">OCI_NumberFree()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="ga7539b88e0253c561488c0ebb24d8bc82"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7539b88e0253c561488c0ebb24d8bc82">&#9670;&nbsp;</a></span>OCI_NumberArrayCreate()</h2>
+<a id="ga89f43519a69f966cd31efd8ed6dd4f2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga89f43519a69f966cd31efd8ed6dd4f2b">&#9670;&nbsp;</a></span>OCI_NumberArrayCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>** OCI_API OCI_NumberArrayCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a>** OCI_API OCI_NumberArrayCreate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -248,19 +248,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_oracle_number.html#ga9e87d52f8415f92b0b723165c4f68850" title="Create a local number object.">OCI_NumberCreate()</a> for more details</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_oracle_number.html#ga28019a85d617e8686a5dc6a888be68c8" title="Create a local number object.">OCI_NumberCreate()</a> for more details</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Return the number handle array on success otherwise NULL on failure </dd></dl>
 
 </div>
 </div>
-<a id="ga5477b7ee15f573135d4de8d8ac02d9db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5477b7ee15f573135d4de8d8ac02d9db">&#9670;&nbsp;</a></span>OCI_NumberArrayFree()</h2>
+<a id="ga1ffb5857696512ec556406434a4e2803"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1ffb5857696512ec556406434a4e2803">&#9670;&nbsp;</a></span>OCI_NumberArrayFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_NumberArrayFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_NumberArrayFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> **&#160;</td>
           <td class="paramname"><em>numbers</em></td><td>)</td>
@@ -278,19 +278,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only arrays of numbers created with <a class="el" href="group___ocilib_c_api_oracle_number.html#ga7539b88e0253c561488c0ebb24d8bc82" title="Create an array of number object.">OCI_NumberArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_oracle_number.html#ga5477b7ee15f573135d4de8d8ac02d9db" title="Free an array of number objects.">OCI_NumberArrayFree()</a></dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only arrays of numbers created with <a class="el" href="group___ocilib_c_api_oracle_number.html#ga89f43519a69f966cd31efd8ed6dd4f2b" title="Create an array of number object.">OCI_NumberArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_oracle_number.html#ga1ffb5857696512ec556406434a4e2803" title="Free an array of number objects.">OCI_NumberArrayFree()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="ga7b9c9cab014954fbe7f1a2e4a022cb2d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7b9c9cab014954fbe7f1a2e4a022cb2d">&#9670;&nbsp;</a></span>OCI_NumberAssign()</h2>
+<a id="gaed7cf75ee3af6cac734f1963f486d5e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaed7cf75ee3af6cac734f1963f486d5e9">&#9670;&nbsp;</a></span>OCI_NumberAssign()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT int OCI_API OCI_NumberAssign </td>
+          <td class="memname">OCI_SYM_PUBLIC int OCI_API OCI_NumberAssign </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number</em>, </td>
@@ -325,14 +325,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gad96dc5365df97f5167df47990207987a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad96dc5365df97f5167df47990207987a">&#9670;&nbsp;</a></span>OCI_NumberToText()</h2>
+<a id="gac8cb94d41a6ca3e77e586523d5e3126e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac8cb94d41a6ca3e77e586523d5e3126e">&#9670;&nbsp;</a></span>OCI_NumberToText()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_NumberToText </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_NumberToText </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number</em>, </td>
@@ -386,14 +386,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga636c9afded7d6f73fb699b8a9d6ee243"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga636c9afded7d6f73fb699b8a9d6ee243">&#9670;&nbsp;</a></span>OCI_NumberFromText()</h2>
+<a id="gaa34870402fb69d90842840010920050f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa34870402fb69d90842840010920050f">&#9670;&nbsp;</a></span>OCI_NumberFromText()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_NumberFromText </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_NumberFromText </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number</em>, </td>
@@ -440,14 +440,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga2c2f7257e40bbcaeeeee2b4ad99861b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2c2f7257e40bbcaeeeee2b4ad99861b0">&#9670;&nbsp;</a></span>OCI_NumberGetContent()</h2>
+<a id="ga408d0bedec3051e1cf82058418fccf0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga408d0bedec3051e1cf82058418fccf0a">&#9670;&nbsp;</a></span>OCI_NumberGetContent()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned char* OCI_API OCI_NumberGetContent </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned char* OCI_API OCI_NumberGetContent </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number</em></td><td>)</td>
@@ -470,14 +470,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga1fa6ccecc2847238439a6f9209e50ffe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga1fa6ccecc2847238439a6f9209e50ffe">&#9670;&nbsp;</a></span>OCI_NumberSetContent()</h2>
+<a id="ga73243d97ac054a7fc1463dbc75a7ec86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga73243d97ac054a7fc1463dbc75a7ec86">&#9670;&nbsp;</a></span>OCI_NumberSetContent()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_NumberSetContent </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSetContent </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number</em>, </td>
@@ -506,19 +506,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_oracle_number.html#ga1fa6ccecc2847238439a6f9209e50ffe" title="Assign the number value content.">OCI_NumberSetContent()</a> for more information</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_oracle_number.html#ga73243d97ac054a7fc1463dbc75a7ec86" title="Assign the number value content.">OCI_NumberSetContent()</a> for more information</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="ga6b10d83add268c55fbc5515a822da503"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6b10d83add268c55fbc5515a822da503">&#9670;&nbsp;</a></span>OCI_NumberSetValue()</h2>
+<a id="ga063ff2f32c8777d124f6fb02e57f51bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga063ff2f32c8777d124f6fb02e57f51bf">&#9670;&nbsp;</a></span>OCI_NumberSetValue()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_NumberSetValue </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSetValue </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number</em>, </td>
@@ -564,20 +564,20 @@ Functions</h2></td></tr>
 <li>OCI_NUM_BIGUINT : value is a pointer to an unsigned big_uint</li>
 <li>OCI_NUM_FLOAT : value is a pointer to an float</li>
 <li>OCI_NUM_DOUBLE : value is a pointer to a double</li>
-<li>OCI_NUM_NUMBER : value is a pointer to the return value of <a class="el" href="group___ocilib_c_api_oracle_number.html#ga2c2f7257e40bbcaeeeee2b4ad99861b0" title="Return the number value content.">OCI_NumberGetContent()</a></li>
+<li>OCI_NUM_NUMBER : value is a pointer to the return value of <a class="el" href="group___ocilib_c_api_oracle_number.html#ga408d0bedec3051e1cf82058418fccf0a" title="Return the number value content.">OCI_NumberGetContent()</a></li>
 </ul>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="gabc9882633298b7049ad4bb54ca33cf7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gabc9882633298b7049ad4bb54ca33cf7b">&#9670;&nbsp;</a></span>OCI_NumberGetValue()</h2>
+<a id="gae50a55dc028b3c28db82bcb8701086ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae50a55dc028b3c28db82bcb8701086ef">&#9670;&nbsp;</a></span>OCI_NumberGetValue()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_NumberGetValue </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_NumberGetValue </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number</em>, </td>
@@ -613,19 +613,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_oracle_number.html#ga6b10d83add268c55fbc5515a822da503" title="Assign the number value with the value of a native C numeric type.">OCI_NumberSetValue()</a> for more information</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_oracle_number.html#ga063ff2f32c8777d124f6fb02e57f51bf" title="Assign the number value with the value of a native C numeric type.">OCI_NumberSetValue()</a> for more information</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="gaa4f8cf489461f8df0948b1008306fe9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa4f8cf489461f8df0948b1008306fe9a">&#9670;&nbsp;</a></span>OCI_NumberAdd()</h2>
+<a id="gab50d04111a9ba8649758a41cf532e847"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab50d04111a9ba8649758a41cf532e847">&#9670;&nbsp;</a></span>OCI_NumberAdd()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_NumberAdd </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_NumberAdd </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number</em>, </td>
@@ -661,19 +661,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_oracle_number.html#ga6b10d83add268c55fbc5515a822da503" title="Assign the number value with the value of a native C numeric type.">OCI_NumberSetValue()</a> for more information</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_oracle_number.html#ga063ff2f32c8777d124f6fb02e57f51bf" title="Assign the number value with the value of a native C numeric type.">OCI_NumberSetValue()</a> for more information</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="gaaa0d30de674c467b3065242445e86ec7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaaa0d30de674c467b3065242445e86ec7">&#9670;&nbsp;</a></span>OCI_NumberSub()</h2>
+<a id="ga06548838ee310ee51ea87ab04fffb42d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga06548838ee310ee51ea87ab04fffb42d">&#9670;&nbsp;</a></span>OCI_NumberSub()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_NumberSub </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSub </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number</em>, </td>
@@ -709,19 +709,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_oracle_number.html#ga6b10d83add268c55fbc5515a822da503" title="Assign the number value with the value of a native C numeric type.">OCI_NumberSetValue()</a> for more information</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_oracle_number.html#ga063ff2f32c8777d124f6fb02e57f51bf" title="Assign the number value with the value of a native C numeric type.">OCI_NumberSetValue()</a> for more information</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="ga8cbd197ebb81995394d2af7cf181f72c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga8cbd197ebb81995394d2af7cf181f72c">&#9670;&nbsp;</a></span>OCI_NumberMultiply()</h2>
+<a id="ga2b2d62cd254e2398e1f974b9be1421fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2b2d62cd254e2398e1f974b9be1421fb">&#9670;&nbsp;</a></span>OCI_NumberMultiply()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_NumberMultiply </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_NumberMultiply </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number</em>, </td>
@@ -757,19 +757,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_oracle_number.html#ga6b10d83add268c55fbc5515a822da503" title="Assign the number value with the value of a native C numeric type.">OCI_NumberSetValue()</a> for more information</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_oracle_number.html#ga063ff2f32c8777d124f6fb02e57f51bf" title="Assign the number value with the value of a native C numeric type.">OCI_NumberSetValue()</a> for more information</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="ga9a457b9e399739bbb524b4b7b0ff3967"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga9a457b9e399739bbb524b4b7b0ff3967">&#9670;&nbsp;</a></span>OCI_NumberDivide()</h2>
+<a id="gaa1dea6ef965992cd7e9d4a12c2613098"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa1dea6ef965992cd7e9d4a12c2613098">&#9670;&nbsp;</a></span>OCI_NumberDivide()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_NumberDivide </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_NumberDivide </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number</em>, </td>
@@ -805,19 +805,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_oracle_number.html#ga6b10d83add268c55fbc5515a822da503" title="Assign the number value with the value of a native C numeric type.">OCI_NumberSetValue()</a> for more information</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_oracle_number.html#ga063ff2f32c8777d124f6fb02e57f51bf" title="Assign the number value with the value of a native C numeric type.">OCI_NumberSetValue()</a> for more information</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="ga02fc55dbd0ef6be3cab18713f2366840"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga02fc55dbd0ef6be3cab18713f2366840">&#9670;&nbsp;</a></span>OCI_NumberCompare()</h2>
+<a id="ga1a49652dde79614d14f739ba3ec7a78f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1a49652dde79614d14f739ba3ec7a78f">&#9670;&nbsp;</a></span>OCI_NumberCompare()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT int OCI_API OCI_NumberCompare </td>
+          <td class="memname">OCI_SYM_PUBLIC int OCI_API OCI_NumberCompare </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *&#160;</td>
           <td class="paramname"><em>number1</em>, </td>
@@ -861,7 +861,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -99,92 +99,92 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_datetimes.html','
 <p>OcilibCApiOracleNumber</p>
 <p>OCILIB encapsulates Oracle SQL Date data type within OCI_Date structure</p>
 <p>Basically, the OCI_Date routines are wrappers around the Oracle OCIDate APIs</p>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="preprocessor">#define SIZE_STR 260</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *d1, *d2;</div><div class="line"></div><div class="line">    <span class="keywordtype">char</span> str[SIZE_STR + 1];</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    d1 = <a class="code" href="group___ocilib_c_api_datetimes.html#gae80eacef54641a68c3b82be85f4a5042">OCI_DateCreate</a>(NULL);</div><div class="line">    d2 = <a class="code" href="group___ocilib_c_api_datetimes.html#gae80eacef54641a68c3b82be85f4a5042">OCI_DateCreate</a>(NULL);</div><div class="line"></div><div class="line">    strcpy(str, <span class="stringliteral">&quot;13041978 20:20:12&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#ga412dea1ba595fcbc293ee278f1ff04ab">OCI_DateFromText</a>(d1, str, <span class="stringliteral">&quot;DDMMYYYY HH24:MI:SS&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gaca5b7b09eae70235fa9c068a7a6df971">OCI_DateToText</a>(d1, <span class="stringliteral">&quot;DD/MM/YYYY HH24:MI:SS&quot;</span>, SIZE_STR, str);</div><div class="line">    printf(<span class="stringliteral">&quot;\nDate is %s\n&quot;</span>, str);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gad7c5c65d88b52e6ecb46b3e9ba8843dc">OCI_DateSysDate</a>(d1);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gaca5b7b09eae70235fa9c068a7a6df971">OCI_DateToText</a>(d1, <span class="stringliteral">&quot;DD/MM/YYYY HH24:MI:SS&quot;</span>, SIZE_STR, str);</div><div class="line">    printf(<span class="stringliteral">&quot;\nSysdate is %s\n&quot;</span>, str);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#ga7f446c4dc922920c36601770e3d9d7d1">OCI_DateAddDays</a>(d1, 5);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gaa405c4bb8c705ce2dd03b51bba1ef303">OCI_DateAddMonths</a>(d1, 2);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gaca5b7b09eae70235fa9c068a7a6df971">OCI_DateToText</a>(d1, <span class="stringliteral">&quot;DD/MM/YYYY HH24:MI:SS&quot;</span>, SIZE_STR, str);</div><div class="line">    printf(<span class="stringliteral">&quot;\nDate + 5 days and 2 months is %s\n&quot;</span>, str);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gad66b48f587f3bc30b1db8cd4cb892847">OCI_DateAssign</a>(d2, d1);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#ga0d174f4b5db6961053807efe1698ea81">OCI_DateLastDay</a>(d1);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gaca5b7b09eae70235fa9c068a7a6df971">OCI_DateToText</a>(d1, <span class="stringliteral">&quot;DD/MM/YYYY HH24:MI:SS&quot;</span>, SIZE_STR, str);</div><div class="line">    printf(<span class="stringliteral">&quot;\nLast day of the month : %s\n&quot;</span>, str);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;\nNumber of days until the end of the months : %i\n&quot;</span>, <a class="code" href="group___ocilib_c_api_datetimes.html#gafa9f51e0977278bc43dafdef13d7fb5e">OCI_DateDaysBetween</a>(d1, d2));</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gaedf77cfe4bd5dab7909e4c2fb5173b48">OCI_DateFree</a>(d1);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gaedf77cfe4bd5dab7909e4c2fb5173b48">OCI_DateFree</a>(d2);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="preprocessor">#define SIZE_STR 260</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *d1, *d2;</div><div class="line"></div><div class="line">    <span class="keywordtype">char</span> str[SIZE_STR + 1];</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    d1 = <a class="code" href="group___ocilib_c_api_datetimes.html#ga45506b36a77bc394cd367f620e20fd1c">OCI_DateCreate</a>(NULL);</div><div class="line">    d2 = <a class="code" href="group___ocilib_c_api_datetimes.html#ga45506b36a77bc394cd367f620e20fd1c">OCI_DateCreate</a>(NULL);</div><div class="line"></div><div class="line">    strcpy(str, <span class="stringliteral">&quot;13041978 20:20:12&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#ga182c1474813b313af0678200f18500d1">OCI_DateFromText</a>(d1, str, <span class="stringliteral">&quot;DDMMYYYY HH24:MI:SS&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gad4f7e216b2e632e6e0e73d3820d3649a">OCI_DateToText</a>(d1, <span class="stringliteral">&quot;DD/MM/YYYY HH24:MI:SS&quot;</span>, SIZE_STR, str);</div><div class="line">    printf(<span class="stringliteral">&quot;\nDate is %s\n&quot;</span>, str);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gae73613cf6173243848ddfd3295b448c4">OCI_DateSysDate</a>(d1);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gad4f7e216b2e632e6e0e73d3820d3649a">OCI_DateToText</a>(d1, <span class="stringliteral">&quot;DD/MM/YYYY HH24:MI:SS&quot;</span>, SIZE_STR, str);</div><div class="line">    printf(<span class="stringliteral">&quot;\nSysdate is %s\n&quot;</span>, str);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gab9e19be2b20d1457ada24abfdf98f7bd">OCI_DateAddDays</a>(d1, 5);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gab71f2c36cd1ada708a83805255d9ade8">OCI_DateAddMonths</a>(d1, 2);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gad4f7e216b2e632e6e0e73d3820d3649a">OCI_DateToText</a>(d1, <span class="stringliteral">&quot;DD/MM/YYYY HH24:MI:SS&quot;</span>, SIZE_STR, str);</div><div class="line">    printf(<span class="stringliteral">&quot;\nDate + 5 days and 2 months is %s\n&quot;</span>, str);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#ga89fed5c82e7543f8a7f6fce78b96c67d">OCI_DateAssign</a>(d2, d1);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#ga5ac095109856a0cda553742d81488378">OCI_DateLastDay</a>(d1);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gad4f7e216b2e632e6e0e73d3820d3649a">OCI_DateToText</a>(d1, <span class="stringliteral">&quot;DD/MM/YYYY HH24:MI:SS&quot;</span>, SIZE_STR, str);</div><div class="line">    printf(<span class="stringliteral">&quot;\nLast day of the month : %s\n&quot;</span>, str);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;\nNumber of days until the end of the months : %i\n&quot;</span>, <a class="code" href="group___ocilib_c_api_datetimes.html#ga88e30a58a74b013bab67aa162a18c493">OCI_DateDaysBetween</a>(d1, d2));</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gab6c9e4fd52928f53414a338846dbe027">OCI_DateFree</a>(d1);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datetimes.html#gab6c9e4fd52928f53414a338846dbe027">OCI_DateFree</a>(d2);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:gae80eacef54641a68c3b82be85f4a5042"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gae80eacef54641a68c3b82be85f4a5042">OCI_DateCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gae80eacef54641a68c3b82be85f4a5042"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a local date object.  <a href="#gae80eacef54641a68c3b82be85f4a5042">More...</a><br /></td></tr>
-<tr class="separator:gae80eacef54641a68c3b82be85f4a5042"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaedf77cfe4bd5dab7909e4c2fb5173b48"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gaedf77cfe4bd5dab7909e4c2fb5173b48">OCI_DateFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date)</td></tr>
-<tr class="memdesc:gaedf77cfe4bd5dab7909e4c2fb5173b48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a date object.  <a href="#gaedf77cfe4bd5dab7909e4c2fb5173b48">More...</a><br /></td></tr>
-<tr class="separator:gaedf77cfe4bd5dab7909e4c2fb5173b48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga60ba27b663a99d407b837ce665291f03"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga60ba27b663a99d407b837ce665291f03">OCI_DateArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int nbelem)</td></tr>
-<tr class="memdesc:ga60ba27b663a99d407b837ce665291f03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of date object.  <a href="#ga60ba27b663a99d407b837ce665291f03">More...</a><br /></td></tr>
-<tr class="separator:ga60ba27b663a99d407b837ce665291f03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa816548e8ae506c965d46811f7ffecf5"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gaa816548e8ae506c965d46811f7ffecf5">OCI_DateArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> **dates)</td></tr>
-<tr class="memdesc:gaa816548e8ae506c965d46811f7ffecf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of date objects.  <a href="#gaa816548e8ae506c965d46811f7ffecf5">More...</a><br /></td></tr>
-<tr class="separator:gaa816548e8ae506c965d46811f7ffecf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7f446c4dc922920c36601770e3d9d7d1"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga7f446c4dc922920c36601770e3d9d7d1">OCI_DateAddDays</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int nb)</td></tr>
-<tr class="memdesc:ga7f446c4dc922920c36601770e3d9d7d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add or subtract days to a date handle.  <a href="#ga7f446c4dc922920c36601770e3d9d7d1">More...</a><br /></td></tr>
-<tr class="separator:ga7f446c4dc922920c36601770e3d9d7d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa405c4bb8c705ce2dd03b51bba1ef303"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gaa405c4bb8c705ce2dd03b51bba1ef303">OCI_DateAddMonths</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int nb)</td></tr>
-<tr class="memdesc:gaa405c4bb8c705ce2dd03b51bba1ef303"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add or subtract months to a date handle.  <a href="#gaa405c4bb8c705ce2dd03b51bba1ef303">More...</a><br /></td></tr>
-<tr class="separator:gaa405c4bb8c705ce2dd03b51bba1ef303"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad66b48f587f3bc30b1db8cd4cb892847"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gad66b48f587f3bc30b1db8cd4cb892847">OCI_DateAssign</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date_src)</td></tr>
-<tr class="memdesc:gad66b48f587f3bc30b1db8cd4cb892847"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign the value of a date handle to another one.  <a href="#gad66b48f587f3bc30b1db8cd4cb892847">More...</a><br /></td></tr>
-<tr class="separator:gad66b48f587f3bc30b1db8cd4cb892847"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaec864d9e80d658f402e8f08c829feead"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gaec864d9e80d658f402e8f08c829feead">OCI_DateCheck</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date)</td></tr>
-<tr class="memdesc:gaec864d9e80d658f402e8f08c829feead"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given date is valid.  <a href="#gaec864d9e80d658f402e8f08c829feead">More...</a><br /></td></tr>
-<tr class="separator:gaec864d9e80d658f402e8f08c829feead"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5c85213e0dc63565c0e5d8151a480010"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga5c85213e0dc63565c0e5d8151a480010">OCI_DateCompare</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date2)</td></tr>
-<tr class="memdesc:ga5c85213e0dc63565c0e5d8151a480010"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares two date handles.  <a href="#ga5c85213e0dc63565c0e5d8151a480010">More...</a><br /></td></tr>
-<tr class="separator:ga5c85213e0dc63565c0e5d8151a480010"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafa9f51e0977278bc43dafdef13d7fb5e"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gafa9f51e0977278bc43dafdef13d7fb5e">OCI_DateDaysBetween</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date2)</td></tr>
-<tr class="memdesc:gafa9f51e0977278bc43dafdef13d7fb5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of days betWeen two dates.  <a href="#gafa9f51e0977278bc43dafdef13d7fb5e">More...</a><br /></td></tr>
-<tr class="separator:gafa9f51e0977278bc43dafdef13d7fb5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga412dea1ba595fcbc293ee278f1ff04ab"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga412dea1ba595fcbc293ee278f1ff04ab">OCI_DateFromText</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, const otext *str, const otext *fmt)</td></tr>
-<tr class="memdesc:ga412dea1ba595fcbc293ee278f1ff04ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a string to a date and store it in the given date handle.  <a href="#ga412dea1ba595fcbc293ee278f1ff04ab">More...</a><br /></td></tr>
-<tr class="separator:ga412dea1ba595fcbc293ee278f1ff04ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaca5b7b09eae70235fa9c068a7a6df971"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gaca5b7b09eae70235fa9c068a7a6df971">OCI_DateToText</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, const otext *fmt, int size, otext *str)</td></tr>
-<tr class="memdesc:gaca5b7b09eae70235fa9c068a7a6df971"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a Date value from the given date handle to a string.  <a href="#gaca5b7b09eae70235fa9c068a7a6df971">More...</a><br /></td></tr>
-<tr class="separator:gaca5b7b09eae70235fa9c068a7a6df971"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gadc1fad15bca1a1780d22148a104bcdbd"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gadc1fad15bca1a1780d22148a104bcdbd">OCI_DateGetDate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int *year, int *month, int *day)</td></tr>
-<tr class="memdesc:gadc1fad15bca1a1780d22148a104bcdbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the date part from a date handle.  <a href="#gadc1fad15bca1a1780d22148a104bcdbd">More...</a><br /></td></tr>
-<tr class="separator:gadc1fad15bca1a1780d22148a104bcdbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa20b12b698b3c244f7482aa0ed348be5"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gaa20b12b698b3c244f7482aa0ed348be5">OCI_DateGetTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int *hour, int *min, int *sec)</td></tr>
-<tr class="memdesc:gaa20b12b698b3c244f7482aa0ed348be5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the time part from a date handle.  <a href="#gaa20b12b698b3c244f7482aa0ed348be5">More...</a><br /></td></tr>
-<tr class="separator:gaa20b12b698b3c244f7482aa0ed348be5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0c33ca23c117aab2c8197ae7fdb657c8"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga0c33ca23c117aab2c8197ae7fdb657c8">OCI_DateGetDateTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int *year, int *month, int *day, int *hour, int *min, int *sec)</td></tr>
-<tr class="memdesc:ga0c33ca23c117aab2c8197ae7fdb657c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the date and time parts from a date handle.  <a href="#ga0c33ca23c117aab2c8197ae7fdb657c8">More...</a><br /></td></tr>
-<tr class="separator:ga0c33ca23c117aab2c8197ae7fdb657c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga502be0f2067e0533ea383abe5a148ee9"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga502be0f2067e0533ea383abe5a148ee9">OCI_DateSetDate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int year, int month, int day)</td></tr>
-<tr class="memdesc:ga502be0f2067e0533ea383abe5a148ee9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the date portion if the given date handle.  <a href="#ga502be0f2067e0533ea383abe5a148ee9">More...</a><br /></td></tr>
-<tr class="separator:ga502be0f2067e0533ea383abe5a148ee9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga260dfef0c32dcef83baddc636495d3ba"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga260dfef0c32dcef83baddc636495d3ba">OCI_DateSetTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int hour, int min, int sec)</td></tr>
-<tr class="memdesc:ga260dfef0c32dcef83baddc636495d3ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the time portion if the given date handle.  <a href="#ga260dfef0c32dcef83baddc636495d3ba">More...</a><br /></td></tr>
-<tr class="separator:ga260dfef0c32dcef83baddc636495d3ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab5e4890df370609f9a8267125c52123e"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gab5e4890df370609f9a8267125c52123e">OCI_DateSetDateTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int year, int month, int day, int hour, int min, int sec)</td></tr>
-<tr class="memdesc:gab5e4890df370609f9a8267125c52123e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the date and time portions if the given date handle.  <a href="#gab5e4890df370609f9a8267125c52123e">More...</a><br /></td></tr>
-<tr class="separator:gab5e4890df370609f9a8267125c52123e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0d174f4b5db6961053807efe1698ea81"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga0d174f4b5db6961053807efe1698ea81">OCI_DateLastDay</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date)</td></tr>
-<tr class="memdesc:ga0d174f4b5db6961053807efe1698ea81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Place the last day of month (from the given date) into the given date.  <a href="#ga0d174f4b5db6961053807efe1698ea81">More...</a><br /></td></tr>
-<tr class="separator:ga0d174f4b5db6961053807efe1698ea81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa48d80a86ff9047c0d3bbd462dfb8167"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gaa48d80a86ff9047c0d3bbd462dfb8167">OCI_DateNextDay</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, const otext *day)</td></tr>
-<tr class="memdesc:gaa48d80a86ff9047c0d3bbd462dfb8167"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the date of next day of the week, after a given date.  <a href="#gaa48d80a86ff9047c0d3bbd462dfb8167">More...</a><br /></td></tr>
-<tr class="separator:gaa48d80a86ff9047c0d3bbd462dfb8167"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad7c5c65d88b52e6ecb46b3e9ba8843dc"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gad7c5c65d88b52e6ecb46b3e9ba8843dc">OCI_DateSysDate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date)</td></tr>
-<tr class="memdesc:gad7c5c65d88b52e6ecb46b3e9ba8843dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current system date/time into the date handle.  <a href="#gad7c5c65d88b52e6ecb46b3e9ba8843dc">More...</a><br /></td></tr>
-<tr class="separator:gad7c5c65d88b52e6ecb46b3e9ba8843dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2f0c93aef119764a91562279208fe7b7"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga2f0c93aef119764a91562279208fe7b7">OCI_DateZoneToZone</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, const otext *zone1, const otext *zone2)</td></tr>
-<tr class="memdesc:ga2f0c93aef119764a91562279208fe7b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a date from one zone to another zone.  <a href="#ga2f0c93aef119764a91562279208fe7b7">More...</a><br /></td></tr>
-<tr class="separator:ga2f0c93aef119764a91562279208fe7b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga52fb4405771971a2603e3eb871b3256e"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga52fb4405771971a2603e3eb871b3256e">OCI_DateToCTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, struct tm *ptm, time_t *pt)</td></tr>
-<tr class="memdesc:ga52fb4405771971a2603e3eb871b3256e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Affect an OCI_Date handle value to ISO C time data types.  <a href="#ga52fb4405771971a2603e3eb871b3256e">More...</a><br /></td></tr>
-<tr class="separator:ga52fb4405771971a2603e3eb871b3256e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5022740b8e062a289d7d06a2f5bd40ca"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga5022740b8e062a289d7d06a2f5bd40ca">OCI_DateFromCTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, struct tm *ptm, time_t t)</td></tr>
-<tr class="memdesc:ga5022740b8e062a289d7d06a2f5bd40ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Affect ISO C time data types values to an OCI_Date handle.  <a href="#ga5022740b8e062a289d7d06a2f5bd40ca">More...</a><br /></td></tr>
-<tr class="separator:ga5022740b8e062a289d7d06a2f5bd40ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga45506b36a77bc394cd367f620e20fd1c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga45506b36a77bc394cd367f620e20fd1c">OCI_DateCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga45506b36a77bc394cd367f620e20fd1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a local date object.  <a href="#ga45506b36a77bc394cd367f620e20fd1c">More...</a><br /></td></tr>
+<tr class="separator:ga45506b36a77bc394cd367f620e20fd1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab6c9e4fd52928f53414a338846dbe027"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gab6c9e4fd52928f53414a338846dbe027">OCI_DateFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date)</td></tr>
+<tr class="memdesc:gab6c9e4fd52928f53414a338846dbe027"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a date object.  <a href="#gab6c9e4fd52928f53414a338846dbe027">More...</a><br /></td></tr>
+<tr class="separator:gab6c9e4fd52928f53414a338846dbe027"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacd74c42f00ce8e6f43a84f0753b8096a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gacd74c42f00ce8e6f43a84f0753b8096a">OCI_DateArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int nbelem)</td></tr>
+<tr class="memdesc:gacd74c42f00ce8e6f43a84f0753b8096a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of date object.  <a href="#gacd74c42f00ce8e6f43a84f0753b8096a">More...</a><br /></td></tr>
+<tr class="separator:gacd74c42f00ce8e6f43a84f0753b8096a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadf2acb934aa8435c13c2fe72b9c71905"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gadf2acb934aa8435c13c2fe72b9c71905">OCI_DateArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> **dates)</td></tr>
+<tr class="memdesc:gadf2acb934aa8435c13c2fe72b9c71905"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of date objects.  <a href="#gadf2acb934aa8435c13c2fe72b9c71905">More...</a><br /></td></tr>
+<tr class="separator:gadf2acb934aa8435c13c2fe72b9c71905"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab9e19be2b20d1457ada24abfdf98f7bd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gab9e19be2b20d1457ada24abfdf98f7bd">OCI_DateAddDays</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int nb)</td></tr>
+<tr class="memdesc:gab9e19be2b20d1457ada24abfdf98f7bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add or subtract days to a date handle.  <a href="#gab9e19be2b20d1457ada24abfdf98f7bd">More...</a><br /></td></tr>
+<tr class="separator:gab9e19be2b20d1457ada24abfdf98f7bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab71f2c36cd1ada708a83805255d9ade8"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gab71f2c36cd1ada708a83805255d9ade8">OCI_DateAddMonths</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int nb)</td></tr>
+<tr class="memdesc:gab71f2c36cd1ada708a83805255d9ade8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add or subtract months to a date handle.  <a href="#gab71f2c36cd1ada708a83805255d9ade8">More...</a><br /></td></tr>
+<tr class="separator:gab71f2c36cd1ada708a83805255d9ade8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga89fed5c82e7543f8a7f6fce78b96c67d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga89fed5c82e7543f8a7f6fce78b96c67d">OCI_DateAssign</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date_src)</td></tr>
+<tr class="memdesc:ga89fed5c82e7543f8a7f6fce78b96c67d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign the value of a date handle to another one.  <a href="#ga89fed5c82e7543f8a7f6fce78b96c67d">More...</a><br /></td></tr>
+<tr class="separator:ga89fed5c82e7543f8a7f6fce78b96c67d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gade4879e7474461bb9861a96ceecec976"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gade4879e7474461bb9861a96ceecec976">OCI_DateCheck</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date)</td></tr>
+<tr class="memdesc:gade4879e7474461bb9861a96ceecec976"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given date is valid.  <a href="#gade4879e7474461bb9861a96ceecec976">More...</a><br /></td></tr>
+<tr class="separator:gade4879e7474461bb9861a96ceecec976"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga38b931241ca62e619660f014428771bd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga38b931241ca62e619660f014428771bd">OCI_DateCompare</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date2)</td></tr>
+<tr class="memdesc:ga38b931241ca62e619660f014428771bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares two date handles.  <a href="#ga38b931241ca62e619660f014428771bd">More...</a><br /></td></tr>
+<tr class="separator:ga38b931241ca62e619660f014428771bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga88e30a58a74b013bab67aa162a18c493"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga88e30a58a74b013bab67aa162a18c493">OCI_DateDaysBetween</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date2)</td></tr>
+<tr class="memdesc:ga88e30a58a74b013bab67aa162a18c493"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of days betWeen two dates.  <a href="#ga88e30a58a74b013bab67aa162a18c493">More...</a><br /></td></tr>
+<tr class="separator:ga88e30a58a74b013bab67aa162a18c493"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga182c1474813b313af0678200f18500d1"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga182c1474813b313af0678200f18500d1">OCI_DateFromText</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, const otext *str, const otext *fmt)</td></tr>
+<tr class="memdesc:ga182c1474813b313af0678200f18500d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a string to a date and store it in the given date handle.  <a href="#ga182c1474813b313af0678200f18500d1">More...</a><br /></td></tr>
+<tr class="separator:ga182c1474813b313af0678200f18500d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad4f7e216b2e632e6e0e73d3820d3649a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gad4f7e216b2e632e6e0e73d3820d3649a">OCI_DateToText</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, const otext *fmt, int size, otext *str)</td></tr>
+<tr class="memdesc:gad4f7e216b2e632e6e0e73d3820d3649a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a Date value from the given date handle to a string.  <a href="#gad4f7e216b2e632e6e0e73d3820d3649a">More...</a><br /></td></tr>
+<tr class="separator:gad4f7e216b2e632e6e0e73d3820d3649a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1e00e16b2c7d3f2a941d7afcb615ba8c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga1e00e16b2c7d3f2a941d7afcb615ba8c">OCI_DateGetDate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int *year, int *month, int *day)</td></tr>
+<tr class="memdesc:ga1e00e16b2c7d3f2a941d7afcb615ba8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the date part from a date handle.  <a href="#ga1e00e16b2c7d3f2a941d7afcb615ba8c">More...</a><br /></td></tr>
+<tr class="separator:ga1e00e16b2c7d3f2a941d7afcb615ba8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf6f4c18289823211a63c41dcfd36f0ec"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gaf6f4c18289823211a63c41dcfd36f0ec">OCI_DateGetTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int *hour, int *min, int *sec)</td></tr>
+<tr class="memdesc:gaf6f4c18289823211a63c41dcfd36f0ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the time part from a date handle.  <a href="#gaf6f4c18289823211a63c41dcfd36f0ec">More...</a><br /></td></tr>
+<tr class="separator:gaf6f4c18289823211a63c41dcfd36f0ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacdeddd9118a561a10d2c99e660b5ed1e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gacdeddd9118a561a10d2c99e660b5ed1e">OCI_DateGetDateTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int *year, int *month, int *day, int *hour, int *min, int *sec)</td></tr>
+<tr class="memdesc:gacdeddd9118a561a10d2c99e660b5ed1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the date and time parts from a date handle.  <a href="#gacdeddd9118a561a10d2c99e660b5ed1e">More...</a><br /></td></tr>
+<tr class="separator:gacdeddd9118a561a10d2c99e660b5ed1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab01bacccd03e2f77c06875caee98f9d4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gab01bacccd03e2f77c06875caee98f9d4">OCI_DateSetDate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int year, int month, int day)</td></tr>
+<tr class="memdesc:gab01bacccd03e2f77c06875caee98f9d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the date portion if the given date handle.  <a href="#gab01bacccd03e2f77c06875caee98f9d4">More...</a><br /></td></tr>
+<tr class="separator:gab01bacccd03e2f77c06875caee98f9d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa0b40540236cc36743723ff684ddd0ba"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gaa0b40540236cc36743723ff684ddd0ba">OCI_DateSetTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int hour, int min, int sec)</td></tr>
+<tr class="memdesc:gaa0b40540236cc36743723ff684ddd0ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the time portion if the given date handle.  <a href="#gaa0b40540236cc36743723ff684ddd0ba">More...</a><br /></td></tr>
+<tr class="separator:gaa0b40540236cc36743723ff684ddd0ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga18d9dd6ae277f14f41badc78f816df31"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga18d9dd6ae277f14f41badc78f816df31">OCI_DateSetDateTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int year, int month, int day, int hour, int min, int sec)</td></tr>
+<tr class="memdesc:ga18d9dd6ae277f14f41badc78f816df31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the date and time portions if the given date handle.  <a href="#ga18d9dd6ae277f14f41badc78f816df31">More...</a><br /></td></tr>
+<tr class="separator:ga18d9dd6ae277f14f41badc78f816df31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5ac095109856a0cda553742d81488378"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga5ac095109856a0cda553742d81488378">OCI_DateLastDay</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date)</td></tr>
+<tr class="memdesc:ga5ac095109856a0cda553742d81488378"><td class="mdescLeft">&#160;</td><td class="mdescRight">Place the last day of month (from the given date) into the given date.  <a href="#ga5ac095109856a0cda553742d81488378">More...</a><br /></td></tr>
+<tr class="separator:ga5ac095109856a0cda553742d81488378"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae4507c8981b4fb3eb10b08fd3d7f12a9"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gae4507c8981b4fb3eb10b08fd3d7f12a9">OCI_DateNextDay</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, const otext *day)</td></tr>
+<tr class="memdesc:gae4507c8981b4fb3eb10b08fd3d7f12a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the date of next day of the week, after a given date.  <a href="#gae4507c8981b4fb3eb10b08fd3d7f12a9">More...</a><br /></td></tr>
+<tr class="separator:gae4507c8981b4fb3eb10b08fd3d7f12a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae73613cf6173243848ddfd3295b448c4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gae73613cf6173243848ddfd3295b448c4">OCI_DateSysDate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date)</td></tr>
+<tr class="memdesc:gae73613cf6173243848ddfd3295b448c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current system date/time into the date handle.  <a href="#gae73613cf6173243848ddfd3295b448c4">More...</a><br /></td></tr>
+<tr class="separator:gae73613cf6173243848ddfd3295b448c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac206300a0c06585505559cf3fe2c5418"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gac206300a0c06585505559cf3fe2c5418">OCI_DateZoneToZone</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, const otext *zone1, const otext *zone2)</td></tr>
+<tr class="memdesc:gac206300a0c06585505559cf3fe2c5418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a date from one zone to another zone.  <a href="#gac206300a0c06585505559cf3fe2c5418">More...</a><br /></td></tr>
+<tr class="separator:gac206300a0c06585505559cf3fe2c5418"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab754b5cf18cf5f1e1710308657b2635d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gab754b5cf18cf5f1e1710308657b2635d">OCI_DateToCTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, struct tm *ptm, time_t *pt)</td></tr>
+<tr class="memdesc:gab754b5cf18cf5f1e1710308657b2635d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Affect an OCI_Date handle value to ISO C time data types.  <a href="#gab754b5cf18cf5f1e1710308657b2635d">More...</a><br /></td></tr>
+<tr class="separator:gab754b5cf18cf5f1e1710308657b2635d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga39b71fcffed82bfdf4f9a18d1db252fd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga39b71fcffed82bfdf4f9a18d1db252fd">OCI_DateFromCTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, struct tm *ptm, time_t t)</td></tr>
+<tr class="memdesc:ga39b71fcffed82bfdf4f9a18d1db252fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Affect ISO C time data types values to an OCI_Date handle.  <a href="#ga39b71fcffed82bfdf4f9a18d1db252fd">More...</a><br /></td></tr>
+<tr class="separator:ga39b71fcffed82bfdf4f9a18d1db252fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="gae80eacef54641a68c3b82be85f4a5042"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae80eacef54641a68c3b82be85f4a5042">&#9670;&nbsp;</a></span>OCI_DateCreate()</h2>
+<a id="ga45506b36a77bc394cd367f620e20fd1c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga45506b36a77bc394cd367f620e20fd1c">&#9670;&nbsp;</a></span>OCI_DateCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a>* OCI_API OCI_DateCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a>* OCI_API OCI_DateCreate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -207,14 +207,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaedf77cfe4bd5dab7909e4c2fb5173b48"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaedf77cfe4bd5dab7909e4c2fb5173b48">&#9670;&nbsp;</a></span>OCI_DateFree()</h2>
+<a id="gab6c9e4fd52928f53414a338846dbe027"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab6c9e4fd52928f53414a338846dbe027">&#9670;&nbsp;</a></span>OCI_DateFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em></td><td>)</td>
@@ -232,19 +232,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only dates created with <a class="el" href="group___ocilib_c_api_datetimes.html#gae80eacef54641a68c3b82be85f4a5042" title="Create a local date object.">OCI_DateCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_datetimes.html#gaedf77cfe4bd5dab7909e4c2fb5173b48" title="Free a date object.">OCI_DateFree()</a></dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only dates created with <a class="el" href="group___ocilib_c_api_datetimes.html#ga45506b36a77bc394cd367f620e20fd1c" title="Create a local date object.">OCI_DateCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_datetimes.html#gab6c9e4fd52928f53414a338846dbe027" title="Free a date object.">OCI_DateFree()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="ga60ba27b663a99d407b837ce665291f03"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga60ba27b663a99d407b837ce665291f03">&#9670;&nbsp;</a></span>OCI_DateArrayCreate()</h2>
+<a id="gacd74c42f00ce8e6f43a84f0753b8096a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacd74c42f00ce8e6f43a84f0753b8096a">&#9670;&nbsp;</a></span>OCI_DateArrayCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a>** OCI_API OCI_DateArrayCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a>** OCI_API OCI_DateArrayCreate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -273,19 +273,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_datetimes.html#gae80eacef54641a68c3b82be85f4a5042" title="Create a local date object.">OCI_DateCreate()</a> for more details</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_datetimes.html#ga45506b36a77bc394cd367f620e20fd1c" title="Create a local date object.">OCI_DateCreate()</a> for more details</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Return the date handle array on success otherwise NULL on failure </dd></dl>
 
 </div>
 </div>
-<a id="gaa816548e8ae506c965d46811f7ffecf5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa816548e8ae506c965d46811f7ffecf5">&#9670;&nbsp;</a></span>OCI_DateArrayFree()</h2>
+<a id="gadf2acb934aa8435c13c2fe72b9c71905"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadf2acb934aa8435c13c2fe72b9c71905">&#9670;&nbsp;</a></span>OCI_DateArrayFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateArrayFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateArrayFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> **&#160;</td>
           <td class="paramname"><em>dates</em></td><td>)</td>
@@ -303,19 +303,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only arrays of dates created with <a class="el" href="group___ocilib_c_api_datetimes.html#ga60ba27b663a99d407b837ce665291f03" title="Create an array of date object.">OCI_DateArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_datetimes.html#gaa816548e8ae506c965d46811f7ffecf5" title="Free an array of date objects.">OCI_DateArrayFree()</a></dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only arrays of dates created with <a class="el" href="group___ocilib_c_api_datetimes.html#gacd74c42f00ce8e6f43a84f0753b8096a" title="Create an array of date object.">OCI_DateArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_datetimes.html#gadf2acb934aa8435c13c2fe72b9c71905" title="Free an array of date objects.">OCI_DateArrayFree()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="ga7f446c4dc922920c36601770e3d9d7d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7f446c4dc922920c36601770e3d9d7d1">&#9670;&nbsp;</a></span>OCI_DateAddDays()</h2>
+<a id="gab9e19be2b20d1457ada24abfdf98f7bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab9e19be2b20d1457ada24abfdf98f7bd">&#9670;&nbsp;</a></span>OCI_DateAddDays()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateAddDays </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateAddDays </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -350,14 +350,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaa405c4bb8c705ce2dd03b51bba1ef303"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa405c4bb8c705ce2dd03b51bba1ef303">&#9670;&nbsp;</a></span>OCI_DateAddMonths()</h2>
+<a id="gab71f2c36cd1ada708a83805255d9ade8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab71f2c36cd1ada708a83805255d9ade8">&#9670;&nbsp;</a></span>OCI_DateAddMonths()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateAddMonths </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateAddMonths </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -392,14 +392,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gad66b48f587f3bc30b1db8cd4cb892847"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad66b48f587f3bc30b1db8cd4cb892847">&#9670;&nbsp;</a></span>OCI_DateAssign()</h2>
+<a id="ga89fed5c82e7543f8a7f6fce78b96c67d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga89fed5c82e7543f8a7f6fce78b96c67d">&#9670;&nbsp;</a></span>OCI_DateAssign()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT int OCI_API OCI_DateAssign </td>
+          <td class="memname">OCI_SYM_PUBLIC int OCI_API OCI_DateAssign </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -434,14 +434,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaec864d9e80d658f402e8f08c829feead"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaec864d9e80d658f402e8f08c829feead">&#9670;&nbsp;</a></span>OCI_DateCheck()</h2>
+<a id="gade4879e7474461bb9861a96ceecec976"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gade4879e7474461bb9861a96ceecec976">&#9670;&nbsp;</a></span>OCI_DateCheck()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT int OCI_API OCI_DateCheck </td>
+          <td class="memname">OCI_SYM_PUBLIC int OCI_API OCI_DateCheck </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em></td><td>)</td>
@@ -469,14 +469,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga5c85213e0dc63565c0e5d8151a480010"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5c85213e0dc63565c0e5d8151a480010">&#9670;&nbsp;</a></span>OCI_DateCompare()</h2>
+<a id="ga38b931241ca62e619660f014428771bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga38b931241ca62e619660f014428771bd">&#9670;&nbsp;</a></span>OCI_DateCompare()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT int OCI_API OCI_DateCompare </td>
+          <td class="memname">OCI_SYM_PUBLIC int OCI_API OCI_DateCompare </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -514,14 +514,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gafa9f51e0977278bc43dafdef13d7fb5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gafa9f51e0977278bc43dafdef13d7fb5e">&#9670;&nbsp;</a></span>OCI_DateDaysBetween()</h2>
+<a id="ga88e30a58a74b013bab67aa162a18c493"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga88e30a58a74b013bab67aa162a18c493">&#9670;&nbsp;</a></span>OCI_DateDaysBetween()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT int OCI_API OCI_DateDaysBetween </td>
+          <td class="memname">OCI_SYM_PUBLIC int OCI_API OCI_DateDaysBetween </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -557,14 +557,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga412dea1ba595fcbc293ee278f1ff04ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga412dea1ba595fcbc293ee278f1ff04ab">&#9670;&nbsp;</a></span>OCI_DateFromText()</h2>
+<a id="ga182c1474813b313af0678200f18500d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga182c1474813b313af0678200f18500d1">&#9670;&nbsp;</a></span>OCI_DateFromText()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateFromText </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateFromText </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -606,14 +606,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaca5b7b09eae70235fa9c068a7a6df971"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaca5b7b09eae70235fa9c068a7a6df971">&#9670;&nbsp;</a></span>OCI_DateToText()</h2>
+<a id="gad4f7e216b2e632e6e0e73d3820d3649a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad4f7e216b2e632e6e0e73d3820d3649a">&#9670;&nbsp;</a></span>OCI_DateToText()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateToText </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateToText </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -662,14 +662,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gadc1fad15bca1a1780d22148a104bcdbd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gadc1fad15bca1a1780d22148a104bcdbd">&#9670;&nbsp;</a></span>OCI_DateGetDate()</h2>
+<a id="ga1e00e16b2c7d3f2a941d7afcb615ba8c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1e00e16b2c7d3f2a941d7afcb615ba8c">&#9670;&nbsp;</a></span>OCI_DateGetDate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateGetDate </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateGetDate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -718,14 +718,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaa20b12b698b3c244f7482aa0ed348be5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa20b12b698b3c244f7482aa0ed348be5">&#9670;&nbsp;</a></span>OCI_DateGetTime()</h2>
+<a id="gaf6f4c18289823211a63c41dcfd36f0ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf6f4c18289823211a63c41dcfd36f0ec">&#9670;&nbsp;</a></span>OCI_DateGetTime()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateGetTime </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateGetTime </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -774,14 +774,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga0c33ca23c117aab2c8197ae7fdb657c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0c33ca23c117aab2c8197ae7fdb657c8">&#9670;&nbsp;</a></span>OCI_DateGetDateTime()</h2>
+<a id="gacdeddd9118a561a10d2c99e660b5ed1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacdeddd9118a561a10d2c99e660b5ed1e">&#9670;&nbsp;</a></span>OCI_DateGetDateTime()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateGetDateTime </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateGetDateTime </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -851,14 +851,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga502be0f2067e0533ea383abe5a148ee9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga502be0f2067e0533ea383abe5a148ee9">&#9670;&nbsp;</a></span>OCI_DateSetDate()</h2>
+<a id="gab01bacccd03e2f77c06875caee98f9d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab01bacccd03e2f77c06875caee98f9d4">&#9670;&nbsp;</a></span>OCI_DateSetDate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateSetDate </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateSetDate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -907,14 +907,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga260dfef0c32dcef83baddc636495d3ba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga260dfef0c32dcef83baddc636495d3ba">&#9670;&nbsp;</a></span>OCI_DateSetTime()</h2>
+<a id="gaa0b40540236cc36743723ff684ddd0ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa0b40540236cc36743723ff684ddd0ba">&#9670;&nbsp;</a></span>OCI_DateSetTime()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateSetTime </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateSetTime </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -963,14 +963,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gab5e4890df370609f9a8267125c52123e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab5e4890df370609f9a8267125c52123e">&#9670;&nbsp;</a></span>OCI_DateSetDateTime()</h2>
+<a id="ga18d9dd6ae277f14f41badc78f816df31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga18d9dd6ae277f14f41badc78f816df31">&#9670;&nbsp;</a></span>OCI_DateSetDateTime()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateSetDateTime </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateSetDateTime </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -1040,14 +1040,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga0d174f4b5db6961053807efe1698ea81"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0d174f4b5db6961053807efe1698ea81">&#9670;&nbsp;</a></span>OCI_DateLastDay()</h2>
+<a id="ga5ac095109856a0cda553742d81488378"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5ac095109856a0cda553742d81488378">&#9670;&nbsp;</a></span>OCI_DateLastDay()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateLastDay </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateLastDay </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em></td><td>)</td>
@@ -1071,14 +1071,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaa48d80a86ff9047c0d3bbd462dfb8167"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa48d80a86ff9047c0d3bbd462dfb8167">&#9670;&nbsp;</a></span>OCI_DateNextDay()</h2>
+<a id="gae4507c8981b4fb3eb10b08fd3d7f12a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae4507c8981b4fb3eb10b08fd3d7f12a9">&#9670;&nbsp;</a></span>OCI_DateNextDay()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateNextDay </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateNextDay </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -1113,14 +1113,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gad7c5c65d88b52e6ecb46b3e9ba8843dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad7c5c65d88b52e6ecb46b3e9ba8843dc">&#9670;&nbsp;</a></span>OCI_DateSysDate()</h2>
+<a id="gae73613cf6173243848ddfd3295b448c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae73613cf6173243848ddfd3295b448c4">&#9670;&nbsp;</a></span>OCI_DateSysDate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateSysDate </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateSysDate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em></td><td>)</td>
@@ -1144,14 +1144,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga2f0c93aef119764a91562279208fe7b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2f0c93aef119764a91562279208fe7b7">&#9670;&nbsp;</a></span>OCI_DateZoneToZone()</h2>
+<a id="gac206300a0c06585505559cf3fe2c5418"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac206300a0c06585505559cf3fe2c5418">&#9670;&nbsp;</a></span>OCI_DateZoneToZone()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateZoneToZone </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateZoneToZone </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -1193,14 +1193,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga52fb4405771971a2603e3eb871b3256e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga52fb4405771971a2603e3eb871b3256e">&#9670;&nbsp;</a></span>OCI_DateToCTime()</h2>
+<a id="gab754b5cf18cf5f1e1710308657b2635d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab754b5cf18cf5f1e1710308657b2635d">&#9670;&nbsp;</a></span>OCI_DateToCTime()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateToCTime </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateToCTime </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -1241,14 +1241,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga5022740b8e062a289d7d06a2f5bd40ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5022740b8e062a289d7d06a2f5bd40ca">&#9670;&nbsp;</a></span>OCI_DateFromCTime()</h2>
+<a id="ga39b71fcffed82bfdf4f9a18d1db252fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga39b71fcffed82bfdf4f9a18d1db252fd">&#9670;&nbsp;</a></span>OCI_DateFromCTime()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DateFromCTime </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DateFromCTime </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *&#160;</td>
           <td class="paramname"><em>date</em>, </td>
@@ -1295,7 +1295,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

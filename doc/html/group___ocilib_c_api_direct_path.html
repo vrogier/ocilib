@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -122,105 +122,105 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_direct_path.html'
 <p>Its recommended to use direct path interface with an Oracle client that is the same version than the database. With version &lt; 10g, it is mandatory regarding that it causes segmentation faults and it's known from Oracle that advices to use the same version for client and server (see metalink KB)</p>
 <dl class="section user"><dt>How to use direct path</dt><dd></dd></dl>
 <ul>
-<li>1 : Create a direct path handle with <a class="el" href="group___ocilib_c_api_direct_path.html#ga33415cbda0a997c10ae0815256701935" title="Create a direct path object.">OCI_DirPathCreate()</a></li>
+<li>1 : Create a direct path handle with <a class="el" href="group___ocilib_c_api_direct_path.html#ga328ddcdff80006192d43a4e2e778eb8d" title="Create a direct path object.">OCI_DirPathCreate()</a></li>
 <li>2 : Set (optional) some direct path load attributes</li>
-<li>3 : Describe the columns to load with <a class="el" href="group___ocilib_c_api_direct_path.html#ga37fecbbc3ecaa6c3ecfe33539aef1f69" title="Describe a column to load into the given table.">OCI_DirPathSetColumn()</a></li>
-<li>4 : Populate data with <a class="el" href="group___ocilib_c_api_direct_path.html#gaaadd5e79891c24d0f9c99ed96e5fe608" title="Set the value of the given row/column array entry.">OCI_DirPathSetEntry()</a></li>
-<li>5 : Convert the data with <a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a></li>
-<li>6 : Load the data into the database with <a class="el" href="group___ocilib_c_api_direct_path.html#ga0c816466d046a3d8c179f779e273f456" title="Loads the data converted to direct path stream format.">OCI_DirPathLoad()</a></li>
-<li>7 : Repeat step 4,5,6 + reset the stream with <a class="el" href="group___ocilib_c_api_direct_path.html#ga2efc984ff0647d3a3c4b29f7e9ec37e2" title="Reset internal arrays and streams to prepare another load.">OCI_DirPathReset()</a> until all rows has been loaded</li>
-<li>8 : Commit the load with <a class="el" href="group___ocilib_c_api_direct_path.html#ga7c80a8db7ef79e4693ac0e770bb2018f" title="Terminate a direct path operation and commit changes into the database.">OCI_DirPathFinish()</a></li>
-<li>9 : Free the direct path handle with <a class="el" href="group___ocilib_c_api_direct_path.html#ga024f04e69293349e3882b2f367a03ed6" title="Free an OCI_DirPath handle.">OCI_DirPathFree()</a></li>
+<li>3 : Describe the columns to load with <a class="el" href="group___ocilib_c_api_direct_path.html#ga2a9c4cc5a9c3f709c02b2aa94e7c7b11" title="Describe a column to load into the given table.">OCI_DirPathSetColumn()</a></li>
+<li>4 : Populate data with <a class="el" href="group___ocilib_c_api_direct_path.html#ga963d8062892a174e428db083e6c0f22a" title="Set the value of the given row/column array entry.">OCI_DirPathSetEntry()</a></li>
+<li>5 : Convert the data with <a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a></li>
+<li>6 : Load the data into the database with <a class="el" href="group___ocilib_c_api_direct_path.html#gafe08b47fda4d47fec4d3f47b6c88036e" title="Loads the data converted to direct path stream format.">OCI_DirPathLoad()</a></li>
+<li>7 : Repeat step 4,5,6 + reset the stream with <a class="el" href="group___ocilib_c_api_direct_path.html#gaee81401ceb61714e5144267b1466d19b" title="Reset internal arrays and streams to prepare another load.">OCI_DirPathReset()</a> until all rows has been loaded</li>
+<li>8 : Commit the load with <a class="el" href="group___ocilib_c_api_direct_path.html#ga360dc44395e1a45d49a2ec9f1d3112a4" title="Terminate a direct path operation and commit changes into the database.">OCI_DirPathFinish()</a></li>
+<li>9 : Free the direct path handle with <a class="el" href="group___ocilib_c_api_direct_path.html#gaa8e361ac0c921921d75a358a141286c9" title="Free an OCI_DirPath handle.">OCI_DirPathFree()</a></li>
 </ul>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/dirpath.sql */</span></div><div class="line"></div><div class="line"><span class="preprocessor">#define SIZE_ARRAY 100</span></div><div class="line"><span class="preprocessor">#define NB_LOAD    10</span></div><div class="line"><span class="preprocessor">#define SIZE_COL1  20</span></div><div class="line"><span class="preprocessor">#define SIZE_COL2  30</span></div><div class="line"><span class="preprocessor">#define SIZE_COL3  8</span></div><div class="line"><span class="preprocessor">#define NUM_COLS   3</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a>    *dp;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a>   *tbl;</div><div class="line"></div><div class="line">    <span class="keywordtype">char</span> val1[SIZE_COL1 + 1];</div><div class="line">    <span class="keywordtype">char</span> val2[SIZE_COL2 + 1];</div><div class="line">    <span class="keywordtype">char</span> val3[SIZE_COL3 + 1];</div><div class="line"></div><div class="line">    <span class="keywordtype">int</span> i = 0, j = 0, nb_rows = SIZE_ARRAY;</div><div class="line">    <span class="keywordtype">boolean</span> res = TRUE;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    tbl = <a class="code" href="group___ocilib_c_api_metadata.html#ga541bb34a0a86c6296f59605f85931039">OCI_TypeInfoGet</a>(cn, <span class="stringliteral">&quot;dirpath_data&quot;</span>, OCI_TIF_TABLE);</div><div class="line">    dp = <a class="code" href="group___ocilib_c_api_direct_path.html#ga33415cbda0a997c10ae0815256701935">OCI_DirPathCreate</a>(tbl, NULL, NUM_COLS, nb_rows);</div><div class="line"></div><div class="line">    <span class="comment">/* optional attributes to set */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#gae25febeb9086f1604743fbf54a4cf677">OCI_DirPathSetBufferSize</a>(dp, 64000);</div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga59a031e1515afd31654105071dc7e371">OCI_DirPathSetNoLog</a>(dp, TRUE);</div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#gafab72b4c04bd2c5d3c850f58f5b22fd2">OCI_DirPathSetParallel</a>(dp, TRUE);</div><div class="line"></div><div class="line">    <span class="comment">/* describe the target table */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga37fecbbc3ecaa6c3ecfe33539aef1f69">OCI_DirPathSetColumn</a>(dp, 1, <span class="stringliteral">&quot;val_int&quot;</span>, SIZE_COL1, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga37fecbbc3ecaa6c3ecfe33539aef1f69">OCI_DirPathSetColumn</a>(dp, 2, <span class="stringliteral">&quot;val_str&quot;</span>, SIZE_COL2, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga37fecbbc3ecaa6c3ecfe33539aef1f69">OCI_DirPathSetColumn</a>(dp, 3, <span class="stringliteral">&quot;val_date&quot;</span>, SIZE_COL3, <span class="stringliteral">&quot;YYYYMMDD&quot;</span>);</div><div class="line"></div><div class="line">    <span class="comment">/* prepare the load */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga31aae5239710847d43b90166fedf0419">OCI_DirPathPrepare</a>(dp);</div><div class="line"></div><div class="line">    nb_rows = <a class="code" href="group___ocilib_c_api_direct_path.html#ga2ff812128f1604615f186aa8bdf8269d">OCI_DirPathGetMaxRows</a>(dp);</div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; NB_LOAD; i++)</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_direct_path.html#ga2efc984ff0647d3a3c4b29f7e9ec37e2">OCI_DirPathReset</a>(dp);</div><div class="line"></div><div class="line">        <span class="keywordflow">for</span> (j = 1; j &lt;= nb_rows; j++)</div><div class="line">        {</div><div class="line">            <span class="comment">/* fill test values */</span></div><div class="line"></div><div class="line">            sprintf(val1, <span class="stringliteral">&quot;%04d&quot;</span>, i + (i * 100));</div><div class="line">            sprintf(val2, <span class="stringliteral">&quot;value %05d&quot;</span>, j + (i * 100));</div><div class="line">            sprintf(val3, <span class="stringliteral">&quot;%04d%02d%02d&quot;</span>, (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);</div><div class="line"></div><div class="line">            <a class="code" href="group___ocilib_c_api_direct_path.html#gaaadd5e79891c24d0f9c99ed96e5fe608">OCI_DirPathSetEntry</a>(dp, j, 1, val1, (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>)strlen(val1), TRUE);</div><div class="line">            <a class="code" href="group___ocilib_c_api_direct_path.html#gaaadd5e79891c24d0f9c99ed96e5fe608">OCI_DirPathSetEntry</a>(dp, j, 2, val2, (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>)strlen(val2), TRUE);</div><div class="line">            <a class="code" href="group___ocilib_c_api_direct_path.html#gaaadd5e79891c24d0f9c99ed96e5fe608">OCI_DirPathSetEntry</a>(dp, j, 3, val3, (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>)strlen(val3), TRUE);</div><div class="line">        }</div><div class="line"></div><div class="line">        <span class="comment">/* load data to the server */</span></div><div class="line"></div><div class="line">        <span class="keywordflow">while</span> (res)</div><div class="line">        {</div><div class="line">            <span class="keywordtype">int</span> state = <a class="code" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76">OCI_DirPathConvert</a>(dp);</div><div class="line"></div><div class="line">            <span class="keywordflow">if</span> ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))</div><div class="line">                res = <a class="code" href="group___ocilib_c_api_direct_path.html#ga0c816466d046a3d8c179f779e273f456">OCI_DirPathLoad</a>(dp);</div><div class="line"></div><div class="line">            <span class="keywordflow">if</span> (state == OCI_DPR_COMPLETE)</div><div class="line">                <span class="keywordflow">break</span>;</div><div class="line">        }</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">/* commits changes */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga7c80a8db7ef79e4693ac0e770bb2018f">OCI_DirPathFinish</a>(dp);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;%04d row(s) loaded\n&quot;</span>, <a class="code" href="group___ocilib_c_api_direct_path.html#gaffb07d43825826b0c9af060ee52fc3e0">OCI_DirPathGetRowCount</a>(dp));</div><div class="line"></div><div class="line">    <span class="comment">/* free direct path object */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga024f04e69293349e3882b2f367a03ed6">OCI_DirPathFree</a>(dp);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/dirpath.sql */</span></div><div class="line"></div><div class="line"><span class="preprocessor">#define SIZE_ARRAY 100</span></div><div class="line"><span class="preprocessor">#define NB_LOAD    10</span></div><div class="line"><span class="preprocessor">#define SIZE_COL1  20</span></div><div class="line"><span class="preprocessor">#define SIZE_COL2  30</span></div><div class="line"><span class="preprocessor">#define SIZE_COL3  8</span></div><div class="line"><span class="preprocessor">#define NUM_COLS   3</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a>    *dp;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a>   *tbl;</div><div class="line"></div><div class="line">    <span class="keywordtype">char</span> val1[SIZE_COL1 + 1];</div><div class="line">    <span class="keywordtype">char</span> val2[SIZE_COL2 + 1];</div><div class="line">    <span class="keywordtype">char</span> val3[SIZE_COL3 + 1];</div><div class="line"></div><div class="line">    <span class="keywordtype">int</span> i = 0, j = 0, nb_rows = SIZE_ARRAY;</div><div class="line">    <span class="keywordtype">boolean</span> res = TRUE;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    tbl = <a class="code" href="group___ocilib_c_api_metadata.html#ga125c7527524c8a4505348f056bfcb14f">OCI_TypeInfoGet</a>(cn, <span class="stringliteral">&quot;dirpath_data&quot;</span>, OCI_TIF_TABLE);</div><div class="line">    dp = <a class="code" href="group___ocilib_c_api_direct_path.html#ga328ddcdff80006192d43a4e2e778eb8d">OCI_DirPathCreate</a>(tbl, NULL, NUM_COLS, nb_rows);</div><div class="line"></div><div class="line">    <span class="comment">/* optional attributes to set */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga862fc89c24a6f49b92cf97f42e61451d">OCI_DirPathSetBufferSize</a>(dp, 64000);</div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga943c947be0b5ea0f16ce36f4872148b4">OCI_DirPathSetNoLog</a>(dp, TRUE);</div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga20726352b3f0f4b7539afd437f2abfeb">OCI_DirPathSetParallel</a>(dp, TRUE);</div><div class="line"></div><div class="line">    <span class="comment">/* describe the target table */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga2a9c4cc5a9c3f709c02b2aa94e7c7b11">OCI_DirPathSetColumn</a>(dp, 1, <span class="stringliteral">&quot;val_int&quot;</span>, SIZE_COL1, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga2a9c4cc5a9c3f709c02b2aa94e7c7b11">OCI_DirPathSetColumn</a>(dp, 2, <span class="stringliteral">&quot;val_str&quot;</span>, SIZE_COL2, NULL);</div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga2a9c4cc5a9c3f709c02b2aa94e7c7b11">OCI_DirPathSetColumn</a>(dp, 3, <span class="stringliteral">&quot;val_date&quot;</span>, SIZE_COL3, <span class="stringliteral">&quot;YYYYMMDD&quot;</span>);</div><div class="line"></div><div class="line">    <span class="comment">/* prepare the load */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#gaa2e38898a241e6b413b67fb20f1e1b05">OCI_DirPathPrepare</a>(dp);</div><div class="line"></div><div class="line">    nb_rows = <a class="code" href="group___ocilib_c_api_direct_path.html#gacc8b0c7ff055cad05ea392f069df410a">OCI_DirPathGetMaxRows</a>(dp);</div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; NB_LOAD; i++)</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_direct_path.html#gaee81401ceb61714e5144267b1466d19b">OCI_DirPathReset</a>(dp);</div><div class="line"></div><div class="line">        <span class="keywordflow">for</span> (j = 1; j &lt;= nb_rows; j++)</div><div class="line">        {</div><div class="line">            <span class="comment">/* fill test values */</span></div><div class="line"></div><div class="line">            sprintf(val1, <span class="stringliteral">&quot;%04d&quot;</span>, i + (i * 100));</div><div class="line">            sprintf(val2, <span class="stringliteral">&quot;value %05d&quot;</span>, j + (i * 100));</div><div class="line">            sprintf(val3, <span class="stringliteral">&quot;%04d%02d%02d&quot;</span>, (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);</div><div class="line"></div><div class="line">            <a class="code" href="group___ocilib_c_api_direct_path.html#ga963d8062892a174e428db083e6c0f22a">OCI_DirPathSetEntry</a>(dp, j, 1, val1, (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>)strlen(val1), TRUE);</div><div class="line">            <a class="code" href="group___ocilib_c_api_direct_path.html#ga963d8062892a174e428db083e6c0f22a">OCI_DirPathSetEntry</a>(dp, j, 2, val2, (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>)strlen(val2), TRUE);</div><div class="line">            <a class="code" href="group___ocilib_c_api_direct_path.html#ga963d8062892a174e428db083e6c0f22a">OCI_DirPathSetEntry</a>(dp, j, 3, val3, (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>)strlen(val3), TRUE);</div><div class="line">        }</div><div class="line"></div><div class="line">        <span class="comment">/* load data to the server */</span></div><div class="line"></div><div class="line">        <span class="keywordflow">while</span> (res)</div><div class="line">        {</div><div class="line">            <span class="keywordtype">int</span> state = <a class="code" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03">OCI_DirPathConvert</a>(dp);</div><div class="line"></div><div class="line">            <span class="keywordflow">if</span> ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))</div><div class="line">                res = <a class="code" href="group___ocilib_c_api_direct_path.html#gafe08b47fda4d47fec4d3f47b6c88036e">OCI_DirPathLoad</a>(dp);</div><div class="line"></div><div class="line">            <span class="keywordflow">if</span> (state == OCI_DPR_COMPLETE)</div><div class="line">                <span class="keywordflow">break</span>;</div><div class="line">        }</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">/* commits changes */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#ga360dc44395e1a45d49a2ec9f1d3112a4">OCI_DirPathFinish</a>(dp);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;%04d row(s) loaded\n&quot;</span>, <a class="code" href="group___ocilib_c_api_direct_path.html#gaba384f9a5b2f761787de10a9f1be8532">OCI_DirPathGetRowCount</a>(dp));</div><div class="line"></div><div class="line">    <span class="comment">/* free direct path object */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_direct_path.html#gaa8e361ac0c921921d75a358a141286c9">OCI_DirPathFree</a>(dp);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga33415cbda0a997c10ae0815256701935"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga33415cbda0a997c10ae0815256701935">OCI_DirPathCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf, const otext *partition, unsigned int nb_cols, unsigned int nb_rows)</td></tr>
-<tr class="memdesc:ga33415cbda0a997c10ae0815256701935"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a direct path object.  <a href="#ga33415cbda0a997c10ae0815256701935">More...</a><br /></td></tr>
-<tr class="separator:ga33415cbda0a997c10ae0815256701935"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga024f04e69293349e3882b2f367a03ed6"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga024f04e69293349e3882b2f367a03ed6">OCI_DirPathFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:ga024f04e69293349e3882b2f367a03ed6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an OCI_DirPath handle.  <a href="#ga024f04e69293349e3882b2f367a03ed6">More...</a><br /></td></tr>
-<tr class="separator:ga024f04e69293349e3882b2f367a03ed6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga37fecbbc3ecaa6c3ecfe33539aef1f69"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga37fecbbc3ecaa6c3ecfe33539aef1f69">OCI_DirPathSetColumn</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, unsigned int index, const otext *name, unsigned int maxsize, const otext *format)</td></tr>
-<tr class="memdesc:ga37fecbbc3ecaa6c3ecfe33539aef1f69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describe a column to load into the given table.  <a href="#ga37fecbbc3ecaa6c3ecfe33539aef1f69">More...</a><br /></td></tr>
-<tr class="separator:ga37fecbbc3ecaa6c3ecfe33539aef1f69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga31aae5239710847d43b90166fedf0419"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga31aae5239710847d43b90166fedf0419">OCI_DirPathPrepare</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:ga31aae5239710847d43b90166fedf0419"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepares the OCI direct path load interface before any rows can be converted or loaded.  <a href="#ga31aae5239710847d43b90166fedf0419">More...</a><br /></td></tr>
-<tr class="separator:ga31aae5239710847d43b90166fedf0419"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaaadd5e79891c24d0f9c99ed96e5fe608"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gaaadd5e79891c24d0f9c99ed96e5fe608">OCI_DirPathSetEntry</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, unsigned int row, unsigned int index, void *value, unsigned size, boolean complete)</td></tr>
-<tr class="memdesc:gaaadd5e79891c24d0f9c99ed96e5fe608"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the value of the given row/column array entry.  <a href="#gaaadd5e79891c24d0f9c99ed96e5fe608">More...</a><br /></td></tr>
-<tr class="separator:gaaadd5e79891c24d0f9c99ed96e5fe608"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8dd680e9664028af035e773275e5ab76"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76">OCI_DirPathConvert</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:ga8dd680e9664028af035e773275e5ab76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert provided user data to the direct path stream format.  <a href="#ga8dd680e9664028af035e773275e5ab76">More...</a><br /></td></tr>
-<tr class="separator:ga8dd680e9664028af035e773275e5ab76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0c816466d046a3d8c179f779e273f456"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga0c816466d046a3d8c179f779e273f456">OCI_DirPathLoad</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:ga0c816466d046a3d8c179f779e273f456"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the data converted to direct path stream format.  <a href="#ga0c816466d046a3d8c179f779e273f456">More...</a><br /></td></tr>
-<tr class="separator:ga0c816466d046a3d8c179f779e273f456"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2efc984ff0647d3a3c4b29f7e9ec37e2"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga2efc984ff0647d3a3c4b29f7e9ec37e2">OCI_DirPathReset</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:ga2efc984ff0647d3a3c4b29f7e9ec37e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset internal arrays and streams to prepare another load.  <a href="#ga2efc984ff0647d3a3c4b29f7e9ec37e2">More...</a><br /></td></tr>
-<tr class="separator:ga2efc984ff0647d3a3c4b29f7e9ec37e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7c80a8db7ef79e4693ac0e770bb2018f"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga7c80a8db7ef79e4693ac0e770bb2018f">OCI_DirPathFinish</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:ga7c80a8db7ef79e4693ac0e770bb2018f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminate a direct path operation and commit changes into the database.  <a href="#ga7c80a8db7ef79e4693ac0e770bb2018f">More...</a><br /></td></tr>
-<tr class="separator:ga7c80a8db7ef79e4693ac0e770bb2018f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga382a1cbd623aa97ca69fed7b26923d61"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga382a1cbd623aa97ca69fed7b26923d61">OCI_DirPathAbort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:ga382a1cbd623aa97ca69fed7b26923d61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminate a direct path operation without committing changes.  <a href="#ga382a1cbd623aa97ca69fed7b26923d61">More...</a><br /></td></tr>
-<tr class="separator:ga382a1cbd623aa97ca69fed7b26923d61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga39b093ea31cdee551552e35df8167a22"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga39b093ea31cdee551552e35df8167a22">OCI_DirPathSave</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:ga39b093ea31cdee551552e35df8167a22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute a data save-point (server side)  <a href="#ga39b093ea31cdee551552e35df8167a22">More...</a><br /></td></tr>
-<tr class="separator:ga39b093ea31cdee551552e35df8167a22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafe3add5d1595fbabab7e197ce26f9a67"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gafe3add5d1595fbabab7e197ce26f9a67">OCI_DirPathFlushRow</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:gafe3add5d1595fbabab7e197ce26f9a67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes a partially loaded row from server.  <a href="#gafe3add5d1595fbabab7e197ce26f9a67">More...</a><br /></td></tr>
-<tr class="separator:gafe3add5d1595fbabab7e197ce26f9a67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0062665eba53e0b62be65d4f0ee0df55"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga0062665eba53e0b62be65d4f0ee0df55">OCI_DirPathSetCurrentRows</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, unsigned int nb_rows)</td></tr>
-<tr class="memdesc:ga0062665eba53e0b62be65d4f0ee0df55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the current number of rows to convert and load.  <a href="#ga0062665eba53e0b62be65d4f0ee0df55">More...</a><br /></td></tr>
-<tr class="separator:ga0062665eba53e0b62be65d4f0ee0df55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafb5fd763a6a181a8aae27db13ca28735"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gafb5fd763a6a181a8aae27db13ca28735">OCI_DirPathGetCurrentRows</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:gafb5fd763a6a181a8aae27db13ca28735"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of rows used in the OCILIB internal arrays of rows.  <a href="#gafb5fd763a6a181a8aae27db13ca28735">More...</a><br /></td></tr>
-<tr class="separator:gafb5fd763a6a181a8aae27db13ca28735"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2ff812128f1604615f186aa8bdf8269d"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga2ff812128f1604615f186aa8bdf8269d">OCI_DirPathGetMaxRows</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:ga2ff812128f1604615f186aa8bdf8269d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of rows allocated in the OCI and OCILIB internal arrays of rows.  <a href="#ga2ff812128f1604615f186aa8bdf8269d">More...</a><br /></td></tr>
-<tr class="separator:ga2ff812128f1604615f186aa8bdf8269d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa94047ee1fd5f923159d49ec3435082b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gaa94047ee1fd5f923159d49ec3435082b">OCI_DirPathSetDateFormat</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, const otext *format)</td></tr>
-<tr class="memdesc:gaa94047ee1fd5f923159d49ec3435082b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the default date format string for input conversion.  <a href="#gaa94047ee1fd5f923159d49ec3435082b">More...</a><br /></td></tr>
-<tr class="separator:gaa94047ee1fd5f923159d49ec3435082b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafab72b4c04bd2c5d3c850f58f5b22fd2"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gafab72b4c04bd2c5d3c850f58f5b22fd2">OCI_DirPathSetParallel</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, boolean value)</td></tr>
-<tr class="memdesc:gafab72b4c04bd2c5d3c850f58f5b22fd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the parallel loading mode.  <a href="#gafab72b4c04bd2c5d3c850f58f5b22fd2">More...</a><br /></td></tr>
-<tr class="separator:gafab72b4c04bd2c5d3c850f58f5b22fd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga59a031e1515afd31654105071dc7e371"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga59a031e1515afd31654105071dc7e371">OCI_DirPathSetNoLog</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, boolean value)</td></tr>
-<tr class="memdesc:ga59a031e1515afd31654105071dc7e371"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the logging mode for the loading operation.  <a href="#ga59a031e1515afd31654105071dc7e371">More...</a><br /></td></tr>
-<tr class="separator:ga59a031e1515afd31654105071dc7e371"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa0976d38ccf4d6f09657115ad6e47880"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gaa0976d38ccf4d6f09657115ad6e47880">OCI_DirPathSetCacheSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, unsigned int size)</td></tr>
-<tr class="memdesc:gaa0976d38ccf4d6f09657115ad6e47880"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set number of elements in the date cache.  <a href="#gaa0976d38ccf4d6f09657115ad6e47880">More...</a><br /></td></tr>
-<tr class="separator:gaa0976d38ccf4d6f09657115ad6e47880"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae25febeb9086f1604743fbf54a4cf677"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gae25febeb9086f1604743fbf54a4cf677">OCI_DirPathSetBufferSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, unsigned int size)</td></tr>
-<tr class="memdesc:gae25febeb9086f1604743fbf54a4cf677"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the size of the internal stream transfer buffer.  <a href="#gae25febeb9086f1604743fbf54a4cf677">More...</a><br /></td></tr>
-<tr class="separator:gae25febeb9086f1604743fbf54a4cf677"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac471686c49662bda2071cc4d7058e47f"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gac471686c49662bda2071cc4d7058e47f">OCI_DirPathSetConvertMode</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, unsigned int mode)</td></tr>
-<tr class="memdesc:gac471686c49662bda2071cc4d7058e47f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the direct path conversion mode.  <a href="#gac471686c49662bda2071cc4d7058e47f">More...</a><br /></td></tr>
-<tr class="separator:gac471686c49662bda2071cc4d7058e47f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaffb07d43825826b0c9af060ee52fc3e0"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gaffb07d43825826b0c9af060ee52fc3e0">OCI_DirPathGetRowCount</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:gaffb07d43825826b0c9af060ee52fc3e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of rows successfully loaded into the database so far.  <a href="#gaffb07d43825826b0c9af060ee52fc3e0">More...</a><br /></td></tr>
-<tr class="separator:gaffb07d43825826b0c9af060ee52fc3e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaade590aadb20d903770d9dc9c82ddb0c"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gaade590aadb20d903770d9dc9c82ddb0c">OCI_DirPathGetAffectedRows</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:gaade590aadb20d903770d9dc9c82ddb0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">return the number of rows successfully processed during in the last conversion or loading call  <a href="#gaade590aadb20d903770d9dc9c82ddb0c">More...</a><br /></td></tr>
-<tr class="separator:gaade590aadb20d903770d9dc9c82ddb0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga957a4d36b54166195cebeca461ddc7c4"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga957a4d36b54166195cebeca461ddc7c4">OCI_DirPathGetErrorColumn</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:ga957a4d36b54166195cebeca461ddc7c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the index of a column which caused an error during data conversion.  <a href="#ga957a4d36b54166195cebeca461ddc7c4">More...</a><br /></td></tr>
-<tr class="separator:ga957a4d36b54166195cebeca461ddc7c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga29e788b14e1e9ecd691c101c38f9e118"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga29e788b14e1e9ecd691c101c38f9e118">OCI_DirPathGetErrorRow</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:ga29e788b14e1e9ecd691c101c38f9e118"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the index of a row which caused an error during data conversion.  <a href="#ga29e788b14e1e9ecd691c101c38f9e118">More...</a><br /></td></tr>
-<tr class="separator:ga29e788b14e1e9ecd691c101c38f9e118"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga328ddcdff80006192d43a4e2e778eb8d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga328ddcdff80006192d43a4e2e778eb8d">OCI_DirPathCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf, const otext *partition, unsigned int nb_cols, unsigned int nb_rows)</td></tr>
+<tr class="memdesc:ga328ddcdff80006192d43a4e2e778eb8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a direct path object.  <a href="#ga328ddcdff80006192d43a4e2e778eb8d">More...</a><br /></td></tr>
+<tr class="separator:ga328ddcdff80006192d43a4e2e778eb8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa8e361ac0c921921d75a358a141286c9"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gaa8e361ac0c921921d75a358a141286c9">OCI_DirPathFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:gaa8e361ac0c921921d75a358a141286c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an OCI_DirPath handle.  <a href="#gaa8e361ac0c921921d75a358a141286c9">More...</a><br /></td></tr>
+<tr class="separator:gaa8e361ac0c921921d75a358a141286c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2a9c4cc5a9c3f709c02b2aa94e7c7b11"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga2a9c4cc5a9c3f709c02b2aa94e7c7b11">OCI_DirPathSetColumn</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, unsigned int index, const otext *name, unsigned int maxsize, const otext *format)</td></tr>
+<tr class="memdesc:ga2a9c4cc5a9c3f709c02b2aa94e7c7b11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describe a column to load into the given table.  <a href="#ga2a9c4cc5a9c3f709c02b2aa94e7c7b11">More...</a><br /></td></tr>
+<tr class="separator:ga2a9c4cc5a9c3f709c02b2aa94e7c7b11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa2e38898a241e6b413b67fb20f1e1b05"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gaa2e38898a241e6b413b67fb20f1e1b05">OCI_DirPathPrepare</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:gaa2e38898a241e6b413b67fb20f1e1b05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepares the OCI direct path load interface before any rows can be converted or loaded.  <a href="#gaa2e38898a241e6b413b67fb20f1e1b05">More...</a><br /></td></tr>
+<tr class="separator:gaa2e38898a241e6b413b67fb20f1e1b05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga963d8062892a174e428db083e6c0f22a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga963d8062892a174e428db083e6c0f22a">OCI_DirPathSetEntry</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, unsigned int row, unsigned int index, void *value, unsigned size, boolean complete)</td></tr>
+<tr class="memdesc:ga963d8062892a174e428db083e6c0f22a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the value of the given row/column array entry.  <a href="#ga963d8062892a174e428db083e6c0f22a">More...</a><br /></td></tr>
+<tr class="separator:ga963d8062892a174e428db083e6c0f22a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga514f23b3b598479558a5025ad8871b03"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03">OCI_DirPathConvert</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:ga514f23b3b598479558a5025ad8871b03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert provided user data to the direct path stream format.  <a href="#ga514f23b3b598479558a5025ad8871b03">More...</a><br /></td></tr>
+<tr class="separator:ga514f23b3b598479558a5025ad8871b03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafe08b47fda4d47fec4d3f47b6c88036e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gafe08b47fda4d47fec4d3f47b6c88036e">OCI_DirPathLoad</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:gafe08b47fda4d47fec4d3f47b6c88036e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the data converted to direct path stream format.  <a href="#gafe08b47fda4d47fec4d3f47b6c88036e">More...</a><br /></td></tr>
+<tr class="separator:gafe08b47fda4d47fec4d3f47b6c88036e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaee81401ceb61714e5144267b1466d19b"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gaee81401ceb61714e5144267b1466d19b">OCI_DirPathReset</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:gaee81401ceb61714e5144267b1466d19b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset internal arrays and streams to prepare another load.  <a href="#gaee81401ceb61714e5144267b1466d19b">More...</a><br /></td></tr>
+<tr class="separator:gaee81401ceb61714e5144267b1466d19b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga360dc44395e1a45d49a2ec9f1d3112a4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga360dc44395e1a45d49a2ec9f1d3112a4">OCI_DirPathFinish</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:ga360dc44395e1a45d49a2ec9f1d3112a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminate a direct path operation and commit changes into the database.  <a href="#ga360dc44395e1a45d49a2ec9f1d3112a4">More...</a><br /></td></tr>
+<tr class="separator:ga360dc44395e1a45d49a2ec9f1d3112a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6c15ac9ebad1caf337e0f6022475652f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga6c15ac9ebad1caf337e0f6022475652f">OCI_DirPathAbort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:ga6c15ac9ebad1caf337e0f6022475652f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Terminate a direct path operation without committing changes.  <a href="#ga6c15ac9ebad1caf337e0f6022475652f">More...</a><br /></td></tr>
+<tr class="separator:ga6c15ac9ebad1caf337e0f6022475652f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0d16e9b3205e35de7c306a76f5e5291f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga0d16e9b3205e35de7c306a76f5e5291f">OCI_DirPathSave</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:ga0d16e9b3205e35de7c306a76f5e5291f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute a data save-point (server side)  <a href="#ga0d16e9b3205e35de7c306a76f5e5291f">More...</a><br /></td></tr>
+<tr class="separator:ga0d16e9b3205e35de7c306a76f5e5291f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9bf00d753decd5cf3f253738fa2e9cc6"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga9bf00d753decd5cf3f253738fa2e9cc6">OCI_DirPathFlushRow</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:ga9bf00d753decd5cf3f253738fa2e9cc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes a partially loaded row from server.  <a href="#ga9bf00d753decd5cf3f253738fa2e9cc6">More...</a><br /></td></tr>
+<tr class="separator:ga9bf00d753decd5cf3f253738fa2e9cc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab8f7bbb7acd4179382850e98a2f89c74"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gab8f7bbb7acd4179382850e98a2f89c74">OCI_DirPathSetCurrentRows</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, unsigned int nb_rows)</td></tr>
+<tr class="memdesc:gab8f7bbb7acd4179382850e98a2f89c74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the current number of rows to convert and load.  <a href="#gab8f7bbb7acd4179382850e98a2f89c74">More...</a><br /></td></tr>
+<tr class="separator:gab8f7bbb7acd4179382850e98a2f89c74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2b38a85b0ba683e6eaaac40cd95d7f66"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga2b38a85b0ba683e6eaaac40cd95d7f66">OCI_DirPathGetCurrentRows</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:ga2b38a85b0ba683e6eaaac40cd95d7f66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of rows used in the OCILIB internal arrays of rows.  <a href="#ga2b38a85b0ba683e6eaaac40cd95d7f66">More...</a><br /></td></tr>
+<tr class="separator:ga2b38a85b0ba683e6eaaac40cd95d7f66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacc8b0c7ff055cad05ea392f069df410a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gacc8b0c7ff055cad05ea392f069df410a">OCI_DirPathGetMaxRows</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:gacc8b0c7ff055cad05ea392f069df410a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of rows allocated in the OCI and OCILIB internal arrays of rows.  <a href="#gacc8b0c7ff055cad05ea392f069df410a">More...</a><br /></td></tr>
+<tr class="separator:gacc8b0c7ff055cad05ea392f069df410a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2eabb0d95639eb215fccac72ca7cd988"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga2eabb0d95639eb215fccac72ca7cd988">OCI_DirPathSetDateFormat</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, const otext *format)</td></tr>
+<tr class="memdesc:ga2eabb0d95639eb215fccac72ca7cd988"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the default date format string for input conversion.  <a href="#ga2eabb0d95639eb215fccac72ca7cd988">More...</a><br /></td></tr>
+<tr class="separator:ga2eabb0d95639eb215fccac72ca7cd988"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga20726352b3f0f4b7539afd437f2abfeb"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga20726352b3f0f4b7539afd437f2abfeb">OCI_DirPathSetParallel</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, boolean value)</td></tr>
+<tr class="memdesc:ga20726352b3f0f4b7539afd437f2abfeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the parallel loading mode.  <a href="#ga20726352b3f0f4b7539afd437f2abfeb">More...</a><br /></td></tr>
+<tr class="separator:ga20726352b3f0f4b7539afd437f2abfeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga943c947be0b5ea0f16ce36f4872148b4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga943c947be0b5ea0f16ce36f4872148b4">OCI_DirPathSetNoLog</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, boolean value)</td></tr>
+<tr class="memdesc:ga943c947be0b5ea0f16ce36f4872148b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the logging mode for the loading operation.  <a href="#ga943c947be0b5ea0f16ce36f4872148b4">More...</a><br /></td></tr>
+<tr class="separator:ga943c947be0b5ea0f16ce36f4872148b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga749621ac121f8c8ff94084cccf7751e6"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga749621ac121f8c8ff94084cccf7751e6">OCI_DirPathSetCacheSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, unsigned int size)</td></tr>
+<tr class="memdesc:ga749621ac121f8c8ff94084cccf7751e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set number of elements in the date cache.  <a href="#ga749621ac121f8c8ff94084cccf7751e6">More...</a><br /></td></tr>
+<tr class="separator:ga749621ac121f8c8ff94084cccf7751e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga862fc89c24a6f49b92cf97f42e61451d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga862fc89c24a6f49b92cf97f42e61451d">OCI_DirPathSetBufferSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, unsigned int size)</td></tr>
+<tr class="memdesc:ga862fc89c24a6f49b92cf97f42e61451d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the size of the internal stream transfer buffer.  <a href="#ga862fc89c24a6f49b92cf97f42e61451d">More...</a><br /></td></tr>
+<tr class="separator:ga862fc89c24a6f49b92cf97f42e61451d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4b83718a0bd51fef0ee056128b697a83"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga4b83718a0bd51fef0ee056128b697a83">OCI_DirPathSetConvertMode</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp, unsigned int mode)</td></tr>
+<tr class="memdesc:ga4b83718a0bd51fef0ee056128b697a83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the direct path conversion mode.  <a href="#ga4b83718a0bd51fef0ee056128b697a83">More...</a><br /></td></tr>
+<tr class="separator:ga4b83718a0bd51fef0ee056128b697a83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaba384f9a5b2f761787de10a9f1be8532"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gaba384f9a5b2f761787de10a9f1be8532">OCI_DirPathGetRowCount</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:gaba384f9a5b2f761787de10a9f1be8532"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of rows successfully loaded into the database so far.  <a href="#gaba384f9a5b2f761787de10a9f1be8532">More...</a><br /></td></tr>
+<tr class="separator:gaba384f9a5b2f761787de10a9f1be8532"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad3e6297e8144624d9da1c614067af8c0"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#gad3e6297e8144624d9da1c614067af8c0">OCI_DirPathGetAffectedRows</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:gad3e6297e8144624d9da1c614067af8c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">return the number of rows successfully processed during in the last conversion or loading call  <a href="#gad3e6297e8144624d9da1c614067af8c0">More...</a><br /></td></tr>
+<tr class="separator:gad3e6297e8144624d9da1c614067af8c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga26fcf9cb6077575876b767430b261523"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga26fcf9cb6077575876b767430b261523">OCI_DirPathGetErrorColumn</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:ga26fcf9cb6077575876b767430b261523"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the index of a column which caused an error during data conversion.  <a href="#ga26fcf9cb6077575876b767430b261523">More...</a><br /></td></tr>
+<tr class="separator:ga26fcf9cb6077575876b767430b261523"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5e90d75ace076456f619d2fe480f0ac0"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_direct_path.html#ga5e90d75ace076456f619d2fe480f0ac0">OCI_DirPathGetErrorRow</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
+<tr class="memdesc:ga5e90d75ace076456f619d2fe480f0ac0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the index of a row which caused an error during data conversion.  <a href="#ga5e90d75ace076456f619d2fe480f0ac0">More...</a><br /></td></tr>
+<tr class="separator:ga5e90d75ace076456f619d2fe480f0ac0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga33415cbda0a997c10ae0815256701935"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga33415cbda0a997c10ae0815256701935">&#9670;&nbsp;</a></span>OCI_DirPathCreate()</h2>
+<a id="ga328ddcdff80006192d43a4e2e778eb8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga328ddcdff80006192d43a4e2e778eb8d">&#9670;&nbsp;</a></span>OCI_DirPathCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a>* OCI_API OCI_DirPathCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a>* OCI_API OCI_DirPathCreate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *&#160;</td>
           <td class="paramname"><em>typinf</em>, </td>
@@ -263,23 +263,23 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Retrieve the table type info handle with <a class="el" href="group___ocilib_c_api_metadata.html#ga541bb34a0a86c6296f59605f85931039" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a>. The partition name is not mandatory</dd>
+<dl class="section note"><dt>Note</dt><dd>Retrieve the table type info handle with <a class="el" href="group___ocilib_c_api_metadata.html#ga125c7527524c8a4505348f056bfcb14f" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a>. The partition name is not mandatory</dd>
 <dd>
-Parameter 'nb_rows' is ignored for Oracle 8i. Prior to Oracle 9i, it's the OCI client that decides of the number of rows to process per convert/load calls. From Oracle 9i, OCI allows application to specify this value. Note that, the OCI client might not accept the input value. After <a class="el" href="group___ocilib_c_api_direct_path.html#ga31aae5239710847d43b90166fedf0419" title="Prepares the OCI direct path load interface before any rows can be converted or loaded.">OCI_DirPathPrepare()</a> has been successfully called, <a class="el" href="group___ocilib_c_api_direct_path.html#ga2ff812128f1604615f186aa8bdf8269d" title="Return the maximum number of rows allocated in the OCI and OCILIB internal arrays of rows.">OCI_DirPathGetMaxRows()</a> returns the final number of rows used for the given direct path operation.</dd></dl>
+Parameter 'nb_rows' is ignored for Oracle 8i. Prior to Oracle 9i, it's the OCI client that decides of the number of rows to process per convert/load calls. From Oracle 9i, OCI allows application to specify this value. Note that, the OCI client might not accept the input value. After <a class="el" href="group___ocilib_c_api_direct_path.html#gaa2e38898a241e6b413b67fb20f1e1b05" title="Prepares the OCI direct path load interface before any rows can be converted or loaded.">OCI_DirPathPrepare()</a> has been successfully called, <a class="el" href="group___ocilib_c_api_direct_path.html#gacc8b0c7ff055cad05ea392f069df410a" title="Return the maximum number of rows allocated in the OCI and OCILIB internal arrays of rows.">OCI_DirPathGetMaxRows()</a> returns the final number of rows used for the given direct path operation.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Return the direct path handle on success otherwise NULL on failure </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_direct_path.html#adf36e39ec5d2368398229cd1d67dc29f">ocilib::DirectPath::DirectPath()</a>.</p>
 
 </div>
 </div>
-<a id="ga024f04e69293349e3882b2f367a03ed6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga024f04e69293349e3882b2f367a03ed6">&#9670;&nbsp;</a></span>OCI_DirPathFree()</h2>
+<a id="gaa8e361ac0c921921d75a358a141286c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa8e361ac0c921921d75a358a141286c9">&#9670;&nbsp;</a></span>OCI_DirPathFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -303,14 +303,14 @@ Parameter 'nb_rows' is ignored for Oracle 8i. Prior to Oracle 9i, it's the OCI c
 
 </div>
 </div>
-<a id="ga37fecbbc3ecaa6c3ecfe33539aef1f69"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga37fecbbc3ecaa6c3ecfe33539aef1f69">&#9670;&nbsp;</a></span>OCI_DirPathSetColumn()</h2>
+<a id="ga2a9c4cc5a9c3f709c02b2aa94e7c7b11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2a9c4cc5a9c3f709c02b2aa94e7c7b11">&#9670;&nbsp;</a></span>OCI_DirPathSetColumn()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathSetColumn </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetColumn </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em>, </td>
@@ -361,7 +361,7 @@ Parameter 'nb_rows' is ignored for Oracle 8i. Prior to Oracle 9i, it's the OCI c
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>An error is thrown if :<ul>
-<li>If the column specified by the 'name' parameter is not found in the table referenced by the type info handle passed to <a class="el" href="group___ocilib_c_api_direct_path.html#ga33415cbda0a997c10ae0815256701935" title="Create a direct path object.">OCI_DirPathCreate()</a></li>
+<li>If the column specified by the 'name' parameter is not found in the table referenced by the type info handle passed to <a class="el" href="group___ocilib_c_api_direct_path.html#ga328ddcdff80006192d43a4e2e778eb8d" title="Create a direct path object.">OCI_DirPathCreate()</a></li>
 <li>the index is out of bounds (= 0 or &gt;= number of columns)</li>
 </ul>
 </dd></dl>
@@ -371,14 +371,14 @@ Parameter 'nb_rows' is ignored for Oracle 8i. Prior to Oracle 9i, it's the OCI c
 
 </div>
 </div>
-<a id="ga31aae5239710847d43b90166fedf0419"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga31aae5239710847d43b90166fedf0419">&#9670;&nbsp;</a></span>OCI_DirPathPrepare()</h2>
+<a id="gaa2e38898a241e6b413b67fb20f1e1b05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa2e38898a241e6b413b67fb20f1e1b05">&#9670;&nbsp;</a></span>OCI_DirPathPrepare()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathPrepare </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathPrepare </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -402,14 +402,14 @@ Parameter 'nb_rows' is ignored for Oracle 8i. Prior to Oracle 9i, it's the OCI c
 
 </div>
 </div>
-<a id="gaaadd5e79891c24d0f9c99ed96e5fe608"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaaadd5e79891c24d0f9c99ed96e5fe608">&#9670;&nbsp;</a></span>OCI_DirPathSetEntry()</h2>
+<a id="ga963d8062892a174e428db083e6c0f22a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga963d8062892a174e428db083e6c0f22a">&#9670;&nbsp;</a></span>OCI_DirPathSetEntry()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathSetEntry </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetEntry </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em>, </td>
@@ -477,7 +477,7 @@ The 'size' parameter is expressed in number of :<ul>
 Direct path support piece loading for LONGs and LOBs columns. When filling these columns, it's possible to provide input buffer piece by piece. In order to do so :<ul>
 <li>set the 'complete' parameter to FALSE</li>
 <li>set the 'size' parameter to the piece size</li>
-<li>Repeat calls to <a class="el" href="group___ocilib_c_api_direct_path.html#gaaadd5e79891c24d0f9c99ed96e5fe608" title="Set the value of the given row/column array entry.">OCI_DirPathSetEntry()</a> until the data is totally provided</li>
+<li>Repeat calls to <a class="el" href="group___ocilib_c_api_direct_path.html#ga963d8062892a174e428db083e6c0f22a" title="Set the value of the given row/column array entry.">OCI_DirPathSetEntry()</a> until the data is totally provided</li>
 <li>The last call that set the last piece or an entry must specify the value TRUE for the 'complete' parameter</li>
 </ul>
 </dd></dl>
@@ -488,14 +488,14 @@ Direct path support piece loading for LONGs and LOBs columns. When filling these
 
 </div>
 </div>
-<a id="ga8dd680e9664028af035e773275e5ab76"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga8dd680e9664028af035e773275e5ab76">&#9670;&nbsp;</a></span>OCI_DirPathConvert()</h2>
+<a id="ga514f23b3b598479558a5025ad8871b03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga514f23b3b598479558a5025ad8871b03">&#9670;&nbsp;</a></span>OCI_DirPathConvert()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_DirPathConvert </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathConvert </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -522,27 +522,27 @@ Direct path support piece loading for LONGs and LOBs columns. When filling these
 </ul>
 </dd></dl>
 <dl class="section note"><dt>Note</dt><dd><ul>
-<li>When using conversion mode OCI_DCM_DEFAULT, <a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> stops when any error is encountered and returns OCI_DPR_ERROR</li>
-<li>When using conversion mode OCI_DCM_FORCE, <a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> does not stop on errors. Instead it discards any erred rows and returns OCI_DPR_COMPLETE once all rows are processed.</li>
+<li>When using conversion mode OCI_DCM_DEFAULT, <a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> stops when any error is encountered and returns OCI_DPR_ERROR</li>
+<li>When using conversion mode OCI_DCM_FORCE, <a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> does not stop on errors. Instead it discards any erred rows and returns OCI_DPR_COMPLETE once all rows are processed.</li>
 </ul>
 </dd>
 <dd>
-List of faulted rows and columns can be retrieved using <a class="el" href="group___ocilib_c_api_direct_path.html#ga29e788b14e1e9ecd691c101c38f9e118" title="Return the index of a row which caused an error during data conversion.">OCI_DirPathGetErrorRow()</a> and <a class="el" href="group___ocilib_c_api_direct_path.html#ga957a4d36b54166195cebeca461ddc7c4" title="Return the index of a column which caused an error during data conversion.">OCI_DirPathGetErrorColumn()</a></dd>
+List of faulted rows and columns can be retrieved using <a class="el" href="group___ocilib_c_api_direct_path.html#ga5e90d75ace076456f619d2fe480f0ac0" title="Return the index of a row which caused an error during data conversion.">OCI_DirPathGetErrorRow()</a> and <a class="el" href="group___ocilib_c_api_direct_path.html#ga26fcf9cb6077575876b767430b261523" title="Return the index of a column which caused an error during data conversion.">OCI_DirPathGetErrorColumn()</a></dd>
 <dd>
-<a class="el" href="group___ocilib_c_api_direct_path.html#gaade590aadb20d903770d9dc9c82ddb0c" title="return the number of rows successfully processed during in the last conversion or loading call">OCI_DirPathGetAffectedRows()</a> returns the number of rows converted in the last call. </dd></dl>
+<a class="el" href="group___ocilib_c_api_direct_path.html#gad3e6297e8144624d9da1c614067af8c0" title="return the number of rows successfully processed during in the last conversion or loading call">OCI_DirPathGetAffectedRows()</a> returns the number of rows converted in the last call. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_direct_path.html#a9b23372744266404aa66464fb0180f2d">ocilib::DirectPath::Convert()</a>.</p>
 
 </div>
 </div>
-<a id="ga0c816466d046a3d8c179f779e273f456"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0c816466d046a3d8c179f779e273f456">&#9670;&nbsp;</a></span>OCI_DirPathLoad()</h2>
+<a id="gafe08b47fda4d47fec4d3f47b6c88036e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafe08b47fda4d47fec4d3f47b6c88036e">&#9670;&nbsp;</a></span>OCI_DirPathLoad()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_DirPathLoad </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathLoad </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -568,22 +568,22 @@ List of faulted rows and columns can be retrieved using <a class="el" href="grou
 <li>OCI_DPR_EMPTY : no data was found to load</li>
 </ul>
 </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>List of faulted rows can be retrieved using <a class="el" href="group___ocilib_c_api_direct_path.html#ga29e788b14e1e9ecd691c101c38f9e118" title="Return the index of a row which caused an error during data conversion.">OCI_DirPathGetErrorRow()</a></dd>
+<dl class="section note"><dt>Note</dt><dd>List of faulted rows can be retrieved using <a class="el" href="group___ocilib_c_api_direct_path.html#ga5e90d75ace076456f619d2fe480f0ac0" title="Return the index of a row which caused an error during data conversion.">OCI_DirPathGetErrorRow()</a></dd>
 <dd>
-<a class="el" href="group___ocilib_c_api_direct_path.html#gaade590aadb20d903770d9dc9c82ddb0c" title="return the number of rows successfully processed during in the last conversion or loading call">OCI_DirPathGetAffectedRows()</a> returns the number of rows successfully loaded in the last call. </dd></dl>
+<a class="el" href="group___ocilib_c_api_direct_path.html#gad3e6297e8144624d9da1c614067af8c0" title="return the number of rows successfully processed during in the last conversion or loading call">OCI_DirPathGetAffectedRows()</a> returns the number of rows successfully loaded in the last call. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_direct_path.html#a697f8f26e85012d05749f5051e6c0e83">ocilib::DirectPath::Load()</a>.</p>
 
 </div>
 </div>
-<a id="ga2efc984ff0647d3a3c4b29f7e9ec37e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2efc984ff0647d3a3c4b29f7e9ec37e2">&#9670;&nbsp;</a></span>OCI_DirPathReset()</h2>
+<a id="gaee81401ceb61714e5144267b1466d19b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaee81401ceb61714e5144267b1466d19b">&#9670;&nbsp;</a></span>OCI_DirPathReset()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathReset </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathReset </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -601,21 +601,21 @@ List of faulted rows and columns can be retrieved using <a class="el" href="grou
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Once some data have been converted or loaded, <a class="el" href="group___ocilib_c_api_direct_path.html#ga2efc984ff0647d3a3c4b29f7e9ec37e2" title="Reset internal arrays and streams to prepare another load.">OCI_DirPathReset()</a> resets internal OCI structures in order to prepare another load operation (set entries, convert and load)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Once some data have been converted or loaded, <a class="el" href="group___ocilib_c_api_direct_path.html#gaee81401ceb61714e5144267b1466d19b" title="Reset internal arrays and streams to prepare another load.">OCI_DirPathReset()</a> resets internal OCI structures in order to prepare another load operation (set entries, convert and load)</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_direct_path.html#a743519d74b51f62064760b34721badf7">ocilib::DirectPath::Reset()</a>.</p>
 
 </div>
 </div>
-<a id="ga7c80a8db7ef79e4693ac0e770bb2018f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7c80a8db7ef79e4693ac0e770bb2018f">&#9670;&nbsp;</a></span>OCI_DirPathFinish()</h2>
+<a id="ga360dc44395e1a45d49a2ec9f1d3112a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga360dc44395e1a45d49a2ec9f1d3112a4">&#9670;&nbsp;</a></span>OCI_DirPathFinish()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathFinish </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathFinish </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -633,22 +633,22 @@ List of faulted rows and columns can be retrieved using <a class="el" href="grou
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>The direct path handle cannot be used anymore after this call for any more loading operations and must be freed with <a class="el" href="group___ocilib_c_api_direct_path.html#ga024f04e69293349e3882b2f367a03ed6" title="Free an OCI_DirPath handle.">OCI_DirPathFree()</a>.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Some properties functions of the direct path handle, such as <a class="el" href="group___ocilib_c_api_direct_path.html#gaffb07d43825826b0c9af060ee52fc3e0" title="Return the number of rows successfully loaded into the database so far.">OCI_DirPathGetRowCount()</a> can be called on a terminated direct path handle</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The direct path handle cannot be used anymore after this call for any more loading operations and must be freed with <a class="el" href="group___ocilib_c_api_direct_path.html#gaa8e361ac0c921921d75a358a141286c9" title="Free an OCI_DirPath handle.">OCI_DirPathFree()</a>.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Some properties functions of the direct path handle, such as <a class="el" href="group___ocilib_c_api_direct_path.html#gaba384f9a5b2f761787de10a9f1be8532" title="Return the number of rows successfully loaded into the database so far.">OCI_DirPathGetRowCount()</a> can be called on a terminated direct path handle</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_direct_path.html#afe8ac43d59960e551f2f0678071ddcea">ocilib::DirectPath::Finish()</a>.</p>
 
 </div>
 </div>
-<a id="ga382a1cbd623aa97ca69fed7b26923d61"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga382a1cbd623aa97ca69fed7b26923d61">&#9670;&nbsp;</a></span>OCI_DirPathAbort()</h2>
+<a id="ga6c15ac9ebad1caf337e0f6022475652f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6c15ac9ebad1caf337e0f6022475652f">&#9670;&nbsp;</a></span>OCI_DirPathAbort()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathAbort </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathAbort </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -667,21 +667,21 @@ List of faulted rows and columns can be retrieved using <a class="el" href="grou
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Any pending loaded data are canceled. Any load completion operations, such as index maintenance operations, are not performed.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>The direct path handle cannot be used anymore after this call for any more loading operations and must be freed with <a class="el" href="group___ocilib_c_api_direct_path.html#ga024f04e69293349e3882b2f367a03ed6" title="Free an OCI_DirPath handle.">OCI_DirPathFree()</a>.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The direct path handle cannot be used anymore after this call for any more loading operations and must be freed with <a class="el" href="group___ocilib_c_api_direct_path.html#gaa8e361ac0c921921d75a358a141286c9" title="Free an OCI_DirPath handle.">OCI_DirPathFree()</a>.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_direct_path.html#a2d9c9a8839c988e039166554a2415622">ocilib::DirectPath::Abort()</a>.</p>
 
 </div>
 </div>
-<a id="ga39b093ea31cdee551552e35df8167a22"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga39b093ea31cdee551552e35df8167a22">&#9670;&nbsp;</a></span>OCI_DirPathSave()</h2>
+<a id="ga0d16e9b3205e35de7c306a76f5e5291f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0d16e9b3205e35de7c306a76f5e5291f">&#9670;&nbsp;</a></span>OCI_DirPathSave()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathSave </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSave </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -706,14 +706,14 @@ List of faulted rows and columns can be retrieved using <a class="el" href="grou
 
 </div>
 </div>
-<a id="gafe3add5d1595fbabab7e197ce26f9a67"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gafe3add5d1595fbabab7e197ce26f9a67">&#9670;&nbsp;</a></span>OCI_DirPathFlushRow()</h2>
+<a id="ga9bf00d753decd5cf3f253738fa2e9cc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9bf00d753decd5cf3f253738fa2e9cc6">&#9670;&nbsp;</a></span>OCI_DirPathFlushRow()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathFlushRow </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathFlushRow </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -737,14 +737,14 @@ List of faulted rows and columns can be retrieved using <a class="el" href="grou
 
 </div>
 </div>
-<a id="ga0062665eba53e0b62be65d4f0ee0df55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0062665eba53e0b62be65d4f0ee0df55">&#9670;&nbsp;</a></span>OCI_DirPathSetCurrentRows()</h2>
+<a id="gab8f7bbb7acd4179382850e98a2f89c74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab8f7bbb7acd4179382850e98a2f89c74">&#9670;&nbsp;</a></span>OCI_DirPathSetCurrentRows()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathSetCurrentRows </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetCurrentRows </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em>, </td>
@@ -780,14 +780,14 @@ List of faulted rows and columns can be retrieved using <a class="el" href="grou
 
 </div>
 </div>
-<a id="gafb5fd763a6a181a8aae27db13ca28735"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gafb5fd763a6a181a8aae27db13ca28735">&#9670;&nbsp;</a></span>OCI_DirPathGetCurrentRows()</h2>
+<a id="ga2b38a85b0ba683e6eaaac40cd95d7f66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2b38a85b0ba683e6eaaac40cd95d7f66">&#9670;&nbsp;</a></span>OCI_DirPathGetCurrentRows()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_DirPathGetCurrentRows </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetCurrentRows </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -811,14 +811,14 @@ List of faulted rows and columns can be retrieved using <a class="el" href="grou
 
 </div>
 </div>
-<a id="ga2ff812128f1604615f186aa8bdf8269d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2ff812128f1604615f186aa8bdf8269d">&#9670;&nbsp;</a></span>OCI_DirPathGetMaxRows()</h2>
+<a id="gacc8b0c7ff055cad05ea392f069df410a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacc8b0c7ff055cad05ea392f069df410a">&#9670;&nbsp;</a></span>OCI_DirPathGetMaxRows()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_DirPathGetMaxRows </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetMaxRows </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -842,14 +842,14 @@ List of faulted rows and columns can be retrieved using <a class="el" href="grou
 
 </div>
 </div>
-<a id="gaa94047ee1fd5f923159d49ec3435082b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa94047ee1fd5f923159d49ec3435082b">&#9670;&nbsp;</a></span>OCI_DirPathSetDateFormat()</h2>
+<a id="ga2eabb0d95639eb215fccac72ca7cd988"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2eabb0d95639eb215fccac72ca7cd988">&#9670;&nbsp;</a></span>OCI_DirPathSetDateFormat()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathSetDateFormat </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetDateFormat </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em>, </td>
@@ -890,14 +890,14 @@ List of faulted rows and columns can be retrieved using <a class="el" href="grou
 
 </div>
 </div>
-<a id="gafab72b4c04bd2c5d3c850f58f5b22fd2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gafab72b4c04bd2c5d3c850f58f5b22fd2">&#9670;&nbsp;</a></span>OCI_DirPathSetParallel()</h2>
+<a id="ga20726352b3f0f4b7539afd437f2abfeb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga20726352b3f0f4b7539afd437f2abfeb">&#9670;&nbsp;</a></span>OCI_DirPathSetParallel()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathSetParallel </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetParallel </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em>, </td>
@@ -948,14 +948,14 @@ Setting the value to TRUE allows multiple load sessions to load the same segment
 
 </div>
 </div>
-<a id="ga59a031e1515afd31654105071dc7e371"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga59a031e1515afd31654105071dc7e371">&#9670;&nbsp;</a></span>OCI_DirPathSetNoLog()</h2>
+<a id="ga943c947be0b5ea0f16ce36f4872148b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga943c947be0b5ea0f16ce36f4872148b4">&#9670;&nbsp;</a></span>OCI_DirPathSetNoLog()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathSetNoLog </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetNoLog </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em>, </td>
@@ -995,14 +995,14 @@ Setting the value to TRUE allows multiple load sessions to load the same segment
 
 </div>
 </div>
-<a id="gaa0976d38ccf4d6f09657115ad6e47880"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa0976d38ccf4d6f09657115ad6e47880">&#9670;&nbsp;</a></span>OCI_DirPathSetCacheSize()</h2>
+<a id="ga749621ac121f8c8ff94084cccf7751e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga749621ac121f8c8ff94084cccf7751e6">&#9670;&nbsp;</a></span>OCI_DirPathSetCacheSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathSetCacheSize </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetCacheSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em>, </td>
@@ -1040,14 +1040,14 @@ Setting the value to 0 disables the cache</dd></dl>
 
 </div>
 </div>
-<a id="gae25febeb9086f1604743fbf54a4cf677"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae25febeb9086f1604743fbf54a4cf677">&#9670;&nbsp;</a></span>OCI_DirPathSetBufferSize()</h2>
+<a id="ga862fc89c24a6f49b92cf97f42e61451d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga862fc89c24a6f49b92cf97f42e61451d">&#9670;&nbsp;</a></span>OCI_DirPathSetBufferSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathSetBufferSize </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetBufferSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em>, </td>
@@ -1083,14 +1083,14 @@ Setting the value to 0 disables the cache</dd></dl>
 
 </div>
 </div>
-<a id="gac471686c49662bda2071cc4d7058e47f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gac471686c49662bda2071cc4d7058e47f">&#9670;&nbsp;</a></span>OCI_DirPathSetConvertMode()</h2>
+<a id="ga4b83718a0bd51fef0ee056128b697a83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4b83718a0bd51fef0ee056128b697a83">&#9670;&nbsp;</a></span>OCI_DirPathSetConvertMode()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DirPathSetConvertMode </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetConvertMode </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em>, </td>
@@ -1125,7 +1125,7 @@ Setting the value to 0 disables the cache</dd></dl>
 </ul>
 </dd>
 <dd>
-See <a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> for conversion mode details</dd>
+See <a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> for conversion mode details</dd>
 <dd>
 Default value is OCI_DCM_DEFAULT</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
@@ -1134,14 +1134,14 @@ Default value is OCI_DCM_DEFAULT</dd></dl>
 
 </div>
 </div>
-<a id="gaffb07d43825826b0c9af060ee52fc3e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaffb07d43825826b0c9af060ee52fc3e0">&#9670;&nbsp;</a></span>OCI_DirPathGetRowCount()</h2>
+<a id="gaba384f9a5b2f761787de10a9f1be8532"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaba384f9a5b2f761787de10a9f1be8532">&#9670;&nbsp;</a></span>OCI_DirPathGetRowCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_DirPathGetRowCount </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetRowCount </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -1159,20 +1159,20 @@ Default value is OCI_DCM_DEFAULT</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Insertions are committed with <a class="el" href="group___ocilib_c_api_direct_path.html#ga7c80a8db7ef79e4693ac0e770bb2018f" title="Terminate a direct path operation and commit changes into the database.">OCI_DirPathFinish()</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Insertions are committed with <a class="el" href="group___ocilib_c_api_direct_path.html#ga360dc44395e1a45d49a2ec9f1d3112a4" title="Terminate a direct path operation and commit changes into the database.">OCI_DirPathFinish()</a> </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_direct_path.html#a5fe6749743b2d9a0989abc4b854eaa84">ocilib::DirectPath::GetRowCount()</a>.</p>
 
 </div>
 </div>
-<a id="gaade590aadb20d903770d9dc9c82ddb0c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaade590aadb20d903770d9dc9c82ddb0c">&#9670;&nbsp;</a></span>OCI_DirPathGetAffectedRows()</h2>
+<a id="gad3e6297e8144624d9da1c614067af8c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad3e6297e8144624d9da1c614067af8c0">&#9670;&nbsp;</a></span>OCI_DirPathGetAffectedRows()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_DirPathGetAffectedRows </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetAffectedRows </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -1192,22 +1192,22 @@ Default value is OCI_DCM_DEFAULT</dd></dl>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>This function called after :</dd></dl>
 <ul>
-<li><a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a>, returns the number of converted rows</li>
-<li><a class="el" href="group___ocilib_c_api_direct_path.html#ga0c816466d046a3d8c179f779e273f456" title="Loads the data converted to direct path stream format.">OCI_DirPathLoad()</a>, returns the number of loaded rows </li>
+<li><a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a>, returns the number of converted rows</li>
+<li><a class="el" href="group___ocilib_c_api_direct_path.html#gafe08b47fda4d47fec4d3f47b6c88036e" title="Loads the data converted to direct path stream format.">OCI_DirPathLoad()</a>, returns the number of loaded rows </li>
 </ul>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_direct_path.html#ae513da5257f0701f65dff0eb3f88326b">ocilib::DirectPath::GetAffectedRows()</a>.</p>
 
 </div>
 </div>
-<a id="ga957a4d36b54166195cebeca461ddc7c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga957a4d36b54166195cebeca461ddc7c4">&#9670;&nbsp;</a></span>OCI_DirPathGetErrorColumn()</h2>
+<a id="ga26fcf9cb6077575876b767430b261523"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga26fcf9cb6077575876b767430b261523">&#9670;&nbsp;</a></span>OCI_DirPathGetErrorColumn()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorColumn </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetErrorColumn </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -1226,23 +1226,23 @@ Default value is OCI_DCM_DEFAULT</dd></dl>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Direct path column indexes start at 1.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Errors may happen while data is converted to direct path stream format using <a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a>. When using conversion mode OCI_DCM_DEFAULT, <a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> returns OCI_DPR_ERROR on error. <a class="el" href="group___ocilib_c_api_direct_path.html#ga957a4d36b54166195cebeca461ddc7c4" title="Return the index of a column which caused an error during data conversion.">OCI_DirPathGetErrorColumn()</a> returns the column index that caused the error When using conversion mode OCI_DCM_FORCE, <a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> returns OCI_DPR_COMPLETE even on errors. In order to retrieve the list of all column indexes that have erred, the application can call <a class="el" href="group___ocilib_c_api_direct_path.html#ga957a4d36b54166195cebeca461ddc7c4" title="Return the index of a column which caused an error during data conversion.">OCI_DirPathGetErrorColumn()</a> repeatedly until it returns 0.</dd>
+<dl class="section note"><dt>Note</dt><dd>Errors may happen while data is converted to direct path stream format using <a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a>. When using conversion mode OCI_DCM_DEFAULT, <a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> returns OCI_DPR_ERROR on error. <a class="el" href="group___ocilib_c_api_direct_path.html#ga26fcf9cb6077575876b767430b261523" title="Return the index of a column which caused an error during data conversion.">OCI_DirPathGetErrorColumn()</a> returns the column index that caused the error When using conversion mode OCI_DCM_FORCE, <a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> returns OCI_DPR_COMPLETE even on errors. In order to retrieve the list of all column indexes that have erred, the application can call <a class="el" href="group___ocilib_c_api_direct_path.html#ga26fcf9cb6077575876b767430b261523" title="Return the index of a column which caused an error during data conversion.">OCI_DirPathGetErrorColumn()</a> repeatedly until it returns 0.</dd>
 <dd>
-The internal value is reset to 0 when calling <a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a></dd></dl>
+The internal value is reset to 0 when calling <a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>0 is no error occurs otherwise the index of the given column which caused an error </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_direct_path.html#ab81431d2e05425bb5fa0fee529f2ea76">ocilib::DirectPath::GetErrorColumn()</a>.</p>
 
 </div>
 </div>
-<a id="ga29e788b14e1e9ecd691c101c38f9e118"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga29e788b14e1e9ecd691c101c38f9e118">&#9670;&nbsp;</a></span>OCI_DirPathGetErrorRow()</h2>
+<a id="ga5e90d75ace076456f619d2fe480f0ac0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5e90d75ace076456f619d2fe480f0ac0">&#9670;&nbsp;</a></span>OCI_DirPathGetErrorRow()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_DirPathGetErrorRow </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetErrorRow </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *&#160;</td>
           <td class="paramname"><em>dp</em></td><td>)</td>
@@ -1262,16 +1262,16 @@ The internal value is reset to 0 when calling <a class="el" href="group___ocilib
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Direct path row indexes start at 1.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Errors may happen :<ul>
-<li>while data is converted to direct path stream format using <a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a></li>
-<li>while data is loaded to database using <a class="el" href="group___ocilib_c_api_direct_path.html#ga0c816466d046a3d8c179f779e273f456" title="Loads the data converted to direct path stream format.">OCI_DirPathLoad()</a></li>
+<li>while data is converted to direct path stream format using <a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a></li>
+<li>while data is loaded to database using <a class="el" href="group___ocilib_c_api_direct_path.html#gafe08b47fda4d47fec4d3f47b6c88036e" title="Loads the data converted to direct path stream format.">OCI_DirPathLoad()</a></li>
 </ul>
 </dd>
 <dd>
-When using conversion mode OCI_DCM_DEFAULT, <a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> returns OCI_DPR_ERROR on error. <a class="el" href="group___ocilib_c_api_direct_path.html#ga29e788b14e1e9ecd691c101c38f9e118" title="Return the index of a row which caused an error during data conversion.">OCI_DirPathGetErrorRow()</a> returns the row index that caused the error. When using conversion mode OCI_DCM_FORCE, <a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> returns OCI_DPR_COMPLETE even on errors. In order to retrieve the list of all row indexes that have erred, the application can call <a class="el" href="group___ocilib_c_api_direct_path.html#ga29e788b14e1e9ecd691c101c38f9e118" title="Return the index of a row which caused an error during data conversion.">OCI_DirPathGetErrorRow()</a> repeatedly until it returns 0.</dd>
+When using conversion mode OCI_DCM_DEFAULT, <a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> returns OCI_DPR_ERROR on error. <a class="el" href="group___ocilib_c_api_direct_path.html#ga5e90d75ace076456f619d2fe480f0ac0" title="Return the index of a row which caused an error during data conversion.">OCI_DirPathGetErrorRow()</a> returns the row index that caused the error. When using conversion mode OCI_DCM_FORCE, <a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a> returns OCI_DPR_COMPLETE even on errors. In order to retrieve the list of all row indexes that have erred, the application can call <a class="el" href="group___ocilib_c_api_direct_path.html#ga5e90d75ace076456f619d2fe480f0ac0" title="Return the index of a row which caused an error during data conversion.">OCI_DirPathGetErrorRow()</a> repeatedly until it returns 0.</dd>
 <dd>
-After a call to <a class="el" href="group___ocilib_c_api_direct_path.html#ga0c816466d046a3d8c179f779e273f456" title="Loads the data converted to direct path stream format.">OCI_DirPathLoad()</a>, in order to retrieve the list of all faulted rows indexes, the application can call <a class="el" href="group___ocilib_c_api_direct_path.html#ga29e788b14e1e9ecd691c101c38f9e118" title="Return the index of a row which caused an error during data conversion.">OCI_DirPathGetErrorRow()</a> repeatedly until it returns 0.</dd>
+After a call to <a class="el" href="group___ocilib_c_api_direct_path.html#gafe08b47fda4d47fec4d3f47b6c88036e" title="Loads the data converted to direct path stream format.">OCI_DirPathLoad()</a>, in order to retrieve the list of all faulted rows indexes, the application can call <a class="el" href="group___ocilib_c_api_direct_path.html#ga5e90d75ace076456f619d2fe480f0ac0" title="Return the index of a row which caused an error during data conversion.">OCI_DirPathGetErrorRow()</a> repeatedly until it returns 0.</dd>
 <dd>
-The internal value is reset to 0 when calling <a class="el" href="group___ocilib_c_api_direct_path.html#ga8dd680e9664028af035e773275e5ab76" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a>, <a class="el" href="group___ocilib_c_api_direct_path.html#ga2efc984ff0647d3a3c4b29f7e9ec37e2" title="Reset internal arrays and streams to prepare another load.">OCI_DirPathReset()</a> or <a class="el" href="group___ocilib_c_api_direct_path.html#ga0c816466d046a3d8c179f779e273f456" title="Loads the data converted to direct path stream format.">OCI_DirPathLoad()</a></dd></dl>
+The internal value is reset to 0 when calling <a class="el" href="group___ocilib_c_api_direct_path.html#ga514f23b3b598479558a5025ad8871b03" title="Convert provided user data to the direct path stream format.">OCI_DirPathConvert()</a>, <a class="el" href="group___ocilib_c_api_direct_path.html#gaee81401ceb61714e5144267b1466d19b" title="Reset internal arrays and streams to prepare another load.">OCI_DirPathReset()</a> or <a class="el" href="group___ocilib_c_api_direct_path.html#gafe08b47fda4d47fec4d3f47b6c88036e" title="Loads the data converted to direct path stream format.">OCI_DirPathLoad()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>0 is no error occurs otherwise the index of the given row which caused an error </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_direct_path.html#a60371cfb916412ac4d34bad78ae26ccd">ocilib::DirectPath::GetErrorRow()</a>.</p>
@@ -1284,7 +1284,7 @@ The internal value is reset to 0 when calling <a class="el" href="group___ocilib
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

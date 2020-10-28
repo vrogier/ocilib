@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -107,57 +107,57 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_threading.html','
 OCI_Thread relies on Oracle API which uses natives threading capabilities of the supported platform</dd>
 <dd>
 Using OCI_Mutex :<ul>
-<li>On Microsoft Windows, a thread can call <a class="el" href="group___ocilib_c_api_threading.html#ga88a05b41e24b3bd1789688702cc6f4f4" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> more than once without any blocking. Just be sure that there is an <a class="el" href="group___ocilib_c_api_threading.html#ga366f287cf828533617faf0785181de7f" title="Release a mutex lock.">OCI_MutexRelease()</a> for every <a class="el" href="group___ocilib_c_api_threading.html#ga88a05b41e24b3bd1789688702cc6f4f4" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> call</li>
-<li>On Unix systems, a thread MUST call <a class="el" href="group___ocilib_c_api_threading.html#ga366f287cf828533617faf0785181de7f" title="Release a mutex lock.">OCI_MutexRelease()</a> after every call to <a class="el" href="group___ocilib_c_api_threading.html#ga88a05b41e24b3bd1789688702cc6f4f4" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> in order to be able to call <a class="el" href="group___ocilib_c_api_threading.html#ga88a05b41e24b3bd1789688702cc6f4f4" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> again. If not, it will be blocked...</li>
+<li>On Microsoft Windows, a thread can call <a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> more than once without any blocking. Just be sure that there is an <a class="el" href="group___ocilib_c_api_threading.html#gaa9344e6795fc50a228c31108697d014f" title="Release a mutex lock.">OCI_MutexRelease()</a> for every <a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> call</li>
+<li>On Unix systems, a thread MUST call <a class="el" href="group___ocilib_c_api_threading.html#gaa9344e6795fc50a228c31108697d014f" title="Release a mutex lock.">OCI_MutexRelease()</a> after every call to <a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> in order to be able to call <a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> again. If not, it will be blocked...</li>
 </ul>
 </dd></dl>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="preprocessor">#define MAX_THREADS 50</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">void</span> key_cleanup(<span class="keywordtype">void</span> *str)</div><div class="line">{</div><div class="line">    free(str);</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">void</span> worker(<a class="code" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *thread, <span class="keywordtype">void</span> *data)</div><div class="line">{</div><div class="line">    <span class="keyword">const</span> <span class="keywordtype">void</span> *<span class="keywordtype">id</span> = <a class="code" href="group___ocilib_c_api_raw_handles.html#ga94df890665f1f2ea39c3f4f4a00f9987">OCI_HandleGetThreadID</a>(thread);</div><div class="line">    <span class="keywordtype">char</span> *str = malloc(50);</div><div class="line"></div><div class="line">    sprintf(str, <span class="stringliteral">&quot;thread %p !\n&quot;</span>, <span class="keywordtype">id</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_threading.html#ga627db7548da4a3d749f64253ae968d9c">OCI_ThreadKeySetValue</a>(<span class="stringliteral">&quot;ID&quot;</span>, str);</div><div class="line"></div><div class="line">    str = <a class="code" href="group___ocilib_c_api_threading.html#gad31beffff5fa23c1af211e4a7d33fee7">OCI_ThreadKeyGetValue</a>(<span class="stringliteral">&quot;ID&quot;</span>);</div><div class="line"></div><div class="line">    printf(str);</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *th[MAX_THREADS];</div><div class="line">    <span class="keywordtype">int</span> i;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT | OCI_ENV_THREADED))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_threading.html#gaec7011dada56cbab7bba9eec43632d86">OCI_ThreadKeyCreate</a>(<span class="stringliteral">&quot;ID&quot;</span>, key_cleanup);</div><div class="line"></div><div class="line">    <span class="comment">/* create threads */</span></div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; MAX_THREADS; i++)</div><div class="line">    {</div><div class="line">        th[i] = <a class="code" href="group___ocilib_c_api_threading.html#ga1a2474e874215e0b42109ba042de5e3a">OCI_ThreadCreate</a>();</div><div class="line">        <a class="code" href="group___ocilib_c_api_threading.html#ga1076c9942cc395f298ca350021031bfd">OCI_ThreadRun</a>(th[i], worker, NULL);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">/* wait for threads and cleanup */</span></div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; MAX_THREADS; i++)</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_threading.html#gadfec0263c6b8d508126a806c85898fb9">OCI_ThreadJoin</a>(th[i]);</div><div class="line">        <a class="code" href="group___ocilib_c_api_threading.html#gada7fa41aeedc7be2ce4f40c93ece524d">OCI_ThreadFree</a>(th[i]);</div><div class="line">    }</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="preprocessor">#define MAX_THREADS 50</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">void</span> key_cleanup(<span class="keywordtype">void</span> *str)</div><div class="line">{</div><div class="line">    free(str);</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">void</span> worker(<a class="code" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *thread, <span class="keywordtype">void</span> *data)</div><div class="line">{</div><div class="line">    <span class="keyword">const</span> <span class="keywordtype">void</span> *<span class="keywordtype">id</span> = <a class="code" href="group___ocilib_c_api_raw_handles.html#gae294c6e28c3acce34a83da7766327837">OCI_HandleGetThreadID</a>(thread);</div><div class="line">    <span class="keywordtype">char</span> *str = malloc(50);</div><div class="line"></div><div class="line">    sprintf(str, <span class="stringliteral">&quot;thread %p !\n&quot;</span>, <span class="keywordtype">id</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_threading.html#gad89b13c40a2992ddd78f63c8e0ad0afe">OCI_ThreadKeySetValue</a>(<span class="stringliteral">&quot;ID&quot;</span>, str);</div><div class="line"></div><div class="line">    str = <a class="code" href="group___ocilib_c_api_threading.html#gae78ab8c9ee2ef856fe85f2ec89a6467e">OCI_ThreadKeyGetValue</a>(<span class="stringliteral">&quot;ID&quot;</span>);</div><div class="line"></div><div class="line">    printf(str);</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *th[MAX_THREADS];</div><div class="line">    <span class="keywordtype">int</span> i;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT | OCI_ENV_THREADED))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_threading.html#gae03533bc063606915424c64a590e2c80">OCI_ThreadKeyCreate</a>(<span class="stringliteral">&quot;ID&quot;</span>, key_cleanup);</div><div class="line"></div><div class="line">    <span class="comment">/* create threads */</span></div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; MAX_THREADS; i++)</div><div class="line">    {</div><div class="line">        th[i] = <a class="code" href="group___ocilib_c_api_threading.html#ga217006ee7fa6d4165a8b6246d8dba855">OCI_ThreadCreate</a>();</div><div class="line">        <a class="code" href="group___ocilib_c_api_threading.html#ga1e7955887aeff3211fd8f9ccdee46af5">OCI_ThreadRun</a>(th[i], worker, NULL);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">/* wait for threads and cleanup */</span></div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; MAX_THREADS; i++)</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_threading.html#ga320e03677e095ee123aa73a3b44ebc82">OCI_ThreadJoin</a>(th[i]);</div><div class="line">        <a class="code" href="group___ocilib_c_api_threading.html#ga4171180f5329ebedea7a10f607c8be70">OCI_ThreadFree</a>(th[i]);</div><div class="line">    }</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:gab0580aafc0e70358742e7c1e269895d5"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#gab0580aafc0e70358742e7c1e269895d5">OCI_MutexCreate</a> (void)</td></tr>
-<tr class="memdesc:gab0580aafc0e70358742e7c1e269895d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a Mutex object.  <a href="#gab0580aafc0e70358742e7c1e269895d5">More...</a><br /></td></tr>
-<tr class="separator:gab0580aafc0e70358742e7c1e269895d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga90c5cb68c0144b7bda9b75906c752ab5"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#ga90c5cb68c0144b7bda9b75906c752ab5">OCI_MutexFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a> *mutex)</td></tr>
-<tr class="memdesc:ga90c5cb68c0144b7bda9b75906c752ab5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a mutex object.  <a href="#ga90c5cb68c0144b7bda9b75906c752ab5">More...</a><br /></td></tr>
-<tr class="separator:ga90c5cb68c0144b7bda9b75906c752ab5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga88a05b41e24b3bd1789688702cc6f4f4"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#ga88a05b41e24b3bd1789688702cc6f4f4">OCI_MutexAcquire</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a> *mutex)</td></tr>
-<tr class="memdesc:ga88a05b41e24b3bd1789688702cc6f4f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acquire a mutex lock.  <a href="#ga88a05b41e24b3bd1789688702cc6f4f4">More...</a><br /></td></tr>
-<tr class="separator:ga88a05b41e24b3bd1789688702cc6f4f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga366f287cf828533617faf0785181de7f"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#ga366f287cf828533617faf0785181de7f">OCI_MutexRelease</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a> *mutex)</td></tr>
-<tr class="memdesc:ga366f287cf828533617faf0785181de7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release a mutex lock.  <a href="#ga366f287cf828533617faf0785181de7f">More...</a><br /></td></tr>
-<tr class="separator:ga366f287cf828533617faf0785181de7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1a2474e874215e0b42109ba042de5e3a"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#ga1a2474e874215e0b42109ba042de5e3a">OCI_ThreadCreate</a> (void)</td></tr>
-<tr class="memdesc:ga1a2474e874215e0b42109ba042de5e3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a Thread object.  <a href="#ga1a2474e874215e0b42109ba042de5e3a">More...</a><br /></td></tr>
-<tr class="separator:ga1a2474e874215e0b42109ba042de5e3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gada7fa41aeedc7be2ce4f40c93ece524d"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#gada7fa41aeedc7be2ce4f40c93ece524d">OCI_ThreadFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *thread)</td></tr>
-<tr class="memdesc:gada7fa41aeedc7be2ce4f40c93ece524d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a thread object.  <a href="#gada7fa41aeedc7be2ce4f40c93ece524d">More...</a><br /></td></tr>
-<tr class="separator:gada7fa41aeedc7be2ce4f40c93ece524d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1076c9942cc395f298ca350021031bfd"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#ga1076c9942cc395f298ca350021031bfd">OCI_ThreadRun</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *thread, <a class="el" href="group___ocilib_c_api_datatypes.html#ga3594662df4f126aa9fc4bdec9ac6a199">POCI_THREAD</a> proc, void *arg)</td></tr>
-<tr class="memdesc:ga1076c9942cc395f298ca350021031bfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute the given routine within the given thread object.  <a href="#ga1076c9942cc395f298ca350021031bfd">More...</a><br /></td></tr>
-<tr class="separator:ga1076c9942cc395f298ca350021031bfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gadfec0263c6b8d508126a806c85898fb9"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#gadfec0263c6b8d508126a806c85898fb9">OCI_ThreadJoin</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *thread)</td></tr>
-<tr class="memdesc:gadfec0263c6b8d508126a806c85898fb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Join the given thread.  <a href="#gadfec0263c6b8d508126a806c85898fb9">More...</a><br /></td></tr>
-<tr class="separator:gadfec0263c6b8d508126a806c85898fb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaec7011dada56cbab7bba9eec43632d86"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#gaec7011dada56cbab7bba9eec43632d86">OCI_ThreadKeyCreate</a> (const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#gad82d734ef2ba8d4e24874e3d6a6faa26">POCI_THREADKEYDEST</a> destfunc)</td></tr>
-<tr class="memdesc:gaec7011dada56cbab7bba9eec43632d86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a thread key object.  <a href="#gaec7011dada56cbab7bba9eec43632d86">More...</a><br /></td></tr>
-<tr class="separator:gaec7011dada56cbab7bba9eec43632d86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga627db7548da4a3d749f64253ae968d9c"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#ga627db7548da4a3d749f64253ae968d9c">OCI_ThreadKeySetValue</a> (const otext *name, void *value)</td></tr>
-<tr class="memdesc:ga627db7548da4a3d749f64253ae968d9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a thread key value.  <a href="#ga627db7548da4a3d749f64253ae968d9c">More...</a><br /></td></tr>
-<tr class="separator:ga627db7548da4a3d749f64253ae968d9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad31beffff5fa23c1af211e4a7d33fee7"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#gad31beffff5fa23c1af211e4a7d33fee7">OCI_ThreadKeyGetValue</a> (const otext *name)</td></tr>
-<tr class="memdesc:gad31beffff5fa23c1af211e4a7d33fee7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a thread key value.  <a href="#gad31beffff5fa23c1af211e4a7d33fee7">More...</a><br /></td></tr>
-<tr class="separator:gad31beffff5fa23c1af211e4a7d33fee7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga584ca3d0686a756f3097b76f4280c803"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#ga584ca3d0686a756f3097b76f4280c803">OCI_MutexCreate</a> (void)</td></tr>
+<tr class="memdesc:ga584ca3d0686a756f3097b76f4280c803"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a Mutex object.  <a href="#ga584ca3d0686a756f3097b76f4280c803">More...</a><br /></td></tr>
+<tr class="separator:ga584ca3d0686a756f3097b76f4280c803"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa3039a4d25298adc5f19d217e79a976e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#gaa3039a4d25298adc5f19d217e79a976e">OCI_MutexFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a> *mutex)</td></tr>
+<tr class="memdesc:gaa3039a4d25298adc5f19d217e79a976e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a mutex object.  <a href="#gaa3039a4d25298adc5f19d217e79a976e">More...</a><br /></td></tr>
+<tr class="separator:gaa3039a4d25298adc5f19d217e79a976e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadde3be46a8a992b1859ffdec1c058b72"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72">OCI_MutexAcquire</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a> *mutex)</td></tr>
+<tr class="memdesc:gadde3be46a8a992b1859ffdec1c058b72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acquire a mutex lock.  <a href="#gadde3be46a8a992b1859ffdec1c058b72">More...</a><br /></td></tr>
+<tr class="separator:gadde3be46a8a992b1859ffdec1c058b72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa9344e6795fc50a228c31108697d014f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#gaa9344e6795fc50a228c31108697d014f">OCI_MutexRelease</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a> *mutex)</td></tr>
+<tr class="memdesc:gaa9344e6795fc50a228c31108697d014f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release a mutex lock.  <a href="#gaa9344e6795fc50a228c31108697d014f">More...</a><br /></td></tr>
+<tr class="separator:gaa9344e6795fc50a228c31108697d014f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga217006ee7fa6d4165a8b6246d8dba855"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#ga217006ee7fa6d4165a8b6246d8dba855">OCI_ThreadCreate</a> (void)</td></tr>
+<tr class="memdesc:ga217006ee7fa6d4165a8b6246d8dba855"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a Thread object.  <a href="#ga217006ee7fa6d4165a8b6246d8dba855">More...</a><br /></td></tr>
+<tr class="separator:ga217006ee7fa6d4165a8b6246d8dba855"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4171180f5329ebedea7a10f607c8be70"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#ga4171180f5329ebedea7a10f607c8be70">OCI_ThreadFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *thread)</td></tr>
+<tr class="memdesc:ga4171180f5329ebedea7a10f607c8be70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a thread object.  <a href="#ga4171180f5329ebedea7a10f607c8be70">More...</a><br /></td></tr>
+<tr class="separator:ga4171180f5329ebedea7a10f607c8be70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1e7955887aeff3211fd8f9ccdee46af5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#ga1e7955887aeff3211fd8f9ccdee46af5">OCI_ThreadRun</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *thread, <a class="el" href="group___ocilib_c_api_datatypes.html#ga3594662df4f126aa9fc4bdec9ac6a199">POCI_THREAD</a> proc, void *arg)</td></tr>
+<tr class="memdesc:ga1e7955887aeff3211fd8f9ccdee46af5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute the given routine within the given thread object.  <a href="#ga1e7955887aeff3211fd8f9ccdee46af5">More...</a><br /></td></tr>
+<tr class="separator:ga1e7955887aeff3211fd8f9ccdee46af5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga320e03677e095ee123aa73a3b44ebc82"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#ga320e03677e095ee123aa73a3b44ebc82">OCI_ThreadJoin</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *thread)</td></tr>
+<tr class="memdesc:ga320e03677e095ee123aa73a3b44ebc82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Join the given thread.  <a href="#ga320e03677e095ee123aa73a3b44ebc82">More...</a><br /></td></tr>
+<tr class="separator:ga320e03677e095ee123aa73a3b44ebc82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae03533bc063606915424c64a590e2c80"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#gae03533bc063606915424c64a590e2c80">OCI_ThreadKeyCreate</a> (const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#gad82d734ef2ba8d4e24874e3d6a6faa26">POCI_THREADKEYDEST</a> destfunc)</td></tr>
+<tr class="memdesc:gae03533bc063606915424c64a590e2c80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a thread key object.  <a href="#gae03533bc063606915424c64a590e2c80">More...</a><br /></td></tr>
+<tr class="separator:gae03533bc063606915424c64a590e2c80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad89b13c40a2992ddd78f63c8e0ad0afe"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#gad89b13c40a2992ddd78f63c8e0ad0afe">OCI_ThreadKeySetValue</a> (const otext *name, void *value)</td></tr>
+<tr class="memdesc:gad89b13c40a2992ddd78f63c8e0ad0afe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a thread key value.  <a href="#gad89b13c40a2992ddd78f63c8e0ad0afe">More...</a><br /></td></tr>
+<tr class="separator:gad89b13c40a2992ddd78f63c8e0ad0afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae78ab8c9ee2ef856fe85f2ec89a6467e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_threading.html#gae78ab8c9ee2ef856fe85f2ec89a6467e">OCI_ThreadKeyGetValue</a> (const otext *name)</td></tr>
+<tr class="memdesc:gae78ab8c9ee2ef856fe85f2ec89a6467e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a thread key value.  <a href="#gae78ab8c9ee2ef856fe85f2ec89a6467e">More...</a><br /></td></tr>
+<tr class="separator:gae78ab8c9ee2ef856fe85f2ec89a6467e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="gab0580aafc0e70358742e7c1e269895d5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab0580aafc0e70358742e7c1e269895d5">&#9670;&nbsp;</a></span>OCI_MutexCreate()</h2>
+<a id="ga584ca3d0686a756f3097b76f4280c803"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga584ca3d0686a756f3097b76f4280c803">&#9670;&nbsp;</a></span>OCI_MutexCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a>* OCI_API OCI_MutexCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a>* OCI_API OCI_MutexCreate </td>
           <td>(</td>
           <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -175,14 +175,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga90c5cb68c0144b7bda9b75906c752ab5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga90c5cb68c0144b7bda9b75906c752ab5">&#9670;&nbsp;</a></span>OCI_MutexFree()</h2>
+<a id="gaa3039a4d25298adc5f19d217e79a976e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa3039a4d25298adc5f19d217e79a976e">&#9670;&nbsp;</a></span>OCI_MutexFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_MutexFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_MutexFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a> *&#160;</td>
           <td class="paramname"><em>mutex</em></td><td>)</td>
@@ -206,14 +206,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga88a05b41e24b3bd1789688702cc6f4f4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga88a05b41e24b3bd1789688702cc6f4f4">&#9670;&nbsp;</a></span>OCI_MutexAcquire()</h2>
+<a id="gadde3be46a8a992b1859ffdec1c058b72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadde3be46a8a992b1859ffdec1c058b72">&#9670;&nbsp;</a></span>OCI_MutexAcquire()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_MutexAcquire </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_MutexAcquire </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a> *&#160;</td>
           <td class="paramname"><em>mutex</em></td><td>)</td>
@@ -237,14 +237,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga366f287cf828533617faf0785181de7f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga366f287cf828533617faf0785181de7f">&#9670;&nbsp;</a></span>OCI_MutexRelease()</h2>
+<a id="gaa9344e6795fc50a228c31108697d014f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa9344e6795fc50a228c31108697d014f">&#9670;&nbsp;</a></span>OCI_MutexRelease()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_MutexRelease </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_MutexRelease </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a> *&#160;</td>
           <td class="paramname"><em>mutex</em></td><td>)</td>
@@ -268,14 +268,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga1a2474e874215e0b42109ba042de5e3a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga1a2474e874215e0b42109ba042de5e3a">&#9670;&nbsp;</a></span>OCI_ThreadCreate()</h2>
+<a id="ga217006ee7fa6d4165a8b6246d8dba855"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga217006ee7fa6d4165a8b6246d8dba855">&#9670;&nbsp;</a></span>OCI_ThreadCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a>* OCI_API OCI_ThreadCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a>* OCI_API OCI_ThreadCreate </td>
           <td>(</td>
           <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -293,14 +293,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gada7fa41aeedc7be2ce4f40c93ece524d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gada7fa41aeedc7be2ce4f40c93ece524d">&#9670;&nbsp;</a></span>OCI_ThreadFree()</h2>
+<a id="ga4171180f5329ebedea7a10f607c8be70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4171180f5329ebedea7a10f607c8be70">&#9670;&nbsp;</a></span>OCI_ThreadFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_ThreadFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *&#160;</td>
           <td class="paramname"><em>thread</em></td><td>)</td>
@@ -324,14 +324,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga1076c9942cc395f298ca350021031bfd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga1076c9942cc395f298ca350021031bfd">&#9670;&nbsp;</a></span>OCI_ThreadRun()</h2>
+<a id="ga1e7955887aeff3211fd8f9ccdee46af5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1e7955887aeff3211fd8f9ccdee46af5">&#9670;&nbsp;</a></span>OCI_ThreadRun()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_ThreadRun </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadRun </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *&#160;</td>
           <td class="paramname"><em>thread</em>, </td>
@@ -373,14 +373,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gadfec0263c6b8d508126a806c85898fb9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gadfec0263c6b8d508126a806c85898fb9">&#9670;&nbsp;</a></span>OCI_ThreadJoin()</h2>
+<a id="ga320e03677e095ee123aa73a3b44ebc82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga320e03677e095ee123aa73a3b44ebc82">&#9670;&nbsp;</a></span>OCI_ThreadJoin()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_ThreadJoin </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadJoin </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *&#160;</td>
           <td class="paramname"><em>thread</em></td><td>)</td>
@@ -405,14 +405,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaec7011dada56cbab7bba9eec43632d86"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaec7011dada56cbab7bba9eec43632d86">&#9670;&nbsp;</a></span>OCI_ThreadKeyCreate()</h2>
+<a id="gae03533bc063606915424c64a590e2c80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae03533bc063606915424c64a590e2c80">&#9670;&nbsp;</a></span>OCI_ThreadKeyCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_ThreadKeyCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadKeyCreate </td>
           <td>(</td>
           <td class="paramtype">const otext *&#160;</td>
           <td class="paramname"><em>name</em>, </td>
@@ -448,14 +448,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga627db7548da4a3d749f64253ae968d9c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga627db7548da4a3d749f64253ae968d9c">&#9670;&nbsp;</a></span>OCI_ThreadKeySetValue()</h2>
+<a id="gad89b13c40a2992ddd78f63c8e0ad0afe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad89b13c40a2992ddd78f63c8e0ad0afe">&#9670;&nbsp;</a></span>OCI_ThreadKeySetValue()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_ThreadKeySetValue </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadKeySetValue </td>
           <td>(</td>
           <td class="paramtype">const otext *&#160;</td>
           <td class="paramname"><em>name</em>, </td>
@@ -490,14 +490,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gad31beffff5fa23c1af211e4a7d33fee7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad31beffff5fa23c1af211e4a7d33fee7">&#9670;&nbsp;</a></span>OCI_ThreadKeyGetValue()</h2>
+<a id="gae78ab8c9ee2ef856fe85f2ec89a6467e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae78ab8c9ee2ef856fe85f2ec89a6467e">&#9670;&nbsp;</a></span>OCI_ThreadKeyGetValue()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT void* OCI_API OCI_ThreadKeyGetValue </td>
+          <td class="memname">OCI_SYM_PUBLIC void* OCI_API OCI_ThreadKeyGetValue </td>
           <td>(</td>
           <td class="paramtype">const otext *&#160;</td>
           <td class="paramname"><em>name</em></td><td>)</td>
@@ -527,7 +527,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

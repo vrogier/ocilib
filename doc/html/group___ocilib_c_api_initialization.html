@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -96,9 +96,9 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_initialization.ht
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>To use OCILIB, it first needs to be initialized through a call to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a>.</p>
+<p>To use OCILIB, it first needs to be initialized through a call to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>.</p>
 <p>Then, the application connects to server, executes queries...</p>
-<p>Finally, OCILIB resources must be released by <a class="el" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a></p>
+<p>Finally, OCILIB resources must be released by <a class="el" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a></p>
 <dl class="section note"><dt>Note</dt><dd></dd></dl>
 <p>The following objects are automatically freed by the library:</p><ul>
 <li>Connections</li>
@@ -112,43 +112,43 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_initialization.ht
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga01464863ddd68393106b63fb8cc1ead1"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac768ae2afe72e905d36e47c173032f26">POCI_ERROR</a> err_handler, const otext *lib_path, unsigned int mode)</td></tr>
-<tr class="memdesc:ga01464863ddd68393106b63fb8cc1ead1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the library.  <a href="#ga01464863ddd68393106b63fb8cc1ead1">More...</a><br /></td></tr>
-<tr class="separator:ga01464863ddd68393106b63fb8cc1ead1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga639706aa8e9689c7ebffc018fac6d3ae"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a> (void)</td></tr>
-<tr class="memdesc:ga639706aa8e9689c7ebffc018fac6d3ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clean up all resources allocated by the library.  <a href="#ga639706aa8e9689c7ebffc018fac6d3ae">More...</a><br /></td></tr>
-<tr class="separator:ga639706aa8e9689c7ebffc018fac6d3ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6fa5693d691752f93dbc6baf07e6cceb"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga6fa5693d691752f93dbc6baf07e6cceb">OCI_GetOCICompileVersion</a> (void)</td></tr>
-<tr class="memdesc:ga6fa5693d691752f93dbc6baf07e6cceb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the version of OCI used for compilation.  <a href="#ga6fa5693d691752f93dbc6baf07e6cceb">More...</a><br /></td></tr>
-<tr class="separator:ga6fa5693d691752f93dbc6baf07e6cceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga771bf5d33dbd0b63d84242819209b35b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga771bf5d33dbd0b63d84242819209b35b">OCI_GetOCIRuntimeVersion</a> (void)</td></tr>
-<tr class="memdesc:ga771bf5d33dbd0b63d84242819209b35b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the version of OCI used at runtime.  <a href="#ga771bf5d33dbd0b63d84242819209b35b">More...</a><br /></td></tr>
-<tr class="separator:ga771bf5d33dbd0b63d84242819209b35b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaecbebbd3747c5012dfbf072f90e33c77"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#gaecbebbd3747c5012dfbf072f90e33c77">OCI_GetImportMode</a> (void)</td></tr>
-<tr class="memdesc:gaecbebbd3747c5012dfbf072f90e33c77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle shared library import mode.  <a href="#gaecbebbd3747c5012dfbf072f90e33c77">More...</a><br /></td></tr>
-<tr class="separator:gaecbebbd3747c5012dfbf072f90e33c77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga19c86551503e6670c96ef3e81a1ce1ba"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga19c86551503e6670c96ef3e81a1ce1ba">OCI_GetCharset</a> (void)</td></tr>
-<tr class="memdesc:ga19c86551503e6670c96ef3e81a1ce1ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCILIB charset type.  <a href="#ga19c86551503e6670c96ef3e81a1ce1ba">More...</a><br /></td></tr>
-<tr class="separator:ga19c86551503e6670c96ef3e81a1ce1ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga59c50704dae44e650bf53a963d32567b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga59c50704dae44e650bf53a963d32567b">OCI_GetAllocatedBytes</a> (unsigned int mem_type)</td></tr>
-<tr class="memdesc:ga59c50704dae44e650bf53a963d32567b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of bytes allocated internally in the library.  <a href="#ga59c50704dae44e650bf53a963d32567b">More...</a><br /></td></tr>
-<tr class="separator:ga59c50704dae44e650bf53a963d32567b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga60f3ade91299999200076cd53ed9066e"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga60f3ade91299999200076cd53ed9066e">OCI_EnableWarnings</a> (boolean value)</td></tr>
-<tr class="memdesc:ga60f3ade91299999200076cd53ed9066e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or disable Oracle warning notifications.  <a href="#ga60f3ade91299999200076cd53ed9066e">More...</a><br /></td></tr>
-<tr class="separator:ga60f3ade91299999200076cd53ed9066e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6ba3f601a97363997f47c9bb0cd9e394"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga6ba3f601a97363997f47c9bb0cd9e394">OCI_SetHAHandler</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga9d59cd068ba0758bc5c022de48b8de4c">POCI_HA_HANDLER</a> handler)</td></tr>
-<tr class="memdesc:ga6ba3f601a97363997f47c9bb0cd9e394"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the High availability (HA) user handler.  <a href="#ga6ba3f601a97363997f47c9bb0cd9e394">More...</a><br /></td></tr>
-<tr class="separator:ga6ba3f601a97363997f47c9bb0cd9e394"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad46f4bcaec7ad58d4e82b51bf065a401"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac768ae2afe72e905d36e47c173032f26">POCI_ERROR</a> err_handler, const otext *lib_path, unsigned int mode)</td></tr>
+<tr class="memdesc:gad46f4bcaec7ad58d4e82b51bf065a401"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the library.  <a href="#gad46f4bcaec7ad58d4e82b51bf065a401">More...</a><br /></td></tr>
+<tr class="separator:gad46f4bcaec7ad58d4e82b51bf065a401"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0395802e1f357326fe0e968c344f437c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a> (void)</td></tr>
+<tr class="memdesc:ga0395802e1f357326fe0e968c344f437c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clean up all resources allocated by the library.  <a href="#ga0395802e1f357326fe0e968c344f437c">More...</a><br /></td></tr>
+<tr class="separator:ga0395802e1f357326fe0e968c344f437c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga471fe81fceb42d90eb82fc3b2e1e4351"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga471fe81fceb42d90eb82fc3b2e1e4351">OCI_GetOCICompileVersion</a> (void)</td></tr>
+<tr class="memdesc:ga471fe81fceb42d90eb82fc3b2e1e4351"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the version of OCI used for compilation.  <a href="#ga471fe81fceb42d90eb82fc3b2e1e4351">More...</a><br /></td></tr>
+<tr class="separator:ga471fe81fceb42d90eb82fc3b2e1e4351"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa00063a7def6b00894520386c7a7696a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#gaa00063a7def6b00894520386c7a7696a">OCI_GetOCIRuntimeVersion</a> (void)</td></tr>
+<tr class="memdesc:gaa00063a7def6b00894520386c7a7696a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the version of OCI used at runtime.  <a href="#gaa00063a7def6b00894520386c7a7696a">More...</a><br /></td></tr>
+<tr class="separator:gaa00063a7def6b00894520386c7a7696a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab8ca72a656755584d4b5272e5a3598c6"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#gab8ca72a656755584d4b5272e5a3598c6">OCI_GetImportMode</a> (void)</td></tr>
+<tr class="memdesc:gab8ca72a656755584d4b5272e5a3598c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle shared library import mode.  <a href="#gab8ca72a656755584d4b5272e5a3598c6">More...</a><br /></td></tr>
+<tr class="separator:gab8ca72a656755584d4b5272e5a3598c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga65fd83e537219b617da5d1e0c198843a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga65fd83e537219b617da5d1e0c198843a">OCI_GetCharset</a> (void)</td></tr>
+<tr class="memdesc:ga65fd83e537219b617da5d1e0c198843a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCILIB charset type.  <a href="#ga65fd83e537219b617da5d1e0c198843a">More...</a><br /></td></tr>
+<tr class="separator:ga65fd83e537219b617da5d1e0c198843a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf483cdc4b9a4826a950b63cafed46ef7"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#gaf483cdc4b9a4826a950b63cafed46ef7">OCI_GetAllocatedBytes</a> (unsigned int mem_type)</td></tr>
+<tr class="memdesc:gaf483cdc4b9a4826a950b63cafed46ef7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of bytes allocated internally in the library.  <a href="#gaf483cdc4b9a4826a950b63cafed46ef7">More...</a><br /></td></tr>
+<tr class="separator:gaf483cdc4b9a4826a950b63cafed46ef7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga98eb3445d035b77d2c666fc09ba9b5fa"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga98eb3445d035b77d2c666fc09ba9b5fa">OCI_EnableWarnings</a> (boolean value)</td></tr>
+<tr class="memdesc:ga98eb3445d035b77d2c666fc09ba9b5fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or disable Oracle warning notifications.  <a href="#ga98eb3445d035b77d2c666fc09ba9b5fa">More...</a><br /></td></tr>
+<tr class="separator:ga98eb3445d035b77d2c666fc09ba9b5fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5a3480a53073170bb1f7568b5b23cd8e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga5a3480a53073170bb1f7568b5b23cd8e">OCI_SetHAHandler</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga9d59cd068ba0758bc5c022de48b8de4c">POCI_HA_HANDLER</a> handler)</td></tr>
+<tr class="memdesc:ga5a3480a53073170bb1f7568b5b23cd8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the High availability (HA) user handler.  <a href="#ga5a3480a53073170bb1f7568b5b23cd8e">More...</a><br /></td></tr>
+<tr class="separator:ga5a3480a53073170bb1f7568b5b23cd8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga01464863ddd68393106b63fb8cc1ead1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga01464863ddd68393106b63fb8cc1ead1">&#9670;&nbsp;</a></span>OCI_Initialize()</h2>
+<a id="gad46f4bcaec7ad58d4e82b51bf065a401"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad46f4bcaec7ad58d4e82b51bf065a401">&#9670;&nbsp;</a></span>OCI_Initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_Initialize </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gac768ae2afe72e905d36e47c173032f26">POCI_ERROR</a>&#160;</td>
           <td class="paramname"><em>err_handler</em>, </td>
@@ -197,13 +197,13 @@ Functions</h2></td></tr>
 </ul>
 </dd>
 <dd>
-<a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> should be called <b>ONCE</b> per application</dd></dl>
+<a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> should be called <b>ONCE</b> per application</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE. Possible reasons for failures:<ul>
-<li>when <a class="el" href="group___ocilib_c_api_error_handling.html#ga66d447c8cd06ea3f841b439a1aac055b" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> return OCI_ERR_ORACLE, <a class="el" href="group___ocilib_c_api_error_handling.html#ga76fb68323de3574fb92a8027e8c4280e" title="Retrieve Oracle Error code from error handle.">OCI_ErrorGetOCICode()</a> returns:<ul>
+<li>when <a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> return OCI_ERR_ORACLE, <a class="el" href="group___ocilib_c_api_error_handling.html#gac68b56831d0ca0a45fb8da25f97d4e07" title="Retrieve Oracle Error code from error handle.">OCI_ErrorGetOCICode()</a> returns:<ul>
 <li>any ORA-XXXXXX error code. Refer to Oracle documentation</li>
 </ul>
 </li>
-<li>when <a class="el" href="group___ocilib_c_api_error_handling.html#ga66d447c8cd06ea3f841b439a1aac055b" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> return OCI_ERR_OCILIB, possible error code returned by <a class="el" href="group___ocilib_c_api_error_handling.html#gaa59683a2cd8d8a5eb7d652fb153ff6c1" title="Retrieve Internal Error code from error handle.">OCI_ErrorGetInternalCode()</a><ul>
+<li>when <a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> return OCI_ERR_OCILIB, possible error code returned by <a class="el" href="group___ocilib_c_api_error_handling.html#ga148d833e4faf47b78cebb4cb4aebcc1e" title="Retrieve Internal Error code from error handle.">OCI_ErrorGetInternalCode()</a><ul>
 <li>OCI_ERR_LOADING_SHARED_LIB : OCILIB could not load oracle shared libraries at runtime (32/64bits mismatch, wrong <code>lib_path</code>, missing MSVC runtime required by oci.dll (MS Windows)</li>
 <li>OCI_ERR_LOADING_SYMBOLS : the loaded shared library does not contain OCI symbols</li>
 <li>OCI_ERR_NOT_AVAILABLE : OCILIb was built with OCI_CHARSET_WIDE and the oracle shared library dos not supports UTF16 (Oracle 8i)</li>
@@ -215,14 +215,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga639706aa8e9689c7ebffc018fac6d3ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga639706aa8e9689c7ebffc018fac6d3ae">&#9670;&nbsp;</a></span>OCI_Cleanup()</h2>
+<a id="ga0395802e1f357326fe0e968c344f437c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0395802e1f357326fe0e968c344f437c">&#9670;&nbsp;</a></span>OCI_Cleanup()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_Cleanup </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup </td>
           <td>(</td>
           <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -240,19 +240,19 @@ Functions</h2></td></tr>
 <li>It unloads the Oracle shared library if it has been dynamically loaded</li>
 </ul>
 </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a> should be called <b>ONCE</b> per application</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a> should be called <b>ONCE</b> per application</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE </dd></dl>
 
 </div>
 </div>
-<a id="ga6fa5693d691752f93dbc6baf07e6cceb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6fa5693d691752f93dbc6baf07e6cceb">&#9670;&nbsp;</a></span>OCI_GetOCICompileVersion()</h2>
+<a id="ga471fe81fceb42d90eb82fc3b2e1e4351"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga471fe81fceb42d90eb82fc3b2e1e4351">&#9670;&nbsp;</a></span>OCI_GetOCICompileVersion()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetOCICompileVersion </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCICompileVersion </td>
           <td>(</td>
           <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -274,14 +274,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga771bf5d33dbd0b63d84242819209b35b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga771bf5d33dbd0b63d84242819209b35b">&#9670;&nbsp;</a></span>OCI_GetOCIRuntimeVersion()</h2>
+<a id="gaa00063a7def6b00894520386c7a7696a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa00063a7def6b00894520386c7a7696a">&#9670;&nbsp;</a></span>OCI_GetOCIRuntimeVersion()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetOCIRuntimeVersion </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCIRuntimeVersion </td>
           <td>(</td>
           <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -303,14 +303,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaecbebbd3747c5012dfbf072f90e33c77"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaecbebbd3747c5012dfbf072f90e33c77">&#9670;&nbsp;</a></span>OCI_GetImportMode()</h2>
+<a id="gab8ca72a656755584d4b5272e5a3598c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab8ca72a656755584d4b5272e5a3598c6">&#9670;&nbsp;</a></span>OCI_GetImportMode()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetImportMode </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetImportMode </td>
           <td>(</td>
           <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -332,14 +332,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga19c86551503e6670c96ef3e81a1ce1ba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga19c86551503e6670c96ef3e81a1ce1ba">&#9670;&nbsp;</a></span>OCI_GetCharset()</h2>
+<a id="ga65fd83e537219b617da5d1e0c198843a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga65fd83e537219b617da5d1e0c198843a">&#9670;&nbsp;</a></span>OCI_GetCharset()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetCharset </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetCharset </td>
           <td>(</td>
           <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -361,14 +361,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga59c50704dae44e650bf53a963d32567b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga59c50704dae44e650bf53a963d32567b">&#9670;&nbsp;</a></span>OCI_GetAllocatedBytes()</h2>
+<a id="gaf483cdc4b9a4826a950b63cafed46ef7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf483cdc4b9a4826a950b63cafed46ef7">&#9670;&nbsp;</a></span>OCI_GetAllocatedBytes()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT big_uint OCI_API OCI_GetAllocatedBytes </td>
+          <td class="memname">OCI_SYM_PUBLIC big_uint OCI_API OCI_GetAllocatedBytes </td>
           <td>(</td>
           <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>mem_type</em></td><td>)</td>
@@ -397,14 +397,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga60f3ade91299999200076cd53ed9066e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga60f3ade91299999200076cd53ed9066e">&#9670;&nbsp;</a></span>OCI_EnableWarnings()</h2>
+<a id="ga98eb3445d035b77d2c666fc09ba9b5fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga98eb3445d035b77d2c666fc09ba9b5fa">&#9670;&nbsp;</a></span>OCI_EnableWarnings()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_EnableWarnings </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_EnableWarnings </td>
           <td>(</td>
           <td class="paramtype">boolean&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
@@ -428,14 +428,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga6ba3f601a97363997f47c9bb0cd9e394"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6ba3f601a97363997f47c9bb0cd9e394">&#9670;&nbsp;</a></span>OCI_SetHAHandler()</h2>
+<a id="ga5a3480a53073170bb1f7568b5b23cd8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5a3480a53073170bb1f7568b5b23cd8e">&#9670;&nbsp;</a></span>OCI_SetHAHandler()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetHAHandler </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetHAHandler </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga9d59cd068ba0758bc5c022de48b8de4c">POCI_HA_HANDLER</a>&#160;</td>
           <td class="paramname"><em>handler</em></td><td>)</td>
@@ -455,7 +455,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>See POCI_HA_HANDLER documentation for more details</dd>
 <dd>
-OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use HA events</dd></dl>
+OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use HA events</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. For previous versions, it returns FALSE without throwing any exception.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
@@ -469,7 +469,7 @@ OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_i
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

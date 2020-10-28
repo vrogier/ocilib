@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -129,110 +129,110 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_lobs.html','');})
 <li>if OCILIB is build with option OCI_IMPORT_LINKAGE and the Oracle version is &gt;= 10.1</li>
 <li>or OCILIB is build with option OCI_IMPORT_RUNTIME (oracle version is not known at compilation stage)</li>
 </ul>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/lob.sql */</span></div><div class="line"></div><div class="line"><span class="preprocessor">#define SIZE_BUF 512</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *st;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a> *rs;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob1, *lob2;</div><div class="line"></div><div class="line">    <span class="keywordtype">char</span> temp[SIZE_BUF + 1];</div><div class="line">    <span class="keywordtype">size_t</span> n;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#ga335822f983af0fb5c529431f06a9a17b">OCI_StatementCreate</a>(cn);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;select code, obj from large_objects for update&quot;</span>);</div><div class="line"></div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gaf2a9e28b66a9538ba0ffb62bffb87c16">OCI_GetResultset</a>(st);</div><div class="line"></div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga36ac26dcea78f6074421781e401f97ba">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        <span class="keywordtype">char</span> *str = <span class="stringliteral">&quot;- ABC must have replaced 3 first chars&quot;</span>;</div><div class="line"></div><div class="line">        lob1 = <a class="code" href="group___ocilib_c_api_fetching.html#gabac23a7dea02963ef8de438950ef6fae">OCI_GetLob</a>(rs, 2);</div><div class="line">        lob2 = <a class="code" href="group___ocilib_c_api_lobs.html#ga318f1273603e24b51c3d9e4c29f42685">OCI_LobCreate</a>(cn, OCI_CLOB);</div><div class="line"></div><div class="line">        n = <a class="code" href="group___ocilib_c_api_lobs.html#ga949f7050609430486c9ef0f3c488d38a">OCI_LobWrite</a>(lob1, <span class="stringliteral">&quot;ABC&quot;</span>, 3);</div><div class="line">        <a class="code" href="group___ocilib_c_api_lobs.html#ga63df7f944c418642fc04571a4a522b87">OCI_LobSeek</a>(lob1, n, OCI_SEEK_SET);</div><div class="line"></div><div class="line">        n = <a class="code" href="group___ocilib_c_api_lobs.html#ga949f7050609430486c9ef0f3c488d38a">OCI_LobWrite</a>(lob2, str, (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>) strlen(str));</div><div class="line"></div><div class="line">        <a class="code" href="group___ocilib_c_api_lobs.html#gacda64fca2ab7eb9d8a8d68190b13a285">OCI_LobAppendLob</a>(lob1, lob2);</div><div class="line">        <a class="code" href="group___ocilib_c_api_lobs.html#ga63df7f944c418642fc04571a4a522b87">OCI_LobSeek</a>(lob1, 0, OCI_SEEK_SET);</div><div class="line"></div><div class="line">        n = <a class="code" href="group___ocilib_c_api_lobs.html#ga36708313dc7d5c0b2c30f7f8b9fa2e2d">OCI_LobRead</a>(lob1, temp, SIZE_BUF);</div><div class="line">        temp[n] = 0;</div><div class="line"></div><div class="line">        printf(<span class="stringliteral">&quot;code: %i, obj : %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#gaa8d80dc30b2012eaddd13efa9dfb711d">OCI_GetInt</a>(rs, 1), temp);</div><div class="line"></div><div class="line">        <a class="code" href="group___ocilib_c_api_lobs.html#gaac269a3de312c2c7d1a6193a9ab79545">OCI_LobFree</a>(lob2);</div><div class="line">    }</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;\n%d row(s) fetched\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#ga93bd9197720088dbda2bef593ad1c07c">OCI_GetRowCount</a>(rs));</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga487b4f90f1fd4aee18f3d901f5aed104">OCI_StatementFree</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/lob.sql */</span></div><div class="line"></div><div class="line"><span class="preprocessor">#define SIZE_BUF 512</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *st;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a> *rs;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob1, *lob2;</div><div class="line"></div><div class="line">    <span class="keywordtype">char</span> temp[SIZE_BUF + 1];</div><div class="line">    <span class="keywordtype">size_t</span> n;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#gab62065db373d58337fa92948d5a8eba1">OCI_StatementCreate</a>(cn);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;select code, obj from large_objects for update&quot;</span>);</div><div class="line"></div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gace8269c905b60b758358025d61e7fce7">OCI_GetResultset</a>(st);</div><div class="line"></div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        <span class="keywordtype">char</span> *str = <span class="stringliteral">&quot;- ABC must have replaced 3 first chars&quot;</span>;</div><div class="line"></div><div class="line">        lob1 = <a class="code" href="group___ocilib_c_api_fetching.html#ga1c060171b5f76a92679584ccaab18f82">OCI_GetLob</a>(rs, 2);</div><div class="line">        lob2 = <a class="code" href="group___ocilib_c_api_lobs.html#gab188a5d746df15c92add244fed1733ee">OCI_LobCreate</a>(cn, OCI_CLOB);</div><div class="line"></div><div class="line">        n = <a class="code" href="group___ocilib_c_api_lobs.html#ga0757fd55ca99679cb924d7e8841223e1">OCI_LobWrite</a>(lob1, <span class="stringliteral">&quot;ABC&quot;</span>, 3);</div><div class="line">        <a class="code" href="group___ocilib_c_api_lobs.html#gae7f97db499c9ec1a5c542dd87f1ab436">OCI_LobSeek</a>(lob1, n, OCI_SEEK_SET);</div><div class="line"></div><div class="line">        n = <a class="code" href="group___ocilib_c_api_lobs.html#ga0757fd55ca99679cb924d7e8841223e1">OCI_LobWrite</a>(lob2, str, (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>) strlen(str));</div><div class="line"></div><div class="line">        <a class="code" href="group___ocilib_c_api_lobs.html#gab0275e05a782fd5f184a21bb031467bc">OCI_LobAppendLob</a>(lob1, lob2);</div><div class="line">        <a class="code" href="group___ocilib_c_api_lobs.html#gae7f97db499c9ec1a5c542dd87f1ab436">OCI_LobSeek</a>(lob1, 0, OCI_SEEK_SET);</div><div class="line"></div><div class="line">        n = <a class="code" href="group___ocilib_c_api_lobs.html#ga742ef61ed2a43b2276abc6568d8d6380">OCI_LobRead</a>(lob1, temp, SIZE_BUF);</div><div class="line">        temp[n] = 0;</div><div class="line"></div><div class="line">        printf(<span class="stringliteral">&quot;code: %i, obj : %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#gae26bdda7984f430630d372af5712bf47">OCI_GetInt</a>(rs, 1), temp);</div><div class="line"></div><div class="line">        <a class="code" href="group___ocilib_c_api_lobs.html#ga2e3add6a698c6972633490759c95f107">OCI_LobFree</a>(lob2);</div><div class="line">    }</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;\n%d row(s) fetched\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#ga80b05221765bef61fc2a5a83707fc09f">OCI_GetRowCount</a>(rs));</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga318f1273603e24b51c3d9e4c29f42685"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga318f1273603e24b51c3d9e4c29f42685">OCI_LobCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type)</td></tr>
-<tr class="memdesc:ga318f1273603e24b51c3d9e4c29f42685"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a local temporary Lob instance.  <a href="#ga318f1273603e24b51c3d9e4c29f42685">More...</a><br /></td></tr>
-<tr class="separator:ga318f1273603e24b51c3d9e4c29f42685"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaac269a3de312c2c7d1a6193a9ab79545"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gaac269a3de312c2c7d1a6193a9ab79545">OCI_LobFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
-<tr class="memdesc:gaac269a3de312c2c7d1a6193a9ab79545"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a local temporary lob.  <a href="#gaac269a3de312c2c7d1a6193a9ab79545">More...</a><br /></td></tr>
-<tr class="separator:gaac269a3de312c2c7d1a6193a9ab79545"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga00934ab657273e10a3dea6c16b32de5f"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga00934ab657273e10a3dea6c16b32de5f">OCI_LobArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, unsigned int nbelem)</td></tr>
-<tr class="memdesc:ga00934ab657273e10a3dea6c16b32de5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of lob object.  <a href="#ga00934ab657273e10a3dea6c16b32de5f">More...</a><br /></td></tr>
-<tr class="separator:ga00934ab657273e10a3dea6c16b32de5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4e317df72cb3e3014c9161c892e68186"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga4e317df72cb3e3014c9161c892e68186">OCI_LobArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> **lobs)</td></tr>
-<tr class="memdesc:ga4e317df72cb3e3014c9161c892e68186"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of lob objects.  <a href="#ga4e317df72cb3e3014c9161c892e68186">More...</a><br /></td></tr>
-<tr class="separator:ga4e317df72cb3e3014c9161c892e68186"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga08db605f9acb170ddc9b0f403f65d871"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga08db605f9acb170ddc9b0f403f65d871">OCI_LobGetType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
-<tr class="memdesc:ga08db605f9acb170ddc9b0f403f65d871"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of the given Lob object.  <a href="#ga08db605f9acb170ddc9b0f403f65d871">More...</a><br /></td></tr>
-<tr class="separator:ga08db605f9acb170ddc9b0f403f65d871"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga63df7f944c418642fc04571a4a522b87"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga63df7f944c418642fc04571a4a522b87">OCI_LobSeek</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, big_uint offset, unsigned int mode)</td></tr>
-<tr class="memdesc:ga63df7f944c418642fc04571a4a522b87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a seek operation on the OCI_lob content buffer.  <a href="#ga63df7f944c418642fc04571a4a522b87">More...</a><br /></td></tr>
-<tr class="separator:ga63df7f944c418642fc04571a4a522b87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab3bc556383addcbd81f7e4158757626e"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gab3bc556383addcbd81f7e4158757626e">OCI_LobGetOffset</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
-<tr class="memdesc:gab3bc556383addcbd81f7e4158757626e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current position in the Lob content buffer.  <a href="#gab3bc556383addcbd81f7e4158757626e">More...</a><br /></td></tr>
-<tr class="separator:gab3bc556383addcbd81f7e4158757626e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga36708313dc7d5c0b2c30f7f8b9fa2e2d"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga36708313dc7d5c0b2c30f7f8b9fa2e2d">OCI_LobRead</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, void *buffer, unsigned int len)</td></tr>
-<tr class="memdesc:ga36708313dc7d5c0b2c30f7f8b9fa2e2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">[OBSOLETE] Read a portion of a lob into the given buffer  <a href="#ga36708313dc7d5c0b2c30f7f8b9fa2e2d">More...</a><br /></td></tr>
-<tr class="separator:ga36708313dc7d5c0b2c30f7f8b9fa2e2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga62d12eaf92b7e5554c4b1cce854e4441"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga62d12eaf92b7e5554c4b1cce854e4441">OCI_LobRead2</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, void *buffer, unsigned int *char_count, unsigned int *byte_count)</td></tr>
-<tr class="memdesc:ga62d12eaf92b7e5554c4b1cce854e4441"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a portion of a lob into the given buffer.  <a href="#ga62d12eaf92b7e5554c4b1cce854e4441">More...</a><br /></td></tr>
-<tr class="separator:ga62d12eaf92b7e5554c4b1cce854e4441"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga949f7050609430486c9ef0f3c488d38a"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga949f7050609430486c9ef0f3c488d38a">OCI_LobWrite</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, void *buffer, unsigned int len)</td></tr>
-<tr class="memdesc:ga949f7050609430486c9ef0f3c488d38a"><td class="mdescLeft">&#160;</td><td class="mdescRight">[OBSOLETE] Write a buffer into a LOB  <a href="#ga949f7050609430486c9ef0f3c488d38a">More...</a><br /></td></tr>
-<tr class="separator:ga949f7050609430486c9ef0f3c488d38a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4cbd00ede807989ab817361ac2e4223b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga4cbd00ede807989ab817361ac2e4223b">OCI_LobWrite2</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, void *buffer, unsigned int *char_count, unsigned int *byte_count)</td></tr>
-<tr class="memdesc:ga4cbd00ede807989ab817361ac2e4223b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a buffer into a LOB.  <a href="#ga4cbd00ede807989ab817361ac2e4223b">More...</a><br /></td></tr>
-<tr class="separator:ga4cbd00ede807989ab817361ac2e4223b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga75a8049251e51665b3103789573a3a3b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga75a8049251e51665b3103789573a3a3b">OCI_LobTruncate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, big_uint size)</td></tr>
-<tr class="memdesc:ga75a8049251e51665b3103789573a3a3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Truncate the given lob to a shorter length.  <a href="#ga75a8049251e51665b3103789573a3a3b">More...</a><br /></td></tr>
-<tr class="separator:ga75a8049251e51665b3103789573a3a3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1fed642e2fdc4b72724340e27e13153e"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga1fed642e2fdc4b72724340e27e13153e">OCI_LobGetLength</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
-<tr class="memdesc:ga1fed642e2fdc4b72724340e27e13153e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the actual length of a lob.  <a href="#ga1fed642e2fdc4b72724340e27e13153e">More...</a><br /></td></tr>
-<tr class="separator:ga1fed642e2fdc4b72724340e27e13153e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gabf9f93c675dbe553d0938c312d26c6e5"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gabf9f93c675dbe553d0938c312d26c6e5">OCI_LobGetChunkSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
-<tr class="memdesc:gabf9f93c675dbe553d0938c312d26c6e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the chunk size of a LOB.  <a href="#gabf9f93c675dbe553d0938c312d26c6e5">More...</a><br /></td></tr>
-<tr class="separator:gabf9f93c675dbe553d0938c312d26c6e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8187347b6578c04aef6f6e7baa949c09"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga8187347b6578c04aef6f6e7baa949c09">OCI_LobErase</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, big_uint offset, big_uint len)</td></tr>
-<tr class="memdesc:ga8187347b6578c04aef6f6e7baa949c09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erase a portion of the lob at a given position.  <a href="#ga8187347b6578c04aef6f6e7baa949c09">More...</a><br /></td></tr>
-<tr class="separator:ga8187347b6578c04aef6f6e7baa949c09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7bfac772587753b2cef9c5a704ae7ce9"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga7bfac772587753b2cef9c5a704ae7ce9">OCI_LobAppend</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, void *buffer, unsigned int len)</td></tr>
-<tr class="memdesc:ga7bfac772587753b2cef9c5a704ae7ce9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append a buffer at the end of a LOB.  <a href="#ga7bfac772587753b2cef9c5a704ae7ce9">More...</a><br /></td></tr>
-<tr class="separator:ga7bfac772587753b2cef9c5a704ae7ce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga673481b03e0d3216fcfa799ec44bbba9"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga673481b03e0d3216fcfa799ec44bbba9">OCI_LobAppend2</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, void *buffer, unsigned int *char_count, unsigned int *byte_count)</td></tr>
-<tr class="memdesc:ga673481b03e0d3216fcfa799ec44bbba9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append a buffer at the end of a LOB.  <a href="#ga673481b03e0d3216fcfa799ec44bbba9">More...</a><br /></td></tr>
-<tr class="separator:ga673481b03e0d3216fcfa799ec44bbba9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gacda64fca2ab7eb9d8a8d68190b13a285"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gacda64fca2ab7eb9d8a8d68190b13a285">OCI_LobAppendLob</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob_src)</td></tr>
-<tr class="memdesc:gacda64fca2ab7eb9d8a8d68190b13a285"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append a source LOB at the end of a destination LOB.  <a href="#gacda64fca2ab7eb9d8a8d68190b13a285">More...</a><br /></td></tr>
-<tr class="separator:gacda64fca2ab7eb9d8a8d68190b13a285"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga642bbf0e0fa52f9900aa332ec2d70cdb"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga642bbf0e0fa52f9900aa332ec2d70cdb">OCI_LobIsTemporary</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
-<tr class="memdesc:ga642bbf0e0fa52f9900aa332ec2d70cdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given lob is a temporary lob.  <a href="#ga642bbf0e0fa52f9900aa332ec2d70cdb">More...</a><br /></td></tr>
-<tr class="separator:ga642bbf0e0fa52f9900aa332ec2d70cdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae53d9ad9e0c1db7cc1942775aa4e70c3"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gae53d9ad9e0c1db7cc1942775aa4e70c3">OCI_LobCopy</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob_src, big_uint offset_dst, big_uint offset_src, big_uint count)</td></tr>
-<tr class="memdesc:gae53d9ad9e0c1db7cc1942775aa4e70c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a portion of a source LOB into a destination LOB.  <a href="#gae53d9ad9e0c1db7cc1942775aa4e70c3">More...</a><br /></td></tr>
-<tr class="separator:gae53d9ad9e0c1db7cc1942775aa4e70c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3cd99f8efdcdbfdc4c273e72c3bde4cc"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga3cd99f8efdcdbfdc4c273e72c3bde4cc">OCI_LobCopyFromFile</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, big_uint offset_dst, big_uint offset_src, big_uint count)</td></tr>
-<tr class="memdesc:ga3cd99f8efdcdbfdc4c273e72c3bde4cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a portion of a source FILE into a destination LOB.  <a href="#ga3cd99f8efdcdbfdc4c273e72c3bde4cc">More...</a><br /></td></tr>
-<tr class="separator:ga3cd99f8efdcdbfdc4c273e72c3bde4cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga191f3b34b55bac65e994f18118080a08"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga191f3b34b55bac65e994f18118080a08">OCI_LobOpen</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, unsigned int mode)</td></tr>
-<tr class="memdesc:ga191f3b34b55bac65e994f18118080a08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open explicitly a Lob.  <a href="#ga191f3b34b55bac65e994f18118080a08">More...</a><br /></td></tr>
-<tr class="separator:ga191f3b34b55bac65e994f18118080a08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8eb276acd9cb2d5ddda85f3f19ec8f9c"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga8eb276acd9cb2d5ddda85f3f19ec8f9c">OCI_LobClose</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
-<tr class="memdesc:ga8eb276acd9cb2d5ddda85f3f19ec8f9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close explicitly a Lob.  <a href="#ga8eb276acd9cb2d5ddda85f3f19ec8f9c">More...</a><br /></td></tr>
-<tr class="separator:ga8eb276acd9cb2d5ddda85f3f19ec8f9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2440e9d98b1a647c6f681d30dcf9cb59"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga2440e9d98b1a647c6f681d30dcf9cb59">OCI_LobIsEqual</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob2)</td></tr>
-<tr class="memdesc:ga2440e9d98b1a647c6f681d30dcf9cb59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two lob handles for equality.  <a href="#ga2440e9d98b1a647c6f681d30dcf9cb59">More...</a><br /></td></tr>
-<tr class="separator:ga2440e9d98b1a647c6f681d30dcf9cb59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga30c335eb342272b308eb3746e5b4ea75"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga30c335eb342272b308eb3746e5b4ea75">OCI_LobAssign</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob_src)</td></tr>
-<tr class="memdesc:ga30c335eb342272b308eb3746e5b4ea75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign a lob to another one.  <a href="#ga30c335eb342272b308eb3746e5b4ea75">More...</a><br /></td></tr>
-<tr class="separator:ga30c335eb342272b308eb3746e5b4ea75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaed9377d01703f9ba727acc71ee04aa4a"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gaed9377d01703f9ba727acc71ee04aa4a">OCI_LobGetMaxSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
-<tr class="memdesc:gaed9377d01703f9ba727acc71ee04aa4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum size that the lob can contain.  <a href="#gaed9377d01703f9ba727acc71ee04aa4a">More...</a><br /></td></tr>
-<tr class="separator:gaed9377d01703f9ba727acc71ee04aa4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1657f17bba0ed7bdbe71293b65aeb25d"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga1657f17bba0ed7bdbe71293b65aeb25d">OCI_LobFlush</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
-<tr class="memdesc:ga1657f17bba0ed7bdbe71293b65aeb25d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flush Lob content to the server.  <a href="#ga1657f17bba0ed7bdbe71293b65aeb25d">More...</a><br /></td></tr>
-<tr class="separator:ga1657f17bba0ed7bdbe71293b65aeb25d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga04033eb79a2815d59ab17d2d72761a19"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga04033eb79a2815d59ab17d2d72761a19">OCI_LobEnableBuffering</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, boolean value)</td></tr>
-<tr class="memdesc:ga04033eb79a2815d59ab17d2d72761a19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable / disable buffering mode on the given lob handle.  <a href="#ga04033eb79a2815d59ab17d2d72761a19">More...</a><br /></td></tr>
-<tr class="separator:ga04033eb79a2815d59ab17d2d72761a19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac9f62083e75fba01cfbc13f6c5c282c4"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gac9f62083e75fba01cfbc13f6c5c282c4">OCI_LobGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
-<tr class="memdesc:gac9f62083e75fba01cfbc13f6c5c282c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve connection handle from the lob handle.  <a href="#gac9f62083e75fba01cfbc13f6c5c282c4">More...</a><br /></td></tr>
-<tr class="separator:gac9f62083e75fba01cfbc13f6c5c282c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf8d80a35664751afc19537bd8aeb081b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gaf8d80a35664751afc19537bd8aeb081b">OCI_LobIsRemote</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
-<tr class="memdesc:gaf8d80a35664751afc19537bd8aeb081b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates if the given lob belongs to a local or remote database table.  <a href="#gaf8d80a35664751afc19537bd8aeb081b">More...</a><br /></td></tr>
-<tr class="separator:gaf8d80a35664751afc19537bd8aeb081b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab188a5d746df15c92add244fed1733ee"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gab188a5d746df15c92add244fed1733ee">OCI_LobCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type)</td></tr>
+<tr class="memdesc:gab188a5d746df15c92add244fed1733ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a local temporary Lob instance.  <a href="#gab188a5d746df15c92add244fed1733ee">More...</a><br /></td></tr>
+<tr class="separator:gab188a5d746df15c92add244fed1733ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2e3add6a698c6972633490759c95f107"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga2e3add6a698c6972633490759c95f107">OCI_LobFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
+<tr class="memdesc:ga2e3add6a698c6972633490759c95f107"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a local temporary lob.  <a href="#ga2e3add6a698c6972633490759c95f107">More...</a><br /></td></tr>
+<tr class="separator:ga2e3add6a698c6972633490759c95f107"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8eec2af366ee659cc7af0b19697ca982"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga8eec2af366ee659cc7af0b19697ca982">OCI_LobArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, unsigned int nbelem)</td></tr>
+<tr class="memdesc:ga8eec2af366ee659cc7af0b19697ca982"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of lob object.  <a href="#ga8eec2af366ee659cc7af0b19697ca982">More...</a><br /></td></tr>
+<tr class="separator:ga8eec2af366ee659cc7af0b19697ca982"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga855e5cd4627ba0aad47cf7e6b832fb82"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga855e5cd4627ba0aad47cf7e6b832fb82">OCI_LobArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> **lobs)</td></tr>
+<tr class="memdesc:ga855e5cd4627ba0aad47cf7e6b832fb82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of lob objects.  <a href="#ga855e5cd4627ba0aad47cf7e6b832fb82">More...</a><br /></td></tr>
+<tr class="separator:ga855e5cd4627ba0aad47cf7e6b832fb82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafa4ea02f1547d918ea47c57074fee4d3"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gafa4ea02f1547d918ea47c57074fee4d3">OCI_LobGetType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
+<tr class="memdesc:gafa4ea02f1547d918ea47c57074fee4d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of the given Lob object.  <a href="#gafa4ea02f1547d918ea47c57074fee4d3">More...</a><br /></td></tr>
+<tr class="separator:gafa4ea02f1547d918ea47c57074fee4d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae7f97db499c9ec1a5c542dd87f1ab436"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gae7f97db499c9ec1a5c542dd87f1ab436">OCI_LobSeek</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, big_uint offset, unsigned int mode)</td></tr>
+<tr class="memdesc:gae7f97db499c9ec1a5c542dd87f1ab436"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a seek operation on the OCI_lob content buffer.  <a href="#gae7f97db499c9ec1a5c542dd87f1ab436">More...</a><br /></td></tr>
+<tr class="separator:gae7f97db499c9ec1a5c542dd87f1ab436"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa0b7bde145ed8a055900373ab56df1ba"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gaa0b7bde145ed8a055900373ab56df1ba">OCI_LobGetOffset</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
+<tr class="memdesc:gaa0b7bde145ed8a055900373ab56df1ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current position in the Lob content buffer.  <a href="#gaa0b7bde145ed8a055900373ab56df1ba">More...</a><br /></td></tr>
+<tr class="separator:gaa0b7bde145ed8a055900373ab56df1ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga742ef61ed2a43b2276abc6568d8d6380"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga742ef61ed2a43b2276abc6568d8d6380">OCI_LobRead</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, void *buffer, unsigned int len)</td></tr>
+<tr class="memdesc:ga742ef61ed2a43b2276abc6568d8d6380"><td class="mdescLeft">&#160;</td><td class="mdescRight">[OBSOLETE] Read a portion of a lob into the given buffer  <a href="#ga742ef61ed2a43b2276abc6568d8d6380">More...</a><br /></td></tr>
+<tr class="separator:ga742ef61ed2a43b2276abc6568d8d6380"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabfb8416a25e73206db3b7e87c1c50279"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gabfb8416a25e73206db3b7e87c1c50279">OCI_LobRead2</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, void *buffer, unsigned int *char_count, unsigned int *byte_count)</td></tr>
+<tr class="memdesc:gabfb8416a25e73206db3b7e87c1c50279"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a portion of a lob into the given buffer.  <a href="#gabfb8416a25e73206db3b7e87c1c50279">More...</a><br /></td></tr>
+<tr class="separator:gabfb8416a25e73206db3b7e87c1c50279"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0757fd55ca99679cb924d7e8841223e1"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga0757fd55ca99679cb924d7e8841223e1">OCI_LobWrite</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, void *buffer, unsigned int len)</td></tr>
+<tr class="memdesc:ga0757fd55ca99679cb924d7e8841223e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">[OBSOLETE] Write a buffer into a LOB  <a href="#ga0757fd55ca99679cb924d7e8841223e1">More...</a><br /></td></tr>
+<tr class="separator:ga0757fd55ca99679cb924d7e8841223e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaad031f7484a74ef7378deb0e42658399"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gaad031f7484a74ef7378deb0e42658399">OCI_LobWrite2</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, void *buffer, unsigned int *char_count, unsigned int *byte_count)</td></tr>
+<tr class="memdesc:gaad031f7484a74ef7378deb0e42658399"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a buffer into a LOB.  <a href="#gaad031f7484a74ef7378deb0e42658399">More...</a><br /></td></tr>
+<tr class="separator:gaad031f7484a74ef7378deb0e42658399"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga011d8a679d271a4402506726af624461"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga011d8a679d271a4402506726af624461">OCI_LobTruncate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, big_uint size)</td></tr>
+<tr class="memdesc:ga011d8a679d271a4402506726af624461"><td class="mdescLeft">&#160;</td><td class="mdescRight">Truncate the given lob to a shorter length.  <a href="#ga011d8a679d271a4402506726af624461">More...</a><br /></td></tr>
+<tr class="separator:ga011d8a679d271a4402506726af624461"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac35aaae55fb88dbf93a062e2f6836fa2"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gac35aaae55fb88dbf93a062e2f6836fa2">OCI_LobGetLength</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
+<tr class="memdesc:gac35aaae55fb88dbf93a062e2f6836fa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the actual length of a lob.  <a href="#gac35aaae55fb88dbf93a062e2f6836fa2">More...</a><br /></td></tr>
+<tr class="separator:gac35aaae55fb88dbf93a062e2f6836fa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga339a749821be338b439a51fd2d55ceba"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga339a749821be338b439a51fd2d55ceba">OCI_LobGetChunkSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
+<tr class="memdesc:ga339a749821be338b439a51fd2d55ceba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the chunk size of a LOB.  <a href="#ga339a749821be338b439a51fd2d55ceba">More...</a><br /></td></tr>
+<tr class="separator:ga339a749821be338b439a51fd2d55ceba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae7754413ccbab6c1bdb9799d40dcbecd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gae7754413ccbab6c1bdb9799d40dcbecd">OCI_LobErase</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, big_uint offset, big_uint len)</td></tr>
+<tr class="memdesc:gae7754413ccbab6c1bdb9799d40dcbecd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erase a portion of the lob at a given position.  <a href="#gae7754413ccbab6c1bdb9799d40dcbecd">More...</a><br /></td></tr>
+<tr class="separator:gae7754413ccbab6c1bdb9799d40dcbecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf18a8369ff26c4a00f14204632c649d5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gaf18a8369ff26c4a00f14204632c649d5">OCI_LobAppend</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, void *buffer, unsigned int len)</td></tr>
+<tr class="memdesc:gaf18a8369ff26c4a00f14204632c649d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append a buffer at the end of a LOB.  <a href="#gaf18a8369ff26c4a00f14204632c649d5">More...</a><br /></td></tr>
+<tr class="separator:gaf18a8369ff26c4a00f14204632c649d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3a2eeb9b586da87c4f0f7b0ca463685c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga3a2eeb9b586da87c4f0f7b0ca463685c">OCI_LobAppend2</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, void *buffer, unsigned int *char_count, unsigned int *byte_count)</td></tr>
+<tr class="memdesc:ga3a2eeb9b586da87c4f0f7b0ca463685c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append a buffer at the end of a LOB.  <a href="#ga3a2eeb9b586da87c4f0f7b0ca463685c">More...</a><br /></td></tr>
+<tr class="separator:ga3a2eeb9b586da87c4f0f7b0ca463685c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab0275e05a782fd5f184a21bb031467bc"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gab0275e05a782fd5f184a21bb031467bc">OCI_LobAppendLob</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob_src)</td></tr>
+<tr class="memdesc:gab0275e05a782fd5f184a21bb031467bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append a source LOB at the end of a destination LOB.  <a href="#gab0275e05a782fd5f184a21bb031467bc">More...</a><br /></td></tr>
+<tr class="separator:gab0275e05a782fd5f184a21bb031467bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf1dede865f37fbc97b59463558c2292a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gaf1dede865f37fbc97b59463558c2292a">OCI_LobIsTemporary</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
+<tr class="memdesc:gaf1dede865f37fbc97b59463558c2292a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given lob is a temporary lob.  <a href="#gaf1dede865f37fbc97b59463558c2292a">More...</a><br /></td></tr>
+<tr class="separator:gaf1dede865f37fbc97b59463558c2292a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab8936de246a2a6fe6bd03e7ae700f7f0"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gab8936de246a2a6fe6bd03e7ae700f7f0">OCI_LobCopy</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob_src, big_uint offset_dst, big_uint offset_src, big_uint count)</td></tr>
+<tr class="memdesc:gab8936de246a2a6fe6bd03e7ae700f7f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a portion of a source LOB into a destination LOB.  <a href="#gab8936de246a2a6fe6bd03e7ae700f7f0">More...</a><br /></td></tr>
+<tr class="separator:gab8936de246a2a6fe6bd03e7ae700f7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab8f4fad5c276bed11dfcaede9687fd8e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gab8f4fad5c276bed11dfcaede9687fd8e">OCI_LobCopyFromFile</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, big_uint offset_dst, big_uint offset_src, big_uint count)</td></tr>
+<tr class="memdesc:gab8f4fad5c276bed11dfcaede9687fd8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a portion of a source FILE into a destination LOB.  <a href="#gab8f4fad5c276bed11dfcaede9687fd8e">More...</a><br /></td></tr>
+<tr class="separator:gab8f4fad5c276bed11dfcaede9687fd8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3025a921b5eb12fff55ed06b4ea2882a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga3025a921b5eb12fff55ed06b4ea2882a">OCI_LobOpen</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, unsigned int mode)</td></tr>
+<tr class="memdesc:ga3025a921b5eb12fff55ed06b4ea2882a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open explicitly a Lob.  <a href="#ga3025a921b5eb12fff55ed06b4ea2882a">More...</a><br /></td></tr>
+<tr class="separator:ga3025a921b5eb12fff55ed06b4ea2882a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga585013cc1607a5abe5b7fdf61fca7b9a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga585013cc1607a5abe5b7fdf61fca7b9a">OCI_LobClose</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
+<tr class="memdesc:ga585013cc1607a5abe5b7fdf61fca7b9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close explicitly a Lob.  <a href="#ga585013cc1607a5abe5b7fdf61fca7b9a">More...</a><br /></td></tr>
+<tr class="separator:ga585013cc1607a5abe5b7fdf61fca7b9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4e40fe34b8305f1e99d2993ba93ece99"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga4e40fe34b8305f1e99d2993ba93ece99">OCI_LobIsEqual</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob2)</td></tr>
+<tr class="memdesc:ga4e40fe34b8305f1e99d2993ba93ece99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two lob handles for equality.  <a href="#ga4e40fe34b8305f1e99d2993ba93ece99">More...</a><br /></td></tr>
+<tr class="separator:ga4e40fe34b8305f1e99d2993ba93ece99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaee023780893eeee9e5890f92cdc3b80e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gaee023780893eeee9e5890f92cdc3b80e">OCI_LobAssign</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob_src)</td></tr>
+<tr class="memdesc:gaee023780893eeee9e5890f92cdc3b80e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign a lob to another one.  <a href="#gaee023780893eeee9e5890f92cdc3b80e">More...</a><br /></td></tr>
+<tr class="separator:gaee023780893eeee9e5890f92cdc3b80e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6af6a3ef1a55e6150f61afeb994e3675"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga6af6a3ef1a55e6150f61afeb994e3675">OCI_LobGetMaxSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
+<tr class="memdesc:ga6af6a3ef1a55e6150f61afeb994e3675"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum size that the lob can contain.  <a href="#ga6af6a3ef1a55e6150f61afeb994e3675">More...</a><br /></td></tr>
+<tr class="separator:ga6af6a3ef1a55e6150f61afeb994e3675"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac352f921cadffd24daed95ac62f479fc"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gac352f921cadffd24daed95ac62f479fc">OCI_LobFlush</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
+<tr class="memdesc:gac352f921cadffd24daed95ac62f479fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flush Lob content to the server.  <a href="#gac352f921cadffd24daed95ac62f479fc">More...</a><br /></td></tr>
+<tr class="separator:gac352f921cadffd24daed95ac62f479fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2f3a2c52553b9213b39e45584589ea51"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga2f3a2c52553b9213b39e45584589ea51">OCI_LobEnableBuffering</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob, boolean value)</td></tr>
+<tr class="memdesc:ga2f3a2c52553b9213b39e45584589ea51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable / disable buffering mode on the given lob handle.  <a href="#ga2f3a2c52553b9213b39e45584589ea51">More...</a><br /></td></tr>
+<tr class="separator:ga2f3a2c52553b9213b39e45584589ea51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafb0bdf73edfde8ae96047b79df0c0cfa"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#gafb0bdf73edfde8ae96047b79df0c0cfa">OCI_LobGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
+<tr class="memdesc:gafb0bdf73edfde8ae96047b79df0c0cfa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve connection handle from the lob handle.  <a href="#gafb0bdf73edfde8ae96047b79df0c0cfa">More...</a><br /></td></tr>
+<tr class="separator:gafb0bdf73edfde8ae96047b79df0c0cfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6685ef8fe58364ef440b9ff9eb6bc65d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_lobs.html#ga6685ef8fe58364ef440b9ff9eb6bc65d">OCI_LobIsRemote</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *lob)</td></tr>
+<tr class="memdesc:ga6685ef8fe58364ef440b9ff9eb6bc65d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates if the given lob belongs to a local or remote database table.  <a href="#ga6685ef8fe58364ef440b9ff9eb6bc65d">More...</a><br /></td></tr>
+<tr class="separator:ga6685ef8fe58364ef440b9ff9eb6bc65d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga318f1273603e24b51c3d9e4c29f42685"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga318f1273603e24b51c3d9e4c29f42685">&#9670;&nbsp;</a></span>OCI_LobCreate()</h2>
+<a id="gab188a5d746df15c92add244fed1733ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab188a5d746df15c92add244fed1733ee">&#9670;&nbsp;</a></span>OCI_LobCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a>* OCI_API OCI_LobCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a>* OCI_API OCI_LobCreate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -273,14 +273,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaac269a3de312c2c7d1a6193a9ab79545"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaac269a3de312c2c7d1a6193a9ab79545">&#9670;&nbsp;</a></span>OCI_LobFree()</h2>
+<a id="ga2e3add6a698c6972633490759c95f107"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2e3add6a698c6972633490759c95f107">&#9670;&nbsp;</a></span>OCI_LobFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em></td><td>)</td>
@@ -298,21 +298,21 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only lobs created with <a class="el" href="group___ocilib_c_api_lobs.html#ga318f1273603e24b51c3d9e4c29f42685" title="Create a local temporary Lob instance.">OCI_LobCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_lobs.html#gaac269a3de312c2c7d1a6193a9ab79545" title="Free a local temporary lob.">OCI_LobFree()</a></dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only lobs created with <a class="el" href="group___ocilib_c_api_lobs.html#gab188a5d746df15c92add244fed1733ee" title="Create a local temporary Lob instance.">OCI_LobCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_lobs.html#ga2e3add6a698c6972633490759c95f107" title="Free a local temporary lob.">OCI_LobFree()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_lob.html#afe6de3289a23c0f5d93b13be66508461">ocilib::Lob&lt; T, U &gt;::Lob()</a>.</p>
 
 </div>
 </div>
-<a id="ga00934ab657273e10a3dea6c16b32de5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga00934ab657273e10a3dea6c16b32de5f">&#9670;&nbsp;</a></span>OCI_LobArrayCreate()</h2>
+<a id="ga8eec2af366ee659cc7af0b19697ca982"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8eec2af366ee659cc7af0b19697ca982">&#9670;&nbsp;</a></span>OCI_LobArrayCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a>** OCI_API OCI_LobArrayCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a>** OCI_API OCI_LobArrayCreate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -348,19 +348,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_lobs.html#ga318f1273603e24b51c3d9e4c29f42685" title="Create a local temporary Lob instance.">OCI_LobCreate()</a> for more details</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_lobs.html#gab188a5d746df15c92add244fed1733ee" title="Create a local temporary Lob instance.">OCI_LobCreate()</a> for more details</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Return the lob handle array on success otherwise NULL on failure </dd></dl>
 
 </div>
 </div>
-<a id="ga4e317df72cb3e3014c9161c892e68186"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4e317df72cb3e3014c9161c892e68186">&#9670;&nbsp;</a></span>OCI_LobArrayFree()</h2>
+<a id="ga855e5cd4627ba0aad47cf7e6b832fb82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga855e5cd4627ba0aad47cf7e6b832fb82">&#9670;&nbsp;</a></span>OCI_LobArrayFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobArrayFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobArrayFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> **&#160;</td>
           <td class="paramname"><em>lobs</em></td><td>)</td>
@@ -378,19 +378,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only arrays of lobs created with <a class="el" href="group___ocilib_c_api_lobs.html#ga00934ab657273e10a3dea6c16b32de5f" title="Create an array of lob object.">OCI_LobArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_lobs.html#ga4e317df72cb3e3014c9161c892e68186" title="Free an array of lob objects.">OCI_LobArrayFree()</a></dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only arrays of lobs created with <a class="el" href="group___ocilib_c_api_lobs.html#ga8eec2af366ee659cc7af0b19697ca982" title="Create an array of lob object.">OCI_LobArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_lobs.html#ga855e5cd4627ba0aad47cf7e6b832fb82" title="Free an array of lob objects.">OCI_LobArrayFree()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="ga08db605f9acb170ddc9b0f403f65d871"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga08db605f9acb170ddc9b0f403f65d871">&#9670;&nbsp;</a></span>OCI_LobGetType()</h2>
+<a id="gafa4ea02f1547d918ea47c57074fee4d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafa4ea02f1547d918ea47c57074fee4d3">&#9670;&nbsp;</a></span>OCI_LobGetType()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_LobGetType </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobGetType </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em></td><td>)</td>
@@ -408,21 +408,21 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>For possible values, see <a class="el" href="group___ocilib_c_api_lobs.html#ga318f1273603e24b51c3d9e4c29f42685" title="Create a local temporary Lob instance.">OCI_LobCreate()</a></dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For possible values, see <a class="el" href="group___ocilib_c_api_lobs.html#gab188a5d746df15c92add244fed1733ee" title="Create a local temporary Lob instance.">OCI_LobCreate()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Object type or OCI_UNKNOWN the input handle is NULL </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_lob.html#a7a22f95689784d21d15b309e532bef55">ocilib::Lob&lt; T, U &gt;::GetType()</a>.</p>
 
 </div>
 </div>
-<a id="ga63df7f944c418642fc04571a4a522b87"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga63df7f944c418642fc04571a4a522b87">&#9670;&nbsp;</a></span>OCI_LobSeek()</h2>
+<a id="gae7f97db499c9ec1a5c542dd87f1ab436"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae7f97db499c9ec1a5c542dd87f1ab436">&#9670;&nbsp;</a></span>OCI_LobSeek()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobSeek </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobSeek </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -477,14 +477,14 @@ Position in the Lob buffer starts at 0.</dd></dl>
 
 </div>
 </div>
-<a id="gab3bc556383addcbd81f7e4158757626e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab3bc556383addcbd81f7e4158757626e">&#9670;&nbsp;</a></span>OCI_LobGetOffset()</h2>
+<a id="gaa0b7bde145ed8a055900373ab56df1ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa0b7bde145ed8a055900373ab56df1ba">&#9670;&nbsp;</a></span>OCI_LobGetOffset()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT big_uint OCI_API OCI_LobGetOffset </td>
+          <td class="memname">OCI_SYM_PUBLIC big_uint OCI_API OCI_LobGetOffset </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em></td><td>)</td>
@@ -508,14 +508,14 @@ Position in the Lob buffer starts at 0.</dd></dl>
 
 </div>
 </div>
-<a id="ga36708313dc7d5c0b2c30f7f8b9fa2e2d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga36708313dc7d5c0b2c30f7f8b9fa2e2d">&#9670;&nbsp;</a></span>OCI_LobRead()</h2>
+<a id="ga742ef61ed2a43b2276abc6568d8d6380"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga742ef61ed2a43b2276abc6568d8d6380">&#9670;&nbsp;</a></span>OCI_LobRead()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_LobRead </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobRead </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -556,19 +556,19 @@ Position in the Lob buffer starts at 0.</dd></dl>
 <li>Characters for CLOBs/NCLOBS</li>
 </ul>
 </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call is obsolete ! Use <a class="el" href="group___ocilib_c_api_lobs.html#ga62d12eaf92b7e5554c4b1cce854e4441" title="Read a portion of a lob into the given buffer.">OCI_LobRead2()</a> instead.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This call is obsolete ! Use <a class="el" href="group___ocilib_c_api_lobs.html#gabfb8416a25e73206db3b7e87c1c50279" title="Read a portion of a lob into the given buffer.">OCI_LobRead2()</a> instead.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of bytes/characters read on success otherwise 0 on failure </dd></dl>
 
 </div>
 </div>
-<a id="ga62d12eaf92b7e5554c4b1cce854e4441"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga62d12eaf92b7e5554c4b1cce854e4441">&#9670;&nbsp;</a></span>OCI_LobRead2()</h2>
+<a id="gabfb8416a25e73206db3b7e87c1c50279"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabfb8416a25e73206db3b7e87c1c50279">&#9670;&nbsp;</a></span>OCI_LobRead2()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobRead2 </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobRead2 </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -622,14 +622,14 @@ For BLOBs, only the parameter 'byte_count' is used For CLOBs, both parameters ca
 
 </div>
 </div>
-<a id="ga949f7050609430486c9ef0f3c488d38a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga949f7050609430486c9ef0f3c488d38a">&#9670;&nbsp;</a></span>OCI_LobWrite()</h2>
+<a id="ga0757fd55ca99679cb924d7e8841223e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0757fd55ca99679cb924d7e8841223e1">&#9670;&nbsp;</a></span>OCI_LobWrite()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_LobWrite </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobWrite </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -670,19 +670,19 @@ For BLOBs, only the parameter 'byte_count' is used For CLOBs, both parameters ca
 <li>Characters for CLOBs/NCLOBs</li>
 </ul>
 </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call is obsolete ! Use <a class="el" href="group___ocilib_c_api_lobs.html#ga4cbd00ede807989ab817361ac2e4223b" title="Write a buffer into a LOB.">OCI_LobWrite2()</a> instead.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This call is obsolete ! Use <a class="el" href="group___ocilib_c_api_lobs.html#gaad031f7484a74ef7378deb0e42658399" title="Write a buffer into a LOB.">OCI_LobWrite2()</a> instead.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of bytes / characters written on success otherwise 0 on failure </dd></dl>
 
 </div>
 </div>
-<a id="ga4cbd00ede807989ab817361ac2e4223b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4cbd00ede807989ab817361ac2e4223b">&#9670;&nbsp;</a></span>OCI_LobWrite2()</h2>
+<a id="gaad031f7484a74ef7378deb0e42658399"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaad031f7484a74ef7378deb0e42658399">&#9670;&nbsp;</a></span>OCI_LobWrite2()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobWrite2 </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobWrite2 </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -738,14 +738,14 @@ For BLOBs, only the parameter 'byte_count' is used For CLOBs, both parameters ca
 
 </div>
 </div>
-<a id="ga75a8049251e51665b3103789573a3a3b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga75a8049251e51665b3103789573a3a3b">&#9670;&nbsp;</a></span>OCI_LobTruncate()</h2>
+<a id="ga011d8a679d271a4402506726af624461"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga011d8a679d271a4402506726af624461">&#9670;&nbsp;</a></span>OCI_LobTruncate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobTruncate </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobTruncate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -787,14 +787,14 @@ If current offset was beyond the new size, it is then updated to an eof position
 
 </div>
 </div>
-<a id="ga1fed642e2fdc4b72724340e27e13153e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga1fed642e2fdc4b72724340e27e13153e">&#9670;&nbsp;</a></span>OCI_LobGetLength()</h2>
+<a id="gac35aaae55fb88dbf93a062e2f6836fa2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac35aaae55fb88dbf93a062e2f6836fa2">&#9670;&nbsp;</a></span>OCI_LobGetLength()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT big_uint OCI_API OCI_LobGetLength </td>
+          <td class="memname">OCI_SYM_PUBLIC big_uint OCI_API OCI_LobGetLength </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em></td><td>)</td>
@@ -818,14 +818,14 @@ If current offset was beyond the new size, it is then updated to an eof position
 
 </div>
 </div>
-<a id="gabf9f93c675dbe553d0938c312d26c6e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gabf9f93c675dbe553d0938c312d26c6e5">&#9670;&nbsp;</a></span>OCI_LobGetChunkSize()</h2>
+<a id="ga339a749821be338b439a51fd2d55ceba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga339a749821be338b439a51fd2d55ceba">&#9670;&nbsp;</a></span>OCI_LobGetChunkSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_LobGetChunkSize </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobGetChunkSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em></td><td>)</td>
@@ -851,14 +851,14 @@ The returned value is in bytes for BLOBS and characters for CLOBS/NCLOBs </dd></
 
 </div>
 </div>
-<a id="ga8187347b6578c04aef6f6e7baa949c09"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga8187347b6578c04aef6f6e7baa949c09">&#9670;&nbsp;</a></span>OCI_LobErase()</h2>
+<a id="gae7754413ccbab6c1bdb9799d40dcbecd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae7754413ccbab6c1bdb9799d40dcbecd">&#9670;&nbsp;</a></span>OCI_LobErase()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT big_uint OCI_API OCI_LobErase </td>
+          <td class="memname">OCI_SYM_PUBLIC big_uint OCI_API OCI_LobErase </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -905,14 +905,14 @@ The returned value is in bytes for BLOBS and characters for CLOBS/NCLOBs </dd></
 
 </div>
 </div>
-<a id="ga7bfac772587753b2cef9c5a704ae7ce9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7bfac772587753b2cef9c5a704ae7ce9">&#9670;&nbsp;</a></span>OCI_LobAppend()</h2>
+<a id="gaf18a8369ff26c4a00f14204632c649d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf18a8369ff26c4a00f14204632c649d5">&#9670;&nbsp;</a></span>OCI_LobAppend()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_LobAppend </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobAppend </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -959,14 +959,14 @@ The returned value is in bytes for BLOBS and characters for CLOBS/NCLOBs </dd></
 
 </div>
 </div>
-<a id="ga673481b03e0d3216fcfa799ec44bbba9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga673481b03e0d3216fcfa799ec44bbba9">&#9670;&nbsp;</a></span>OCI_LobAppend2()</h2>
+<a id="ga3a2eeb9b586da87c4f0f7b0ca463685c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3a2eeb9b586da87c4f0f7b0ca463685c">&#9670;&nbsp;</a></span>OCI_LobAppend2()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobAppend2 </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobAppend2 </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -1020,14 +1020,14 @@ For BLOBs, only the parameter 'byte_count' is used For CLOBs, both parameters ca
 
 </div>
 </div>
-<a id="gacda64fca2ab7eb9d8a8d68190b13a285"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gacda64fca2ab7eb9d8a8d68190b13a285">&#9670;&nbsp;</a></span>OCI_LobAppendLob()</h2>
+<a id="gab0275e05a782fd5f184a21bb031467bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab0275e05a782fd5f184a21bb031467bc">&#9670;&nbsp;</a></span>OCI_LobAppendLob()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobAppendLob </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobAppendLob </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -1062,14 +1062,14 @@ For BLOBs, only the parameter 'byte_count' is used For CLOBs, both parameters ca
 
 </div>
 </div>
-<a id="ga642bbf0e0fa52f9900aa332ec2d70cdb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga642bbf0e0fa52f9900aa332ec2d70cdb">&#9670;&nbsp;</a></span>OCI_LobIsTemporary()</h2>
+<a id="gaf1dede865f37fbc97b59463558c2292a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf1dede865f37fbc97b59463558c2292a">&#9670;&nbsp;</a></span>OCI_LobIsTemporary()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobIsTemporary </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsTemporary </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em></td><td>)</td>
@@ -1093,14 +1093,14 @@ For BLOBs, only the parameter 'byte_count' is used For CLOBs, both parameters ca
 
 </div>
 </div>
-<a id="gae53d9ad9e0c1db7cc1942775aa4e70c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae53d9ad9e0c1db7cc1942775aa4e70c3">&#9670;&nbsp;</a></span>OCI_LobCopy()</h2>
+<a id="gab8936de246a2a6fe6bd03e7ae700f7f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab8936de246a2a6fe6bd03e7ae700f7f0">&#9670;&nbsp;</a></span>OCI_LobCopy()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobCopy </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobCopy </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -1158,14 +1158,14 @@ Absolute position starts at 0. </dd></dl>
 
 </div>
 </div>
-<a id="ga3cd99f8efdcdbfdc4c273e72c3bde4cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3cd99f8efdcdbfdc4c273e72c3bde4cc">&#9670;&nbsp;</a></span>OCI_LobCopyFromFile()</h2>
+<a id="gab8f4fad5c276bed11dfcaede9687fd8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab8f4fad5c276bed11dfcaede9687fd8e">&#9670;&nbsp;</a></span>OCI_LobCopyFromFile()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobCopyFromFile </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobCopyFromFile </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -1225,14 +1225,14 @@ Absolute position starts at 0. </dd></dl>
 
 </div>
 </div>
-<a id="ga191f3b34b55bac65e994f18118080a08"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga191f3b34b55bac65e994f18118080a08">&#9670;&nbsp;</a></span>OCI_LobOpen()</h2>
+<a id="ga3025a921b5eb12fff55ed06b4ea2882a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3025a921b5eb12fff55ed06b4ea2882a">&#9670;&nbsp;</a></span>OCI_LobOpen()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobOpen </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobOpen </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -1277,14 +1277,14 @@ Absolute position starts at 0. </dd></dl>
 
 </div>
 </div>
-<a id="ga8eb276acd9cb2d5ddda85f3f19ec8f9c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga8eb276acd9cb2d5ddda85f3f19ec8f9c">&#9670;&nbsp;</a></span>OCI_LobClose()</h2>
+<a id="ga585013cc1607a5abe5b7fdf61fca7b9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga585013cc1607a5abe5b7fdf61fca7b9a">&#9670;&nbsp;</a></span>OCI_LobClose()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobClose </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobClose </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em></td><td>)</td>
@@ -1312,14 +1312,14 @@ Absolute position starts at 0. </dd></dl>
 
 </div>
 </div>
-<a id="ga2440e9d98b1a647c6f681d30dcf9cb59"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2440e9d98b1a647c6f681d30dcf9cb59">&#9670;&nbsp;</a></span>OCI_LobIsEqual()</h2>
+<a id="ga4e40fe34b8305f1e99d2993ba93ece99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4e40fe34b8305f1e99d2993ba93ece99">&#9670;&nbsp;</a></span>OCI_LobIsEqual()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobIsEqual </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsEqual </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -1352,14 +1352,14 @@ Absolute position starts at 0. </dd></dl>
 
 </div>
 </div>
-<a id="ga30c335eb342272b308eb3746e5b4ea75"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga30c335eb342272b308eb3746e5b4ea75">&#9670;&nbsp;</a></span>OCI_LobAssign()</h2>
+<a id="gaee023780893eeee9e5890f92cdc3b80e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaee023780893eeee9e5890f92cdc3b80e">&#9670;&nbsp;</a></span>OCI_LobAssign()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobAssign </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobAssign </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -1394,14 +1394,14 @@ Absolute position starts at 0. </dd></dl>
 
 </div>
 </div>
-<a id="gaed9377d01703f9ba727acc71ee04aa4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaed9377d01703f9ba727acc71ee04aa4a">&#9670;&nbsp;</a></span>OCI_LobGetMaxSize()</h2>
+<a id="ga6af6a3ef1a55e6150f61afeb994e3675"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6af6a3ef1a55e6150f61afeb994e3675">&#9670;&nbsp;</a></span>OCI_LobGetMaxSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT big_uint OCI_API OCI_LobGetMaxSize </td>
+          <td class="memname">OCI_SYM_PUBLIC big_uint OCI_API OCI_LobGetMaxSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em></td><td>)</td>
@@ -1425,14 +1425,14 @@ Absolute position starts at 0. </dd></dl>
 
 </div>
 </div>
-<a id="ga1657f17bba0ed7bdbe71293b65aeb25d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga1657f17bba0ed7bdbe71293b65aeb25d">&#9670;&nbsp;</a></span>OCI_LobFlush()</h2>
+<a id="gac352f921cadffd24daed95ac62f479fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac352f921cadffd24daed95ac62f479fc">&#9670;&nbsp;</a></span>OCI_LobFlush()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobFlush </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobFlush </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em></td><td>)</td>
@@ -1456,14 +1456,14 @@ Absolute position starts at 0. </dd></dl>
 
 </div>
 </div>
-<a id="ga04033eb79a2815d59ab17d2d72761a19"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga04033eb79a2815d59ab17d2d72761a19">&#9670;&nbsp;</a></span>OCI_LobEnableBuffering()</h2>
+<a id="ga2f3a2c52553b9213b39e45584589ea51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2f3a2c52553b9213b39e45584589ea51">&#9670;&nbsp;</a></span>OCI_LobEnableBuffering()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobEnableBuffering </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobEnableBuffering </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em>, </td>
@@ -1493,21 +1493,21 @@ Absolute position starts at 0. </dd></dl>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Oracle "LOB Buffering Subsystem" allows client applications to speedup read/write of small buffers on Lobs Objects. Check Oracle Documentation for more details on "LOB Buffering Subsystem". This reduces the number of network round trips and LOB versions, thereby improving LOB performance significantly.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>According to Oracle documentation the following operations are not permitted on Lobs when buffering is on : <a class="el" href="group___ocilib_c_api_lobs.html#gae53d9ad9e0c1db7cc1942775aa4e70c3" title="Copy a portion of a source LOB into a destination LOB.">OCI_LobCopy()</a>, OCI_LobAppend, <a class="el" href="group___ocilib_c_api_lobs.html#ga8187347b6578c04aef6f6e7baa949c09" title="Erase a portion of the lob at a given position.">OCI_LobErase()</a>, <a class="el" href="group___ocilib_c_api_lobs.html#ga1fed642e2fdc4b72724340e27e13153e" title="Return the actual length of a lob.">OCI_LobGetLength()</a>, <a class="el" href="group___ocilib_c_api_lobs.html#ga75a8049251e51665b3103789573a3a3b" title="Truncate the given lob to a shorter length.">OCI_LobTruncate()</a></dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>According to Oracle documentation the following operations are not permitted on Lobs when buffering is on : <a class="el" href="group___ocilib_c_api_lobs.html#gab8936de246a2a6fe6bd03e7ae700f7f0" title="Copy a portion of a source LOB into a destination LOB.">OCI_LobCopy()</a>, OCI_LobAppend, <a class="el" href="group___ocilib_c_api_lobs.html#gae7754413ccbab6c1bdb9799d40dcbecd" title="Erase a portion of the lob at a given position.">OCI_LobErase()</a>, <a class="el" href="group___ocilib_c_api_lobs.html#gac35aaae55fb88dbf93a062e2f6836fa2" title="Return the actual length of a lob.">OCI_LobGetLength()</a>, <a class="el" href="group___ocilib_c_api_lobs.html#ga011d8a679d271a4402506726af624461" title="Truncate the given lob to a shorter length.">OCI_LobTruncate()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_lob.html#a71bb7b684c0fdcc076d2f190f44ed5cb">ocilib::Lob&lt; T, U &gt;::EnableBuffering()</a>.</p>
 
 </div>
 </div>
-<a id="gac9f62083e75fba01cfbc13f6c5c282c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gac9f62083e75fba01cfbc13f6c5c282c4">&#9670;&nbsp;</a></span>OCI_LobGetConnection()</h2>
+<a id="gafb0bdf73edfde8ae96047b79df0c0cfa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafb0bdf73edfde8ae96047b79df0c0cfa">&#9670;&nbsp;</a></span>OCI_LobGetConnection()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>* OCI_API OCI_LobGetConnection </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>* OCI_API OCI_LobGetConnection </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em></td><td>)</td>
@@ -1530,14 +1530,14 @@ Absolute position starts at 0. </dd></dl>
 
 </div>
 </div>
-<a id="gaf8d80a35664751afc19537bd8aeb081b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf8d80a35664751afc19537bd8aeb081b">&#9670;&nbsp;</a></span>OCI_LobIsRemote()</h2>
+<a id="ga6685ef8fe58364ef440b9ff9eb6bc65d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6685ef8fe58364ef440b9ff9eb6bc65d">&#9670;&nbsp;</a></span>OCI_LobIsRemote()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_LobIsRemote </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsRemote </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga8b274b67a4c2320612d4dfb3083131f5">OCI_Lob</a> *&#160;</td>
           <td class="paramname"><em>lob</em></td><td>)</td>
@@ -1567,7 +1567,7 @@ Absolute position starts at 0. </dd></dl>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

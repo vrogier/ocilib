@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -122,58 +122,58 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_hash_tables.html'
 </dd>
 <dd>
 Collisions are handled by chaining method.</dd></dl>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/products.sql */</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <span class="keywordtype">int</span> i, n;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a>  *st;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a>  *rs;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a>  *ht;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f">OCI_HashEntry</a>  *he;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga9eae5234e3ca61b6dc51747bc8ce97e4">OCI_HashValue</a>  *hv;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#ga335822f983af0fb5c529431f06a9a17b">OCI_StatementCreate</a>(cn);</div><div class="line">    ht = <a class="code" href="group___ocilib_c_api_hash_tables.html#gaa4375677fb934961a73a1f5d0de6eadd">OCI_HashCreate</a>(256, OCI_HASH_INTEGER);</div><div class="line"></div><div class="line">    <span class="comment">/* fill the hash table with data from DB */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;select code, name from products&quot;</span>);</div><div class="line"></div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gaf2a9e28b66a9538ba0ffb62bffb87c16">OCI_GetResultset</a>(st);</div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga36ac26dcea78f6074421781e401f97ba">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_hash_tables.html#ga5dd1a43256fb6178b808050166bdd9da">OCI_HashAddInt</a>(ht, <a class="code" href="group___ocilib_c_api_fetching.html#gaae77e6ff755a8c85e3c646f07fa4f76c">OCI_GetString2</a>(rs, <span class="stringliteral">&quot;name&quot;</span>), <a class="code" href="group___ocilib_c_api_fetching.html#gac4c468b115909db951f2e23a5e6d07cf">OCI_GetInt2</a>(rs, <span class="stringliteral">&quot;code&quot;</span>));</div><div class="line">    }</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;%d row(s) fetched\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#ga93bd9197720088dbda2bef593ad1c07c">OCI_GetRowCount</a>(rs));</div><div class="line"></div><div class="line">    <span class="comment">/* lookup an entry */</span></div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;code for &#39;%s&#39; is : %d\n&quot;</span>, <span class="stringliteral">&quot;product 1&quot;</span>, <a class="code" href="group___ocilib_c_api_hash_tables.html#gae3cc454186f8b8870fc695c0d4ca9335">OCI_HashGetInt</a>(ht, <span class="stringliteral">&quot;product 1&quot;</span>));</div><div class="line"></div><div class="line">    <span class="comment">/* browse the hash table */</span></div><div class="line"></div><div class="line">    n = <a class="code" href="group___ocilib_c_api_hash_tables.html#ga0c09d091560a0ef02c96558a254b32db">OCI_HashGetSize</a>(ht);</div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; n; i++)</div><div class="line">    {</div><div class="line">        he = <a class="code" href="group___ocilib_c_api_hash_tables.html#gaac21d1abb64dd64e797b1fe8e8638675">OCI_HashGetEntry</a>(ht, i);</div><div class="line"></div><div class="line">        <span class="keywordflow">while</span> (he)</div><div class="line">        {</div><div class="line">            printf(<span class="stringliteral">&quot;&gt;key: &#39;%s&#39;\n&quot;</span>, he-&gt;key);</div><div class="line"></div><div class="line">            hv = he-&gt;values;</div><div class="line"></div><div class="line">            <span class="keywordflow">while</span> (hv)</div><div class="line">            {</div><div class="line">                printf(<span class="stringliteral">&quot;..... value : &#39;%i&#39;\n&quot;</span>, hv-&gt;value.num);</div><div class="line">                hv = hv-&gt;next;</div><div class="line">            }</div><div class="line"></div><div class="line">            he = he-&gt;next;</div><div class="line">        }</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">/* destroy table */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_hash_tables.html#ga9d85500c527e1cb75697abd663add2f1">OCI_HashFree</a>(ht);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga487b4f90f1fd4aee18f3d901f5aed104">OCI_StatementFree</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> <table class="memberdecls">
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/products.sql */</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <span class="keywordtype">int</span> i, n;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a>  *st;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a>  *rs;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a>  *ht;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f">OCI_HashEntry</a>  *he;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga9eae5234e3ca61b6dc51747bc8ce97e4">OCI_HashValue</a>  *hv;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#gab62065db373d58337fa92948d5a8eba1">OCI_StatementCreate</a>(cn);</div><div class="line">    ht = <a class="code" href="group___ocilib_c_api_hash_tables.html#gae4e352e1bfd10252a6160c722753b727">OCI_HashCreate</a>(256, OCI_HASH_INTEGER);</div><div class="line"></div><div class="line">    <span class="comment">/* fill the hash table with data from DB */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;select code, name from products&quot;</span>);</div><div class="line"></div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gace8269c905b60b758358025d61e7fce7">OCI_GetResultset</a>(st);</div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_hash_tables.html#gaed6b1961449185ff518da87ea36d1fa5">OCI_HashAddInt</a>(ht, <a class="code" href="group___ocilib_c_api_fetching.html#gaf477ec7cf03543385462cb4831184be1">OCI_GetString2</a>(rs, <span class="stringliteral">&quot;name&quot;</span>), <a class="code" href="group___ocilib_c_api_fetching.html#gaf85796a64b3147bbd0f18f1a2967d31c">OCI_GetInt2</a>(rs, <span class="stringliteral">&quot;code&quot;</span>));</div><div class="line">    }</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;%d row(s) fetched\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#ga80b05221765bef61fc2a5a83707fc09f">OCI_GetRowCount</a>(rs));</div><div class="line"></div><div class="line">    <span class="comment">/* lookup an entry */</span></div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;code for &#39;%s&#39; is : %d\n&quot;</span>, <span class="stringliteral">&quot;product 1&quot;</span>, <a class="code" href="group___ocilib_c_api_hash_tables.html#ga4af2b014afd078f5e889eff9fe1cae32">OCI_HashGetInt</a>(ht, <span class="stringliteral">&quot;product 1&quot;</span>));</div><div class="line"></div><div class="line">    <span class="comment">/* browse the hash table */</span></div><div class="line"></div><div class="line">    n = <a class="code" href="group___ocilib_c_api_hash_tables.html#ga2e7dbef7a5a7dbfe2cfd16721b09e282">OCI_HashGetSize</a>(ht);</div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; n; i++)</div><div class="line">    {</div><div class="line">        he = <a class="code" href="group___ocilib_c_api_hash_tables.html#gac1673978828990993a403bcd8e5a6d43">OCI_HashGetEntry</a>(ht, i);</div><div class="line"></div><div class="line">        <span class="keywordflow">while</span> (he)</div><div class="line">        {</div><div class="line">            printf(<span class="stringliteral">&quot;&gt;key: &#39;%s&#39;\n&quot;</span>, he-&gt;key);</div><div class="line"></div><div class="line">            hv = he-&gt;values;</div><div class="line"></div><div class="line">            <span class="keywordflow">while</span> (hv)</div><div class="line">            {</div><div class="line">                printf(<span class="stringliteral">&quot;..... value : &#39;%i&#39;\n&quot;</span>, hv-&gt;value.num);</div><div class="line">                hv = hv-&gt;next;</div><div class="line">            }</div><div class="line"></div><div class="line">            he = he-&gt;next;</div><div class="line">        }</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">/* destroy table */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_hash_tables.html#gab617eedae4e32ded3ad5ee1514b88ae0">OCI_HashFree</a>(ht);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:gaa4375677fb934961a73a1f5d0de6eadd"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#gaa4375677fb934961a73a1f5d0de6eadd">OCI_HashCreate</a> (unsigned int size, unsigned int type)</td></tr>
-<tr class="memdesc:gaa4375677fb934961a73a1f5d0de6eadd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a hash table.  <a href="#gaa4375677fb934961a73a1f5d0de6eadd">More...</a><br /></td></tr>
-<tr class="separator:gaa4375677fb934961a73a1f5d0de6eadd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9d85500c527e1cb75697abd663add2f1"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga9d85500c527e1cb75697abd663add2f1">OCI_HashFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table)</td></tr>
-<tr class="memdesc:ga9d85500c527e1cb75697abd663add2f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a hash table.  <a href="#ga9d85500c527e1cb75697abd663add2f1">More...</a><br /></td></tr>
-<tr class="separator:ga9d85500c527e1cb75697abd663add2f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0c09d091560a0ef02c96558a254b32db"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga0c09d091560a0ef02c96558a254b32db">OCI_HashGetSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table)</td></tr>
-<tr class="memdesc:ga0c09d091560a0ef02c96558a254b32db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the size of the hash table.  <a href="#ga0c09d091560a0ef02c96558a254b32db">More...</a><br /></td></tr>
-<tr class="separator:ga0c09d091560a0ef02c96558a254b32db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3fee7204caa79b6a907888afad3e54ec"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga3fee7204caa79b6a907888afad3e54ec">OCI_HashGetType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table)</td></tr>
-<tr class="memdesc:ga3fee7204caa79b6a907888afad3e54ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of the hash table.  <a href="#ga3fee7204caa79b6a907888afad3e54ec">More...</a><br /></td></tr>
-<tr class="separator:ga3fee7204caa79b6a907888afad3e54ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga133bdca29a7db21fb256d6fca74d884d"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga133bdca29a7db21fb256d6fca74d884d">OCI_HashAddString</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key, const otext *value)</td></tr>
-<tr class="memdesc:ga133bdca29a7db21fb256d6fca74d884d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a pair string key / string value to the hash table.  <a href="#ga133bdca29a7db21fb256d6fca74d884d">More...</a><br /></td></tr>
-<tr class="separator:ga133bdca29a7db21fb256d6fca74d884d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gadfb699332bcbf683f21986e2b2ef8bae"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#gadfb699332bcbf683f21986e2b2ef8bae">OCI_HashGetString</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key)</td></tr>
-<tr class="memdesc:gadfb699332bcbf683f21986e2b2ef8bae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the string value associated to the given key.  <a href="#gadfb699332bcbf683f21986e2b2ef8bae">More...</a><br /></td></tr>
-<tr class="separator:gadfb699332bcbf683f21986e2b2ef8bae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5dd1a43256fb6178b808050166bdd9da"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga5dd1a43256fb6178b808050166bdd9da">OCI_HashAddInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key, int value)</td></tr>
-<tr class="memdesc:ga5dd1a43256fb6178b808050166bdd9da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a pair string key / integer value to the hash table.  <a href="#ga5dd1a43256fb6178b808050166bdd9da">More...</a><br /></td></tr>
-<tr class="separator:ga5dd1a43256fb6178b808050166bdd9da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae3cc454186f8b8870fc695c0d4ca9335"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#gae3cc454186f8b8870fc695c0d4ca9335">OCI_HashGetInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key)</td></tr>
-<tr class="memdesc:gae3cc454186f8b8870fc695c0d4ca9335"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the integer value associated to the given key.  <a href="#gae3cc454186f8b8870fc695c0d4ca9335">More...</a><br /></td></tr>
-<tr class="separator:gae3cc454186f8b8870fc695c0d4ca9335"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5ccbb621f98ac384b42970310ded97be"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga5ccbb621f98ac384b42970310ded97be">OCI_HashAddPointer</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key, void *value)</td></tr>
-<tr class="memdesc:ga5ccbb621f98ac384b42970310ded97be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a pair string key / pointer value to the hash table.  <a href="#ga5ccbb621f98ac384b42970310ded97be">More...</a><br /></td></tr>
-<tr class="separator:ga5ccbb621f98ac384b42970310ded97be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5888383ad07c5ccf3af8e83545a6ad72"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga5888383ad07c5ccf3af8e83545a6ad72">OCI_HashGetPointer</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key)</td></tr>
-<tr class="memdesc:ga5888383ad07c5ccf3af8e83545a6ad72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a pointer associated with the given key.  <a href="#ga5888383ad07c5ccf3af8e83545a6ad72">More...</a><br /></td></tr>
-<tr class="separator:ga5888383ad07c5ccf3af8e83545a6ad72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga754bc2113cc9b3700d41569122f4a9cc"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f">OCI_HashEntry</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga754bc2113cc9b3700d41569122f4a9cc">OCI_HashLookup</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key, boolean create)</td></tr>
-<tr class="memdesc:ga754bc2113cc9b3700d41569122f4a9cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lookup for an entry matching the key in the table.  <a href="#ga754bc2113cc9b3700d41569122f4a9cc">More...</a><br /></td></tr>
-<tr class="separator:ga754bc2113cc9b3700d41569122f4a9cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gabd2a244334f5c171461af7e9b5856e7e"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga9eae5234e3ca61b6dc51747bc8ce97e4">OCI_HashValue</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#gabd2a244334f5c171461af7e9b5856e7e">OCI_HashGetValue</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key)</td></tr>
-<tr class="memdesc:gabd2a244334f5c171461af7e9b5856e7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the first hash slot that matches the key.  <a href="#gabd2a244334f5c171461af7e9b5856e7e">More...</a><br /></td></tr>
-<tr class="separator:gabd2a244334f5c171461af7e9b5856e7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaac21d1abb64dd64e797b1fe8e8638675"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f">OCI_HashEntry</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#gaac21d1abb64dd64e797b1fe8e8638675">OCI_HashGetEntry</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, unsigned int index)</td></tr>
-<tr class="memdesc:gaac21d1abb64dd64e797b1fe8e8638675"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the entry slot of the hash table internal list at the given position.  <a href="#gaac21d1abb64dd64e797b1fe8e8638675">More...</a><br /></td></tr>
-<tr class="separator:gaac21d1abb64dd64e797b1fe8e8638675"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae4e352e1bfd10252a6160c722753b727"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#gae4e352e1bfd10252a6160c722753b727">OCI_HashCreate</a> (unsigned int size, unsigned int type)</td></tr>
+<tr class="memdesc:gae4e352e1bfd10252a6160c722753b727"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a hash table.  <a href="#gae4e352e1bfd10252a6160c722753b727">More...</a><br /></td></tr>
+<tr class="separator:gae4e352e1bfd10252a6160c722753b727"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab617eedae4e32ded3ad5ee1514b88ae0"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#gab617eedae4e32ded3ad5ee1514b88ae0">OCI_HashFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table)</td></tr>
+<tr class="memdesc:gab617eedae4e32ded3ad5ee1514b88ae0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a hash table.  <a href="#gab617eedae4e32ded3ad5ee1514b88ae0">More...</a><br /></td></tr>
+<tr class="separator:gab617eedae4e32ded3ad5ee1514b88ae0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2e7dbef7a5a7dbfe2cfd16721b09e282"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga2e7dbef7a5a7dbfe2cfd16721b09e282">OCI_HashGetSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table)</td></tr>
+<tr class="memdesc:ga2e7dbef7a5a7dbfe2cfd16721b09e282"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the size of the hash table.  <a href="#ga2e7dbef7a5a7dbfe2cfd16721b09e282">More...</a><br /></td></tr>
+<tr class="separator:ga2e7dbef7a5a7dbfe2cfd16721b09e282"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga916140a892972372ef9c3337c8d322fd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga916140a892972372ef9c3337c8d322fd">OCI_HashGetType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table)</td></tr>
+<tr class="memdesc:ga916140a892972372ef9c3337c8d322fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of the hash table.  <a href="#ga916140a892972372ef9c3337c8d322fd">More...</a><br /></td></tr>
+<tr class="separator:ga916140a892972372ef9c3337c8d322fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9c961648afe95d2413415d18e968d28c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga9c961648afe95d2413415d18e968d28c">OCI_HashAddString</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key, const otext *value)</td></tr>
+<tr class="memdesc:ga9c961648afe95d2413415d18e968d28c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a pair string key / string value to the hash table.  <a href="#ga9c961648afe95d2413415d18e968d28c">More...</a><br /></td></tr>
+<tr class="separator:ga9c961648afe95d2413415d18e968d28c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga839eeee3bb9675a643eb54c9560f34bc"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga839eeee3bb9675a643eb54c9560f34bc">OCI_HashGetString</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key)</td></tr>
+<tr class="memdesc:ga839eeee3bb9675a643eb54c9560f34bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the string value associated to the given key.  <a href="#ga839eeee3bb9675a643eb54c9560f34bc">More...</a><br /></td></tr>
+<tr class="separator:ga839eeee3bb9675a643eb54c9560f34bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaed6b1961449185ff518da87ea36d1fa5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#gaed6b1961449185ff518da87ea36d1fa5">OCI_HashAddInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key, int value)</td></tr>
+<tr class="memdesc:gaed6b1961449185ff518da87ea36d1fa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a pair string key / integer value to the hash table.  <a href="#gaed6b1961449185ff518da87ea36d1fa5">More...</a><br /></td></tr>
+<tr class="separator:gaed6b1961449185ff518da87ea36d1fa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4af2b014afd078f5e889eff9fe1cae32"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga4af2b014afd078f5e889eff9fe1cae32">OCI_HashGetInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key)</td></tr>
+<tr class="memdesc:ga4af2b014afd078f5e889eff9fe1cae32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the integer value associated to the given key.  <a href="#ga4af2b014afd078f5e889eff9fe1cae32">More...</a><br /></td></tr>
+<tr class="separator:ga4af2b014afd078f5e889eff9fe1cae32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga802a1450629be5c8d4f9b572271949bc"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga802a1450629be5c8d4f9b572271949bc">OCI_HashAddPointer</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key, void *value)</td></tr>
+<tr class="memdesc:ga802a1450629be5c8d4f9b572271949bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a pair string key / pointer value to the hash table.  <a href="#ga802a1450629be5c8d4f9b572271949bc">More...</a><br /></td></tr>
+<tr class="separator:ga802a1450629be5c8d4f9b572271949bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga70fd57f85d290f72e64e30c5aa7a9f18"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga70fd57f85d290f72e64e30c5aa7a9f18">OCI_HashGetPointer</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key)</td></tr>
+<tr class="memdesc:ga70fd57f85d290f72e64e30c5aa7a9f18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a pointer associated with the given key.  <a href="#ga70fd57f85d290f72e64e30c5aa7a9f18">More...</a><br /></td></tr>
+<tr class="separator:ga70fd57f85d290f72e64e30c5aa7a9f18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5822731c199b1f9d7b8590a5a93ef1ef"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f">OCI_HashEntry</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga5822731c199b1f9d7b8590a5a93ef1ef">OCI_HashLookup</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key, boolean create)</td></tr>
+<tr class="memdesc:ga5822731c199b1f9d7b8590a5a93ef1ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lookup for an entry matching the key in the table.  <a href="#ga5822731c199b1f9d7b8590a5a93ef1ef">More...</a><br /></td></tr>
+<tr class="separator:ga5822731c199b1f9d7b8590a5a93ef1ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2595b8342c75b53d8447c1e0c513dd29"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga9eae5234e3ca61b6dc51747bc8ce97e4">OCI_HashValue</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga2595b8342c75b53d8447c1e0c513dd29">OCI_HashGetValue</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key)</td></tr>
+<tr class="memdesc:ga2595b8342c75b53d8447c1e0c513dd29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the first hash slot that matches the key.  <a href="#ga2595b8342c75b53d8447c1e0c513dd29">More...</a><br /></td></tr>
+<tr class="separator:ga2595b8342c75b53d8447c1e0c513dd29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac1673978828990993a403bcd8e5a6d43"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f">OCI_HashEntry</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#gac1673978828990993a403bcd8e5a6d43">OCI_HashGetEntry</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, unsigned int index)</td></tr>
+<tr class="memdesc:gac1673978828990993a403bcd8e5a6d43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the entry slot of the hash table internal list at the given position.  <a href="#gac1673978828990993a403bcd8e5a6d43">More...</a><br /></td></tr>
+<tr class="separator:gac1673978828990993a403bcd8e5a6d43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="gaa4375677fb934961a73a1f5d0de6eadd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa4375677fb934961a73a1f5d0de6eadd">&#9670;&nbsp;</a></span>OCI_HashCreate()</h2>
+<a id="gae4e352e1bfd10252a6160c722753b727"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae4e352e1bfd10252a6160c722753b727">&#9670;&nbsp;</a></span>OCI_HashCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a>* OCI_API OCI_HashCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a>* OCI_API OCI_HashCreate </td>
           <td>(</td>
           <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>size</em>, </td>
@@ -212,14 +212,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga9d85500c527e1cb75697abd663add2f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga9d85500c527e1cb75697abd663add2f1">&#9670;&nbsp;</a></span>OCI_HashFree()</h2>
+<a id="gab617eedae4e32ded3ad5ee1514b88ae0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab617eedae4e32ded3ad5ee1514b88ae0">&#9670;&nbsp;</a></span>OCI_HashFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_HashFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_HashFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *&#160;</td>
           <td class="paramname"><em>table</em></td><td>)</td>
@@ -241,14 +241,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga0c09d091560a0ef02c96558a254b32db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0c09d091560a0ef02c96558a254b32db">&#9670;&nbsp;</a></span>OCI_HashGetSize()</h2>
+<a id="ga2e7dbef7a5a7dbfe2cfd16721b09e282"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2e7dbef7a5a7dbfe2cfd16721b09e282">&#9670;&nbsp;</a></span>OCI_HashGetSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_HashGetSize </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_HashGetSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *&#160;</td>
           <td class="paramname"><em>table</em></td><td>)</td>
@@ -269,14 +269,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga3fee7204caa79b6a907888afad3e54ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3fee7204caa79b6a907888afad3e54ec">&#9670;&nbsp;</a></span>OCI_HashGetType()</h2>
+<a id="ga916140a892972372ef9c3337c8d322fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga916140a892972372ef9c3337c8d322fd">&#9670;&nbsp;</a></span>OCI_HashGetType()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_HashGetType </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_HashGetType </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *&#160;</td>
           <td class="paramname"><em>table</em></td><td>)</td>
@@ -304,14 +304,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga133bdca29a7db21fb256d6fca74d884d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga133bdca29a7db21fb256d6fca74d884d">&#9670;&nbsp;</a></span>OCI_HashAddString()</h2>
+<a id="ga9c961648afe95d2413415d18e968d28c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9c961648afe95d2413415d18e968d28c">&#9670;&nbsp;</a></span>OCI_HashAddString()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_HashAddString </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddString </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *&#160;</td>
           <td class="paramname"><em>table</em>, </td>
@@ -351,14 +351,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gadfb699332bcbf683f21986e2b2ef8bae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gadfb699332bcbf683f21986e2b2ef8bae">&#9670;&nbsp;</a></span>OCI_HashGetString()</h2>
+<a id="ga839eeee3bb9675a643eb54c9560f34bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga839eeee3bb9675a643eb54c9560f34bc">&#9670;&nbsp;</a></span>OCI_HashGetString()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_HashGetString </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_HashGetString </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *&#160;</td>
           <td class="paramname"><em>table</em>, </td>
@@ -391,14 +391,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga5dd1a43256fb6178b808050166bdd9da"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5dd1a43256fb6178b808050166bdd9da">&#9670;&nbsp;</a></span>OCI_HashAddInt()</h2>
+<a id="gaed6b1961449185ff518da87ea36d1fa5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaed6b1961449185ff518da87ea36d1fa5">&#9670;&nbsp;</a></span>OCI_HashAddInt()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_HashAddInt </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddInt </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *&#160;</td>
           <td class="paramname"><em>table</em>, </td>
@@ -438,14 +438,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gae3cc454186f8b8870fc695c0d4ca9335"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae3cc454186f8b8870fc695c0d4ca9335">&#9670;&nbsp;</a></span>OCI_HashGetInt()</h2>
+<a id="ga4af2b014afd078f5e889eff9fe1cae32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4af2b014afd078f5e889eff9fe1cae32">&#9670;&nbsp;</a></span>OCI_HashGetInt()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT int OCI_API OCI_HashGetInt </td>
+          <td class="memname">OCI_SYM_PUBLIC int OCI_API OCI_HashGetInt </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *&#160;</td>
           <td class="paramname"><em>table</em>, </td>
@@ -478,14 +478,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga5ccbb621f98ac384b42970310ded97be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5ccbb621f98ac384b42970310ded97be">&#9670;&nbsp;</a></span>OCI_HashAddPointer()</h2>
+<a id="ga802a1450629be5c8d4f9b572271949bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga802a1450629be5c8d4f9b572271949bc">&#9670;&nbsp;</a></span>OCI_HashAddPointer()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_HashAddPointer </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddPointer </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *&#160;</td>
           <td class="paramname"><em>table</em>, </td>
@@ -525,14 +525,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga5888383ad07c5ccf3af8e83545a6ad72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5888383ad07c5ccf3af8e83545a6ad72">&#9670;&nbsp;</a></span>OCI_HashGetPointer()</h2>
+<a id="ga70fd57f85d290f72e64e30c5aa7a9f18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga70fd57f85d290f72e64e30c5aa7a9f18">&#9670;&nbsp;</a></span>OCI_HashGetPointer()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT void* OCI_API OCI_HashGetPointer </td>
+          <td class="memname">OCI_SYM_PUBLIC void* OCI_API OCI_HashGetPointer </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *&#160;</td>
           <td class="paramname"><em>table</em>, </td>
@@ -565,14 +565,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga754bc2113cc9b3700d41569122f4a9cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga754bc2113cc9b3700d41569122f4a9cc">&#9670;&nbsp;</a></span>OCI_HashLookup()</h2>
+<a id="ga5822731c199b1f9d7b8590a5a93ef1ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5822731c199b1f9d7b8590a5a93ef1ef">&#9670;&nbsp;</a></span>OCI_HashLookup()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f">OCI_HashEntry</a>* OCI_API OCI_HashLookup </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f">OCI_HashEntry</a>* OCI_API OCI_HashLookup </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *&#160;</td>
           <td class="paramname"><em>table</em>, </td>
@@ -612,14 +612,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gabd2a244334f5c171461af7e9b5856e7e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gabd2a244334f5c171461af7e9b5856e7e">&#9670;&nbsp;</a></span>OCI_HashGetValue()</h2>
+<a id="ga2595b8342c75b53d8447c1e0c513dd29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2595b8342c75b53d8447c1e0c513dd29">&#9670;&nbsp;</a></span>OCI_HashGetValue()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga9eae5234e3ca61b6dc51747bc8ce97e4">OCI_HashValue</a>* OCI_API OCI_HashGetValue </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga9eae5234e3ca61b6dc51747bc8ce97e4">OCI_HashValue</a>* OCI_API OCI_HashGetValue </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *&#160;</td>
           <td class="paramname"><em>table</em>, </td>
@@ -652,14 +652,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaac21d1abb64dd64e797b1fe8e8638675"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaac21d1abb64dd64e797b1fe8e8638675">&#9670;&nbsp;</a></span>OCI_HashGetEntry()</h2>
+<a id="gac1673978828990993a403bcd8e5a6d43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac1673978828990993a403bcd8e5a6d43">&#9670;&nbsp;</a></span>OCI_HashGetEntry()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f">OCI_HashEntry</a>* OCI_API OCI_HashGetEntry </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f">OCI_HashEntry</a>* OCI_API OCI_HashGetEntry </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *&#160;</td>
           <td class="paramname"><em>table</em>, </td>
@@ -699,7 +699,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

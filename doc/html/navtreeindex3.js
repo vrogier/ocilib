@@ -190,9 +190,9 @@ var NAVTREEINDEX3 =
 "classocilib_1_1support_1_1_bind_type_adaptor.html":[3,0,0,1,8],
 "classocilib_1_1support_1_1_binds_holder.html":[3,0,0,1,7],
 "compat_8h_source.html":[4,0,13],
-"config_8h_source.html":[4,0,16],
-"config_8hpp_source.html":[4,0,17],
-"core_8hpp_source.html":[4,0,19],
+"config_8hpp_source.html":[4,0,16],
+"core_8hpp_source.html":[4,0,18],
+"defines_8h_source.html":[4,0,20],
 "files.html":[4,0],
 "functions.html":[3,2,0],
 "functions.html":[3,2,0,0],
@@ -245,9 +245,9 @@ var NAVTREEINDEX3 =
 "functions_~.html":[3,2,0,23],
 "group___ocilib_c_api.html":[1,2],
 "group___ocilib_c_api_abort.html":[1,2,23],
-"group___ocilib_c_api_abort.html#gaf34a39ddfb3b6677eab1add1a4052e4d":[1,2,23,0],
+"group___ocilib_c_api_abort.html#ga64dfd04e997dc1496d09dc05b83cedf0":[1,2,23,0],
 "group___ocilib_c_api_advanced_queuing.html":[1,2,29],
-"group___ocilib_c_api_advanced_queuing.html#ga0324dc312063a08f5b34ceae9f5f1f09":[1,2,29,54],
-"group___ocilib_c_api_advanced_queuing.html#ga0b690cf393387147d9d474adab89b5c0":[1,2,29,57],
-"group___ocilib_c_api_advanced_queuing.html#ga0f6f721d9b3fe4e73a74ed6dc1909622":[1,2,29,48]
+"group___ocilib_c_api_advanced_queuing.html#ga009427823e6873f61f4381373699f954":[1,2,29,16],
+"group___ocilib_c_api_advanced_queuing.html#ga00c7712f43b1bc03b28e60256f2fd6ee":[1,2,29,0],
+"group___ocilib_c_api_advanced_queuing.html#ga042a7ca976ca00f5bd4e7052406d6146":[1,2,29,15]
 };

@@ -1,13 +1,13 @@
 var group___ocilib_c_api_error_handling =
 [
-    [ "OCI_SetErrorHandler", "group___ocilib_c_api_error_handling.html#ga1d8013908d583eb37f3e7b15556a3582", null ],
-    [ "OCI_GetLastError", "group___ocilib_c_api_error_handling.html#gaf2abe52ad5b278f65dd97a44a2adac4c", null ],
-    [ "OCI_ErrorGetString", "group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38", null ],
-    [ "OCI_ErrorGetType", "group___ocilib_c_api_error_handling.html#ga66d447c8cd06ea3f841b439a1aac055b", null ],
-    [ "OCI_ErrorGetOCICode", "group___ocilib_c_api_error_handling.html#ga76fb68323de3574fb92a8027e8c4280e", null ],
-    [ "OCI_ErrorGetInternalCode", "group___ocilib_c_api_error_handling.html#gaa59683a2cd8d8a5eb7d652fb153ff6c1", null ],
-    [ "OCI_ErrorGetConnection", "group___ocilib_c_api_error_handling.html#gaa1dcd57ceeb422c050dd3791ff0372e1", null ],
-    [ "OCI_ErrorGetStatement", "group___ocilib_c_api_error_handling.html#gab099d59cd4faf2fa6a4430114ea73402", null ],
-    [ "OCI_ErrorGetRow", "group___ocilib_c_api_error_handling.html#ga9bbafe173059e065d3bc8d805c0d7033", null ],
-    [ "OCI_ErrorGetLocation", "group___ocilib_c_api_error_handling.html#ga2c072431c84a8f028a7483ab5234bf68", null ]
+    [ "OCI_SetErrorHandler", "group___ocilib_c_api_error_handling.html#ga748ca2a086c8adeb08e104e64155767e", null ],
+    [ "OCI_GetLastError", "group___ocilib_c_api_error_handling.html#gafbd1fb0e0b9ee2d62e357c70276aed0e", null ],
+    [ "OCI_ErrorGetString", "group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348", null ],
+    [ "OCI_ErrorGetType", "group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af", null ],
+    [ "OCI_ErrorGetOCICode", "group___ocilib_c_api_error_handling.html#gac68b56831d0ca0a45fb8da25f97d4e07", null ],
+    [ "OCI_ErrorGetInternalCode", "group___ocilib_c_api_error_handling.html#ga148d833e4faf47b78cebb4cb4aebcc1e", null ],
+    [ "OCI_ErrorGetConnection", "group___ocilib_c_api_error_handling.html#gada405583643f56f1e41188acd9446b26", null ],
+    [ "OCI_ErrorGetStatement", "group___ocilib_c_api_error_handling.html#gab0e7a642f56267550ac07ba01d700d7a", null ],
+    [ "OCI_ErrorGetRow", "group___ocilib_c_api_error_handling.html#ga6f2a9404899d7365fbc51ded9bff5c8b", null ],
+    [ "OCI_ErrorGetLocation", "group___ocilib_c_api_error_handling.html#ga5c7f187565211c7a0a45c4685b07f684", null ]
 ];

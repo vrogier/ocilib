@@ -1,19 +1,24 @@
 ---
 author: admin
 comments: true
-date: 2020-07-16 12:00:00+01:00
+date: 2020-10-28 10:00:00+01:00
 layout: page
 slug: download
 title: Download
 ---
 
-* Get the lastest package from GitHub :[version {{site.ocilib_current_release_version}} ({{site.ocilib_current_release_date}})]({{site.projecturl}}/releases/)
+Latest version is {{site.ocilib_current_release_version}} ({{site.ocilib_current_release_date}})
+
+You can get OCILIB from the following sources:
+
+* [Windows, Linux/Unix distribution archives from GitHub]({{site.projecturl}}/releases/)
+* [Windows Nuget package from nuget.org](https://www.nuget.org/packages/ocilib/)
 
 ## Installation
 
 ### Windows platforms
 
-Since version 4.6.4, OCILIB is also available as a nuget packages available on nuget.org.
+Since version 4.6.4, OCILIB is also available as a nuget packages available on nuget.org
 Thus, in your VS project, add a dependency to the package "ocilib".
 Your project will be automatically configured to reference ocilib headers and link ocilib shared librairies.
  

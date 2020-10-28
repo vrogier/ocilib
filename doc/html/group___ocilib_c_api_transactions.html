@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -101,8 +101,8 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_transactions.html
 <p>Local transactions are implicit within connection objects and there is no specific call or programming step for using it.</p>
 <p>In order to control changes made in the database:</p>
 <ul>
-<li><a class="el" href="group___ocilib_c_api_transactions.html#gaee1ba614ed2dc5bd83bf788ca08f3e71" title="Commit current pending changes.">OCI_Commit()</a> validates current pending modifications</li>
-<li><a class="el" href="group___ocilib_c_api_transactions.html#ga50742bf6db9f580194d2433b8d310f5e" title="Cancel current pending changes.">OCI_Rollback()</a> discards current pending modifications</li>
+<li><a class="el" href="group___ocilib_c_api_transactions.html#gadc75ccc3334477a3b4ceeb609f7ed544" title="Commit current pending changes.">OCI_Commit()</a> validates current pending modifications</li>
+<li><a class="el" href="group___ocilib_c_api_transactions.html#gafe6bf0b2d454a3e2f78a1da8063661fc" title="Cancel current pending changes.">OCI_Rollback()</a> discards current pending modifications</li>
 </ul>
 <p>OCILIB supports a feature called 'Auto Commit' that performs an implicit and automatic commit call after every execute call</p>
 <dl class="section note"><dt>Note</dt><dd>Those actions are executed within a connection context and not directly to a transaction.</dd></dl>
@@ -116,55 +116,55 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_transactions.html
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:gaee1ba614ed2dc5bd83bf788ca08f3e71"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gaee1ba614ed2dc5bd83bf788ca08f3e71">OCI_Commit</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gaee1ba614ed2dc5bd83bf788ca08f3e71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Commit current pending changes.  <a href="#gaee1ba614ed2dc5bd83bf788ca08f3e71">More...</a><br /></td></tr>
-<tr class="separator:gaee1ba614ed2dc5bd83bf788ca08f3e71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga50742bf6db9f580194d2433b8d310f5e"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga50742bf6db9f580194d2433b8d310f5e">OCI_Rollback</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga50742bf6db9f580194d2433b8d310f5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cancel current pending changes.  <a href="#ga50742bf6db9f580194d2433b8d310f5e">More...</a><br /></td></tr>
-<tr class="separator:ga50742bf6db9f580194d2433b8d310f5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8a21e8ab3893ae71ff8d8f6c9795566d"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga8a21e8ab3893ae71ff8d8f6c9795566d">OCI_SetAutoCommit</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, boolean enable)</td></tr>
-<tr class="memdesc:ga8a21e8ab3893ae71ff8d8f6c9795566d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable / disable auto commit mode.  <a href="#ga8a21e8ab3893ae71ff8d8f6c9795566d">More...</a><br /></td></tr>
-<tr class="separator:ga8a21e8ab3893ae71ff8d8f6c9795566d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gabb9c795b1a971cf2bb2b9a57a97de7cf"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gabb9c795b1a971cf2bb2b9a57a97de7cf">OCI_GetAutoCommit</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gabb9c795b1a971cf2bb2b9a57a97de7cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current auto commit mode status.  <a href="#gabb9c795b1a971cf2bb2b9a57a97de7cf">More...</a><br /></td></tr>
-<tr class="separator:gabb9c795b1a971cf2bb2b9a57a97de7cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga206d14aa9a25befd218a7f91a56d5c47"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga206d14aa9a25befd218a7f91a56d5c47">OCI_TransactionCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int timeout, unsigned int mode, <a class="el" href="group___ocilib_c_api_datatypes.html#ga56df9baec6ef3397e359102b323b3d7e">OCI_XID</a> *pxid)</td></tr>
-<tr class="memdesc:ga206d14aa9a25befd218a7f91a56d5c47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new global transaction or a serializable/read-only local transaction.  <a href="#ga206d14aa9a25befd218a7f91a56d5c47">More...</a><br /></td></tr>
-<tr class="separator:ga206d14aa9a25befd218a7f91a56d5c47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaab96c358fd6074b5d4f027bd86cfa229"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gaab96c358fd6074b5d4f027bd86cfa229">OCI_TransactionFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:gaab96c358fd6074b5d4f027bd86cfa229"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free current transaction.  <a href="#gaab96c358fd6074b5d4f027bd86cfa229">More...</a><br /></td></tr>
-<tr class="separator:gaab96c358fd6074b5d4f027bd86cfa229"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf8e8d8d04d91f2c18dbf34d875b8e42f"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gaf8e8d8d04d91f2c18dbf34d875b8e42f">OCI_TransactionStart</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:gaf8e8d8d04d91f2c18dbf34d875b8e42f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start global transaction.  <a href="#gaf8e8d8d04d91f2c18dbf34d875b8e42f">More...</a><br /></td></tr>
-<tr class="separator:gaf8e8d8d04d91f2c18dbf34d875b8e42f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7ede55e97d4012c7ea43df2bec40762e"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga7ede55e97d4012c7ea43df2bec40762e">OCI_TransactionStop</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:ga7ede55e97d4012c7ea43df2bec40762e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop current global transaction.  <a href="#ga7ede55e97d4012c7ea43df2bec40762e">More...</a><br /></td></tr>
-<tr class="separator:ga7ede55e97d4012c7ea43df2bec40762e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga59e8bd076231e597b5f74bc02c976577"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga59e8bd076231e597b5f74bc02c976577">OCI_TransactionResume</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:ga59e8bd076231e597b5f74bc02c976577"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume a stopped global transaction.  <a href="#ga59e8bd076231e597b5f74bc02c976577">More...</a><br /></td></tr>
-<tr class="separator:ga59e8bd076231e597b5f74bc02c976577"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf5c5db14eb32609314ccae72c891ebfc"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gaf5c5db14eb32609314ccae72c891ebfc">OCI_TransactionPrepare</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:gaf5c5db14eb32609314ccae72c891ebfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare a global transaction validation.  <a href="#gaf5c5db14eb32609314ccae72c891ebfc">More...</a><br /></td></tr>
-<tr class="separator:gaf5c5db14eb32609314ccae72c891ebfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gadebbc2e16eea8f328b6d5dfb49a9d5c5"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gadebbc2e16eea8f328b6d5dfb49a9d5c5">OCI_TransactionForget</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:gadebbc2e16eea8f328b6d5dfb49a9d5c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cancel the prepared global transaction validation.  <a href="#gadebbc2e16eea8f328b6d5dfb49a9d5c5">More...</a><br /></td></tr>
-<tr class="separator:gadebbc2e16eea8f328b6d5dfb49a9d5c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae54af0bfb81cd2d21bea6451db491e60"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gae54af0bfb81cd2d21bea6451db491e60">OCI_TransactionGetMode</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:gae54af0bfb81cd2d21bea6451db491e60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return global transaction mode.  <a href="#gae54af0bfb81cd2d21bea6451db491e60">More...</a><br /></td></tr>
-<tr class="separator:gae54af0bfb81cd2d21bea6451db491e60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga558f067c07970370c84b8e8463276f89"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga558f067c07970370c84b8e8463276f89">OCI_TransactionGetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:ga558f067c07970370c84b8e8463276f89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return global transaction Timeout.  <a href="#ga558f067c07970370c84b8e8463276f89">More...</a><br /></td></tr>
-<tr class="separator:ga558f067c07970370c84b8e8463276f89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadc75ccc3334477a3b4ceeb609f7ed544"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gadc75ccc3334477a3b4ceeb609f7ed544">OCI_Commit</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gadc75ccc3334477a3b4ceeb609f7ed544"><td class="mdescLeft">&#160;</td><td class="mdescRight">Commit current pending changes.  <a href="#gadc75ccc3334477a3b4ceeb609f7ed544">More...</a><br /></td></tr>
+<tr class="separator:gadc75ccc3334477a3b4ceeb609f7ed544"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafe6bf0b2d454a3e2f78a1da8063661fc"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gafe6bf0b2d454a3e2f78a1da8063661fc">OCI_Rollback</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gafe6bf0b2d454a3e2f78a1da8063661fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cancel current pending changes.  <a href="#gafe6bf0b2d454a3e2f78a1da8063661fc">More...</a><br /></td></tr>
+<tr class="separator:gafe6bf0b2d454a3e2f78a1da8063661fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga43be7c3750fab514da607cc0425fde1f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga43be7c3750fab514da607cc0425fde1f">OCI_SetAutoCommit</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, boolean enable)</td></tr>
+<tr class="memdesc:ga43be7c3750fab514da607cc0425fde1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable / disable auto commit mode.  <a href="#ga43be7c3750fab514da607cc0425fde1f">More...</a><br /></td></tr>
+<tr class="separator:ga43be7c3750fab514da607cc0425fde1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa625d9f9d4741c6a6a7c5e0bf0db0997"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gaa625d9f9d4741c6a6a7c5e0bf0db0997">OCI_GetAutoCommit</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gaa625d9f9d4741c6a6a7c5e0bf0db0997"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current auto commit mode status.  <a href="#gaa625d9f9d4741c6a6a7c5e0bf0db0997">More...</a><br /></td></tr>
+<tr class="separator:gaa625d9f9d4741c6a6a7c5e0bf0db0997"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaae6f94ecf17ba5893209a90d6f092bf1"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gaae6f94ecf17ba5893209a90d6f092bf1">OCI_TransactionCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int timeout, unsigned int mode, <a class="el" href="group___ocilib_c_api_datatypes.html#ga56df9baec6ef3397e359102b323b3d7e">OCI_XID</a> *pxid)</td></tr>
+<tr class="memdesc:gaae6f94ecf17ba5893209a90d6f092bf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new global transaction or a serializable/read-only local transaction.  <a href="#gaae6f94ecf17ba5893209a90d6f092bf1">More...</a><br /></td></tr>
+<tr class="separator:gaae6f94ecf17ba5893209a90d6f092bf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga39a61a42c913f19731b830fb4efaf574"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga39a61a42c913f19731b830fb4efaf574">OCI_TransactionFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
+<tr class="memdesc:ga39a61a42c913f19731b830fb4efaf574"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free current transaction.  <a href="#ga39a61a42c913f19731b830fb4efaf574">More...</a><br /></td></tr>
+<tr class="separator:ga39a61a42c913f19731b830fb4efaf574"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7a4954200fde27bf2e1c2d0b90018062"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga7a4954200fde27bf2e1c2d0b90018062">OCI_TransactionStart</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
+<tr class="memdesc:ga7a4954200fde27bf2e1c2d0b90018062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start global transaction.  <a href="#ga7a4954200fde27bf2e1c2d0b90018062">More...</a><br /></td></tr>
+<tr class="separator:ga7a4954200fde27bf2e1c2d0b90018062"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1c5d44275fa024ae1079d1b9a07f3d1b"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga1c5d44275fa024ae1079d1b9a07f3d1b">OCI_TransactionStop</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
+<tr class="memdesc:ga1c5d44275fa024ae1079d1b9a07f3d1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop current global transaction.  <a href="#ga1c5d44275fa024ae1079d1b9a07f3d1b">More...</a><br /></td></tr>
+<tr class="separator:ga1c5d44275fa024ae1079d1b9a07f3d1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabb18246fb0c96c4148d339bfb0a596e3"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gabb18246fb0c96c4148d339bfb0a596e3">OCI_TransactionResume</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
+<tr class="memdesc:gabb18246fb0c96c4148d339bfb0a596e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume a stopped global transaction.  <a href="#gabb18246fb0c96c4148d339bfb0a596e3">More...</a><br /></td></tr>
+<tr class="separator:gabb18246fb0c96c4148d339bfb0a596e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga161ac7b488a99a3c3f9748f50cced291"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga161ac7b488a99a3c3f9748f50cced291">OCI_TransactionPrepare</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
+<tr class="memdesc:ga161ac7b488a99a3c3f9748f50cced291"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare a global transaction validation.  <a href="#ga161ac7b488a99a3c3f9748f50cced291">More...</a><br /></td></tr>
+<tr class="separator:ga161ac7b488a99a3c3f9748f50cced291"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5ea692078a6645d9efc9e242ae50e017"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga5ea692078a6645d9efc9e242ae50e017">OCI_TransactionForget</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
+<tr class="memdesc:ga5ea692078a6645d9efc9e242ae50e017"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cancel the prepared global transaction validation.  <a href="#ga5ea692078a6645d9efc9e242ae50e017">More...</a><br /></td></tr>
+<tr class="separator:ga5ea692078a6645d9efc9e242ae50e017"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac13bc63411edaa36a098c2a4a1406f12"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gac13bc63411edaa36a098c2a4a1406f12">OCI_TransactionGetMode</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
+<tr class="memdesc:gac13bc63411edaa36a098c2a4a1406f12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return global transaction mode.  <a href="#gac13bc63411edaa36a098c2a4a1406f12">More...</a><br /></td></tr>
+<tr class="separator:gac13bc63411edaa36a098c2a4a1406f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaab95873de72150f5c4604211be7286b1"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gaab95873de72150f5c4604211be7286b1">OCI_TransactionGetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
+<tr class="memdesc:gaab95873de72150f5c4604211be7286b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return global transaction Timeout.  <a href="#gaab95873de72150f5c4604211be7286b1">More...</a><br /></td></tr>
+<tr class="separator:gaab95873de72150f5c4604211be7286b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="gaee1ba614ed2dc5bd83bf788ca08f3e71"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaee1ba614ed2dc5bd83bf788ca08f3e71">&#9670;&nbsp;</a></span>OCI_Commit()</h2>
+<a id="gadc75ccc3334477a3b4ceeb609f7ed544"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadc75ccc3334477a3b4ceeb609f7ed544">&#9670;&nbsp;</a></span>OCI_Commit()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_Commit </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_Commit </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -188,14 +188,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga50742bf6db9f580194d2433b8d310f5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga50742bf6db9f580194d2433b8d310f5e">&#9670;&nbsp;</a></span>OCI_Rollback()</h2>
+<a id="gafe6bf0b2d454a3e2f78a1da8063661fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafe6bf0b2d454a3e2f78a1da8063661fc">&#9670;&nbsp;</a></span>OCI_Rollback()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_Rollback </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_Rollback </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -219,14 +219,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga8a21e8ab3893ae71ff8d8f6c9795566d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga8a21e8ab3893ae71ff8d8f6c9795566d">&#9670;&nbsp;</a></span>OCI_SetAutoCommit()</h2>
+<a id="ga43be7c3750fab514da607cc0425fde1f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga43be7c3750fab514da607cc0425fde1f">&#9670;&nbsp;</a></span>OCI_SetAutoCommit()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetAutoCommit </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetAutoCommit </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -262,14 +262,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gabb9c795b1a971cf2bb2b9a57a97de7cf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gabb9c795b1a971cf2bb2b9a57a97de7cf">&#9670;&nbsp;</a></span>OCI_GetAutoCommit()</h2>
+<a id="gaa625d9f9d4741c6a6a7c5e0bf0db0997"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa625d9f9d4741c6a6a7c5e0bf0db0997">&#9670;&nbsp;</a></span>OCI_GetAutoCommit()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_GetAutoCommit </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_GetAutoCommit </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -293,14 +293,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga206d14aa9a25befd218a7f91a56d5c47"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga206d14aa9a25befd218a7f91a56d5c47">&#9670;&nbsp;</a></span>OCI_TransactionCreate()</h2>
+<a id="gaae6f94ecf17ba5893209a90d6f092bf1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaae6f94ecf17ba5893209a90d6f092bf1">&#9670;&nbsp;</a></span>OCI_TransactionCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a>* OCI_API OCI_TransactionCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a>* OCI_API OCI_TransactionCreate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -367,14 +367,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaab96c358fd6074b5d4f027bd86cfa229"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaab96c358fd6074b5d4f027bd86cfa229">&#9670;&nbsp;</a></span>OCI_TransactionFree()</h2>
+<a id="ga39a61a42c913f19731b830fb4efaf574"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga39a61a42c913f19731b830fb4efaf574">&#9670;&nbsp;</a></span>OCI_TransactionFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_TransactionFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *&#160;</td>
           <td class="paramname"><em>trans</em></td><td>)</td>
@@ -398,14 +398,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaf8e8d8d04d91f2c18dbf34d875b8e42f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf8e8d8d04d91f2c18dbf34d875b8e42f">&#9670;&nbsp;</a></span>OCI_TransactionStart()</h2>
+<a id="ga7a4954200fde27bf2e1c2d0b90018062"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7a4954200fde27bf2e1c2d0b90018062">&#9670;&nbsp;</a></span>OCI_TransactionStart()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_TransactionStart </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionStart </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *&#160;</td>
           <td class="paramname"><em>trans</em></td><td>)</td>
@@ -429,14 +429,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga7ede55e97d4012c7ea43df2bec40762e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7ede55e97d4012c7ea43df2bec40762e">&#9670;&nbsp;</a></span>OCI_TransactionStop()</h2>
+<a id="ga1c5d44275fa024ae1079d1b9a07f3d1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1c5d44275fa024ae1079d1b9a07f3d1b">&#9670;&nbsp;</a></span>OCI_TransactionStop()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_TransactionStop </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionStop </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *&#160;</td>
           <td class="paramname"><em>trans</em></td><td>)</td>
@@ -460,14 +460,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga59e8bd076231e597b5f74bc02c976577"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga59e8bd076231e597b5f74bc02c976577">&#9670;&nbsp;</a></span>OCI_TransactionResume()</h2>
+<a id="gabb18246fb0c96c4148d339bfb0a596e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabb18246fb0c96c4148d339bfb0a596e3">&#9670;&nbsp;</a></span>OCI_TransactionResume()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_TransactionResume </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionResume </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *&#160;</td>
           <td class="paramname"><em>trans</em></td><td>)</td>
@@ -491,14 +491,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaf5c5db14eb32609314ccae72c891ebfc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf5c5db14eb32609314ccae72c891ebfc">&#9670;&nbsp;</a></span>OCI_TransactionPrepare()</h2>
+<a id="ga161ac7b488a99a3c3f9748f50cced291"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga161ac7b488a99a3c3f9748f50cced291">&#9670;&nbsp;</a></span>OCI_TransactionPrepare()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_TransactionPrepare </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionPrepare </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *&#160;</td>
           <td class="paramname"><em>trans</em></td><td>)</td>
@@ -522,14 +522,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gadebbc2e16eea8f328b6d5dfb49a9d5c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gadebbc2e16eea8f328b6d5dfb49a9d5c5">&#9670;&nbsp;</a></span>OCI_TransactionForget()</h2>
+<a id="ga5ea692078a6645d9efc9e242ae50e017"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5ea692078a6645d9efc9e242ae50e017">&#9670;&nbsp;</a></span>OCI_TransactionForget()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_TransactionForget </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionForget </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *&#160;</td>
           <td class="paramname"><em>trans</em></td><td>)</td>
@@ -553,14 +553,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gae54af0bfb81cd2d21bea6451db491e60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae54af0bfb81cd2d21bea6451db491e60">&#9670;&nbsp;</a></span>OCI_TransactionGetMode()</h2>
+<a id="gac13bc63411edaa36a098c2a4a1406f12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac13bc63411edaa36a098c2a4a1406f12">&#9670;&nbsp;</a></span>OCI_TransactionGetMode()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_TransactionGetMode </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_TransactionGetMode </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *&#160;</td>
           <td class="paramname"><em>trans</em></td><td>)</td>
@@ -572,7 +572,7 @@ Functions</h2></td></tr>
 <p><code>#include &lt;api.h&gt;</code></p>
 
 <p>Return global transaction mode. </p>
-<dl class="section note"><dt>Note</dt><dd>: see <a class="el" href="group___ocilib_c_api_transactions.html#ga206d14aa9a25befd218a7f91a56d5c47" title="Create a new global transaction or a serializable/read-only local transaction.">OCI_TransactionCreate()</a> for possible values</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>: see <a class="el" href="group___ocilib_c_api_transactions.html#gaae6f94ecf17ba5893209a90d6f092bf1" title="Create a new global transaction or a serializable/read-only local transaction.">OCI_TransactionCreate()</a> for possible values</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">trans</td><td>- Global transaction handle</td></tr>
@@ -585,14 +585,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga558f067c07970370c84b8e8463276f89"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga558f067c07970370c84b8e8463276f89">&#9670;&nbsp;</a></span>OCI_TransactionGetTimeout()</h2>
+<a id="gaab95873de72150f5c4604211be7286b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaab95873de72150f5c4604211be7286b1">&#9670;&nbsp;</a></span>OCI_TransactionGetTimeout()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_TransactionGetTimeout </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_TransactionGetTimeout </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *&#160;</td>
           <td class="paramname"><em>trans</em></td><td>)</td>
@@ -622,7 +622,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

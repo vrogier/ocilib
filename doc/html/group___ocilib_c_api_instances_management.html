@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,30 +100,30 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_instances_managem
 <p>OCILIB supports Oracle 11g client features for manipulating remote Oracle instances.</p>
 <p>Oracle instances (on the same computer or on a remote server) can be :</p>
 <ul>
-<li>started with <a class="el" href="group___ocilib_c_api_instances_management.html#ga1f7f4e4a1f7f32d70296281546276ce5" title="Start a database instance.">OCI_DatabaseStartup()</a></li>
-<li>shutdown with <a class="el" href="group___ocilib_c_api_instances_management.html#ga6c4b72e7ad5c87691fdecca573dca41b" title="Shutdown a database instance.">OCI_DatabaseShutdown()</a></li>
+<li>started with <a class="el" href="group___ocilib_c_api_instances_management.html#ga5e05ed174b5127b0f1d4eac851d03ab7" title="Start a database instance.">OCI_DatabaseStartup()</a></li>
+<li>shutdown with <a class="el" href="group___ocilib_c_api_instances_management.html#ga107e2e1fefd33945702db1b83e34c8cc" title="Shutdown a database instance.">OCI_DatabaseShutdown()</a></li>
 </ul>
 <p>Several options are handled for this actions</p>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{ </div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT);</div><div class="line"></div><div class="line">    <span class="comment">/* start remote instance */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_instances_management.html#ga1f7f4e4a1f7f32d70296281546276ce5">OCI_DatabaseStartup</a>(<span class="stringliteral">&quot;db&quot;</span>, </div><div class="line">                        <span class="stringliteral">&quot;sys_usr&quot;</span>, </div><div class="line">                        <span class="stringliteral">&quot;sys_pwd&quot;</span>, </div><div class="line">                        OCI_SESSION_SYSDBA, </div><div class="line">                        OCI_DB_SPM_FULL,</div><div class="line">                        OCI_DB_SPF_FORCE,</div><div class="line">                        NULL);</div><div class="line"></div><div class="line"></div><div class="line">     <span class="comment">/* shutdown remote instance */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_instances_management.html#ga6c4b72e7ad5c87691fdecca573dca41b">OCI_DatabaseShutdown</a>(<span class="stringliteral">&quot;db&quot;</span>, </div><div class="line">                         <span class="stringliteral">&quot;sys_usr&quot;</span>, </div><div class="line">                         <span class="stringliteral">&quot;sys_pwd&quot;</span>,  </div><div class="line">                         OCI_SESSION_SYSDBA,</div><div class="line">                         OCI_DB_SDM_FULL,</div><div class="line">                         OCI_DB_SDF_ABORT);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line">    </div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}   </div><div class="line"></div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{ </div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT);</div><div class="line"></div><div class="line">    <span class="comment">/* start remote instance */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_instances_management.html#ga5e05ed174b5127b0f1d4eac851d03ab7">OCI_DatabaseStartup</a>(<span class="stringliteral">&quot;db&quot;</span>, </div><div class="line">                        <span class="stringliteral">&quot;sys_usr&quot;</span>, </div><div class="line">                        <span class="stringliteral">&quot;sys_pwd&quot;</span>, </div><div class="line">                        OCI_SESSION_SYSDBA, </div><div class="line">                        OCI_DB_SPM_FULL,</div><div class="line">                        OCI_DB_SPF_FORCE,</div><div class="line">                        NULL);</div><div class="line"></div><div class="line"></div><div class="line">     <span class="comment">/* shutdown remote instance */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_instances_management.html#ga107e2e1fefd33945702db1b83e34c8cc">OCI_DatabaseShutdown</a>(<span class="stringliteral">&quot;db&quot;</span>, </div><div class="line">                         <span class="stringliteral">&quot;sys_usr&quot;</span>, </div><div class="line">                         <span class="stringliteral">&quot;sys_pwd&quot;</span>,  </div><div class="line">                         OCI_SESSION_SYSDBA,</div><div class="line">                         OCI_DB_SDM_FULL,</div><div class="line">                         OCI_DB_SDF_ABORT);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line">    </div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}   </div><div class="line"></div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga1f7f4e4a1f7f32d70296281546276ce5"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_instances_management.html#ga1f7f4e4a1f7f32d70296281546276ce5">OCI_DatabaseStartup</a> (const otext *db, const otext *user, const otext *pwd, unsigned int sess_mode, unsigned int start_mode, unsigned int start_flag, const otext *spfile)</td></tr>
-<tr class="memdesc:ga1f7f4e4a1f7f32d70296281546276ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start a database instance.  <a href="#ga1f7f4e4a1f7f32d70296281546276ce5">More...</a><br /></td></tr>
-<tr class="separator:ga1f7f4e4a1f7f32d70296281546276ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6c4b72e7ad5c87691fdecca573dca41b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_instances_management.html#ga6c4b72e7ad5c87691fdecca573dca41b">OCI_DatabaseShutdown</a> (const otext *db, const otext *user, const otext *pwd, unsigned int sess_mode, unsigned int shut_mode, unsigned int shut_flag)</td></tr>
-<tr class="memdesc:ga6c4b72e7ad5c87691fdecca573dca41b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shutdown a database instance.  <a href="#ga6c4b72e7ad5c87691fdecca573dca41b">More...</a><br /></td></tr>
-<tr class="separator:ga6c4b72e7ad5c87691fdecca573dca41b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5e05ed174b5127b0f1d4eac851d03ab7"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_instances_management.html#ga5e05ed174b5127b0f1d4eac851d03ab7">OCI_DatabaseStartup</a> (const otext *db, const otext *user, const otext *pwd, unsigned int sess_mode, unsigned int start_mode, unsigned int start_flag, const otext *spfile)</td></tr>
+<tr class="memdesc:ga5e05ed174b5127b0f1d4eac851d03ab7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start a database instance.  <a href="#ga5e05ed174b5127b0f1d4eac851d03ab7">More...</a><br /></td></tr>
+<tr class="separator:ga5e05ed174b5127b0f1d4eac851d03ab7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga107e2e1fefd33945702db1b83e34c8cc"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_instances_management.html#ga107e2e1fefd33945702db1b83e34c8cc">OCI_DatabaseShutdown</a> (const otext *db, const otext *user, const otext *pwd, unsigned int sess_mode, unsigned int shut_mode, unsigned int shut_flag)</td></tr>
+<tr class="memdesc:ga107e2e1fefd33945702db1b83e34c8cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shutdown a database instance.  <a href="#ga107e2e1fefd33945702db1b83e34c8cc">More...</a><br /></td></tr>
+<tr class="separator:ga107e2e1fefd33945702db1b83e34c8cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga1f7f4e4a1f7f32d70296281546276ce5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga1f7f4e4a1f7f32d70296281546276ce5">&#9670;&nbsp;</a></span>OCI_DatabaseStartup()</h2>
+<a id="ga5e05ed174b5127b0f1d4eac851d03ab7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5e05ed174b5127b0f1d4eac851d03ab7">&#9670;&nbsp;</a></span>OCI_DatabaseStartup()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DatabaseStartup </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DatabaseStartup </td>
           <td>(</td>
           <td class="paramtype">const otext *&#160;</td>
           <td class="paramname"><em>db</em>, </td>
@@ -210,14 +210,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga6c4b72e7ad5c87691fdecca573dca41b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6c4b72e7ad5c87691fdecca573dca41b">&#9670;&nbsp;</a></span>OCI_DatabaseShutdown()</h2>
+<a id="ga107e2e1fefd33945702db1b83e34c8cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga107e2e1fefd33945702db1b83e34c8cc">&#9670;&nbsp;</a></span>OCI_DatabaseShutdown()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_DatabaseShutdown </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_DatabaseShutdown </td>
           <td>(</td>
           <td class="paramtype">const otext *&#160;</td>
           <td class="paramname"><em>db</em>, </td>
@@ -329,7 +329,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -122,59 +122,59 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_subscriptions.htm
 <li>At row level : same that object level + RowID of the altered row</li>
 </ul>
 <dl class="section warning"><dt>Warning</dt><dd>Trying to use this features with a client/server version &lt; 10gR2 will raise an error</dd></dl>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="preprocessor">#if defined(_WINDOWS)</span></div><div class="line"><span class="preprocessor">    #define sleep(x) Sleep(x*1000)</span></div><div class="line"><span class="preprocessor">#else</span></div><div class="line"><span class="preprocessor">    #include &lt;unistd.h&gt;</span></div><div class="line"><span class="preprocessor">#endif</span></div><div class="line"></div><div class="line"><span class="preprocessor">#define wait_for_events() sleep(5)</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> event_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event);</div><div class="line"><span class="keywordtype">void</span> error_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err);</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>   *con;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a>    *st;</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Initializing OCILIB in event mode...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(error_handler, NULL, OCI_ENV_EVENTS))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Connecting to usr@db...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    con = <a class="code" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_transactions.html#ga8a21e8ab3893ae71ff8d8f6c9795566d">OCI_SetAutoCommit</a>(con, TRUE);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Creating statement...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#ga335822f983af0fb5c529431f06a9a17b">OCI_StatementCreate</a>(con);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Creating tables...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;create table table1(code number)&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;create table table2(str varchar2(10))&quot;</span>);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Registering subscription...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    sub = <a class="code" href="group___ocilib_c_api_subscriptions.html#ga78afd31aa61d0ce04c535cd669e58e07">OCI_SubscriptionRegister</a>(con, <span class="stringliteral">&quot;sub-00&quot;</span>, OCI_CNT_ALL, event_handler, 5468, 0);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Adding queries to be notified...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af">OCI_Prepare</a>(st, <span class="stringliteral">&quot;select * from table1&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_subscriptions.html#ga5e21132d60056afa78348f380bacf702">OCI_SubscriptionAddStatement</a>(sub, st);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af">OCI_Prepare</a>(st, <span class="stringliteral">&quot;select * from table2&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_subscriptions.html#ga5e21132d60056afa78348f380bacf702">OCI_SubscriptionAddStatement</a>(sub, st);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Executing some DDL operation...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;alter table table1 add price number&quot;</span>);</div><div class="line"></div><div class="line">    wait_for_events();</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Executing some DML operation...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;insert into table1 values(1, 10.5)&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;insert into table2 values(&#39;shoes&#39;)&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;update table1 set price = 13.5 where code = 1&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;delete from table2 &quot;</span>);</div><div class="line"></div><div class="line">    wait_for_events();</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Droping tables...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;drop table table1&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;drop table table2&quot;</span>);</div><div class="line"></div><div class="line">    wait_for_events();</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Unregistering subscription...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_subscriptions.html#gaee7e14ee05f2368b4843aaf61d284341">OCI_SubscriptionUnregister</a>(sub);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Disconnecting from DB...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree</a>(con);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Cleaning up OCILIB resources...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Done...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">void</span> error_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    <span class="keywordtype">int</span>         err_type = <a class="code" href="group___ocilib_c_api_error_handling.html#ga66d447c8cd06ea3f841b439a1aac055b">OCI_ErrorGetType</a>(err);</div><div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span> *err_msg = <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;** %s - %s\n&quot;</span>, err_type == OCI_ERR_WARNING ? <span class="stringliteral">&quot;Warning&quot;</span> : <span class="stringliteral">&quot;Error&quot;</span>, err_msg);</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">void</span> event_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</div><div class="line">{</div><div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> type = <a class="code" href="group___ocilib_c_api_subscriptions.html#ga0f5fb0fdd972f5d09a6745b05706ff0f">OCI_EventGetType</a>(event);</div><div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> op = <a class="code" href="group___ocilib_c_api_subscriptions.html#ga0bc0106ab06c682f77dd763733573a7d">OCI_EventGetOperation</a>(event);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub = <a class="code" href="group___ocilib_c_api_subscriptions.html#ga6a8667ed40a4be1eb47b1a0552791407">OCI_EventGetSubscription</a>(event);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;** Notification      : %s\n\n&quot;</span>, <a class="code" href="group___ocilib_c_api_subscriptions.html#ga9266ae54a6e23a280cb6a34fa90bf81a">OCI_SubscriptionGetName</a>(sub));</div><div class="line">    printf(<span class="stringliteral">&quot;...... Database      : %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_subscriptions.html#ga3a82c0dc1d0d69506087b81bc717c60c">OCI_EventGetDatabase</a>(event));</div><div class="line"></div><div class="line">    <span class="keywordflow">switch</span> (type)</div><div class="line">    {</div><div class="line">    <span class="keywordflow">case</span> OCI_ENT_STARTUP:</div><div class="line">        printf(<span class="stringliteral">&quot;...... Event         : Startup\n&quot;</span>);</div><div class="line">        <span class="keywordflow">break</span>;</div><div class="line">    <span class="keywordflow">case</span> OCI_ENT_SHUTDOWN:</div><div class="line">        printf(<span class="stringliteral">&quot;...... Event         : Shutdown\n&quot;</span>);</div><div class="line">        <span class="keywordflow">break</span>;</div><div class="line">    <span class="keywordflow">case</span> OCI_ENT_SHUTDOWN_ANY:</div><div class="line">        printf(<span class="stringliteral">&quot;...... Event         : Shutdown any\n&quot;</span>);</div><div class="line">        <span class="keywordflow">break</span>;</div><div class="line">    <span class="keywordflow">case</span> OCI_ENT_DROP_DATABASE:</div><div class="line">        printf(<span class="stringliteral">&quot;...... Event         : drop database\n&quot;</span>);</div><div class="line">        <span class="keywordflow">break</span>;</div><div class="line">    <span class="keywordflow">case</span> OCI_ENT_DEREGISTER:</div><div class="line">        printf(<span class="stringliteral">&quot;...... Event         : deregister\n&quot;</span>);</div><div class="line">        <span class="keywordflow">break</span>;</div><div class="line">    <span class="keywordflow">case</span> OCI_ENT_OBJECT_CHANGED:</div><div class="line"></div><div class="line">        printf(<span class="stringliteral">&quot;...... Event         : object changed\n&quot;</span>);</div><div class="line">        printf(<span class="stringliteral">&quot;........... Object   : %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_subscriptions.html#gab2986bcdd9e4e10996bec5f7767776ec">OCI_EventGetObject</a>(event));</div><div class="line"></div><div class="line">        <span class="keywordflow">switch</span> (op)</div><div class="line">        {</div><div class="line">        <span class="keywordflow">case</span> OCI_ONT_INSERT:</div><div class="line">            printf(<span class="stringliteral">&quot;........... Action   : insert\n&quot;</span>);</div><div class="line">            <span class="keywordflow">break</span>;</div><div class="line">        <span class="keywordflow">case</span> OCI_ONT_UPDATE:</div><div class="line">            printf(<span class="stringliteral">&quot;........... Action   : update\n&quot;</span>);</div><div class="line">            <span class="keywordflow">break</span>;</div><div class="line">        <span class="keywordflow">case</span> OCI_ONT_DELETE:</div><div class="line">            printf(<span class="stringliteral">&quot;........... Action   : delete\n&quot;</span>);</div><div class="line">            <span class="keywordflow">break</span>;</div><div class="line">        <span class="keywordflow">case</span> OCI_ONT_ALTER:</div><div class="line">            printf(<span class="stringliteral">&quot;........... Action   : alter\n&quot;</span>);</div><div class="line">            <span class="keywordflow">break</span>;</div><div class="line">        <span class="keywordflow">case</span> OCI_ONT_DROP:</div><div class="line">            printf(<span class="stringliteral">&quot;........... Action   : drop\n&quot;</span>);</div><div class="line">            <span class="keywordflow">break</span>;</div><div class="line">        }</div><div class="line"></div><div class="line">        <span class="keywordflow">if</span> (op &lt; OCI_ONT_ALTER)</div><div class="line">            printf(<span class="stringliteral">&quot;........... Rowid    : %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_subscriptions.html#gaef9f191c3e55ce652953da82d7cb0d75">OCI_EventGetRowid</a>(event));</div><div class="line"></div><div class="line">        <span class="keywordflow">break</span>;</div><div class="line">    }</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;\n&quot;</span>);</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="preprocessor">#if defined(_WINDOWS)</span></div><div class="line"><span class="preprocessor">    #define sleep(x) Sleep(x*1000)</span></div><div class="line"><span class="preprocessor">#else</span></div><div class="line"><span class="preprocessor">    #include &lt;unistd.h&gt;</span></div><div class="line"><span class="preprocessor">#endif</span></div><div class="line"></div><div class="line"><span class="preprocessor">#define wait_for_events() sleep(5)</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> event_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event);</div><div class="line"><span class="keywordtype">void</span> error_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err);</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>   *con;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a>    *st;</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Initializing OCILIB in event mode...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(error_handler, NULL, OCI_ENV_EVENTS))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Connecting to usr@db...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    con = <a class="code" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_transactions.html#ga43be7c3750fab514da607cc0425fde1f">OCI_SetAutoCommit</a>(con, TRUE);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Creating statement...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#gab62065db373d58337fa92948d5a8eba1">OCI_StatementCreate</a>(con);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Creating tables...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;create table table1(code number)&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;create table table2(str varchar2(10))&quot;</span>);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Registering subscription...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    sub = <a class="code" href="group___ocilib_c_api_subscriptions.html#ga944ea5d5b2e4f09f7bcc1bd7d36f3886">OCI_SubscriptionRegister</a>(con, <span class="stringliteral">&quot;sub-00&quot;</span>, OCI_CNT_ALL, event_handler, 5468, 0);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Adding queries to be notified...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a>(st, <span class="stringliteral">&quot;select * from table1&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_subscriptions.html#gab85ad7dc94fe85b69823a18fe690291d">OCI_SubscriptionAddStatement</a>(sub, st);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a>(st, <span class="stringliteral">&quot;select * from table2&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_subscriptions.html#gab85ad7dc94fe85b69823a18fe690291d">OCI_SubscriptionAddStatement</a>(sub, st);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Executing some DDL operation...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;alter table table1 add price number&quot;</span>);</div><div class="line"></div><div class="line">    wait_for_events();</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Executing some DML operation...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;insert into table1 values(1, 10.5)&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;insert into table2 values(&#39;shoes&#39;)&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;update table1 set price = 13.5 where code = 1&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;delete from table2 &quot;</span>);</div><div class="line"></div><div class="line">    wait_for_events();</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Droping tables...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;drop table table1&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;drop table table2&quot;</span>);</div><div class="line"></div><div class="line">    wait_for_events();</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Unregistering subscription...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_subscriptions.html#ga0cd32fe33c2e6a2104253df0a7ced19c">OCI_SubscriptionUnregister</a>(sub);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Disconnecting from DB...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a>(con);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Cleaning up OCILIB resources...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;=&gt; Done...\n\n&quot;</span>);</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">void</span> error_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    <span class="keywordtype">int</span>         err_type = <a class="code" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af">OCI_ErrorGetType</a>(err);</div><div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span> *err_msg = <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;** %s - %s\n&quot;</span>, err_type == OCI_ERR_WARNING ? <span class="stringliteral">&quot;Warning&quot;</span> : <span class="stringliteral">&quot;Error&quot;</span>, err_msg);</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">void</span> event_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</div><div class="line">{</div><div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> type = <a class="code" href="group___ocilib_c_api_subscriptions.html#ga26e6a778b6daa16d4fe8e89c339cbe78">OCI_EventGetType</a>(event);</div><div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> op = <a class="code" href="group___ocilib_c_api_subscriptions.html#gaf827cbc855e71e51794ad50c9360eaf6">OCI_EventGetOperation</a>(event);</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub = <a class="code" href="group___ocilib_c_api_subscriptions.html#ga041ff0a18df7114b59d6945ad5936e05">OCI_EventGetSubscription</a>(event);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;** Notification      : %s\n\n&quot;</span>, <a class="code" href="group___ocilib_c_api_subscriptions.html#ga13ee63fc481614bd8de9d3ab217b9cef">OCI_SubscriptionGetName</a>(sub));</div><div class="line">    printf(<span class="stringliteral">&quot;...... Database      : %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_subscriptions.html#ga81f3133e4646a5c87c8154fcd6a9462c">OCI_EventGetDatabase</a>(event));</div><div class="line"></div><div class="line">    <span class="keywordflow">switch</span> (type)</div><div class="line">    {</div><div class="line">    <span class="keywordflow">case</span> OCI_ENT_STARTUP:</div><div class="line">        printf(<span class="stringliteral">&quot;...... Event         : Startup\n&quot;</span>);</div><div class="line">        <span class="keywordflow">break</span>;</div><div class="line">    <span class="keywordflow">case</span> OCI_ENT_SHUTDOWN:</div><div class="line">        printf(<span class="stringliteral">&quot;...... Event         : Shutdown\n&quot;</span>);</div><div class="line">        <span class="keywordflow">break</span>;</div><div class="line">    <span class="keywordflow">case</span> OCI_ENT_SHUTDOWN_ANY:</div><div class="line">        printf(<span class="stringliteral">&quot;...... Event         : Shutdown any\n&quot;</span>);</div><div class="line">        <span class="keywordflow">break</span>;</div><div class="line">    <span class="keywordflow">case</span> OCI_ENT_DROP_DATABASE:</div><div class="line">        printf(<span class="stringliteral">&quot;...... Event         : drop database\n&quot;</span>);</div><div class="line">        <span class="keywordflow">break</span>;</div><div class="line">    <span class="keywordflow">case</span> OCI_ENT_DEREGISTER:</div><div class="line">        printf(<span class="stringliteral">&quot;...... Event         : deregister\n&quot;</span>);</div><div class="line">        <span class="keywordflow">break</span>;</div><div class="line">    <span class="keywordflow">case</span> OCI_ENT_OBJECT_CHANGED:</div><div class="line"></div><div class="line">        printf(<span class="stringliteral">&quot;...... Event         : object changed\n&quot;</span>);</div><div class="line">        printf(<span class="stringliteral">&quot;........... Object   : %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_subscriptions.html#ga8189e4c17d0b897b5554c209f2d9cd5a">OCI_EventGetObject</a>(event));</div><div class="line"></div><div class="line">        <span class="keywordflow">switch</span> (op)</div><div class="line">        {</div><div class="line">        <span class="keywordflow">case</span> OCI_ONT_INSERT:</div><div class="line">            printf(<span class="stringliteral">&quot;........... Action   : insert\n&quot;</span>);</div><div class="line">            <span class="keywordflow">break</span>;</div><div class="line">        <span class="keywordflow">case</span> OCI_ONT_UPDATE:</div><div class="line">            printf(<span class="stringliteral">&quot;........... Action   : update\n&quot;</span>);</div><div class="line">            <span class="keywordflow">break</span>;</div><div class="line">        <span class="keywordflow">case</span> OCI_ONT_DELETE:</div><div class="line">            printf(<span class="stringliteral">&quot;........... Action   : delete\n&quot;</span>);</div><div class="line">            <span class="keywordflow">break</span>;</div><div class="line">        <span class="keywordflow">case</span> OCI_ONT_ALTER:</div><div class="line">            printf(<span class="stringliteral">&quot;........... Action   : alter\n&quot;</span>);</div><div class="line">            <span class="keywordflow">break</span>;</div><div class="line">        <span class="keywordflow">case</span> OCI_ONT_DROP:</div><div class="line">            printf(<span class="stringliteral">&quot;........... Action   : drop\n&quot;</span>);</div><div class="line">            <span class="keywordflow">break</span>;</div><div class="line">        }</div><div class="line"></div><div class="line">        <span class="keywordflow">if</span> (op &lt; OCI_ONT_ALTER)</div><div class="line">            printf(<span class="stringliteral">&quot;........... Rowid    : %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_subscriptions.html#ga972381153e9440b0812c4ddc98628070">OCI_EventGetRowid</a>(event));</div><div class="line"></div><div class="line">        <span class="keywordflow">break</span>;</div><div class="line">    }</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;\n&quot;</span>);</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga78afd31aa61d0ce04c535cd669e58e07"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga78afd31aa61d0ce04c535cd669e58e07">OCI_SubscriptionRegister</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, const otext *name, unsigned int type, <a class="el" href="group___ocilib_c_api_datatypes.html#ga6eed7878852e796a705f452bad294fd2">POCI_NOTIFY</a> handler, unsigned int port, unsigned int timeout)</td></tr>
-<tr class="memdesc:ga78afd31aa61d0ce04c535cd669e58e07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a notification against the given database.  <a href="#ga78afd31aa61d0ce04c535cd669e58e07">More...</a><br /></td></tr>
-<tr class="separator:ga78afd31aa61d0ce04c535cd669e58e07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaee7e14ee05f2368b4843aaf61d284341"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#gaee7e14ee05f2368b4843aaf61d284341">OCI_SubscriptionUnregister</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub)</td></tr>
-<tr class="memdesc:gaee7e14ee05f2368b4843aaf61d284341"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unregister a previously registered notification.  <a href="#gaee7e14ee05f2368b4843aaf61d284341">More...</a><br /></td></tr>
-<tr class="separator:gaee7e14ee05f2368b4843aaf61d284341"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5e21132d60056afa78348f380bacf702"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga5e21132d60056afa78348f380bacf702">OCI_SubscriptionAddStatement</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub, <a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:ga5e21132d60056afa78348f380bacf702"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a statement to the notification to monitor.  <a href="#ga5e21132d60056afa78348f380bacf702">More...</a><br /></td></tr>
-<tr class="separator:ga5e21132d60056afa78348f380bacf702"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9266ae54a6e23a280cb6a34fa90bf81a"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga9266ae54a6e23a280cb6a34fa90bf81a">OCI_SubscriptionGetName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub)</td></tr>
-<tr class="memdesc:ga9266ae54a6e23a280cb6a34fa90bf81a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the given registered subscription.  <a href="#ga9266ae54a6e23a280cb6a34fa90bf81a">More...</a><br /></td></tr>
-<tr class="separator:ga9266ae54a6e23a280cb6a34fa90bf81a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaac2b2c3f7bc5e07f230cb4f797f95e8c"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#gaac2b2c3f7bc5e07f230cb4f797f95e8c">OCI_SubscriptionGetPort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub)</td></tr>
-<tr class="memdesc:gaac2b2c3f7bc5e07f230cb4f797f95e8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the port used by the notification.  <a href="#gaac2b2c3f7bc5e07f230cb4f797f95e8c">More...</a><br /></td></tr>
-<tr class="separator:gaac2b2c3f7bc5e07f230cb4f797f95e8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga56fb04b8fe1cf961dbab6ee90b3362ca"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga56fb04b8fe1cf961dbab6ee90b3362ca">OCI_SubscriptionGetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub)</td></tr>
-<tr class="memdesc:ga56fb04b8fe1cf961dbab6ee90b3362ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the timeout of the given registered subscription.  <a href="#ga56fb04b8fe1cf961dbab6ee90b3362ca">More...</a><br /></td></tr>
-<tr class="separator:ga56fb04b8fe1cf961dbab6ee90b3362ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga748e045e9c97b31e83cd52926ba62509"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga748e045e9c97b31e83cd52926ba62509">OCI_SubscriptionGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub)</td></tr>
-<tr class="memdesc:ga748e045e9c97b31e83cd52926ba62509"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the connection handle associated with a subscription handle.  <a href="#ga748e045e9c97b31e83cd52926ba62509">More...</a><br /></td></tr>
-<tr class="separator:ga748e045e9c97b31e83cd52926ba62509"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0f5fb0fdd972f5d09a6745b05706ff0f"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga0f5fb0fdd972f5d09a6745b05706ff0f">OCI_EventGetType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</td></tr>
-<tr class="memdesc:ga0f5fb0fdd972f5d09a6745b05706ff0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of event reported by a notification.  <a href="#ga0f5fb0fdd972f5d09a6745b05706ff0f">More...</a><br /></td></tr>
-<tr class="separator:ga0f5fb0fdd972f5d09a6745b05706ff0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0bc0106ab06c682f77dd763733573a7d"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga0bc0106ab06c682f77dd763733573a7d">OCI_EventGetOperation</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</td></tr>
-<tr class="memdesc:ga0bc0106ab06c682f77dd763733573a7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of operation reported by a notification.  <a href="#ga0bc0106ab06c682f77dd763733573a7d">More...</a><br /></td></tr>
-<tr class="separator:ga0bc0106ab06c682f77dd763733573a7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3a82c0dc1d0d69506087b81bc717c60c"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga3a82c0dc1d0d69506087b81bc717c60c">OCI_EventGetDatabase</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</td></tr>
-<tr class="memdesc:ga3a82c0dc1d0d69506087b81bc717c60c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the database that generated the event.  <a href="#ga3a82c0dc1d0d69506087b81bc717c60c">More...</a><br /></td></tr>
-<tr class="separator:ga3a82c0dc1d0d69506087b81bc717c60c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab2986bcdd9e4e10996bec5f7767776ec"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#gab2986bcdd9e4e10996bec5f7767776ec">OCI_EventGetObject</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</td></tr>
-<tr class="memdesc:gab2986bcdd9e4e10996bec5f7767776ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the object that generated the event.  <a href="#gab2986bcdd9e4e10996bec5f7767776ec">More...</a><br /></td></tr>
-<tr class="separator:gab2986bcdd9e4e10996bec5f7767776ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaef9f191c3e55ce652953da82d7cb0d75"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#gaef9f191c3e55ce652953da82d7cb0d75">OCI_EventGetRowid</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</td></tr>
-<tr class="memdesc:gaef9f191c3e55ce652953da82d7cb0d75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the rowid of the altered database object row.  <a href="#gaef9f191c3e55ce652953da82d7cb0d75">More...</a><br /></td></tr>
-<tr class="separator:gaef9f191c3e55ce652953da82d7cb0d75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6a8667ed40a4be1eb47b1a0552791407"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga6a8667ed40a4be1eb47b1a0552791407">OCI_EventGetSubscription</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</td></tr>
-<tr class="memdesc:ga6a8667ed40a4be1eb47b1a0552791407"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the subscription handle that generated this event.  <a href="#ga6a8667ed40a4be1eb47b1a0552791407">More...</a><br /></td></tr>
-<tr class="separator:ga6a8667ed40a4be1eb47b1a0552791407"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga944ea5d5b2e4f09f7bcc1bd7d36f3886"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga944ea5d5b2e4f09f7bcc1bd7d36f3886">OCI_SubscriptionRegister</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, const otext *name, unsigned int type, <a class="el" href="group___ocilib_c_api_datatypes.html#ga6eed7878852e796a705f452bad294fd2">POCI_NOTIFY</a> handler, unsigned int port, unsigned int timeout)</td></tr>
+<tr class="memdesc:ga944ea5d5b2e4f09f7bcc1bd7d36f3886"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a notification against the given database.  <a href="#ga944ea5d5b2e4f09f7bcc1bd7d36f3886">More...</a><br /></td></tr>
+<tr class="separator:ga944ea5d5b2e4f09f7bcc1bd7d36f3886"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0cd32fe33c2e6a2104253df0a7ced19c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga0cd32fe33c2e6a2104253df0a7ced19c">OCI_SubscriptionUnregister</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub)</td></tr>
+<tr class="memdesc:ga0cd32fe33c2e6a2104253df0a7ced19c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unregister a previously registered notification.  <a href="#ga0cd32fe33c2e6a2104253df0a7ced19c">More...</a><br /></td></tr>
+<tr class="separator:ga0cd32fe33c2e6a2104253df0a7ced19c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab85ad7dc94fe85b69823a18fe690291d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#gab85ad7dc94fe85b69823a18fe690291d">OCI_SubscriptionAddStatement</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub, <a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
+<tr class="memdesc:gab85ad7dc94fe85b69823a18fe690291d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a statement to the notification to monitor.  <a href="#gab85ad7dc94fe85b69823a18fe690291d">More...</a><br /></td></tr>
+<tr class="separator:gab85ad7dc94fe85b69823a18fe690291d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga13ee63fc481614bd8de9d3ab217b9cef"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga13ee63fc481614bd8de9d3ab217b9cef">OCI_SubscriptionGetName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub)</td></tr>
+<tr class="memdesc:ga13ee63fc481614bd8de9d3ab217b9cef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the given registered subscription.  <a href="#ga13ee63fc481614bd8de9d3ab217b9cef">More...</a><br /></td></tr>
+<tr class="separator:ga13ee63fc481614bd8de9d3ab217b9cef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gade4a896a4075ba9f220c00dc8465f4a4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#gade4a896a4075ba9f220c00dc8465f4a4">OCI_SubscriptionGetPort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub)</td></tr>
+<tr class="memdesc:gade4a896a4075ba9f220c00dc8465f4a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the port used by the notification.  <a href="#gade4a896a4075ba9f220c00dc8465f4a4">More...</a><br /></td></tr>
+<tr class="separator:gade4a896a4075ba9f220c00dc8465f4a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga17d1434115ea5b3ff1d8657d08f52b0b"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga17d1434115ea5b3ff1d8657d08f52b0b">OCI_SubscriptionGetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub)</td></tr>
+<tr class="memdesc:ga17d1434115ea5b3ff1d8657d08f52b0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the timeout of the given registered subscription.  <a href="#ga17d1434115ea5b3ff1d8657d08f52b0b">More...</a><br /></td></tr>
+<tr class="separator:ga17d1434115ea5b3ff1d8657d08f52b0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2663f519b01e092b23a7842affca8e36"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga2663f519b01e092b23a7842affca8e36">OCI_SubscriptionGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub)</td></tr>
+<tr class="memdesc:ga2663f519b01e092b23a7842affca8e36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the connection handle associated with a subscription handle.  <a href="#ga2663f519b01e092b23a7842affca8e36">More...</a><br /></td></tr>
+<tr class="separator:ga2663f519b01e092b23a7842affca8e36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga26e6a778b6daa16d4fe8e89c339cbe78"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga26e6a778b6daa16d4fe8e89c339cbe78">OCI_EventGetType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</td></tr>
+<tr class="memdesc:ga26e6a778b6daa16d4fe8e89c339cbe78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of event reported by a notification.  <a href="#ga26e6a778b6daa16d4fe8e89c339cbe78">More...</a><br /></td></tr>
+<tr class="separator:ga26e6a778b6daa16d4fe8e89c339cbe78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf827cbc855e71e51794ad50c9360eaf6"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#gaf827cbc855e71e51794ad50c9360eaf6">OCI_EventGetOperation</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</td></tr>
+<tr class="memdesc:gaf827cbc855e71e51794ad50c9360eaf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of operation reported by a notification.  <a href="#gaf827cbc855e71e51794ad50c9360eaf6">More...</a><br /></td></tr>
+<tr class="separator:gaf827cbc855e71e51794ad50c9360eaf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga81f3133e4646a5c87c8154fcd6a9462c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga81f3133e4646a5c87c8154fcd6a9462c">OCI_EventGetDatabase</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</td></tr>
+<tr class="memdesc:ga81f3133e4646a5c87c8154fcd6a9462c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the database that generated the event.  <a href="#ga81f3133e4646a5c87c8154fcd6a9462c">More...</a><br /></td></tr>
+<tr class="separator:ga81f3133e4646a5c87c8154fcd6a9462c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8189e4c17d0b897b5554c209f2d9cd5a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga8189e4c17d0b897b5554c209f2d9cd5a">OCI_EventGetObject</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</td></tr>
+<tr class="memdesc:ga8189e4c17d0b897b5554c209f2d9cd5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the object that generated the event.  <a href="#ga8189e4c17d0b897b5554c209f2d9cd5a">More...</a><br /></td></tr>
+<tr class="separator:ga8189e4c17d0b897b5554c209f2d9cd5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga972381153e9440b0812c4ddc98628070"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga972381153e9440b0812c4ddc98628070">OCI_EventGetRowid</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</td></tr>
+<tr class="memdesc:ga972381153e9440b0812c4ddc98628070"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the rowid of the altered database object row.  <a href="#ga972381153e9440b0812c4ddc98628070">More...</a><br /></td></tr>
+<tr class="separator:ga972381153e9440b0812c4ddc98628070"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga041ff0a18df7114b59d6945ad5936e05"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_subscriptions.html#ga041ff0a18df7114b59d6945ad5936e05">OCI_EventGetSubscription</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *event)</td></tr>
+<tr class="memdesc:ga041ff0a18df7114b59d6945ad5936e05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the subscription handle that generated this event.  <a href="#ga041ff0a18df7114b59d6945ad5936e05">More...</a><br /></td></tr>
+<tr class="separator:ga041ff0a18df7114b59d6945ad5936e05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga78afd31aa61d0ce04c535cd669e58e07"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga78afd31aa61d0ce04c535cd669e58e07">&#9670;&nbsp;</a></span>OCI_SubscriptionRegister()</h2>
+<a id="ga944ea5d5b2e4f09f7bcc1bd7d36f3886"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga944ea5d5b2e4f09f7bcc1bd7d36f3886">&#9670;&nbsp;</a></span>OCI_SubscriptionRegister()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a>* OCI_API OCI_SubscriptionRegister </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a>* OCI_API OCI_SubscriptionRegister </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -240,10 +240,10 @@ Functions</h2></td></tr>
 </ul>
 <dl class="section note"><dt>Note</dt><dd>Parameter 'port' and 'timeout' are optional (use value 0 a optional value)</dd>
 <dd>
-OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd></dl>
+OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd></dl>
 <p>@ </p><dl class="section warning"><dt>Warning</dt><dd>Port usage All notifications are using the same port. Port number can be either:<ul>
-<li>determined automatically by Oracle client once the first subscription had been created and can be retrieved using <a class="el" href="group___ocilib_c_api_subscriptions.html#gaac2b2c3f7bc5e07f230cb4f797f95e8c" title="Return the port used by the notification.">OCI_SubscriptionGetPort()</a></li>
-<li>Set by the parameter 'port' during the first call to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga78afd31aa61d0ce04c535cd669e58e07" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a>. In this case later calls can provide same port number or 0</li>
+<li>determined automatically by Oracle client once the first subscription had been created and can be retrieved using <a class="el" href="group___ocilib_c_api_subscriptions.html#gade4a896a4075ba9f220c00dc8465f4a4" title="Return the port used by the notification.">OCI_SubscriptionGetPort()</a></li>
+<li>Set by the parameter 'port' during the first call to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga944ea5d5b2e4f09f7bcc1bd7d36f3886" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a>. In this case later calls can provide same port number or 0</li>
 </ul>
 </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Requires Oracle Client 10gR2 or above</dd>
@@ -255,14 +255,14 @@ Subscription handles are automatically managed by the library</dd></dl>
 
 </div>
 </div>
-<a id="gaee7e14ee05f2368b4843aaf61d284341"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaee7e14ee05f2368b4843aaf61d284341">&#9670;&nbsp;</a></span>OCI_SubscriptionUnregister()</h2>
+<a id="ga0cd32fe33c2e6a2104253df0a7ced19c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0cd32fe33c2e6a2104253df0a7ced19c">&#9670;&nbsp;</a></span>OCI_SubscriptionUnregister()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SubscriptionUnregister </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SubscriptionUnregister </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *&#160;</td>
           <td class="paramname"><em>sub</em></td><td>)</td>
@@ -280,25 +280,25 @@ Subscription handles are automatically managed by the library</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a> will automatically unregister any registered subscriptions</dd>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a> will automatically unregister any registered subscriptions</dd>
 <dd>
-If the database connection passed to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga78afd31aa61d0ce04c535cd669e58e07" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a> has been closed by the time that the application calls OCI_SubscriptionUnregister, the library internally reconnects to the given database, performs the unregistration and then disconnects</dd>
+If the database connection passed to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga944ea5d5b2e4f09f7bcc1bd7d36f3886" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a> has been closed by the time that the application calls OCI_SubscriptionUnregister, the library internally reconnects to the given database, performs the unregistration and then disconnects</dd>
 <dd>
-OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd></dl>
+OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_subscription.html#a44f8bca8a9479fe38dde565890850389">ocilib::Subscription::Register()</a>.</p>
 
 </div>
 </div>
-<a id="ga5e21132d60056afa78348f380bacf702"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5e21132d60056afa78348f380bacf702">&#9670;&nbsp;</a></span>OCI_SubscriptionAddStatement()</h2>
+<a id="gab85ad7dc94fe85b69823a18fe690291d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab85ad7dc94fe85b69823a18fe690291d">&#9670;&nbsp;</a></span>OCI_SubscriptionAddStatement()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SubscriptionAddStatement </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SubscriptionAddStatement </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *&#160;</td>
           <td class="paramname"><em>sub</em>, </td>
@@ -327,9 +327,9 @@ OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_i
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The given statement must be prepared but not executed before being passed to this function. <a class="el" href="group___ocilib_c_api_subscriptions.html#ga5e21132d60056afa78348f380bacf702" title="Add a statement to the notification to monitor.">OCI_SubscriptionAddStatement()</a> executes the statement and register it for notifications</dd>
+<dl class="section note"><dt>Note</dt><dd>The given statement must be prepared but not executed before being passed to this function. <a class="el" href="group___ocilib_c_api_subscriptions.html#gab85ad7dc94fe85b69823a18fe690291d" title="Add a statement to the notification to monitor.">OCI_SubscriptionAddStatement()</a> executes the statement and register it for notifications</dd>
 <dd>
-OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd>
+OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd>
 <dd>
 The given statement must hold a 'SELECT' SQL statement</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
@@ -338,14 +338,14 @@ The given statement must hold a 'SELECT' SQL statement</dd></dl>
 
 </div>
 </div>
-<a id="ga9266ae54a6e23a280cb6a34fa90bf81a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga9266ae54a6e23a280cb6a34fa90bf81a">&#9670;&nbsp;</a></span>OCI_SubscriptionGetName()</h2>
+<a id="ga13ee63fc481614bd8de9d3ab217b9cef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga13ee63fc481614bd8de9d3ab217b9cef">&#9670;&nbsp;</a></span>OCI_SubscriptionGetName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_SubscriptionGetName </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_SubscriptionGetName </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *&#160;</td>
           <td class="paramname"><em>sub</em></td><td>)</td>
@@ -363,20 +363,20 @@ The given statement must hold a 'SELECT' SQL statement</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_subscription.html#a92517e6ef6bf355fbe99f77a4302a455">ocilib::Subscription::GetName()</a>.</p>
 
 </div>
 </div>
-<a id="gaac2b2c3f7bc5e07f230cb4f797f95e8c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaac2b2c3f7bc5e07f230cb4f797f95e8c">&#9670;&nbsp;</a></span>OCI_SubscriptionGetPort()</h2>
+<a id="gade4a896a4075ba9f220c00dc8465f4a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gade4a896a4075ba9f220c00dc8465f4a4">&#9670;&nbsp;</a></span>OCI_SubscriptionGetPort()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_SubscriptionGetPort </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_SubscriptionGetPort </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *&#160;</td>
           <td class="paramname"><em>sub</em></td><td>)</td>
@@ -394,20 +394,20 @@ The given statement must hold a 'SELECT' SQL statement</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_subscription.html#ac928d03b25df753c3ea61b6d74f58234">ocilib::Subscription::GetPort()</a>.</p>
 
 </div>
 </div>
-<a id="ga56fb04b8fe1cf961dbab6ee90b3362ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga56fb04b8fe1cf961dbab6ee90b3362ca">&#9670;&nbsp;</a></span>OCI_SubscriptionGetTimeout()</h2>
+<a id="ga17d1434115ea5b3ff1d8657d08f52b0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga17d1434115ea5b3ff1d8657d08f52b0b">&#9670;&nbsp;</a></span>OCI_SubscriptionGetTimeout()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_SubscriptionGetTimeout </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_SubscriptionGetTimeout </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *&#160;</td>
           <td class="paramname"><em>sub</em></td><td>)</td>
@@ -425,20 +425,20 @@ The given statement must hold a 'SELECT' SQL statement</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_subscription.html#a5ebcdbd6229c7222c89be43a8c562044">ocilib::Subscription::GetTimeout()</a>.</p>
 
 </div>
 </div>
-<a id="ga748e045e9c97b31e83cd52926ba62509"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga748e045e9c97b31e83cd52926ba62509">&#9670;&nbsp;</a></span>OCI_SubscriptionGetConnection()</h2>
+<a id="ga2663f519b01e092b23a7842affca8e36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2663f519b01e092b23a7842affca8e36">&#9670;&nbsp;</a></span>OCI_SubscriptionGetConnection()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>* OCI_API OCI_SubscriptionGetConnection </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>* OCI_API OCI_SubscriptionGetConnection </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *&#160;</td>
           <td class="paramname"><em>sub</em></td><td>)</td>
@@ -462,14 +462,14 @@ The given statement must hold a 'SELECT' SQL statement</dd></dl>
 
 </div>
 </div>
-<a id="ga0f5fb0fdd972f5d09a6745b05706ff0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0f5fb0fdd972f5d09a6745b05706ff0f">&#9670;&nbsp;</a></span>OCI_EventGetType()</h2>
+<a id="ga26e6a778b6daa16d4fe8e89c339cbe78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga26e6a778b6daa16d4fe8e89c339cbe78">&#9670;&nbsp;</a></span>OCI_EventGetType()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_EventGetType </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetType </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *&#160;</td>
           <td class="paramname"><em>event</em></td><td>)</td>
@@ -496,24 +496,24 @@ The given statement must hold a 'SELECT' SQL statement</dd></dl>
 <li>OCI_ENT_DEREGISTER : the notification is timed out</li>
 <li>OCI_ENT_OBJECT_CHANGED : a database object has been modified</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_subscriptions.html#ga3a82c0dc1d0d69506087b81bc717c60c" title="Return the name of the database that generated the event.">OCI_EventGetDatabase()</a> returns the affected database</dd>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_subscriptions.html#ga81f3133e4646a5c87c8154fcd6a9462c" title="Return the name of the database that generated the event.">OCI_EventGetDatabase()</a> returns the affected database</dd>
 <dd>
-OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd>
+OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd>
 <dd>
-<a class="el" href="group___ocilib_c_api_subscriptions.html#gab2986bcdd9e4e10996bec5f7767776ec" title="Return the name of the object that generated the event.">OCI_EventGetObject()</a> returns the affected object ('schema_name'.'object_name') </dd></dl>
+<a class="el" href="group___ocilib_c_api_subscriptions.html#ga8189e4c17d0b897b5554c209f2d9cd5a" title="Return the name of the object that generated the event.">OCI_EventGetObject()</a> returns the affected object ('schema_name'.'object_name') </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_event.html#ade44e537f50ac722530f82c0f73db6d2">ocilib::Event::GetType()</a>.</p>
 
 </div>
 </div>
-<a id="ga0bc0106ab06c682f77dd763733573a7d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0bc0106ab06c682f77dd763733573a7d">&#9670;&nbsp;</a></span>OCI_EventGetOperation()</h2>
+<a id="gaf827cbc855e71e51794ad50c9360eaf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf827cbc855e71e51794ad50c9360eaf6">&#9670;&nbsp;</a></span>OCI_EventGetOperation()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_EventGetOperation </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetOperation </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *&#160;</td>
           <td class="paramname"><em>event</em></td><td>)</td>
@@ -531,7 +531,7 @@ OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_i
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This call is only valid when <a class="el" href="group___ocilib_c_api_subscriptions.html#ga0f5fb0fdd972f5d09a6745b05706ff0f" title="Return the type of event reported by a notification.">OCI_EventGetType()</a> reports the event type OCI_ENT_OBJECT_CHANGED</dd>
+<dl class="section note"><dt>Note</dt><dd>This call is only valid when <a class="el" href="group___ocilib_c_api_subscriptions.html#ga26e6a778b6daa16d4fe8e89c339cbe78" title="Return the type of event reported by a notification.">OCI_EventGetType()</a> reports the event type OCI_ENT_OBJECT_CHANGED</dd>
 <dd>
 The returned value can be one of the following values :</dd></dl>
 <ul>
@@ -542,26 +542,26 @@ The returned value can be one of the following values :</dd></dl>
 <li>OCI_ONT_DROP : a drop has been performed</li>
 <li>OCI_ONT_GENERIC : generic undefined action</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_subscriptions.html#ga3a82c0dc1d0d69506087b81bc717c60c" title="Return the name of the database that generated the event.">OCI_EventGetDatabase()</a> returns the affected database</dd>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_subscriptions.html#ga81f3133e4646a5c87c8154fcd6a9462c" title="Return the name of the database that generated the event.">OCI_EventGetDatabase()</a> returns the affected database</dd>
 <dd>
-<a class="el" href="group___ocilib_c_api_subscriptions.html#gab2986bcdd9e4e10996bec5f7767776ec" title="Return the name of the object that generated the event.">OCI_EventGetObject()</a> returns the affected object ('schema_name'.'object_name')</dd>
+<a class="el" href="group___ocilib_c_api_subscriptions.html#ga8189e4c17d0b897b5554c209f2d9cd5a" title="Return the name of the object that generated the event.">OCI_EventGetObject()</a> returns the affected object ('schema_name'.'object_name')</dd>
 <dd>
-OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd>
+OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd>
 <dd>
-if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga78afd31aa61d0ce04c535cd669e58e07" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a>, the rowid of the altered row can be retrieved with <a class="el" href="group___ocilib_c_api_subscriptions.html#gaef9f191c3e55ce652953da82d7cb0d75" title="Return the rowid of the altered database object row.">OCI_EventGetRowid()</a> </dd></dl>
+if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga944ea5d5b2e4f09f7bcc1bd7d36f3886" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a>, the rowid of the altered row can be retrieved with <a class="el" href="group___ocilib_c_api_subscriptions.html#ga972381153e9440b0812c4ddc98628070" title="Return the rowid of the altered database object row.">OCI_EventGetRowid()</a> </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_event.html#a71186b0875124925cc7a5df4abeef653">ocilib::Event::GetObjectEvent()</a>.</p>
 
 </div>
 </div>
-<a id="ga3a82c0dc1d0d69506087b81bc717c60c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3a82c0dc1d0d69506087b81bc717c60c">&#9670;&nbsp;</a></span>OCI_EventGetDatabase()</h2>
+<a id="ga81f3133e4646a5c87c8154fcd6a9462c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga81f3133e4646a5c87c8154fcd6a9462c">&#9670;&nbsp;</a></span>OCI_EventGetDatabase()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_EventGetDatabase </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_EventGetDatabase </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *&#160;</td>
           <td class="paramname"><em>event</em></td><td>)</td>
@@ -579,20 +579,20 @@ if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscripti
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_event.html#ab5916f85034d50780067d34b1bef69a9">ocilib::Event::GetDatabaseName()</a>.</p>
 
 </div>
 </div>
-<a id="gab2986bcdd9e4e10996bec5f7767776ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab2986bcdd9e4e10996bec5f7767776ec">&#9670;&nbsp;</a></span>OCI_EventGetObject()</h2>
+<a id="ga8189e4c17d0b897b5554c209f2d9cd5a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8189e4c17d0b897b5554c209f2d9cd5a">&#9670;&nbsp;</a></span>OCI_EventGetObject()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_EventGetObject </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_EventGetObject </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *&#160;</td>
           <td class="paramname"><em>event</em></td><td>)</td>
@@ -610,20 +610,20 @@ if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscripti
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_event.html#a6838809560aba4bcc0fb71a0bea4bcf9">ocilib::Event::GetObjectName()</a>.</p>
 
 </div>
 </div>
-<a id="gaef9f191c3e55ce652953da82d7cb0d75"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaef9f191c3e55ce652953da82d7cb0d75">&#9670;&nbsp;</a></span>OCI_EventGetRowid()</h2>
+<a id="ga972381153e9440b0812c4ddc98628070"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga972381153e9440b0812c4ddc98628070">&#9670;&nbsp;</a></span>OCI_EventGetRowid()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_EventGetRowid </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_EventGetRowid </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *&#160;</td>
           <td class="paramname"><em>event</em></td><td>)</td>
@@ -641,20 +641,20 @@ if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscripti
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_event.html#a0d80123251af1a33c093fafc2ee9b9ca">ocilib::Event::GetRowID()</a>.</p>
 
 </div>
 </div>
-<a id="ga6a8667ed40a4be1eb47b1a0552791407"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6a8667ed40a4be1eb47b1a0552791407">&#9670;&nbsp;</a></span>OCI_EventGetSubscription()</h2>
+<a id="ga041ff0a18df7114b59d6945ad5936e05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga041ff0a18df7114b59d6945ad5936e05">&#9670;&nbsp;</a></span>OCI_EventGetSubscription()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a>* OCI_API OCI_EventGetSubscription </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a>* OCI_API OCI_EventGetSubscription </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a> *&#160;</td>
           <td class="paramname"><em>event</em></td><td>)</td>
@@ -672,7 +672,7 @@ if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscripti
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_event.html#a545a749a11dedb46a93f49db2dd1657b">ocilib::Event::GetSubscription()</a>.</p>
 
@@ -684,7 +684,7 @@ if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscripti
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

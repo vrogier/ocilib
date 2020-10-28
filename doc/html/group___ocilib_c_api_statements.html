@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -98,72 +98,72 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_statements.html',
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiTransactions</p>
 <p>Executing SQL statements or PL/SQL blocks is really simple with OCILIB.</p>
-<p>First, call <a class="el" href="group___ocilib_c_api_statements.html#ga335822f983af0fb5c529431f06a9a17b" title="Create a statement object and return its handle.">OCI_StatementCreate()</a> to allocate a statement handle. Then :</p>
+<p>First, call <a class="el" href="group___ocilib_c_api_statements.html#gab62065db373d58337fa92948d5a8eba1" title="Create a statement object and return its handle.">OCI_StatementCreate()</a> to allocate a statement handle. Then :</p>
 <ul>
-<li>Prepare the SQL with <a class="el" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a></li>
-<li>Parse and execute it with <a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a></li>
+<li>Prepare the SQL with <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a></li>
+<li>Parse and execute it with <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a></li>
 </ul>
-<p>These two steps can be done together by calling <a class="el" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3" title="Prepare and Execute a SQL statement or PL/SQL block.">OCI_ExecuteStmt()</a> that prepares and executes in one go.</p>
-<p>To find out if the statement has affected any rows, call <a class="el" href="group___ocilib_c_api_statements.html#ga1cf932261960da80cd36d650a08565c3" title="Return the number of rows affected by the SQL statement.">OCI_GetAffectedRows()</a></p>
-<p>Finally, release the statement and its resources with <a class="el" href="group___ocilib_c_api_statements.html#ga487b4f90f1fd4aee18f3d901f5aed104" title="Free a statement and all resources associated to it (resultsets ...)">OCI_StatementFree()</a></p>
+<p>These two steps can be done together by calling <a class="el" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2" title="Prepare and Execute a SQL statement or PL/SQL block.">OCI_ExecuteStmt()</a> that prepares and executes in one go.</p>
+<p>To find out if the statement has affected any rows, call <a class="el" href="group___ocilib_c_api_statements.html#ga0af3308fa16a0a0e591b67c7ab7211a7" title="Return the number of rows affected by the SQL statement.">OCI_GetAffectedRows()</a></p>
+<p>Finally, release the statement and its resources with <a class="el" href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0" title="Free a statement and all resources associated to it (resultsets ...)">OCI_StatementFree()</a></p>
 <dl class="section note"><dt>Note</dt><dd>A statement can be prepared once and executed as many times as needed (see Binding variables section)</dd>
 <dd>
 An OCI_Statement can be used to prepare and/or execute different SQL and PL/SQL statements as many times as needed. For example, if the SQL processing of an application is sequential, only one statement handle is required</dd>
 <dd>
 OCILIB supports nested levels of SQL statement processing. An application can loop through the resultset of the statement handle A, executing statement B and fetching statement C at every loop, and so on ...</dd></dl>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/products.sql */</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a>  *st;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#ga335822f983af0fb5c529431f06a9a17b">OCI_StatementCreate</a>(cn);</div><div class="line"></div><div class="line">    <span class="comment">/* prepare and execute in 2 steps */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af">OCI_Prepare</a>(st, <span class="stringliteral">&quot;delete from products where code = 1&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450">OCI_Execute</a>(st);</div><div class="line">    printf(<span class="stringliteral">&quot;%d row deleted\n&quot;</span>, <a class="code" href="group___ocilib_c_api_statements.html#ga1cf932261960da80cd36d650a08565c3">OCI_GetAffectedRows</a>(st));</div><div class="line"></div><div class="line">    <span class="comment">/* prepare/execute in 1 step */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;delete from products where code = 2&quot;</span>);</div><div class="line">    printf(<span class="stringliteral">&quot;%d row deleted\n&quot;</span>, <a class="code" href="group___ocilib_c_api_statements.html#ga1cf932261960da80cd36d650a08565c3">OCI_GetAffectedRows</a>(st));</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_transactions.html#gaee1ba614ed2dc5bd83bf788ca08f3e71">OCI_Commit</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga487b4f90f1fd4aee18f3d901f5aed104">OCI_StatementFree</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/products.sql */</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a>  *st;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#gab62065db373d58337fa92948d5a8eba1">OCI_StatementCreate</a>(cn);</div><div class="line"></div><div class="line">    <span class="comment">/* prepare and execute in 2 steps */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a>(st, <span class="stringliteral">&quot;delete from products where code = 1&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a>(st);</div><div class="line">    printf(<span class="stringliteral">&quot;%d row deleted\n&quot;</span>, <a class="code" href="group___ocilib_c_api_statements.html#ga0af3308fa16a0a0e591b67c7ab7211a7">OCI_GetAffectedRows</a>(st));</div><div class="line"></div><div class="line">    <span class="comment">/* prepare/execute in 1 step */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;delete from products where code = 2&quot;</span>);</div><div class="line">    printf(<span class="stringliteral">&quot;%d row deleted\n&quot;</span>, <a class="code" href="group___ocilib_c_api_statements.html#ga0af3308fa16a0a0e591b67c7ab7211a7">OCI_GetAffectedRows</a>(st));</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_transactions.html#gadc75ccc3334477a3b4ceeb609f7ed544">OCI_Commit</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga335822f983af0fb5c529431f06a9a17b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga335822f983af0fb5c529431f06a9a17b">OCI_StatementCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga335822f983af0fb5c529431f06a9a17b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a statement object and return its handle.  <a href="#ga335822f983af0fb5c529431f06a9a17b">More...</a><br /></td></tr>
-<tr class="separator:ga335822f983af0fb5c529431f06a9a17b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga487b4f90f1fd4aee18f3d901f5aed104"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga487b4f90f1fd4aee18f3d901f5aed104">OCI_StatementFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:ga487b4f90f1fd4aee18f3d901f5aed104"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a statement and all resources associated to it (resultsets ...)  <a href="#ga487b4f90f1fd4aee18f3d901f5aed104">More...</a><br /></td></tr>
-<tr class="separator:ga487b4f90f1fd4aee18f3d901f5aed104"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga592e4b3cf3df7e152c46fab5d6e3b3af"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af">OCI_Prepare</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *sql)</td></tr>
-<tr class="memdesc:ga592e4b3cf3df7e152c46fab5d6e3b3af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare a SQL statement or PL/SQL block.  <a href="#ga592e4b3cf3df7e152c46fab5d6e3b3af">More...</a><br /></td></tr>
-<tr class="separator:ga592e4b3cf3df7e152c46fab5d6e3b3af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7189aa353845909aaedc8d5956429450"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450">OCI_Execute</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:ga7189aa353845909aaedc8d5956429450"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute a prepared SQL statement or PL/SQL block.  <a href="#ga7189aa353845909aaedc8d5956429450">More...</a><br /></td></tr>
-<tr class="separator:ga7189aa353845909aaedc8d5956429450"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8b2b66994f847d9f0b6b0efe4a13ccf3"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *sql)</td></tr>
-<tr class="memdesc:ga8b2b66994f847d9f0b6b0efe4a13ccf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare and Execute a SQL statement or PL/SQL block.  <a href="#ga8b2b66994f847d9f0b6b0efe4a13ccf3">More...</a><br /></td></tr>
-<tr class="separator:ga8b2b66994f847d9f0b6b0efe4a13ccf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab8b38d31d356d3ca17640b272bb90401"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#gab8b38d31d356d3ca17640b272bb90401">OCI_Parse</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *sql)</td></tr>
-<tr class="memdesc:gab8b38d31d356d3ca17640b272bb90401"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse a SQL statement or PL/SQL block.  <a href="#gab8b38d31d356d3ca17640b272bb90401">More...</a><br /></td></tr>
-<tr class="separator:gab8b38d31d356d3ca17640b272bb90401"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga420f21e4b00ce3e35ee15ed1e109ead1"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga420f21e4b00ce3e35ee15ed1e109ead1">OCI_Describe</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *sql)</td></tr>
-<tr class="memdesc:ga420f21e4b00ce3e35ee15ed1e109ead1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describe the select list of a SQL select statement.  <a href="#ga420f21e4b00ce3e35ee15ed1e109ead1">More...</a><br /></td></tr>
-<tr class="separator:ga420f21e4b00ce3e35ee15ed1e109ead1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gabb4eca3a2c07a9f031c3f2f257663da8"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#gabb4eca3a2c07a9f031c3f2f257663da8">OCI_GetSql</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:gabb4eca3a2c07a9f031c3f2f257663da8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last SQL or PL/SQL statement prepared or executed by the statement.  <a href="#gabb4eca3a2c07a9f031c3f2f257663da8">More...</a><br /></td></tr>
-<tr class="separator:gabb4eca3a2c07a9f031c3f2f257663da8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga129f5173f76224ecd934bfad650a22f3"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga129f5173f76224ecd934bfad650a22f3">OCI_GetSqlIdentifier</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:ga129f5173f76224ecd934bfad650a22f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the statement SQL_ID from the server.  <a href="#ga129f5173f76224ecd934bfad650a22f3">More...</a><br /></td></tr>
-<tr class="separator:ga129f5173f76224ecd934bfad650a22f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaddfbdd24d8686d908e560611bb7b6cc7"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#gaddfbdd24d8686d908e560611bb7b6cc7">OCI_GetSqlErrorPos</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:gaddfbdd24d8686d908e560611bb7b6cc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the error position (in terms of characters) in the SQL statement where the error occurred in case of SQL parsing error.  <a href="#gaddfbdd24d8686d908e560611bb7b6cc7">More...</a><br /></td></tr>
-<tr class="separator:gaddfbdd24d8686d908e560611bb7b6cc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1cf932261960da80cd36d650a08565c3"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga1cf932261960da80cd36d650a08565c3">OCI_GetAffectedRows</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:ga1cf932261960da80cd36d650a08565c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of rows affected by the SQL statement.  <a href="#ga1cf932261960da80cd36d650a08565c3">More...</a><br /></td></tr>
-<tr class="separator:ga1cf932261960da80cd36d650a08565c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2927470291ccc2230da272c3573b4879"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga2927470291ccc2230da272c3573b4879">OCI_GetSQLCommand</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:ga2927470291ccc2230da272c3573b4879"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle SQL code the command held by the statement handle.  <a href="#ga2927470291ccc2230da272c3573b4879">More...</a><br /></td></tr>
-<tr class="separator:ga2927470291ccc2230da272c3573b4879"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga51c2827c3b5fcfdbd768b8c7e1c1cbc3"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga51c2827c3b5fcfdbd768b8c7e1c1cbc3">OCI_GetSQLVerb</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:ga51c2827c3b5fcfdbd768b8c7e1c1cbc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the verb of the SQL command held by the statement handle.  <a href="#ga51c2827c3b5fcfdbd768b8c7e1c1cbc3">More...</a><br /></td></tr>
-<tr class="separator:ga51c2827c3b5fcfdbd768b8c7e1c1cbc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab62065db373d58337fa92948d5a8eba1"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#gab62065db373d58337fa92948d5a8eba1">OCI_StatementCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gab62065db373d58337fa92948d5a8eba1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a statement object and return its handle.  <a href="#gab62065db373d58337fa92948d5a8eba1">More...</a><br /></td></tr>
+<tr class="separator:gab62065db373d58337fa92948d5a8eba1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8faf400001d7132469396b67ae8894d0"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
+<tr class="memdesc:ga8faf400001d7132469396b67ae8894d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a statement and all resources associated to it (resultsets ...)  <a href="#ga8faf400001d7132469396b67ae8894d0">More...</a><br /></td></tr>
+<tr class="separator:ga8faf400001d7132469396b67ae8894d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaaedce0c8f66eb60445fb759900d32f04"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *sql)</td></tr>
+<tr class="memdesc:gaaedce0c8f66eb60445fb759900d32f04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare a SQL statement or PL/SQL block.  <a href="#gaaedce0c8f66eb60445fb759900d32f04">More...</a><br /></td></tr>
+<tr class="separator:gaaedce0c8f66eb60445fb759900d32f04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac4fae0835b45409e141eb1b4518fa89c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
+<tr class="memdesc:gac4fae0835b45409e141eb1b4518fa89c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute a prepared SQL statement or PL/SQL block.  <a href="#gac4fae0835b45409e141eb1b4518fa89c">More...</a><br /></td></tr>
+<tr class="separator:gac4fae0835b45409e141eb1b4518fa89c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga533ada0a945118e7e62e2357d956dcf2"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *sql)</td></tr>
+<tr class="memdesc:ga533ada0a945118e7e62e2357d956dcf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare and Execute a SQL statement or PL/SQL block.  <a href="#ga533ada0a945118e7e62e2357d956dcf2">More...</a><br /></td></tr>
+<tr class="separator:ga533ada0a945118e7e62e2357d956dcf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga248aacd7e8e87d26082054dfe68a2367"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga248aacd7e8e87d26082054dfe68a2367">OCI_Parse</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *sql)</td></tr>
+<tr class="memdesc:ga248aacd7e8e87d26082054dfe68a2367"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse a SQL statement or PL/SQL block.  <a href="#ga248aacd7e8e87d26082054dfe68a2367">More...</a><br /></td></tr>
+<tr class="separator:ga248aacd7e8e87d26082054dfe68a2367"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga499f2ecbc9ac9de1bccedc5af1cef1ca"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga499f2ecbc9ac9de1bccedc5af1cef1ca">OCI_Describe</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *sql)</td></tr>
+<tr class="memdesc:ga499f2ecbc9ac9de1bccedc5af1cef1ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describe the select list of a SQL select statement.  <a href="#ga499f2ecbc9ac9de1bccedc5af1cef1ca">More...</a><br /></td></tr>
+<tr class="separator:ga499f2ecbc9ac9de1bccedc5af1cef1ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab7d4f14255b8f42a94844c697bf44317"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#gab7d4f14255b8f42a94844c697bf44317">OCI_GetSql</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
+<tr class="memdesc:gab7d4f14255b8f42a94844c697bf44317"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last SQL or PL/SQL statement prepared or executed by the statement.  <a href="#gab7d4f14255b8f42a94844c697bf44317">More...</a><br /></td></tr>
+<tr class="separator:gab7d4f14255b8f42a94844c697bf44317"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa48fca797236878ff44e9dd2f96eba4a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#gaa48fca797236878ff44e9dd2f96eba4a">OCI_GetSqlIdentifier</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
+<tr class="memdesc:gaa48fca797236878ff44e9dd2f96eba4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the statement SQL_ID from the server.  <a href="#gaa48fca797236878ff44e9dd2f96eba4a">More...</a><br /></td></tr>
+<tr class="separator:gaa48fca797236878ff44e9dd2f96eba4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab3ec87b4fb46ab1752341561912449a9"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#gab3ec87b4fb46ab1752341561912449a9">OCI_GetSqlErrorPos</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
+<tr class="memdesc:gab3ec87b4fb46ab1752341561912449a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the error position (in terms of characters) in the SQL statement where the error occurred in case of SQL parsing error.  <a href="#gab3ec87b4fb46ab1752341561912449a9">More...</a><br /></td></tr>
+<tr class="separator:gab3ec87b4fb46ab1752341561912449a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0af3308fa16a0a0e591b67c7ab7211a7"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga0af3308fa16a0a0e591b67c7ab7211a7">OCI_GetAffectedRows</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
+<tr class="memdesc:ga0af3308fa16a0a0e591b67c7ab7211a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of rows affected by the SQL statement.  <a href="#ga0af3308fa16a0a0e591b67c7ab7211a7">More...</a><br /></td></tr>
+<tr class="separator:ga0af3308fa16a0a0e591b67c7ab7211a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8d320ae22ef2449a1548c962a03efcca"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#ga8d320ae22ef2449a1548c962a03efcca">OCI_GetSQLCommand</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
+<tr class="memdesc:ga8d320ae22ef2449a1548c962a03efcca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle SQL code the command held by the statement handle.  <a href="#ga8d320ae22ef2449a1548c962a03efcca">More...</a><br /></td></tr>
+<tr class="separator:ga8d320ae22ef2449a1548c962a03efcca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadff15a7f23558c5a3175bead9efa8805"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statements.html#gadff15a7f23558c5a3175bead9efa8805">OCI_GetSQLVerb</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
+<tr class="memdesc:gadff15a7f23558c5a3175bead9efa8805"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the verb of the SQL command held by the statement handle.  <a href="#gadff15a7f23558c5a3175bead9efa8805">More...</a><br /></td></tr>
+<tr class="separator:gadff15a7f23558c5a3175bead9efa8805"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga335822f983af0fb5c529431f06a9a17b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga335822f983af0fb5c529431f06a9a17b">&#9670;&nbsp;</a></span>OCI_StatementCreate()</h2>
+<a id="gab62065db373d58337fa92948d5a8eba1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab62065db373d58337fa92948d5a8eba1">&#9670;&nbsp;</a></span>OCI_StatementCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a>* OCI_API OCI_StatementCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a>* OCI_API OCI_StatementCreate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -187,14 +187,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga487b4f90f1fd4aee18f3d901f5aed104"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga487b4f90f1fd4aee18f3d901f5aed104">&#9670;&nbsp;</a></span>OCI_StatementFree()</h2>
+<a id="ga8faf400001d7132469396b67ae8894d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8faf400001d7132469396b67ae8894d0">&#9670;&nbsp;</a></span>OCI_StatementFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_StatementFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em></td><td>)</td>
@@ -218,14 +218,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga592e4b3cf3df7e152c46fab5d6e3b3af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga592e4b3cf3df7e152c46fab5d6e3b3af">&#9670;&nbsp;</a></span>OCI_Prepare()</h2>
+<a id="gaaedce0c8f66eb60445fb759900d32f04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaaedce0c8f66eb60445fb759900d32f04">&#9670;&nbsp;</a></span>OCI_Prepare()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_Prepare </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_Prepare </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -261,14 +261,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga7189aa353845909aaedc8d5956429450"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7189aa353845909aaedc8d5956429450">&#9670;&nbsp;</a></span>OCI_Execute()</h2>
+<a id="gac4fae0835b45409e141eb1b4518fa89c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac4fae0835b45409e141eb1b4518fa89c">&#9670;&nbsp;</a></span>OCI_Execute()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_Execute </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_Execute </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em></td><td>)</td>
@@ -289,8 +289,8 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>If a SQL warning occurs:<ul>
 <li>the function returns TRUE</li>
-<li>the SQL warning triggers the global error handler with an OCI_Error having its <a class="el" href="group___ocilib_c_api_error_handling.html#ga66d447c8cd06ea3f841b439a1aac055b" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> attribute set to OCI_ERR_WARNING</li>
-<li>If OCILIB is initialized with the OCI_ENV_CONTEXT mode, <a class="el" href="group___ocilib_c_api_error_handling.html#gaf2abe52ad5b278f65dd97a44a2adac4c" title="Retrieve the last error or warning occurred within the last OCILIB call.">OCI_GetLastError()</a> will return the OCI_Error object corresponding to the warning </li>
+<li>the SQL warning triggers the global error handler with an OCI_Error having its <a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> attribute set to OCI_ERR_WARNING</li>
+<li>If OCILIB is initialized with the OCI_ENV_CONTEXT mode, <a class="el" href="group___ocilib_c_api_error_handling.html#gafbd1fb0e0b9ee2d62e357c70276aed0e" title="Retrieve the last error or warning occurred within the last OCILIB call.">OCI_GetLastError()</a> will return the OCI_Error object corresponding to the warning </li>
 </ul>
 </dd></dl>
 
@@ -298,14 +298,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga8b2b66994f847d9f0b6b0efe4a13ccf3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga8b2b66994f847d9f0b6b0efe4a13ccf3">&#9670;&nbsp;</a></span>OCI_ExecuteStmt()</h2>
+<a id="ga533ada0a945118e7e62e2357d956dcf2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga533ada0a945118e7e62e2357d956dcf2">&#9670;&nbsp;</a></span>OCI_ExecuteStmt()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_ExecuteStmt </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -337,8 +337,8 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>If a SQL warning occurs:<ul>
 <li>the function returns TRUE</li>
-<li>the SQL warning triggers the global error handler with an OCI_Error having its <a class="el" href="group___ocilib_c_api_error_handling.html#ga66d447c8cd06ea3f841b439a1aac055b" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> attribute set to OCI_ERR_WARNING</li>
-<li>If OCILIB is initialized with the OCI_ENV_CONTEXT mode, <a class="el" href="group___ocilib_c_api_error_handling.html#gaf2abe52ad5b278f65dd97a44a2adac4c" title="Retrieve the last error or warning occurred within the last OCILIB call.">OCI_GetLastError()</a> will return the OCI_Error object corresponding to the warning </li>
+<li>the SQL warning triggers the global error handler with an OCI_Error having its <a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> attribute set to OCI_ERR_WARNING</li>
+<li>If OCILIB is initialized with the OCI_ENV_CONTEXT mode, <a class="el" href="group___ocilib_c_api_error_handling.html#gafbd1fb0e0b9ee2d62e357c70276aed0e" title="Retrieve the last error or warning occurred within the last OCILIB call.">OCI_GetLastError()</a> will return the OCI_Error object corresponding to the warning </li>
 </ul>
 </dd></dl>
 
@@ -346,14 +346,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gab8b38d31d356d3ca17640b272bb90401"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab8b38d31d356d3ca17640b272bb90401">&#9670;&nbsp;</a></span>OCI_Parse()</h2>
+<a id="ga248aacd7e8e87d26082054dfe68a2367"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga248aacd7e8e87d26082054dfe68a2367">&#9670;&nbsp;</a></span>OCI_Parse()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_Parse </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_Parse </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -384,22 +384,22 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>This call sends the SQL or PL/SQL command to the server for parsing only. The command is not executed. This call is only useful to check is a command is valid or not.</dd>
 <dd>
-This call prepares the statement (internal call to <a class="el" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a>) and ask the Oracle server to parse its SQL or PL/SQL command. <a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> can be call after <a class="el" href="group___ocilib_c_api_statements.html#gab8b38d31d356d3ca17640b272bb90401" title="Parse a SQL statement or PL/SQL block.">OCI_Parse()</a> in order to execute the statement, which means that the server will re-parse again the command.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Do not use <a class="el" href="group___ocilib_c_api_statements.html#gab8b38d31d356d3ca17640b272bb90401" title="Parse a SQL statement or PL/SQL block.">OCI_Parse()</a> unless you're only interested in the parsing result because the statement will be parsed again when executed and thus leading to unnecessary server round-trips and less performance</dd></dl>
+This call prepares the statement (internal call to <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a>) and ask the Oracle server to parse its SQL or PL/SQL command. <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> can be call after <a class="el" href="group___ocilib_c_api_statements.html#ga248aacd7e8e87d26082054dfe68a2367" title="Parse a SQL statement or PL/SQL block.">OCI_Parse()</a> in order to execute the statement, which means that the server will re-parse again the command.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Do not use <a class="el" href="group___ocilib_c_api_statements.html#ga248aacd7e8e87d26082054dfe68a2367" title="Parse a SQL statement or PL/SQL block.">OCI_Parse()</a> unless you're only interested in the parsing result because the statement will be parsed again when executed and thus leading to unnecessary server round-trips and less performance</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#aa13843de1251c79b09a1329b40d41d42">ocilib::Statement::Parse()</a>.</p>
 
 </div>
 </div>
-<a id="ga420f21e4b00ce3e35ee15ed1e109ead1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga420f21e4b00ce3e35ee15ed1e109ead1">&#9670;&nbsp;</a></span>OCI_Describe()</h2>
+<a id="ga499f2ecbc9ac9de1bccedc5af1cef1ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga499f2ecbc9ac9de1bccedc5af1cef1ca">&#9670;&nbsp;</a></span>OCI_Describe()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_Describe </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_Describe </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -428,24 +428,24 @@ This call prepares the statement (internal call to <a class="el" href="group___o
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This call sends the SELECT SQL order to the server for retrieving the description of the select order only. The command is not executed. This call is only useful to retrieve information on the associated resultset Call OCI_GetResultet() after <a class="el" href="group___ocilib_c_api_statements.html#ga420f21e4b00ce3e35ee15ed1e109ead1" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> to access to SELECT list information</dd>
+<dl class="section note"><dt>Note</dt><dd>This call sends the SELECT SQL order to the server for retrieving the description of the select order only. The command is not executed. This call is only useful to retrieve information on the associated resultset Call OCI_GetResultet() after <a class="el" href="group___ocilib_c_api_statements.html#ga499f2ecbc9ac9de1bccedc5af1cef1ca" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> to access to SELECT list information</dd>
 <dd>
-This call prepares the statement (internal call to <a class="el" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a>) and ask the Oracle server to describe the output SELECT list. <a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> can be called after <a class="el" href="group___ocilib_c_api_statements.html#ga420f21e4b00ce3e35ee15ed1e109ead1" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> in order to execute the statement, which means that the server will parse, and describe again the SQL order.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Do not use <a class="el" href="group___ocilib_c_api_statements.html#ga420f21e4b00ce3e35ee15ed1e109ead1" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> unless you're only interested in the resultset information because the statement will be parsed again when executed and thus leading to unnecessary server round-trips and less performance</dd></dl>
+This call prepares the statement (internal call to <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a>) and ask the Oracle server to describe the output SELECT list. <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> can be called after <a class="el" href="group___ocilib_c_api_statements.html#ga499f2ecbc9ac9de1bccedc5af1cef1ca" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> in order to execute the statement, which means that the server will parse, and describe again the SQL order.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Do not use <a class="el" href="group___ocilib_c_api_statements.html#ga499f2ecbc9ac9de1bccedc5af1cef1ca" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> unless you're only interested in the resultset information because the statement will be parsed again when executed and thus leading to unnecessary server round-trips and less performance</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#ac967f297cfd4ca08f431c647c2fdc793">ocilib::Statement::Describe()</a>.</p>
 
 </div>
 </div>
-<a id="gabb4eca3a2c07a9f031c3f2f257663da8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gabb4eca3a2c07a9f031c3f2f257663da8">&#9670;&nbsp;</a></span>OCI_GetSql()</h2>
+<a id="gab7d4f14255b8f42a94844c697bf44317"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab7d4f14255b8f42a94844c697bf44317">&#9670;&nbsp;</a></span>OCI_GetSql()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetSql </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetSql </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em></td><td>)</td>
@@ -468,14 +468,14 @@ This call prepares the statement (internal call to <a class="el" href="group___o
 
 </div>
 </div>
-<a id="ga129f5173f76224ecd934bfad650a22f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga129f5173f76224ecd934bfad650a22f3">&#9670;&nbsp;</a></span>OCI_GetSqlIdentifier()</h2>
+<a id="gaa48fca797236878ff44e9dd2f96eba4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa48fca797236878ff44e9dd2f96eba4a">&#9670;&nbsp;</a></span>OCI_GetSqlIdentifier()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetSqlIdentifier </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetSqlIdentifier </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em></td><td>)</td>
@@ -500,14 +500,14 @@ This call prepares the statement (internal call to <a class="el" href="group___o
 
 </div>
 </div>
-<a id="gaddfbdd24d8686d908e560611bb7b6cc7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaddfbdd24d8686d908e560611bb7b6cc7">&#9670;&nbsp;</a></span>OCI_GetSqlErrorPos()</h2>
+<a id="gab3ec87b4fb46ab1752341561912449a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab3ec87b4fb46ab1752341561912449a9">&#9670;&nbsp;</a></span>OCI_GetSqlErrorPos()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetSqlErrorPos </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSqlErrorPos </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em></td><td>)</td>
@@ -531,14 +531,14 @@ This call prepares the statement (internal call to <a class="el" href="group___o
 
 </div>
 </div>
-<a id="ga1cf932261960da80cd36d650a08565c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga1cf932261960da80cd36d650a08565c3">&#9670;&nbsp;</a></span>OCI_GetAffectedRows()</h2>
+<a id="ga0af3308fa16a0a0e591b67c7ab7211a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0af3308fa16a0a0e591b67c7ab7211a7">&#9670;&nbsp;</a></span>OCI_GetAffectedRows()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetAffectedRows </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetAffectedRows </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em></td><td>)</td>
@@ -561,12 +561,12 @@ This call prepares the statement (internal call to <a class="el" href="group___o
 <li>For INSERTs : number of rows inserted</li>
 <li>For DELETEs : number of rows deleted</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>For SELECTs statements, use <a class="el" href="group___ocilib_c_api_fetching.html#ga93bd9197720088dbda2bef593ad1c07c" title="Retrieve the number of rows fetched so far.">OCI_GetRowCount()</a> instead</dd>
+<dl class="section note"><dt>Note</dt><dd>For SELECTs statements, use <a class="el" href="group___ocilib_c_api_fetching.html#ga80b05221765bef61fc2a5a83707fc09f" title="Retrieve the number of rows fetched so far.">OCI_GetRowCount()</a> instead</dd>
 <dd>
 For PL/SQL blocks performing "select into :&lt;bind&gt;":<ul>
 <li>it returns the number of rows selected from PL/SQL</li>
-<li>Up to version 4.3.0, <a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> returned FALSE and generated an error ORA-01403 - "No Data Found"</li>
-<li>From version 4.3.1, <a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> returns 0 if no data found, otherwise the number of selected rows </li>
+<li>Up to version 4.3.0, <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> returned FALSE and generated an error ORA-01403 - "No Data Found"</li>
+<li>From version 4.3.1, <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> returns 0 if no data found, otherwise the number of selected rows </li>
 </ul>
 </dd></dl>
 
@@ -574,14 +574,14 @@ For PL/SQL blocks performing "select into :&lt;bind&gt;":<ul>
 
 </div>
 </div>
-<a id="ga2927470291ccc2230da272c3573b4879"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2927470291ccc2230da272c3573b4879">&#9670;&nbsp;</a></span>OCI_GetSQLCommand()</h2>
+<a id="ga8d320ae22ef2449a1548c962a03efcca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8d320ae22ef2449a1548c962a03efcca">&#9670;&nbsp;</a></span>OCI_GetSQLCommand()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetSQLCommand </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSQLCommand </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em></td><td>)</td>
@@ -599,21 +599,21 @@ For PL/SQL blocks performing "select into :&lt;bind&gt;":<ul>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_statements.html#ga2927470291ccc2230da272c3573b4879" title="Return the Oracle SQL code the command held by the statement handle.">OCI_GetSQLCommand()</a> must be called after the statement has be executed because that's the server engine that computes the SQL command code</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_statements.html#ga8d320ae22ef2449a1548c962a03efcca" title="Return the Oracle SQL code the command held by the statement handle.">OCI_GetSQLCommand()</a> must be called after the statement has be executed because that's the server engine that computes the SQL command code</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>The SQL command code of the statement otherwise OCI_UNKOWN </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#a3fea776ad539e45d5209998e66a1ebb4">ocilib::Statement::GetSQLCommand()</a>.</p>
 
 </div>
 </div>
-<a id="ga51c2827c3b5fcfdbd768b8c7e1c1cbc3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga51c2827c3b5fcfdbd768b8c7e1c1cbc3">&#9670;&nbsp;</a></span>OCI_GetSQLVerb()</h2>
+<a id="gadff15a7f23558c5a3175bead9efa8805"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadff15a7f23558c5a3175bead9efa8805">&#9670;&nbsp;</a></span>OCI_GetSQLVerb()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetSQLVerb </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetSQLVerb </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em></td><td>)</td>
@@ -631,7 +631,7 @@ For PL/SQL blocks performing "select into :&lt;bind&gt;":<ul>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_statements.html#ga51c2827c3b5fcfdbd768b8c7e1c1cbc3" title="Return the verb of the SQL command held by the statement handle.">OCI_GetSQLVerb()</a> must be called after the statement has been executed because that's the server engine that computes the SQL verb</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_statements.html#gadff15a7f23558c5a3175bead9efa8805" title="Return the verb of the SQL command held by the statement handle.">OCI_GetSQLVerb()</a> must be called after the statement has been executed because that's the server engine that computes the SQL verb</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>The SQL verb list is available in Oracle documentations and guides</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>The SQL command verb of the statement otherwise NULL </dd></dl>
 
@@ -645,7 +645,7 @@ For PL/SQL blocks performing "select into :&lt;bind&gt;":<ul>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

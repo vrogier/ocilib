@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -108,62 +108,62 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_pools.html','');}
 <p>If database sessions are not reusable by mid-tier threads (that is, they are stateful) and the number of back-end server processes may cause scaling problems on the database, use OCI connection pooling.</p>
 <p>If database sessions are reusable by mid-tier threads (that is, they are stateless) and the number of back-end server processes may cause scaling problems on the database, use OCI session pooling.</p>
 <p>If database sessions are not reusable by mid-tier threads (that is, they are stateful) and the number of back-end server processes will never be large enough to potentially cause any scaling issue on the database, there is no need to use any pooling mechanism.</p>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="preprocessor">#define MAX_THREADS 50</span></div><div class="line"><span class="preprocessor">#define MAX_CONN    10</span></div><div class="line"><span class="preprocessor">#define SIZE_STR   260</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">void</span> pool_worker(<a class="code" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *thread, <span class="keywordtype">void</span> *data)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn = <a class="code" href="group___ocilib_c_api_pools.html#ga3f6f0cc0b68e1efab43b5929411dd6ab">OCI_PoolGetConnection</a>(data, NULL);</div><div class="line">    <span class="keywordtype">char</span> str[SIZE_STR + 1] = <span class="stringliteral">&quot;&quot;</span>;</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_formatting.html#gafc660530b550458f0b5578a06e7a7a27">OCI_Immediate</a>(cn, <span class="stringliteral">&quot;select to_char(sysdate, &#39;YYYYMMDD HH24:MI:SS&#39;) from dual&quot;</span>, OCI_ARG_TEXT, str);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, str);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree</a>(cn);</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *th[MAX_THREADS];</div><div class="line">    OCI_ConnPool *pool;</div><div class="line"></div><div class="line">    <span class="keywordtype">int</span> i;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT | OCI_ENV_THREADED))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">/* create pool */</span></div><div class="line"></div><div class="line">    pool = <a class="code" href="group___ocilib_c_api_pools.html#gad7685236e3829f29e69dfa1c20c9e7e0">OCI_PoolCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_POOL_SESSION, OCI_SESSION_DEFAULT, 0, MAX_CONN, 1);</div><div class="line"></div><div class="line">    <span class="comment">/* create threads */</span></div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; MAX_THREADS; i++)</div><div class="line">    {</div><div class="line">        th[i] = <a class="code" href="group___ocilib_c_api_threading.html#ga1a2474e874215e0b42109ba042de5e3a">OCI_ThreadCreate</a>();</div><div class="line">        <a class="code" href="group___ocilib_c_api_threading.html#ga1076c9942cc395f298ca350021031bfd">OCI_ThreadRun</a>(th[i], pool_worker, pool);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">/* wait for threads and cleanup */</span></div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; MAX_THREADS; i++)</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_threading.html#gadfec0263c6b8d508126a806c85898fb9">OCI_ThreadJoin</a>(th[i]);</div><div class="line">        <a class="code" href="group___ocilib_c_api_threading.html#gada7fa41aeedc7be2ce4f40c93ece524d">OCI_ThreadFree</a>(th[i]);</div><div class="line">    }</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_pools.html#gaeebfa67b8c6013c1ae9c0b97b317e1bf">OCI_PoolFree</a>(pool);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="preprocessor">#define MAX_THREADS 50</span></div><div class="line"><span class="preprocessor">#define MAX_CONN    10</span></div><div class="line"><span class="preprocessor">#define SIZE_STR   260</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">void</span> pool_worker(<a class="code" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *thread, <span class="keywordtype">void</span> *data)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn = <a class="code" href="group___ocilib_c_api_pools.html#ga2e9b73c94c032755c30eb36b8b09fee5">OCI_PoolGetConnection</a>(data, NULL);</div><div class="line">    <span class="keywordtype">char</span> str[SIZE_STR + 1] = <span class="stringliteral">&quot;&quot;</span>;</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_formatting.html#ga8ccca68ac7352c4114fcd90830f33ce7">OCI_Immediate</a>(cn, <span class="stringliteral">&quot;select to_char(sysdate, &#39;YYYYMMDD HH24:MI:SS&#39;) from dual&quot;</span>, OCI_ARG_TEXT, str);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, str);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a>(cn);</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *th[MAX_THREADS];</div><div class="line">    OCI_ConnPool *pool;</div><div class="line"></div><div class="line">    <span class="keywordtype">int</span> i;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT | OCI_ENV_THREADED))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">/* create pool */</span></div><div class="line"></div><div class="line">    pool = <a class="code" href="group___ocilib_c_api_pools.html#gab4b17f7cb1cb55218eeaeee4618c7547">OCI_PoolCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_POOL_SESSION, OCI_SESSION_DEFAULT, 0, MAX_CONN, 1);</div><div class="line"></div><div class="line">    <span class="comment">/* create threads */</span></div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; MAX_THREADS; i++)</div><div class="line">    {</div><div class="line">        th[i] = <a class="code" href="group___ocilib_c_api_threading.html#ga217006ee7fa6d4165a8b6246d8dba855">OCI_ThreadCreate</a>();</div><div class="line">        <a class="code" href="group___ocilib_c_api_threading.html#ga1e7955887aeff3211fd8f9ccdee46af5">OCI_ThreadRun</a>(th[i], pool_worker, pool);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">/* wait for threads and cleanup */</span></div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 0; i &lt; MAX_THREADS; i++)</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_threading.html#ga320e03677e095ee123aa73a3b44ebc82">OCI_ThreadJoin</a>(th[i]);</div><div class="line">        <a class="code" href="group___ocilib_c_api_threading.html#ga4171180f5329ebedea7a10f607c8be70">OCI_ThreadFree</a>(th[i]);</div><div class="line">    }</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_pools.html#gad98d2baac08791e3121e577924899d59">OCI_PoolFree</a>(pool);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:gad7685236e3829f29e69dfa1c20c9e7e0"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#gad7685236e3829f29e69dfa1c20c9e7e0">OCI_PoolCreate</a> (const otext *db, const otext *user, const otext *pwd, unsigned int type, unsigned int mode, unsigned int min_con, unsigned int max_con, unsigned int incr_con)</td></tr>
-<tr class="memdesc:gad7685236e3829f29e69dfa1c20c9e7e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Oracle pool of connections or sessions.  <a href="#gad7685236e3829f29e69dfa1c20c9e7e0">More...</a><br /></td></tr>
-<tr class="separator:gad7685236e3829f29e69dfa1c20c9e7e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaeebfa67b8c6013c1ae9c0b97b317e1bf"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#gaeebfa67b8c6013c1ae9c0b97b317e1bf">OCI_PoolFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
-<tr class="memdesc:gaeebfa67b8c6013c1ae9c0b97b317e1bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a pool object.  <a href="#gaeebfa67b8c6013c1ae9c0b97b317e1bf">More...</a><br /></td></tr>
-<tr class="separator:gaeebfa67b8c6013c1ae9c0b97b317e1bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3f6f0cc0b68e1efab43b5929411dd6ab"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga3f6f0cc0b68e1efab43b5929411dd6ab">OCI_PoolGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool, const otext *tag)</td></tr>
-<tr class="memdesc:ga3f6f0cc0b68e1efab43b5929411dd6ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a connection from the pool.  <a href="#ga3f6f0cc0b68e1efab43b5929411dd6ab">More...</a><br /></td></tr>
-<tr class="separator:ga3f6f0cc0b68e1efab43b5929411dd6ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab3de34dcf6eb9c5aac381074eea6f199"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#gab3de34dcf6eb9c5aac381074eea6f199">OCI_PoolGetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
-<tr class="memdesc:gab3de34dcf6eb9c5aac381074eea6f199"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the idle timeout for connections/sessions in the pool.  <a href="#gab3de34dcf6eb9c5aac381074eea6f199">More...</a><br /></td></tr>
-<tr class="separator:gab3de34dcf6eb9c5aac381074eea6f199"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga44c2acfecf3b318b34c7301768cc0053"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga44c2acfecf3b318b34c7301768cc0053">OCI_PoolSetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool, unsigned int value)</td></tr>
-<tr class="memdesc:ga44c2acfecf3b318b34c7301768cc0053"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the connections/sessions idle timeout.  <a href="#ga44c2acfecf3b318b34c7301768cc0053">More...</a><br /></td></tr>
-<tr class="separator:ga44c2acfecf3b318b34c7301768cc0053"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4621ce46c4ff8f0b4888a7fc964c8d80"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga4621ce46c4ff8f0b4888a7fc964c8d80">OCI_PoolGetNoWait</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
-<tr class="memdesc:ga4621ce46c4ff8f0b4888a7fc964c8d80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the waiting mode used when no more connections/sessions are available from the pool.  <a href="#ga4621ce46c4ff8f0b4888a7fc964c8d80">More...</a><br /></td></tr>
-<tr class="separator:ga4621ce46c4ff8f0b4888a7fc964c8d80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9831b1900b8c05e25bebd4774167317a"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga9831b1900b8c05e25bebd4774167317a">OCI_PoolSetNoWait</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool, boolean value)</td></tr>
-<tr class="memdesc:ga9831b1900b8c05e25bebd4774167317a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the waiting mode used when no more connections/sessions are available from the pool.  <a href="#ga9831b1900b8c05e25bebd4774167317a">More...</a><br /></td></tr>
-<tr class="separator:ga9831b1900b8c05e25bebd4774167317a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga25ccd51b5a7e7f48950e1dbfe847c3f6"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga25ccd51b5a7e7f48950e1dbfe847c3f6">OCI_PoolGetBusyCount</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
-<tr class="memdesc:ga25ccd51b5a7e7f48950e1dbfe847c3f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of busy connections/sessions.  <a href="#ga25ccd51b5a7e7f48950e1dbfe847c3f6">More...</a><br /></td></tr>
-<tr class="separator:ga25ccd51b5a7e7f48950e1dbfe847c3f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga41cd5b1fdb6470f5d4c2820ffb3692f1"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga41cd5b1fdb6470f5d4c2820ffb3692f1">OCI_PoolGetOpenedCount</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
-<tr class="memdesc:ga41cd5b1fdb6470f5d4c2820ffb3692f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of opened connections/sessions.  <a href="#ga41cd5b1fdb6470f5d4c2820ffb3692f1">More...</a><br /></td></tr>
-<tr class="separator:ga41cd5b1fdb6470f5d4c2820ffb3692f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga314ddcfc569ffc89ae0af75f9ba2db76"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga314ddcfc569ffc89ae0af75f9ba2db76">OCI_PoolGetMin</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
-<tr class="memdesc:ga314ddcfc569ffc89ae0af75f9ba2db76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the minimum number of connections/sessions that can be opened to the database.  <a href="#ga314ddcfc569ffc89ae0af75f9ba2db76">More...</a><br /></td></tr>
-<tr class="separator:ga314ddcfc569ffc89ae0af75f9ba2db76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6b304c6e115acacd99a7d39a3e828bdb"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga6b304c6e115acacd99a7d39a3e828bdb">OCI_PoolGetMax</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
-<tr class="memdesc:ga6b304c6e115acacd99a7d39a3e828bdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of connections/sessions that can be opened to the database.  <a href="#ga6b304c6e115acacd99a7d39a3e828bdb">More...</a><br /></td></tr>
-<tr class="separator:ga6b304c6e115acacd99a7d39a3e828bdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaaa3a7066a1220f4e20dedebd7f49a121"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#gaaa3a7066a1220f4e20dedebd7f49a121">OCI_PoolGetIncrement</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
-<tr class="memdesc:gaaa3a7066a1220f4e20dedebd7f49a121"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the increment for connections/sessions to be opened to the database when the pool is not full.  <a href="#gaaa3a7066a1220f4e20dedebd7f49a121">More...</a><br /></td></tr>
-<tr class="separator:gaaa3a7066a1220f4e20dedebd7f49a121"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gacc15e6a573cd8d3fbd2e346b770a27f5"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#gacc15e6a573cd8d3fbd2e346b770a27f5">OCI_PoolGetStatementCacheSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
-<tr class="memdesc:gacc15e6a573cd8d3fbd2e346b770a27f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of statements to keep in the pool statement cache.  <a href="#gacc15e6a573cd8d3fbd2e346b770a27f5">More...</a><br /></td></tr>
-<tr class="separator:gacc15e6a573cd8d3fbd2e346b770a27f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad6afcf9e91c4757c2025261d8135f3d4"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#gad6afcf9e91c4757c2025261d8135f3d4">OCI_PoolSetStatementCacheSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool, unsigned int value)</td></tr>
-<tr class="memdesc:gad6afcf9e91c4757c2025261d8135f3d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum number of statements to keep in the pool statement cache.  <a href="#gad6afcf9e91c4757c2025261d8135f3d4">More...</a><br /></td></tr>
-<tr class="separator:gad6afcf9e91c4757c2025261d8135f3d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab4b17f7cb1cb55218eeaeee4618c7547"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#gab4b17f7cb1cb55218eeaeee4618c7547">OCI_PoolCreate</a> (const otext *db, const otext *user, const otext *pwd, unsigned int type, unsigned int mode, unsigned int min_con, unsigned int max_con, unsigned int incr_con)</td></tr>
+<tr class="memdesc:gab4b17f7cb1cb55218eeaeee4618c7547"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Oracle pool of connections or sessions.  <a href="#gab4b17f7cb1cb55218eeaeee4618c7547">More...</a><br /></td></tr>
+<tr class="separator:gab4b17f7cb1cb55218eeaeee4618c7547"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad98d2baac08791e3121e577924899d59"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#gad98d2baac08791e3121e577924899d59">OCI_PoolFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
+<tr class="memdesc:gad98d2baac08791e3121e577924899d59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a pool object.  <a href="#gad98d2baac08791e3121e577924899d59">More...</a><br /></td></tr>
+<tr class="separator:gad98d2baac08791e3121e577924899d59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2e9b73c94c032755c30eb36b8b09fee5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga2e9b73c94c032755c30eb36b8b09fee5">OCI_PoolGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool, const otext *tag)</td></tr>
+<tr class="memdesc:ga2e9b73c94c032755c30eb36b8b09fee5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a connection from the pool.  <a href="#ga2e9b73c94c032755c30eb36b8b09fee5">More...</a><br /></td></tr>
+<tr class="separator:ga2e9b73c94c032755c30eb36b8b09fee5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae6bdb982e96f0978c0b06d0be96cab65"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#gae6bdb982e96f0978c0b06d0be96cab65">OCI_PoolGetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
+<tr class="memdesc:gae6bdb982e96f0978c0b06d0be96cab65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the idle timeout for connections/sessions in the pool.  <a href="#gae6bdb982e96f0978c0b06d0be96cab65">More...</a><br /></td></tr>
+<tr class="separator:gae6bdb982e96f0978c0b06d0be96cab65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga893457c5817ebfc9adf6819ed1d13752"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga893457c5817ebfc9adf6819ed1d13752">OCI_PoolSetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool, unsigned int value)</td></tr>
+<tr class="memdesc:ga893457c5817ebfc9adf6819ed1d13752"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the connections/sessions idle timeout.  <a href="#ga893457c5817ebfc9adf6819ed1d13752">More...</a><br /></td></tr>
+<tr class="separator:ga893457c5817ebfc9adf6819ed1d13752"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae4130d1a63f2c8b59314baff1ee76f97"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#gae4130d1a63f2c8b59314baff1ee76f97">OCI_PoolGetNoWait</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
+<tr class="memdesc:gae4130d1a63f2c8b59314baff1ee76f97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the waiting mode used when no more connections/sessions are available from the pool.  <a href="#gae4130d1a63f2c8b59314baff1ee76f97">More...</a><br /></td></tr>
+<tr class="separator:gae4130d1a63f2c8b59314baff1ee76f97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6f3b1680200816a4e821a5c87f8f85cc"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga6f3b1680200816a4e821a5c87f8f85cc">OCI_PoolSetNoWait</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool, boolean value)</td></tr>
+<tr class="memdesc:ga6f3b1680200816a4e821a5c87f8f85cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the waiting mode used when no more connections/sessions are available from the pool.  <a href="#ga6f3b1680200816a4e821a5c87f8f85cc">More...</a><br /></td></tr>
+<tr class="separator:ga6f3b1680200816a4e821a5c87f8f85cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga03f2328d935681970ab2c26d8cf0e7e4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga03f2328d935681970ab2c26d8cf0e7e4">OCI_PoolGetBusyCount</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
+<tr class="memdesc:ga03f2328d935681970ab2c26d8cf0e7e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of busy connections/sessions.  <a href="#ga03f2328d935681970ab2c26d8cf0e7e4">More...</a><br /></td></tr>
+<tr class="separator:ga03f2328d935681970ab2c26d8cf0e7e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga925e18447dcfc1b5163d147ba619d8a5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga925e18447dcfc1b5163d147ba619d8a5">OCI_PoolGetOpenedCount</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
+<tr class="memdesc:ga925e18447dcfc1b5163d147ba619d8a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of opened connections/sessions.  <a href="#ga925e18447dcfc1b5163d147ba619d8a5">More...</a><br /></td></tr>
+<tr class="separator:ga925e18447dcfc1b5163d147ba619d8a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf485b3177cee66353857adf798993319"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#gaf485b3177cee66353857adf798993319">OCI_PoolGetMin</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
+<tr class="memdesc:gaf485b3177cee66353857adf798993319"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the minimum number of connections/sessions that can be opened to the database.  <a href="#gaf485b3177cee66353857adf798993319">More...</a><br /></td></tr>
+<tr class="separator:gaf485b3177cee66353857adf798993319"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacaffd61a334e8736937133f41890341e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#gacaffd61a334e8736937133f41890341e">OCI_PoolGetMax</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
+<tr class="memdesc:gacaffd61a334e8736937133f41890341e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of connections/sessions that can be opened to the database.  <a href="#gacaffd61a334e8736937133f41890341e">More...</a><br /></td></tr>
+<tr class="separator:gacaffd61a334e8736937133f41890341e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3b624f2115427ec552d9335b16b827ea"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga3b624f2115427ec552d9335b16b827ea">OCI_PoolGetIncrement</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
+<tr class="memdesc:ga3b624f2115427ec552d9335b16b827ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the increment for connections/sessions to be opened to the database when the pool is not full.  <a href="#ga3b624f2115427ec552d9335b16b827ea">More...</a><br /></td></tr>
+<tr class="separator:ga3b624f2115427ec552d9335b16b827ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga54eeec6e0c48be850a516a5f8ba06bcb"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga54eeec6e0c48be850a516a5f8ba06bcb">OCI_PoolGetStatementCacheSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
+<tr class="memdesc:ga54eeec6e0c48be850a516a5f8ba06bcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of statements to keep in the pool statement cache.  <a href="#ga54eeec6e0c48be850a516a5f8ba06bcb">More...</a><br /></td></tr>
+<tr class="separator:ga54eeec6e0c48be850a516a5f8ba06bcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga55ff91d6f22208501911071c491f20fe"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga55ff91d6f22208501911071c491f20fe">OCI_PoolSetStatementCacheSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool, unsigned int value)</td></tr>
+<tr class="memdesc:ga55ff91d6f22208501911071c491f20fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum number of statements to keep in the pool statement cache.  <a href="#ga55ff91d6f22208501911071c491f20fe">More...</a><br /></td></tr>
+<tr class="separator:ga55ff91d6f22208501911071c491f20fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="gad7685236e3829f29e69dfa1c20c9e7e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad7685236e3829f29e69dfa1c20c9e7e0">&#9670;&nbsp;</a></span>OCI_PoolCreate()</h2>
+<a id="gab4b17f7cb1cb55218eeaeee4618c7547"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab4b17f7cb1cb55218eeaeee4618c7547">&#9670;&nbsp;</a></span>OCI_PoolCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a>* OCI_API OCI_PoolCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a>* OCI_API OCI_PoolCreate </td>
           <td>(</td>
           <td class="paramtype">const otext *&#160;</td>
           <td class="paramname"><em>db</em>, </td>
@@ -249,14 +249,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaeebfa67b8c6013c1ae9c0b97b317e1bf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaeebfa67b8c6013c1ae9c0b97b317e1bf">&#9670;&nbsp;</a></span>OCI_PoolFree()</h2>
+<a id="gad98d2baac08791e3121e577924899d59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad98d2baac08791e3121e577924899d59">&#9670;&nbsp;</a></span>OCI_PoolFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_PoolFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_PoolFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em></td><td>)</td>
@@ -280,14 +280,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga3f6f0cc0b68e1efab43b5929411dd6ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3f6f0cc0b68e1efab43b5929411dd6ab">&#9670;&nbsp;</a></span>OCI_PoolGetConnection()</h2>
+<a id="ga2e9b73c94c032755c30eb36b8b09fee5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2e9b73c94c032755c30eb36b8b09fee5">&#9670;&nbsp;</a></span>OCI_PoolGetConnection()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>* OCI_API OCI_PoolGetConnection </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>* OCI_API OCI_PoolGetConnection </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em>, </td>
@@ -317,7 +317,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section user"><dt>Session tagging</dt><dd></dd></dl>
-<p>Session pools have a nice feature that is 'session tagging' It's possible to tag a session with a string identifier when the session is returned to the pool, it keeps its tags. When requesting a connection from the session pool, it's possible to request a session that has the given 'tag' parameter If one exists, it is returned. If not and if an untagged session is available, it is then returned. So check the connection tag property with <a class="el" href="group___ocilib_c_api_connections.html#ga2703e4c986b2d6827184b10a5aa527af" title="Return the tag associated the given connection.">OCI_GetSessionTag()</a> to find out if the returned connection is tagged or not.</p>
+<p>Session pools have a nice feature that is 'session tagging' It's possible to tag a session with a string identifier when the session is returned to the pool, it keeps its tags. When requesting a connection from the session pool, it's possible to request a session that has the given 'tag' parameter If one exists, it is returned. If not and if an untagged session is available, it is then returned. So check the connection tag property with <a class="el" href="group___ocilib_c_api_connections.html#gac20c8fb51e786007476d7aa791625857" title="Return the tag associated the given connection.">OCI_GetSessionTag()</a> to find out if the returned connection is tagged or not.</p>
 <p>This features is described in the OCI developer guide as the following :</p>
 <p>"The tags provide a way for users to customize sessions in the pool. A client may get a default or untagged session from a pool, set certain attributes on the session (such as NLS settings), and return the session to the pool, labeling it with an appropriate tag. The user may request a session with the same tags in order to have a session with the same attributes"</p>
 <dl class="section return"><dt>Returns</dt><dd>Connection handle otherwise NULL on failure </dd></dl>
@@ -326,14 +326,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gab3de34dcf6eb9c5aac381074eea6f199"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab3de34dcf6eb9c5aac381074eea6f199">&#9670;&nbsp;</a></span>OCI_PoolGetTimeout()</h2>
+<a id="gae6bdb982e96f0978c0b06d0be96cab65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae6bdb982e96f0978c0b06d0be96cab65">&#9670;&nbsp;</a></span>OCI_PoolGetTimeout()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_PoolGetTimeout </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetTimeout </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em></td><td>)</td>
@@ -359,14 +359,14 @@ Timeout is not available for internal pooling implementation (client &lt; 9i) </
 
 </div>
 </div>
-<a id="ga44c2acfecf3b318b34c7301768cc0053"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga44c2acfecf3b318b34c7301768cc0053">&#9670;&nbsp;</a></span>OCI_PoolSetTimeout()</h2>
+<a id="ga893457c5817ebfc9adf6819ed1d13752"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga893457c5817ebfc9adf6819ed1d13752">&#9670;&nbsp;</a></span>OCI_PoolSetTimeout()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_PoolSetTimeout </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetTimeout </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em>, </td>
@@ -403,14 +403,14 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 
 </div>
 </div>
-<a id="ga4621ce46c4ff8f0b4888a7fc964c8d80"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4621ce46c4ff8f0b4888a7fc964c8d80">&#9670;&nbsp;</a></span>OCI_PoolGetNoWait()</h2>
+<a id="gae4130d1a63f2c8b59314baff1ee76f97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae4130d1a63f2c8b59314baff1ee76f97">&#9670;&nbsp;</a></span>OCI_PoolGetNoWait()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_PoolGetNoWait </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_PoolGetNoWait </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em></td><td>)</td>
@@ -438,14 +438,14 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 
 </div>
 </div>
-<a id="ga9831b1900b8c05e25bebd4774167317a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga9831b1900b8c05e25bebd4774167317a">&#9670;&nbsp;</a></span>OCI_PoolSetNoWait()</h2>
+<a id="ga6f3b1680200816a4e821a5c87f8f85cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6f3b1680200816a4e821a5c87f8f85cc">&#9670;&nbsp;</a></span>OCI_PoolSetNoWait()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_PoolSetNoWait </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetNoWait </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em>, </td>
@@ -484,14 +484,14 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 
 </div>
 </div>
-<a id="ga25ccd51b5a7e7f48950e1dbfe847c3f6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga25ccd51b5a7e7f48950e1dbfe847c3f6">&#9670;&nbsp;</a></span>OCI_PoolGetBusyCount()</h2>
+<a id="ga03f2328d935681970ab2c26d8cf0e7e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga03f2328d935681970ab2c26d8cf0e7e4">&#9670;&nbsp;</a></span>OCI_PoolGetBusyCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_PoolGetBusyCount </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetBusyCount </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em></td><td>)</td>
@@ -514,14 +514,14 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 
 </div>
 </div>
-<a id="ga41cd5b1fdb6470f5d4c2820ffb3692f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga41cd5b1fdb6470f5d4c2820ffb3692f1">&#9670;&nbsp;</a></span>OCI_PoolGetOpenedCount()</h2>
+<a id="ga925e18447dcfc1b5163d147ba619d8a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga925e18447dcfc1b5163d147ba619d8a5">&#9670;&nbsp;</a></span>OCI_PoolGetOpenedCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_PoolGetOpenedCount </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetOpenedCount </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em></td><td>)</td>
@@ -544,14 +544,14 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 
 </div>
 </div>
-<a id="ga314ddcfc569ffc89ae0af75f9ba2db76"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga314ddcfc569ffc89ae0af75f9ba2db76">&#9670;&nbsp;</a></span>OCI_PoolGetMin()</h2>
+<a id="gaf485b3177cee66353857adf798993319"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf485b3177cee66353857adf798993319">&#9670;&nbsp;</a></span>OCI_PoolGetMin()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_PoolGetMin </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetMin </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em></td><td>)</td>
@@ -574,14 +574,14 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 
 </div>
 </div>
-<a id="ga6b304c6e115acacd99a7d39a3e828bdb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6b304c6e115acacd99a7d39a3e828bdb">&#9670;&nbsp;</a></span>OCI_PoolGetMax()</h2>
+<a id="gacaffd61a334e8736937133f41890341e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacaffd61a334e8736937133f41890341e">&#9670;&nbsp;</a></span>OCI_PoolGetMax()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_PoolGetMax </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetMax </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em></td><td>)</td>
@@ -604,14 +604,14 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 
 </div>
 </div>
-<a id="gaaa3a7066a1220f4e20dedebd7f49a121"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaaa3a7066a1220f4e20dedebd7f49a121">&#9670;&nbsp;</a></span>OCI_PoolGetIncrement()</h2>
+<a id="ga3b624f2115427ec552d9335b16b827ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3b624f2115427ec552d9335b16b827ea">&#9670;&nbsp;</a></span>OCI_PoolGetIncrement()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_PoolGetIncrement </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetIncrement </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em></td><td>)</td>
@@ -634,14 +634,14 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 
 </div>
 </div>
-<a id="gacc15e6a573cd8d3fbd2e346b770a27f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gacc15e6a573cd8d3fbd2e346b770a27f5">&#9670;&nbsp;</a></span>OCI_PoolGetStatementCacheSize()</h2>
+<a id="ga54eeec6e0c48be850a516a5f8ba06bcb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga54eeec6e0c48be850a516a5f8ba06bcb">&#9670;&nbsp;</a></span>OCI_PoolGetStatementCacheSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_PoolGetStatementCacheSize </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetStatementCacheSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em></td><td>)</td>
@@ -665,14 +665,14 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 
 </div>
 </div>
-<a id="gad6afcf9e91c4757c2025261d8135f3d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad6afcf9e91c4757c2025261d8135f3d4">&#9670;&nbsp;</a></span>OCI_PoolSetStatementCacheSize()</h2>
+<a id="ga55ff91d6f22208501911071c491f20fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga55ff91d6f22208501911071c491f20fe">&#9670;&nbsp;</a></span>OCI_PoolSetStatementCacheSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_PoolSetStatementCacheSize </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetStatementCacheSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *&#160;</td>
           <td class="paramname"><em>pool</em>, </td>
@@ -713,7 +713,7 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

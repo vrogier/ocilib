@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -122,77 +122,77 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_files.html','');}
 <li>New maximum file size limit (128 To) applies to OCI_Files objects.</li>
 <li>See Internal Large Objects (LOBs) section for Files &gt; 4 Go information</li>
 </ul>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/file.sql */</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *st;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a> *rs;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file;</div><div class="line">    <span class="keywordtype">char</span> buffer[256];</div><div class="line">    <span class="keywordtype">int</span> n;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#ga335822f983af0fb5c529431f06a9a17b">OCI_StatementCreate</a>(cn);</div><div class="line"></div><div class="line">    file = <a class="code" href="group___ocilib_c_api_files.html#ga199d6ce1a1231feb56b456ad6cbc2714">OCI_FileCreate</a>(cn, OCI_BFILE);</div><div class="line"></div><div class="line">    <span class="comment">/* replace &#39;test.txt&#39; with any existing file on the &#39;test_folder&#39; folder */</span></div><div class="line">    </div><div class="line">    <a class="code" href="group___ocilib_c_api_files.html#ga17e77f8545ef10e2a081b19ae915a6ae">OCI_FileSetName</a>(file, <span class="stringliteral">&quot;TEMP_FOLDER&quot;</span>, <span class="stringliteral">&quot;test.txt&quot;</span>);</div><div class="line"></div><div class="line">    <span class="comment">/* check if file exists */</span></div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (<a class="code" href="group___ocilib_c_api_files.html#ga634da122ca768f1c219ed08a113da0d3">OCI_FileExists</a>(file))</div><div class="line">    {</div><div class="line">        printf(<span class="stringliteral">&quot;file size : %d\n&quot;</span>, <a class="code" href="group___ocilib_c_api_files.html#ga0cf778c46524cb185d2d60e1cac672f5">OCI_FileGetSize</a>(file));</div><div class="line">        printf(<span class="stringliteral">&quot;file dir  : %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_files.html#gae3e7de24ad2974ebdce48524f26f7d6b">OCI_FileGetDirectory</a>(file));</div><div class="line">        printf(<span class="stringliteral">&quot;file name : %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_files.html#ga998ff160e890c6898f218c9841c062fc">OCI_FileGetName</a>(file));</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">/* bind for inserting into table */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af">OCI_Prepare</a>(st, <span class="stringliteral">&quot;insert into files(id, item) values (1, :f)&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_binding.html#gaa38da0b6c33326c068d38ceeeb60c2b6">OCI_BindFile</a>(st, <span class="stringliteral">&quot;:f&quot;</span>, file);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450">OCI_Execute</a>(st);</div><div class="line"></div><div class="line">    <span class="comment">/* free local file object */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_files.html#gad4b58b6d80e24bb045fb82d78c5cf36a">OCI_FileFree</a>(file);</div><div class="line"></div><div class="line">    <span class="comment">/* fetch file data from table */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;select * from files&quot;</span>);</div><div class="line"></div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gaf2a9e28b66a9538ba0ffb62bffb87c16">OCI_GetResultset</a>(st);</div><div class="line"></div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga36ac26dcea78f6074421781e401f97ba">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        file = <a class="code" href="group___ocilib_c_api_fetching.html#ga1f4362d4f0ad420ebfaeafca29670d77">OCI_GetFile</a>(rs, 2);</div><div class="line"></div><div class="line">        <a class="code" href="group___ocilib_c_api_files.html#gaf18d3143f2d1e261b5b90becba0726fe">OCI_FileOpen</a>(file);</div><div class="line"></div><div class="line">        printf(<span class="stringliteral">&quot;file size  %d\n&quot;</span>, <a class="code" href="group___ocilib_c_api_files.html#ga0cf778c46524cb185d2d60e1cac672f5">OCI_FileGetSize</a>(file));</div><div class="line">        printf(<span class="stringliteral">&quot;file dir   %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_files.html#gae3e7de24ad2974ebdce48524f26f7d6b">OCI_FileGetDirectory</a>(file));</div><div class="line">        printf(<span class="stringliteral">&quot;file name  %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_files.html#ga998ff160e890c6898f218c9841c062fc">OCI_FileGetName</a>(file));</div><div class="line"></div><div class="line">        <span class="keywordflow">while</span> (n = <a class="code" href="group___ocilib_c_api_files.html#gaf6400291c6338fc6be4dfdc3a6f5eb55">OCI_FileRead</a>(file, buffer, <span class="keyword">sizeof</span>(buffer) - 1))</div><div class="line">        {</div><div class="line">            buffer[n] = 0;</div><div class="line">            printf(buffer);</div><div class="line">        }</div><div class="line"></div><div class="line">        <a class="code" href="group___ocilib_c_api_files.html#ga875e7e20aae8ff4358f1710f12630797">OCI_FileClose</a>(file);</div><div class="line">    }</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga487b4f90f1fd4aee18f3d901f5aed104">OCI_StatementFree</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/file.sql */</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *st;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a> *rs;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file;</div><div class="line">    <span class="keywordtype">char</span> buffer[256];</div><div class="line">    <span class="keywordtype">int</span> n;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#gab62065db373d58337fa92948d5a8eba1">OCI_StatementCreate</a>(cn);</div><div class="line"></div><div class="line">    file = <a class="code" href="group___ocilib_c_api_files.html#gac99e87670781d36d0852aa30af65f4d6">OCI_FileCreate</a>(cn, OCI_BFILE);</div><div class="line"></div><div class="line">    <span class="comment">/* replace &#39;test.txt&#39; with any existing file on the &#39;test_folder&#39; folder */</span></div><div class="line">    </div><div class="line">    <a class="code" href="group___ocilib_c_api_files.html#ga8ed41c02a9089b49fd8093313200cf28">OCI_FileSetName</a>(file, <span class="stringliteral">&quot;TEMP_FOLDER&quot;</span>, <span class="stringliteral">&quot;test.txt&quot;</span>);</div><div class="line"></div><div class="line">    <span class="comment">/* check if file exists */</span></div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (<a class="code" href="group___ocilib_c_api_files.html#ga50ca363026bbe7e251826949194d2245">OCI_FileExists</a>(file))</div><div class="line">    {</div><div class="line">        printf(<span class="stringliteral">&quot;file size : %d\n&quot;</span>, <a class="code" href="group___ocilib_c_api_files.html#gaf1849513ad3b19ddb6ed30973e2a8eb6">OCI_FileGetSize</a>(file));</div><div class="line">        printf(<span class="stringliteral">&quot;file dir  : %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_files.html#gad397ad38bbaa80a67ba990260769a1bd">OCI_FileGetDirectory</a>(file));</div><div class="line">        printf(<span class="stringliteral">&quot;file name : %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_files.html#gada9b6da63ff6fe54514c692cfa4edd77">OCI_FileGetName</a>(file));</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">/* bind for inserting into table */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a>(st, <span class="stringliteral">&quot;insert into files(id, item) values (1, :f)&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_binding.html#ga459f9eda643980663b3e932ce9a8f6f3">OCI_BindFile</a>(st, <span class="stringliteral">&quot;:f&quot;</span>, file);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a>(st);</div><div class="line"></div><div class="line">    <span class="comment">/* free local file object */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_files.html#gaa618f629670685cbb02044856d36dd38">OCI_FileFree</a>(file);</div><div class="line"></div><div class="line">    <span class="comment">/* fetch file data from table */</span></div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;select * from files&quot;</span>);</div><div class="line"></div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gace8269c905b60b758358025d61e7fce7">OCI_GetResultset</a>(st);</div><div class="line"></div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        file = <a class="code" href="group___ocilib_c_api_fetching.html#gabb992cb7c166b193befb78e47a19acb7">OCI_GetFile</a>(rs, 2);</div><div class="line"></div><div class="line">        <a class="code" href="group___ocilib_c_api_files.html#gaa033419fe40d095fee0df7175112e559">OCI_FileOpen</a>(file);</div><div class="line"></div><div class="line">        printf(<span class="stringliteral">&quot;file size  %d\n&quot;</span>, <a class="code" href="group___ocilib_c_api_files.html#gaf1849513ad3b19ddb6ed30973e2a8eb6">OCI_FileGetSize</a>(file));</div><div class="line">        printf(<span class="stringliteral">&quot;file dir   %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_files.html#gad397ad38bbaa80a67ba990260769a1bd">OCI_FileGetDirectory</a>(file));</div><div class="line">        printf(<span class="stringliteral">&quot;file name  %s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_files.html#gada9b6da63ff6fe54514c692cfa4edd77">OCI_FileGetName</a>(file));</div><div class="line"></div><div class="line">        <span class="keywordflow">while</span> (n = <a class="code" href="group___ocilib_c_api_files.html#ga616bfe9db949af310efe532091c0b3e5">OCI_FileRead</a>(file, buffer, <span class="keyword">sizeof</span>(buffer) - 1))</div><div class="line">        {</div><div class="line">            buffer[n] = 0;</div><div class="line">            printf(buffer);</div><div class="line">        }</div><div class="line"></div><div class="line">        <a class="code" href="group___ocilib_c_api_files.html#gadaba85bc80450119f8b7b4d9d0832872">OCI_FileClose</a>(file);</div><div class="line">    }</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga199d6ce1a1231feb56b456ad6cbc2714"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga199d6ce1a1231feb56b456ad6cbc2714">OCI_FileCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type)</td></tr>
-<tr class="memdesc:ga199d6ce1a1231feb56b456ad6cbc2714"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a file object instance.  <a href="#ga199d6ce1a1231feb56b456ad6cbc2714">More...</a><br /></td></tr>
-<tr class="separator:ga199d6ce1a1231feb56b456ad6cbc2714"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad4b58b6d80e24bb045fb82d78c5cf36a"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gad4b58b6d80e24bb045fb82d78c5cf36a">OCI_FileFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:gad4b58b6d80e24bb045fb82d78c5cf36a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a local File object.  <a href="#gad4b58b6d80e24bb045fb82d78c5cf36a">More...</a><br /></td></tr>
-<tr class="separator:gad4b58b6d80e24bb045fb82d78c5cf36a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac74441cd7b3b7fe7e815b4be2fe48c49"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gac74441cd7b3b7fe7e815b4be2fe48c49">OCI_FileArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, unsigned int nbelem)</td></tr>
-<tr class="memdesc:gac74441cd7b3b7fe7e815b4be2fe48c49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of file object.  <a href="#gac74441cd7b3b7fe7e815b4be2fe48c49">More...</a><br /></td></tr>
-<tr class="separator:gac74441cd7b3b7fe7e815b4be2fe48c49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga081c016b3b514bd47f3f9cb8656215ea"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga081c016b3b514bd47f3f9cb8656215ea">OCI_FileArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> **files)</td></tr>
-<tr class="memdesc:ga081c016b3b514bd47f3f9cb8656215ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of file objects.  <a href="#ga081c016b3b514bd47f3f9cb8656215ea">More...</a><br /></td></tr>
-<tr class="separator:ga081c016b3b514bd47f3f9cb8656215ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaaab496da783753ec077afcc03cde0770"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gaaab496da783753ec077afcc03cde0770">OCI_FileGetType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:gaaab496da783753ec077afcc03cde0770"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of the given File object.  <a href="#gaaab496da783753ec077afcc03cde0770">More...</a><br /></td></tr>
-<tr class="separator:gaaab496da783753ec077afcc03cde0770"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafb3e54d66132f999c576adf15fdd581e"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gafb3e54d66132f999c576adf15fdd581e">OCI_FileSeek</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, big_uint offset, unsigned int mode)</td></tr>
-<tr class="memdesc:gafb3e54d66132f999c576adf15fdd581e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a seek operation on the OCI_File content buffer.  <a href="#gafb3e54d66132f999c576adf15fdd581e">More...</a><br /></td></tr>
-<tr class="separator:gafb3e54d66132f999c576adf15fdd581e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7032e262e260dd6f50515058b722f951"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga7032e262e260dd6f50515058b722f951">OCI_FileGetOffset</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:ga7032e262e260dd6f50515058b722f951"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current position in the file.  <a href="#ga7032e262e260dd6f50515058b722f951">More...</a><br /></td></tr>
-<tr class="separator:ga7032e262e260dd6f50515058b722f951"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf6400291c6338fc6be4dfdc3a6f5eb55"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gaf6400291c6338fc6be4dfdc3a6f5eb55">OCI_FileRead</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, void *buffer, unsigned int len)</td></tr>
-<tr class="memdesc:gaf6400291c6338fc6be4dfdc3a6f5eb55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a portion of a file into the given buffer.  <a href="#gaf6400291c6338fc6be4dfdc3a6f5eb55">More...</a><br /></td></tr>
-<tr class="separator:gaf6400291c6338fc6be4dfdc3a6f5eb55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0cf778c46524cb185d2d60e1cac672f5"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga0cf778c46524cb185d2d60e1cac672f5">OCI_FileGetSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:ga0cf778c46524cb185d2d60e1cac672f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the size in bytes of a file.  <a href="#ga0cf778c46524cb185d2d60e1cac672f5">More...</a><br /></td></tr>
-<tr class="separator:ga0cf778c46524cb185d2d60e1cac672f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga634da122ca768f1c219ed08a113da0d3"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga634da122ca768f1c219ed08a113da0d3">OCI_FileExists</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:ga634da122ca768f1c219ed08a113da0d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given file exists on server.  <a href="#ga634da122ca768f1c219ed08a113da0d3">More...</a><br /></td></tr>
-<tr class="separator:ga634da122ca768f1c219ed08a113da0d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga17e77f8545ef10e2a081b19ae915a6ae"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga17e77f8545ef10e2a081b19ae915a6ae">OCI_FileSetName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, const otext *dir, const otext *name)</td></tr>
-<tr class="memdesc:ga17e77f8545ef10e2a081b19ae915a6ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the directory and file name of FILE handle.  <a href="#ga17e77f8545ef10e2a081b19ae915a6ae">More...</a><br /></td></tr>
-<tr class="separator:ga17e77f8545ef10e2a081b19ae915a6ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae3e7de24ad2974ebdce48524f26f7d6b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gae3e7de24ad2974ebdce48524f26f7d6b">OCI_FileGetDirectory</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:gae3e7de24ad2974ebdce48524f26f7d6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the directory of the given file.  <a href="#gae3e7de24ad2974ebdce48524f26f7d6b">More...</a><br /></td></tr>
-<tr class="separator:gae3e7de24ad2974ebdce48524f26f7d6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga998ff160e890c6898f218c9841c062fc"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga998ff160e890c6898f218c9841c062fc">OCI_FileGetName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:ga998ff160e890c6898f218c9841c062fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the given file.  <a href="#ga998ff160e890c6898f218c9841c062fc">More...</a><br /></td></tr>
-<tr class="separator:ga998ff160e890c6898f218c9841c062fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf18d3143f2d1e261b5b90becba0726fe"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gaf18d3143f2d1e261b5b90becba0726fe">OCI_FileOpen</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:gaf18d3143f2d1e261b5b90becba0726fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a file for reading.  <a href="#gaf18d3143f2d1e261b5b90becba0726fe">More...</a><br /></td></tr>
-<tr class="separator:gaf18d3143f2d1e261b5b90becba0726fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad07691fd580272892fb87d4549628161"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gad07691fd580272892fb87d4549628161">OCI_FileIsOpen</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:gad07691fd580272892fb87d4549628161"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the specified file is opened within the file handle.  <a href="#gad07691fd580272892fb87d4549628161">More...</a><br /></td></tr>
-<tr class="separator:gad07691fd580272892fb87d4549628161"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga875e7e20aae8ff4358f1710f12630797"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga875e7e20aae8ff4358f1710f12630797">OCI_FileClose</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:ga875e7e20aae8ff4358f1710f12630797"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a file.  <a href="#ga875e7e20aae8ff4358f1710f12630797">More...</a><br /></td></tr>
-<tr class="separator:ga875e7e20aae8ff4358f1710f12630797"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0127f1d7bcef3d1883144bb2e70299bc"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga0127f1d7bcef3d1883144bb2e70299bc">OCI_FileIsEqual</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file2)</td></tr>
-<tr class="memdesc:ga0127f1d7bcef3d1883144bb2e70299bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two file handle for equality.  <a href="#ga0127f1d7bcef3d1883144bb2e70299bc">More...</a><br /></td></tr>
-<tr class="separator:ga0127f1d7bcef3d1883144bb2e70299bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2a37633ddf3d9c22575a85cee7b75f42"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga2a37633ddf3d9c22575a85cee7b75f42">OCI_FileAssign</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file_src)</td></tr>
-<tr class="memdesc:ga2a37633ddf3d9c22575a85cee7b75f42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign a file to another one.  <a href="#ga2a37633ddf3d9c22575a85cee7b75f42">More...</a><br /></td></tr>
-<tr class="separator:ga2a37633ddf3d9c22575a85cee7b75f42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad85cb242cc047186593afd93c11ddcbb"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gad85cb242cc047186593afd93c11ddcbb">OCI_FileGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:gad85cb242cc047186593afd93c11ddcbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve connection handle from the file handle.  <a href="#gad85cb242cc047186593afd93c11ddcbb">More...</a><br /></td></tr>
-<tr class="separator:gad85cb242cc047186593afd93c11ddcbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac99e87670781d36d0852aa30af65f4d6"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gac99e87670781d36d0852aa30af65f4d6">OCI_FileCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type)</td></tr>
+<tr class="memdesc:gac99e87670781d36d0852aa30af65f4d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a file object instance.  <a href="#gac99e87670781d36d0852aa30af65f4d6">More...</a><br /></td></tr>
+<tr class="separator:gac99e87670781d36d0852aa30af65f4d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa618f629670685cbb02044856d36dd38"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gaa618f629670685cbb02044856d36dd38">OCI_FileFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
+<tr class="memdesc:gaa618f629670685cbb02044856d36dd38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a local File object.  <a href="#gaa618f629670685cbb02044856d36dd38">More...</a><br /></td></tr>
+<tr class="separator:gaa618f629670685cbb02044856d36dd38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga39337da803749682964d664f1c9255bf"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga39337da803749682964d664f1c9255bf">OCI_FileArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, unsigned int nbelem)</td></tr>
+<tr class="memdesc:ga39337da803749682964d664f1c9255bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of file object.  <a href="#ga39337da803749682964d664f1c9255bf">More...</a><br /></td></tr>
+<tr class="separator:ga39337da803749682964d664f1c9255bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab59a84709566624a6803de312b4450d4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gab59a84709566624a6803de312b4450d4">OCI_FileArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> **files)</td></tr>
+<tr class="memdesc:gab59a84709566624a6803de312b4450d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of file objects.  <a href="#gab59a84709566624a6803de312b4450d4">More...</a><br /></td></tr>
+<tr class="separator:gab59a84709566624a6803de312b4450d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0ef4a19de27ebe0db2421b71f7b93620"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga0ef4a19de27ebe0db2421b71f7b93620">OCI_FileGetType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
+<tr class="memdesc:ga0ef4a19de27ebe0db2421b71f7b93620"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of the given File object.  <a href="#ga0ef4a19de27ebe0db2421b71f7b93620">More...</a><br /></td></tr>
+<tr class="separator:ga0ef4a19de27ebe0db2421b71f7b93620"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3dbddfb33e47382476aa71bde147c7b6"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga3dbddfb33e47382476aa71bde147c7b6">OCI_FileSeek</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, big_uint offset, unsigned int mode)</td></tr>
+<tr class="memdesc:ga3dbddfb33e47382476aa71bde147c7b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a seek operation on the OCI_File content buffer.  <a href="#ga3dbddfb33e47382476aa71bde147c7b6">More...</a><br /></td></tr>
+<tr class="separator:ga3dbddfb33e47382476aa71bde147c7b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa00126400e81319e542f6097d9830e59"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gaa00126400e81319e542f6097d9830e59">OCI_FileGetOffset</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
+<tr class="memdesc:gaa00126400e81319e542f6097d9830e59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current position in the file.  <a href="#gaa00126400e81319e542f6097d9830e59">More...</a><br /></td></tr>
+<tr class="separator:gaa00126400e81319e542f6097d9830e59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga616bfe9db949af310efe532091c0b3e5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga616bfe9db949af310efe532091c0b3e5">OCI_FileRead</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, void *buffer, unsigned int len)</td></tr>
+<tr class="memdesc:ga616bfe9db949af310efe532091c0b3e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a portion of a file into the given buffer.  <a href="#ga616bfe9db949af310efe532091c0b3e5">More...</a><br /></td></tr>
+<tr class="separator:ga616bfe9db949af310efe532091c0b3e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf1849513ad3b19ddb6ed30973e2a8eb6"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gaf1849513ad3b19ddb6ed30973e2a8eb6">OCI_FileGetSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
+<tr class="memdesc:gaf1849513ad3b19ddb6ed30973e2a8eb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the size in bytes of a file.  <a href="#gaf1849513ad3b19ddb6ed30973e2a8eb6">More...</a><br /></td></tr>
+<tr class="separator:gaf1849513ad3b19ddb6ed30973e2a8eb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga50ca363026bbe7e251826949194d2245"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga50ca363026bbe7e251826949194d2245">OCI_FileExists</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
+<tr class="memdesc:ga50ca363026bbe7e251826949194d2245"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given file exists on server.  <a href="#ga50ca363026bbe7e251826949194d2245">More...</a><br /></td></tr>
+<tr class="separator:ga50ca363026bbe7e251826949194d2245"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8ed41c02a9089b49fd8093313200cf28"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga8ed41c02a9089b49fd8093313200cf28">OCI_FileSetName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, const otext *dir, const otext *name)</td></tr>
+<tr class="memdesc:ga8ed41c02a9089b49fd8093313200cf28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the directory and file name of FILE handle.  <a href="#ga8ed41c02a9089b49fd8093313200cf28">More...</a><br /></td></tr>
+<tr class="separator:ga8ed41c02a9089b49fd8093313200cf28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad397ad38bbaa80a67ba990260769a1bd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gad397ad38bbaa80a67ba990260769a1bd">OCI_FileGetDirectory</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
+<tr class="memdesc:gad397ad38bbaa80a67ba990260769a1bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the directory of the given file.  <a href="#gad397ad38bbaa80a67ba990260769a1bd">More...</a><br /></td></tr>
+<tr class="separator:gad397ad38bbaa80a67ba990260769a1bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gada9b6da63ff6fe54514c692cfa4edd77"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gada9b6da63ff6fe54514c692cfa4edd77">OCI_FileGetName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
+<tr class="memdesc:gada9b6da63ff6fe54514c692cfa4edd77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the given file.  <a href="#gada9b6da63ff6fe54514c692cfa4edd77">More...</a><br /></td></tr>
+<tr class="separator:gada9b6da63ff6fe54514c692cfa4edd77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa033419fe40d095fee0df7175112e559"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gaa033419fe40d095fee0df7175112e559">OCI_FileOpen</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
+<tr class="memdesc:gaa033419fe40d095fee0df7175112e559"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a file for reading.  <a href="#gaa033419fe40d095fee0df7175112e559">More...</a><br /></td></tr>
+<tr class="separator:gaa033419fe40d095fee0df7175112e559"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0c95c0baf32e554869141600de0cf33b"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga0c95c0baf32e554869141600de0cf33b">OCI_FileIsOpen</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
+<tr class="memdesc:ga0c95c0baf32e554869141600de0cf33b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the specified file is opened within the file handle.  <a href="#ga0c95c0baf32e554869141600de0cf33b">More...</a><br /></td></tr>
+<tr class="separator:ga0c95c0baf32e554869141600de0cf33b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadaba85bc80450119f8b7b4d9d0832872"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gadaba85bc80450119f8b7b4d9d0832872">OCI_FileClose</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
+<tr class="memdesc:gadaba85bc80450119f8b7b4d9d0832872"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a file.  <a href="#gadaba85bc80450119f8b7b4d9d0832872">More...</a><br /></td></tr>
+<tr class="separator:gadaba85bc80450119f8b7b4d9d0832872"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2ce317e2b1a0fa72392af0a29f42be86"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga2ce317e2b1a0fa72392af0a29f42be86">OCI_FileIsEqual</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file2)</td></tr>
+<tr class="memdesc:ga2ce317e2b1a0fa72392af0a29f42be86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two file handle for equality.  <a href="#ga2ce317e2b1a0fa72392af0a29f42be86">More...</a><br /></td></tr>
+<tr class="separator:ga2ce317e2b1a0fa72392af0a29f42be86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga068eee96a39fd164c9c2ac8bf9c9c13d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga068eee96a39fd164c9c2ac8bf9c9c13d">OCI_FileAssign</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file_src)</td></tr>
+<tr class="memdesc:ga068eee96a39fd164c9c2ac8bf9c9c13d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign a file to another one.  <a href="#ga068eee96a39fd164c9c2ac8bf9c9c13d">More...</a><br /></td></tr>
+<tr class="separator:ga068eee96a39fd164c9c2ac8bf9c9c13d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1e2dfc03563d9e07ef7236bc8d4423b6"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga1e2dfc03563d9e07ef7236bc8d4423b6">OCI_FileGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
+<tr class="memdesc:ga1e2dfc03563d9e07ef7236bc8d4423b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve connection handle from the file handle.  <a href="#ga1e2dfc03563d9e07ef7236bc8d4423b6">More...</a><br /></td></tr>
+<tr class="separator:ga1e2dfc03563d9e07ef7236bc8d4423b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga199d6ce1a1231feb56b456ad6cbc2714"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga199d6ce1a1231feb56b456ad6cbc2714">&#9670;&nbsp;</a></span>OCI_FileCreate()</h2>
+<a id="gac99e87670781d36d0852aa30af65f4d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac99e87670781d36d0852aa30af65f4d6">&#9670;&nbsp;</a></span>OCI_FileCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a>* OCI_API OCI_FileCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a>* OCI_API OCI_FileCreate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -232,14 +232,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gad4b58b6d80e24bb045fb82d78c5cf36a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad4b58b6d80e24bb045fb82d78c5cf36a">&#9670;&nbsp;</a></span>OCI_FileFree()</h2>
+<a id="gaa618f629670685cbb02044856d36dd38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa618f629670685cbb02044856d36dd38">&#9670;&nbsp;</a></span>OCI_FileFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_FileFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_FileFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em></td><td>)</td>
@@ -257,21 +257,21 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only Files created with <a class="el" href="group___ocilib_c_api_files.html#ga199d6ce1a1231feb56b456ad6cbc2714" title="Create a file object instance.">OCI_FileCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_files.html#gad4b58b6d80e24bb045fb82d78c5cf36a" title="Free a local File object.">OCI_FileFree()</a></dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only Files created with <a class="el" href="group___ocilib_c_api_files.html#gac99e87670781d36d0852aa30af65f4d6" title="Create a file object instance.">OCI_FileCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_files.html#gaa618f629670685cbb02044856d36dd38" title="Free a local File object.">OCI_FileFree()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#a06719d4c92dbce133890c5cccdfec48a">ocilib::File::File()</a>.</p>
 
 </div>
 </div>
-<a id="gac74441cd7b3b7fe7e815b4be2fe48c49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gac74441cd7b3b7fe7e815b4be2fe48c49">&#9670;&nbsp;</a></span>OCI_FileArrayCreate()</h2>
+<a id="ga39337da803749682964d664f1c9255bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga39337da803749682964d664f1c9255bf">&#9670;&nbsp;</a></span>OCI_FileArrayCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a>** OCI_API OCI_FileArrayCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a>** OCI_API OCI_FileArrayCreate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -307,19 +307,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_files.html#ga199d6ce1a1231feb56b456ad6cbc2714" title="Create a file object instance.">OCI_FileCreate()</a> for more details</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_files.html#gac99e87670781d36d0852aa30af65f4d6" title="Create a file object instance.">OCI_FileCreate()</a> for more details</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Return the file handle array on success otherwise NULL on failure </dd></dl>
 
 </div>
 </div>
-<a id="ga081c016b3b514bd47f3f9cb8656215ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga081c016b3b514bd47f3f9cb8656215ea">&#9670;&nbsp;</a></span>OCI_FileArrayFree()</h2>
+<a id="gab59a84709566624a6803de312b4450d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab59a84709566624a6803de312b4450d4">&#9670;&nbsp;</a></span>OCI_FileArrayFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_FileArrayFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_FileArrayFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> **&#160;</td>
           <td class="paramname"><em>files</em></td><td>)</td>
@@ -337,19 +337,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only arrays of lobs created with <a class="el" href="group___ocilib_c_api_files.html#gac74441cd7b3b7fe7e815b4be2fe48c49" title="Create an array of file object.">OCI_FileArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_files.html#ga081c016b3b514bd47f3f9cb8656215ea" title="Free an array of file objects.">OCI_FileArrayFree()</a></dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only arrays of lobs created with <a class="el" href="group___ocilib_c_api_files.html#ga39337da803749682964d664f1c9255bf" title="Create an array of file object.">OCI_FileArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_files.html#gab59a84709566624a6803de312b4450d4" title="Free an array of file objects.">OCI_FileArrayFree()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="gaaab496da783753ec077afcc03cde0770"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaaab496da783753ec077afcc03cde0770">&#9670;&nbsp;</a></span>OCI_FileGetType()</h2>
+<a id="ga0ef4a19de27ebe0db2421b71f7b93620"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0ef4a19de27ebe0db2421b71f7b93620">&#9670;&nbsp;</a></span>OCI_FileGetType()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_FileGetType </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_FileGetType </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em></td><td>)</td>
@@ -367,19 +367,19 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>For possible values, see <a class="el" href="group___ocilib_c_api_files.html#ga199d6ce1a1231feb56b456ad6cbc2714" title="Create a file object instance.">OCI_FileCreate()</a></dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For possible values, see <a class="el" href="group___ocilib_c_api_files.html#gac99e87670781d36d0852aa30af65f4d6" title="Create a file object instance.">OCI_FileCreate()</a></dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Object type or OCI_UNKNOWN the input handle is NULL </dd></dl>
 
 </div>
 </div>
-<a id="gafb3e54d66132f999c576adf15fdd581e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gafb3e54d66132f999c576adf15fdd581e">&#9670;&nbsp;</a></span>OCI_FileSeek()</h2>
+<a id="ga3dbddfb33e47382476aa71bde147c7b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3dbddfb33e47382476aa71bde147c7b6">&#9670;&nbsp;</a></span>OCI_FileSeek()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_FileSeek </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_FileSeek </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em>, </td>
@@ -428,14 +428,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga7032e262e260dd6f50515058b722f951"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7032e262e260dd6f50515058b722f951">&#9670;&nbsp;</a></span>OCI_FileGetOffset()</h2>
+<a id="gaa00126400e81319e542f6097d9830e59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa00126400e81319e542f6097d9830e59">&#9670;&nbsp;</a></span>OCI_FileGetOffset()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT big_uint OCI_API OCI_FileGetOffset </td>
+          <td class="memname">OCI_SYM_PUBLIC big_uint OCI_API OCI_FileGetOffset </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em></td><td>)</td>
@@ -459,14 +459,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaf6400291c6338fc6be4dfdc3a6f5eb55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf6400291c6338fc6be4dfdc3a6f5eb55">&#9670;&nbsp;</a></span>OCI_FileRead()</h2>
+<a id="ga616bfe9db949af310efe532091c0b3e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga616bfe9db949af310efe532091c0b3e5">&#9670;&nbsp;</a></span>OCI_FileRead()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_FileRead </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_FileRead </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em>, </td>
@@ -508,14 +508,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga0cf778c46524cb185d2d60e1cac672f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0cf778c46524cb185d2d60e1cac672f5">&#9670;&nbsp;</a></span>OCI_FileGetSize()</h2>
+<a id="gaf1849513ad3b19ddb6ed30973e2a8eb6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf1849513ad3b19ddb6ed30973e2a8eb6">&#9670;&nbsp;</a></span>OCI_FileGetSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT big_uint OCI_API OCI_FileGetSize </td>
+          <td class="memname">OCI_SYM_PUBLIC big_uint OCI_API OCI_FileGetSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em></td><td>)</td>
@@ -538,14 +538,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga634da122ca768f1c219ed08a113da0d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga634da122ca768f1c219ed08a113da0d3">&#9670;&nbsp;</a></span>OCI_FileExists()</h2>
+<a id="ga50ca363026bbe7e251826949194d2245"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga50ca363026bbe7e251826949194d2245">&#9670;&nbsp;</a></span>OCI_FileExists()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_FileExists </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_FileExists </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em></td><td>)</td>
@@ -570,14 +570,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga17e77f8545ef10e2a081b19ae915a6ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga17e77f8545ef10e2a081b19ae915a6ae">&#9670;&nbsp;</a></span>OCI_FileSetName()</h2>
+<a id="ga8ed41c02a9089b49fd8093313200cf28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8ed41c02a9089b49fd8093313200cf28">&#9670;&nbsp;</a></span>OCI_FileSetName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_FileSetName </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_FileSetName </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em>, </td>
@@ -624,14 +624,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gae3e7de24ad2974ebdce48524f26f7d6b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae3e7de24ad2974ebdce48524f26f7d6b">&#9670;&nbsp;</a></span>OCI_FileGetDirectory()</h2>
+<a id="gad397ad38bbaa80a67ba990260769a1bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad397ad38bbaa80a67ba990260769a1bd">&#9670;&nbsp;</a></span>OCI_FileGetDirectory()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_FileGetDirectory </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_FileGetDirectory </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em></td><td>)</td>
@@ -654,14 +654,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga998ff160e890c6898f218c9841c062fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga998ff160e890c6898f218c9841c062fc">&#9670;&nbsp;</a></span>OCI_FileGetName()</h2>
+<a id="gada9b6da63ff6fe54514c692cfa4edd77"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gada9b6da63ff6fe54514c692cfa4edd77">&#9670;&nbsp;</a></span>OCI_FileGetName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_FileGetName </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_FileGetName </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em></td><td>)</td>
@@ -684,14 +684,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaf18d3143f2d1e261b5b90becba0726fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf18d3143f2d1e261b5b90becba0726fe">&#9670;&nbsp;</a></span>OCI_FileOpen()</h2>
+<a id="gaa033419fe40d095fee0df7175112e559"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa033419fe40d095fee0df7175112e559">&#9670;&nbsp;</a></span>OCI_FileOpen()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_FileOpen </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_FileOpen </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em></td><td>)</td>
@@ -715,14 +715,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gad07691fd580272892fb87d4549628161"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad07691fd580272892fb87d4549628161">&#9670;&nbsp;</a></span>OCI_FileIsOpen()</h2>
+<a id="ga0c95c0baf32e554869141600de0cf33b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0c95c0baf32e554869141600de0cf33b">&#9670;&nbsp;</a></span>OCI_FileIsOpen()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_FileIsOpen </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_FileIsOpen </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em></td><td>)</td>
@@ -746,14 +746,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga875e7e20aae8ff4358f1710f12630797"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga875e7e20aae8ff4358f1710f12630797">&#9670;&nbsp;</a></span>OCI_FileClose()</h2>
+<a id="gadaba85bc80450119f8b7b4d9d0832872"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadaba85bc80450119f8b7b4d9d0832872">&#9670;&nbsp;</a></span>OCI_FileClose()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_FileClose </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_FileClose </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em></td><td>)</td>
@@ -777,14 +777,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga0127f1d7bcef3d1883144bb2e70299bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0127f1d7bcef3d1883144bb2e70299bc">&#9670;&nbsp;</a></span>OCI_FileIsEqual()</h2>
+<a id="ga2ce317e2b1a0fa72392af0a29f42be86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2ce317e2b1a0fa72392af0a29f42be86">&#9670;&nbsp;</a></span>OCI_FileIsEqual()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_FileIsEqual </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_FileIsEqual </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em>, </td>
@@ -817,14 +817,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga2a37633ddf3d9c22575a85cee7b75f42"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2a37633ddf3d9c22575a85cee7b75f42">&#9670;&nbsp;</a></span>OCI_FileAssign()</h2>
+<a id="ga068eee96a39fd164c9c2ac8bf9c9c13d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga068eee96a39fd164c9c2ac8bf9c9c13d">&#9670;&nbsp;</a></span>OCI_FileAssign()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_FileAssign </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_FileAssign </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em>, </td>
@@ -859,14 +859,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gad85cb242cc047186593afd93c11ddcbb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad85cb242cc047186593afd93c11ddcbb">&#9670;&nbsp;</a></span>OCI_FileGetConnection()</h2>
+<a id="ga1e2dfc03563d9e07ef7236bc8d4423b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1e2dfc03563d9e07ef7236bc8d4423b6">&#9670;&nbsp;</a></span>OCI_FileGetConnection()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>* OCI_API OCI_FileGetConnection </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>* OCI_API OCI_FileGetConnection </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *&#160;</td>
           <td class="paramname"><em>file</em></td><td>)</td>
@@ -895,7 +895,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -97,143 +97,143 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_connections.html'
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiErrorHandling</p>
-<p>Connecting to a database server is done with one call to <a class="el" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0" title="Create a physical connection to an Oracle database server.">OCI_ConnectionCreate()</a>.</p>
-<p><a class="el" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9" title="Close a physical connection to an Oracle database server.">OCI_ConnectionFree()</a> closes the established connection.</p>
+<p>Connecting to a database server is done with one call to <a class="el" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7" title="Create a physical connection to an Oracle database server.">OCI_ConnectionCreate()</a>.</p>
+<p><a class="el" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9" title="Close a physical connection to an Oracle database server.">OCI_ConnectionFree()</a> closes the established connection.</p>
 <p>Connection properties are accessible through a set of functions</p>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;Server major    version : %i\n&quot;</span>, <a class="code" href="group___ocilib_c_api_connections.html#ga2d7618d8eae73643dd75067a40e656a1">OCI_GetServerMajorVersion</a>(cn));</div><div class="line">    printf(<span class="stringliteral">&quot;Server minor    version : %i\n&quot;</span>, <a class="code" href="group___ocilib_c_api_connections.html#ga8f48a3c755751e5df415160913c6c7ee">OCI_GetServerMinorVersion</a>(cn));</div><div class="line">    printf(<span class="stringliteral">&quot;Server revision version : %i\n\n&quot;</span>, <a class="code" href="group___ocilib_c_api_connections.html#gae4c3b37f1c9fc79d36220aa9c96d4415">OCI_GetServerRevisionVersion</a>(cn));</div><div class="line">    printf(<span class="stringliteral">&quot;Connection      version : %i\n\n&quot;</span>, <a class="code" href="group___ocilib_c_api_connections.html#ga6f61147801fce4b69edb4981ba4ea1b7">OCI_GetVersionConnection</a>(cn));</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;Server major    version : %i\n&quot;</span>, <a class="code" href="group___ocilib_c_api_connections.html#gaa7d6dc15cf9e9e09b2cbef9ae20e9135">OCI_GetServerMajorVersion</a>(cn));</div><div class="line">    printf(<span class="stringliteral">&quot;Server minor    version : %i\n&quot;</span>, <a class="code" href="group___ocilib_c_api_connections.html#ga2df8ed30a01b6787cc615cebec3f3c2c">OCI_GetServerMinorVersion</a>(cn));</div><div class="line">    printf(<span class="stringliteral">&quot;Server revision version : %i\n\n&quot;</span>, <a class="code" href="group___ocilib_c_api_connections.html#ga0eaeda9f974e77c11aeaeb0c048d4631">OCI_GetServerRevisionVersion</a>(cn));</div><div class="line">    printf(<span class="stringliteral">&quot;Connection      version : %i\n\n&quot;</span>, <a class="code" href="group___ocilib_c_api_connections.html#ga5d0f9362d935db46c8badd1d0c83b38d">OCI_GetVersionConnection</a>(cn));</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga5cd867ad94bdc4a3bbfdef24452262e0"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0">OCI_ConnectionCreate</a> (const otext *db, const otext *user, const otext *pwd, unsigned int mode)</td></tr>
-<tr class="memdesc:ga5cd867ad94bdc4a3bbfdef24452262e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a physical connection to an Oracle database server.  <a href="#ga5cd867ad94bdc4a3bbfdef24452262e0">More...</a><br /></td></tr>
-<tr class="separator:ga5cd867ad94bdc4a3bbfdef24452262e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac3fe655e96074adb119908be4650a4c9"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gac3fe655e96074adb119908be4650a4c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a physical connection to an Oracle database server.  <a href="#gac3fe655e96074adb119908be4650a4c9">More...</a><br /></td></tr>
-<tr class="separator:gac3fe655e96074adb119908be4650a4c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaaa13dc7489eeebcc6bd2a54fb88248b7"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaaa13dc7489eeebcc6bd2a54fb88248b7">OCI_IsConnected</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gaaa13dc7489eeebcc6bd2a54fb88248b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns TRUE is the given connection is still connected otherwise FALSE.  <a href="#gaaa13dc7489eeebcc6bd2a54fb88248b7">More...</a><br /></td></tr>
-<tr class="separator:gaaa13dc7489eeebcc6bd2a54fb88248b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga79621217bc8fb84907c453258a2a33e1"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga79621217bc8fb84907c453258a2a33e1">OCI_GetUserData</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga79621217bc8fb84907c453258a2a33e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the pointer to user data previously associated with the connection.  <a href="#ga79621217bc8fb84907c453258a2a33e1">More...</a><br /></td></tr>
-<tr class="separator:ga79621217bc8fb84907c453258a2a33e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaeed5fe2da7af18c69585fbec9f63c951"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaeed5fe2da7af18c69585fbec9f63c951">OCI_SetUserData</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, void *data)</td></tr>
-<tr class="memdesc:gaeed5fe2da7af18c69585fbec9f63c951"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate a pointer to user data to the given connection.  <a href="#gaeed5fe2da7af18c69585fbec9f63c951">More...</a><br /></td></tr>
-<tr class="separator:gaeed5fe2da7af18c69585fbec9f63c951"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0fb3f55bfe0ca869cac6f356f7da5dfe"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga0fb3f55bfe0ca869cac6f356f7da5dfe">OCI_SetSessionTag</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, const otext *tag)</td></tr>
-<tr class="memdesc:ga0fb3f55bfe0ca869cac6f356f7da5dfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate a tag to the given connection/session.  <a href="#ga0fb3f55bfe0ca869cac6f356f7da5dfe">More...</a><br /></td></tr>
-<tr class="separator:ga0fb3f55bfe0ca869cac6f356f7da5dfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2703e4c986b2d6827184b10a5aa527af"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga2703e4c986b2d6827184b10a5aa527af">OCI_GetSessionTag</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga2703e4c986b2d6827184b10a5aa527af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the tag associated the given connection.  <a href="#ga2703e4c986b2d6827184b10a5aa527af">More...</a><br /></td></tr>
-<tr class="separator:ga2703e4c986b2d6827184b10a5aa527af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga644896376cffbd498d928bec9ba4b379"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga644896376cffbd498d928bec9ba4b379">OCI_GetDatabase</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga644896376cffbd498d928bec9ba4b379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the connected database/service name.  <a href="#ga644896376cffbd498d928bec9ba4b379">More...</a><br /></td></tr>
-<tr class="separator:ga644896376cffbd498d928bec9ba4b379"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1c74d8d264e9911b19810518567451b3"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga1c74d8d264e9911b19810518567451b3">OCI_GetUserName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga1c74d8d264e9911b19810518567451b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current logged user name.  <a href="#ga1c74d8d264e9911b19810518567451b3">More...</a><br /></td></tr>
-<tr class="separator:ga1c74d8d264e9911b19810518567451b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga23176f3b177958f3422888b1dc986194"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga23176f3b177958f3422888b1dc986194">OCI_GetPassword</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga23176f3b177958f3422888b1dc986194"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current logged user password.  <a href="#ga23176f3b177958f3422888b1dc986194">More...</a><br /></td></tr>
-<tr class="separator:ga23176f3b177958f3422888b1dc986194"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3a98bd2c7fc31d9884309a16a07dd539"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga3a98bd2c7fc31d9884309a16a07dd539">OCI_SetPassword</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, const otext *password)</td></tr>
-<tr class="memdesc:ga3a98bd2c7fc31d9884309a16a07dd539"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the password of the logged user.  <a href="#ga3a98bd2c7fc31d9884309a16a07dd539">More...</a><br /></td></tr>
-<tr class="separator:ga3a98bd2c7fc31d9884309a16a07dd539"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga029b4ed1c6396d6fa8d9552e19ca9c7d"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga029b4ed1c6396d6fa8d9552e19ca9c7d">OCI_SetUserPassword</a> (const otext *db, const otext *user, const otext *pwd, const otext *new_pwd)</td></tr>
-<tr class="memdesc:ga029b4ed1c6396d6fa8d9552e19ca9c7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the password of the given user on the given database.  <a href="#ga029b4ed1c6396d6fa8d9552e19ca9c7d">More...</a><br /></td></tr>
-<tr class="separator:ga029b4ed1c6396d6fa8d9552e19ca9c7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga92919dbcb84121aa97b6cfbd48dfd832"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga92919dbcb84121aa97b6cfbd48dfd832">OCI_GetSessionMode</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga92919dbcb84121aa97b6cfbd48dfd832"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current session mode.  <a href="#ga92919dbcb84121aa97b6cfbd48dfd832">More...</a><br /></td></tr>
-<tr class="separator:ga92919dbcb84121aa97b6cfbd48dfd832"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab7016c85bd29c1fa9ba5d980da2b615c"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gab7016c85bd29c1fa9ba5d980da2b615c">OCI_GetVersionServer</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gab7016c85bd29c1fa9ba5d980da2b615c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the connected database server version.  <a href="#gab7016c85bd29c1fa9ba5d980da2b615c">More...</a><br /></td></tr>
-<tr class="separator:gab7016c85bd29c1fa9ba5d980da2b615c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2d7618d8eae73643dd75067a40e656a1"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga2d7618d8eae73643dd75067a40e656a1">OCI_GetServerMajorVersion</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga2d7618d8eae73643dd75067a40e656a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the major version number of the connected database server.  <a href="#ga2d7618d8eae73643dd75067a40e656a1">More...</a><br /></td></tr>
-<tr class="separator:ga2d7618d8eae73643dd75067a40e656a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8f48a3c755751e5df415160913c6c7ee"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga8f48a3c755751e5df415160913c6c7ee">OCI_GetServerMinorVersion</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga8f48a3c755751e5df415160913c6c7ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the minor version number of the connected database server.  <a href="#ga8f48a3c755751e5df415160913c6c7ee">More...</a><br /></td></tr>
-<tr class="separator:ga8f48a3c755751e5df415160913c6c7ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae4c3b37f1c9fc79d36220aa9c96d4415"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gae4c3b37f1c9fc79d36220aa9c96d4415">OCI_GetServerRevisionVersion</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gae4c3b37f1c9fc79d36220aa9c96d4415"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the revision version number of the connected database server.  <a href="#gae4c3b37f1c9fc79d36220aa9c96d4415">More...</a><br /></td></tr>
-<tr class="separator:gae4c3b37f1c9fc79d36220aa9c96d4415"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gade18954504b0d40e981e683f00d39951"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gade18954504b0d40e981e683f00d39951">OCI_SetFormat</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, const otext *format)</td></tr>
-<tr class="memdesc:gade18954504b0d40e981e683f00d39951"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the format string for implicit string conversions of the given type.  <a href="#gade18954504b0d40e981e683f00d39951">More...</a><br /></td></tr>
-<tr class="separator:gade18954504b0d40e981e683f00d39951"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4ed928994e00b49fe651b450d47baaf1"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga4ed928994e00b49fe651b450d47baaf1">OCI_GetFormat</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type)</td></tr>
-<tr class="memdesc:ga4ed928994e00b49fe651b450d47baaf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the format string for implicit string conversions of the given type.  <a href="#ga4ed928994e00b49fe651b450d47baaf1">More...</a><br /></td></tr>
-<tr class="separator:ga4ed928994e00b49fe651b450d47baaf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga033d19889ff80f7d5ff16285392ed696"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga033d19889ff80f7d5ff16285392ed696">OCI_GetTransaction</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga033d19889ff80f7d5ff16285392ed696"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current transaction of the connection.  <a href="#ga033d19889ff80f7d5ff16285392ed696">More...</a><br /></td></tr>
-<tr class="separator:ga033d19889ff80f7d5ff16285392ed696"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gacd5bcb0f0894ffcafcb6dfee5e850f5a"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gacd5bcb0f0894ffcafcb6dfee5e850f5a">OCI_SetTransaction</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:gacd5bcb0f0894ffcafcb6dfee5e850f5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a transaction to a connection.  <a href="#gacd5bcb0f0894ffcafcb6dfee5e850f5a">More...</a><br /></td></tr>
-<tr class="separator:gacd5bcb0f0894ffcafcb6dfee5e850f5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6f61147801fce4b69edb4981ba4ea1b7"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga6f61147801fce4b69edb4981ba4ea1b7">OCI_GetVersionConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga6f61147801fce4b69edb4981ba4ea1b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the highest Oracle version is supported by the connection.  <a href="#ga6f61147801fce4b69edb4981ba4ea1b7">More...</a><br /></td></tr>
-<tr class="separator:ga6f61147801fce4b69edb4981ba4ea1b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad7b3c1053b3324192089ab8289df3e57"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gad7b3c1053b3324192089ab8289df3e57">OCI_SetTrace</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int trace, const otext *value)</td></tr>
-<tr class="memdesc:gad7b3c1053b3324192089ab8289df3e57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set tracing information to the session of the given connection.  <a href="#gad7b3c1053b3324192089ab8289df3e57">More...</a><br /></td></tr>
-<tr class="separator:gad7b3c1053b3324192089ab8289df3e57"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2744cf73d308f9d65f94fd695084ee76"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga2744cf73d308f9d65f94fd695084ee76">OCI_GetTrace</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int trace)</td></tr>
-<tr class="memdesc:ga2744cf73d308f9d65f94fd695084ee76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current trace for the trace type from the given connection.  <a href="#ga2744cf73d308f9d65f94fd695084ee76">More...</a><br /></td></tr>
-<tr class="separator:ga2744cf73d308f9d65f94fd695084ee76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa4a9ff378dba28920b81b8b71e2372f5"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaa4a9ff378dba28920b81b8b71e2372f5">OCI_Ping</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gaa4a9ff378dba28920b81b8b71e2372f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a round trip call to the server to confirm that the connection and the server are active.  <a href="#gaa4a9ff378dba28920b81b8b71e2372f5">More...</a><br /></td></tr>
-<tr class="separator:gaa4a9ff378dba28920b81b8b71e2372f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaba3523c60736722aa61e1c245d92cb08"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaba3523c60736722aa61e1c245d92cb08">OCI_SetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, unsigned int value)</td></tr>
-<tr class="memdesc:gaba3523c60736722aa61e1c245d92cb08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a given timeout for OCI calls that require server round-trips to the given database.  <a href="#gaba3523c60736722aa61e1c245d92cb08">More...</a><br /></td></tr>
-<tr class="separator:gaba3523c60736722aa61e1c245d92cb08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2fc44c0b2803a612b77f566c1a7cf787"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga2fc44c0b2803a612b77f566c1a7cf787">OCI_GetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type)</td></tr>
-<tr class="memdesc:ga2fc44c0b2803a612b77f566c1a7cf787"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the requested timeout value for OCI calls that require server round-trips to the given database.  <a href="#ga2fc44c0b2803a612b77f566c1a7cf787">More...</a><br /></td></tr>
-<tr class="separator:ga2fc44c0b2803a612b77f566c1a7cf787"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga98877db184e1d8d5bf50be1fb6906dc2"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga98877db184e1d8d5bf50be1fb6906dc2">OCI_GetDBName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga98877db184e1d8d5bf50be1fb6906dc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server database name of the connected database/service name.  <a href="#ga98877db184e1d8d5bf50be1fb6906dc2">More...</a><br /></td></tr>
-<tr class="separator:ga98877db184e1d8d5bf50be1fb6906dc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac3ee48e0bfd6b606328bdbbd670cfdb0"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gac3ee48e0bfd6b606328bdbbd670cfdb0">OCI_GetInstanceName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gac3ee48e0bfd6b606328bdbbd670cfdb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server Instance name of the connected database/service name.  <a href="#gac3ee48e0bfd6b606328bdbbd670cfdb0">More...</a><br /></td></tr>
-<tr class="separator:gac3ee48e0bfd6b606328bdbbd670cfdb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gabf76c1f95bcfb75e8ce887c84642f14f"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gabf76c1f95bcfb75e8ce887c84642f14f">OCI_GetServiceName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gabf76c1f95bcfb75e8ce887c84642f14f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server service name of the connected database/service name.  <a href="#gabf76c1f95bcfb75e8ce887c84642f14f">More...</a><br /></td></tr>
-<tr class="separator:gabf76c1f95bcfb75e8ce887c84642f14f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad34ea35e12ce6860ae2111e403ae0be5"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gad34ea35e12ce6860ae2111e403ae0be5">OCI_GetServerName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gad34ea35e12ce6860ae2111e403ae0be5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server machine name of the connected database/service name.  <a href="#gad34ea35e12ce6860ae2111e403ae0be5">More...</a><br /></td></tr>
-<tr class="separator:gad34ea35e12ce6860ae2111e403ae0be5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0bf8783a356591ae8267c4ca08638c81"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga0bf8783a356591ae8267c4ca08638c81">OCI_GetDomainName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga0bf8783a356591ae8267c4ca08638c81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server domain name of the connected database/service name.  <a href="#ga0bf8783a356591ae8267c4ca08638c81">More...</a><br /></td></tr>
-<tr class="separator:ga0bf8783a356591ae8267c4ca08638c81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gade7003071dbe1b3ff5bc36cbb2418c3a"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gade7003071dbe1b3ff5bc36cbb2418c3a">OCI_GetInstanceStartTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gade7003071dbe1b3ff5bc36cbb2418c3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the date and time (Timestamp) server instance start of the connected database/service name.  <a href="#gade7003071dbe1b3ff5bc36cbb2418c3a">More...</a><br /></td></tr>
-<tr class="separator:gade7003071dbe1b3ff5bc36cbb2418c3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaec581bccba93866adb0306d819bf355c"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaec581bccba93866adb0306d819bf355c">OCI_IsTAFCapable</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gaec581bccba93866adb0306d819bf355c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verify if the given connection support TAF events.  <a href="#gaec581bccba93866adb0306d819bf355c">More...</a><br /></td></tr>
-<tr class="separator:gaec581bccba93866adb0306d819bf355c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5cfa430f4621c35bae775409de0c6215"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga5cfa430f4621c35bae775409de0c6215">OCI_SetTAFHandler</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, <a class="el" href="group___ocilib_c_api_datatypes.html#ga67e0f339111bb2d9243582e129697873">POCI_TAF_HANDLER</a> handler)</td></tr>
-<tr class="memdesc:ga5cfa430f4621c35bae775409de0c6215"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Transparent Application Failover (TAF) user handler.  <a href="#ga5cfa430f4621c35bae775409de0c6215">More...</a><br /></td></tr>
-<tr class="separator:ga5cfa430f4621c35bae775409de0c6215"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gabafb62291c1503ecff6ff4ee719a2ff1"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gabafb62291c1503ecff6ff4ee719a2ff1">OCI_GetStatementCacheSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gabafb62291c1503ecff6ff4ee719a2ff1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of statements to keep in the statement cache.  <a href="#gabafb62291c1503ecff6ff4ee719a2ff1">More...</a><br /></td></tr>
-<tr class="separator:gabafb62291c1503ecff6ff4ee719a2ff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf6001f3ffc1e8537a4e02bbfe8549d3f"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaf6001f3ffc1e8537a4e02bbfe8549d3f">OCI_SetStatementCacheSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int value)</td></tr>
-<tr class="memdesc:gaf6001f3ffc1e8537a4e02bbfe8549d3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum number of statements to keep in the statement cache.  <a href="#gaf6001f3ffc1e8537a4e02bbfe8549d3f">More...</a><br /></td></tr>
-<tr class="separator:gaf6001f3ffc1e8537a4e02bbfe8549d3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf1026309c40b8419b2a6cd24d71d8090"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaf1026309c40b8419b2a6cd24d71d8090">OCI_GetDefaultLobPrefetchSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gaf1026309c40b8419b2a6cd24d71d8090"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the default LOB prefetch buffer size for the connection.  <a href="#gaf1026309c40b8419b2a6cd24d71d8090">More...</a><br /></td></tr>
-<tr class="separator:gaf1026309c40b8419b2a6cd24d71d8090"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga069d605439946b83a1fd930670bae710"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga069d605439946b83a1fd930670bae710">OCI_SetDefaultLobPrefetchSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int value)</td></tr>
-<tr class="memdesc:ga069d605439946b83a1fd930670bae710"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or disable prefetching for all LOBs fetched in the connection.  <a href="#ga069d605439946b83a1fd930670bae710">More...</a><br /></td></tr>
-<tr class="separator:ga069d605439946b83a1fd930670bae710"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2d69a4abb692871b3378e3d97c74c59e"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga2d69a4abb692871b3378e3d97c74c59e">OCI_GetMaxCursors</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga2d69a4abb692871b3378e3d97c74c59e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of SQL statements that can be opened in one session.  <a href="#ga2d69a4abb692871b3378e3d97c74c59e">More...</a><br /></td></tr>
-<tr class="separator:ga2d69a4abb692871b3378e3d97c74c59e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga47258f61e45f047ebca8e8b13b9d89e7"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7">OCI_ConnectionCreate</a> (const otext *db, const otext *user, const otext *pwd, unsigned int mode)</td></tr>
+<tr class="memdesc:ga47258f61e45f047ebca8e8b13b9d89e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a physical connection to an Oracle database server.  <a href="#ga47258f61e45f047ebca8e8b13b9d89e7">More...</a><br /></td></tr>
+<tr class="separator:ga47258f61e45f047ebca8e8b13b9d89e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga375f2252640df238d927d647f6aceba9"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga375f2252640df238d927d647f6aceba9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a physical connection to an Oracle database server.  <a href="#ga375f2252640df238d927d647f6aceba9">More...</a><br /></td></tr>
+<tr class="separator:ga375f2252640df238d927d647f6aceba9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafc7fefce4744e5c3b5842223702ab795"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gafc7fefce4744e5c3b5842223702ab795">OCI_IsConnected</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gafc7fefce4744e5c3b5842223702ab795"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns TRUE is the given connection is still connected otherwise FALSE.  <a href="#gafc7fefce4744e5c3b5842223702ab795">More...</a><br /></td></tr>
+<tr class="separator:gafc7fefce4744e5c3b5842223702ab795"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0c8b2c6e06705b42c46ab0fcf28fe79e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga0c8b2c6e06705b42c46ab0fcf28fe79e">OCI_GetUserData</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga0c8b2c6e06705b42c46ab0fcf28fe79e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the pointer to user data previously associated with the connection.  <a href="#ga0c8b2c6e06705b42c46ab0fcf28fe79e">More...</a><br /></td></tr>
+<tr class="separator:ga0c8b2c6e06705b42c46ab0fcf28fe79e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4b5068b200b23165ed0fd451d4091340"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga4b5068b200b23165ed0fd451d4091340">OCI_SetUserData</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, void *data)</td></tr>
+<tr class="memdesc:ga4b5068b200b23165ed0fd451d4091340"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate a pointer to user data to the given connection.  <a href="#ga4b5068b200b23165ed0fd451d4091340">More...</a><br /></td></tr>
+<tr class="separator:ga4b5068b200b23165ed0fd451d4091340"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga205a553322fb38312fd9176d83df0096"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga205a553322fb38312fd9176d83df0096">OCI_SetSessionTag</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, const otext *tag)</td></tr>
+<tr class="memdesc:ga205a553322fb38312fd9176d83df0096"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate a tag to the given connection/session.  <a href="#ga205a553322fb38312fd9176d83df0096">More...</a><br /></td></tr>
+<tr class="separator:ga205a553322fb38312fd9176d83df0096"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac20c8fb51e786007476d7aa791625857"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gac20c8fb51e786007476d7aa791625857">OCI_GetSessionTag</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gac20c8fb51e786007476d7aa791625857"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the tag associated the given connection.  <a href="#gac20c8fb51e786007476d7aa791625857">More...</a><br /></td></tr>
+<tr class="separator:gac20c8fb51e786007476d7aa791625857"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga27e272a7e429d04c231d3d756efc0c4a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga27e272a7e429d04c231d3d756efc0c4a">OCI_GetDatabase</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga27e272a7e429d04c231d3d756efc0c4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the connected database/service name.  <a href="#ga27e272a7e429d04c231d3d756efc0c4a">More...</a><br /></td></tr>
+<tr class="separator:ga27e272a7e429d04c231d3d756efc0c4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga12d1efa4d67ca65959b91a8f50f06852"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga12d1efa4d67ca65959b91a8f50f06852">OCI_GetUserName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga12d1efa4d67ca65959b91a8f50f06852"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current logged user name.  <a href="#ga12d1efa4d67ca65959b91a8f50f06852">More...</a><br /></td></tr>
+<tr class="separator:ga12d1efa4d67ca65959b91a8f50f06852"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaac43e5270de6945e152b850e0dc3d620"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaac43e5270de6945e152b850e0dc3d620">OCI_GetPassword</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gaac43e5270de6945e152b850e0dc3d620"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current logged user password.  <a href="#gaac43e5270de6945e152b850e0dc3d620">More...</a><br /></td></tr>
+<tr class="separator:gaac43e5270de6945e152b850e0dc3d620"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga48c540f04fa3c0ed32495439c39bc870"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga48c540f04fa3c0ed32495439c39bc870">OCI_SetPassword</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, const otext *password)</td></tr>
+<tr class="memdesc:ga48c540f04fa3c0ed32495439c39bc870"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the password of the logged user.  <a href="#ga48c540f04fa3c0ed32495439c39bc870">More...</a><br /></td></tr>
+<tr class="separator:ga48c540f04fa3c0ed32495439c39bc870"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabd58aec4d4b225c35c167d0542bc7531"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gabd58aec4d4b225c35c167d0542bc7531">OCI_SetUserPassword</a> (const otext *db, const otext *user, const otext *pwd, const otext *new_pwd)</td></tr>
+<tr class="memdesc:gabd58aec4d4b225c35c167d0542bc7531"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the password of the given user on the given database.  <a href="#gabd58aec4d4b225c35c167d0542bc7531">More...</a><br /></td></tr>
+<tr class="separator:gabd58aec4d4b225c35c167d0542bc7531"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabe3f67a7e18e44ca01c7588d14450385"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gabe3f67a7e18e44ca01c7588d14450385">OCI_GetSessionMode</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gabe3f67a7e18e44ca01c7588d14450385"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current session mode.  <a href="#gabe3f67a7e18e44ca01c7588d14450385">More...</a><br /></td></tr>
+<tr class="separator:gabe3f67a7e18e44ca01c7588d14450385"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga689c15086d9fb2a761acd3278494b593"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga689c15086d9fb2a761acd3278494b593">OCI_GetVersionServer</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga689c15086d9fb2a761acd3278494b593"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the connected database server version.  <a href="#ga689c15086d9fb2a761acd3278494b593">More...</a><br /></td></tr>
+<tr class="separator:ga689c15086d9fb2a761acd3278494b593"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa7d6dc15cf9e9e09b2cbef9ae20e9135"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaa7d6dc15cf9e9e09b2cbef9ae20e9135">OCI_GetServerMajorVersion</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gaa7d6dc15cf9e9e09b2cbef9ae20e9135"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the major version number of the connected database server.  <a href="#gaa7d6dc15cf9e9e09b2cbef9ae20e9135">More...</a><br /></td></tr>
+<tr class="separator:gaa7d6dc15cf9e9e09b2cbef9ae20e9135"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2df8ed30a01b6787cc615cebec3f3c2c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga2df8ed30a01b6787cc615cebec3f3c2c">OCI_GetServerMinorVersion</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga2df8ed30a01b6787cc615cebec3f3c2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the minor version number of the connected database server.  <a href="#ga2df8ed30a01b6787cc615cebec3f3c2c">More...</a><br /></td></tr>
+<tr class="separator:ga2df8ed30a01b6787cc615cebec3f3c2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0eaeda9f974e77c11aeaeb0c048d4631"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga0eaeda9f974e77c11aeaeb0c048d4631">OCI_GetServerRevisionVersion</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga0eaeda9f974e77c11aeaeb0c048d4631"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the revision version number of the connected database server.  <a href="#ga0eaeda9f974e77c11aeaeb0c048d4631">More...</a><br /></td></tr>
+<tr class="separator:ga0eaeda9f974e77c11aeaeb0c048d4631"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga02224068f112f1f0db4d557d7d904ae7"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga02224068f112f1f0db4d557d7d904ae7">OCI_SetFormat</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, const otext *format)</td></tr>
+<tr class="memdesc:ga02224068f112f1f0db4d557d7d904ae7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the format string for implicit string conversions of the given type.  <a href="#ga02224068f112f1f0db4d557d7d904ae7">More...</a><br /></td></tr>
+<tr class="separator:ga02224068f112f1f0db4d557d7d904ae7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6a31f953cff6f4ccbab93e60883752da"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga6a31f953cff6f4ccbab93e60883752da">OCI_GetFormat</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type)</td></tr>
+<tr class="memdesc:ga6a31f953cff6f4ccbab93e60883752da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the format string for implicit string conversions of the given type.  <a href="#ga6a31f953cff6f4ccbab93e60883752da">More...</a><br /></td></tr>
+<tr class="separator:ga6a31f953cff6f4ccbab93e60883752da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6b107cf9096ebe63982a613ad9c3082c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga6b107cf9096ebe63982a613ad9c3082c">OCI_GetTransaction</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga6b107cf9096ebe63982a613ad9c3082c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current transaction of the connection.  <a href="#ga6b107cf9096ebe63982a613ad9c3082c">More...</a><br /></td></tr>
+<tr class="separator:ga6b107cf9096ebe63982a613ad9c3082c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4a403232cb36be5d9d06be3d8416ebdb"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga4a403232cb36be5d9d06be3d8416ebdb">OCI_SetTransaction</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
+<tr class="memdesc:ga4a403232cb36be5d9d06be3d8416ebdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a transaction to a connection.  <a href="#ga4a403232cb36be5d9d06be3d8416ebdb">More...</a><br /></td></tr>
+<tr class="separator:ga4a403232cb36be5d9d06be3d8416ebdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5d0f9362d935db46c8badd1d0c83b38d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga5d0f9362d935db46c8badd1d0c83b38d">OCI_GetVersionConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga5d0f9362d935db46c8badd1d0c83b38d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the highest Oracle version is supported by the connection.  <a href="#ga5d0f9362d935db46c8badd1d0c83b38d">More...</a><br /></td></tr>
+<tr class="separator:ga5d0f9362d935db46c8badd1d0c83b38d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab7d477741d5aae9c8267f5e3a02445c9"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gab7d477741d5aae9c8267f5e3a02445c9">OCI_SetTrace</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int trace, const otext *value)</td></tr>
+<tr class="memdesc:gab7d477741d5aae9c8267f5e3a02445c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set tracing information to the session of the given connection.  <a href="#gab7d477741d5aae9c8267f5e3a02445c9">More...</a><br /></td></tr>
+<tr class="separator:gab7d477741d5aae9c8267f5e3a02445c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae064755d497e0d65249d81077bf21cc1"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gae064755d497e0d65249d81077bf21cc1">OCI_GetTrace</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int trace)</td></tr>
+<tr class="memdesc:gae064755d497e0d65249d81077bf21cc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current trace for the trace type from the given connection.  <a href="#gae064755d497e0d65249d81077bf21cc1">More...</a><br /></td></tr>
+<tr class="separator:gae064755d497e0d65249d81077bf21cc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0d4bd50d388e1e47746ab22182949146"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga0d4bd50d388e1e47746ab22182949146">OCI_Ping</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga0d4bd50d388e1e47746ab22182949146"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a round trip call to the server to confirm that the connection and the server are active.  <a href="#ga0d4bd50d388e1e47746ab22182949146">More...</a><br /></td></tr>
+<tr class="separator:ga0d4bd50d388e1e47746ab22182949146"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8b458bd78540d65eaca53f2d263ba835"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga8b458bd78540d65eaca53f2d263ba835">OCI_SetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, unsigned int value)</td></tr>
+<tr class="memdesc:ga8b458bd78540d65eaca53f2d263ba835"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a given timeout for OCI calls that require server round-trips to the given database.  <a href="#ga8b458bd78540d65eaca53f2d263ba835">More...</a><br /></td></tr>
+<tr class="separator:ga8b458bd78540d65eaca53f2d263ba835"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga02c95ccf517f24208403a49366251e91"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga02c95ccf517f24208403a49366251e91">OCI_GetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type)</td></tr>
+<tr class="memdesc:ga02c95ccf517f24208403a49366251e91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the requested timeout value for OCI calls that require server round-trips to the given database.  <a href="#ga02c95ccf517f24208403a49366251e91">More...</a><br /></td></tr>
+<tr class="separator:ga02c95ccf517f24208403a49366251e91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2eee9e0b3a4c8b6b7b0f45eab5462be2"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga2eee9e0b3a4c8b6b7b0f45eab5462be2">OCI_GetDBName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga2eee9e0b3a4c8b6b7b0f45eab5462be2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server database name of the connected database/service name.  <a href="#ga2eee9e0b3a4c8b6b7b0f45eab5462be2">More...</a><br /></td></tr>
+<tr class="separator:ga2eee9e0b3a4c8b6b7b0f45eab5462be2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3b25beede2bd9ec3d6199744c10b22d7"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga3b25beede2bd9ec3d6199744c10b22d7">OCI_GetInstanceName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga3b25beede2bd9ec3d6199744c10b22d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server Instance name of the connected database/service name.  <a href="#ga3b25beede2bd9ec3d6199744c10b22d7">More...</a><br /></td></tr>
+<tr class="separator:ga3b25beede2bd9ec3d6199744c10b22d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaeb5fbce7b76b0947046812d3a11a2e3a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaeb5fbce7b76b0947046812d3a11a2e3a">OCI_GetServiceName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gaeb5fbce7b76b0947046812d3a11a2e3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server service name of the connected database/service name.  <a href="#gaeb5fbce7b76b0947046812d3a11a2e3a">More...</a><br /></td></tr>
+<tr class="separator:gaeb5fbce7b76b0947046812d3a11a2e3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga535fc44b46834c4706219b64c0456eee"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga535fc44b46834c4706219b64c0456eee">OCI_GetServerName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga535fc44b46834c4706219b64c0456eee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server machine name of the connected database/service name.  <a href="#ga535fc44b46834c4706219b64c0456eee">More...</a><br /></td></tr>
+<tr class="separator:ga535fc44b46834c4706219b64c0456eee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad1fdb2d5635b8fab5551719924f69c4d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gad1fdb2d5635b8fab5551719924f69c4d">OCI_GetDomainName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gad1fdb2d5635b8fab5551719924f69c4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server domain name of the connected database/service name.  <a href="#gad1fdb2d5635b8fab5551719924f69c4d">More...</a><br /></td></tr>
+<tr class="separator:gad1fdb2d5635b8fab5551719924f69c4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa61e9772e5276771b32ad677f8feacb0"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaa61e9772e5276771b32ad677f8feacb0">OCI_GetInstanceStartTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gaa61e9772e5276771b32ad677f8feacb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the date and time (Timestamp) server instance start of the connected database/service name.  <a href="#gaa61e9772e5276771b32ad677f8feacb0">More...</a><br /></td></tr>
+<tr class="separator:gaa61e9772e5276771b32ad677f8feacb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga329709a08f9b1dd18d1e4fc10a490ebe"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga329709a08f9b1dd18d1e4fc10a490ebe">OCI_IsTAFCapable</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:ga329709a08f9b1dd18d1e4fc10a490ebe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verify if the given connection support TAF events.  <a href="#ga329709a08f9b1dd18d1e4fc10a490ebe">More...</a><br /></td></tr>
+<tr class="separator:ga329709a08f9b1dd18d1e4fc10a490ebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae8628a23ee7464583715d7674ae9bc4d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gae8628a23ee7464583715d7674ae9bc4d">OCI_SetTAFHandler</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, <a class="el" href="group___ocilib_c_api_datatypes.html#ga67e0f339111bb2d9243582e129697873">POCI_TAF_HANDLER</a> handler)</td></tr>
+<tr class="memdesc:gae8628a23ee7464583715d7674ae9bc4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Transparent Application Failover (TAF) user handler.  <a href="#gae8628a23ee7464583715d7674ae9bc4d">More...</a><br /></td></tr>
+<tr class="separator:gae8628a23ee7464583715d7674ae9bc4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab9c951a0fe64e5939d48f3af4e0ecc3f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gab9c951a0fe64e5939d48f3af4e0ecc3f">OCI_GetStatementCacheSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gab9c951a0fe64e5939d48f3af4e0ecc3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of statements to keep in the statement cache.  <a href="#gab9c951a0fe64e5939d48f3af4e0ecc3f">More...</a><br /></td></tr>
+<tr class="separator:gab9c951a0fe64e5939d48f3af4e0ecc3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5ad29c4a050e2718fb387f3201670570"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga5ad29c4a050e2718fb387f3201670570">OCI_SetStatementCacheSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int value)</td></tr>
+<tr class="memdesc:ga5ad29c4a050e2718fb387f3201670570"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum number of statements to keep in the statement cache.  <a href="#ga5ad29c4a050e2718fb387f3201670570">More...</a><br /></td></tr>
+<tr class="separator:ga5ad29c4a050e2718fb387f3201670570"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae8360bad28184ec35cae3b7179117958"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gae8360bad28184ec35cae3b7179117958">OCI_GetDefaultLobPrefetchSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gae8360bad28184ec35cae3b7179117958"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the default LOB prefetch buffer size for the connection.  <a href="#gae8360bad28184ec35cae3b7179117958">More...</a><br /></td></tr>
+<tr class="separator:gae8360bad28184ec35cae3b7179117958"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga083df70a99650555c5bf5cdff289f19e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga083df70a99650555c5bf5cdff289f19e">OCI_SetDefaultLobPrefetchSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int value)</td></tr>
+<tr class="memdesc:ga083df70a99650555c5bf5cdff289f19e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or disable prefetching for all LOBs fetched in the connection.  <a href="#ga083df70a99650555c5bf5cdff289f19e">More...</a><br /></td></tr>
+<tr class="separator:ga083df70a99650555c5bf5cdff289f19e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa27ae4a5d2945aece891f9092d57d116"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaa27ae4a5d2945aece891f9092d57d116">OCI_GetMaxCursors</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gaa27ae4a5d2945aece891f9092d57d116"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of SQL statements that can be opened in one session.  <a href="#gaa27ae4a5d2945aece891f9092d57d116">More...</a><br /></td></tr>
+<tr class="separator:gaa27ae4a5d2945aece891f9092d57d116"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga5cd867ad94bdc4a3bbfdef24452262e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5cd867ad94bdc4a3bbfdef24452262e0">&#9670;&nbsp;</a></span>OCI_ConnectionCreate()</h2>
+<a id="ga47258f61e45f047ebca8e8b13b9d89e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga47258f61e45f047ebca8e8b13b9d89e7">&#9670;&nbsp;</a></span>OCI_ConnectionCreate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>* OCI_API OCI_ConnectionCreate </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>* OCI_API OCI_ConnectionCreate </td>
           <td>(</td>
           <td class="paramtype">const otext *&#160;</td>
           <td class="paramname"><em>db</em>, </td>
@@ -295,8 +295,8 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
 <p>The XA connection string used in a transaction monitor to connect to Oracle must be compatible with OCILIB :</p>
 <ul>
 <li>the XA parameter 'Objects' MUST be set to 'true'</li>
-<li>If OCI_ENV_THREADED is passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a>, the XA parameter 'Threads' must be set to 'true', otherwise to 'false'</li>
-<li>If OCI_ENV_EVENTS is passed to <a class="el" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1" title="Initialize the library.">OCI_Initialize()</a>, the XA parameter 'Events' must be set to 'true', otherwise to 'false'</li>
+<li>If OCI_ENV_THREADED is passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>, the XA parameter 'Threads' must be set to 'true', otherwise to 'false'</li>
+<li>If OCI_ENV_EVENTS is passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>, the XA parameter 'Events' must be set to 'true', otherwise to 'false'</li>
 <li>As Oracle does not support Unicode UTF16 character set through the XA interface, Only OCI_CHARSET_ANSI builds of OCILIB can be used</li>
 <li>You still can use UTF8 if the NLS_LANG environment variable is set with a valid UTF8 NLS value</li>
 <li>DO NOT USE OCI_CHARSET_WIDE OCILIB builds with XA connections</li>
@@ -308,14 +308,14 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
 
 </div>
 </div>
-<a id="gac3fe655e96074adb119908be4650a4c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gac3fe655e96074adb119908be4650a4c9">&#9670;&nbsp;</a></span>OCI_ConnectionFree()</h2>
+<a id="ga375f2252640df238d927d647f6aceba9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga375f2252640df238d927d647f6aceba9">&#9670;&nbsp;</a></span>OCI_ConnectionFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_ConnectionFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_ConnectionFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -339,14 +339,14 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
 
 </div>
 </div>
-<a id="gaaa13dc7489eeebcc6bd2a54fb88248b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaaa13dc7489eeebcc6bd2a54fb88248b7">&#9670;&nbsp;</a></span>OCI_IsConnected()</h2>
+<a id="gafc7fefce4744e5c3b5842223702ab795"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafc7fefce4744e5c3b5842223702ab795">&#9670;&nbsp;</a></span>OCI_IsConnected()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_IsConnected </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_IsConnected </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -369,14 +369,14 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
 
 </div>
 </div>
-<a id="ga79621217bc8fb84907c453258a2a33e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga79621217bc8fb84907c453258a2a33e1">&#9670;&nbsp;</a></span>OCI_GetUserData()</h2>
+<a id="ga0c8b2c6e06705b42c46ab0fcf28fe79e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0c8b2c6e06705b42c46ab0fcf28fe79e">&#9670;&nbsp;</a></span>OCI_GetUserData()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT void* OCI_API OCI_GetUserData </td>
+          <td class="memname">OCI_SYM_PUBLIC void* OCI_API OCI_GetUserData </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -400,14 +400,14 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
 
 </div>
 </div>
-<a id="gaeed5fe2da7af18c69585fbec9f63c951"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaeed5fe2da7af18c69585fbec9f63c951">&#9670;&nbsp;</a></span>OCI_SetUserData()</h2>
+<a id="ga4b5068b200b23165ed0fd451d4091340"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4b5068b200b23165ed0fd451d4091340">&#9670;&nbsp;</a></span>OCI_SetUserData()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetUserData </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetUserData </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -443,14 +443,14 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
 
 </div>
 </div>
-<a id="ga0fb3f55bfe0ca869cac6f356f7da5dfe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0fb3f55bfe0ca869cac6f356f7da5dfe">&#9670;&nbsp;</a></span>OCI_SetSessionTag()</h2>
+<a id="ga205a553322fb38312fd9176d83df0096"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga205a553322fb38312fd9176d83df0096">&#9670;&nbsp;</a></span>OCI_SetSessionTag()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetSessionTag </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetSessionTag </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -479,9 +479,9 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Use this call only for connections retrieved from a session pool See <a class="el" href="group___ocilib_c_api_pools.html#ga3f6f0cc0b68e1efab43b5929411dd6ab" title="Get a connection from the pool.">OCI_PoolGetConnection()</a> for more details</dd>
+<dl class="section note"><dt>Note</dt><dd>Use this call only for connections retrieved from a session pool See <a class="el" href="group___ocilib_c_api_pools.html#ga2e9b73c94c032755c30eb36b8b09fee5" title="Get a connection from the pool.">OCI_PoolGetConnection()</a> for more details</dd>
 <dd>
-To untag a session, call <a class="el" href="group___ocilib_c_api_connections.html#ga0fb3f55bfe0ca869cac6f356f7da5dfe" title="Associate a tag to the given connection/session.">OCI_SetSessionTag()</a> with 'tag' parameter set to NULL</dd></dl>
+To untag a session, call <a class="el" href="group___ocilib_c_api_connections.html#ga205a553322fb38312fd9176d83df0096" title="Associate a tag to the given connection/session.">OCI_SetSessionTag()</a> with 'tag' parameter set to NULL</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>No error is raised if the connection is a standalone connection or retrieved from a connection pool</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
@@ -489,14 +489,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 </div>
 </div>
-<a id="ga2703e4c986b2d6827184b10a5aa527af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2703e4c986b2d6827184b10a5aa527af">&#9670;&nbsp;</a></span>OCI_GetSessionTag()</h2>
+<a id="gac20c8fb51e786007476d7aa791625857"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac20c8fb51e786007476d7aa791625857">&#9670;&nbsp;</a></span>OCI_GetSessionTag()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetSessionTag </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetSessionTag </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -519,14 +519,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 </div>
 </div>
-<a id="ga644896376cffbd498d928bec9ba4b379"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga644896376cffbd498d928bec9ba4b379">&#9670;&nbsp;</a></span>OCI_GetDatabase()</h2>
+<a id="ga27e272a7e429d04c231d3d756efc0c4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga27e272a7e429d04c231d3d756efc0c4a">&#9670;&nbsp;</a></span>OCI_GetDatabase()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetDatabase </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetDatabase </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -549,14 +549,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 </div>
 </div>
-<a id="ga1c74d8d264e9911b19810518567451b3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga1c74d8d264e9911b19810518567451b3">&#9670;&nbsp;</a></span>OCI_GetUserName()</h2>
+<a id="ga12d1efa4d67ca65959b91a8f50f06852"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga12d1efa4d67ca65959b91a8f50f06852">&#9670;&nbsp;</a></span>OCI_GetUserName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetUserName </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetUserName </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -579,14 +579,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 </div>
 </div>
-<a id="ga23176f3b177958f3422888b1dc986194"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga23176f3b177958f3422888b1dc986194">&#9670;&nbsp;</a></span>OCI_GetPassword()</h2>
+<a id="gaac43e5270de6945e152b850e0dc3d620"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaac43e5270de6945e152b850e0dc3d620">&#9670;&nbsp;</a></span>OCI_GetPassword()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetPassword </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetPassword </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -609,14 +609,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 </div>
 </div>
-<a id="ga3a98bd2c7fc31d9884309a16a07dd539"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3a98bd2c7fc31d9884309a16a07dd539">&#9670;&nbsp;</a></span>OCI_SetPassword()</h2>
+<a id="ga48c540f04fa3c0ed32495439c39bc870"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga48c540f04fa3c0ed32495439c39bc870">&#9670;&nbsp;</a></span>OCI_SetPassword()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetPassword </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetPassword </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -651,14 +651,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 </div>
 </div>
-<a id="ga029b4ed1c6396d6fa8d9552e19ca9c7d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga029b4ed1c6396d6fa8d9552e19ca9c7d">&#9670;&nbsp;</a></span>OCI_SetUserPassword()</h2>
+<a id="gabd58aec4d4b225c35c167d0542bc7531"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabd58aec4d4b225c35c167d0542bc7531">&#9670;&nbsp;</a></span>OCI_SetUserPassword()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetUserPassword </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetUserPassword </td>
           <td>(</td>
           <td class="paramtype">const otext *&#160;</td>
           <td class="paramname"><em>db</em>, </td>
@@ -707,14 +707,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 </div>
 </div>
-<a id="ga92919dbcb84121aa97b6cfbd48dfd832"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga92919dbcb84121aa97b6cfbd48dfd832">&#9670;&nbsp;</a></span>OCI_GetSessionMode()</h2>
+<a id="gabe3f67a7e18e44ca01c7588d14450385"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabe3f67a7e18e44ca01c7588d14450385">&#9670;&nbsp;</a></span>OCI_GetSessionMode()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetSessionMode </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSessionMode </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -732,18 +732,18 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0" title="Create a physical connection to an Oracle database server.">OCI_ConnectionCreate()</a> for possible values </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7" title="Create a physical connection to an Oracle database server.">OCI_ConnectionCreate()</a> for possible values </dd></dl>
 
 </div>
 </div>
-<a id="gab7016c85bd29c1fa9ba5d980da2b615c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab7016c85bd29c1fa9ba5d980da2b615c">&#9670;&nbsp;</a></span>OCI_GetVersionServer()</h2>
+<a id="ga689c15086d9fb2a761acd3278494b593"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga689c15086d9fb2a761acd3278494b593">&#9670;&nbsp;</a></span>OCI_GetVersionServer()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetVersionServer </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetVersionServer </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -766,14 +766,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 </div>
 </div>
-<a id="ga2d7618d8eae73643dd75067a40e656a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2d7618d8eae73643dd75067a40e656a1">&#9670;&nbsp;</a></span>OCI_GetServerMajorVersion()</h2>
+<a id="gaa7d6dc15cf9e9e09b2cbef9ae20e9135"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa7d6dc15cf9e9e09b2cbef9ae20e9135">&#9670;&nbsp;</a></span>OCI_GetServerMajorVersion()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetServerMajorVersion </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerMajorVersion </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -797,14 +797,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 </div>
 </div>
-<a id="ga8f48a3c755751e5df415160913c6c7ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga8f48a3c755751e5df415160913c6c7ee">&#9670;&nbsp;</a></span>OCI_GetServerMinorVersion()</h2>
+<a id="ga2df8ed30a01b6787cc615cebec3f3c2c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2df8ed30a01b6787cc615cebec3f3c2c">&#9670;&nbsp;</a></span>OCI_GetServerMinorVersion()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetServerMinorVersion </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerMinorVersion </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -828,14 +828,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 </div>
 </div>
-<a id="gae4c3b37f1c9fc79d36220aa9c96d4415"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae4c3b37f1c9fc79d36220aa9c96d4415">&#9670;&nbsp;</a></span>OCI_GetServerRevisionVersion()</h2>
+<a id="ga0eaeda9f974e77c11aeaeb0c048d4631"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0eaeda9f974e77c11aeaeb0c048d4631">&#9670;&nbsp;</a></span>OCI_GetServerRevisionVersion()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetServerRevisionVersion </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerRevisionVersion </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -859,14 +859,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 </div>
 </div>
-<a id="gade18954504b0d40e981e683f00d39951"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gade18954504b0d40e981e683f00d39951">&#9670;&nbsp;</a></span>OCI_SetFormat()</h2>
+<a id="ga02224068f112f1f0db4d557d7d904ae7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga02224068f112f1f0db4d557d7d904ae7">&#9670;&nbsp;</a></span>OCI_SetFormat()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetFormat </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetFormat </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -936,14 +936,14 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
 
 </div>
 </div>
-<a id="ga4ed928994e00b49fe651b450d47baaf1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4ed928994e00b49fe651b450d47baaf1">&#9670;&nbsp;</a></span>OCI_GetFormat()</h2>
+<a id="ga6a31f953cff6f4ccbab93e60883752da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6a31f953cff6f4ccbab93e60883752da">&#9670;&nbsp;</a></span>OCI_GetFormat()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetFormat </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetFormat </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -972,20 +972,20 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_connections.html#gade18954504b0d40e981e683f00d39951" title="Set the format string for implicit string conversions of the given type.">OCI_SetFormat()</a> for possible values </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_connections.html#ga02224068f112f1f0db4d557d7d904ae7" title="Set the format string for implicit string conversions of the given type.">OCI_SetFormat()</a> for possible values </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f">ocilib::Environment::GetFormat()</a>, and <a class="el" href="classocilib_1_1_connection.html#af121e98b6393fb6e2a63b2c23194be14">ocilib::Connection::GetFormat()</a>.</p>
 
 </div>
 </div>
-<a id="ga033d19889ff80f7d5ff16285392ed696"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga033d19889ff80f7d5ff16285392ed696">&#9670;&nbsp;</a></span>OCI_GetTransaction()</h2>
+<a id="ga6b107cf9096ebe63982a613ad9c3082c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6b107cf9096ebe63982a613ad9c3082c">&#9670;&nbsp;</a></span>OCI_GetTransaction()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a>* OCI_API OCI_GetTransaction </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a>* OCI_API OCI_GetTransaction </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1009,14 +1009,14 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
 
 </div>
 </div>
-<a id="gacd5bcb0f0894ffcafcb6dfee5e850f5a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gacd5bcb0f0894ffcafcb6dfee5e850f5a">&#9670;&nbsp;</a></span>OCI_SetTransaction()</h2>
+<a id="ga4a403232cb36be5d9d06be3d8416ebdb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4a403232cb36be5d9d06be3d8416ebdb">&#9670;&nbsp;</a></span>OCI_SetTransaction()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetTransaction </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetTransaction </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -1052,14 +1052,14 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
 
 </div>
 </div>
-<a id="ga6f61147801fce4b69edb4981ba4ea1b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6f61147801fce4b69edb4981ba4ea1b7">&#9670;&nbsp;</a></span>OCI_GetVersionConnection()</h2>
+<a id="ga5d0f9362d935db46c8badd1d0c83b38d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5d0f9362d935db46c8badd1d0c83b38d">&#9670;&nbsp;</a></span>OCI_GetVersionConnection()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetVersionConnection </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetVersionConnection </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1098,14 +1098,14 @@ Returns one of the following values:</dd></dl>
 
 </div>
 </div>
-<a id="gad7b3c1053b3324192089ab8289df3e57"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad7b3c1053b3324192089ab8289df3e57">&#9670;&nbsp;</a></span>OCI_SetTrace()</h2>
+<a id="gab7d477741d5aae9c8267f5e3a02445c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab7d477741d5aae9c8267f5e3a02445c9">&#9670;&nbsp;</a></span>OCI_SetTrace()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetTrace </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetTrace </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -1168,14 +1168,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="ga2744cf73d308f9d65f94fd695084ee76"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2744cf73d308f9d65f94fd695084ee76">&#9670;&nbsp;</a></span>OCI_GetTrace()</h2>
+<a id="gae064755d497e0d65249d81077bf21cc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae064755d497e0d65249d81077bf21cc1">&#9670;&nbsp;</a></span>OCI_GetTrace()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetTrace </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetTrace </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -1204,20 +1204,20 @@ Oracle limits the size of these traces content:</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_connections.html#gad7b3c1053b3324192089ab8289df3e57" title="Set tracing information to the session of the given connection.">OCI_SetTrace()</a> for more details. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_connections.html#gab7d477741d5aae9c8267f5e3a02445c9" title="Set tracing information to the session of the given connection.">OCI_SetTrace()</a> for more details. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a23c58d343bd49173b2ec1f55ed3be3c8">ocilib::Connection::GetTrace()</a>.</p>
 
 </div>
 </div>
-<a id="gaa4a9ff378dba28920b81b8b71e2372f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa4a9ff378dba28920b81b8b71e2372f5">&#9670;&nbsp;</a></span>OCI_Ping()</h2>
+<a id="ga0d4bd50d388e1e47746ab22182949146"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0d4bd50d388e1e47746ab22182949146">&#9670;&nbsp;</a></span>OCI_Ping()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_Ping </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_Ping </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1242,14 +1242,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="gaba3523c60736722aa61e1c245d92cb08"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaba3523c60736722aa61e1c245d92cb08">&#9670;&nbsp;</a></span>OCI_SetTimeout()</h2>
+<a id="ga8b458bd78540d65eaca53f2d263ba835"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8b458bd78540d65eaca53f2d263ba835">&#9670;&nbsp;</a></span>OCI_SetTimeout()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetTimeout </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetTimeout </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -1327,14 +1327,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="ga2fc44c0b2803a612b77f566c1a7cf787"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2fc44c0b2803a612b77f566c1a7cf787">&#9670;&nbsp;</a></span>OCI_GetTimeout()</h2>
+<a id="ga02c95ccf517f24208403a49366251e91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga02c95ccf517f24208403a49366251e91">&#9670;&nbsp;</a></span>OCI_GetTimeout()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetTimeout </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetTimeout </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -1363,21 +1363,21 @@ Oracle limits the size of these traces content:</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>: See <a class="el" href="group___ocilib_c_api_connections.html#gaba3523c60736722aa61e1c245d92cb08" title="Set a given timeout for OCI calls that require server round-trips to the given database.">OCI_SetTimeout()</a> for more information</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>: See <a class="el" href="group___ocilib_c_api_connections.html#ga8b458bd78540d65eaca53f2d263ba835" title="Set a given timeout for OCI calls that require server round-trips to the given database.">OCI_SetTimeout()</a> for more information</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>The given timeout value if supported, otherwise 0 </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a6607849329f328582edbb2958ae651d6">ocilib::Connection::GetTimeout()</a>.</p>
 
 </div>
 </div>
-<a id="ga98877db184e1d8d5bf50be1fb6906dc2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga98877db184e1d8d5bf50be1fb6906dc2">&#9670;&nbsp;</a></span>OCI_GetDBName()</h2>
+<a id="ga2eee9e0b3a4c8b6b7b0f45eab5462be2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2eee9e0b3a4c8b6b7b0f45eab5462be2">&#9670;&nbsp;</a></span>OCI_GetDBName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetDBName </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetDBName </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1401,14 +1401,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="gac3ee48e0bfd6b606328bdbbd670cfdb0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gac3ee48e0bfd6b606328bdbbd670cfdb0">&#9670;&nbsp;</a></span>OCI_GetInstanceName()</h2>
+<a id="ga3b25beede2bd9ec3d6199744c10b22d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3b25beede2bd9ec3d6199744c10b22d7">&#9670;&nbsp;</a></span>OCI_GetInstanceName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetInstanceName </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetInstanceName </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1432,14 +1432,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="gabf76c1f95bcfb75e8ce887c84642f14f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gabf76c1f95bcfb75e8ce887c84642f14f">&#9670;&nbsp;</a></span>OCI_GetServiceName()</h2>
+<a id="gaeb5fbce7b76b0947046812d3a11a2e3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaeb5fbce7b76b0947046812d3a11a2e3a">&#9670;&nbsp;</a></span>OCI_GetServiceName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetServiceName </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetServiceName </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1463,14 +1463,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="gad34ea35e12ce6860ae2111e403ae0be5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad34ea35e12ce6860ae2111e403ae0be5">&#9670;&nbsp;</a></span>OCI_GetServerName()</h2>
+<a id="ga535fc44b46834c4706219b64c0456eee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga535fc44b46834c4706219b64c0456eee">&#9670;&nbsp;</a></span>OCI_GetServerName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetServerName </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetServerName </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1494,14 +1494,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="ga0bf8783a356591ae8267c4ca08638c81"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0bf8783a356591ae8267c4ca08638c81">&#9670;&nbsp;</a></span>OCI_GetDomainName()</h2>
+<a id="gad1fdb2d5635b8fab5551719924f69c4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad1fdb2d5635b8fab5551719924f69c4d">&#9670;&nbsp;</a></span>OCI_GetDomainName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_GetDomainName </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_GetDomainName </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1525,14 +1525,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="gade7003071dbe1b3ff5bc36cbb2418c3a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gade7003071dbe1b3ff5bc36cbb2418c3a">&#9670;&nbsp;</a></span>OCI_GetInstanceStartTime()</h2>
+<a id="gaa61e9772e5276771b32ad677f8feacb0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa61e9772e5276771b32ad677f8feacb0">&#9670;&nbsp;</a></span>OCI_GetInstanceStartTime()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a>* OCI_API OCI_GetInstanceStartTime </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a>* OCI_API OCI_GetInstanceStartTime </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1556,14 +1556,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="gaec581bccba93866adb0306d819bf355c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaec581bccba93866adb0306d819bf355c">&#9670;&nbsp;</a></span>OCI_IsTAFCapable()</h2>
+<a id="ga329709a08f9b1dd18d1e4fc10a490ebe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga329709a08f9b1dd18d1e4fc10a490ebe">&#9670;&nbsp;</a></span>OCI_IsTAFCapable()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_IsTAFCapable </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_IsTAFCapable </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1588,14 +1588,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="ga5cfa430f4621c35bae775409de0c6215"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5cfa430f4621c35bae775409de0c6215">&#9670;&nbsp;</a></span>OCI_SetTAFHandler()</h2>
+<a id="gae8628a23ee7464583715d7674ae9bc4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae8628a23ee7464583715d7674ae9bc4d">&#9670;&nbsp;</a></span>OCI_SetTAFHandler()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetTAFHandler </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetTAFHandler </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -1632,14 +1632,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="gabafb62291c1503ecff6ff4ee719a2ff1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gabafb62291c1503ecff6ff4ee719a2ff1">&#9670;&nbsp;</a></span>OCI_GetStatementCacheSize()</h2>
+<a id="gab9c951a0fe64e5939d48f3af4e0ecc3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab9c951a0fe64e5939d48f3af4e0ecc3f">&#9670;&nbsp;</a></span>OCI_GetStatementCacheSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetStatementCacheSize </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetStatementCacheSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1664,14 +1664,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="gaf6001f3ffc1e8537a4e02bbfe8549d3f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf6001f3ffc1e8537a4e02bbfe8549d3f">&#9670;&nbsp;</a></span>OCI_SetStatementCacheSize()</h2>
+<a id="ga5ad29c4a050e2718fb387f3201670570"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5ad29c4a050e2718fb387f3201670570">&#9670;&nbsp;</a></span>OCI_SetStatementCacheSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetStatementCacheSize </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetStatementCacheSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -1707,14 +1707,14 @@ Oracle limits the size of these traces content:</dd></dl>
 
 </div>
 </div>
-<a id="gaf1026309c40b8419b2a6cd24d71d8090"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf1026309c40b8419b2a6cd24d71d8090">&#9670;&nbsp;</a></span>OCI_GetDefaultLobPrefetchSize()</h2>
+<a id="gae8360bad28184ec35cae3b7179117958"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae8360bad28184ec35cae3b7179117958">&#9670;&nbsp;</a></span>OCI_GetDefaultLobPrefetchSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetDefaultLobPrefetchSize </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDefaultLobPrefetchSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1745,14 +1745,14 @@ Default is 0 (prefetching disabled) </dd></dl>
 
 </div>
 </div>
-<a id="ga069d605439946b83a1fd930670bae710"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga069d605439946b83a1fd930670bae710">&#9670;&nbsp;</a></span>OCI_SetDefaultLobPrefetchSize()</h2>
+<a id="ga083df70a99650555c5bf5cdff289f19e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga083df70a99650555c5bf5cdff289f19e">&#9670;&nbsp;</a></span>OCI_SetDefaultLobPrefetchSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_SetDefaultLobPrefetchSize </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetDefaultLobPrefetchSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -1800,14 +1800,14 @@ LOBs prefetching is disabled by default</dd></dl>
 
 </div>
 </div>
-<a id="ga2d69a4abb692871b3378e3d97c74c59e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2d69a4abb692871b3378e3d97c74c59e">&#9670;&nbsp;</a></span>OCI_GetMaxCursors()</h2>
+<a id="gaa27ae4a5d2945aece891f9092d57d116"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa27ae4a5d2945aece891f9092d57d116">&#9670;&nbsp;</a></span>OCI_GetMaxCursors()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_GetMaxCursors </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetMaxCursors </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em></td><td>)</td>
@@ -1840,7 +1840,7 @@ Return 0 if the client and server version are &lt; 12cR1 </dd></dl>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,8 +100,8 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_feature_returning
 <p>OCILIB supports the Oracle feature 'Returning into' for DML statements.</p>
 <p>Let's Oracle talk about this features:</p>
 <dl class="section user"><dt></dt><dd>'Using the RETURNING clause with a DML statement allows you to essentially combine two SQL statements into one, possibly saving you a server round-trip. This is accomplished by adding an extra clause to the traditional UPDATE, INSERT, and DELETE statements. The extra clause effectively adds a query to the DML statement. In the OCI, the values are returned to the application through the use of OUT bind variables.'</dd></dl>
-<p>OCILIB implements this features by providing a set of functions that allows to register output placeholders for the returned values. Once the DML is executed with <a class="el" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a>, the output returned data is available through a regular resultset object that can be fetched.</p>
-<dl class="section note"><dt>Note</dt><dd>Array binding interface is also supported with 'returning into' DML statement. Every iteration (or row of given arrays) generates an resultset object. Once a resultset is fetched, the next on can be retrieved with <a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga67cbb956e8d721c8397e3f897a57b224" title="Retrieve the next available resultset.">OCI_GetNextResultset()</a></dd></dl>
+<p>OCILIB implements this features by providing a set of functions that allows to register output placeholders for the returned values. Once the DML is executed with <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a>, the output returned data is available through a regular resultset object that can be fetched.</p>
+<dl class="section note"><dt>Note</dt><dd>Array binding interface is also supported with 'returning into' DML statement. Every iteration (or row of given arrays) generates an resultset object. Once a resultset is fetched, the next on can be retrieved with <a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga20d23ea50075c16a1f7c5ae3515bd025" title="Retrieve the next available resultset.">OCI_GetNextResultset()</a></dd></dl>
 <dl class="section user"><dt></dt><dd></dd></dl>
 <dl class="section note"><dt>Note</dt><dd>OCI_Long are not supported for 'returning into' clause .This is a limitation imposed by Oracle.</dd>
 <dd>
@@ -110,77 +110,77 @@ OCI_Column objects retrieved from output OCI_Resultset have the following partic
 <li>their names are the provided bind names to the DML statement (by example, ':out1'). So any call to the functions OCI_GetXXX2() should be aware of it</li>
 <li>The columns detailed SQL attributes might be not all set or accurate. By example, the scale and precision are not set, the SQL type is the one chosen by OCILIB regarding the OCILIB object data type and might be slightly different from the real one.</li>
 </ul>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/products.sql */</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a>  *st;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a>  *rs;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#ga335822f983af0fb5c529431f06a9a17b">OCI_StatementCreate</a>(cn);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga592e4b3cf3df7e152c46fab5d6e3b3af">OCI_Prepare</a>(st, <span class="stringliteral">&quot;update products set name = name || &#39; updated&#39; returning code into :code&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_feature_returning_into.html#ga4c215f37902cc9045c27ae1bdd3b2844">OCI_RegisterInt</a>(st, <span class="stringliteral">&quot;:code&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga7189aa353845909aaedc8d5956429450">OCI_Execute</a>(st);</div><div class="line"></div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gaf2a9e28b66a9538ba0ffb62bffb87c16">OCI_GetResultset</a>(st);</div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga36ac26dcea78f6074421781e401f97ba">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        printf(<span class="stringliteral">&quot;element with code %d has been updated\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#gaa8d80dc30b2012eaddd13efa9dfb711d">OCI_GetInt</a>(rs, 1));</div><div class="line">    }</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;Number of affected rows : %d\n&quot;</span>, <a class="code" href="group___ocilib_c_api_statements.html#ga1cf932261960da80cd36d650a08565c3">OCI_GetAffectedRows</a>(st));</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8b2b66994f847d9f0b6b0efe4a13ccf3">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;select count(*) from products where name like &#39;%updated&#39;&quot;</span>);</div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gaf2a9e28b66a9538ba0ffb62bffb87c16">OCI_GetResultset</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_fetching.html#ga36ac26dcea78f6074421781e401f97ba">OCI_FetchNext</a>(rs);</div><div class="line">    printf(<span class="stringliteral">&quot;%i elements updated in DB\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#gaa8d80dc30b2012eaddd13efa9dfb711d">OCI_GetInt</a>(rs, 1));</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_transactions.html#gaee1ba614ed2dc5bd83bf788ca08f3e71">OCI_Commit</a>(cn);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga487b4f90f1fd4aee18f3d901f5aed104">OCI_StatementFree</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="comment">/* requires script demo/products.sql */</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a>  *st;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a>  *rs;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    st = <a class="code" href="group___ocilib_c_api_statements.html#gab62065db373d58337fa92948d5a8eba1">OCI_StatementCreate</a>(cn);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a>(st, <span class="stringliteral">&quot;update products set name = name || &#39; updated&#39; returning code into :code&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_feature_returning_into.html#ga2ae33801dc41fbb359ad2d6c23aec024">OCI_RegisterInt</a>(st, <span class="stringliteral">&quot;:code&quot;</span>);</div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a>(st);</div><div class="line"></div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gace8269c905b60b758358025d61e7fce7">OCI_GetResultset</a>(st);</div><div class="line">    <span class="keywordflow">while</span> (<a class="code" href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a>(rs))</div><div class="line">    {</div><div class="line">        printf(<span class="stringliteral">&quot;element with code %d has been updated\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#gae26bdda7984f430630d372af5712bf47">OCI_GetInt</a>(rs, 1));</div><div class="line">    }</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;Number of affected rows : %d\n&quot;</span>, <a class="code" href="group___ocilib_c_api_statements.html#ga0af3308fa16a0a0e591b67c7ab7211a7">OCI_GetAffectedRows</a>(st));</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a>(st, <span class="stringliteral">&quot;select count(*) from products where name like &#39;%updated&#39;&quot;</span>);</div><div class="line">    rs = <a class="code" href="group___ocilib_c_api_fetching.html#gace8269c905b60b758358025d61e7fce7">OCI_GetResultset</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a>(rs);</div><div class="line">    printf(<span class="stringliteral">&quot;%i elements updated in DB\n&quot;</span>, <a class="code" href="group___ocilib_c_api_fetching.html#gae26bdda7984f430630d372af5712bf47">OCI_GetInt</a>(rs, 1));</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_transactions.html#gadc75ccc3334477a3b4ceeb609f7ed544">OCI_Commit</a>(cn);</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a>(st);</div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga67cbb956e8d721c8397e3f897a57b224"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga67cbb956e8d721c8397e3f897a57b224">OCI_GetNextResultset</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:ga67cbb956e8d721c8397e3f897a57b224"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the next available resultset.  <a href="#ga67cbb956e8d721c8397e3f897a57b224">More...</a><br /></td></tr>
-<tr class="separator:ga67cbb956e8d721c8397e3f897a57b224"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaaf3b03d15c93a0441473f2bcf86453d6"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gaaf3b03d15c93a0441473f2bcf86453d6">OCI_RegisterNumber</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
-<tr class="memdesc:gaaf3b03d15c93a0441473f2bcf86453d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a register output bind placeholder.  <a href="#gaaf3b03d15c93a0441473f2bcf86453d6">More...</a><br /></td></tr>
-<tr class="separator:gaaf3b03d15c93a0441473f2bcf86453d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga75b56f19cf0c858b2e4a2b81ef15b5ea"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga75b56f19cf0c858b2e4a2b81ef15b5ea">OCI_RegisterShort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
-<tr class="memdesc:ga75b56f19cf0c858b2e4a2b81ef15b5ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a short output bind placeholder.  <a href="#ga75b56f19cf0c858b2e4a2b81ef15b5ea">More...</a><br /></td></tr>
-<tr class="separator:ga75b56f19cf0c858b2e4a2b81ef15b5ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad86a6a528899cae1272b88e06e3d2043"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gad86a6a528899cae1272b88e06e3d2043">OCI_RegisterUnsignedShort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
-<tr class="memdesc:gad86a6a528899cae1272b88e06e3d2043"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an unsigned short output bind placeholder.  <a href="#gad86a6a528899cae1272b88e06e3d2043">More...</a><br /></td></tr>
-<tr class="separator:gad86a6a528899cae1272b88e06e3d2043"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4c215f37902cc9045c27ae1bdd3b2844"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga4c215f37902cc9045c27ae1bdd3b2844">OCI_RegisterInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
-<tr class="memdesc:ga4c215f37902cc9045c27ae1bdd3b2844"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an integer output bind placeholder.  <a href="#ga4c215f37902cc9045c27ae1bdd3b2844">More...</a><br /></td></tr>
-<tr class="separator:ga4c215f37902cc9045c27ae1bdd3b2844"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa54a5be8206d27268e574c0c4f6695a1"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gaa54a5be8206d27268e574c0c4f6695a1">OCI_RegisterUnsignedInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
-<tr class="memdesc:gaa54a5be8206d27268e574c0c4f6695a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an unsigned integer output bind placeholder.  <a href="#gaa54a5be8206d27268e574c0c4f6695a1">More...</a><br /></td></tr>
-<tr class="separator:gaa54a5be8206d27268e574c0c4f6695a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7f993f07ff0296c7f6961298e473ebbe"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga7f993f07ff0296c7f6961298e473ebbe">OCI_RegisterBigInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
-<tr class="memdesc:ga7f993f07ff0296c7f6961298e473ebbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a big integer output bind placeholder.  <a href="#ga7f993f07ff0296c7f6961298e473ebbe">More...</a><br /></td></tr>
-<tr class="separator:ga7f993f07ff0296c7f6961298e473ebbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1a22763f9e2f04525d4c9ed84ad3e3ab"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga1a22763f9e2f04525d4c9ed84ad3e3ab">OCI_RegisterUnsignedBigInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
-<tr class="memdesc:ga1a22763f9e2f04525d4c9ed84ad3e3ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an unsigned big integer output bind placeholder.  <a href="#ga1a22763f9e2f04525d4c9ed84ad3e3ab">More...</a><br /></td></tr>
-<tr class="separator:ga1a22763f9e2f04525d4c9ed84ad3e3ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf0e8a8475060fc2c352c5ecdf68802ca"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gaf0e8a8475060fc2c352c5ecdf68802ca">OCI_RegisterString</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int len)</td></tr>
-<tr class="memdesc:gaf0e8a8475060fc2c352c5ecdf68802ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a string output bind placeholder.  <a href="#gaf0e8a8475060fc2c352c5ecdf68802ca">More...</a><br /></td></tr>
-<tr class="separator:gaf0e8a8475060fc2c352c5ecdf68802ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8620b248d8f5a8d869b9144cfb4d27e3"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga8620b248d8f5a8d869b9144cfb4d27e3">OCI_RegisterRaw</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int len)</td></tr>
-<tr class="memdesc:ga8620b248d8f5a8d869b9144cfb4d27e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an raw output bind placeholder.  <a href="#ga8620b248d8f5a8d869b9144cfb4d27e3">More...</a><br /></td></tr>
-<tr class="separator:ga8620b248d8f5a8d869b9144cfb4d27e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga47f7026a1340f47106bb68e640721e7b"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga47f7026a1340f47106bb68e640721e7b">OCI_RegisterDouble</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
-<tr class="memdesc:ga47f7026a1340f47106bb68e640721e7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a double output bind placeholder.  <a href="#ga47f7026a1340f47106bb68e640721e7b">More...</a><br /></td></tr>
-<tr class="separator:ga47f7026a1340f47106bb68e640721e7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga334374bb86c0562ab453a45a56c62dac"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga334374bb86c0562ab453a45a56c62dac">OCI_RegisterFloat</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
-<tr class="memdesc:ga334374bb86c0562ab453a45a56c62dac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a float output bind placeholder.  <a href="#ga334374bb86c0562ab453a45a56c62dac">More...</a><br /></td></tr>
-<tr class="separator:ga334374bb86c0562ab453a45a56c62dac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafefe1c8c8cc0d1ce80017d340900e176"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gafefe1c8c8cc0d1ce80017d340900e176">OCI_RegisterDate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
-<tr class="memdesc:gafefe1c8c8cc0d1ce80017d340900e176"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a date output bind placeholder.  <a href="#gafefe1c8c8cc0d1ce80017d340900e176">More...</a><br /></td></tr>
-<tr class="separator:gafefe1c8c8cc0d1ce80017d340900e176"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf9ff792f0d536acd1558c7949a4f63b6"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gaf9ff792f0d536acd1558c7949a4f63b6">OCI_RegisterTimestamp</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int type)</td></tr>
-<tr class="memdesc:gaf9ff792f0d536acd1558c7949a4f63b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a timestamp output bind placeholder.  <a href="#gaf9ff792f0d536acd1558c7949a4f63b6">More...</a><br /></td></tr>
-<tr class="separator:gaf9ff792f0d536acd1558c7949a4f63b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga24570345dff59944656f2cf537de0693"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga24570345dff59944656f2cf537de0693">OCI_RegisterInterval</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int type)</td></tr>
-<tr class="memdesc:ga24570345dff59944656f2cf537de0693"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an interval output bind placeholder.  <a href="#ga24570345dff59944656f2cf537de0693">More...</a><br /></td></tr>
-<tr class="separator:ga24570345dff59944656f2cf537de0693"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf5ec3d17cd631f61794169d6f0f72185"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gaf5ec3d17cd631f61794169d6f0f72185">OCI_RegisterObject</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
-<tr class="memdesc:gaf5ec3d17cd631f61794169d6f0f72185"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an object output bind placeholder.  <a href="#gaf5ec3d17cd631f61794169d6f0f72185">More...</a><br /></td></tr>
-<tr class="separator:gaf5ec3d17cd631f61794169d6f0f72185"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaaf804e8eb11f4b040e23ce4f164f279c"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gaaf804e8eb11f4b040e23ce4f164f279c">OCI_RegisterLob</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int type)</td></tr>
-<tr class="memdesc:gaaf804e8eb11f4b040e23ce4f164f279c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a lob output bind placeholder.  <a href="#gaaf804e8eb11f4b040e23ce4f164f279c">More...</a><br /></td></tr>
-<tr class="separator:gaaf804e8eb11f4b040e23ce4f164f279c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaae282a931f8f23e4abe066a9a82ba45f"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gaae282a931f8f23e4abe066a9a82ba45f">OCI_RegisterFile</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int type)</td></tr>
-<tr class="memdesc:gaae282a931f8f23e4abe066a9a82ba45f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a file output bind placeholder.  <a href="#gaae282a931f8f23e4abe066a9a82ba45f">More...</a><br /></td></tr>
-<tr class="separator:gaae282a931f8f23e4abe066a9a82ba45f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga34cb87ebfa9f43b1474f192515562271"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga34cb87ebfa9f43b1474f192515562271">OCI_RegisterRef</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
-<tr class="memdesc:ga34cb87ebfa9f43b1474f192515562271"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a Ref output bind placeholder.  <a href="#ga34cb87ebfa9f43b1474f192515562271">More...</a><br /></td></tr>
-<tr class="separator:ga34cb87ebfa9f43b1474f192515562271"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga20d23ea50075c16a1f7c5ae3515bd025"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga20d23ea50075c16a1f7c5ae3515bd025">OCI_GetNextResultset</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
+<tr class="memdesc:ga20d23ea50075c16a1f7c5ae3515bd025"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the next available resultset.  <a href="#ga20d23ea50075c16a1f7c5ae3515bd025">More...</a><br /></td></tr>
+<tr class="separator:ga20d23ea50075c16a1f7c5ae3515bd025"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae3f953259ed63f97e7f568e1bef366d5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gae3f953259ed63f97e7f568e1bef366d5">OCI_RegisterNumber</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
+<tr class="memdesc:gae3f953259ed63f97e7f568e1bef366d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a register output bind placeholder.  <a href="#gae3f953259ed63f97e7f568e1bef366d5">More...</a><br /></td></tr>
+<tr class="separator:gae3f953259ed63f97e7f568e1bef366d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga91b85ed4738f53aac907f721049b60e2"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga91b85ed4738f53aac907f721049b60e2">OCI_RegisterShort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
+<tr class="memdesc:ga91b85ed4738f53aac907f721049b60e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a short output bind placeholder.  <a href="#ga91b85ed4738f53aac907f721049b60e2">More...</a><br /></td></tr>
+<tr class="separator:ga91b85ed4738f53aac907f721049b60e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac87cc0a7aef79e4d4e493be1e85be583"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gac87cc0a7aef79e4d4e493be1e85be583">OCI_RegisterUnsignedShort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
+<tr class="memdesc:gac87cc0a7aef79e4d4e493be1e85be583"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an unsigned short output bind placeholder.  <a href="#gac87cc0a7aef79e4d4e493be1e85be583">More...</a><br /></td></tr>
+<tr class="separator:gac87cc0a7aef79e4d4e493be1e85be583"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2ae33801dc41fbb359ad2d6c23aec024"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga2ae33801dc41fbb359ad2d6c23aec024">OCI_RegisterInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
+<tr class="memdesc:ga2ae33801dc41fbb359ad2d6c23aec024"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an integer output bind placeholder.  <a href="#ga2ae33801dc41fbb359ad2d6c23aec024">More...</a><br /></td></tr>
+<tr class="separator:ga2ae33801dc41fbb359ad2d6c23aec024"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2b45328d3862038c7d9cb24ffa0f8528"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga2b45328d3862038c7d9cb24ffa0f8528">OCI_RegisterUnsignedInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
+<tr class="memdesc:ga2b45328d3862038c7d9cb24ffa0f8528"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an unsigned integer output bind placeholder.  <a href="#ga2b45328d3862038c7d9cb24ffa0f8528">More...</a><br /></td></tr>
+<tr class="separator:ga2b45328d3862038c7d9cb24ffa0f8528"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadfc833c4c4029d5b0045cecf12b0f756"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gadfc833c4c4029d5b0045cecf12b0f756">OCI_RegisterBigInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
+<tr class="memdesc:gadfc833c4c4029d5b0045cecf12b0f756"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a big integer output bind placeholder.  <a href="#gadfc833c4c4029d5b0045cecf12b0f756">More...</a><br /></td></tr>
+<tr class="separator:gadfc833c4c4029d5b0045cecf12b0f756"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab9af2115b832a4b657328615af0f0127"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gab9af2115b832a4b657328615af0f0127">OCI_RegisterUnsignedBigInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
+<tr class="memdesc:gab9af2115b832a4b657328615af0f0127"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an unsigned big integer output bind placeholder.  <a href="#gab9af2115b832a4b657328615af0f0127">More...</a><br /></td></tr>
+<tr class="separator:gab9af2115b832a4b657328615af0f0127"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae014971fbc18e6155e63016d01d02f8d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gae014971fbc18e6155e63016d01d02f8d">OCI_RegisterString</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int len)</td></tr>
+<tr class="memdesc:gae014971fbc18e6155e63016d01d02f8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a string output bind placeholder.  <a href="#gae014971fbc18e6155e63016d01d02f8d">More...</a><br /></td></tr>
+<tr class="separator:gae014971fbc18e6155e63016d01d02f8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae0dd6cf79082c7dd85f809624f5f9d20"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gae0dd6cf79082c7dd85f809624f5f9d20">OCI_RegisterRaw</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int len)</td></tr>
+<tr class="memdesc:gae0dd6cf79082c7dd85f809624f5f9d20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an raw output bind placeholder.  <a href="#gae0dd6cf79082c7dd85f809624f5f9d20">More...</a><br /></td></tr>
+<tr class="separator:gae0dd6cf79082c7dd85f809624f5f9d20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3e15fa6e5b58f3f86ffd3116e88f7d13"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga3e15fa6e5b58f3f86ffd3116e88f7d13">OCI_RegisterDouble</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
+<tr class="memdesc:ga3e15fa6e5b58f3f86ffd3116e88f7d13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a double output bind placeholder.  <a href="#ga3e15fa6e5b58f3f86ffd3116e88f7d13">More...</a><br /></td></tr>
+<tr class="separator:ga3e15fa6e5b58f3f86ffd3116e88f7d13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaea793d17bd03a534572dc6575060df3e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gaea793d17bd03a534572dc6575060df3e">OCI_RegisterFloat</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
+<tr class="memdesc:gaea793d17bd03a534572dc6575060df3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a float output bind placeholder.  <a href="#gaea793d17bd03a534572dc6575060df3e">More...</a><br /></td></tr>
+<tr class="separator:gaea793d17bd03a534572dc6575060df3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad8b6f4bbb869f86009947add4123206f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gad8b6f4bbb869f86009947add4123206f">OCI_RegisterDate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
+<tr class="memdesc:gad8b6f4bbb869f86009947add4123206f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a date output bind placeholder.  <a href="#gad8b6f4bbb869f86009947add4123206f">More...</a><br /></td></tr>
+<tr class="separator:gad8b6f4bbb869f86009947add4123206f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7cd893cb5067eb08a6ae458d8077ea11"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga7cd893cb5067eb08a6ae458d8077ea11">OCI_RegisterTimestamp</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int type)</td></tr>
+<tr class="memdesc:ga7cd893cb5067eb08a6ae458d8077ea11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a timestamp output bind placeholder.  <a href="#ga7cd893cb5067eb08a6ae458d8077ea11">More...</a><br /></td></tr>
+<tr class="separator:ga7cd893cb5067eb08a6ae458d8077ea11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga542dd02cfa1cfc17170adb3f0b800a7d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga542dd02cfa1cfc17170adb3f0b800a7d">OCI_RegisterInterval</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int type)</td></tr>
+<tr class="memdesc:ga542dd02cfa1cfc17170adb3f0b800a7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an interval output bind placeholder.  <a href="#ga542dd02cfa1cfc17170adb3f0b800a7d">More...</a><br /></td></tr>
+<tr class="separator:ga542dd02cfa1cfc17170adb3f0b800a7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaeb99a8778a224305c3b45b5c5db72ed7"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gaeb99a8778a224305c3b45b5c5db72ed7">OCI_RegisterObject</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
+<tr class="memdesc:gaeb99a8778a224305c3b45b5c5db72ed7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an object output bind placeholder.  <a href="#gaeb99a8778a224305c3b45b5c5db72ed7">More...</a><br /></td></tr>
+<tr class="separator:gaeb99a8778a224305c3b45b5c5db72ed7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0d27f3ce3424e18a2af4895b8f6b58e7"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga0d27f3ce3424e18a2af4895b8f6b58e7">OCI_RegisterLob</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int type)</td></tr>
+<tr class="memdesc:ga0d27f3ce3424e18a2af4895b8f6b58e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a lob output bind placeholder.  <a href="#ga0d27f3ce3424e18a2af4895b8f6b58e7">More...</a><br /></td></tr>
+<tr class="separator:ga0d27f3ce3424e18a2af4895b8f6b58e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae7e621f6dd01ff1b58fb93c34ba499bd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gae7e621f6dd01ff1b58fb93c34ba499bd">OCI_RegisterFile</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int type)</td></tr>
+<tr class="memdesc:gae7e621f6dd01ff1b58fb93c34ba499bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a file output bind placeholder.  <a href="#gae7e621f6dd01ff1b58fb93c34ba499bd">More...</a><br /></td></tr>
+<tr class="separator:gae7e621f6dd01ff1b58fb93c34ba499bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaae9bde36980d05ae13b90b1271108dae"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gaae9bde36980d05ae13b90b1271108dae">OCI_RegisterRef</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
+<tr class="memdesc:gaae9bde36980d05ae13b90b1271108dae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a Ref output bind placeholder.  <a href="#gaae9bde36980d05ae13b90b1271108dae">More...</a><br /></td></tr>
+<tr class="separator:gaae9bde36980d05ae13b90b1271108dae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga67cbb956e8d721c8397e3f897a57b224"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga67cbb956e8d721c8397e3f897a57b224">&#9670;&nbsp;</a></span>OCI_GetNextResultset()</h2>
+<a id="ga20d23ea50075c16a1f7c5ae3515bd025"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga20d23ea50075c16a1f7c5ae3515bd025">&#9670;&nbsp;</a></span>OCI_GetNextResultset()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a>* OCI_API OCI_GetNextResultset </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a>* OCI_API OCI_GetNextResultset </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em></td><td>)</td>
@@ -213,14 +213,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="gaaf3b03d15c93a0441473f2bcf86453d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaaf3b03d15c93a0441473f2bcf86453d6">&#9670;&nbsp;</a></span>OCI_RegisterNumber()</h2>
+<a id="gae3f953259ed63f97e7f568e1bef366d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae3f953259ed63f97e7f568e1bef366d5">&#9670;&nbsp;</a></span>OCI_RegisterNumber()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterNumber </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterNumber </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -253,14 +253,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="ga75b56f19cf0c858b2e4a2b81ef15b5ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga75b56f19cf0c858b2e4a2b81ef15b5ea">&#9670;&nbsp;</a></span>OCI_RegisterShort()</h2>
+<a id="ga91b85ed4738f53aac907f721049b60e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga91b85ed4738f53aac907f721049b60e2">&#9670;&nbsp;</a></span>OCI_RegisterShort()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterShort </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterShort </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -293,14 +293,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="gad86a6a528899cae1272b88e06e3d2043"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad86a6a528899cae1272b88e06e3d2043">&#9670;&nbsp;</a></span>OCI_RegisterUnsignedShort()</h2>
+<a id="gac87cc0a7aef79e4d4e493be1e85be583"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac87cc0a7aef79e4d4e493be1e85be583">&#9670;&nbsp;</a></span>OCI_RegisterUnsignedShort()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedShort </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterUnsignedShort </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -333,14 +333,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="ga4c215f37902cc9045c27ae1bdd3b2844"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4c215f37902cc9045c27ae1bdd3b2844">&#9670;&nbsp;</a></span>OCI_RegisterInt()</h2>
+<a id="ga2ae33801dc41fbb359ad2d6c23aec024"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2ae33801dc41fbb359ad2d6c23aec024">&#9670;&nbsp;</a></span>OCI_RegisterInt()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterInt </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterInt </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -373,14 +373,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="gaa54a5be8206d27268e574c0c4f6695a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa54a5be8206d27268e574c0c4f6695a1">&#9670;&nbsp;</a></span>OCI_RegisterUnsignedInt()</h2>
+<a id="ga2b45328d3862038c7d9cb24ffa0f8528"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2b45328d3862038c7d9cb24ffa0f8528">&#9670;&nbsp;</a></span>OCI_RegisterUnsignedInt()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedInt </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterUnsignedInt </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -413,14 +413,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="ga7f993f07ff0296c7f6961298e473ebbe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7f993f07ff0296c7f6961298e473ebbe">&#9670;&nbsp;</a></span>OCI_RegisterBigInt()</h2>
+<a id="gadfc833c4c4029d5b0045cecf12b0f756"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadfc833c4c4029d5b0045cecf12b0f756">&#9670;&nbsp;</a></span>OCI_RegisterBigInt()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterBigInt </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterBigInt </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -453,14 +453,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="ga1a22763f9e2f04525d4c9ed84ad3e3ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga1a22763f9e2f04525d4c9ed84ad3e3ab">&#9670;&nbsp;</a></span>OCI_RegisterUnsignedBigInt()</h2>
+<a id="gab9af2115b832a4b657328615af0f0127"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab9af2115b832a4b657328615af0f0127">&#9670;&nbsp;</a></span>OCI_RegisterUnsignedBigInt()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterUnsignedBigInt </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterUnsignedBigInt </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -493,14 +493,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="gaf0e8a8475060fc2c352c5ecdf68802ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf0e8a8475060fc2c352c5ecdf68802ca">&#9670;&nbsp;</a></span>OCI_RegisterString()</h2>
+<a id="gae014971fbc18e6155e63016d01d02f8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae014971fbc18e6155e63016d01d02f8d">&#9670;&nbsp;</a></span>OCI_RegisterString()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterString </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterString </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -540,14 +540,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="ga8620b248d8f5a8d869b9144cfb4d27e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga8620b248d8f5a8d869b9144cfb4d27e3">&#9670;&nbsp;</a></span>OCI_RegisterRaw()</h2>
+<a id="gae0dd6cf79082c7dd85f809624f5f9d20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae0dd6cf79082c7dd85f809624f5f9d20">&#9670;&nbsp;</a></span>OCI_RegisterRaw()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterRaw </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterRaw </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -587,14 +587,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="ga47f7026a1340f47106bb68e640721e7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga47f7026a1340f47106bb68e640721e7b">&#9670;&nbsp;</a></span>OCI_RegisterDouble()</h2>
+<a id="ga3e15fa6e5b58f3f86ffd3116e88f7d13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3e15fa6e5b58f3f86ffd3116e88f7d13">&#9670;&nbsp;</a></span>OCI_RegisterDouble()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterDouble </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterDouble </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -627,14 +627,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="ga334374bb86c0562ab453a45a56c62dac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga334374bb86c0562ab453a45a56c62dac">&#9670;&nbsp;</a></span>OCI_RegisterFloat()</h2>
+<a id="gaea793d17bd03a534572dc6575060df3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaea793d17bd03a534572dc6575060df3e">&#9670;&nbsp;</a></span>OCI_RegisterFloat()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterFloat </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterFloat </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -667,14 +667,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="gafefe1c8c8cc0d1ce80017d340900e176"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gafefe1c8c8cc0d1ce80017d340900e176">&#9670;&nbsp;</a></span>OCI_RegisterDate()</h2>
+<a id="gad8b6f4bbb869f86009947add4123206f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad8b6f4bbb869f86009947add4123206f">&#9670;&nbsp;</a></span>OCI_RegisterDate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterDate </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterDate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -707,14 +707,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="gaf9ff792f0d536acd1558c7949a4f63b6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf9ff792f0d536acd1558c7949a4f63b6">&#9670;&nbsp;</a></span>OCI_RegisterTimestamp()</h2>
+<a id="ga7cd893cb5067eb08a6ae458d8077ea11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7cd893cb5067eb08a6ae458d8077ea11">&#9670;&nbsp;</a></span>OCI_RegisterTimestamp()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterTimestamp </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterTimestamp </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -750,19 +750,19 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_timestamps.html#ga5c590ea371920703997cd7bea126ad9d" title="Create a local Timestamp instance.">OCI_TimestampCreate()</a> for possible values of parameter 'type'</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_timestamps.html#ga793beb5bae3200b75a294e19cc0cc235" title="Create a local Timestamp instance.">OCI_TimestampCreate()</a> for possible values of parameter 'type'</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="ga24570345dff59944656f2cf537de0693"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga24570345dff59944656f2cf537de0693">&#9670;&nbsp;</a></span>OCI_RegisterInterval()</h2>
+<a id="ga542dd02cfa1cfc17170adb3f0b800a7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga542dd02cfa1cfc17170adb3f0b800a7d">&#9670;&nbsp;</a></span>OCI_RegisterInterval()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterInterval </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterInterval </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -798,19 +798,19 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_timestamps.html#ga4748278cf01c5e927137ce3342038fd7" title="Create a local interval object.">OCI_IntervalCreate()</a> for possible values of parameter 'type'</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_timestamps.html#gaab148eb1566a9a2a2e86c683cc3e2369" title="Create a local interval object.">OCI_IntervalCreate()</a> for possible values of parameter 'type'</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="gaf5ec3d17cd631f61794169d6f0f72185"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf5ec3d17cd631f61794169d6f0f72185">&#9670;&nbsp;</a></span>OCI_RegisterObject()</h2>
+<a id="gaeb99a8778a224305c3b45b5c5db72ed7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaeb99a8778a224305c3b45b5c5db72ed7">&#9670;&nbsp;</a></span>OCI_RegisterObject()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterObject </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterObject </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -850,14 +850,14 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 </div>
 </div>
-<a id="gaaf804e8eb11f4b040e23ce4f164f279c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaaf804e8eb11f4b040e23ce4f164f279c">&#9670;&nbsp;</a></span>OCI_RegisterLob()</h2>
+<a id="ga0d27f3ce3424e18a2af4895b8f6b58e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0d27f3ce3424e18a2af4895b8f6b58e7">&#9670;&nbsp;</a></span>OCI_RegisterLob()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterLob </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterLob </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -893,19 +893,19 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_lobs.html#ga318f1273603e24b51c3d9e4c29f42685" title="Create a local temporary Lob instance.">OCI_LobCreate()</a> for possible values of parameter 'type'</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_lobs.html#gab188a5d746df15c92add244fed1733ee" title="Create a local temporary Lob instance.">OCI_LobCreate()</a> for possible values of parameter 'type'</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="gaae282a931f8f23e4abe066a9a82ba45f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaae282a931f8f23e4abe066a9a82ba45f">&#9670;&nbsp;</a></span>OCI_RegisterFile()</h2>
+<a id="gae7e621f6dd01ff1b58fb93c34ba499bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae7e621f6dd01ff1b58fb93c34ba499bd">&#9670;&nbsp;</a></span>OCI_RegisterFile()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterFile </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterFile </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -941,19 +941,19 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_files.html#ga199d6ce1a1231feb56b456ad6cbc2714" title="Create a file object instance.">OCI_FileCreate()</a> for possible values of parameter 'type'</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_files.html#gac99e87670781d36d0852aa30af65f4d6" title="Create a file object instance.">OCI_FileCreate()</a> for possible values of parameter 'type'</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
 </div>
 </div>
-<a id="ga34cb87ebfa9f43b1474f192515562271"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga34cb87ebfa9f43b1474f192515562271">&#9670;&nbsp;</a></span>OCI_RegisterRef()</h2>
+<a id="gaae9bde36980d05ae13b90b1271108dae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaae9bde36980d05ae13b90b1271108dae">&#9670;&nbsp;</a></span>OCI_RegisterRef()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_RegisterRef </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterRef </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -999,7 +999,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>

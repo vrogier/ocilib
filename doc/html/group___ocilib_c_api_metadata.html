@@ -32,7 +32,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.0</span>
+   &#160;<span id="projectnumber">4.7.1</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -97,47 +97,47 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_metadata.html',''
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiAbort</p>
-<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga661d5229057b291ef25bb344315f7c38">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *tbl;</div><div class="line">    <span class="keywordtype">int</span> i, n;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#ga01464863ddd68393106b63fb8cc1ead1">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga5cd867ad94bdc4a3bbfdef24452262e0">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    tbl = <a class="code" href="group___ocilib_c_api_metadata.html#ga541bb34a0a86c6296f59605f85931039">OCI_TypeInfoGet</a>(cn, <span class="stringliteral">&quot;user_tables&quot;</span>, OCI_TIF_VIEW);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;Column Name                   Type      Length  Prec.   Scale   Null ?\n&quot;</span>);</div><div class="line">    printf(<span class="stringliteral">&quot;----------------------------------------------------------------------\n&quot;</span>);</div><div class="line"></div><div class="line">    n = <a class="code" href="group___ocilib_c_api_metadata.html#ga9c93a72421d19de30acbf05a53353c93">OCI_TypeInfoGetColumnCount</a>(tbl);</div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 1; i &lt;= n; i++)</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_datatypes.html#gac0a3096f1a717d9417d9639e6da7dc56">OCI_Column</a> *col = <a class="code" href="group___ocilib_c_api_metadata.html#gab22a6fcb3d64c74adfc7506f1ce343d7">OCI_TypeInfoGetColumn</a>(tbl, i);</div><div class="line"></div><div class="line">        printf(<span class="stringliteral">&quot;%-30s%-10s%-8i%-8i%-8i%-s\n&quot;</span>,</div><div class="line">            OCI_GetColumnName(col),</div><div class="line">            OCI_GetColumnSQLType(col),</div><div class="line">            OCI_GetColumnSize(col),</div><div class="line">            OCI_GetColumnPrecision(col),</div><div class="line">            OCI_GetColumnScale(col),</div><div class="line">            OCI_GetColumnNullable(col) == TRUE ? <span class="stringliteral">&quot;Y&quot;</span> : <span class="stringliteral">&quot;N&quot;</span>);</div><div class="line">    }</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#gac3fe655e96074adb119908be4650a4c9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga639706aa8e9689c7ebffc018fac6d3ae">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div><div class="line"></div><div class="line"><span class="keywordtype">void</span> err_handler(<a class="code" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div><div class="line">{</div><div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, <a class="code" href="group___ocilib_c_api_error_handling.html#ga6e63ec3bed9e30ef6363cc8ebd243348">OCI_ErrorGetString</a>(err));</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">void</span>)</div><div class="line">{</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *cn;</div><div class="line">    <a class="code" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *tbl;</div><div class="line">    <span class="keywordtype">int</span> i, n;</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (!<a class="code" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a>(err_handler, NULL, OCI_ENV_DEFAULT))</div><div class="line">    {</div><div class="line">        <span class="keywordflow">return</span> EXIT_FAILURE;</div><div class="line">    }</div><div class="line"></div><div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7">OCI_ConnectionCreate</a>(<span class="stringliteral">&quot;db&quot;</span>, <span class="stringliteral">&quot;usr&quot;</span>, <span class="stringliteral">&quot;pwd&quot;</span>, OCI_SESSION_DEFAULT);</div><div class="line">    tbl = <a class="code" href="group___ocilib_c_api_metadata.html#ga125c7527524c8a4505348f056bfcb14f">OCI_TypeInfoGet</a>(cn, <span class="stringliteral">&quot;user_tables&quot;</span>, OCI_TIF_VIEW);</div><div class="line"></div><div class="line">    printf(<span class="stringliteral">&quot;Column Name                   Type      Length  Prec.   Scale   Null ?\n&quot;</span>);</div><div class="line">    printf(<span class="stringliteral">&quot;----------------------------------------------------------------------\n&quot;</span>);</div><div class="line"></div><div class="line">    n = <a class="code" href="group___ocilib_c_api_metadata.html#gad35f0d4af92fbbaca42170f3882367b2">OCI_TypeInfoGetColumnCount</a>(tbl);</div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (i = 1; i &lt;= n; i++)</div><div class="line">    {</div><div class="line">        <a class="code" href="group___ocilib_c_api_datatypes.html#gac0a3096f1a717d9417d9639e6da7dc56">OCI_Column</a> *col = <a class="code" href="group___ocilib_c_api_metadata.html#gafa8dd1e53e9334d1a7c64e2e0cb2fe36">OCI_TypeInfoGetColumn</a>(tbl, i);</div><div class="line"></div><div class="line">        printf(<span class="stringliteral">&quot;%-30s%-10s%-8i%-8i%-8i%-s\n&quot;</span>,</div><div class="line">            OCI_GetColumnName(col),</div><div class="line">            OCI_GetColumnSQLType(col),</div><div class="line">            OCI_GetColumnSize(col),</div><div class="line">            OCI_GetColumnPrecision(col),</div><div class="line">            OCI_GetColumnScale(col),</div><div class="line">            OCI_GetColumnNullable(col) == TRUE ? <span class="stringliteral">&quot;Y&quot;</span> : <span class="stringliteral">&quot;N&quot;</span>);</div><div class="line">    }</div><div class="line"></div><div class="line">    <a class="code" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a>(cn);</div><div class="line">    <a class="code" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div><div class="line">}</div></div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga541bb34a0a86c6296f59605f85931039"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#ga541bb34a0a86c6296f59605f85931039">OCI_TypeInfoGet</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, const otext *name, unsigned int type)</td></tr>
-<tr class="memdesc:ga541bb34a0a86c6296f59605f85931039"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the available type info information.  <a href="#ga541bb34a0a86c6296f59605f85931039">More...</a><br /></td></tr>
-<tr class="separator:ga541bb34a0a86c6296f59605f85931039"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gadd54c10b628fa994b367c29dd671fd1f"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#gadd54c10b628fa994b367c29dd671fd1f">OCI_TypeInfoGetType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
-<tr class="memdesc:gadd54c10b628fa994b367c29dd671fd1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of the type info object.  <a href="#gadd54c10b628fa994b367c29dd671fd1f">More...</a><br /></td></tr>
-<tr class="separator:gadd54c10b628fa994b367c29dd671fd1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5413bb8ad987dd0ccf415e6058958d82"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#ga5413bb8ad987dd0ccf415e6058958d82">OCI_TypeInfoGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
-<tr class="memdesc:ga5413bb8ad987dd0ccf415e6058958d82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve connection handle from the type info handle.  <a href="#ga5413bb8ad987dd0ccf415e6058958d82">More...</a><br /></td></tr>
-<tr class="separator:ga5413bb8ad987dd0ccf415e6058958d82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5d8b11bf30702727e7c0499875ab9142"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#ga5d8b11bf30702727e7c0499875ab9142">OCI_TypeInfoFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
-<tr class="memdesc:ga5d8b11bf30702727e7c0499875ab9142"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a type info object.  <a href="#ga5d8b11bf30702727e7c0499875ab9142">More...</a><br /></td></tr>
-<tr class="separator:ga5d8b11bf30702727e7c0499875ab9142"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9c93a72421d19de30acbf05a53353c93"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#ga9c93a72421d19de30acbf05a53353c93">OCI_TypeInfoGetColumnCount</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
-<tr class="memdesc:ga9c93a72421d19de30acbf05a53353c93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of columns of a table/view/object.  <a href="#ga9c93a72421d19de30acbf05a53353c93">More...</a><br /></td></tr>
-<tr class="separator:ga9c93a72421d19de30acbf05a53353c93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab22a6fcb3d64c74adfc7506f1ce343d7"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gac0a3096f1a717d9417d9639e6da7dc56">OCI_Column</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#gab22a6fcb3d64c74adfc7506f1ce343d7">OCI_TypeInfoGetColumn</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf, unsigned int index)</td></tr>
-<tr class="memdesc:gab22a6fcb3d64c74adfc7506f1ce343d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the column object handle at the given index in the table.  <a href="#gab22a6fcb3d64c74adfc7506f1ce343d7">More...</a><br /></td></tr>
-<tr class="separator:gab22a6fcb3d64c74adfc7506f1ce343d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7060bac83043e839ff2741373c756b22"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#ga7060bac83043e839ff2741373c756b22">OCI_TypeInfoGetName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
-<tr class="memdesc:ga7060bac83043e839ff2741373c756b22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name described by the type info object.  <a href="#ga7060bac83043e839ff2741373c756b22">More...</a><br /></td></tr>
-<tr class="separator:ga7060bac83043e839ff2741373c756b22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga32139839e23dd22c496227f3fa244514"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#ga32139839e23dd22c496227f3fa244514">OCI_TypeInfoIsFinalType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
-<tr class="memdesc:ga32139839e23dd22c496227f3fa244514"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate if the given UDT type if final.  <a href="#ga32139839e23dd22c496227f3fa244514">More...</a><br /></td></tr>
-<tr class="separator:ga32139839e23dd22c496227f3fa244514"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4386b90cd5c09a1b67615eb8b17b4a59"><td class="memItemLeft" align="right" valign="top">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#ga4386b90cd5c09a1b67615eb8b17b4a59">OCI_TypeInfoGetSuperType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
-<tr class="memdesc:ga4386b90cd5c09a1b67615eb8b17b4a59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the super type of the given type (e.g. parent type for a derived ORACLE UDT type)  <a href="#ga4386b90cd5c09a1b67615eb8b17b4a59">More...</a><br /></td></tr>
-<tr class="separator:ga4386b90cd5c09a1b67615eb8b17b4a59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga125c7527524c8a4505348f056bfcb14f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#ga125c7527524c8a4505348f056bfcb14f">OCI_TypeInfoGet</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, const otext *name, unsigned int type)</td></tr>
+<tr class="memdesc:ga125c7527524c8a4505348f056bfcb14f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the available type info information.  <a href="#ga125c7527524c8a4505348f056bfcb14f">More...</a><br /></td></tr>
+<tr class="separator:ga125c7527524c8a4505348f056bfcb14f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad9d81f650ac18068043213de8baccdef"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#gad9d81f650ac18068043213de8baccdef">OCI_TypeInfoGetType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
+<tr class="memdesc:gad9d81f650ac18068043213de8baccdef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of the type info object.  <a href="#gad9d81f650ac18068043213de8baccdef">More...</a><br /></td></tr>
+<tr class="separator:gad9d81f650ac18068043213de8baccdef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga37a3bf548d1c565f0d4b63f900d72558"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#ga37a3bf548d1c565f0d4b63f900d72558">OCI_TypeInfoGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
+<tr class="memdesc:ga37a3bf548d1c565f0d4b63f900d72558"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve connection handle from the type info handle.  <a href="#ga37a3bf548d1c565f0d4b63f900d72558">More...</a><br /></td></tr>
+<tr class="separator:ga37a3bf548d1c565f0d4b63f900d72558"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga328dc2829ae4fc10065b7299c0645b24"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#ga328dc2829ae4fc10065b7299c0645b24">OCI_TypeInfoFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
+<tr class="memdesc:ga328dc2829ae4fc10065b7299c0645b24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a type info object.  <a href="#ga328dc2829ae4fc10065b7299c0645b24">More...</a><br /></td></tr>
+<tr class="separator:ga328dc2829ae4fc10065b7299c0645b24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad35f0d4af92fbbaca42170f3882367b2"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#gad35f0d4af92fbbaca42170f3882367b2">OCI_TypeInfoGetColumnCount</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
+<tr class="memdesc:gad35f0d4af92fbbaca42170f3882367b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of columns of a table/view/object.  <a href="#gad35f0d4af92fbbaca42170f3882367b2">More...</a><br /></td></tr>
+<tr class="separator:gad35f0d4af92fbbaca42170f3882367b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafa8dd1e53e9334d1a7c64e2e0cb2fe36"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gac0a3096f1a717d9417d9639e6da7dc56">OCI_Column</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#gafa8dd1e53e9334d1a7c64e2e0cb2fe36">OCI_TypeInfoGetColumn</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf, unsigned int index)</td></tr>
+<tr class="memdesc:gafa8dd1e53e9334d1a7c64e2e0cb2fe36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the column object handle at the given index in the table.  <a href="#gafa8dd1e53e9334d1a7c64e2e0cb2fe36">More...</a><br /></td></tr>
+<tr class="separator:gafa8dd1e53e9334d1a7c64e2e0cb2fe36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae392831114e2f342b150fc34c852ba01"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#gae392831114e2f342b150fc34c852ba01">OCI_TypeInfoGetName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
+<tr class="memdesc:gae392831114e2f342b150fc34c852ba01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name described by the type info object.  <a href="#gae392831114e2f342b150fc34c852ba01">More...</a><br /></td></tr>
+<tr class="separator:gae392831114e2f342b150fc34c852ba01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabb9ceb4dfbfa55fe856fcb00a7d31b13"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#gabb9ceb4dfbfa55fe856fcb00a7d31b13">OCI_TypeInfoIsFinalType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
+<tr class="memdesc:gabb9ceb4dfbfa55fe856fcb00a7d31b13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate if the given UDT type if final.  <a href="#gabb9ceb4dfbfa55fe856fcb00a7d31b13">More...</a><br /></td></tr>
+<tr class="separator:gabb9ceb4dfbfa55fe856fcb00a7d31b13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7b7612f76f3b05c344391b0a58ab0185"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_metadata.html#ga7b7612f76f3b05c344391b0a58ab0185">OCI_TypeInfoGetSuperType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
+<tr class="memdesc:ga7b7612f76f3b05c344391b0a58ab0185"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the super type of the given type (e.g. parent type for a derived ORACLE UDT type)  <a href="#ga7b7612f76f3b05c344391b0a58ab0185">More...</a><br /></td></tr>
+<tr class="separator:ga7b7612f76f3b05c344391b0a58ab0185"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga541bb34a0a86c6296f59605f85931039"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga541bb34a0a86c6296f59605f85931039">&#9670;&nbsp;</a></span>OCI_TypeInfoGet()</h2>
+<a id="ga125c7527524c8a4505348f056bfcb14f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga125c7527524c8a4505348f056bfcb14f">&#9670;&nbsp;</a></span>OCI_TypeInfoGet()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a>* OCI_API OCI_TypeInfoGet </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a>* OCI_API OCI_TypeInfoGet </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
           <td class="paramname"><em>con</em>, </td>
@@ -190,14 +190,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gadd54c10b628fa994b367c29dd671fd1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gadd54c10b628fa994b367c29dd671fd1f">&#9670;&nbsp;</a></span>OCI_TypeInfoGetType()</h2>
+<a id="gad9d81f650ac18068043213de8baccdef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad9d81f650ac18068043213de8baccdef">&#9670;&nbsp;</a></span>OCI_TypeInfoGetType()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_TypeInfoGetType </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_TypeInfoGetType </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *&#160;</td>
           <td class="paramname"><em>typinf</em></td><td>)</td>
@@ -228,14 +228,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga5413bb8ad987dd0ccf415e6058958d82"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5413bb8ad987dd0ccf415e6058958d82">&#9670;&nbsp;</a></span>OCI_TypeInfoGetConnection()</h2>
+<a id="ga37a3bf548d1c565f0d4b63f900d72558"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga37a3bf548d1c565f0d4b63f900d72558">&#9670;&nbsp;</a></span>OCI_TypeInfoGetConnection()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>* OCI_API OCI_TypeInfoGetConnection </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a>* OCI_API OCI_TypeInfoGetConnection </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *&#160;</td>
           <td class="paramname"><em>typinf</em></td><td>)</td>
@@ -258,14 +258,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga5d8b11bf30702727e7c0499875ab9142"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5d8b11bf30702727e7c0499875ab9142">&#9670;&nbsp;</a></span>OCI_TypeInfoFree()</h2>
+<a id="ga328dc2829ae4fc10065b7299c0645b24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga328dc2829ae4fc10065b7299c0645b24">&#9670;&nbsp;</a></span>OCI_TypeInfoFree()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_TypeInfoFree </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_TypeInfoFree </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *&#160;</td>
           <td class="paramname"><em>typinf</em></td><td>)</td>
@@ -288,14 +288,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga9c93a72421d19de30acbf05a53353c93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga9c93a72421d19de30acbf05a53353c93">&#9670;&nbsp;</a></span>OCI_TypeInfoGetColumnCount()</h2>
+<a id="gad35f0d4af92fbbaca42170f3882367b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad35f0d4af92fbbaca42170f3882367b2">&#9670;&nbsp;</a></span>OCI_TypeInfoGetColumnCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT unsigned int OCI_API OCI_TypeInfoGetColumnCount </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_TypeInfoGetColumnCount </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *&#160;</td>
           <td class="paramname"><em>typinf</em></td><td>)</td>
@@ -318,14 +318,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gab22a6fcb3d64c74adfc7506f1ce343d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab22a6fcb3d64c74adfc7506f1ce343d7">&#9670;&nbsp;</a></span>OCI_TypeInfoGetColumn()</h2>
+<a id="gafa8dd1e53e9334d1a7c64e2e0cb2fe36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafa8dd1e53e9334d1a7c64e2e0cb2fe36">&#9670;&nbsp;</a></span>OCI_TypeInfoGetColumn()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gac0a3096f1a717d9417d9639e6da7dc56">OCI_Column</a>* OCI_API OCI_TypeInfoGetColumn </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gac0a3096f1a717d9417d9639e6da7dc56">OCI_Column</a>* OCI_API OCI_TypeInfoGetColumn </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *&#160;</td>
           <td class="paramname"><em>typinf</em>, </td>
@@ -364,14 +364,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga7060bac83043e839ff2741373c756b22"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7060bac83043e839ff2741373c756b22">&#9670;&nbsp;</a></span>OCI_TypeInfoGetName()</h2>
+<a id="gae392831114e2f342b150fc34c852ba01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae392831114e2f342b150fc34c852ba01">&#9670;&nbsp;</a></span>OCI_TypeInfoGetName()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT const otext* OCI_API OCI_TypeInfoGetName </td>
+          <td class="memname">OCI_SYM_PUBLIC const otext* OCI_API OCI_TypeInfoGetName </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *&#160;</td>
           <td class="paramname"><em>typinf</em></td><td>)</td>
@@ -394,14 +394,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga32139839e23dd22c496227f3fa244514"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga32139839e23dd22c496227f3fa244514">&#9670;&nbsp;</a></span>OCI_TypeInfoIsFinalType()</h2>
+<a id="gabb9ceb4dfbfa55fe856fcb00a7d31b13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabb9ceb4dfbfa55fe856fcb00a7d31b13">&#9670;&nbsp;</a></span>OCI_TypeInfoIsFinalType()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT boolean OCI_API OCI_TypeInfoIsFinalType </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_TypeInfoIsFinalType </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *&#160;</td>
           <td class="paramname"><em>typinf</em></td><td>)</td>
@@ -422,8 +422,8 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>This property is only valid for UDTs (OCI_TIF_TYPE)</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd><ul>
-<li>when <a class="el" href="group___ocilib_c_api_metadata.html#gadd54c10b628fa994b367c29dd671fd1f" title="Return the type of the type info object.">OCI_TypeInfoGetType()</a> returns OCI_UNKNOWN, OCI_TIF_TABLE, OCI_TIF_VIEW: returns TRUE</li>
-<li>when <a class="el" href="group___ocilib_c_api_metadata.html#gadd54c10b628fa994b367c29dd671fd1f" title="Return the type of the type info object.">OCI_TypeInfoGetType()</a> returns OCI_TIF_TYPE: returns TRUE if the type is final and FALSE if it is virtual </li>
+<li>when <a class="el" href="group___ocilib_c_api_metadata.html#gad9d81f650ac18068043213de8baccdef" title="Return the type of the type info object.">OCI_TypeInfoGetType()</a> returns OCI_UNKNOWN, OCI_TIF_TABLE, OCI_TIF_VIEW: returns TRUE</li>
+<li>when <a class="el" href="group___ocilib_c_api_metadata.html#gad9d81f650ac18068043213de8baccdef" title="Return the type of the type info object.">OCI_TypeInfoGetType()</a> returns OCI_TIF_TYPE: returns TRUE if the type is final and FALSE if it is virtual </li>
 </ul>
 </dd></dl>
 
@@ -431,14 +431,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga4386b90cd5c09a1b67615eb8b17b4a59"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4386b90cd5c09a1b67615eb8b17b4a59">&#9670;&nbsp;</a></span>OCI_TypeInfoGetSuperType()</h2>
+<a id="ga7b7612f76f3b05c344391b0a58ab0185"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7b7612f76f3b05c344391b0a58ab0185">&#9670;&nbsp;</a></span>OCI_TypeInfoGetSuperType()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_EXPORT <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a>* OCI_API OCI_TypeInfoGetSuperType </td>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a>* OCI_API OCI_TypeInfoGetSuperType </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *&#160;</td>
           <td class="paramname"><em>typinf</em></td><td>)</td>
@@ -458,11 +458,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>This property is only valid for UDTs (OCI_TIF_TYPE)</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd><ul>
-<li>when <a class="el" href="group___ocilib_c_api_metadata.html#gadd54c10b628fa994b367c29dd671fd1f" title="Return the type of the type info object.">OCI_TypeInfoGetType()</a> returns OCI_UNKNOWN, OCI_TIF_TABLE, OCI_TIF_VIEW:<ul>
+<li>when <a class="el" href="group___ocilib_c_api_metadata.html#gad9d81f650ac18068043213de8baccdef" title="Return the type of the type info object.">OCI_TypeInfoGetType()</a> returns OCI_UNKNOWN, OCI_TIF_TABLE, OCI_TIF_VIEW:<ul>
 <li>returns NULL</li>
 </ul>
 </li>
-<li>when <a class="el" href="group___ocilib_c_api_metadata.html#gadd54c10b628fa994b367c29dd671fd1f" title="Return the type of the type info object.">OCI_TypeInfoGetType()</a> returns OCI_TIF_TYPE:<ul>
+<li>when <a class="el" href="group___ocilib_c_api_metadata.html#gad9d81f650ac18068043213de8baccdef" title="Return the type of the type info object.">OCI_TypeInfoGetType()</a> returns OCI_TIF_TYPE:<ul>
 <li>returns the TypeInfo handle wrapping the parent super type</li>
 <li>returns NULL if the given type is NOT deriving from a base type </li>
 </ul>
@@ -480,7 +480,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Jul 16 2020 10:37:29 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Oct 27 2020 18:09:17 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
   </ul>
