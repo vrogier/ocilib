@@ -7,7 +7,8 @@ slug: download
 title: Download
 ---
 
-**Latest version is {{site.ocilib_current_release_version}} ({{site.ocilib_current_release_date}})**
+**Latest version is {{site.ocilib_current_release_version}} ({{site.ocilib_current_release_date}}).**
+<br/>
 <br/>
 You can get OCILIB from the following sources:
 <br/>
