@@ -21,7 +21,7 @@
 #ifndef OCILIB_DEFS_H_INCLUDED
 #define OCILIB_DEFS_H_INCLUDED
 
-#include "ocilibc/config.h"
+#include "ocilibc/defines.h"
 
 #include "import.h"
 
@@ -430,5 +430,48 @@ typedef unsigned short dbtext;
        OCI_CDT_NUMERIC != (type) &&     \
        OCI_CDT_RAW     != (type) &&     \
        OCI_CDT_BOOLEAN != (type)))
+
+
+#ifdef _WINDOWS
+
+#define vsnprintf   _vsnprintf
+#define vsnwprintf  _vsnwprintf
+#define swprintf    _snwprintf
+
+#endif
+
+/* helpers mapping macros */
+
+#ifdef OCI_CHARSET_ANSI
+
+#define ostrcpy          strcpy
+#define ostrncpy         strncpy
+#define ostrcat          strcat
+#define ostrncat         strncat
+#define ostrlen          strlen
+#define ostrcmp          strcmp
+#define ostrtol          strtol
+#define osscanf          sscanf
+#define otoupper         toupper
+#define oisdigit         isdigit
+
+#else
+
+#define ostrcpy          wcscpy
+#define ostrncpy         wcsncpy
+#define ostrcat          wcscat
+#define ostrncat         wcsncat
+#define ostrlen          wcslen
+#define ostrcmp          wcscmp
+#define ostrtol          wcstol
+#define osscanf          swscanf
+#define otoupper         towupper
+#define oisdigit         iswdigit
+
+#endif
+
+/* string size macros */
+
+#define otextsize(s) (ostrlen(s) * sizeof(otext))
 
 #endif    /* OCILIB_DEFS_H_INCLUDED */

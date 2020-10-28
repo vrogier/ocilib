@@ -129,7 +129,7 @@ TEST(ReportedIssues, Issue225)
     for (size_t i = 0; i < numbers.size(); i++)
     {
         otext buffer[100];
-        osprintf(buffer, 100, OTEXT("v(%d) = %d"), static_cast<int>(i) + 1, static_cast<int>(i) + 1 + 10);
+        osprintf(buffer, OTEXT("v(%d) = %d"), static_cast<int>(i) + 1, static_cast<int>(i) + 1 + 10);
         ASSERT_EQ(ostring(buffer), ostring(OCI_ServerGetOutput(conn)));
     }
 

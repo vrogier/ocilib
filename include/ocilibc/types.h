@@ -31,10 +31,10 @@
  *  - Oracle Streams - Advanced Queuing User's Guide
  */
 
-#ifndef OCILIB_OCILIB_TYPES_H_INCLUDED
-#define OCILIB_OCILIB_TYPES_H_INCLUDED
+#ifndef OCILIB_OCILIBC_TYPES_H_INCLUDED
+#define OCILIB_OCILIBC_TYPES_H_INCLUDED
 
-#include "ocilibc/config.h"
+#include "ocilibc/defines.h"
 
 /**
  * @addtogroup OcilibCApi
@@ -719,4 +719,4 @@ typedef struct OCI_HashEntry
  * @} OcilibCApi
  */
 
-#endif    /* OCILIB_OCILIB_TYPES_H_INCLUDED */
+#endif    /* OCILIB_OCILIBC_TYPES_H_INCLUDED */

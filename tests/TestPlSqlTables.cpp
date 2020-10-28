@@ -1,6 +1,5 @@
 #include "ocilib_tests.h"
 
-
 TEST(TestPlSqlTables, BasicInOutStringTableBinding)
 {
     ExecDML
@@ -46,8 +45,8 @@ TEST(TestPlSqlTables, BasicInOutStringTableBinding)
 
     for (unsigned int i = 0; i < ArraySize; i++)
     {
-        osprintf(tab_names[i], StringSize, OTEXT("name  %03d"), i + 1);
-        osprintf(tab_values[i], StringSize, OTEXT("value %03d"), i + 1);
+        osprintf(tab_names[i], OTEXT("name  %03d"), i + 1);
+        osprintf(tab_values[i], OTEXT("value %03d"), i + 1);
 
         tab_results[i][0] = 0;
     }
@@ -70,7 +69,7 @@ TEST(TestPlSqlTables, BasicInOutStringTableBinding)
 
     for (unsigned int i = 0; i < ArraySize; i++)
     {
-        osprintf(buffer, StringSize, OTEXT("name  %03d - value %03d"), i + 1, i + 1);
+        osprintf(buffer, OTEXT("name  %03d - value %03d"), i + 1, i + 1);
         ASSERT_EQ(ostring(buffer), tab_results[i]);
     }
 

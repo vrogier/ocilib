@@ -23,13 +23,13 @@
 #include "array.h"
 #include "element.h"
 #include "macros.h"
-#include "strings.h"
+#include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * CollInit
+ * OcilibCollectionInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * CollectionInitialize
+OCI_Coll * OcilibCollectionInitialize
 (
     OCI_Connection *con,
     OCI_Coll       *coll,
@@ -62,7 +62,7 @@ OCI_Coll * CollectionInitialize
 
         CHECK
         (
-            MemoryAllocateObject
+            OcilibMemoryAllocateObject
             (
                 coll->con->env, coll->con->err, coll->con->cxt,
                 typinf->colcode, typinf->tdo, (void *) NULL,
@@ -79,7 +79,7 @@ OCI_Coll * CollectionInitialize
     (
         if (FAILURE)
         {
-            CollectionFree(coll);
+            OcilibCollectionFree(coll);
             coll = NULL;
         }
 
@@ -88,10 +88,10 @@ OCI_Coll * CollectionInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollCreate
+ * OcilibCollectionCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * CollectionCreate
+OCI_Coll * OcilibCollectionCreate
 (
     OCI_TypeInfo *typinf
 )
@@ -104,16 +104,16 @@ OCI_Coll * CollectionCreate
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
 
-    SET_RETVAL(CollectionInitialize(typinf->con, NULL, NULL, typinf))
+    SET_RETVAL(OcilibCollectionInitialize(typinf->con, NULL, NULL, typinf))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollFree
+ * OcilibCollectionFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollectionFree
+boolean OcilibCollectionFree
 (
     OCI_Coll *coll
 )
@@ -133,7 +133,7 @@ boolean CollectionFree
     {
         coll->elem->hstate = OCI_OBJECT_FETCHED_DIRTY;
 
-        ElementFree(coll->elem);
+        OcilibElementFree(coll->elem);
 
         coll->elem = NULL;
     }
@@ -142,12 +142,12 @@ boolean CollectionFree
 
     if ((OCI_OBJECT_ALLOCATED == coll->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == coll->hstate))
     {
-        MemoryFreeObject(coll->con->env, coll->typinf->con->err, coll->handle, OCI_DEFAULT);
+        OcilibMemoryFreeObject(coll->con->env, coll->typinf->con->err, coll->handle, OCI_DEFAULT);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != coll->hstate)
     {
-        ErrorResetSource(NULL, coll);
+        OcilibErrorResetSource(NULL, coll);
 
         FREE(coll)
     }
@@ -158,10 +158,10 @@ boolean CollectionFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollArrayCreate
+ * OcilibCollectionCreateArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll ** CollectionCreateArray
+OCI_Coll ** OcilibCollectionCreateArray
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -178,8 +178,8 @@ OCI_Coll ** CollectionCreateArray
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0,
-                      sizeof(OCIColl*), sizeof(OCI_Coll), 0, typinf);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_COLLECTION, 0,
+                            sizeof(OCIColl*), sizeof(OCI_Coll), 0, typinf);
 
     CHECK_NULL(arr)
 
@@ -189,10 +189,10 @@ OCI_Coll ** CollectionCreateArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollArrayFree
+ * OcilibCollectionFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollectionFreeArray
+boolean OcilibCollectionFreeArray
 (
     OCI_Coll **colls
 )
@@ -205,16 +205,16 @@ boolean CollectionFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, colls)
 
-    SET_RETVAL(ArrayFreeFromHandles((void **)colls))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void **)colls))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollAssign
+ * OcilibCollectionAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollectionAssign
+boolean OcilibCollectionAssign
 (
     OCI_Coll *coll,
     OCI_Coll *coll_src
@@ -244,10 +244,10 @@ boolean CollectionAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollGetType
+ * OcilibCollectionGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int CollectionGetType
+unsigned int OcilibCollectionGetType
 (
     OCI_Coll *coll
 )
@@ -286,10 +286,10 @@ unsigned int CollectionGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollGetMax
+ * OcilibCollectionGetMax
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int CollectionGetMax
+unsigned int OcilibCollectionGetMax
 (
     OCI_Coll *coll
 )
@@ -308,10 +308,10 @@ unsigned int CollectionGetMax
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollGetSize
+ * OcilibCollectionGetSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int CollectionGetSize
+unsigned int  OcilibCollectionGetSize
 (
     OCI_Coll *coll
 )
@@ -340,10 +340,10 @@ unsigned int CollectionGetSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollTrim
+ * OcilibCollectionTrim
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollectionTrim
+boolean OcilibCollectionTrim
 (
     OCI_Coll    *coll,
     unsigned int nb_elem
@@ -356,7 +356,7 @@ boolean CollectionTrim
     )
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll)
-    CHECK_BOUND((sb4) nb_elem, (sb4) 0, (sb4) CollectionGetSize(coll));
+    CHECK_BOUND((sb4) nb_elem, (sb4) 0, (sb4)OcilibCollectionGetSize(coll));
 
     CHECK_OCI
     (
@@ -372,10 +372,10 @@ boolean CollectionTrim
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollGetElem
+ * OcilibCollectionGetElement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * CollectionGetElement
+OCI_Elem * OcilibCollectionGetElement
 (
     OCI_Coll    *coll,
     unsigned int index
@@ -406,7 +406,7 @@ OCI_Elem * CollectionGetElement
 
     if (exists && NULL != data)
     {
-        elem = coll->elem = ElementInitialize(coll->con, coll->elem, data, ind, coll->typinf);
+        elem = coll->elem = OcilibElementInitialize(coll->con, coll->elem, data, ind, coll->typinf);
         CHECK_NULL(elem)
     }
 
@@ -416,10 +416,10 @@ OCI_Elem * CollectionGetElement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollGetElem2
+ * OcilibCollectionGetElement2
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollectionGetElement2
+boolean OcilibCollectionGetElement2
 (
     OCI_Coll    *coll,
     unsigned int index,
@@ -451,12 +451,12 @@ boolean CollectionGetElement2
 
     if (exists && NULL != data)
     {
-        elem = ElementInitialize(coll->con, elem, data, ind, coll->typinf);
+        elem = OcilibElementInitialize(coll->con, elem, data, ind, coll->typinf);
         CHECK_NULL(elem)
     }
     else
     {
-        CHECK(ElementSetNullIndicator(elem, OCI_IND_NULL))
+        CHECK(OcilibElementSetNullIndicator(elem, OCI_IND_NULL))
     }
 
     SET_SUCCESS()
@@ -465,10 +465,10 @@ boolean CollectionGetElement2
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollSetElem
+ * OcilibCollectionSetElement
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollectionSetElement
+boolean OcilibCollectionSetElement
 (
     OCI_Coll    *coll,
     unsigned int index,
@@ -500,10 +500,10 @@ boolean CollectionSetElement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollAppend
+ * OcilibCollectionAddElement
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollectionAddElement
+boolean OcilibCollectionAddElement
 (
     OCI_Coll *coll,
     OCI_Elem *elem
@@ -533,10 +533,10 @@ boolean CollectionAddElement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollGetTypeInfo
+ * OcilibCollectionGetTypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * CollectionGetTypeInfo
+OCI_TypeInfo * OcilibCollectionGetTypeInfo
 (
     OCI_Coll *coll
 )
@@ -550,10 +550,10 @@ OCI_TypeInfo * CollectionGetTypeInfo
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollClear
+ * OcilibCollectionClear
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollectionClear
+boolean OcilibCollectionClear
 (
     OCI_Coll *coll
 )
@@ -566,7 +566,7 @@ boolean CollectionClear
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll)
 
-    CHECK(CollectionTrim(coll, CollectionGetSize(coll)))
+    CHECK(OcilibCollectionTrim(coll, OcilibCollectionGetSize(coll)))
 
     SET_SUCCESS()
 
@@ -574,10 +574,10 @@ boolean CollectionClear
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollDeleteElem
+ * OcilibCollectionRemoveElement
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollectionRemoveElement
+boolean OcilibCollectionRemoveElement
 (
     OCI_Coll    *coll,
     unsigned int index
@@ -608,10 +608,10 @@ boolean CollectionRemoveElement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollGetCount
+ * OcilibCollectionGetCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int CollectionGetCount
+unsigned int  OcilibCollectionGetCount
 (
     OCI_Coll *coll
 )
@@ -653,10 +653,10 @@ unsigned int CollectionGetCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * CollectionToString
+ * OcilibCollectionToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean CollectionToString
+boolean OcilibCollectionToString
 (
     OCI_Coll     *coll,
     unsigned int *size,
@@ -678,29 +678,29 @@ boolean CollectionToString
     CHECK_PTR(OCI_IPC_COLLECTION, coll)
     CHECK_PTR(OCI_IPC_VOID,       size)
 
-    err = ErrorGet(TRUE, TRUE);
+    err = OcilibErrorGet(TRUE, TRUE);
 
     if (NULL != str)
     {
         *str = 0;
     }
 
-    len += StringAddToBuffer(str, len, coll->typinf->name,
-                             (unsigned int)ostrlen(coll->typinf->name), FALSE);
+    len += OcilibStringAddToBuffer(str, len, coll->typinf->name,
+                                   (unsigned int)ostrlen(coll->typinf->name), FALSE);
 
-    len += StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
+    len += OcilibStringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
 
-    count = CollectionGetSize(coll);
+    count = OcilibCollectionGetSize(coll);
 
     for (unsigned int i = 1; i <= count; i++)
     {
-        OCI_Elem* elem = CollectionGetElement(coll, i);
+        OCI_Elem* elem = OcilibCollectionGetElement(coll, i);
 
         quote = TRUE;
 
-        if (ElementIsNull(elem))
+        if (OcilibElementIsNull(elem))
         {
-            len += StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
+            len += OcilibStringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
         }
         else
         {
@@ -715,7 +715,7 @@ boolean CollectionToString
                 case OCI_CDT_TEXT:
                 {
                     data_size = OCIStringSize(Env.env, elem->handle);
-                    data      = (void*) ElementGetString(elem);
+                    data      = (void*)OcilibElementGetString(elem);
                     break;
                 }
                 case OCI_CDT_NUMERIC:
@@ -742,43 +742,43 @@ boolean CollectionToString
                 }
                 case OCI_CDT_DATETIME:
                 {
-                    data = (void*) ElementGetDate(elem);
+                    data = (void*)OcilibElementGetDate(elem);
                     break;
                 }
                 case OCI_CDT_TIMESTAMP:
                 {
-                    data = (void*) ElementGetTimestamp(elem);
+                    data = (void*)OcilibElementGetTimestamp(elem);
                     break;
                 }
                 case OCI_CDT_INTERVAL:
                 {
-                    data = (void*) ElementGetInterval(elem);
+                    data = (void*)OcilibElementGetInterval(elem);
                     break;
                 }
                 case OCI_CDT_LOB:
                 {
-                    data = (void*) ElementGetLob(elem);
+                    data = (void*)OcilibElementGetLob(elem);
                     break;
                 }
                 case OCI_CDT_FILE:
                 {
-                    data = (void*) ElementGetFile(elem);
+                    data = (void*)OcilibElementGetFile(elem);
                     break;
                 }
                 case OCI_CDT_REF:
                 {
-                    data = (void*) ElementGetReference(elem);
+                    data = (void*)OcilibElementGetReference(elem);
                     break;
                 }
                 case OCI_CDT_OBJECT:
                 {
-                    data  = (void*) ElementGetObject(elem);
+                    data  = (void*)OcilibElementGetObject(elem);
                     quote = FALSE;
                     break;
                 }
                 case OCI_CDT_COLLECTION:
                 {
-                    data  = (void*) ElementGetCollection(elem);
+                    data  = (void*)OcilibElementGetCollection(elem);
                     quote = FALSE;
                 }
             }
@@ -795,13 +795,18 @@ boolean CollectionToString
 
             if (NULL != data)
             {
-                len += StringGetFromType(coll->con, &coll->typinf->cols[0], data, data_size, tmpbuf,
-                                         tmpbuf && size ? *size - len : 0, quote);
+                len += OcilibStringGetFromType(coll->con,
+                                               &coll->typinf->cols[0],
+                                               data,
+                                               data_size, 
+                                               tmpbuf, 
+                                               tmpbuf && size ? *size - len : 0,
+                                               quote);
             }
             else
             {
-                len += StringAddToBuffer(str, len, OCI_STRING_NULL,
-                                         OCI_STRING_NULL_SIZE, FALSE);
+                len += OcilibStringAddToBuffer(str, len, OCI_STRING_NULL,
+                                               OCI_STRING_NULL_SIZE, FALSE);
             }
 
             CHECK(NULL == err || OCI_UNKNOWN == err->type)
@@ -809,11 +814,11 @@ boolean CollectionToString
 
         if (i < count)
         {
-            len += StringAddToBuffer(str, len, OTEXT(", "), 2, FALSE);
+            len += OcilibStringAddToBuffer(str, len, OTEXT(", "), 2, FALSE);
         }
     }
 
-    len += StringAddToBuffer(str, len, OTEXT(")"), 1, FALSE);
+    len += OcilibStringAddToBuffer(str, len, OTEXT(")"), 1, FALSE);
 
     *size = len;
 

@@ -26,7 +26,7 @@
 #include "memory.h"
 #include "message.h"
 #include "object.h"
-#include "strings.h"
+#include "stringutils.h"
 
 static const unsigned int NavigationModeValues[] =
 {
@@ -41,7 +41,7 @@ static const unsigned int VisibilityModeValues[] =
     OCI_AMV_ON_COMMIT
 };
 
-static const unsigned int DequeueModeValues[]=
+static const unsigned int OcilibDequeueModeValues[]=
 {
     OCI_ADM_BROWSE,
     OCI_ADM_LOCKED,
@@ -50,10 +50,10 @@ static const unsigned int DequeueModeValues[]=
 };
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueCreate
+ * OcilibDequeueCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Dequeue * DequeueCreate
+OCI_Dequeue * OcilibDequeueCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *name
@@ -75,24 +75,24 @@ OCI_Dequeue * DequeueCreate
     ALLOC_DATA(OCI_IPC_DEQUEUE, dequeue, 1)
 
     dequeue->typinf = typinf;
-    dequeue->name   = ostrdup(name);
+    dequeue->name   = OcilibStringDuplicate(name);
 
     /* allocate dequeue options descriptor */
 
-    CHECK(MemoryAllocDescriptor((dvoid *)dequeue->typinf->con->env,
-                                (dvoid **)&dequeue->opth,
-                                OCI_DTYPE_AQDEQ_OPTIONS))
+    CHECK(OcilibMemoryAllocDescriptor((dvoid *)dequeue->typinf->con->env,
+                                      (dvoid **)&dequeue->opth,
+                                      OCI_DTYPE_AQDEQ_OPTIONS))
 
     /* create local message for OCI_DequeueGet() */
 
-    dequeue->msg = MessageCreate(dequeue->typinf);
+    dequeue->msg = OcilibMessageCreate(dequeue->typinf);
     CHECK_NULL(dequeue->msg)
 
     CLEANUP_AND_EXIT_FUNC
     (
         if (FAILURE)
         {
-            DequeueFree(dequeue);
+            OcilibDequeueFree(dequeue);
             dequeue = NULL;
         }
 
@@ -101,10 +101,10 @@ OCI_Dequeue * DequeueCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueFree
+ * OcilibDequeueFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean DequeueFree
+boolean OcilibDequeueFree
 (
     OCI_Dequeue *dequeue
 )
@@ -121,30 +121,30 @@ boolean DequeueFree
 
     if (NULL != dequeue->subhp)
     {
-        DequeueUnsubscribe(dequeue);
+        OcilibDequeueUnsubscribe(dequeue);
     }
 
     /* free local message  */
 
     if (NULL != dequeue->msg)
     {
-        MessageFree(dequeue->msg);
+        OcilibMessageFree(dequeue->msg);
     }
 
     /* free local agent  */
 
     if (NULL != dequeue->agent)
     {
-        AgentFree(dequeue->agent);
+        OcilibAgentFree(dequeue->agent);
     }
 
     /* free OCI descriptor */
 
-    MemoryFreeDescriptor((dvoid*)dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
+    OcilibMemoryFreeDescriptor((dvoid*)dequeue->opth, OCI_DTYPE_AQDEQ_OPTIONS);
 
     /* free data  */
 
-    ErrorResetSource(NULL, dequeue);
+    OcilibErrorResetSource(NULL, dequeue);
 
     FREE(dequeue->name)
     FREE(dequeue->pattern)
@@ -158,10 +158,10 @@ boolean DequeueFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueListen
+ * OcilibDequeueListen
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Agent * DequeueListen
+OCI_Agent * OcilibDequeueListen
 (
     OCI_Dequeue *dequeue,
     int          timeout
@@ -200,7 +200,7 @@ OCI_Agent * DequeueListen
 
         if (OCI_ERR_AQ_LISTEN_TIMEOUT != code)
         {
-            THROW(ExceptionOCI, dequeue->typinf->con->err, ret)
+            THROW(OcilibExceptionOCI, dequeue->typinf->con->err, ret)
         }
     }
 
@@ -210,9 +210,9 @@ OCI_Agent * DequeueListen
 
     if (NULL != handle && OCI_SUCCESSFUL(ret))
     {
-        dequeue->agent= AgentInitialize(dequeue->typinf->con,
-                                        dequeue->agent, handle,
-                                        NULL, NULL);
+        dequeue->agent= OcilibAgentInitialize(dequeue->typinf->con,
+                                              dequeue->agent, handle,
+                                              NULL, NULL);
 
         CHECK_NULL(dequeue->agent)
 
@@ -225,10 +225,10 @@ OCI_Agent * DequeueListen
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueGetMessage
+ * OcilibDequeueGetMessage
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Msg * DequeueGetMessage
+OCI_Msg * OcilibDequeueGetMessage
 (
     OCI_Dequeue *dequeue
 )
@@ -251,11 +251,11 @@ OCI_Msg * DequeueGetMessage
 
     /* reset message */
 
-    CHECK(MessageReset(dequeue->msg))
+    CHECK(OcilibMessageReset(dequeue->msg))
 
     /* dequeue message */
 
-    dbstr = StringGetDBString(dequeue->name, &dbsize);
+    dbstr = OcilibStringGetDBString(dequeue->name, &dbsize);
 
     if (OCI_UNKNOWN == dequeue->typinf->typecode)
     {
@@ -307,8 +307,8 @@ OCI_Msg * DequeueGetMessage
                  */
 
                 const int len = (int)ostrlen(dequeue->name);
-                ansi_queue_name = MemoryAlloc(OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
-                StringNativeToAnsi(dequeue->name, ansi_queue_name, len);
+                ansi_queue_name = OcilibMemoryAlloc(OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
+                OcilibStringNativeToAnsi(dequeue->name, ansi_queue_name, len);
             }
             else
 
@@ -317,7 +317,7 @@ OCI_Msg * DequeueGetMessage
 
             if (OCI_ERR_AQ_DEQUEUE_TIMEOUT != code)
             {
-                THROW(ExceptionOCI, dequeue->typinf->con->err, ret)
+                THROW(OcilibExceptionOCI, dequeue->typinf->con->err, ret)
             }
         }
     }
@@ -336,11 +336,11 @@ OCI_Msg * DequeueGetMessage
             {
                 dequeue->msg->ind = *(OCIInd *) p_ind;
 
-                dequeue->msg->obj = ObjectInitialize
+                dequeue->msg->obj = OcilibObjectInitialize
                                     (
-                                        dequeue->typinf->con, 
+                                        dequeue->typinf->con,
                                         (OCI_Object*)dequeue->msg->obj,
-                                        dequeue->msg->payload, 
+                                        dequeue->msg->payload,
                                         dequeue->typinf,
                                         NULL, -1, TRUE
                                     );
@@ -356,17 +356,17 @@ OCI_Msg * DequeueGetMessage
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
-        
+        OcilibStringReleaseDBString(dbstr);
+
         FREE(ansi_queue_name)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueGetConsumerName
+ * OcilibDequeueGetConsumerName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * DequeueGetConsumer
+const otext * OcilibDequeueGetConsumer
 (
     OCI_Dequeue *dequeue
 )
@@ -383,10 +383,10 @@ const otext * DequeueGetConsumer
     {
         unsigned int size = 0;
 
-        CHECK(StringGetAttribute(dequeue->typinf->con, dequeue->opth,
-                                 OCI_DTYPE_AQDEQ_OPTIONS,
-                                 OCI_ATTR_CONSUMER_NAME,
-                                 &dequeue->consumer, &size))
+        CHECK(OcilibStringGetAttribute(dequeue->typinf->con, dequeue->opth,
+                                       OCI_DTYPE_AQDEQ_OPTIONS,
+                                       OCI_ATTR_CONSUMER_NAME,
+                                       &dequeue->consumer, &size))
     }
 
     SET_RETVAL(dequeue->consumer)
@@ -395,10 +395,10 @@ const otext * DequeueGetConsumer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueSetConsumerName
+ * OcilibDequeueSetConsumerName
  * --------------------------------------------------------------------------------------------- */
 
-boolean DequeueSetConsumer
+boolean OcilibDequeueSetConsumer
 (
     OCI_Dequeue *dequeue,
     const otext *consumer
@@ -412,10 +412,10 @@ boolean DequeueSetConsumer
 
     CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    CHECK(StringSetAttribute(dequeue->typinf->con, dequeue->opth,
-                             OCI_DTYPE_AQDEQ_OPTIONS,
-                             OCI_ATTR_CONSUMER_NAME,
-                             &dequeue->consumer, consumer))
+    CHECK(OcilibStringSetAttribute(dequeue->typinf->con, dequeue->opth,
+                                   OCI_DTYPE_AQDEQ_OPTIONS,
+                                   OCI_ATTR_CONSUMER_NAME,
+                                   &dequeue->consumer, consumer))
 
     SET_SUCCESS()
 
@@ -423,10 +423,10 @@ boolean DequeueSetConsumer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueGetCorrelation
+ * OcilibDequeueGetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-const otext * DequeueGetCorrelation
+const otext * OcilibDequeueGetCorrelation
 (
     OCI_Dequeue *dequeue
 )
@@ -443,10 +443,10 @@ const otext * DequeueGetCorrelation
     {
         unsigned int size = 0;
 
-        CHECK(StringGetAttribute(dequeue->typinf->con, dequeue->opth,
-                                 OCI_DTYPE_AQDEQ_OPTIONS,
-                                 OCI_ATTR_CORRELATION,
-                                 &dequeue->pattern, &size))
+        CHECK(OcilibStringGetAttribute(dequeue->typinf->con, dequeue->opth,
+                                       OCI_DTYPE_AQDEQ_OPTIONS,
+                                       OCI_ATTR_CORRELATION,
+                                       &dequeue->pattern, &size))
     }
 
     SET_RETVAL(dequeue->pattern)
@@ -455,10 +455,10 @@ const otext * DequeueGetCorrelation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueSetCorrelation
+ * OcilibDequeueSetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-boolean DequeueSetCorrelation
+boolean OcilibDequeueSetCorrelation
 (
     OCI_Dequeue *dequeue,
     const otext *pattern
@@ -472,10 +472,10 @@ boolean DequeueSetCorrelation
 
     CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
 
-    CHECK(StringSetAttribute(dequeue->typinf->con, dequeue->opth,
-                             OCI_DTYPE_AQDEQ_OPTIONS,
-                             OCI_ATTR_CORRELATION,
-                             &dequeue->pattern, pattern))
+    CHECK(OcilibStringSetAttribute(dequeue->typinf->con, dequeue->opth,
+                                   OCI_DTYPE_AQDEQ_OPTIONS,
+                                   OCI_ATTR_CORRELATION,
+                                   &dequeue->pattern, pattern))
 
     SET_SUCCESS()
 
@@ -483,10 +483,10 @@ boolean DequeueSetCorrelation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueGetRelativeMsgID
+ * OcilibDequeueGetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-boolean DequeueGetRelativeMsgID
+boolean OcilibDequeueGetRelativeMsgID
 (
     OCI_Dequeue  *dequeue,
     void         *id,
@@ -532,10 +532,10 @@ boolean DequeueGetRelativeMsgID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueSetRelativeMsgID
+ * OcilibDequeueSetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-boolean DequeueSetRelativeMsgID
+boolean OcilibDequeueSetRelativeMsgID
 (
     OCI_Dequeue *dequeue,
     const void  *id,
@@ -573,10 +573,10 @@ boolean DequeueSetRelativeMsgID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueGetVisibility
+ * OcilibDequeueGetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DequeueGetVisibility
+unsigned int OcilibDequeueGetVisibility
 (
     OCI_Dequeue *dequeue
 )
@@ -604,10 +604,10 @@ unsigned int DequeueGetVisibility
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueSetVisibility
+ * OcilibDequeueSetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-boolean DequeueSetVisibility
+boolean OcilibDequeueSetVisibility
 (
     OCI_Dequeue *dequeue,
     unsigned int visibility
@@ -637,10 +637,10 @@ boolean DequeueSetVisibility
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueGetMode
+ * OcilibDequeueGetMode
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DequeueGetMode
+unsigned int OcilibDequeueGetMode
 (
     OCI_Dequeue *dequeue
 )
@@ -668,10 +668,10 @@ unsigned int DequeueGetMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueSetMode
+ * OcilibDequeueSetMode
  * --------------------------------------------------------------------------------------------- */
 
-boolean DequeueSetMode
+boolean OcilibDequeueSetMode
 (
     OCI_Dequeue *dequeue,
     unsigned int mode
@@ -686,7 +686,7 @@ boolean DequeueSetMode
     ub4 value = (ub4) mode;
 
     CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
-    CHECK_ENUM_VALUE(mode, DequeueModeValues, OTEXT("Dequeue Mode"))
+    CHECK_ENUM_VALUE(mode, OcilibDequeueModeValues, OTEXT("Dequeue Mode"))
 
     CHECK_ATTRIB_SET
     (
@@ -701,10 +701,10 @@ boolean DequeueSetMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueGetNavigation
+ * OcilibDequeueGetNavigation
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DequeueGetNavigation
+unsigned int OcilibDequeueGetNavigation
 (
     OCI_Dequeue *dequeue
 )
@@ -732,10 +732,10 @@ unsigned int DequeueGetNavigation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueSetNavigation
+ * OcilibDequeueSetNavigation
  * --------------------------------------------------------------------------------------------- */
 
-boolean DequeueSetNavigation
+boolean OcilibDequeueSetNavigation
 (
     OCI_Dequeue *dequeue,
     unsigned int position
@@ -765,10 +765,10 @@ boolean DequeueSetNavigation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueGetWaitTime
+ * OcilibDequeueGetWaitTime
  * --------------------------------------------------------------------------------------------- */
 
-int DequeueGetWaitTime
+int OcilibDequeueGetWaitTime
 (
     OCI_Dequeue *dequeue
 )
@@ -796,10 +796,10 @@ int DequeueGetWaitTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueSetWaitTime
+ * OcilibDequeueSetWaitTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean DequeueSetWaitTime
+boolean OcilibDequeueSetWaitTime
 (
     OCI_Dequeue *dequeue,
     int          timeout
@@ -828,10 +828,10 @@ boolean DequeueSetWaitTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueSetAgentList
+ * OcilibDequeueSetAgentList
  * --------------------------------------------------------------------------------------------- */
 
-boolean DequeueSetAgentList
+boolean OcilibDequeueSetAgentList
 (
     OCI_Dequeue *dequeue,
     OCI_Agent  **consumers,
@@ -866,10 +866,10 @@ boolean DequeueSetAgentList
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueSubscribe
+ * OcilibDequeueSubscribe
  * --------------------------------------------------------------------------------------------- */
 
-boolean DequeueSubscribe
+boolean OcilibDequeueSubscribe
 (
     OCI_Dequeue   *dequeue,
     unsigned int   port,
@@ -906,13 +906,13 @@ boolean DequeueSubscribe
 
     /* clear any previous subscription */
 
-    CHECK(DequeueUnsubscribe(dequeue))
+    CHECK(OcilibDequeueUnsubscribe(dequeue))
 
     /* allocate subscription handle */
 
-    CHECK(MemoryAllocHandle(con->env,
-                            (dvoid **) (void *) &dequeue->subhp,
-                            OCI_HTYPE_SUBSCRIPTION))
+    CHECK(OcilibMemoryAllocHandle(con->env,
+                                  (dvoid **) (void *) &dequeue->subhp,
+                                  OCI_HTYPE_SUBSCRIPTION))
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -995,7 +995,7 @@ boolean DequeueSubscribe
             *str = (otext) otoupper(*str);
         }
 
-        dbstr = StringGetDBString(buffer, &dbsize);
+        dbstr = OcilibStringGetDBString(buffer, &dbsize);
 
         CHECK_ATTRIB_SET
         (
@@ -1027,22 +1027,20 @@ boolean DequeueSubscribe
         As there is no other to way to do regarding the OCI API, let's disable this
         warning just the time to set the callback attribute to the dequeue handle */
 
-#ifdef _MSC_VER
-  #pragma warning(disable: 4054)
-#endif
+    WARNING_DISABLE_CAST_FUNC_TYPE
+    WARNING_DISABLE_PEDANTIC
 
     /* internal callback handler */
 
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK,
-        dequeue->subhp, CallbackNotifyMessages, 0,
+        dequeue->subhp, OcilibCallbackNotifyMessages, 0,
         dequeue->typinf->con->err
     )
 
-#ifdef _MSC_VER
-  #pragma warning(default: 4054)
-#endif
+    WARNING_RESTORE_CAST_FUNC_TYPE
+    WARNING_RESTORE_PEDANTIC
 
     /* set callback */
 
@@ -1062,20 +1060,20 @@ boolean DequeueSubscribe
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(dbstr);
 
         if (FAILURE && NULL != dequeue)
         {
-            DequeueUnsubscribe(dequeue);
+            OcilibDequeueUnsubscribe(dequeue);
         }
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DequeueUnsubscribe
+ * OcilibDequeueUnsubscribe
  * --------------------------------------------------------------------------------------------- */
 
-boolean DequeueUnsubscribe
+boolean OcilibDequeueUnsubscribe
 (
     OCI_Dequeue *dequeue
 )
@@ -1105,7 +1103,7 @@ boolean DequeueUnsubscribe
 
         /* free OCI handle */
 
-        MemoryFreeHandle((dvoid *) dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
+        OcilibMemoryFreeHandle((dvoid *) dequeue->subhp, OCI_HTYPE_SUBSCRIPTION);
 
         dequeue->subhp = NULL;
     }

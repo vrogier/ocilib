@@ -50,7 +50,8 @@ extern "C" {
 * @defgroup OcilibCApiEnvironmentVariables Environment Variables
 */
 
-#include "ocilibc/config.h"
+#include "ocilibc/platform.h"
+#include "ocilibc/defines.h"
 #include "ocilibc/types.h"
 #include "ocilibc/api.h"
 #include "ocilibc/compat.h"

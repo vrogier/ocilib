@@ -23,18 +23,18 @@
 
 #include "types.h"
 
-boolean ArrayInitialize
+OCI_SYM_LOCAL boolean OcilibArrayInitialize
 (
     OCI_Array    *arr,
     OCI_TypeInfo *typinf
 );
 
-boolean ArrayDispose
+OCI_SYM_LOCAL boolean OcilibArrayDispose
 (
     OCI_Array* arr
 );
 
-OCI_Array* ArrayCreate
+OCI_SYM_LOCAL OCI_Array* OcilibArrayCreate
 (
     OCI_Connection* con,
     unsigned int    nb_elem,
@@ -46,7 +46,7 @@ OCI_Array* ArrayCreate
     OCI_TypeInfo  * typinf
 );
 
-boolean ArrayFreeFromHandles
+OCI_SYM_LOCAL boolean OcilibArrayFreeFromHandles
 (
     void** handles
 );

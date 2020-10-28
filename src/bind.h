@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Bind* BindCreate
+OCI_SYM_LOCAL OCI_Bind* OcilibBindCreate
 (
     OCI_Statement* stmt,
     void         * data,
@@ -37,129 +37,129 @@ OCI_Bind* BindCreate
     unsigned int   nbelem
 );
 
-boolean BindFree
+OCI_SYM_LOCAL boolean OcilibBindFree
 (
     OCI_Bind* bnd
 );
 
-int BindGetIndex
+OCI_SYM_LOCAL int OcilibBindGetIndex
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-boolean BindSetNullIndicator
+OCI_SYM_LOCAL boolean OcilibBindSetNullIndicator
 (
     OCI_Bind   * bnd,
     unsigned int position,
     sb2          value
 );
 
-const otext* BindGetName
+OCI_SYM_LOCAL const otext* OcilibBindGetName
 (
     OCI_Bind* bnd
 );
 
-unsigned int BindGetType
+OCI_SYM_LOCAL unsigned int OcilibBindGetType
 (
     OCI_Bind* bnd
 );
 
-unsigned int BindGetSubtype
+OCI_SYM_LOCAL unsigned int OcilibBindGetSubtype
 (
     OCI_Bind* bnd
 );
 
-unsigned int BindGetDataCount
+OCI_SYM_LOCAL unsigned int OcilibBindGetDataCount
 (
     OCI_Bind* bnd
 );
 
-void* BindGetData
+OCI_SYM_LOCAL void* OcilibBindGetData
 (
     OCI_Bind* bnd
 );
 
-OCI_Statement* BindGetStatement
+OCI_SYM_LOCAL OCI_Statement* OcilibBindGetStatement
 (
     OCI_Bind* bnd
 );
 
-boolean BindSetDataSize
+OCI_SYM_LOCAL boolean OcilibBindSetDataSize
 (
     OCI_Bind   * bnd,
     unsigned int size
 );
 
-boolean BindSetDataSizeAtPos
+OCI_SYM_LOCAL boolean OcilibBindSetDataSizeAtPos
 (
     OCI_Bind   * bnd,
     unsigned int position,
     unsigned int size
 );
 
-unsigned int BindGetDataSize
+OCI_SYM_LOCAL unsigned int OcilibBindGetDataSize
 (
     OCI_Bind* bnd
 );
 
-unsigned int BindGetDataSizeAtPos
+OCI_SYM_LOCAL unsigned int OcilibBindGetDataSizeAtPos
 (
     OCI_Bind   * bnd,
     unsigned int position
 );
 
-boolean BindSetNullAtPos
+OCI_SYM_LOCAL boolean OcilibBindSetNullAtPos
 (
     OCI_Bind   * bnd,
     unsigned int position
 );
 
-boolean BindSetNull
+OCI_SYM_LOCAL boolean OcilibBindSetNull
 (
     OCI_Bind* bnd
 );
 
-boolean BindSetNotNullAtPos
+OCI_SYM_LOCAL boolean OcilibBindSetNotNullAtPos
 (
     OCI_Bind   * bnd,
     unsigned int position
 );
 
-boolean BindSetNotNull
+OCI_SYM_LOCAL boolean OcilibBindSetNotNull
 (
     OCI_Bind* bnd
 );
 
-boolean BindIsNullAtPos
+OCI_SYM_LOCAL boolean OcilibBindIsNullAtPos
 (
     OCI_Bind   * bnd,
     unsigned int position
 );
 
-boolean BindIsNull
+OCI_SYM_LOCAL boolean OcilibBindIsNull
 (
     OCI_Bind* bnd
 );
 
-boolean BindSetCharsetForm
+OCI_SYM_LOCAL boolean OcilibBindSetCharsetForm
 (
     OCI_Bind    *bnd,
     unsigned int csfrm
 );
 
-boolean BindSetDirection
+OCI_SYM_LOCAL boolean OcilibBindSetDirection
 (
     OCI_Bind    *bnd,
     unsigned int direction
 );
 
-unsigned int BindGetDirection
+OCI_SYM_LOCAL unsigned int OcilibBindGetDirection
 (
     OCI_Bind* bnd
 );
 
-unsigned int BindGetAllocationMode
+OCI_SYM_LOCAL unsigned int OcilibBindGetAllocationMode
 (
     OCI_Bind* bnd
 );

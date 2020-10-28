@@ -23,23 +23,23 @@
 
 #include "types.h"
 
-OCI_List* ListCreate
+OCI_SYM_LOCAL OCI_List* OcilibListCreate
 (
     int type
 );
 
-boolean ListFree
+OCI_SYM_LOCAL boolean OcilibListFree
 (
     OCI_List* list
 );
 
-void* ListAppend
+OCI_SYM_LOCAL void* OcilibListAppend
 (
     OCI_List* list,
     int       size
 );
 
-boolean ListClear
+OCI_SYM_LOCAL boolean OcilibListClear
 (
     OCI_List* list
 );
@@ -49,7 +49,7 @@ typedef void (*POCI_LIST_FOR_EACH)
     void* data
 );
 
-boolean ListForEach
+OCI_SYM_LOCAL boolean OcilibListForEach
 (
     OCI_List         * list,
     POCI_LIST_FOR_EACH proc
@@ -61,20 +61,20 @@ typedef void (*POCI_LIST_FOR_EACH_WITH_PARAM)
     void* param
 );
 
-boolean ListForEachWithParam
+OCI_SYM_LOCAL boolean OcilibListForEachWithParam
 (
     OCI_List                    * list,
     void                        * param,
     POCI_LIST_FOR_EACH_WITH_PARAM proc
 );
 
-boolean ListRemove
+OCI_SYM_LOCAL boolean OcilibListRemove
 (
     OCI_List* list,
     void    * data
 );
 
-boolean ListExists
+OCI_SYM_LOCAL boolean OcilibListExists
 (
     OCI_List* list,
     void    * data
@@ -86,7 +86,7 @@ typedef boolean (*POCI_LIST_FIND)
     void* param
 );
 
-void* ListFind
+OCI_SYM_LOCAL void * OcilibListFind
 (
     OCI_List     * list,
     POCI_LIST_FIND proc,

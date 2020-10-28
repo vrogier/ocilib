@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_File * FileInitialize
+OCI_SYM_LOCAL OCI_File * OcilibFileInitialize
 (
     OCI_Connection *con,
     OCI_File       *file,
@@ -31,113 +31,113 @@ OCI_File * FileInitialize
     ub4             type
 );
 
-boolean FileGetInfo
+OCI_SYM_LOCAL boolean OcilibFileGetInfo
 (
     OCI_File* file
 );
 
-OCI_File * FileCreate
+OCI_SYM_LOCAL OCI_File * OcilibFileCreate
 (
     OCI_Connection *con,
     unsigned int    type
 );
 
-boolean FileFree
+OCI_SYM_LOCAL boolean OcilibFileFree
 (
     OCI_File *file
 );
 
-OCI_File ** FileCreateArray
+OCI_SYM_LOCAL OCI_File ** OcilibFileCreateArray
 (
     OCI_Connection *con,
     unsigned int    type,
     unsigned int    nbelem
 );
 
-boolean FileFreeArray
+OCI_SYM_LOCAL boolean OcilibFileFreeArray
 (
     OCI_File **files
 );
 
-boolean FileSeek
+OCI_SYM_LOCAL boolean OcilibFileSeek
 (
     OCI_File    *file,
     big_uint     offset,
     unsigned int mode
 );
 
-big_uint FileGetOffset
+OCI_SYM_LOCAL big_uint OcilibFileGetOffset
 (
     OCI_File *file
 );
 
-unsigned int FileRead
+OCI_SYM_LOCAL unsigned int OcilibFileRead
 (
     OCI_File    *file,
     void        *buffer,
     unsigned int len
 );
 
-unsigned int FileGetType
+OCI_SYM_LOCAL unsigned int OcilibFileGetType
 (
     OCI_File *file
 );
 
-big_uint FileGetSize
+OCI_SYM_LOCAL big_uint OcilibFileGetSize
 (
     OCI_File *file
 );
 
-boolean FileExists
+OCI_SYM_LOCAL boolean OcilibFileExists
 (
     OCI_File *file
 );
 
-boolean FileSetName
+OCI_SYM_LOCAL boolean OcilibFileSetName
 (
     OCI_File    *file,
     const otext *dir,
     const otext *name
 );
 
-const otext * FileGetDirectory
+OCI_SYM_LOCAL const otext * OcilibFileGetDirectory
 (
     OCI_File *file
 );
 
-const otext * FileGetName
+OCI_SYM_LOCAL const otext * OcilibFileGetName
 (
     OCI_File *file
 );
 
-boolean FileOpen
+OCI_SYM_LOCAL boolean OcilibFileOpen
 (
     OCI_File *file
 );
 
-boolean FileIsOpen
+OCI_SYM_LOCAL boolean OcilibFileIsOpen
 (
     OCI_File *file
 );
 
-boolean FileClose
+OCI_SYM_LOCAL boolean OcilibFileClose
 (
     OCI_File *file
 );
 
-boolean FileIsEqual
+OCI_SYM_LOCAL boolean OcilibFileIsEqual
 (
     OCI_File *file,
     OCI_File *file2
 );
 
-boolean FileAssign
+OCI_SYM_LOCAL boolean OcilibFileAssign
 (
     OCI_File *file,
     OCI_File *file_src
 );
 
-OCI_Connection* FileGetConnection
+OCI_SYM_LOCAL OCI_Connection* OcilibFileGetConnection
 (
     OCI_File* file
 );

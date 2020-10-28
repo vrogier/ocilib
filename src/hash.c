@@ -22,6 +22,7 @@
 
 #include "macros.h"
 #include "memory.h"
+#include "stringutils.h"
 
 static const unsigned int HashTypeValues[] =
 {
@@ -31,10 +32,10 @@ static const unsigned int HashTypeValues[] =
 };
 
 /* --------------------------------------------------------------------------------------------- *
- * HashCompute
+ * OcilibHashCompute
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int HashCompute
+static unsigned int OcilibHashCompute
 (
     OCI_HashTable *table,
     const otext   *str
@@ -56,10 +57,10 @@ unsigned int HashCompute
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* HashAdd
+* OcilibHashAdd
 * --------------------------------------------------------------------------------------------- */
 
-boolean HashAdd
+static boolean OcilibHashAdd
 (
     OCI_HashTable *table,
     const otext   *key,
@@ -82,18 +83,18 @@ boolean HashAdd
 
     boolean success = FALSE;
 
-    e = HashLookup(table, key, TRUE);
+    e = OcilibHashLookup(table, key, TRUE);
 
     if (NULL != e)
     {
-        v = (OCI_HashValue *)MemoryAlloc(OCI_IPC_HASHVALUE, sizeof(*v),
-                                         (size_t)1, TRUE);
+        v = (OCI_HashValue *)OcilibMemoryAlloc(OCI_IPC_HASHVALUE, sizeof(*v),
+                                               (size_t)1, TRUE);
 
         if (NULL != v)
         {
             if (OCI_HASH_STRING == table->type && value.p_text)
             {
-                v->value.p_text = ostrdup(value.p_text);
+                v->value.p_text = OcilibStringDuplicate(value.p_text);
             }
             else if (OCI_HASH_INTEGER == table->type)
             {
@@ -131,10 +132,10 @@ boolean HashAdd
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HashCreate
+ * OcilibHashCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_HashTable * HashCreate
+OCI_HashTable * OcilibHashCreate
 (
     unsigned int size,
     unsigned int type
@@ -152,9 +153,9 @@ OCI_HashTable * HashCreate
 
     /* allocate table structure */
 
-    table = (OCI_HashTable *) MemoryAlloc(OCI_IPC_HASHTABLE,
-                                          sizeof(*table),
-                                          (size_t) 1, TRUE);
+    table = (OCI_HashTable *)OcilibMemoryAlloc(OCI_IPC_HASHTABLE,
+                                               sizeof(*table),
+                                               (size_t) 1, TRUE);
     CHECK_NULL(table)
 
     /* set up attributes and allocate internal array of hash entry pointers */
@@ -163,9 +164,9 @@ OCI_HashTable * HashCreate
     table->size  = 0;
     table->count = 0;
 
-    table->items = (OCI_HashEntry **) MemoryAlloc(OCI_IPC_HASHENTRY_ARRAY,
-                                                  sizeof(*table->items),
-                                                  (size_t) size, TRUE);
+    table->items = (OCI_HashEntry **)OcilibMemoryAlloc(OCI_IPC_HASHENTRY_ARRAY,
+                                                       sizeof(*table->items),
+                                                       (size_t) size, TRUE);
     CHECK_NULL(table->items);
 
     table->size = size;
@@ -174,7 +175,7 @@ OCI_HashTable * HashCreate
     (
         if (FAILURE)
         {
-            HashFree(table);
+            OcilibHashFree(table);
             table = NULL;
         }
 
@@ -183,10 +184,10 @@ OCI_HashTable * HashCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HashFree
+ * OcilibHashFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean HashFree
+boolean OcilibHashFree
 (
     OCI_HashTable *table
 )
@@ -240,7 +241,7 @@ boolean HashFree
         FREE(table->items)
     }
 
-    ErrorResetSource(NULL, table);
+    OcilibErrorResetSource(NULL, table);
 
     FREE(table)
 
@@ -253,7 +254,7 @@ boolean HashFree
  * HashGetSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int HashGetSize
+unsigned int OcilibHashGetSize
 (
     OCI_HashTable *table
 )
@@ -272,10 +273,10 @@ unsigned int HashGetSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HashGetType
+ * OcilibHashGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int HashGetType
+unsigned int OcilibHashGetType
 (
     OCI_HashTable *table
 )
@@ -294,10 +295,10 @@ unsigned int HashGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HashGetValue
+ * OcilibHashGetValue
  * --------------------------------------------------------------------------------------------- */
 
-OCI_HashValue * HashGetValue
+OCI_HashValue * OcilibHashGetValue
 (
     OCI_HashTable *table,
     const otext   *key
@@ -311,7 +312,7 @@ OCI_HashValue * HashGetValue
 
     CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
-    OCI_HashEntry* e = HashLookup(table, key, FALSE);
+    OCI_HashEntry* e = OcilibHashLookup(table, key, FALSE);
     CHECK_NULL(e)
 
     SET_RETVAL(e->values)
@@ -320,10 +321,10 @@ OCI_HashValue * HashGetValue
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HashGetEntry
+ * OcilibHashGetEntry
  * --------------------------------------------------------------------------------------------- */
 
-OCI_HashEntry * HashGetEntry
+OCI_HashEntry * OcilibHashGetEntry
 (
     OCI_HashTable *table,
     unsigned int   index
@@ -345,10 +346,10 @@ OCI_HashEntry * HashGetEntry
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HashGetString
+ * OcilibHashGetString
  * --------------------------------------------------------------------------------------------- */
 
-const otext * HashGetString
+const otext * OcilibHashGetString
 (
     OCI_HashTable *table,
     const otext   *key
@@ -363,7 +364,7 @@ const otext * HashGetString
     CHECK_PTR(OCI_IPC_HASHTABLE, table)
     CHECK_COMPAT(table->type == OCI_HASH_STRING)
 
-    OCI_HashValue *v = HashGetValue(table, key);
+    OCI_HashValue *v = OcilibHashGetValue(table, key);
     CHECK_NULL(v)
 
     SET_RETVAL(v->value.p_text)
@@ -372,10 +373,10 @@ const otext * HashGetString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HashGetInt
+ * OcilibHashGetInt
  * --------------------------------------------------------------------------------------------- */
 
-int HashGetInt
+int OcilibHashGetInt
 (
     OCI_HashTable *table,
     const otext   *key
@@ -390,7 +391,7 @@ int HashGetInt
     CHECK_PTR(OCI_IPC_HASHTABLE, table)
     CHECK_COMPAT(table->type == OCI_HASH_INTEGER)
 
-    OCI_HashValue * v = HashGetValue(table, key);
+    OCI_HashValue * v = OcilibHashGetValue(table, key);
     CHECK_NULL(v)
 
     SET_RETVAL(v->value.num)
@@ -399,10 +400,10 @@ int HashGetInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HashGetPointer
+ * OcilibHashGetPointer
  * --------------------------------------------------------------------------------------------- */
 
-void * HashGetPointer
+void * OcilibHashGetPointer
 (
     OCI_HashTable *table,
     const otext   *key
@@ -417,7 +418,7 @@ void * HashGetPointer
     CHECK_PTR(OCI_IPC_HASHTABLE, table)
     CHECK_COMPAT(table->type == OCI_HASH_POINTER)
 
-    OCI_HashValue *v = HashGetValue(table, key);
+    OCI_HashValue *v = OcilibHashGetValue(table, key);
     CHECK_NULL(v)
 
     SET_RETVAL(v->value.p_void)
@@ -426,10 +427,10 @@ void * HashGetPointer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HashAddString
+ * OcilibHashAddString
  * --------------------------------------------------------------------------------------------- */
 
-boolean HashAddString
+boolean OcilibHashAddString
 (
     OCI_HashTable *table,
     const otext   *key,
@@ -449,7 +450,7 @@ boolean HashAddString
 
     v.p_text = (otext *) value;
 
-    CHECK(HashAdd(table, key, v, OCI_HASH_STRING))
+    CHECK(OcilibHashAdd(table, key, v, OCI_HASH_STRING))
 
     SET_SUCCESS()
 
@@ -457,10 +458,10 @@ boolean HashAddString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HashAddInt
+ * OcilibHashAddInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean HashAddInt
+boolean OcilibHashAddInt
 (
     OCI_HashTable *table,
     const otext   *key,
@@ -480,7 +481,7 @@ boolean HashAddInt
 
     v.num = value;
 
-    CHECK(HashAdd(table, key, v, OCI_HASH_INTEGER))
+    CHECK(OcilibHashAdd(table, key, v, OCI_HASH_INTEGER))
 
     SET_SUCCESS()
 
@@ -488,10 +489,10 @@ boolean HashAddInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HashAddPointer
+ * OcilibHashAddPointer
  * --------------------------------------------------------------------------------------------- */
 
-boolean HashAddPointer
+boolean OcilibHashAddPointer
 (
     OCI_HashTable *table,
     const otext   *key,
@@ -511,7 +512,7 @@ boolean HashAddPointer
 
     v.p_void = value;
 
-    CHECK(HashAdd(table, key, v, OCI_HASH_POINTER))
+    CHECK(OcilibHashAdd(table, key, v, OCI_HASH_POINTER))
 
     SET_SUCCESS()
 
@@ -519,10 +520,10 @@ boolean HashAddPointer
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * HashLookup
+ * OcilibHashLookup
  * --------------------------------------------------------------------------------------------- */
 
-OCI_HashEntry * HashLookup
+OCI_HashEntry * OcilibHashLookup
 (
     OCI_HashTable *table,
     const otext   *key,
@@ -540,13 +541,13 @@ OCI_HashEntry * HashLookup
     CHECK_PTR(OCI_IPC_HASHTABLE, table)
     CHECK_PTR(OCI_IPC_STRING,      key)
 
-    const unsigned int i = HashCompute(table, key);
+    const unsigned int i = OcilibHashCompute(table, key);
 
     if (i < table->size)
     {
         for(e = table->items[i]; e; e = e->next)
         {
-            if (ostrcasecmp(e->key, key) == 0)
+            if (OcilibStringCaseCompare(e->key, key) == 0)
             {
                 break;
             }
@@ -554,13 +555,13 @@ OCI_HashEntry * HashLookup
 
         if (NULL == e && create)
         {
-            e = (OCI_HashEntry *) MemoryAlloc(OCI_IPC_HASHENTRY,
-                                              sizeof(*e),
-                                              (size_t) 1,
-                                              TRUE);
+            e = (OCI_HashEntry *)OcilibMemoryAlloc(OCI_IPC_HASHENTRY,
+                                                   sizeof(*e),
+                                                   (size_t) 1,
+                                                   TRUE);
             CHECK_NULL(e)
 
-            e->key = ostrdup(key);
+            e->key = OcilibStringDuplicate(key);
 
             e1 = e2 = table->items[i];
 

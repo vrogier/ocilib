@@ -33,99 +33,99 @@
 #include "memory.h"
 #include "number.h"
 #include "reference.h"
-#include "strings.h"
+#include "stringutils.h"
 #include "timestamp.h"
 #include "typeinfo.h"
 
-#define OBJECT_SET_VALUE(datatype, type, func, ...)                     \
+#define OBJECT_SET_VALUE(datatype, type, func, ...)                             \
+                                                                                \
+    ENTER_FUNC(boolean, FALSE, OCI_IPC_OBJECT, obj)                             \
+                                                                                \
+    CHECK_PTR(OCI_IPC_OBJECT, obj)                                              \
+                                                                                \
+    if (NULL == value)                                                          \
+    {                                                                           \
+        CHECK(OcilibObjectSetNull(obj, attr) )                                  \
+    }                                                                           \
+    else                                                                        \
+    {                                                                           \
+        int index = OcilibObjectGetAttributeIndex(obj, attr, datatype, TRUE);   \
+                                                                                \
+        if (index >= 0)                                                         \
+        {                                                                       \
+            OCIInd *ind  = NULL;                                                \
+            type   *data = (type *) OcilibObjectGetAttr(obj, index, &ind);      \
+                                                                                \
+            CHECK_OCI(obj->con->err, func, __VA_ARGS__)                         \
+                                                                                \
+            *ind = OCI_IND_NOTNULL;                                             \
+        }                                                                       \
+    }                                                                           \
+                                                                                \
+    SET_SUCCESS()                                                               \
+                                                                                \
+    EXIT_FUNC()
+
+#define OBJECT_GET_VALUE(datatype, object_type, type, func, ...)        \
                                                                         \
-    ENTER_FUNC(boolean, FALSE, OCI_IPC_OBJECT, obj)                     \
+    ENTER_FUNC(object_type, NULL, OCI_IPC_OBJECT, obj)                  \
+                                                                        \
+    int index = 0;                                                      \
                                                                         \
     CHECK_PTR(OCI_IPC_OBJECT, obj)                                      \
                                                                         \
-    if (NULL == value)                                                  \
+    index = OcilibObjectGetAttributeIndex(obj, attr, datatype, TRUE);   \
+    CHECK(index >= 0)                                                   \
+                                                                        \
+    OCIInd *ind = NULL;                                                 \
+    type *value = NULL;                                                 \
+                                                                        \
+    value = (type *) OcilibObjectGetAttr(obj, index, &ind);             \
+                                                                        \
+    object_type tmp = NULL;                                             \
+                                                                        \
+    if (value && ind && (OCI_IND_NULL != *ind))                         \
     {                                                                   \
-        CHECK(ObjectSetNull(obj, attr) )                                \
+        tmp = obj->objs[index] = func(__VA_ARGS__);                     \
+        CHECK_NULL(tmp)                                                 \
     }                                                                   \
-    else                                                                \
-    {                                                                   \
-        int index = ObjectGetAttributeIndex(obj, attr, datatype, TRUE); \
                                                                         \
-        if (index >= 0)                                                 \
-        {                                                               \
-            OCIInd *ind  = NULL;                                        \
-            type   *data = (type *) ObjectGetAttr(obj, index, &ind);    \
+    SET_RETVAL(tmp)                                                     \
                                                                         \
-            CHECK_OCI(obj->con->err, func, __VA_ARGS__)                 \
+    EXIT_FUNC()
+
+#define OBJECT_GET_NUMBER(number_type, type, value)                     \
                                                                         \
-            *ind = OCI_IND_NOTNULL;                                     \
-        }                                                               \
-    }                                                                   \
+    ENTER_FUNC(type, value, OCI_IPC_OBJECT, obj)                        \
+                                                                        \
+    CHECK_PTR(OCI_IPC_OBJECT, obj)                                      \
+                                                                        \
+    type tmp = value;                                                   \
+                                                                        \
+    CHECK(OcilibObjectGetNumberInternal(obj, attr,                      \
+                                        (void *) (&tmp),                \
+                                        (uword) (number_type)));        \
+                                                                        \
+    SET_RETVAL(tmp)                                                     \
+                                                                        \
+    EXIT_FUNC()
+
+#define OBJECT_SET_NUMBER(number_type, value)                           \
+                                                                        \
+    ENTER_FUNC(boolean, FALSE,OCI_IPC_OBJECT, obj)                      \
+                                                                        \
+    CHECK_PTR(OCI_IPC_OBJECT, obj)                                      \
+                                                                        \
+    CHECK(OcilibObjectSetNumberInternal(obj, attr, (void *) &(value),   \
+                                        (uword) (number_type)))         \
                                                                         \
     SET_SUCCESS()                                                       \
                                                                         \
     EXIT_FUNC()
 
-#define OBJECT_GET_VALUE(datatype, object_type, type, func, ...) \
-                                                                 \
-    ENTER_FUNC(object_type, NULL, OCI_IPC_OBJECT, obj)           \
-                                                                 \
-    int index = 0;                                               \
-                                                                 \
-    CHECK_PTR(OCI_IPC_OBJECT, obj)                               \
-                                                                 \
-    index = ObjectGetAttributeIndex(obj, attr, datatype, TRUE);  \
-    CHECK(index >= 0)                                            \
-                                                                 \
-    OCIInd *ind = NULL;                                          \
-    type *value = NULL;                                          \
-                                                                 \
-    value = (type *) ObjectGetAttr(obj, index, &ind);            \
-                                                                 \
-    object_type tmp = NULL;                                      \
-                                                                 \
-    if (value && ind && (OCI_IND_NULL != *ind))                  \
-    {                                                            \
-        tmp = obj->objs[index] = func(__VA_ARGS__);              \
-        CHECK_NULL(tmp)                                          \
-    }                                                            \
-                                                                 \
-    SET_RETVAL(tmp)                                              \
-                                                                 \
-    EXIT_FUNC()
-
-#define OBJECT_GET_NUMBER(number_type, type, value)        \
-                                                           \
-    ENTER_FUNC(type, value, OCI_IPC_OBJECT, obj)           \
-                                                           \
-    CHECK_PTR(OCI_IPC_OBJECT, obj)                         \
-                                                           \
-    type tmp = value;                                      \
-                                                           \
-    CHECK(ObjectGetNumberInternal(obj, attr,               \
-                                  (void *) (&tmp),         \
-                                  (uword) (number_type))); \
-                                                           \
-    SET_RETVAL(tmp)                                        \
-                                                           \
-    EXIT_FUNC()
-
-#define OBJECT_SET_NUMBER(number_type, value)                   \
-                                                                \
-    ENTER_FUNC(boolean, FALSE,OCI_IPC_OBJECT, obj)              \
-                                                                \
-    CHECK_PTR(OCI_IPC_OBJECT, obj)                              \
-                                                                \
-    CHECK(ObjectSetNumberInternal(obj, attr, (void *) &(value), \
-                                  (uword) (number_type)))       \
-                                                                \
-    SET_SUCCESS()                                               \
-                                                                \
-    EXIT_FUNC()
-
 /* pre declaration */
 
-boolean ObjectGetAttributeInfo
+static boolean OcilibObjectGetAttributeInfo
 (
     OCI_TypeInfo * typinf,
     int            index,
@@ -134,19 +134,19 @@ boolean ObjectGetAttributeInfo
 );
 
 /* --------------------------------------------------------------------------------------------- *
- * TypeInfoFind
+ * OcilibObjectTypeInfoFind
  * --------------------------------------------------------------------------------------------- */
 
-static boolean TypeInfoFind(OCI_TypeInfo * typinf, OCIType* tdo)
+static boolean OcilibObjectTypeInfoFind(OCI_TypeInfo * typinf, OCIType* tdo)
 {
     return NULL != typinf && typinf->tdo == tdo;
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetRealTypeInfo
+ * OcilibObjectGetRealTypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
+static OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 {
     ENTER_FUNC
     (
@@ -171,9 +171,9 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
     /* create a local REF to store a REF to the object real type */
 
-    CHECK(MemoryAllocateObject(typinf->con->env, typinf->con->err,
-                               typinf->con->cxt, SQLT_REF, (OCIType *)0,
-                               NULL, OCI_DURATION_SESSION, 0, (void**)&ref))
+    CHECK(OcilibMemoryAllocateObject(typinf->con->env, typinf->con->err,
+                                     typinf->con->cxt, SQLT_REF, (OCIType *)0,
+                                     NULL, OCI_DURATION_SESSION, 0, (void**)&ref))
 
     CHECK_OCI
     (
@@ -202,7 +202,7 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
     /* first try to find it in list */
 
-    parent = ListFind(typinf->con->tinfs, (POCI_LIST_FIND)TypeInfoFind, tdo);
+    parent = OcilibListFind(typinf->con->tinfs, (POCI_LIST_FIND)OcilibObjectTypeInfoFind, tdo);
 
     /* if found, it will be assigned in the cleanup part */
 
@@ -217,7 +217,7 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
     otext fullname[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
-    CHECK(MemoryAllocHandle(typinf->con->env, (void**) &descr, OCI_HTYPE_DESCRIBE))
+    CHECK(OcilibMemoryAllocHandle(typinf->con->env, (void**) &descr, OCI_HTYPE_DESCRIBE))
 
     CHECK_OCI
     (
@@ -235,19 +235,19 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
         typinf->con->err
     )
 
-    CHECK(StringGetAttribute(typinf->con, param, OCI_DTYPE_PARAM,
-                             OCI_ATTR_SCHEMA_NAME, &schema_name, &size_schema))
+    CHECK(OcilibStringGetAttribute(typinf->con, param, OCI_DTYPE_PARAM,
+                                   OCI_ATTR_SCHEMA_NAME, &schema_name, &size_schema))
 
-    CHECK(StringGetAttribute(typinf->con, param, OCI_DTYPE_PARAM,
-                             OCI_ATTR_NAME, &object_name, &size_object))
+    CHECK(OcilibStringGetAttribute(typinf->con, param, OCI_DTYPE_PARAM,
+                                   OCI_ATTR_NAME, &object_name, &size_object))
 
     /* compute link full name */
 
-    StringGetFullTypeName(schema_name, NULL, object_name, NULL,
-                          fullname, (sizeof(fullname) / sizeof(otext)) - 1);
+    OcilibStringGetFullTypeName(schema_name, NULL, object_name, NULL,
+                                fullname, (sizeof(fullname) / sizeof(otext)) - 1);
 
     /* retrieve the type info of the real object */
-    parent = TypeInfoGet(typinf->con, fullname, OCI_TIF_TYPE);
+    parent = OcilibTypeInfoGet(typinf->con, fullname, OCI_TIF_TYPE);
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -255,12 +255,12 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
         {
             if (NULL != ref)
             {
-                MemoryFreeObject(typinf->con->env, typinf->con->err, ref, OCI_DEFAULT);
+                OcilibMemoryFreeObject(typinf->con->env, typinf->con->err, ref, OCI_DEFAULT);
             }
 
             if (NULL != descr)
             {
-                MemoryFreeHandle(descr, OCI_HTYPE_DESCRIBE);
+                OcilibMemoryFreeHandle(descr, OCI_HTYPE_DESCRIBE);
             }
         }
 
@@ -269,10 +269,10 @@ OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetIndicatorOffset
+ * OcilibObjectGetIndicatorOffset
  * --------------------------------------------------------------------------------------------- */
 
-ub2 ObjectGetIndOffset
+static ub2 OcilibObjectGetIndOffset
 (
     OCI_TypeInfo *typinf,
     int           index
@@ -287,7 +287,7 @@ ub2 ObjectGetIndOffset
     {
         if (OCI_CDT_OBJECT == typinf->cols[i].datatype)
         {
-            j += ObjectGetIndOffset(typinf->cols[i].typinf, typinf->cols[i].typinf->nb_cols);
+            j += OcilibObjectGetIndOffset(typinf->cols[i].typinf, typinf->cols[i].typinf->nb_cols);
         }
         else
         {
@@ -300,10 +300,10 @@ ub2 ObjectGetIndOffset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetStructSize
+ * OcilibObjectGetStructSize
  * --------------------------------------------------------------------------------------------- */
 
-void ObjectGetStructSize
+static void OcilibObjectGetStructSize
 (
     OCI_TypeInfo *typinf,
     size_t       *p_size,
@@ -331,7 +331,7 @@ void ObjectGetStructSize
         {
             /* if super type information has not been already cached, then let's compute it now */
 
-            ObjectGetStructSize(typinf->parent_type, &size, &align);
+            OcilibObjectGetStructSize(typinf->parent_type, &size, &align);
 
             /* copy super type members offsets to the current sub type of members offsets */
 
@@ -358,7 +358,7 @@ void ObjectGetStructSize
 
                 /* get current type self first member information (after parent type) */
 
-                ObjectGetAttributeInfo(typinf, i, &size2, &next_align);
+                OcilibObjectGetAttributeInfo(typinf, i, &size2, &next_align);
 
                 /* make sure that parent field is aligned */
 
@@ -376,12 +376,12 @@ void ObjectGetStructSize
             }
             else
             {
-                ObjectGetAttributeInfo(typinf, i, &size1, &align);
+                OcilibObjectGetAttributeInfo(typinf, i, &size1, &align);
 
                 typinf->offsets[i] = 0;
             }
 
-            ObjectGetAttributeInfo(typinf, i + 1, &size2, &align);
+            OcilibObjectGetAttributeInfo(typinf, i + 1, &size2, &align);
 
             size += size1;
 
@@ -396,10 +396,10 @@ void ObjectGetStructSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetUserStructSize
+ * OcilibObjectGetUserStructSize
  * --------------------------------------------------------------------------------------------- */
 
-void ObjectGetUserStructSize
+void OcilibObjectGetUserStructSize
 (
     OCI_TypeInfo* typinf,
     size_t      * p_size,
@@ -421,8 +421,8 @@ void ObjectGetUserStructSize
 
     for (ub2 i = 0; i < typinf->nb_cols; i++)
     {
-        ColumnGetAttributeInfo(&typinf->cols[i],   typinf->nb_cols, i,   &size1, &align1);
-        ColumnGetAttributeInfo(&typinf->cols[i+1], typinf->nb_cols, i+1, &size2, &align2);
+        OcilibColumnGetAttributeInfo(&typinf->cols[i],   typinf->nb_cols, i,   &size1, &align1);
+        OcilibColumnGetAttributeInfo(&typinf->cols[i+1], typinf->nb_cols, i+1, &size2, &align2);
 
         if (align < align1)
         {
@@ -444,10 +444,10 @@ void ObjectGetUserStructSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetAttributeInfo
+ * OcilibObjectGetAttributeInfo
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectGetAttributeInfo
+static boolean OcilibObjectGetAttributeInfo
 (
     OCI_TypeInfo *typinf,
     int           index,
@@ -513,7 +513,7 @@ boolean ObjectGetAttributeInfo
         }
         case OCI_CDT_OBJECT:
         {
-            ObjectGetStructSize(typinf->cols[index].typinf, p_size, p_align);
+            OcilibObjectGetStructSize(typinf->cols[index].typinf, p_size, p_align);
             break;
         }
         default:
@@ -533,10 +533,10 @@ boolean ObjectGetAttributeInfo
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectReset
+ * OcilibObjectReset
  * --------------------------------------------------------------------------------------------- */
 
-void ObjectReset
+static void OcilibObjectReset
 (
     OCI_Object *obj
 )
@@ -557,7 +557,7 @@ void ObjectReset
                 data->hstate =  OCI_OBJECT_FETCHED_DIRTY;
             }
 
-            FreeObjectFromType(obj->objs[i], obj->typinf->cols[i].datatype);
+            OcilibFreeObjectFromType(obj->objs[i], obj->typinf->cols[i].datatype);
 
             obj->objs[i] = NULL;
         }
@@ -569,10 +569,10 @@ void ObjectReset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectInitialize
+ * OcilibObjectInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * ObjectInitialize
+OCI_Object * OcilibObjectInitialize
 (
     OCI_Connection *con,
     OCI_Object     *obj,
@@ -609,7 +609,7 @@ OCI_Object * ObjectInitialize
     ALLOC_DATA(OCI_IPC_BUFF_ARRAY, obj->tmpsizes, obj->typinf->nb_cols)
     ALLOC_DATA(OCI_IPC_BUFF_ARRAY, obj->objs,     obj->typinf->nb_cols)
 
-    ObjectReset(obj);
+    OcilibObjectReset(obj);
 
     if (NULL == obj->handle || OCI_OBJECT_ALLOCATED_ARRAY == obj->hstate)
     {
@@ -620,10 +620,10 @@ OCI_Object * ObjectInitialize
             obj->hstate = OCI_OBJECT_ALLOCATED;
         }
 
-        CHECK(MemoryAllocateObject(obj->con->env, obj->con->err, obj->con->cxt,
-                                   (OCITypeCode)obj->typinf->typecode, obj->typinf->tdo,
-                                   (dvoid *) NULL, (OCIDuration) OCI_DURATION_SESSION,
-                                   (boolean) TRUE, (dvoid **) &obj->handle))
+        CHECK(OcilibMemoryAllocateObject(obj->con->env, obj->con->err, obj->con->cxt,
+                                        (OCITypeCode)obj->typinf->typecode, obj->typinf->tdo,
+                                        (dvoid *) NULL, (OCIDuration) OCI_DURATION_SESSION,
+                                        (boolean) TRUE, (dvoid **) &obj->handle))
     }
     else
     {
@@ -669,7 +669,7 @@ OCI_Object * ObjectInitialize
         else
         {
             obj->tab_ind = parent->tab_ind;
-            obj->idx_ind = parent->idx_ind + ObjectGetIndOffset(parent->typinf, index);
+            obj->idx_ind = parent->idx_ind + OcilibObjectGetIndOffset(parent->typinf, index);
         }
     }
 
@@ -677,7 +677,7 @@ OCI_Object * ObjectInitialize
     (
         if (FAILURE)
         {
-            ObjectFree(obj);
+            OcilibObjectFree(obj);
             obj = NULL;
         }
 
@@ -686,10 +686,10 @@ OCI_Object * ObjectInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetAttributeIndex
+ * OcilibObjectGetAttributeIndex
  * --------------------------------------------------------------------------------------------- */
 
-int ObjectGetAttributeIndex
+static int OcilibObjectGetAttributeIndex
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -712,7 +712,7 @@ int ObjectGetAttributeIndex
     {
         OCI_Column *col = &obj->typinf->cols[i];
 
-        if (((type == -1) || (col->datatype == type))  && (ostrcasecmp(col->name, attr) == 0))
+        if (((type == -1) || (col->datatype == type))  && (OcilibStringCaseCompare(col->name, attr) == 0))
         {
             index = (int) i;
             break;
@@ -721,7 +721,7 @@ int ObjectGetAttributeIndex
 
     if (check && index == -1)
     {
-        THROW(ExceptionAttributeNotFound, attr)
+        THROW(OcilibExceptionAttributeNotFound, attr)
     }
 
     SET_RETVAL(index)
@@ -730,10 +730,10 @@ int ObjectGetAttributeIndex
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetAttr
+ * OcilibObjectGetAttr
  * --------------------------------------------------------------------------------------------- */
 
-void * ObjectGetAttr
+static void * OcilibObjectGetAttr
 (
     OCI_Object  *obj,
     unsigned int index,
@@ -755,14 +755,14 @@ void * ObjectGetAttr
 
     if (obj->typinf->struct_size == 0)
     {
-        ObjectGetStructSize(obj->typinf, &size, &align);
+        OcilibObjectGetStructSize(obj->typinf, &size, &align);
     }
 
     offset = (size_t) obj->typinf->offsets[index];
 
     if (pind)
     {
-        const int ind_index = obj->idx_ind + ObjectGetIndOffset(obj->typinf, (int) index);
+        const int ind_index = obj->idx_ind + OcilibObjectGetIndOffset(obj->typinf, (int) index);
 
         *pind = &obj->tab_ind[ind_index];
     }
@@ -773,10 +773,10 @@ void * ObjectGetAttr
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetNumberInternal
+ * OcilibObjectSetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetNumberInternal
+static boolean OcilibObjectSetNumberInternal
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -795,18 +795,18 @@ boolean ObjectSetNumberInternal
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_NUMERIC, TRUE);
+    index = OcilibObjectGetAttributeIndex(obj, attr, OCI_CDT_NUMERIC, TRUE);
 
     if (index == -1)
     {
-        THROW(ExceptionAttributeNotFound, attr)
+        THROW(OcilibExceptionAttributeNotFound, attr)
     }
 
     OCIInd     *ind = NULL;
-    void       *num = ObjectGetAttr(obj, index, &ind);
+    void       *num = OcilibObjectGetAttr(obj, index, &ind);
     OCI_Column *col = &obj->typinf->cols[index];
 
-    CHECK(NumberTranslateValue(obj->con, value, flag, num, col->subtype))
+    CHECK(OcilibNumberTranslateValue(obj->con, value, flag, num, col->subtype))
 
     *ind = OCI_IND_NOTNULL;
 
@@ -816,10 +816,10 @@ boolean ObjectSetNumberInternal
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetNumberInternal
+ * OcilibObjectGetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectGetNumberInternal
+static boolean OcilibObjectGetNumberInternal
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -838,35 +838,36 @@ boolean ObjectGetNumberInternal
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_NUMERIC, FALSE);
+    index = OcilibObjectGetAttributeIndex(obj, attr, OCI_CDT_NUMERIC, FALSE);
 
     if (index >= 0)
     {
         OCIInd *ind = NULL;
         void   *ptr = NULL;
 
-        ptr = ObjectGetAttr(obj, index, &ind);
+        ptr = OcilibObjectGetAttr(obj, index, &ind);
 
         if (ptr && (OCI_IND_NULL != *ind))
         {
             OCI_Column *col = &obj->typinf->cols[index];
 
-            CHECK(NumberTranslateValue(obj->con, ptr, col->subtype, value, flag))
+            CHECK(OcilibNumberTranslateValue(obj->con, ptr, col->subtype, value, flag))
         }
     }
     else
     {
-        index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_TEXT, FALSE);
+        index = OcilibObjectGetAttributeIndex(obj, attr, OCI_CDT_TEXT, FALSE);
 
         if (index >= 0)
         {
-            CHECK(NumberFromStringInternal(obj->con, value, flag, ObjectGetString(obj, attr), NULL))
+            CHECK(OcilibNumberFromStringInternal(obj->con, value, flag, 
+                                                 OcilibObjectGetString(obj, attr), NULL))
         }
     }
 
     if (index == -1)
     {
-        THROW(ExceptionAttributeNotFound, attr)
+        THROW(OcilibExceptionAttributeNotFound, attr)
     }
 
     SET_SUCCESS()
@@ -875,10 +876,10 @@ boolean ObjectGetNumberInternal
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectCreate
+ * OcilibObjectCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * ObjectCreate
+OCI_Object * OcilibObjectCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf
@@ -893,16 +894,16 @@ OCI_Object * ObjectCreate
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_PTR(OCI_IPC_TYPE_INFO,  typinf)
 
-    SET_RETVAL(ObjectInitialize(con, NULL, NULL, typinf, NULL, -1, TRUE))
+    SET_RETVAL(OcilibObjectInitialize(con, NULL, NULL, typinf, NULL, -1, TRUE))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectFree
+ * OcilibObjectFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectFree
+boolean OcilibObjectFree
 (
     OCI_Object *obj
 )
@@ -919,7 +920,7 @@ boolean ObjectFree
     /* if the object has sub-objects that have been fetched, we need to free
        these objects */
 
-    ObjectReset(obj);
+    OcilibObjectReset(obj);
 
     FREE(obj->objs)
     FREE(obj->tmpbufs)
@@ -927,12 +928,12 @@ boolean ObjectFree
 
     if ((OCI_OBJECT_ALLOCATED == obj->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == obj->hstate))
     {
-        MemoryFreeObject(obj->con->env, obj->con->err, obj->handle, OCI_DEFAULT);
+        OcilibMemoryFreeObject(obj->con->env, obj->con->err, obj->handle, OCI_DEFAULT);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != obj->hstate)
     {
-        ErrorResetSource(NULL, obj);
+        OcilibErrorResetSource(NULL, obj);
 
         FREE(obj)
     }
@@ -943,10 +944,10 @@ boolean ObjectFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectCreateArray
+ * OcilibObjectCreateArray
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object ** ObjectCreateArray
+OCI_Object ** OcilibObjectCreateArray
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
@@ -964,9 +965,9 @@ OCI_Object ** ObjectCreateArray
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_PTR(OCI_IPC_TYPE_INFO,  typinf)
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0,
-                      sizeof(void *), sizeof(OCI_Object),
-                      0, typinf);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_OBJECT, 0,
+                            sizeof(void *), sizeof(OCI_Object),
+                            0, typinf);
 
     CHECK_NULL(arr)
 
@@ -976,10 +977,10 @@ OCI_Object ** ObjectCreateArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectFreeArray
+ * OcilibObjectFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectFreeArray
+boolean OcilibObjectFreeArray
 (
     OCI_Object **objs
 )
@@ -992,16 +993,16 @@ boolean ObjectFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, objs)
 
-    SET_RETVAL(ArrayFreeFromHandles((void **)objs))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void **)objs))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectAssign
+ * OcilibObjectAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectAssign
+boolean OcilibObjectAssign
 (
     OCI_Object *obj,
     OCI_Object *obj_src
@@ -1029,7 +1030,7 @@ boolean ObjectAssign
 
     obj->typinf = obj_src->typinf;
 
-    ObjectReset(obj);
+    OcilibObjectReset(obj);
 
     SET_SUCCESS()
 
@@ -1037,10 +1038,10 @@ boolean ObjectAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetShort
+ * OcilibObjectGetShort
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectGetBoolean
+boolean OcilibObjectGetBoolean
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1056,11 +1057,11 @@ boolean ObjectGetBoolean
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
+    index = OcilibObjectGetAttributeIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
 
     if (index < 0)
     {
-        THROW(ExceptionAttributeNotFound, attr)
+        THROW(OcilibExceptionAttributeNotFound, attr)
     }
 
     OCIInd *ind = NULL;
@@ -1068,7 +1069,7 @@ boolean ObjectGetBoolean
 
     boolean value = FALSE;
 
-    ptr = ObjectGetAttr(obj, index, &ind);
+    ptr = OcilibObjectGetAttr(obj, index, &ind);
 
     if (NULL != ptr && ind && (OCI_IND_NULL != *ind))
     {
@@ -1081,10 +1082,10 @@ boolean ObjectGetBoolean
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetNumber
+ * OcilibObjectGetNumber
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Number * ObjectGetNumber
+OCI_Number * OcilibObjectGetNumber
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1095,7 +1096,7 @@ OCI_Number * ObjectGetNumber
         OCI_CDT_NUMERIC,
         OCI_Number*,
         OCINumber*,
-        NumberInitialize,
+        OcilibNumberInitialize,
         obj->con,
         (OCI_Number *) obj->objs[index],
         (OCINumber *) value
@@ -1103,10 +1104,10 @@ OCI_Number * ObjectGetNumber
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetShort
+ * OcilibObjectGetShort
  * --------------------------------------------------------------------------------------------- */
 
-short ObjectGetShort
+short OcilibObjectGetShort
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1116,10 +1117,10 @@ short ObjectGetShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetUnsignedShort
+ * OcilibObjectGetUnsignedShort
  * --------------------------------------------------------------------------------------------- */
 
-unsigned short ObjectGetUnsignedShort
+unsigned short OcilibObjectGetUnsignedShort
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1129,10 +1130,10 @@ unsigned short ObjectGetUnsignedShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetInt
+ * OcilibObjectGetInt
  * --------------------------------------------------------------------------------------------- */
 
-int ObjectGetInt
+int OcilibObjectGetInt
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1142,10 +1143,10 @@ int ObjectGetInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetUnsignedInt
+ * OcilibObjectGetUnsignedInt
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ObjectGetUnsignedInt
+unsigned int OcilibObjectGetUnsignedInt
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1155,10 +1156,10 @@ unsigned int ObjectGetUnsignedInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetBigInt
+ * OcilibObjectGetBigInt
  * --------------------------------------------------------------------------------------------- */
 
-big_int ObjectGetBigInt
+big_int OcilibObjectGetBigInt
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1168,10 +1169,10 @@ big_int ObjectGetBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetUnsignedBigInt
+ * OcilibObjectGetUnsignedBigInt
  * --------------------------------------------------------------------------------------------- */
 
-big_uint ObjectGetUnsignedBigInt
+big_uint OcilibObjectGetUnsignedBigInt
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1181,10 +1182,10 @@ big_uint ObjectGetUnsignedBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetDouble
+ * OcilibObjectGetDouble
  * --------------------------------------------------------------------------------------------- */
 
-double ObjectGetDouble
+double OcilibObjectGetDouble
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1194,10 +1195,10 @@ double ObjectGetDouble
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetFloat
+ * OcilibObjectGetFloat
  * --------------------------------------------------------------------------------------------- */
 
-float ObjectGetFloat
+float OcilibObjectGetFloat
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1207,10 +1208,10 @@ float ObjectGetFloat
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetString
+ * OcilibObjectGetString
  * --------------------------------------------------------------------------------------------- */
 
-const otext * ObjectGetString
+const otext * OcilibObjectGetString
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1229,20 +1230,22 @@ const otext * ObjectGetString
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_TEXT, FALSE);
+    index = OcilibObjectGetAttributeIndex(obj, attr, OCI_CDT_TEXT, FALSE);
 
     if (index >= 0)
     {
         OCIInd     *ind   = NULL;
         OCIString **value = NULL;
 
-        value = (OCIString **) ObjectGetAttr(obj, index, &ind);
+        value = (OCIString **)OcilibObjectGetAttr(obj, index, &ind);
 
         if (value && ind && (OCI_IND_NULL != *ind))
         {
             if (Env.use_wide_char_conv)
             {
-                str = StringFromStringPtr(obj->con->env, *value, &obj->tmpbufs[index], &obj->tmpsizes[index]);
+                str = OcilibStringFromStringPtr(obj->con->env, *value,
+                                                &obj->tmpbufs[index],
+                                                &obj->tmpsizes[index]);
             }
             else
             {
@@ -1252,17 +1255,17 @@ const otext * ObjectGetString
     }
     else
     {
-        index = ObjectGetAttributeIndex(obj, attr, -1, FALSE);
+        index = OcilibObjectGetAttributeIndex(obj, attr, -1, FALSE);
 
         if (index >= 0)
         {
-            OCI_Error   *err   = ErrorGet(TRUE, TRUE);
+            OCI_Error   *err   = OcilibErrorGet(TRUE, TRUE);
             OCIInd      *ind   = NULL;
             void        *value = NULL;
             unsigned int size  = 0;
             unsigned int len   = 0;
 
-            value = ObjectGetAttr(obj, index, &ind);
+            value = OcilibObjectGetAttr(obj, index, &ind);
 
             /* special case of RAW attribute, we need their length */
             if (OCI_CDT_RAW == obj->typinf->cols[index].datatype)
@@ -1274,20 +1277,24 @@ const otext * ObjectGetString
                 }
             }
 
-            len = StringGetFromType(obj->con, &obj->typinf->cols[index], value, size, NULL, 0, FALSE);
+            len = OcilibStringGetFromType(obj->con, &obj->typinf->cols[index], value,
+                                          size, NULL, 0, FALSE);
 
             CHECK_ERROR(err)
 
             if (len > 0)
             {
-                CHECK(StringRequestBuffer(&obj->tmpbufs[index], &obj->tmpsizes[index], len))
+                CHECK(OcilibStringRequestBuffer(&obj->tmpbufs[index], &obj->tmpsizes[index], len))
 
-                const unsigned int real_tmpsize = StringGetFromType(obj->con,
-                                                                    &obj->typinf->cols[index],
-                                                                    value, size,
-                                                                    obj->tmpbufs[index],
-                                                                    obj->tmpsizes[index],
-                                                                    FALSE);
+                const unsigned int real_tmpsize = OcilibStringGetFromType
+                (
+                    obj->con,
+                    &obj->typinf->cols[index],
+                    value, size,
+                    obj->tmpbufs[index],
+                    obj->tmpsizes[index],
+                    FALSE
+                );
 
                 CHECK(NULL == err || OCI_UNKNOWN == err->type)
 
@@ -1301,7 +1308,7 @@ const otext * ObjectGetString
 
     if (index == -1)
     {
-        THROW(ExceptionAttributeNotFound, attr)
+        THROW(OcilibExceptionAttributeNotFound, attr)
     }
 
     SET_RETVAL(str)
@@ -1310,10 +1317,10 @@ const otext * ObjectGetString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetRaw
+ * OcilibObjectGetRaw
  * --------------------------------------------------------------------------------------------- */
 
-int ObjectGetRaw
+int OcilibObjectGetRaw
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1333,17 +1340,17 @@ int ObjectGetRaw
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_RAW, TRUE);
+    index = OcilibObjectGetAttributeIndex(obj, attr, OCI_CDT_RAW, TRUE);
 
     if (index < 0)
     {
-        THROW(ExceptionAttributeNotFound, attr)
+        THROW(OcilibExceptionAttributeNotFound, attr)
     }
 
     OCIInd  *ind   = NULL;
     OCIRaw **value = NULL;
 
-    value = (OCIRaw **) ObjectGetAttr(obj, index, &ind);
+    value = (OCIRaw **)OcilibObjectGetAttr(obj, index, &ind);
 
     if (value && ind && (OCI_IND_NULL != *ind))
     {
@@ -1365,10 +1372,10 @@ int ObjectGetRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ObjectGetRawSize
+* OcilibObjectGetRawSize
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int ObjectGetRawSize
+unsigned int OcilibObjectGetRawSize
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1386,17 +1393,17 @@ unsigned int ObjectGetRawSize
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_RAW, TRUE);
+    index = OcilibObjectGetAttributeIndex(obj, attr, OCI_CDT_RAW, TRUE);
 
     if (index < 0)
     {
-        THROW(ExceptionAttributeNotFound, attr)
+        THROW(OcilibExceptionAttributeNotFound, attr)
     }
 
     OCIInd  *ind   = NULL;
     OCIRaw **value = NULL;
 
-    value = (OCIRaw **)ObjectGetAttr(obj, index, &ind);
+    value = (OCIRaw **)OcilibObjectGetAttr(obj, index, &ind);
 
     if (value && ind && (OCI_IND_NULL != *ind))
     {
@@ -1409,10 +1416,10 @@ unsigned int ObjectGetRawSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetDate
+ * OcilibObjectGetDate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Date * ObjectGetDate
+OCI_Date * OcilibObjectGetDate
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1423,7 +1430,7 @@ OCI_Date * ObjectGetDate
         OCI_CDT_DATETIME,
         OCI_Date*,
         OCIDate,
-        DateInitialize,
+        OcilibDateInitialize,
         obj->con,
         (OCI_Date *) obj->objs[index],
         value,
@@ -1433,10 +1440,10 @@ OCI_Date * ObjectGetDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetTimestamp
+ * OcilibObjectGetTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Timestamp * ObjectGetTimestamp
+OCI_Timestamp * OcilibObjectGetTimestamp
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1449,7 +1456,7 @@ OCI_Timestamp * ObjectGetTimestamp
         OCI_CDT_TIMESTAMP,
         OCI_Timestamp*,
         OCIDateTime*,
-        TimestampInitialize,
+        OcilibTimestampInitialize,
         obj->con,
         (OCI_Timestamp *) obj->objs[index],
         (OCIDateTime *) *value,
@@ -1472,10 +1479,10 @@ OCI_Timestamp * ObjectGetTimestamp
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetInterval
+ * OcilibObjectGetInterval
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval * ObjectGetInterval
+OCI_Interval * OcilibObjectGetInterval
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1488,7 +1495,7 @@ OCI_Interval * ObjectGetInterval
         OCI_CDT_INTERVAL,
         OCI_Interval*,
         OCIInterval *,
-        IntervalInitialize,
+        OcilibIntervalInitialize,
         obj->con,
         (OCI_Interval *) obj->objs[index],
         (OCIInterval *) *value,
@@ -1511,10 +1518,10 @@ OCI_Interval * ObjectGetInterval
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetColl
+ * OcilibObjectGetColl
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * ObjectGetColl
+OCI_Coll * OcilibObjectGetColl
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1525,7 +1532,7 @@ OCI_Coll * ObjectGetColl
         OCI_CDT_COLLECTION,
         OCI_Coll*,
         OCIColl*,
-        CollectionInitialize,
+        OcilibCollectionInitialize,
         obj->con,
         (OCI_Coll *) obj->objs[index],
         (OCIColl *) *value,
@@ -1534,10 +1541,10 @@ OCI_Coll * ObjectGetColl
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetObject
+ * OcilibObjectGetObject
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * ObjectGetObject
+OCI_Object * OcilibObjectGetObject
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1548,7 +1555,7 @@ OCI_Object * ObjectGetObject
         OCI_CDT_OBJECT,
         OCI_Object*,
         void,
-        ObjectInitialize,
+        OcilibObjectInitialize,
         obj->con,
         (OCI_Object *) obj->objs[index],
         value,
@@ -1558,10 +1565,10 @@ OCI_Object * ObjectGetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetLob
+ * OcilibObjectGetLob
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Lob * ObjectGetLob
+OCI_Lob * OcilibObjectGetLob
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1572,7 +1579,7 @@ OCI_Lob * ObjectGetLob
         OCI_CDT_LOB,
         OCI_Lob*,
         OCILobLocator*,
-        LobInitialize,
+        OcilibLobInitialize,
         obj->con,
         (OCI_Lob *) obj->objs[index],
         *value,
@@ -1581,10 +1588,10 @@ OCI_Lob * ObjectGetLob
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetFile
+ * OcilibObjectGetFile
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File * ObjectGetFile
+OCI_File * OcilibObjectGetFile
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1595,7 +1602,7 @@ OCI_File * ObjectGetFile
         OCI_CDT_FILE,
         OCI_File *,
         OCILobLocator*,
-        FileInitialize,
+        OcilibFileInitialize,
         obj->con,
         (OCI_File *) obj->objs[index],
         *value,
@@ -1604,10 +1611,10 @@ OCI_File * ObjectGetFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetReference
+ * OcilibObjectGetReference
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * ObjectGetReference
+OCI_Ref * OcilibObjectGetReference
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1618,7 +1625,7 @@ OCI_Ref * ObjectGetReference
         OCI_CDT_REF,
         OCI_Ref*,
         OCIRef*,
-        ReferenceInitialize,
+        OcilibReferenceInitialize,
         obj->con,
         NULL,
         (OCI_Ref *) obj->objs[index],
@@ -1627,10 +1634,10 @@ OCI_Ref * ObjectGetReference
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ObjectSetBoolean
+* OcilibObjectSetBoolean
 * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetBoolean
+boolean OcilibObjectSetBoolean
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1646,15 +1653,15 @@ boolean ObjectSetBoolean
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_STRING, attr)
 
-    const int index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
+    const int index = OcilibObjectGetAttributeIndex(obj, attr, OCI_CDT_BOOLEAN, TRUE);
 
     if (index < 0)
     {
-        THROW(ExceptionAttributeNotFound, attr)
+        THROW(OcilibExceptionAttributeNotFound, attr)
     }
 
     OCIInd  *ind  = NULL;
-    boolean *data = (boolean *)ObjectGetAttr(obj, index, &ind);
+    boolean *data = (boolean *)OcilibObjectGetAttr(obj, index, &ind);
 
     if (data)
     {
@@ -1668,10 +1675,10 @@ boolean ObjectSetBoolean
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetNumber
+ * OcilibObjectSetNumber
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetNumber
+boolean OcilibObjectSetNumber
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1690,10 +1697,10 @@ boolean ObjectSetNumber
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetShort
+ * OcilibObjectSetShort
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetShort
+boolean OcilibObjectSetShort
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1704,10 +1711,10 @@ boolean ObjectSetShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetUnsignedShort
+ * OcilibObjectSetUnsignedShort
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetUnsignedShort
+boolean OcilibObjectSetUnsignedShort
 (
     OCI_Object    *obj,
     const otext   *attr,
@@ -1718,10 +1725,10 @@ boolean ObjectSetUnsignedShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetInt
+ * OcilibObjectSetInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetInt
+boolean OcilibObjectSetInt
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1732,10 +1739,10 @@ boolean ObjectSetInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetUnsignedInt
+ * OcilibObjectSetUnsignedInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetUnsignedInt
+boolean OcilibObjectSetUnsignedInt
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1746,10 +1753,10 @@ boolean ObjectSetUnsignedInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetBigInt
+ * OcilibObjectSetBigInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetBigInt
+boolean OcilibObjectSetBigInt
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1760,10 +1767,10 @@ boolean ObjectSetBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetUnsignedBigInt
+ * OcilibObjectSetUnsignedBigInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetUnsignedBigInt
+boolean OcilibObjectSetUnsignedBigInt
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1774,10 +1781,10 @@ boolean ObjectSetUnsignedBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetDouble
+ * OcilibObjectSetDouble
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetDouble
+boolean OcilibObjectSetDouble
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1788,10 +1795,10 @@ boolean ObjectSetDouble
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetFloat
+ * OcilibObjectSetFloat
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetFloat
+boolean OcilibObjectSetFloat
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1802,10 +1809,10 @@ boolean ObjectSetFloat
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetString
+ * OcilibObjectSetString
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetString
+boolean OcilibObjectSetString
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1822,21 +1829,21 @@ boolean ObjectSetString
 
     if (NULL == value)
     {
-        CHECK(ObjectSetNull(obj, attr))
+        CHECK(OcilibObjectSetNull(obj, attr))
     }
     else
     {
-        const int index = ObjectGetAttributeIndex(obj, attr, OCI_CDT_TEXT, TRUE);
+        const int index = OcilibObjectGetAttributeIndex(obj, attr, OCI_CDT_TEXT, TRUE);
 
         if (index < 0)
         {
-            THROW(ExceptionAttributeNotFound, attr)
+            THROW(OcilibExceptionAttributeNotFound, attr)
         }
 
         OCIInd     *ind  = NULL;
-        OCIString **data = (OCIString **) ObjectGetAttr(obj, index, &ind);
+        OCIString **data = (OCIString **)OcilibObjectGetAttr(obj, index, &ind);
 
-        CHECK(StringToStringPtr(obj->con->env, data, obj->con->err, value))
+        CHECK(OcilibStringToStringPtr(obj->con->env, data, obj->con->err, value))
 
         *ind = OCI_IND_NOTNULL;
     }
@@ -1847,10 +1854,10 @@ boolean ObjectSetString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetRaw
+ * OcilibObjectSetRaw
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetRaw
+boolean OcilibObjectSetRaw
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1872,10 +1879,10 @@ boolean ObjectSetRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetDate
+ * OcilibObjectSetDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetDate
+boolean OcilibObjectSetDate
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1894,10 +1901,10 @@ boolean ObjectSetDate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetTimestamp
+ * OcilibObjectSetTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetTimestamp
+boolean OcilibObjectSetTimestamp
 (
     OCI_Object    *obj,
     const otext   *attr,
@@ -1932,10 +1939,10 @@ boolean ObjectSetTimestamp
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetInterval
+ * OcilibObjectSetInterval
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetInterval
+boolean OcilibObjectSetInterval
 (
     OCI_Object   *obj,
     const otext  *attr,
@@ -1971,10 +1978,10 @@ boolean ObjectSetInterval
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetColl
+ * OcilibObjectSetColl
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetColl
+boolean OcilibObjectSetColl
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -1994,10 +2001,10 @@ boolean ObjectSetColl
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetObject
+ * OcilibObjectSetObject
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetObject
+boolean OcilibObjectSetObject
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -2023,10 +2030,10 @@ boolean ObjectSetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetLob
+ * OcilibObjectSetLob
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetLob
+boolean OcilibObjectSetLob
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -2046,10 +2053,10 @@ boolean ObjectSetLob
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetFile
+ * OcilibObjectSetFile
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetFile
+boolean OcilibObjectSetFile
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -2069,10 +2076,10 @@ boolean ObjectSetFile
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetReference
+ * OcilibObjectSetReference
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetReference
+boolean OcilibObjectSetReference
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -2092,10 +2099,10 @@ boolean ObjectSetReference
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectSetNull
+ * OcilibObjectSetNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectSetNull
+boolean OcilibObjectSetNull
 (
     OCI_Object  *obj,
     const otext *attr
@@ -2109,14 +2116,14 @@ boolean ObjectSetNull
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_STRING, attr)
 
-    const int index = ObjectGetAttributeIndex(obj, attr, -1, TRUE);
+    const int index = OcilibObjectGetAttributeIndex(obj, attr, -1, TRUE);
 
     if (index == -1)
     {
-        THROW(ExceptionAttributeNotFound, attr)
+        THROW(OcilibExceptionAttributeNotFound, attr)
     }
 
-    const int ind_index = obj->idx_ind + ObjectGetIndOffset(obj->typinf, index);
+    const int ind_index = obj->idx_ind + OcilibObjectGetIndOffset(obj->typinf, index);
 
     obj->tab_ind[ind_index] = OCI_IND_NULL;
 
@@ -2126,10 +2133,10 @@ boolean ObjectSetNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectIsNull
+ * OcilibObjectIsNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectIsNull
+boolean OcilibObjectIsNull
 (
     OCI_Object  *obj,
     const otext *attr
@@ -2146,14 +2153,14 @@ boolean ObjectIsNull
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_STRING, attr)
 
-    index = ObjectGetAttributeIndex(obj, attr, -1, TRUE);
+    index = OcilibObjectGetAttributeIndex(obj, attr, -1, TRUE);
 
     if (index == -1)
     {
-        THROW(ExceptionAttributeNotFound, attr)
+        THROW(OcilibExceptionAttributeNotFound, attr)
     }
 
-    const int ind_index = obj->idx_ind + ObjectGetIndOffset(obj->typinf, index);
+    const int ind_index = obj->idx_ind + OcilibObjectGetIndOffset(obj->typinf, index);
 
     SET_RETVAL(OCI_IND_NOTNULL != obj->tab_ind[ind_index])
 
@@ -2161,10 +2168,10 @@ boolean ObjectIsNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetTypeInfo
+ * OcilibObjectGetTypeInfo
  * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * ObjectGetTypeInfo
+OCI_TypeInfo * OcilibObjectGetTypeInfo
 (
     OCI_Object *obj
 )
@@ -2178,10 +2185,10 @@ OCI_TypeInfo * ObjectGetTypeInfo
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetType
+ * OcilibObjectGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ObjectGetType
+unsigned int OcilibObjectGetType
 (
     OCI_Object *obj
 )
@@ -2195,10 +2202,10 @@ unsigned int ObjectGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetSelfRef
+ * OcilibObjectGetSelfRef
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectGetSelfRef
+boolean OcilibObjectGetSelfRef
 (
     OCI_Object *obj,
     OCI_Ref    *ref
@@ -2224,7 +2231,7 @@ boolean ObjectGetSelfRef
 
     if (NULL != ref->obj)
     {
-        ObjectFree(ref->obj);
+        OcilibObjectFree(ref->obj);
         ref->obj = NULL;
     }
 
@@ -2234,10 +2241,10 @@ boolean ObjectGetSelfRef
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectGetStruct
+ * OcilibObjectGetStruct
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectGetStruct
+boolean OcilibObjectGetStruct
 (
     OCI_Object *obj,
     void      **pp_struct,
@@ -2267,10 +2274,10 @@ boolean ObjectGetStruct
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ObjectToString
+ * OcilibObjectToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean ObjectToString
+boolean OcilibObjectToString
 (
     OCI_Object   *obj,
     unsigned int *size,
@@ -2291,24 +2298,24 @@ boolean ObjectToString
     CHECK_PTR(OCI_IPC_OBJECT, obj)
     CHECK_PTR(OCI_IPC_VOID,   size)
 
-    err = ErrorGet(TRUE, TRUE);
+    err = OcilibErrorGet(TRUE, TRUE);
 
     if (str)
     {
         *str = 0;
     }
 
-    len += StringAddToBuffer(str, len, obj->typinf->name, (unsigned int) ostrlen(obj->typinf->name), FALSE);
-    len += StringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
+    len += OcilibStringAddToBuffer(str, len, obj->typinf->name, (unsigned int) ostrlen(obj->typinf->name), FALSE);
+    len += OcilibStringAddToBuffer(str, len, OTEXT("("), 1, FALSE);
 
     for (int i = 0; i < obj->typinf->nb_cols; i++)
     {
         attr  = obj->typinf->cols[i].name;
         quote = TRUE;
 
-        if (ObjectIsNull(obj, attr))
+        if (OcilibObjectIsNull(obj, attr))
         {
-            len += StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
+            len += OcilibStringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
         }
         else
         {
@@ -2321,12 +2328,12 @@ boolean ObjectToString
                 case OCI_CDT_TEXT:
                 {
                     OCIInd *ind = NULL;
-                    data = ObjectGetAttr(obj, i, &ind);
+                    data = OcilibObjectGetAttr(obj, i, &ind);
 
                     if (data && ind && (OCI_IND_NULL != *ind))
                     {
                         data_size = OCIStringSize(Env.env, (*(OCIString **)data));
-                        data      = (void *)ObjectGetString(obj, attr);
+                        data      = (void *)OcilibObjectGetString(obj, attr);
                     }
                     else
                     {
@@ -2337,21 +2344,21 @@ boolean ObjectToString
                 case OCI_CDT_BOOLEAN:
                 {
                     OCIInd *ind = NULL;
-                    data  = ObjectGetAttr(obj, i, &ind);
+                    data  = OcilibObjectGetAttr(obj, i, &ind);
                     quote = FALSE;
                     break;
                 }
                 case OCI_CDT_NUMERIC:
                 {
                     OCIInd *ind = NULL;
-                    data  = ObjectGetAttr(obj, i, &ind);
+                    data  = OcilibObjectGetAttr(obj, i, &ind);
                     quote = FALSE;
                     break;
                 }
                 case OCI_CDT_RAW:
                 {
                     OCIInd *ind = NULL;
-                    data = ObjectGetAttr(obj, i, &ind);
+                    data = OcilibObjectGetAttr(obj, i, &ind);
 
                     if (data && ind && (OCI_IND_NULL != *ind))
                     {
@@ -2366,43 +2373,43 @@ boolean ObjectToString
                 }
                 case OCI_CDT_DATETIME:
                 {
-                    data = (void *) ObjectGetDate(obj, attr);
+                    data = (void *)OcilibObjectGetDate(obj, attr);
                     break;
                 }
                 case OCI_CDT_TIMESTAMP:
                 {
-                    data = (void *) ObjectGetTimestamp(obj, attr);
+                    data = (void *)OcilibObjectGetTimestamp(obj, attr);
                     break;
                 }
                 case OCI_CDT_INTERVAL:
                 {
-                    data = (void *) ObjectGetInterval(obj, attr);
+                    data = (void *)OcilibObjectGetInterval(obj, attr);
                     break;
                 }
                 case OCI_CDT_LOB:
                 {
-                    data = (void *) ObjectGetLob(obj, attr);
+                    data = (void *)OcilibObjectGetLob(obj, attr);
                     break;
                 }
                 case OCI_CDT_FILE:
                 {
-                    data = (void *) ObjectGetFile(obj, attr);
+                    data = (void *)OcilibObjectGetFile(obj, attr);
                     break;
                 }
                 case OCI_CDT_REF:
                 {
-                    data = (void *) ObjectGetReference(obj, attr);
+                    data = (void *)OcilibObjectGetReference(obj, attr);
                     break;
                 }
                 case OCI_CDT_OBJECT:
                 {
-                    data  = (void *) ObjectGetObject(obj, attr);
+                    data  = (void *)OcilibObjectGetObject(obj, attr);
                     quote = FALSE;
                     break;
                 }
                 case OCI_CDT_COLLECTION:
                 {
-                    data  =  (void *) ObjectGetColl(obj, attr);
+                    data  =  (void *)OcilibObjectGetColl(obj, attr);
                     quote = FALSE;
                 }
             }
@@ -2419,12 +2426,12 @@ boolean ObjectToString
 
             if (data)
             {
-                len += StringGetFromType(obj->con, &obj->typinf->cols[i], data, data_size,
-                                         tmpbuf, tmpbuf && size ? *size - len : 0, quote);
+                len += OcilibStringGetFromType(obj->con, &obj->typinf->cols[i], data, data_size,
+                                               tmpbuf, tmpbuf && size ? *size - len : 0, quote);
             }
             else
             {
-                len += StringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
+                len += OcilibStringAddToBuffer(str, len, OCI_STRING_NULL, OCI_STRING_NULL_SIZE, FALSE);
             }
 
             CHECK(NULL == err || OCI_UNKNOWN == err->type)
@@ -2432,11 +2439,11 @@ boolean ObjectToString
 
         if (i < (obj->typinf->nb_cols-1))
         {
-            len += StringAddToBuffer(str, len, OTEXT(", "), 2, quote);
+            len += OcilibStringAddToBuffer(str, len, OTEXT(", "), 2, quote);
         }
     }
 
-    len += StringAddToBuffer(str, len, OTEXT(")"), 1, FALSE);
+    len += OcilibStringAddToBuffer(str, len, OTEXT(")"), 1, FALSE);
 
     *size = len;
 

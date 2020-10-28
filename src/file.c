@@ -23,7 +23,7 @@
 #include "array.h"
 #include "macros.h"
 #include "memory.h"
-#include "strings.h"
+#include "stringutils.h"
 
 static const unsigned int SeekModeValues[] =
 {
@@ -39,10 +39,10 @@ static const unsigned int FileTypeValues[] =
 };
 
 /* --------------------------------------------------------------------------------------------- *
- * FileInit
+ * OcilibFileInit
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File * FileInitialize
+OCI_File * OcilibFileInitialize
 (
     OCI_Connection *con,
     OCI_File       *file,
@@ -83,9 +83,9 @@ OCI_File * FileInitialize
 
         file->hstate = OCI_OBJECT_ALLOCATED;
 
-        CHECK(MemoryAllocDescriptor((dvoid *)file->con->env,
-                                    (dvoid **)(void *)&file->handle,
-                                    (ub4)OCI_DTYPE_LOB))
+        CHECK(OcilibMemoryAllocDescriptor((dvoid *)file->con->env,
+                                          (dvoid **)(void *)&file->handle,
+                                          (ub4)OCI_DTYPE_LOB))
     }
     else if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
     {
@@ -96,7 +96,7 @@ OCI_File * FileInitialize
     (
         if (FAILURE)
         {
-            FileFree(file);
+            OcilibFileFree(file);
             file = NULL;
         }
 
@@ -105,10 +105,10 @@ OCI_File * FileInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileGetInfo
+ * OcilibFileGetInfo
  * --------------------------------------------------------------------------------------------- */
 
-boolean FileGetInfo
+boolean OcilibFileGetInfo
 (
     OCI_File *file
 )
@@ -145,10 +145,10 @@ boolean FileGetInfo
     /* retrieve name */
 
     dbsize1 = (int) OCI_SIZE_DIRECTORY  * (int) sizeof(otext);
-    dbstr1  = StringGetDBString(file->dir, &dbsize1);
+    dbstr1  = OcilibStringGetDBString(file->dir, &dbsize1);
 
     dbsize2 = (int) OCI_SIZE_FILENAME  * (int) sizeof(otext);
-    dbstr2  = StringGetDBString(file->name, &dbsize1);
+    dbstr2  = OcilibStringGetDBString(file->name, &dbsize1);
 
     usize1 = (ub2) dbsize1;
     usize2 = (ub2) dbsize2;
@@ -165,23 +165,23 @@ boolean FileGetInfo
     dbsize1 = (int) usize1;
     dbsize2 = (int) usize2;
 
-    StringCopyDBStringToNativeString(dbstr1, file->dir,  dbcharcount(dbsize1));
-    StringCopyDBStringToNativeString(dbstr2, file->name, dbcharcount(dbsize2));
+    OcilibStringCopyDBStringToNativeString(dbstr1, file->dir,  dbcharcount(dbsize1));
+    OcilibStringCopyDBStringToNativeString(dbstr2, file->name, dbcharcount(dbsize2));
 
     SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr1);
-        StringReleaseDBString(dbstr2);
+        OcilibStringReleaseDBString(dbstr1);
+        OcilibStringReleaseDBString(dbstr2);
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileCreate
+ * OcilibFileCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File * FileCreate
+OCI_File * OcilibFileCreate
 (
     OCI_Connection *con,
     unsigned int    type
@@ -196,16 +196,16 @@ OCI_File * FileCreate
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_ENUM_VALUE(type, FileTypeValues, OTEXT("File Type"))
 
-    SET_RETVAL(FileInitialize(con, NULL, NULL, type))
+    SET_RETVAL(OcilibFileInitialize(con, NULL, NULL, type))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileFree
+ * OcilibFileFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean FileFree
+boolean OcilibFileFree
 (
     OCI_File *file
 )
@@ -224,12 +224,12 @@ boolean FileFree
 
     if (OCI_OBJECT_ALLOCATED == file->hstate)
     {
-        MemoryFreeDescriptor((dvoid*)file->handle, (ub4)OCI_DTYPE_LOB);
+        OcilibMemoryFreeDescriptor((dvoid*)file->handle, (ub4)OCI_DTYPE_LOB);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != file->hstate)
     {
-        ErrorResetSource(NULL, file);
+        OcilibErrorResetSource(NULL, file);
 
         FREE(file)
     }
@@ -240,10 +240,10 @@ boolean FileFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileArrayCreate
+ * OcilibFileArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File ** FileCreateArray
+OCI_File ** OcilibFileCreateArray
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -261,9 +261,9 @@ OCI_File ** FileCreateArray
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_ENUM_VALUE(type, FileTypeValues, OTEXT("File Type"))
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_FILE, type,
-                      sizeof(OCILobLocator*), sizeof(OCI_File),
-                      OCI_DTYPE_LOB, NULL);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_FILE, type,
+                            sizeof(OCILobLocator*), sizeof(OCI_File),
+                            OCI_DTYPE_LOB, NULL);
 
     CHECK_NULL(arr)
 
@@ -273,10 +273,10 @@ OCI_File ** FileCreateArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileArrayFree
+ * OcilibFileArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean FileFreeArray
+boolean OcilibFileFreeArray
 (
     OCI_File **files
 )
@@ -289,16 +289,16 @@ boolean FileFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, files)
 
-    SET_RETVAL(ArrayFreeFromHandles((void**)files))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void**)files))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileSeek
+ * OcilibFileSeek
  * --------------------------------------------------------------------------------------------- */
 
-boolean FileSeek
+boolean OcilibFileSeek
 (
     OCI_File    *file,
     big_uint     offset,
@@ -318,7 +318,7 @@ boolean FileSeek
     CHECK_PTR(OCI_IPC_FILE, file)
     CHECK_ENUM_VALUE(mode, SeekModeValues, OTEXT("Seek Mode"))
 
-    size = FileGetSize(file);
+    size = OcilibFileGetSize(file);
 
     switch (mode)
     {
@@ -360,10 +360,10 @@ boolean FileSeek
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileGetOffset
+ * OcilibFileGetOffset
  * --------------------------------------------------------------------------------------------- */
 
-big_uint FileGetOffset
+big_uint OcilibFileGetOffset
 (
     OCI_File *file
 )
@@ -382,10 +382,10 @@ big_uint FileGetOffset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileRead
+ * OcilibFileRead
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int FileRead
+unsigned int OcilibFileRead
 (
     OCI_File    *file,
     void        *buffer,
@@ -454,10 +454,10 @@ unsigned int FileRead
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileGetType
+ * OcilibFileGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int FileGetType
+unsigned int OcilibFileGetType
 (
     OCI_File *file
 )
@@ -471,10 +471,10 @@ unsigned int FileGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileGetSize
+ * OcilibFileGetSize
  * --------------------------------------------------------------------------------------------- */
 
-big_uint FileGetSize
+big_uint OcilibFileGetSize
 (
     OCI_File *file
 )
@@ -525,10 +525,10 @@ big_uint FileGetSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobFileExists
+ * OcilibFileExists
  * --------------------------------------------------------------------------------------------- */
 
-boolean FileExists
+boolean OcilibFileExists
 (
     OCI_File *file
 )
@@ -557,10 +557,10 @@ boolean FileExists
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileSetName
+ * OcilibFileSetName
  * --------------------------------------------------------------------------------------------- */
 
-boolean FileSetName
+boolean OcilibFileSetName
 (
     OCI_File    *file,
     const otext *dir,
@@ -580,8 +580,8 @@ boolean FileSetName
 
     CHECK_PTR(OCI_IPC_FILE, file)
 
-    dbstr1 = StringGetDBString(dir,  &dbsize1);
-    dbstr2 = StringGetDBString(name, &dbsize2);
+    dbstr1 = OcilibStringGetDBString(dir,  &dbsize1);
+    dbstr2 = OcilibStringGetDBString(name, &dbsize2);
 
     CHECK_OCI
     (
@@ -594,22 +594,22 @@ boolean FileSetName
         (OraText *) dbstr2, (ub2) dbsize2
     )
 
-    CHECK(FileGetInfo(file))
+    CHECK(OcilibFileGetInfo(file))
 
     SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr1);
-        StringReleaseDBString(dbstr2);
+        OcilibStringReleaseDBString(dbstr1);
+        OcilibStringReleaseDBString(dbstr2);
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileGetDirectory
+ * OcilibFileGetDirectory
  * --------------------------------------------------------------------------------------------- */
 
-const otext * FileGetDirectory
+const otext * OcilibFileGetDirectory
 (
     OCI_File *file
 )
@@ -624,7 +624,7 @@ const otext * FileGetDirectory
 
     if (!IS_STRING_VALID(file->dir))
     {
-        CHECK(FileGetInfo(file))
+        CHECK(OcilibFileGetInfo(file))
     }
 
     SET_RETVAL(file->dir)
@@ -633,10 +633,10 @@ const otext * FileGetDirectory
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileGetName
+ * OcilibFileGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * FileGetName
+const otext * OcilibFileGetName
 (
     OCI_File *file
 )
@@ -651,7 +651,7 @@ const otext * FileGetName
 
     if (!IS_STRING_VALID(file->name))
     {
-        CHECK(FileGetInfo(file))
+        CHECK(OcilibFileGetInfo(file))
     }
 
     SET_RETVAL(file->name)
@@ -660,10 +660,10 @@ const otext * FileGetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileOpen
+ * OcilibFileOpen
  * --------------------------------------------------------------------------------------------- */
 
-boolean FileOpen
+boolean OcilibFileOpen
 (
     OCI_File *file
 )
@@ -692,10 +692,10 @@ boolean FileOpen
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OCI_LobFileIsOpen
+ * OcilibFileIsOpen
  * --------------------------------------------------------------------------------------------- */
 
-boolean FileIsOpen
+boolean OcilibFileIsOpen
 (
     OCI_File *file
 )
@@ -724,10 +724,10 @@ boolean FileIsOpen
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileClose
+ * OcilibFileClose
  * --------------------------------------------------------------------------------------------- */
 
-boolean FileClose
+boolean OcilibFileClose
 (
     OCI_File *file
 )
@@ -756,10 +756,10 @@ boolean FileClose
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileIsEqual
+ * OcilibFileIsEqual
  * --------------------------------------------------------------------------------------------- */
 
-boolean FileIsEqual
+boolean OcilibFileIsEqual
 (
     OCI_File *file,
     OCI_File *file2
@@ -790,10 +790,10 @@ boolean FileIsEqual
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FileAssign
+ * OcilibFileAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean FileAssign
+boolean OcilibFileAssign
 (
     OCI_File *file,
     OCI_File *file_src
@@ -829,7 +829,7 @@ boolean FileAssign
         )
     }
 
-    CHECK(FileGetInfo(file))
+    CHECK(OcilibFileGetInfo(file))
 
     SET_SUCCESS()
 
@@ -837,10 +837,10 @@ boolean FileAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* FileGetConnection
+* OcilibFileGetConnection
 * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * FileGetConnection
+OCI_Connection * OcilibFileGetConnection
 (
     OCI_File *file
 )

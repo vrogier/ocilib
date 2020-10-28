@@ -132,12 +132,18 @@ typedef struct test_t
 
   #endif
 
+    #define ostrlen         wcslen
+    #define osprintf        wsprintf
+
 #else
 
   #define omain           main
   #define oarg            char
   #define print_args(x)   printf(x)
   #define GET_ARG(s, i)   strncat(s, argv[i], sizeof(s)-1)
+
+  #define ostrlen         strlen
+  #define osprintf        sprintf
 
 #endif
 

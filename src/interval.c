@@ -23,7 +23,7 @@
 #include "array.h"
 #include "helpers.h"
 #include "macros.h"
-#include "strings.h"
+#include "stringutils.h"
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -36,10 +36,10 @@ static const unsigned int IntervalTypeValues[] =
 #endif
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalInit
+ * OcilibIntervalInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval * IntervalInitialize
+OCI_Interval * OcilibIntervalInitialize
 (
     OCI_Connection *con,
     OCI_Interval   *itv,
@@ -47,10 +47,9 @@ OCI_Interval * IntervalInitialize
     ub4             type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ OCI_Interval*, itv,
-        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
+        /* returns */ OCI_Interval*, itv
     )
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
@@ -74,10 +73,10 @@ OCI_Interval * IntervalInitialize
         {
             CHECK
             (
-                MemoryAllocDescriptor
+                OcilibMemoryAllocDescriptor
                 (
                     (dvoid  *)itv->env, (dvoid **)(void *)&itv->handle,
-                    (ub4)ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type)
+                    (ub4)OcilibExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type)
                 )
             )
 
@@ -93,7 +92,7 @@ OCI_Interval * IntervalInitialize
     (
         if (FAILURE)
         {
-            IntervalFree(itv);
+            OcilibIntervalFree(itv);
             itv = NULL;
         }
 
@@ -114,10 +113,10 @@ OCI_Interval * IntervalInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalCreate
+ * OcilibIntervalCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval * IntervalCreate
+OCI_Interval * OcilibIntervalCreate
 (
     OCI_Connection *con,
     unsigned int    type
@@ -135,16 +134,16 @@ OCI_Interval * IntervalCreate
     CHECK_ENUM_VALUE(type, IntervalTypeValues, OTEXT("Interval type"))
 #endif
 
-    SET_RETVAL(IntervalInitialize(con, NULL, NULL, type))
+    SET_RETVAL(OcilibIntervalInitialize(con, NULL, NULL, type))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalFree
+ * OcilibIntervalFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalFree
+boolean OcilibIntervalFree
 (
     OCI_Interval *itv
 )
@@ -161,16 +160,16 @@ boolean IntervalFree
 
     if (OCI_OBJECT_ALLOCATED == itv->hstate)
     {
-        MemoryFreeDescriptor
+        OcilibMemoryFreeDescriptor
         (
             (dvoid*)itv->handle,
-            ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type)
+            OcilibExternalSubTypeToHandleType(OCI_CDT_INTERVAL, itv->type)
         );
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != itv->hstate)
     {
-        ErrorResetSource(NULL, itv);
+        OcilibErrorResetSource(NULL, itv);
 
         FREE(itv)
     }
@@ -181,10 +180,10 @@ boolean IntervalFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalArrayCreate
+ * OcilibIntervalArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval ** IntervalCreateArray
+OCI_Interval ** OcilibIntervalCreateArray
 (
     OCI_Connection *con,
     unsigned int    type,
@@ -207,9 +206,9 @@ OCI_Interval ** IntervalCreateArray
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    arr = ArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type,
-                      sizeof(OCIInterval*), sizeof(OCI_Interval),
-                      ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, type), NULL);
+    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_INTERVAL, type,
+                            sizeof(OCIInterval*), sizeof(OCI_Interval),
+                            OcilibExternalSubTypeToHandleType(OCI_CDT_INTERVAL, type), NULL);
 
     CHECK_NULL(arr)
 
@@ -227,10 +226,10 @@ OCI_Interval ** IntervalCreateArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalArrayFree
+ * OcilibIntervalArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalFreeArray
+boolean OcilibIntervalFreeArray
 (
     OCI_Interval **itvs
 )
@@ -243,16 +242,16 @@ boolean IntervalFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, itvs)
 
-    SET_RETVAL(ArrayFreeFromHandles((void**)itvs))
+    SET_RETVAL(OcilibArrayFreeFromHandles((void**)itvs))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalGetType
+ * OcilibIntervalGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int IntervalGetType
+unsigned int OcilibIntervalGetType
 (
     OCI_Interval *itv
 )
@@ -266,10 +265,10 @@ unsigned int IntervalGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalAssign
+ * OcilibIntervalAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalAssign
+boolean OcilibIntervalAssign
 (
     OCI_Interval *itv,
     OCI_Interval *itv_src
@@ -302,10 +301,10 @@ boolean IntervalAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalCheck
+ * OcilibIntervalCheck
  * --------------------------------------------------------------------------------------------- */
 
-int IntervalCheck
+int OcilibIntervalCheck
 (
     OCI_Interval *itv
 )
@@ -338,10 +337,10 @@ int IntervalCheck
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalCompare
+ * OcilibIntervalCompare
  * --------------------------------------------------------------------------------------------- */
 
-int IntervalCompare
+int OcilibIntervalCompare
 (
     OCI_Interval *itv,
     OCI_Interval *itv2
@@ -377,10 +376,10 @@ int IntervalCompare
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalFromString
+ * OcilibIntervalFromString
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalFromString
+boolean OcilibIntervalFromString
 (
     OCI_Interval* itv,
     const otext * str
@@ -398,7 +397,7 @@ boolean IntervalFromString
     CHECK_PTR(OCI_IPC_INTERVAL, itv)
     CHECK_PTR(OCI_IPC_STRING,   str)
 
-    dbstr = StringGetDBString(str, &dbsize);
+    dbstr = OcilibStringGetDBString(str, &dbsize);
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -417,15 +416,15 @@ boolean IntervalFromString
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(dbstr);
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalToString
+ * OcilibIntervalToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalToString
+boolean OcilibIntervalToString
 (
     OCI_Interval *itv,
     int           leading_prec,
@@ -451,7 +450,7 @@ boolean IntervalToString
 
     str[0] = 0;
 
-    dbstr = StringGetDBString(str, &dbsize);
+    dbstr = OcilibStringGetDBString(str, &dbsize);
 
     len = (size_t) dbsize;
 
@@ -477,7 +476,7 @@ boolean IntervalToString
 
     dbsize = (int)len;
 
-    StringCopyDBStringToNativeString(dbstr, str, dbcharcount(dbsize));
+    OcilibStringCopyDBStringToNativeString(dbstr, str, dbcharcount(dbsize));
 
     /* set null string terminator */
 
@@ -487,15 +486,15 @@ boolean IntervalToString
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(dbstr);
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalFromTimeZone
+ * OcilibIntervalFromTimeZone
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalFromTimeZone
+boolean OcilibIntervalFromTimeZone
 (
     OCI_Interval *itv,
     const otext * str
@@ -513,7 +512,7 @@ boolean IntervalFromTimeZone
     CHECK_PTR(OCI_IPC_INTERVAL, itv)
     CHECK_PTR(OCI_IPC_STRING,   str)
 
-    dbstr = StringGetDBString(str, &dbsize);
+    dbstr = OcilibStringGetDBString(str, &dbsize);
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -532,15 +531,15 @@ boolean IntervalFromTimeZone
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(dbstr);
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalGetDaySecond
+ * OcilibIntervalGetDaySecond
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalGetDaySecond
+boolean OcilibIntervalGetDaySecond
 (
     OCI_Interval *itv,
     int          *day,
@@ -595,10 +594,10 @@ boolean IntervalGetDaySecond
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalGetYearMonth
+ * OcilibIntervalGetYearMonth
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalGetYearMonth
+boolean OcilibIntervalGetYearMonth
 (
     OCI_Interval *itv,
     int          *year,
@@ -637,10 +636,10 @@ boolean IntervalGetYearMonth
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalSetDaySecond
+ * OcilibIntervalSetDaySecond
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalSetDaySecond
+boolean OcilibIntervalSetDaySecond
 (
     OCI_Interval *itv,
     int           day,
@@ -685,10 +684,10 @@ boolean IntervalSetDaySecond
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalSetYearMonth
+ * OcilibIntervalSetYearMonth
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalSetYearMonth
+boolean OcilibIntervalSetYearMonth
 (
     OCI_Interval *itv,
     int           year,
@@ -726,10 +725,10 @@ boolean IntervalSetYearMonth
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalAdd
+ * OcilibIntervalAdd
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalAdd
+boolean OcilibIntervalAdd
 (
     OCI_Interval *itv,
     OCI_Interval *itv2
@@ -762,10 +761,10 @@ boolean IntervalAdd
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IntervalSubtract
+ * OcilibIntervalSubtract
  * --------------------------------------------------------------------------------------------- */
 
-boolean IntervalSubtract
+boolean OcilibIntervalSubtract
 (
     OCI_Interval *itv,
     OCI_Interval *itv2

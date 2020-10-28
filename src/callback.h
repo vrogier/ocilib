@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-sb4 CallbackInBind
+OCI_SYM_LOCAL sb4 OcilibCallbackInBind
 (
     dvoid   *ictxp,
     OCIBind *bindp,
@@ -35,7 +35,7 @@ sb4 CallbackInBind
     dvoid  **indp
 );
 
-sb4 CallbackOutBind
+OCI_SYM_LOCAL sb4 OcilibCallbackOutBind
 (
     dvoid   *octxp,
     OCIBind *bindp,
@@ -48,7 +48,7 @@ sb4 CallbackOutBind
     ub2    **rcodep
 );
 
-ub4 CallbackNotifyChanges
+OCI_SYM_LOCAL ub4 OcilibCallbackNotifyChanges
 (
     void            *oci_ctx,
     OCISubscription *subscrhp,
@@ -58,7 +58,7 @@ ub4 CallbackNotifyChanges
     ub4              mode
 );
 
-ub4 CallbackNotifyMessages
+OCI_SYM_LOCAL ub4 OcilibCallbackNotifyMessages
 (
     void            *oci_ctx,
     OCISubscription *subscrhp,
@@ -68,7 +68,7 @@ ub4 CallbackNotifyMessages
     ub4              mode
 );
 
-sb4 CallbackFailOver
+OCI_SYM_LOCAL sb4 OcilibCallbackFailOver
 (
     dvoid *svchp,
     dvoid *envhp,
@@ -77,7 +77,7 @@ sb4 CallbackFailOver
     ub4    fo_event
 );
 
-void CallbackHAEvent
+OCI_SYM_LOCAL void OcilibCallbackHAEvent
 (
     dvoid *evtctx,
     dvoid *eventptr

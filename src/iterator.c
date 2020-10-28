@@ -24,10 +24,10 @@
 #include "macros.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * IteratorCreate
+ * OcilibIteratorCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Iter * IteratorCreate
+OCI_Iter * OcilibIteratorCreate
 (
     OCI_Coll *coll
 )
@@ -65,14 +65,14 @@ OCI_Iter * IteratorCreate
 
     /* create data element */
 
-    iter->elem = ElementInitialize(coll->con, iter->elem, NULL, (OCIInd*)NULL, coll->typinf);
+    iter->elem = OcilibElementInitialize(coll->con, iter->elem, NULL, (OCIInd*)NULL, coll->typinf);
     CHECK_NULL(iter->elem)
 
     CLEANUP_AND_EXIT_FUNC
     (
         if (FAILURE)
         {
-            IteratorFree(iter);
+            OcilibIteratorFree(iter);
             iter = NULL;
         }
 
@@ -81,10 +81,10 @@ OCI_Iter * IteratorCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IteratorFree
+ * OcilibIteratorFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean IteratorFree
+boolean OcilibIteratorFree
 (
     OCI_Iter *iter
 )
@@ -116,13 +116,13 @@ boolean IteratorFree
     if (NULL != iter->elem)
     {
         iter->elem->hstate = OCI_OBJECT_FETCHED_DIRTY;
-        ElementFree(iter->elem);
+        OcilibElementFree(iter->elem);
         iter->elem = NULL;
     }
 
     /* free iterator structure */
 
-    ErrorResetSource(NULL, iter);
+    OcilibErrorResetSource(NULL, iter);
 
     FREE(iter)
 
@@ -132,10 +132,10 @@ boolean IteratorFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IteratorGetNext
+ * OcilibIteratorGetNext
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * IteratorGetNext
+OCI_Elem * OcilibIteratorGetNext
 (
     OCI_Iter *iter
 )
@@ -166,8 +166,8 @@ OCI_Elem * IteratorGetNext
 
     CHECK(!iter->eoc)
 
-    iter->elem  = ElementInitialize(iter->coll->con, iter->elem, 
-                                    data, p_ind, iter->coll->typinf);
+    iter->elem  = OcilibElementInitialize(iter->coll->con, iter->elem,
+                                          data, p_ind, iter->coll->typinf);
     iter->dirty = FALSE;
     iter->boc   = FALSE;
 
@@ -177,10 +177,10 @@ OCI_Elem * IteratorGetNext
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IteratorGetPrev
+ * OcilibIteratorGetPrev
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * IteratorGetPrev
+OCI_Elem * OcilibIteratorGetPrev
 (
     OCI_Iter *iter
 )
@@ -211,7 +211,7 @@ OCI_Elem * IteratorGetPrev
 
     CHECK(!iter->boc)
 
-    iter->elem  = ElementInitialize(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
+    iter->elem  = OcilibElementInitialize(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
     iter->dirty = FALSE;
     iter->eoc   = FALSE;
 
@@ -221,10 +221,10 @@ OCI_Elem * IteratorGetPrev
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * IteratorGetCurrent
+ * OcilibIteratorGetCurrent
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * IteratorGetCurrent
+OCI_Elem * OcilibIteratorGetCurrent
 (
     OCI_Iter *iter
 )

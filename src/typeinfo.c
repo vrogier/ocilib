@@ -24,7 +24,7 @@
 #include "list.h"
 #include "macros.h"
 #include "memory.h"
-#include "strings.h"
+#include "stringutils.h"
 
 static unsigned int TypeInfoTypeValues[] =
 {
@@ -41,24 +41,24 @@ typedef struct TypeInfoFindParams
 } TypeInfoFindParams;
 
 /* --------------------------------------------------------------------------------------------- *
- * TypeInfoFind
+ * OcilibTypeInfoFind
  * --------------------------------------------------------------------------------------------- */
 
-static boolean TypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find_params)
+static boolean OcilibTypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find_params)
 {
     return
         typinf &&
         find_params &&
         typinf->type == find_params->type &&
-        ostrcasecmp(typinf->name,   find_params->name) == 0 &&
-        ostrcasecmp(typinf->schema, find_params->schema) == 0;
+        OcilibStringCaseCompare(typinf->name,   find_params->name) == 0 &&
+        OcilibStringCaseCompare(typinf->schema, find_params->schema) == 0;
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TypeInfoDispose
+ * OcilibTypeInfoDispose
  * --------------------------------------------------------------------------------------------- */
 
-boolean TypeInfoDispose
+boolean OcilibTypeInfoDispose
 (
     OCI_TypeInfo *typinf
 )
@@ -81,7 +81,7 @@ boolean TypeInfoDispose
     FREE(typinf->schema)
     FREE(typinf->offsets)
 
-    ErrorResetSource(NULL, typinf);
+    OcilibErrorResetSource(NULL, typinf);
 
     SET_SUCCESS()
 
@@ -89,10 +89,10 @@ boolean TypeInfoDispose
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TypeInfoGet
+ * OcilibTypeInfoGet
  * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo * TypeInfoGet
+OCI_TypeInfo * OcilibTypeInfoGet
 (
     OCI_Connection *con,
     const otext    *name,
@@ -196,24 +196,24 @@ OCI_TypeInfo * TypeInfoGet
     find_params.name   = obj_name;
     find_params.schema = obj_schema;
 
-    typinf = ListFind(con->tinfs, (POCI_LIST_FIND)TypeInfoFind, &find_params);
+    typinf = OcilibListFind(con->tinfs, (POCI_LIST_FIND)OcilibTypeInfoFind, &find_params);
 
     /* Not found, so create type object */
 
     if (NULL == typinf)
     {
-        typinf = ListAppend(con->tinfs, sizeof(OCI_TypeInfo));
+        typinf = OcilibListAppend(con->tinfs, sizeof(OCI_TypeInfo));
         CHECK_NULL(typinf)
 
         /* allocate describe handle */
 
         typinf->con         = con;
-        typinf->name        = ostrdup(obj_name);
-        typinf->schema      = ostrdup(obj_schema);
+        typinf->name        = OcilibStringDuplicate(obj_name);
+        typinf->schema      = OcilibStringDuplicate(obj_schema);
         typinf->struct_size = 0;
         typinf->align       = 0;
 
-        CHECK(MemoryAllocHandle(typinf->con->env, (dvoid **)(void *)&dschp, OCI_HTYPE_DESCRIBE))
+        CHECK(OcilibMemoryAllocHandle(typinf->con->env, (dvoid **)(void *)&dschp, OCI_HTYPE_DESCRIBE))
 
         /* perform describe */
 
@@ -232,7 +232,7 @@ OCI_TypeInfo * TypeInfoGet
 
         ostrncat(str, typinf->name, max_chars);
 
-        dbstr1 = StringGetDBString(str, &dbsize1);
+        dbstr1 = OcilibStringGetDBString(str, &dbsize1);
 
         /* set public scope to include synonyms */
 
@@ -364,22 +364,23 @@ OCI_TypeInfo * TypeInfoGet
 
                     /* get super type schema and name */
 
-                    CHECK(StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
-                                             OCI_ATTR_SUPERTYPE_SCHEMA_NAME,
-                                             &sp_schema_name, &sp_size_schema))
+                    CHECK(OcilibStringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
+                                                   OCI_ATTR_SUPERTYPE_SCHEMA_NAME,
+                                                   &sp_schema_name, &sp_size_schema))
 
-                    CHECK(StringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
-                                             OCI_ATTR_SUPERTYPE_NAME,
-                                             &sp_object_name, &sp_size_object))
+                    CHECK(OcilibStringGetAttribute(con, param_root, OCI_DTYPE_PARAM,
+                                                   OCI_ATTR_SUPERTYPE_NAME,
+                                                   &sp_object_name, &sp_size_object))
 
                     /* compute super type full name */
 
-                    StringGetFullTypeName(sp_schema_name, NULL, sp_object_name, NULL, sp_fullname,
-                                          (sizeof(sp_fullname) / sizeof(otext)) - 1);
+                        OcilibStringGetFullTypeName(sp_schema_name, NULL, sp_object_name,
+                                                    NULL, sp_fullname,
+                                                    (sizeof(sp_fullname) / sizeof(otext)) - 1);
 
                     /* retrieve the type info of the real object */
 
-                    typinf->parent_type = TypeInfoGet(con, sp_fullname, type);
+                    typinf->parent_type = OcilibTypeInfoGet(con, sp_fullname, type);
 
                     CHECK_NULL(typinf->parent_type)
                 }
@@ -414,7 +415,7 @@ OCI_TypeInfo * TypeInfoGet
                     }
                     default:
                     {
-                        THROW(ExceptionDatatypeNotSupported, typinf->typecode)
+                        THROW(OcilibExceptionDatatypeNotSupported, typinf->typecode)
                         break;
                     }
                 }
@@ -444,32 +445,34 @@ OCI_TypeInfo * TypeInfoGet
 
                 /* get link schema, object and database link names */
 
-                CHECK(StringGetAttribute(con, param_root,
-                                         OCI_DTYPE_PARAM,
-                                         OCI_ATTR_SCHEMA_NAME,
-                                         &syn_schema_name,
-                                         &size_schema))
+                CHECK(OcilibStringGetAttribute(con, param_root,
+                                               OCI_DTYPE_PARAM,
+                                               OCI_ATTR_SCHEMA_NAME,
+                                               &syn_schema_name,
+                                               &size_schema))
 
-                CHECK(StringGetAttribute(con, param_root,
-                                         OCI_DTYPE_PARAM,
-                                         OCI_ATTR_NAME,
-                                         &syn_object_name,
-                                         &size_object))
+                CHECK(OcilibStringGetAttribute(con, param_root,
+                                               OCI_DTYPE_PARAM,
+                                               OCI_ATTR_NAME,
+                                               &syn_object_name,
+                                               &size_object))
 
-                CHECK(StringGetAttribute(con, param_root,
-                                         OCI_DTYPE_PARAM,
-                                         OCI_ATTR_LINK,
-                                         &syn_link_name,
-                                         &size_link))
+                CHECK(OcilibStringGetAttribute(con, param_root,
+                                               OCI_DTYPE_PARAM,
+                                               OCI_ATTR_LINK,
+                                               &syn_link_name,
+                                               &size_link))
 
                 /* compute link full name */
 
-                StringGetFullTypeName(syn_schema_name, NULL, syn_object_name, syn_link_name, syn_fullname,
-                                      (sizeof(syn_fullname) / sizeof(otext)) - 1);
+                    OcilibStringGetFullTypeName(syn_schema_name, NULL, 
+                                                syn_object_name, syn_link_name,
+                                                syn_fullname,
+                                                (sizeof(syn_fullname) / sizeof(otext)) - 1);
 
                 /* retrieve the type info of the real object */
 
-                syn_typinf = TypeInfoGet(con, syn_fullname, type);
+                syn_typinf = OcilibTypeInfoGet(con, syn_fullname, type);
 
                 /* do we have a valid object ? */
 
@@ -520,8 +523,8 @@ OCI_TypeInfo * TypeInfoGet
 
                 for (ub2 i = 0; i < typinf->nb_cols; i++)
                 {
-                    CHECK(ColumnRetrieveInfo(&typinf->cols[i], con, NULL, param_cols, i + 1, ptype))
-                    CHECK(ColumnMapInfo(&typinf->cols[i], NULL))
+                    CHECK(OcilibColumnRetrieveInfo(&typinf->cols[i], con, NULL, param_cols, i + 1, ptype))
+                    CHECK(OcilibColumnMapInfo(&typinf->cols[i], NULL))
                 }
             }
         }
@@ -529,7 +532,7 @@ OCI_TypeInfo * TypeInfoGet
 
     /* free describe handle */
 
-    MemoryFreeHandle(dschp, OCI_HTYPE_DESCRIBE);
+    OcilibMemoryFreeHandle(dschp, OCI_HTYPE_DESCRIBE);
 
     /* increment type info reference counter on success */
 
@@ -539,37 +542,37 @@ OCI_TypeInfo * TypeInfoGet
 
     if ((type != OCI_UNKNOWN) && ((syn_typinf && syn_typinf->type != type) || (!syn_typinf && typinf->type != type)))
     {
-        THROW(ExceptionTypeInfoWrongType, name)
+        THROW(OcilibExceptionTypeInfoWrongType, name)
     }
 
     SET_RETVAL(syn_typinf ? syn_typinf : typinf)
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr1);
+        OcilibStringReleaseDBString(dbstr1);
 
         /* free temporary strings */
 
-        MemoryFree(syn_link_name);
-        MemoryFree(syn_object_name);
-        MemoryFree(syn_schema_name);
-        MemoryFree(sp_schema_name);
-        MemoryFree(sp_object_name);
+        OcilibMemoryFree(syn_link_name);
+        OcilibMemoryFree(syn_object_name);
+        OcilibMemoryFree(syn_schema_name);
+        OcilibMemoryFree(sp_schema_name);
+        OcilibMemoryFree(sp_object_name);
 
-        MemoryFreeHandle(dschp, OCI_HTYPE_DESCRIBE);
+        OcilibMemoryFreeHandle(dschp, OCI_HTYPE_DESCRIBE);
 
         if (FAILURE || syn_typinf)
         {
-            TypeInfoFree(typinf);
+            OcilibTypeInfoFree(typinf);
         }
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TypeInfoFree
+ * OcilibTypeInfoFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean TypeInfoFree
+boolean OcilibTypeInfoFree
 (
     OCI_TypeInfo *typinf
 )
@@ -586,8 +589,8 @@ boolean TypeInfoFree
 
     if (typinf->refcount == 0)
     {
-        ListRemove(typinf->con->tinfs, typinf);
-        TypeInfoDispose(typinf);
+        OcilibListRemove(typinf->con->tinfs, typinf);
+        OcilibTypeInfoDispose(typinf);
 
         FREE(typinf)
     }
@@ -598,10 +601,10 @@ boolean TypeInfoFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TypeInfoGetType
+ * OcilibTypeInfoGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int TypeInfoGetType
+unsigned int OcilibTypeInfoGetType
 (
     OCI_TypeInfo *typinf
 )
@@ -615,10 +618,10 @@ unsigned int TypeInfoGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TypeInfoGetConnection
+ * OcilibTypeInfoGetConnection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * TypeInfoGetConnection
+OCI_Connection * OcilibTypeInfoGetConnection
 (
     OCI_TypeInfo *typinf
 )
@@ -632,10 +635,10 @@ OCI_Connection * TypeInfoGetConnection
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TypeInfoGetColumnCount
+ * OcilibTypeInfoGetColumnCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int TypeInfoGetColumnCount
+unsigned int OcilibTypeInfoGetColumnCount
 (
     OCI_TypeInfo *typinf
 )
@@ -649,10 +652,10 @@ unsigned int TypeInfoGetColumnCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TypeInfoGetColumn
+ * OcilibTypeInfoGetColumn
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Column * TypeInfoGetColumn
+OCI_Column * OcilibTypeInfoGetColumn
 (
     OCI_TypeInfo *typinf,
     unsigned int  index
@@ -673,10 +676,10 @@ OCI_Column * TypeInfoGetColumn
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * TypeInfoGetName
+ * OcilibTypeInfoGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * TypeInfoGetName
+const otext * OcilibTypeInfoGetName
 (
     OCI_TypeInfo *typinf
 )
@@ -690,10 +693,10 @@ const otext * TypeInfoGetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_TypeInfoIsFinalType
+* OcilibTypeInfoIsFinalType
 * --------------------------------------------------------------------------------------------- */
 
-boolean TypeInfoIsFinalType
+boolean OcilibTypeInfoIsFinalType
 (
     OCI_TypeInfo *typinf
 )
@@ -707,10 +710,10 @@ boolean TypeInfoIsFinalType
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_TypeInfoGetSuperType
+* OcilibTypeInfoGetSuperType
 * --------------------------------------------------------------------------------------------- */
 
-OCI_TypeInfo* TypeInfoGetSuperType
+OCI_TypeInfo* OcilibTypeInfoGetSuperType
 (
     OCI_TypeInfo *typinf
 )

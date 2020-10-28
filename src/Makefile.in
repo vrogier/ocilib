@@ -108,7 +108,10 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(include_HEADERS) \
-	$(noinst_HEADERS) $(am__DIST_COMMON)
+	$(noinst_HEADERS) $(ocilibcppdetailcoresub_HEADERS) \
+	$(ocilibcppdetailsub_HEADERS) \
+	$(ocilibcppdetailsupportsub_HEADERS) $(ocilibcppsub_HEADERS) \
+	$(ocilibcsub_HEADERS) $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
@@ -140,31 +143,36 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)" \
+	"$(DESTDIR)$(ocilibcppdetailcoresubdir)" \
+	"$(DESTDIR)$(ocilibcppdetailsubdir)" \
+	"$(DESTDIR)$(ocilibcppdetailsupportsubdir)" \
+	"$(DESTDIR)$(ocilibcppsubdir)" "$(DESTDIR)$(ocilibcsubdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libocilib_la_DEPENDENCIES =
-am_libocilib_la_OBJECTS = libocilib_la-array.lo libocilib_la-bind.lo \
-	libocilib_la-callback.lo libocilib_la-connection.lo \
-	libocilib_la-define.lo libocilib_la-exception.lo \
-	libocilib_la-handle.lo libocilib_la-iterator.lo \
-	libocilib_la-lob.lo libocilib_la-mutex.lo \
-	libocilib_la-resultset.lo libocilib_la-string.lo \
-	libocilib_la-timestamp.lo libocilib_la-collection.lo \
-	libocilib_la-pool.lo libocilib_la-element.lo \
-	libocilib_la-file.lo libocilib_la-hash.lo \
-	libocilib_la-library.lo libocilib_la-long.lo \
-	libocilib_la-number.lo libocilib_la-typeinfo.lo \
-	libocilib_la-thread.lo libocilib_la-transaction.lo \
-	libocilib_la-column.lo libocilib_la-date.lo \
-	libocilib_la-error.lo libocilib_la-format.lo \
-	libocilib_la-interval.lo libocilib_la-list.lo \
-	libocilib_la-memory.lo libocilib_la-object.lo \
-	libocilib_la-statement.lo libocilib_la-ref.lo \
-	libocilib_la-threadkey.lo libocilib_la-dirpath.lo \
-	libocilib_la-event.lo libocilib_la-subscription.lo \
-	libocilib_la-agent.lo libocilib_la-dequeue.lo \
-	libocilib_la-enqueue.lo libocilib_la-msg.lo \
-	libocilib_la-queue.lo
+am_libocilib_la_OBJECTS = libocilib_la-agent.lo libocilib_la-array.lo \
+	libocilib_la-bind.lo libocilib_la-callback.lo \
+	libocilib_la-collection.lo libocilib_la-column.lo \
+	libocilib_la-connection.lo libocilib_la-date.lo \
+	libocilib_la-database.lo libocilib_la-define.lo \
+	libocilib_la-dequeue.lo libocilib_la-dirpath.lo \
+	libocilib_la-element.lo libocilib_la-enqueue.lo \
+	libocilib_la-environment.lo libocilib_la-error.lo \
+	libocilib_la-event.lo libocilib_la-exception.lo \
+	libocilib_la-file.lo libocilib_la-format.lo \
+	libocilib_la-handle.lo libocilib_la-hash.lo \
+	libocilib_la-helpers.lo libocilib_la-interval.lo \
+	libocilib_la-iterator.lo libocilib_la-list.lo \
+	libocilib_la-lob.lo libocilib_la-long.lo \
+	libocilib_la-memory.lo libocilib_la-message.lo \
+	libocilib_la-mutex.lo libocilib_la-number.lo \
+	libocilib_la-object.lo libocilib_la-ocilib.lo \
+	libocilib_la-pool.lo libocilib_la-queue.lo \
+	libocilib_la-reference.lo libocilib_la-resultset.lo \
+	libocilib_la-statement.lo libocilib_la-stringutils.lo \
+	libocilib_la-subscription.lo libocilib_la-thread.lo \
+	libocilib_la-threadkey.lo libocilib_la-timestamp.lo \
+	libocilib_la-transaction.lo libocilib_la-typeinfo.lo
 libocilib_la_OBJECTS = $(am_libocilib_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -185,7 +193,7 @@ AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
-DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
+DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
@@ -214,7 +222,11 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-HEADERS = $(include_HEADERS) $(noinst_HEADERS)
+HEADERS = $(include_HEADERS) $(noinst_HEADERS) \
+	$(ocilibcppdetailcoresub_HEADERS) \
+	$(ocilibcppdetailsub_HEADERS) \
+	$(ocilibcppdetailsupportsub_HEADERS) $(ocilibcppsub_HEADERS) \
+	$(ocilibcsub_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -290,6 +302,7 @@ OBJEXT = @OBJEXT@
 OCILIB_CHARSET = @OCILIB_CHARSET@
 OCILIB_DEMO_SOURCES = @OCILIB_DEMO_SOURCES@
 OCILIB_DOCS = @OCILIB_DOCS@
+OCILIB_EXTRA_FLAGS = @OCILIB_EXTRA_FLAGS@
 OCILIB_IMPORT = @OCILIB_IMPORT@
 OCILIB_LD_FLAG = @OCILIB_LD_FLAG@
 OCILIB_PREFIX = @OCILIB_PREFIX@
@@ -357,6 +370,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -368,7 +382,7 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = @ORACLE_INCLUDES@ -I$(top_srcdir)/include
 lib_LTLIBRARIES = libocilib.la
 libocilib_la_LIBADD = @ORACLE_LIBADD@ 
-libocilib_la_SOURCES=   \
+libocilib_la_SOURCES = \
     agent.c             \
     array.c             \
     bind.c              \
@@ -408,7 +422,7 @@ libocilib_la_SOURCES=   \
     reference.c         \
     resultset.c         \
     statement.c         \
-    strings.c           \
+    stringutils.c       \
     subscription.c      \
     thread.c            \
     threadkey.c         \
@@ -416,19 +430,24 @@ libocilib_la_SOURCES=   \
     transaction.c       \
     typeinfo.c
 
-libocilib_la_CFLAGS = -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
+libocilib_la_CFLAGS = @OCILIB_EXTRA_FLAGS@ -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
 libocilib_la_LDFLAGS = @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
-include_HEADERS=                             \
-    $(top_srcdir)/include/ocilib.h           \
-    $(top_srcdir)/include/ocilibc/api.h      \
-    $(top_srcdir)/include/ocilibc/compat.h   \
-    $(top_srcdir)/include/ocilibc/config.h   \
-    $(top_srcdir)/include/ocilibc/types.h    \
-    $(top_srcdir)/include/ocilib.hpp         \
-    $(top_srcdir)/include/ocilibcpp/core.hpp \
-    $(top_srcdir)/include/ocilibcpp/impl.hpp
-noinst_HEADERS=     \
-	agent.h         \
+ocilibcsubdir = $(includedir)/ocilibc
+ocilibcsub_HEADERS = $(top_srcdir)/include/ocilibc/*.h
+ocilibcppsubdir = $(includedir)/ocilibcpp
+ocilibcppsub_HEADERS = $(top_srcdir)/include/ocilibcpp/*.hpp
+ocilibcppdetailsubdir = $(includedir)/ocilibcpp/detail
+ocilibcppdetailsub_HEADERS = $(top_srcdir)/include/ocilibcpp/detail/*.hpp
+ocilibcppdetailcoresubdir = $(includedir)/ocilibcpp/detail/core
+ocilibcppdetailcoresub_HEADERS = $(top_srcdir)/include/ocilibcpp/detail/core/*.hpp
+ocilibcppdetailsupportsubdir = $(includedir)/ocilibcpp/detail/support
+ocilibcppdetailsupportsub_HEADERS = $(top_srcdir)/include/ocilibcpp/detail/support/*.hpp
+include_HEADERS = \
+    $(top_srcdir)/include/ocilib.h       	\
+    $(top_srcdir)/include/ocilib.hpp
+
+noinst_HEADERS = \
+    agent.h         \
     array.h         \
     bind.h          \
     callback.h      \
@@ -470,7 +489,7 @@ noinst_HEADERS=     \
     reference.h     \
     resultset.h     \
     statement.h     \
-    strings.h       \
+    stringutils.h   \
     subscription.h  \
     thread.h        \
     threadkey.h     \
@@ -478,9 +497,9 @@ noinst_HEADERS=     \
     transaction.h   \
     typeinfo.h      \
     types.h         \
-	oci/types.h     \
-	oci/defs.h      \
-	oci/api.h 
+    oci/types.h     \
+    oci/defs.h      \
+    oci/api.h 
 
 CLEANFILES = *~ 
 all: all-am
@@ -568,12 +587,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-collection.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-column.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-connection.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-database.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-date.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-define.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-dequeue.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-dirpath.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-element.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-enqueue.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-environment.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-error.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-event.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-exception.Plo@am__quote@
@@ -581,23 +602,24 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-format.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-handle.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-hash.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-helpers.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-interval.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-iterator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-library.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-list.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-lob.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-long.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-memory.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-msg.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-message.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-mutex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-number.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-object.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-ocilib.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-pool.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-queue.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-ref.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-reference.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-resultset.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-statement.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-string.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-stringutils.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-subscription.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-thread.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-threadkey.Plo@am__quote@
@@ -626,6 +648,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
+libocilib_la-agent.lo: agent.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-agent.lo -MD -MP -MF $(DEPDIR)/libocilib_la-agent.Tpo -c -o libocilib_la-agent.lo `test -f 'agent.c' || echo '$(srcdir)/'`agent.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-agent.Tpo $(DEPDIR)/libocilib_la-agent.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='agent.c' object='libocilib_la-agent.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-agent.lo `test -f 'agent.c' || echo '$(srcdir)/'`agent.c
+
 libocilib_la-array.lo: array.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-array.lo -MD -MP -MF $(DEPDIR)/libocilib_la-array.Tpo -c -o libocilib_la-array.lo `test -f 'array.c' || echo '$(srcdir)/'`array.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-array.Tpo $(DEPDIR)/libocilib_la-array.Plo
@@ -647,152 +676,12 @@ libocilib_la-callback.lo: callback.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-callback.lo `test -f 'callback.c' || echo '$(srcdir)/'`callback.c
 
-libocilib_la-connection.lo: connection.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-connection.lo -MD -MP -MF $(DEPDIR)/libocilib_la-connection.Tpo -c -o libocilib_la-connection.lo `test -f 'connection.c' || echo '$(srcdir)/'`connection.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-connection.Tpo $(DEPDIR)/libocilib_la-connection.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='connection.c' object='libocilib_la-connection.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-connection.lo `test -f 'connection.c' || echo '$(srcdir)/'`connection.c
-
-libocilib_la-define.lo: define.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-define.lo -MD -MP -MF $(DEPDIR)/libocilib_la-define.Tpo -c -o libocilib_la-define.lo `test -f 'define.c' || echo '$(srcdir)/'`define.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-define.Tpo $(DEPDIR)/libocilib_la-define.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='define.c' object='libocilib_la-define.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-define.lo `test -f 'define.c' || echo '$(srcdir)/'`define.c
-
-libocilib_la-exception.lo: exception.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-exception.lo -MD -MP -MF $(DEPDIR)/libocilib_la-exception.Tpo -c -o libocilib_la-exception.lo `test -f 'exception.c' || echo '$(srcdir)/'`exception.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-exception.Tpo $(DEPDIR)/libocilib_la-exception.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='exception.c' object='libocilib_la-exception.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-exception.lo `test -f 'exception.c' || echo '$(srcdir)/'`exception.c
-
-libocilib_la-handle.lo: handle.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-handle.lo -MD -MP -MF $(DEPDIR)/libocilib_la-handle.Tpo -c -o libocilib_la-handle.lo `test -f 'handle.c' || echo '$(srcdir)/'`handle.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-handle.Tpo $(DEPDIR)/libocilib_la-handle.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='handle.c' object='libocilib_la-handle.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-handle.lo `test -f 'handle.c' || echo '$(srcdir)/'`handle.c
-
-libocilib_la-iterator.lo: iterator.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-iterator.lo -MD -MP -MF $(DEPDIR)/libocilib_la-iterator.Tpo -c -o libocilib_la-iterator.lo `test -f 'iterator.c' || echo '$(srcdir)/'`iterator.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-iterator.Tpo $(DEPDIR)/libocilib_la-iterator.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='iterator.c' object='libocilib_la-iterator.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-iterator.lo `test -f 'iterator.c' || echo '$(srcdir)/'`iterator.c
-
-libocilib_la-lob.lo: lob.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-lob.lo -MD -MP -MF $(DEPDIR)/libocilib_la-lob.Tpo -c -o libocilib_la-lob.lo `test -f 'lob.c' || echo '$(srcdir)/'`lob.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-lob.Tpo $(DEPDIR)/libocilib_la-lob.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lob.c' object='libocilib_la-lob.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-lob.lo `test -f 'lob.c' || echo '$(srcdir)/'`lob.c
-
-libocilib_la-mutex.lo: mutex.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-mutex.lo -MD -MP -MF $(DEPDIR)/libocilib_la-mutex.Tpo -c -o libocilib_la-mutex.lo `test -f 'mutex.c' || echo '$(srcdir)/'`mutex.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-mutex.Tpo $(DEPDIR)/libocilib_la-mutex.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mutex.c' object='libocilib_la-mutex.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-mutex.lo `test -f 'mutex.c' || echo '$(srcdir)/'`mutex.c
-
-libocilib_la-resultset.lo: resultset.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-resultset.lo -MD -MP -MF $(DEPDIR)/libocilib_la-resultset.Tpo -c -o libocilib_la-resultset.lo `test -f 'resultset.c' || echo '$(srcdir)/'`resultset.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-resultset.Tpo $(DEPDIR)/libocilib_la-resultset.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='resultset.c' object='libocilib_la-resultset.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-resultset.lo `test -f 'resultset.c' || echo '$(srcdir)/'`resultset.c
-
-libocilib_la-string.lo: string.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-string.lo -MD -MP -MF $(DEPDIR)/libocilib_la-string.Tpo -c -o libocilib_la-string.lo `test -f 'string.c' || echo '$(srcdir)/'`string.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-string.Tpo $(DEPDIR)/libocilib_la-string.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='string.c' object='libocilib_la-string.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-string.lo `test -f 'string.c' || echo '$(srcdir)/'`string.c
-
-libocilib_la-timestamp.lo: timestamp.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-timestamp.lo -MD -MP -MF $(DEPDIR)/libocilib_la-timestamp.Tpo -c -o libocilib_la-timestamp.lo `test -f 'timestamp.c' || echo '$(srcdir)/'`timestamp.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-timestamp.Tpo $(DEPDIR)/libocilib_la-timestamp.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='timestamp.c' object='libocilib_la-timestamp.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-timestamp.lo `test -f 'timestamp.c' || echo '$(srcdir)/'`timestamp.c
-
 libocilib_la-collection.lo: collection.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-collection.lo -MD -MP -MF $(DEPDIR)/libocilib_la-collection.Tpo -c -o libocilib_la-collection.lo `test -f 'collection.c' || echo '$(srcdir)/'`collection.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-collection.Tpo $(DEPDIR)/libocilib_la-collection.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='collection.c' object='libocilib_la-collection.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-collection.lo `test -f 'collection.c' || echo '$(srcdir)/'`collection.c
-
-libocilib_la-pool.lo: pool.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-pool.lo -MD -MP -MF $(DEPDIR)/libocilib_la-pool.Tpo -c -o libocilib_la-pool.lo `test -f 'pool.c' || echo '$(srcdir)/'`pool.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-pool.Tpo $(DEPDIR)/libocilib_la-pool.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pool.c' object='libocilib_la-pool.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-pool.lo `test -f 'pool.c' || echo '$(srcdir)/'`pool.c
-
-libocilib_la-element.lo: element.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-element.lo -MD -MP -MF $(DEPDIR)/libocilib_la-element.Tpo -c -o libocilib_la-element.lo `test -f 'element.c' || echo '$(srcdir)/'`element.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-element.Tpo $(DEPDIR)/libocilib_la-element.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='element.c' object='libocilib_la-element.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-element.lo `test -f 'element.c' || echo '$(srcdir)/'`element.c
-
-libocilib_la-file.lo: file.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-file.lo -MD -MP -MF $(DEPDIR)/libocilib_la-file.Tpo -c -o libocilib_la-file.lo `test -f 'file.c' || echo '$(srcdir)/'`file.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-file.Tpo $(DEPDIR)/libocilib_la-file.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='file.c' object='libocilib_la-file.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-file.lo `test -f 'file.c' || echo '$(srcdir)/'`file.c
-
-libocilib_la-hash.lo: hash.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-hash.lo -MD -MP -MF $(DEPDIR)/libocilib_la-hash.Tpo -c -o libocilib_la-hash.lo `test -f 'hash.c' || echo '$(srcdir)/'`hash.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-hash.Tpo $(DEPDIR)/libocilib_la-hash.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hash.c' object='libocilib_la-hash.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-hash.lo `test -f 'hash.c' || echo '$(srcdir)/'`hash.c
-
-libocilib_la-library.lo: library.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-library.lo -MD -MP -MF $(DEPDIR)/libocilib_la-library.Tpo -c -o libocilib_la-library.lo `test -f 'library.c' || echo '$(srcdir)/'`library.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-library.Tpo $(DEPDIR)/libocilib_la-library.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='library.c' object='libocilib_la-library.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-library.lo `test -f 'library.c' || echo '$(srcdir)/'`library.c
-
-libocilib_la-long.lo: long.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-long.lo -MD -MP -MF $(DEPDIR)/libocilib_la-long.Tpo -c -o libocilib_la-long.lo `test -f 'long.c' || echo '$(srcdir)/'`long.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-long.Tpo $(DEPDIR)/libocilib_la-long.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='long.c' object='libocilib_la-long.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-long.lo `test -f 'long.c' || echo '$(srcdir)/'`long.c
-
-libocilib_la-number.lo: number.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-number.lo -MD -MP -MF $(DEPDIR)/libocilib_la-number.Tpo -c -o libocilib_la-number.lo `test -f 'number.c' || echo '$(srcdir)/'`number.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-number.Tpo $(DEPDIR)/libocilib_la-number.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='number.c' object='libocilib_la-number.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-number.lo `test -f 'number.c' || echo '$(srcdir)/'`number.c
-
-libocilib_la-typeinfo.lo: typeinfo.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-typeinfo.lo -MD -MP -MF $(DEPDIR)/libocilib_la-typeinfo.Tpo -c -o libocilib_la-typeinfo.lo `test -f 'typeinfo.c' || echo '$(srcdir)/'`typeinfo.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-typeinfo.Tpo $(DEPDIR)/libocilib_la-typeinfo.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='typeinfo.c' object='libocilib_la-typeinfo.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-typeinfo.lo `test -f 'typeinfo.c' || echo '$(srcdir)/'`typeinfo.c
-
-libocilib_la-thread.lo: thread.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-thread.lo -MD -MP -MF $(DEPDIR)/libocilib_la-thread.Tpo -c -o libocilib_la-thread.lo `test -f 'thread.c' || echo '$(srcdir)/'`thread.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-thread.Tpo $(DEPDIR)/libocilib_la-thread.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='thread.c' object='libocilib_la-thread.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-thread.lo `test -f 'thread.c' || echo '$(srcdir)/'`thread.c
-
-libocilib_la-transaction.lo: transaction.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-transaction.lo -MD -MP -MF $(DEPDIR)/libocilib_la-transaction.Tpo -c -o libocilib_la-transaction.lo `test -f 'transaction.c' || echo '$(srcdir)/'`transaction.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-transaction.Tpo $(DEPDIR)/libocilib_la-transaction.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='transaction.c' object='libocilib_la-transaction.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-transaction.lo `test -f 'transaction.c' || echo '$(srcdir)/'`transaction.c
 
 libocilib_la-column.lo: column.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-column.lo -MD -MP -MF $(DEPDIR)/libocilib_la-column.Tpo -c -o libocilib_la-column.lo `test -f 'column.c' || echo '$(srcdir)/'`column.c
@@ -801,6 +690,13 @@ libocilib_la-column.lo: column.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-column.lo `test -f 'column.c' || echo '$(srcdir)/'`column.c
 
+libocilib_la-connection.lo: connection.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-connection.lo -MD -MP -MF $(DEPDIR)/libocilib_la-connection.Tpo -c -o libocilib_la-connection.lo `test -f 'connection.c' || echo '$(srcdir)/'`connection.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-connection.Tpo $(DEPDIR)/libocilib_la-connection.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='connection.c' object='libocilib_la-connection.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-connection.lo `test -f 'connection.c' || echo '$(srcdir)/'`connection.c
+
 libocilib_la-date.lo: date.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-date.lo -MD -MP -MF $(DEPDIR)/libocilib_la-date.Tpo -c -o libocilib_la-date.lo `test -f 'date.c' || echo '$(srcdir)/'`date.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-date.Tpo $(DEPDIR)/libocilib_la-date.Plo
@@ -808,96 +704,19 @@ libocilib_la-date.lo: date.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-date.lo `test -f 'date.c' || echo '$(srcdir)/'`date.c
 
-libocilib_la-error.lo: error.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-error.lo -MD -MP -MF $(DEPDIR)/libocilib_la-error.Tpo -c -o libocilib_la-error.lo `test -f 'error.c' || echo '$(srcdir)/'`error.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-error.Tpo $(DEPDIR)/libocilib_la-error.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='error.c' object='libocilib_la-error.lo' libtool=yes @AMDEPBACKSLASH@
+libocilib_la-database.lo: database.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-database.lo -MD -MP -MF $(DEPDIR)/libocilib_la-database.Tpo -c -o libocilib_la-database.lo `test -f 'database.c' || echo '$(srcdir)/'`database.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-database.Tpo $(DEPDIR)/libocilib_la-database.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='database.c' object='libocilib_la-database.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-error.lo `test -f 'error.c' || echo '$(srcdir)/'`error.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-database.lo `test -f 'database.c' || echo '$(srcdir)/'`database.c
 
-libocilib_la-format.lo: format.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-format.lo -MD -MP -MF $(DEPDIR)/libocilib_la-format.Tpo -c -o libocilib_la-format.lo `test -f 'format.c' || echo '$(srcdir)/'`format.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-format.Tpo $(DEPDIR)/libocilib_la-format.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='format.c' object='libocilib_la-format.lo' libtool=yes @AMDEPBACKSLASH@
+libocilib_la-define.lo: define.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-define.lo -MD -MP -MF $(DEPDIR)/libocilib_la-define.Tpo -c -o libocilib_la-define.lo `test -f 'define.c' || echo '$(srcdir)/'`define.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-define.Tpo $(DEPDIR)/libocilib_la-define.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='define.c' object='libocilib_la-define.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-format.lo `test -f 'format.c' || echo '$(srcdir)/'`format.c
-
-libocilib_la-interval.lo: interval.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-interval.lo -MD -MP -MF $(DEPDIR)/libocilib_la-interval.Tpo -c -o libocilib_la-interval.lo `test -f 'interval.c' || echo '$(srcdir)/'`interval.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-interval.Tpo $(DEPDIR)/libocilib_la-interval.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='interval.c' object='libocilib_la-interval.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-interval.lo `test -f 'interval.c' || echo '$(srcdir)/'`interval.c
-
-libocilib_la-list.lo: list.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-list.lo -MD -MP -MF $(DEPDIR)/libocilib_la-list.Tpo -c -o libocilib_la-list.lo `test -f 'list.c' || echo '$(srcdir)/'`list.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-list.Tpo $(DEPDIR)/libocilib_la-list.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='list.c' object='libocilib_la-list.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-list.lo `test -f 'list.c' || echo '$(srcdir)/'`list.c
-
-libocilib_la-memory.lo: memory.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-memory.lo -MD -MP -MF $(DEPDIR)/libocilib_la-memory.Tpo -c -o libocilib_la-memory.lo `test -f 'memory.c' || echo '$(srcdir)/'`memory.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-memory.Tpo $(DEPDIR)/libocilib_la-memory.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='memory.c' object='libocilib_la-memory.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-memory.lo `test -f 'memory.c' || echo '$(srcdir)/'`memory.c
-
-libocilib_la-object.lo: object.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-object.lo -MD -MP -MF $(DEPDIR)/libocilib_la-object.Tpo -c -o libocilib_la-object.lo `test -f 'object.c' || echo '$(srcdir)/'`object.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-object.Tpo $(DEPDIR)/libocilib_la-object.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='object.c' object='libocilib_la-object.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-object.lo `test -f 'object.c' || echo '$(srcdir)/'`object.c
-
-libocilib_la-statement.lo: statement.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-statement.lo -MD -MP -MF $(DEPDIR)/libocilib_la-statement.Tpo -c -o libocilib_la-statement.lo `test -f 'statement.c' || echo '$(srcdir)/'`statement.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-statement.Tpo $(DEPDIR)/libocilib_la-statement.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='statement.c' object='libocilib_la-statement.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-statement.lo `test -f 'statement.c' || echo '$(srcdir)/'`statement.c
-
-libocilib_la-ref.lo: reference.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-ref.lo -MD -MP -MF $(DEPDIR)/libocilib_la-ref.Tpo -c -o libocilib_la-ref.lo `test -f 'reference.c' || echo '$(srcdir)/'`reference.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-ref.Tpo $(DEPDIR)/libocilib_la-ref.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='reference.c' object='libocilib_la-ref.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-ref.lo `test -f 'reference.c' || echo '$(srcdir)/'`reference.c
-
-libocilib_la-threadkey.lo: threadkey.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-threadkey.lo -MD -MP -MF $(DEPDIR)/libocilib_la-threadkey.Tpo -c -o libocilib_la-threadkey.lo `test -f 'threadkey.c' || echo '$(srcdir)/'`threadkey.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-threadkey.Tpo $(DEPDIR)/libocilib_la-threadkey.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='threadkey.c' object='libocilib_la-threadkey.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-threadkey.lo `test -f 'threadkey.c' || echo '$(srcdir)/'`threadkey.c
-
-libocilib_la-dirpath.lo: dirpath.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-dirpath.lo -MD -MP -MF $(DEPDIR)/libocilib_la-dirpath.Tpo -c -o libocilib_la-dirpath.lo `test -f 'dirpath.c' || echo '$(srcdir)/'`dirpath.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-dirpath.Tpo $(DEPDIR)/libocilib_la-dirpath.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dirpath.c' object='libocilib_la-dirpath.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-dirpath.lo `test -f 'dirpath.c' || echo '$(srcdir)/'`dirpath.c
-
-libocilib_la-event.lo: event.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-event.lo -MD -MP -MF $(DEPDIR)/libocilib_la-event.Tpo -c -o libocilib_la-event.lo `test -f 'event.c' || echo '$(srcdir)/'`event.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-event.Tpo $(DEPDIR)/libocilib_la-event.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='event.c' object='libocilib_la-event.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-event.lo `test -f 'event.c' || echo '$(srcdir)/'`event.c
-
-libocilib_la-subscription.lo: subscription.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-subscription.lo -MD -MP -MF $(DEPDIR)/libocilib_la-subscription.Tpo -c -o libocilib_la-subscription.lo `test -f 'subscription.c' || echo '$(srcdir)/'`subscription.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-subscription.Tpo $(DEPDIR)/libocilib_la-subscription.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='subscription.c' object='libocilib_la-subscription.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-subscription.lo `test -f 'subscription.c' || echo '$(srcdir)/'`subscription.c
-
-libocilib_la-agent.lo: agent.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-agent.lo -MD -MP -MF $(DEPDIR)/libocilib_la-agent.Tpo -c -o libocilib_la-agent.lo `test -f 'agent.c' || echo '$(srcdir)/'`agent.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-agent.Tpo $(DEPDIR)/libocilib_la-agent.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='agent.c' object='libocilib_la-agent.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-agent.lo `test -f 'agent.c' || echo '$(srcdir)/'`agent.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-define.lo `test -f 'define.c' || echo '$(srcdir)/'`define.c
 
 libocilib_la-dequeue.lo: dequeue.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-dequeue.lo -MD -MP -MF $(DEPDIR)/libocilib_la-dequeue.Tpo -c -o libocilib_la-dequeue.lo `test -f 'dequeue.c' || echo '$(srcdir)/'`dequeue.c
@@ -906,6 +725,20 @@ libocilib_la-dequeue.lo: dequeue.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-dequeue.lo `test -f 'dequeue.c' || echo '$(srcdir)/'`dequeue.c
 
+libocilib_la-dirpath.lo: dirpath.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-dirpath.lo -MD -MP -MF $(DEPDIR)/libocilib_la-dirpath.Tpo -c -o libocilib_la-dirpath.lo `test -f 'dirpath.c' || echo '$(srcdir)/'`dirpath.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-dirpath.Tpo $(DEPDIR)/libocilib_la-dirpath.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dirpath.c' object='libocilib_la-dirpath.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-dirpath.lo `test -f 'dirpath.c' || echo '$(srcdir)/'`dirpath.c
+
+libocilib_la-element.lo: element.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-element.lo -MD -MP -MF $(DEPDIR)/libocilib_la-element.Tpo -c -o libocilib_la-element.lo `test -f 'element.c' || echo '$(srcdir)/'`element.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-element.Tpo $(DEPDIR)/libocilib_la-element.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='element.c' object='libocilib_la-element.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-element.lo `test -f 'element.c' || echo '$(srcdir)/'`element.c
+
 libocilib_la-enqueue.lo: enqueue.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-enqueue.lo -MD -MP -MF $(DEPDIR)/libocilib_la-enqueue.Tpo -c -o libocilib_la-enqueue.lo `test -f 'enqueue.c' || echo '$(srcdir)/'`enqueue.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-enqueue.Tpo $(DEPDIR)/libocilib_la-enqueue.Plo
@@ -913,12 +746,152 @@ libocilib_la-enqueue.lo: enqueue.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-enqueue.lo `test -f 'enqueue.c' || echo '$(srcdir)/'`enqueue.c
 
-libocilib_la-msg.lo: message.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-msg.lo -MD -MP -MF $(DEPDIR)/libocilib_la-msg.Tpo -c -o libocilib_la-msg.lo `test -f 'message.c' || echo '$(srcdir)/'`message.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-msg.Tpo $(DEPDIR)/libocilib_la-msg.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='message.c' object='libocilib_la-msg.lo' libtool=yes @AMDEPBACKSLASH@
+libocilib_la-environment.lo: environment.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-environment.lo -MD -MP -MF $(DEPDIR)/libocilib_la-environment.Tpo -c -o libocilib_la-environment.lo `test -f 'environment.c' || echo '$(srcdir)/'`environment.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-environment.Tpo $(DEPDIR)/libocilib_la-environment.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='environment.c' object='libocilib_la-environment.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-msg.lo `test -f 'message.c' || echo '$(srcdir)/'`message.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-environment.lo `test -f 'environment.c' || echo '$(srcdir)/'`environment.c
+
+libocilib_la-error.lo: error.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-error.lo -MD -MP -MF $(DEPDIR)/libocilib_la-error.Tpo -c -o libocilib_la-error.lo `test -f 'error.c' || echo '$(srcdir)/'`error.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-error.Tpo $(DEPDIR)/libocilib_la-error.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='error.c' object='libocilib_la-error.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-error.lo `test -f 'error.c' || echo '$(srcdir)/'`error.c
+
+libocilib_la-event.lo: event.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-event.lo -MD -MP -MF $(DEPDIR)/libocilib_la-event.Tpo -c -o libocilib_la-event.lo `test -f 'event.c' || echo '$(srcdir)/'`event.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-event.Tpo $(DEPDIR)/libocilib_la-event.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='event.c' object='libocilib_la-event.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-event.lo `test -f 'event.c' || echo '$(srcdir)/'`event.c
+
+libocilib_la-exception.lo: exception.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-exception.lo -MD -MP -MF $(DEPDIR)/libocilib_la-exception.Tpo -c -o libocilib_la-exception.lo `test -f 'exception.c' || echo '$(srcdir)/'`exception.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-exception.Tpo $(DEPDIR)/libocilib_la-exception.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='exception.c' object='libocilib_la-exception.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-exception.lo `test -f 'exception.c' || echo '$(srcdir)/'`exception.c
+
+libocilib_la-file.lo: file.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-file.lo -MD -MP -MF $(DEPDIR)/libocilib_la-file.Tpo -c -o libocilib_la-file.lo `test -f 'file.c' || echo '$(srcdir)/'`file.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-file.Tpo $(DEPDIR)/libocilib_la-file.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='file.c' object='libocilib_la-file.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-file.lo `test -f 'file.c' || echo '$(srcdir)/'`file.c
+
+libocilib_la-format.lo: format.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-format.lo -MD -MP -MF $(DEPDIR)/libocilib_la-format.Tpo -c -o libocilib_la-format.lo `test -f 'format.c' || echo '$(srcdir)/'`format.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-format.Tpo $(DEPDIR)/libocilib_la-format.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='format.c' object='libocilib_la-format.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-format.lo `test -f 'format.c' || echo '$(srcdir)/'`format.c
+
+libocilib_la-handle.lo: handle.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-handle.lo -MD -MP -MF $(DEPDIR)/libocilib_la-handle.Tpo -c -o libocilib_la-handle.lo `test -f 'handle.c' || echo '$(srcdir)/'`handle.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-handle.Tpo $(DEPDIR)/libocilib_la-handle.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='handle.c' object='libocilib_la-handle.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-handle.lo `test -f 'handle.c' || echo '$(srcdir)/'`handle.c
+
+libocilib_la-hash.lo: hash.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-hash.lo -MD -MP -MF $(DEPDIR)/libocilib_la-hash.Tpo -c -o libocilib_la-hash.lo `test -f 'hash.c' || echo '$(srcdir)/'`hash.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-hash.Tpo $(DEPDIR)/libocilib_la-hash.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hash.c' object='libocilib_la-hash.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-hash.lo `test -f 'hash.c' || echo '$(srcdir)/'`hash.c
+
+libocilib_la-helpers.lo: helpers.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-helpers.lo -MD -MP -MF $(DEPDIR)/libocilib_la-helpers.Tpo -c -o libocilib_la-helpers.lo `test -f 'helpers.c' || echo '$(srcdir)/'`helpers.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-helpers.Tpo $(DEPDIR)/libocilib_la-helpers.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='helpers.c' object='libocilib_la-helpers.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-helpers.lo `test -f 'helpers.c' || echo '$(srcdir)/'`helpers.c
+
+libocilib_la-interval.lo: interval.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-interval.lo -MD -MP -MF $(DEPDIR)/libocilib_la-interval.Tpo -c -o libocilib_la-interval.lo `test -f 'interval.c' || echo '$(srcdir)/'`interval.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-interval.Tpo $(DEPDIR)/libocilib_la-interval.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='interval.c' object='libocilib_la-interval.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-interval.lo `test -f 'interval.c' || echo '$(srcdir)/'`interval.c
+
+libocilib_la-iterator.lo: iterator.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-iterator.lo -MD -MP -MF $(DEPDIR)/libocilib_la-iterator.Tpo -c -o libocilib_la-iterator.lo `test -f 'iterator.c' || echo '$(srcdir)/'`iterator.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-iterator.Tpo $(DEPDIR)/libocilib_la-iterator.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='iterator.c' object='libocilib_la-iterator.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-iterator.lo `test -f 'iterator.c' || echo '$(srcdir)/'`iterator.c
+
+libocilib_la-list.lo: list.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-list.lo -MD -MP -MF $(DEPDIR)/libocilib_la-list.Tpo -c -o libocilib_la-list.lo `test -f 'list.c' || echo '$(srcdir)/'`list.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-list.Tpo $(DEPDIR)/libocilib_la-list.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='list.c' object='libocilib_la-list.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-list.lo `test -f 'list.c' || echo '$(srcdir)/'`list.c
+
+libocilib_la-lob.lo: lob.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-lob.lo -MD -MP -MF $(DEPDIR)/libocilib_la-lob.Tpo -c -o libocilib_la-lob.lo `test -f 'lob.c' || echo '$(srcdir)/'`lob.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-lob.Tpo $(DEPDIR)/libocilib_la-lob.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lob.c' object='libocilib_la-lob.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-lob.lo `test -f 'lob.c' || echo '$(srcdir)/'`lob.c
+
+libocilib_la-long.lo: long.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-long.lo -MD -MP -MF $(DEPDIR)/libocilib_la-long.Tpo -c -o libocilib_la-long.lo `test -f 'long.c' || echo '$(srcdir)/'`long.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-long.Tpo $(DEPDIR)/libocilib_la-long.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='long.c' object='libocilib_la-long.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-long.lo `test -f 'long.c' || echo '$(srcdir)/'`long.c
+
+libocilib_la-memory.lo: memory.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-memory.lo -MD -MP -MF $(DEPDIR)/libocilib_la-memory.Tpo -c -o libocilib_la-memory.lo `test -f 'memory.c' || echo '$(srcdir)/'`memory.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-memory.Tpo $(DEPDIR)/libocilib_la-memory.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='memory.c' object='libocilib_la-memory.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-memory.lo `test -f 'memory.c' || echo '$(srcdir)/'`memory.c
+
+libocilib_la-message.lo: message.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-message.lo -MD -MP -MF $(DEPDIR)/libocilib_la-message.Tpo -c -o libocilib_la-message.lo `test -f 'message.c' || echo '$(srcdir)/'`message.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-message.Tpo $(DEPDIR)/libocilib_la-message.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='message.c' object='libocilib_la-message.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-message.lo `test -f 'message.c' || echo '$(srcdir)/'`message.c
+
+libocilib_la-mutex.lo: mutex.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-mutex.lo -MD -MP -MF $(DEPDIR)/libocilib_la-mutex.Tpo -c -o libocilib_la-mutex.lo `test -f 'mutex.c' || echo '$(srcdir)/'`mutex.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-mutex.Tpo $(DEPDIR)/libocilib_la-mutex.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mutex.c' object='libocilib_la-mutex.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-mutex.lo `test -f 'mutex.c' || echo '$(srcdir)/'`mutex.c
+
+libocilib_la-number.lo: number.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-number.lo -MD -MP -MF $(DEPDIR)/libocilib_la-number.Tpo -c -o libocilib_la-number.lo `test -f 'number.c' || echo '$(srcdir)/'`number.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-number.Tpo $(DEPDIR)/libocilib_la-number.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='number.c' object='libocilib_la-number.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-number.lo `test -f 'number.c' || echo '$(srcdir)/'`number.c
+
+libocilib_la-object.lo: object.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-object.lo -MD -MP -MF $(DEPDIR)/libocilib_la-object.Tpo -c -o libocilib_la-object.lo `test -f 'object.c' || echo '$(srcdir)/'`object.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-object.Tpo $(DEPDIR)/libocilib_la-object.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='object.c' object='libocilib_la-object.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-object.lo `test -f 'object.c' || echo '$(srcdir)/'`object.c
+
+libocilib_la-ocilib.lo: ocilib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-ocilib.lo -MD -MP -MF $(DEPDIR)/libocilib_la-ocilib.Tpo -c -o libocilib_la-ocilib.lo `test -f 'ocilib.c' || echo '$(srcdir)/'`ocilib.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-ocilib.Tpo $(DEPDIR)/libocilib_la-ocilib.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ocilib.c' object='libocilib_la-ocilib.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-ocilib.lo `test -f 'ocilib.c' || echo '$(srcdir)/'`ocilib.c
+
+libocilib_la-pool.lo: pool.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-pool.lo -MD -MP -MF $(DEPDIR)/libocilib_la-pool.Tpo -c -o libocilib_la-pool.lo `test -f 'pool.c' || echo '$(srcdir)/'`pool.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-pool.Tpo $(DEPDIR)/libocilib_la-pool.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pool.c' object='libocilib_la-pool.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-pool.lo `test -f 'pool.c' || echo '$(srcdir)/'`pool.c
 
 libocilib_la-queue.lo: queue.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-queue.lo -MD -MP -MF $(DEPDIR)/libocilib_la-queue.Tpo -c -o libocilib_la-queue.lo `test -f 'queue.c' || echo '$(srcdir)/'`queue.c
@@ -926,6 +899,76 @@ libocilib_la-queue.lo: queue.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='queue.c' object='libocilib_la-queue.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-queue.lo `test -f 'queue.c' || echo '$(srcdir)/'`queue.c
+
+libocilib_la-reference.lo: reference.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-reference.lo -MD -MP -MF $(DEPDIR)/libocilib_la-reference.Tpo -c -o libocilib_la-reference.lo `test -f 'reference.c' || echo '$(srcdir)/'`reference.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-reference.Tpo $(DEPDIR)/libocilib_la-reference.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='reference.c' object='libocilib_la-reference.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-reference.lo `test -f 'reference.c' || echo '$(srcdir)/'`reference.c
+
+libocilib_la-resultset.lo: resultset.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-resultset.lo -MD -MP -MF $(DEPDIR)/libocilib_la-resultset.Tpo -c -o libocilib_la-resultset.lo `test -f 'resultset.c' || echo '$(srcdir)/'`resultset.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-resultset.Tpo $(DEPDIR)/libocilib_la-resultset.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='resultset.c' object='libocilib_la-resultset.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-resultset.lo `test -f 'resultset.c' || echo '$(srcdir)/'`resultset.c
+
+libocilib_la-statement.lo: statement.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-statement.lo -MD -MP -MF $(DEPDIR)/libocilib_la-statement.Tpo -c -o libocilib_la-statement.lo `test -f 'statement.c' || echo '$(srcdir)/'`statement.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-statement.Tpo $(DEPDIR)/libocilib_la-statement.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='statement.c' object='libocilib_la-statement.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-statement.lo `test -f 'statement.c' || echo '$(srcdir)/'`statement.c
+
+libocilib_la-stringutils.lo: stringutils.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-stringutils.lo -MD -MP -MF $(DEPDIR)/libocilib_la-stringutils.Tpo -c -o libocilib_la-stringutils.lo `test -f 'stringutils.c' || echo '$(srcdir)/'`stringutils.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-stringutils.Tpo $(DEPDIR)/libocilib_la-stringutils.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='stringutils.c' object='libocilib_la-stringutils.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-stringutils.lo `test -f 'stringutils.c' || echo '$(srcdir)/'`stringutils.c
+
+libocilib_la-subscription.lo: subscription.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-subscription.lo -MD -MP -MF $(DEPDIR)/libocilib_la-subscription.Tpo -c -o libocilib_la-subscription.lo `test -f 'subscription.c' || echo '$(srcdir)/'`subscription.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-subscription.Tpo $(DEPDIR)/libocilib_la-subscription.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='subscription.c' object='libocilib_la-subscription.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-subscription.lo `test -f 'subscription.c' || echo '$(srcdir)/'`subscription.c
+
+libocilib_la-thread.lo: thread.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-thread.lo -MD -MP -MF $(DEPDIR)/libocilib_la-thread.Tpo -c -o libocilib_la-thread.lo `test -f 'thread.c' || echo '$(srcdir)/'`thread.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-thread.Tpo $(DEPDIR)/libocilib_la-thread.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='thread.c' object='libocilib_la-thread.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-thread.lo `test -f 'thread.c' || echo '$(srcdir)/'`thread.c
+
+libocilib_la-threadkey.lo: threadkey.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-threadkey.lo -MD -MP -MF $(DEPDIR)/libocilib_la-threadkey.Tpo -c -o libocilib_la-threadkey.lo `test -f 'threadkey.c' || echo '$(srcdir)/'`threadkey.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-threadkey.Tpo $(DEPDIR)/libocilib_la-threadkey.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='threadkey.c' object='libocilib_la-threadkey.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-threadkey.lo `test -f 'threadkey.c' || echo '$(srcdir)/'`threadkey.c
+
+libocilib_la-timestamp.lo: timestamp.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-timestamp.lo -MD -MP -MF $(DEPDIR)/libocilib_la-timestamp.Tpo -c -o libocilib_la-timestamp.lo `test -f 'timestamp.c' || echo '$(srcdir)/'`timestamp.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-timestamp.Tpo $(DEPDIR)/libocilib_la-timestamp.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='timestamp.c' object='libocilib_la-timestamp.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-timestamp.lo `test -f 'timestamp.c' || echo '$(srcdir)/'`timestamp.c
+
+libocilib_la-transaction.lo: transaction.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-transaction.lo -MD -MP -MF $(DEPDIR)/libocilib_la-transaction.Tpo -c -o libocilib_la-transaction.lo `test -f 'transaction.c' || echo '$(srcdir)/'`transaction.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-transaction.Tpo $(DEPDIR)/libocilib_la-transaction.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='transaction.c' object='libocilib_la-transaction.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-transaction.lo `test -f 'transaction.c' || echo '$(srcdir)/'`transaction.c
+
+libocilib_la-typeinfo.lo: typeinfo.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-typeinfo.lo -MD -MP -MF $(DEPDIR)/libocilib_la-typeinfo.Tpo -c -o libocilib_la-typeinfo.lo `test -f 'typeinfo.c' || echo '$(srcdir)/'`typeinfo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-typeinfo.Tpo $(DEPDIR)/libocilib_la-typeinfo.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='typeinfo.c' object='libocilib_la-typeinfo.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-typeinfo.lo `test -f 'typeinfo.c' || echo '$(srcdir)/'`typeinfo.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -953,6 +996,111 @@ uninstall-includeHEADERS:
 	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
+install-ocilibcppdetailcoresubHEADERS: $(ocilibcppdetailcoresub_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(ocilibcppdetailcoresub_HEADERS)'; test -n "$(ocilibcppdetailcoresubdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(ocilibcppdetailcoresubdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(ocilibcppdetailcoresubdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(ocilibcppdetailcoresubdir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(ocilibcppdetailcoresubdir)" || exit $$?; \
+	done
+
+uninstall-ocilibcppdetailcoresubHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(ocilibcppdetailcoresub_HEADERS)'; test -n "$(ocilibcppdetailcoresubdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(ocilibcppdetailcoresubdir)'; $(am__uninstall_files_from_dir)
+install-ocilibcppdetailsubHEADERS: $(ocilibcppdetailsub_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(ocilibcppdetailsub_HEADERS)'; test -n "$(ocilibcppdetailsubdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(ocilibcppdetailsubdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(ocilibcppdetailsubdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(ocilibcppdetailsubdir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(ocilibcppdetailsubdir)" || exit $$?; \
+	done
+
+uninstall-ocilibcppdetailsubHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(ocilibcppdetailsub_HEADERS)'; test -n "$(ocilibcppdetailsubdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(ocilibcppdetailsubdir)'; $(am__uninstall_files_from_dir)
+install-ocilibcppdetailsupportsubHEADERS: $(ocilibcppdetailsupportsub_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(ocilibcppdetailsupportsub_HEADERS)'; test -n "$(ocilibcppdetailsupportsubdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(ocilibcppdetailsupportsubdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(ocilibcppdetailsupportsubdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(ocilibcppdetailsupportsubdir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(ocilibcppdetailsupportsubdir)" || exit $$?; \
+	done
+
+uninstall-ocilibcppdetailsupportsubHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(ocilibcppdetailsupportsub_HEADERS)'; test -n "$(ocilibcppdetailsupportsubdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(ocilibcppdetailsupportsubdir)'; $(am__uninstall_files_from_dir)
+install-ocilibcppsubHEADERS: $(ocilibcppsub_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(ocilibcppsub_HEADERS)'; test -n "$(ocilibcppsubdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(ocilibcppsubdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(ocilibcppsubdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(ocilibcppsubdir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(ocilibcppsubdir)" || exit $$?; \
+	done
+
+uninstall-ocilibcppsubHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(ocilibcppsub_HEADERS)'; test -n "$(ocilibcppsubdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(ocilibcppsubdir)'; $(am__uninstall_files_from_dir)
+install-ocilibcsubHEADERS: $(ocilibcsub_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(ocilibcsub_HEADERS)'; test -n "$(ocilibcsubdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(ocilibcsubdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(ocilibcsubdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(ocilibcsubdir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(ocilibcsubdir)" || exit $$?; \
+	done
+
+uninstall-ocilibcsubHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(ocilibcsub_HEADERS)'; test -n "$(ocilibcsubdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(ocilibcsubdir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -1040,7 +1188,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)" "$(DESTDIR)$(ocilibcppdetailcoresubdir)" "$(DESTDIR)$(ocilibcppdetailsubdir)" "$(DESTDIR)$(ocilibcppdetailsupportsubdir)" "$(DESTDIR)$(ocilibcppsubdir)" "$(DESTDIR)$(ocilibcsubdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -1097,7 +1245,11 @@ info: info-am
 
 info-am:
 
-install-data-am: install-includeHEADERS
+install-data-am: install-includeHEADERS \
+	install-ocilibcppdetailcoresubHEADERS \
+	install-ocilibcppdetailsubHEADERS \
+	install-ocilibcppdetailsupportsubHEADERS \
+	install-ocilibcppsubHEADERS install-ocilibcsubHEADERS
 
 install-dvi: install-dvi-am
 
@@ -1143,7 +1295,11 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES
+uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES \
+	uninstall-ocilibcppdetailcoresubHEADERS \
+	uninstall-ocilibcppdetailsubHEADERS \
+	uninstall-ocilibcppdetailsupportsubHEADERS \
+	uninstall-ocilibcppsubHEADERS uninstall-ocilibcsubHEADERS
 
 .MAKE: install-am install-strip
 
@@ -1155,13 +1311,21 @@ uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am \
 	install-includeHEADERS install-info install-info-am \
-	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am uninstall-includeHEADERS \
-	uninstall-libLTLIBRARIES
+	install-libLTLIBRARIES install-man \
+	install-ocilibcppdetailcoresubHEADERS \
+	install-ocilibcppdetailsubHEADERS \
+	install-ocilibcppdetailsupportsubHEADERS \
+	install-ocilibcppsubHEADERS install-ocilibcsubHEADERS \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-includeHEADERS uninstall-libLTLIBRARIES \
+	uninstall-ocilibcppdetailcoresubHEADERS \
+	uninstall-ocilibcppdetailsubHEADERS \
+	uninstall-ocilibcppdetailsupportsubHEADERS \
+	uninstall-ocilibcppsubHEADERS uninstall-ocilibcsubHEADERS
 
 .PRECIOUS: Makefile
 

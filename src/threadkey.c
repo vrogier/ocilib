@@ -24,10 +24,10 @@
 #include "macros.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * ThreadKeyCreateInternal
+ * OcilibThreadKeyCreateInternal
  * --------------------------------------------------------------------------------------------- */
 
-OCI_ThreadKey * ThreadKeyCreateInternal
+OCI_ThreadKey * OcilibThreadKeyCreateInternal
 (
     POCI_THREADKEYDEST destfunc
 )
@@ -46,7 +46,7 @@ OCI_ThreadKey * ThreadKeyCreateInternal
 
     /* allocate error handle */
 
-    CHECK(MemoryAllocHandle(Env.env, (dvoid **)(void *)&key->err, OCI_HTYPE_ERROR))
+    CHECK(OcilibMemoryAllocHandle(Env.env, (dvoid **)(void *)&key->err, OCI_HTYPE_ERROR))
 
     /* key initialization */
 
@@ -61,7 +61,7 @@ OCI_ThreadKey * ThreadKeyCreateInternal
     (
         if (FAILURE)
         {
-            ThreadKeyFree(key);
+            OcilibThreadKeyFree(key);
             key = NULL;
         }
 
@@ -70,10 +70,10 @@ OCI_ThreadKey * ThreadKeyCreateInternal
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ThreadKeyFree
+ * OcilibThreadKeyFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean ThreadKeyFree
+boolean OcilibThreadKeyFree
 (
     OCI_ThreadKey *key
 )
@@ -103,12 +103,12 @@ boolean ThreadKeyFree
 
     if (NULL !=  key->err)
     {
-        MemoryFreeHandle(key->err, OCI_HTYPE_ERROR);
+        OcilibMemoryFreeHandle(key->err, OCI_HTYPE_ERROR);
     }
 
     /* free key structure */
 
-    ErrorResetSource(NULL, key);
+    OcilibErrorResetSource(NULL, key);
 
     FREE(key)
 
@@ -118,10 +118,10 @@ boolean ThreadKeyFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ThreadKeySet
+ * OcilibThreadKeySet
  * --------------------------------------------------------------------------------------------- */
 
-boolean ThreadKeySet
+boolean OcilibThreadKeySet
 (
     OCI_ThreadKey *key,
     void          *value
@@ -149,10 +149,10 @@ boolean ThreadKeySet
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ThreadKeyGet
+ * OcilibThreadKeyGet
  * --------------------------------------------------------------------------------------------- */
 
-boolean ThreadKeyGet
+boolean OcilibThreadKeyGet
 (
     OCI_ThreadKey* key,
     void         **value
@@ -181,10 +181,10 @@ boolean ThreadKeyGet
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ThreadKeyCreate
+ * OcilibThreadKeyCreate
  * --------------------------------------------------------------------------------------------- */
 
-boolean ThreadKeyCreate
+boolean OcilibThreadKeyCreate
 (
     const otext       *name,
     POCI_THREADKEYDEST destfunc
@@ -206,18 +206,18 @@ boolean ThreadKeyCreate
         /* create the map at the first call to ThreadKeyCreate to save
            time and memory when it's not needed */
 
-        Env.key_map = HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_POINTER);
+        Env.key_map = OcilibHashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_POINTER);
         CHECK_NULL(Env.key_map)
     }
 
     /* create key */
 
-    key = ThreadKeyCreateInternal(destfunc);
+    key = OcilibThreadKeyCreateInternal(destfunc);
     CHECK_NULL(key)
 
     /* add key to internal key hash table */
 
-    CHECK(HashAddPointer(Env.key_map, name, key))
+    CHECK(OcilibHashAddPointer(Env.key_map, name, key))
 
     SET_SUCCESS()
 
@@ -225,16 +225,16 @@ boolean ThreadKeyCreate
     (
         if (FAILURE && NULL != key)
         {
-            ThreadKeyFree(key);
+            OcilibThreadKeyFree(key);
         }
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ThreadKeySetValue
+ * OcilibThreadKeySetValue
  * --------------------------------------------------------------------------------------------- */
 
-boolean ThreadKeySetValue
+boolean OcilibThreadKeySetValue
 (
     const otext *name,
     void        *value
@@ -250,10 +250,10 @@ boolean ThreadKeySetValue
 
     CHECK_PTR(OCI_IPC_STRING, name)
 
-    key = (OCI_ThreadKey*) HashGetPointer(Env.key_map, name);
+    key = (OCI_ThreadKey*)OcilibHashGetPointer(Env.key_map, name);
     CHECK_NULL(key)
 
-    CHECK(ThreadKeySet(key, value))
+    CHECK(OcilibThreadKeySet(key, value))
 
     SET_SUCCESS()
 
@@ -261,10 +261,10 @@ boolean ThreadKeySetValue
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ThreadKeyGetValue
+ * OcilibThreadKeyGetValue
  * --------------------------------------------------------------------------------------------- */
 
-void * ThreadKeyGetValue
+void * OcilibThreadKeyGetValue
 (
     const otext *name
 )
@@ -278,11 +278,11 @@ void * ThreadKeyGetValue
     OCI_ThreadKey* key = NULL;
     CHECK_PTR(OCI_IPC_STRING, name)
 
-    key = (OCI_ThreadKey*)HashGetPointer(Env.key_map, name);
+    key = (OCI_ThreadKey*)OcilibHashGetPointer(Env.key_map, name);
     CHECK_NULL(key)
 
     void *data = NULL;
-    CHECK(ThreadKeyGet(key, &data))
+    CHECK(OcilibThreadKeyGet(key, &data))
 
     SET_RETVAL(data)
 

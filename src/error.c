@@ -21,25 +21,26 @@
 #include "error.h"
 
 #include "macros.h"
-#include "strings.h"
+#include "stringutils.h"
 #include "threadkey.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorCreate
+ * OcilibErrorCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Error * ErrorCreate
+OCI_Error * OcilibErrorCreate
 (
+    void
 )
 {
     return (OCI_Error *) calloc(1, sizeof(OCI_Error));
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorFree
+ * OcilibErrorFree
  * --------------------------------------------------------------------------------------------- */
 
-void ErrorFree
+void OcilibErrorFree
 (
     OCI_Error *err
 )
@@ -61,10 +62,10 @@ void ErrorFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorReset
+ * OcilibErrorReset
  * --------------------------------------------------------------------------------------------- */
 
-void ErrorReset
+void OcilibErrorReset
 (
     OCI_Error *err
 )
@@ -91,10 +92,10 @@ void ErrorReset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorGet
+ * OcilibErrorGet
  * --------------------------------------------------------------------------------------------- */
 
-void ErrorSet
+void OcilibErrorSet
 (
     OCI_Error   *err,
     unsigned int type,
@@ -127,7 +128,7 @@ void ErrorSet
 
     /* convert location if needed */
 
-    StringAnsiToNative(location, err->location, (unsigned int) location_len);
+    OcilibStringAnsiToNative(location, err->location, (unsigned int) location_len);
     err->location_len = max(err->location_len, (unsigned int) location_len);
 
     /* allocate storage for message */
@@ -139,16 +140,16 @@ void ErrorSet
 
     /* format message */
 
-    osprintf(err->message, (int)total_len, format, err->location, message);
+    OcilibStringFormat(err->message, (int)total_len, format, err->location, message);
 
     err->message_len = max(err->message_len, (unsigned int)total_len);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorResetSource
+ * OcilibErrorResetSource
  * --------------------------------------------------------------------------------------------- */
 
-void ErrorResetSource
+void OcilibErrorResetSource
 (
     OCI_Error* err,
     void* source_ptr
@@ -156,7 +157,7 @@ void ErrorResetSource
 {
     if (err == NULL)
     {
-        err = ErrorGet(FALSE, FALSE);
+        err = OcilibErrorGet(FALSE, FALSE);
     }
 
     if (err != NULL && err->source_ptr == source_ptr)
@@ -167,10 +168,10 @@ void ErrorResetSource
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorGet
+ * OcilibErrorGet
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Error * ErrorGet
+OCI_Error * OcilibErrorGet
 (
     boolean check_state,
     boolean reset_err
@@ -180,15 +181,15 @@ OCI_Error * ErrorGet
 
     if (Env.loaded && LIB_THREADED && Env.key_errs != NULL)
     {
-        if (ThreadKeyGet(Env.key_errs, (void **)(dvoid *)&err))
+        if (OcilibThreadKeyGet(Env.key_errs, (void **)(dvoid *)&err))
         {
             if (NULL == err)
             {
-                err = ErrorCreate();
+                err = OcilibErrorCreate();
 
                 if (NULL != err)
                 {
-                    ThreadKeySet(Env.key_errs, err);
+                    OcilibThreadKeySet(Env.key_errs, err);
                 }
             }
         }
@@ -201,17 +202,17 @@ OCI_Error * ErrorGet
 
     if (err != NULL && reset_err)
     {
-        ErrorReset(err);
+        OcilibErrorReset(err);
     }
 
     return err;
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorGetString
+ * OcilibErrorGetString
  * --------------------------------------------------------------------------------------------- */
 
-const otext * ErrorGetString
+const otext * OcilibErrorGetString
 (
     OCI_Error *err
 )
@@ -222,10 +223,10 @@ const otext * ErrorGetString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorGetType
+ * OcilibErrorGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ErrorGetType
+unsigned int OcilibErrorGetType
 (
     OCI_Error *err
 )
@@ -236,10 +237,10 @@ unsigned int ErrorGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorGetOCICode
+ * OcilibErrorGetOCICode
  * --------------------------------------------------------------------------------------------- */
 
-int ErrorGetOCICode
+int OcilibErrorGetOCICode
 (
     OCI_Error *err
 )
@@ -250,10 +251,10 @@ int ErrorGetOCICode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorGetInternalCode
+ * OcilibErrorGetInternalCode
  * --------------------------------------------------------------------------------------------- */
 
-int ErrorGetInternalCode
+int OcilibErrorGetInternalCode
 (
     OCI_Error *err
 )
@@ -264,10 +265,10 @@ int ErrorGetInternalCode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorGetSource
+ * OcilibErrorGetSource
  * --------------------------------------------------------------------------------------------- */
 
-void* ErrorGetSource
+void* OcilibErrorGetSource
 (
     OCI_Error* err
 )
@@ -279,10 +280,10 @@ void* ErrorGetSource
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorGetSourceType
+ * OcilibErrorGetSourceType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ErrorGetSourceType
+unsigned int OcilibErrorGetSourceType
 (
     OCI_Error* err
 )
@@ -293,10 +294,10 @@ unsigned int ErrorGetSourceType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorGetLocation
+ * OcilibErrorGetLocation
  * --------------------------------------------------------------------------------------------- */
 
-const otext* ErrorGetLocation
+const otext* OcilibErrorGetLocation
 (
     OCI_Error* err
 )
@@ -308,10 +309,10 @@ const otext* ErrorGetLocation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorGetConnection
+ * OcilibErrorGetConnection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection * ErrorGetConnection
+OCI_Connection * OcilibErrorGetConnection
 (
     OCI_Error *err
 )
@@ -377,10 +378,10 @@ OCI_Connection * ErrorGetConnection
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorGetStatement
+ * OcilibErrorGetStatement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Statement * ErrorGetStatement
+OCI_Statement * OcilibErrorGetStatement
 (
     OCI_Error *err
 )
@@ -406,10 +407,10 @@ OCI_Statement * ErrorGetStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ErrorGetRow
+ * OcilibErrorGetRow
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ErrorGetRow
+unsigned int OcilibErrorGetRow
 (
     OCI_Error *err
 )

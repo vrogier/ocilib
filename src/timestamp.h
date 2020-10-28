@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Timestamp * TimestampInitialize
+OCI_SYM_LOCAL OCI_Timestamp * OcilibTimestampInitialize
 (
     OCI_Connection *con,
     OCI_Timestamp  *tmsp,
@@ -31,52 +31,52 @@ OCI_Timestamp * TimestampInitialize
     ub4             type
 );
 
-OCI_Timestamp * TimestampCreate
+OCI_SYM_LOCAL OCI_Timestamp * OcilibTimestampCreate
 (
     OCI_Connection *con,
     unsigned int    type
 );
 
-boolean TimestampFree
+OCI_SYM_LOCAL boolean OcilibTimestampFree
 (
     OCI_Timestamp *tmsp
 );
 
-OCI_Timestamp ** TimestampCreateArray
+OCI_SYM_LOCAL OCI_Timestamp ** OcilibTimestampCreateArray
 (
     OCI_Connection* con,
     unsigned int    type,
     unsigned int    nbelem
 );
 
-boolean TimestampFreeArray
+OCI_SYM_LOCAL boolean OcilibTimestampFreeArray
 (
     OCI_Timestamp **tmsps
 );
 
-unsigned int TimestampGetType
+OCI_SYM_LOCAL unsigned int OcilibTimestampGetType
 (
     OCI_Timestamp *tmsp
 );
 
-boolean TimestampAssign
+OCI_SYM_LOCAL boolean OcilibTimestampAssign
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp_src
 );
 
-int TimestampCheck
+OCI_SYM_LOCAL int OcilibTimestampCheck
 (
     OCI_Timestamp *tmsp
 );
 
-int TimestampCompare
+OCI_SYM_LOCAL int OcilibTimestampCompare
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp2
 );
 
-boolean TimestampConstruct
+OCI_SYM_LOCAL boolean OcilibTimestampConstruct
 (
     OCI_Timestamp *tmsp,
     int            year,
@@ -89,20 +89,20 @@ boolean TimestampConstruct
     const otext   *time_zone
 );
 
-boolean TimestampConvert
+OCI_SYM_LOCAL boolean OcilibTimestampConvert
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp_src
 );
 
-boolean TimestampFromString
+OCI_SYM_LOCAL boolean OcilibTimestampFromString
 (
     OCI_Timestamp *tmsp,
     const otext   *str,
     const otext   *fmt
 );
 
-boolean TimestampToString
+OCI_SYM_LOCAL boolean OcilibTimestampToString
 (
     OCI_Timestamp *tmsp,
     const otext   *fmt,
@@ -111,7 +111,7 @@ boolean TimestampToString
     int            precision
 );
 
-boolean TimestampGetDate
+OCI_SYM_LOCAL boolean OcilibTimestampGetDate
 (
     OCI_Timestamp *tmsp,
     int           *year,
@@ -119,7 +119,7 @@ boolean TimestampGetDate
     int           *day
 );
 
-boolean TimestampGetTime
+OCI_SYM_LOCAL boolean OcilibTimestampGetTime
 (
     OCI_Timestamp *tmsp,
     int           *hour,
@@ -128,7 +128,7 @@ boolean TimestampGetTime
     int           *fsec
 );
 
-boolean TimestampGetDateTime
+OCI_SYM_LOCAL boolean OcilibTimestampGetDateTime
 (
     OCI_Timestamp *tmsp,
     int           *year,
@@ -140,52 +140,52 @@ boolean TimestampGetDateTime
     int           *fsec
 );
 
-boolean TimestampGetTimeZoneName
+OCI_SYM_LOCAL boolean OcilibTimestampGetTimeZoneName
 (
     OCI_Timestamp *tmsp,
     int            size,
     otext         *str
 );
 
-boolean TimestampGetTimeZoneOffset
+OCI_SYM_LOCAL boolean OcilibTimestampGetTimeZoneOffset
 (
     OCI_Timestamp *tmsp,
     int           *hour,
     int           *min
 );
 
-boolean TimestampIntervalAdd
+OCI_SYM_LOCAL boolean OcilibTimestampIntervalAdd
 (
     OCI_Timestamp *tmsp,
     OCI_Interval  *itv
 );
 
-boolean TimestampIntervalSub
+OCI_SYM_LOCAL boolean OcilibTimestampIntervalSub
 (
     OCI_Timestamp* tmsp,
     OCI_Interval  *itv
 );
 
-boolean TimestampSubtract
+OCI_SYM_LOCAL boolean OcilibTimestampSubtract
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp2,
     OCI_Interval  *itv
 );
 
-boolean TimestampSysTimestamp
+OCI_SYM_LOCAL boolean OcilibTimestampSysTimestamp
 (
     OCI_Timestamp *tmsp
 );
 
-boolean TimestampToCTime
+OCI_SYM_LOCAL boolean OcilibTimestampToCTime
 (
     OCI_Timestamp *tmsp,
     struct tm     *ptm,
     time_t        *pt
 );
 
-boolean TimestampFromCTime
+OCI_SYM_LOCAL boolean OcilibTimestampFromCTime
 (
     OCI_Timestamp *tmsp,
     struct tm     *ptm,

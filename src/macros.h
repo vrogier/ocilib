@@ -26,6 +26,42 @@
 #include "memory.h"
 #include "types.h"
 
+/* Global warning macro specific warnings macro */
+
+#if defined(_MSC_VER)
+
+    #define WARNING_DISABLE(w)              __pragma(warning( disable : w ))
+    #define WARNING_RESTORE(w)              __pragma(warning( default : w ))
+
+    #define WARNING_DISABLE_CAST_FUNC_TYPE  WARNING_DISABLE(4054)
+    #define WARNING_RESTORE_CAST_FUNC_TYPE  WARNING_RESTORE(4054)
+    #define WARNING_DISABLE_PEDANTIC
+    #define WARNING_RESTORE_PEDANTIC
+
+#elif defined(__GNUC__)
+
+    #define DO_PRAGMA(exp) _Pragma(#exp)
+
+    #define WARNING_DISABLE(w)                  \
+        DO_PRAGMA(GCC diagnostic push)          \
+        DO_PRAGMA(GCC diagnostic ignored #w)
+
+    #define WARNING_RESTORE(w)                  \
+        DO_PRAGMA(GCC diagnostic pop)           \
+
+	#if __GNUC__ > 7
+      #define WARNING_DISABLE_CAST_FUNC_TYPE      WARNING_DISABLE(-Wcast-function-type)
+      #define WARNING_RESTORE_CAST_FUNC_TYPE      WARNING_RESTORE(-Wcast-function-type)
+    #else
+      #define WARNING_DISABLE_CAST_FUNC_TYPE
+      #define WARNING_RESTORE_CAST_FUNC_TYPE
+	#endif
+
+	#define WARNING_DISABLE_PEDANTIC            WARNING_DISABLE(-Wpedantic)
+    #define WARNING_RESTORE_PEDANTIC            WARNING_RESTORE(-Wpedantic)
+
+#endif
+
 /* declare a call context */
 
 #define CONTEXT(src_type, src_ptr)       \
@@ -42,6 +78,11 @@
     ret_type call_retval = ret_value;                      \
     boolean call_status = TRUE;                            \
     CONTEXT(src_type, src_ptr)                             \
+
+#define ENTER_FUNC_NO_CONTEXT(ret_type, ret_value)         \
+                                                           \
+    ret_type call_retval = ret_value;                      \
+    boolean call_status = TRUE;                            \
 
 #define ENTER_VOID(src_type, src_ptr) \
                                       \
@@ -68,14 +109,14 @@ CleanupLabel:              \
 
 /* return to the caller */
 
-#define LABEL_EXIT_VOID() \
-                          \
-ExitLabel:                \
+#define LABEL_EXIT_VOID()           \
+                                    \
+ExitLabel:                          \
     return;
 
-#define LABEL_EXIT_FUNC() \
-                          \
-ExitLabel:                \
+#define LABEL_EXIT_FUNC()           \
+                                    \
+ExitLabel:                          \
     return call_retval;
 
 /* status management */
@@ -144,39 +185,39 @@ ExitLabel:                \
 
 #define CHECK_ERROR(err) CHECK(NULL == (err) || OCI_UNKNOWN == (err)->type)
 
-#define CHECK_PTR(type, ptr)                \
-                                            \
-    if (!(ptr))                             \
-    {                                       \
-        THROW(ExceptionNullPointer, (type)) \
+#define CHECK_PTR(type, ptr)                        \
+                                                    \
+    if (!(ptr))                                     \
+    {                                               \
+        THROW(OcilibExceptionNullPointer, (type))   \
     }
 
-#define CHECK_BOUND(v, b1, b2)           \
-                                         \
-    if (((v) < (b1)) || ((v) > (b2)))    \
-    {                                    \
-        THROW(ExceptionOutOfBounds, (v)) \
+#define CHECK_BOUND(v, b1, b2)                  \
+                                                \
+    if (((v) < (b1)) || ((v) > (b2)))           \
+    {                                           \
+        THROW(OcilibExceptionOutOfBounds, (v))  \
     }
 
-#define CHECK_MIN(v, m)                   \
-                                          \
-    if ((v) < (m))                        \
-    {                                     \
-        THROW(ExceptionMinimumValue, (m)) \
+#define CHECK_MIN(v, m)                         \
+                                                \
+    if ((v) < (m))                              \
+    {                                           \
+        THROW(OcilibExceptionMinimumValue, (m)) \
     }
 
-#define CHECK_COMPAT(exp)                 \
-                                          \
-    if (!(exp))                           \
-    {                                     \
-        THROW_NO_ARGS(ExceptionTypeNotCompatible) \
+#define CHECK_COMPAT(exp)                               \
+                                                        \
+    if (!(exp))                                         \
+    {                                                   \
+        THROW_NO_ARGS(OcilibExceptionTypeNotCompatible) \
     }
 
-#define CHECK_STMT_STATUS(st, v)            \
-                                            \
-    if ((((st)->status) & (v)) == 0)        \
-    {                                       \
-        THROW(ExceptionStatementState, (v)) \
+#define CHECK_STMT_STATUS(st, v)                    \
+                                                    \
+    if ((((st)->status) & (v)) == 0)                \
+    {                                               \
+        THROW(OcilibExceptionStatementState, (v))   \
     }
 
 #define CHECK_OBJECT_FETCHED(obj)                  \
@@ -193,40 +234,40 @@ ExitLabel:                \
         JUMP_EXIT()             \
     }                           \
 
-#define CHECK_SCROLLABLE_CURSOR_ACTIVATED(st)              \
-                                                           \
-    if (((st)->nb_rbinds > 0) ||                           \
-        ((st)->exec_mode != OCI_STMT_SCROLLABLE_READONLY)) \
-    {                                                      \
-        THROW_NO_ARGS(ExceptionStatementNotScrollable)             \
+#define CHECK_SCROLLABLE_CURSOR_ACTIVATED(st)                   \
+                                                                \
+    if (((st)->nb_rbinds > 0) ||                                \
+        ((st)->exec_mode != OCI_STMT_SCROLLABLE_READONLY))      \
+    {                                                           \
+        THROW_NO_ARGS(OcilibExceptionStatementNotScrollable)    \
     }
 
-#define CHECK_DIRPATH_STATUS(dp, v)                \
-                                                   \
-    if ((dp)->status != (v))                       \
-    {                                              \
-        THROW(ExceptionDirPathState, (dp)->status) \
+#define CHECK_DIRPATH_STATUS(dp, v)                         \
+                                                            \
+    if ((dp)->status != (v))                                \
+    {                                                       \
+        THROW(OcilibExceptionDirPathState, (dp)->status)    \
     }
 
-#define CHECK_INITIALIZED()            \
-                                       \
-    if (!Env.loaded)                   \
-    {                                  \
-        THROW_NO_ARGS(ExceptionNotInitialized) \
+#define CHECK_INITIALIZED()                             \
+                                                        \
+    if (!Env.loaded)                                    \
+    {                                                   \
+        THROW_NO_ARGS(OcilibExceptionNotInitialized)    \
     }
 
 #define CHECK_FEATURE(con, feat, ver)                                     \
                                                                           \
     if (Env.version_runtime < (ver) || ((con) && (con)->ver_num < (ver))) \
     {                                                                     \
-        THROW(ExceptionNotAvailable, (feat))                              \
+        THROW(OcilibExceptionNotAvailable, (feat))                        \
     }
 
-#define CHECK_THREAD_ENABLED()           \
-                                         \
-    if (!(LIB_THREADED))                 \
-    {                                    \
-        THROW_NO_ARGS(ExceptionNotMultithreaded) \
+#define CHECK_THREAD_ENABLED()                          \
+                                                        \
+    if (!(LIB_THREADED))                                \
+    {                                                   \
+        THROW_NO_ARGS(OcilibExceptionNotMultithreaded)  \
     }
 
 #define CHECK_TIMESTAMP_ENABLED(con) \
@@ -245,65 +286,65 @@ ExitLabel:                \
                                                \
     CHECK_FEATURE(con, OCI_FEATURE_EXTENDED_PLSQLTYPES, OCI_12_1)
 
-#define CHECK_STATEMENT_CACHING_ENABLED()                           \
-                                                                    \
-    if (Env.version_runtime < OCI_9_2)                              \
-    {                                                               \
-        THROW(ExceptionNotAvailable, OCI_FEATURE_STATEMENT_CACHING) \
+#define CHECK_STATEMENT_CACHING_ENABLED()                                   \
+                                                                            \
+    if (Env.version_runtime < OCI_9_2)                                      \
+    {                                                                       \
+        THROW(OcilibExceptionNotAvailable, OCI_FEATURE_STATEMENT_CACHING)   \
     }
 
-#define CHECK_DIRPATH_DATE_CACHE_ENABLED(dp)                         \
-                                                                     \
-    if (Env.version_runtime < OCI_9_2)                               \
-    {                                                                \
-        THROW(ExceptionNotAvailable, OCI_FEATURE_DIRPATH_DATE_CACHE) \
+#define CHECK_DIRPATH_DATE_CACHE_ENABLED(dp)                                \
+                                                                            \
+    if (Env.version_runtime < OCI_9_2)                                      \
+    {                                                                       \
+        THROW(OcilibExceptionNotAvailable, OCI_FEATURE_DIRPATH_DATE_CACHE)  \
     }
 
-#define CHECK_REMOTE_DBS_CONTROL_ENABLED()                           \
-                                                                     \
-    if (Env.version_runtime < OCI_10_2)                              \
-    {                                                                \
-        THROW(ExceptionNotAvailable, OCI_FEATURE_REMOTE_DBS_CONTROL) \
+#define CHECK_REMOTE_DBS_CONTROL_ENABLED()                                  \
+                                                                            \
+    if (Env.version_runtime < OCI_10_2)                                     \
+    {                                                                       \
+        THROW(OcilibExceptionNotAvailable, OCI_FEATURE_REMOTE_DBS_CONTROL)  \
     }
 
-#define CHECK_DATABASE_NOTIFY_ENABLED()                           \
-                                                                  \
-    if (Env.version_runtime < OCI_10_2)                           \
-    {                                                             \
-        THROW(ExceptionNotAvailable, OCI_FEATURE_DATABASE_NOTIFY) \
+#define CHECK_DATABASE_NOTIFY_ENABLED()                                     \
+                                                                            \
+    if (Env.version_runtime < OCI_10_2)                                     \
+    {                                                                       \
+        THROW(OcilibExceptionNotAvailable, OCI_FEATURE_DATABASE_NOTIFY)     \
     }
 
-#define CHECK_HIGH_AVAILABILITY_ENABLED()                           \
-                                                                    \
-    if (Env.version_runtime < OCI_10_2)                             \
-    {                                                               \
-        THROW(ExceptionNotAvailable, OCI_FEATURE_HIGH_AVAILABILITY) \
+#define CHECK_HIGH_AVAILABILITY_ENABLED()                                   \
+                                                                            \
+    if (Env.version_runtime < OCI_10_2)                                     \
+    {                                                                       \
+        THROW(OcilibExceptionNotAvailable, OCI_FEATURE_HIGH_AVAILABILITY)   \
     }
 
-#define CHECK_XA_ENABLED(mode)                        \
-                                                      \
-    if ( ((mode) & OCI_SESSION_XA) && (!Env.use_xa) ) \
-    {                                                 \
-        THROW(ExceptionNotAvailable, OCI_FEATURE_XA)  \
+#define CHECK_XA_ENABLED(mode)                              \
+                                                            \
+    if ( ((mode) & OCI_SESSION_XA) && (!Env.use_xa) )       \
+    {                                                       \
+        THROW(OcilibExceptionNotAvailable, OCI_FEATURE_XA)  \
     }
 
-#define CHECK_ENUM_VALUE(mode, values, name)                      \
-                                                                  \
-    {                                                             \
-        size_t ii = 0, nn = sizeof(values) / sizeof((values)[0]); \
-        for (; ii < nn; ii++)                                     \
-        {                                                         \
-            if ((mode) == (values)[ii]) break;                    \
-            }                                                     \
-            if (ii >= nn)                                         \
-            {                                                     \
-                THROW(ExceptionArgInvalidValue, (name), (mode))   \
-            }                                                     \
+#define CHECK_ENUM_VALUE(mode, values, name)                            \
+                                                                        \
+    {                                                                   \
+        size_t ii = 0, nn = sizeof(values) / sizeof((values)[0]);       \
+        for (; ii < nn; ii++)                                           \
+        {                                                               \
+            if ((mode) == (values)[ii]) break;                          \
+            }                                                           \
+            if (ii >= nn)                                               \
+            {                                                           \
+                THROW(OcilibExceptionArgInvalidValue, (name), (mode))   \
+            }                                                           \
         }
 
 /* memory management helpers */
 
-#define FREE(ptr)   { MemoryFree(ptr); (ptr) = NULL; }
+#define FREE(ptr)   { OcilibMemoryFree(ptr); (ptr) = NULL; }
 
 /* helpers macros */
 
@@ -364,29 +405,29 @@ ExitLabel:                \
                                                    \
     EXIT_FUNC()                                    \
 
-#define ALLOC_BUFFER(type, ptr, size, count)                     \
-                                                                 \
-    if (!(ptr))                                                  \
-    {                                                            \
-        (ptr) = MemoryAlloc(type, size, (size_t) (count), TRUE); \
-                                                                 \
-        CHECK_NULL((ptr))                                        \
-    }                                                            \
+#define ALLOC_BUFFER(type, ptr, size, count)                            \
+                                                                        \
+    if (!(ptr))                                                         \
+    {                                                                   \
+        (ptr) = OcilibMemoryAlloc(type, size, (size_t) (count), TRUE);  \
+                                                                        \
+        CHECK_NULL((ptr))                                               \
+    }                                                                   \
 
-#define REALLOC_BUFFER(type, ptr, size, current, allocated, requested)                     \
-                                                                                           \
-    if (!(ptr))                                                                            \
-    {                                                                                      \
-        (ptr)                = MemoryAlloc(type, size,  (size_t) (requested), TRUE);       \
-        if (ptr) (allocated) = (requested);                                                \
-    }                                                                                      \
-    else if ((current) >= (allocated))                                                     \
-    {                                                                                      \
-        (ptr)                = MemoryRealloc(ptr, type, size, (size_t) (requested), TRUE); \
-        if (ptr) (allocated) = (requested);                                                \
-    }                                                                                      \
-                                                                                           \
-    CHECK_NULL((ptr))                                                                      \
+#define REALLOC_BUFFER(type, ptr, size, current, allocated, requested)                          \
+                                                                                                \
+    if (!(ptr))                                                                                 \
+    {                                                                                           \
+        (ptr)                = OcilibMemoryAlloc(type, size,  (size_t) (requested), TRUE);      \
+        if (ptr) (allocated) = (requested);                                                     \
+    }                                                                                           \
+    else if ((current) >= (allocated))                                                          \
+    {                                                                                           \
+        (ptr)                = OcilibMemoryRealloc(ptr, type, size, (size_t) (requested), TRUE);\
+        if (ptr) (allocated) = (requested);                                                     \
+    }                                                                                           \
+                                                                                                \
+    CHECK_NULL((ptr))                                                                           \
 
 #define ALLOC_DATA(type, ptr, count) \
                                      \
@@ -406,16 +447,16 @@ ExitLabel:                \
 
 #define IS_STRING_VALID(s) ((s) && ((s)[0]))
 
-#define CHECK_OCI(oci_err, func, ...)                          \
-                                                               \
-    {                                                          \
-        sword oci_retcall = func(__VA_ARGS__);                 \
-        if (OCI_FAILURE(oci_retcall))                          \
-        {                                                      \
-            ExceptionOCI(&call_context, oci_err, oci_retcall); \
-            CHECK(OCI_SUCCESS_WITH_INFO == oci_retcall)        \
-        }                                                      \
-    }                                                          \
+#define CHECK_OCI(oci_err, func, ...)                                   \
+                                                                        \
+    {                                                                   \
+        sword oci_retcall = func(__VA_ARGS__);                          \
+        if (OCI_FAILURE(oci_retcall))                                   \
+        {                                                               \
+            OcilibExceptionOCI(&call_context, oci_err, oci_retcall);    \
+            CHECK(OCI_SUCCESS_WITH_INFO == oci_retcall)                 \
+        }                                                               \
+    }                                                                   \
 
 #define CHECK_ATTRIB_GET(htype, atype, handle, value, size, err)           \
                                                                            \

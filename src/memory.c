@@ -25,26 +25,26 @@
 #include "macros.h"
 #include "mutex.h"
 
-#define MUTEXED_CALL(exp)            \
-                                     \
-    if (Env.mem_mutex)               \
-    {                                \
-        MutexAcquire(Env.mem_mutex); \
-    }                                \
-                                     \
-    (exp);                           \
-                                     \
-    if (Env.mem_mutex)               \
-    {                                \
-        MutexRelease(Env.mem_mutex); \
-    }                                \
+#define MUTEXED_CALL(exp)                   \
+                                            \
+    if (Env.mem_mutex)                      \
+    {                                       \
+        OcilibMutexAcquire(Env.mem_mutex);  \
+    }                                       \
+                                            \
+    (exp);                                  \
+                                            \
+    if (Env.mem_mutex)                      \
+    {                                       \
+        OcilibMutexRelease(Env.mem_mutex);  \
+    }                                       \
 
 
 /* --------------------------------------------------------------------------------------------- *
- * MemoryUpdateBytes
+ * OcilibMemoryUpdateBytes
  * --------------------------------------------------------------------------------------------- */
 
-void MemoryUpdateBytes
+static void OcilibMemoryUpdateBytes
 (
     int     type,
     big_int size
@@ -61,10 +61,10 @@ void MemoryUpdateBytes
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MemoryAlloc
+ * OcilibMemoryAlloc
  * --------------------------------------------------------------------------------------------- */
 
-void * MemoryAlloc
+void * OcilibMemoryAlloc
 (
     int     ptr_type,
     size_t  block_size,
@@ -84,7 +84,7 @@ void * MemoryAlloc
 
     if (NULL == block)
     {
-        THROW(ExceptionMemory, ptr_type, size)
+        THROW(OcilibExceptionMemory, ptr_type, size)
     }
 
     if (zero_fill)
@@ -95,7 +95,7 @@ void * MemoryAlloc
     block->type = ptr_type;
     block->size = (unsigned int) size;
 
-    MemoryUpdateBytes(block->type, block->size);
+    OcilibMemoryUpdateBytes(block->type, block->size);
 
     SET_RETVAL(((unsigned char*)block) + sizeof(*block))
 
@@ -103,10 +103,10 @@ void * MemoryAlloc
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MemoryRealloc
+ * OcilibMemoryRealloc
  * --------------------------------------------------------------------------------------------- */
 
-void * MemoryRealloc
+void * OcilibMemoryRealloc
 (
     void  * ptr_mem,
     int     ptr_type,
@@ -133,8 +133,8 @@ void * MemoryRealloc
 
             if (NULL == ptr_new)
             {
-                MemoryFree(ptr_mem);
-                THROW(ExceptionMemory, ptr_type, size);
+                OcilibMemoryFree(ptr_mem);
+                THROW(OcilibExceptionMemory, ptr_type, size);
             }
 
             block = (OCI_MemoryBlock*)ptr_new;
@@ -149,14 +149,14 @@ void * MemoryRealloc
                 memset(((unsigned char*)block) + block->size, 0, size - block->size);
             }
 
-            MemoryUpdateBytes(block->type, size_diff);
+            OcilibMemoryUpdateBytes(block->type, size_diff);
         }
 
         ptr_mem = ((unsigned char*)block) + sizeof(*block);
     }
     else
     {
-        ptr_mem = MemoryAlloc(ptr_type, block_size, block_count, zero_fill);
+        ptr_mem = OcilibMemoryAlloc(ptr_type, block_size, block_count, zero_fill);
     }
 
     SET_RETVAL(ptr_mem)
@@ -165,10 +165,10 @@ void * MemoryRealloc
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MemoryFree
+ * OcilibMemoryFree
  * --------------------------------------------------------------------------------------------- */
 
-void MemoryFree
+void OcilibMemoryFree
 (
     void * ptr_mem
 )
@@ -179,7 +179,7 @@ void MemoryFree
 
         if (block)
         {
-            MemoryUpdateBytes(block->type, (big_int) 0 - block->size);
+            OcilibMemoryUpdateBytes(block->type, (big_int) 0 - block->size);
 
             free(block);
         }
@@ -187,20 +187,19 @@ void MemoryFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MemoryAllocHandle
+ * OcilibMemoryAllocHandle
  * --------------------------------------------------------------------------------------------- */
 
-boolean MemoryAllocHandle
+boolean OcilibMemoryAllocHandle
 (
     CONST dvoid *parenth,
     dvoid      **hndlpp,
     ub4          type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ boolean, FALSE
     )
 
     CHECK_NULL(hndlpp)
@@ -217,19 +216,18 @@ boolean MemoryAllocHandle
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MemoryFreeHandle
+ * OcilibMemoryFreeHandle
  * --------------------------------------------------------------------------------------------- */
 
-boolean MemoryFreeHandle
+boolean OcilibMemoryFreeHandle
 (
     dvoid *hndlp,
     ub4    type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ boolean, FALSE
     )
 
     CHECK_NULL(hndlp)
@@ -245,20 +243,19 @@ boolean MemoryFreeHandle
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MemoryAllocDescriptor
+ * OcilibMemoryAllocDescriptor
  * --------------------------------------------------------------------------------------------- */
 
-boolean MemoryAllocDescriptor
+boolean OcilibMemoryAllocDescriptor
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
     ub4          type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ boolean, FALSE
     )
 
     CHECK_NULL(descpp)
@@ -275,10 +272,10 @@ boolean MemoryAllocDescriptor
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MemoryAllocDescriptorArray
+ * OcilibMemoryAllocDescriptorArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean MemoryAllocDescriptorArray
+boolean OcilibMemoryAllocDescriptorArray
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
@@ -286,10 +283,9 @@ boolean MemoryAllocDescriptorArray
     ub4          nb_elem
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ boolean, FALSE
     )
 
     CHECK_NULL(descpp)
@@ -324,19 +320,18 @@ boolean MemoryAllocDescriptorArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MemoryFreeDescriptor
+ * OcilibMemoryFreeDescriptor
  * --------------------------------------------------------------------------------------------- */
 
-boolean MemoryFreeDescriptor
+boolean OcilibMemoryFreeDescriptor
 (
     dvoid *descp,
     ub4    type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ boolean, FALSE
     )
 
     CHECK_NULL(descp)
@@ -353,20 +348,19 @@ boolean MemoryFreeDescriptor
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MemoryFreeDescriptor
+ * OcilibMemoryFreeDescriptor
  * --------------------------------------------------------------------------------------------- */
 
-boolean MemoryFreeDescriptorArray
+boolean OcilibMemoryFreeDescriptorArray
 (
     dvoid **descp,
     ub4     type,
     ub4     nb_elem
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
+        /* returns */ boolean, FALSE
     )
 
     CHECK_NULL(descp)
@@ -404,10 +398,10 @@ boolean MemoryFreeDescriptorArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MemoryAllocateObject
+ * OcilibMemoryAllocateObject
  * --------------------------------------------------------------------------------------------- */
 
-boolean MemoryAllocateObject
+boolean OcilibMemoryAllocateObject
 (
     OCIEnv          *env,
     OCIError        *err,
@@ -442,10 +436,10 @@ boolean MemoryAllocateObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MemoryFreeObject
+ * OcilibMemoryFreeObject
  * --------------------------------------------------------------------------------------------- */
 
-boolean MemoryFreeObject
+boolean OcilibMemoryFreeObject
 (
     OCIEnv   *env,
     OCIError *err,
@@ -476,10 +470,10 @@ boolean MemoryFreeObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* MemoryAllocOracleCallback
+* OcilibMemoryAllocOracleCallback
 * --------------------------------------------------------------------------------------------- */
 
-void * MemoryAllocOracleCallback
+void * OcilibMemoryAllocOracleCallback
 (
     void  *ctxp,
     size_t size
@@ -487,14 +481,14 @@ void * MemoryAllocOracleCallback
 {
     OCI_NOT_USED(ctxp)
 
-    return MemoryAlloc(OCI_IPC_ORACLE, size, 1, FALSE);
+    return OcilibMemoryAlloc(OCI_IPC_ORACLE, size, 1, FALSE);
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* MemoryReallocOracleCallback
+* OcilibMemoryReallocOracleCallback
 * --------------------------------------------------------------------------------------------- */
 
-void * MemoryReallocOracleCallback
+void * OcilibMemoryReallocOracleCallback
 (
     void  *ctxp,
     void  *memptr,
@@ -503,14 +497,14 @@ void * MemoryReallocOracleCallback
 {
     OCI_NOT_USED(ctxp)
 
-    return MemoryRealloc(memptr, OCI_IPC_ORACLE, newsize, 1, FALSE);
+    return OcilibMemoryRealloc(memptr, OCI_IPC_ORACLE, newsize, 1, FALSE);
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* MemoryFreeOracleCallback
+* OcilibMemoryFreeOracleCallback
 * --------------------------------------------------------------------------------------------- */
 
-void MemoryFreeOracleCallback
+void OcilibMemoryFreeOracleCallback
 (
     void *ctxp,
     void *memptr
@@ -518,5 +512,5 @@ void MemoryFreeOracleCallback
 {
     OCI_NOT_USED(ctxp)
 
-    MemoryFree(memptr);
+        OcilibMemoryFree(memptr);
 }

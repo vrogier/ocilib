@@ -23,112 +23,112 @@
 
 #include "types.h"
 
-const void * HandleGetEnvironment
+OCI_SYM_LOCAL const void * OcilibHandleGetEnvironment
 (
     void
 );
 
-const void * HandleGetContext
+OCI_SYM_LOCAL const void * OcilibHandleGetContext
 (
     OCI_Connection *con
 );
 
-const void * HandleGetServer
+OCI_SYM_LOCAL const void * OcilibHandleGetServer
 (
     OCI_Connection *con
 );
 
-const void * HandleGetError
+OCI_SYM_LOCAL const void * OcilibHandleGetError
 (
     OCI_Connection *con
 );
 
-const void * HandleGetSession
+OCI_SYM_LOCAL const void * OcilibHandleGetSession
 (
     OCI_Connection *con
 );
 
-const void * HandleGetTransaction
+OCI_SYM_LOCAL const void * OcilibHandleGetTransaction
 (
     OCI_Transaction *trans
 );
 
-const void * HandleGetStatement
+OCI_SYM_LOCAL const void * OcilibHandleGetStatement
 (
     OCI_Statement *stmt
 );
 
-const void * HandleGetLob
+OCI_SYM_LOCAL const void * OcilibHandleGetLob
 (
     OCI_Lob *lob
 );
 
-const void * HandleGetFile
+OCI_SYM_LOCAL const void * OcilibHandleGetFile
 (
     OCI_File *file
 );
 
-const void * HandleGetDate
+OCI_SYM_LOCAL const void * OcilibHandleGetDate
 (
     OCI_Date *date
 );
 
-const void * HandleGetTimestamp
+OCI_SYM_LOCAL const void * OcilibHandleGetTimestamp
 (
     OCI_Timestamp *tmsp
 );
 
-const void * HandleGetInterval
+OCI_SYM_LOCAL const void * OcilibHandleGetInterval
 (
     OCI_Interval *itv
 );
 
-const void * HandleGetObject
+OCI_SYM_LOCAL const void * OcilibHandleGetObject
 (
     OCI_Object *obj
 );
 
-const void * HandleGetColl
+OCI_SYM_LOCAL const void * OcilibHandleGetColl
 (
     OCI_Coll *coll
 );
 
-const void * HandleGetReference
+OCI_SYM_LOCAL const void * OcilibHandleGetReference
 (
     OCI_Ref *ref
 );
 
-const void * HandleGetMutex
+OCI_SYM_LOCAL const void * OcilibHandleGetMutex
 (
     OCI_Mutex *mutex
 );
 
-const void * HandleGetThreadID
+OCI_SYM_LOCAL const void * OcilibHandleGetThreadID
 (
     OCI_Thread *thread
 );
 
-const void * HandleGetThread
+OCI_SYM_LOCAL const void * OcilibHandleGetThread
 (
     OCI_Thread *thread
 );
 
-const void * HandleGetDirPathCtx
+OCI_SYM_LOCAL const void * OcilibHandleGetDirPathCtx
 (
     OCI_DirPath *dp
 );
 
-const void * HandleGetDirPathColArray
+OCI_SYM_LOCAL const void * OcilibHandleGetDirPathColArray
 (
     OCI_DirPath *dp
 );
 
-const void * HandleGetDirPathStream
+OCI_SYM_LOCAL const void * OcilibHandleGetDirPathStream
 (
     OCI_DirPath *dp
 );
 
-const void * HandleGetSubscription
+OCI_SYM_LOCAL const void * OcilibHandleGetSubscription
 (
     OCI_Subscription *sub
 );

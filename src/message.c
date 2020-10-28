@@ -25,13 +25,13 @@
 #include "macros.h"
 #include "memory.h"
 #include "object.h"
-#include "strings.h"
+#include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageCreate
+ * OcilibMessageCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Msg * MessageCreate
+OCI_Msg * OcilibMessageCreate
 (
     OCI_TypeInfo *typinf
 )
@@ -57,7 +57,7 @@ OCI_Msg * MessageCreate
 
     CHECK
     (
-        MemoryAllocDescriptor
+        OcilibMemoryAllocDescriptor
         (
             (dvoid *)msg->typinf->con->env,
             (dvoid **)&msg->proph,
@@ -69,7 +69,7 @@ OCI_Msg * MessageCreate
 
     if (OCI_UNKNOWN != msg->typinf->typecode)
     {
-        msg->obj = ObjectCreate(typinf->con, typinf);
+        msg->obj = OcilibObjectCreate(typinf->con, typinf);
         CHECK_NULL(msg->obj)
     }
 
@@ -77,7 +77,7 @@ OCI_Msg * MessageCreate
     (
         if (FAILURE)
         {
-            MessageFree(msg);
+            OcilibMessageFree(msg);
             msg = NULL;
         }
 
@@ -86,10 +86,10 @@ OCI_Msg * MessageCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageFree
+ * OcilibMessageFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageFree
+boolean OcilibMessageFree
 (
     OCI_Msg *msg
 )
@@ -106,7 +106,7 @@ boolean MessageFree
 
     if (NULL != msg->sender)
     {
-        AgentFree(msg->sender);
+        OcilibAgentFree(msg->sender);
     }
 
     /* free internal OCI_Object handle if payload is not RAW */
@@ -115,7 +115,7 @@ boolean MessageFree
     {
         msg->obj->hstate =  OCI_OBJECT_ALLOCATED;
 
-        ObjectFree(msg->obj);
+        OcilibObjectFree(msg->obj);
 
         msg->obj = NULL;
     }
@@ -150,9 +150,9 @@ boolean MessageFree
 
     /* free OCI descriptor */
 
-    MemoryFreeDescriptor((dvoid*)msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
+    OcilibMemoryFreeDescriptor((dvoid*)msg->proph, OCI_DTYPE_AQMSG_PROPERTIES);
 
-    ErrorResetSource(NULL, msg);
+    OcilibErrorResetSource(NULL, msg);
 
     FREE(msg)
 
@@ -162,10 +162,10 @@ boolean MessageFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageReset
+ * OcilibMessageReset
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageReset
+boolean OcilibMessageReset
 (
     OCI_Msg *msg
 )
@@ -173,26 +173,26 @@ boolean MessageReset
     const unsigned int len = 0;
 
     boolean res =
-        (
-            MessageSetExpiration(msg, -1)       &&
-            MessageSetEnqueueDelay(msg, 0)      &&
-            MessageSetPriority(msg,0)           &&
-            MessageSetOriginalID(msg, NULL, len)     &&
-            MessageSetSender(msg, NULL)              &&
-            MessageSetConsumers(msg, NULL, len)      &&
-            MessageSetCorrelation(msg, NULL)         &&
-            MessageSetExceptionQueue(msg, NULL)
-        );
+    (
+        OcilibMessageSetExpiration(msg, -1)       &&
+        OcilibMessageSetEnqueueDelay(msg, 0)      &&
+        OcilibMessageSetPriority(msg,0)           &&
+        OcilibMessageSetOriginalID(msg, NULL, len)     &&
+        OcilibMessageSetSender(msg, NULL)              &&
+        OcilibMessageSetConsumers(msg, NULL, len)      &&
+        OcilibMessageSetCorrelation(msg, NULL)         &&
+        OcilibMessageSetExceptionQueue(msg, NULL)
+    );
 
     if (res)
     {
         if (OCI_UNKNOWN == msg->typinf->typecode)
         {
-            res = MessageSetRaw(msg, NULL, len);
+            res = OcilibMessageSetRaw(msg, NULL, len);
         }
         else
         {
-            res = MessageSetObject(msg, NULL);
+            res = OcilibMessageSetObject(msg, NULL);
         }
     }
 
@@ -200,10 +200,10 @@ boolean MessageReset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetObject
+ * OcilibMessageGetObject
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * MessageGetObject
+OCI_Object * OcilibMessageGetObject
 (
     OCI_Msg *msg
 )
@@ -225,10 +225,10 @@ OCI_Object * MessageGetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetObject
+ * OcilibMessageGetObject
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageSetObject
+boolean OcilibMessageSetObject
 (
     OCI_Msg    *msg,
     OCI_Object *obj
@@ -247,7 +247,7 @@ boolean MessageSetObject
     {
         /* assign the given object to the message internal object */
 
-        CHECK(ObjectAssign((OCI_Object *) msg->obj, obj))
+        CHECK(OcilibObjectAssign((OCI_Object *) msg->obj, obj))
 
         msg->ind = OCI_IND_NOTNULL;
     }
@@ -262,10 +262,10 @@ boolean MessageSetObject
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetRaw
+ * OcilibMessageGetRaw
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageGetRaw
+boolean OcilibMessageGetRaw
 (
     OCI_Msg      *msg,
     void         *raw,
@@ -305,10 +305,10 @@ boolean MessageGetRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageSetRaw
+ * OcilibMessageSetRaw
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageSetRaw
+boolean OcilibMessageSetRaw
 (
     OCI_Msg     *msg,
     const void  *raw,
@@ -346,10 +346,10 @@ boolean MessageSetRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetAttemptCount
+ * OcilibMessageGetAttemptCount
  * --------------------------------------------------------------------------------------------- */
 
-int MessageGetAttemptCount
+int OcilibMessageGetAttemptCount
 (
     OCI_Msg *msg
 )
@@ -377,10 +377,10 @@ int MessageGetAttemptCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetEnqueueDelay
+ * OcilibMessageGetEnqueueDelay
  * --------------------------------------------------------------------------------------------- */
 
-int MessageGetEnqueueDelay
+int OcilibMessageGetEnqueueDelay
 (
     OCI_Msg *msg
 )
@@ -408,10 +408,10 @@ int MessageGetEnqueueDelay
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageSetEnqueueDelay
+ * OcilibMessageSetEnqueueDelay
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageSetEnqueueDelay
+boolean OcilibMessageSetEnqueueDelay
 (
     OCI_Msg *msg,
     int      value
@@ -440,10 +440,10 @@ boolean MessageSetEnqueueDelay
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetEnqueueTime
+ * OcilibMessageGetEnqueueTime
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Date * MessageGetEnqueueTime
+OCI_Date * OcilibMessageGetEnqueueTime
 (
     OCI_Msg *msg
 )
@@ -465,7 +465,7 @@ OCI_Date * MessageGetEnqueueTime
         msg->typinf->con->err
     )
 
-    msg->date = DateInitialize(msg->typinf->con, msg->date, &date, FALSE, FALSE);
+    msg->date = OcilibDateInitialize(msg->typinf->con, msg->date, &date, FALSE, FALSE);
     CHECK_NULL(msg->date)
 
     SET_RETVAL(msg->date)
@@ -474,10 +474,10 @@ OCI_Date * MessageGetEnqueueTime
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetExpiration
+ * OcilibMessageGetExpiration
  * --------------------------------------------------------------------------------------------- */
 
-int MessageGetExpiration
+int OcilibMessageGetExpiration
 (
     OCI_Msg *msg
 )
@@ -505,10 +505,10 @@ int MessageGetExpiration
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageSetExpiration
+ * OcilibMessageSetExpiration
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageSetExpiration
+boolean OcilibMessageSetExpiration
 (
     OCI_Msg *msg,
     int      value
@@ -537,10 +537,10 @@ boolean MessageSetExpiration
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetState
+ * OcilibMessageGetState
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int MessageGetState
+unsigned int OcilibMessageGetState
 (
     OCI_Msg *msg
 )
@@ -570,10 +570,10 @@ unsigned int MessageGetState
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetPriority
+ * OcilibMessageGetPriority
  * --------------------------------------------------------------------------------------------- */
 
-int MessageGetPriority
+int OcilibMessageGetPriority
 (
     OCI_Msg *msg
 )
@@ -601,10 +601,10 @@ int MessageGetPriority
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageSetPriority
+ * OcilibMessageSetPriority
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageSetPriority
+boolean OcilibMessageSetPriority
 (
     OCI_Msg *msg,
     int      value
@@ -633,10 +633,10 @@ boolean MessageSetPriority
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetID
+ * OcilibMessageGetID
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageGetID
+boolean OcilibMessageGetID
 (
     OCI_Msg      *msg,
     void         *id,
@@ -675,10 +675,10 @@ boolean MessageGetID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetOriginalID
+ * OcilibMessageGetOriginalID
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageGetOriginalID
+boolean OcilibMessageGetOriginalID
 (
     OCI_Msg      *msg,
     void         *id,
@@ -724,10 +724,10 @@ boolean MessageGetOriginalID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageSetOriginalID
+ * OcilibMessageSetOriginalID
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageSetOriginalID
+boolean OcilibMessageSetOriginalID
 (
     OCI_Msg     *msg,
     const void  *id,
@@ -765,10 +765,10 @@ boolean MessageSetOriginalID
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetCorrelation
+ * OcilibMessageGetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-const otext * MessageGetCorrelation
+const otext * OcilibMessageGetCorrelation
 (
     OCI_Msg *msg
 )
@@ -785,12 +785,12 @@ const otext * MessageGetCorrelation
     {
         unsigned int size = 0;
 
-        CHECK(StringGetAttribute(msg->typinf->con,
-                                 msg->proph,
-                                 OCI_DTYPE_AQMSG_PROPERTIES,
-                                 OCI_ATTR_CORRELATION,
-                                 &msg->correlation,
-                                 &size))
+        CHECK(OcilibStringGetAttribute(msg->typinf->con,
+                                       msg->proph,
+                                       OCI_DTYPE_AQMSG_PROPERTIES,
+                                       OCI_ATTR_CORRELATION,
+                                       &msg->correlation,
+                                       &size))
     }
 
     SET_RETVAL(msg->correlation)
@@ -799,10 +799,10 @@ const otext * MessageGetCorrelation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageSetCorrelation
+ * OcilibMessageSetCorrelation
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageSetCorrelation
+boolean OcilibMessageSetCorrelation
 (
     OCI_Msg     *msg,
     const otext *correlation
@@ -816,12 +816,12 @@ boolean MessageSetCorrelation
 
     CHECK_PTR(OCI_IPC_MSG, msg)
 
-    CHECK(StringSetAttribute(msg->typinf->con,
-                             msg->proph,
-                             OCI_DTYPE_AQMSG_PROPERTIES,
-                             OCI_ATTR_CORRELATION,
-                             &msg->correlation,
-                             correlation))
+    CHECK(OcilibStringSetAttribute(msg->typinf->con,
+                                   msg->proph,
+                                   OCI_DTYPE_AQMSG_PROPERTIES,
+                                   OCI_ATTR_CORRELATION,
+                                   &msg->correlation,
+                                   correlation))
 
     SET_SUCCESS()
 
@@ -829,10 +829,10 @@ boolean MessageSetCorrelation
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetExceptionQueue
+ * OcilibMessageGetExceptionQueue
  * --------------------------------------------------------------------------------------------- */
 
-const otext * MessageGetExceptionQueue
+const otext * OcilibMessageGetExceptionQueue
 (
     OCI_Msg *msg
 )
@@ -849,12 +849,12 @@ const otext * MessageGetExceptionQueue
     {
         unsigned int size = 0;
 
-        CHECK(StringGetAttribute(msg->typinf->con,
-                                 msg->proph,
-                                 OCI_DTYPE_AQMSG_PROPERTIES,
-                                 OCI_ATTR_EXCEPTION_QUEUE,
-                                 &msg->except_queue,
-                                 &size))
+        CHECK(OcilibStringGetAttribute(msg->typinf->con,
+                                       msg->proph,
+                                       OCI_DTYPE_AQMSG_PROPERTIES,
+                                       OCI_ATTR_EXCEPTION_QUEUE,
+                                       &msg->except_queue,
+                                       &size))
     }
 
     SET_RETVAL(msg->except_queue)
@@ -863,10 +863,10 @@ const otext * MessageGetExceptionQueue
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageSetExceptionQueue
+ * OcilibMessageSetExceptionQueue
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageSetExceptionQueue
+boolean OcilibMessageSetExceptionQueue
 (
     OCI_Msg     *msg,
     const otext *queue
@@ -880,12 +880,12 @@ boolean MessageSetExceptionQueue
 
     CHECK_PTR(OCI_IPC_MSG, msg)
 
-    CHECK(StringSetAttribute(msg->typinf->con,
-                             msg->proph,
-                             OCI_DTYPE_AQMSG_PROPERTIES,
-                             OCI_ATTR_EXCEPTION_QUEUE,
-                             &msg->except_queue,
-                             queue))
+    CHECK(OcilibStringSetAttribute(msg->typinf->con,
+                                   msg->proph,
+                                   OCI_DTYPE_AQMSG_PROPERTIES,
+                                   OCI_ATTR_EXCEPTION_QUEUE,
+                                   &msg->except_queue,
+                                   queue))
 
     SET_SUCCESS()
 
@@ -893,10 +893,10 @@ boolean MessageSetExceptionQueue
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageGetSender
+ * OcilibMessageGetSender
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Agent * MessageGetSender
+OCI_Agent * OcilibMessageGetSender
 (
     OCI_Msg *msg
 )
@@ -920,7 +920,8 @@ OCI_Agent * MessageGetSender
 
     if (NULL != handle)
     {
-        msg->sender = AgentInitialize(msg->typinf->con, msg->sender, handle, NULL, NULL);
+        msg->sender = OcilibAgentInitialize(msg->typinf->con, msg->sender, 
+                                            handle, NULL, NULL);
         CHECK_NULL(msg->sender)
     }
 
@@ -930,10 +931,10 @@ OCI_Agent * MessageGetSender
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageSetSender
+ * OcilibMessageSetSender
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageSetSender
+boolean OcilibMessageSetSender
 (
     OCI_Msg   *msg,
     OCI_Agent *sender
@@ -960,10 +961,10 @@ boolean MessageSetSender
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * MessageSetConsumers
+ * OcilibMessageSetConsumers
  * --------------------------------------------------------------------------------------------- */
 
-boolean MessageSetConsumers
+boolean OcilibMessageSetConsumers
 (
     OCI_Msg     *msg,
     OCI_Agent  **consumers,

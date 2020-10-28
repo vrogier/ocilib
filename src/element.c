@@ -32,36 +32,36 @@
 #include "number.h"
 #include "object.h"
 #include "reference.h"
-#include "strings.h"
+#include "stringutils.h"
 #include "timestamp.h"
 
-#define ELEM_SET_VALUE(elemtype, type, func_init, func_assign)   \
-                                                                 \
-    ENTER_FUNC(boolean, TRUE, OCI_IPC_ELEMENT, elem)             \
-                                                                 \
-    CHECK_PTR(OCI_IPC_ELEMENT, elem)                             \
-    CHECK_COMPAT((elemtype) == (elem)->typinf->cols[0].datatype) \
-                                                                 \
-    if (NULL == value)                                           \
-    {                                                            \
-        CHECK(ElementSetNull(elem))                              \
-    }                                                            \
-    else                                                         \
-    {                                                            \
-        if (!(elem)->obj)                                        \
-        {                                                        \
-            (elem)->obj = func_init;                             \
-            CHECK_NULL((elem)->obj)                              \
-        }                                                        \
-                                                                 \
-        CHECK(func_assign)                                       \
-                                                                 \
-        CHECK(ElementSetNullIndicator(elem, OCI_IND_NOTNULL))    \
-        (elem)->handle = ((type) (elem)->obj)->handle;           \
-    }                                                            \
-                                                                 \
-    SET_SUCCESS()                                                \
-                                                                 \
+#define ELEM_SET_VALUE(elemtype, type, func_init, func_assign)      \
+                                                                    \
+    ENTER_FUNC(boolean, TRUE, OCI_IPC_ELEMENT, elem)                \
+                                                                    \
+    CHECK_PTR(OCI_IPC_ELEMENT, elem)                                \
+    CHECK_COMPAT((elemtype) == (elem)->typinf->cols[0].datatype)    \
+                                                                    \
+    if (NULL == value)                                              \
+    {                                                               \
+        CHECK(OcilibElementSetNull(elem))                           \
+    }                                                               \
+    else                                                            \
+    {                                                               \
+        if (!(elem)->obj)                                           \
+        {                                                           \
+            (elem)->obj = func_init;                                \
+            CHECK_NULL((elem)->obj)                                 \
+        }                                                           \
+                                                                    \
+        CHECK(func_assign)                                          \
+                                                                    \
+        CHECK(OcilibElementSetNullIndicator(elem, OCI_IND_NOTNULL)) \
+        (elem)->handle = ((type) (elem)->obj)->handle;              \
+    }                                                               \
+                                                                    \
+    SET_SUCCESS()                                                   \
+                                                                    \
     EXIT_FUNC()
 
 #define ELEM_GET_VALUE(elemtype, type, func)                     \
@@ -91,39 +91,39 @@
                                                                  \
     EXIT_FUNC()
 
-#define ELEM_GET_NUMBER(elem, number_type, type, value)                      \
-                                                                             \
-    ENTER_FUNC(type, value, OCI_IPC_ELEMENT, elem)                           \
-                                                                             \
-    CHECK_PTR(OCI_IPC_ELEMENT, elem)                                         \
-    CHECK_COMPAT(OCI_CDT_NUMERIC == (elem)->typinf->cols[0].datatype)        \
-                                                                             \
-    type tmp = value;                                                        \
-                                                                             \
-    CHECK(ElemGetNumberInternal(elem, (void *) &tmp, (uword) (number_type))) \
-                                                                             \
-    SET_RETVAL(tmp)                                                          \
-                                                                             \
+#define ELEM_GET_NUMBER(elem, number_type, type, value)                                 \
+                                                                                        \
+    ENTER_FUNC(type, value, OCI_IPC_ELEMENT, elem)                                      \
+                                                                                        \
+    CHECK_PTR(OCI_IPC_ELEMENT, elem)                                                    \
+    CHECK_COMPAT(OCI_CDT_NUMERIC == (elem)->typinf->cols[0].datatype)                   \
+                                                                                        \
+    type tmp = value;                                                                   \
+                                                                                        \
+    CHECK(OcilibElementGetNumberInternal(elem, (void *) &tmp, (uword) (number_type)))   \
+                                                                                        \
+    SET_RETVAL(tmp)                                                                     \
+                                                                                        \
     EXIT_FUNC()
 
-#define ELEM_SET_NUMBER(elem, value, number_type)                                   \
-                                                                                    \
-    ENTER_FUNC(boolean, FALSE, OCI_IPC_ELEMENT, elem)                               \
-                                                                                    \
-    CHECK_PTR(OCI_IPC_ELEMENT, elem)                                                \
-    CHECK_COMPAT(OCI_CDT_NUMERIC == (elem)->typinf->cols[0].datatype)               \
-                                                                                    \
-    CHECK(ElementSetNumberInternal(elem, (void *) &(value), (uword) (number_type))) \
-                                                                                    \
-    SET_SUCCESS()                                                                   \
-                                                                                    \
+#define ELEM_SET_NUMBER(elem, value, number_type)                                           \
+                                                                                            \
+    ENTER_FUNC(boolean, FALSE, OCI_IPC_ELEMENT, elem)                                       \
+                                                                                            \
+    CHECK_PTR(OCI_IPC_ELEMENT, elem)                                                        \
+    CHECK_COMPAT(OCI_CDT_NUMERIC == (elem)->typinf->cols[0].datatype)                       \
+                                                                                            \
+    CHECK(OcilibElementSetNumberInternal(elem, (void *) &(value), (uword) (number_type)))   \
+                                                                                            \
+    SET_SUCCESS()                                                                           \
+                                                                                            \
     EXIT_FUNC()
 
 /* --------------------------------------------------------------------------------------------- *
-* ElemFreeAllocatedData
+* OcilibElementFreeAllocatedData
 * --------------------------------------------------------------------------------------------- */
 
-boolean ElemFreeAllocatedData
+static boolean OcilibElementFreeAllocatedData
 (
     OCI_Elem *elem
 )
@@ -141,7 +141,7 @@ boolean ElemFreeAllocatedData
         switch (elem->typinf->cols[0].datatype)
         {
             case OCI_CDT_TEXT:
-                StringFreeStringPtr(elem->con->env, (OCIString**)&elem->handle, elem->con->err);
+                OcilibStringFreeStringPtr(elem->con->env, (OCIString**)&elem->handle, elem->con->err);
                 break;
             default:
                 FREE(elem->handle)
@@ -155,10 +155,10 @@ boolean ElemFreeAllocatedData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementInitialize
+ * OcilibElementInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * ElementInitialize
+OCI_Elem * OcilibElementInitialize
 (
     OCI_Connection *con,
     OCI_Elem       *elem,
@@ -180,7 +180,7 @@ OCI_Elem * ElementInitialize
     elem->con = con;
 
     /* Free previously allocated data before reassign new one */
-    ElemFreeAllocatedData(elem);
+    OcilibElementFreeAllocatedData(elem);
 
     /* Reset members */
     elem->ind    = OCI_IND_NULL;
@@ -240,7 +240,7 @@ OCI_Elem * ElementInitialize
     (
         if (FAILURE)
         {
-            ElementFree(elem);
+            OcilibElementFree(elem);
             elem = NULL;
         }
 
@@ -249,10 +249,10 @@ OCI_Elem * ElementInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementSetNullIndicator
+ * OcilibElementSetNullIndicator
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetNullIndicator
+boolean OcilibElementSetNullIndicator
 (
     OCI_Elem *elem,
     OCIInd    value
@@ -296,10 +296,10 @@ boolean ElementSetNullIndicator
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementSetNumberInternal
+ * OcilibElementSetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetNumberInternal
+static boolean OcilibElementSetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -314,10 +314,10 @@ boolean ElementSetNumberInternal
 
     CHECK_PTR(OCI_IPC_ELEMENT, elem)
 
-    CHECK(NumberTranslateValue(elem->typinf->con, value, flag, elem->handle,
-                               elem->typinf->cols[0].subtype))
+    CHECK(OcilibNumberTranslateValue(elem->typinf->con, value, flag, elem->handle,
+                                     elem->typinf->cols[0].subtype))
 
-    CHECK(ElementSetNullIndicator(elem, OCI_IND_NOTNULL))
+    CHECK(OcilibElementSetNullIndicator(elem, OCI_IND_NOTNULL))
 
     SET_SUCCESS()
 
@@ -325,10 +325,10 @@ boolean ElementSetNumberInternal
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetNumberInternal
+ * OcilibElementGetNumberInternal
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElemGetNumberInternal
+static boolean OcilibElementGetNumberInternal
 (
     OCI_Elem *elem,
     void     *value,
@@ -344,22 +344,22 @@ boolean ElemGetNumberInternal
     CHECK_PTR(OCI_IPC_ELEMENT, elem)
     CHECK_PTR(OCI_IPC_VOID,    value)
 
-    if (!ElementIsNull(elem))
+    if (!OcilibElementIsNull(elem))
     {
         if (OCI_CDT_NUMERIC == elem->typinf->cols[0].datatype)
         {
-            CHECK(NumberTranslateValue(elem->typinf->con, elem->handle,
-                                       elem->typinf->cols[0].subtype,
-                                       value, flag))
+            CHECK(OcilibNumberTranslateValue(elem->typinf->con, elem->handle,
+                                             elem->typinf->cols[0].subtype,
+                                             value, flag))
         }
         else if (OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
         {
-            CHECK(NumberFromStringInternal(elem->con, value, flag,
-                                           ElementGetString(elem), NULL))
+            CHECK(OcilibNumberFromStringInternal(elem->con, value, flag,
+                                                 OcilibElementGetString(elem), NULL))
         }
         else
         {
-            THROW_NO_ARGS(ExceptionTypeNotCompatible)
+            THROW_NO_ARGS(OcilibExceptionTypeNotCompatible)
         }
     }
 
@@ -369,10 +369,10 @@ boolean ElemGetNumberInternal
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementCreate
+ * OcilibElementCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * ElementCreate
+OCI_Elem * OcilibElementCreate
 (
     OCI_TypeInfo *typinf
 )
@@ -385,16 +385,16 @@ OCI_Elem * ElementCreate
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
 
-    SET_RETVAL(ElementInitialize(typinf->con, NULL, NULL, (OCIInd*)NULL, typinf))
+    SET_RETVAL(OcilibElementInitialize(typinf->con, NULL, NULL, (OCIInd*)NULL, typinf))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementFree
+ * OcilibElementFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementFree
+boolean OcilibElementFree
 (
     OCI_Elem *elem
 )
@@ -420,12 +420,12 @@ boolean ElementFree
             data->hstate = OCI_OBJECT_FETCHED_DIRTY;
         }
 
-        FreeObjectFromType(elem->obj, elem->typinf->cols[0].datatype);
+        OcilibFreeObjectFromType(elem->obj, elem->typinf->cols[0].datatype);
     }
 
-    ElemFreeAllocatedData(elem);
+    OcilibElementFreeAllocatedData(elem);
 
-    ErrorResetSource(NULL, elem);
+    OcilibErrorResetSource(NULL, elem);
 
     FREE(elem->tmpbuf)
     FREE(elem)
@@ -436,10 +436,10 @@ boolean ElementFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementGetBoolean
+ * OcilibElementGetBoolean
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementGetBoolean
+boolean OcilibElementGetBoolean
 (
     OCI_Elem *elem
 )
@@ -453,7 +453,7 @@ boolean ElementGetBoolean
     CHECK_PTR(OCI_IPC_ELEMENT, elem)
     CHECK_COMPAT(OCI_CDT_BOOLEAN == elem->typinf->cols[0].datatype)
 
-    CHECK(!ElementIsNull(elem))
+    CHECK(!OcilibElementIsNull(elem))
 
     SET_RETVAL(elem->handle ? *((boolean*)elem->handle) : FALSE)
 
@@ -461,10 +461,10 @@ boolean ElementGetBoolean
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementGetNumber
+ * OcilibElementGetNumber
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Number * ElementGetNumber
+OCI_Number * OcilibElementGetNumber
 (
     OCI_Elem *elem
 )
@@ -473,15 +473,15 @@ OCI_Number * ElementGetNumber
     (
         OCI_CDT_NUMERIC,
         OCI_Number *,
-        NumberInitialize(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle)
+        OcilibNumberInitialize(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementGetShort
+ * OcilibElementGetShort
  * --------------------------------------------------------------------------------------------- */
 
-short ElementGetShort
+short OcilibElementGetShort
 (
     OCI_Elem *elem
 )
@@ -490,10 +490,10 @@ short ElementGetShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementGetUnsignedShort
+ * OcilibElementGetUnsignedShort
  * --------------------------------------------------------------------------------------------- */
 
-unsigned short ElementGetUnsignedShort
+unsigned short OcilibElementGetUnsignedShort
 (
     OCI_Elem *elem
 )
@@ -502,10 +502,10 @@ unsigned short ElementGetUnsignedShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetInt
+ * OcilibElementGetInt
  * --------------------------------------------------------------------------------------------- */
 
-int ElemGetInt
+int OcilibElementGetInt
 (
     OCI_Elem *elem
 )
@@ -514,10 +514,10 @@ int ElemGetInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementGetUnsignedInt
+ * OcilibElementGetUnsignedInt
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ElementGetUnsignedInt
+unsigned int OcilibElementGetUnsignedInt
 (
     OCI_Elem *elem
 )
@@ -526,10 +526,10 @@ unsigned int ElementGetUnsignedInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementGetBigInt
+ * OcilibElementGetBigInt
  * --------------------------------------------------------------------------------------------- */
 
-big_int ElementGetBigInt
+big_int OcilibElementGetBigInt
 (
     OCI_Elem *elem
 )
@@ -538,10 +538,10 @@ big_int ElementGetBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementGetUnsignedBigInt
+ * OcilibElementGetUnsignedBigInt
  * --------------------------------------------------------------------------------------------- */
 
-big_uint ElementGetUnsignedBigInt
+big_uint OcilibElementGetUnsignedBigInt
 (
     OCI_Elem *elem
 )
@@ -550,10 +550,10 @@ big_uint ElementGetUnsignedBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementGetDouble
+ * OcilibElementGetDouble
  * --------------------------------------------------------------------------------------------- */
 
-double ElementGetDouble
+double OcilibElementGetDouble
 (
     OCI_Elem *elem
 )
@@ -562,10 +562,10 @@ double ElementGetDouble
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetFloat
+ * OcilibElementGetFloat
  * --------------------------------------------------------------------------------------------- */
 
-float ElementGetFloat
+float OcilibElementGetFloat
 (
     OCI_Elem *elem
 )
@@ -574,10 +574,10 @@ float ElementGetFloat
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetString
+ * OcilibElementGetString
  * --------------------------------------------------------------------------------------------- */
 
-const otext * ElementGetString
+const otext * OcilibElementGetString
 (
     OCI_Elem *elem
 )
@@ -593,18 +593,18 @@ const otext * ElementGetString
 
     CHECK_NULL(elem->handle)
 
-    SET_RETVAL(StringFromStringPtr(elem->con->env,
-                                   (OCIString*)elem->handle,
-                                   &elem->tmpbuf, &elem->tmpsize))
+    SET_RETVAL(OcilibStringFromStringPtr(elem->con->env,
+                                         (OCIString*)elem->handle,
+                                         &elem->tmpbuf, &elem->tmpsize))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetRaw
+ * OcilibElementGetRaw
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ElementGetRaw
+unsigned int OcilibElementGetRaw
 (
     OCI_Elem    *elem,
     void        *value,
@@ -638,10 +638,10 @@ unsigned int ElementGetRaw
 }
 
 /* -------------------------------------------------------------------------------------------- *
-* OCI_ElemGetRawSize
+* OcilibElementGetRawSize
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int ElementGetRawSize
+unsigned int OcilibElementGetRawSize
 (
     OCI_Elem *elem
 )
@@ -663,10 +663,10 @@ unsigned int ElementGetRawSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetDate
+ * OcilibElementGetDate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Date * ElementGetDate
+OCI_Date * OcilibElementGetDate
 (
     OCI_Elem *elem
 )
@@ -675,15 +675,15 @@ OCI_Date * ElementGetDate
     (
         OCI_CDT_DATETIME,
         OCI_Date *,
-        DateInitialize(elem->con, (OCI_Date *) elem->obj, (OCIDate *) elem->handle, FALSE, FALSE)
+        OcilibDateInitialize(elem->con, (OCI_Date *) elem->obj, (OCIDate *) elem->handle, FALSE, FALSE)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetTimestamp
+ * OcilibElementGetTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Timestamp * ElementGetTimestamp
+OCI_Timestamp * OcilibElementGetTimestamp
 (
     OCI_Elem *elem
 )
@@ -694,9 +694,9 @@ OCI_Timestamp * ElementGetTimestamp
     (
         OCI_CDT_TIMESTAMP,
         OCI_Timestamp *,
-        TimestampInitialize(elem->con, (OCI_Timestamp *) elem->obj,
-                            (OCIDateTime *) elem->handle,
-                            elem->typinf->cols[0].subtype)
+        OcilibTimestampInitialize(elem->con, (OCI_Timestamp *) elem->obj,
+                                  (OCIDateTime *) elem->handle,
+                                  elem->typinf->cols[0].subtype)
     )
 
 #else
@@ -715,10 +715,10 @@ OCI_Timestamp * ElementGetTimestamp
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetInterval
+ * OcilibElementGetInterval
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Interval * ElementGetInterval
+OCI_Interval * OcilibElementGetInterval
 (
     OCI_Elem *elem
 )
@@ -729,9 +729,9 @@ OCI_Interval * ElementGetInterval
     (
         OCI_CDT_INTERVAL,
         OCI_Interval *,
-        IntervalInitialize(elem->con, (OCI_Interval *) elem->obj, 
-                           (OCIInterval *) elem->handle,
-                           elem->typinf->cols[0].subtype)
+        OcilibIntervalInitialize(elem->con, (OCI_Interval *) elem->obj,
+                                 (OCIInterval *) elem->handle,
+                                 elem->typinf->cols[0].subtype)
     )
 #else
 
@@ -749,10 +749,10 @@ OCI_Interval * ElementGetInterval
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetLob
+ * OcilibElementGetLob
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Lob * ElementGetLob
+OCI_Lob * OcilibElementGetLob
 (
     OCI_Elem *elem
 )
@@ -761,17 +761,17 @@ OCI_Lob * ElementGetLob
     (
         OCI_CDT_LOB,
         OCI_Lob*,
-        LobInitialize(elem->con, (OCI_Lob *) elem->obj, 
-                      (OCILobLocator *) elem->handle,
-                      elem->typinf->cols[0].subtype)
+        OcilibLobInitialize(elem->con, (OCI_Lob *) elem->obj,
+                           (OCILobLocator *) elem->handle,
+                            elem->typinf->cols[0].subtype)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetFile
+ * OcilibElementGetFile
  * --------------------------------------------------------------------------------------------- */
 
-OCI_File * ElementGetFile
+OCI_File * OcilibElementGetFile
 (
     OCI_Elem *elem
 )
@@ -780,17 +780,17 @@ OCI_File * ElementGetFile
     (
         OCI_CDT_FILE,
         OCI_File*,
-        FileInitialize(elem->con, (OCI_File *) elem->obj,
-                       (OCILobLocator *) elem->handle,
-                       elem->typinf->cols[0].subtype)
+        OcilibFileInitialize(elem->con, (OCI_File *) elem->obj,
+                             (OCILobLocator *) elem->handle,
+                             elem->typinf->cols[0].subtype)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementGetReference
+ * OcilibElementGetReference
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * ElementGetReference
+OCI_Ref * OcilibElementGetReference
 (
     OCI_Elem *elem
 )
@@ -799,16 +799,16 @@ OCI_Ref * ElementGetReference
     (
         OCI_CDT_REF,
         OCI_Ref*,
-        ReferenceInitialize(elem->con, elem->typinf->cols[0].typinf,
-                            (OCI_Ref *) elem->obj, (OCIRef *) elem->handle)
+        OcilibReferenceInitialize(elem->con, elem->typinf->cols[0].typinf,
+                                  (OCI_Ref *) elem->obj, (OCIRef *) elem->handle)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetObject
+ * OcilibElementGetObject
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Object * ElementGetObject
+OCI_Object * OcilibElementGetObject
 (
     OCI_Elem *elem
 )
@@ -817,16 +817,16 @@ OCI_Object * ElementGetObject
     (
         OCI_CDT_OBJECT,
         OCI_Object*,
-        ObjectInitialize(elem->con, (OCI_Object *) elem->obj, elem->handle,
-                         elem->typinf->cols[0].typinf, NULL, -1, TRUE)
+        OcilibObjectInitialize(elem->con, (OCI_Object *) elem->obj, elem->handle,
+                               elem->typinf->cols[0].typinf, NULL, -1, TRUE)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemGetColl
+ * OcilibElementGetCollection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * ElementGetCollection
+OCI_Coll * OcilibElementGetCollection
 (
     OCI_Elem *elem
 )
@@ -835,17 +835,17 @@ OCI_Coll * ElementGetCollection
     (
         OCI_CDT_COLLECTION,
         OCI_Coll*,
-        CollectionInitialize(elem->con, (OCI_Coll *) elem->obj,
-                             (OCIColl *) elem->handle,
-                             elem->typinf->cols[0].typinf)
+        OcilibCollectionInitialize(elem->con, (OCI_Coll *) elem->obj,
+                                   (OCIColl *) elem->handle,
+                                   elem->typinf->cols[0].typinf)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetBoolean
+ * OcilibElementSetBoolean
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetBoolean
+boolean OcilibElementSetBoolean
 (
     OCI_Elem *elem,
     boolean   value
@@ -866,7 +866,7 @@ boolean ElementSetBoolean
 
         *data = value;
 
-        CHECK(ElementSetNullIndicator(elem, OCI_IND_NOTNULL))
+        CHECK(OcilibElementSetNullIndicator(elem, OCI_IND_NOTNULL))
     }
 
     SET_SUCCESS()
@@ -875,10 +875,10 @@ boolean ElementSetBoolean
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementSetNumber
+ * OcilibElementSetNumber
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetNumber
+boolean OcilibElementSetNumber
 (
     OCI_Elem   *elem,
     OCI_Number *value
@@ -888,16 +888,16 @@ boolean ElementSetNumber
     (
         OCI_CDT_NUMERIC,
         OCI_Number*,
-        NumberInitialize(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle),
-        NumberAssign((OCI_Number *) elem->obj, value)
+        OcilibNumberInitialize(elem->con, (OCI_Number *) elem->obj, (OCINumber *) elem->handle),
+        OcilibNumberAssign((OCI_Number *) elem->obj, value)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetShort
+ * OcilibElementSetShort
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetShort
+boolean OcilibElementSetShort
 (
     OCI_Elem *elem,
     short     value
@@ -907,10 +907,10 @@ boolean ElementSetShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetUnsignedShort
+ * OcilibElementSetUnsignedShort
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetUnsignedShort
+boolean OcilibElementSetUnsignedShort
 (
     OCI_Elem      *elem,
     unsigned short value
@@ -920,10 +920,10 @@ boolean ElementSetUnsignedShort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetInt
+ * OcilibElementSetInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetInt
+boolean OcilibElementSetInt
 (
     OCI_Elem *elem,
     int       value
@@ -933,10 +933,10 @@ boolean ElementSetInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetUnsignedInt
+ * OcilibElementSetUnsignedInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetUnsignedInt
+boolean OcilibElementSetUnsignedInt
 (
     OCI_Elem    *elem,
     unsigned int value
@@ -946,10 +946,10 @@ boolean ElementSetUnsignedInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetBigInt
+ * OcilibElementSetBigInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetBigInt
+boolean OcilibElementSetBigInt
 (
     OCI_Elem *elem,
     big_int   value
@@ -959,10 +959,10 @@ boolean ElementSetBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetUnsignedBigInt
+ * OcilibElementSetUnsignedBigInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetUnsignedBigInt
+boolean OcilibElementSetUnsignedBigInt
 (
     OCI_Elem *elem,
     big_uint  value
@@ -972,10 +972,10 @@ boolean ElementSetUnsignedBigInt
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetDouble
+ * OcilibElementSetDouble
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetDouble
+boolean OcilibElementSetDouble
 (
     OCI_Elem *elem,
     double    value
@@ -985,10 +985,10 @@ boolean ElementSetDouble
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetFloat
+ * OcilibElementSetFloat
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetFloat
+boolean OcilibElementSetFloat
 (
     OCI_Elem *elem,
     float     value
@@ -998,10 +998,10 @@ boolean ElementSetFloat
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetString
+ * OcilibElementSetString
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetString
+boolean OcilibElementSetString
 (
     OCI_Elem    *elem,
     const otext *value
@@ -1018,17 +1018,17 @@ boolean ElementSetString
 
     if (NULL == value)
     {
-        CHECK(ElementSetNull(elem))
+        CHECK(OcilibElementSetNull(elem))
     }
     else
     {
         elem->alloc = (elem->alloc || elem->handle == NULL);
 
-        CHECK(StringToStringPtr(elem->con->env,
-                                (OCIString **) &elem->handle,
-                                elem->con->err, value))
+        CHECK(OcilibStringToStringPtr(elem->con->env,
+                                      (OCIString **) &elem->handle,
+                                      elem->con->err, value))
 
-        CHECK(ElementSetNullIndicator(elem, OCI_IND_NOTNULL))
+        CHECK(OcilibElementSetNullIndicator(elem, OCI_IND_NOTNULL))
     }
 
     SET_SUCCESS()
@@ -1037,10 +1037,10 @@ boolean ElementSetString
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetRaw
+ * OcilibElementSetRaw
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetRaw
+boolean OcilibElementSetRaw
 (
     OCI_Elem    *elem,
     void       * value,
@@ -1058,7 +1058,7 @@ boolean ElementSetRaw
 
     if (NULL == value)
     {
-        CHECK(ElementSetNull(elem))
+        CHECK(OcilibElementSetNull(elem))
     }
     else
     {
@@ -1070,7 +1070,7 @@ boolean ElementSetRaw
             (ub1*) value, len, (OCIRaw **) &elem->handle
         )
 
-        CHECK(ElementSetNullIndicator(elem, OCI_IND_NOTNULL))
+        CHECK(OcilibElementSetNullIndicator(elem, OCI_IND_NOTNULL))
     }
 
     SET_SUCCESS()
@@ -1079,10 +1079,10 @@ boolean ElementSetRaw
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetDate
+ * OcilibElementSetDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetDate
+boolean OcilibElementSetDate
 (
     OCI_Elem *elem,
     OCI_Date *value
@@ -1092,17 +1092,17 @@ boolean ElementSetDate
     (
         OCI_CDT_DATETIME,
         OCI_Date*,
-        DateInitialize(elem->con, (OCI_Date *) elem->obj,
-                       (OCIDate *) elem->handle, TRUE, FALSE),
-        DateAssign((OCI_Date *) elem->obj, value)
+        OcilibDateInitialize(elem->con, (OCI_Date *) elem->obj,
+                             (OCIDate *) elem->handle, TRUE, FALSE),
+        OcilibDateAssign((OCI_Date *) elem->obj, value)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetTimestamp
+ * OcilibElementSetTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetTimestamp
+boolean OcilibElementSetTimestamp
 (
     OCI_Elem      *elem,
     OCI_Timestamp *value
@@ -1114,10 +1114,10 @@ boolean ElementSetTimestamp
     (
         OCI_CDT_TIMESTAMP,
         OCI_Timestamp*,
-        TimestampInitialize(elem->con, (OCI_Timestamp *) elem->obj,
-                            (OCIDateTime *) elem->handle,
-                            elem->typinf->cols[0].subtype),
-        TimestampAssign((OCI_Timestamp *) elem->obj, value)
+        OcilibTimestampInitialize(elem->con, (OCI_Timestamp *) elem->obj,
+                                  (OCIDateTime *) elem->handle,
+                                  elem->typinf->cols[0].subtype),
+        OcilibTimestampAssign((OCI_Timestamp *) elem->obj, value)
     )
 
 #else
@@ -1136,10 +1136,10 @@ boolean ElementSetTimestamp
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetInterval
+ * OcilibElementSetInterval
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetInterval
+boolean OcilibElementSetInterval
 (
     OCI_Elem     *elem,
     OCI_Interval *value
@@ -1152,10 +1152,10 @@ boolean ElementSetInterval
     (
         OCI_CDT_INTERVAL,
         OCI_Interval*,
-        IntervalInitialize(elem->con, (OCI_Interval *) elem->obj,
-                           (OCIInterval *) elem->handle,
-                           elem->typinf->cols[0].subtype),
-        IntervalAssign((OCI_Interval *) elem->obj, value)
+        OcilibIntervalInitialize(elem->con, (OCI_Interval *) elem->obj,
+                                 (OCIInterval *) elem->handle,
+                                 elem->typinf->cols[0].subtype),
+        OcilibIntervalAssign((OCI_Interval *) elem->obj, value)
     )
 
 #else
@@ -1174,10 +1174,10 @@ boolean ElementSetInterval
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetColl
+ * OcilibElementSetCollection
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetCollection
+boolean OcilibElementSetCollection
 (
     OCI_Elem *elem,
     OCI_Coll *value
@@ -1187,17 +1187,17 @@ boolean ElementSetCollection
     (
         OCI_CDT_COLLECTION,
         OCI_Coll*,
-        CollectionInitialize(elem->con, (OCI_Coll *) elem->obj, (OCIColl *) elem->handle,
-                             elem->typinf->cols[0].typinf),
-        CollectionAssign((OCI_Coll *) elem->obj, value)
+        OcilibCollectionInitialize(elem->con, (OCI_Coll *) elem->obj, (OCIColl *) elem->handle,
+                                   elem->typinf->cols[0].typinf),
+        OcilibCollectionAssign((OCI_Coll *) elem->obj, value)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetObject
+ * OcilibElementSetObject
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetObject
+boolean OcilibElementSetObject
 (
     OCI_Elem   *elem,
     OCI_Object *value
@@ -1207,17 +1207,17 @@ boolean ElementSetObject
     (
         OCI_CDT_OBJECT,
         OCI_Object*,
-        ObjectInitialize(elem->con, (OCI_Object *) elem->obj, elem->handle,
-                         elem->typinf->cols[0].typinf, NULL, -1, TRUE),
-        ObjectAssign((OCI_Object *) elem->obj, value)
+        OcilibObjectInitialize(elem->con, (OCI_Object *) elem->obj, elem->handle,
+                               elem->typinf->cols[0].typinf, NULL, -1, TRUE),
+        OcilibObjectAssign((OCI_Object *) elem->obj, value)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetLob
+ * OcilibElementSetLob
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetLob
+boolean OcilibElementSetLob
 (
     OCI_Elem *elem,
     OCI_Lob  *value
@@ -1227,18 +1227,18 @@ boolean ElementSetLob
     (
         OCI_CDT_LOB,
         OCI_Lob*,
-        LobInitialize(elem->con, (OCI_Lob *) elem->obj,
-                      (OCILobLocator *) elem->handle,
-                      elem->typinf->cols[0].subtype),
-        LobAssign((OCI_Lob *) elem->obj, value)
+        OcilibLobInitialize(elem->con, (OCI_Lob *) elem->obj,
+                            (OCILobLocator *) elem->handle,
+                            elem->typinf->cols[0].subtype),
+        OcilibLobAssign((OCI_Lob *) elem->obj, value)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemSetFile
+ * OcilibElementSetFile
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetFile
+boolean OcilibElementSetFile
 (
     OCI_Elem *elem,
     OCI_File *value
@@ -1248,18 +1248,18 @@ boolean ElementSetFile
     (
         OCI_CDT_FILE,
         OCI_File*,
-        FileInitialize(elem->con, (OCI_File *) elem->obj, 
-                       (OCILobLocator *) elem->handle,
-                       elem->typinf->cols[0].subtype),
-        FileAssign((OCI_File *) elem->obj, value)
+        OcilibFileInitialize(elem->con, (OCI_File *) elem->obj,
+                             (OCILobLocator *) elem->handle,
+                             elem->typinf->cols[0].subtype),
+        OcilibFileAssign((OCI_File *) elem->obj, value)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementSetReference
+ * OcilibElementSetReference
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetReference
+boolean OcilibElementSetReference
 (
     OCI_Elem *elem,
     OCI_Ref  *value
@@ -1269,17 +1269,17 @@ boolean ElementSetReference
     (
         OCI_CDT_REF,
         OCI_Ref*,
-        ReferenceInitialize(elem->con, elem->typinf->cols[0].typinf,
-                            (OCI_Ref *) elem->obj, (OCIRef *) elem->handle),
-        ReferenceAssign((OCI_Ref *) elem->obj, value)
+        OcilibReferenceInitialize(elem->con, elem->typinf->cols[0].typinf,
+                                  (OCI_Ref *) elem->obj, (OCIRef *) elem->handle),
+        OcilibReferenceAssign((OCI_Ref *) elem->obj, value)
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElemIsNull
+ * OcilibElementIsNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementIsNull
+boolean OcilibElementIsNull
 (
     OCI_Elem *elem
 )
@@ -1300,13 +1300,13 @@ boolean ElementIsNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ElementSetNull
+ * OcilibElementSetNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean ElementSetNull
+boolean OcilibElementSetNull
 (
     OCI_Elem *elem
 )
 {
-    return ElementSetNullIndicator(elem, OCI_IND_NULL);
+    return OcilibElementSetNullIndicator(elem, OCI_IND_NULL);
 }

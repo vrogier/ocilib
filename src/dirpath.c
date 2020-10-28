@@ -23,7 +23,7 @@
 #include "macros.h"
 #include "memory.h"
 #include "number.h"
-#include "strings.h"
+#include "stringutils.h"
 
 static const unsigned int ConversionModeValues[] =
 {
@@ -32,10 +32,10 @@ static const unsigned int ConversionModeValues[] =
 };
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathSetArray
+ * OcilibDirPathSetArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathSetArray
+static boolean OcilibDirPathSetArray
 (
     OCI_DirPath *dp,
     ub4          row_from
@@ -104,7 +104,7 @@ boolean DirPathSetArray
  * DirPahArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DirPathArrayToStream
+static unsigned int OcilibDirPathArrayToStream
 (
     OCI_DirPath *dp,
     ub4          row_from
@@ -142,7 +142,7 @@ unsigned int DirPathArrayToStream
 
             if (OCI_DCM_DEFAULT == dp->cvt_mode)
             {
-                THROW(ExceptionOCI, dp->con->err, ret)
+                THROW(OcilibExceptionOCI, dp->con->err, ret)
             }
             break;
         }
@@ -211,7 +211,7 @@ unsigned int DirPathArrayToStream
  * DirPahArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DirPathLoadStream
+static unsigned int OcilibDirPathLoadStream
 (
     OCI_DirPath *dp
 )
@@ -245,7 +245,7 @@ unsigned int DirPathLoadStream
         case OCI_ERROR:
         {
             status = OCI_DPR_ERROR;
-            THROW(ExceptionOCI, dp->con->err, ret)
+            THROW(OcilibExceptionOCI, dp->con->err, ret)
             break;
         }
         case OCI_NO_DATA:
@@ -287,10 +287,10 @@ unsigned int DirPathLoadStream
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathCreate
+ * OcilibDirPathCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_DirPath * DirPathCreate
+OCI_DirPath * OcilibDirPathCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *partition,
@@ -336,7 +336,7 @@ OCI_DirPath * DirPathCreate
 
     CHECK
     (
-        MemoryAllocHandle
+        OcilibMemoryAllocHandle
         (
             (dvoid *) dp->con->env,
             (dvoid **) (void *) &dp->ctx,
@@ -346,7 +346,7 @@ OCI_DirPath * DirPathCreate
 
     /* set table name attribute */
 
-    dbstr1 = StringGetDBString(dp->typinf->name, &dbsize1);
+    dbstr1 = OcilibStringGetDBString(dp->typinf->name, &dbsize1);
 
     CHECK_ATTRIB_SET
     (
@@ -359,7 +359,7 @@ OCI_DirPath * DirPathCreate
 
     if (IS_STRING_VALID(dp->typinf->schema))
     {
-        dbstr2 = StringGetDBString(dp->typinf->schema, &dbsize2);
+        dbstr2 = OcilibStringGetDBString(dp->typinf->schema, &dbsize2);
 
         CHECK_ATTRIB_SET
         (
@@ -373,7 +373,7 @@ OCI_DirPath * DirPathCreate
 
     if (IS_STRING_VALID(partition))
     {
-        dbstr3 = StringGetDBString(partition, &dbsize3);
+        dbstr3 = OcilibStringGetDBString(partition, &dbsize3);
 
         CHECK_ATTRIB_SET
         (
@@ -412,13 +412,13 @@ OCI_DirPath * DirPathCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr1);
-        StringReleaseDBString(dbstr2);
-        StringReleaseDBString(dbstr3);
+        OcilibStringReleaseDBString(dbstr1);
+        OcilibStringReleaseDBString(dbstr2);
+        OcilibStringReleaseDBString(dbstr3);
 
         if (FAILURE)
         {
-            DirPathFree(dp);
+            OcilibDirPathFree(dp);
             dp = NULL;
         }
 
@@ -427,10 +427,10 @@ OCI_DirPath * DirPathCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathFree
+ * OcilibDirPathFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathFree
+boolean OcilibDirPathFree
 (
     OCI_DirPath *dp
 )
@@ -457,11 +457,11 @@ boolean DirPathFree
     FREE(dp->err_cols)
     FREE(dp->err_rows)
 
-    MemoryFreeHandle(dp->strm, OCI_HTYPE_DIRPATH_STREAM);
-    MemoryFreeHandle(dp->arr,  OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
-    MemoryFreeHandle(dp->ctx,  OCI_HTYPE_DIRPATH_CTX);
+    OcilibMemoryFreeHandle(dp->strm, OCI_HTYPE_DIRPATH_STREAM);
+    OcilibMemoryFreeHandle(dp->arr,  OCI_HTYPE_DIRPATH_COLUMN_ARRAY);
+    OcilibMemoryFreeHandle(dp->ctx,  OCI_HTYPE_DIRPATH_CTX);
 
-    ErrorResetSource(NULL, dp);
+    OcilibErrorResetSource(NULL, dp);
 
     FREE(dp)
 
@@ -471,10 +471,10 @@ boolean DirPathFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathSetColumn
+ * OcilibDirPathSetColumn
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathSetColumn
+boolean OcilibDirPathSetColumn
 (
     OCI_DirPath *dp,
     unsigned int index,
@@ -509,7 +509,7 @@ boolean DirPathSetColumn
 
     for (i = 0; i < dp->typinf->nb_cols; i++)
     {
-        if (0 == ostrcasecmp(name, dp->typinf->cols[i].name))
+        if (0 == OcilibStringCaseCompare(name, dp->typinf->cols[i].name))
         {
             break;
         }
@@ -519,7 +519,7 @@ boolean DirPathSetColumn
 
     if (i >= dp->typinf->nb_cols)
     {
-        THROW(ExceptionDirPathColNotFound, name, dp->typinf->name)
+        THROW(OcilibExceptionDirPathColNotFound, name, dp->typinf->name)
     }
 
     /* set column information */
@@ -553,7 +553,7 @@ boolean DirPathSetColumn
         {
             if (IS_STRING_VALID(format))
             {
-                dpcol->format      = ostrdup(format);
+                dpcol->format      = OcilibStringDuplicate(format);
                 dpcol->format_size = (ub4) ostrlen(format);
                 dpcol->type        = OCI_DDT_NUMBER;
                 dpcol->sqlcode     = SQLT_NUM;
@@ -574,7 +574,7 @@ boolean DirPathSetColumn
 
             if (IS_STRING_VALID(format))
             {
-                dpcol->format      = ostrdup(format);
+                dpcol->format      = OcilibStringDuplicate(format);
                 dpcol->format_size = (ub4) ostrlen(format);
                 dpcol->maxsize     = (ub2) max(dpcol->format_size, maxsize);
                 dpcol->bufsize    *= sizeof(otext);
@@ -607,7 +607,7 @@ boolean DirPathSetColumn
         }
         default:
         {
-            THROW(ExceptionDatatypeNotSupported, col->libcode)
+            THROW(OcilibExceptionDatatypeNotSupported, col->libcode)
         }
     }
 
@@ -634,7 +634,7 @@ boolean DirPathSetColumn
 
     /* set column name */
 
-    dbstr1 = StringGetDBString(name, &dbsize1);
+    dbstr1 = OcilibStringGetDBString(name, &dbsize1);
 
     CHECK_ATTRIB_SET
     (
@@ -689,7 +689,7 @@ boolean DirPathSetColumn
 
     if (dpcol->format && dpcol->format[0] && (OCI_DDT_NUMBER != dpcol->type))
     {
-        dbstr2 = StringGetDBString(dpcol->format, &dbsize2);
+        dbstr2 = OcilibStringGetDBString(dpcol->format, &dbsize2);
 
         CHECK_ATTRIB_SET
         (
@@ -717,8 +717,8 @@ boolean DirPathSetColumn
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr1);
-        StringReleaseDBString(dbstr2);
+        OcilibStringReleaseDBString(dbstr1);
+        OcilibStringReleaseDBString(dbstr2);
 
         if (NULL != hattr)
         {
@@ -728,10 +728,10 @@ boolean DirPathSetColumn
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathPrepare
+ * OcilibDirPathPrepare
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathPrepare
+boolean OcilibDirPathPrepare
 (
     OCI_DirPath *dp
 )
@@ -762,7 +762,7 @@ boolean DirPathPrepare
 
     CHECK
     (
-        MemoryAllocHandle
+        OcilibMemoryAllocHandle
         (
             (dvoid *)dp->ctx,
             (dvoid **)(void *)&dp->arr,
@@ -774,7 +774,7 @@ boolean DirPathPrepare
 
     CHECK
     (
-        MemoryAllocHandle
+        OcilibMemoryAllocHandle
         (
             (dvoid *)dp->ctx,
             (dvoid **)(void *)&dp->strm,
@@ -821,10 +821,10 @@ boolean DirPathPrepare
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathSetEntry
+ * OcilibDirPathSetEntry
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathSetEntry
+boolean OcilibDirPathSetEntry
 (
     OCI_DirPath *dp,
     unsigned int row,
@@ -895,7 +895,7 @@ boolean DirPathSetEntry
         if (OCI_DDT_TEXT == dpcol->type && Env.use_wide_char_conv)
         {
             size = ocharcount(size);
-            StringUTF32ToUTF16(value, data, size);
+            OcilibStringUTF32ToUTF16(value, data, size);
         }
         else if (OCI_DDT_OTHERS == dpcol->type && OCI_CHAR_WIDE == Env.charset)
         {
@@ -903,7 +903,7 @@ boolean DirPathSetEntry
                so, let's convert them to ANSI */
 
             size = ocharcount(size);
-            StringNativeToAnsi(value, data, size);
+            OcilibStringNativeToAnsi(value, data, size);
         }
         else if (OCI_DDT_NUMBER == dpcol->type)
         {
@@ -912,8 +912,8 @@ boolean DirPathSetEntry
 
             OCINumber *num = (OCINumber *) data;
 
-            CHECK(NumberFromStringInternal(dp->con, num, OCI_NUM_NUMBER,
-                                           (otext *)value, dpcol->format))
+            CHECK(OcilibNumberFromStringInternal(dp->con, num, OCI_NUM_NUMBER,
+                                                 (otext *)value, dpcol->format))
 
             size = (unsigned int) num->OCINumberPart[0];
         }
@@ -932,10 +932,10 @@ boolean DirPathSetEntry
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathReset
+ * OcilibDirPathReset
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathReset
+boolean OcilibDirPathReset
 (
     OCI_DirPath *dp
 )
@@ -980,10 +980,10 @@ boolean DirPathReset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathConvert
+ * OcilibDirPathConvert
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DirPathConvert
+unsigned int OcilibDirPathConvert
 (
     OCI_DirPath *dp
 )
@@ -1029,11 +1029,11 @@ unsigned int DirPathConvert
 
     /* set array values */
 
-    CHECK(DirPathSetArray(dp, row_from))
+    CHECK(OcilibDirPathSetArray(dp, row_from))
 
     /* try to convert values from array into stream */
 
-    dp->res_conv = DirPathArrayToStream(dp, row_from);
+    dp->res_conv = OcilibDirPathArrayToStream(dp, row_from);
 
     /* in case of conversion error, continue conversion in force mode
        other return from conversion */
@@ -1050,11 +1050,11 @@ unsigned int DirPathConvert
 
             /* set values again */
 
-            CHECK(DirPathSetArray(dp, row_from))
+            CHECK(OcilibDirPathSetArray(dp, row_from))
 
             /* perform conversion again */
 
-            dp->res_conv = DirPathArrayToStream(dp, row_from);
+            dp->res_conv = OcilibDirPathArrayToStream(dp, row_from);
         }
     }
 
@@ -1066,10 +1066,10 @@ unsigned int DirPathConvert
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathLoad
+ * OcilibDirPathLoad
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DirPathLoad
+unsigned int OcilibDirPathLoad
 (
     OCI_DirPath *dp
 )
@@ -1096,13 +1096,13 @@ unsigned int DirPathLoad
 
     /* load the stream */
 
-    dp->res_load = DirPathLoadStream(dp);
+    dp->res_load = OcilibDirPathLoadStream(dp);
 
     /* continue to load the stream while it returns an error */
 
     while (OCI_DPR_ERROR == dp->res_load)
     {
-        dp->res_load = DirPathLoadStream(dp);
+        dp->res_load = OcilibDirPathLoadStream(dp);
     }
 
     SET_RETVAL(dp->res_load)
@@ -1111,10 +1111,10 @@ unsigned int DirPathLoad
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathFinish
+ * OcilibDirPathFinish
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathFinish
+boolean OcilibDirPathFinish
 (
     OCI_DirPath *dp
 )
@@ -1143,10 +1143,10 @@ boolean DirPathFinish
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathAbort
+ * OcilibDirPathAbort
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathAbort
+boolean OcilibDirPathAbort
 (
     OCI_DirPath *dp
 )
@@ -1175,10 +1175,10 @@ boolean DirPathAbort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathSave
+ * OcilibDirPathSave
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathSave
+boolean OcilibDirPathSave
 (
     OCI_DirPath *dp
 )
@@ -1206,10 +1206,10 @@ boolean DirPathSave
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathFlushRow
+ * OcilibDirPathFlushRow
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathFlushRow
+boolean OcilibDirPathFlushRow
 (
     OCI_DirPath *dp
 )
@@ -1236,10 +1236,10 @@ boolean DirPathFlushRow
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathSetCurrentRows
+ * OcilibDirPathSetCurrentRows
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathSetCurrentRows
+boolean OcilibDirPathSetCurrentRows
 (
     OCI_DirPath *dp,
     unsigned int nb_rows
@@ -1263,10 +1263,10 @@ boolean DirPathSetCurrentRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathGetCurrentRows
+ * OcilibDirPathGetCurrentRows
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DirPathGetCurrentRows
+unsigned int OcilibDirPathGetCurrentRows
 (
     OCI_DirPath *dp
 )
@@ -1280,10 +1280,10 @@ unsigned int DirPathGetCurrentRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathGetMaxRows
+ * OcilibDirPathGetMaxRows
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DirPathGetMaxRows
+unsigned int OcilibDirPathGetMaxRows
 (
     OCI_DirPath *dp
 )
@@ -1297,10 +1297,10 @@ unsigned int DirPathGetMaxRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathSetDateFormat
+ * OcilibDirPathSetDateFormat
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathSetDateFormat
+boolean OcilibDirPathSetDateFormat
 (
     OCI_DirPath *dp,
     const otext *format
@@ -1318,7 +1318,7 @@ boolean DirPathSetDateFormat
     CHECK_PTR(OCI_IPC_DIRPATH, dp)
     CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED)
 
-    dbstr = StringGetDBString(format, &dbsize);
+    dbstr = OcilibStringGetDBString(format, &dbsize);
 
     CHECK_ATTRIB_SET
     (
@@ -1331,15 +1331,15 @@ boolean DirPathSetDateFormat
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(dbstr);
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathSetParallel
+ * OcilibDirPathSetParallel
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathSetParallel
+boolean OcilibDirPathSetParallel
 (
     OCI_DirPath *dp,
     boolean      value
@@ -1369,10 +1369,10 @@ boolean DirPathSetParallel
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathSetNoLog
+ * OcilibDirPathSetNoLog
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathSetNoLog
+boolean OcilibDirPathSetNoLog
 (
     OCI_DirPath *dp,
     boolean      value
@@ -1402,10 +1402,10 @@ boolean DirPathSetNoLog
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathSetCacheSize
+ * OcilibDirPathSetCacheSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathSetCacheSize
+boolean OcilibDirPathSetCacheSize
 (
     OCI_DirPath *dp,
     unsigned int size
@@ -1452,10 +1452,10 @@ boolean DirPathSetCacheSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathSetBufferSize
+ * OcilibDirPathSetBufferSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathSetBufferSize
+boolean OcilibDirPathSetBufferSize
 (
     OCI_DirPath *dp,
     unsigned int size
@@ -1485,10 +1485,10 @@ boolean DirPathSetBufferSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathSetConvertMode
+ * OcilibDirPathSetConvertMode
  * --------------------------------------------------------------------------------------------- */
 
-boolean DirPathSetConvertMode
+boolean OcilibDirPathSetConvertMode
 (
     OCI_DirPath *dp,
     unsigned int mode
@@ -1512,10 +1512,10 @@ boolean DirPathSetConvertMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathGetRowCount
+ * OcilibDirPathGetRowCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DirPathGetRowCount
+unsigned int OcilibDirPathGetRowCount
 (
     OCI_DirPath *dp
 )
@@ -1529,10 +1529,10 @@ unsigned int DirPathGetRowCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathGetAffectedRows
+ * OcilibDirPathGetAffectedRows
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DirPathGetAffectedRows
+unsigned int OcilibDirPathGetAffectedRows
 (
     OCI_DirPath *dp
 )
@@ -1546,10 +1546,10 @@ unsigned int DirPathGetAffectedRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathGetErrorColumn
+ * OcilibDirPathGetErrorColumn
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DirPathGetErrorColumn
+unsigned int OcilibDirPathGetErrorColumn
 (
     OCI_DirPath *dp
 )
@@ -1570,10 +1570,10 @@ unsigned int DirPathGetErrorColumn
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPathGetErrorRow
+ * OcilibDirPathGetErrorRow
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int DirPathGetErrorRow
+unsigned int OcilibDirPathGetErrorRow
 (
     OCI_DirPath *dp
 )

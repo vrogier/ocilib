@@ -89,7 +89,13 @@ inline void Exception::SetWhat(const otext* value) noexcept
         return;
     }
 
-    const size_t len = ostrlen(value);
+
+#if defined(OCI_CHARSET_ANSI)
+    const size_t len = strlen(value);
+#else
+    const size_t len = wcslen(value);   
+#endif
+
     _what = new (std::nothrow) otext[len + 1];
     if (_what)
     {

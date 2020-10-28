@@ -84,7 +84,7 @@
     <ClCompile Include="..\src\reference.c" />
     <ClCompile Include="..\src\resultset.c" />
     <ClCompile Include="..\src\statement.c" />
-    <ClCompile Include="..\src\strings.c" />
+    <ClCompile Include="..\src\stringutils.c" />
     <ClCompile Include="..\src\subscription.c" />
     <ClCompile Include="..\src\thread.c" />
     <ClCompile Include="..\src\threadkey.c" />

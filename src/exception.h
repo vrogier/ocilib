@@ -23,134 +23,134 @@
 
 #include "types.h"
 
-OCI_Error* ExceptionGetError
+OCI_SYM_LOCAL OCI_Error* OcilibExceptionGetError
 (
     void
 );
 
-void ExceptionOCI
+OCI_SYM_LOCAL void OcilibExceptionOCI
 (
     OCI_Context* ctx,
     OCIError    *oci_err,
     sword        call_ret
 );
 
-void ExceptionMemory
+OCI_SYM_LOCAL void OcilibExceptionMemory
 (
     OCI_Context* ctx,
     int          type,
     size_t       nb_bytes
 );
 
-void ExceptionNotAvailable
+OCI_SYM_LOCAL void OcilibExceptionNotAvailable
 (
     OCI_Context* ctx,
     int          feature
 );
 
-void ExceptionNullPointer
+OCI_SYM_LOCAL void OcilibExceptionNullPointer
 (
     OCI_Context* ctx,
     int          type
 );
 
-void ExceptionDatatypeNotSupported
+OCI_SYM_LOCAL void OcilibExceptionDatatypeNotSupported
 (
     OCI_Context* ctx,
     int          code
 );
 
-void ExceptionParsingToken
+OCI_SYM_LOCAL void OcilibExceptionParsingToken
 (
     OCI_Context* ctx,
     otext        token
 );
 
-void ExceptionMappingArgument
+OCI_SYM_LOCAL void OcilibExceptionMappingArgument
 (
     OCI_Context* ctx,
     int          arg
 );
 
-void ExceptionNotInitialized
+OCI_SYM_LOCAL void OcilibExceptionNotInitialized
 (
     OCI_Context* ctx
 );
 
-void ExceptionLoadingSharedLib
+OCI_SYM_LOCAL void OcilibExceptionLoadingSharedLib
 (
     OCI_Context* ctx
 );
 
-void ExceptionLoadingSymbols
+OCI_SYM_LOCAL void OcilibExceptionLoadingSymbols
 (
     OCI_Context* ctx
 );
 
-void ExceptionNotMultithreaded
+OCI_SYM_LOCAL void OcilibExceptionNotMultithreaded
 (
     OCI_Context* ctx
 );
 
-void ExceptionOutOfBounds
+OCI_SYM_LOCAL void OcilibExceptionOutOfBounds
 (
     OCI_Context* ctx,
     int          value
 );
 
-void ExceptionUnfreedData
+OCI_SYM_LOCAL void OcilibExceptionUnfreedData
 (
     OCI_Context* ctx,
     int          type_elem,
     int          nb_elem
 );
 
-void ExceptionUnfreedBytes
+OCI_SYM_LOCAL void OcilibExceptionUnfreedBytes
 (
     OCI_Context* ctx,
     big_uint     nb_bytes
 );
 
-void ExceptionMaxBind
+OCI_SYM_LOCAL void OcilibExceptionMaxBind
 (
     OCI_Context* ctx
 );
 
-void ExceptionAttributeNotFound
+OCI_SYM_LOCAL void OcilibExceptionAttributeNotFound
 (
     OCI_Context * ctx,
     const otext * attr
 );
 
-void ExceptionMinimumValue
+OCI_SYM_LOCAL void OcilibExceptionMinimumValue
 (
     OCI_Context* ctx,
     int          min
 );
 
-void ExceptionTypeNotCompatible
+OCI_SYM_LOCAL void OcilibExceptionTypeNotCompatible
 (
     OCI_Context* ctx
 );
 
-void ExceptionStatementState
+OCI_SYM_LOCAL void OcilibExceptionStatementState
 (
     OCI_Context* ctx,
     int          state
 );
 
-void ExceptionStatementNotScrollable
+OCI_SYM_LOCAL void OcilibExceptionStatementNotScrollable
 (
     OCI_Context* ctx
 );
 
-void ExceptionBindAlreadyUsed
+OCI_SYM_LOCAL void OcilibExceptionBindAlreadyUsed
 (
     OCI_Context * ctx,
     const otext * bind
 );
 
-void ExceptionBindArraySize
+OCI_SYM_LOCAL void OcilibExceptionBindArraySize
 (
     OCI_Context* ctx,
     unsigned int maxsize,
@@ -158,63 +158,63 @@ void ExceptionBindArraySize
     unsigned int newsize
 );
 
-void ExceptionDirPathColNotFound
+OCI_SYM_LOCAL void OcilibExceptionDirPathColNotFound
 (
     OCI_Context* ctx,
     const otext* column,
     const otext* table
 );
 
-void ExceptionDirPathState
+OCI_SYM_LOCAL void OcilibExceptionDirPathState
 (
     OCI_Context* ctx,
     int          state
 );
 
-void ExceptionOCIEnvironment
+OCI_SYM_LOCAL void OcilibExceptionOCIEnvironment
 (
     OCI_Context* ctx
 );
 
-void ExceptionRebindBadDatatype
+OCI_SYM_LOCAL void OcilibExceptionRebindBadDatatype
 (
     OCI_Context * ctx,
     const otext * bind
 );
 
-void ExceptionTypeInfoWrongType
+OCI_SYM_LOCAL void OcilibExceptionTypeInfoWrongType
 (
     OCI_Context * ctx,
     const otext * name
 );
 
-void ExceptionItemNotFound
+OCI_SYM_LOCAL void OcilibExceptionItemNotFound
 (
     OCI_Context * ctx,
     const otext * name,
     unsigned int  type
 );
 
-void ExceptionArgInvalidValue
+OCI_SYM_LOCAL void OcilibExceptionArgInvalidValue
 (
     OCI_Context * ctx,
     const otext * name,
     unsigned int  value
 );
 
-void ExceptionEnvFromXaString
+OCI_SYM_LOCAL void OcilibExceptionEnvFromXaString
 (
     OCI_Context* ctx,
     const otext* value
 );
 
-void ExceptionConnFromXaString
+OCI_SYM_LOCAL void OcilibExceptionConnFromXaString
 (
     OCI_Context* ctx,
     const otext* value
 );
 
-void ExceptionExternalBindingNotAllowed
+OCI_SYM_LOCAL void OcilibExceptionExternalBindingNotAllowed
 (
     OCI_Context * ctx,
     const otext * bind

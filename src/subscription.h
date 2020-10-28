@@ -23,12 +23,12 @@
 
 #include "types.h"
 
-boolean SubscriptionDispose
+OCI_SYM_LOCAL boolean OcilibSubscriptionDispose
 (
     OCI_Subscription *sub
 );
 
-OCI_Subscription * SubscriptionRegister
+OCI_SYM_LOCAL OCI_Subscription * OcilibSubscriptionRegister
 (
     OCI_Connection *con,
     const otext    *name,
@@ -38,33 +38,33 @@ OCI_Subscription * SubscriptionRegister
     unsigned int    timeout
 );
 
-boolean SubscriptionUnregister
+OCI_SYM_LOCAL boolean OcilibSubscriptionUnregister
 (
     OCI_Subscription *sub
 );
 
-boolean SubscriptionAddStatement
+OCI_SYM_LOCAL boolean OcilibSubscriptionAddStatement
 (
     OCI_Subscription *sub,
     OCI_Statement    *stmt
 );
 
-const otext * SubscriptionGetName
+OCI_SYM_LOCAL const otext * OcilibSubscriptionGetName
 (
     OCI_Subscription *sub
 );
 
-unsigned int SubscriptionGetPort
+OCI_SYM_LOCAL unsigned int OcilibSubscriptionGetPort
 (
     OCI_Subscription *sub
 );
 
-unsigned int SubscriptionGetTimeout
+OCI_SYM_LOCAL unsigned int OcilibSubscriptionGetTimeout
 (
     OCI_Subscription *sub
 );
 
-OCI_Connection * SubscriptionGetConnection
+OCI_SYM_LOCAL OCI_Connection * OcilibSubscriptionGetConnection
 (
     OCI_Subscription *sub
 );

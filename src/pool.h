@@ -23,12 +23,12 @@
 
 #include "types.h"
 
-boolean PoolDispose
+OCI_SYM_LOCAL boolean OcilibPoolDispose
 (
     OCI_Pool *pool
 );
 
-OCI_Pool * PoolCreate
+OCI_SYM_LOCAL OCI_Pool * OcilibPoolCreate
 (
     const otext *db,
     const otext *user,
@@ -40,71 +40,71 @@ OCI_Pool * PoolCreate
     unsigned int incr_con
 );
 
-boolean PoolFree
+OCI_SYM_LOCAL boolean OcilibPoolFree
 (
     OCI_Pool *pool
 );
 
-OCI_Connection * PoolGetConnection
+OCI_SYM_LOCAL OCI_Connection * OcilibPoolGetConnection
 (
     OCI_Pool    *pool,
     const otext *tag
 );
 
-unsigned int PoolGetTimeout
+OCI_SYM_LOCAL unsigned int OcilibPoolGetTimeout
 (
     OCI_Pool *pool
 );
 
-boolean PoolSetTimeout
+OCI_SYM_LOCAL boolean OcilibPoolSetTimeout
 (
     OCI_Pool    *pool,
     unsigned int value
 );
 
-boolean PoolGetNoWait
+OCI_SYM_LOCAL boolean OcilibPoolGetNoWait
 (
     OCI_Pool *pool
 );
 
-boolean PoolSetNoWait
+OCI_SYM_LOCAL boolean OcilibPoolSetNoWait
 (
     OCI_Pool *pool,
     boolean   value
 );
 
-unsigned int PoolGetBusyCount
+OCI_SYM_LOCAL unsigned int OcilibPoolGetBusyCount
 (
     OCI_Pool *pool
 );
 
-unsigned int PoolGetOpenedCount
+OCI_SYM_LOCAL unsigned int OcilibPoolGetOpenedCount
 (
     OCI_Pool *pool
 );
 
-unsigned int PoolGetMin
+OCI_SYM_LOCAL unsigned int OcilibPoolGetMin
 (
     OCI_Pool *pool
 );
 
-unsigned int PoolGetMax
+OCI_SYM_LOCAL unsigned int OcilibPoolGetMax
 (
     OCI_Pool *pool
 );
 
-unsigned int PoolGetIncrement
+OCI_SYM_LOCAL unsigned int OcilibPoolGetIncrement
 (
     OCI_Pool *pool
 );
 
-boolean PoolSetStatementCacheSize
+OCI_SYM_LOCAL boolean OcilibPoolSetStatementCacheSize
 (
     OCI_Pool    *pool,
     unsigned int value
 );
 
-unsigned int PoolGetStatementCacheSize
+OCI_SYM_LOCAL unsigned int OcilibPoolGetStatementCacheSize
 (
     OCI_Pool *pool
 );

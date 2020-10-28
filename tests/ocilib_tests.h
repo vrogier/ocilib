@@ -13,12 +13,16 @@
     #endif
     #define TO_STRING std::to_wstring
     using ostring = std::wstring;
+    #define osprintf wsprintf
+    #define ostrlen wcslen
 #else
     #ifndef OCI_CHARSET_ANSI
     #define OCI_CHARSET_ANSI
     #endif
     #define TO_STRING std::to_string
     using ostring = std::string;
+    #define osprintf sprintf
+    #define ostrlen strlen
 #endif
 
 #define OCI_API __stdcall

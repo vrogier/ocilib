@@ -24,7 +24,7 @@
 #include "list.h"
 #include "macros.h"
 #include "resultset.h"
-#include "strings.h"
+#include "stringutils.h"
 #include "timestamp.h"
 
 typedef struct HAEventParams
@@ -36,10 +36,10 @@ typedef struct HAEventParams
 } HAEventParams;
 
 /* --------------------------------------------------------------------------------------------- *
- * ProcInBind
+ * OcilibCallbackInBind
  * --------------------------------------------------------------------------------------------- */
 
-sb4 CallbackInBind
+sb4 OcilibCallbackInBind
 (
     dvoid   *ictxp,
     OCIBind *bindp,
@@ -101,10 +101,10 @@ sb4 CallbackInBind
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ProcOutBind
+ * OcilibCallbackOutBind
  * --------------------------------------------------------------------------------------------- */
 
-sb4 CallbackOutBind
+sb4 OcilibCallbackOutBind
 (
     dvoid   *octxp,
     OCIBind *bindp,
@@ -164,7 +164,7 @@ sb4 CallbackOutBind
                 bnd->stmt->con->err
             )
 
-            bnd->stmt->rsts[iter] = ResultsetCreate(bnd->stmt, rows);
+            bnd->stmt->rsts[iter] = OcilibResultsetCreate(bnd->stmt, rows);
 
             CHECK_NULL(bnd->stmt->rsts[iter])
 
@@ -211,10 +211,10 @@ sb4 CallbackOutBind
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ProcNotifyMessages
+ * OcilibCallbackNotifyMessages
  * --------------------------------------------------------------------------------------------- */
 
-ub4 CallbackNotifyMessages
+ub4 OcilibCallbackNotifyMessages
 (
     void            *oci_ctx,
     OCISubscription *subscrhp,
@@ -248,10 +248,10 @@ ub4 CallbackNotifyMessages
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ProcNotifyChanges
+ * OcilibCallbackNotifyChanges
  * --------------------------------------------------------------------------------------------- */
 
-ub4 CallbackNotifyChanges
+ub4 OcilibCallbackNotifyChanges
 (
     void            *oci_ctx,
     OCISubscription *subscrhp,
@@ -278,14 +278,14 @@ ub4 CallbackNotifyChanges
 
     CHECK_PTR(OCI_IPC_VOID, sub)
 
-    CHECK(EventReset(&sub->event))
+    CHECK(OcilibEventReset(&sub->event))
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* get database that generated the notification */
 
-    CHECK(StringGetAttribute(sub->con, desc, OCI_DTYPE_CHDES, OCI_ATTR_CHDES_DBNAME,
-                             &sub->event.dbname, &sub->event.dbname_size))
+    CHECK(OcilibStringGetAttribute(sub->con, desc, OCI_DTYPE_CHDES, OCI_ATTR_CHDES_DBNAME,
+                                   &sub->event.dbname, &sub->event.dbname_size))
 
     /* get notification type */
 
@@ -382,9 +382,9 @@ ub4 CallbackNotifyChanges
 
                 /* get table name */
 
-                CHECK(StringGetAttribute(sub->con, *tbl_elem, OCI_DTYPE_TABLE_CHDES,
-                                         OCI_ATTR_CHDES_TABLE_NAME, &sub->event.objname,
-                                         &sub->event.objname_size))
+                CHECK(OcilibStringGetAttribute(sub->con, *tbl_elem, OCI_DTYPE_TABLE_CHDES,
+                                               OCI_ATTR_CHDES_TABLE_NAME, &sub->event.objname,
+                                               &sub->event.objname_size))
 
                 /* get table modification type */
 
@@ -450,9 +450,9 @@ ub4 CallbackNotifyChanges
 
                             /* get rowid  */
 
-                            CHECK(StringGetAttribute(sub->con, *row_elem, OCI_DTYPE_ROW_CHDES,
-                                                     OCI_ATTR_CHDES_ROW_ROWID, &sub->event.rowid,
-                                                     &sub->event.rowid_size))
+                            CHECK(OcilibStringGetAttribute(sub->con, *row_elem, OCI_DTYPE_ROW_CHDES,
+                                                           OCI_ATTR_CHDES_ROW_ROWID, &sub->event.rowid,
+                                                           &sub->event.rowid_size))
 
                             /* get opcode  */
 
@@ -494,10 +494,10 @@ ub4 CallbackNotifyChanges
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ProcFailOver
+ * OcilibCallbackFailOver
  * --------------------------------------------------------------------------------------------- */
 
-sb4 CallbackFailOver
+sb4 OcilibCallbackFailOver
 (
     dvoid *svchp,
     dvoid *envhp,
@@ -527,10 +527,10 @@ sb4 CallbackFailOver
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* ProcHAEventInvoke
+* OcilibProcHAEventInvoke
 * --------------------------------------------------------------------------------------------- */
 
-void ProcHAEventInvoke
+static void OcilibProcHAEventInvoke
 (
     OCI_Connection *con,
     HAEventParams * ha_params
@@ -547,7 +547,7 @@ void ProcHAEventInvoke
 
     if (NULL != con && con->svr == ha_params->srvhp)
     {
-        tmsp = TimestampInitialize(NULL, tmsp, ha_params->dthp, OCI_TIMESTAMP);
+        tmsp = OcilibTimestampInitialize(NULL, tmsp, ha_params->dthp, OCI_TIMESTAMP);
 
         CHECK_NULL(tmsp)
 
@@ -557,17 +557,17 @@ void ProcHAEventInvoke
     if (NULL != tmsp)
     {
         tmsp->hstate = OCI_OBJECT_FETCHED_DIRTY;
-        TimestampFree(tmsp);
+        OcilibTimestampFree(tmsp);
     }
 
     EXIT_VOID()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ProcHAEvent
+ * OcilibCallbackHAEvent
  * --------------------------------------------------------------------------------------------- */
 
-void CallbackHAEvent
+void OcilibCallbackHAEvent
 (
     dvoid *evtctx,
     dvoid *eventptr
@@ -632,7 +632,7 @@ void CallbackHAEvent
 
             /* notify all related connections */
 
-            ListForEachWithParam(Env.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM) ProcHAEventInvoke);
+            OcilibListForEachWithParam(Env.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM)OcilibProcHAEventInvoke);
 
             /* get next server */
 

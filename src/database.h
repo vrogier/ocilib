@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-boolean DatabaseSetUserPassword
+OCI_SYM_LOCAL boolean OcilibDatabaseSetUserPassword
 (
     const otext* db,
     const otext* user,
@@ -31,7 +31,7 @@ boolean DatabaseSetUserPassword
     const otext* new_pwd
 );
 
-boolean DatabaseStartup
+OCI_SYM_LOCAL boolean OcilibDatabaseStartup
 (
     const otext* db,
     const otext* user,
@@ -42,7 +42,7 @@ boolean DatabaseStartup
     const otext* spfile
 );
 
-boolean DatabaseShutdown
+OCI_SYM_LOCAL boolean OcilibDatabaseShutdown
 (
     const otext* db,
     const otext* user,

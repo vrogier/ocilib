@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-void * MemoryAlloc
+OCI_SYM_LOCAL void * OcilibMemoryAlloc
 (
     int     ptr_type,
     size_t  block_size,
@@ -31,7 +31,7 @@ void * MemoryAlloc
     boolean zero_fill
 );
 
-void * MemoryRealloc
+OCI_SYM_LOCAL void * OcilibMemoryRealloc
 (
     void  * ptr_mem,
     int     ptr_type,
@@ -40,32 +40,32 @@ void * MemoryRealloc
     boolean zero_fill
 );
 
-void MemoryFree
+OCI_SYM_LOCAL void OcilibMemoryFree
 (
     void * ptr_mem
 );
 
-boolean MemoryAllocHandle
+OCI_SYM_LOCAL boolean OcilibMemoryAllocHandle
 (
     CONST dvoid *parenth,
     dvoid      **hndlpp,
     ub4          type
 );
 
-boolean MemoryFreeHandle
+OCI_SYM_LOCAL boolean OcilibMemoryFreeHandle
 (
     dvoid* hndlp,
     ub4    type
 );
 
-boolean MemoryAllocDescriptor
+OCI_SYM_LOCAL boolean OcilibMemoryAllocDescriptor
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
     ub4          type
 );
 
-boolean MemoryAllocDescriptorArray
+OCI_SYM_LOCAL boolean OcilibMemoryAllocDescriptorArray
 (
     CONST dvoid *parenth,
     dvoid      **descpp,
@@ -73,20 +73,20 @@ boolean MemoryAllocDescriptorArray
     ub4          nb_elem
 );
 
-boolean MemoryFreeDescriptor
+OCI_SYM_LOCAL boolean OcilibMemoryFreeDescriptor
 (
     dvoid *descp,
     ub4    type
 );
 
-boolean MemoryFreeDescriptorArray
+OCI_SYM_LOCAL boolean OcilibMemoryFreeDescriptorArray
 (
     dvoid **descp,
     ub4     type,
     ub4     nb_elem
 );
 
-sword MemoryAllocateObject
+OCI_SYM_LOCAL sword OcilibMemoryAllocateObject
 (
     OCIEnv          *env,
     OCIError        *err,
@@ -99,7 +99,7 @@ sword MemoryAllocateObject
     dvoid          **instance
 );
 
-sword MemoryFreeObject
+OCI_SYM_LOCAL sword OcilibMemoryFreeObject
 (
     OCIEnv  * env,
     OCIError* err,
@@ -107,20 +107,20 @@ sword MemoryFreeObject
     ub2       flags
 );
 
-void * MemoryAllocOracleCallback
+OCI_SYM_LOCAL void * OcilibMemoryAllocOracleCallback
 (
     void  *ctxp,
     size_t size
 );
 
-void * MemoryReallocOracleCallback
+OCI_SYM_LOCAL void * OcilibMemoryReallocOracleCallback
 (
     void  *ctxp,
     void  *memptr,
     size_t newsize
 );
 
-void MemoryFreeOracleCallback
+OCI_SYM_LOCAL void OcilibMemoryFreeOracleCallback
 (
     void *ctxp,
     void *memptr

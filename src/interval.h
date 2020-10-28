@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Interval * IntervalInitialize
+OCI_SYM_LOCAL OCI_Interval * OcilibIntervalInitialize
 (
     OCI_Connection *con,
     OCI_Interval   *itv,
@@ -31,58 +31,58 @@ OCI_Interval * IntervalInitialize
     ub4             type
 );
 
-OCI_Interval * IntervalCreate
+OCI_SYM_LOCAL OCI_Interval * OcilibIntervalCreate
 (
     OCI_Connection *con,
     unsigned int    type
 );
 
-boolean IntervalFree
+OCI_SYM_LOCAL boolean OcilibIntervalFree
 (
     OCI_Interval *itv
 );
 
-OCI_Interval ** IntervalCreateArray
+OCI_SYM_LOCAL OCI_Interval ** OcilibIntervalCreateArray
 (
     OCI_Connection *con,
     unsigned int    type,
     unsigned int    nbelem
 );
 
-boolean IntervalFreeArray
+OCI_SYM_LOCAL boolean OcilibIntervalFreeArray
 (
     OCI_Interval **itvs
 );
 
-unsigned int IntervalGetType
+OCI_SYM_LOCAL unsigned int OcilibIntervalGetType
 (
     OCI_Interval *itv
 );
 
-boolean IntervalAssign
+OCI_SYM_LOCAL boolean OcilibIntervalAssign
 (
     OCI_Interval *itv,
     OCI_Interval *itv_src
 );
 
-int IntervalCheck
+OCI_SYM_LOCAL int OcilibIntervalCheck
 (
     OCI_Interval *itv
 );
 
-int IntervalCompare
+OCI_SYM_LOCAL int OcilibIntervalCompare
 (
     OCI_Interval *itv,
     OCI_Interval *itv2
 );
 
-boolean IntervalFromString
+OCI_SYM_LOCAL boolean OcilibIntervalFromString
 (
     OCI_Interval *itv,
     const otext * str
 );
 
-boolean IntervalToString
+OCI_SYM_LOCAL boolean OcilibIntervalToString
 (
     OCI_Interval *itv,
     int           leading_prec,
@@ -91,13 +91,13 @@ boolean IntervalToString
     otext        *str
 );
 
-boolean IntervalFromTimeZone
+OCI_SYM_LOCAL boolean OcilibIntervalFromTimeZone
 (
     OCI_Interval *itv,
     const otext * str
 );
 
-boolean IntervalGetDaySecond
+OCI_SYM_LOCAL boolean OcilibIntervalGetDaySecond
 (
     OCI_Interval *itv,
     int          *day,
@@ -107,14 +107,14 @@ boolean IntervalGetDaySecond
     int          *fsec
 );
 
-boolean IntervalGetYearMonth
+OCI_SYM_LOCAL boolean OcilibIntervalGetYearMonth
 (
     OCI_Interval *itv,
     int          *year,
     int          *month
 );
 
-boolean IntervalSetDaySecond
+OCI_SYM_LOCAL boolean OcilibIntervalSetDaySecond
 (
     OCI_Interval *itv,
     int           day,
@@ -124,20 +124,20 @@ boolean IntervalSetDaySecond
     int           fsec
 );
 
-boolean IntervalSetYearMonth
+OCI_SYM_LOCAL boolean OcilibIntervalSetYearMonth
 (
     OCI_Interval *itv,
     int           year,
     int           month
 );
 
-boolean IntervalAdd
+OCI_SYM_LOCAL boolean OcilibIntervalAdd
 (
     OCI_Interval *itv,
     OCI_Interval *itv2
 );
 
-boolean IntervalSubtract
+OCI_SYM_LOCAL boolean OcilibIntervalSubtract
 (
     OCI_Interval *itv,
     OCI_Interval *itv2

@@ -31,10 +31,10 @@
 #include "timestamp.h"
 
 /* --------------------------------------------------------------------------------------------- *
-  * ExternalSubTypeToSQLType
+  * OcilibExternalSubTypeToSQLType
   * --------------------------------------------------------------------------------------------- */
 
-unsigned int ExternalSubTypeToSQLType
+unsigned int OcilibExternalSubTypeToSQLType
 (
     unsigned int type,
     unsigned int subtype
@@ -119,10 +119,10 @@ unsigned int ExternalSubTypeToSQLType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * ExternalSubTypeToHandleType
+ * OcilibExternalSubTypeToHandleType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int ExternalSubTypeToHandleType
+unsigned int OcilibExternalSubTypeToHandleType
 (
     unsigned int type,
     unsigned int subtype
@@ -167,10 +167,10 @@ unsigned int ExternalSubTypeToHandleType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * FreeObjectFromType
+ * OcilibFreeObjectFromType
  * --------------------------------------------------------------------------------------------- */
 
-boolean FreeObjectFromType
+boolean OcilibFreeObjectFromType
 (
     void       * obj,
     unsigned int type
@@ -182,47 +182,47 @@ boolean FreeObjectFromType
     {
         case OCI_CDT_NUMERIC:
         {
-            res = NumberFree((OCI_Number*)obj);
+            res = OcilibNumberFree((OCI_Number*)obj);
             break;
         }
         case OCI_CDT_DATETIME:
         {
-            res = DateFree((OCI_Date*)obj);
+            res = OcilibDateFree((OCI_Date*)obj);
             break;
         }
         case OCI_CDT_LOB:
         {
-            res = LobFree((OCI_Lob*)obj);
+            res = OcilibLobFree((OCI_Lob*)obj);
             break;
         }
         case OCI_CDT_FILE:
         {
-            res = FileFree((OCI_File*)obj);
+            res = OcilibFileFree((OCI_File*)obj);
             break;
         }
         case OCI_CDT_OBJECT:
         {
-            res = ObjectFree((OCI_Object*)obj);
+            res = OcilibObjectFree((OCI_Object*)obj);
             break;
         }
         case OCI_CDT_COLLECTION:
         {
-            res = CollectionFree((OCI_Coll*)obj);
+            res = OcilibCollectionFree((OCI_Coll*)obj);
             break;
         }
         case OCI_CDT_TIMESTAMP:
         {
-            res = TimestampFree((OCI_Timestamp*)obj);
+            res = OcilibTimestampFree((OCI_Timestamp*)obj);
             break;
         }
         case OCI_CDT_INTERVAL:
         {
-            res = IntervalFree((OCI_Interval*)obj);
+            res = OcilibIntervalFree((OCI_Interval*)obj);
             break;
         }
         case OCI_CDT_REF:
         {
-            res = ReferenceFree((OCI_Ref*)obj);
+            res = OcilibReferenceFree((OCI_Ref*)obj);
             break;
         }
     }

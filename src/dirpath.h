@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_DirPath * DirPathCreate
+OCI_SYM_LOCAL OCI_DirPath * OcilibDirPathCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *partition,
@@ -31,12 +31,12 @@ OCI_DirPath * DirPathCreate
     unsigned int  nb_rows
 );
 
-boolean DirPathFree
+OCI_SYM_LOCAL boolean OcilibDirPathFree
 (
     OCI_DirPath *dp
 );
 
-boolean DirPathSetColumn
+OCI_SYM_LOCAL boolean OcilibDirPathSetColumn
 (
     OCI_DirPath *dp,
     unsigned int index,
@@ -45,12 +45,12 @@ boolean DirPathSetColumn
     const otext *format
 );
 
-boolean DirPathPrepare
+OCI_SYM_LOCAL boolean OcilibDirPathPrepare
 (
     OCI_DirPath *dp
 );
 
-boolean DirPathSetEntry
+OCI_SYM_LOCAL boolean OcilibDirPathSetEntry
 (
     OCI_DirPath *dp,
     unsigned int row,
@@ -60,109 +60,109 @@ boolean DirPathSetEntry
     boolean      complete
 );
 
-boolean DirPathReset
+OCI_SYM_LOCAL boolean OcilibDirPathReset
 (
     OCI_DirPath *dp
 );
 
-unsigned int DirPathConvert
+OCI_SYM_LOCAL unsigned int OcilibDirPathConvert
 (
     OCI_DirPath *dp
 );
 
-unsigned int DirPathLoad
+OCI_SYM_LOCAL unsigned int OcilibDirPathLoad
 (
     OCI_DirPath *dp
 );
 
-boolean DirPathFinish
+OCI_SYM_LOCAL boolean OcilibDirPathFinish
 (
     OCI_DirPath *dp
 );
 
-boolean DirPathAbort
+OCI_SYM_LOCAL boolean OcilibDirPathAbort
 (
     OCI_DirPath *dp
 );
 
-boolean DirPathSave
+OCI_SYM_LOCAL boolean OcilibDirPathSave
 (
     OCI_DirPath *dp
 );
 
-boolean DirPathFlushRow
+OCI_SYM_LOCAL boolean OcilibDirPathFlushRow
 (
     OCI_DirPath *dp
 );
 
-boolean DirPathSetCurrentRows
+OCI_SYM_LOCAL boolean OcilibDirPathSetCurrentRows
 (
     OCI_DirPath *dp,
     unsigned int nb_rows
 );
 
-unsigned int DirPathGetCurrentRows
+OCI_SYM_LOCAL unsigned int OcilibDirPathGetCurrentRows
 (
     OCI_DirPath *dp
 );
 
-unsigned int DirPathGetMaxRows
+OCI_SYM_LOCAL unsigned int OcilibDirPathGetMaxRows
 (
     OCI_DirPath* dp
 );
 
-boolean DirPathSetDateFormat
+OCI_SYM_LOCAL boolean OcilibDirPathSetDateFormat
 (
     OCI_DirPath *dp,
     const otext *format
 );
 
-boolean DirPathSetParallel
+OCI_SYM_LOCAL boolean OcilibDirPathSetParallel
 (
     OCI_DirPath *dp,
     boolean      value
 );
 
-boolean DirPathSetNoLog
+OCI_SYM_LOCAL boolean OcilibDirPathSetNoLog
 (
     OCI_DirPath *dp,
     boolean      value
 );
 
-boolean DirPathSetCacheSize
+OCI_SYM_LOCAL boolean OcilibDirPathSetCacheSize
 (
     OCI_DirPath *dp,
     unsigned int size
 );
 
-boolean DirPathSetBufferSize
+OCI_SYM_LOCAL boolean OcilibDirPathSetBufferSize
 (
     OCI_DirPath *dp,
     unsigned int size
 );
 
-boolean DirPathSetConvertMode
+OCI_SYM_LOCAL boolean OcilibDirPathSetConvertMode
 (
     OCI_DirPath *dp,
     unsigned int mode
 );
 
-unsigned int DirPathGetRowCount
+OCI_SYM_LOCAL unsigned int OcilibDirPathGetRowCount
 (
     OCI_DirPath *dp
 );
 
-unsigned int DirPathGetAffectedRows
+OCI_SYM_LOCAL unsigned int OcilibDirPathGetAffectedRows
 (
     OCI_DirPath *dp
 );
 
-unsigned int DirPathGetErrorColumn
+OCI_SYM_LOCAL unsigned int OcilibDirPathGetErrorColumn
 (
     OCI_DirPath *dp
 );
 
-unsigned int DirPathGetErrorRow
+OCI_SYM_LOCAL unsigned int OcilibDirPathGetErrorRow
 (
     OCI_DirPath *dp
 );

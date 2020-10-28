@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_Coll * CollectionInitialize
+OCI_SYM_LOCAL OCI_Coll * OcilibCollectionInitialize
 (
     OCI_Connection *con,
     OCI_Coll       *Coll,
@@ -31,103 +31,103 @@ OCI_Coll * CollectionInitialize
     OCI_TypeInfo   *typeinf
 );
 
-OCI_Coll* CollectionCreate
+OCI_SYM_LOCAL OCI_Coll* OcilibCollectionCreate
 (
     OCI_TypeInfo* typinf
 );
 
-boolean CollectionFree
+OCI_SYM_LOCAL boolean OcilibCollectionFree
 (
     OCI_Coll* coll
 );
 
-OCI_Coll** CollectionCreateArray
+OCI_SYM_LOCAL OCI_Coll** OcilibCollectionCreateArray
 (
     OCI_Connection* con,
     OCI_TypeInfo  * typinf,
     unsigned int    nbelem
 );
 
-boolean CollectionFreeArray
+OCI_SYM_LOCAL boolean OcilibCollectionFreeArray
 (
     OCI_Coll** colls
 );
 
-boolean CollectionAssign
+OCI_SYM_LOCAL boolean OcilibCollectionAssign
 (
     OCI_Coll* coll,
     OCI_Coll* coll_src
 );
 
-boolean CollectionTrim
+OCI_SYM_LOCAL boolean OcilibCollectionTrim
 (
     OCI_Coll   * coll,
     unsigned int nb_elem
 );
 
-boolean CollectionClear
+OCI_SYM_LOCAL boolean OcilibCollectionClear
 (
     OCI_Coll* coll
 );
 
-unsigned int CollectionGetType
+OCI_SYM_LOCAL unsigned int OcilibCollectionGetType
 (
     OCI_Coll* coll
 );
 
-unsigned int CollectionGetMax
+OCI_SYM_LOCAL unsigned int OcilibCollectionGetMax
 (
     OCI_Coll* coll
 );
 
-unsigned int CollectionGetSize
+OCI_SYM_LOCAL unsigned int OcilibCollectionGetSize
 (
     OCI_Coll* coll
 );
 
-unsigned int CollectionGetCount
+OCI_SYM_LOCAL unsigned int OcilibCollectionGetCount
 (
     OCI_Coll* coll
 );
 
-OCI_Elem* CollectionGetElement
+OCI_SYM_LOCAL OCI_Elem* OcilibCollectionGetElement
 (
     OCI_Coll   * coll,
     unsigned int index
 );
 
-boolean CollectionGetElement2
+OCI_SYM_LOCAL boolean OcilibCollectionGetElement2
 (
     OCI_Coll   * coll,
     unsigned int index,
     OCI_Elem   * elem
 );
 
-boolean CollectionSetElement
+OCI_SYM_LOCAL boolean OcilibCollectionSetElement
 (
     OCI_Coll   * coll,
     unsigned int index,
     OCI_Elem   * elem
 );
 
-boolean CollectionAddElement
+OCI_SYM_LOCAL boolean OcilibCollectionAddElement
 (
     OCI_Coll* coll,
     OCI_Elem* elem
 );
 
-boolean CollectionRemoveElement
+OCI_SYM_LOCAL boolean OcilibCollectionRemoveElement
 (
     OCI_Coll   * coll,
     unsigned int index
 );
 
-OCI_TypeInfo* CollectionGetTypeInfo
+OCI_SYM_LOCAL OCI_TypeInfo* OcilibCollectionGetTypeInfo
 (
     OCI_Coll* coll
 );
 
-boolean CollectionToString
+OCI_SYM_LOCAL boolean OcilibCollectionToString
 (
     OCI_Coll    * coll,
     unsigned int* size,

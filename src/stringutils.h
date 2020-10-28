@@ -18,32 +18,32 @@
  * limitations under the License.
  */
 
-#ifndef OCILIB_STRING_H_INCLUDED
-#define OCILIB_STRING_H_INCLUDED
+#ifndef OCILIB_STRING_UTILS_H_INCLUDED
+#define OCILIB_STRING_UTILS_H_INCLUDED
 
 #include "types.h"
 
-size_t StringLength
+OCI_SYM_LOCAL size_t OcilibStringLength
 (
     void const* ptr,
     size_t      size_elem
 );
 
-unsigned int StringBinaryToString
+OCI_SYM_LOCAL unsigned int OcilibStringBinaryToString
 (
     const unsigned char* binary,
     unsigned int         binary_size,
     otext              * buffer
 );
 
-boolean StringRequestBuffer
+OCI_SYM_LOCAL boolean OcilibStringRequestBuffer
 (
     otext      ** buffer,
     unsigned int* buffer_size,
     unsigned int  request_size
 );
 
-void StringTranslate
+OCI_SYM_LOCAL void OcilibStringTranslate
 (
     void * src,
     void * dst,
@@ -52,49 +52,49 @@ void StringTranslate
     size_t size_char_out
 );
 
-#define StringAnsiToNative(s, d, l) \
-    StringTranslate( (void *) (s), (void *) (d), l, sizeof(char),   sizeof(otext) )
+#define OcilibStringAnsiToNative(s, d, l) \
+    OcilibStringTranslate( (void *) (s), (void *) (d), l, sizeof(char),   sizeof(otext) )
 
-#define StringNativeToAnsi(s, d, l) \
-    StringTranslate( (void *) (s), (void *) (d), l, sizeof(otext),  sizeof(char)  )
+#define OcilibStringNativeToAnsi(s, d, l) \
+    OcilibStringTranslate( (void *) (s), (void *) (d), l, sizeof(otext),  sizeof(char)  )
 
-#define StringUTF16ToUTF32(s, d, l) \
-    StringTranslate( (void *) (s), (void *) (d), l, sizeof(short),  sizeof(int)   )
+#define OcilibStringUTF16ToUTF32(s, d, l) \
+   OcilibStringTranslate( (void *) (s), (void *) (d), l, sizeof(short),  sizeof(int)   )
 
-#define StringUTF32ToUTF16(s, d, l) \
-    StringTranslate( (void *) (s), (void *) (d), l, sizeof(int),    sizeof(short) )
+#define OcilibStringUTF32ToUTF16(s, d, l) \
+    OcilibStringTranslate( (void *) (s), (void *) (d), l, sizeof(int),    sizeof(short) )
 
-#define StringOracleToNative(s, d, l) \
-    StringTranslate( (void *) (s), (void *) (d), l, sizeof(dbtext), sizeof(otext) )
+#define OcilibStringOracleToNative(s, d, l) \
+    OcilibStringTranslate( (void *) (s), (void *) (d), l, sizeof(dbtext), sizeof(otext) )
 
-#define StringRawCopy(s, d, l) \
-    StringTranslate( (void *) (s), (void *) (d), l, sizeof(otext),  sizeof(otext) )
+#define OcilibStringRawCopy(s, d, l) \
+    OcilibStringTranslate( (void *) (s), (void *) (d), l, sizeof(otext),  sizeof(otext) )
 
-dbtext* StringGetDBString
+OCI_SYM_LOCAL dbtext * OcilibStringGetDBString
 (
     const otext* src,
     int        * size
 );
 
-void StringReleaseDBString
+OCI_SYM_LOCAL void OcilibStringReleaseDBString
 (
     dbtext* str
 );
 
-int StringCopyDBStringToNativeString
+OCI_SYM_LOCAL int OcilibStringCopyDBStringToNativeString
 (
     const dbtext* src,
     otext       * dst,
     int           len
 );
 
-otext* StringDuplicateFromDBString
+OCI_SYM_LOCAL otext * OcilibStringDuplicateFromDBString
 (
     const dbtext* src,
     int           len
 );
 
-otext* StringFromStringPtr
+OCI_SYM_LOCAL otext * OcilibStringFromStringPtr
 (
     OCIEnv      * env,
     OCIString   * str,
@@ -102,7 +102,7 @@ otext* StringFromStringPtr
     unsigned int* buffer_size
 );
 
-boolean StringToStringPtr
+OCI_SYM_LOCAL boolean OcilibStringToStringPtr
 (
     OCIEnv     * env,
     OCIString ** str,
@@ -110,14 +110,14 @@ boolean StringToStringPtr
     const otext* value
 );
 
-boolean StringFreeStringPtr
+OCI_SYM_LOCAL boolean OcilibStringFreeStringPtr
 (
     OCIEnv    * env,
     OCIString** str,
     OCIError  * err
 );
 
-unsigned int StringGetFromType
+OCI_SYM_LOCAL unsigned int OcilibStringGetFromType
 (
     OCI_Connection* con,
     OCI_Column    * col,
@@ -128,7 +128,7 @@ unsigned int StringGetFromType
     boolean         quote
 );
 
-unsigned int StringAddToBuffer
+OCI_SYM_LOCAL unsigned int OcilibStringAddToBuffer
 (
     otext      * buffer,
     unsigned int offset,
@@ -137,14 +137,14 @@ unsigned int StringAddToBuffer
     boolean      check_quote
 );
 
-unsigned int StringGetTypeName
+OCI_SYM_LOCAL unsigned int OcilibStringGetTypeName
 (
     const otext* source,
     otext      * dest,
     unsigned int length
 );
 
-unsigned int StringGetFullTypeName
+OCI_SYM_LOCAL unsigned int OcilibStringGetFullTypeName
 (
     const otext* schema,
     const otext* package,
@@ -154,7 +154,7 @@ unsigned int StringGetFullTypeName
     unsigned int length
 );
 
-boolean StringGetAttribute
+OCI_SYM_LOCAL boolean OcilibStringGetAttribute
 (
     OCI_Connection* con,
     void          * handle,
@@ -164,7 +164,7 @@ boolean StringGetAttribute
     unsigned int  * size
 );
 
-boolean StringSetAttribute
+OCI_SYM_LOCAL boolean OcilibStringSetAttribute
 (
     OCI_Connection* con,
     void          * handle,
@@ -174,4 +174,35 @@ boolean StringSetAttribute
     const otext   * value
 );
 
-#endif /* OCILIB_STRING_H_INCLUDED */
+OCI_SYM_LOCAL otext * OcilibStringDuplicate
+(
+    const otext * src
+);
+
+OCI_SYM_LOCAL char * OcilibStringAnsiDuplicate
+(
+    const char * src
+);
+
+
+OCI_SYM_LOCAL int OcilibStringCaseCompare
+(
+    const otext* str1,
+    const otext* str2
+);
+
+OCI_SYM_LOCAL int OcilibStringAnsiCaseCompare
+(
+    const char* str1,
+    const char* str2
+);
+
+OCI_SYM_LOCAL int OcilibStringFormat
+(
+    otext       * str,
+    int           size,
+    const otext * format,
+    ...
+);
+
+#endif /* OCILIB_STRING_UTILS_H_INCLUDED */

@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-int FormatParseSql
+OCI_SYM_LOCAL int OcilibFormatParseSql
 (
     OCI_Statement* stmt,
     otext        * buffer,

@@ -23,21 +23,22 @@
 
 #include "types.h"
 
-OCI_Error * ErrorCreate
+OCI_SYM_LOCAL OCI_Error * OcilibErrorCreate
 (
+    void
 );
 
-void ErrorFree
-(
-    OCI_Error *err
-);
-
-void ErrorReset
+OCI_SYM_LOCAL void OcilibErrorFree
 (
     OCI_Error *err
 );
 
-void ErrorSet
+OCI_SYM_LOCAL void OcilibErrorReset
+(
+    OCI_Error *err
+);
+
+OCI_SYM_LOCAL void OcilibErrorSet
 (
     OCI_Error   *err,
     unsigned int type,
@@ -49,64 +50,64 @@ void ErrorSet
     unsigned int row
 );
 
-void ErrorResetSource
+OCI_SYM_LOCAL void OcilibErrorResetSource
 (
     OCI_Error* err,
     void* source_ptr
 );
 
-OCI_Error * ErrorGet
+OCI_SYM_LOCAL OCI_Error * OcilibErrorGet
 (
     boolean check_state,
     boolean reset_err
 );
 
-const otext* ErrorGetString
+OCI_SYM_LOCAL const otext* OcilibErrorGetString
 (
     OCI_Error* err
 );
 
-unsigned int ErrorGetType
+OCI_SYM_LOCAL unsigned int OcilibErrorGetType
 (
     OCI_Error* err
 );
 
-int ErrorGetOCICode
+OCI_SYM_LOCAL int OcilibErrorGetOCICode
 (
     OCI_Error* err
 );
 
-int ErrorGetInternalCode
+OCI_SYM_LOCAL int OcilibErrorGetInternalCode
 (
     OCI_Error* err
 );
 
-void* ErrorGetSource
+OCI_SYM_LOCAL void* OcilibErrorGetSource
 (
     OCI_Error* err
 );
 
-unsigned int ErrorGetSourceType
+OCI_SYM_LOCAL unsigned int OcilibErrorGetSourceType
 (
     OCI_Error* err
 );
 
-const otext* ErrorGetLocation
+OCI_SYM_LOCAL const otext* OcilibErrorGetLocation
 (
     OCI_Error* err
 );
 
-OCI_Connection* ErrorGetConnection
+OCI_SYM_LOCAL OCI_Connection* OcilibErrorGetConnection
 (
     OCI_Error* err
 );
 
-OCI_Statement* ErrorGetStatement
+OCI_SYM_LOCAL OCI_Statement* OcilibErrorGetStatement
 (
     OCI_Error* err
 );
 
-unsigned int ErrorGetRow
+OCI_SYM_LOCAL unsigned int OcilibErrorGetRow
 (
     OCI_Error* err
 );

@@ -23,80 +23,80 @@
 
 #include "types.h"
 
-OCI_HashTable * HashCreate
+OCI_SYM_LOCAL OCI_HashTable * OcilibHashCreate
 (
     unsigned int size,
     unsigned int type
 );
 
-boolean HashFree
+OCI_SYM_LOCAL boolean OcilibHashFree
 (
     OCI_HashTable *table
 );
 
-unsigned int HashGetSize
+OCI_SYM_LOCAL unsigned int OcilibHashGetSize
 (
     OCI_HashTable *table
 );
 
-unsigned int HashGetType
+OCI_SYM_LOCAL unsigned int OcilibHashGetType
 (
     OCI_HashTable *table
 );
 
-boolean HashAddString
+OCI_SYM_LOCAL boolean OcilibHashAddString
 (
     OCI_HashTable *table,
     const otext   *key,
     const otext   *value
 );
 
-const otext * HashGetString
+OCI_SYM_LOCAL const otext * OcilibHashGetString
 (
     OCI_HashTable *table,
     const otext   *key
 );
 
-boolean HashAddInt
+OCI_SYM_LOCAL boolean OcilibHashAddInt
 (
     OCI_HashTable *table,
     const otext   *key,
     int            value
 );
 
-int HashGetInt
+OCI_SYM_LOCAL int OcilibHashGetInt
 (
     OCI_HashTable *table,
     const otext   *key
 );
 
-boolean HashAddPointer
+OCI_SYM_LOCAL boolean OcilibHashAddPointer
 (
     OCI_HashTable *table,
     const otext   *key,
     void          *value
 );
 
-void * HashGetPointer
+OCI_SYM_LOCAL void * OcilibHashGetPointer
 (
     OCI_HashTable *table,
     const otext   *key
 );
 
-OCI_HashEntry * HashLookup
+OCI_SYM_LOCAL OCI_HashEntry * OcilibHashLookup
 (
     OCI_HashTable *table,
     const otext   *key,
     boolean        create
 );
 
-OCI_HashValue * HashGetValue
+OCI_SYM_LOCAL OCI_HashValue * OcilibHashGetValue
 (
     OCI_HashTable *table,
     const otext   *key
 );
 
-OCI_HashEntry * HashGetEntry
+OCI_SYM_LOCAL OCI_HashEntry * OcilibHashGetEntry
 (
     OCI_HashTable *table,
     unsigned int   index

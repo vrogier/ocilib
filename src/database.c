@@ -25,14 +25,14 @@
 #include "error.h"
 #include "macros.h"
 #include "statement.h"
-#include "strings.h"
+#include "stringutils.h"
 #include "transaction.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * DatabaseStartup
+ * OcilibDatabaseStartup
  * --------------------------------------------------------------------------------------------- */
 
-boolean DatabaseStartup
+boolean OcilibDatabaseStartup
 (
     const otext *db,
     const otext *user,
@@ -69,18 +69,18 @@ boolean DatabaseStartup
     {
         /* connect with preliminary authentication mode */
 
-        con = ConnectionCreate(db, user, pwd, sess_mode | OCI_PRELIM_AUTH);
+        con = OcilibConnectionCreate(db, user, pwd, sess_mode | OCI_PRELIM_AUTH);
         CHECK_NULL(con)
 
         if (IS_STRING_VALID(spfile))
         {
             /* allocate administration handle */
 
-            CHECK(MemoryAllocHandle((dvoid *)Env.env,  (dvoid **) (void *) &adm, OCI_HTYPE_ADMIN))
+            CHECK(OcilibMemoryAllocHandle((dvoid *)Env.env,  (dvoid **) (void *) &adm, OCI_HTYPE_ADMIN))
 
             /* set client file if provided */
 
-            dbstr = StringGetDBString(spfile, &dbsize);
+            dbstr = OcilibStringGetDBString(spfile, &dbsize);
 
             CHECK_ATTRIB_SET
             (
@@ -101,52 +101,52 @@ boolean DatabaseStartup
             start_flag
         )
 
-        ConnectionFree(con);
+        OcilibConnectionFree(con);
     }
 
     /* connect without preliminary mode */
 
-    con = ConnectionCreate(db, user, pwd, sess_mode);
+    con = OcilibConnectionCreate(db, user, pwd, sess_mode);
     CHECK_NULL(con)
 
-    /* alter database */
+    /* alter OcilibDatabase */
 
-    stmt = StatementCreate(con);
+    stmt = OcilibStatementCreate(con);
     CHECK_NULL(stmt)
 
-    /* mount database */
+    /* mount OcilibDatabase */
 
     if (start_mode & OCI_DB_SPM_MOUNT)
     {
-        CHECK(StatementExecuteStmt(stmt, OTEXT("ALTER DATABASE MOUNT")))
+        CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER OcilibDatabase MOUNT")))
     }
 
-    /* open database */
+    /* open OcilibDatabase */
 
     if (start_mode & OCI_DB_SPM_OPEN)
     {
-        CHECK(StatementExecuteStmt(stmt, OTEXT("ALTER DATABASE OPEN")))
+        CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER OcilibDatabase OPEN")))
     }
 
     SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(dbstr);
 
         if (NULL != stmt)
         {
-            StatementFree(stmt);
+            OcilibStatementFree(stmt);
         }
 
         if (NULL != con)
         {
-            ConnectionFree(con);
+            OcilibConnectionFree(con);
         }
 
         if (NULL != adm)
         {
-            MemoryFreeHandle(Env.err, OCI_HTYPE_ADMIN);
+            OcilibMemoryFreeHandle(Env.err, OCI_HTYPE_ADMIN);
         }
     )
 
@@ -171,10 +171,10 @@ boolean DatabaseStartup
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DatabaseShutdown
+ * OcilibDatabaseShutdown
  * --------------------------------------------------------------------------------------------- */
 
-boolean DatabaseShutdown
+boolean OcilibDatabaseShutdown
 (
     const otext *db,
     const otext *user,
@@ -199,14 +199,14 @@ boolean DatabaseShutdown
 
     /* connect to server */
 
-    con = ConnectionCreate(db, user, pwd, sess_mode);
+    con = OcilibConnectionCreate(db, user, pwd, sess_mode);
     CHECK_NULL(con)
 
     /* delete current transaction before the abort */
 
     if (NULL != con->trs && (OCI_DB_SDF_ABORT == shut_flag))
     {
-        TransactionFree(con->trs);
+        OcilibTransactionFree(con->trs);
         con->trs = NULL;
     }
 
@@ -226,35 +226,35 @@ boolean DatabaseShutdown
         )
     }
 
-    /* alter database if we are not in abort mode */
+    /* alter OcilibDatabase if we are not in abort mode */
 
     if (OCI_DB_SDF_ABORT != shut_flag)
     {
-        stmt = StatementCreate(con);
+        stmt = OcilibStatementCreate(con);
         CHECK_NULL(stmt)
 
-        /* close database */
+        /* close OcilibDatabase */
 
         if (shut_mode & OCI_DB_SDM_CLOSE)
         {
-            CHECK(StatementExecuteStmt(stmt, OTEXT("ALTER DATABASE CLOSE NORMAL")))
+            CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER OcilibDatabase CLOSE NORMAL")))
         }
 
-        /* unmount database */
+        /* unmount OcilibDatabase */
 
         if (shut_mode & OCI_DB_SDM_DISMOUNT)
         {
-            CHECK(StatementExecuteStmt(stmt, OTEXT("ALTER DATABASE DISMOUNT")))
+            CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER OcilibDatabase DISMOUNT")))
         }
 
-        StatementFree(stmt);
+        OcilibStatementFree(stmt);
         stmt = NULL;
 
         /* delete current transaction before the shutdown */
 
         if (NULL != con->trs)
         {
-            TransactionFree(con->trs);
+            OcilibTransactionFree(con->trs);
             con->trs = NULL;
         }
 
@@ -269,7 +269,7 @@ boolean DatabaseShutdown
             OCI_DBSHUTDOWN_FINAL
         )
 
-        ConnectionFree(con);
+        OcilibConnectionFree(con);
         con = NULL;
     }
 
@@ -291,21 +291,21 @@ boolean DatabaseShutdown
     (
         if (NULL != stmt)
         {
-            StatementFree(stmt);
+            OcilibStatementFree(stmt);
         }
 
         if (NULL != con)
         {
-            ConnectionFree(con);
+            OcilibConnectionFree(con);
         }
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DatabaseSetUserPassword
+ * OcilibDatabaseSetUserPassword
  * --------------------------------------------------------------------------------------------- */
 
-boolean DatabaseSetUserPassword
+boolean OcilibDatabaseSetUserPassword
 (
     const otext* db,
     const otext* user,
@@ -329,13 +329,13 @@ boolean DatabaseSetUserPassword
 
     /* create a connection in auth mode */
 
-    con = ConnectionAllocate( NULL, db, user, pwd, OCI_AUTH);
+    con = OcilibConnectionAllocate( NULL, db, user, pwd, OCI_AUTH);
     CHECK_NULL(con)
 
     /* ConnectionLogon() will reset the password  */
 
-    CHECK(ConnectionAttach(con))
-    CHECK(ConnectionLogon(con, new_pwd, NULL))
+    CHECK(OcilibConnectionAttach(con))
+    CHECK(OcilibConnectionLogon(con, new_pwd, NULL))
 
     SET_SUCCESS()
 
@@ -343,7 +343,7 @@ boolean DatabaseSetUserPassword
     (
         if (FAILURE && NULL != con)
         {
-            ConnectionFree(con);
+            OcilibConnectionFree(con);
         }
     )
 }

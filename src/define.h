@@ -23,29 +23,29 @@
 
 #include "types.h"
 
-OCI_Define* DefineGet
+OCI_SYM_LOCAL OCI_Define* OcilibDefineGet
 (
     OCI_Resultset* rs,
     unsigned int   index
 );
 
-int DefineGetIndex
+OCI_SYM_LOCAL int OcilibDefineGetIndex
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-void* DefineGetData
+OCI_SYM_LOCAL void* OcilibDefineGetData
 (
     OCI_Define* def
 );
 
-boolean DefineIsDataNotNull
+OCI_SYM_LOCAL boolean OcilibDefineIsDataNotNull
 (
     OCI_Define* def
 );
 
-boolean DefineGetNumber
+OCI_SYM_LOCAL boolean OcilibDefineGetNumber
 (
     OCI_Resultset* rs,
     unsigned int   index,
@@ -53,12 +53,12 @@ boolean DefineGetNumber
     uword          type
 );
 
-boolean DefineAlloc
+OCI_SYM_LOCAL boolean OcilibDefineAlloc
 (
     OCI_Define* def
 );
 
-boolean DefineDef
+OCI_SYM_LOCAL boolean OcilibDefineDef
 (
     OCI_Define* def,
     ub4         position

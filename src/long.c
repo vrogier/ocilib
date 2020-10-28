@@ -22,7 +22,7 @@
 
 #include "macros.h"
 #include "memory.h"
-#include "strings.h"
+#include "stringutils.h"
 
 static const unsigned int LongTypeValues[] =
 {
@@ -31,10 +31,10 @@ static const unsigned int LongTypeValues[] =
 };
 
 /* --------------------------------------------------------------------------------------------- *
- * LongInitialize
+ * OcilibLongInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Long * LongInitialize
+OCI_Long * OcilibLongInitialize
 (
     OCI_Statement *stmt,
     OCI_Long      *lg,
@@ -42,10 +42,9 @@ OCI_Long * LongInitialize
     unsigned int   type
 )
 {
-    ENTER_FUNC
+    ENTER_FUNC_NO_CONTEXT
     (
-        /* returns */ OCI_Long*, lg,
-        /* context */ OCI_IPC_STATEMENT, stmt
+        /* returns */ OCI_Long*, lg
     )
 
     ALLOC_DATA(OCI_IPC_LONG, lg, 1);
@@ -70,7 +69,7 @@ OCI_Long * LongInitialize
     (
         if (FAILURE)
         {
-            LongFree(lg);
+            OcilibLongFree(lg);
             lg = NULL;
         }
 
@@ -79,10 +78,10 @@ OCI_Long * LongInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * LongCreate
+ * OcilibLongCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Long * LongCreate
+OCI_Long * OcilibLongCreate
 (
     OCI_Statement *stmt,
     unsigned int   type
@@ -97,16 +96,16 @@ OCI_Long * LongCreate
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     CHECK_ENUM_VALUE(type, LongTypeValues, OTEXT("Long Type"))
 
-    SET_RETVAL(LongInitialize(stmt, NULL, NULL, type))
+    SET_RETVAL(OcilibLongInitialize(stmt, NULL, NULL, type))
 
     EXIT_FUNC()
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * LongFree
+ * OcilibLongFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean LongFree
+boolean OcilibLongFree
 (
     OCI_Long *lg
 )
@@ -120,7 +119,7 @@ boolean LongFree
     CHECK_PTR(OCI_IPC_LONG, lg)
     CHECK_OBJECT_FETCHED(lg)
 
-    ErrorResetSource(NULL, lg);
+    OcilibErrorResetSource(NULL, lg);
 
     FREE(lg->buffer)
     FREE(lg)
@@ -131,10 +130,10 @@ boolean LongFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * LongGetType
+ * OcilibLongGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int LongGetType
+unsigned int OcilibLongGetType
 (
     OCI_Long *lg
 )
@@ -151,7 +150,7 @@ unsigned int LongGetType
  * LongRead
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int LongRead
+unsigned int OcilibLongRead
 (
     OCI_Long    *lg,
     void        *buffer,
@@ -202,10 +201,10 @@ unsigned int LongRead
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * LongWrite
+ * OcilibLongWrite
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int LongWrite
+unsigned int OcilibLongWrite
 (
     OCI_Long    *lg,
     void        *buffer,
@@ -234,7 +233,7 @@ unsigned int LongWrite
     if (OCI_CLONG == lg->type)
     {
         len *= (unsigned int) sizeof(otext);
-        obuf = StringGetDBString((const otext *) buffer, (int *) &len);
+        obuf = OcilibStringGetDBString((const otext *) buffer, (int *) &len);
     }
     else
     {
@@ -294,7 +293,7 @@ unsigned int LongWrite
 
     if (OCI_FAILURE(code) && (OCI_NEED_DATA != code))
     {
-        THROW(ExceptionOCI, lg->stmt->con->err, code)
+        THROW(OcilibExceptionOCI, lg->stmt->con->err, code)
     }
 
     /* update size */
@@ -315,16 +314,16 @@ unsigned int LongWrite
     (
         if (NULL != lg && OCI_CLONG == lg->type)
         {
-            StringReleaseDBString((dbtext*)obuf);
+            OcilibStringReleaseDBString((dbtext*)obuf);
         }
     )
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * LongGetSize
+ * OcilibLongGetSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int LongGetSize
+unsigned int OcilibLongGetSize
 (
     OCI_Long *lg
 )
@@ -350,10 +349,10 @@ unsigned int LongGetSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * LongGetBuffer
+ * OcilibLongGetBuffer
  * --------------------------------------------------------------------------------------------- */
 
-void * LongGetBuffer
+void * OcilibLongGetBuffer
 (
     OCI_Long *lg
 )

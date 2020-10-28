@@ -34,7 +34,7 @@
 #include "number.h"
 #include "object.h"
 #include "reference.h"
-#include "strings.h"
+#include "stringutils.h"
 #include "timestamp.h"
 
 static const unsigned int CharsetFormValues[] =
@@ -51,10 +51,10 @@ static const unsigned int BindDirectionValues[] =
 };
 
 /* --------------------------------------------------------------------------------------------- *
- * BindAllocateInternalData
+ * OcilibBindAllocateInternalData
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindAllocateInternalData
+static boolean OcilibBindAllocateInternalData
 (
     OCI_Bind* bnd
 )
@@ -124,14 +124,14 @@ boolean BindAllocateInternalData
             {
                 struct_size = sizeof(OCI_Timestamp);
                 elem_size   = sizeof(OCIDateTime*);
-                handle_type = ExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, bnd->subtype);
+                handle_type = OcilibExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, bnd->subtype);
                 break;
             }
             case OCI_CDT_INTERVAL:
             {
                 struct_size = sizeof(OCI_Interval);
                 elem_size   = sizeof(OCIInterval*);
-                handle_type = ExternalSubTypeToHandleType(OCI_CDT_INTERVAL, bnd->subtype);
+                handle_type = OcilibExternalSubTypeToHandleType(OCI_CDT_INTERVAL, bnd->subtype);
                 break;
             }
             case OCI_CDT_RAW:
@@ -159,9 +159,9 @@ boolean BindAllocateInternalData
             }
         }
 
-        arr = ArrayCreate(bnd->stmt->con, bnd->buffer.count,
-                          bnd->type, bnd->subtype, elem_size,
-                          struct_size, handle_type, bnd->typinf);
+        arr = OcilibArrayCreate(bnd->stmt->con, bnd->buffer.count,
+                                bnd->type, bnd->subtype, elem_size,
+                                struct_size, handle_type, bnd->typinf);
 
         CHECK_NULL(arr)
 
@@ -233,7 +233,7 @@ boolean BindAllocateInternalData
             {
                 if (bnd->subtype == OCI_NUM_NUMBER)
                 {
-                    OCI_Number* number = NumberCreate(bnd->stmt->con);
+                    OCI_Number* number = OcilibNumberCreate(bnd->stmt->con);
 
                     CHECK_NULL(number)
 
@@ -242,19 +242,19 @@ boolean BindAllocateInternalData
                 }
                 else if (SQLT_VNU == bnd->code)
                 {
-                    bnd->input       = (void**)MemoryAlloc(OCI_IPC_VOID, sizeof(big_int), 1, TRUE);
-                    bnd->buffer.data = (void**)MemoryAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);
+                    bnd->input       = (void**)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(big_int), 1, TRUE);
+                    bnd->buffer.data = (void**)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OCINumber), 1, TRUE);
                 }
                 else
                 {
-                    bnd->input       = (void**)MemoryAlloc(OCI_IPC_VOID, bnd->size, 1, TRUE);
+                    bnd->input       = (void**)OcilibMemoryAlloc(OCI_IPC_VOID, bnd->size, 1, TRUE);
                     bnd->buffer.data = (void**)bnd->input;
                 }
                 break;
             }
             case OCI_CDT_DATETIME:
             {
-                OCI_Date* date = DateCreate(bnd->stmt->con);
+                OCI_Date* date = OcilibDateCreate(bnd->stmt->con);
 
                 CHECK_NULL(date)
 
@@ -267,19 +267,19 @@ boolean BindAllocateInternalData
             {
                 if (Env.use_wide_char_conv)
                 {
-                    bnd->buffer.data = (void**)MemoryAlloc(OCI_IPC_STRING, bnd->size * (sizeof(otext) / sizeof(dbtext)), 1, TRUE);
-                    bnd->input       = (void**)MemoryAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
+                    bnd->buffer.data = (void**)OcilibMemoryAlloc(OCI_IPC_STRING, bnd->size * (sizeof(otext) / sizeof(dbtext)), 1, TRUE);
+                    bnd->input       = (void**)OcilibMemoryAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
                 }
                 else
                 {
-                    bnd->buffer.data = (void**)MemoryAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
+                    bnd->buffer.data = (void**)OcilibMemoryAlloc(OCI_IPC_STRING, bnd->size, 1, TRUE);
                     bnd->input       = (void**)bnd->buffer.data;
                 }
                 break;
             }
             case OCI_CDT_LOB:
             {
-                OCI_Lob* lob = LobCreate(bnd->stmt->con, bnd->subtype);
+                OCI_Lob* lob = OcilibLobCreate(bnd->stmt->con, bnd->subtype);
 
                 CHECK_NULL(lob)
 
@@ -290,7 +290,7 @@ boolean BindAllocateInternalData
             }
             case OCI_CDT_FILE:
             {
-                OCI_File* file = FileCreate(bnd->stmt->con, bnd->subtype);
+                OCI_File* file = OcilibFileCreate(bnd->stmt->con, bnd->subtype);
 
                 CHECK_NULL(file)
 
@@ -301,7 +301,7 @@ boolean BindAllocateInternalData
             }
             case OCI_CDT_TIMESTAMP:
             {
-                OCI_Timestamp* tmsp = TimestampCreate(bnd->stmt->con, bnd->subtype);
+                OCI_Timestamp* tmsp = OcilibTimestampCreate(bnd->stmt->con, bnd->subtype);
 
                 CHECK_NULL(tmsp)
 
@@ -312,7 +312,7 @@ boolean BindAllocateInternalData
             }
             case OCI_CDT_INTERVAL:
             {
-                OCI_Interval* itv = IntervalCreate(bnd->stmt->con, bnd->subtype);
+                OCI_Interval* itv = OcilibIntervalCreate(bnd->stmt->con, bnd->subtype);
 
                 CHECK_NULL(itv)
 
@@ -323,13 +323,13 @@ boolean BindAllocateInternalData
             }
             case OCI_CDT_RAW:
             {
-                bnd->input       = (void**)MemoryAlloc(OCI_IPC_VOID, bnd->size, 1, TRUE);
+                bnd->input       = (void**)OcilibMemoryAlloc(OCI_IPC_VOID, bnd->size, 1, TRUE);
                 bnd->buffer.data = (void**)bnd->input;
                 break;
             }
             case OCI_CDT_OBJECT:
             {
-                OCI_Object* obj = ObjectCreate(bnd->stmt->con, bnd->typinf);
+                OCI_Object* obj = OcilibObjectCreate(bnd->stmt->con, bnd->typinf);
 
                 CHECK_NULL(obj)
 
@@ -340,7 +340,7 @@ boolean BindAllocateInternalData
             }
             case OCI_CDT_COLLECTION:
             {
-                OCI_Coll* coll = CollectionCreate(bnd->typinf);
+                OCI_Coll* coll = OcilibCollectionCreate(bnd->typinf);
 
                 CHECK_NULL(coll)
 
@@ -351,7 +351,7 @@ boolean BindAllocateInternalData
             }
             case OCI_CDT_REF:
             {
-                OCI_Ref* ref = ReferenceCreate(bnd->stmt->con, bnd->typinf);
+                OCI_Ref* ref = OcilibReferenceCreate(bnd->stmt->con, bnd->typinf);
 
                 CHECK_NULL(ref)
 
@@ -370,7 +370,11 @@ boolean BindAllocateInternalData
     EXIT_FUNC()
 }
 
-boolean BindAllocateBuffers
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibBindAllocateBuffers
+ * --------------------------------------------------------------------------------------------- */
+
+static boolean OcilibBindAllocateBuffers
 (
     OCI_Bind    *bnd,
     unsigned int mode,
@@ -461,7 +465,7 @@ boolean BindAllocateBuffers
 
     if (!bnd->input && (OCI_BAM_INTERNAL == bnd->alloc_mode))
     {
-        CHECK(BindAllocateInternalData(bnd))
+        CHECK(OcilibBindAllocateInternalData(bnd))
     }
 
     SET_SUCCESS()
@@ -470,10 +474,10 @@ boolean BindAllocateBuffers
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* BindCheckAvailability
+* OcilibBindCheckAvailability
 * --------------------------------------------------------------------------------------------- */
 
-boolean BindCheckAvailability
+    static boolean OcilibBindCheckAvailability
 (
     OCI_Statement *stmt,
     unsigned int   mode,
@@ -494,7 +498,7 @@ boolean BindCheckAvailability
         {
             if (stmt->nb_ubinds >= OCI_BIND_MAX)
             {
-                THROW_NO_ARGS(ExceptionMaxBind)
+                THROW_NO_ARGS(OcilibExceptionMaxBind)
             }
 
             /* allocate user bind array if necessary */
@@ -512,7 +516,7 @@ boolean BindCheckAvailability
         {
             if (stmt->nb_rbinds >= OCI_BIND_MAX)
             {
-                THROW_NO_ARGS(ExceptionMaxBind)
+                THROW_NO_ARGS(OcilibExceptionMaxBind)
             }
 
             /* allocate register bind array if necessary */
@@ -534,10 +538,10 @@ boolean BindCheckAvailability
 }
 
 /* --------------------------------------------------------------------------------------------- *
-  * BindPerformBinding
+  * OcilibBindPerformBinding
   * --------------------------------------------------------------------------------------------- */
 
-boolean BindPerformBinding
+static boolean OcilibBindPerformBinding
 (
     OCI_Bind    *bnd,
     unsigned int mode,
@@ -580,7 +584,7 @@ boolean BindPerformBinding
     }
     else
     {
-        dbstr = StringGetDBString(bnd->name, &dbsize);
+        dbstr = OcilibStringGetDBString(bnd->name, &dbsize);
 
         CHECK_OCI
         (
@@ -630,9 +634,9 @@ boolean BindPerformBinding
             (OCIBind *)bnd->buffer.handle,
             bnd->stmt->con->err,
             (dvoid *)bnd,
-            CallbackInBind,
+            OcilibCallbackInBind,
             (dvoid *)bnd,
-            CallbackOutBind
+            OcilibCallbackOutBind
         )
     }
 
@@ -640,16 +644,16 @@ boolean BindPerformBinding
 
     CLEANUP_AND_EXIT_FUNC
     (
-        StringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(dbstr);
     )
 
 }
 
 /* --------------------------------------------------------------------------------------------- *
-  * BindAddToStatement
+  * OcilibBindAddToStatement
   * --------------------------------------------------------------------------------------------- */
 
-boolean BindAddToStatement
+static boolean OcilibBindAddToStatement
 (
     OCI_Bind    *bnd,
     unsigned int mode,
@@ -672,7 +676,7 @@ boolean BindAddToStatement
 
             /* for user binds, add a positive index */
 
-            CHECK(HashAddInt(bnd->stmt->map, bnd->name, bnd->stmt->nb_ubinds))
+            CHECK(OcilibHashAddInt(bnd->stmt->map, bnd->name, bnd->stmt->nb_ubinds))
         }
     }
     else
@@ -683,7 +687,7 @@ boolean BindAddToStatement
 
         const int index = (int)bnd->stmt->nb_rbinds;
 
-        CHECK(HashAddInt(bnd->stmt->map, bnd->name, -index))
+        CHECK(OcilibHashAddInt(bnd->stmt->map, bnd->name, -index))
     }
 
     SET_SUCCESS()
@@ -692,10 +696,10 @@ boolean BindAddToStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindCreate
+ * OcilibBindCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Bind* BindCreate
+OCI_Bind* OcilibBindCreate
 (
     OCI_Statement *stmt,
     void          *data,
@@ -735,7 +739,7 @@ OCI_Bind* BindCreate
 
         if (index <= 0 || index > OCI_BIND_MAX)
         {
-            THROW(ExceptionOutOfBounds, index)
+            THROW(OcilibExceptionOutOfBounds, index)
         }
     }
 
@@ -743,13 +747,13 @@ OCI_Bind* BindCreate
 
     if (OCI_BIND_INPUT == mode)
     {
-        prev_index = BindGetIndex(stmt, name);
+        prev_index = OcilibBindGetIndex(stmt, name);
 
         if (prev_index > 0)
         {
             if (!stmt->bind_reuse)
             {
-                THROW(ExceptionBindAlreadyUsed, name)
+                THROW(OcilibExceptionBindAlreadyUsed, name)
             }
             else
             {
@@ -757,7 +761,7 @@ OCI_Bind* BindCreate
 
                 if (bnd->type != type)
                 {
-                    THROW(ExceptionRebindBadDatatype, name)
+                    THROW(OcilibExceptionRebindBadDatatype, name)
                 }
                 else
                 {
@@ -771,7 +775,7 @@ OCI_Bind* BindCreate
 
     /* check if we can handle another bind */
 
-    CHECK(BindCheckAvailability(stmt, mode, reused))
+    CHECK(OcilibBindCheckAvailability(stmt, mode, reused))
 
     /* check out the number of elements that the bind variable will hold */
 
@@ -802,7 +806,7 @@ OCI_Bind* BindCreate
 
     if (NULL == stmt->map)
     {
-        stmt->map = HashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
+        stmt->map = OcilibHashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
         CHECK_NULL(stmt->map)
     }
 
@@ -825,7 +829,7 @@ OCI_Bind* BindCreate
 
     if (NULL == bnd->name)
     {
-        bnd->name = ostrdup(name);
+        bnd->name = OcilibStringDuplicate(name);
     }
 
     /* initialize buffer */
@@ -833,7 +837,7 @@ OCI_Bind* BindCreate
     bnd->buffer.count   = nbelem;
     bnd->buffer.sizelen = sizeof(ub2);
 
-    CHECK(BindAllocateBuffers(bnd, mode, reused, nballoc, nbelem, plsql_table))
+    CHECK(OcilibBindAllocateBuffers(bnd, mode, reused, nballoc, nbelem, plsql_table))
 
     /* if we bind an OCI_Long or any output bind, we need to change the
        execution mode to provide data at execute time */
@@ -858,7 +862,7 @@ OCI_Bind* BindCreate
 
     /* OCI binding */
 
-    CHECK(BindPerformBinding(bnd, mode, index, exec_mode, plsql_table))
+    CHECK(OcilibBindPerformBinding(bnd, mode, index, exec_mode, plsql_table))
 
     /* set charset form */
 
@@ -879,7 +883,7 @@ OCI_Bind* BindCreate
          - add the bind index to the map
     */
 
-    CHECK(BindAddToStatement(bnd, mode, reused))
+    CHECK(OcilibBindAddToStatement(bnd, mode, reused))
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -887,7 +891,7 @@ OCI_Bind* BindCreate
 
         if (FAILURE && NULL != bnd && prev_index == -1)
         {
-            BindFree(bnd);
+            OcilibBindFree(bnd);
             bnd = NULL;
         }
 
@@ -896,10 +900,10 @@ OCI_Bind* BindCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindFree
+ * OcilibBindFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindFree
+boolean OcilibBindFree
 (
     OCI_Bind *bnd
 )
@@ -916,7 +920,7 @@ boolean BindFree
     {
         if (bnd->is_array)
         {
-            ArrayFreeFromHandles(bnd->input);
+            OcilibArrayFreeFromHandles(bnd->input);
         }
         else
         {
@@ -929,13 +933,13 @@ boolean BindFree
 
                     if (bnd->type == OCI_CDT_NUMERIC && bnd->subtype == OCI_NUM_NUMBER)
                     {
-                        FreeObjectFromType(bnd->input, bnd->type);
+                        OcilibFreeObjectFromType(bnd->input, bnd->type);
                     }
                     else
                     {
                         /* strings requiring otext / dbtext conversions and 64 bit integers */
 
-                        MemoryFree(bnd->input);
+                        OcilibMemoryFree(bnd->input);
 
                         if (bnd->alloc)
                         {
@@ -946,7 +950,7 @@ boolean BindFree
                 }
                 default:
                 {
-                    FreeObjectFromType(bnd->input, bnd->type);
+                    OcilibFreeObjectFromType(bnd->input, bnd->type);
                 }
             }
         }
@@ -959,7 +963,7 @@ boolean BindFree
         }
     }
 
-    ErrorResetSource(NULL, bnd);
+    OcilibErrorResetSource(NULL, bnd);
 
     FREE(bnd->buffer.inds)
     FREE(bnd->buffer.obj_inds)
@@ -975,10 +979,10 @@ boolean BindFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindGetIndex
+ * OcilibBindGetIndex
  * --------------------------------------------------------------------------------------------- */
 
-int BindGetIndex
+int OcilibBindGetIndex
 (
     OCI_Statement* stmt,
     const otext  * name
@@ -995,7 +999,7 @@ int BindGetIndex
 
     CHECK_NULL(stmt->map)
 
-    OCI_HashEntry* he = HashLookup(stmt->map, name, FALSE);
+    OCI_HashEntry* he = OcilibHashLookup(stmt->map, name, FALSE);
 
     int index = -1;
 
@@ -1003,7 +1007,7 @@ int BindGetIndex
     {
         /* no more entries or key matched => so we got it ! */
 
-        if (NULL == he->next || ostrcasecmp(he->key, name) == 0)
+        if (NULL == he->next || OcilibStringCaseCompare(he->key, name) == 0)
         {
             /* in order to use the same map for user binds and
                register binds :
@@ -1028,10 +1032,10 @@ int BindGetIndex
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindSetNullIndicator
+ * OcilibBindSetNullIndicator
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindSetNullIndicator
+boolean OcilibBindSetNullIndicator
 (
     OCI_Bind    *bnd,
     unsigned int position,
@@ -1057,10 +1061,10 @@ boolean BindSetNullIndicator
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindGetName
+ * OcilibBindGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext * BindGetName
+const otext * OcilibBindGetName
 (
     OCI_Bind *bnd
 )
@@ -1074,10 +1078,10 @@ const otext * BindGetName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindGetType
+ * OcilibBindGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int BindGetType
+unsigned int OcilibBindGetType
 (
     OCI_Bind *bnd
 )
@@ -1091,10 +1095,10 @@ unsigned int BindGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindGetSubtype
+ * OcilibBindGetSubtype
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int BindGetSubtype
+unsigned int OcilibBindGetSubtype
 (
     OCI_Bind *bnd
 )
@@ -1125,10 +1129,10 @@ unsigned int BindGetSubtype
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindGetDataCount
+ * OcilibBindGetDataCount
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int BindGetDataCount
+unsigned int OcilibBindGetDataCount
 (
     OCI_Bind *bnd
 )
@@ -1142,10 +1146,10 @@ unsigned int BindGetDataCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindGetData
+ * OcilibBindGetData
  * --------------------------------------------------------------------------------------------- */
 
-void * BindGetData
+void * OcilibBindGetData
 (
     OCI_Bind *bnd
 )
@@ -1159,10 +1163,10 @@ void * BindGetData
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindGetStatement
+ * OcilibBindGetStatement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Statement * BindGetStatement
+OCI_Statement * OcilibBindGetStatement
 (
     OCI_Bind *bnd
 )
@@ -1176,23 +1180,23 @@ OCI_Statement * BindGetStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindSetDataSize
+ * OcilibBindSetDataSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindSetDataSize
+boolean OcilibBindSetDataSize
 (
     OCI_Bind    *bnd,
     unsigned int size
 )
 {
-    return BindSetDataSizeAtPos(bnd, 1, size);
+    return OcilibBindSetDataSizeAtPos(bnd, 1, size);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindSetDataSizeAtPos
+ * OcilibBindSetDataSizeAtPos
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindSetDataSizeAtPos
+boolean OcilibBindSetDataSizeAtPos
 (
     OCI_Bind    *bnd,
     unsigned int position,
@@ -1229,22 +1233,22 @@ boolean BindSetDataSizeAtPos
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindGetDataSize
+ * OcilibBindGetDataSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int BindGetDataSize
+unsigned int OcilibBindGetDataSize
 (
     OCI_Bind *bnd
 )
 {
-    return BindGetDataSizeAtPos(bnd, 1);
+    return OcilibBindGetDataSizeAtPos(bnd, 1);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindGetDataSizeAtPos
+ * OcilibBindGetDataSizeAtPos
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int BindGetDataSizeAtPos
+unsigned int OcilibBindGetDataSizeAtPos
 (
     OCI_Bind    *bnd,
     unsigned int position
@@ -1279,10 +1283,10 @@ unsigned int BindGetDataSizeAtPos
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindSetNullAtPos
+ * OcilibBindSetNullAtPos
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindSetNullAtPos
+boolean OcilibBindSetNullAtPos
 (
     OCI_Bind    *bnd,
     unsigned int position
@@ -1297,7 +1301,7 @@ boolean BindSetNullAtPos
     CHECK_PTR(OCI_IPC_BIND, bnd)
     CHECK_BOUND(position, 1, bnd->buffer.count)
 
-    CHECK(BindSetNullIndicator(bnd, position, OCI_IND_NULL))
+    CHECK(OcilibBindSetNullIndicator(bnd, position, OCI_IND_NULL))
 
     SET_SUCCESS()
 
@@ -1305,22 +1309,22 @@ boolean BindSetNullAtPos
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindSetNull
+ * OcilibBindSetNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindSetNull
+boolean OcilibBindSetNull
 (
     OCI_Bind *bnd
 )
 {
-    return BindSetNullAtPos(bnd, 1);
+    return OcilibBindSetNullAtPos(bnd, 1);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindSetNotNullAtPos
+ * OcilibBindSetNotNullAtPos
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindSetNotNullAtPos
+boolean OcilibBindSetNotNullAtPos
 (
     OCI_Bind    *bnd,
     unsigned int position
@@ -1335,7 +1339,7 @@ boolean BindSetNotNullAtPos
     CHECK_PTR(OCI_IPC_BIND, bnd)
     CHECK_BOUND(position, 1, bnd->buffer.count)
 
-    CHECK(BindSetNullIndicator(bnd, position, OCI_IND_NOTNULL))
+    CHECK(OcilibBindSetNullIndicator(bnd, position, OCI_IND_NOTNULL))
 
     SET_SUCCESS()
 
@@ -1343,22 +1347,22 @@ boolean BindSetNotNullAtPos
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindSetNotNull
+ * OcilibBindSetNotNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindSetNotNull
+boolean OcilibBindSetNotNull
 (
     OCI_Bind *bnd
 )
 {
-    return BindSetNotNullAtPos(bnd, 1);
+    return OcilibBindSetNotNullAtPos(bnd, 1);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindIsNullAtPos
+ * OcilibBindIsNullAtPos
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindIsNullAtPos
+boolean OcilibBindIsNullAtPos
 (
     OCI_Bind    *bnd,
     unsigned int position
@@ -1381,22 +1385,22 @@ boolean BindIsNullAtPos
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindIsNull
+ * OcilibBindIsNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindIsNull
+boolean OcilibBindIsNull
 (
     OCI_Bind *bnd
 )
 {
-    return BindIsNullAtPos(bnd, 1);
+    return OcilibBindIsNullAtPos(bnd, 1);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindSetCharsetForm
+ * OcilibBindSetCharsetForm
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindSetCharsetForm
+boolean OcilibBindSetCharsetForm
 (
     OCI_Bind    *bnd,
     unsigned int csfrm
@@ -1436,10 +1440,10 @@ boolean BindSetCharsetForm
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindSetDirection
+ * OcilibBindSetDirection
  * --------------------------------------------------------------------------------------------- */
 
-boolean BindSetDirection
+boolean OcilibBindSetDirection
 (
     OCI_Bind    *bnd,
     unsigned int direction
@@ -1454,10 +1458,10 @@ boolean BindSetDirection
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * BindGetDirection
+ * OcilibBindGetDirection
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int BindGetDirection
+unsigned int OcilibBindGetDirection
 (
     OCI_Bind *bnd
 )
@@ -1471,10 +1475,10 @@ unsigned int BindGetDirection
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* BindGetAllocationMode
+* OcilibBindGetAllocationMode
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int BindGetAllocationMode
+unsigned int OcilibBindGetAllocationMode
 (
     OCI_Bind *bnd
 )

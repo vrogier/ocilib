@@ -23,14 +23,14 @@
 
 #include "types.h"
 
-void ObjectGetUserStructSize
+OCI_SYM_LOCAL void OcilibObjectGetUserStructSize
 (
     OCI_TypeInfo* typinf,
     size_t      * p_size,
     size_t      * p_align
 );
 
-OCI_Object * ObjectInitialize
+OCI_SYM_LOCAL OCI_Object * OcilibObjectInitialize
 (
     OCI_Connection *con,
     OCI_Object     *obj,
@@ -41,102 +41,102 @@ OCI_Object * ObjectInitialize
     boolean         reset
 );
 
-OCI_Object * ObjectCreate
+OCI_SYM_LOCAL OCI_Object * OcilibObjectCreate
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf
 );
 
-boolean ObjectFree
+OCI_SYM_LOCAL boolean OcilibObjectFree
 (
     OCI_Object *obj
 );
 
-OCI_Object ** ObjectCreateArray
+OCI_SYM_LOCAL OCI_Object ** OcilibObjectCreateArray
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
     unsigned int    nbelem
 );
 
-boolean ObjectFreeArray
+OCI_SYM_LOCAL boolean OcilibObjectFreeArray
 (
     OCI_Object **objs
 );
 
-boolean ObjectAssign
+OCI_SYM_LOCAL boolean OcilibObjectAssign
 (
     OCI_Object *obj,
     OCI_Object *obj_src
 );
 
-boolean ObjectGetBoolean
+OCI_SYM_LOCAL boolean OcilibObjectGetBoolean
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_Number * ObjectGetNumber
+OCI_SYM_LOCAL OCI_Number * OcilibObjectGetNumber
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-short ObjectGetShort
+OCI_SYM_LOCAL short OcilibObjectGetShort
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-unsigned short ObjectGetUnsignedShort
+OCI_SYM_LOCAL unsigned short OcilibObjectGetUnsignedShort
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-int ObjectGetInt
+OCI_SYM_LOCAL int OcilibObjectGetInt
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-unsigned int ObjectGetUnsignedInt
+OCI_SYM_LOCAL unsigned int OcilibObjectGetUnsignedInt
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-big_int ObjectGetBigInt
+OCI_SYM_LOCAL big_int OcilibObjectGetBigInt
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-big_uint ObjectGetUnsignedBigInt
+OCI_SYM_LOCAL big_uint OcilibObjectGetUnsignedBigInt
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-double ObjectGetDouble
+OCI_SYM_LOCAL double OcilibObjectGetDouble
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-float ObjectGetFloat
+OCI_SYM_LOCAL float OcilibObjectGetFloat
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-const otext * ObjectGetString
+OCI_SYM_LOCAL const otext * OcilibObjectGetString
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-int ObjectGetRaw
+OCI_SYM_LOCAL int OcilibObjectGetRaw
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -144,138 +144,138 @@ int ObjectGetRaw
     unsigned int len
 );
 
-unsigned int ObjectGetRawSize
+OCI_SYM_LOCAL unsigned int OcilibObjectGetRawSize
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_Date * ObjectGetDate
+OCI_SYM_LOCAL OCI_Date * OcilibObjectGetDate
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_Timestamp * ObjectGetTimestamp
+OCI_SYM_LOCAL OCI_Timestamp * OcilibObjectGetTimestamp
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_Interval * ObjectGetInterval
+OCI_SYM_LOCAL OCI_Interval * OcilibObjectGetInterval
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_Coll * ObjectGetColl
+OCI_SYM_LOCAL OCI_Coll * OcilibObjectGetColl
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_Object * ObjectGetObject
+OCI_SYM_LOCAL OCI_Object * OcilibObjectGetObject
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_Lob * ObjectGetLob
+OCI_SYM_LOCAL OCI_Lob * OcilibObjectGetLob
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_File * ObjectGetFile
+OCI_SYM_LOCAL OCI_File * OcilibObjectGetFile
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_Ref * ObjectGetReference
+OCI_SYM_LOCAL OCI_Ref * OcilibObjectGetReference
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-boolean ObjectSetBoolean
+OCI_SYM_LOCAL boolean OcilibObjectSetBoolean
 (
     OCI_Object  *obj,
     const otext *attr,
     boolean      value
 );
 
-boolean ObjectSetNumber
+OCI_SYM_LOCAL boolean OcilibObjectSetNumber
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Number  *value
 );
 
-boolean ObjectSetShort
+OCI_SYM_LOCAL boolean OcilibObjectSetShort
 (
     OCI_Object  *obj,
     const otext *attr,
     short        value
 );
 
-boolean ObjectSetUnsignedShort
+OCI_SYM_LOCAL boolean OcilibObjectSetUnsignedShort
 (
     OCI_Object    *obj,
     const otext   *attr,
     unsigned short value
 );
 
-boolean ObjectSetInt
+OCI_SYM_LOCAL boolean OcilibObjectSetInt
 (
     OCI_Object  *obj,
     const otext *attr,
     int          value
 );
 
-boolean ObjectSetUnsignedInt
+OCI_SYM_LOCAL boolean OcilibObjectSetUnsignedInt
 (
     OCI_Object  *obj,
     const otext *attr,
     unsigned int value
 );
 
-boolean ObjectSetBigInt
+OCI_SYM_LOCAL boolean OcilibObjectSetBigInt
 (
     OCI_Object  *obj,
     const otext *attr,
     big_int      value
 );
 
-boolean ObjectSetUnsignedBigInt
+OCI_SYM_LOCAL boolean OcilibObjectSetUnsignedBigInt
 (
     OCI_Object  *obj,
     const otext *attr,
     big_uint     value
 );
 
-boolean ObjectSetDouble
+OCI_SYM_LOCAL boolean OcilibObjectSetDouble
 (
     OCI_Object  *obj,
     const otext *attr,
     double       value
 );
 
-boolean ObjectSetFloat
+OCI_SYM_LOCAL boolean OcilibObjectSetFloat
 (
     OCI_Object  *obj,
     const otext *attr,
     float        value
 );
 
-boolean ObjectSetString
+OCI_SYM_LOCAL boolean OcilibObjectSetString
 (
     OCI_Object  *obj,
     const otext *attr,
     const otext *value
 );
 
-boolean ObjectSetRaw
+OCI_SYM_LOCAL boolean OcilibObjectSetRaw
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -283,98 +283,98 @@ boolean ObjectSetRaw
     unsigned int len
 );
 
-boolean ObjectSetDate
+OCI_SYM_LOCAL boolean OcilibObjectSetDate
 (
     OCI_Object * obj,
     const otext *attr,
     OCI_Date    *value
 );
 
-boolean ObjectSetTimestamp
+OCI_SYM_LOCAL boolean OcilibObjectSetTimestamp
 (
     OCI_Object   * obj,
     const otext   *attr,
     OCI_Timestamp *value
 );
 
-boolean ObjectSetInterval
+OCI_SYM_LOCAL boolean OcilibObjectSetInterval
 (
     OCI_Object   *obj,
     const otext  *attr,
     OCI_Interval *value
 );
 
-boolean ObjectSetColl
+OCI_SYM_LOCAL boolean OcilibObjectSetColl
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Coll    *value
 );
 
-boolean ObjectSetObject
+OCI_SYM_LOCAL boolean OcilibObjectSetObject
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Object  *value
 );
 
-boolean ObjectSetLob
+OCI_SYM_LOCAL boolean OcilibObjectSetLob
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Lob     *value
 );
 
-boolean ObjectSetFile
+OCI_SYM_LOCAL boolean OcilibObjectSetFile
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_File    *value
 );
 
-boolean ObjectSetReference
+OCI_SYM_LOCAL boolean OcilibObjectSetReference
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Ref     *value
 );
 
-boolean ObjectSetNull
+OCI_SYM_LOCAL boolean OcilibObjectSetNull
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-boolean ObjectIsNull
+OCI_SYM_LOCAL boolean OcilibObjectIsNull
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_TypeInfo * ObjectGetTypeInfo
+OCI_SYM_LOCAL OCI_TypeInfo * OcilibObjectGetTypeInfo
 (
     OCI_Object *obj
 );
 
-unsigned int ObjectGetType
+OCI_SYM_LOCAL unsigned int OcilibObjectGetType
 (
     OCI_Object *obj
 );
 
-boolean ObjectGetSelfRef
+OCI_SYM_LOCAL boolean OcilibObjectGetSelfRef
 (
     OCI_Object *obj,
     OCI_Ref    *ref
 );
 
-boolean ObjectGetStruct
+OCI_SYM_LOCAL boolean OcilibObjectGetStruct
 (
     OCI_Object *obj,
     void      **pp_struct,
     void      **pp_ind
 );
 
-boolean ObjectToString
+OCI_SYM_LOCAL boolean OcilibObjectToString
 (
     OCI_Object   *obj,
     unsigned int *size,

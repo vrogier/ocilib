@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-boolean ColumnGetAttributeInfo
+OCI_SYM_LOCAL boolean OcilibColumnGetAttributeInfo
 (
     OCI_Column  *col,
     unsigned int count,
@@ -32,7 +32,7 @@ boolean ColumnGetAttributeInfo
     size_t      *p_align
 );
 
-boolean ColumnRetrieveInfo
+OCI_SYM_LOCAL boolean OcilibColumnRetrieveInfo
 (
     OCI_Column     *col,
     OCI_Connection *con,
@@ -42,90 +42,90 @@ boolean ColumnRetrieveInfo
     int             ptype
 );
 
-boolean ColumnMapInfo
+OCI_SYM_LOCAL boolean OcilibColumnMapInfo
 (
     OCI_Column    *col,
     OCI_Statement *stmt
 );
 
-const otext* ColumnGetName
+OCI_SYM_LOCAL const otext* OcilibColumnGetName
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetType
+OCI_SYM_LOCAL unsigned int OcilibColumnGetType
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetCharsetForm
+OCI_SYM_LOCAL unsigned int OcilibColumnGetCharsetForm
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetSize
+OCI_SYM_LOCAL unsigned int OcilibColumnGetSize
 (
     OCI_Column* col
 );
 
-int ColumnGetScale
+OCI_SYM_LOCAL int OcilibColumnGetScale
 (
     OCI_Column* col
 );
 
-int ColumnGetPrecision
+OCI_SYM_LOCAL int OcilibColumnGetPrecision
 (
     OCI_Column* col
 );
 
-int ColumnGetFractionalPrecision
+OCI_SYM_LOCAL int OcilibColumnGetFractionalPrecision
 (
     OCI_Column* col
 );
 
-int ColumnGetLeadingPrecision
+OCI_SYM_LOCAL int OcilibColumnGetLeadingPrecision
 (
     OCI_Column* col
 );
 
-boolean ColumnGetNullable
+OCI_SYM_LOCAL boolean OcilibColumnGetNullable
 (
     OCI_Column* col
 );
 
-boolean ColumnGetCharUsed
+OCI_SYM_LOCAL boolean OcilibColumnGetCharUsed
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetPropertyFlags
+OCI_SYM_LOCAL unsigned int OcilibColumnGetPropertyFlags
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetCollationID
+OCI_SYM_LOCAL unsigned int OcilibColumnGetCollationID
 (
     OCI_Column* col
 );
 
-const otext* ColumnGetSqlType
+OCI_SYM_LOCAL const otext* OcilibColumnGetSqlType
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetFullSqlType
+OCI_SYM_LOCAL unsigned int OcilibColumnGetFullSqlType
 (
     OCI_Column * col,
     otext      * buffer,
     unsigned int len
 );
 
-OCI_TypeInfo* ColumnGetTypeInfo
+OCI_SYM_LOCAL OCI_TypeInfo* OcilibColumnGetTypeInfo
 (
     OCI_Column* col
 );
 
-unsigned int ColumnGetSubType
+OCI_SYM_LOCAL unsigned int OcilibColumnGetSubType
 (
     OCI_Column* col
 );

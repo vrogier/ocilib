@@ -22,41 +22,43 @@
 #define OCILIB_OCI_LOADER_H_INCLUDED
 
 #if defined(_AIX)
-#define  LIB_OPEN_FLAGS        (RTLD_NOW | RTLD_GLOBAL | RTLD_MEMBER)
+  #define  LIB_OPEN_FLAGS        (RTLD_NOW | RTLD_GLOBAL | RTLD_MEMBER)
 #elif defined(__hpux)
-#define  LIB_OPEN_FLAGS        (BIND_DEFERRED |BIND_VERBOSE| DYNAMIC_PATH)
-#else
-#define  LIB_OPEN_FLAGS        (RTLD_NOW | RTLD_GLOBAL)
+  #define  LIB_OPEN_FLAGS        (BIND_DEFERRED |BIND_VERBOSE| DYNAMIC_PATH)
+#elif defined(__GNUC__)
+  #define  LIB_OPEN_FLAGS        (RTLD_NOW | RTLD_GLOBAL)
 #endif
 
 #if defined(_WINDOWS)
 
   #include <Windows.h>
 
-#define LIB_HANDLE               HMODULE
-#define LIB_OPEN(l)              LoadLibraryA(l)
-#define LIB_CLOSE                FreeLibrary
-#define LIB_SYMBOL(h, s, p, t)   p = (t) GetProcAddress(h, s)
+  #define LIB_HANDLE               HMODULE
+  #define LIB_OPEN(l)              LoadLibraryA(l)
+  #define LIB_CLOSE                FreeLibrary
+  #define LIB_SYMBOL(h, s, p, t)   p = (t) GetProcAddress(h, s)
 
 #elif defined(__hpux)
 
   #include <dl.h>
 
-#define LIB_HANDLE               shl_t
-#define LIB_OPEN(l)              shl_load(l, LIB_OPEN_FLAGS, 0L)
-#define LIB_CLOSE                shl_unload
-#define LIB_SYMBOL(h, s, p, t)   shl_findsym(&h, s, (short) TYPE_PROCEDURE, (void *) &p)
+  #define LIB_HANDLE               shl_t
+  #define LIB_OPEN(l)              shl_load(l, LIB_OPEN_FLAGS, 0L)
+  #define LIB_CLOSE                shl_unload
+  #define LIB_SYMBOL(h, s, p, t)   shl_findsym(&h, s, (short) TYPE_PROCEDURE, (void *) &p)
+
+#elif defined(__GNUC__)
+
+  #include <dlfcn.h>
+
+  #define LIB_HANDLE               void *
+  #define LIB_OPEN(l)              dlopen(l, LIB_OPEN_FLAGS)
+  #define LIB_CLOSE                dlclose
+  #define LIB_SYMBOL(h, s, p, t)   p = (t) dlsym(h, s)
 
 #else
 
-  #ifdef HAVE_DLFCN_H
-    #include <dlfcn.h>
-  #endif
-
-#define LIB_HANDLE               void *
-#define LIB_OPEN(l)              dlopen(l, LIB_OPEN_FLAGS)
-#define LIB_CLOSE                dlclose
-#define LIB_SYMBOL(h, s, p, t)   p = (t) dlsym(h, s)
+  #error Unable to compute how to dynamic libraries
 
 #endif
 

@@ -53,7 +53,7 @@ libocilib_la_SOURCES=   \
     reference.c         \
     resultset.c         \
     statement.c         \
-    strings.c           \
+    stringutils.c       \
     subscription.c      \
     thread.c            \
     threadkey.c         \
@@ -61,7 +61,7 @@ libocilib_la_SOURCES=   \
     transaction.c       \
     typeinfo.c
 
-libocilib_la_CFLAGS= -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
+libocilib_la_CFLAGS= @OCILIB_EXTRA_FLAGS@ -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
 libocilib_la_LDFLAGS= @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 
@@ -127,7 +127,7 @@ noinst_HEADERS=     \
     reference.h     \
     resultset.h     \
     statement.h     \
-    strings.h       \
+    stringutils.h   \
     subscription.h  \
     thread.h        \
     threadkey.h     \
