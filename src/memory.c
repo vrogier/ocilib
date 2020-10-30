@@ -146,7 +146,7 @@ void * OcilibMemoryRealloc
 
             if (zero_fill)
             {
-                memset(((unsigned char*)block) + block->size, 0, size - block->size);
+                memset(((unsigned char*)block) + (block->size - size_diff), 0, size_diff);
             }
 
             OcilibMemoryUpdateBytes(block->type, size_diff);
