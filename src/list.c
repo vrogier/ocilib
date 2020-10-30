@@ -92,13 +92,13 @@ static OCI_Item * OcilibListCreateItem
     (
         if (FAILURE)
         {
-            if (NULL != item->data)
-            {
-                FREE(item->data)
-            }
-
             if (NULL != item)
             {
+                if (NULL != item->data)
+                {
+                    FREE(item->data)
+                }
+
                 FREE(item)
             }
         }
