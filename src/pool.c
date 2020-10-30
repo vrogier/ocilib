@@ -45,6 +45,8 @@ boolean OcilibPoolDispose
         /* context */ OCI_IPC_POOL, pool
     )
 
+    CHECK_PTR(OCI_IPC_POOL, pool)
+
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     if (Env.version_runtime >= OCI_9_0)
