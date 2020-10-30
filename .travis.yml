@@ -32,4 +32,4 @@ addons:
     notification_email: vince.rogier@gmail.com
     build_command_prepend: "touch configure.ac aclocal.m4 configure Makefile.am Makefile.in config.h.in; ./configure --with-oracle-import=runtime CFLAGS='-g -O2 -std=gnu99'"
     build_command:   "make"
-    branch_pattern: master
+    branch_pattern: develop-v4.7.2
