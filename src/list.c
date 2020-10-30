@@ -203,10 +203,10 @@ void * OcilibListAppend
 
     CHECK_PTR(OCI_IPC_LIST, list)
 
+    ACQUIRE_LOCK()
+
     item = OcilibListCreateItem(list->type, size);
     CHECK_NULL(item)
-
-    ACQUIRE_LOCK()
 
     temp = list->head;
 
