@@ -193,3 +193,28 @@ TEST(ReportedIssues, Issue238)
 }
 
 #endif
+
+class ReportedIssues247 : public ::testing::TestWithParam<unsigned int> {};
+
+static std::vector<unsigned int> TimestampTypes{ OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
+static Context contextIssue247NoNullPointerException;
+
+static void AddErrorIssue247NoNullPointerException(OCI_Error* err)
+{
+    contextIssue247NoNullPointerException.Errs.emplace_back(Error{ OCI_ErrorGetInternalCode(err), OCI_ErrorGetOCICode(err) });
+}
+
+TEST_P(ReportedIssues247, NoNullPointerException)
+{
+    ASSERT_TRUE(OCI_Initialize(AddErrorIssue247NoNullPointerException, HOME, OCI_ENV_DEFAULT));
+
+    const auto tmsp = OCI_TimestampCreate(nullptr, GetParam());
+    ASSERT_TRUE(OCI_TimestampSysTimestamp(tmsp));
+    ASSERT_TRUE(OCI_TimestampFree(tmsp));
+
+    ASSERT_TRUE(contextIssue247NoNullPointerException.Errs.empty());
+
+    ASSERT_TRUE(OCI_Cleanup());
+}
+
+INSTANTIATE_TEST_CASE_P(ReportedIssues, ReportedIssues247, ::testing::ValuesIn(TimestampTypes));

@@ -999,7 +999,7 @@ boolean OcilibTimestampIntervalAdd
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (NULL != tmsp && tmsp != tmp)
+        if (NULL != tmp && tmsp != tmp)
         {
             OcilibTimestampFree(tmp);
         }
@@ -1070,7 +1070,7 @@ boolean OcilibTimestampIntervalSub
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (NULL != tmsp && tmsp != tmp)
+        if (NULL != tmp && tmsp != tmp)
         {
             OcilibTimestampFree(tmp);
         }
@@ -1183,7 +1183,7 @@ boolean OcilibTimestampSysTimestamp
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (NULL != tmsp && tmsp != tmp)
+        if (NULL != tmp && tmsp != tmp)
         {
             OcilibTimestampFree(tmp);
         }
