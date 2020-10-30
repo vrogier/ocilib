@@ -290,7 +290,7 @@ boolean OcilibMemoryAllocDescriptorArray
 
     CHECK_NULL(descpp)
 
-    sword ret = OCI_ERROR;
+    sword ret = OCI_SUCCESS;
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
@@ -365,7 +365,7 @@ boolean OcilibMemoryFreeDescriptorArray
 
     CHECK_NULL(descp)
 
-    sword ret = OCI_ERROR;
+    sword ret = OCI_SUCCESS;
 
     if (descp)
     {
