@@ -72,7 +72,7 @@ TEST(ReportedIssues, Issue222)
 {
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
-    const auto pool = OCI_PoolCreate(DBS, USR, PWD, OCI_POOL_SESSION, OCI_SESSION_SYSDBA, 0, 1, 1);
+    const auto pool = OCI_PoolCreate(DBS, SYS_USR, SYS_PWD, OCI_POOL_SESSION, OCI_SESSION_SYSDBA, 0, 1, 1);
     ASSERT_NE(nullptr, pool);
 
     const auto conn = OCI_PoolGetConnection(pool, nullptr);

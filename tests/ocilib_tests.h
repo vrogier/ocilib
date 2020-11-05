@@ -28,9 +28,11 @@
 #define OCI_API __stdcall
 #include "../include/ocilib.h"
 
-#define DBS OTEXT("db18c")
+#define DBS OTEXT("localhost:1521/db19c")
 #define USR OTEXT("usr")
 #define PWD OTEXT("pwd")
+#define SYS_USR OTEXT("sys")
+#define SYS_PWD OTEXT("sys")
 #define HOME OTEXT("")
 #define PWD_WRONG OTEXT("pwd_wrong")
 #define ARRAY_SIZE 10

@@ -1,9 +1,21 @@
 #include "ocilib_tests.h"
 
-// requires DDL from /demo/ref.sql
+static void IniTestRef()
+{
+    ExecDML(OTEXT("create type vendor_t as object(code  number, name  varchar2(30))"));
+    ExecDML(OTEXT("create table vendors of vendor_t"));
+    ExecDML(OTEXT("insert into vendors values (vendor_t(1, 'John Doe'))"));
+}
+
+static void CleanupTestRef()
+{
+    ExecDML(OTEXT("drop table vendors"));
+}
 
 TEST(TestRef, CreateAndFree)
 {
+    IniTestRef();
+    
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -15,10 +27,14 @@ TEST(TestRef, CreateAndFree)
 
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+
+    CleanupTestRef();
 }
 
 TEST(TestRef, ArrayCreateAndFree)
 {
+    IniTestRef();
+    
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -34,11 +50,14 @@ TEST(TestRef, ArrayCreateAndFree)
 
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+ 
+    CleanupTestRef();
 }
-
 
 TEST(TestRef, Assign)
 {
+    IniTestRef();
+
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -58,10 +77,14 @@ TEST(TestRef, Assign)
     ASSERT_TRUE(OCI_RefFree(ref2));
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+  
+    CleanupTestRef();
 }
 
 TEST(TestRef, GetTypeInfo)
 {
+    IniTestRef();
+    
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -72,10 +95,14 @@ TEST(TestRef, GetTypeInfo)
     ASSERT_TRUE(OCI_RefFree(ref));
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+
+    CleanupTestRef();
 }
 
 TEST(TestRef, GetObjectFetch)
 {
+    IniTestRef();
+    
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -94,10 +121,13 @@ TEST(TestRef, GetObjectFetch)
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
 
+    CleanupTestRef();
 }
 
 TEST(TestRef, GetObjectNull)
 {
+    IniTestRef();
+    
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -110,10 +140,14 @@ TEST(TestRef, GetObjectNull)
 
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+
+    CleanupTestRef();
 }
 
 TEST(TestRef, IsNullTrue)
 {
+    IniTestRef();
+
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -126,10 +160,14 @@ TEST(TestRef, IsNullTrue)
 
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+
+    CleanupTestRef();
 }
 
 TEST(TestRef, IsNullFalse)
 {
+    IniTestRef();
+
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -146,11 +184,14 @@ TEST(TestRef, IsNullFalse)
 
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
-}
 
+    CleanupTestRef();
+}
 
 TEST(TestRef, ToTextNotNull)
 {
+    IniTestRef();
+    
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -172,10 +213,14 @@ TEST(TestRef, ToTextNotNull)
 
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+
+    CleanupTestRef();
 }
 
 TEST(TestRef, ToTextNull)
 {
+    IniTestRef();
+    
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -191,10 +236,14 @@ TEST(TestRef, ToTextNull)
     ASSERT_TRUE(OCI_RefFree(ref));
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+
+    CleanupTestRef();
 }
 
 TEST(TestRef, SetNullWhenNotNullWithoutPinningOject)
 {
+    IniTestRef();
+    
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -213,10 +262,14 @@ TEST(TestRef, SetNullWhenNotNullWithoutPinningOject)
 
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+
+    CleanupTestRef();
 }
 
 TEST(TestRef, RefFetch)
 {
+    IniTestRef();
+    
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -233,11 +286,14 @@ TEST(TestRef, RefFetch)
 
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
-}
 
+    CleanupTestRef();
+}
 
 TEST(TestRef, RefBindInOut)
 {
+    IniTestRef();
+    
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -262,10 +318,14 @@ TEST(TestRef, RefBindInOut)
 
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+
+    CleanupTestRef();
 }
 
 TEST(TestRef, RefRegister)
 {
+    IniTestRef();
+    
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -295,10 +355,14 @@ TEST(TestRef, RefRegister)
     ASSERT_TRUE(OCI_ConnectionFree(conn));
 
     ASSERT_TRUE(OCI_Cleanup());
+
+    CleanupTestRef();
 }
 
 TEST(TestRef, SetNullWhenNotNullWithPinningOject)
 {
+    IniTestRef();
+
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -319,10 +383,14 @@ TEST(TestRef, SetNullWhenNotNullWithPinningOject)
 
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+
+    CleanupTestRef();
 }
 
 TEST(TestRef, SetNullWhenNull)
 {
+    IniTestRef();
+    
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -336,4 +404,6 @@ TEST(TestRef, SetNullWhenNull)
     ASSERT_TRUE(OCI_RefFree(ref));
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+
+    CleanupTestRef();
 }
