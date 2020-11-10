@@ -139,7 +139,7 @@ void * OcilibMemoryRealloc
 
             block = (OCI_MemoryBlock*)ptr_new;
 
-            const big_int size_diff = (big_int)size - block->size;
+            const size_t size_diff = (big_int)size - block->size;
 
             block->type = ptr_type;
             block->size = (unsigned int)size;

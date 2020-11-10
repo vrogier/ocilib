@@ -1132,14 +1132,13 @@ boolean OcilibTimestampSysTimestamp
         /* context */ OCI_IPC_TIMESTAMP, tmsp
     )
 
-    OCI_Timestamp *tmp = NULL;
-    OCIDateTime *handle = NULL;
+    OCI_Timestamp *tmp_tmsp = tmsp;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
     CHECK_TIMESTAMP_ENABLED(tmsp->con)
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
-
+           
     /* Filling a timestamp handle of type OCI_TIMESTAMP with
        OCIDateTimeSysTimestamp() can lead later to an error ORA-01483 when
        binding the given timestamp to some SQL Statement (Oracle BUG).
@@ -1150,42 +1149,34 @@ boolean OcilibTimestampSysTimestamp
 
     if (OCI_TIMESTAMP == tmsp->type)
     {
-        tmp = OcilibTimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
-        CHECK_NULL(tmp)
-
-        handle = tmp->handle;
-    }
-    else
-    {
-        handle = tmsp->handle;
+        tmp_tmsp = OcilibTimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
     }
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmp_tmsp->err,
         OCIDateTimeSysTimeStamp,
-        (dvoid *) tmsp->env, tmsp->err, handle
+        (dvoid *)tmp_tmsp->env, tmp_tmsp->err, tmp_tmsp->handle
     )
 
     if (OCI_TIMESTAMP == tmsp->type)
     {
-        CHECK(OcilibTimestampConvert(tmsp, tmp))
+        CHECK(OcilibTimestampConvert(tmsp, tmp_tmsp))
     }
-
+    
     SET_SUCCESS()
 
 #else
 
-    OCI_NOT_USED(tmp)
-    OCI_NOT_USED(handle)
+    OCI_NOT_USED(tmp_tmsp)
 
 #endif
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (NULL != tmp && tmsp != tmp)
+        if (NULL != tmp_tmsp && tmsp != tmp_tmsp)
         {
-            OcilibTimestampFree(tmp);
+            OcilibTimestampFree(tmp_tmsp);
         }
     )
 }

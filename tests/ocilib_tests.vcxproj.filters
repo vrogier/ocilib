@@ -213,9 +213,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Header files">
       <UniqueIdentifier>{dd240098-c9aa-4f76-9b0d-50e653c6086b}</UniqueIdentifier>
     </Filter>
@@ -230,5 +227,8 @@
     <ClInclude Include="ocilib_tests.h">
       <Filter>Header files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
