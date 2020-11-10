@@ -1,4 +1,4 @@
-2020-11-01 Version 4.7.2 Vincent Rogier vince.rogier@ocilib.net
+2020-11-10 Version 4.7.2 Vincent Rogier vince.rogier@ocilib.net
    
     * Fixes (C API)
     
@@ -8,7 +8,8 @@
    
    * Miscellaneous
 
-        - Re-Ran successfully test suite with OCILIB compiled in 8i, 9i, 10g, 11g, 12c, 18c modes
+        - Updated C API test suite  
+            * Re-Ran successfully test suite with OCILIB compiled in 8i, 9i, 10g, 11g, 12c, 18c modes (ANSI and Unicode)
     
  2020-10-27 Version 4.7.1 Vincent Rogier vince.rogier@ocilib.net
 
