@@ -18,9 +18,6 @@ Click on a change log entry to see the full details.
 
 
 _[2020-11-10 . version 4.7.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.2.txt)_
-
-
-2020-11-10 Version 4.7.2 Vincent Rogier vince.rogier@ocilib.net
    
     * Fixes (C API)
     
@@ -34,7 +31,6 @@ _[2020-11-10 . version 4.7.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.
             * Re-Ran successfully test suite with OCILIB compiled in 8i, 9i, 10g, 11g, 12c, 18c modes (ANSI and Unicode)
     
 _[2020-10-28 . version 4.7.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.1.txt)_
-
 
   * Enhancements (C API)
     
