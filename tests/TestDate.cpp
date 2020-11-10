@@ -213,8 +213,6 @@ TEST(TestDate, GetLastDay)
     ASSERT_TRUE(OCI_Cleanup());
 }
 
-#ifndef OCI_CHAR_WIDE
-
 TEST(TestDate, GetNextDay)
 {
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
@@ -233,7 +231,6 @@ TEST(TestDate, GetNextDay)
 
     ASSERT_TRUE(OCI_Cleanup());
 }
-#endif
 
 TEST(TestDate, SetGetDateTime)
 {

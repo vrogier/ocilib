@@ -7,18 +7,12 @@
 #include <vector>
 #include <string>
 
-#ifdef _UNICODE
-    #ifndef OCI_CHARSET_WIDE
-    #define OCI_CHARSET_WIDE
-    #endif
+#ifdef OCI_CHARSET_WIDE
     #define TO_STRING std::to_wstring
     using ostring = std::wstring;
     #define osprintf wsprintf
     #define ostrlen wcslen
 #else
-    #ifndef OCI_CHARSET_ANSI
-    #define OCI_CHARSET_ANSI
-    #endif
     #define TO_STRING std::to_string
     using ostring = std::string;
     #define osprintf sprintf
@@ -37,7 +31,7 @@
 #define PWD_WRONG OTEXT("pwd_wrong")
 #define ARRAY_SIZE 10
 #define STRING_SIZE 20
-#define NLS_LANGUAGE_SUNDAY_NAME OTEXT("Dimanche")
+#define NLS_LANGUAGE_SUNDAY_NAME OTEXT("Sunday")
 
 #include "mutex"
 
