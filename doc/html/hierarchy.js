@@ -80,6 +80,7 @@ var hierarchy =
       [ "ocilib::support::BindResolverScalarType< unsigned short >", "structocilib_1_1support_1_1_bind_resolver_scalar_type.html", null ]
     ] ],
     [ "ocilib::support::BindsHolder", "classocilib_1_1support_1_1_binds_holder.html", null ],
+    [ "ocilib::Collection< T >", "classocilib_1_1_collection.html", null ],
     [ "ocilib::CollectionElement< T >", "classocilib_1_1_collection_element.html", null ],
     [ "ocilib::CollectionIterator< T >", "classocilib_1_1_collection_iterator.html", null ],
     [ "ocilib::core::Enum< T >", "classocilib_1_1core_1_1_enum.html", null ],
@@ -98,9 +99,6 @@ var hierarchy =
     ] ],
     [ "ocilib::core::HandleHolder< OCI_Bind * >", "classocilib_1_1core_1_1_handle_holder.html", [
       [ "ocilib::BindInfo", "classocilib_1_1_bind_info.html", null ]
-    ] ],
-    [ "ocilib::core::HandleHolder< OCI_Coll * >", "classocilib_1_1core_1_1_handle_holder.html", [
-      [ "ocilib::Collection< T >", "classocilib_1_1_collection.html", null ]
     ] ],
     [ "ocilib::core::HandleHolder< OCI_Column * >", "classocilib_1_1core_1_1_handle_holder.html", [
       [ "ocilib::Column", "classocilib_1_1_column.html", null ]
@@ -128,12 +126,6 @@ var hierarchy =
     ] ],
     [ "ocilib::core::HandleHolder< OCI_Interval * >", "classocilib_1_1core_1_1_handle_holder.html", [
       [ "ocilib::Interval", "classocilib_1_1_interval.html", null ]
-    ] ],
-    [ "ocilib::core::HandleHolder< OCI_Lob * >", "classocilib_1_1core_1_1_handle_holder.html", [
-      [ "ocilib::Lob< T, U >", "classocilib_1_1_lob.html", null ]
-    ] ],
-    [ "ocilib::core::HandleHolder< OCI_Long * >", "classocilib_1_1core_1_1_handle_holder.html", [
-      [ "ocilib::Long< T, U >", "classocilib_1_1_long.html", null ]
     ] ],
     [ "ocilib::core::HandleHolder< OCI_Msg * >", "classocilib_1_1core_1_1_handle_holder.html", [
       [ "ocilib::Message", "classocilib_1_1_message.html", null ]
@@ -168,6 +160,7 @@ var hierarchy =
     [ "ocilib::core::HandleHolder< OCI_TypeInfo * >", "classocilib_1_1core_1_1_handle_holder.html", [
       [ "ocilib::TypeInfo", "classocilib_1_1_type_info.html", null ]
     ] ],
+    [ "ocilib::Lob< T, U >", "classocilib_1_1_lob.html", null ],
     [ "ocilib::core::Lockable", "classocilib_1_1core_1_1_lockable.html", [
       [ "ocilib::core::ConcurrentList< ocilib::core::Handle * >", "classocilib_1_1core_1_1_concurrent_list.html", null ],
       [ "ocilib::core::ConcurrentList< ocilib::core::HandleHolder * >", "classocilib_1_1core_1_1_concurrent_list.html", null ],
@@ -177,13 +170,13 @@ var hierarchy =
       [ "ocilib::core::ConcurrentMap< K, V >", "classocilib_1_1core_1_1_concurrent_map.html", null ]
     ] ],
     [ "ocilib::core::Locker", "classocilib_1_1core_1_1_locker.html", null ],
+    [ "ocilib::Long< T, U >", "classocilib_1_1_long.html", null ],
     [ "ocilib::core::ManagedBuffer< T >", "classocilib_1_1core_1_1_managed_buffer.html", null ],
     [ "ocilib::Mutex", "classocilib_1_1_mutex.html", null ],
     [ "ocilib::support::NumericTypeResolver< T >", "structocilib_1_1support_1_1_numeric_type_resolver.html", null ],
     [ "ocilib::Queue", "classocilib_1_1_queue.html", null ],
     [ "ocilib::QueueTable", "classocilib_1_1_queue_table.html", null ],
     [ "ocilib::core::Streamable", "classocilib_1_1core_1_1_streamable.html", [
-      [ "ocilib::Collection< T >", "classocilib_1_1_collection.html", null ],
       [ "ocilib::Date", "classocilib_1_1_date.html", null ],
       [ "ocilib::Interval", "classocilib_1_1_interval.html", null ],
       [ "ocilib::Number", "classocilib_1_1_number.html", null ],

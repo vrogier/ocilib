@@ -29,6 +29,6 @@ var classocilib_1_1_collection =
     [ "begin", "classocilib_1_1_collection.html#a1dfa6213fb06150d421352b58e5da1cf", null ],
     [ "end", "classocilib_1_1_collection.html#a3215cfffde412c23860c356f5777f0aa", null ],
     [ "end", "classocilib_1_1_collection.html#a8f84e0e1689a7407cca431273a57e019", null ],
-    [ "operator []", "classocilib_1_1_collection.html#a837a8b6579140fa36097310a8396c6a1", null ],
-    [ "operator []", "classocilib_1_1_collection.html#a62b14e959a6675f19732b5a0dbe5fc72", null ]
+    [ "operator[]", "classocilib_1_1_collection.html#a1e06f1ab36f4dfdefc8c4988375964ad", null ],
+    [ "operator[]", "classocilib_1_1_collection.html#af4c943137d47b40904f900ea1cbf4cbe", null ]
 ];

@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2020-10-28 10:00:00+01:00
+date: 2020-11-10 10:00:00+01:00
 layout: page
 slug: changelogs
 title: Changelogs
@@ -16,6 +16,23 @@ Click on a change log entry to see the full details.
 <br/>
 <br/>
 
+
+_[2020-11-10 . version 4.7.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.2.txt)_
+
+
+2020-11-10 Version 4.7.2 Vincent Rogier vince.rogier@ocilib.net
+   
+    * Fixes (C API)
+    
+        - Issue 247: When using a OCI_Timestamp object created with OCI_TIMESTAMP_TZ flags, some OCILIB timestamps methods might raise an OCI_ERR_NULL_POINTER error
+        - Issue 248: For Oracle client version < 11g, version 4.7.0 broke the ability to fetch data from resultset containing specific datatypes
+        - Fixed some Coverity code analysis findings (hypothetical issues never encountered)
+   
+   * Miscellaneous
+
+        - Updated C API test suite  
+            * Re-Ran successfully test suite with OCILIB compiled in 8i, 9i, 10g, 11g, 12c, 18c modes (ANSI and Unicode)
+    
 _[2020-10-28 . version 4.7.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.1.txt)_
 
 

@@ -32,6 +32,6 @@ twitter_user: ocilib
 twitter_card: true
 twitter_image: 
 
-ocilib_current_release_version: 4.7.1
-ocilib_current_release_date: 2020-10-28
+ocilib_current_release_version: 4.7.2
+ocilib_current_release_date: 2020-11-10
 ocilib_author: Vincent Rogier
