@@ -463,8 +463,9 @@ namespace ocilib
         Exception(OCI_Error* err) noexcept;
 
         void SetWhat(const otext* value) noexcept;
+        void CopyWhat(const char* value) noexcept;
 
-        otext* _what;
+        char* _what;
         OCI_Statement* _pStatement;
         OCI_Connection* _pConnnection;
         unsigned int _row;
