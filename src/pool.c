@@ -229,7 +229,11 @@ OCI_Pool * OcilibPoolCreate
             (
                 driver_version,
                 osizeof(driver_version) - (size_t)1,
+            #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
+                OTEXT("%ls : %d.%d.%d"),
+            #else
                 OTEXT("%s : %d.%d.%d"),
+            #endif 
                 OCILIB_DRIVER_NAME,
                 OCILIB_MAJOR_VERSION,
                 OCILIB_MINOR_VERSION,

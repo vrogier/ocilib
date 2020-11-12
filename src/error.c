@@ -113,7 +113,11 @@ void OcilibErrorSet
     err->source_type = source_type;
     err->row         = row;
 
+#if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
+    const otext* format = OTEXT("Error occured at %ls: %ls");
+#else
     const otext* format = OTEXT("Error occured at %s: %s");
+#endif 
 
     const size_t format_len = ostrlen(format);
     const size_t message_len = message ? ostrlen(message) : 0;

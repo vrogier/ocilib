@@ -432,42 +432,41 @@ typedef unsigned short dbtext;
        OCI_CDT_RAW     != (type) &&     \
        OCI_CDT_BOOLEAN != (type)))
 
-
-#ifdef _WINDOWS
-
-#define vsnprintf   _vsnprintf
-#define vsnwprintf  _vsnwprintf
-#define swprintf    _snwprintf
-
-#endif
-
 /* helpers mapping macros */
 
 #ifdef OCI_CHARSET_ANSI
 
-#define ostrcpy          strcpy
-#define ostrncpy         strncpy
-#define ostrcat          strcat
-#define ostrncat         strncat
-#define ostrlen          strlen
-#define ostrcmp          strcmp
-#define ostrtol          strtol
-#define osscanf          sscanf
-#define otoupper         toupper
-#define oisdigit         isdigit
+  #define ostrcpy            strcpy
+  #define ostrncpy           strncpy
+  #define ostrcat            strcat
+  #define ostrncat           strncat
+  #define ostrlen            strlen
+  #define ostrcmp            strcmp
+  #define ostrtol            strtol
+  #define osscanf            sscanf
+  #define otoupper           toupper
+  #define oisdigit           isdigit
+
+  #ifdef _WINDOWS
+    #define ovsprintf       _vsnprintf
+  #else
+    #define ovsprintf       vsnprintf
+
+  #endif
 
 #else
 
-#define ostrcpy          wcscpy
-#define ostrncpy         wcsncpy
-#define ostrcat          wcscat
-#define ostrncat         wcsncat
-#define ostrlen          wcslen
-#define ostrcmp          wcscmp
-#define ostrtol          wcstol
-#define osscanf          swscanf
-#define otoupper         towupper
-#define oisdigit         iswdigit
+  #define ostrcpy           wcscpy
+  #define ostrncpy          wcsncpy
+  #define ostrcat           wcscat
+  #define ostrncat          wcsncat
+  #define ostrlen           wcslen
+  #define ostrcmp           wcscmp
+  #define ostrtol           wcstol
+  #define osscanf           swscanf
+  #define otoupper          towupper
+  #define oisdigit          iswdigit
+  #define ovsprintf         vswprintf
 
 #endif
 

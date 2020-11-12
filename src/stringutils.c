@@ -1325,15 +1325,7 @@ int OcilibStringFormat
 
     va_start(args, format);
 
-#ifdef OCI_CHARSET_ANSI
-
-    const int n = (int)vsnprintf(str, (size_t)size, format, args);
-
-#else
-
-    const int n = (int)vsnwprintf(str, (size_t)size, format, args);
-
-#endif
+    const int n = (int)ovsprintf(str, (size_t)size, format, args);
 
     va_end(args);
 

@@ -187,8 +187,11 @@ int OcilibFormatParseSql
                         (
                             pb, 
                             OCI_SIZE_TIMESTAMP,
-                            OTEXT("to_timestamp('%02i%02i%04i%02i%02i%02i%s',")
-                            OTEXT("'DDMMYYYYHH24MISSFF')"),
+                        #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
+                            OTEXT("to_timestamp('%02i%02i%04i%02i%02i%02i%ls', 'DDMMYYYYHH24MISSFF')"),
+                        #else
+                            OTEXT("to_timestamp('%02i%02i%04i%02i%02i%02i%s', 'DDMMYYYYHH24MISSFF')"),
+                        #endif                            
                             dd, mm, yy, hh, mi, ss, str_ff
                         );
                     }
