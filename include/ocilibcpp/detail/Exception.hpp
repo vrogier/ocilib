@@ -192,9 +192,9 @@ inline ostring Exception::GetMessage() const
 
     message.resize(messLenght);
 
-    return message;
-
 #endif
+
+    return message;
 }
 
 inline Exception::ExceptionType Exception::GetType() const
