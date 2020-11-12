@@ -67,6 +67,9 @@ typedef struct test_t
 
 #include "ocilib.h"
 
+#include <stdio.h>
+#include <wchar.h>
+
 /* --------------------------------------------------------------------------------------------- *
  * PLATFORMS
  * --------------------------------------------------------------------------------------------- */
@@ -120,20 +123,18 @@ typedef struct test_t
 
     #define omain           wmain
     #define oarg            otext
-    #define print_args(x)   wprintf(x)
     #define GET_ARG(s, i)   ostrncat(s, argv[i], sizeof(s))
 
   #else
 
     #define omain           main
     #define oarg            char
-    #define print_args(x)   printf(x)
     #define GET_ARG(s, i)   mbstowcs(s, argv[i], sizeof(s))
 
   #endif
 
     #define ostrlen         wcslen
-    #define osprintf        wsprintf
+    #define osprintf        swprintf
 
 #else
 

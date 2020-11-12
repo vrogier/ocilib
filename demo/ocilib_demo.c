@@ -171,11 +171,11 @@ int omain(int argc, oarg* argv[])
     /* CONNECTION TO SERVER ------------------------------------------------- */
 
     print_text("Connecting to ");
-    print_args(usr);
+    print_ostr(usr);
     print_text("/");
-    print_args(pwd);
+    print_ostr(pwd);
     print_text("@");
-    print_args(dbs);
+    print_ostr(dbs);
     print_text("\n\n");
 
     cn = OCI_ConnectionCreate(dbs, usr, pwd, OCI_SESSION_DEFAULT);
@@ -588,7 +588,7 @@ void test_bind2(void)
 
     /* lob */
     lob = OCI_LobCreate(cn, OCI_CLOB);
-    osprintf(temp, OTEXT("lob value00"));
+    osprintf(temp, SIZE_STR+1, OTEXT("lob value00"));
     OCI_LobWrite(lob, temp, (unsigned int) ostrlen(temp));
 
     /* file */
@@ -599,7 +599,7 @@ void test_bind2(void)
     i   = 1;
     dbl = 3.14;
     flt = (float) 3.14;
-    osprintf(temp, OTEXT("Name00"));
+    osprintf(temp, SIZE_STR+1, OTEXT("Name00"));
 
     /* bind scalar C types arrays */
 
@@ -1175,17 +1175,17 @@ void test_returning_array(void)
         tab_int[i] = i+1;
         tab_dbl[i] = 3.14*(double)(i+1);
         tab_flt[i] = (float) 3.14*(float)(i+1);
-        osprintf(tab_str[i], OTEXT("Name%02i"), i+1);
+        osprintf(tab_str[i], 31, OTEXT("Name%02i"), i+1);
 
         /* date */
         OCI_DateSysDate(tab_date[i]);
 
         /* lob */
-        osprintf(temp, OTEXT("lob value%02i"), i+1);
+        osprintf(temp, SIZE_STR+1, OTEXT("lob value%02i"), i+1);
         OCI_LobWrite(tab_lob[i], temp, (unsigned int) ostrlen(temp));
 
         /* file */
-        osprintf(str, OTEXT("file%02i.txt"), i+1);
+        osprintf(str, SIZE_STR+1, OTEXT("file%02i.txt"), i+1);
         OCI_FileSetName(tab_file[i], OTEXT("mydir"), str);
     }
 
@@ -1632,9 +1632,9 @@ void test_directpath(void)
         OCI_TypeInfo *tbl;
         boolean res = TRUE;
 
-        otext val1[SIZE_COL1+1];
-        otext val2[SIZE_COL2+1];
-        otext val3[SIZE_COL3+1];
+        otext val1[SIZE_COL1+1] = OTEXT("");
+        otext val2[SIZE_COL2+1] = OTEXT("");
+        otext val3[SIZE_COL3+1] = OTEXT("");
 
         int i = 0, j = 0, nb_rows = SIZE_ARRAY;
         int state;
@@ -1681,9 +1681,9 @@ void test_directpath(void)
                 {
                     /* fill test values */
 
-                    osprintf(val1, OTEXT("%04d"), i + (i*100));
-                    osprintf(val2, OTEXT("value %05d"), j + (i*100));
-                    osprintf(val3, OTEXT("%04d%02d%02d"), (j%23)+1 + 2000,
+                    osprintf(val1, SIZE_COL1+1, OTEXT("%04d"), i + (i*100));
+                    osprintf(val2, SIZE_COL2+1, OTEXT("value %05d"), j + (i*100));
+                    osprintf(val3, SIZE_COL3+1, OTEXT("%04d%02d%02d"), (j%23)+1 + 2000,
                                                                      (j%11)+1,
                                                                      (j%23)+1);
 
@@ -1701,7 +1701,7 @@ void test_directpath(void)
                     if ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))
                         res = OCI_DirPathLoad(dp);
 
-                    if (state == OCI_DPR_COMPLETE)
+                    if (state == OCI_DPR_COMPLETE || state == OCI_DPR_ERROR)
                         break;
                 }
             }
