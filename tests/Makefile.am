@@ -11,5 +11,6 @@
 AUTOMAKE_OPTIONS = foreign 
 CLEANFILES = *~
 
-test_DATA = @OCILIB_TESTS@
-EXTRA_DIST = $(test_DATA)
+tests_DATA = @OCILIB_TESTS@
+testsdir = $(prefix)/share/doc/$(PACKAGE)/tests
+EXTRA_DIST = $(tests_DATA)
