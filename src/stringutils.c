@@ -667,7 +667,7 @@ boolean OcilibStringSetAttribute
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibStringGetFromType
+ * OcilibStringGetFromType 
  * --------------------------------------------------------------------------------------------- */
 
 unsigned int OcilibStringGetFromType
@@ -1321,11 +1321,13 @@ int OcilibStringFormat
     ...
 )
 {
+    /* size is the number of character that can fit in str variable without including last null char */
+
     va_list args;
 
     va_start(args, format);
 
-    const int n = (int)ovsprintf(str, (size_t)size, format, args);
+    const int n = (int)ovsprintf(str, (size_t)(size + 1), format, args);
 
     va_end(args);
 
