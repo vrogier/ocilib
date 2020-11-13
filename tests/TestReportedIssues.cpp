@@ -154,7 +154,7 @@ TEST(ReportedIssues, Issue238)
     ExecDML(OTEXT("create table FetchLobAsString(value clob)"));
 
     const char* nsl_lang = getenv("NLS_LANG");
-    putenv("NLS_LANG=American_America.UTF8");
+    putenv((char*)"NLS_LANG=American_America.UTF8");
 
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
@@ -187,7 +187,7 @@ TEST(ReportedIssues, Issue238)
     {
         new_nls_lang += nsl_lang;
     }
-    putenv(new_nls_lang.data());
+    putenv((char*)new_nls_lang.data());
 
     ExecDML(OTEXT("drop table FetchLobAsString;"));
 }

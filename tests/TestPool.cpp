@@ -4,7 +4,7 @@
 
 const size_t MaxThread = 10;
 
-static std::atomic<int> ConnCreatedCount = 0;
+static std::atomic<int> ConnCreatedCount{ 0 };
 
 static void WorkerProc(OCI_Thread* thread, void* data)
 {

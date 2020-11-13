@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 
+#include <ocilib.hpp>
+
 #ifdef OCI_CHARSET_WIDE
     #define TO_STRING std::to_wstring
     using ostring = std::wstring;
@@ -19,10 +21,13 @@
     #define ostrlen strlen
 #endif
 
-#define OCI_API __stdcall
+#ifdef _MSC_VER
+#  define OCI_API __stdcall
+#endif
+
 #include "../include/ocilib.h"
 
-#define DBS OTEXT("localhost:1521/db19c")
+#define DBS OTEXT("192.168.0.11:1521/db19c")
 #define USR OTEXT("usr")
 #define PWD OTEXT("pwd")
 #define SYS_USR OTEXT("sys")

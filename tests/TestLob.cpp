@@ -7,7 +7,7 @@ std::vector<unsigned int> LobTypes{ OCI_BLOB, OCI_CLOB, OCI_NCLOB };
 
 void* GetBufferData()
 {
-    static otext* buf = OTEXT("123456");
+    static otext* buf = (otext*)OTEXT("123456");
 
     return  static_cast<void*>(buf);
 }
@@ -25,7 +25,7 @@ unsigned int GetBufferSize(unsigned int type)
 }
 
 
- int GetBufferOffset(unsigned int type, int size)
+int GetBufferOffset(unsigned int type, int size)
 {
     if (type == OCI_BLOB)
     {
@@ -78,7 +78,7 @@ TEST_P(TestLob, AssignEmpty)
     const auto lob2 = OCI_LobCreate(conn, GetParam());
 
     ASSERT_TRUE(OCI_LobAssign(lob2, lob1));
-    
+
     ASSERT_TRUE(OCI_LobFree(lob1));
     ASSERT_TRUE(OCI_LobFree(lob2));
     ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -92,7 +92,7 @@ TEST_P(TestLob, AssignNotEmpty)
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto lob1 = OCI_LobCreate(conn, GetParam());
     const auto lob2 = OCI_LobCreate(conn, GetParam());
-    
+
     void *buffer_in = GetBufferData();
     unsigned int size_in = GetBufferSize(GetParam());
     unsigned char buffer_out[1024] = {};
@@ -118,7 +118,7 @@ TEST_P(TestLob, SeekAndGetOffset)
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     const auto lob = OCI_LobCreate(conn, type);
-   
+
     void *buffer = GetBufferData();
     unsigned int size = GetBufferSize(type);
 
@@ -127,16 +127,16 @@ TEST_P(TestLob, SeekAndGetOffset)
 
     ASSERT_TRUE(OCI_LobSeek(lob, GetBufferOffset(type, 2), OCI_SEEK_SET));
     ASSERT_EQ(GetBufferOffset(type, 2), OCI_LobGetOffset(lob));
-    
+
     ASSERT_TRUE(OCI_LobSeek(lob, GetBufferOffset(type, 2), OCI_SEEK_CUR));
     ASSERT_EQ(GetBufferOffset(type, 4), OCI_LobGetOffset(lob));
-   
+
     ASSERT_TRUE(OCI_LobSeek(lob, GetBufferOffset(type, -3), OCI_SEEK_CUR));
     ASSERT_EQ(GetBufferOffset(type, 1), OCI_LobGetOffset(lob));
-    
+
     ASSERT_TRUE(OCI_LobSeek(lob, 0, OCI_SEEK_SET));
     ASSERT_EQ(0, OCI_LobGetOffset(lob));
-    
+
     ASSERT_TRUE(OCI_LobSeek(lob, 0, OCI_SEEK_END));
     ASSERT_EQ(GetBufferSize(type), OCI_LobGetOffset(lob));
 

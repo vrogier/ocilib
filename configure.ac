@@ -43,6 +43,7 @@ AC_CONFIG_FILES([
    demo/Makefile
    demo/Makefile_demo
    demo/Makefile_demo_cpp
+   tests/Makefile_tests
  ])
 
 AC_OUTPUT()

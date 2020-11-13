@@ -3,7 +3,7 @@
 #include "ocilib_tests.h"
 
 
-static std::atomic<int> MessageWithConsumersCount = 0;
+static std::atomic<int> MessageWithConsumersCount {0};
 
 TEST(TestQueue, SingleMessage)
 {

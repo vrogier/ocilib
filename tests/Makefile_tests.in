@@ -1,0 +1,58 @@
+# Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+#  
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without 
+# modifications, as long as this notice is preserved.
+# 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+INCS =  -I@OCILIB_PREFIX@/include
+CFLAGS = -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@
+LDFLAGS= @ORACLE_LIBADD@  -L@OCILIB_PREFIX@/lib -locilib
+CC = @CC@
+SRCS = ocilib_demo.c
+OBJS = $(SRCS:.c=.o)
+
+all: ocilib_demo
+
+ocilib_demo: $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS)
+
+.c.o:
+	$(CC) $(INCS) $(CFLAGS) -c -o $@ $<
+
+clean: 
+	rm -f *~ $(OBJS)
+
+# Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+#  
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without 
+# modifications, as long as this notice is preserved.
+# 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+CC = g++
+CFLAGS =  -Wall -D@OCILIB_CHARSET@
+EXEC_NAME = ocilib_tests
+INCLUDES = -I/usr/local/include -I@OCILIB_PREFIX@/include
+LIBS = @ORACLE_LIBADD@  -L@OCILIB_PREFIX@/lib -locilib -lgtest -lgtest_main -lpthread
+SOURCES := $(wildcard *.cpp) 
+OBJS := $(addsuffix .o, $(basename $(notdir $(SOURCES))))
+
+all: $(EXEC_NAME)
+    
+$(EXEC_NAME): $(OBJS)
+	$(CC) -o $(EXEC_NAME) $(OBJS) $(LIBS)
+
+%.o: %.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+
+clean: 
+	rm -f *~ $(EXEC_NAME) 
+	rm -f *~ $(OBJS)
+
