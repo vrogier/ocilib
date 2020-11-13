@@ -9,8 +9,8 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 ACLOCAL_AMFLAGS = -I m4
-EXTRA_DIST = doc/html reconf configure VERSION acocilib.m4
-SUBDIRS = doc/html src demo
+EXTRA_DIST = doc/html reconf configure VERSION acocilib.m4 tests
+SUBDIRS = doc/html src demo tests
 DISTCLEANFILES = *~ \#*\#
 MAINTAINERCLEANFILES = \
 Makefile Makefile.in config.cache config.log config.h.in \
