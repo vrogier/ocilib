@@ -9,8 +9,9 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 AUTOMAKE_OPTIONS = foreign 
+SUBDIRS = .
 CLEANFILES = *~
 
-tests_DATA = @OCILIB_TESTS@
+tests_DATA = @OCILIB_TESTS@ Makefile_tests
 testsdir = $(prefix)/share/doc/$(PACKAGE)/tests
 EXTRA_DIST = $(tests_DATA)
