@@ -144,7 +144,7 @@ typedef struct test_t
   #define GET_ARG(s, i)   strncat(s, argv[i], sizeof(s)-1)
 
   #define ostrlen         strlen
-  #define osprintf        sprintf
+  #define osprintf        snprintf
 
 #endif
 
