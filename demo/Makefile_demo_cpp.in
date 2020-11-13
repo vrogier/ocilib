@@ -8,12 +8,20 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-AUTOMAKE_OPTIONS = foreign 
-SUBDIRS = .
-CLEANFILES = *~
+INCS =  -I@OCILIB_PREFIX@/include
+CXXFLAGS = -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@
+LDFLAGS= @ORACLE_LIBADD@  -L@OCILIB_PREFIX@/lib -locilib -I/usr/local/include -L$ORACLE_HOME -lclntsh -lpthread
+CXX = @CXX@
+SRCS = ocilib_demo.cpp
+OBJS = $(SRCS:.cpp=.o)
 
-demo_DATA = @OCILIB_DEMO_SOURCES@ Makefile_demo @OCILIB_DEMO_SOURCES@ Makefile_demo_cpp
-demodir = $(prefix)/share/doc/$(PACKAGE)/demo
+all: ocilib_demo_cpp
 
-EXTRA_DIST = $(demo_DATA)
+demo: $(OBJS)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJS)
 
+.cpp.o:
+	$(CXX) $(INCS) $(CXXFLAGS) -c -o $@ $<
+
+clean: 
+	rm -f *~ $(OBJS)

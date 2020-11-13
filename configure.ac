@@ -42,6 +42,7 @@ AC_CONFIG_FILES([
    doc/html/Makefile
    demo/Makefile
    demo/Makefile_demo
+   demo/Makefile_demo_cpp
  ])
 
 AC_OUTPUT()
