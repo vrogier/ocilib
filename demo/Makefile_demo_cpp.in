@@ -8,9 +8,9 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-CXX=@CXX@
+CXX=g++
 CPPFLAGS=-D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@
-LDLIBS=-L$ORACLE_HOME -lclntsh  -L@OCILIB_PREFIX@/lib -locilib -I/usr/local/include -lpthread
+LDLIBS=-L@ORACLE_HOME@ -lclntsh  -L@OCILIB_PREFIX@/lib -locilib -I/usr/local/include -lpthread
 
 all:
 	$(CXX) -o ocilib_demo_cpp ocilib_demo.cpp $(CPPFLAGS) $(LDFLAGS) $(LDLIBS)
