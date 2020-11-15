@@ -444,8 +444,10 @@ typedef struct OCI_BatchErrors OCI_BatchErrors;
 
 struct OCI_Statement
 {
+    /* Start OCI_Datatype */
     OCIStmt         *stmt;              /* OCI statement handle */
     ub4              hstate;            /* object variable state */
+    /* End OCI_Datatype */
     ub4              exec_mode;         /* type of execution */
     OCI_Resultset  **rsts;              /* pointer to resultset list */
     OCI_Statement  **stmts;             /* pointer to implicit statement resultset list */
@@ -487,8 +489,10 @@ struct OCI_Statement
 
 struct OCI_Lob
 {
+    /* Start OCI_Datatype */
     OCILobLocator  *handle;         /* OCI handle */
     ub4             hstate;         /* object variable state */
+    /* End OCI_Datatype */
     ub4             type;           /* type of lob */
     OCI_Connection *con;            /* pointer to connection object */
     big_uint        offset;         /* current offset for R/W */
@@ -501,8 +505,10 @@ struct OCI_Lob
 
 struct OCI_File
 {
+    /* Start OCI_Datatype */
     OCILobLocator  *handle;     /* OCI handle */
     ub4             hstate;     /* object variable state */
+    /* End OCI_Datatype */
     ub4             type;       /* type of file */
     OCI_Connection *con;        /* pointer to connection object */
     otext          *dir;        /* directory name */
@@ -517,8 +523,10 @@ struct OCI_File
 
 struct OCI_Long
 {
+    /* Start OCI_Datatype */
     OCI_Statement *stmt;        /* pointer to statement object */
     ub4            hstate;      /* object variable state */
+    /* End OCI_Datatype */
     ub4            type;        /* type of long */
     OCI_Define    *def;         /* pointer to resultset define object */
     ub4            size;        /* size of the buffer read / written */
@@ -535,8 +543,10 @@ struct OCI_Long
 
 struct OCI_Number
 {
+    /* Start OCI_Datatype */
     OCINumber      *handle;     /* OCI handle */
     ub4             hstate;     /* object variable state */
+    /* End OCI_Datatype */
     /* padding here in 64bits - cannot avoid it as this struct can be reinterpretated as OCI_Datatype */
     OCI_Connection *con;        /* pointer to connection object */
     OCIError       *err;        /* OCI error handle */
@@ -550,8 +560,10 @@ struct OCI_Number
 
 struct OCI_Date
 {
+    /* Start OCI_Datatype */
     OCIDate        *handle;     /* OCI handle */
     ub4             hstate;     /* object variable state */
+    /* End OCI_Datatype */
     ub4             allocated;  /* is handle allocated ? */
     OCI_Connection *con;        /* pointer to connection object */
     OCIError       *err;        /* OCI context handle */
@@ -565,12 +577,14 @@ struct OCI_Date
 
 struct OCI_Timestamp
 {
+    /* Start OCI_Datatype */
 #if OCI_VERSION_COMPILE >= OCI_9_0
     OCIDateTime    *handle;     /* OCI handle */
 #else
     void           *handle;     /* fake handle for alignment */
 #endif
     ub4             hstate;     /* object variable state */
+    /* End OCI_Datatype */
     ub4             type;       /* sub type */
     OCI_Connection *con;        /* pointer to connection object */
     OCIError       *err;        /* OCI context handle */
@@ -584,13 +598,15 @@ struct OCI_Timestamp
 
 struct OCI_Interval
 {
+    /* Start OCI_Datatype */
 #if OCI_VERSION_COMPILE >= OCI_9_0
     OCIInterval    *handle;     /* OCI handle */
 #else
     void           *handle;     /* fake handle for alignment */
 #endif
-    ub4             type;       /* sub type */
     ub4             hstate;     /* object variable state */
+    /* End OCI_Datatype */
+    ub4             type;       /* sub type */
     OCI_Connection *con;        /* pointer to connection object */
     OCIError       *err;        /* OCI context handle */
     OCIEnv         *env;        /* OCI environment handle */
@@ -603,8 +619,10 @@ struct OCI_Interval
 
 struct OCI_Object
 {
+    /* Start OCI_Datatype */
     void               *handle;       /* OCI handle */
     ub4                 hstate;       /* object variable state */
+    /* End OCI_Datatype */
     OCIObjectLifetime   type;         /* object type */
     OCI_Connection     *con;          /* pointer to connection object */
     OCI_TypeInfo       *typinf;       /* pointer to type info object */
@@ -622,8 +640,10 @@ struct OCI_Object
 
 struct OCI_Elem
 {
+    /* Start OCI_Datatype */
     void           *handle;      /* OCI handle */
     ub4             hstate;      /* object variable state */
+    /* End OCI_Datatype */
     unsigned int    tmpsize;     /* temporary buffer size */
     OCI_Connection *con;         /* pointer to connection object */
     void           *obj;         /* OCILIB sub object */
@@ -642,8 +662,10 @@ struct OCI_Elem
 
 struct OCI_Coll
 {
+    /* Start OCI_Datatype */
     OCIColl        *handle;      /* OCI handle */
     ub4             hstate;      /* object variable state */
+    /* End OCI_Datatype */
     /* padding here in 64bits - cannot avoid it as this struct can be reinterpretated as OCI_Datatype */
     OCI_Connection *con;         /* pointer to connection object */
     OCI_TypeInfo   *typinf;      /* pointer to type info object */
@@ -672,8 +694,10 @@ struct OCI_Iter
 
 struct OCI_Ref
 {
+    /* Start OCI_Datatype */
     OCIRef         *handle;      /* OCI handle */
     ub4             hstate;      /* object variable state */
+    /* End OCI_Datatype */
     boolean         pinned;      /* is the reference pinned */
     OCI_Connection *con;         /* pointer to connection object */
     OCI_TypeInfo   *typinf;      /* pointer to type info object */
@@ -803,8 +827,10 @@ struct OCI_Subscription
 
 struct OCI_Agent
 {
+    /* Start OCI_Datatype */
     OCIAQAgent     *handle;        /* OCI agent handle */
     ub4             hstate;        /* object variable state */
+    /* End OCI_Datatype */
     /* padding here in 64bits - cannot avoid it as this struct can be reinterpretated as OCI_Datatype */
     OCI_Connection *con;           /* OCILIB connection handle */
     otext          *address;       /* agent address */
