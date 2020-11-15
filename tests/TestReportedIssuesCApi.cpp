@@ -1,6 +1,6 @@
 #include "ocilib_tests.h"
 
-TEST(ReportedIssues, Issue216)
+TEST(ReportedIssuesCApi, Issue216)
 {
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
@@ -68,7 +68,7 @@ TEST(ReportedIssues, Issue216)
     ASSERT_TRUE(OCI_Cleanup());
 }
 
-TEST(ReportedIssues, Issue222)
+TEST(ReportedIssuesCApi, Issue222)
 {
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
@@ -83,7 +83,7 @@ TEST(ReportedIssues, Issue222)
     ASSERT_TRUE(OCI_Cleanup());
 }
 
-TEST(ReportedIssues, Issue225)
+TEST(ReportedIssuesCApi, Issue225)
 {
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
@@ -149,7 +149,7 @@ TEST(ReportedIssues, Issue225)
 
 #ifdef OCI_CHARSET_ANSI
 
-TEST(ReportedIssues, Issue238)
+TEST(ReportedIssuesCApi, Issue238)
 {
     ExecDML(OTEXT("create table FetchLobAsString(value clob)"));
 
@@ -217,4 +217,4 @@ TEST_P(ReportedIssues247, NoNullPointerException)
     ASSERT_TRUE(OCI_Cleanup());
 }
 
-INSTANTIATE_TEST_CASE_P(ReportedIssues, ReportedIssues247, ::testing::ValuesIn(TimestampTypes));
+INSTANTIATE_TEST_CASE_P(ReportedIssuesCApi, ReportedIssues247, ::testing::ValuesIn(TimestampTypes));
