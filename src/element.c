@@ -80,6 +80,7 @@
             (elem)->obj = func;                                  \
             CHECK_NULL((elem)->obj)                              \
             tmp = (elem)->obj;                                   \
+            (elem)->init = (NULL != tmp);                        \
         }                                                        \
         else                                                     \
         {                                                        \
