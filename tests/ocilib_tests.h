@@ -27,7 +27,7 @@
 
 #include "../include/ocilib.h"
 
-#define DBS OTEXT("192.168.0.11:1521/db19c")
+#define DBS OTEXT("localhost:1521/db19c")
 #define USR OTEXT("usr")
 #define PWD OTEXT("pwd")
 #define SYS_USR OTEXT("sys")
