@@ -184,7 +184,7 @@ boolean OcilibLobFree
     CHECK_PTR(OCI_IPC_LOB, lob)
     CHECK_OBJECT_FETCHED(lob)
 
-    if (OcilibLobIsTemporary(lob))
+    if ((OCI_OBJECT_FETCHED_INVALIDATED != lob->hstate) && OcilibLobIsTemporary(lob))
     {
         CHECK_OCI
         (

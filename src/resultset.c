@@ -597,6 +597,14 @@ static boolean OcilibResultsetClearFetchedObjectInstances(OCI_Resultset *rs)
                 }
             }
         }
+
+        if (NULL != def->obj)
+        {
+            /* previously assigned handle is invalided
+               We shall not try manipulate its oci handle when calling the destructor method */ 
+           
+            ((OCI_Datatype*)def->obj)->hstate = OCI_OBJECT_FETCHED_INVALIDATED;
+        }
     }
 
     SET_SUCCESS()
@@ -839,11 +847,18 @@ boolean OcilibResultsetFree
 
         /* free buffer objects */
 
-        if (def->obj)
+        if (NULL != def->obj)
         {
             /* handy cast to set object state flag */
 
-            ((OCI_Datatype *)def->obj)->hstate = OCI_OBJECT_FETCHED_DIRTY;
+            OCI_Datatype* data_type = (OCI_Datatype*)def->obj;
+
+            /* mark it as dirty only is it not already invalidated */
+
+            if (data_type->hstate != OCI_OBJECT_FETCHED_INVALIDATED)
+            {
+                data_type->hstate = OCI_OBJECT_FETCHED_DIRTY;
+            }
 
             if (OCI_CDT_CURSOR == def->col.datatype)
             {
