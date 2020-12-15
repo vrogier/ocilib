@@ -307,6 +307,8 @@ OCI_Subscription * OcilibSubscriptionRegister
         sub->con->err
     )
 
+    SET_RETVAL(sub)
+
 #else
 
     OCI_NOT_USED(name)

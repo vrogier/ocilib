@@ -512,5 +512,5 @@ void OcilibMemoryFreeOracleCallback
 {
     OCI_NOT_USED(ctxp)
 
-        OcilibMemoryFree(memptr);
+    OcilibMemoryFree(memptr);
 }
