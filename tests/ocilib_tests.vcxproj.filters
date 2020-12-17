@@ -214,6 +214,9 @@
     <ClCompile Include="TestREportedIssuesCppApi.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestNotifications.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header files">
