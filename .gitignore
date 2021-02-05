@@ -63,6 +63,7 @@ build/
 *.bsc
 *.lastbuildstate
 *.tlog
+*.o
 
 # Visual C++ cache files
 ipch/
@@ -178,3 +179,5 @@ $RECYCLE.BIN/
 testlog.manifest
 *.testlog
 /nuget/*.nupkg
+*Browse.VC.db-wal
+*Browse.VC.db-shm
