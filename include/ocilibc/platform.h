@@ -117,10 +117,6 @@
 
 /* Build modes */
 
-#ifndef OCI_EXPORT
-  #define OCI_EXPORT
-#endif
-
 #define OCI_LIB_TYPE_SHARED  1
 #define OCI_LIB_TYPE_STATIC  2
 
