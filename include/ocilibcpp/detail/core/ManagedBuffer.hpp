@@ -32,11 +32,6 @@ namespace ocilib
         }
 
         template<typename T>
-        core::ManagedBuffer<T>::ManagedBuffer(T* buffer, size_t size) : _buffer(buffer), _size(size)
-        {
-        }
-
-        template<typename T>
         core::ManagedBuffer<T>::ManagedBuffer(size_t size) : _buffer(core::OnAllocate(new T[size], size)), _size(size)
         {
             memset(_buffer, 0, sizeof(T) * _size);
@@ -44,7 +39,7 @@ namespace ocilib
         template<typename T>
         core::ManagedBuffer<T>::~ManagedBuffer() noexcept
         {
-            delete core::OnDeallocate(_buffer);
+            delete [] core::OnDeallocate(_buffer);
         }
 
         template<typename T>
