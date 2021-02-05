@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ocilib++_demo_vs2017", "ocilib++_demo_vs2017.vcxproj", "{22508194-4A82-4EA7-A754-126534AE7108}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ocilib++_demo_vs2019", "ocilib++_demo_vs2019.vcxproj", "{22508194-4A82-4EA7-A754-126534AE7108}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
