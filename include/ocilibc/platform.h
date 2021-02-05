@@ -115,15 +115,6 @@
   #endif
 #endif
 
-/* Build modes */
-
-#define OCI_LIB_TYPE_SHARED  1
-#define OCI_LIB_TYPE_STATIC  2
-
-#ifndef OCI_LIB_TYPE
-  #define OCI_LIB_TYPE OCI_LIB_TYPE_SHARED
-#endif
-
 /* Control of symbol visibility for shared libraries */
 
 #if defined _WINDOWS
@@ -142,7 +133,7 @@
   #endif
 #endif
 
-#if OCI_LIB_TYPE == OCI_LIB_TYPE_SHARED
+#ifdef OCI_LIB_SHARED
   #ifdef OCI_EXPORT
     #define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_EXPORT
   #else

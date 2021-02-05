@@ -107,7 +107,7 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <PreprocessorDefinitions>_WIN32;_DEBUG;_WINDOWS;_USRDLL;OCI_EXPORT=__declspec(dllexport);OCI_API=__stdcall;OCI_CHARSET_ANSI;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32;_DEBUG;_WINDOWS;_USRDLL;OCI_EXPORT;OCI_LIB_SHARED;OCI_API=__stdcall;OCI_CHARSET_ANSI;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -160,7 +160,7 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <PreprocessorDefinitions>_WIN64;_DEBUG;_WINDOWS;_USRDLL;OCI_EXPORT=__declspec(dllexport);OCI_API=__stdcall;OCI_CHARSET_ANSI;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN64;_DEBUG;_WINDOWS;_USRDLL;OOCI_EXPORT;OCI_LIB_SHARED;OCI_API=__stdcall;OCI_CHARSET_ANSI;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -210,7 +210,7 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <PreprocessorDefinitions>_WIN32;_DEBUG;_WINDOWS;_USRDLL;OCI_EXPORT=__declspec(dllexport);OCI_API=__stdcall;OCI_CHARSET_WIDE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32;_DEBUG;_WINDOWS;_USRDLL;OCI_EXPORT;OCI_LIB_SHARED;OCI_API=__stdcall;OCI_CHARSET_WIDE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -263,7 +263,7 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <PreprocessorDefinitions>_WIN64;_DEBUG;_WINDOWS;_USRDLL;OCI_EXPORT=__declspec(dllexport);OCI_API=__stdcall;OCI_CHARSET_WIDE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN64;_DEBUG;_WINDOWS;_USRDLL;OCI_EXPORT;OCI_LIB_SHARED;OCI_API=__stdcall;OCI_CHARSET_WIDE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
