@@ -114,9 +114,9 @@ void OcilibErrorSet
     err->row         = row;
 
 #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
-    const otext* format = OTEXT("Error occured at %ls: %ls");
+    const otext* format = OTEXT("Error occurred at %ls: %ls");
 #else
-    const otext* format = OTEXT("Error occured at %s: %s");
+    const otext* format = OTEXT("Error occurred at %s: %s");
 #endif 
 
     const size_t format_len = ostrlen(format);
