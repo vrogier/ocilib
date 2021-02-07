@@ -1,10 +1,11 @@
-2021-02-06 Version 4.7.3 Vincent Rogier vince.rogier@ocilib.net
+2021-02-07 Version 4.7.3 Vincent Rogier vince.rogier@ocilib.net
    
     * Fixes (C API)
     
         - Issue 251: OCI_ErrorGetMessage() returns invalid messages when OCILIB is build with OCI_CHARSET_WIDE on linux/unix platforms
         - Issue 252: Incorrect OCILIB client driver layer namein V$SESSION_CONNECT_INFO and GV$SESSION_CONNECT_INFO when OCILIB is build with OCI_CHARSET_WIDE on linux/unix platforms
         - Issue 253: Error occured at OcilibLobFree: ORA-01403: no data found
+        - Issue 264: Fetched UROWIDs (IOT Table ROWIDs) values are truncated
         
     * Fixes (C++ API)
     
@@ -13,6 +14,9 @@
   
    * Miscellaneous
 
+        - Updated compilers for MS Windows prebuilt binaries
+            * VS2019 16.8.4 for 32/64 bit DLLs 
+            * VC runtime (statically linked) updated from vc141_xp to vc142
         - Reduced some ocilib structures size by removing some paddings (especially in 64bits)
         - Added a makefile to build the C++ demo (Makefile_demo_cpp) that is also now installed with the C demo Makefile
         - OCILIB Test suite is now ported to Linux/Unix platforms
@@ -20,7 +24,7 @@
             * To build the test suite:
                 - Modify the db credentials in ocilib_tests.h
                 - Use Makefile_tests (it depends on google test that must be installed prior building the test suite)
-            
+                
 2020-11-10 Version 4.7.2 Vincent Rogier vince.rogier@ocilib.net
    
     * Fixes (C API)
