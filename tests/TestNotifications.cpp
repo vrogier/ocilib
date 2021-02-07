@@ -1,14 +1,14 @@
 #include "ocilib_tests.h"
 
-constexpr int SingleDDL1ExpectedEventsCount{ 1 };
-constexpr int SingleDDL2ExpectedEventsCount{ 2 };
-constexpr int MultipleDDLExpectedEventsCount{ 2 };
-constexpr int MultipleDMLExpectedEventsCount{ 5 };
+constexpr size_t SingleDDL1ExpectedEventsCount{ 1 };
+constexpr size_t SingleDDL2ExpectedEventsCount{ 2 };
+constexpr size_t MultipleDDLExpectedEventsCount{ 2 };
+constexpr size_t MultipleDMLExpectedEventsCount{ 5 };
 
-static std::atomic<int> SingleDDL1EventCount{ 0 };
-static std::atomic<int> SingleDDL2EventCount{ 0 };
-static std::atomic<int> MultipleDDLEventCount{ 0 };
-static std::atomic<int> MultipleDMLEventCount{ 0 };
+static std::atomic<size_t> SingleDDL1EventCount{ 0 };
+static std::atomic<size_t> SingleDDL2EventCount{ 0 };
+static std::atomic<size_t> MultipleDDLEventCount{ 0 };
+static std::atomic<size_t> MultipleDMLEventCount{ 0 };
 
 struct Event
 {
@@ -139,7 +139,7 @@ static void SingleDDL1EventEventHandler(OCI_Event* event)
 static void SingleDDL2EventEventHandler(OCI_Event* event)
 {
     EXPECT_TRUE(SingleDDL2EventCount < SingleDDL2ExpectedEvents.size());
-    
+
     CheckEvent(SingleDDL2ExpectedEvents[SingleDDL2EventCount], event);
 
     SingleDDL2EventCount++;
@@ -151,7 +151,7 @@ static void MultipleDDLEventEventHandler(OCI_Event* event)
     EXPECT_TRUE(MultipleDDLEventCount < MultipleDDLExpectedEvents.size());
 
     CheckEvent(MultipleDDLExpectedEvents[MultipleDDLEventCount], event);
-    
+
     MultipleDDLEventCount++;
 }
 
@@ -168,7 +168,7 @@ TEST(TestNotifications, SingleDDL1)
 {
     ExecDML(OTEXT("drop table TestTableSingleDDL1"));
     ExecDML(OTEXT("create table TestTableSingleDDL1(code number)"));
-    
+
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_EVENTS));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -182,11 +182,11 @@ TEST(TestNotifications, SingleDDL1)
 
     ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestTableSingleDDL1")));
     ASSERT_TRUE(OCI_SubscriptionAddStatement(sub, stmt));
-   
+
     ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("alter table TestTableSingleDDL1 add price number")));
 
     Sleep(1000);
-    
+
     ASSERT_EQ(SingleDDL1ExpectedEvents.size(), SingleDDL1EventCount);
 
     ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
