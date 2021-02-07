@@ -519,6 +519,7 @@ OCILOBGETCONTENTTYPE         OCILobGetContentType         = NULL;
 OCISTMTGETNEXTRESULT         OCIStmtGetNextResult         = NULL;
 OCISERVERRELEASE2            OCIServerRelease2            = NULL;
 OCISODAOPERKEYSSET           OCISodaOperKeysSet           = NULL;
+OCIROWIDTOCHAR               OCIRowidToChar               = NULL;
 
 XAOSVCCTX xaoSvcCtx = NULL;
 XAOENV    xaoEnv    = NULL;
@@ -1289,7 +1290,10 @@ boolean OcilibEnvironmentInitialize
                    OCIAQDEQ);
         LIB_SYMBOL(Env.lib_handle, "OCIAQListen",                  OCIAQListen,
                    OCIAQLISTEN);
-
+        
+        LIB_SYMBOL(Env.lib_handle, "OCIRowidToChar",               OCIRowidToChar,
+                   OCIROWIDTOCHAR);
+                   
         LIB_SYMBOL(Env.lib_handle, "xaoSvcCtx",                    xaoSvcCtx,
                    XAOSVCCTX);
         LIB_SYMBOL(Env.lib_handle, "xaoEnv",                       xaoEnv,

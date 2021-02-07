@@ -154,9 +154,18 @@ void * OcilibDefineGetData
         }
         default:
         {
-            /* scalar types */
+            /* special case for ROWIDs exposed as strings but internally handled as rowid descriptors */
 
-            data = (((ub1 *) (def->buf.data)) + (size_t) (def->col.bufsize * (def->rs->row_cur-1)));
+            if (IS_ROWID_COL(&def->col))
+            {
+                data = def->buf.data[def->rs->row_cur - 1];
+            }
+            else
+            {
+                /* scalar types */
+
+                data = (((ub1 *) (def->buf.data)) + (size_t) (def->col.bufsize * (def->rs->row_cur-1)));
+            }
         }
     }
 

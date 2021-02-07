@@ -1671,6 +1671,14 @@ typedef OCIEnv * (*XAOENV)
     OraText *dbname
 );
 
+typedef sword (*OCIROWIDTOCHAR)
+(
+    OCIRowid *rowidDesc, 
+    OraText  *outbfp, 
+    ub2      *outbflp,
+    OCIError *errhp
+);
+
 /* API introduced in 8.1 */
 
 typedef void (*OCITHREADPROCESSINIT)

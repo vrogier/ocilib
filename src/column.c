@@ -694,28 +694,10 @@ boolean OcilibColumnMapInfo
         case SQLT_RID:
         case SQLT_RDD:
         {
-            col->libcode  = SQLT_STR;
-            col->datatype = OCI_CDT_TEXT;
-
-            if ((SQLT_RID == col->sqlcode) || (col->size == sizeof(OCIRowid *)))
-            {
-                /* For Oracle 7 ROWIDs and regular ROWID descriptors, the
-                   max size of the hex value is defined by the constant
-                   OCI_SIZE_ROWID
-                */
-
-                col->bufsize = (ub4) ((OCI_SIZE_ROWID + 1) * char_size);
-            }
-            else
-            {
-                /*  For ROWID descriptor, column size is bigger than the size
-                    of the descriptor, it means that an UROWID column and then
-                    the column size is the maximum size needed for representing
-                    its value as an hex string
-                */
-
-                col->bufsize = (ub4) ((col->size + 1) * char_size);
-            }
+            col->libcode    = SQLT_RDD;
+            col->datatype   = OCI_CDT_TEXT;
+            col->bufsize    = (ub4)sizeof(OCIRowid*);
+            col->handletype = OCI_DTYPE_ROWID;
             break;
         }
         case SQLT_BIN:

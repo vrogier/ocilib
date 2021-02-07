@@ -819,7 +819,7 @@
 #define OCI_SIZE_FORMAT_TODATE              14
 #define OCI_SIZE_NULL                       4
 #define OCI_SIZE_PRECISION                  10
-#define OCI_SIZE_ROWID                      23
+#define OCI_SIZE_ROWID                      23 /* deprecated */
 #define OCI_SIZE_DIRECTORY                  30
 #define OCI_SIZE_FILENAME                   255
 #define OCI_SIZE_FORMAT_NUMS                40
