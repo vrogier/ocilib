@@ -142,6 +142,7 @@
 
 #define OCI_DTYPE_LOB 50                                     /* lob  locator */
 #define OCI_DTYPE_PARAM 53  /* a parameter descriptor obtained from ocigparm */
+#define OCI_DTYPE_ROWID  54                              /* rowid descriptor */
 #define OCI_DTYPE_FILE 56                                /* File Lob locator */
 #define OCI_DTYPE_AQENQ_OPTIONS 57                        /* enqueue options */
 #define OCI_DTYPE_AQDEQ_OPTIONS 58                        /* dequeue options */

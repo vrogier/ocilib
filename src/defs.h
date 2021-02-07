@@ -425,6 +425,10 @@ typedef unsigned short dbtext;
                                      \
     (OCI_CDT_NUMERIC == (type) && OCI_NUM_NUMBER == (subtype))
 
+#define IS_ROWID_COL(col) \
+                                     \
+    (OCI_CDT_TEXT == (col)->datatype && SQLT_RDD == (col)->libcode)
+
 #define IS_OCILIB_OBJECT(type, subtype) \
                                         \
     ( (IS_OCI_NUMBER(type, subtype)) || \

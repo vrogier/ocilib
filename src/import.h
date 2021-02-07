@@ -288,6 +288,7 @@ extern OCILOBGETCONTENTTYPE         OCILobGetContentType;
 extern OCISTMTGETNEXTRESULT         OCIStmtGetNextResult;
 extern OCISERVERRELEASE2            OCIServerRelease2;
 extern OCISODAOPERKEYSSET           OCISodaOperKeysSet;
+extern OCIROWIDTOCHAR               OCIRowidToChar;
 
     #ifdef ORAXB8_DEFINED
 
