@@ -643,6 +643,7 @@ LT_AGE
 LT_REVISION
 LT_CURRENT
 LT_RELEASE
+OCILIB_TESTS
 OCILIB_DEMO_SOURCES
 OCILIB_DOCS
 OCILIB_PREFIX
@@ -12954,8 +12955,11 @@ $as_echo "$OCILIB_PREFIX" >&6; }
   doc_files=`(cd ${srcdir:-.}/doc/html && ls -1 *.html *.css *.png)`
   OCILIB_DOCS=`echo $doc_files | sed 's,$, ,g'`
 
-  demo_sources_files=`(cd ${srcdir:-.}/demo/ && ls -1 *.c *.h *.cpp *.sql)`
+  demo_sources_files=`(cd ${srcdir:-.}/demo && ls -1 *.c *.h *.cpp *.sql)`
   OCILIB_DEMO_SOURCES=`echo $demo_sources_files | sed 's,$, ,g'`
+
+  tests_files=`(cd ${srcdir:-.}/tests && ls -1 *.h *.cpp)`
+  OCILIB_TESTS=`echo $tests_files | sed 's,$, ,g'`
 
 
 
@@ -13223,7 +13227,7 @@ $as_echo "$ac_ocilib_ld" >&6; }
 
 
 
-ac_config_files="$ac_config_files README ocilib.pc Makefile src/Makefile doc/html/Makefile demo/Makefile demo/Makefile_demo demo/Makefile_demo_cpp"
+ac_config_files="$ac_config_files README ocilib.pc Makefile src/Makefile doc/html/Makefile demo/Makefile demo/Makefile_demo demo/Makefile_demo_cpp tests/Makefile tests/Makefile_tests"
 
 
 cat >confcache <<\_ACEOF
@@ -14248,6 +14252,8 @@ do
     "demo/Makefile") CONFIG_FILES="$CONFIG_FILES demo/Makefile" ;;
     "demo/Makefile_demo") CONFIG_FILES="$CONFIG_FILES demo/Makefile_demo" ;;
     "demo/Makefile_demo_cpp") CONFIG_FILES="$CONFIG_FILES demo/Makefile_demo_cpp" ;;
+    "tests/Makefile") CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
+    "tests/Makefile_tests") CONFIG_FILES="$CONFIG_FILES tests/Makefile_tests" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
