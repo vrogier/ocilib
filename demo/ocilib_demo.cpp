@@ -274,7 +274,7 @@ int omain(int argc, oarg* argv[])
 
         ocout << otext("Connecting to ") << usr << otext("/") << pwd << otext("@") << dbs << oendl << oendl;
 
-        con.Open(dbs, usr, OTEXT("aaa"), Environment::SessionDefault);
+        con.Open(dbs, usr, pwd, Environment::SessionDefault);
 
         print_version();
         create_tables();
