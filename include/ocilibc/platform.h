@@ -133,14 +133,14 @@
   #endif
 #endif
 
-#ifdef OCI_LIB_SHARED
+#ifdef OCI_LIB_LOCAL_COMPILE
+  #define OCI_SYM_PUBLIC
+#else
   #ifdef OCI_EXPORT
     #define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_EXPORT
   #else
     #define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_IMPORT
   #endif
-#else
-  #define OCI_SYM_PUBLIC
 #endif
 
 /* Charset modes */
