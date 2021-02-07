@@ -128,11 +128,11 @@
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release UNICODE|Win32'">..\..\lib32;$(LibraryPath)</LibraryPath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release UNICODE|Win32'">..\..\include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug ANSI|x64'">..\..\include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug ANSI|x64'"> ..\..\lib64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug ANSI|x64'">..\..\lib64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release ANSI|x64'">..\..\include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release ANSI|x64'"> ..\..\lib64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release ANSI|x64'">..\..\lib64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release UNICODE|x64'">..\..\include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release UNICODE|x64'"> ..\..\lib64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release UNICODE|x64'">..\..\lib64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug ANSI|Win32'">ocilib_demo</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release ANSI|Win32'">ocilib_demo</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release UNICODE|Win32'">ocilib_demo</TargetName>
