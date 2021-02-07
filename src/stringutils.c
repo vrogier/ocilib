@@ -156,6 +156,45 @@ boolean OcilibStringRequestBuffer
  * OcilibStringTranslate
  * --------------------------------------------------------------------------------------------- */
 
+#define STRING_CVT_EXPAND(type_src, type_dst, char_count)       \
+                                                                \
+    const int len = char_count;                                 \
+    unsigned type_src* str1 = (unsigned type_src*)src;          \
+    unsigned type_dst* str2 = (unsigned type_dst*)dst;          \
+                                                                \
+    if (*str1 == 0)                                             \
+    {                                                           \
+        return;                                                 \
+    }                                                           \
+                                                                \
+    while (char_count--)                                        \
+    {                                                           \
+        str2[char_count] = (unsigned type_dst)str1[char_count]; \
+    }                                                           \
+                                                                \
+    str2[len] = 0;                                              \
+
+#define STRING_CVT_PACK(type_src, type_dst, char_count)         \
+                                                                \
+    const int len = char_count;                                 \
+    unsigned type_src* str1 = (unsigned type_src*)src;          \
+    unsigned type_dst* str2 = (unsigned type_dst*)dst;          \
+    int i = 0;                                                  \
+                                                                \
+   if (*str1 == 0)                                              \
+    {                                                           \
+        return;                                                 \
+    }                                                           \
+                                                                \
+    while (i < char_count)                                      \
+    {                                                           \
+        str2[i] = (unsigned type_dst)str1[i];                   \
+        i++;                                                    \
+    }                                                           \
+                                                                \
+    str2[len] = 0;    
+
+
 void OcilibStringTranslate
 (
     void  *src,
@@ -165,8 +204,6 @@ void OcilibStringTranslate
     size_t size_char_out
 )
 {
-    const int len = char_count;
-
     if (!src || !dst)
     {
         return;
@@ -182,53 +219,19 @@ void OcilibStringTranslate
         {
             /* 2 => 4 bytes */
 
-            unsigned short *str1 = (unsigned short *) src;
-            unsigned int   *str2 = (unsigned int   *) dst;
-
-            if (*str1 == 0)
-            {
-                return;
-            }
-
-            while (char_count--)
-            {
-                str2[char_count] = (unsigned int) str1[char_count];
-            }
+            STRING_CVT_EXPAND(short, int, char_count)
         }
-
         else if ((size_char_in == sizeof(char)) && (size_char_out == sizeof(short)))
         {
             /* 1 => 2 bytes */
 
-            unsigned char  *str1 = (unsigned char  *) src;
-            unsigned short *str2 = (unsigned short *) dst;
-
-            if (*str1 == 0)
-            {
-                return;
-            }
-
-            while (char_count--)
-            {
-                str2[char_count] = (unsigned short) str1[char_count];
-            }
+            STRING_CVT_EXPAND(char, short, char_count)
         }
         else if ((size_char_in == sizeof(char)) && (size_char_out == sizeof(int)))
         {
             /* 1 => 4 bytes */
 
-            unsigned char *str1 = (unsigned char *) src;
-            unsigned int  *str2 = (unsigned int  *) dst;
-
-            if (*str1 == 0)
-            {
-                return;
-            }
-
-            while (char_count--)
-            {
-                str2[char_count] = (unsigned int) str1[char_count];
-            }
+            STRING_CVT_EXPAND(char, int, char_count)
         }
     }
     else if (size_char_out < size_char_in)
@@ -239,69 +242,39 @@ void OcilibStringTranslate
         {
             /* 4 => 2 bytes */
 
-            unsigned int   *str1 = (unsigned int   *) src;
-            unsigned short *str2 = (unsigned short *) dst;
-
-            int i = 0;
-
-            if (*str1 == 0)
-            {
-                return;
-            }
-
-            while (i < char_count)
-            {
-                str2[i] = (unsigned short) str1[i];
-                i++;
-            }
+            STRING_CVT_PACK(int, short, char_count)
         }
         else if ((size_char_in == sizeof(short)) && (size_char_out == sizeof(char)))
         {
             /* 2 => 1 bytes */
 
-            unsigned short *str1 = (unsigned short *) src;
-            unsigned char  *str2 = (unsigned char  *) dst;
-
-            int i= 0;
-
-            if (*str1 == 0)
-            {
-                return;
-            }
-
-            while (i < char_count)
-            {
-                str2[i] = (unsigned char) str1[i];
-                i++;
-            }
+            STRING_CVT_PACK(short, char, char_count)
+            
         }
         else if ((size_char_in == sizeof(int)) &&  (size_char_out == sizeof(char)))
         {
             /* 4 => 1 bytes */
 
-            unsigned int  *str1 = (unsigned int  *) src;
-            unsigned char *str2 = (unsigned char *) dst;
-
-            int i = 0;
-
-            if (*str1 == 0)
-            {
-                return;
-            }
-
-            while (i < char_count)
-            {
-                str2[i] = (unsigned char) str1[i];
-                i++;
-            }
+            STRING_CVT_PACK(int, char, char_count)
         }
     }
-    else
+    else if (src != dst)
     {
-        memcpy(dst, src, len * size_char_out);
-    }
+        memcpy(dst, src, char_count * size_char_out);
 
-    memset(((char*) dst) + len * size_char_out, 0, size_char_out);
+        if (size_char_out == sizeof(char))
+        {
+            ((char*)dst)[char_count] = 0;
+        }
+        else if (size_char_out == sizeof(short))
+        {
+            ((short*)dst)[char_count] = 0;
+        }
+        else if (size_char_out == sizeof(int))
+        {
+            ((int*)dst)[char_count] = 0;
+        }
+    }
 }
 
 /* --------------------------------------------------------------------------------------------- *
