@@ -123,7 +123,7 @@ typedef struct test_t
 
     #define omain           wmain
     #define oarg            otext
-    #define GET_ARG(s, i)   ostrncat(s, argv[i], sizeof(s))
+    #define GET_ARG(s, i)   wcsncat(s, argv[i], sizeof(s))
 
   #else
 
