@@ -1798,7 +1798,7 @@ const otext * OcilibResultsetGetString
 
                 /* retrieve the size - no error checking */
 
-                sword err = OCIRowidToChar(rowid, NULL, &rowid_length, def->rs->stmt->con->err);
+                OCIRowidToChar(rowid, NULL, &rowid_length, def->rs->stmt->con->err);
 
                 if (rowid_length > 0)
                 {
