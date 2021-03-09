@@ -1,4 +1,4 @@
-# Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+# Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
 #  
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without 
@@ -12,7 +12,7 @@ AUTOMAKE_OPTIONS = foreign
 SUBDIRS = .
 CLEANFILES = *~
 
-demo_DATA = @OCILIB_DEMO_SOURCES@ Makefile_demo
+demo_DATA = @OCILIB_DEMO_SOURCES@ Makefile_demo @OCILIB_DEMO_SOURCES@ Makefile_demo_cpp
 demodir = $(prefix)/share/doc/$(PACKAGE)/demo
 
 EXTRA_DIST = $(demo_DATA)

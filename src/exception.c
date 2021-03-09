@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -322,8 +322,8 @@ void OcilibExceptionOCI
     if (err)
     {
         sb4           err_code = 0;
-        otext         buffer[512];
-        int           err_size = osizeof(buffer);
+        otext         buffer[OCI_SIZE_BUFFER] = OTEXT("");
+        int           err_size = (int)OCI_SIZE_BUFFER* (int)sizeof(otext);
         const boolean warning  = OCI_SUCCESS_WITH_INFO == call_ret;
 
         dbtext * err_msg = OcilibStringGetDBString(buffer, &err_size);
@@ -332,6 +332,8 @@ void OcilibExceptionOCI
 
         OCIErrorGet((dvoid *)oci_err, (ub4)1, (OraText *)NULL, &err_code,
                     (OraText *)err_msg, (ub4)err_size, (ub4)OCI_HTYPE_ERROR);
+
+        OcilibStringCopyDBStringToNativeString(err_msg, buffer, dbcharcount(err_size));
 
         if (err_code == 0 && err_msg[0] == 0)
         {

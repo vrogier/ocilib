@@ -1,6 +1,6 @@
 #include "ocilib_tests.h"
 
-TEST(ReportedIssues, Issue216)
+TEST(ReportedIssuesCApi, Issue216)
 {
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
@@ -68,7 +68,7 @@ TEST(ReportedIssues, Issue216)
     ASSERT_TRUE(OCI_Cleanup());
 }
 
-TEST(ReportedIssues, Issue222)
+TEST(ReportedIssuesCApi, Issue222)
 {
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
@@ -83,7 +83,7 @@ TEST(ReportedIssues, Issue222)
     ASSERT_TRUE(OCI_Cleanup());
 }
 
-TEST(ReportedIssues, Issue225)
+TEST(ReportedIssuesCApi, Issue225)
 {
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
@@ -149,12 +149,12 @@ TEST(ReportedIssues, Issue225)
 
 #ifdef OCI_CHARSET_ANSI
 
-TEST(ReportedIssues, Issue238)
+TEST(ReportedIssuesCApi, Issue238)
 {
     ExecDML(OTEXT("create table FetchLobAsString(value clob)"));
 
     const char* nsl_lang = getenv("NLS_LANG");
-    putenv("NLS_LANG=American_America.UTF8");
+    putenv((char*)"NLS_LANG=American_America.UTF8");
 
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
@@ -187,7 +187,7 @@ TEST(ReportedIssues, Issue238)
     {
         new_nls_lang += nsl_lang;
     }
-    putenv(new_nls_lang.data());
+    putenv((char*)new_nls_lang.data());
 
     ExecDML(OTEXT("drop table FetchLobAsString;"));
 }
@@ -217,4 +217,41 @@ TEST_P(ReportedIssues247, NoNullPointerException)
     ASSERT_TRUE(OCI_Cleanup());
 }
 
-INSTANTIATE_TEST_CASE_P(ReportedIssues, ReportedIssues247, ::testing::ValuesIn(TimestampTypes));
+TEST(ReportedIssuesCApi, Issue262)
+{
+    ExecDML(OTEXT("CREATE TABLE test_urowid(name VARCHAR2(256 CHAR) NOT NULL, CONSTRAINT test_urowid PRIMARY KEY (name) ) ORGANIZATION INDEX"));
+    ExecDML(OTEXT("INSERT INTO test_urowid VALUES (LPAD('a', 200, 'a'))"));
+
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+    const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+    ASSERT_NE(nullptr, conn);
+
+    const auto stmt = OCI_StatementCreate(conn);
+    ASSERT_NE(nullptr, stmt);
+
+    ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT NAME, LENGTH(ROWID), ROWID FROM test_urowid")));
+
+    const auto rslt = OCI_GetResultset(stmt);
+    ASSERT_NE(nullptr, rslt);
+ 
+    ASSERT_TRUE(OCI_FetchNext(rslt));
+    const auto name = OCI_GetString(rslt, 1);
+    ASSERT_NE(nullptr, name);
+    const auto length = static_cast<size_t>(OCI_GetInt(rslt, 2));
+    ASSERT_EQ(true, length > 0);
+    const auto rowid = OCI_GetString(rslt, 3);
+    ASSERT_NE(nullptr, rowid);
+
+    const auto expected_length = length;
+    const auto real_length = ostrlen(rowid);
+    ASSERT_EQ(expected_length, real_length);
+
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_Cleanup());
+
+    ExecDML(OTEXT("DROP TABLE test_urowid"));
+}
+
+
+INSTANTIATE_TEST_CASE_P(ReportedIssuesCApi, ReportedIssues247, ::testing::ValuesIn(TimestampTypes));

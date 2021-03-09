@@ -1,11 +1,16 @@
 #pragma once
 
 #define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
+
 #include "gtest/gtest.h"
 
 #include <array>
 #include <vector>
 #include <string>
+#include <algorithm>
+#include <atomic>
+
+#include <ocilib.hpp>
 
 #ifdef OCI_CHARSET_WIDE
     #define TO_STRING std::to_wstring
@@ -19,9 +24,13 @@
     #define ostrlen strlen
 #endif
 
-#define OCI_API __stdcall
+#ifdef _MSC_VER
+#  define OCI_API __stdcall
+#endif
+
 #include "../include/ocilib.h"
 
+#define DBSNAME OTEXT("db19c")
 #define DBS OTEXT("localhost:1521/db19c")
 #define USR OTEXT("usr")
 #define PWD OTEXT("pwd")
@@ -59,3 +68,10 @@ struct Context
 #endif
 
 void ExecDML(ostring dml);
+
+inline ostring ToUpper(ostring str)
+{
+    std::for_each(std::begin(str), std::end(str), [](otext& c) { c = static_cast<otext>(::towupper(c)); });
+
+    return str;
+}

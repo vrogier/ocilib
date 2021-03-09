@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 
 #include "dirpath.h"
 
+#include "connection.h"
 #include "macros.h"
 #include "memory.h"
 #include "number.h"
@@ -529,8 +530,8 @@ boolean OcilibDirPathSetColumn
 
     /* default column attributes */
 
-    dpcol->maxsize     = (ub2) maxsize;
-    dpcol->bufsize     = (ub2) maxsize + 1;
+    dpcol->maxsize     = (ub4) maxsize;
+    dpcol->bufsize     = (ub4) maxsize + 1;
     dpcol->sqlcode     = SQLT_CHR;
     dpcol->type        = OCI_DDT_TEXT;
     dpcol->index       = i;
@@ -576,7 +577,7 @@ boolean OcilibDirPathSetColumn
             {
                 dpcol->format      = OcilibStringDuplicate(format);
                 dpcol->format_size = (ub4) ostrlen(format);
-                dpcol->maxsize     = (ub2) max(dpcol->format_size, maxsize);
+                dpcol->maxsize     = (ub4) max(dpcol->format_size, maxsize);
                 dpcol->bufsize    *= sizeof(otext);
             }
             break;
@@ -654,12 +655,26 @@ boolean OcilibDirPathSetColumn
 
     /* set column size */
 
-    CHECK_ATTRIB_SET
-    (
-        OCI_DTYPE_PARAM, OCI_ATTR_DATA_SIZE,
-        hattr, &dpcol->maxsize, sizeof(dpcol->maxsize),
-        dp->typinf->con->err
-    )
+    if (OcilibConnectionIsVersionSupported(dp->typinf->con, OCI_10_1))
+    {
+        CHECK_ATTRIB_SET
+        (
+            OCI_DTYPE_PARAM, OCI_ATTR_DATA_SIZE,
+            hattr, &dpcol->maxsize, sizeof(dpcol->maxsize),
+            dp->typinf->con->err
+        )
+    }
+    else
+    {
+        ub2 legacy_col_size = (ub2) dpcol->maxsize;
+
+        CHECK_ATTRIB_SET
+        (
+            OCI_DTYPE_PARAM, OCI_ATTR_DATA_SIZE,
+            hattr, &legacy_col_size, sizeof(legacy_col_size),
+            dp->typinf->con->err
+        )       
+    }
 
     /* set column precision */
 

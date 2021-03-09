@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -819,7 +819,7 @@
 #define OCI_SIZE_FORMAT_TODATE              14
 #define OCI_SIZE_NULL                       4
 #define OCI_SIZE_PRECISION                  10
-#define OCI_SIZE_ROWID                      23
+#define OCI_SIZE_ROWID                      23 /* deprecated */
 #define OCI_SIZE_DIRECTORY                  30
 #define OCI_SIZE_FILENAME                   255
 #define OCI_SIZE_FORMAT_NUMS                40

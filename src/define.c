@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,9 +154,18 @@ void * OcilibDefineGetData
         }
         default:
         {
-            /* scalar types */
+            /* special case for ROWIDs exposed as strings but internally handled as rowid descriptors */
 
-            data = (((ub1 *) (def->buf.data)) + (size_t) (def->col.bufsize * (def->rs->row_cur-1)));
+            if (IS_ROWID_COL(&def->col))
+            {
+                data = def->buf.data[def->rs->row_cur - 1];
+            }
+            else
+            {
+                /* scalar types */
+
+                data = (((ub1 *) (def->buf.data)) + (size_t) (def->col.bufsize * (def->rs->row_cur-1)));
+            }
         }
     }
 

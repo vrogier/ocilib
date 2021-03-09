@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,6 +142,7 @@
 
 #define OCI_DTYPE_LOB 50                                     /* lob  locator */
 #define OCI_DTYPE_PARAM 53  /* a parameter descriptor obtained from ocigparm */
+#define OCI_DTYPE_ROWID  54                              /* rowid descriptor */
 #define OCI_DTYPE_FILE 56                                /* File Lob locator */
 #define OCI_DTYPE_AQENQ_OPTIONS 57                        /* enqueue options */
 #define OCI_DTYPE_AQDEQ_OPTIONS 58                        /* dequeue options */

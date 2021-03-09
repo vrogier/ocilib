@@ -3,7 +3,7 @@
 *
 * Website: http://www.ocilib.net
 *
-* Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+* Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -290,9 +290,9 @@ int omain(int argc, oarg* argv[])
         drop_tables();
         con.Close();
     }
-    catch (std::exception &ex)
+    catch (Exception &ex)
     {
-        ocout << ex.what() << oendl;
+        ocout << ex.GetMessage() << oendl;
     }
 
     if (con)

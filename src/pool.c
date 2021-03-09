@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -229,7 +229,11 @@ OCI_Pool * OcilibPoolCreate
             (
                 driver_version,
                 osizeof(driver_version) - (size_t)1,
+            #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
+                OTEXT("%ls : %d.%d.%d"),
+            #else
                 OTEXT("%s : %d.%d.%d"),
+            #endif 
                 OCILIB_DRIVER_NAME,
                 OCILIB_MAJOR_VERSION,
                 OCILIB_MINOR_VERSION,

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -519,6 +519,7 @@ OCILOBGETCONTENTTYPE         OCILobGetContentType         = NULL;
 OCISTMTGETNEXTRESULT         OCIStmtGetNextResult         = NULL;
 OCISERVERRELEASE2            OCIServerRelease2            = NULL;
 OCISODAOPERKEYSSET           OCISodaOperKeysSet           = NULL;
+OCIROWIDTOCHAR               OCIRowidToChar               = NULL;
 
 XAOSVCCTX xaoSvcCtx = NULL;
 XAOENV    xaoEnv    = NULL;
@@ -1289,7 +1290,10 @@ boolean OcilibEnvironmentInitialize
                    OCIAQDEQ);
         LIB_SYMBOL(Env.lib_handle, "OCIAQListen",                  OCIAQListen,
                    OCIAQLISTEN);
-
+        
+        LIB_SYMBOL(Env.lib_handle, "OCIRowidToChar",               OCIRowidToChar,
+                   OCIROWIDTOCHAR);
+                   
         LIB_SYMBOL(Env.lib_handle, "xaoSvcCtx",                    xaoSvcCtx,
                    XAOSVCCTX);
         LIB_SYMBOL(Env.lib_handle, "xaoEnv",                       xaoEnv,

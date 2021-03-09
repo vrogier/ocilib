@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@
 
 #define OCILIB_MAJOR_VERSION     4
 #define OCILIB_MINOR_VERSION     7
-#define OCILIB_REVISION_VERSION  2
+#define OCILIB_REVISION_VERSION  3
 
 /* Import mode */
 
@@ -115,19 +115,6 @@
   #endif
 #endif
 
-/* Build modes */
-
-#ifndef OCI_EXPORT
-  #define OCI_EXPORT
-#endif
-
-#define OCI_LIB_TYPE_SHARED  1
-#define OCI_LIB_TYPE_STATIC  2
-
-#ifndef OCI_LIB_TYPE
-  #define OCI_LIB_TYPE OCI_LIB_TYPE_SHARED
-#endif
-
 /* Control of symbol visibility for shared libraries */
 
 #if defined _WINDOWS
@@ -146,14 +133,14 @@
   #endif
 #endif
 
-#if OCI_LIB_TYPE == OCI_LIB_TYPE_SHARED
+#ifdef OCI_LIB_LOCAL_COMPILE
+  #define OCI_SYM_PUBLIC
+#else
   #ifdef OCI_EXPORT
     #define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_EXPORT
   #else
     #define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_IMPORT
   #endif
-#else
-  #define OCI_SYM_PUBLIC
 #endif
 
 /* Charset modes */

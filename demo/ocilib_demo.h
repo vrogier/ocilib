@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,9 @@ typedef struct test_t
 
 #include "ocilib.h"
 
+#include <stdio.h>
+#include <wchar.h>
+
 /* --------------------------------------------------------------------------------------------- *
  * PLATFORMS
  * --------------------------------------------------------------------------------------------- */
@@ -120,20 +123,18 @@ typedef struct test_t
 
     #define omain           wmain
     #define oarg            otext
-    #define print_args(x)   wprintf(x)
-    #define GET_ARG(s, i)   ostrncat(s, argv[i], sizeof(s))
+    #define GET_ARG(s, i)   wcsncat(s, argv[i], sizeof(s))
 
   #else
 
     #define omain           main
     #define oarg            char
-    #define print_args(x)   printf(x)
     #define GET_ARG(s, i)   mbstowcs(s, argv[i], sizeof(s))
 
   #endif
 
     #define ostrlen         wcslen
-    #define osprintf        wsprintf
+    #define osprintf        swprintf
 
 #else
 
@@ -143,7 +144,7 @@ typedef struct test_t
   #define GET_ARG(s, i)   strncat(s, argv[i], sizeof(s)-1)
 
   #define ostrlen         strlen
-  #define osprintf        sprintf
+  #define osprintf        snprintf
 
 #endif
 

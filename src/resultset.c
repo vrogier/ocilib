@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -597,6 +597,14 @@ static boolean OcilibResultsetClearFetchedObjectInstances(OCI_Resultset *rs)
                 }
             }
         }
+
+        if (NULL != def->obj)
+        {
+            /* previously assigned handle is invalided
+               We shall not try manipulate its oci handle when calling the destructor method */ 
+           
+            ((OCI_Datatype*)def->obj)->hstate = OCI_OBJECT_FETCHED_INVALIDATED;
+        }
     }
 
     SET_SUCCESS()
@@ -839,11 +847,18 @@ boolean OcilibResultsetFree
 
         /* free buffer objects */
 
-        if (def->obj)
+        if (NULL != def->obj)
         {
             /* handy cast to set object state flag */
 
-            ((OCI_Datatype *)def->obj)->hstate = OCI_OBJECT_FETCHED_DIRTY;
+            OCI_Datatype* data_type = (OCI_Datatype*)def->obj;
+
+            /* mark it as dirty only is it not already invalidated */
+
+            if (data_type->hstate != OCI_OBJECT_FETCHED_INVALIDATED)
+            {
+                data_type->hstate = OCI_OBJECT_FETCHED_DIRTY;
+            }
 
             if (OCI_CDT_CURSOR == def->col.datatype)
             {
@@ -1774,17 +1789,57 @@ const otext * OcilibResultsetGetString
 
         if (OCI_CDT_TEXT == def->col.datatype)
         {
-            result = (otext *)OcilibDefineGetData(def);
+            /* special case for ROWIDs exposed as strings but internally handled as rowid descriptors */
 
-            /* for long mapped to string, the zero terminal character is not
-                always added by Oracle ? or OCILIB issue ? Anyway we check the
-                length returned by Oracle and set it properly */
-
-            if (OCI_CLONG == def->col.subtype)
+            if (IS_ROWID_COL(&def->col))
             {
-                ub2* lens = (ub2 *)def->buf.lens;
+                OCIRowid* rowid = (OCIRowid*)OcilibDefineGetData(def);
+                ub2 rowid_length = 0;
 
-                result[lens[rs->row_cur - 1]] = 0;
+                /* retrieve the size - no error checking */
+
+                OCIRowidToChar(rowid, NULL, &rowid_length, def->rs->stmt->con->err);
+
+                if (rowid_length > 0)
+                {
+                    /* allocate column temporary buffer if needed */
+
+                    CHECK(OcilibStringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, rowid_length))
+
+                    /* Retrieve ROWID as hex string */
+
+                    CHECK_OCI
+                    (
+                        rs->stmt->con->err,
+                        OCIRowidToChar,
+                        rowid, (OraText*) def->buf.tmpbuf, &rowid_length, rs->stmt->con->err
+                    )
+
+                    if (OCI_CHAR_WIDE == Env.charset)
+                    {
+                        /* ROWIDs hex strings are always returned by OCI client as ANSI strings, 
+                           we need to expand them to native wide character strings */
+
+                        OcilibStringAnsiToNative(def->buf.tmpbuf, def->buf.tmpbuf, rowid_length);
+                    }
+
+                    result = def->buf.tmpbuf;
+                }
+            }
+            else
+            {
+                result = (otext*)OcilibDefineGetData(def);
+
+                /* for long mapped to string, the zero terminal character is not
+                    always added by Oracle ? or OCILIB issue ? Anyway we check the
+                    length returned by Oracle and set it properly */
+
+                if (OCI_CLONG == def->col.subtype)
+                {
+                    ub2* lens = (ub2 *)def->buf.lens;
+
+                    result[lens[rs->row_cur - 1]] = 0;
+                }
             }
         }
         else if ((OCI_CDT_LONG == def->col.datatype) && (OCI_CLONG == def->col.subtype))

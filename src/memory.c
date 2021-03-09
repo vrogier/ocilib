@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -512,5 +512,5 @@ void OcilibMemoryFreeOracleCallback
 {
     OCI_NOT_USED(ctxp)
 
-        OcilibMemoryFree(memptr);
+    OcilibMemoryFree(memptr);
 }

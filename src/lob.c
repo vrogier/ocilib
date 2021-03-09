@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -184,7 +184,7 @@ boolean OcilibLobFree
     CHECK_PTR(OCI_IPC_LOB, lob)
     CHECK_OBJECT_FETCHED(lob)
 
-    if (OcilibLobIsTemporary(lob))
+    if ((OCI_OBJECT_FETCHED_INVALIDATED != lob->hstate) && OcilibLobIsTemporary(lob))
     {
         CHECK_OCI
         (

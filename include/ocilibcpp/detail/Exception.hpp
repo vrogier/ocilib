@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@
 
 namespace ocilib
 {
-
 inline Exception::Exception() noexcept
     : _what(nullptr),
     _pStatement(nullptr),
@@ -70,13 +69,12 @@ inline Exception& Exception::operator = (const Exception& other) noexcept
         _errLib = other._errLib;
         _errOracle = other._errOracle;
 
-        SetWhat(other._what);
+        CopyWhat(other._what);
     }
 
     return *this;
 }
-
-inline void Exception::SetWhat(const otext* value) noexcept
+inline void Exception::CopyWhat(const char* value) noexcept
 {
     if (_what)
     {
@@ -89,18 +87,63 @@ inline void Exception::SetWhat(const otext* value) noexcept
         return;
     }
 
+    const size_t len = strlen(value) + 1;
 
-#if defined(OCI_CHARSET_ANSI)
-    const size_t len = strlen(value);
-#else
-    const size_t len = wcslen(value);   
-#endif
-
-    _what = new (std::nothrow) otext[len + 1];
+    _what = new (std::nothrow) char[len];
     if (_what)
     {
-        memcpy(_what, value, (len + 1) * (sizeof(otext)));
+        memcpy(_what, value, len);
     }
+}
+
+inline void Exception::SetWhat(const otext* value) noexcept
+{
+
+#if defined(OCI_CHARSET_ANSI)
+
+    CopyWhat(value);
+
+#else
+
+    if (_what)
+    {
+        delete[] _what;
+        _what = nullptr;
+    }
+
+    if (!value)
+    {
+        return;
+    }
+
+    const size_t valueLenght = wcslen(value);
+
+    _what = new (std::nothrow) char[valueLenght + 1];
+    if (_what)
+    {
+        const otext* ptr = value;
+       
+        mbstate_t mbs;
+        mbrlen(nullptr, 0, &mbs);
+    
+    #if defined(_MSC_VER)
+        __pragma(warning(disable : 4996))
+    #endif
+
+        const size_t convLenght = wcsrtombs(_what, &ptr, valueLenght, &mbs);
+
+    #if defined(_MSC_VER)
+        __pragma(warning(default: 4996))
+    #endif   
+            
+        const size_t whatLenght = (static_cast<size_t>(-1) == convLenght) ? 0 : convLenght;
+
+        _what[whatLenght] = 0;
+
+
+    }
+
+#endif
 }
 
 inline const char * Exception::what() const noexcept
@@ -110,9 +153,48 @@ inline const char * Exception::what() const noexcept
 
 inline ostring Exception::GetMessage() const
 {
-    const otext* str = what();
+    const char* str = what();
 
-    return str ? str : ostring{};
+    if (!str)
+    {
+        return ostring{};
+    }
+
+    ostring message;
+
+#if defined(OCI_CHARSET_ANSI)
+
+    message = str;
+
+#else
+
+    const size_t valueLenght = strlen(str);
+
+    message.resize(valueLenght);
+
+    const char* ptr = str;
+
+    mbstate_t mbs;
+    mbrlen(nullptr, 0, &mbs);
+
+
+#if defined(_MSC_VER)
+    __pragma(warning(disable : 4996))
+#endif
+
+    const size_t convLenght = mbsrtowcs(&message[0], &ptr, valueLenght, &mbs);
+
+#if defined(_MSC_VER)
+    __pragma(warning(default: 4996))
+#endif 
+
+    const size_t messLenght = (static_cast<size_t>(-1) == convLenght) ? 0 : convLenght;
+
+    message.resize(messLenght);
+
+#endif
+
+    return message;
 }
 
 inline Exception::ExceptionType Exception::GetType() const

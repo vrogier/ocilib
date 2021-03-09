@@ -154,9 +154,6 @@
     <ClCompile Include="TestTimestamp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
-    <ClCompile Include="TestReportedIssues.cpp">
-      <Filter>Tests suite</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\dirpath.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -210,6 +207,15 @@
     </ClCompile>
     <ClCompile Include="..\src\stringutils.c">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="TestReportedIssuesCApi.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestREportedIssuesCppApi.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestNotifications.cpp">
+      <Filter>Tests suite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

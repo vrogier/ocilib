@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -168,7 +168,7 @@ boolean OcilibColumnRetrieveInfo
         con->err
     )
 
-    /* when the OcilibColumn is a record from a PL/SQL table, OCI returns an undocumented SQLT code */
+    /* when the column is a record from a PL/SQL table, OCI returns an undocumented SQLT code */
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
@@ -235,7 +235,7 @@ boolean OcilibColumnRetrieveInfo
         con->err
     )
 
-    /* type of OcilibColumn length for string based OcilibColumn */
+    /* type of column length for string based column */
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
@@ -364,7 +364,7 @@ boolean OcilibColumnRetrieveInfo
 
 #endif
 
-    /* check nullable only for table based OcilibColumn */
+    /* check nullable only for table based column */
 
     if (ptype < OCI_DESC_TYPE)
     {
@@ -671,7 +671,7 @@ boolean OcilibColumnMapInfo
         {
             col->datatype = OCI_CDT_DATETIME;
 
-            /* We map to SQLT_ODT only it the OcilibColumn is not part of a
+            /* We map to SQLT_ODT only it the column is not part of a
                "returning into" clause (workaround for Oracle
                known bug #3269146
             */
@@ -694,28 +694,10 @@ boolean OcilibColumnMapInfo
         case SQLT_RID:
         case SQLT_RDD:
         {
-            col->libcode  = SQLT_STR;
-            col->datatype = OCI_CDT_TEXT;
-
-            if ((SQLT_RDD == col->sqlcode) || (col->size > sizeof(OCIRowid *)))
-            {
-                /* For Oracle 7 ROWIDs and regular ROWID descriptors, the
-                   max size of the hex value is defined by the constant
-                   OCI_SIZE_ROWID
-                */
-
-                col->bufsize = (ub4) ((OCI_SIZE_ROWID + 1) * char_size);
-            }
-            else
-            {
-                /*  For ROWID descriptor, if OcilibColumn size is bigger than the size
-                    of the descriptor, it means that an UROWID OcilibColumn and then
-                    the OcilibColumn size is the maximum size needed for representing
-                    its value as an hex string
-                */
-
-                col->bufsize = (ub4) ((col->size + 1) * char_size);
-            }
+            col->libcode    = SQLT_RDD;
+            col->datatype   = OCI_CDT_TEXT;
+            col->bufsize    = (ub4)sizeof(OCIRowid*);
+            col->handletype = OCI_DTYPE_ROWID;
             break;
         }
         case SQLT_BIN:
@@ -984,11 +966,11 @@ unsigned int OcilibColumnGetSize
 
     CHECK_PTR(OCI_IPC_COLUMN, col)
 
-    /* Oracle 9i introduced CHAR attribute on string OcilibColumns to indicate the
-       size of the OcilibColumn is not in bytes (default) but in chars
+    /* Oracle 9i introduced CHAR attribute on string columns to indicate the
+       size of the column is not in bytes (default) but in chars
        OCI_ColumnDescribe() already managed the Oracle compatibility
-       version, so if the OcilibColumn character size member is zero it means :
-       - the OcilibColumn is not a string OcilibColumn
+       version, so if the column character size member is zero it means :
+       - the column is not a string column
        - the size is not in char
        - client does not support the OCI_ATTR_CHAR_SIZE attribute */
 
@@ -1184,7 +1166,7 @@ const otext * OcilibColumnGetSqlType
     const otext *type = NULL;
 
     /* VARCHAR type will not be returned because Oracle does not make any
-       difference with VARCHAR2. If a OcilibColumn is created with VARCHAR, it is
+       difference with VARCHAR2. If a column is created with VARCHAR, it is
        internally created as VARCHAR2
     */
 

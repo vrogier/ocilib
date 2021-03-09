@@ -1,4 +1,4 @@
-# Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+# Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
 #  
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without 
@@ -42,6 +42,9 @@ AC_CONFIG_FILES([
    doc/html/Makefile
    demo/Makefile
    demo/Makefile_demo
+   demo/Makefile_demo_cpp
+   tests/Makefile
+   tests/Makefile_tests
  ])
 
 AC_OUTPUT()

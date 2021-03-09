@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -268,8 +268,9 @@ typedef unsigned short dbtext;
 #define OCI_OBJECT_ALLOCATED            1
 #define OCI_OBJECT_FETCHED_CLEAN        2
 #define OCI_OBJECT_FETCHED_DIRTY        3
-#define OCI_OBJECT_ALLOCATED_ARRAY      4
-#define OCI_OBJECT_ALLOCATED_BIND_STMT  5
+#define OCI_OBJECT_FETCHED_INVALIDATED  4
+#define OCI_OBJECT_ALLOCATED_ARRAY      5
+#define OCI_OBJECT_ALLOCATED_BIND_STMT  6
 
 /* --------------------------------------------------------------------------------------------- *
  * bind type
@@ -424,6 +425,10 @@ typedef unsigned short dbtext;
                                      \
     (OCI_CDT_NUMERIC == (type) && OCI_NUM_NUMBER == (subtype))
 
+#define IS_ROWID_COL(col) \
+                                     \
+    (OCI_CDT_TEXT == (col)->datatype && SQLT_RDD == (col)->libcode)
+
 #define IS_OCILIB_OBJECT(type, subtype) \
                                         \
     ( (IS_OCI_NUMBER(type, subtype)) || \
@@ -432,42 +437,41 @@ typedef unsigned short dbtext;
        OCI_CDT_RAW     != (type) &&     \
        OCI_CDT_BOOLEAN != (type)))
 
-
-#ifdef _WINDOWS
-
-#define vsnprintf   _vsnprintf
-#define vsnwprintf  _vsnwprintf
-#define swprintf    _snwprintf
-
-#endif
-
 /* helpers mapping macros */
 
 #ifdef OCI_CHARSET_ANSI
 
-#define ostrcpy          strcpy
-#define ostrncpy         strncpy
-#define ostrcat          strcat
-#define ostrncat         strncat
-#define ostrlen          strlen
-#define ostrcmp          strcmp
-#define ostrtol          strtol
-#define osscanf          sscanf
-#define otoupper         toupper
-#define oisdigit         isdigit
+  #define ostrcpy            strcpy
+  #define ostrncpy           strncpy
+  #define ostrcat            strcat
+  #define ostrncat           strncat
+  #define ostrlen            strlen
+  #define ostrcmp            strcmp
+  #define ostrtol            strtol
+  #define osscanf            sscanf
+  #define otoupper           toupper
+  #define oisdigit           isdigit
+
+  #ifdef _WINDOWS
+    #define ovsprintf       _vsnprintf
+  #else
+    #define ovsprintf       vsnprintf
+
+  #endif
 
 #else
 
-#define ostrcpy          wcscpy
-#define ostrncpy         wcsncpy
-#define ostrcat          wcscat
-#define ostrncat         wcsncat
-#define ostrlen          wcslen
-#define ostrcmp          wcscmp
-#define ostrtol          wcstol
-#define osscanf          swscanf
-#define otoupper         towupper
-#define oisdigit         iswdigit
+  #define ostrcpy           wcscpy
+  #define ostrncpy          wcsncpy
+  #define ostrcat           wcscat
+  #define ostrncat          wcsncat
+  #define ostrlen           wcslen
+  #define ostrcmp           wcscmp
+  #define ostrtol           wcstol
+  #define osscanf           swscanf
+  #define otoupper          towupper
+  #define oisdigit          iswdigit
+  #define ovsprintf         vswprintf
 
 #endif
 

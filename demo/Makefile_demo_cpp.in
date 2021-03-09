@@ -1,0 +1,19 @@
+# Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+#  
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without 
+# modifications, as long as this notice is preserved.
+# 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+CXX=g++
+CPPFLAGS=-D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@
+LDLIBS=-L@ORACLE_HOME@ -lclntsh  -L@OCILIB_PREFIX@/lib -locilib -I/usr/local/include -lpthread
+
+all:
+	$(CXX) -o ocilib_demo_cpp ocilib_demo.cpp $(CPPFLAGS) $(LDFLAGS) $(LDLIBS)
+
+clean:
+	rm -f $(OBJS)

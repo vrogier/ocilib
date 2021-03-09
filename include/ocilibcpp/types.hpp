@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -463,8 +463,9 @@ namespace ocilib
         Exception(OCI_Error* err) noexcept;
 
         void SetWhat(const otext* value) noexcept;
+        void CopyWhat(const char* value) noexcept;
 
-        otext* _what;
+        char* _what;
         OCI_Statement* _pStatement;
         OCI_Connection* _pConnnection;
         unsigned int _row;

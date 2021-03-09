@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,11 +32,6 @@ namespace ocilib
         }
 
         template<typename T>
-        core::ManagedBuffer<T>::ManagedBuffer(T* buffer, size_t size) : _buffer(buffer), _size(size)
-        {
-        }
-
-        template<typename T>
         core::ManagedBuffer<T>::ManagedBuffer(size_t size) : _buffer(core::OnAllocate(new T[size], size)), _size(size)
         {
             memset(_buffer, 0, sizeof(T) * _size);
@@ -44,7 +39,7 @@ namespace ocilib
         template<typename T>
         core::ManagedBuffer<T>::~ManagedBuffer() noexcept
         {
-            delete core::OnDeallocate(_buffer);
+            delete [] core::OnDeallocate(_buffer);
         }
 
         template<typename T>

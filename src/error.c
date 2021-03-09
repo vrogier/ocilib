@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,7 +113,11 @@ void OcilibErrorSet
     err->source_type = source_type;
     err->row         = row;
 
-    const otext* format = OTEXT("Error occured at %s: %s");
+#if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
+    const otext* format = OTEXT("Error occurred at %ls: %ls");
+#else
+    const otext* format = OTEXT("Error occurred at %s: %s");
+#endif 
 
     const size_t format_len = ostrlen(format);
     const size_t message_len = message ? ostrlen(message) : 0;

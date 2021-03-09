@@ -4,7 +4,7 @@
 
 const size_t MaxThread = 10;
 
-static std::atomic<int> ThreadKeyFreeCount = 0;
+static std::atomic<int> ThreadKeyFreeCount {0};
 
 static void KeyCleanup(void* str)
 {

@@ -48,13 +48,16 @@ AC_DEFUN([OCILIB_PATH],
   doc_files=`(cd ${srcdir:-.}/doc/html && ls -1 *.html *.css *.png)`
   OCILIB_DOCS=`echo $doc_files | sed 's,$, ,g'`
 
-  demo_sources_files=`(cd ${srcdir:-.}/demo/ && ls -1 *.c *.h *.cpp *.sql)`
+  demo_sources_files=`(cd ${srcdir:-.}/demo && ls -1 *.c *.h *.cpp *.sql)`
   OCILIB_DEMO_SOURCES=`echo $demo_sources_files | sed 's,$, ,g'`
+
+  tests_files=`(cd ${srcdir:-.}/tests && ls -1 *.h *.cpp)`
+  OCILIB_TESTS=`echo $tests_files | sed 's,$, ,g'`
 
   AC_SUBST(OCILIB_PREFIX)
   AC_SUBST(OCILIB_DOCS)
   AC_SUBST(OCILIB_DEMO_SOURCES)
-
+  AC_SUBST(OCILIB_TESTS)
 ])
 
 dnl ------------------------------------------------------------------------

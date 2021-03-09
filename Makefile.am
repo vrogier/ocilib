@@ -1,4 +1,4 @@
-# Copyright (c) 2007-2020 Vincent ROGIER <vince.rogier@ocilib.net>
+# Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
 #  
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without 
@@ -10,7 +10,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = doc/html reconf configure VERSION acocilib.m4
-SUBDIRS = doc/html src demo
+SUBDIRS = doc/html src demo tests
 DISTCLEANFILES = *~ \#*\#
 MAINTAINERCLEANFILES = \
 Makefile Makefile.in config.cache config.log config.h.in \
