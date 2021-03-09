@@ -5,6 +5,7 @@
         - Issue 251: OCI_ErrorGetMessage() returns invalid messages when OCILIB is build with OCI_CHARSET_WIDE on linux/unix platforms
         - Issue 252: Incorrect OCILIB client driver layer namein V$SESSION_CONNECT_INFO and GV$SESSION_CONNECT_INFO when OCILIB is build with OCI_CHARSET_WIDE on linux/unix platforms
         - Issue 253: Error occured at OcilibLobFree: ORA-01403: no data found
+        - Issue 258: OCI_SubscriptionRegister() returns always NULL since v4.7.0
         - Issue 264: Fetched UROWIDs (IOT Table ROWIDs) values are truncated
         - Issue 268: OCI_DirPathSetColumn() forwards parameter 'maxsize' as unsigned short to Oracle client leading to data truncation
          
