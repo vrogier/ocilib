@@ -18,10 +18,8 @@ Click on a change log entry to see the full details.
 
 
 _[2021-03-09 . version 4.7.3]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.3.txt)_
-
-_[2020-11-10 . version 4.7.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.2.txt)_
-   
-###  Fixes (C API)
+ 
+    * Fixes (C API)
     
         - Issue 251: OCI_ErrorGetMessage() returns invalid messages when OCILIB is build with OCI_CHARSET_WIDE on linux/unix platforms
         - Issue 252: Incorrect OCILIB client driver layer namein V$SESSION_CONNECT_INFO and GV$SESSION_CONNECT_INFO when OCILIB is build with OCI_CHARSET_WIDE on linux/unix platforms
@@ -30,12 +28,12 @@ _[2020-11-10 . version 4.7.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.
         - Issue 264: Fetched UROWIDs (IOT Table ROWIDs) values are truncated
         - Issue 268: OCI_DirPathSetColumn() forwards parameter 'maxsize' as unsigned short to Oracle client leading to data truncation
 
- ###  Fixes (C++ API)  
+    * Fixes (C++ API)  
 
         - Issue 250: Exception handling when using OCI_CHARSET_WIDE
         - Issue 262: Using correct delete[] in ManagedBuffer destructor
 
-###  Miscellaneous
+    * Miscellaneous
 
         - Updated compilers for MS Windows prebuilt binaries
             * VS2019 16.9.0 for 32/64 bit DLLs 
@@ -49,7 +47,24 @@ _[2020-11-10 . version 4.7.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.
                 - Modify the db credentials in ocilib_tests.h
                 - Use Makefile_tests (it depends on google test that must be installed prior building the test suite)
 
+<br/>
+<br/>
+_[2020-11-10 . version 4.7.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.2.txt)_
+  
+    *  Fixes (C API)
     
+        - Issue 247: When using a OCI_Timestamp object created with OCI_TIMESTAMP_TZ flags, some OCILIB timestamps methods might raise an OCI_ERR_NULL_POINTER error
+        - Issue 248: For Oracle client version < 11g, version 4.7.0 broke the ability to fetch data from resultset containing specific datatypes
+        - Fixed some Coverity code analysis findings (hypothetical issues never encountered)
+   
+    *  Miscellaneous
+
+        - Updated C API test suite  
+            * Re-Ran successfully test suite with OCILIB compiled in 8i, 9i, 10g, 11g, 12c, 18c modes (ANSI and Unicode)
+    
+<br/>
+<br/>
+
 _[2020-10-28 . version 4.7.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.1.txt)_
 
   * Enhancements (C API)
@@ -82,7 +97,9 @@ _[2020-10-28 . version 4.7.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.
   
         - Updated compilers for MS Windows prebuilt binaries
             * VS2019 16.7.6 for 32/64 bit DLLs
-            
+ <br/>
+<br/>
+           
 _[2020-07-16 . version 4.7.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.0.txt)_
 
     * Enhancements (C API)
@@ -133,7 +150,9 @@ _[2020-07-16 . version 4.7.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.
     * Miscellaneous
     
         - Extended C API Test suite that has now a much wider coverage
-  
+<br/>
+<br/> 
+
 _[2020-04-18 . version 4.6.4]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.6.4.txt)_
 
     * Fixes (C API)
@@ -148,6 +167,8 @@ _[2020-04-18 . version 4.6.4]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.
 	
 	* Miscellaneous (C++ API)	
 		- Enhanced Number class in C++ API
+<br/>
+<br/>
   
 _[2019-11-01 . version 4.6.3]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.6.3.txt)_
 
