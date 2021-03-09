@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2020-11-10 10:00:00+01:00
+date: 2021-03-09 21:00:00+01:00
 layout: page
 slug: changelogs
 title: Changelogs
@@ -17,18 +17,38 @@ Click on a change log entry to see the full details.
 <br/>
 
 
+_[2021-03-09 . version 4.7.3]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.3.txt)_
+
 _[2020-11-10 . version 4.7.2]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.2.txt)_
    
-    * Fixes (C API)
+###  Fixes (C API)
     
-        - Issue 247: When using a OCI_Timestamp object created with OCI_TIMESTAMP_TZ flags, some OCILIB timestamps methods might raise an OCI_ERR_NULL_POINTER error
-        - Issue 248: For Oracle client version < 11g, version 4.7.0 broke the ability to fetch data from resultset containing specific datatypes
-        - Fixed some Coverity code analysis findings (hypothetical issues never encountered)
-   
-   * Miscellaneous
+        - Issue 251: OCI_ErrorGetMessage() returns invalid messages when OCILIB is build with OCI_CHARSET_WIDE on linux/unix platforms
+        - Issue 252: Incorrect OCILIB client driver layer namein V$SESSION_CONNECT_INFO and GV$SESSION_CONNECT_INFO when OCILIB is build with OCI_CHARSET_WIDE on linux/unix platforms
+        - Issue 253: Error occured at OcilibLobFree: ORA-01403: no data found
+        - Issue 258: OCI_SubscriptionRegister() returns always NULL since v4.7.0
+        - Issue 264: Fetched UROWIDs (IOT Table ROWIDs) values are truncated
+        - Issue 268: OCI_DirPathSetColumn() forwards parameter 'maxsize' as unsigned short to Oracle client leading to data truncation
 
-        - Updated C API test suite  
-            * Re-Ran successfully test suite with OCILIB compiled in 8i, 9i, 10g, 11g, 12c, 18c modes (ANSI and Unicode)
+ ###  Fixes (C++ API)  
+
+        - Issue 250: Exception handling when using OCI_CHARSET_WIDE
+        - Issue 262: Using correct delete[] in ManagedBuffer destructor
+
+###  Miscellaneous
+
+        - Updated compilers for MS Windows prebuilt binaries
+            * VS2019 16.9.0 for 32/64 bit DLLs 
+            * VC runtime (statically linked) updated from vc141_xp to vc142
+            * Note: Windows XP is not supported anymore due to the runtime update
+        - Reduced some ocilib structures size by removing some paddings (especially in 64bits)
+        - Added a makefile to build the C++ demo (Makefile_demo_cpp) that is also now installed with the C demo Makefile
+        - OCILIB Test suite is now ported to Linux/Unix platforms
+            * Test suite is now provided in ocilib-x.y.z-gnu.tar.gz distribution archives and installed by 'make install' among documentation and demo (typically in /usr/local/share/doc/ocilib/tests)
+            * To build the test suite:
+                - Modify the db credentials in ocilib_tests.h
+                - Use Makefile_tests (it depends on google test that must be installed prior building the test suite)
+
     
 _[2020-10-28 . version 4.7.1]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.1.txt)_
 

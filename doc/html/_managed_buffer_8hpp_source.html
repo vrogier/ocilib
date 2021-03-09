@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.2</span>
+   &#160;<span id="projectnumber">4.7.3</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -94,7 +94,7 @@ $(document).ready(function(){initNavTree('_managed_buffer_8hpp_source.html','');
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Website: http://www.ocilib.net</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Copyright (c) 2007-2020 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Copyright (c) 2007-2021 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * you may not use this file except in compliance with the License.</span></div>
@@ -123,29 +123,24 @@ $(document).ready(function(){initNavTree('_managed_buffer_8hpp_source.html','');
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        }</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        core::ManagedBuffer&lt;T&gt;::ManagedBuffer(T* buffer, <span class="keywordtype">size_t</span> size) : _buffer(buffer), _size(size)</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        core::ManagedBuffer&lt;T&gt;::ManagedBuffer(<span class="keywordtype">size_t</span> size) : _buffer(core::OnAllocate(new T[size], size)), _size(size)</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        }</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            memset(_buffer, 0, <span class="keyword">sizeof</span>(T) * _size);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        }</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        core::ManagedBuffer&lt;T&gt;::ManagedBuffer(<span class="keywordtype">size_t</span> size) : _buffer(core::OnAllocate(new T[size], size)), _size(size)</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        core::ManagedBuffer&lt;T&gt;::~ManagedBuffer() noexcept</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        {</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            memset(_buffer, 0, <span class="keyword">sizeof</span>(T) * _size);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="keyword">delete</span> [] core::OnDeallocate(_buffer);</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        }</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        core::ManagedBuffer&lt;T&gt;::~ManagedBuffer() noexcept</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        {</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <span class="keyword">delete</span> core::OnDeallocate(_buffer);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        }</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        core::ManagedBuffer&lt;T&gt;::operator T* ()</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            <span class="keywordflow">return</span>  _buffer;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        }</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    }</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        core::ManagedBuffer&lt;T&gt;::operator T* ()</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            <span class="keywordflow">return</span>  _buffer;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    }</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="anamespaceocilib_html"><div class="ttname"><a href="namespaceocilib.html">ocilib</a></div><div class="ttdoc">OCILIB ++ Namespace.</div></div>
@@ -154,7 +149,7 @@ $(document).ready(function(){initNavTree('_managed_buffer_8hpp_source.html','');
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_61cd5f35b8b1be43259f22e9b0db1fea.html">Perso</a></li><li class="navelem"><a class="el" href="dir_9298a345c780663689f983db4e6433e5.html">Git</a></li><li class="navelem"><a class="el" href="dir_38eed9049b8d9d8b7380cfb82baf6064.html">ocilib</a></li><li class="navelem"><a class="el" href="dir_77853f29ec0906ca26c7dc6b0c16fc06.html">include</a></li><li class="navelem"><a class="el" href="dir_91afec7e3bd0f86b7baf0415747cde2f.html">ocilibcpp</a></li><li class="navelem"><a class="el" href="dir_fc13dd379b9678babd4c6cbb82880750.html">detail</a></li><li class="navelem"><a class="el" href="dir_0845fe5b1d968d2bdb149df4f5b5e8c4.html">core</a></li><li class="navelem"><b>ManagedBuffer.hpp</b></li>
-    <li class="footer">Generated on Tue Nov 10 2020 14:25:38 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Mar 9 2021 21:51:48 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.20 </li>
   </ul>

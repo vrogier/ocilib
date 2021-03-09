@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.2</span>
+   &#160;<span id="projectnumber">4.7.3</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -95,7 +95,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="line"><span class="comment"> *</span></div>
 <div class="line"><span class="comment"> * Website: http://www.ocilib.net</span></div>
 <div class="line"><span class="comment"> *</span></div>
-<div class="line"><span class="comment"> * Copyright (c) 2007-2020 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
+<div class="line"><span class="comment"> * Copyright (c) 2007-2021 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
 <div class="line"><span class="comment"> *</span></div>
 <div class="line"><span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><span class="comment"> * you may not use this file except in compliance with the License.</span></div>
@@ -159,6 +159,9 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
+<div class="line"><span class="preprocessor">#include &lt;stdio.h&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;wchar.h&gt;</span></div>
+<div class="line"> </div>
 <div class="line"><span class="comment">/* --------------------------------------------------------------------------------------------- *</span></div>
 <div class="line"><span class="comment"> * PLATFORMS</span></div>
 <div class="line"><span class="comment"> * --------------------------------------------------------------------------------------------- */</span></div>
@@ -212,20 +215,18 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">    #define omain           wmain</span></div>
 <div class="line"><span class="preprocessor">    #define oarg            otext</span></div>
-<div class="line"><span class="preprocessor">    #define print_args(x)   wprintf(x)</span></div>
-<div class="line"><span class="preprocessor">    #define GET_ARG(s, i)   ostrncat(s, argv[i], sizeof(s))</span></div>
+<div class="line"><span class="preprocessor">    #define GET_ARG(s, i)   wcsncat(s, argv[i], sizeof(s))</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">  #else</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">    #define omain           main</span></div>
 <div class="line"><span class="preprocessor">    #define oarg            char</span></div>
-<div class="line"><span class="preprocessor">    #define print_args(x)   printf(x)</span></div>
 <div class="line"><span class="preprocessor">    #define GET_ARG(s, i)   mbstowcs(s, argv[i], sizeof(s))</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">  #endif</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">    #define ostrlen         wcslen</span></div>
-<div class="line"><span class="preprocessor">    #define osprintf        wsprintf</span></div>
+<div class="line"><span class="preprocessor">    #define osprintf        swprintf</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#else</span></div>
 <div class="line"> </div>
@@ -235,7 +236,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="line"><span class="preprocessor">  #define GET_ARG(s, i)   strncat(s, argv[i], sizeof(s)-1)</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">  #define ostrlen         strlen</span></div>
-<div class="line"><span class="preprocessor">  #define osprintf        sprintf</span></div>
+<div class="line"><span class="preprocessor">  #define osprintf        snprintf</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#endif</span></div>
 <div class="line"> </div>
@@ -245,7 +246,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="line"><span class="comment"> *</span></div>
 <div class="line"><span class="comment"> * Website: http://www.ocilib.net</span></div>
 <div class="line"><span class="comment"> *</span></div>
-<div class="line"><span class="comment"> * Copyright (c) 2007-2020 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
+<div class="line"><span class="comment"> * Copyright (c) 2007-2021 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
 <div class="line"><span class="comment"> *</span></div>
 <div class="line"><span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><span class="comment"> * you may not use this file except in compliance with the License.</span></div>
@@ -413,11 +414,11 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="line">    <span class="comment">/* CONNECTION TO SERVER ------------------------------------------------- */</span></div>
 <div class="line"> </div>
 <div class="line">    print_text(<span class="stringliteral">&quot;Connecting to &quot;</span>);</div>
-<div class="line">    print_args(usr);</div>
+<div class="line">    print_ostr(usr);</div>
 <div class="line">    print_text(<span class="stringliteral">&quot;/&quot;</span>);</div>
-<div class="line">    print_args(pwd);</div>
+<div class="line">    print_ostr(pwd);</div>
 <div class="line">    print_text(<span class="stringliteral">&quot;@&quot;</span>);</div>
-<div class="line">    print_args(dbs);</div>
+<div class="line">    print_ostr(dbs);</div>
 <div class="line">    print_text(<span class="stringliteral">&quot;\n\n&quot;</span>);</div>
 <div class="line"> </div>
 <div class="line">    cn = <a class="code" href="group___ocilib_c_api_connections.html#ga47258f61e45f047ebca8e8b13b9d89e7">OCI_ConnectionCreate</a>(dbs, usr, pwd, OCI_SESSION_DEFAULT);</div>
@@ -830,7 +831,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="line"> </div>
 <div class="line">    <span class="comment">/* lob */</span></div>
 <div class="line">    lob = <a class="code" href="group___ocilib_c_api_lobs.html#gab188a5d746df15c92add244fed1733ee">OCI_LobCreate</a>(cn, OCI_CLOB);</div>
-<div class="line">    osprintf(temp, OTEXT(<span class="stringliteral">&quot;lob value00&quot;</span>));</div>
+<div class="line">    osprintf(temp, SIZE_STR+1, OTEXT(<span class="stringliteral">&quot;lob value00&quot;</span>));</div>
 <div class="line">    <a class="code" href="group___ocilib_c_api_lobs.html#ga0757fd55ca99679cb924d7e8841223e1">OCI_LobWrite</a>(lob, temp, (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>) ostrlen(temp));</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">/* file */</span></div>
@@ -841,7 +842,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="line">    i   = 1;</div>
 <div class="line">    dbl = 3.14;</div>
 <div class="line">    flt = (float) 3.14;</div>
-<div class="line">    osprintf(temp, OTEXT(<span class="stringliteral">&quot;Name00&quot;</span>));</div>
+<div class="line">    osprintf(temp, SIZE_STR+1, OTEXT(<span class="stringliteral">&quot;Name00&quot;</span>));</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">/* bind scalar C types arrays */</span></div>
 <div class="line"> </div>
@@ -1417,17 +1418,17 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="line">        tab_int[i] = i+1;</div>
 <div class="line">        tab_dbl[i] = 3.14*(double)(i+1);</div>
 <div class="line">        tab_flt[i] = (float) 3.14*(<span class="keywordtype">float</span>)(i+1);</div>
-<div class="line">        osprintf(tab_str[i], OTEXT(<span class="stringliteral">&quot;Name%02i&quot;</span>), i+1);</div>
+<div class="line">        osprintf(tab_str[i], 31, OTEXT(<span class="stringliteral">&quot;Name%02i&quot;</span>), i+1);</div>
 <div class="line"> </div>
 <div class="line">        <span class="comment">/* date */</span></div>
 <div class="line">        <a class="code" href="group___ocilib_c_api_datetimes.html#gae73613cf6173243848ddfd3295b448c4">OCI_DateSysDate</a>(tab_date[i]);</div>
 <div class="line"> </div>
 <div class="line">        <span class="comment">/* lob */</span></div>
-<div class="line">        osprintf(temp, OTEXT(<span class="stringliteral">&quot;lob value%02i&quot;</span>), i+1);</div>
+<div class="line">        osprintf(temp, SIZE_STR+1, OTEXT(<span class="stringliteral">&quot;lob value%02i&quot;</span>), i+1);</div>
 <div class="line">        <a class="code" href="group___ocilib_c_api_lobs.html#ga0757fd55ca99679cb924d7e8841223e1">OCI_LobWrite</a>(tab_lob[i], temp, (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>) ostrlen(temp));</div>
 <div class="line"> </div>
 <div class="line">        <span class="comment">/* file */</span></div>
-<div class="line">        osprintf(str, OTEXT(<span class="stringliteral">&quot;file%02i.txt&quot;</span>), i+1);</div>
+<div class="line">        osprintf(str, SIZE_STR+1, OTEXT(<span class="stringliteral">&quot;file%02i.txt&quot;</span>), i+1);</div>
 <div class="line">        <a class="code" href="group___ocilib_c_api_files.html#ga8ed41c02a9089b49fd8093313200cf28">OCI_FileSetName</a>(tab_file[i], OTEXT(<span class="stringliteral">&quot;mydir&quot;</span>), str);</div>
 <div class="line">    }</div>
 <div class="line"> </div>
@@ -1874,9 +1875,9 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="line">        <a class="code" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *tbl;</div>
 <div class="line">        <span class="keywordtype">boolean</span> res = TRUE;</div>
 <div class="line"> </div>
-<div class="line">        otext val1[SIZE_COL1+1];</div>
-<div class="line">        otext val2[SIZE_COL2+1];</div>
-<div class="line">        otext val3[SIZE_COL3+1];</div>
+<div class="line">        otext val1[SIZE_COL1+1] = OTEXT(<span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line">        otext val2[SIZE_COL2+1] = OTEXT(<span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line">        otext val3[SIZE_COL3+1] = OTEXT(<span class="stringliteral">&quot;&quot;</span>);</div>
 <div class="line"> </div>
 <div class="line">        <span class="keywordtype">int</span> i = 0, j = 0, nb_rows = SIZE_ARRAY;</div>
 <div class="line">        <span class="keywordtype">int</span> state;</div>
@@ -1923,9 +1924,9 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="line">                {</div>
 <div class="line">                    <span class="comment">/* fill test values */</span></div>
 <div class="line"> </div>
-<div class="line">                    osprintf(val1, OTEXT(<span class="stringliteral">&quot;%04d&quot;</span>), i + (i*100));</div>
-<div class="line">                    osprintf(val2, OTEXT(<span class="stringliteral">&quot;value %05d&quot;</span>), j + (i*100));</div>
-<div class="line">                    osprintf(val3, OTEXT(<span class="stringliteral">&quot;%04d%02d%02d&quot;</span>), (j%23)+1 + 2000,</div>
+<div class="line">                    osprintf(val1, SIZE_COL1+1, OTEXT(<span class="stringliteral">&quot;%04d&quot;</span>), i + (i*100));</div>
+<div class="line">                    osprintf(val2, SIZE_COL2+1, OTEXT(<span class="stringliteral">&quot;value %05d&quot;</span>), j + (i*100));</div>
+<div class="line">                    osprintf(val3, SIZE_COL3+1, OTEXT(<span class="stringliteral">&quot;%04d%02d%02d&quot;</span>), (j%23)+1 + 2000,</div>
 <div class="line">                                                                     (j%11)+1,</div>
 <div class="line">                                                                     (j%23)+1);</div>
 <div class="line"> </div>
@@ -1943,7 +1944,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="line">                    <span class="keywordflow">if</span> ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))</div>
 <div class="line">                        res = <a class="code" href="group___ocilib_c_api_direct_path.html#gafe08b47fda4d47fec4d3f47b6c88036e">OCI_DirPathLoad</a>(dp);</div>
 <div class="line"> </div>
-<div class="line">                    <span class="keywordflow">if</span> (state == OCI_DPR_COMPLETE)</div>
+<div class="line">                    <span class="keywordflow">if</span> (state == OCI_DPR_COMPLETE || state == OCI_DPR_ERROR)</div>
 <div class="line">                        <span class="keywordflow">break</span>;</div>
 <div class="line">                }</div>
 <div class="line">            }</div>
@@ -2335,7 +2336,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gaaedce0c8f66eb60445fb759900d32f04"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Prepare(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare a SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_files_html_gac99e87670781d36d0852aa30af65f4d6"><div class="ttname"><a href="group___ocilib_c_api_files.html#gac99e87670781d36d0852aa30af65f4d6">OCI_FileCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_File *OCI_API OCI_FileCreate(OCI_Connection *con, unsigned int type)</div><div class="ttdoc">Create a file object instance.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_gafbbd89897d747b4935146dc317f8071e"><div class="ttname"><a href="group___ocilib_c_api_binding.html#gafbbd89897d747b4935146dc317f8071e">OCI_BindNumber</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_BindNumber(OCI_Statement *stmt, const otext *name, OCI_Number *data)</div><div class="ttdoc">Bind an Number variable.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga88d4b7a22a0996612532961510afb861"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga88d4b7a22a0996612532961510afb861">big_int</a></div><div class="ttdeci">long long big_int</div><div class="ttdoc">big_int is a C scalar integer (32 or 64 bits) depending on compiler support for 64bits integers....</div><div class="ttdef"><b>Definition:</b> <a href="platform_8h_source.html#l00294">platform.h:294</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga88d4b7a22a0996612532961510afb861"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga88d4b7a22a0996612532961510afb861">big_int</a></div><div class="ttdeci">long long big_int</div><div class="ttdoc">big_int is a C scalar integer (32 or 64 bits) depending on compiler support for 64bits integers....</div><div class="ttdef"><b>Definition:</b> <a href="platform_8h_source.html#l00281">platform.h:281</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga95e122a9e888afdd674803e521557aba"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga95e122a9e888afdd674803e521557aba">OCI_Long</a></div><div class="ttdeci">struct OCI_Long OCI_Long</div><div class="ttdoc">Oracle Long data type.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00001">types.h:248</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_user_types_html_ga9fce7380b7c0a040287788115950fe3c"><div class="ttname"><a href="group___ocilib_c_api_user_types.html#ga9fce7380b7c0a040287788115950fe3c">OCI_ObjectGetRaw</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_ObjectGetRaw(OCI_Object *obj, const otext *attr, void *value, unsigned int len)</div><div class="ttdoc">Return the raw attribute value of the given object attribute into the given buffer.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_timestamps_html_ga793beb5bae3200b75a294e19cc0cc235"><div class="ttname"><a href="group___ocilib_c_api_timestamps.html#ga793beb5bae3200b75a294e19cc0cc235">OCI_TimestampCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Timestamp *OCI_API OCI_TimestampCreate(OCI_Connection *con, unsigned int type)</div><div class="ttdoc">Create a local Timestamp instance.</div></div>
@@ -2371,7 +2372,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_demo_application.
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Nov 10 2020 14:25:39 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Mar 9 2021 21:51:49 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.20 </li>
   </ul>

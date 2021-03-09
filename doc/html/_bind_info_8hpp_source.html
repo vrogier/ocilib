@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.2</span>
+   &#160;<span id="projectnumber">4.7.3</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -94,7 +94,7 @@ $(document).ready(function(){initNavTree('_bind_info_8hpp_source.html',''); init
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Website: http://www.ocilib.net</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Copyright (c) 2007-2020 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Copyright (c) 2007-2021 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * you may not use this file except in compliance with the License.</span></div>
@@ -176,7 +176,7 @@ $(document).ready(function(){initNavTree('_bind_info_8hpp_source.html',''); init
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="aclassocilib_1_1_bind_info_html_a70f42f1c564f6b4a7d94dcb40b6d99a3"><div class="ttname"><a href="classocilib_1_1_bind_info.html#a70f42f1c564f6b4a7d94dcb40b6d99a3">ocilib::BindInfo::BindDirection</a></div><div class="ttdeci">core::Enum&lt; BindDirectionValues &gt; BindDirection</div><div class="ttdoc">Bind direction.</div><div class="ttdef"><b>Definition:</b> <a href="types_8hpp_source.html#l05386">types.hpp:5386</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_bind_info_html_a70f42f1c564f6b4a7d94dcb40b6d99a3"><div class="ttname"><a href="classocilib_1_1_bind_info.html#a70f42f1c564f6b4a7d94dcb40b6d99a3">ocilib::BindInfo::BindDirection</a></div><div class="ttdeci">core::Enum&lt; BindDirectionValues &gt; BindDirection</div><div class="ttdoc">Bind direction.</div><div class="ttdef"><b>Definition:</b> <a href="types_8hpp_source.html#l05387">types.hpp:5387</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga7bf7e94c3be66d0a7c8edad675133f41"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga7bf7e94c3be66d0a7c8edad675133f41">OCI_Bind</a></div><div class="ttdeci">struct OCI_Bind OCI_Bind</div><div class="ttdoc">Internal bind representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00001">types.h:136</a></div></div>
 <div class="ttc" id="anamespaceocilib_1_1core_html_a591f0993deea0ef65ce097c97e078543"><div class="ttname"><a href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check</a></div><div class="ttdeci">static T Check(T result)</div><div class="ttdoc">Internal usage. Checks if the last OCILIB function call has raised an error. If so,...</div><div class="ttdef"><b>Definition:</b> <a href="_utils_8hpp_source.html#l00053">Utils.hpp:53</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_gac67a363032169df8cbcf4a1e60cd23ec"><div class="ttname"><a href="group___ocilib_c_api_binding.html#gac67a363032169df8cbcf4a1e60cd23ec">OCI_BindGetName</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_BindGetName(OCI_Bind *bnd)</div><div class="ttdoc">Return the name of the given bind.</div></div>
@@ -189,7 +189,7 @@ $(document).ready(function(){initNavTree('_bind_info_8hpp_source.html',''); init
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_gadf10728f2c02ff6a582011acf9550e7d"><div class="ttname"><a href="group___ocilib_c_api_binding.html#gadf10728f2c02ff6a582011acf9550e7d">OCI_BindGetType</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetType(OCI_Bind *bnd)</div><div class="ttdoc">Return the OCILIB type of the given bind.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_ga0c8f47b7fb21238614dc18805b41da33"><div class="ttname"><a href="group___ocilib_c_api_binding.html#ga0c8f47b7fb21238614dc18805b41da33">OCI_BindIsNullAtPos</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_BindIsNullAtPos(OCI_Bind *bnd, unsigned int position)</div><div class="ttdoc">Check if the current entry value at the given index of the binded array is marked as NULL.</div></div>
 <div class="ttc" id="aclassocilib_1_1_bind_info_html_afffaaaf7a39bc9e7f57a512b125b2cda"><div class="ttname"><a href="classocilib_1_1_bind_info.html#afffaaaf7a39bc9e7f57a512b125b2cda">ocilib::BindInfo::SetDataNull</a></div><div class="ttdeci">void SetDataNull(bool value, unsigned int index=1)</div><div class="ttdoc">Mark as null or not null the current bind real value(s) used in SQL statements.</div><div class="ttdef"><b>Definition:</b> <a href="_bind_info_8hpp_source.html#l00058">BindInfo.hpp:58</a></div></div>
-<div class="ttc" id="aclassocilib_1_1_statement_html"><div class="ttname"><a href="classocilib_1_1_statement.html">ocilib::Statement</a></div><div class="ttdoc">Object used for executing SQL or PL/SQL statement and returning the produced results.</div><div class="ttdef"><b>Definition:</b> <a href="types_8hpp_source.html#l05535">types.hpp:5536</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_statement_html"><div class="ttname"><a href="classocilib_1_1_statement.html">ocilib::Statement</a></div><div class="ttdoc">Object used for executing SQL or PL/SQL statement and returning the produced results.</div><div class="ttdef"><b>Definition:</b> <a href="types_8hpp_source.html#l05536">types.hpp:5537</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_gac57837a2afa4b6fcfc709d82c610f074"><div class="ttname"><a href="group___ocilib_c_api_binding.html#gac57837a2afa4b6fcfc709d82c610f074">OCI_BindGetStatement</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_BindGetStatement(OCI_Bind *bnd)</div><div class="ttdoc">Return the statement handle associated with a bind handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_gacdafaff6e6722820f15b4c9ec79bb20f"><div class="ttname"><a href="group___ocilib_c_api_binding.html#gacdafaff6e6722820f15b4c9ec79bb20f">OCI_BindSetCharsetForm</a></div><div class="ttdeci">boolean OCI_API OCI_BindSetCharsetForm(OCI_Bind *bnd, unsigned int csfrm)</div><div class="ttdoc">Set the charset form of the given character based bind variable.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_gaab9becc077dd4327b9d782df51b72835"><div class="ttname"><a href="group___ocilib_c_api_binding.html#gaab9becc077dd4327b9d782df51b72835">OCI_BindSetNotNullAtPos</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNotNullAtPos(OCI_Bind *bnd, unsigned int position)</div><div class="ttdoc">Set to NOT null the entry in the bind variable input array.</div></div>
@@ -209,7 +209,7 @@ $(document).ready(function(){initNavTree('_bind_info_8hpp_source.html',''); init
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_61cd5f35b8b1be43259f22e9b0db1fea.html">Perso</a></li><li class="navelem"><a class="el" href="dir_9298a345c780663689f983db4e6433e5.html">Git</a></li><li class="navelem"><a class="el" href="dir_38eed9049b8d9d8b7380cfb82baf6064.html">ocilib</a></li><li class="navelem"><a class="el" href="dir_77853f29ec0906ca26c7dc6b0c16fc06.html">include</a></li><li class="navelem"><a class="el" href="dir_91afec7e3bd0f86b7baf0415747cde2f.html">ocilibcpp</a></li><li class="navelem"><a class="el" href="dir_fc13dd379b9678babd4c6cbb82880750.html">detail</a></li><li class="navelem"><b>BindInfo.hpp</b></li>
-    <li class="footer">Generated on Tue Nov 10 2020 14:25:38 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Mar 9 2021 21:51:48 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.20 </li>
   </ul>

@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.2</span>
+   &#160;<span id="projectnumber">4.7.3</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -103,7 +103,7 @@ Description</h1>
 </ul>
 <h1><a class="anchor" id="Version"></a>
 Version information</h1>
-<p>Current version : <b>4.7.2</b></p>
+<p>Current version : <b>4.7.3</b></p>
 <h1><a class="anchor" id="Features"></a>
 Main features</h1>
 <ul>
@@ -147,7 +147,37 @@ License</h1>
 <p>The source code is free source code licensed under the Apache License, Version 2.0. (see the file LICENSE)</p>
 <h1><a class="anchor" id="Changelog"></a>
 ChangeLog</h1>
-<div class="fragment"><div class="line">2020-11-10 Version 4.7.2 Vincent Rogier vince.rogier@ocilib.net</div>
+<div class="fragment"><div class="line">2021-03-09 Version 4.7.3 Vincent Rogier vince.rogier@ocilib.net</div>
+<div class="line">   </div>
+<div class="line">    * Fixes (C API)</div>
+<div class="line">    </div>
+<div class="line">        - Issue 251: OCI_ErrorGetMessage() returns invalid messages when OCILIB is build with OCI_CHARSET_WIDE on linux/unix platforms</div>
+<div class="line">        - Issue 252: Incorrect OCILIB client driver layer namein V$SESSION_CONNECT_INFO and GV$SESSION_CONNECT_INFO when OCILIB is build with OCI_CHARSET_WIDE on linux/unix platforms</div>
+<div class="line">        - Issue 253: Error occured at OcilibLobFree: ORA-01403: no data found</div>
+<div class="line">        - Issue 258: OCI_SubscriptionRegister() returns always NULL since v4.7.0</div>
+<div class="line">        - Issue 264: Fetched UROWIDs (IOT Table ROWIDs) values are truncated</div>
+<div class="line">        - Issue 268: OCI_DirPathSetColumn() forwards parameter &#39;maxsize&#39; as unsigned short to Oracle client leading to data truncation</div>
+<div class="line">         </div>
+<div class="line">    * Fixes (C++ API)</div>
+<div class="line">    </div>
+<div class="line">        - Issue 250: Exception handling when using OCI_CHARSET_WIDE</div>
+<div class="line">        - Issue 262: Using correct delete[] in ManagedBuffer destructor</div>
+<div class="line">  </div>
+<div class="line">   * Miscellaneous</div>
+<div class="line"> </div>
+<div class="line">        - Updated compilers for MS Windows prebuilt binaries</div>
+<div class="line">            * VS2019 16.9.0 for 32/64 bit DLLs </div>
+<div class="line">            * VC runtime (statically linked) updated from vc141_xp to vc142</div>
+<div class="line">            * Note: Windows XP is not supported anymore due to the runtime update</div>
+<div class="line">        - Reduced some ocilib structures size by removing some paddings (especially in 64bits)</div>
+<div class="line">        - Added a makefile to build the C++ demo (Makefile_demo_cpp) that is also now installed with the C demo Makefile</div>
+<div class="line">        - OCILIB Test suite is now ported to Linux/Unix platforms</div>
+<div class="line">            * Test suite is now provided in ocilib-x.y.z-gnu.tar.gz distribution archives and installed by &#39;make install&#39; among documentation and demo (typically in /usr/local/share/doc/ocilib/tests)</div>
+<div class="line">            * To build the test suite:</div>
+<div class="line">                - Modify the db credentials in ocilib_tests.h</div>
+<div class="line">                - Use Makefile_tests (it depends on google test that must be installed prior building the test suite)</div>
+<div class="line">                </div>
+<div class="line">2020-11-10 Version 4.7.2 Vincent Rogier vince.rogier@ocilib.net</div>
 <div class="line">   </div>
 <div class="line">    * Fixes (C API)</div>
 <div class="line">    </div>
@@ -3330,7 +3360,7 @@ ChangeLog</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Nov 10 2020 14:25:39 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Mar 9 2021 21:51:49 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.20 </li>
   </ul>

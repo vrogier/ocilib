@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.2</span>
+   &#160;<span id="projectnumber">4.7.3</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -94,7 +94,7 @@ $(document).ready(function(){initNavTree('_queue_8hpp_source.html',''); initResi
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Website: http://www.ocilib.net</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Copyright (c) 2007-2020 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * Copyright (c) 2007-2021 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * you may not use this file except in compliance with the License.</span></div>
@@ -152,7 +152,7 @@ $(document).ready(function(){initNavTree('_queue_8hpp_source.html',''); initResi
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_ga2c7926f2efe4a881c2a4562f60a76836"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#ga2c7926f2efe4a881c2a4562f60a76836">OCI_QueueStop</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_QueueStop(OCI_Connection *con, const otext *queue_name, boolean enqueue, boolean dequeue, boolean wait)</div><div class="ttdoc">Stop enqueuing or dequeuing or both on the given queue.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_gac8fb7a646ff98e9612dc115346d78107"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#gac8fb7a646ff98e9612dc115346d78107">OCI_QueueCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_QueueCreate(OCI_Connection *con, const otext *queue_name, const otext *queue_table, unsigned int queue_type, unsigned int max_retries, unsigned int retry_delay, unsigned int retention_time, boolean dependency_tracking, const otext *comment)</div><div class="ttdoc">Create a queue.</div></div>
 <div class="ttc" id="aclassocilib_1_1_queue_html_a64eddfb6e3a05447d1695a013c044f3a"><div class="ttname"><a href="classocilib_1_1_queue.html#a64eddfb6e3a05447d1695a013c044f3a">ocilib::Queue::Alter</a></div><div class="ttdeci">static void Alter(const Connection &amp;connection, const ostring &amp;queue, unsigned int maxRetries=0, unsigned int retryDelay=0, unsigned int retentionTime=0, const ostring &amp;comment=OTEXT(&quot;&quot;))</div><div class="ttdoc">Alter the given queue.</div><div class="ttdef"><b>Definition:</b> <a href="_queue_8hpp_source.html#l00034">Queue.hpp:34</a></div></div>
-<div class="ttc" id="aclassocilib_1_1_connection_html"><div class="ttname"><a href="classocilib_1_1_connection.html">ocilib::Connection</a></div><div class="ttdoc">A connection or session with a specific database.</div><div class="ttdef"><b>Definition:</b> <a href="types_8hpp_source.html#l01562">types.hpp:1563</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_connection_html"><div class="ttname"><a href="classocilib_1_1_connection.html">ocilib::Connection</a></div><div class="ttdoc">A connection or session with a specific database.</div><div class="ttdef"><b>Definition:</b> <a href="types_8hpp_source.html#l01563">types.hpp:1564</a></div></div>
 <div class="ttc" id="aclassocilib_1_1_queue_html_adc6da276e2992b09f4376ffa57a7f36b"><div class="ttname"><a href="classocilib_1_1_queue.html#adc6da276e2992b09f4376ffa57a7f36b">ocilib::Queue::Drop</a></div><div class="ttdeci">static void Drop(const Connection &amp;connection, const ostring &amp;queue)</div><div class="ttdoc">Drop the given queue.</div><div class="ttdef"><b>Definition:</b> <a href="_queue_8hpp_source.html#l00039">Queue.hpp:39</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_ga47a06a3de235e407ac89572239cf5311"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#ga47a06a3de235e407ac89572239cf5311">OCI_QueueStart</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_QueueStart(OCI_Connection *con, const otext *queue_name, boolean enqueue, boolean dequeue)</div><div class="ttdoc">Start the given queue.</div></div>
 <div class="ttc" id="aclassocilib_1_1_queue_html_a18e34479d578ffc558debda0da09ccee"><div class="ttname"><a href="classocilib_1_1_queue.html#a18e34479d578ffc558debda0da09ccee">ocilib::Queue::Create</a></div><div class="ttdeci">static void Create(const Connection &amp;connection, const ostring &amp;queue, const ostring &amp;table, QueueType type=NormalQueue, unsigned int maxRetries=0, unsigned int retryDelay=0, unsigned int retentionTime=0, bool dependencyTracking=false, const ostring &amp;comment=OTEXT(&quot;&quot;))</div><div class="ttdoc">Create a queue.</div><div class="ttdef"><b>Definition:</b> <a href="_queue_8hpp_source.html#l00028">Queue.hpp:28</a></div></div>
@@ -165,7 +165,7 @@ $(document).ready(function(){initNavTree('_queue_8hpp_source.html',''); initResi
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_61cd5f35b8b1be43259f22e9b0db1fea.html">Perso</a></li><li class="navelem"><a class="el" href="dir_9298a345c780663689f983db4e6433e5.html">Git</a></li><li class="navelem"><a class="el" href="dir_38eed9049b8d9d8b7380cfb82baf6064.html">ocilib</a></li><li class="navelem"><a class="el" href="dir_77853f29ec0906ca26c7dc6b0c16fc06.html">include</a></li><li class="navelem"><a class="el" href="dir_91afec7e3bd0f86b7baf0415747cde2f.html">ocilibcpp</a></li><li class="navelem"><a class="el" href="dir_fc13dd379b9678babd4c6cbb82880750.html">detail</a></li><li class="navelem"><b>Queue.hpp</b></li>
-    <li class="footer">Generated on Tue Nov 10 2020 14:25:38 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Mar 9 2021 21:51:48 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.20 </li>
   </ul>
