@@ -742,9 +742,9 @@ struct OCI_DirPathColumn
     ub4    format_size;           /* size of the column format */
     ub2    type;                  /* column type */
     ub2    sqlcode;               /* sql type */
-    ub2    bufsize;               /* buffer size */
+    ub4    bufsize;               /* buffer size */
     ub2    index;                 /* ref index in the type info columns list */
-    ub2    maxsize;               /* input max size */
+    ub4    maxsize;               /* input max size */
 };
 
 typedef struct OCI_DirPathColumn OCI_DirPathColumn;
