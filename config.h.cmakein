@@ -1,0 +1,26 @@
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#cmakedefine HAVE_DLFCN_H
+
+/* Name of package */
+#cmakedefine PACKAGE "@CPACK_PACKAGE_NAME@"
+
+/* Define to the address where bug reports for this package should be sent. */
+#cmakedefine PACKAGE_BUGREPORT "@CPACK_PACKAGE_CONTACT@"
+
+/* Define to the full name of this package. */
+#cmakedefine PACKAGE_NAME "@CPACK_PACKAGE_NAME@"
+
+/* Define to the full name and version of this package. */
+#cmakedefine PACKAGE_STRING "@CPACK_PACKAGE_NAME@ @CMAKE_PACKAGE_VERSION@"
+
+/* Define to the one symbol short name of this package. */
+#cmakedefine PACKAGE_TARNAME "@CPACK_PACKAGE_FILE_NAME@"
+
+/* Define to the home page for this package. */
+#cmakedefine PACKAGE_URL "@CPACK_PACKAGE_HOMEPAGE_URL@"
+
+/* Define to the version of this package. */
+#cmakedefine PACKAGE_VERSION "@CMAKE_PACKAGE_VERSION@"
+
+/* Version number of package */
+#cmakedefine VERSION "@CMAKE_PACKAGE_VERSION@"
