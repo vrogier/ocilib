@@ -1918,9 +1918,12 @@ boolean OcilibConnectionEnableServerOutput
 
         /* check parameter ranges ( Oracle 10g increased the size of output line */
 
-        if (con->ver_num >= OCI_10_2 && lnsize > OCI_OUPUT_LSIZE_10G)
+        if (con->ver_num >= OCI_10_2)
         {
-            lnsize = OCI_OUPUT_LSIZE_10G;
+            if (lnsize > OCI_OUPUT_LSIZE_10G)
+            {
+                lnsize = OCI_OUPUT_LSIZE_10G;
+            }
         }
         else if (lnsize > OCI_OUPUT_LSIZE)
         {
