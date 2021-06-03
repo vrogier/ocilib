@@ -2359,6 +2359,10 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_GetSQLVerb
  * - Each OCI_Execute() call may be preceded by an update of the program
  *   variables (for INSERTs for example)
  *
+ * @warning
+ * When using multiple chunks, remember to call OCI_BindSetNullAtPos() and 
+ * OCI_BindSetNotNullAtPos() as the indicators aren't reset after OCI_Execute() of a chunk
+ *
  * Bindings can be:
  *  - IN (host variable are not used anymore after statement execution)
  *  - OUT (host variable are set during statement execution)
@@ -2469,6 +2473,11 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_GetSQLVerb
  * populating the input arrays for the next execution. The array size passed to
  * later OCI_BindArraySetSize() calls cannot be greater than the initial size
  * otherwise an exception will be thrown.
+ *
+ * @warning
+ * When using multiple chunks, remember to call OCI_BindSetNullAtPos() and 
+ * OCI_BindSetNotNullAtPos() as the indicators aren't reset after OCI_Execute() of a chunk
+ *
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -13430,7 +13439,7 @@ OCI_SYM_PUBLIC boolean OCI_DescribeFmt
  *
  * OCILIB uses hash tables internally for index/name columns mapping.
  *
- * OCILIB makes public its hash table’s implementation public for general purpose
+ * OCILIB makes public its hash tableÂ’s implementation public for general purpose
  * uses.
  *
  * OCI_HashTable objects manage string keys / values that can be :
@@ -15966,7 +15975,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetAgentList
  * @warning
  * The return value is valid only until:
  * - OCIDequeueListen() is called again
- * - OCI_DequeueFree(à is called to free the Dequeue object
+ * - OCI_DequeueFree(Ã  is called to free the Dequeue object
  * So Do not store the handle value across calls to OCIDequeueListen()
  *
  * @return
