@@ -714,7 +714,6 @@ struct OCI_TypeInfo
     OCI_Connection *con;         /* pointer to connection object */
     OCI_Column     *cols;        /* array of column datatype info */
     OCI_TypeInfo   *parent_type; /* parent super type for derived type */
-    OCI_Mutex     * mutex;       /* mutex handle for ref counting */
     OCIType        *tdo;         /* datatype object type */
     otext          *name;        /* name of the type info object */
     otext          *schema;      /* owner of the type info object */
@@ -725,7 +724,6 @@ struct OCI_TypeInfo
     ub2             typecode;    /* Oracle type code */
     ub2             colcode;     /* Oracle collection code */
     ub2             nb_cols;     /* number of columns */
-    ub2             refcount;    /* reference counter */
     ub1             is_final;    /* is is a virtual type that can be inherited ? */
 };
 

@@ -13067,12 +13067,13 @@ OCI_SYM_PUBLIC OCI_Connection * OCI_API OCI_TypeInfoGetConnection
  * @param typinf  - Type info handle
  *
  * @note
- * this call is optional.
+ * this call is DEPRECATED.
  * OCI_TypeInfo object are internally tracked and
  * automatically freed when their related connection is freed
+ * Thus this method does nothing
  *
  * @return
- * TRUE on success otherwise FALSE
+ * TRUE if input handle is valid otherwise FALSE
  *
  */
 

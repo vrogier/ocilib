@@ -55,31 +55,6 @@ static boolean OcilibTypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find
         OcilibStringCaseCompare(typinf->schema, find_params->schema) == 0;
 }
 
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibTypeInfoUpdateRefCounter
- * --------------------------------------------------------------------------------------------- */
-
-static void OcilibTypeInfoUpdateRefCounter(OCI_TypeInfo* typinf, sb2 value)
-{
-    if (typinf == NULL)
-    {
-        return;
-    }
-
-    if (NULL != typinf->mutex)
-    {
-        OcilibMutexAcquire(typinf->mutex);
-    }
-
-    typinf->refcount += value;
-
-    if (NULL != typinf->mutex)
-    {
-        OcilibMutexRelease(typinf->mutex);
-    }
-}
-
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTypeInfoFindOrCreate
  * --------------------------------------------------------------------------------------------- */
@@ -104,17 +79,8 @@ static OCI_TypeInfo* OcilibTypeInfoFindOrCreate(OCI_Connection* con, TypeInfoFin
         typinf->struct_size = 0;
         typinf->align = 0;
 
-        if (LIB_THREADED)
-        {
-            typinf->mutex = OcilibMutexCreateInternal();
-        }
-
         *p_is_created = TRUE;
     }
-
-    /* increment type info reference counter on success */
-
-    OcilibTypeInfoUpdateRefCounter(typinf, 1);
 
     return typinf;
 }
@@ -145,12 +111,6 @@ boolean OcilibTypeInfoDispose
     FREE(typinf->name)
     FREE(typinf->schema)
     FREE(typinf->offsets)
-
-    if (NULL != typinf->mutex)
-    {
-        OcilibMutexFree(typinf->mutex);
-        typinf->mutex = NULL;
-    }
 
     OcilibErrorResetSource(NULL, typinf);
 
@@ -696,25 +656,6 @@ boolean OcilibTypeInfoFree
     )
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-
-    /* decrement type info reference counter on success */
-
-    OcilibTypeInfoUpdateRefCounter(typinf, -1);
-
-    if (typinf->refcount == 0)
-    {
-        LOCK_LIST
-        (
-            typinf->con->tinfs,
-            {
-                OcilibListRemove(typinf->con->tinfs, typinf);
-            }
-        )
-
-        OcilibTypeInfoDispose(typinf);
-
-        FREE(typinf)
-    }
 
     SET_SUCCESS()
 
