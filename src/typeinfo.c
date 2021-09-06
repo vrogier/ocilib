@@ -139,6 +139,10 @@ OCI_TypeInfo * OcilibTypeInfoGet
     size_t  max_chars = sizeof(buffer) / sizeof(otext) - 1;
     dbtext* dbstr1    = NULL;
     int     dbsize1   = -1;
+    dbtext* dbstr2    = NULL;
+    int     dbsize2   = -1;
+    dbtext* dbstr3    = NULL;
+    int     dbsize3   = -1;
     sb4     pbsp      = 1;
 
     otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
@@ -242,17 +246,52 @@ OCI_TypeInfo * OcilibTypeInfoGet
             dschp, &pbsp, sizeof(pbsp),
             con->err
         )
-
+  
         /* describe call */
 
-        CHECK_OCI
-        (
-            con->err,
-            OCIDescribeAny,
-            con->cxt, con->err, (dvoid *) dbstr1,
-            (ub4) dbsize1, OCI_OTYPE_NAME,
-            OCI_DEFAULT, OCI_PTYPE_UNK, dschp
-        )
+        if (OCI_TIF_TYPE == type)
+        {
+            OCIType* tdo = NULL;
+
+            /* for types, as OCIDescribeAny() doest not support some cases like SYS.RAW anymore
+               like on previous Oracle versions, let's use OCITypeByName()
+            */
+
+            dbstr2 = OcilibStringGetDBString(typinf->schema, &dbsize2);
+            dbstr3 = OcilibStringGetDBString(typinf->name, &dbsize3);
+
+            CHECK_OCI
+            (
+                con->err,
+                OCITypeByName,
+                con->env, con->err, con->cxt, 
+                (CONST text*) dbstr2, dbsize2,
+                (CONST text*) dbstr3, dbsize3,
+                (text*)0, 0, 
+                OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
+                &tdo
+            )
+
+            CHECK_OCI
+            (
+                con->err,
+                OCIDescribeAny,
+                con->cxt, con->err, tdo,
+                (ub4) 0, OCI_OTYPE_PTR,
+                OCI_DEFAULT, OCI_PTYPE_UNK, dschp
+            )
+        }
+        else
+        { 
+            CHECK_OCI
+            (
+                con->err,
+                OCIDescribeAny,
+                con->cxt, con->err, (dvoid*)dbstr1,
+                (ub4)dbsize1, OCI_OTYPE_NAME,
+                OCI_DEFAULT, OCI_PTYPE_UNK, dschp
+            )
+        }
 
         /* get parameter handle */
 
@@ -415,7 +454,10 @@ OCI_TypeInfo * OcilibTypeInfoGet
                     }
                     default:
                     {
-                        THROW(OcilibExceptionDatatypeNotSupported, typinf->typecode)
+                        if (!pdt)
+                        {
+                            THROW(OcilibExceptionDatatypeNotSupported, typinf->typecode)
+                        }
                         break;
                     }
                 }
@@ -550,6 +592,8 @@ OCI_TypeInfo * OcilibTypeInfoGet
     CLEANUP_AND_EXIT_FUNC
     (
         OcilibStringReleaseDBString(dbstr1);
+        OcilibStringReleaseDBString(dbstr2);
+        OcilibStringReleaseDBString(dbstr3);
 
         /* free temporary strings */
 

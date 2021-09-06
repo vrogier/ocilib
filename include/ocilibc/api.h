@@ -16311,7 +16311,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueStop
  * @note
  * Possible values for parameter 'queue_payload_type' :
  * - For Oracle types (UDT) : use the type name ([schema.].type_name)
- * - For RAW data           : use "SYS.RAW" or "RAW"
+ * - For RAW data           : use "SYS.RAW" or "RAW" (depending on Oracle versions - For latest ones, use "RAW")
  *
  * @note
  * Possible values for parameter 'message_grouping' :

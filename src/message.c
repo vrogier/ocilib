@@ -122,7 +122,7 @@ boolean OcilibMessageFree
 
     /* free message RAW payload if necessary */
 
-    if (NULL != msg->id && (OCI_UNKNOWN == msg->typinf->typecode))
+    if (NULL != msg->payload && (OCI_UNKNOWN == msg->typinf->typecode))
     {
         CHECK_OCI
         (
@@ -132,6 +132,8 @@ boolean OcilibMessageFree
             (OCIRaw **) &msg->payload
         )
     }
+
+    msg->payload = NULL;
 
     /* free message ID */
 

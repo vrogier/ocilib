@@ -183,3 +183,65 @@ TEST(TestQueue, MessageWithConsumers)
 
     ExecDML(OTEXT("drop type TestQueueMessageWithConsumersType"));
 }
+
+
+TEST(TestQueue, SingleRawMessage)
+{
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+    const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+    ASSERT_NE(nullptr, conn);
+
+    // no check - for cleanup
+    OCI_QueueStop(conn, OTEXT("TestQueueSingleRawMessage"), TRUE, TRUE, FALSE);
+    OCI_QueueDrop(conn, OTEXT("TestQueueSingleRawMessage"));
+    OCI_QueueTableDrop(conn, OTEXT("TestQueueSingleRawMessageTable"), TRUE);
+    // end no check
+
+    ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestQueueSingleRawMessageTable"), OTEXT("RAW"), NULL, NULL, FALSE, OCI_AGM_NONE, NULL, 0, 0, NULL));
+    ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestQueueSingleRawMessage"), OTEXT("TestQueueSingleRawMessageTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
+    ASSERT_TRUE(OCI_QueueStart(conn, OTEXT("TestQueueSingleRawMessage"), TRUE, TRUE));
+
+    const auto inf = OCI_TypeInfoGet(conn, OTEXT("SYS.RAW"), OCI_TIF_TYPE);
+    ASSERT_NE(nullptr, inf);
+
+    const auto enq = OCI_EnqueueCreate(inf, OTEXT("TestQueueSingleRawMessage"));
+    ASSERT_NE(nullptr, enq);
+
+    const auto deq = OCI_DequeueCreate(inf, OTEXT("TestQueueSingleRawMessage"));
+    ASSERT_NE(nullptr, deq);
+
+    const auto msg_in = OCI_MsgCreate(inf);
+    ASSERT_NE(nullptr, msg_in);
+
+    const auto byteBring = ostring(OTEXT("123456789"));
+    ASSERT_TRUE(OCI_MsgSetRaw(msg_in, static_cast<const void *>(byteBring.data()), static_cast<unsigned int>(byteBring.size())));
+
+    ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
+
+    ASSERT_TRUE(OCI_MsgFree(msg_in));
+
+    ASSERT_TRUE(OCI_Commit(conn));
+
+    const auto msg_out = OCI_DequeueGet(deq);
+    ASSERT_NE(nullptr, msg_out);
+
+    otext buffer[100] = OTEXT("");
+    unsigned int size = 100;
+    ASSERT_TRUE(OCI_MsgGetRaw(msg_out, static_cast<void*>(buffer), &size));
+
+    ASSERT_EQ(byteBring, ostring(buffer));
+    ASSERT_EQ(byteBring.size(), size);
+
+    ASSERT_TRUE(OCI_EnqueueFree(enq));
+    ASSERT_TRUE(OCI_DequeueFree(deq));
+
+    ASSERT_TRUE(OCI_Commit(conn));
+
+    ASSERT_TRUE(OCI_QueueStop(conn, OTEXT("TestQueueSingleRawMessage"), TRUE, TRUE, FALSE));
+    ASSERT_TRUE(OCI_QueueDrop(conn, OTEXT("TestQueueSingleRawMessage")));
+    ASSERT_TRUE(OCI_QueueTableDrop(conn, OTEXT("TestQueueSingleRawMessageTable"), TRUE));
+
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_Cleanup());
+}

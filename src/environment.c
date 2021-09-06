@@ -419,6 +419,7 @@ OCIARRAYDESCRIPTORALLOC      OCIArrayDescriptorAlloc      = NULL;
 OCIARRAYDESCRIPTORFREE       OCIArrayDescriptorFree       = NULL;
 OCICLIENTVERSION             OCIClientVersion             = NULL;
 OCITYPEBYREF                 OCITypeByRef                 = NULL;
+OCITYPEBYNAME                OCITypeByName                = NULL;
 OCINUMBERTOINT               OCINumberToInt               = NULL;
 OCINUMBERFROMINT             OCINumberFromInt             = NULL;
 OCINUMBERTOREAL              OCINumberToReal              = NULL;
@@ -1071,6 +1072,8 @@ boolean OcilibEnvironmentInitialize
 
         LIB_SYMBOL(Env.lib_handle, "OCITypeByRef",                 OCITypeByRef,
                    OCITYPEBYREF);
+        LIB_SYMBOL(Env.lib_handle, "OCITypeByName",                OCITypeByName,
+                   OCITYPEBYNAME);
 
         LIB_SYMBOL(Env.lib_handle, "OCINumberToInt",               OCINumberToInt,
                    OCINUMBERTOINT);
