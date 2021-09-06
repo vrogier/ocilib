@@ -1530,29 +1530,47 @@ boolean OcilibEnvironmentCleanup
 
     /* dispose list items */
 
-    OcilibListForEach(Env.arrs,  (POCI_LIST_FOR_EACH)OcilibArrayDispose);
-    OcilibListForEach(Env.subs,  (POCI_LIST_FOR_EACH)OcilibSubscriptionDispose);
-    OcilibListForEach(Env.cons,  (POCI_LIST_FOR_EACH)OcilibConnectionDispose);
-    OcilibListForEach(Env.pools, (POCI_LIST_FOR_EACH)OcilibPoolDispose);
+    LOCK_LIST
+    (
+        Env.arrs,
+        {
+            OcilibListForEach(Env.arrs,  (POCI_LIST_FOR_EACH)OcilibArrayDispose);
+            OcilibListClear(Env.arrs);
+        }
+    )
 
-    /* free all arrays */
+    LOCK_LIST
+    (
+        Env.subs,
+        {
+            OcilibListClear(Env.subs);
+            OcilibListForEach(Env.subs,  (POCI_LIST_FOR_EACH)OcilibSubscriptionDispose);
+        }
+    )
 
-    OcilibListClear(Env.arrs);
+    LOCK_LIST
+    (
+        Env.cons,
+        {
+            OcilibListClear(Env.cons);
+            OcilibListForEach(Env.cons,  (POCI_LIST_FOR_EACH)OcilibConnectionDispose);
+        }
+    )
+
+    LOCK_LIST
+    (
+        Env.pools,
+        {
+            OcilibListClear(Env.pools);
+            OcilibListForEach(Env.pools, (POCI_LIST_FOR_EACH)OcilibPoolDispose);
+        }
+    )
+
+    /* free all lists */
+
     OcilibListFree(Env.arrs);
-
-    /* free all subscriptions */
-
-    OcilibListClear(Env.subs);
     OcilibListFree(Env.subs);
-
-    /* free all connections */
-
-    OcilibListClear(Env.cons);
     OcilibListFree(Env.cons);
-
-    /* free all pools */
-
-    OcilibListClear(Env.pools);
     OcilibListFree(Env.pools);
 
     /* free key map */

@@ -24,6 +24,7 @@
 #include "list.h"
 #include "macros.h"
 #include "memory.h"
+#include "mutex.h"
 #include "stringutils.h"
 
 static unsigned int TypeInfoTypeValues[] =
@@ -39,7 +40,7 @@ typedef struct TypeInfoFindParams
     otext      * schema;
     otext      * name;
 } TypeInfoFindParams;
-
+         
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTypeInfoFind
  * --------------------------------------------------------------------------------------------- */
@@ -52,6 +53,70 @@ static boolean OcilibTypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find
         typinf->type == find_params->type &&
         OcilibStringCaseCompare(typinf->name,   find_params->name) == 0 &&
         OcilibStringCaseCompare(typinf->schema, find_params->schema) == 0;
+}
+
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibTypeInfoUpdateRefCounter
+ * --------------------------------------------------------------------------------------------- */
+
+static void OcilibTypeInfoUpdateRefCounter(OCI_TypeInfo* typinf, sb2 value)
+{
+    if (typinf == NULL)
+    {
+        return;
+    }
+
+    if (NULL != typinf->mutex)
+    {
+        OcilibMutexAcquire(typinf->mutex);
+    }
+
+    typinf->refcount += value;
+
+    if (NULL != typinf->mutex)
+    {
+        OcilibMutexRelease(typinf->mutex);
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibTypeInfoFindOrCreate
+ * --------------------------------------------------------------------------------------------- */
+
+static OCI_TypeInfo* OcilibTypeInfoFindOrCreate(OCI_Connection* con, TypeInfoFindParams* p_find_params, boolean* p_is_created)
+{
+    *p_is_created = FALSE;
+
+    OCI_TypeInfo* typinf = OcilibListFind(con->tinfs, (POCI_LIST_FIND)OcilibTypeInfoFind, p_find_params);
+
+    if (NULL == typinf)
+    {
+        typinf = OcilibListAppend(con->tinfs, sizeof(OCI_TypeInfo));
+        if (typinf == NULL)
+        {
+            return typinf;
+        }
+
+        typinf->con = con;
+        typinf->name = OcilibStringDuplicate(p_find_params->name);
+        typinf->schema = OcilibStringDuplicate(p_find_params->schema);
+        typinf->struct_size = 0;
+        typinf->align = 0;
+
+        if (LIB_THREADED)
+        {
+            typinf->mutex = OcilibMutexCreateInternal();
+        }
+
+        *p_is_created = TRUE;
+    }
+
+    /* increment type info reference counter on success */
+
+    OcilibTypeInfoUpdateRefCounter(typinf, 1);
+
+    return typinf;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -80,6 +145,12 @@ boolean OcilibTypeInfoDispose
     FREE(typinf->name)
     FREE(typinf->schema)
     FREE(typinf->offsets)
+
+    if (NULL != typinf->mutex)
+    {
+        OcilibMutexFree(typinf->mutex);
+        typinf->mutex = NULL;
+    }
 
     OcilibErrorResetSource(NULL, typinf);
 
@@ -148,6 +219,8 @@ OCI_TypeInfo * OcilibTypeInfoGet
     otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
     otext obj_name[OCI_SIZE_OBJ_NAME + 1];
 
+    boolean is_created = FALSE;
+
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_PTR(OCI_IPC_STRING,     name)
     CHECK_ENUM_VALUE(type, TypeInfoTypeValues, OTEXT("Type"))
@@ -200,23 +273,22 @@ OCI_TypeInfo * OcilibTypeInfoGet
     find_params.name   = obj_name;
     find_params.schema = obj_schema;
 
-    typinf = OcilibListFind(con->tinfs, (POCI_LIST_FIND)OcilibTypeInfoFind, &find_params);
+    LOCK_LIST
+    (
+        con->tinfs,
+        {
+            typinf = OcilibTypeInfoFindOrCreate(con, &find_params, &is_created);
+        }
+    )
+
+    CHECK_NULL(typinf)
 
     /* Not found, so create type object */
 
-    if (NULL == typinf)
+    if (is_created)
     {
-        typinf = OcilibListAppend(con->tinfs, sizeof(OCI_TypeInfo));
-        CHECK_NULL(typinf)
-
         /* allocate describe handle */
-
-        typinf->con         = con;
-        typinf->name        = OcilibStringDuplicate(obj_name);
-        typinf->schema      = OcilibStringDuplicate(obj_schema);
-        typinf->struct_size = 0;
-        typinf->align       = 0;
-
+        
         CHECK(OcilibMemoryAllocHandle(typinf->con->env, (dvoid **)(void *)&dschp, OCI_HTYPE_DESCRIBE))
 
         /* perform describe */
@@ -570,15 +642,11 @@ OCI_TypeInfo * OcilibTypeInfoGet
                 }
             }
         }
+
+        /* free describe handle */
+
+        OcilibMemoryFreeHandle(dschp, OCI_HTYPE_DESCRIBE);
     }
-
-    /* free describe handle */
-
-    OcilibMemoryFreeHandle(dschp, OCI_HTYPE_DESCRIBE);
-
-    /* increment type info reference counter on success */
-
-    typinf->refcount++;
 
     /* type checking sanity checks */
 
@@ -629,11 +697,20 @@ boolean OcilibTypeInfoFree
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
 
-    typinf->refcount--;
+    /* decrement type info reference counter on success */
+
+    OcilibTypeInfoUpdateRefCounter(typinf, -1);
 
     if (typinf->refcount == 0)
     {
-        OcilibListRemove(typinf->con->tinfs, typinf);
+        LOCK_LIST
+        (
+            typinf->con->tinfs,
+            {
+                OcilibListRemove(typinf->con->tinfs, typinf);
+            }
+        )
+
         OcilibTypeInfoDispose(typinf);
 
         FREE(typinf)

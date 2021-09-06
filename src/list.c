@@ -24,35 +24,18 @@
 #include "memory.h"
 #include "mutex.h"
 
-#define ACQUIRE_LOCK()                          \
-                                                \
-    if (NULL != list->mutex)                    \
-    {                                           \
-        CHECK(OcilibMutexAcquire(list->mutex))  \
-    }
-
-#define RELEASE_LOCK()                          \
-                                                \
-    if (NULL != list->mutex)                    \
-    {                                           \
-        CHECK(OcilibMutexRelease(list->mutex)) \
-    }
-
 #define LIST_FOR_EACH(exp)     \
                                \
     if (list)                  \
     {                          \
         OCI_Item *item = NULL; \
-        ACQUIRE_LOCK()         \
         item = list->head;     \
         while (item)           \
         {                      \
             exp;               \
             item = item->next; \
         }                      \
-        RELEASE_LOCK()         \
     }
-
 /* --------------------------------------------------------------------------------------------- *
  * OcilibListCreateItem
  * --------------------------------------------------------------------------------------------- */
@@ -171,6 +154,7 @@ boolean OcilibListFree
     if (NULL!= list->mutex)
     {
         OcilibMutexFree(list->mutex);
+        list->mutex = NULL;
     }
 
     OcilibErrorResetSource(NULL, list);
@@ -203,8 +187,6 @@ void * OcilibListAppend
 
     CHECK_PTR(OCI_IPC_LIST, list)
 
-    ACQUIRE_LOCK()
-
     item = OcilibListCreateItem(list->type, size);
     CHECK_NULL(item)
 
@@ -225,8 +207,6 @@ void * OcilibListAppend
     }
 
     list->count++;
-
-    RELEASE_LOCK()
 
     SET_RETVAL(item->data)
 
@@ -252,8 +232,6 @@ boolean OcilibListClear
 
     CHECK_PTR(OCI_IPC_LIST, list)
 
-    ACQUIRE_LOCK()
-
     /* walk along the list to free item's buffer */
 
     item = list->head;
@@ -272,8 +250,6 @@ boolean OcilibListClear
 
     list->head  = NULL;
     list->count = 0;
-
-    RELEASE_LOCK()
 
     SET_SUCCESS()
 
@@ -355,8 +331,6 @@ boolean OcilibListRemove
     CHECK_PTR(OCI_IPC_LIST, list)
     CHECK_PTR(OCI_IPC_VOID, data)
 
-    ACQUIRE_LOCK()
-
     item = list->head;
 
     boolean found = FALSE;
@@ -393,8 +367,6 @@ boolean OcilibListRemove
     {
         list->count--;
     }
-
-    RELEASE_LOCK()
 
     SET_RETVAL(found)
 
@@ -467,3 +439,58 @@ void * OcilibListFind
 
     EXIT_FUNC()
 }
+
+/* --------------------------------------------------------------------------------------------- *
+* OcilibListLock
+* --------------------------------------------------------------------------------------------- */
+
+boolean OcilibListLock
+(
+    OCI_List* list
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_LIST, list
+    )
+
+    CHECK_PTR(OCI_IPC_LIST, list)
+
+    if (NULL != list->mutex)
+    {
+        CHECK(OcilibMutexAcquire(list->mutex))
+    }
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OcilibListUnlock
+* --------------------------------------------------------------------------------------------- */
+
+boolean OcilibListUnlock
+(
+    OCI_List* list
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_LIST, list
+    )
+
+    CHECK_PTR(OCI_IPC_LIST, list)
+
+    if (NULL != list->mutex)
+    {                                         
+        CHECK(OcilibMutexRelease(list->mutex))
+    }
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
+}
+

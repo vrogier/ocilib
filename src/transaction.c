@@ -86,7 +86,14 @@ OCI_Transaction * OcilibTransactionCreate
 
     /* create transaction object */
 
-    trans = OcilibListAppend(con->trsns, sizeof(*trans));
+    LOCK_LIST
+    (
+        con->trsns,
+        {
+            trans = OcilibListAppend(con->trsns, sizeof(*trans));
+        }
+    )
+
     CHECK_NULL(trans)
 
     trans->con     = con;
@@ -141,11 +148,17 @@ boolean OcilibTransactionFree
 
     CHECK_PTR(OCI_IPC_TRANSACTION, trans)
 
-    OcilibTransactionDispose(trans);
-
     /* remove transaction from internal list */
 
-    OcilibListRemove(trans->con->trsns, trans);
+    LOCK_LIST
+    (
+        trans->con->trsns,
+        {
+            OcilibListRemove(trans->con->trsns, trans);
+        }
+    )
+
+    CHECK(OcilibTransactionDispose(trans))
 
     FREE(trans)
 

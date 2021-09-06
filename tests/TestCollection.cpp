@@ -128,7 +128,7 @@ TEST(TestCollection, SelectVarray)
     ExecDML(OTEXT("insert into SelectVarray_Table values('category 1', SelectVarray_Coll(SelectVarray_Type(1, 'name 1'), SelectVarray_Type(2, 'name 2')))"));
     ExecDML(OTEXT("insert into SelectVarray_Table values('category 2', SelectVarray_Coll(SelectVarray_Type(3, 'name 3'), SelectVarray_Type(4, 'name 4')))"));
 
-    SelectCollection(OTEXT("SELECT * from SelectVarray_Table"));
+    SelectCollection(OTEXT("SELECT * from SelectVarray_Table order by category"));
 
     ExecDML(OTEXT("drop table SelectVarray_Table"));
     ExecDML(OTEXT("drop type SelectVarray_Coll"));
@@ -144,7 +144,7 @@ TEST(TestCollection, SelectNestedTable)
     ExecDML(OTEXT("insert into SelectNestedTable_Table values('category 1', SelectNestedTable_Coll(SelectNestedTable_Type(1, 'name 1'), SelectNestedTable_Type(2, 'name 2')))"));
     ExecDML(OTEXT("insert into SelectNestedTable_Table values('category 2', SelectNestedTable_Coll(SelectNestedTable_Type(3, 'name 3'), SelectNestedTable_Type(4, 'name 4')))"));
 
-    SelectCollection(OTEXT("SELECT * from SelectNestedTable_Table"));
+    SelectCollection(OTEXT("SELECT * from SelectNestedTable_Table order by category"));
 
     ExecDML(OTEXT("drop table SelectNestedTable_Table"));
     ExecDML(OTEXT("drop type SelectNestedTable_Coll"));

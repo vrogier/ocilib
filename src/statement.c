@@ -1520,7 +1520,16 @@ OCI_Statement * OcilibStatementCreate
 
     /* create statement object */
 
-    OCI_Statement *stmt = OcilibListAppend(con->stmts, sizeof(*stmt));
+    OCI_Statement *stmt = NULL;
+    
+    LOCK_LIST
+    (
+        con->stmts,
+        {
+            stmt = OcilibListAppend(con->stmts, sizeof(*stmt));
+        }
+    )
+
     CHECK_NULL(stmt)
 
     SET_RETVAL(OcilibStatementInitialize(con, (OCI_Statement*)stmt, NULL, FALSE, NULL))
@@ -1546,8 +1555,15 @@ boolean OcilibStatementFree
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     CHECK_OBJECT_FETCHED(stmt)
 
+    LOCK_LIST
+    (
+        stmt->con->stmts,
+        {
+            OcilibListRemove(stmt->con->stmts, stmt);
+        }
+    )
+
     OcilibStatementDispose(stmt);
-    OcilibListRemove(stmt->con->stmts, stmt);
 
     FREE(stmt)
 

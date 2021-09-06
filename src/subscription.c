@@ -172,7 +172,14 @@ OCI_Subscription * OcilibSubscriptionRegister
 
     /* create subscription object */
 
-    sub = OcilibListAppend(Env.subs, sizeof(*sub));
+    LOCK_LIST
+    (
+        Env.subs,
+        {
+            sub = OcilibListAppend(Env.subs, sizeof(*sub));
+        }
+    )
+    
     CHECK_NULL(sub)
 
     /* allocate error handle */
@@ -326,8 +333,8 @@ OCI_Subscription * OcilibSubscriptionRegister
         {
             OcilibStringReleaseDBString(dbstr);
 
-            OcilibSubscriptionDispose(sub);
-            OcilibListRemove(Env.subs, sub);
+            OcilibSubscriptionUnregister(sub);
+
             FREE(sub)
         }
     )
@@ -350,8 +357,15 @@ boolean OcilibSubscriptionUnregister
 
     CHECK_PTR(OCI_IPC_NOTIFY, sub)
 
+    LOCK_LIST
+    (
+        Env.subs,
+        {
+            OcilibListRemove(Env.subs, sub);
+        }
+    )
+
     OcilibSubscriptionDispose(sub);
-    OcilibListRemove(Env.subs, sub);
 
     FREE(sub);
 

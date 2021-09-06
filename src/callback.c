@@ -632,7 +632,13 @@ void OcilibCallbackHAEvent
 
             /* notify all related connections */
 
-            OcilibListForEachWithParam(Env.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM)OcilibProcHAEventInvoke);
+            LOCK_LIST
+            (
+                Env.cons,
+                {
+                    OcilibListForEachWithParam(Env.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM)OcilibProcHAEventInvoke);
+                }
+            )
 
             /* get next server */
 

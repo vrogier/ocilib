@@ -93,4 +93,14 @@ OCI_SYM_LOCAL void * OcilibListFind
     void         * param
 );
 
+OCI_SYM_LOCAL boolean OcilibListLock
+(
+    OCI_List* list
+);
+
+OCI_SYM_LOCAL boolean OcilibListUnlock
+(
+    OCI_List* list
+);
+
 #endif /* OCILIB_LIST_H_INCLUDED */
