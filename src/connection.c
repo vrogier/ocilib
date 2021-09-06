@@ -1955,15 +1955,13 @@ boolean OcilibConnectionEnableServerOutput
     {
         const unsigned int charsize = sizeof(otext);
 
-        /* check parameter ranges ( Oracle 10g increased the size of output line */
+        const unsigned int max_lnsize = (con->ver_num >= OCI_10_2) ? OCI_OUPUT_LSIZE_10G : OCI_OUPUT_LSIZE;
 
-        if (con->ver_num >= OCI_10_2 && lnsize > OCI_OUPUT_LSIZE_10G)
+        /* check parameter ranges (Oracle 10g increased the size of output line) */
+
+        if (lnsize > max_lnsize)
         {
-            lnsize = OCI_OUPUT_LSIZE_10G;
-        }
-        else if (lnsize > OCI_OUPUT_LSIZE)
-        {
-            lnsize = OCI_OUPUT_LSIZE;
+            lnsize = max_lnsize;
         }
 
         con->svopt->arrsize = arrsize;
