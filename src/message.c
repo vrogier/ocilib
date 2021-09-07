@@ -655,7 +655,7 @@ boolean OcilibMessageGetID
     CHECK_PTR(OCI_IPC_VOID, id)
     CHECK_PTR(OCI_IPC_VOID, len)
 
-    unsigned int max_len = *len;
+    unsigned int max_len = 0;
     *len = 0;
 
     if (msg->id)
