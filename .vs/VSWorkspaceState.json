@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\include",
+    "\\include\\ocilibcpp\\detail",
+    "\\include\\ocilibcpp\\detail\\support",
+    "\\src"
+  ],
+  "SelectedNode": "\\src\\connection.c",
+  "PreviewInSolutionExplorer": false
+}
