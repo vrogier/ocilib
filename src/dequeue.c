@@ -328,6 +328,8 @@ OCI_Msg * OcilibDequeueGetMessage
 
     if (OCI_SUCCESSFUL(ret))
     {
+        msg = dequeue->msg;
+
         /* get payload */
     
         if (p_ind && (OCI_IND_NULL != (*(OCIInd *) p_ind)))
@@ -348,8 +350,6 @@ OCI_Msg * OcilibDequeueGetMessage
 
                 CHECK_NULL(dequeue->msg->obj)
             }
-
-            msg = dequeue->msg;
         }
     }
 

@@ -145,13 +145,10 @@ boolean OcilibEnqueuePut
 
     /* get payload */
 
-    if (OCI_UNKNOWN != enqueue->typinf->typecode)
+    if (OCI_UNKNOWN != enqueue->typinf->typecode && OCI_IND_NULL != msg->ind)
     {
-        if (OCI_IND_NULL != msg->ind)
-        {
-            payload = msg->obj->handle;
-            ind     = msg->obj->tab_ind;
-        }
+        payload = msg->obj->handle;
+        ind     = msg->obj->tab_ind;
     }
     else
     {

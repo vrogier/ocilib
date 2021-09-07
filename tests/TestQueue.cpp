@@ -183,8 +183,6 @@ TEST(TestQueue, MessageWithConsumers)
 
     ExecDML(OTEXT("drop type TestQueueMessageWithConsumersType"));
 }
-
-
 TEST(TestQueue, SingleRawMessage)
 {
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
@@ -244,4 +242,139 @@ TEST(TestQueue, SingleRawMessage)
 
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+}
+
+TEST(TestQueue, SingleRawMessageEmptyPayload)
+{
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+    const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+    ASSERT_NE(nullptr, conn);
+
+    // no check - for cleanup
+    OCI_QueueStop(conn, OTEXT("TestQueueSingleRawMessageEmptyPayload"), TRUE, TRUE, FALSE);
+    OCI_QueueDrop(conn, OTEXT("TestQueueSingleRawMessageEmptyPayload"));
+    OCI_QueueTableDrop(conn, OTEXT("TestQueueSingleRawMessageEmptyPayloadTable"), TRUE);
+    // end no check
+
+    ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestQueueSingleRawMessageEmptyPayloadTable"), OTEXT("RAW"), NULL, NULL, FALSE, OCI_AGM_NONE, NULL, 0, 0, NULL));
+    ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestQueueSingleRawMessageEmptyPayload"), OTEXT("TestQueueSingleRawMessageEmptyPayloadTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
+    ASSERT_TRUE(OCI_QueueStart(conn, OTEXT("TestQueueSingleRawMessageEmptyPayload"), TRUE, TRUE));
+
+    const auto inf = OCI_TypeInfoGet(conn, OTEXT("SYS.RAW"), OCI_TIF_TYPE);
+    ASSERT_NE(nullptr, inf);
+
+    const auto enq = OCI_EnqueueCreate(inf, OTEXT("TestQueueSingleRawMessageEmptyPayload"));
+    ASSERT_NE(nullptr, enq);
+
+    const auto deq = OCI_DequeueCreate(inf, OTEXT("TestQueueSingleRawMessageEmptyPayload"));
+    ASSERT_NE(nullptr, deq);
+
+    const auto msg_in = OCI_MsgCreate(inf);
+    ASSERT_NE(nullptr, msg_in);
+
+    const auto byteBring = ostring(OTEXT("123456789"));
+    ASSERT_TRUE(OCI_MsgSetOriginalID(msg_in, static_cast<const void*>(byteBring.data()), static_cast<unsigned int>(byteBring.size())));
+
+    ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
+
+    ASSERT_TRUE(OCI_MsgFree(msg_in));
+
+    ASSERT_TRUE(OCI_Commit(conn));
+
+    const auto msg_out = OCI_DequeueGet(deq);
+    ASSERT_NE(nullptr, msg_out);
+
+    otext buffer[100] = OTEXT("");
+    unsigned int size = 100;
+    ASSERT_TRUE(OCI_MsgGetOriginalID(msg_out, static_cast<void*>(buffer), &size));
+
+    ASSERT_EQ(byteBring, ostring(buffer));
+    ASSERT_EQ(byteBring.size(), size);
+
+    otext payload[100] = OTEXT("");
+    unsigned int payloadSize = 100;
+    ASSERT_TRUE(OCI_MsgGetRaw(msg_out, static_cast<void*>(buffer), &payloadSize));
+    ASSERT_EQ(0, payloadSize);
+
+    ASSERT_TRUE(OCI_EnqueueFree(enq));
+    ASSERT_TRUE(OCI_DequeueFree(deq));
+
+    ASSERT_TRUE(OCI_Commit(conn));
+
+    ASSERT_TRUE(OCI_QueueStop(conn, OTEXT("TestQueueSingleRawMessageEmptyPayload"), TRUE, TRUE, FALSE));
+    ASSERT_TRUE(OCI_QueueDrop(conn, OTEXT("TestQueueSingleRawMessageEmptyPayload")));
+    ASSERT_TRUE(OCI_QueueTableDrop(conn, OTEXT("TestQueueSingleRawMessageEmptyPayloadTable"), TRUE));
+
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_Cleanup());
+}
+
+
+TEST(TestQueue, SingleMessageEmptyPayload)
+{
+    ExecDML(OTEXT("create type TestQueueSingleMessageEmptyPayloadType as object(title varchar2(50), content varchar2(100))"));
+
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+    const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+    ASSERT_NE(nullptr, conn);
+
+    // no check - for cleanup
+    OCI_QueueStop(conn, OTEXT("TestQueueSingleMessageEmptyPayload"), TRUE, TRUE, FALSE);
+    OCI_QueueDrop(conn, OTEXT("TestQueueSingleMessageEmptyPayload"));
+    OCI_QueueTableDrop(conn, OTEXT("TestQueueSingleMessageEmptyPayloadTable"), TRUE);
+    // end no check
+
+    ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestQueueSingleMessageEmptyPayloadTable"), OTEXT("TestQueueSingleMessageEmptyPayloadType"), NULL, NULL, FALSE, OCI_AGM_NONE, NULL, 0, 0, NULL));
+    ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestQueueSingleMessageEmptyPayload"), OTEXT("TestQueueSingleMessageEmptyPayloadTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
+    ASSERT_TRUE(OCI_QueueStart(conn, OTEXT("TestQueueSingleMessageEmptyPayload"), TRUE, TRUE));
+
+    const auto inf = OCI_TypeInfoGet(conn, OTEXT("TestQueueSingleMessageEmptyPayloadType"), OCI_TIF_TYPE);
+    ASSERT_NE(nullptr, inf);
+
+    const auto enq = OCI_EnqueueCreate(inf, OTEXT("TestQueueSingleMessageEmptyPayload"));
+    ASSERT_NE(nullptr, enq);
+
+    const auto deq = OCI_DequeueCreate(inf, OTEXT("TestQueueSingleMessageEmptyPayload"));
+    ASSERT_NE(nullptr, deq);
+
+    const auto msg_in = OCI_MsgCreate(inf);
+    ASSERT_NE(nullptr, msg_in);
+
+    const auto byteBring = ostring(OTEXT("123456789"));
+    ASSERT_TRUE(OCI_MsgSetOriginalID(msg_in, static_cast<const void*>(byteBring.data()), static_cast<unsigned int>(byteBring.size())));
+
+    ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
+
+    ASSERT_TRUE(OCI_MsgFree(msg_in));
+
+    ASSERT_TRUE(OCI_Commit(conn));
+
+    const auto msg_out = OCI_DequeueGet(deq);
+    ASSERT_NE(nullptr, msg_out);
+
+    otext buffer[100] = OTEXT("");
+    unsigned int size = 100;
+    ASSERT_TRUE(OCI_MsgGetOriginalID(msg_out, static_cast<void*>(buffer), &size));
+
+    ASSERT_EQ(byteBring, ostring(buffer));
+    ASSERT_EQ(byteBring.size(), size);
+
+    const auto obj_out = OCI_MsgGetObject(msg_out);
+    ASSERT_EQ(nullptr, obj_out);
+
+    ASSERT_TRUE(OCI_EnqueueFree(enq));
+    ASSERT_TRUE(OCI_DequeueFree(deq));
+
+    ASSERT_TRUE(OCI_Commit(conn));
+
+    ASSERT_TRUE(OCI_QueueStop(conn, OTEXT("TestQueueSingleMessageEmptyPayload"), TRUE, TRUE, FALSE));
+    ASSERT_TRUE(OCI_QueueDrop(conn, OTEXT("TestQueueSingleMessageEmptyPayload")));
+    ASSERT_TRUE(OCI_QueueTableDrop(conn, OTEXT("TestQueueSingleMessageEmptyPayloadTable"), TRUE));
+
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_Cleanup());
+
+    ExecDML(OTEXT("drop type TestQueueSingleMessageEmptyPayloadType"));
 }

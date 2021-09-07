@@ -655,20 +655,16 @@ boolean OcilibMessageGetID
     CHECK_PTR(OCI_IPC_VOID, id)
     CHECK_PTR(OCI_IPC_VOID, len)
 
+    unsigned int max_len = 0;
+    *len = 0;
+
     if (msg->id)
     {
         const ub4 raw_len = OCIRawSize(msg->typinf->con->env, msg->id);
 
-        if (*len > raw_len)
-        {
-            *len = raw_len;
-        }
+        *len = min(max_len, raw_len);
 
         memcpy(id, OCIRawPtr(msg->typinf->con->env, msg->id), (size_t) (*len));
-    }
-    else
-    {
-        *len = 0;
     }
 
     SET_SUCCESS()
@@ -694,11 +690,13 @@ boolean OcilibMessageGetOriginalID
     )
 
     OCIRaw *value = NULL;
+    unsigned int max_len = 0;
 
     CHECK_PTR(OCI_IPC_MSG,  msg)
     CHECK_PTR(OCI_IPC_VOID, id)
     CHECK_PTR(OCI_IPC_VOID, len)
 
+    max_len = *len;
     *len = 0;
 
     CHECK_ATTRIB_GET
@@ -712,10 +710,7 @@ boolean OcilibMessageGetOriginalID
     {
         const ub4 raw_len = OCIRawSize(msg->typinf->con->env, value);
 
-        if (*len > raw_len)
-        {
-            *len = raw_len;
-        }
+        *len = min(max_len, raw_len);
 
         memcpy(id, OCIRawPtr(msg->typinf->con->env, value), (size_t) (*len));
     }
@@ -757,7 +752,7 @@ boolean OcilibMessageSetOriginalID
     CHECK_ATTRIB_SET
     (
         OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ORIGINAL_MSGID,
-        msg->proph, &value, 0,
+        msg->proph, value, 0,
         msg->typinf->con->err
     )
 
