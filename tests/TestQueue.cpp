@@ -183,6 +183,7 @@ TEST(TestQueue, MessageWithConsumers)
 
     ExecDML(OTEXT("drop type TestQueueMessageWithConsumersType"));
 }
+
 TEST(TestQueue, SingleRawMessage)
 {
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
@@ -347,6 +348,10 @@ TEST(TestQueue, SingleMessageEmptyPayload)
 
     ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
 
+    otext msgIDIn[100] = OTEXT("");
+    unsigned int sizeMsgIDIn = 100;
+    ASSERT_TRUE(OCI_MsgGetID(msg_in, static_cast<void*>(msgIDIn), &sizeMsgIDIn));
+
     ASSERT_TRUE(OCI_MsgFree(msg_in));
 
     ASSERT_TRUE(OCI_Commit(conn));
@@ -355,11 +360,18 @@ TEST(TestQueue, SingleMessageEmptyPayload)
     ASSERT_NE(nullptr, msg_out);
 
     otext buffer[100] = OTEXT("");
-    unsigned int size = 100;
-    ASSERT_TRUE(OCI_MsgGetOriginalID(msg_out, static_cast<void*>(buffer), &size));
+    unsigned int sizeBuffer = 100;
+    ASSERT_TRUE(OCI_MsgGetOriginalID(msg_out, static_cast<void*>(buffer), &sizeBuffer));
 
     ASSERT_EQ(byteBring, ostring(buffer));
-    ASSERT_EQ(byteBring.size(), size);
+    ASSERT_EQ(byteBring.size(), sizeBuffer);
+
+    otext msgIDOut[100] = OTEXT("");
+    unsigned int sizeMsgIDOut = 100;
+    ASSERT_TRUE(OCI_MsgGetID(msg_out, static_cast<void*>(msgIDOut), &sizeMsgIDOut));
+
+    ASSERT_EQ(ostring(msgIDIn), ostring(msgIDOut));
+    ASSERT_EQ(sizeMsgIDIn, sizeMsgIDOut);
 
     const auto obj_out = OCI_MsgGetObject(msg_out);
     ASSERT_EQ(nullptr, obj_out);

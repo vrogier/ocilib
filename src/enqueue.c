@@ -183,7 +183,7 @@ boolean OcilibEnqueuePut
 
         ret = OCIAQEnq(enqueue->typinf->con->cxt, enqueue->typinf->con->err,
                        (OraText*)name, enqueue->opth, msg->proph,
-                       enqueue->typinf->tdo, &payload, &ind, NULL, OCI_DEFAULT);
+                       enqueue->typinf->tdo, &payload, &ind, &msg->id, OCI_DEFAULT);
 
         /* check returned error code */
 
