@@ -1543,8 +1543,8 @@ boolean OcilibEnvironmentCleanup
     (
         Env.subs,
         {
-            OcilibListClear(Env.subs);
             OcilibListForEach(Env.subs,  (POCI_LIST_FOR_EACH)OcilibSubscriptionDispose);
+            OcilibListClear(Env.subs);
         }
     )
 
@@ -1552,8 +1552,8 @@ boolean OcilibEnvironmentCleanup
     (
         Env.cons,
         {
-            OcilibListClear(Env.cons);
             OcilibListForEach(Env.cons,  (POCI_LIST_FOR_EACH)OcilibConnectionDispose);
+            OcilibListClear(Env.cons);
         }
     )
 
@@ -1561,8 +1561,8 @@ boolean OcilibEnvironmentCleanup
     (
         Env.pools,
         {
-            OcilibListClear(Env.pools);
             OcilibListForEach(Env.pools, (POCI_LIST_FOR_EACH)OcilibPoolDispose);
+            OcilibListClear(Env.pools);
         }
     )
 
