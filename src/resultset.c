@@ -1855,7 +1855,7 @@ const otext * OcilibResultsetGetString
         {
             OCI_Error *err = OcilibErrorGet(TRUE, TRUE);
 
-            unsigned int bufsize   = OCI_SIZE_TMP_CVT;
+            unsigned int buffer_size  = OCI_SIZE_TMP_CVT;
             unsigned int data_size = 0;
 
             switch (def->col.datatype)
@@ -1882,8 +1882,9 @@ const otext * OcilibResultsetGetString
                 }
                 case OCI_CDT_RAW:
                 {
-                    data      = OcilibDefineGetData(def);
-                    data_size = ((ub2*)def->buf.lens)[def->rs->row_cur - 1];
+                    data        = OcilibDefineGetData(def);
+                    data_size   = ((ub2*)def->buf.lens)[def->rs->row_cur - 1];
+                    buffer_size = data_size * 2;
                     break;
                 }
                 case OCI_CDT_REF:
@@ -1897,12 +1898,12 @@ const otext * OcilibResultsetGetString
 
                     if (lg)
                     {
-                        bufsize = OcilibLongGetSize(lg);
+                        buffer_size = OcilibLongGetSize(lg);
 
                         if (OCI_BLONG == def->col.subtype)
                         {
                             /* here we have binary long, it will be output in hexadecimal */
-                            bufsize *= 2;
+                            buffer_size *= 2;
                         }
                     }
 
@@ -1916,12 +1917,12 @@ const otext * OcilibResultsetGetString
 
                     if (lob)
                     {
-                        bufsize = (unsigned int)OcilibLobGetLength(lob);
+                        buffer_size = (unsigned int)OcilibLobGetLength(lob);
 
                         if (OCI_BLOB == def->col.subtype)
                         {
                             /* here we have binary blob, it will be output in hexadecimal */
-                            bufsize *= 2;
+                            buffer_size *= 2;
                         }
                     }
 
@@ -1936,12 +1937,12 @@ const otext * OcilibResultsetGetString
 
                     if (file)
                     {
-                        bufsize = (unsigned int) ostrlen(OTEXT("/"));
+                        buffer_size = (unsigned int) ostrlen(OTEXT("/"));
 
                         OcilibFileGetInfo(file);
 
-                        bufsize += (unsigned int) (file->dir ? ostrlen(file->dir) : 0);
-                        bufsize += (unsigned int) (file->name ? ostrlen(file->name) : 0);
+                        buffer_size += (unsigned int) (file->dir ? ostrlen(file->dir) : 0);
+                        buffer_size += (unsigned int) (file->name ? ostrlen(file->name) : 0);
                     }
 
                     data = file;
@@ -1953,7 +1954,7 @@ const otext * OcilibResultsetGetString
 
                     if (obj)
                     {
-                        CHECK(OcilibObjectToString(obj, &bufsize, NULL))
+                        CHECK(OcilibObjectToString(obj, &buffer_size, NULL))
                     }
 
                     data = obj;
@@ -1965,7 +1966,7 @@ const otext * OcilibResultsetGetString
 
                     if (coll)
                     {
-                        CHECK(OcilibCollectionToString(coll, &bufsize, NULL))
+                        CHECK(OcilibCollectionToString(coll, &buffer_size, NULL))
                     }
 
                     data = coll;
@@ -1977,7 +1978,7 @@ const otext * OcilibResultsetGetString
 
                     if (stmt && stmt->sql)
                     {
-                        bufsize = (unsigned int) ostrlen(stmt->sql);
+                        buffer_size = (unsigned int) ostrlen(stmt->sql);
                     }
 
                     data = stmt;
@@ -1991,7 +1992,7 @@ const otext * OcilibResultsetGetString
 
             CHECK(NULL == err || OCI_UNKNOWN == err->type)
 
-            CHECK(OcilibStringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, bufsize))
+            CHECK(OcilibStringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, buffer_size))
 
             CHECK(OcilibStringGetFromType(rs->stmt->con, &def->col, data, data_size,
                                           def->buf.tmpbuf, def->buf.tmpsize, FALSE))

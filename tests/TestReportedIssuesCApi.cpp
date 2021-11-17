@@ -253,5 +253,58 @@ TEST(ReportedIssuesCApi, Issue262)
     ExecDML(OTEXT("DROP TABLE test_urowid"));
 }
 
+TEST(ReportedIssuesCApi, Issue288)
+{
+    ExecDML(OTEXT("drop table TestIssue288"));
+    ExecDML(OTEXT("create table TestIssue288 (id number, val raw(2000))"));
+    ExecDML(OTEXT("insert into TestIssue288 "
+       "select lvl - 1, hextoraw(val) from "
+       "( "
+       "    with l as(select level as lvl from dual connect by level < 102) "
+       "    select lvl, listagg('FF', '') within group(order by null) as val "
+       "    from l connect by level < lvl and prior lvl = lvl and prior sys_guid() is not null "
+       "    group by lvl "
+       ") "
+       "where lvl > 1"));
+
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+    const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+    ASSERT_NE(nullptr, conn);
+
+    const auto stmt = OCI_StatementCreate(conn);
+    ASSERT_NE(nullptr, stmt);
+
+    ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select id, val, length(val) from TestIssue288 order by id")));
+
+    auto rslt = OCI_GetResultset(stmt);
+    ASSERT_NE(nullptr, rslt);
+
+    auto counter = 0u;
+
+    while (OCI_FetchNext(rslt))
+    {
+        counter++;
+        
+        auto id = OCI_GetInt(rslt, 1);
+        auto val = OCI_GetString(rslt, 2);
+        auto len = OCI_GetInt(rslt, 3);
+  
+        ASSERT_NE(nullptr, val);
+
+        ASSERT_EQ(counter, id);
+        ASSERT_EQ(counter *2, len);
+        ASSERT_EQ(len, ostrlen(val));
+    }
+
+    ASSERT_EQ(100u, counter);
+
+    ASSERT_TRUE(OCI_StatementFree(stmt));
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_Cleanup());
+
+    ExecDML(OTEXT("drop table TestIssue288"));
+}
+
 
 INSTANTIATE_TEST_CASE_P(ReportedIssuesCApi, ReportedIssues247, ::testing::ValuesIn(TimestampTypes));
