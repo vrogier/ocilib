@@ -1,7 +1,8 @@
-2021-12-01 Version 4.7.4 Vincent Rogier vince.rogier@ocilib.net
+2021-11-30 Version 4.7.4 Vincent Rogier vince.rogier@ocilib.net
 
    * Fixes (C API)
 
+        - Issue 291: OCI_DirPathGetErrorRow() always return 0 since v4.7.0
         - Issue 284: OCI_MsgGetID() returns a NULL ID after being queued with OCI_DequeuePut()
         - Issue 288: OCI_GetString returns null on implicit conversion of a RAW value when it's longer than 64 bytes
 		- Issue 283: OCI_DequeueGet() returns null pointer when message has empty payload
