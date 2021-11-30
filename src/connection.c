@@ -112,7 +112,16 @@ OCI_Connection * OcilibConnectionAllocate
 
     /* create connection object */
 
-    OCI_Connection *con = OcilibListAppend(Env.cons, sizeof(*con));
+    OCI_Connection* con = NULL;
+
+    LOCK_LIST
+    (
+        Env.cons,
+        {
+            con = OcilibListAppend(Env.cons, sizeof(*con));
+        }
+    )
+
     CHECK_NULL(con)
 
     con->alloc_handles = (0 == (mode & OCI_SESSION_XA));
@@ -958,25 +967,48 @@ static boolean OcilibConnectionLogOff
     }
 
     /* dissociate connection from existing subscriptions */
-
-    OcilibListForEachWithParam(Env.subs, con, (POCI_LIST_FOR_EACH_WITH_PARAM) OcilibConnectionDetachSubscriptions);
+    LOCK_LIST
+    (
+        Env.subs,
+        {
+            OcilibListForEachWithParam(Env.subs, con, (POCI_LIST_FOR_EACH_WITH_PARAM)OcilibConnectionDetachSubscriptions); 
+        }
+    )
 
     WARNING_DISABLE_CAST_FUNC_TYPE
 
     /* free all statements */
 
-    OcilibListForEach(con->stmts, (POCI_LIST_FOR_EACH)OcilibStatementDispose);
-    OcilibListClear(con->stmts);
+    LOCK_LIST
+    (
+        con->stmts, 
+        {
+            OcilibListForEach(con->stmts, (POCI_LIST_FOR_EACH)OcilibStatementDispose);
+            OcilibListClear(con->stmts);
+        }
+    )
 
     /* free all type info objects */
 
-    OcilibListForEach(con->tinfs, (POCI_LIST_FOR_EACH)OcilibTypeInfoDispose);
-    OcilibListClear(con->tinfs);
+    LOCK_LIST
+    (
+        con->tinfs,
+        {
+            OcilibListForEach(con->tinfs, (POCI_LIST_FOR_EACH)OcilibTypeInfoDispose);
+            OcilibListClear(con->tinfs);
+        }
+    )
 
     /* free all transactions */
 
-    OcilibListForEach(con->trsns, (POCI_LIST_FOR_EACH)OcilibTransactionDispose);
-    OcilibListClear(con->trsns);
+    LOCK_LIST
+    (
+        con->trsns,
+        {
+            OcilibListForEach(con->trsns, (POCI_LIST_FOR_EACH)OcilibTransactionDispose);
+            OcilibListClear(con->trsns);
+        }
+    )
 
     WARNING_RESTORE_CAST_FUNC_TYPE
 
@@ -1211,8 +1243,15 @@ boolean OcilibConnectionFree
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    OcilibConnectionDispose(con);
-    OcilibListRemove(Env.cons, con);
+    LOCK_LIST
+    (
+        Env.cons,
+        {
+            OcilibListRemove(Env.cons, con);
+        }
+    )
+
+    CHECK(OcilibConnectionDispose(con))
 
     FREE(con)
 
@@ -1916,15 +1955,13 @@ boolean OcilibConnectionEnableServerOutput
     {
         const unsigned int charsize = sizeof(otext);
 
-        /* check parameter ranges ( Oracle 10g increased the size of output line */
+        const unsigned int max_lnsize = (con->ver_num >= OCI_10_2) ? OCI_OUPUT_LSIZE_10G : OCI_OUPUT_LSIZE;
 
-        if (con->ver_num >= OCI_10_2 && lnsize > OCI_OUPUT_LSIZE_10G)
+        /* check parameter ranges (Oracle 10g increased the size of output line) */
+
+        if (lnsize > max_lnsize)
         {
-            lnsize = OCI_OUPUT_LSIZE_10G;
-        }
-        else if (lnsize > OCI_OUPUT_LSIZE)
-        {
-            lnsize = OCI_OUPUT_LSIZE;
+            lnsize = max_lnsize;
         }
 
         con->svopt->arrsize = arrsize;

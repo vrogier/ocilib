@@ -472,6 +472,13 @@ ExitLabel:                          \
     (                                                                      \
         err, OCIAttrSet, (void*) (handle), (ub4) (htype), (void*) (value), \
         (ub4) (size), (ub4) (atype), err                                   \
-    )                                                                      \
+    )       
+
+
+#define LOCK_LIST(list, exp)    \
+                                \
+    OcilibListLock(list);       \
+    exp                         \
+    OcilibListUnlock(list);     \
 
 #endif /* OCILIB_MACROS_H_INCLUDED */

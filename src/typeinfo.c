@@ -24,6 +24,7 @@
 #include "list.h"
 #include "macros.h"
 #include "memory.h"
+#include "mutex.h"
 #include "stringutils.h"
 
 static unsigned int TypeInfoTypeValues[] =
@@ -39,7 +40,7 @@ typedef struct TypeInfoFindParams
     otext      * schema;
     otext      * name;
 } TypeInfoFindParams;
-
+         
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTypeInfoFind
  * --------------------------------------------------------------------------------------------- */
@@ -52,6 +53,36 @@ static boolean OcilibTypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find
         typinf->type == find_params->type &&
         OcilibStringCaseCompare(typinf->name,   find_params->name) == 0 &&
         OcilibStringCaseCompare(typinf->schema, find_params->schema) == 0;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibTypeInfoFindOrCreate
+ * --------------------------------------------------------------------------------------------- */
+
+static OCI_TypeInfo* OcilibTypeInfoFindOrCreate(OCI_Connection* con, TypeInfoFindParams* p_find_params, boolean* p_is_created)
+{
+    *p_is_created = FALSE;
+
+    OCI_TypeInfo* typinf = OcilibListFind(con->tinfs, (POCI_LIST_FIND)OcilibTypeInfoFind, p_find_params);
+
+    if (NULL == typinf)
+    {
+        typinf = OcilibListAppend(con->tinfs, sizeof(OCI_TypeInfo));
+        if (typinf == NULL)
+        {
+            return typinf;
+        }
+
+        typinf->con = con;
+        typinf->name = OcilibStringDuplicate(p_find_params->name);
+        typinf->schema = OcilibStringDuplicate(p_find_params->schema);
+        typinf->struct_size = 0;
+        typinf->align = 0;
+
+        *p_is_created = TRUE;
+    }
+
+    return typinf;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -139,10 +170,16 @@ OCI_TypeInfo * OcilibTypeInfoGet
     size_t  max_chars = sizeof(buffer) / sizeof(otext) - 1;
     dbtext* dbstr1    = NULL;
     int     dbsize1   = -1;
+    dbtext* dbstr2    = NULL;
+    int     dbsize2   = -1;
+    dbtext* dbstr3    = NULL;
+    int     dbsize3   = -1;
     sb4     pbsp      = 1;
 
     otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
     otext obj_name[OCI_SIZE_OBJ_NAME + 1];
+
+    boolean is_created = FALSE;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
     CHECK_PTR(OCI_IPC_STRING,     name)
@@ -196,23 +233,22 @@ OCI_TypeInfo * OcilibTypeInfoGet
     find_params.name   = obj_name;
     find_params.schema = obj_schema;
 
-    typinf = OcilibListFind(con->tinfs, (POCI_LIST_FIND)OcilibTypeInfoFind, &find_params);
+    LOCK_LIST
+    (
+        con->tinfs,
+        {
+            typinf = OcilibTypeInfoFindOrCreate(con, &find_params, &is_created);
+        }
+    )
+
+    CHECK_NULL(typinf)
 
     /* Not found, so create type object */
 
-    if (NULL == typinf)
+    if (is_created)
     {
-        typinf = OcilibListAppend(con->tinfs, sizeof(OCI_TypeInfo));
-        CHECK_NULL(typinf)
-
         /* allocate describe handle */
-
-        typinf->con         = con;
-        typinf->name        = OcilibStringDuplicate(obj_name);
-        typinf->schema      = OcilibStringDuplicate(obj_schema);
-        typinf->struct_size = 0;
-        typinf->align       = 0;
-
+        
         CHECK(OcilibMemoryAllocHandle(typinf->con->env, (dvoid **)(void *)&dschp, OCI_HTYPE_DESCRIBE))
 
         /* perform describe */
@@ -242,17 +278,52 @@ OCI_TypeInfo * OcilibTypeInfoGet
             dschp, &pbsp, sizeof(pbsp),
             con->err
         )
-
+  
         /* describe call */
 
-        CHECK_OCI
-        (
-            con->err,
-            OCIDescribeAny,
-            con->cxt, con->err, (dvoid *) dbstr1,
-            (ub4) dbsize1, OCI_OTYPE_NAME,
-            OCI_DEFAULT, OCI_PTYPE_UNK, dschp
-        )
+        if (OCI_TIF_TYPE == type)
+        {
+            OCIType* tdo = NULL;
+
+            /* for types, as OCIDescribeAny() doest not support some cases like SYS.RAW anymore
+               like on previous Oracle versions, let's use OCITypeByName()
+            */
+
+            dbstr2 = OcilibStringGetDBString(typinf->schema, &dbsize2);
+            dbstr3 = OcilibStringGetDBString(typinf->name, &dbsize3);
+
+            CHECK_OCI
+            (
+                con->err,
+                OCITypeByName,
+                con->env, con->err, con->cxt, 
+                (CONST text*) dbstr2, dbsize2,
+                (CONST text*) dbstr3, dbsize3,
+                (text*)0, 0, 
+                OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
+                &tdo
+            )
+
+            CHECK_OCI
+            (
+                con->err,
+                OCIDescribeAny,
+                con->cxt, con->err, tdo,
+                (ub4) 0, OCI_OTYPE_PTR,
+                OCI_DEFAULT, OCI_PTYPE_UNK, dschp
+            )
+        }
+        else
+        { 
+            CHECK_OCI
+            (
+                con->err,
+                OCIDescribeAny,
+                con->cxt, con->err, (dvoid*)dbstr1,
+                (ub4)dbsize1, OCI_OTYPE_NAME,
+                OCI_DEFAULT, OCI_PTYPE_UNK, dschp
+            )
+        }
 
         /* get parameter handle */
 
@@ -415,7 +486,10 @@ OCI_TypeInfo * OcilibTypeInfoGet
                     }
                     default:
                     {
-                        THROW(OcilibExceptionDatatypeNotSupported, typinf->typecode)
+                        if (!pdt)
+                        {
+                            THROW(OcilibExceptionDatatypeNotSupported, typinf->typecode)
+                        }
                         break;
                     }
                 }
@@ -528,15 +602,11 @@ OCI_TypeInfo * OcilibTypeInfoGet
                 }
             }
         }
+
+        /* free describe handle */
+
+        OcilibMemoryFreeHandle(dschp, OCI_HTYPE_DESCRIBE);
     }
-
-    /* free describe handle */
-
-    OcilibMemoryFreeHandle(dschp, OCI_HTYPE_DESCRIBE);
-
-    /* increment type info reference counter on success */
-
-    typinf->refcount++;
 
     /* type checking sanity checks */
 
@@ -550,6 +620,8 @@ OCI_TypeInfo * OcilibTypeInfoGet
     CLEANUP_AND_EXIT_FUNC
     (
         OcilibStringReleaseDBString(dbstr1);
+        OcilibStringReleaseDBString(dbstr2);
+        OcilibStringReleaseDBString(dbstr3);
 
         /* free temporary strings */
 
@@ -584,16 +656,6 @@ boolean OcilibTypeInfoFree
     )
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-
-    typinf->refcount--;
-
-    if (typinf->refcount == 0)
-    {
-        OcilibListRemove(typinf->con->tinfs, typinf);
-        OcilibTypeInfoDispose(typinf);
-
-        FREE(typinf)
-    }
 
     SET_SUCCESS()
 

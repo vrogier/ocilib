@@ -1097,6 +1097,22 @@ typedef sword (*OCITYPEBYREF)
     OCIType       **tdo
 );
 
+typedef sword (*OCITYPEBYNAME)
+(
+    OCIEnv          *env, 
+    OCIError        *err, 
+    const OCISvcCtx *svc,
+    const oratext*   schema_name,
+    ub4              s_length,
+    const oratext   *type_name,
+    ub4              t_length,
+    const oratext   *version_name, 
+    ub4              v_length,
+    OCIDuration      pin_duration,
+    OCITypeGetOpt    get_option,
+    OCIType        **tdo
+);
+
 typedef sword (*OCIOBJECTNEW)
 (
     OCIEnv          *env,

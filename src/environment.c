@@ -419,6 +419,7 @@ OCIARRAYDESCRIPTORALLOC      OCIArrayDescriptorAlloc      = NULL;
 OCIARRAYDESCRIPTORFREE       OCIArrayDescriptorFree       = NULL;
 OCICLIENTVERSION             OCIClientVersion             = NULL;
 OCITYPEBYREF                 OCITypeByRef                 = NULL;
+OCITYPEBYNAME                OCITypeByName                = NULL;
 OCINUMBERTOINT               OCINumberToInt               = NULL;
 OCINUMBERFROMINT             OCINumberFromInt             = NULL;
 OCINUMBERTOREAL              OCINumberToReal              = NULL;
@@ -1071,6 +1072,8 @@ boolean OcilibEnvironmentInitialize
 
         LIB_SYMBOL(Env.lib_handle, "OCITypeByRef",                 OCITypeByRef,
                    OCITYPEBYREF);
+        LIB_SYMBOL(Env.lib_handle, "OCITypeByName",                OCITypeByName,
+                   OCITYPEBYNAME);
 
         LIB_SYMBOL(Env.lib_handle, "OCINumberToInt",               OCINumberToInt,
                    OCINUMBERTOINT);
@@ -1527,29 +1530,47 @@ boolean OcilibEnvironmentCleanup
 
     /* dispose list items */
 
-    OcilibListForEach(Env.arrs,  (POCI_LIST_FOR_EACH)OcilibArrayDispose);
-    OcilibListForEach(Env.subs,  (POCI_LIST_FOR_EACH)OcilibSubscriptionDispose);
-    OcilibListForEach(Env.cons,  (POCI_LIST_FOR_EACH)OcilibConnectionDispose);
-    OcilibListForEach(Env.pools, (POCI_LIST_FOR_EACH)OcilibPoolDispose);
+    LOCK_LIST
+    (
+        Env.arrs,
+        {
+            OcilibListForEach(Env.arrs,  (POCI_LIST_FOR_EACH)OcilibArrayDispose);
+            OcilibListClear(Env.arrs);
+        }
+    )
 
-    /* free all arrays */
+    LOCK_LIST
+    (
+        Env.subs,
+        {
+            OcilibListForEach(Env.subs,  (POCI_LIST_FOR_EACH)OcilibSubscriptionDispose);
+            OcilibListClear(Env.subs);
+        }
+    )
 
-    OcilibListClear(Env.arrs);
+    LOCK_LIST
+    (
+        Env.cons,
+        {
+            OcilibListForEach(Env.cons,  (POCI_LIST_FOR_EACH)OcilibConnectionDispose);
+            OcilibListClear(Env.cons);
+        }
+    )
+
+    LOCK_LIST
+    (
+        Env.pools,
+        {
+            OcilibListForEach(Env.pools, (POCI_LIST_FOR_EACH)OcilibPoolDispose);
+            OcilibListClear(Env.pools);
+        }
+    )
+
+    /* free all lists */
+
     OcilibListFree(Env.arrs);
-
-    /* free all subscriptions */
-
-    OcilibListClear(Env.subs);
     OcilibListFree(Env.subs);
-
-    /* free all connections */
-
-    OcilibListClear(Env.cons);
     OcilibListFree(Env.cons);
-
-    /* free all pools */
-
-    OcilibListClear(Env.pools);
     OcilibListFree(Env.pools);
 
     /* free key map */

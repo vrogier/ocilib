@@ -186,6 +186,7 @@ extern OCIARRAYDESCRIPTORALLOC      OCIArrayDescriptorAlloc;
 extern OCIARRAYDESCRIPTORFREE       OCIArrayDescriptorFree;
 extern OCICLIENTVERSION             OCIClientVersion;
 extern OCITYPEBYREF                 OCITypeByRef;
+extern OCITYPEBYNAME                OCITypeByName; 
 extern OCINUMBERTOINT               OCINumberToInt;
 extern OCINUMBERFROMINT             OCINumberFromInt;
 extern OCINUMBERTOREAL              OCINumberToReal;

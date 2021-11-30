@@ -145,13 +145,10 @@ boolean OcilibEnqueuePut
 
     /* get payload */
 
-    if (OCI_UNKNOWN != enqueue->typinf->typecode)
+    if (OCI_UNKNOWN != enqueue->typinf->typecode && OCI_IND_NULL != msg->ind)
     {
-        if (OCI_IND_NULL != msg->ind)
-        {
-            payload = msg->obj->handle;
-            ind     = msg->obj->tab_ind;
-        }
+        payload = msg->obj->handle;
+        ind     = msg->obj->tab_ind;
     }
     else
     {
@@ -186,7 +183,7 @@ boolean OcilibEnqueuePut
 
         ret = OCIAQEnq(enqueue->typinf->con->cxt, enqueue->typinf->con->err,
                        (OraText*)name, enqueue->opth, msg->proph,
-                       enqueue->typinf->tdo, &payload, &ind, NULL, OCI_DEFAULT);
+                       enqueue->typinf->tdo, &payload, &ind, &msg->id, OCI_DEFAULT);
 
         /* check returned error code */
 

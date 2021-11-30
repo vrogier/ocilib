@@ -724,7 +724,6 @@ struct OCI_TypeInfo
     ub2             typecode;    /* Oracle type code */
     ub2             colcode;     /* Oracle collection code */
     ub2             nb_cols;     /* number of columns */
-    ub2             refcount;    /* reference counter */
     ub1             is_final;    /* is is a virtual type that can be inherited ? */
 };
 

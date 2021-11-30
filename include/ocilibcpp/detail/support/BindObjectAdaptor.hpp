@@ -72,7 +72,7 @@ namespace ocilib
         template<class T>
         BindObjectAdaptor<T>::~BindObjectAdaptor() noexcept
         {
-            delete core::OnDeallocate(_data);
+            delete[] core::OnDeallocate(_data);
         }
 
         template<class T>

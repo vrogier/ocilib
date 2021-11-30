@@ -143,7 +143,7 @@ static unsigned int OcilibDirPathArrayToStream
 
             if (OCI_DCM_DEFAULT == dp->cvt_mode)
             {
-                THROW(OcilibExceptionOCI, dp->con->err, ret)
+                OcilibExceptionOCI(&call_context, dp->con->err, ret);
             }
             break;
         }
@@ -246,7 +246,7 @@ static unsigned int OcilibDirPathLoadStream
         case OCI_ERROR:
         {
             status = OCI_DPR_ERROR;
-            THROW(OcilibExceptionOCI, dp->con->err, ret)
+            OcilibExceptionOCI(&call_context, dp->con->err, ret);
             break;
         }
         case OCI_NO_DATA:

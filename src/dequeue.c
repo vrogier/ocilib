@@ -328,26 +328,27 @@ OCI_Msg * OcilibDequeueGetMessage
 
     if (OCI_SUCCESSFUL(ret))
     {
-        /* get payload */
+        msg = dequeue->msg;
 
-        if (OCI_UNKNOWN != dequeue->typinf->typecode)
+        /* get payload */
+    
+        if (p_ind && (OCI_IND_NULL != (*(OCIInd *) p_ind)))
         {
-            if (p_ind && (OCI_IND_NULL != (*(OCIInd *) p_ind)))
+            dequeue->msg->ind = *(OCIInd *) p_ind;
+
+            if (OCI_UNKNOWN != dequeue->typinf->typecode)
             {
-                dequeue->msg->ind = *(OCIInd *) p_ind;
 
                 dequeue->msg->obj = OcilibObjectInitialize
-                                    (
-                                        dequeue->typinf->con,
-                                        (OCI_Object*)dequeue->msg->obj,
-                                        dequeue->msg->payload,
-                                        dequeue->typinf,
-                                        NULL, -1, TRUE
-                                    );
+                (
+                    dequeue->typinf->con,
+                    (OCI_Object*)dequeue->msg->obj,
+                    dequeue->msg->payload,
+                    dequeue->typinf,
+                    NULL, -1, TRUE
+                );
 
                 CHECK_NULL(dequeue->msg->obj)
-
-                msg = dequeue->msg;
             }
         }
     }

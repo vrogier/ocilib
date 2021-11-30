@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OCILIB Demo", "ocilib_demo_vs2019.vcxproj", "{D08196A4-17BC-42CE-A7A9-866905120974}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OCILIB Demo", "ocilib_demo.vcxproj", "{D08196A4-17BC-42CE-A7A9-866905120974}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

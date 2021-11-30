@@ -13067,12 +13067,13 @@ OCI_SYM_PUBLIC OCI_Connection * OCI_API OCI_TypeInfoGetConnection
  * @param typinf  - Type info handle
  *
  * @note
- * this call is optional.
+ * this call is DEPRECATED.
  * OCI_TypeInfo object are internally tracked and
  * automatically freed when their related connection is freed
+ * Thus this method does nothing
  *
  * @return
- * TRUE on success otherwise FALSE
+ * TRUE if input handle is valid otherwise FALSE
  *
  */
 
@@ -16311,7 +16312,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueStop
  * @note
  * Possible values for parameter 'queue_payload_type' :
  * - For Oracle types (UDT) : use the type name ([schema.].type_name)
- * - For RAW data           : use "SYS.RAW" or "RAW"
+ * - For RAW data           : use "SYS.RAW" or "RAW" (depending on Oracle versions - For latest ones, use "RAW")
  *
  * @note
  * Possible values for parameter 'message_grouping' :

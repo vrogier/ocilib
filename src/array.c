@@ -223,7 +223,14 @@ OCI_Array * OcilibArrayCreate
 
     /* create array object */
 
-    arr = OcilibListAppend(Env.arrs, sizeof(*arr));
+    LOCK_LIST
+    (
+        Env.arrs,
+        {
+            arr = OcilibListAppend(Env.arrs, sizeof(*arr));
+        }
+    )
+
     CHECK_NULL(arr)
 
     arr->con          = con;
@@ -297,10 +304,20 @@ boolean OcilibArrayFreeFromHandles
 
     CHECK_PTR(OCI_IPC_VOID, handles)
 
-    arr = OcilibListFind(Env.arrs, (POCI_LIST_FIND) OcilibArrayFindAny, handles);
+    LOCK_LIST
+    (
+        Env.arrs,
+        {
+            arr = OcilibListFind(Env.arrs, (POCI_LIST_FIND)OcilibArrayFindAny, handles);
+            if (NULL != arr)
+            {
+                OcilibListRemove(Env.arrs, arr);
+            }
+        }
+    )
+
     CHECK_NULL(arr)
 
-    OcilibListRemove(Env.arrs, arr);
     OcilibArrayDispose(arr);
     FREE(arr)
 
