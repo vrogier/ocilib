@@ -10,6 +10,8 @@
 /lib32
 /lib64
 /proj/dll/temp
+/proj/test/Win32
+/proj/test/x64
 
 # WinMerge backups
 *.bak
@@ -181,3 +183,6 @@ testlog.manifest
 /nuget/*.nupkg
 *Browse.VC.db-wal
 *Browse.VC.db-shm
+/.vs
+*.recipe
+*.txt
