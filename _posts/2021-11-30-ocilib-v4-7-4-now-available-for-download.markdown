@@ -1,0 +1,42 @@
+---
+author: admin
+comments: false
+date: 2021-11-30 20:00:00+01:00
+layout: post
+slug: ocilib-v4-7-4-now-available-for-download
+title: OCILIB v4.7.4 now available for download !
+---
+
+Dear all,
+<br/>
+<br/>
+<b>OCILIB v4.7.4 is now [_available for download_]({{site.projecturl}}/releases/) !</b>
+<br/>
+<br/>
+Get the release and enjoy it !
+<br/>
+<br/>
+### Fixes (C API)
+
+        - Issue 291: OCI_DirPathGetErrorRow() always return 0 since v4.7.0
+        - Issue 284: OCI_MsgGetID() returns a NULL ID after being queued with OCI_DequeuePut()
+        - Issue 288: OCI_GetString returns null on implicit conversion of a RAW value when it's longer than 64 bytes
+        - Issue 283: OCI_DequeueGet() returns null pointer when message has empty payload
+        - Issue 282: PL/SQL Server output wrong internal buffer size on some oracle versions
+        - Issue 281: ORA-00931 in OCI_TypeInfoGet() when using SYS.RAW type
+
+### Fixes (C++ API)
+    
+        - Issue 272: AddressSanitizer reports mismatched new[] vs delete
+        - Issue 278: ocilib::Object causes Segmentation fault
+	
+### Miscellaneous
+    
+        -Updated compilers for MS Windows prebuilt binaries
+            * VS2022 17.0.1 for 32/64 bit DLLs 
+            * VC runtime (statically linked) updated from vc142 to vc143
+
+<br/>
+
+Vincent
+
