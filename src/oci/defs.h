@@ -251,6 +251,7 @@
 #define OCI_ATTR_COL_COUNT              82 /* columns of column array
                                                      processed so far.       */
 
+#define OCI_ATTR_STREAM_OFFSET          83  /* str off of last row processed */
 #define OCI_ATTR_SUBSCR_NAME            94           /* name of subscription */
 #define OCI_ATTR_SUBSCR_CALLBACK        95            /* associated callback */
 #define OCI_ATTR_SUBSCR_CTX             96    /* associated callback context */

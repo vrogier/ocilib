@@ -224,8 +224,10 @@ static unsigned int OcilibDirPathLoadStream
     )
 
     sword ret = OCI_SUCCESS;
-    ub4 nb_loaded = 0;
-    ub4 size      = sizeof(nb_loaded);
+
+    ub4 nb_loaded   = 0;
+    ub4 size_loaded = sizeof(nb_loaded);
+    ub4 size_offset = sizeof(ub4);
 
     CHECK_PTR(OCI_IPC_DIRPATH, dp)
 
@@ -266,7 +268,16 @@ static unsigned int OcilibDirPathLoadStream
     CHECK_ATTRIB_GET
     (
         OCI_HTYPE_DIRPATH_STREAM, OCI_ATTR_ROW_COUNT,
-        dp->strm, &nb_loaded, &size,
+        dp->strm, &nb_loaded, &size_loaded,
+        dp->con->err
+    )
+
+    /* retrieve the offset of the last processed row */
+
+    CHECK_ATTRIB_GET
+    (
+        OCI_HTYPE_DIRPATH_STREAM, OCI_ATTR_STREAM_OFFSET,
+        dp->strm, &dp->load_offset, &size_offset,
         dp->con->err
     )
 
@@ -970,6 +981,7 @@ boolean OcilibDirPathReset
     dp->nb_err       = 0;
     dp->idx_err_row  = 0;
     dp->idx_err_col  = 0;
+    dp->load_offset  = 0;
 
     /* reset array */
 
@@ -1095,6 +1107,8 @@ unsigned int OcilibDirPathLoad
         /* context */ OCI_IPC_DIRPATH, dp
     )
 
+    ub4 load_offset = 0;
+
     CHECK_PTR(OCI_IPC_DIRPATH, dp)
     CHECK_DIRPATH_STATUS(dp, OCI_DPS_CONVERTED)
 
@@ -1113,11 +1127,23 @@ unsigned int OcilibDirPathLoad
 
     dp->res_load = OcilibDirPathLoadStream(dp);
 
+    load_offset = dp->load_offset;
+
     /* continue to load the stream while it returns an error */
 
     while (OCI_DPR_ERROR == dp->res_load)
     {
         dp->res_load = OcilibDirPathLoadStream(dp);
+
+        /* if number of converted rows does not increase, the error is not related to conversion error
+           thus, we need to exit the loop to not iterate for ever 
+        */
+        if (load_offset >= dp->load_offset)
+        {
+            break;
+        }
+
+        load_offset = dp->load_offset;
     }
 
     SET_RETVAL(dp->res_load)

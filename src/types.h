@@ -767,6 +767,7 @@ struct OCI_DirPath
     ub4                 nb_loaded;      /* number of row loaded so far */
     ub4                 nb_converted;   /* number of row converted so far */
     ub4                 nb_entries;     /* number of rows currently set */
+    ub4                 load_offset;    /* absolute offset of the last converted row  */
     ub4                 status;         /* internal status */
     ub4                 nb_cur;         /* current number of row to load per stream */
     ub2                 nb_cols;        /* number of columns to load */
