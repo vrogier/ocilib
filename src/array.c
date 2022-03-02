@@ -304,11 +304,13 @@ boolean OcilibArrayFreeFromHandles
 
     CHECK_PTR(OCI_IPC_VOID, handles)
 
+    WARNING_DISABLE_UNSAFE_CONVERT
+
     LOCK_LIST
     (
         Env.arrs,
         {
-            arr = OcilibListFind(Env.arrs, (POCI_LIST_FIND)OcilibArrayFindAny, handles);
+            arr = OcilibListFind(Env.arrs, (POCI_LIST_FIND)OcilibArrayFindAny, (void *) handles);
             if (NULL != arr)
             {
                 OcilibListRemove(Env.arrs, arr);
@@ -316,6 +318,8 @@ boolean OcilibArrayFreeFromHandles
         }
     )
 
+    WARNING_RESTORE_UNSAFE_CONVERT
+            
     CHECK_NULL(arr)
 
     OcilibArrayDispose(arr);
