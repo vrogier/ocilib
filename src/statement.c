@@ -1522,13 +1522,7 @@ OCI_Statement * OcilibStatementCreate
 
     OCI_Statement *stmt = NULL;
     
-    LOCK_LIST
-    (
-        con->stmts,
-        {
-            stmt = OcilibListAppend(con->stmts, sizeof(*stmt));
-        }
-    )
+    LIST_ATOMIC_ADD(con->stmts, stmt)
 
     CHECK_NULL(stmt)
 
@@ -1555,15 +1549,7 @@ boolean OcilibStatementFree
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     CHECK_OBJECT_FETCHED(stmt)
 
-    LOCK_LIST
-    (
-        stmt->con->stmts,
-        {
-            OcilibListRemove(stmt->con->stmts, stmt);
-        }
-    )
-
-    OcilibStatementDispose(stmt);
+    LIST_ATOMIC_REMOVE(stmt->con->stmts, stmt, OcilibStatementDispose)
 
     FREE(stmt)
 

@@ -202,13 +202,7 @@ static OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
     /* first try to find it in list */
 
-    LOCK_LIST
-    (
-        typinf->con->tinfs,
-        {
-            parent = OcilibListFind(typinf->con->tinfs, (POCI_LIST_FIND)OcilibObjectTypeInfoFind, tdo);
-        }
-    )
+    LIST_ATOMIC_FIND(typinf->con->tinfs, OcilibObjectTypeInfoFind, tdo, parent)
 
     /* if found, it will be assigned in the cleanup part */
 

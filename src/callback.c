@@ -632,13 +632,7 @@ void OcilibCallbackHAEvent
 
             /* notify all related connections */
 
-            LOCK_LIST
-            (
-                Env.cons,
-                {
-                    OcilibListForEachWithParam(Env.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM)OcilibProcHAEventInvoke);
-                }
-            )
+            LIST_ATOMIC_FOREACH_WITH_PARAM(Env.cons, &params, OcilibProcHAEventInvoke)
 
             /* get next server */
 

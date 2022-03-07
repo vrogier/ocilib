@@ -61,9 +61,11 @@ static boolean OcilibTypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find
 
 static OCI_TypeInfo* OcilibTypeInfoFindOrCreate(OCI_Connection* con, TypeInfoFindParams* p_find_params, boolean* p_is_created)
 {
-    *p_is_created = FALSE;
+    OCI_TypeInfo* typinf = NULL;
 
-    OCI_TypeInfo* typinf = OcilibListFind(con->tinfs, (POCI_LIST_FIND)OcilibTypeInfoFind, p_find_params);
+    *p_is_created = FALSE;
+    
+    LIST_ATOMIC_FIND(con->tinfs, OcilibTypeInfoFind, p_find_params, typinf)
 
     if (NULL == typinf)
     {
@@ -233,7 +235,7 @@ OCI_TypeInfo * OcilibTypeInfoGet
     find_params.name   = obj_name;
     find_params.schema = obj_schema;
 
-    LOCK_LIST
+    LIST_ATOMIC_OPERATION
     (
         con->tinfs,
         {

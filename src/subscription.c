@@ -172,13 +172,7 @@ OCI_Subscription * OcilibSubscriptionRegister
 
     /* create subscription object */
 
-    LOCK_LIST
-    (
-        Env.subs,
-        {
-            sub = OcilibListAppend(Env.subs, sizeof(*sub));
-        }
-    )
+    LIST_ATOMIC_ADD(Env.subs, sub)
     
     CHECK_NULL(sub)
 
@@ -357,15 +351,7 @@ boolean OcilibSubscriptionUnregister
 
     CHECK_PTR(OCI_IPC_NOTIFY, sub)
 
-    LOCK_LIST
-    (
-        Env.subs,
-        {
-            OcilibListRemove(Env.subs, sub);
-        }
-    )
-
-    OcilibSubscriptionDispose(sub);
+    LIST_ATOMIC_REMOVE(Env.subs, sub, OcilibSubscriptionDispose)
 
     FREE(sub);
 

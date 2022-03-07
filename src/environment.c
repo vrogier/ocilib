@@ -1530,41 +1530,10 @@ boolean OcilibEnvironmentCleanup
 
     /* dispose list items */
 
-    LOCK_LIST
-    (
-        Env.arrs,
-        {
-            OcilibListForEach(Env.arrs,  (POCI_LIST_FOR_EACH)OcilibArrayDispose);
-            OcilibListClear(Env.arrs);
-        }
-    )
-
-    LOCK_LIST
-    (
-        Env.subs,
-        {
-            OcilibListForEach(Env.subs,  (POCI_LIST_FOR_EACH)OcilibSubscriptionDispose);
-            OcilibListClear(Env.subs);
-        }
-    )
-
-    LOCK_LIST
-    (
-        Env.cons,
-        {
-            OcilibListForEach(Env.cons,  (POCI_LIST_FOR_EACH)OcilibConnectionDispose);
-            OcilibListClear(Env.cons);
-        }
-    )
-
-    LOCK_LIST
-    (
-        Env.pools,
-        {
-            OcilibListForEach(Env.pools, (POCI_LIST_FOR_EACH)OcilibPoolDispose);
-            OcilibListClear(Env.pools);
-        }
-    )
+    LIST_ATOMIC_REMOVE_ALL(Env.arrs,  OcilibArrayDispose)
+    LIST_ATOMIC_REMOVE_ALL(Env.subs,  OcilibSubscriptionDispose)
+    LIST_ATOMIC_REMOVE_ALL(Env.cons,  OcilibConnectionDispose)
+    LIST_ATOMIC_REMOVE_ALL(Env.pools, OcilibPoolDispose)
 
     /* free all lists */
 

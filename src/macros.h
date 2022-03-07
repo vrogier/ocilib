@@ -26,44 +26,44 @@
 #include "memory.h"
 #include "types.h"
 
-/* Global warning macro specific warnings macro */
+ /* Global warning macro specific warnings macro */
 
 #if defined(_MSC_VER)
 
-    #define WARNING_DISABLE(w)              __pragma(warning( disable : w ))
-    #define WARNING_RESTORE(w)              __pragma(warning( default : w ))
+#define WARNING_DISABLE(w)              __pragma(warning( disable : w ))
+#define WARNING_RESTORE(w)              __pragma(warning( default : w ))
 
-    #define WARNING_DISABLE_CAST_FUNC_TYPE  WARNING_DISABLE(4054)
-    #define WARNING_RESTORE_CAST_FUNC_TYPE  WARNING_RESTORE(4054)
-    #define WARNING_DISABLE_PEDANTIC
-    #define WARNING_RESTORE_PEDANTIC
-    #define WARNING_DISABLE_UNSAFE_CONVERT  WARNING_DISABLE(4191)
-    #define WARNING_RESTORE_UNSAFE_CONVERT  WARNING_RESTORE(4191)
+#define WARNING_DISABLE_CAST_FUNC_TYPE  WARNING_DISABLE(4054)
+#define WARNING_RESTORE_CAST_FUNC_TYPE  WARNING_RESTORE(4054)
+#define WARNING_DISABLE_PEDANTIC
+#define WARNING_RESTORE_PEDANTIC
+#define WARNING_DISABLE_UNSAFE_CONVERT  WARNING_DISABLE(4191)
+#define WARNING_RESTORE_UNSAFE_CONVERT  WARNING_RESTORE(4191)
 
 #elif defined(__GNUC__)
 
-    #define DO_PRAGMA(exp) _Pragma(#exp)
+#define DO_PRAGMA(exp) _Pragma(#exp)
 
-    #define WARNING_DISABLE(w)                  \
+#define WARNING_DISABLE(w)                  \
         DO_PRAGMA(GCC diagnostic push)          \
         DO_PRAGMA(GCC diagnostic ignored #w)
 
-    #define WARNING_RESTORE(w)                  \
+#define WARNING_RESTORE(w)                  \
         DO_PRAGMA(GCC diagnostic pop)           \
 
-	#if __GNUC__ > 7
-      #define WARNING_DISABLE_CAST_FUNC_TYPE      WARNING_DISABLE(-Wcast-function-type)
-      #define WARNING_RESTORE_CAST_FUNC_TYPE      WARNING_RESTORE(-Wcast-function-type)
-    #else
-      #define WARNING_DISABLE_CAST_FUNC_TYPE
-      #define WARNING_RESTORE_CAST_FUNC_TYPE
-	#endif
+#if __GNUC__ > 7
+#define WARNING_DISABLE_CAST_FUNC_TYPE      WARNING_DISABLE(-Wcast-function-type)
+#define WARNING_RESTORE_CAST_FUNC_TYPE      WARNING_RESTORE(-Wcast-function-type)
+#else
+#define WARNING_DISABLE_CAST_FUNC_TYPE
+#define WARNING_RESTORE_CAST_FUNC_TYPE
+#endif
 
-	#define WARNING_DISABLE_PEDANTIC            WARNING_DISABLE(-Wpedantic)
-    #define WARNING_RESTORE_PEDANTIC            WARNING_RESTORE(-Wpedantic)
-  
-    #define WARNING_DISABLE_UNSAFE_CONVERT
-    #define WARNING_RESTORE_UNSAFE_CONVERT
+#define WARNING_DISABLE_PEDANTIC            WARNING_DISABLE(-Wpedantic)
+#define WARNING_RESTORE_PEDANTIC            WARNING_RESTORE(-Wpedantic)
+
+#define WARNING_DISABLE_UNSAFE_CONVERT
+#define WARNING_RESTORE_UNSAFE_CONVERT
 
 #endif
 
@@ -479,11 +479,102 @@ ExitLabel:                          \
         (ub4) (size), (ub4) (atype), err                                   \
     )       
 
+#define LIST_ATOMIC_OPERATION(list, exp)                    \
+                                                            \
+    OcilibListLock(list);                                   \
+    WARNING_DISABLE_UNSAFE_CONVERT                          \
+    exp                                                     \
+    WARNING_RESTORE_UNSAFE_CONVERT                          \
+    OcilibListUnlock(list);                                 \
 
-#define LOCK_LIST(list, exp)    \
-                                \
-    OcilibListLock(list);       \
-    exp                         \
-    OcilibListUnlock(list);     \
+#define LIST_ATOMIC_FOREACH(list, cb)                       \
+                                                            \
+    LIST_ATOMIC_OPERATION                                   \
+    (                                                       \
+        list,                                               \
+        {                                                   \
+            OcilibListForEach(list, (POCI_LIST_FOR_EACH)cb);\
+        }                                                   \
+    ) 
+
+#define LIST_ATOMIC_FOREACH_WITH_PARAM(list, param, cb)     \
+                                                            \
+    LIST_ATOMIC_OPERATION                                   \
+    (                                                       \
+        list,                                               \
+        {                                                   \
+            OcilibListForEachWithParam                      \
+            (                                               \
+                list,(void *) param,                        \
+                (POCI_LIST_FOR_EACH_WITH_PARAM)cb           \
+            );                                              \
+        }                                                   \
+    ) 
+
+#define LIST_ATOMIC_REMOVE_ALL(list, cb)                    \
+                                                            \
+    LIST_ATOMIC_OPERATION                                   \
+    (                                                       \
+        list,                                               \
+        {                                                   \
+            OcilibListForEach(list, (POCI_LIST_FOR_EACH)cb);\
+            OcilibListClear(list);                          \
+        }                                                   \
+    )                                                       \
+
+#define LIST_ATOMIC_FIND(list, cb, data, item)              \
+                                                            \
+    LIST_ATOMIC_OPERATION                                   \
+    (                                                       \
+        list,                                               \
+        {                                                   \
+            item = OcilibListFind                           \
+            (                                               \
+                list, (POCI_LIST_FIND) cb,                  \
+                (void *) data                               \
+            );                                              \
+        }                                                   \
+    )                                                       \
+
+#define LIST_ATOMIC_ADD(list, item)                         \
+                                                            \
+    LIST_ATOMIC_OPERATION                                   \
+    (                                                       \
+        list,                                               \
+        {                                                   \
+            item = OcilibListAppend(list, sizeof(*item));   \
+        }                                                   \
+    )                                                       \
+
+#define LIST_ATOMIC_REMOVE(list, item, cb)                  \
+                                                            \
+    LIST_ATOMIC_OPERATION                                   \
+    (                                                       \
+        list,                                               \
+        {                                                   \
+            OcilibListRemove(list, item);                   \
+        }                                                   \
+    )                                                       \
+    cb(item);                                               \
+
+
+#define LIST_ATOMIC_FIND_AND_REMOVE(list, cb, data, item)   \
+                                                            \
+    LIST_ATOMIC_OPERATION                                   \
+    (                                                       \
+        list,                                               \
+        {                                                   \
+            item = OcilibListFind                           \
+            (                                               \
+                list, (POCI_LIST_FIND) cb,                  \
+                (void *) data                               \
+            );                                              \
+            if (NULL != item)                               \
+            {                                               \
+                OcilibListRemove(list, item);               \
+            }                                               \
+        }                                                   \
+    )                                                       \
+
 
 #endif /* OCILIB_MACROS_H_INCLUDED */

@@ -223,13 +223,7 @@ OCI_Array * OcilibArrayCreate
 
     /* create array object */
 
-    LOCK_LIST
-    (
-        Env.arrs,
-        {
-            arr = OcilibListAppend(Env.arrs, sizeof(*arr));
-        }
-    )
+    LIST_ATOMIC_ADD(Env.arrs, arr)
 
     CHECK_NULL(arr)
 
@@ -304,21 +298,7 @@ boolean OcilibArrayFreeFromHandles
 
     CHECK_PTR(OCI_IPC_VOID, handles)
 
-    WARNING_DISABLE_UNSAFE_CONVERT
-
-    LOCK_LIST
-    (
-        Env.arrs,
-        {
-            arr = OcilibListFind(Env.arrs, (POCI_LIST_FIND)OcilibArrayFindAny, (void *) handles);
-            if (NULL != arr)
-            {
-                OcilibListRemove(Env.arrs, arr);
-            }
-        }
-    )
-
-    WARNING_RESTORE_UNSAFE_CONVERT
+    LIST_ATOMIC_FIND_AND_REMOVE(Env.arrs, OcilibArrayFindAny, handles, arr)
             
     CHECK_NULL(arr)
 

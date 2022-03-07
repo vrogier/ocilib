@@ -169,13 +169,7 @@ OCI_Pool * OcilibPoolCreate
 
     /* create pool object */
 
-    LOCK_LIST
-    (
-        Env.pools,
-        {
-            pool = OcilibListAppend(Env.pools, sizeof(*pool));
-        }
-    )
+    LIST_ATOMIC_ADD(Env.pools, pool)
 
     CHECK_NULL(pool)
 
@@ -395,15 +389,7 @@ boolean OcilibPoolFree
 
     CHECK_PTR(OCI_IPC_POOL, pool)
 
-    LOCK_LIST
-    (
-        Env.pools,
-        {
-            OcilibListRemove(Env.pools, pool);
-        }
-    )
-
-    CHECK(OcilibPoolDispose(pool))
+    LIST_ATOMIC_REMOVE(Env.pools, pool, OcilibPoolDispose)
 
     FREE(pool)
 
