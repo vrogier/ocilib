@@ -306,5 +306,60 @@ TEST(ReportedIssuesCApi, Issue288)
     ExecDML(OTEXT("drop table TestIssue288"));
 }
 
+TEST(ReportedIssuesCApi, Issue313)
+{
+    ExecDML(OTEXT("drop table TestIssue313"));
+    ExecDML(OTEXT("create table TestIssue313(test int, value clob)"));
+    ExecDML(OTEXT("insert into TestIssue313 values(1, null)"));
+    ExecDML(OTEXT("insert into TestIssue313 values(2, '')"));
+    ExecDML(OTEXT("insert into TestIssue313 values(3, empty_clob())"));
+
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+    const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+    ASSERT_NE(nullptr, conn);
+
+    const auto stmt = OCI_StatementCreate(conn);
+    ASSERT_NE(nullptr, stmt);
+
+    ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select test, value from TestIssue313")));
+
+    auto rslt = OCI_GetResultset(stmt);
+    ASSERT_NE(nullptr, rslt);
+
+    auto counter = 0u;
+
+    while (OCI_FetchNext(rslt))
+    {
+        auto test = OCI_GetInt(rslt, 1);
+        auto value = OCI_GetString(rslt, 2);
+
+        if (test == 1 || test == 2)
+        {
+            /* NULL CLOB and '' lead to NULL CLOB */
+            ASSERT_EQ(nullptr, value);
+
+        }
+        else if (test == 3)
+        {
+            ASSERT_NE(nullptr, value);
+            ASSERT_EQ(0, ostrlen(value));
+        }
+        else
+        {
+            ASSERT_TRUE(FALSE);
+        }
+
+        counter++;
+    }
+
+    ASSERT_EQ(3u, counter);
+
+    ASSERT_TRUE(OCI_StatementFree(stmt));
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_Cleanup());
+
+    ExecDML(OTEXT("drop table TestIssue313"));
+}
 
 INSTANTIATE_TEST_CASE_P(ReportedIssuesCApi, ReportedIssues247, ::testing::ValuesIn(TimestampTypes));

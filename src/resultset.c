@@ -1994,8 +1994,7 @@ const otext * OcilibResultsetGetString
 
             CHECK(OcilibStringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, buffer_size))
 
-            CHECK(OcilibStringGetFromType(rs->stmt->con, &def->col, data, data_size,
-                                          def->buf.tmpbuf, def->buf.tmpsize, FALSE))
+            OcilibStringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, def->buf.tmpsize, FALSE);
 
             CHECK(NULL == err || OCI_UNKNOWN == err->type)
 
