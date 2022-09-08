@@ -605,6 +605,8 @@ static void OcilibEnvironmentKeyMapFree
     Env.key_map = NULL;
 }
 
+#ifndef OCI_IMPORT_LINKAGE
+
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEnvironmentLoadSymbols
  * --------------------------------------------------------------------------------------------- */
@@ -1116,6 +1118,9 @@ static void OcilibEnvironmentLoadSymbols()
 
     WARNING_RESTORE_UNSAFE_CONVERT
 }
+
+#endif
+
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEnvironmentGetVariable

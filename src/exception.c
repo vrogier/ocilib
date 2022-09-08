@@ -409,6 +409,9 @@ void OcilibExceptionLoadingSharedLib
 #ifdef OCI_IMPORT_RUNTIME
 
     EXCEPTION_IMPL(OCI_ERR_LOADING_SHARED_LIB, OCI_DL_NAME)
+#else
+
+    OCI_NOT_USED(ctx)
 
 #endif
 }
