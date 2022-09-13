@@ -186,3 +186,7 @@ testlog.manifest
 /.vs
 *.recipe
 *.txt
+
+# misc. VS files
+*.lock
+*.vsidx
