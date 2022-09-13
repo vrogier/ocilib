@@ -117,6 +117,7 @@
     <ClCompile Include="TestDate.cpp" />
     <ClCompile Include="TestDescribe.cpp" />
     <ClCompile Include="TestDirectPath.cpp" />
+    <ClCompile Include="TestEnvironment.cpp" />
     <ClCompile Include="TestImplicitResultset.cpp" />
     <ClCompile Include="TestInterval.cpp" />
     <ClCompile Include="TestLob.cpp" />

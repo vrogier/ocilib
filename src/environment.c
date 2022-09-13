@@ -1546,6 +1546,11 @@ boolean OcilibEnvironmentCleanup
     unsigned int i = 0;
 
     /* exit if the environment is not loaded */
+ 
+    if (!Env.loaded)
+    {
+        JUMP_EXIT()
+    }
 
     success = TRUE;
 
