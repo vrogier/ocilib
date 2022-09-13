@@ -4244,7 +4244,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindIsNullAtPos
  *
  */
 
-boolean OCI_API OCI_BindSetCharsetForm
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetCharsetForm
 (
     OCI_Bind *   bnd,
     unsigned int csfrm

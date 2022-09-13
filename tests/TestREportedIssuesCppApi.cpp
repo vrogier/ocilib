@@ -32,3 +32,34 @@ TEST(ReportedIssuesCppApi, Issue250)
 }
 
 #endif
+
+
+TEST(ReportedIssuesCppApi, Issue314)
+{
+    auto exceptionOccured{ false };
+
+    try
+    {
+        ocilib::Environment::Initialize();
+
+        Connection con(DBS, USR, PWD);
+        ocilib::Statement stmt(con);
+
+        int value = 2;
+
+        stmt.Prepare(OTEXT("select * from dual where 1 > :value"));
+        stmt.Bind(":value", value, ocilib::BindInfo::In);
+        auto bind = stmt.GetBind(1);
+        bind.SetCharsetForm(CharsetFormValues::CharsetFormNational);
+        stmt.ExecutePrepared();
+    }
+    catch (ocilib::Exception e)
+    {
+        exceptionOccured = true;
+    }
+
+    ASSERT_FALSE(0, exceptionOccured);
+
+
+    Environment::Cleanup();
+}
