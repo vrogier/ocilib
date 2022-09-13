@@ -488,7 +488,7 @@ CollectionElement<T> Collection<T>::operator [] (unsigned int index)
 template<class T>
 CollectionElement<T> Collection<T>::operator [](unsigned int index) const
 {
-    return  CollectionElement<T>(this, index);
+    return CollectionElement<T>(const_cast<Collection<T>*>(this), index);
 }
 
 }
