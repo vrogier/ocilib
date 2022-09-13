@@ -30,8 +30,8 @@
 
 #include "../include/ocilib.h"
 
-#define DBSNAME OTEXT("db19c")
-#define DBS OTEXT("localhost:1521/db19c")
+#define DBSNAME OTEXT("DB21C")
+#define DBS OTEXT("DB21C_DEV")
 #define USR OTEXT("usr")
 #define PWD OTEXT("pwd")
 #define SYS_USR OTEXT("sys")
