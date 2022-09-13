@@ -1475,9 +1475,13 @@ boolean OcilibEnvironmentInitialize
     }
 
     /* create thread key for thread errors */
+ 
+    WARNING_DISABLE_UNSAFE_CONVERT
 
     Env.key_errs = OcilibThreadKeyCreateInternal((POCI_THREADKEYDEST)OcilibEnvironmentFreeError);
     CHECK_NULL(Env.key_errs)
+
+    WARNING_RESTORE_UNSAFE_CONVERT
 
     /* allocate connections internal list */
 
