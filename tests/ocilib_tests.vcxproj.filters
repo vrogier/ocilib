@@ -211,7 +211,7 @@
     <ClCompile Include="TestReportedIssuesCApi.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
-    <ClCompile Include="TestREportedIssuesCppApi.cpp">
+    <ClCompile Include="TestReportedIssuesCppApi.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestNotifications.cpp">

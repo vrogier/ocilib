@@ -131,7 +131,7 @@
     <ClCompile Include="TestQueue.cpp" />
     <ClCompile Include="TestReference.cpp" />
     <ClCompile Include="TestReportedIssuesCApi.cpp" />
-    <ClCompile Include="TestREportedIssuesCppApi.cpp" />
+    <ClCompile Include="TestReportedIssuesCppApi.cpp" />
     <ClCompile Include="TestReturningInto.cpp" />
     <ClCompile Include="TestRowId.cpp" />
     <ClCompile Include="TestScrollabeCursor.cpp" />
