@@ -35,13 +35,17 @@ Collection<T>::Collection()
 template<class T>
 Collection<T>::Collection(const TypeInfo &typeInfo)
 {
-    Acquire(core::Check(OCI_CollCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_CollFree), nullptr, typeInfo.GetConnection().GetHandle());
+    AcquireAllocated
+    (
+        core::Check(OCI_CollCreate(typeInfo)), 
+        typeInfo.GetConnection().GetHandle()
+    );
 }
 
 template<class T>
 Collection<T>::Collection(OCI_Coll *pColl, core::Handle *parent)
 {
-    Acquire(pColl, nullptr, nullptr, parent);
+    AcquireTransient(pColl,parent);
 }
 
 template<class T>

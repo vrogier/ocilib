@@ -36,7 +36,7 @@ namespace ocilib
         template<class T>
         HandleHolder<T>::HandleHolder(const HandleHolder& other) : _smartHandle(nullptr)
         {
-            Acquire(other, nullptr, nullptr, other._smartHandle ? other._smartHandle->GetParent() : nullptr);
+            AcquireTransient(other, other._smartHandle ? other._smartHandle->GetParent() : nullptr);
         }
 
         template<class T>
@@ -51,7 +51,7 @@ namespace ocilib
             if (this != &other)
             {
                 Handle* parent = other._smartHandle ? other._smartHandle->GetParent() : nullptr;
-                SILENT_CATCH(Acquire(other, nullptr, nullptr, parent))
+                SILENT_CATCH(AcquireTransient(other, parent))
             }
             return *this;
         }
@@ -93,7 +93,25 @@ namespace ocilib
         }
 
         template<class T>
-        void HandleHolder<T>::Acquire(T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent)
+        void HandleHolder<T>::AcquireAllocated(T handle, Handle* parent)
+        {
+            Acquire(handle, true, nullptr, parent);
+        }
+  
+        template<class T>
+        void HandleHolder<T>::AcquireTransient(T handle, Handle* parent)
+        {
+            Acquire(handle, false, nullptr, parent);
+        }
+  
+        template<class T>
+        void HandleHolder<T>::AcquireAllocatedWithNotification(T handle, Handle* parent, SmartHandleFreeNotifyFunc freeNotifyFunc)
+        {
+            Acquire(handle, true, freeNotifyFunc, parent);
+        }
+
+        template<class T>
+        void HandleHolder<T>::Acquire(T handle, bool allocated, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent)
         {
             if (_smartHandle && _smartHandle->GetHandle() == handle)
             {
@@ -108,7 +126,7 @@ namespace ocilib
 
                 if (!_smartHandle)
                 {
-                    _smartHandle = OnAllocate(new SmartHandle(this, handle, handleFreefunc, freeNotifyFunc, parent));
+                    _smartHandle = OnAllocate(new SmartHandle(this, handle, allocated, freeNotifyFunc, parent));
                 }
                 else
                 {

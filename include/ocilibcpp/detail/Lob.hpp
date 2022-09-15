@@ -39,13 +39,17 @@ inline Lob<T, U>::Lob()
 template<class T, int U>
 Lob<T, U>::Lob(const Connection &connection)
 {
-    Acquire(core::Check(OCI_LobCreate(connection, U)), reinterpret_cast<HandleFreeFunc>(OCI_LobFree), nullptr, connection.GetHandle());
+    AcquireAllocated
+    (
+        core::Check(OCI_LobCreate(connection, U)),
+        connection.GetHandle()
+    );
 }
 
 template<class T, int U>
 Lob<T, U>::Lob(OCI_Lob *pLob, core::Handle *parent)
 {
-    Acquire(pLob, nullptr, nullptr, parent);
+    AcquireTransient(pLob, parent);
 }
 
 template<>
@@ -186,7 +190,11 @@ big_uint Lob<T, U>::GetChunkSize() const
 template<class T, int U>
 Connection Lob<T, U>::GetConnection() const
 {
-    return Connection(core::Check(OCI_LobGetConnection(*this)), nullptr);
+    return Connection
+    (
+        core::Check(OCI_LobGetConnection(*this)), 
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 template<class T, int U>

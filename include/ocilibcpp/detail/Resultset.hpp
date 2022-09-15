@@ -27,7 +27,7 @@ namespace ocilib
 
 inline Resultset::Resultset(OCI_Resultset *resultset, core::Handle *parent)
 {
-    Acquire(resultset, nullptr, nullptr, parent);
+    AcquireTransient(resultset, parent);
 }
 
 inline bool Resultset::Next()

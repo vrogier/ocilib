@@ -175,6 +175,7 @@ namespace ocilib
 #include "ocilibcpp/detail/support/BindObjectAdaptor.hpp"
 #include "ocilibcpp/detail/support/BindTypeAdaptor.hpp"
 #include "ocilibcpp/detail/support/BindsHolder.hpp"
+#include "ocilibcpp/detail/support/HandleDeleter.hpp"
 #include "ocilibcpp/detail/support/HandleStoreResolver.hpp"
 #include "ocilibcpp/detail/support/NumericTypeResolver.hpp"
 

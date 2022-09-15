@@ -35,17 +35,29 @@ inline Reference::Reference()
 inline Reference::Reference(const TypeInfo &typeInfo)
 {
     Connection connection = typeInfo.GetConnection();
-    Acquire(core::Check(OCI_RefCreate(connection, typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_RefFree), nullptr, connection.GetHandle());
+    AcquireAllocated
+    (
+        core::Check(OCI_RefCreate(connection, typeInfo)),
+        connection.GetHandle()
+    );
 }
 
 inline Reference::Reference(OCI_Ref *pRef, core::Handle *parent)
 {
-    Acquire(pRef, nullptr, nullptr, parent);
+    AcquireTransient(pRef, parent);
 }
 
 inline TypeInfo Reference::GetTypeInfo() const
 {
-    return TypeInfo(core::Check(OCI_RefGetTypeInfo(*this)));
+    OCI_TypeInfo* typeInfo = core::Check(OCI_RefGetTypeInfo(*this));
+
+    Connection connection
+    (
+        core::Check(OCI_TypeInfoGetConnection(typeInfo)),
+        Environment::GetEnvironmentHandle()
+    );
+
+    return TypeInfo(typeInfo, connection.GetHandle());
 }
 
 inline Object Reference::GetObject() const

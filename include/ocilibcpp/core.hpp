@@ -388,21 +388,23 @@ namespace ocilib
 
             HandleHolder& operator= (const HandleHolder& other) noexcept;
 
-            typedef boolean(OCI_API* HandleFreeFunc)(AnyPointer handle);
-
             typedef void(*SmartHandleFreeNotifyFunc)(SmartHandle* smartHandle);
 
             Handle* GetHandle() const;
 
-            void Acquire(T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent);
+            void AcquireAllocated(T handle, Handle* parent);
+            void AcquireTransient(T handle, Handle* parent);
+            void AcquireAllocatedWithNotification(T handle, Handle* parent, SmartHandleFreeNotifyFunc freeNotifyFunc);
             void Acquire(HandleHolder& other);
+
+            void Acquire(T handle, bool allocated, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent);
             void Release();
 
             class SmartHandle : public Handle
             {
             public:
 
-                SmartHandle(HandleHolder* holder, T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent);
+                SmartHandle(HandleHolder* holder, T handle, bool allocated, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent);
                 virtual ~SmartHandle() noexcept;
 
                 void Acquire(HandleHolder* holder);
@@ -434,7 +436,7 @@ namespace ocilib
                 SynchronizationGuard _guard;
 
                 T _handle;
-                HandleFreeFunc _handleFreeFunc;
+                bool _allocated;
                 SmartHandleFreeNotifyFunc _freeNotifyFunc;
                 Handle* _parent;
                 AnyPointer _extraInfo;

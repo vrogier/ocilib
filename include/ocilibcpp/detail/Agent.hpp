@@ -27,18 +27,16 @@ namespace ocilib
 
 inline Agent::Agent(const Connection &connection, const ostring& name, const ostring& address)
 {
-    Acquire
+    AcquireAllocated
     (
         core::Check(OCI_AgentCreate(connection, name.c_str(), address.c_str())),
-        reinterpret_cast<HandleFreeFunc>(OCI_AgentFree), 
-        nullptr, 
         connection.GetHandle()
     );
 }
 
 inline Agent::Agent(OCI_Agent *pAgent, core::Handle *parent)
 {
-    Acquire(pAgent, nullptr, nullptr, parent);
+    AcquireTransient(pAgent, parent);
 }
 
 inline ostring Agent::GetName() const

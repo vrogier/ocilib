@@ -42,13 +42,16 @@ inline Connection::Connection(const ostring& db, const ostring& user, const ostr
 
 inline Connection::Connection(OCI_Connection *con,  core::Handle *parent)
 {
-    Acquire(con, reinterpret_cast<HandleFreeFunc>(parent ? OCI_ConnectionFree : nullptr), nullptr, parent);
+    AcquireTransient(con, parent);
 }
 
 inline void Connection::Open(const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)
 {
-    Acquire(core::Check(OCI_ConnectionCreate(db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues())),
-        reinterpret_cast<HandleFreeFunc>(OCI_ConnectionFree), nullptr, Environment::GetEnvironmentHandle());
+    AcquireAllocated
+    (
+        core::Check(OCI_ConnectionCreate(db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues())),
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline void Connection::Close()

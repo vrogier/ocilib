@@ -27,7 +27,7 @@ namespace ocilib
 
 inline Column::Column(OCI_Column *pColumn, core::Handle *parent)
 {
-    Acquire(pColumn, nullptr, nullptr, parent);
+    AcquireTransient(pColumn, parent);
 }
 
 inline ostring Column::GetName() const
@@ -113,7 +113,15 @@ inline bool Column::IsCharSemanticUsed() const
 
 inline TypeInfo Column::GetTypeInfo() const
 {
-    return TypeInfo(core::Check(OCI_ColumnGetTypeInfo(*this)));
+    OCI_TypeInfo* typeInfo = core::Check(OCI_ColumnGetTypeInfo(*this));
+
+    Connection connection
+    (
+        core::Check(OCI_TypeInfoGetConnection(typeInfo)),
+        Environment::GetEnvironmentHandle()
+    );
+
+    return TypeInfo(typeInfo, connection.GetHandle());
 }
 
 }

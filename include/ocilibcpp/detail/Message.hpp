@@ -31,12 +31,18 @@ namespace ocilib
 
 inline Message::Message(const TypeInfo &typeInfo)
 {
-    Acquire(core::Check(OCI_MsgCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_MsgFree), nullptr, nullptr);
+    Connection connection = typeInfo.GetConnection();
+
+    AcquireAllocated
+    (
+        core::Check(OCI_MsgCreate(typeInfo)),
+        connection.GetHandle()
+    );
 }
 
 inline Message::Message(OCI_Msg *pMessage, core::Handle *parent)
 {
-    Acquire(pMessage, nullptr, nullptr, parent);
+    AcquireTransient(pMessage, parent);
 }
 
 inline void Message::Reset()

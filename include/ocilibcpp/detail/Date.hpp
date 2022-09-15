@@ -49,16 +49,14 @@ inline Date::Date(const otext* str, const otext* format)
 
 inline Date::Date(OCI_Date *pDate, core::Handle *parent)
 {
-    Acquire(pDate, nullptr, nullptr, parent);
+    AcquireTransient(pDate, parent);
 }
 
 inline void Date::Allocate()
 {
-    Acquire
+    AcquireAllocated
     (
         core::Check(OCI_DateCreate(nullptr)),
-        reinterpret_cast<HandleFreeFunc>(OCI_DateFree),
-        nullptr,
         Environment::GetEnvironmentHandle()
     );
 }

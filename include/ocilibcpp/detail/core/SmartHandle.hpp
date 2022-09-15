@@ -21,6 +21,8 @@
 #pragma once
 
 #include "ocilibcpp/core.hpp"
+#include "ocilibcpp/detail/support/HandleStoreResolver.hpp"
+#include "ocilibcpp/detail/support/HandleDeleter.hpp"
 
 namespace ocilib
 {
@@ -30,10 +32,10 @@ namespace ocilib
         template<class T>
         HandleHolder<T>::SmartHandle::SmartHandle
         (
-            HandleHolder* holder, T handle, HandleFreeFunc handleFreefunc,
+            HandleHolder* holder, T handle, bool allocated,
             SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent
         )
-            : _holders(), _handle(handle), _handleFreeFunc(handleFreefunc),
+            : _holders(), _handle(handle), _allocated(allocated),
             _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store{nullptr},
             _guard(GetSynchronizationMode())
         {
@@ -82,9 +84,10 @@ namespace ocilib
                 _freeNotifyFunc(this);
             }
 
-            if (_handleFreeFunc && _handle)
+            if (_handle && _allocated)
             {
-                _handleFreeFunc(_handle);
+                support::HandleDeleter<T> deleter;
+                deleter(_handle);
             }
 
             if (_store)

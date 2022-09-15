@@ -35,7 +35,7 @@ inline Number::Number(bool create)
 
 inline Number::Number(OCI_Number *pNumber, core::Handle *parent)
 {
-    Acquire(pNumber, nullptr, nullptr, parent);
+    AcquireTransient(pNumber, parent);
 }
 
 inline Number::Number(const ostring& str, const ostring& format)
@@ -54,11 +54,9 @@ inline Number::Number(const otext* str, const otext* format)
 
 inline void Number::Allocate()
 {
-    Acquire
+    AcquireAllocated
     (
         core::Check(OCI_NumberCreate(nullptr)),
-        reinterpret_cast<HandleFreeFunc>(OCI_NumberFree),
-        nullptr,
         Environment::GetEnvironmentHandle()
     );
 }
@@ -166,7 +164,12 @@ void Number::Divide(const T &value)
 
 inline Number& Number::operator = (OCI_Number * &lhs)
 {
-    Acquire(lhs, reinterpret_cast<HandleFreeFunc>(OCI_NumberFree), nullptr, nullptr);
+    AcquireAllocated
+    (
+        lhs, 
+        Environment::GetEnvironmentHandle()
+    );
+
     return *this;
 }
 

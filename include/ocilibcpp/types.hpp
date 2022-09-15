@@ -493,6 +493,15 @@ namespace ocilib
         friend class Interval;
         friend class Agent;
         friend class Transaction;
+        friend class Exception;
+        friend class File;
+        friend class Log;
+        friend class Statement;
+        friend class Object;
+        friend class Reference;
+        friend class Message;
+        friend class Event;
+        friend class Column;
 
     public:
 
@@ -1573,6 +1582,9 @@ namespace ocilib
         friend class Agent;
         friend class Dequeue;
         friend class Enqueue;
+        friend class Column;
+        friend class Message;
+        friend class DirectPath;
 
         template<class, int>
         friend class Lob;
@@ -4632,7 +4644,7 @@ namespace ocilib
 
     private:
 
-        TypeInfo(OCI_TypeInfo* pTypeInfo);
+        TypeInfo(OCI_TypeInfo* pTypeInfo, core::Handle* parent);
     };
 
     /**

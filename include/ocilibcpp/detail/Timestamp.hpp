@@ -34,22 +34,18 @@ inline Timestamp::Timestamp()
 
 inline Timestamp::Timestamp(TimestampType type)
 {
-    Acquire
+    AcquireAllocated
     (
         core::Check(OCI_TimestampCreate(nullptr, type)),
-        reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree),
-        nullptr,
         Environment::GetEnvironmentHandle()
     );
 }
 
 inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostring& format)
 {
-    Acquire
+    AcquireAllocated
     (
         core::Check(OCI_TimestampCreate(nullptr, type)),
-        reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 
-        nullptr,
         Environment::GetEnvironmentHandle()
     );
 
@@ -58,7 +54,7 @@ inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostri
 
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, core::Handle *parent)
 {
-    Acquire(pTimestamp, nullptr, nullptr, parent);
+    AcquireTransient(pTimestamp, parent);
 }
 
 inline Timestamp Timestamp::Clone() const

@@ -45,8 +45,14 @@ inline void Pool::Open(const ostring& db, const ostring& user, const ostring& pw
 {
     Release();
 
-    Acquire(core::Check(OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), poolType, sessionFlags.GetValues(),
-        minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), nullptr, Environment::GetEnvironmentHandle());
+    AcquireAllocated
+    (
+        core::Check
+        (
+            OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), poolType, sessionFlags.GetValues(),  minSize, maxSize, increment)
+        ), 
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline void Pool::Close()

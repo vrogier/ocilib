@@ -117,7 +117,7 @@ TEST(TestQueue, MessageWithConsumers)
     const auto deq2 = OCI_DequeueCreate(inf, OTEXT("TestQueueMessageWithConsumers"));
     ASSERT_NE(nullptr, deq2);
 
-    OCI_Agent* agents[2];
+    OCI_Agent* agents[2] {};
 
     agents[0] = OCI_AgentCreate(conn, OTEXT("C1"), nullptr);
     ASSERT_NE(nullptr, agents[0]);

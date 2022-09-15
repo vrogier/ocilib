@@ -30,11 +30,11 @@ namespace ocilib
 inline Enqueue::Enqueue(const TypeInfo &typeInfo, const ostring& queueName)
 {
     Connection connection = typeInfo.GetConnection();
-    Acquire
+    
+    AcquireAllocated
     (
         core::Check(OCI_EnqueueCreate(typeInfo, queueName.c_str())), 
-        reinterpret_cast<HandleFreeFunc>(OCI_EnqueueFree),
-        nullptr, connection.GetHandle()
+        connection.GetHandle()
     );
 }
 

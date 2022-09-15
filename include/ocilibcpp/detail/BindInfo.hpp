@@ -27,7 +27,7 @@ namespace ocilib
 
 inline BindInfo::BindInfo(OCI_Bind *pBind, core::Handle *parent)
 {
-    Acquire(pBind, nullptr, nullptr, parent);
+    AcquireTransient(pBind, parent);
 }
 
 inline ostring BindInfo::GetName() const

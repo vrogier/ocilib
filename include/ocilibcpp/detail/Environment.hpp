@@ -272,7 +272,13 @@ inline void Environment::SelfInitialize(EnvironmentFlags mode, const ostring& li
 
     _callbacks.SetGuard(&_guard);
 
-    _handle.Acquire(static_cast<OCI_Environment*>(const_cast<AnyPointer>(core::Check(OCI_HandleGetEnvironment()))), nullptr, nullptr, nullptr);
+    _handle.AcquireTransient
+    (
+        /* returned value IS NOT an OCI_Environment* but OCIEnv* direct handle 
+           to be changed when C API we have public methods for OCI_Environment */
+        static_cast<OCI_Environment*>(const_cast<AnyPointer>(core::Check(OCI_HandleGetEnvironment()))),
+        nullptr
+    );
 
     _charMaxSize = ComputeCharMaxSize(GetCharset());
 }
