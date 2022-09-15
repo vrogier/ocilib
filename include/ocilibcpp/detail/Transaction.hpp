@@ -29,12 +29,18 @@ namespace ocilib
 
 inline Transaction::Transaction(const Connection &connection, unsigned int timeout, TransactionFlags flags, OCI_XID *pxid)
 {
-    Acquire(core::Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)), reinterpret_cast<HandleFreeFunc>(OCI_TransactionFree), nullptr, nullptr);
+    Acquire
+    (
+        core::Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)), 
+        reinterpret_cast<HandleFreeFunc>(OCI_TransactionFree), 
+        nullptr,
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline Transaction::Transaction(OCI_Transaction *trans)
 {
-    Acquire(trans, nullptr, nullptr, nullptr);
+    Acquire(trans, nullptr, nullptr, Environment::GetEnvironmentHandle());
 }
 
 inline void Transaction::Prepare()

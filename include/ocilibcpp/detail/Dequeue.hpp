@@ -31,12 +31,19 @@ namespace ocilib
     
 inline Dequeue::Dequeue(const TypeInfo &typeInfo, const ostring& queueName)
 {
-    Acquire(core::Check(OCI_DequeueCreate(typeInfo, queueName.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_DequeueFree), nullptr, nullptr);
+    Connection connection = typeInfo.GetConnection();
+    Acquire
+    (
+        core::Check(OCI_DequeueCreate(typeInfo, queueName.c_str())), 
+        reinterpret_cast<HandleFreeFunc>(OCI_DequeueFree),
+        nullptr,
+        connection.GetHandle()
+    );
 }
 
-inline Dequeue::Dequeue(OCI_Dequeue *pDequeue)
+inline Dequeue::Dequeue(OCI_Dequeue *pDequeue, core::Handle* parent)
 {
-    Acquire(pDequeue, nullptr, nullptr, nullptr);
+    Acquire(pDequeue, nullptr, nullptr, parent);
 }
 
 inline Message Dequeue::Get()

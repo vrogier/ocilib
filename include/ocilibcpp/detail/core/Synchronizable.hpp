@@ -31,35 +31,35 @@ namespace ocilib
 {
     namespace core
     {
-        inline Lockable::Lockable() : _locker(nullptr)
+        inline Synchronizable::Synchronizable() : _guard(nullptr)
         {
 
         }
 
-        inline Lockable::~Lockable() noexcept
+        inline Synchronizable::~Synchronizable() noexcept
         {
 
         }
 
-        inline void Lockable::Lock() const
+        inline void Synchronizable::Acquire() const
         {
-            if (_locker)
+            if (_guard)
             {
-                _locker->Lock();
+                _guard->Acquire();
             }
         }
 
-        inline void Lockable::Unlock() const
+        inline void Synchronizable::Release() const
         {
-            if (_locker)
+            if (_guard)
             {
-                _locker->Unlock();
+                _guard->Release();
             }
         }
 
-        inline void Lockable::SetLocker(Locker* locker)
+        inline void Synchronizable::SetGuard(SynchronizationGuard* guard)
         {
-            _locker = locker;
+            _guard = guard;
         }
 
     }

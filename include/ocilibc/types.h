@@ -83,6 +83,18 @@
 **/
 
 /**
+ * @typedef OCI_Environment
+ *
+ * @brief
+ * Environment object 
+ *
+ * Represents a runtime OCI executing environment
+ *
+ */
+
+typedef struct OCI_Environment OCI_Environment;
+
+/**
  * @typedef OCI_Pool
  *
  * @brief

@@ -210,21 +210,31 @@ namespace ocilib
             size_t _size;
         };
 
+        /**
+         * @brief Internal usage.
+         * Synchronization mode enumeration
+         */
+        enum SynchronizationMode
+        {
+            Unsafe,
+            Safe
+        };
+
        /**
         * @brief Internal usage.
-        * Locker object
+        * SynchronizationGuard object
         */ 
-        class Locker
+        class SynchronizationGuard
         {
         public:
 
-            Locker();
-            virtual ~Locker() noexcept;
+            SynchronizationGuard(SynchronizationMode mode);
+            virtual ~SynchronizationGuard() noexcept;
 
-            void Lock() const;
-            void Unlock() const;
+            void Acquire() const;
+            void Release() const;
 
-            void SetAccessMode(bool threaded);
+            void SetMode(SynchronizationMode mode);
 
         private:
 
@@ -235,21 +245,21 @@ namespace ocilib
         * @brief Internal usage.
         * Base class for types that can be locked
         */ 
-        class Lockable
+        class Synchronizable
         {
         public:
 
-            Lockable();
-            virtual  ~Lockable() noexcept;
+            Synchronizable();
+            virtual  ~Synchronizable() noexcept;
 
-            void SetLocker(Locker* locker);
+            void SetGuard(SynchronizationGuard* guard);
 
-            void Lock() const;
-            void Unlock() const;
+            void Acquire() const;
+            void Release() const;
 
         private:
 
-            Locker* _locker;
+            SynchronizationGuard* _guard;
         };
 
        /**
@@ -257,7 +267,7 @@ namespace ocilib
         * Map supporting concurrent access from multiple threads
         */ 
         template<class K, class V>
-        class ConcurrentMap : public Lockable
+        class ConcurrentMap : public Synchronizable
         {
         public:
 
@@ -281,7 +291,7 @@ namespace ocilib
         * List supporting concurrent access from multiple threads
         */ 
         template<class T>
-        class ConcurrentList : public Lockable
+        class ConcurrentList : public Synchronizable
         {
         public:
 
@@ -305,6 +315,9 @@ namespace ocilib
             std::list<T> _list;
         };
 
+        /* Forward declaration */
+        class HandleStore;
+
        /**
         * @brief Internal usage.
         * Interface for handling ownership and relationship of a C API handle
@@ -317,6 +330,35 @@ namespace ocilib
             virtual ConcurrentList<Handle*>& GetChildren() = 0;
             virtual void DetachFromHolders() = 0;
             virtual void DetachFromParent() = 0;
+            virtual HandleStore* GetStore() = 0;
+        };
+
+        /**
+        * @brief Internal usage.
+         * Provide a store for C Handles to C++ Handles mapping
+         */
+        class HandleStore
+        {
+        public:
+
+            HandleStore(SynchronizationGuard * guard);
+
+            template <class T>
+            T Get(AnyPointer ptr);
+
+            template <class T>
+            void Set(AnyPointer ptr, T handle);
+
+            static HandleStore& GetStoreForHandle(Handle*);
+
+            template <class T>
+            static HandleStore& CreateStore();
+
+        private:
+
+            static HandleStore& GetDefaultStore();
+
+            ConcurrentMap<AnyPointer, Handle*>  _handles;
         };
 
         /**
@@ -378,22 +420,25 @@ namespace ocilib
                 ConcurrentList<Handle*>& GetChildren() override;
                 void DetachFromHolders() override;
                 void DetachFromParent() override;
+                HandleStore* GetStore() override;
 
             private:
 
                 static void DeleteHandle(Handle* handle);
                 static void ResetHolder(HandleHolder* holder);
+                static SynchronizationMode GetSynchronizationMode();
 
                 ConcurrentList<HandleHolder*> _holders;
                 ConcurrentList<Handle*>  _children;
 
-                Locker _locker;
+                SynchronizationGuard _guard;
 
                 T _handle;
                 HandleFreeFunc _handleFreeFunc;
                 SmartHandleFreeNotifyFunc _freeNotifyFunc;
                 Handle* _parent;
                 AnyPointer _extraInfo;
+                HandleStore* _store;
             };
 
             SmartHandle* _smartHandle;
@@ -424,6 +469,5 @@ namespace ocilib
                 return lhs;
             }
         };
-
     }
 }

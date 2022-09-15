@@ -34,12 +34,25 @@ inline Timestamp::Timestamp()
 
 inline Timestamp::Timestamp(TimestampType type)
 {
-    Acquire(core::Check(OCI_TimestampCreate(nullptr, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), nullptr, nullptr);
+    Acquire
+    (
+        core::Check(OCI_TimestampCreate(nullptr, type)),
+        reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree),
+        nullptr,
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostring& format)
 {
-    Acquire(core::Check(OCI_TimestampCreate(nullptr, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), nullptr, nullptr);
+    Acquire
+    (
+        core::Check(OCI_TimestampCreate(nullptr, type)),
+        reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), 
+        nullptr,
+        Environment::GetEnvironmentHandle()
+    );
+
     FromString(data, format);
 }
 

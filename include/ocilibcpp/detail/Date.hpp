@@ -54,7 +54,13 @@ inline Date::Date(OCI_Date *pDate, core::Handle *parent)
 
 inline void Date::Allocate()
 {
-    Acquire(core::Check(OCI_DateCreate(nullptr)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), nullptr, nullptr);
+    Acquire
+    (
+        core::Check(OCI_DateCreate(nullptr)),
+        reinterpret_cast<HandleFreeFunc>(OCI_DateFree),
+        nullptr,
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline Date Date::SysDate()

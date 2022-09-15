@@ -47,7 +47,11 @@ inline ostring TypeInfo::GetName() const
 
 inline Connection TypeInfo::GetConnection() const
 {
-    return Connection(core::Check(OCI_TypeInfoGetConnection(*this)), nullptr);
+    return Connection
+    (
+        core::Check(OCI_TypeInfoGetConnection(*this)),
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline unsigned int TypeInfo::GetColumnCount() const

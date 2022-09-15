@@ -159,8 +159,9 @@ namespace ocilib
 #include "ocilibcpp/detail/core/Flags.hpp"
 #include "ocilibcpp/detail/core/ManagedBuffer.hpp"
 #include "ocilibcpp/detail/core/HandleHolder.hpp"
-#include "ocilibcpp/detail/core/Locker.hpp"
-#include "ocilibcpp/detail/core/Lockable.hpp"
+#include "ocilibcpp/detail/core/HandleStore.hpp"
+#include "ocilibcpp/detail/core/SynchronizationGuard.hpp"
+#include "ocilibcpp/detail/core/Synchronizable.hpp"
 #include "ocilibcpp/detail/core/ConcurrentMap.hpp"
 #include "ocilibcpp/detail/core/ConcurrentList.hpp"
 #include "ocilibcpp/detail/core/SmartHandle.hpp"
@@ -174,6 +175,7 @@ namespace ocilib
 #include "ocilibcpp/detail/support/BindObjectAdaptor.hpp"
 #include "ocilibcpp/detail/support/BindTypeAdaptor.hpp"
 #include "ocilibcpp/detail/support/BindsHolder.hpp"
+#include "ocilibcpp/detail/support/HandleStoreResolver.hpp"
 #include "ocilibcpp/detail/support/NumericTypeResolver.hpp"
 
 /* Including types implementations  */

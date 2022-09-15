@@ -35,7 +35,13 @@ inline Subscription::Subscription()
 
 inline Subscription::Subscription(OCI_Subscription *pSubcription)
 {
-    Acquire(pSubcription, nullptr, nullptr, nullptr);
+    Acquire
+    (
+        pSubcription,
+        nullptr, 
+        nullptr, 
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline void Subscription::Register(const Connection &connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)

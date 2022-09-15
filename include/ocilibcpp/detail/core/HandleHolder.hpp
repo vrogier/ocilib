@@ -104,7 +104,7 @@ namespace ocilib
 
             if (handle)
             {
-                _smartHandle = Environment::GetSmartHandle<SmartHandle*>(handle);
+                _smartHandle = HandleStore::GetStoreForHandle(parent).Get<SmartHandle*>(handle);
 
                 if (!_smartHandle)
                 {

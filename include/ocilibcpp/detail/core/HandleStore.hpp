@@ -26,43 +26,43 @@ namespace ocilib
 {
     namespace core
     {
-        inline Locker::Locker() : _mutex(nullptr)
+        inline HandleStore::HandleStore(SynchronizationGuard* guard)
         {
-            SetAccessMode(false);
+            _handles.SetGuard(guard);
         }
 
-        inline Locker::~Locker() noexcept
+        template <class T>
+        T HandleStore::Get(AnyPointer ptr)
         {
-            SILENT_CATCH(SetAccessMode(false));
+            return dynamic_cast<T>(_handles.Get(ptr));
         }
 
-        inline void Locker::SetAccessMode(bool threaded)
+        template <class T>
+        void HandleStore::Set(AnyPointer ptr, T handle)
         {
-            if (threaded && !_mutex)
+            if (handle)
             {
-                _mutex = Mutex::Create();
+                _handles.Set(ptr, handle);
             }
-            else if (!threaded && _mutex)
+            else
             {
-                Mutex::Destroy(_mutex);
-                _mutex = nullptr;
-            }
-        }
-
-        inline void Locker::Lock() const
-        {
-            if (_mutex)
-            {
-                Mutex::Acquire(_mutex);
+                _handles.Remove(ptr);
             }
         }
 
-        inline void Locker::Unlock() const
+        inline HandleStore& HandleStore::GetStoreForHandle(Handle* handle)
         {
-            if (_mutex)
-            {
-                Mutex::Release(_mutex);
-            }
+            HandleStore* store = handle ? handle->GetStore() : nullptr;
+            
+            return store ? *store : GetDefaultStore();
+        }
+
+        inline HandleStore& HandleStore::GetDefaultStore()
+        {
+            static SynchronizationGuard guard(SynchronizationMode::Unsafe);
+            static HandleStore store(&guard);
+
+            return store;
         }
 
     }

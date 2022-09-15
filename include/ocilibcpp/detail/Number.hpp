@@ -54,7 +54,13 @@ inline Number::Number(const otext* str, const otext* format)
 
 inline void Number::Allocate()
 {
-    Acquire(core::Check(OCI_NumberCreate(nullptr)), reinterpret_cast<HandleFreeFunc>(OCI_NumberFree), nullptr, nullptr);
+    Acquire
+    (
+        core::Check(OCI_NumberCreate(nullptr)),
+        reinterpret_cast<HandleFreeFunc>(OCI_NumberFree),
+        nullptr,
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline void Number::FromString(const ostring& str, const ostring& format) const

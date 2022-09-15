@@ -34,12 +34,24 @@ inline Interval::Interval()
 
 inline Interval::Interval(IntervalType type)
 {
-    Acquire(core::Check(OCI_IntervalCreate(nullptr, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), nullptr, nullptr);
+    Acquire
+    (
+        core::Check(OCI_IntervalCreate(nullptr, type)), 
+        reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree),
+        nullptr, 
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline Interval::Interval(IntervalType type, const ostring& data)
 {
-    Acquire(core::Check(OCI_IntervalCreate(nullptr, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), nullptr, nullptr);
+    Acquire
+    (
+        core::Check(OCI_IntervalCreate(nullptr, type)),
+        reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), 
+        nullptr,
+        Environment::GetEnvironmentHandle()
+    );
 
     FromString(data);
 }
