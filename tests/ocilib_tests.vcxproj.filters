@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Tests suite</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\agent.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -223,24 +220,402 @@
     <ClCompile Include="TestEnvironment.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Header files">
-      <UniqueIdentifier>{dd240098-c9aa-4f76-9b0d-50e653c6086b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Tests suite">
       <UniqueIdentifier>{a27a0a28-f04a-4730-a09e-72366b3cc3de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{90ec65d7-b4a8-48f2-97d2-6032820c7905}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\ocilibc">
+      <UniqueIdentifier>{ed8f9f17-e258-4a16-877e-25e3a21ec3bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\ocilibcpp">
+      <UniqueIdentifier>{ee8689d1-aaf6-4907-a496-57722715d47f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources">
       <UniqueIdentifier>{fc9505f2-5f34-43eb-8c4c-29c05561e5c0}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ocilib_tests.h">
-      <Filter>Header files</Filter>
-    </ClInclude>
+    <Filter Include="Include\ocilibcpp\detail">
+      <UniqueIdentifier>{b0367525-b346-43e9-bcf8-a0d927b64e80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\ocilibcpp\detail\core">
+      <UniqueIdentifier>{7bc87595-4be6-4efd-8e54-5f703100acb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\ocilibcpp\detail\support">
+      <UniqueIdentifier>{cfe56081-9ae4-430b-bf01-0e4933c13235}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\oci">
+      <UniqueIdentifier>{50ecc37f-2994-430f-957a-c11f4f7be220}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ocilib_tests.h">
+      <Filter>Tests suite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibc\api.h">
+      <Filter>Include\ocilibc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibc\compat.h">
+      <Filter>Include\ocilibc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibc\defines.h">
+      <Filter>Include\ocilibc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibc\platform.h">
+      <Filter>Include\ocilibc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibc\types.h">
+      <Filter>Include\ocilibc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilib.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilib.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\config.hpp">
+      <Filter>Include\ocilibcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\core.hpp">
+      <Filter>Include\ocilibcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\support.hpp">
+      <Filter>Include\ocilibcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\types.hpp">
+      <Filter>Include\ocilibcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Agent.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\BindInfo.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Collection.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\CollectionElement.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\CollectionIterator.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Column.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Connection.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Date.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Dequeue.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\DirectPath.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Enqueue.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Environment.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Event.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Exception.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\File.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Interval.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Lob.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Long.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Message.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Mutex.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Number.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Object.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Pool.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Queue.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\QueueTable.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Reference.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Resultset.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Statement.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Subscription.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Thread.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\ThreadKey.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Timestamp.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Transaction.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\TypeInfo.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\core\ConcurrentList.hpp">
+      <Filter>Include\ocilibcpp\detail\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\core\ConcurrentMap.hpp">
+      <Filter>Include\ocilibcpp\detail\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\core\Enum.hpp">
+      <Filter>Include\ocilibcpp\detail\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\core\Flags.hpp">
+      <Filter>Include\ocilibcpp\detail\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\core\HandleHolder.hpp">
+      <Filter>Include\ocilibcpp\detail\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\core\HandleStore.hpp">
+      <Filter>Include\ocilibcpp\detail\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\core\ManagedBuffer.hpp">
+      <Filter>Include\ocilibcpp\detail\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\core\MemoryDebugInfo.hpp">
+      <Filter>Include\ocilibcpp\detail\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\core\SmartHandle.hpp">
+      <Filter>Include\ocilibcpp\detail\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\core\Synchronizable.hpp">
+      <Filter>Include\ocilibcpp\detail\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\core\SynchronizationGuard.hpp">
+      <Filter>Include\ocilibcpp\detail\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\core\Utils.hpp">
+      <Filter>Include\ocilibcpp\detail\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\support\BindArray.hpp">
+      <Filter>Include\ocilibcpp\detail\support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\support\BindObject.hpp">
+      <Filter>Include\ocilibcpp\detail\support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\support\BindObjectAdaptor.hpp">
+      <Filter>Include\ocilibcpp\detail\support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\support\BindResolver.hpp">
+      <Filter>Include\ocilibcpp\detail\support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\support\BindsHolder.hpp">
+      <Filter>Include\ocilibcpp\detail\support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\support\BindTypeAdaptor.hpp">
+      <Filter>Include\ocilibcpp\detail\support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\support\HandleDeleter.hpp">
+      <Filter>Include\ocilibcpp\detail\support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\support\HandleStoreResolver.hpp">
+      <Filter>Include\ocilibcpp\detail\support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\support\NumericTypeResolver.hpp">
+      <Filter>Include\ocilibcpp\detail\support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\agent.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\array.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bind.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\callback.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\collection.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\column.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\connection.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\database.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\date.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\define.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\defs.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\dequeue.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\dirpath.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\element.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\enqueue.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\environment.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\error.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\event.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\exception.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\file.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\format.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\handle.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\hash.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\helpers.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\import.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\interval.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\iterator.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\list.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\loader.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\lob.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\long.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\macros.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\memory.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\message.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\mutex.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\number.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\object.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\pool.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\queue.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\reference.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\resultset.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\statement.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\stringutils.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\subscription.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\thread.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\threadkey.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\timestamp.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\transaction.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\typeinfo.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\types.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\oci\api.h">
+      <Filter>Sources\oci</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\oci\defs.h">
+      <Filter>Sources\oci</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\oci\types.h">
+      <Filter>Sources\oci</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
