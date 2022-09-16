@@ -198,7 +198,6 @@ namespace ocilib
         public:
             ManagedBuffer();
             ManagedBuffer(size_t size);
-            ManagedBuffer(T* buffer, size_t size);
 
             ~ManagedBuffer() noexcept;
 
