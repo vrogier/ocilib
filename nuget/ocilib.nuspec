@@ -18,7 +18,7 @@ It requires Oracle Client libraries (Regular or instant client).
 	</description>
 	<authors>Vincent Rogier</authors>
     <owners>Vincentt Rogier</owners>
-	<releaseNotes>https://github.com/vrogier/ocilib/releases/tag/v4.7.4</releaseNotes>
+	<releaseNotes>https://github.com/vrogier/ocilib/releases/tag/v4.7.5</releaseNotes>
     <projectUrl>https://github.com/vrogier/ocilib</projectUrl>
     <iconUrl>http://ocilib.net/images/logo-160x120.png</iconUrl>
 	<icon>images\logo-160x120.png</icon>
