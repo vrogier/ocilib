@@ -578,8 +578,24 @@ static boolean OcilibStatementBindUpdate
 
             if (dst_bint)
             {
-                CHECK(OcilibNumberTranslateValue(bnd->stmt->con, src_number,
-                                                 OCI_NUM_NUMBER, dst_bint, bnd->subtype))
+                if (src_number && bnd->buffer.inds[index] != OCI_IND_NULL)
+                {
+                    CHECK
+                    (
+                        OcilibNumberTranslateValue
+                        (
+                            bnd->stmt->con, 
+                            src_number,
+                            OCI_NUM_NUMBER,
+                            dst_bint, 
+                            bnd->subtype
+                        )
+                    )
+                }
+                else
+                {
+                    *dst_bint = 0;
+                }
             }
         }
     }

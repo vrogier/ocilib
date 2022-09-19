@@ -306,6 +306,76 @@ TEST(ReportedIssuesCApi, Issue288)
     ExecDML(OTEXT("drop table TestIssue288"));
 }
 
+
+TEST(ReportedIssuesCApi, Issue308)
+{
+    ExecDML(OTEXT("create table TestTableIssue308(num number, id number)"));
+
+    ExecDML
+    (
+        OTEXT("CREATE OR REPLACE PACKAGE TestPackageIssue308")
+        OTEXT("IS")
+        OTEXT("    TYPE ItemType is record(num number, id number);")
+        OTEXT("    FUNCTION Func(num number, item OUT TestPackageIssue308.ItemType) return number;")
+        OTEXT("END;")
+    );
+
+    ExecDML
+    (
+        OTEXT("CREATE OR REPLACE PACKAGE BODY TestPackageIssue308")
+        OTEXT("IS")
+        OTEXT("    FUNCTION Func(num number, item OUT TestPackageIssue308.ItemType) return number")
+        OTEXT("    IS")
+        OTEXT("         row TestTableIssue308%rowtype;")
+        OTEXT("    BEGIN")
+        OTEXT("        item.num := row.num;")
+        OTEXT("        item.id  := row.id;")
+        OTEXT("        return item.num;")
+        OTEXT("    END;")
+        OTEXT("END;")
+    );
+
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+    const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+    ASSERT_NE(nullptr, conn);
+
+    const auto stmt = OCI_StatementCreate(conn);
+    ASSERT_NE(nullptr, stmt);
+
+
+    big_int num = 1234;
+    big_int id  = 0; 
+    big_int ret = 0;
+
+    const otext* sql = 
+        OTEXT("declare")
+        OTEXT("  item TestPackageIssue308.ItemType;")
+        OTEXT("begin")
+        OTEXT("  :ret := TestPackageIssue308.Func(:num, item);")
+        OTEXT("  :id  := item.id;")
+        OTEXT("end; ");
+
+    ASSERT_TRUE(OCI_Prepare(stmt, sql));
+    ASSERT_TRUE(OCI_BindBigInt(stmt, OTEXT(":num"), &num));
+    ASSERT_TRUE(OCI_BindBigInt(stmt, OTEXT(":id"), &id));
+    ASSERT_TRUE(OCI_BindBigInt(stmt, OTEXT(":ret"), &ret));
+  
+    ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN));
+    ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 2), OCI_BDM_OUT));
+    ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 3), OCI_BDM_OUT));
+
+    ASSERT_TRUE(OCI_Execute(stmt));
+
+    ASSERT_TRUE(OCI_StatementFree(stmt));
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_Cleanup());
+
+    ExecDML(OTEXT("drop package TestPackageIssue308"));
+    ExecDML(OTEXT("drop package TestTableIssue308"));
+}
+
+
 TEST(ReportedIssuesCApi, Issue313)
 {
     ExecDML(OTEXT("drop table TestIssue313"));
