@@ -6829,6 +6829,9 @@ namespace ocilib
         */
         bool operator -= (int offset);
 
+    public:
+        Resultset() {};
+
     private:
 
         Resultset(OCI_Resultset* resultset, core::Handle* parent);
