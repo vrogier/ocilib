@@ -455,8 +455,8 @@ boolean OcilibLobRead2
             NULL, csid, csfrm
         )
 
-            (*char_count) = (ub4) size_in_out_char_byte;
-        (*byte_count)     = (ub4) size_in_out_char_byte;
+        (*char_count) = (ub4) size_in_out_char_byte;
+        (*byte_count) = (ub4) size_in_out_char_byte;
     }
 
     if (OCI_BLOB != lob->type)

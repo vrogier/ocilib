@@ -257,7 +257,11 @@ OCI_Msg * OcilibDequeueGetMessage
 
     dbstr = OcilibStringGetDBString(dequeue->name, &dbsize);
 
-    if (OCI_UNKNOWN == dequeue->typinf->typecode)
+    if (OCI_UNKNOWN != dequeue->typinf->typecode && NULL != dequeue->msg->obj)
+    {
+        p_ind = dequeue->msg->obj->tab_ind;
+    }
+    else
     {
         p_ind = &dequeue->msg->ind;
     }
