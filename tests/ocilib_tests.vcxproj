@@ -56,7 +56,7 @@
     <IncludePath>..\src;..\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\src;..\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\src;..\include;$(IncludePath);c:\Apps\Oracle\Database21c\oci\include\</IncludePath>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="..\src\agent.c" />

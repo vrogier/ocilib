@@ -372,7 +372,7 @@ TEST(ReportedIssuesCApi, Issue308)
     ASSERT_TRUE(OCI_Cleanup());
 
     ExecDML(OTEXT("drop package TestPackageIssue308"));
-    ExecDML(OTEXT("drop package TestTableIssue308"));
+    ExecDML(OTEXT("drop table TestTableIssue308"));
 }
 
 
@@ -430,6 +430,254 @@ TEST(ReportedIssuesCApi, Issue313)
     ASSERT_TRUE(OCI_Cleanup());
 
     ExecDML(OTEXT("drop table TestIssue313"));
+}
+
+const auto MessageQueueTableIssue316 = OTEXT("MessageQueueTableIssue316");
+const auto MessageQueueIssue316 = OTEXT("MessageQueueIssue316");
+const auto JmsBytesMessageType = OTEXT("SYS.AQ$_JMS_BYTES_MESSAGE");
+const auto JmsHeaderType = OTEXT("SYS.AQ$_JMS_HEADER");
+const auto JmsPropArrayType = OTEXT("SYS.AQ$_JMS_USERPROPARRAY");
+const auto JmsPropertyType = OTEXT("SYS.AQ$_JMS_USERPROPERTY");
+
+bool Issue316_ReadMessages(OCI_Connection* conn, OCI_Dequeue *dequeue)
+{
+    enum class ExpectedPayloadType
+    {
+        Raw,
+        Blob
+    };
+
+    struct ExpectedInfo
+    {
+        ExpectedPayloadType Type;
+        unsigned int Size;
+    };
+
+    std::array<ExpectedInfo, 2> expectedInfos
+    {
+        ExpectedInfo { ExpectedPayloadType::Raw, 6 },
+        ExpectedInfo { ExpectedPayloadType::Blob, 9 }
+    };
+
+    const int bufferSize = 100;
+
+    for (auto& info : expectedInfos)
+    {
+        const auto msg = OCI_DequeueGet(dequeue);
+        if (msg == nullptr) return false;
+
+        OCI_Commit(conn);
+
+        const auto jmsBytesMessage = OCI_MsgGetObject(msg);
+        if (jmsBytesMessage == nullptr) return false;
+
+        const auto bytesLen = OCI_ObjectGetInt(jmsBytesMessage, OTEXT("BYTES_LEN"));
+        if (bytesLen != info.Size) return false;
+
+        if (info.Type == ExpectedPayloadType::Raw)
+        {
+            char buffer[bufferSize];
+
+            const int rawDataSize = OCI_ObjectGetRaw(jmsBytesMessage, OTEXT("BYTES_RAW"), buffer, bufferSize);
+            if (rawDataSize != info.Size) return false;
+        }
+
+        if (info.Type == ExpectedPayloadType::Blob)
+        {
+            char buffer[bufferSize]{};
+
+            const auto lob = OCI_ObjectGetLob(jmsBytesMessage, OTEXT("BYTES_LOB"));
+            if (lob == nullptr) return false;
+            
+            const auto lobDataSize = static_cast<int>(OCI_LobGetLength(lob));
+            if (lobDataSize != info.Size *2) return false;
+        }
+    }
+
+    return true;
+}
+
+OCI_Object* Issue316_CreateJmsBytesMessage(OCI_Connection *conn)
+{
+    const auto typeJmsBytesMessage = OCI_TypeInfoGet(conn, JmsBytesMessageType, OCI_TIF_TYPE);
+    if (typeJmsBytesMessage == nullptr) return nullptr;
+
+    const auto typeJmsHeader = OCI_TypeInfoGet(conn, JmsHeaderType, OCI_TIF_TYPE);
+    if (typeJmsHeader == nullptr) return nullptr;
+
+    const auto typeJmsPropArray = OCI_TypeInfoGet(conn, JmsPropArrayType, OCI_TIF_TYPE);
+    if (typeJmsPropArray == nullptr) return nullptr;
+
+    const auto typeJmsProperty = OCI_TypeInfoGet(conn, JmsPropertyType, OCI_TIF_TYPE);
+    if (typeJmsProperty == nullptr) return nullptr;
+
+    const auto jmsBytesMessage = OCI_ObjectCreate(conn, typeJmsBytesMessage);
+    if (jmsBytesMessage == nullptr) return nullptr;
+
+    const auto jmsHeader = OCI_ObjectCreate(conn, typeJmsHeader);
+    if (jmsHeader == nullptr) return nullptr;
+
+    const auto jmsPropArray = OCI_CollCreate(typeJmsPropArray);
+    if (jmsPropArray == nullptr) return nullptr;
+
+    const auto jmsProp = OCI_ObjectCreate(conn, typeJmsProperty);
+    if (jmsProp == nullptr) return nullptr;
+
+    const auto elem = OCI_ElemCreate(typeJmsPropArray);
+    if (elem == nullptr) return nullptr;
+
+    auto res = OCI_ObjectSetInt(jmsProp, OTEXT("TYPE"), 100);
+    if (res == false) return nullptr;
+
+    res = OCI_ObjectSetInt(jmsProp, OTEXT("JAVA_TYPE"), 27);
+    if (res == false) return nullptr;
+
+    res = OCI_ObjectSetString(jmsProp, OTEXT("STR_VALUE"), OTEXT("prop"));
+    if (res == false) return nullptr;
+
+    res = OCI_ObjectSetString(jmsProp, OTEXT("NAME"), OTEXT("value"));
+    if (res == false) return nullptr;
+
+    res = OCI_ElemSetObject(elem, jmsProp);
+    if (res == false) return nullptr;
+
+    res = OCI_CollAppend(jmsPropArray, elem);
+    if (res == false) return nullptr;
+
+    res = OCI_ObjectSetColl(jmsHeader, OTEXT("PROPERTIES"), jmsPropArray);
+    if (res == false) return nullptr;
+
+    res = OCI_ObjectSetObject(jmsBytesMessage, OTEXT("HEADER"), jmsHeader);
+    if (res == false) return nullptr;
+
+    res = OCI_ObjectFree(jmsHeader);
+    if (res == false) return nullptr;
+
+    res = OCI_CollFree(jmsPropArray);
+    if (res == false) return nullptr;
+
+    res = OCI_ObjectFree(jmsProp);
+    if (res == false) return nullptr;
+
+    res = OCI_ElemFree(elem);
+    if (res == false) return nullptr;
+
+    return jmsBytesMessage;
+}
+
+OCI_Msg* Issue316_CreateRawMessage(OCI_Connection* conn)
+{
+    auto res{ true };
+ 
+    const auto typeJmsBytesMessage = OCI_TypeInfoGet(conn, JmsBytesMessageType, OCI_TIF_TYPE);
+    if (typeJmsBytesMessage == nullptr) return nullptr;
+
+    const auto msgRaw = OCI_MsgCreate(typeJmsBytesMessage);
+    if (msgRaw == nullptr) return nullptr;
+
+    const auto objectRaw = Issue316_CreateJmsBytesMessage(conn);
+    if (objectRaw == nullptr) return nullptr;
+
+    const auto rawBuffer = OTEXT("123456");
+
+    res = OCI_ObjectSetRaw(objectRaw, OTEXT("BYTES_RAW"), (void*)rawBuffer, 6);
+    if (res == false) return nullptr;
+
+    res = OCI_ObjectSetDouble(objectRaw, OTEXT("BYTES_LEN"), 6);
+    if (res == false) return nullptr;
+
+    res = OCI_MsgSetObject(msgRaw, objectRaw);
+    if (res == false) return nullptr;
+
+    res = OCI_ObjectFree(objectRaw);
+    if (res == false) return nullptr;
+
+    return msgRaw;
+}
+
+OCI_Msg* Issue316_CreateLobMessage(OCI_Connection* conn)
+{
+    auto res{ true };
+
+    const auto typeJmsBytesMessage = OCI_TypeInfoGet(conn, JmsBytesMessageType, OCI_TIF_TYPE);
+    if (typeJmsBytesMessage == nullptr) return nullptr;
+
+    const auto msgBlob = OCI_MsgCreate(typeJmsBytesMessage);
+    if (msgBlob == nullptr) return nullptr;
+
+    const auto objectBlob = Issue316_CreateJmsBytesMessage(conn);
+    if (objectBlob == nullptr) return nullptr;
+
+    const auto lob = OCI_LobCreate(conn, OCI_CLOB);
+    if (lob == nullptr) return nullptr;
+
+    const auto lobBuffer = OTEXT("123456789");
+    res = OCI_LobWrite(lob, (void*)lobBuffer, 9);
+    if (res == false) return nullptr;
+
+    res = OCI_ObjectSetLob(objectBlob, OTEXT("BYTES_LOB"), lob);
+    if (res == false) return nullptr;
+
+    res = OCI_ObjectSetDouble(objectBlob, OTEXT("BYTES_LEN"), 9);
+    if (res == false) return nullptr;
+
+    res = OCI_MsgSetObject(msgBlob, objectBlob);
+    if (res == false) return nullptr;
+
+    res = OCI_LobFree(lob);
+    if (res == false) return nullptr;
+
+    res = OCI_ObjectFree(objectBlob);
+    if (res == false) return nullptr;
+
+    return msgBlob;
+}
+
+TEST(ReportedIssuesCApi, Issue316)
+{
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT | OCI_ENV_THREADED));
+    
+    const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+    ASSERT_NE(nullptr, conn);
+
+    ASSERT_TRUE(OCI_QueueTableCreate(conn, MessageQueueTableIssue316, JmsBytesMessageType, NULL, NULL, FALSE, OCI_AGM_NONE, NULL, 0, 0, NULL));
+    ASSERT_TRUE(OCI_QueueCreate(conn, MessageQueueIssue316, MessageQueueTableIssue316, OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
+    ASSERT_TRUE(OCI_QueueStart(conn, MessageQueueIssue316, TRUE, TRUE));
+
+    const auto typeJmsBytesMessage = OCI_TypeInfoGet(conn, JmsBytesMessageType, OCI_TIF_TYPE);
+    ASSERT_NE(nullptr, typeJmsBytesMessage);
+
+    const auto enqueue = OCI_EnqueueCreate(typeJmsBytesMessage, MessageQueueIssue316);
+    ASSERT_NE(nullptr, enqueue);
+
+    const auto dequeue = OCI_DequeueCreate(typeJmsBytesMessage, MessageQueueIssue316);
+    ASSERT_NE(nullptr, dequeue);
+ 
+    const auto rawMsg = Issue316_CreateRawMessage(conn);
+    ASSERT_NE(nullptr, rawMsg);
+ 
+    const auto lobMsg = Issue316_CreateLobMessage(conn);
+    ASSERT_NE(nullptr, lobMsg);
+
+    ASSERT_TRUE(OCI_EnqueuePut(enqueue, rawMsg));
+    ASSERT_TRUE(OCI_EnqueuePut(enqueue, lobMsg));
+
+    ASSERT_TRUE(OCI_Commit(conn));
+
+    ASSERT_TRUE(OCI_MsgFree(rawMsg));
+    ASSERT_TRUE(OCI_MsgFree(lobMsg));
+
+    ASSERT_TRUE(Issue316_ReadMessages(conn, dequeue));
+
+    ASSERT_TRUE(OCI_DequeueFree(dequeue));
+    ASSERT_TRUE(OCI_EnqueueFree(enqueue));
+
+    ASSERT_TRUE(OCI_QueueStop(conn, MessageQueueIssue316, TRUE, TRUE, FALSE));
+    ASSERT_TRUE(OCI_QueueDrop(conn, MessageQueueIssue316));
+    ASSERT_TRUE(OCI_QueueTableDrop(conn, MessageQueueTableIssue316, TRUE));
+
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_Cleanup());
 }
 
 INSTANTIATE_TEST_CASE_P(ReportedIssuesCApi, ReportedIssues247, ::testing::ValuesIn(TimestampTypes));
