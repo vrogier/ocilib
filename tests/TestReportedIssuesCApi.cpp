@@ -2,12 +2,12 @@
 
 TEST(ReportedIssuesCApi, Issue216)
 {
+    ExecDML(OTEXT("CREATE TABLE ISSUE_216(ID NUMBER, DATEVALUE DATE)"));
+
     ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
     ASSERT_NE(nullptr, conn);
-
-    ASSERT_TRUE(OCI_Immediate(conn, OTEXT("CREATE TABLE ISSUE_216(ID NUMBER, DATEVALUE DATE)")));
 
     const auto stmt = OCI_StatementCreate(conn);
     ASSERT_NE(nullptr, stmt);
@@ -62,10 +62,10 @@ TEST(ReportedIssuesCApi, Issue216)
         ASSERT_TRUE(OCI_DateFree(dates[i]));
     }
 
-    ASSERT_TRUE(OCI_Immediate(conn, OTEXT("DROP TABLE ISSUE_216")));
-
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+
+    ExecDML(OTEXT("DROP TABLE ISSUE_216"));
 }
 
 TEST(ReportedIssuesCApi, Issue222)
@@ -313,18 +313,18 @@ TEST(ReportedIssuesCApi, Issue308)
 
     ExecDML
     (
-        OTEXT("CREATE OR REPLACE PACKAGE TestPackageIssue308")
+        OTEXT("CREATE OR REPLACE PACKAGE TestPackageIssue308 ")
         OTEXT("IS")
         OTEXT("    TYPE ItemType is record(num number, id number);")
-        OTEXT("    FUNCTION Func(num number, item OUT TestPackageIssue308.ItemType) return number;")
+        OTEXT("    FUNCTION Func(num number, item OUT ItemType) return number;")
         OTEXT("END;")
     );
 
     ExecDML
     (
-        OTEXT("CREATE OR REPLACE PACKAGE BODY TestPackageIssue308")
+        OTEXT("CREATE OR REPLACE PACKAGE BODY TestPackageIssue308 ")
         OTEXT("IS")
-        OTEXT("    FUNCTION Func(num number, item OUT TestPackageIssue308.ItemType) return number")
+        OTEXT("    FUNCTION Func(num number, item OUT ItemType) return number")
         OTEXT("    IS")
         OTEXT("         row TestTableIssue308%rowtype;")
         OTEXT("    BEGIN")
