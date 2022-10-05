@@ -154,7 +154,7 @@
 #endif
 
 #ifdef OCI_CHARSET_ANSI
-  #undef OCI_CHARSET_ANSI
+  #undef OCI_CHARSET_WIDE
 #endif
 
 #if !defined(OCI_CHARSET_ANSI)  && !defined(OCI_CHARSET_WIDE)
