@@ -282,6 +282,8 @@ const OCI_SQLCmdInfo SQLCmds[OCI_SQLCMD_COUNT] =
     {OCI_SFC_CREATE_ANALYTIC_VIEW            , OTEXT("CREATE ANALYTIC VIEW")           },
     {OCI_SFC_ALTER_ANALYTIC_VIEW             , OTEXT("ALTER ANALYTIC VIEW")            },
     {OCI_SFC_DROP_ANALYTIC_VIEW              , OTEXT("DROP ANALYTIC VIEW")             },
+    {OCI_SFC_CREATE_LANGUAGE                 , OTEXT("CREATE LANGUAGE")                },
+    {OCI_SFC_DROP_LANGUAGE                   , OTEXT("DROP LANGUAGE")                  },
     {OCI_SFC_ALTER_PUBLIC_DATABASE_LINK      , OTEXT("ALTER PUBLIC DATABASE LINK")     }
 };
 

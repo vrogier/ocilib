@@ -356,7 +356,7 @@ typedef unsigned short dbtext;
 
 #endif
 
-#define OCI_SQLCMD_COUNT                239
+#define OCI_SQLCMD_COUNT                241
 
 #define OCI_FMT_COUNT                   6
 

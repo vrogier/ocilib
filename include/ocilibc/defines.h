@@ -806,6 +806,8 @@
 #define OCI_SFC_CREATE_ANALYTIC_VIEW            249
 #define OCI_SFC_ALTER_ANALYTIC_VIEW             250
 #define OCI_SFC_DROP_ANALYTIC_VIEW              251
+#define OCI_SFC_CREATE_LANGUAGE                 270
+#define OCI_SFC_DROP_LANGUAGE                   271
 #define OCI_SFC_ALTER_PUBLIC_DATABASE_LINK      305
 
 /* size constants */
