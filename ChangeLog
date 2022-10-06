@@ -1,26 +1,33 @@
-2021-09-20 Version 4.7.5 Vincent Rogier vince.rogier@ocilib.net
+2021-10-09 Version 4.7.5 Vincent Rogier vince.rogier@ocilib.net
 
-   * Fixes (C API)
+	* Changes (C API)
+	
+		- OCI_Cleanup() now returns FALSE if OCI_Initialize() has not been called
+		- OCI_Execute() and related methods return now FALSE and report an OCI_Error for PL/SQL statements raising PL/SQL no_data_found exceptions
+		- OCI_GetSQLVerb() handles some new verbs added with Oracle 21c
+		
+    * Fixes (C API)
 
-		- Issue 297: Compilation fails with MSVC 2022 version 17.2 (error C2220)
-		- Issue 298: Possible Infinite loop in OCI_DirPathLoad() when load errors occur
+		- Issue 297: Library compilation fails with MSVC 2022 version 17.2 (error C2220)
+		- Issue 298: OCI_DirPathLoad() can never returns in case of internal load errors (infinite loop)
 		- Issue 308: OCI_Execute() raises error OCI-22060 when binding host big_int variables with OCI_BDM_OUT in case the SQL or PL/SQL engine sets a NULL value
-		- Issue 309: No exception was raised if no data was found in PL/SQL block
+		- Issue 309: OCI_Execute() does not raise exceptions when executing PL/SQL statement raising no data was found PL/SQL exception
 		- Issue 313: OCI_GetString() returns NULL for CLOB columns is the CLOB row value was filled with empty_clob()
 		- Issue 314: OCI_BindSetCharsetForm() is not accessible since v4.7.0
+		- ISsue 316: OCI_DequeueGet() returns messages with OCI_Object payloads that can have NULL properties while being NOT NULL when queued
 
     * Fixes (C++ API)
     
 		- Issue 299: Performance issues with C++ API in multi-threaded environments
-		- Issue 306: Compile error under GCC when accessing to an ocilib::Collection item
+		- Issue 306: Compile error under GCC when accessing an ocilib::Collection item
 	
    * Miscellaneous
     
-		- Behavior changes: 
-			- OCI_Cleanup() now returns FALSE if OCI_Initialize() has not been called
-			- Addressing issue #308 implies that PL/SQL statement not catching no_data_found PL/SQL execution will now make OCI_Execute() to report failure
-		- Updated compilers for MS Windows prebuilt binaries
-            * VS2022 17.3.3 for 32/64 bit DLLs 
+		- Updated compilers for MS Windows prebuilt binaries to VS2022 17.3.5
+		- Internal code changes / refactoring
+		- Some documentation updates
+		- Added more tests in tests suite 
+		- Fixed ocilib C demo makefile : compilation could failed on some Linux environments
  
 2021-11-30 Version 4.7.4 Vincent Rogier vince.rogier@ocilib.net
 
