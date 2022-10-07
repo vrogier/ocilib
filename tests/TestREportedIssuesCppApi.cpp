@@ -16,7 +16,7 @@ TEST(ReportedIssuesCppApi, Issue250)
 
         Connection con(DBS, USR, PWD_WRONG);
     }
-    catch (Exception& ex)
+    catch (const ocilib::Exception& e)
     {
         ansiMessage = ex.what();
         wideMessage = ex.GetMessage();
@@ -60,7 +60,7 @@ TEST(ReportedIssuesCppApi, Issue309_NoDataFoundPlsqlWithError)
 
         stmt.Execute(cmd);
     }
-    catch (ocilib::Exception e)
+    catch (const ocilib::Exception& e)
     {
         errCode = e.GetOracleErrorCode();
     }
@@ -114,7 +114,7 @@ TEST(ReportedIssuesCppApi, Issue309_NoDataFoundSqlCallingPlsqlWithoutError)
             counter++;
         }
     }
-    catch (ocilib::Exception e)
+    catch (const ocilib::Exception& e)
     {
         exceptionOccured = true;
     }
@@ -149,7 +149,7 @@ TEST(ReportedIssuesCppApi, Issue309_NoDataFoundSqlWithoutError)
             counter++;
         }
     }
-    catch (ocilib::Exception e)
+    catch (const ocilib::Exception& e)
     {
         exceptionOccured = true;
     }
@@ -181,7 +181,7 @@ TEST(ReportedIssuesCppApi, Issue314)
         bind.SetCharsetForm(CharsetFormValues::CharsetFormNational);
         stmt.ExecutePrepared();
     }
-    catch (ocilib::Exception e)
+    catch (const ocilib::Exception& e)
     {
         exceptionOccured = true;
     }

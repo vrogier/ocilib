@@ -471,7 +471,7 @@ bool Issue316_ReadMessages(OCI_Connection* conn, OCI_Dequeue *dequeue)
         const auto jmsBytesMessage = OCI_MsgGetObject(msg);
         if (jmsBytesMessage == nullptr) return false;
 
-        const auto bytesLen = OCI_ObjectGetInt(jmsBytesMessage, OTEXT("BYTES_LEN"));
+        const auto bytesLen = OCI_ObjectGetUnsignedInt(jmsBytesMessage, OTEXT("BYTES_LEN"));
         if (bytesLen != info.Size) return false;
 
         if (info.Type == ExpectedPayloadType::Raw)
@@ -479,18 +479,16 @@ bool Issue316_ReadMessages(OCI_Connection* conn, OCI_Dequeue *dequeue)
             char buffer[bufferSize];
 
             const int rawDataSize = OCI_ObjectGetRaw(jmsBytesMessage, OTEXT("BYTES_RAW"), buffer, bufferSize);
-            if (rawDataSize != info.Size) return false;
+            if ((unsigned int) rawDataSize != info.Size) return false;
         }
 
         if (info.Type == ExpectedPayloadType::Blob)
         {
-            char buffer[bufferSize]{};
-
             const auto lob = OCI_ObjectGetLob(jmsBytesMessage, OTEXT("BYTES_LOB"));
             if (lob == nullptr) return false;
             
             const auto lobDataSize = static_cast<int>(OCI_LobGetLength(lob));
-            if (lobDataSize != info.Size *2) return false;
+            if ((unsigned int)lobDataSize != info.Size *2) return false;
         }
     }
 
