@@ -141,7 +141,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup
  *   of OCI that is required by OCILIB to support all library features. Thus this version is just an indicator 
  *   as OCILIB is compatible with all Oracle 8+ OCI versions and adapt itself runtime loaded Oracle libraries
  *
- * @ote
+ * @note
  *  Retun value is an integer using the following pattern 'MMmmRR'
  * - 'MM' digits are the Oracle OCI major version
  * - 'mm' digits are the Oracle OCI minor version
@@ -174,7 +174,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCICompileVersion
  * - with runtime loading build option, the version determined from the symbols dynamically loaded. This
  *   is a best effort guess as a given Oracle release may not introduce new OCI symbols
  *
- * @ote
+ * @note
  *  Retun value is an integer using the following pattern 'MMmmRR'
  * - 'MM' digits are the Oracle OCI major version
  * - 'mm' digits are the Oracle OCI minor version
