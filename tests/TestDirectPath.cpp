@@ -168,7 +168,7 @@ TEST_P(TestDirectPathErrorModes, AllErrorWorkflows)
     otext val2[ColSize2 + 1];
     otext val3[ColSize3 + 1];
 
-    int i = 0, j = 0, nb_rows = ArraySize;
+    unsigned int i = 0, j = 0, nb_rows = ArraySize;
 
     const auto table = OCI_TypeInfoGet(conn, OTEXT("TestDirectPathTable2"), OCI_TIF_TABLE);
     ASSERT_NE(nullptr, table);
@@ -241,7 +241,7 @@ TEST_P(TestDirectPathErrorModes, AllErrorWorkflows)
         /* load data to the server */
         while (TRUE)
         {
-            int nb_conv = 0;
+            unsigned int nb_conv = 0;
             int nb_error = 0;
 
             /* convert data*/
