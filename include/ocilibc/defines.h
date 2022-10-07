@@ -44,13 +44,13 @@
 
 /* versions extract macros */
 
-#define OCI_VER_MAJ(v)                      (unsigned int) ((v)/100)
-#define OCI_VER_MIN(v)                      (unsigned int) (((v)/10) - (((v)/100)*10))
-#define OCI_VER_REV(v)                      (unsigned int) ((v) - (((v)/10)*10))
+#define OCI_VER_MAJ(v)                      (unsigned int) ((v)/10000)
+#define OCI_VER_MIN(v)                      (unsigned int) (((v)/100) - (((v)/10000)*100))
+#define OCI_VER_REV(v)                      (unsigned int) ((v) - (((v)/100)*100))
 
-#define OCI_VER_MAKE(x, y, z)               ((x)*100 + (y)*10 + (z))
+#define OCI_VER_MAKE(x, y, z)               ((x)*10000 + (y)*100 + (z))
 
-/* oracle OCI key versions*/
+/* oracle OCI well known major versions (non exhaustive) */
 
 #define OCI_8_0                             OCI_VER_MAKE( 8, 0, 0)
 #define OCI_8_1                             OCI_VER_MAKE( 8, 1, 0)
@@ -69,6 +69,7 @@
 #define OCI_18_5                            OCI_VER_MAKE(18, 5, 0)
 #define OCI_19_3                            OCI_VER_MAKE(19, 3, 0)
 #define OCI_19_5                            OCI_VER_MAKE(19, 5, 0)
+#define OCI_21_3                            OCI_VER_MAKE(21, 3, 0)
 
 /* OCILIB Error types */
 

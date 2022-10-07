@@ -34,7 +34,7 @@
   /* for runtime loading, set compile time version to the highest minimum
      version needed by OCILIB encapsulation of OCI */
 
-  #define OCI_VERSION_COMPILE OCI_19_5
+  #define OCI_VERSION_COMPILE OCI_18_1
 
   /* set runtime version to unknown, it will be guessed from symbols loading */
 
@@ -44,7 +44,7 @@
 
   #if defined(OCI_MAJOR_VERSION)
 
-  #define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
+    #define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
 
     #if OCI_VERSION_COMPILE == OCI_VER_MAKE(18, 0, 0)
 

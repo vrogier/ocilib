@@ -291,7 +291,7 @@ extern OCISERVERRELEASE2            OCIServerRelease2;
 extern OCISODAOPERKEYSSET           OCISodaOperKeysSet;
 extern OCIROWIDTOCHAR               OCIRowidToChar;
 
-    #ifdef ORAXB8_DEFINED
+#ifdef ORAXB8_DEFINED
 
 extern OCILOBCOPY2         OCILobCopy2;
 extern OCILOBERASE2        OCILobErase2;
@@ -302,7 +302,7 @@ extern OCILOBTRIM2         OCILobTrim2;
 extern OCILOBWRITE2        OCILobWrite2;
 extern OCILOBWRITEAPPEND2  OCILobWriteAppend2;
 
-    #endif
+#endif
 
 #define OCIDateGetTime(date, hour, min, sec)     \
     {                                            \
