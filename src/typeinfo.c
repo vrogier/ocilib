@@ -61,7 +61,7 @@ static boolean OcilibTypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find
 
 static OCI_TypeInfo* OcilibTypeInfoFindOrCreate(OCI_Connection* con, TypeInfoFindParams* p_find_params, boolean* p_is_created)
 {
-    OCI_TypeInfo* typinf = OcilibListFind(con->tinfs, OcilibTypeInfoFind, p_find_params);
+    OCI_TypeInfo* typinf = OcilibListFind(con->tinfs, (POCI_LIST_FIND) OcilibTypeInfoFind, p_find_params);
 
     *p_is_created = FALSE;
     
