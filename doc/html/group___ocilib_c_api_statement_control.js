@@ -17,5 +17,5 @@ var group___ocilib_c_api_statement_control =
     [ "OCI_GetLongMaxSize", "group___ocilib_c_api_statement_control.html#ga4205adb98cd8eaedaeeb6297c1297992", null ],
     [ "OCI_SetLongMode", "group___ocilib_c_api_statement_control.html#gab48b8c050e05fbf488794005bca68d4a", null ],
     [ "OCI_GetLongMode", "group___ocilib_c_api_statement_control.html#gab8293f13f00235613b295bb3ce16b066", null ],
-    [ "OCI_StatementGetConnection", "group___ocilib_c_api_statement_control.html#ga27d0756a086f84f1a9047ca341263551", null ]
+    [ "OCI_StatementGetConnection", "group___ocilib_c_api_statement_control.html#gaf904543ff555ba1de6418770efda32e5", null ]
 ];

@@ -35,5 +35,92 @@ var namespaceocilib =
     [ "ThreadKey", "classocilib_1_1_thread_key.html", "classocilib_1_1_thread_key" ],
     [ "Timestamp", "classocilib_1_1_timestamp.html", "classocilib_1_1_timestamp" ],
     [ "Transaction", "classocilib_1_1_transaction.html", "classocilib_1_1_transaction" ],
-    [ "TypeInfo", "classocilib_1_1_type_info.html", "classocilib_1_1_type_info" ]
+    [ "TypeInfo", "classocilib_1_1_type_info.html", "classocilib_1_1_type_info" ],
+    [ "ostring", "namespaceocilib.html#a01daa07e307e429b66fb80f442362237", null ],
+    [ "AnyPointer", "namespaceocilib.html#aaad26690e8171c4564d66776987e1bd2", null ],
+    [ "Raw", "namespaceocilib.html#a7a8f606db0b3fbbf7d814240c5f96178", null ],
+    [ "MutexHandle", "namespaceocilib.html#a9ba55eb6242e61c183e256b023f0c081", null ],
+    [ "ThreadHandle", "namespaceocilib.html#ae6a65e2d9f68cf3bb5d1ea4f68e8db59", null ],
+    [ "ThreadId", "namespaceocilib.html#a22a4931a8a317ed5790064d5404053a1", null ],
+    [ "CallbackPointer", "namespaceocilib.html#a60c0d18db88516aa7e7033267c2d02a4", null ],
+    [ "OracleVersion", "namespaceocilib.html#afe3d8221cc75c2b963b8af79fa524d3d", null ],
+    [ "DataType", "namespaceocilib.html#af76dd95d19af0d99467b501c993e41c2", null ],
+    [ "NumericType", "namespaceocilib.html#a18aed3696c08ae78534a80779bd1024b", null ],
+    [ "CharsetForm", "namespaceocilib.html#aea0f2f4d6c0f65b57dacee31db32343d", null ],
+    [ "CollationID", "namespaceocilib.html#a56e53bdd5831315fe43a63e3b9a6acfa", null ],
+    [ "SeekMode", "namespaceocilib.html#a7311e48d6ecb0e3d1279272e47fb20ff", null ],
+    [ "OpenMode", "namespaceocilib.html#a082d99a27ea9bfaa6418dce68123d4ab", null ],
+    [ "LobType", "namespaceocilib.html#a6f14e843de32a836a0ff481f3321f9ff", null ],
+    [ "LongType", "namespaceocilib.html#a84c02874ff8ca59cb48a8bd58a171d26", null ],
+    [ "FormatType", "namespaceocilib.html#acb82fd2c5aa1ac56faf78259b63ad739", null ],
+    [ "Clob", "namespaceocilib.html#a5dea067365397df11f7bf57baaba2f18", null ],
+    [ "NClob", "namespaceocilib.html#a1ea7d88fb42c5d357f5c206411b340b4", null ],
+    [ "Blob", "namespaceocilib.html#ade47c508c724e92cbeb9c54af4744c84", null ],
+    [ "Clong", "namespaceocilib.html#ad6eb75cae499ab9eb82741ceaacdd6d0", null ],
+    [ "Blong", "namespaceocilib.html#a10c23c26d79c987b8650c9855bf4f877", null ],
+    [ "OracleVersionValues", "namespaceocilib.html#a0068f86dccd326d3a1284d1af9fbe3cf", null ],
+    [ "DataTypeValues", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6", [
+      [ "TypeNumeric", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6ae34a151ea18f0d97f6ed0edc3e091c69", null ],
+      [ "TypeDate", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a6c0c7b10d3b4a982b63b99fe75e0be63", null ],
+      [ "TypeString", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6ac966831ebb93f4bf30fd9698b65d08cc", null ],
+      [ "TypeLong", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6abd2ec5796d8f2d9be1b08e3e06c4a1c9", null ],
+      [ "TypeStatement", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a635aabc0fcbb534cd4cabb261d137937", null ],
+      [ "TypeLob", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6ad80cd9d05344d48724baf66600a920c4", null ],
+      [ "TypeFile", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a9b7724c06e96d366c0a05080440a139e", null ],
+      [ "TypeTimestamp", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a6c6ee0643be61eab50bafcca4e83a8c9", null ],
+      [ "TypeInterval", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a4699064e7363ad59bf635baff1517d14", null ],
+      [ "TypeRaw", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a19be3fcd293e259af4f2d168aeac4c23", null ],
+      [ "TypeObject", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6ab1decf42dfae51700c785c207e0ce47c", null ],
+      [ "TypeCollection", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a053c1e73f868ef56aecf006707026406", null ],
+      [ "TypeReference", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a07f33c93d9de40b547b36e83bd786d09", null ],
+      [ "TypeBoolean", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a98677ddeb2f2662db1eb4a1bb86c3ae8", null ]
+    ] ],
+    [ "NumericTypeValues", "namespaceocilib.html#a021f591112a3aa788830d4959e270509", [
+      [ "NumericShort", "namespaceocilib.html#a021f591112a3aa788830d4959e270509ae26c0c585ce46790ef01b2667b841634", null ],
+      [ "NumericInt", "namespaceocilib.html#a021f591112a3aa788830d4959e270509a4b8c03a8cde3d096bba686a01c2a6401", null ],
+      [ "NumericBigInt", "namespaceocilib.html#a021f591112a3aa788830d4959e270509a9ad6869c7ddd84298d23abd4dddd67e3", null ],
+      [ "NumericUnsignedShort", "namespaceocilib.html#a021f591112a3aa788830d4959e270509a7d9e27a85bb65b464ce66766f85dd02e", null ],
+      [ "NumericUnsignedInt", "namespaceocilib.html#a021f591112a3aa788830d4959e270509abcf2092e71bc00b40115977e946a2a0c", null ],
+      [ "NumericUnsignedBigInt", "namespaceocilib.html#a021f591112a3aa788830d4959e270509a6cec77377ab155224c9e2afade452664", null ],
+      [ "NumericDouble", "namespaceocilib.html#a021f591112a3aa788830d4959e270509a0964b4551627d8f43a2f633aa108749e", null ],
+      [ "NumericFloat", "namespaceocilib.html#a021f591112a3aa788830d4959e270509abc8a003dba0bbe9228d3d227ab68cd9e", null ],
+      [ "NumericNumber", "namespaceocilib.html#a021f591112a3aa788830d4959e270509a9d1e645ec13cf3e18e7690c9d7e2da0b", null ]
+    ] ],
+    [ "CharsetFormValues", "namespaceocilib.html#a26c5b6c40c0d4f9bff59ae8ff442263d", [
+      [ "CharsetFormDefault", "namespaceocilib.html#a26c5b6c40c0d4f9bff59ae8ff442263da0cbac8087ab4d1dd3c8e79460c948604", null ],
+      [ "CharsetFormNational", "namespaceocilib.html#a26c5b6c40c0d4f9bff59ae8ff442263da8742194565efe0a4c6e1b16571bf85de", null ]
+    ] ],
+    [ "CollationIDValues", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617", [
+      [ "CollationIDNone", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617aa41630025f81bdbc1366212d0c12caf9", null ],
+      [ "CollationIDNlsComp", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617ac463503ecceab7b21035c1334f786645", null ],
+      [ "CollationIDNlsSort", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617ab12f400f0ffa000be2fc27259b79ea89", null ],
+      [ "CollationIDNlsSortCI", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a7eb27ad7f40a053c0dc58036af8e796a", null ],
+      [ "CollationIDNlsSortAI", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a17f3720a88e7ff335d5fc4fa4399bc7a", null ],
+      [ "CollationIDNlsSortCS", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617ac088effce0dd33f4007e831210b2cd61", null ],
+      [ "CollationIDNlsSortVar1", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a546c1992f64f26b42ef41b3950c5d9ba", null ],
+      [ "CollationIDNlsSortVar1CI", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a7f99a9c6e1d8b5bcc3b09d88008d9903", null ],
+      [ "CollationIDNlsSortVar1AI", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a83a4bd17cc35b93b73256e441fff2178", null ],
+      [ "CollationIDNlsSortVar1CS", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617ac317c26b7ab9a8f527ce7e5adfa9081f", null ],
+      [ "CollationIDBinary", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617ac0ddf8221256d47f331c5e84de7865bd", null ],
+      [ "CollationIDBinaryCI", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a96b16590bf2e3fe139e974f18d117136", null ],
+      [ "CollationIDBinaryAI", "namespaceocilib.html#a3a51d116768accdb6d5b867ac26a8617a1797ac904df2c6ab343cb26d23de60df", null ]
+    ] ],
+    [ "SeekModeValues", "namespaceocilib.html#a4f93943c01043379927c2944b0c92576", [
+      [ "SeekSet", "namespaceocilib.html#a4f93943c01043379927c2944b0c92576a6cb13438b0bad43b2d4b112c6017ce81", null ],
+      [ "SeekEnd", "namespaceocilib.html#a4f93943c01043379927c2944b0c92576ac13e9b641b5902f46defb8bdfd280495", null ],
+      [ "SeekOffset", "namespaceocilib.html#a4f93943c01043379927c2944b0c92576a66cecebd6af72acf437ebd2a9703dad0", null ]
+    ] ],
+    [ "OpenModeValues", "namespaceocilib.html#a33326533192a8d1ed3c64b070042378b", [
+      [ "ReadOnly", "namespaceocilib.html#a33326533192a8d1ed3c64b070042378ba77affe2f0c333fef841ac1fec378fe16", null ],
+      [ "ReadWrite", "namespaceocilib.html#a33326533192a8d1ed3c64b070042378ba180690a54f04007e22ef78624967be62", null ]
+    ] ],
+    [ "LobTypeValues", "namespaceocilib.html#ac6e39e0361fffd586dcb5dd293b6e2c6", null ],
+    [ "LongTypeValues", "namespaceocilib.html#a221f8e33d7feb78a888d65939e19c36c", null ],
+    [ "FormatTypeValues", "namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59", [
+      [ "FormatDate", "namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59a7e5ab19554ac7497343d16dbb7355310", null ],
+      [ "FormatTimestamp", "namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59ac3ead276aba936011534286acc34017d", null ],
+      [ "FormatNumeric", "namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59ac7156fdcd818567f2f61458413af1e38", null ],
+      [ "FormatBinaryDouble", "namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59a5081733637bf84d373be2da07a134fd6", null ],
+      [ "FormatBinaryFloat", "namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59a7358fe41947e742a906069c932ce5314", null ]
+    ] ]
 ];

@@ -1,8 +1,8 @@
 var group___ocilib_c_api_pools =
 [
-    [ "OCI_PoolCreate", "group___ocilib_c_api_pools.html#gab4b17f7cb1cb55218eeaeee4618c7547", null ],
+    [ "OCI_PoolCreate", "group___ocilib_c_api_pools.html#gae8dcd0fc7d63c88516b95c478d10d942", null ],
     [ "OCI_PoolFree", "group___ocilib_c_api_pools.html#gad98d2baac08791e3121e577924899d59", null ],
-    [ "OCI_PoolGetConnection", "group___ocilib_c_api_pools.html#ga2e9b73c94c032755c30eb36b8b09fee5", null ],
+    [ "OCI_PoolGetConnection", "group___ocilib_c_api_pools.html#ga8f8b76255818af6e25f76f298ccf5e70", null ],
     [ "OCI_PoolGetTimeout", "group___ocilib_c_api_pools.html#gae6bdb982e96f0978c0b06d0be96cab65", null ],
     [ "OCI_PoolSetTimeout", "group___ocilib_c_api_pools.html#ga893457c5817ebfc9adf6819ed1d13752", null ],
     [ "OCI_PoolGetNoWait", "group___ocilib_c_api_pools.html#gae4130d1a63f2c8b59314baff1ee76f97", null ],

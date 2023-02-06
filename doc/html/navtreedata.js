@@ -25,15 +25,7 @@
 var NAVTREE =
 [
   [ "OCILIB (C and C++ Driver for Oracle)", "index.html", [
-    [ "Introduction", "index.html", [
-      [ "Description", "index.html#Intro", null ],
-      [ "Version information", "index.html#Version", null ],
-      [ "Main features", "index.html#Features", null ],
-      [ "Download", "index.html#Download", null ],
-      [ "Author", "index.html#Author", null ],
-      [ "License", "index.html#License", null ],
-      [ "ChangeLog", "index.html#Changelog", null ]
-    ] ],
+    [ "Introduction", "index.html", "index" ],
     [ "Documentation", "modules.html", "modules" ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
@@ -65,13 +57,17 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_agent_8hpp_source.html",
-"classocilib_1_1_date.html#ad493a3b361497700feaa1af17d02a3e8",
-"classocilib_1_1_file.html#affa5f35720e5de2e950990918b7bc4d1",
-"classocilib_1_1_statement.html#a2898cd27d31c30347db1fd9931ebbad8",
-"group___ocilib_c_api_advanced_queuing.html#ga0741726408202b1852a0a0b3c7a1ecf5",
-"group___ocilib_c_api_connections.html#gafc7fefce4744e5c3b5842223702ab795",
-"group___ocilib_c_api_hash_tables.html#gae4e352e1bfd10252a6160c722753b727",
-"group___ocilib_c_api_user_types.html#ga22da8762e0d2467879d2ec6dee42ba90"
+"classocilib_1_1_connection.html#a43eb6879fc41ddc0dc790ed0793e2c47",
+"classocilib_1_1_dequeue.html#a540386020a56e991737e079910eabcd0",
+"classocilib_1_1_environment.html#a872e754685d391c109c4fd9701ef3ff2a72f9f092e367efe0b0a5b7cde3ad1244",
+"classocilib_1_1_interval.html#acd45704d56b910c2d2c1ff1ab18aec98",
+"classocilib_1_1_pool.html#a52ee2b1e8d5039f64a18fe343fbb191eae703388104ab6daf2f01a90c61115543",
+"classocilib_1_1_statement.html#a888f1edb17ddf23cad6d01c302884972",
+"classocilib_1_1_transaction.html#aad56be300eb5c62bea0e622eb25416b4",
+"group___ocilib_c_api_binding.html#ga6bcb91e88f7a7570bf739cc20427ebc3",
+"group___ocilib_c_api_environment_variables.html",
+"group___ocilib_c_api_pools.html#gae6bdb982e96f0978c0b06d0be96cab65",
+"namespaceocilib.html#a33326533192a8d1ed3c64b070042378ba180690a54f04007e22ef78624967be62"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

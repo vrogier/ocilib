@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2021-11-30 20:00:00+01:00
+date: 2023-02-06 20:00:00+01:00
 layout: page
 slug: about
 title: About
@@ -27,8 +27,7 @@ Few years later and thousand of hours spent on it, OCILIB had became the referen
   
 ## About me
 
-I'm French and live/work in France around Paris.
+I'm French and live in Brittany, France.
 <br/>
-I'm a software Architect at [Capsule Technologie](http://www.capsuletech.com), industry leader in connected health.
+I'm a software Architect at [Capsule Philips](http://www.capsuletech.com), industry leader in connected health.
 <br/>
-Previously I was working as a Senior Software Engineer for a French company that develops computerized integrated food management systems for hospitals and health care institutions.

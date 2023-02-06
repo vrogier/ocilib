@@ -9,5 +9,8 @@ var namespaceocilib_1_1support =
     [ "BindResolverType", "structocilib_1_1support_1_1_bind_resolver_type.html", null ],
     [ "BindsHolder", "classocilib_1_1support_1_1_binds_holder.html", null ],
     [ "BindTypeAdaptor", "classocilib_1_1support_1_1_bind_type_adaptor.html", null ],
+    [ "HandleDeleter", "structocilib_1_1support_1_1_handle_deleter.html", null ],
+    [ "HandleStoreResolver", "structocilib_1_1support_1_1_handle_store_resolver.html", null ],
+    [ "HandleStoreResolverType", "structocilib_1_1support_1_1_handle_store_resolver_type.html", null ],
     [ "NumericTypeResolver", "structocilib_1_1support_1_1_numeric_type_resolver.html", null ]
 ];

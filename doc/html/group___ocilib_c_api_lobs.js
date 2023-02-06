@@ -1,8 +1,8 @@
 var group___ocilib_c_api_lobs =
 [
-    [ "OCI_LobCreate", "group___ocilib_c_api_lobs.html#gab188a5d746df15c92add244fed1733ee", null ],
+    [ "OCI_LobCreate", "group___ocilib_c_api_lobs.html#ga35233a7a52a28cf0e105670ee14ba4d9", null ],
     [ "OCI_LobFree", "group___ocilib_c_api_lobs.html#ga2e3add6a698c6972633490759c95f107", null ],
-    [ "OCI_LobArrayCreate", "group___ocilib_c_api_lobs.html#ga8eec2af366ee659cc7af0b19697ca982", null ],
+    [ "OCI_LobArrayCreate", "group___ocilib_c_api_lobs.html#ga9dfda890c31c433fd6fc8476e0a79f32", null ],
     [ "OCI_LobArrayFree", "group___ocilib_c_api_lobs.html#ga855e5cd4627ba0aad47cf7e6b832fb82", null ],
     [ "OCI_LobGetType", "group___ocilib_c_api_lobs.html#gafa4ea02f1547d918ea47c57074fee4d3", null ],
     [ "OCI_LobSeek", "group___ocilib_c_api_lobs.html#gae7f97db499c9ec1a5c542dd87f1ab436", null ],
@@ -28,6 +28,6 @@ var group___ocilib_c_api_lobs =
     [ "OCI_LobGetMaxSize", "group___ocilib_c_api_lobs.html#ga6af6a3ef1a55e6150f61afeb994e3675", null ],
     [ "OCI_LobFlush", "group___ocilib_c_api_lobs.html#gac352f921cadffd24daed95ac62f479fc", null ],
     [ "OCI_LobEnableBuffering", "group___ocilib_c_api_lobs.html#ga2f3a2c52553b9213b39e45584589ea51", null ],
-    [ "OCI_LobGetConnection", "group___ocilib_c_api_lobs.html#gafb0bdf73edfde8ae96047b79df0c0cfa", null ],
+    [ "OCI_LobGetConnection", "group___ocilib_c_api_lobs.html#ga7750c909262ba6f7d1395bc14efed743", null ],
     [ "OCI_LobIsRemote", "group___ocilib_c_api_lobs.html#ga6685ef8fe58364ef440b9ff9eb6bc65d", null ]
 ];

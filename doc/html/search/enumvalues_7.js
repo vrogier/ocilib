@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['locked_3080',['Locked',['../classocilib_1_1_dequeue.html#a905f0addefd1d1092009985009cbceb8a8d7301b995da78db4f15b06a2b6caa90',1,'ocilib::Dequeue']]],
-  ['longexplicit_3081',['LongExplicit',['../classocilib_1_1_statement.html#a095c882ba807ccba7bf693b5652385e1a09633efb99147569736eee7c2a633c8f',1,'ocilib::Statement']]],
-  ['longimplicit_3082',['LongImplicit',['../classocilib_1_1_statement.html#a095c882ba807ccba7bf693b5652385e1a0da780a1752bfcd8a6458ddbd4f7511b',1,'ocilib::Statement']]],
-  ['loose_3083',['Loose',['../classocilib_1_1_transaction.html#aad56be300eb5c62bea0e622eb25416b4ad0bcf5edb8c2949e24d3664c47c225ec',1,'ocilib::Transaction']]]
+  ['locked_0',['Locked',['../classocilib_1_1_dequeue.html#a905f0addefd1d1092009985009cbceb8a8d7301b995da78db4f15b06a2b6caa90',1,'ocilib::Dequeue']]],
+  ['longexplicit_1',['LongExplicit',['../classocilib_1_1_statement.html#a095c882ba807ccba7bf693b5652385e1a09633efb99147569736eee7c2a633c8f',1,'ocilib::Statement']]],
+  ['longimplicit_2',['LongImplicit',['../classocilib_1_1_statement.html#a095c882ba807ccba7bf693b5652385e1a0da780a1752bfcd8a6458ddbd4f7511b',1,'ocilib::Statement']]],
+  ['loose_3',['Loose',['../classocilib_1_1_transaction.html#aad56be300eb5c62bea0e622eb25416b4ad0bcf5edb8c2949e24d3664c47c225ec',1,'ocilib::Transaction']]]
 ];

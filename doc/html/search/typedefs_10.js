@@ -1,11 +1,11 @@
 var searchData=
 [
-  ['seekmode_2937',['SeekMode',['../classocilib_1_1_resultset.html#affbd50db35431bb77c05b17ebf428c5d',1,'ocilib::Resultset::SeekMode()'],['../namespaceocilib.html#a7311e48d6ecb0e3d1279272e47fb20ff',1,'ocilib::SeekMode()']]],
-  ['sessionflags_2938',['SessionFlags',['../classocilib_1_1_environment.html#adc60817b069dc4d3d9ff76d0c2b0177b',1,'ocilib::Environment']]],
-  ['sessiontrace_2939',['SessionTrace',['../classocilib_1_1_connection.html#a732812cae822313d1a24b91d449cb63f',1,'ocilib::Connection']]],
-  ['shutdownflags_2940',['ShutdownFlags',['../classocilib_1_1_environment.html#a832723aa734cff579500d26a6b1ff7c8',1,'ocilib::Environment']]],
-  ['shutdownmode_2941',['ShutdownMode',['../classocilib_1_1_environment.html#a0821795bc064c833d5dfb561c84e36c7',1,'ocilib::Environment']]],
-  ['startflags_2942',['StartFlags',['../classocilib_1_1_environment.html#a83a1104d774e08ce95cd4faf07e4b45a',1,'ocilib::Environment']]],
-  ['startmode_2943',['StartMode',['../classocilib_1_1_environment.html#acc436aec986b3f9148c519826f108bbc',1,'ocilib::Environment']]],
-  ['statementtype_2944',['StatementType',['../classocilib_1_1_statement.html#ab51ec370d22d5375304bdf1d05912c47',1,'ocilib::Statement']]]
+  ['seekmode_0',['SeekMode',['../classocilib_1_1_resultset.html#affbd50db35431bb77c05b17ebf428c5d',1,'ocilib::Resultset::SeekMode()'],['../namespaceocilib.html#a7311e48d6ecb0e3d1279272e47fb20ff',1,'ocilib::SeekMode()']]],
+  ['sessionflags_1',['SessionFlags',['../classocilib_1_1_environment.html#adc60817b069dc4d3d9ff76d0c2b0177b',1,'ocilib::Environment']]],
+  ['sessiontrace_2',['SessionTrace',['../classocilib_1_1_connection.html#a732812cae822313d1a24b91d449cb63f',1,'ocilib::Connection']]],
+  ['shutdownflags_3',['ShutdownFlags',['../classocilib_1_1_environment.html#a832723aa734cff579500d26a6b1ff7c8',1,'ocilib::Environment']]],
+  ['shutdownmode_4',['ShutdownMode',['../classocilib_1_1_environment.html#a0821795bc064c833d5dfb561c84e36c7',1,'ocilib::Environment']]],
+  ['startflags_5',['StartFlags',['../classocilib_1_1_environment.html#a83a1104d774e08ce95cd4faf07e4b45a',1,'ocilib::Environment']]],
+  ['startmode_6',['StartMode',['../classocilib_1_1_environment.html#acc436aec986b3f9148c519826f108bbc',1,'ocilib::Environment']]],
+  ['statementtype_7',['StatementType',['../classocilib_1_1_statement.html#ab51ec370d22d5375304bdf1d05912c47',1,'ocilib::Statement']]]
 ];

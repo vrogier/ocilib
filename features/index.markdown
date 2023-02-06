@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2019-02-25 20:00:00+01:00
+date: 2023-02-06 20:00:00+01:00
 layout: page
 slug: features
 title: Features
@@ -11,7 +11,7 @@ title: Features
 + ISO C ++ API   
 + Full ANSI and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
 + Full 32/64 bits compatibility
-+ Compatible with all Oracle version >= 8i    
++ Compatible with all Oracle version >= 8.0    
 + Automatic adaptation to the runtime Oracle client version
 + Runtime loading of Oracle libraries
 + Built-in error handling (global and thread context)

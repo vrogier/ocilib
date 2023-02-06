@@ -1,6 +1,7 @@
 var group___ocilib_c_api_datatypes =
 [
     [ "big_int", "group___ocilib_c_api_datatypes.html#ga88d4b7a22a0996612532961510afb861", null ],
+    [ "OCI_Environment", "group___ocilib_c_api_datatypes.html#ga51c97c8c8eb02524207afd1225b43d27", null ],
     [ "OCI_Pool", "group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa", null ],
     [ "OCI_Connection", "group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77", null ],
     [ "OCI_Statement", "group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d", null ],

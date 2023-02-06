@@ -1,8 +1,8 @@
 var group___ocilib_c_api_datetimes =
 [
-    [ "OCI_DateCreate", "group___ocilib_c_api_datetimes.html#ga45506b36a77bc394cd367f620e20fd1c", null ],
+    [ "OCI_DateCreate", "group___ocilib_c_api_datetimes.html#ga26123a85d5b36fead616acffbf5ef145", null ],
     [ "OCI_DateFree", "group___ocilib_c_api_datetimes.html#gab6c9e4fd52928f53414a338846dbe027", null ],
-    [ "OCI_DateArrayCreate", "group___ocilib_c_api_datetimes.html#gacd74c42f00ce8e6f43a84f0753b8096a", null ],
+    [ "OCI_DateArrayCreate", "group___ocilib_c_api_datetimes.html#ga5ece76551a739a4782ff3a32f42f1a92", null ],
     [ "OCI_DateArrayFree", "group___ocilib_c_api_datetimes.html#gadf2acb934aa8435c13c2fe72b9c71905", null ],
     [ "OCI_DateAddDays", "group___ocilib_c_api_datetimes.html#gab9e19be2b20d1457ada24abfdf98f7bd", null ],
     [ "OCI_DateAddMonths", "group___ocilib_c_api_datetimes.html#gab71f2c36cd1ada708a83805255d9ade8", null ],

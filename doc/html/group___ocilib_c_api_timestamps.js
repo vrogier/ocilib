@@ -1,8 +1,8 @@
 var group___ocilib_c_api_timestamps =
 [
-    [ "OCI_TimestampCreate", "group___ocilib_c_api_timestamps.html#ga793beb5bae3200b75a294e19cc0cc235", null ],
+    [ "OCI_TimestampCreate", "group___ocilib_c_api_timestamps.html#gaab6a035d8c145cdb6b4601aa9d5b7b7b", null ],
     [ "OCI_TimestampFree", "group___ocilib_c_api_timestamps.html#ga9b011cd5ca5554b605c8275f9327c1bf", null ],
-    [ "OCI_TimestampArrayCreate", "group___ocilib_c_api_timestamps.html#ga9f21f490f67f77ac701e062d2ab0f17b", null ],
+    [ "OCI_TimestampArrayCreate", "group___ocilib_c_api_timestamps.html#ga5d69230ebee7efabcce762ba187ed443", null ],
     [ "OCI_TimestampArrayFree", "group___ocilib_c_api_timestamps.html#ga4116709906a3ace4d92cb6405c6d4c06", null ],
     [ "OCI_TimestampGetType", "group___ocilib_c_api_timestamps.html#gaaff119235fea6916d67f62bf09c6c0e3", null ],
     [ "OCI_TimestampAssign", "group___ocilib_c_api_timestamps.html#gadbcb165790f622f82a755c74cc4c8d4d", null ],
@@ -23,9 +23,9 @@ var group___ocilib_c_api_timestamps =
     [ "OCI_TimestampSysTimestamp", "group___ocilib_c_api_timestamps.html#gaba3e1f5ec3967cb41a68afff6e86a138", null ],
     [ "OCI_TimestampToCTime", "group___ocilib_c_api_timestamps.html#gac769ccce451473048a7b46baa0f01c2b", null ],
     [ "OCI_TimestampFromCTime", "group___ocilib_c_api_timestamps.html#gab77bb9993a59ddb2a30cc01eae1713ad", null ],
-    [ "OCI_IntervalCreate", "group___ocilib_c_api_timestamps.html#gaab148eb1566a9a2a2e86c683cc3e2369", null ],
+    [ "OCI_IntervalCreate", "group___ocilib_c_api_timestamps.html#ga08d1536ed8490af186dc4805e7c513ea", null ],
     [ "OCI_IntervalFree", "group___ocilib_c_api_timestamps.html#ga102191691463260b1f5b9660f3c5112f", null ],
-    [ "OCI_IntervalArrayCreate", "group___ocilib_c_api_timestamps.html#ga59c5f443b9393c87ad82a60ed9f8354e", null ],
+    [ "OCI_IntervalArrayCreate", "group___ocilib_c_api_timestamps.html#gafc89fce43f93d38b7e5195a7b1ada9de", null ],
     [ "OCI_IntervalArrayFree", "group___ocilib_c_api_timestamps.html#ga8bafedc40871bfceab52145b033ce0c2", null ],
     [ "OCI_IntervalGetType", "group___ocilib_c_api_timestamps.html#gaa49359423ee94f354172966ca0861055", null ],
     [ "OCI_IntervalAssign", "group___ocilib_c_api_timestamps.html#ga4284e812e2333074c22592b843f4e8cc", null ],

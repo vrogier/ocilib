@@ -1,6 +1,6 @@
 var group___ocilib_c_api_direct_path =
 [
-    [ "OCI_DirPathCreate", "group___ocilib_c_api_direct_path.html#ga328ddcdff80006192d43a4e2e778eb8d", null ],
+    [ "OCI_DirPathCreate", "group___ocilib_c_api_direct_path.html#ga89a508ab173c5243617570fad67f9803", null ],
     [ "OCI_DirPathFree", "group___ocilib_c_api_direct_path.html#gaa8e361ac0c921921d75a358a141286c9", null ],
     [ "OCI_DirPathSetColumn", "group___ocilib_c_api_direct_path.html#ga2a9c4cc5a9c3f709c02b2aa94e7c7b11", null ],
     [ "OCI_DirPathPrepare", "group___ocilib_c_api_direct_path.html#gaa2e38898a241e6b413b67fb20f1e1b05", null ],
