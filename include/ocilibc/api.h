@@ -16847,6 +16847,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetOperation
  * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
  * subscriptions
  *
+ * @warning
+ * When using Oracle pluggable databases (PDBs), OCI_EventGetDatabase() returns
+ * the container database name and NOT the pluggable database name (Oracle limitation).
+ *
  */
 
 OCI_SYM_PUBLIC const otext * OCI_API OCI_EventGetDatabase
