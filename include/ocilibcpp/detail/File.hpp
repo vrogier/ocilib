@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,19 +34,27 @@ inline File::File()
 
 inline File::File(const Connection &connection)
 {
-    Acquire(core::Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), nullptr, connection.GetHandle());
+    AcquireAllocated
+    (
+        core::Check(OCI_FileCreate(connection, OCI_BFILE)), 
+        connection.GetHandle()
+    );
 }
 
 inline File::File(const Connection &connection, const ostring& directory, const ostring& name)
 {
-    Acquire(core::Check(OCI_FileCreate(connection, OCI_BFILE)), reinterpret_cast<HandleFreeFunc>(OCI_FileFree), nullptr, connection.GetHandle());
+    AcquireAllocated
+    (
+        core::Check(OCI_FileCreate(connection, OCI_BFILE)), 
+        connection.GetHandle()
+    );
 
     SetInfos(directory, name);
 }
 
 inline File::File(OCI_File *pFile, core::Handle *parent)
 {
-    Acquire(pFile, nullptr, nullptr, parent);
+    AcquireTransient(pFile,parent);
 }
 
 inline Raw File::Read(unsigned int size)
@@ -89,7 +97,11 @@ inline big_uint File::GetLength() const
 
 inline Connection File::GetConnection() const
 {
-    return Connection(core::Check(OCI_FileGetConnection(*this)), nullptr);
+    return Connection
+    (
+        core::Check(OCI_FileGetConnection(*this)), 
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline bool File::Exists() const

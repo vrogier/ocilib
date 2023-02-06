@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -211,7 +211,7 @@ inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
 
     if (handler)
     {
-        Dequeue dequeue(pDequeue);
+        Dequeue dequeue(pDequeue, Environment::GetEnvironmentHandle());
         handler(dequeue);
     }
 }
@@ -235,25 +235,6 @@ void Environment::SetUserCallback(AnyPointer ptr, T callback)
     }
 }
 
-template<class T>
-void Environment::SetSmartHandle(AnyPointer ptr, T handle)
-{
-    if (handle)
-    {
-        GetInstance()._handles.Set(ptr, handle);
-    }
-    else
-    {
-        GetInstance()._handles.Remove(ptr);
-    }
-}
-
-template<class T>
-T Environment::GetSmartHandle(AnyPointer ptr)
-{
-    return dynamic_cast<T>(GetInstance()._handles.Get(ptr));
-}
-
 inline core::Handle * Environment::GetEnvironmentHandle()
 {
     return GetInstance()._handle.GetHandle();
@@ -274,7 +255,7 @@ inline Environment& Environment::GetInstance()
     return environment;
 }
 
-inline Environment::Environment() : _charMaxSize(0), _initialized(false)
+inline Environment::Environment() : _charMaxSize(0), _initialized(false), _guard(core::SynchronizationMode::Unsafe)
 {
 
 }
@@ -287,22 +268,26 @@ inline void Environment::SelfInitialize(EnvironmentFlags mode, const ostring& li
 
     _initialized = true;
 
-    _locker.SetAccessMode((_mode & Environment::Threaded) == Environment::Threaded);
+    _guard.SetMode((_mode & Environment::Threaded) == Environment::Threaded ? core::SynchronizationMode::Safe : core::SynchronizationMode::Unsafe);
 
-    _callbacks.SetLocker(&_locker);
-    _handles.SetLocker(&_locker);
+    _callbacks.SetGuard(&_guard);
 
-    _handle.Acquire(const_cast<AnyPointer>(core::Check(OCI_HandleGetEnvironment())), nullptr, nullptr, nullptr);
+    _handle.AcquireTransient
+    (
+        /* returned value IS NOT an OCI_Environment* but OCIEnv* direct handle 
+           to be changed when C API we have public methods for OCI_Environment */
+        static_cast<OCI_Environment*>(const_cast<AnyPointer>(core::Check(OCI_HandleGetEnvironment()))),
+        nullptr
+    );
 
     _charMaxSize = ComputeCharMaxSize(GetCharset());
 }
 
 inline void Environment::SelfCleanup()
 {
-    _locker.SetAccessMode(false);
+    _guard.SetMode(core::SynchronizationMode::Unsafe);
 
-    _callbacks.SetLocker(nullptr);
-    _handles.SetLocker(nullptr);
+    _callbacks.SetGuard(nullptr);
 
     _handle.Release();
 

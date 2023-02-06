@@ -28,7 +28,7 @@ The source code is free source code licensed under **Apache License, Version 2.0
 - ISO C ++ API
 - Full ANSI and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
 - Full 32/64 bits compatibility
-- Compatible with all Oracle version >= 8i
+- Compatible with all Oracle version >= 8.0
 - Automatic adaptation to the runtime Oracle client version
 - Runtime loading of Oracle libraries
 - Built-in error handling (global and thread context)

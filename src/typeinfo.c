@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,10 +61,10 @@ static boolean OcilibTypeInfoFind(OCI_TypeInfo *typinf, TypeInfoFindParams *find
 
 static OCI_TypeInfo* OcilibTypeInfoFindOrCreate(OCI_Connection* con, TypeInfoFindParams* p_find_params, boolean* p_is_created)
 {
+    OCI_TypeInfo* typinf = OcilibListFind(con->tinfs, (POCI_LIST_FIND) OcilibTypeInfoFind, p_find_params);
+
     *p_is_created = FALSE;
-
-    OCI_TypeInfo* typinf = OcilibListFind(con->tinfs, (POCI_LIST_FIND)OcilibTypeInfoFind, p_find_params);
-
+    
     if (NULL == typinf)
     {
         typinf = OcilibListAppend(con->tinfs, sizeof(OCI_TypeInfo));
@@ -233,7 +233,7 @@ OCI_TypeInfo * OcilibTypeInfoGet
     find_params.name   = obj_name;
     find_params.schema = obj_schema;
 
-    LOCK_LIST
+    LIST_ATOMIC_OPERATION
     (
         con->tinfs,
         {

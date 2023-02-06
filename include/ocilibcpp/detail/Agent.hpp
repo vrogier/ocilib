@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,16 @@ namespace ocilib
 
 inline Agent::Agent(const Connection &connection, const ostring& name, const ostring& address)
 {
-    Acquire(core::Check(OCI_AgentCreate(connection, name.c_str(), address.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_AgentFree), nullptr, nullptr);
+    AcquireAllocated
+    (
+        core::Check(OCI_AgentCreate(connection, name.c_str(), address.c_str())),
+        connection.GetHandle()
+    );
 }
 
 inline Agent::Agent(OCI_Agent *pAgent, core::Handle *parent)
 {
-    Acquire(pAgent, nullptr, nullptr, parent);
+    AcquireTransient(pAgent, parent);
 }
 
 inline ostring Agent::GetName() const

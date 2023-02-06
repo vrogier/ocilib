@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,13 +202,7 @@ static OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 
     /* first try to find it in list */
 
-    LOCK_LIST
-    (
-        typinf->con->tinfs,
-        {
-            parent = OcilibListFind(typinf->con->tinfs, (POCI_LIST_FIND)OcilibObjectTypeInfoFind, tdo);
-        }
-    )
+    LIST_ATOMIC_FIND(typinf->con->tinfs, OcilibObjectTypeInfoFind, tdo, parent)
 
     /* if found, it will be assigned in the cleanup part */
 

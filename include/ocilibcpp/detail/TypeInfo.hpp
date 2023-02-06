@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,16 @@ namespace ocilib
 
 inline TypeInfo::TypeInfo(const Connection &connection, const ostring& name, TypeInfoType type)
 {
-    Acquire(core::Check(OCI_TypeInfoGet(connection, name.c_str(), type)), static_cast<HandleFreeFunc>(nullptr), nullptr, connection.GetHandle());
+    AcquireTransient
+    (
+        core::Check(OCI_TypeInfoGet(connection, name.c_str(), type)), 
+        connection.GetHandle()
+    );
 }
 
-inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo)
-{
-    Acquire(pTypeInfo, nullptr, nullptr, nullptr);
+inline TypeInfo::TypeInfo(OCI_TypeInfo *pTypeInfo, core::Handle* parent)
+{    
+    AcquireTransient(pTypeInfo, parent);
 }
 
 inline TypeInfo::TypeInfoType TypeInfo::GetType() const
@@ -47,7 +51,11 @@ inline ostring TypeInfo::GetName() const
 
 inline Connection TypeInfo::GetConnection() const
 {
-    return Connection(core::Check(OCI_TypeInfoGetConnection(*this)), nullptr);
+    return Connection
+    (
+        core::Check(OCI_TypeInfoGetConnection(*this)),
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline unsigned int TypeInfo::GetColumnCount() const
@@ -67,7 +75,9 @@ inline boolean TypeInfo::IsFinalType() const
 
 inline TypeInfo TypeInfo::GetSuperType() const
 {
-    return TypeInfo(core::Check(OCI_TypeInfoGetSuperType(*this)));
+    Connection connection = GetConnection();
+
+    return TypeInfo(core::Check(OCI_TypeInfoGetSuperType(*this)), connection.GetHandle());
 }
 
 }

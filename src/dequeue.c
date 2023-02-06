@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -257,7 +257,11 @@ OCI_Msg * OcilibDequeueGetMessage
 
     dbstr = OcilibStringGetDBString(dequeue->name, &dbsize);
 
-    if (OCI_UNKNOWN == dequeue->typinf->typecode)
+    if (OCI_UNKNOWN != dequeue->typinf->typecode && NULL != dequeue->msg->obj)
+    {
+        p_ind = dequeue->msg->obj->tab_ind;
+    }
+    else
     {
         p_ind = &dequeue->msg->ind;
     }

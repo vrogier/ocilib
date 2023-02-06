@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,9 @@ namespace ocilib
     /**
     * @brief
     * Oracle Version enumerated values
+	* 
+	* @note
+	* This list is NOT exhaustive and contains only a list of well known released versions
     *
     */
     enum OracleVersionValues
@@ -58,7 +61,11 @@ namespace ocilib
         Oracle18cR1 = OCI_18_1,
         Oracle18cR2 = OCI_18_2,
         Oracle18cR3 = OCI_18_3,
-        Oracle18cR4 = OCI_18_4
+        Oracle18cR4 = OCI_18_4,
+        Oracle18cR5 = OCI_18_5,
+        Oracle19cR3 = OCI_19_3,
+        Oracle19cR5 = OCI_19_5,
+        Oracle21cR3 = OCI_21_3
     };
 
     /**
@@ -484,10 +491,24 @@ namespace ocilib
         friend class Mutex;
         friend class Connection;
         friend class Pool;
+        friend class TypeInfo;
         friend class Subscription;
         friend class Dequeue;
-        template<class>
-        friend class core::HandleHolder;
+        friend class Date;
+        friend class Timestamp;
+        friend class Number;
+        friend class Interval;
+        friend class Agent;
+        friend class Transaction;
+        friend class Exception;
+        friend class File;
+        friend class Log;
+        friend class Statement;
+        friend class Object;
+        friend class Reference;
+        friend class Message;
+        friend class Event;
+        friend class Column;
 
     public:
 
@@ -739,20 +760,20 @@ namespace ocilib
             ShutdowntDefault = OCI_DB_SDF_DEFAULT,
             /**  - Further connects are prohibited
               *  - No new transactions are allowed. */
-              ShutdowTrans = OCI_DB_SDF_TRANS,
-              /**  - Further connects are prohibited
-                *  - No new transactions are allowed.
-                *  - Waits for active transactions to complete */
-                ShutdownTransLocal = OCI_DB_SDF_TRANS_LOCAL,
-                /**  - Does not wait for current calls to complete or users to disconnect from the database.
-                  *  - All uncommitted transactions are terminated and rolled back */
-                  ShutdownImmediate = OCI_DB_SDF_IMMEDIATE,
-                  /**  - Does not wait for current calls to complete or users to disconnect from the database.
-                    *  - All uncommitted transactions are terminated and are not rolled back.
-                    *  - This is the fastest possible way to shut down the database, but the next
-                    *    database startup may require instance recovery.
-                    *  - Therefore, this option should be used only in unusual circumstances */
-                    ShutdownAbort = OCI_DB_SDF_ABORT
+            ShutdowTrans = OCI_DB_SDF_TRANS,
+            /**  - Further connects are prohibited
+              *  - No new transactions are allowed.
+              *  - Waits for active transactions to complete */
+            ShutdownTransLocal = OCI_DB_SDF_TRANS_LOCAL,
+            /**  - Does not wait for current calls to complete or users to disconnect from the database.
+              *  - All uncommitted transactions are terminated and rolled back */
+            ShutdownImmediate = OCI_DB_SDF_IMMEDIATE,
+            /**  - Does not wait for current calls to complete or users to disconnect from the database.
+              *  - All uncommitted transactions are terminated and are not rolled back.
+              *  - This is the fastest possible way to shut down the database, but the next
+              *    database startup may require instance recovery.
+              *  - Therefore, this option should be used only in unusual circumstances */
+             ShutdownAbort = OCI_DB_SDF_ABORT
         };
 
         /**
@@ -1101,7 +1122,7 @@ namespace ocilib
 
     private:
 
-        class EnvironmentHandle : core::HandleHolder<AnyPointer>
+        class EnvironmentHandle : core::HandleHolder<OCI_Environment*>
         {
             friend class Environment;
         };
@@ -1117,23 +1138,15 @@ namespace ocilib
         template<class T>
         static void SetUserCallback(AnyPointer ptr, T callback);
 
-        template<class T>
-        static void SetSmartHandle(AnyPointer ptr, T handle);
-
-        template<class T>
-        static T GetSmartHandle(AnyPointer ptr);
-
         static core::Handle* GetEnvironmentHandle();
-
         static Environment& GetInstance();
 
         Environment();
-
+        
         void SelfInitialize(EnvironmentFlags mode, const ostring& libpath);
         void SelfCleanup();
 
-        core::Locker _locker;
-        core::ConcurrentMap<AnyPointer, core::Handle*>  _handles;
+        core::SynchronizationGuard _guard;
         core::ConcurrentMap<AnyPointer, CallbackPointer> _callbacks;
         EnvironmentHandle _handle;
         EnvironmentFlags _mode;
@@ -1573,6 +1586,12 @@ namespace ocilib
         friend class Reference;
         friend class Resultset;
         friend class Subscription;
+        friend class Agent;
+        friend class Dequeue;
+        friend class Enqueue;
+        friend class Column;
+        friend class Message;
+        friend class DirectPath;
 
         template<class, int>
         friend class Lob;
@@ -4632,7 +4651,7 @@ namespace ocilib
 
     private:
 
-        TypeInfo(OCI_TypeInfo* pTypeInfo);
+        TypeInfo(OCI_TypeInfo* pTypeInfo, core::Handle* parent);
     };
 
     /**
@@ -6858,19 +6877,19 @@ namespace ocilib
             /** The column has no flags or the OCI client does not support it */
             NoFlags = OCI_CPF_NONE,
             /** - If Set, the column is an IDENTITY column
-                - Otherwise, it is not an IDENTITY column */
-                IsIdentity = OCI_CPF_IS_IDENTITY,
-                /** Only valid when IsIdentity is set:
-                       - If set, means that the value is "ALWAYS GENERATED"
-                       - Otherwise means that the value is "GENERATED BY" */
-                       IsGeneratedAlways = OCI_CPF_IS_GEN_ALWAYS,
-                       /** Only valid when IsIdentity is set:
-                              - If set, means that the value is generated by default on NULL */
-                              IsGeneratedByDefaultOnNull = OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL,
-                              /**  If set, Column is an implicitly generated logical partitioning column for container_map enabled object */
-                              IsLogicalPartitioning = OCI_CPF_IS_LPART,
-                              /**  If set, Column is a CON_ID column implicitly generated by CONTAINERS() or is an ORIGIN_CON_ID column implicitly generated for Extended Data Link */
-                              IsGeneratedByContainers = OCI_CPF_IS_CONID
+            - Otherwise, it is not an IDENTITY column */
+            IsIdentity = OCI_CPF_IS_IDENTITY,
+            /** Only valid when IsIdentity is set:
+            - If set, means that the value is "ALWAYS GENERATED"
+            - Otherwise means that the value is "GENERATED BY" */
+            IsGeneratedAlways = OCI_CPF_IS_GEN_ALWAYS,
+            /** Only valid when IsIdentity is set:
+            - If set, means that the value is generated by default on NULL */
+            IsGeneratedByDefaultOnNull = OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL,
+            /**  If set, Column is an implicitly generated logical partitioning column for container_map enabled object */
+            IsLogicalPartitioning = OCI_CPF_IS_LPART,
+            /**  If set, Column is a CON_ID column implicitly generated by CONTAINERS() or is an ORIGIN_CON_ID column implicitly generated for Extended Data Link */
+            IsGeneratedByContainers = OCI_CPF_IS_CONID
         };
 
         /**
@@ -8254,7 +8273,7 @@ namespace ocilib
 
     private:
 
-        Dequeue(OCI_Dequeue* pDequeue);
+        Dequeue(OCI_Dequeue* pDequeue, core::Handle* parent);
     };
 
     /**

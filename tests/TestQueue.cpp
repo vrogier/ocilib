@@ -117,7 +117,7 @@ TEST(TestQueue, MessageWithConsumers)
     const auto deq2 = OCI_DequeueCreate(inf, OTEXT("TestQueueMessageWithConsumers"));
     ASSERT_NE(nullptr, deq2);
 
-    OCI_Agent* agents[2];
+    OCI_Agent* agents[2] {};
 
     agents[0] = OCI_AgentCreate(conn, OTEXT("C1"), nullptr);
     ASSERT_NE(nullptr, agents[0]);
@@ -295,7 +295,7 @@ TEST(TestQueue, SingleRawMessageEmptyPayload)
 
     otext payload[100] = OTEXT("");
     unsigned int payloadSize = 100;
-    ASSERT_TRUE(OCI_MsgGetRaw(msg_out, static_cast<void*>(buffer), &payloadSize));
+    ASSERT_TRUE(OCI_MsgGetRaw(msg_out, static_cast<void*>(payload), &payloadSize));
     ASSERT_EQ(0, payloadSize);
 
     ASSERT_TRUE(OCI_EnqueueFree(enq));

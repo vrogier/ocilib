@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,13 +33,17 @@ Long<T, U>::Long()
 template<class T, int U>
 Long<T, U>::Long(const Statement &statement)
 {
-    Acquire(core::Check(OCI_LongCreate(statement, U)), reinterpret_cast<HandleFreeFunc>(OCI_LongFree), nullptr, statement.GetHandle());
+    AcquireAllocated
+    (
+        core::Check(OCI_LongCreate(statement, U)),
+        statement.GetHandle()
+    );
 }
 
 template<class T, int U>
 Long<T, U>::Long(OCI_Long *pLong, core::Handle* parent)
 {
-    Acquire(pLong, nullptr, nullptr, parent);
+    AcquireTransient(pLong, parent);
 }
 
 template<class T, int U>

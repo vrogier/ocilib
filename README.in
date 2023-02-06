@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  */
  
@@ -34,7 +34,7 @@ FEATURES
    
     * Full ANSI and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
     * Full 32/64 bits compatibility
-    * Compatible with all Oracle version >= 8i
+    * Compatible with all Oracle version >= 8.0
     * Automatic adaptation to the runtime Oracle client version
     * Runtime loading of Oracle libraries
     * Built-in error handling (global and thread context)

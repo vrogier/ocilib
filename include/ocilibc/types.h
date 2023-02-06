@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,6 +81,18 @@
  * the library details.
  *
 **/
+
+/**
+ * @typedef OCI_Environment
+ *
+ * @brief
+ * Environment object 
+ *
+ * Represents a runtime OCI executing environment
+ *
+ */
+
+typedef struct OCI_Environment OCI_Environment;
 
 /**
  * @typedef OCI_Pool
@@ -235,7 +247,7 @@ typedef struct OCI_Transaction OCI_Transaction;
  * - LONG RAW : Binary long objects
  * - LONG     : Character long objects
  *
- * Those types were used in older versions of Oracle (before Oracle8i) to store
+ * Those types were used in older versions of Oracle (before Oracle 8i) to store
  * large chunks of data in the database.
  *
  * It's now depreciated by Oracle that recommends using LOBs

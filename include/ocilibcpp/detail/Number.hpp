@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ inline Number::Number(bool create)
 
 inline Number::Number(OCI_Number *pNumber, core::Handle *parent)
 {
-    Acquire(pNumber, nullptr, nullptr, parent);
+    AcquireTransient(pNumber, parent);
 }
 
 inline Number::Number(const ostring& str, const ostring& format)
@@ -54,7 +54,11 @@ inline Number::Number(const otext* str, const otext* format)
 
 inline void Number::Allocate()
 {
-    Acquire(core::Check(OCI_NumberCreate(nullptr)), reinterpret_cast<HandleFreeFunc>(OCI_NumberFree), nullptr, nullptr);
+    AcquireAllocated
+    (
+        core::Check(OCI_NumberCreate(nullptr)),
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline void Number::FromString(const ostring& str, const ostring& format) const
@@ -160,7 +164,12 @@ void Number::Divide(const T &value)
 
 inline Number& Number::operator = (OCI_Number * &lhs)
 {
-    Acquire(lhs, reinterpret_cast<HandleFreeFunc>(OCI_NumberFree), nullptr, nullptr);
+    AcquireAllocated
+    (
+        lhs, 
+        Environment::GetEnvironmentHandle()
+    );
+
     return *this;
 }
 

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,12 +36,16 @@ inline Object::Object()
 inline Object::Object(const TypeInfo &typeInfo)
 {
     Connection connection = typeInfo.GetConnection();
-    Acquire(core::Check(OCI_ObjectCreate(connection, typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_ObjectFree), nullptr, connection.GetHandle());
+    AcquireAllocated
+    (
+        core::Check(OCI_ObjectCreate(connection, typeInfo)),
+        connection.GetHandle()
+    );
 }
 
 inline Object::Object(OCI_Object *pObject, core::Handle *parent)
 {
-    Acquire(pObject, nullptr, nullptr, parent);
+    AcquireTransient(pObject, parent);
 }
 
 inline Object Object::Clone() const
@@ -65,7 +69,15 @@ inline void Object::SetAttributeNull(const ostring& name)
 
 inline TypeInfo Object::GetTypeInfo() const
 {
-    return TypeInfo(core::Check(OCI_ObjectGetTypeInfo(*this)));
+    OCI_TypeInfo* typeInfo = core::Check(OCI_ObjectGetTypeInfo(*this));
+  
+    Connection connection
+    (
+        core::Check(OCI_TypeInfoGetConnection(typeInfo)),
+        Environment::GetEnvironmentHandle()
+    );
+
+    return TypeInfo(typeInfo, connection.GetHandle());
 }
 
 inline Reference Object::GetReference() const

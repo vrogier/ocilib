@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ namespace ocilib
 
 inline Column::Column(OCI_Column *pColumn, core::Handle *parent)
 {
-    Acquire(pColumn, nullptr, nullptr, parent);
+    AcquireTransient(pColumn, parent);
 }
 
 inline ostring Column::GetName() const
@@ -113,7 +113,15 @@ inline bool Column::IsCharSemanticUsed() const
 
 inline TypeInfo Column::GetTypeInfo() const
 {
-    return TypeInfo(core::Check(OCI_ColumnGetTypeInfo(*this)));
+    OCI_TypeInfo* typeInfo = core::Check(OCI_ColumnGetTypeInfo(*this));
+
+    Connection connection
+    (
+        core::Check(OCI_TypeInfoGetConnection(typeInfo)),
+        Environment::GetEnvironmentHandle()
+    );
+
+    return TypeInfo(typeInfo, connection.GetHandle());
 }
 
 }

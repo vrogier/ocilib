@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,12 +31,18 @@ namespace ocilib
 
 inline Message::Message(const TypeInfo &typeInfo)
 {
-    Acquire(core::Check(OCI_MsgCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_MsgFree), nullptr, nullptr);
+    Connection connection = typeInfo.GetConnection();
+
+    AcquireAllocated
+    (
+        core::Check(OCI_MsgCreate(typeInfo)),
+        connection.GetHandle()
+    );
 }
 
 inline Message::Message(OCI_Msg *pMessage, core::Handle *parent)
 {
-    Acquire(pMessage, nullptr, nullptr, parent);
+    AcquireTransient(pMessage, parent);
 }
 
 inline void Message::Reset()

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -223,13 +223,7 @@ OCI_Array * OcilibArrayCreate
 
     /* create array object */
 
-    LOCK_LIST
-    (
-        Env.arrs,
-        {
-            arr = OcilibListAppend(Env.arrs, sizeof(*arr));
-        }
-    )
+    LIST_ATOMIC_ADD(Env.arrs, arr)
 
     CHECK_NULL(arr)
 
@@ -304,18 +298,8 @@ boolean OcilibArrayFreeFromHandles
 
     CHECK_PTR(OCI_IPC_VOID, handles)
 
-    LOCK_LIST
-    (
-        Env.arrs,
-        {
-            arr = OcilibListFind(Env.arrs, (POCI_LIST_FIND)OcilibArrayFindAny, handles);
-            if (NULL != arr)
-            {
-                OcilibListRemove(Env.arrs, arr);
-            }
-        }
-    )
-
+    LIST_ATOMIC_FIND_AND_REMOVE(Env.arrs, OcilibArrayFindAny, handles, arr)
+            
     CHECK_NULL(arr)
 
     OcilibArrayDispose(arr);

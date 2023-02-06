@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@
   /* for runtime loading, set compile time version to the highest minimum
      version needed by OCILIB encapsulation of OCI */
 
-  #define OCI_VERSION_COMPILE OCI_19_5
+  #define OCI_VERSION_COMPILE OCI_18_1
 
   /* set runtime version to unknown, it will be guessed from symbols loading */
 
@@ -44,7 +44,7 @@
 
   #if defined(OCI_MAJOR_VERSION)
 
-  #define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
+    #define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
 
     #if OCI_VERSION_COMPILE == OCI_VER_MAKE(18, 0, 0)
 
@@ -228,8 +228,9 @@ typedef unsigned short dbtext;
 #define OCI_FEATURE_HIGH_AVAILABILITY    8
 #define OCI_FEATURE_XA                   9
 #define OCI_FEATURE_EXTENDED_PLSQLTYPES 10
+#define OCI_FEATURE_MULTITHREADING      11
 
-#define OCI_FEATURE_COUNT               OCI_FEATURE_EXTENDED_PLSQLTYPES
+#define OCI_FEATURE_COUNT               OCI_FEATURE_MULTITHREADING
 
 /* --------------------------------------------------------------------------------------------- *
  * handle types
@@ -356,7 +357,7 @@ typedef unsigned short dbtext;
 
 #endif
 
-#define OCI_SQLCMD_COUNT                239
+#define OCI_SQLCMD_COUNT                241
 
 #define OCI_FMT_COUNT                   6
 
@@ -413,7 +414,7 @@ typedef unsigned short dbtext;
 
 #define NB_ARG_VERSION                  3
 
-#define LIB_THREADED                    (Env.env_mode & OCI_ENV_THREADED)
+#define LIB_THREADED                    ((Env.env_mode & OCI_ENV_THREADED) && (Env.version_runtime> OCI_8_0))
 
 #define IS_PLSQL_STMT(type)         \
                                     \

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,13 @@ namespace ocilib
     
 inline DirectPath::DirectPath(const TypeInfo &typeInfo, unsigned int nbCols, unsigned int  nbRows, const ostring& partition)
 {
-    Acquire(core::Check(OCI_DirPathCreate(typeInfo, partition.c_str(), nbCols, nbRows)), reinterpret_cast<HandleFreeFunc>(OCI_DirPathFree), nullptr, nullptr);
+    Connection connection = typeInfo.GetConnection();
+    
+    AcquireAllocated
+    (
+        core::Check(OCI_DirPathCreate(typeInfo, partition.c_str(), nbCols, nbRows)), 
+        connection.GetHandle()
+    );
 }
 
 inline void DirectPath::SetColumn(unsigned int colIndex, const ostring& name, unsigned int maxSize,  const ostring& format)

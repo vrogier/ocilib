@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,14 @@ inline void Pool::Open(const ostring& db, const ostring& user, const ostring& pw
 {
     Release();
 
-    Acquire(core::Check(OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), poolType, sessionFlags.GetValues(),
-        minSize, maxSize, increment)), reinterpret_cast<HandleFreeFunc>(OCI_PoolFree), nullptr, Environment::GetEnvironmentHandle());
+    AcquireAllocated
+    (
+        core::Check
+        (
+            OCI_PoolCreate(db.c_str(), user.c_str(), pwd.c_str(), poolType, sessionFlags.GetValues(),  minSize, maxSize, increment)
+        ), 
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline void Pool::Close()

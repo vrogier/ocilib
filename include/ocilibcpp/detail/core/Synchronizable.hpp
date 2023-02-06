@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,35 +31,35 @@ namespace ocilib
 {
     namespace core
     {
-        inline Lockable::Lockable() : _locker(nullptr)
+        inline Synchronizable::Synchronizable() : _guard(nullptr)
         {
 
         }
 
-        inline Lockable::~Lockable() noexcept
+        inline Synchronizable::~Synchronizable() noexcept
         {
 
         }
 
-        inline void Lockable::Lock() const
+        inline void Synchronizable::Acquire() const
         {
-            if (_locker)
+            if (_guard)
             {
-                _locker->Lock();
+                _guard->Acquire();
             }
         }
 
-        inline void Lockable::Unlock() const
+        inline void Synchronizable::Release() const
         {
-            if (_locker)
+            if (_guard)
             {
-                _locker->Unlock();
+                _guard->Release();
             }
         }
 
-        inline void Lockable::SetLocker(Locker* locker)
+        inline void Synchronizable::SetGuard(SynchronizationGuard* guard)
         {
-            _locker = locker;
+            _guard = guard;
         }
 
     }

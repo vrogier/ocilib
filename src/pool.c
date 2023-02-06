@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -169,13 +169,7 @@ OCI_Pool * OcilibPoolCreate
 
     /* create pool object */
 
-    LOCK_LIST
-    (
-        Env.pools,
-        {
-            pool = OcilibListAppend(Env.pools, sizeof(*pool));
-        }
-    )
+    LIST_ATOMIC_ADD(Env.pools, pool)
 
     CHECK_NULL(pool)
 
@@ -395,15 +389,7 @@ boolean OcilibPoolFree
 
     CHECK_PTR(OCI_IPC_POOL, pool)
 
-    LOCK_LIST
-    (
-        Env.pools,
-        {
-            OcilibListRemove(Env.pools, pool);
-        }
-    )
-
-    CHECK(OcilibPoolDispose(pool))
+    LIST_ATOMIC_REMOVE(Env.pools, pool, OcilibPoolDispose)
 
     FREE(pool)
 

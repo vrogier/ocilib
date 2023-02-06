@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,13 +86,7 @@ OCI_Transaction * OcilibTransactionCreate
 
     /* create transaction object */
 
-    LOCK_LIST
-    (
-        con->trsns,
-        {
-            trans = OcilibListAppend(con->trsns, sizeof(*trans));
-        }
-    )
+    LIST_ATOMIC_ADD(con->trsns, trans)
 
     CHECK_NULL(trans)
 
@@ -150,15 +144,7 @@ boolean OcilibTransactionFree
 
     /* remove transaction from internal list */
 
-    LOCK_LIST
-    (
-        trans->con->trsns,
-        {
-            OcilibListRemove(trans->con->trsns, trans);
-        }
-    )
-
-    CHECK(OcilibTransactionDispose(trans))
+    LIST_ATOMIC_REMOVE(trans->con->trsns, trans, OcilibTransactionDispose)
 
     FREE(trans)
 

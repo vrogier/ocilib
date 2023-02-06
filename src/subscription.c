@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -172,13 +172,7 @@ OCI_Subscription * OcilibSubscriptionRegister
 
     /* create subscription object */
 
-    LOCK_LIST
-    (
-        Env.subs,
-        {
-            sub = OcilibListAppend(Env.subs, sizeof(*sub));
-        }
-    )
+    LIST_ATOMIC_ADD(Env.subs, sub)
     
     CHECK_NULL(sub)
 
@@ -314,8 +308,6 @@ OCI_Subscription * OcilibSubscriptionRegister
         sub->con->err
     )
 
-    SET_RETVAL(sub)
-
 #else
 
     OCI_NOT_USED(name)
@@ -332,11 +324,11 @@ OCI_Subscription * OcilibSubscriptionRegister
         if (FAILURE)
         {
             OcilibStringReleaseDBString(dbstr);
-
             OcilibSubscriptionUnregister(sub);
-
-            FREE(sub)
+            sub = NULL;
         }
+
+        SET_RETVAL(sub)
     )
 }
 
@@ -357,15 +349,7 @@ boolean OcilibSubscriptionUnregister
 
     CHECK_PTR(OCI_IPC_NOTIFY, sub)
 
-    LOCK_LIST
-    (
-        Env.subs,
-        {
-            OcilibListRemove(Env.subs, sub);
-        }
-    )
-
-    OcilibSubscriptionDispose(sub);
+    LIST_ATOMIC_REMOVE(Env.subs, sub, OcilibSubscriptionDispose)
 
     FREE(sub);
 

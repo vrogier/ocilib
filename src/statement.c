@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -578,8 +578,24 @@ static boolean OcilibStatementBindUpdate
 
             if (dst_bint)
             {
-                CHECK(OcilibNumberTranslateValue(bnd->stmt->con, src_number,
-                                                 OCI_NUM_NUMBER, dst_bint, bnd->subtype))
+                if (src_number && bnd->buffer.inds[index] != OCI_IND_NULL)
+                {
+                    CHECK
+                    (
+                        OcilibNumberTranslateValue
+                        (
+                            bnd->stmt->con, 
+                            src_number,
+                            OCI_NUM_NUMBER,
+                            dst_bint, 
+                            bnd->subtype
+                        )
+                    )
+                }
+                else
+                {
+                    *dst_bint = 0;
+                }
             }
         }
     }
@@ -1411,8 +1427,16 @@ boolean OcilibStatementExecuteInternal
 
     /* check result */
 
-    boolean success = ((OCI_SUCCESS   == ret) || (OCI_SUCCESS_WITH_INFO == ret) ||
-                       (OCI_NEED_DATA == ret) || (OCI_NO_DATA == ret));
+    boolean success = ((OCI_SUCCESS           == ret) ||
+                       (OCI_SUCCESS_WITH_INFO == ret) ||
+                       (OCI_NEED_DATA         == ret));
+    
+    /* handle no data as error only for PL/SQL statements as it results from NO_DATA_FOUND exception in PL/SQL */
+
+    if (!success && !IS_PLSQL_STMT(stmt->type))
+    {
+        success = (OCI_NO_DATA == ret);
+    }
 
     if (OCI_SUCCESS_WITH_INFO == ret)
     {
@@ -1522,13 +1546,7 @@ OCI_Statement * OcilibStatementCreate
 
     OCI_Statement *stmt = NULL;
     
-    LOCK_LIST
-    (
-        con->stmts,
-        {
-            stmt = OcilibListAppend(con->stmts, sizeof(*stmt));
-        }
-    )
+    LIST_ATOMIC_ADD(con->stmts, stmt)
 
     CHECK_NULL(stmt)
 
@@ -1555,15 +1573,7 @@ boolean OcilibStatementFree
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     CHECK_OBJECT_FETCHED(stmt)
 
-    LOCK_LIST
-    (
-        stmt->con->stmts,
-        {
-            OcilibListRemove(stmt->con->stmts, stmt);
-        }
-    )
-
-    OcilibStatementDispose(stmt);
+    LIST_ATOMIC_REMOVE(stmt->con->stmts, stmt, OcilibStatementDispose)
 
     FREE(stmt)
 

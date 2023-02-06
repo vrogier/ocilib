@@ -45,7 +45,7 @@ TEST(TestDirectPath, Simple)
     otext val2[ColSize2 + 1];
     otext val3[ColSize3 + 1];
 
-    int i = 0, j = 0, nb_rows = ArraySize;
+    unsigned int i = 0, j = 0, nb_rows = ArraySize;
     boolean res = TRUE;
     
     const auto table = OCI_TypeInfoGet(conn, OTEXT("TestDirectPathTable1"), OCI_TIF_TABLE);
@@ -122,7 +122,7 @@ TEST(TestDirectPath, Simple)
     ExecDML(OTEXT("drop table TestDirectPathTable1"));
 }
 
-void CheckAllErrorWorkflows(OCI_Connection* con, OCI_DirPath* dp, int expected, int result, char* str)
+void CheckAllErrorWorkflows(OCI_Connection* con, OCI_DirPath* dp, int expected, int result, const char* str)
 {
     ASSERT_EQ(expected, result) << str;
 }
@@ -168,8 +168,7 @@ TEST_P(TestDirectPathErrorModes, AllErrorWorkflows)
     otext val2[ColSize2 + 1];
     otext val3[ColSize3 + 1];
 
-    int i = 0, j = 0, nb_rows = ArraySize;
-    boolean res = TRUE;
+    unsigned int i = 0, j = 0, nb_rows = ArraySize;
 
     const auto table = OCI_TypeInfoGet(conn, OTEXT("TestDirectPathTable2"), OCI_TIF_TABLE);
     ASSERT_NE(nullptr, table);
@@ -242,7 +241,7 @@ TEST_P(TestDirectPathErrorModes, AllErrorWorkflows)
         /* load data to the server */
         while (TRUE)
         {
-            int nb_conv = 0;
+            unsigned int nb_conv = 0;
             int nb_error = 0;
 
             /* convert data*/

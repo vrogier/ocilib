@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,16 @@ namespace ocilib
 
 inline Transaction::Transaction(const Connection &connection, unsigned int timeout, TransactionFlags flags, OCI_XID *pxid)
 {
-    Acquire(core::Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)), reinterpret_cast<HandleFreeFunc>(OCI_TransactionFree), nullptr, nullptr);
+    AcquireAllocated
+    (
+        core::Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)), 
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline Transaction::Transaction(OCI_Transaction *trans)
 {
-    Acquire(trans, nullptr, nullptr, nullptr);
+    AcquireTransient(trans, Environment::GetEnvironmentHandle());
 }
 
 inline void Transaction::Prepare()

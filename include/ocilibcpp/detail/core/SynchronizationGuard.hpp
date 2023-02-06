@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,30 +26,30 @@ namespace ocilib
 {
     namespace core
     {
-        inline Locker::Locker() : _mutex(nullptr)
+        inline SynchronizationGuard::SynchronizationGuard(SynchronizationMode mode) : _mutex(nullptr)
         {
-            SetAccessMode(false);
+            SetMode(mode);
         }
 
-        inline Locker::~Locker() noexcept
+        inline SynchronizationGuard::~SynchronizationGuard() noexcept
         {
-            SILENT_CATCH(SetAccessMode(false));
+            SILENT_CATCH(SetMode(SynchronizationMode::Unsafe));
         }
 
-        inline void Locker::SetAccessMode(bool threaded)
+        inline void SynchronizationGuard::SetMode(SynchronizationMode mode)
         {
-            if (threaded && !_mutex)
+            if (SynchronizationMode::Safe == mode && !_mutex)
             {
                 _mutex = Mutex::Create();
             }
-            else if (!threaded && _mutex)
+            else if (SynchronizationMode::Unsafe == mode && _mutex)
             {
                 Mutex::Destroy(_mutex);
                 _mutex = nullptr;
             }
         }
 
-        inline void Locker::Lock() const
+        inline void SynchronizationGuard::Acquire() const
         {
             if (_mutex)
             {
@@ -57,7 +57,7 @@ namespace ocilib
             }
         }
 
-        inline void Locker::Unlock() const
+        inline void SynchronizationGuard::Release() const
         {
             if (_mutex)
             {

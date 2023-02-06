@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,13 +114,7 @@ OCI_Connection * OcilibConnectionAllocate
 
     OCI_Connection* con = NULL;
 
-    LOCK_LIST
-    (
-        Env.cons,
-        {
-            con = OcilibListAppend(Env.cons, sizeof(*con));
-        }
-    )
+    LIST_ATOMIC_ADD(Env.cons, con)
 
     CHECK_NULL(con)
 
@@ -967,50 +961,14 @@ static boolean OcilibConnectionLogOff
     }
 
     /* dissociate connection from existing subscriptions */
-    LOCK_LIST
-    (
-        Env.subs,
-        {
-            OcilibListForEachWithParam(Env.subs, con, (POCI_LIST_FOR_EACH_WITH_PARAM)OcilibConnectionDetachSubscriptions); 
-        }
-    )
 
-    WARNING_DISABLE_CAST_FUNC_TYPE
+    LIST_ATOMIC_FOREACH_WITH_PARAM(Env.subs, con, OcilibConnectionDetachSubscriptions)
 
-    /* free all statements */
+    /* free all child lists */
 
-    LOCK_LIST
-    (
-        con->stmts, 
-        {
-            OcilibListForEach(con->stmts, (POCI_LIST_FOR_EACH)OcilibStatementDispose);
-            OcilibListClear(con->stmts);
-        }
-    )
-
-    /* free all type info objects */
-
-    LOCK_LIST
-    (
-        con->tinfs,
-        {
-            OcilibListForEach(con->tinfs, (POCI_LIST_FOR_EACH)OcilibTypeInfoDispose);
-            OcilibListClear(con->tinfs);
-        }
-    )
-
-    /* free all transactions */
-
-    LOCK_LIST
-    (
-        con->trsns,
-        {
-            OcilibListForEach(con->trsns, (POCI_LIST_FOR_EACH)OcilibTransactionDispose);
-            OcilibListClear(con->trsns);
-        }
-    )
-
-    WARNING_RESTORE_CAST_FUNC_TYPE
+    LIST_ATOMIC_REMOVE_ALL(con->stmts, OcilibStatementDispose)
+    LIST_ATOMIC_REMOVE_ALL(con->tinfs, OcilibTypeInfoDispose)
+    LIST_ATOMIC_REMOVE_ALL(con->trsns, OcilibTransactionDispose)
 
     /* 1 - XA Connection */
 
@@ -1243,15 +1201,7 @@ boolean OcilibConnectionFree
 
     CHECK_PTR(OCI_IPC_CONNECTION, con)
 
-    LOCK_LIST
-    (
-        Env.cons,
-        {
-            OcilibListRemove(Env.cons, con);
-        }
-    )
-
-    CHECK(OcilibConnectionDispose(con))
+    LIST_ATOMIC_REMOVE(Env.cons, con, OcilibConnectionDispose)
 
     FREE(con)
 
@@ -1689,7 +1639,7 @@ const otext * OcilibConnectionGetServerVersion
             ver_min = OCI_SERVER_RELEASE_REL_UPD(version);
             ver_rev = OCI_SERVER_RELEASE_REL_UPD_REV(version);
 
-            con->ver_num = ver_maj * 100 + ver_min * 10 + ver_rev;
+            con->ver_num = OCI_VER_MAKE(ver_maj, ver_min, ver_rev);
         }
         else
 

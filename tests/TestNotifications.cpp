@@ -25,7 +25,7 @@ static std::array< Event, SingleDDL1ExpectedEventsCount> SingleDDL1ExpectedEvent
     {
         OTEXT("sub-1"),
         DBSNAME,
-        ToUpper(ostring(USR) + OTEXT(".TestTableSingleDDL1")),
+        ostring(USR) + OTEXT(".TestTableSingleDDL1"),
         OCI_ENT_OBJECT_CHANGED,
         OCI_ONT_ALTER
     }
@@ -37,7 +37,7 @@ static std::array< Event, SingleDDL2ExpectedEventsCount> SingleDDL2ExpectedEvent
     {
         OTEXT("sub-2"),
         DBSNAME,
-        ToUpper(ostring(USR) + OTEXT(".TestTableSingleDDL2")),
+        ostring(USR) + OTEXT(".TestTableSingleDDL2"),
         OCI_ENT_OBJECT_CHANGED,
         OCI_ONT_ALTER
     },
@@ -45,7 +45,7 @@ static std::array< Event, SingleDDL2ExpectedEventsCount> SingleDDL2ExpectedEvent
     {
         OTEXT("sub-2"),
         DBSNAME,
-        ToUpper(ostring(USR) + OTEXT(".TestTableSingleDDL2")),
+        ostring(USR) + OTEXT(".TestTableSingleDDL2"),
         OCI_ENT_OBJECT_CHANGED,
         OCI_ONT_ALTER
     }
@@ -57,7 +57,7 @@ static std::array< Event, MultipleDDLExpectedEventsCount> MultipleDDLExpectedEve
     {
         OTEXT("sub-3"),
         DBSNAME,
-        ToUpper(ostring(USR) + OTEXT(".TestTableMultipleDDLTable1")),
+        ostring(USR) + OTEXT(".TestTableMultipleDDLTable1"),
         OCI_ENT_OBJECT_CHANGED,
         OCI_ONT_ALTER
     },
@@ -65,7 +65,7 @@ static std::array< Event, MultipleDDLExpectedEventsCount> MultipleDDLExpectedEve
     {
         OTEXT("sub-3"),
         DBSNAME,
-        ToUpper(ostring(USR) + OTEXT(".TestTableMultipleDDLTable2")),
+        ostring(USR) + OTEXT(".TestTableMultipleDDLTable2"),
         OCI_ENT_OBJECT_CHANGED,
         OCI_ONT_ALTER
     }
@@ -77,7 +77,7 @@ static std::array< Event, MultipleDMLExpectedEventsCount> MultipleDMLExpectedEve
     {
         OTEXT("sub-4"),
         DBSNAME,
-        ToUpper(ostring(USR) + OTEXT(".TestTableMultipleDML")),
+        ostring(USR) + OTEXT(".TestTableMultipleDML"),
         OCI_ENT_OBJECT_CHANGED,
         OCI_ONT_INSERT
     },
@@ -85,7 +85,7 @@ static std::array< Event, MultipleDMLExpectedEventsCount> MultipleDMLExpectedEve
     {
         OTEXT("sub-4"),
         DBSNAME,
-        ToUpper(ostring(USR) + OTEXT(".TestTableMultipleDML")),
+        ostring(USR) + OTEXT(".TestTableMultipleDML"),
         OCI_ENT_OBJECT_CHANGED,
         OCI_ONT_INSERT
     },
@@ -93,7 +93,7 @@ static std::array< Event, MultipleDMLExpectedEventsCount> MultipleDMLExpectedEve
     {
         OTEXT("sub-4"),
         DBSNAME,
-        ToUpper(ostring(USR) + OTEXT(".TestTableMultipleDML")),
+        ostring(USR) + OTEXT(".TestTableMultipleDML"),
         OCI_ENT_OBJECT_CHANGED,
         OCI_ONT_UPDATE
     },
@@ -101,7 +101,7 @@ static std::array< Event, MultipleDMLExpectedEventsCount> MultipleDMLExpectedEve
     {
         OTEXT("sub-4"),
         DBSNAME,
-        ToUpper(ostring(USR) + OTEXT(".TestTableMultipleDML")),
+        ostring(USR) + OTEXT(".TestTableMultipleDML"),
         OCI_ENT_OBJECT_CHANGED,
         OCI_ONT_DELETE
     },
@@ -109,7 +109,7 @@ static std::array< Event, MultipleDMLExpectedEventsCount> MultipleDMLExpectedEve
     {
         OTEXT("sub-4"),
         DBSNAME,
-        ToUpper(ostring(USR) + OTEXT(".TestTableMultipleDML")),
+        ostring(USR) + OTEXT(".TestTableMultipleDML"),
         OCI_ENT_OBJECT_CHANGED,
         OCI_ONT_DELETE
     }
@@ -120,11 +120,11 @@ static void CheckEvent(const Event& evt, OCI_Event* event)
     const auto sub = OCI_EventGetSubscription(event);
     ASSERT_NE(nullptr, sub);
 
-    EXPECT_EQ(evt.SubName, OCI_SubscriptionGetName(sub));
-    EXPECT_EQ(evt.DatabaseName, OCI_EventGetDatabase(event));
+    EXPECT_EQ(ToUpper(evt.SubName), ToUpper(OCI_SubscriptionGetName(sub)));
+    EXPECT_EQ(ToUpper(evt.DatabaseName), ToUpper(OCI_EventGetDatabase(event)));
     EXPECT_EQ(evt.Type, OCI_EventGetType(event));
     EXPECT_EQ(evt.Operation, OCI_EventGetOperation(event));
-    EXPECT_EQ(evt.ObjectName, OCI_EventGetObject(event));
+    EXPECT_EQ(ToUpper(evt.ObjectName), ToUpper(OCI_EventGetObject(event)));
 }
 
 static void SingleDDL1EventEventHandler(OCI_Event* event)

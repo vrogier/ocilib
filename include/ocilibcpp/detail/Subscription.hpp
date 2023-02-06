@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,14 +35,28 @@ inline Subscription::Subscription()
 
 inline Subscription::Subscription(OCI_Subscription *pSubcription)
 {
-    Acquire(pSubcription, nullptr, nullptr, nullptr);
+    AcquireTransient
+    (
+        pSubcription,
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline void Subscription::Register(const Connection &connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
 {
-    Acquire(core::Check(OCI_SubscriptionRegister(connection, name.c_str(), changeTypes.GetValues(),
-        static_cast<POCI_NOTIFY> (handler != nullptr ? Environment::NotifyHandler : nullptr), port, timeout)),
-                                           reinterpret_cast<HandleFreeFunc>(OCI_SubscriptionUnregister), nullptr, nullptr);
+    AcquireAllocated
+    (
+        core::Check
+        ( 
+            OCI_SubscriptionRegister
+            (
+                connection, name.c_str(), changeTypes.GetValues(),
+                static_cast<POCI_NOTIFY> (handler != nullptr ? Environment::NotifyHandler : nullptr), 
+                port, timeout
+            )
+        ),
+        Environment::GetEnvironmentHandle()
+    );
 
     Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), handler);
 }
@@ -80,7 +94,11 @@ inline unsigned int Subscription::GetPort() const
 
 inline Connection Subscription::GetConnection() const
 {
-    return Connection(core::Check(OCI_SubscriptionGetConnection(*this)), nullptr);
+    return Connection
+    (
+        core::Check(OCI_SubscriptionGetConnection(*this)),
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 }

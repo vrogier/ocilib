@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@
 
 #define OCILIB_MAJOR_VERSION     4
 #define OCILIB_MINOR_VERSION     7
-#define OCILIB_REVISION_VERSION  3
+#define OCILIB_REVISION_VERSION  5
 
 /* Import mode */
 
@@ -154,7 +154,7 @@
 #endif
 
 #ifdef OCI_CHARSET_ANSI
-  #undef OCI_CHARSET_ANSI
+  #undef OCI_CHARSET_WIDE
 #endif
 
 #if !defined(OCI_CHARSET_ANSI)  && !defined(OCI_CHARSET_WIDE)
@@ -167,7 +167,7 @@
  *
  * OCILIB supports both ANSI and Unicode.
  *
- * Oracle started a real Unicode support with Oracle8i but only for bind and fetch data.
+ * Oracle started a real Unicode support with Oracle 8i but only for bind and fetch data.
  * All SQL and PL/SQ/ statements, database objects names were still only supported in ANSI.
  *
  * With Oracle 9i, Oracle provides a full Unicode support.
