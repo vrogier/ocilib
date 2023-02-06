@@ -167,7 +167,7 @@
  *
  * OCILIB supports both ANSI and Unicode.
  *
- * Oracle started a real Unicode support with Oracle8i but only for bind and fetch data.
+ * Oracle started a real Unicode support with Oracle 8i but only for bind and fetch data.
  * All SQL and PL/SQ/ statements, database objects names were still only supported in ANSI.
  *
  * With Oracle 9i, Oracle provides a full Unicode support.

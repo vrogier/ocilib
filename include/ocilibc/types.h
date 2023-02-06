@@ -247,7 +247,7 @@ typedef struct OCI_Transaction OCI_Transaction;
  * - LONG RAW : Binary long objects
  * - LONG     : Character long objects
  *
- * Those types were used in older versions of Oracle (before Oracle8i) to store
+ * Those types were used in older versions of Oracle (before Oracle 8i) to store
  * large chunks of data in the database.
  *
  * It's now depreciated by Oracle that recommends using LOBs

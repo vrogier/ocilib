@@ -41,6 +41,9 @@ namespace ocilib
     /**
     * @brief
     * Oracle Version enumerated values
+	* 
+	* @note
+	* This list is NOT exhaustive and contains only a list of well known released versions
     *
     */
     enum OracleVersionValues
@@ -58,7 +61,11 @@ namespace ocilib
         Oracle18cR1 = OCI_18_1,
         Oracle18cR2 = OCI_18_2,
         Oracle18cR3 = OCI_18_3,
-        Oracle18cR4 = OCI_18_4
+        Oracle18cR4 = OCI_18_4,
+        Oracle18cR5 = OCI_18_5,
+        Oracle19cR3 = OCI_19_3,
+        Oracle19cR5 = OCI_19_5,
+        Oracle21cR3 = OCI_21_3
     };
 
     /**

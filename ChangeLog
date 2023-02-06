@@ -13,7 +13,7 @@
 		- Very old Oracle OCI 8.0.x is now supported 
 			- Up to now, OCILIB supported all Oracle versions from 8.1
 			- Oracle 8.0 is now also supported for very old legacy systems (as Oracle 8.0 was released in mid 90's)
-			- As OCI multi-threaded APIs were only available from with 8.1, passing OCI_ENV_THREADED to OCI_Initialize() with Oracle 8.0 will generate the following error:
+			- As OCI multi-threaded APIs were only available from 8.1, passing OCI_ENV_THREADED to OCI_Initialize() with Oracle 8.0 will generate an error:
 				- OCILIB Error code : OCI_ERR_NOT_AVAILABLE 
 				- OCILIB Error message : "Feature not available (Oracle 8.1 multihreading support)"		
 			
