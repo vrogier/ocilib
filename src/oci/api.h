@@ -45,19 +45,32 @@
 
 /* API introduced in 8.0 */
 
-typedef sword (*OCIENVCREATE)
-(
-    OCIEnv **envhpp,
+typedef sword (*OCIINITIALIZE)
+( 
     ub4 mode,
     void *ctxp,
-    void    *(*malocfp)(void *ctxp, size_t size),
-    void    *(*ralocfp)(void *ctxp, void *memptr, size_t newsize),
+    void *(*malocfp)
+    (
+        void *ctxp, 
+        size_t size
+    ),
+    void *(*ralocfp)
+    (
+        void *ctxp, 
+        void *memptr, 
+        size_t newsize),
     void (*mfreefp)
     (
         void *ctxp,
         void *memptr
-    ),
-    size_t xtramem_sz,
+    )
+);
+
+typedef sword (*OCIENVINIT)
+(
+    OCIEnv **envp,
+    ub4      mode,
+    size_t   xtramem_sz,
     void   **usrmempp
 );
 
@@ -89,14 +102,6 @@ typedef sword (*OCIDESCRIPTORFREE)
 (
     void     *descp,
     const ub4 type
-);
-
-typedef sword (*OCIENVINIT)
-(
-    OCIEnv **envp,
-    ub4      mode,
-    size_t   xtramem_sz,
-    void   **usrmempp
 );
 
 typedef sword (*OCISERVERATTACH)
@@ -1696,6 +1701,30 @@ typedef sword (*OCIROWIDTOCHAR)
 );
 
 /* API introduced in 8.1 */
+
+typedef sword (*OCIENVCREATE)
+(
+    OCIEnv **envhpp,
+    ub4 mode,
+    void *ctxp,
+    void *(*malocfp)
+    (
+        void *ctxp, 
+        size_t size
+    ),
+    void *(*ralocfp)
+    (
+        void *ctxp, 
+        void *memptr, 
+        size_t newsize),
+    void (*mfreefp)
+    (
+        void *ctxp,
+        void *memptr
+    ),
+    size_t xtramem_sz,
+    void   **usrmempp
+);
 
 typedef void (*OCITHREADPROCESSINIT)
 (

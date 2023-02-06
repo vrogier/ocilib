@@ -183,7 +183,8 @@ static const otext * OracleFeatures[OCI_FEATURE_COUNT] =
     OTEXT("Oracle 10g R2 remote database startup/shutdown"),
     OTEXT("Oracle 10g R2 High Availability"),
     OTEXT("Oracle XA Connections"),
-    OTEXT("Oracle 12c R1 PL/SQL extended support")
+    OTEXT("Oracle 12c R1 PL/SQL extended support"),
+    OTEXT("Oracle 8.1 multihreading support")
 };
 
 typedef struct StatementState

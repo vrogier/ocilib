@@ -228,8 +228,9 @@ typedef unsigned short dbtext;
 #define OCI_FEATURE_HIGH_AVAILABILITY    8
 #define OCI_FEATURE_XA                   9
 #define OCI_FEATURE_EXTENDED_PLSQLTYPES 10
+#define OCI_FEATURE_MULTITHREADING      11
 
-#define OCI_FEATURE_COUNT               OCI_FEATURE_EXTENDED_PLSQLTYPES
+#define OCI_FEATURE_COUNT               OCI_FEATURE_MULTITHREADING
 
 /* --------------------------------------------------------------------------------------------- *
  * handle types
@@ -413,7 +414,7 @@ typedef unsigned short dbtext;
 
 #define NB_ARG_VERSION                  3
 
-#define LIB_THREADED                    (Env.env_mode & OCI_ENV_THREADED)
+#define LIB_THREADED                    ((Env.env_mode & OCI_ENV_THREADED) && (Env.version_runtime> OCI_8_0))
 
 #define IS_PLSQL_STMT(type)         \
                                     \

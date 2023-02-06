@@ -190,3 +190,4 @@ testlog.manifest
 # misc. VS files
 *.lock
 *.vsidx
+*.bin

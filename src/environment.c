@@ -311,6 +311,8 @@ static const otext * FormatDefaultValues[OCI_FMT_COUNT] =
 
 /* OCI function pointers */
 
+OCIINITIALIZE                OCIInitialize                = NULL;
+OCIENVINIT                   OCIEnvInit                   = NULL;
 OCIENVCREATE                 OCIEnvCreate                 = NULL;
 OCISERVERATTACH              OCIServerAttach              = NULL;
 OCISERVERDETACH              OCIServerDetach              = NULL;
@@ -622,7 +624,13 @@ static void OcilibEnvironmentLoadSymbols()
         Oracle and compatible library ...
     */
 
-    LIB_SYMBOL(Env.lib_handle, "OCIEnvCreate",          OCIEnvCreate,
+    LIB_SYMBOL(Env.lib_handle, "OCIInitialize",         OCIInitialize,
+                OCIINITIALIZE);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIEnvInit",            OCIEnvInit,
+                OCIENVINIT);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIEnvCreate",           OCIEnvCreate,
                 OCIENVCREATE);
 
     LIB_SYMBOL(Env.lib_handle, "OCIServerAttach",       OCIServerAttach,
@@ -1375,9 +1383,14 @@ boolean OcilibEnvironmentInitialize
         {
             Env.version_runtime = OCI_8_1;
         }
-        else if (OCIEnvCreate)
+        else if (OCIEnvInit)
         {
             Env.version_runtime = OCI_8_0;
+
+            if (mode & OCI_ENV_THREADED)
+            {
+                THROW(OcilibExceptionNotAvailable, OCI_FEATURE_MULTITHREADING)
+            }
         }
         else
         {
@@ -1435,12 +1448,28 @@ boolean OcilibEnvironmentInitialize
 
     /* create environment on success */
 
-    ret = OCIEnvCreate(&Env.env, oci_mode,
-                       (dvoid *) &Env,
-                       OcilibMemoryAllocOracleCallback,
-                       OcilibMemoryReallocOracleCallback,
-                       OcilibMemoryFreeOracleCallback,
-                       (size_t) 0, (dvoid **) NULL);
+    if (Env.version_runtime == OCI_8_0)
+    {
+        ret = OCIInitialize(oci_mode, 
+                           (dvoid *) &Env,
+                            OcilibMemoryAllocOracleCallback,
+                            OcilibMemoryReallocOracleCallback,
+                            OcilibMemoryFreeOracleCallback);
+
+        if (OCI_SUCCESSFUL(ret))
+        {
+            ret = OCIEnvInit(&Env.env, OCI_DEFAULT, (size_t)0, (dvoid**)NULL);
+        }
+    }
+    else
+    {
+        ret = OCIEnvCreate(&Env.env, oci_mode,
+                           (dvoid *) &Env,
+                           OcilibMemoryAllocOracleCallback,
+                           OcilibMemoryReallocOracleCallback,
+                           OcilibMemoryFreeOracleCallback,
+                           (size_t) 0, (dvoid **) NULL);
+    }
 
     /*  allocate error handle */
     if (OCI_SUCCESSFUL(ret))
@@ -1480,8 +1509,11 @@ boolean OcilibEnvironmentInitialize
  
     WARNING_DISABLE_UNSAFE_CONVERT
 
-    Env.key_errs = OcilibThreadKeyCreateInternal((POCI_THREADKEYDEST)OcilibEnvironmentFreeError);
-    CHECK_NULL(Env.key_errs)
+    if (Env.version_runtime > OCI_8_0)
+    {
+        Env.key_errs = OcilibThreadKeyCreateInternal((POCI_THREADKEYDEST)OcilibEnvironmentFreeError);
+        CHECK_NULL(Env.key_errs)
+    }
 
     WARNING_RESTORE_UNSAFE_CONVERT
 
@@ -1606,7 +1638,7 @@ boolean OcilibEnvironmentCleanup
 
     /* free error thread key */
 
-    if (NULL != Env.key_errs)
+    if (LIB_THREADED && NULL != Env.key_errs)
     {
         OCI_ThreadKey *key = Env.key_errs;
         OCI_Error     *err = OcilibErrorGet(FALSE, FALSE);
