@@ -308,8 +308,6 @@ OCI_Subscription * OcilibSubscriptionRegister
         sub->con->err
     )
 
-    SET_RETVAL(sub)
-
 #else
 
     OCI_NOT_USED(name)
@@ -326,11 +324,11 @@ OCI_Subscription * OcilibSubscriptionRegister
         if (FAILURE)
         {
             OcilibStringReleaseDBString(dbstr);
-
             OcilibSubscriptionUnregister(sub);
-
-            FREE(sub)
+            sub = NULL;
         }
+
+        SET_RETVAL(sub)
     )
 }
 
