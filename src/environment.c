@@ -1509,7 +1509,7 @@ boolean OcilibEnvironmentInitialize
  
     WARNING_DISABLE_UNSAFE_CONVERT
 
-    if (Env.version_runtime > OCI_8_0)
+    if (LIB_THREADED)
     {
         Env.key_errs = OcilibThreadKeyCreateInternal((POCI_THREADKEYDEST)OcilibEnvironmentFreeError);
         CHECK_NULL(Env.key_errs)
@@ -1580,7 +1580,7 @@ boolean OcilibEnvironmentCleanup
     unsigned int i = 0;
 
     /* exit if the environment is not loaded */
- 
+
     if (!Env.loaded)
     {
         JUMP_EXIT()
@@ -1634,21 +1634,21 @@ boolean OcilibEnvironmentCleanup
         }
 
         success = OCI_SUCCESSFUL(OCIThreadTerm(Env.env, Env.err));
-    }
 
-    /* free error thread key */
+        /* free error thread key */
 
-    if (LIB_THREADED && NULL != Env.key_errs)
-    {
-        OCI_ThreadKey *key = Env.key_errs;
-        OCI_Error     *err = OcilibErrorGet(FALSE, FALSE);
+        if (NULL != Env.key_errs)
+        {
+            OCI_ThreadKey *key = Env.key_errs;
+            OCI_Error     *err = OcilibErrorGet(FALSE, FALSE);
 
-        Env.key_errs = NULL;
+            Env.key_errs = NULL;
 
-        OcilibEnvironmentFreeError(err);
+            OcilibEnvironmentFreeError(err);
 
-        OcilibThreadKeySet(key, NULL);
-        OcilibThreadKeyFree(key);
+            OcilibThreadKeySet(key, NULL);
+            OcilibThreadKeyFree(key);
+        }
     }
 
     /* set unloaded flag */
