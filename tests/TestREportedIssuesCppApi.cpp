@@ -41,12 +41,12 @@ TEST(ReportedIssuesCppApi, Issue309_NoDataFoundPlsqlWithError)
 
     try
     {
-        ocilib::Environment::Initialize();
+        Environment::Initialize();
 
         Connection con(DBS, USR, PWD);
-        ocilib::Statement stmt(con);
+        Statement stmt(con);
 
-        const ocilib::ostring cmd =
+        const ostring cmd =
         OTEXT
         (
             R"(
@@ -101,10 +101,10 @@ TEST(ReportedIssuesCppApi, Issue309_NoDataFoundSqlCallingPlsqlWithoutError)
     auto isNull{ false };
     try
     {
-        ocilib::Environment::Initialize();
+        Environment::Initialize();
 
         Connection con(DBS, USR, PWD);
-        ocilib::Statement stmt(con);
+        Statement stmt(con);
 
         stmt.Execute(OTEXT("select TestPackageIssue309.ReturnNumber() from dual"));
         auto resultset = stmt.GetResultset();
@@ -114,7 +114,7 @@ TEST(ReportedIssuesCppApi, Issue309_NoDataFoundSqlCallingPlsqlWithoutError)
             counter++;
         }
     }
-    catch (const ocilib::Exception& e)
+    catch (const ocilib::Exception&)
     {
         exceptionOccured = true;
     }
@@ -137,10 +137,10 @@ TEST(ReportedIssuesCppApi, Issue309_NoDataFoundSqlWithoutError)
     auto counter{ 0 };
     try
     {
-        ocilib::Environment::Initialize();
+        Environment::Initialize();
 
         Connection con(DBS, USR, PWD);
-        ocilib::Statement stmt(con);
+        Statement stmt(con);
 
         stmt.Execute(OTEXT(" select code, name from TestTableIssue309_3"));
         auto resultset = stmt.GetResultset();
@@ -168,10 +168,10 @@ TEST(ReportedIssuesCppApi, Issue314)
 
     try
     {
-        ocilib::Environment::Initialize();
+        Environment::Initialize();
 
         Connection con(DBS, USR, PWD);
-        ocilib::Statement stmt(con);
+        Statement stmt(con);
 
         int value = 2;
 
@@ -189,4 +189,19 @@ TEST(ReportedIssuesCppApi, Issue314)
     ASSERT_FALSE(exceptionOccured);
 
     Environment::Cleanup();
+}
+
+TEST(ReportedIssuesCppApi, Issue325)
+{
+    Environment::Initialize();
+
+    Connection con(DBS, USR, PWD);
+ 
+    Clob clob(con);
+
+    // to test it compiles
+    auto clobConn = clob.GetConnection();
+
+    Environment::Cleanup();
+
 }
