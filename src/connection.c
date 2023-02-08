@@ -2374,20 +2374,20 @@ unsigned int OcilibConnectionGetTimeout
         {
             case OCI_NTO_SEND:
             {
-                CHECK_ATTRIB_SET
+                CHECK_ATTRIB_GET
                 (
                     OCI_HTYPE_SERVER, OCI_ATTR_SEND_TIMEOUT,
-                    con->svr, &timeout, sizeof(timeout),
+                    con->svr, &timeout, NULL,
                     con->err
                 )
                 break;
             }
             case OCI_NTO_RECEIVE:
             {
-                CHECK_ATTRIB_SET
+                CHECK_ATTRIB_GET
                 (
                     OCI_HTYPE_SERVER, OCI_ATTR_RECEIVE_TIMEOUT,
-                    con->svr, &timeout, sizeof(timeout),
+                    con->svr, &timeout, NULL,
                     con->err
                 )
                 break;
@@ -2399,10 +2399,10 @@ unsigned int OcilibConnectionGetTimeout
             {
                 if (Env.version_runtime >= OCI_18_3)
                 {
-                    CHECK_ATTRIB_SET
+                    CHECK_ATTRIB_GET
                     (
                         OCI_HTYPE_SVCCTX, OCI_ATTR_CALL_TIMEOUT,
-                        con->cxt, &timeout, sizeof(timeout),
+                        con->cxt, &timeout, NULL,
                         con->err
                     )
                 }
