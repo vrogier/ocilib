@@ -1,0 +1,9 @@
+2023-02-08 Version 4.7.6 Vincent Rogier vince.rogier@ocilib.net
+
+   * Fixes (C API)
+
+		- Issue 326: OCI_GetTimeout() always returns 0 since v4.7.0
+
+    * Fixes (C++ API)
+    
+		- Issue 325: ocilib::Lob::GetConnection() does not compile anymore since v4.7.5

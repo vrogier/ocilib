@@ -16,6 +16,16 @@ Click on a change log entry to see the full details.
 <br/>
 <br/>
 
+_[2023-02-06 . version 4.7.6]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.6.txt)_
+
+   * Fixes (C API)
+
+		- Issue 326: OCI_GetTimeout() always returns 0 since v4.7.0
+
+    * Fixes (C++ API)
+    
+		- Issue 325: ocilib::Lob::GetConnection() does not compile anymore since v4.7.5
+
 _[2023-02-06 . version 4.7.5]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.5.txt)_
 
 	* Changes (C API)
