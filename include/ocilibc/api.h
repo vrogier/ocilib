@@ -2388,6 +2388,10 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_GetSQLVerb
  * - Each OCI_Execute() call may be preceded by an update of the program
  *   variables (for INSERTs for example)
  *
+ * @warning
+ * Between re-execution of same SQL statetement, use OCI_BindSetNullAtPos() / OCI_BindSetNull() and OCI_BindSetNullAtPos() / OCI_BindSetNotNullAtPos()
+ * to update the NULL / NOT NULL status of host variables
+ *
  * Bindings can be:
  *  - IN (host variable are not used anymore after statement execution)
  *  - OUT (host variable are set during statement execution)
@@ -13460,7 +13464,7 @@ OCI_SYM_PUBLIC boolean OCI_DescribeFmt
  *
  * OCILIB uses hash tables internally for index/name columns mapping.
  *
- * OCILIB makes public its hash table’s implementation public for general purpose
+ * OCILIB makes public its hash tables implementation public for general purpose
  * uses.
  *
  * OCI_HashTable objects manage string keys / values that can be :
@@ -15996,7 +16000,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetAgentList
  * @warning
  * The return value is valid only until:
  * - OCIDequeueListen() is called again
- * - OCI_DequeueFree(à is called to free the Dequeue object
+ * - OCI_DequeueFree() is called to free the Dequeue object
  * So Do not store the handle value across calls to OCIDequeueListen()
  *
  * @return
