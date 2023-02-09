@@ -1,3 +1,14 @@
+2023-02-08 Version 4.7.6 Vincent Rogier vince.rogier@ocilib.net
+
+   * Fixes (C API)
+
+		- Issue 326: OCI_GetTimeout() always returns 0 since v4.7.0
+
+    * Fixes (C++ API)
+    
+		- Issue 325: ocilib::Lob::GetConnection() does not compile anymore since v4.7.5
+	
+
 2023-02-06 Version 4.7.5 Vincent Rogier vince.rogier@ocilib.net
 
 	* Changes (C API)
@@ -26,7 +37,7 @@
 		- Issue 313: OCI_GetString() returns NULL for CLOB columns is the CLOB row value was filled with empty_clob()
 		- Issue 314: OCI_BindSetCharsetForm() is not accessible since v4.7.0
 		- ISsue 316: OCI_DequeueGet() returns messages with OCI_Object payloads that can have NULL properties while being NOT NULL when queued
-		- ISsue 317: OCI_SubscriptionRegister() generates a segfault on failure
+		- ISsue 323: OCI_SubscriptionRegister() generates a segfault on failure
 
     * Fixes (C++ API)
     
@@ -284,7 +295,7 @@
            * Fixed Oracle minor and revision version when Oracle version  >= 18c (due to breaking in OCI API)
            
            * Added new version constants
-                - C API: added OCI_18_1, OCI_18_2, OCI_18_3 v
+                - C API: added OCI_18_1, OCI_18_2, OCI_18_3
                 - C++ API: extended OracleVersionValues with Oracle18cR1, Oracle18cR2, Oracle18cR3
 
             * Extended Column property flags:

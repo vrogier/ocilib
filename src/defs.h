@@ -31,10 +31,9 @@
 
 #ifdef OCI_IMPORT_RUNTIME
 
-  /* for runtime loading, set compile time version to the highest minimum
-     version needed by OCILIB encapsulation of OCI */
+  /* for runtime loading, set compile time version to the highest known OCI version */
 
-  #define OCI_VERSION_COMPILE OCI_18_1
+  #define OCI_VERSION_COMPILE OCI_21_3
 
   /* set runtime version to unknown, it will be guessed from symbols loading */
 

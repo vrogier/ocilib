@@ -510,6 +510,9 @@ namespace ocilib
         friend class Event;
         friend class Column;
 
+        template<class, int>
+        friend class Lob;
+
     public:
 
         /**

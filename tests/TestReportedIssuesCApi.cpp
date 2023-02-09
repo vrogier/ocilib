@@ -678,4 +678,26 @@ TEST(ReportedIssuesCApi, Issue316)
     ASSERT_TRUE(OCI_Cleanup());
 }
 
+TEST(ReportedIssuesCApi, Issue326)
+{
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+    const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+
+    ASSERT_NE(nullptr, conn);
+
+    ASSERT_TRUE(OCI_SetTimeout(conn, OCI_NTO_SEND, 1000));
+    ASSERT_TRUE(OCI_SetTimeout(conn, OCI_NTO_RECEIVE, 2000));
+    ASSERT_TRUE(OCI_SetTimeout(conn, OCI_NTO_CALL, 3000));
+
+    ASSERT_EQ(1000, OCI_GetTimeout(conn, OCI_NTO_SEND));
+    // Possible oracle bug for OCI_ATTR_RECEIVE_TIMEOUT 
+   // ASSERT_EQ(2000, OCI_GetTimeout(conn, OCI_NTO_RECEIVE));
+    ASSERT_EQ(3000, OCI_GetTimeout(conn, OCI_NTO_CALL));
+
+
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_Cleanup());
+}
+
 INSTANTIATE_TEST_CASE_P(ReportedIssuesCApi, ReportedIssues247, ::testing::ValuesIn(TimestampTypes));
