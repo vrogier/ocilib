@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -291,7 +291,7 @@ extern OCISERVERRELEASE2            OCIServerRelease2;
 extern OCISODAOPERKEYSSET           OCISodaOperKeysSet;
 extern OCIROWIDTOCHAR               OCIRowidToChar;
 
-    #ifdef ORAXB8_DEFINED
+#ifdef ORAXB8_DEFINED
 
 extern OCILOBCOPY2         OCILobCopy2;
 extern OCILOBERASE2        OCILobErase2;
@@ -302,7 +302,7 @@ extern OCILOBTRIM2         OCILobTrim2;
 extern OCILOBWRITE2        OCILobWrite2;
 extern OCILOBWRITEAPPEND2  OCILobWriteAppend2;
 
-    #endif
+#endif
 
 #define OCIDateGetTime(date, hour, min, sec)     \
     {                                            \

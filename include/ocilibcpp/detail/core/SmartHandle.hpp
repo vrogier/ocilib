@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@
 #pragma once
 
 #include "ocilibcpp/core.hpp"
+#include "ocilibcpp/detail/support/HandleStoreResolver.hpp"
+#include "ocilibcpp/detail/support/HandleDeleter.hpp"
 
 namespace ocilib
 {
@@ -30,19 +32,23 @@ namespace ocilib
         template<class T>
         HandleHolder<T>::SmartHandle::SmartHandle
         (
-            HandleHolder* holder, T handle, HandleFreeFunc handleFreefunc,
+            HandleHolder* holder, T handle, bool allocated,
             SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent
         )
-            : _holders(), _handle(handle), _handleFreeFunc(handleFreefunc),
-            _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr)
+            : _holders(), _handle(handle), _allocated(allocated),
+            _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store{nullptr},
+            _guard(GetSynchronizationMode())
         {
-            _locker.SetAccessMode((Environment::GetMode() & Environment::Threaded) == Environment::Threaded);
+            _holders.SetGuard(&_guard);
+            _children.SetGuard(&_guard);
 
-            _holders.SetLocker(&_locker);
-            _children.SetLocker(&_locker);
+            if (support::HandleStoreResolver<T>::RequireStore)
+            {
+                _store = core::OnAllocate(new core::HandleStore(&_guard));
+            }
 
-            Environment::SetSmartHandle<SmartHandle*>(handle, this);
-
+            HandleStore::GetStoreForHandle(parent).Set<SmartHandle*>(handle, this);
+            
             Acquire(holder);
 
             if (_parent && _handle)
@@ -68,19 +74,25 @@ namespace ocilib
             _children.ForEach(DeleteHandle);
             _children.Clear();
 
-            _holders.SetLocker(nullptr);
-            _children.SetLocker(nullptr);
+            _holders.SetGuard(nullptr);
+            _children.SetGuard(nullptr);
 
-            Environment::SetSmartHandle<SmartHandle*>(_handle, nullptr);
+            HandleStore::GetStoreForHandle(_parent).Set<SmartHandle*>(_handle, nullptr);
 
             if (_freeNotifyFunc)
             {
                 _freeNotifyFunc(this);
             }
 
-            if (_handleFreeFunc && _handle)
+            if (_handle && _allocated)
             {
-                _handleFreeFunc(_handle);
+                support::HandleDeleter<T> deleter;
+                deleter(_handle);
+            }
+
+            if (_store)
+            {
+                delete core::OnDeallocate(_store);
             }
         }
 
@@ -103,6 +115,17 @@ namespace ocilib
             {
                 holder->_smartHandle = nullptr;
             }
+        }
+
+        template<class T>
+        SynchronizationMode HandleHolder<T>::SmartHandle::GetSynchronizationMode()
+        {  
+            if ((Environment::GetMode() & Environment::Threaded) == Environment::Threaded)
+            {
+                return support::HandleStoreResolver<T>::SynchMode;
+            }
+           
+            return SynchronizationMode::Unsafe;
         }
 
         template<class T>
@@ -167,5 +190,10 @@ namespace ocilib
             _parent = nullptr;
         }
 
+        template<class T>    
+        HandleStore* HandleHolder<T>::SmartHandle::GetStore()
+        {
+            return _store;
+        }
     }
 }

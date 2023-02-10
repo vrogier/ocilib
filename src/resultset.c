@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1994,8 +1994,7 @@ const otext * OcilibResultsetGetString
 
             CHECK(OcilibStringRequestBuffer(&def->buf.tmpbuf, &def->buf.tmpsize, buffer_size))
 
-            CHECK(OcilibStringGetFromType(rs->stmt->con, &def->col, data, data_size,
-                                          def->buf.tmpbuf, def->buf.tmpsize, FALSE))
+            OcilibStringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, def->buf.tmpsize, FALSE);
 
             CHECK(NULL == err || OCI_UNKNOWN == err->type)
 

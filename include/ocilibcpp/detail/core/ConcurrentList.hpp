@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,33 +48,33 @@ namespace ocilib
         template<class T>
         void ConcurrentList<T>::Add(T value)
         {
-            Lock();
+            Acquire();
             _list.push_back(value);
-            Unlock();
+            Release();
         }
 
         template<class T>
         void ConcurrentList<T>::Remove(T value)
         {
-            Lock();
+            Acquire();
             _list.remove(value);
-            Unlock();
+            Release();
         }
 
         template<class T>
         void ConcurrentList<T>::Clear()
         {
-            Lock();
+            Acquire();
             _list.clear();
-            Unlock();
+            Release();
         }
 
         template<class T>
         size_t ConcurrentList<T>::GetSize()
         {
-            Lock();
+            Acquire();
             const size_t size = _list.size();
-            Unlock();
+            Release();
 
             return size;
         }
@@ -82,11 +82,11 @@ namespace ocilib
         template<class T>
         bool ConcurrentList<T>::Exists(const T& value)
         {
-            Lock();
+            Acquire();
 
             const bool res = std::find(_list.begin(), _list.end(), value) != _list.end();
 
-            Unlock();
+            Release();
 
             return res;
         }
@@ -97,7 +97,7 @@ namespace ocilib
         {
             bool res = false;
 
-            Lock();
+            Acquire();
 
             typename std::list<T>::iterator it = std::find_if(_list.begin(), _list.end(), predicate);
 
@@ -107,7 +107,7 @@ namespace ocilib
                 res = true;
             }
 
-            Unlock();
+            Release();
 
             return res;
         }
@@ -116,11 +116,11 @@ namespace ocilib
         template<class A>
         void ConcurrentList<T>::ForEach(A action)
         {
-            Lock();
+            Acquire();
 
             std::for_each(_list.begin(), _list.end(), action);
 
-            Unlock();
+            Release();
         }
 
     }

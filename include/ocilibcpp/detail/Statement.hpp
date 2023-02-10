@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,17 +49,22 @@ inline Statement::Statement()
 
 inline Statement::Statement(const Connection &connection)
 {
-    Acquire(core::Check(OCI_StatementCreate(connection)), reinterpret_cast<HandleFreeFunc>(OCI_StatementFree), OnFreeSmartHandle, connection.GetHandle());
+    AcquireAllocatedWithNotification
+    (
+        core::Check(OCI_StatementCreate(connection)),
+        connection.GetHandle(),
+        OnFreeSmartHandle
+    );
 }
 
 inline Statement::Statement(OCI_Statement *stmt, core::Handle *parent)
 {
-    Acquire(stmt, reinterpret_cast<HandleFreeFunc>(parent ? OCI_StatementFree : nullptr), OnFreeSmartHandle, parent);
+    AcquireTransient(stmt, parent);
 }
 
 inline Connection Statement::GetConnection() const
 {
-    return Connection(core::Check(OCI_StatementGetConnection(*this)), nullptr);
+    return Connection(core::Check(OCI_StatementGetConnection(*this)), Environment::GetEnvironmentHandle());
 }
 
 inline void Statement::Describe(const ostring& sql)

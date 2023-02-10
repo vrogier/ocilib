@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -632,13 +632,7 @@ void OcilibCallbackHAEvent
 
             /* notify all related connections */
 
-            LOCK_LIST
-            (
-                Env.cons,
-                {
-                    OcilibListForEachWithParam(Env.cons, &params, (POCI_LIST_FOR_EACH_WITH_PARAM)OcilibProcHAEventInvoke);
-                }
-            )
+            LIST_ATOMIC_FOREACH_WITH_PARAM(Env.cons, &params, OcilibProcHAEventInvoke)
 
             /* get next server */
 

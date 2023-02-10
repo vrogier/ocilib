@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -198,7 +198,6 @@ namespace ocilib
         public:
             ManagedBuffer();
             ManagedBuffer(size_t size);
-            ManagedBuffer(T* buffer, size_t size);
 
             ~ManagedBuffer() noexcept;
 
@@ -210,21 +209,31 @@ namespace ocilib
             size_t _size;
         };
 
+        /**
+         * @brief Internal usage.
+         * Synchronization mode enumeration
+         */
+        enum SynchronizationMode
+        {
+            Unsafe,
+            Safe
+        };
+
        /**
         * @brief Internal usage.
-        * Locker object
+        * SynchronizationGuard object
         */ 
-        class Locker
+        class SynchronizationGuard
         {
         public:
 
-            Locker();
-            virtual ~Locker() noexcept;
+            SynchronizationGuard(SynchronizationMode mode);
+            virtual ~SynchronizationGuard() noexcept;
 
-            void Lock() const;
-            void Unlock() const;
+            void Acquire() const;
+            void Release() const;
 
-            void SetAccessMode(bool threaded);
+            void SetMode(SynchronizationMode mode);
 
         private:
 
@@ -235,21 +244,21 @@ namespace ocilib
         * @brief Internal usage.
         * Base class for types that can be locked
         */ 
-        class Lockable
+        class Synchronizable
         {
         public:
 
-            Lockable();
-            virtual  ~Lockable() noexcept;
+            Synchronizable();
+            virtual  ~Synchronizable() noexcept;
 
-            void SetLocker(Locker* locker);
+            void SetGuard(SynchronizationGuard* guard);
 
-            void Lock() const;
-            void Unlock() const;
+            void Acquire() const;
+            void Release() const;
 
         private:
 
-            Locker* _locker;
+            SynchronizationGuard* _guard;
         };
 
        /**
@@ -257,7 +266,7 @@ namespace ocilib
         * Map supporting concurrent access from multiple threads
         */ 
         template<class K, class V>
-        class ConcurrentMap : public Lockable
+        class ConcurrentMap : public Synchronizable
         {
         public:
 
@@ -281,7 +290,7 @@ namespace ocilib
         * List supporting concurrent access from multiple threads
         */ 
         template<class T>
-        class ConcurrentList : public Lockable
+        class ConcurrentList : public Synchronizable
         {
         public:
 
@@ -305,6 +314,9 @@ namespace ocilib
             std::list<T> _list;
         };
 
+        /* Forward declaration */
+        class HandleStore;
+
        /**
         * @brief Internal usage.
         * Interface for handling ownership and relationship of a C API handle
@@ -317,6 +329,35 @@ namespace ocilib
             virtual ConcurrentList<Handle*>& GetChildren() = 0;
             virtual void DetachFromHolders() = 0;
             virtual void DetachFromParent() = 0;
+            virtual HandleStore* GetStore() = 0;
+        };
+
+        /**
+        * @brief Internal usage.
+         * Provide a store for C Handles to C++ Handles mapping
+         */
+        class HandleStore
+        {
+        public:
+
+            HandleStore(SynchronizationGuard * guard);
+
+            template <class T>
+            T Get(AnyPointer ptr);
+
+            template <class T>
+            void Set(AnyPointer ptr, T handle);
+
+            static HandleStore& GetStoreForHandle(Handle*);
+
+            template <class T>
+            static HandleStore& CreateStore();
+
+        private:
+
+            static HandleStore& GetDefaultStore();
+
+            ConcurrentMap<AnyPointer, Handle*>  _handles;
         };
 
         /**
@@ -346,21 +387,23 @@ namespace ocilib
 
             HandleHolder& operator= (const HandleHolder& other) noexcept;
 
-            typedef boolean(OCI_API* HandleFreeFunc)(AnyPointer handle);
-
             typedef void(*SmartHandleFreeNotifyFunc)(SmartHandle* smartHandle);
 
             Handle* GetHandle() const;
 
-            void Acquire(T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent);
+            void AcquireAllocated(T handle, Handle* parent);
+            void AcquireTransient(T handle, Handle* parent);
+            void AcquireAllocatedWithNotification(T handle, Handle* parent, SmartHandleFreeNotifyFunc freeNotifyFunc);
             void Acquire(HandleHolder& other);
+
+            void Acquire(T handle, bool allocated, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent);
             void Release();
 
             class SmartHandle : public Handle
             {
             public:
 
-                SmartHandle(HandleHolder* holder, T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent);
+                SmartHandle(HandleHolder* holder, T handle, bool allocated, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent);
                 virtual ~SmartHandle() noexcept;
 
                 void Acquire(HandleHolder* holder);
@@ -378,22 +421,25 @@ namespace ocilib
                 ConcurrentList<Handle*>& GetChildren() override;
                 void DetachFromHolders() override;
                 void DetachFromParent() override;
+                HandleStore* GetStore() override;
 
             private:
 
                 static void DeleteHandle(Handle* handle);
                 static void ResetHolder(HandleHolder* holder);
+                static SynchronizationMode GetSynchronizationMode();
 
                 ConcurrentList<HandleHolder*> _holders;
                 ConcurrentList<Handle*>  _children;
 
-                Locker _locker;
+                SynchronizationGuard _guard;
 
                 T _handle;
-                HandleFreeFunc _handleFreeFunc;
+                bool _allocated;
                 SmartHandleFreeNotifyFunc _freeNotifyFunc;
                 Handle* _parent;
                 AnyPointer _extraInfo;
+                HandleStore* _store;
             };
 
             SmartHandle* _smartHandle;
@@ -424,6 +470,5 @@ namespace ocilib
                 return lhs;
             }
         };
-
     }
 }

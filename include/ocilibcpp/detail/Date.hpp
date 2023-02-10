@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,12 +49,16 @@ inline Date::Date(const otext* str, const otext* format)
 
 inline Date::Date(OCI_Date *pDate, core::Handle *parent)
 {
-    Acquire(pDate, nullptr, nullptr, parent);
+    AcquireTransient(pDate, parent);
 }
 
 inline void Date::Allocate()
 {
-    Acquire(core::Check(OCI_DateCreate(nullptr)), reinterpret_cast<HandleFreeFunc>(OCI_DateFree), nullptr, nullptr);
+    AcquireAllocated
+    (
+        core::Check(OCI_DateCreate(nullptr)),
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline Date Date::SysDate()

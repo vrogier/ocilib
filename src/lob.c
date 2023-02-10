@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -455,8 +455,8 @@ boolean OcilibLobRead2
             NULL, csid, csfrm
         )
 
-            (*char_count) = (ub4) size_in_out_char_byte;
-        (*byte_count)     = (ub4) size_in_out_char_byte;
+        (*char_count) = (ub4) size_in_out_char_byte;
+        (*byte_count) = (ub4) size_in_out_char_byte;
     }
 
     if (OCI_BLOB != lob->type)

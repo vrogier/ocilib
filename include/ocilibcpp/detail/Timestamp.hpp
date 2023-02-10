@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,18 +34,27 @@ inline Timestamp::Timestamp()
 
 inline Timestamp::Timestamp(TimestampType type)
 {
-    Acquire(core::Check(OCI_TimestampCreate(nullptr, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), nullptr, nullptr);
+    AcquireAllocated
+    (
+        core::Check(OCI_TimestampCreate(nullptr, type)),
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostring& format)
 {
-    Acquire(core::Check(OCI_TimestampCreate(nullptr, type)), reinterpret_cast<HandleFreeFunc>(OCI_TimestampFree), nullptr, nullptr);
+    AcquireAllocated
+    (
+        core::Check(OCI_TimestampCreate(nullptr, type)),
+        Environment::GetEnvironmentHandle()
+    );
+
     FromString(data, format);
 }
 
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, core::Handle *parent)
 {
-    Acquire(pTimestamp, nullptr, nullptr, parent);
+    AcquireTransient(pTimestamp, parent);
 }
 
 inline Timestamp Timestamp::Clone() const

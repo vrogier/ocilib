@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +44,9 @@ namespace ocilib
         template<class K, class V>
         void ConcurrentMap<K, V>::Remove(K key)
         {
-            Lock();
+            Acquire();
             _map.erase(key);
-            Unlock();
+            Release();
         }
 
         template<class K, class V>
@@ -54,13 +54,13 @@ namespace ocilib
         {
             V value = 0;
 
-            Lock();
+            Acquire();
             typename std::map< K, V >::const_iterator it = _map.find(key);
             if (it != _map.end())
             {
                 value = it->second;
             }
-            Unlock();
+            Release();
 
             return value;
         }
@@ -68,25 +68,25 @@ namespace ocilib
         template<class K, class V>
         void ConcurrentMap<K, V>::Set(K key, V value)
         {
-            Lock();
+            Acquire();
             _map[key] = value;
-            Unlock();
+            Release();
         }
 
         template<class K, class V>
         void ConcurrentMap<K, V>::Clear()
         {
-            Lock();
+            Acquire();
             _map.clear();
-            Unlock();
+            Release();
         }
 
         template<class K, class V>
         size_t ConcurrentMap<K, V>::GetSize()
         {
-            Lock();
+            Acquire();
             const size_t size = _map.size();
-            Unlock();
+            Release();
 
             return size;
         }

@@ -17,7 +17,7 @@
 
  @section Version Version information
 
-Current version :  <b>4.7.4</b>
+Current version :  <b>4.7.6</b>
 
  @section Features Main features
 
@@ -25,7 +25,7 @@ Current version :  <b>4.7.4</b>
  - ISO C ++ API
  - Full Ansi and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
  - Full 32/64 bits compatibility
- - Comptabile with all Oracle version >= 8i
+ - Comptabile with all Oracle version >= 8.0
  - Automatic adaptation to the runtime Oracle client version
  - Runtime loading of Oracle libraries
  - Builtin error handling (global and thread context)

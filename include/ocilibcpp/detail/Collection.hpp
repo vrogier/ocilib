@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,13 +35,17 @@ Collection<T>::Collection()
 template<class T>
 Collection<T>::Collection(const TypeInfo &typeInfo)
 {
-    Acquire(core::Check(OCI_CollCreate(typeInfo)), reinterpret_cast<HandleFreeFunc>(OCI_CollFree), nullptr, typeInfo.GetConnection().GetHandle());
+    AcquireAllocated
+    (
+        core::Check(OCI_CollCreate(typeInfo)), 
+        typeInfo.GetConnection().GetHandle()
+    );
 }
 
 template<class T>
 Collection<T>::Collection(OCI_Coll *pColl, core::Handle *parent)
 {
-    Acquire(pColl, nullptr, nullptr, parent);
+    AcquireTransient(pColl,parent);
 }
 
 template<class T>
@@ -488,7 +492,7 @@ CollectionElement<T> Collection<T>::operator [] (unsigned int index)
 template<class T>
 CollectionElement<T> Collection<T>::operator [](unsigned int index) const
 {
-    return  CollectionElement<T>(this, index);
+    return CollectionElement<T>(const_cast<Collection<T>*>(this), index);
 }
 
 }

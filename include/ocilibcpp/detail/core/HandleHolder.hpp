@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace ocilib
         template<class T>
         HandleHolder<T>::HandleHolder(const HandleHolder& other) : _smartHandle(nullptr)
         {
-            Acquire(other, nullptr, nullptr, other._smartHandle ? other._smartHandle->GetParent() : nullptr);
+            AcquireTransient(other, other._smartHandle ? other._smartHandle->GetParent() : nullptr);
         }
 
         template<class T>
@@ -51,7 +51,7 @@ namespace ocilib
             if (this != &other)
             {
                 Handle* parent = other._smartHandle ? other._smartHandle->GetParent() : nullptr;
-                SILENT_CATCH(Acquire(other, nullptr, nullptr, parent))
+                SILENT_CATCH(AcquireTransient(other, parent))
             }
             return *this;
         }
@@ -93,7 +93,25 @@ namespace ocilib
         }
 
         template<class T>
-        void HandleHolder<T>::Acquire(T handle, HandleFreeFunc handleFreefunc, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent)
+        void HandleHolder<T>::AcquireAllocated(T handle, Handle* parent)
+        {
+            Acquire(handle, true, nullptr, parent);
+        }
+  
+        template<class T>
+        void HandleHolder<T>::AcquireTransient(T handle, Handle* parent)
+        {
+            Acquire(handle, false, nullptr, parent);
+        }
+  
+        template<class T>
+        void HandleHolder<T>::AcquireAllocatedWithNotification(T handle, Handle* parent, SmartHandleFreeNotifyFunc freeNotifyFunc)
+        {
+            Acquire(handle, true, freeNotifyFunc, parent);
+        }
+
+        template<class T>
+        void HandleHolder<T>::Acquire(T handle, bool allocated, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent)
         {
             if (_smartHandle && _smartHandle->GetHandle() == handle)
             {
@@ -104,11 +122,11 @@ namespace ocilib
 
             if (handle)
             {
-                _smartHandle = Environment::GetSmartHandle<SmartHandle*>(handle);
+                _smartHandle = HandleStore::GetStoreForHandle(parent).Get<SmartHandle*>(handle);
 
                 if (!_smartHandle)
                 {
-                    _smartHandle = OnAllocate(new SmartHandle(this, handle, handleFreefunc, freeNotifyFunc, parent));
+                    _smartHandle = OnAllocate(new SmartHandle(this, handle, allocated, freeNotifyFunc, parent));
                 }
                 else
                 {

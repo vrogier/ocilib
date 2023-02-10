@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,19 +34,27 @@ inline Interval::Interval()
 
 inline Interval::Interval(IntervalType type)
 {
-    Acquire(core::Check(OCI_IntervalCreate(nullptr, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), nullptr, nullptr);
+    AcquireAllocated
+    (
+        core::Check(OCI_IntervalCreate(nullptr, type)), 
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline Interval::Interval(IntervalType type, const ostring& data)
 {
-    Acquire(core::Check(OCI_IntervalCreate(nullptr, type)), reinterpret_cast<HandleFreeFunc>(OCI_IntervalFree), nullptr, nullptr);
+    AcquireAllocated
+    (
+        core::Check(OCI_IntervalCreate(nullptr, type)),
+        Environment::GetEnvironmentHandle()
+    );
 
     FromString(data);
 }
 
 inline Interval::Interval(OCI_Interval *pInterval, core::Handle *parent)
 {
-    Acquire(pInterval, nullptr, nullptr, parent);
+    AcquireTransient(pInterval, parent);
 }
 
 inline Interval Interval::Clone() const

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,8 +138,26 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup
  * @note
  * - with linkage build option, the version is determined from the oci.h header through different ways
  * - with runtime loading build option, the version is set to the highest version
- *   of OCI needed by OCILIB, not necessarily the real OCI version
+ *   of OCI that is required by OCILIB to support all library features. Thus this version is just an indicator 
+ *   as OCILIB is compatible with all Oracle 8+ OCI versions and adapt itself runtime loaded Oracle libraries
  *
+ * @note
+ *  Retun value is an integer using the following pattern 'MMmmRR'
+ * - 'MM' digits are the Oracle OCI major version
+ * - 'mm' digits are the Oracle OCI minor version
+ * - 'RR' digits are the Oracle OCI revision version
+ * 
+ * @note 
+ *  Manipulating direclty this value is not recommended.
+ *  - For retrieving OCI major version from it, use the maro OCI_VER_MAJ()
+ *  - For retrieving OCI minor version from it, use the maro OCI_VER_MIN()
+ *  - For retrieving OCI revision version from it, use the maro OCI_VER_REV()
+ * For example: if (OCI_VER_MAJ(OCI_GetOCICompileVersion()) >= 21) {...}
+ * 
+ * @note 
+ * For testing this return value agains a specific specific version, use OCI_VER_MAKE()
+ * For example, if OCI_GetOCICompileVersion() > OCI_VER_MAKE(21, 3, 0) {...}
+ * 
  */
 
 OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCICompileVersion
@@ -152,11 +170,27 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCICompileVersion
  * Return the version of OCI used at runtime
  *
  * @note
- * - with linkage build option, the version is determined from the oci.h header
- *   through different ways
- * - with runtime loading build option, the version determined from the symbols
- *   dynamically loaded.
+ * - with linkage build option, the version is determined from the oci.h header through different ways
+ * - with runtime loading build option, the version determined from the symbols dynamically loaded. This
+ *   is a best effort guess as a given Oracle release may not introduce new OCI symbols
  *
+ * @note
+ *  Retun value is an integer using the following pattern 'MMmmRR'
+ * - 'MM' digits are the Oracle OCI major version
+ * - 'mm' digits are the Oracle OCI minor version
+ * - 'RR' digits are the Oracle OCI revision version
+ * 
+ * @note 
+ *  Manipulating direclty this value is not recommended.
+ *  - For retrieving OCI major version from it, use the maro OCI_VER_MAJ()
+ *  - For retrieving OCI minor version from it, use the maro OCI_VER_MIN()
+ *  - For retrieving OCI revision version from it, use the maro OCI_VER_REV()
+ * For example: if (OCI_VER_MAJ(OCI_GetOCIRuntimeVersion()) >= 21) {...}
+ * 
+ * @note 
+ * For testing this return value agains a specific specific version, use OCI_VER_MAKE()
+ * For example, if OCI_GetOCIRuntimeVersion() > OCI_VER_MAKE(21, 3, 0) {...}
+ * 
  */
 
 OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCIRuntimeVersion
@@ -766,7 +800,8 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSessionMode
 
 /**
  * @brief
- * Return the connected database server version
+ * Return the connected database server version string (aka server banner version)
+ *  as reported by SQL*Plus
  *
  * @param con - Connection handle
  *
@@ -2272,13 +2307,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSqlErrorPos
  *  - For DELETEs : number of rows deleted
  *
  * @note
- * For SELECTs  statements, use OCI_GetRowCount() instead
- *
- * @note
- * For PL/SQL blocks performing "select into :<bind>":
- *  - it returns the number of rows selected from PL/SQL
- *  - Up to version 4.3.0, OCI_Execute() returned FALSE and generated an error ORA-01403 - "No Data Found"
- *  - From version 4.3.1, OCI_Execute() returns 0 if no data found, otherwise the number of selected rows
+ * For SELECTs statements, use OCI_GetRowCount() instead
  *
  */
 
@@ -2358,6 +2387,10 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_GetSQLVerb
  * - Call OCI_Execute() as many times as needed
  * - Each OCI_Execute() call may be preceded by an update of the program
  *   variables (for INSERTs for example)
+ *
+ * @warning
+ * Between re-execution of same SQL statetement, use OCI_BindSetNullAtPos() / OCI_BindSetNull() and OCI_BindSetNullAtPos() / OCI_BindSetNotNullAtPos()
+ * to update the NULL / NOT NULL status of host variables
  *
  * Bindings can be:
  *  - IN (host variable are not used anymore after statement execution)
@@ -4244,7 +4277,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindIsNullAtPos
  *
  */
 
-boolean OCI_API OCI_BindSetCharsetForm
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetCharsetForm
 (
     OCI_Bind *   bnd,
     unsigned int csfrm
@@ -13431,7 +13464,7 @@ OCI_SYM_PUBLIC boolean OCI_DescribeFmt
  *
  * OCILIB uses hash tables internally for index/name columns mapping.
  *
- * OCILIB makes public its hash table’s implementation public for general purpose
+ * OCILIB makes public its hash tables implementation public for general purpose
  * uses.
  *
  * OCI_HashTable objects manage string keys / values that can be :
@@ -15967,7 +16000,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetAgentList
  * @warning
  * The return value is valid only until:
  * - OCIDequeueListen() is called again
- * - OCI_DequeueFree(à is called to free the Dequeue object
+ * - OCI_DequeueFree() is called to free the Dequeue object
  * So Do not store the handle value across calls to OCIDequeueListen()
  *
  * @return
@@ -16817,6 +16850,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetOperation
  * @note
  * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
  * subscriptions
+ *
+ * @warning
+ * When using Oracle pluggable databases (PDBs), OCI_EventGetDatabase() returns
+ * the container database name and NOT the pluggable database name (Oracle limitation).
  *
  */
 

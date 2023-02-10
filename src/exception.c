@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -183,7 +183,8 @@ static const otext * OracleFeatures[OCI_FEATURE_COUNT] =
     OTEXT("Oracle 10g R2 remote database startup/shutdown"),
     OTEXT("Oracle 10g R2 High Availability"),
     OTEXT("Oracle XA Connections"),
-    OTEXT("Oracle 12c R1 PL/SQL extended support")
+    OTEXT("Oracle 12c R1 PL/SQL extended support"),
+    OTEXT("Oracle 8.1 multihreading support")
 };
 
 typedef struct StatementState
@@ -409,6 +410,9 @@ void OcilibExceptionLoadingSharedLib
 #ifdef OCI_IMPORT_RUNTIME
 
     EXCEPTION_IMPL(OCI_ERR_LOADING_SHARED_LIB, OCI_DL_NAME)
+#else
+
+    OCI_NOT_USED(ctx)
 
 #endif
 }

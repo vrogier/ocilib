@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,12 +31,18 @@ namespace ocilib
     
 inline Dequeue::Dequeue(const TypeInfo &typeInfo, const ostring& queueName)
 {
-    Acquire(core::Check(OCI_DequeueCreate(typeInfo, queueName.c_str())), reinterpret_cast<HandleFreeFunc>(OCI_DequeueFree), nullptr, nullptr);
+    Connection connection = typeInfo.GetConnection();
+
+    AcquireAllocated
+    (
+        core::Check(OCI_DequeueCreate(typeInfo, queueName.c_str())), 
+        connection.GetHandle()
+    );
 }
 
-inline Dequeue::Dequeue(OCI_Dequeue *pDequeue)
+inline Dequeue::Dequeue(OCI_Dequeue *pDequeue, core::Handle* parent)
 {
-    Acquire(pDequeue, nullptr, nullptr, nullptr);
+    AcquireTransient(pDequeue,parent);
 }
 
 inline Message Dequeue::Get()

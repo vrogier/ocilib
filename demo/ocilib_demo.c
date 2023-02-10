@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,29 +65,29 @@ void test_number(void);
 
 test_t tab_test[] =
 {
-        {test_format,            TRUE},
-        {test_immediate,         TRUE},
-        {test_immediate_format,  TRUE},
-        {test_fetch,             TRUE},
-        {test_bind1,             TRUE},
-        {test_bind2,             TRUE},
-        {test_piecewise_insert,  TRUE},
-        {test_piecewise_fetch,   TRUE},
-        {test_lob,               TRUE},
-        {test_nested_table,      TRUE},
-        {test_ref_cursor,        TRUE},
-        {test_plsql,             TRUE},
-        {test_dates,             TRUE},
-        {test_timestamp,         TRUE},
-        {test_describe,          TRUE},
-        {test_returning,         TRUE},
-        {test_returning_array,   TRUE},
-        {test_object_insert,     TRUE},
-        {test_object_fetch,      TRUE},
+        {test_format,            	TRUE},
+        {test_immediate,         	TRUE},
+        {test_immediate_format,  	TRUE},
+        {test_fetch,             	TRUE},
+        {test_bind1,             	TRUE},
+        {test_bind2,             	TRUE},
+        {test_piecewise_insert,  	TRUE},
+        {test_piecewise_fetch,   	TRUE},
+        {test_lob,               	TRUE},
+        {test_nested_table,      	TRUE},
+        {test_ref_cursor,        	TRUE},
+        {test_plsql,             	TRUE},
+        {test_dates,             	TRUE},
+        {test_timestamp,         	TRUE},
+        {test_describe,          	TRUE},
+        {test_returning,         	TRUE},
+        {test_returning_array,   	TRUE},
+        {test_object_insert,     	TRUE},
+        {test_object_fetch,      	TRUE},
         {test_object_fetch_string,  TRUE},
-        {test_scrollable_cursor, TRUE},
-        {test_collection,        TRUE},
-        {test_ref,               TRUE},
+        {test_scrollable_cursor, 	TRUE},
+        {test_collection,        	TRUE},
+        {test_ref,               	TRUE},
         {test_directpath,           TRUE},
         {test_bigint,               TRUE},
         {test_number,               TRUE}
@@ -1336,7 +1336,7 @@ void test_object_fetch(void)
         print_text("\n");
 
         temp[OCI_ObjectGetRaw(obj, OTEXT("VAL_RAW"), rawbuf, 10)] = 0;
-        print_text("val_raw        : "); print_text(rawbuf);
+        print_text("val_raw        : "); print_frmt("%s", rawbuf);
         print_text("\n");
 
         date = OCI_ObjectGetDate(obj, OTEXT("VAL_DATE"));

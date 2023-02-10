@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2021 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -251,6 +251,7 @@
 #define OCI_ATTR_COL_COUNT              82 /* columns of column array
                                                      processed so far.       */
 
+#define OCI_ATTR_STREAM_OFFSET          83  /* str off of last row processed */
 #define OCI_ATTR_SUBSCR_NAME            94           /* name of subscription */
 #define OCI_ATTR_SUBSCR_CALLBACK        95            /* associated callback */
 #define OCI_ATTR_SUBSCR_CTX             96    /* associated callback context */
