@@ -1478,7 +1478,7 @@ boolean OcilibStatementExecuteInternal
 
 #if OCI_VERSION_COMPILE >= OCI_12_2
 
-            if (OcilibConnectionIsVersionSupported(stmt->con, OCI_12_2))
+            if (OcilibConnectionIsVersionSupported(stmt->con, OCI_12_2) && stmt->sql_id == NULL)
             {
                 unsigned int size_id = 0;
 

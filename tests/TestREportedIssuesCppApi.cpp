@@ -205,3 +205,32 @@ TEST(ReportedIssuesCppApi, Issue325)
     Environment::Cleanup();
 
 }
+
+
+
+TEST(ReportedIssuesCppApi, Issue329)
+{ 
+    Environment::Initialize(Environment::Threaded);
+
+    Connection con(DBS, USR, PWD);
+    Statement st(con);
+
+    st.SetFetchMode(Statement::FetchScrollable);
+    st.Prepare("select count(*) from dual connect by level<=:lvl");
+
+    int i = 10;
+    st.Bind(":lvl", i, BindInfo::In);
+    st.ExecutePrepared();
+
+    auto s1 = st.GetSqlIdentifier();
+
+    i = 100;
+
+    st.ExecutePrepared();
+
+    auto s2 = st.GetSqlIdentifier();
+
+    ASSERT_EQ(s1, s2);
+
+    Environment::Cleanup();
+}
