@@ -633,9 +633,9 @@ OCI_TypeInfo * OcilibTypeInfoGet
 
         OcilibMemoryFreeHandle(dschp, OCI_HTYPE_DESCRIBE);
 
-        if (FAILURE || syn_typinf)
+        if (NULL != typinf && (FAILURE || NULL != syn_typinf))
         {
-            OcilibTypeInfoFree(typinf);
+           LIST_ATOMIC_REMOVE(con->tinfs, typinf, OcilibTypeInfoDispose)
         }
     )
 }
