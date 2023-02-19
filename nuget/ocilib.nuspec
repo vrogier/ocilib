@@ -2,7 +2,7 @@
 <package>
   <metadata minClientVersion="3.5">
     <id>ocilib</id>
-    <version>4.7.6</version>
+    <version>4.7.7</version>
 	<title>Ocilib Driver for Oracle databases</title>
     <summary>
 OCILIB is an open source and cross platform Oracle Driver delivering efficient access to Oracle databases. 
