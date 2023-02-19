@@ -56,6 +56,12 @@ OCI_Long * OcilibLongInitialize
     lg->type    = type;
     lg->offset  = 0;
 
+    if (IS_XMLTYPE_COL(&lg->def->col))
+    {
+        /* For XMLTYPE, first 4 bytes is the content length */ 
+        lg->offset = sizeof(ub4);
+    }
+
     if (def)
     {
         lg->hstate = OCI_OBJECT_FETCHED_CLEAN;
@@ -340,6 +346,12 @@ unsigned int OcilibLongGetSize
 
     if (OCI_CLONG == lg->type)
     {
+        if (IS_XMLTYPE_COL(&lg->def->col))
+        {
+            /* For XMLTYPE, size includes the fist 4 bytes that is the content length */ 
+            size -= sizeof(ub4);
+        }
+
         size /= (unsigned int) sizeof(dbtext);
     }
 
@@ -357,10 +369,23 @@ void * OcilibLongGetBuffer
     OCI_Long *lg
 )
 {
-    GET_PROP
+    ENTER_FUNC
     (
-        /* result */ void *, NULL,
-        /* handle */ OCI_IPC_LONG, lg,
-        /* member */ buffer
+        /* returns */ void *, 0,
+        /* context */ OCI_IPC_LONG, lg
     )
+
+    CHECK_PTR(OCI_IPC_LONG, lg)
+
+    void* result = lg->buffer;
+
+    if (OCI_CLONG == lg->type && IS_XMLTYPE_COL(&lg->def->col))
+    {
+        /* For XMLTYPE, first 4 bytes is the content length */ 
+        result = lg->buffer + sizeof(ub4);
+    }
+
+    SET_RETVAL(result)
+
+    EXIT_FUNC()
 }

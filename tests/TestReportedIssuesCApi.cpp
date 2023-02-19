@@ -680,7 +680,7 @@ TEST(ReportedIssuesCApi, Issue316)
 
 TEST(ReportedIssuesCApi, Issue326)
 {
-    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_THREADED));
 
     const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
 
@@ -691,8 +691,7 @@ TEST(ReportedIssuesCApi, Issue326)
     ASSERT_TRUE(OCI_SetTimeout(conn, OCI_NTO_CALL, 3000));
 
     ASSERT_EQ(1000, OCI_GetTimeout(conn, OCI_NTO_SEND));
-    // Possible oracle bug for OCI_ATTR_RECEIVE_TIMEOUT 
-   // ASSERT_EQ(2000, OCI_GetTimeout(conn, OCI_NTO_RECEIVE));
+    ASSERT_EQ(2000, OCI_GetTimeout(conn, OCI_NTO_RECEIVE));
     ASSERT_EQ(3000, OCI_GetTimeout(conn, OCI_NTO_CALL));
 
 

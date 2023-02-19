@@ -437,6 +437,20 @@ typedef unsigned short dbtext;
        OCI_CDT_RAW     != (type) &&     \
        OCI_CDT_BOOLEAN != (type)))
 
+#define IS_XMLTYPE(typinf)                                  \
+      ( NULL != (typinf) &&                                 \
+        NULL != (typinf)->name &&                           \
+        SQLT_OPAQUE_TYPE == (typinf)->typecode &&           \
+        0 == ostrcmp((typinf)->name, OTEXT("XMLTYPE")) )    \
+
+#define IS_XMLTYPE_COL(col)                                 \
+     ( NULL != (col) && IS_XMLTYPE((col)->typinf) )
+
+
+
+
+#define SQLT_OPAQUE_TYPE 58   /*  SQL/OTS Opaque Types */
+
 /* helpers mapping macros */
 
 #ifdef OCI_CHARSET_ANSI

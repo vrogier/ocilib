@@ -514,6 +514,18 @@ boolean OcilibColumnRetrieveInfo
         CHECK_NULL(col->typinf);
     }
 
+    /* Check if the colulmn is XMLTYPE */
+
+    if (IS_XMLTYPE_COL(col))
+    {
+        /* Mapping XMLTYPE to LONG as:
+           - OCI XML API i not supported by OCILIB 
+           - CLOB cannot be mapped to XMLTYPE
+        */
+
+        col->sqlcode = SQLT_LVC;
+    }
+
     SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
@@ -1218,8 +1230,17 @@ const otext * OcilibColumnGetSqlType
 #endif
 
         case SQLT_LNG:
+        case SQLT_LVC:
         {
-            type = OTEXT("LONG");
+            if (IS_XMLTYPE_COL(col))
+            {
+                type = OTEXT("XMLTYPE");
+            }
+            else
+            {
+                type = OTEXT("LONG");
+            }
+           
             break;
         }
         case SQLT_DAT:
@@ -1241,6 +1262,8 @@ const otext * OcilibColumnGetSqlType
             break;
         }
         case SQLT_LBI:
+        case SQLT_LVB:
+        case SQLT_VBI:
         {
             type = OTEXT("LONG RAW");
             break;
@@ -1485,8 +1508,16 @@ unsigned int OcilibColumnGetFullSqlType
 #endif
 
         case SQLT_LNG:
+        case SQLT_LVC:
         {
-            size = OcilibStringFormat(buffer, (int)len, OTEXT("LONG"));
+            if (IS_XMLTYPE_COL(col))
+            {
+                  size = OcilibStringFormat(buffer, (int)len, OTEXT("XMLTYPE"));
+            }
+            else
+            {
+                size = OcilibStringFormat(buffer, (int)len, OTEXT("LONG"));
+            }
             break;
         }
         case SQLT_DAT:
@@ -1508,6 +1539,8 @@ unsigned int OcilibColumnGetFullSqlType
             break;
         }
         case SQLT_LBI:
+        case SQLT_LVB:
+        case SQLT_VBI:       
         {
             size = OcilibStringFormat(buffer, (int)len, OTEXT("LONG RAW(%i)"), (int) col->size);
             break;

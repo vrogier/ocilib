@@ -458,9 +458,10 @@ OCI_TypeInfo * OcilibTypeInfoGet
 
                 switch (typinf->typecode)
                 {
-                    case  SQLT_NTY:
+                    case SQLT_NTY:
+                    case SQLT_OPAQUE_TYPE:
 #if OCI_VERSION_COMPILE >= OCI_12_1
-                    case  SQLT_REC:
+                    case SQLT_REC:
 #endif
                     {
                         param_list = param_type;

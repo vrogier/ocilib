@@ -16,7 +16,7 @@ TEST(ReportedIssuesCppApi, Issue250)
 
         Connection con(DBS, USR, PWD_WRONG);
     }
-    catch (const ocilib::Exception& e)
+    catch (const ocilib::Exception& ex)
     {
         ansiMessage = ex.what();
         wideMessage = ex.GetMessage();
@@ -149,7 +149,7 @@ TEST(ReportedIssuesCppApi, Issue309_NoDataFoundSqlWithoutError)
             counter++;
         }
     }
-    catch (const ocilib::Exception& e)
+    catch (const ocilib::Exception&)
     {
         exceptionOccured = true;
     }
@@ -176,12 +176,12 @@ TEST(ReportedIssuesCppApi, Issue314)
         int value = 2;
 
         stmt.Prepare(OTEXT("select * from dual where 1 > :value"));
-        stmt.Bind(":value", value, ocilib::BindInfo::In);
+        stmt.Bind(OTEXT(":value"), value, ocilib::BindInfo::In);
         auto bind = stmt.GetBind(1);
         bind.SetCharsetForm(CharsetFormValues::CharsetFormNational);
         stmt.ExecutePrepared();
     }
-    catch (const ocilib::Exception& e)
+    catch (const ocilib::Exception&)
     {
         exceptionOccured = true;
     }
@@ -206,8 +206,6 @@ TEST(ReportedIssuesCppApi, Issue325)
 
 }
 
-
-
 TEST(ReportedIssuesCppApi, Issue329)
 { 
     Environment::Initialize(Environment::Threaded);
@@ -216,10 +214,10 @@ TEST(ReportedIssuesCppApi, Issue329)
     Statement st(con);
 
     st.SetFetchMode(Statement::FetchScrollable);
-    st.Prepare("select count(*) from dual connect by level<=:lvl");
+    st.Prepare(OTEXT("select count(*) from dual connect by level<=:lvl"));
 
     int i = 10;
-    st.Bind(":lvl", i, BindInfo::In);
+    st.Bind(OTEXT(":lvl"), i, BindInfo::In);
     st.ExecutePrepared();
 
     auto s1 = st.GetSqlIdentifier();
@@ -231,6 +229,31 @@ TEST(ReportedIssuesCppApi, Issue329)
     auto s2 = st.GetSqlIdentifier();
 
     ASSERT_EQ(s1, s2);
+
+    Environment::Cleanup();
+}
+
+TEST(ReportedIssuesCppApi, Issue331)
+{ 
+    auto expectedString = ToUpper(ostring(OTEXT("<element name=\"name\" type=\"str\"></element>")));
+    Environment::Initialize();
+    Environment::EnableWarnings(true);
+
+    Connection con(DBS, USR, PWD);
+    Statement st(con);
+    st.Execute(OTEXT("SELECT XMLELEMENT(\"element\",xmlattributes(('name') as name, ('str') as \"type\")) as xml from dual"));
+ 
+    auto rs = st.GetResultset();
+    rs.Next();
+
+    auto col = rs.GetColumn(1);
+    ASSERT_EQ(ostring(OTEXT("XMLTYPE")), col.GetSQLType());
+    ASSERT_EQ(ostring(OTEXT("XMLTYPE")), col.GetFullSQLType());
+    ASSERT_EQ(DataTypeValues::TypeLong, col.GetType());
+    ASSERT_EQ(LongTypeValues::LongCharacter, col.GetSubType());
+
+    ASSERT_EQ(expectedString, ToUpper(rs.Get<Clong>(1).GetContent()));
+    ASSERT_EQ(expectedString, ToUpper(rs.Get<ostring>(1)));
 
     Environment::Cleanup();
 }

@@ -58,6 +58,7 @@ FEATURES
     * Describe database schema objects
     * Hash tables API
     * Portable Threads and mutexes API
+    * Partial support for XMLTYPE (fetching only as string content)
 
 ===========================================================================
 DOWNLOAD 

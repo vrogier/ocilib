@@ -1,3 +1,18 @@
+2023-02-XX Version 4.7.7 Vincent Rogier vince.rogier@ocilib.net
+
+   * Enhancements (C API)
+
+    - Oracle XMLTYPE is now partially supported
+        * Only for fetching resultsets
+        * OCI_Column and ocilib::Column report now "XMLTYPE" as SQL type
+        * XMLTYPE is mapped to OCI_Long/ocilib:Clong data types
+ 
+   * Fixes (C API)
+
+        - Issue 329: OCI_GetSqlIdentifier() returns invalid values for Scrollable Statements when called more than once
+		- Issue 332: OCI_TypeInfoGet() : since v4.7.4, in case of failure, OCI_TypeInfo object is not removed from OCI_Connection internal list of OCI_TypeInfo objects
+        - Issue 331: Strange behaviour with XMLTYPE
+
 2023-02-08 Version 4.7.6 Vincent Rogier vince.rogier@ocilib.net
 
    * Fixes (C API)

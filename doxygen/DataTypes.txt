@@ -45,6 +45,7 @@
  * NAMED DATATYPE (TYPE, OBJECT)   | OCI_Object *                   |                        | ocilib::Object                   |                       |   
  * PL/SQL RECORD                   | OCI_Object *                   |                        | ocilib::Object                   |                       |   
  * REF                             | OCI_Ref *                      |                        | ocilib::Reference                |                       |   
+ * XMLTYPE                         | OCI_Long *                     | OCI_CLONG              | ocilib::Clong                    |                       |
  *
  * @}
  *

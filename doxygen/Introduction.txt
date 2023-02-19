@@ -17,7 +17,7 @@
 
  @section Version Version information
 
-Current version :  <b>4.7.6</b>
+Current version :  <b>4.7.7</b>
 
  @section Features Main features
 
@@ -49,6 +49,7 @@ Current version :  <b>4.7.6</b>
  - Describe database schema objects
  - Hash tables API
  - Portable Threads and mutexes API
+ - Partial support for XMLTYPE (fetching only as string content)
 
  @section Download Download
 
