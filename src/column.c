@@ -523,7 +523,7 @@ boolean OcilibColumnRetrieveInfo
            - CLOB cannot be mapped to XMLTYPE
         */
 
-        col->sqlcode = SQLT_LVC;
+        col->sqlcode = SQLT_LNG;
     }
 
     SET_SUCCESS()

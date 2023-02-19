@@ -528,12 +528,6 @@ static boolean OcilibResultsetFetchPieces
 
                     OCI_Long *lg = (OCI_Long *) def->buf.data[iter];
 
-                    if (IS_XMLTYPE_COL(&def->col) && lg->size == 0)
-                    {
-                        /* For XMLTYPE, first 4 bytes is the content length */ 
-                        lg->piecesize += sizeof(ub4);
-                    }
-
                     lg->size += lg->piecesize;
 
                     break;
