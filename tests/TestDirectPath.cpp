@@ -81,9 +81,9 @@ TEST(TestDirectPath, Simple)
         {
             /* fill test values */
 
-            osprintf(val1, "%04d", i + (i * 100));
-            osprintf(val2, "value %05d", j + (i * 100));
-            osprintf(val3, "%04d%02d%02d", (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
+            osprintf(val1, OTEXT("%04d"), i + (i * 100));
+            osprintf(val2, OTEXT("value %05d"), j + (i * 100));
+            osprintf(val3, OTEXT("%04d%02d%02d"), (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
             ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val1, (unsigned int)ostrlen(val1), TRUE));
             ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val2, (unsigned int)ostrlen(val2), TRUE));
@@ -136,10 +136,10 @@ void CheckAllErrorWorkflowsData(OCI_Connection* con, OCI_DirPath* dp, boolean ge
     
     int nb_rows = 0;
 
-    OCI_Immediate(con, "select count(*) from TestDirectPathTable2", OCI_ARG_INT, &nb_rows);
+    OCI_Immediate(con, OTEXT("select count(*) from TestDirectPathTable2"), OCI_ARG_INT, &nb_rows);
     CheckAllErrorWorkflows(con, dp, ((gen_conv_error && force) || gen_load_error) ? (TotalCount - ErrCount) : TotalCount, nb_rows, "total rows in database");
 
-    OCI_ImmediateFmt(con, "select count(distinct val_int) from TestDirectPathTable2", OCI_ARG_INT, &nb_rows);
+    OCI_ImmediateFmt(con, OTEXT("select count(distinct val_int) from TestDirectPathTable2"), OCI_ARG_INT, &nb_rows);
     CheckAllErrorWorkflows(con, dp, ((gen_conv_error && force) || gen_load_error) ? (TotalCount - ErrCount) : TotalCount, nb_rows, "distinct rows in database");
 }
 

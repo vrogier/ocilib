@@ -45,7 +45,7 @@
 #include "mutex"
 
 using Mutex = std::recursive_mutex;
-using Guard = std::lock_guard<Mutex>;
+using Guard = std::lock_guard<::Mutex>;
 
 struct Error
 {
@@ -58,7 +58,7 @@ using Errors = std::vector<Error>;
 struct Context
 {
     Errors Errs;
-    Mutex Lock;
+    ::Mutex Lock;
 };
 
 
