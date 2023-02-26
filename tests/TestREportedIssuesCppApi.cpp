@@ -288,6 +288,5 @@ TEST(ReportedIssuesCppApi, Issue331)
     ASSERT_EQ(ostring(OTEXT("XMLTYPE")), col.GetFullSQLType());
     ASSERT_EQ(DataTypeValues::TypeXmlType, col.GetType());
 
-
     Environment::Cleanup();
 }

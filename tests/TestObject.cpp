@@ -1,6 +1,6 @@
 #include "ocilib_tests.h"
 
-
+using namespace ocilib;
 TEST(TestObject, SetGetBasicProps)
 {
     ExecDML(OTEXT("create type TestObjectSetGetBasicPropsVendor as object(code number, name varchar2(30))"));
@@ -54,4 +54,27 @@ TEST(TestObject, SetGetBasicProps)
 
     ExecDML(OTEXT("drop type TestObjectSetGetBasicPropsVendor"));
     ExecDML(OTEXT("drop type TestObjectSetGetBasicPropsSale"));
+}
+
+
+TEST(TestObject, ToStringCpp)
+{
+    ExecDML(OTEXT("create type TestObjectToStringCpp as object(code number, name varchar2(30))"));
+   
+    Environment::Initialize();
+
+    Connection conn(DBS, USR, PWD);
+    TypeInfo typinf(conn, OTEXT("TestObjectToStringCpp"), TypeInfo::Type);
+    Object obj(typinf);
+
+    obj.Set<int>(OTEXT("code"), 1);
+    obj.Set<ostring>(OTEXT("name"), OTEXT("computer"));
+
+    ostring expected = OTEXT("TestObjectToStringCpp(1, 'computer')");
+    
+    ASSERT_EQ(ToUpper(expected), ToUpper(obj.ToString()));
+
+    Environment::Cleanup();
+
+    ExecDML(OTEXT("drop type TestObjectToStringCpp"));
 }

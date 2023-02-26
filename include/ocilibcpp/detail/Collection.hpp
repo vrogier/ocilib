@@ -469,15 +469,19 @@ ostring Collection<T>::ToString() const
 {
     if (!IsNull())
     {
-        unsigned int len = 0;
+        unsigned int size{};
+        
+        core::Check(OCI_CollToText(*this, &size, nullptr));
 
-        core::Check(OCI_CollToText(*this, &len, nullptr));
+        ostring result;
 
-        core::ManagedBuffer<otext> buffer(static_cast<size_t>(len + 1));
+        result.resize(static_cast<size_t>(size));
 
-        core::Check(OCI_CollToText(*this, &len, buffer));
+        core::Check(OCI_CollToText(*this, &size , const_cast<otext*>(result.data())));
 
-        return core::MakeString(static_cast<const otext *>(buffer), static_cast<int>(len));
+        result.resize(static_cast<size_t>(size));
+
+        return result;
     }
 
     return OCI_STRING_NULL;
