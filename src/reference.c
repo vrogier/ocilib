@@ -425,7 +425,9 @@ boolean OcilibReferenceToString
     )
 
     dbtext *dbstr = NULL;
-    int dbsize = (int) size * (int) sizeof(otext);
+
+    /* OCI hex string are always ANSI string whatever environment mode */
+    unsigned int char_count = size;
 
     CHECK_PTR(OCI_IPC_REF,    ref)
     CHECK_PTR(OCI_IPC_STRING, str)
@@ -434,27 +436,42 @@ boolean OcilibReferenceToString
 
     str[0] = 0;
 
-    dbstr = OcilibStringGetDBString(str, &dbsize);
+    if (OCI_CHAR_WIDE == Env.charset)
+    {
+        /* need temporary buffer in wide strings mode */
+        dbstr = (dbtext *) OcilibMemoryAlloc(OCI_IPC_STRING, (size_t) ((char_count + 1) * sizeof(otext)), (size_t) 1, TRUE);
+    }
+    else
+    {
+        dbstr = str;
+    }
 
     CHECK_OCI
     (
         ref->con->err,
         OCIRefToHex,
         ref->con->env, ref->con->err, ref->handle,
-        (OraText *) dbstr, (ub4 *) &dbsize
+        (OraText *) dbstr, (ub4 *) &char_count
     )
 
-    OcilibStringCopyDBStringToNativeString(dbstr, str, dbcharcount(dbsize));
+    if (OCI_CHAR_WIDE == Env.charset)
+    {
+        /* need to convert temporary ANSI buffer to Native in wide strings mode */
+        OcilibStringAnsiToNative(dbstr, str, size);
+    }
 
     /* set null string terminator */
 
-    str[dbcharcount(dbsize)] = 0;
+    str[char_count] = 0;
 
     SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dbstr);
+        if (OCI_CHAR_WIDE == Env.charset)
+        {
+            FREE(dbstr);
+        }
     )
 }
 
@@ -475,7 +492,7 @@ unsigned int OcilibReferenceGetHexSize
 
     CHECK_PTR(OCI_IPC_REF, ref)
 
-    SET_RETVAL((unsigned int) OCIRefHexSize(ref->con->env, (const OCIRef*)ref->handle) / (ub4)sizeof(dbtext))
+    SET_RETVAL((unsigned int) OCIRefHexSize(ref->con->env, (const OCIRef*)ref->handle))
 
     EXIT_FUNC()
 }

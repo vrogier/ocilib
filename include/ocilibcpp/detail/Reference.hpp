@@ -90,11 +90,13 @@ inline ostring Reference::ToString() const
     {
         const unsigned int size = core::Check(OCI_RefGetHexSize(*this));
 
-        core::ManagedBuffer<otext> buffer(static_cast<size_t>(size + 1));
+        ostring result;
 
-        core::Check(OCI_RefToText(*this, size, buffer));
+        result.resize(static_cast<size_t>(size));
 
-        return core::MakeString(static_cast<const otext *>(buffer), static_cast<int>(size));
+        core::Check(OCI_RefToText(*this, size, const_cast<otext*>(result.data())));
+
+        return result;
     }
 
     return OCI_STRING_NULL;

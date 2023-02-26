@@ -1,5 +1,7 @@
 #include "ocilib_tests.h"
 
+using namespace ocilib;
+
 static void IniTestRef()
 {
     ExecDML(OTEXT("create type vendor_t as object(code  number, name  varchar2(30))"));
@@ -404,6 +406,31 @@ TEST(TestRef, SetNullWhenNull)
     ASSERT_TRUE(OCI_RefFree(ref));
     ASSERT_TRUE(OCI_ConnectionFree(conn));
     ASSERT_TRUE(OCI_Cleanup());
+
+    CleanupTestRef();
+}
+
+
+TEST(TestRef, ToStringCpp)
+{
+    IniTestRef();
+    
+    Environment::Initialize();
+    
+    Connection conn(DBS, USR, PWD);
+    Statement stmt(conn);
+
+    stmt.Execute(OTEXT("select ref(v) from vendors v"));
+    auto rst = stmt.GetResultset();
+
+    while (rst.Next())
+    {
+        auto ref = rst.Get<Reference>(1);
+        auto s = ref.ToString();
+        ASSERT_TRUE(s.size()  > 0);
+    }
+
+    Environment::Cleanup();
 
     CleanupTestRef();
 }
