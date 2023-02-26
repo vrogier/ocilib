@@ -458,8 +458,15 @@ OCI_TypeInfo * OcilibTypeInfoGet
 
                 switch (typinf->typecode)
                 {
-                    case SQLT_NTY:
                     case SQLT_OPAQUE_TYPE:
+                    {
+                        if (!IS_XMLTYPE(typinf))
+                        {
+                            THROW(OcilibExceptionDatatypeNotSupported, typinf->typecode)
+                        }
+                        break;
+                    }
+                    case SQLT_NTY:
 #if OCI_VERSION_COMPILE >= OCI_12_1
                     case SQLT_REC:
 #endif

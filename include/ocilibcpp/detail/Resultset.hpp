@@ -371,6 +371,18 @@ inline Reference Resultset::Get<Reference>(const ostring& name) const
 }
 
 template<>
+inline XmlType Resultset::Get<XmlType>(unsigned int index) const
+{
+    return XmlType(core::Check(OCI_GetXmlType(*this, index)), GetHandle());
+}
+
+template<>
+inline XmlType Resultset::Get<XmlType>(const ostring& name) const
+{
+    return XmlType(core::Check(OCI_GetXmlType2(*this,name.c_str())), GetHandle());
+}
+
+template<>
 inline Statement Resultset::Get<Statement>(unsigned int index) const
 {
     return Statement(core::Check(OCI_GetStatement(*this, index)), GetHandle());

@@ -164,6 +164,9 @@
     <ClCompile Include="..\..\src\stringutils.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\xmltype.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\agent.h">
@@ -338,6 +341,9 @@
       <Filter>Headers %28Public%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\stringutils.h">
+      <Filter>Headers %28Private%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\xmltype.h">
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
   </ItemGroup>

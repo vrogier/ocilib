@@ -187,6 +187,7 @@ class Interval;
 class Number;
 class TypeInfo;
 class Reference;
+class XmType;
 class Object;
 template<class>
 class Element;

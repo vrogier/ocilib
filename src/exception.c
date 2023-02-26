@@ -69,6 +69,7 @@ static const otext * TypeNames[OCI_IPC_COUNT] =
     OTEXT("Enqueue handle"),
     OTEXT("Dequeue handle"),
     OTEXT("Agent handle"),
+    OTEXT("XmlType handle"),
 
     OTEXT("Internal list handle"),
     OTEXT("Internal list item handle"),

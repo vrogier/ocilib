@@ -57,6 +57,7 @@
 #include "timestamp.h"
 #include "transaction.h"
 #include "typeinfo.h"
+#include "xmltype.h"
 
 static void OcilibCheckContext
 (
@@ -4715,6 +4716,20 @@ boolean OCI_API OCI_RefToText
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ *  XmlType
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OCI_API OCI_XmlTypeToText
+(
+    OCI_XmlType * xmlType,
+    unsigned int* size,
+    otext       * str
+)
+{
+    CALL_IMPL(OcilibXmlTypeToString, xmlType, size, str);
+}
+
+/* --------------------------------------------------------------------------------------------- *
  *  resultset
  * --------------------------------------------------------------------------------------------- */
 
@@ -5165,6 +5180,24 @@ OCI_Ref* OCI_API OCI_GetRef2
 )
 {
     CALL_IMPL(OcilibResultsetGetReference2, rs, name);
+}
+
+OCI_XmlType* OCI_API OCI_GetXmlType
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(OcilibResultsetGetXmlType, rs, index);
+}
+
+OCI_XmlType* OCI_API OCI_GetXmlType2
+(
+    OCI_Resultset* rs,
+    const otext  * name
+)
+{
+    CALL_IMPL(OcilibResultsetGetXmlType2, rs, name);
 }
 
 OCI_Statement* OCI_API OCI_GetStatement

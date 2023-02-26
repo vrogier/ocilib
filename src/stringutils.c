@@ -33,6 +33,7 @@
 #include "object.h"
 #include "reference.h"
 #include "timestamp.h"
+#include "xmltype.h"
 
 #define COMPUTE_LENTGH(type, ptr, size)   \
     const type *s = (const type *) (ptr); \
@@ -932,6 +933,17 @@ unsigned int OcilibStringGetFromType
             {
                 res = FALSE;
             }
+            break;
+        }
+        case OCI_CDT_XMLTYPE:
+        {
+            OCI_XmlType *xmlType = (OCI_XmlType *) data;
+
+            unsigned int real_size = buffer_size;
+
+            quote = FALSE;
+            res   = xmlType ? OcilibXmlTypeToString(xmlType, &real_size, ptr) : FALSE;
+            len   = real_size;
             break;
         }
         default:

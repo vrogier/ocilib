@@ -139,8 +139,6 @@ inline void Exception::SetWhat(const otext* value) noexcept
         const size_t whatLenght = (static_cast<size_t>(-1) == convLenght) ? 0 : convLenght;
 
         _what[whatLenght] = 0;
-
-
     }
 
 #endif

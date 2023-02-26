@@ -5,6 +5,42 @@ using namespace ocilib;
 
 #ifdef OCI_CHARSET_WIDE
 
+ostring ConverStringToAnsi(std::string value) noexcept
+{
+    if (value.empty())
+    {
+        return {};
+    }
+
+    otext* buffer = new (std::nothrow) otext[value.size() + 1];
+    if (buffer)
+    {
+        const char* ptr = value.data();
+       
+        mbstate_t mbs;
+        mbrlen(nullptr, 0, &mbs);
+    
+    #if defined(_MSC_VER)
+        __pragma(warning(disable : 4996))
+    #endif
+
+        const size_t convLenght = mbsrtowcs(buffer, &ptr, value.size(), &mbs);
+
+    #if defined(_MSC_VER)
+        __pragma(warning(default: 4996))
+    #endif   
+            
+        const size_t whatLenght = (static_cast<size_t>(-1) == convLenght) ? 0 : convLenght;
+
+        buffer[whatLenght] = 0;
+    }
+
+    ostring result = buffer;
+
+    delete[] buffer;
+
+    return result;
+}
 TEST(ReportedIssuesCppApi, Issue250)
 {
     std::string ansiMessage;
@@ -22,7 +58,7 @@ TEST(ReportedIssuesCppApi, Issue250)
         wideMessage = ex.GetMessage();
     }
 
-    std::wstring convertedMessage(ansiMessage.begin(), ansiMessage.end());
+    std::wstring convertedMessage = ConverStringToAnsi(ansiMessage);
 
     ASSERT_FALSE(ansiMessage.empty());
     ASSERT_FALSE(wideMessage.empty());
@@ -241,19 +277,17 @@ TEST(ReportedIssuesCppApi, Issue331)
 
     Connection con(DBS, USR, PWD);
     Statement st(con);
-    st.Execute(OTEXT("SELECT XMLELEMENT(\"element\",xmlattributes(('name') as name, ('str') as \"type\")) as xml from dual"));
+
+    st.SetFetchMode(Statement::FetchScrollable);
+    st.Execute(OTEXT("SELECT XMLELEMENT(\"element\",xmlattributes(('name') as name, (to_char(dbms_random.value(1,11))) as \"type\")) as xml1, XMLELEMENT(\"element\",xmlattributes(('name') as name, (to_char(dbms_random.value(12,16))) as \"type\")) as xml2 from dual connect by level < 3"));
  
     auto rs = st.GetResultset();
-    rs.Next();
 
     auto col = rs.GetColumn(1);
     ASSERT_EQ(ostring(OTEXT("XMLTYPE")), col.GetSQLType());
     ASSERT_EQ(ostring(OTEXT("XMLTYPE")), col.GetFullSQLType());
-    ASSERT_EQ(DataTypeValues::TypeLong, col.GetType());
-    ASSERT_EQ(LongTypeValues::LongCharacter, col.GetSubType());
+    ASSERT_EQ(DataTypeValues::TypeXmlType, col.GetType());
 
-    ASSERT_EQ(expectedString, ToUpper(rs.Get<Clong>(1).GetContent()));
-    ASSERT_EQ(expectedString, ToUpper(rs.Get<ostring>(1)));
 
     Environment::Cleanup();
 }

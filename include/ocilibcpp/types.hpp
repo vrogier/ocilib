@@ -111,7 +111,9 @@ namespace ocilib
         /** Object REF */
         TypeReference = OCI_CDT_REF,
         /** PL/SQL boolean */
-        TypeBoolean = OCI_CDT_BOOLEAN
+        TypeBoolean = OCI_CDT_BOOLEAN,
+        /** XMLTYPE */
+        TypeXmlType = OCI_CDT_XMLTYPE
     };
 
     /**
@@ -4922,6 +4924,31 @@ namespace ocilib
     private:
 
         Reference(OCI_Ref* pRef, core::Handle* parent = nullptr);
+    };
+
+       /**
+     * @brief
+     * Object identifying the SQL data type XMLTYPE.
+     *
+     * This class wraps the OCILIB object handle OCI_XmlType and its related methods
+     *
+     */
+    class XmlType : public core::HandleHolder<OCI_XmlType*>, public core::Streamable
+    {
+        friend class Resultset;
+
+    public:
+
+        /**
+        * @brief
+        * return a string representation of the current XmlType
+        *
+        */
+        ostring ToString() const override;
+
+    private:
+
+        XmlType(OCI_XmlType* pXmlType, core::Handle* parent = nullptr);
     };
 
     /**

@@ -328,6 +328,18 @@ OCI_SYM_LOCAL OCI_Ref * OcilibResultsetGetReference2
     const otext  * name
 );
 
+OCI_SYM_LOCAL OCI_XmlType * OcilibResultsetGetXmlType
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+);
+
+OCI_SYM_LOCAL OCI_XmlType * OcilibResultsetGetXmlType2
+(
+    OCI_Resultset* rs,
+    const otext  * name
+);
+
 OCI_SYM_LOCAL OCI_Statement * OcilibResultsetGetStatement
 (
     OCI_Resultset* rs,

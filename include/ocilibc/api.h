@@ -4397,6 +4397,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetAllocationMode
  * - OCI_Coll      : uses OCI_CollToText()
  * - OCI_Object    : uses OCI_ObjectToText()
  * - OCI_Ref       : uses OCI_RefToText()
+ * - OCI_XmlType   : uses OCI_XmlTypeToText()
  * - OCI_File      : returns "$(folder)/$(filename)" - no content returned
  * - OCI_Lob       : see note above for binary types
  * - OCI_Long      : see note above for binary types
@@ -4772,6 +4773,7 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_ColumnGetName
  * - OCI_CDT_COLLECTION  : OCI_Coll *
  * - OCI_CDT_REF         : OCI_Ref *
  * - OCI_CDT_BOOLEAN     : boolean
+ * - OCI_CDT_XMLTYPE     : OCI_XmlType *
  *
  * @return
  * The column type or OCI_CDT_UNKNOWN if index is out of bounds
@@ -6051,6 +6053,45 @@ OCI_SYM_PUBLIC OCI_Ref * OCI_API OCI_GetRef
  */
 
 OCI_SYM_PUBLIC OCI_Ref * OCI_API OCI_GetRef2
+(
+    OCI_Resultset *rs,
+    const otext *  name
+);
+
+/**
+ * @brief
+ * Return the current XmlType value of the column at the given index in the resultset
+ *
+ * @param rs    - Resultset handle
+ * @param index - Column position
+ *
+ * @note
+ * Column position starts at 1.
+ *
+ * @return
+ * The column current row value or NULL if index is out of bounds
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_XmlType * OCI_API OCI_GetXmlType
+(
+    OCI_Resultset *rs,
+    unsigned int   index
+);
+
+/**
+ * @brief
+ * Return the current XmlType value of the column from its name in the resultset
+ *
+ * @param rs    - Resultset handle
+ * @param name  - Column name
+ *
+ * @return
+ * The column current row value or NULL if no column found with the given name
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_XmlType * OCI_API OCI_GetXmlType2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -12960,6 +13001,30 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RefToText
     OCI_Ref *    ref,
     unsigned int size,
     otext *      str
+);
+
+/**
+ * @brief
+ * Convert a XmlType handle value to a string
+ *
+ * @param coll - XmlType handle
+ * @param size - Destination string length pointer in characters
+ * @param str  - Destination string
+ *
+ * @note
+ * In order to compute the needed string length, call the method with a NULL string
+ * Then call the method again with a valid buffer
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_SYM_PUBLIC boolean OCI_API OCI_XmlTypeToText
+(
+    OCI_XmlType  *xmlType,
+    unsigned int *size,
+    otext *       str
 );
 
 /**

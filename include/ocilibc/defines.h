@@ -147,6 +147,7 @@
 #define OCI_IPC_ENQUEUE          38
 #define OCI_IPC_DEQUEUE          39
 #define OCI_IPC_AGENT            40
+#define OCI_IPC_XMLTYPE          41
 
 /* allocated bytes types */
 
@@ -188,6 +189,7 @@
 #define OCI_CDT_COLLECTION                  13
 #define OCI_CDT_REF                         14
 #define OCI_CDT_BOOLEAN                     15
+#define OCI_CDT_XMLTYPE                     16
 
 /* Data Type codes for OCI_ImmediateXXX() calls */
 

@@ -40,6 +40,7 @@
 #include "statement.h"
 #include "stringutils.h"
 #include "timestamp.h"
+#include "xmltype.h"
 
 static unsigned int SeekModeValues[] =
 {
@@ -110,6 +111,25 @@ static unsigned int SeekModeValues[] =
     SET_RETVAL(tmp)                                      \
                                                          \
     EXIT_FUNC()
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibDefineGetLongObject
+ * --------------------------------------------------------------------------------------------- */
+
+static OCI_Long* OcilibDefineGetLongObject(OCI_Define * def, ub4 index)
+{
+    if (OCI_CDT_LONG == def->col.datatype)
+    {
+        return (OCI_Long*)def->buf.data[index];
+    }
+    else if (OCI_CDT_XMLTYPE == def->col.datatype)
+    {
+        OCI_XmlType* xmlType = (OCI_XmlType*)def->buf.data[index];
+        return xmlType->lng;
+    }
+
+    return NULL;
+}
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibResultsetCreate
@@ -374,13 +394,24 @@ static boolean OcilibResultsetFetchPieces
     {
         OCI_Define *def = &rs->defs[i];
 
-        if (OCI_CDT_LONG == def->col.datatype)
+        if (IS_DYNAMIC_FETCH_COLUMN(&def->col))
         {
-            for (j = 0; j < def->buf.count; j++)
+            if (OCI_CDT_LONG == def->col.datatype)
             {
-                def->buf.data[j] = OcilibLongInitialize(rs->stmt,
-                                                        (OCI_Long *)def->buf.data[j],
-                                                        def, def->col.subtype);
+                for (j = 0; j < def->buf.count; j++)
+                {
+                    def->buf.data[j] = OcilibLongInitialize(rs->stmt,
+                                                           (OCI_Long*)def->buf.data[j],
+                                                            def, def->col.subtype);
+                }
+            }
+            else if (OCI_CDT_XMLTYPE == def->col.datatype)
+            {
+                for (j = 0; j < def->buf.count; j++)
+                {          
+                    def->buf.data[j] = OcilibXmlTypeInitialize(rs->stmt->con, rs->stmt,
+                                                               (OCI_XmlType *)def->buf.data[j], def);
+                }
             }
         }
     }
@@ -410,12 +441,12 @@ static boolean OcilibResultsetFetchPieces
         {
             OCI_Define *def = &(rs->defs[i]);
 
-            if ((OCI_CDT_LONG == def->col.datatype) && (def->buf.handle == handle))
+            if (IS_DYNAMIC_FETCH_COLUMN(&def->col) && (def->buf.handle == handle))
             {
                 /* get the long object for the given internal row */
 
-                OCI_Long *lg = (OCI_Long *) def->buf.data[iter];
-
+                OCI_Long* lg = OcilibDefineGetLongObject(def, iter);
+                
                 unsigned int nb_alloc      = 0;
                 unsigned int trailing_size = 0;
                 unsigned int char_fact     = sizeof(otext) / sizeof(dbtext);
@@ -522,12 +553,10 @@ static boolean OcilibResultsetFetchPieces
             {
                 OCI_Define *def = &rs->defs[i];
 
-                if ((OCI_CDT_LONG == def->col.datatype) && (def->buf.handle == handle))
+                if (IS_DYNAMIC_FETCH_COLUMN(&def->col) && (def->buf.handle == handle))
                 {
-                    /* get the long object for the given internal row */
-
-                    OCI_Long *lg = (OCI_Long *) def->buf.data[iter];
-
+                    OCI_Long* lg = OcilibDefineGetLongObject(def, iter);
+                    
                     lg->size += lg->piecesize;
 
                     break;
@@ -542,11 +571,12 @@ static boolean OcilibResultsetFetchPieces
     {
         OCI_Define *def = &rs->defs[i];
 
-        if ((OCI_CDT_LONG == def->col.datatype) && (OCI_CLONG == def->col.subtype))
+        if (((OCI_CDT_LONG == def->col.datatype) && (OCI_CLONG == def->col.subtype)) ||
+             (OCI_CDT_XMLTYPE == def->col.datatype))
         {
             for (j = 0; j < def->buf.count; j++)
             {
-                OCI_Long *lg = (OCI_Long *) def->buf.data[j];
+                OCI_Long* lg = OcilibDefineGetLongObject(def, j);
 
                 if (lg->buffer)
                 {
@@ -897,7 +927,7 @@ boolean OcilibResultsetFree
 
         /* free OCI long buffers */
 
-        if ((OCI_CDT_LONG) == def->col.datatype && def->buf.data)
+        if (IS_DYNAMIC_FETCH_COLUMN(&def->col) && def->buf.data)
         {
             for (j = 0; j < def->buf.count; j++)
             {
@@ -905,7 +935,14 @@ boolean OcilibResultsetFree
                 {
                     ((OCI_Datatype *)def->buf.data[j])->hstate = OCI_OBJECT_FETCHED_DIRTY;
 
-                    OcilibLongFree((OCI_Long *)def->buf.data[j]);
+                    if (OCI_CDT_LONG == def->col.datatype)
+                    {
+                        OcilibLongFree((OCI_Long*)def->buf.data[j]);
+                    }
+                    else if (OCI_CDT_XMLTYPE == def->col.datatype)
+                    {
+                        OcilibXmlTypeFree((OCI_XmlType*)def->buf.data[j]);
+                    }
                 }
             }
         }
@@ -1546,6 +1583,11 @@ boolean OcilibResultsetGetStruct
                         *((OCI_Ref **) ptr) = OcilibResultsetGetReference(rs, i);
                         break;
                     }
+                    case OCI_CDT_XMLTYPE:
+                    {
+                        *((OCI_XmlType **) ptr) = OcilibResultsetGetXmlType(rs, i);
+                        break;
+                    }
                 }
             }
 
@@ -1984,6 +2026,18 @@ const otext * OcilibResultsetGetString
                     data = stmt;
                     break;
                 }
+                case OCI_CDT_XMLTYPE:
+                {
+                    OCI_XmlType *xmlType = OcilibResultsetGetXmlType(rs, index);
+
+                    if (xmlType)
+                    {
+                        CHECK(OcilibXmlTypeToString(xmlType, &buffer_size, NULL))
+                    }
+
+                    data = xmlType;
+                    break;
+                }
                 default:
                 {
                     break;
@@ -2358,6 +2412,37 @@ OCI_Ref * OcilibResultsetGetReference2
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OcilibResultsetGetXmlType
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_XmlType * OcilibResultsetGetXmlType
+(
+    OCI_Resultset *rs,
+    unsigned int   index
+)
+{
+    GET_HANDLE
+    (
+        rs, index, OCI_XmlType *, NULL, OCI_CDT_XMLTYPE,
+
+        (OCI_XmlType *) OcilibDefineGetData(def)
+    )
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibResultsetGetXmlType2
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_XmlType * OcilibResultsetGetXmlType2
+(
+    OCI_Resultset *rs,
+    const otext   *name
+)
+{
+    GET_BY_NAME(rs, name, OcilibResultsetGetXmlType, OCI_XmlType*, NULL)
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OcilibResultsetGetStatement
  * --------------------------------------------------------------------------------------------- */
 
@@ -2536,6 +2621,8 @@ unsigned int OcilibResultsetGetDataSize
             {
                 size /= sizeof(otext);
             }
+
+            // for XMLTYPE, lens array contains the len in characters, not in bytes
         }
     }
 

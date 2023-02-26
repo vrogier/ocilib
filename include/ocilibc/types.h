@@ -356,6 +356,16 @@ typedef struct OCI_Iter OCI_Iter;
 typedef struct OCI_Ref OCI_Ref;
 
 /**
+ * @typedef OCI_XmlType
+ *
+ * @brief
+ * Oracle XMLTYPE type representation.
+ *
+ */
+
+typedef struct OCI_XmlType OCI_XmlType;
+
+/**
  * @typedef OCI_TypeInfo
  *
  * @brief

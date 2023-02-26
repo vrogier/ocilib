@@ -49,12 +49,12 @@ OCI_Long * OcilibLongInitialize
 
     ALLOC_DATA(OCI_IPC_LONG, lg, 1);
 
-    lg->size    = 0;
-    lg->maxsize = 0;
-    lg->stmt    = stmt;
-    lg->def     = def;
-    lg->type    = type;
-    lg->offset  = 0;
+    lg->stmt        = stmt;
+    lg->def         = def;
+    lg->type        = type;
+    lg->offset      = 0;
+    lg->piecesize   = 0;
+    lg->size        = 0;
 
     if (def)
     {

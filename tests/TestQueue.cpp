@@ -213,7 +213,7 @@ TEST(TestQueue, SingleRawMessage)
     const auto msg_in = OCI_MsgCreate(inf);
     ASSERT_NE(nullptr, msg_in);
 
-    const auto byteBring = ostring(OTEXT("123456789"));
+    const auto byteBring = std::string("123456789");
     ASSERT_TRUE(OCI_MsgSetRaw(msg_in, static_cast<const void *>(byteBring.data()), static_cast<unsigned int>(byteBring.size())));
 
     ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
@@ -225,11 +225,11 @@ TEST(TestQueue, SingleRawMessage)
     const auto msg_out = OCI_DequeueGet(deq);
     ASSERT_NE(nullptr, msg_out);
 
-    otext buffer[100] = OTEXT("");
+    char buffer[100] = "";
     unsigned int size = 100;
     ASSERT_TRUE(OCI_MsgGetRaw(msg_out, static_cast<void*>(buffer), &size));
 
-    ASSERT_EQ(byteBring, ostring(buffer));
+    ASSERT_EQ(byteBring,  std::string(buffer));
     ASSERT_EQ(byteBring.size(), size);
 
     ASSERT_TRUE(OCI_EnqueueFree(enq));
@@ -274,7 +274,7 @@ TEST(TestQueue, SingleRawMessageEmptyPayload)
     const auto msg_in = OCI_MsgCreate(inf);
     ASSERT_NE(nullptr, msg_in);
 
-    const auto byteBring = ostring(OTEXT("123456789"));
+    const auto byteBring =  std::string("123456789");
     ASSERT_TRUE(OCI_MsgSetOriginalID(msg_in, static_cast<const void*>(byteBring.data()), static_cast<unsigned int>(byteBring.size())));
 
     ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
@@ -286,11 +286,11 @@ TEST(TestQueue, SingleRawMessageEmptyPayload)
     const auto msg_out = OCI_DequeueGet(deq);
     ASSERT_NE(nullptr, msg_out);
 
-    otext buffer[100] = OTEXT("");
+    char buffer[100] = "";
     unsigned int size = 100;
     ASSERT_TRUE(OCI_MsgGetOriginalID(msg_out, static_cast<void*>(buffer), &size));
 
-    ASSERT_EQ(byteBring, ostring(buffer));
+    ASSERT_EQ(byteBring, std::string(buffer));
     ASSERT_EQ(byteBring.size(), size);
 
     otext payload[100] = OTEXT("");
@@ -343,7 +343,7 @@ TEST(TestQueue, SingleMessageEmptyPayload)
     const auto msg_in = OCI_MsgCreate(inf);
     ASSERT_NE(nullptr, msg_in);
 
-    const auto byteBring = ostring(OTEXT("123456789"));
+    const auto byteBring = std::string("123456789");
     ASSERT_TRUE(OCI_MsgSetOriginalID(msg_in, static_cast<const void*>(byteBring.data()), static_cast<unsigned int>(byteBring.size())));
 
     ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
@@ -359,11 +359,11 @@ TEST(TestQueue, SingleMessageEmptyPayload)
     const auto msg_out = OCI_DequeueGet(deq);
     ASSERT_NE(nullptr, msg_out);
 
-    otext buffer[100] = OTEXT("");
+    char buffer[100] = "";
     unsigned int sizeBuffer = 100;
     ASSERT_TRUE(OCI_MsgGetOriginalID(msg_out, static_cast<void*>(buffer), &sizeBuffer));
 
-    ASSERT_EQ(byteBring, ostring(buffer));
+    ASSERT_EQ(byteBring, std::string(buffer));
     ASSERT_EQ(byteBring.size(), sizeBuffer);
 
     otext msgIDOut[100] = OTEXT("");

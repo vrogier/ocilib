@@ -105,6 +105,7 @@
     <ClCompile Include="..\src\timestamp.c" />
     <ClCompile Include="..\src\transaction.c" />
     <ClCompile Include="..\src\typeinfo.c" />
+    <ClCompile Include="..\src\xmltype.c" />
     <ClCompile Include="TestCursor.cpp" />
     <ClCompile Include="TestArray.cpp" />
     <ClCompile Include="TestCollection.cpp" />
@@ -138,6 +139,7 @@
     <ClCompile Include="TestThread.cpp" />
     <ClCompile Include="TestThreadKey.cpp" />
     <ClCompile Include="TestTimestamp.cpp" />
+    <ClCompile Include="TestXmlType.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\ocilib.h" />
@@ -199,6 +201,7 @@
     <ClInclude Include="..\include\ocilibcpp\detail\Timestamp.hpp" />
     <ClInclude Include="..\include\ocilibcpp\detail\Transaction.hpp" />
     <ClInclude Include="..\include\ocilibcpp\detail\TypeInfo.hpp" />
+    <ClInclude Include="..\include\ocilibcpp\detail\XmlType.hpp" />
     <ClInclude Include="..\include\ocilibcpp\support.hpp" />
     <ClInclude Include="..\include\ocilibcpp\types.hpp" />
     <ClInclude Include="..\include\ocilibc\api.h" />
@@ -259,6 +262,7 @@
     <ClInclude Include="..\src\transaction.h" />
     <ClInclude Include="..\src\typeinfo.h" />
     <ClInclude Include="..\src\types.h" />
+    <ClInclude Include="..\src\xmltype.h" />
     <ClInclude Include="ocilib_tests.h" />
   </ItemGroup>
   <ItemGroup>
@@ -291,7 +295,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>X64;__DEBUG;_CONSOLE;OCI_CHARSET_ANSI;OCI_IMPORT_RUNTIME;OCI_LIB_LOCAL_COMPILE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64;__DEBUG;_CONSOLE;OCI_CHARSET_WIDE;OCI_IMPORT_RUNTIME;OCI_LIB_LOCAL_COMPILE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>

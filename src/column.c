@@ -516,15 +516,11 @@ boolean OcilibColumnRetrieveInfo
 
     /* Check if the colulmn is XMLTYPE */
 
-    if (IS_XMLTYPE_COL(col))
+    if (IS_XMLTYPE(col->typinf))
     {
-        /* Mapping XMLTYPE to LONG as:
-           - OCI XML API i not supported by OCILIB 
-           - CLOB cannot be mapped to XMLTYPE
-        */
-
-        col->sqlcode = SQLT_LNG;
-    }
+        col->sqlcode = SQLT_OPAQUE_TYPE;
+        col->size = sizeof(OCI_XmlType*);
+   }
 
     SET_SUCCESS()
 
@@ -882,9 +878,19 @@ boolean OcilibColumnMapInfo
         case SQLT_SLS:
         default:
         {
-            col->libcode  = SQLT_STR;
-            col->datatype = OCI_CDT_TEXT;
-            col->bufsize  = (ub4) ((col->size + 1) * char_size);
+            col->libcode = SQLT_STR;
+
+            if (IS_XMLTYPE_COL(col))
+            {
+                col->datatype = OCI_CDT_XMLTYPE;
+                col->bufsize  = INT_MAX;
+            }
+            else
+            {
+                col->datatype = OCI_CDT_TEXT;
+                col->bufsize  = (ub4)((col->size + 1) * char_size);
+            }
+
             break;
         }
     }
@@ -1232,15 +1238,7 @@ const otext * OcilibColumnGetSqlType
         case SQLT_LNG:
         case SQLT_LVC:
         {
-            if (IS_XMLTYPE_COL(col))
-            {
-                type = OTEXT("XMLTYPE");
-            }
-            else
-            {
-                type = OTEXT("LONG");
-            }
-           
+            type = OTEXT("LONG");          
             break;
         }
         case SQLT_DAT:
@@ -1382,6 +1380,12 @@ const otext * OcilibColumnGetSqlType
 
 #endif
 
+        case SQLT_OPAQUE_TYPE:
+        {
+            type = (IS_XMLTYPE_COL(col)) ? OTEXT("XMLTYPE") : OTEXT("?");
+            break;
+        }
+
         default:
         {
             /* unknown data type ? Should not happen because all
@@ -1510,14 +1514,7 @@ unsigned int OcilibColumnGetFullSqlType
         case SQLT_LNG:
         case SQLT_LVC:
         {
-            if (IS_XMLTYPE_COL(col))
-            {
-                  size = OcilibStringFormat(buffer, (int)len, OTEXT("XMLTYPE"));
-            }
-            else
-            {
-                size = OcilibStringFormat(buffer, (int)len, OTEXT("LONG"));
-            }
+            size = OcilibStringFormat(buffer, (int)len, OTEXT("LONG"));
             break;
         }
         case SQLT_DAT:
@@ -1672,6 +1669,17 @@ unsigned int OcilibColumnGetFullSqlType
         }
 
 #endif
+
+        case SQLT_OPAQUE_TYPE:
+        {
+            size = OcilibStringFormat
+            (
+                buffer,
+                (int)len, 
+                IS_XMLTYPE_COL(col) ? OTEXT("XMLTYPE") : OTEXT("?")
+            );
+            break;
+        }
 
         default:
         {

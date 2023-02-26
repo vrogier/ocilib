@@ -537,6 +537,20 @@ struct OCI_Long
 };
 
 /*
+ * XmlType object
+ *
+ */
+
+struct OCI_XmlType
+{
+    /* Start OCI_Datatype */
+    OCI_Long       *lng;
+    ub4             hstate;      /* object variable state */
+    /* End OCI_Datatype */
+    OCI_Connection *con;        /* pointer to connection object */
+};
+
+/*
 * Number object
 *
 */
