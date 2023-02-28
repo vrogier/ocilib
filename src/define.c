@@ -20,6 +20,7 @@
 
 #include "define.h"
 
+#include "callback.h"
 #include "connection.h"
 #include "hash.h"
 #include "macros.h"
@@ -408,6 +409,19 @@ boolean OcilibDefineDef
         (ub2  *) NULL,
         (ub4   ) mode
     )
+
+    if (IS_DYNAMIC_FETCH_COLUMN(&def->col))
+    {
+        CHECK_OCI
+        (
+            def->rs->stmt->con->err,
+            OCIDefineDynamic,
+            (OCIDefine*)def->buf.handle,
+            def->rs->stmt->con->err,
+            def,
+            OcilibCallbackDynamicDefine
+        )
+    }
 
     if (SQLT_NTY == def->col.sqlcode || SQLT_REF == def->col.sqlcode)
     {

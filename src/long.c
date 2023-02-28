@@ -364,3 +364,42 @@ void * OcilibLongGetBuffer
         /* member */ buffer
     )
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibLongFinalizeDynamicFetch
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_SYM_LOCAL boolean OcilibLongFinalizeDynamicFetch
+(
+    OCI_Long* lg
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_LONG, lg
+    )
+
+    CHECK_PTR(OCI_IPC_LONG, lg)
+
+    if (lg->buffer)
+    {
+        lg->size += lg->piecesize;
+
+        if (OCI_CLONG == lg->type)
+        {
+            const int len = (int)(lg->size / sizeof(dbtext));
+
+            ((dbtext*)lg->buffer)[len] = 0;
+
+            if (Env.use_wide_char_conv)
+            {
+                OcilibStringUTF16ToUTF32(lg->buffer, lg->buffer, len);
+            }
+        }
+    }
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
+}

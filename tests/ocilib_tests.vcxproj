@@ -123,6 +123,7 @@
     <ClCompile Include="TestInterval.cpp" />
     <ClCompile Include="TestLob.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="TestLong.cpp" />
     <ClCompile Include="TestNotifications.cpp" />
     <ClCompile Include="TestNumber.cpp" />
     <ClCompile Include="TestObject.cpp" />

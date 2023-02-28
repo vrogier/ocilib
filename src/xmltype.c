@@ -131,53 +131,51 @@ boolean OcilibXmlTypeFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibXmlTypeToString
+ * OcilibXmlTypeGetContent
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibXmlTypeToString
+OCI_SYM_LOCAL const otext * OcilibXmlTypeGetContent
 (
-    OCI_XmlType    *xmlType,
-    unsigned int   *size,
-    otext          *str
+    OCI_XmlType    *xmlType
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ const otext *, NULL,
         /* context */ OCI_IPC_XMLTYPE, xmlType
     )
 
-    unsigned int len   = 0;
+    CHECK_PTR(OCI_IPC_XMLTYPE, xmlType)
+
+    if (NULL != xmlType->lng)
+    {
+        SET_RETVAL((otext*)xmlType->lng->buffer);
+    }
+
+    EXIT_FUNC()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibXmlTypeGetContentSize
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_SYM_LOCAL unsigned int OcilibXmlTypeGetContentSize
+(
+    OCI_XmlType    *xmlType
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ unsigned int, 0,
+        /* context */ OCI_IPC_XMLTYPE, xmlType
+    )
 
     CHECK_PTR(OCI_IPC_XMLTYPE, xmlType)
-    CHECK_PTR(OCI_IPC_VOID,   size)
 
-    if (str)
+    if (NULL != xmlType->lng)
     {
-        len += OcilibStringAddToBuffer(str, 0, (otext*) xmlType->lng->buffer, xmlType->lng->size, FALSE);
-    }
-    else
-    {
-        len += xmlType->lng->size;
+        SET_RETVAL(xmlType->lng->size / sizeof(otext));
     }
 
-    *size = len / sizeof(otext);
-
-    SET_SUCCESS()
-
-    CLEANUP_AND_EXIT_FUNC
-    (
-        if (FAILURE)
-        {
-            if (NULL != size)
-            {
-                *size = 0;
-            }
-
-            if (NULL != str)
-            {
-                *str = 0;
-            }
-        }
-    )
+    EXIT_FUNC()
 }

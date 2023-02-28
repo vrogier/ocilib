@@ -288,6 +288,24 @@ typedef sword (*OCIDEFINEBYPOS)
     ub4         mode
 );
 
+typedef sword (*OCIDEFINEDYNAMIC)
+(
+    OCIDefine   *defnp,
+    OCIError    *errhp,
+    void        *octxp, 
+    sb4      (*ocbfp)
+    (
+        void          *octxp,
+        OCIDefine     *defnp,
+        ub4            iter, 
+        void         **bufpp,
+        ub4          **alenpp,
+        ub1           *piecep,
+        void         **indpp,
+        ub2          **rcodep
+   )
+);
+
 typedef sword (*OCIDEFINEOBJECT)
 (
     OCIDefine     *defnp,

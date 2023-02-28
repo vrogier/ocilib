@@ -4719,14 +4719,20 @@ boolean OCI_API OCI_RefToText
  *  XmlType
  * --------------------------------------------------------------------------------------------- */
 
-boolean OCI_API OCI_XmlTypeToText
+const otext* OCI_API OCI_XmlTypeGetContent
 (
-    OCI_XmlType * xmlType,
-    unsigned int* size,
-    otext       * str
+    OCI_XmlType * xmlType
 )
 {
-    CALL_IMPL(OcilibXmlTypeToString, xmlType, size, str);
+    CALL_IMPL(OcilibXmlTypeGetContent, xmlType);
+}
+
+unsigned int OCI_API OCI_XmlTypeGetContentSize
+(
+    OCI_XmlType * xmlType
+)
+{
+    CALL_IMPL(OcilibXmlTypeGetContentSize, xmlType);
 }
 
 /* --------------------------------------------------------------------------------------------- *

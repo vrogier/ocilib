@@ -37,17 +37,14 @@ inline ostring XmlType::ToString() const
 {
     if (!IsNull())
     {
-        unsigned int size{};
-        
-        core::Check(OCI_XmlTypeToText(*this, &size, nullptr));
+        unsigned int size = core::Check(OCI_XmlTypeGetContentSize(*this));
 
-        ostring result;
+        if (size > 0)
+        {
+            return ostring(core::Check(OCI_XmlTypeGetContent(*this)), static_cast<size_t>(size));
+        }
 
-        result.resize(static_cast<size_t>(size));
-
-        core::Check(OCI_XmlTypeToText(*this, &size , const_cast<otext*>(result.data())));
-
-        return result;
+        return {};
     }
 
     return OCI_STRING_NULL;

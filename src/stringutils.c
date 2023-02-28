@@ -935,17 +935,6 @@ unsigned int OcilibStringGetFromType
             }
             break;
         }
-        case OCI_CDT_XMLTYPE:
-        {
-            OCI_XmlType *xmlType = (OCI_XmlType *) data;
-
-            unsigned int real_size = buffer_size;
-
-            quote = FALSE;
-            res   = xmlType ? OcilibXmlTypeToString(xmlType, &real_size, ptr) : FALSE;
-            len   = real_size;
-            break;
-        }
         default:
         {
             res   = FALSE;

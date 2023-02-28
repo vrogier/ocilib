@@ -116,12 +116,8 @@ TEST(TestXmlType, Fetch)
     auto xmlType1 = OCI_GetXmlType(rst, 1);
     ASSERT_NE(nullptr, xmlType1);
 
-    ASSERT_TRUE(OCI_XmlTypeToText(xmlType1, &size1, NULL));
-    ASSERT_EQ(expected1.size(), size1);
-
-    ASSERT_TRUE(OCI_XmlTypeToText(xmlType1, &size1, value1));
-    ASSERT_EQ(expected1.size(), size1);
-    ASSERT_EQ(expected1, ostring(value1));
+    ASSERT_EQ(expected1.size(), OCI_XmlTypeGetContentSize(xmlType1));
+    ASSERT_EQ(expected1, ostring(OCI_XmlTypeGetContent(xmlType1)));
 
     ASSERT_EQ(expected1, ostring(OCI_GetString(rst, 1)));
 
@@ -131,12 +127,8 @@ TEST(TestXmlType, Fetch)
     auto xmlType2 = OCI_GetXmlType(rst, 2);
     ASSERT_NE(nullptr, xmlType2);
 
-    ASSERT_TRUE(OCI_XmlTypeToText(xmlType2, &size2, NULL));
-    ASSERT_EQ(expected2.size(), size2);
-
-    ASSERT_TRUE(OCI_XmlTypeToText(xmlType2, &size2, value2));
-    ASSERT_EQ(expected2.size(), size2);
-    ASSERT_EQ(expected2, ostring(value2));
+    ASSERT_EQ(expected2.size(), OCI_XmlTypeGetContentSize(xmlType2));
+    ASSERT_EQ(expected2, ostring(OCI_XmlTypeGetContent(xmlType2)));
 
     ASSERT_EQ(expected2, ostring(OCI_GetString(rst, 2)));
   
@@ -198,6 +190,98 @@ TEST(TestXmlType, FetchScrollable)
     ASSERT_EQ(expectedFirst, ostring(OCI_GetString(rst, 1)));
   
     ASSERT_TRUE(OCI_Cleanup());
+}
+
+struct XmlRow
+{
+    int Level;
+    ostring Xml;
+};
+
+void TestXmlTypeFetchCustom
+(
+    unsigned int fetchSize, 
+    unsigned int dynamicSize, 
+    Statement::FetchModeValues mode
+)
+{ 
+    Environment::Initialize();
+    Environment::EnableWarnings(true);
+
+    std::vector<XmlRow> xmlRowValues;
+
+    Connection con(DBS, USR, PWD);
+    Statement st(con);
+    
+    st.SetFetchSize(fetchSize);
+    st.SetLongMaxSize(dynamicSize);
+    st.SetFetchMode(mode);
+
+    st.Prepare(OTEXT("SELECT level lvl, XMLELEMENT(\"element\",xmlattributes((to_char(level)) as name)) as xml from dual connect by level<=100"));
+    st.ExecutePrepared();
+
+    auto rs = st.GetResultset();
+    while (rs++) 
+    {
+        xmlRowValues.push_back({ rs.Get<int>(1), ToUpper(rs.Get<ostring>(2)) });
+    }
+
+    const auto expectedRows = 100u;
+    ASSERT_EQ(expectedRows, rs.GetCount());
+    ASSERT_EQ(expectedRows, static_cast<decltype(expectedRows)>(xmlRowValues.size()));
+
+    int i = 1;
+    for(auto & row : xmlRowValues)
+    {
+        ASSERT_EQ(i, row.Level);
+        auto expectedString = ToUpper(ostring(OTEXT("<element name=\"")) + TO_STRING(i) + ostring(OTEXT("\"></element>")));
+        ASSERT_EQ(expectedString, row.Xml);
+        i++;
+    }
+
+    Environment::Cleanup();
+}
+
+
+TEST(TestXmlType, FetchSmallBufferFetchSizeOneCpp)
+{ 
+    TestXmlTypeFetchCustom(1, 20, Statement::FetchForward);
+}
+
+TEST(TestXmlType, FetchSmallBufferFetchSizeTwentyCpp)
+{ 
+    TestXmlTypeFetchCustom(20, 20, Statement::FetchForward);
+}
+
+TEST(TestXmlType, FetchDefaultBufferFetchSizeOneCpp)
+{ 
+     TestXmlTypeFetchCustom(1, OCI_SIZE_LARGE_BUFFER, Statement::FetchForward);
+}
+
+TEST(TestXmlType, FetchDefaultBufferFetchSizeTwentyCpp)
+{ 
+     TestXmlTypeFetchCustom(20, OCI_SIZE_LARGE_BUFFER, Statement::FetchForward);
+
+}
+
+TEST(TestXmlType, FetchSmallBufferFetchSizeOneScrollableCpp)
+{ 
+    TestXmlTypeFetchCustom(1, 20, Statement::FetchForward);
+}
+
+TEST(TestXmlType, FetchSmallBufferFetchSizeTwentyscrollableCpp)
+{ 
+    TestXmlTypeFetchCustom(20, 20, Statement::FetchForward);
+}
+
+TEST(TestXmlType, FetchDefaultBufferFetchSizeOneScrollableCpp)
+{ 
+     TestXmlTypeFetchCustom(1, OCI_SIZE_LARGE_BUFFER, Statement::FetchForward);
+}
+
+TEST(TestXmlType, FetchDefaultBufferFetchSizeTwentyScrollableCpp)
+{ 
+     TestXmlTypeFetchCustom(20, OCI_SIZE_LARGE_BUFFER, Statement::FetchForward);
 }
 
 TEST(TestXmlType, FetchScrollableCpp)

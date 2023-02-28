@@ -21,11 +21,14 @@
 #include "callback.h"
 
 #include "event.h"
+#include "helpers.h"
 #include "list.h"
+#include "long.h"
 #include "macros.h"
 #include "resultset.h"
 #include "stringutils.h"
 #include "timestamp.h"
+#include "xmltype.h"
 
 typedef struct HAEventParams
 {
@@ -652,4 +655,113 @@ void OcilibCallbackHAEvent
 #endif
 
     EXIT_VOID()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibCallbackDynamicDefine
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
+(
+    void          *octxp,
+    OCIDefine     *defnp,
+    ub4            iter, 
+    void         **bufpp,
+    ub4          **alenpp,
+    ub1           *piecep,
+    void         **indpp,
+    ub2          **rcodep
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ sb4, OCI_ERROR,
+        /* context */ OCI_IPC_DEFINE, octxp
+    )
+
+    OCI_Define * def = (OCI_Define *) octxp;
+
+    /* those checks may be not necessary but they keep away compilers warning
+       away if the warning level is set to maximum !
+    */
+
+    OCI_NOT_USED(defnp)
+
+    /* check objects and bounds */
+
+    CHECK_PTR(OCI_IPC_DEFINE, def)
+
+    /* get the long object for the given internal row */
+
+    OCI_Long* lg = OcilibGetLongObjectFromDefine(def, iter);
+
+    /* reset long objects */
+    if (*piecep == OCI_FIRST_PIECE)
+    {
+        if (OCI_CDT_LONG == def->col.datatype)
+        {
+            def->buf.data[iter] = OcilibLongInitialize(def->rs->stmt,
+                                                       (OCI_Long*)def->buf.data[iter],
+                                                       def, def->col.subtype);
+        }
+        else if (OCI_CDT_XMLTYPE == def->col.datatype)
+        {       
+            def->buf.data[iter] = OcilibXmlTypeInitialize(def->rs->stmt->con, def->rs->stmt,
+                                                          (OCI_XmlType *)def->buf.data[iter], def);
+        }
+
+        lg = OcilibGetLongObjectFromDefine(def, iter);
+    }
+    else if (*piecep && **alenpp && *alenpp)
+    {
+        /* Update size from previous call */
+
+        lg->size += (**alenpp);
+    }
+                
+    ub4 char_fact     = (OCI_CLONG == lg->type) ? max(1, sizeof(otext) / sizeof(dbtext)) : 1;
+    ub4 trailing_size = (OCI_CLONG == lg->type) ? sizeof(dbtext) * char_fact : 0;
+
+    /* check buffer */
+
+    ub4 bufsize = def->rs->stmt->long_size;
+
+    if (!lg->buffer)
+    {
+        lg->maxsize = bufsize;
+
+        ALLOC_DATA(OCI_IPC_LONG_BUFFER, lg->buffer, lg->maxsize)
+    }
+    else if ((lg->size + bufsize) >= lg->maxsize)
+    {
+        lg->maxsize *= ((lg->size + bufsize) / lg->maxsize) + 1;
+
+        lg->buffer = (ub1 *)OcilibMemoryRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER,
+                                                (size_t) lg->maxsize, 1, TRUE);
+    }
+   
+    /* update piece info */
+ 
+    if (*piecep == OCI_ONE_PIECE)
+    {
+        *piecep = OCI_ONE_PIECE;
+    }
+    else if (*piecep == OCI_FIRST_PIECE)
+    {
+        *piecep = OCI_FIRST_PIECE;
+    }
+    else if (*piecep == OCI_NEXT_PIECE)
+    {
+        *piecep = OCI_NEXT_PIECE;
+    }
+
+    lg->piecesize =(bufsize / char_fact) - trailing_size;
+
+    *bufpp   = (lg->buffer + (size_t) lg->size);
+    *alenpp  = (ub4   *) &lg->piecesize;
+    *rcodep  = (ub2   *) NULL;
+
+    SET_RETVAL(OCI_CONTINUE)
+
+    EXIT_FUNC()
 }

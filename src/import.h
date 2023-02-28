@@ -91,6 +91,7 @@ extern OCIBINDBYNAME                OCIBindByName;
 extern OCIBINDDYNAMIC               OCIBindDynamic;
 extern OCIBINDOBJECT                OCIBindObject;
 extern OCIDEFINEBYPOS               OCIDefineByPos;
+extern OCIDEFINEDYNAMIC             OCIDefineDynamic;
 extern OCIDEFINEOBJECT              OCIDefineObject;
 extern OCISTMTPREPARE               OCIStmtPrepare;
 extern OCISTMTEXECUTE               OCIStmtExecute;

@@ -13005,26 +13005,28 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RefToText
 
 /**
  * @brief
- * Convert a XmlType handle value to a string
+ * Return the string representation of given a XmlType handle
  *
- * @param coll - XmlType handle
- * @param size - Destination string length pointer in characters
- * @param str  - Destination string
- *
- * @note
- * In order to compute the needed string length, call the method with a NULL string
- * Then call the method again with a valid buffer
- *
- * @return
- * TRUE on success otherwise FALSE
+ * @param xmlType - XmlType handle
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_XmlTypeToText
+OCI_SYM_PUBLIC const otext* OCI_API OCI_XmlTypeGetContent
 (
-    OCI_XmlType  *xmlType,
-    unsigned int *size,
-    otext *       str
+    OCI_XmlType  *xmlType
+);
+
+/**
+ * @brief
+ * Return the number of characters of the XML string content for the given XmlType handle
+ *
+ * @param xmlType - XmlType handle
+ *
+ */
+
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_XmlTypeGetContentSize
+(
+    OCI_XmlType  *xmlType
 );
 
 /**

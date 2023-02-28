@@ -41,4 +41,11 @@ OCI_SYM_LOCAL boolean OcilibFreeObjectFromType
     unsigned int type
 );
 
+OCI_SYM_LOCAL OCI_Long* OcilibGetLongObjectFromDefine
+(
+    OCI_Define* def,
+    ub4         index
+);
+
+
 #endif /* OCILIB_HELPERS_H_INCLUDED */

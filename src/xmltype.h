@@ -41,11 +41,14 @@ OCI_SYM_LOCAL boolean OcilibXmlTypeFree
     OCI_XmlType *xmlType
 );
 
-OCI_SYM_LOCAL boolean OcilibXmlTypeToString
+OCI_SYM_LOCAL const otext * OcilibXmlTypeGetContent
 (
-    OCI_XmlType    *xmlType,
-    unsigned int   *size,
-    otext          *str
+    OCI_XmlType    *xmlType
+);
+
+OCI_SYM_LOCAL unsigned int OcilibXmlTypeGetContentSize
+(
+    OCI_XmlType    *xmlType
 );
 
 #endif /* OCILIB_XMLTYPE_H_INCLUDED */

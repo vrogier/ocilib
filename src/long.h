@@ -71,4 +71,9 @@ OCI_SYM_LOCAL void * OcilibLongGetBuffer
     OCI_Long *lg
 );
 
+OCI_SYM_LOCAL boolean OcilibLongFinalizeDynamicFetch
+(
+    OCI_Long *lg
+);
+
 #endif /* OCILIB_LONG_H_INCLUDED */

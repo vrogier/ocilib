@@ -113,25 +113,6 @@ static unsigned int SeekModeValues[] =
     EXIT_FUNC()
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDefineGetLongObject
- * --------------------------------------------------------------------------------------------- */
-
-static OCI_Long* OcilibDefineGetLongObject(OCI_Define * def, ub4 index)
-{
-    if (OCI_CDT_LONG == def->col.datatype)
-    {
-        return (OCI_Long*)def->buf.data[index];
-    }
-    else if (OCI_CDT_XMLTYPE == def->col.datatype)
-    {
-        OCI_XmlType* xmlType = (OCI_XmlType*)def->buf.data[index];
-        return xmlType->lng;
-    }
-
-    return NULL;
-}
-
-/* --------------------------------------------------------------------------------------------- *
  * OcilibResultsetCreate
  * --------------------------------------------------------------------------------------------- */
 
@@ -368,10 +349,10 @@ static boolean OcilibResultsetExpandStrings
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetFetchPieces
+ * OcilibResultFinalizeDynamicFetch
  * --------------------------------------------------------------------------------------------- */
 
-static boolean OcilibResultsetFetchPieces
+static boolean OcilibResultFinalizeDynamicFetch
 (
     OCI_Resultset *rs
 )
@@ -382,188 +363,9 @@ static boolean OcilibResultsetFetchPieces
         /* context */ OCI_IPC_RESULTSET, rs
     )
 
-    ub4 type, dx;
-    ub1 in_out;
     ub4 i, j;
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs)
-
-    /* reset long objects */
-
-    for (i = 0; i < rs->nb_defs; i++)
-    {
-        OCI_Define *def = &rs->defs[i];
-
-        if (IS_DYNAMIC_FETCH_COLUMN(&def->col))
-        {
-            if (OCI_CDT_LONG == def->col.datatype)
-            {
-                for (j = 0; j < def->buf.count; j++)
-                {
-                    def->buf.data[j] = OcilibLongInitialize(rs->stmt,
-                                                           (OCI_Long*)def->buf.data[j],
-                                                            def, def->col.subtype);
-                }
-            }
-            else if (OCI_CDT_XMLTYPE == def->col.datatype)
-            {
-                for (j = 0; j < def->buf.count; j++)
-                {          
-                    def->buf.data[j] = OcilibXmlTypeInitialize(rs->stmt->con, rs->stmt,
-                                                               (OCI_XmlType *)def->buf.data[j], def);
-                }
-            }
-        }
-    }
-
-    /* dynamic fetch */
-
-    while (OCI_NEED_DATA == rs->fetch_status)
-    {
-        ub1   piece  = OCI_NEXT_PIECE;
-        ub4   iter   = 0;
-        void *handle = NULL;
-
-        /* get piece information */
-
-        CHECK_OCI
-        (
-            rs->stmt->con->err,
-            OCIStmtGetPieceInfo,
-            rs->stmt->stmt, rs->stmt->con->err,
-            &handle,  &type, &in_out,
-            &iter, &dx, &piece
-        )
-
-        /* search for the given column */
-
-        for (i = 0; i < rs->nb_defs; i++)
-        {
-            OCI_Define *def = &(rs->defs[i]);
-
-            if (IS_DYNAMIC_FETCH_COLUMN(&def->col) && (def->buf.handle == handle))
-            {
-                /* get the long object for the given internal row */
-
-                OCI_Long* lg = OcilibDefineGetLongObject(def, iter);
-                
-                unsigned int nb_alloc      = 0;
-                unsigned int trailing_size = 0;
-                unsigned int char_fact     = sizeof(otext) / sizeof(dbtext);
-
-                /* setup up piece size */
-
-                ub4 bufsize = rs->stmt->long_size;
-
-                if (char_fact == 0)
-                {
-                    char_fact = 1;
-                }
-
-                if (OCI_CLONG == lg->type)
-                {
-                    bufsize += (ub4) sizeof(dbtext);
-                }
-
-                nb_alloc = (lg->maxsize / bufsize);
-
-                if (OCI_CLONG == lg->type)
-                {
-                    trailing_size = sizeof(dbtext) * nb_alloc;
-                }
-
-                /* check buffer */
-
-                if (!lg->buffer)
-                {
-                    lg->maxsize = bufsize;
-
-                    ALLOC_DATA(OCI_IPC_LONG_BUFFER, lg->buffer, lg->maxsize)
-                }
-                else if ((lg->size*char_fact) >= (lg->maxsize - trailing_size))
-                {
-                    lg->maxsize = (lg->size + trailing_size + bufsize) * char_fact;
-
-                    lg->buffer = (ub1 *)OcilibMemoryRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER,
-                                                            (size_t) lg->maxsize, 1, TRUE);
-                }
-
-                /* update piece info */
-
-                lg->piecesize = bufsize;
-
-                if (OCI_CLONG == lg->type)
-                {
-                    lg->piecesize /= sizeof(otext);
-                    lg->piecesize *= sizeof(dbtext);
-                    lg->piecesize -= (ub4) sizeof(dbtext);
-                }
-
-                CHECK_OCI
-                (
-                    rs->stmt->con->err,
-                    OCIStmtSetPieceInfo,
-                    (dvoid *) handle,
-                    (ub4) OCI_HTYPE_DEFINE,
-                    lg->stmt->con->err,
-                    (dvoid *) (lg->buffer + (size_t) lg->size),
-                    &lg->piecesize, piece,
-                    lg->def->buf.inds, (ub2 *) NULL
-                )
-
-                break;
-            }
-        }
-
-        /* fetch data */
-
-#if defined(OCI_STMT_SCROLLABLE_READONLY)
-
-        if (Env.use_scrollable_cursors)
-        {
-            rs->fetch_status = OCIStmtFetch2(rs->stmt->stmt, rs->stmt->con->err,
-                                             rs->fetch_size, (ub2) OCI_FETCH_NEXT,
-                                             (sb4) 0, (ub4) OCI_DEFAULT);
-        }
-        else
-
-#endif
-
-        {
-            rs->fetch_status = OCIStmtFetch(rs->stmt->stmt, rs->stmt->con->err,
-                                            rs->fetch_size, (ub2) OCI_FETCH_NEXT,
-                                            (ub4) OCI_DEFAULT);
-        }
-
-        /* check for return value of fetch call */
-
-        if (OCI_ERROR == rs->fetch_status)
-        {
-            THROW(OcilibExceptionOCI, rs->stmt->con->err, rs->fetch_status)
-        }
-        else if (OCI_SUCCESS_WITH_INFO == rs->fetch_status)
-        {
-            OcilibExceptionOCI(&call_context, rs->stmt->con->err, rs->fetch_status);
-        }
-        else
-        {
-            /* search for the given column */
-
-            for (i = 0; i < rs->nb_defs; i++)
-            {
-                OCI_Define *def = &rs->defs[i];
-
-                if (IS_DYNAMIC_FETCH_COLUMN(&def->col) && (def->buf.handle == handle))
-                {
-                    OCI_Long* lg = OcilibDefineGetLongObject(def, iter);
-                    
-                    lg->size += lg->piecesize;
-
-                    break;
-                }
-            }
-        }
-    }
 
     /* for LONG columns, set the zero terminal string */
 
@@ -571,23 +373,15 @@ static boolean OcilibResultsetFetchPieces
     {
         OCI_Define *def = &rs->defs[i];
 
-        if (((OCI_CDT_LONG == def->col.datatype) && (OCI_CLONG == def->col.subtype)) ||
-             (OCI_CDT_XMLTYPE == def->col.datatype))
+        if (IS_DYNAMIC_FETCH_COLUMN(&def->col))
         {
             for (j = 0; j < def->buf.count; j++)
             {
-                OCI_Long* lg = OcilibDefineGetLongObject(def, j);
+                OCI_Long* lg = OcilibGetLongObjectFromDefine(def, j);
 
-                if (lg->buffer)
+                if (lg && lg->buffer)
                 {
-                    const int len = (int) ( lg->size / sizeof(dbtext) );
-
-                    ((dbtext *)lg->buffer)[len] = 0;
-
-                    if (Env.use_wide_char_conv)
-                    {
-                        OcilibStringUTF16ToUTF32(lg->buffer, lg->buffer, len);
-                    }
+                    OcilibLongFinalizeDynamicFetch(lg);
                 }
             }
         }
@@ -649,7 +443,7 @@ static boolean OcilibResultsetClearFetchedObjectInstances(OCI_Resultset *rs)
 static boolean OcilibResultsetFetchData
 (
     OCI_Resultset *rs,
-    int            mode,
+    int            direction,
     int            offset
 )
 {
@@ -672,7 +466,7 @@ static boolean OcilibResultsetFetchData
     if (Env.use_scrollable_cursors)
     {
         rs->fetch_status = OCIStmtFetch2(rs->stmt->stmt, rs->stmt->con->err,
-                                         rs->fetch_size, (ub2) mode, (sb4) offset,
+                                         rs->fetch_size, (ub2) direction, (sb4) offset,
                                          (ub4) OCI_DEFAULT);
     }
     else
@@ -694,11 +488,9 @@ static boolean OcilibResultsetFetchData
     {
         OcilibExceptionOCI(&call_context, rs->stmt->con->err, rs->fetch_status);
     }
-    else if (OCI_NEED_DATA == rs->fetch_status)
-    {
-        /* need to do a piecewise fetch */
-        CHECK(OcilibResultsetFetchPieces(rs))
-    }
+
+    /* finalize dynamic fetch */
+    CHECK(OcilibResultFinalizeDynamicFetch(rs))
 
     /* check string buffer for Unicode builds that need buffer expansion */
 
@@ -755,7 +547,7 @@ static boolean OcilibResultsetFetchData
 
     if ((OCI_NO_DATA == rs->fetch_status) && (row_fetched == 0))
     {
-        if ((OCI_SFD_NEXT == mode) || (offset > 0))
+        if ((OCI_SFD_NEXT == direction) || (offset > 0))
         {
             rs->eof = TRUE;
         }
@@ -1893,6 +1685,15 @@ const otext * OcilibResultsetGetString
                 result = (otext *)OcilibLongGetBuffer(lg);
             }
         }
+        else if (OCI_CDT_XMLTYPE == def->col.datatype)
+        {
+            OCI_XmlType *xmlType = OcilibResultsetGetXmlType(rs, index);
+
+            if (xmlType)
+            {
+                  result = (otext *)OcilibXmlTypeGetContent(xmlType);
+            }
+        }
         else
         {
             OCI_Error *err = OcilibErrorGet(TRUE, TRUE);
@@ -2025,19 +1826,7 @@ const otext * OcilibResultsetGetString
 
                     data = stmt;
                     break;
-                }
-                case OCI_CDT_XMLTYPE:
-                {
-                    OCI_XmlType *xmlType = OcilibResultsetGetXmlType(rs, index);
-
-                    if (xmlType)
-                    {
-                        CHECK(OcilibXmlTypeToString(xmlType, &buffer_size, NULL))
-                    }
-
-                    data = xmlType;
-                    break;
-                }
+                }               
                 default:
                 {
                     break;

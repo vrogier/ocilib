@@ -229,3 +229,27 @@ boolean OcilibFreeObjectFromType
 
     return res;
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibGetLongObjectFromDefine
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Long* OcilibGetLongObjectFromDefine
+(
+    OCI_Define* def,
+    ub4         index
+)
+{
+    if (OCI_CDT_LONG == def->col.datatype)
+    {
+        return (OCI_Long*)def->buf.data[index];
+    }
+    else if (OCI_CDT_XMLTYPE == def->col.datatype)
+    {
+        OCI_XmlType* xmlType = (OCI_XmlType*)def->buf.data[index];
+        return xmlType ? xmlType->lng : NULL;
+    }
+
+    return NULL;
+}
+

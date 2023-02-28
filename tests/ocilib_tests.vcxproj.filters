@@ -223,6 +223,15 @@
     <ClCompile Include="main.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\xmltype.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="TestXmlType.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLong.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Tests suite">
@@ -616,6 +625,12 @@
     </ClInclude>
     <ClInclude Include="..\src\oci\types.h">
       <Filter>Sources\oci</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\xmltype.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\XmlType.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
