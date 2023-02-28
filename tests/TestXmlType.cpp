@@ -107,9 +107,6 @@ TEST(TestXmlType, Fetch)
 
     ASSERT_TRUE(OCI_FetchNext(rst));
 
-    auto size1 = 0u;
-    otext value1[100] = OTEXT("");
-
     auto expected1 = ostring(OTEXT("<person firstname=\"john\" lastname=\"doe\"></person>"));
     auto expected2 = ostring(OTEXT("<person firstname=\"vince\" lastname=\"rogier\"></person>"));
 
@@ -120,9 +117,6 @@ TEST(TestXmlType, Fetch)
     ASSERT_EQ(expected1, ostring(OCI_XmlTypeGetContent(xmlType1)));
 
     ASSERT_EQ(expected1, ostring(OCI_GetString(rst, 1)));
-
-    auto size2 = 0u;
-    otext value2[100] = OTEXT("");
 
     auto xmlType2 = OCI_GetXmlType(rst, 2);
     ASSERT_NE(nullptr, xmlType2);
