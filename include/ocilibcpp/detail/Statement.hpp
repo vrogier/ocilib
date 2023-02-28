@@ -912,14 +912,14 @@ inline unsigned int Statement::GetPrefetchMemory() const
     return core::Check(OCI_GetPrefetchMemory(*this));
 }
 
-inline void Statement::SetLongMaxSize(unsigned int value)
+inline void Statement::SetPieceSize(unsigned int value)
 {
-    core::Check(OCI_SetLongMaxSize(*this, value));
+    core::Check(OCI_SetPieceSize(*this, value));
 }
 
-inline unsigned int Statement::GetLongMaxSize() const
+inline unsigned int Statement::GetPieceSize() const
 {
-    return core::Check(OCI_GetLongMaxSize(*this));
+    return core::Check(OCI_GetPieceSize(*this));
 }
 
 inline void Statement::SetLongMode(LongMode value)

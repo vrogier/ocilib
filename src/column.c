@@ -767,7 +767,7 @@ boolean OcilibColumnMapInfo
             {
                 col->datatype = OCI_CDT_TEXT;
                 col->subtype  = OCI_CLONG;
-                col->bufsize  = (OCI_SIZE_LONG+1) * char_size;
+                col->bufsize  = (OCI_SIZE_PIECE_DYNAMIC_FETCH+1) * char_size;
 
             }
             else

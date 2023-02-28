@@ -6,7 +6,7 @@ using namespace ocilib;
 void TestLongFetchCustom
 (
     unsigned int longSize,
-    unsigned int dynamicSize
+    unsigned int pieceSize
 )
 { 
     ExecDML(OTEXT("create table TestLongFetchCustom (code int, content long raw)"));
@@ -26,7 +26,7 @@ void TestLongFetchCustom
 
     Blong lng(st);
     
-    st.SetLongMaxSize(dynamicSize);
+    st.SetPieceSize(pieceSize);
 
     st.Prepare(OTEXT("insert into TestLongFetchCustom(code, content) values (1, :data)"));
     st.Bind<Blong>(OTEXT(":data"), lng, longSize, BindInfo::In);
@@ -61,7 +61,7 @@ void TestLongFetchCustom
 
 TEST(TestLong, InsertAndFetchSmallBinaryBigLongSize)
 { 
-    TestLongFetchCustom(50, OCI_SIZE_LARGE_BUFFER);
+    TestLongFetchCustom(50, OCI_SIZE_PIECE_DYNAMIC_FETCH);
 }
 
 TEST(TestLong, InsertAndFetchSmallBinarySmallLongSize)

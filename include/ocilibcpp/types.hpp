@@ -6417,22 +6417,22 @@ namespace ocilib
 
         /**
         * @brief
-        * Set the LONG data type piece buffer size
+        * Set the piece size for dynamic fetch operations (XMLTYPE, LONGs) 
         *
         * @param value - maximum size for long buffer
         *
         */
-        void SetLongMaxSize(unsigned int value);
+        void SetPieceSize(unsigned int value);
 
         /**
         * @brief
-        * Return the LONG data type piece buffer size
+        * Return the piece size for dynamic fetch operations (XMLTYPE, LONGs) 
         *
         * @note
-        * Default value is set to constant OCI_SIZE_LONG
+        * Default value is set to constant OCI_SIZE_PIECE_DYNAMIC_FETCH
         *
         */
-        unsigned int GetLongMaxSize() const;
+        unsigned int GetPieceSize() const;
 
         /**
         * @brief

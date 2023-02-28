@@ -6226,21 +6226,21 @@ unsigned int OCI_API OCI_GetPrefetchMemory
     CALL_IMPL(OcilibStatementGetPrefetchMemory, stmt);
 }
 
-boolean OCI_API OCI_SetLongMaxSize
+boolean OCI_API OCI_SetPieceSize
 (
     OCI_Statement* stmt,
     unsigned int   size
 )
 {
-    CALL_IMPL(OcilibStatementSetLongMaxSize, stmt, size);
+    CALL_IMPL(OcilibStatementSetPieceSize, stmt, size);
 }
 
-unsigned int OCI_API OCI_GetLongMaxSize
+unsigned int OCI_API OCI_GetPieceSize
 (
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(OcilibStatementGetLongMaxSize, stmt);
+    CALL_IMPL(OcilibStatementGetPieceSize, stmt);
 }
 
 boolean OCI_API OCI_SetLongMode

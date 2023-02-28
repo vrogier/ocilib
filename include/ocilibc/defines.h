@@ -817,8 +817,8 @@
 
 #define OCI_SIZE_FORMAT                     64
 #define OCI_SIZE_BUFFER                     512
-#define OCI_SIZE_LARGE_BUFFER               ((64*1024)-1)
-#define OCI_SIZE_LONG                       ((64*1024)-1)
+#define OCI_SIZE_LARGE_BUFFER               (32*1024)
+#define OCI_SIZE_PIECE_DYNAMIC_FETCH        (32*1024)
 #define OCI_SIZE_DATE                       45
 #define OCI_SIZE_TIMESTAMP                  54
 #define OCI_SIZE_FORMAT_TODATE              14

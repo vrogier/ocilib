@@ -686,6 +686,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
     */
 
     OCI_NOT_USED(defnp)
+    OCI_NOT_USED(indpp)
 
     /* check objects and bounds */
 
@@ -724,7 +725,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
 
     /* check buffer */
 
-    ub4 bufsize = def->rs->stmt->long_size;
+    ub4 bufsize = def->rs->stmt->piece_size;
 
     if (!lg->buffer)
     {

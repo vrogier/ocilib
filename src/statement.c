@@ -987,7 +987,7 @@ OCI_Statement * OcilibStatementInitialize
     stmt->stmt = handle;
 
     stmt->exec_mode       = OCI_DEFAULT;
-    stmt->long_size       = OCI_SIZE_LONG;
+    stmt->piece_size      = OCI_SIZE_PIECE_DYNAMIC_FETCH;
     stmt->bind_reuse      = FALSE;
     stmt->bind_mode       = OCI_BIND_BY_NAME;
     stmt->long_mode       = OCI_LONG_EXPLICIT;
@@ -3917,10 +3917,10 @@ unsigned int OcilibStatementGetPrefetchMemory
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibStatementSetLongMaxSize
+ * OcilibStatementSetPieceSize
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibStatementSetLongMaxSize
+boolean OcilibStatementSetPieceSize
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -3935,7 +3935,7 @@ boolean OcilibStatementSetLongMaxSize
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     CHECK_MIN(size, 1)
 
-    stmt->long_size = size;
+    stmt->piece_size = size;
 
     SET_SUCCESS()
 
@@ -3943,10 +3943,10 @@ boolean OcilibStatementSetLongMaxSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibStatementGetLongMaxSize
+ * OcilibStatementGetPieceSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibStatementGetLongMaxSize
+unsigned int OcilibStatementGetPieceSize
 (
     OCI_Statement *stmt
 )
@@ -3955,7 +3955,7 @@ unsigned int OcilibStatementGetLongMaxSize
     (
         unsigned int, 0,
         OCI_IPC_STATEMENT, stmt,
-        long_size
+        piece_size
     )
 }
 

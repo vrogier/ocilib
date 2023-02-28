@@ -664,13 +664,13 @@ OCI_SYM_LOCAL unsigned int OcilibStatementGetPrefetchMemory
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementSetLongMaxSize
+OCI_SYM_LOCAL boolean OcilibStatementSetPieceSize
 (
     OCI_Statement* stmt,
     unsigned int   size
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetLongMaxSize
+OCI_SYM_LOCAL unsigned int OcilibStatementGetPieceSize
 (
     OCI_Statement* stmt
 );

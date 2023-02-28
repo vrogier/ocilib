@@ -8410,17 +8410,17 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPrefetchMemory
 
 /**
  * @brief
- * Set the LONG data type piece buffer size
+ * Set the piece size for dynamic fetch operations (XMLTYPE, LONGs) 
  *
  * @param stmt - Statement handle
- * @param size - maximum size for long buffer
+ * @param size - piece size
  *
  * @return
  * TRUE on success otherwise FALSE
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetLongMaxSize
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetPieceSize
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -8428,16 +8428,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetLongMaxSize
 
 /**
  * @brief
- * Return the LONG data type piece buffer size
+ * Return the piece size for dynamic fetch operations (XMLTYPE, LONGs) 
  *
  * @param stmt - Statement handle
  *
  * @note
- * Default value is set to constant OCI_SIZE_LONG
+ * Default value is set to constant OCI_SIZE_PIECE_DYNAMIC_FETCH
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetLongMaxSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPieceSize
 (
     OCI_Statement *stmt
 );

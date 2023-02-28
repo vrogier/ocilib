@@ -201,7 +201,7 @@ struct XmlRow
 void TestXmlTypeFetchCustom
 (
     unsigned int fetchSize, 
-    unsigned int dynamicSize, 
+    unsigned int pieceSize, 
     Statement::FetchModeValues mode
 )
 { 
@@ -214,7 +214,7 @@ void TestXmlTypeFetchCustom
     Statement st(con);
     
     st.SetFetchSize(fetchSize);
-    st.SetLongMaxSize(dynamicSize);
+    st.SetPieceSize(pieceSize);
     st.SetFetchMode(mode);
 
     st.Prepare(OTEXT("SELECT level lvl, XMLELEMENT(\"element\",xmlattributes((to_char(level)) as name)) as xml from dual connect by level<=100"));
@@ -255,12 +255,12 @@ TEST(TestXmlType, FetchSmallBufferFetchSizeTwentyCpp)
 
 TEST(TestXmlType, FetchDefaultBufferFetchSizeOneCpp)
 { 
-     TestXmlTypeFetchCustom(1, OCI_SIZE_LARGE_BUFFER, Statement::FetchForward);
+     TestXmlTypeFetchCustom(1, OCI_SIZE_PIECE_DYNAMIC_FETCH, Statement::FetchForward);
 }
 
 TEST(TestXmlType, FetchDefaultBufferFetchSizeTwentyCpp)
 { 
-     TestXmlTypeFetchCustom(20, OCI_SIZE_LARGE_BUFFER, Statement::FetchForward);
+     TestXmlTypeFetchCustom(20, OCI_SIZE_PIECE_DYNAMIC_FETCH, Statement::FetchForward);
 
 }
 
@@ -276,12 +276,12 @@ TEST(TestXmlType, FetchSmallBufferFetchSizeTwentyscrollableCpp)
 
 TEST(TestXmlType, FetchDefaultBufferFetchSizeOneScrollableCpp)
 { 
-     TestXmlTypeFetchCustom(1, OCI_SIZE_LARGE_BUFFER, Statement::FetchForward);
+     TestXmlTypeFetchCustom(1, OCI_SIZE_PIECE_DYNAMIC_FETCH, Statement::FetchForward);
 }
 
 TEST(TestXmlType, FetchDefaultBufferFetchSizeTwentyScrollableCpp)
 { 
-     TestXmlTypeFetchCustom(20, OCI_SIZE_LARGE_BUFFER, Statement::FetchForward);
+     TestXmlTypeFetchCustom(20, OCI_SIZE_PIECE_DYNAMIC_FETCH, Statement::FetchForward);
 }
 
 TEST(TestXmlType, FetchScrollableCpp)

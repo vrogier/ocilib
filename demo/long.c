@@ -79,7 +79,7 @@ int main(void)
 
 
     OCI_ExecuteStmt(st, "select content from test_long_raw where code = 1");
-    OCI_SetLongMaxSize(st, 10000);
+    OCI_SetPieceSize(st, 10000);
 
     rs = OCI_GetResultset(st);
 
