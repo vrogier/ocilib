@@ -2,19 +2,21 @@
 
 using namespace ocilib;
 
-
-void TestLongFetchCustom
+template<class T, class U>
+void TestLongInsertAndFetch
 (
     unsigned int longSize,
-    unsigned int pieceSize
+    unsigned int pieceSize,
+    ostring tableName,
+    ostring sqlType
 )
 { 
-    ExecDML(OTEXT("create table TestLongFetchCustom (code int, content long raw)"));
+    ExecDML(OTEXT("create table ") +  tableName + OTEXT("(code int, content ") + sqlType + OTEXT(")"));
 
     Environment::Initialize();
     Environment::EnableWarnings(true);
 
-    Raw longContent;
+    U longContent;
 
     for (auto i = 1u; i <= longSize; i++)
     {           
@@ -24,12 +26,12 @@ void TestLongFetchCustom
     Connection con(DBS, USR, PWD);
     Statement st(con);
 
-    Blong lng(st);
+    T lng(st);
     
     st.SetPieceSize(pieceSize);
 
-    st.Prepare(OTEXT("insert into TestLongFetchCustom(code, content) values (1, :data)"));
-    st.Bind<Blong>(OTEXT(":data"), lng, longSize, BindInfo::In);
+    st.Prepare(OTEXT("insert into ") +  tableName + OTEXT("(code, content) values(1, :data)"));
+    st.Bind<T>(OTEXT(":data"), lng, longSize, BindInfo::In);
     st.ExecutePrepared();
 
     auto written = 0u;
@@ -37,17 +39,17 @@ void TestLongFetchCustom
     while (written < longSize)
     {
         auto remaining = (std::min)(longSize - written, longSize);
-        Raw bytes (std::begin(longContent) + written, std::begin(longContent) + written + remaining);
-        written += lng.Write(bytes);
+        U str (std::begin(longContent) + written, std::begin(longContent) + written + remaining);
+        written += lng.Write(str);
     }
 
     con.Commit();
 
-    st.Execute(OTEXT("select * from TestLongFetchCustom"));
+    st.Execute(OTEXT("select * from ") +  tableName);
     auto rs = st.GetResultset();
     rs.Next();
 
-    lng = rs.Get<Blong>(2);
+    lng = rs.Get<T>(2);
 
     auto selectLongContent = lng.GetContent();
    
@@ -55,24 +57,74 @@ void TestLongFetchCustom
 
     Environment::Cleanup();
   
-    ExecDML(OTEXT("drop table TestLongFetchCustom"));
+    ExecDML(OTEXT("drop table ") +  tableName); 
 }
 
-
-TEST(TestLong, InsertAndFetchSmallBinaryBigLongSize)
+TEST(TestLong, BinaryInsertAndFetchSmallLongSizeBig)
 { 
-    TestLongFetchCustom(50, OCI_SIZE_PIECE_DYNAMIC_FETCH);
+     TestLongInsertAndFetch<Blong, Raw>
+     (
+         50,
+         OCI_SIZE_PIECE_DYNAMIC_FETCH,
+         OTEXT("TestLongInsertAndFetchBinary"),
+         OTEXT("long raw")
+     );
 }
 
-TEST(TestLong, InsertAndFetchSmallBinarySmallLongSize)
+TEST(TestLong, BinaryInsertAndFetchSmallLongSizeSmall)
 { 
-    TestLongFetchCustom(50, 20);
+     TestLongInsertAndFetch<Blong, Raw>
+     (
+         50,
+         20,
+         OTEXT("TestLongInsertAndFetchBinary"),
+         OTEXT("long raw")
+     );}
+
+TEST(TestLong, BinaryInsertAndFetchBigLongSizeSmall)
+{ 
+     TestLongInsertAndFetch<Blong, Raw>
+     (
+         5000,
+         200,
+         OTEXT("TestLongInsertAndFetchBinary"),
+         OTEXT("long raw")
+     );}
+
+
+TEST(TestLong, StringInsertAndFetchSmallLongSizeBig)
+{ 
+     TestLongInsertAndFetch<Clong, ostring>
+     (
+         50,
+         OCI_SIZE_PIECE_DYNAMIC_FETCH,
+         OTEXT("TestLongInsertAndFetchString"),
+         OTEXT("long")
+     );
 }
 
-TEST(TestLong, InsertAndFetchBigBinarySmallLongSize)
+TEST(TestLong, StringInsertAndFetchSmallongSizeSmallL)
 { 
-    TestLongFetchCustom(5000, 200);
+     TestLongInsertAndFetch<Clong, ostring>
+     (
+         50,
+         20,
+         OTEXT("TestLongInsertAndFetchString"),
+         OTEXT("long")
+     );
 }
+
+TEST(TestLong, StringInsertAndFetchBigLongSizeSmall)
+{ 
+     TestLongInsertAndFetch<Clong, ostring>
+     (
+         5000,
+         200,
+         OTEXT("TestLongInsertAndFetchString"),
+         OTEXT("long")
+     );
+}
+
 
 
 

@@ -27,7 +27,7 @@ OCI_SYM_LOCAL OCI_Long * OcilibLongInitialize
 (
     OCI_Statement *stmt,
     OCI_Long      *lg,
-    OCI_Define    *def,
+    unsigned int   hstate,
     unsigned int   type
 );
 

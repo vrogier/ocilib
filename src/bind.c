@@ -845,15 +845,14 @@ OCI_Bind* OcilibBindCreate
     if (OCI_CDT_LONG == bnd->type)
     {
         OCI_Long *lg = (OCI_Long *)  bnd->input;
-
-        lg->maxsize = size;
-        exec_mode   = OCI_DATA_AT_EXEC;
-
+     
         if (OCI_CLONG == bnd->subtype)
         {
-            lg->maxsize /= (unsigned int) sizeof(otext);
-            lg->maxsize *= (unsigned int) sizeof(dbtext);
+            bnd->size *= (unsigned int) sizeof(dbtext);
         }
+
+        lg->maxsize = bnd->size;
+        exec_mode   = OCI_DATA_AT_EXEC;
     }
     else if (OCI_BIND_OUTPUT == mode)
     {

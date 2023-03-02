@@ -489,16 +489,6 @@ static boolean OcilibResultsetFetchData
         OcilibExceptionOCI(&call_context, rs->stmt->con->err, rs->fetch_status);
     }
 
-    /* finalize dynamic fetch */
-    CHECK(OcilibResultFinalizeDynamicFetch(rs))
-
-    /* check string buffer for Unicode builds that need buffer expansion */
-
-    if (Env.use_wide_char_conv)
-    {
-        CHECK(OcilibResultsetExpandStrings(rs))
-    }
-
     /* update internal fetch status and variables */
 
     ub4 row_count   = 0;
@@ -558,6 +548,18 @@ static boolean OcilibResultsetFetchData
         }
 
         CHECK(FALSE)
+    }
+    else
+    {
+        /* finalize dynamic fetch */
+        CHECK(OcilibResultFinalizeDynamicFetch(rs))
+
+        /* check string buffer for Unicode builds that need buffer expansion */
+
+        if (Env.use_wide_char_conv)
+        {
+            CHECK(OcilibResultsetExpandStrings(rs))
+        }
     }
 
     SET_SUCCESS()

@@ -49,7 +49,7 @@ OCI_XmlType * OcilibXmlTypeInitialize
     ALLOC_DATA(OCI_IPC_XMLTYPE, xmlType, 1);
 
     xmlType->con    = con;
-    xmlType->lng    = OcilibLongInitialize(stmt, xmlType->lng, def, OCI_CLONG);
+    xmlType->lng    = OcilibLongInitialize(stmt, xmlType->lng, OCI_OBJECT_FETCHED_CLEAN, OCI_CLONG);
 
     if (def)
     {

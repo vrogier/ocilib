@@ -528,11 +528,11 @@ struct OCI_Long
     ub4            hstate;      /* object variable state */
     /* End OCI_Datatype */
     ub4            type;        /* type of long */
-    OCI_Define    *def;         /* pointer to resultset define object */
+    OCI_Bind      *bnd;         /* pointer to bind object */
     ub4            size;        /* size of the buffer read / written */
     ub4            offset;      /* current offset for R/W */
     ub4            piecesize;   /* size of current fetched piece */
-    ub4            maxsize;     /* size to R/W */
+    ub4            maxsize;     /* size to R /W */
     ub1           *buffer;      /* fetched buffer */
 };
 

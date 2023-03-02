@@ -38,7 +38,7 @@ OCI_Long * OcilibLongInitialize
 (
     OCI_Statement *stmt,
     OCI_Long      *lg,
-    OCI_Define    *def,
+    unsigned int   hstate,
     unsigned int   type
 )
 {
@@ -50,20 +50,11 @@ OCI_Long * OcilibLongInitialize
     ALLOC_DATA(OCI_IPC_LONG, lg, 1);
 
     lg->stmt        = stmt;
-    lg->def         = def;
+    lg->hstate      = hstate;
     lg->type        = type;
     lg->offset      = 0;
     lg->piecesize   = 0;
     lg->size        = 0;
-
-    if (def)
-    {
-        lg->hstate = OCI_OBJECT_FETCHED_CLEAN;
-    }
-    else if (OCI_OBJECT_ALLOCATED_ARRAY != lg->hstate)
-    {
-        lg->hstate = OCI_OBJECT_ALLOCATED;
-    }
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -96,7 +87,7 @@ OCI_Long * OcilibLongCreate
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
     CHECK_ENUM_VALUE(type, LongTypeValues, OTEXT("Long Type"))
 
-    SET_RETVAL(OcilibLongInitialize(stmt, NULL, NULL, type))
+    SET_RETVAL(OcilibLongInitialize(stmt, NULL, OCI_OBJECT_ALLOCATED, type))
 
     EXIT_FUNC()
 }
@@ -165,6 +156,7 @@ unsigned int OcilibLongRead
 
     CHECK_PTR(OCI_IPC_LONG, lg)
     CHECK_PTR(OCI_IPC_VOID, buffer)
+    CHECK_OBJECT_FETCHED(lg)
 
     /* lg->size and lg offset are still expressed in db text units even
        if the buffer had already been expanded to otext *
@@ -217,23 +209,23 @@ unsigned int OcilibLongWrite
         /* context */ OCI_IPC_LONG, lg
     )
 
-    sword code = OCI_SUCCESS;
-    void *obuf   = NULL;
-    void *handle = NULL;
-    ub1   in_out = OCI_PARAM_IN;
-    ub1   piece  = OCI_ONE_PIECE;
-    ub4   type   = 0;
-    ub4   iter   = 0;
-    ub4   dx     = 0;
-    ub4   count  = 0;
+    sword code        = OCI_SUCCESS;
+    void *obuf        = NULL;
+    void *handle      = NULL;
+    ub1   in_out      = OCI_PARAM_IN;
+    ub1   piece       = OCI_ONE_PIECE;
+    ub4   type        = 0;
+    ub4   iter        = 0;
+    ub4   dx          = 0;
 
     CHECK_PTR(OCI_IPC_VOID, buffer)
     CHECK_PTR(OCI_IPC_LONG, lg)
 
+    ub4 byte_size =  min(lg->stmt->piece_size, OCI_CLONG == lg->type ? len * sizeof(otext) : len);
+
     if (OCI_CLONG == lg->type)
     {
-        len *= (unsigned int) sizeof(otext);
-        obuf = OcilibStringGetDBString((const otext *) buffer, (int *) &len);
+        obuf = OcilibStringGetDBString((const otext *) buffer, (int *) &byte_size);
     }
     else
     {
@@ -252,25 +244,20 @@ unsigned int OcilibLongWrite
 
     /* set up piece type */
 
-    if (len > 0)
+    if (byte_size > 0)
     {
         piece = (ub1) ((lg->size > 0) ? OCI_NEXT_PIECE : OCI_FIRST_PIECE);
+
+        if ((lg->size + byte_size) >= lg->maxsize)
+        {
+            piece       = OCI_LAST_PIECE;
+            byte_size   = lg->maxsize - lg->size;
+        }
     }
     else
     {
-        piece = (ub1) OCI_LAST_PIECE;
-    }
-
-    /* correct size to write for last piece flag */
-
-    if ((lg->size + len) >= lg->maxsize)
-    {
-        piece = OCI_LAST_PIECE;
-        count = lg->maxsize - lg->size;
-    }
-    else
-    {
-        count = len;
+        piece       = (ub1) OCI_LAST_PIECE;
+        byte_size   = 0;
     }
 
     /* set up info for writing */
@@ -280,7 +267,7 @@ unsigned int OcilibLongWrite
         lg->stmt->con->err,
         OCIStmtSetPieceInfo,
         handle, type, lg->stmt->con->err,
-        (dvoid *) obuf, &count,  piece,
+        (dvoid *) obuf, &byte_size,  piece,
         (dvoid *) NULL, (ub2 *) NULL
     )
 
@@ -298,17 +285,19 @@ unsigned int OcilibLongWrite
 
     /* update size */
 
-    lg->size += count;
+    lg->size += byte_size;
 
     /* at this point, count is expressed in db text bytes for character LONGs
      **/
 
+    unsigned int result = byte_size;
+
     if (OCI_CLONG == lg->type)
     {
-        count /= (unsigned int) sizeof(dbtext);
+        result /= (unsigned int) sizeof(dbtext);
     }
 
-    SET_RETVAL(count)
+    SET_RETVAL(result)
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -384,13 +373,15 @@ OCI_SYM_LOCAL boolean OcilibLongFinalizeDynamicFetch
 
     if (lg->buffer)
     {
-        lg->size += lg->piecesize;
+        if (lg->piecesize > 0)
+        {
+            lg->size += lg->piecesize;
+            lg->piecesize = 0;
+        }
 
         if (OCI_CLONG == lg->type)
         {
             const int len = (int)(lg->size / sizeof(dbtext));
-
-            ((dbtext*)lg->buffer)[len] = 0;
 
             if (Env.use_wide_char_conv)
             {

@@ -695,7 +695,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
     /* get the long object for the given internal row */
 
     OCI_Long* lg = OcilibGetLongObjectFromDefine(def, iter);
-
+   
     /* reset long objects */
     if (*piecep == OCI_FIRST_PIECE)
     {
@@ -703,7 +703,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
         {
             def->buf.data[iter] = OcilibLongInitialize(def->rs->stmt,
                                                        (OCI_Long*)def->buf.data[iter],
-                                                       def, def->col.subtype);
+                                                       OCI_OBJECT_FETCHED_CLEAN, def->col.subtype);
         }
         else if (OCI_CDT_XMLTYPE == def->col.datatype)
         {       
@@ -719,26 +719,26 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
 
         lg->size += (**alenpp);
     }
-                
-    ub4 char_fact     = (OCI_CLONG == lg->type) ? max(1, sizeof(otext) / sizeof(dbtext)) : 1;
-    ub4 trailing_size = (OCI_CLONG == lg->type) ? sizeof(dbtext) * char_fact : 0;
+    
+    ub4 char_fact = (OCI_CLONG == lg->type) ? max(1, sizeof(otext) / sizeof(dbtext)) : 1;
 
     /* check buffer */
 
-    ub4 bufsize = def->rs->stmt->piece_size;
-
     if (!lg->buffer)
     {
-        lg->maxsize = bufsize;
+        lg->maxsize = def->rs->stmt->piece_size;
 
-        ALLOC_DATA(OCI_IPC_LONG_BUFFER, lg->buffer, lg->maxsize)
+        const size_t size_alloc = (size_t) (lg->maxsize + sizeof(dbtext)) * char_fact;
+
+        ALLOC_DATA(OCI_IPC_LONG_BUFFER, lg->buffer, size_alloc)
     }
-    else if ((lg->size + bufsize) >= lg->maxsize)
+    else if ((lg->size + def->rs->stmt->piece_size) > lg->maxsize)
     {
-        lg->maxsize *= ((lg->size + bufsize) / lg->maxsize) + 1;
-
-        lg->buffer = (ub1 *)OcilibMemoryRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER,
-                                                (size_t) lg->maxsize, 1, TRUE);
+        lg->maxsize += def->rs->stmt->piece_size;
+  
+        const size_t size_alloc = (size_t)(lg->maxsize + sizeof(dbtext)) * char_fact;
+  
+        lg->buffer = (ub1 *) OcilibMemoryRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER, size_alloc, 1, TRUE);
     }
    
     /* update piece info */
@@ -756,7 +756,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
         *piecep = OCI_NEXT_PIECE;
     }
 
-    lg->piecesize =(bufsize / char_fact) - trailing_size;
+    lg->piecesize = def->rs->stmt->piece_size;
 
     *bufpp   = (lg->buffer + (size_t) lg->size);
     *alenpp  = (ub4   *) &lg->piecesize;
