@@ -761,6 +761,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
     *bufpp   = (lg->buffer + (size_t) lg->size);
     *alenpp  = (ub4   *) &lg->piecesize;
     *rcodep  = (ub2   *) NULL;
+    *indpp   = &def->buf.inds[iter];
 
     SET_RETVAL(OCI_CONTINUE)
 

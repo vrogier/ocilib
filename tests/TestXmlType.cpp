@@ -303,8 +303,62 @@ TEST(TestXmlType, FetchScrollableCpp)
     ASSERT_EQ(expectedFirst, xmlType2.ToString());
     ASSERT_EQ(expectedFirst, rst.Get<ostring>(1));
 
-
     Environment::Cleanup();
 }
 
+TEST(TestXmlType, FetchWithNulls)
+{ 
+    ExecDML(OTEXT("create table TestXmlTypeFetchWithNulls(id number, xml xmltype)"));
+
+    Environment::Initialize();
+
+    Connection conn(DBS, USR, PWD);
+    Statement stmt (conn);
+
+    const otext* nonNullInsertValue = OTEXT("XMLELEMENT(\"person\",xmlattributes('John' as \"name\"))");
+ 
+    for (int i = 1; i <= 100; i++)
+    {
+        auto value = i % 2 ? nonNullInsertValue : OTEXT("NULL");
+        ostring ddl = OTEXT("insert into TestXmlTypeFetchWithNulls(id, xml) values (") + TO_STRING(i) + OTEXT(", ") + value + OTEXT(")");
+        stmt.Execute(ddl);
+    }
+ 
+    stmt.SetFetchSize(10);
+    stmt.Execute("select id,xml,length(xml) len from TestXmlTypeFetchWithNulls");
+
+    int i = 0;
+    auto rs = stmt.GetResultset();
+    while (rs++)
+    {
+        i++;
+
+        auto id = rs.Get<int>(1);
+        auto value = rs.Get<ostring>(2);
+        auto size = rs.Get<int>(3);
+      
+        ASSERT_EQ(i, id);
+
+        if (i % 2)
+        {
+            auto expectedValue = OTEXT("<person name=\"John\"/>\n");
+            ASSERT_EQ(ToUpper(expectedValue), ToUpper(value));
+        }
+        else
+        {
+            ASSERT_EQ(0, value.size());
+            ASSERT_EQ(true, rs.IsColumnNull(2));
+        }
+
+        ASSERT_EQ(size, value.size());
+    }
+
+    ASSERT_EQ(100, i);
+
+    conn.Commit();
+
+    Environment::Cleanup();
+
+    ExecDML(OTEXT("drop table TestXmlTypeFetchWithNulls"));
+}
 
