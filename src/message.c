@@ -109,6 +109,13 @@ boolean OcilibMessageFree
         OcilibAgentFree(msg->sender);
     }
 
+    /* free local OCI_Date object */
+
+    if (NULL != msg->date)
+    {
+        OcilibDateFree(msg->date);
+    }
+
     /* free internal OCI_Object handle if payload is not RAW */
 
     if (NULL != msg->obj)
@@ -456,19 +463,17 @@ OCI_Date * OcilibMessageGetEnqueueTime
         /* context */ OCI_IPC_MSG, msg
     )
 
-    OCIDate date;
-
     CHECK_PTR(OCI_IPC_MSG, msg)
+
+    msg->date = OcilibDateInitialize(msg->typinf->con, msg->date, NULL, TRUE, FALSE);
+    CHECK_NULL(msg->date)
 
     CHECK_ATTRIB_GET
     (
         OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ENQ_TIME,
-        msg->proph, &date, NULL,
+        msg->proph, msg->date->handle, NULL,
         msg->typinf->con->err
     )
-
-    msg->date = OcilibDateInitialize(msg->typinf->con, msg->date, &date, FALSE, FALSE);
-    CHECK_NULL(msg->date)
 
     SET_RETVAL(msg->date)
 

@@ -699,4 +699,26 @@ TEST(ReportedIssuesCApi, Issue326)
     ASSERT_TRUE(OCI_Cleanup());
 }
 
+
+TEST(ReportedIssuesCApi, Issue347)
+{
+    ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_THREADED));
+
+    const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+    ASSERT_NE(nullptr, conn);
+
+    const auto typeJmsBytesMessage = OCI_TypeInfoGet(conn, JmsBytesMessageType, OCI_TIF_TYPE);
+    ASSERT_NE(nullptr, typeJmsBytesMessage);
+
+    const auto msgRaw = OCI_MsgCreate(typeJmsBytesMessage);
+    ASSERT_NE(nullptr, msgRaw);
+
+    const auto enqueueDate = OCI_MsgGetEnqueueTime(msgRaw);
+    ASSERT_NE(nullptr, enqueueDate);
+
+    ASSERT_TRUE(OCI_MsgFree(msgRaw));
+    ASSERT_TRUE(OCI_ConnectionFree(conn));
+    ASSERT_TRUE(OCI_Cleanup());
+}
+
 INSTANTIATE_TEST_CASE_P(ReportedIssuesCApi, ReportedIssues247, ::testing::ValuesIn(TimestampTypes));
