@@ -578,6 +578,10 @@ boolean OcilibStringGetAttribute
         }
 
         CHECK_NULL(*str)
+
+        /* Ensure that the string value will be NULL terminated */
+
+        (*str)[len] = 0;
     }
 
     SET_SUCCESS()
