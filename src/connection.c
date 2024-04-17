@@ -1664,7 +1664,7 @@ const otext * OcilibConnectionGetServerVersion
                                                   (int*)&ver_min,
                                                   (int*)&ver_rev))
                     {
-                        con->ver_num = ver_maj * 100 + ver_min * 10 + ver_rev;
+                        con->ver_num = OCI_VER_MAKE(ver_maj, ver_min, ver_rev);
                     }
 
                     break;
