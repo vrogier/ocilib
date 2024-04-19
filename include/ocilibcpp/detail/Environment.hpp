@@ -166,7 +166,7 @@ inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int sou
 
     if (handler)
     {
-        Connection connection(pConnection, nullptr);
+        Connection connection(pConnection, nullptr, false);
         Timestamp timestamp(pTimestamp, connection.GetHandle());
 
         handler(connection,
@@ -184,7 +184,7 @@ inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigne
 
     if (handler)
     {
-        Connection connection(pConnection, nullptr);
+        Connection connection(pConnection, nullptr, false);
 
         res = handler(connection,
                       Connection::FailoverRequest( static_cast<Connection::FailoverRequest::Type> (type)),

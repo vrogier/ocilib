@@ -54,7 +54,8 @@ inline TypeInfo Reference::GetTypeInfo() const
     Connection connection
     (
         core::Check(OCI_TypeInfoGetConnection(typeInfo)),
-        Environment::GetEnvironmentHandle()
+        Environment::GetEnvironmentHandle(),
+        false
     );
 
     return TypeInfo(typeInfo, connection.GetHandle());

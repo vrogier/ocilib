@@ -77,7 +77,10 @@ namespace ocilib
             _holders.SetGuard(nullptr);
             _children.SetGuard(nullptr);
 
-            HandleStore::GetStoreForHandle(_parent).Set<SmartHandle*>(_handle, nullptr);
+            if (_parent)
+            {
+                HandleStore::GetStoreForHandle(_parent).Set<SmartHandle*>(_handle, nullptr);
+            }
 
             if (_freeNotifyFunc)
             {

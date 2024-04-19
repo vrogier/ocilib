@@ -217,7 +217,7 @@ inline Statement Exception::GetStatement() const
 
 inline Connection Exception::GetConnection() const
 {
-    return Connection(_pConnnection, Environment::GetEnvironmentHandle());
+    return Connection(_pConnnection, Environment::GetEnvironmentHandle(), false);
 }
 
 inline unsigned int Exception::GetRow() const

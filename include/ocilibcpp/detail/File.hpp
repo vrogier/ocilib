@@ -100,7 +100,8 @@ inline Connection File::GetConnection() const
     return Connection
     (
         core::Check(OCI_FileGetConnection(*this)), 
-        Environment::GetEnvironmentHandle()
+        Environment::GetEnvironmentHandle(),
+        false
     );
 }
 

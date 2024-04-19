@@ -290,3 +290,18 @@ TEST(ReportedIssuesCppApi, Issue331)
 
     Environment::Cleanup();
 }
+
+
+TEST(ReportedIssuesCppApi, Issue355)
+{ 
+    Environment::Initialize(ocilib::Environment::Threaded);
+
+    Pool pool(DBS, USR, PWD,  Pool::SessionPool, 1, 2);
+
+    for (int i = 0; i < 3; ++i) 
+    {
+        ocilib::Connection connection = pool.GetConnection();
+    }
+   
+    Environment::Cleanup();
+}

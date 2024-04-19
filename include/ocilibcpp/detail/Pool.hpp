@@ -62,7 +62,7 @@ inline void Pool::Close()
 
 inline Connection Pool::GetConnection(const ostring& sessionTag)
 {
-    return Connection(core::Check(OCI_PoolGetConnection(*this, sessionTag.c_str())), GetHandle());
+    return Connection(core::Check(OCI_PoolGetConnection(*this, sessionTag.c_str())), GetHandle(), true);
 }
 
 inline unsigned int Pool::GetTimeout() const

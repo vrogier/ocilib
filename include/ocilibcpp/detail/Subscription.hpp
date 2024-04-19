@@ -97,7 +97,8 @@ inline Connection Subscription::GetConnection() const
     return Connection
     (
         core::Check(OCI_SubscriptionGetConnection(*this)),
-        Environment::GetEnvironmentHandle()
+        Environment::GetEnvironmentHandle(),
+        false
     );
 }
 

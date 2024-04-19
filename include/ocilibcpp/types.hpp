@@ -2369,7 +2369,7 @@ namespace ocilib
 
     private:
 
-        Connection(OCI_Connection* con, core::Handle* parent);
+        Connection(OCI_Connection* con, core::Handle* parent, bool allocated);
     };
 
     /**

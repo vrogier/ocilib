@@ -54,7 +54,8 @@ inline Connection TypeInfo::GetConnection() const
     return Connection
     (
         core::Check(OCI_TypeInfoGetConnection(*this)),
-        Environment::GetEnvironmentHandle()
+        Environment::GetEnvironmentHandle(),
+        false
     );
 }
 

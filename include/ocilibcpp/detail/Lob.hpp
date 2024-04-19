@@ -193,7 +193,8 @@ Connection Lob<T, U>::GetConnection() const
     return Connection
     (
         core::Check(OCI_LobGetConnection(*this)), 
-        Environment::GetEnvironmentHandle()
+        Environment::GetEnvironmentHandle(),
+        false
     );
 }
 

@@ -118,7 +118,8 @@ inline TypeInfo Column::GetTypeInfo() const
     Connection connection
     (
         core::Check(OCI_TypeInfoGetConnection(typeInfo)),
-        Environment::GetEnvironmentHandle()
+        Environment::GetEnvironmentHandle(),
+        false
     );
 
     return TypeInfo(typeInfo, connection.GetHandle());

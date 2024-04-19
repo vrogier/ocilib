@@ -40,9 +40,16 @@ inline Connection::Connection(const ostring& db, const ostring& user, const ostr
     Open(db, user, pwd, sessionFlags);
 }
 
-inline Connection::Connection(OCI_Connection *con,  core::Handle *parent)
+inline Connection::Connection(OCI_Connection *con,  core::Handle *parent, bool allocated)
 {
-    AcquireTransient(con, parent);
+    if (allocated)
+    {
+        AcquireAllocated(con, parent);
+    }
+    else
+    {
+        AcquireTransient(con, parent);
+    }
 }
 
 inline void Connection::Open(const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)

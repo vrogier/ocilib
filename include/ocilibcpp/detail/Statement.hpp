@@ -64,7 +64,7 @@ inline Statement::Statement(OCI_Statement *stmt, core::Handle *parent)
 
 inline Connection Statement::GetConnection() const
 {
-    return Connection(core::Check(OCI_StatementGetConnection(*this)), Environment::GetEnvironmentHandle());
+    return Connection(core::Check(OCI_StatementGetConnection(*this)), Environment::GetEnvironmentHandle(), false);
 }
 
 inline void Statement::Describe(const ostring& sql)
