@@ -1055,7 +1055,7 @@ boolean OcilibElementSetRaw
     )
 
     CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    CHECK_COMPAT(OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
+    CHECK_COMPAT(OCI_CDT_RAW == elem->typinf->cols[0].datatype)
 
     if (NULL == value)
     {
