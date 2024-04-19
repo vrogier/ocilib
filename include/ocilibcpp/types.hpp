@@ -1506,12 +1506,15 @@ namespace ocilib
          * @brief
          * Set the waiting mode used when no more connections/sessions are available from the pool
          *
-         * @param value - wait for object
+         * @param value - wait mode for object
          *
          * @note
          * For parameter value, pass :
-         * - true to wait for an available object if the pool is saturated
-         * - false to not wait for an available object
+         * - false to wait for an available object if the pool is saturated
+         * - true to not wait for an available object
+         *
+         * @note
+         * Default pool behavior is to wait for available connections
          *
          */
         void SetNoWait(bool value);

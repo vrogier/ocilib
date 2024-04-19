@@ -1643,12 +1643,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_PoolGetNoWait
  * from the pool
  *
  * @param pool  - Pool handle
- * @param value - wait for object
+ * @param value - wait mode for object
  *
  * @note
  * Pass :
  * - FALSE to wait for an available object if the pool is saturated
  * - TRUE to not wait for an available object
+ * 
+ * @note
+ * Default pool behavior is to wait for available connections
  *
  */
 
