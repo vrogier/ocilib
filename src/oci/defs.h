@@ -137,6 +137,7 @@
 #define OCI_HTYPE_CPOOL         26                 /* connection pool handle */
 #define OCI_HTYPE_SPOOL         27                    /* session pool handle */
 #define OCI_HTYPE_ADMIN         28                           /* admin handle */
+#define OCI_HTYPE_EVENT         29                        /* HA event handle */
 
 /*-------------------------Descriptor Types----------------------------------*/
 
