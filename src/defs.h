@@ -33,7 +33,7 @@
 
   /* for runtime loading, set compile time version to the highest known OCI version */
 
-  #define OCI_VERSION_COMPILE OCI_21_3
+  #define OCI_VERSION_COMPILE OCI_23_5
 
   /* set runtime version to unknown, it will be guessed from symbols loading */
 
