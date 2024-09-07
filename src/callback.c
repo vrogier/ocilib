@@ -589,60 +589,65 @@ void OcilibCallbackHAEvent
 
     if (Env.version_runtime >= OCI_10_2)
     {
+        OCIEvent* evt = (OCIEvent*)eventptr;
+
         HAEventParams params;
 
         memset(&params, 0, sizeof(params));
 
+        params.event  = OCI_HA_STATUS_DOWN;
+        params.source = OCI_HA_SOURCE_INSTANCE;
+
+        /* get event timestamp */
+
         CHECK_ATTRIB_GET
         (
-            OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVFIRST,
-            (OCIEvent *)eventptr, &params.srvhp, NULL,
+            OCI_HTYPE_EVENT, OCI_ATTR_HA_TIMESTAMP,
+            evt, &params.dthp, NULL,
+            Env.err
+        )
+
+        /* get status */
+
+        CHECK_ATTRIB_GET
+        (
+            OCI_HTYPE_EVENT, OCI_ATTR_HA_STATUS,
+            evt, &params.event, NULL,
+            Env.err
+        )
+
+        /* get source */
+
+        CHECK_ATTRIB_GET
+        (
+            OCI_HTYPE_EVENT, OCI_ATTR_HA_SOURCE,
+            evt, &params.source, NULL,
+            Env.err
+        )
+
+        /* get first server */
+    
+        CHECK_ATTRIB_GET
+        (
+            OCI_HTYPE_EVENT, OCI_ATTR_HA_SRVFIRST,
+            evt, &params.srvhp, NULL,
             Env.err
         )
 
         while (params.srvhp)
         {
-            params.dthp   = NULL;
-            params.event  = OCI_HA_STATUS_DOWN;
-            params.source = OCI_HA_SOURCE_INSTANCE;
-
-            /* get event timestamp */
-
-            CHECK_ATTRIB_GET
-            (
-                OCI_HTYPE_SERVER, OCI_ATTR_HA_TIMESTAMP,
-                params.srvhp, &params.dthp, NULL,
-                Env.err
-            )
-
-            /* get status */
-
-            CHECK_ATTRIB_GET
-            (
-                OCI_HTYPE_SERVER, OCI_ATTR_HA_STATUS,
-                params.srvhp, &params.event, NULL,
-                Env.err
-            )
-
-            /* get source */
-
-            CHECK_ATTRIB_GET
-            (
-                OCI_HTYPE_SERVER, OCI_ATTR_HA_SOURCE,
-                params.srvhp, &params.source, NULL,
-                Env.err
-            )
-
             /* notify all related connections */
 
             LIST_ATOMIC_FOREACH_WITH_PARAM(Env.cons, &params, OcilibProcHAEventInvoke)
+
+            params.srvhp = NULL;
 
             /* get next server */
 
             CHECK_ATTRIB_GET
             (
-                OCI_HTYPE_SERVER, OCI_ATTR_HA_SRVNEXT,
-                eventptr, &params.srvhp, NULL,
+                OCI_HTYPE_EVENT, OCI_ATTR_HA_SRVNEXT,
+                evt, &params.srvhp, NULL,
                 Env.err
             )
         }
