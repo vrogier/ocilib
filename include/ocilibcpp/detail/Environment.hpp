@@ -28,18 +28,59 @@
 
 namespace ocilib
 {
-    
+
+inline Environment::Environment(EnvironmentFlags mode, const ostring& libpath) : _charMaxSize(0), _initialized(false), _guard(core::SynchronizationMode::Unsafe), _defaultStore(nullptr)
+{
+    _mode = mode;
+
+    core::Check(OCI_Initialize(nullptr, libpath.c_str(), _mode.GetValues() | OCI_ENV_CONTEXT));
+     _initialized = true;
+  
+     core::Check(OCI_SetUserData(nullptr ,this));
+
+    _guard.SetMode((_mode & Environment::Threaded) == Environment::Threaded ? core::SynchronizationMode::Safe : core::SynchronizationMode::Unsafe);
+    _callbacks.SetGuard(&_guard);      
+    _handle.AcquireTransient
+    (
+        /* returned value IS NOT an OCI_Environment* but OCIEnv* direct handle 
+           to be changed when C API we have public methods for OCI_Environment */
+        static_cast<OCI_Environment*>(const_cast<AnyPointer>(core::Check(OCI_HandleGetEnvironment()))),
+        nullptr
+    );
+
+    _charMaxSize = ComputeCharMaxSize(GetCharset());
+}
+
+inline Environment::~Environment()
+{
+    _guard.SetMode(core::SynchronizationMode::Unsafe);
+    _callbacks.SetGuard(nullptr);
+    _handle.Release();
+
+    if (_initialized)
+    {
+       core::Check(OCI_SetUserData(nullptr ,this));
+       core::Check(OCI_Cleanup());
+    } 
+}
+
 inline void Environment::Initialize(EnvironmentFlags mode, const ostring& libpath)
 {
-    GetInstance().SelfInitialize(mode, libpath);
+  	Environment* environment = static_cast<Environment*>(OCI_GetUserData(nullptr));	
+    if (environment == nullptr)
+    {
+        // not tracking return value here as created environment will be deallocated by Environment::Cleanup
+        core::OnAllocate(new Environment(mode, libpath));
+    }
 }
 
 inline void Environment::Cleanup()
-{
-    GetInstance().SelfCleanup();
-
-	Environment* handle = static_cast<Environment*>(OCI_GetUserData(nullptr));	
-	OCI_SetUserData(nullptr, handle);
+{   
+    Environment* environment = GetInstance();
+    if (environment != nullptr)
+    {
+        delete core::OnDeallocate(environment);
+    }
 
 #ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
 
@@ -51,7 +92,7 @@ inline void Environment::Cleanup()
 
 inline Environment::EnvironmentFlags Environment::GetMode()
 {
-    return GetInstance()._mode;
+    return GetInstance()->_mode;
 }
 
 inline Environment::ImportMode Environment::GetImportMode()
@@ -66,7 +107,7 @@ inline Environment::CharsetMode Environment::GetCharset()
 
 inline unsigned int Environment::GetCharMaxSize()
 {
-    return GetInstance()._charMaxSize;
+    return GetInstance()->_charMaxSize;
 }
 
 inline big_uint Environment::GetAllocatedBytes(AllocatedBytesFlags type)
@@ -76,7 +117,7 @@ inline big_uint Environment::GetAllocatedBytes(AllocatedBytesFlags type)
 
 inline bool Environment::Initialized()
 {
-    return GetInstance()._initialized;
+    return GetInstance()->_initialized;
 }
 
 inline OracleVersion Environment::GetCompileVersion()
@@ -219,7 +260,7 @@ inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
 template<class T>
 T Environment::GetUserCallback(AnyPointer ptr)
 {
-    return reinterpret_cast<T>(GetInstance()._callbacks.Get(ptr));
+    return reinterpret_cast<T>(GetInstance()->_callbacks.Get(ptr));
 }
 
 template<class T>
@@ -227,76 +268,27 @@ void Environment::SetUserCallback(AnyPointer ptr, T callback)
 {
     if (callback)
     {
-        GetInstance()._callbacks.Set(ptr, reinterpret_cast<CallbackPointer>(callback));
+        GetInstance()->_callbacks.Set(ptr, reinterpret_cast<CallbackPointer>(callback));
     }
     else
     {
-        GetInstance()._callbacks.Remove(ptr);
+        GetInstance()->_callbacks.Remove(ptr);
     }
 }
 
 inline core::Handle * Environment::GetEnvironmentHandle()
 {
-    return GetInstance()._handle.GetHandle();
+    return GetInstance()->_handle.GetHandle();
 }
 
-inline Environment& Environment::GetInstance()
+inline Environment* Environment::GetInstance()
 {
-	Environment* handle = static_cast<Environment*>(OCI_GetUserData(nullptr));
-    if (handle != nullptr)
-    {
-        return *handle;
-    }
-
-    static Environment environment;
-
-    OCI_SetUserData(nullptr,&environment);
-
-    return environment;
+    return core::Check(static_cast<Environment*>(OCI_GetUserData(nullptr)));
 }
 
-inline Environment::Environment() : _charMaxSize(0), _initialized(false), _guard(core::SynchronizationMode::Unsafe)
+inline core::HandleStore& Environment::GetDefaultStore()
 {
-
-}
-
-inline void Environment::SelfInitialize(EnvironmentFlags mode, const ostring& libpath)
-{
-    _mode = mode;
-
-    core::Check(OCI_Initialize(nullptr, libpath.c_str(), _mode.GetValues() | OCI_ENV_CONTEXT));
-
-    _initialized = true;
-
-    _guard.SetMode((_mode & Environment::Threaded) == Environment::Threaded ? core::SynchronizationMode::Safe : core::SynchronizationMode::Unsafe);
-
-    _callbacks.SetGuard(&_guard);
-
-    _handle.AcquireTransient
-    (
-        /* returned value IS NOT an OCI_Environment* but OCIEnv* direct handle 
-           to be changed when C API we have public methods for OCI_Environment */
-        static_cast<OCI_Environment*>(const_cast<AnyPointer>(core::Check(OCI_HandleGetEnvironment()))),
-        nullptr
-    );
-
-    _charMaxSize = ComputeCharMaxSize(GetCharset());
-}
-
-inline void Environment::SelfCleanup()
-{
-    _guard.SetMode(core::SynchronizationMode::Unsafe);
-
-    _callbacks.SetGuard(nullptr);
-
-    _handle.Release();
-
-    if (_initialized)
-    {
-        core::Check(OCI_Cleanup());
-    }
-
-    _initialized = false;
+    return GetInstance()->_defaultStore;
 }
 
 }

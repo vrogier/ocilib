@@ -37,6 +37,7 @@
     * Fixes (C++ API)
     
         - Issue 355: Since v4.7.5, connection acquired from ocilib::Pool where not released, leading to pool exhaustion
+        - Issue 362: Calling Environment::Initialize() / Environment::Cleanup() multiple times per process might lead to segfaults with latest embedded vc143 runtime
         
     * Documentation
     

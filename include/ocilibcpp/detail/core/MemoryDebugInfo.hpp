@@ -75,6 +75,12 @@ namespace ocilib
                         << " - Type " << alloc.Name
                         << std::endl;
                 }
+
+                #ifdef OCILIBPP_DEBUG_MEMORY_THROW
+
+                throw std::exception("Unfreed memory in ocilib cpp");
+
+                #endif 
             }
         };
 

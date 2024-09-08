@@ -27,7 +27,7 @@ namespace ocilib
 
 inline MutexHandle Mutex::Create()
 {
-    return Environment::GetInstance().Initialized() ? core::Check(OCI_MutexCreate()) : nullptr;
+    return Environment::GetInstance()->Initialized() ? core::Check(OCI_MutexCreate()) : nullptr;
 }
 
 inline void Mutex::Destroy(MutexHandle handle)

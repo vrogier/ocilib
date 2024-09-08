@@ -227,10 +227,7 @@ struct OCI_Environment
     boolean         use_wide_char_conv;           /* are we on a unix like platform with unicode */
     boolean         warnings_on;                  /* warnings enabled ? */
     boolean         env_vars[OCI_VARS_COUNT];     /* specific environment variables */
-
 };
-
-typedef struct OCI_Environment OCI_Environment;
 
 /*
  * Pool object

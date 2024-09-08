@@ -10,6 +10,9 @@
 #include <algorithm>
 #include <atomic>
 
+#define OCILIBPP_DEBUG_MEMORY_ENABLED
+#define OCILIBPP_DEBUG_MEMORY_THROW
+
 #include <ocilib.hpp>
 
 #ifdef OCI_CHARSET_WIDE

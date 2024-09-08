@@ -263,9 +263,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="ocilib_tests.h">
       <Filter>Tests suite</Filter>
     </ClInclude>
@@ -632,5 +629,8 @@
     <ClInclude Include="..\include\ocilibcpp\detail\XmlType.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

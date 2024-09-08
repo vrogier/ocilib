@@ -34,7 +34,7 @@ namespace ocilib
         template <class T>
         T HandleStore::Get(AnyPointer ptr)
         {
-            return dynamic_cast<T>(_handles.Get(ptr));
+            return reinterpret_cast<T>(_handles.Get(ptr));
         }
 
         template <class T>
@@ -54,16 +54,9 @@ namespace ocilib
         {
             HandleStore* store = handle ? handle->GetStore() : nullptr;
             
-            return store ? *store : GetDefaultStore();
+            return store ? *store : Environment::GetInstance()->GetDefaultStore();
         }
 
-        inline HandleStore& HandleStore::GetDefaultStore()
-        {
-            static SynchronizationGuard guard(SynchronizationMode::Unsafe);
-            static HandleStore store(&guard);
-
-            return store;
-        }
 
     }
 }

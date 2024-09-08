@@ -511,9 +511,10 @@ namespace ocilib
         friend class Message;
         friend class Event;
         friend class Column;
-
         template<class, int>
         friend class Lob;
+
+        friend class core::HandleStore;
 
     public:
 
@@ -1144,15 +1145,16 @@ namespace ocilib
         static void SetUserCallback(AnyPointer ptr, T callback);
 
         static core::Handle* GetEnvironmentHandle();
-        static Environment& GetInstance();
+        static Environment* GetInstance();
 
-        Environment();
-        
-        void SelfInitialize(EnvironmentFlags mode, const ostring& libpath);
-        void SelfCleanup();
+        static core::HandleStore& GetDefaultStore();
+
+        Environment(EnvironmentFlags mode, const ostring& libpath);
+        ~Environment();
 
         core::SynchronizationGuard _guard;
         core::ConcurrentMap<AnyPointer, CallbackPointer> _callbacks;
+        core::HandleStore _defaultStore;
         EnvironmentHandle _handle;
         EnvironmentFlags _mode;
         unsigned int _charMaxSize;
