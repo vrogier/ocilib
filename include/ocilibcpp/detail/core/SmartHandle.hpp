@@ -35,9 +35,8 @@ namespace ocilib
             HandleHolder* holder, T handle, bool allocated,
             SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent
         )
-            : _holders(), _handle(handle), _allocated(allocated),
-            _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store{nullptr},
-            _guard(GetSynchronizationMode())
+            :  _guard(GetSynchronizationMode()), _handle(handle), _allocated(allocated),
+               _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store{nullptr}
         {
             _holders.SetGuard(&_guard);
             _children.SetGuard(&_guard);
@@ -200,3 +199,4 @@ namespace ocilib
         }
     }
 }
+ 

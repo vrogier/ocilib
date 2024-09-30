@@ -102,7 +102,7 @@ namespace ocilib
         template<>
         inline void BindArray::BindArrayObject<ocilib::ostring>::AllocData()
         {
-            const size_t count = _elemSize * _elemCount;
+            const size_t count = static_cast<size_t>(_elemSize * _elemCount);
 
             _data = core::OnAllocate(new otext[count], count);
 
@@ -112,7 +112,7 @@ namespace ocilib
         template<>
         inline void BindArray::BindArrayObject<ocilib::Raw> ::AllocData()
         {
-            const size_t count = _elemSize * _elemCount;
+            const size_t count =  static_cast<size_t>(_elemSize * _elemCount);
 
             _data = core::OnAllocate(new unsigned char[count], count);
 

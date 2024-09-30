@@ -350,12 +350,7 @@ namespace ocilib
 
             static HandleStore& GetStoreForHandle(Handle*);
 
-            template <class T>
-            static HandleStore& CreateStore();
-
         private:
-
-            static HandleStore& GetDefaultStore();
 
             ConcurrentMap<AnyPointer, Handle*>  _handles;
         };
