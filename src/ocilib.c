@@ -2841,10 +2841,10 @@ boolean OCI_API OCI_IntervalGetDaySecond
     int         * hour,
     int         * min,
     int         * sec,
-    int         * fsec
+    int         * nsec
 )
 {
-    CALL_IMPL(OcilibIntervalGetDaySecond, itv, day, hour, min, sec, fsec)
+    CALL_IMPL(OcilibIntervalGetDaySecond, itv, day, hour, min, sec, nsec)
 }
 
 boolean OCI_API OCI_IntervalGetYearMonth
@@ -2864,10 +2864,10 @@ boolean OCI_API OCI_IntervalSetDaySecond
     int           hour,
     int           min,
     int           sec,
-    int           fsec
+    int           nsec
 )
 {
-    CALL_IMPL(OcilibIntervalSetDaySecond, itv, day, hour, min, sec, fsec)
+    CALL_IMPL(OcilibIntervalSetDaySecond, itv, day, hour, min, sec, nsec)
 }
 
 boolean OCI_API OCI_IntervalSetYearMonth

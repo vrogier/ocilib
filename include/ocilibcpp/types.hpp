@@ -3330,19 +3330,33 @@ namespace ocilib
 
         /**
         * @brief
+        * Return the interval nano seconds value
+        *
+        */
+        int GetNanoSeconds() const;
+
+        /**
+        * @brief
+        * Set the interval nano seconds value
+        *
+        */
+        void SetNanoSeconds(int value);
+
+        /**
+        * @brief
         * Extract the date / second parts from the interval value
         *
         * @param day  - Place holder for Day value
         * @param hour - Place holder for Hour value
         * @param min  - Place holder for Minutes value
         * @param sec  - Place holder for Seconds value
-        * @param fsec - Place holder for Milliseconds value
+        * @param nsec - Place holder for NanoSeconds value
         *
         * @warning
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        void GetDaySecond(int& day, int& hour, int& min, int& sec, int& fsec) const;
+        void GetDaySecond(int& day, int& hour, int& min, int& sec, int& nsec) const;
 
         /**
         * @brief
@@ -3352,13 +3366,13 @@ namespace ocilib
         * @param hour - Hour value
         * @param min  - Minutes value
         * @param sec  - Seconds value
-        * @param fsec - Milliseconds value
+        * @param nsec - NanoSeconds value
         *
         * @warning
-        * this call is only permitted if the current interval type is  Interval::DaySecond
+        * this call is only permitted if the current interval type is Interval::DaySecond
         *
         */
-        void SetDaySecond(int day, int hour, int min, int sec, int fsec);
+        void SetDaySecond(int day, int hour, int min, int sec, int nsec);
 
         /**
         * @brief

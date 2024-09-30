@@ -11449,7 +11449,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalFromTimeZone
  * @param hour - Place holder for hours value
  * @param min  - Place holder for minutes value
  * @param sec  - Place holder for seconds value
- * @param fsec - Place holder for fractional part of seconds value
+ * @param nsec - Place holder for nanoseconds value
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -11463,7 +11463,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalGetDaySecond
     int *         hour,
     int *         min,
     int *         sec,
-    int *         fsec
+    int *         nsec
 );
 
 /**
@@ -11495,7 +11495,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalGetYearMonth
  * @param hour  - Hour value
  * @param min   - Minute value
  * @param sec   - Second value
- * @param fsec  - Fractional part of the seconds
+ * @param nsec  - Nanoseconds value
  *
  * @return
  * TRUE on success otherwise FALSE

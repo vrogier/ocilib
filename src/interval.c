@@ -546,7 +546,7 @@ boolean OcilibIntervalGetDaySecond
     int          *hour,
     int          *min,
     int          *sec,
-    int          *fsec
+    int          *nsec
 )
 {
     ENTER_FUNC
@@ -559,13 +559,13 @@ boolean OcilibIntervalGetDaySecond
     CHECK_PTR(OCI_IPC_INT,      hour)
     CHECK_PTR(OCI_IPC_INT,      min)
     CHECK_PTR(OCI_IPC_INT,      sec)
-    CHECK_PTR(OCI_IPC_INT,      fsec)
+    CHECK_PTR(OCI_IPC_INT,      nsec)
 
     *day  = 0;
     *hour = 0;
     *min  = 0;
     *sec  = 0;
-    *fsec = 0;
+    *nsec = 0;
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -575,7 +575,7 @@ boolean OcilibIntervalGetDaySecond
         OCIIntervalGetDaySecond,
         (dvoid *) itv->env, itv->err,
         (sb4 *) day, (sb4 *) hour, (sb4 *) min,
-        (sb4 *) sec, (sb4 *) fsec, itv->handle
+        (sb4 *) sec, (sb4 *) nsec, itv->handle
     )
 
     SET_SUCCESS()
@@ -586,7 +586,7 @@ boolean OcilibIntervalGetDaySecond
     OCI_NOT_USED(hour)
     OCI_NOT_USED(min)
     OCI_NOT_USED(sec)
-    OCI_NOT_USED(fsec)
+    OCI_NOT_USED(nsec)
 
 #endif
 
@@ -646,7 +646,7 @@ boolean OcilibIntervalSetDaySecond
     int           hour,
     int           min,
     int           sec,
-    int           fsec
+    int           nsec
 )
 {
     ENTER_FUNC
@@ -665,7 +665,7 @@ boolean OcilibIntervalSetDaySecond
         OCIIntervalSetDaySecond,
         (dvoid *) itv->env, itv->err,
         (sb4) day, (sb4) hour, (sb4) min,
-        (sb4) sec, (sb4) fsec, itv->handle
+        (sb4) sec, (sb4) nsec, itv->handle
     )
 
     SET_SUCCESS()
@@ -676,7 +676,7 @@ boolean OcilibIntervalSetDaySecond
     OCI_NOT_USED(hour)
     OCI_NOT_USED(min)
     OCI_NOT_USED(sec)
-    OCI_NOT_USED(fsec)
+    OCI_NOT_USED(nsec)
 
 #endif
 
