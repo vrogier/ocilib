@@ -1,26 +1,27 @@
-2024-09-07 Version 4.7.7 Vincent Rogier vince.rogier@ocilib.net
+2024-10-02 Version 4.7.7 Vincent Rogier vince.rogier@ocilib.net
 
    * Enhancements (C API)
 
-    - Oracle XMLTYPE is now partially supported
-        * Added OCI_XmlType* data type (OCI_CDT_XMLTYPE) that can only be fetched from resultets in this current release
-        * OCI_ColumnGetType() reports "XMLTYPE" as SQL type
-        * OCI_TypeInfoGet() returns a valid OCI_TypeInfo handle for the type name "SYS.XMLTYPE"
-        * OCI_GetString() returns a string representation of a XMLTYPE object
-        * Added the following new APIs:
-            - OCI_GetXmlType()
-            - OCI_GetXmlType2()
-            - OCI_XmlTypeToText()
-        * In this current release, use OCI_GetString() instead of OCI_GetXmlType() as: 
-            - OCI_XmlType handles can only be used to getting XML content strings, which is already done by OCI_GetString()
-            - In later releases, OCI_XmlType API will evolve to support local xml object creation, DOM manipulation, SQL binding
+        - Oracle XMLTYPE is now partially supported
+            * Added OCI_XmlType* data type (OCI_CDT_XMLTYPE) that can only be fetched from resultets in this current release
+            * OCI_ColumnGetType() reports "XMLTYPE" as SQL type
+            * OCI_TypeInfoGet() returns a valid OCI_TypeInfo handle for the type name "SYS.XMLTYPE"
+            * OCI_GetString() returns a string representation of a XMLTYPE object
+            * Added the following new APIs:
+                - OCI_GetXmlType()
+                - OCI_GetXmlType2()
+                - OCI_XmlTypeToText()
+            * In this current release, use OCI_GetString() instead of OCI_GetXmlType() as: 
+                - OCI_XmlType handles can only be used to getting XML content strings, which is already done by OCI_GetString()
+                - In later releases, OCI_XmlType API will evolve to support local xml object creation, DOM manipulation, SQL binding
         
    * Enhancements (C++ API)
 
-    - Oracle XMLTYPE is now partially supported:
-        * Added ocilib::XmlType class (that can only be retrieved using ocilib::Resultset::Get<ocilib::XmlType>())
-        * ocilib::Resultset::Get<ostring>() returns a string representation of the XMLTYPE object
-   
+        - Oracle XMLTYPE is now partially supported:
+            * Added ocilib::XmlType class (that can only be retrieved using ocilib::Resultset::Get<ocilib::XmlType>())
+            * ocilib::Resultset::Get<ostring>() returns a string representation of the XMLTYPE object
+        - Added Interval::GetNanoSeconds() and Interval::SetNanoSeconds()
+        
    * Fixes (C API)
 
         - Issue 329: OCI_GetSqlIdentifier() returns invalid values for Scrollable Statements when called more than once
@@ -42,10 +43,11 @@
     * Documentation
     
         - Issue 352 : Fixed documentation for OCI_PoolGetNoWait and ocilib::Pool::SetNoWait()
+        - Issue 363 : Fixed documentation for OCI_IntervalGetDaySecond and OCI_IntervalSetDaySecond(), Interval::GetDaySecond() and GetSaySecond()
 
 2023-02-08 Version 4.7.6 Vincent Rogier vince.rogier@ocilib.net
 
-   * Fixes (C API)
+    * Fixes (C API)
 
 		- Issue 326: OCI_GetTimeout() always returns 0 since v4.7.0
 
