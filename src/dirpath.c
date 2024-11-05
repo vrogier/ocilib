@@ -982,6 +982,7 @@ boolean OcilibDirPathReset
     dp->idx_err_row  = 0;
     dp->idx_err_col  = 0;
     dp->load_offset  = 0;
+    dp->nb_cur = dp->nb_rows;
 
     /* reset array */
 
