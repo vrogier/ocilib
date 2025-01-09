@@ -2525,6 +2525,37 @@ namespace ocilib
 
         /**
         * @brief
+        * Create a number object initialized with given numerical value
+        *
+        * @param value - value to assign
+        *
+        */
+        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        Number(const T& value);
+
+
+        /**
+        * @brief
+        * For value types, overrides HandleHolder copy constructor to perform assignment rather 
+        * than ref counting management
+        *
+        * @param other - value to assign
+        *
+        */
+        Number(const Number& other);
+
+        /**
+         * @brief
+         * For value types, overrides HandleHolder assignment operator to perform assignment rather 
+         * than ref counting management
+         *
+         * @param other - value to assign
+         *
+         */
+        Number& operator= (const Number& other) noexcept;
+
+        /**
+        * @brief
         * Create a Number object with the value provided by the input Number string
         *
         * @param str    - String Number
@@ -2708,6 +2739,26 @@ namespace ocilib
          *
          */
         Date(bool create = false);
+
+        /**
+         * @brief
+         * For value types, overrides HandleHolder copy constructor to perform assignment rather 
+         * than ref counting management
+         *
+         * @param other - value to assign
+         *
+         */
+        Date(const Date& other);
+
+         /**
+         * @brief
+         * For value types, overrides HandleHolder assignment operator to perform assignment rather 
+         * than ref counting management
+         *
+         * @param other - value to assign
+         *
+         */
+        Date& operator= (const Date& other) noexcept;
 
         /**
         * @brief
@@ -3167,6 +3218,26 @@ namespace ocilib
         */
         Interval(IntervalType type);
 
+       /**
+        * @brief
+        * For value types, overrides HandleHolder copy constructor to perform assignment rather 
+        * than ref counting management
+        *
+        * @param other - value to assign
+        *
+        */
+        Interval(const Interval& other);
+
+        /**
+         * @brief
+         * For value types, overrides HandleHolder assignment operator to perform assignment rather 
+         * than ref counting management
+         *
+         * @param other - value to assign
+         *
+         */
+        Interval& operator= (const Interval& other) noexcept;
+
         /**
         * @brief
         * Create an interval object with the value provided by the input interval string
@@ -3519,6 +3590,8 @@ namespace ocilib
 
         int Compare(const Interval& other) const;
 
+        void Allocate(IntervalType type);
+
         Interval(OCI_Interval* pInterval, core::Handle* parent = nullptr);
     };
 
@@ -3582,6 +3655,26 @@ namespace ocilib
         *
         */
         Timestamp();
+
+        /**
+        * @brief
+        * For value types, overrides HandleHolder copy constructor to perform assignment rather 
+        * than ref counting management
+        *
+        * @param other - value to assign
+        *
+        */
+        Timestamp(const Timestamp& other);
+
+        /**
+         * @brief
+         * For value types, overrides HandleHolder assignment operator to perform assignment rather 
+         * than ref counting management
+         *
+         * @param other - value to assign
+         *
+         */
+        Timestamp& operator= (const Timestamp& other) noexcept;
 
         /**
         * @brief
@@ -4025,6 +4118,8 @@ namespace ocilib
     private:
 
         int Compare(const Timestamp& other) const;
+
+        void Allocate(TimestampType type);
 
         Timestamp(OCI_Timestamp* pTimestamp, core::Handle* parent = nullptr);
     };

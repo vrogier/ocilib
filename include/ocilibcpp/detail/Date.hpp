@@ -33,6 +33,26 @@ inline Date::Date(bool create)
     }
 }
 
+inline Date::Date(const Date& other)
+{
+    *this = other;
+}
+
+inline Date& Date::operator= (const Date& other) noexcept
+{
+    if (this != &other)
+    {
+        if (IsNull())
+        {
+            Allocate();
+        }
+
+        core::Check(OCI_DateAssign(*this, other));
+    }
+
+    return *this;
+}
+
 inline Date::Date(const ostring& str, const ostring& format)
 {
     Allocate();

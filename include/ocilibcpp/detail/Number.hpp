@@ -33,6 +33,32 @@ inline Number::Number(bool create)
     }
 }
 
+template<class T, typename core::SupportedNumeric<T>::Type::type*>
+Number::Number(const T &value)
+{
+    *this = value;
+}
+
+inline Number::Number(const Number& other)
+{
+    *this = other;
+}
+
+inline Number& Number::operator= (const Number& other) noexcept
+{
+    if (this != &other)
+    {
+        if (IsNull())
+        {
+            Allocate();
+        }
+
+        core::Check(OCI_NumberAssign(*this, other));
+    }
+
+    return *this;
+}
+
 inline Number::Number(OCI_Number *pNumber, core::Handle *parent)
 {
     AcquireTransient(pNumber, parent);

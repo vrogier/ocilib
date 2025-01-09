@@ -34,11 +34,7 @@ inline Timestamp::Timestamp()
 
 inline Timestamp::Timestamp(TimestampType type)
 {
-    AcquireAllocated
-    (
-        core::Check(OCI_TimestampCreate(nullptr, type)),
-        Environment::GetEnvironmentHandle()
-    );
+    Allocate(type);
 }
 
 inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostring& format)
@@ -55,6 +51,35 @@ inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostri
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, core::Handle *parent)
 {
     AcquireTransient(pTimestamp, parent);
+}
+
+inline Timestamp::Timestamp(const Timestamp& other)
+{
+    *this = other;
+}
+
+inline Timestamp& Timestamp::operator= (const Timestamp& other) noexcept
+{
+    if (this != &other)
+    {
+        if (IsNull())
+        {
+            Allocate(other.GetType());
+        }
+
+        core::Check(OCI_TimestampAssign(*this, other));
+    }
+
+    return *this;
+}
+
+inline void Timestamp::Allocate(TimestampType type)
+{
+    AcquireAllocated
+    (
+        core::Check(OCI_TimestampCreate(nullptr, type)),
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline Timestamp Timestamp::Clone() const
