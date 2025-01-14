@@ -18,7 +18,7 @@ It requires Oracle Client libraries (Regular or instant client).
 	</description>
 	<authors>Vincent Rogier</authors>
     <owners>Vincentt Rogier</owners>
-	<releaseNotes>https://github.com/vrogier/ocilib/releases/tag/v4.7.6</releaseNotes>
+	<releaseNotes>https://github.com/vrogier/ocilib/releases/tag/v4.7.7</releaseNotes>
     <projectUrl>https://github.com/vrogier/ocilib</projectUrl>
     <iconUrl>http://ocilib.net/images/logo-160x120.png</iconUrl>
 	<icon>images\logo-160x120.png</icon>
@@ -27,7 +27,7 @@ It requires Oracle Client libraries (Regular or instant client).
     <licenseUrl>https://licenses.nuget.org/Apache-2.0</licenseUrl>
     <copyright>Copyright 2007-2025 Vincent Rogier</copyright>
     <tags>Oracle SQL C C++ OCI API Access Driver</tags>
-    <repository type="git" url="https://github.com/vrogier/ocilib.git" commit="85956c325350e5841cca4a77c34b1cb22a491926" />
+    <repository type="git" url="https://github.com/vrogier/ocilib.git" commit="659bb8299886a7b7c98a2690c116c8a2a57a376d" />
   </metadata>
   <files>
     <file src="ocilib.props" target="build\native" />
