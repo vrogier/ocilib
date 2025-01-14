@@ -739,7 +739,7 @@ void test_piecewise_insert(void)
         Statement st(con);
         Blong lg(st);
         st.Prepare(otext("insert into test_long_raw(code, content) values (1, :data)"));
-        st.SetLongMaxSize(static_cast<unsigned int>(size));
+        st.OCI_SetPieceSize(static_cast<unsigned int>(size));
         st.Bind(otext(":data"), lg, static_cast<unsigned int>(size), BindInfo::In);
         st.ExecutePrepared();
 

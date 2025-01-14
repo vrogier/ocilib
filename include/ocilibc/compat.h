@@ -304,7 +304,7 @@
 #define OCI_STRING_FORMAT_NUM_BIN               OCI_STRING_FORMAT_NUM_BDOUBLE
 
 
-/* macro added in version 4.8.0 */
+/* macro added in version 4.7.7 */
 
 #define OCI_SIZE_LONG                           OCI_SIZE_PIECE_DYNAMIC_FETCH
 #define OCI_SetLongMaxSize(st, sz)              OCI_SetPieceSize(st, sz)
