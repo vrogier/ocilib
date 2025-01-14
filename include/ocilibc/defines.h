@@ -81,7 +81,9 @@
 #define OCI_21_15                           OCI_VER_MAKE(21, 15, 0)
 #define OCI_21_3                            OCI_VER_MAKE(21, 3, 0)
 #define OCI_23_3                            OCI_VER_MAKE(23, 3, 0)
+#define OCI_23_4                            OCI_VER_MAKE(23, 4, 0)
 #define OCI_23_5                            OCI_VER_MAKE(23, 5, 0)
+#define OCI_23_6                            OCI_VER_MAKE(23, 6, 0)
 
 /* OCILIB Error types */
 
