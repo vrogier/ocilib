@@ -81,7 +81,7 @@ namespace ocilib
 
                 #ifdef OCILIBPP_DEBUG_MEMORY_THROW
 
-                throw std::exception("Unfreed memory in ocilib cpp");
+                throw std::runtime_error("Unfreed memory in ocilib cpp");
 
                 #endif 
             }
