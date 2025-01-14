@@ -63,6 +63,7 @@ var annotated_dup =
       [ "ThreadKey", "classocilib_1_1_thread_key.html", "classocilib_1_1_thread_key" ],
       [ "Timestamp", "classocilib_1_1_timestamp.html", "classocilib_1_1_timestamp" ],
       [ "Transaction", "classocilib_1_1_transaction.html", "classocilib_1_1_transaction" ],
-      [ "TypeInfo", "classocilib_1_1_type_info.html", "classocilib_1_1_type_info" ]
+      [ "TypeInfo", "classocilib_1_1_type_info.html", "classocilib_1_1_type_info" ],
+      [ "XmlType", "classocilib_1_1_xml_type.html", "classocilib_1_1_xml_type" ]
     ] ]
 ];

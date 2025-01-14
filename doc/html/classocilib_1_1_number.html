@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.5</span>
+   &#160;<span id="projectnumber">4.7.7</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -112,6 +112,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5a7daa4f309c64b9170a24395410d45a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_number.html#a5a7daa4f309c64b9170a24395410d45a">Number</a> (bool create=false)</td></tr>
 <tr class="memdesc:a5a7daa4f309c64b9170a24395410d45a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an empty null number object.  <br /></td></tr>
 <tr class="separator:a5a7daa4f309c64b9170a24395410d45a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c68e4d217961ffba54405ba4c46b03f"><td class="memTemplParams" colspan="2">template&lt;class T , typename <a class="el" href="structocilib_1_1core_1_1_supported_numeric.html">core::SupportedNumeric</a>&lt; T &gt;::Type::type *  = nullptr&gt; </td></tr>
+<tr class="memitem:a0c68e4d217961ffba54405ba4c46b03f"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classocilib_1_1_number.html#a0c68e4d217961ffba54405ba4c46b03f">Number</a> (const T &amp;value)</td></tr>
+<tr class="memdesc:a0c68e4d217961ffba54405ba4c46b03f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a number object initialized with given numerical value.  <br /></td></tr>
+<tr class="separator:a0c68e4d217961ffba54405ba4c46b03f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94756c6cc1d0bed5f33089053d367501"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_number.html#a94756c6cc1d0bed5f33089053d367501">Number</a> (const <a class="el" href="classocilib_1_1_number.html">Number</a> &amp;other)</td></tr>
+<tr class="memdesc:a94756c6cc1d0bed5f33089053d367501"><td class="mdescLeft">&#160;</td><td class="mdescRight">For value types, overrides HandleHolder copy constructor to perform assignment rather than ref counting management.  <br /></td></tr>
+<tr class="separator:a94756c6cc1d0bed5f33089053d367501"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a883deda33d1a0840eed55507b6cd3258"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classocilib_1_1_number.html">Number</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_number.html#a883deda33d1a0840eed55507b6cd3258">operator=</a> (const <a class="el" href="classocilib_1_1_number.html">Number</a> &amp;other) noexcept</td></tr>
+<tr class="memdesc:a883deda33d1a0840eed55507b6cd3258"><td class="mdescLeft">&#160;</td><td class="mdescRight">For value types, overrides HandleHolder assignment operator to perform assignment rather than ref counting management.  <br /></td></tr>
+<tr class="separator:a883deda33d1a0840eed55507b6cd3258"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a445cd661a6c1fcb7eb8d67d3a061d91e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_number.html#a445cd661a6c1fcb7eb8d67d3a061d91e">Number</a> (const otext *str, const otext *format=OTEXT(&quot;&quot;))</td></tr>
 <tr class="memdesc:a445cd661a6c1fcb7eb8d67d3a061d91e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <a class="el" href="classocilib_1_1_number.html" title="Object identifying the SQL data type NUMBER.">Number</a> object with the value provided by the input <a class="el" href="classocilib_1_1_number.html" title="Object identifying the SQL data type NUMBER.">Number</a> string.  <br /></td></tr>
 <tr class="separator:a445cd661a6c1fcb7eb8d67d3a061d91e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -136,10 +146,10 @@ Public Member Functions</h2></td></tr>
 <p>This class wraps the OCILIB object handle OCI_Number and its related methods</p>
 <p>NUMBERs can be handled using native scalar types This class is optional and exposes some special NUMBER properties </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l02496">2496</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l02506">2506</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a5a7daa4f309c64b9170a24395410d45a" name="a5a7daa4f309c64b9170a24395410d45a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a7daa4f309c64b9170a24395410d45a">&#9670;&#160;</a></span>Number() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a7daa4f309c64b9170a24395410d45a">&#9670;&#160;</a></span>Number() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -174,8 +184,74 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a0c68e4d217961ffba54405ba4c46b03f" name="a0c68e4d217961ffba54405ba4c46b03f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c68e4d217961ffba54405ba4c46b03f">&#9670;&#160;</a></span>Number() <span class="overload">[2/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T , typename <a class="el" href="structocilib_1_1core_1_1_supported_numeric.html">core::SupportedNumeric</a>&lt; T &gt;::Type::type * &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">ocilib::Number::Number </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a number object initialized with given numerical value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>- value to assign </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00037">37</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a94756c6cc1d0bed5f33089053d367501" name="a94756c6cc1d0bed5f33089053d367501"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94756c6cc1d0bed5f33089053d367501">&#9670;&#160;</a></span>Number() <span class="overload">[3/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ocilib::Number::Number </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classocilib_1_1_number.html">Number</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>For value types, overrides HandleHolder copy constructor to perform assignment rather than ref counting management. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>- value to assign </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00042">42</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a445cd661a6c1fcb7eb8d67d3a061d91e" name="a445cd661a6c1fcb7eb8d67d3a061d91e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a445cd661a6c1fcb7eb8d67d3a061d91e">&#9670;&#160;</a></span>Number() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a445cd661a6c1fcb7eb8d67d3a061d91e">&#9670;&#160;</a></span>Number() <span class="overload">[4/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -220,14 +296,14 @@ Public Member Functions</h2></td></tr>
 <dd>
 Default connection <a class="el" href="classocilib_1_1_number.html" title="Object identifying the SQL data type NUMBER.">Number</a> format is computed from <a class="el" href="classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f" title="Return the format string for implicit string conversions of the given type.">Environment::GetFormat()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00048">48</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00074">74</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_number.html#a5b10645346c76c78c40505d2ebcf1ee1">FromString()</a>.</p>
 
 </div>
 </div>
 <a id="ae18ee9902c947edc9adeefdf5aff2376" name="ae18ee9902c947edc9adeefdf5aff2376"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae18ee9902c947edc9adeefdf5aff2376">&#9670;&#160;</a></span>Number() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae18ee9902c947edc9adeefdf5aff2376">&#9670;&#160;</a></span>Number() <span class="overload">[5/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -272,13 +348,51 @@ Default connection <a class="el" href="classocilib_1_1_number.html" title="Objec
 <dd>
 Default connection <a class="el" href="classocilib_1_1_number.html" title="Object identifying the SQL data type NUMBER.">Number</a> format is computed from <a class="el" href="classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f" title="Return the format string for implicit string conversions of the given type.">Environment::GetFormat()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00041">41</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00067">67</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_number.html#a5b10645346c76c78c40505d2ebcf1ee1">FromString()</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a883deda33d1a0840eed55507b6cd3258" name="a883deda33d1a0840eed55507b6cd3258"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a883deda33d1a0840eed55507b6cd3258">&#9670;&#160;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classocilib_1_1_number.html">Number</a> &amp; ocilib::Number::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classocilib_1_1_number.html">Number</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>For value types, overrides HandleHolder assignment operator to perform assignment rather than ref counting management. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>- value to assign </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00047">47</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_oracle_number.html#gaed7cf75ee3af6cac734f1963f486d5e9">OCI_NumberAssign()</a>.</p>
+
+</div>
+</div>
 <a id="a5b10645346c76c78c40505d2ebcf1ee1" name="a5b10645346c76c78c40505d2ebcf1ee1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5b10645346c76c78c40505d2ebcf1ee1">&#9670;&#160;</a></span>FromString()</h2>
 
@@ -325,7 +439,7 @@ Default connection <a class="el" href="classocilib_1_1_number.html" title="Objec
 <dd>
 Default connection number format is computed from <a class="el" href="classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f" title="Return the format string for implicit string conversions of the given type.">Environment::GetFormat()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00064">64</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00090">90</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, <a class="el" href="namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59ac7156fdcd818567f2f61458413af1e38">ocilib::FormatNumeric</a>, <a class="el" href="classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f">ocilib::Environment::GetFormat()</a>, and <a class="el" href="group___ocilib_c_api_oracle_number.html#gaa34870402fb69d90842840010920050f">OCI_NumberFromText()</a>.</p>
 
@@ -366,7 +480,7 @@ Default connection number format is computed from <a class="el" href="classocili
 </dl>
 <dl class="section note"><dt>Note</dt><dd>For number formats, refer to the Oracle SQL documentation </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00069">69</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00095">95</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, <a class="el" href="namespaceocilib_1_1core.html#a83120353da816337cfe839f435f238fe">ocilib::core::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_oracle_number.html#gac8cb94d41a6ca3e77e586523d5e3126e">OCI_NumberToText()</a>.</p>
 
@@ -400,7 +514,7 @@ Default connection number format is computed from <a class="el" href="classocili
 
 <p>Implements <a class="el" href="classocilib_1_1core_1_1_streamable.html">ocilib::core::Streamable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00085">85</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00111">111</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59ac7156fdcd818567f2f61458413af1e38">ocilib::FormatNumeric</a>, <a class="el" href="classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f">ocilib::Environment::GetFormat()</a>, and <a class="el" href="classocilib_1_1_number.html#a59adc1be9880aa25eb34ffca1403be9c">ToString()</a>.</p>
 
@@ -433,7 +547,7 @@ Default connection number format is computed from <a class="el" href="classocili
 
 <p>Clone the current instance to a new one performing deep copy. </p>
 
-<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00090">90</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_number_8hpp_source.html#l00116">116</a> of file <a class="el" href="_number_8hpp_source.html">Number.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_oracle_number.html#gaed7cf75ee3af6cac734f1963f486d5e9">OCI_NumberAssign()</a>.</p>
 
@@ -446,7 +560,7 @@ Default connection number format is computed from <a class="el" href="classocili
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_number.html">Number</a></li>
-    <li class="footer">Generated on Mon Feb 6 2023 20:52:13 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

@@ -63,5 +63,7 @@ var group___ocilib_c_api_user_types =
     [ "OCI_RefIsNull", "group___ocilib_c_api_user_types.html#ga10961386f90aaf31eeb7d4465eabcb00", null ],
     [ "OCI_RefSetNull", "group___ocilib_c_api_user_types.html#gacb262804ac70d64b9a0c786e17fdefb0", null ],
     [ "OCI_RefGetHexSize", "group___ocilib_c_api_user_types.html#gabe39454c2deb0c8be8f7dada8a2da95c", null ],
-    [ "OCI_RefToText", "group___ocilib_c_api_user_types.html#gada8070fcff371bfb8d0262aabfab581a", null ]
+    [ "OCI_RefToText", "group___ocilib_c_api_user_types.html#gada8070fcff371bfb8d0262aabfab581a", null ],
+    [ "OCI_XmlTypeGetContent", "group___ocilib_c_api_user_types.html#ga36a36c16a0d1b3b8eb5b9ea85b80f7a4", null ],
+    [ "OCI_XmlTypeGetContentSize", "group___ocilib_c_api_user_types.html#gada2c2c40af58c66b77fa281db303451c", null ]
 ];

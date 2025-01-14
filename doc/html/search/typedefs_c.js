@@ -38,7 +38,8 @@ var searchData=
   ['oci_5ftypeinfo_35',['OCI_TypeInfo',['../group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6',1,'types.h']]],
   ['oci_5fvariant_36',['OCI_Variant',['../group___ocilib_c_api_datatypes.html#gac5f6e0444dd008148afbad207c8dd630',1,'types.h']]],
   ['oci_5fxid_37',['OCI_XID',['../group___ocilib_c_api_datatypes.html#ga56df9baec6ef3397e359102b323b3d7e',1,'types.h']]],
-  ['openmode_38',['OpenMode',['../namespaceocilib.html#a082d99a27ea9bfaa6418dce68123d4ab',1,'ocilib']]],
-  ['oracleversion_39',['OracleVersion',['../namespaceocilib.html#afe3d8221cc75c2b963b8af79fa524d3d',1,'ocilib']]],
-  ['ostring_40',['ostring',['../namespaceocilib.html#a01daa07e307e429b66fb80f442362237',1,'ocilib']]]
+  ['oci_5fxmltype_38',['OCI_XmlType',['../group___ocilib_c_api_datatypes.html#ga14291b3c4b2b3ab1e3d5efc108251e22',1,'types.h']]],
+  ['openmode_39',['OpenMode',['../namespaceocilib.html#a082d99a27ea9bfaa6418dce68123d4ab',1,'ocilib']]],
+  ['oracleversion_40',['OracleVersion',['../namespaceocilib.html#afe3d8221cc75c2b963b8af79fa524d3d',1,'ocilib']]],
+  ['ostring_41',['ostring',['../namespaceocilib.html#a01daa07e307e429b66fb80f442362237',1,'ocilib']]]
 ];

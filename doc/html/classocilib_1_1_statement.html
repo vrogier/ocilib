@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.5</span>
+   &#160;<span id="projectnumber">4.7.7</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -313,12 +313,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac92a0edfa13659adb4f93d1f1101f4d1"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#ac92a0edfa13659adb4f93d1f1101f4d1">GetPrefetchMemory</a> () const</td></tr>
 <tr class="memdesc:ac92a0edfa13659adb4f93d1f1101f4d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the amount of memory used to retrieve rows pre-fetched by OCI Client.  <br /></td></tr>
 <tr class="separator:ac92a0edfa13659adb4f93d1f1101f4d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6714db7af83a10a81d8e60e54a2e10f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#ae6714db7af83a10a81d8e60e54a2e10f">SetLongMaxSize</a> (unsigned int value)</td></tr>
-<tr class="memdesc:ae6714db7af83a10a81d8e60e54a2e10f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the LONG data type piece buffer size.  <br /></td></tr>
-<tr class="separator:ae6714db7af83a10a81d8e60e54a2e10f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a888f1edb17ddf23cad6d01c302884972"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#a888f1edb17ddf23cad6d01c302884972">GetLongMaxSize</a> () const</td></tr>
-<tr class="memdesc:a888f1edb17ddf23cad6d01c302884972"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the LONG data type piece buffer size.  <br /></td></tr>
-<tr class="separator:a888f1edb17ddf23cad6d01c302884972"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae149184672566391c764a18d253c6ee8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#ae149184672566391c764a18d253c6ee8">SetPieceSize</a> (unsigned int value)</td></tr>
+<tr class="memdesc:ae149184672566391c764a18d253c6ee8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the piece size for dynamic fetch operations (XMLTYPE, LONGs)  <br /></td></tr>
+<tr class="separator:ae149184672566391c764a18d253c6ee8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b1ea39ecb08e22da95412b8c5388c2b"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#a6b1ea39ecb08e22da95412b8c5388c2b">GetPieceSize</a> () const</td></tr>
+<tr class="memdesc:a6b1ea39ecb08e22da95412b8c5388c2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the piece size for dynamic fetch operations (XMLTYPE, LONGs)  <br /></td></tr>
+<tr class="separator:a6b1ea39ecb08e22da95412b8c5388c2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa177edd6baabe4987b795602d72184cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#aa177edd6baabe4987b795602d72184cd">SetLongMode</a> (<a class="el" href="classocilib_1_1_statement.html#ab3b6a01a57de9631f9c430b427665dbb">LongMode</a> value)</td></tr>
 <tr class="memdesc:aa177edd6baabe4987b795602d72184cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the long data type handling mode of a SQL statement.  <br /></td></tr>
 <tr class="separator:aa177edd6baabe4987b795602d72184cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -339,7 +339,7 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><p><a class="el" href="classocilib_1_1_object.html" title="Object identifying the SQL data type OBJECT.">Object</a> used for executing SQL or PL/SQL statement and returning the produced results. </p>
 <p>This class wraps the OCILIB object handle OCI_Statement and its related methods </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05555">5555</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05699">5699</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="ab51ec370d22d5375304bdf1d05912c47" name="ab51ec370d22d5375304bdf1d05912c47"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab51ec370d22d5375304bdf1d05912c47">&#9670;&#160;</a></span>StatementType</h2>
@@ -356,7 +356,7 @@ Public Member Functions</h2></td></tr>
 <p><a class="el" href="classocilib_1_1_statement.html" title="Object used for executing SQL or PL/SQL statement and returning the produced results.">Statement</a> Type. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832" title="Statement Type enumerated values.">Statement::StatementTypeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05604">5604</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05748">5748</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -375,7 +375,7 @@ Public Member Functions</h2></td></tr>
 <p>Fetch Modes. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_statement.html#a8c77708b4c2fd86c3605544a62bce00e" title="Fetch Modes enumerated values.">Statement::FetchModeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05626">5626</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05770">5770</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -394,7 +394,7 @@ Public Member Functions</h2></td></tr>
 <p>Bind Modes. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_statement.html#a639c366a350bbf314767144abc005187" title="Bind Modes enumerated values.">Statement::BindModeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05648">5648</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05792">5792</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -413,7 +413,7 @@ Public Member Functions</h2></td></tr>
 <p>LONG data type mapping modes. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_statement.html#a095c882ba807ccba7bf693b5652385e1" title="LONG data type mapping modes enumerated values.">Statement::LongModeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05670">5670</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05814">5814</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -456,7 +456,7 @@ Public Member Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05571">5571</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05715">5715</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -480,7 +480,7 @@ Public Member Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05611">5611</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05755">5755</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -504,7 +504,7 @@ Public Member Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05633">5633</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05777">5777</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -528,7 +528,7 @@ Public Member Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05655">5655</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05799">5799</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -2506,8 +2506,8 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 
 </div>
 </div>
-<a id="ae6714db7af83a10a81d8e60e54a2e10f" name="ae6714db7af83a10a81d8e60e54a2e10f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae6714db7af83a10a81d8e60e54a2e10f">&#9670;&#160;</a></span>SetLongMaxSize()</h2>
+<a id="ae149184672566391c764a18d253c6ee8" name="ae149184672566391c764a18d253c6ee8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae149184672566391c764a18d253c6ee8">&#9670;&#160;</a></span>SetPieceSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2516,7 +2516,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void ocilib::Statement::SetLongMaxSize </td>
+          <td class="memname">void ocilib::Statement::SetPieceSize </td>
           <td>(</td>
           <td class="paramtype">unsigned int&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
@@ -2530,7 +2530,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 </table>
 </div><div class="memdoc">
 
-<p>Set the LONG data type piece buffer size. </p>
+<p>Set the piece size for dynamic fetch operations (XMLTYPE, LONGs) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">value</td><td>- maximum size for long buffer </td></tr>
@@ -2540,12 +2540,12 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 
 <p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00915">915</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#ga5eaac9bdb276fe0753fbf507615184f9">OCI_SetLongMaxSize()</a>.</p>
+<p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#gac17f8520e6d8fab2980f07e7cdeb4d6a">OCI_SetPieceSize()</a>.</p>
 
 </div>
 </div>
-<a id="a888f1edb17ddf23cad6d01c302884972" name="a888f1edb17ddf23cad6d01c302884972"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a888f1edb17ddf23cad6d01c302884972">&#9670;&#160;</a></span>GetLongMaxSize()</h2>
+<a id="a6b1ea39ecb08e22da95412b8c5388c2b" name="a6b1ea39ecb08e22da95412b8c5388c2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b1ea39ecb08e22da95412b8c5388c2b">&#9670;&#160;</a></span>GetPieceSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2554,7 +2554,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int ocilib::Statement::GetLongMaxSize </td>
+          <td class="memname">unsigned int ocilib::Statement::GetPieceSize </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -2567,12 +2567,12 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 </table>
 </div><div class="memdoc">
 
-<p>Return the LONG data type piece buffer size. </p>
-<dl class="section note"><dt>Note</dt><dd>Default value is set to constant OCI_SIZE_LONG </dd></dl>
+<p>Return the piece size for dynamic fetch operations (XMLTYPE, LONGs) </p>
+<dl class="section note"><dt>Note</dt><dd>Default value is set to constant OCI_SIZE_PIECE_DYNAMIC_FETCH </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00920">920</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#ga4205adb98cd8eaedaeeb6297c1297992">OCI_GetLongMaxSize()</a>.</p>
+<p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#gae3107314c38911283ece8a85495e1a5a">OCI_GetPieceSize()</a>.</p>
 
 </div>
 </div>
@@ -2751,7 +2751,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_statement.html">Statement</a></li>
-    <li class="footer">Generated on Mon Feb 6 2023 20:52:13 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

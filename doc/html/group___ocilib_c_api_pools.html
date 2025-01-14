@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.5</span>
+   &#160;<span id="projectnumber">4.7.7</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -173,9 +173,9 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_pools.html',''); 
 <div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line">}</div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga375f2252640df238d927d647f6aceba9"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ConnectionFree(OCI_Connection *con)</div><div class="ttdoc">Close a physical connection to an Oracle database server.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga09c3bd0786917f352497f354351cd308"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a></div><div class="ttdeci">struct OCI_Thread OCI_Thread</div><div class="ttdoc">OCILIB encapsulation of OCI Threads.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga09c3bd0786917f352497f354351cd308"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a></div><div class="ttdeci">struct OCI_Thread OCI_Thread</div><div class="ttdoc">OCILIB encapsulation of OCI Threads.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00420">types.h:420</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00390">types.h:390</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_formatting_html_ga8ccca68ac7352c4114fcd90830f33ce7"><div class="ttname"><a href="group___ocilib_c_api_formatting.html#ga8ccca68ac7352c4114fcd90830f33ce7">OCI_Immediate</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_Immediate(OCI_Connection *con, const otext *sql,...)</div><div class="ttdoc">Perform 3 calls (prepare+execute+fetch) in 1 call.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
@@ -552,15 +552,17 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pool</td><td>- Pool handle </td></tr>
-    <tr><td class="paramname">value</td><td>- wait for object</td></tr>
+    <tr><td class="paramname">value</td><td>- wait mode for object</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Pass :<ul>
 <li>FALSE to wait for an available object if the pool is saturated</li>
-<li>TRUE to not wait for an available object </li>
+<li>TRUE to not wait for an available object</li>
 </ul>
-</dd></dl>
+</dd>
+<dd>
+Default pool behavior is to wait for available connections </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#a3cf9bd8b24283c1066fc223295785cc1">ocilib::Pool::SetNoWait()</a>.</p>
 
@@ -795,7 +797,7 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Feb 6 2023 20:52:13 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

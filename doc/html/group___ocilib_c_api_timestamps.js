@@ -34,7 +34,7 @@ var group___ocilib_c_api_timestamps =
     [ "OCI_IntervalFromText", "group___ocilib_c_api_timestamps.html#gaa8513ebee2e2ef75d78f661291640050", null ],
     [ "OCI_IntervalToText", "group___ocilib_c_api_timestamps.html#gad04bd55b34b2160030fad15526d9455e", null ],
     [ "OCI_IntervalFromTimeZone", "group___ocilib_c_api_timestamps.html#ga87f3308469af7b6af24aef1394b59fd6", null ],
-    [ "OCI_IntervalGetDaySecond", "group___ocilib_c_api_timestamps.html#ga79860bff78177246e071e2f19d854f27", null ],
+    [ "OCI_IntervalGetDaySecond", "group___ocilib_c_api_timestamps.html#gaadae8663c1a1f7f3f777b5d6e300965e", null ],
     [ "OCI_IntervalGetYearMonth", "group___ocilib_c_api_timestamps.html#ga2996b42fd3ef220a1657c76b2d3b7a7d", null ],
     [ "OCI_IntervalSetDaySecond", "group___ocilib_c_api_timestamps.html#gaf6d3255e82c8ebade46d148ebe30149c", null ],
     [ "OCI_IntervalSetYearMonth", "group___ocilib_c_api_timestamps.html#ga69590b0b89bfbad25783914ad3c989ae", null ],

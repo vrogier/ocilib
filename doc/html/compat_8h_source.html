@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.5</span>
+   &#160;<span id="projectnumber">4.7.7</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -101,7 +101,7 @@ $(document).ready(function(){initNavTree('compat_8h_source.html',''); initResiza
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> * Website: http://www.ocilib.net</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment"> * Copyright (c) 2007-2023 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment"> * Copyright (c) 2007-2025 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment"> * you may not use this file except in compliance with the License.</span></div>
@@ -290,7 +290,14 @@ $(document).ready(function(){initNavTree('compat_8h_source.html',''); initResiza
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span> </div>
 <div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span><span class="preprocessor">#define OCI_STRING_FORMAT_NUM_BIN               OCI_STRING_FORMAT_NUM_BDOUBLE</span></div>
 <div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span> </div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span><span class="preprocessor">#endif  </span><span class="comment">/* OCILIB_COMPAT_H_INCLUDED */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span> </div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span><span class="comment">/* macro added in version 4.7.7 */</span></div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span> </div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span><span class="preprocessor">#define OCI_SIZE_LONG                           OCI_SIZE_PIECE_DYNAMIC_FETCH</span></div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span><span class="preprocessor">#define OCI_SetLongMaxSize(st, sz)              OCI_SetPieceSize(st, sz)</span></div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span><span class="preprocessor">#define OCI_GetLongMaxSize(st)                  OCI_GetPieceSize(st)</span></div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span> </div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span><span class="preprocessor">#endif  </span><span class="comment">/* OCILIB_COMPAT_H_INCLUDED */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.8.15-->
@@ -298,7 +305,7 @@ $(document).ready(function(){initNavTree('compat_8h_source.html',''); initResiza
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d522931ffa1371640980b621734a4381.html">Users</a></li><li class="navelem"><a class="el" href="dir_b96fe95805c7312e6cf312359506fd11.html">vince</a></li><li class="navelem"><a class="el" href="dir_ddcb6002697055b3db9aeaa0f50e134a.html">source</a></li><li class="navelem"><a class="el" href="dir_2a0db4129dfc82c90c0c9d66afaae0b5.html">repos</a></li><li class="navelem"><a class="el" href="dir_8d8c1859ede15e5709ed1c818e6b5afe.html">ocilib</a></li><li class="navelem"><a class="el" href="dir_606323569aa12d5b337cb6273e6fb61c.html">include</a></li><li class="navelem"><a class="el" href="dir_b61feb278206a7d215e205c71cd640c8.html">ocilibc</a></li><li class="navelem"><b>compat.h</b></li>
-    <li class="footer">Generated on Mon Feb 6 2023 20:52:13 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Jan 14 2025 23:58:10 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

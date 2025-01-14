@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.5</span>
+   &#160;<span id="projectnumber">4.7.7</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -113,6 +113,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aeb0f3012f217aaaa9fc5686288f091e2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_date.html#aeb0f3012f217aaaa9fc5686288f091e2">Date</a> (bool create=false)</td></tr>
 <tr class="memdesc:aeb0f3012f217aaaa9fc5686288f091e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an empty null <a class="el" href="classocilib_1_1_date.html" title="Object identifying the SQL data type DATE.">Date</a> object.  <br /></td></tr>
 <tr class="separator:aeb0f3012f217aaaa9fc5686288f091e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a925db8f0fbc6839e0ddf450260a9c1df"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_date.html#a925db8f0fbc6839e0ddf450260a9c1df">Date</a> (const <a class="el" href="classocilib_1_1_date.html">Date</a> &amp;other)</td></tr>
+<tr class="memdesc:a925db8f0fbc6839e0ddf450260a9c1df"><td class="mdescLeft">&#160;</td><td class="mdescRight">For value types, overrides HandleHolder copy constructor to perform assignment rather than ref counting management.  <br /></td></tr>
+<tr class="separator:a925db8f0fbc6839e0ddf450260a9c1df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5c6a5ff75e52cda3aa134e2acba101d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classocilib_1_1_date.html">Date</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_date.html#ad5c6a5ff75e52cda3aa134e2acba101d">operator=</a> (const <a class="el" href="classocilib_1_1_date.html">Date</a> &amp;other) noexcept</td></tr>
+<tr class="memdesc:ad5c6a5ff75e52cda3aa134e2acba101d"><td class="mdescLeft">&#160;</td><td class="mdescRight">For value types, overrides HandleHolder assignment operator to perform assignment rather than ref counting management.  <br /></td></tr>
+<tr class="separator:ad5c6a5ff75e52cda3aa134e2acba101d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e1c5c1a999a51ddc267fd3f0b77c975"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_date.html#a3e1c5c1a999a51ddc267fd3f0b77c975">Date</a> (const otext *str, const otext *format=OTEXT(&quot;&quot;))</td></tr>
 <tr class="memdesc:a3e1c5c1a999a51ddc267fd3f0b77c975"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a date object with the value provided by the input date time string.  <br /></td></tr>
 <tr class="separator:a3e1c5c1a999a51ddc267fd3f0b77c975"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -259,10 +265,10 @@ Static Public Member Functions</h2></td></tr>
 <div class="textblock"><p><a class="el" href="classocilib_1_1_object.html" title="Object identifying the SQL data type OBJECT.">Object</a> identifying the SQL data type DATE. </p>
 <p>This class wraps the OCILIB object handle OCI_Date and its related methods </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l02674">2674</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l02715">2715</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aeb0f3012f217aaaa9fc5686288f091e2" name="aeb0f3012f217aaaa9fc5686288f091e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb0f3012f217aaaa9fc5686288f091e2">&#9670;&#160;</a></span>Date() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb0f3012f217aaaa9fc5686288f091e2">&#9670;&#160;</a></span>Date() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -297,8 +303,44 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a925db8f0fbc6839e0ddf450260a9c1df" name="a925db8f0fbc6839e0ddf450260a9c1df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a925db8f0fbc6839e0ddf450260a9c1df">&#9670;&#160;</a></span>Date() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ocilib::Date::Date </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classocilib_1_1_date.html">Date</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>For value types, overrides HandleHolder copy constructor to perform assignment rather than ref counting management. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>- value to assign </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00036">36</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a3e1c5c1a999a51ddc267fd3f0b77c975" name="a3e1c5c1a999a51ddc267fd3f0b77c975"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e1c5c1a999a51ddc267fd3f0b77c975">&#9670;&#160;</a></span>Date() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e1c5c1a999a51ddc267fd3f0b77c975">&#9670;&#160;</a></span>Date() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -343,14 +385,14 @@ Static Public Member Functions</h2></td></tr>
 <dd>
 Default connection date format is computed from <a class="el" href="classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f" title="Return the format string for implicit string conversions of the given type.">Environment::GetFormat()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00043">43</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00063">63</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a0865162452936c0709e0fe8e22f5b785">FromString()</a>.</p>
 
 </div>
 </div>
 <a id="ad493a3b361497700feaa1af17d02a3e8" name="ad493a3b361497700feaa1af17d02a3e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad493a3b361497700feaa1af17d02a3e8">&#9670;&#160;</a></span>Date() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad493a3b361497700feaa1af17d02a3e8">&#9670;&#160;</a></span>Date() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -395,7 +437,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 <dd>
 Default connection date format is computed from <a class="el" href="classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f" title="Return the format string for implicit string conversions of the given type.">Environment::GetFormat()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00036">36</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00056">56</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a0865162452936c0709e0fe8e22f5b785">FromString()</a>.</p>
 
@@ -427,9 +469,47 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Return the current system date time. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00064">64</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00084">84</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#gae73613cf6173243848ddfd3295b448c4">OCI_DateSysDate()</a>.</p>
+
+</div>
+</div>
+<a id="ad5c6a5ff75e52cda3aa134e2acba101d" name="ad5c6a5ff75e52cda3aa134e2acba101d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5c6a5ff75e52cda3aa134e2acba101d">&#9670;&#160;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classocilib_1_1_date.html">Date</a> &amp; ocilib::Date::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classocilib_1_1_date.html">Date</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>For value types, overrides HandleHolder assignment operator to perform assignment rather than ref counting management. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>- value to assign </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00041">41</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#ga89fed5c82e7543f8a7f6fce78b96c67d">OCI_DateAssign()</a>.</p>
 
 </div>
 </div>
@@ -458,7 +538,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Check if the given date is valid. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00091">91</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00111">111</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#gade4879e7474461bb9861a96ceecec976">OCI_DateCheck()</a>.</p>
 
@@ -489,7 +569,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Return the date year value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00096">96</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00116">116</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a2bfeb2ee09fdedd9d988f5f7bc2a0f29">GetDate()</a>.</p>
 
@@ -521,7 +601,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Set the date year value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00105">105</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00125">125</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a2bfeb2ee09fdedd9d988f5f7bc2a0f29">GetDate()</a>, and <a class="el" href="classocilib_1_1_date.html#adc8b133ee59ff0b0ce8202ed6df8cd2e">SetDate()</a>.</p>
 
@@ -552,7 +632,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Return the date month value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00113">113</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00133">133</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a2bfeb2ee09fdedd9d988f5f7bc2a0f29">GetDate()</a>.</p>
 
@@ -584,7 +664,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Set the date month value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00122">122</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00142">142</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a2bfeb2ee09fdedd9d988f5f7bc2a0f29">GetDate()</a>, and <a class="el" href="classocilib_1_1_date.html#adc8b133ee59ff0b0ce8202ed6df8cd2e">SetDate()</a>.</p>
 
@@ -615,7 +695,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Return the date day value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00130">130</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00150">150</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a2bfeb2ee09fdedd9d988f5f7bc2a0f29">GetDate()</a>.</p>
 
@@ -647,7 +727,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Set the date day value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00139">139</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00159">159</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a2bfeb2ee09fdedd9d988f5f7bc2a0f29">GetDate()</a>, and <a class="el" href="classocilib_1_1_date.html#adc8b133ee59ff0b0ce8202ed6df8cd2e">SetDate()</a>.</p>
 
@@ -678,7 +758,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Return the date hours value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00147">147</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00167">167</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a16553d265b62c1fd85f7ec18ba1dd4b9">GetTime()</a>.</p>
 
@@ -710,7 +790,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Set the date hours value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00156">156</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00176">176</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a16553d265b62c1fd85f7ec18ba1dd4b9">GetTime()</a>, and <a class="el" href="classocilib_1_1_date.html#a75c0e6525529470b5d31815534dc07e2">SetTime()</a>.</p>
 
@@ -741,7 +821,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Return the date minutes value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00164">164</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00184">184</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a16553d265b62c1fd85f7ec18ba1dd4b9">GetTime()</a>.</p>
 
@@ -773,7 +853,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Set the date minutes value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00173">173</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00193">193</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a16553d265b62c1fd85f7ec18ba1dd4b9">GetTime()</a>, and <a class="el" href="classocilib_1_1_date.html#a75c0e6525529470b5d31815534dc07e2">SetTime()</a>.</p>
 
@@ -804,7 +884,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Return the date seconds value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00181">181</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00201">201</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a16553d265b62c1fd85f7ec18ba1dd4b9">GetTime()</a>.</p>
 
@@ -836,7 +916,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Set the date seconds value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00190">190</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00210">210</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a16553d265b62c1fd85f7ec18ba1dd4b9">GetTime()</a>, and <a class="el" href="classocilib_1_1_date.html#a75c0e6525529470b5d31815534dc07e2">SetTime()</a>.</p>
 
@@ -874,7 +954,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00198">198</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00218">218</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#ga88e30a58a74b013bab67aa162a18c493">OCI_DateDaysBetween()</a>.</p>
 
@@ -930,7 +1010,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00203">203</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00223">223</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#gab01bacccd03e2f77c06875caee98f9d4">OCI_DateSetDate()</a>.</p>
 
@@ -988,7 +1068,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00208">208</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00228">228</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#gaa0b40540236cc36743723ff684ddd0ba">OCI_DateSetTime()</a>.</p>
 
@@ -1067,7 +1147,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00213">213</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00233">233</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#ga18d9dd6ae277f14f41badc78f816df31">OCI_DateSetDateTime()</a>.</p>
 
@@ -1123,7 +1203,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00218">218</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00238">238</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#ga1e00e16b2c7d3f2a941d7afcb615ba8c">OCI_DateGetDate()</a>.</p>
 
@@ -1181,7 +1261,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00223">223</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00243">243</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#gaf6f4c18289823211a63c41dcfd36f0ec">OCI_DateGetTime()</a>.</p>
 
@@ -1260,7 +1340,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00228">228</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00248">248</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#gacdeddd9118a561a10d2c99e660b5ed1e">OCI_DateGetDateTime()</a>.</p>
 
@@ -1298,7 +1378,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00233">233</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00253">253</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#gab9e19be2b20d1457ada24abfdf98f7bd">OCI_DateAddDays()</a>.</p>
 
@@ -1338,7 +1418,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00238">238</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00258">258</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="group___ocilib_c_api_datetimes.html#gab71f2c36cd1ada708a83805255d9ade8">OCI_DateAddMonths()</a>.</p>
 
@@ -1376,7 +1456,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00243">243</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00263">263</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, <a class="el" href="classocilib_1_1_date.html#aaf64f8635f50118dcd5b83625d121f57">Clone()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#gae4507c8981b4fb3eb10b08fd3d7f12a9">OCI_DateNextDay()</a>.</p>
 
@@ -1407,7 +1487,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Return the last day of month from the current date object. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00252">252</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00272">272</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, <a class="el" href="classocilib_1_1_date.html#aaf64f8635f50118dcd5b83625d121f57">Clone()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#ga5ac095109856a0cda553742d81488378">OCI_DateLastDay()</a>.</p>
 
@@ -1456,7 +1536,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00261">261</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00281">281</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#gac206300a0c06585505559cf3fe2c5418">OCI_DateZoneToZone()</a>.</p>
 
@@ -1508,7 +1588,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 <dd>
 Default connection date format is computed from <a class="el" href="classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f" title="Return the format string for implicit string conversions of the given type.">Environment::GetFormat()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00266">266</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00286">286</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, <a class="el" href="namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59a7e5ab19554ac7497343d16dbb7355310">ocilib::FormatDate</a>, <a class="el" href="classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f">ocilib::Environment::GetFormat()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#ga182c1474813b313af0678200f18500d1">OCI_DateFromText()</a>.</p>
 
@@ -1549,7 +1629,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 </dl>
 <dl class="section note"><dt>Note</dt><dd>For date time formats, refer to the Oracle SQL documentation </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00271">271</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00291">291</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, <a class="el" href="namespaceocilib_1_1core.html#a83120353da816337cfe839f435f238fe">ocilib::core::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#gad4f7e216b2e632e6e0e73d3820d3649a">OCI_DateToText()</a>.</p>
 
@@ -1583,7 +1663,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Implements <a class="el" href="classocilib_1_1core_1_1_streamable.html">ocilib::core::Streamable</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00287">287</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00307">307</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59a7e5ab19554ac7497343d16dbb7355310">ocilib::FormatDate</a>, <a class="el" href="classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f">ocilib::Environment::GetFormat()</a>, and <a class="el" href="classocilib_1_1_date.html#a6df878be9d66d55addc0abe7c874e7ce">ToString()</a>.</p>
 
@@ -1616,7 +1696,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Clone the current instance to a new one performing deep copy. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00075">75</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00095">95</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_datetimes.html#ga89fed5c82e7543f8a7f6fce78b96c67d">OCI_DateAssign()</a>.</p>
 
@@ -1649,7 +1729,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Increment the date by 1 day. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00292">292</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00312">312</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 </div>
 </div>
@@ -1679,7 +1759,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Increment the date by 1 day. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00297">297</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00317">317</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#aaf64f8635f50118dcd5b83625d121f57">Clone()</a>.</p>
 
@@ -1710,7 +1790,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Decrement the date by 1 day. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00306">306</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00326">326</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 </div>
 </div>
@@ -1740,7 +1820,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Decrement the date by 1 day. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00311">311</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00331">331</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#aaf64f8635f50118dcd5b83625d121f57">Clone()</a>.</p>
 
@@ -1772,7 +1852,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Return a new date holding the current date value incremented by the given number of days. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00320">320</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00340">340</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#aaf64f8635f50118dcd5b83625d121f57">Clone()</a>.</p>
 
@@ -1804,7 +1884,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Return a new date holding the current date value decremented by the given number of days. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00326">326</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00346">346</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#aaf64f8635f50118dcd5b83625d121f57">Clone()</a>.</p>
 
@@ -1836,7 +1916,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Increment the date by the given number of days. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00332">332</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00352">352</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a66ea5cd0a89ec6e529948e1dcd96d037">AddDays()</a>.</p>
 
@@ -1868,7 +1948,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Decrement the date by the given number of days. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00338">338</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00358">358</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_date.html#a66ea5cd0a89ec6e529948e1dcd96d037">AddDays()</a>.</p>
 
@@ -1900,7 +1980,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Indicates if the current date value is equal to the given date value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00344">344</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00364">364</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 </div>
 </div>
@@ -1930,7 +2010,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Indicates if the current date value is not equal the given date value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00349">349</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00369">369</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 </div>
 </div>
@@ -1960,7 +2040,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Indicates if the current date value is superior to the given date value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00354">354</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00374">374</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 </div>
 </div>
@@ -1990,7 +2070,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Indicates if the current date value is inferior to the given date value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00359">359</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00379">379</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 </div>
 </div>
@@ -2020,7 +2100,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Indicates if the current date value is superior or equal to the given date value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00364">364</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00384">384</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 </div>
 </div>
@@ -2050,7 +2130,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 
 <p>Indicates if the current date value is inferior or equal to the given date value. </p>
 
-<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00371">371</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_date_8hpp_source.html#l00391">391</a> of file <a class="el" href="_date_8hpp_source.html">Date.hpp</a>.</p>
 
 </div>
 </div>
@@ -2061,7 +2141,7 @@ Default connection date format is computed from <a class="el" href="classocilib_
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_date.html">Date</a></li>
-    <li class="footer">Generated on Mon Feb 6 2023 20:52:13 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

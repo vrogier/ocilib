@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.5</span>
+   &#160;<span id="projectnumber">4.7.7</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -101,7 +101,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_hash_tables.html'
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiFormatting</p>
 <p>OCILIB uses hash tables internally for index/name columns mapping.</p>
-<p>OCILIB makes public its hash table’s implementation public for general purpose uses.</p>
+<p>OCILIB makes public its hash tables implementation public for general purpose uses.</p>
 <p>OCI_HashTable objects manage string keys / values that can be :</p>
 <ul>
 <li>integers</li>
@@ -204,11 +204,11 @@ Collisions are handled by chaining method.</dd></dl>
 <div class="line">}</div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga375f2252640df238d927d647f6aceba9"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ConnectionFree(OCI_Connection *con)</div><div class="ttdoc">Close a physical connection to an Oracle database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga99fdd3a24d96ae27a9f31cae47041c27"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27">OCI_ConnectionCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Connection *OCI_API OCI_ConnectionCreate(const otext *db, const otext *user, const otext *pwd, unsigned int mode)</div><div class="ttdoc">Create a physical connection to an Oracle database server.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga0bbce882abdc1a99ebf01637447c35cb"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a></div><div class="ttdeci">struct OCI_HashTable OCI_HashTable</div><div class="ttdoc">OCILIB implementation of hash tables.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00376">types.h:376</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga0bbce882abdc1a99ebf01637447c35cb"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a></div><div class="ttdeci">struct OCI_HashTable OCI_HashTable</div><div class="ttdoc">OCILIB implementation of hash tables.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00386">types.h:386</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4b016f1bd7de508b1a919e34b12aa83d"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a></div><div class="ttdeci">struct OCI_Statement OCI_Statement</div><div class="ttdoc">Oracle SQL or PL/SQL statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00136">types.h:136</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4d9f49c020c16dd2ac25694acde4b39f"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f">OCI_HashEntry</a></div><div class="ttdeci">struct OCI_HashEntry OCI_HashEntry</div><div class="ttdoc">Hash table entry.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00390">types.h:390</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga9eae5234e3ca61b6dc51747bc8ce97e4"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga9eae5234e3ca61b6dc51747bc8ce97e4">OCI_HashValue</a></div><div class="ttdeci">struct OCI_HashValue OCI_HashValue</div><div class="ttdoc">Hash table entry value.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gae0c7aa9c507975d21ca6c261081ba753"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a></div><div class="ttdeci">struct OCI_Resultset OCI_Resultset</div><div class="ttdoc">Collection of output columns from a select statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00163">types.h:163</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
@@ -805,7 +805,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Feb 6 2023 20:52:13 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

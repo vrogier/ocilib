@@ -149,6 +149,9 @@ var hierarchy =
     [ "ocilib::core::HandleHolder< OCI_TypeInfo * >", "classocilib_1_1core_1_1_handle_holder.html", [
       [ "ocilib::TypeInfo", "classocilib_1_1_type_info.html", null ]
     ] ],
+    [ "ocilib::core::HandleHolder< OCI_XmlType * >", "classocilib_1_1core_1_1_handle_holder.html", [
+      [ "ocilib::XmlType", "classocilib_1_1_xml_type.html", null ]
+    ] ],
     [ "ocilib::core::HandleStore", "classocilib_1_1core_1_1_handle_store.html", null ],
     [ "ocilib::support::HandleStoreResolverType< T, U >", "structocilib_1_1support_1_1_handle_store_resolver_type.html", null ],
     [ "ocilib::support::HandleStoreResolverType< false, core::SynchronizationMode::Unsafe >", "structocilib_1_1support_1_1_handle_store_resolver_type.html", [
@@ -168,7 +171,8 @@ var hierarchy =
       [ "ocilib::Number", "classocilib_1_1_number.html", null ],
       [ "ocilib::Object", "classocilib_1_1_object.html", null ],
       [ "ocilib::Reference", "classocilib_1_1_reference.html", null ],
-      [ "ocilib::Timestamp", "classocilib_1_1_timestamp.html", null ]
+      [ "ocilib::Timestamp", "classocilib_1_1_timestamp.html", null ],
+      [ "ocilib::XmlType", "classocilib_1_1_xml_type.html", null ]
     ] ],
     [ "ocilib::core::SupportedNumeric< T >", "structocilib_1_1core_1_1_supported_numeric.html", null ],
     [ "ocilib::core::Synchronizable", "classocilib_1_1core_1_1_synchronizable.html", [

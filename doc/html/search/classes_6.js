@@ -29,10 +29,11 @@ var searchData=
   ['handleholder_3c_20oci_5ftimestamp_20_2a_20_3e_26',['HandleHolder&lt; OCI_Timestamp * &gt;',['../classocilib_1_1core_1_1_handle_holder.html',1,'ocilib::core']]],
   ['handleholder_3c_20oci_5ftransaction_20_2a_20_3e_27',['HandleHolder&lt; OCI_Transaction * &gt;',['../classocilib_1_1core_1_1_handle_holder.html',1,'ocilib::core']]],
   ['handleholder_3c_20oci_5ftypeinfo_20_2a_20_3e_28',['HandleHolder&lt; OCI_TypeInfo * &gt;',['../classocilib_1_1core_1_1_handle_holder.html',1,'ocilib::core']]],
-  ['handlestore_29',['HandleStore',['../classocilib_1_1core_1_1_handle_store.html',1,'ocilib::core']]],
-  ['handlestoreresolver_30',['HandleStoreResolver',['../structocilib_1_1support_1_1_handle_store_resolver.html',1,'ocilib::support']]],
-  ['handlestoreresolvertype_31',['HandleStoreResolverType',['../structocilib_1_1support_1_1_handle_store_resolver_type.html',1,'ocilib::support']]],
-  ['handlestoreresolvertype_3c_20false_2c_20core_3a_3asynchronizationmode_3a_3aunsafe_20_3e_32',['HandleStoreResolverType&lt; false, core::SynchronizationMode::Unsafe &gt;',['../structocilib_1_1support_1_1_handle_store_resolver_type.html',1,'ocilib::support']]],
-  ['handlestoreresolvertype_3c_20true_2c_20core_3a_3asynchronizationmode_3a_3asafe_20_3e_33',['HandleStoreResolverType&lt; true, core::SynchronizationMode::Safe &gt;',['../structocilib_1_1support_1_1_handle_store_resolver_type.html',1,'ocilib::support']]],
-  ['handlestoreresolvertype_3c_20true_2c_20core_3a_3asynchronizationmode_3a_3aunsafe_20_3e_34',['HandleStoreResolverType&lt; true, core::SynchronizationMode::Unsafe &gt;',['../structocilib_1_1support_1_1_handle_store_resolver_type.html',1,'ocilib::support']]]
+  ['handleholder_3c_20oci_5fxmltype_20_2a_20_3e_29',['HandleHolder&lt; OCI_XmlType * &gt;',['../classocilib_1_1core_1_1_handle_holder.html',1,'ocilib::core']]],
+  ['handlestore_30',['HandleStore',['../classocilib_1_1core_1_1_handle_store.html',1,'ocilib::core']]],
+  ['handlestoreresolver_31',['HandleStoreResolver',['../structocilib_1_1support_1_1_handle_store_resolver.html',1,'ocilib::support']]],
+  ['handlestoreresolvertype_32',['HandleStoreResolverType',['../structocilib_1_1support_1_1_handle_store_resolver_type.html',1,'ocilib::support']]],
+  ['handlestoreresolvertype_3c_20false_2c_20core_3a_3asynchronizationmode_3a_3aunsafe_20_3e_33',['HandleStoreResolverType&lt; false, core::SynchronizationMode::Unsafe &gt;',['../structocilib_1_1support_1_1_handle_store_resolver_type.html',1,'ocilib::support']]],
+  ['handlestoreresolvertype_3c_20true_2c_20core_3a_3asynchronizationmode_3a_3asafe_20_3e_34',['HandleStoreResolverType&lt; true, core::SynchronizationMode::Safe &gt;',['../structocilib_1_1support_1_1_handle_store_resolver_type.html',1,'ocilib::support']]],
+  ['handlestoreresolvertype_3c_20true_2c_20core_3a_3asynchronizationmode_3a_3aunsafe_20_3e_35',['HandleStoreResolverType&lt; true, core::SynchronizationMode::Unsafe &gt;',['../structocilib_1_1support_1_1_handle_store_resolver_type.html',1,'ocilib::support']]]
 ];

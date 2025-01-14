@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['date_0',['Date',['../classocilib_1_1_date.html#aeb0f3012f217aaaa9fc5686288f091e2',1,'ocilib::Date::Date(bool create=false)'],['../classocilib_1_1_date.html#a3e1c5c1a999a51ddc267fd3f0b77c975',1,'ocilib::Date::Date(const otext *str, const otext *format=OTEXT(&quot;&quot;))'],['../classocilib_1_1_date.html#ad493a3b361497700feaa1af17d02a3e8',1,'ocilib::Date::Date(const ostring &amp;str, const ostring &amp;format=OTEXT(&quot;&quot;))']]],
+  ['date_0',['Date',['../classocilib_1_1_date.html#aeb0f3012f217aaaa9fc5686288f091e2',1,'ocilib::Date::Date(bool create=false)'],['../classocilib_1_1_date.html#a925db8f0fbc6839e0ddf450260a9c1df',1,'ocilib::Date::Date(const Date &amp;other)'],['../classocilib_1_1_date.html#a3e1c5c1a999a51ddc267fd3f0b77c975',1,'ocilib::Date::Date(const otext *str, const otext *format=OTEXT(&quot;&quot;))'],['../classocilib_1_1_date.html#ad493a3b361497700feaa1af17d02a3e8',1,'ocilib::Date::Date(const ostring &amp;str, const ostring &amp;format=OTEXT(&quot;&quot;))']]],
   ['daysbetween_1',['DaysBetween',['../classocilib_1_1_date.html#aed8bcb119b2692931be3affa0bd3ce9d',1,'ocilib::Date']]],
   ['delete_2',['Delete',['../classocilib_1_1_collection.html#aec5b2e080fc4e2dd0e3985970112a3a6',1,'ocilib::Collection']]],
   ['dequeue_3',['Dequeue',['../classocilib_1_1_dequeue.html#a847e053d022db97fb403caf0cc6e3bc6',1,'ocilib::Dequeue']]],

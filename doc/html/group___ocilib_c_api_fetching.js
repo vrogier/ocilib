@@ -72,6 +72,8 @@ var group___ocilib_c_api_fetching =
     [ "OCI_GetColl2", "group___ocilib_c_api_fetching.html#ga5de3b556fa063216df6bb71e30efab4d", null ],
     [ "OCI_GetRef", "group___ocilib_c_api_fetching.html#ga039ffd4f2b51b35bc1a5137914251528", null ],
     [ "OCI_GetRef2", "group___ocilib_c_api_fetching.html#gab06a5bc53470ea9ba66df781526948af", null ],
+    [ "OCI_GetXmlType", "group___ocilib_c_api_fetching.html#ga9255c577fae30f5dba2e2cc66d7cc000", null ],
+    [ "OCI_GetXmlType2", "group___ocilib_c_api_fetching.html#ga88f64d894b78d7ec1c2e1c885e790aa8", null ],
     [ "OCI_GetLong", "group___ocilib_c_api_fetching.html#ga7af90deb9e70e7bcab3b356e856b9b73", null ],
     [ "OCI_GetLong2", "group___ocilib_c_api_fetching.html#ga210767f2c45e541c86ddaabd98002d67", null ],
     [ "OCI_IsNull", "group___ocilib_c_api_fetching.html#gaa243eb282f3d062e6dc325d0fbcd03ae", null ],

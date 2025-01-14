@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.5</span>
+   &#160;<span id="projectnumber">4.7.7</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -188,7 +188,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_user_types.html',
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga270329793bf4735351b6007bc20d41ae"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a></div><div class="ttdeci">struct OCI_Object OCI_Object</div><div class="ttdoc">Oracle Named types representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00309">types.h:309</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4b016f1bd7de508b1a919e34b12aa83d"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a></div><div class="ttdeci">struct OCI_Statement OCI_Statement</div><div class="ttdoc">Oracle SQL or PL/SQL statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00136">types.h:136</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga549efec5df4c0825db908a5ceb9ab614"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a></div><div class="ttdeci">struct OCI_Date OCI_Date</div><div class="ttdoc">Oracle internal date representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00279">types.h:279</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00390">types.h:390</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gae0c7aa9c507975d21ca6c261081ba753"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a></div><div class="ttdeci">struct OCI_Resultset OCI_Resultset</div><div class="ttdoc">Collection of output columns from a select statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00163">types.h:163</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datetimes_html_ga26123a85d5b36fead616acffbf5ef145"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#ga26123a85d5b36fead616acffbf5ef145">OCI_DateCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Date *OCI_API OCI_DateCreate(OCI_Connection *con)</div><div class="ttdoc">Create a local date object.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datetimes_html_gae73613cf6173243848ddfd3295b448c4"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#gae73613cf6173243848ddfd3295b448c4">OCI_DateSysDate</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_DateSysDate(OCI_Date *date)</div><div class="ttdoc">Return the current system date/time into the date handle.</div></div>
@@ -492,6 +492,12 @@ Functions</h2></td></tr>
 <tr class="memitem:gada8070fcff371bfb8d0262aabfab581a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#gada8070fcff371bfb8d0262aabfab581a">OCI_RefToText</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0e6344d3d91bcf39059894adc19f011a">OCI_Ref</a> *ref, unsigned int size, otext *str)</td></tr>
 <tr class="memdesc:gada8070fcff371bfb8d0262aabfab581a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a Ref handle value to a hexadecimal string.  <br /></td></tr>
 <tr class="separator:gada8070fcff371bfb8d0262aabfab581a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga36a36c16a0d1b3b8eb5b9ea85b80f7a4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga36a36c16a0d1b3b8eb5b9ea85b80f7a4">OCI_XmlTypeGetContent</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga14291b3c4b2b3ab1e3d5efc108251e22">OCI_XmlType</a> *xmlType)</td></tr>
+<tr class="memdesc:ga36a36c16a0d1b3b8eb5b9ea85b80f7a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the string representation of given a XmlType handle.  <br /></td></tr>
+<tr class="separator:ga36a36c16a0d1b3b8eb5b9ea85b80f7a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gada2c2c40af58c66b77fa281db303451c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#gada2c2c40af58c66b77fa281db303451c">OCI_XmlTypeGetContentSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga14291b3c4b2b3ab1e3d5efc108251e22">OCI_XmlType</a> *xmlType)</td></tr>
+<tr class="memdesc:gada2c2c40af58c66b77fa281db303451c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of characters of the XML string content for the given XmlType handle.  <br /></td></tr>
+<tr class="separator:gada2c2c40af58c66b77fa281db303451c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ga83de9bfa7c55feb47ea1c91b7196b4b1" name="ga83de9bfa7c55feb47ea1c91b7196b4b1"></a>
@@ -3226,13 +3232,73 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
 
 </div>
 </div>
+<a id="ga36a36c16a0d1b3b8eb5b9ea85b80f7a4" name="ga36a36c16a0d1b3b8eb5b9ea85b80f7a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga36a36c16a0d1b3b8eb5b9ea85b80f7a4">&#9670;&#160;</a></span>OCI_XmlTypeGetContent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC const otext *OCI_API OCI_XmlTypeGetContent </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga14291b3c4b2b3ab1e3d5efc108251e22">OCI_XmlType</a> *&#160;</td>
+          <td class="paramname"><em>xmlType</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Return the string representation of given a XmlType handle. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">xmlType</td><td>- XmlType handle </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_xml_type.html#a99961a8e46f83bbb47a28db2f0fe5ade">ocilib::XmlType::ToString()</a>.</p>
+
+</div>
+</div>
+<a id="gada2c2c40af58c66b77fa281db303451c" name="gada2c2c40af58c66b77fa281db303451c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gada2c2c40af58c66b77fa281db303451c">&#9670;&#160;</a></span>OCI_XmlTypeGetContentSize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_XmlTypeGetContentSize </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga14291b3c4b2b3ab1e3d5efc108251e22">OCI_XmlType</a> *&#160;</td>
+          <td class="paramname"><em>xmlType</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Return the number of characters of the XML string content for the given XmlType handle. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">xmlType</td><td>- XmlType handle </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_xml_type.html#a99961a8e46f83bbb47a28db2f0fe5ade">ocilib::XmlType::ToString()</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.8.15-->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Feb 6 2023 20:52:13 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

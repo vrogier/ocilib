@@ -7,9 +7,11 @@ var classocilib_1_1_timestamp =
       [ "WithLocalTimeZone", "classocilib_1_1_timestamp.html#ad2949c9e9e869cb67a758ceb3a806beba07c7d9372d58aaa6e60dfa7b85d9aae6", null ]
     ] ],
     [ "Timestamp", "classocilib_1_1_timestamp.html#a2455da940a38b0607af0b966a52827e6", null ],
+    [ "Timestamp", "classocilib_1_1_timestamp.html#a8b77e3efac4eceeb57398c19fc1c668e", null ],
     [ "Timestamp", "classocilib_1_1_timestamp.html#a26bf87f4efcc477c77b0b34a703a49bd", null ],
     [ "Timestamp", "classocilib_1_1_timestamp.html#ae397d7d53e2cc816f17c1049b3376277", null ],
     [ "SysTimestamp", "classocilib_1_1_timestamp.html#ab4e620bbb5f5843447254da1505dfbc1", null ],
+    [ "operator=", "classocilib_1_1_timestamp.html#a4c40d9314fdcdb5a86a0f8bea7c4ba99", null ],
     [ "GetType", "classocilib_1_1_timestamp.html#a8b8223b81bc27892f3d353a12febc459", null ],
     [ "Convert", "classocilib_1_1_timestamp.html#a4d62cd5546ed652ae4b04533f243f0a9", null ],
     [ "IsValid", "classocilib_1_1_timestamp.html#aade14ecded574b75496bf606034309a3", null ],

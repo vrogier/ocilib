@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.5</span>
+   &#160;<span id="projectnumber">4.7.7</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -101,7 +101,7 @@ $(document).ready(function(){initNavTree('_exception_8hpp_source.html',''); init
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> * Website: http://www.ocilib.net</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment"> * Copyright (c) 2007-2023 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment"> * Copyright (c) 2007-2025 Vincent ROGIER &lt;vince.rogier@ocilib.net&gt;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment"> * you may not use this file except in compliance with the License.</span></div>
@@ -237,109 +237,107 @@ $(document).ready(function(){initNavTree('_exception_8hpp_source.html',''); init
 <div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>        <span class="keyword">const</span> <span class="keywordtype">size_t</span> whatLenght = (<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(-1) == convLenght) ? 0 : convLenght;</div>
 <div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span> </div>
 <div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>        _what[whatLenght] = 0;</div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span> </div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    }</div>
 <div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span> </div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    }</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>}</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#a6453d51a1e16c5c563bf6e6c947edd25">  149</a></span><span class="keyword">inline</span> <span class="keyword">const</span> <span class="keywordtype">char</span> * <a class="code hl_function" href="classocilib_1_1_exception.html#a6453d51a1e16c5c563bf6e6c947edd25">Exception::what</a>() const noexcept</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>{</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    <span class="keywordflow">return</span> _what;</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>}</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span> </div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#a23ee359af658d3a068a0f5256ca16b55">  154</a></span><span class="keyword">inline</span> <a class="code hl_typedef" href="namespaceocilib.html#a01daa07e307e429b66fb80f442362237">ostring</a> <a class="code hl_function" href="classocilib_1_1_exception.html#a23ee359af658d3a068a0f5256ca16b55">Exception::GetMessage</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="keyword"></span>{</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    <span class="keyword">const</span> <span class="keywordtype">char</span>* str = <a class="code hl_function" href="classocilib_1_1_exception.html#a6453d51a1e16c5c563bf6e6c947edd25">what</a>();</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    <span class="keywordflow">if</span> (!str)</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    {</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>        <span class="keywordflow">return</span> <a class="code hl_typedef" href="namespaceocilib.html#a01daa07e307e429b66fb80f442362237">ostring</a>{};</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    }</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>}</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#a6453d51a1e16c5c563bf6e6c947edd25">  147</a></span><span class="keyword">inline</span> <span class="keyword">const</span> <span class="keywordtype">char</span> * <a class="code hl_function" href="classocilib_1_1_exception.html#a6453d51a1e16c5c563bf6e6c947edd25">Exception::what</a>() const noexcept</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>{</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    <span class="keywordflow">return</span> _what;</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>}</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span> </div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#a23ee359af658d3a068a0f5256ca16b55">  152</a></span><span class="keyword">inline</span> <a class="code hl_typedef" href="namespaceocilib.html#a01daa07e307e429b66fb80f442362237">ostring</a> <a class="code hl_function" href="classocilib_1_1_exception.html#a23ee359af658d3a068a0f5256ca16b55">Exception::GetMessage</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    <span class="keyword">const</span> <span class="keywordtype">char</span>* str = <a class="code hl_function" href="classocilib_1_1_exception.html#a6453d51a1e16c5c563bf6e6c947edd25">what</a>();</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span> </div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    <span class="keywordflow">if</span> (!str)</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    {</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        <span class="keywordflow">return</span> <a class="code hl_typedef" href="namespaceocilib.html#a01daa07e307e429b66fb80f442362237">ostring</a>{};</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    }</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    <a class="code hl_typedef" href="namespaceocilib.html#a01daa07e307e429b66fb80f442362237">ostring</a> message;</div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    <a class="code hl_typedef" href="namespaceocilib.html#a01daa07e307e429b66fb80f442362237">ostring</a> message;</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span><span class="preprocessor">#if defined(OCI_CHARSET_ANSI)</span></div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span><span class="preprocessor">#if defined(OCI_CHARSET_ANSI)</span></div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    message = str;</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    message = str;</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span><span class="preprocessor">#else</span></div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span> </div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> valueLenght = strlen(str);</div>
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span> </div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> valueLenght = strlen(str);</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    message.resize(valueLenght);</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    message.resize(valueLenght);</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    <span class="keyword">const</span> <span class="keywordtype">char</span>* ptr = str;</div>
 <div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span> </div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>    <span class="keyword">const</span> <span class="keywordtype">char</span>* ptr = str;</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span> </div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    mbstate_t mbs;</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    mbrlen(<span class="keyword">nullptr</span>, 0, &amp;mbs);</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span> </div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span><span class="preprocessor">#if defined(_MSC_VER)</span></div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    __pragma(warning(disable : 4996))</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>    mbstate_t mbs;</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    mbrlen(<span class="keyword">nullptr</span>, 0, &amp;mbs);</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span><span class="preprocessor">#if defined(_MSC_VER)</span></div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    __pragma(warning(disable : 4996))</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span> </div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> convLenght = mbsrtowcs(&amp;message[0], &amp;ptr, valueLenght, &amp;mbs);</div>
 <div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> convLenght = mbsrtowcs(&amp;message[0], &amp;ptr, valueLenght, &amp;mbs);</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span> </div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span><span class="preprocessor">#if defined(_MSC_VER)</span></div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    __pragma(warning(<span class="keywordflow">default</span>: 4996))</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span><span class="preprocessor">#endif </span></div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span><span class="preprocessor">#if defined(_MSC_VER)</span></div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    __pragma(warning(<span class="keywordflow">default</span>: 4996))</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span><span class="preprocessor">#endif </span></div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> messLenght = (<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(-1) == convLenght) ? 0 : convLenght;</div>
 <div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span> </div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> messLenght = (<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(-1) == convLenght) ? 0 : convLenght;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    message.resize(messLenght);</div>
 <div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>    message.resize(messLenght);</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span> </div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span> </div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    <span class="keywordflow">return</span> message;</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>}</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#a96a5dcf8511d0d8fa30e9d98dab66f5a">  200</a></span><span class="keyword">inline</span> <a class="code hl_class" href="classocilib_1_1core_1_1_enum.html">Exception::ExceptionType</a> <a class="code hl_function" href="classocilib_1_1_exception.html#a96a5dcf8511d0d8fa30e9d98dab66f5a">Exception::GetType</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span><span class="keyword"></span>{</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    <span class="keywordflow">return</span> _type;</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>}</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#a6cdb247ecc20e7e0f8815797669b8e97">  205</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="classocilib_1_1_exception.html#a6cdb247ecc20e7e0f8815797669b8e97">Exception::GetOracleErrorCode</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span><span class="keyword"></span>{</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    <span class="keywordflow">return</span> _errOracle;</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>}</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span> </div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#aa32d9d5eb10b364d276ce2ba6a74a921">  210</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="classocilib_1_1_exception.html#aa32d9d5eb10b364d276ce2ba6a74a921">Exception::GetInternalErrorCode</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span><span class="keyword"></span>{</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    <span class="keywordflow">return</span> _errLib;</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>}</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#ad0feb150c8d52f3f5fd646e3e9c5435d">  215</a></span><span class="keyword">inline</span> <a class="code hl_class" href="classocilib_1_1_statement.html">Statement</a> <a class="code hl_function" href="classocilib_1_1_exception.html#ad0feb150c8d52f3f5fd646e3e9c5435d">Exception::GetStatement</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span><span class="keyword"></span>{</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="classocilib_1_1_statement.html">Statement</a>(_pStatement, <span class="keyword">nullptr</span>);</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>}</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#aa27e74a7461709afabac83d71628a2d1">  220</a></span><span class="keyword">inline</span> <a class="code hl_class" href="classocilib_1_1_connection.html">Connection</a> <a class="code hl_function" href="classocilib_1_1_exception.html#aa27e74a7461709afabac83d71628a2d1">Exception::GetConnection</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span><span class="keyword"></span>{</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="classocilib_1_1_connection.html">Connection</a>(_pConnnection, Environment::GetEnvironmentHandle());</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>}</div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span> </div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#a8c06341ba16889cf92da380789fd8cd2">  225</a></span><span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code hl_function" href="classocilib_1_1_exception.html#a8c06341ba16889cf92da380789fd8cd2">Exception::GetRow</a>()<span class="keyword"> const</span></div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span><span class="keyword"></span>{</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    <span class="keywordflow">return</span> _row;</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    <span class="keywordflow">return</span> message;</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>}</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span> </div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#a96a5dcf8511d0d8fa30e9d98dab66f5a">  198</a></span><span class="keyword">inline</span> <a class="code hl_class" href="classocilib_1_1core_1_1_enum.html">Exception::ExceptionType</a> <a class="code hl_function" href="classocilib_1_1_exception.html#a96a5dcf8511d0d8fa30e9d98dab66f5a">Exception::GetType</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>    <span class="keywordflow">return</span> _type;</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>}</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#a6cdb247ecc20e7e0f8815797669b8e97">  203</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="classocilib_1_1_exception.html#a6cdb247ecc20e7e0f8815797669b8e97">Exception::GetOracleErrorCode</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    <span class="keywordflow">return</span> _errOracle;</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>}</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span> </div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#aa32d9d5eb10b364d276ce2ba6a74a921">  208</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="classocilib_1_1_exception.html#aa32d9d5eb10b364d276ce2ba6a74a921">Exception::GetInternalErrorCode</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    <span class="keywordflow">return</span> _errLib;</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>}</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span> </div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#ad0feb150c8d52f3f5fd646e3e9c5435d">  213</a></span><span class="keyword">inline</span> <a class="code hl_class" href="classocilib_1_1_statement.html">Statement</a> <a class="code hl_function" href="classocilib_1_1_exception.html#ad0feb150c8d52f3f5fd646e3e9c5435d">Exception::GetStatement</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="classocilib_1_1_statement.html">Statement</a>(_pStatement, <span class="keyword">nullptr</span>);</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>}</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span> </div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#aa27e74a7461709afabac83d71628a2d1">  218</a></span><span class="keyword">inline</span> <a class="code hl_class" href="classocilib_1_1_connection.html">Connection</a> <a class="code hl_function" href="classocilib_1_1_exception.html#aa27e74a7461709afabac83d71628a2d1">Exception::GetConnection</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="classocilib_1_1_connection.html">Connection</a>(_pConnnection, Environment::GetEnvironmentHandle(), <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>}</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span> </div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno"><a class="line" href="classocilib_1_1_exception.html#a8c06341ba16889cf92da380789fd8cd2">  223</a></span><span class="keyword">inline</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code hl_function" href="classocilib_1_1_exception.html#a8c06341ba16889cf92da380789fd8cd2">Exception::GetRow</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>    <span class="keywordflow">return</span> _row;</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>}</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span> </div>
 <div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>}</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span> </div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>}</div>
-<div class="ttc" id="aclassocilib_1_1_connection_html"><div class="ttname"><a href="classocilib_1_1_connection.html">ocilib::Connection</a></div><div class="ttdoc">A connection or session with a specific database.</div><div class="ttdef"><b>Definition:</b> <a href="types_8hpp_source.html#l01576">types.hpp:1577</a></div></div>
-<div class="ttc" id="aclassocilib_1_1_exception_html"><div class="ttname"><a href="classocilib_1_1_exception.html">ocilib::Exception</a></div><div class="ttdoc">Exception class handling all OCILIB errors.</div><div class="ttdef"><b>Definition:</b> <a href="types_8hpp_source.html#l00357">types.hpp:358</a></div></div>
-<div class="ttc" id="aclassocilib_1_1_exception_html_a23ee359af658d3a068a0f5256ca16b55"><div class="ttname"><a href="classocilib_1_1_exception.html#a23ee359af658d3a068a0f5256ca16b55">ocilib::Exception::GetMessage</a></div><div class="ttdeci">ostring GetMessage() const</div><div class="ttdoc">Retrieve the error message.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00154">Exception.hpp:154</a></div></div>
-<div class="ttc" id="aclassocilib_1_1_exception_html_a6453d51a1e16c5c563bf6e6c947edd25"><div class="ttname"><a href="classocilib_1_1_exception.html#a6453d51a1e16c5c563bf6e6c947edd25">ocilib::Exception::what</a></div><div class="ttdeci">const char * what() const noexcept override</div><div class="ttdoc">Override the std::exception::what() method.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00149">Exception.hpp:149</a></div></div>
-<div class="ttc" id="aclassocilib_1_1_exception_html_a6cdb247ecc20e7e0f8815797669b8e97"><div class="ttname"><a href="classocilib_1_1_exception.html#a6cdb247ecc20e7e0f8815797669b8e97">ocilib::Exception::GetOracleErrorCode</a></div><div class="ttdeci">int GetOracleErrorCode() const</div><div class="ttdoc">Return the Oracle error code.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00205">Exception.hpp:205</a></div></div>
-<div class="ttc" id="aclassocilib_1_1_exception_html_a8c06341ba16889cf92da380789fd8cd2"><div class="ttname"><a href="classocilib_1_1_exception.html#a8c06341ba16889cf92da380789fd8cd2">ocilib::Exception::GetRow</a></div><div class="ttdeci">unsigned int GetRow() const</div><div class="ttdoc">Return the row index which caused an error during statement execution.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00225">Exception.hpp:225</a></div></div>
-<div class="ttc" id="aclassocilib_1_1_exception_html_a96a5dcf8511d0d8fa30e9d98dab66f5a"><div class="ttname"><a href="classocilib_1_1_exception.html#a96a5dcf8511d0d8fa30e9d98dab66f5a">ocilib::Exception::GetType</a></div><div class="ttdeci">ExceptionType GetType() const</div><div class="ttdoc">Return the Exception type.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00200">Exception.hpp:200</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_connection_html"><div class="ttname"><a href="classocilib_1_1_connection.html">ocilib::Connection</a></div><div class="ttdoc">A connection or session with a specific database.</div><div class="ttdef"><b>Definition:</b> <a href="types_8hpp_source.html#l01586">types.hpp:1587</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_exception_html"><div class="ttname"><a href="classocilib_1_1_exception.html">ocilib::Exception</a></div><div class="ttdoc">Exception class handling all OCILIB errors.</div><div class="ttdef"><b>Definition:</b> <a href="types_8hpp_source.html#l00359">types.hpp:360</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_exception_html_a23ee359af658d3a068a0f5256ca16b55"><div class="ttname"><a href="classocilib_1_1_exception.html#a23ee359af658d3a068a0f5256ca16b55">ocilib::Exception::GetMessage</a></div><div class="ttdeci">ostring GetMessage() const</div><div class="ttdoc">Retrieve the error message.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00152">Exception.hpp:152</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_exception_html_a6453d51a1e16c5c563bf6e6c947edd25"><div class="ttname"><a href="classocilib_1_1_exception.html#a6453d51a1e16c5c563bf6e6c947edd25">ocilib::Exception::what</a></div><div class="ttdeci">const char * what() const noexcept override</div><div class="ttdoc">Override the std::exception::what() method.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00147">Exception.hpp:147</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_exception_html_a6cdb247ecc20e7e0f8815797669b8e97"><div class="ttname"><a href="classocilib_1_1_exception.html#a6cdb247ecc20e7e0f8815797669b8e97">ocilib::Exception::GetOracleErrorCode</a></div><div class="ttdeci">int GetOracleErrorCode() const</div><div class="ttdoc">Return the Oracle error code.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00203">Exception.hpp:203</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_exception_html_a8c06341ba16889cf92da380789fd8cd2"><div class="ttname"><a href="classocilib_1_1_exception.html#a8c06341ba16889cf92da380789fd8cd2">ocilib::Exception::GetRow</a></div><div class="ttdeci">unsigned int GetRow() const</div><div class="ttdoc">Return the row index which caused an error during statement execution.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00223">Exception.hpp:223</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_exception_html_a96a5dcf8511d0d8fa30e9d98dab66f5a"><div class="ttname"><a href="classocilib_1_1_exception.html#a96a5dcf8511d0d8fa30e9d98dab66f5a">ocilib::Exception::GetType</a></div><div class="ttdeci">ExceptionType GetType() const</div><div class="ttdoc">Return the Exception type.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00198">Exception.hpp:198</a></div></div>
 <div class="ttc" id="aclassocilib_1_1_exception_html_aa190fa19d909203574f06513b638acd7"><div class="ttname"><a href="classocilib_1_1_exception.html#aa190fa19d909203574f06513b638acd7">ocilib::Exception::~Exception</a></div><div class="ttdeci">virtual ~Exception() noexcept</div><div class="ttdoc">Virtual destructor required for deriving from std::exception.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00056">Exception.hpp:56</a></div></div>
-<div class="ttc" id="aclassocilib_1_1_exception_html_aa27e74a7461709afabac83d71628a2d1"><div class="ttname"><a href="classocilib_1_1_exception.html#aa27e74a7461709afabac83d71628a2d1">ocilib::Exception::GetConnection</a></div><div class="ttdeci">Connection GetConnection() const</div><div class="ttdoc">Return the connection within the error occurred.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00220">Exception.hpp:220</a></div></div>
-<div class="ttc" id="aclassocilib_1_1_exception_html_aa32d9d5eb10b364d276ce2ba6a74a921"><div class="ttname"><a href="classocilib_1_1_exception.html#aa32d9d5eb10b364d276ce2ba6a74a921">ocilib::Exception::GetInternalErrorCode</a></div><div class="ttdeci">int GetInternalErrorCode() const</div><div class="ttdoc">Return the OCILIB error code.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00210">Exception.hpp:210</a></div></div>
-<div class="ttc" id="aclassocilib_1_1_exception_html_ad0feb150c8d52f3f5fd646e3e9c5435d"><div class="ttname"><a href="classocilib_1_1_exception.html#ad0feb150c8d52f3f5fd646e3e9c5435d">ocilib::Exception::GetStatement</a></div><div class="ttdeci">Statement GetStatement() const</div><div class="ttdoc">Return the statement within the error occurred.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00215">Exception.hpp:215</a></div></div>
-<div class="ttc" id="aclassocilib_1_1_statement_html"><div class="ttname"><a href="classocilib_1_1_statement.html">ocilib::Statement</a></div><div class="ttdoc">Object used for executing SQL or PL/SQL statement and returning the produced results.</div><div class="ttdef"><b>Definition:</b> <a href="types_8hpp_source.html#l05555">types.hpp:5556</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_exception_html_aa27e74a7461709afabac83d71628a2d1"><div class="ttname"><a href="classocilib_1_1_exception.html#aa27e74a7461709afabac83d71628a2d1">ocilib::Exception::GetConnection</a></div><div class="ttdeci">Connection GetConnection() const</div><div class="ttdoc">Return the connection within the error occurred.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00218">Exception.hpp:218</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_exception_html_aa32d9d5eb10b364d276ce2ba6a74a921"><div class="ttname"><a href="classocilib_1_1_exception.html#aa32d9d5eb10b364d276ce2ba6a74a921">ocilib::Exception::GetInternalErrorCode</a></div><div class="ttdeci">int GetInternalErrorCode() const</div><div class="ttdoc">Return the OCILIB error code.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00208">Exception.hpp:208</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_exception_html_ad0feb150c8d52f3f5fd646e3e9c5435d"><div class="ttname"><a href="classocilib_1_1_exception.html#ad0feb150c8d52f3f5fd646e3e9c5435d">ocilib::Exception::GetStatement</a></div><div class="ttdeci">Statement GetStatement() const</div><div class="ttdoc">Return the statement within the error occurred.</div><div class="ttdef"><b>Definition:</b> <a href="_exception_8hpp_source.html#l00213">Exception.hpp:213</a></div></div>
+<div class="ttc" id="aclassocilib_1_1_statement_html"><div class="ttname"><a href="classocilib_1_1_statement.html">ocilib::Statement</a></div><div class="ttdoc">Object used for executing SQL or PL/SQL statement and returning the produced results.</div><div class="ttdef"><b>Definition:</b> <a href="types_8hpp_source.html#l05699">types.hpp:5700</a></div></div>
 <div class="ttc" id="aclassocilib_1_1core_1_1_enum_html"><div class="ttname"><a href="classocilib_1_1core_1_1_enum.html">ocilib::core::Enum&lt; ExceptionTypeValues &gt;</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00390">types.h:390</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga148d833e4faf47b78cebb4cb4aebcc1e"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga148d833e4faf47b78cebb4cb4aebcc1e">OCI_ErrorGetInternalCode</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_ErrorGetInternalCode(OCI_Error *err)</div><div class="ttdoc">Retrieve Internal Error code from error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga3237c442184faa28a5bfb12bd635eb20"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga3237c442184faa28a5bfb12bd635eb20">OCI_ErrorGetConnection</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Connection *OCI_API OCI_ErrorGetConnection(OCI_Error *err)</div><div class="ttdoc">Retrieve connection handle within the error occurred.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga33aceb5bd97aba516ed1494d7715fb37"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga33aceb5bd97aba516ed1494d7715fb37">OCI_ErrorGetStatement</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_ErrorGetStatement(OCI_Error *err)</div><div class="ttdoc">Retrieve statement handle within the error occurred.</div></div>
@@ -356,7 +354,7 @@ $(document).ready(function(){initNavTree('_exception_8hpp_source.html',''); init
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d522931ffa1371640980b621734a4381.html">Users</a></li><li class="navelem"><a class="el" href="dir_b96fe95805c7312e6cf312359506fd11.html">vince</a></li><li class="navelem"><a class="el" href="dir_ddcb6002697055b3db9aeaa0f50e134a.html">source</a></li><li class="navelem"><a class="el" href="dir_2a0db4129dfc82c90c0c9d66afaae0b5.html">repos</a></li><li class="navelem"><a class="el" href="dir_8d8c1859ede15e5709ed1c818e6b5afe.html">ocilib</a></li><li class="navelem"><a class="el" href="dir_606323569aa12d5b337cb6273e6fb61c.html">include</a></li><li class="navelem"><a class="el" href="dir_99013d0d03105912aa0cbf667755f0dd.html">ocilibcpp</a></li><li class="navelem"><a class="el" href="dir_2035c15ce43b3f4be25562332263c9a0.html">detail</a></li><li class="navelem"><b>Exception.hpp</b></li>
-    <li class="footer">Generated on Mon Feb 6 2023 20:52:13 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Jan 14 2025 23:58:10 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

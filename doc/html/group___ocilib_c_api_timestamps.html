@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.5</span>
+   &#160;<span id="projectnumber">4.7.7</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -149,7 +149,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_timestamps.html',
 <div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line">}</div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga51bd3b406fe1b1d1a2eceee3f02ebd47"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a></div><div class="ttdeci">struct OCI_Timestamp OCI_Timestamp</div><div class="ttdoc">Oracle internal timestamp representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00289">types.h:289</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00390">types.h:390</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gac15e42323f4e24403bb2ff5dce7e054c"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a></div><div class="ttdeci">struct OCI_Interval OCI_Interval</div><div class="ttdoc">Oracle internal interval representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00299">types.h:299</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
@@ -268,9 +268,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga87f3308469af7b6af24aef1394b59fd6"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga87f3308469af7b6af24aef1394b59fd6">OCI_IntervalFromTimeZone</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv, const otext *str)</td></tr>
 <tr class="memdesc:ga87f3308469af7b6af24aef1394b59fd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Correct an interval handle value with the given time zone.  <br /></td></tr>
 <tr class="separator:ga87f3308469af7b6af24aef1394b59fd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga79860bff78177246e071e2f19d854f27"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga79860bff78177246e071e2f19d854f27">OCI_IntervalGetDaySecond</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv, int *day, int *hour, int *min, int *sec, int *fsec)</td></tr>
-<tr class="memdesc:ga79860bff78177246e071e2f19d854f27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the day / time portion of an interval handle.  <br /></td></tr>
-<tr class="separator:ga79860bff78177246e071e2f19d854f27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaadae8663c1a1f7f3f777b5d6e300965e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#gaadae8663c1a1f7f3f777b5d6e300965e">OCI_IntervalGetDaySecond</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv, int *day, int *hour, int *min, int *sec, int *nsec)</td></tr>
+<tr class="memdesc:gaadae8663c1a1f7f3f777b5d6e300965e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the day / time portion of an interval handle.  <br /></td></tr>
+<tr class="separator:gaadae8663c1a1f7f3f777b5d6e300965e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2996b42fd3ef220a1657c76b2d3b7a7d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga2996b42fd3ef220a1657c76b2d3b7a7d">OCI_IntervalGetYearMonth</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv, int *year, int *month)</td></tr>
 <tr class="memdesc:ga2996b42fd3ef220a1657c76b2d3b7a7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the year / month portion of an interval handle.  <br /></td></tr>
 <tr class="separator:ga2996b42fd3ef220a1657c76b2d3b7a7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -334,7 +334,7 @@ Timestamp type can be :</dd></dl>
 </ul>
 <dl class="section return"><dt>Returns</dt><dd>Return the Timestamp handle on success otherwise NULL on failure </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#a26bf87f4efcc477c77b0b34a703a49bd">ocilib::Timestamp::Timestamp()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#ae397d7d53e2cc816f17c1049b3376277">ocilib::Timestamp::Timestamp()</a>.</p>
 
 </div>
 </div>
@@ -517,7 +517,7 @@ Timestamp type can be :</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Both timestamp handles must be of the same type</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#aa906706a29495b750a78e21a6416ca1b">ocilib::Timestamp::Clone()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#aa906706a29495b750a78e21a6416ca1b">ocilib::Timestamp::Clone()</a>, and <a class="el" href="classocilib_1_1_timestamp.html#a4c40d9314fdcdb5a86a0f8bea7c4ba99">ocilib::Timestamp::operator=()</a>.</p>
 
 </div>
 </div>
@@ -1453,7 +1453,7 @@ Interval type can be :<ul>
 </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Return the Interval handle on success otherwise NULL on failure </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#a58549d5f7914cbcab99db43e9fd493fc">ocilib::Interval::Interval()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#a2fce8e46fd534247603bd606ac6f0994">ocilib::Interval::Interval()</a>.</p>
 
 </div>
 </div>
@@ -1635,7 +1635,7 @@ Interval type can be :<ul>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#ae6f8d79b4b91733990aa3d0e821c8283">ocilib::Interval::Clone()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#ae6f8d79b4b91733990aa3d0e821c8283">ocilib::Interval::Clone()</a>, and <a class="el" href="classocilib_1_1_interval.html#a8ebd4a185efc5de1870b1434b1377821">ocilib::Interval::operator=()</a>.</p>
 
 </div>
 </div>
@@ -1866,8 +1866,8 @@ Interval type can be :<ul>
 
 </div>
 </div>
-<a id="ga79860bff78177246e071e2f19d854f27" name="ga79860bff78177246e071e2f19d854f27"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga79860bff78177246e071e2f19d854f27">&#9670;&#160;</a></span>OCI_IntervalGetDaySecond()</h2>
+<a id="gaadae8663c1a1f7f3f777b5d6e300965e" name="gaadae8663c1a1f7f3f777b5d6e300965e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaadae8663c1a1f7f3f777b5d6e300965e">&#9670;&#160;</a></span>OCI_IntervalGetDaySecond()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1906,7 +1906,7 @@ Interval type can be :<ul>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int *&#160;</td>
-          <td class="paramname"><em>fsec</em>&#160;</td>
+          <td class="paramname"><em>nsec</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1926,13 +1926,13 @@ Interval type can be :<ul>
     <tr><td class="paramname">hour</td><td>- Place holder for hours value </td></tr>
     <tr><td class="paramname">min</td><td>- Place holder for minutes value </td></tr>
     <tr><td class="paramname">sec</td><td>- Place holder for seconds value </td></tr>
-    <tr><td class="paramname">fsec</td><td>- Place holder for fractional part of seconds value</td></tr>
+    <tr><td class="paramname">nsec</td><td>- Place holder for nanoseconds value</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#a56bc115e7b2475c267fa393f925c93c4">ocilib::Interval::GetDaySecond()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#a26dddf05b2f3c45f73e495229b95d39b">ocilib::Interval::GetDaySecond()</a>.</p>
 
 </div>
 </div>
@@ -2045,13 +2045,13 @@ Interval type can be :<ul>
     <tr><td class="paramname">hour</td><td>- Hour value </td></tr>
     <tr><td class="paramname">min</td><td>- Minute value </td></tr>
     <tr><td class="paramname">sec</td><td>- Second value </td></tr>
-    <tr><td class="paramname">fsec</td><td>- Fractional part of the seconds</td></tr>
+    <tr><td class="paramname">nsec</td><td>- Nanoseconds value</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#acffb79cc4979cee7e49938a957177dba">ocilib::Interval::SetDaySecond()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#aeba2bc913925fe695ba6423de677d63d">ocilib::Interval::SetDaySecond()</a>.</p>
 
 </div>
 </div>
@@ -2194,7 +2194,7 @@ Interval type can be :<ul>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Feb 6 2023 20:52:13 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

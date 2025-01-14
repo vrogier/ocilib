@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2021-03-09 21:00:00+01:00
+date: 2024-01-15 21:00:00+01:00
 layout: page
 slug: changelogs
 title: Changelogs
@@ -15,6 +15,12 @@ Click on a change log entry to see the full details.
 
 <br/>
 <br/>
+
+
+_[2025-01-14 . version 4.7.7]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.7.txt)_
+
+   * Added support for XMLTYPE
+   * Some C API and C++ API Bug fixes (see changelog for details)
 
 _[2023-02-06 . version 4.7.6]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.6.txt)_
 

@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.5</span>
+   &#160;<span id="projectnumber">4.7.7</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -174,7 +174,7 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><p>A connection or session <a class="el" href="classocilib_1_1_pool.html" title="A connection or session Pool.">Pool</a>. </p>
 <p>This class wraps the OCILIB object handle OCI_Pool and its related methods </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l01348">1348</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l01355">1355</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="aeeecc50278ee613c2c6f0c14026fee9d" name="aeeecc50278ee613c2c6f0c14026fee9d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeeecc50278ee613c2c6f0c14026fee9d">&#9670;&#160;</a></span>PoolType</h2>
@@ -191,7 +191,7 @@ Public Member Functions</h2></td></tr>
 <p>Type of <a class="el" href="classocilib_1_1_pool.html" title="A connection or session Pool.">Pool</a>. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_pool.html#a52ee2b1e8d5039f64a18fe343fbb191e" title="Pool type enumerated values.">Pool::PoolTypeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l01372">1372</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l01379">1379</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -216,7 +216,7 @@ Public Member Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l01357">1357</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l01364">1364</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -651,15 +651,17 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 <p>Set the waiting mode used when no more connections/sessions are available from the pool. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">value</td><td>- wait for object</td></tr>
+    <tr><td class="paramname">value</td><td>- wait mode for object</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>For parameter value, pass :<ul>
-<li>true to wait for an available object if the pool is saturated</li>
-<li>false to not wait for an available object </li>
+<li>false to wait for an available object if the pool is saturated</li>
+<li>true to not wait for an available object</li>
 </ul>
-</dd></dl>
+</dd>
+<dd>
+Default pool behavior is to wait for available connections </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="_pool_8hpp_source.html#l00083">83</a> of file <a class="el" href="_pool_8hpp_source.html">Pool.hpp</a>.</p>
 
@@ -899,7 +901,7 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_pool.html">Pool</a></li>
-    <li class="footer">Generated on Mon Feb 6 2023 20:52:13 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

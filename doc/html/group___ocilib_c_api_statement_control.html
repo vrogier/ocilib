@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.5</span>
+   &#160;<span id="projectnumber">4.7.7</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -143,12 +143,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ga28f0d61d1a194fcaa5d9b035c4975a3e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statement_control.html#ga28f0d61d1a194fcaa5d9b035c4975a3e">OCI_GetPrefetchMemory</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
 <tr class="memdesc:ga28f0d61d1a194fcaa5d9b035c4975a3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the amount of memory used to retrieve rows pre-fetched by OCI Client.  <br /></td></tr>
 <tr class="separator:ga28f0d61d1a194fcaa5d9b035c4975a3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5eaac9bdb276fe0753fbf507615184f9"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statement_control.html#ga5eaac9bdb276fe0753fbf507615184f9">OCI_SetLongMaxSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, unsigned int size)</td></tr>
-<tr class="memdesc:ga5eaac9bdb276fe0753fbf507615184f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the LONG data type piece buffer size.  <br /></td></tr>
-<tr class="separator:ga5eaac9bdb276fe0753fbf507615184f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4205adb98cd8eaedaeeb6297c1297992"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statement_control.html#ga4205adb98cd8eaedaeeb6297c1297992">OCI_GetLongMaxSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:ga4205adb98cd8eaedaeeb6297c1297992"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the LONG data type piece buffer size.  <br /></td></tr>
-<tr class="separator:ga4205adb98cd8eaedaeeb6297c1297992"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac17f8520e6d8fab2980f07e7cdeb4d6a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statement_control.html#gac17f8520e6d8fab2980f07e7cdeb4d6a">OCI_SetPieceSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, unsigned int size)</td></tr>
+<tr class="memdesc:gac17f8520e6d8fab2980f07e7cdeb4d6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the piece size for dynamic fetch operations (XMLTYPE, LONGs)  <br /></td></tr>
+<tr class="separator:gac17f8520e6d8fab2980f07e7cdeb4d6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae3107314c38911283ece8a85495e1a5a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statement_control.html#gae3107314c38911283ece8a85495e1a5a">OCI_GetPieceSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
+<tr class="memdesc:gae3107314c38911283ece8a85495e1a5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the piece size for dynamic fetch operations (XMLTYPE, LONGs)  <br /></td></tr>
+<tr class="separator:gae3107314c38911283ece8a85495e1a5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab48b8c050e05fbf488794005bca68d4a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_statement_control.html#gab48b8c050e05fbf488794005bca68d4a">OCI_SetLongMode</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, unsigned int mode)</td></tr>
 <tr class="memdesc:gab48b8c050e05fbf488794005bca68d4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the long data type handling mode of a SQL statement.  <br /></td></tr>
 <tr class="separator:gab48b8c050e05fbf488794005bca68d4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -668,14 +668,14 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 
 </div>
 </div>
-<a id="ga5eaac9bdb276fe0753fbf507615184f9" name="ga5eaac9bdb276fe0753fbf507615184f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5eaac9bdb276fe0753fbf507615184f9">&#9670;&#160;</a></span>OCI_SetLongMaxSize()</h2>
+<a id="gac17f8520e6d8fab2980f07e7cdeb4d6a" name="gac17f8520e6d8fab2980f07e7cdeb4d6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac17f8520e6d8fab2980f07e7cdeb4d6a">&#9670;&#160;</a></span>OCI_SetPieceSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetLongMaxSize </td>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_SetPieceSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em>, </td>
@@ -696,28 +696,28 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set the LONG data type piece buffer size. </p>
+<p>Set the piece size for dynamic fetch operations (XMLTYPE, LONGs) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
-    <tr><td class="paramname">size</td><td>- maximum size for long buffer</td></tr>
+    <tr><td class="paramname">size</td><td>- piece size</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#ae6714db7af83a10a81d8e60e54a2e10f">ocilib::Statement::SetLongMaxSize()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#ae149184672566391c764a18d253c6ee8">ocilib::Statement::SetPieceSize()</a>.</p>
 
 </div>
 </div>
-<a id="ga4205adb98cd8eaedaeeb6297c1297992" name="ga4205adb98cd8eaedaeeb6297c1297992"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4205adb98cd8eaedaeeb6297c1297992">&#9670;&#160;</a></span>OCI_GetLongMaxSize()</h2>
+<a id="gae3107314c38911283ece8a85495e1a5a" name="gae3107314c38911283ece8a85495e1a5a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae3107314c38911283ece8a85495e1a5a">&#9670;&#160;</a></span>OCI_GetPieceSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetLongMaxSize </td>
+          <td class="memname">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPieceSize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
           <td class="paramname"><em>stmt</em></td><td>)</td>
@@ -728,16 +728,16 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the LONG data type piece buffer size. </p>
+<p>Return the piece size for dynamic fetch operations (XMLTYPE, LONGs) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">stmt</td><td>- Statement handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Default value is set to constant OCI_SIZE_LONG </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Default value is set to constant OCI_SIZE_PIECE_DYNAMIC_FETCH </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#a888f1edb17ddf23cad6d01c302884972">ocilib::Statement::GetLongMaxSize()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#a6b1ea39ecb08e22da95412b8c5388c2b">ocilib::Statement::GetPieceSize()</a>.</p>
 
 </div>
 </div>
@@ -856,7 +856,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Feb 6 2023 20:52:13 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

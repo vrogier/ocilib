@@ -13,8 +13,8 @@ var group___ocilib_c_api_statement_control =
     [ "OCI_GetPrefetchSize", "group___ocilib_c_api_statement_control.html#ga01753b667b1d879dd2c32a2f65331eb9", null ],
     [ "OCI_SetPrefetchMemory", "group___ocilib_c_api_statement_control.html#ga0a3716423dccf24d394b6435cd2dbcae", null ],
     [ "OCI_GetPrefetchMemory", "group___ocilib_c_api_statement_control.html#ga28f0d61d1a194fcaa5d9b035c4975a3e", null ],
-    [ "OCI_SetLongMaxSize", "group___ocilib_c_api_statement_control.html#ga5eaac9bdb276fe0753fbf507615184f9", null ],
-    [ "OCI_GetLongMaxSize", "group___ocilib_c_api_statement_control.html#ga4205adb98cd8eaedaeeb6297c1297992", null ],
+    [ "OCI_SetPieceSize", "group___ocilib_c_api_statement_control.html#gac17f8520e6d8fab2980f07e7cdeb4d6a", null ],
+    [ "OCI_GetPieceSize", "group___ocilib_c_api_statement_control.html#gae3107314c38911283ece8a85495e1a5a", null ],
     [ "OCI_SetLongMode", "group___ocilib_c_api_statement_control.html#gab48b8c050e05fbf488794005bca68d4a", null ],
     [ "OCI_GetLongMode", "group___ocilib_c_api_statement_control.html#gab8293f13f00235613b295bb3ce16b066", null ],
     [ "OCI_StatementGetConnection", "group___ocilib_c_api_statement_control.html#gaf904543ff555ba1de6418770efda32e5", null ]

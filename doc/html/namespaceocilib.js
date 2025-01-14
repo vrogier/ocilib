@@ -36,6 +36,7 @@ var namespaceocilib =
     [ "Timestamp", "classocilib_1_1_timestamp.html", "classocilib_1_1_timestamp" ],
     [ "Transaction", "classocilib_1_1_transaction.html", "classocilib_1_1_transaction" ],
     [ "TypeInfo", "classocilib_1_1_type_info.html", "classocilib_1_1_type_info" ],
+    [ "XmlType", "classocilib_1_1_xml_type.html", "classocilib_1_1_xml_type" ],
     [ "ostring", "namespaceocilib.html#a01daa07e307e429b66fb80f442362237", null ],
     [ "AnyPointer", "namespaceocilib.html#aaad26690e8171c4564d66776987e1bd2", null ],
     [ "Raw", "namespaceocilib.html#a7a8f606db0b3fbbf7d814240c5f96178", null ],
@@ -73,7 +74,8 @@ var namespaceocilib =
       [ "TypeObject", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6ab1decf42dfae51700c785c207e0ce47c", null ],
       [ "TypeCollection", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a053c1e73f868ef56aecf006707026406", null ],
       [ "TypeReference", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a07f33c93d9de40b547b36e83bd786d09", null ],
-      [ "TypeBoolean", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a98677ddeb2f2662db1eb4a1bb86c3ae8", null ]
+      [ "TypeBoolean", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a98677ddeb2f2662db1eb4a1bb86c3ae8", null ],
+      [ "TypeXmlType", "namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a1457bdbb997a504adfc39ddebc9ab2ff", null ]
     ] ],
     [ "NumericTypeValues", "namespaceocilib.html#a021f591112a3aa788830d4959e270509", [
       [ "NumericShort", "namespaceocilib.html#a021f591112a3aa788830d4959e270509ae26c0c585ce46790ef01b2667b841634", null ],

@@ -1,9 +1,11 @@
 var classocilib_1_1_date =
 [
     [ "Date", "classocilib_1_1_date.html#aeb0f3012f217aaaa9fc5686288f091e2", null ],
+    [ "Date", "classocilib_1_1_date.html#a925db8f0fbc6839e0ddf450260a9c1df", null ],
     [ "Date", "classocilib_1_1_date.html#a3e1c5c1a999a51ddc267fd3f0b77c975", null ],
     [ "Date", "classocilib_1_1_date.html#ad493a3b361497700feaa1af17d02a3e8", null ],
     [ "SysDate", "classocilib_1_1_date.html#a5d7ee0191341605450e52102ad6a92f7", null ],
+    [ "operator=", "classocilib_1_1_date.html#ad5c6a5ff75e52cda3aa134e2acba101d", null ],
     [ "IsValid", "classocilib_1_1_date.html#ae767e2f48b8232cb2771fb52de581026", null ],
     [ "GetYear", "classocilib_1_1_date.html#af2287ac4dc6db1c4e2d08621560e2ee3", null ],
     [ "SetYear", "classocilib_1_1_date.html#af04d0e5775d0b249d73f2d94a2d5fbf1", null ],
