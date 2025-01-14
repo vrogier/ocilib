@@ -20,14 +20,17 @@
 
 #pragma once
 
+#ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
+
 #include <algorithm>
+#include <exception>
+#include <vector>
+#include <iostream>
 
 namespace ocilib
 {
     namespace core
     {
-#ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
-
         struct MemoryAllocation
         {
             void* Address;
@@ -90,7 +93,7 @@ namespace ocilib
 
             return memoryDebugInfo;
         }
-
-#endif
     }
 }
+
+#endif

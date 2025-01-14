@@ -154,6 +154,7 @@ namespace ocilib
 
 /* Including core implementations  */
 
+#include "ocilibcpp/detail/core/MemoryDebugInfo.hpp"
 #include "ocilibcpp/detail/core/Utils.hpp"
 #include "ocilibcpp/detail/core/Enum.hpp"
 #include "ocilibcpp/detail/core/Flags.hpp"
@@ -165,7 +166,6 @@ namespace ocilib
 #include "ocilibcpp/detail/core/ConcurrentMap.hpp"
 #include "ocilibcpp/detail/core/ConcurrentList.hpp"
 #include "ocilibcpp/detail/core/SmartHandle.hpp"
-#include "ocilibcpp/detail/core/MemoryDebugInfo.hpp"
 
 /* Including support implementations  */
 
