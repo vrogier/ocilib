@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackOutBind
     dvoid  **bufpp,
     ub4    **alenp,
     ub1     *piecep,
-    void   **indp,
+    dvoid  **indp,
     ub2    **rcodep
 );
 
@@ -81,6 +81,18 @@ OCI_SYM_LOCAL void OcilibCallbackHAEvent
 (
     dvoid *evtctx,
     dvoid *eventptr
+);
+
+OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
+(
+    void          *octxp,
+    OCIDefine     *defnp,
+    ub4            iter, 
+    void         **bufpp,
+    ub4          **alenpp,
+    ub1           *piecep,
+    void         **indpp,
+    ub2          **rcodep
 );
 
 #endif /* OCILIB_CALLBACK_H_INCLUDED */

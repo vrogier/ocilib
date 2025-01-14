@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -368,6 +368,18 @@ template<>
 inline Reference Resultset::Get<Reference>(const ostring& name) const
 {
     return Reference(core::Check(OCI_GetRef2(*this,name.c_str())), GetHandle());
+}
+
+template<>
+inline XmlType Resultset::Get<XmlType>(unsigned int index) const
+{
+    return XmlType(core::Check(OCI_GetXmlType(*this, index)), GetHandle());
+}
+
+template<>
+inline XmlType Resultset::Get<XmlType>(const ostring& name) const
+{
+    return XmlType(core::Check(OCI_GetXmlType2(*this,name.c_str())), GetHandle());
 }
 
 template<>

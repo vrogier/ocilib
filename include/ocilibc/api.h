@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1643,12 +1643,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_PoolGetNoWait
  * from the pool
  *
  * @param pool  - Pool handle
- * @param value - wait for object
+ * @param value - wait mode for object
  *
  * @note
  * Pass :
  * - FALSE to wait for an available object if the pool is saturated
  * - TRUE to not wait for an available object
+ * 
+ * @note
+ * Default pool behavior is to wait for available connections
  *
  */
 
@@ -4397,6 +4400,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetAllocationMode
  * - OCI_Coll      : uses OCI_CollToText()
  * - OCI_Object    : uses OCI_ObjectToText()
  * - OCI_Ref       : uses OCI_RefToText()
+ * - OCI_XmlType   : uses OCI_XmlTypeToText()
  * - OCI_File      : returns "$(folder)/$(filename)" - no content returned
  * - OCI_Lob       : see note above for binary types
  * - OCI_Long      : see note above for binary types
@@ -4772,6 +4776,7 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_ColumnGetName
  * - OCI_CDT_COLLECTION  : OCI_Coll *
  * - OCI_CDT_REF         : OCI_Ref *
  * - OCI_CDT_BOOLEAN     : boolean
+ * - OCI_CDT_XMLTYPE     : OCI_XmlType *
  *
  * @return
  * The column type or OCI_CDT_UNKNOWN if index is out of bounds
@@ -6051,6 +6056,45 @@ OCI_SYM_PUBLIC OCI_Ref * OCI_API OCI_GetRef
  */
 
 OCI_SYM_PUBLIC OCI_Ref * OCI_API OCI_GetRef2
+(
+    OCI_Resultset *rs,
+    const otext *  name
+);
+
+/**
+ * @brief
+ * Return the current XmlType value of the column at the given index in the resultset
+ *
+ * @param rs    - Resultset handle
+ * @param index - Column position
+ *
+ * @note
+ * Column position starts at 1.
+ *
+ * @return
+ * The column current row value or NULL if index is out of bounds
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_XmlType * OCI_API OCI_GetXmlType
+(
+    OCI_Resultset *rs,
+    unsigned int   index
+);
+
+/**
+ * @brief
+ * Return the current XmlType value of the column from its name in the resultset
+ *
+ * @param rs    - Resultset handle
+ * @param name  - Column name
+ *
+ * @return
+ * The column current row value or NULL if no column found with the given name
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_XmlType * OCI_API OCI_GetXmlType2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -8369,17 +8413,17 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPrefetchMemory
 
 /**
  * @brief
- * Set the LONG data type piece buffer size
+ * Set the piece size for dynamic fetch operations (XMLTYPE, LONGs) 
  *
  * @param stmt - Statement handle
- * @param size - maximum size for long buffer
+ * @param size - piece size
  *
  * @return
  * TRUE on success otherwise FALSE
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetLongMaxSize
+OCI_SYM_PUBLIC boolean OCI_API OCI_SetPieceSize
 (
     OCI_Statement *stmt,
     unsigned int   size
@@ -8387,16 +8431,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetLongMaxSize
 
 /**
  * @brief
- * Return the LONG data type piece buffer size
+ * Return the piece size for dynamic fetch operations (XMLTYPE, LONGs) 
  *
  * @param stmt - Statement handle
  *
  * @note
- * Default value is set to constant OCI_SIZE_LONG
+ * Default value is set to constant OCI_SIZE_PIECE_DYNAMIC_FETCH
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetLongMaxSize
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPieceSize
 (
     OCI_Statement *stmt
 );
@@ -11405,7 +11449,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalFromTimeZone
  * @param hour - Place holder for hours value
  * @param min  - Place holder for minutes value
  * @param sec  - Place holder for seconds value
- * @param fsec - Place holder for fractional part of seconds value
+ * @param nsec - Place holder for nanoseconds value
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -11419,7 +11463,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalGetDaySecond
     int *         hour,
     int *         min,
     int *         sec,
-    int *         fsec
+    int *         nsec
 );
 
 /**
@@ -11451,7 +11495,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalGetYearMonth
  * @param hour  - Hour value
  * @param min   - Minute value
  * @param sec   - Second value
- * @param fsec  - Fractional part of the seconds
+ * @param nsec  - Nanoseconds value
  *
  * @return
  * TRUE on success otherwise FALSE
@@ -12960,6 +13004,32 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RefToText
     OCI_Ref *    ref,
     unsigned int size,
     otext *      str
+);
+
+/**
+ * @brief
+ * Return the string representation of given a XmlType handle
+ *
+ * @param xmlType - XmlType handle
+ *
+ */
+
+OCI_SYM_PUBLIC const otext* OCI_API OCI_XmlTypeGetContent
+(
+    OCI_XmlType  *xmlType
+);
+
+/**
+ * @brief
+ * Return the number of characters of the XML string content for the given XmlType handle
+ *
+ * @param xmlType - XmlType handle
+ *
+ */
+
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_XmlTypeGetContentSize
+(
+    OCI_XmlType  *xmlType
 );
 
 /**

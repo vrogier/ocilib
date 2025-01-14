@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +69,7 @@ static const otext * TypeNames[OCI_IPC_COUNT] =
     OTEXT("Enqueue handle"),
     OTEXT("Dequeue handle"),
     OTEXT("Agent handle"),
+    OTEXT("XmlType handle"),
 
     OTEXT("Internal list handle"),
     OTEXT("Internal list item handle"),

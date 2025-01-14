@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,8 +139,6 @@ inline void Exception::SetWhat(const otext* value) noexcept
         const size_t whatLenght = (static_cast<size_t>(-1) == convLenght) ? 0 : convLenght;
 
         _what[whatLenght] = 0;
-
-
     }
 
 #endif
@@ -219,7 +217,7 @@ inline Statement Exception::GetStatement() const
 
 inline Connection Exception::GetConnection() const
 {
-    return Connection(_pConnnection, Environment::GetEnvironmentHandle());
+    return Connection(_pConnnection, Environment::GetEnvironmentHandle(), false);
 }
 
 inline unsigned int Exception::GetRow() const

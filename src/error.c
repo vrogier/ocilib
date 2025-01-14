@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -376,6 +376,8 @@ OCI_Connection * OcilibErrorGetConnection
             return ((OCI_Dequeue*)err->source_ptr)->typinf->con;
         case OCI_IPC_AGENT:
             return ((OCI_Agent*)err->source_ptr)->con;
+        case OCI_IPC_XMLTYPE:
+            return ((OCI_XmlType*)err->source_ptr)->con;
     }
 
     return NULL;

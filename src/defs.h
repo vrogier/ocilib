@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@
 
   /* for runtime loading, set compile time version to the highest known OCI version */
 
-  #define OCI_VERSION_COMPILE OCI_21_3
+  #define OCI_VERSION_COMPILE OCI_23_6
 
   /* set runtime version to unknown, it will be guessed from symbols loading */
 
@@ -187,29 +187,29 @@ typedef unsigned short dbtext;
 
 /* ---- Internal pointers ----- */
 
-#define OCI_IPC_LIST             41
-#define OCI_IPC_LIST_ITEM        42
-#define OCI_IPC_BIND_ARRAY       43
-#define OCI_IPC_DEFINE           44
-#define OCI_IPC_DEFINE_ARRAY     45
-#define OCI_IPC_HASHENTRY        46
-#define OCI_IPC_HASHENTRY_ARRAY  47
-#define OCI_IPC_HASHVALUE        48
-#define OCI_IPC_THREADKEY        49
-#define OCI_IPC_OCIDATE          50
-#define OCI_IPC_TM               51
-#define OCI_IPC_RESULTSET_ARRAY  52
-#define OCI_IPC_PLS_SIZE_ARRAY   53
-#define OCI_IPC_PLS_RCODE_ARRAY  54
-#define OCI_IPC_SERVER_OUPUT     55
-#define OCI_IPC_INDICATOR_ARRAY  56
-#define OCI_IPC_LEN_ARRAY        57
-#define OCI_IPC_BUFF_ARRAY       58
-#define OCI_IPC_LONG_BUFFER      59
-#define OCI_IPC_TRACE_INFO       60
-#define OCI_IPC_DP_COL_ARRAY     61
-#define OCI_IPC_BATCH_ERRORS     62
-#define OCI_IPC_STATEMENT_ARRAY  63
+#define OCI_IPC_LIST             42
+#define OCI_IPC_LIST_ITEM        43
+#define OCI_IPC_BIND_ARRAY       44
+#define OCI_IPC_DEFINE           45
+#define OCI_IPC_DEFINE_ARRAY     46
+#define OCI_IPC_HASHENTRY        47
+#define OCI_IPC_HASHENTRY_ARRAY  48
+#define OCI_IPC_HASHVALUE        49
+#define OCI_IPC_THREADKEY        50
+#define OCI_IPC_OCIDATE          51
+#define OCI_IPC_TM               52
+#define OCI_IPC_RESULTSET_ARRAY  53
+#define OCI_IPC_PLS_SIZE_ARRAY   54
+#define OCI_IPC_PLS_RCODE_ARRAY  55
+#define OCI_IPC_SERVER_OUPUT     56
+#define OCI_IPC_INDICATOR_ARRAY  57
+#define OCI_IPC_LEN_ARRAY        58
+#define OCI_IPC_BUFF_ARRAY       59
+#define OCI_IPC_LONG_BUFFER      60
+#define OCI_IPC_TRACE_INFO       61
+#define OCI_IPC_DP_COL_ARRAY     62
+#define OCI_IPC_BATCH_ERRORS     63
+#define OCI_IPC_STATEMENT_ARRAY  64
 
 #define OCI_IPC_COUNT            (OCI_IPC_STATEMENT_ARRAY + 2)
 
@@ -436,6 +436,24 @@ typedef unsigned short dbtext;
        OCI_CDT_NUMERIC != (type) &&     \
        OCI_CDT_RAW     != (type) &&     \
        OCI_CDT_BOOLEAN != (type)))
+
+#define IS_XMLTYPE(typinf)                                  \
+      ( NULL != (typinf) &&                                 \
+        NULL != (typinf)->name &&                           \
+        SQLT_OPAQUE_TYPE == (typinf)->typecode &&           \
+        0 == ostrcmp((typinf)->name, OTEXT("XMLTYPE")) )    \
+
+#define IS_XMLTYPE_COL(col)                                 \
+     ( NULL != (col) &&                                     \
+       (col)->sqlcode ==  SQLT_OPAQUE_TYPE &&               \
+       IS_XMLTYPE((col)->typinf) )
+
+#define IS_DYNAMIC_FETCH_COLUMN(col)                        \
+    ( OCI_CDT_LONG    == (col)->datatype ||                 \
+      OCI_CDT_XMLTYPE == (col)->datatype )
+
+
+#define SQLT_OPAQUE_TYPE 58   /*  SQL/OTS Opaque Types */
 
 /* helpers mapping macros */
 

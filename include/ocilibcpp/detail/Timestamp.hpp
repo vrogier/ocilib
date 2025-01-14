@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,7 @@ inline Timestamp::Timestamp()
 
 inline Timestamp::Timestamp(TimestampType type)
 {
-    AcquireAllocated
-    (
-        core::Check(OCI_TimestampCreate(nullptr, type)),
-        Environment::GetEnvironmentHandle()
-    );
+    Allocate(type);
 }
 
 inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostring& format)
@@ -55,6 +51,35 @@ inline Timestamp::Timestamp(TimestampType type, const ostring& data, const ostri
 inline Timestamp::Timestamp(OCI_Timestamp *pTimestamp, core::Handle *parent)
 {
     AcquireTransient(pTimestamp, parent);
+}
+
+inline Timestamp::Timestamp(const Timestamp& other)
+{
+    *this = other;
+}
+
+inline Timestamp& Timestamp::operator= (const Timestamp& other) noexcept
+{
+    if (this != &other)
+    {
+        if (IsNull())
+        {
+            Allocate(other.GetType());
+        }
+
+        core::Check(OCI_TimestampAssign(*this, other));
+    }
+
+    return *this;
+}
+
+inline void Timestamp::Allocate(TimestampType type)
+{
+    AcquireAllocated
+    (
+        core::Check(OCI_TimestampCreate(nullptr, type)),
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline Timestamp Timestamp::Clone() const

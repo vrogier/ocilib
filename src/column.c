@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -514,6 +514,14 @@ boolean OcilibColumnRetrieveInfo
         CHECK_NULL(col->typinf);
     }
 
+    /* Check if the colulmn is XMLTYPE */
+
+    if (IS_XMLTYPE(col->typinf))
+    {
+        col->sqlcode = SQLT_OPAQUE_TYPE;
+        col->size = sizeof(OCI_XmlType*);
+   }
+
     SET_SUCCESS()
 
     CLEANUP_AND_EXIT_FUNC
@@ -759,7 +767,7 @@ boolean OcilibColumnMapInfo
             {
                 col->datatype = OCI_CDT_TEXT;
                 col->subtype  = OCI_CLONG;
-                col->bufsize  = (OCI_SIZE_LONG+1) * char_size;
+                col->bufsize  = (OCI_SIZE_PIECE_DYNAMIC_FETCH+1) * char_size;
 
             }
             else
@@ -870,9 +878,19 @@ boolean OcilibColumnMapInfo
         case SQLT_SLS:
         default:
         {
-            col->libcode  = SQLT_STR;
-            col->datatype = OCI_CDT_TEXT;
-            col->bufsize  = (ub4) ((col->size + 1) * char_size);
+            col->libcode = SQLT_STR;
+
+            if (IS_XMLTYPE_COL(col))
+            {
+                col->datatype = OCI_CDT_XMLTYPE;
+                col->bufsize  = INT_MAX;
+            }
+            else
+            {
+                col->datatype = OCI_CDT_TEXT;
+                col->bufsize  = (ub4)((col->size + 1) * char_size);
+            }
+
             break;
         }
     }
@@ -1218,8 +1236,9 @@ const otext * OcilibColumnGetSqlType
 #endif
 
         case SQLT_LNG:
+        case SQLT_LVC:
         {
-            type = OTEXT("LONG");
+            type = OTEXT("LONG");          
             break;
         }
         case SQLT_DAT:
@@ -1241,6 +1260,8 @@ const otext * OcilibColumnGetSqlType
             break;
         }
         case SQLT_LBI:
+        case SQLT_LVB:
+        case SQLT_VBI:
         {
             type = OTEXT("LONG RAW");
             break;
@@ -1358,6 +1379,12 @@ const otext * OcilibColumnGetSqlType
         }
 
 #endif
+
+        case SQLT_OPAQUE_TYPE:
+        {
+            type = (IS_XMLTYPE_COL(col)) ? OTEXT("XMLTYPE") : OTEXT("?");
+            break;
+        }
 
         default:
         {
@@ -1485,6 +1512,7 @@ unsigned int OcilibColumnGetFullSqlType
 #endif
 
         case SQLT_LNG:
+        case SQLT_LVC:
         {
             size = OcilibStringFormat(buffer, (int)len, OTEXT("LONG"));
             break;
@@ -1508,6 +1536,8 @@ unsigned int OcilibColumnGetFullSqlType
             break;
         }
         case SQLT_LBI:
+        case SQLT_LVB:
+        case SQLT_VBI:       
         {
             size = OcilibStringFormat(buffer, (int)len, OTEXT("LONG RAW(%i)"), (int) col->size);
             break;
@@ -1639,6 +1669,17 @@ unsigned int OcilibColumnGetFullSqlType
         }
 
 #endif
+
+        case SQLT_OPAQUE_TYPE:
+        {
+            size = OcilibStringFormat
+            (
+                buffer,
+                (int)len, 
+                IS_XMLTYPE_COL(col) ? OTEXT("XMLTYPE") : OTEXT("?")
+            );
+            break;
+        }
 
         default:
         {

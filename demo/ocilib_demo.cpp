@@ -3,7 +3,7 @@
 *
 * Website: http://www.ocilib.net
 *
-* Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+* Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -739,7 +739,7 @@ void test_piecewise_insert(void)
         Statement st(con);
         Blong lg(st);
         st.Prepare(otext("insert into test_long_raw(code, content) values (1, :data)"));
-        st.SetLongMaxSize(static_cast<unsigned int>(size));
+        st.SetPieceSize(static_cast<unsigned int>(size));
         st.Bind(otext(":data"), lg, static_cast<unsigned int>(size), BindInfo::In);
         st.ExecutePrepared();
 

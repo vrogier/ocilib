@@ -360,6 +360,7 @@
     <ClCompile Include="..\..\src\timestamp.c" />
     <ClCompile Include="..\..\src\transaction.c" />
     <ClCompile Include="..\..\src\typeinfo.c" />
+    <ClCompile Include="..\..\src\xmltype.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\ocilib.h" />
@@ -420,6 +421,7 @@
     <ClInclude Include="..\..\src\transaction.h" />
     <ClInclude Include="..\..\src\typeinfo.h" />
     <ClInclude Include="..\..\src\types.h" />
+    <ClInclude Include="..\..\src\xmltype.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

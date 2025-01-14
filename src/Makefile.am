@@ -1,4 +1,4 @@
-# Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+# Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
 #  
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without 
@@ -59,7 +59,8 @@ libocilib_la_SOURCES=   \
     threadkey.c         \
     timestamp.c         \
     transaction.c       \
-    typeinfo.c
+    typeinfo.c          \
+    xmltype.c
 
 libocilib_la_CFLAGS= @OCILIB_EXTRA_FLAGS@ -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
 libocilib_la_LDFLAGS= @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
@@ -135,6 +136,7 @@ noinst_HEADERS=     \
     transaction.h   \
     typeinfo.h      \
     types.h         \
+    xmltype.h       \
     oci/types.h     \
     oci/defs.h      \
     oci/api.h 

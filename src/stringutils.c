@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@
 #include "object.h"
 #include "reference.h"
 #include "timestamp.h"
+#include "xmltype.h"
 
 #define COMPUTE_LENTGH(type, ptr, size)   \
     const type *s = (const type *) (ptr); \
@@ -577,6 +578,10 @@ boolean OcilibStringGetAttribute
         }
 
         CHECK_NULL(*str)
+
+        /* Ensure that the string value will be NULL terminated */
+
+        (*str)[len] = 0;
     }
 
     SET_SUCCESS()

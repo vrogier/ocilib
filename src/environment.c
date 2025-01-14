@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -328,6 +328,7 @@ OCIBINDBYNAME                OCIBindByName                = NULL;
 OCIBINDDYNAMIC               OCIBindDynamic               = NULL;
 OCIBINDOBJECT                OCIBindObject                = NULL;
 OCIDEFINEBYPOS               OCIDefineByPos               = NULL;
+OCIDEFINEDYNAMIC             OCIDefineDynamic             = NULL;
 OCIDEFINEOBJECT              OCIDefineObject              = NULL;
 OCISTMTPREPARE               OCIStmtPrepare               = NULL;
 OCISTMTEXECUTE               OCIStmtExecute               = NULL;
@@ -697,6 +698,8 @@ static void OcilibEnvironmentLoadSymbols()
 
     LIB_SYMBOL(Env.lib_handle, "OCIDefineByPos",        OCIDefineByPos,
                 OCIDEFINEBYPOS);
+    LIB_SYMBOL(Env.lib_handle, "OCIDefineDynamic",      OCIDefineDynamic,
+                OCIDEFINEDYNAMIC);
     LIB_SYMBOL(Env.lib_handle, "OCIDefineObject",       OCIDefineObject,
                 OCIDEFINEOBJECT);
 

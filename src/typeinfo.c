@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -458,9 +458,17 @@ OCI_TypeInfo * OcilibTypeInfoGet
 
                 switch (typinf->typecode)
                 {
-                    case  SQLT_NTY:
+                    case SQLT_OPAQUE_TYPE:
+                    {
+                        if (!IS_XMLTYPE(typinf))
+                        {
+                            THROW(OcilibExceptionDatatypeNotSupported, typinf->typecode)
+                        }
+                        break;
+                    }
+                    case SQLT_NTY:
 #if OCI_VERSION_COMPILE >= OCI_12_1
-                    case  SQLT_REC:
+                    case SQLT_REC:
 #endif
                     {
                         param_list = param_type;
@@ -633,9 +641,9 @@ OCI_TypeInfo * OcilibTypeInfoGet
 
         OcilibMemoryFreeHandle(dschp, OCI_HTYPE_DESCRIBE);
 
-        if (FAILURE || syn_typinf)
+        if (NULL != typinf && (FAILURE || NULL != syn_typinf))
         {
-            OcilibTypeInfoFree(typinf);
+           LIST_ATOMIC_REMOVE(con->tinfs, typinf, OcilibTypeInfoDispose)
         }
     )
 }

@@ -191,3 +191,4 @@ testlog.manifest
 *.lock
 *.vsidx
 *.bin
+*.json

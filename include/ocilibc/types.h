@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -354,6 +354,16 @@ typedef struct OCI_Iter OCI_Iter;
  */
 
 typedef struct OCI_Ref OCI_Ref;
+
+/**
+ * @typedef OCI_XmlType
+ *
+ * @brief
+ * Oracle XMLTYPE type representation.
+ *
+ */
+
+typedef struct OCI_XmlType OCI_XmlType;
 
 /**
  * @typedef OCI_TypeInfo

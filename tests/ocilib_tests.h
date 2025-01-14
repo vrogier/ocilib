@@ -10,6 +10,9 @@
 #include <algorithm>
 #include <atomic>
 
+#define OCILIBPP_DEBUG_MEMORY_ENABLED
+#define OCILIBPP_DEBUG_MEMORY_THROW
+
 #include <ocilib.hpp>
 
 #ifdef OCI_CHARSET_WIDE
@@ -30,12 +33,12 @@
 
 #include "../include/ocilib.h"
 
-#define DBSNAME OTEXT("DB21C")
-#define DBS OTEXT("DB21C_DEV")
+#define DBSNAME OTEXT("FREE")
+#define DBS OTEXT("FREE_DEV")
 #define USR OTEXT("usr")
 #define PWD OTEXT("pwd")
 #define SYS_USR OTEXT("sys")
-#define SYS_PWD OTEXT("sys")
+#define SYS_PWD OTEXT("pwd")
 #define HOME OTEXT("")
 #define PWD_WRONG OTEXT("pwd_wrong")
 #define ARRAY_SIZE 10
@@ -45,7 +48,7 @@
 #include "mutex"
 
 using Mutex = std::recursive_mutex;
-using Guard = std::lock_guard<Mutex>;
+using Guard = std::lock_guard<::Mutex>;
 
 struct Error
 {
@@ -58,7 +61,7 @@ using Errors = std::vector<Error>;
 struct Context
 {
     Errors Errs;
-    Mutex Lock;
+    ::Mutex Lock;
 };
 
 

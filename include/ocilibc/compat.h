@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -302,6 +302,13 @@
 #define OCI_GetDefaultFormatNumeric(con)        OCI_GetFormat(con, OCI_FMT_NUMERIC)
 
 #define OCI_STRING_FORMAT_NUM_BIN               OCI_STRING_FORMAT_NUM_BDOUBLE
+
+
+/* macro added in version 4.7.7 */
+
+#define OCI_SIZE_LONG                           OCI_SIZE_PIECE_DYNAMIC_FETCH
+#define OCI_SetLongMaxSize(st, sz)              OCI_SetPieceSize(st, sz)
+#define OCI_GetLongMaxSize(st)                  OCI_GetPieceSize(st)
 
 /**
  * @}

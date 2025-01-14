@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,8 @@ inline TypeInfo Reference::GetTypeInfo() const
     Connection connection
     (
         core::Check(OCI_TypeInfoGetConnection(typeInfo)),
-        Environment::GetEnvironmentHandle()
+        Environment::GetEnvironmentHandle(),
+        false
     );
 
     return TypeInfo(typeInfo, connection.GetHandle());
@@ -90,11 +91,13 @@ inline ostring Reference::ToString() const
     {
         const unsigned int size = core::Check(OCI_RefGetHexSize(*this));
 
-        core::ManagedBuffer<otext> buffer(static_cast<size_t>(size + 1));
+        ostring result;
 
-        core::Check(OCI_RefToText(*this, size, buffer));
+        result.resize(static_cast<size_t>(size));
 
-        return core::MakeString(static_cast<const otext *>(buffer), static_cast<int>(size));
+        core::Check(OCI_RefToText(*this, size, const_cast<otext*>(result.data())));
+
+        return result;
     }
 
     return OCI_STRING_NULL;

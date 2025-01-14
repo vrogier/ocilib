@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,7 +111,9 @@ namespace ocilib
         /** Object REF */
         TypeReference = OCI_CDT_REF,
         /** PL/SQL boolean */
-        TypeBoolean = OCI_CDT_BOOLEAN
+        TypeBoolean = OCI_CDT_BOOLEAN,
+        /** XMLTYPE */
+        TypeXmlType = OCI_CDT_XMLTYPE
     };
 
     /**
@@ -509,9 +511,10 @@ namespace ocilib
         friend class Message;
         friend class Event;
         friend class Column;
-
         template<class, int>
         friend class Lob;
+
+        friend class core::HandleStore;
 
     public:
 
@@ -1142,15 +1145,16 @@ namespace ocilib
         static void SetUserCallback(AnyPointer ptr, T callback);
 
         static core::Handle* GetEnvironmentHandle();
-        static Environment& GetInstance();
+        static Environment* GetInstance();
 
-        Environment();
-        
-        void SelfInitialize(EnvironmentFlags mode, const ostring& libpath);
-        void SelfCleanup();
+        static core::HandleStore& GetDefaultStore();
+
+        Environment(EnvironmentFlags mode, const ostring& libpath);
+        ~Environment();
 
         core::SynchronizationGuard _guard;
         core::ConcurrentMap<AnyPointer, CallbackPointer> _callbacks;
+        core::HandleStore _defaultStore;
         EnvironmentHandle _handle;
         EnvironmentFlags _mode;
         unsigned int _charMaxSize;
@@ -1504,12 +1508,15 @@ namespace ocilib
          * @brief
          * Set the waiting mode used when no more connections/sessions are available from the pool
          *
-         * @param value - wait for object
+         * @param value - wait mode for object
          *
          * @note
          * For parameter value, pass :
-         * - true to wait for an available object if the pool is saturated
-         * - false to not wait for an available object
+         * - false to wait for an available object if the pool is saturated
+         * - true to not wait for an available object
+         *
+         * @note
+         * Default pool behavior is to wait for available connections
          *
          */
         void SetNoWait(bool value);
@@ -2367,7 +2374,7 @@ namespace ocilib
 
     private:
 
-        Connection(OCI_Connection* con, core::Handle* parent);
+        Connection(OCI_Connection* con, core::Handle* parent, bool allocated);
     };
 
     /**
@@ -2515,6 +2522,37 @@ namespace ocilib
         *
         */
         Number(bool create = false);
+
+        /**
+        * @brief
+        * Create a number object initialized with given numerical value
+        *
+        * @param value - value to assign
+        *
+        */
+        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        Number(const T& value);
+
+
+        /**
+        * @brief
+        * For value types, overrides HandleHolder copy constructor to perform assignment rather 
+        * than ref counting management
+        *
+        * @param other - value to assign
+        *
+        */
+        Number(const Number& other);
+
+        /**
+         * @brief
+         * For value types, overrides HandleHolder assignment operator to perform assignment rather 
+         * than ref counting management
+         *
+         * @param other - value to assign
+         *
+         */
+        Number& operator= (const Number& other) noexcept;
 
         /**
         * @brief
@@ -2701,6 +2739,26 @@ namespace ocilib
          *
          */
         Date(bool create = false);
+
+        /**
+         * @brief
+         * For value types, overrides HandleHolder copy constructor to perform assignment rather 
+         * than ref counting management
+         *
+         * @param other - value to assign
+         *
+         */
+        Date(const Date& other);
+
+         /**
+         * @brief
+         * For value types, overrides HandleHolder assignment operator to perform assignment rather 
+         * than ref counting management
+         *
+         * @param other - value to assign
+         *
+         */
+        Date& operator= (const Date& other) noexcept;
 
         /**
         * @brief
@@ -3160,6 +3218,26 @@ namespace ocilib
         */
         Interval(IntervalType type);
 
+       /**
+        * @brief
+        * For value types, overrides HandleHolder copy constructor to perform assignment rather 
+        * than ref counting management
+        *
+        * @param other - value to assign
+        *
+        */
+        Interval(const Interval& other);
+
+        /**
+         * @brief
+         * For value types, overrides HandleHolder assignment operator to perform assignment rather 
+         * than ref counting management
+         *
+         * @param other - value to assign
+         *
+         */
+        Interval& operator= (const Interval& other) noexcept;
+
         /**
         * @brief
         * Create an interval object with the value provided by the input interval string
@@ -3323,19 +3401,33 @@ namespace ocilib
 
         /**
         * @brief
+        * Return the interval nano seconds value
+        *
+        */
+        int GetNanoSeconds() const;
+
+        /**
+        * @brief
+        * Set the interval nano seconds value
+        *
+        */
+        void SetNanoSeconds(int value);
+
+        /**
+        * @brief
         * Extract the date / second parts from the interval value
         *
         * @param day  - Place holder for Day value
         * @param hour - Place holder for Hour value
         * @param min  - Place holder for Minutes value
         * @param sec  - Place holder for Seconds value
-        * @param fsec - Place holder for Milliseconds value
+        * @param nsec - Place holder for NanoSeconds value
         *
         * @warning
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        void GetDaySecond(int& day, int& hour, int& min, int& sec, int& fsec) const;
+        void GetDaySecond(int& day, int& hour, int& min, int& sec, int& nsec) const;
 
         /**
         * @brief
@@ -3345,13 +3437,13 @@ namespace ocilib
         * @param hour - Hour value
         * @param min  - Minutes value
         * @param sec  - Seconds value
-        * @param fsec - Milliseconds value
+        * @param nsec - NanoSeconds value
         *
         * @warning
-        * this call is only permitted if the current interval type is  Interval::DaySecond
+        * this call is only permitted if the current interval type is Interval::DaySecond
         *
         */
-        void SetDaySecond(int day, int hour, int min, int sec, int fsec);
+        void SetDaySecond(int day, int hour, int min, int sec, int nsec);
 
         /**
         * @brief
@@ -3498,6 +3590,8 @@ namespace ocilib
 
         int Compare(const Interval& other) const;
 
+        void Allocate(IntervalType type);
+
         Interval(OCI_Interval* pInterval, core::Handle* parent = nullptr);
     };
 
@@ -3561,6 +3655,26 @@ namespace ocilib
         *
         */
         Timestamp();
+
+        /**
+        * @brief
+        * For value types, overrides HandleHolder copy constructor to perform assignment rather 
+        * than ref counting management
+        *
+        * @param other - value to assign
+        *
+        */
+        Timestamp(const Timestamp& other);
+
+        /**
+         * @brief
+         * For value types, overrides HandleHolder assignment operator to perform assignment rather 
+         * than ref counting management
+         *
+         * @param other - value to assign
+         *
+         */
+        Timestamp& operator= (const Timestamp& other) noexcept;
 
         /**
         * @brief
@@ -4004,6 +4118,8 @@ namespace ocilib
     private:
 
         int Compare(const Timestamp& other) const;
+
+        void Allocate(TimestampType type);
 
         Timestamp(OCI_Timestamp* pTimestamp, core::Handle* parent = nullptr);
     };
@@ -4922,6 +5038,31 @@ namespace ocilib
     private:
 
         Reference(OCI_Ref* pRef, core::Handle* parent = nullptr);
+    };
+
+       /**
+     * @brief
+     * Object identifying the SQL data type XMLTYPE.
+     *
+     * This class wraps the OCILIB object handle OCI_XmlType and its related methods
+     *
+     */
+    class XmlType : public core::HandleHolder<OCI_XmlType*>, public core::Streamable
+    {
+        friend class Resultset;
+
+    public:
+
+        /**
+        * @brief
+        * return a string representation of the current XmlType
+        *
+        */
+        ostring ToString() const override;
+
+    private:
+
+        XmlType(OCI_XmlType* pXmlType, core::Handle* parent = nullptr);
     };
 
     /**
@@ -6390,22 +6531,22 @@ namespace ocilib
 
         /**
         * @brief
-        * Set the LONG data type piece buffer size
+        * Set the piece size for dynamic fetch operations (XMLTYPE, LONGs) 
         *
         * @param value - maximum size for long buffer
         *
         */
-        void SetLongMaxSize(unsigned int value);
+        void SetPieceSize(unsigned int value);
 
         /**
         * @brief
-        * Return the LONG data type piece buffer size
+        * Return the piece size for dynamic fetch operations (XMLTYPE, LONGs) 
         *
         * @note
-        * Default value is set to constant OCI_SIZE_LONG
+        * Default value is set to constant OCI_SIZE_PIECE_DYNAMIC_FETCH
         *
         */
-        unsigned int GetLongMaxSize() const;
+        unsigned int GetPieceSize() const;
 
         /**
         * @brief

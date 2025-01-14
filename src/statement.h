@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -664,13 +664,13 @@ OCI_SYM_LOCAL unsigned int OcilibStatementGetPrefetchMemory
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementSetLongMaxSize
+OCI_SYM_LOCAL boolean OcilibStatementSetPieceSize
 (
     OCI_Statement* stmt,
     unsigned int   size
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetLongMaxSize
+OCI_SYM_LOCAL unsigned int OcilibStatementGetPieceSize
 (
     OCI_Statement* stmt
 );

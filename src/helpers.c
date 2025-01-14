@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -229,3 +229,27 @@ boolean OcilibFreeObjectFromType
 
     return res;
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibGetLongObjectFromDefine
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Long* OcilibGetLongObjectFromDefine
+(
+    OCI_Define* def,
+    ub4         index
+)
+{
+    if (OCI_CDT_LONG == def->col.datatype)
+    {
+        return (OCI_Long*)def->buf.data[index];
+    }
+    else if (OCI_CDT_XMLTYPE == def->col.datatype)
+    {
+        OCI_XmlType* xmlType = (OCI_XmlType*)def->buf.data[index];
+        return xmlType ? xmlType->lng : NULL;
+    }
+
+    return NULL;
+}
+

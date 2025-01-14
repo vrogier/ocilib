@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,12 +49,12 @@ OCI_Long * OcilibLongInitialize
 
     ALLOC_DATA(OCI_IPC_LONG, lg, 1);
 
-    lg->size    = 0;
-    lg->maxsize = 0;
-    lg->stmt    = stmt;
-    lg->def     = def;
-    lg->type    = type;
-    lg->offset  = 0;
+    lg->stmt        = stmt;
+    lg->def         = def;
+    lg->type        = type;
+    lg->offset      = 0;
+    lg->piecesize   = 0;
+    lg->size        = 0;
 
     if (def)
     {
@@ -363,4 +363,43 @@ void * OcilibLongGetBuffer
         /* handle */ OCI_IPC_LONG, lg,
         /* member */ buffer
     )
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibLongFinalizeDynamicFetch
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_SYM_LOCAL boolean OcilibLongFinalizeDynamicFetch
+(
+    OCI_Long* lg
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_LONG, lg
+    )
+
+    CHECK_PTR(OCI_IPC_LONG, lg)
+
+    if (lg->buffer)
+    {
+        lg->size += lg->piecesize;
+
+        if (OCI_CLONG == lg->type)
+        {
+            const int len = (int)(lg->size / sizeof(dbtext));
+
+            ((dbtext*)lg->buffer)[len] = 0;
+
+            if (Env.use_wide_char_conv)
+            {
+                OcilibStringUTF16ToUTF32(lg->buffer, lg->buffer, len);
+            }
+        }
+    }
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
 }

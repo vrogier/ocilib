@@ -52,6 +52,7 @@ The source code is free source code licensed under **Apache License, Version 2.0
 - Describe database schema objects
 - Hash tables API
 - Portable Threads and mutexes API
+- Partial support for XMLTYPE (fetching only as string content)
 
 ## 5. Installation
 

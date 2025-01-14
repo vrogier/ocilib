@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  */
  
@@ -58,7 +58,8 @@ FEATURES
     * Describe database schema objects
     * Hash tables API
     * Portable Threads and mutexes API
-
+    * Partial support for XMLTYPE (fetching only as string content)
+    
 ===========================================================================
 DOWNLOAD 
 ===========================================================================

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ inline Statement::Statement(OCI_Statement *stmt, core::Handle *parent)
 
 inline Connection Statement::GetConnection() const
 {
-    return Connection(core::Check(OCI_StatementGetConnection(*this)), Environment::GetEnvironmentHandle());
+    return Connection(core::Check(OCI_StatementGetConnection(*this)), Environment::GetEnvironmentHandle(), false);
 }
 
 inline void Statement::Describe(const ostring& sql)
@@ -912,14 +912,14 @@ inline unsigned int Statement::GetPrefetchMemory() const
     return core::Check(OCI_GetPrefetchMemory(*this));
 }
 
-inline void Statement::SetLongMaxSize(unsigned int value)
+inline void Statement::SetPieceSize(unsigned int value)
 {
-    core::Check(OCI_SetLongMaxSize(*this, value));
+    core::Check(OCI_SetPieceSize(*this, value));
 }
 
-inline unsigned int Statement::GetLongMaxSize() const
+inline unsigned int Statement::GetPieceSize() const
 {
-    return core::Check(OCI_GetLongMaxSize(*this));
+    return core::Check(OCI_GetPieceSize(*this));
 }
 
 inline void Statement::SetLongMode(LongMode value)

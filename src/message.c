@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,6 +107,13 @@ boolean OcilibMessageFree
     if (NULL != msg->sender)
     {
         OcilibAgentFree(msg->sender);
+    }
+
+    /* free local OCI_Date object */
+
+    if (NULL != msg->date)
+    {
+        OcilibDateFree(msg->date);
     }
 
     /* free internal OCI_Object handle if payload is not RAW */
@@ -456,19 +463,17 @@ OCI_Date * OcilibMessageGetEnqueueTime
         /* context */ OCI_IPC_MSG, msg
     )
 
-    OCIDate date;
-
     CHECK_PTR(OCI_IPC_MSG, msg)
+
+    msg->date = OcilibDateInitialize(msg->typinf->con, msg->date, NULL, TRUE, FALSE);
+    CHECK_NULL(msg->date)
 
     CHECK_ATTRIB_GET
     (
         OCI_DTYPE_AQMSG_PROPERTIES, OCI_ATTR_ENQ_TIME,
-        msg->proph, &date, NULL,
+        msg->proph, msg->date->handle, NULL,
         msg->typinf->con->err
     )
-
-    msg->date = OcilibDateInitialize(msg->typinf->con, msg->date, &date, FALSE, FALSE);
-    CHECK_NULL(msg->date)
 
     SET_RETVAL(msg->date)
 

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -469,15 +469,19 @@ ostring Collection<T>::ToString() const
 {
     if (!IsNull())
     {
-        unsigned int len = 0;
+        unsigned int size{};
+        
+        core::Check(OCI_CollToText(*this, &size, nullptr));
 
-        core::Check(OCI_CollToText(*this, &len, nullptr));
+        ostring result;
 
-        core::ManagedBuffer<otext> buffer(static_cast<size_t>(len + 1));
+        result.resize(static_cast<size_t>(size));
 
-        core::Check(OCI_CollToText(*this, &len, buffer));
+        core::Check(OCI_CollToText(*this, &size , const_cast<otext*>(result.data())));
 
-        return core::MakeString(static_cast<const otext *>(buffer), static_cast<int>(len));
+        result.resize(static_cast<size_t>(size));
+
+        return result;
     }
 
     return OCI_STRING_NULL;

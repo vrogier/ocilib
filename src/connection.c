@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1664,7 +1664,7 @@ const otext * OcilibConnectionGetServerVersion
                                                   (int*)&ver_min,
                                                   (int*)&ver_rev))
                     {
-                        con->ver_num = ver_maj * 100 + ver_min * 10 + ver_rev;
+                        con->ver_num = OCI_VER_MAKE(ver_maj, ver_min, ver_rev);
                     }
 
                     break;

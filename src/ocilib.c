@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@
 #include "timestamp.h"
 #include "transaction.h"
 #include "typeinfo.h"
+#include "xmltype.h"
 
 static void OcilibCheckContext
 (
@@ -2840,10 +2841,10 @@ boolean OCI_API OCI_IntervalGetDaySecond
     int         * hour,
     int         * min,
     int         * sec,
-    int         * fsec
+    int         * nsec
 )
 {
-    CALL_IMPL(OcilibIntervalGetDaySecond, itv, day, hour, min, sec, fsec)
+    CALL_IMPL(OcilibIntervalGetDaySecond, itv, day, hour, min, sec, nsec)
 }
 
 boolean OCI_API OCI_IntervalGetYearMonth
@@ -2863,10 +2864,10 @@ boolean OCI_API OCI_IntervalSetDaySecond
     int           hour,
     int           min,
     int           sec,
-    int           fsec
+    int           nsec
 )
 {
-    CALL_IMPL(OcilibIntervalSetDaySecond, itv, day, hour, min, sec, fsec)
+    CALL_IMPL(OcilibIntervalSetDaySecond, itv, day, hour, min, sec, nsec)
 }
 
 boolean OCI_API OCI_IntervalSetYearMonth
@@ -4715,6 +4716,26 @@ boolean OCI_API OCI_RefToText
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ *  XmlType
+ * --------------------------------------------------------------------------------------------- */
+
+const otext* OCI_API OCI_XmlTypeGetContent
+(
+    OCI_XmlType * xmlType
+)
+{
+    CALL_IMPL(OcilibXmlTypeGetContent, xmlType);
+}
+
+unsigned int OCI_API OCI_XmlTypeGetContentSize
+(
+    OCI_XmlType * xmlType
+)
+{
+    CALL_IMPL(OcilibXmlTypeGetContentSize, xmlType);
+}
+
+/* --------------------------------------------------------------------------------------------- *
  *  resultset
  * --------------------------------------------------------------------------------------------- */
 
@@ -5165,6 +5186,24 @@ OCI_Ref* OCI_API OCI_GetRef2
 )
 {
     CALL_IMPL(OcilibResultsetGetReference2, rs, name);
+}
+
+OCI_XmlType* OCI_API OCI_GetXmlType
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(OcilibResultsetGetXmlType, rs, index);
+}
+
+OCI_XmlType* OCI_API OCI_GetXmlType2
+(
+    OCI_Resultset* rs,
+    const otext  * name
+)
+{
+    CALL_IMPL(OcilibResultsetGetXmlType2, rs, name);
 }
 
 OCI_Statement* OCI_API OCI_GetStatement
@@ -6187,21 +6226,21 @@ unsigned int OCI_API OCI_GetPrefetchMemory
     CALL_IMPL(OcilibStatementGetPrefetchMemory, stmt);
 }
 
-boolean OCI_API OCI_SetLongMaxSize
+boolean OCI_API OCI_SetPieceSize
 (
     OCI_Statement* stmt,
     unsigned int   size
 )
 {
-    CALL_IMPL(OcilibStatementSetLongMaxSize, stmt, size);
+    CALL_IMPL(OcilibStatementSetPieceSize, stmt, size);
 }
 
-unsigned int OCI_API OCI_GetLongMaxSize
+unsigned int OCI_API OCI_GetPieceSize
 (
     OCI_Statement* stmt
 )
 {
-    CALL_IMPL(OcilibStatementGetLongMaxSize, stmt);
+    CALL_IMPL(OcilibStatementGetPieceSize, stmt);
 }
 
 boolean OCI_API OCI_SetLongMode

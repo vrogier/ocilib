@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -350,12 +350,7 @@ namespace ocilib
 
             static HandleStore& GetStoreForHandle(Handle*);
 
-            template <class T>
-            static HandleStore& CreateStore();
-
         private:
-
-            static HandleStore& GetDefaultStore();
 
             ConcurrentMap<AnyPointer, Handle*>  _handles;
         };

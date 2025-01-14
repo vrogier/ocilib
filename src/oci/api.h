@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -286,6 +286,24 @@ typedef sword (*OCIDEFINEBYPOS)
     ub2        *rlenp,
     ub2        *rcodep,
     ub4         mode
+);
+
+typedef sword (*OCIDEFINEDYNAMIC)
+(
+    OCIDefine   *defnp,
+    OCIError    *errhp,
+    void        *octxp, 
+    sb4      (*ocbfp)
+    (
+        void          *octxp,
+        OCIDefine     *defnp,
+        ub4            iter, 
+        void         **bufpp,
+        ub4          **alenpp,
+        ub1           *piecep,
+        void         **indpp,
+        ub2          **rcodep
+   )
 );
 
 typedef sword (*OCIDEFINEOBJECT)

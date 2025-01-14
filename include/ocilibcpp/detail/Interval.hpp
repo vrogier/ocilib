@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,27 @@ inline Interval::Interval()
 
 inline Interval::Interval(IntervalType type)
 {
-    AcquireAllocated
-    (
-        core::Check(OCI_IntervalCreate(nullptr, type)), 
-        Environment::GetEnvironmentHandle()
-    );
+    Allocate(type);
+}
+
+inline Interval::Interval(const Interval& other)
+{
+    *this = other;
+}
+
+inline Interval& Interval::operator= (const Interval& other) noexcept
+{
+    if (this != &other)
+    {
+        if (IsNull())
+        {
+            Allocate(other.GetType());
+        }
+
+        core::Check(OCI_IntervalAssign(*this, other));
+    }
+
+    return *this;
 }
 
 inline Interval::Interval(IntervalType type, const ostring& data)
@@ -55,6 +71,15 @@ inline Interval::Interval(IntervalType type, const ostring& data)
 inline Interval::Interval(OCI_Interval *pInterval, core::Handle *parent)
 {
     AcquireTransient(pInterval, parent);
+}
+
+inline void Interval::Allocate(IntervalType type)
+{
+    AcquireAllocated
+    (
+        core::Check(OCI_IntervalCreate(nullptr, type)), 
+        Environment::GetEnvironmentHandle()
+    );
 }
 
 inline Interval Interval::Clone() const
@@ -189,7 +214,7 @@ inline int Interval::GetMilliSeconds() const
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
-    return milliseconds;
+    return milliseconds / 1000000;
 }
 
 inline void Interval::SetMilliSeconds(int value)
@@ -197,17 +222,34 @@ inline void Interval::SetMilliSeconds(int value)
     int day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
+    SetDaySecond(day, hour, minutes, seconds, value * 1000000);
+}
+
+inline int Interval::GetNanoSeconds() const
+{
+    int day = 0, hour = 0, minutes = 0, seconds = 0, nanoseconds = 0;
+
+    GetDaySecond(day, hour, minutes, seconds, nanoseconds);
+
+    return nanoseconds;
+}
+
+inline void Interval::SetNanoSeconds(int value)
+{
+    int day = 0, hour = 0, minutes = 0, seconds = 0, nanoseconds = 0;
+
+    GetDaySecond(day, hour, minutes, seconds, nanoseconds);
     SetDaySecond(day, hour, minutes, seconds, value);
 }
 
-inline void Interval::GetDaySecond(int &day, int &hour, int &min, int &sec, int &fsec) const
+inline void Interval::GetDaySecond(int &day, int &hour, int &min, int &sec, int &nanosec) const
 {
-    core::Check(OCI_IntervalGetDaySecond(*this, &day, &hour, &min, &sec, &fsec));
+    core::Check(OCI_IntervalGetDaySecond(*this, &day, &hour, &min, &sec, &nanosec));
 }
 
-inline void Interval::SetDaySecond(int day, int hour, int min, int sec, int fsec)
+inline void Interval::SetDaySecond(int day, int hour, int min, int sec, int nanosec)
 {
-    core::Check(OCI_IntervalSetDaySecond(*this, day, hour, min, sec, fsec));
+    core::Check(OCI_IntervalSetDaySecond(*this, day, hour, min, sec, nanosec));
 }
 
 inline void Interval::GetYearMonth(int &year, int &month) const

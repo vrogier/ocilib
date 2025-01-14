@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -323,6 +323,18 @@ OCI_SYM_LOCAL OCI_Ref * OcilibResultsetGetReference
 );
 
 OCI_SYM_LOCAL OCI_Ref * OcilibResultsetGetReference2
+(
+    OCI_Resultset* rs,
+    const otext  * name
+);
+
+OCI_SYM_LOCAL OCI_XmlType * OcilibResultsetGetXmlType
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+);
+
+OCI_SYM_LOCAL OCI_XmlType * OcilibResultsetGetXmlType2
 (
     OCI_Resultset* rs,
     const otext  * name

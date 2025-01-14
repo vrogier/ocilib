@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,17 @@
 
 #pragma once
 
+#ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
+
 #include <algorithm>
+#include <exception>
+#include <vector>
+#include <iostream>
 
 namespace ocilib
 {
     namespace core
     {
-#ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
-
         struct MemoryAllocation
         {
             void* Address;
@@ -75,6 +78,12 @@ namespace ocilib
                         << " - Type " << alloc.Name
                         << std::endl;
                 }
+
+                #ifdef OCILIBPP_DEBUG_MEMORY_THROW
+
+                throw std::runtime_error("Unfreed memory in ocilib cpp");
+
+                #endif 
             }
         };
 
@@ -84,7 +93,7 @@ namespace ocilib
 
             return memoryDebugInfo;
         }
-
-#endif
     }
 }
+
+#endif

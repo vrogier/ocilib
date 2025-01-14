@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,6 +91,7 @@ extern OCIBINDBYNAME                OCIBindByName;
 extern OCIBINDDYNAMIC               OCIBindDynamic;
 extern OCIBINDOBJECT                OCIBindObject;
 extern OCIDEFINEBYPOS               OCIDefineByPos;
+extern OCIDEFINEDYNAMIC             OCIDefineDynamic;
 extern OCIDEFINEOBJECT              OCIDefineObject;
 extern OCISTMTPREPARE               OCIStmtPrepare;
 extern OCISTMTEXECUTE               OCIStmtExecute;

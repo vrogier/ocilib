@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,21 @@
 #define OCI_18_5                            OCI_VER_MAKE(18, 5, 0)
 #define OCI_19_3                            OCI_VER_MAKE(19, 3, 0)
 #define OCI_19_5                            OCI_VER_MAKE(19, 5, 0)
+#define OCI_19_12                           OCI_VER_MAKE(19, 12, 0)
+#define OCI_19_16                           OCI_VER_MAKE(19, 16, 0)
+#define OCI_19_17                           OCI_VER_MAKE(19, 17, 0)
+#define OCI_19_19                           OCI_VER_MAKE(19, 19, 0)
+#define OCI_19_21                           OCI_VER_MAKE(19, 21, 0)
+#define OCI_19_22                           OCI_VER_MAKE(19, 22, 0)
+#define OCI_19_24                           OCI_VER_MAKE(19, 24, 0)
+#define OCI_21_12                           OCI_VER_MAKE(21, 12, 0)
+#define OCI_21_14                           OCI_VER_MAKE(21, 14, 0)
+#define OCI_21_15                           OCI_VER_MAKE(21, 15, 0)
 #define OCI_21_3                            OCI_VER_MAKE(21, 3, 0)
+#define OCI_23_3                            OCI_VER_MAKE(23, 3, 0)
+#define OCI_23_4                            OCI_VER_MAKE(23, 4, 0)
+#define OCI_23_5                            OCI_VER_MAKE(23, 5, 0)
+#define OCI_23_6                            OCI_VER_MAKE(23, 6, 0)
 
 /* OCILIB Error types */
 
@@ -147,6 +161,7 @@
 #define OCI_IPC_ENQUEUE          38
 #define OCI_IPC_DEQUEUE          39
 #define OCI_IPC_AGENT            40
+#define OCI_IPC_XMLTYPE          41
 
 /* allocated bytes types */
 
@@ -188,6 +203,7 @@
 #define OCI_CDT_COLLECTION                  13
 #define OCI_CDT_REF                         14
 #define OCI_CDT_BOOLEAN                     15
+#define OCI_CDT_XMLTYPE                     16
 
 /* Data Type codes for OCI_ImmediateXXX() calls */
 
@@ -815,8 +831,8 @@
 
 #define OCI_SIZE_FORMAT                     64
 #define OCI_SIZE_BUFFER                     512
-#define OCI_SIZE_LARGE_BUFFER               ((64*1024)-1)
-#define OCI_SIZE_LONG                       ((64*1024)-1)
+#define OCI_SIZE_LARGE_BUFFER               (32*1024)
+#define OCI_SIZE_PIECE_DYNAMIC_FETCH        (32*1024)
 #define OCI_SIZE_DATE                       45
 #define OCI_SIZE_TIMESTAMP                  54
 #define OCI_SIZE_FORMAT_TODATE              14

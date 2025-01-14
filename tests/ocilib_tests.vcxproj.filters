@@ -223,6 +223,15 @@
     <ClCompile Include="main.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\xmltype.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="TestXmlType.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLong.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Tests suite">
@@ -252,9 +261,6 @@
     <Filter Include="Sources\oci">
       <UniqueIdentifier>{50ecc37f-2994-430f-957a-c11f4f7be220}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ocilib_tests.h">
@@ -617,5 +623,14 @@
     <ClInclude Include="..\src\oci\types.h">
       <Filter>Sources\oci</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\xmltype.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\XmlType.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

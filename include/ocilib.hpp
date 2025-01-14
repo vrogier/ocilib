@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,6 +154,7 @@ namespace ocilib
 
 /* Including core implementations  */
 
+#include "ocilibcpp/detail/core/MemoryDebugInfo.hpp"
 #include "ocilibcpp/detail/core/Utils.hpp"
 #include "ocilibcpp/detail/core/Enum.hpp"
 #include "ocilibcpp/detail/core/Flags.hpp"
@@ -165,7 +166,6 @@ namespace ocilib
 #include "ocilibcpp/detail/core/ConcurrentMap.hpp"
 #include "ocilibcpp/detail/core/ConcurrentList.hpp"
 #include "ocilibcpp/detail/core/SmartHandle.hpp"
-#include "ocilibcpp/detail/core/MemoryDebugInfo.hpp"
 
 /* Including support implementations  */
 
@@ -198,6 +198,7 @@ namespace ocilib
 #include "ocilibcpp/detail/TypeInfo.hpp"
 #include "ocilibcpp/detail/Object.hpp"
 #include "ocilibcpp/detail/Reference.hpp"
+#include "ocilibcpp/detail/XmlType.hpp"
 #include "ocilibcpp/detail/Collection.hpp"
 #include "ocilibcpp/detail/CollectionIterator.hpp"
 #include "ocilibcpp/detail/CollectionElement.hpp"

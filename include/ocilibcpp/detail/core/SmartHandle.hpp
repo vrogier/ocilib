@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,9 +35,8 @@ namespace ocilib
             HandleHolder* holder, T handle, bool allocated,
             SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent
         )
-            : _holders(), _handle(handle), _allocated(allocated),
-            _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store{nullptr},
-            _guard(GetSynchronizationMode())
+            :  _guard(GetSynchronizationMode()), _handle(handle), _allocated(allocated),
+               _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store{nullptr}
         {
             _holders.SetGuard(&_guard);
             _children.SetGuard(&_guard);
@@ -77,7 +76,10 @@ namespace ocilib
             _holders.SetGuard(nullptr);
             _children.SetGuard(nullptr);
 
-            HandleStore::GetStoreForHandle(_parent).Set<SmartHandle*>(_handle, nullptr);
+            if (_parent)
+            {
+                HandleStore::GetStoreForHandle(_parent).Set<SmartHandle*>(_handle, nullptr);
+            }
 
             if (_freeNotifyFunc)
             {
@@ -197,3 +199,4 @@ namespace ocilib
         }
     }
 }
+ 

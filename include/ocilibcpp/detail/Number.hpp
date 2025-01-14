@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,32 @@ inline Number::Number(bool create)
     {
         Allocate();
     }
+}
+
+template<class T, typename core::SupportedNumeric<T>::Type::type*>
+Number::Number(const T &value)
+{
+    *this = value;
+}
+
+inline Number::Number(const Number& other)
+{
+    *this = other;
+}
+
+inline Number& Number::operator= (const Number& other) noexcept
+{
+    if (this != &other)
+    {
+        if (IsNull())
+        {
+            Allocate();
+        }
+
+        core::Check(OCI_NumberAssign(*this, other));
+    }
+
+    return *this;
 }
 
 inline Number::Number(OCI_Number *pNumber, core::Handle *parent)

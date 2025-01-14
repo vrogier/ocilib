@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 
 #include "define.h"
 
+#include "callback.h"
 #include "connection.h"
 #include "hash.h"
 #include "macros.h"
@@ -146,6 +147,7 @@ void * OcilibDefineGetData
         case OCI_CDT_OBJECT:
         case OCI_CDT_COLLECTION:
         case OCI_CDT_REF:
+        case OCI_CDT_XMLTYPE:
         {
             /* handle based types */
 
@@ -295,11 +297,15 @@ boolean OcilibDefineAlloc
     ALLOC_BUFFER(OCI_IPC_LEN_ARRAY, def->buf.lens, def->buf.sizelen, def->buf.count)
 
     /* initialize length array with buffer default size.
-       But, Oracle uses different sizes for static fetch and callback fetch....*/
+        But, Oracle uses different sizes for static fetch and callback fetch....*/
 
     /* Allocate buffer array */
-
-    const ub4 bufsize = (ub4)(OCI_CDT_LONG == def->col.datatype ? sizeof(OCI_Long *) : def->col.bufsize);
+    
+    ub4 bufsize = (ub4) def->col.bufsize;
+    if (IS_DYNAMIC_FETCH_COLUMN(&def->col))
+    {
+        bufsize = sizeof(void*);
+    }
 
     ALLOC_BUFFER(OCI_IPC_BUFF_ARRAY, def->buf.data, bufsize, def->buf.count)
 
@@ -380,7 +386,7 @@ boolean OcilibDefineDef
 
     /*check define mode for long columns */
 
-    if (OCI_CDT_LONG == def->col.datatype)
+    if (IS_DYNAMIC_FETCH_COLUMN(&def->col))
     {
         mode = OCI_DYNAMIC_FETCH;
     }
@@ -404,6 +410,19 @@ boolean OcilibDefineDef
         (ub4   ) mode
     )
 
+    if (IS_DYNAMIC_FETCH_COLUMN(&def->col))
+    {
+        CHECK_OCI
+        (
+            def->rs->stmt->con->err,
+            OCIDefineDynamic,
+            (OCIDefine*)def->buf.handle,
+            def->rs->stmt->con->err,
+            def,
+            OcilibCallbackDynamicDefine
+        )
+    }
+
     if (SQLT_NTY == def->col.sqlcode || SQLT_REF == def->col.sqlcode)
     {
         CHECK_OCI
@@ -421,11 +440,11 @@ boolean OcilibDefineDef
     }
 
     if(((OCI_CDT_TEXT == def->col.datatype))  ||
+       ((OCI_CDT_XMLTYPE == def->col.datatype))  ||
        ((OCI_CDT_LOB  == def->col.datatype)  && (OCI_BLOB  != def->col.subtype)) ||
        ((OCI_CDT_FILE == def->col.datatype)  && (OCI_BFILE != def->col.subtype)) ||
        ((OCI_CDT_LONG == def->col.datatype)  && (OCI_BLONG != def->col.subtype)))
     {
-
         if ((SQLCS_NCHAR == def->col.csfrm) || Env.nls_utf8)
         {
             ub1 csfrm = SQLCS_NCHAR;

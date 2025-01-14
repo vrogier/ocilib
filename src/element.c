@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1055,7 +1055,7 @@ boolean OcilibElementSetRaw
     )
 
     CHECK_PTR(OCI_IPC_ELEMENT, elem)
-    CHECK_COMPAT(OCI_CDT_TEXT == elem->typinf->cols[0].datatype)
+    CHECK_COMPAT(OCI_CDT_RAW == elem->typinf->cols[0].datatype)
 
     if (NULL == value)
     {

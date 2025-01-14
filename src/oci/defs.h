@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,6 +137,7 @@
 #define OCI_HTYPE_CPOOL         26                 /* connection pool handle */
 #define OCI_HTYPE_SPOOL         27                    /* session pool handle */
 #define OCI_HTYPE_ADMIN         28                           /* admin handle */
+#define OCI_HTYPE_EVENT         29                        /* HA event handle */
 
 /*-------------------------Descriptor Types----------------------------------*/
 

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,26 @@ inline Date::Date(bool create)
     {
         Allocate();
     }
+}
+
+inline Date::Date(const Date& other)
+{
+    *this = other;
+}
+
+inline Date& Date::operator= (const Date& other) noexcept
+{
+    if (this != &other)
+    {
+        if (IsNull())
+        {
+            Allocate();
+        }
+
+        core::Check(OCI_DateAssign(*this, other));
+    }
+
+    return *this;
 }
 
 inline Date::Date(const ostring& str, const ostring& format)

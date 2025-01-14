@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -227,10 +227,7 @@ struct OCI_Environment
     boolean         use_wide_char_conv;           /* are we on a unix like platform with unicode */
     boolean         warnings_on;                  /* warnings enabled ? */
     boolean         env_vars[OCI_VARS_COUNT];     /* specific environment variables */
-
 };
-
-typedef struct OCI_Environment OCI_Environment;
 
 /*
  * Pool object
@@ -469,7 +466,7 @@ struct OCI_Statement
     ub4              fetch_size;        /* fetch array size */
     ub4              prefetch_size;     /* pre-fetch size */
     ub4              prefetch_mem;      /* pre-fetch memory */
-    ub4              long_size;         /* default size for LONG columns */
+    ub4              piece_size;        /* default piece size for dynamic fetchs */
     ub1              long_mode;         /* LONG datatype handling mode */
     ub1              status;            /* statement status */
     ub2              type;              /* type of SQL statement */
@@ -534,6 +531,20 @@ struct OCI_Long
     ub4            piecesize;   /* size of current fetched piece */
     ub4            maxsize;     /* size to R/W */
     ub1           *buffer;      /* fetched buffer */
+};
+
+/*
+ * XmlType object
+ *
+ */
+
+struct OCI_XmlType
+{
+    /* Start OCI_Datatype */
+    OCI_Long       *lng;
+    ub4             hstate;      /* object variable state */
+    /* End OCI_Datatype */
+    OCI_Connection *con;        /* pointer to connection object */
 };
 
 /*

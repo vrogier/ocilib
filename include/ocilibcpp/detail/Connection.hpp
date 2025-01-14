@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,16 @@ inline Connection::Connection(const ostring& db, const ostring& user, const ostr
     Open(db, user, pwd, sessionFlags);
 }
 
-inline Connection::Connection(OCI_Connection *con,  core::Handle *parent)
+inline Connection::Connection(OCI_Connection *con,  core::Handle *parent, bool allocated)
 {
-    AcquireTransient(con, parent);
+    if (allocated)
+    {
+        AcquireAllocated(con, parent);
+    }
+    else
+    {
+        AcquireTransient(con, parent);
+    }
 }
 
 inline void Connection::Open(const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)

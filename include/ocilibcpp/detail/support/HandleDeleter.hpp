@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2023 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,6 +100,11 @@ namespace ocilib
         template<> struct HandleDeleter<OCI_Ref*>
         {
             bool operator()(OCI_Ref* handle) const { return OCI_RefFree(handle); }
+        };
+
+        template<> struct HandleDeleter<OCI_XmlType*>
+        {
+            bool operator()(OCI_XmlType* handle) const { return true; }
         };
 
         template<> struct HandleDeleter<OCI_Statement*>
