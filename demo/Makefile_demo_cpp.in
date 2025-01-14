@@ -1,4 +1,4 @@
-# Copyright (c) 2007-2024 Vincent ROGIER <vince.rogier@ocilib.net>
+# Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
 #  
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without 

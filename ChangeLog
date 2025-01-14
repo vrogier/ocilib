@@ -1,4 +1,4 @@
-2024-10-02 Version 4.7.7 Vincent Rogier vince.rogier@ocilib.net
+2025-01-14 Version 4.7.7 Vincent Rogier vince.rogier@ocilib.net
 
    * Enhancements (C API)
 
@@ -37,13 +37,14 @@
         
     * Fixes (C++ API)
     
+        - Issue 351: C++ Value types perform handle assignment instead of value assignment
         - Issue 355: Since v4.7.5, connection acquired from ocilib::Pool where not released, leading to pool exhaustion
         - Issue 362: Calling Environment::Initialize() / Environment::Cleanup() multiple times per process might lead to segfaults with latest embedded vc143 runtime
         
     * Documentation
     
         - Issue 352 : Fixed documentation for OCI_PoolGetNoWait and ocilib::Pool::SetNoWait()
-        - Issue 363 : Fixed documentation for OCI_IntervalGetDaySecond and OCI_IntervalSetDaySecond(), Interval::GetDaySecond() and GetSaySecond()
+        - Issue 363 : Fixed documentation for OCI_IntervalGetDaySecond() and OCI_IntervalSetDaySecond(), Interval::GetDaySecond() and GetSaySecond()
 
 2023-02-08 Version 4.7.6 Vincent Rogier vince.rogier@ocilib.net
 

@@ -22,7 +22,7 @@ BEGIN
             VALUE "FileDescription", "Open source C driver for Oracle databases"
             VALUE "FileVersion", "4.7.7.0"
             VALUE "InternalName", "OCILIB"
-            VALUE "LegalCopyright", "Copyright © 2007-2024"
+            VALUE "LegalCopyright", "Copyright © 2007-2025"
             VALUE "ProductName", "OCILIB (C driver for Oracle)"
             VALUE "ProductVersion", "4.7.7.0"
         END
@@ -54,7 +54,7 @@ BEGIN
             VALUE "FileDescription", "Open source C driver for Oracle databases"
             VALUE "FileVersion", "4.7.7.0"
             VALUE "InternalName", "OCILIB.dll"
-            VALUE "LegalCopyright", "Copyright © 2007-2024"
+            VALUE "LegalCopyright", "Copyright © 2007-2025"
             VALUE "OriginalFilename", "OCILIB.dll"
             VALUE "ProductName", "OCILIB (C driver for Oracle)"
             VALUE "ProductVersion", "4.7.7.0"
