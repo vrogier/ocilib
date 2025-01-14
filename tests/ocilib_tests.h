@@ -33,12 +33,12 @@
 
 #include "../include/ocilib.h"
 
-#define DBSNAME OTEXT("DB21C")
-#define DBS OTEXT("DB21C_DEV")
+#define DBSNAME OTEXT("FREE")
+#define DBS OTEXT("FREE_DEV")
 #define USR OTEXT("usr")
 #define PWD OTEXT("pwd")
 #define SYS_USR OTEXT("sys")
-#define SYS_PWD OTEXT("sys")
+#define SYS_PWD OTEXT("pwd")
 #define HOME OTEXT("")
 #define PWD_WRONG OTEXT("pwd_wrong")
 #define ARRAY_SIZE 10
