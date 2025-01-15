@@ -204,6 +204,7 @@
 #define OCI_CDT_REF                         14
 #define OCI_CDT_BOOLEAN                     15
 #define OCI_CDT_XMLTYPE                     16
+#define OCI_CDT_VECTOR                      17
 
 /* Data Type codes for OCI_ImmediateXXX() calls */
 

@@ -60,7 +60,8 @@ libocilib_la_SOURCES=   \
     timestamp.c         \
     transaction.c       \
     typeinfo.c          \
-    xmltype.c
+    xmltype.c           \
+    vector.c
 
 libocilib_la_CFLAGS= @OCILIB_EXTRA_FLAGS@ -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
 libocilib_la_LDFLAGS= @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
@@ -137,6 +138,7 @@ noinst_HEADERS=     \
     typeinfo.h      \
     types.h         \
     xmltype.h       \
+    vector.h        \
     oci/types.h     \
     oci/defs.h      \
     oci/api.h 

@@ -113,7 +113,9 @@ namespace ocilib
         /** PL/SQL boolean */
         TypeBoolean = OCI_CDT_BOOLEAN,
         /** XMLTYPE */
-        TypeXmlType = OCI_CDT_XMLTYPE
+        TypeXmlType = OCI_CDT_XMLTYPE,
+        /** VECTOR */
+        TypeVector = OCI_CDT_XMLTYPE
     };
 
     /**
@@ -5040,7 +5042,7 @@ namespace ocilib
         Reference(OCI_Ref* pRef, core::Handle* parent = nullptr);
     };
 
-       /**
+    /**
      * @brief
      * Object identifying the SQL data type XMLTYPE.
      *
@@ -5063,6 +5065,31 @@ namespace ocilib
     private:
 
         XmlType(OCI_XmlType* pXmlType, core::Handle* parent = nullptr);
+    };
+
+   /**
+     * @brief
+     * Object identifying the SQL data type VECTOR.
+     *
+     * This class wraps the OCILIB object handle OCI_Vector and its related methods
+     *
+     */
+    class Vector : public core::HandleHolder<OCI_Vector*>, public core::Streamable
+    {
+        friend class Resultset;
+
+    public:
+
+        /**
+        * @brief
+        * return a string representation of the current XmlType
+        *
+        */
+        ostring ToString() const override;
+
+    private:
+
+        Vector(OCI_Vector* pVector, core::Handle* parent = nullptr);
     };
 
     /**

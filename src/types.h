@@ -548,6 +548,19 @@ struct OCI_XmlType
 };
 
 /*
+ * Vector object
+ *
+ */
+struct OCI_Vector
+{
+    /* Start OCI_Datatype */
+    void           *handle;
+    ub4             hstate;      /* object variable state */
+    /* End OCI_Datatype */
+    OCI_Connection *con;        /* pointer to connection object */
+};
+
+/*
 * Number object
 *
 */

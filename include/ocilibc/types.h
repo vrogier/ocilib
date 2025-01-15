@@ -366,6 +366,16 @@ typedef struct OCI_Ref OCI_Ref;
 typedef struct OCI_XmlType OCI_XmlType;
 
 /**
+ * @typedef OCI_Vector
+ *
+ * @brief
+ * Oracle VECTOR type representation.
+ *
+ */
+
+typedef struct OCI_Vector OCI_Vector;
+
+/**
  * @typedef OCI_TypeInfo
  *
  * @brief

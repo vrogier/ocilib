@@ -24,7 +24,6 @@
 #include "macros.h"
 #include "memory.h"
 #include "stringutils.h"
-#include "xmltype.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibXmlTypeInitialize
