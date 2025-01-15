@@ -526,6 +526,12 @@ OCISTMTGETNEXTRESULT         OCIStmtGetNextResult         = NULL;
 OCISERVERRELEASE2            OCIServerRelease2            = NULL;
 OCISODAOPERKEYSSET           OCISodaOperKeysSet           = NULL;
 OCIROWIDTOCHAR               OCIRowidToChar               = NULL;
+OCISODABULKINSERT            OCISodaBulkInsert            = NULL;    
+OCISERVERDATALENGTHGET       OCIServerDataLengthGet       = NULL;
+OCIVECTORTOARRAY             OCIVectorToArray             = NULL;
+OCIVECTORFROMARRAY           OCIVectorFromArray           = NULL;
+OCIVECTORTOTEXT              OCIVectorToText              = NULL;
+OCIVECTORFROMTEXT            OCIVectorFromText            = NULL;
 
 XAOSVCCTX xaoSvcCtx = NULL;
 XAOENV    xaoEnv    = NULL;
@@ -1114,6 +1120,7 @@ static void OcilibEnvironmentLoadSymbols()
                    
     LIB_SYMBOL(Env.lib_handle, "xaoSvcCtx",                    xaoSvcCtx,
                 XAOSVCCTX);
+
     LIB_SYMBOL(Env.lib_handle, "xaoEnv",                       xaoEnv,
                 XAOENV);
 
@@ -1128,6 +1135,24 @@ static void OcilibEnvironmentLoadSymbols()
 
     LIB_SYMBOL(Env.lib_handle, "OCISodaOperKeysSet",           OCISodaOperKeysSet,
                 OCISODAOPERKEYSSET);
+
+    LIB_SYMBOL(Env.lib_handle, "OCISodaBulkInsert",            OCISodaBulkInsert,
+                OCISODABULKINSERT);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIServerDataLengthGet",       OCIServerDataLengthGet,
+                OCISERVERDATALENGTHGET);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIVectorToArray",             OCIVectorToArray,
+                OCIVECTORTOARRAY);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIVectorFromArray",           OCIVectorFromArray,
+                OCIVECTORFROMARRAY);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIVectorToText",              OCIVectorToText,
+                OCIVECTORTOTEXT);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIVectorFromText",            OCIVectorFromText,
+                OCIVECTORFROMTEXT);
 
     WARNING_RESTORE_UNSAFE_CONVERT
 }
@@ -1346,7 +1371,29 @@ boolean OcilibEnvironmentInitialize
             
         /* API Version checking */
 
-        if (OCISodaOperKeysSet)
+        if (OCIClientVersion)
+        {
+            sword maj = 0;
+            sword min = 0;
+            sword rev = 0;
+
+            OCIClientVersion(&maj, &min, &rev, NULL, NULL);
+
+            Env.version_runtime = OCI_VER_MAKE(maj, min, rev);
+        }
+        else if (OCIVectorToArray)
+        {
+            Env.version_runtime = OCI_23_4;
+        }
+        else if (OCIServerDataLengthGet)
+        {
+            Env.version_runtime = OCI_21_3;
+        }
+         else if (OCISodaBulkInsert)
+        {
+            Env.version_runtime = OCI_19_3;
+        }
+        else if (OCISodaOperKeysSet)
         {
             Env.version_runtime = OCI_18_3;
         }
@@ -1403,7 +1450,7 @@ boolean OcilibEnvironmentInitialize
     }
     else
     {
-    THROW_NO_ARGS(OcilibExceptionLoadingSharedLib)
+        THROW_NO_ARGS(OcilibExceptionLoadingSharedLib)
     }
 
   #if defined(OCI_BIG_UINT_ENABLED)

@@ -4777,6 +4777,7 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_ColumnGetName
  * - OCI_CDT_REF         : OCI_Ref *
  * - OCI_CDT_BOOLEAN     : boolean
  * - OCI_CDT_XMLTYPE     : OCI_XmlType *
+ * - OCI_CDT_VECTOR      : OCI_Vector *
  *
  * @return
  * The column type or OCI_CDT_UNKNOWN if index is out of bounds
@@ -5015,6 +5016,24 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetCollationID
 );
 
 /**
+* @brief
+* Return the column dimension (for VECTOR type)
+*
+* @param col - Column handle
+*
+* @note
+* This was introduced in Oracle 23.4.
+* When the vector has a flexible dimension, it returns 0.
+* For earlier versions or other types than VECTOR, it always return 0
+*
+*/
+
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetCollationID
+(
+    OCI_Column *col
+);
+
+/**
  * @brief
  * Return the type information object associated to the column
  *
@@ -5079,6 +5098,14 @@ OCI_SYM_PUBLIC OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
  * - OCI_NUM_DOUBLE
  * - OCI_NUM_FLOAT
  * - OCI_NUM_NUMBER
+ *
+ *  For vector columns the possible values are:
+ * - OCI_VEC_FLEX
+ * - OCI_VEC_FLOAT16
+ * - OCI_VEC_FLOAT32
+ * - OCI_VEC_FLOAT64
+ * - OCI_VEC_INT8
+ * - OCI_VEC_BINARY
  *
  * @warning
  * For numeric columns, the value may be not accurate at all!

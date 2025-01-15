@@ -83,6 +83,7 @@
 #define SQLT_CFILEE 115                                /* character file lob */
 #define SQLT_RSET 116                                     /* result set type */
 #define SQLT_NCO  122      /* named collection type (varray or nested table) */
+#define SQLT_VEC  127                                  /* native VECTOR type */
 #define SQLT_VST  155                                      /* OCIString type */
 #define SQLT_ODT  156                                        /* OCIDate type */
 
@@ -158,12 +159,10 @@
 #define OCI_DTYPE_TIMESTAMP 68                                  /* Timestamp */
 #define OCI_DTYPE_TIMESTAMP_TZ 69                 /* Timestamp with timezone */
 #define OCI_DTYPE_TIMESTAMP_LTZ 70                /* Timestamp with local tz */
-#define OCI_DTYPE_CHDES         77          /* Top level change notification
-                                             *desc */
-#define OCI_DTYPE_TABLE_CHDES   78          /* Table change descriptor
-                                             *          */
-#define OCI_DTYPE_ROW_CHDES     79          /* Row change descriptor
-                                             *           */
+#define OCI_DTYPE_CHDES 77             /* Top level change notification desc */
+#define OCI_DTYPE_TABLE_CHDES   78                /* Table change descriptor */
+#define OCI_DTYPE_ROW_CHDES     79                 /* Row change descriptor  */
+#define OCI_DTYPE_VECTOR        87                 /* Vector Descriptor Type */
 
 /*---------------------------------------------------------------------------*/
 
@@ -372,6 +371,10 @@
 #define OCI_ATTR_SQL_ID                    504        /* SQL ID in text form */
 #define OCI_ATTR_LOB_REMOTE                520               /* remote lob ? */
 #define OCI_ATTR_CALL_TIMEOUT              531
+
+#define OCI_ATTR_VECTOR_DIMENSION          695   /* Dimension of vector type */
+#define OCI_ATTR_VECTOR_DATA_FORMAT        696   /* Format of data in vector */
+#define OCI_ATTR_VECTOR_PROPERTY           697          /* vector properties */
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */
 
@@ -686,6 +689,7 @@ typedef struct OCIParam OCIParam;                /* OCI PARameter descriptor */
 typedef struct OCIDateTime OCIDateTime;           /* OCI DateTime descriptor */
 typedef struct OCIInterval OCIInterval;           /* OCI Interval descriptor */
 typedef struct OCIRowid OCIRowid;                    /* OCI ROWID descriptor */
+typedef struct OCIVector OCIVector;                 /* OCI VECTOR Descriptor */
 
 /*----------------------------- OBJECT FREE OPTION --------------------------*/
 
@@ -1028,6 +1032,17 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_ATTR_COL_PROPERTY_IS_GEN_BY_DEF_ON_NULL 0x0000000000000004 
 #define OCI_ATTR_COL_PROPERTY_IS_LPART              0x0000000000000008 
 #define OCI_ATTR_COL_PROPERTY_IS_CONID              0x0000000000000010 
+
+/*-------------- Flags coresponding to the vector column properties ---------*/
+#define OCI_ATTR_VECTOR_COL_PROPERTY_IS_FLEX        0x01
+
+/*-------------- storage type coresponding to the vector column  ------------*/
+#define OCI_ATTR_VECTOR_FORMAT_FLEX         0
+#define OCI_ATTR_VECTOR_FORMAT_FLOAT16      1
+#define OCI_ATTR_VECTOR_FORMAT_FLOAT32      2
+#define OCI_ATTR_VECTOR_FORMAT_FLOAT64      3
+#define OCI_ATTR_VECTOR_FORMAT_INT8         4
+#define OCI_ATTR_VECTOR_FORMAT_BINARY       5
 
 /*-----------------Macros to get the various version number components------ */
 

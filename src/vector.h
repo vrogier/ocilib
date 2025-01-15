@@ -23,4 +23,32 @@
 
 #include "types.h"
 
+/*
+
+OCI_SYM_LOCAL OCI_Vector * OcilibVectorCreate
+(
+    OCI_Connection *con
+);
+
+OCI_SYM_LOCAL boolean OcilibVectorFree
+(
+    OCI_Vector *Vector
+);
+
+
+OCI_SYM_LOCAL int OcilibVectorGetDimension
+(
+    OCI_Vector    *Vector
+);
+
+OCI_SYM_LOCAL int OcilibVectorGetDimension
+(
+    OCI_Vector* Vector
+);
+
+OCI_SYM_LOCAL const otext * OcilibVectorGetDimension
+(
+    OCI_Vector    *Vector
+);*/
+
 #endif /* OCILIB_VECTOR_H_INCLUDED */

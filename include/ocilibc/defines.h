@@ -76,10 +76,10 @@
 #define OCI_19_21                           OCI_VER_MAKE(19, 21, 0)
 #define OCI_19_22                           OCI_VER_MAKE(19, 22, 0)
 #define OCI_19_24                           OCI_VER_MAKE(19, 24, 0)
+#define OCI_21_3                            OCI_VER_MAKE(21, 3, 0)
 #define OCI_21_12                           OCI_VER_MAKE(21, 12, 0)
 #define OCI_21_14                           OCI_VER_MAKE(21, 14, 0)
 #define OCI_21_15                           OCI_VER_MAKE(21, 15, 0)
-#define OCI_21_3                            OCI_VER_MAKE(21, 3, 0)
 #define OCI_23_3                            OCI_VER_MAKE(23, 3, 0)
 #define OCI_23_4                            OCI_VER_MAKE(23, 4, 0)
 #define OCI_23_5                            OCI_VER_MAKE(23, 5, 0)
@@ -162,6 +162,7 @@
 #define OCI_IPC_DEQUEUE          39
 #define OCI_IPC_AGENT            40
 #define OCI_IPC_XMLTYPE          41
+#define OCI_IPC_VECTOR           42
 
 /* allocated bytes types */
 
@@ -584,6 +585,15 @@
 #define OCI_FMT_BINARY_DOUBLE               4
 #define OCI_FMT_BINARY_FLOAT                5
 #define OCI_FMT_TIMESTAMP_TZ                6
+
+/* vector formats */
+
+#define OCI_VEC_FLEX                        0
+#define OCI_VEC_FLOAT16                     1
+#define OCI_VEC_FLOAT32                     2
+#define OCI_VEC_FLOAT64                     3
+#define OCI_VEC_INT8                        4
+#define OCI_VEC_BINARY                      5
 
 /* sql function codes */
 

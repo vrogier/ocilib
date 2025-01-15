@@ -363,6 +363,37 @@ boolean OcilibColumnRetrieveInfo
     }
 
 #endif
+    
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+    if (OcilibConnectionIsVersionSupported(con, OCI_23_4))
+    {
+        if (ptype < OCI_DESC_TYPE)
+        {
+            ub4 vec_dim = 0;
+            ub1 vec_fmt = 0;
+
+            CHECK_ATTRIB_GET
+            (
+                OCI_DTYPE_PARAM, OCI_ATTR_VECTOR_DATA_FORMAT,
+                param, &vec_fmt, NULL,
+                con->err
+            )
+
+            col->subtype = vec_fmt;
+
+            CHECK_ATTRIB_GET
+            (
+                OCI_DTYPE_PARAM, OCI_ATTR_VECTOR_DIMENSION,
+                param, &vec_dim, NULL,
+                con->err
+            )
+
+            col->dimension = vec_dim;
+        }
+    }
+
+#endif
 
     /* check nullable only for table based column */
 
@@ -867,6 +898,18 @@ boolean OcilibColumnMapInfo
 
 #endif
 
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+        case SQLT_VEC:
+        {
+            col->libcode  = SQLT_VEC;
+            col->bufsize  = (ub4) sizeof(OCIVector*);
+            col->datatype = OCI_CDT_VECTOR;
+            break;
+        }
+
+#endif
+
         case SQLT_CHR:
         case SQLT_STR:
         case SQLT_VCS:
@@ -1148,7 +1191,7 @@ unsigned int OcilibColumnGetPropertyFlags
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ColumnGetCollationID
+* OcilibColumnGetCollationID
 * --------------------------------------------------------------------------------------------- */
 
 unsigned int OcilibColumnGetCollationID
@@ -1161,6 +1204,23 @@ unsigned int OcilibColumnGetCollationID
         /* result */ unsigned int, OCI_CCI_NONE,
         /* handle */ OCI_IPC_COLUMN, col,
         /* member */ collation_id
+    )
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OcilibColumnGetDimension
+* --------------------------------------------------------------------------------------------- */
+
+unsigned int OcilibColumnGetDimension
+(
+    OCI_Column *col
+)
+{
+    GET_PROP
+    (
+        /* result */ unsigned int, 0,
+        /* handle */ OCI_IPC_COLUMN, col,
+        /* member */ dimension
     )
 }
 
@@ -1385,6 +1445,18 @@ const otext * OcilibColumnGetSqlType
             type = (IS_XMLTYPE_COL(col)) ? OTEXT("XMLTYPE") : OTEXT("?");
             break;
         }
+
+        
+
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+        case SQLT_VEC:
+        {
+            type = OTEXT("VECTOR");
+            break;
+        }
+
+#endif
 
         default:
         {
@@ -1680,6 +1752,22 @@ unsigned int OcilibColumnGetFullSqlType
             );
             break;
         }
+
+
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+        case SQLT_VEC:
+        {
+            otext* dim = OTEXT("*");
+            otext* fmt = OTEXT("*");
+         
+            // TODO
+
+            break;
+        }
+
+#endif
+
 
         default:
         {

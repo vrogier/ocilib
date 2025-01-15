@@ -291,6 +291,12 @@ extern OCISTMTGETNEXTRESULT         OCIStmtGetNextResult;
 extern OCISERVERRELEASE2            OCIServerRelease2;
 extern OCISODAOPERKEYSSET           OCISodaOperKeysSet;
 extern OCIROWIDTOCHAR               OCIRowidToChar;
+extern OCISODABULKINSERT            OCISodaBulkInsert;
+extern OCISERVERDATALENGTHGET       OCIServerDataLengthGet;
+extern OCIVECTORTOARRAY             OCIVectorToArray;
+extern OCIVECTORFROMARRAY           OCIVectorFromArray;
+extern OCIVECTORTOTEXT              OCIVectorToText;
+extern OCIVECTORFROMTEXT            OCIVectorFromText;
 
 #ifdef ORAXB8_DEFINED
 

@@ -569,6 +569,14 @@ unsigned int OCI_API OCI_ColumnGetCollationID
     CALL_IMPL(OcilibColumnGetCollationID, col)
 }
 
+unsigned int OCI_API OCI_ColumnGetDimension
+(
+    OCI_Column* col
+)
+{
+    CALL_IMPL(OcilibColumnGetDimension, col)
+}
+
 const otext* OCI_API OCI_ColumnGetSQLType
 (
     OCI_Column* col

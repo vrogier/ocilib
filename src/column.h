@@ -108,6 +108,11 @@ OCI_SYM_LOCAL unsigned int OcilibColumnGetCollationID
     OCI_Column* col
 );
 
+OCI_SYM_LOCAL unsigned int OcilibColumnGetDimension
+(
+    OCI_Column* col
+);
+
 OCI_SYM_LOCAL const otext* OcilibColumnGetSqlType
 (
     OCI_Column* col

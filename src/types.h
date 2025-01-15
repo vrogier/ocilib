@@ -336,6 +336,7 @@ struct OCI_Column
     ub1             handletype;     /* oracle handle type */
     ub4             props;          /* column properties */
     ub4             collation_id;   /* collation id */
+    ub4             dimension;      /* dimension */
 };
 
 /*
@@ -554,10 +555,12 @@ struct OCI_XmlType
 struct OCI_Vector
 {
     /* Start OCI_Datatype */
-    void           *handle;
+    OCIVector      *handle;
     ub4             hstate;      /* object variable state */
     /* End OCI_Datatype */
     OCI_Connection *con;        /* pointer to connection object */
+    ub4             dim;
+    ub1             format;
 };
 
 /*
