@@ -39,8 +39,6 @@ const otext* OcilibColumnGetVectorFormatString
     {
         case OCI_VEC_FLEX:
             return OTEXT("*");
-         case OCI_VEC_FLOAT16:
-            return OTEXT("FLOAT16");
          case OCI_VEC_FLOAT32:
             return OTEXT("FLOAT32");
          case OCI_VEC_FLOAT64:
@@ -931,10 +929,11 @@ boolean OcilibColumnMapInfo
 
         case SQLT_VEC:
         {
-            col->libcode  = SQLT_VEC;
-            col->bufsize  = (ub4) sizeof(OCIVector*);
-            col->datatype = OCI_CDT_VECTOR;
-            break;
+            col->libcode    = SQLT_VEC;
+            col->bufsize    = (ub4) sizeof(OCIVector*);
+            col->datatype   = OCI_CDT_VECTOR;
+            col->handletype = OCI_DTYPE_VECTOR;
+           break;
         }
 
 #endif

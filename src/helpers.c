@@ -29,6 +29,7 @@
 #include "object.h"
 #include "reference.h"
 #include "timestamp.h"
+#include "vector.h"
 
 /* --------------------------------------------------------------------------------------------- *
   * OcilibExternalSubTypeToSQLType
@@ -223,6 +224,11 @@ boolean OcilibFreeObjectFromType
         case OCI_CDT_REF:
         {
             res = OcilibReferenceFree((OCI_Ref*)obj);
+            break;
+        }
+        case OCI_CDT_VECTOR:
+        {
+            res = OcilibVectorFree((OCI_Vector*)obj);
             break;
         }
     }

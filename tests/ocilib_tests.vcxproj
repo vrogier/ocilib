@@ -142,6 +142,7 @@
     <ClCompile Include="TestThread.cpp" />
     <ClCompile Include="TestThreadKey.cpp" />
     <ClCompile Include="TestTimestamp.cpp" />
+    <ClCompile Include="TestVector.cpp" />
     <ClCompile Include="TestXmlType.cpp" />
   </ItemGroup>
   <ItemGroup>

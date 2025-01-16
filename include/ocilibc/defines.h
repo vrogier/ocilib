@@ -586,14 +586,13 @@
 #define OCI_FMT_BINARY_FLOAT                5
 #define OCI_FMT_TIMESTAMP_TZ                6
 
-/* vector formats */
+/* vector formats (Oracle 23.4) */
 
 #define OCI_VEC_FLEX                        0
-#define OCI_VEC_FLOAT16                     1
 #define OCI_VEC_FLOAT32                     2
 #define OCI_VEC_FLOAT64                     3
 #define OCI_VEC_INT8                        4
-#define OCI_VEC_BINARY                      5
+#define OCI_VEC_BINARY                      5  /* Oracle 23.5 */
 
 /* sql function codes */
 
@@ -855,6 +854,8 @@
 #define OCI_SIZE_FORMAT_NUMS                40
 #define OCI_SIZE_FORMAT_NUML                65
 #define OCI_SIZE_OBJ_NAME                   128
+#define OCI_SIZE_NUM_VECTOR_INT             4
+#define OCI_SIZE_NUM_VECTOR_FLOAT           16
 
 #define OCI_HASH_DEFAULT_SIZE               256
 

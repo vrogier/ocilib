@@ -326,6 +326,10 @@ ExitLabel:                          \
         THROW(OcilibExceptionNotAvailable, OCI_FEATURE_HIGH_AVAILABILITY)   \
     }
 
+#define CHECK_VECTOR_ENABLED(con)                                           \
+                                                                            \
+    CHECK_FEATURE(con, OCI_FEATURE_VECTOR, OCI_23_4)
+
 #define CHECK_XA_ENABLED(mode)                              \
                                                             \
     if ( ((mode) & OCI_SESSION_XA) && (!Env.use_xa) )       \

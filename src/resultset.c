@@ -40,6 +40,7 @@
 #include "statement.h"
 #include "stringutils.h"
 #include "timestamp.h"
+#include "vector.h"
 #include "xmltype.h"
 
 static unsigned int SeekModeValues[] =
@@ -2229,6 +2230,38 @@ OCI_XmlType * OcilibResultsetGetXmlType2
 )
 {
     GET_BY_NAME(rs, name, OcilibResultsetGetXmlType, OCI_XmlType*, NULL)
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibResultsetGetVector
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Vector * OcilibResultsetGetVector
+(
+    OCI_Resultset* rs,
+    unsigned int   index
+)
+{
+    GET_HANDLE
+    (
+        rs, index, OCI_Vector *, NULL, OCI_CDT_VECTOR,
+
+       OcilibVectorInitialize(rs->stmt->con, (OCI_Vector *) def->obj, OcilibDefineGetData(def))
+
+    )
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibResultsetGetVector2
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Vector * OcilibResultsetGetVector2
+(
+    OCI_Resultset* rs,
+    const otext  * name
+)
+{
+    GET_BY_NAME(rs, name, OcilibResultsetGetVector, OCI_Vector*, NULL)
 }
 
 /* --------------------------------------------------------------------------------------------- *

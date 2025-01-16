@@ -559,8 +559,6 @@ struct OCI_Vector
     ub4             hstate;      /* object variable state */
     /* End OCI_Datatype */
     OCI_Connection *con;        /* pointer to connection object */
-    ub4             dim;
-    ub1             format;
 };
 
 /*

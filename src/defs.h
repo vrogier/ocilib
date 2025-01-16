@@ -228,8 +228,9 @@ typedef unsigned short dbtext;
 #define OCI_FEATURE_XA                   9
 #define OCI_FEATURE_EXTENDED_PLSQLTYPES 10
 #define OCI_FEATURE_MULTITHREADING      11
+#define OCI_FEATURE_VECTOR              12
 
-#define OCI_FEATURE_COUNT               OCI_FEATURE_MULTITHREADING
+#define OCI_FEATURE_COUNT               OCI_FEATURE_VECTOR
 
 /* --------------------------------------------------------------------------------------------- *
  * handle types

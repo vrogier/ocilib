@@ -57,6 +57,7 @@
 #include "timestamp.h"
 #include "transaction.h"
 #include "typeinfo.h"
+#include "vector.h"
 #include "xmltype.h"
 
 static void OcilibCheckContext
@@ -4744,6 +4745,95 @@ unsigned int OCI_API OCI_XmlTypeGetContentSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ *  Vector
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Vector * OCI_API OCI_VectorCreate
+(
+    OCI_Connection *con
+)
+{
+    CALL_IMPL(OcilibVectorCreate, con);
+}
+
+boolean OCI_API OCI_VectorFree
+(
+    OCI_Vector *vect
+)
+{
+    CALL_IMPL(OcilibVectorFree, vect);
+}
+
+OCI_Vector** OCI_API OCI_VectorArrayCreate
+(
+    OCI_Connection* con,
+    unsigned int    nbelem
+)
+{
+    CALL_IMPL(OcilibVectorCreateArray, con, nbelem);
+}
+
+boolean OCI_API OCI_VectorArrayFree
+(
+    OCI_Vector** vects
+)
+{
+    CALL_IMPL(OcilibVectorFreeArray, vects);
+}
+
+boolean OCI_API OCI_VectorGetInfo
+(
+    OCI_Vector   *vect,
+    unsigned int *format,
+    unsigned int *dimensions
+)
+{
+    CALL_IMPL(OcilibVectorGetInfo, vect, format, dimensions);
+}
+
+boolean OCI_API OCI_VectorGetValues
+(
+    OCI_Vector *vect,
+    void       *values
+)
+{
+    CALL_IMPL(OcilibVectorGetValues, vect, values);
+}
+
+boolean OCI_API OCI_VectorSetValues
+(
+    OCI_Vector       *vect,
+    unsigned int      format,
+    unsigned int      dimensions,
+    void             *values
+)
+{
+    CALL_IMPL(OcilibVectorSetValues, vect, format, dimensions, values);
+}
+
+boolean OCI_API OCI_VectorFromText
+(
+    OCI_Vector  *vect,
+    const otext* str,
+    unsigned int size,
+    unsigned int format,
+    unsigned int dimensions
+)
+{
+    CALL_IMPL(OcilibVectorFromString, vect, str, size, format, dimensions);
+}
+
+boolean OCI_API OCI_VectorToText
+(
+    OCI_Vector    *vect,
+    unsigned int  *size,
+    otext         *str
+)
+{
+    CALL_IMPL(OcilibVectorToString, vect, size, str);
+}
+
+/* --------------------------------------------------------------------------------------------- *
  *  resultset
  * --------------------------------------------------------------------------------------------- */
 
@@ -5212,6 +5302,24 @@ OCI_XmlType* OCI_API OCI_GetXmlType2
 )
 {
     CALL_IMPL(OcilibResultsetGetXmlType2, rs, name);
+}
+
+OCI_Vector * OCI_API OCI_GetVector
+(
+    OCI_Resultset *rs,
+    unsigned int   index
+)
+{
+    CALL_IMPL(OcilibResultsetGetVector, rs, index);
+}
+
+OCI_Vector * OCI_API OCI_GetVector2
+(
+    OCI_Resultset *rs,
+    const otext *  name
+)
+{
+    CALL_IMPL(OcilibResultsetGetVector2, rs, name);
 }
 
 OCI_Statement* OCI_API OCI_GetStatement
@@ -5843,6 +5951,27 @@ boolean OCI_API OCI_BindArrayOfObjects
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfObjects, stmt, name, data, typinf, nbelem);
+}
+
+boolean OCI_API OCI_BindVector
+(
+    OCI_Statement* stmt,
+    const otext  * name,
+    OCI_Vector   * data
+)
+{
+    CALL_IMPL(OcilibStatementBindVector, stmt, name, data);
+}
+
+boolean OCI_API OCI_BindArrayOfVectors
+(
+    OCI_Statement* stmt,
+    const otext  * name,
+    OCI_Vector  ** data,
+    unsigned int   nbelem
+)
+{
+    CALL_IMPL(OcilibStatementBindArrayOfVectors, stmt, name, data, nbelem);
 }
 
 boolean OCI_API OCI_BindLob

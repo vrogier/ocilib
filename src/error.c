@@ -378,7 +378,9 @@ OCI_Connection * OcilibErrorGetConnection
             return ((OCI_Agent*)err->source_ptr)->con;
         case OCI_IPC_XMLTYPE:
             return ((OCI_XmlType*)err->source_ptr)->con;
-    }
+        case OCI_IPC_VECTOR:
+            return ((OCI_Vector*)err->source_ptr)->con;
+   }
 
     return NULL;
 }

@@ -232,6 +232,12 @@
     <ClCompile Include="TestLong.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\vector.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="TestVector.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Tests suite">
@@ -627,6 +633,12 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\XmlType.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\vector.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Vector.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
   </ItemGroup>

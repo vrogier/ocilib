@@ -148,7 +148,8 @@ void * OcilibDefineGetData
         case OCI_CDT_COLLECTION:
         case OCI_CDT_REF:
         case OCI_CDT_XMLTYPE:
-        {
+        case OCI_CDT_VECTOR:
+       {
             /* handle based types */
 
             data =  def->buf.data[def->rs->row_cur-1];

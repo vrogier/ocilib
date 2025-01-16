@@ -33,6 +33,7 @@
 #include "object.h"
 #include "reference.h"
 #include "timestamp.h"
+#include "vector.h"
 
 #define ARRAY_INIT(type, exp)                                  \
     data = exp;                                                \
@@ -142,6 +143,11 @@ boolean OcilibArrayInitialize
                 ARRAY_INIT(OCI_Ref, OcilibReferenceInitialize(arr->con, typinf, (OCI_Ref *) data, handle))
                 break;
             }
+            case OCI_CDT_VECTOR:
+            {
+                ARRAY_INIT(OCI_Ref, OcilibVectorInitialize(arr->con,  (OCI_Vector *) data, handle))
+                break;
+            }    
         }
     }
 
