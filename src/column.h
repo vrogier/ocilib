@@ -23,6 +23,11 @@
 
 #include "types.h"
 
+OCI_SYM_LOCAL const otext* OcilibColumnGetVectorFormatString
+(
+    int format
+);
+
 OCI_SYM_LOCAL boolean OcilibColumnGetAttributeInfo
 (
     OCI_Column  *col,

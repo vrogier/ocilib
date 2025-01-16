@@ -27,6 +27,35 @@
 #include "typeinfo.h"
 
 /* --------------------------------------------------------------------------------------------- *
+* OcilibColumnGetVectorFormatString
+* --------------------------------------------------------------------------------------------- */
+
+const otext* OcilibColumnGetVectorFormatString
+(
+    int format
+)
+{
+    switch (format)
+    {
+        case OCI_VEC_FLEX:
+            return OTEXT("*");
+         case OCI_VEC_FLOAT16:
+            return OTEXT("FLOAT16");
+         case OCI_VEC_FLOAT32:
+            return OTEXT("FLOAT32");
+         case OCI_VEC_FLOAT64:
+            return OTEXT("FLOAT64");
+         case OCI_VEC_INT8:
+            return OTEXT("INT8");
+          case OCI_VEC_BINARY:
+            return OTEXT("BINARY");
+    }
+
+    return OTEXT("?");
+
+}
+
+/* --------------------------------------------------------------------------------------------- *
 * OcilibColumnGetAttrInfo
 * --------------------------------------------------------------------------------------------- */
 
@@ -1758,10 +1787,21 @@ unsigned int OcilibColumnGetFullSqlType
 
         case SQLT_VEC:
         {
-            otext* dim = OTEXT("*");
-            otext* fmt = OTEXT("*");
-         
-            // TODO
+            otext str_dim[OCI_SIZE_FORMAT] = OTEXT("*");        
+            const otext* str_fmt = OcilibColumnGetVectorFormatString(col->subtype);
+
+            if (col->dimension > 0)
+            {
+                OcilibStringFormat(str_dim, OCI_SIZE_FORMAT, OTEXT("%i"), col->dimension);
+            }
+
+    #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
+            const otext *fmt = OTEXT("VECTOR(%ls, %ls)");
+    #else
+            const otext *fmt = OTEXT("VECTOR(%s, %s)");
+    #endif
+
+            size = OcilibStringFormat(buffer, (int)len, fmt, str_dim, str_fmt);
 
             break;
         }

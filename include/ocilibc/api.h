@@ -13230,7 +13230,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_TypeInfoGetColumnCount
  * Return the column object handle at the given index in the table
  *
  * @param typinf - Type info handle
- * @param index  - Column position
+ * @param index  - Column position (starts at 1)
  *
  * @return
  * - Column handle on success
