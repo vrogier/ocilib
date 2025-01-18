@@ -6253,6 +6253,15 @@ boolean OCI_API OCI_RegisterRef
     CALL_IMPL(OcilibStatementRegisterReference, stmt, name, typinf);
 }
 
+boolean OCI_API OCI_RegisterVector
+(
+    OCI_Statement* stmt,
+    const otext  * name
+)
+{
+    CALL_IMPL(OcilibStatementRegisterVector, stmt, name);
+}
+
 unsigned int OCI_API OCI_GetStatementType
 (
     OCI_Statement* stmt

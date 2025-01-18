@@ -1804,6 +1804,18 @@ const otext * OcilibResultsetGetString
                     data = obj;
                     break;
                 }
+                case OCI_CDT_VECTOR:
+                {
+                    OCI_Vector *vect = OcilibResultsetGetVector(rs, index);
+
+                    if (vect)
+                    {
+                        CHECK(OcilibVectorToString(vect, &buffer_size, NULL))
+                    }
+
+                    data = vect;
+                    break;
+                }
                 case OCI_CDT_COLLECTION:
                 {
                     OCI_Coll *coll = OcilibResultsetGetColl(rs, index);

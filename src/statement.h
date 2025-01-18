@@ -608,6 +608,12 @@ OCI_SYM_LOCAL boolean OcilibStatementRegisterReference
     OCI_TypeInfo * typinf
 );
 
+OCI_SYM_LOCAL boolean OcilibStatementRegisterVector
+(
+    OCI_Statement* stmt,
+    const otext  * name
+);
+
 OCI_SYM_LOCAL unsigned int OcilibStatementGetStatementType
 (
     OCI_Statement* stmt

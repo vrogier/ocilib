@@ -176,7 +176,7 @@ namespace TestCApi
 		ExecDML(OTEXT("DROP TABLE  TestBindVector"));
 	}
 
-		TEST(TestVector, Fetch)
+	TEST(TestVector, Fetch)
 	{
 		ExecDML(OTEXT("CREATE TABLE TestFetchVector (value VECTOR(*, FLOAT32))"));
 		ExecDML(OTEXT("INSERT INTO TestFetchVector values('[1.1, 2.2, 3.3, 4.4]')"));
@@ -219,14 +219,72 @@ namespace TestCApi
 
 		ExecDML(OTEXT("DROP TABLE  TestFetchVector"));
 	}
+
+	TEST(TestVector, FetchAsString)
+	{
+		ExecDML(OTEXT("CREATE TABLE TestFetchVectorAsString (value VECTOR(*, INT8))"));
+		ExecDML(OTEXT("INSERT INTO TestFetchVectorAsString values('[1, 2, 3, 4]')"));
+
+		ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+		const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+		ASSERT_NE(nullptr, conn);
+
+		const auto stmt = OCI_StatementCreate(conn);
+		ASSERT_NE(nullptr, stmt);
+
+		ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select value from TestFetchVectorAsString")));
+
+		const auto rs = OCI_GetResultset(stmt);
+		ASSERT_NE(nullptr, rs);
+
+		ASSERT_TRUE(OCI_FetchNext(rs));
+
+		auto str = OCI_GetString(rs, 1);
+
+		ASSERT_EQ(ostring(OTEXT("[1,2,3,4]")), str);
+	
+		ASSERT_TRUE(OCI_Cleanup());
+
+		ExecDML(OTEXT("DROP TABLE  TestFetchVectorAsString"));
+	}
+
+	TEST(TestVector, RegisterVector)
+    {
+ 		ExecDML(OTEXT("CREATE TABLE TestRegisterVector (code int, value VECTOR(*, INT8))"));
+        ExecDML(OTEXT("TRUNCATE TABLE TestRegisterVector"));
+		ExecDML(OTEXT("INSERT INTO TestRegisterVector values(1, '[1, 2, 3, 4]')"));
+
+        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("update TestRegisterVector set code = 2 returning value into :value")));
+        ASSERT_TRUE(OCI_RegisterVector(stmt, OTEXT(":value")));
+        ASSERT_TRUE(OCI_Execute(stmt));
+
+        auto rslt = OCI_GetResultset(stmt);
+        ASSERT_NE(nullptr, rslt);
+
+  		ASSERT_TRUE(OCI_FetchNext(rslt));
+
+		auto str = OCI_GetString(rslt, 1);
+
+		ASSERT_EQ(ostring(OTEXT("[1,2,3,4]")), str);
+	
+        ASSERT_TRUE(OCI_Cleanup());
+
+        ExecDML(OTEXT("DROP TABLE TestRegisterVector"));
+    }
 }
 
 namespace TestCppApi
 {
-	TEST(TestVector, CreateCpp)
-	{
 
-	}
 
 }
 

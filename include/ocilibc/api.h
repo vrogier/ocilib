@@ -8185,6 +8185,24 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterRef
 );
 
 /**
+ * @brief
+ * Register a Vector output bind placeholder
+ *
+ * @param stmt   - Statement handle
+ * @param name   - Vector bind name
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ */
+
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterVector
+(
+    OCI_Statement *stmt,
+    const otext *  name
+);
+
+
+/**
  * @} OcilibCApiFeatureReturningInto
  */
 

@@ -3691,6 +3691,36 @@ boolean OcilibStatementRegisterReference
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OcilibStatementRegisterVector
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OcilibStatementRegisterVector
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_STATEMENT, stmt
+    )
+
+    CHECK_REGISTER(stmt, name)
+    CHECK_VECTOR_ENABLED(stmt->con)
+
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+    REGISTER_DATA(sizeof(OCIVector *), OCI_CDT_VECTOR, SQLT_VEC, 0, NULL, 0)
+
+#endif
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OcilibStatementGetStatementType
  * --------------------------------------------------------------------------------------------- */
 

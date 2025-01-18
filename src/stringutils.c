@@ -33,6 +33,7 @@
 #include "object.h"
 #include "reference.h"
 #include "timestamp.h"
+#include "vector.h"
 #include "xmltype.h"
 
 #define COMPUTE_LENTGH(type, ptr, size)   \
@@ -908,6 +909,17 @@ unsigned int OcilibStringGetFromType
 
             quote = FALSE;
             res   = obj ? OcilibObjectToString(obj, &real_size, ptr) : FALSE;
+            len   = real_size;
+            break;
+        }
+        case OCI_CDT_VECTOR:
+        {
+            OCI_Vector *vect = (OCI_Vector *) data;
+
+            unsigned int real_size = buffer_size;
+
+            quote = FALSE;
+            res   = vect ? OcilibVectorToString(vect, &real_size, ptr) : FALSE;
             len   = real_size;
             break;
         }
