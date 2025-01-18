@@ -109,6 +109,19 @@ namespace ocilib
                 IsSame<T, Number>::value> Type;
         };
 
+       /**
+        * @brief Internal usage.
+        * Determine if the given type is a supported numeric type
+        */   
+        template<class T>
+        struct SupportedVectorNumeric
+        {
+            typedef EnableIf<IsSame<T, unsigned char>::value ||
+                IsSame<T, char>::value ||
+                IsSame<T, float>::value ||
+                IsSame<T, double>::value> Type;
+        };
+
         /**
          * @brief
          * Template Enumeration template class providing some type safety to some extends for manipulating enumerated variables

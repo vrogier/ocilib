@@ -1604,6 +1604,7 @@ namespace ocilib
         friend class Column;
         friend class Message;
         friend class DirectPath;
+        friend class Vector;
 
         template<class, int>
         friend class Lob;
@@ -2592,8 +2593,8 @@ namespace ocilib
         * @brief
         * Assign to the number object the value provided by the input number time string
         *
-        * @param str    - String number time
-        * @param format - format of the number time provided in parameter 'data'
+        * @param str    - String number
+        * @param format - format of the number provided in parameter 'data'
         *
         * @note
         * For number formats, refer to the Oracle SQL documentation
@@ -5082,7 +5083,137 @@ namespace ocilib
 
         /**
         * @brief
-        * return a string representation of the current XmlType
+        * Vector Format types enumerated values
+        *
+        */
+        enum VectorFormatValues
+        {
+            /** */
+            Flex = OCI_VEC_FLEX,
+            /** */
+            Int8 = OCI_VEC_INT8,
+            /**  */
+            Float32 = OCI_VEC_FLOAT32,
+             /**  */
+            Float64 = OCI_VEC_FLOAT64,
+              /**  */
+            Binary = OCI_VEC_BINARY    
+       };
+
+        /**
+        * @brief
+        * Type of Format
+        *
+        * Possible values are Vector::VectorFormatValues
+        *
+        */
+        typedef core::Enum<VectorFormatValues> VectorFormat;
+
+        /**
+        * @brief
+        * Create an empty null Vector instance
+        *
+        */
+        Vector();
+
+        /**
+        * @brief
+        * Parametrized constructor
+        *
+        * @param connection - Parent connection
+        *
+        * @note
+        * - The Vector object must not be accessed anymore once the parent connection object gets out of scope
+        *
+        */
+        Vector(const Connection& connection);
+
+       /**
+        * @brief
+        * Set the Vector content from a raw array of values
+        *
+        * @param values - values to set
+        * @param size   - number of element in the input buffer array
+        *
+       */
+        template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
+        void Set(T* values, unsigned int size);
+        
+       /**
+        * @brief
+        * Fills the given raw array with the Vector content
+        *
+        * @param values - input array buffer to fill
+        *
+        * @warning 
+        * The input buffer must be large enought to receive tyhe values.
+        * Use GetDimensions() to knwo rerquired number of elements.
+        *
+        * @warning
+        * T Type must match the format of the Vector current content :
+        * - VectorFormat::Int8 => char
+        * - VectorFormat::Float32 => char
+        * - VectorFormat::Float32 => char
+        * - VectorFormat::Binary => unsigned char
+        *
+        */
+        template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
+        void Get(T* values);
+
+       /**
+        * @brief
+        * Set the Vector content from a std::vector<T>
+        *
+        * @param values - values to set
+        *
+        */
+        template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
+        void Set(const std::vector<T>& values);
+
+       /**
+        * @brief
+        * Returns the Vector content as a std::vector<T>
+        *
+        * @warning
+        * T Type must match the format of the Vector current content :
+        * - VectorFormat::Int8 => char
+        * - VectorFormat::Float32 => char
+        * - VectorFormat::Float32 => char
+        * - VectorFormat::Binary => unsigned char
+        *
+        */
+        template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
+        std::vector<T> Get();
+
+        /**
+        * @brief
+        * Return the dimension count of the vector
+        *
+        */
+        unsigned int GetDimensionCount();
+
+        /**
+        * @brief
+        * Return the format of the format
+        *
+        */
+        VectorFormat GetFormat();
+
+       /**
+        * @brief
+        * Assign to the Vector object the value provided by the given string
+        *
+        * @param str        - textual representation of the vector
+        * @param format     - format of the vector contained in the input string
+        * @param dimensions - number of dimensions of the vector contained in the input string
+        *
+        *
+        */
+        void FromString(const ostring& str, VectorFormat format, unsigned int dimensions);
+
+        /**
+        * @brief
+        * return a string representation of the current Vector
         *
         */
         ostring ToString() const override;

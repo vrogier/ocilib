@@ -78,6 +78,7 @@ namespace ocilib
         template<> struct BindResolver<ocilib::Blong> : BindResolverHandleType<ocilib::Blong, OCI_Long*> {};
         template<> struct BindResolver<ocilib::Reference> : BindResolverHandleType<ocilib::Reference, OCI_Ref*> {};
         template<> struct BindResolver<ocilib::Object> : BindResolverHandleType<ocilib::Object, OCI_Object*> {};
+        template<> struct BindResolver<ocilib::Vector> : BindResolverHandleType<ocilib::Vector, OCI_Vector*> {};
         template<> struct BindResolver<ocilib::Statement> : BindResolverHandleType<ocilib::Statement, OCI_Statement*> {};
-    }
+   }
 }

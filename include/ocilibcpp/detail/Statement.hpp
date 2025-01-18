@@ -420,6 +420,12 @@ inline void Statement::Bind<Reference>(const ostring& name, Reference &value, Bi
 }
 
 template<>
+inline void Statement::Bind<Vector>(const ostring& name, Vector &value, BindInfo::BindDirection mode)
+{
+    Bind2(OCI_BindVector, name, value, mode);
+}
+
+template<>
 inline void Statement::Bind<Statement>(const ostring& name, Statement &value, BindInfo::BindDirection mode)
 {
     Bind2(OCI_BindStatement, name, value, mode);
@@ -826,6 +832,12 @@ template<>
 inline void Statement::Register<Reference, TypeInfo>(const ostring& name, TypeInfo& typeInfo)
 {
     core::Check(OCI_RegisterRef(*this, name.c_str(), typeInfo));
+}
+
+template<>
+inline void Statement::Register<Vector>(const ostring& name)
+{
+    core::Check(OCI_RegisterVector(*this, name.c_str()));
 }
 
 template<>
