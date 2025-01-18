@@ -5154,7 +5154,6 @@ OCI_SYM_PUBLIC OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
  *
  *  For vector columns the possible values are:
  * - OCI_VEC_FLEX
- * - OCI_VEC_FLOAT16
  * - OCI_VEC_FLOAT32
  * - OCI_VEC_FLOAT64
  * - OCI_VEC_INT8

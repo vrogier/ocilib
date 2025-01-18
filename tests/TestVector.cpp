@@ -4,6 +4,69 @@ using namespace ocilib;
 
 namespace TestCApi
 {
+	void CheckColumnFullType
+    (
+        int index,
+        OCI_TypeInfo* typinf,
+        const ostring& name,
+        const ostring& typeName,
+        unsigned int type,
+        unsigned int subtype
+    )
+    {
+        const auto col = OCI_TypeInfoGetColumn(typinf, index);
+        ASSERT_NE(nullptr, col);
+
+        ASSERT_EQ(type, OCI_GetColumnType(col));
+        ASSERT_EQ(name, ostring(OCI_ColumnGetName(col)));
+        ASSERT_EQ(subtype, OCI_ColumnGetSubType(col));
+
+        otext buffer[256] = OTEXT("");
+
+        OCI_ColumnGetFullSQLType(col, buffer, 256);
+
+        ASSERT_EQ(typeName, ostring(buffer));  
+	}
+
+	TEST(TestVector, DescribeTableVector)
+    {
+        ExecDML(OTEXT("DROP TABLE TestDescribeVector"));
+        ExecDML
+        (
+            OTEXT("CREATE TABLE TestDescribeVector")
+            OTEXT("(")
+            OTEXT("    v1 VECTOR,")
+            OTEXT("    v2 VECTOR(8, *),")
+            OTEXT("    v3 VECTOR(*, INT8),")
+            OTEXT("    v4 VECTOR(8, INT8),")
+            OTEXT("    v5 VECTOR(32, FLOAT32),")
+            OTEXT("    v6 VECTOR(64, FLOAT64),")
+            OTEXT("    v7 VECTOR(64, BINARY)")
+            OTEXT(")")
+           );
+     
+        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestDescribeVector"), OCI_TIF_TABLE);
+        ASSERT_NE(nullptr, typinf);
+
+        CheckColumnFullType(1, typinf, OTEXT("V1"), OTEXT("VECTOR(*, *)"), OCI_CDT_VECTOR, OCI_VEC_FLEX);
+        CheckColumnFullType(2, typinf, OTEXT("V2"), OTEXT("VECTOR(8, *)"), OCI_CDT_VECTOR, OCI_VEC_FLEX);
+        CheckColumnFullType(3, typinf, OTEXT("V3"), OTEXT("VECTOR(*, INT8)"), OCI_CDT_VECTOR, OCI_VEC_INT8);
+        CheckColumnFullType(4, typinf, OTEXT("V4"), OTEXT("VECTOR(8, INT8)"), OCI_CDT_VECTOR, OCI_VEC_INT8);
+        CheckColumnFullType(5, typinf, OTEXT("V5"), OTEXT("VECTOR(32, FLOAT32)"), OCI_CDT_VECTOR, OCI_VEC_FLOAT32);
+        CheckColumnFullType(6, typinf, OTEXT("V6"), OTEXT("VECTOR(64, FLOAT64)"), OCI_CDT_VECTOR, OCI_VEC_FLOAT64);
+        CheckColumnFullType(7, typinf, OTEXT("V7"), OTEXT("VECTOR(64, BINARY)"), OCI_CDT_VECTOR, OCI_VEC_BINARY);
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_Cleanup());
+   
+        ExecDML(OTEXT("DROP TABLE TestDescribeVector"));
+    }
+
 	TEST(TestVector, Create)
 	{
 		ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
@@ -284,7 +347,26 @@ namespace TestCApi
 
 namespace TestCppApi
 {
+		TEST(TestVector, CreateCpp)
+	{
+        Environment::Initialize();
 
+        Connection conn(DBS, USR, PWD);
+		Vector vect(conn);
+
+		std::vector<char> arr1 { 1,2,3,4 };
+
+		vect.Set(arr1);
+
+		auto str = vect.ToString();
+
+		auto arr2 = vect.Get<char>();
+
+		str = str;
+
+	    
+		Environment::Cleanup();
+	}
 
 }
 

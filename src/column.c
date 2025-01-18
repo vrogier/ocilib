@@ -1861,7 +1861,8 @@ unsigned int OcilibColumnGetSubType
         OCI_CDT_FILE      == col->datatype  ||
         OCI_CDT_TIMESTAMP == col->datatype  ||
         OCI_CDT_INTERVAL  == col->datatype  ||
-        OCI_CDT_NUMERIC   == col->datatype)
+        OCI_CDT_NUMERIC   == col->datatype ||
+        OCI_CDT_VECTOR    == col->datatype)
     {
         subtype = col->subtype;
     }

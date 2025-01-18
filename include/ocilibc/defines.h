@@ -588,7 +588,7 @@
 
 /* vector formats (Oracle 23.4) */
 
-#define OCI_VEC_FLEX                        0
+#define OCI_VEC_FLEX                        0  /* only for describing colums */
 #define OCI_VEC_FLOAT32                     2
 #define OCI_VEC_FLOAT64                     3
 #define OCI_VEC_INT8                        4
