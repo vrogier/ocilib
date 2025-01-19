@@ -57,7 +57,7 @@ size_t OcilibStringLength
 
     CHECK_FALSE(NULL == ptr, 0);
 
-    if (Env.nls_utf8)
+    if (IS_UTF8_ENV())
     {
         const char *s = (char *) ptr;
         while (*s)
@@ -131,7 +131,7 @@ boolean OcilibStringRequestBuffer
 
     request_size++;
 
-    request_size *= Env.nls_utf8 ? OCI_UTF8_BYTES_PER_CHAR :  sizeof(otext);
+    request_size *= IS_UTF8_ENV() ? OCI_UTF8_BYTES_PER_CHAR : sizeof(otext);
 
     if (!*buffer)
     {
@@ -552,7 +552,7 @@ boolean OcilibStringGetAttribute
             Some we check if the first character slot has any zero bytes set
             to detect this defect ! */
 
-        if ((OCI_CHAR_WIDE == Env.charset) && dbsize > 1)
+        if (IS_WIDE_CHAR_ENV() && dbsize > 1)
         {
             char *ptr = (char*) dbstr;
 

@@ -280,6 +280,7 @@ extern OCIAQDEQ                     OCIAQDeq;
 extern OCIAQLISTEN                  OCIAQListen;
 extern OCIDBSTARTUP                 OCIDBStartup;
 extern OCIDBSHUTDOWN                OCIDBShutdown;
+extern OCIENVNLSCREATE              OCIEnvNlsCreate;
 extern OCISTMTPREPARE2              OCIStmtPrepare2;
 extern OCISTMTRELEASE               OCIStmtRelease;
 extern OCISUBSCRIPTIONREGISTER      OCISubscriptionRegister;

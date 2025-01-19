@@ -514,6 +514,7 @@ OCICACHEFREE                 OCICacheFree                 = NULL;
 OCIPING                      OCIPing                      = NULL;
 OCIDBSTARTUP                 OCIDBStartup                 = NULL;
 OCIDBSHUTDOWN                OCIDBShutdown                = NULL;
+OCIENVNLSCREATE              OCIEnvNlsCreate              = NULL;
 OCISTMTPREPARE2              OCIStmtPrepare2              = NULL;
 OCISTMTRELEASE               OCIStmtRelease               = NULL;
 OCISUBSCRIPTIONREGISTER      OCISubscriptionRegister      = NULL;
@@ -1098,6 +1099,8 @@ static void OcilibEnvironmentLoadSymbols()
     LIB_SYMBOL(Env.lib_handle, "OCIDBShutdown",                OCIDBShutdown,
                 OCIDBSHUTDOWN);
 
+    LIB_SYMBOL(Env.lib_handle, "OCIEnvNlsCreate",              OCIEnvNlsCreate,
+                OCIENVNLSCREATE);
     LIB_SYMBOL(Env.lib_handle, "OCIStmtPrepare2",              OCIStmtPrepare2,
                 OCISTMTPREPARE2);
     LIB_SYMBOL(Env.lib_handle, "OCIStmtRelease",               OCIStmtRelease,
@@ -1272,7 +1275,7 @@ boolean OcilibEnvironmentInitialize
 
     Env.env_mode           = mode;
     Env.charset            = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_ANSI;
-    Env.use_wide_char_conv = (Env.charset == OCI_CHAR_WIDE && (WCHAR_MAX == WCHAR_4_BYTES));
+    Env.use_wide_char_conv = (IS_WIDE_CHAR_ENV() && (WCHAR_MAX == WCHAR_4_BYTES));
 
     /* create environment error */
 
@@ -1296,7 +1299,7 @@ boolean OcilibEnvironmentInitialize
 
     /* test for UTF8 environment */
 
-    if (OCI_CHAR_ANSI == Env.charset)
+    if (IS_ANSI_ENV())
     {
         char *str = OcilibEnvironmentGetVariable("NLS_LANG");
 
@@ -1498,7 +1501,38 @@ boolean OcilibEnvironmentInitialize
 
     /* create environment on success */
 
-    if (Env.version_runtime == OCI_8_0)
+    if (Env.version_runtime >= OCI_9_2)
+    {
+        ub4 mode    = oci_mode;
+        ub2 charset = OCI_DEFAULT;
+        
+    #ifdef OCI_CHARSET_WIDE
+
+        mode    = mode &~OCI_ENV_MODE;
+        charset = OCI_UTF16ID;
+
+    #endif
+
+        ret = OCIEnvNlsCreate(&Env.env, mode,
+                           (dvoid *) &Env,
+                           OcilibMemoryAllocOracleCallback,
+                           OcilibMemoryReallocOracleCallback,
+                           OcilibMemoryFreeOracleCallback,
+                           (size_t) 0, (dvoid **) NULL,
+                            charset,
+                            charset);
+
+    }
+    else if (Env.version_runtime >= OCI_8_1)
+    {
+        ret = OCIEnvCreate(&Env.env, oci_mode,
+                           (dvoid *) &Env,
+                           OcilibMemoryAllocOracleCallback,
+                           OcilibMemoryReallocOracleCallback,
+                           OcilibMemoryFreeOracleCallback,
+                           (size_t) 0, (dvoid **) NULL);
+    }
+    else if (Env.version_runtime == OCI_8_0)
     {
         ret = OCIInitialize(oci_mode, 
                            (dvoid *) &Env,
@@ -1513,12 +1547,7 @@ boolean OcilibEnvironmentInitialize
     }
     else
     {
-        ret = OCIEnvCreate(&Env.env, oci_mode,
-                           (dvoid *) &Env,
-                           OcilibMemoryAllocOracleCallback,
-                           OcilibMemoryReallocOracleCallback,
-                           OcilibMemoryFreeOracleCallback,
-                           (size_t) 0, (dvoid **) NULL);
+        ret = OCI_ERROR;
     }
 
     /*  allocate error handle */

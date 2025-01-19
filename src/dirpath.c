@@ -555,7 +555,7 @@ boolean OcilibDirPathSetColumn
             dpcol->maxsize *= sizeof(otext);
             dpcol->bufsize *= sizeof(otext);
 
-            if (Env.nls_utf8)
+            if (IS_UTF8_ENV())
             {
                 dpcol->bufsize *= OCI_UTF8_BYTES_PER_CHAR;
             }
@@ -727,7 +727,7 @@ boolean OcilibDirPathSetColumn
 
     /* setup Unicode mode for Unicode user data */
 
-    if (OCI_DDT_TEXT == dpcol->type && OCI_CHAR_WIDE == Env.charset)
+    if (OCI_DDT_TEXT == dpcol->type && IS_WIDE_CHAR_ENV())
     {
         ub2 csid = OCI_UTF16ID;
 
@@ -923,7 +923,7 @@ boolean OcilibDirPathSetEntry
             size = ocharcount(size);
             OcilibStringUTF32ToUTF16(value, data, size);
         }
-        else if (OCI_DDT_OTHERS == dpcol->type && OCI_CHAR_WIDE == Env.charset)
+        else if (OCI_DDT_OTHERS == dpcol->type && IS_WIDE_CHAR_ENV())
         {
             /* input Unicode numeric values causes oracle conversion error.
                so, let's convert them to ANSI */

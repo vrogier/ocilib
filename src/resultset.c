@@ -1650,7 +1650,7 @@ const otext * OcilibResultsetGetString
                         rowid, (OraText*) def->buf.tmpbuf, &rowid_length, rs->stmt->con->err
                     )
 
-                    if (OCI_CHAR_WIDE == Env.charset)
+                    if (IS_WIDE_CHAR_ENV())
                     {
                         /* ROWIDs hex strings are always returned by OCI client as ANSI strings, 
                            we need to expand them to native wide character strings */

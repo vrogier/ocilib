@@ -1988,6 +1988,17 @@ typedef sword (*OCISTMTFETCH2 )
 
 /* API introduced in 9.2 */
 
+typedef sword (*OCIENVNLSCREATE)
+(
+    OCIEnv **envp, ub4 mode, void  *ctxp,
+    void  *(*malocfp)(void  *ctxp, size_t size),
+    void  *(*ralocfp)(void  *ctxp, void  *memptr, size_t newsize),
+    void   (*mfreefp)(void  *ctxp, void  *memptr),
+    size_t xtramem_sz, void  **usrmempp,
+    ub2 charset,
+    ub2 ncharset
+);
+
 typedef sword (*OCISTMTPREPARE2)
 (
     OCISvcCtx     *svchp,

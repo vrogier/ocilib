@@ -417,7 +417,7 @@ OCI_SYM_LOCAL boolean OcilibVectorFromString
 
     CHECK_ENUM_VALUE(format, VectorFormatValues, OTEXT("Vector format"))
 
-    if (OCI_CHAR_WIDE == Env.charset)
+    if (IS_WIDE_CHAR_ENV())
     {
         ansi_str = OcilibMemoryAlloc(OCI_IPC_STRING, (size_t)ansi_size+1, (size_t)1, TRUE);
         OcilibStringNativeToAnsi(str, ansi_str, ansi_size);
@@ -446,7 +446,7 @@ OCI_SYM_LOCAL boolean OcilibVectorFromString
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (OCI_CHAR_WIDE == Env.charset)
+        if (IS_WIDE_CHAR_ENV())
         {    
             OcilibMemoryFree(ansi_str);
         }
@@ -499,7 +499,7 @@ OCI_SYM_LOCAL boolean OcilibVectorToString
     {
         str[0] = 0;
 
-        if (OCI_CHAR_WIDE == Env.charset)
+        if (IS_WIDE_CHAR_ENV())
         {
             ansi_str = OcilibMemoryAlloc(OCI_IPC_STRING, (size_t)ansi_size+1, (size_t)1, TRUE);
         }
@@ -519,9 +519,13 @@ OCI_SYM_LOCAL boolean OcilibVectorToString
             OCI_DEFAULT
         )
 
-        if (OCI_CHAR_WIDE == Env.charset)
+        if (IS_WIDE_CHAR_ENV())
         {    
-            OcilibStringAnsiToNative(ansi_str ,str,ansi_size);
+            OcilibStringAnsiToNative(ansi_str ,str, ansi_size);
+        }
+        else
+        {
+            str[ansi_size] = 0;
         }
     }
 
@@ -531,7 +535,7 @@ OCI_SYM_LOCAL boolean OcilibVectorToString
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (OCI_CHAR_WIDE == Env.charset)
+        if (IS_WIDE_CHAR_ENV())
         {    
             OcilibMemoryFree(ansi_str);
         }

@@ -357,6 +357,11 @@ ExitLabel:                          \
 
 /* helpers macros */
 
+#define IS_WIDE_CHAR_ENV() (OCI_CHAR_WIDE == Env.charset)
+#define IS_ANSI_ENV() (OCI_CHAR_ANSI == Env.charset)
+#define IS_UTF8_ENV() (TRUE == Env.charset)
+
+
 #define GET_PROP(rtype, rvalue, stype, sptr, prop) \
                                                    \
     ENTER_FUNC(rtype, rvalue, stype, sptr)         \
