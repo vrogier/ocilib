@@ -1,4 +1,5 @@
 #include "ocilib.h"
+#include "types.h"
 
 /* Direct path complete test suite demonstrating the following workflows :
 
@@ -259,6 +260,9 @@ void do_load(OCI_Connection *con, boolean gen_conv_error, boolean gen_load_error
 
                 while (nb_conv < SIZE_ARRAY)
                 {
+                    /* reset dp->nb_cur to the number of remaining rows not converted */
+                    dp->nb_cur = SIZE_ARRAY - nb_conv;
+                    
                     for (j = 1; j <= nb_rows - nb_conv; j++)
                     {
                         sprintf(val1, "%04d", (j + nb_conv) + (i*SIZE_ARRAY));
