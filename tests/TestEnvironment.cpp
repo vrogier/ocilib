@@ -24,6 +24,26 @@ namespace TestCApi
 			ASSERT_TRUE(OCI_Cleanup());
 		}
 	}
+
+	TEST(TestEnvironment, GetLocaleValidCode)
+	{
+		ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+		const otext*  str = OCI_GetLocaleString(OCI_LSI_DAYNAME1);
+		ASSERT_NE(nullptr, str);
+
+		ASSERT_TRUE(OCI_Cleanup());
+	}
+
+	TEST(TestEnvironment, GetLocaleInalidCode)
+	{
+		ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+		const otext*  str = OCI_GetLocaleString(999);
+		ASSERT_EQ(nullptr, str);
+
+		ASSERT_TRUE(OCI_Cleanup());
+	}
 }
 
 namespace TestCppApi
@@ -70,4 +90,15 @@ namespace TestCppApi
 
 		ASSERT_FALSE(exceptionRaised);
 	}
+
+	TEST(TestEnvironment, GetLocaleValidCodeCpp)
+	{
+		Environment::Initialize();
+
+		auto str = Environment::GetLocaleString(Environment::LocaleDayname1);
+		ASSERT_NE(ostring(), str);
+
+		Environment::Cleanup();
+	}
+
 }

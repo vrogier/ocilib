@@ -363,6 +363,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetErrorHandler
 
 /**
  * @brief
+ * 
+ */
+
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetLocaleString
+(
+    unsigned int code
+);
+
+/**
+ * @brief
  * Retrieve the last error or warning occurred within the last OCILIB call
  *
  * @note

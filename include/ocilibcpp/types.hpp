@@ -818,6 +818,93 @@ namespace ocilib
         typedef core::Flags<AllocatedBytesValues> AllocatedBytesFlags;
 
         /**
+        * @brief
+        * Locales string enumerated values
+        *
+        */
+        enum LocaleCodeValues
+        {
+            LocaleDayname1 = OCI_LSI_DAYNAME1,
+            LocaleDayname2 = OCI_LSI_DAYNAME2,
+            LocaleDayname3 = OCI_LSI_DAYNAME3,
+            LocaleDayname4 = OCI_LSI_DAYNAME4,
+            LocaleDayname5 = OCI_LSI_DAYNAME5,
+            LocaleDayname6 = OCI_LSI_DAYNAME6,
+            LocaleDayname7 = OCI_LSI_DAYNAME7,
+            LocaleAbdayname1 = OCI_LSI_ABDAYNAME1,
+            LocaleAbdayname2 = OCI_LSI_ABDAYNAME2,
+            LocaleAbdayname3 = OCI_LSI_ABDAYNAME3,
+            LocaleAbdayname4 = OCI_LSI_ABDAYNAME4,
+            LocaleAbdayname5 = OCI_LSI_ABDAYNAME5,
+            LocaleAbdayname6 = OCI_LSI_ABDAYNAME6,
+            LocaleAbdayname7 = OCI_LSI_ABDAYNAME7,
+            LocaleMonthname1 = OCI_LSI_MONTHNAME1,
+            LocaleMonthname2 = OCI_LSI_MONTHNAME2,
+            LocaleMonthname3 = OCI_LSI_MONTHNAME3,
+            LocaleMonthname4 = OCI_LSI_MONTHNAME4,
+            LocaleMonthname5 = OCI_LSI_MONTHNAME5,
+            LocaleMonthname6 = OCI_LSI_MONTHNAME6,
+            LocaleMonthname7 = OCI_LSI_MONTHNAME7,
+            LocaleMonthname8 = OCI_LSI_MONTHNAME8,
+            LocaleMonthname9 = OCI_LSI_MONTHNAME9,
+            LocaleMonthname10 = OCI_LSI_MONTHNAME10,
+            LocaleMonthname11 = OCI_LSI_MONTHNAME11,
+            LocaleMonthname12 = OCI_LSI_MONTHNAME12,
+            LocaleAbmonthname1 = OCI_LSI_ABMONTHNAME1,
+            LocaleAbmonthname2 = OCI_LSI_ABMONTHNAME2,
+            LocaleAbmonthname3 = OCI_LSI_ABMONTHNAME3,
+            LocaleAbmonthname4 = OCI_LSI_ABMONTHNAME4,
+            LocaleAbmonthname5 = OCI_LSI_ABMONTHNAME5,
+            LocaleAbmonthname6 = OCI_LSI_ABMONTHNAME6,
+            LocaleAbmonthname7 = OCI_LSI_ABMONTHNAME7,
+            LocaleAbmonthname8 = OCI_LSI_ABMONTHNAME8,
+            LocaleAbmonthname9 = OCI_LSI_ABMONTHNAME9,
+            LocaleAbmonthname10 = OCI_LSI_ABMONTHNAME10,
+            LocaleAbmonthname11 = OCI_LSI_ABMONTHNAME11,
+            LocaleAbmonthname12 = OCI_LSI_ABMONTHNAME12,
+            LocaleYes = OCI_LSI_YES,
+            LocaleNo = OCI_LSI_NO,
+            LocaleAm = OCI_LSI_AM,
+            LocalePm = OCI_LSI_PM,
+            LocaleAd = OCI_LSI_AD,
+            LocaleBc = OCI_LSI_BC,
+            LocaleDecimal = OCI_LSI_DECIMAL,
+            LocaleGroup = OCI_LSI_GROUP,
+            LocaleDebit = OCI_LSI_DEBIT,
+            LocaleCredit = OCI_LSI_CREDIT,
+            LocaleDateformat = OCI_LSI_DATEFORMAT,
+            LocaleInt = OCI_LSI_INT_CURRENCY,
+            LocaleLoc = OCI_LSI_LOC_CURRENCY,
+            LocaleLanguage = OCI_LSI_LANGUAGE,
+            LocaleAblanguage = OCI_LSI_ABLANGUAGE,
+            LocaleTerritory = OCI_LSI_TERRITORY,
+            LocaleCharacterSEt = OCI_LSI_CHARACTER_SET,
+            LocaleLinguisticName = OCI_LSI_LINGUISTIC_NAME,
+            LocaleCalendar = OCI_LSI_CALENDAR,
+            LocaleDualCurrency = OCI_LSI_DUAL_CURRENCY,
+            LocaleWritingdir = OCI_LSI_WRITINGDIR,
+            LocaleAbterritory = OCI_LSI_ABTERRITORY,
+            LocaleDdateformat = OCI_LSI_DDATEFORMAT,
+            LocaleDtimeformat = OCI_LSI_DTIMEFORMAT,
+            LocaleSfdateformat = OCI_LSI_SFDATEFORMAT,
+            LocaleSftimeformat = OCI_LSI_SFTIMEFORMAT,
+            LocaleNumgrouping = OCI_LSI_NUMGROUPING,
+            LocaleListsep = OCI_LSI_LISTSEP,
+            LocaleMondecimal = OCI_LSI_MONDECIMAL,
+            LocaleMongroup = OCI_LSI_MONGROUP,
+            LocaleMongrouping = OCI_LSI_MONGROUPING,
+            LocaleIntCurrenySep = OCI_LSI_INT_CURRENCYSEP
+        };
+
+        /**
+        * @brief
+        * Locales string
+        *
+        * Possible values are Environment::AllocatedBytesValues
+        *
+        */
+        typedef core::Enum<LocaleCodeValues> LocaleCode;
+        /**
         * @typedef HAHandlerProc
         *
         * @brief
@@ -1010,11 +1097,11 @@ namespace ocilib
         *
         * @note
         * Default format values are :
-        * - OCI_FMT_DATE          : constant OCI_STRING_FORMAT_DATE
-        * - OCI_FMT_TIMESTAMP     : constant OCI_STRING_FORMAT_TIMESTAMP
-        * - OCI_FMT_NUMERIC       : constant OCI_STRING_FORMAT_NUMERIC
-        * - OCI_FMT_BINARY_DOUBLE : constant OCI_STRING_FORMAT_BINARY_DOUBLE
-        * - OCI_FMT_BINARY FLOAT  : constant OCI_STRING_FORMAT_BINARY_FLOAT
+        * - FormatType::FormatDate          : constant OCI_STRING_FORMAT_DATE
+        * - FormatType::FormatTimestamp     : constant OCI_STRING_FORMAT_TIMESTAMP
+        * - FormatType::FormatNumeric       : constant OCI_STRING_FORMAT_NUMERIC
+        * - FormatType::FormatBinaryDouble  : constant OCI_STRING_FORMAT_BINARY_DOUBLE
+        * - FormatType::FormatBinaryFloat   : constant OCI_STRING_FORMAT_BINARY_FLOAT
         *
         * @note
         * Conversions are performed by Oracle built-in functions whenever possible.
@@ -1035,6 +1122,15 @@ namespace ocilib
         *
         */
         static ostring GetFormat(FormatType formatType);
+
+        /**
+        * @brief
+        * Return the Localized string for the giben LocalCode value
+        *
+        * @param code - Locale Code
+        *
+        */
+        static ostring GetLocaleString(LocaleCode code);
 
         /**
          * @brief
@@ -1117,7 +1213,7 @@ namespace ocilib
          * @param handler - HA handler procedure
          *
          * @note
-         * See POCI_HA_HANDLER documentation for more details
+         * See HAHandlerProc documentation for more details
          *
          * @note
          * EnvMode::Events flag must be passed to Initialize() to be able to use HA events
@@ -1452,7 +1548,7 @@ namespace ocilib
          * possible to request a session that has the given 'tag' parameter
          * If one exists, it is returned. If not and if an untagged session
          * is available, it is then returned. So check the connection tag
-         * property with OCI_GetSessionTag() to find out if the returned
+         * property with GetSessionTag() to find out if the returned
          * connection is tagged or not.
          *
          * This features is described in the OCI developer guide as the following :
@@ -2029,11 +2125,11 @@ namespace ocilib
         *
         * @note
         * Default format values are :
-        * - OCI_FMT_DATE          : constant OCI_STRING_FORMAT_DATE
-        * - OCI_FMT_TIMESTAMP     : constant OCI_STRING_FORMAT_TIMESTAMP
-        * - OCI_FMT_NUMERIC       : constant OCI_STRING_FORMAT_NUMERIC
-        * - OCI_FMT_BINARY_DOUBLE : constant OCI_STRING_FORMAT_BINARY_DOUBLE
-        * - OCI_FMT_BINARY FLOAT  : constant OCI_STRING_FORMAT_BINARY_FLOAT
+        * - FormatType::FormatDate          : constant OCI_STRING_FORMAT_DATE
+        * - FormatType::FormatTimestamp     : constant OCI_STRING_FORMAT_TIMESTAMP
+        * - FormatType::FormatNumeric       : constant OCI_STRING_FORMAT_NUMERIC
+        * - FormatType::FormatBinaryDouble  : constant OCI_STRING_FORMAT_BINARY_DOUBLE
+        * - FormatType::FormatBinaryFloat   : constant OCI_STRING_FORMAT_BINARY_FLOAT
         *
         * @note
         * Conversions are performed by Oracle built-in functions whenever possible.
@@ -2114,7 +2210,7 @@ namespace ocilib
          * These information:
          *
          * - is stored in the system view V$SESSION
-         * - can be retrieved from the connection property of an OCI_Error handle
+         * - can be retrieved from the connection property of an Error object
          *
          * system view V$SESSION
          *
@@ -8308,8 +8404,8 @@ namespace ocilib
             /** Retrieves the next message which is available */
             NextMessage = OCI_ADN_NEXT_MSG,
             /** Skips the remainder of the current transaction  group (if any)
-                and retrieves the first message of the next transaction group.*/
-                NextTransaction = OCI_ADN_NEXT_TRANSACTION
+             and retrieves the first message of the next transaction group.*/
+            NextTransaction = OCI_ADN_NEXT_TRANSACTION
         };
 
         /**
@@ -8741,7 +8837,7 @@ namespace ocilib
             None = OCI_AGM_NONE,
             /** All messages enqueued in one transaction are considered part of
                 the same group and can be dequeued as a group of related messages */
-                Transactionnal = OCI_AGM_TRANSACTIONNAL
+            Transactionnal = OCI_AGM_TRANSACTIONNAL
         };
 
         /**

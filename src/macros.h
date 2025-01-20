@@ -344,12 +344,12 @@ ExitLabel:                          \
         for (; ii < nn; ii++)                                           \
         {                                                               \
             if ((mode) == (values)[ii]) break;                          \
-            }                                                           \
-            if (ii >= nn)                                               \
-            {                                                           \
-                THROW(OcilibExceptionArgInvalidValue, (name), (mode))   \
-            }                                                           \
-        }
+        }                                                               \
+        if (ii >= nn)                                                   \
+        {                                                               \
+            THROW(OcilibExceptionArgInvalidValue, (name), (mode))       \
+        }                                                               \
+    }
 
 /* memory management helpers */
 

@@ -976,6 +976,19 @@ struct OCI_SQLCmdInfo
 
 typedef struct OCI_SQLCmdInfo OCI_SQLCmdInfo;
 
+/*
+ * OCI_LocaleStringInfo : Oracle Localized strings
+ *
+ */
+
+struct OCI_LocaleStringInfo
+{
+    unsigned int code;  /* local string code */
+    otext       *str ;  /* local string content */
+};
+
+typedef struct OCI_LocaleStringInfo OCI_LocaleStringInfo;
+
 /* OCI context */
 
 struct OCI_Context

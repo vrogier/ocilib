@@ -175,6 +175,11 @@ inline ostring Environment::GetFormat(FormatType formatType)
     return core::MakeString(core::Check(OCI_GetFormat(nullptr, formatType)));
 }
 
+inline ostring Environment::GetLocaleString(LocaleCode code)
+{
+    return core::MakeString(core::Check(OCI_GetLocaleString(code)));
+}
+
 inline void Environment::StartDatabase(const ostring& db, const ostring& user, const ostring &pwd, Environment::StartFlags startFlags,
                                        Environment::StartMode startMode, Environment::SessionFlags sessionFlags, const ostring& spfile)
 {

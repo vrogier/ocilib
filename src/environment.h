@@ -85,6 +85,11 @@ OCI_SYM_LOCAL boolean OcilibEnvironmentSetHAHandler
     POCI_HA_HANDLER handler
 );
 
+OCI_SYM_LOCAL const otext * OCI_GetLocaleString
+(
+    unsigned int code
+);
+
 OCI_SYM_LOCAL boolean OcilibEnvironmentSetFormat
 (
     OCI_Connection* con,

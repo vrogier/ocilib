@@ -1077,5 +1077,84 @@ typedef uword OCIObjectMarkStatus;
                                                            /* new: extension */
 
 
+/*--------------------- NLS service type and constance ----------------------*/
+#define OCI_NLS_DAYNAME1      1                    /* Native name for Monday */
+#define OCI_NLS_DAYNAME2      2                   /* Native name for Tuesday */
+#define OCI_NLS_DAYNAME3      3                 /* Native name for Wednesday */
+#define OCI_NLS_DAYNAME4      4                  /* Native name for Thursday */
+#define OCI_NLS_DAYNAME5      5                    /* Native name for Friday */
+#define OCI_NLS_DAYNAME6      6              /* Native name for for Saturday */
+#define OCI_NLS_DAYNAME7      7                /* Native name for for Sunday */
+#define OCI_NLS_ABDAYNAME1    8        /* Native abbreviated name for Monday */
+#define OCI_NLS_ABDAYNAME2    9       /* Native abbreviated name for Tuesday */
+#define OCI_NLS_ABDAYNAME3    10    /* Native abbreviated name for Wednesday */
+#define OCI_NLS_ABDAYNAME4    11     /* Native abbreviated name for Thursday */
+#define OCI_NLS_ABDAYNAME5    12       /* Native abbreviated name for Friday */
+#define OCI_NLS_ABDAYNAME6    13 /* Native abbreviated name for for Saturday */
+#define OCI_NLS_ABDAYNAME7    14   /* Native abbreviated name for for Sunday */
+#define OCI_NLS_MONTHNAME1    15                  /* Native name for January */
+#define OCI_NLS_MONTHNAME2    16                 /* Native name for February */
+#define OCI_NLS_MONTHNAME3    17                    /* Native name for March */
+#define OCI_NLS_MONTHNAME4    18                    /* Native name for April */
+#define OCI_NLS_MONTHNAME5    19                      /* Native name for May */
+#define OCI_NLS_MONTHNAME6    20                     /* Native name for June */
+#define OCI_NLS_MONTHNAME7    21                     /* Native name for July */
+#define OCI_NLS_MONTHNAME8    22                   /* Native name for August */
+#define OCI_NLS_MONTHNAME9    23                /* Native name for September */
+#define OCI_NLS_MONTHNAME10   24                  /* Native name for October */
+#define OCI_NLS_MONTHNAME11   25                 /* Native name for November */
+#define OCI_NLS_MONTHNAME12   26                 /* Native name for December */
+#define OCI_NLS_ABMONTHNAME1  27      /* Native abbreviated name for January */
+#define OCI_NLS_ABMONTHNAME2  28     /* Native abbreviated name for February */
+#define OCI_NLS_ABMONTHNAME3  29        /* Native abbreviated name for March */
+#define OCI_NLS_ABMONTHNAME4  30        /* Native abbreviated name for April */
+#define OCI_NLS_ABMONTHNAME5  31          /* Native abbreviated name for May */
+#define OCI_NLS_ABMONTHNAME6  32         /* Native abbreviated name for June */
+#define OCI_NLS_ABMONTHNAME7  33         /* Native abbreviated name for July */
+#define OCI_NLS_ABMONTHNAME8  34       /* Native abbreviated name for August */
+#define OCI_NLS_ABMONTHNAME9  35    /* Native abbreviated name for September */
+#define OCI_NLS_ABMONTHNAME10 36      /* Native abbreviated name for October */
+#define OCI_NLS_ABMONTHNAME11 37     /* Native abbreviated name for November */
+#define OCI_NLS_ABMONTHNAME12 38     /* Native abbreviated name for December */
+#define OCI_NLS_YES           39   /* Native string for affirmative response */
+#define OCI_NLS_NO            40                 /* Native negative response */
+#define OCI_NLS_AM            41           /* Native equivalent string of AM */
+#define OCI_NLS_PM            42           /* Native equivalent string of PM */
+#define OCI_NLS_AD            43           /* Native equivalent string of AD */
+#define OCI_NLS_BC            44           /* Native equivalent string of BC */
+#define OCI_NLS_DECIMAL       45                        /* decimal character */
+#define OCI_NLS_GROUP         46                          /* group separator */
+#define OCI_NLS_DEBIT         47                   /* Native symbol of debit */
+#define OCI_NLS_CREDIT        48                  /* Native sumbol of credit */
+#define OCI_NLS_DATEFORMAT    49                       /* Oracle date format */
+#define OCI_NLS_INT_CURRENCY  50            /* International currency symbol */
+#define OCI_NLS_LOC_CURRENCY  51                   /* Locale currency symbol */
+#define OCI_NLS_LANGUAGE      52                            /* Language name */
+#define OCI_NLS_ABLANGUAGE    53           /* Abbreviation for language name */
+#define OCI_NLS_TERRITORY     54                           /* Territory name */
+#define OCI_NLS_CHARACTER_SET 55                       /* Character set name */
+#define OCI_NLS_LINGUISTIC_NAME    56                     /* Linguistic name */
+#define OCI_NLS_CALENDAR      57                            /* Calendar name */
+#define OCI_NLS_DUAL_CURRENCY 78                     /* Dual currency symbol */
+#define OCI_NLS_WRITINGDIR    79               /* Language writing direction */
+#define OCI_NLS_ABTERRITORY   80                   /* Territory Abbreviation */
+#define OCI_NLS_DDATEFORMAT   81               /* Oracle default date format */
+#define OCI_NLS_DTIMEFORMAT   82               /* Oracle default time format */
+#define OCI_NLS_SFDATEFORMAT  83       /* Local string formatted date format */
+#define OCI_NLS_SFTIMEFORMAT  84       /* Local string formatted time format */
+#define OCI_NLS_NUMGROUPING   85                   /* Number grouping fields */
+#define OCI_NLS_LISTSEP       86                           /* List separator */
+#define OCI_NLS_MONDECIMAL    87               /* Monetary decimal character */
+#define OCI_NLS_MONGROUP      88                 /* Monetary group separator */
+#define OCI_NLS_MONGROUPING   89                 /* Monetary grouping fields */
+#define OCI_NLS_INT_CURRENCYSEP 90       /* International currency separator */
+#define OCI_NLS_CHARSET_MAXBYTESZ 91     /* Maximum character byte size      */
+#define OCI_NLS_CHARSET_FIXEDWIDTH 92    /* Fixed-width charset byte size    */
+#define OCI_NLS_CHARSET_ID    93                         /* Character set id */
+#define OCI_NLS_NCHARSET_ID   94                        /* NCharacter set id */
+
+
+#define OCI_NLS_MAXBUFSZ   100 /* Max buffer size may need for OCINlsGetInfo */
+
 #endif /* OCILIB_OCI_DEFS_H_INCLUDED */
 

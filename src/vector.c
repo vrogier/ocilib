@@ -287,6 +287,13 @@ boolean OcilibVectorGetInfo
 
     SET_SUCCESS()
 
+#else
+
+    OCI_NOT_USED(format)
+    OCI_NOT_USED(dimensions)
+
+    CHECK(FALSE)
+
 #endif
 
     EXIT_FUNC()
@@ -336,6 +343,12 @@ boolean OcilibVectorGetValues
 
     SET_SUCCESS()
 
+#else
+
+    OCI_NOT_USED(values)
+
+    CHECK(FALSE)
+
 #endif
 
     EXIT_FUNC()
@@ -380,6 +393,14 @@ boolean OcilibVectorSetValues
     )
 
     SET_SUCCESS()
+
+#else
+
+    OCI_NOT_USED(format)
+    OCI_NOT_USED(dimensions)
+    OCI_NOT_USED(values)
+
+    CHECK(FALSE)
 
 #endif
 
@@ -441,6 +462,15 @@ OCI_SYM_LOCAL boolean OcilibVectorFromString
     )
 
      SET_SUCCESS()
+
+#else
+
+    OCI_NOT_USED(str)
+    OCI_NOT_USED(size)
+    OCI_NOT_USED(format)
+    OCI_NOT_USED(dimensions)
+
+    CHECK(FALSE)
 
 #endif
 
@@ -528,6 +558,13 @@ OCI_SYM_LOCAL boolean OcilibVectorToString
     }
 
     *size = (unsigned int)ansi_size;
+
+#else
+
+    OCI_NOT_USED(size)
+    OCI_NOT_USED(str)
+
+    CHECK(FALSE)
 
 #endif
 
