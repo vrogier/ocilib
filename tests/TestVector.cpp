@@ -2,32 +2,32 @@
 
 using namespace ocilib;
 
+void CheckColumnFullType
+(
+    int index,
+    OCI_TypeInfo* typinf,
+    const ostring& name,
+    const ostring& typeName,
+    unsigned int type,
+    unsigned int subtype
+)
+{
+    const auto col = OCI_TypeInfoGetColumn(typinf, index);
+    ASSERT_NE(nullptr, col);
+
+    ASSERT_EQ(type, OCI_GetColumnType(col));
+    ASSERT_EQ(name, ostring(OCI_ColumnGetName(col)));
+    ASSERT_EQ(subtype, OCI_ColumnGetSubType(col));
+
+    otext buffer[256] = OTEXT("");
+
+    OCI_ColumnGetFullSQLType(col, buffer, 256);
+
+    ASSERT_EQ(typeName, ostring(buffer));  
+}
+
 namespace TestCApi
 {
-	void CheckColumnFullType
-    (
-        int index,
-        OCI_TypeInfo* typinf,
-        const ostring& name,
-        const ostring& typeName,
-        unsigned int type,
-        unsigned int subtype
-    )
-    {
-        const auto col = OCI_TypeInfoGetColumn(typinf, index);
-        ASSERT_NE(nullptr, col);
-
-        ASSERT_EQ(type, OCI_GetColumnType(col));
-        ASSERT_EQ(name, ostring(OCI_ColumnGetName(col)));
-        ASSERT_EQ(subtype, OCI_ColumnGetSubType(col));
-
-        otext buffer[256] = OTEXT("");
-
-        OCI_ColumnGetFullSQLType(col, buffer, 256);
-
-        ASSERT_EQ(typeName, ostring(buffer));  
-	}
-
 	TEST(TestVector, DescribeTableVector)
     {
         ExecDML(OTEXT("DROP TABLE TestDescribeVector"));
@@ -81,6 +81,25 @@ namespace TestCApi
 
 		ASSERT_TRUE(OCI_Cleanup());
 	}
+
+	TEST(TestVector, ArrayCreateAndFree)
+    {
+        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+
+ 		const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+		ASSERT_NE(nullptr, conn);
+
+		const auto vects = OCI_VectorArrayCreate(conn, ARRAY_SIZE);
+        ASSERT_TRUE(nullptr != vects);
+
+        for (int i = 0; i < ARRAY_SIZE; i++)
+        {
+            ASSERT_TRUE(nullptr != vects[i]);
+        }
+        ASSERT_TRUE(OCI_VectorArrayFree(vects));
+
+        ASSERT_TRUE(OCI_Cleanup());
+    }
 
 	TEST(TestVector, SetValue)
 	{
@@ -305,7 +324,7 @@ namespace TestCApi
 
 		auto str = OCI_GetString(rs, 1);
 
-		ASSERT_EQ(ostring(OTEXT("[1,2,3,4]")), str);
+		ASSERT_EQ(ostring(OTEXT("[1,2,3,4]")), ostring(str));
 	
 		ASSERT_TRUE(OCI_Cleanup());
 
@@ -347,27 +366,260 @@ namespace TestCApi
 
 namespace TestCppApi
 {
-		TEST(TestVector, CreateCpp)
+	TEST(TestVector, DescribeTableVectorCpp)
+    {
+        ExecDML(OTEXT("DROP TABLE TestDescribeVector"));
+        ExecDML
+        (
+            OTEXT("CREATE TABLE TestDescribeVector")
+            OTEXT("(")
+            OTEXT("    v1 VECTOR,")
+            OTEXT("    v2 VECTOR(8, *),")
+            OTEXT("    v3 VECTOR(*, INT8),")
+            OTEXT("    v4 VECTOR(8, INT8),")
+            OTEXT("    v5 VECTOR(32, FLOAT32),")
+            OTEXT("    v6 VECTOR(64, FLOAT64),")
+            OTEXT("    v7 VECTOR(64, BINARY)")
+            OTEXT(")")
+           );
+     
+        Environment::Initialize();
+
+        Connection con(DBS, USR, PWD);
+		TypeInfo tif(con,  OTEXT("TestDescribeVector"), TypeInfo::Table);
+
+        CheckColumnFullType(1, tif, OTEXT("V1"), OTEXT("VECTOR(*, *)"), TypeVector, Vector::Flex);
+        CheckColumnFullType(2, tif, OTEXT("V2"), OTEXT("VECTOR(8, *)"), TypeVector, Vector::Flex);
+        CheckColumnFullType(3, tif, OTEXT("V3"), OTEXT("VECTOR(*, INT8)"), TypeVector, Vector::Int8);
+        CheckColumnFullType(4, tif, OTEXT("V4"), OTEXT("VECTOR(8, INT8)"), TypeVector, Vector::Int8);
+        CheckColumnFullType(5, tif, OTEXT("V5"), OTEXT("VECTOR(32, FLOAT32)"), TypeVector, Vector::Float32);
+        CheckColumnFullType(6, tif, OTEXT("V6"), OTEXT("VECTOR(64, FLOAT64)"), TypeVector, Vector::Float64);
+        CheckColumnFullType(7, tif, OTEXT("V7"), OTEXT("VECTOR(64, BINARY)"), TypeVector, Vector::Binary);
+
+		Environment::Cleanup();
+
+        ExecDML(OTEXT("DROP TABLE TestDescribeVector"));
+    }
+
+	TEST(TestVector, CreateCpp)
 	{
         Environment::Initialize();
 
-        Connection conn(DBS, USR, PWD);
-		Vector vect(conn);
+        Connection con(DBS, USR, PWD);
+		Vector vect(con);
 
-		std::vector<char> arr1 { 1,2,3,4 };
-
-		vect.Set(arr1);
-
-		auto str = vect.ToString();
-
-		auto arr2 = vect.Get<char>();
-
-		str = str;
-
-	    
 		Environment::Cleanup();
 	}
 
+	TEST(TestVector, SetValueArrayCpp)
+	{
+        Environment::Initialize();
+
+        Connection con(DBS, USR, PWD);
+		Vector vect(con);
+
+		std::array<char, 4> values1 = { 1, 3, 2, 4 };
+		std::array<char, 4> values2 = { 0, 0, 0, 0 };
+
+		unsigned int dimensions1 = 4;
+		Vector::VectorFormat format1 = Vector::Int8;
+
+		vect.Set(values1.data(), static_cast<unsigned int>(values1.size()));
+
+		ASSERT_EQ(dimensions1, vect.GetDimensionCount());
+		ASSERT_EQ(format1, vect.GetFormat());
+
+		vect.Get(values2.data());
+
+		for (int i = 0; i < 4; i++)
+		{
+			ASSERT_EQ(values1[i], values2[i]);
+		}
+
+		Environment::Cleanup();
+	}
+
+	TEST(TestVector, SetValueVectorCpp)
+	{
+        Environment::Initialize();
+
+        Connection con(DBS, USR, PWD);
+		Vector vect(con);
+
+		std::vector<char> values1 = { 1, 3, 2, 4 };
+
+		unsigned int dimensions1 = 4;
+		Vector::VectorFormat format1 = Vector::Int8;
+
+		vect.Set(values1);
+
+		auto values2 = vect.Get<char>();
+		ASSERT_EQ(values1.size(), values2.size());
+
+		for (int i = 0; i < 4; i++)
+		{
+			ASSERT_EQ(values1[i], values2[i]);
+		}
+
+		Environment::Cleanup();
+	}
+
+	TEST(TestVector, ToStringCpp)
+	{
+        Environment::Initialize();
+
+        Connection con(DBS, USR, PWD);
+		Vector vect(con);
+
+		std::vector<char> values1 = { 1, 3, 2, 4 };
+	
+		vect.Set(values1);
+
+		ASSERT_EQ(ostring(OTEXT("[1,3,2,4]")), vect.ToString());
+	
+		Environment::Cleanup();
+	}
+
+	TEST(TestVector, FromTextCpp)
+	{
+        Environment::Initialize();
+
+        Connection con(DBS, USR, PWD);
+		Vector vect(con);
+
+		vect.FromString(OTEXT("[1.1,2.2,3.3,4.4]"), Vector::Float32, 4);
+
+		ASSERT_EQ(4, vect.GetDimensionCount());
+		ASSERT_EQ(Vector::Float32, vect.GetFormat());
+
+		auto values = vect.Get<float>();
+
+		ASSERT_FLOAT_EQ(1.1f, values[0]);		
+		ASSERT_FLOAT_EQ(2.2f, values[1]);
+		ASSERT_FLOAT_EQ(3.3f, values[2]);
+		ASSERT_FLOAT_EQ(4.4f, values[3]);
+
+		Environment::Cleanup();
+	}
+
+	TEST(TestVector, BindCpp)
+	{
+		ExecDML(OTEXT("CREATE TABLE TestBindVector (value VECTOR(*, FLOAT32))"));
+
+        Environment::Initialize();
+
+        Connection con(DBS, USR, PWD);
+		Vector vect(con);
+
+		std::vector<char> values1 = { 1, 3, 2, 4 };
+		vect.Set(values1);
+
+		Statement stmt(con);
+		stmt.Prepare(OTEXT("INSERT INTO TestBindVector values(:v)"));
+        stmt.Bind(OTEXT(":v"), vect, BindInfo::In);
+		stmt.ExecutePrepared();
+	
+		stmt.Execute(OTEXT("select value from TestBindVector"));
+
+		auto rs = stmt.GetResultset();
+		rs.Next();
+		vect = rs.Get<Vector>(1);
+
+		ASSERT_EQ(4, vect.GetDimensionCount());
+		ASSERT_EQ(Vector::Float32, vect.GetFormat());
+			
+		auto values2 = vect.Get<float>();
+		ASSERT_EQ(4, values2.size());
+	
+		ASSERT_FLOAT_EQ(values1[0], values2[0]);		
+		ASSERT_FLOAT_EQ(values1[1], values2[1]);
+		ASSERT_FLOAT_EQ(values1[2], values2[2]);
+		ASSERT_FLOAT_EQ(values1[3], values2[3]);
+		
+		Environment::Cleanup();
+
+		ExecDML(OTEXT("DROP TABLE  TestBindVector"));
+	}
+
+	TEST(TestVector, FetchCpp)
+	{
+		ExecDML(OTEXT("CREATE TABLE TestFetchVector (value VECTOR(*, FLOAT32))"));
+		ExecDML(OTEXT("INSERT INTO TestFetchVector values('[1.1, 2.2, 3.3, 4.4]')"));
+
+		ExecDML(OTEXT("CREATE TABLE TestBindVector (value VECTOR(*, FLOAT32))"));
+
+        Environment::Initialize();
+
+        Connection con(DBS, USR, PWD);
+		Statement stmt(con);
+
+		stmt.Execute(OTEXT("select value from TestFetchVector"));
+
+		auto rs = stmt.GetResultset();
+		rs.Next();
+		auto vect = rs.Get<Vector>(1);
+
+		ASSERT_EQ(4, vect.GetDimensionCount());
+		ASSERT_EQ(Vector::Float32, vect.GetFormat());
+	
+		auto values = vect.Get<float>();	
+		ASSERT_EQ(4, values.size());
+	
+		ASSERT_FLOAT_EQ(1.1f, values[0]);		
+		ASSERT_FLOAT_EQ(2.2f, values[1]);
+		ASSERT_FLOAT_EQ(3.3f, values[2]);
+		ASSERT_FLOAT_EQ(4.4f, values[3]);
+		
+		Environment::Cleanup();
+
+		ExecDML(OTEXT("DROP TABLE  TestFetchVector"));
+	}
+
+	TEST(TestVector, FetchAsStringCpp)
+	{
+		ExecDML(OTEXT("CREATE TABLE TestFetchVectorAsString (value VECTOR(*, INT8))"));
+		ExecDML(OTEXT("INSERT INTO TestFetchVectorAsString values('[1, 2, 3, 4]')"));
+
+        Environment::Initialize();
+
+        Connection con(DBS, USR, PWD);
+		Statement stmt(con);
+
+		stmt.Execute(OTEXT("select value from TestFetchVectorAsString"));
+
+		auto rs = stmt.GetResultset();
+		rs.Next();
+
+		ASSERT_EQ(ostring(OTEXT("[1,2,3,4]")), rs.Get<ostring>(1));
+	
+		Environment::Cleanup();
+
+		ExecDML(OTEXT("DROP TABLE  TestFetchVectorAsString"));
+	}
+
+	TEST(TestVector, RegisterVectorCpp)
+    {
+ 		ExecDML(OTEXT("CREATE TABLE TestRegisterVector (code int, value VECTOR(*, INT8))"));
+        ExecDML(OTEXT("TRUNCATE TABLE TestRegisterVector"));
+		ExecDML(OTEXT("INSERT INTO TestRegisterVector values(1, '[1, 2, 3, 4]')"));
+
+        Environment::Initialize();
+
+        Connection con(DBS, USR, PWD);
+		Statement stmt(con);
+		stmt.Prepare(OTEXT("update TestRegisterVector set code = 2 returning value into :value"));
+		stmt.Register<Vector>(OTEXT(":value"));
+        stmt.ExecutePrepared();
+
+		auto rs = stmt.GetResultset();
+		rs.Next();
+
+		ASSERT_EQ(ostring(OTEXT("[1,2,3,4]")),  rs.Get<ostring>(1));
+	
+		Environment::Cleanup();
+
+        ExecDML(OTEXT("DROP TABLE TestRegisterVector"));
+    }
 }
 
 

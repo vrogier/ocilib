@@ -115,7 +115,7 @@ namespace ocilib
         /** XMLTYPE */
         TypeXmlType = OCI_CDT_XMLTYPE,
         /** VECTOR */
-        TypeVector = OCI_CDT_XMLTYPE
+        TypeVector = OCI_CDT_VECTOR
     };
 
     /**

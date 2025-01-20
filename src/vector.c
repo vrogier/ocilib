@@ -492,8 +492,6 @@ OCI_SYM_LOCAL boolean OcilibVectorToString
             OCI_SIZE_NUM_VECTOR_FLOAT : OCI_SIZE_NUM_VECTOR_INT;
 
         ansi_size = (ub4) (2 + (elem_size + 2) * dimensions);
-
-        *size = (unsigned int)ansi_size;
     }
     else
     {
@@ -528,6 +526,8 @@ OCI_SYM_LOCAL boolean OcilibVectorToString
             str[ansi_size] = 0;
         }
     }
+
+    *size = (unsigned int)ansi_size;
 
 #endif
 
