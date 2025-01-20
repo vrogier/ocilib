@@ -1587,7 +1587,7 @@ boolean OcilibEnvironmentInitialize
         
     #ifdef OCI_CHARSET_WIDE
 
-        nls_mode    = (ub4)  mode &~OCI_ENV_MODE;
+        nls_mode    = (ub4) nls_mode &~OCI_ENV_MODE;
         charset     = OCI_UTF16ID;
 
     #endif
