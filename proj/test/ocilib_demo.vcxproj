@@ -43,37 +43,37 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug ANSI|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release ANSI|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release UNICODE|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug ANSI|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release ANSI|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -196,6 +196,9 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>$(TargetDir)$(TargetName).bsc</OutputFile>
     </Bscmake>
+    <PostBuildEvent>
+      <Command>xcopy  /Y /R ..\..\lib32\ociliba.dll "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release ANSI|x64'">
     <Midl>
@@ -245,6 +248,9 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>$(TargetDir)$(TargetName).bsc</OutputFile>
     </Bscmake>
+    <PostBuildEvent>
+      <Command>xcopy  /Y /R ..\..\lib64\ociliba.dll "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug ANSI|Win32'">
     <Midl>
@@ -295,6 +301,9 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>$(TargetDir)$(TargetName).bsc</OutputFile>
     </Bscmake>
+    <PostBuildEvent>
+      <Command>xcopy /Y /R  ..\..\lib32\ociliba.dll "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug ANSI|x64'">
     <Midl>
@@ -345,6 +354,9 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>$(TargetDir)$(TargetName).bsc</OutputFile>
     </Bscmake>
+    <PostBuildEvent>
+      <Command>xcopy  /Y /R ..\..\lib64\ociliba.dll "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release UNICODE|Win32'">
     <Midl>
@@ -394,6 +406,9 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>$(TargetDir)$(TargetName).bsc</OutputFile>
     </Bscmake>
+    <PostBuildEvent>
+      <Command>xcopy  /Y /R ..\..\lib32\ocilibw.dll "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release UNICODE|x64'">
     <Midl>
@@ -443,6 +458,9 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>$(TargetDir)$(TargetName).bsc</OutputFile>
     </Bscmake>
+    <PostBuildEvent>
+      <Command>xcopy  /Y /R ..\..\lib64\ocilibw.dll "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

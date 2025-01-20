@@ -192,3 +192,4 @@ testlog.manifest
 *.vsidx
 *.bin
 *.json
+/proj/test/Win64
