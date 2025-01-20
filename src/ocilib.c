@@ -3072,6 +3072,14 @@ boolean OCI_API OCI_SetHAHandler
     CALL_IMPL(OcilibEnvironmentSetHAHandler, handler)
 }
 
+const otext* OCI_API OCI_GetLocaleString
+(
+    unsigned int code
+)
+{
+    CALL_IMPL(OcilibGetLocaleString, code)
+}
+
 boolean OCI_API OCI_SetFormat
 (
     OCI_Connection* con,

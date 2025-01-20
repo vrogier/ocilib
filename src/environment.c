@@ -1582,17 +1582,17 @@ boolean OcilibEnvironmentInitialize
 
     if (Env.version_runtime >= OCI_9_2)
     {
-        ub4 mode    = oci_mode;
+        ub4 nls_mode    = (ub4) oci_mode;
         ub2 charset = OCI_DEFAULT;
         
     #ifdef OCI_CHARSET_WIDE
 
-        mode    = mode &~OCI_ENV_MODE;
-        charset = OCI_UTF16ID;
+        nls_mode    = (ub4)  mode &~OCI_ENV_MODE;
+        charset     = OCI_UTF16ID;
 
     #endif
 
-        ret = OCIEnvNlsCreate(&Env.env, mode,
+        ret = OCIEnvNlsCreate(&Env.env, nls_mode,
                            (dvoid *) &Env,
                            OcilibMemoryAllocOracleCallback,
                            OcilibMemoryReallocOracleCallback,
@@ -2105,17 +2105,17 @@ boolean OcilibEnvironmentSetHAHandler
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_GetLocaleString
+* OcilibGetLocaleString
 * --------------------------------------------------------------------------------------------- */
 
-const otext* OCI_GetLocaleString
+const otext* OcilibGetLocaleString
 (
     unsigned int code
 )
 {
     ENTER_FUNC
     (
-        /* returns */ const text *, NULL,
+        /* returns */ const otext *, NULL,
         /* context */ OCI_IPC_VOID, &Env
     )
 
