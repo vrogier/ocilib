@@ -443,7 +443,7 @@ boolean OcilibReferenceToString
     }
     else
     {
-        dbstr = str;
+        dbstr = (dbtext *) str;
     }
 
     CHECK_OCI
