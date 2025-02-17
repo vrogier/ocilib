@@ -11,7 +11,7 @@ namespace TestCApi
 
 		ASSERT_TRUE(OCI_Cleanup());
 	}
-	TEST(TestEnvironment, CleanupWithInitialize)
+	TEST(TestEnvironment, CleanupWithoutInitialize)
 	{
 		ASSERT_FALSE(OCI_Cleanup());
 	}
@@ -56,7 +56,7 @@ namespace TestCppApi
 	}
 
 
-	TEST(TestEnvironment, CleanupWithInitializeCpp)
+	TEST(TestEnvironment, CleanupWithoutInitializeCpp)
 	{
 		auto exceptionRaised{ false };
 		try
@@ -68,7 +68,7 @@ namespace TestCppApi
 			exceptionRaised = true;
 		}
 
-		ASSERT_FALSE(exceptionRaised);
+		ASSERT_TRUE(exceptionRaised);
 	}
 
 	TEST(TestEnvironment, MultipleCallCpp)

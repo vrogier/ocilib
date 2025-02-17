@@ -83,7 +83,10 @@
  *
  * @note
  * This function must be called before any OCILIB library function.
- *
+ * 
+ * All OCILIB functions (except OCI_GetLastError()) will fail if OCI_Initialize() has not been called.
+ * In this case the error reported by OCI_GetLastError() is OCI_ERR_NOT_INITIALIZED.
+ * 
  * @warning
  * - The parameter 'libpath' is only used if OCILIB has been built with the option OCI_IMPORT_RUNTIME
  * - If the parameter 'lib_path' is NULL, the Oracle library is loaded from system environment variables
@@ -123,7 +126,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize
  * @warning
  * OCI_Cleanup() should be called <b>ONCE</b> per application
  *
- * @return TRUE
+ * @return TRUE on success otherwise FALSE if:
+ * - OCI_Initialize() had not previously called, in this case the error reported by OCI_GetLastError() is OCI_ERR_NOT_INITIALIZED.
+ * - OCI_Cleanup() has already been called.
+ * - Some OCILIB local datatype handles have not been freed.
+ * 
  */
 
 OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup
@@ -378,7 +385,7 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_GetLocaleString
  * @note
  * OCI_GetLastError() is based on thread context and thus OCILIB must be
  * initialized with the flag OCI_ENV_CONTEXT
- *
+ * 
  * @warning
  * OCILIB functions that returns a boolean value to indicate their success :
  * - return TRUE if no error occurred OR if a warning occurred

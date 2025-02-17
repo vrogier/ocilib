@@ -1358,7 +1358,10 @@ boolean OcilibEnvironmentInitialize
 
     /* create environment error */
 
-    Env.lib_err = OcilibErrorCreate();
+    if (NULL == Env.lib_err)
+    {
+        Env.lib_err = OcilibErrorCreate();
+    }
 
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
@@ -1739,10 +1742,7 @@ boolean OcilibEnvironmentCleanup
 
     /* exit if the environment is not loaded */
 
-    if (!Env.loaded)
-    {
-        JUMP_EXIT()
-    }
+    CHECK_INITIALIZED()
 
     success = TRUE;
 

@@ -940,7 +940,7 @@ namespace ocilib
          *
          * @note
          * This function must be the last OCILIB library function call.
-         * - It deallocates objects not explicitly freed by the program (connections, statements, ...)
+         * - It deallocates library managed objects not explicitly freed by the program (connections, statements, ...)
          * - It unloads the Oracle shared library if it has been dynamically loaded
          *
          * @warning

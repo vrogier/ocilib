@@ -181,6 +181,11 @@ OCI_Error * OcilibErrorGet
     boolean reset_err
 )
 {
+    if (NULL == Env.lib_err)
+    {
+        Env.lib_err = OcilibErrorCreate();
+    }
+
     OCI_Error *err = Env.lib_err;
 
     if (Env.loaded && LIB_THREADED && Env.key_errs != NULL)

@@ -391,5 +391,23 @@ namespace TestCppApi
         Environment::Cleanup();
     }
 
+    TEST(ReportedIssuesCppApi, Issue370)
+    {
+        int errCode = 0;
+        int errType = 0;
+        try
+        {
+            auto inititialzed = Environment::Initialized();
+        }
+        catch (const ocilib::Exception& ex)
+        {
+            errCode = ex.GetInternalErrorCode();
+            errType = ex.GetType();
+        }
+
+        ASSERT_EQ(OCI_ERR_NOT_INITIALIZED, errCode);
+        ASSERT_EQ(Exception::ExceptionTypeValues::OcilibError, errType);
+    }
+
 }
 

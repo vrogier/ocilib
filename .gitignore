@@ -193,3 +193,4 @@ testlog.manifest
 *.bin
 *.json
 /proj/test/Win64
+**/CopilotIndices
