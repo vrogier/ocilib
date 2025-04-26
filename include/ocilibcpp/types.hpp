@@ -1125,7 +1125,7 @@ namespace ocilib
 
         /**
         * @brief
-        * Return the Localized string for the giben LocalCode value
+        * Return the Localized string for the VEC_FLEXgiven LocalCode value
         *
         * @param code - Locale Code
         *
@@ -7405,6 +7405,14 @@ namespace ocilib
         *
         */
         int GetLeadingPrecision() const;
+
+
+        /**
+        * @brief
+        * Return the dimension of the column for Vector columns
+        *
+        */
+        int GetDimension() const;
 
         /**
         * @brief

@@ -96,6 +96,11 @@ inline int Column::GetLeadingPrecision() const
     return core::Check(OCI_ColumnGetLeadingPrecision(*this));
 }
 
+inline int Column::GetDimension() const
+{
+    return core::Check(OCI_ColumnGetDimension(*this));
+}
+
 inline Column::PropertyFlags Column::GetPropertyFlags() const
 {
     return PropertyFlags(static_cast<PropertyFlags::Type>(core::Check(OCI_ColumnGetPropertyFlags(*this))));

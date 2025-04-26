@@ -5098,7 +5098,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetCollationID
 *
 */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetCollationID
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetDimension
 (
     OCI_Column *col
 );
@@ -6196,11 +6196,38 @@ OCI_SYM_PUBLIC OCI_XmlType * OCI_API OCI_GetXmlType2
     const otext *  name
 );
 
+/**
+ * @brief
+ * Return the current Vector value of the column at the given index in the resultset
+ *
+ * @param rs    - Resultset handle
+ * @param index - Column position
+ *
+ * @note
+ * Column position starts at 1.
+ *
+ * @return
+ * The column current row value or NULL if index is out of bounds
+ *
+ */
+
 OCI_SYM_PUBLIC OCI_Vector * OCI_API OCI_GetVector
 (
     OCI_Resultset *rs,
     unsigned int   index
 );
+
+/**
+ * @brief
+ * Return the current Vector value of the column from its name in the resultset
+ *
+ * @param rs    - Resultset handle
+ * @param name  - Column name
+ *
+ * @return
+ * The column current row value or NULL if no column found with the given name
+ *
+ */
 
 OCI_SYM_PUBLIC OCI_Vector * OCI_API OCI_GetVector2
 (
@@ -13402,7 +13429,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_VectorFromText
  * Then call the method again with a valid buffer
  * 
  * @warning
- * OCI_VEC_BIANRAY only supported from Oracle 23.5
+ * OCI_VEC_BINARY only supported from Oracle 23.5
  *
  * @return
  * TRUE on success otherwise FALSE
