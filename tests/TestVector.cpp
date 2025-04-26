@@ -9,7 +9,8 @@ void CheckColumnFullType
     const ostring& name,
     const ostring& typeName,
     unsigned int type,
-    unsigned int subtype
+    unsigned int subtype,
+	unsigned int dimension
 )
 {
     const auto col = OCI_TypeInfoGetColumn(typinf, index);
@@ -18,6 +19,7 @@ void CheckColumnFullType
     ASSERT_EQ(type, OCI_GetColumnType(col));
     ASSERT_EQ(name, ostring(OCI_ColumnGetName(col)));
     ASSERT_EQ(subtype, OCI_ColumnGetSubType(col));
+	ASSERT_EQ(dimension, OCI_ColumnGetDimension(col));
 
     otext buffer[256] = OTEXT("");
 
@@ -31,19 +33,19 @@ namespace TestCApi
 	TEST(TestVector, DescribeTableVector)
     {
         ExecDML(OTEXT("DROP TABLE TestDescribeVector"));
-        ExecDML
-        (
-            OTEXT("CREATE TABLE TestDescribeVector")
-            OTEXT("(")
-            OTEXT("    v1 VECTOR,")
-            OTEXT("    v2 VECTOR(8, *),")
-            OTEXT("    v3 VECTOR(*, INT8),")
-            OTEXT("    v4 VECTOR(8, INT8),")
-            OTEXT("    v5 VECTOR(32, FLOAT32),")
-            OTEXT("    v6 VECTOR(64, FLOAT64),")
-            OTEXT("    v7 VECTOR(64, BINARY)")
-            OTEXT(")")
-           );
+		ExecDML
+		(
+			OTEXT("CREATE TABLE TestDescribeVector")
+			OTEXT("(")
+			OTEXT("    v1 VECTOR,")
+			OTEXT("    v2 VECTOR(64, *),")
+			OTEXT("    v3 VECTOR(*, INT8),")
+			OTEXT("    v4 VECTOR(128, INT8),")
+			OTEXT("    v5 VECTOR(256, FLOAT32),")
+			OTEXT("    v6 VECTOR(256, FLOAT64),")
+			OTEXT("    v7 VECTOR(512, BINARY)")
+			OTEXT(")")
+		);
      
         ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
 
@@ -53,13 +55,13 @@ namespace TestCApi
         const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestDescribeVector"), OCI_TIF_TABLE);
         ASSERT_NE(nullptr, typinf);
 
-        CheckColumnFullType(1, typinf, OTEXT("V1"), OTEXT("VECTOR(*, *)"), OCI_CDT_VECTOR, OCI_VEC_FLEX);
-        CheckColumnFullType(2, typinf, OTEXT("V2"), OTEXT("VECTOR(8, *)"), OCI_CDT_VECTOR, OCI_VEC_FLEX);
-        CheckColumnFullType(3, typinf, OTEXT("V3"), OTEXT("VECTOR(*, INT8)"), OCI_CDT_VECTOR, OCI_VEC_INT8);
-        CheckColumnFullType(4, typinf, OTEXT("V4"), OTEXT("VECTOR(8, INT8)"), OCI_CDT_VECTOR, OCI_VEC_INT8);
-        CheckColumnFullType(5, typinf, OTEXT("V5"), OTEXT("VECTOR(32, FLOAT32)"), OCI_CDT_VECTOR, OCI_VEC_FLOAT32);
-        CheckColumnFullType(6, typinf, OTEXT("V6"), OTEXT("VECTOR(64, FLOAT64)"), OCI_CDT_VECTOR, OCI_VEC_FLOAT64);
-        CheckColumnFullType(7, typinf, OTEXT("V7"), OTEXT("VECTOR(64, BINARY)"), OCI_CDT_VECTOR, OCI_VEC_BINARY);
+        CheckColumnFullType(1, typinf, OTEXT("V1"), OTEXT("VECTOR(*, *)"), OCI_CDT_VECTOR, OCI_VEC_FLEX, 0);
+        CheckColumnFullType(2, typinf, OTEXT("V2"), OTEXT("VECTOR(64, *)"), OCI_CDT_VECTOR, OCI_VEC_FLEX, 64);
+        CheckColumnFullType(3, typinf, OTEXT("V3"), OTEXT("VECTOR(*, INT8)"), OCI_CDT_VECTOR, OCI_VEC_INT8, 0);
+        CheckColumnFullType(4, typinf, OTEXT("V4"), OTEXT("VECTOR(128, INT8)"), OCI_CDT_VECTOR, OCI_VEC_INT8, 128);
+        CheckColumnFullType(5, typinf, OTEXT("V5"), OTEXT("VECTOR(256, FLOAT32)"), OCI_CDT_VECTOR, OCI_VEC_FLOAT32, 256);
+        CheckColumnFullType(6, typinf, OTEXT("V6"), OTEXT("VECTOR(256, FLOAT64)"), OCI_CDT_VECTOR, OCI_VEC_FLOAT64, 256);
+        CheckColumnFullType(7, typinf, OTEXT("V7"), OTEXT("VECTOR(512, BINARY)"), OCI_CDT_VECTOR, OCI_VEC_BINARY, 512);
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
         ASSERT_TRUE(OCI_Cleanup());
@@ -374,12 +376,12 @@ namespace TestCppApi
             OTEXT("CREATE TABLE TestDescribeVector")
             OTEXT("(")
             OTEXT("    v1 VECTOR,")
-            OTEXT("    v2 VECTOR(8, *),")
+            OTEXT("    v2 VECTOR(64, *),")
             OTEXT("    v3 VECTOR(*, INT8),")
-            OTEXT("    v4 VECTOR(8, INT8),")
-            OTEXT("    v5 VECTOR(32, FLOAT32),")
-            OTEXT("    v6 VECTOR(64, FLOAT64),")
-            OTEXT("    v7 VECTOR(64, BINARY)")
+            OTEXT("    v4 VECTOR(128, INT8),")
+            OTEXT("    v5 VECTOR(256, FLOAT32),")
+            OTEXT("    v6 VECTOR(256, FLOAT64),")
+            OTEXT("    v7 VECTOR(512, BINARY)")
             OTEXT(")")
            );
      
@@ -388,13 +390,13 @@ namespace TestCppApi
         Connection con(DBS, USR, PWD);
 		TypeInfo tif(con,  OTEXT("TestDescribeVector"), TypeInfo::Table);
 
-        CheckColumnFullType(1, tif, OTEXT("V1"), OTEXT("VECTOR(*, *)"), TypeVector, Vector::Flex);
-        CheckColumnFullType(2, tif, OTEXT("V2"), OTEXT("VECTOR(8, *)"), TypeVector, Vector::Flex);
-        CheckColumnFullType(3, tif, OTEXT("V3"), OTEXT("VECTOR(*, INT8)"), TypeVector, Vector::Int8);
-        CheckColumnFullType(4, tif, OTEXT("V4"), OTEXT("VECTOR(8, INT8)"), TypeVector, Vector::Int8);
-        CheckColumnFullType(5, tif, OTEXT("V5"), OTEXT("VECTOR(32, FLOAT32)"), TypeVector, Vector::Float32);
-        CheckColumnFullType(6, tif, OTEXT("V6"), OTEXT("VECTOR(64, FLOAT64)"), TypeVector, Vector::Float64);
-        CheckColumnFullType(7, tif, OTEXT("V7"), OTEXT("VECTOR(64, BINARY)"), TypeVector, Vector::Binary);
+        CheckColumnFullType(1, tif, OTEXT("V1"), OTEXT("VECTOR(*, *)"), TypeVector, Vector::Flex, 0);
+        CheckColumnFullType(2, tif, OTEXT("V2"), OTEXT("VECTOR(64, *)"), TypeVector, Vector::Flex,64);
+        CheckColumnFullType(3, tif, OTEXT("V3"), OTEXT("VECTOR(*, INT8)"), TypeVector, Vector::Int8, 0);
+        CheckColumnFullType(4, tif, OTEXT("V4"), OTEXT("VECTOR(128, INT8)"), TypeVector, Vector::Int8, 128);
+        CheckColumnFullType(5, tif, OTEXT("V5"), OTEXT("VECTOR(256, FLOAT32)"), TypeVector, Vector::Float32, 256);
+        CheckColumnFullType(6, tif, OTEXT("V6"), OTEXT("VECTOR(256, FLOAT64)"), TypeVector, Vector::Float64, 256);
+        CheckColumnFullType(7, tif, OTEXT("V7"), OTEXT("VECTOR(512, BINARY)"), TypeVector, Vector::Binary, 512);
 
 		Environment::Cleanup();
 
