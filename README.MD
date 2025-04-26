@@ -1,6 +1,4 @@
 ﻿# OCILIB - C and C++ Drivers for Oracle 
-[![Build Status](https://img.shields.io/travis/vrogier/ocilib/master.svg)](https://travis-ci.org/vrogier/ocilib)
-[![Code Analysis](https://img.shields.io/coverity/scan/8019.svg)](https://scan.coverity.com/projects/vrogier-ocilib)
 
 ## 1. About
 
@@ -55,6 +53,8 @@ The source code is free source code licensed under **Apache License, Version 2.0
 - Partial support for XMLTYPE (fetching only as string content)
 
 ## 5. Installation
+
+You can either use OCILIB release packages or reference OCILIB packages from your favourite package manager (conan, xmake, vcpkg, nuget, ..).
 
 ### Windows platforms
 
