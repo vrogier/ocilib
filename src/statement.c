@@ -716,7 +716,7 @@ static boolean OcilibStatementBindCheckAll
             {
                 if (bnd->is_array)
                 {
-                    const ub4 count = IS_PLSQL_STMT(stmt->type) ? bnd->nbelem : stmt->nb_iters;
+                    const ub4 count = OCI_MAX(bnd->nbelem, stmt->nb_iters);
 
                     for (j = 0; j < count; j++)
                     {
@@ -773,7 +773,7 @@ static boolean OcilibStatementBindUpdateAll
             {
                 if (bnd->is_array)
                 {
-                    const ub4 count = IS_PLSQL_STMT(stmt->type) ? bnd->nbelem : stmt->nb_iters;
+                    const ub4 count = OCI_MAX(bnd->nbelem, stmt->nb_iters);
 
                     for (ub4 j = 0; j < count; j++)
                     {
@@ -1382,7 +1382,7 @@ boolean OcilibStatementExecuteInternal
 
         /* for array DML, use batch error mode */
 
-        if (iters > 1)
+        if (iters > 1 && !IS_PLSQL_STMT(stmt->type))
         {
             mode = mode | OCI_BATCH_ERRORS;
         }

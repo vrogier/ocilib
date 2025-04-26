@@ -453,6 +453,8 @@ typedef unsigned short dbtext;
     ( OCI_CDT_LONG    == (col)->datatype ||                 \
       OCI_CDT_XMLTYPE == (col)->datatype )
 
+#define OCI_MAX(a,b) ((a) > (b) ? (a) : (b))
+#define OCI_MIN(a,b) ((a) < (b) ? (a) : (b))
 
 #define SQLT_OPAQUE_TYPE 58   /*  SQL/OTS Opaque Types */
 
