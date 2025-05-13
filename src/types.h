@@ -555,8 +555,12 @@ struct OCI_XmlType
 struct OCI_Vector
 {
     /* Start OCI_Datatype */
-    OCIVector      *handle;
-    ub4             hstate;      /* object variable state */
+#if OCI_VERSION_COMPILE >= OCI_23_4
+    OCIVector*      handle;     /* OCI handle */
+#else
+    void*           handle;     /* fake handle for alignment */
+#endif  
+    ub4             hstate;     /* object variable state */
     /* End OCI_Datatype */
     OCI_Connection *con;        /* pointer to connection object */
 };
