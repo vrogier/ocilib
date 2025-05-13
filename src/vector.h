@@ -27,7 +27,11 @@ OCI_SYM_LOCAL OCI_Vector * OcilibVectorInitialize
 (
     OCI_Connection *con,
     OCI_Vector     *vect,
-    OCIVector      *handle
+#if OCI_VERSION_COMPILE >= OCI_23_4
+    OCIVector     *handle
+#else
+    void          *handle
+#endif  
 );
 
 OCI_SYM_LOCAL OCI_Vector * OcilibVectorCreate
