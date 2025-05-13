@@ -145,7 +145,7 @@ boolean OcilibArrayInitialize
             }
             case OCI_CDT_VECTOR:
             {
-                ARRAY_INIT(OCI_Ref, OcilibVectorInitialize(arr->con,  (OCI_Vector *) data, handle))
+                ARRAY_INIT(OCI_Vector, OcilibVectorInitialize(arr->con,  (OCI_Vector *) data, handle))
                 break;
             }    
         }

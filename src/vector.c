@@ -25,7 +25,7 @@
 #include "memory.h"
 #include "stringutils.h"
 
-#if OCI_VERSION_COMPILE >= OCI_9_0
+#if OCI_VERSION_COMPILE >= OCI_23_4
 
 static unsigned int VectorFormatValues[] =
 {
@@ -36,6 +36,7 @@ static unsigned int VectorFormatValues[] =
 };
 
 #endif
+
 /* --------------------------------------------------------------------------------------------- *
  * OcilibVectorInitialize
  * --------------------------------------------------------------------------------------------- */
@@ -44,7 +45,11 @@ OCI_Vector * OcilibVectorInitialize
 (
     OCI_Connection *con,
     OCI_Vector     *vect,
+#if OCI_VERSION_COMPILE >= OCI_23_4
     OCIVector      *handle
+#else
+    void           *handle
+#endif  
 )
 {
     ENTER_FUNC
