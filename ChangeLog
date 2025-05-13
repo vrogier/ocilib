@@ -1,4 +1,4 @@
-2025-04-29 Version 4.8.0 Vincent Rogier vince.rogier@ocilib.net
+2025-05-13 Version 4.8.0 Vincent Rogier vince.rogier@ocilib.net
 
   * Enhancements (C API)
 
@@ -48,7 +48,6 @@
       
     * Fixes (C++ API)
         - Issue 370 : Calling Environment::Initialized() before Environment::Initialize() throws an exception
-
     
 2025-01-14 Version 4.7.7 Vincent Rogier vince.rogier@ocilib.net
 

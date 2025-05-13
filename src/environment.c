@@ -1774,7 +1774,7 @@ boolean OcilibEnvironmentCleanup
         FREE(Env.formats[i])
     }
 
-    for (i = 0; i < OCI_FMT_COUNT; i++)
+    for (i = 0; i < OCI_LSI_COUNT; i++)
     {
         FREE(LocaleStrings[i].str)
     }
