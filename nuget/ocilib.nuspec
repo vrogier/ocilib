@@ -27,7 +27,7 @@ It requires Oracle Client libraries (Regular or instant client).
     <licenseUrl>https://licenses.nuget.org/Apache-2.0</licenseUrl>
     <copyright>Copyright 2007-2025 Vincent Rogier</copyright>
     <tags>Oracle SQL C C++ OCI API Access Driver</tags>
-    <repository type="git" url="https://github.com/vrogier/ocilib.git" commit="XXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+    <repository type="git" url="https://github.com/vrogier/ocilib.git" commit="5dd930469a26413dd18178db74f39d1f47752df2" />
   </metadata>
   <files>
     <file src="ocilib.props" target="build\native" />
