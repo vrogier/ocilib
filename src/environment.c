@@ -307,6 +307,82 @@ static const otext * FormatDefaultValues[OCI_FMT_COUNT] =
     OCI_STRING_FORMAT_TIMESTAMP_TZ
 };
 
+#define OCI_LSI_COUNT 70
+
+OCI_LocaleStringInfo LocaleStrings[OCI_LSI_COUNT] =
+{
+    { OCI_LSI_DAYNAME1,         NULL },
+    { OCI_LSI_DAYNAME2,         NULL },
+    { OCI_LSI_DAYNAME3,         NULL },
+    { OCI_LSI_DAYNAME4,         NULL },
+    { OCI_LSI_DAYNAME5,         NULL },
+    { OCI_LSI_DAYNAME6,         NULL },
+    { OCI_LSI_DAYNAME7,         NULL },
+    { OCI_LSI_ABDAYNAME1,       NULL },
+    { OCI_LSI_ABDAYNAME2,       NULL },
+    { OCI_LSI_ABDAYNAME3,       NULL },
+    { OCI_LSI_ABDAYNAME4,       NULL },
+    { OCI_LSI_ABDAYNAME5,       NULL },
+    { OCI_LSI_ABDAYNAME6,       NULL },
+    { OCI_LSI_ABDAYNAME7,       NULL },
+    { OCI_LSI_MONTHNAME1,       NULL },
+    { OCI_LSI_MONTHNAME2,       NULL },
+    { OCI_LSI_MONTHNAME3,       NULL },
+    { OCI_LSI_MONTHNAME4,       NULL },
+    { OCI_LSI_MONTHNAME5,       NULL },
+    { OCI_LSI_MONTHNAME6,       NULL },
+    { OCI_LSI_MONTHNAME7,       NULL },
+    { OCI_LSI_MONTHNAME8,       NULL },
+    { OCI_LSI_MONTHNAME9,       NULL },
+    { OCI_LSI_MONTHNAME10,      NULL },
+    { OCI_LSI_MONTHNAME11,      NULL },
+    { OCI_LSI_MONTHNAME12,      NULL },
+    { OCI_LSI_ABMONTHNAME1,     NULL },
+    { OCI_LSI_ABMONTHNAME2,     NULL },
+    { OCI_LSI_ABMONTHNAME3,     NULL },
+    { OCI_LSI_ABMONTHNAME4,     NULL },
+    { OCI_LSI_ABMONTHNAME5,     NULL },
+    { OCI_LSI_ABMONTHNAME6,     NULL },
+    { OCI_LSI_ABMONTHNAME7,     NULL },
+    { OCI_LSI_ABMONTHNAME8,     NULL },
+    { OCI_LSI_ABMONTHNAME9,     NULL },
+    { OCI_LSI_ABMONTHNAME10,    NULL },
+    { OCI_LSI_ABMONTHNAME11,    NULL },
+    { OCI_LSI_ABMONTHNAME12,    NULL },
+    { OCI_LSI_YES,              NULL },
+    { OCI_LSI_NO,               NULL },
+    { OCI_LSI_AM,               NULL },
+    { OCI_LSI_PM,               NULL },
+    { OCI_LSI_AD,               NULL },
+    { OCI_LSI_BC,               NULL },
+    { OCI_LSI_DECIMAL,          NULL },
+    { OCI_LSI_GROUP,            NULL },
+    { OCI_LSI_DEBIT,            NULL },
+    { OCI_LSI_CREDIT,           NULL },
+    { OCI_LSI_DATEFORMAT,       NULL },
+    { OCI_LSI_INT_CURRENCY,     NULL },
+    { OCI_LSI_LOC_CURRENCY,     NULL },
+    { OCI_LSI_LANGUAGE,         NULL },
+    { OCI_LSI_ABLANGUAGE,       NULL },
+    { OCI_LSI_TERRITORY,        NULL },
+    { OCI_LSI_CHARACTER_SET,    NULL },
+    { OCI_LSI_LINGUISTIC_NAME,  NULL },
+    { OCI_LSI_CALENDAR,         NULL },
+    { OCI_LSI_DUAL_CURRENCY,    NULL },
+    { OCI_LSI_WRITINGDIR,       NULL },
+    { OCI_LSI_ABTERRITORY,      NULL },
+    { OCI_LSI_DDATEFORMAT,      NULL },
+    { OCI_LSI_DTIMEFORMAT,      NULL },
+    { OCI_LSI_SFDATEFORMAT,     NULL },
+    { OCI_LSI_SFTIMEFORMAT,     NULL },
+    { OCI_LSI_NUMGROUPING,      NULL },
+    { OCI_LSI_LISTSEP,          NULL },
+    { OCI_LSI_MONDECIMAL,       NULL },
+    { OCI_LSI_MONGROUP,         NULL },
+    { OCI_LSI_MONGROUPING,      NULL },
+    { OCI_LSI_INT_CURRENCYSEP,  NULL }
+};
+
 #ifdef OCI_IMPORT_RUNTIME
 
 /* OCI function pointers */
@@ -514,6 +590,8 @@ OCICACHEFREE                 OCICacheFree                 = NULL;
 OCIPING                      OCIPing                      = NULL;
 OCIDBSTARTUP                 OCIDBStartup                 = NULL;
 OCIDBSHUTDOWN                OCIDBShutdown                = NULL;
+OCIENVNLSCREATE              OCIEnvNlsCreate              = NULL;
+OCINLSGETINFO                OCINlsGetInfo                = NULL;
 OCISTMTPREPARE2              OCIStmtPrepare2              = NULL;
 OCISTMTRELEASE               OCIStmtRelease               = NULL;
 OCISUBSCRIPTIONREGISTER      OCISubscriptionRegister      = NULL;
@@ -526,6 +604,12 @@ OCISTMTGETNEXTRESULT         OCIStmtGetNextResult         = NULL;
 OCISERVERRELEASE2            OCIServerRelease2            = NULL;
 OCISODAOPERKEYSSET           OCISodaOperKeysSet           = NULL;
 OCIROWIDTOCHAR               OCIRowidToChar               = NULL;
+OCISODABULKINSERT            OCISodaBulkInsert            = NULL;    
+OCISERVERDATALENGTHGET       OCIServerDataLengthGet       = NULL;
+OCIVECTORTOARRAY             OCIVectorToArray             = NULL;
+OCIVECTORFROMARRAY           OCIVectorFromArray           = NULL;
+OCIVECTORTOTEXT              OCIVectorToText              = NULL;
+OCIVECTORFROMTEXT            OCIVectorFromText            = NULL;
 
 XAOSVCCTX xaoSvcCtx = NULL;
 XAOENV    xaoEnv    = NULL;
@@ -1092,6 +1176,10 @@ static void OcilibEnvironmentLoadSymbols()
     LIB_SYMBOL(Env.lib_handle, "OCIDBShutdown",                OCIDBShutdown,
                 OCIDBSHUTDOWN);
 
+    LIB_SYMBOL(Env.lib_handle, "OCIEnvNlsCreate",              OCIEnvNlsCreate,
+                OCIENVNLSCREATE);
+    LIB_SYMBOL(Env.lib_handle, "OCINlsGetInfo",              OCINlsGetInfo,
+                OCINLSGETINFO);
     LIB_SYMBOL(Env.lib_handle, "OCIStmtPrepare2",              OCIStmtPrepare2,
                 OCISTMTPREPARE2);
     LIB_SYMBOL(Env.lib_handle, "OCIStmtRelease",               OCIStmtRelease,
@@ -1114,6 +1202,7 @@ static void OcilibEnvironmentLoadSymbols()
                    
     LIB_SYMBOL(Env.lib_handle, "xaoSvcCtx",                    xaoSvcCtx,
                 XAOSVCCTX);
+
     LIB_SYMBOL(Env.lib_handle, "xaoEnv",                       xaoEnv,
                 XAOENV);
 
@@ -1128,6 +1217,24 @@ static void OcilibEnvironmentLoadSymbols()
 
     LIB_SYMBOL(Env.lib_handle, "OCISodaOperKeysSet",           OCISodaOperKeysSet,
                 OCISODAOPERKEYSSET);
+
+    LIB_SYMBOL(Env.lib_handle, "OCISodaBulkInsert",            OCISodaBulkInsert,
+                OCISODABULKINSERT);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIServerDataLengthGet",       OCIServerDataLengthGet,
+                OCISERVERDATALENGTHGET);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIVectorToArray",             OCIVectorToArray,
+                OCIVECTORTOARRAY);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIVectorFromArray",           OCIVectorFromArray,
+                OCIVECTORFROMARRAY);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIVectorToText",              OCIVectorToText,
+                OCIVECTORTOTEXT);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIVectorFromText",            OCIVectorFromText,
+                OCIVECTORFROMTEXT);
 
     WARNING_RESTORE_UNSAFE_CONVERT
 }
@@ -1247,11 +1354,14 @@ boolean OcilibEnvironmentInitialize
 
     Env.env_mode           = mode;
     Env.charset            = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_ANSI;
-    Env.use_wide_char_conv = (Env.charset == OCI_CHAR_WIDE && (WCHAR_MAX == WCHAR_4_BYTES));
+    Env.use_wide_char_conv = (IS_WIDE_CHAR_ENV() && (WCHAR_MAX == WCHAR_4_BYTES));
 
     /* create environment error */
 
-    Env.lib_err = OcilibErrorCreate();
+    if (NULL == Env.lib_err)
+    {
+        Env.lib_err = OcilibErrorCreate();
+    }
 
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
@@ -1271,7 +1381,7 @@ boolean OcilibEnvironmentInitialize
 
     /* test for UTF8 environment */
 
-    if (OCI_CHAR_ANSI == Env.charset)
+    if (IS_ANSI_ENV())
     {
         char *str = OcilibEnvironmentGetVariable("NLS_LANG");
 
@@ -1346,7 +1456,29 @@ boolean OcilibEnvironmentInitialize
             
         /* API Version checking */
 
-        if (OCISodaOperKeysSet)
+        if (OCIClientVersion)
+        {
+            sword maj = 0;
+            sword min = 0;
+            sword rev = 0;
+
+            OCIClientVersion(&maj, &min, &rev, NULL, NULL);
+
+            Env.version_runtime = OCI_VER_MAKE(maj, min, rev);
+        }
+        else if (OCIVectorToArray)
+        {
+            Env.version_runtime = OCI_23_4;
+        }
+        else if (OCIServerDataLengthGet)
+        {
+            Env.version_runtime = OCI_21_3;
+        }
+         else if (OCISodaBulkInsert)
+        {
+            Env.version_runtime = OCI_19_3;
+        }
+        else if (OCISodaOperKeysSet)
         {
             Env.version_runtime = OCI_18_3;
         }
@@ -1403,7 +1535,7 @@ boolean OcilibEnvironmentInitialize
     }
     else
     {
-    THROW_NO_ARGS(OcilibExceptionLoadingSharedLib)
+        THROW_NO_ARGS(OcilibExceptionLoadingSharedLib)
     }
 
   #if defined(OCI_BIG_UINT_ENABLED)
@@ -1451,7 +1583,38 @@ boolean OcilibEnvironmentInitialize
 
     /* create environment on success */
 
-    if (Env.version_runtime == OCI_8_0)
+    if (Env.version_runtime >= OCI_9_2)
+    {
+        ub4 nls_mode    = (ub4) oci_mode;
+        ub2 charset = OCI_DEFAULT;
+        
+    #ifdef OCI_CHARSET_WIDE
+
+        nls_mode    = (ub4) nls_mode &~OCI_ENV_MODE;
+        charset     = OCI_UTF16ID;
+
+    #endif
+
+        ret = OCIEnvNlsCreate(&Env.env, nls_mode,
+                           (dvoid *) &Env,
+                           OcilibMemoryAllocOracleCallback,
+                           OcilibMemoryReallocOracleCallback,
+                           OcilibMemoryFreeOracleCallback,
+                           (size_t) 0, (dvoid **) NULL,
+                            charset,
+                            charset);
+
+    }
+    else if (Env.version_runtime >= OCI_8_1)
+    {
+        ret = OCIEnvCreate(&Env.env, oci_mode,
+                           (dvoid *) &Env,
+                           OcilibMemoryAllocOracleCallback,
+                           OcilibMemoryReallocOracleCallback,
+                           OcilibMemoryFreeOracleCallback,
+                           (size_t) 0, (dvoid **) NULL);
+    }
+    else if (Env.version_runtime == OCI_8_0)
     {
         ret = OCIInitialize(oci_mode, 
                            (dvoid *) &Env,
@@ -1466,12 +1629,7 @@ boolean OcilibEnvironmentInitialize
     }
     else
     {
-        ret = OCIEnvCreate(&Env.env, oci_mode,
-                           (dvoid *) &Env,
-                           OcilibMemoryAllocOracleCallback,
-                           OcilibMemoryReallocOracleCallback,
-                           OcilibMemoryFreeOracleCallback,
-                           (size_t) 0, (dvoid **) NULL);
+        ret = OCI_ERROR;
     }
 
     /*  allocate error handle */
@@ -1584,10 +1742,7 @@ boolean OcilibEnvironmentCleanup
 
     /* exit if the environment is not loaded */
 
-    if (!Env.loaded)
-    {
-        JUMP_EXIT()
-    }
+    CHECK_INITIALIZED()
 
     success = TRUE;
 
@@ -1617,6 +1772,11 @@ boolean OcilibEnvironmentCleanup
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
         FREE(Env.formats[i])
+    }
+
+    for (i = 0; i < OCI_LSI_COUNT; i++)
+    {
+        FREE(LocaleStrings[i].str)
     }
 
     /* finalize OCIThread object support */
@@ -1943,6 +2103,78 @@ boolean OcilibEnvironmentSetHAHandler
 
     EXIT_FUNC()
 }
+
+/* --------------------------------------------------------------------------------------------- *
+* OcilibGetLocaleString
+* --------------------------------------------------------------------------------------------- */
+
+const otext* OcilibGetLocaleString
+(
+    unsigned int code
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ const otext *, NULL,
+        /* context */ OCI_IPC_VOID, &Env
+    )
+
+    dbtext *dbstr = NULL;
+    int     dbsize = OCI_SIZE_BUFFER_LSI;
+
+    CHECK_INITIALIZED()
+
+
+#if OCI_VERSION_COMPILE >= OCI_9_2
+
+    size_t i = 0, n = sizeof(LocaleStrings) / sizeof((LocaleStrings)[0]);
+    for (; i < n; i++)
+    {
+        if (code == LocaleStrings[i].code)
+        {
+            break;
+        }
+    } 
+     
+    if (i >= n)
+    {
+        THROW(OcilibExceptionArgInvalidValue, OTEXT("Locale Code"), code)
+    }
+
+    if (LocaleStrings[i].str == NULL)
+    {
+        LocaleStrings[i].str = (otext*)OcilibMemoryAlloc(OCI_IPC_STRING, (size_t)OCI_SIZE_BUFFER_LSI + 1, (size_t)1, TRUE);
+
+        dbstr = OcilibStringGetDBString(LocaleStrings[i].str, &dbsize);
+
+        CHECK_OCI
+        (
+            Env.err,
+            OCINlsGetInfo,
+            Env.env,
+            Env.err,
+            (OraText*)dbstr,
+            (size_t)dbsize,
+            (ub2)code
+        )
+
+        OcilibStringCopyDBStringToNativeString(dbstr, LocaleStrings[i].str, OCI_SIZE_BUFFER_LSI);
+    }
+
+    SET_RETVAL(LocaleStrings[i].str)
+
+#else
+
+    OCI_NOT_USED(type)
+
+#endif
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        OcilibStringReleaseDBString(dbstr);
+    )
+}
+
 
 /* --------------------------------------------------------------------------------------------- *
 * OcilibEnvironmentSetFormat

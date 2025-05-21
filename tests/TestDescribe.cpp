@@ -15,7 +15,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, col);
 
         ASSERT_EQ(name, ostring(OCI_GetColumnName(col)));
-        ASSERT_EQ(typeName, ostring(OCI_GetColumnSQLType(col)));
+        ASSERT_EQ(typeName, ostring(OCI_ColumnGetSQLType(col)));
         ASSERT_EQ(type, OCI_GetColumnType(col));
     }
 
@@ -134,5 +134,5 @@ namespace TestCApi
 
         ExecDML(OTEXT("drop type TestDescribeTableSubType"));
         ExecDML(OTEXT("drop type TestDescribeTable"));
-    }
+    }     
 }

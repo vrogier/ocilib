@@ -83,6 +83,7 @@
 #define SQLT_CFILEE 115                                /* character file lob */
 #define SQLT_RSET 116                                     /* result set type */
 #define SQLT_NCO  122      /* named collection type (varray or nested table) */
+#define SQLT_VEC  127                                  /* native VECTOR type */
 #define SQLT_VST  155                                      /* OCIString type */
 #define SQLT_ODT  156                                        /* OCIDate type */
 
@@ -158,12 +159,10 @@
 #define OCI_DTYPE_TIMESTAMP 68                                  /* Timestamp */
 #define OCI_DTYPE_TIMESTAMP_TZ 69                 /* Timestamp with timezone */
 #define OCI_DTYPE_TIMESTAMP_LTZ 70                /* Timestamp with local tz */
-#define OCI_DTYPE_CHDES         77          /* Top level change notification
-                                             *desc */
-#define OCI_DTYPE_TABLE_CHDES   78          /* Table change descriptor
-                                             *          */
-#define OCI_DTYPE_ROW_CHDES     79          /* Row change descriptor
-                                             *           */
+#define OCI_DTYPE_CHDES 77             /* Top level change notification desc */
+#define OCI_DTYPE_TABLE_CHDES   78                /* Table change descriptor */
+#define OCI_DTYPE_ROW_CHDES     79                 /* Row change descriptor  */
+#define OCI_DTYPE_VECTOR        87                 /* Vector Descriptor Type */
 
 /*---------------------------------------------------------------------------*/
 
@@ -372,6 +371,10 @@
 #define OCI_ATTR_SQL_ID                    504        /* SQL ID in text form */
 #define OCI_ATTR_LOB_REMOTE                520               /* remote lob ? */
 #define OCI_ATTR_CALL_TIMEOUT              531
+
+#define OCI_ATTR_VECTOR_DIMENSION          695   /* Dimension of vector type */
+#define OCI_ATTR_VECTOR_DATA_FORMAT        696   /* Format of data in vector */
+#define OCI_ATTR_VECTOR_PROPERTY           697          /* vector properties */
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */
 
@@ -686,6 +689,7 @@ typedef struct OCIParam OCIParam;                /* OCI PARameter descriptor */
 typedef struct OCIDateTime OCIDateTime;           /* OCI DateTime descriptor */
 typedef struct OCIInterval OCIInterval;           /* OCI Interval descriptor */
 typedef struct OCIRowid OCIRowid;                    /* OCI ROWID descriptor */
+typedef struct OCIVector OCIVector;                 /* OCI VECTOR Descriptor */
 
 /*----------------------------- OBJECT FREE OPTION --------------------------*/
 
@@ -1029,6 +1033,17 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_ATTR_COL_PROPERTY_IS_LPART              0x0000000000000008 
 #define OCI_ATTR_COL_PROPERTY_IS_CONID              0x0000000000000010 
 
+/*-------------- Flags coresponding to the vector column properties ---------*/
+#define OCI_ATTR_VECTOR_COL_PROPERTY_IS_FLEX        0x01
+
+/*-------------- storage type coresponding to the vector column  ------------*/
+#define OCI_ATTR_VECTOR_FORMAT_FLEX         0
+#define OCI_ATTR_VECTOR_FORMAT_FLOAT16      1
+#define OCI_ATTR_VECTOR_FORMAT_FLOAT32      2
+#define OCI_ATTR_VECTOR_FORMAT_FLOAT64      3
+#define OCI_ATTR_VECTOR_FORMAT_INT8         4
+#define OCI_ATTR_VECTOR_FORMAT_BINARY       5
+
 /*-----------------Macros to get the various version number components------ */
 
 #define OCI_SERVER_RELEASE_REL(v) ((sword)(((v) >> 24) & 0x000000FF))
@@ -1061,6 +1076,85 @@ typedef uword OCIObjectMarkStatus;
                                                /* old: porting update number */
                                                            /* new: extension */
 
+
+/*--------------------- NLS service type and constance ----------------------*/
+#define OCI_NLS_DAYNAME1      1                    /* Native name for Monday */
+#define OCI_NLS_DAYNAME2      2                   /* Native name for Tuesday */
+#define OCI_NLS_DAYNAME3      3                 /* Native name for Wednesday */
+#define OCI_NLS_DAYNAME4      4                  /* Native name for Thursday */
+#define OCI_NLS_DAYNAME5      5                    /* Native name for Friday */
+#define OCI_NLS_DAYNAME6      6              /* Native name for for Saturday */
+#define OCI_NLS_DAYNAME7      7                /* Native name for for Sunday */
+#define OCI_NLS_ABDAYNAME1    8        /* Native abbreviated name for Monday */
+#define OCI_NLS_ABDAYNAME2    9       /* Native abbreviated name for Tuesday */
+#define OCI_NLS_ABDAYNAME3    10    /* Native abbreviated name for Wednesday */
+#define OCI_NLS_ABDAYNAME4    11     /* Native abbreviated name for Thursday */
+#define OCI_NLS_ABDAYNAME5    12       /* Native abbreviated name for Friday */
+#define OCI_NLS_ABDAYNAME6    13 /* Native abbreviated name for for Saturday */
+#define OCI_NLS_ABDAYNAME7    14   /* Native abbreviated name for for Sunday */
+#define OCI_NLS_MONTHNAME1    15                  /* Native name for January */
+#define OCI_NLS_MONTHNAME2    16                 /* Native name for February */
+#define OCI_NLS_MONTHNAME3    17                    /* Native name for March */
+#define OCI_NLS_MONTHNAME4    18                    /* Native name for April */
+#define OCI_NLS_MONTHNAME5    19                      /* Native name for May */
+#define OCI_NLS_MONTHNAME6    20                     /* Native name for June */
+#define OCI_NLS_MONTHNAME7    21                     /* Native name for July */
+#define OCI_NLS_MONTHNAME8    22                   /* Native name for August */
+#define OCI_NLS_MONTHNAME9    23                /* Native name for September */
+#define OCI_NLS_MONTHNAME10   24                  /* Native name for October */
+#define OCI_NLS_MONTHNAME11   25                 /* Native name for November */
+#define OCI_NLS_MONTHNAME12   26                 /* Native name for December */
+#define OCI_NLS_ABMONTHNAME1  27      /* Native abbreviated name for January */
+#define OCI_NLS_ABMONTHNAME2  28     /* Native abbreviated name for February */
+#define OCI_NLS_ABMONTHNAME3  29        /* Native abbreviated name for March */
+#define OCI_NLS_ABMONTHNAME4  30        /* Native abbreviated name for April */
+#define OCI_NLS_ABMONTHNAME5  31          /* Native abbreviated name for May */
+#define OCI_NLS_ABMONTHNAME6  32         /* Native abbreviated name for June */
+#define OCI_NLS_ABMONTHNAME7  33         /* Native abbreviated name for July */
+#define OCI_NLS_ABMONTHNAME8  34       /* Native abbreviated name for August */
+#define OCI_NLS_ABMONTHNAME9  35    /* Native abbreviated name for September */
+#define OCI_NLS_ABMONTHNAME10 36      /* Native abbreviated name for October */
+#define OCI_NLS_ABMONTHNAME11 37     /* Native abbreviated name for November */
+#define OCI_NLS_ABMONTHNAME12 38     /* Native abbreviated name for December */
+#define OCI_NLS_YES           39   /* Native string for affirmative response */
+#define OCI_NLS_NO            40                 /* Native negative response */
+#define OCI_NLS_AM            41           /* Native equivalent string of AM */
+#define OCI_NLS_PM            42           /* Native equivalent string of PM */
+#define OCI_NLS_AD            43           /* Native equivalent string of AD */
+#define OCI_NLS_BC            44           /* Native equivalent string of BC */
+#define OCI_NLS_DECIMAL       45                        /* decimal character */
+#define OCI_NLS_GROUP         46                          /* group separator */
+#define OCI_NLS_DEBIT         47                   /* Native symbol of debit */
+#define OCI_NLS_CREDIT        48                  /* Native sumbol of credit */
+#define OCI_NLS_DATEFORMAT    49                       /* Oracle date format */
+#define OCI_NLS_INT_CURRENCY  50            /* International currency symbol */
+#define OCI_NLS_LOC_CURRENCY  51                   /* Locale currency symbol */
+#define OCI_NLS_LANGUAGE      52                            /* Language name */
+#define OCI_NLS_ABLANGUAGE    53           /* Abbreviation for language name */
+#define OCI_NLS_TERRITORY     54                           /* Territory name */
+#define OCI_NLS_CHARACTER_SET 55                       /* Character set name */
+#define OCI_NLS_LINGUISTIC_NAME    56                     /* Linguistic name */
+#define OCI_NLS_CALENDAR      57                            /* Calendar name */
+#define OCI_NLS_DUAL_CURRENCY 78                     /* Dual currency symbol */
+#define OCI_NLS_WRITINGDIR    79               /* Language writing direction */
+#define OCI_NLS_ABTERRITORY   80                   /* Territory Abbreviation */
+#define OCI_NLS_DDATEFORMAT   81               /* Oracle default date format */
+#define OCI_NLS_DTIMEFORMAT   82               /* Oracle default time format */
+#define OCI_NLS_SFDATEFORMAT  83       /* Local string formatted date format */
+#define OCI_NLS_SFTIMEFORMAT  84       /* Local string formatted time format */
+#define OCI_NLS_NUMGROUPING   85                   /* Number grouping fields */
+#define OCI_NLS_LISTSEP       86                           /* List separator */
+#define OCI_NLS_MONDECIMAL    87               /* Monetary decimal character */
+#define OCI_NLS_MONGROUP      88                 /* Monetary group separator */
+#define OCI_NLS_MONGROUPING   89                 /* Monetary grouping fields */
+#define OCI_NLS_INT_CURRENCYSEP 90       /* International currency separator */
+#define OCI_NLS_CHARSET_MAXBYTESZ 91     /* Maximum character byte size      */
+#define OCI_NLS_CHARSET_FIXEDWIDTH 92    /* Fixed-width charset byte size    */
+#define OCI_NLS_CHARSET_ID    93                         /* Character set id */
+#define OCI_NLS_NCHARSET_ID   94                        /* NCharacter set id */
+
+
+#define OCI_NLS_MAXBUFSZ   100 /* Max buffer size may need for OCINlsGetInfo */
 
 #endif /* OCILIB_OCI_DEFS_H_INCLUDED */
 

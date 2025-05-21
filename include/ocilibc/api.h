@@ -83,7 +83,10 @@
  *
  * @note
  * This function must be called before any OCILIB library function.
- *
+ * 
+ * All OCILIB functions (except OCI_GetLastError()) will fail if OCI_Initialize() has not been called.
+ * In this case the error reported by OCI_GetLastError() is OCI_ERR_NOT_INITIALIZED.
+ * 
  * @warning
  * - The parameter 'libpath' is only used if OCILIB has been built with the option OCI_IMPORT_RUNTIME
  * - If the parameter 'lib_path' is NULL, the Oracle library is loaded from system environment variables
@@ -123,7 +126,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize
  * @warning
  * OCI_Cleanup() should be called <b>ONCE</b> per application
  *
- * @return TRUE
+ * @return TRUE on success otherwise FALSE if:
+ * - OCI_Initialize() had not previously called, in this case the error reported by OCI_GetLastError() is OCI_ERR_NOT_INITIALIZED.
+ * - OCI_Cleanup() has already been called.
+ * - Some OCILIB local datatype handles have not been freed.
+ * 
  */
 
 OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup
@@ -363,12 +370,22 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetErrorHandler
 
 /**
  * @brief
+ * 
+ */
+
+OCI_SYM_PUBLIC const otext * OCI_API OCI_GetLocaleString
+(
+    unsigned int code
+);
+
+/**
+ * @brief
  * Retrieve the last error or warning occurred within the last OCILIB call
  *
  * @note
  * OCI_GetLastError() is based on thread context and thus OCILIB must be
  * initialized with the flag OCI_ENV_CONTEXT
- *
+ * 
  * @warning
  * OCILIB functions that returns a boolean value to indicate their success :
  * - return TRUE if no error occurred OR if a warning occurred
@@ -3534,6 +3551,59 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfObjects
 
 /**
  * @brief
+ * Bind an Vector variable
+ *
+ * @param stmt - Statement handle
+ * @param name - Variable name
+ * @param data - Vector handle
+ *
+ * @note
+ * parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindVector
+(
+    OCI_Statement *stmt,
+    const otext *  name,
+    OCI_Vector *   data
+);
+
+/**
+ * @brief
+ * Bind an array of Vector handles
+ *
+ * @param stmt   - Statement handle
+ * @param name   - Variable name
+ * @param data   - Array of Vector handle
+ * @param nbelem - Number of element in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
+ * For regular DML array operations, pass the value 0.
+ *
+ * @note
+ * parameter 'data' can NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfVectors
+(
+    OCI_Statement *stmt,
+    const otext *  name,
+    OCI_Vector  ** data,
+    unsigned int   nbelem
+);
+
+/**
+ * @brief
  * Bind a Collection variable
  *
  * @param stmt - Statement handle
@@ -4777,6 +4847,7 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_ColumnGetName
  * - OCI_CDT_REF         : OCI_Ref *
  * - OCI_CDT_BOOLEAN     : boolean
  * - OCI_CDT_XMLTYPE     : OCI_XmlType *
+ * - OCI_CDT_VECTOR      : OCI_Vector *
  *
  * @return
  * The column type or OCI_CDT_UNKNOWN if index is out of bounds
@@ -5015,6 +5086,24 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetCollationID
 );
 
 /**
+* @brief
+* Return the column dimension (for VECTOR type)
+*
+* @param col - Column handle
+*
+* @note
+* This was introduced in Oracle 23.4.
+* When the vector has a flexible dimension, it returns 0.
+* For earlier versions or other types than VECTOR, it always return 0
+*
+*/
+
+OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetDimension
+(
+    OCI_Column *col
+);
+
+/**
  * @brief
  * Return the type information object associated to the column
  *
@@ -5079,6 +5168,13 @@ OCI_SYM_PUBLIC OCI_TypeInfo * OCI_API OCI_ColumnGetTypeInfo
  * - OCI_NUM_DOUBLE
  * - OCI_NUM_FLOAT
  * - OCI_NUM_NUMBER
+ *
+ *  For vector columns the possible values are:
+ * - OCI_VEC_FLEX
+ * - OCI_VEC_FLOAT32
+ * - OCI_VEC_FLOAT64
+ * - OCI_VEC_INT8
+ * - OCI_VEC_BINARY
  *
  * @warning
  * For numeric columns, the value may be not accurate at all!
@@ -6095,6 +6191,45 @@ OCI_SYM_PUBLIC OCI_XmlType * OCI_API OCI_GetXmlType
  */
 
 OCI_SYM_PUBLIC OCI_XmlType * OCI_API OCI_GetXmlType2
+(
+    OCI_Resultset *rs,
+    const otext *  name
+);
+
+/**
+ * @brief
+ * Return the current Vector value of the column at the given index in the resultset
+ *
+ * @param rs    - Resultset handle
+ * @param index - Column position
+ *
+ * @note
+ * Column position starts at 1.
+ *
+ * @return
+ * The column current row value or NULL if index is out of bounds
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Vector * OCI_API OCI_GetVector
+(
+    OCI_Resultset *rs,
+    unsigned int   index
+);
+
+/**
+ * @brief
+ * Return the current Vector value of the column from its name in the resultset
+ *
+ * @param rs    - Resultset handle
+ * @param name  - Column name
+ *
+ * @return
+ * The column current row value or NULL if no column found with the given name
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Vector * OCI_API OCI_GetVector2
 (
     OCI_Resultset *rs,
     const otext *  name
@@ -8091,6 +8226,24 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterRef
     const otext *  name,
     OCI_TypeInfo * typinf
 );
+
+/**
+ * @brief
+ * Register a Vector output bind placeholder
+ *
+ * @param stmt   - Statement handle
+ * @param name   - Vector bind name
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ */
+
+OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterVector
+(
+    OCI_Statement *stmt,
+    const otext *  name
+);
+
 
 /**
  * @} OcilibCApiFeatureReturningInto
@@ -13033,6 +13186,263 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_XmlTypeGetContentSize
 );
 
 /**
+ * @brief
+ * Create a local Vector instance
+ *
+ * @param con - Connection handle
+ *
+ * @warning
+ * Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)
+ *
+ * @return
+ * Return the Vector handle on success otherwise NULL on failure
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Vector* OCI_API OCI_VectorCreate
+(
+    OCI_Connection* con
+);
+
+/**
+ * @brief
+ * Free a local Vector
+ *
+ * @param vect - Vector handle
+ *
+ * @warning
+ * Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)
+ *
+ * 
+ * @warning
+ * Only Vectors created with OCI_VectorCreate() should be freed by OCI_VectorFree()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_SYM_PUBLIC boolean OCI_API OCI_VectorFree
+(
+    OCI_Vector* vect
+);
+
+/**
+ * @brief
+ * Create an array of Vector object
+ *
+ * @param con    - Connection handle
+ * @param nbelem - number of elements in the array
+ *
+ * @warning
+ * Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)
+ *
+ * @note
+ * see OCI_VectorCreate() for more details
+ *
+ * @return
+ * Return the Vector handle array on success otherwise NULL on failure
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Vector** OCI_API OCI_VectorArrayCreate
+(
+    OCI_Connection* con,
+    unsigned int    nbelem
+);
+
+/**
+ * @brief
+ * Free an array of Vector objects
+ *
+ * @param vects - Array of Vector objects
+ *
+ * @warning
+ * Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)
+ *
+ * @warning
+ * Only arrays of Vector created with OCI_VectorArrayCreate()
+ * should be freed by OCI_VectorArrayFree()
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_SYM_PUBLIC boolean OCI_API OCI_VectorArrayFree
+(
+    OCI_Vector** vects
+);
+
+/**
+ * @brief
+ * Returns information about the vector
+ *
+ * @param vect       - Vector handle
+ * @param format     - pointer to a variable receiving the vector format
+ * @param dimensions - pointer to a variable receiving the vector number of dimensions
+ *
+ * @warning
+ * Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)
+ *
+ * @note
+ * Possible values for format :
+ *
+ * - OCI_VEC_FLOAT32
+ * - OCI_VEC_FLOAT64 
+ * - OCI_VEC_INT8 
+ * - OCI_VEC_BINARY
+ * 
+ * @warning
+ * OCI_VEC_BIANRAY only supported from Oracle 23.5
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_SYM_PUBLIC boolean OCI_API OCI_VectorGetInfo
+(
+    OCI_Vector* vect, 
+    unsigned int *format,
+    unsigned int *dimensions
+);
+
+/**
+ * @brief
+ * Returns the content of the vector
+ *
+ * @param vect       - Vector handle
+ * @param values     - pointer to an array of values
+ *
+ * @warning
+ * Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)
+ *
+ * @note
+ * Depending on the vector format :
+ *
+ * - OCI_VEC_FLOAT32 : array value type is float 
+ * - OCI_VEC_FLOAT64 : array value type is double 
+ * - OCI_VEC_INT8    : array value type is char 
+ * - OCI_VEC_BINARY  : array value type is void 
+ * 
+ * @warning
+ * OCI_VEC_BIANRAY only supported from Oracle 23.5
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+
+OCI_SYM_PUBLIC boolean OCI_API OCI_VectorGetValues
+(
+    OCI_Vector* vect,
+    void *values
+);
+
+/**
+ * @brief
+ * Set the content of the vector
+ *
+ * @param vect       - Vector handle
+ * @param format     - Vector format
+ * @param dimensions - Vector number of dimensions
+ * @param values     - Array of values to set
+ *
+ * @warning
+ * Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)
+ *
+ * @note
+ * Depending on the vector format :
+ *
+ * - OCI_VEC_FLOAT32 : array value type is float 
+ * - OCI_VEC_FLOAT64 : array value type is double 
+ * - OCI_VEC_INT8    : array value type is char 
+ * - OCI_VEC_BINARY  : array value type is void 
+ * 
+ * @warning
+ * OCI_VEC_BIANRAY only supported from Oracle 23.5
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+OCI_SYM_PUBLIC boolean OCI_API OCI_VectorSetValues
+(
+    OCI_Vector       *vect,
+    unsigned int      format,
+    unsigned int      dimensions,
+    void             *values
+);
+
+/**
+ * @brief
+ * Set the content of the vector from a given string representation
+ *
+ * @param vect       - Vector handle
+ * @param str        - Vector string representation
+ * @param size       - @str length (number of characters) - If Zero, the length will be computed
+ * @param format     - Vector format
+ * @param dimensions - Vector number of dimensions
+ *
+ * @warning
+ * Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)
+ *
+ * @note
+ * Depending on the vector format :
+ *
+ * - OCI_VEC_FLOAT32 : string contains an textual array of float representation
+ * - OCI_VEC_FLOAT64 : string contains an textual array of double representation 
+ * - OCI_VEC_INT8    : string contains an textual array of 8 byte values representation
+ * - OCI_VEC_BINARY
+ * 
+ * @warning
+ * OCI_VEC_BIANRAY only supported from Oracle 23.5
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+OCI_SYM_PUBLIC boolean OCI_API OCI_VectorFromText
+(
+    OCI_Vector  *vect,
+    const otext* str,
+    unsigned int size,
+    unsigned int format,
+    unsigned int dimensions
+);
+
+/**
+ * @brief
+ * Returns a string representation of the vector
+ *
+ * @param vect       - Vector handle
+ * @param size       - @str buffer length (number of characters)
+ * @param str        - string wthat fill be filled with the textual representation of the vector
+ *
+ * @warning
+ * Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)
+ *
+ * @note
+ * In order to compute the needed string length, call the method with a NULL string and @size will 
+ * be filled with the number of character needed.
+ * Then call the method again with a valid buffer
+ * 
+ * @warning
+ * OCI_VEC_BINARY only supported from Oracle 23.5
+ *
+ * @return
+ * TRUE on success otherwise FALSE
+ *
+ */
+OCI_SYM_PUBLIC boolean OCI_API OCI_VectorToText
+(
+    OCI_Vector    *vect,
+    unsigned int  *size,
+    otext         *str
+);
+
+/**
  * @} OcilibCApiUserTypes
  */
 
@@ -13203,7 +13613,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_TypeInfoGetColumnCount
  * Return the column object handle at the given index in the table
  *
  * @param typinf - Type info handle
- * @param index  - Column position
+ * @param index  - Column position (starts at 1)
  *
  * @return
  * - Column handle on success

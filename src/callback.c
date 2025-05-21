@@ -192,6 +192,7 @@ sb4 OcilibCallbackOutBind
         case OCI_CDT_INTERVAL:
         case OCI_CDT_LOB:
         case OCI_CDT_FILE:
+        case OCI_CDT_VECTOR:
         {
             *bufpp = def->buf.data[index];
             break;

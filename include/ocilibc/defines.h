@@ -76,10 +76,10 @@
 #define OCI_19_21                           OCI_VER_MAKE(19, 21, 0)
 #define OCI_19_22                           OCI_VER_MAKE(19, 22, 0)
 #define OCI_19_24                           OCI_VER_MAKE(19, 24, 0)
+#define OCI_21_3                            OCI_VER_MAKE(21, 3, 0)
 #define OCI_21_12                           OCI_VER_MAKE(21, 12, 0)
 #define OCI_21_14                           OCI_VER_MAKE(21, 14, 0)
 #define OCI_21_15                           OCI_VER_MAKE(21, 15, 0)
-#define OCI_21_3                            OCI_VER_MAKE(21, 3, 0)
 #define OCI_23_3                            OCI_VER_MAKE(23, 3, 0)
 #define OCI_23_4                            OCI_VER_MAKE(23, 4, 0)
 #define OCI_23_5                            OCI_VER_MAKE(23, 5, 0)
@@ -162,6 +162,7 @@
 #define OCI_IPC_DEQUEUE          39
 #define OCI_IPC_AGENT            40
 #define OCI_IPC_XMLTYPE          41
+#define OCI_IPC_VECTOR           42
 
 /* allocated bytes types */
 
@@ -204,6 +205,7 @@
 #define OCI_CDT_REF                         14
 #define OCI_CDT_BOOLEAN                     15
 #define OCI_CDT_XMLTYPE                     16
+#define OCI_CDT_VECTOR                      17
 
 /* Data Type codes for OCI_ImmediateXXX() calls */
 
@@ -584,6 +586,14 @@
 #define OCI_FMT_BINARY_FLOAT                5
 #define OCI_FMT_TIMESTAMP_TZ                6
 
+/* vector formats (Oracle 23.4) */
+
+#define OCI_VEC_FLEX                        0  /* only for describing colums */
+#define OCI_VEC_FLOAT32                     2
+#define OCI_VEC_FLOAT64                     3
+#define OCI_VEC_INT8                        4
+#define OCI_VEC_BINARY                      5  /* Oracle 23.5 */
+
 /* sql function codes */
 
 #define OCI_SFC_CREATE_TABLE                    1
@@ -827,6 +837,78 @@
 #define OCI_SFC_DROP_LANGUAGE                   271
 #define OCI_SFC_ALTER_PUBLIC_DATABASE_LINK      305
 
+
+#define OCI_LSI_DAYNAME1            1
+#define OCI_LSI_DAYNAME2            2
+#define OCI_LSI_DAYNAME3            3
+#define OCI_LSI_DAYNAME4            4
+#define OCI_LSI_DAYNAME5            5
+#define OCI_LSI_DAYNAME6            6
+#define OCI_LSI_DAYNAME7            7
+#define OCI_LSI_ABDAYNAME1          8
+#define OCI_LSI_ABDAYNAME2          9
+#define OCI_LSI_ABDAYNAME3          10
+#define OCI_LSI_ABDAYNAME4          11
+#define OCI_LSI_ABDAYNAME5          12
+#define OCI_LSI_ABDAYNAME6          13
+#define OCI_LSI_ABDAYNAME7          14
+#define OCI_LSI_MONTHNAME1          15
+#define OCI_LSI_MONTHNAME2          16
+#define OCI_LSI_MONTHNAME3          17
+#define OCI_LSI_MONTHNAME4          18
+#define OCI_LSI_MONTHNAME5          19
+#define OCI_LSI_MONTHNAME6          20
+#define OCI_LSI_MONTHNAME7          21
+#define OCI_LSI_MONTHNAME8          22
+#define OCI_LSI_MONTHNAME9          23
+#define OCI_LSI_MONTHNAME10         24
+#define OCI_LSI_MONTHNAME11         25
+#define OCI_LSI_MONTHNAME12         26
+#define OCI_LSI_ABMONTHNAME1        27
+#define OCI_LSI_ABMONTHNAME2        28
+#define OCI_LSI_ABMONTHNAME3        29
+#define OCI_LSI_ABMONTHNAME4        30
+#define OCI_LSI_ABMONTHNAME5        31
+#define OCI_LSI_ABMONTHNAME6        32
+#define OCI_LSI_ABMONTHNAME7        33
+#define OCI_LSI_ABMONTHNAME8        34
+#define OCI_LSI_ABMONTHNAME9        35
+#define OCI_LSI_ABMONTHNAME10       36
+#define OCI_LSI_ABMONTHNAME11       37
+#define OCI_LSI_ABMONTHNAME12       38
+#define OCI_LSI_YES                 39
+#define OCI_LSI_NO                  40
+#define OCI_LSI_AM                  41
+#define OCI_LSI_PM                  42
+#define OCI_LSI_AD                  43
+#define OCI_LSI_BC                  44
+#define OCI_LSI_DECIMAL             45
+#define OCI_LSI_GROUP               46
+#define OCI_LSI_DEBIT               47
+#define OCI_LSI_CREDIT              48
+#define OCI_LSI_DATEFORMAT          49
+#define OCI_LSI_INT_CURRENCY        50
+#define OCI_LSI_LOC_CURRENCY        51
+#define OCI_LSI_LANGUAGE            52
+#define OCI_LSI_ABLANGUAGE          53
+#define OCI_LSI_TERRITORY           54
+#define OCI_LSI_CHARACTER_SET       55
+#define OCI_LSI_LINGUISTIC_NAME     56
+#define OCI_LSI_CALENDAR            57
+#define OCI_LSI_DUAL_CURRENCY       78
+#define OCI_LSI_WRITINGDIR          79
+#define OCI_LSI_ABTERRITORY         80
+#define OCI_LSI_DDATEFORMAT         81
+#define OCI_LSI_DTIMEFORMAT         82
+#define OCI_LSI_SFDATEFORMAT        83
+#define OCI_LSI_SFTIMEFORMAT        84
+#define OCI_LSI_NUMGROUPING         85
+#define OCI_LSI_LISTSEP             86
+#define OCI_LSI_MONDECIMAL          87
+#define OCI_LSI_MONGROUP            88
+#define OCI_LSI_MONGROUPING         89
+#define OCI_LSI_INT_CURRENCYSEP     90
+
 /* size constants */
 
 #define OCI_SIZE_FORMAT                     64
@@ -844,6 +926,10 @@
 #define OCI_SIZE_FORMAT_NUMS                40
 #define OCI_SIZE_FORMAT_NUML                65
 #define OCI_SIZE_OBJ_NAME                   128
+#define OCI_SIZE_NUM_VECTOR_INT             4
+#define OCI_SIZE_NUM_VECTOR_FLOAT           16
+#define OCI_SIZE_BUFFER_LSI                100
+
 
 #define OCI_HASH_DEFAULT_SIZE               256
 

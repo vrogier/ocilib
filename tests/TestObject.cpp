@@ -55,8 +55,8 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
         ASSERT_TRUE(OCI_Cleanup());
 
-        ExecDML(OTEXT("drop type TestObjectSetGetBasicPropsVendor"));
-        ExecDML(OTEXT("drop type TestObjectSetGetBasicPropsSale"));
+       ExecDML(OTEXT("drop type TestObjectSetGetBasicPropsSale"));
+       ExecDML(OTEXT("drop type TestObjectSetGetBasicPropsVendor"));
     }
 }
 

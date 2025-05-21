@@ -215,7 +215,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_Cleanup());
     }
 
-    /* disabling that test as day name is local dependent
     TEST(TestDate, GetNextDay)
     {
         ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
@@ -224,7 +223,7 @@ namespace TestCApi
         int year = 0, month = 0, day = 0;
 
         ASSERT_TRUE(OCI_DateFromText(date, OTEXT("1978-04-13 20:30:15"), OCI_STRING_FORMAT_DATETIME));
-        ASSERT_TRUE(OCI_DateNextDay(date, NLS_LANGUAGE_SUNDAY_NAME));
+        ASSERT_TRUE(OCI_DateNextDay(date, OCI_GetLocaleString(OCI_LSI_DAYNAME7)));
         ASSERT_TRUE(OCI_DateGetDate(date, &year, &month, &day));
         ASSERT_EQ(1978, year);
         ASSERT_EQ(4, month);
@@ -257,7 +256,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_Cleanup());
     }
-    */
+    
 
     TEST(TestDate, DateFetch)
     {

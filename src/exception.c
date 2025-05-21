@@ -70,6 +70,7 @@ static const otext * TypeNames[OCI_IPC_COUNT] =
     OTEXT("Dequeue handle"),
     OTEXT("Agent handle"),
     OTEXT("XmlType handle"),
+    OTEXT("Vector handle"),
 
     OTEXT("Internal list handle"),
     OTEXT("Internal list item handle"),
@@ -185,7 +186,8 @@ static const otext * OracleFeatures[OCI_FEATURE_COUNT] =
     OTEXT("Oracle 10g R2 High Availability"),
     OTEXT("Oracle XA Connections"),
     OTEXT("Oracle 12c R1 PL/SQL extended support"),
-    OTEXT("Oracle 8.1 multihreading support")
+    OTEXT("Oracle 8.1 multihreading support"),
+    OTEXT("Oracle 23ai Vectors support")
 };
 
 typedef struct StatementState

@@ -1988,6 +1988,26 @@ typedef sword (*OCISTMTFETCH2 )
 
 /* API introduced in 9.2 */
 
+typedef sword (*OCINLSGETINFO)
+(
+    void        *hndl, 
+    OCIError    *errhp, 
+    OraText     *buf, 
+    size_t       buflen, 
+    ub2          item 
+);
+
+typedef sword (*OCIENVNLSCREATE)
+(
+    OCIEnv **envp, ub4 mode, void  *ctxp,
+    void  *(*malocfp)(void  *ctxp, size_t size),
+    void  *(*ralocfp)(void  *ctxp, void  *memptr, size_t newsize),
+    void   (*mfreefp)(void  *ctxp, void  *memptr),
+    size_t xtramem_sz, void  **usrmempp,
+    ub2 charset,
+    ub2 ncharset
+);
+
 typedef sword (*OCISTMTPREPARE2)
 (
     OCISvcCtx     *svchp,
@@ -2247,6 +2267,73 @@ typedef sword(*OCISODAOPERKEYSSET)
     OCIError     *errhp,
     ub4           mode
 );
+
+/* API introduced in 19.3 */
+
+typedef sword(*OCISODABULKINSERT)
+(
+    OCISvcCtx            *svchp,
+    void*                *collection,
+    void*               **documentarray,
+    ub4                   arraylen,
+    void*                 opoptns,
+    OCIError             *errhp,
+    ub4                   mode
+);
+
+/* API introduced in 21.3 */
+
+typedef sword(*OCISERVERDATALENGTHGET)
+(
+    void     *hndlp,
+    boolean  *lengthValidp,
+    ub8      *lengthp,
+    OCIError *errhp,
+    ub4       mode
+);
+
+/* API introduced in 23.4 */
+
+typedef sword(*OCIVECTORTOARRAY)
+(
+    OCIVector *vectord, 
+    OCIError *errhp, 
+    ub1 vformat,
+    ub4 *vdim, 
+    void *vecarray,
+    ub4 mode
+);
+
+typedef sword(*OCIVECTORFROMARRAY)
+(
+    OCIVector *vectord, 
+    OCIError *errhp, 
+    ub1 vformat,
+    ub4 vdim, 
+    void *vecarray,
+    ub4 mode
+);
+
+typedef sword(*OCIVECTORTOTEXT)
+(
+    OCIVector *vectord,
+    OCIError *errhp, 
+    OraText *vtext,
+    ub4 *vtextlen, 
+    ub4 mode
+);
+
+typedef sword(*OCIVECTORFROMTEXT)
+(
+    OCIVector *vectord, 
+    OCIError *errhp, 
+    ub1 vformat,
+    ub4 vdim, 
+    const OraText *vtext, 
+    ub4 vtextlen,
+    ub4 mode
+);
+
 
 #endif /* OCILIB_OCI_API_H_INCLUDED */
 

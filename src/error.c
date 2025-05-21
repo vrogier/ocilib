@@ -181,6 +181,11 @@ OCI_Error * OcilibErrorGet
     boolean reset_err
 )
 {
+    if (NULL == Env.lib_err)
+    {
+        Env.lib_err = OcilibErrorCreate();
+    }
+
     OCI_Error *err = Env.lib_err;
 
     if (Env.loaded && LIB_THREADED && Env.key_errs != NULL)
@@ -378,7 +383,9 @@ OCI_Connection * OcilibErrorGetConnection
             return ((OCI_Agent*)err->source_ptr)->con;
         case OCI_IPC_XMLTYPE:
             return ((OCI_XmlType*)err->source_ptr)->con;
-    }
+        case OCI_IPC_VECTOR:
+            return ((OCI_Vector*)err->source_ptr)->con;
+   }
 
     return NULL;
 }

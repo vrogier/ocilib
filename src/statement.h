@@ -398,6 +398,21 @@ OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfObjects
     unsigned int   nbelem
 );
 
+OCI_SYM_LOCAL boolean OcilibStatementBindVector
+(
+    OCI_Statement* stmt,
+    const otext  * name,
+    OCI_Vector   * data
+);
+
+OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfVectors
+(
+    OCI_Statement* stmt,
+    const otext  * name,
+    OCI_Vector  ** data,
+    unsigned int   nbelem
+);
+
 OCI_SYM_LOCAL boolean OcilibStatementBindLob
 (
     OCI_Statement* stmt,
@@ -591,6 +606,12 @@ OCI_SYM_LOCAL boolean OcilibStatementRegisterReference
     OCI_Statement* stmt,
     const otext  * name,
     OCI_TypeInfo * typinf
+);
+
+OCI_SYM_LOCAL boolean OcilibStatementRegisterVector
+(
+    OCI_Statement* stmt,
+    const otext  * name
 );
 
 OCI_SYM_LOCAL unsigned int OcilibStatementGetStatementType

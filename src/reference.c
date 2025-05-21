@@ -436,14 +436,14 @@ boolean OcilibReferenceToString
 
     str[0] = 0;
 
-    if (OCI_CHAR_WIDE == Env.charset)
+    if (IS_WIDE_CHAR_ENV())
     {
         /* need temporary buffer in wide strings mode */
         dbstr = (dbtext *) OcilibMemoryAlloc(OCI_IPC_STRING, (size_t) ((char_count + 1) * sizeof(otext)), (size_t) 1, TRUE);
     }
     else
     {
-        dbstr = str;
+        dbstr = (dbtext *) str;
     }
 
     CHECK_OCI
@@ -454,7 +454,7 @@ boolean OcilibReferenceToString
         (OraText *) dbstr, (ub4 *) &char_count
     )
 
-    if (OCI_CHAR_WIDE == Env.charset)
+    if (IS_WIDE_CHAR_ENV())
     {
         /* need to convert temporary ANSI buffer to Native in wide strings mode */
         OcilibStringAnsiToNative(dbstr, str, size);
@@ -468,7 +468,7 @@ boolean OcilibReferenceToString
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (OCI_CHAR_WIDE == Env.charset)
+        if (IS_WIDE_CHAR_ENV())
         {
             FREE(dbstr);
         }

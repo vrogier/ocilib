@@ -716,7 +716,7 @@ static boolean OcilibStatementBindCheckAll
             {
                 if (bnd->is_array)
                 {
-                    const ub4 count = IS_PLSQL_STMT(stmt->type) ? bnd->nbelem : stmt->nb_iters;
+                    const ub4 count = OCI_MAX(bnd->nbelem, stmt->nb_iters);
 
                     for (j = 0; j < count; j++)
                     {
@@ -773,7 +773,7 @@ static boolean OcilibStatementBindUpdateAll
             {
                 if (bnd->is_array)
                 {
-                    const ub4 count = IS_PLSQL_STMT(stmt->type) ? bnd->nbelem : stmt->nb_iters;
+                    const ub4 count = OCI_MAX(bnd->nbelem, stmt->nb_iters);
 
                     for (ub4 j = 0; j < count; j++)
                     {
@@ -1382,7 +1382,7 @@ boolean OcilibStatementExecuteInternal
 
         /* for array DML, use batch error mode */
 
-        if (iters > 1)
+        if (iters > 1 && !IS_PLSQL_STMT(stmt->type))
         {
             mode = mode | OCI_BATCH_ERRORS;
         }
@@ -3001,6 +3001,81 @@ boolean OcilibStatementBindArrayOfObjects
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OcilibStatementBindVector
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OcilibStatementBindVector
+(
+    OCI_Statement *stmt,
+    const otext   *name,
+    OCI_Vector    *data
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_STATEMENT, stmt
+    )
+
+    CHECK_BIND(stmt, name, data, OCI_IPC_VECTOR, TRUE)
+    CHECK_VECTOR_ENABLED(stmt->con)
+
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+    BIND_DATA(sizeof(OCIVector*), OCI_CDT_VECTOR, SQLT_VEC, 0, NULL, 0)
+
+#else
+
+    OCI_NOT_USED(name)
+    OCI_NOT_USED(data)
+
+#endif
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStatementBindArrayOfVectors
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OcilibStatementBindArrayOfVectors
+(
+    OCI_Statement *stmt,
+    const otext   *name,
+    OCI_Vector   **data,
+    unsigned int   nbelem
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_STATEMENT, stmt
+    )
+
+    CHECK_BIND(stmt, name, data, OCI_IPC_VECTOR, TRUE)
+    CHECK_VECTOR_ENABLED(stmt->con)
+
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+    BIND_DATA(sizeof(OCIVector*), OCI_CDT_VECTOR, SQLT_VEC, 0, NULL, nbelem)
+
+#else
+
+    OCI_NOT_USED(name)
+    OCI_NOT_USED(data) 
+    OCI_NOT_USED(nbelem)
+
+#endif
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
+
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OcilibStatementBindLob
  * --------------------------------------------------------------------------------------------- */
 
@@ -3609,6 +3684,36 @@ boolean OcilibStatementRegisterReference
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
 
     REGISTER_DATA(sizeof(OCIRef *), OCI_CDT_REF, SQLT_REF, 0, typinf, 0)
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStatementRegisterVector
+ * --------------------------------------------------------------------------------------------- */
+
+boolean OcilibStatementRegisterVector
+(
+    OCI_Statement* stmt,
+    const otext* name
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_STATEMENT, stmt
+    )
+
+    CHECK_REGISTER(stmt, name)
+    CHECK_VECTOR_ENABLED(stmt->con)
+
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+    REGISTER_DATA(sizeof(OCIVector *), OCI_CDT_VECTOR, SQLT_VEC, 0, NULL, 0)
+
+#endif
 
     SET_SUCCESS()
 

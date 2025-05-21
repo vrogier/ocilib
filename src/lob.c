@@ -396,14 +396,14 @@ boolean OcilibLobRead2
 
     if (OCI_BLOB != lob->type)
     {
-        if (OCI_CHAR_WIDE == Env.charset)
+        if (IS_WIDE_CHAR_ENV())
         {
             csid = OCI_UTF16ID;
         }
 
         if (((*byte_count) == 0) && ((*char_count) > 0))
         {
-            if (Env.nls_utf8)
+            if (IS_UTF8_ENV())
             {
                 (*byte_count) = (*char_count) * (ub4)OCI_UTF8_BYTES_PER_CHAR;
             }
@@ -463,7 +463,7 @@ boolean OcilibLobRead2
     {
         ub4 ora_byte_count = (ub4) *byte_count;
 
-        if (!Env.use_lob_ub8 && !Env.nls_utf8)
+        if (!Env.use_lob_ub8 && !IS_UTF8_ENV())
         {
             ora_byte_count *= sizeof(dbtext);
         }
@@ -472,7 +472,7 @@ boolean OcilibLobRead2
 
 #ifndef OCI_LOB2_API_ENABLED
 
-        if (Env.nls_utf8)
+        if (IS_UTF8_ENV())
         {
             (*char_count) = (ub4) StringLength((const char *)buffer, sizeof(char));
         }
@@ -489,7 +489,7 @@ boolean OcilibLobRead2
     {
         lob->offset += (big_uint) (*char_count);
 
-        if (!Env.nls_utf8 && Env.use_wide_char_conv)
+        if (!IS_UTF8_ENV() && Env.use_wide_char_conv)
         {
             OcilibStringUTF16ToUTF32(buffer, buffer, (int) (*char_count));
             (*byte_count) = (ub4) (*char_count) * (ub4) sizeof(otext);
@@ -563,14 +563,14 @@ boolean OcilibLobWrite2
 
     if (OCI_BLOB != lob->type)
     {
-        if (OCI_CHAR_WIDE == Env.charset)
+        if (IS_WIDE_CHAR_ENV())
         {
             csid = OCI_UTF16ID;
         }
 
         if (((*byte_count) == 0) && ((*char_count) > 0))
         {
-            if (Env.nls_utf8)
+            if (IS_UTF8_ENV())
             {
                 (*byte_count) = (unsigned int) strlen((const char *) buffer);
             }
@@ -582,7 +582,7 @@ boolean OcilibLobWrite2
 
         if (((*char_count) == 0) && ((*byte_count) > 0))
         {
-            if (Env.nls_utf8 )
+            if (IS_UTF8_ENV() )
             {
 
 #ifndef OCI_LOB2_API_ENABLED
@@ -636,7 +636,7 @@ boolean OcilibLobWrite2
     {
         ub4 size_in_out_char_byte = 0;
 
-        if ((OCI_BLOB == lob->type) || Env.nls_utf8)
+        if ((OCI_BLOB == lob->type) || IS_UTF8_ENV())
         {
             size_in_out_char_byte = (*byte_count);
         }
@@ -658,7 +658,7 @@ boolean OcilibLobWrite2
             (*char_count) = (ub4) size_in_out_char_byte;
         (*byte_count)     = (ub4) size_in_out_char_byte;
 
-        if ((OCI_CLOB == lob->type) && !Env.nls_utf8)
+        if ((OCI_CLOB == lob->type) && !IS_UTF8_ENV())
         {
             (*byte_count) *= (ub4) sizeof(otext);
         }
@@ -1078,14 +1078,14 @@ boolean OcilibLobAppend2
 
     if (OCI_BLOB != lob->type)
     {
-        if (OCI_CHAR_WIDE == Env.charset)
+        if (IS_WIDE_CHAR_ENV())
         {
             csid = OCI_UTF16ID;
         }
 
         if (((*byte_count) == 0) && ((*char_count) > 0))
         {
-            if (Env.nls_utf8)
+            if (IS_UTF8_ENV())
             {
                 (*byte_count) = (unsigned int) strlen( (char *) buffer);
             }
@@ -1097,7 +1097,7 @@ boolean OcilibLobAppend2
 
         if (((*char_count) == 0) && ((*byte_count) > 0))
         {
-            if (Env.nls_utf8)
+            if (IS_UTF8_ENV())
             {
 
 #ifndef OCI_LOB2_API_ENABLED
@@ -1150,7 +1150,7 @@ boolean OcilibLobAppend2
     {
         ub4 size_in_out_char_byte = 0;
 
-        if ((OCI_BLOB == lob->type) || !Env.nls_utf8)
+        if ((OCI_BLOB == lob->type) || !IS_UTF8_ENV())
         {
             size_in_out_char_byte = (*byte_count);
         }
@@ -1171,7 +1171,7 @@ boolean OcilibLobAppend2
         (*char_count) = (ub4) size_in_out_char_byte;
         (*byte_count) = (ub4) size_in_out_char_byte;
 
-        if ((OCI_CLOB == lob->type) && !Env.nls_utf8)
+        if ((OCI_CLOB == lob->type) && !IS_UTF8_ENV())
         {
             (*byte_count) *= (ub4) sizeof(otext);
         }

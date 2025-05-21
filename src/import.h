@@ -280,6 +280,8 @@ extern OCIAQDEQ                     OCIAQDeq;
 extern OCIAQLISTEN                  OCIAQListen;
 extern OCIDBSTARTUP                 OCIDBStartup;
 extern OCIDBSHUTDOWN                OCIDBShutdown;
+extern OCIENVNLSCREATE              OCIEnvNlsCreate;
+extern OCINLSGETINFO                OCINlsGetInfo;
 extern OCISTMTPREPARE2              OCIStmtPrepare2;
 extern OCISTMTRELEASE               OCIStmtRelease;
 extern OCISUBSCRIPTIONREGISTER      OCISubscriptionRegister;
@@ -291,6 +293,12 @@ extern OCISTMTGETNEXTRESULT         OCIStmtGetNextResult;
 extern OCISERVERRELEASE2            OCIServerRelease2;
 extern OCISODAOPERKEYSSET           OCISodaOperKeysSet;
 extern OCIROWIDTOCHAR               OCIRowidToChar;
+extern OCISODABULKINSERT            OCISodaBulkInsert;
+extern OCISERVERDATALENGTHGET       OCIServerDataLengthGet;
+extern OCIVECTORTOARRAY             OCIVectorToArray;
+extern OCIVECTORFROMARRAY           OCIVectorFromArray;
+extern OCIVECTORTOTEXT              OCIVectorToText;
+extern OCIVECTORFROMTEXT            OCIVectorFromText;
 
 #ifdef ORAXB8_DEFINED
 

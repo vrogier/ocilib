@@ -701,7 +701,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_Cleanup());
     }
 
-
     TEST(ReportedIssuesCApi, Issue347)
     {
         ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_THREADED));
@@ -721,6 +720,17 @@ namespace TestCApi
         ASSERT_TRUE(OCI_MsgFree(msgRaw));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
         ASSERT_TRUE(OCI_Cleanup());
+    }
+
+    TEST(ReportedIssuesCApi, Issue370)
+    {
+        ASSERT_EQ(nullptr, OCI_GetUserData(nullptr));
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+
+        ASSERT_EQ(OCI_ERR_NOT_INITIALIZED, OCI_ErrorGetInternalCode(err));
+        ASSERT_EQ(OCI_ERR_OCILIB, OCI_ErrorGetType(err));
     }
 
     INSTANTIATE_TEST_CASE_P(ReportedIssuesCApi, ReportedIssues247, ::testing::ValuesIn(TimestampTypes));

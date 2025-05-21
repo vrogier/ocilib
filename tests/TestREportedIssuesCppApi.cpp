@@ -391,5 +391,72 @@ namespace TestCppApi
         Environment::Cleanup();
     }
 
+    TEST(ReportedIssuesCppApi, Issue370)
+    {
+        int errCode = 0;
+        int errType = 0;
+        try
+        {
+            auto inititialzed = Environment::Initialized();
+        }
+        catch (const ocilib::Exception& ex)
+        {
+            errCode = ex.GetInternalErrorCode();
+            errType = ex.GetType();
+        }
+
+        ASSERT_EQ(OCI_ERR_NOT_INITIALIZED, errCode);
+        ASSERT_EQ(Exception::ExceptionTypeValues::OcilibError, errType);
+    }
+
+    TEST(ReportedIssuesCppApi, Issue377)
+    {
+        ExecDML(OTEXT("create table TestIssue377(value number(18))"));
+
+        ostring errMessage;
+        int errCode{};
+        size_t expectedCount{10};
+        size_t insertedCount{};
+
+        try
+        {
+            ocilib::Environment::Initialize(ocilib::Environment::Default | ocilib::Environment::Threaded);
+            Connection conn(DBS, USR, PWD);
+
+            std::vector<big_int> values;
+            for (int i = 1; i <= expectedCount; ++i)
+            {
+                values.push_back(1234567890000 + i);
+            }
+
+            ostring sql = OTEXT("begin insert into TestIssue377(value) values (:0); end;");
+            ocilib::Statement stmt(conn);
+            stmt.Prepare(sql);
+            stmt.SetBindArraySize(static_cast<unsigned int>(values.size()));
+            stmt.Bind(OTEXT(":0"), values, ocilib::BindInfo::In);
+            stmt.ExecutePrepared();
+
+            stmt.Execute(OTEXT("select value from TestIssue377"));
+            auto rs = stmt.GetResultset();
+            while (rs++)
+            {
+                ASSERT_EQ(values[insertedCount],rs.Get<big_int>(1));
+                insertedCount++;
+            }
+        }
+        catch (const ocilib::Exception& ex) 
+        {
+            errMessage = ex.GetMessage();
+            errCode = ex.GetOracleErrorCode();
+        }
+
+        ASSERT_EQ(true, errMessage.empty());
+        ASSERT_EQ(0, errCode);
+        ASSERT_EQ(expectedCount, insertedCount);
+
+        ocilib::Environment::Cleanup();
+     
+        ExecDML(OTEXT("drop table TestIssue377"));
+    }
 }
 

@@ -1,3 +1,54 @@
+2025-05-13 Version 4.8.0 Vincent Rogier vince.rogier@ocilib.net
+
+  * Enhancements (C API)
+
+        - Oracle VECTOR type is now supported 
+            * Requires Oracle 23.4 client and database 
+            * For prior Oracle clients, VECTOR type can be binded and fetched as string
+            * Added OCI_Vector* data type (OCI_CDT_VECTOR) 
+            * Added the following new APIs:               
+                - OCI_VectorCreate()
+                - OCI_VectorFree()
+                - OCI_VectorArrayCreate()
+                - OCI_VectorArrayFree()
+                - OCI_VectorGetInfo()
+                - OCI_VectorGetValues()
+                - OCI_VectorSetValues()
+                - OCI_VectorFromText()
+                - OCI_VectorToText()
+                - OCI_GetVector()
+                - OCI_GetVector2()
+                - OCI_RegisterVector()
+                - OCI_BindVector()
+                - OCI_BindArrayOfVectors()
+                - OCI_ColumnGetDimension()
+            * Added Vector element types : OCI_VEC_INT8, OCI_VEC_FLOAT32, OCI_VEC_FLOAT64 and OCI_VEC_BINARY (OCI_VEC_FLEX is only used for describing column)
+            * Vector element type OCI_VEC_BINARY is only supported from 23.5
+            * OCI_ColumnGetType() reports "VECTOR" as SQL type
+            * OCI_ColumnGetFullSQLType() reports same details as SQLPlus( e.g., VECTOR({dimension}, {type]) )
+            * OCI_ColumnGetSubType() returns OCI_VEC_XXX values
+            * OCI_GetString() returns a string representation of a VECTOR object
+
+        -  Added the ability to retrived localized strings from Oracle client
+            - Added OCI_LST_XXX entries
+            - Added OCI_GetLocaleString() 
+        
+   * Enhancements (C++ API)
+   
+        - Oracle VECTOR type is now supported (see C API for more details)
+            * Added ocilib::Vector class wrapping OCI_Vector* handle
+            * Added ocilib::Column::GetDimension() method         
+        - Added the ability to retrived localized strings from Oracle client
+            - Added ocilib::Environment::LocaleCode enum
+            - Added ocilib::Environment::GetLocaleString() method
+           
+    * Fixes (C API)
+        - Issue 371 : Build failure with gcc14
+        - Issue 377 : Binding arrays of non scalar types (big_int/OCI_Datetime/OCI_Timestamp/OCI_Interval) with a PL/SQL block statement provides NULL values to Oracle client
+      
+    * Fixes (C++ API)
+        - Issue 370 : Calling Environment::Initialized() before Environment::Initialize() throws an exception
+    
 2025-01-14 Version 4.7.7 Vincent Rogier vince.rogier@ocilib.net
 
    * Enhancements (C API)

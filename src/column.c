@@ -27,6 +27,33 @@
 #include "typeinfo.h"
 
 /* --------------------------------------------------------------------------------------------- *
+* OcilibColumnGetVectorFormatString
+* --------------------------------------------------------------------------------------------- */
+
+const otext* OcilibColumnGetVectorFormatString
+(
+    int format
+)
+{
+    switch (format)
+    {
+        case OCI_VEC_FLEX:
+            return OTEXT("*");
+         case OCI_VEC_FLOAT32:
+            return OTEXT("FLOAT32");
+         case OCI_VEC_FLOAT64:
+            return OTEXT("FLOAT64");
+         case OCI_VEC_INT8:
+            return OTEXT("INT8");
+          case OCI_VEC_BINARY:
+            return OTEXT("BINARY");
+    }
+
+    return OTEXT("?");
+
+}
+
+/* --------------------------------------------------------------------------------------------- *
 * OcilibColumnGetAttrInfo
 * --------------------------------------------------------------------------------------------- */
 
@@ -359,6 +386,37 @@ boolean OcilibColumnRetrieveInfo
             }
 
   #endif
+        }
+    }
+
+#endif
+    
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+    if (OcilibConnectionIsVersionSupported(con, OCI_23_4))
+    {
+        if (ptype < OCI_DESC_TYPE)
+        {
+            ub4 vec_dim = 0;
+            ub1 vec_fmt = 0;
+
+            CHECK_ATTRIB_GET
+            (
+                OCI_DTYPE_PARAM, OCI_ATTR_VECTOR_DATA_FORMAT,
+                param, &vec_fmt, NULL,
+                con->err
+            )
+
+            col->subtype = vec_fmt;
+
+            CHECK_ATTRIB_GET
+            (
+                OCI_DTYPE_PARAM, OCI_ATTR_VECTOR_DIMENSION,
+                param, &vec_dim, NULL,
+                con->err
+            )
+
+            col->dimension = vec_dim;
         }
     }
 
@@ -867,6 +925,19 @@ boolean OcilibColumnMapInfo
 
 #endif
 
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+        case SQLT_VEC:
+        {
+            col->libcode    = SQLT_VEC;
+            col->bufsize    = (ub4) sizeof(OCIVector*);
+            col->datatype   = OCI_CDT_VECTOR;
+            col->handletype = OCI_DTYPE_VECTOR;
+           break;
+        }
+
+#endif
+
         case SQLT_CHR:
         case SQLT_STR:
         case SQLT_VCS:
@@ -1148,7 +1219,7 @@ unsigned int OcilibColumnGetPropertyFlags
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OCI_ColumnGetCollationID
+* OcilibColumnGetCollationID
 * --------------------------------------------------------------------------------------------- */
 
 unsigned int OcilibColumnGetCollationID
@@ -1161,6 +1232,23 @@ unsigned int OcilibColumnGetCollationID
         /* result */ unsigned int, OCI_CCI_NONE,
         /* handle */ OCI_IPC_COLUMN, col,
         /* member */ collation_id
+    )
+}
+
+/* --------------------------------------------------------------------------------------------- *
+* OcilibColumnGetDimension
+* --------------------------------------------------------------------------------------------- */
+
+unsigned int OcilibColumnGetDimension
+(
+    OCI_Column *col
+)
+{
+    GET_PROP
+    (
+        /* result */ unsigned int, 0,
+        /* handle */ OCI_IPC_COLUMN, col,
+        /* member */ dimension
     )
 }
 
@@ -1385,6 +1473,18 @@ const otext * OcilibColumnGetSqlType
             type = (IS_XMLTYPE_COL(col)) ? OTEXT("XMLTYPE") : OTEXT("?");
             break;
         }
+
+        
+
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+        case SQLT_VEC:
+        {
+            type = OTEXT("VECTOR");
+            break;
+        }
+
+#endif
 
         default:
         {
@@ -1681,6 +1781,33 @@ unsigned int OcilibColumnGetFullSqlType
             break;
         }
 
+
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+        case SQLT_VEC:
+        {
+            otext str_dim[OCI_SIZE_FORMAT] = OTEXT("*");        
+            const otext* str_fmt = OcilibColumnGetVectorFormatString(col->subtype);
+
+            if (col->dimension > 0)
+            {
+                OcilibStringFormat(str_dim, OCI_SIZE_FORMAT, OTEXT("%i"), col->dimension);
+            }
+
+    #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
+            const otext *fmt = OTEXT("VECTOR(%ls, %ls)");
+    #else
+            const otext *fmt = OTEXT("VECTOR(%s, %s)");
+    #endif
+
+            size = OcilibStringFormat(buffer, (int)len, fmt, str_dim, str_fmt);
+
+            break;
+        }
+
+#endif
+
+
         default:
         {
             size = OcilibStringFormat(buffer, (int)len, OTEXT("?"));
@@ -1734,7 +1861,8 @@ unsigned int OcilibColumnGetSubType
         OCI_CDT_FILE      == col->datatype  ||
         OCI_CDT_TIMESTAMP == col->datatype  ||
         OCI_CDT_INTERVAL  == col->datatype  ||
-        OCI_CDT_NUMERIC   == col->datatype)
+        OCI_CDT_NUMERIC   == col->datatype ||
+        OCI_CDT_VECTOR    == col->datatype)
     {
         subtype = col->subtype;
     }

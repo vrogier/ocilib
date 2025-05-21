@@ -36,6 +36,7 @@
 #include "reference.h"
 #include "stringutils.h"
 #include "timestamp.h"
+#include "vector.h"
 
 static const unsigned int CharsetFormValues[] =
 {
@@ -157,6 +158,14 @@ static boolean OcilibBindAllocateInternalData
                 elem_size   = sizeof(OCIRef*);
                 break;
             }
+ #if OCI_VERSION_COMPILE >= OCI_23_4            
+            case OCI_CDT_VECTOR:
+            {
+                struct_size = sizeof(OCI_Vector);
+                elem_size   = sizeof(OCIVector*);
+                break;
+            }
+#endif
         }
 
         arr = OcilibArrayCreate(bnd->stmt->con, bnd->buffer.count,
@@ -218,6 +227,7 @@ static boolean OcilibBindAllocateInternalData
             case OCI_CDT_OBJECT:
             case OCI_CDT_COLLECTION:
             case OCI_CDT_REF:
+            case OCI_CDT_VECTOR:
             {
                 bnd->buffer.data = (void**)arr->mem_handle;
                 bnd->input       = (void**)arr->tab_obj;
@@ -360,6 +370,17 @@ static boolean OcilibBindAllocateInternalData
 
                 break;
             }
+            case OCI_CDT_VECTOR:
+            {
+                OCI_Vector* vect = OcilibVectorCreate(bnd->stmt->con);
+
+                CHECK_NULL(vect)
+
+                bnd->input       = (void**)vect;
+                bnd->buffer.data = (void**)vect->handle;
+
+                break;
+            }    
         }
     }
 

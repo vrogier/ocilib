@@ -102,6 +102,11 @@ namespace ocilib
             bool operator()(OCI_Ref* handle) const { return OCI_RefFree(handle); }
         };
 
+        template<> struct HandleDeleter<OCI_Vector*>
+        {
+            bool operator()(OCI_Vector* handle) const { return OCI_VectorFree(handle); }
+        };
+
         template<> struct HandleDeleter<OCI_XmlType*>
         {
             bool operator()(OCI_XmlType* handle) const { return true; }

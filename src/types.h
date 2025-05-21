@@ -336,6 +336,7 @@ struct OCI_Column
     ub1             handletype;     /* oracle handle type */
     ub4             props;          /* column properties */
     ub4             collation_id;   /* collation id */
+    ub4             dimension;      /* dimension */
 };
 
 /*
@@ -543,6 +544,23 @@ struct OCI_XmlType
     /* Start OCI_Datatype */
     OCI_Long       *lng;
     ub4             hstate;      /* object variable state */
+    /* End OCI_Datatype */
+    OCI_Connection *con;        /* pointer to connection object */
+};
+
+/*
+ * Vector object
+ *
+ */
+struct OCI_Vector
+{
+    /* Start OCI_Datatype */
+#if OCI_VERSION_COMPILE >= OCI_23_4
+    OCIVector*      handle;     /* OCI handle */
+#else
+    void*           handle;     /* fake handle for alignment */
+#endif  
+    ub4             hstate;     /* object variable state */
     /* End OCI_Datatype */
     OCI_Connection *con;        /* pointer to connection object */
 };
@@ -961,6 +979,19 @@ struct OCI_SQLCmdInfo
 };
 
 typedef struct OCI_SQLCmdInfo OCI_SQLCmdInfo;
+
+/*
+ * OCI_LocaleStringInfo : Oracle Localized strings
+ *
+ */
+
+struct OCI_LocaleStringInfo
+{
+    unsigned int code;  /* local string code */
+    otext       *str ;  /* local string content */
+};
+
+typedef struct OCI_LocaleStringInfo OCI_LocaleStringInfo;
 
 /* OCI context */
 

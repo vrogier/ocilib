@@ -326,6 +326,10 @@ ExitLabel:                          \
         THROW(OcilibExceptionNotAvailable, OCI_FEATURE_HIGH_AVAILABILITY)   \
     }
 
+#define CHECK_VECTOR_ENABLED(con)                                           \
+                                                                            \
+    CHECK_FEATURE(con, OCI_FEATURE_VECTOR, OCI_23_4)
+
 #define CHECK_XA_ENABLED(mode)                              \
                                                             \
     if ( ((mode) & OCI_SESSION_XA) && (!Env.use_xa) )       \
@@ -340,18 +344,23 @@ ExitLabel:                          \
         for (; ii < nn; ii++)                                           \
         {                                                               \
             if ((mode) == (values)[ii]) break;                          \
-            }                                                           \
-            if (ii >= nn)                                               \
-            {                                                           \
-                THROW(OcilibExceptionArgInvalidValue, (name), (mode))   \
-            }                                                           \
-        }
+        }                                                               \
+        if (ii >= nn)                                                   \
+        {                                                               \
+            THROW(OcilibExceptionArgInvalidValue, (name), (mode))       \
+        }                                                               \
+    }
 
 /* memory management helpers */
 
 #define FREE(ptr)   { OcilibMemoryFree(ptr); (ptr) = NULL; }
 
 /* helpers macros */
+
+#define IS_WIDE_CHAR_ENV() (OCI_CHAR_WIDE == Env.charset)
+#define IS_ANSI_ENV() (OCI_CHAR_ANSI == Env.charset)
+#define IS_UTF8_ENV() (TRUE == Env.charset)
+
 
 #define GET_PROP(rtype, rvalue, stype, sptr, prop) \
                                                    \

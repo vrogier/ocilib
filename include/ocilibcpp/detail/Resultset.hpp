@@ -383,6 +383,18 @@ inline XmlType Resultset::Get<XmlType>(const ostring& name) const
 }
 
 template<>
+inline Vector Resultset::Get<Vector>(unsigned int index) const
+{
+    return Vector(core::Check(OCI_GetVector(*this, index)), GetHandle());
+}
+
+template<>
+inline Vector Resultset::Get<Vector>(const ostring& name) const
+{
+    return Vector(core::Check(OCI_GetVector2(*this,name.c_str())), GetHandle());
+}
+
+template<>
 inline Statement Resultset::Get<Statement>(unsigned int index) const
 {
     return Statement(core::Check(OCI_GetStatement(*this, index)), GetHandle());

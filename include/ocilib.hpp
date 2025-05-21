@@ -199,6 +199,7 @@ namespace ocilib
 #include "ocilibcpp/detail/Object.hpp"
 #include "ocilibcpp/detail/Reference.hpp"
 #include "ocilibcpp/detail/XmlType.hpp"
+#include "ocilibcpp/detail/Vector.hpp"
 #include "ocilibcpp/detail/Collection.hpp"
 #include "ocilibcpp/detail/CollectionIterator.hpp"
 #include "ocilibcpp/detail/CollectionElement.hpp"
