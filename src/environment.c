@@ -2009,6 +2009,11 @@ OCI_Error * OcilibEnvironmentGetLastError
         {
             err = NULL;
         }
+        
+        if (NULL != err && OCI_ERR_WARNING == err->type && !Env.warnings_on)
+        {
+            err = NULL;
+        }
 
     }
 
