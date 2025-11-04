@@ -26,177 +26,176 @@
 
 namespace ocilib
 {
-    namespace core
-    {
+	namespace core
+	{
 
-        template<class T>
-        HandleHolder<T>::SmartHandle::SmartHandle
-        (
-            HandleHolder* holder, T handle, bool allocated,
-            SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent
-        )
-            :  _guard(GetSynchronizationMode()), _handle(handle), _allocated(allocated),
-               _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store{nullptr}
-        {
-            _holders.SetGuard(&_guard);
-            _children.SetGuard(&_guard);
+		template<class T>
+		HandleHolder<T>::SmartHandle::SmartHandle
+		(
+			HandleHolder* holder, T handle, bool allocated,
+			SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent
+		)
+			: _guard(GetSynchronizationMode()), _handle(handle), _allocated(allocated),
+			_freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store{ nullptr }
+		{
+			_holders.SetGuard(&_guard);
+			_children.SetGuard(&_guard);
 
-            if (support::HandleStoreResolver<T>::RequireStore)
-            {
-                _store = core::OnAllocate(new core::HandleStore(&_guard));
-            }
+			if (support::HandleStoreResolver<T>::RequireStore)
+			{
+				_store = core::OnAllocate(new core::HandleStore(&_guard));
+			}
 
-            HandleStore::GetStoreForHandle(parent).Set<SmartHandle*>(handle, this);
-            
-            Acquire(holder);
+			HandleStore::GetStoreForHandle(parent).Set<SmartHandle*>(handle, this);
 
-            if (_parent && _handle)
-            {
-                _parent->GetChildren().Add(this);
-            }
-        }
+			Acquire(holder);
 
-        template<class T>
-        HandleHolder<T>::SmartHandle::~SmartHandle() noexcept
-        {
-            SILENT_CATCH((Destroy()))
-        }
+			if (_parent && _handle)
+			{
+				_parent->GetChildren().Add(this);
+			}
+		}
 
-        template<class T>
-        void HandleHolder<T>::SmartHandle::Destroy()
-        {
-            if (_parent && _handle)
-            {
-                _parent->GetChildren().Remove(this);
-            }
+		template<class T>
+		HandleHolder<T>::SmartHandle::~SmartHandle() noexcept
+		{
+			SILENT_CATCH((Destroy()))
+		}
 
-            _children.ForEach(DeleteHandle);
-            _children.Clear();
+		template<class T>
+		void HandleHolder<T>::SmartHandle::Destroy()
+		{
+			if (_parent && _handle)
+			{
+				_parent->GetChildren().Remove(this);
+			}
 
-            _holders.SetGuard(nullptr);
-            _children.SetGuard(nullptr);
+			_children.ForEach(DeleteHandle);
+			_children.Clear();
 
-            if (_parent)
-            {
-                HandleStore::GetStoreForHandle(_parent).Set<SmartHandle*>(_handle, nullptr);
-            }
+			_holders.SetGuard(nullptr);
+			_children.SetGuard(nullptr);
 
-            if (_freeNotifyFunc)
-            {
-                _freeNotifyFunc(this);
-            }
+			if (_parent)
+			{
+				HandleStore::GetStoreForHandle(_parent).Set<SmartHandle*>(_handle, nullptr);
+			}
 
-            if (_handle && _allocated)
-            {
-                support::HandleDeleter<T> deleter;
-                deleter(_handle);
-            }
+			if (_freeNotifyFunc)
+			{
+				_freeNotifyFunc(this);
+			}
 
-            if (_store)
-            {
-                delete core::OnDeallocate(_store);
-            }
-        }
+			if (_handle && _allocated)
+			{
+				support::HandleDeleter<T> deleter;
+				deleter(_handle);
+			}
 
-        template<class T>
-        void HandleHolder<T>::SmartHandle::DeleteHandle(Handle* handle)
-        {
-            if (handle)
-            {
-                handle->DetachFromParent();
-                handle->DetachFromHolders();
+			if (_store)
+			{
+				delete core::OnDeallocate(_store);
+			}
+		}
 
-                delete core::OnDeallocate(handle);
-            }
-        }
+		template<class T>
+		void HandleHolder<T>::SmartHandle::DeleteHandle(Handle* handle)
+		{
+			if (handle)
+			{
+				handle->DetachFromParent();
+				handle->DetachFromHolders();
 
-        template<class T>
-        void HandleHolder<T>::SmartHandle::ResetHolder(HandleHolder* holder)
-        {
-            if (holder)
-            {
-                holder->_smartHandle = nullptr;
-            }
-        }
+				delete core::OnDeallocate(handle);
+			}
+		}
 
-        template<class T>
-        SynchronizationMode HandleHolder<T>::SmartHandle::GetSynchronizationMode()
-        {  
-            if ((Environment::GetMode() & Environment::Threaded) == Environment::Threaded)
-            {
-                return support::HandleStoreResolver<T>::SynchMode;
-            }
-           
-            return SynchronizationMode::Unsafe;
-        }
+		template<class T>
+		void HandleHolder<T>::SmartHandle::ResetHolder(HandleHolder* holder)
+		{
+			if (holder)
+			{
+				holder->_smartHandle = nullptr;
+			}
+		}
 
-        template<class T>
-        void HandleHolder<T>::SmartHandle::Acquire(HandleHolder* holder)
-        {
-            _holders.Add(holder);
-        }
+		template<class T>
+		SynchronizationMode HandleHolder<T>::SmartHandle::GetSynchronizationMode()
+		{
+			if ((Environment::GetMode() & Environment::Threaded) == Environment::Threaded)
+			{
+				return support::HandleStoreResolver<T>::SynchMode;
+			}
 
-        template<class T>
-        void HandleHolder<T>::SmartHandle::Release(HandleHolder* holder)
-        {
-            _holders.Remove(holder);
+			return SynchronizationMode::Unsafe;
+		}
 
-            if (_holders.GetSize() == 0)
-            {
-                delete core::OnDeallocate(this);
-            }
+		template<class T>
+		void HandleHolder<T>::SmartHandle::Acquire(HandleHolder* holder)
+		{
+			_holders.Add(holder);
+		}
 
-            holder->_smartHandle = nullptr;
-        }
+		template<class T>
+		void HandleHolder<T>::SmartHandle::Release(HandleHolder* holder)
+		{
+			_holders.Remove(holder);
 
-        template<class T>
-        T HandleHolder<T>::SmartHandle::GetHandle() const
-        {
-            return _handle;
-        }
+			if (_holders.GetSize() == 0)
+			{
+				delete core::OnDeallocate(this);
+			}
 
-        template<class T>
-        Handle* HandleHolder<T>::SmartHandle::GetParent() const
-        {
-            return _parent;
-        }
+			holder->_smartHandle = nullptr;
+		}
 
-        template<class T>
-        AnyPointer HandleHolder<T>::SmartHandle::GetExtraInfos() const
-        {
-            return _extraInfo;
-        }
+		template<class T>
+		T HandleHolder<T>::SmartHandle::GetHandle() const
+		{
+			return _handle;
+		}
 
-        template<class T>
-        void HandleHolder<T>::SmartHandle::SetExtraInfos(AnyPointer extraInfo)
-        {
-            _extraInfo = extraInfo;
-        }
+		template<class T>
+		AnyPointer HandleHolder<T>::SmartHandle::GetExtraInfos() const
+		{
+			return _extraInfo;
+		}
 
-        template<class T>
-        ConcurrentList<Handle*>& HandleHolder<T>::SmartHandle::GetChildren()
-        {
-            return _children;
-        }
+		template<class T>
+		void HandleHolder<T>::SmartHandle::SetExtraInfos(AnyPointer extraInfo)
+		{
+			_extraInfo = extraInfo;
+		}
 
-        template<class T>
-        void HandleHolder<T>::SmartHandle::DetachFromHolders()
-        {
-            _holders.ForEach(ResetHolder);
-            _holders.Clear();
-        }
+		template<class T>
+		ConcurrentList<Handle*>& HandleHolder<T>::SmartHandle::GetChildren()
+		{
+			return _children;
+		}
 
-        template<class T>
-        void HandleHolder<T>::SmartHandle::DetachFromParent()
-        {
-            _parent = nullptr;
-        }
+		template<class T>
+		void HandleHolder<T>::SmartHandle::DetachFromHolders()
+		{
+			_holders.ForEach(ResetHolder);
+			_holders.Clear();
+		}
 
-        template<class T>    
-        HandleStore* HandleHolder<T>::SmartHandle::GetStore()
-        {
-            return _store;
-        }
-    }
+		template<class T>
+		void HandleHolder<T>::SmartHandle::DetachFromParent()
+		{
+			_parent = nullptr;
+		}
+
+		template<class T>
+		HandleStore* HandleHolder<T>::SmartHandle::GetStore() const
+		{
+			return _store;
+		}
+
+		template<class T>
+		Handle* HandleHolder<T>::SmartHandle::GetParent() const
+		{
+			return _parent;
+		}
+	}
 }
- 

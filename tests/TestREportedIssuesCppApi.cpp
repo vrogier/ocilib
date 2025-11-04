@@ -459,6 +459,48 @@ namespace TestCppApi
 		ExecDML(OTEXT("drop table TestIssue377"));
 	}
 
+	TEST(ReportedIssuesCppApi, Issue379)
+	{
+		ocilib::Environment::Initialize(ocilib::Environment::Threaded | ocilib::Environment::Events);
+
+		ocilib::Pool pool;
+		pool.Open(DBS, USR, PWD, ocilib::Pool::ConnectionPool, 0, 3);
+		auto conn = pool.GetConnection();
+
+		ocilib::TypeInfo tInfo(conn, OTEXT("CHAR_ARR_TYP"), ocilib::TypeInfo::Type);
+		ocilib::Statement stmt(conn);
+
+		stmt.Prepare(OTEXT("BEGIN :ret := TEST_USER_TYPES(:p1, :p2); END;"));
+
+		ocilib::Collection<ocilib::ostring> collRet(tInfo);
+		ocilib::Collection<ocilib::ostring> collP1(tInfo);
+		ocilib::Collection<ocilib::ostring> collP2(tInfo);
+
+		stmt.Bind(OTEXT(":ret"), collRet, ocilib::BindInfo::Out);
+		stmt.Bind(OTEXT(":p1"), collP1, ocilib::BindInfo::Out);
+		stmt.Bind(OTEXT(":p2"), collP2, ocilib::BindInfo::Out);
+
+		stmt.ExecutePrepared();
+
+		std::wcout << OTEXT("RETURN values:") << std::endl;
+		for (ocilib::Collection<ocilib::ostring>::iterator it = collRet.begin(); it != collRet.end(); ++it)
+		{
+			std::wcout << OTEXT("  ") << (ocilib::ostring)*it << std::endl;
+		}
+
+		std::cout << "P1 values:" << std::endl;
+		for (ocilib::Collection<ocilib::ostring>::iterator it = collP1.begin(); it != collP1.end(); ++it)
+		{
+			std::wcout << OTEXT("  ") << (ocilib::ostring)*it << std::endl;
+		}
+
+		std::cout << "P2 values:" << std::endl;
+		for (ocilib::Collection<ocilib::ostring>::iterator it = collP2.begin(); it != collP2.end(); ++it)
+		{
+			std::wcout << OTEXT("  ") << (ocilib::ostring)*it << std::endl;
+		}
+		ocilib::Environment::Cleanup();
+	}
 
 	TEST(ReportedIssuesCppApi, Issue382)
 	{
