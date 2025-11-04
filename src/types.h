@@ -422,7 +422,7 @@ struct OCI_Resultset
 };
 
 /*
- * OCI_Define : Internal Resultset column data implementation
+ * OCI_BatchErrors : Internal Resultset batch errors
  *
  */
 
@@ -434,6 +434,19 @@ struct OCI_BatchErrors
 };
 
 typedef struct OCI_BatchErrors OCI_BatchErrors;
+
+/*
+ * OCI_ParsedBinds : Partse Bind informations
+ *
+ */
+
+struct OCI_ParsedBinds
+{
+    unsigned int   count;
+    const otext  **names;
+};
+
+typedef struct OCI_ParsedBinds OCI_ParsedBinds;
 
 /*
  * Statement object
@@ -456,6 +469,7 @@ struct OCI_Statement
     OCI_Bind       **rbinds;            /* array of register bind objects */
     OCI_HashTable   *map;               /* hash table handle for mapping bind name/index */
     OCI_BatchErrors* batch;             /* error handling for array DML */
+    OCI_ParsedBinds* parse_binds;       /* parsed bind info */
     ub2              nb_ubinds;         /* number of used user binds */
     ub2              nb_rbinds;         /* number of used register binds */
     ub2              allocated_ubinds;  /* number of allocated user binds */

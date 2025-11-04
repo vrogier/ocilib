@@ -6851,6 +6851,24 @@ namespace ocilib
 
         /**
         * @brief
+        * Return the list of parsed bind names after an Prepare() Parse() call.
+        *
+        * @warning
+        * Returned names are uppper case and do not contain leading ':' character.
+        *
+        * @warning
+        * GetParseBindNames() returns information computed by OCI client library, not by OCILIB.
+        * Result is uncorrelated to any bind operation.
+        *
+        * @note
+		* List of parsed bind on success or empty list if no bind found
+        *
+        */
+
+        std::vector<ostring> GetParseBindNames() const;
+
+        /**
+        * @brief
         * Returns all errors that occurred within a DML array statement execution
         *
         */

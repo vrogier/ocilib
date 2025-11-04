@@ -293,6 +293,7 @@ extern OCISTMTGETNEXTRESULT         OCIStmtGetNextResult;
 extern OCISERVERRELEASE2            OCIServerRelease2;
 extern OCISODAOPERKEYSSET           OCISodaOperKeysSet;
 extern OCIROWIDTOCHAR               OCIRowidToChar;
+extern OCISTMTGETBINDINFO           OCIStmtGetBindInfo;
 extern OCISODABULKINSERT            OCISodaBulkInsert;
 extern OCISERVERDATALENGTHGET       OCIServerDataLengthGet;
 extern OCIVECTORTOARRAY             OCIVectorToArray;

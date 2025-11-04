@@ -538,6 +538,44 @@ namespace TestCppApi
 		Environment::Cleanup();
 	}
 
+	TEST(ReportedIssuesCppApi, Issue381_BindByName)
+	{
+		Environment::Initialize(Environment::Default);
+
+		auto conn = Connection(DBS, USR, PWD);
+		auto stmt = Statement(conn);
+
+		stmt.Prepare(OTEXT("SELECT 1 FROM dual WHERE 1 = :abc and 2 = :def and 3 = :def"));
+
+		auto bindInfo = stmt.GetParseBindNames();
+
+		ASSERT_EQ(2, bindInfo.size());
+		ASSERT_EQ(ostring(OTEXT("ABC")), bindInfo[0]);
+		ASSERT_EQ(ostring(OTEXT("DEF")), bindInfo[1]);
+
+		Environment::Cleanup();
+	}
+
+	TEST(ReportedIssuesCppApi, Issue381_BindByPos)
+	{
+		Environment::Initialize(Environment::Default);
+
+		auto conn = Connection(DBS, USR, PWD);
+		auto stmt = Statement(conn);
+
+		stmt.SetBindMode(Statement::BindByPosition);
+		stmt.Prepare(OTEXT("SELECT 1 FROM dual WHERE 1 = :abc and 2 = :def and 3 = :def"));
+
+		auto bindInfo = stmt.GetParseBindNames();
+
+		ASSERT_EQ(3, bindInfo.size());
+		ASSERT_EQ(ostring(OTEXT("ABC")), bindInfo[0]);
+		ASSERT_EQ(ostring(OTEXT("DEF")), bindInfo[1]);
+		ASSERT_EQ(ostring(OTEXT("DEF")), bindInfo[2]);
+
+		Environment::Cleanup();
+	}
+
 	TEST(ReportedIssuesCppApi, Issue382)
 	{
 		ExecDML(OTEXT("drop user UserIssue382"));

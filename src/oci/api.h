@@ -1718,6 +1718,21 @@ typedef sword (*OCIROWIDTOCHAR)
     OCIError *errhp
 );
 
+typedef sword(*OCISTMTGETBINDINFO)
+(
+    OCIStmt   *stmtp, 
+    OCIError  *errhp, 
+    ub4        size,
+    ub4        startloc,
+    sb4       *found, 
+    OraText   *bvnp[], 
+    ub1        bvnl[],
+    OraText   *invp[], 
+    ub1        inpl[], 
+    ub1        dupl[],
+    OCIBind  **hndl
+);
+
 /* API introduced in 8.1 */
 
 typedef sword (*OCIENVCREATE)

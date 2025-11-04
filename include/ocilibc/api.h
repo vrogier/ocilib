@@ -2378,6 +2378,32 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_GetSQLVerb
 );
 
 /**
+ * @brief
+ * Return the lists of parsed bind names after an OCI_Prepare() or OCI_Parse() call.
+ *
+ * @param stmt  - Statement handle
+ * @param count - Placeholder to receive the bind count
+ * @param names - Placeholder to receive the bind names
+ * 
+ * @warning
+ * Returned names are uppper case and do not contain leading ':' character.
+ *
+ * @warning
+ * OCI_GetParseBindNames() returns information computed by OCI client library, not by OCILIB.
+ * Result is uncorrelated to any bind operation
+ *
+ * @return
+ * TRUE on success otherwise FALSE if an error occured of if @count or @names are NULL
+ */
+
+OCI_SYM_PUBLIC boolean OCI_API OCI_GetParseBindNames
+(
+    OCI_Statement* stmt,
+    unsigned int*  count,
+    const otext*** names
+);
+
+/**
  * @} OcilibCApiStatements
  */
 

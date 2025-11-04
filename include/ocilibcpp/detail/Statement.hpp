@@ -957,6 +957,24 @@ namespace ocilib
 	{
 		return core::MakeString(core::Check(OCI_GetSQLVerb(*this)));
 	}
+	
+
+	inline std::vector<ostring> Statement::GetParseBindNames() const
+	{
+		unsigned int count = 0;
+		const otext** names = nullptr;
+
+		core::Check(OCI_GetParseBindNames(*this, &count, &names));
+
+		std::vector<ostring> result;
+
+		for (unsigned int i = 0; i < count; ++i)
+		{
+			result.emplace_back(core::MakeString(names[i]));
+		}
+
+		return result;
+	}
 
 	inline void Statement::GetBatchErrors(std::vector<Exception>& exceptions)
 	{

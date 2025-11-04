@@ -285,6 +285,7 @@
 #define OCI_ATTR_CONN_MIN              183
 #define OCI_ATTR_CONN_MAX              184
 #define OCI_ATTR_CONN_INCR             185
+#define OCI_ATTR_BIND_COUNT            190        /* number of bind postions */
 #define OCI_ATTR_SUBSCR_RECPTPRES      195
 #define OCI_ATTR_ROWS_FETCHED          197      /* rows fetched in last call */
 #define OCI_ATTR_SPOOL_STMTCACHESIZE   208        /*Stmt cache size of pool  */

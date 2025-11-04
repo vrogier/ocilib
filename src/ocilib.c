@@ -6505,6 +6505,16 @@ const otext* OCI_API OCI_GetSQLVerb
     CALL_IMPL(OcilibStatementGetSqlVerb, stmt);
 }
 
+boolean OCI_API OCI_GetParseBindNames
+(
+    OCI_Statement* stmt,
+    unsigned int*  count,
+    const otext*** names
+)
+ {
+     CALL_IMPL(OcilibStatementGetParseBindNames, stmt, count, names);
+ }
+
 OCI_Error* OCI_API OCI_GetBatchError
 (
     OCI_Statement* stmt

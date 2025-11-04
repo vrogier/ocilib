@@ -604,6 +604,7 @@ OCISTMTGETNEXTRESULT         OCIStmtGetNextResult         = NULL;
 OCISERVERRELEASE2            OCIServerRelease2            = NULL;
 OCISODAOPERKEYSSET           OCISodaOperKeysSet           = NULL;
 OCIROWIDTOCHAR               OCIRowidToChar               = NULL;
+OCISTMTGETBINDINFO           OCIStmtGetBindInfo           = NULL;
 OCISODABULKINSERT            OCISodaBulkInsert            = NULL;    
 OCISERVERDATALENGTHGET       OCIServerDataLengthGet       = NULL;
 OCIVECTORTOARRAY             OCIVectorToArray             = NULL;
@@ -1199,6 +1200,10 @@ static void OcilibEnvironmentLoadSymbols()
         
     LIB_SYMBOL(Env.lib_handle, "OCIRowidToChar",               OCIRowidToChar,
                 OCIROWIDTOCHAR);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIStmtGetBindInfo",           OCIStmtGetBindInfo,
+                OCISTMTGETBINDINFO);
+
                    
     LIB_SYMBOL(Env.lib_handle, "xaoSvcCtx",                    xaoSvcCtx,
                 XAOSVCCTX);
