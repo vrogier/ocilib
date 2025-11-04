@@ -459,47 +459,83 @@ namespace TestCppApi
 		ExecDML(OTEXT("drop table TestIssue377"));
 	}
 
-	TEST(ReportedIssuesCppApi, Issue379)
+	TEST(ReportedIssuesCppApi, Issue379_Collection)
 	{
-		ocilib::Environment::Initialize(ocilib::Environment::Threaded | ocilib::Environment::Events);
+		ExecDML(OTEXT("create or replace type Issue379Type is table of varchar2(255)"));
 
-		ocilib::Pool pool;
-		pool.Open(DBS, USR, PWD, ocilib::Pool::ConnectionPool, 0, 3);
+		Environment::Initialize(Environment::Default);
+
+		auto pool = Pool(DBS, USR, PWD, Pool::ConnectionPool, 0, 1);
 		auto conn = pool.GetConnection();
+		auto type = TypeInfo(conn, OTEXT("Issue379Type"), ocilib::TypeInfo::Type);
+		auto coll = Collection<ostring>(type);
+		
+		ASSERT_EQ(0, coll.GetSize());
 
-		ocilib::TypeInfo tInfo(conn, OTEXT("CHAR_ARR_TYP"), ocilib::TypeInfo::Type);
-		ocilib::Statement stmt(conn);
+		coll.Append(OTEXT("Value1"));
 
-		stmt.Prepare(OTEXT("BEGIN :ret := TEST_USER_TYPES(:p1, :p2); END;"));
+		ASSERT_EQ(1, coll.GetSize());
 
-		ocilib::Collection<ocilib::ostring> collRet(tInfo);
-		ocilib::Collection<ocilib::ostring> collP1(tInfo);
-		ocilib::Collection<ocilib::ostring> collP2(tInfo);
+		Environment::Cleanup();
+	
+		ExecDML(OTEXT("drop type Issue379Type"));
+	}
 
-		stmt.Bind(OTEXT(":ret"), collRet, ocilib::BindInfo::Out);
-		stmt.Bind(OTEXT(":p1"), collP1, ocilib::BindInfo::Out);
-		stmt.Bind(OTEXT(":p2"), collP2, ocilib::BindInfo::Out);
+	TEST(ReportedIssuesCppApi, Issue379_Lob)
+	{
+		Environment::Initialize(Environment::Default);
 
-		stmt.ExecutePrepared();
+		auto pool = Pool(DBS, USR, PWD, Pool::ConnectionPool, 0, 1);
+		auto conn = pool.GetConnection();
+		auto lob = Clob(conn);
 
-		std::wcout << OTEXT("RETURN values:") << std::endl;
-		for (ocilib::Collection<ocilib::ostring>::iterator it = collRet.begin(); it != collRet.end(); ++it)
 		{
-			std::wcout << OTEXT("  ") << (ocilib::ostring)*it << std::endl;
+			auto localConn = lob.GetConnection();
+			ASSERT_EQ(true, localConn.IsServerAlive());
 		}
 
-		std::cout << "P1 values:" << std::endl;
-		for (ocilib::Collection<ocilib::ostring>::iterator it = collP1.begin(); it != collP1.end(); ++it)
+		ASSERT_EQ(false, lob.IsNull());
+		ASSERT_EQ(true, conn.IsServerAlive());
+
+		Environment::Cleanup();
+	}
+
+	TEST(ReportedIssuesCppApi, Issue379_File)
+	{
+		Environment::Initialize(Environment::Default);
+
+		auto pool = Pool(DBS, USR, PWD, Pool::ConnectionPool, 0, 1);
+		auto conn = pool.GetConnection();
+		auto file = File(conn);
+
 		{
-			std::wcout << OTEXT("  ") << (ocilib::ostring)*it << std::endl;
+			auto localConn = file.GetConnection();
+			ASSERT_EQ(true, localConn.IsServerAlive());
 		}
 
-		std::cout << "P2 values:" << std::endl;
-		for (ocilib::Collection<ocilib::ostring>::iterator it = collP2.begin(); it != collP2.end(); ++it)
+		ASSERT_EQ(false, file.IsNull());
+		ASSERT_EQ(true, conn.IsServerAlive());
+
+		Environment::Cleanup();
+	}
+
+	TEST(ReportedIssuesCppApi, Issue379_Statement)
+	{
+		Environment::Initialize(Environment::Default);
+
+		auto pool = Pool(DBS, USR, PWD, Pool::ConnectionPool, 0, 1);
+		auto conn = pool.GetConnection();
+		auto stmt = Statement(conn);
+
 		{
-			std::wcout << OTEXT("  ") << (ocilib::ostring)*it << std::endl;
+			auto localConn = stmt.GetConnection();
+			ASSERT_EQ(true, localConn.IsServerAlive());
 		}
-		ocilib::Environment::Cleanup();
+
+		ASSERT_EQ(false, stmt.IsNull());
+		ASSERT_EQ(true, conn.IsServerAlive());
+
+		Environment::Cleanup();
 	}
 
 	TEST(ReportedIssuesCppApi, Issue382)
