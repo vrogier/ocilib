@@ -576,7 +576,7 @@ namespace TestCppApi
         Environment::Cleanup();
     }
 
-    TEST(ReportedIssuesCppApi, Issue382)
+    TEST(ReportedIssuesCApi, Issue382)
     {
         ExecDML(OTEXT("drop user UserIssue382"));
         ExecDML(OTEXT("drop profile ProfileIssue382"));
@@ -585,6 +585,9 @@ namespace TestCppApi
         ExecDML(OTEXT("create user UserIssue382 identified by UserIssue382"));
         ExecDML(OTEXT("grant create session to UserIssue382"));
         ExecDML(OTEXT("alter user UserIssue382 profile ProfileIssue382"));
+
+
+        Sleep(2000);
 
         ostring errMessage;
         int errCode{};

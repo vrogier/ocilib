@@ -2019,7 +2019,6 @@ OCI_Error * OcilibEnvironmentGetLastError
         {
             err = NULL;
         }
-
     }
 
     return err;

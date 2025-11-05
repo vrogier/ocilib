@@ -2399,7 +2399,7 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_GetSQLVerb
 OCI_SYM_PUBLIC boolean OCI_API OCI_GetParseBindNames
 (
     OCI_Statement* stmt,
-    unsigned int*  count,
+    unsigned int * count,
     const otext*** names
 );
 

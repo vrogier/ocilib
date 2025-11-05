@@ -6508,7 +6508,7 @@ const otext* OCI_API OCI_GetSQLVerb
 boolean OCI_API OCI_GetParseBindNames
 (
     OCI_Statement* stmt,
-    unsigned int*  count,
+    unsigned int * count,
     const otext*** names
 )
  {

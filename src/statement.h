@@ -768,7 +768,7 @@ OCI_SYM_LOCAL const otext * OcilibStatementGetSqlVerb
 OCI_SYM_LOCAL boolean OcilibStatementGetParseBindNames
 (
     OCI_Statement* stmt,
-    unsigned int*  count,
+    unsigned int * count,
     const otext*** names
 );
 

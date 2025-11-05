@@ -436,17 +436,17 @@ struct OCI_BatchErrors
 typedef struct OCI_BatchErrors OCI_BatchErrors;
 
 /*
- * OCI_ParsedBinds : Partse Bind informations
+ * OCI_ParseBinds : Parse Bind informations
  *
  */
 
-struct OCI_ParsedBinds
+struct OCI_ParseBinds
 {
     unsigned int   count;
     const otext  **names;
 };
 
-typedef struct OCI_ParsedBinds OCI_ParsedBinds;
+typedef struct OCI_ParseBinds OCI_ParseBinds;
 
 /*
  * Statement object
@@ -468,8 +468,8 @@ struct OCI_Statement
     OCI_Bind       **ubinds;            /* array of user bind objects */
     OCI_Bind       **rbinds;            /* array of register bind objects */
     OCI_HashTable   *map;               /* hash table handle for mapping bind name/index */
-    OCI_BatchErrors* batch;             /* error handling for array DML */
-    OCI_ParsedBinds* parse_binds;       /* parsed bind info */
+    OCI_BatchErrors *batch;             /* error handling for array DML */
+    OCI_ParseBinds  *parse_binds;       /* parse bind info */
     ub2              nb_ubinds;         /* number of used user binds */
     ub2              nb_rbinds;         /* number of used register binds */
     ub2              allocated_ubinds;  /* number of allocated user binds */

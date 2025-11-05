@@ -270,10 +270,10 @@ static boolean OcilibStatementFreeAllBinds
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibStatementFreeParsedBinds
+ * OcilibStatementFreeParseBinds
  * --------------------------------------------------------------------------------------------- */
 
-static boolean OcilibStatementFreeParsedBinds
+static boolean OcilibStatementFreeParseBinds
 (
     OCI_Statement* stmt
 )
@@ -304,10 +304,10 @@ static boolean OcilibStatementFreeParsedBinds
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibStatementGetParsedBinds
+ * OcilibStatementGetParseBinds
  * --------------------------------------------------------------------------------------------- */
 
-static boolean OcilibStatementGetParsedBinds
+static boolean OcilibStatementGetParseBinds
 (
     OCI_Statement* stmt
 )
@@ -338,9 +338,8 @@ static boolean OcilibStatementGetParsedBinds
            stmt->con->err
        )
 
-       stmt->parse_binds = (OCI_ParsedBinds*)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OCI_ParsedBinds), 1, TRUE);
+       stmt->parse_binds = (OCI_ParseBinds*)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OCI_ParseBinds), 1, TRUE);
        stmt->parse_binds->names = (otext**)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(otext*), count, TRUE);
-
 
        sb4 found = 0;
        bvnp = (OraText**)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OraText*), count, TRUE);
@@ -356,15 +355,10 @@ static boolean OcilibStatementGetParsedBinds
            OCIStmtGetBindInfo,
            stmt->stmt,
            stmt->con->err,
-           count,
-           1,
-           &found,
-           bvnp,
-           bvnl,
-           invp,
-           inpl,
-           dupl,
-           NULL
+           count, 1, &found,
+           bvnp, bvnl,
+           invp, inpl,
+           dupl, NULL
        )
 
        for (sb4 i = 0; i < found; i++)
@@ -392,7 +386,7 @@ static boolean OcilibStatementGetParsedBinds
     
         if (FAILURE)
         {
-            OcilibStatementFreeParsedBinds(stmt);
+            OcilibStatementFreeParseBinds(stmt);
         }
     
         SET_RETVAL(NULL != stmt->parse_binds)
@@ -454,7 +448,7 @@ static boolean OcilibStatementReset
 
     /* free parsed binds */
 
-    CHECK(OcilibStatementFreeParsedBinds(stmt))
+    CHECK(OcilibStatementFreeParseBinds(stmt))
 
     /* free bind map */
 
@@ -4474,7 +4468,7 @@ unsigned int OcilibStatementGetSqlCommand
 OCI_SYM_LOCAL boolean OcilibStatementGetParseBindNames
 (
     OCI_Statement* stmt,
-    unsigned int*  count,
+    unsigned int * count,
     const otext*** names
 )
 {
@@ -4491,7 +4485,7 @@ OCI_SYM_LOCAL boolean OcilibStatementGetParseBindNames
     *count = 0;
     *names = NULL;
 
-    CHECK(OcilibStatementGetParsedBinds(stmt))
+    CHECK(OcilibStatementGetParseBinds(stmt))
 
     *count = stmt->parse_binds->count;
     *names = (const otext**)stmt->parse_binds->names;
