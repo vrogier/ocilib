@@ -66,7 +66,7 @@ inline Environment::~Environment()
 
 inline void Environment::Initialize(EnvironmentFlags mode, const ostring& libpath)
 {
-  	Environment* environment = static_cast<Environment*>(OCI_GetUserData(nullptr));	
+      Environment* environment = static_cast<Environment*>(OCI_GetUserData(nullptr));    
     if (environment == nullptr)
     {
         // not tracking return value here as created environment will be deallocated by Environment::Cleanup

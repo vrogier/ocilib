@@ -64,7 +64,7 @@ CollectionElement<T>& CollectionElement<T>::operator = (const CollectionElement 
         _coll->Set(_pos, static_cast<T>(other));
     }
 
-	return *this;
+    return *this;
 }
 
 template<class T>

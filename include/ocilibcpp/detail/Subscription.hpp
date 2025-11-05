@@ -28,82 +28,82 @@
 namespace ocilib
 {
 
-	inline Subscription::Subscription()
-	{
+    inline Subscription::Subscription()
+    {
 
-	}
+    }
 
-	inline Subscription::Subscription(OCI_Subscription* pSubcription)
-	{
-		AcquireTransient
-		(
-			pSubcription,
-			Environment::GetEnvironmentHandle()
-		);
-	}
+    inline Subscription::Subscription(OCI_Subscription* pSubcription)
+    {
+        AcquireTransient
+        (
+            pSubcription,
+            Environment::GetEnvironmentHandle()
+        );
+    }
 
-	inline void Subscription::Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
-	{
-		AcquireAllocated
-		(
-			core::Check
-			(
-				OCI_SubscriptionRegister
-				(
-					connection, name.c_str(), changeTypes.GetValues(),
-					static_cast<POCI_NOTIFY> (handler != nullptr ? Environment::NotifyHandler : nullptr),
-					port, timeout
-				)
-			),
-			Environment::GetEnvironmentHandle()
-		);
+    inline void Subscription::Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
+    {
+        AcquireAllocated
+        (
+            core::Check
+            (
+                OCI_SubscriptionRegister
+                (
+                    connection, name.c_str(), changeTypes.GetValues(),
+                    static_cast<POCI_NOTIFY> (handler != nullptr ? Environment::NotifyHandler : nullptr),
+                    port, timeout
+                )
+            ),
+            Environment::GetEnvironmentHandle()
+        );
 
-		Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), handler);
-	}
+        Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), handler);
+    }
 
-	inline void Subscription::Unregister()
-	{
-		Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), nullptr);
+    inline void Subscription::Unregister()
+    {
+        Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), nullptr);
 
-		Release();
-	}
+        Release();
+    }
 
-	inline void Subscription::Watch(const ostring& sql)
-	{
-		Statement st(GetConnection());
+    inline void Subscription::Watch(const ostring& sql)
+    {
+        Statement st(GetConnection());
 
-		st.Execute(sql);
+        st.Execute(sql);
 
-		core::Check(OCI_SubscriptionAddStatement(*this, st));
-	}
+        core::Check(OCI_SubscriptionAddStatement(*this, st));
+    }
 
-	inline ostring Subscription::GetName() const
-	{
-		return core::MakeString(core::Check(OCI_SubscriptionGetName(*this)));
-	}
+    inline ostring Subscription::GetName() const
+    {
+        return core::MakeString(core::Check(OCI_SubscriptionGetName(*this)));
+    }
 
-	inline unsigned int Subscription::GetTimeout() const
-	{
-		return core::Check(OCI_SubscriptionGetTimeout(*this));
-	}
+    inline unsigned int Subscription::GetTimeout() const
+    {
+        return core::Check(OCI_SubscriptionGetTimeout(*this));
+    }
 
-	inline unsigned int Subscription::GetPort() const
-	{
-		return core::Check(OCI_SubscriptionGetPort(*this));
-	}
+    inline unsigned int Subscription::GetPort() const
+    {
+        return core::Check(OCI_SubscriptionGetPort(*this));
+    }
 
-	inline Connection Subscription::GetConnection() const
-	{
-		core::Handle* selfHandle = this->GetHandle();
-		core::Handle* parentHandle = selfHandle ? selfHandle->GetParent() : nullptr;
-		core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : Environment::GetEnvironmentHandle();
+    inline Connection Subscription::GetConnection() const
+    {
+        core::Handle* selfHandle = this->GetHandle();
+        core::Handle* parentHandle = selfHandle ? selfHandle->GetParent() : nullptr;
+        core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : Environment::GetEnvironmentHandle();
 
-		return Connection
-		(
-			core::Check(OCI_SubscriptionGetConnection(*this)),
-			connectionParent,
-			false
-		);
-	}
+        return Connection
+        (
+            core::Check(OCI_SubscriptionGetConnection(*this)),
+            connectionParent,
+            false
+        );
+    }
 
 }

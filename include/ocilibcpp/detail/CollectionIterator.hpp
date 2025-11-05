@@ -54,117 +54,117 @@ CollectionIterator<T>& CollectionIterator<T>::operator = (const CollectionIterat
         _elem._coll = other._elem._coll;
     }
 
-	return *this;
+    return *this;
 }
 
 template<class T>
 CollectionIterator<T>& CollectionIterator<T>::operator += (difference_type value)
 {
-	_elem._pos += static_cast<unsigned int>(value);
-	return *this;
+    _elem._pos += static_cast<unsigned int>(value);
+    return *this;
 }
 
 template<class T>
 CollectionIterator<T>& CollectionIterator<T>::operator -= (difference_type value)
 {
-	_elem._pos -= static_cast<unsigned int>(value);
-	return *this;
+    _elem._pos -= static_cast<unsigned int>(value);
+    return *this;
 }
 
 template<class T>
 T& CollectionIterator<T>::operator*()
 {
-	return _elem;
+    return _elem;
 }
 
 template<class T>
 T* CollectionIterator<T>::operator->()
 {
-	return &_elem;
+    return &_elem;
 }
 
 template<class T>
 CollectionIterator<T>& CollectionIterator<T>::operator--()
 {
-	--_elem._pos;
-	return *this;
+    --_elem._pos;
+    return *this;
 }
 
 template<class T>
 CollectionIterator<T>& CollectionIterator<T>::operator++()
 {
-	++*(const_cast<unsigned int*>(&_elem._pos));
-	return *this;
+    ++*(const_cast<unsigned int*>(&_elem._pos));
+    return *this;
 }
 
 template<class T>
 CollectionIterator<T> CollectionIterator<T>::operator++(int)
 {
-	CollectionIterator res(_elem._coll, _elem._pos);
-	++(*this);
-	return res;
+    CollectionIterator res(_elem._coll, _elem._pos);
+    ++(*this);
+    return res;
 }
 
 template<class T>
 CollectionIterator<T> CollectionIterator<T>::operator--(int)
 {
-	CollectionIterator res(_elem);
-	--(*this);
-	return res;
+    CollectionIterator res(_elem);
+    --(*this);
+    return res;
 }
 
 template<class T>
 CollectionIterator<T>  CollectionIterator<T>::operator + (difference_type value)
 {
-	return CollectionIterator(_elem._coll, _elem._pos + static_cast<unsigned int>(value));
+    return CollectionIterator(_elem._coll, _elem._pos + static_cast<unsigned int>(value));
 }
 
 template<class T>
 CollectionIterator<T> CollectionIterator<T>::operator - (difference_type value)
 {
-	return CollectionIterator(_elem._coll, _elem._pos - static_cast<unsigned int>(value));
+    return CollectionIterator(_elem._coll, _elem._pos - static_cast<unsigned int>(value));
 }
 
 template<class T>
 typename CollectionIterator<T>::difference_type CollectionIterator<T>::operator - (const CollectionIterator & other)
 {
-	return static_cast<difference_type>(_elem._pos - other._elem._pos);
+    return static_cast<difference_type>(_elem._pos - other._elem._pos);
 }
 
 template<class T>
 bool CollectionIterator<T>::operator == (const CollectionIterator& other)
 {
-	return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(*_elem._coll)) == (static_cast<OCI_Coll *>(*other._elem._coll));
+    return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(*_elem._coll)) == (static_cast<OCI_Coll *>(*other._elem._coll));
 }
 
 template<class T>
 bool CollectionIterator<T>::operator != (const CollectionIterator& other)
 {
-	return !(*this == other);
+    return !(*this == other);
 }
 
 template<class T>
 bool CollectionIterator<T>::operator > (const CollectionIterator& other)
 {
-	return _elem._pos > other._elem._pos;
+    return _elem._pos > other._elem._pos;
 }
 
 template<class T>
 bool CollectionIterator<T>::operator < (const CollectionIterator& other)
 {
-	return _elem._pos < other._elem._pos;
+    return _elem._pos < other._elem._pos;
 }
 
 template<class T>
 bool CollectionIterator<T>::operator >= (const CollectionIterator& other)
 {
-	return _elem._pos >= other._elem._pos;
+    return _elem._pos >= other._elem._pos;
 }
 
 template<class T>
 bool CollectionIterator<T>::operator <= (const CollectionIterator& other)
 {
-	return _elem._pos <= other._elem._pos;
+    return _elem._pos <= other._elem._pos;
 }
 
 }

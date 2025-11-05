@@ -41,9 +41,9 @@ namespace ocilib
     /**
     * @brief
     * Oracle Version enumerated values
-	* 
-	* @note
-	* This list is NOT exhaustive and contains only a list of well known released versions
+    * 
+    * @note
+    * This list is NOT exhaustive and contains only a list of well known released versions
     *
     */
     enum OracleVersionValues
@@ -6861,7 +6861,7 @@ namespace ocilib
         * Result is uncorrelated to any bind operation.
         *
         * @note
-		* List of parsed bind on success or empty list if no bind found
+        * List of parsed bind on success or empty list if no bind found
         *
         */
 
