@@ -290,7 +290,7 @@ static boolean OcilibStatementFreeParseBinds
     {
         for (unsigned int i = 0; i < stmt->parse_binds->count; i++)
         {
-            FREE((void*) stmt->parse_binds->names[i]);
+            FREE(stmt->parse_binds->names[i]);
         }
 
         FREE(stmt->parse_binds->names);
@@ -342,9 +342,9 @@ static boolean OcilibStatementGetParseBinds
        stmt->parse_binds->names = (otext**)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(otext*), count, TRUE);
 
        sb4 found = 0;
-       bvnp = (OraText**)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OraText*), count, TRUE);
+       bvnp = (const OraText**)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OraText*), count, TRUE);
        bvnl = (ub1*)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(ub1), count, TRUE);
-       invp = (OraText**)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OraText*), count, TRUE);
+       invp = (const OraText**)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OraText*), count, TRUE);
        inpl = (ub1*)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(ub1), count, TRUE);
        dupl = (ub1*)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(ub1), count, TRUE);
        hndl = (OCIBind*) OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OCIBind*), count, TRUE);

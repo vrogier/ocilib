@@ -576,7 +576,7 @@ namespace TestCppApi
         Environment::Cleanup();
     }
 
-    TEST(ReportedIssuesCApi, Issue382)
+    TEST(ReportedIssuesCppApi, Issue382)
     {
         ExecDML(OTEXT("drop user UserIssue382"));
         ExecDML(OTEXT("drop profile ProfileIssue382"));

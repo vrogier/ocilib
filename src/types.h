@@ -443,7 +443,7 @@ typedef struct OCI_BatchErrors OCI_BatchErrors;
 struct OCI_ParseBinds
 {
     unsigned int   count;
-    const otext  **names;
+    otext        **names;
 };
 
 typedef struct OCI_ParseBinds OCI_ParseBinds;
