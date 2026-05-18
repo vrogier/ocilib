@@ -77,7 +77,7 @@ namespace ocilib
 
             if (_parent)
             {
-                HandleStore::GetStoreForHandle(_parent).Set<SmartHandle*>(_handle, nullptr);
+                HandleStore::GetStoreForHandle(_parent).template Set<SmartHandle*>(_handle, nullptr);
             }
 
             if (_freeNotifyFunc)
