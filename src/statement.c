@@ -294,8 +294,7 @@ static boolean OcilibStatementFreeParseBinds
         }
 
         FREE(stmt->parse_binds->names);
-
-        stmt->parse_binds = NULL;
+        FREE(stmt->parse_binds);
     }
 
     SET_SUCCESS()
