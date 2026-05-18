@@ -457,7 +457,7 @@ ExitLabel:                          \
 
 #define ARRAY_SET_AT(ptr, type, offset, value) \
                                                \
-    *(type*)(ARRAY_GET_AT(ptr, sizeof(type), i)) = (type) (value);
+    *(type*)(ARRAY_GET_AT(ptr, sizeof(type), offset)) = (type) (value);
 
 #define IS_STRING_VALID(s) ((s) && ((s)[0]))
 
