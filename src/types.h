@@ -130,8 +130,8 @@ struct OCI_Error
     unsigned int type;              /* OCILIB error type */
     unsigned int source_type;       /* source type */
     int          code;              /* Oracle OCI or OCILIB internal error code */
-    unsigned int location_len;      /* length of error message */
-    unsigned int message_len;       /* length of error location */
+    unsigned int location_len;      /* length of error location */
+    unsigned int message_len;       /* length of error message */
     ub4          row;               /* Error row offset (array DML) */
     boolean      active;            /* to avoid recursive exceptions */
 };
