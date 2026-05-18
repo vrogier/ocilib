@@ -102,7 +102,7 @@ static boolean OcilibDirPathSetArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPahArrayToStream
+ * OcilibDirPathArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
 static unsigned int OcilibDirPathArrayToStream
@@ -208,7 +208,7 @@ static unsigned int OcilibDirPathArrayToStream
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * DirPahArrayToStream
+ * OcilibDirPathLoadStream
  * --------------------------------------------------------------------------------------------- */
 
 static unsigned int OcilibDirPathLoadStream
@@ -915,7 +915,7 @@ boolean OcilibDirPathSetEntry
 
         ub1 *data = ((ub1 *) dpcol->data) + (size_t) ((row-1) * dpcol->bufsize);
 
-        /* we weed to pack the buffer if wchar_t is 4 bytes */
+        /* we need to pack the buffer if wchar_t is 4 bytes */
 
         if (OCI_DDT_TEXT == dpcol->type && Env.use_wide_char_conv)
         {

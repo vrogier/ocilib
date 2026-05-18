@@ -64,7 +64,7 @@ sb4 OcilibCallbackInBind
     sb2 *ind = (sb2 *) bnd ? bnd->buffer.inds : NULL;
     ub4  i   = 0;
 
-    /* those checks may be not necessary but they keep away compilers warning
+    /* these checks may not be necessary but they keep compiler warnings
        away if the warning level is set to maximum !
     */
 
@@ -131,7 +131,7 @@ sb4 OcilibCallbackOutBind
     OCI_Resultset *rs   = NULL;
     ub4            rows = 0;
 
-    /* those checks may be not necessary but they keep away compilers warning
+    /* these checks may not be necessary but they keep compiler warnings
        away if the warning level is set to maximum !
     */
 
@@ -687,7 +687,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
 
     OCI_Define * def = (OCI_Define *) octxp;
 
-    /* those checks may be not necessary but they keep away compilers warning
+    /* these checks may not be necessary but they keep compiler warnings
        away if the warning level is set to maximum !
     */
 

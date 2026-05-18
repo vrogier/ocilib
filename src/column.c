@@ -572,7 +572,7 @@ boolean OcilibColumnRetrieveInfo
         CHECK_NULL(col->typinf);
     }
 
-    /* Check if the colulmn is XMLTYPE */
+    /* Check if the column is XMLTYPE */
 
     if (IS_XMLTYPE(col->typinf))
     {

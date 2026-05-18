@@ -2079,7 +2079,7 @@ boolean OcilibEnvironmentSetHAHandler
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* On MSVC, casting a function pointer to a data pointer generates a warning.
-       As there is no other to way to do regarding the OCI API, let's disable this
+       As there is no other way to do regarding the OCI API, let's disable this
        warning just the time to set the callback attribute to the environment handle */
 
     WARNING_DISABLE_CAST_FUNC_TYPE
