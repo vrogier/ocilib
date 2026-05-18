@@ -490,11 +490,13 @@ ExitLabel:                          \
 
 #define LIST_ATOMIC_OPERATION(list, exp)                    \
                                                             \
-    OcilibListLock(list);                                   \
-    WARNING_DISABLE_UNSAFE_CONVERT                          \
-    exp                                                     \
-    WARNING_RESTORE_UNSAFE_CONVERT                          \
-    OcilibListUnlock(list);                                 \
+    if (OcilibListLock(list))                               \
+    {                                                       \
+        WARNING_DISABLE_UNSAFE_CONVERT                      \
+        exp                                                 \
+        WARNING_RESTORE_UNSAFE_CONVERT                      \
+        OcilibListUnlock(list);                             \
+    }                                                       \
 
 #define LIST_ATOMIC_FOREACH(list, cb)                       \
                                                             \
