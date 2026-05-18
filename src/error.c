@@ -120,14 +120,22 @@ void OcilibErrorSet
 #endif 
 
     const size_t format_len = ostrlen(format);
-    const size_t message_len = message ? ostrlen(message) : 0;
-    const size_t location_len = location ? strlen(location) : 0;
-    const size_t total_len = format_len + message_len + location_len;
+
+    size_t message_len = message ? ostrlen(message) : 0;
+    size_t location_len = location ? strlen(location) : 0;
 
     /* allocate storage for location */
     if (err->location_len < location_len)
     {
-        err->location = realloc(err->location, (location_len + 1) * sizeof(otext));
+        otext* buffer = realloc(err->location, (location_len + 1) * sizeof(otext));
+        if (buffer != NULL)
+        {
+            err->location = buffer;
+        }
+        else
+        {
+            location_len = err->location_len;
+        }
     }
 
     /* convert location if needed */
@@ -135,11 +143,21 @@ void OcilibErrorSet
     OcilibStringAnsiToNative(location, err->location, (unsigned int) location_len);
     err->location_len = max(err->location_len, (unsigned int) location_len);
 
+    const size_t total_len = format_len + message_len + location_len;
+    
     /* allocate storage for message */
 
     if (err->message_len < total_len)
     {
-        err->message = realloc(err->message, (total_len + 1) * sizeof(otext));
+        otext* buffer = realloc(err->message, (total_len + 1) * sizeof(otext));
+        if (buffer != NULL)
+        {
+            err->message = buffer;
+        }
+        else
+        {
+            message_len = err->message_len;
+        }
     }
 
     /* format message */
