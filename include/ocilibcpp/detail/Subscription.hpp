@@ -33,11 +33,11 @@ namespace ocilib
 
     }
 
-    inline Subscription::Subscription(OCI_Subscription* pSubcription)
+    inline Subscription::Subscription(OCI_Subscription* pSubscription)
     {
         AcquireTransient
         (
-            pSubcription,
+            pSubscription,
             Environment::GetEnvironmentHandle()
         );
     }

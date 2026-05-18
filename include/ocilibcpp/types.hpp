@@ -478,7 +478,7 @@ namespace ocilib
 
         char* _what;
         OCI_Statement* _pStatement;
-        OCI_Connection* _pConnnection;
+        OCI_Connection* _pConnection;
         unsigned int _row;
         ExceptionType _type;
         int _errLib;
@@ -7609,7 +7609,7 @@ namespace ocilib
 
     private:
 
-        Subscription(OCI_Subscription* pSubcription);
+        Subscription(OCI_Subscription* pSubscription);
     };
 
     /**

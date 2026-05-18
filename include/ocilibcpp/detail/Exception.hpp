@@ -27,7 +27,7 @@ namespace ocilib
 inline Exception::Exception() noexcept
     : _what(nullptr),
     _pStatement(nullptr),
-    _pConnnection(nullptr),
+    _pConnection(nullptr),
     _row(0),
     _type(static_cast<ExceptionType::Type>(0)),
     _errLib(0),
@@ -39,7 +39,7 @@ inline Exception::Exception() noexcept
 inline Exception::Exception(OCI_Error *err) noexcept
     : _what(nullptr),
     _pStatement(OCI_ErrorGetStatement(err)),
-    _pConnnection(OCI_ErrorGetConnection(err)),
+    _pConnection(OCI_ErrorGetConnection(err)),
     _row(OCI_ErrorGetRow(err)),
     _type(static_cast<ExceptionType::Type>(OCI_ErrorGetType(err))),
     _errLib(OCI_ErrorGetInternalCode(err)),
@@ -63,7 +63,7 @@ inline Exception& Exception::operator = (const Exception& other) noexcept
     if (this != &other)
     {
         _pStatement = other._pStatement;
-        _pConnnection = other._pConnnection;
+        _pConnection = other._pConnection;
         _row = other._row;
         _type = other._type;
         _errLib = other._errLib;
@@ -116,9 +116,9 @@ inline void Exception::SetWhat(const otext* value) noexcept
         return;
     }
 
-    const size_t valueLenght = wcslen(value);
+    const size_t valueLength = wcslen(value);
 
-    _what = new (std::nothrow) char[valueLenght + 1];
+    _what = new (std::nothrow) char[valueLength + 1];
     if (_what)
     {
         const otext* ptr = value;
@@ -130,15 +130,15 @@ inline void Exception::SetWhat(const otext* value) noexcept
         __pragma(warning(disable : 4996))
     #endif
 
-        const size_t convLenght = wcsrtombs(_what, &ptr, valueLenght, &mbs);
+        const size_t convLength = wcsrtombs(_what, &ptr, valueLength, &mbs);
 
     #if defined(_MSC_VER)
         __pragma(warning(default: 4996))
     #endif   
             
-        const size_t whatLenght = (static_cast<size_t>(-1) == convLenght) ? 0 : convLenght;
+        const size_t whatLength = (static_cast<size_t>(-1) == convLength) ? 0 : convLength;
 
-        _what[whatLenght] = 0;
+        _what[whatLength] = 0;
     }
 
 #endif
@@ -166,9 +166,9 @@ inline ostring Exception::GetMessage() const
 
 #else
 
-    const size_t valueLenght = strlen(str);
+    const size_t valueLength = strlen(str);
 
-    message.resize(valueLenght);
+    message.resize(valueLength);
 
     const char* ptr = str;
 
@@ -180,15 +180,15 @@ inline ostring Exception::GetMessage() const
     __pragma(warning(disable : 4996))
 #endif
 
-    const size_t convLenght = mbsrtowcs(&message[0], &ptr, valueLenght, &mbs);
+    const size_t convLength = mbsrtowcs(&message[0], &ptr, valueLength, &mbs);
 
 #if defined(_MSC_VER)
     __pragma(warning(default: 4996))
 #endif 
 
-    const size_t messLenght = (static_cast<size_t>(-1) == convLenght) ? 0 : convLenght;
+    const size_t messLength = (static_cast<size_t>(-1) == convLength) ? 0 : convLength;
 
-    message.resize(messLenght);
+    message.resize(messLength);
 
 #endif
 
@@ -217,7 +217,7 @@ inline Statement Exception::GetStatement() const
 
 inline Connection Exception::GetConnection() const
 {
-    return Connection(_pConnnection, Environment::GetEnvironmentHandle(), false);
+    return Connection(_pConnection, Environment::GetEnvironmentHandle(), false);
 }
 
 inline unsigned int Exception::GetRow() const
