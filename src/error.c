@@ -358,7 +358,7 @@ OCI_Connection * OcilibErrorGetConnection
         case OCI_IPC_LONG:
             return ((OCI_Long*)err->source_ptr)->stmt->con;
         case OCI_IPC_OBJECT:
-            return ((OCI_Statement*)err->source_ptr)->con;
+            return ((OCI_Object*)err->source_ptr)->con;
         case OCI_IPC_COLLECTION:
             return ((OCI_Coll*)err->source_ptr)->con;
         case OCI_IPC_ITERATOR:
