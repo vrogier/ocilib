@@ -2413,7 +2413,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_GetParseBindNames
  *
  * OCILIB supports OCI data binding APIs
  *
- * Programs variables can be binded to an Oracle SQL PL/SQL statement in order to :
+ * Programs variables can be bound to an Oracle SQL PL/SQL statement in order to :
  *
  * - Provide input data for SQL statement
  * - Provide input/output data for PL/SQL blocks
@@ -2457,7 +2457,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_GetParseBindNames
  * - Array binding is really fast for massive DML operations
  * - For string/RAW arrays, the input array MUST BE a contiguous block of data
  *   and not an array of pointers. So to bind an array of 10 elements for a
- *   varchar2(30) column, binded variable must be a like array[10][31]
+ *   varchar2(30) column, bound variable must be a like array[10][31]
  *
  * OCILIB does not pre-parse statements (like other frameworks such as JDBC, ...)
  * and lets Oracle recognize input variables embedded within the SQL statements.
@@ -2468,9 +2468,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_GetParseBindNames
  *
  * - by name (default mode in OCILIB): Oracle looks for variables in the SQL
  *   statement by searching their names provided to the binding function.
- *   So a variable can be binded once and used many times in the statement
+ *   So a variable can be bound once and used many times in the statement
  * - by position: Oracle binds variables by position, so every variable is
- *   binded with a position number
+ *   bound with a position number
  *
  * OCILIB Default binding mode is OCI_BIND_BY_NAME.
  *
@@ -2511,7 +2511,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_GetParseBindNames
  *
  * @note
  * Rebinding is disabled by default (see OCI_AllowRebinding())
- * When using rebinding feature, host variable re-binded to a previously allocated
+ * When using rebinding feature, host variable re-bound to a previously allocated
  * bind MUST be of the SAME data type !
  *
  * @par Basic input bind Example
@@ -2578,7 +2578,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindArrayGetSize
 
 /**
  * @brief
- * Allow different host variables to be binded using the same bind name or
+ * Allow different host variables to be bound using the same bind name or
  * position between executions of a prepared statement
  *
  * @param stmt  - Statement handle
@@ -2588,7 +2588,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindArrayGetSize
  * Default value is FALSE
  *
  * @warning
- * When using rebinding feature, host variable re-binded to a previously allocated
+ * When using rebinding feature, host variable re-bound to a previously allocated
  * bind MUST be of the same data type !
  *
  * @return
@@ -4314,7 +4314,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNotNullAtPos
 
 /**
  * @brief
- * Check if the current value of the binded variable is marked as NULL
+ * Check if the current value of the bound variable is marked as NULL
  *
  * @param bnd - Bind handle
  *
@@ -4330,7 +4330,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindIsNull
 
 /**
  * @brief
- * Check if the current entry value at the given index of the binded array
+ * Check if the current entry value at the given index of the bound array
  * is marked as NULL
  *
  * @param bnd      - Bind handle
@@ -4416,8 +4416,8 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetAllocationMode
  * ONLY the following statements can return resultsets that can be fetched by host programs:
  * - Statements executing SQL SELECT
  * - Statements executing SQL INSERT/UPDATE/DELETE using a RETURNING INTO clause
- * - Statements binded to PL/SQL OPEN FOR argument
- * - Statements binded to PL/SQL procedure OUT variables
+ * - Statements bound to PL/SQL OPEN FOR argument
+ * - Statements bound to PL/SQL procedure OUT variables
  * - Statements implicitly returned from PL/SQL procedure or blocks (new feature in Oracle 12cR1) using
  *   DBMS_SQL.RETURN_RESULT()
  *
@@ -7893,12 +7893,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetNull
  *
  * @note
  * SQL statements with a 'returning' clause can return multiple resultsets.
- * When arrays of program variables are binded to the statement, Oracle will
+ * When arrays of program variables are bound to the statement, Oracle will
  * execute the statement for every row (iteration).
  * Each iteration generates a resultset that can be fetched like regular ones.
  *
  * @note
- * Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implicit resultsets
+ * Starting with Oracle 12cR1, PL/SQL procedure and blocks can return multiple implicit resultsets
  * Refer to  Oracle documentation for more information.
  *
  * @return
@@ -8282,7 +8282,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterVector
  * OCILIB supports the Oracle ROWID type through C scalar string types (otext).
  *
  * - ROWIDs can be retrieved from resultset with OCI_GetString()
- * - ROWIDs can be binded to statements with OCI_BindString()
+ * - ROWIDs can be bound to statements with OCI_BindString()
  *
  * The maximum size of an ROWID buffer is defined by the constant OCI_SIZE_ROWID
  *
@@ -11715,7 +11715,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSetYearMonth
  * @brief
  * Adds an interval handle value to another
  *
- * @param itv   - Interval handle from witch to add
+ * @param itv   - Interval handle from which to add
  * @param itv2  - Interval handle to add
  *
  * @return
@@ -11733,7 +11733,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalAdd
  * @brief
  * Subtract an interval handle value from another
  *
- * @param itv   - Interval handle from witch to remove
+ * @param itv   - Interval handle from which to remove
  * @param itv2  - Interval handle to remove
  *
  * @return
@@ -17007,7 +17007,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTablePurge
  *
  * @param con             - Connection handle
  * @param queue_table     - Queue table name
- * @param compatible      - Database version with witch the queue table has to migrate
+ * @param compatible      - Database version with which the queue table has to migrate
  *
  * @note
  * Possible values for parameter 'compatible' :

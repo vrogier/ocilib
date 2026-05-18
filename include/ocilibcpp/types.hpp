@@ -5810,9 +5810,9 @@ namespace ocilib
         */
         enum VectorTypeValues
         {
-            /** Vector is binded as an array in a regular DML array operation */
+            /** Vector is bound as an array in a regular DML array operation */
             AsArray = 1,
-            /** Vector is binded as a PL/SQL index by table */
+            /** Vector is bound as a PL/SQL index by table */
             AsPlSqlTable = 2
         };
 
@@ -6030,9 +6030,9 @@ namespace ocilib
         */
         enum BindModeValues
         {
-            /** Bind variables are binded by name */
+            /** Bind variables are bound by name */
             BindByPosition = OCI_BIND_BY_POS,
-            /** Bind variables are binded by position */
+            /** Bind variables are bound by position */
             BindByName = OCI_BIND_BY_NAME
         };
 
@@ -6317,12 +6317,12 @@ namespace ocilib
         *
         * @note
         * SQL statements with a 'returning' clause can return multiple resultsets.
-        * When arrays of program variables are binded to the statement, Oracle will
+        * When arrays of program variables are bound to the statement, Oracle will
         * execute the statement for every row (iteration).
         * Each iteration generates a resultset that can be fetched like regular ones.
         *
         * @note
-        * Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implicit resultsets
+        * Starting with Oracle 12cR1, PL/SQL procedure and blocks can return multiple implicit resultsets
         * Refer to  Oracle documentation for more information.
         *
         */
@@ -6363,7 +6363,7 @@ namespace ocilib
 
         /**
         * @brief
-        * Allow different host variables to be binded using the same bind name or
+        * Allow different host variables to be bound using the same bind name or
         * position between executions of a prepared statement
         *
         * @param value - Rebinding mode allowed
@@ -6372,7 +6372,7 @@ namespace ocilib
         * Default value is false
         *
         * @warning
-        * When using rebinding feature, host variable re-binded to a previously allocated
+        * When using rebinding feature, host variable re-bound to a previously allocated
         * bind MUST be of the same data type !
         *
         */
@@ -9013,7 +9013,7 @@ namespace ocilib
          *
          * @param connection - Database connection
          * @param table      - Queue table name
-         * @param compatible - Optional database version with witch the queue table has to migrate
+         * @param compatible - Optional database version with which the queue table has to migrate
          *
          * @note
          * Possible values for parameter 'compatible' :
