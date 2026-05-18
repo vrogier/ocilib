@@ -188,11 +188,10 @@ static unsigned int OcilibDirPathArrayToStream
         dp->nb_converted += err_row;
 
         /* record errors index on real error */
-        if (OCI_DPR_ERROR == status)
+        if ((OCI_DPR_ERROR == status) && (dp->nb_err < dp->nb_cur))
         {
             dp->err_rows[dp->nb_err] = row_from + err_row;
             dp->err_cols[dp->nb_err] = err_col;
-
             dp->nb_err++;
         }
     }
@@ -286,9 +285,9 @@ static unsigned int OcilibDirPathLoadStream
 
     /* On failure, record errors rows */
 
-    if (OCI_FAILURE(ret))
+    if (OCI_FAILURE(ret) && (dp->nb_err < dp->nb_cur))
     {
-        dp->err_rows[dp->nb_err] = (dp->nb_err > 0) ? (dp->err_rows[dp->nb_err-1] + nb_loaded + 1) : dp->nb_loaded;
+        dp->err_rows[dp->nb_err] = (dp->nb_err > 0) ? (dp->err_rows[dp->nb_err - 1] + nb_loaded + 1) : dp->nb_loaded;
         dp->err_cols[dp->nb_err] = 0;
         dp->nb_err++;
     }
