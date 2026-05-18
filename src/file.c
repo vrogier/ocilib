@@ -148,7 +148,7 @@ boolean OcilibFileGetInfo
     dbstr1  = OcilibStringGetDBString(file->dir, &dbsize1);
 
     dbsize2 = (int) OCI_SIZE_FILENAME  * (int) sizeof(otext);
-    dbstr2  = OcilibStringGetDBString(file->name, &dbsize1);
+    dbstr2  = OcilibStringGetDBString(file->name, &dbsize2);
 
     usize1 = (ub2) dbsize1;
     usize2 = (ub2) dbsize2;
