@@ -629,7 +629,7 @@ namespace TestCppApi
 
     TEST(ReportedIssuesCppApi, Issue387)
     { 
-        const auto msgTypeName = OTEXT("SYS.AQ$_JMS_BYTES_MESSAGE");
+        const auto msgTypeName = OTEXT("SYS.RAW");
         
         Environment::Initialize(Environment::Default);
 
@@ -643,7 +643,7 @@ namespace TestCppApi
         msgRaw.SetPayload(Raw{ 0x01, 0x02, 0x03 });
 
         auto validRaw = msgRaw.GetPayload<Raw>();
-        ASSERT_EQ(3, emptyRaw.size());
+        ASSERT_EQ(3, validRaw.size());
 
         Environment::Cleanup();
     }

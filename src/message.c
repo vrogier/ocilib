@@ -289,7 +289,7 @@ boolean OcilibMessageGetRaw
 
     CHECK_PTR(OCI_IPC_MSG,  msg)
     CHECK_PTR(OCI_IPC_VOID, size)
-    CHECK_COMPAT(msg->typinf->typecode != OCI_UNKNOWN)
+    CHECK_COMPAT(msg->typinf->typecode == OCI_UNKNOWN)
 
     if ((msg->payload) && (OCI_IND_NULL != msg->ind))
     {
