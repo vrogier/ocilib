@@ -289,7 +289,7 @@ unsigned int OcilibHashGetType
 
     CHECK_PTR(OCI_IPC_HASHTABLE, table)
 
-    SET_RETVAL(table->type; )
+    SET_RETVAL(table->type)
 
     EXIT_FUNC()
 }
@@ -562,6 +562,7 @@ OCI_HashEntry * OcilibHashLookup
             CHECK_NULL(e)
 
             e->key = OcilibStringDuplicate(key);
+            CHECK_NULL(e->key)
 
             e1 = e2 = table->items[i];
 
