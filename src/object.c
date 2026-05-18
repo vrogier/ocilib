@@ -421,8 +421,17 @@ void OcilibObjectGetUserStructSize
 
     for (ub2 i = 0; i < typinf->nb_cols; i++)
     {
-        OcilibColumnGetAttributeInfo(&typinf->cols[i],   typinf->nb_cols, i,   &size1, &align1);
-        OcilibColumnGetAttributeInfo(&typinf->cols[i+1], typinf->nb_cols, i+1, &size2, &align2);
+        OcilibColumnGetAttributeInfo(&typinf->cols[i], typinf->nb_cols, i, &size1, &align1);
+
+        if (i + 1 < typinf->nb_cols)
+        {
+            OcilibColumnGetAttributeInfo(&typinf->cols[i + 1], typinf->nb_cols, i + 1, &size2, &align2);
+        }
+        else
+        {
+            size2  = 0;
+            align2 = 0;
+        }
 
         if (align < align1)
         {
