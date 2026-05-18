@@ -67,6 +67,8 @@ inline Raw Message::GetPayload<Raw>()
 {
     unsigned int size = 0;
 
+    core::Check(OCI_MsgGetRaw(*this, nullptr, &size));
+    
     core::ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
 
     core::Check(OCI_MsgGetRaw(*this, static_cast<AnyPointer>(buffer), &size));

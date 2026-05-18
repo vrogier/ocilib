@@ -15369,14 +15369,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetObject
 
 /**
  * @brief
- * Get the RAW payload of the given message
+ * Copy the RAW payload of the given message into the given buffer
  *
  * @param msg  - Message handle
  * @param raw  - Input buffer
  * @param size - Input buffer maximum size
  *
  * @note
- * On output, parameter 'size' holds the number of bytes copied into the given buffer
+ * If parameter 'raw' is NULL, parameter 'size' is filled with the required buffer size 
+ * Otherwise, 'raw' buffer is filled with RAW content and 'size' holds the number of bytes copied into the given buffer
  *
  * @return
  * TRUE on success otherwise FALSE on failure or if payload is object based.

@@ -288,20 +288,26 @@ boolean OcilibMessageGetRaw
     )
 
     CHECK_PTR(OCI_IPC_MSG,  msg)
-    CHECK_PTR(OCI_IPC_VOID, raw)
     CHECK_PTR(OCI_IPC_VOID, size)
-    CHECK_COMPAT(OCI_UNKNOWN == msg->typinf->typecode)
+    CHECK_COMPAT(msg->typinf->typecode != OCI_UNKNOWN)
 
     if ((msg->payload) && (OCI_IND_NULL != msg->ind))
     {
         const unsigned int raw_size = OCIRawSize(msg->typinf->con->env, (OCIRaw *) msg->payload);
-
-        if (*size > raw_size)
+     
+        if (raw == NULL)
         {
             *size = raw_size;
         }
-
-        memcpy(raw, OCIRawPtr(msg->typinf->con->env, msg->payload), (size_t) (*size));
+        else
+        {
+            if (*size > raw_size)
+            {
+                *size = raw_size;
+            }
+            
+            memcpy(raw, OCIRawPtr(msg->typinf->con->env, msg->payload), (size_t)(*size));
+        }
     }
     else
     {

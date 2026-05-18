@@ -586,7 +586,6 @@ namespace TestCppApi
         ExecDML(OTEXT("grant create session to UserIssue382"));
         ExecDML(OTEXT("alter user UserIssue382 profile ProfileIssue382"));
 
-
         Sleep(2000);
 
         ostring errMessage;
@@ -626,6 +625,27 @@ namespace TestCppApi
 
         ExecDML(OTEXT("drop user UserIssue382"));
         ExecDML(OTEXT("drop profile ProfileIssue382"));
+    }
+
+    TEST(ReportedIssuesCppApi, Issue387)
+    { 
+        const auto msgTypeName = OTEXT("SYS.AQ$_JMS_BYTES_MESSAGE");
+        
+        Environment::Initialize(Environment::Default);
+
+        auto conn = Connection(DBS, USR, PWD);   
+        auto msgType = TypeInfo(conn, msgTypeName, TypeInfo::Type);
+        auto msgRaw = Message(msgType);
+      
+        auto emptyRaw = msgRaw.GetPayload<Raw>();
+        ASSERT_EQ(0, emptyRaw.size());
+
+        msgRaw.SetPayload(Raw{ 0x01, 0x02, 0x03 });
+
+        auto validRaw = msgRaw.GetPayload<Raw>();
+        ASSERT_EQ(3, emptyRaw.size());
+
+        Environment::Cleanup();
     }
 }
 
