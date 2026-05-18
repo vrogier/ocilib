@@ -453,7 +453,7 @@ ExitLabel:                          \
 
 #define ARRAY_GET_AT(ptr, size, offset) \
                                         \
-    (((ub1 *) (ptr)) + (size_t)((size)*i))
+    (((ub1 *) (ptr)) + (size_t)((size)*offset))
 
 #define ARRAY_SET_AT(ptr, type, offset, value) \
                                                \
