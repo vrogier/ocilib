@@ -317,12 +317,12 @@ static boolean OcilibStatementGetParseBinds
         /* context */ OCI_IPC_STATEMENT, stmt
     )
 
-    const OraText** bvnp = NULL;
-    ub1*            bvnl = NULL;
-    const OraText** invp = NULL;
-    ub1*            inpl = NULL;
-    ub1*            dupl = NULL;
-    OCIBind*        hndl = NULL;
+    OraText** bvnp = NULL;
+    ub1*      bvnl = NULL;
+    OraText** invp = NULL;
+    ub1*      inpl = NULL;
+    ub1*      dupl = NULL;
+    OCIBind*  hndl = NULL;
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt)
 
