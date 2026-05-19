@@ -1,0 +1,52 @@
+---
+author: admin
+comments: false
+date: 2026-05-19 20:00:00+01:00
+layout: post
+slug: ocilib-v4-9-0-now-available-for-download
+title: OCILIB v4.9.0 now available for download !
+---
+
+Dear all,
+<br/>
+<br/>
+<b>OCILIB v4.9.0 is now [_available for download_]({{site.projecturl}}/releases/) !</b>
+<br/>
+<br/>
+Get the release and enjoy it !
+<br/>
+<br/>
+### Enhancements (C API)
+   
+ - Issue 381 : Enhancement for computing bind variables without executing statement (C API)
+   - Added OCI_GetParseBindNames()
+
+###  Enhancements (C++ API)
+
+- Issue 381 : Enhancement for computing bind variables without executing statement (C++ API):
+    - Added Statement::GetParseBindNames()
+         
+###  Fixes (C API)
+    
+- Issue 382 : Warnings when opening a connection in password  during grace period
+      
+###  Fixes (C++ API)
+
+- Issue 379 : Issues in creating collection of user defined type
+- Issue 383 : Compilation error on macOS
+- Issue 387 : Message::GetPayload<Raw>() always return an empty Raw of size 0
+
+###  Documentation
+    
+- Fixed all typos in the documentation (C and C++ APIs)
+- Added some refinements
+   
+### Miscellaneous
+    
+- Updated compilers for MS Windows prebuilt binaries to VS2022 17.14.32
+- Various minor internal changes, added checks and fixes found by static analysis
+ 
+<br/>
+
+Vincent
+

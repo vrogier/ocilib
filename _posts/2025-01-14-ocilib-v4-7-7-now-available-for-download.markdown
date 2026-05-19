@@ -1,0 +1,69 @@
+---
+author: admin
+comments: false
+date: 2025-01-14 20:00:00+01:00
+layout: post
+slug: ocilib-v4-7-7-now-available-for-download
+title: OCILIB v4.7.7 now available for download !
+---
+
+Dear all,
+<br/>
+<br/>
+<b>OCILIB v4.7.7 is now [_available for download_]({{site.projecturl}}/releases/) !</b>
+<br/>
+<br/>
+Get the release and enjoy it !
+<br/>
+<br/>
+### Enhancements (C API)
+
+- Oracle XMLTYPE is now partially supported
+  - Added OCI_XmlType* data type (OCI_CDT_XMLTYPE) that can only be fetched from resultets in this current release
+  - OCI_ColumnGetType() reports "XMLTYPE" as SQL type
+  - OCI_TypeInfoGet() returns a valid OCI_TypeInfo handle for the type name "SYS.XMLTYPE"
+  - OCI_GetString() returns a string representation of a XMLTYPE object
+  - Added the following new APIs:
+    - OCI_GetXmlType()
+    - OCI_GetXmlType2()
+    -  OCI_XmlTypeToText()
+  - In this current release, use OCI_GetString() instead of OCI_GetXmlType() as: 
+    -  OCI_XmlType handles can only be used to getting XML content strings, which is already done by OCI_GetString()
+    -  In later releases, OCI_XmlType API will evolve to support local xml object creation, DOM manipulation, SQL binding
+        
+### Enhancements (C++ API)
+
+  - Oracle XMLTYPE is now partially supported:
+    - Added ocilib::XmlType class (that can only be retrieved using ocilib::Resultset::Get<ocilib::XmlType>())
+    - ocilib::Resultset::Get<ostring>() returns a string representation of the XMLTYPE object
+  - Added Interval::GetNanoSeconds() and Interval::SetNanoSeconds()
+        
+### Fixes (C API)
+
+- Issue 329: OCI_GetSqlIdentifier() returns invalid values for Scrollable Statements when called more than once
+- Issue 332: OCI_TypeInfoGet() : since v4.7.4, in case of failure, OCI_TypeInfo object is not removed from OCI_Connection internal list of OCI_TypeInfo objects
+- Issue 331: Strange behaviour with XMLTYPE
+- Issue 332: OCI_TypeInfoGet() : In case of failure, newly created OCI_TypeInfo object is not removed from OCI_Connection internal cache
+- Issue 333: OCI_GetServerMajorVersion() returns wrong values for Oracle Server version < 18.1
+- Issue 334: OCI_RefToText() return garbage when charset is OCI_CHARSET_WIDE
+- Issue 347: OCI_MsgGetEnqueueTime() leaked DateTime handle causing OCI_Cleanup() reporting unfreed handle
+- Issue 348: OCI_EventGetObject() might returned garbage character after object name
+- Issue 354: OCI_ElemSetRaw() performed wrong check on element datatype
+- Issue 361: Fixed HA event callback processing
+        
+### Fixes (C++ API)
+    
+- Issue 351: C++ Value types perform handle assignment instead of value assignment
+- Issue 355: Since v4.7.5, connection acquired from ocilib::Pool where not released, leading to pool exhaustion
+- Issue 362: Calling Environment::Initialize() / Environment::Cleanup() multiple times per process might lead to segfaults with latest embedded vc143 runtime
+        
+### Documentation
+    
+- Issue 352 : Fixed documentation for OCI_PoolGetNoWait and ocilib::Pool::SetNoWait()
+- Issue 363 : Fixed documentation for OCI_IntervalGetDaySecond() and OCI_IntervalSetDaySecond(), Interval::GetDaySecond() and GetSaySecond()
+
+ 
+<br/>
+
+Vincent
+
