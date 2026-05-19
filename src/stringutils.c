@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@
 #include "vector.h"
 #include "xmltype.h"
 
-#define COMPUTE_LENTGH(type, ptr, size)   \
+#define COMPUTE_LENGTH(type, ptr, size)   \
     const type *s = (const type *) (ptr); \
     const type *e = (const type *) (ptr); \
     while (*e++);                         \
@@ -68,15 +68,15 @@ size_t OcilibStringLength
     }
     else if (sizeof(char) == size_elem)
     {
-        COMPUTE_LENTGH(char, ptr, size)
+        COMPUTE_LENGTH(char, ptr, size)
     }
     else if (sizeof(short) == size_elem)
     {
-        COMPUTE_LENTGH(short, ptr, size)
+        COMPUTE_LENGTH(short, ptr, size)
     }
     else if (sizeof(int) == size_elem)
     {
-        COMPUTE_LENTGH(int, ptr, size)
+        COMPUTE_LENGTH(int, ptr, size)
     }
 
     return size;
@@ -300,7 +300,7 @@ dbtext * OcilibStringGetDBString
 
     if (*size == -1)
     {
-        COMPUTE_LENTGH(otext, src, len)
+        COMPUTE_LENGTH(otext, src, len)
     }
     else
     {

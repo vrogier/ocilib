@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -285,6 +285,7 @@
 #define OCI_ATTR_CONN_MIN              183
 #define OCI_ATTR_CONN_MAX              184
 #define OCI_ATTR_CONN_INCR             185
+#define OCI_ATTR_BIND_COUNT            190        /* number of bind postions */
 #define OCI_ATTR_SUBSCR_RECPTPRES      195
 #define OCI_ATTR_ROWS_FETCHED          197      /* rows fetched in last call */
 #define OCI_ATTR_SPOOL_STMTCACHESIZE   208        /*Stmt cache size of pool  */

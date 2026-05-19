@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -594,7 +594,7 @@ static boolean OcilibConnectionLogonRegular
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
-        /* activate statement cache is the OCI version supports it */
+        /* activate statement cache if the OCI version supports it */
 
         if (Env.version_runtime >= OCI_9_2)
         {
@@ -782,7 +782,7 @@ boolean OcilibConnectionLogon
 
 #endif
 
-    /* 2 - regular connectionq and connections from pool */
+    /* 2 - regular connections and connections from pool */
 
     if (con->alloc_handles)
     {

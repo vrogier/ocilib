@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,7 +148,7 @@ boolean OcilibFileGetInfo
     dbstr1  = OcilibStringGetDBString(file->dir, &dbsize1);
 
     dbsize2 = (int) OCI_SIZE_FILENAME  * (int) sizeof(otext);
-    dbstr2  = OcilibStringGetDBString(file->name, &dbsize1);
+    dbstr2  = OcilibStringGetDBString(file->name, &dbsize2);
 
     usize1 = (ub2) dbsize1;
     usize2 = (ub2) dbsize2;

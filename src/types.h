@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,8 +130,8 @@ struct OCI_Error
     unsigned int type;              /* OCILIB error type */
     unsigned int source_type;       /* source type */
     int          code;              /* Oracle OCI or OCILIB internal error code */
-    unsigned int location_len;      /* length of error message */
-    unsigned int message_len;       /* length of error location */
+    unsigned int location_len;      /* length of error location */
+    unsigned int message_len;       /* length of error message */
     ub4          row;               /* Error row offset (array DML) */
     boolean      active;            /* to avoid recursive exceptions */
 };
@@ -422,7 +422,7 @@ struct OCI_Resultset
 };
 
 /*
- * OCI_Define : Internal Resultset column data implementation
+ * OCI_BatchErrors : Internal Resultset batch errors
  *
  */
 
@@ -434,6 +434,19 @@ struct OCI_BatchErrors
 };
 
 typedef struct OCI_BatchErrors OCI_BatchErrors;
+
+/*
+ * OCI_ParseBinds : Parse Bind informations
+ *
+ */
+
+struct OCI_ParseBinds
+{
+    unsigned int   count;
+    otext        **names;
+};
+
+typedef struct OCI_ParseBinds OCI_ParseBinds;
 
 /*
  * Statement object
@@ -455,7 +468,8 @@ struct OCI_Statement
     OCI_Bind       **ubinds;            /* array of user bind objects */
     OCI_Bind       **rbinds;            /* array of register bind objects */
     OCI_HashTable   *map;               /* hash table handle for mapping bind name/index */
-    OCI_BatchErrors* batch;             /* error handling for array DML */
+    OCI_BatchErrors *batch;             /* error handling for array DML */
+    OCI_ParseBinds  *parse_binds;       /* parse bind info */
     ub2              nb_ubinds;         /* number of used user binds */
     ub2              nb_rbinds;         /* number of used register binds */
     ub2              allocated_ubinds;  /* number of allocated user binds */

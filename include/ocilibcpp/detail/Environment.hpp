@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ inline Environment::~Environment()
 
 inline void Environment::Initialize(EnvironmentFlags mode, const ostring& libpath)
 {
-  	Environment* environment = static_cast<Environment*>(OCI_GetUserData(nullptr));	
+      Environment* environment = static_cast<Environment*>(OCI_GetUserData(nullptr));    
     if (environment == nullptr)
     {
         // not tracking return value here as created environment will be deallocated by Environment::Cleanup

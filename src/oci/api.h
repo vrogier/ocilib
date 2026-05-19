@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1716,6 +1716,21 @@ typedef sword (*OCIROWIDTOCHAR)
     OraText  *outbfp, 
     ub2      *outbflp,
     OCIError *errhp
+);
+
+typedef sword(*OCISTMTGETBINDINFO)
+(
+    OCIStmt   *stmtp, 
+    OCIError  *errhp, 
+    ub4        size,
+    ub4        startloc,
+    sb4       *found, 
+    OraText   *bvnp[], 
+    ub1        bvnl[],
+    OraText   *invp[], 
+    ub1        inpl[], 
+    ub1        dupl[],
+    OCIBind  **hndl
 );
 
 /* API introduced in 8.1 */

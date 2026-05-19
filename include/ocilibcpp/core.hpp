@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,21 +25,21 @@
 
 #include "ocilibcpp/config.hpp"
 
-// ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
-// ReSharper disable CppClangTidyHicppSpecialMemberFunctions
-// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
-// ReSharper disable CppClangTidyModernizeUseNodiscard
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
+ // ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
+ // ReSharper disable CppClangTidyHicppSpecialMemberFunctions
+ // ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
+ // ReSharper disable CppClangTidyModernizeUseNodiscard
+ // ReSharper disable CppClangTidyHicppUseEqualsDefault
+ // ReSharper disable CppClangTidyModernizeUseEqualsDefault
 
 namespace ocilib
 {
     /**
      * @namespace ocilib::core
-     * @brief OCILIB internal core classes 
+     * @brief OCILIB internal core classes
      *
      */
-     
+
     namespace core
     {
 #ifdef OCILIBPP_HAS_ENABLEIF
@@ -91,10 +91,10 @@ namespace ocilib
         */
         Raw MakeRaw(AnyPointer result, unsigned int size);
 
-       /**
-        * @brief Internal usage.
-        * Determine if the given type is a supported numeric type
-        */   
+        /**
+         * @brief Internal usage.
+         * Determine if the given type is a supported numeric type
+         */
         template<class T>
         struct SupportedNumeric
         {
@@ -109,10 +109,10 @@ namespace ocilib
                 IsSame<T, Number>::value> Type;
         };
 
-       /**
-        * @brief Internal usage.
-        * Determine if the given type is a supported numeric type
-        */   
+        /**
+         * @brief Internal usage.
+         * Determine if the given type is a supported numeric type
+         */
         template<class T>
         struct SupportedVectorNumeric
         {
@@ -201,10 +201,10 @@ namespace ocilib
             unsigned int _flags;
         };
 
-       /**
-        * @brief Internal usage.
-        * Provide a buffer class with RAII capabilities
-        */  
+        /**
+         * @brief Internal usage.
+         * Provide a buffer class with RAII capabilities
+         */
         template< typename T>
         class ManagedBuffer
         {
@@ -232,10 +232,10 @@ namespace ocilib
             Safe
         };
 
-       /**
-        * @brief Internal usage.
-        * SynchronizationGuard object
-        */ 
+        /**
+         * @brief Internal usage.
+         * SynchronizationGuard object
+         */
         class SynchronizationGuard
         {
         public:
@@ -253,10 +253,10 @@ namespace ocilib
             MutexHandle _mutex;
         };
 
-       /**
-        * @brief Internal usage.
-        * Base class for types that can be locked
-        */ 
+        /**
+         * @brief Internal usage.
+         * Base class for types that can be locked
+         */
         class Synchronizable
         {
         public:
@@ -274,10 +274,10 @@ namespace ocilib
             SynchronizationGuard* _guard;
         };
 
-       /**
-        * @brief Internal usage.
-        * Map supporting concurrent access from multiple threads
-        */ 
+        /**
+         * @brief Internal usage.
+         * Map supporting concurrent access from multiple threads
+         */
         template<class K, class V>
         class ConcurrentMap : public Synchronizable
         {
@@ -298,10 +298,10 @@ namespace ocilib
 
         };
 
-       /**
-        * @brief Internal usage.
-        * List supporting concurrent access from multiple threads
-        */ 
+        /**
+         * @brief Internal usage.
+         * List supporting concurrent access from multiple threads
+         */
         template<class T>
         class ConcurrentList : public Synchronizable
         {
@@ -330,10 +330,10 @@ namespace ocilib
         /* Forward declaration */
         class HandleStore;
 
-       /**
-        * @brief Internal usage.
-        * Interface for handling ownership and relationship of a C API handle
-        */ 
+        /**
+         * @brief Internal usage.
+         * Interface for handling ownership and relationship of a C API handle
+         */
         class Handle
         {
         public:
@@ -342,7 +342,8 @@ namespace ocilib
             virtual ConcurrentList<Handle*>& GetChildren() = 0;
             virtual void DetachFromHolders() = 0;
             virtual void DetachFromParent() = 0;
-            virtual HandleStore* GetStore() = 0;
+            virtual HandleStore* GetStore() const = 0;
+            virtual Handle* GetParent() const = 0;
         };
 
         /**
@@ -353,7 +354,7 @@ namespace ocilib
         {
         public:
 
-            HandleStore(SynchronizationGuard * guard);
+            HandleStore(SynchronizationGuard* guard);
 
             template <class T>
             T Get(AnyPointer ptr);
@@ -421,15 +422,14 @@ namespace ocilib
 
                 T GetHandle() const;
 
-                Handle* GetParent() const;
-
                 AnyPointer GetExtraInfos() const;
                 void  SetExtraInfos(AnyPointer extraInfo);
 
                 ConcurrentList<Handle*>& GetChildren() override;
                 void DetachFromHolders() override;
                 void DetachFromParent() override;
-                HandleStore* GetStore() override;
+                HandleStore* GetStore() const override;
+                Handle* GetParent() const override;
 
             private:
 

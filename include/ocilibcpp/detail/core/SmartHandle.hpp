@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,15 +28,14 @@ namespace ocilib
 {
     namespace core
     {
-
         template<class T>
         HandleHolder<T>::SmartHandle::SmartHandle
         (
             HandleHolder* holder, T handle, bool allocated,
             SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent
         )
-            :  _guard(GetSynchronizationMode()), _handle(handle), _allocated(allocated),
-               _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store{nullptr}
+            : _guard(GetSynchronizationMode()), _handle(handle), _allocated(allocated),
+            _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store{ nullptr }
         {
             _holders.SetGuard(&_guard);
             _children.SetGuard(&_guard);
@@ -47,7 +46,7 @@ namespace ocilib
             }
 
             HandleStore::GetStoreForHandle(parent).Set<SmartHandle*>(handle, this);
-            
+
             Acquire(holder);
 
             if (_parent && _handle)
@@ -78,7 +77,7 @@ namespace ocilib
 
             if (_parent)
             {
-                HandleStore::GetStoreForHandle(_parent).Set<SmartHandle*>(_handle, nullptr);
+                HandleStore::GetStoreForHandle(_parent).template Set<SmartHandle*>(_handle, nullptr);
             }
 
             if (_freeNotifyFunc)
@@ -121,12 +120,12 @@ namespace ocilib
 
         template<class T>
         SynchronizationMode HandleHolder<T>::SmartHandle::GetSynchronizationMode()
-        {  
+        {
             if ((Environment::GetMode() & Environment::Threaded) == Environment::Threaded)
             {
                 return support::HandleStoreResolver<T>::SynchMode;
             }
-           
+
             return SynchronizationMode::Unsafe;
         }
 
@@ -153,12 +152,6 @@ namespace ocilib
         T HandleHolder<T>::SmartHandle::GetHandle() const
         {
             return _handle;
-        }
-
-        template<class T>
-        Handle* HandleHolder<T>::SmartHandle::GetParent() const
-        {
-            return _parent;
         }
 
         template<class T>
@@ -192,11 +185,16 @@ namespace ocilib
             _parent = nullptr;
         }
 
-        template<class T>    
-        HandleStore* HandleHolder<T>::SmartHandle::GetStore()
+        template<class T>
+        HandleStore* HandleHolder<T>::SmartHandle::GetStore() const
         {
             return _store;
         }
+
+        template<class T>
+        Handle* HandleHolder<T>::SmartHandle::GetParent() const
+        {
+            return _parent;
+        }
     }
 }
- 

@@ -1,3 +1,34 @@
+2026-05-19 Version 4.9.0 Vincent Rogier vince.rogier@ocilib.net
+
+    * Enhancements (C API)
+   
+        - Issue 381 : Enhancement for computing bind variables without executing statement (C API)
+            * Added OCI_GetParseBindNames()
+
+    * Enhancements (C++ API)
+
+        - Issue 381 : Enhancement for computing bind variables without executing statement (C++ API):
+            * Added Statement::GetParseBindNames()
+         
+    * Fixes (C API)
+    
+        - Issue 382 : Warnings when opening a connection in password  during grace period
+      
+    * Fixes (C++ API)
+        - Issue 379 : Issues in creating collection of user defined type
+        - Issue 383 : Compilation error on macOS
+        - Issue 387 : Message::GetPayload<Raw>() always return an empty Raw of size 0
+
+    * Documentation
+    
+        - Fixed all typos in the documentation (C and C++ APIs)
+        - Added some refinements
+   
+    * Miscellaneous
+    
+		- Updated compilers for MS Windows prebuilt binaries to VS2022 17.14.32
+        - Various minor internal changes, added checks and fixes found by static analysis
+   
 2025-05-13 Version 4.8.0 Vincent Rogier vince.rogier@ocilib.net
 
   * Enhancements (C API)
@@ -1891,7 +1922,7 @@
           - the trailing null character was missing if the binded string had been shortened by some PL/SQL code or user
           - Internal initialization of bind array of data lengths: the length was including null terminator character and could lead to some memory corruptions
       - Fixed some demo example codes 
-      - Fixed computation of internal OCI_Object sub objects offsets in their parents’ indicator array (could have caused segfaults and/or bad indicator values)
+      - Fixed computation of internal OCI_Object sub objects offsets in their parentsâ€™ indicator array (could have caused segfaults and/or bad indicator values)
       - Fixed problems with OCI_Elem internal null indicators:
           - In some cases, a segfault caused by a null pointer could happened
           - For OCI_Object handles held by an OCI_Elem handle, the object internal indicator structure was not properly set/retrieved

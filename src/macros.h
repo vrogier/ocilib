@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -453,11 +453,11 @@ ExitLabel:                          \
 
 #define ARRAY_GET_AT(ptr, size, offset) \
                                         \
-    (((ub1 *) (ptr)) + (size_t)((size)*i))
+    (((ub1 *) (ptr)) + (size_t)((size)*offset))
 
 #define ARRAY_SET_AT(ptr, type, offset, value) \
                                                \
-    *(type*)(ARRAY_GET_AT(ptr, sizeof(type), i)) = (type) (value);
+    *(type*)(ARRAY_GET_AT(ptr, sizeof(type), offset)) = (type) (value);
 
 #define IS_STRING_VALID(s) ((s) && ((s)[0]))
 
@@ -490,11 +490,13 @@ ExitLabel:                          \
 
 #define LIST_ATOMIC_OPERATION(list, exp)                    \
                                                             \
-    OcilibListLock(list);                                   \
-    WARNING_DISABLE_UNSAFE_CONVERT                          \
-    exp                                                     \
-    WARNING_RESTORE_UNSAFE_CONVERT                          \
-    OcilibListUnlock(list);                                 \
+    if (OcilibListLock(list))                               \
+    {                                                       \
+        WARNING_DISABLE_UNSAFE_CONVERT                      \
+        exp                                                 \
+        WARNING_RESTORE_UNSAFE_CONVERT                      \
+        OcilibListUnlock(list);                             \
+    }                                                       \
 
 #define LIST_ATOMIC_FOREACH(list, cb)                       \
                                                             \

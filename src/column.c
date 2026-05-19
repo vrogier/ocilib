@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -572,7 +572,7 @@ boolean OcilibColumnRetrieveInfo
         CHECK_NULL(col->typinf);
     }
 
-    /* Check if the colulmn is XMLTYPE */
+    /* Check if the column is XMLTYPE */
 
     if (IS_XMLTYPE(col->typinf))
     {

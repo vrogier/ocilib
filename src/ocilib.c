@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
@@ -6504,6 +6504,16 @@ const otext* OCI_API OCI_GetSQLVerb
 {
     CALL_IMPL(OcilibStatementGetSqlVerb, stmt);
 }
+
+boolean OCI_API OCI_GetParseBindNames
+(
+    OCI_Statement* stmt,
+    unsigned int * count,
+    const otext*** names
+)
+ {
+     CALL_IMPL(OcilibStatementGetParseBindNames, stmt, count, names);
+ }
 
 OCI_Error* OCI_API OCI_GetBatchError
 (

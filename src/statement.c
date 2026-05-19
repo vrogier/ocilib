@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -270,6 +270,129 @@ static boolean OcilibStatementFreeAllBinds
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OcilibStatementFreeParseBinds
+ * --------------------------------------------------------------------------------------------- */
+
+static boolean OcilibStatementFreeParseBinds
+(
+    OCI_Statement* stmt
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_STATEMENT, stmt
+    )
+
+    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+
+    if (NULL != stmt->parse_binds)
+    {
+        for (unsigned int i = 0; i < stmt->parse_binds->count; i++)
+        {
+            FREE(stmt->parse_binds->names[i]);
+        }
+
+        FREE(stmt->parse_binds->names);
+        FREE(stmt->parse_binds);
+    }
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStatementGetParseBinds
+ * --------------------------------------------------------------------------------------------- */
+
+static boolean OcilibStatementGetParseBinds
+(
+    OCI_Statement* stmt
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_STATEMENT, stmt
+    )
+
+    OraText** bvnp = NULL;
+    ub1*      bvnl = NULL;
+    OraText** invp = NULL;
+    ub1*      inpl = NULL;
+    ub1*      dupl = NULL;
+    OCIBind*  hndl = NULL;
+
+    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+
+    if (NULL == stmt->parse_binds)
+    {
+       ub4 count = 0;
+
+       CHECK_ATTRIB_GET
+       (
+           OCI_HTYPE_STMT, OCI_ATTR_BIND_COUNT,
+           stmt->stmt, &count, NULL,
+           stmt->con->err
+       )
+
+       stmt->parse_binds = (OCI_ParseBinds*)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OCI_ParseBinds), 1, TRUE);
+       stmt->parse_binds->names = (otext**)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(otext*), count, TRUE);
+
+       sb4 found = 0;
+       bvnp = (OraText**)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OraText*), count, TRUE);
+       bvnl = (ub1*)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(ub1), count, TRUE);
+       invp = (OraText**)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OraText*), count, TRUE);
+       inpl = (ub1*)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(ub1), count, TRUE);
+       dupl = (ub1*)OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(ub1), count, TRUE);
+       hndl = (OCIBind*) OcilibMemoryAlloc(OCI_IPC_VOID, sizeof(OCIBind*), count, TRUE);
+
+       CHECK_OCI
+       (
+           stmt->con->err,
+           OCIStmtGetBindInfo,
+           stmt->stmt,
+           stmt->con->err,
+           count, 1, &found,
+           bvnp, bvnl,
+           invp, inpl,
+           dupl, NULL
+       )
+
+       for (sb4 i = 0; i < found; i++)
+       {
+           if (stmt->bind_mode == OCI_BIND_BY_POS || 0 == dupl[i])
+           {
+               stmt->parse_binds->count++;
+               stmt->parse_binds->names[i] = OcilibStringDuplicateFromDBString
+                                            (
+                                                (const dbtext*)bvnp[i],
+                                                (int)dbcharcount(bvnl[i])
+                                            );
+           }
+       }
+    }
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        FREE(bvnp)
+        FREE(bvnl)
+        FREE(invp)
+        FREE(inpl)
+        FREE(dupl)
+        FREE(hndl)
+    
+        if (FAILURE)
+        {
+            OcilibStatementFreeParseBinds(stmt);
+        }
+    
+        SET_RETVAL(NULL != stmt->parse_binds)
+    )
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OcilibStatementReset
  * --------------------------------------------------------------------------------------------- */
 
@@ -322,6 +445,10 @@ static boolean OcilibStatementReset
 
     CHECK(OcilibStatementFreeAllBinds(stmt))
 
+    /* free parsed binds */
+
+    CHECK(OcilibStatementFreeParseBinds(stmt))
+
     /* free bind map */
 
     if (NULL != stmt->map)
@@ -370,12 +497,13 @@ static boolean OcilibStatementReset
     FREE(stmt->sql)
     FREE(stmt->sql_id)
 
-    stmt->rsts   = NULL;
-    stmt->stmts  = NULL;
-    stmt->sql    = NULL;
-    stmt->sql_id = NULL;
-    stmt->map    = NULL;
-    stmt->batch  = NULL;
+    stmt->rsts        = NULL;
+    stmt->stmts       = NULL;
+    stmt->sql         = NULL;
+    stmt->sql_id      = NULL;
+    stmt->map         = NULL;
+    stmt->batch       = NULL;
+    stmt->parse_binds = NULL;
 
     stmt->nb_rs   = 0;
     stmt->nb_stmt = 0;
@@ -4332,6 +4460,39 @@ unsigned int OcilibStatementGetSqlCommand
     EXIT_FUNC()
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStatementGetParseBindNames
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_SYM_LOCAL boolean OcilibStatementGetParseBindNames
+(
+    OCI_Statement* stmt,
+    unsigned int * count,
+    const otext*** names
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ boolean, FALSE,
+        /* context */ OCI_IPC_STATEMENT, stmt
+    )
+
+    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
+    CHECK_PTR(OCI_IPC_VOID, count)
+    CHECK_PTR(OCI_IPC_VOID, names)
+
+    *count = 0;
+    *names = NULL;
+
+    CHECK(OcilibStatementGetParseBinds(stmt))
+
+    *count = stmt->parse_binds->count;
+    *names = (const otext**)stmt->parse_binds->names;
+
+    SET_SUCCESS()
+
+    EXIT_FUNC()
+}
 /* --------------------------------------------------------------------------------------------- *
  * OcilibStatementGetSqlVerb
  * --------------------------------------------------------------------------------------------- */

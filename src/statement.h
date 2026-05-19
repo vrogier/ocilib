@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -763,6 +763,13 @@ OCI_SYM_LOCAL unsigned int OcilibStatementGetSqlCommand
 OCI_SYM_LOCAL const otext * OcilibStatementGetSqlVerb
 (
     OCI_Statement* stmt
+);
+
+OCI_SYM_LOCAL boolean OcilibStatementGetParseBindNames
+(
+    OCI_Statement* stmt,
+    unsigned int * count,
+    const otext*** names
 );
 
 OCI_SYM_LOCAL OCI_Error * OcilibStatementGetBatchError

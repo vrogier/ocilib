@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,23 +109,23 @@ boolean OcilibDatabaseStartup
     con = OcilibConnectionCreate(db, user, pwd, sess_mode);
     CHECK_NULL(con)
 
-    /* alter OcilibDatabase */
+    /* alter database */
 
     stmt = OcilibStatementCreate(con);
     CHECK_NULL(stmt)
 
-    /* mount OcilibDatabase */
+    /* mount database */
 
     if (start_mode & OCI_DB_SPM_MOUNT)
     {
-        CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER OcilibDatabase MOUNT")))
+        CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE MOUNT")))
     }
 
-    /* open OcilibDatabase */
+    /* open database */
 
     if (start_mode & OCI_DB_SPM_OPEN)
     {
-        CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER OcilibDatabase OPEN")))
+        CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE OPEN")))
     }
 
     SET_SUCCESS()
@@ -226,25 +226,25 @@ boolean OcilibDatabaseShutdown
         )
     }
 
-    /* alter OcilibDatabase if we are not in abort mode */
+    /* alter database if we are not in abort mode */
 
     if (OCI_DB_SDF_ABORT != shut_flag)
     {
         stmt = OcilibStatementCreate(con);
         CHECK_NULL(stmt)
 
-        /* close OcilibDatabase */
+        /* close database */
 
         if (shut_mode & OCI_DB_SDM_CLOSE)
         {
-            CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER OcilibDatabase CLOSE NORMAL")))
+            CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE CLOSE NORMAL")))
         }
 
-        /* unmount OcilibDatabase */
+        /* unmount database */
 
         if (shut_mode & OCI_DB_SDM_DISMOUNT)
         {
-            CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER OcilibDatabase DISMOUNT")))
+            CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE DISMOUNT")))
         }
 
         OcilibStatementFree(stmt);

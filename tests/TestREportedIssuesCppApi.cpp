@@ -46,7 +46,7 @@ namespace TestCppApi
     }
     TEST(ReportedIssuesCppApi, Issue250)
     {
- 
+
         std::string ansiMessage;
         std::wstring wideMessage;
 
@@ -56,7 +56,7 @@ namespace TestCppApi
 
             Connection con(DBS, USR, PWD_WRONG);
         }
-        catch (const ocilib::Exception& ex)
+        catch (const Exception& ex)
         {
             ansiMessage = ex.what();
             wideMessage = ex.GetMessage();
@@ -74,7 +74,7 @@ namespace TestCppApi
 #endif
 
     TEST(ReportedIssuesCppApi, Issue309_NoDataFoundPlsqlWithError)
-    { 
+    {
         ExecDML(OTEXT("create table TestTableIssue309_1(code number, name varchar2(50))"));
 
         int errCode{};
@@ -100,7 +100,7 @@ namespace TestCppApi
 
             stmt.Execute(cmd);
         }
-        catch (const ocilib::Exception& e)
+        catch (const Exception& e)
         {
             errCode = e.GetOracleErrorCode();
         }
@@ -113,7 +113,7 @@ namespace TestCppApi
     }
 
     TEST(ReportedIssuesCppApi, Issue309_NoDataFoundSqlCallingPlsqlWithoutError)
-    {  
+    {
         ExecDML(OTEXT("create table TestTableIssue309_2(code number)"));
         ExecDML(OTEXT(
             R"(
@@ -126,12 +126,12 @@ namespace TestCppApi
             R"(
             CREATE OR REPLACE PACKAGE BODY TestPackageIssue309 IS
                 FUNCTION ReturnNumber return number
-	            AS
-		            result number;
-	            BEGIN
-	                select code into result from TestTableIssue309_2 where code = 1;
-	                return result;
-	            END;
+                AS
+                    result number;
+                BEGIN
+                    select code into result from TestTableIssue309_2 where code = 1;
+                    return result;
+                END;
             END;
             )"
         ));
@@ -154,7 +154,7 @@ namespace TestCppApi
                 counter++;
             }
         }
-        catch (const ocilib::Exception&)
+        catch (const Exception&)
         {
             exceptionOccured = true;
         }
@@ -170,7 +170,7 @@ namespace TestCppApi
     }
 
     TEST(ReportedIssuesCppApi, Issue309_NoDataFoundSqlWithoutError)
-    { 
+    {
         ExecDML(OTEXT("create table TestTableIssue309_3(code number, name varchar2(50))"));
 
         auto exceptionOccured{ false };
@@ -189,7 +189,7 @@ namespace TestCppApi
                 counter++;
             }
         }
-        catch (const ocilib::Exception&)
+        catch (const Exception&)
         {
             exceptionOccured = true;
         }
@@ -203,7 +203,7 @@ namespace TestCppApi
     }
 
     TEST(ReportedIssuesCppApi, Issue314)
-    { 
+    {
         auto exceptionOccured{ false };
 
         try
@@ -216,12 +216,12 @@ namespace TestCppApi
             int value = 2;
 
             stmt.Prepare(OTEXT("select * from dual where 1 > :value"));
-            stmt.Bind(OTEXT(":value"), value, ocilib::BindInfo::In);
+            stmt.Bind(OTEXT(":value"), value, BindInfo::In);
             auto bind = stmt.GetBind(1);
             bind.SetCharsetForm(CharsetFormValues::CharsetFormNational);
             stmt.ExecutePrepared();
         }
-        catch (const ocilib::Exception&)
+        catch (const Exception&)
         {
             exceptionOccured = true;
         }
@@ -232,7 +232,7 @@ namespace TestCppApi
     }
 
     TEST(ReportedIssuesCppApi, Issue325)
-    {  
+    {
         Environment::Initialize();
 
         Connection con(DBS, USR, PWD);
@@ -247,7 +247,7 @@ namespace TestCppApi
     }
 
     TEST(ReportedIssuesCppApi, Issue329)
-    {  
+    {
         Environment::Initialize(Environment::Threaded);
 
         Connection con(DBS, USR, PWD);
@@ -274,7 +274,7 @@ namespace TestCppApi
     }
 
     TEST(ReportedIssuesCppApi, Issue331)
-    {  
+    {
         auto expectedString = ToUpper(ostring(OTEXT("<element name=\"name\" type=\"str\"></element>")));
         Environment::Initialize();
         Environment::EnableWarnings(true);
@@ -296,21 +296,21 @@ namespace TestCppApi
     }
 
     TEST(ReportedIssuesCppApi, Issue355)
-    {  
-        Environment::Initialize(ocilib::Environment::Threaded);
+    {
+        Environment::Initialize(Environment::Threaded);
 
         Pool pool(DBS, USR, PWD, Pool::SessionPool, 1, 2);
 
         for (int i = 0; i < 3; ++i)
         {
-            ocilib::Connection connection = pool.GetConnection();
+            Connection connection = pool.GetConnection();
         }
 
         Environment::Cleanup();
     }
 
     TEST(ReportedIssuesCppApi, Issue351_Date)
-    { 
+    {
         Environment::Initialize();
 
         Connection con(DBS, USR, PWD);
@@ -326,7 +326,7 @@ namespace TestCppApi
         ASSERT_NE(str1, str2);
 
         Environment::Cleanup();
-   }
+    }
 
     TEST(ReportedIssuesCppApi, Issue351_Number)
     {
@@ -399,7 +399,7 @@ namespace TestCppApi
         {
             auto inititialzed = Environment::Initialized();
         }
-        catch (const ocilib::Exception& ex)
+        catch (const Exception& ex)
         {
             errCode = ex.GetInternalErrorCode();
             errType = ex.GetType();
@@ -415,12 +415,12 @@ namespace TestCppApi
 
         ostring errMessage;
         int errCode{};
-        size_t expectedCount{10};
+        size_t expectedCount{ 10 };
         size_t insertedCount{};
 
         try
         {
-            ocilib::Environment::Initialize(ocilib::Environment::Default | ocilib::Environment::Threaded);
+            Environment::Initialize(Environment::Default | Environment::Threaded);
             Connection conn(DBS, USR, PWD);
 
             std::vector<big_int> values;
@@ -430,21 +430,21 @@ namespace TestCppApi
             }
 
             ostring sql = OTEXT("begin insert into TestIssue377(value) values (:0); end;");
-            ocilib::Statement stmt(conn);
+            Statement stmt(conn);
             stmt.Prepare(sql);
             stmt.SetBindArraySize(static_cast<unsigned int>(values.size()));
-            stmt.Bind(OTEXT(":0"), values, ocilib::BindInfo::In);
+            stmt.Bind(OTEXT(":0"), values, BindInfo::In);
             stmt.ExecutePrepared();
 
             stmt.Execute(OTEXT("select value from TestIssue377"));
             auto rs = stmt.GetResultset();
             while (rs++)
             {
-                ASSERT_EQ(values[insertedCount],rs.Get<big_int>(1));
+                ASSERT_EQ(values[insertedCount], rs.Get<big_int>(1));
                 insertedCount++;
             }
         }
-        catch (const ocilib::Exception& ex) 
+        catch (const Exception& ex)
         {
             errMessage = ex.GetMessage();
             errCode = ex.GetOracleErrorCode();
@@ -454,9 +454,199 @@ namespace TestCppApi
         ASSERT_EQ(0, errCode);
         ASSERT_EQ(expectedCount, insertedCount);
 
-        ocilib::Environment::Cleanup();
-     
+        Environment::Cleanup();
+
         ExecDML(OTEXT("drop table TestIssue377"));
     }
+
+    TEST(ReportedIssuesCppApi, Issue379_Collection)
+    {
+        ExecDML(OTEXT("create or replace type Issue379Type is table of varchar2(255)"));
+
+        Environment::Initialize(Environment::Default);
+
+        auto pool = Pool(DBS, USR, PWD, Pool::ConnectionPool, 0, 1);
+        auto conn = pool.GetConnection();
+        auto type = TypeInfo(conn, OTEXT("Issue379Type"), ocilib::TypeInfo::Type);
+        auto coll = Collection<ostring>(type);
+        
+        ASSERT_EQ(0, coll.GetSize());
+
+        coll.Append(OTEXT("Value1"));
+
+        ASSERT_EQ(1, coll.GetSize());
+
+        Environment::Cleanup();
+    
+        ExecDML(OTEXT("drop type Issue379Type"));
+    }
+
+    TEST(ReportedIssuesCppApi, Issue379_Lob)
+    {
+        Environment::Initialize(Environment::Default);
+
+        auto pool = Pool(DBS, USR, PWD, Pool::ConnectionPool, 0, 1);
+        auto conn = pool.GetConnection();
+        auto lob = Clob(conn);
+
+        {
+            auto localConn = lob.GetConnection();
+            ASSERT_EQ(true, localConn.IsServerAlive());
+        }
+
+        ASSERT_EQ(false, lob.IsNull());
+        ASSERT_EQ(true, conn.IsServerAlive());
+
+        Environment::Cleanup();
+    }
+
+    TEST(ReportedIssuesCppApi, Issue379_File)
+    {
+        Environment::Initialize(Environment::Default);
+
+        auto pool = Pool(DBS, USR, PWD, Pool::ConnectionPool, 0, 1);
+        auto conn = pool.GetConnection();
+        auto file = File(conn);
+
+        {
+            auto localConn = file.GetConnection();
+            ASSERT_EQ(true, localConn.IsServerAlive());
+        }
+
+        ASSERT_EQ(false, file.IsNull());
+        ASSERT_EQ(true, conn.IsServerAlive());
+
+        Environment::Cleanup();
+    }
+
+    TEST(ReportedIssuesCppApi, Issue379_Statement)
+    {
+        Environment::Initialize(Environment::Default);
+
+        auto pool = Pool(DBS, USR, PWD, Pool::ConnectionPool, 0, 1);
+        auto conn = pool.GetConnection();
+        auto stmt = Statement(conn);
+
+        {
+            auto localConn = stmt.GetConnection();
+            ASSERT_EQ(true, localConn.IsServerAlive());
+        }
+
+        ASSERT_EQ(false, stmt.IsNull());
+        ASSERT_EQ(true, conn.IsServerAlive());
+
+        Environment::Cleanup();
+    }
+
+    TEST(ReportedIssuesCppApi, Issue381_BindByName)
+    {
+        Environment::Initialize(Environment::Default);
+
+        auto conn = Connection(DBS, USR, PWD);
+        auto stmt = Statement(conn);
+
+        stmt.Prepare(OTEXT("SELECT 1 FROM dual WHERE 1 = :abc and 2 = :def and 3 = :def"));
+
+        auto bindInfo = stmt.GetParseBindNames();
+
+        ASSERT_EQ(2, bindInfo.size());
+        ASSERT_EQ(ostring(OTEXT("ABC")), bindInfo[0]);
+        ASSERT_EQ(ostring(OTEXT("DEF")), bindInfo[1]);
+
+        Environment::Cleanup();
+    }
+
+    TEST(ReportedIssuesCppApi, Issue381_BindByPos)
+    {
+        Environment::Initialize(Environment::Default);
+
+        auto conn = Connection(DBS, USR, PWD);
+        auto stmt = Statement(conn);
+
+        stmt.SetBindMode(Statement::BindByPosition);
+        stmt.Prepare(OTEXT("SELECT 1 FROM dual WHERE 1 = :abc and 2 = :def and 3 = :def"));
+
+        auto bindInfo = stmt.GetParseBindNames();
+
+        ASSERT_EQ(3, bindInfo.size());
+        ASSERT_EQ(ostring(OTEXT("ABC")), bindInfo[0]);
+        ASSERT_EQ(ostring(OTEXT("DEF")), bindInfo[1]);
+        ASSERT_EQ(ostring(OTEXT("DEF")), bindInfo[2]);
+
+        Environment::Cleanup();
+    }
+
+    TEST(ReportedIssuesCppApi, Issue382)
+    {
+        ExecDML(OTEXT("drop user UserIssue382"));
+        ExecDML(OTEXT("drop profile ProfileIssue382"));
+
+        ExecDML(OTEXT("create profile ProfileIssue382 limit password_life_time 0.00001158 password_grace_time 1"));
+        ExecDML(OTEXT("create user UserIssue382 identified by UserIssue382"));
+        ExecDML(OTEXT("grant create session to UserIssue382"));
+        ExecDML(OTEXT("alter user UserIssue382 profile ProfileIssue382"));
+
+        Sleep(2000);
+
+        ostring errMessage;
+        int errCode{};
+
+        try
+        {
+            Environment::Initialize(Environment::Default | Environment::Threaded);
+            Connection conn(DBS, OTEXT("UserIssue382"), OTEXT("UserIssue382"));
+        }
+        catch (const Exception& ex)
+        {
+            errMessage = ex.GetMessage();
+            errCode = ex.GetOracleErrorCode();
+        }
+
+        ASSERT_EQ(true, errMessage.empty());
+        ASSERT_EQ(0, errCode);
+
+        try
+        {
+            Environment::Initialize(Environment::Default | Environment::Threaded);
+            Environment::EnableWarnings(true);
+            Connection conn(DBS, OTEXT("UserIssue382"), OTEXT("UserIssue382"));
+        }
+        catch (const Exception& ex)
+        {
+            errMessage = ex.GetMessage();
+            errCode = ex.GetOracleErrorCode();
+        }
+
+        ASSERT_EQ(false, errMessage.empty());
+        ASSERT_EQ(28098, errCode);
+
+
+        Environment::Cleanup();
+
+        ExecDML(OTEXT("drop user UserIssue382"));
+        ExecDML(OTEXT("drop profile ProfileIssue382"));
+    }
+
+    TEST(ReportedIssuesCppApi, Issue387)
+    { 
+        const auto msgTypeName = OTEXT("SYS.RAW");
+        
+        Environment::Initialize(Environment::Default);
+
+        auto conn = Connection(DBS, USR, PWD);   
+        auto msgType = TypeInfo(conn, msgTypeName, TypeInfo::Type);
+        auto msgRaw = Message(msgType);
+      
+        auto emptyRaw = msgRaw.GetPayload<Raw>();
+        ASSERT_EQ(0, emptyRaw.size());
+
+        msgRaw.SetPayload(Raw{ 0x01, 0x02, 0x03 });
+
+        auto validRaw = msgRaw.GetPayload<Raw>();
+        ASSERT_EQ(3, validRaw.size());
+
+        Environment::Cleanup();
+    }
 }
+
 

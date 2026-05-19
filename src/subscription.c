@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -249,7 +249,7 @@ OCI_Subscription * OcilibSubscriptionRegister
     )
 
     /* On MSVC, casting a function pointer to a data pointer generates a warning.
-       As there is no other to way to do regarding the OCI API, let's disable this
+       As there is no other way to do regarding the OCI API, let's disable this
        warning just the time to set the callback attribute to the subscription handle */
 
     WARNING_DISABLE_CAST_FUNC_TYPE

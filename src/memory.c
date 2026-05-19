@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -146,7 +146,7 @@ void * OcilibMemoryRealloc
 
             if (zero_fill)
             {
-                memset(((unsigned char*)block) + (block->size - size_diff), 0, size_diff);
+                memset(((unsigned char*)block) + (size - size_diff), 0, size_diff);
             }
 
             OcilibMemoryUpdateBytes(block->type, size_diff);

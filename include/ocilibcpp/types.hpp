@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,13 @@
 #include "ocilibcpp/core.hpp"
 #include "ocilibcpp/support.hpp"
 
-// ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
-// ReSharper disable CppClangTidyModernizeUseNodiscard
-// ReSharper disable CppClangTidyHicppSpecialMemberFunctions
-// ReSharper disable CppClangTidyReadabilityRedundantDeclaration
-// ReSharper disable CppFunctionIsNotImplemented
-// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
-// ReSharper disable CppClassCanBeFinal
+ // ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
+ // ReSharper disable CppClangTidyModernizeUseNodiscard
+ // ReSharper disable CppClangTidyHicppSpecialMemberFunctions
+ // ReSharper disable CppClangTidyReadabilityRedundantDeclaration
+ // ReSharper disable CppFunctionIsNotImplemented
+ // ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
+ // ReSharper disable CppClassCanBeFinal
 
 namespace ocilib
 {
@@ -41,9 +41,9 @@ namespace ocilib
     /**
     * @brief
     * Oracle Version enumerated values
-	* 
-	* @note
-	* This list is NOT exhaustive and contains only a list of well known released versions
+    *
+    * @note
+    * This list is NOT exhaustive and contains only a list of well known released versions
     *
     */
     enum OracleVersionValues
@@ -283,11 +283,11 @@ namespace ocilib
     */
     enum LobTypeValues
     {
-        /** */
+        /** Binary Large Object (BLOB) */
         LobBinary = OCI_BLOB,
-        /**  */
+        /** Character Large Object (CLOB) */
         LobCharacter = OCI_CLOB,
-        /**  */
+        /** National Character Large Object (NCLOB) */
         LobNationalCharacter = OCI_NCLOB
     };
 
@@ -307,9 +307,9 @@ namespace ocilib
     */
     enum LongTypeValues
     {
-        /** */
+        /** Binary LONG RAW */
         LongBinary = OCI_BLONG,
-        /**  */
+        /** Character LONG */
         LongCharacter = OCI_CLONG
     };
 
@@ -478,7 +478,7 @@ namespace ocilib
 
         char* _what;
         OCI_Statement* _pStatement;
-        OCI_Connection* _pConnnection;
+        OCI_Connection* _pConnection;
         unsigned int _row;
         ExceptionType _type;
         int _errLib;
@@ -781,7 +781,7 @@ namespace ocilib
               *  - This is the fastest possible way to shut down the database, but the next
               *    database startup may require instance recovery.
               *  - Therefore, this option should be used only in unusual circumstances */
-             ShutdownAbort = OCI_DB_SDF_ABORT
+            ShutdownAbort = OCI_DB_SDF_ABORT
         };
 
         /**
@@ -1125,7 +1125,7 @@ namespace ocilib
 
         /**
         * @brief
-        * Return the Localized string for the VEC_FLEXgiven LocalCode value
+        * Return the Localized string for the given LocalCode value
         *
         * @param code - Locale Code
         *
@@ -1724,12 +1724,12 @@ namespace ocilib
              *   - Time to wait for read operations completion from the database server
              *   - Requires Oracle 12cR1 client
              */
-             TimeoutReceive = OCI_NTO_RECEIVE,
-             /**
-              *   - Time to wait for a database round-trip to complete ( Client processing is not taken into account)
-              *   - Requires Oracle 18c client
-              */
-              TimeoutCall = OCI_NTO_CALL
+            TimeoutReceive = OCI_NTO_RECEIVE,
+            /**
+             *   - Time to wait for a database round-trip to complete ( Client processing is not taken into account)
+             *   - Requires Oracle 18c client
+             */
+            TimeoutCall = OCI_NTO_CALL
         };
 
         /**
@@ -2635,7 +2635,7 @@ namespace ocilib
 
         /**
         * @brief
-        * For value types, overrides HandleHolder copy constructor to perform assignment rather 
+        * For value types, overrides HandleHolder copy constructor to perform assignment rather
         * than ref counting management
         *
         * @param other - value to assign
@@ -2645,7 +2645,7 @@ namespace ocilib
 
         /**
          * @brief
-         * For value types, overrides HandleHolder assignment operator to perform assignment rather 
+         * For value types, overrides HandleHolder assignment operator to perform assignment rather
          * than ref counting management
          *
          * @param other - value to assign
@@ -2677,7 +2677,7 @@ namespace ocilib
         * @param format - format of the Number provided in parameter 'data'
         *
         * @note
-        * ForNumber formats, refer to the Oracle SQL documentation
+        * For Number formats, refer to the Oracle SQL documentation
         *
         * @note
         * Default connection Number format is computed from Environment::GetFormat()
@@ -2841,7 +2841,7 @@ namespace ocilib
 
         /**
          * @brief
-         * For value types, overrides HandleHolder copy constructor to perform assignment rather 
+         * For value types, overrides HandleHolder copy constructor to perform assignment rather
          * than ref counting management
          *
          * @param other - value to assign
@@ -2849,14 +2849,14 @@ namespace ocilib
          */
         Date(const Date& other);
 
-         /**
-         * @brief
-         * For value types, overrides HandleHolder assignment operator to perform assignment rather 
-         * than ref counting management
-         *
-         * @param other - value to assign
-         *
-         */
+        /**
+        * @brief
+        * For value types, overrides HandleHolder assignment operator to perform assignment rather
+        * than ref counting management
+        *
+        * @param other - value to assign
+        *
+        */
         Date& operator= (const Date& other) noexcept;
 
         /**
@@ -3066,7 +3066,7 @@ namespace ocilib
 
         /**
          * @brief
-         * Add or subtract days
+         * Add or substract days
          *
          * @param days   - Number of days to add/remove
          *
@@ -3075,7 +3075,7 @@ namespace ocilib
 
         /**
          * @brief
-         * Add or subtract months
+         * Add or substract months
          *
          * @param months   - Number of months to add/remove
          *
@@ -3317,19 +3317,19 @@ namespace ocilib
         */
         Interval(IntervalType type);
 
-       /**
-        * @brief
-        * For value types, overrides HandleHolder copy constructor to perform assignment rather 
-        * than ref counting management
-        *
-        * @param other - value to assign
-        *
-        */
+        /**
+         * @brief
+         * For value types, overrides HandleHolder copy constructor to perform assignment rather
+         * than ref counting management
+         *
+         * @param other - value to assign
+         *
+         */
         Interval(const Interval& other);
 
         /**
          * @brief
-         * For value types, overrides HandleHolder assignment operator to perform assignment rather 
+         * For value types, overrides HandleHolder assignment operator to perform assignment rather
          * than ref counting management
          *
          * @param other - value to assign
@@ -3757,7 +3757,7 @@ namespace ocilib
 
         /**
         * @brief
-        * For value types, overrides HandleHolder copy constructor to perform assignment rather 
+        * For value types, overrides HandleHolder copy constructor to perform assignment rather
         * than ref counting management
         *
         * @param other - value to assign
@@ -3767,7 +3767,7 @@ namespace ocilib
 
         /**
          * @brief
-         * For value types, overrides HandleHolder assignment operator to perform assignment rather 
+         * For value types, overrides HandleHolder assignment operator to perform assignment rather
          * than ref counting management
          *
          * @param other - value to assign
@@ -4029,10 +4029,10 @@ namespace ocilib
 
         /**
         * @brief
-        * Subtract the given two timestamp and store the result into the given Interval
+        * Substract the given two timestamp and store the result into the given Interval
         *
         * @param lsh    - Timestamp value
-        * @param rsh    - Timestamp to subtract
+        * @param rsh    - Timestamp to substract
         * @param result - result difference
         *
         * @note
@@ -5098,7 +5098,7 @@ namespace ocilib
         * Returns the object pointed by the reference
         *
         * @return
-        * The object may bu null is the current reference value is null
+        * The object may be null if the current reference value is null
         *
         */
         Object GetObject() const;
@@ -5164,13 +5164,13 @@ namespace ocilib
         XmlType(OCI_XmlType* pXmlType, core::Handle* parent = nullptr);
     };
 
-   /**
-     * @brief
-     * Object identifying the SQL data type VECTOR.
-     *
-     * This class wraps the OCILIB object handle OCI_Vector and its related methods
-     *
-     */
+    /**
+      * @brief
+      * Object identifying the SQL data type VECTOR.
+      *
+      * This class wraps the OCILIB object handle OCI_Vector and its related methods
+      *
+      */
     class Vector : public core::HandleHolder<OCI_Vector*>, public core::Streamable
     {
         friend class Resultset;
@@ -5184,17 +5184,17 @@ namespace ocilib
         */
         enum VectorFormatValues
         {
-            /** */
+            /** Flexible format */
             Flex = OCI_VEC_FLEX,
-            /** */
+            /** 8-bit integer format */
             Int8 = OCI_VEC_INT8,
-            /**  */
+            /** 32-bit floating point format */
             Float32 = OCI_VEC_FLOAT32,
-             /**  */
+            /** 64-bit floating point format */
             Float64 = OCI_VEC_FLOAT64,
-              /**  */
-            Binary = OCI_VEC_BINARY    
-       };
+            /** Binary format */
+            Binary = OCI_VEC_BINARY
+        };
 
         /**
         * @brief
@@ -5224,60 +5224,60 @@ namespace ocilib
         */
         Vector(const Connection& connection);
 
-       /**
-        * @brief
-        * Set the Vector content from a raw array of values
-        *
-        * @param values - values to set
-        * @param size   - number of element in the input buffer array
-        *
-       */
+        /**
+         * @brief
+         * Set the Vector content from a raw array of values
+         *
+         * @param values - values to set
+         * @param size   - number of element in the input buffer array
+         *
+        */
         template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
         void Set(T* values, unsigned int size);
-        
-       /**
-        * @brief
-        * Fills the given raw array with the Vector content
-        *
-        * @param values - input array buffer to fill
-        *
-        * @warning 
-        * The input buffer must be large enought to receive tyhe values.
-        * Use GetDimensions() to knwo rerquired number of elements.
-        *
-        * @warning
-        * T Type must match the format of the Vector current content :
-        * - VectorFormat::Int8 => char
-        * - VectorFormat::Float32 => char
-        * - VectorFormat::Float32 => char
-        * - VectorFormat::Binary => unsigned char
-        *
-        */
+
+        /**
+         * @brief
+         * Fills the given raw array with the Vector content
+         *
+         * @param values - input array buffer to fill
+         *
+         * @warning
+         * The input buffer must be large enough to receive the values.
+         * Use GetDimensionCount() to know the required number of elements.
+         *
+         * @warning
+         * T Type must match the format of the Vector current content :
+         * - VectorFormat::Int8 => char
+         * - VectorFormat::Float32 => float
+         * - VectorFormat::Float64 => double
+         * - VectorFormat::Binary => unsigned char
+         *
+         */
         template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
         void Get(T* values);
 
-       /**
-        * @brief
-        * Set the Vector content from a std::vector<T>
-        *
-        * @param values - values to set
-        *
-        */
+        /**
+         * @brief
+         * Set the Vector content from a std::vector<T>
+         *
+         * @param values - values to set
+         *
+         */
         template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
         void Set(const std::vector<T>& values);
 
-       /**
-        * @brief
-        * Returns the Vector content as a std::vector<T>
-        *
-        * @warning
-        * T Type must match the format of the Vector current content :
-        * - VectorFormat::Int8 => char
-        * - VectorFormat::Float32 => char
-        * - VectorFormat::Float32 => char
-        * - VectorFormat::Binary => unsigned char
-        *
-        */
+        /**
+         * @brief
+         * Returns the Vector content as a std::vector<T>
+         *
+         * @warning
+         * T Type must match the format of the Vector current content :
+         * - VectorFormat::Int8 => char
+         * - VectorFormat::Float32 => float
+         * - VectorFormat::Float64 => double
+         * - VectorFormat::Binary => unsigned char
+         *
+         */
         template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
         std::vector<T> Get();
 
@@ -5290,21 +5290,21 @@ namespace ocilib
 
         /**
         * @brief
-        * Return the format of the format
+        * Return the format of the vector
         *
         */
         VectorFormat GetFormat();
 
-       /**
-        * @brief
-        * Assign to the Vector object the value provided by the given string
-        *
-        * @param str        - textual representation of the vector
-        * @param format     - format of the vector contained in the input string
-        * @param dimensions - number of dimensions of the vector contained in the input string
-        *
-        *
-        */
+        /**
+         * @brief
+         * Assign to the Vector object the value provided by the given string
+         *
+         * @param str        - textual representation of the vector
+         * @param format     - format of the vector contained in the input string
+         * @param dimensions - number of dimensions of the vector contained in the input string
+         *
+         *
+         */
         void FromString(const ostring& str, VectorFormat format, unsigned int dimensions);
 
         /**
@@ -5810,9 +5810,9 @@ namespace ocilib
         */
         enum VectorTypeValues
         {
-            /** Vector is binded as an array in a regular DML array operation */
+            /** Vector is bound as an array in a regular DML array operation */
             AsArray = 1,
-            /** Vector is binded as a PL/SQL index by table */
+            /** Vector is bound as a PL/SQL index by table */
             AsPlSqlTable = 2
         };
 
@@ -6030,9 +6030,9 @@ namespace ocilib
         */
         enum BindModeValues
         {
-            /** Bind variables are binded by name */
+            /** Bind variables are bound by name */
             BindByPosition = OCI_BIND_BY_POS,
-            /** Bind variables are binded by position */
+            /** Bind variables are bound by position */
             BindByName = OCI_BIND_BY_NAME
         };
 
@@ -6197,7 +6197,7 @@ namespace ocilib
         /**
         * @brief
         * Execute the prepared statement, retrieve all resultsets, and call the given callback
-        * with adapted type wit for each row of each resultsets
+        * with adapted type for each row of each resultsets
         *
         * @tparam TAdapter       -  type of the adapter callback
         * @tparam TFetchCallback -  type of the fetch callback
@@ -6241,7 +6241,7 @@ namespace ocilib
         /**
         * @brief
         * Execute the given SQL statement, retrieve all resultsets, and call the given callback
-        * with adapted type wit for each row of each resultsets
+        * with adapted type for each row of each resultsets
         *
         * @tparam TAdapter       -  type of the adapter callback
         * @tparam TFetchCallback -  type of the fetch callback
@@ -6317,12 +6317,12 @@ namespace ocilib
         *
         * @note
         * SQL statements with a 'returning' clause can return multiple resultsets.
-        * When arrays of program variables are binded to the statement, Oracle will
+        * When arrays of program variables are bound to the statement, Oracle will
         * execute the statement for every row (iteration).
         * Each iteration generates a resultset that can be fetched like regular ones.
         *
         * @note
-        * Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implicit resultsets
+        * Starting with Oracle 12cR1, PL/SQL procedure and blocks can return multiple implicit resultsets
         * Refer to  Oracle documentation for more information.
         *
         */
@@ -6363,7 +6363,7 @@ namespace ocilib
 
         /**
         * @brief
-        * Allow different host variables to be binded using the same bind name or
+        * Allow different host variables to be bound using the same bind name or
         * position between executions of a prepared statement
         *
         * @param value - Rebinding mode allowed
@@ -6372,7 +6372,7 @@ namespace ocilib
         * Default value is false
         *
         * @warning
-        * When using rebinding feature, host variable re-binded to a previously allocated
+        * When using rebinding feature, host variable re-bound to a previously allocated
         * bind MUST be of the same data type !
         *
         */
@@ -6785,7 +6785,7 @@ namespace ocilib
 
         /**
         * @brief
-        * Set the piece size for dynamic fetch operations (XMLTYPE, LONGs) 
+        * Set the piece size for dynamic fetch operations (XMLTYPE, LONGs)
         *
         * @param value - maximum size for long buffer
         *
@@ -6794,7 +6794,7 @@ namespace ocilib
 
         /**
         * @brief
-        * Return the piece size for dynamic fetch operations (XMLTYPE, LONGs) 
+        * Return the piece size for dynamic fetch operations (XMLTYPE, LONGs)
         *
         * @note
         * Default value is set to constant OCI_SIZE_PIECE_DYNAMIC_FETCH
@@ -6848,6 +6848,24 @@ namespace ocilib
         *
         */
         ostring GetSQLVerb() const;
+
+        /**
+        * @brief
+        * Return the list of parsed bind names after an Prepare() Parse() call.
+        *
+        * @warning
+        * Returned names are upper case and do not contain leading ':' character.
+        *
+        * @warning
+        * GetParseBindNames() returns information computed by OCI client library, not by OCILIB.
+        * Result is uncorrelated to any bind operation.
+        *
+        * @note
+        * List of parsed bind on success or empty list if no bind found
+        *
+        */
+
+        std::vector<ostring> GetParseBindNames() const;
 
         /**
         * @brief
@@ -7109,7 +7127,7 @@ namespace ocilib
         * @param offset  - Fetch offset
         *
         * @warning
-        * hSeek() works ONLY for scrollable resultsets
+        * Seek() works ONLY for scrollable resultsets
         *
         * @note
         * If you intend to use Seek() on a scrollable statement and if any of the
@@ -7591,7 +7609,7 @@ namespace ocilib
 
     private:
 
-        Subscription(OCI_Subscription* pSubcription);
+        Subscription(OCI_Subscription* pSubscription);
     };
 
     /**
@@ -8995,7 +9013,7 @@ namespace ocilib
          *
          * @param connection - Database connection
          * @param table      - Queue table name
-         * @param compatible - Optional database version with witch the queue table has to migrate
+         * @param compatible - Optional database version with which the queue table has to migrate
          *
          * @note
          * Possible values for parameter 'compatible' :
@@ -9465,7 +9483,7 @@ namespace ocilib
 #define OCILIB_DEFINE_FLAG_OPERATORS(T) \
         inline core::Flags<T> operator | (T a, T b) { return core::Flags<T>(a) | core::Flags<T>(b); } \
 
-    OCILIB_DEFINE_FLAG_OPERATORS(Environment::EnvironmentFlagsValues)
+        OCILIB_DEFINE_FLAG_OPERATORS(Environment::EnvironmentFlagsValues)
         OCILIB_DEFINE_FLAG_OPERATORS(Environment::SessionFlagsValues)
         OCILIB_DEFINE_FLAG_OPERATORS(Environment::StartFlagsValues)
         OCILIB_DEFINE_FLAG_OPERATORS(Environment::StartModeValues)

@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,14 +120,22 @@ void OcilibErrorSet
 #endif 
 
     const size_t format_len = ostrlen(format);
-    const size_t message_len = message ? ostrlen(message) : 0;
-    const size_t location_len = location ? strlen(location) : 0;
-    const size_t total_len = format_len + message_len + location_len;
+
+    size_t message_len = message ? ostrlen(message) : 0;
+    size_t location_len = location ? strlen(location) : 0;
 
     /* allocate storage for location */
     if (err->location_len < location_len)
     {
-        err->location = realloc(err->location, (location_len + 1) * sizeof(otext));
+        otext* buffer = realloc(err->location, (location_len + 1) * sizeof(otext));
+        if (buffer != NULL)
+        {
+            err->location = buffer;
+        }
+        else
+        {
+            location_len = err->location_len;
+        }
     }
 
     /* convert location if needed */
@@ -135,11 +143,21 @@ void OcilibErrorSet
     OcilibStringAnsiToNative(location, err->location, (unsigned int) location_len);
     err->location_len = max(err->location_len, (unsigned int) location_len);
 
+    const size_t total_len = format_len + message_len + location_len;
+    
     /* allocate storage for message */
 
     if (err->message_len < total_len)
     {
-        err->message = realloc(err->message, (total_len + 1) * sizeof(otext));
+        otext* buffer = realloc(err->message, (total_len + 1) * sizeof(otext));
+        if (buffer != NULL)
+        {
+            err->message = buffer;
+        }
+        else
+        {
+            message_len = err->message_len;
+        }
     }
 
     /* format message */
@@ -358,7 +376,7 @@ OCI_Connection * OcilibErrorGetConnection
         case OCI_IPC_LONG:
             return ((OCI_Long*)err->source_ptr)->stmt->con;
         case OCI_IPC_OBJECT:
-            return ((OCI_Statement*)err->source_ptr)->con;
+            return ((OCI_Object*)err->source_ptr)->con;
         case OCI_IPC_COLLECTION:
             return ((OCI_Coll*)err->source_ptr)->con;
         case OCI_IPC_ITERATOR:

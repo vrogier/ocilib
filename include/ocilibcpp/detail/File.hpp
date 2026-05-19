@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,132 +22,136 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
+ // ReSharper disable CppClangTidyHicppUseEqualsDefault
+ // ReSharper disable CppClangTidyModernizeUseEqualsDefault
 
 namespace ocilib
 {
 
-inline File::File()
-{
-}
+    inline File::File()
+    {
+    }
 
-inline File::File(const Connection &connection)
-{
-    AcquireAllocated
-    (
-        core::Check(OCI_FileCreate(connection, OCI_BFILE)), 
-        connection.GetHandle()
-    );
-}
+    inline File::File(const Connection& connection)
+    {
+        AcquireAllocated
+        (
+            core::Check(OCI_FileCreate(connection, OCI_BFILE)),
+            connection.GetHandle()
+        );
+    }
 
-inline File::File(const Connection &connection, const ostring& directory, const ostring& name)
-{
-    AcquireAllocated
-    (
-        core::Check(OCI_FileCreate(connection, OCI_BFILE)), 
-        connection.GetHandle()
-    );
+    inline File::File(const Connection& connection, const ostring& directory, const ostring& name)
+    {
+        AcquireAllocated
+        (
+            core::Check(OCI_FileCreate(connection, OCI_BFILE)),
+            connection.GetHandle()
+        );
 
-    SetInfos(directory, name);
-}
+        SetInfos(directory, name);
+    }
 
-inline File::File(OCI_File *pFile, core::Handle *parent)
-{
-    AcquireTransient(pFile,parent);
-}
+    inline File::File(OCI_File* pFile, core::Handle* parent)
+    {
+        AcquireTransient(pFile, parent);
+    }
 
-inline Raw File::Read(unsigned int size)
-{
-    core::ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
+    inline Raw File::Read(unsigned int size)
+    {
+        core::ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
 
-    size = core::Check(OCI_FileRead(*this, static_cast<AnyPointer>(buffer), size));
+        size = core::Check(OCI_FileRead(*this, static_cast<AnyPointer>(buffer), size));
 
-    return core::MakeRaw(buffer, size);
-}
+        return core::MakeRaw(buffer, size);
+    }
 
-inline bool File::Seek(SeekMode seekMode, big_uint offset)
-{
-    return (core::Check(OCI_FileSeek(*this, offset, seekMode)) == TRUE);
-}
+    inline bool File::Seek(SeekMode seekMode, big_uint offset)
+    {
+        return (core::Check(OCI_FileSeek(*this, offset, seekMode)) == TRUE);
+    }
 
-inline File File::Clone() const
-{
-    File result(GetConnection());
+    inline File File::Clone() const
+    {
+        File result(GetConnection());
 
-    core::Check(OCI_FileAssign(result, *this));
+        core::Check(OCI_FileAssign(result, *this));
 
-    return result;
-}
+        return result;
+    }
 
-inline bool File::Equals(const File &other) const
-{
-    return (core::Check(OCI_FileIsEqual(*this, other)) == TRUE);
-}
+    inline bool File::Equals(const File& other) const
+    {
+        return (core::Check(OCI_FileIsEqual(*this, other)) == TRUE);
+    }
 
-inline big_uint File::GetOffset() const
-{
-    return core::Check(OCI_FileGetOffset(*this));
-}
+    inline big_uint File::GetOffset() const
+    {
+        return core::Check(OCI_FileGetOffset(*this));
+    }
 
-inline big_uint File::GetLength() const
-{
-    return core::Check(OCI_FileGetSize(*this));
-}
+    inline big_uint File::GetLength() const
+    {
+        return core::Check(OCI_FileGetSize(*this));
+    }
 
-inline Connection File::GetConnection() const
-{
-    return Connection
-    (
-        core::Check(OCI_FileGetConnection(*this)), 
-        Environment::GetEnvironmentHandle(),
-        false
-    );
-}
+    inline Connection File::GetConnection() const
+    {
+        core::Handle* selfHandle = this->GetHandle();
+        core::Handle* parentHandle = selfHandle ? selfHandle->GetParent() : nullptr;
+        core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : Environment::GetEnvironmentHandle();
 
-inline bool File::Exists() const
-{
-    return (core::Check(OCI_FileExists(*this)) == TRUE);
-}
+        return Connection
+        (
+            core::Check(OCI_FileGetConnection(*this)),
+            connectionParent,
+            false
+        );
+    }
 
-inline void File::SetInfos(const ostring& directory, const ostring& name)
-{
-    core::Check(OCI_FileSetName(*this, directory.c_str(), name.c_str()));
-}
+    inline bool File::Exists() const
+    {
+        return (core::Check(OCI_FileExists(*this)) == TRUE);
+    }
 
-inline ostring File::GetName() const
-{
-    return core::MakeString(core::Check(OCI_FileGetName(*this)));
-}
+    inline void File::SetInfos(const ostring& directory, const ostring& name)
+    {
+        core::Check(OCI_FileSetName(*this, directory.c_str(), name.c_str()));
+    }
 
-inline ostring File::GetDirectory() const
-{
-    return core::MakeString(core::Check(OCI_FileGetDirectory(*this)));
-}
+    inline ostring File::GetName() const
+    {
+        return core::MakeString(core::Check(OCI_FileGetName(*this)));
+    }
 
-inline void File::Open()
-{
-    core::Check(OCI_FileOpen(*this));
-}
+    inline ostring File::GetDirectory() const
+    {
+        return core::MakeString(core::Check(OCI_FileGetDirectory(*this)));
+    }
 
-inline bool File::IsOpened() const
-{
-    return (core::Check(OCI_FileIsOpen(*this)) == TRUE);
-}
+    inline void File::Open()
+    {
+        core::Check(OCI_FileOpen(*this));
+    }
 
-inline void File::Close()
-{
-    core::Check(OCI_FileClose(*this));
-}
+    inline bool File::IsOpened() const
+    {
+        return (core::Check(OCI_FileIsOpen(*this)) == TRUE);
+    }
 
-inline bool File::operator == (const File& other) const
-{
-    return Equals(other);
-}
+    inline void File::Close()
+    {
+        core::Check(OCI_FileClose(*this));
+    }
 
-inline bool File::operator != (const File& other) const
-{
-    return (!(*this == other));
-}
+    inline bool File::operator == (const File& other) const
+    {
+        return Equals(other);
+    }
+
+    inline bool File::operator != (const File& other) const
+    {
+        return (!(*this == other));
+    }
 
 }

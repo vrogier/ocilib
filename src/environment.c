@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2025 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -604,6 +604,7 @@ OCISTMTGETNEXTRESULT         OCIStmtGetNextResult         = NULL;
 OCISERVERRELEASE2            OCIServerRelease2            = NULL;
 OCISODAOPERKEYSSET           OCISodaOperKeysSet           = NULL;
 OCIROWIDTOCHAR               OCIRowidToChar               = NULL;
+OCISTMTGETBINDINFO           OCIStmtGetBindInfo           = NULL;
 OCISODABULKINSERT            OCISodaBulkInsert            = NULL;    
 OCISERVERDATALENGTHGET       OCIServerDataLengthGet       = NULL;
 OCIVECTORTOARRAY             OCIVectorToArray             = NULL;
@@ -1199,6 +1200,10 @@ static void OcilibEnvironmentLoadSymbols()
         
     LIB_SYMBOL(Env.lib_handle, "OCIRowidToChar",               OCIRowidToChar,
                 OCIROWIDTOCHAR);
+
+    LIB_SYMBOL(Env.lib_handle, "OCIStmtGetBindInfo",           OCIStmtGetBindInfo,
+                OCISTMTGETBINDINFO);
+
                    
     LIB_SYMBOL(Env.lib_handle, "xaoSvcCtx",                    xaoSvcCtx,
                 XAOSVCCTX);
@@ -2009,7 +2014,11 @@ OCI_Error * OcilibEnvironmentGetLastError
         {
             err = NULL;
         }
-
+        
+        if (NULL != err && OCI_ERR_WARNING == err->type && !Env.warnings_on)
+        {
+            err = NULL;
+        }
     }
 
     return err;
@@ -2070,7 +2079,7 @@ boolean OcilibEnvironmentSetHAHandler
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* On MSVC, casting a function pointer to a data pointer generates a warning.
-       As there is no other to way to do regarding the OCI API, let's disable this
+       As there is no other way to do regarding the OCI API, let's disable this
        warning just the time to set the callback attribute to the environment handle */
 
     WARNING_DISABLE_CAST_FUNC_TYPE
