@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -102,14 +102,14 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_raw_handles.html'
 <p>OcilibCApiInstancesManagement</p>
 <p>OCILIB conception was focused on a full but closed encapsulation of OCI.</p>
 <p>All OCI headers, data types, prototypes are imported internally (linkage or runtime import).</p>
-<p>OCILIB public interface exposes only ISO C scalar types and OCILIB objects</p>
-<p>OCI is a wide and rich API that can deals with hundreds of options !</p>
-<p>OCILIB tries to implements most of it. But, sometimes in really specific contexts, it might be necessary to directly call OCI APIs in order to use uncovered OCI functionalities or options</p>
-<p>OCILIB proposes now a set of functions to retrieve its internal OCI handles</p>
+<p>OCILIB public interface exposes only ISO C scalar types and OCILIB objects.</p>
+<p>OCI is a wide and rich API that can deal with hundreds of options.</p>
+<p>OCILIB tries to implement most of it. But, sometimes in really specific contexts, it might be necessary to directly call OCI APIs in order to use uncovered OCI functionalities or options.</p>
+<p>OCILIB proposes a set of functions to retrieve its internal OCI handles.</p>
 <dl class="section warning"><dt>Warning</dt><dd></dd></dl>
-<p>The OCILIB author strongly <b>advises</b> against the use of internal handles, unless there is no other way to accomplish the task</p>
+<p>The OCILIB author strongly <b>advises</b> against the use of internal handles, unless there is no other way to accomplish the task.</p>
 <dl class="section warning"><dt>Warning</dt><dd></dd></dl>
-<p>Using these handles for direct application calls to OCI might lead to OCILIB instability or crash if handles are incorrectly used ! </p>
+<p>Using these handles for direct application calls to OCI might lead to OCILIB instability or crash if handles are incorrectly used. </p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -144,40 +144,40 @@ Functions</h2></td></tr>
 <tr class="memdesc:gaa99a6e08909c1d2818f1c8dbbf945547"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI Date Handle (OCIDate *) of an OCILIB OCI_Date object.  <br /></td></tr>
 <tr class="separator:gaa99a6e08909c1d2818f1c8dbbf945547"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab40870860068a818836b00cdbfb94fde"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_raw_handles.html#gab40870860068a818836b00cdbfb94fde">OCI_HandleGetTimestamp</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a> *tmsp)</td></tr>
-<tr class="memdesc:gab40870860068a818836b00cdbfb94fde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI Date time Handle (OCIDatetime *) of an OCILIB OCI_Timestamp object.  <br /></td></tr>
+<tr class="memdesc:gab40870860068a818836b00cdbfb94fde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI Datetime Handle (OCIDatetime *) of an OCILIB OCI_Timestamp object.  <br /></td></tr>
 <tr class="separator:gab40870860068a818836b00cdbfb94fde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7eb7312490fa38a58899dc09ba1088fe"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_raw_handles.html#ga7eb7312490fa38a58899dc09ba1088fe">OCI_HandleGetInterval</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv)</td></tr>
-<tr class="memdesc:ga7eb7312490fa38a58899dc09ba1088fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return OCI Interval Handle (OCIInterval *) of an OCILIB OCI_Interval object.  <br /></td></tr>
+<tr class="memdesc:ga7eb7312490fa38a58899dc09ba1088fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI Interval Handle (OCIInterval *) of an OCILIB OCI_Interval object.  <br /></td></tr>
 <tr class="separator:ga7eb7312490fa38a58899dc09ba1088fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad4ea5c4175505c174cbe452621c51643"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_raw_handles.html#gad4ea5c4175505c174cbe452621c51643">OCI_HandleGetObject</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> *obj)</td></tr>
-<tr class="memdesc:gad4ea5c4175505c174cbe452621c51643"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return OCI Object Handle (void *) of an OCILIB OCI_Object object.  <br /></td></tr>
+<tr class="memdesc:gad4ea5c4175505c174cbe452621c51643"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI Object Handle (void *) of an OCILIB OCI_Object object.  <br /></td></tr>
 <tr class="separator:gad4ea5c4175505c174cbe452621c51643"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaef72916da43fb3836554a9b0cb9070cf"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_raw_handles.html#gaef72916da43fb3836554a9b0cb9070cf">OCI_HandleGetColl</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a> *coll)</td></tr>
-<tr class="memdesc:gaef72916da43fb3836554a9b0cb9070cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return OCI Collection Handle (OCIColl *) of an OCILIB OCI_Coll object.  <br /></td></tr>
+<tr class="memdesc:gaef72916da43fb3836554a9b0cb9070cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI Collection Handle (OCIColl *) of an OCILIB OCI_Coll object.  <br /></td></tr>
 <tr class="separator:gaef72916da43fb3836554a9b0cb9070cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga34cbb1c327910e8bf31d19197f84bdc2"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_raw_handles.html#ga34cbb1c327910e8bf31d19197f84bdc2">OCI_HandleGetRef</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0e6344d3d91bcf39059894adc19f011a">OCI_Ref</a> *ref)</td></tr>
-<tr class="memdesc:ga34cbb1c327910e8bf31d19197f84bdc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return OCI Ref Handle (OCIRef *) of an OCILIB OCI_Ref object.  <br /></td></tr>
+<tr class="memdesc:ga34cbb1c327910e8bf31d19197f84bdc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI Ref Handle (OCIRef *) of an OCILIB OCI_Ref object.  <br /></td></tr>
 <tr class="separator:ga34cbb1c327910e8bf31d19197f84bdc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga71b2240a5c4d5d44d3b34f72a8df37c9"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_raw_handles.html#ga71b2240a5c4d5d44d3b34f72a8df37c9">OCI_HandleGetMutex</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gadf74bea9761211fd1de22991a88282aa">OCI_Mutex</a> *mutex)</td></tr>
-<tr class="memdesc:ga71b2240a5c4d5d44d3b34f72a8df37c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return OCI Mutex handle (OCIThreadMutex *) of an OCILIB OCI_Mutex object.  <br /></td></tr>
+<tr class="memdesc:ga71b2240a5c4d5d44d3b34f72a8df37c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI Mutex handle (OCIThreadMutex *) of an OCILIB OCI_Mutex object.  <br /></td></tr>
 <tr class="separator:ga71b2240a5c4d5d44d3b34f72a8df37c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga081836f9fcd1610340f3c93e9446a748"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_raw_handles.html#ga081836f9fcd1610340f3c93e9446a748">OCI_HandleGetThreadID</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *thread)</td></tr>
-<tr class="memdesc:ga081836f9fcd1610340f3c93e9446a748"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return OCI Thread ID (OCIThreadId *) of an OCILIB OCI_Thread object.  <br /></td></tr>
+<tr class="memdesc:ga081836f9fcd1610340f3c93e9446a748"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI Thread ID (OCIThreadId *) of an OCILIB OCI_Thread object.  <br /></td></tr>
 <tr class="separator:ga081836f9fcd1610340f3c93e9446a748"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga20eab50192d611e41d5aab7cdf696d29"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_raw_handles.html#ga20eab50192d611e41d5aab7cdf696d29">OCI_HandleGetThread</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a> *thread)</td></tr>
-<tr class="memdesc:ga20eab50192d611e41d5aab7cdf696d29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return OCI Thread handle (OCIThreadHandle *) of an OCILIB OCI_Thread object.  <br /></td></tr>
+<tr class="memdesc:ga20eab50192d611e41d5aab7cdf696d29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI Thread handle (OCIThreadHandle *) of an OCILIB OCI_Thread object.  <br /></td></tr>
 <tr class="separator:ga20eab50192d611e41d5aab7cdf696d29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac18ae63b26cf398247347648f043ac5c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_raw_handles.html#gac18ae63b26cf398247347648f043ac5c">OCI_HandleGetDirPathCtx</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:gac18ae63b26cf398247347648f043ac5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return OCI DirectPath Context handle (OCIDirPathCtx *) of an OCILIB OCI_DirPath object.  <br /></td></tr>
+<tr class="memdesc:gac18ae63b26cf398247347648f043ac5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI DirectPath Context handle (OCIDirPathCtx *) of an OCILIB OCI_DirPath object.  <br /></td></tr>
 <tr class="separator:gac18ae63b26cf398247347648f043ac5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga30e7ff08212f7a7fbd32303d2b1909a7"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_raw_handles.html#ga30e7ff08212f7a7fbd32303d2b1909a7">OCI_HandleGetDirPathColArray</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:ga30e7ff08212f7a7fbd32303d2b1909a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return OCI DirectPath Column array handle (OCIDirPathColArray *) of an OCILIB OCI_DirPath object.  <br /></td></tr>
+<tr class="memdesc:ga30e7ff08212f7a7fbd32303d2b1909a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI DirectPath Column array handle (OCIDirPathColArray *) of an OCILIB OCI_DirPath object.  <br /></td></tr>
 <tr class="separator:ga30e7ff08212f7a7fbd32303d2b1909a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae29987216dbc6da0cc6e5badd1e68754"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_raw_handles.html#gae29987216dbc6da0cc6e5badd1e68754">OCI_HandleGetDirPathStream</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7ad67a3c6bb06fa04fcf3eae68af599a">OCI_DirPath</a> *dp)</td></tr>
-<tr class="memdesc:gae29987216dbc6da0cc6e5badd1e68754"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return OCI DirectPath Stream handle (OCIDirPathStream *) of an OCILIB OCI_DirPath object.  <br /></td></tr>
+<tr class="memdesc:gae29987216dbc6da0cc6e5badd1e68754"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI DirectPath Stream handle (OCIDirPathStream *) of an OCILIB OCI_DirPath object.  <br /></td></tr>
 <tr class="separator:gae29987216dbc6da0cc6e5badd1e68754"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf34176334959c3415c18f649bdfe946a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_raw_handles.html#gaf34176334959c3415c18f649bdfe946a">OCI_HandleGetSubscription</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a> *sub)</td></tr>
-<tr class="memdesc:gaf34176334959c3415c18f649bdfe946a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return OCI Subscription handle (OCISubscription *) of an OCILIB OCI_Subscription object.  <br /></td></tr>
+<tr class="memdesc:gaf34176334959c3415c18f649bdfe946a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCI Subscription handle (OCISubscription *) of an OCILIB OCI_Subscription object.  <br /></td></tr>
 <tr class="separator:gaf34176334959c3415c18f649bdfe946a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -200,7 +200,7 @@ Functions</h2></td></tr>
 <p><code>#include &lt;api.h&gt;</code></p>
 
 <p>Return the OCI Environment Handle (OCIEnv *) of OCILIB library. </p>
-<dl class="section return"><dt>Returns</dt><dd>OCI Environment handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Environment handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -229,7 +229,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Context handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Context handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -258,7 +258,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Server handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Server handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -287,7 +287,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Error handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Error handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -316,7 +316,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Session handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Session handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -345,7 +345,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Transaction handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Transaction handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -374,7 +374,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Statement handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Statement handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -403,7 +403,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI LobLocator handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI LobLocator handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -432,7 +432,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI LobLocator handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI LobLocator handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -461,7 +461,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Date handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Date handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -483,14 +483,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the OCI Date time Handle (OCIDatetime *) of an OCILIB OCI_Timestamp object. </p>
+<p>Return the OCI Datetime Handle (OCIDatetime *) of an OCILIB OCI_Timestamp object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tmsp</td><td>- Timestamp handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Date time handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Datetime handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -512,14 +512,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return OCI Interval Handle (OCIInterval *) of an OCILIB OCI_Interval object. </p>
+<p>Return the OCI Interval Handle (OCIInterval *) of an OCILIB OCI_Interval object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">itv</td><td>- Interval handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Interval handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Interval handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -541,14 +541,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return OCI Object Handle (void *) of an OCILIB OCI_Object object. </p>
+<p>Return the OCI Object Handle (void *) of an OCILIB OCI_Object object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">obj</td><td>- Object handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Object handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Object handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -570,14 +570,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return OCI Collection Handle (OCIColl *) of an OCILIB OCI_Coll object. </p>
+<p>Return the OCI Collection Handle (OCIColl *) of an OCILIB OCI_Coll object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">coll</td><td>- Collection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Collection handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Collection handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -599,14 +599,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return OCI Ref Handle (OCIRef *) of an OCILIB OCI_Ref object. </p>
+<p>Return the OCI Ref Handle (OCIRef *) of an OCILIB OCI_Ref object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ref</td><td>- Ref handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Ref handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Ref handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -628,14 +628,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return OCI Mutex handle (OCIThreadMutex *) of an OCILIB OCI_Mutex object. </p>
+<p>Return the OCI Mutex handle (OCIThreadMutex *) of an OCILIB OCI_Mutex object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">mutex</td><td>- Mutex handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Mutex handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Mutex handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -657,14 +657,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return OCI Thread ID (OCIThreadId *) of an OCILIB OCI_Thread object. </p>
+<p>Return the OCI Thread ID (OCIThreadId *) of an OCILIB OCI_Thread object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">thread</td><td>- Thread handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Thread ID otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Thread ID, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_thread.html#afe0aa1738345837dcc19b6458be6ca59">ocilib::Thread::GetThreadId()</a>.</p>
 
@@ -688,14 +688,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return OCI Thread handle (OCIThreadHandle *) of an OCILIB OCI_Thread object. </p>
+<p>Return the OCI Thread handle (OCIThreadHandle *) of an OCILIB OCI_Thread object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">thread</td><td>- Thread handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Thread handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Thread handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -717,14 +717,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return OCI DirectPath Context handle (OCIDirPathCtx *) of an OCILIB OCI_DirPath object. </p>
+<p>Return the OCI DirectPath Context handle (OCIDirPathCtx *) of an OCILIB OCI_DirPath object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dp</td><td>- DirectPath handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI DirectPath Context handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI DirectPath Context handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -746,14 +746,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return OCI DirectPath Column array handle (OCIDirPathColArray *) of an OCILIB OCI_DirPath object. </p>
+<p>Return the OCI DirectPath Column array handle (OCIDirPathColArray *) of an OCILIB OCI_DirPath object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dp</td><td>- DirectPath handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI DirectPath Column array handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI DirectPath Column array handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -775,14 +775,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return OCI DirectPath Stream handle (OCIDirPathStream *) of an OCILIB OCI_DirPath object. </p>
+<p>Return the OCI DirectPath Stream handle (OCIDirPathStream *) of an OCILIB OCI_DirPath object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dp</td><td>- DirectPath handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI DirectPath Stream handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI DirectPath Stream handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -804,14 +804,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return OCI Subscription handle (OCISubscription *) of an OCILIB OCI_Subscription object. </p>
+<p>Return the OCI Subscription handle (OCISubscription *) of an OCILIB OCI_Subscription object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">sub</td><td>- Subscription handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>OCI Subscription otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCI Subscription handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -821,7 +821,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:15 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2024-01-15 21:00:00+01:00
+date: 2026-05-19 21:00:00+01:00
 layout: page
 slug: changelogs
 title: Changelogs
@@ -16,6 +16,17 @@ Click on a change log entry to see the full details.
 <br/>
 <br/>
 
+_[2026-05-19 . version 4.9.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.9.0.txt)_
+
+   * Added support for getting parse binds name without executing statements
+   * Minor enhancements
+   * Some C API and C++ API Bug fixes (see changelog for details)
+   
+_[2025-05-21 . version 4.8.0]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.8.0.txt)_
+
+   * Added support for VECTOR type
+   * Added the ability to get localized strings
+   * Some C API and C++ API Bug fixes (see changelog for details)
 
 _[2025-01-14 . version 4.7.7]({{ site.baseurl }}/changelogs/ocilib-changelog-v4.7.7.txt)_
 

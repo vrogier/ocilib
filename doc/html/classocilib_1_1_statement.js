@@ -82,5 +82,6 @@ var classocilib_1_1_statement =
     [ "GetLongMode", "classocilib_1_1_statement.html#ac4fa9a5423663808f9ef247d6890eb9e", null ],
     [ "GetSQLCommand", "classocilib_1_1_statement.html#a3fea776ad539e45d5209998e66a1ebb4", null ],
     [ "GetSQLVerb", "classocilib_1_1_statement.html#aaf137a7712dfdad9906e0a353da21248", null ],
+    [ "GetParseBindNames", "classocilib_1_1_statement.html#a1adbe0c8ee5747694dc70c6043993d6f", null ],
     [ "GetBatchErrors", "classocilib_1_1_statement.html#a664bd1d260f56cbe69183f4eda523b53", null ]
 ];

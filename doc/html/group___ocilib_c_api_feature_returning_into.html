@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,18 +100,18 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_feature_returning
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiCollections</p>
-<p>OCILIB supports the Oracle feature 'Returning into' for DML statements.</p>
-<p>Let's Oracle talk about this features:</p>
+<p>OCILIB supports the Oracle 'RETURNING INTO' feature for DML statements.</p>
+<p>From Oracle documentation:</p>
 <dl class="section user"><dt></dt><dd>'Using the RETURNING clause with a DML statement allows you to essentially combine two SQL statements into one, possibly saving you a server round-trip. This is accomplished by adding an extra clause to the traditional UPDATE, INSERT, and DELETE statements. The extra clause effectively adds a query to the DML statement. In the OCI, the values are returned to the application through the use of OUT bind variables.'</dd></dl>
-<p>OCILIB implements this features by providing a set of functions that allows to register output placeholders for the returned values. Once the DML is executed with <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a>, the output returned data is available through a regular resultset object that can be fetched.</p>
-<dl class="section note"><dt>Note</dt><dd>Array binding interface is also supported with 'returning into' DML statement. Every iteration (or row of given arrays) generates an resultset object. Once a resultset is fetched, the next on can be retrieved with <a class="el" href="group___ocilib_c_api_feature_returning_into.html#gab03e45a4bbd915a92b9f50ec9fd69865" title="Retrieve the next available resultset.">OCI_GetNextResultset()</a></dd></dl>
-<dl class="section user"><dt></dt><dd></dd></dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_Long are not supported for 'returning into' clause .This is a limitation imposed by Oracle.</dd>
+<p>OCILIB implements this feature by providing a set of functions that allow registering output placeholders for the returned values. Once the DML is executed with <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a>, the output returned data is available through a regular result set object that can be fetched.</p>
+<dl class="section note"><dt>Note</dt><dd>Array binding interface is also supported with 'RETURNING INTO' DML statements. Every iteration (or row of given arrays) generates a result set object. Once a result set is fetched, the next one can be retrieved with <a class="el" href="group___ocilib_c_api_feature_returning_into.html#gab03e45a4bbd915a92b9f50ec9fd69865" title="Retrieve the next available resultset.">OCI_GetNextResultset()</a>.</dd>
+<dd>
+OCI_Long objects are not supported for the 'RETURNING INTO' clause. This is a limitation imposed by Oracle.</dd>
 <dd>
 OCI_Column objects retrieved from output OCI_Resultset have the following particularities:</dd></dl>
 <ul>
-<li>their names are the provided bind names to the DML statement (by example, ':out1'). So any call to the functions OCI_GetXXX2() should be aware of it</li>
-<li>The columns detailed SQL attributes might be not all set or accurate. By example, the scale and precision are not set, the SQL type is the one chosen by OCILIB regarding the OCILIB object data type and might be slightly different from the real one.</li>
+<li>Their names are the provided bind names to the DML statement (for example, ':out1'). Any call to the OCI_GetXXX2() functions should be aware of this.</li>
+<li>The columns' detailed SQL attributes might not all be set or accurate. For example, the scale and precision are not set; the SQL type is the one chosen by OCILIB based on the OCILIB object data type and might be slightly different from the real one.</li>
 </ul>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
@@ -165,19 +165,19 @@ OCI_Column objects retrieved from output OCI_Resultset have the following partic
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga99fdd3a24d96ae27a9f31cae47041c27"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27">OCI_ConnectionCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Connection *OCI_API OCI_ConnectionCreate(const otext *db, const otext *user, const otext *pwd, unsigned int mode)</div><div class="ttdoc">Create a physical connection to an Oracle database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4b016f1bd7de508b1a919e34b12aa83d"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a></div><div class="ttdeci">struct OCI_Statement OCI_Statement</div><div class="ttdoc">Oracle SQL or PL/SQL statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00136">types.h:136</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gae0c7aa9c507975d21ca6c261081ba753"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a></div><div class="ttdeci">struct OCI_Resultset OCI_Resultset</div><div class="ttdoc">Collection of output columns from a select statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00163">types.h:163</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_feature_returning_into_html_ga2ae33801dc41fbb359ad2d6c23aec024"><div class="ttname"><a href="group___ocilib_c_api_feature_returning_into.html#ga2ae33801dc41fbb359ad2d6c23aec024">OCI_RegisterInt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterInt(OCI_Statement *stmt, const otext *name)</div><div class="ttdoc">Register an integer output bind placeholder.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the resultset handle from an executed statement.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gae26bdda7984f430630d372af5712bf47"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gae26bdda7984f430630d372af5712bf47">OCI_GetInt</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_GetInt(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current integer value of the column at the given index in the resultset.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the result set handle from an executed statement.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gae26bdda7984f430630d372af5712bf47"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gae26bdda7984f430630d372af5712bf47">OCI_GetInt</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_GetInt(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current integer value of the column at the given index in the result set.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_ga0af3308fa16a0a0e591b67c7ab7211a7"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga0af3308fa16a0a0e591b67c7ab7211a7">OCI_GetAffectedRows</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetAffectedRows(OCI_Statement *stmt)</div><div class="ttdoc">Return the number of rows affected by the SQL statement.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_ga155a95c89d2e8e162acb61383a56f77d"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga155a95c89d2e8e162acb61383a56f77d">OCI_StatementCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_StatementCreate(OCI_Connection *con)</div><div class="ttdoc">Create a statement object and return its handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga533ada0a945118e7e62e2357d956dcf2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare and Execute a SQL statement or PL/SQL block.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated to it (resultsets ...)</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga533ada0a945118e7e62e2357d956dcf2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare and execute a SQL statement or PL/SQL block in a single call.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated with it (result sets, bind variables,...</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gaaedce0c8f66eb60445fb759900d32f04"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Prepare(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare a SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gac4fae0835b45409e141eb1b4518fa89c"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Execute(OCI_Statement *stmt)</div><div class="ttdoc">Execute a prepared SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_transactions_html_gadc75ccc3334477a3b4ceeb609f7ed544"><div class="ttname"><a href="group___ocilib_c_api_transactions.html#gadc75ccc3334477a3b4ceeb609f7ed544">OCI_Commit</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Commit(OCI_Connection *con)</div><div class="ttdoc">Commit current pending changes.</div></div>
@@ -189,7 +189,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:gab03e45a4bbd915a92b9f50ec9fd69865"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the next available resultset.  <br /></td></tr>
 <tr class="separator:gab03e45a4bbd915a92b9f50ec9fd69865"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae3f953259ed63f97e7f568e1bef366d5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gae3f953259ed63f97e7f568e1bef366d5">OCI_RegisterNumber</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
-<tr class="memdesc:gae3f953259ed63f97e7f568e1bef366d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a register output bind placeholder.  <br /></td></tr>
+<tr class="memdesc:gae3f953259ed63f97e7f568e1bef366d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a Number output bind placeholder.  <br /></td></tr>
 <tr class="separator:gae3f953259ed63f97e7f568e1bef366d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga91b85ed4738f53aac907f721049b60e2"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga91b85ed4738f53aac907f721049b60e2">OCI_RegisterShort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
 <tr class="memdesc:ga91b85ed4738f53aac907f721049b60e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a short output bind placeholder.  <br /></td></tr>
@@ -213,7 +213,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:gae014971fbc18e6155e63016d01d02f8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a string output bind placeholder.  <br /></td></tr>
 <tr class="separator:gae014971fbc18e6155e63016d01d02f8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae0dd6cf79082c7dd85f809624f5f9d20"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gae0dd6cf79082c7dd85f809624f5f9d20">OCI_RegisterRaw</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, unsigned int len)</td></tr>
-<tr class="memdesc:gae0dd6cf79082c7dd85f809624f5f9d20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an raw output bind placeholder.  <br /></td></tr>
+<tr class="memdesc:gae0dd6cf79082c7dd85f809624f5f9d20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a raw output bind placeholder.  <br /></td></tr>
 <tr class="separator:gae0dd6cf79082c7dd85f809624f5f9d20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3e15fa6e5b58f3f86ffd3116e88f7d13"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga3e15fa6e5b58f3f86ffd3116e88f7d13">OCI_RegisterDouble</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
 <tr class="memdesc:ga3e15fa6e5b58f3f86ffd3116e88f7d13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a double output bind placeholder.  <br /></td></tr>
@@ -242,6 +242,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gaae9bde36980d05ae13b90b1271108dae"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#gaae9bde36980d05ae13b90b1271108dae">OCI_RegisterRef</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf)</td></tr>
 <tr class="memdesc:gaae9bde36980d05ae13b90b1271108dae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a Ref output bind placeholder.  <br /></td></tr>
 <tr class="separator:gaae9bde36980d05ae13b90b1271108dae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga998c0d1365a4349112e605d932b8ed44"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_feature_returning_into.html#ga998c0d1365a4349112e605d932b8ed44">OCI_RegisterVector</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
+<tr class="memdesc:ga998c0d1365a4349112e605d932b8ed44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a Vector output bind placeholder.  <br /></td></tr>
+<tr class="separator:ga998c0d1365a4349112e605d932b8ed44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="gab03e45a4bbd915a92b9f50ec9fd69865" name="gab03e45a4bbd915a92b9f50ec9fd69865"></a>
@@ -269,16 +272,16 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>it is only valid for the following statements:<ul>
-<li>Statements executing SQL UPDATE/DELETE using a RETURNING INTO clause</li>
-<li>Statements implicitly returned from PL/SQL procedure or blocks (new feature in Oracle 12cR1) using DBMS_SQL.RETURN_RESULT()</li>
+<dl class="section note"><dt>Note</dt><dd>It is only valid for the following statements:<ul>
+<li>Statements executing SQL UPDATE/DELETE using a RETURNING INTO clause.</li>
+<li>Statements implicitly returned from PL/SQL procedures or blocks (Oracle 12cR1+) using DBMS_SQL.RETURN_RESULT().</li>
 </ul>
 </dd>
 <dd>
-SQL statements with a 'returning' clause can return multiple resultsets. When arrays of program variables are binded to the statement, Oracle will execute the statement for every row (iteration). Each iteration generates a resultset that can be fetched like regular ones.</dd>
+SQL statements with a 'RETURNING' clause can return multiple result sets. When arrays of program variables are bound to the statement, Oracle will execute the statement for every row (iteration). Each iteration generates a result set that can be fetched like regular ones.</dd>
 <dd>
-Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implicit resultsets Refer to Oracle documentation for more information.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>A resultset handle on success otherwise NULL </dd></dl>
+Starting with Oracle 12cR1, PL/SQL procedures and blocks can return multiple implicit result sets. Refer to Oracle documentation for more information.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A result set handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#aee310420457d252691afac34c6dc306c">ocilib::Statement::GetNextResultset()</a>.</p>
 
@@ -312,7 +315,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Register a register output bind placeholder. </p>
+<p>Register a Number output bind placeholder. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
@@ -320,7 +323,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -360,7 +363,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -400,7 +403,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -440,7 +443,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -480,7 +483,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -520,7 +523,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -560,7 +563,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -607,7 +610,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -645,7 +648,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Register an raw output bind placeholder. </p>
+<p>Register a raw output bind placeholder. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
@@ -654,7 +657,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -694,7 +697,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -734,7 +737,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -774,7 +777,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -821,8 +824,8 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_timestamps.html#gaab6a035d8c145cdb6b4601aa9d5b7b7b" title="Create a local Timestamp instance.">OCI_TimestampCreate()</a> for possible values of parameter 'type'</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_timestamps.html#gaab6a035d8c145cdb6b4601aa9d5b7b7b" title="Create a local Timestamp instance.">OCI_TimestampCreate()</a> for possible values of parameter 'type'.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -869,8 +872,8 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_timestamps.html#ga08d1536ed8490af186dc4805e7c513ea" title="Create a local interval object.">OCI_IntervalCreate()</a> for possible values of parameter 'type'</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_timestamps.html#ga08d1536ed8490af186dc4805e7c513ea" title="Create a local interval object.">OCI_IntervalCreate()</a> for possible values of parameter 'type'.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -917,7 +920,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -964,8 +967,8 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_lobs.html#ga35233a7a52a28cf0e105670ee14ba4d9" title="Create a local temporary Lob instance.">OCI_LobCreate()</a> for possible values of parameter 'type'</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_lobs.html#ga35233a7a52a28cf0e105670ee14ba4d9" title="Create a local temporary Lob instance.">OCI_LobCreate()</a> for possible values of parameter 'type'.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1012,8 +1015,8 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_files.html#ga28b7af3b3d80ee55218089e96791b120" title="Create a file object instance.">OCI_FileCreate()</a> for possible values of parameter 'type'</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_files.html#ga28b7af3b3d80ee55218089e96791b120" title="Create a file object instance.">OCI_FileCreate()</a> for possible values of parameter 'type'.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1060,7 +1063,47 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
+
+</div>
+</div>
+<a id="ga998c0d1365a4349112e605d932b8ed44" name="ga998c0d1365a4349112e605d932b8ed44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga998c0d1365a4349112e605d932b8ed44">&#9670;&#160;</a></span>OCI_RegisterVector()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterVector </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
+          <td class="paramname"><em>stmt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const otext *&#160;</td>
+          <td class="paramname"><em>name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Register a Vector output bind placeholder. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
+    <tr><td class="paramname">name</td><td>- Vector bind name</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1070,7 +1113,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks ca return multiple implici
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

@@ -65,5 +65,14 @@ var group___ocilib_c_api_user_types =
     [ "OCI_RefGetHexSize", "group___ocilib_c_api_user_types.html#gabe39454c2deb0c8be8f7dada8a2da95c", null ],
     [ "OCI_RefToText", "group___ocilib_c_api_user_types.html#gada8070fcff371bfb8d0262aabfab581a", null ],
     [ "OCI_XmlTypeGetContent", "group___ocilib_c_api_user_types.html#ga36a36c16a0d1b3b8eb5b9ea85b80f7a4", null ],
-    [ "OCI_XmlTypeGetContentSize", "group___ocilib_c_api_user_types.html#gada2c2c40af58c66b77fa281db303451c", null ]
+    [ "OCI_XmlTypeGetContentSize", "group___ocilib_c_api_user_types.html#gada2c2c40af58c66b77fa281db303451c", null ],
+    [ "OCI_VectorCreate", "group___ocilib_c_api_user_types.html#gabc9170914d130a93a76a44961a759b70", null ],
+    [ "OCI_VectorFree", "group___ocilib_c_api_user_types.html#ga1b9f32095d035b38d0cef9e7db4ea373", null ],
+    [ "OCI_VectorArrayCreate", "group___ocilib_c_api_user_types.html#gacdde47092dd5402d22be659a35ceac0f", null ],
+    [ "OCI_VectorArrayFree", "group___ocilib_c_api_user_types.html#ga985634b723929f62b61412616674fa22", null ],
+    [ "OCI_VectorGetInfo", "group___ocilib_c_api_user_types.html#ga0e06be49b7e92bc74b1a20e10f2e2e1d", null ],
+    [ "OCI_VectorGetValues", "group___ocilib_c_api_user_types.html#ga0fbda5ce37317fe8bfefd0bd25173715", null ],
+    [ "OCI_VectorSetValues", "group___ocilib_c_api_user_types.html#gaf16573c01f89c78746fb5180c2900736", null ],
+    [ "OCI_VectorFromText", "group___ocilib_c_api_user_types.html#ga39908b4f48ae912c3fbfd7fd05dd2c49", null ],
+    [ "OCI_VectorToText", "group___ocilib_c_api_user_types.html#ga5681ff5391954799f929b044f7c0c3df", null ]
 ];

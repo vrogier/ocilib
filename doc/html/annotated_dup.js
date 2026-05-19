@@ -12,6 +12,7 @@ var annotated_dup =
         [ "ManagedBuffer", "classocilib_1_1core_1_1_managed_buffer.html", null ],
         [ "Streamable", "classocilib_1_1core_1_1_streamable.html", null ],
         [ "SupportedNumeric", "structocilib_1_1core_1_1_supported_numeric.html", null ],
+        [ "SupportedVectorNumeric", "structocilib_1_1core_1_1_supported_vector_numeric.html", null ],
         [ "Synchronizable", "classocilib_1_1core_1_1_synchronizable.html", null ],
         [ "SynchronizationGuard", "classocilib_1_1core_1_1_synchronization_guard.html", null ]
       ] ],
@@ -64,6 +65,7 @@ var annotated_dup =
       [ "Timestamp", "classocilib_1_1_timestamp.html", "classocilib_1_1_timestamp" ],
       [ "Transaction", "classocilib_1_1_transaction.html", "classocilib_1_1_transaction" ],
       [ "TypeInfo", "classocilib_1_1_type_info.html", "classocilib_1_1_type_info" ],
+      [ "Vector", "classocilib_1_1_vector.html", "classocilib_1_1_vector" ],
       [ "XmlType", "classocilib_1_1_xml_type.html", "classocilib_1_1_xml_type" ]
     ] ]
 ];

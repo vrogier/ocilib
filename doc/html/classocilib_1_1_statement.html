@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -188,7 +188,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af7803f35686478948d0010753b8ec07d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a232afb35a0b2967702d94fc54434ca10"><td class="memTemplParams" colspan="2">template&lt;class T , class U &gt; </td></tr>
 <tr class="memitem:a232afb35a0b2967702d94fc54434ca10"><td class="memTemplItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#a232afb35a0b2967702d94fc54434ca10">ExecutePrepared</a> (T callback, U adapter)</td></tr>
-<tr class="memdesc:a232afb35a0b2967702d94fc54434ca10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute the prepared statement, retrieve all resultsets, and call the given callback with adapted type wit for each row of each resultsets.  <br /></td></tr>
+<tr class="memdesc:a232afb35a0b2967702d94fc54434ca10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute the prepared statement, retrieve all resultsets, and call the given callback with adapted type for each row of each resultsets.  <br /></td></tr>
 <tr class="separator:a232afb35a0b2967702d94fc54434ca10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a678a77f6049f9702bbaea6f0227ff1be"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:a678a77f6049f9702bbaea6f0227ff1be"><td class="memTemplItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#a678a77f6049f9702bbaea6f0227ff1be">Execute</a> (const <a class="el" href="namespaceocilib.html#a01daa07e307e429b66fb80f442362237">ostring</a> &amp;sql, T callback)</td></tr>
@@ -196,7 +196,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a678a77f6049f9702bbaea6f0227ff1be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a104d97b1257eaa46fb9da43bcc72ff4f"><td class="memTemplParams" colspan="2">template&lt;class T , class U &gt; </td></tr>
 <tr class="memitem:a104d97b1257eaa46fb9da43bcc72ff4f"><td class="memTemplItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#a104d97b1257eaa46fb9da43bcc72ff4f">Execute</a> (const <a class="el" href="namespaceocilib.html#a01daa07e307e429b66fb80f442362237">ostring</a> &amp;sql, T callback, U adapter)</td></tr>
-<tr class="memdesc:a104d97b1257eaa46fb9da43bcc72ff4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute the given SQL statement, retrieve all resultsets, and call the given callback with adapted type wit for each row of each resultsets.  <br /></td></tr>
+<tr class="memdesc:a104d97b1257eaa46fb9da43bcc72ff4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute the given SQL statement, retrieve all resultsets, and call the given callback with adapted type for each row of each resultsets.  <br /></td></tr>
 <tr class="separator:a104d97b1257eaa46fb9da43bcc72ff4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf3454f38921350eaba4630e75cc3387"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#acf3454f38921350eaba4630e75cc3387">GetAffectedRows</a> () const</td></tr>
 <tr class="memdesc:acf3454f38921350eaba4630e75cc3387"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of rows affected by the SQL statement.  <br /></td></tr>
@@ -220,7 +220,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aae04ff511f29f6b1de135933891df76e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current input array size for bulk operations.  <br /></td></tr>
 <tr class="separator:aae04ff511f29f6b1de135933891df76e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43fb95781936d17b29b1f86f4f1c2f13"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#a43fb95781936d17b29b1f86f4f1c2f13">AllowRebinding</a> (bool value)</td></tr>
-<tr class="memdesc:a43fb95781936d17b29b1f86f4f1c2f13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allow different host variables to be binded using the same bind name or position between executions of a prepared statement.  <br /></td></tr>
+<tr class="memdesc:a43fb95781936d17b29b1f86f4f1c2f13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allow different host variables to be bound using the same bind name or position between executions of a prepared statement.  <br /></td></tr>
 <tr class="separator:a43fb95781936d17b29b1f86f4f1c2f13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5265f8b6f1d5cc2e2f919b6a65804db"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#af5265f8b6f1d5cc2e2f919b6a65804db">IsRebindingAllowed</a> () const</td></tr>
 <tr class="memdesc:af5265f8b6f1d5cc2e2f919b6a65804db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate if rebinding is allowed on the statement.  <br /></td></tr>
@@ -331,6 +331,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aaf137a7712dfdad9906e0a353da21248"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceocilib.html#a01daa07e307e429b66fb80f442362237">ostring</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#aaf137a7712dfdad9906e0a353da21248">GetSQLVerb</a> () const</td></tr>
 <tr class="memdesc:aaf137a7712dfdad9906e0a353da21248"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the verb of the SQL command held by the statement.  <br /></td></tr>
 <tr class="separator:aaf137a7712dfdad9906e0a353da21248"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1adbe0c8ee5747694dc70c6043993d6f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespaceocilib.html#a01daa07e307e429b66fb80f442362237">ostring</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#a1adbe0c8ee5747694dc70c6043993d6f">GetParseBindNames</a> () const</td></tr>
+<tr class="memdesc:a1adbe0c8ee5747694dc70c6043993d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the list of parsed bind names after an <a class="el" href="classocilib_1_1_statement.html#a86e2443467c373530fc5a6a1e4e84e36" title="Prepare a SQL statement or PL/SQL block.">Prepare()</a> <a class="el" href="classocilib_1_1_statement.html#aa13843de1251c79b09a1329b40d41d42" title="Parse a SQL statement or PL/SQL block.">Parse()</a> call.  <br /></td></tr>
+<tr class="separator:a1adbe0c8ee5747694dc70c6043993d6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a664bd1d260f56cbe69183f4eda523b53"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_statement.html#a664bd1d260f56cbe69183f4eda523b53">GetBatchErrors</a> (std::vector&lt; <a class="el" href="classocilib_1_1_exception.html">Exception</a> &gt; &amp;exceptions)</td></tr>
 <tr class="memdesc:a664bd1d260f56cbe69183f4eda523b53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns all errors that occurred within a DML array statement execution.  <br /></td></tr>
 <tr class="separator:a664bd1d260f56cbe69183f4eda523b53"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -339,7 +342,7 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><p><a class="el" href="classocilib_1_1_object.html" title="Object identifying the SQL data type OBJECT.">Object</a> used for executing SQL or PL/SQL statement and returning the produced results. </p>
 <p>This class wraps the OCILIB object handle OCI_Statement and its related methods </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05699">5699</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05953">5953</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="ab51ec370d22d5375304bdf1d05912c47" name="ab51ec370d22d5375304bdf1d05912c47"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab51ec370d22d5375304bdf1d05912c47">&#9670;&#160;</a></span>StatementType</h2>
@@ -356,7 +359,7 @@ Public Member Functions</h2></td></tr>
 <p><a class="el" href="classocilib_1_1_statement.html" title="Object used for executing SQL or PL/SQL statement and returning the produced results.">Statement</a> Type. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832" title="Statement Type enumerated values.">Statement::StatementTypeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05748">5748</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l06002">6002</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -375,7 +378,7 @@ Public Member Functions</h2></td></tr>
 <p>Fetch Modes. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_statement.html#a8c77708b4c2fd86c3605544a62bce00e" title="Fetch Modes enumerated values.">Statement::FetchModeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05770">5770</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l06024">6024</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -394,7 +397,7 @@ Public Member Functions</h2></td></tr>
 <p>Bind Modes. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_statement.html#a639c366a350bbf314767144abc005187" title="Bind Modes enumerated values.">Statement::BindModeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05792">5792</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l06046">6046</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -413,7 +416,7 @@ Public Member Functions</h2></td></tr>
 <p>LONG data type mapping modes. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_statement.html#a095c882ba807ccba7bf693b5652385e1" title="LONG data type mapping modes enumerated values.">Statement::LongModeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05814">5814</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l06068">6068</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -456,7 +459,7 @@ Public Member Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05715">5715</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05969">5969</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -480,7 +483,7 @@ Public Member Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05755">5755</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l06009">6009</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -498,13 +501,13 @@ Public Member Functions</h2></td></tr>
 
 <p>Bind Modes enumerated values. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a639c366a350bbf314767144abc005187a4fd1b4c763e4a113231f79d877ff2b54" name="a639c366a350bbf314767144abc005187a4fd1b4c763e4a113231f79d877ff2b54"></a>BindByPosition&#160;</td><td class="fielddoc"><p>Bind variables are binded by name </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a639c366a350bbf314767144abc005187a4fd1b4c763e4a113231f79d877ff2b54" name="a639c366a350bbf314767144abc005187a4fd1b4c763e4a113231f79d877ff2b54"></a>BindByPosition&#160;</td><td class="fielddoc"><p>Bind variables are bound by name </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a639c366a350bbf314767144abc005187a9eaf24cbbc3f23afb6a3ed9274b81713" name="a639c366a350bbf314767144abc005187a9eaf24cbbc3f23afb6a3ed9274b81713"></a>BindByName&#160;</td><td class="fielddoc"><p>Bind variables are binded by position </p>
+<tr><td class="fieldname"><a id="a639c366a350bbf314767144abc005187a9eaf24cbbc3f23afb6a3ed9274b81713" name="a639c366a350bbf314767144abc005187a9eaf24cbbc3f23afb6a3ed9274b81713"></a>BindByName&#160;</td><td class="fielddoc"><p>Bind variables are bound by position </p>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05777">5777</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l06031">6031</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -528,7 +531,7 @@ Public Member Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05799">5799</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l06053">6053</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -672,7 +675,7 @@ Public Member Functions</h2></td></tr>
 This call prepares the statement (internal call to <a class="el" href="classocilib_1_1_statement.html#a86e2443467c373530fc5a6a1e4e84e36" title="Prepare a SQL statement or PL/SQL block.">Prepare()</a>) and ask the Oracle server to describe the output SELECT list. <a class="el" href="classocilib_1_1_statement.html#a4dfa7fef7a945dd5242cd9b0d24385e6" title="Prepare and execute a SQL statement or PL/SQL block.">Execute()</a> can be called after <a class="el" href="classocilib_1_1_statement.html#ac967f297cfd4ca08f431c647c2fdc793" title="Describe the select list of a SQL select statement.">Describe()</a> in order to execute the statement, which means that the server will parse, and describe again the SQL order.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Do not use <a class="el" href="classocilib_1_1_statement.html#ac967f297cfd4ca08f431c647c2fdc793" title="Describe the select list of a SQL select statement.">Describe()</a> unless you're only interested in the resultset information because the statement will be parsed again when executed and thus leading to unnecessary server round trips and less performance </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00070">70</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00074">74</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statements.html#ga499f2ecbc9ac9de1bccedc5af1cef1ca">OCI_Describe()</a>.</p>
 
@@ -714,7 +717,7 @@ This call prepares the statement (internal call to <a class="el" href="classocil
 This call prepares the statement (internal call to <a class="el" href="classocilib_1_1_statement.html#a86e2443467c373530fc5a6a1e4e84e36" title="Prepare a SQL statement or PL/SQL block.">Prepare()</a>) and ask the Oracle server to parse its SQL or PL/SQL command. <a class="el" href="classocilib_1_1_statement.html#a4dfa7fef7a945dd5242cd9b0d24385e6" title="Prepare and execute a SQL statement or PL/SQL block.">Execute()</a> can be call after <a class="el" href="classocilib_1_1_statement.html#aa13843de1251c79b09a1329b40d41d42" title="Parse a SQL statement or PL/SQL block.">Parse()</a> in order to execute the statement, which means that the server will parse again the command.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Do not use <a class="el" href="classocilib_1_1_statement.html#aa13843de1251c79b09a1329b40d41d42" title="Parse a SQL statement or PL/SQL block.">Parse()</a> unless you're only interested in the parsing result because the statement will be parsed again when executed and thus leading to unnecessary server round trips and less performance </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00077">77</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00081">81</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statements.html#ga248aacd7e8e87d26082054dfe68a2367">OCI_Parse()</a>.</p>
 
@@ -753,7 +756,7 @@ This call prepares the statement (internal call to <a class="el" href="classocil
 </dl>
 <dl class="section note"><dt>Note</dt><dd>With version 1.3.0 and above, do not call this function for fetched statements (REF cursors) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00084">84</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00088">88</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare()</a>.</p>
 
@@ -784,7 +787,7 @@ This call prepares the statement (internal call to <a class="el" href="classocil
 
 <p>Execute a prepared SQL statement or PL/SQL block. </p>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00091">91</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00095">95</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute()</a>.</p>
 
@@ -824,7 +827,7 @@ This call prepares the statement (internal call to <a class="el" href="classocil
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00115">115</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00119">119</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt()</a>.</p>
 
@@ -866,7 +869,7 @@ template&lt;class T &gt; </div>
 <dl class="section note"><dt>Note</dt><dd>The user defined callback function must conform to the following prototype: bool callback(const Resultset &amp;) It shall return true to continue fetching the resultset or false to stop the fetch</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>The number of rows fetched </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00100">100</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00104">104</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_statement.html#ade72a9bde1660483c15e36a49787e140">ExecutePrepared()</a>.</p>
 
@@ -900,7 +903,7 @@ template&lt;class T , class U &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Execute the prepared statement, retrieve all resultsets, and call the given callback with adapted type wit for each row of each resultsets. </p>
+<p>Execute the prepared statement, retrieve all resultsets, and call the given callback with adapted type for each row of each resultsets. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">TAdapter</td><td>- type of the adapter callback </td></tr>
@@ -918,7 +921,7 @@ template&lt;class T , class U &gt; </div>
 <dl class="section note"><dt>Note</dt><dd>The user defined callback function must conform to the following prototype: bool callback(const Resultset &amp;) It shall return true to continue fetching the resultset or false to stop the fetch</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>The number of rows fetched </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00108">108</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00112">112</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_statement.html#ade72a9bde1660483c15e36a49787e140">ExecutePrepared()</a>.</p>
 
@@ -969,7 +972,7 @@ template&lt;class T &gt; </div>
 <dl class="section note"><dt>Note</dt><dd>The user defined callback function must conform to the following prototype: bool callback(const Resultset &amp;) It shall return true to continue fetching the resultset or false to stop the fetch</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>The number of rows fetched </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00123">123</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00127">127</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_statement.html#a4dfa7fef7a945dd5242cd9b0d24385e6">Execute()</a>.</p>
 
@@ -1009,7 +1012,7 @@ template&lt;class T , class U &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Execute the given SQL statement, retrieve all resultsets, and call the given callback with adapted type wit for each row of each resultsets. </p>
+<p>Execute the given SQL statement, retrieve all resultsets, and call the given callback with adapted type for each row of each resultsets. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">TAdapter</td><td>- type of the adapter callback </td></tr>
@@ -1028,7 +1031,7 @@ template&lt;class T , class U &gt; </div>
 <dl class="section note"><dt>Note</dt><dd>The user defined callback function must conform to the following prototype: bool callback(const Resultset &amp;) It shall return true to continue fetching the resultset or false to stop the fetch</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>The number of rows fetched </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00131">131</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00135">135</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="classocilib_1_1_statement.html#a4dfa7fef7a945dd5242cd9b0d24385e6">Execute()</a>.</p>
 
@@ -1065,7 +1068,7 @@ template&lt;class T , class U &gt; </div>
 </ul>
 <dl class="section note"><dt>Note</dt><dd>For SELECTs statements, use GetRowCount() instead </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00170">170</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00174">174</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statements.html#ga0af3308fa16a0a0e591b67c7ab7211a7">OCI_GetAffectedRows()</a>.</p>
 
@@ -1096,7 +1099,7 @@ template&lt;class T , class U &gt; </div>
 
 <p>Return the last SQL or PL/SQL statement prepared or executed by the statement. </p>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00175">175</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00179">179</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, <a class="el" href="namespaceocilib_1_1core.html#a83120353da816337cfe839f435f238fe">ocilib::core::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_statements.html#gae0b460b30f9b0bac72eccc267ffd96d2">OCI_GetSql()</a>.</p>
 
@@ -1127,7 +1130,7 @@ template&lt;class T , class U &gt; </div>
 
 <p>Return the server SQL_ID of the last SQL or PL/SQL statement prepared or executed by the statement. </p>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00180">180</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00184">184</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, <a class="el" href="namespaceocilib_1_1core.html#a83120353da816337cfe839f435f238fe">ocilib::core::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_statements.html#ga7f3c6bc49a455074d7ad39dbdd65ad60">OCI_GetSqlIdentifier()</a>.</p>
 
@@ -1160,7 +1163,7 @@ template&lt;class T , class U &gt; </div>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_fetching.html">Fetching data</a> for more details about what statements can return resultsets</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>If the statement has not been prepared and executed, null resultset object will be returned </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00185">185</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00189">189</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset()</a>.</p>
 
@@ -1196,11 +1199,11 @@ template&lt;class T , class U &gt; </div>
 </ul>
 </dd>
 <dd>
-SQL statements with a 'returning' clause can return multiple resultsets. When arrays of program variables are binded to the statement, Oracle will execute the statement for every row (iteration). Each iteration generates a resultset that can be fetched like regular ones.</dd>
+SQL statements with a 'returning' clause can return multiple resultsets. When arrays of program variables are bound to the statement, Oracle will execute the statement for every row (iteration). Each iteration generates a resultset that can be fetched like regular ones.</dd>
 <dd>
-Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implicit resultsets Refer to Oracle documentation for more information. </dd></dl>
+Starting with Oracle 12cR1, PL/SQL procedure and blocks can return multiple implicit resultsets Refer to Oracle documentation for more information. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00190">190</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00194">194</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_feature_returning_into.html#gab03e45a4bbd915a92b9f50ec9fd69865">OCI_GetNextResultset()</a>.</p>
 
@@ -1242,7 +1245,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implic
 <dd>
 <a class="el" href="classocilib_1_1_statement.html#a77a7469b451f81fdf7493e90f0b1fc59" title="Set the input array size for bulk operations.">SetBindArraySize()</a> can optionally be called before any later <a class="el" href="classocilib_1_1_statement.html#a4dfa7fef7a945dd5242cd9b0d24385e6" title="Prepare and execute a SQL statement or PL/SQL block.">Execute()</a> call in order to notify the statement of the exact number of elements populating the input arrays for the next execution. The array size passed to later <a class="el" href="classocilib_1_1_statement.html#a77a7469b451f81fdf7493e90f0b1fc59" title="Set the input array size for bulk operations.">SetBindArraySize()</a> calls cannot be greater than the initial size otherwise an exception will be thrown. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00195">195</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00199">199</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_binding.html#gac3cc8e0c27ad2e86d5403a9711e0f240">OCI_BindArraySetSize()</a>.</p>
 
@@ -1273,7 +1276,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implic
 
 <p>Return the current input array size for bulk operations. </p>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00200">200</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00204">204</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_binding.html#gabced7d271075361b4576c0f50a7b4b0c">OCI_BindArrayGetSize()</a>.</p>
 
@@ -1303,7 +1306,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implic
 </table>
 </div><div class="memdoc">
 
-<p>Allow different host variables to be binded using the same bind name or position between executions of a prepared statement. </p>
+<p>Allow different host variables to be bound using the same bind name or position between executions of a prepared statement. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">value</td><td>- Rebinding mode allowed</td></tr>
@@ -1311,9 +1314,9 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implic
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Default value is false</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>When using rebinding feature, host variable re-binded to a previously allocated bind MUST be of the same data type ! </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>When using rebinding feature, host variable re-bound to a previously allocated bind MUST be of the same data type ! </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00205">205</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00209">209</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_binding.html#ga3e38d38b5ed615ea8d7d827a17e803fc">OCI_AllowRebinding()</a>.</p>
 
@@ -1343,9 +1346,9 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implic
 </div><div class="memdoc">
 
 <p>Indicate if rebinding is allowed on the statement. </p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="classocilib_1_1_statement.html#a43fb95781936d17b29b1f86f4f1c2f13" title="Allow different host variables to be binded using the same bind name or position between executions o...">AllowRebinding()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="classocilib_1_1_statement.html#a43fb95781936d17b29b1f86f4f1c2f13" title="Allow different host variables to be bound using the same bind name or position between executions of...">AllowRebinding()</a> for more details </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00210">210</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00214">214</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_binding.html#ga0a12098c447d544ec46778aea4827f2c">OCI_IsRebindingAllowed()</a>.</p>
 
@@ -1386,7 +1389,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implic
 <dl class="section note"><dt>Note</dt><dd>Bind indexes start with 1 in OCILIB</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Bind index on success or zero if the bind does not exists </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00215">215</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00219">219</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_binding.html#gae983030af785d5383219edaaececb109">OCI_GetBindIndex()</a>.</p>
 
@@ -1417,7 +1420,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implic
 
 <p>Return the number of binds currently associated to a statement. </p>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00220">220</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00224">224</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_binding.html#ga8f8095c2779d7836f864c7e0db9e560a">OCI_GetBindCount()</a>.</p>
 
@@ -1457,7 +1460,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implic
 <dl class="section warning"><dt>Warning</dt><dd>Index starts at 1.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Bind handle are created sequentially. For example, the third call to a <a class="el" href="classocilib_1_1_statement.html#a3d697f20d57aadf3cc45a4383e511c6d" title="Bind an host variable.">Bind()</a> call generates a bind object of index 3. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00225">225</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00229">229</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_binding.html#ga128143cf329983d720cb39c51c23e297">OCI_GetBind()</a>.</p>
 
@@ -1496,7 +1499,7 @@ Starting withOracle 12cR1, PL/SQ procedure and blocks can return multiple implic
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Bind names must include a semicolon at the beginning. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00230">230</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00234">234</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_binding.html#ga9818715301cdb6329d7ea0482f707dbe">OCI_GetBind2()</a>.</p>
 
@@ -1668,7 +1671,7 @@ template&lt;class T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00583">583</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00593">593</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_binding.html#gacbe3bd7e2009234add0525bf66d7136c">OCI_BindColl()</a>.</p>
 
@@ -1724,7 +1727,7 @@ template&lt;class T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>- Bind name </td></tr>
-    <tr><td class="paramname">values</td><td>- Vector of host variables </td></tr>
+    <tr><td class="paramname">values</td><td>- <a class="el" href="classocilib_1_1_vector.html" title="Object identifying the SQL data type VECTOR.">Vector</a> of host variables </td></tr>
     <tr><td class="paramname">mode</td><td>- bind direction mode </td></tr>
     <tr><td class="paramname">type</td><td>- vector type (regular array or PL/SQL table)</td></tr>
   </table>
@@ -1791,7 +1794,7 @@ template&lt;class T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>- Bind name </td></tr>
-    <tr><td class="paramname">values</td><td>- Vector of host variables </td></tr>
+    <tr><td class="paramname">values</td><td>- <a class="el" href="classocilib_1_1_vector.html" title="Object identifying the SQL data type VECTOR.">Vector</a> of host variables </td></tr>
     <tr><td class="paramname">typeInfo</td><td>- <a class="el" href="classocilib_1_1_object.html" title="Object identifying the SQL data type OBJECT.">Object</a> type information </td></tr>
     <tr><td class="paramname">mode</td><td>- bind direction mode </td></tr>
     <tr><td class="paramname">type</td><td>- vector type (regular array or PL/SQL table)</td></tr>
@@ -1801,7 +1804,7 @@ template&lt;class T &gt; </div>
 <dl class="section warning"><dt>Warning</dt><dd>This method has built-in specialized versions for <a class="el" href="classocilib_1_1_object.html" title="Object identifying the SQL data type OBJECT.">Object</a>, <a class="el" href="classocilib_1_1_reference.html" title="Object identifying the SQL data type REF.">Reference</a>.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved automatically from the arguments. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00706">706</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00716">716</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="group___ocilib_c_api_binding.html#gabcfe21ef504063f23abc29f4bff8ecd9">OCI_BindArrayOfColls()</a>.</p>
 
@@ -1863,7 +1866,7 @@ template&lt;class T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>- Bind name </td></tr>
-    <tr><td class="paramname">values</td><td>- Vector of host collection variables </td></tr>
+    <tr><td class="paramname">values</td><td>- <a class="el" href="classocilib_1_1_vector.html" title="Object identifying the SQL data type VECTOR.">Vector</a> of host collection variables </td></tr>
     <tr><td class="paramname">typeInfo</td><td>- <a class="el" href="classocilib_1_1_object.html" title="Object identifying the SQL data type OBJECT.">Object</a> type information </td></tr>
     <tr><td class="paramname">mode</td><td>- bind direction mode </td></tr>
     <tr><td class="paramname">type</td><td>- vector type (regular array or PL/SQL table) </td></tr>
@@ -1871,7 +1874,7 @@ template&lt;class T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00650">650</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00660">660</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="group___ocilib_c_api_binding.html#gabcfe21ef504063f23abc29f4bff8ecd9">OCI_BindArrayOfColls()</a>.</p>
 
@@ -1934,7 +1937,7 @@ template&lt;class T , class U &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>- Bind name </td></tr>
-    <tr><td class="paramname">values</td><td>- Vector of host variables </td></tr>
+    <tr><td class="paramname">values</td><td>- <a class="el" href="classocilib_1_1_vector.html" title="Object identifying the SQL data type VECTOR.">Vector</a> of host variables </td></tr>
     <tr><td class="paramname">extraInfo</td><td>- Extra information needed for the bind call </td></tr>
     <tr><td class="paramname">mode</td><td>- bind direction mode </td></tr>
     <tr><td class="paramname">type</td><td>- vector type (regular array or PL/SQL table)</td></tr>
@@ -2113,7 +2116,7 @@ template&lt;class T , class U &gt; </div>
 
 <p>Return the type of a SQL statement. </p>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00855">855</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00871">871</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#gadeb0d05ffe0672a5325440ad2c49b802">OCI_GetStatementType()</a>.</p>
 
@@ -2145,7 +2148,7 @@ template&lt;class T , class U &gt; </div>
 <p>Return the error position (in terms of characters) in the SQL statement where the error occurred in case of SQL parsing error. </p>
 <dl class="section note"><dt>Note</dt><dd>Positions start at 1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00860">860</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00876">876</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statements.html#gab3ec87b4fb46ab1752341561912449a9">OCI_GetSqlErrorPos()</a>.</p>
 
@@ -2184,7 +2187,7 @@ template&lt;class T , class U &gt; </div>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd><a class="el" href="classocilib_1_1_statement.html#aedd9b8b946d8ec3e8d274dc61cb39a4d" title="Set the fetch mode of a SQL statement.">SetFetchMode()</a> MUST be called before any <a class="el" href="classocilib_1_1_statement.html#a4dfa7fef7a945dd5242cd9b0d24385e6" title="Prepare and execute a SQL statement or PL/SQL block.">Execute()</a> call </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00865">865</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00881">881</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#ga1993321bb525eef88957b5a37a54219b">OCI_SetFetchMode()</a>.</p>
 
@@ -2216,7 +2219,7 @@ template&lt;class T , class U &gt; </div>
 <p>Return the fetch mode of a SQL statement. </p>
 <dl class="section note"><dt>Note</dt><dd>Default value is <a class="el" href="classocilib_1_1_statement.html#a8c77708b4c2fd86c3605544a62bce00ea14b515c5a730cee38039148f4fd2f2ed">Statement::FetchForward</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00870">870</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00886">886</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#ga81d5e181fdd7c8db9aa2e77564a6dc81">OCI_GetFetchMode()</a>.</p>
 
@@ -2254,7 +2257,7 @@ template&lt;class T , class U &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00875">875</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00891">891</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#ga927b734436e44accd929209fbcd94667">OCI_SetBindMode()</a>.</p>
 
@@ -2286,7 +2289,7 @@ template&lt;class T , class U &gt; </div>
 <p>Return the binding mode of a SQL statement. </p>
 <dl class="section note"><dt>Note</dt><dd>Default value is <a class="el" href="classocilib_1_1_statement.html#a639c366a350bbf314767144abc005187a9eaf24cbbc3f23afb6a3ed9274b81713">Statement::BindByName</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00880">880</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00896">896</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#ga55231c6c248d1dc379e125879c8e1844">OCI_GetBindMode()</a>.</p>
 
@@ -2324,7 +2327,7 @@ template&lt;class T , class U &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00885">885</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00901">901</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#gad1ad2c5edc80a11816a39485a44518e7">OCI_SetFetchSize()</a>.</p>
 
@@ -2356,7 +2359,7 @@ template&lt;class T , class U &gt; </div>
 <p>Return the number of rows fetched per internal server fetch call. </p>
 <dl class="section note"><dt>Note</dt><dd>Default value is set to constant OCI_FETCH_SIZE </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00890">890</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00906">906</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#gacc0f805055a7ae7febd936785f76bbf6">OCI_GetFetchSize()</a>.</p>
 
@@ -2395,7 +2398,7 @@ template&lt;class T , class U &gt; </div>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>To turn off pre-fetching, set both attributes (size and memory) to 0. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00895">895</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00911">911</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#gacd51004bf5e62b397d4702a272947c79">OCI_SetPrefetchSize()</a>.</p>
 
@@ -2427,7 +2430,7 @@ template&lt;class T , class U &gt; </div>
 <p>Return the number of rows pre-fetched by OCI Client. </p>
 <dl class="section note"><dt>Note</dt><dd>Default value is set to constant OCI_PREFETCH_SIZE </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00900">900</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00916">916</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#ga01753b667b1d879dd2c32a2f65331eb9">OCI_GetPrefetchSize()</a>.</p>
 
@@ -2468,7 +2471,7 @@ template&lt;class T , class U &gt; </div>
 <dd>
 OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created. To setup a big value for <a class="el" href="classocilib_1_1_statement.html#a245001c736a380b5ccc7e9b7df701475" title="Set the amount of memory pre-fetched by OCI Client.">SetPrefetchMemory()</a>, you must call <a class="el" href="classocilib_1_1_statement.html#afff79afbf2152a74383a0af97e120906" title="Set the number of rows pre-fetched by OCI Client.">SetPrefetchSize()</a> to 0 to make OCI consider this attribute. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00905">905</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00921">921</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#ga0a3716423dccf24d394b6435cd2dbcae">OCI_SetPrefetchMemory()</a>.</p>
 
@@ -2500,7 +2503,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 <p>Return the amount of memory used to retrieve rows pre-fetched by OCI Client. </p>
 <dl class="section note"><dt>Note</dt><dd>Default value is 0 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00910">910</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00926">926</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#ga28f0d61d1a194fcaa5d9b035c4975a3e">OCI_GetPrefetchMemory()</a>.</p>
 
@@ -2538,7 +2541,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00915">915</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00931">931</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#gac17f8520e6d8fab2980f07e7cdeb4d6a">OCI_SetPieceSize()</a>.</p>
 
@@ -2570,7 +2573,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 <p>Return the piece size for dynamic fetch operations (XMLTYPE, LONGs) </p>
 <dl class="section note"><dt>Note</dt><dd>Default value is set to constant OCI_SIZE_PIECE_DYNAMIC_FETCH </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00920">920</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00936">936</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#gae3107314c38911283ece8a85495e1a5a">OCI_GetPieceSize()</a>.</p>
 
@@ -2609,7 +2612,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 </dl>
 <dl class="section note"><dt>Note</dt><dd>LONG RAWs can't be handled with <a class="el" href="classocilib_1_1_statement.html#a095c882ba807ccba7bf693b5652385e1a0da780a1752bfcd8a6458ddbd4f7511b">Statement::LongImplicit</a> mode </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00925">925</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00941">941</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#gab48b8c050e05fbf488794005bca68d4a">OCI_SetLongMode()</a>.</p>
 
@@ -2640,7 +2643,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 
 <p>Return the long data type handling mode of a SQL statement. </p>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00930">930</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00946">946</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statement_control.html#gab8293f13f00235613b295bb3ce16b066">OCI_GetLongMode()</a>.</p>
 
@@ -2673,7 +2676,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 <dl class="section warning"><dt>Warning</dt><dd><a class="el" href="classocilib_1_1_statement.html#a3fea776ad539e45d5209998e66a1ebb4" title="Return the Oracle SQL code the command held by the statement.">GetSQLCommand()</a> must be called after the statement has be executed because that's the server engine that computes the SQL command code</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>The SQL command list is available in Oracle documentations and guides </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00935">935</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00951">951</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_statements.html#ga8d320ae22ef2449a1548c962a03efcca">OCI_GetSQLCommand()</a>.</p>
 
@@ -2706,9 +2709,44 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 <dl class="section warning"><dt>Warning</dt><dd><a class="el" href="classocilib_1_1_statement.html#aaf137a7712dfdad9906e0a353da21248" title="Return the verb of the SQL command held by the statement.">GetSQLVerb()</a> must be called after the statement has been executed because that's the server engine that computes the SQL verb</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>The SQL verb list is available in Oracle documentations and guides </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00940">940</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00956">956</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, <a class="el" href="namespaceocilib_1_1core.html#a83120353da816337cfe839f435f238fe">ocilib::core::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_statements.html#gafa3fc1352d793580b76723b7dea622a7">OCI_GetSQLVerb()</a>.</p>
+
+</div>
+</div>
+<a id="a1adbe0c8ee5747694dc70c6043993d6f" name="a1adbe0c8ee5747694dc70c6043993d6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1adbe0c8ee5747694dc70c6043993d6f">&#9670;&#160;</a></span>GetParseBindNames()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="namespaceocilib.html#a01daa07e307e429b66fb80f442362237">ostring</a> &gt; ocilib::Statement::GetParseBindNames </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the list of parsed bind names after an <a class="el" href="classocilib_1_1_statement.html#a86e2443467c373530fc5a6a1e4e84e36" title="Prepare a SQL statement or PL/SQL block.">Prepare()</a> <a class="el" href="classocilib_1_1_statement.html#aa13843de1251c79b09a1329b40d41d42" title="Parse a SQL statement or PL/SQL block.">Parse()</a> call. </p>
+<dl class="section warning"><dt>Warning</dt><dd>Returned names are upper case and do not contain leading ':' character.</dd>
+<dd>
+<a class="el" href="classocilib_1_1_statement.html#a1adbe0c8ee5747694dc70c6043993d6f" title="Return the list of parsed bind names after an Prepare() Parse() call.">GetParseBindNames()</a> returns information computed by OCI client library, not by OCILIB. Result is uncorrelated to any bind operation.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>List of parsed bind on success or empty list if no bind found </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00961">961</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, <a class="el" href="namespaceocilib_1_1core.html#a83120353da816337cfe839f435f238fe">ocilib::core::MakeString()</a>, and <a class="el" href="group___ocilib_c_api_statements.html#ga9415b328ee840afabf6c8fdfd527210c">OCI_GetParseBindNames()</a>.</p>
 
 </div>
 </div>
@@ -2738,7 +2776,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 
 <p>Returns all errors that occurred within a DML array statement execution. </p>
 
-<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00945">945</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_statement_8hpp_source.html#l00980">980</a> of file <a class="el" href="_statement_8hpp_source.html">Statement.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_binding.html#ga6bcb91e88f7a7570bf739cc20427ebc3">OCI_GetBatchError()</a>.</p>
 
@@ -2751,7 +2789,7 @@ OCILIB set pre-fetch attribute to OCI_PREFETCH_SIZE when a statement is created.
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_statement.html">Statement</a></li>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:15 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

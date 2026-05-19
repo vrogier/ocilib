@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,21 +100,21 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_transactions.html
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiPools</p>
-<p>OCILIB supports local and global transactions.</p>
-<p>Local transactions are implicit within connection objects and there is no specific call or programming step for using it.</p>
-<p>In order to control changes made in the database:</p>
+<p>OCILIB supports both local and global transactions.</p>
+<p>Local transactions are implicit within connection objects and require no specific API call or programming step to use.</p>
+<p>To control changes made in the database:</p>
 <ul>
-<li><a class="el" href="group___ocilib_c_api_transactions.html#gadc75ccc3334477a3b4ceeb609f7ed544" title="Commit current pending changes.">OCI_Commit()</a> validates current pending modifications</li>
-<li><a class="el" href="group___ocilib_c_api_transactions.html#gafe6bf0b2d454a3e2f78a1da8063661fc" title="Cancel current pending changes.">OCI_Rollback()</a> discards current pending modifications</li>
+<li><a class="el" href="group___ocilib_c_api_transactions.html#gadc75ccc3334477a3b4ceeb609f7ed544" title="Commit current pending changes.">OCI_Commit()</a> validates current pending modifications.</li>
+<li><a class="el" href="group___ocilib_c_api_transactions.html#gafe6bf0b2d454a3e2f78a1da8063661fc" title="Roll back current pending changes.">OCI_Rollback()</a> discards current pending modifications.</li>
 </ul>
-<p>OCILIB supports a feature called 'Auto Commit' that performs an implicit and automatic commit call after every execute call</p>
-<dl class="section note"><dt>Note</dt><dd>Those actions are executed within a connection context and not directly to a transaction.</dd></dl>
+<p>OCILIB also supports an 'Auto Commit' mode that performs an implicit commit after every statement execution.</p>
+<dl class="section note"><dt>Note</dt><dd>Commit and rollback operations are executed within a connection context, not directly on a transaction object.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Global transactions are optional and are designed for distributed or global transaction environments.</dd></dl>
-<p>OCILIB supports them by :</p>
+<p>OCILIB supports them by:</p>
 <ul>
-<li>Creating/Destroying explicitly a transaction object</li>
-<li>Starting/Stopping/Resuming explicitly the transaction</li>
-<li>Preparing the transaction for specific calls </li>
+<li>Explicitly creating/destroying transaction objects.</li>
+<li>Explicitly starting/stopping/resuming transactions.</li>
+<li>Preparing transactions for two-phase commit. </li>
 </ul>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -123,40 +123,40 @@ Functions</h2></td></tr>
 <tr class="memdesc:gadc75ccc3334477a3b4ceeb609f7ed544"><td class="mdescLeft">&#160;</td><td class="mdescRight">Commit current pending changes.  <br /></td></tr>
 <tr class="separator:gadc75ccc3334477a3b4ceeb609f7ed544"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafe6bf0b2d454a3e2f78a1da8063661fc"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gafe6bf0b2d454a3e2f78a1da8063661fc">OCI_Rollback</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gafe6bf0b2d454a3e2f78a1da8063661fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cancel current pending changes.  <br /></td></tr>
+<tr class="memdesc:gafe6bf0b2d454a3e2f78a1da8063661fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Roll back current pending changes.  <br /></td></tr>
 <tr class="separator:gafe6bf0b2d454a3e2f78a1da8063661fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga43be7c3750fab514da607cc0425fde1f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga43be7c3750fab514da607cc0425fde1f">OCI_SetAutoCommit</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, boolean enable)</td></tr>
-<tr class="memdesc:ga43be7c3750fab514da607cc0425fde1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable / disable auto commit mode.  <br /></td></tr>
+<tr class="memdesc:ga43be7c3750fab514da607cc0425fde1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or disable auto-commit mode.  <br /></td></tr>
 <tr class="separator:ga43be7c3750fab514da607cc0425fde1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa625d9f9d4741c6a6a7c5e0bf0db0997"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gaa625d9f9d4741c6a6a7c5e0bf0db0997">OCI_GetAutoCommit</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gaa625d9f9d4741c6a6a7c5e0bf0db0997"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current auto commit mode status.  <br /></td></tr>
+<tr class="memdesc:gaa625d9f9d4741c6a6a7c5e0bf0db0997"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current auto-commit mode status.  <br /></td></tr>
 <tr class="separator:gaa625d9f9d4741c6a6a7c5e0bf0db0997"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2360c7635c536f313b93c6437aa9e1e8"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga2360c7635c536f313b93c6437aa9e1e8">OCI_TransactionCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int timeout, unsigned int mode, OCI_XID *pxid)</td></tr>
 <tr class="memdesc:ga2360c7635c536f313b93c6437aa9e1e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new global transaction or a serializable/read-only local transaction.  <br /></td></tr>
 <tr class="separator:ga2360c7635c536f313b93c6437aa9e1e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga39a61a42c913f19731b830fb4efaf574"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga39a61a42c913f19731b830fb4efaf574">OCI_TransactionFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:ga39a61a42c913f19731b830fb4efaf574"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free current transaction.  <br /></td></tr>
+<tr class="memdesc:ga39a61a42c913f19731b830fb4efaf574"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a transaction object.  <br /></td></tr>
 <tr class="separator:ga39a61a42c913f19731b830fb4efaf574"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7a4954200fde27bf2e1c2d0b90018062"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga7a4954200fde27bf2e1c2d0b90018062">OCI_TransactionStart</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:ga7a4954200fde27bf2e1c2d0b90018062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start global transaction.  <br /></td></tr>
+<tr class="memdesc:ga7a4954200fde27bf2e1c2d0b90018062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start a global transaction.  <br /></td></tr>
 <tr class="separator:ga7a4954200fde27bf2e1c2d0b90018062"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga1c5d44275fa024ae1079d1b9a07f3d1b"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga1c5d44275fa024ae1079d1b9a07f3d1b">OCI_TransactionStop</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:ga1c5d44275fa024ae1079d1b9a07f3d1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop current global transaction.  <br /></td></tr>
+<tr class="memdesc:ga1c5d44275fa024ae1079d1b9a07f3d1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop a global transaction.  <br /></td></tr>
 <tr class="separator:ga1c5d44275fa024ae1079d1b9a07f3d1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabb18246fb0c96c4148d339bfb0a596e3"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gabb18246fb0c96c4148d339bfb0a596e3">OCI_TransactionResume</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
 <tr class="memdesc:gabb18246fb0c96c4148d339bfb0a596e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume a stopped global transaction.  <br /></td></tr>
 <tr class="separator:gabb18246fb0c96c4148d339bfb0a596e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga161ac7b488a99a3c3f9748f50cced291"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga161ac7b488a99a3c3f9748f50cced291">OCI_TransactionPrepare</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:ga161ac7b488a99a3c3f9748f50cced291"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare a global transaction validation.  <br /></td></tr>
+<tr class="memdesc:ga161ac7b488a99a3c3f9748f50cced291"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare a global transaction for two-phase commit validation.  <br /></td></tr>
 <tr class="separator:ga161ac7b488a99a3c3f9748f50cced291"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5ea692078a6645d9efc9e242ae50e017"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#ga5ea692078a6645d9efc9e242ae50e017">OCI_TransactionForget</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:ga5ea692078a6645d9efc9e242ae50e017"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cancel the prepared global transaction validation.  <br /></td></tr>
+<tr class="memdesc:ga5ea692078a6645d9efc9e242ae50e017"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cancel a previously prepared global transaction validation.  <br /></td></tr>
 <tr class="separator:ga5ea692078a6645d9efc9e242ae50e017"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac13bc63411edaa36a098c2a4a1406f12"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gac13bc63411edaa36a098c2a4a1406f12">OCI_TransactionGetMode</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:gac13bc63411edaa36a098c2a4a1406f12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return global transaction mode.  <br /></td></tr>
+<tr class="memdesc:gac13bc63411edaa36a098c2a4a1406f12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the global transaction mode.  <br /></td></tr>
 <tr class="separator:gac13bc63411edaa36a098c2a4a1406f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaab95873de72150f5c4604211be7286b1"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_transactions.html#gaab95873de72150f5c4604211be7286b1">OCI_TransactionGetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:gaab95873de72150f5c4604211be7286b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return global transaction Timeout.  <br /></td></tr>
+<tr class="memdesc:gaab95873de72150f5c4604211be7286b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the global transaction timeout.  <br /></td></tr>
 <tr class="separator:gaab95873de72150f5c4604211be7286b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -185,7 +185,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a5875666074d5c8b9cfb1f5660f176757">ocilib::Connection::Commit()</a>.</p>
 
@@ -209,14 +209,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Cancel current pending changes. </p>
+<p>Roll back current pending changes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a491989e0422be48ce603c21357b7f605">ocilib::Connection::Rollback()</a>.</p>
 
@@ -250,16 +250,16 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Enable / disable auto commit mode. </p>
-<p>The auto commit mode allows commit changes after every executed SQL order</p>
+<p>Enable or disable auto-commit mode. </p>
+<p>When enabled, all pending changes are automatically committed after every successful statement execution.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
-    <tr><td class="paramname">enable</td><td>- Enable (TRUE) or disable (FALSE)</td></tr>
+    <tr><td class="paramname">enable</td><td>- TRUE to enable auto-commit, FALSE to disable it</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a8e6f6ed2cf7556ed33f142ab6a603526">ocilib::Connection::SetAutoCommit()</a>.</p>
 
@@ -283,14 +283,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Get current auto commit mode status. </p>
+<p>Return the current auto-commit mode status. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE if auto commit mode is activated otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if auto-commit mode is enabled, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#ad691cfaa93b44371799d1a985f38a4ef">ocilib::Connection::GetAutoCommit()</a>.</p>
 
@@ -340,31 +340,29 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
-    <tr><td class="paramname">timeout</td><td>- Time that a transaction stays inactive after being stopped </td></tr>
+    <tr><td class="paramname">timeout</td><td>- Time (in seconds) that a transaction stays inactive after being stopped </td></tr>
     <tr><td class="paramname">mode</td><td>- Transaction mode </td></tr>
-    <tr><td class="paramname">pxid</td><td>- pointer to a global transaction identifier structure</td></tr>
+    <tr><td class="paramname">pxid</td><td>- Pointer to a global transaction identifier structure (XID)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The parameter 'mode' can be one of the following values :</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'mode':</dd></dl>
 <ul>
 <li>Global transactions:<ul>
-<li>OCI_TRS_NEW : By default starts a new, tightly coupled and migratable branch.</li>
-<li>OCI_TRS_TIGHT : explicitly specifies a tightly coupled branch</li>
-<li>OCI_TRS_LOOSE : specifies a loosely coupled branch</li>
+<li>OCI_TRS_NEW : Start a new, tightly coupled and migratable branch (default).</li>
+<li>OCI_TRS_TIGHT : Explicitly specify a tightly coupled branch.</li>
+<li>OCI_TRS_LOOSE : Specify a loosely coupled branch.</li>
 </ul>
 </li>
-<li>Global and local transactions :<ul>
-<li>OCI_TRS_READONLY - start a read-only transaction</li>
-<li>OCI_TRS_READWRITE - start a read-write transaction</li>
-<li>OCI_TRS_SERIALIZABLE : start a serializable transaction</li>
+<li>Global and local transactions:<ul>
+<li>OCI_TRS_READONLY : Start a read-only transaction.</li>
+<li>OCI_TRS_READWRITE : Start a read-write transaction.</li>
+<li>OCI_TRS_SERIALIZABLE : Start a serializable transaction.</li>
 </ul>
 </li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>For local transaction:<ul>
-<li>pass a NULL value for pxid </li>
-</ul>
-</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For local transactions, pass NULL for the 'pxid' parameter.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Transaction handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_transaction.html#a5d7965922a67ec4fb9f9759de9539a54">ocilib::Transaction::Transaction()</a>.</p>
 
@@ -388,14 +386,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Free current transaction. </p>
+<p>Free a transaction object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">trans</td><td>- Connection handle</td></tr>
+    <tr><td class="paramname">trans</td><td>- Transaction handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -417,14 +415,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Start global transaction. </p>
+<p>Start a global transaction. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">trans</td><td>- Connection handle</td></tr>
+    <tr><td class="paramname">trans</td><td>- Transaction handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_transaction.html#a2abaae7bfa114d944b1a29ee66286383">ocilib::Transaction::Start()</a>.</p>
 
@@ -448,14 +446,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Stop current global transaction. </p>
+<p>Stop a global transaction. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">trans</td><td>- Connection handle</td></tr>
+    <tr><td class="paramname">trans</td><td>- Transaction handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_transaction.html#adcfc66c5dbea6f6c88ee10a947a80a44">ocilib::Transaction::Stop()</a>.</p>
 
@@ -482,11 +480,11 @@ Functions</h2></td></tr>
 <p>Resume a stopped global transaction. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">trans</td><td>- Global transaction handle</td></tr>
+    <tr><td class="paramname">trans</td><td>- Transaction handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_transaction.html#a33334401b173df447f3f2e0e77c1bdbb">ocilib::Transaction::Resume()</a>.</p>
 
@@ -510,14 +508,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Prepare a global transaction validation. </p>
+<p>Prepare a global transaction for two-phase commit validation. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">trans</td><td>- Global transaction handle</td></tr>
+    <tr><td class="paramname">trans</td><td>- Transaction handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_transaction.html#ac3b4d4b7e11700048400ec7264fb10a5">ocilib::Transaction::Prepare()</a>.</p>
 
@@ -541,14 +539,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Cancel the prepared global transaction validation. </p>
+<p>Cancel a previously prepared global transaction validation. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">trans</td><td>- Global transaction handle</td></tr>
+    <tr><td class="paramname">trans</td><td>- Transaction handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_transaction.html#a38c31438fa22d1d83c0aba3084b925fe">ocilib::Transaction::Forget()</a>.</p>
 
@@ -572,15 +570,15 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return global transaction mode. </p>
-<dl class="section note"><dt>Note</dt><dd>: see <a class="el" href="group___ocilib_c_api_transactions.html#ga2360c7635c536f313b93c6437aa9e1e8" title="Create a new global transaction or a serializable/read-only local transaction.">OCI_TransactionCreate()</a> for possible values</dd></dl>
+<p>Return the global transaction mode. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">trans</td><td>- Global transaction handle</td></tr>
+    <tr><td class="paramname">trans</td><td>- Transaction handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Transaction mode or OCI_UNKNOW if trans is NULL </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_transactions.html#ga2360c7635c536f313b93c6437aa9e1e8" title="Create a new global transaction or a serializable/read-only local transaction.">OCI_TransactionCreate()</a> for possible values.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The transaction mode, or OCI_UNKNOWN if the input handle is NULL. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_transaction.html#a1a89940069c67aae6a5b861557067f22">ocilib::Transaction::GetFlags()</a>.</p>
 
@@ -604,14 +602,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return global transaction Timeout. </p>
+<p>Return the global transaction timeout. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">trans</td><td>- Global transaction handle</td></tr>
+    <tr><td class="paramname">trans</td><td>- Transaction handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Transaction timeout or 0 if trans is NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The transaction timeout in seconds, or 0 if the input handle is NULL. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_transaction.html#ad7087c3f40b68f08074f97d515bca19d">ocilib::Transaction::GetTimeout()</a>.</p>
 
@@ -623,7 +621,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

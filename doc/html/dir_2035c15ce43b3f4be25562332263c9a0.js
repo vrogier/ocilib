@@ -36,5 +36,6 @@ var dir_2035c15ce43b3f4be25562332263c9a0 =
     [ "Timestamp.hpp", "_timestamp_8hpp_source.html", null ],
     [ "Transaction.hpp", "_transaction_8hpp_source.html", null ],
     [ "TypeInfo.hpp", "_type_info_8hpp_source.html", null ],
+    [ "Vector.hpp", "_vector_8hpp_source.html", null ],
     [ "XmlType.hpp", "_xml_type_8hpp_source.html", null ]
 ];

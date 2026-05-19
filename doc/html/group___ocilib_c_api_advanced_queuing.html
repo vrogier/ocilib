@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,28 +100,28 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_advanced_queuing.
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiDirectPath</p>
-<p>OCILIB supports Oracle Advanced Queues features</p>
-<p>Let's Oracle talk about this features !</p>
+<p>OCILIB supports Oracle Advanced Queues features.</p>
+<p>Let Oracle describe these features:</p>
 <dl class="section user"><dt>Oracle Queues (from Oracle Streams - Advanced Queuing User's Guide)</dt><dd></dd></dl>
 <p>Oracle Streams AQ provides database-integrated message queuing functionality. It is built on top of Oracle Streams and leverages the functions of Oracle Database so that messages can be stored persistently, propagated between queues on different computers and databases, and transmitted using Oracle Net Services and HTTP(S). Because Oracle Streams AQ is implemented in database tables, all operational benefits of high availability, scalability, and reliability are also applicable to queue data. Standard database features such as recovery, restart, and security are supported by Oracle Streams AQ. You can use database development and management tools such as Oracle Enterprise Manager to monitor queues. Like other database tables, queue tables can be imported and exported.</p>
 <dl class="section user"><dt>OCILIB implementation</dt><dd></dd></dl>
-<p>OCILIB provides a (nearly) full C implementation of Advanced Queues available in Oracle OCI and proposes the following data types :</p><ul>
-<li>OCI_Msg : Implementation of message to enqueue/dequeue from/to queues</li>
-<li>OCI_Enqueue : Implementation of enqueuing process</li>
-<li>OCI_Dequeue : Implementation of dequeuing process</li>
-<li>OCI_Agent : Implementation of Advanced queues Agents</li>
+<p>OCILIB provides a (nearly) full C implementation of Advanced Queues available in Oracle OCI and proposes the following data types:</p><ul>
+<li>OCI_Msg : Implementation of messages to enqueue/dequeue from/to queues.</li>
+<li>OCI_Enqueue : Implementation of the enqueuing process.</li>
+<li>OCI_Dequeue : Implementation of the dequeuing process.</li>
+<li>OCI_Agent : Implementation of Advanced Queues Agents.</li>
 </ul>
-<p>OCILIB support AQ messages notification with Oracle Client 10gR2 or above</p>
-<p>Note that the only AQ features not supported yet by OCILIB are :</p><ul>
-<li>Payloads of type AnyData</li>
-<li>Enqueuing/dequeuing arrays of messages</li>
-<li>Optional delivery mode introduced in 10gR2</li>
+<p>OCILIB supports AQ message notification with Oracle Client 10gR2 or above.</p>
+<p>Note that the only AQ features not supported yet by OCILIB are:</p><ul>
+<li>Payloads of type AnyData.</li>
+<li>Enqueuing/dequeuing arrays of messages.</li>
+<li>Optional delivery mode introduced in 10gR2.</li>
 </ul>
-<p>OCILIB provides as well a C API to administrate queues and queue tables initially reserved to PL/SQL and Java (wrappers around PL/SQL calls). This API, based on internal PL/SQL calls wrapping the DBMS_AQADM packages procedures, allow the following actions :</p><ul>
-<li>create, alter, drop and purge queue tables (OCI_QueueTableXXX calls)</li>
-<li>create, alter, drop, start, stop queues (OCI_QueueXXX calls)</li>
+<p>OCILIB also provides a C API to administrate queues and queue tables initially reserved to PL/SQL and Java (wrappers around PL/SQL calls). This API, based on internal PL/SQL calls wrapping the DBMS_AQADM package procedures, allows the following actions:</p><ul>
+<li>Create, alter, drop and purge queue tables (OCI_QueueTableXXX calls).</li>
+<li>Create, alter, drop, start, stop queues (OCI_QueueXXX calls).</li>
 </ul>
-<p>Note that the user connected to the database needs particular privileges to manipulate or administrate queues (See Oracle Streams - Advanced Queuing User's Guide for more information on these privileges)</p>
+<p>Note that the user connected to the database needs particular privileges to manipulate or administrate queues (see Oracle Streams - Advanced Queuing User's Guide for more information on these privileges).</p>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">/* requires script demo/queue.sql */</span></div>
@@ -191,7 +191,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_advanced_queuing.
 <div class="line">}</div>
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_ga00373fb647a578a10e0bee4e026b29b5"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#ga00373fb647a578a10e0bee4e026b29b5">OCI_MsgGetObject</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Object *OCI_API OCI_MsgGetObject(OCI_Msg *msg)</div><div class="ttdoc">Get the object payload of the given message.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_ga0741726408202b1852a0a0b3c7a1ecf5"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#ga0741726408202b1852a0a0b3c7a1ecf5">OCI_QueueTableDrop</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableDrop(OCI_Connection *con, const otext *queue_table, boolean force)</div><div class="ttdoc">Drop the given queue table.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_ga115ed0a76b14a34694008e058b5b0a94"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#ga115ed0a76b14a34694008e058b5b0a94">OCI_EnqueuePut</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueuePut(OCI_Enqueue *enqueue, OCI_Msg *msg)</div><div class="ttdoc">Enqueue a message on the queue associated to the Enqueue object.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_ga115ed0a76b14a34694008e058b5b0a94"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#ga115ed0a76b14a34694008e058b5b0a94">OCI_EnqueuePut</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueuePut(OCI_Enqueue *enqueue, OCI_Msg *msg)</div><div class="ttdoc">Enqueue a message on the queue associated with the Enqueue object.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_ga2c7926f2efe4a881c2a4562f60a76836"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#ga2c7926f2efe4a881c2a4562f60a76836">OCI_QueueStop</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_QueueStop(OCI_Connection *con, const otext *queue_name, boolean enqueue, boolean dequeue, boolean wait)</div><div class="ttdoc">Stop enqueuing or dequeuing or both on the given queue.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_ga3e9c882d01220e88325a5a94301a9bfe"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#ga3e9c882d01220e88325a5a94301a9bfe">OCI_MsgCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Msg *OCI_API OCI_MsgCreate(OCI_TypeInfo *typinf)</div><div class="ttdoc">Create a message object based on the given payload type.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_ga47a06a3de235e407ac89572239cf5311"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#ga47a06a3de235e407ac89572239cf5311">OCI_QueueStart</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_QueueStart(OCI_Connection *con, const otext *queue_name, boolean enqueue, boolean dequeue)</div><div class="ttdoc">Start the given queue.</div></div>
@@ -200,21 +200,21 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_advanced_queuing.
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_ga9bddce742a929284867cfc99cff24689"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#ga9bddce742a929284867cfc99cff24689">OCI_MsgFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_MsgFree(OCI_Msg *msg)</div><div class="ttdoc">Free a message object.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_gac6ac6aa63ae6a0d19993b994e65701e5"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#gac6ac6aa63ae6a0d19993b994e65701e5">OCI_QueueDrop</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_QueueDrop(OCI_Connection *con, const otext *queue_name)</div><div class="ttdoc">Drop the given queue.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_gac8fb7a646ff98e9612dc115346d78107"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#gac8fb7a646ff98e9612dc115346d78107">OCI_QueueCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_QueueCreate(OCI_Connection *con, const otext *queue_name, const otext *queue_table, unsigned int queue_type, unsigned int max_retries, unsigned int retry_delay, unsigned int retention_time, boolean dependency_tracking, const otext *comment)</div><div class="ttdoc">Create a queue.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_gad41989e159249f51151bfadbc3cd1cea"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#gad41989e159249f51151bfadbc3cd1cea">OCI_EnqueueCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Enqueue *OCI_API OCI_EnqueueCreate(OCI_TypeInfo *typinf, const otext *name)</div><div class="ttdoc">Create a Enqueue object for the given queue.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_gad41989e159249f51151bfadbc3cd1cea"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#gad41989e159249f51151bfadbc3cd1cea">OCI_EnqueueCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Enqueue *OCI_API OCI_EnqueueCreate(OCI_TypeInfo *typinf, const otext *name)</div><div class="ttdoc">Create an Enqueue object for the given queue.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_gadd4eb747be91bb5816fd9786620c5450"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#gadd4eb747be91bb5816fd9786620c5450">OCI_QueueTableCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableCreate(OCI_Connection *con, const otext *queue_table, const otext *queue_payload_type, const otext *storage_clause, const otext *sort_list, boolean multiple_consumers, unsigned int message_grouping, const otext *comment, unsigned int primary_instance, unsigned int secondary_instance, const otext *compatible)</div><div class="ttdoc">Create a queue table for messages of the given type.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_gae21076136e268657eb36f284b8cf57da"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#gae21076136e268657eb36f284b8cf57da">OCI_MsgSetObject</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetObject(OCI_Msg *msg, OCI_Object *obj)</div><div class="ttdoc">Set the object payload of the given message.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_gaef7f29697e4956837543a8718a38ffd9"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#gaef7f29697e4956837543a8718a38ffd9">OCI_DequeueCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Dequeue *OCI_API OCI_DequeueCreate(OCI_TypeInfo *typinf, const otext *name)</div><div class="ttdoc">Create a Dequeue object for the given queue.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_gafb8d299caf0835404a7c8498780bf0ae"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#gafb8d299caf0835404a7c8498780bf0ae">OCI_EnqueueFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueFree(OCI_Enqueue *enqueue)</div><div class="ttdoc">Free a Enqueue object.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_advanced_queuing_html_gafb8d299caf0835404a7c8498780bf0ae"><div class="ttname"><a href="group___ocilib_c_api_advanced_queuing.html#gafb8d299caf0835404a7c8498780bf0ae">OCI_EnqueueFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueFree(OCI_Enqueue *enqueue)</div><div class="ttdoc">Free an Enqueue object.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga375f2252640df238d927d647f6aceba9"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ConnectionFree(OCI_Connection *con)</div><div class="ttdoc">Close a physical connection to an Oracle database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga99fdd3a24d96ae27a9f31cae47041c27"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27">OCI_ConnectionCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Connection *OCI_API OCI_ConnectionCreate(const otext *db, const otext *user, const otext *pwd, unsigned int mode)</div><div class="ttdoc">Create a physical connection to an Oracle database server.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga0d226bd4128b8fc66bba6b09ac332409"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga0d226bd4128b8fc66bba6b09ac332409">OCI_Enqueue</a></div><div class="ttdeci">struct OCI_Enqueue OCI_Enqueue</div><div class="ttdoc">OCILIB encapsulation of A/Q enqueuing operations.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00490">types.h:490</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga19a5d189577b50fa5c208a236a4bcbfc"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga19a5d189577b50fa5c208a236a4bcbfc">OCI_Dequeue</a></div><div class="ttdeci">struct OCI_Dequeue OCI_Dequeue</div><div class="ttdoc">OCILIB encapsulation of A/Q dequeuing operations.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00480">types.h:480</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga0d226bd4128b8fc66bba6b09ac332409"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga0d226bd4128b8fc66bba6b09ac332409">OCI_Enqueue</a></div><div class="ttdeci">struct OCI_Enqueue OCI_Enqueue</div><div class="ttdoc">OCILIB encapsulation of A/Q enqueuing operations.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00500">types.h:500</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga19a5d189577b50fa5c208a236a4bcbfc"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga19a5d189577b50fa5c208a236a4bcbfc">OCI_Dequeue</a></div><div class="ttdeci">struct OCI_Dequeue OCI_Dequeue</div><div class="ttdoc">OCILIB encapsulation of A/Q dequeuing operations.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00490">types.h:490</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga270329793bf4735351b6007bc20d41ae"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a></div><div class="ttdeci">struct OCI_Object OCI_Object</div><div class="ttdoc">Oracle Named types representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00309">types.h:309</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gac7448d2a513d9d5e8ff73926e8383239"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a></div><div class="ttdeci">struct OCI_Msg OCI_Msg</div><div class="ttdoc">OCILIB encapsulation of A/Q message.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00460">types.h:460</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gad33099e82262f1f484c19283d5f812c6"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a></div><div class="ttdeci">struct OCI_TypeInfo OCI_TypeInfo</div><div class="ttdoc">Type info metadata handle.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00376">types.h:376</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gac7448d2a513d9d5e8ff73926e8383239"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a></div><div class="ttdeci">struct OCI_Msg OCI_Msg</div><div class="ttdoc">OCILIB encapsulation of A/Q message.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00470">types.h:470</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gad33099e82262f1f484c19283d5f812c6"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a></div><div class="ttdeci">struct OCI_TypeInfo OCI_TypeInfo</div><div class="ttdoc">Type info metadata handle.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00386">types.h:386</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_metadata_html_ga170733509803e73193ed3d7d858e68f8"><div class="ttname"><a href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8">OCI_TypeInfoGet</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_TypeInfo *OCI_API OCI_TypeInfoGet(OCI_Connection *con, const otext *name, unsigned int type)</div><div class="ttdoc">Retrieve the available type info information.</div></div>
@@ -243,7 +243,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:gae21076136e268657eb36f284b8cf57da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the object payload of the given message.  <br /></td></tr>
 <tr class="separator:gae21076136e268657eb36f284b8cf57da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga85cb7fb78140355356d77ca14e8b8a1e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga85cb7fb78140355356d77ca14e8b8a1e">OCI_MsgGetRaw</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a> *msg, void *raw, unsigned int *size)</td></tr>
-<tr class="memdesc:ga85cb7fb78140355356d77ca14e8b8a1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the RAW payload of the given message.  <br /></td></tr>
+<tr class="memdesc:ga85cb7fb78140355356d77ca14e8b8a1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy the RAW payload of the given message into the given buffer.  <br /></td></tr>
 <tr class="separator:ga85cb7fb78140355356d77ca14e8b8a1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf8ec070cd38bf12677bd3979f2a5983d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf8ec070cd38bf12677bd3979f2a5983d">OCI_MsgSetRaw</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a> *msg, const void *raw, unsigned int size)</td></tr>
 <tr class="memdesc:gaf8ec070cd38bf12677bd3979f2a5983d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the RAW payload of the given message.  <br /></td></tr>
@@ -255,16 +255,16 @@ Functions</h2></td></tr>
 <tr class="memdesc:gabfa9430ca7b10cee1136284fe1ddc14a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of seconds that a message is delayed for dequeuing.  <br /></td></tr>
 <tr class="separator:gabfa9430ca7b10cee1136284fe1ddc14a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0b566d4d600064c7e3dedcb2d859fe17"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga0b566d4d600064c7e3dedcb2d859fe17">OCI_MsgSetEnqueueDelay</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a> *msg, int value)</td></tr>
-<tr class="memdesc:ga0b566d4d600064c7e3dedcb2d859fe17"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the number of seconds to delay the enqueued message  <br /></td></tr>
+<tr class="memdesc:ga0b566d4d600064c7e3dedcb2d859fe17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the number of seconds to delay the enqueued message.  <br /></td></tr>
 <tr class="separator:ga0b566d4d600064c7e3dedcb2d859fe17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab977d05222bd631a12270cd249e7f2a5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#gab977d05222bd631a12270cd249e7f2a5">OCI_MsgGetEnqueueTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a> *msg)</td></tr>
-<tr class="memdesc:gab977d05222bd631a12270cd249e7f2a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">return the time the message was enqueued  <br /></td></tr>
+<tr class="memdesc:gab977d05222bd631a12270cd249e7f2a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the time the message was enqueued.  <br /></td></tr>
 <tr class="separator:gab977d05222bd631a12270cd249e7f2a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7790083d93391e64783072b31dcff385"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga7790083d93391e64783072b31dcff385">OCI_MsgGetExpiration</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a> *msg)</td></tr>
 <tr class="memdesc:ga7790083d93391e64783072b31dcff385"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the duration that the message is available for dequeuing.  <br /></td></tr>
 <tr class="separator:ga7790083d93391e64783072b31dcff385"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab85ec5aea9c236ae5218aea0ce7cbda5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#gab85ec5aea9c236ae5218aea0ce7cbda5">OCI_MsgSetExpiration</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a> *msg, int value)</td></tr>
-<tr class="memdesc:gab85ec5aea9c236ae5218aea0ce7cbda5"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the duration that the message is available for dequeuing  <br /></td></tr>
+<tr class="memdesc:gab85ec5aea9c236ae5218aea0ce7cbda5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the duration that the message is available for dequeuing.  <br /></td></tr>
 <tr class="separator:gab85ec5aea9c236ae5218aea0ce7cbda5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf984e4e2f912718fc8f4ee97df4e0813"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf984e4e2f912718fc8f4ee97df4e0813">OCI_MsgGetState</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a> *msg)</td></tr>
 <tr class="memdesc:gaf984e4e2f912718fc8f4ee97df4e0813"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the state of the message at the time of the dequeue.  <br /></td></tr>
@@ -297,22 +297,22 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga3a7d704cfb517979f4446b0431e3968a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the correlation identifier of the message.  <br /></td></tr>
 <tr class="separator:ga3a7d704cfb517979f4446b0431e3968a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2211605a7071b7374d86d944f341a4bd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga2211605a7071b7374d86d944f341a4bd">OCI_MsgSetCorrelation</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a> *msg, const otext *correlation)</td></tr>
-<tr class="memdesc:ga2211605a7071b7374d86d944f341a4bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the correlation identifier of the message  <br /></td></tr>
+<tr class="memdesc:ga2211605a7071b7374d86d944f341a4bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the correlation identifier of the message.  <br /></td></tr>
 <tr class="separator:ga2211605a7071b7374d86d944f341a4bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6754ed13ef30430e63bedbd2b4dbbc92"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga6754ed13ef30430e63bedbd2b4dbbc92">OCI_MsgGetExceptionQueue</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a> *msg)</td></tr>
 <tr class="memdesc:ga6754ed13ef30430e63bedbd2b4dbbc92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Exception queue name of the message.  <br /></td></tr>
 <tr class="separator:ga6754ed13ef30430e63bedbd2b4dbbc92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6f3e574536ac55b0913361ab64e8d92f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga6f3e574536ac55b0913361ab64e8d92f">OCI_MsgSetExceptionQueue</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a> *msg, const otext *queue)</td></tr>
-<tr class="memdesc:ga6f3e574536ac55b0913361ab64e8d92f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the name of the queue to which the message is moved to if it cannot be processed successfully.  <br /></td></tr>
+<tr class="memdesc:ga6f3e574536ac55b0913361ab64e8d92f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the name of the queue to which the message is moved if it cannot be processed successfully.  <br /></td></tr>
 <tr class="separator:ga6f3e574536ac55b0913361ab64e8d92f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad41989e159249f51151bfadbc3cd1cea"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga0d226bd4128b8fc66bba6b09ac332409">OCI_Enqueue</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#gad41989e159249f51151bfadbc3cd1cea">OCI_EnqueueCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf, const otext *name)</td></tr>
-<tr class="memdesc:gad41989e159249f51151bfadbc3cd1cea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a Enqueue object for the given queue.  <br /></td></tr>
+<tr class="memdesc:gad41989e159249f51151bfadbc3cd1cea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an Enqueue object for the given queue.  <br /></td></tr>
 <tr class="separator:gad41989e159249f51151bfadbc3cd1cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafb8d299caf0835404a7c8498780bf0ae"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#gafb8d299caf0835404a7c8498780bf0ae">OCI_EnqueueFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0d226bd4128b8fc66bba6b09ac332409">OCI_Enqueue</a> *enqueue)</td></tr>
-<tr class="memdesc:gafb8d299caf0835404a7c8498780bf0ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a Enqueue object.  <br /></td></tr>
+<tr class="memdesc:gafb8d299caf0835404a7c8498780bf0ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an Enqueue object.  <br /></td></tr>
 <tr class="separator:gafb8d299caf0835404a7c8498780bf0ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga115ed0a76b14a34694008e058b5b0a94"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga115ed0a76b14a34694008e058b5b0a94">OCI_EnqueuePut</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0d226bd4128b8fc66bba6b09ac332409">OCI_Enqueue</a> *enqueue, <a class="el" href="group___ocilib_c_api_datatypes.html#gac7448d2a513d9d5e8ff73926e8383239">OCI_Msg</a> *msg)</td></tr>
-<tr class="memdesc:ga115ed0a76b14a34694008e058b5b0a94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enqueue a message on the queue associated to the Enqueue object.  <br /></td></tr>
+<tr class="memdesc:ga115ed0a76b14a34694008e058b5b0a94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enqueue a message on the queue associated with the Enqueue object.  <br /></td></tr>
 <tr class="separator:ga115ed0a76b14a34694008e058b5b0a94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae545d89e74253d2dd908dab296fe8781"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae545d89e74253d2dd908dab296fe8781">OCI_EnqueueSetSequenceDeviation</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0d226bd4128b8fc66bba6b09ac332409">OCI_Enqueue</a> *enqueue, unsigned int sequence)</td></tr>
 <tr class="memdesc:gae545d89e74253d2dd908dab296fe8781"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the enqueuing sequence of messages to put in the queue.  <br /></td></tr>
@@ -354,7 +354,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga9286f5cb2106c5dcd3fb9745b98213fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current consumer name associated with the dequeuing process.  <br /></td></tr>
 <tr class="separator:ga9286f5cb2106c5dcd3fb9745b98213fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf04696fe712ae0a3b1397d877c0dcb96"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf04696fe712ae0a3b1397d877c0dcb96">OCI_DequeueSetCorrelation</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga19a5d189577b50fa5c208a236a4bcbfc">OCI_Dequeue</a> *dequeue, const otext *pattern)</td></tr>
-<tr class="memdesc:gaf04696fe712ae0a3b1397d877c0dcb96"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the correlation identifier of the message to be dequeued  <br /></td></tr>
+<tr class="memdesc:gaf04696fe712ae0a3b1397d877c0dcb96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the correlation identifier of the message to be dequeued.  <br /></td></tr>
 <tr class="separator:gaf04696fe712ae0a3b1397d877c0dcb96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae2db45b51e4977ab83d7273a34e9b6dd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae2db45b51e4977ab83d7273a34e9b6dd">OCI_DequeueGetCorrelation</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga19a5d189577b50fa5c208a236a4bcbfc">OCI_Dequeue</a> *dequeue)</td></tr>
 <tr class="memdesc:gae2db45b51e4977ab83d7273a34e9b6dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the correlation identifier of the message to be dequeued.  <br /></td></tr>
@@ -384,13 +384,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga0835077db0c5be00e2b6401b5234e0f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the navigation position of messages to retrieve from the queue.  <br /></td></tr>
 <tr class="separator:ga0835077db0c5be00e2b6401b5234e0f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafa9bb653b54361d3b623c326b10d5436"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#gafa9bb653b54361d3b623c326b10d5436">OCI_DequeueSetWaitTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga19a5d189577b50fa5c208a236a4bcbfc">OCI_Dequeue</a> *dequeue, int timeout)</td></tr>
-<tr class="memdesc:gafa9bb653b54361d3b623c326b10d5436"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the time that OCIDequeueGet() waits for messages if no messages are currently available  <br /></td></tr>
+<tr class="memdesc:gafa9bb653b54361d3b623c326b10d5436"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the time that <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga88d602c567fbc14f153254c8da992723" title="Dequeue messages from the given queue.">OCI_DequeueGet()</a> waits for messages if no messages are currently available.  <br /></td></tr>
 <tr class="separator:gafa9bb653b54361d3b623c326b10d5436"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9216806faf2442a1c83702b1b2c4cf01"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga9216806faf2442a1c83702b1b2c4cf01">OCI_DequeueGetWaitTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga19a5d189577b50fa5c208a236a4bcbfc">OCI_Dequeue</a> *dequeue)</td></tr>
-<tr class="memdesc:ga9216806faf2442a1c83702b1b2c4cf01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the time that OCIDequeueGet() waits for messages if no messages are currently available.  <br /></td></tr>
+<tr class="memdesc:ga9216806faf2442a1c83702b1b2c4cf01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the time that <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga88d602c567fbc14f153254c8da992723" title="Dequeue messages from the given queue.">OCI_DequeueGet()</a> waits for messages if no messages are currently available.  <br /></td></tr>
 <tr class="separator:ga9216806faf2442a1c83702b1b2c4cf01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga46d1f811b0ebbbfa2ddfca54a1a094a8"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga46d1f811b0ebbbfa2ddfca54a1a094a8">OCI_DequeueSetAgentList</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga19a5d189577b50fa5c208a236a4bcbfc">OCI_Dequeue</a> *dequeue, <a class="el" href="group___ocilib_c_api_datatypes.html#gaf9fd9b1e46ebe8947c3c553b93e951c0">OCI_Agent</a> **consumers, unsigned int count)</td></tr>
-<tr class="memdesc:ga46d1f811b0ebbbfa2ddfca54a1a094a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Agent list to listen to message for.  <br /></td></tr>
+<tr class="memdesc:ga46d1f811b0ebbbfa2ddfca54a1a094a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Agent list to listen to messages for.  <br /></td></tr>
 <tr class="separator:ga46d1f811b0ebbbfa2ddfca54a1a094a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga1821ab4a14ccc13b450eb8bcd6a8a4ef"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gaf9fd9b1e46ebe8947c3c553b93e951c0">OCI_Agent</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga1821ab4a14ccc13b450eb8bcd6a8a4ef">OCI_DequeueListen</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga19a5d189577b50fa5c208a236a4bcbfc">OCI_Dequeue</a> *dequeue, int timeout)</td></tr>
 <tr class="memdesc:ga1821ab4a14ccc13b450eb8bcd6a8a4ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Listen for messages that match any recipient of the associated Agent list.  <br /></td></tr>
@@ -470,22 +470,22 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCILIB supports 2 type of message payload :<ul>
-<li>Oracle types (UDT)</li>
-<li>RAW data</li>
+<dl class="section note"><dt>Note</dt><dd>OCILIB supports 2 types of message payload:<ul>
+<li>Oracle types (UDT).</li>
+<li>RAW data.</li>
 </ul>
 </dd>
 <dd>
-Oracle Type AnyData is not supported in the current version of OCILIB</dd>
+Oracle Type AnyData is not supported in the current version of OCILIB.</dd>
 <dd>
-the parameter 'typinf' indicates the type of payload :<ul>
-<li>For object payload, retrieve the object type information handle with <a class="el" href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a> using the object type name</li>
-<li>For RAW payload, you MUST pass the object type information retrieved with <a class="el" href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a> using "SYS.RAW" as object type name</li>
+The parameter 'typinf' indicates the type of payload:<ul>
+<li>For object payload, retrieve the object type information handle with <a class="el" href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a> using the object type name.</li>
+<li>For RAW payload, you MUST pass the object type information retrieved with <a class="el" href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a> using "SYS.RAW" as object type name.</li>
 </ul>
 </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Newly created Message handles have NULL payloads. For Message handling Objects payloads, <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga00373fb647a578a10e0bee4e026b29b5" title="Get the object payload of the given message.">OCI_MsgGetObject()</a> returns NULL until an object handle is assigned to the message.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>When a local OCI_Msg handle is enqueued, it keeps its attributes. If it's enqueued again, another identical message is posted into the queue. To reset a message and empty all its properties, call <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga4c0824e410e48766adddd5af9004394d" title="Reset all attributes of a message object.">OCI_MsgReset()</a> Note that <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga4c0824e410e48766adddd5af9004394d" title="Reset all attributes of a message object.">OCI_MsgReset()</a> clears the message payload.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the message handle on success otherwise NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>When a local OCI_Msg handle is enqueued, it keeps its attributes. If it's enqueued again, another identical message is posted into the queue. To reset a message and empty all its properties, call <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga4c0824e410e48766adddd5af9004394d" title="Reset all attributes of a message object.">OCI_MsgReset()</a>. Note that <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga4c0824e410e48766adddd5af9004394d" title="Reset all attributes of a message object.">OCI_MsgReset()</a> clears the message payload.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The message handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#a7f050451b47f028fdbaa258a5f95f3bd">ocilib::Message::Message()</a>.</p>
 
@@ -516,8 +516,8 @@ the parameter 'typinf' indicates the type of payload :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only message handles created with <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga3e9c882d01220e88325a5a94301a9bfe" title="Create a message object based on the given payload type.">OCI_MsgCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga9bddce742a929284867cfc99cff24689" title="Free a message object.">OCI_MsgFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only message handles created with <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga3e9c882d01220e88325a5a94301a9bfe" title="Create a message object based on the given payload type.">OCI_MsgCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga9bddce742a929284867cfc99cff24689" title="Free a message object.">OCI_MsgFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -546,9 +546,9 @@ the parameter 'typinf' indicates the type of payload :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This function calls OCI_MsgSetxxx() with default or NULL attributes</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga4c0824e410e48766adddd5af9004394d" title="Reset all attributes of a message object.">OCI_MsgReset()</a> clears the message payload and set it to NULL For messages handling objects payloads, <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae21076136e268657eb36f284b8cf57da" title="Set the object payload of the given message.">OCI_MsgSetObject()</a> must be called again to assign a payload.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This function calls OCI_MsgSetxxx() with default or NULL attributes.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga4c0824e410e48766adddd5af9004394d" title="Reset all attributes of a message object.">OCI_MsgReset()</a> clears the message payload and sets it to NULL. For messages handling object payloads, <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae21076136e268657eb36f284b8cf57da" title="Set the object payload of the given message.">OCI_MsgSetObject()</a> must be called again to assign a payload.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#aacc25763e5a1cd639378cec1a56b62cf">ocilib::Message::Reset()</a>.</p>
 
@@ -579,7 +579,7 @@ the parameter 'typinf' indicates the type of payload :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the object handle on success otherwise NULL on failure or if payload is NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The object handle on success, or NULL on failure or if the payload is NULL. </dd></dl>
 
 </div>
 </div>
@@ -619,7 +619,7 @@ the parameter 'typinf' indicates the type of payload :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -657,7 +657,7 @@ the parameter 'typinf' indicates the type of payload :<ul>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Get the RAW payload of the given message. </p>
+<p>Copy the RAW payload of the given message into the given buffer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>- Message handle </td></tr>
@@ -666,8 +666,8 @@ the parameter 'typinf' indicates the type of payload :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>On output, parameter 'size' holds the number of bytes copied into the given buffer</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE on failure or if payload is object based. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If parameter 'raw' is NULL, parameter 'size' is filled with the required buffer size Otherwise, 'raw' buffer is filled with RAW content and 'size' holds the number of bytes copied into the given buffer</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE on failure or if the payload is object-based. </dd></dl>
 
 </div>
 </div>
@@ -714,7 +714,7 @@ the parameter 'typinf' indicates the type of payload :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE on failure or if payload is object based. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE on failure or if the payload is object-based. </dd></dl>
 
 </div>
 </div>
@@ -739,10 +739,11 @@ the parameter 'typinf' indicates the type of payload :<ul>
 <p>Return the number of attempts that have been made to dequeue the message. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">msg</td><td>- Message handle </td></tr>
+    <tr><td class="paramname">msg</td><td>- Message handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of attempts, or 0 on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#a3438a3c103d308ae71e90e5c102c85c9">ocilib::Message::GetAttemptCount()</a>.</p>
 
@@ -773,7 +774,8 @@ the parameter 'typinf' indicates the type of payload :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga0b566d4d600064c7e3dedcb2d859fe17" title="set the number of seconds to delay the enqueued message">OCI_MsgSetEnqueueDelay()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga0b566d4d600064c7e3dedcb2d859fe17" title="Set the number of seconds to delay the enqueued message.">OCI_MsgSetEnqueueDelay()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The delay in seconds, or 0 on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#ab8535f621d6e9b15ce7ca349be10adf3">ocilib::Message::GetEnqueueDelay()</a>.</p>
 
@@ -807,7 +809,7 @@ the parameter 'typinf' indicates the type of payload :<ul>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>set the number of seconds to delay the enqueued message </p>
+<p>Set the number of seconds to delay the enqueued message. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>- Message handle </td></tr>
@@ -817,11 +819,11 @@ the parameter 'typinf' indicates the type of payload :<ul>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>The delay represents the number of seconds after which a message is available for dequeuing. When the message is enqueued, its state is set to OCI_AMS_WAITING. When the delay expires, its state is set to OCI_AMS_READY.</dd>
 <dd>
-If parameter 'value' is set to zero (default value), the message will be immediately available for dequeuing</dd></dl>
+If parameter 'value' is set to zero (default value), the message will be immediately available for dequeuing.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Dequeuing by Message ID overrides the delay specification.</dd>
 <dd>
 Delaying processing requires the queue monitor to be started.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#aaf09869e15cfaeb3d78b5988625a0d6c">ocilib::Message::SetEnqueueDelay()</a>.</p>
 
@@ -845,14 +847,15 @@ Delaying processing requires the queue monitor to be started.</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>return the time the message was enqueued </p>
+<p>Return the time the message was enqueued. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>- Message handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Only use this function for message dequeued from queues </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Only use this function for messages dequeued from queues.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The enqueue time as a Date handle, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#a70ddacf58096ccce4eadad03cdb63cdd">ocilib::Message::GetEnqueueTime()</a>.</p>
 
@@ -883,7 +886,8 @@ Delaying processing requires the queue monitor to be started.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gab85ec5aea9c236ae5218aea0ce7cbda5" title="set the duration that the message is available for dequeuing">OCI_MsgSetExpiration()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gab85ec5aea9c236ae5218aea0ce7cbda5" title="Set the duration that the message is available for dequeuing.">OCI_MsgSetExpiration()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The expiration duration in seconds, or 0 on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#ab32a10ece505bcc1d0e52a529c699b4b">ocilib::Message::GetExpiration()</a>.</p>
 
@@ -917,19 +921,19 @@ Delaying processing requires the queue monitor to be started.</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>set the duration that the message is available for dequeuing </p>
+<p>Set the duration that the message is available for dequeuing. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>- Message handle </td></tr>
-    <tr><td class="paramname">value</td><td>- duration in seconds</td></tr>
+    <tr><td class="paramname">value</td><td>- Duration in seconds</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This parameter is an offset from the delay (see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga0b566d4d600064c7e3dedcb2d859fe17" title="set the number of seconds to delay the enqueued message">OCI_MsgSetEnqueueDelay()</a>) While waiting for expiration, the message state is set to OCI_AMS_READY. If the message is not dequeued before it expires, it will be moved to the exception queue with the state OCI_AMS_EXPIRED.</dd>
+<dl class="section note"><dt>Note</dt><dd>This parameter is an offset from the delay (see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga0b566d4d600064c7e3dedcb2d859fe17" title="Set the number of seconds to delay the enqueued message.">OCI_MsgSetEnqueueDelay()</a>) While waiting for expiration, the message state is set to OCI_AMS_READY. If the message is not dequeued before it expires, it will be moved to the exception queue with the state OCI_AMS_EXPIRED.</dd>
 <dd>
-If parameter 'value' is set to -1 (default value), the message will not expire</dd></dl>
+If parameter 'value' is set to -1 (default value), the message will not expire.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>Expiration processing requires the queue monitor to be started.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#a7395ccb71a1ab5149c3b2db3ecbd70b3">ocilib::Message::SetExpiration()</a>.</p>
 
@@ -961,11 +965,11 @@ If parameter 'value' is set to -1 (default value), the message will not expire</
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><ul>
-<li>OCI_UNKNOWN : the function has failed to get the message state</li>
-<li>OCI_AMS_READY : the message is ready to be processed</li>
-<li>OCI_AMS_WAITING : the message delay has not yet completed</li>
-<li>OCI_AMS_PROCESSED : the message has been processed</li>
-<li>OCI_AMS_EXPIRED : the message has moved to exception queue </li>
+<li>OCI_UNKNOWN : the function has failed to get the message state.</li>
+<li>OCI_AMS_READY : the message is ready to be processed.</li>
+<li>OCI_AMS_WAITING : the message delay has not yet completed.</li>
+<li>OCI_AMS_PROCESSED : the message has been processed.</li>
+<li>OCI_AMS_EXPIRED : the message has moved to the exception queue. </li>
 </ul>
 </dd></dl>
 
@@ -998,7 +1002,8 @@ If parameter 'value' is set to -1 (default value), the message will not expire</
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga042a7ca976ca00f5bd4e7052406d6146" title="Set the priority of the message.">OCI_MsgSetPriority()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga042a7ca976ca00f5bd4e7052406d6146" title="Set the priority of the message.">OCI_MsgSetPriority()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The message priority value. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#ab8a0c1a53ba7cba6bb26d733e4645903">ocilib::Message::GetPriority()</a>.</p>
 
@@ -1046,7 +1051,7 @@ If parameter 'value' is set to -1 (default value), the message will not expire</
 <li>Default value is zero.</li>
 </ul>
 </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#a5eec3ebba0c7dda6bed67df88319a7ed">ocilib::Message::SetPriority()</a>.</p>
 
@@ -1095,14 +1100,14 @@ If parameter 'value' is set to -1 (default value), the message will not expire</
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The message ID is :<ul>
-<li>generated when the message is enqueued in the queue</li>
-<li>retrieved when the message is dequeued from the queue</li>
+<dl class="section note"><dt>Note</dt><dd>The message ID is:<ul>
+<li>Generated when the message is enqueued in the queue.</li>
+<li>Retrieved when the message is dequeued from the queue.</li>
 </ul>
 </dd>
 <dd>
-On output, parameter 'len' holds the number of bytes copied into the given buffer</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+On output, parameter 'len' holds the number of bytes copied into the given buffer.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#a98d63f0dd6ced89bd5aa5cc40f521da5">ocilib::Message::GetID()</a>.</p>
 
@@ -1152,8 +1157,8 @@ On output, parameter 'len' holds the number of bytes copied into the given buffe
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>When a message is propagated from/to different queues, this ID is the one generated for the message in the previous queue.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>On output, parameter 'len' holds the number of bytes copied into the given buffer</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>On output, parameter 'len' holds the number of bytes copied into the given buffer.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#a683c339e1682516ab1365311a79329a8">ocilib::Message::GetOriginalID()</a>.</p>
 
@@ -1203,7 +1208,7 @@ On output, parameter 'len' holds the number of bytes copied into the given buffe
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>When a message is propagated from/to different queues, this ID is the one generated for the message in the previous queue.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#aea7d86e961ef365841aa04195f598c01">ocilib::Message::SetOriginalID()</a>.</p>
 
@@ -1234,7 +1239,7 @@ On output, parameter 'len' holds the number of bytes copied into the given buffe
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Sender Handle (OCI_Agent *) on success (if set at enqueue time) otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Sender handle (OCI_Agent *) on success (if set at enqueue time), or NULL otherwise. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#a912b61bff35e579fb02bedd8260e9842">ocilib::Message::GetSender()</a>.</p>
 
@@ -1276,7 +1281,7 @@ On output, parameter 'len' holds the number of bytes copied into the given buffe
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#a2f32d21624feea4591932481611ba09b">ocilib::Message::SetSender()</a>.</p>
 
@@ -1326,7 +1331,7 @@ On output, parameter 'len' holds the number of bytes copied into the given buffe
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>This function should only be used for queues which allow multiple consumers. The default recipients are the queue subscribers.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#ad0ff24fdeb9b3e5381ae009edde4ca85">ocilib::Message::SetConsumers()</a>.</p>
 
@@ -1357,7 +1362,8 @@ On output, parameter 'len' holds the number of bytes copied into the given buffe
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga2211605a7071b7374d86d944f341a4bd" title="set the correlation identifier of the message">OCI_MsgSetCorrelation()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga2211605a7071b7374d86d944f341a4bd" title="Set the correlation identifier of the message.">OCI_MsgSetCorrelation()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The correlation identifier string, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#aae60925c0e8e9249c2a963edd945f6df">ocilib::Message::GetCorrelation()</a>.</p>
 
@@ -1391,7 +1397,7 @@ On output, parameter 'len' holds the number of bytes copied into the given buffe
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>set the correlation identifier of the message </p>
+<p>Set the correlation identifier of the message. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>- Message handle </td></tr>
@@ -1399,8 +1405,8 @@ On output, parameter 'len' holds the number of bytes copied into the given buffe
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf04696fe712ae0a3b1397d877c0dcb96" title="set the correlation identifier of the message to be dequeued">OCI_DequeueSetCorrelation()</a> for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf04696fe712ae0a3b1397d877c0dcb96" title="Set the correlation identifier of the message to be dequeued.">OCI_DequeueSetCorrelation()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#a2db8c69adaaa26d48b5cfb9c970e63af">ocilib::Message::SetCorrelation()</a>.</p>
 
@@ -1431,8 +1437,9 @@ On output, parameter 'len' holds the number of bytes copied into the given buffe
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>When calling this function on a message retrieved with <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga88d602c567fbc14f153254c8da992723" title="Dequeue messages from the given queue.">OCI_DequeueGet()</a>, the returned value is NULL if the default exception queue associated with the current queue is used (e.g. no user defined specified at enqueue time for the message)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga6f3e574536ac55b0913361ab64e8d92f" title="Set the name of the queue to which the message is moved to if it cannot be processed successfully.">OCI_MsgSetExceptionQueue()</a> for more details </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>When calling this function on a message retrieved with <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga88d602c567fbc14f153254c8da992723" title="Dequeue messages from the given queue.">OCI_DequeueGet()</a>, the returned value is NULL if the default exception queue associated with the current queue is used (e.g. no user- defined queue specified at enqueue time for the message).</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga6f3e574536ac55b0913361ab64e8d92f" title="Set the name of the queue to which the message is moved if it cannot be processed successfully.">OCI_MsgSetExceptionQueue()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The exception queue name, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#a46965ab773bffe9dbe21ec6b76d97bcb">ocilib::Message::GetExceptionQueue()</a>.</p>
 
@@ -1466,7 +1473,7 @@ On output, parameter 'len' holds the number of bytes copied into the given buffe
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set the name of the queue to which the message is moved to if it cannot be processed successfully. </p>
+<p>Set the name of the queue to which the message is moved if it cannot be processed successfully. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">msg</td><td>- Message handle </td></tr>
@@ -1474,11 +1481,11 @@ On output, parameter 'len' holds the number of bytes copied into the given buffe
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>From Oracle Documentation :</dd></dl>
-<p>"Messages are moved into exception queues in two cases :
+<dl class="section warning"><dt>Warning</dt><dd>From Oracle Documentation:</dd></dl>
+<p>"Messages are moved into exception queues in two cases:
  - If the number of unsuccessful dequeue attempts has exceeded the attribute 'max_retries' of
-   given queue
- - if the message has expired.
+   the given queue.
+ - If the message has expired.
 
 All messages in the exception queue are in the EXPIRED state.
 
@@ -1489,7 +1496,7 @@ moved to the default exception queue associated with the queue table and a warni
 logged in the alert file.
 
 This attribute must refer to a valid queue name."</p>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_message.html#af3604dfb0ffe1da8e56c453a8784e7a4">ocilib::Message::SetExceptionQueue()</a>.</p>
 
@@ -1523,7 +1530,7 @@ This attribute must refer to a valid queue name."</p>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Create a Enqueue object for the given queue. </p>
+<p>Create an Enqueue object for the given queue. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">typinf</td><td>- Type info handle </td></tr>
@@ -1531,20 +1538,20 @@ This attribute must refer to a valid queue name."</p>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCILIB supports 2 type of message payload :<ul>
-<li>Oracle types (UDT)</li>
-<li>RAW data</li>
+<dl class="section note"><dt>Note</dt><dd>OCILIB supports 2 types of message payload:<ul>
+<li>Oracle types (UDT).</li>
+<li>RAW data.</li>
 </ul>
 </dd>
 <dd>
-Oracle Type AnyData is not supported in the current version of OCILIB</dd>
+Oracle Type AnyData is not supported in the current version of OCILIB.</dd>
 <dd>
-the parameter 'typinf' indicates the type of payload to enqueue to the given queue :<ul>
-<li>For object payload, retrieve the object type information handle with <a class="el" href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a> using the object type name</li>
-<li>For RAW payload, you MUST pass the object type information retrieved with <a class="el" href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a> using "SYS.RAW" as object type name</li>
+The parameter 'typinf' indicates the type of payload to enqueue to the given queue:<ul>
+<li>For object payload, retrieve the object type information handle with <a class="el" href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a> using the object type name.</li>
+<li>For RAW payload, you MUST pass the object type information retrieved with <a class="el" href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a> using "SYS.RAW" as object type name.</li>
 </ul>
 </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the Enqueue handle on success otherwise NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Enqueue handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_enqueue.html#ac5f4eb750aab446607db4244a4d25f2a">ocilib::Enqueue::Enqueue()</a>.</p>
 
@@ -1568,14 +1575,14 @@ the parameter 'typinf' indicates the type of payload to enqueue to the given que
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Free a Enqueue object. </p>
+<p>Free an Enqueue object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">enqueue</td><td>- Enqueue handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1607,7 +1614,7 @@ the parameter 'typinf' indicates the type of payload to enqueue to the given que
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Enqueue a message on the queue associated to the Enqueue object. </p>
+<p>Enqueue a message on the queue associated with the Enqueue object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">enqueue</td><td>- Enqueue handle </td></tr>
@@ -1615,7 +1622,7 @@ the parameter 'typinf' indicates the type of payload to enqueue to the given que
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_enqueue.html#af97c67d859f5983ed094839ee6cd5e85">ocilib::Enqueue::Put()</a>.</p>
 
@@ -1653,22 +1660,22 @@ the parameter 'typinf' indicates the type of payload to enqueue to the given que
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">enqueue</td><td>- Enqueue handle </td></tr>
-    <tr><td class="paramname">sequence</td><td>- enqueuing sequence</td></tr>
+    <tr><td class="paramname">sequence</td><td>- Enqueuing sequence</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'sequence' :<ul>
-<li>OCI_ASD_BEFORE : enqueue message before another message</li>
-<li>OCI_ASD_TOP : enqueue message before all messages</li>
+<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'sequence':<ul>
+<li>OCI_ASD_BEFORE : enqueue message before another message.</li>
+<li>OCI_ASD_TOP : enqueue message before all messages.</li>
 </ul>
 </dd>
 <dd>
-Default value is OCI_ASD_TOP</dd>
+Default value is OCI_ASD_TOP.</dd>
 <dd>
-if the parameter 'sequence' is set to OCI_ASD_BEFORE, the application must call <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga62de29813bfcba2484daacee89a9c2e1" title="Set a message identifier to use for enqueuing messages using a sequence deviation.">OCI_EnqueueSetRelativeMsgID()</a> before enqueuing the next message in the queue.</dd>
+If the parameter 'sequence' is set to OCI_ASD_BEFORE, the application must call <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga62de29813bfcba2484daacee89a9c2e1" title="Set a message identifier to use for enqueuing messages using a sequence deviation.">OCI_EnqueueSetRelativeMsgID()</a> before enqueuing the next message in the queue.</dd>
 <dd>
-In order to stop enqueuing message using a sequence deviation, call <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae545d89e74253d2dd908dab296fe8781" title="Set the enqueuing sequence of messages to put in the queue.">OCI_EnqueueSetSequenceDeviation()</a> with the value OCI_ASD_TOP</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+In order to stop enqueuing messages using a sequence deviation, call <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae545d89e74253d2dd908dab296fe8781" title="Set the enqueuing sequence of messages to put in the queue.">OCI_EnqueueSetSequenceDeviation()</a> with the value OCI_ASD_TOP.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_enqueue.html#a6259485a6962e526739c33b7cce4da81">ocilib::Enqueue::SetMode()</a>.</p>
 
@@ -1699,7 +1706,8 @@ In order to stop enqueuing message using a sequence deviation, call <a class="el
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae545d89e74253d2dd908dab296fe8781" title="Set the enqueuing sequence of messages to put in the queue.">OCI_EnqueueSetSequenceDeviation()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae545d89e74253d2dd908dab296fe8781" title="Set the enqueuing sequence of messages to put in the queue.">OCI_EnqueueSetSequenceDeviation()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The sequence deviation value. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_enqueue.html#a2f6d48e90d9a84866f8a6582d1d92652">ocilib::Enqueue::GetMode()</a>.</p>
 
@@ -1741,14 +1749,14 @@ In order to stop enqueuing message using a sequence deviation, call <a class="el
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'visibility' :<ul>
-<li>OCI_AMV_IMMEDIATE : enqueue is an independent transaction</li>
-<li>OCI_AMV_ON_COMMIT : enqueue is part of current transaction</li>
+<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'visibility':<ul>
+<li>OCI_AMV_IMMEDIATE : enqueue is an independent transaction.</li>
+<li>OCI_AMV_ON_COMMIT : enqueue is part of the current transaction.</li>
 </ul>
 </dd>
 <dd>
-Default value is OCI_AMV_ON_COMMIT</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Default value is OCI_AMV_ON_COMMIT.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_enqueue.html#a00a93dce396bf6fc5642b60b7ecdf57e">ocilib::Enqueue::SetVisibility()</a>.</p>
 
@@ -1779,7 +1787,8 @@ Default value is OCI_AMV_ON_COMMIT</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gac463524f14c217b1301bc144052cb8b8" title="Set whether the new message is enqueued as part of the current transaction.">OCI_EnqueueSetVisibility()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gac463524f14c217b1301bc144052cb8b8" title="Set whether the new message is enqueued as part of the current transaction.">OCI_EnqueueSetVisibility()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The visibility mode value. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_enqueue.html#a2cb186ded3ec763d17b8759bbbf65471">ocilib::Enqueue::GetVisibility()</a>.</p>
 
@@ -1823,15 +1832,15 @@ Default value is OCI_AMV_ON_COMMIT</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">enqueue</td><td>- Enqueue handle </td></tr>
-    <tr><td class="paramname">id</td><td>- message identifier </td></tr>
-    <tr><td class="paramname">len</td><td>- pointer to message identifier length</td></tr>
+    <tr><td class="paramname">id</td><td>- Message identifier </td></tr>
+    <tr><td class="paramname">len</td><td>- Pointer to message identifier length</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This call is only valid if <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae545d89e74253d2dd908dab296fe8781" title="Set the enqueuing sequence of messages to put in the queue.">OCI_EnqueueSetSequenceDeviation()</a> has been called with the value OCI_ASD_BEFORE</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>if the function cannot assign the message id, the content of the parameter 'len' is set to zero.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae545d89e74253d2dd908dab296fe8781" title="Set the enqueuing sequence of messages to put in the queue.">OCI_EnqueueSetSequenceDeviation()</a> for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This call is only valid if <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae545d89e74253d2dd908dab296fe8781" title="Set the enqueuing sequence of messages to put in the queue.">OCI_EnqueueSetSequenceDeviation()</a> has been called with the value OCI_ASD_BEFORE.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>If the function cannot assign the message ID, the content of the parameter 'len' is set to zero.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae545d89e74253d2dd908dab296fe8781" title="Set the enqueuing sequence of messages to put in the queue.">OCI_EnqueueSetSequenceDeviation()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_enqueue.html#a9c2a10425d82e93a25f9be9a9ba5b521">ocilib::Enqueue::SetRelativeMsgID()</a>.</p>
 
@@ -1875,14 +1884,14 @@ Default value is OCI_AMV_ON_COMMIT</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">enqueue</td><td>- Enqueue handle </td></tr>
-    <tr><td class="paramname">id</td><td>- buffer to receive the message identifier </td></tr>
-    <tr><td class="paramname">len</td><td>- pointer to buffer max length</td></tr>
+    <tr><td class="paramname">id</td><td>- Buffer to receive the message identifier </td></tr>
+    <tr><td class="paramname">len</td><td>- Pointer to buffer max length</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>When the function returns, parameter 'len' hold the number of bytes assigned to parameter 'id'</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga0ddb921ef671528a811054267c84ed5b" title="Get the current associated message identifier used for enqueuing messages using a sequence deviation.">OCI_EnqueueGetRelativeMsgID()</a> for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>When the function returns, parameter 'len' holds the number of bytes assigned to parameter 'id'.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga62de29813bfcba2484daacee89a9c2e1" title="Set a message identifier to use for enqueuing messages using a sequence deviation.">OCI_EnqueueSetRelativeMsgID()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_enqueue.html#a921a9b3d2b38dc71cb34489c0799dbc1">ocilib::Enqueue::GetRelativeMsgID()</a>.</p>
 
@@ -1924,20 +1933,20 @@ Default value is OCI_AMV_ON_COMMIT</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCILIB supports 2 type of message payload :<ul>
-<li>Oracle types (UDT)</li>
-<li>RAW data</li>
+<dl class="section note"><dt>Note</dt><dd>OCILIB supports 2 types of message payload:<ul>
+<li>Oracle types (UDT).</li>
+<li>RAW data.</li>
 </ul>
 </dd>
 <dd>
-Oracle Type AnyData is not supported in the current version of OCILIB</dd>
+Oracle Type AnyData is not supported in the current version of OCILIB.</dd>
 <dd>
-the parameter 'typinf' indicates the type of payload to dequeue from the given queue :<ul>
-<li>For object payload, retrieve the object type information handle with <a class="el" href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a> using the object type name</li>
-<li>For RAW payload, you MUST pass the object type information retrieved with <a class="el" href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a> using "SYS.RAW" as object type name</li>
+The parameter 'typinf' indicates the type of payload to dequeue from the given queue:<ul>
+<li>For object payload, retrieve the object type information handle with <a class="el" href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a> using the object type name.</li>
+<li>For RAW payload, you MUST pass the object type information retrieved with <a class="el" href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8" title="Retrieve the available type info information.">OCI_TypeInfoGet()</a> using "SYS.RAW" as object type name.</li>
 </ul>
 </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the Dequeue handle on success otherwise NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Dequeue handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a847e053d022db97fb403caf0cc6e3bc6">ocilib::Dequeue::Dequeue()</a>.</p>
 
@@ -1968,7 +1977,7 @@ the parameter 'typinf' indicates the type of payload to dequeue from the given q
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1997,10 +2006,10 @@ the parameter 'typinf' indicates the type of payload to dequeue from the given q
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>The returned message is handled by the dequeue object. Do not release it with <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga9bddce742a929284867cfc99cff24689" title="Free a message object.">OCI_MsgFree()</a></dd>
+<dl class="section warning"><dt>Warning</dt><dd>The returned message is handled by the dequeue object. Do not release it with <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga9bddce742a929284867cfc99cff24689" title="Free a message object.">OCI_MsgFree()</a>.</dd>
 <dd>
-When dequeuing from a multiple consumer queue, you need to set the navigation mode to OCI_ADN_FIRST_MSG using <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf4033419771eb5a28ee373b6eb4a3acb" title="Set the position of messages to be retrieved.">OCI_DequeueSetNavigation()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Message handle on success otherwise NULL on failure or on timeout </dd></dl>
+When dequeuing from a multiple consumer queue, you need to set the navigation mode to OCI_ADN_FIRST_MSG using <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf4033419771eb5a28ee373b6eb4a3acb" title="Set the position of messages to be retrieved.">OCI_DequeueSetNavigation()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Message handle on success, or NULL on failure or on timeout. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a0f742953d21b8fd6d234228d0d91d484">ocilib::Dequeue::Get()</a>.</p>
 
@@ -2051,15 +2060,15 @@ When dequeuing from a multiple consumer queue, you need to set the navigation mo
   <table class="params">
     <tr><td class="paramname">dequeue</td><td>- Dequeue handle </td></tr>
     <tr><td class="paramname">port</td><td>- Port to use for notifications </td></tr>
-    <tr><td class="paramname">timeout</td><td>- notification timeout </td></tr>
+    <tr><td class="paramname">timeout</td><td>- Notification timeout </td></tr>
     <tr><td class="paramname">callback</td><td>- User handler callback fired when messages are ready to be dequeued</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use asynchronous messages notifications</dd>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use asynchronous message notifications.</dd>
 <dd>
-Requires Oracle Client 10gR2 or above</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Requires Oracle Client 10gR2 or above.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a3ea855e5342813a9915c1a84fcebe838">ocilib::Dequeue::Subscribe()</a>.</p>
 
@@ -2090,7 +2099,7 @@ Requires Oracle Client 10gR2 or above</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a32d54ca7cda80bc50c090a2ca9f1f5ba">ocilib::Dequeue::Unsubscribe()</a>.</p>
 
@@ -2128,12 +2137,12 @@ Requires Oracle Client 10gR2 or above</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dequeue</td><td>- Dequeue handle </td></tr>
-    <tr><td class="paramname">consumer</td><td>- consumer name</td></tr>
+    <tr><td class="paramname">consumer</td><td>- Consumer name</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>If a queue is not set up for multiple consumers, <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaa6c17abf16a1c37bcd55e8f4779f4d43" title="Set the current consumer name to retrieve message for.">OCI_DequeueSetConsumer()</a> should not be called or called with parameter 'consumer' set to NULL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>If a queue is not set up for multiple consumers, <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaa6c17abf16a1c37bcd55e8f4779f4d43" title="Set the current consumer name to retrieve message for.">OCI_DequeueSetConsumer()</a> should not be called, or called with parameter 'consumer' set to NULL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a62efff6e10821923a754d72cd310eee6">ocilib::Dequeue::SetConsumer()</a>.</p>
 
@@ -2164,7 +2173,8 @@ Requires Oracle Client 10gR2 or above</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaa6c17abf16a1c37bcd55e8f4779f4d43" title="Set the current consumer name to retrieve message for.">OCI_DequeueSetConsumer()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaa6c17abf16a1c37bcd55e8f4779f4d43" title="Set the current consumer name to retrieve message for.">OCI_DequeueSetConsumer()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The consumer name, or NULL if not set. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a540386020a56e991737e079910eabcd0">ocilib::Dequeue::GetConsumer()</a>.</p>
 
@@ -2198,16 +2208,16 @@ Requires Oracle Client 10gR2 or above</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>set the correlation identifier of the message to be dequeued </p>
+<p>Set the correlation identifier of the message to be dequeued. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dequeue</td><td>- Dequeue handle </td></tr>
-    <tr><td class="paramname">pattern</td><td>- correlation identifier</td></tr>
+    <tr><td class="paramname">pattern</td><td>- Correlation identifier</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Special pattern matching characters, such as "%" or "_" can be used. If more than one message satisfies the pattern, the order of dequeuing is undetermined.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a6e8458363e28e238219d7cf75f4b38da">ocilib::Dequeue::SetCorrelation()</a>.</p>
 
@@ -2238,7 +2248,8 @@ Requires Oracle Client 10gR2 or above</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf04696fe712ae0a3b1397d877c0dcb96" title="set the correlation identifier of the message to be dequeued">OCI_DequeueSetCorrelation()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf04696fe712ae0a3b1397d877c0dcb96" title="Set the correlation identifier of the message to be dequeued.">OCI_DequeueSetCorrelation()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The correlation identifier, or NULL if not set. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a225dc48f328c33b9dc0b6f9f4153c480">ocilib::Dequeue::GetCorrelation()</a>.</p>
 
@@ -2282,13 +2293,13 @@ Requires Oracle Client 10gR2 or above</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dequeue</td><td>- Dequeue handle </td></tr>
-    <tr><td class="paramname">id</td><td>- message identifier </td></tr>
-    <tr><td class="paramname">len</td><td>- size of the message identifier</td></tr>
+    <tr><td class="paramname">id</td><td>- Message identifier </td></tr>
+    <tr><td class="paramname">len</td><td>- Size of the message identifier</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>if the function cannot assign the message id, the content of the parameter 'len' is set to zero.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>If the function cannot assign the message ID, the content of the parameter 'len' is set to zero.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a695ecccd47c0786963c8c1a0f996dfb0">ocilib::Dequeue::SetRelativeMsgID()</a>.</p>
 
@@ -2332,13 +2343,14 @@ Requires Oracle Client 10gR2 or above</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dequeue</td><td>- Dequeue handle </td></tr>
-    <tr><td class="paramname">id</td><td>- message identifier </td></tr>
-    <tr><td class="paramname">len</td><td>- size of the message identifier</td></tr>
+    <tr><td class="paramname">id</td><td>- Message identifier </td></tr>
+    <tr><td class="paramname">len</td><td>- Size of the message identifier</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>When the function returns, parameter 'len' hold the number of bytes assigned to parameter 'id'</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga9b09f739f9949187ef11898180073173" title="Set the message identifier of the message to be dequeued.">OCI_DequeueSetRelativeMsgID()</a> for more details </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>When the function returns, parameter 'len' holds the number of bytes assigned to parameter 'id'.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga9b09f739f9949187ef11898180073173" title="Set the message identifier of the message to be dequeued.">OCI_DequeueSetRelativeMsgID()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#acd2d88f55ccda9c864e6311749896602">ocilib::Dequeue::GetRelativeMsgID()</a>.</p>
 
@@ -2376,19 +2388,19 @@ Requires Oracle Client 10gR2 or above</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dequeue</td><td>- Dequeue handle </td></tr>
-    <tr><td class="paramname">visibility</td><td>- dequeuing mode</td></tr>
+    <tr><td class="paramname">visibility</td><td>- Dequeuing mode</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>The visibility parameter is ignored when using the OCI_ADM_BROWSE dequeuing mode (see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaab4dba4eaffdfa547c2f63813070b831" title="Set the dequeuing/locking behavior.">OCI_DequeueSetMode()</a>)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'mode' :<ul>
-<li>OCI_AMV_IMMEDIATE : dequeue is an independent transaction</li>
-<li>OCI_AMV_ON_COMMIT : dequeue is part of current transaction</li>
+<dl class="section warning"><dt>Warning</dt><dd>The visibility parameter is ignored when using the OCI_ADM_BROWSE dequeuing mode (see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaab4dba4eaffdfa547c2f63813070b831" title="Set the dequeuing/locking behavior.">OCI_DequeueSetMode()</a>).</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'visibility':<ul>
+<li>OCI_AMV_IMMEDIATE : dequeue is an independent transaction.</li>
+<li>OCI_AMV_ON_COMMIT : dequeue is part of the current transaction.</li>
 </ul>
 </dd>
 <dd>
-Default value is OCI_AMV_ON_COMMIT</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Default value is OCI_AMV_ON_COMMIT.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a94f05861f9442576117343e611db7710">ocilib::Dequeue::SetVisibility()</a>.</p>
 
@@ -2419,7 +2431,8 @@ Default value is OCI_AMV_ON_COMMIT</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga3bc8378427ac5885adb0a8398cbb9990" title="Set whether the new message is dequeued as part of the current transaction.">OCI_DequeueSetVisibility()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga3bc8378427ac5885adb0a8398cbb9990" title="Set whether the new message is dequeued as part of the current transaction.">OCI_DequeueSetVisibility()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The visibility mode value. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a280a62cf6463266dc9db668e94120441">ocilib::Dequeue::GetVisibility()</a>.</p>
 
@@ -2457,20 +2470,20 @@ Default value is OCI_AMV_ON_COMMIT</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dequeue</td><td>- Dequeue handle </td></tr>
-    <tr><td class="paramname">mode</td><td>- dequeuing mode</td></tr>
+    <tr><td class="paramname">mode</td><td>- Dequeuing mode</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'mode' :<ul>
-<li>OCI_ADM_BROWSE : read message without acquiring a lock</li>
-<li>OCI_ADM_LOCKED : read and obtain write lock on message</li>
-<li>OCI_ADM_REMOVE : read the message and delete it</li>
-<li>OCI_ADM_REMOVE_NODATA : confirm receipt of the message, but do not deliver the actual message content</li>
+<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'mode':<ul>
+<li>OCI_ADM_BROWSE : read message without acquiring a lock.</li>
+<li>OCI_ADM_LOCKED : read and obtain write lock on message.</li>
+<li>OCI_ADM_REMOVE : read the message and delete it.</li>
+<li>OCI_ADM_REMOVE_NODATA : confirm receipt of the message, but do not deliver the actual message content.</li>
 </ul>
 </dd>
 <dd>
-Default value is OCI_ADM_REMOVE</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Default value is OCI_ADM_REMOVE.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a6c1dcf6fd92374c3a3210ab4af266e74">ocilib::Dequeue::SetMode()</a>.</p>
 
@@ -2501,7 +2514,8 @@ Default value is OCI_ADM_REMOVE</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaab4dba4eaffdfa547c2f63813070b831" title="Set the dequeuing/locking behavior.">OCI_DequeueSetMode()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaab4dba4eaffdfa547c2f63813070b831" title="Set the dequeuing/locking behavior.">OCI_DequeueSetMode()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The dequeuing mode value. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a4edbd82ca04246fe05f46797e5b39111">ocilib::Dequeue::GetMode()</a>.</p>
 
@@ -2539,27 +2553,27 @@ Default value is OCI_ADM_REMOVE</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dequeue</td><td>- Dequeue handle </td></tr>
-    <tr><td class="paramname">position</td><td>- navigation position</td></tr>
+    <tr><td class="paramname">position</td><td>- Navigation position</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The dequeuing uses the following sequence :<ul>
-<li>find messages using the navigation position</li>
-<li>apply search criteria (message correlation)</li>
-<li>get message</li>
+<dl class="section note"><dt>Note</dt><dd>The dequeuing uses the following sequence:<ul>
+<li>Find messages using the navigation position.</li>
+<li>Apply search criteria (message correlation).</li>
+<li>Get message.</li>
 </ul>
 </dd>
 <dd>
-Possible values for parameter 'position' :<ul>
-<li>OCI_ADN_FIRST_MSG : retrieves the first message which is available</li>
-<li>OCI_ADN_NEXT_MSG : retrieves the next message which is available</li>
+Possible values for parameter 'position':<ul>
+<li>OCI_ADN_FIRST_MSG : retrieves the first message which is available.</li>
+<li>OCI_ADN_NEXT_MSG : retrieves the next message which is available.</li>
 <li>OCI_ADN_NEXT_TRANSACTION : skips the remainder of the current transaction group (if any) and retrieves the first message of the next transaction group.</li>
 </ul>
 </dd>
 <dd>
-Default value is OCI_ADN_NEXT_MSG</dd></dl>
+Default value is OCI_ADN_NEXT_MSG.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>OCI_ADN_NEXT_TRANSACTION can only be used if message grouping is enabled for the given queue.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#acbd93f507d418e379b0e8746e46797dc">ocilib::Dequeue::SetNavigation()</a>.</p>
 
@@ -2590,7 +2604,8 @@ Default value is OCI_ADN_NEXT_MSG</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf4033419771eb5a28ee373b6eb4a3acb" title="Set the position of messages to be retrieved.">OCI_DequeueSetNavigation()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf4033419771eb5a28ee373b6eb4a3acb" title="Set the position of messages to be retrieved.">OCI_DequeueSetNavigation()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The navigation position value. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#abce3ec0d973941044c2fc9be7dd89f76">ocilib::Dequeue::GetNavigation()</a>.</p>
 
@@ -2624,23 +2639,23 @@ Default value is OCI_ADN_NEXT_MSG</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>set the time that OCIDequeueGet() waits for messages if no messages are currently available </p>
+<p>Set the time that <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga88d602c567fbc14f153254c8da992723" title="Dequeue messages from the given queue.">OCI_DequeueGet()</a> waits for messages if no messages are currently available. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dequeue</td><td>- Dequeue handle </td></tr>
-    <tr><td class="paramname">timeout</td><td>- timeout in seconds</td></tr>
+    <tr><td class="paramname">timeout</td><td>- Timeout in seconds</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd><ul>
 <li>Any positive values in seconds are valid.</li>
-<li>The value 0 is accepted and means OCIDequeueGet() does not wait for messages and returns immediately if no messages are available</li>
-<li>The value -1 is accepted and means OCIDequeueGet() waits for ever (until a message is available in the queue)</li>
+<li>The value 0 is accepted and means <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga88d602c567fbc14f153254c8da992723" title="Dequeue messages from the given queue.">OCI_DequeueGet()</a> does not wait for messages and returns immediately if no messages are available.</li>
+<li>The value -1 is accepted and means <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga88d602c567fbc14f153254c8da992723" title="Dequeue messages from the given queue.">OCI_DequeueGet()</a> waits forever (until a message is available in the queue).</li>
 </ul>
 </dd>
 <dd>
-Default value is -1 (wait for ever)</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Default value is -1 (wait forever).</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#ad21f48047402f1137701d92aa20c1f8b">ocilib::Dequeue::SetWaitTime()</a>.</p>
 
@@ -2664,14 +2679,15 @@ Default value is -1 (wait for ever)</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the time that OCIDequeueGet() waits for messages if no messages are currently available. </p>
+<p>Return the time that <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga88d602c567fbc14f153254c8da992723" title="Dequeue messages from the given queue.">OCI_DequeueGet()</a> waits for messages if no messages are currently available. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dequeue</td><td>- Dequeue handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gafa9bb653b54361d3b623c326b10d5436" title="set the time that OCIDequeueGet() waits for messages if no messages are currently available">OCI_DequeueSetWaitTime()</a> for more details </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gafa9bb653b54361d3b623c326b10d5436" title="Set the time that OCI_DequeueGet() waits for messages if no messages are currently available.">OCI_DequeueSetWaitTime()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The timeout value in seconds. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a1132149a901f8cc057d2c97457fb83b2">ocilib::Dequeue::GetWaitTime()</a>.</p>
 
@@ -2711,16 +2727,16 @@ Default value is -1 (wait for ever)</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set the Agent list to listen to message for. </p>
+<p>Set the Agent list to listen to messages for. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dequeue</td><td>- Dequeue handle </td></tr>
     <tr><td class="paramname">consumers</td><td>- Agent handle array </td></tr>
-    <tr><td class="paramname">count</td><td>- Number of agents the array</td></tr>
+    <tr><td class="paramname">count</td><td>- Number of agents in the array</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>return TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a53aff2d3dcf31c7fc5c28efc417e4983">ocilib::Dequeue::SetAgents()</a>.</p>
 
@@ -2758,21 +2774,21 @@ Default value is -1 (wait for ever)</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dequeue</td><td>- Dequeue handle </td></tr>
-    <tr><td class="paramname">timeout</td><td>- Timeout in second</td></tr>
+    <tr><td class="paramname">timeout</td><td>- Timeout in seconds</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If an Agent handle is returned, messages are available for this agent. In order to retrieve its messages :<ul>
-<li>call <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaa6c17abf16a1c37bcd55e8f4779f4d43" title="Set the current consumer name to retrieve message for.">OCI_DequeueSetConsumer()</a> with the name of agent using <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf68fabf3b84d4df960d5c98bef049701" title="Get the given AQ agent name.">OCI_AgentGetName()</a></li>
-<li>call <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga88d602c567fbc14f153254c8da992723" title="Dequeue messages from the given queue.">OCI_DequeueGet()</a> to dequeue it's pending messages</li>
+<dl class="section note"><dt>Note</dt><dd>If an Agent handle is returned, messages are available for this agent. In order to retrieve its messages:<ul>
+<li>Call <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaa6c17abf16a1c37bcd55e8f4779f4d43" title="Set the current consumer name to retrieve message for.">OCI_DequeueSetConsumer()</a> with the name of agent using <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaf68fabf3b84d4df960d5c98bef049701" title="Get the given AQ agent name.">OCI_AgentGetName()</a>.</li>
+<li>Call <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga88d602c567fbc14f153254c8da992723" title="Dequeue messages from the given queue.">OCI_DequeueGet()</a> to dequeue its pending messages.</li>
 </ul>
 </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>The return value is valid only until:<ul>
-<li>OCIDequeueListen() is called again</li>
-<li><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga856a186d2888472787fa0635c61859e6" title="Free a Dequeue object.">OCI_DequeueFree()</a> is called to free the Dequeue object So Do not store the handle value across calls to OCIDequeueListen()</li>
+<li><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga1821ab4a14ccc13b450eb8bcd6a8a4ef" title="Listen for messages that match any recipient of the associated Agent list.">OCI_DequeueListen()</a> is called again.</li>
+<li><a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga856a186d2888472787fa0635c61859e6" title="Free a Dequeue object.">OCI_DequeueFree()</a> is called to free the Dequeue object. Do not store the handle value across calls to <a class="el" href="group___ocilib_c_api_advanced_queuing.html#ga1821ab4a14ccc13b450eb8bcd6a8a4ef" title="Listen for messages that match any recipient of the associated Agent list.">OCI_DequeueListen()</a>.</li>
 </ul>
 </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>An Agent handle for who messages are available on success otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>An Agent handle for whom messages are available on success, or NULL otherwise. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_dequeue.html#a0584f7dd5eb269fb6a894cfc1d5c4f68">ocilib::Dequeue::Listen()</a>.</p>
 
@@ -2821,15 +2837,15 @@ Default value is -1 (wait for ever)</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>An AQ agent object is :<ul>
-<li>used as recipient information when enqueuing a message</li>
-<li>used as sender information when dequeuing a message</li>
-<li>used for listening message only from identified senders</li>
+<dl class="section note"><dt>Note</dt><dd>An AQ agent object is:<ul>
+<li>Used as recipient information when enqueuing a message.</li>
+<li>Used as sender information when dequeuing a message.</li>
+<li>Used for listening to messages only from identified senders.</li>
 </ul>
 </dd>
 <dd>
-the AQ agent address can be any Oracle identifier, up to 128 bytes. the AQ agent name can be any Oracle identifier, up to 30 bytes.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>AQ agent handle on success otherwise NULL </dd></dl>
+The AQ agent address can be any Oracle identifier, up to 128 bytes. The AQ agent name can be any Oracle identifier, up to 30 bytes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The AQ agent handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_agent.html#affb689fd24c780f9e25d713c042ddf45">ocilib::Agent::Agent()</a>.</p>
 
@@ -2860,8 +2876,8 @@ the AQ agent address can be any Oracle identifier, up to 128 bytes. the AQ agent
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only AQ agent handle created with <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gac191e8368375079d5edc9f148c961a26" title="Create an AQ agent object.">OCI_AgentCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaa9cb7d74befa375975008363d901fe1c" title="Free an AQ agent object.">OCI_AgentFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only AQ agent handles created with <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gac191e8368375079d5edc9f148c961a26" title="Create an AQ agent object.">OCI_AgentCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gaa9cb7d74befa375975008363d901fe1c" title="Free an AQ agent object.">OCI_AgentFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2901,10 +2917,10 @@ the AQ agent address can be any Oracle identifier, up to 128 bytes. the AQ agent
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>the AQ agent name is used to identified an message send or recipient when enqueuing/dequeuing a message</dd>
+<dl class="section note"><dt>Note</dt><dd>The AQ agent name is used to identify a message sender or recipient when enqueuing/dequeuing a message.</dd>
 <dd>
-the AQ agent name can be any Oracle identifier, up to 30 bytes.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+The AQ agent name can be any Oracle identifier, up to 30 bytes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_agent.html#a8cf39298ceae611b2499244e97c23baa">ocilib::Agent::SetName()</a>.</p>
 
@@ -2935,7 +2951,7 @@ the AQ agent name can be any Oracle identifier, up to 30 bytes.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>AQ agent name on success otherwise NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The AQ agent name on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_agent.html#aea0ae8413708604fd1bb4629c1d9c35d">ocilib::Agent::GetName()</a>.</p>
 
@@ -2977,10 +2993,10 @@ the AQ agent name can be any Oracle identifier, up to 30 bytes.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>the parameter 'address' must be of the form : [schema.]queue_name[@dblink]</dd>
+<dl class="section note"><dt>Note</dt><dd>The parameter 'address' must be of the form: [schema.]queue_name[@dblink].</dd>
 <dd>
-the AQ agent address can be any Oracle identifier, up to 128 bytes.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+The AQ agent address can be any Oracle identifier, up to 128 bytes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_agent.html#a44b3a42c020de9077c1ddeab63d0f5fd">ocilib::Agent::SetAddress()</a>.</p>
 
@@ -3011,8 +3027,8 @@ the AQ agent address can be any Oracle identifier, up to 128 bytes.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae1d331093be310c2e4e926b4b7cc7dfb" title="Set the given AQ agent address.">OCI_AgentSetAddress()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>AQ agent address on success otherwise NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gae1d331093be310c2e4e926b4b7cc7dfb" title="Set the given AQ agent address.">OCI_AgentSetAddress()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The AQ agent address on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_agent.html#aa8953ebb12a1393201c34cfa41cd4c1e">ocilib::Agent::GetAddress()</a>.</p>
 
@@ -3097,29 +3113,29 @@ the AQ agent address can be any Oracle identifier, up to 128 bytes.</dd></dl>
     <tr><td class="paramname">queue_type</td><td>- Queue type </td></tr>
     <tr><td class="paramname">max_retries</td><td>- Maximum number of attempts to dequeue a message </td></tr>
     <tr><td class="paramname">retry_delay</td><td>- Number of seconds between attempts to dequeue a message </td></tr>
-    <tr><td class="paramname">retention_time</td><td>- number of seconds a message is retained in the queue table after being dequeued from the queue </td></tr>
+    <tr><td class="paramname">retention_time</td><td>- Number of seconds a message is retained in the queue table after being dequeued from the queue </td></tr>
     <tr><td class="paramname">dependency_tracking</td><td>- Parameter reserved for future use by Oracle (MUST be set to FALSE) </td></tr>
     <tr><td class="paramname">comment</td><td>- Description of the queue</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Parameter 'queue_name' can specify the schema where to create to queue ([schema.]queue_name) Queue names cannot be longer than 24 characters (Oracle limit for user queues)</dd>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'queue_name' can specify the schema where to create the queue ([schema.]queue_name). Queue names cannot be longer than 24 characters (Oracle limit for user queues).</dd>
 <dd>
-Possible values for parameter 'queue_type' :<ul>
-<li>OCI_AQT_NORMAL : Normal queue</li>
-<li>OCI_AQT_EXCEPTION : Exception queue</li>
-<li>OCI_AQT_NON_PERSISTENT : Non persistent queue</li>
+Possible values for parameter 'queue_type':<ul>
+<li>OCI_AQT_NORMAL : Normal queue.</li>
+<li>OCI_AQT_EXCEPTION : Exception queue.</li>
+<li>OCI_AQT_NON_PERSISTENT : Non-persistent queue.</li>
 </ul>
 </dd></dl>
-<p>To set default values, pass :</p><ul>
-<li>queue_type : OCI_AQT_NORMAL</li>
-<li>max_retries : 0</li>
-<li>retry_delay : 0</li>
-<li>retention_time : 0</li>
-<li>comment : NULL</li>
+<p>To set default values, pass:</p><ul>
+<li>queue_type : OCI_AQT_NORMAL.</li>
+<li>max_retries : 0.</li>
+<li>retry_delay : 0.</li>
+<li>retention_time : 0.</li>
+<li>comment : NULL.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>this call wraps the PL/SQL procedure DBMS_AQADM.CREATE_QUEUE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This call wraps the PL/SQL procedure DBMS_AQADM.CREATE_QUEUE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_queue.html#a18e34479d578ffc558debda0da09ccee">ocilib::Queue::Create()</a>.</p>
 
@@ -3184,15 +3200,15 @@ Possible values for parameter 'queue_type' :<ul>
     <tr><td class="paramname">queue_name</td><td>- Queue name </td></tr>
     <tr><td class="paramname">max_retries</td><td>- Maximum number of attempts to dequeue a message </td></tr>
     <tr><td class="paramname">retry_delay</td><td>- Number of seconds between attempts to dequeue a message </td></tr>
-    <tr><td class="paramname">retention_time</td><td>- number of seconds a message is retained in the queue table after being dequeued from the queue </td></tr>
+    <tr><td class="paramname">retention_time</td><td>- Number of seconds a message is retained in the queue table after being dequeued from the queue </td></tr>
     <tr><td class="paramname">comment</td><td>- Description of the queue</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gac8fb7a646ff98e9612dc115346d78107" title="Create a queue.">OCI_QueueCreate()</a> for more details</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This function updates all attributes handled in the parameter list !</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>this call wraps the PL/SQL procedure DBMS_AQADM.ALTER_QUEUE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gac8fb7a646ff98e9612dc115346d78107" title="Create a queue.">OCI_QueueCreate()</a> for more details.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This function updates all attributes handled in the parameter list.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This call wraps the PL/SQL procedure DBMS_AQADM.ALTER_QUEUE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_queue.html#a64eddfb6e3a05447d1695a013c044f3a">ocilib::Queue::Alter()</a>.</p>
 
@@ -3235,8 +3251,8 @@ Possible values for parameter 'queue_type' :<ul>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>A queue can be dropped only if it has been stopped before.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>this call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_queue.html#adc6da276e2992b09f4376ffa57a7f36b">ocilib::Queue::Drop()</a>.</p>
 
@@ -3292,9 +3308,9 @@ Possible values for parameter 'queue_type' :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>For exception queues, only enqueuing is allowed</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>this call wraps the PL/SQL procedure DBMS_AQADM.START_QUEUE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>For exception queues, only enqueuing is allowed.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This call wraps the PL/SQL procedure DBMS_AQADM.START_QUEUE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_queue.html#ad2a7f23a19deeb67cadf651baacf3de6">ocilib::Queue::Start()</a>.</p>
 
@@ -3358,8 +3374,8 @@ Possible values for parameter 'queue_type' :<ul>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>A queue cannot be stopped if there are pending transactions against the queue.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>this call wraps the PL/SQL procedure DBMS_AQADM.STOP_QUEUE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This call wraps the PL/SQL procedure DBMS_AQADM.STOP_QUEUE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_queue.html#a579d1c3fc22de2aedb5d30a8af2fbac7">ocilib::Queue::Stop()</a>.</p>
 
@@ -3455,44 +3471,44 @@ Possible values for parameter 'queue_type' :<ul>
     <tr><td class="paramname">queue_payload_type</td><td>- Message type name </td></tr>
     <tr><td class="paramname">storage_clause</td><td>- Additional clauses for the table storage </td></tr>
     <tr><td class="paramname">sort_list</td><td>- Additional columns name to use for sorting </td></tr>
-    <tr><td class="paramname">multiple_consumers</td><td>- Enable multiple consumers for each messages </td></tr>
+    <tr><td class="paramname">multiple_consumers</td><td>- Enable multiple consumers for each message </td></tr>
     <tr><td class="paramname">message_grouping</td><td>- Specifies if messages are grouped within a transaction </td></tr>
     <tr><td class="paramname">comment</td><td>- Description of the queue table </td></tr>
-    <tr><td class="paramname">primary_instance</td><td>- primary owner (instance) of the queue table </td></tr>
+    <tr><td class="paramname">primary_instance</td><td>- Primary owner (instance) of the queue table </td></tr>
     <tr><td class="paramname">secondary_instance</td><td>- Owner of the queue table if the primary instance is not available </td></tr>
-    <tr><td class="paramname">compatible</td><td>- lowest database version with which the queue table is compatible</td></tr>
+    <tr><td class="paramname">compatible</td><td>- Lowest database version with which the queue table is compatible</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Parameter 'queue_table' can specify the schema where to create to queue table ([schema.]queue_table) Queue table names cannot be longer than 24 characters (Oracle limit for user queue tables)</dd>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'queue_table' can specify the schema where to create the queue table ([schema.]queue_table). Queue table names cannot be longer than 24 characters (Oracle limit for user queue tables).</dd>
 <dd>
-Possible values for parameter 'queue_payload_type' :<ul>
-<li>For Oracle types (UDT) : use the type name ([schema.].type_name)</li>
-<li>For RAW data : use "SYS.RAW" or "RAW" (depending on Oracle versions - For latest ones, use "RAW")</li>
+Possible values for parameter 'queue_payload_type':<ul>
+<li>For Oracle types (UDT) : use the type name ([schema.].type_name).</li>
+<li>For RAW data : use "SYS.RAW" or "RAW" (depending on Oracle versions - for latest ones, use "RAW").</li>
 </ul>
 </dd>
 <dd>
-Possible values for parameter 'message_grouping' :<ul>
-<li>OCI_AGM_NONE : each message is treated individually</li>
+Possible values for parameter 'message_grouping':<ul>
+<li>OCI_AGM_NONE : each message is treated individually.</li>
 <li>OCI_AGM_TRANSACTIONNAL : all messages enqueued in one transaction are considered part of the same group and can be dequeued as a group of related messages.</li>
 </ul>
 </dd>
 <dd>
-Possible values for parameter 'compatible' :<ul>
+Possible values for parameter 'compatible':<ul>
 <li>"8.0", "8.1", "10.0"</li>
 </ul>
 </dd></dl>
-<p>To set default values, pass :</p><ul>
-<li>storage_clause : NULL</li>
-<li>sort_list : NULL</li>
-<li>message_grouping : OCI_AGM_NONE</li>
-<li>comment : NULL</li>
-<li>primary_instance : 0</li>
-<li>primary_instance : 0</li>
-<li>compatible : NULL</li>
+<p>To set default values, pass:</p><ul>
+<li>storage_clause : NULL.</li>
+<li>sort_list : NULL.</li>
+<li>message_grouping : OCI_AGM_NONE.</li>
+<li>comment : NULL.</li>
+<li>primary_instance : 0.</li>
+<li>secondary_instance: 0.</li>
+<li>compatible : NULL.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>this call wraps the PL/SQL procedure DBMS_AQADM.CREATE_QUEUE_TABLE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This call wraps the PL/SQL procedure DBMS_AQADM.CREATE_QUEUE_TABLE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_queue_table.html#a7e9d54a5313486c68d6f6d204f1e6650">ocilib::QueueTable::Create()</a>.</p>
 
@@ -3550,15 +3566,15 @@ Possible values for parameter 'compatible' :<ul>
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
     <tr><td class="paramname">queue_table</td><td>- Queue table name </td></tr>
     <tr><td class="paramname">comment</td><td>- Description of the queue table </td></tr>
-    <tr><td class="paramname">primary_instance</td><td>- primary owner (instance) of the queue table </td></tr>
+    <tr><td class="paramname">primary_instance</td><td>- Primary owner (instance) of the queue table </td></tr>
     <tr><td class="paramname">secondary_instance</td><td>- Owner of the queue table if the primary instance is not available</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gadd4eb747be91bb5816fd9786620c5450" title="Create a queue table for messages of the given type.">OCI_QueueTableCreate()</a> from more details</dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_advanced_queuing.html#gadd4eb747be91bb5816fd9786620c5450" title="Create a queue table for messages of the given type.">OCI_QueueTableCreate()</a> for more details.</dd>
 <dd>
-this call wraps the PL/SQL procedure DBMS_AQADM.ALTER_QUEUE_TABLE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+This call wraps the PL/SQL procedure DBMS_AQADM.ALTER_QUEUE_TABLE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_queue_table.html#afa86cf00bbe382c814a8879571260468">ocilib::QueueTable::Alter()</a>.</p>
 
@@ -3607,14 +3623,14 @@ this call wraps the PL/SQL procedure DBMS_AQADM.ALTER_QUEUE_TABLE(). Refer to Or
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Possible values for 'force' :<ul>
-<li>TRUE : all queues using the queue table and their associated propagation schedules are dropped automatically</li>
-<li>FALSE : All the queues using the given queue table must be stopped and dropped before the queue table can be dropped.</li>
+<dl class="section note"><dt>Note</dt><dd>Possible values for 'force':<ul>
+<li>TRUE : all queues using the queue table and their associated propagation schedules are dropped automatically.</li>
+<li>FALSE : all the queues using the given queue table must be stopped and dropped before the queue table can be dropped.</li>
 </ul>
 </dd>
 <dd>
-this call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE_TABLE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+This call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE_TABLE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_queue_table.html#a0c9551b7ad995fb2d7ee1d509813a8cb">ocilib::QueueTable::Drop()</a>.</p>
 
@@ -3677,17 +3693,17 @@ this call wraps the PL/SQL procedure DBMS_AQADM.DROP_QUEUE_TABLE(). Refer to Ora
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'delivery_mode' :<ul>
-<li>OCI_APM_BUFFERED : purge only buffered messages</li>
-<li>OCI_APM_PERSISTENT : purge only persistent messages</li>
-<li>OCI_APM_ALL : purge all messages</li>
+<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'delivery_mode':<ul>
+<li>OCI_APM_BUFFERED : purge only buffered messages.</li>
+<li>OCI_APM_PERSISTENT : purge only persistent messages.</li>
+<li>OCI_APM_ALL : purge all messages.</li>
 </ul>
 </dd>
 <dd>
-For more information about the SQL purge conditions, refer to Oracle Streams - Advanced Queuing User's Guide for more details</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This feature is only available from Oracle 10gR2. This function does nothing and returns TRUE is the server version is &lt; Oracle 10gR2</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>this call wraps the PL/SQL procedure DBMS_AQADM.PURGE_QUEUE_TABLE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+For more information about the SQL purge conditions, refer to Oracle Streams - Advanced Queuing User's Guide for more details.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This feature is only available from Oracle 10gR2. This function does nothing and returns TRUE if the server version is &lt; Oracle 10gR2.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This call wraps the PL/SQL procedure DBMS_AQADM.PURGE_QUEUE_TABLE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_queue_table.html#aea804d12ae00ef230823e8f7c2bb1453">ocilib::QueueTable::Purge()</a>.</p>
 
@@ -3732,17 +3748,17 @@ For more information about the SQL purge conditions, refer to Oracle Streams - A
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
     <tr><td class="paramname">queue_table</td><td>- Queue table name </td></tr>
-    <tr><td class="paramname">compatible</td><td>- Database version with witch the queue table has to migrate</td></tr>
+    <tr><td class="paramname">compatible</td><td>- Database version with which the queue table has to migrate</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'compatible' :<ul>
+<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'compatible':<ul>
 <li>"8.0", "8.1", "10.0"</li>
 </ul>
 </dd>
 <dd>
-this call wraps the PL/SQL procedure DBMS_AQADM.MIGRATE_QUEUE_TABLE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+This call wraps the PL/SQL procedure DBMS_AQADM.MIGRATE_QUEUE_TABLE(). Refer to Oracle Streams - Advanced Queuing User's Guide for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_queue_table.html#a13fb569dc7db5a47ca7e1b894892fa29">ocilib::QueueTable::Migrate()</a>.</p>
 
@@ -3754,7 +3770,7 @@ this call wraps the PL/SQL procedure DBMS_AQADM.MIGRATE_QUEUE_TABLE(). Refer to 
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:15 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

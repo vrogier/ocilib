@@ -21,6 +21,7 @@ var classocilib_1_1_column =
     [ "GetPrecision", "classocilib_1_1_column.html#a3330317fcf56034809d1a389e1ba849c", null ],
     [ "GetFractionalPrecision", "classocilib_1_1_column.html#acc4f3f0440b1384e4f61b18626309060", null ],
     [ "GetLeadingPrecision", "classocilib_1_1_column.html#af287d5ac4c014d572e8200a3b1bdae39", null ],
+    [ "GetDimension", "classocilib_1_1_column.html#a66dc25e151ae9d299cde3f6ce3214ee7", null ],
     [ "GetPropertyFlags", "classocilib_1_1_column.html#a7c87171e14265c1419a5c469c5e8796a", null ],
     [ "IsNullable", "classocilib_1_1_column.html#a4dc2ccbdd94b0bbc9952459fa06d4102", null ],
     [ "IsCharSemanticUsed", "classocilib_1_1_column.html#a63cad955f634eb2532a61c8404a2bb9c", null ],

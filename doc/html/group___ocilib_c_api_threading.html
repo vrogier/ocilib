@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,18 +100,18 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_threading.html','
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiHashTables</p>
-<p>Oracle proposes a portable implementation of Mutex and Thread objects</p>
+<p>Oracle proposes a portable implementation of Mutex and Thread objects.</p>
 <p>OCILIB implements these OCI features for portable multi-threading support.</p>
-<p>Mutexes are designed for mutual exclusion between thread in order to lock resources temporarily</p>
-<p>Thread keys can be seen as process-wide variables that have a thread-specific values. It allows to create a unique key identified by a name (string) that can store values specific to each thread.</p>
-<p>OCILIB exposes the types OCI_Mutex, OCI_Thread</p>
-<dl class="section warning"><dt>Warning</dt><dd>OCILIB MUST be initialized with OCI_ENV_THREADED to enable threads support</dd>
+<p>Mutexes are designed for mutual exclusion between threads in order to lock resources temporarily.</p>
+<p>Thread keys can be seen as process-wide variables that have thread-specific values. They allow creating a unique key identified by a name (string) that can store values specific to each thread.</p>
+<p>OCILIB exposes the types OCI_Mutex and OCI_Thread.</p>
+<dl class="section warning"><dt>Warning</dt><dd>OCILIB MUST be initialized with OCI_ENV_THREADED to enable thread support.</dd>
 <dd>
-OCI_Thread relies on Oracle API which uses natives threading capabilities of the supported platform</dd>
+OCI_Thread relies on the Oracle API which uses native threading capabilities of the supported platform.</dd>
 <dd>
-Using OCI_Mutex :<ul>
-<li>On Microsoft Windows, a thread can call <a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> more than once without any blocking. Just be sure that there is an <a class="el" href="group___ocilib_c_api_threading.html#gaa9344e6795fc50a228c31108697d014f" title="Release a mutex lock.">OCI_MutexRelease()</a> for every <a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> call</li>
-<li>On Unix systems, a thread MUST call <a class="el" href="group___ocilib_c_api_threading.html#gaa9344e6795fc50a228c31108697d014f" title="Release a mutex lock.">OCI_MutexRelease()</a> after every call to <a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> in order to be able to call <a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> again. If not, it will be blocked...</li>
+Using OCI_Mutex:<ul>
+<li>On Microsoft Windows, a thread can call <a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> more than once without any blocking. Just be sure that there is an <a class="el" href="group___ocilib_c_api_threading.html#gaa9344e6795fc50a228c31108697d014f" title="Release a mutex lock.">OCI_MutexRelease()</a> for every <a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> call.</li>
+<li>On Unix systems, a thread MUST call <a class="el" href="group___ocilib_c_api_threading.html#gaa9344e6795fc50a228c31108697d014f" title="Release a mutex lock.">OCI_MutexRelease()</a> after every call to <a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> in order to be able to call <a class="el" href="group___ocilib_c_api_threading.html#gadde3be46a8a992b1859ffdec1c058b72" title="Acquire a mutex lock.">OCI_MutexAcquire()</a> again. If not, it will be blocked.</li>
 </ul>
 </dd></dl>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
@@ -174,12 +174,12 @@ Using OCI_Mutex :<ul>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line">}</div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga09c3bd0786917f352497f354351cd308"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a></div><div class="ttdeci">struct OCI_Thread OCI_Thread</div><div class="ttdoc">OCILIB encapsulation of OCI Threads.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00420">types.h:420</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga09c3bd0786917f352497f354351cd308"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a></div><div class="ttdeci">struct OCI_Thread OCI_Thread</div><div class="ttdoc">OCILIB encapsulation of OCI Threads.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00430">types.h:430</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_raw_handles_html_ga081836f9fcd1610340f3c93e9446a748"><div class="ttname"><a href="group___ocilib_c_api_raw_handles.html#ga081836f9fcd1610340f3c93e9446a748">OCI_HandleGetThreadID</a></div><div class="ttdeci">OCI_SYM_PUBLIC const void *OCI_API OCI_HandleGetThreadID(OCI_Thread *thread)</div><div class="ttdoc">Return OCI Thread ID (OCIThreadId *) of an OCILIB OCI_Thread object.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_raw_handles_html_ga081836f9fcd1610340f3c93e9446a748"><div class="ttname"><a href="group___ocilib_c_api_raw_handles.html#ga081836f9fcd1610340f3c93e9446a748">OCI_HandleGetThreadID</a></div><div class="ttdeci">OCI_SYM_PUBLIC const void *OCI_API OCI_HandleGetThreadID(OCI_Thread *thread)</div><div class="ttdoc">Return the OCI Thread ID (OCIThreadId *) of an OCILIB OCI_Thread object.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_threading_html_ga051505b93fcc35248b8a745e8dc2c77e"><div class="ttname"><a href="group___ocilib_c_api_threading.html#ga051505b93fcc35248b8a745e8dc2c77e">OCI_ThreadKeyGetValue</a></div><div class="ttdeci">OCI_SYM_PUBLIC void *OCI_API OCI_ThreadKeyGetValue(const otext *name)</div><div class="ttdoc">Get a thread key value.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_threading_html_ga1e7955887aeff3211fd8f9ccdee46af5"><div class="ttname"><a href="group___ocilib_c_api_threading.html#ga1e7955887aeff3211fd8f9ccdee46af5">OCI_ThreadRun</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadRun(OCI_Thread *thread, POCI_THREAD proc, void *arg)</div><div class="ttdoc">Execute the given routine within the given thread object.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_threading_html_ga320e03677e095ee123aa73a3b44ebc82"><div class="ttname"><a href="group___ocilib_c_api_threading.html#ga320e03677e095ee123aa73a3b44ebc82">OCI_ThreadJoin</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadJoin(OCI_Thread *thread)</div><div class="ttdoc">Join the given thread.</div></div>
@@ -245,7 +245,7 @@ Functions</h2></td></tr>
 <p><code>#include &lt;api.h&gt;</code></p>
 
 <p>Create a Mutex object. </p>
-<dl class="section return"><dt>Returns</dt><dd>Mutex handle on success or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Mutex handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_mutex.html#ae99bda51943daf4d7c143dc4c8ec3072">ocilib::Mutex::Create()</a>.</p>
 
@@ -276,7 +276,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_mutex.html#a4bf7c7f3eba27a0ad21777fab817b00f">ocilib::Mutex::Destroy()</a>.</p>
 
@@ -307,7 +307,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_mutex.html#aefb570e2751c62913eea0abda981b31b">ocilib::Mutex::Acquire()</a>.</p>
 
@@ -338,7 +338,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_mutex.html#aa88646ac37c9f5b74cb802fd3129a297">ocilib::Mutex::Release()</a>.</p>
 
@@ -363,7 +363,7 @@ Functions</h2></td></tr>
 <p><code>#include &lt;api.h&gt;</code></p>
 
 <p>Create a Thread object. </p>
-<dl class="section return"><dt>Returns</dt><dd>Thread handle on success or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Thread handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_thread.html#aa8ea3f3d52603301bee5d1778cc871d7">ocilib::Thread::Create()</a>.</p>
 
@@ -394,7 +394,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_thread.html#af672a19847e798b83fe3f5d7dd0ba16c">ocilib::Thread::Destroy()</a>.</p>
 
@@ -438,12 +438,12 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">thread</td><td>- Thread handle </td></tr>
-    <tr><td class="paramname">proc</td><td>- routine to execute </td></tr>
-    <tr><td class="paramname">arg</td><td>- parameter to pass to the routine</td></tr>
+    <tr><td class="paramname">proc</td><td>- Routine to execute </td></tr>
+    <tr><td class="paramname">arg</td><td>- Parameter to pass to the routine</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_thread.html#af71970f96e3daf697d38fb7225cb77b7">ocilib::Thread::Run()</a>.</p>
 
@@ -474,8 +474,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This function waits for the given thread to finish</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This function waits for the given thread to finish.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_thread.html#af55c3998611320a10f4c2f62c697de62">ocilib::Thread::Join()</a>.</p>
 
@@ -517,8 +517,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Parameter proc is optional. It's called when the thread terminates to allow the program to deal with the thread specific value of the key</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter destfunc is optional. It is called when the thread terminates to allow the program to deal with the thread-specific value of the key.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_thread_key.html#ab737b633fa17a284d28c98c8be27ac0b">ocilib::ThreadKey::Create()</a>.</p>
 
@@ -556,11 +556,11 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>- Thread key name </td></tr>
-    <tr><td class="paramname">value</td><td>- user value to set</td></tr>
+    <tr><td class="paramname">value</td><td>- User value to set</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_thread_key.html#a7899df68a1e710315cc79500c418db6b">ocilib::ThreadKey::SetValue()</a>.</p>
 
@@ -591,7 +591,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Thread key value on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The thread key value on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_thread_key.html#ad93fb8aef7bbafefe288abeaadec91c7">ocilib::ThreadKey::GetValue()</a>.</p>
 
@@ -603,7 +603,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:15 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,19 +100,19 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_subscriptions.htm
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiAdvancedQueuing</p>
-<p>OCILIB supports Oracle 10gR2 feature Database Change Notifications (DCN) also named Continuous Query Notifications (CQN)</p>
-<p>This features allows a client application to register notifications when some changes are made in a database :</p><ul>
-<li>Database status changes : startup and shutdown</li>
-<li>Database objects changes :<ul>
-<li>DDL changes : alter or drop actions</li>
-<li>DML changes : insert, delete, update actions</li>
+<p>OCILIB supports the Oracle 10gR2 feature Database Change Notifications (DCN), also named Continuous Query Notifications (CQN).</p>
+<p>This feature allows a client application to register notifications when some changes are made in a database:</p><ul>
+<li>Database status changes: startup and shutdown.</li>
+<li>Database object changes:<ul>
+<li>DDL changes: alter or drop actions.</li>
+<li>DML changes: insert, delete, update actions.</li>
 </ul>
 </li>
 </ul>
 <p>This feature can be really useful in applications that hold a cache of data. Instead of refreshing data periodically by connecting to the server, the application could only refresh modified data when necessary or perform specific tasks depending on the events. It saves application time, network traffic and can help the design of the application logic.</p>
-<p>The database status change notification is also interesting to be informed of instance startup / shutdown</p>
-<p>Check Oracle documentation for more details about this feature</p>
-<dl class="section note"><dt>Note</dt><dd>No active database connection is required to receive the notifications as they are handled by the Oracle client using a dedicated socket connection to the server</dd></dl>
+<p>The database status change notification is also interesting to be informed of instance startup / shutdown.</p>
+<p>Check Oracle documentation for more details about this feature.</p>
+<dl class="section note"><dt>Note</dt><dd>No active database connection is required to receive the notifications as they are handled by the Oracle client using a dedicated socket connection to the server.</dd></dl>
 <dl class="section user"><dt>Database changes</dt><dd></dd></dl>
 <p>The client application can be notified of any database status change (single DB or multiple DB in a RAC environment).</p>
 <dl class="section user"><dt>Object changes</dt><dd></dd></dl>
@@ -120,11 +120,11 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_subscriptions.htm
 <p>Oracle server will notify of any changes of any object that is part of the statement result set.</p>
 <p>Registering a statement will notify about any changes on its result set rows performed after the registration of the query.</p>
 <p>The query can be a simple 'select * from table' or a complex query involving many tables and/or criteria in the where clause.</p>
-<p>For Object changes, the notification can be at :</p><ul>
-<li>At Object level : only the object name (schema + object) is given</li>
-<li>At row level : same that object level + RowID of the altered row</li>
+<p>For object changes, the notification can be at:</p><ul>
+<li>Object level: only the object name (schema + object) is given.</li>
+<li>Row level: same as object level + RowID of the altered row.</li>
 </ul>
-<dl class="section warning"><dt>Warning</dt><dd>Trying to use this features with a client/server version &lt; 10gR2 will raise an error</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Trying to use this feature with a client/server version &lt; 10gR2 will raise an error.</dd></dl>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#if defined(_WINDOWS)</span></div>
@@ -288,15 +288,15 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_subscriptions.htm
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga99fdd3a24d96ae27a9f31cae47041c27"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27">OCI_ConnectionCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Connection *OCI_API OCI_ConnectionCreate(const otext *db, const otext *user, const otext *pwd, unsigned int mode)</div><div class="ttdoc">Create a physical connection to an Oracle database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4b016f1bd7de508b1a919e34b12aa83d"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a></div><div class="ttdeci">struct OCI_Statement OCI_Statement</div><div class="ttdoc">Oracle SQL or PL/SQL statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00136">types.h:136</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gadb8a12f3997bef6dc932e75f728efbb7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a></div><div class="ttdeci">struct OCI_Event OCI_Event</div><div class="ttdoc">OCILIB encapsulation of Oracle DCN event.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00450">types.h:450</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gae28da488be3fc9bbf5ee3cc368b93be4"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a></div><div class="ttdeci">struct OCI_Subscription OCI_Subscription</div><div class="ttdoc">OCILIB encapsulation of Oracle DCN notification.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00440">types.h:440</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga5e55028f0874d30cf80d2ffed349d0af"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af">OCI_ErrorGetType</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_ErrorGetType(OCI_Error *err)</div><div class="ttdoc">Retrieve the type of error from error handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gadb8a12f3997bef6dc932e75f728efbb7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gadb8a12f3997bef6dc932e75f728efbb7">OCI_Event</a></div><div class="ttdeci">struct OCI_Event OCI_Event</div><div class="ttdoc">OCILIB encapsulation of Oracle DCN event.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00460">types.h:460</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gae28da488be3fc9bbf5ee3cc368b93be4"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gae28da488be3fc9bbf5ee3cc368b93be4">OCI_Subscription</a></div><div class="ttdeci">struct OCI_Subscription OCI_Subscription</div><div class="ttdoc">OCILIB encapsulation of Oracle DCN notification.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00450">types.h:450</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga5e55028f0874d30cf80d2ffed349d0af"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af">OCI_ErrorGetType</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_ErrorGetType(OCI_Error *err)</div><div class="ttdoc">Retrieve the type of error from an error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_ga155a95c89d2e8e162acb61383a56f77d"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga155a95c89d2e8e162acb61383a56f77d">OCI_StatementCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_StatementCreate(OCI_Connection *con)</div><div class="ttdoc">Create a statement object and return its handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga533ada0a945118e7e62e2357d956dcf2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare and Execute a SQL statement or PL/SQL block.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga533ada0a945118e7e62e2357d956dcf2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare and execute a SQL statement or PL/SQL block in a single call.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gaaedce0c8f66eb60445fb759900d32f04"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Prepare(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare a SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_subscriptions_html_ga0146520f475bcd0b3fa01606cd0064f4"><div class="ttname"><a href="group___ocilib_c_api_subscriptions.html#ga0146520f475bcd0b3fa01606cd0064f4">OCI_EventGetRowid</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_EventGetRowid(OCI_Event *event)</div><div class="ttdoc">Return the rowid of the altered database object row.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_subscriptions_html_ga0cd32fe33c2e6a2104253df0a7ced19c"><div class="ttname"><a href="group___ocilib_c_api_subscriptions.html#ga0cd32fe33c2e6a2104253df0a7ced19c">OCI_SubscriptionUnregister</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_SubscriptionUnregister(OCI_Subscription *sub)</div><div class="ttdoc">Unregister a previously registered notification.</div></div>
@@ -308,7 +308,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_subscriptions.htm
 <div class="ttc" id="agroup___ocilib_c_api_subscriptions_html_gaea831f648aff10278cd70a87aaf6da28"><div class="ttname"><a href="group___ocilib_c_api_subscriptions.html#gaea831f648aff10278cd70a87aaf6da28">OCI_EventGetObject</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_EventGetObject(OCI_Event *event)</div><div class="ttdoc">Return the name of the object that generated the event.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_subscriptions_html_gaec56cab8bd75b11213c1ec7891119f4f"><div class="ttname"><a href="group___ocilib_c_api_subscriptions.html#gaec56cab8bd75b11213c1ec7891119f4f">OCI_EventGetSubscription</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Subscription *OCI_API OCI_EventGetSubscription(OCI_Event *event)</div><div class="ttdoc">Return the subscription handle that generated this event.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_subscriptions_html_gaf827cbc855e71e51794ad50c9360eaf6"><div class="ttname"><a href="group___ocilib_c_api_subscriptions.html#gaf827cbc855e71e51794ad50c9360eaf6">OCI_EventGetOperation</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetOperation(OCI_Event *event)</div><div class="ttdoc">Return the type of operation reported by a notification.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_transactions_html_ga43be7c3750fab514da607cc0425fde1f"><div class="ttname"><a href="group___ocilib_c_api_transactions.html#ga43be7c3750fab514da607cc0425fde1f">OCI_SetAutoCommit</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_SetAutoCommit(OCI_Connection *con, boolean enable)</div><div class="ttdoc">Enable / disable auto commit mode.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_transactions_html_ga43be7c3750fab514da607cc0425fde1f"><div class="ttname"><a href="group___ocilib_c_api_transactions.html#ga43be7c3750fab514da607cc0425fde1f">OCI_SetAutoCommit</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_SetAutoCommit(OCI_Connection *con, boolean enable)</div><div class="ttdoc">Enable or disable auto-commit mode.</div></div>
 </div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -414,29 +414,29 @@ Functions</h2></td></tr>
     <tr><td class="paramname">type</td><td>- Subscription type </td></tr>
     <tr><td class="paramname">handler</td><td>- User handler callback </td></tr>
     <tr><td class="paramname">port</td><td>- Port to use for notifications </td></tr>
-    <tr><td class="paramname">timeout</td><td>- notification timeout</td></tr>
+    <tr><td class="paramname">timeout</td><td>- Notification timeout</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Parameter 'type' can be one of the following values :</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'type' can be one of the following values:</dd></dl>
 <ul>
-<li>OCI_CNT_OBJECTS : request for changes at objects (e.g. tables) level (DDL / DML)</li>
-<li>OCI_CNT_ROWS : request for changes at rows level (DML)</li>
-<li>OCI_CNT_DATABASES : request for changes at database level (startup, shutdown)</li>
-<li>OCI_CNT_ALL : request for all changes</li>
+<li>OCI_CNT_OBJECTS : request for changes at object (e.g. tables) level (DDL / DML).</li>
+<li>OCI_CNT_ROWS : request for changes at row level (DML).</li>
+<li>OCI_CNT_DATABASES : request for changes at database level (startup, shutdown).</li>
+<li>OCI_CNT_ALL : request for all changes.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>Parameter 'port' and 'timeout' are optional (use value 0 a optional value)</dd>
+<dl class="section note"><dt>Note</dt><dd>Parameters 'port' and 'timeout' are optional (use value 0 as optional value).</dd>
 <dd>
-OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd></dl>
-<p>@ </p><dl class="section warning"><dt>Warning</dt><dd>Port usage All notifications are using the same port. Port number can be either:<ul>
-<li>determined automatically by Oracle client once the first subscription had been created and can be retrieved using <a class="el" href="group___ocilib_c_api_subscriptions.html#gade4a896a4075ba9f220c00dc8465f4a4" title="Return the port used by the notification.">OCI_SubscriptionGetPort()</a></li>
-<li>Set by the parameter 'port' during the first call to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga45619c63f00a129c3152a9dbfea75798" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a>. In this case later calls can provide same port number or 0</li>
+OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Port usage: All notifications use the same port. Port number can be either:<ul>
+<li>Determined automatically by the Oracle client once the first subscription has been created and can be retrieved using <a class="el" href="group___ocilib_c_api_subscriptions.html#gade4a896a4075ba9f220c00dc8465f4a4" title="Return the port used by the notification.">OCI_SubscriptionGetPort()</a>.</li>
+<li>Set by the parameter 'port' during the first call to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga45619c63f00a129c3152a9dbfea75798" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a>. In this case, later calls can provide the same port number or 0.</li>
 </ul>
 </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Requires Oracle Client 10gR2 or above</dd>
+<dl class="section note"><dt>Note</dt><dd>Requires Oracle Client 10gR2 or above.</dd>
 <dd>
-Subscription handles are automatically managed by the library</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Subscription handle on success or NULL on failure </dd></dl>
+Subscription handles are automatically managed by the library.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Subscription handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_subscription.html#a44f8bca8a9479fe38dde565890850389">ocilib::Subscription::Register()</a>.</p>
 
@@ -467,12 +467,12 @@ Subscription handles are automatically managed by the library</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a> will automatically unregister any registered subscriptions</dd>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a> will automatically unregister any registered subscriptions.</dd>
 <dd>
-If the database connection passed to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga45619c63f00a129c3152a9dbfea75798" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a> has been closed by the time that the application calls OCI_SubscriptionUnregister, the library internally reconnects to the given database, performs the unregistration and then disconnects</dd>
+If the database connection passed to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga45619c63f00a129c3152a9dbfea75798" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a> has been closed by the time that the application calls <a class="el" href="group___ocilib_c_api_subscriptions.html#ga0cd32fe33c2e6a2104253df0a7ced19c" title="Unregister a previously registered notification.">OCI_SubscriptionUnregister()</a>, the library internally reconnects to the given database, performs the unregistration and then disconnects.</dd>
 <dd>
-OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -512,12 +512,12 @@ OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_i
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The given statement must be prepared but not executed before being passed to this function. <a class="el" href="group___ocilib_c_api_subscriptions.html#gab85ad7dc94fe85b69823a18fe690291d" title="Add a statement to the notification to monitor.">OCI_SubscriptionAddStatement()</a> executes the statement and register it for notifications</dd>
+<dl class="section note"><dt>Note</dt><dd>The given statement must be prepared but not executed before being passed to this function. <a class="el" href="group___ocilib_c_api_subscriptions.html#gab85ad7dc94fe85b69823a18fe690291d" title="Add a statement to the notification to monitor.">OCI_SubscriptionAddStatement()</a> executes the statement and registers it for notifications.</dd>
 <dd>
-OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd>
+OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions.</dd>
 <dd>
-The given statement must hold a 'SELECT' SQL statement</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+The given statement must hold a 'SELECT' SQL statement.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_subscription.html#a0bbced3f0c3111880bff1d9f8b607a38">ocilib::Subscription::Watch()</a>.</p>
 
@@ -548,7 +548,8 @@ The given statement must hold a 'SELECT' SQL statement</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The subscription name, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_subscription.html#a92517e6ef6bf355fbe99f77a4302a455">ocilib::Subscription::GetName()</a>.</p>
 
@@ -579,7 +580,8 @@ The given statement must hold a 'SELECT' SQL statement</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The port number, or 0 on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_subscription.html#ac928d03b25df753c3ea61b6d74f58234">ocilib::Subscription::GetPort()</a>.</p>
 
@@ -610,7 +612,8 @@ The given statement must hold a 'SELECT' SQL statement</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The timeout value in seconds, or 0 on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_subscription.html#a5ebcdbd6229c7222c89be43a8c562044">ocilib::Subscription::GetTimeout()</a>.</p>
 
@@ -641,7 +644,8 @@ The given statement must hold a 'SELECT' SQL statement</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>It may return a NULL handle if the connection used in OCI_SubscriptionRegister has been closed. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>It may return a NULL handle if the connection used in <a class="el" href="group___ocilib_c_api_subscriptions.html#ga45619c63f00a129c3152a9dbfea75798" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a> has been closed.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The connection handle, or NULL if not available. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_subscription.html#a4e6aaf207d301b2ec51f63ddfd60f5a5">ocilib::Subscription::GetConnection()</a>.</p>
 
@@ -672,20 +676,21 @@ The given statement must hold a 'SELECT' SQL statement</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The returned value can be one of the following values :</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The returned value can be one of the following values:</dd></dl>
 <ul>
-<li>OCI_ENT_STARTUP : a database has been started up</li>
-<li>OCI_ENT_SHUTDOWN : a database has been shut down</li>
-<li>OCI_ENT_SHUTDOWN_ANY : a database has been shut down (RAC)</li>
-<li>OCI_ENT_DROP_DATABASE : a database has been dropped</li>
-<li>OCI_ENT_DEREGISTER : the notification is timed out</li>
-<li>OCI_ENT_OBJECT_CHANGED : a database object has been modified</li>
+<li>OCI_ENT_STARTUP : a database has been started up.</li>
+<li>OCI_ENT_SHUTDOWN : a database has been shut down.</li>
+<li>OCI_ENT_SHUTDOWN_ANY : a database has been shut down (RAC).</li>
+<li>OCI_ENT_DROP_DATABASE : a database has been dropped.</li>
+<li>OCI_ENT_DEREGISTER : the notification has timed out.</li>
+<li>OCI_ENT_OBJECT_CHANGED : a database object has been modified.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_subscriptions.html#ga3dd621bfdaf9aadb3a2c7a7c476f24b5" title="Return the name of the database that generated the event.">OCI_EventGetDatabase()</a> returns the affected database</dd>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_subscriptions.html#ga3dd621bfdaf9aadb3a2c7a7c476f24b5" title="Return the name of the database that generated the event.">OCI_EventGetDatabase()</a> returns the affected database.</dd>
 <dd>
-OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd>
+OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions.</dd>
 <dd>
-<a class="el" href="group___ocilib_c_api_subscriptions.html#gaea831f648aff10278cd70a87aaf6da28" title="Return the name of the object that generated the event.">OCI_EventGetObject()</a> returns the affected object ('schema_name'.'object_name') </dd></dl>
+<a class="el" href="group___ocilib_c_api_subscriptions.html#gaea831f648aff10278cd70a87aaf6da28" title="Return the name of the object that generated the event.">OCI_EventGetObject()</a> returns the affected object ('schema_name'.'object_name').</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The event type value. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_event.html#ade44e537f50ac722530f82c0f73db6d2">ocilib::Event::GetType()</a>.</p>
 
@@ -716,24 +721,25 @@ OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_i
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This call is only valid when <a class="el" href="group___ocilib_c_api_subscriptions.html#ga26e6a778b6daa16d4fe8e89c339cbe78" title="Return the type of event reported by a notification.">OCI_EventGetType()</a> reports the event type OCI_ENT_OBJECT_CHANGED</dd>
+<dl class="section note"><dt>Note</dt><dd>This call is only valid when <a class="el" href="group___ocilib_c_api_subscriptions.html#ga26e6a778b6daa16d4fe8e89c339cbe78" title="Return the type of event reported by a notification.">OCI_EventGetType()</a> reports the event type OCI_ENT_OBJECT_CHANGED.</dd>
 <dd>
-The returned value can be one of the following values :</dd></dl>
+The returned value can be one of the following values:</dd></dl>
 <ul>
-<li>OCI_ONT_INSERT : an insert has been performed</li>
-<li>OCI_ONT_UPDATE : an update has been performed</li>
-<li>OCI_ONT_DELETE : a delete has been performed</li>
-<li>OCI_ONT_ALTER : an alter has been performed</li>
-<li>OCI_ONT_DROP : a drop has been performed</li>
-<li>OCI_ONT_GENERIC : generic undefined action</li>
+<li>OCI_ONT_INSERT : an insert has been performed.</li>
+<li>OCI_ONT_UPDATE : an update has been performed.</li>
+<li>OCI_ONT_DELETE : a delete has been performed.</li>
+<li>OCI_ONT_ALTER : an alter has been performed.</li>
+<li>OCI_ONT_DROP : a drop has been performed.</li>
+<li>OCI_ONT_GENERIC : generic undefined action.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_subscriptions.html#ga3dd621bfdaf9aadb3a2c7a7c476f24b5" title="Return the name of the database that generated the event.">OCI_EventGetDatabase()</a> returns the affected database</dd>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_subscriptions.html#ga3dd621bfdaf9aadb3a2c7a7c476f24b5" title="Return the name of the database that generated the event.">OCI_EventGetDatabase()</a> returns the affected database.</dd>
 <dd>
-<a class="el" href="group___ocilib_c_api_subscriptions.html#gaea831f648aff10278cd70a87aaf6da28" title="Return the name of the object that generated the event.">OCI_EventGetObject()</a> returns the affected object ('schema_name'.'object_name')</dd>
+<a class="el" href="group___ocilib_c_api_subscriptions.html#gaea831f648aff10278cd70a87aaf6da28" title="Return the name of the object that generated the event.">OCI_EventGetObject()</a> returns the affected object ('schema_name'.'object_name').</dd>
 <dd>
-OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd>
+OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions.</dd>
 <dd>
-if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga45619c63f00a129c3152a9dbfea75798" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a>, the rowid of the altered row can be retrieved with <a class="el" href="group___ocilib_c_api_subscriptions.html#ga0146520f475bcd0b3fa01606cd0064f4" title="Return the rowid of the altered database object row.">OCI_EventGetRowid()</a> </dd></dl>
+If OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscriptions.html#ga45619c63f00a129c3152a9dbfea75798" title="Register a notification against the given database.">OCI_SubscriptionRegister()</a>, the rowid of the altered row can be retrieved with <a class="el" href="group___ocilib_c_api_subscriptions.html#ga0146520f475bcd0b3fa01606cd0064f4" title="Return the rowid of the altered database object row.">OCI_EventGetRowid()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The operation type value. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_event.html#a71186b0875124925cc7a5df4abeef653">ocilib::Event::GetObjectEvent()</a>.</p>
 
@@ -764,8 +770,9 @@ if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscripti
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>When using Oracle pluggable databases (PDBs), <a class="el" href="group___ocilib_c_api_subscriptions.html#ga3dd621bfdaf9aadb3a2c7a7c476f24b5" title="Return the name of the database that generated the event.">OCI_EventGetDatabase()</a> returns the container database name and NOT the pluggable database name (Oracle limitation). </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>When using Oracle pluggable databases (PDBs), <a class="el" href="group___ocilib_c_api_subscriptions.html#ga3dd621bfdaf9aadb3a2c7a7c476f24b5" title="Return the name of the database that generated the event.">OCI_EventGetDatabase()</a> returns the container database name and NOT the pluggable database name (Oracle limitation).</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The database name, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_event.html#ab5916f85034d50780067d34b1bef69a9">ocilib::Event::GetDatabaseName()</a>.</p>
 
@@ -796,7 +803,8 @@ if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscripti
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The object name, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_event.html#a6838809560aba4bcc0fb71a0bea4bcf9">ocilib::Event::GetObjectName()</a>.</p>
 
@@ -827,7 +835,8 @@ if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscripti
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The rowid string, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_event.html#a0d80123251af1a33c093fafc2ee9b9ca">ocilib::Event::GetRowID()</a>.</p>
 
@@ -858,7 +867,8 @@ if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscripti
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use subscriptions.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The subscription handle, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_event.html#a545a749a11dedb46a93f49db2dd1657b">ocilib::Event::GetSubscription()</a>.</p>
 
@@ -870,7 +880,7 @@ if OCI_CNT_ROWS is passed to <a class="el" href="group___ocilib_c_api_subscripti
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:15 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

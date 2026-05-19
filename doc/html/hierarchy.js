@@ -20,6 +20,7 @@ var hierarchy =
       [ "ocilib::support::BindResolverHandleType< ocilib::Reference, OCI_Ref * >", "structocilib_1_1support_1_1_bind_resolver_handle_type.html", null ],
       [ "ocilib::support::BindResolverHandleType< ocilib::Statement, OCI_Statement * >", "structocilib_1_1support_1_1_bind_resolver_handle_type.html", null ],
       [ "ocilib::support::BindResolverHandleType< ocilib::Timestamp, OCI_Timestamp * >", "structocilib_1_1support_1_1_bind_resolver_handle_type.html", null ],
+      [ "ocilib::support::BindResolverHandleType< ocilib::Vector, OCI_Vector * >", "structocilib_1_1support_1_1_bind_resolver_handle_type.html", null ],
       [ "ocilib::support::BindResolverScalarType< big_int >", "structocilib_1_1support_1_1_bind_resolver_scalar_type.html", null ],
       [ "ocilib::support::BindResolverScalarType< big_uint >", "structocilib_1_1support_1_1_bind_resolver_scalar_type.html", null ],
       [ "ocilib::support::BindResolverScalarType< double >", "structocilib_1_1support_1_1_bind_resolver_scalar_type.html", null ],
@@ -53,6 +54,7 @@ var hierarchy =
     [ "ocilib::support::BindResolverType< ocilib::Reference, OCI_Ref *, true >", "structocilib_1_1support_1_1_bind_resolver_type.html", null ],
     [ "ocilib::support::BindResolverType< ocilib::Statement, OCI_Statement *, true >", "structocilib_1_1support_1_1_bind_resolver_type.html", null ],
     [ "ocilib::support::BindResolverType< ocilib::Timestamp, OCI_Timestamp *, true >", "structocilib_1_1support_1_1_bind_resolver_type.html", null ],
+    [ "ocilib::support::BindResolverType< ocilib::Vector, OCI_Vector *, true >", "structocilib_1_1support_1_1_bind_resolver_type.html", null ],
     [ "ocilib::support::BindResolverType< short, short, false >", "structocilib_1_1support_1_1_bind_resolver_type.html", null ],
     [ "ocilib::support::BindResolverType< T, T, false >", "structocilib_1_1support_1_1_bind_resolver_type.html", [
       [ "ocilib::support::BindResolverScalarType< T >", "structocilib_1_1support_1_1_bind_resolver_scalar_type.html", null ]
@@ -149,6 +151,9 @@ var hierarchy =
     [ "ocilib::core::HandleHolder< OCI_TypeInfo * >", "classocilib_1_1core_1_1_handle_holder.html", [
       [ "ocilib::TypeInfo", "classocilib_1_1_type_info.html", null ]
     ] ],
+    [ "ocilib::core::HandleHolder< OCI_Vector * >", "classocilib_1_1core_1_1_handle_holder.html", [
+      [ "ocilib::Vector", "classocilib_1_1_vector.html", null ]
+    ] ],
     [ "ocilib::core::HandleHolder< OCI_XmlType * >", "classocilib_1_1core_1_1_handle_holder.html", [
       [ "ocilib::XmlType", "classocilib_1_1_xml_type.html", null ]
     ] ],
@@ -172,9 +177,11 @@ var hierarchy =
       [ "ocilib::Object", "classocilib_1_1_object.html", null ],
       [ "ocilib::Reference", "classocilib_1_1_reference.html", null ],
       [ "ocilib::Timestamp", "classocilib_1_1_timestamp.html", null ],
+      [ "ocilib::Vector", "classocilib_1_1_vector.html", null ],
       [ "ocilib::XmlType", "classocilib_1_1_xml_type.html", null ]
     ] ],
     [ "ocilib::core::SupportedNumeric< T >", "structocilib_1_1core_1_1_supported_numeric.html", null ],
+    [ "ocilib::core::SupportedVectorNumeric< T >", "structocilib_1_1core_1_1_supported_vector_numeric.html", null ],
     [ "ocilib::core::Synchronizable", "classocilib_1_1core_1_1_synchronizable.html", [
       [ "ocilib::core::ConcurrentList< ocilib::core::HandleHolder * >", "classocilib_1_1core_1_1_concurrent_list.html", null ],
       [ "ocilib::core::ConcurrentList< ocilib::core::Handle * >", "classocilib_1_1core_1_1_concurrent_list.html", null ],

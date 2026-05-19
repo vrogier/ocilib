@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,30 +100,30 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_files.html',''); 
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiLobs</p>
-<p>External Large Objects (FILEs) were introduced with Oracle 8i</p>
-<p>Oracle OCI supplies a set APIs to manipulate this data type.</p>
+<p>External Large Objects (FILEs) were introduced with Oracle 8i.</p>
+<p>Oracle OCI supplies a set of APIs to manipulate this data type.</p>
 <p>OCILIB encapsulates this API by supplying:</p>
 <ul>
-<li>An OCI_File C type</li>
-<li>A set of really easy APIs to manipulate OCI_File objects</li>
+<li>An OCI_File C type.</li>
+<li>A set of easy-to-use APIs to manipulate OCI_File objects.</li>
 </ul>
-<p>OCILIB currently supports 2 types of Lobs :</p>
+<p>OCILIB currently supports 2 types of files:</p>
 <ul>
-<li>BFILE : Binary files</li>
-<li>CFILE : Character files</li>
+<li>BFILE : Binary files.</li>
+<li>CFILE : Character files.</li>
 </ul>
 <dl class="section warning"><dt>Warning</dt><dd>FILEs are read-only.</dd></dl>
-<p>OCI_Lob objects can be :</p>
+<p>OCI_File objects can be:</p>
 <ul>
-<li>Created as standalone instances</li>
-<li>Used for in/out binding</li>
-<li>Retrieved from select statements</li>
-<li>Used for reading server files content</li>
+<li>Created as standalone instances.</li>
+<li>Used for in/out binding.</li>
+<li>Retrieved from SELECT statements.</li>
+<li>Used for reading server file content.</li>
 </ul>
-<dl class="section user"><dt>Files &gt; 4 Go</dt><dd></dd></dl>
+<dl class="section user"><dt>Files &gt; 4 GB</dt><dd></dd></dl>
 <ul>
-<li>New maximum file size limit (128 To) applies to OCI_Files objects.</li>
-<li>See Internal Large Objects (LOBs) section for Files &gt; 4 Go information</li>
+<li>The new maximum file size limit (128 TB) applies to OCI_File objects.</li>
+<li>See Internal Large Objects (LOBs) section for files &gt; 4 GB information.</li>
 </ul>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
@@ -212,16 +212,16 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_files.html',''); 
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga99fdd3a24d96ae27a9f31cae47041c27"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27">OCI_ConnectionCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Connection *OCI_API OCI_ConnectionCreate(const otext *db, const otext *user, const otext *pwd, unsigned int mode)</div><div class="ttdoc">Create a physical connection to an Oracle database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4b016f1bd7de508b1a919e34b12aa83d"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a></div><div class="ttdeci">struct OCI_Statement OCI_Statement</div><div class="ttdoc">Oracle SQL or PL/SQL statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00136">types.h:136</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gad57163fd9169661f31821898c0a86b1d"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a></div><div class="ttdeci">struct OCI_File OCI_File</div><div class="ttdoc">Oracle External Large objects:</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00223">types.h:223</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gae0c7aa9c507975d21ca6c261081ba753"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a></div><div class="ttdeci">struct OCI_Resultset OCI_Resultset</div><div class="ttdoc">Collection of output columns from a select statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00163">types.h:163</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga63231f3dd4c27966315116b22dfe0963"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga63231f3dd4c27966315116b22dfe0963">OCI_GetFile</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_File *OCI_API OCI_GetFile(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current File value of the column at the given index in the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the resultset handle from an executed statement.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga63231f3dd4c27966315116b22dfe0963"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga63231f3dd4c27966315116b22dfe0963">OCI_GetFile</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_File *OCI_API OCI_GetFile(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current File value of the column at the given index in the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the result set handle from an executed statement.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_files_html_ga175384966477aca0ffd2a352efb3b8b1"><div class="ttname"><a href="group___ocilib_c_api_files.html#ga175384966477aca0ffd2a352efb3b8b1">OCI_FileGetName</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_FileGetName(OCI_File *file)</div><div class="ttdoc">Return the name of the given file.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_files_html_ga28b7af3b3d80ee55218089e96791b120"><div class="ttname"><a href="group___ocilib_c_api_files.html#ga28b7af3b3d80ee55218089e96791b120">OCI_FileCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_File *OCI_API OCI_FileCreate(OCI_Connection *con, unsigned int type)</div><div class="ttdoc">Create a file object instance.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_files_html_ga50ca363026bbe7e251826949194d2245"><div class="ttname"><a href="group___ocilib_c_api_files.html#ga50ca363026bbe7e251826949194d2245">OCI_FileExists</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FileExists(OCI_File *file)</div><div class="ttdoc">Check if the given file exists on server.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_files_html_ga50ca363026bbe7e251826949194d2245"><div class="ttname"><a href="group___ocilib_c_api_files.html#ga50ca363026bbe7e251826949194d2245">OCI_FileExists</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FileExists(OCI_File *file)</div><div class="ttdoc">Check if the given file exists on the server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_files_html_ga616bfe9db949af310efe532091c0b3e5"><div class="ttname"><a href="group___ocilib_c_api_files.html#ga616bfe9db949af310efe532091c0b3e5">OCI_FileRead</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_FileRead(OCI_File *file, void *buffer, unsigned int len)</div><div class="ttdoc">Read a portion of a file into the given buffer.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_files_html_ga83b4b4d4cfdbaf363d30f002e1ab7827"><div class="ttname"><a href="group___ocilib_c_api_files.html#ga83b4b4d4cfdbaf363d30f002e1ab7827">OCI_FileGetDirectory</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_FileGetDirectory(OCI_File *file)</div><div class="ttdoc">Return the directory of the given file.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_files_html_ga8ed41c02a9089b49fd8093313200cf28"><div class="ttname"><a href="group___ocilib_c_api_files.html#ga8ed41c02a9089b49fd8093313200cf28">OCI_FileSetName</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FileSetName(OCI_File *file, const otext *dir, const otext *name)</div><div class="ttdoc">Set the directory and file name of FILE handle.</div></div>
@@ -232,8 +232,8 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_files.html',''); 
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_ga155a95c89d2e8e162acb61383a56f77d"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga155a95c89d2e8e162acb61383a56f77d">OCI_StatementCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_StatementCreate(OCI_Connection *con)</div><div class="ttdoc">Create a statement object and return its handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga533ada0a945118e7e62e2357d956dcf2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare and Execute a SQL statement or PL/SQL block.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated to it (resultsets ...)</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga533ada0a945118e7e62e2357d956dcf2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare and execute a SQL statement or PL/SQL block in a single call.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated with it (result sets, bind variables,...</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gaaedce0c8f66eb60445fb759900d32f04"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Prepare(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare a SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gac4fae0835b45409e141eb1b4518fa89c"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Execute(OCI_Statement *stmt)</div><div class="ttdoc">Execute a prepared SQL statement or PL/SQL block.</div></div>
 </div><!-- fragment --> </dd></dl>
@@ -247,7 +247,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:gaa618f629670685cbb02044856d36dd38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a local File object.  <br /></td></tr>
 <tr class="separator:gaa618f629670685cbb02044856d36dd38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6e68cb422de0d7464323bfbb9cb33124"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga6e68cb422de0d7464323bfbb9cb33124">OCI_FileArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, unsigned int nbelem)</td></tr>
-<tr class="memdesc:ga6e68cb422de0d7464323bfbb9cb33124"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of file object.  <br /></td></tr>
+<tr class="memdesc:ga6e68cb422de0d7464323bfbb9cb33124"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of File objects.  <br /></td></tr>
 <tr class="separator:ga6e68cb422de0d7464323bfbb9cb33124"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab59a84709566624a6803de312b4450d4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#gab59a84709566624a6803de312b4450d4">OCI_FileArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> **files)</td></tr>
 <tr class="memdesc:gab59a84709566624a6803de312b4450d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of file objects.  <br /></td></tr>
@@ -268,7 +268,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:gaf1849513ad3b19ddb6ed30973e2a8eb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the size in bytes of a file.  <br /></td></tr>
 <tr class="separator:gaf1849513ad3b19ddb6ed30973e2a8eb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga50ca363026bbe7e251826949194d2245"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga50ca363026bbe7e251826949194d2245">OCI_FileExists</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:ga50ca363026bbe7e251826949194d2245"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given file exists on server.  <br /></td></tr>
+<tr class="memdesc:ga50ca363026bbe7e251826949194d2245"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given file exists on the server.  <br /></td></tr>
 <tr class="separator:ga50ca363026bbe7e251826949194d2245"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8ed41c02a9089b49fd8093313200cf28"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga8ed41c02a9089b49fd8093313200cf28">OCI_FileSetName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, const otext *dir, const otext *name)</td></tr>
 <tr class="memdesc:ga8ed41c02a9089b49fd8093313200cf28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the directory and file name of FILE handle.  <br /></td></tr>
@@ -289,13 +289,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:gadaba85bc80450119f8b7b4d9d0832872"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a file.  <br /></td></tr>
 <tr class="separator:gadaba85bc80450119f8b7b4d9d0832872"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2ce317e2b1a0fa72392af0a29f42be86"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga2ce317e2b1a0fa72392af0a29f42be86">OCI_FileIsEqual</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file2)</td></tr>
-<tr class="memdesc:ga2ce317e2b1a0fa72392af0a29f42be86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two file handle for equality.  <br /></td></tr>
+<tr class="memdesc:ga2ce317e2b1a0fa72392af0a29f42be86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two File handles for equality.  <br /></td></tr>
 <tr class="separator:ga2ce317e2b1a0fa72392af0a29f42be86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga068eee96a39fd164c9c2ac8bf9c9c13d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga068eee96a39fd164c9c2ac8bf9c9c13d">OCI_FileAssign</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file, <a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file_src)</td></tr>
 <tr class="memdesc:ga068eee96a39fd164c9c2ac8bf9c9c13d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign a file to another one.  <br /></td></tr>
 <tr class="separator:ga068eee96a39fd164c9c2ac8bf9c9c13d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2de329ddaea5fd20988f191883ec5586"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_files.html#ga2de329ddaea5fd20988f191883ec5586">OCI_FileGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gad57163fd9169661f31821898c0a86b1d">OCI_File</a> *file)</td></tr>
-<tr class="memdesc:ga2de329ddaea5fd20988f191883ec5586"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve connection handle from the file handle.  <br /></td></tr>
+<tr class="memdesc:ga2de329ddaea5fd20988f191883ec5586"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the connection handle from the File handle.  <br /></td></tr>
 <tr class="separator:ga2de329ddaea5fd20988f191883ec5586"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -335,12 +335,12 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Supported file types :</p>
+<p>Supported file types:</p>
 <ul>
-<li>OCI_BFILE : Binary file</li>
-<li>OCI_CFILE : Character file</li>
+<li>OCI_BFILE : Binary file.</li>
+<li>OCI_CFILE : Character file.</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>Return the lob handle on success otherwise NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The File handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#a06719d4c92dbce133890c5cccdfec48a">ocilib::File::File()</a>.</p>
 
@@ -371,8 +371,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only Files created with <a class="el" href="group___ocilib_c_api_files.html#ga28b7af3b3d80ee55218089e96791b120" title="Create a file object instance.">OCI_FileCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_files.html#gaa618f629670685cbb02044856d36dd38" title="Free a local File object.">OCI_FileFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only files created with <a class="el" href="group___ocilib_c_api_files.html#ga28b7af3b3d80ee55218089e96791b120" title="Create a file object instance.">OCI_FileCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_files.html#gaa618f629670685cbb02044856d36dd38" title="Free a local File object.">OCI_FileFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -410,17 +410,17 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Create an array of file object. </p>
+<p>Create an array of File objects. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
     <tr><td class="paramname">type</td><td>- File type </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- number of elements in the array</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_files.html#ga28b7af3b3d80ee55218089e96791b120" title="Create a file object instance.">OCI_FileCreate()</a> for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the file handle array on success otherwise NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_files.html#ga28b7af3b3d80ee55218089e96791b120" title="Create a file object instance.">OCI_FileCreate()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The File handle array on success, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -449,8 +449,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only arrays of lobs created with <a class="el" href="group___ocilib_c_api_files.html#ga6e68cb422de0d7464323bfbb9cb33124" title="Create an array of file object.">OCI_FileArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_files.html#gab59a84709566624a6803de312b4450d4" title="Free an array of file objects.">OCI_FileArrayFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only arrays of files created with <a class="el" href="group___ocilib_c_api_files.html#ga6e68cb422de0d7464323bfbb9cb33124" title="Create an array of File objects.">OCI_FileArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_files.html#gab59a84709566624a6803de312b4450d4" title="Free an array of file objects.">OCI_FileArrayFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -479,8 +479,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>For possible values, see <a class="el" href="group___ocilib_c_api_files.html#ga28b7af3b3d80ee55218089e96791b120" title="Create a file object instance.">OCI_FileCreate()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Object type or OCI_UNKNOWN the input handle is NULL </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For possible values, see <a class="el" href="group___ocilib_c_api_files.html#ga28b7af3b3d80ee55218089e96791b120" title="Create a file object instance.">OCI_FileCreate()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The File type, or OCI_UNKNOWN if the input handle is NULL. </dd></dl>
 
 </div>
 </div>
@@ -527,14 +527,14 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Mode parameter can be one of the following value :</p>
+<p>Mode parameter can be one of the following values:</p>
 <ul>
-<li>OCI_SEEK_SET : set the file current offset to the given absolute offset</li>
-<li>OCI_SEEK_END : set the file current offset to the end of the lob</li>
-<li>OCI_SEEK_CUR : move the file current offset to the number of bytes given by parameter 'offset'</li>
+<li>OCI_SEEK_SET : Set the file current offset to the given absolute offset.</li>
+<li>OCI_SEEK_END : Set the file current offset to the end of the file.</li>
+<li>OCI_SEEK_CUR : Move the file current offset by the number of bytes given by parameter 'offset'.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>Position in the File buffer starts at 0.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Position in the file buffer starts at 0.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#aa3ae5973a9029f9cf53c8f15f845ee6e">ocilib::File::Seek()</a>.</p>
 
@@ -565,7 +565,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>File position (starting with 0) or 0 on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The file position (starting with 0), or 0 on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#a34a9d4521ac4bfc7ff4daeac39fd5bbd">ocilib::File::GetOffset()</a>.</p>
 
@@ -614,7 +614,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes read on success otherwise 0 on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes read on success, or 0 on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#ab3c4d83ffd6d49c5dd078dd2f1355dd1">ocilib::File::Read()</a>.</p>
 
@@ -641,10 +641,11 @@ Functions</h2></td></tr>
 <p>Return the size in bytes of a file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">file</td><td>- File handle </td></tr>
+    <tr><td class="paramname">file</td><td>- File handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The file size in bytes, or 0 on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#a6715adae16c588d5bcc856cbe44d2d04">ocilib::File::GetLength()</a>.</p>
 
@@ -668,15 +669,15 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Check if the given file exists on server. </p>
+<p>Check if the given file exists on the server. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">file</td><td>- File handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>For local FILEs object, OCI_LobFileSetName() must be called before to set the filename to check</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For local FILE objects, <a class="el" href="group___ocilib_c_api_files.html#ga8ed41c02a9089b49fd8093313200cf28" title="Set the directory and file name of FILE handle.">OCI_FileSetName()</a> must be called first to set the filename to check.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if the file exists, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#afb5e8c649f7c86a6577d4e02d34fa308">ocilib::File::Exists()</a>.</p>
 
@@ -721,16 +722,16 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">file</td><td>- File handle </td></tr>
     <tr><td class="paramname">dir</td><td>- File directory </td></tr>
-    <tr><td class="paramname">name</td><td>- File name in </td></tr>
+    <tr><td class="paramname">name</td><td>- File name</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd><ul>
-<li>For local FILEs only</li>
-<li>Files fetched from resultset cannot be assigned a new directory and name</li>
+<li>For local FILEs only.</li>
+<li>Files fetched from result sets cannot be assigned a new directory and name.</li>
 </ul>
 </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#a823d9517faecb0e5fb9c2eb1d0c87be2">ocilib::File::SetInfos()</a>.</p>
 
@@ -757,10 +758,11 @@ Functions</h2></td></tr>
 <p>Return the directory of the given file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">file</td><td>- File handle </td></tr>
+    <tr><td class="paramname">file</td><td>- File handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The directory name, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#a16c1238a0e44ac0046674d8df37fbfd9">ocilib::File::GetDirectory()</a>.</p>
 
@@ -787,10 +789,11 @@ Functions</h2></td></tr>
 <p>Return the name of the given file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">file</td><td>- File handle </td></tr>
+    <tr><td class="paramname">file</td><td>- File handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The file name, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#a56e9d6885b50836f6c02308deab5af0d">ocilib::File::GetName()</a>.</p>
 
@@ -821,7 +824,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#affa5f35720e5de2e950990918b7bc4d1">ocilib::File::Open()</a>.</p>
 
@@ -852,7 +855,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE if the file was opened with this handle otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if the file was opened with this handle, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#ad4eaa65aecca385912cfefce402db2bd">ocilib::File::IsOpened()</a>.</p>
 
@@ -883,7 +886,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#a29690c49cf6dbf39b088b12bc07babc5">ocilib::File::Close()</a>.</p>
 
@@ -917,15 +920,15 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Compare two file handle for equality. </p>
+<p>Compare two File handles for equality. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">file</td><td>- File handle </td></tr>
-    <tr><td class="paramname">file2</td><td>- File2 handle</td></tr>
+    <tr><td class="paramname">file2</td><td>- File handle to compare</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE is the lobs are not null and equal otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if the files are not null and equal, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -965,7 +968,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#ab0600f40fd36a1cd07d3b0aa91fb7544">ocilib::File::Clone()</a>.</p>
 
@@ -989,13 +992,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Retrieve connection handle from the file handle. </p>
+<p>Retrieve the connection handle from the File handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">file</td><td>- file handle </td></tr>
+    <tr><td class="paramname">file</td><td>- File handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The connection handle, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_file.html#a7e1acdd023b9984b15d0ec543560d0ac">ocilib::File::GetConnection()</a>.</p>
 
@@ -1007,7 +1011,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -174,7 +174,7 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><p>A connection or session <a class="el" href="classocilib_1_1_pool.html" title="A connection or session Pool.">Pool</a>. </p>
 <p>This class wraps the OCILIB object handle OCI_Pool and its related methods </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l01355">1355</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l01453">1453</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="aeeecc50278ee613c2c6f0c14026fee9d" name="aeeecc50278ee613c2c6f0c14026fee9d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeeecc50278ee613c2c6f0c14026fee9d">&#9670;&#160;</a></span>PoolType</h2>
@@ -191,7 +191,7 @@ Public Member Functions</h2></td></tr>
 <p>Type of <a class="el" href="classocilib_1_1_pool.html" title="A connection or session Pool.">Pool</a>. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_pool.html#a52ee2b1e8d5039f64a18fe343fbb191e" title="Pool type enumerated values.">Pool::PoolTypeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l01379">1379</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l01477">1477</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -216,7 +216,7 @@ Public Member Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l01364">1364</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l01462">1462</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -498,7 +498,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section user"><dt>Session tagging</dt><dd></dd></dl>
-<p>Session pools have a nice feature called 'session tagging' It's possible to tag a session with a string identifier when the session is returned to the pool, it keeps its tags. When requesting a connection from the session pool, it's possible to request a session that has the given 'tag' parameter If one exists, it is returned. If not and if an untagged session is available, it is then returned. So check the connection tag property with <a class="el" href="group___ocilib_c_api_connections.html#gab2c594a153e7b4c02aa0ec118f68b772" title="Return the tag associated the given connection.">OCI_GetSessionTag()</a> to find out if the returned connection is tagged or not.</p>
+<p>Session pools have a nice feature called 'session tagging' It's possible to tag a session with a string identifier when the session is returned to the pool, it keeps its tags. When requesting a connection from the session pool, it's possible to request a session that has the given 'tag' parameter If one exists, it is returned. If not and if an untagged session is available, it is then returned. So check the connection tag property with GetSessionTag() to find out if the returned connection is tagged or not.</p>
 <p>This features is described in the OCI developer guide as the following :</p>
 <p>"The tags provide a way for users to customize sessions in the pool.
   A client may get a default or untagged session from a pool, set certain
@@ -901,7 +901,7 @@ Default pool behavior is to wait for available connections </dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_pool.html">Pool</a></li>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:15 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

@@ -12,5 +12,6 @@ var group___ocilib_c_api_statements =
     [ "OCI_GetSqlErrorPos", "group___ocilib_c_api_statements.html#gab3ec87b4fb46ab1752341561912449a9", null ],
     [ "OCI_GetAffectedRows", "group___ocilib_c_api_statements.html#ga0af3308fa16a0a0e591b67c7ab7211a7", null ],
     [ "OCI_GetSQLCommand", "group___ocilib_c_api_statements.html#ga8d320ae22ef2449a1548c962a03efcca", null ],
-    [ "OCI_GetSQLVerb", "group___ocilib_c_api_statements.html#gafa3fc1352d793580b76723b7dea622a7", null ]
+    [ "OCI_GetSQLVerb", "group___ocilib_c_api_statements.html#gafa3fc1352d793580b76723b7dea622a7", null ],
+    [ "OCI_GetParseBindNames", "group___ocilib_c_api_statements.html#ga9415b328ee840afabf6c8fdfd527210c", null ]
 ];

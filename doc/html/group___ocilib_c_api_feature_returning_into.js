@@ -18,5 +18,6 @@ var group___ocilib_c_api_feature_returning_into =
     [ "OCI_RegisterObject", "group___ocilib_c_api_feature_returning_into.html#gaeb99a8778a224305c3b45b5c5db72ed7", null ],
     [ "OCI_RegisterLob", "group___ocilib_c_api_feature_returning_into.html#ga0d27f3ce3424e18a2af4895b8f6b58e7", null ],
     [ "OCI_RegisterFile", "group___ocilib_c_api_feature_returning_into.html#gae7e621f6dd01ff1b58fb93c34ba499bd", null ],
-    [ "OCI_RegisterRef", "group___ocilib_c_api_feature_returning_into.html#gaae9bde36980d05ae13b90b1271108dae", null ]
+    [ "OCI_RegisterRef", "group___ocilib_c_api_feature_returning_into.html#gaae9bde36980d05ae13b90b1271108dae", null ],
+    [ "OCI_RegisterVector", "group___ocilib_c_api_feature_returning_into.html#ga998c0d1365a4349112e605d932b8ed44", null ]
 ];

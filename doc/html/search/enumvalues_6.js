@@ -6,9 +6,10 @@ var searchData=
   ['in_3',['In',['../classocilib_1_1_bind_info.html#a08f96498d216e0ad14ab8e7a35406533a026e00fee6fd4ae470376643180eba05',1,'ocilib::BindInfo']]],
   ['indexedtable_4',['IndexedTable',['../classocilib_1_1_collection.html#a71184e168473a0c48994b2129029793aaad79ec2252aa6b3e9c6f454b84f0be74',1,'ocilib::Collection']]],
   ['inout_5',['InOut',['../classocilib_1_1_bind_info.html#a08f96498d216e0ad14ab8e7a35406533a401b5f2ceea3399cf4846b8383b2584e',1,'ocilib::BindInfo']]],
-  ['isgeneratedalways_6',['IsGeneratedAlways',['../classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3a0b6cacb8ddb56da9cd8bb2d0589a16db',1,'ocilib::Column']]],
-  ['isgeneratedbycontainers_7',['IsGeneratedByContainers',['../classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3a16019d6dff37c2b44fe4b8ab603a000d',1,'ocilib::Column']]],
-  ['isgeneratedbydefaultonnull_8',['IsGeneratedByDefaultOnNull',['../classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3afd40f7f0eb1cee692fdb0cb9f4260b15',1,'ocilib::Column']]],
-  ['isidentity_9',['IsIdentity',['../classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3ace16a6cc7e7015721b56eb6a16820235',1,'ocilib::Column']]],
-  ['islogicalpartitioning_10',['IsLogicalPartitioning',['../classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3abc86d2c287fb9f194be09e4dffba0d87',1,'ocilib::Column']]]
+  ['int8_6',['Int8',['../classocilib_1_1_vector.html#aa6cf47f6cc3eae158f3f609a3b2a0bb9a0df19dd8b4ab2d2d44c63730b22ae067',1,'ocilib::Vector']]],
+  ['isgeneratedalways_7',['IsGeneratedAlways',['../classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3a0b6cacb8ddb56da9cd8bb2d0589a16db',1,'ocilib::Column']]],
+  ['isgeneratedbycontainers_8',['IsGeneratedByContainers',['../classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3a16019d6dff37c2b44fe4b8ab603a000d',1,'ocilib::Column']]],
+  ['isgeneratedbydefaultonnull_9',['IsGeneratedByDefaultOnNull',['../classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3afd40f7f0eb1cee692fdb0cb9f4260b15',1,'ocilib::Column']]],
+  ['isidentity_10',['IsIdentity',['../classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3ace16a6cc7e7015721b56eb6a16820235',1,'ocilib::Column']]],
+  ['islogicalpartitioning_11',['IsLogicalPartitioning',['../classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3abc86d2c287fb9f194be09e4dffba0d87',1,'ocilib::Column']]]
 ];

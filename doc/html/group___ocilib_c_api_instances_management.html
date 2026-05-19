@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -101,12 +101,12 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_instances_managem
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiSubscriptions</p>
 <p>OCILIB supports Oracle 11g client features for manipulating remote Oracle instances.</p>
-<p>Oracle instances (on the same computer or on a remote server) can be :</p>
+<p>Oracle instances (on the same computer or on a remote server) can be:</p>
 <ul>
-<li>started with <a class="el" href="group___ocilib_c_api_instances_management.html#ga5e05ed174b5127b0f1d4eac851d03ab7" title="Start a database instance.">OCI_DatabaseStartup()</a></li>
-<li>shutdown with <a class="el" href="group___ocilib_c_api_instances_management.html#ga107e2e1fefd33945702db1b83e34c8cc" title="Shutdown a database instance.">OCI_DatabaseShutdown()</a></li>
+<li>Started with <a class="el" href="group___ocilib_c_api_instances_management.html#ga5e05ed174b5127b0f1d4eac851d03ab7" title="Start a database instance.">OCI_DatabaseStartup()</a>.</li>
+<li>Shut down with <a class="el" href="group___ocilib_c_api_instances_management.html#ga107e2e1fefd33945702db1b83e34c8cc" title="Shutdown a database instance.">OCI_DatabaseShutdown()</a>.</li>
 </ul>
-<p>Several options are handled for this actions</p>
+<p>Several options are handled for these actions.</p>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">void</span> err_handler(<a class="code hl_typedef" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div>
@@ -142,8 +142,8 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_instances_managem
 <div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line">}   </div>
 <div class="line"> </div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_instances_management_html_ga107e2e1fefd33945702db1b83e34c8cc"><div class="ttname"><a href="group___ocilib_c_api_instances_management.html#ga107e2e1fefd33945702db1b83e34c8cc">OCI_DatabaseShutdown</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_DatabaseShutdown(const otext *db, const otext *user, const otext *pwd, unsigned int sess_mode, unsigned int shut_mode, unsigned int shut_flag)</div><div class="ttdoc">Shutdown a database instance.</div></div>
@@ -231,24 +231,24 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Possible values for parameter session mode :</p><ul>
+<p>Possible values for parameter session mode:</p><ul>
 <li>OCI_SESSION_SYSDBA</li>
 <li>OCI_SESSION_SYSOPER</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>External credentials are supported by supplying a null value for the 'user' and 'pwd' parameters If the param 'db' is NULL then a connection to the default local DB is done</dd></dl>
-<p>Possible (combined) values for parameter start_mode :</p><ul>
-<li>OCI_DB_SPM_START : start the instance</li>
-<li>OCI_DB_SPM_MOUNT : mount the instance</li>
-<li>OCI_DB_SPM_OPEN : open the instance</li>
-<li>OCI_DB_SPM_FULL : start, mount and open the instance</li>
+<dl class="section note"><dt>Note</dt><dd>External credentials are supported by supplying a null value for the 'user' and 'pwd' parameters. If the param 'db' is NULL then a connection to the default local DB is done.</dd></dl>
+<p>Possible (combined) values for parameter start_mode:</p><ul>
+<li>OCI_DB_SPM_START : start the instance.</li>
+<li>OCI_DB_SPM_MOUNT : mount the instance.</li>
+<li>OCI_DB_SPM_OPEN : open the instance.</li>
+<li>OCI_DB_SPM_FULL : start, mount and open the instance.</li>
 </ul>
-<p>Possible (combined) values for parameter start_flag :</p><ul>
-<li>OCI_DB_SPF_DEFAULT : default startup</li>
-<li>OCI_DB_SPF_FORCE : shuts down a running instance (if needed) using ABORT command and starts a new instance</li>
-<li>OCI_DB_SPF_RESTRICT : allows database access only to users with both CREATE SESSION and RESTRICTED SESSION privileges</li>
+<p>Possible (combined) values for parameter start_flag:</p><ul>
+<li>OCI_DB_SPF_DEFAULT : default startup.</li>
+<li>OCI_DB_SPF_FORCE : shuts down a running instance (if needed) using ABORT command and starts a new instance.</li>
+<li>OCI_DB_SPF_RESTRICT : allows database access only to users with both CREATE SESSION and RESTRICTED SESSION privileges.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>If the client side spfile is not provided, the database is started with its server-side spfile</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the client-side spfile is not provided, the database is started with its server-side spfile.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_environment.html#a7165adb4dffe98f8ae5fcf5829f591b3">ocilib::Environment::StartDatabase()</a>.</p>
 
@@ -318,50 +318,50 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Possible values for parameter session mode :<ul>
+<dl class="section warning"><dt>Warning</dt><dd>Possible values for parameter session mode:<ul>
 <li>OCI_SESSION_SYSDBA</li>
 <li>OCI_SESSION_SYSOPER</li>
 </ul>
 </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>External credentials are supported by supplying a null value for the 'user' and 'pwd' parameters If the param 'db' is NULL then a connection to the default local DB is done</dd></dl>
-<p>Possible (combined) values for parameter shut_mode :</p><ul>
-<li>OCI_DB_SDM_SHUTDOWN : shutdown the instance</li>
-<li>OCI_DB_SDM_CLOSE : close the instance</li>
-<li>OCI_DB_SDM_DISMOUNT : dismount the instance</li>
-<li>OCI_DB_SDM_FULL : shutdown, close and dismount the instance</li>
+<dl class="section note"><dt>Note</dt><dd>External credentials are supported by supplying a null value for the 'user' and 'pwd' parameters. If the param 'db' is NULL then a connection to the default local DB is done.</dd></dl>
+<p>Possible (combined) values for parameter shut_mode:</p><ul>
+<li>OCI_DB_SDM_SHUTDOWN : shutdown the instance.</li>
+<li>OCI_DB_SDM_CLOSE : close the instance.</li>
+<li>OCI_DB_SDM_DISMOUNT : dismount the instance.</li>
+<li>OCI_DB_SDM_FULL : shutdown, close and dismount the instance.</li>
 </ul>
-<p>Possible (exclusive) value for parameter shut_flag (from Oracle documentation) :</p><ul>
+<p>Possible (exclusive) values for parameter shut_flag (from Oracle documentation):</p><ul>
 <li>OCI_DB_SDF_DEFAULT :<ul>
 <li>Further connects are prohibited.</li>
-<li>Waits for users to disconnect from the database</li>
+<li>Waits for users to disconnect from the database.</li>
 </ul>
 </li>
 <li>OCI_DB_SDF_TRANS :<ul>
-<li>Further connects are prohibited</li>
+<li>Further connects are prohibited.</li>
 <li>No new transactions are allowed.</li>
-<li>Waits for active transactions to complete</li>
+<li>Waits for active transactions to complete.</li>
 </ul>
 </li>
 <li>OCI_DB_SDF_TRANS_LOCAL :<ul>
-<li>Further connects are prohibited</li>
+<li>Further connects are prohibited.</li>
 <li>No new transactions are allowed.</li>
-<li>Waits only for local transactions to complete</li>
+<li>Waits only for local transactions to complete.</li>
 </ul>
 </li>
 <li>OCI_DB_SDF_IMMEDIATE :<ul>
 <li>Does not wait for current calls to complete or users to disconnect from the database.</li>
-<li>All uncommitted transactions are terminated and rolled back</li>
+<li>All uncommitted transactions are terminated and rolled back.</li>
 </ul>
 </li>
 <li>OCI_DB_SDF_ABORT :<ul>
 <li>Does not wait for current calls to complete or users to disconnect from the database.</li>
 <li>All uncommitted transactions are terminated and are not rolled back.</li>
 <li>This is the fastest possible way to shut down the database, but the next database startup may require instance recovery.</li>
-<li>Therefore, this option should be used only in unusual circumstances</li>
+<li>Therefore, this option should be used only in unusual circumstances.</li>
 </ul>
 </li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_environment.html#a13cfb9869267de416ecf18671c7002e3">ocilib::Environment::ShutdownDatabase()</a>.</p>
 
@@ -373,7 +373,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:15 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

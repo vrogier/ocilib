@@ -12,10 +12,13 @@ var searchData=
   ['fetchforward_9',['FetchForward',['../classocilib_1_1_statement.html#a8c77708b4c2fd86c3605544a62bce00ea14b515c5a730cee38039148f4fd2f2ed',1,'ocilib::Statement']]],
   ['fetchscrollable_10',['FetchScrollable',['../classocilib_1_1_statement.html#a8c77708b4c2fd86c3605544a62bce00ea1c8564c29ec573250bf2bceced410ca6',1,'ocilib::Statement']]],
   ['firstmessage_11',['FirstMessage',['../classocilib_1_1_dequeue.html#a73a362526ed563329dbd5a2bc7c93072a1df4dcda96d2212c1ebdbce08297195e',1,'ocilib::Dequeue']]],
-  ['force_12',['Force',['../classocilib_1_1_direct_path.html#af8deca8c305d4b2d8bc642b73e3148a5a8d9afee6856ab9bc25637df47829c911',1,'ocilib::DirectPath']]],
-  ['formatbinarydouble_13',['FormatBinaryDouble',['../namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59a5081733637bf84d373be2da07a134fd6',1,'ocilib']]],
-  ['formatbinaryfloat_14',['FormatBinaryFloat',['../namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59a7358fe41947e742a906069c932ce5314',1,'ocilib']]],
-  ['formatdate_15',['FormatDate',['../namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59a7e5ab19554ac7497343d16dbb7355310',1,'ocilib']]],
-  ['formatnumeric_16',['FormatNumeric',['../namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59ac7156fdcd818567f2f61458413af1e38',1,'ocilib']]],
-  ['formattimestamp_17',['FormatTimestamp',['../namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59ac3ead276aba936011534286acc34017d',1,'ocilib']]]
+  ['flex_12',['Flex',['../classocilib_1_1_vector.html#aa6cf47f6cc3eae158f3f609a3b2a0bb9a452be0d84102be3ce142b0e122f2043d',1,'ocilib::Vector']]],
+  ['float32_13',['Float32',['../classocilib_1_1_vector.html#aa6cf47f6cc3eae158f3f609a3b2a0bb9a14aaa7636a548055784eb1b182730d26',1,'ocilib::Vector']]],
+  ['float64_14',['Float64',['../classocilib_1_1_vector.html#aa6cf47f6cc3eae158f3f609a3b2a0bb9acf0daa67f8e9d4be062bcfe34e61cf81',1,'ocilib::Vector']]],
+  ['force_15',['Force',['../classocilib_1_1_direct_path.html#af8deca8c305d4b2d8bc642b73e3148a5a8d9afee6856ab9bc25637df47829c911',1,'ocilib::DirectPath']]],
+  ['formatbinarydouble_16',['FormatBinaryDouble',['../namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59a5081733637bf84d373be2da07a134fd6',1,'ocilib']]],
+  ['formatbinaryfloat_17',['FormatBinaryFloat',['../namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59a7358fe41947e742a906069c932ce5314',1,'ocilib']]],
+  ['formatdate_18',['FormatDate',['../namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59a7e5ab19554ac7497343d16dbb7355310',1,'ocilib']]],
+  ['formatnumeric_19',['FormatNumeric',['../namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59ac7156fdcd818567f2f61458413af1e38',1,'ocilib']]],
+  ['formattimestamp_20',['FormatTimestamp',['../namespaceocilib.html#aa3336aac944c985aadbbf4f4279d8f59ac3ead276aba936011534286acc34017d',1,'ocilib']]]
 ];

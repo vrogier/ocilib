@@ -39,6 +39,8 @@ var group___ocilib_c_api_binding =
     [ "OCI_BindArrayOfFiles", "group___ocilib_c_api_binding.html#ga3db4144c3f019cb3d3e777048a10d76d", null ],
     [ "OCI_BindObject", "group___ocilib_c_api_binding.html#ga32664500e947d60626de59d4047d3f32", null ],
     [ "OCI_BindArrayOfObjects", "group___ocilib_c_api_binding.html#ga75e16a440ab19fbfed8589e70a835bce", null ],
+    [ "OCI_BindVector", "group___ocilib_c_api_binding.html#ga2fc795d2abc5c56eac539980745650d8", null ],
+    [ "OCI_BindArrayOfVectors", "group___ocilib_c_api_binding.html#ga32e67481f8f82c5e27ccc1b10532173a", null ],
     [ "OCI_BindColl", "group___ocilib_c_api_binding.html#gacbe3bd7e2009234add0525bf66d7136c", null ],
     [ "OCI_BindArrayOfColls", "group___ocilib_c_api_binding.html#gabcfe21ef504063f23abc29f4bff8ecd9", null ],
     [ "OCI_BindRef", "group___ocilib_c_api_binding.html#ga7616fd99a88771aefb5bc10dfbe94f7b", null ],

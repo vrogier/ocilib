@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,16 +100,16 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_formatting.html',
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiMetadata</p>
-<p>OCILIB offers some smart routines that takes a variable number of arguments in order to minimize OCILIB function calls and reduce the amount of code lines</p>
-<p>On Windows platforms, the target programming language must support the __cdecl calling convention</p>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_formatting.html#ga8ccca68ac7352c4114fcd90830f33ce7" title="Perform 3 calls (prepare+execute+fetch) in 1 call.">OCI_Immediate()</a> and <a class="el" href="group___ocilib_c_api_formatting.html#gaf1b3649d6c389cbcfa15d501ce4907e1" title="Performs 4 call (prepare+bind+execute+fetch) in 1 call.">OCI_ImmediateFmt()</a> support all OCILIB supported types for output result, except :<ul>
+<p>OCILIB offers some smart routines that take a variable number of arguments in order to minimize OCILIB function calls and reduce the amount of code lines.</p>
+<p>On Windows platforms, the target programming language must support the __cdecl calling convention.</p>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_formatting.html#ga8ccca68ac7352c4114fcd90830f33ce7" title="Perform 3 calls (prepare+execute+fetch) in 1 call.">OCI_Immediate()</a> and <a class="el" href="group___ocilib_c_api_formatting.html#gaf1b3649d6c389cbcfa15d501ce4907e1" title="Perform 4 calls (prepare+bind+execute+fetch) in 1 call.">OCI_ImmediateFmt()</a> support all OCILIB supported types for output results, except:<ul>
 <li>OCI_Long</li>
-<li>OCI_Statement If a query output result contains one of these unsupported types, the function returns FALSE</li>
+<li>OCI_Statement If a query output result contains one of these unsupported types, the function returns FALSE.</li>
 </ul>
 </dd>
 <dd>
-In the parameter list, every output placeholder MUST be preceded by an integer parameter that indicates the type of the placeholder in order to handle correctly the given pointer.</dd></dl>
-<p>Possible values for indicating placeholders type :</p>
+In the parameter list, every output placeholder MUST be preceded by an integer parameter that indicates the type of the placeholder in order to correctly handle the given pointer.</dd></dl>
+<p>Possible values for indicating placeholder types:</p>
 <ul>
 <li>OCI_ARG_SHORT ---&mdash;&gt; short *</li>
 <li>OCI_ARG_USHORT --&mdash;&gt; unsigned short *</li>
@@ -131,13 +131,13 @@ In the parameter list, every output placeholder MUST be preceded by an integer p
 <li>OCI_ARG_COLLECTION -&gt; OCI_Coll *</li>
 <li>OCI_ARG_REF -----&mdash;&gt; OCI_Ref *</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>For output strings and Raws, returned data is copied to the given buffer instead of returning a pointer the real data. So these buffers must be big enough to hold the column content. No size check is performed.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For output strings and Raws, returned data is copied to the given buffer instead of returning a pointer to the real data. So these buffers must be big enough to hold the column content. No size check is performed.</dd></dl>
 <ul>
 <li>For strings, only the real string is copied.</li>
-<li>For Raws, the number of bytes copied is the column size</li>
+<li>For Raws, the number of bytes copied is the column size.</li>
 </ul>
-<dl class="section warning"><dt>Warning</dt><dd>Input parameters for formatted function only support a restricted set of data types !</dd></dl>
-<p>Supported input identifiers :</p>
+<dl class="section warning"><dt>Warning</dt><dd>Input parameters for formatted functions only support a restricted set of data types.</dd></dl>
+<p>Supported input identifiers:</p>
 <ul>
 <li>'s' : (otext *) -------&mdash;&gt; input string (quotes are added)</li>
 <li>'m' : (otext *) -------&mdash;&gt; meta data string (no quotes added)</li>
@@ -214,19 +214,19 @@ In the parameter list, every output placeholder MUST be preceded by an integer p
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga99fdd3a24d96ae27a9f31cae47041c27"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27">OCI_ConnectionCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Connection *OCI_API OCI_ConnectionCreate(const otext *db, const otext *user, const otext *pwd, unsigned int mode)</div><div class="ttdoc">Create a physical connection to an Oracle database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4b016f1bd7de508b1a919e34b12aa83d"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a></div><div class="ttdeci">struct OCI_Statement OCI_Statement</div><div class="ttdoc">Oracle SQL or PL/SQL statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00136">types.h:136</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gae0c7aa9c507975d21ca6c261081ba753"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a></div><div class="ttdeci">struct OCI_Resultset OCI_Resultset</div><div class="ttdoc">Collection of output columns from a select statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00163">types.h:163</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gaa1e2572fffa5c94c2bb8bb3dc45aebcf"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gaa1e2572fffa5c94c2bb8bb3dc45aebcf">OCI_GetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current string value of the column at the given index in the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the resultset handle from an executed statement.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gaa1e2572fffa5c94c2bb8bb3dc45aebcf"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gaa1e2572fffa5c94c2bb8bb3dc45aebcf">OCI_GetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current string value of the column at the given index in the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the result set handle from an executed statement.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_formatting_html_ga8ccca68ac7352c4114fcd90830f33ce7"><div class="ttname"><a href="group___ocilib_c_api_formatting.html#ga8ccca68ac7352c4114fcd90830f33ce7">OCI_Immediate</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_Immediate(OCI_Connection *con, const otext *sql,...)</div><div class="ttdoc">Perform 3 calls (prepare+execute+fetch) in 1 call.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_formatting_html_gac0bb3ae45e686e7f5b7b028e0d605144"><div class="ttname"><a href="group___ocilib_c_api_formatting.html#gac0bb3ae45e686e7f5b7b028e0d605144">OCI_ExecuteStmtFmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_ExecuteStmtFmt(OCI_Statement *stmt, const otext *sql,...)</div><div class="ttdoc">Execute a formatted SQL statement or PL/SQL block.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_formatting_html_gaf1b3649d6c389cbcfa15d501ce4907e1"><div class="ttname"><a href="group___ocilib_c_api_formatting.html#gaf1b3649d6c389cbcfa15d501ce4907e1">OCI_ImmediateFmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_ImmediateFmt(OCI_Connection *con, const otext *sql,...)</div><div class="ttdoc">Performs 4 call (prepare+bind+execute+fetch) in 1 call.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_formatting_html_gaf1b3649d6c389cbcfa15d501ce4907e1"><div class="ttname"><a href="group___ocilib_c_api_formatting.html#gaf1b3649d6c389cbcfa15d501ce4907e1">OCI_ImmediateFmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_ImmediateFmt(OCI_Connection *con, const otext *sql,...)</div><div class="ttdoc">Perform 4 calls (prepare+bind+execute+fetch) in 1 call.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_ga155a95c89d2e8e162acb61383a56f77d"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga155a95c89d2e8e162acb61383a56f77d">OCI_StatementCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_StatementCreate(OCI_Connection *con)</div><div class="ttdoc">Create a statement object and return its handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated to it (resultsets ...)</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated with it (result sets, bind variables,...</div></div>
 </div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -235,7 +235,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga8ccca68ac7352c4114fcd90830f33ce7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform 3 calls (prepare+execute+fetch) in 1 call.  <br /></td></tr>
 <tr class="separator:ga8ccca68ac7352c4114fcd90830f33ce7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf1b3649d6c389cbcfa15d501ce4907e1"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_formatting.html#gaf1b3649d6c389cbcfa15d501ce4907e1">OCI_ImmediateFmt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, const otext *sql,...)</td></tr>
-<tr class="memdesc:gaf1b3649d6c389cbcfa15d501ce4907e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs 4 call (prepare+bind+execute+fetch) in 1 call.  <br /></td></tr>
+<tr class="memdesc:gaf1b3649d6c389cbcfa15d501ce4907e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform 4 calls (prepare+bind+execute+fetch) in 1 call.  <br /></td></tr>
 <tr class="separator:gaf1b3649d6c389cbcfa15d501ce4907e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8f1bf7b3c7fcc75dd2ad3a64c810c9ba"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_formatting.html#ga8f1bf7b3c7fcc75dd2ad3a64c810c9ba">OCI_PrepareFmt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *sql,...)</td></tr>
 <tr class="memdesc:ga8f1bf7b3c7fcc75dd2ad3a64c810c9ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare a formatted SQL statement or PL/SQL block.  <br /></td></tr>
@@ -294,8 +294,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Every output parameter MUST be preceded by an integer parameter that indicates the type of the placeholder in order to handle correctly the given pointer.</dd></dl>
-<p>TRUE on success otherwise FALSE </p>
+<dl class="section note"><dt>Note</dt><dd>Every output parameter MUST be preceded by an integer parameter that indicates the type of the placeholder in order to correctly handle the given pointer.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -333,7 +333,7 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Performs 4 call (prepare+bind+execute+fetch) in 1 call. </p>
+<p>Perform 4 calls (prepare+bind+execute+fetch) in 1 call. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
@@ -342,7 +342,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>TRUE on success otherwise FALSE </p>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -389,7 +389,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -436,11 +436,11 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>If a SQL warning occurs:<ul>
 <li>the function returns TRUE</li>
-<li>the SQL warning triggers the global error handler with an OCI_Error having its <a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> attribute set to OCI_ERR_WARNING</li>
-<li>If OCILIB is initialized with the OCI_ENV_CONTEXT mode, <a class="el" href="group___ocilib_c_api_error_handling.html#ga7a49ce8b93a89f104658b293d435a0e2" title="Retrieve the last error or warning occurred within the last OCILIB call.">OCI_GetLastError()</a> will return the OCI_Error object corresponding to the warning </li>
+<li>the SQL warning triggers the global error handler with an OCI_Error having its <a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af" title="Retrieve the type of error from an error handle.">OCI_ErrorGetType()</a> attribute set to OCI_ERR_WARNING</li>
+<li>If OCILIB is initialized with the OCI_ENV_CONTEXT mode, <a class="el" href="group___ocilib_c_api_error_handling.html#ga7a49ce8b93a89f104658b293d435a0e2" title="Retrieve the last error or warning that occurred during the most recent OCILIB call.">OCI_GetLastError()</a> will return the OCI_Error object corresponding to the warning </li>
 </ul>
 </dd></dl>
 
@@ -489,11 +489,11 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This call sends the SQL or PL/SQL command to the server for parsing only. The command is not executed. This call is only useful to check is a command is valid or not.</dd>
+<dl class="section note"><dt>Note</dt><dd>This call sends the SQL or PL/SQL command to the server for parsing only. The command is not executed. This call is only useful to check if a command is valid or not.</dd>
 <dd>
-This call prepares the statement (internal call to <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a>) and ask the Oracle server to parse its SQL or PL/SQL command. <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> can be call after <a class="el" href="group___ocilib_c_api_formatting.html#ga465b5752e397143d2e72bed33dca4473" title="Parse a formatted SQL statement or PL/SQL block.">OCI_ParseFmt()</a> in order to execute the statement, which means that the server will re-parse again the command.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Do not use <a class="el" href="group___ocilib_c_api_formatting.html#ga465b5752e397143d2e72bed33dca4473" title="Parse a formatted SQL statement or PL/SQL block.">OCI_ParseFmt()</a> unless you're only interested in the parsing result because the statement will be parsed again when executed and thus leading to unnecessary server round-trips and less performance</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+This call prepares the statement (internal call to <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a>) and asks the Oracle server to parse its SQL or PL/SQL command. <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> can be called after <a class="el" href="group___ocilib_c_api_formatting.html#ga465b5752e397143d2e72bed33dca4473" title="Parse a formatted SQL statement or PL/SQL block.">OCI_ParseFmt()</a> in order to execute the statement, which means that the server will re-parse the command again.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Do not use <a class="el" href="group___ocilib_c_api_formatting.html#ga465b5752e397143d2e72bed33dca4473" title="Parse a formatted SQL statement or PL/SQL block.">OCI_ParseFmt()</a> unless you're only interested in the parsing result because the statement will be parsed again when executed, thus leading to unnecessary server round-trips and less performance.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -540,11 +540,11 @@ This call prepares the statement (internal call to <a class="el" href="group___o
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This call sends the SELECT SQL order to the server for retrieving the description of the select order only. The command is not executed. This call is only useful to retrieve information on the associated resultset Call <a class="el" href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0" title="Retrieve the resultset handle from an executed statement.">OCI_GetResultset()</a> after <a class="el" href="group___ocilib_c_api_statements.html#ga499f2ecbc9ac9de1bccedc5af1cef1ca" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> to access to SELECT list information</dd>
+<dl class="section note"><dt>Note</dt><dd>This call sends the SELECT SQL order to the server for retrieving the description of the select order only. The command is not executed. This call is only useful to retrieve information on the associated resultset. Call <a class="el" href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0" title="Retrieve the result set handle from an executed statement.">OCI_GetResultset()</a> after <a class="el" href="group___ocilib_c_api_formatting.html#gae1ce7b928febb03c47a1663383b6ec53" title="Describe the select list of a formatted SQL select statement.">OCI_DescribeFmt()</a> to access SELECT list information.</dd>
 <dd>
-This call prepares the statement (internal call to <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a>) and ask the Oracle server to describe the output SELECT list. <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> can be call after <a class="el" href="group___ocilib_c_api_statements.html#ga499f2ecbc9ac9de1bccedc5af1cef1ca" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> in order to execute the statement, which means that the server will parse, and describe again the SQL order.</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Do not use <a class="el" href="group___ocilib_c_api_statements.html#ga499f2ecbc9ac9de1bccedc5af1cef1ca" title="Describe the select list of a SQL select statement.">OCI_Describe()</a> unless you're only interested in the resultset information because the statement will be parsed again when executed and thus leading to unnecessary server round-trips and less performance</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+This call prepares the statement (internal call to <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a>) and asks the Oracle server to describe the output SELECT list. <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> can be called after <a class="el" href="group___ocilib_c_api_formatting.html#gae1ce7b928febb03c47a1663383b6ec53" title="Describe the select list of a formatted SQL select statement.">OCI_DescribeFmt()</a> in order to execute the statement, which means that the server will parse and describe the SQL order again.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Do not use <a class="el" href="group___ocilib_c_api_formatting.html#gae1ce7b928febb03c47a1663383b6ec53" title="Describe the select list of a formatted SQL select statement.">OCI_DescribeFmt()</a> unless you're only interested in the result set information because the statement will be parsed again when executed, thus leading to unnecessary server round-trips and less performance.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -554,7 +554,7 @@ This call prepares the statement (internal call to <a class="el" href="group___o
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

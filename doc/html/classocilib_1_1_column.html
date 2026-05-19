@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -164,6 +164,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af287d5ac4c014d572e8200a3b1bdae39"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_column.html#af287d5ac4c014d572e8200a3b1bdae39">GetLeadingPrecision</a> () const</td></tr>
 <tr class="memdesc:af287d5ac4c014d572e8200a3b1bdae39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the leading precision of the column for <a class="el" href="classocilib_1_1_interval.html" title="Object identifying the SQL data type INTERVAL.">Interval</a> columns.  <br /></td></tr>
 <tr class="separator:af287d5ac4c014d572e8200a3b1bdae39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66dc25e151ae9d299cde3f6ce3214ee7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_column.html#a66dc25e151ae9d299cde3f6ce3214ee7">GetDimension</a> () const</td></tr>
+<tr class="memdesc:a66dc25e151ae9d299cde3f6ce3214ee7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the dimension of the column for <a class="el" href="classocilib_1_1_vector.html" title="Object identifying the SQL data type VECTOR.">Vector</a> columns.  <br /></td></tr>
+<tr class="separator:a66dc25e151ae9d299cde3f6ce3214ee7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c87171e14265c1419a5c469c5e8796a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classocilib_1_1_column.html#ab243703a689021b8a13391cd3e31e896">PropertyFlags</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_column.html#a7c87171e14265c1419a5c469c5e8796a">GetPropertyFlags</a> () const</td></tr>
 <tr class="memdesc:a7c87171e14265c1419a5c469c5e8796a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the column property flags.  <br /></td></tr>
 <tr class="separator:a7c87171e14265c1419a5c469c5e8796a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -181,7 +184,7 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><p>Encapsulate a <a class="el" href="classocilib_1_1_resultset.html" title="Database resultset.">Resultset</a> column or object member properties. </p>
 <p>This class wraps the OCILIB object handle OCI_Column and its related methods </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l07007">7007</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l07279">7279</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="ab243703a689021b8a13391cd3e31e896" name="ab243703a689021b8a13391cd3e31e896"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab243703a689021b8a13391cd3e31e896">&#9670;&#160;</a></span>PropertyFlags</h2>
@@ -198,7 +201,7 @@ Public Member Functions</h2></td></tr>
 <p><a class="el" href="classocilib_1_1_column.html" title="Encapsulate a Resultset column or object member properties.">Column</a> properties flags. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_column.html#a297ea71454f03a3c3ab3e071ec4fd1c3" title="Column properties flags values.">Column::PropertyFlagsValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l07046">7046</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l07318">7318</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -241,7 +244,7 @@ Public Member Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l07019">7019</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l07291">7291</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -634,6 +637,37 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a66dc25e151ae9d299cde3f6ce3214ee7" name="a66dc25e151ae9d299cde3f6ce3214ee7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66dc25e151ae9d299cde3f6ce3214ee7">&#9670;&#160;</a></span>GetDimension()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ocilib::Column::GetDimension </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the dimension of the column for <a class="el" href="classocilib_1_1_vector.html" title="Object identifying the SQL data type VECTOR.">Vector</a> columns. </p>
+
+<p class="definition">Definition at line <a class="el" href="_column_8hpp_source.html#l00099">99</a> of file <a class="el" href="_column_8hpp_source.html">Column.hpp</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_fetching.html#ga0a6f783b0e5316999d5cbae13f5d27c4">OCI_ColumnGetDimension()</a>.</p>
+
+</div>
+</div>
 <a id="a7c87171e14265c1419a5c469c5e8796a" name="a7c87171e14265c1419a5c469c5e8796a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7c87171e14265c1419a5c469c5e8796a">&#9670;&#160;</a></span>GetPropertyFlags()</h2>
 
@@ -660,7 +694,7 @@ Public Member Functions</h2></td></tr>
 <p>Return the column property flags. </p>
 <dl class="section note"><dt>Note</dt><dd>This was introduced in Oracle 12cR1. It is currently used for identifying Identity columns. For earlier versions, it always return Columns::NoFlags </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_column_8hpp_source.html#l00099">99</a> of file <a class="el" href="_column_8hpp_source.html">Column.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_column_8hpp_source.html#l00104">104</a> of file <a class="el" href="_column_8hpp_source.html">Column.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_fetching.html#ga0ef652d32ebbb64b2452ee01a8c99535">OCI_ColumnGetPropertyFlags()</a>.</p>
 
@@ -691,7 +725,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Return true if the column is nullable otherwise false. </p>
 
-<p class="definition">Definition at line <a class="el" href="_column_8hpp_source.html#l00104">104</a> of file <a class="el" href="_column_8hpp_source.html">Column.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_column_8hpp_source.html#l00109">109</a> of file <a class="el" href="_column_8hpp_source.html">Column.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_fetching.html#ga268199e0dc3e906e012a0721c6c713b8">OCI_ColumnGetNullable()</a>.</p>
 
@@ -723,7 +757,7 @@ Public Member Functions</h2></td></tr>
 <p>Return true if the length of the column is character-length or false if it is byte-length. </p>
 <dl class="section note"><dt>Note</dt><dd>This was introduced in Oracle 9i. So for version that are not supporting this property, it always return false </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_column_8hpp_source.html#l00109">109</a> of file <a class="el" href="_column_8hpp_source.html">Column.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_column_8hpp_source.html#l00114">114</a> of file <a class="el" href="_column_8hpp_source.html">Column.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, and <a class="el" href="group___ocilib_c_api_fetching.html#ga6ecdc17f67f725f99eae9fa1ad9c94aa">OCI_ColumnGetCharUsed()</a>.</p>
 
@@ -755,7 +789,7 @@ Public Member Functions</h2></td></tr>
 <p>Return the type information object associated to the column. </p>
 <dl class="section note"><dt>Note</dt><dd>This call is used only for Named <a class="el" href="classocilib_1_1_object.html" title="Object identifying the SQL data type OBJECT.">Object</a> typed and collection columns. It returns a null object if the column is not a Named <a class="el" href="classocilib_1_1_object.html" title="Object identifying the SQL data type OBJECT.">Object</a> or a collection. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_column_8hpp_source.html#l00114">114</a> of file <a class="el" href="_column_8hpp_source.html">Column.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_column_8hpp_source.html#l00119">119</a> of file <a class="el" href="_column_8hpp_source.html">Column.hpp</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>, <a class="el" href="group___ocilib_c_api_fetching.html#ga7de677326c5b1a8d94011a4bf59a8255">OCI_ColumnGetTypeInfo()</a>, and <a class="el" href="group___ocilib_c_api_metadata.html#ga394592a9ee3685258c37d9a90e94d8e2">OCI_TypeInfoGetConnection()</a>.</p>
 
@@ -768,7 +802,7 @@ Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_column.html">Column</a></li>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:15 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

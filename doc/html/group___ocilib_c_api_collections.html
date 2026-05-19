@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -102,19 +102,19 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_collections.html'
 <p>OcilibCApiPlSql</p>
 <p>OCILIB supports all Oracle collections:</p>
 <ul>
-<li>PL/SQL Tables: only available in PL/SQL, unbounded, sparse arrays of homogeneous elements.</li>
-<li>VARRAYS : available in SQL and PL/SQL, they are bounded arrays of homogeneous elements</li>
-<li>Nested Tables: available in SQL and PL/SQL, they are unbounded arrays of homogeneous elements and can become sparse through deletions</li>
+<li>PL/SQL Tables: Only available in PL/SQL, unbounded, sparse arrays of homogeneous elements.</li>
+<li>VARRAYS : Available in SQL and PL/SQL, bounded arrays of homogeneous elements.</li>
+<li>Nested Tables: Available in SQL and PL/SQL, unbounded arrays of homogeneous elements that can become sparse through deletions.</li>
 </ul>
-<p>PL/SQL tables are implemented by binding regular C arrays with the array interface (using OCI_BindArrayOfXXX() calls)</p>
-<p>VARRAYS and Nested tables are implemented in OCILIB with the type OCI_Coll. It's possible to bind and fetch VARRAYS and Nested tables using OCI_Coll handle.</p>
-<p>It's also possible to declare local collections based on some database type without using queries</p>
-<p>OCI (and thus OCILIB) offers the possibility to access collection elements :</p>
+<p>PL/SQL tables are implemented by binding regular C arrays with the array interface (using OCI_BindArrayOfXXX() calls).</p>
+<p>VARRAYS and Nested Tables are implemented in OCILIB with the type OCI_Coll. It is possible to bind and fetch VARRAYS and Nested Tables using OCI_Coll handles.</p>
+<p>It is also possible to declare local collections based on a database type without using queries.</p>
+<p>OCI (and thus OCILIB) offers the ability to access collection elements:</p>
 <ul>
-<li>directly by index (<a class="el" href="group___ocilib_c_api_collections.html#ga686c01b751c1fd455d12e9de3d9795b2" title="Return the element at the given position in the collection.">OCI_CollGetElem()</a> and <a class="el" href="group___ocilib_c_api_collections.html#ga9ccfb9147e7ac1906d2dc08e5c70b071" title="Assign the given element value to the element at the given position in the collection.">OCI_CollSetElem()</a>)</li>
-<li>using an iterator (OCI_Iter) to iterate through the collection (<a class="el" href="group___ocilib_c_api_collections.html#ga99cc3535f75c68b3ef96686e3b053404" title="Get the next element in the collection.">OCI_IterGetNext()</a>, <a class="el" href="group___ocilib_c_api_collections.html#ga5e0eef996f0dec5ace00b838b34e4f6b" title="Get the previous element in the collection.">OCI_IterGetPrev()</a>)</li>
+<li>Directly by index (<a class="el" href="group___ocilib_c_api_collections.html#ga686c01b751c1fd455d12e9de3d9795b2" title="Return the element at the given position in the collection.">OCI_CollGetElem()</a> and <a class="el" href="group___ocilib_c_api_collections.html#ga9ccfb9147e7ac1906d2dc08e5c70b071" title="Assign the given element value to the element at the given position in the collection.">OCI_CollSetElem()</a>).</li>
+<li>Using an iterator (OCI_Iter) to iterate through the collection (<a class="el" href="group___ocilib_c_api_collections.html#ga99cc3535f75c68b3ef96686e3b053404" title="Get the next element in the collection.">OCI_IterGetNext()</a>, <a class="el" href="group___ocilib_c_api_collections.html#ga5e0eef996f0dec5ace00b838b34e4f6b" title="Get the previous element in the collection.">OCI_IterGetPrev()</a>).</li>
 </ul>
-<p>Collection Items are implemented through the type OCI_Elem and use the series of calls OCI_ElemGetXXX() and OCI_ElemSetXXX() to manipulate elements content values</p>
+<p>Collection items are implemented through the type OCI_Elem and use the series of calls OCI_ElemGetXXX() and OCI_ElemSetXXX() to manipulate element content values.</p>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">/* requires script demo/collections.sql */</span></div>
@@ -212,20 +212,20 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_collections.html'
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga270329793bf4735351b6007bc20d41ae"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a></div><div class="ttdeci">struct OCI_Object OCI_Object</div><div class="ttdoc">Oracle Named types representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00309">types.h:309</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4b016f1bd7de508b1a919e34b12aa83d"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a></div><div class="ttdeci">struct OCI_Statement OCI_Statement</div><div class="ttdoc">Oracle SQL or PL/SQL statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00136">types.h:136</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga5891a18e9f8ad138e4ec365b834a04d9"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a></div><div class="ttdeci">struct OCI_Coll OCI_Coll</div><div class="ttdoc">Oracle Collections (VARRAYs and Nested Tables) representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00319">types.h:319</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gae0c7aa9c507975d21ca6c261081ba753"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a></div><div class="ttdeci">struct OCI_Resultset OCI_Resultset</div><div class="ttdoc">Collection of output columns from a select statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00163">types.h:163</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gaf88481fd4329ba97717805effd4b8fc9"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gaf88481fd4329ba97717805effd4b8fc9">OCI_Iter</a></div><div class="ttdeci">struct OCI_Iter OCI_Iter</div><div class="ttdoc">Oracle Collection iterator representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00338">types.h:338</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gaa1e2572fffa5c94c2bb8bb3dc45aebcf"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gaa1e2572fffa5c94c2bb8bb3dc45aebcf">OCI_GetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current string value of the column at the given index in the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the resultset handle from an executed statement.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadb033f03ae9c5d46c5695720b97143b7"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadb033f03ae9c5d46c5695720b97143b7">OCI_GetColl</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Coll *OCI_API OCI_GetColl(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current Collection value of the column at the given index in the resultset.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gaa1e2572fffa5c94c2bb8bb3dc45aebcf"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gaa1e2572fffa5c94c2bb8bb3dc45aebcf">OCI_GetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current string value of the column at the given index in the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the result set handle from an executed statement.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadb033f03ae9c5d46c5695720b97143b7"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadb033f03ae9c5d46c5695720b97143b7">OCI_GetColl</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Coll *OCI_API OCI_GetColl(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current Collection value of the column at the given index in the result set.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_formatting_html_gac0bb3ae45e686e7f5b7b028e0d605144"><div class="ttname"><a href="group___ocilib_c_api_formatting.html#gac0bb3ae45e686e7f5b7b028e0d605144">OCI_ExecuteStmtFmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_ExecuteStmtFmt(OCI_Statement *stmt, const otext *sql,...)</div><div class="ttdoc">Execute a formatted SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_metadata_html_ga170733509803e73193ed3d7d858e68f8"><div class="ttname"><a href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8">OCI_TypeInfoGet</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_TypeInfo *OCI_API OCI_TypeInfoGet(OCI_Connection *con, const otext *name, unsigned int type)</div><div class="ttdoc">Retrieve the available type info information.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_ga155a95c89d2e8e162acb61383a56f77d"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga155a95c89d2e8e162acb61383a56f77d">OCI_StatementCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_StatementCreate(OCI_Connection *con)</div><div class="ttdoc">Create a statement object and return its handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated to it (resultsets ...)</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated with it (result sets, bind variables,...</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gaaedce0c8f66eb60445fb759900d32f04"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Prepare(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare a SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gac4fae0835b45409e141eb1b4518fa89c"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Execute(OCI_Statement *stmt)</div><div class="ttdoc">Execute a prepared SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_user_types_html_ga2e6ebd74b78e410d46348d7f1938d16f"><div class="ttname"><a href="group___ocilib_c_api_user_types.html#ga2e6ebd74b78e410d46348d7f1938d16f">OCI_ObjectGetInt</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_ObjectGetInt(OCI_Object *obj, const otext *attr)</div><div class="ttdoc">Return the integer value of the given object attribute.</div></div>
@@ -241,7 +241,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga26d876b21cff8960f88bc413034f332f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a local collection.  <br /></td></tr>
 <tr class="separator:ga26d876b21cff8960f88bc413034f332f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0eb4fe5b87750380e65dbedd667cd45d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga0eb4fe5b87750380e65dbedd667cd45d">OCI_CollArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf, unsigned int nbelem)</td></tr>
-<tr class="memdesc:ga0eb4fe5b87750380e65dbedd667cd45d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of Collection object.  <br /></td></tr>
+<tr class="memdesc:ga0eb4fe5b87750380e65dbedd667cd45d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of Collection objects.  <br /></td></tr>
 <tr class="separator:ga0eb4fe5b87750380e65dbedd667cd45d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabfde961ed2cdbd1d563f43d21b71f506"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#gabfde961ed2cdbd1d563f43d21b71f506">OCI_CollArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a> **colls)</td></tr>
 <tr class="memdesc:gabfde961ed2cdbd1d563f43d21b71f506"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of Collection objects.  <br /></td></tr>
@@ -250,25 +250,25 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga85627cee75e07a97af88c58038ef0ad6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign a collection to another one.  <br /></td></tr>
 <tr class="separator:ga85627cee75e07a97af88c58038ef0ad6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3ec3a176751ac9bad6d1754dfbe9ca9b"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga3ec3a176751ac9bad6d1754dfbe9ca9b">OCI_CollGetTypeInfo</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a> *coll)</td></tr>
-<tr class="memdesc:ga3ec3a176751ac9bad6d1754dfbe9ca9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type info object associated to the collection.  <br /></td></tr>
+<tr class="memdesc:ga3ec3a176751ac9bad6d1754dfbe9ca9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type info object associated with the collection.  <br /></td></tr>
 <tr class="separator:ga3ec3a176751ac9bad6d1754dfbe9ca9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8634475fda583d5b4142f6d3ae823528"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga8634475fda583d5b4142f6d3ae823528">OCI_CollGetType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a> *coll)</td></tr>
 <tr class="memdesc:ga8634475fda583d5b4142f6d3ae823528"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the collection type.  <br /></td></tr>
 <tr class="separator:ga8634475fda583d5b4142f6d3ae823528"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaad1c7e01554d85d5b533d44136d9ff00"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#gaad1c7e01554d85d5b533d44136d9ff00">OCI_CollGetMax</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a> *coll)</td></tr>
-<tr class="memdesc:gaad1c7e01554d85d5b533d44136d9ff00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum number of elements of the given collection.  <br /></td></tr>
+<tr class="memdesc:gaad1c7e01554d85d5b533d44136d9ff00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of elements of the given collection.  <br /></td></tr>
 <tr class="separator:gaad1c7e01554d85d5b533d44136d9ff00"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0e4b6945db0e616e99ec0e6f5875bcf1"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga0e4b6945db0e616e99ec0e6f5875bcf1">OCI_CollGetSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a> *coll)</td></tr>
-<tr class="memdesc:ga0e4b6945db0e616e99ec0e6f5875bcf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the total number of elements of the given collection.  <br /></td></tr>
+<tr class="memdesc:ga0e4b6945db0e616e99ec0e6f5875bcf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the total number of elements of the given collection.  <br /></td></tr>
 <tr class="separator:ga0e4b6945db0e616e99ec0e6f5875bcf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5e4349c27bcb3ce53e18d1a141e24ee2"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga5e4349c27bcb3ce53e18d1a141e24ee2">OCI_CollGetCount</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a> *coll)</td></tr>
-<tr class="memdesc:ga5e4349c27bcb3ce53e18d1a141e24ee2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current number of elements of the given collection.  <br /></td></tr>
+<tr class="memdesc:ga5e4349c27bcb3ce53e18d1a141e24ee2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of elements of the given collection.  <br /></td></tr>
 <tr class="separator:ga5e4349c27bcb3ce53e18d1a141e24ee2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae17003ccc337d9185f4371d1795d99e5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#gae17003ccc337d9185f4371d1795d99e5">OCI_CollTrim</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a> *coll, unsigned int nb_elem)</td></tr>
 <tr class="memdesc:gae17003ccc337d9185f4371d1795d99e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trims the given number of elements from the end of the collection.  <br /></td></tr>
 <tr class="separator:gae17003ccc337d9185f4371d1795d99e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga723b38bda47554633f9025de192ba7a6"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga723b38bda47554633f9025de192ba7a6">OCI_CollClear</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a> *coll)</td></tr>
-<tr class="memdesc:ga723b38bda47554633f9025de192ba7a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">clear all items of the given collection  <br /></td></tr>
+<tr class="memdesc:ga723b38bda47554633f9025de192ba7a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear all items of the given collection.  <br /></td></tr>
 <tr class="separator:ga723b38bda47554633f9025de192ba7a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga686c01b751c1fd455d12e9de3d9795b2"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga686c01b751c1fd455d12e9de3d9795b2">OCI_CollGetElem</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a> *coll, unsigned int index)</td></tr>
 <tr class="memdesc:ga686c01b751c1fd455d12e9de3d9795b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the element at the given position in the collection.  <br /></td></tr>
@@ -313,7 +313,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga07dbb02111bedf3bc95eb455210f0e34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the boolean value of the given collection element.  <br /></td></tr>
 <tr class="separator:ga07dbb02111bedf3bc95eb455210f0e34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gace4d719cb4b855fac7e09c8c4c65ca9d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#gace4d719cb4b855fac7e09c8c4c65ca9d">OCI_ElemGetNumber</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a> *elem)</td></tr>
-<tr class="memdesc:gace4d719cb4b855fac7e09c8c4c65ca9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number value of the given collection element.  <br /></td></tr>
+<tr class="memdesc:gace4d719cb4b855fac7e09c8c4c65ca9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Number value of the given collection element.  <br /></td></tr>
 <tr class="separator:gace4d719cb4b855fac7e09c8c4c65ca9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4300508602b25d0c3eaf16998a5d99fe"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC short OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga4300508602b25d0c3eaf16998a5d99fe">OCI_ElemGetShort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a> *elem)</td></tr>
 <tr class="memdesc:ga4300508602b25d0c3eaf16998a5d99fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the short value of the given collection element.  <br /></td></tr>
@@ -382,19 +382,19 @@ Functions</h2></td></tr>
 <tr class="memdesc:gaa85ec1444006584f492ef685d5b98087"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a short value to a collection element.  <br /></td></tr>
 <tr class="separator:gaa85ec1444006584f492ef685d5b98087"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga96bc7074691b2262d1af5cc2f54a6d6a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga96bc7074691b2262d1af5cc2f54a6d6a">OCI_ElemSetUnsignedShort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a> *elem, unsigned short value)</td></tr>
-<tr class="memdesc:ga96bc7074691b2262d1af5cc2f54a6d6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a unsigned short value to a collection element.  <br /></td></tr>
+<tr class="memdesc:ga96bc7074691b2262d1af5cc2f54a6d6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set an unsigned short value to a collection element.  <br /></td></tr>
 <tr class="separator:ga96bc7074691b2262d1af5cc2f54a6d6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5c1875aa767c0309dbd5c61b52c7274e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga5c1875aa767c0309dbd5c61b52c7274e">OCI_ElemSetInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a> *elem, int value)</td></tr>
-<tr class="memdesc:ga5c1875aa767c0309dbd5c61b52c7274e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a int value to a collection element.  <br /></td></tr>
+<tr class="memdesc:ga5c1875aa767c0309dbd5c61b52c7274e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set an int value to a collection element.  <br /></td></tr>
 <tr class="separator:ga5c1875aa767c0309dbd5c61b52c7274e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae6adda23c2494c849c4cc2190898ad22"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#gae6adda23c2494c849c4cc2190898ad22">OCI_ElemSetUnsignedInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a> *elem, unsigned int value)</td></tr>
-<tr class="memdesc:gae6adda23c2494c849c4cc2190898ad22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a unsigned int value to a collection element.  <br /></td></tr>
+<tr class="memdesc:gae6adda23c2494c849c4cc2190898ad22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set an unsigned int value to a collection element.  <br /></td></tr>
 <tr class="separator:gae6adda23c2494c849c4cc2190898ad22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3ab580192e19960f1265c7e8d5b184a6"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga3ab580192e19960f1265c7e8d5b184a6">OCI_ElemSetBigInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a> *elem, <a class="el" href="group___ocilib_c_api_datatypes.html#ga88d4b7a22a0996612532961510afb861">big_int</a> value)</td></tr>
 <tr class="memdesc:ga3ab580192e19960f1265c7e8d5b184a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a big int value to a collection element.  <br /></td></tr>
 <tr class="separator:ga3ab580192e19960f1265c7e8d5b184a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga97eb4b1022e6ecdf866a9d6afaad13dd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga97eb4b1022e6ecdf866a9d6afaad13dd">OCI_ElemSetUnsignedBigInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a> *elem, big_uint value)</td></tr>
-<tr class="memdesc:ga97eb4b1022e6ecdf866a9d6afaad13dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a unsigned big_int value to a collection element.  <br /></td></tr>
+<tr class="memdesc:ga97eb4b1022e6ecdf866a9d6afaad13dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set an unsigned big int value to a collection element.  <br /></td></tr>
 <tr class="separator:ga97eb4b1022e6ecdf866a9d6afaad13dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3d12b06d04fe73431e13add0b484bfbf"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_collections.html#ga3d12b06d04fe73431e13add0b484bfbf">OCI_ElemSetDouble</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga1210aec5a07ce9ed82199b3359d371bf">OCI_Elem</a> *elem, double value)</td></tr>
 <tr class="memdesc:ga3d12b06d04fe73431e13add0b484bfbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a double value to a collection element.  <br /></td></tr>
@@ -465,7 +465,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the collection object handle on success otherwise NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The collection object handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#a5c845dddea0e8afd50cd2b6576373f24">ocilib::Collection&lt; T &gt;::Collection()</a>.</p>
 
@@ -496,8 +496,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only collection created with <a class="el" href="group___ocilib_c_api_collections.html#gafe61e4584053f3203fbfd95253906ee3" title="Create a local collection instance.">OCI_CollCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_collections.html#ga26d876b21cff8960f88bc413034f332f" title="Free a local collection.">OCI_CollFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only collections created with <a class="el" href="group___ocilib_c_api_collections.html#gafe61e4584053f3203fbfd95253906ee3" title="Create a local collection instance.">OCI_CollCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_collections.html#ga26d876b21cff8960f88bc413034f332f" title="Free a local collection.">OCI_CollFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -535,17 +535,17 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Create an array of Collection object. </p>
+<p>Create an array of Collection objects. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
     <tr><td class="paramname">typinf</td><td>- Object type (type info handle) </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- number of elements in the array</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_user_types.html#ga83de9bfa7c55feb47ea1c91b7196b4b1" title="Create a local object instance.">OCI_ObjectCreate()</a> for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the Collection handle array on success otherwise NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_user_types.html#ga83de9bfa7c55feb47ea1c91b7196b4b1" title="Create a local object instance.">OCI_ObjectCreate()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Collection handle array on success, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -574,8 +574,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only arrays of Collection created with <a class="el" href="group___ocilib_c_api_collections.html#ga0eb4fe5b87750380e65dbedd667cd45d" title="Create an array of Collection object.">OCI_CollArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_collections.html#gabfde961ed2cdbd1d563f43d21b71f506" title="Free an array of Collection objects.">OCI_CollArrayFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only arrays of Collections created with <a class="el" href="group___ocilib_c_api_collections.html#ga0eb4fe5b87750380e65dbedd667cd45d" title="Create an array of Collection objects.">OCI_CollArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_collections.html#gabfde961ed2cdbd1d563f43d21b71f506" title="Free an array of Collection objects.">OCI_CollArrayFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -615,8 +615,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Oracle proceeds to a deep copy of the collection content</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Oracle performs a deep copy of the collection content.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#a2785bbd657566b60c08b3994020c5dbe">ocilib::Collection&lt; T &gt;::Clone()</a>.</p>
 
@@ -640,13 +640,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the type info object associated to the collection. </p>
+<p>Return the type info object associated with the collection. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">coll</td><td>- Collection handle </td></tr>
+    <tr><td class="paramname">coll</td><td>- Collection handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The type info handle, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#acde204d8ad241353fcfe3266b873af0d">ocilib::Collection&lt; T &gt;::Append()</a>, and <a class="el" href="classocilib_1_1_collection.html#ab2e2a127e65ad59e56f8d53819ae9e22">ocilib::Collection&lt; T &gt;::GetTypeInfo()</a>.</p>
 
@@ -682,7 +683,7 @@ Functions</h2></td></tr>
 <li>OCI_COLL_VARRAY: Oracle VARRAY</li>
 <li>OCI_COLL_NESTED_TABLE: Oracle Nested Table</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>Collection type or OCI_UNKNOWN if the collection handle is null </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The collection type, or OCI_UNKNOWN if the collection handle is NULL. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#aa70bf5ea56280a676507d67156a8e84a">ocilib::Collection&lt; T &gt;::GetType()</a>.</p>
 
@@ -706,13 +707,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Returns the maximum number of elements of the given collection. </p>
+<p>Return the maximum number of elements of the given collection. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">coll</td><td>- Collection handle </td></tr>
+    <tr><td class="paramname">coll</td><td>- Collection handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The maximum number of elements. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#a5c3e97317e413531375fd46450d227f8">ocilib::Collection&lt; T &gt;::GetMax()</a>.</p>
 
@@ -736,13 +738,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Returns the total number of elements of the given collection. </p>
+<p>Return the total number of elements of the given collection. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">coll</td><td>- Collection handle </td></tr>
+    <tr><td class="paramname">coll</td><td>- Collection handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The total number of elements. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#a5a6e08ab81ea66302bc9e22657c3b8fd">ocilib::Collection&lt; T &gt;::GetSize()</a>.</p>
 
@@ -766,18 +769,19 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Returns the current number of elements of the given collection. </p>
-<dl class="section note"><dt>Note</dt><dd><ul>
-<li>For VARRAYs, it returns the same value than <a class="el" href="group___ocilib_c_api_collections.html#ga0e4b6945db0e616e99ec0e6f5875bcf1" title="Returns the total number of elements of the given collection.">OCI_CollGetSize()</a> as VARRAYs cannot contains holes</li>
-<li>For Nested Tables that are spare collections that can have holes, it returns the total number of elements minus the total of deleted elements</li>
-</ul>
-</dd></dl>
+<p>Return the current number of elements of the given collection. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">coll</td><td>- Collection handle </td></tr>
+    <tr><td class="paramname">coll</td><td>- Collection handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd><ul>
+<li>For VARRAYs, it returns the same value as <a class="el" href="group___ocilib_c_api_collections.html#ga0e4b6945db0e616e99ec0e6f5875bcf1" title="Return the total number of elements of the given collection.">OCI_CollGetSize()</a> since VARRAYs cannot contain holes.</li>
+<li>For Nested Tables (sparse collections that can have holes), it returns the total number of elements minus the number of deleted elements.</li>
+</ul>
+</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The current number of elements. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#a18b74d925e187038a34a88e44c3b4534">ocilib::Collection&lt; T &gt;::GetCount()</a>.</p>
 
@@ -819,7 +823,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#a9052f38fc28bcf3cca0e31315c35637a">ocilib::Collection&lt; T &gt;::Truncate()</a>.</p>
 
@@ -843,14 +847,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>clear all items of the given collection </p>
+<p>Clear all items of the given collection. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">coll</td><td>- Collection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#a985acda1c8f214dcd448b9721672cb7b">ocilib::Collection&lt; T &gt;::Clear()</a>.</p>
 
@@ -893,7 +897,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Collection indexes start at position 1.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Element handle on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The element handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#abed1b12789d4c5c2aa7207306e363085">ocilib::Collection&lt; T &gt;::Get()</a>, <a class="el" href="classocilib_1_1_collection.html#a9a4646a62b8104ae35439c1a71a28a5b">ocilib::Collection&lt; T &gt;::IsElementNull()</a>, <a class="el" href="classocilib_1_1_collection.html#aa1930c8177492ad07588ab7713697357">ocilib::Collection&lt; T &gt;::Set()</a>, and <a class="el" href="classocilib_1_1_collection.html#a0e1a60521fbca530926361de95fab5bd">ocilib::Collection&lt; T &gt;::SetElementNull()</a>.</p>
 
@@ -943,7 +947,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Collection indexes start at position 1.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Element handle on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -991,7 +995,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Collection indexes start at position 1.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#aa1930c8177492ad07588ab7713697357">ocilib::Collection&lt; T &gt;::Set()</a>.</p>
 
@@ -1033,7 +1037,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#acde204d8ad241353fcfe3266b873af0d">ocilib::Collection&lt; T &gt;::Append()</a>.</p>
 
@@ -1082,11 +1086,11 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>In order to compute the needed string length, call the method with a NULL string Then call the method again with a valid buffer</dd>
+<dl class="section note"><dt>Note</dt><dd>To compute the required string length, call this function with a NULL string. Then call it again with a valid buffer.</dd>
 <dd>
-The resulting string is similar to the SQL*PLUS output for collections For RAWs and BLOBs attributes, their binary values are converted to hexadecimal strings</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This convenient method shall not be used when performance matters. It is usually called twice (buffer length computation) and must also care about quotes within strings.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+The resulting string is similar to the SQL*Plus output for collections. For RAW and BLOB attributes, their binary values are converted to hexadecimal strings.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This convenience method should not be used when performance matters. It is usually called twice (for buffer length computation) and must also handle quotes within strings.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#a3b8f999da093669938844052eedddc7e">ocilib::Collection&lt; T &gt;::ToString()</a>.</p>
 
@@ -1131,8 +1135,8 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="section note"><dt>Note</dt><dd>Collection indexes start at position 1.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_collections.html#ga8b2a4b4976c1d1c48e47e0269dec355e" title="Delete the element at the given position in the Nested Table Collection.">OCI_CollDeleteElem()</a> is only valid for nested tables.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd><ul>
-<li>if the input collection is a nested table, it returns TRUE if the element is successfully deleted otherwise FALSE on error</li>
-<li>if the input collection is a VARRAY, it always returns FALSE without spawning an exception </li>
+<li>If the input collection is a Nested Table, it returns TRUE if the element is successfully deleted, or FALSE on error.</li>
+<li>If the input collection is a VARRAY, it always returns FALSE without raising an exception. </li>
 </ul>
 </dd></dl>
 
@@ -1165,7 +1169,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the iterator handle on success otherwise NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The iterator handle on success, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -1194,7 +1198,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1223,10 +1227,10 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Element handle on success otherwise NULL if:<ul>
-<li>Empty collection</li>
-<li>Iterator already positioned on the last collection element</li>
-<li>An error occurred </li>
+<dl class="section return"><dt>Returns</dt><dd>The element handle on success, or NULL if:<ul>
+<li>The collection is empty.</li>
+<li>The iterator is already positioned on the last element.</li>
+<li>An error occurred. </li>
 </ul>
 </dd></dl>
 
@@ -1257,10 +1261,10 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Element handle on success otherwise NULL if:<ul>
-<li>Empty collection</li>
-<li>Iterator already positioned on the last collection element</li>
-<li>An error occurred </li>
+<dl class="section return"><dt>Returns</dt><dd>The element handle on success, or NULL if:<ul>
+<li>The collection is empty.</li>
+<li>The iterator is already positioned on the first element.</li>
+<li>An error occurred. </li>
 </ul>
 </dd></dl>
 
@@ -1291,10 +1295,9 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Element handle on success otherwise NULL if:<ul>
-<li>Empty collection</li>
-<li>Iterator already positioned on the last collection element</li>
-<li>An error occurred </li>
+<dl class="section return"><dt>Returns</dt><dd>The element handle on success, or NULL if:<ul>
+<li>The collection is empty.</li>
+<li>An error occurred. </li>
 </ul>
 </dd></dl>
 
@@ -1325,7 +1328,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the collection element handle on success otherwise NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The collection element handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#acde204d8ad241353fcfe3266b873af0d">ocilib::Collection&lt; T &gt;::Append()</a>.</p>
 
@@ -1356,8 +1359,8 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only element created with <a class="el" href="group___ocilib_c_api_collections.html#gaa8eb1b1d433f9d17f678e647845482ab" title="Create a local collection element instance based on a collection type descriptor.">OCI_ElemCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_collections.html#ga19926a53d166b2e2052ce9ed3b79a7fb" title="Free a local collection element.">OCI_ElemFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only elements created with <a class="el" href="group___ocilib_c_api_collections.html#gaa8eb1b1d433f9d17f678e647845482ab" title="Create a local collection element instance based on a collection type descriptor.">OCI_ElemCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_collections.html#ga19926a53d166b2e2052ce9ed3b79a7fb" title="Free a local collection element.">OCI_ElemFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#acde204d8ad241353fcfe3266b873af0d">ocilib::Collection&lt; T &gt;::Append()</a>.</p>
 
@@ -1388,8 +1391,8 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_collections.html#ga07dbb02111bedf3bc95eb455210f0e34" title="Return the boolean value of the given collection element.">OCI_ElemGetBoolean()</a> returns a valid value only for collection elements of PL/SQL boolean type</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>boolean value or FALSE on failure </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_collections.html#ga07dbb02111bedf3bc95eb455210f0e34" title="Return the boolean value of the given collection element.">OCI_ElemGetBoolean()</a> returns a valid value only for collection elements of PL/SQL boolean type.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The boolean value, or FALSE on failure. </dd></dl>
 
 </div>
 </div>
@@ -1411,14 +1414,14 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the number value of the given collection element. </p>
+<p>Return the Number value of the given collection element. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>number handle or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Number handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -1447,7 +1450,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Short value or 0 on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The short value, or 0 on failure. </dd></dl>
 
 </div>
 </div>
@@ -1476,7 +1479,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Unsigned short value or 0 on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The unsigned short value, or 0 on failure. </dd></dl>
 
 </div>
 </div>
@@ -1505,7 +1508,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Int value or 0 on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The int value, or 0 on failure. </dd></dl>
 
 </div>
 </div>
@@ -1534,7 +1537,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Unsigned int value or 0 on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The unsigned int value, or 0 on failure. </dd></dl>
 
 </div>
 </div>
@@ -1563,7 +1566,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Big int value or 0 on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The big int value, or 0 on failure. </dd></dl>
 
 </div>
 </div>
@@ -1592,7 +1595,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Unsigned big int value or 0 on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The unsigned big int value, or 0 on failure. </dd></dl>
 
 </div>
 </div>
@@ -1621,7 +1624,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Double value or 0 on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The double value, or 0.0 on failure. </dd></dl>
 
 </div>
 </div>
@@ -1650,7 +1653,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Double value or 0 on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The float value, or 0.0 on failure. </dd></dl>
 
 </div>
 </div>
@@ -1679,7 +1682,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>String value or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The string value, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -1726,7 +1729,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes read from the RAW value or 0 on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes read from the RAW value, or 0 on failure. </dd></dl>
 
 </div>
 </div>
@@ -1755,7 +1758,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>size in bytes of the RAW value or 0 on failure or wrong attribute type </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The size in bytes of the RAW value, or 0 on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1784,7 +1787,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Date handle or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Date handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -1813,7 +1816,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Timestamp handle or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Timestamp handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -1842,7 +1845,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Interval handle or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Interval handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -1871,7 +1874,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Lob handle or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Lob handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -1900,7 +1903,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>File handle or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The File handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -1929,7 +1932,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object handle or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Object handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -1958,7 +1961,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Collection handle or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Collection handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -1987,7 +1990,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Ref handle or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Ref handle, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -2023,12 +2026,12 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
-    <tr><td class="paramname">value</td><td>- Short value</td></tr>
+    <tr><td class="paramname">value</td><td>- Boolean value</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_collections.html#ga030d99a7934e1a71d9413c535f282741" title="Set a boolean value to a collection element.">OCI_ElemSetBoolean()</a> is only valid value only for collection elements of PL / SQL boolean type</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_collections.html#ga030d99a7934e1a71d9413c535f282741" title="Set a boolean value to a collection element.">OCI_ElemSetBoolean()</a> is only valid for collection elements of PL/SQL boolean type.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2064,11 +2067,11 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
-    <tr><td class="paramname">value</td><td>- number value</td></tr>
+    <tr><td class="paramname">value</td><td>- Number value</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2108,7 +2111,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2140,7 +2143,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set a unsigned short value to a collection element. </p>
+<p>Set an unsigned short value to a collection element. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
@@ -2148,7 +2151,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2180,7 +2183,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set a int value to a collection element. </p>
+<p>Set an int value to a collection element. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
@@ -2188,7 +2191,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2220,7 +2223,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set a unsigned int value to a collection element. </p>
+<p>Set an unsigned int value to a collection element. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
@@ -2228,7 +2231,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2264,11 +2267,11 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
-    <tr><td class="paramname">value</td><td>- big int value</td></tr>
+    <tr><td class="paramname">value</td><td>- Big int value</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2300,7 +2303,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set a unsigned big_int value to a collection element. </p>
+<p>Set an unsigned big int value to a collection element. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
@@ -2308,7 +2311,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2348,7 +2351,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2384,11 +2387,11 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
-    <tr><td class="paramname">value</td><td>- float value</td></tr>
+    <tr><td class="paramname">value</td><td>- Float value</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2428,8 +2431,8 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a NULL pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2476,8 +2479,8 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a NULL pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2513,12 +2516,12 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
-    <tr><td class="paramname">value</td><td>- Date Handle</td></tr>
+    <tr><td class="paramname">value</td><td>- Date handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a NULL pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2554,12 +2557,12 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
-    <tr><td class="paramname">value</td><td>- Timestamp Handle</td></tr>
+    <tr><td class="paramname">value</td><td>- Timestamp handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a NULL pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2595,12 +2598,12 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
-    <tr><td class="paramname">value</td><td>- Interval Handle</td></tr>
+    <tr><td class="paramname">value</td><td>- Interval handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a NULL pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2636,12 +2639,12 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
-    <tr><td class="paramname">value</td><td>- Collection Handle</td></tr>
+    <tr><td class="paramname">value</td><td>- Collection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a NULL pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2677,13 +2680,13 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
-    <tr><td class="paramname">value</td><td>- Object Handle</td></tr>
+    <tr><td class="paramname">value</td><td>- Object handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>This function assigns a copy of the object to the given attribute. Any further modifications of the object passed as the parameter 'value' will not be reflected to object 's attribute set with this call</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This function assigns a copy of the object to the given attribute. Any further modifications of the object passed as the parameter 'value' will not be reflected in the object's attribute set with this call.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a NULL pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2719,12 +2722,12 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
-    <tr><td class="paramname">value</td><td>- Lob Handle</td></tr>
+    <tr><td class="paramname">value</td><td>- Lob handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a NULL pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2760,12 +2763,12 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
-    <tr><td class="paramname">value</td><td>- File Handle</td></tr>
+    <tr><td class="paramname">value</td><td>- File handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a NULL pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2801,12 +2804,12 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">elem</td><td>- Element handle </td></tr>
-    <tr><td class="paramname">value</td><td>- Ref Handle</td></tr>
+    <tr><td class="paramname">value</td><td>- Ref handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a NULL pointer for value calls <a class="el" href="group___ocilib_c_api_collections.html#ga4dbcec13cd0607d1f1156080e6f02449" title="Set a collection element value to null.">OCI_ElemSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2835,7 +2838,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE if it's null otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if the value is null, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#a9a4646a62b8104ae35439c1a71a28a5b">ocilib::Collection&lt; T &gt;::IsElementNull()</a>.</p>
 
@@ -2866,7 +2869,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_collection.html#a0e1a60521fbca530926361de95fab5bd">ocilib::Collection&lt; T &gt;::SetElementNull()</a>.</p>
 
@@ -2878,7 +2881,7 @@ The resulting string is similar to the SQL*PLUS output for collections For RAWs 
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

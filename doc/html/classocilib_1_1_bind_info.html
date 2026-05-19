@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -119,13 +119,13 @@ Public Types</h2></td></tr>
 <tr class="memitem:a061da468fee527c2359b5af7372f940a"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_bind_info.html#a061da468fee527c2359b5af7372f940a">VectorTypeValues</a> { <a class="el" href="classocilib_1_1_bind_info.html#a061da468fee527c2359b5af7372f940aaaac88e22ca31167897cc88b2e41098f4">AsArray</a> = 1
 , <a class="el" href="classocilib_1_1_bind_info.html#a061da468fee527c2359b5af7372f940aa804e4fb625c467f2a7ce91cce2f3c472">AsPlSqlTable</a> = 2
  }</td></tr>
-<tr class="memdesc:a061da468fee527c2359b5af7372f940a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vector type values.  <a href="classocilib_1_1_bind_info.html#a061da468fee527c2359b5af7372f940a">More...</a><br /></td></tr>
+<tr class="memdesc:a061da468fee527c2359b5af7372f940a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classocilib_1_1_vector.html" title="Object identifying the SQL data type VECTOR.">Vector</a> type values.  <a href="classocilib_1_1_bind_info.html#a061da468fee527c2359b5af7372f940a">More...</a><br /></td></tr>
 <tr class="separator:a061da468fee527c2359b5af7372f940a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70f42f1c564f6b4a7d94dcb40b6d99a3"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classocilib_1_1core_1_1_enum.html">core::Enum</a>&lt; <a class="el" href="classocilib_1_1_bind_info.html#a08f96498d216e0ad14ab8e7a35406533">BindDirectionValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_bind_info.html#a70f42f1c564f6b4a7d94dcb40b6d99a3">BindDirection</a></td></tr>
 <tr class="memdesc:a70f42f1c564f6b4a7d94dcb40b6d99a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind direction.  <br /></td></tr>
 <tr class="separator:a70f42f1c564f6b4a7d94dcb40b6d99a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a694f6e0e2b09e3183cedcf7e6fa87505"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classocilib_1_1core_1_1_enum.html">core::Enum</a>&lt; <a class="el" href="classocilib_1_1_bind_info.html#a061da468fee527c2359b5af7372f940a">VectorTypeValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classocilib_1_1_bind_info.html#a694f6e0e2b09e3183cedcf7e6fa87505">VectorType</a></td></tr>
-<tr class="memdesc:a694f6e0e2b09e3183cedcf7e6fa87505"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vector type.  <br /></td></tr>
+<tr class="memdesc:a694f6e0e2b09e3183cedcf7e6fa87505"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classocilib_1_1_vector.html" title="Object identifying the SQL data type VECTOR.">Vector</a> type.  <br /></td></tr>
 <tr class="separator:a694f6e0e2b09e3183cedcf7e6fa87505"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -162,7 +162,7 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><p>Provides SQL bind information. </p>
 <p>This class wraps the OCILIB object handle OCI_Bind and its related methods </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05522">5522</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05776">5776</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a70f42f1c564f6b4a7d94dcb40b6d99a3" name="a70f42f1c564f6b4a7d94dcb40b6d99a3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a70f42f1c564f6b4a7d94dcb40b6d99a3">&#9670;&#160;</a></span>BindDirection</h2>
@@ -179,7 +179,7 @@ Public Member Functions</h2></td></tr>
 <p>Bind direction. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_bind_info.html#a08f96498d216e0ad14ab8e7a35406533" title="Bind direction enumerated values.">BindInfo::BindDirectionValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05550">5550</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05804">5804</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -195,10 +195,10 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Vector type. </p>
+<p><a class="el" href="classocilib_1_1_vector.html" title="Object identifying the SQL data type VECTOR.">Vector</a> type. </p>
 <p>Possible values are <a class="el" href="classocilib_1_1_bind_info.html#a061da468fee527c2359b5af7372f940a" title="Vector type values.">BindInfo::VectorTypeValues</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05572">5572</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05826">5826</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -225,7 +225,7 @@ Public Member Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05533">5533</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05787">5787</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -241,15 +241,15 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Vector type values. </p>
+<p><a class="el" href="classocilib_1_1_vector.html" title="Object identifying the SQL data type VECTOR.">Vector</a> type values. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a061da468fee527c2359b5af7372f940aaaac88e22ca31167897cc88b2e41098f4" name="a061da468fee527c2359b5af7372f940aaaac88e22ca31167897cc88b2e41098f4"></a>AsArray&#160;</td><td class="fielddoc"><p>Vector is binded as an array in a regular DML array operation </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a061da468fee527c2359b5af7372f940aaaac88e22ca31167897cc88b2e41098f4" name="a061da468fee527c2359b5af7372f940aaaac88e22ca31167897cc88b2e41098f4"></a>AsArray&#160;</td><td class="fielddoc"><p><a class="el" href="classocilib_1_1_vector.html" title="Object identifying the SQL data type VECTOR.">Vector</a> is bound as an array in a regular DML array operation </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a061da468fee527c2359b5af7372f940aa804e4fb625c467f2a7ce91cce2f3c472" name="a061da468fee527c2359b5af7372f940aa804e4fb625c467f2a7ce91cce2f3c472"></a>AsPlSqlTable&#160;</td><td class="fielddoc"><p>Vector is binded as a PL/SQL index by table </p>
+<tr><td class="fieldname"><a id="a061da468fee527c2359b5af7372f940aa804e4fb625c467f2a7ce91cce2f3c472" name="a061da468fee527c2359b5af7372f940aa804e4fb625c467f2a7ce91cce2f3c472"></a>AsPlSqlTable&#160;</td><td class="fielddoc"><p><a class="el" href="classocilib_1_1_vector.html" title="Object identifying the SQL data type VECTOR.">Vector</a> is bound as a PL/SQL index by table </p>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05557">5557</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8hpp_source.html#l05811">5811</a> of file <a class="el" href="types_8hpp_source.html">types.hpp</a>.</p>
 
 </div>
 </div>
@@ -600,7 +600,7 @@ Index starts with 1 </dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceocilib.html">ocilib</a></li><li class="navelem"><a class="el" href="classocilib_1_1_bind_info.html">BindInfo</a></li>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:15 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

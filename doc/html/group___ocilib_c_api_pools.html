@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,8 +100,8 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_pools.html',''); 
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiConnections</p>
-<p>OCILIB support the connections and sessions pooling features introduced in Oracle 9i.</p>
-<p>Let's Oracle talk about this features !</p>
+<p>OCILIB supports the connection and session pooling features introduced in Oracle 9i.</p>
+<p>The following descriptions are adapted from the Oracle Call Interface Programmer's Guide:</p>
 <dl class="section user"><dt>Connection pools (from Oracle Call Interface Programmer's Guide)</dt><dd></dd></dl>
 <p>Connection pooling is the use of a group (the pool) of reusable physical connections by several sessions, in order to balance loads. The management of the pool is done by OCI, not the application. Applications that can use connection pooling include middle-tier applications for Web application servers and e-mail servers.</p>
 <dl class="section user"><dt>Session Pools (from Oracle Call Interface Programmer's Guide)</dt><dd></dd></dl>
@@ -173,10 +173,10 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_pools.html',''); 
 <div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line">}</div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga375f2252640df238d927d647f6aceba9"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ConnectionFree(OCI_Connection *con)</div><div class="ttdoc">Close a physical connection to an Oracle database server.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga09c3bd0786917f352497f354351cd308"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a></div><div class="ttdeci">struct OCI_Thread OCI_Thread</div><div class="ttdoc">OCILIB encapsulation of OCI Threads.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00420">types.h:420</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga09c3bd0786917f352497f354351cd308"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga09c3bd0786917f352497f354351cd308">OCI_Thread</a></div><div class="ttdeci">struct OCI_Thread OCI_Thread</div><div class="ttdoc">OCILIB encapsulation of OCI Threads.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00430">types.h:430</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_formatting_html_ga8ccca68ac7352c4114fcd90830f33ce7"><div class="ttname"><a href="group___ocilib_c_api_formatting.html#ga8ccca68ac7352c4114fcd90830f33ce7">OCI_Immediate</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_Immediate(OCI_Connection *con, const otext *sql,...)</div><div class="ttdoc">Perform 3 calls (prepare+execute+fetch) in 1 call.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
@@ -225,7 +225,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:gacaffd61a334e8736937133f41890341e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of connections/sessions that can be opened to the database.  <br /></td></tr>
 <tr class="separator:gacaffd61a334e8736937133f41890341e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3b624f2115427ec552d9335b16b827ea"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga3b624f2115427ec552d9335b16b827ea">OCI_PoolGetIncrement</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
-<tr class="memdesc:ga3b624f2115427ec552d9335b16b827ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the increment for connections/sessions to be opened to the database when the pool is not full.  <br /></td></tr>
+<tr class="memdesc:ga3b624f2115427ec552d9335b16b827ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the increment for connections/sessions to be opened to the database when the pool needs to grow.  <br /></td></tr>
 <tr class="separator:ga3b624f2115427ec552d9335b16b827ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga54eeec6e0c48be850a516a5f8ba06bcb"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_pools.html#ga54eeec6e0c48be850a516a5f8ba06bcb">OCI_PoolGetStatementCacheSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga03591b6a21bfc75df4bbd9c9005307fa">OCI_Pool</a> *pool)</td></tr>
 <tr class="memdesc:ga54eeec6e0c48be850a516a5f8ba06bcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of statements to keep in the pool statement cache.  <br /></td></tr>
@@ -307,22 +307,22 @@ Functions</h2></td></tr>
     <tr><td class="paramname">pwd</td><td>- Oracle User password </td></tr>
     <tr><td class="paramname">type</td><td>- Type of pool </td></tr>
     <tr><td class="paramname">mode</td><td>- Session mode </td></tr>
-    <tr><td class="paramname">min_con</td><td>- minimum number of connections/sessions that can be opened. </td></tr>
-    <tr><td class="paramname">max_con</td><td>- maximum number of connections/sessions that can be opened. </td></tr>
-    <tr><td class="paramname">incr_con</td><td>- next increment for connections/sessions to be opened</td></tr>
+    <tr><td class="paramname">min_con</td><td>- Minimum number of connections/sessions that can be opened </td></tr>
+    <tr><td class="paramname">max_con</td><td>- Maximum number of connections/sessions that can be opened </td></tr>
+    <tr><td class="paramname">incr_con</td><td>- Increment for connections/sessions to be opened when the pool needs to grow</td></tr>
   </table>
   </dd>
 </dl>
 <p>Possible values for parameter 'type':</p><ul>
-<li>OCI_POOL_CONNECTION</li>
-<li>OCI_POOL_SESSION</li>
+<li>OCI_POOL_CONNECTION : Connection pool.</li>
+<li>OCI_POOL_SESSION : Session pool.</li>
 </ul>
 <p>Possible values for parameter 'mode':</p><ul>
-<li>OCI_SESSION_DEFAULT</li>
-<li>OCI_SESSION_SYSDBA (session pools only)</li>
+<li>OCI_SESSION_DEFAULT : Standard user session.</li>
+<li>OCI_SESSION_SYSDBA : SYSDBA privileged session (session pools only).</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>External credentials are supported by supplying a null value for the 'user' and 'pwd' parameters If the param 'db' is NULL then a connection to the default local DB is done</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Connection or session pool handle on success or NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>External credentials are supported by supplying NULL for both the 'user' and 'pwd' parameters. If the 'db' parameter is NULL, a connection to the default local database is established.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pool handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#a9187e73af99e3f713b7824ec7e638498">ocilib::Pool::Open()</a>.</p>
 
@@ -353,7 +353,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -389,20 +389,20 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pool</td><td>- Pool handle </td></tr>
-    <tr><td class="paramname">tag</td><td>- user tag string</td></tr>
+    <tr><td class="paramname">tag</td><td>- User tag string (optional, NULL for untagged session)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section user"><dt>Session tagging</dt><dd></dd></dl>
-<p>Session pools have a nice feature that is 'session tagging' It's possible to tag a session with a string identifier when the session is returned to the pool, it keeps its tags. When requesting a connection from the session pool, it's possible to request a session that has the given 'tag' parameter If one exists, it is returned. If not and if an untagged session is available, it is then returned. So check the connection tag property with <a class="el" href="group___ocilib_c_api_connections.html#gab2c594a153e7b4c02aa0ec118f68b772" title="Return the tag associated the given connection.">OCI_GetSessionTag()</a> to find out if the returned connection is tagged or not.</p>
-<p>This features is described in the OCI developer guide as the following :</p>
+<dl class="section user"><dt>Session Tagging</dt><dd></dd></dl>
+<p>Session pools support session tagging, which allows sessions to be labeled with a string identifier. When a session is returned to the pool, it retains its tag. When requesting a connection from the pool, you can request a session with a specific tag. If a matching tagged session is available, it is returned. Otherwise, an untagged session is returned if available. Use <a class="el" href="group___ocilib_c_api_connections.html#gab2c594a153e7b4c02aa0ec118f68b772" title="Return the tag associated with the given connection.">OCI_GetSessionTag()</a> to determine whether the returned connection is tagged.</p>
+<p>As described in the Oracle Call Interface Programmer's Guide:</p>
 <p>"The tags provide a way for users to customize sessions in the pool.
   A client may get a default or untagged session from a pool, set certain
   attributes on the session (such as NLS settings), and return the session
   to the pool, labeling it with an appropriate tag.
   The user may request a session with the same tags in order to have a
-  session with the same attributes"</p>
-<dl class="section return"><dt>Returns</dt><dd>Connection handle otherwise NULL on failure </dd></dl>
+  session with the same attributes."</p>
+<dl class="section return"><dt>Returns</dt><dd>Connection handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#a0b49ae68d9484fbb6048cea29635f402">ocilib::Pool::GetConnection()</a>.</p>
 
@@ -433,9 +433,10 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Connections/sessions idle for more than this time value (in seconds) is terminated</dd>
+<dl class="section note"><dt>Note</dt><dd>Connections/sessions that remain idle for more than this time value (in seconds) are terminated.</dd>
 <dd>
-Timeout is not available for internal pooling implementation (client &lt; 9i) </dd></dl>
+Timeout is not available for the internal pooling implementation (client &lt; 9i).</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The idle timeout value in seconds. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#a1f8428f2686a2ff3c47111c00ffcb276">ocilib::Pool::GetTimeout()</a>.</p>
 
@@ -473,13 +474,14 @@ Timeout is not available for internal pooling implementation (client &lt; 9i) </
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pool</td><td>- Pool handle </td></tr>
-    <tr><td class="paramname">value</td><td>- Timeout value</td></tr>
+    <tr><td class="paramname">value</td><td>- Timeout value in seconds</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>connections/sessions idle for more than this time value (in seconds) is terminated</dd>
+<dl class="section note"><dt>Note</dt><dd>Connections/sessions that remain idle for more than this time value (in seconds) are terminated.</dd>
 <dd>
-This call has no effect if pooling is internally implemented (client &lt; 9i) </dd></dl>
+This function has no effect if pooling is internally implemented (client &lt; 9i).</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#ae4ae2a3b58e10c25f7921a95b2727158">ocilib::Pool::SetTimeout()</a>.</p>
 
@@ -552,17 +554,18 @@ This call has no effect if pooling is internally implemented (client &lt; 9i) </
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pool</td><td>- Pool handle </td></tr>
-    <tr><td class="paramname">value</td><td>- wait mode for object</td></tr>
+    <tr><td class="paramname">value</td><td>- Wait mode</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Pass :<ul>
-<li>FALSE to wait for an available object if the pool is saturated</li>
-<li>TRUE to not wait for an available object</li>
+<dl class="section note"><dt>Note</dt><dd>Possible values:<ul>
+<li>FALSE : Wait for an available connection/session if the pool is saturated.</li>
+<li>TRUE : Return immediately with an error if no connection/session is available.</li>
 </ul>
 </dd>
 <dd>
-Default pool behavior is to wait for available connections </dd></dl>
+The default pool behavior is to wait for available connections.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#a3cf9bd8b24283c1066fc223295785cc1">ocilib::Pool::SetNoWait()</a>.</p>
 
@@ -589,10 +592,11 @@ Default pool behavior is to wait for available connections </dd></dl>
 <p>Return the current number of busy connections/sessions. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pool</td><td>- Pool handle </td></tr>
+    <tr><td class="paramname">pool</td><td>- Pool handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of connections/sessions currently in use. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#a8890fec7e28ef67c70c43dbf9a07f793">ocilib::Pool::GetBusyConnectionsCount()</a>.</p>
 
@@ -619,10 +623,11 @@ Default pool behavior is to wait for available connections </dd></dl>
 <p>Return the current number of opened connections/sessions. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pool</td><td>- Pool handle </td></tr>
+    <tr><td class="paramname">pool</td><td>- Pool handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The total number of connections/sessions currently opened (busy + idle). </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#aac20a54e596069fa9f893b266adbe932">ocilib::Pool::GetOpenedConnectionsCount()</a>.</p>
 
@@ -649,10 +654,11 @@ Default pool behavior is to wait for available connections </dd></dl>
 <p>Return the minimum number of connections/sessions that can be opened to the database. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pool</td><td>- Pool handle </td></tr>
+    <tr><td class="paramname">pool</td><td>- Pool handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The minimum pool size. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#a09aae19998d58f7308f70e46c6bff89d">ocilib::Pool::GetMinSize()</a>.</p>
 
@@ -679,10 +685,11 @@ Default pool behavior is to wait for available connections </dd></dl>
 <p>Return the maximum number of connections/sessions that can be opened to the database. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pool</td><td>- Pool handle </td></tr>
+    <tr><td class="paramname">pool</td><td>- Pool handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The maximum pool size. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#abf9afb3d4ea03f575af4774c46e8241c">ocilib::Pool::GetMaxSize()</a>.</p>
 
@@ -706,13 +713,14 @@ Default pool behavior is to wait for available connections </dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the increment for connections/sessions to be opened to the database when the pool is not full. </p>
+<p>Return the increment for connections/sessions to be opened to the database when the pool needs to grow. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pool</td><td>- Pool handle </td></tr>
+    <tr><td class="paramname">pool</td><td>- Pool handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The pool increment value. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#a34e4ba32797f5a6d9537c745a6b976c3">ocilib::Pool::GetIncrement()</a>.</p>
 
@@ -743,7 +751,8 @@ Default pool behavior is to wait for available connections </dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Default value is 20 (value from Oracle Documentation) </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The default value is 20 (as documented by Oracle).</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The maximum number of cached statements. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#a4a4f23653dc6c5fcfb91ffffac79e689">ocilib::Pool::GetStatementCacheSize()</a>.</p>
 
@@ -781,11 +790,11 @@ Default pool behavior is to wait for available connections </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pool</td><td>- Pool handle </td></tr>
-    <tr><td class="paramname">value</td><td>- maximum number of statements in the cache</td></tr>
+    <tr><td class="paramname">value</td><td>- Maximum number of statements in the cache</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_pool.html#af2fb81be5059d4f0a089b704f6a8fc03">ocilib::Pool::SetStatementCacheSize()</a>.</p>
 
@@ -797,7 +806,7 @@ Default pool behavior is to wait for available connections </dd></dl>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

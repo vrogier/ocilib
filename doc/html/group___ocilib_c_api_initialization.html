@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -99,19 +99,19 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_initialization.ht
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>To use OCILIB, it first needs to be initialized through a call to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>.</p>
-<p>Then, the application connects to server, executes queries...</p>
-<p>Finally, OCILIB resources must be released by <a class="el" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a></p>
+<p>Before using any OCILIB functionality, the library must be initialized by calling <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>.</p>
+<p>Once initialized, the application can connect to Oracle databases, execute statements, fetch data, etc.</p>
+<p>When the application is done, all OCILIB resources must be released by calling <a class="el" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a>.</p>
 <dl class="section note"><dt>Note</dt><dd></dd></dl>
-<p>The following objects are automatically freed by the library:</p><ul>
+<p>The following objects are automatically freed by the library during cleanup:</p><ul>
 <li>Connections</li>
-<li>pools</li>
+<li>Pools</li>
 <li>Statements</li>
 <li>Type info objects</li>
 <li>Thread keys</li>
 </ul>
 <dl class="section warning"><dt>Warning</dt><dd></dd></dl>
-<p>All other standalone object instances (mutexes, threads, dates, lobs, ...) <b>ARE NOT</b> freed. </p>
+<p>All other standalone object instances (mutexes, threads, dates, lobs, ...) <b>ARE NOT</b> automatically freed and must be explicitly released by the application before calling <a class="el" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a>. </p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -131,16 +131,16 @@ Functions</h2></td></tr>
 <tr class="memdesc:gab8ca72a656755584d4b5272e5a3598c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle shared library import mode.  <br /></td></tr>
 <tr class="separator:gab8ca72a656755584d4b5272e5a3598c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga65fd83e537219b617da5d1e0c198843a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga65fd83e537219b617da5d1e0c198843a">OCI_GetCharset</a> (void)</td></tr>
-<tr class="memdesc:ga65fd83e537219b617da5d1e0c198843a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the OCILIB charset type.  <br /></td></tr>
+<tr class="memdesc:ga65fd83e537219b617da5d1e0c198843a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the character set type used by OCILIB.  <br /></td></tr>
 <tr class="separator:ga65fd83e537219b617da5d1e0c198843a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf483cdc4b9a4826a950b63cafed46ef7"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC big_uint OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#gaf483cdc4b9a4826a950b63cafed46ef7">OCI_GetAllocatedBytes</a> (unsigned int mem_type)</td></tr>
-<tr class="memdesc:gaf483cdc4b9a4826a950b63cafed46ef7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of bytes allocated internally in the library.  <br /></td></tr>
+<tr class="memdesc:gaf483cdc4b9a4826a950b63cafed46ef7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current number of bytes allocated internally by the library.  <br /></td></tr>
 <tr class="separator:gaf483cdc4b9a4826a950b63cafed46ef7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga98eb3445d035b77d2c666fc09ba9b5fa"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga98eb3445d035b77d2c666fc09ba9b5fa">OCI_EnableWarnings</a> (boolean value)</td></tr>
 <tr class="memdesc:ga98eb3445d035b77d2c666fc09ba9b5fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or disable Oracle warning notifications.  <br /></td></tr>
 <tr class="separator:ga98eb3445d035b77d2c666fc09ba9b5fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5a3480a53073170bb1f7568b5b23cd8e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_initialization.html#ga5a3480a53073170bb1f7568b5b23cd8e">OCI_SetHAHandler</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga9d59cd068ba0758bc5c022de48b8de4c">POCI_HA_HANDLER</a> handler)</td></tr>
-<tr class="memdesc:ga5a3480a53073170bb1f7568b5b23cd8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the High availability (HA) user handler.  <br /></td></tr>
+<tr class="memdesc:ga5a3480a53073170bb1f7568b5b23cd8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the High Availability (HA) event handler.  <br /></td></tr>
 <tr class="separator:ga5a3480a53073170bb1f7568b5b23cd8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -187,30 +187,31 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Possible values for parameter mode:</p><ul>
-<li>OCI_ENV_DEFAULT : default mode</li>
-<li>OCI_ENV_THREADED : multi-threading support</li>
-<li>OCI_ENV_CONTEXT : thread contextual error handling</li>
-<li>OCI_ENV_EVENTS : enables events for subscription, HA Events, AQ notifications</li>
+<p>Possible values for parameter mode (combinable with bitwise OR):</p><ul>
+<li>OCI_ENV_DEFAULT : Default mode</li>
+<li>OCI_ENV_THREADED : Enable multi-threading support</li>
+<li>OCI_ENV_CONTEXT : Enable thread-contextual error handling</li>
+<li>OCI_ENV_EVENTS : Enable events for subscriptions, HA events, and AQ notifications</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>This function must be called before any OCILIB library function.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This function must be called before any other OCILIB function.</dd></dl>
+<p>All OCILIB functions (except <a class="el" href="group___ocilib_c_api_error_handling.html#ga7a49ce8b93a89f104658b293d435a0e2" title="Retrieve the last error or warning that occurred during the most recent OCILIB call.">OCI_GetLastError()</a>) will fail if <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> has not been called. In that case, the error reported by <a class="el" href="group___ocilib_c_api_error_handling.html#ga7a49ce8b93a89f104658b293d435a0e2" title="Retrieve the last error or warning that occurred during the most recent OCILIB call.">OCI_GetLastError()</a> is OCI_ERR_NOT_INITIALIZED.</p>
 <dl class="section warning"><dt>Warning</dt><dd><ul>
-<li>The parameter 'libpath' is only used if OCILIB has been built with the option OCI_IMPORT_RUNTIME</li>
-<li>If the parameter 'lib_path' is NULL, the Oracle library is loaded from system environment variables</li>
+<li>The parameter 'lib_path' is only used when OCILIB has been built with the option OCI_IMPORT_RUNTIME.</li>
+<li>If the parameter 'lib_path' is NULL, the Oracle library is loaded from system environment variables.</li>
 </ul>
 </dd>
 <dd>
-<a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> should be called <b>ONCE</b> per application</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE. Possible reasons for failures:<ul>
-<li>when <a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> return OCI_ERR_ORACLE, <a class="el" href="group___ocilib_c_api_error_handling.html#gac68b56831d0ca0a45fb8da25f97d4e07" title="Retrieve Oracle Error code from error handle.">OCI_ErrorGetOCICode()</a> returns:<ul>
-<li>any ORA-XXXXXX error code. Refer to Oracle documentation</li>
+<a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> should be called <b>ONCE</b> per application.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. Possible reasons for failure:<ul>
+<li>When <a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af" title="Retrieve the type of error from an error handle.">OCI_ErrorGetType()</a> returns OCI_ERR_ORACLE, <a class="el" href="group___ocilib_c_api_error_handling.html#gac68b56831d0ca0a45fb8da25f97d4e07" title="Retrieve the Oracle error code (ORA-XXXXX) from an error handle.">OCI_ErrorGetOCICode()</a> returns:<ul>
+<li>Any ORA-XXXXXX error code. Refer to Oracle documentation.</li>
 </ul>
 </li>
-<li>when <a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a> return OCI_ERR_OCILIB, possible error code returned by <a class="el" href="group___ocilib_c_api_error_handling.html#ga148d833e4faf47b78cebb4cb4aebcc1e" title="Retrieve Internal Error code from error handle.">OCI_ErrorGetInternalCode()</a><ul>
-<li>OCI_ERR_LOADING_SHARED_LIB : OCILIB could not load oracle shared libraries at runtime (32/64bits mismatch, wrong <code>lib_path</code>, missing MSVC runtime required by oci.dll (MS Windows)</li>
-<li>OCI_ERR_LOADING_SYMBOLS : the loaded shared library does not contain OCI symbols</li>
-<li>OCI_ERR_NOT_AVAILABLE : OCILIb was built with OCI_CHARSET_WIDE and the oracle shared library dos not supports UTF16 (Oracle 8i)</li>
-<li>OCI_ERR_CREATE_OCI_ENVIRONMENT: Oracle OCI environment initialization failed (in such cases, it is impossible to get the reason) </li>
+<li>When <a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af" title="Retrieve the type of error from an error handle.">OCI_ErrorGetType()</a> returns OCI_ERR_OCILIB, <a class="el" href="group___ocilib_c_api_error_handling.html#ga148d833e4faf47b78cebb4cb4aebcc1e" title="Retrieve the OCILIB internal error code from an error handle.">OCI_ErrorGetInternalCode()</a> may return:<ul>
+<li>OCI_ERR_LOADING_SHARED_LIB : OCILIB could not load the Oracle shared library at runtime (32/64-bit mismatch, invalid <code>lib_path</code>, or missing MSVC runtime required by oci.dll on Windows).</li>
+<li>OCI_ERR_LOADING_SYMBOLS : The loaded shared library does not contain the expected OCI symbols.</li>
+<li>OCI_ERR_NOT_AVAILABLE : OCILIB was built with OCI_CHARSET_WIDE and the Oracle shared library does not support UTF16 (Oracle 8i).</li>
+<li>OCI_ERR_CREATE_OCI_ENVIRONMENT : Oracle OCI environment initialization failed (in such cases, the underlying reason cannot be determined). </li>
 </ul>
 </li>
 </ul>
@@ -237,14 +238,18 @@ Functions</h2></td></tr>
 <p><code>#include &lt;api.h&gt;</code></p>
 
 <p>Clean up all resources allocated by the library. </p>
-<dl class="section note"><dt>Note</dt><dd><ul>
-<li>This function must be the last OCILIB library function call.</li>
-<li>It deallocates objects not explicitly freed by the program (connections, statements, ...)</li>
-<li>It unloads the Oracle shared library if it has been dynamically loaded</li>
+<dl class="section note"><dt>Note</dt><dd>This function must be the last OCILIB function call in the application.<ul>
+<li>It deallocates objects not explicitly freed by the program (connections, statements, etc.).</li>
+<li>It unloads the Oracle shared library if it was dynamically loaded.</li>
 </ul>
 </dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a> should be called <b>ONCE</b> per application</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd><a class="el" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a> should be called <b>ONCE</b> per application.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. Possible reasons for failure:<ul>
+<li><a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> was not previously called (<a class="el" href="group___ocilib_c_api_error_handling.html#ga7a49ce8b93a89f104658b293d435a0e2" title="Retrieve the last error or warning that occurred during the most recent OCILIB call.">OCI_GetLastError()</a> reports OCI_ERR_NOT_INITIALIZED).</li>
+<li><a class="el" href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c" title="Clean up all resources allocated by the library.">OCI_Cleanup()</a> has already been called.</li>
+<li>Some OCILIB local data type handles have not been freed. </li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -268,27 +273,29 @@ Functions</h2></td></tr>
 
 <p>Return the version of OCI used for compilation. </p>
 <dl class="section note"><dt>Note</dt><dd><ul>
-<li>with linkage build option, the version is determined from the oci.h header through different ways</li>
-<li>with runtime loading build option, the version is set to the highest version of OCI that is required by OCILIB to support all library features. Thus this version is just an indicator as OCILIB is compatible with all Oracle 8+ OCI versions and adapt itself runtime loaded Oracle libraries</li>
+<li>With the linkage build option, the version is determined from the oci.h header.</li>
+<li>With the runtime loading build option, the version is set to the highest OCI version required by OCILIB to support all library features. This version serves as an indicator, as OCILIB is compatible with all Oracle 8+ OCI versions and adapts itself to the runtime-loaded Oracle libraries.</li>
 </ul>
 </dd>
 <dd>
-Retun value is an integer using the following pattern 'MMmmRR'<ul>
-<li>'MM' digits are the Oracle OCI major version</li>
-<li>'mm' digits are the Oracle OCI minor version</li>
-<li>'RR' digits are the Oracle OCI revision version</li>
+The return value is an integer following the pattern 'MMmmRR':<ul>
+<li>'MM' : Oracle OCI major version</li>
+<li>'mm' : Oracle OCI minor version</li>
+<li>'RR' : Oracle OCI revision version</li>
 </ul>
 </dd>
 <dd>
-Manipulating direclty this value is not recommended.<ul>
-<li>For retrieving OCI major version from it, use the maro OCI_VER_MAJ()</li>
-<li>For retrieving OCI minor version from it, use the maro OCI_VER_MIN()</li>
-<li>For retrieving OCI revision version from it, use the maro OCI_VER_REV() For example: if (OCI_VER_MAJ(OCI_GetOCICompileVersion()) &gt;= 21) {...}</li>
+Manipulating this value directly is not recommended. Use the following macros instead:<ul>
+<li>OCI_VER_MAJ() : Retrieve the OCI major version.</li>
+<li>OCI_VER_MIN() : Retrieve the OCI minor version.</li>
+<li>OCI_VER_REV() : Retrieve the OCI revision version.</li>
 </ul>
-</dd>
-<dd>
-For testing this return value agains a specific specific version, use OCI_VER_MAKE() For example, if <a class="el" href="group___ocilib_c_api_initialization.html#ga471fe81fceb42d90eb82fc3b2e1e4351" title="Return the version of OCI used for compilation.">OCI_GetOCICompileVersion()</a> &gt; OCI_VER_MAKE(21, 3, 0) {...} </dd></dl>
-
+</dd></dl>
+<p>For example: </p><div class="fragment"><div class="line"><span class="keywordflow">if</span> (OCI_VER_MAJ(<a class="code hl_function" href="group___ocilib_c_api_initialization.html#ga471fe81fceb42d90eb82fc3b2e1e4351">OCI_GetOCICompileVersion</a>()) &gt;= 21) {...} </div>
+<div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga471fe81fceb42d90eb82fc3b2e1e4351"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga471fe81fceb42d90eb82fc3b2e1e4351">OCI_GetOCICompileVersion</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCICompileVersion(void)</div><div class="ttdoc">Return the version of OCI used for compilation.</div></div>
+</div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>To compare the return value against a specific version, use OCI_VER_MAKE().</dd></dl>
+<p>For example: </p><div class="fragment"><div class="line"><span class="keywordflow">if</span> (<a class="code hl_function" href="group___ocilib_c_api_initialization.html#ga471fe81fceb42d90eb82fc3b2e1e4351">OCI_GetOCICompileVersion</a>() &gt; OCI_VER_MAKE(21, 3, 0)) {...} </div>
+</div><!-- fragment --> 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_environment.html#ab960dffe3b86e8748d5b518c64e52db2">ocilib::Environment::GetCompileMajorVersion()</a>, <a class="el" href="classocilib_1_1_environment.html#aa83d0028e8b214d2dc47643a09042e3a">ocilib::Environment::GetCompileMinorVersion()</a>, <a class="el" href="classocilib_1_1_environment.html#a4bd1db0e73679a56a46a2bf62fd3f29f">ocilib::Environment::GetCompileRevisionVersion()</a>, and <a class="el" href="classocilib_1_1_environment.html#a3785fef7232b7210fc619aa7f7d1d14e">ocilib::Environment::GetCompileVersion()</a>.</p>
 
 </div>
@@ -313,27 +320,29 @@ For testing this return value agains a specific specific version, use OCI_VER_MA
 
 <p>Return the version of OCI used at runtime. </p>
 <dl class="section note"><dt>Note</dt><dd><ul>
-<li>with linkage build option, the version is determined from the oci.h header through different ways</li>
-<li>with runtime loading build option, the version determined from the symbols dynamically loaded. This is a best effort guess as a given Oracle release may not introduce new OCI symbols</li>
+<li>With the linkage build option, the version is determined from the oci.h header.</li>
+<li>With the runtime loading build option, the version is determined from the symbols dynamically loaded. This is a best-effort estimate, as a given Oracle release may not introduce new OCI symbols.</li>
 </ul>
 </dd>
 <dd>
-Retun value is an integer using the following pattern 'MMmmRR'<ul>
-<li>'MM' digits are the Oracle OCI major version</li>
-<li>'mm' digits are the Oracle OCI minor version</li>
-<li>'RR' digits are the Oracle OCI revision version</li>
+The return value is an integer following the pattern 'MMmmRR':<ul>
+<li>'MM' : Oracle OCI major version</li>
+<li>'mm' : Oracle OCI minor version</li>
+<li>'RR' : Oracle OCI revision version</li>
 </ul>
 </dd>
 <dd>
-Manipulating direclty this value is not recommended.<ul>
-<li>For retrieving OCI major version from it, use the maro OCI_VER_MAJ()</li>
-<li>For retrieving OCI minor version from it, use the maro OCI_VER_MIN()</li>
-<li>For retrieving OCI revision version from it, use the maro OCI_VER_REV() For example: if (OCI_VER_MAJ(OCI_GetOCIRuntimeVersion()) &gt;= 21) {...}</li>
+Manipulating this value directly is not recommended. Use the following macros instead:<ul>
+<li>OCI_VER_MAJ() : Retrieve the OCI major version.</li>
+<li>OCI_VER_MIN() : Retrieve the OCI minor version.</li>
+<li>OCI_VER_REV() : Retrieve the OCI revision version.</li>
 </ul>
-</dd>
-<dd>
-For testing this return value agains a specific specific version, use OCI_VER_MAKE() For example, if <a class="el" href="group___ocilib_c_api_initialization.html#gaa00063a7def6b00894520386c7a7696a" title="Return the version of OCI used at runtime.">OCI_GetOCIRuntimeVersion()</a> &gt; OCI_VER_MAKE(21, 3, 0) {...} </dd></dl>
-
+</dd></dl>
+<p>For example: </p><div class="fragment"><div class="line"><span class="keywordflow">if</span> (OCI_VER_MAJ(<a class="code hl_function" href="group___ocilib_c_api_initialization.html#gaa00063a7def6b00894520386c7a7696a">OCI_GetOCIRuntimeVersion</a>()) &gt;= 21) {...} </div>
+<div class="ttc" id="agroup___ocilib_c_api_initialization_html_gaa00063a7def6b00894520386c7a7696a"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gaa00063a7def6b00894520386c7a7696a">OCI_GetOCIRuntimeVersion</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCIRuntimeVersion(void)</div><div class="ttdoc">Return the version of OCI used at runtime.</div></div>
+</div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>To compare the return value against a specific version, use OCI_VER_MAKE().</dd></dl>
+<p>For example: </p><div class="fragment"><div class="line"><span class="keywordflow">if</span> (<a class="code hl_function" href="group___ocilib_c_api_initialization.html#gaa00063a7def6b00894520386c7a7696a">OCI_GetOCIRuntimeVersion</a>() &gt; OCI_VER_MAKE(21, 3, 0)) {...} </div>
+</div><!-- fragment --> 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_environment.html#a11ddff7767cf09a87ce317c0f114542c">ocilib::Environment::GetRuntimeMajorVersion()</a>, <a class="el" href="classocilib_1_1_environment.html#ab6b0f545dc6a308a4011fdd8e17daed9">ocilib::Environment::GetRuntimeMinorVersion()</a>, <a class="el" href="classocilib_1_1_environment.html#a2ac5d8f0a3dae18586f0fae13caef534">ocilib::Environment::GetRuntimeRevisionVersion()</a>, and <a class="el" href="classocilib_1_1_environment.html#a6e6872be754719ec2b36819a01161494">ocilib::Environment::GetRuntimeVersion()</a>.</p>
 
 </div>
@@ -357,9 +366,9 @@ For testing this return value agains a specific specific version, use OCI_VER_MA
 <p><code>#include &lt;api.h&gt;</code></p>
 
 <p>Return the Oracle shared library import mode. </p>
-<dl class="section note"><dt>Note</dt><dd>Possible values are:<ul>
-<li>OCI_IMPORT_MODE_LINKAGE</li>
-<li>OCI_IMPORT_MODE_RUNTIME </li>
+<dl class="section return"><dt>Returns</dt><dd>The import mode used by OCILIB. Possible values are:<ul>
+<li>OCI_IMPORT_MODE_LINKAGE : OCI is linked at compile time.</li>
+<li>OCI_IMPORT_MODE_RUNTIME : OCI is loaded dynamically at runtime. </li>
 </ul>
 </dd></dl>
 
@@ -385,10 +394,10 @@ For testing this return value agains a specific specific version, use OCI_VER_MA
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the OCILIB charset type. </p>
-<dl class="section note"><dt>Note</dt><dd>Possible values are:<ul>
-<li>OCI_CHAR_ANSI</li>
-<li>OCI_CHAR_WIDE </li>
+<p>Return the character set type used by OCILIB. </p>
+<dl class="section return"><dt>Returns</dt><dd>The character set mode used by OCILIB. Possible values are:<ul>
+<li>OCI_CHAR_ANSI : ANSI (single-byte or multi-byte) character set.</li>
+<li>OCI_CHAR_WIDE : Unicode (wide character) character set. </li>
 </ul>
 </dd></dl>
 
@@ -414,19 +423,20 @@ For testing this return value agains a specific specific version, use OCI_VER_MA
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the current number of bytes allocated internally in the library. </p>
+<p>Return the current number of bytes allocated internally by the library. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">mem_type</td><td>: type of memory to request</td></tr>
+    <tr><td class="paramname">mem_type</td><td>- Type of memory allocation to query</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Possible values are:<ul>
-<li>OCI_MEM_ORACLE : bytes allocated by Oracle client library</li>
-<li>OCI_MEM_OCILIB : bytes allocated by OCILIB library</li>
-<li>OCI_MEM_ORACLE : bytes allocated by all libraries </li>
+<dl class="section note"><dt>Note</dt><dd>Possible values for parameter mem_type:<ul>
+<li>OCI_MEM_ORACLE : Bytes allocated by the Oracle client library.</li>
+<li>OCI_MEM_OCILIB : Bytes allocated by the OCILIB library.</li>
+<li>OCI_MEM_ALL : Total bytes allocated by all libraries combined.</li>
 </ul>
 </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes currently allocated for the specified memory type. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_environment.html#a62b413dd1056fc73daca8e579c2ed847">ocilib::Environment::GetAllocatedBytes()</a>.</p>
 
@@ -453,11 +463,12 @@ For testing this return value agains a specific specific version, use OCI_VER_MA
 <p>Enable or disable Oracle warning notifications. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">value</td><td>- enable/disable warnings</td></tr>
+    <tr><td class="paramname">value</td><td>- TRUE to enable warnings, FALSE to disable them</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Default value is FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>By default, warnings are disabled (FALSE).</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_environment.html#a5d339bf030bab748a439a830ccb777b5">ocilib::Environment::EnableWarnings()</a>.</p>
 
@@ -481,18 +492,16 @@ For testing this return value agains a specific specific version, use OCI_VER_MA
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set the High availability (HA) user handler. </p>
+<p>Set the High Availability (HA) event handler. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">handler</td><td>- Pointer to HA handler procedure</td></tr>
+    <tr><td class="paramname">handler</td><td>- Pointer to the HA handler procedure (see POCI_HA_HANDLER)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See POCI_HA_HANDLER documentation for more details</dd>
-<dd>
-OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to be able to use HA events</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. For previous versions, it returns FALSE without throwing any exception.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> to enable HA event notifications.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This feature requires Oracle 10gR2 or later. For earlier versions, the function returns FALSE without raising an exception.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_environment.html#a6b88680ddf3fcba5e2222604f5179a79">ocilib::Environment::SetHAHandler()</a>.</p>
 
@@ -504,7 +513,7 @@ OCI_ENV_EVENTS flag must be passed to <a class="el" href="group___ocilib_c_api_i
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

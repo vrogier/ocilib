@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,8 +100,8 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_datetimes.html','
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiOracleNumber</p>
-<p>OCILIB encapsulates Oracle SQL Date data type within OCI_Date structure</p>
-<p>Basically, the OCI_Date routines are wrappers around the Oracle OCIDate APIs</p>
+<p>OCILIB encapsulates the Oracle SQL Date data type within the OCI_Date structure.</p>
+<p>The OCI_Date routines are wrappers around the Oracle OCIDate APIs.</p>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#define SIZE_STR 260</span></div>
@@ -155,18 +155,18 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_datetimes.html','
 <div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line">}</div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga549efec5df4c0825db908a5ceb9ab614"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a></div><div class="ttdeci">struct OCI_Date OCI_Date</div><div class="ttdoc">Oracle internal date representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00279">types.h:279</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datetimes_html_ga182c1474813b313af0678200f18500d1"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#ga182c1474813b313af0678200f18500d1">OCI_DateFromText</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_DateFromText(OCI_Date *date, const otext *str, const otext *fmt)</div><div class="ttdoc">Convert a string to a date and store it in the given date handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datetimes_html_ga26123a85d5b36fead616acffbf5ef145"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#ga26123a85d5b36fead616acffbf5ef145">OCI_DateCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Date *OCI_API OCI_DateCreate(OCI_Connection *con)</div><div class="ttdoc">Create a local date object.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datetimes_html_ga5ac095109856a0cda553742d81488378"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#ga5ac095109856a0cda553742d81488378">OCI_DateLastDay</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_DateLastDay(OCI_Date *date)</div><div class="ttdoc">Place the last day of month (from the given date) into the given date.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datetimes_html_ga88e30a58a74b013bab67aa162a18c493"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#ga88e30a58a74b013bab67aa162a18c493">OCI_DateDaysBetween</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_DateDaysBetween(OCI_Date *date, OCI_Date *date2)</div><div class="ttdoc">Return the number of days betWeen two dates.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datetimes_html_ga5ac095109856a0cda553742d81488378"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#ga5ac095109856a0cda553742d81488378">OCI_DateLastDay</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_DateLastDay(OCI_Date *date)</div><div class="ttdoc">Set the given date to the last day of its month.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datetimes_html_ga88e30a58a74b013bab67aa162a18c493"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#ga88e30a58a74b013bab67aa162a18c493">OCI_DateDaysBetween</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_DateDaysBetween(OCI_Date *date, OCI_Date *date2)</div><div class="ttdoc">Return the number of days between two dates.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datetimes_html_ga89fed5c82e7543f8a7f6fce78b96c67d"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#ga89fed5c82e7543f8a7f6fce78b96c67d">OCI_DateAssign</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_DateAssign(OCI_Date *date, OCI_Date *date_src)</div><div class="ttdoc">Assign the value of a date handle to another one.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datetimes_html_gab6c9e4fd52928f53414a338846dbe027"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#gab6c9e4fd52928f53414a338846dbe027">OCI_DateFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_DateFree(OCI_Date *date)</div><div class="ttdoc">Free a date object.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datetimes_html_gab71f2c36cd1ada708a83805255d9ade8"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#gab71f2c36cd1ada708a83805255d9ade8">OCI_DateAddMonths</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_DateAddMonths(OCI_Date *date, int nb)</div><div class="ttdoc">Add or subtract months to a date handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datetimes_html_gab9e19be2b20d1457ada24abfdf98f7bd"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#gab9e19be2b20d1457ada24abfdf98f7bd">OCI_DateAddDays</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_DateAddDays(OCI_Date *date, int nb)</div><div class="ttdoc">Add or subtract days to a date handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datetimes_html_gad4f7e216b2e632e6e0e73d3820d3649a"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#gad4f7e216b2e632e6e0e73d3820d3649a">OCI_DateToText</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_DateToText(OCI_Date *date, const otext *fmt, int size, otext *str)</div><div class="ttdoc">Convert a Date value from the given date handle to a string.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datetimes_html_gae73613cf6173243848ddfd3295b448c4"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#gae73613cf6173243848ddfd3295b448c4">OCI_DateSysDate</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_DateSysDate(OCI_Date *date)</div><div class="ttdoc">Return the current system date/time into the date handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 </div><!-- fragment --> </dd></dl>
@@ -180,7 +180,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:gab6c9e4fd52928f53414a338846dbe027"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a date object.  <br /></td></tr>
 <tr class="separator:gab6c9e4fd52928f53414a338846dbe027"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5ece76551a739a4782ff3a32f42f1a92"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga5ece76551a739a4782ff3a32f42f1a92">OCI_DateArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int nbelem)</td></tr>
-<tr class="memdesc:ga5ece76551a739a4782ff3a32f42f1a92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of date object.  <br /></td></tr>
+<tr class="memdesc:ga5ece76551a739a4782ff3a32f42f1a92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of Date objects.  <br /></td></tr>
 <tr class="separator:ga5ece76551a739a4782ff3a32f42f1a92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gadf2acb934aa8435c13c2fe72b9c71905"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gadf2acb934aa8435c13c2fe72b9c71905">OCI_DateArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> **dates)</td></tr>
 <tr class="memdesc:gadf2acb934aa8435c13c2fe72b9c71905"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of date objects.  <br /></td></tr>
@@ -201,7 +201,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga38b931241ca62e619660f014428771bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares two date handles.  <br /></td></tr>
 <tr class="separator:ga38b931241ca62e619660f014428771bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga88e30a58a74b013bab67aa162a18c493"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga88e30a58a74b013bab67aa162a18c493">OCI_DateDaysBetween</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, <a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date2)</td></tr>
-<tr class="memdesc:ga88e30a58a74b013bab67aa162a18c493"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of days betWeen two dates.  <br /></td></tr>
+<tr class="memdesc:ga88e30a58a74b013bab67aa162a18c493"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of days between two dates.  <br /></td></tr>
 <tr class="separator:ga88e30a58a74b013bab67aa162a18c493"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga182c1474813b313af0678200f18500d1"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga182c1474813b313af0678200f18500d1">OCI_DateFromText</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, const otext *str, const otext *fmt)</td></tr>
 <tr class="memdesc:ga182c1474813b313af0678200f18500d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a string to a date and store it in the given date handle.  <br /></td></tr>
@@ -219,19 +219,19 @@ Functions</h2></td></tr>
 <tr class="memdesc:gacdeddd9118a561a10d2c99e660b5ed1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the date and time parts from a date handle.  <br /></td></tr>
 <tr class="separator:gacdeddd9118a561a10d2c99e660b5ed1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab01bacccd03e2f77c06875caee98f9d4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gab01bacccd03e2f77c06875caee98f9d4">OCI_DateSetDate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int year, int month, int day)</td></tr>
-<tr class="memdesc:gab01bacccd03e2f77c06875caee98f9d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the date portion if the given date handle.  <br /></td></tr>
+<tr class="memdesc:gab01bacccd03e2f77c06875caee98f9d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the date portion of the given date handle.  <br /></td></tr>
 <tr class="separator:gab01bacccd03e2f77c06875caee98f9d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa0b40540236cc36743723ff684ddd0ba"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gaa0b40540236cc36743723ff684ddd0ba">OCI_DateSetTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int hour, int min, int sec)</td></tr>
-<tr class="memdesc:gaa0b40540236cc36743723ff684ddd0ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the time portion if the given date handle.  <br /></td></tr>
+<tr class="memdesc:gaa0b40540236cc36743723ff684ddd0ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the time portion of the given date handle.  <br /></td></tr>
 <tr class="separator:gaa0b40540236cc36743723ff684ddd0ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga18d9dd6ae277f14f41badc78f816df31"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga18d9dd6ae277f14f41badc78f816df31">OCI_DateSetDateTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, int year, int month, int day, int hour, int min, int sec)</td></tr>
-<tr class="memdesc:ga18d9dd6ae277f14f41badc78f816df31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the date and time portions if the given date handle.  <br /></td></tr>
+<tr class="memdesc:ga18d9dd6ae277f14f41badc78f816df31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the date and time portions of the given date handle.  <br /></td></tr>
 <tr class="separator:ga18d9dd6ae277f14f41badc78f816df31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5ac095109856a0cda553742d81488378"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga5ac095109856a0cda553742d81488378">OCI_DateLastDay</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date)</td></tr>
-<tr class="memdesc:ga5ac095109856a0cda553742d81488378"><td class="mdescLeft">&#160;</td><td class="mdescRight">Place the last day of month (from the given date) into the given date.  <br /></td></tr>
+<tr class="memdesc:ga5ac095109856a0cda553742d81488378"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the given date to the last day of its month.  <br /></td></tr>
 <tr class="separator:ga5ac095109856a0cda553742d81488378"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae4507c8981b4fb3eb10b08fd3d7f12a9"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gae4507c8981b4fb3eb10b08fd3d7f12a9">OCI_DateNextDay</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, const otext *day)</td></tr>
-<tr class="memdesc:gae4507c8981b4fb3eb10b08fd3d7f12a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the date of next day of the week, after a given date.  <br /></td></tr>
+<tr class="memdesc:gae4507c8981b4fb3eb10b08fd3d7f12a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the date of the next specified day of the week, after a given date.  <br /></td></tr>
 <tr class="separator:gae4507c8981b4fb3eb10b08fd3d7f12a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae73613cf6173243848ddfd3295b448c4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gae73613cf6173243848ddfd3295b448c4">OCI_DateSysDate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date)</td></tr>
 <tr class="memdesc:gae73613cf6173243848ddfd3295b448c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current system date/time into the date handle.  <br /></td></tr>
@@ -240,10 +240,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:gac206300a0c06585505559cf3fe2c5418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a date from one zone to another zone.  <br /></td></tr>
 <tr class="separator:gac206300a0c06585505559cf3fe2c5418"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab754b5cf18cf5f1e1710308657b2635d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#gab754b5cf18cf5f1e1710308657b2635d">OCI_DateToCTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, struct tm *ptm, time_t *pt)</td></tr>
-<tr class="memdesc:gab754b5cf18cf5f1e1710308657b2635d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Affect an OCI_Date handle value to ISO C time data types.  <br /></td></tr>
+<tr class="memdesc:gab754b5cf18cf5f1e1710308657b2635d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert an OCI_Date handle value to ISO C time data types.  <br /></td></tr>
 <tr class="separator:gab754b5cf18cf5f1e1710308657b2635d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga39b71fcffed82bfdf4f9a18d1db252fd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datetimes.html#ga39b71fcffed82bfdf4f9a18d1db252fd">OCI_DateFromCTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a> *date, struct tm *ptm, time_t t)</td></tr>
-<tr class="memdesc:ga39b71fcffed82bfdf4f9a18d1db252fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Affect ISO C time data types values to an OCI_Date handle.  <br /></td></tr>
+<tr class="memdesc:ga39b71fcffed82bfdf4f9a18d1db252fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert ISO C time data type values to an OCI_Date handle.  <br /></td></tr>
 <tr class="separator:ga39b71fcffed82bfdf4f9a18d1db252fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -272,8 +272,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>From version 2.5.0, parameter 'con' can be NULL in order to manipulate dates independently from database connections</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the date handle on success otherwise NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>From version 2.5.0, parameter 'con' can be NULL in order to manipulate dates independently from database connections.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Date handle on success, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -302,8 +302,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only dates created with <a class="el" href="group___ocilib_c_api_datetimes.html#ga26123a85d5b36fead616acffbf5ef145" title="Create a local date object.">OCI_DateCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_datetimes.html#gab6c9e4fd52928f53414a338846dbe027" title="Free a date object.">OCI_DateFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only dates created with <a class="el" href="group___ocilib_c_api_datetimes.html#ga26123a85d5b36fead616acffbf5ef145" title="Create a local date object.">OCI_DateCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_datetimes.html#gab6c9e4fd52928f53414a338846dbe027" title="Free a date object.">OCI_DateFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -335,16 +335,16 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Create an array of date object. </p>
+<p>Create an array of Date objects. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- number of elements in the array</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_datetimes.html#ga26123a85d5b36fead616acffbf5ef145" title="Create a local date object.">OCI_DateCreate()</a> for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the date handle array on success otherwise NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_datetimes.html#ga26123a85d5b36fead616acffbf5ef145" title="Create a local date object.">OCI_DateCreate()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Date handle array on success, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -373,8 +373,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only arrays of dates created with <a class="el" href="group___ocilib_c_api_datetimes.html#ga5ece76551a739a4782ff3a32f42f1a92" title="Create an array of date object.">OCI_DateArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_datetimes.html#gadf2acb934aa8435c13c2fe72b9c71905" title="Free an array of date objects.">OCI_DateArrayFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only arrays of dates created with <a class="el" href="group___ocilib_c_api_datetimes.html#ga5ece76551a739a4782ff3a32f42f1a92" title="Create an array of Date objects.">OCI_DateArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_datetimes.html#gadf2acb934aa8435c13c2fe72b9c71905" title="Free an array of date objects.">OCI_DateArrayFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -414,7 +414,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#a66ea5cd0a89ec6e529948e1dcd96d037">ocilib::Date::AddDays()</a>.</p>
 
@@ -456,7 +456,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#ab88babb27ca39e366aa597bcf4dd4437">ocilib::Date::AddMonths()</a>.</p>
 
@@ -498,7 +498,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#aaf64f8635f50118dcd5b83625d121f57">ocilib::Date::Clone()</a>, and <a class="el" href="classocilib_1_1_date.html#ad5c6a5ff75e52cda3aa134e2acba101d">ocilib::Date::operator=()</a>.</p>
 
@@ -530,8 +530,8 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><ul>
-<li>Zero if date is valid</li>
-<li>Any other value means the date is invalid </li>
+<li>Zero if the date is valid.</li>
+<li>Any other value means the date is invalid. </li>
 </ul>
 </dd></dl>
 
@@ -612,7 +612,7 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the number of days betWeen two dates. </p>
+<p>Return the number of days between two dates. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">date</td><td>- Date1 handle </td></tr>
@@ -620,8 +620,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>The number of days is the difference of (date2 - date)</p>
-<dl class="section return"><dt>Returns</dt><dd>Number of days on success otherwise OCI_ERROR on failure </dd></dl>
+<p>The number of days is the difference of (date2 - date).</p>
+<dl class="section return"><dt>Returns</dt><dd>The number of days on success, or OCI_ERROR on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#aed8bcb119b2692931be3affa0bd3ce9d">ocilib::Date::DaysBetween()</a>.</p>
 
@@ -670,7 +670,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#a0865162452936c0709e0fe8e22f5b785">ocilib::Date::FromString()</a>.</p>
 
@@ -719,14 +719,14 @@ Functions</h2></td></tr>
 <p>Convert a Date value from the given date handle to a string. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">date</td><td>- source Date handle </td></tr>
+    <tr><td class="paramname">date</td><td>- Source Date handle </td></tr>
     <tr><td class="paramname">fmt</td><td>- Date format </td></tr>
     <tr><td class="paramname">size</td><td>- Destination string size in characters </td></tr>
     <tr><td class="paramname">str</td><td>- Destination date string</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#a83719a9efab4cdb98bb34ed80f565582">ocilib::Date::ToString()</a>.</p>
 
@@ -782,7 +782,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#a2bfeb2ee09fdedd9d988f5f7bc2a0f29">ocilib::Date::GetDate()</a>.</p>
 
@@ -838,7 +838,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#a16553d265b62c1fd85f7ec18ba1dd4b9">ocilib::Date::GetTime()</a>.</p>
 
@@ -915,7 +915,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#a200e69126db4c0ecaad0d7f796051493">ocilib::Date::GetDateTime()</a>.</p>
 
@@ -961,7 +961,7 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set the date portion if the given date handle. </p>
+<p>Set the date portion of the given date handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">date</td><td>- Date handle </td></tr>
@@ -971,7 +971,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#adc8b133ee59ff0b0ce8202ed6df8cd2e">ocilib::Date::SetDate()</a>.</p>
 
@@ -1017,7 +1017,7 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set the time portion if the given date handle. </p>
+<p>Set the time portion of the given date handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">date</td><td>- Date handle </td></tr>
@@ -1027,7 +1027,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#a75c0e6525529470b5d31815534dc07e2">ocilib::Date::SetTime()</a>.</p>
 
@@ -1091,7 +1091,7 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set the date and time portions if the given date handle. </p>
+<p>Set the date and time portions of the given date handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">date</td><td>- Date handle </td></tr>
@@ -1104,7 +1104,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#ae92d4769ff7a2403168f0ca375cb684d">ocilib::Date::SetDateTime()</a>.</p>
 
@@ -1128,14 +1128,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Place the last day of month (from the given date) into the given date. </p>
+<p>Set the given date to the last day of its month. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">date</td><td>- Date handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#ac6aa158a33e09073daf60c5faaae87b7">ocilib::Date::LastDay()</a>.</p>
 
@@ -1169,7 +1169,7 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Gets the date of next day of the week, after a given date. </p>
+<p>Get the date of the next specified day of the week, after a given date. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">date</td><td>- Date handle </td></tr>
@@ -1177,7 +1177,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#a041345409a7c1024c39309a283f83e94">ocilib::Date::NextDay()</a>.</p>
 
@@ -1208,7 +1208,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#a5d7ee0191341605450e52102ad6a92f7">ocilib::Date::SysDate()</a>.</p>
 
@@ -1257,7 +1257,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_date.html#afb8e57ba43a66cc05ce762c6b8c5e5ed">ocilib::Date::ChangeTimeZone()</a>.</p>
 
@@ -1297,7 +1297,7 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Affect an OCI_Date handle value to ISO C time data types. </p>
+<p>Convert an OCI_Date handle value to ISO C time data types. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">date</td><td>- Date handle </td></tr>
@@ -1306,8 +1306,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Both parameters 'ptm' and 'p' are optional but one of them has to be provided.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Both parameters 'ptm' and 'pt' are optional but one of them has to be provided.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1345,17 +1345,17 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Affect ISO C time data types values to an OCI_Date handle. </p>
+<p>Convert ISO C time data type values to an OCI_Date handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">date</td><td>- Date handle </td></tr>
-    <tr><td class="paramname">ptm</td><td>- Pointer to a structure tm that hold the date/time value </td></tr>
-    <tr><td class="paramname">t</td><td>- Value (time_t) that hold the date/time in the time_t format</td></tr>
+    <tr><td class="paramname">ptm</td><td>- Pointer to a structure tm that holds the date/time value </td></tr>
+    <tr><td class="paramname">t</td><td>- Value (time_t) that holds the date/time in the time_t format</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Both parameters 'ptm' and 'p' are optional but one of them has to be provided. If 'ptm' is not null, its value is affected to the OCI_Timestamp handle, otherwise the value of 't' is used.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Both parameters 'ptm' and 't' are optional but one of them has to be provided. If 'ptm' is not null, its value is assigned to the OCI_Date handle, otherwise the value of 't' is used.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1365,7 +1365,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

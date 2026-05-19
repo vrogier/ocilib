@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,9 +100,9 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_connections.html'
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiErrorHandling</p>
-<p>Connecting to a database server is done with one call to <a class="el" href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27" title="Create a physical connection to an Oracle database server.">OCI_ConnectionCreate()</a>.</p>
-<p><a class="el" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9" title="Close a physical connection to an Oracle database server.">OCI_ConnectionFree()</a> closes the established connection.</p>
-<p>Connection properties are accessible through a set of functions</p>
+<p>Connecting to an Oracle database server is done with a single call to <a class="el" href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27" title="Create a physical connection to an Oracle database server.">OCI_ConnectionCreate()</a>.</p>
+<p><a class="el" href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9" title="Close a physical connection to an Oracle database server.">OCI_ConnectionFree()</a> closes the established connection and releases its resources.</p>
+<p>Connection properties are accessible through a set of dedicated functions.</p>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">void</span> err_handler(<a class="code hl_typedef" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div>
@@ -134,12 +134,12 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_connections.html'
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga0eaeda9f974e77c11aeaeb0c048d4631"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga0eaeda9f974e77c11aeaeb0c048d4631">OCI_GetServerRevisionVersion</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerRevisionVersion(OCI_Connection *con)</div><div class="ttdoc">Return the revision version number of the connected database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga2df8ed30a01b6787cc615cebec3f3c2c"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga2df8ed30a01b6787cc615cebec3f3c2c">OCI_GetServerMinorVersion</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerMinorVersion(OCI_Connection *con)</div><div class="ttdoc">Return the minor version number of the connected database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga375f2252640df238d927d647f6aceba9"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ConnectionFree(OCI_Connection *con)</div><div class="ttdoc">Close a physical connection to an Oracle database server.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_connections_html_ga5d0f9362d935db46c8badd1d0c83b38d"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga5d0f9362d935db46c8badd1d0c83b38d">OCI_GetVersionConnection</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetVersionConnection(OCI_Connection *con)</div><div class="ttdoc">Return the highest Oracle version is supported by the connection.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_connections_html_ga5d0f9362d935db46c8badd1d0c83b38d"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga5d0f9362d935db46c8badd1d0c83b38d">OCI_GetVersionConnection</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetVersionConnection(OCI_Connection *con)</div><div class="ttdoc">Return the highest Oracle version supported by the connection.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga99fdd3a24d96ae27a9f31cae47041c27"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27">OCI_ConnectionCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Connection *OCI_API OCI_ConnectionCreate(const otext *db, const otext *user, const otext *pwd, unsigned int mode)</div><div class="ttdoc">Create a physical connection to an Oracle database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_gaa7d6dc15cf9e9e09b2cbef9ae20e9135"><div class="ttname"><a href="group___ocilib_c_api_connections.html#gaa7d6dc15cf9e9e09b2cbef9ae20e9135">OCI_GetServerMajorVersion</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerMajorVersion(OCI_Connection *con)</div><div class="ttdoc">Return the major version number of the connected database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 </div><!-- fragment --> </dd></dl>
@@ -153,40 +153,40 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga375f2252640df238d927d647f6aceba9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a physical connection to an Oracle database server.  <br /></td></tr>
 <tr class="separator:ga375f2252640df238d927d647f6aceba9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafc7fefce4744e5c3b5842223702ab795"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gafc7fefce4744e5c3b5842223702ab795">OCI_IsConnected</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gafc7fefce4744e5c3b5842223702ab795"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns TRUE is the given connection is still connected otherwise FALSE.  <br /></td></tr>
+<tr class="memdesc:gafc7fefce4744e5c3b5842223702ab795"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given connection is still active.  <br /></td></tr>
 <tr class="separator:gafc7fefce4744e5c3b5842223702ab795"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae7324458fea06b3b776749b95aa7d3dd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gae7324458fea06b3b776749b95aa7d3dd">OCI_GetUserData</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
 <tr class="memdesc:gae7324458fea06b3b776749b95aa7d3dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the pointer to user data previously associated with the connection.  <br /></td></tr>
 <tr class="separator:gae7324458fea06b3b776749b95aa7d3dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4b5068b200b23165ed0fd451d4091340"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga4b5068b200b23165ed0fd451d4091340">OCI_SetUserData</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, void *data)</td></tr>
-<tr class="memdesc:ga4b5068b200b23165ed0fd451d4091340"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate a pointer to user data to the given connection.  <br /></td></tr>
+<tr class="memdesc:ga4b5068b200b23165ed0fd451d4091340"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate a pointer to user data with the given connection.  <br /></td></tr>
 <tr class="separator:ga4b5068b200b23165ed0fd451d4091340"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga205a553322fb38312fd9176d83df0096"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga205a553322fb38312fd9176d83df0096">OCI_SetSessionTag</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, const otext *tag)</td></tr>
-<tr class="memdesc:ga205a553322fb38312fd9176d83df0096"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate a tag to the given connection/session.  <br /></td></tr>
+<tr class="memdesc:ga205a553322fb38312fd9176d83df0096"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate a tag with the given connection/session.  <br /></td></tr>
 <tr class="separator:ga205a553322fb38312fd9176d83df0096"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab2c594a153e7b4c02aa0ec118f68b772"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gab2c594a153e7b4c02aa0ec118f68b772">OCI_GetSessionTag</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gab2c594a153e7b4c02aa0ec118f68b772"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the tag associated the given connection.  <br /></td></tr>
+<tr class="memdesc:gab2c594a153e7b4c02aa0ec118f68b772"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the tag associated with the given connection.  <br /></td></tr>
 <tr class="separator:gab2c594a153e7b4c02aa0ec118f68b772"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab6aa8f982f62f185f8fd648faf03eac3"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gab6aa8f982f62f185f8fd648faf03eac3">OCI_GetDatabase</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gab6aa8f982f62f185f8fd648faf03eac3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the connected database/service name.  <br /></td></tr>
+<tr class="memdesc:gab6aa8f982f62f185f8fd648faf03eac3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the connected database or service name.  <br /></td></tr>
 <tr class="separator:gab6aa8f982f62f185f8fd648faf03eac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa5370e47f8020edbb7940d2a99e6c1e4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaa5370e47f8020edbb7940d2a99e6c1e4">OCI_GetUserName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gaa5370e47f8020edbb7940d2a99e6c1e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current logged user name.  <br /></td></tr>
+<tr class="memdesc:gaa5370e47f8020edbb7940d2a99e6c1e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the user name of the currently logged-in session.  <br /></td></tr>
 <tr class="separator:gaa5370e47f8020edbb7940d2a99e6c1e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7118b54ae0566d1e577f4d850bbe3831"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga7118b54ae0566d1e577f4d850bbe3831">OCI_GetPassword</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga7118b54ae0566d1e577f4d850bbe3831"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current logged user password.  <br /></td></tr>
+<tr class="memdesc:ga7118b54ae0566d1e577f4d850bbe3831"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the password of the currently logged-in session.  <br /></td></tr>
 <tr class="separator:ga7118b54ae0566d1e577f4d850bbe3831"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga48c540f04fa3c0ed32495439c39bc870"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga48c540f04fa3c0ed32495439c39bc870">OCI_SetPassword</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, const otext *password)</td></tr>
-<tr class="memdesc:ga48c540f04fa3c0ed32495439c39bc870"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the password of the logged user.  <br /></td></tr>
+<tr class="memdesc:ga48c540f04fa3c0ed32495439c39bc870"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the password of the currently logged-in user.  <br /></td></tr>
 <tr class="separator:ga48c540f04fa3c0ed32495439c39bc870"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabd58aec4d4b225c35c167d0542bc7531"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gabd58aec4d4b225c35c167d0542bc7531">OCI_SetUserPassword</a> (const otext *db, const otext *user, const otext *pwd, const otext *new_pwd)</td></tr>
-<tr class="memdesc:gabd58aec4d4b225c35c167d0542bc7531"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the password of the given user on the given database.  <br /></td></tr>
+<tr class="memdesc:gabd58aec4d4b225c35c167d0542bc7531"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the password of the given user on the specified database.  <br /></td></tr>
 <tr class="separator:gabd58aec4d4b225c35c167d0542bc7531"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabe3f67a7e18e44ca01c7588d14450385"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gabe3f67a7e18e44ca01c7588d14450385">OCI_GetSessionMode</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
 <tr class="memdesc:gabe3f67a7e18e44ca01c7588d14450385"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current session mode.  <br /></td></tr>
 <tr class="separator:gabe3f67a7e18e44ca01c7588d14450385"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5568aeecb11380cf203eaca32c103192"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga5568aeecb11380cf203eaca32c103192">OCI_GetVersionServer</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga5568aeecb11380cf203eaca32c103192"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the connected database server version string (aka server banner version) as reported by SQL*Plus.  <br /></td></tr>
+<tr class="memdesc:ga5568aeecb11380cf203eaca32c103192"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the connected database server version string (server banner), as reported by SQL*Plus.  <br /></td></tr>
 <tr class="separator:ga5568aeecb11380cf203eaca32c103192"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa7d6dc15cf9e9e09b2cbef9ae20e9135"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gaa7d6dc15cf9e9e09b2cbef9ae20e9135">OCI_GetServerMajorVersion</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
 <tr class="memdesc:gaa7d6dc15cf9e9e09b2cbef9ae20e9135"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the major version number of the connected database server.  <br /></td></tr>
@@ -204,49 +204,49 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga72b610d9c14fab80c41f2e5ed9d1c379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the format string for implicit string conversions of the given type.  <br /></td></tr>
 <tr class="separator:ga72b610d9c14fab80c41f2e5ed9d1c379"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga66dd3357147162c5d4f4491b5f5959e4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga66dd3357147162c5d4f4491b5f5959e4">OCI_GetTransaction</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga66dd3357147162c5d4f4491b5f5959e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current transaction of the connection.  <br /></td></tr>
+<tr class="memdesc:ga66dd3357147162c5d4f4491b5f5959e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current transaction associated with the connection.  <br /></td></tr>
 <tr class="separator:ga66dd3357147162c5d4f4491b5f5959e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4a403232cb36be5d9d06be3d8416ebdb"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga4a403232cb36be5d9d06be3d8416ebdb">OCI_SetTransaction</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, <a class="el" href="group___ocilib_c_api_datatypes.html#gac4291a2f7094685879b4739c692ce128">OCI_Transaction</a> *trans)</td></tr>
-<tr class="memdesc:ga4a403232cb36be5d9d06be3d8416ebdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a transaction to a connection.  <br /></td></tr>
+<tr class="memdesc:ga4a403232cb36be5d9d06be3d8416ebdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate a transaction with a connection.  <br /></td></tr>
 <tr class="separator:ga4a403232cb36be5d9d06be3d8416ebdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5d0f9362d935db46c8badd1d0c83b38d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga5d0f9362d935db46c8badd1d0c83b38d">OCI_GetVersionConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga5d0f9362d935db46c8badd1d0c83b38d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the highest Oracle version is supported by the connection.  <br /></td></tr>
+<tr class="memdesc:ga5d0f9362d935db46c8badd1d0c83b38d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the highest Oracle version supported by the connection.  <br /></td></tr>
 <tr class="separator:ga5d0f9362d935db46c8badd1d0c83b38d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab7d477741d5aae9c8267f5e3a02445c9"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gab7d477741d5aae9c8267f5e3a02445c9">OCI_SetTrace</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int trace, const otext *value)</td></tr>
-<tr class="memdesc:gab7d477741d5aae9c8267f5e3a02445c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set tracing information to the session of the given connection.  <br /></td></tr>
+<tr class="memdesc:gab7d477741d5aae9c8267f5e3a02445c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set tracing information on the session of the given connection.  <br /></td></tr>
 <tr class="separator:gab7d477741d5aae9c8267f5e3a02445c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab8e268433fe0dfdb3b9daa2a3a10c4fe"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gab8e268433fe0dfdb3b9daa2a3a10c4fe">OCI_GetTrace</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int trace)</td></tr>
-<tr class="memdesc:gab8e268433fe0dfdb3b9daa2a3a10c4fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current trace for the trace type from the given connection.  <br /></td></tr>
+<tr class="memdesc:gab8e268433fe0dfdb3b9daa2a3a10c4fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current trace value for the given trace type from the connection.  <br /></td></tr>
 <tr class="separator:gab8e268433fe0dfdb3b9daa2a3a10c4fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0d4bd50d388e1e47746ab22182949146"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga0d4bd50d388e1e47746ab22182949146">OCI_Ping</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga0d4bd50d388e1e47746ab22182949146"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes a round trip call to the server to confirm that the connection and the server are active.  <br /></td></tr>
+<tr class="memdesc:ga0d4bd50d388e1e47746ab22182949146"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a round-trip call to the server to verify that the connection and server are active.  <br /></td></tr>
 <tr class="separator:ga0d4bd50d388e1e47746ab22182949146"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8b458bd78540d65eaca53f2d263ba835"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga8b458bd78540d65eaca53f2d263ba835">OCI_SetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, unsigned int value)</td></tr>
 <tr class="memdesc:ga8b458bd78540d65eaca53f2d263ba835"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a given timeout for OCI calls that require server round-trips to the given database.  <br /></td></tr>
 <tr class="separator:ga8b458bd78540d65eaca53f2d263ba835"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga02c95ccf517f24208403a49366251e91"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga02c95ccf517f24208403a49366251e91">OCI_GetTimeout</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type)</td></tr>
-<tr class="memdesc:ga02c95ccf517f24208403a49366251e91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the requested timeout value for OCI calls that require server round-trips to the given database.  <br /></td></tr>
+<tr class="memdesc:ga02c95ccf517f24208403a49366251e91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the requested timeout value for OCI calls that require server round-trips.  <br /></td></tr>
 <tr class="separator:ga02c95ccf517f24208403a49366251e91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4b9bb2a74a741cfc07807e345e312131"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga4b9bb2a74a741cfc07807e345e312131">OCI_GetDBName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga4b9bb2a74a741cfc07807e345e312131"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server database name of the connected database/service name.  <br /></td></tr>
+<tr class="memdesc:ga4b9bb2a74a741cfc07807e345e312131"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server database name of the connected database.  <br /></td></tr>
 <tr class="separator:ga4b9bb2a74a741cfc07807e345e312131"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gadfaaf6f016bb3cb7ec59da50dfe46abb"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gadfaaf6f016bb3cb7ec59da50dfe46abb">OCI_GetInstanceName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gadfaaf6f016bb3cb7ec59da50dfe46abb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server Instance name of the connected database/service name.  <br /></td></tr>
+<tr class="memdesc:gadfaaf6f016bb3cb7ec59da50dfe46abb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server instance name of the connected database.  <br /></td></tr>
 <tr class="separator:gadfaaf6f016bb3cb7ec59da50dfe46abb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0479a95955ae6068eb049f1a66053f33"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga0479a95955ae6068eb049f1a66053f33">OCI_GetServiceName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga0479a95955ae6068eb049f1a66053f33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server service name of the connected database/service name.  <br /></td></tr>
+<tr class="memdesc:ga0479a95955ae6068eb049f1a66053f33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server service name of the connected database.  <br /></td></tr>
 <tr class="separator:ga0479a95955ae6068eb049f1a66053f33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad7d95568d6155710d011a8355dfbcd5c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gad7d95568d6155710d011a8355dfbcd5c">OCI_GetServerName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gad7d95568d6155710d011a8355dfbcd5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server machine name of the connected database/service name.  <br /></td></tr>
+<tr class="memdesc:gad7d95568d6155710d011a8355dfbcd5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server machine name of the connected database.  <br /></td></tr>
 <tr class="separator:gad7d95568d6155710d011a8355dfbcd5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab22c672bb3633de1f1260aa0708374c4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gab22c672bb3633de1f1260aa0708374c4">OCI_GetDomainName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:gab22c672bb3633de1f1260aa0708374c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server domain name of the connected database/service name.  <br /></td></tr>
+<tr class="memdesc:gab22c672bb3633de1f1260aa0708374c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the Oracle server domain name of the connected database.  <br /></td></tr>
 <tr class="separator:gab22c672bb3633de1f1260aa0708374c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga1626427a10c0854ae25335b166dcec59"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga1626427a10c0854ae25335b166dcec59">OCI_GetInstanceStartTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga1626427a10c0854ae25335b166dcec59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the date and time (Timestamp) server instance start of the connected database/service name.  <br /></td></tr>
+<tr class="memdesc:ga1626427a10c0854ae25335b166dcec59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the date and time (Timestamp) at which the server instance was started.  <br /></td></tr>
 <tr class="separator:ga1626427a10c0854ae25335b166dcec59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga329709a08f9b1dd18d1e4fc10a490ebe"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#ga329709a08f9b1dd18d1e4fc10a490ebe">OCI_IsTAFCapable</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
-<tr class="memdesc:ga329709a08f9b1dd18d1e4fc10a490ebe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verify if the given connection support TAF events.  <br /></td></tr>
+<tr class="memdesc:ga329709a08f9b1dd18d1e4fc10a490ebe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given connection supports Transparent Application Failover (TAF) events.  <br /></td></tr>
 <tr class="separator:ga329709a08f9b1dd18d1e4fc10a490ebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae8628a23ee7464583715d7674ae9bc4d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_connections.html#gae8628a23ee7464583715d7674ae9bc4d">OCI_SetTAFHandler</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, <a class="el" href="group___ocilib_c_api_datatypes.html#ga67e0f339111bb2d9243582e129697873">POCI_TAF_HANDLER</a> handler)</td></tr>
 <tr class="memdesc:gae8628a23ee7464583715d7674ae9bc4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Transparent Application Failover (TAF) user handler.  <br /></td></tr>
@@ -311,40 +311,38 @@ Functions</h2></td></tr>
 <p>Create a physical connection to an Oracle database server. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">db</td><td>- Oracle Service Name </td></tr>
-    <tr><td class="paramname">user</td><td>- Oracle User name </td></tr>
-    <tr><td class="paramname">pwd</td><td>- Oracle User password </td></tr>
+    <tr><td class="paramname">db</td><td>- Oracle Service Name (or NULL for the default local database) </td></tr>
+    <tr><td class="paramname">user</td><td>- Oracle user name (or NULL for external credentials) </td></tr>
+    <tr><td class="paramname">pwd</td><td>- Oracle user password (or NULL for external credentials) </td></tr>
     <tr><td class="paramname">mode</td><td>- Session mode</td></tr>
   </table>
   </dd>
 </dl>
-<p>Possible values for parameter mode :</p><ul>
-<li>OCI_SESSION_DEFAULT</li>
-<li>OCI_SESSION_SYSDBA</li>
-<li>OCI_SESSION_SYSOPER</li>
-<li>OCI_SESSION_XA</li>
+<p>Possible values for parameter mode (mutually exclusive, cannot be combined):</p><ul>
+<li>OCI_SESSION_DEFAULT : Standard user session.</li>
+<li>OCI_SESSION_SYSDBA : SYSDBA privileged session.</li>
+<li>OCI_SESSION_SYSOPER : SYSOPER privileged session.</li>
+<li>OCI_SESSION_XA : XA (distributed transaction) session.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>External credentials are supported by supplying a null value for the 'user' and 'pwd' parameters. If the param 'db' is NULL then a connection to the default local DB is done</dd>
-<dd>
-For parameter 'mode', the possible values are exclusive and cannot be combined</dd></dl>
-<dl class="section user"><dt>Oracle XA support</dt><dd></dd></dl>
-<p>OCILIB supports Oracle XA connectivity. In order to get a connection using the XA interface :</p><ul>
-<li>For parameter 'db' : pass the value of the 'DB' parameter of the given XA connection string passed to the Transaction Processing Monitor (TPM)</li>
-<li>Pass NULL to the 'user' and 'pwd' parameters</li>
-<li>Pass the value OCI_SESSION_XA to parameter 'mode'</li>
+<dl class="section note"><dt>Note</dt><dd>External credentials are supported by supplying NULL for both the 'user' and 'pwd' parameters. If the 'db' parameter is NULL, a connection to the default local database is established.</dd></dl>
+<dl class="section user"><dt>Oracle XA Support</dt><dd></dd></dl>
+<p>OCILIB supports Oracle XA connectivity. To obtain a connection through the XA interface:</p><ul>
+<li>For parameter 'db': pass the value of the 'DB' parameter from the XA connection string provided to the Transaction Processing Monitor (TPM).</li>
+<li>Pass NULL for the 'user' and 'pwd' parameters.</li>
+<li>Pass OCI_SESSION_XA for the 'mode' parameter.</li>
 </ul>
-<dl class="section user"><dt>Oracle XA Connection String</dt><dd></dd></dl>
-<p>The XA connection string used in a transaction monitor to connect to Oracle must be compatible with OCILIB :</p>
+<dl class="section user"><dt>Oracle XA Connection String Requirements</dt><dd></dd></dl>
+<p>The XA connection string used in a transaction monitor to connect to Oracle must be compatible with OCILIB:</p>
 <ul>
-<li>the XA parameter 'Objects' MUST be set to 'true'</li>
-<li>If OCI_ENV_THREADED is passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>, the XA parameter 'Threads' must be set to 'true', otherwise to 'false'</li>
-<li>If OCI_ENV_EVENTS is passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>, the XA parameter 'Events' must be set to 'true', otherwise to 'false'</li>
-<li>As Oracle does not support Unicode UTF16 character set through the XA interface, Only OCI_CHARSET_ANSI builds of OCILIB can be used</li>
-<li>You still can use UTF8 if the NLS_LANG environment variable is set with a valid UTF8 NLS value</li>
-<li>DO NOT USE OCI_CHARSET_WIDE OCILIB builds with XA connections</li>
+<li>The XA parameter 'Objects' MUST be set to 'true'.</li>
+<li>If OCI_ENV_THREADED is passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>, the XA parameter 'Threads' must be set to 'true'; otherwise set it to 'false'.</li>
+<li>If OCI_ENV_EVENTS is passed to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>, the XA parameter 'Events' must be set to 'true'; otherwise set it to 'false'.</li>
+<li>Oracle does not support Unicode UTF16 through the XA interface; only OCI_CHARSET_ANSI builds of OCILIB can be used.</li>
+<li>UTF-8 encoding is still available if the NLS_LANG environment variable is set to a valid UTF-8 NLS value.</li>
+<li>Do NOT use OCI_CHARSET_WIDE OCILIB builds with XA connections.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>On success, a local transaction is automatically created and started ONLY for regular standalone connections and connections retrieved from connection pools. No transaction is created for a XA connection or q connection retrieved from session pools.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Connection handle on success or NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>On success, a local transaction is automatically created and started ONLY for regular standalone connections and connections retrieved from connection pools. No transaction is created for XA connections or connections retrieved from session pools.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Connection handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a7cb9e2d4c98a3753325f88504c311be3">ocilib::Connection::Open()</a>.</p>
 
@@ -375,7 +373,8 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>All resources (statements, type info objects, etc.) associated with the connection are automatically freed.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -397,13 +396,14 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Returns TRUE is the given connection is still connected otherwise FALSE. </p>
+<p>Check if the given connection is still active. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
+    <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if the connection is still active, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a04ea902cc34aaf7888955a30eba5326a">ocilib::Connection::IsServerAlive()</a>.</p>
 
@@ -434,7 +434,8 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Value NULL for parameter <code>con</code> is a valid value. It returns then previously stored data with global scope (program wide) </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing NULL for the <code>con</code> parameter is valid. In that case, the function returns the user data stored with global (program-wide) scope.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The user data pointer, or NULL if none was previously set. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#acd861d10260b82cd4a72049565f9291b">ocilib::Connection::GetUserData()</a>, and <a class="el" href="classocilib_1_1_environment.html#a83613d62908717ddf7d0ac797d63120a">ocilib::Environment::Initialize()</a>.</p>
 
@@ -468,7 +469,7 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Associate a pointer to user data to the given connection. </p>
+<p>Associate a pointer to user data with the given connection. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
@@ -476,8 +477,8 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Value NULL for parameter <code>con</code> is a valid value. It allows users to associate a pointer to user data with global scope (program wide)</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing NULL for the <code>con</code> parameter is valid. In that case, the user data is stored with global (program-wide) scope.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a9a290370df27e4e843fc01fd1c9396ba">ocilib::Connection::SetUserData()</a>.</p>
 
@@ -511,19 +512,19 @@ For parameter 'mode', the possible values are exclusive and cannot be combined</
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Associate a tag to the given connection/session. </p>
+<p>Associate a tag with the given connection/session. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
-    <tr><td class="paramname">tag</td><td>- user tag string</td></tr>
+    <tr><td class="paramname">tag</td><td>- User tag string</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Use this call only for connections retrieved from a session pool See <a class="el" href="group___ocilib_c_api_pools.html#ga8f8b76255818af6e25f76f298ccf5e70" title="Get a connection from the pool.">OCI_PoolGetConnection()</a> for more details</dd>
+<dl class="section note"><dt>Note</dt><dd>This function is intended for connections retrieved from a session pool. See <a class="el" href="group___ocilib_c_api_pools.html#ga8f8b76255818af6e25f76f298ccf5e70" title="Get a connection from the pool.">OCI_PoolGetConnection()</a> for more details.</dd>
 <dd>
-To untag a session, call <a class="el" href="group___ocilib_c_api_connections.html#ga205a553322fb38312fd9176d83df0096" title="Associate a tag to the given connection/session.">OCI_SetSessionTag()</a> with 'tag' parameter set to NULL</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>No error is raised if the connection is a standalone connection or retrieved from a connection pool</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+To remove the tag from a session, call <a class="el" href="group___ocilib_c_api_connections.html#ga205a553322fb38312fd9176d83df0096" title="Associate a tag with the given connection/session.">OCI_SetSessionTag()</a> with the 'tag' parameter set to NULL.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>No error is raised if the connection is a standalone connection or was retrieved from a connection pool.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a0219e7f6c011ca24f849687e17496339">ocilib::Connection::SetSessionTag()</a>.</p>
 
@@ -547,13 +548,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the tag associated the given connection. </p>
+<p>Return the tag associated with the given connection. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
+    <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The session tag string, or NULL if no tag has been set. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#ac7dd305f40bb25ce15426b636ee673ca">ocilib::Connection::GetSessionTag()</a>.</p>
 
@@ -577,13 +579,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the name of the connected database/service name. </p>
+<p>Return the name of the connected database or service name. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
+    <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The database/service name string, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#ae1aead89beab25bd7578fa7f2614c216">ocilib::Connection::GetConnectionString()</a>.</p>
 
@@ -607,13 +610,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the current logged user name. </p>
+<p>Return the user name of the currently logged-in session. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
+    <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The user name string, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a9415082f3a6f25ed08c137b074ac7853">ocilib::Connection::GetUserName()</a>.</p>
 
@@ -637,13 +641,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the current logged user password. </p>
+<p>Return the password of the currently logged-in session. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
+    <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The password string, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a3239ac0f6dc3a9f8ed458c462e0f88d3">ocilib::Connection::GetPassword()</a>.</p>
 
@@ -677,7 +682,7 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Change the password of the logged user. </p>
+<p>Change the password of the currently logged-in user. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
@@ -685,7 +690,7 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a70f19966b317e6518a8bc710b9f0d3da">ocilib::Connection::ChangePassword()</a>.</p>
 
@@ -731,17 +736,18 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Change the password of the given user on the given database. </p>
+<p>Change the password of the given user on the specified database. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">db</td><td>- Oracle Service Name </td></tr>
-    <tr><td class="paramname">user</td><td>- Oracle User name </td></tr>
-    <tr><td class="paramname">pwd</td><td>- Oracle User password </td></tr>
-    <tr><td class="paramname">new_pwd</td><td>- Oracle User New password</td></tr>
+    <tr><td class="paramname">user</td><td>- Oracle user name </td></tr>
+    <tr><td class="paramname">pwd</td><td>- Current Oracle user password </td></tr>
+    <tr><td class="paramname">new_pwd</td><td>- New Oracle user password</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This function does not require an active connection; it connects internally to perform the password change.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_environment.html#a8f1ad7a0ab764b28f2f1c9d513b90baa">ocilib::Environment::ChangeUserPassword()</a>.</p>
 
@@ -772,7 +778,7 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27" title="Create a physical connection to an Oracle database server.">OCI_ConnectionCreate()</a> for possible values </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The session mode. See <a class="el" href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27" title="Create a physical connection to an Oracle database server.">OCI_ConnectionCreate()</a> for possible values. </dd></dl>
 
 </div>
 </div>
@@ -794,13 +800,14 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the connected database server version string (aka server banner version) as reported by SQL*Plus. </p>
+<p>Return the connected database server version string (server banner), as reported by SQL*Plus. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
+    <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The server version banner string, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#af34410379300284f6551fc697a1e2734">ocilib::Connection::GetServerVersion()</a>.</p>
 
@@ -936,41 +943,42 @@ To untag a session, call <a class="el" href="group___ocilib_c_api_connections.ht
 <p>Set the format string for implicit string conversions of the given type. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">con</td><td>- Connection handle (optional) </td></tr>
+    <tr><td class="paramname">con</td><td>- Connection handle (or NULL for library-level format) </td></tr>
     <tr><td class="paramname">type</td><td>- Type of format </td></tr>
     <tr><td class="paramname">format</td><td>- Format string</td></tr>
   </table>
   </dd>
 </dl>
-<p>Formats can set at 2 levels:</p><ul>
-<li>Library level: by passing a NULL Connection handle</li>
-<li>Connection level: by passing a valid Connection handle</li>
+<p>Formats can be set at two levels:</p><ul>
+<li>Library level: by passing NULL for the connection handle.</li>
+<li>Connection level: by passing a valid connection handle.</li>
 </ul>
-<p>When the library needs to perform a string conversion, it search for a valid format using the following order:</p><ul>
-<li>Connection format</li>
-<li>Library format</li>
-<li>Default format</li>
-</ul>
-<dl class="section note"><dt>Note</dt><dd>Possible values of parameter 'type' :</dd></dl>
+<p>When a string conversion is needed, OCILIB searches for a valid format in the following order:</p><ol type="1">
+<li>Connection-level format.</li>
+<li>Library-level format.</li>
+<li>Built-in default format.</li>
+</ol>
+<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'type':</dd></dl>
 <ul>
-<li>OCI_FMT_DATE : format used to convert DATE to string</li>
-<li>OCI_FMT_TIMESTAMP : format used to convert TIMESTAMP and TIMESTAMP WITH LOCAL TIMEZONE to string</li>
-<li>OCI_FMT_TIMESTAMP_TZ : format used to convert TIMESTAMP WITH TIME ZONE to string</li>
-<li>OCI_FMT_NUMERIC : format used to convert numeric types to string</li>
-<li>OCI_FMT_BINARY_DOUBLE : format used to convert BINARY_DOUBLE to string</li>
-<li>OCI_FMT_BINARY FLOAT : format used to convert BINARY_FLOAT to string</li>
+<li>OCI_FMT_DATE : Format for converting DATE to string.</li>
+<li>OCI_FMT_TIMESTAMP : Format for converting TIMESTAMP and TIMESTAMP WITH LOCAL TIME ZONE to string.</li>
+<li>OCI_FMT_TIMESTAMP_TZ : Format for converting TIMESTAMP WITH TIME ZONE to string.</li>
+<li>OCI_FMT_NUMERIC : Format for converting numeric types to string.</li>
+<li>OCI_FMT_BINARY_DOUBLE : Format for converting BINARY_DOUBLE to string.</li>
+<li>OCI_FMT_BINARY_FLOAT : Format for converting BINARY_FLOAT to string.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>Default format values are :<ul>
-<li>OCI_FMT_DATE : constant OCI_STRING_FORMAT_DATE</li>
-<li>OCI_FMT_TIMESTAMP : constant OCI_STRING_FORMAT_TIMESTAMP</li>
-<li>OCI_FMT_TIMESTAMP_TZ : constant OCI_STRING_FORMAT_TIMESTAMP_TZ</li>
-<li>OCI_FMT_NUMERIC : constant OCI_STRING_FORMAT_NUMERIC</li>
-<li>OCI_FMT_BINARY_DOUBLE : constant OCI_STRING_FORMAT_BINARY_DOUBLE</li>
-<li>OCI_FMT_BINARY FLOAT : constant OCI_STRING_FORMAT_BINARY_FLOAT</li>
+<dl class="section note"><dt>Note</dt><dd>Default format values:<ul>
+<li>OCI_FMT_DATE : OCI_STRING_FORMAT_DATE</li>
+<li>OCI_FMT_TIMESTAMP : OCI_STRING_FORMAT_TIMESTAMP</li>
+<li>OCI_FMT_TIMESTAMP_TZ : OCI_STRING_FORMAT_TIMESTAMP_TZ</li>
+<li>OCI_FMT_NUMERIC : OCI_STRING_FORMAT_NUMERIC</li>
+<li>OCI_FMT_BINARY_DOUBLE : OCI_STRING_FORMAT_BINARY_DOUBLE</li>
+<li>OCI_FMT_BINARY_FLOAT : OCI_STRING_FORMAT_BINARY_FLOAT</li>
 </ul>
 </dd>
 <dd>
-Conversions are performed by Oracle built-in functions whenever possible. For DATE, TIMESTAMP and numeric types, see documentation of Oracle SQL to_char() function for more details For BINARY_DOUBLE and BINARY_FLOAT, refer to the C Standard Library printf() family documentation </dd></dl>
+Conversions are performed by Oracle built-in functions whenever possible. For DATE, TIMESTAMP, and numeric types, refer to the Oracle SQL TO_CHAR() function documentation. For BINARY_DOUBLE and BINARY_FLOAT, refer to the C Standard Library printf() family documentation.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_environment.html#a0a67cffd57505db4a35005b8d373f5ba">ocilib::Environment::SetFormat()</a>, and <a class="el" href="classocilib_1_1_connection.html#a0d160d4250e24a9c4ca510eb1727b3dd">ocilib::Connection::SetFormat()</a>.</p>
 
@@ -1007,12 +1015,13 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
 <p>Return the format string for implicit string conversions of the given type. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
+    <tr><td class="paramname">con</td><td>- Connection handle (or NULL for library-level format) </td></tr>
     <tr><td class="paramname">type</td><td>- Type of format</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_connections.html#ga02224068f112f1f0db4d557d7d904ae7" title="Set the format string for implicit string conversions of the given type.">OCI_SetFormat()</a> for possible values </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_connections.html#ga02224068f112f1f0db4d557d7d904ae7" title="Set the format string for implicit string conversions of the given type.">OCI_SetFormat()</a> for possible values of the 'type' parameter.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The format string for the specified type, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f">ocilib::Environment::GetFormat()</a>, and <a class="el" href="classocilib_1_1_connection.html#af121e98b6393fb6e2a63b2c23194be14">ocilib::Connection::GetFormat()</a>.</p>
 
@@ -1036,14 +1045,15 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the current transaction of the connection. </p>
+<p>Return the current transaction associated with the connection. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>From v3.9.4, no more default transaction object is created for a new connection </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Since version 3.9.4, no default transaction object is created for new connections.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The transaction handle, or NULL if no transaction is associated with the connection. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a2d069eb6e93578ac869d79de480394c2">ocilib::Connection::GetTransaction()</a>.</p>
 
@@ -1077,7 +1087,7 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set a transaction to a connection. </p>
+<p>Associate a transaction with a connection. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
@@ -1085,8 +1095,9 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The current transaction (if any) is automatically stopped but the newly assigned is not started or resumed</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Do not set transaction object to XA connection or connection retrieved from a session pool </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The current transaction (if any) is automatically stopped, but the newly assigned transaction is not started or resumed.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Do not assign a transaction object to an XA connection or a connection retrieved from a session pool.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#aabc3f94e651e8bd02051b2fe0adb9bd7">ocilib::Connection::SetTransaction()</a>.</p>
 
@@ -1110,29 +1121,15 @@ Conversions are performed by Oracle built-in functions whenever possible. For DA
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the highest Oracle version is supported by the connection. </p>
+<p>Return the highest Oracle version supported by the connection. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">con</td><td>- connection handle</td></tr>
+    <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The highest supported version is the lower version between client and server:</dd>
-<dd>
-Returns one of the following values:</dd></dl>
-<ul>
-<li>OCI_UNKNOWN</li>
-<li>OCI_8_0</li>
-<li>OCI_8_1</li>
-<li>OCI_9_0</li>
-<li>OCI_9_2</li>
-<li>OCI_10_1</li>
-<li>OCI_10_2</li>
-<li>OCI_11_1</li>
-<li>OCI_11_2</li>
-<li>OCI_12_1</li>
-<li>OCI_18_3 </li>
-</ul>
+<dl class="section note"><dt>Note</dt><dd>The highest supported version is the lower of the client and server versions.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>One of the OCI version constants (e.g., OCI_8_0, OCI_9_2, OCI_10_1, OCI_11_2, OCI_12_1, OCI_18_3, etc.), or OCI_UNKNOWN on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#acfceaeaf9a2ee7f638a0a83e669c43f2">ocilib::Connection::GetVersion()</a>.</p>
 
@@ -1172,37 +1169,39 @@ Returns one of the following values:</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set tracing information to the session of the given connection. </p>
+<p>Set tracing information on the session of the given connection. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">con</td><td>- connection handle </td></tr>
-    <tr><td class="paramname">trace</td><td>- trace type </td></tr>
-    <tr><td class="paramname">value</td><td>- trace content</td></tr>
+    <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
+    <tr><td class="paramname">trace</td><td>- Trace type </td></tr>
+    <tr><td class="paramname">value</td><td>- Trace content string</td></tr>
   </table>
   </dd>
 </dl>
-<p>Store current trace information to the given connection handle. These information:</p>
-<ul>
-<li>is stored in system view V$SESSION and/or V$SQL_MONITOR</li>
-<li>can be retrieved from the connection property of an OCI_Error handle</li>
+<p>Stores trace information on the given connection session. This information:</p><ul>
+<li>Is recorded in the system views V$SESSION and/or V$SQL_MONITOR.</li>
+<li>Can be used for application monitoring and diagnostics.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>Possible values of parameter 'trace' :</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Possible values for parameter 'trace':</dd></dl>
 <ul>
-<li>OCI_TRC_IDENTITY : Specifies the user defined identifier in the session. It's recorded in the column CLIENT_IDENTIFIER of the system view V$SESSION</li>
-<li>OCI_TRC_MODULE : name of the current module in the client application. It's recorded in the column MODULE of the system view V$SESSION</li>
-<li>OCI_TRC_ACTION : name of the current action within the current module. It's recorded in the column ACTION of the system view V$SESSION</li>
-<li>OCI_TRC_DETAIL : Client application additional information. It's recorded in the column CLIENT_INFO of the system view V$SESSION</li>
-<li>OCI_TRC_OPERATION: Client application database operation. It's recorded in the column DBOP_NAME of the system view V$SQL_MONITOR <dl class="section warning"><dt>Warning</dt><dd>The system view V$SESSION is updated on Oracle versions &gt;= 10gR1 The system view V$SQL_MONITOR is updated on Oracle versions &gt;= 12cR1</dd>
+<li>OCI_TRC_IDENTITY : User-defined identifier. Recorded in V$SESSION.CLIENT_IDENTIFIER.</li>
+<li>OCI_TRC_MODULE : Current module name. Recorded in V$SESSION.MODULE.</li>
+<li>OCI_TRC_ACTION : Current action within the module. Recorded in V$SESSION.ACTION.</li>
+<li>OCI_TRC_DETAIL : Additional client information. Recorded in V$SESSION.CLIENT_INFO.</li>
+<li>OCI_TRC_OPERATION : Database operation name. Recorded in V$SQL_MONITOR.DBOP_NAME.</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>The V$SESSION view is updated on Oracle versions &gt;= 10gR1. The V$SQL_MONITOR view is updated on Oracle versions &gt;= 12cR1.</dd>
 <dd>
-Oracle limits the size of these traces content:</dd></dl>
-</li>
+Oracle limits the size of trace content:</dd></dl>
+<ul>
 <li>OCI_TRC_IDENTITY : 64 bytes</li>
 <li>OCI_TRC_MODULE : 48 bytes</li>
 <li>OCI_TRC_ACTION : 32 bytes</li>
 <li>OCI_TRC_DETAIL : 64 bytes</li>
-<li>OCI_TRC_OPERATION: 32 bytes</li>
+<li>OCI_TRC_OPERATION : 32 bytes</li>
 </ul>
-<p>OCILIB truncates input values to match theses limits </p>
+<p>OCILIB truncates input values to match these limits.</p>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a98d7c8767b911e2a386f664344a529b9">ocilib::Connection::SetTrace()</a>.</p>
 
@@ -1236,15 +1235,16 @@ Oracle limits the size of these traces content:</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Get the current trace for the trace type from the given connection. </p>
+<p>Return the current trace value for the given trace type from the connection. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">con</td><td>- connection handle </td></tr>
-    <tr><td class="paramname">trace</td><td>- trace type</td></tr>
+    <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
+    <tr><td class="paramname">trace</td><td>- Trace type</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_connections.html#gab7d477741d5aae9c8267f5e3a02445c9" title="Set tracing information to the session of the given connection.">OCI_SetTrace()</a> for more details. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_connections.html#gab7d477741d5aae9c8267f5e3a02445c9" title="Set tracing information on the session of the given connection.">OCI_SetTrace()</a> for possible values of the 'trace' parameter.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The trace string value, or NULL if not set or on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a23c58d343bd49173b2ec1f55ed3be3c8">ocilib::Connection::GetTrace()</a>.</p>
 
@@ -1268,15 +1268,15 @@ Oracle limits the size of these traces content:</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Makes a round trip call to the server to confirm that the connection and the server are active. </p>
+<p>Perform a round-trip call to the server to verify that the connection and server are active. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Returns TRUE is the connection is still alive otherwise FALSE</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10g. For previous versions, it returns FALSE without throwing any exception. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This feature requires Oracle 10g or later. For earlier versions, the function returns FALSE without raising an exception.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if the connection is still alive, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#aeba71bddbb789e27f3b12f3db6a8a757">ocilib::Connection::PingServer()</a>.</p>
 
@@ -1342,15 +1342,15 @@ Oracle limits the size of these traces content:</dd></dl>
 </ul>
 </li>
 </ul>
-<p>OCI client raises an timeout type related error when a given timeout is reached.</p>
-<dl class="section note"><dt>Note</dt><dd>To disable a given timeout, pass the value 0</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>OCI client is using the following precedence rules when applying timeouts:<ul>
-<li>1 - Timeout set using OCI_NTO_CALL (all other timeouts are discarded)</li>
-<li>2 - Timeouts set using OCI_NTO_SEND and/or OCI_NTO_RECEIVE</li>
-<li>3 - Timeouts set in sqlnet.ora file</li>
+<p>The OCI client raises a timeout-related error when a given timeout is reached.</p>
+<dl class="section note"><dt>Note</dt><dd>To disable a given timeout, pass the value 0.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The OCI client applies the following precedence rules for timeouts:<ul>
+<li>1. Timeout set using OCI_NTO_CALL (all other timeouts are discarded).</li>
+<li>2. Timeouts set using OCI_NTO_SEND and/or OCI_NTO_RECEIVE.</li>
+<li>3. Timeouts set in the sqlnet.ora file.</li>
 </ul>
 </dd></dl>
-<p>Here is a summary:</p>
+<p>Summary:</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">FLAG   </th><th class="markdownTableHeadNone">Min. Version   </th><th class="markdownTableHeadNone">OCI Error raised   </th><th class="markdownTableHeadNone">OCI Error description   </th><th class="markdownTableHeadNone">sqlnet.ora equivalent    </th></tr>
@@ -1359,9 +1359,10 @@ Oracle limits the size of these traces content:</dd></dl>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">OCI_NTO_RECEIVE   </td><td class="markdownTableBodyNone">OCI_12_1   </td><td class="markdownTableBodyNone">ORA-12609   </td><td class="markdownTableBodyNone">TNS: Receive timeout occurred   </td><td class="markdownTableBodyNone">SQLNET.RECV_TIMEOUT    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">OCI_NTO_CALL   </td><td class="markdownTableBodyNone">OCI_18_1   </td><td class="markdownTableBodyNone">ORA-03136   </td><td class="markdownTableBodyNone">inbound connection timed out   </td><td class="markdownTableBodyNone">&mdash;   </td></tr>
+<td class="markdownTableBodyNone">OCI_NTO_CALL   </td><td class="markdownTableBodyNone">OCI_18_1   </td><td class="markdownTableBodyNone">ORA-03136   </td><td class="markdownTableBodyNone">Inbound connection timed out   </td><td class="markdownTableBodyNone">&mdash;   </td></tr>
 </table>
-<dl class="section warning"><dt>Warning</dt><dd>Returns FALSE without throwing any exception if the Oracle client does not support the given flag </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Returns FALSE without raising an exception if the Oracle client does not support the given flag.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#ab6423c3a50332ad7a46de77da2e02a6e">ocilib::Connection::SetTimeout()</a>.</p>
 
@@ -1395,7 +1396,7 @@ Oracle limits the size of these traces content:</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Returns the requested timeout value for OCI calls that require server round-trips to the given database. </p>
+<p>Return the requested timeout value for OCI calls that require server round-trips. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
@@ -1403,8 +1404,8 @@ Oracle limits the size of these traces content:</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>: See <a class="el" href="group___ocilib_c_api_connections.html#ga8b458bd78540d65eaca53f2d263ba835" title="Set a given timeout for OCI calls that require server round-trips to the given database.">OCI_SetTimeout()</a> for more information</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>The given timeout value if supported, otherwise 0 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_connections.html#ga8b458bd78540d65eaca53f2d263ba835" title="Set a given timeout for OCI calls that require server round-trips to the given database.">OCI_SetTimeout()</a> for possible values of the 'type' parameter.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The timeout value in milliseconds if supported, otherwise 0. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a6607849329f328582edbb2958ae651d6">ocilib::Connection::GetTimeout()</a>.</p>
 
@@ -1428,14 +1429,15 @@ Oracle limits the size of these traces content:</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the Oracle server database name of the connected database/service name. </p>
+<p>Return the Oracle server database name of the connected database. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. For previous versions, it returns NULL without throwing any exception. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This feature requires Oracle 10gR2 or later. For earlier versions, the function returns NULL without raising an exception.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The database name string, or NULL on failure or if not supported. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a848743ebe56fb2e357aac027f1a899ef">ocilib::Connection::GetDatabase()</a>.</p>
 
@@ -1459,14 +1461,15 @@ Oracle limits the size of these traces content:</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the Oracle server Instance name of the connected database/service name. </p>
+<p>Return the Oracle server instance name of the connected database. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. For previous versions, it returns NULL without throwing any exception. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This feature requires Oracle 10gR2 or later. For earlier versions, the function returns NULL without raising an exception.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The instance name string, or NULL on failure or if not supported. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a27f6fc0791aa2fceec0241f7540c096d">ocilib::Connection::GetInstance()</a>.</p>
 
@@ -1490,14 +1493,15 @@ Oracle limits the size of these traces content:</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the Oracle server service name of the connected database/service name. </p>
+<p>Return the Oracle server service name of the connected database. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. For previous versions, it returns NULL without throwing any exception. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This feature requires Oracle 10gR2 or later. For earlier versions, the function returns NULL without raising an exception.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The service name string, or NULL on failure or if not supported. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#af17f2428b851eb4b2b6e792152897e46">ocilib::Connection::GetService()</a>.</p>
 
@@ -1521,14 +1525,15 @@ Oracle limits the size of these traces content:</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the Oracle server machine name of the connected database/service name. </p>
+<p>Return the Oracle server machine name of the connected database. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. For previous versions, it returns NULL without throwing any exception. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This feature requires Oracle 10gR2 or later. For earlier versions, the function returns NULL without raising an exception.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The server machine name string, or NULL on failure or if not supported. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#ac174bc4ed3eb4cd88a4ea4bbf587b812">ocilib::Connection::GetServer()</a>.</p>
 
@@ -1552,14 +1557,15 @@ Oracle limits the size of these traces content:</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the Oracle server domain name of the connected database/service name. </p>
+<p>Return the Oracle server domain name of the connected database. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. For previous versions, it returns NULL without throwing any exception. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This feature requires Oracle 10gR2 or later. For earlier versions, the function returns NULL without raising an exception.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The domain name string, or NULL on failure or if not supported. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a1aa2ed92b41416313da7f9fe9ae7bd70">ocilib::Connection::GetDomain()</a>.</p>
 
@@ -1583,14 +1589,15 @@ Oracle limits the size of these traces content:</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the date and time (Timestamp) server instance start of the connected database/service name. </p>
+<p>Return the date and time (Timestamp) at which the server instance was started. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. For previous versions, it returns NULL without throwing any exception. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This feature requires Oracle 10gR2 or later. For earlier versions, the function returns NULL without raising an exception.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A timestamp handle representing the instance start time, or NULL on failure or if not supported. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a5098ef196d95503c77c5537ab987df04">ocilib::Connection::GetInstanceStartTime()</a>.</p>
 
@@ -1614,15 +1621,15 @@ Oracle limits the size of these traces content:</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Verify if the given connection support TAF events. </p>
+<p>Check if the given connection supports Transparent Application Failover (TAF) events. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Returns TRUE is the connection supports TAF event otherwise FALSE</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. For previous versions, it returns FALSE without throwing any exception. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This feature requires Oracle 10gR2 or later. For earlier versions, the function returns FALSE without raising an exception.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if the connection supports TAF events, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a823b6cc30418baae943fd29d2280418b">ocilib::Connection::IsTAFCapable()</a>.</p>
 
@@ -1660,13 +1667,12 @@ Oracle limits the size of these traces content:</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
-    <tr><td class="paramname">handler</td><td>- Pointer to TAF handler procedure</td></tr>
+    <tr><td class="paramname">handler</td><td>- Pointer to the TAF handler procedure (see POCI_TAF_HANDLER)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See POCI_TAF_HANDLER documentation for more details</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call is supported from Oracle 10gR2. For previous versions, it returns FALSE without throwing any exception.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This feature requires Oracle 10gR2 or later. For earlier versions, the function returns FALSE without raising an exception.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a6e83ffbf5d12d6fad2abc6c0ec72d5e7">ocilib::Connection::SetTAFHandler()</a>.</p>
 
@@ -1697,8 +1703,9 @@ Oracle limits the size of these traces content:</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Default value is 20 (value from Oracle Documentation)</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Requires Oracle Client 9.2 or above </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The default value is 20 (as documented by Oracle).</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Requires Oracle Client 9.2 or later.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The maximum number of cached statements. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#ae2ef54b87c0b95e370f4402bb6d8cd67">ocilib::Connection::GetStatementCacheSize()</a>.</p>
 
@@ -1736,12 +1743,12 @@ Oracle limits the size of these traces content:</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
-    <tr><td class="paramname">value</td><td>- maximum number of statements in the cache</td></tr>
+    <tr><td class="paramname">value</td><td>- Maximum number of statements in the cache</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Requires Oracle Client 9.2 or above</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Requires Oracle Client 9.2 or later.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a633a95c4ccba6b647df22c678db63cf5">ocilib::Connection::SetStatementCacheSize()</a>.</p>
 
@@ -1772,14 +1779,15 @@ Oracle limits the size of these traces content:</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Requires Oracle Client AND Server 11gR1 or above</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Prefetch size is:<ul>
-<li>number of bytes for BLOBs and BFILEs</li>
-<li>number of characters for CLOBs.</li>
+<dl class="section warning"><dt>Warning</dt><dd>Requires Oracle Client AND Server 11gR1 or later.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The prefetch size unit is:<ul>
+<li>Number of bytes for BLOBs and BFILEs.</li>
+<li>Number of characters for CLOBs.</li>
 </ul>
 </dd>
 <dd>
-Default is 0 (prefetching disabled) </dd></dl>
+The default value is 0 (prefetching disabled).</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The prefetch buffer size, or 0 if prefetching is disabled. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a1016afd9695b0e60df0bde47932d1b53">ocilib::Connection::GetDefaultLobPrefetchSize()</a>.</p>
 
@@ -1817,24 +1825,24 @@ Default is 0 (prefetching disabled) </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
-    <tr><td class="paramname">value</td><td>- default prefetch buffer size</td></tr>
+    <tr><td class="paramname">value</td><td>- Default prefetch buffer size</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>If parameter 'value':<ul>
-<li>is == 0, it disables prefetching for all LOBs fetched in the connection.</li>
-<li>is &gt; 0, it enables prefetching for all LOBs fetched in the connection and the given buffer size is used for prefetching LOBs</li>
+<li>Is 0, prefetching is disabled for all LOBs fetched in the connection.</li>
+<li>Is greater than 0, prefetching is enabled with the specified buffer size.</li>
 </ul>
 </dd>
 <dd>
-LOBs prefetching is disabled by default</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Requires Oracle Client AND Server 11gR1 or above.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Prefetch size is:<ul>
-<li>number of bytes for BLOBs and BFILEs</li>
-<li>number of characters for CLOBs.</li>
+LOB prefetching is disabled by default.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Requires Oracle Client AND Server 11gR1 or later.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The prefetch size unit is:<ul>
+<li>Number of bytes for BLOBs and BFILEs.</li>
+<li>Number of characters for CLOBs.</li>
 </ul>
 </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a7974876422e8ecd7f566091eb926313d">ocilib::Connection::SetDefaultLobPrefetchSize()</a>.</p>
 
@@ -1865,10 +1873,9 @@ LOBs prefetching is disabled by default</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Requires Oracle Client AND Server 12cR1 or above</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>the returned value is the same as the db parameter 'open_cursors' from server's parameter file</dd>
-<dd>
-Return 0 if the client and server version are &lt; 12cR1 </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Requires Oracle Client AND Server 12cR1 or later.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The returned value corresponds to the 'open_cursors' database parameter from the server's parameter file.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The maximum number of open cursors, or 0 if the client and server versions are earlier than 12cR1. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_connection.html#a2b142bdff73f7a55a6439f38343cea09">ocilib::Connection::GetMaxCursors()</a>.</p>
 
@@ -1880,7 +1887,7 @@ Return 0 if the client and server version are &lt; 12cR1 </dd></dl>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

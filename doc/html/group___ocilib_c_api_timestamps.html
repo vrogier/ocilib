@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,12 +100,12 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_timestamps.html',
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiDatetimes</p>
-<p>OCILIB encapsulates Oracle :</p>
+<p>OCILIB encapsulates Oracle:</p>
 <ul>
-<li>SQL timestamp data type within OCI_Timestamp structure</li>
-<li>SQL interval data type within OCI_Interval structure</li>
+<li>SQL timestamp data type within the OCI_Timestamp structure.</li>
+<li>SQL interval data type within the OCI_Interval structure.</li>
 </ul>
-<p>Basically, the OCI_Timestamp and OCI_Interval routines are wrappers around the Oracle OCIDatetime and OCIInterval APIs</p>
+<p>The OCI_Timestamp and OCI_Interval routines are wrappers around the Oracle OCIDatetime and OCIInterval APIs.</p>
 <dl class="section user"><dt>Examples</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">void</span> err_handler(<a class="code hl_typedef" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div>
@@ -149,9 +149,9 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_timestamps.html',
 <div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line">}</div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga51bd3b406fe1b1d1a2eceee3f02ebd47"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a></div><div class="ttdeci">struct OCI_Timestamp OCI_Timestamp</div><div class="ttdoc">Oracle internal timestamp representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00289">types.h:289</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gac15e42323f4e24403bb2ff5dce7e054c"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a></div><div class="ttdeci">struct OCI_Interval OCI_Interval</div><div class="ttdoc">Oracle internal interval representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00299">types.h:299</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_timestamps_html_ga08d1536ed8490af186dc4805e7c513ea"><div class="ttname"><a href="group___ocilib_c_api_timestamps.html#ga08d1536ed8490af186dc4805e7c513ea">OCI_IntervalCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Interval *OCI_API OCI_IntervalCreate(OCI_Connection *con, unsigned int type)</div><div class="ttdoc">Create a local interval object.</div></div>
@@ -161,7 +161,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_timestamps.html',
 <div class="ttc" id="agroup___ocilib_c_api_timestamps_html_gaab6a035d8c145cdb6b4601aa9d5b7b7b"><div class="ttname"><a href="group___ocilib_c_api_timestamps.html#gaab6a035d8c145cdb6b4601aa9d5b7b7b">OCI_TimestampCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Timestamp *OCI_API OCI_TimestampCreate(OCI_Connection *con, unsigned int type)</div><div class="ttdoc">Create a local Timestamp instance.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_timestamps_html_gac01e709a7c1de65021076e548256824d"><div class="ttname"><a href="group___ocilib_c_api_timestamps.html#gac01e709a7c1de65021076e548256824d">OCI_TimestampToText</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampToText(OCI_Timestamp *tmsp, const otext *fmt, int size, otext *str, int precision)</div><div class="ttdoc">Convert a timestamp value from the given timestamp handle to a string.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_timestamps_html_gad04bd55b34b2160030fad15526d9455e"><div class="ttname"><a href="group___ocilib_c_api_timestamps.html#gad04bd55b34b2160030fad15526d9455e">OCI_IntervalToText</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalToText(OCI_Interval *itv, int leading_prec, int fraction_prec, int size, otext *str)</div><div class="ttdoc">Convert an interval value from the given interval handle to a string.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_timestamps_html_gaf6d3255e82c8ebade46d148ebe30149c"><div class="ttname"><a href="group___ocilib_c_api_timestamps.html#gaf6d3255e82c8ebade46d148ebe30149c">OCI_IntervalSetDaySecond</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSetDaySecond(OCI_Interval *itv, int day, int hour, int min, int sec, int fsec)</div><div class="ttdoc">Set the day / time portion if the given interval handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_timestamps_html_gaf6d3255e82c8ebade46d148ebe30149c"><div class="ttname"><a href="group___ocilib_c_api_timestamps.html#gaf6d3255e82c8ebade46d148ebe30149c">OCI_IntervalSetDaySecond</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSetDaySecond(OCI_Interval *itv, int day, int hour, int min, int sec, int fsec)</div><div class="ttdoc">Set the day/time portion of the given Interval handle.</div></div>
 </div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -173,7 +173,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga9b011cd5ca5554b605c8275f9327c1bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an OCI_Timestamp handle.  <br /></td></tr>
 <tr class="separator:ga9b011cd5ca5554b605c8275f9327c1bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5d69230ebee7efabcce762ba187ed443"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga5d69230ebee7efabcce762ba187ed443">OCI_TimestampArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, unsigned int nbelem)</td></tr>
-<tr class="memdesc:ga5d69230ebee7efabcce762ba187ed443"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of timestamp object.  <br /></td></tr>
+<tr class="memdesc:ga5d69230ebee7efabcce762ba187ed443"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of Timestamp objects.  <br /></td></tr>
 <tr class="separator:ga5d69230ebee7efabcce762ba187ed443"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4116709906a3ace4d92cb6405c6d4c06"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga4116709906a3ace4d92cb6405c6d4c06">OCI_TimestampArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a> **tmsps)</td></tr>
 <tr class="memdesc:ga4116709906a3ace4d92cb6405c6d4c06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of timestamp objects.  <br /></td></tr>
@@ -209,7 +209,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga24fe49fb1c4f3953b6197450053ffc9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the time portion from a timestamp handle.  <br /></td></tr>
 <tr class="separator:ga24fe49fb1c4f3953b6197450053ffc9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6303fe8fc258f2bf15a773184f251609"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga6303fe8fc258f2bf15a773184f251609">OCI_TimestampGetDateTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a> *tmsp, int *year, int *month, int *day, int *hour, int *min, int *sec, int *fsec)</td></tr>
-<tr class="memdesc:ga6303fe8fc258f2bf15a773184f251609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the date and time parts from a date handle.  <br /></td></tr>
+<tr class="memdesc:ga6303fe8fc258f2bf15a773184f251609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the date and time parts from a timestamp handle.  <br /></td></tr>
 <tr class="separator:ga6303fe8fc258f2bf15a773184f251609"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga47569baca7da9be83cc9b843c5ccc173"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga47569baca7da9be83cc9b843c5ccc173">OCI_TimestampGetTimeZoneName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a> *tmsp, int size, otext *str)</td></tr>
 <tr class="memdesc:ga47569baca7da9be83cc9b843c5ccc173"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the time zone name of a timestamp handle.  <br /></td></tr>
@@ -230,10 +230,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:gaba3e1f5ec3967cb41a68afff6e86a138"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the system current date and time as a timestamp value with time zone into the timestamp handle.  <br /></td></tr>
 <tr class="separator:gaba3e1f5ec3967cb41a68afff6e86a138"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac769ccce451473048a7b46baa0f01c2b"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#gac769ccce451473048a7b46baa0f01c2b">OCI_TimestampToCTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a> *tmsp, struct tm *ptm, time_t *pt)</td></tr>
-<tr class="memdesc:gac769ccce451473048a7b46baa0f01c2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Affect an OCI_Timestamp handle value to ISO C time data types.  <br /></td></tr>
+<tr class="memdesc:gac769ccce451473048a7b46baa0f01c2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert an OCI_Timestamp handle value to ISO C time data types.  <br /></td></tr>
 <tr class="separator:gac769ccce451473048a7b46baa0f01c2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab77bb9993a59ddb2a30cc01eae1713ad"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#gab77bb9993a59ddb2a30cc01eae1713ad">OCI_TimestampFromCTime</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga51bd3b406fe1b1d1a2eceee3f02ebd47">OCI_Timestamp</a> *tmsp, struct tm *ptm, time_t t)</td></tr>
-<tr class="memdesc:gab77bb9993a59ddb2a30cc01eae1713ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Affect ISO C time data types values to an OCI_Timestamp handle.  <br /></td></tr>
+<tr class="memdesc:gab77bb9993a59ddb2a30cc01eae1713ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert ISO C time data type values to an OCI_Timestamp handle.  <br /></td></tr>
 <tr class="separator:gab77bb9993a59ddb2a30cc01eae1713ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga08d1536ed8490af186dc4805e7c513ea"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga08d1536ed8490af186dc4805e7c513ea">OCI_IntervalCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type)</td></tr>
 <tr class="memdesc:ga08d1536ed8490af186dc4805e7c513ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a local interval object.  <br /></td></tr>
@@ -242,7 +242,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga102191691463260b1f5b9660f3c5112f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an OCI_Interval handle.  <br /></td></tr>
 <tr class="separator:ga102191691463260b1f5b9660f3c5112f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafc89fce43f93d38b7e5195a7b1ada9de"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#gafc89fce43f93d38b7e5195a7b1ada9de">OCI_IntervalArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int type, unsigned int nbelem)</td></tr>
-<tr class="memdesc:gafc89fce43f93d38b7e5195a7b1ada9de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of Interval object.  <br /></td></tr>
+<tr class="memdesc:gafc89fce43f93d38b7e5195a7b1ada9de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of Interval objects.  <br /></td></tr>
 <tr class="separator:gafc89fce43f93d38b7e5195a7b1ada9de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8bafedc40871bfceab52145b033ce0c2"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga8bafedc40871bfceab52145b033ce0c2">OCI_IntervalArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> **itvs)</td></tr>
 <tr class="memdesc:ga8bafedc40871bfceab52145b033ce0c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of Interval objects.  <br /></td></tr>
@@ -251,7 +251,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:gaa49359423ee94f354172966ca0861055"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of the given Interval object.  <br /></td></tr>
 <tr class="separator:gaa49359423ee94f354172966ca0861055"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4284e812e2333074c22592b843f4e8cc"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga4284e812e2333074c22592b843f4e8cc">OCI_IntervalAssign</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv, <a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv_src)</td></tr>
-<tr class="memdesc:ga4284e812e2333074c22592b843f4e8cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign the value of a interval handle to another one.  <br /></td></tr>
+<tr class="memdesc:ga4284e812e2333074c22592b843f4e8cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign the value of an Interval handle to another one.  <br /></td></tr>
 <tr class="separator:ga4284e812e2333074c22592b843f4e8cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga11efcc1b3c7c3dbe59edf7c2ffbb8fcf"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga11efcc1b3c7c3dbe59edf7c2ffbb8fcf">OCI_IntervalCheck</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv)</td></tr>
 <tr class="memdesc:ga11efcc1b3c7c3dbe59edf7c2ffbb8fcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given interval is valid.  <br /></td></tr>
@@ -275,13 +275,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga2996b42fd3ef220a1657c76b2d3b7a7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the year / month portion of an interval handle.  <br /></td></tr>
 <tr class="separator:ga2996b42fd3ef220a1657c76b2d3b7a7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf6d3255e82c8ebade46d148ebe30149c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#gaf6d3255e82c8ebade46d148ebe30149c">OCI_IntervalSetDaySecond</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv, int day, int hour, int min, int sec, int fsec)</td></tr>
-<tr class="memdesc:gaf6d3255e82c8ebade46d148ebe30149c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the day / time portion if the given interval handle.  <br /></td></tr>
+<tr class="memdesc:gaf6d3255e82c8ebade46d148ebe30149c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the day/time portion of the given Interval handle.  <br /></td></tr>
 <tr class="separator:gaf6d3255e82c8ebade46d148ebe30149c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga69590b0b89bfbad25783914ad3c989ae"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga69590b0b89bfbad25783914ad3c989ae">OCI_IntervalSetYearMonth</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv, int year, int month)</td></tr>
-<tr class="memdesc:ga69590b0b89bfbad25783914ad3c989ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the year / month portion if the given Interval handle.  <br /></td></tr>
+<tr class="memdesc:ga69590b0b89bfbad25783914ad3c989ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the year/month portion of the given Interval handle.  <br /></td></tr>
 <tr class="separator:ga69590b0b89bfbad25783914ad3c989ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga06d3b7ea16d079506200d4aab2b137d9"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga06d3b7ea16d079506200d4aab2b137d9">OCI_IntervalAdd</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv, <a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv2)</td></tr>
-<tr class="memdesc:ga06d3b7ea16d079506200d4aab2b137d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds an interval handle value to another.  <br /></td></tr>
+<tr class="memdesc:ga06d3b7ea16d079506200d4aab2b137d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an Interval handle value to another.  <br /></td></tr>
 <tr class="separator:ga06d3b7ea16d079506200d4aab2b137d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2d8c4bf2bff6509f98b68a2160ee096d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_timestamps.html#ga2d8c4bf2bff6509f98b68a2160ee096d">OCI_IntervalSubtract</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv, <a class="el" href="group___ocilib_c_api_datatypes.html#gac15e42323f4e24403bb2ff5dce7e054c">OCI_Interval</a> *itv2)</td></tr>
 <tr class="memdesc:ga2d8c4bf2bff6509f98b68a2160ee096d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtract an interval handle value from another.  <br /></td></tr>
@@ -324,15 +324,15 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>From version 2.5.0, parameter 'con' can be NULL in order to manipulate timestamps independently from database connections</dd>
+<dl class="section note"><dt>Note</dt><dd>From version 2.5.0, parameter 'con' can be NULL in order to manipulate timestamps independently from database connections.</dd>
 <dd>
-Timestamp type can be :</dd></dl>
+Timestamp type can be:</dd></dl>
 <ul>
-<li>OCI_TIMESTAMP : timestamp</li>
-<li>OCI_TIMESTAMP_TZ : timestamp with time zone</li>
-<li>OCI_TIMESTAMP_LTZ : timestamp with local time zone</li>
+<li>OCI_TIMESTAMP : Timestamp.</li>
+<li>OCI_TIMESTAMP_TZ : Timestamp with time zone.</li>
+<li>OCI_TIMESTAMP_LTZ : Timestamp with local time zone.</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>Return the Timestamp handle on success otherwise NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Timestamp handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#ae397d7d53e2cc816f17c1049b3376277">ocilib::Timestamp::Timestamp()</a>.</p>
 
@@ -363,8 +363,8 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only Timestamp created with <a class="el" href="group___ocilib_c_api_timestamps.html#gaab6a035d8c145cdb6b4601aa9d5b7b7b" title="Create a local Timestamp instance.">OCI_TimestampCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_timestamps.html#ga102191691463260b1f5b9660f3c5112f" title="Free an OCI_Interval handle.">OCI_IntervalFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only Timestamps created with <a class="el" href="group___ocilib_c_api_timestamps.html#gaab6a035d8c145cdb6b4601aa9d5b7b7b" title="Create a local Timestamp instance.">OCI_TimestampCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_timestamps.html#ga9b011cd5ca5554b605c8275f9327c1bf" title="Free an OCI_Timestamp handle.">OCI_TimestampFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -402,17 +402,17 @@ Timestamp type can be :</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Create an array of timestamp object. </p>
+<p>Create an array of Timestamp objects. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
     <tr><td class="paramname">type</td><td>- Timestamp type </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- number of elements in the array</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_timestamps.html#gaab6a035d8c145cdb6b4601aa9d5b7b7b" title="Create a local Timestamp instance.">OCI_TimestampCreate()</a> for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the timestamp handle array on success otherwise NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_timestamps.html#gaab6a035d8c145cdb6b4601aa9d5b7b7b" title="Create a local Timestamp instance.">OCI_TimestampCreate()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Timestamp handle array on success, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -441,8 +441,8 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only arrays of timestamp created with <a class="el" href="group___ocilib_c_api_timestamps.html#ga5d69230ebee7efabcce762ba187ed443" title="Create an array of timestamp object.">OCI_TimestampArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_timestamps.html#ga4116709906a3ace4d92cb6405c6d4c06" title="Free an array of timestamp objects.">OCI_TimestampArrayFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only arrays of timestamps created with <a class="el" href="group___ocilib_c_api_timestamps.html#ga5d69230ebee7efabcce762ba187ed443" title="Create an array of Timestamp objects.">OCI_TimestampArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_timestamps.html#ga4116709906a3ace4d92cb6405c6d4c06" title="Free an array of timestamp objects.">OCI_TimestampArrayFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -471,8 +471,8 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>For possible values, see <a class="el" href="group___ocilib_c_api_timestamps.html#gaab6a035d8c145cdb6b4601aa9d5b7b7b" title="Create a local Timestamp instance.">OCI_TimestampCreate()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Object type or OCI_UNKNOWN the input handle is NULL </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For possible values, see <a class="el" href="group___ocilib_c_api_timestamps.html#gaab6a035d8c145cdb6b4601aa9d5b7b7b" title="Create a local Timestamp instance.">OCI_TimestampCreate()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Timestamp type, or OCI_UNKNOWN if the input handle is NULL. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#a8b8223b81bc27892f3d353a12febc459">ocilib::Timestamp::GetType()</a>.</p>
 
@@ -514,8 +514,8 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Both timestamp handles must be of the same type</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Both timestamp handles must be of the same type.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#aa906706a29495b750a78e21a6416ca1b">ocilib::Timestamp::Clone()</a>, and <a class="el" href="classocilib_1_1_timestamp.html#a4c40d9314fdcdb5a86a0f8bea7c4ba99">ocilib::Timestamp::operator=()</a>.</p>
 
@@ -547,8 +547,8 @@ Timestamp type can be :</dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><ul>
-<li>Zero if the timestamp value is valid</li>
-<li>Any other value means the timestamp value is invalid </li>
+<li>Zero if the timestamp value is valid.</li>
+<li>Any other value means the timestamp value is invalid. </li>
 </ul>
 </dd></dl>
 
@@ -678,15 +678,15 @@ Timestamp type can be :</dd></dl>
     <tr><td class="paramname">year</td><td>- Year value </td></tr>
     <tr><td class="paramname">month</td><td>- Month value </td></tr>
     <tr><td class="paramname">day</td><td>- Day value </td></tr>
-    <tr><td class="paramname">hour</td><td>- hour value </td></tr>
-    <tr><td class="paramname">min</td><td>- minutes value </td></tr>
-    <tr><td class="paramname">sec</td><td>- seconds value </td></tr>
-    <tr><td class="paramname">fsec</td><td>- fractional part of seconds value </td></tr>
-    <tr><td class="paramname">time_zone</td><td>- name of a time zone to use [optional]</td></tr>
+    <tr><td class="paramname">hour</td><td>- Hour value </td></tr>
+    <tr><td class="paramname">min</td><td>- Minutes value </td></tr>
+    <tr><td class="paramname">sec</td><td>- Seconds value </td></tr>
+    <tr><td class="paramname">fsec</td><td>- Fractional part of seconds value </td></tr>
+    <tr><td class="paramname">time_zone</td><td>- Name of a time zone to use (optional)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#a96e0e68871acbe91a926d6ef84422492">ocilib::Timestamp::SetDateTime()</a>.</p>
 
@@ -728,7 +728,7 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#a4d62cd5546ed652ae4b04533f243f0a9">ocilib::Timestamp::Convert()</a>.</p>
 
@@ -777,7 +777,7 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#a59e2d47ed21416bae572dddebc1d64fd">ocilib::Timestamp::FromString()</a>.</p>
 
@@ -832,7 +832,7 @@ Timestamp type can be :</dd></dl>
 <p>Convert a timestamp value from the given timestamp handle to a string. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">tmsp</td><td>- source Timestamp handle </td></tr>
+    <tr><td class="paramname">tmsp</td><td>- Source Timestamp handle </td></tr>
     <tr><td class="paramname">fmt</td><td>- Timestamp format </td></tr>
     <tr><td class="paramname">size</td><td>- Destination string size in characters </td></tr>
     <tr><td class="paramname">str</td><td>- Destination date string </td></tr>
@@ -840,7 +840,7 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#a351c6028bbbffcb4225eb079ad01001c">ocilib::Timestamp::ToString()</a>.</p>
 
@@ -896,7 +896,7 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#a4546de13f3e26546f77f8504ffaec897">ocilib::Timestamp::GetDate()</a>.</p>
 
@@ -959,7 +959,7 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#afdd5a82624344a4312b3927043af58a5">ocilib::Timestamp::GetTime()</a>.</p>
 
@@ -1029,10 +1029,10 @@ Timestamp type can be :</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Extract the date and time parts from a date handle. </p>
+<p>Extract the date and time parts from a timestamp handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">tmsp</td><td>- Date handle </td></tr>
+    <tr><td class="paramname">tmsp</td><td>- Timestamp handle </td></tr>
     <tr><td class="paramname">year</td><td>- Place holder for year value </td></tr>
     <tr><td class="paramname">month</td><td>- Place holder for month value </td></tr>
     <tr><td class="paramname">day</td><td>- Place holder for day value </td></tr>
@@ -1043,7 +1043,7 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#a22226812ac798821f9f384b688398dfd">ocilib::Timestamp::GetDateTime()</a>.</p>
 
@@ -1092,7 +1092,7 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#aa6d711aade2d064882f5c50fe29f5b27">ocilib::Timestamp::GetTimeZone()</a>.</p>
 
@@ -1141,7 +1141,7 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#accab4e5784ec77d07b961cf9731b4e25">ocilib::Timestamp::GetTimeZoneOffset()</a>.</p>
 
@@ -1183,7 +1183,7 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#ab9ace45cf7bd568178b5afadf159fb5f">ocilib::Timestamp::operator+=()</a>.</p>
 
@@ -1225,7 +1225,7 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#aea8c09eef2dd09305e9df4161b9672f6">ocilib::Timestamp::operator-=()</a>.</p>
 
@@ -1275,7 +1275,7 @@ Timestamp type can be :</dd></dl>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>The function acts like tmsp - tmsp2 = itv</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#a459393b361378de2fe1c77c9af469cd8">ocilib::Timestamp::operator-()</a>, and <a class="el" href="classocilib_1_1_timestamp.html#aee56ee27d7b8c3f694ceb53346caac6a">ocilib::Timestamp::Substract()</a>.</p>
 
@@ -1306,7 +1306,7 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_timestamp.html#ab4e620bbb5f5843447254da1505dfbc1">ocilib::Timestamp::SysTimestamp()</a>.</p>
 
@@ -1346,7 +1346,7 @@ Timestamp type can be :</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Affect an OCI_Timestamp handle value to ISO C time data types. </p>
+<p>Convert an OCI_Timestamp handle value to ISO C time data types. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tmsp</td><td>- Timestamp handle </td></tr>
@@ -1355,8 +1355,8 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Both parameters 'ptm' and 'p' are optional but one of them has to be provided.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Both parameters 'ptm' and 'pt' are optional but one of them has to be provided.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1394,17 +1394,17 @@ Timestamp type can be :</dd></dl>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Affect ISO C time data types values to an OCI_Timestamp handle. </p>
+<p>Convert ISO C time data type values to an OCI_Timestamp handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tmsp</td><td>- Timestamp handle </td></tr>
-    <tr><td class="paramname">ptm</td><td>- Pointer to a structure tm that hold the date/time value </td></tr>
-    <tr><td class="paramname">t</td><td>- Value (time_t) that hold the date/time in the time_t format</td></tr>
+    <tr><td class="paramname">ptm</td><td>- Pointer to a structure tm that holds the date/time value </td></tr>
+    <tr><td class="paramname">t</td><td>- Value (time_t) that holds the date/time in the time_t format</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Both parameters 'ptm' and 'p' are optional but one of them has to be provided. If 'ptm' is not null, its value is affected to the OCI_Timestamp handle, otherwise the value of 't' is used.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Both parameters 'ptm' and 't' are optional but one of them has to be provided. If 'ptm' is not null, its value is assigned to the OCI_Timestamp handle, otherwise the value of 't' is used.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1444,14 +1444,14 @@ Timestamp type can be :</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>From version 2.5.0, parameter 'con' can be NULL in order to manipulate intervals independently from database connections</dd>
+<dl class="section note"><dt>Note</dt><dd>From version 2.5.0, parameter 'con' can be NULL in order to manipulate intervals independently from database connections.</dd>
 <dd>
-Interval type can be :<ul>
-<li>OCI_INTERVAL_YM : year / month interval</li>
-<li>OCI_INTERVAL_DS : date/ time interval</li>
+Interval type can be:<ul>
+<li>OCI_INTERVAL_YM : Year/month interval.</li>
+<li>OCI_INTERVAL_DS : Day/time interval.</li>
 </ul>
 </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the Interval handle on success otherwise NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Interval handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#a2fce8e46fd534247603bd606ac6f0994">ocilib::Interval::Interval()</a>.</p>
 
@@ -1482,8 +1482,8 @@ Interval type can be :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only Intervals created with <a class="el" href="group___ocilib_c_api_timestamps.html#ga08d1536ed8490af186dc4805e7c513ea" title="Create a local interval object.">OCI_IntervalCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_timestamps.html#ga102191691463260b1f5b9660f3c5112f" title="Free an OCI_Interval handle.">OCI_IntervalFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only Intervals created with <a class="el" href="group___ocilib_c_api_timestamps.html#ga08d1536ed8490af186dc4805e7c513ea" title="Create a local interval object.">OCI_IntervalCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_timestamps.html#ga102191691463260b1f5b9660f3c5112f" title="Free an OCI_Interval handle.">OCI_IntervalFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1521,17 +1521,17 @@ Interval type can be :<ul>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Create an array of Interval object. </p>
+<p>Create an array of Interval objects. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
     <tr><td class="paramname">type</td><td>- Type of Interval </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- number of elements in the array</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_timestamps.html#ga08d1536ed8490af186dc4805e7c513ea" title="Create a local interval object.">OCI_IntervalCreate()</a> for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the Interval handle array on success otherwise NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_timestamps.html#ga08d1536ed8490af186dc4805e7c513ea" title="Create a local interval object.">OCI_IntervalCreate()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Interval handle array on success, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -1560,8 +1560,8 @@ Interval type can be :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only arrays of Interval created with <a class="el" href="group___ocilib_c_api_timestamps.html#gafc89fce43f93d38b7e5195a7b1ada9de" title="Create an array of Interval object.">OCI_IntervalArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_timestamps.html#ga8bafedc40871bfceab52145b033ce0c2" title="Free an array of Interval objects.">OCI_IntervalArrayFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only arrays of Intervals created with <a class="el" href="group___ocilib_c_api_timestamps.html#gafc89fce43f93d38b7e5195a7b1ada9de" title="Create an array of Interval objects.">OCI_IntervalArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_timestamps.html#ga8bafedc40871bfceab52145b033ce0c2" title="Free an array of Interval objects.">OCI_IntervalArrayFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1590,8 +1590,8 @@ Interval type can be :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>For possible values, see <a class="el" href="group___ocilib_c_api_timestamps.html#ga08d1536ed8490af186dc4805e7c513ea" title="Create a local interval object.">OCI_IntervalCreate()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Object type or OCI_UNKNOWN the input handle is NULL </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For possible values, see <a class="el" href="group___ocilib_c_api_timestamps.html#ga08d1536ed8490af186dc4805e7c513ea" title="Create a local interval object.">OCI_IntervalCreate()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Interval type, or OCI_UNKNOWN if the input handle is NULL. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#afdbefce67252da1ed8d96ef0d4906be6">ocilib::Interval::GetType()</a>.</p>
 
@@ -1625,15 +1625,15 @@ Interval type can be :<ul>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Assign the value of a interval handle to another one. </p>
+<p>Assign the value of an Interval handle to another one. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">itv</td><td>- Destination interval handle </td></tr>
-    <tr><td class="paramname">itv_src</td><td>- Source interval handle</td></tr>
+    <tr><td class="paramname">itv</td><td>- Destination Interval handle </td></tr>
+    <tr><td class="paramname">itv_src</td><td>- Source Interval handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#ae6f8d79b4b91733990aa3d0e821c8283">ocilib::Interval::Clone()</a>, and <a class="el" href="classocilib_1_1_interval.html#a8ebd4a185efc5de1870b1434b1377821">ocilib::Interval::operator=()</a>.</p>
 
@@ -1665,8 +1665,8 @@ Interval type can be :<ul>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><ul>
-<li>Zero if the interval value is valid</li>
-<li>Any other value means the interval value is invalid </li>
+<li>Zero if the interval value is valid.</li>
+<li>Any other value means the interval value is invalid. </li>
 </ul>
 </dd></dl>
 
@@ -1755,7 +1755,7 @@ Interval type can be :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#af81dd9b7ee637dd4dbd6926ea0a8eff9">ocilib::Interval::FromString()</a>.</p>
 
@@ -1810,7 +1810,7 @@ Interval type can be :<ul>
 <p>Convert an interval value from the given interval handle to a string. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">itv</td><td>- source Interval handle </td></tr>
+    <tr><td class="paramname">itv</td><td>- Source Interval handle </td></tr>
     <tr><td class="paramname">leading_prec</td><td>- Precision of the leading part </td></tr>
     <tr><td class="paramname">fraction_prec</td><td>- Precision of the fractional part </td></tr>
     <tr><td class="paramname">size</td><td>- Destination string size in characters </td></tr>
@@ -1818,7 +1818,7 @@ Interval type can be :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#ad5b8c885efcdd33ecc8f20592b0aac77">ocilib::Interval::ToString()</a>.</p>
 
@@ -1860,7 +1860,7 @@ Interval type can be :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#ac678c97f4b51f284e5fcccc924f427c5">ocilib::Interval::UpdateTimeZone()</a>.</p>
 
@@ -1930,7 +1930,7 @@ Interval type can be :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#a26dddf05b2f3c45f73e495229b95d39b">ocilib::Interval::GetDaySecond()</a>.</p>
 
@@ -1979,7 +1979,7 @@ Interval type can be :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#acbd6c432506b1b2a74897fb6c057c410">ocilib::Interval::GetYearMonth()</a>.</p>
 
@@ -2037,11 +2037,11 @@ Interval type can be :<ul>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set the day / time portion if the given interval handle. </p>
+<p>Set the day/time portion of the given Interval handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">itv</td><td>- Interval handle </td></tr>
-    <tr><td class="paramname">day</td><td>- day value </td></tr>
+    <tr><td class="paramname">day</td><td>- Day value </td></tr>
     <tr><td class="paramname">hour</td><td>- Hour value </td></tr>
     <tr><td class="paramname">min</td><td>- Minute value </td></tr>
     <tr><td class="paramname">sec</td><td>- Second value </td></tr>
@@ -2049,7 +2049,7 @@ Interval type can be :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#aeba2bc913925fe695ba6423de677d63d">ocilib::Interval::SetDaySecond()</a>.</p>
 
@@ -2089,7 +2089,7 @@ Interval type can be :<ul>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Set the year / month portion if the given Interval handle. </p>
+<p>Set the year/month portion of the given Interval handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">itv</td><td>- Interval handle </td></tr>
@@ -2098,7 +2098,7 @@ Interval type can be :<ul>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#ad4bae20d7e87eb57526dab3d4303c6de">ocilib::Interval::SetYearMonth()</a>.</p>
 
@@ -2132,15 +2132,15 @@ Interval type can be :<ul>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Adds an interval handle value to another. </p>
+<p>Add an Interval handle value to another. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">itv</td><td>- Interval handle from witch to add </td></tr>
+    <tr><td class="paramname">itv</td><td>- Destination Interval handle </td></tr>
     <tr><td class="paramname">itv2</td><td>- Interval handle to add</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#a0d543fb59b6ab3b23a4b48d9b48c6e65">ocilib::Interval::operator+=()</a>.</p>
 
@@ -2177,12 +2177,12 @@ Interval type can be :<ul>
 <p>Subtract an interval handle value from another. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">itv</td><td>- Interval handle from witch to remove </td></tr>
-    <tr><td class="paramname">itv2</td><td>- Interval handle to remove</td></tr>
+    <tr><td class="paramname">itv</td><td>- Destination Interval handle </td></tr>
+    <tr><td class="paramname">itv2</td><td>- Interval handle to subtract</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_interval.html#ac92ddd1c7e219f1d88af4abc8e58d43f">ocilib::Interval::operator-=()</a>.</p>
 
@@ -2194,7 +2194,7 @@ Interval type can be :<ul>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

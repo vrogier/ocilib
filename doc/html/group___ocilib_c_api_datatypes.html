@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -195,6 +195,9 @@ Typedefs</h2></td></tr>
 <tr class="memitem:ga14291b3c4b2b3ab1e3d5efc108251e22"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="group___ocilib_c_api_datatypes.html#ga14291b3c4b2b3ab1e3d5efc108251e22">OCI_XmlType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datatypes.html#ga14291b3c4b2b3ab1e3d5efc108251e22">OCI_XmlType</a></td></tr>
 <tr class="memdesc:ga14291b3c4b2b3ab1e3d5efc108251e22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Oracle XMLTYPE type representation.  <br /></td></tr>
 <tr class="separator:ga14291b3c4b2b3ab1e3d5efc108251e22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaffb026a0c44dfcf37f6477ecc1ba5ac9"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a></td></tr>
+<tr class="memdesc:gaffb026a0c44dfcf37f6477ecc1ba5ac9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Oracle VECTOR type representation.  <br /></td></tr>
+<tr class="separator:gaffb026a0c44dfcf37f6477ecc1ba5ac9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad33099e82262f1f484c19283d5f812c6"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a></td></tr>
 <tr class="memdesc:gad33099e82262f1f484c19283d5f812c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type info metadata handle.  <br /></td></tr>
 <tr class="separator:gad33099e82262f1f484c19283d5f812c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -749,6 +752,26 @@ Typedefs</h2></td></tr>
 
 </div>
 </div>
+<a id="gaffb026a0c44dfcf37f6477ecc1ba5ac9" name="gaffb026a0c44dfcf37f6477ecc1ba5ac9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaffb026a0c44dfcf37f6477ecc1ba5ac9">&#9670;&#160;</a></span>OCI_Vector</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;types.h&gt;</code></p>
+
+<p>Oracle VECTOR type representation. </p>
+
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00376">376</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+
+</div>
+</div>
 <a id="gad33099e82262f1f484c19283d5f812c6" name="gad33099e82262f1f484c19283d5f812c6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gad33099e82262f1f484c19283d5f812c6">&#9670;&#160;</a></span>OCI_TypeInfo</h2>
 
@@ -766,7 +789,7 @@ Typedefs</h2></td></tr>
 <p>Type info metadata handle. </p>
 <p>Type info meta data handle.</p>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00376">376</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00386">386</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -786,7 +809,7 @@ Typedefs</h2></td></tr>
 
 <p>OCILIB implementation of hash tables. </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00386">386</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00396">396</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -807,7 +830,7 @@ Typedefs</h2></td></tr>
 <p>Encapsulates an Oracle or OCILIB exception. </p>
 <p>The error object is used to raise internal or oracle errors. When an error occurs, if the application has provided an error handler, an error object is constructed and passed to the handler </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00400">400</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00410">410</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -827,7 +850,7 @@ Typedefs</h2></td></tr>
 
 <p>OCILIB encapsulation of OCI mutexes. </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00410">410</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00420">420</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -847,7 +870,7 @@ Typedefs</h2></td></tr>
 
 <p>OCILIB encapsulation of OCI Threads. </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00420">420</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00430">430</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -867,7 +890,7 @@ Typedefs</h2></td></tr>
 
 <p>OCILIB encapsulation of OCI Direct Path handle. </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00430">430</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00440">440</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -887,7 +910,7 @@ Typedefs</h2></td></tr>
 
 <p>OCILIB encapsulation of Oracle DCN notification. </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00440">440</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00450">450</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -907,7 +930,7 @@ Typedefs</h2></td></tr>
 
 <p>OCILIB encapsulation of Oracle DCN event. </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00450">450</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00460">460</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -927,7 +950,7 @@ Typedefs</h2></td></tr>
 
 <p>OCILIB encapsulation of A/Q message. </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00460">460</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00470">470</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -947,7 +970,7 @@ Typedefs</h2></td></tr>
 
 <p>OCILIB encapsulation of A/Q Agent. </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00470">470</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00480">480</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -967,7 +990,7 @@ Typedefs</h2></td></tr>
 
 <p>OCILIB encapsulation of A/Q dequeuing operations. </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00480">480</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00490">490</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -987,7 +1010,7 @@ Typedefs</h2></td></tr>
 
 <p>OCILIB encapsulation of A/Q enqueuing operations. </p>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00490">490</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00500">500</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -1013,7 +1036,7 @@ Typedefs</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00502">502</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00512">512</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -1040,7 +1063,7 @@ Typedefs</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00518">518</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00528">528</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -1066,7 +1089,7 @@ Typedefs</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00534">534</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00544">544</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -1092,7 +1115,7 @@ Typedefs</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00549">549</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00559">559</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -1118,7 +1141,7 @@ Typedefs</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00564">564</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00574">574</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -1166,7 +1189,7 @@ Possible values for parameter 'event' :<ul>
 </ul>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00600">600</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00610">610</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -1213,7 +1236,7 @@ Possible values for parameter 'event' :<ul>
 </ul>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00638">638</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="types_8h_source.html#l00648">648</a> of file <a class="el" href="types_8h_source.html">types.h</a>.</p>
 
 </div>
 </div>
@@ -1297,7 +1320,7 @@ Possible values for parameter 'event' :<ul>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:10 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

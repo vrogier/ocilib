@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -113,8 +113,8 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_user_types.html',
 <li>create a local OCI_Ref handle.</li>
 <li>register an OCI_Ref handle for a 'returning into' clause.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>See Oracle Database SQL Language Reference for more details about REF data type</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Prior to v3.5.0, OCILIB relied on some OCI routines to set/get objects attributes. these OCI calls had known bugs in Unicode mode that has been fixed in Oracle 11gR2. From v3.5.0, OCILIB directly sets objects attributes and thus OCILIB objects can now be used in Unicode mode.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See Oracle Database SQL Language Reference for more details about REF data type.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Prior to v3.5.0, OCILIB relied on some OCI routines to set/get objects attributes. These OCI calls had known bugs in Unicode mode that were fixed in Oracle 11gR2. From v3.5.0, OCILIB directly sets objects attributes and thus OCILIB objects can now be used in Unicode mode.</dd></dl>
 <dl class="section user"><dt>Example : Inserting a local object into a table</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">/* requires script demo/object.sql */</span></div>
@@ -188,21 +188,21 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_user_types.html',
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga270329793bf4735351b6007bc20d41ae"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a></div><div class="ttdeci">struct OCI_Object OCI_Object</div><div class="ttdoc">Oracle Named types representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00309">types.h:309</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4b016f1bd7de508b1a919e34b12aa83d"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a></div><div class="ttdeci">struct OCI_Statement OCI_Statement</div><div class="ttdoc">Oracle SQL or PL/SQL statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00136">types.h:136</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga549efec5df4c0825db908a5ceb9ab614"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a></div><div class="ttdeci">struct OCI_Date OCI_Date</div><div class="ttdoc">Oracle internal date representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00279">types.h:279</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gae0c7aa9c507975d21ca6c261081ba753"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a></div><div class="ttdeci">struct OCI_Resultset OCI_Resultset</div><div class="ttdoc">Collection of output columns from a select statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00163">types.h:163</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datetimes_html_ga26123a85d5b36fead616acffbf5ef145"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#ga26123a85d5b36fead616acffbf5ef145">OCI_DateCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Date *OCI_API OCI_DateCreate(OCI_Connection *con)</div><div class="ttdoc">Create a local date object.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datetimes_html_gae73613cf6173243848ddfd3295b448c4"><div class="ttname"><a href="group___ocilib_c_api_datetimes.html#gae73613cf6173243848ddfd3295b448c4">OCI_DateSysDate</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_DateSysDate(OCI_Date *date)</div><div class="ttdoc">Return the current system date/time into the date handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the resultset handle from an executed statement.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gafa5d1eb1b7d0393327fc2e081a74f589"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gafa5d1eb1b7d0393327fc2e081a74f589">OCI_GetObject</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Object *OCI_API OCI_GetObject(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current Object value of the column at the given index in the resultset.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the result set handle from an executed statement.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gafa5d1eb1b7d0393327fc2e081a74f589"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gafa5d1eb1b7d0393327fc2e081a74f589">OCI_GetObject</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Object *OCI_API OCI_GetObject(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current Object value of the column at the given index in the result set.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_metadata_html_ga170733509803e73193ed3d7d858e68f8"><div class="ttname"><a href="group___ocilib_c_api_metadata.html#ga170733509803e73193ed3d7d858e68f8">OCI_TypeInfoGet</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_TypeInfo *OCI_API OCI_TypeInfoGet(OCI_Connection *con, const otext *name, unsigned int type)</div><div class="ttdoc">Retrieve the available type info information.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_ga0af3308fa16a0a0e591b67c7ab7211a7"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga0af3308fa16a0a0e591b67c7ab7211a7">OCI_GetAffectedRows</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetAffectedRows(OCI_Statement *stmt)</div><div class="ttdoc">Return the number of rows affected by the SQL statement.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_ga155a95c89d2e8e162acb61383a56f77d"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga155a95c89d2e8e162acb61383a56f77d">OCI_StatementCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_StatementCreate(OCI_Connection *con)</div><div class="ttdoc">Create a statement object and return its handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga533ada0a945118e7e62e2357d956dcf2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare and Execute a SQL statement or PL/SQL block.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated to it (resultsets ...)</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga533ada0a945118e7e62e2357d956dcf2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare and execute a SQL statement or PL/SQL block in a single call.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated with it (result sets, bind variables,...</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gaaedce0c8f66eb60445fb759900d32f04"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Prepare(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare a SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gac4fae0835b45409e141eb1b4518fa89c"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Execute(OCI_Statement *stmt)</div><div class="ttdoc">Execute a prepared SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_user_types_html_ga134d48ae05764e6a47c53cd25537916e"><div class="ttname"><a href="group___ocilib_c_api_user_types.html#ga134d48ae05764e6a47c53cd25537916e">OCI_ObjectSetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetString(OCI_Object *obj, const otext *attr, const otext *value)</div><div class="ttdoc">Set an object attribute of type string.</div></div>
@@ -291,7 +291,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_user_types.html',
 <div class="line">}</div>
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_ga7616fd99a88771aefb5bc10dfbe94f7b"><div class="ttname"><a href="group___ocilib_c_api_binding.html#ga7616fd99a88771aefb5bc10dfbe94f7b">OCI_BindRef</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_BindRef(OCI_Statement *stmt, const otext *name, OCI_Ref *data)</div><div class="ttdoc">Bind a Ref variable.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga0e6344d3d91bcf39059894adc19f011a"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga0e6344d3d91bcf39059894adc19f011a">OCI_Ref</a></div><div class="ttdeci">struct OCI_Ref OCI_Ref</div><div class="ttdoc">Oracle REF type representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00356">types.h:356</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga039ffd4f2b51b35bc1a5137914251528"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga039ffd4f2b51b35bc1a5137914251528">OCI_GetRef</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Ref *OCI_API OCI_GetRef(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current Ref value of the column at the given index in the resultset.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga039ffd4f2b51b35bc1a5137914251528"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga039ffd4f2b51b35bc1a5137914251528">OCI_GetRef</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Ref *OCI_API OCI_GetRef(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current Ref value of the column at the given index in the result set.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_user_types_html_ga0863df8d73594f88cbdbdb812d606e44"><div class="ttname"><a href="group___ocilib_c_api_user_types.html#ga0863df8d73594f88cbdbdb812d606e44">OCI_RefGetObject</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Object *OCI_API OCI_RefGetObject(OCI_Ref *ref)</div><div class="ttdoc">Returns the object pointed by the Ref handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_user_types_html_ga7fac2346adba13dd114779dec9575e12"><div class="ttname"><a href="group___ocilib_c_api_user_types.html#ga7fac2346adba13dd114779dec9575e12">OCI_RefFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_RefFree(OCI_Ref *ref)</div><div class="ttdoc">Free a local Ref.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_user_types_html_ga8c1ceff113f3395c8bf76d80e61fe4a2"><div class="ttname"><a href="group___ocilib_c_api_user_types.html#ga8c1ceff113f3395c8bf76d80e61fe4a2">OCI_RefCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Ref *OCI_API OCI_RefCreate(OCI_Connection *con, OCI_TypeInfo *typinf)</div><div class="ttdoc">Create a local Ref instance.</div></div>
@@ -322,7 +322,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga7a7bdb5ddb9c79a7344e864ced99a238"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve an Oracle Ref handle from an object and assign it to the given OCILIB OCI_Ref handle.  <br /></td></tr>
 <tr class="separator:ga7a7bdb5ddb9c79a7344e864ced99a238"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga79ebe7471cfb445259af41ac89586d1f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga79ebe7471cfb445259af41ac89586d1f">OCI_ObjectGetTypeInfo</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> *obj)</td></tr>
-<tr class="memdesc:ga79ebe7471cfb445259af41ac89586d1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type info object associated to the object.  <br /></td></tr>
+<tr class="memdesc:ga79ebe7471cfb445259af41ac89586d1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type info object associated with the object.  <br /></td></tr>
 <tr class="separator:ga79ebe7471cfb445259af41ac89586d1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6cb966b927919bbb949f0b606f7ce362"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga6cb966b927919bbb949f0b606f7ce362">OCI_ObjectGetBoolean</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> *obj, const otext *attr)</td></tr>
 <tr class="memdesc:ga6cb966b927919bbb949f0b606f7ce362"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the boolean value of the given object attribute (ONLY for PL/SQL records)  <br /></td></tr>
@@ -466,7 +466,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga7fac2346adba13dd114779dec9575e12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a local Ref.  <br /></td></tr>
 <tr class="separator:ga7fac2346adba13dd114779dec9575e12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga1cc4ba3390daf6ff02af7dfb49e33dd8"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga0e6344d3d91bcf39059894adc19f011a">OCI_Ref</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga1cc4ba3390daf6ff02af7dfb49e33dd8">OCI_RefArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf, unsigned int nbelem)</td></tr>
-<tr class="memdesc:ga1cc4ba3390daf6ff02af7dfb49e33dd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of Ref object.  <br /></td></tr>
+<tr class="memdesc:ga1cc4ba3390daf6ff02af7dfb49e33dd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of Ref objects.  <br /></td></tr>
 <tr class="separator:ga1cc4ba3390daf6ff02af7dfb49e33dd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga57ba2af33fae4aeed355365a07481483"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga57ba2af33fae4aeed355365a07481483">OCI_RefArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0e6344d3d91bcf39059894adc19f011a">OCI_Ref</a> **refs)</td></tr>
 <tr class="memdesc:ga57ba2af33fae4aeed355365a07481483"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of Ref objects.  <br /></td></tr>
@@ -475,7 +475,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga7a3648836531a00bfeaa47acfe170707"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign a Ref to another one.  <br /></td></tr>
 <tr class="separator:ga7a3648836531a00bfeaa47acfe170707"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaff153e94e63d81d6abddb0ab775a5246"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#gaff153e94e63d81d6abddb0ab775a5246">OCI_RefGetTypeInfo</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0e6344d3d91bcf39059894adc19f011a">OCI_Ref</a> *ref)</td></tr>
-<tr class="memdesc:gaff153e94e63d81d6abddb0ab775a5246"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type info object associated to the Ref.  <br /></td></tr>
+<tr class="memdesc:gaff153e94e63d81d6abddb0ab775a5246"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type info object associated with the Ref.  <br /></td></tr>
 <tr class="separator:gaff153e94e63d81d6abddb0ab775a5246"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0863df8d73594f88cbdbdb812d606e44"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga0863df8d73594f88cbdbdb812d606e44">OCI_RefGetObject</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0e6344d3d91bcf39059894adc19f011a">OCI_Ref</a> *ref)</td></tr>
 <tr class="memdesc:ga0863df8d73594f88cbdbdb812d606e44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the object pointed by the Ref handle.  <br /></td></tr>
@@ -493,11 +493,38 @@ Functions</h2></td></tr>
 <tr class="memdesc:gada8070fcff371bfb8d0262aabfab581a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a Ref handle value to a hexadecimal string.  <br /></td></tr>
 <tr class="separator:gada8070fcff371bfb8d0262aabfab581a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga36a36c16a0d1b3b8eb5b9ea85b80f7a4"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga36a36c16a0d1b3b8eb5b9ea85b80f7a4">OCI_XmlTypeGetContent</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga14291b3c4b2b3ab1e3d5efc108251e22">OCI_XmlType</a> *xmlType)</td></tr>
-<tr class="memdesc:ga36a36c16a0d1b3b8eb5b9ea85b80f7a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the string representation of given a XmlType handle.  <br /></td></tr>
+<tr class="memdesc:ga36a36c16a0d1b3b8eb5b9ea85b80f7a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the string representation of the given XmlType handle.  <br /></td></tr>
 <tr class="separator:ga36a36c16a0d1b3b8eb5b9ea85b80f7a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gada2c2c40af58c66b77fa281db303451c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#gada2c2c40af58c66b77fa281db303451c">OCI_XmlTypeGetContentSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga14291b3c4b2b3ab1e3d5efc108251e22">OCI_XmlType</a> *xmlType)</td></tr>
 <tr class="memdesc:gada2c2c40af58c66b77fa281db303451c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of characters of the XML string content for the given XmlType handle.  <br /></td></tr>
 <tr class="separator:gada2c2c40af58c66b77fa281db303451c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabc9170914d130a93a76a44961a759b70"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#gabc9170914d130a93a76a44961a759b70">OCI_VectorCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con)</td></tr>
+<tr class="memdesc:gabc9170914d130a93a76a44961a759b70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a local Vector instance.  <br /></td></tr>
+<tr class="separator:gabc9170914d130a93a76a44961a759b70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1b9f32095d035b38d0cef9e7db4ea373"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga1b9f32095d035b38d0cef9e7db4ea373">OCI_VectorFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *vect)</td></tr>
+<tr class="memdesc:ga1b9f32095d035b38d0cef9e7db4ea373"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free a local Vector.  <br /></td></tr>
+<tr class="separator:ga1b9f32095d035b38d0cef9e7db4ea373"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacdde47092dd5402d22be659a35ceac0f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> **OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#gacdde47092dd5402d22be659a35ceac0f">OCI_VectorArrayCreate</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *con, unsigned int nbelem)</td></tr>
+<tr class="memdesc:gacdde47092dd5402d22be659a35ceac0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array of Vector objects.  <br /></td></tr>
+<tr class="separator:gacdde47092dd5402d22be659a35ceac0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga985634b723929f62b61412616674fa22"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga985634b723929f62b61412616674fa22">OCI_VectorArrayFree</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> **vects)</td></tr>
+<tr class="memdesc:ga985634b723929f62b61412616674fa22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an array of Vector objects.  <br /></td></tr>
+<tr class="separator:ga985634b723929f62b61412616674fa22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0e06be49b7e92bc74b1a20e10f2e2e1d"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga0e06be49b7e92bc74b1a20e10f2e2e1d">OCI_VectorGetInfo</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *vect, unsigned int *format, unsigned int *dimensions)</td></tr>
+<tr class="memdesc:ga0e06be49b7e92bc74b1a20e10f2e2e1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns information about the vector.  <br /></td></tr>
+<tr class="separator:ga0e06be49b7e92bc74b1a20e10f2e2e1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0fbda5ce37317fe8bfefd0bd25173715"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga0fbda5ce37317fe8bfefd0bd25173715">OCI_VectorGetValues</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *vect, void *values)</td></tr>
+<tr class="memdesc:ga0fbda5ce37317fe8bfefd0bd25173715"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the content of the vector.  <br /></td></tr>
+<tr class="separator:ga0fbda5ce37317fe8bfefd0bd25173715"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf16573c01f89c78746fb5180c2900736"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#gaf16573c01f89c78746fb5180c2900736">OCI_VectorSetValues</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *vect, unsigned int format, unsigned int dimensions, void *values)</td></tr>
+<tr class="memdesc:gaf16573c01f89c78746fb5180c2900736"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the content of the vector.  <br /></td></tr>
+<tr class="separator:gaf16573c01f89c78746fb5180c2900736"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga39908b4f48ae912c3fbfd7fd05dd2c49"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga39908b4f48ae912c3fbfd7fd05dd2c49">OCI_VectorFromText</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *vect, const otext *str, unsigned int size, unsigned int format, unsigned int dimensions)</td></tr>
+<tr class="memdesc:ga39908b4f48ae912c3fbfd7fd05dd2c49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the content of the vector from a given string representation.  <br /></td></tr>
+<tr class="separator:ga39908b4f48ae912c3fbfd7fd05dd2c49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5681ff5391954799f929b044f7c0c3df"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_user_types.html#ga5681ff5391954799f929b044f7c0c3df">OCI_VectorToText</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *vect, unsigned int *size, otext *str)</td></tr>
+<tr class="memdesc:ga5681ff5391954799f929b044f7c0c3df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a string representation of the vector.  <br /></td></tr>
+<tr class="separator:ga5681ff5391954799f929b044f7c0c3df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ga83de9bfa7c55feb47ea1c91b7196b4b1" name="ga83de9bfa7c55feb47ea1c91b7196b4b1"></a>
@@ -536,7 +563,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the object handle on success otherwise NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The object handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_object.html#a97c1016f3b77b1b3444dfd2da5d7d5eb">ocilib::Object::Object()</a>.</p>
 
@@ -567,8 +594,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only object created with <a class="el" href="group___ocilib_c_api_user_types.html#ga83de9bfa7c55feb47ea1c91b7196b4b1" title="Create a local object instance.">OCI_ObjectCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_user_types.html#ga1e7e875b6a5a3e67bd5cf7a8c0486202" title="Free a local object.">OCI_ObjectFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only objects created with <a class="el" href="group___ocilib_c_api_user_types.html#ga83de9bfa7c55feb47ea1c91b7196b4b1" title="Create a local object instance.">OCI_ObjectCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_user_types.html#ga1e7e875b6a5a3e67bd5cf7a8c0486202" title="Free a local object.">OCI_ObjectFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -611,12 +638,12 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
     <tr><td class="paramname">typinf</td><td>- Object type (type info handle) </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- number of elements in the array</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_user_types.html#ga83de9bfa7c55feb47ea1c91b7196b4b1" title="Create a local object instance.">OCI_ObjectCreate()</a> for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the Object handle array on success otherwise NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_user_types.html#ga83de9bfa7c55feb47ea1c91b7196b4b1" title="Create a local object instance.">OCI_ObjectCreate()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Object handle array on success, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -645,8 +672,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only arrays of Object created with <a class="el" href="group___ocilib_c_api_user_types.html#ga6ec622f7716bd0707d83f81e68f4e3a5" title="Create an array of Object objects.">OCI_ObjectArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_user_types.html#gaf2b67a1eab9446a96c289af953670b91" title="Free an array of Object objects.">OCI_ObjectArrayFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only arrays of Objects created with <a class="el" href="group___ocilib_c_api_user_types.html#ga6ec622f7716bd0707d83f81e68f4e3a5" title="Create an array of Object objects.">OCI_ObjectArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_user_types.html#gaf2b67a1eab9446a96c289af953670b91" title="Free an array of Object objects.">OCI_ObjectArrayFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -686,10 +713,10 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Oracle proceeds to a deep copy of the object content</dd>
+<dl class="section note"><dt>Note</dt><dd>Oracle proceeds to a deep copy of the object content.</dd>
 <dd>
-The two object handles must have the same type otherwise an exception is thrown</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+The two object handles must have the same type, otherwise an exception is thrown.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_object.html#a9e81416f700c2f5e10a9373f895af64b">ocilib::Object::Clone()</a>.</p>
 
@@ -720,13 +747,13 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Possibles values are :</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Possible values are:</dd></dl>
 <ul>
-<li>OCI_OBJ_PERSISTENT: persistent object from the DB</li>
-<li>OCI_OBJ_TRANSIENT : local temporary object</li>
-<li>OCI_OBJ_VALUE : embedded object</li>
+<li>OCI_OBJ_PERSISTENT : Persistent object from the DB.</li>
+<li>OCI_OBJ_TRANSIENT : Local temporary object.</li>
+<li>OCI_OBJ_VALUE : Embedded object.</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>Instance type or OCI_UNKNOWN the input handle is NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The instance type, or OCI_UNKNOWN if the input handle is NULL. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_object.html#abebdc747fcbf7473444c2b83d4672dab">ocilib::Object::GetType()</a>.</p>
 
@@ -768,8 +795,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The type information of the object and the ref must be the same, otherwise an exception is thrown</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The type information of the object and the ref must be the same, otherwise an exception is thrown.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_object.html#a59be7ae8797185e024ae7e011bf63e7b">ocilib::Object::GetReference()</a>.</p>
 
@@ -793,13 +820,14 @@ The two object handles must have the same type otherwise an exception is thrown<
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the type info object associated to the object. </p>
+<p>Return the type info object associated with the object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">obj</td><td>- Object handle </td></tr>
+    <tr><td class="paramname">obj</td><td>- Object handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The type info handle, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_object.html#ab95c05b9ff5dcff35058ed5f4f132543">ocilib::Object::GetTypeInfo()</a>.</p>
 
@@ -841,12 +869,9 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga6cb966b927919bbb949f0b606f7ce362" title="Return the boolean value of the given object attribute (ONLY for PL/SQL records)">OCI_ObjectGetBoolean()</a> returns a valid value only for PL/SQL boolean based attributes</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd><ul>
-<li>ONLY supported by Oracle 12c and above !</li>
-</ul>
-</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or 0 on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga6cb966b927919bbb949f0b606f7ce362" title="Return the boolean value of the given object attribute (ONLY for PL/SQL records)">OCI_ObjectGetBoolean()</a> returns a valid value only for PL/SQL boolean-based attributes.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only supported by Oracle 12c and above.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or FALSE on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -886,8 +911,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gadf5fee0bda558c2f78c91e56be4068cd" title="Return the number value of the given object attribute.">OCI_ObjectGetNumber()</a> returns a valid value only for number based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or NULL on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gadf5fee0bda558c2f78c91e56be4068cd" title="Return the number value of the given object attribute.">OCI_ObjectGetNumber()</a> returns a valid value only for number-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or NULL on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -927,8 +952,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gaeda09801dd865c268842a52d301090e2" title="Return the short value of the given object attribute.">OCI_ObjectGetShort()</a> returns a valid value only for integer and number based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or 0 on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gaeda09801dd865c268842a52d301090e2" title="Return the short value of the given object attribute.">OCI_ObjectGetShort()</a> returns a valid value only for integer and number-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or 0 on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -968,8 +993,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga9ad8528e359442588b94bca4508038ff" title="Return the unsigned short value of the given object attribute.">OCI_ObjectGetUnsignedShort()</a> returns a valid value only for integer and number based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or 0 on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga9ad8528e359442588b94bca4508038ff" title="Return the unsigned short value of the given object attribute.">OCI_ObjectGetUnsignedShort()</a> returns a valid value only for integer and number-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or 0 on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1009,8 +1034,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga2e6ebd74b78e410d46348d7f1938d16f" title="Return the integer value of the given object attribute.">OCI_ObjectGetInt()</a> returns a valid value only for integer and number based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or 0 on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga2e6ebd74b78e410d46348d7f1938d16f" title="Return the integer value of the given object attribute.">OCI_ObjectGetInt()</a> returns a valid value only for integer and number-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or 0 on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1050,8 +1075,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga80dbf932f783974c45d0a9ce8494c10a" title="Return the unsigned integer value of the given object attribute.">OCI_ObjectGetUnsignedInt()</a> returns a valid value only for integer and number based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or 0 on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga80dbf932f783974c45d0a9ce8494c10a" title="Return the unsigned integer value of the given object attribute.">OCI_ObjectGetUnsignedInt()</a> returns a valid value only for integer and number-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or 0 on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1091,8 +1116,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga6a82c99966546435170f65090a03d47d" title="Return the big integer value of the given object attribute.">OCI_ObjectGetBigInt()</a> returns a valid value only for integer and number based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or 0 on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga6a82c99966546435170f65090a03d47d" title="Return the big integer value of the given object attribute.">OCI_ObjectGetBigInt()</a> returns a valid value only for integer and number-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or 0 on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1132,8 +1157,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga539dcdeb3ef20ff83b891bf43afe9ade" title="Return the unsigned big integer value of the given object attribute.">OCI_ObjectGetUnsignedBigInt()</a> returns a valid value only for integer and number based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or 0 on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga539dcdeb3ef20ff83b891bf43afe9ade" title="Return the unsigned big integer value of the given object attribute.">OCI_ObjectGetUnsignedBigInt()</a> returns a valid value only for integer and number-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or 0 on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1173,8 +1198,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gad9617ceff714151440084eab2c7d77b7" title="Return the double value of the given object attribute.">OCI_ObjectGetDouble()</a> returns a valid value only for integer and number based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or 0.0 on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gad9617ceff714151440084eab2c7d77b7" title="Return the double value of the given object attribute.">OCI_ObjectGetDouble()</a> returns a valid value only for integer and number-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or 0.0 on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1214,8 +1239,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga586117fe4eff5c9b2e1aecc3a42230df" title="Return the float value of the given object attribute.">OCI_ObjectGetFloat()</a> returns a valid value only for integer and number based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or 0.0 on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga586117fe4eff5c9b2e1aecc3a42230df" title="Return the float value of the given object attribute.">OCI_ObjectGetFloat()</a> returns a valid value only for integer and number-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or 0.0 on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1255,8 +1280,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The method can return a string value for any attributes types. It performs implicit string conversions using the same mechanisms than <a class="el" href="group___ocilib_c_api_fetching.html#gaa1e2572fffa5c94c2bb8bb3dc45aebcf" title="Return the current string value of the column at the given index in the resultset.">OCI_GetString()</a>. See its documentation for more details.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This method can return a string value for any attribute type. It performs implicit string conversions using the same mechanisms as <a class="el" href="group___ocilib_c_api_fetching.html#gaa1e2572fffa5c94c2bb8bb3dc45aebcf" title="Return the current string value of the column at the given index in the result set.">OCI_GetString()</a>. See its documentation for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -1310,8 +1335,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga9fce7380b7c0a040287788115950fe3c" title="Return the raw attribute value of the given object attribute into the given buffer.">OCI_ObjectGetRaw()</a> copies data into the buffer only for raw based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes written to the buffer or 0 on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga9fce7380b7c0a040287788115950fe3c" title="Return the raw attribute value of the given object attribute into the given buffer.">OCI_ObjectGetRaw()</a> copies data into the buffer only for raw-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes written to the buffer, or 0 on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1352,7 +1377,7 @@ The two object handles must have the same type otherwise an exception is thrown<
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>size in bytes of the RAW value or 0 on failure or wrong attribute type </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The size in bytes of the RAW value, or 0 on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1392,8 +1417,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gad21a72b5e58138e4d5363aa581827bd8" title="Return the date value of the given object attribute.">OCI_ObjectGetDate()</a> returns a valid value only for date based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or NULL on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gad21a72b5e58138e4d5363aa581827bd8" title="Return the date value of the given object attribute.">OCI_ObjectGetDate()</a> returns a valid value only for date-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or NULL on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1433,8 +1458,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gaa221f72aa550e68a9ffe2231df6edfe9" title="Return the timestamp value of the given object attribute.">OCI_ObjectGetTimestamp()</a> returns a valid value only for timestamps based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or NULL on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gaa221f72aa550e68a9ffe2231df6edfe9" title="Return the timestamp value of the given object attribute.">OCI_ObjectGetTimestamp()</a> returns a valid value only for timestamp-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or NULL on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1474,8 +1499,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gadab67ba943536c645ae01ab52dec0cc5" title="Return the interval value of the given object attribute.">OCI_ObjectGetInterval()</a> returns a valid value only for intervals based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or NULL on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gadab67ba943536c645ae01ab52dec0cc5" title="Return the interval value of the given object attribute.">OCI_ObjectGetInterval()</a> returns a valid value only for interval-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or NULL on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1515,8 +1540,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga7ff784d4154bfae2d5cf0c8751bd217b" title="Return the collection value of the given object attribute.">OCI_ObjectGetColl()</a> returns a valid value only for intervals based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or NULL on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga7ff784d4154bfae2d5cf0c8751bd217b" title="Return the collection value of the given object attribute.">OCI_ObjectGetColl()</a> returns a valid value only for collection-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or NULL on failure or wrong attribute type. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_object.html#a445a681cef83743583ca9226a025d040">ocilib::Object::Get()</a>.</p>
 
@@ -1558,8 +1583,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga602a1925e5941e3a0668cecb35bd18f8" title="Return the Ref value of the given object attribute.">OCI_ObjectGetRef()</a> returns a valid value only for Refs based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or NULL on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga602a1925e5941e3a0668cecb35bd18f8" title="Return the Ref value of the given object attribute.">OCI_ObjectGetRef()</a> returns a valid value only for Ref-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or NULL on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1599,8 +1624,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga3b6d1df07e3d3ff0e6d50e86fee9536b" title="Return the object value of the given object attribute.">OCI_ObjectGetObject()</a> returns a valid value only for object based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or NULL on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga3b6d1df07e3d3ff0e6d50e86fee9536b" title="Return the object value of the given object attribute.">OCI_ObjectGetObject()</a> returns a valid value only for object-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or NULL on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1640,8 +1665,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gab5ce66a28a8ae4e769eb7e7a9068a61a" title="Return the lob value of the given object attribute.">OCI_ObjectGetLob()</a> returns a valid value only for lobs based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or NULL on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#gab5ce66a28a8ae4e769eb7e7a9068a61a" title="Return the lob value of the given object attribute.">OCI_ObjectGetLob()</a> returns a valid value only for LOB-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or NULL on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1681,8 +1706,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga4b8a1376c9451c56bea9458b4c5d5101" title="Return the file value of the given object attribute.">OCI_ObjectGetFile()</a> returns a valid value only for files based attributes</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Attribute value or NULL on failure or wrong attribute type </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the attribute is found in the object descriptor attributes list, then a data type check is performed for integrity. <a class="el" href="group___ocilib_c_api_user_types.html#ga4b8a1376c9451c56bea9458b4c5d5101" title="Return the file value of the given object attribute.">OCI_ObjectGetFile()</a> returns a valid value only for File-based attributes.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The attribute value, or NULL on failure or wrong attribute type. </dd></dl>
 
 </div>
 </div>
@@ -1725,15 +1750,12 @@ The two object handles must have the same type otherwise an exception is thrown<
   <table class="params">
     <tr><td class="paramname">obj</td><td>- Object handle </td></tr>
     <tr><td class="paramname">attr</td><td>- Attribute name </td></tr>
-    <tr><td class="paramname">value</td><td>- boolean value</td></tr>
+    <tr><td class="paramname">value</td><td>- Boolean value</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd><ul>
-<li>ONLY supported by Oracle 12c and above !</li>
-</ul>
-</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only supported by Oracle 12c and above.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1776,11 +1798,11 @@ The two object handles must have the same type otherwise an exception is thrown<
   <table class="params">
     <tr><td class="paramname">obj</td><td>- Object handle </td></tr>
     <tr><td class="paramname">attr</td><td>- Attribute name </td></tr>
-    <tr><td class="paramname">value</td><td>- number value</td></tr>
+    <tr><td class="paramname">value</td><td>- Number value</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1827,7 +1849,7 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1874,7 +1896,7 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1921,7 +1943,7 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1968,7 +1990,7 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2015,7 +2037,7 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2062,7 +2084,7 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2109,7 +2131,7 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2156,7 +2178,7 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2203,8 +2225,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2258,8 +2280,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2306,8 +2328,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2354,8 +2376,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2402,8 +2424,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2450,8 +2472,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_object.html#a08db8c47c4022b70936c99aa917548c9">ocilib::Object::Set()</a>.</p>
 
@@ -2500,9 +2522,9 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>This function assigns a copy of the object to the given attribute. Any further modifications of the object passed as the parameter 'value' will not be reflected to object 's attribute set with this call</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This function assigns a copy of the object to the given attribute. Any further modifications of the object passed as the parameter 'value' will not be reflected to the object's attribute set with this call.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2549,8 +2571,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2597,8 +2619,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2645,8 +2667,8 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Passing a null pointer for value calls <a class="el" href="group___ocilib_c_api_user_types.html#ga691998ab31f4d6ca7be9ec3f1341fb12" title="Set an object attribute to null.">OCI_ObjectSetNull()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2686,7 +2708,7 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>FALSE if the attribute is not null otherwise TRUE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if the attribute is null, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_object.html#aa48d3265a6bad6aff06e9e6ef20e3647">ocilib::Object::IsAttributeNull()</a>.</p>
 
@@ -2728,7 +2750,7 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_object.html#ac6c1faeb8694aaf58f3da8838d03ba23">ocilib::Object::SetAttributeNull()</a>.</p>
 
@@ -2772,13 +2794,13 @@ The two object handles must have the same type otherwise an exception is thrown<
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">obj</td><td>- Object handle </td></tr>
-    <tr><td class="paramname">pp_struct</td><td>- Address of a pointer that retrieve the C structure of data </td></tr>
-    <tr><td class="paramname">pp_ind</td><td>- Address of a pointer that retrieve the C structure of indicators</td></tr>
+    <tr><td class="paramname">pp_struct</td><td>- Address of a pointer that receives the C structure of data </td></tr>
+    <tr><td class="paramname">pp_ind</td><td>- Address of a pointer that receives the C structure of indicators</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See Oracle OCI programming guide for more details about OTT structures. The members of these structures are OCI data types like OCINumber, OCIString that requires mixing OCILIB code and raw OCI code. OCI Object API headers have to be included to handle this data types using OCI object functions</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See Oracle OCI programming guide for more details about OTT structures. The members of these structures are OCI data types like OCINumber, OCIString that require mixing OCILIB code and raw OCI code. OCI Object API headers have to be included to handle these data types using OCI object functions.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2825,11 +2847,11 @@ The two object handles must have the same type otherwise an exception is thrown<
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>In order to compute the needed string length, call the method with a NULL string Then call the method again with a valid buffer</dd>
+<dl class="section note"><dt>Note</dt><dd>In order to compute the needed string length, call the method with a NULL string. Then call the method again with a valid buffer.</dd>
 <dd>
-The resulting string is similar to the SQL*PLUS output for UDTs (user types and objects) For RAWs and BLOBs attributes, their binary values are converted to hexadecimal strings</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This convenient method shall not be used when performance matters. It is usually called twice (buffer length computation) and must also care about quotes within strings.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+The resulting string is similar to the SQL*PLUS output for UDTs (user types and objects). For RAW and BLOB attributes, their binary values are converted to hexadecimal strings.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This convenience method should not be used when performance matters. It is usually called twice (buffer length computation) and must also handle quotes within strings.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_object.html#a48be93177a19e92df811105e22182b5e">ocilib::Object::ToString()</a>.</p>
 
@@ -2871,7 +2893,7 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the Ref handle on success otherwise NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Ref handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_object.html#a59be7ae8797185e024ae7e011bf63e7b">ocilib::Object::GetReference()</a>, and <a class="el" href="classocilib_1_1_reference.html#ae05f73e86ee9f6203bb32f1d618eddaf">ocilib::Reference::Reference()</a>.</p>
 
@@ -2902,8 +2924,8 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only Refs created with <a class="el" href="group___ocilib_c_api_user_types.html#ga8c1ceff113f3395c8bf76d80e61fe4a2" title="Create a local Ref instance.">OCI_RefCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_user_types.html#ga7fac2346adba13dd114779dec9575e12" title="Free a local Ref.">OCI_RefFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only Refs created with <a class="el" href="group___ocilib_c_api_user_types.html#ga8c1ceff113f3395c8bf76d80e61fe4a2" title="Create a local Ref instance.">OCI_RefCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_user_types.html#ga7fac2346adba13dd114779dec9575e12" title="Free a local Ref.">OCI_RefFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2941,17 +2963,17 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Create an array of Ref object. </p>
+<p>Create an array of Ref objects. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
     <tr><td class="paramname">typinf</td><td>- Object type (type info handle) </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- number of elements in the array</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_user_types.html#ga8c1ceff113f3395c8bf76d80e61fe4a2" title="Create a local Ref instance.">OCI_RefCreate()</a> for more details</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Return the Ref handle array on success otherwise NULL on failure </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_user_types.html#ga8c1ceff113f3395c8bf76d80e61fe4a2" title="Create a local Ref instance.">OCI_RefCreate()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Ref handle array on success, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -2980,8 +3002,8 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only arrays of Ref created with <a class="el" href="group___ocilib_c_api_user_types.html#ga1cc4ba3390daf6ff02af7dfb49e33dd8" title="Create an array of Ref object.">OCI_RefArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_user_types.html#ga57ba2af33fae4aeed355365a07481483" title="Free an array of Ref objects.">OCI_RefArrayFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only arrays of Refs created with <a class="el" href="group___ocilib_c_api_user_types.html#ga1cc4ba3390daf6ff02af7dfb49e33dd8" title="Create an array of Ref objects.">OCI_RefArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_user_types.html#ga57ba2af33fae4aeed355365a07481483" title="Free an array of Ref objects.">OCI_RefArrayFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -3021,8 +3043,8 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>The two Ref handles must have the same type otherwise an exception is thrown</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The two Ref handles must have the same type, otherwise an exception is thrown.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_reference.html#a2d0838e9cd826b1c545d6db2b1265bea">ocilib::Reference::Clone()</a>.</p>
 
@@ -3046,13 +3068,14 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the type info object associated to the Ref. </p>
+<p>Return the type info object associated with the Ref. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">ref</td><td>- Ref handle </td></tr>
+    <tr><td class="paramname">ref</td><td>- Ref handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The type info handle, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_reference.html#a6137e562e923832a525fe2fc00fa564c">ocilib::Reference::GetTypeInfo()</a>.</p>
 
@@ -3083,7 +3106,7 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The object handle is the ref is not null otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The object handle if the Ref is not null, otherwise NULL. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_reference.html#afeee7701caaa5a1a383d62f0f98def4e">ocilib::Reference::GetObject()</a>.</p>
 
@@ -3114,7 +3137,7 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE if it does not point to a valid object otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if it does not point to a valid object, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_reference.html#adf41069c96d59b38fb731f18c0604cef">ocilib::Reference::IsReferenceNull()</a>.</p>
 
@@ -3145,8 +3168,8 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>this call clears the reference to object pointed by the Ref handle.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This call clears the reference to the object pointed to by the Ref handle.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_reference.html#aa9ffdde7e84ff990ff3bd903570fdd85">ocilib::Reference::SetReferenceNull()</a>.</p>
 
@@ -3177,7 +3200,8 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>the returned size is the number of character needed to store the hex representation of the Ref that can be retrieved with <a class="el" href="group___ocilib_c_api_user_types.html#gada8070fcff371bfb8d0262aabfab581a" title="Converts a Ref handle value to a hexadecimal string.">OCI_RefToText()</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The returned size is the number of characters needed to store the hex representation of the Ref that can be retrieved with <a class="el" href="group___ocilib_c_api_user_types.html#gada8070fcff371bfb8d0262aabfab581a" title="Converts a Ref handle value to a hexadecimal string.">OCI_RefToText()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The size in characters, or 0 on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_reference.html#a614dbca2e61021aa0c2a2cf91a3d2034">ocilib::Reference::ToString()</a>.</p>
 
@@ -3226,7 +3250,7 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_reference.html#a614dbca2e61021aa0c2a2cf91a3d2034">ocilib::Reference::ToString()</a>.</p>
 
@@ -3250,13 +3274,14 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the string representation of given a XmlType handle. </p>
+<p>Return the string representation of the given XmlType handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">xmlType</td><td>- XmlType handle </td></tr>
+    <tr><td class="paramname">xmlType</td><td>- XmlType handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The XML string content, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_xml_type.html#a99961a8e46f83bbb47a28db2f0fe5ade">ocilib::XmlType::ToString()</a>.</p>
 
@@ -3283,12 +3308,449 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
 <p>Return the number of characters of the XML string content for the given XmlType handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">xmlType</td><td>- XmlType handle </td></tr>
+    <tr><td class="paramname">xmlType</td><td>- XmlType handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of characters, or 0 on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_xml_type.html#a99961a8e46f83bbb47a28db2f0fe5ade">ocilib::XmlType::ToString()</a>.</p>
+
+</div>
+</div>
+<a id="gabc9170914d130a93a76a44961a759b70" name="gabc9170914d130a93a76a44961a759b70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabc9170914d130a93a76a44961a759b70">&#9670;&#160;</a></span>OCI_VectorCreate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *OCI_API OCI_VectorCreate </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
+          <td class="paramname"><em>con</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Create a local Vector instance. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">con</td><td>- Connection handle</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Vector handle on success, or NULL on failure. </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_vector.html#a67bbc1e3b0248bf94b53c80eb59b157d">ocilib::Vector::Vector()</a>.</p>
+
+</div>
+</div>
+<a id="ga1b9f32095d035b38d0cef9e7db4ea373" name="ga1b9f32095d035b38d0cef9e7db4ea373"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1b9f32095d035b38d0cef9e7db4ea373">&#9670;&#160;</a></span>OCI_VectorFree()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_VectorFree </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *&#160;</td>
+          <td class="paramname"><em>vect</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Free a local Vector. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vect</td><td>- Vector handle</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)</dd>
+<dd>
+Only Vectors created with <a class="el" href="group___ocilib_c_api_user_types.html#gabc9170914d130a93a76a44961a759b70" title="Create a local Vector instance.">OCI_VectorCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_user_types.html#ga1b9f32095d035b38d0cef9e7db4ea373" title="Free a local Vector.">OCI_VectorFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
+
+</div>
+</div>
+<a id="gacdde47092dd5402d22be659a35ceac0f" name="gacdde47092dd5402d22be659a35ceac0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacdde47092dd5402d22be659a35ceac0f">&#9670;&#160;</a></span>OCI_VectorArrayCreate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> **OCI_API OCI_VectorArrayCreate </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *&#160;</td>
+          <td class="paramname"><em>con</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>nbelem</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Create an array of Vector objects. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">con</td><td>- Connection handle </td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4).</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_user_types.html#gabc9170914d130a93a76a44961a759b70" title="Create a local Vector instance.">OCI_VectorCreate()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Vector handle array on success, or NULL on failure. </dd></dl>
+
+</div>
+</div>
+<a id="ga985634b723929f62b61412616674fa22" name="ga985634b723929f62b61412616674fa22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga985634b723929f62b61412616674fa22">&#9670;&#160;</a></span>OCI_VectorArrayFree()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_VectorArrayFree </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> **&#160;</td>
+          <td class="paramname"><em>vects</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Free an array of Vector objects. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vects</td><td>- Array of Vector objects</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)</dd>
+<dd>
+Only arrays of Vectors created with <a class="el" href="group___ocilib_c_api_user_types.html#gacdde47092dd5402d22be659a35ceac0f" title="Create an array of Vector objects.">OCI_VectorArrayCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_user_types.html#ga985634b723929f62b61412616674fa22" title="Free an array of Vector objects.">OCI_VectorArrayFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
+
+</div>
+</div>
+<a id="ga0e06be49b7e92bc74b1a20e10f2e2e1d" name="ga0e06be49b7e92bc74b1a20e10f2e2e1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0e06be49b7e92bc74b1a20e10f2e2e1d">&#9670;&#160;</a></span>OCI_VectorGetInfo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_VectorGetInfo </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *&#160;</td>
+          <td class="paramname"><em>vect</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int *&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int *&#160;</td>
+          <td class="paramname"><em>dimensions</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Returns information about the vector. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vect</td><td>- Vector handle </td></tr>
+    <tr><td class="paramname">format</td><td>- Pointer to a variable receiving the vector format </td></tr>
+    <tr><td class="paramname">dimensions</td><td>- Pointer to a variable receiving the vector number of dimensions</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4).</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Possible values for format:</dd></dl>
+<ul>
+<li>OCI_VEC_FLOAT32</li>
+<li>OCI_VEC_FLOAT64</li>
+<li>OCI_VEC_INT8</li>
+<li>OCI_VEC_BINARY</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>OCI_VEC_BINARY only supported from Oracle 23.5.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_vector.html#a268523ca5b7df4c3f54abc64ee02adf3">ocilib::Vector::GetDimensionCount()</a>, and <a class="el" href="classocilib_1_1_vector.html#a2c5c1c2db0f0de89495484b5b8e66cae">ocilib::Vector::GetFormat()</a>.</p>
+
+</div>
+</div>
+<a id="ga0fbda5ce37317fe8bfefd0bd25173715" name="ga0fbda5ce37317fe8bfefd0bd25173715"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0fbda5ce37317fe8bfefd0bd25173715">&#9670;&#160;</a></span>OCI_VectorGetValues()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_VectorGetValues </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *&#160;</td>
+          <td class="paramname"><em>vect</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>values</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Returns the content of the vector. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vect</td><td>- Vector handle </td></tr>
+    <tr><td class="paramname">values</td><td>- Pointer to an array of values</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4).</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Depending on the vector format:</dd></dl>
+<ul>
+<li>OCI_VEC_FLOAT32 : array value type is float.</li>
+<li>OCI_VEC_FLOAT64 : array value type is double.</li>
+<li>OCI_VEC_INT8 : array value type is char.</li>
+<li>OCI_VEC_BINARY : array value type is void.</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>OCI_VEC_BINARY only supported from Oracle 23.5.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_vector.html#acab4ff7d135ad720cb618343c9c9ebfa">ocilib::Vector::Get()</a>.</p>
+
+</div>
+</div>
+<a id="gaf16573c01f89c78746fb5180c2900736" name="gaf16573c01f89c78746fb5180c2900736"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf16573c01f89c78746fb5180c2900736">&#9670;&#160;</a></span>OCI_VectorSetValues()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_VectorSetValues </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *&#160;</td>
+          <td class="paramname"><em>vect</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>dimensions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>values</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Set the content of the vector. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vect</td><td>- Vector handle </td></tr>
+    <tr><td class="paramname">format</td><td>- Vector format </td></tr>
+    <tr><td class="paramname">dimensions</td><td>- Vector number of dimensions </td></tr>
+    <tr><td class="paramname">values</td><td>- Array of values to set</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Depending on the vector format:</dd></dl>
+<ul>
+<li>OCI_VEC_FLOAT32 : array value type is float.</li>
+<li>OCI_VEC_FLOAT64 : array value type is double.</li>
+<li>OCI_VEC_INT8 : array value type is char.</li>
+<li>OCI_VEC_BINARY : array value type is void.</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>OCI_VEC_BINARY only supported from Oracle 23.5.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_vector.html#a856677110caa2772bc1e3d9294f06d21">ocilib::Vector::Set()</a>.</p>
+
+</div>
+</div>
+<a id="ga39908b4f48ae912c3fbfd7fd05dd2c49" name="ga39908b4f48ae912c3fbfd7fd05dd2c49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga39908b4f48ae912c3fbfd7fd05dd2c49">&#9670;&#160;</a></span>OCI_VectorFromText()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_VectorFromText </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *&#160;</td>
+          <td class="paramname"><em>vect</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const otext *&#160;</td>
+          <td class="paramname"><em>str</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>dimensions</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Set the content of the vector from a given string representation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vect</td><td>- Vector handle </td></tr>
+    <tr><td class="paramname">str</td><td>- Vector string representation </td></tr>
+    <tr><td class="paramname">size</td><td>- String length (number of characters) - if zero, the length will be computed </td></tr>
+    <tr><td class="paramname">format</td><td>- Vector format </td></tr>
+    <tr><td class="paramname">dimensions</td><td>- Vector number of dimensions</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4).</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Depending on the vector format:</dd></dl>
+<ul>
+<li>OCI_VEC_FLOAT32 : string contains a textual array of float representation.</li>
+<li>OCI_VEC_FLOAT64 : string contains a textual array of double representation.</li>
+<li>OCI_VEC_INT8 : string contains a textual array of 8-byte values representation.</li>
+<li>OCI_VEC_BINARY : binary format.</li>
+</ul>
+<dl class="section warning"><dt>Warning</dt><dd>OCI_VEC_BINARY only supported from Oracle 23.5.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_vector.html#a48ca130d3c5d21339682f380d83ec9a3">ocilib::Vector::FromString()</a>.</p>
+
+</div>
+</div>
+<a id="ga5681ff5391954799f929b044f7c0c3df" name="ga5681ff5391954799f929b044f7c0c3df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5681ff5391954799f929b044f7c0c3df">&#9670;&#160;</a></span>OCI_VectorToText()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_VectorToText </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *&#160;</td>
+          <td class="paramname"><em>vect</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int *&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">otext *&#160;</td>
+          <td class="paramname"><em>str</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Returns a string representation of the vector. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vect</td><td>- Vector handle </td></tr>
+    <tr><td class="paramname">size</td><td>- String buffer length (number of characters) </td></tr>
+    <tr><td class="paramname">str</td><td>- String that will be filled with the textual representation of the vector</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Support for SQL VECTOR type has been introduced in Oracle 23ai (Oracle 23.4).</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>In order to compute the needed string length, call the method with a NULL string and 'size' will be filled with the number of characters needed. Then call the method again with a valid buffer.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>OCI_VEC_BINARY only supported from Oracle 23.5.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_vector.html#a29338156aefa3edeb25b143d16f4b797">ocilib::Vector::ToString()</a>.</p>
 
 </div>
 </div>
@@ -3298,7 +3760,7 @@ The resulting string is similar to the SQL*PLUS output for UDTs (user types and 
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

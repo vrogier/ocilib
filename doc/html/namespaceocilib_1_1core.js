@@ -10,6 +10,7 @@ var namespaceocilib_1_1core =
     [ "ManagedBuffer", "classocilib_1_1core_1_1_managed_buffer.html", null ],
     [ "Streamable", "classocilib_1_1core_1_1_streamable.html", null ],
     [ "SupportedNumeric", "structocilib_1_1core_1_1_supported_numeric.html", null ],
+    [ "SupportedVectorNumeric", "structocilib_1_1core_1_1_supported_vector_numeric.html", null ],
     [ "Synchronizable", "classocilib_1_1core_1_1_synchronizable.html", null ],
     [ "SynchronizationGuard", "classocilib_1_1core_1_1_synchronization_guard.html", null ],
     [ "SynchronizationMode", "namespaceocilib_1_1core.html#afb81e91567de99b2d56f487e5ebb1d20", null ],

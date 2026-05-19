@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -98,64 +98,145 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="Intro"></a>
 Description</h1>
-<p>OCILIB is an open source and portable Oracle C and C++ Driver that delivers really fast and reliable access to Oracle databases.</p>
+<p>OCILIB is an open source, cross-platform Oracle driver for C and C++. It provides fast and reliable access to Oracle databases through a simple, consistent API.</p>
 <p>The OCILIB library :</p>
 <ul>
-<li>Offers a rich, full featured and easy to use API</li>
-<li>Runs on all Oracle platforms</li>
+<li>Offers a rich, full-featured, and easy-to-use API</li>
+<li>Runs on all major Oracle client platforms</li>
 <li>Encapsulates OCI (Oracle Call Interface)</li>
-<li>Is the most complete available OCI wrapper</li>
-<li>C API written in standard C99 code with native Unicode support</li>
-<li>C++ API written in standard C++03 (uses C++11 features only if supported by compilers)</li>
+<li>Provides a C API written in ISO C99 with native Unicode support</li>
+<li>Provides a C++ API written in standard C++03 (optionally using selected C++11 features when supported)</li>
 </ul>
 <h1><a class="anchor" id="Version"></a>
 Version information</h1>
-<p>Current version : <b>4.7.7</b></p>
+<p>Current version: <b>4.9.0</b></p>
 <h1><a class="anchor" id="Features"></a>
 Main features</h1>
 <ul>
 <li>ISO C API</li>
-<li>ISO C ++ API</li>
-<li>Full Ansi and Unicode support on all platforms (ISO C wide strings or UTF8 strings)</li>
-<li>Full 32/64 bits compatibility</li>
-<li>Comptabile with all Oracle version &gt;= 8.0</li>
+<li>ISO C++ API</li>
+<li>Full ANSI and Unicode support on all platforms (ISO C wide strings or UTF-8 strings)</li>
+<li>Full 32/64-bit compatibility</li>
+<li>Compatible with all Oracle versions &gt;= 8.0</li>
 <li>Automatic adaptation to the runtime Oracle client version</li>
 <li>Runtime loading of Oracle libraries</li>
-<li>Builtin error handling (global and thread context)</li>
+<li>Built-in error handling (global and thread context)</li>
 <li>Full support for SQL API and Object API</li>
-<li>Full support for ALL Oracle SQL and PL/SQL datatypes (scalars, objects, refs, collections, ..)</li>
-<li>Full support for PL/SQL (blocks, cursors, Index by Tables and Nested tables)</li>
-<li>Support for non scalar datatype with trough library objects</li>
+<li>Full support for Oracle SQL and PL/SQL data types (scalars, objects, refs, collections, ...)</li>
+<li>Full support for PL/SQL (blocks, cursors, index-by tables, and nested tables)</li>
+<li>Support for non-scalar data types through library objects</li>
 <li>Oracle Pooling (connections and sessions pools)</li>
 <li>Oracle XA connectivity (X/Open Distributed Transaction Processing XA interface)</li>
-<li>Oracle AQ (Advanded Queues)</li>
-<li>Oracle TAF (Transparent Application Failover) and HA (High availabality) support</li>
-<li>Binding array Interface</li>
+<li>Oracle AQ (Advanced Queuing)</li>
+<li>Oracle TAF (Transparent Application Failover) and HA (High availability) support</li>
+<li>Binding array interface</li>
 <li>Returning DML feature</li>
 <li>Scrollable statements</li>
 <li>Statement cache</li>
 <li>Direct Path loading</li>
 <li>Remote Instances Startup/Shutdown</li>
-<li>Oracle Database Change notification / Continuous Query Notification</li>
+<li>Oracle Database Change Notification / Continuous Query Notification</li>
 <li>Oracle warnings support</li>
 <li>Global and local transactions</li>
 <li>Describe database schema objects</li>
 <li>Hash tables API</li>
-<li>Portable Threads and mutexes API</li>
+<li>Portable threads and mutexes API</li>
 <li>Partial support for XMLTYPE (fetching only as string content)</li>
 </ul>
 <h1><a class="anchor" id="Download"></a>
 Download</h1>
-<p>Get OCILIB from <a href="http://www.ocilib.net">OCILIB website</a></p>
+<p>Get OCILIB from the <a href="http://www.ocilib.net">OCILIB website</a></p>
 <h1><a class="anchor" id="Author"></a>
 Author</h1>
 <p>OCILIB is developed by <a href="#" onclick="location.href='mai'+'lto:'+'vin'+'ce'+'.ro'+'gi'+'er@'+'oc'+'ili'+'b.'+'net'; return false;">Vincent Rogier</a></p>
 <h1><a class="anchor" id="License"></a>
 License</h1>
-<p>The source code is free source code licensed under the Apache License, Version 2.0. (see the file LICENSE)</p>
+<p>The source code is licensed under the Apache License, Version 2.0 (see the file LICENSE).</p>
 <h1><a class="anchor" id="Changelog"></a>
 ChangeLog</h1>
-<div class="fragment"><div class="line">2025-01-14 Version 4.7.7 Vincent Rogier vince.rogier@ocilib.net</div>
+<div class="fragment"><div class="line">2026-05-19 Version 4.9.0 Vincent Rogier vince.rogier@ocilib.net</div>
+<div class="line"> </div>
+<div class="line">    * Enhancements (C API)</div>
+<div class="line">   </div>
+<div class="line">        - Issue 381 : Enhancement for computing bind variables without executing statement (C API)</div>
+<div class="line">            * Added OCI_GetParseBindNames()</div>
+<div class="line"> </div>
+<div class="line">    * Enhancements (C++ API)</div>
+<div class="line"> </div>
+<div class="line">        - Issue 381 : Enhancement for computing bind variables without executing statement (C++ API):</div>
+<div class="line">            * Added Statement::GetParseBindNames()</div>
+<div class="line">         </div>
+<div class="line">    * Fixes (C API)</div>
+<div class="line">    </div>
+<div class="line">        - Issue 382 : Warnings when opening a connection in password  during grace period</div>
+<div class="line">      </div>
+<div class="line">    * Fixes (C++ API)</div>
+<div class="line">        - Issue 379 : Issues in creating collection of user defined type</div>
+<div class="line">        - Issue 383 : Compilation error on macOS</div>
+<div class="line">        - Issue 387 : Message::GetPayload&lt;Raw&gt;() always return an empty Raw of size 0</div>
+<div class="line"> </div>
+<div class="line">    * Documentation</div>
+<div class="line">    </div>
+<div class="line">        - Fixed all typos in the documentation (C and C++ APIs)</div>
+<div class="line">        - Added some refinements</div>
+<div class="line">   </div>
+<div class="line">    * Miscellaneous</div>
+<div class="line">    </div>
+<div class="line">        - Updated compilers for MS Windows prebuilt binaries to VS2022 17.14.32</div>
+<div class="line">        - Various minor internal changes, added checks and fixes found by static analysis</div>
+<div class="line">   </div>
+<div class="line">2025-05-13 Version 4.8.0 Vincent Rogier vince.rogier@ocilib.net</div>
+<div class="line"> </div>
+<div class="line">  * Enhancements (C API)</div>
+<div class="line"> </div>
+<div class="line">        - Oracle VECTOR type is now supported </div>
+<div class="line">            * Requires Oracle 23.4 client and database </div>
+<div class="line">            * For prior Oracle clients, VECTOR type can be binded and fetched as string</div>
+<div class="line">            * Added OCI_Vector* data type (OCI_CDT_VECTOR) </div>
+<div class="line">            * Added the following new APIs:               </div>
+<div class="line">                - OCI_VectorCreate()</div>
+<div class="line">                - OCI_VectorFree()</div>
+<div class="line">                - OCI_VectorArrayCreate()</div>
+<div class="line">                - OCI_VectorArrayFree()</div>
+<div class="line">                - OCI_VectorGetInfo()</div>
+<div class="line">                - OCI_VectorGetValues()</div>
+<div class="line">                - OCI_VectorSetValues()</div>
+<div class="line">                - OCI_VectorFromText()</div>
+<div class="line">                - OCI_VectorToText()</div>
+<div class="line">                - OCI_GetVector()</div>
+<div class="line">                - OCI_GetVector2()</div>
+<div class="line">                - OCI_RegisterVector()</div>
+<div class="line">                - OCI_BindVector()</div>
+<div class="line">                - OCI_BindArrayOfVectors()</div>
+<div class="line">                - OCI_ColumnGetDimension()</div>
+<div class="line">            * Added Vector element types : OCI_VEC_INT8, OCI_VEC_FLOAT32, OCI_VEC_FLOAT64 and OCI_VEC_BINARY (OCI_VEC_FLEX is only used for describing column)</div>
+<div class="line">            * Vector element type OCI_VEC_BINARY is only supported from 23.5</div>
+<div class="line">            * OCI_ColumnGetType() reports &quot;VECTOR&quot; as SQL type</div>
+<div class="line">            * OCI_ColumnGetFullSQLType() reports same details as SQLPlus( e.g., VECTOR({dimension}, {type]) )</div>
+<div class="line">            * OCI_ColumnGetSubType() returns OCI_VEC_XXX values</div>
+<div class="line">            * OCI_GetString() returns a string representation of a VECTOR object</div>
+<div class="line"> </div>
+<div class="line">        -  Added the ability to retrived localized strings from Oracle client</div>
+<div class="line">            - Added OCI_LST_XXX entries</div>
+<div class="line">            - Added OCI_GetLocaleString() </div>
+<div class="line">        </div>
+<div class="line">   * Enhancements (C++ API)</div>
+<div class="line">   </div>
+<div class="line">        - Oracle VECTOR type is now supported (see C API for more details)</div>
+<div class="line">            * Added ocilib::Vector class wrapping OCI_Vector* handle</div>
+<div class="line">            * Added ocilib::Column::GetDimension() method         </div>
+<div class="line">        - Added the ability to retrived localized strings from Oracle client</div>
+<div class="line">            - Added ocilib::Environment::LocaleCode enum</div>
+<div class="line">            - Added ocilib::Environment::GetLocaleString() method</div>
+<div class="line">           </div>
+<div class="line">    * Fixes (C API)</div>
+<div class="line">        - Issue 371 : Build failure with gcc14</div>
+<div class="line">        - Issue 377 : Binding arrays of non scalar types (big_int/OCI_Datetime/OCI_Timestamp/OCI_Interval) with a PL/SQL block statement provides NULL values to Oracle client</div>
+<div class="line">      </div>
+<div class="line">    * Fixes (C++ API)</div>
+<div class="line">        - Issue 370 : Calling Environment::Initialized() before Environment::Initialize() throws an exception</div>
+<div class="line">    </div>
+<div class="line">2025-01-14 Version 4.7.7 Vincent Rogier vince.rogier@ocilib.net</div>
 <div class="line"> </div>
 <div class="line">   * Enhancements (C API)</div>
 <div class="line"> </div>
@@ -1997,7 +2078,7 @@ ChangeLog</h1>
 <div class="line">          - the trailing null character was missing if the binded string had been shortened by some PL/SQL code or user</div>
 <div class="line">          - Internal initialization of bind array of data lengths: the length was including null terminator character and could lead to some memory corruptions</div>
 <div class="line">      - Fixed some demo example codes </div>
-<div class="line">      - Fixed computation of internal OCI_Object sub objects offsets in their parents’ indicator array (could have caused segfaults and/or bad indicator values)</div>
+<div class="line">      - Fixed computation of internal OCI_Object sub objects offsets in their parentsâ€™ indicator array (could have caused segfaults and/or bad indicator values)</div>
 <div class="line">      - Fixed problems with OCI_Elem internal null indicators:</div>
 <div class="line">          - In some cases, a segfault caused by a null pointer could happened</div>
 <div class="line">          - For OCI_Object handles held by an OCI_Elem handle, the object internal indicator structure was not properly set/retrieved</div>
@@ -3492,7 +3573,7 @@ ChangeLog</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:12 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:15 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

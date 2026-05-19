@@ -38,5 +38,6 @@ var searchData=
   ['typestring_35',['TypeString',['../namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6ac966831ebb93f4bf30fd9698b65d08cc',1,'ocilib']]],
   ['typetimestamp_36',['TypeTimestamp',['../namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a6c6ee0643be61eab50bafcca4e83a8c9',1,'ocilib']]],
   ['typeupdate_37',['TypeUpdate',['../classocilib_1_1_statement.html#a1cceff980b5e9c407e7fdafbbc107832ae8df59963aa1b5fa2f3e3be3326e2240',1,'ocilib::Statement']]],
-  ['typexmltype_38',['TypeXmlType',['../namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a1457bdbb997a504adfc39ddebc9ab2ff',1,'ocilib']]]
+  ['typevector_38',['TypeVector',['../namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a820ce9c830a6f4ead897c0beee053c34',1,'ocilib']]],
+  ['typexmltype_39',['TypeXmlType',['../namespaceocilib.html#ac3f00ba4e438728cf3377542245d21e6a1457bdbb997a504adfc39ddebc9ab2ff',1,'ocilib']]]
 ];

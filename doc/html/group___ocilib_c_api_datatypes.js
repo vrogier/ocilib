@@ -22,6 +22,7 @@ var group___ocilib_c_api_datatypes =
     [ "OCI_Iter", "group___ocilib_c_api_datatypes.html#gaf88481fd4329ba97717805effd4b8fc9", null ],
     [ "OCI_Ref", "group___ocilib_c_api_datatypes.html#ga0e6344d3d91bcf39059894adc19f011a", null ],
     [ "OCI_XmlType", "group___ocilib_c_api_datatypes.html#ga14291b3c4b2b3ab1e3d5efc108251e22", null ],
+    [ "OCI_Vector", "group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9", null ],
     [ "OCI_TypeInfo", "group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6", null ],
     [ "OCI_HashTable", "group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb", null ],
     [ "OCI_Error", "group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7", null ],

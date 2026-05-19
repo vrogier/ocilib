@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,20 +100,20 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_longs.html',''); 
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiFiles</p>
-<p>Long Objects encapsulate Oracle LONGs data types and were used to store large buffers in Oracle database.</p>
-<p>They're still supported but are depreciated. Oracle now provides a newer and better way to deal with data that needs large storage : LOBs</p>
-<p>OCILIB supports this data type because it was and still is widely used</p>
-<p>OCILIB provides a set of API for manipulating LONGs that is really close to the one provided for LOBs.</p>
-<p>OCILIB currently supports 3 types of Long Objects:</p>
+<p>Long Objects encapsulate Oracle LONG data types and were used to store large buffers in Oracle databases.</p>
+<p>They are still supported but are deprecated. Oracle now provides a newer and better way to deal with data that needs large storage: LOBs.</p>
+<p>OCILIB supports this data type because it was and still is widely used.</p>
+<p>OCILIB provides a set of APIs for manipulating LONGs that is very close to the one provided for LOBs.</p>
+<p>OCILIB currently supports 2 types of Long Objects:</p>
 <ul>
-<li>OCI_BLONG : LONG RAW columns</li>
-<li>OCI_CLONG : LONG columns</li>
+<li>OCI_BLONG : LONG RAW columns.</li>
+<li>OCI_CLONG : LONG columns.</li>
 </ul>
-<p>OCI_Lob objects can be :</p>
+<p>OCI_Long objects can be:</p>
 <ul>
-<li>Created as standalone instances</li>
-<li>Used for in/out binding</li>
-<li>Retrieved from select statement</li>
+<li>Created as standalone instances.</li>
+<li>Used for in/out binding.</li>
+<li>Retrieved from SELECT statements.</li>
 </ul>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
@@ -221,24 +221,24 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_longs.html',''); 
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga99fdd3a24d96ae27a9f31cae47041c27"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27">OCI_ConnectionCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Connection *OCI_API OCI_ConnectionCreate(const otext *db, const otext *user, const otext *pwd, unsigned int mode)</div><div class="ttdoc">Create a physical connection to an Oracle database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4b016f1bd7de508b1a919e34b12aa83d"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a></div><div class="ttdeci">struct OCI_Statement OCI_Statement</div><div class="ttdoc">Oracle SQL or PL/SQL statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00136">types.h:136</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga95e122a9e888afdd674803e521557aba"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga95e122a9e888afdd674803e521557aba">OCI_Long</a></div><div class="ttdeci">struct OCI_Long OCI_Long</div><div class="ttdoc">Oracle Long data type.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00260">types.h:260</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gae0c7aa9c507975d21ca6c261081ba753"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a></div><div class="ttdeci">struct OCI_Resultset OCI_Resultset</div><div class="ttdoc">Collection of output columns from a select statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00163">types.h:163</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7af90deb9e70e7bcab3b356e856b9b73"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7af90deb9e70e7bcab3b356e856b9b73">OCI_GetLong</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Long *OCI_API OCI_GetLong(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current Long value of the column at the given index in the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the resultset handle from an executed statement.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7af90deb9e70e7bcab3b356e856b9b73"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7af90deb9e70e7bcab3b356e856b9b73">OCI_GetLong</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Long *OCI_API OCI_GetLong(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current Long value of the column at the given index in the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the result set handle from an executed statement.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_longs_html_ga645e23ae25f61403cda590b84d7c515a"><div class="ttname"><a href="group___ocilib_c_api_longs.html#ga645e23ae25f61403cda590b84d7c515a">OCI_LongFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_LongFree(OCI_Long *lg)</div><div class="ttdoc">Free a local temporary long.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_longs_html_ga7843603fb41ecb402feeb8e19516d19f"><div class="ttname"><a href="group___ocilib_c_api_longs.html#ga7843603fb41ecb402feeb8e19516d19f">OCI_LongGetSize</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongGetSize(OCI_Long *lg)</div><div class="ttdoc">Return the buffer size of a long object in bytes (OCI_BLONG) or character (OCI_CLONG)</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_longs_html_ga7843603fb41ecb402feeb8e19516d19f"><div class="ttname"><a href="group___ocilib_c_api_longs.html#ga7843603fb41ecb402feeb8e19516d19f">OCI_LongGetSize</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongGetSize(OCI_Long *lg)</div><div class="ttdoc">Return the buffer size of a Long object in bytes (OCI_BLONG) or characters (OCI_CLONG)</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_longs_html_ga8bacb9883122e2925613927695fe54dd"><div class="ttname"><a href="group___ocilib_c_api_longs.html#ga8bacb9883122e2925613927695fe54dd">OCI_LongRead</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongRead(OCI_Long *lg, void *buffer, unsigned int len)</div><div class="ttdoc">Read a portion of a long into the given buffer [Obsolete].</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_longs_html_gac5c5c7779dc465f3f5e06e8a72358452"><div class="ttname"><a href="group___ocilib_c_api_longs.html#gac5c5c7779dc465f3f5e06e8a72358452">OCI_LongWrite</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongWrite(OCI_Long *lg, void *buffer, unsigned int len)</div><div class="ttdoc">Write a buffer into a Long.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_longs_html_gaef6b124865144b2602f0ea234d18622d"><div class="ttname"><a href="group___ocilib_c_api_longs.html#gaef6b124865144b2602f0ea234d18622d">OCI_LongCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Long *OCI_API OCI_LongCreate(OCI_Statement *stmt, unsigned int type)</div><div class="ttdoc">Create a local temporary Long instance.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statement_control_html_gac17f8520e6d8fab2980f07e7cdeb4d6a"><div class="ttname"><a href="group___ocilib_c_api_statement_control.html#gac17f8520e6d8fab2980f07e7cdeb4d6a">OCI_SetPieceSize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_SetPieceSize(OCI_Statement *stmt, unsigned int size)</div><div class="ttdoc">Set the piece size for dynamic fetch operations (XMLTYPE, LONGs)</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_ga155a95c89d2e8e162acb61383a56f77d"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga155a95c89d2e8e162acb61383a56f77d">OCI_StatementCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_StatementCreate(OCI_Connection *con)</div><div class="ttdoc">Create a statement object and return its handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga533ada0a945118e7e62e2357d956dcf2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare and Execute a SQL statement or PL/SQL block.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated to it (resultsets ...)</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga533ada0a945118e7e62e2357d956dcf2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare and execute a SQL statement or PL/SQL block in a single call.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated with it (result sets, bind variables,...</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gaaedce0c8f66eb60445fb759900d32f04"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Prepare(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare a SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gac4fae0835b45409e141eb1b4518fa89c"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Execute(OCI_Statement *stmt)</div><div class="ttdoc">Execute a prepared SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_transactions_html_gadc75ccc3334477a3b4ceeb609f7ed544"><div class="ttname"><a href="group___ocilib_c_api_transactions.html#gadc75ccc3334477a3b4ceeb609f7ed544">OCI_Commit</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Commit(OCI_Connection *con)</div><div class="ttdoc">Commit current pending changes.</div></div>
@@ -262,7 +262,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:gac5c5c7779dc465f3f5e06e8a72358452"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a buffer into a Long.  <br /></td></tr>
 <tr class="separator:gac5c5c7779dc465f3f5e06e8a72358452"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7843603fb41ecb402feeb8e19516d19f"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_longs.html#ga7843603fb41ecb402feeb8e19516d19f">OCI_LongGetSize</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga95e122a9e888afdd674803e521557aba">OCI_Long</a> *lg)</td></tr>
-<tr class="memdesc:ga7843603fb41ecb402feeb8e19516d19f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the buffer size of a long object in bytes (OCI_BLONG) or character (OCI_CLONG)  <br /></td></tr>
+<tr class="memdesc:ga7843603fb41ecb402feeb8e19516d19f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the buffer size of a Long object in bytes (OCI_BLONG) or characters (OCI_CLONG)  <br /></td></tr>
 <tr class="separator:ga7843603fb41ecb402feeb8e19516d19f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2d1b3cecae8b8867a29fe4c6f641341b"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC void *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_longs.html#ga2d1b3cecae8b8867a29fe4c6f641341b">OCI_LongGetBuffer</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga95e122a9e888afdd674803e521557aba">OCI_Long</a> *lg)</td></tr>
 <tr class="memdesc:ga2d1b3cecae8b8867a29fe4c6f641341b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the internal buffer of an OCI_Long object read from a fetch sequence.  <br /></td></tr>
@@ -305,12 +305,12 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Supported lob types :</p>
+<p>Supported Long types:</p>
 <ul>
-<li>OCI_BLONG : Binary Long</li>
-<li>OCI_CLONG : Character Long</li>
+<li>OCI_BLONG : Binary Long.</li>
+<li>OCI_CLONG : Character Long.</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>Return the long handle on success otherwise NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Long handle on success, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_long.html#a4541c7bff32db90366434199adcc8507">ocilib::Long&lt; T, U &gt;::Long()</a>.</p>
 
@@ -341,8 +341,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Only lobs created with <a class="el" href="group___ocilib_c_api_longs.html#gaef6b124865144b2602f0ea234d18622d" title="Create a local temporary Long instance.">OCI_LongCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_longs.html#ga645e23ae25f61403cda590b84d7c515a" title="Free a local temporary long.">OCI_LongFree()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Only Longs created with <a class="el" href="group___ocilib_c_api_longs.html#gaef6b124865144b2602f0ea234d18622d" title="Create a local temporary Long instance.">OCI_LongCreate()</a> should be freed by <a class="el" href="group___ocilib_c_api_longs.html#ga645e23ae25f61403cda590b84d7c515a" title="Free a local temporary long.">OCI_LongFree()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -371,8 +371,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>For possible values, see <a class="el" href="group___ocilib_c_api_lobs.html#ga35233a7a52a28cf0e105670ee14ba4d9" title="Create a local temporary Lob instance.">OCI_LobCreate()</a></dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Object type or OCI_UNKNOWN the input handle is NULL </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For possible values, see <a class="el" href="group___ocilib_c_api_longs.html#gaef6b124865144b2602f0ea234d18622d" title="Create a local temporary Long instance.">OCI_LongCreate()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Long type, or OCI_UNKNOWN if the input handle is NULL. </dd></dl>
 
 </div>
 </div>
@@ -420,21 +420,21 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd><ul>
-<li>From version 2.0.0, this function is obsolete because OCILIB fetches now all data during OCIFetchNext() call</li>
-<li>So, this call reads now the internal OCI_Long object allocated buffer</li>
-<li>The internal buffer can be directly accessed with <a class="el" href="group___ocilib_c_api_longs.html#ga2d1b3cecae8b8867a29fe4c6f641341b" title="Return the internal buffer of an OCI_Long object read from a fetch sequence.">OCI_LongGetBuffer()</a></li>
+<li>From version 2.0.0, this function is obsolete because OCILIB now fetches all data during the OCIFetchNext() call.</li>
+<li>This call now reads the internal OCI_Long object allocated buffer.</li>
+<li>The internal buffer can be directly accessed with <a class="el" href="group___ocilib_c_api_longs.html#ga2d1b3cecae8b8867a29fe4c6f641341b" title="Return the internal buffer of an OCI_Long object read from a fetch sequence.">OCI_LongGetBuffer()</a>.</li>
 </ul>
 </dd>
 <dd>
 <ul>
-<li>For OCI_CLONG, parameter 'len' and returned value are expressed in characters</li>
-<li>For OCI_BLONG, parameter 'len' and returned value are expressed in bytes</li>
+<li>For OCI_CLONG, parameter 'len' and returned value are expressed in characters.</li>
+<li>For OCI_BLONG, parameter 'len' and returned value are expressed in bytes.</li>
 </ul>
 </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd><ul>
-<li>Number of bytes/characters read on success</li>
-<li>0 if there is nothing more to read</li>
-<li>0 on failure </li>
+<li>Number of bytes/characters read on success.</li>
+<li>0 if there is nothing more to read.</li>
+<li>0 on failure. </li>
 </ul>
 </dd></dl>
 
@@ -478,12 +478,12 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">lg</td><td>- Long handle </td></tr>
-    <tr><td class="paramname">buffer</td><td>- the pointer to a buffer </td></tr>
-    <tr><td class="paramname">len</td><td>- the length of the buffer in bytes (OCI_BLONG) or character (OCI_CLONG)</td></tr>
+    <tr><td class="paramname">buffer</td><td>- Pointer to a buffer </td></tr>
+    <tr><td class="paramname">len</td><td>- Length of the buffer in bytes (OCI_BLONG) or characters (OCI_CLONG)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes (OCI_BLONG) / character (OCI_CLONG) written on success otherwise 0 on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bytes (OCI_BLONG) or characters (OCI_CLONG) written on success, or 0 on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_long.html#a36eacb25606221605a427cb26d147a91">ocilib::Long&lt; T, U &gt;::Write()</a>.</p>
 
@@ -507,13 +507,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the buffer size of a long object in bytes (OCI_BLONG) or character (OCI_CLONG) </p>
+<p>Return the buffer size of a Long object in bytes (OCI_BLONG) or characters (OCI_CLONG) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">lg</td><td>- Long handle </td></tr>
+    <tr><td class="paramname">lg</td><td>- Long handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The buffer size, or 0 on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_long.html#a92d62dfe3fa9d9fcc7b5d66cdc32f06b">ocilib::Long&lt; T, U &gt;::GetLength()</a>.</p>
 
@@ -540,10 +541,11 @@ Functions</h2></td></tr>
 <p>Return the internal buffer of an OCI_Long object read from a fetch sequence. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">lg</td><td>- Long handle </td></tr>
+    <tr><td class="paramname">lg</td><td>- Long handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The internal buffer pointer, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -553,7 +555,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

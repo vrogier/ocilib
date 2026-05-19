@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -100,61 +100,63 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_binding.html','')
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiStatements</p>
-<p>OCILIB supports OCI data binding APIs</p>
-<p>Programs variables can be binded to an Oracle SQL PL/SQL statement in order to :</p>
+<p>OCILIB supports the OCI data binding APIs.</p>
+<p>Program variables can be bound to an Oracle SQL or PL/SQL statement in order to:</p>
 <ul>
-<li>Provide input data for SQL statement</li>
-<li>Provide input/output data for PL/SQL blocks</li>
+<li>Provide input data for SQL statements.</li>
+<li>Provide input/output data for PL/SQL blocks.</li>
 </ul>
-<p>OCILIB provides a set of binding functions to use with:</p>
+<p>OCILIB provides a set of binding functions for the following data types:</p>
 <ul>
-<li>Basic data types: string (char/wchar_t *), int, float, double, raw</li>
-<li>Object data types: lobs, files,longs, dates, cursors, statements, timestamps, intervals, objects</li>
+<li>Basic data types: string (char/wchar_t *), int, float, double, raw.</li>
+<li>Object data types: LOBs, files, longs, dates, cursors, statements, timestamps, intervals, objects.</li>
 </ul>
 <p>To use binding:</p>
-<ul>
-<li>Prepare a statement with <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a> (see Executing statements)</li>
-<li>Bind variables by calling one if the OCI_Bindxxxxx() function for every input variable referenced by the SQL statement</li>
-<li>Setup up values of the program variables</li>
-<li>Call <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> as many times as needed</li>
-<li>Each <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> call may be preceded by an update of the program variables (for INSERTs for example)</li>
-</ul>
-<dl class="section warning"><dt>Warning</dt><dd>Between re-execution of same SQL statetement, use <a class="el" href="group___ocilib_c_api_binding.html#ga637008f9891c431ac6688aec9b42025a" title="Set to null the entry in the bind variable input array.">OCI_BindSetNullAtPos()</a> / <a class="el" href="group___ocilib_c_api_binding.html#ga795f95806a25046aa18ca7a7abebc3a1" title="Set the bind variable to null.">OCI_BindSetNull()</a> and <a class="el" href="group___ocilib_c_api_binding.html#ga637008f9891c431ac6688aec9b42025a" title="Set to null the entry in the bind variable input array.">OCI_BindSetNullAtPos()</a> / <a class="el" href="group___ocilib_c_api_binding.html#gaab9becc077dd4327b9d782df51b72835" title="Set to NOT null the entry in the bind variable input array.">OCI_BindSetNotNullAtPos()</a> to update the NULL / NOT NULL status of host variables</dd></dl>
+<ol type="1">
+<li>Prepare a statement with <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a> (see Executing statements).</li>
+<li>Bind variables by calling the appropriate OCI_BindXXX() function for every input variable referenced by the SQL statement.</li>
+<li>Set the values of the program variables.</li>
+<li>Call <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> as many times as needed.</li>
+<li>Each <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> call may be preceded by an update of the program variables (for INSERTs, for example).</li>
+</ol>
+<dl class="section warning"><dt>Warning</dt><dd>Between re-executions of the same SQL statement, use <a class="el" href="group___ocilib_c_api_binding.html#ga795f95806a25046aa18ca7a7abebc3a1" title="Set the bind variable to null.">OCI_BindSetNull()</a> / <a class="el" href="group___ocilib_c_api_binding.html#ga637008f9891c431ac6688aec9b42025a" title="Set to null the entry in the bind variable input array.">OCI_BindSetNullAtPos()</a> and <a class="el" href="group___ocilib_c_api_binding.html#ga8d755d40fb660dadaac7476e27d6788e" title="Set the bind variable to NOT null.">OCI_BindSetNotNull()</a> / <a class="el" href="group___ocilib_c_api_binding.html#gaab9becc077dd4327b9d782df51b72835" title="Set to NOT null the entry in the bind variable input array.">OCI_BindSetNotNullAtPos()</a> to update the NULL / NOT NULL status of host variables.</dd></dl>
 <p>Bindings can be:</p><ul>
-<li>IN (host variable are not used anymore after statement execution)</li>
-<li>OUT (host variable are set during statement execution)</li>
-<li>IN/OUT (default) Use OCI_BindSetDirectionTo() to change a host variable bind direction mode after the binding call but before statement execution. Note that each direction mode may have a little overhead depending on the SQL type as OCILIB may have to do checks/conversions/mappings between host variable and buffers. Thus, to maximize performances:</li>
-<li>set direction mode to OCI_BDM_IN if host variable is not updated by statement execution</li>
-<li>set direction mode to OCI_BDM_OUT if host variable value does not matter prior to statement execution</li>
-<li>set direction mode to OCI_BDM_IN_OUT when host variable value is used for execution and updated by statement execution</li>
+<li>IN: Host variable is used as input only; not updated after statement execution.</li>
+<li>OUT: Host variable is set during statement execution; its initial value is ignored.</li>
+<li>IN/OUT: Host variable is both read before and updated after statement execution (default).</li>
 </ul>
-<p>OCILIB supports the OCI array Interface by binding arrays of C scalar types and OCILIB object types.</p>
+<p>Use <a class="el" href="group___ocilib_c_api_binding.html#ga9797a3860499a334e710f446460d08bd" title="Set the direction mode of a bind handle.">OCI_BindSetDirection()</a> to change a host variable's bind direction after the binding call but before statement execution. Each direction mode may have a slight overhead depending on the SQL type, as OCILIB may need to perform checks, conversions, or mappings between host variables and internal buffers. To maximize performance:</p><ul>
+<li>Set direction mode to OCI_BDM_IN if the host variable is not updated by statement execution.</li>
+<li>Set direction mode to OCI_BDM_OUT if the host variable value is irrelevant prior to execution.</li>
+<li>Set direction mode to OCI_BDM_IN_OUT when the host variable is used for execution and updated afterward.</li>
+</ul>
+<p>OCILIB supports the OCI array interface by binding arrays of C scalar types and OCILIB object types.</p>
 <ul>
-<li>all types supported the library can be used for array binding except OCI_Statement and OCI_Long</li>
-<li>Array binding is really fast for massive DML operations</li>
-<li>For string/RAW arrays, the input array MUST BE a contiguous block of data and not an array of pointers. So to bind an array of 10 elements for a varchar2(30) column, binded variable must be a like array[10][31]</li>
+<li>All types supported by the library can be used for array binding, except OCI_Statement and OCI_Long.</li>
+<li>Array binding is highly efficient for bulk DML operations.</li>
+<li>For string/RAW arrays, the input array MUST be a contiguous block of data, not an array of pointers. For example, to bind an array of 10 elements for a VARCHAR2(30) column, the bound variable should be declared as array[10][31].</li>
 </ul>
-<p>OCILIB does not pre-parse statements (like other frameworks such as JDBC, ...) and lets Oracle recognize input variables embedded within the SQL statements.</p>
-<p>Bind variables must be preceded in the SQL code by the character ':'.</p>
-<p>Oracle and OCILIB supports two ways of binding:</p>
+<p>OCILIB does not pre-parse statements (unlike other frameworks such as JDBC) and lets Oracle recognize input variables embedded within the SQL statements.</p>
+<p>Bind variables must be preceded in the SQL code by the ':' character.</p>
+<p>Oracle and OCILIB support two binding modes:</p>
 <ul>
-<li>by name (default mode in OCILIB): Oracle looks for variables in the SQL statement by searching their names provided to the binding function. So a variable can be binded once and used many times in the statement</li>
-<li>by position: Oracle binds variables by position, so every variable is binded with a position number</li>
+<li>By name (default): Oracle identifies variables by their names as provided to the binding function. A variable can be bound once and referenced multiple times in the statement.</li>
+<li>By position: Oracle binds variables by their ordinal position.</li>
 </ul>
-<p>OCILIB Default binding mode is OCI_BIND_BY_NAME.</p>
-<p>When using binding by position, provide the position to OCI_BindXXXX() call through the name parameter. Within this mode the bind name must be the position preceded by a semicolon like ':1', ':2', ....</p>
-<dl class="section user"><dt>Internal Bind allocation mode</dt><dd></dd></dl>
-<p>Bind variables or arrays can be internally allocated by OCILIB. That means that instead of allocating variables or arrays on the stack/heap in the user program, bind contents can be allocated internally and thus :</p><ul>
-<li>minimize the amount of program variables</li>
-<li>optimize internal memory management for arrays</li>
+<p>The default binding mode is OCI_BIND_BY_NAME.</p>
+<p>When using binding by position, provide the position to OCI_BindXXX() calls through the name parameter. The bind name must be the position preceded by a colon, e.g., ':1', ':2', etc.</p>
+<dl class="section user"><dt>Internal Bind Allocation Mode</dt><dd></dd></dl>
+<p>Bind variables or arrays can be internally allocated by OCILIB. Instead of allocating variables or arrays on the stack/heap in the user program, bind contents can be allocated internally, which:</p><ul>
+<li>Minimizes the number of program variables.</li>
+<li>Optimizes internal memory management for arrays.</li>
 </ul>
-<p>To do so :</p><ul>
-<li>Call <a class="el" href="group___ocilib_c_api_statement_control.html#ga4f4811d4d8174cfaf9ef99be6f4c37d6" title="Set the current bind allocation mode that will be used for subsequent binding calls.">OCI_SetBindAllocation()</a> with the mode OCI_BAM_INTERNAL</li>
-<li>pass a NULL variable or array to OCI_BindXXX() calls</li>
-<li>Retrieve the bind content allocated by OCILIB with <a class="el" href="group___ocilib_c_api_binding.html#ga24846da485d1e4a22e0decb119ea2aa8" title="Return the user defined data associated with a bind handle.">OCI_BindGetData()</a></li>
+<p>To use internal bind allocation:</p><ul>
+<li>Call <a class="el" href="group___ocilib_c_api_statement_control.html#ga4f4811d4d8174cfaf9ef99be6f4c37d6" title="Set the current bind allocation mode that will be used for subsequent binding calls.">OCI_SetBindAllocation()</a> with the mode OCI_BAM_INTERNAL.</li>
+<li>Pass NULL for the variable or array parameter in OCI_BindXXX() calls.</li>
+<li>Retrieve the bind content allocated by OCILIB with <a class="el" href="group___ocilib_c_api_binding.html#ga24846da485d1e4a22e0decb119ea2aa8" title="Return the user defined data associated with a bind handle.">OCI_BindGetData()</a>.</li>
 </ul>
-<p>Internal Bind allocation mode IS compatible with ALL array binding OCI_BindArrayOfxxx() methods.</p>
-<p>Internal Bind allocation mode IS NOT compatible with some single variable bind calls :</p><ul>
+<p>Internal bind allocation IS compatible with ALL array binding OCI_BindArrayOfXXX() methods.</p>
+<p>Internal bind allocation IS NOT compatible with the following single variable bind calls:</p><ul>
 <li><a class="el" href="group___ocilib_c_api_binding.html#gad68922bc608146101c7570ef3582ccb7" title="Bind a timestamp variable.">OCI_BindTimestamp()</a></li>
 <li><a class="el" href="group___ocilib_c_api_binding.html#ga71de798ad1514c2163202c358734d68d" title="Bind an interval variable.">OCI_BindInterval()</a></li>
 <li><a class="el" href="group___ocilib_c_api_binding.html#ga3662f45fd9f09b74d72ee33b49ba0cce" title="Bind a Lob variable.">OCI_BindLob()</a></li>
@@ -165,9 +167,9 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_binding.html','')
 <li><a class="el" href="group___ocilib_c_api_binding.html#gadb2f26dfd5e564f69917525124e6104a" title="Bind a Statement variable (PL/SQL Ref Cursor)">OCI_BindStatement()</a></li>
 <li><a class="el" href="group___ocilib_c_api_binding.html#ga80da2b4b5aea88f662d6e993d1397c6c" title="Bind a Long variable.">OCI_BindLong()</a></li>
 </ul>
-<p>These methods need to know the data sub type (like OCI_CLOB/OCI_BLOB for lobs) in order to internally create variables. As these methods prototypes are not passing the sub type, calling them with the statement bind mode set to OCI_BAM_INTERNAL will raise an OCILIB error of type OCI_ERR_NULL_POINTER</p>
-<dl class="section note"><dt>Note</dt><dd>Rebinding is disabled by default (see <a class="el" href="group___ocilib_c_api_binding.html#ga3e38d38b5ed615ea8d7d827a17e803fc" title="Allow different host variables to be binded using the same bind name or position between executions o...">OCI_AllowRebinding()</a>) When using rebinding feature, host variable re-binded to a previously allocated bind MUST be of the SAME data type !</dd></dl>
-<dl class="section user"><dt>Basic input bind Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
+<p>These methods require the data sub-type (e.g., OCI_CLOB/OCI_BLOB for LOBs) to internally create variables. Since their prototypes do not include the sub-type parameter, calling them with the bind mode set to OCI_BAM_INTERNAL will raise an OCILIB error of type OCI_ERR_NULL_POINTER.</p>
+<dl class="section note"><dt>Note</dt><dd>Rebinding is disabled by default (see <a class="el" href="group___ocilib_c_api_binding.html#ga3e38d38b5ed615ea8d7d827a17e803fc" title="Allow different host variables to be bound using the same bind name or position between executions of...">OCI_AllowRebinding()</a>). When using the rebinding feature, a host variable re-bound to a previously allocated bind MUST be of the same data type.</dd></dl>
+<dl class="section user"><dt>Basic input bind example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">/* requires script demo/products.sql */</span></div>
 <div class="line"> </div>
@@ -218,20 +220,20 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_binding.html','')
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga99fdd3a24d96ae27a9f31cae47041c27"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27">OCI_ConnectionCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Connection *OCI_API OCI_ConnectionCreate(const otext *db, const otext *user, const otext *pwd, unsigned int mode)</div><div class="ttdoc">Create a physical connection to an Oracle database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4b016f1bd7de508b1a919e34b12aa83d"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a></div><div class="ttdeci">struct OCI_Statement OCI_Statement</div><div class="ttdoc">Oracle SQL or PL/SQL statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00136">types.h:136</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gae0c7aa9c507975d21ca6c261081ba753"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a></div><div class="ttdeci">struct OCI_Resultset OCI_Resultset</div><div class="ttdoc">Collection of output columns from a select statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00163">types.h:163</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gaa1e2572fffa5c94c2bb8bb3dc45aebcf"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gaa1e2572fffa5c94c2bb8bb3dc45aebcf">OCI_GetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current string value of the column at the given index in the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the resultset handle from an executed statement.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gaa1e2572fffa5c94c2bb8bb3dc45aebcf"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gaa1e2572fffa5c94c2bb8bb3dc45aebcf">OCI_GetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_GetString(OCI_Resultset *rs, unsigned int index)</div><div class="ttdoc">Return the current string value of the column at the given index in the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the result set handle from an executed statement.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_ga155a95c89d2e8e162acb61383a56f77d"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga155a95c89d2e8e162acb61383a56f77d">OCI_StatementCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_StatementCreate(OCI_Connection *con)</div><div class="ttdoc">Create a statement object and return its handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated to it (resultsets ...)</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated with it (result sets, bind variables,...</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gaaedce0c8f66eb60445fb759900d32f04"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04">OCI_Prepare</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Prepare(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare a SQL statement or PL/SQL block.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gac4fae0835b45409e141eb1b4518fa89c"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c">OCI_Execute</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Execute(OCI_Statement *stmt)</div><div class="ttdoc">Execute a prepared SQL statement or PL/SQL block.</div></div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Array interface Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
+<dl class="section user"><dt>Array interface example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">/* requires script demo/products.sql */</span></div>
 <div class="line"> </div>
@@ -295,15 +297,15 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_binding.html','')
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line">}</div>
-<div class="ttc" id="agroup___ocilib_c_api_binding_html_ga0a783d759ff7fcfed46aafd95312dde2"><div class="ttname"><a href="group___ocilib_c_api_binding.html#ga0a783d759ff7fcfed46aafd95312dde2">OCI_GetBatchErrorCount</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBatchErrorCount(OCI_Statement *stmt)</div><div class="ttdoc">Returns the number of errors that occurred within the last DML array statement.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_binding_html_ga0a783d759ff7fcfed46aafd95312dde2"><div class="ttname"><a href="group___ocilib_c_api_binding.html#ga0a783d759ff7fcfed46aafd95312dde2">OCI_GetBatchErrorCount</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBatchErrorCount(OCI_Statement *stmt)</div><div class="ttdoc">Return the number of errors that occurred within the last DML array statement.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_ga6b32004f76a2f7c56280af7c6b94e12d"><div class="ttname"><a href="group___ocilib_c_api_binding.html#ga6b32004f76a2f7c56280af7c6b94e12d">OCI_BindArrayOfInts</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfInts(OCI_Statement *stmt, const otext *name, int *data, unsigned int nbelem)</div><div class="ttdoc">Bind an array of integers.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_binding_html_ga6bcb91e88f7a7570bf739cc20427ebc3"><div class="ttname"><a href="group___ocilib_c_api_binding.html#ga6bcb91e88f7a7570bf739cc20427ebc3">OCI_GetBatchError</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Error *OCI_API OCI_GetBatchError(OCI_Statement *stmt)</div><div class="ttdoc">Returns the first or next error that occurred within a DML array statement execution.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_binding_html_ga6bcb91e88f7a7570bf739cc20427ebc3"><div class="ttname"><a href="group___ocilib_c_api_binding.html#ga6bcb91e88f7a7570bf739cc20427ebc3">OCI_GetBatchError</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Error *OCI_API OCI_GetBatchError(OCI_Statement *stmt)</div><div class="ttdoc">Return the first or next error that occurred within a DML array statement execution.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_gaacbbd2d4b8742ef0b25402f7db386ac6"><div class="ttname"><a href="group___ocilib_c_api_binding.html#gaacbbd2d4b8742ef0b25402f7db386ac6">OCI_BindArrayOfStrings</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfStrings(OCI_Statement *stmt, const otext *name, otext *data, unsigned int len, unsigned int nbelem)</div><div class="ttdoc">Bind an array of strings.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_gac3cc8e0c27ad2e86d5403a9711e0f240"><div class="ttname"><a href="group___ocilib_c_api_binding.html#gac3cc8e0c27ad2e86d5403a9711e0f240">OCI_BindArraySetSize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_BindArraySetSize(OCI_Statement *stmt, unsigned int size)</div><div class="ttdoc">Set the input array size for bulk operations.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6f2a9404899d7365fbc51ded9bff5c8b"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6f2a9404899d7365fbc51ded9bff5c8b">OCI_ErrorGetRow</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_ErrorGetRow(OCI_Error *err)</div><div class="ttdoc">Return the row index which caused an error during statement execution.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6f2a9404899d7365fbc51ded9bff5c8b"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6f2a9404899d7365fbc51ded9bff5c8b">OCI_ErrorGetRow</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_ErrorGetRow(OCI_Error *err)</div><div class="ttdoc">Return the row index that caused an error during array DML execution.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_ga0af3308fa16a0a0e591b67c7ab7211a7"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga0af3308fa16a0a0e591b67c7ab7211a7">OCI_GetAffectedRows</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetAffectedRows(OCI_Statement *stmt)</div><div class="ttdoc">Return the number of rows affected by the SQL statement.</div></div>
 </div><!-- fragment --></dd></dl>
-<dl class="section user"><dt>Internal Array interface Example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
+<dl class="section user"><dt>Internal array interface example</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="comment">/* requires script demo/dates.sql */</span></div>
 <div class="line"> </div>
@@ -352,7 +354,7 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_binding.html','')
 <div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line">}</div>
 <div class="line"> </div>
-<div class="ttc" id="agroup___ocilib_c_api_binding_html_ga128143cf329983d720cb39c51c23e297"><div class="ttname"><a href="group___ocilib_c_api_binding.html#ga128143cf329983d720cb39c51c23e297">OCI_GetBind</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Bind *OCI_API OCI_GetBind(OCI_Statement *stmt, unsigned int index)</div><div class="ttdoc">Return the bind handle at the given index in the internal array of bind handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_binding_html_ga128143cf329983d720cb39c51c23e297"><div class="ttname"><a href="group___ocilib_c_api_binding.html#ga128143cf329983d720cb39c51c23e297">OCI_GetBind</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Bind *OCI_API OCI_GetBind(OCI_Statement *stmt, unsigned int index)</div><div class="ttdoc">Return the bind handle at the given index in the internal array of bind handles.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_ga24846da485d1e4a22e0decb119ea2aa8"><div class="ttname"><a href="group___ocilib_c_api_binding.html#ga24846da485d1e4a22e0decb119ea2aa8">OCI_BindGetData</a></div><div class="ttdeci">OCI_SYM_PUBLIC void *OCI_API OCI_BindGetData(OCI_Bind *bnd)</div><div class="ttdoc">Return the user defined data associated with a bind handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_binding_html_ga99cbbd83a87eb4c67ba36445089bfbf3"><div class="ttname"><a href="group___ocilib_c_api_binding.html#ga99cbbd83a87eb4c67ba36445089bfbf3">OCI_BindArrayOfDates</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfDates(OCI_Statement *stmt, const otext *name, OCI_Date **data, unsigned int nbelem)</div><div class="ttdoc">Bind an array of dates.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga549efec5df4c0825db908a5ceb9ab614"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga549efec5df4c0825db908a5ceb9ab614">OCI_Date</a></div><div class="ttdeci">struct OCI_Date OCI_Date</div><div class="ttdoc">Oracle internal date representation.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00279">types.h:279</a></div></div>
@@ -369,7 +371,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:gabced7d271075361b4576c0f50a7b4b0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current input array size for bulk operations.  <br /></td></tr>
 <tr class="separator:gabced7d271075361b4576c0f50a7b4b0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3e38d38b5ed615ea8d7d827a17e803fc"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga3e38d38b5ed615ea8d7d827a17e803fc">OCI_AllowRebinding</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, boolean value)</td></tr>
-<tr class="memdesc:ga3e38d38b5ed615ea8d7d827a17e803fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allow different host variables to be binded using the same bind name or position between executions of a prepared statement.  <br /></td></tr>
+<tr class="memdesc:ga3e38d38b5ed615ea8d7d827a17e803fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allow different host variables to be bound using the same bind name or position between executions of a prepared statement.  <br /></td></tr>
 <tr class="separator:ga3e38d38b5ed615ea8d7d827a17e803fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0a12098c447d544ec46778aea4827f2c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga0a12098c447d544ec46778aea4827f2c">OCI_IsRebindingAllowed</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
 <tr class="memdesc:ga0a12098c447d544ec46778aea4827f2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicate if rebinding is allowed on the given statement.  <br /></td></tr>
@@ -378,13 +380,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga4741cbea45a7bc1cefbf725326a59072"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind a boolean variable (PL/SQL ONLY)  <br /></td></tr>
 <tr class="separator:ga4741cbea45a7bc1cefbf725326a59072"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafbbd89897d747b4935146dc317f8071e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#gafbbd89897d747b4935146dc317f8071e">OCI_BindNumber</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> *data)</td></tr>
-<tr class="memdesc:gafbbd89897d747b4935146dc317f8071e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind an Number variable.  <br /></td></tr>
+<tr class="memdesc:gafbbd89897d747b4935146dc317f8071e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind a Number variable.  <br /></td></tr>
 <tr class="separator:gafbbd89897d747b4935146dc317f8071e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf8704b0ec5f0f58f78dc80f4216a0a26"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#gaf8704b0ec5f0f58f78dc80f4216a0a26">OCI_BindArrayOfNumbers</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#gacba937663b91f91c5c1c2256f02292e6">OCI_Number</a> **data, unsigned int nbelem)</td></tr>
 <tr class="memdesc:gaf8704b0ec5f0f58f78dc80f4216a0a26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind an array of Number.  <br /></td></tr>
 <tr class="separator:gaf8704b0ec5f0f58f78dc80f4216a0a26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac105faadfabd482a0cae36526a4b6544"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#gac105faadfabd482a0cae36526a4b6544">OCI_BindShort</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, short *data)</td></tr>
-<tr class="memdesc:gac105faadfabd482a0cae36526a4b6544"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind an short variable.  <br /></td></tr>
+<tr class="memdesc:gac105faadfabd482a0cae36526a4b6544"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind a short variable.  <br /></td></tr>
 <tr class="separator:gac105faadfabd482a0cae36526a4b6544"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae845d1bb9a9910ef3df6bda401b50bdc"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#gae845d1bb9a9910ef3df6bda401b50bdc">OCI_BindArrayOfShorts</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, short *data, unsigned int nbelem)</td></tr>
 <tr class="memdesc:gae845d1bb9a9910ef3df6bda401b50bdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind an array of shorts.  <br /></td></tr>
@@ -479,6 +481,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ga75e16a440ab19fbfed8589e70a835bce"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga75e16a440ab19fbfed8589e70a835bce">OCI_BindArrayOfObjects</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#ga270329793bf4735351b6007bc20d41ae">OCI_Object</a> **data, <a class="el" href="group___ocilib_c_api_datatypes.html#gad33099e82262f1f484c19283d5f812c6">OCI_TypeInfo</a> *typinf, unsigned int nbelem)</td></tr>
 <tr class="memdesc:ga75e16a440ab19fbfed8589e70a835bce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind an array of object handles.  <br /></td></tr>
 <tr class="separator:ga75e16a440ab19fbfed8589e70a835bce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2fc795d2abc5c56eac539980745650d8"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga2fc795d2abc5c56eac539980745650d8">OCI_BindVector</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *data)</td></tr>
+<tr class="memdesc:ga2fc795d2abc5c56eac539980745650d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind a Vector variable.  <br /></td></tr>
+<tr class="separator:ga2fc795d2abc5c56eac539980745650d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga32e67481f8f82c5e27ccc1b10532173a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga32e67481f8f82c5e27ccc1b10532173a">OCI_BindArrayOfVectors</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> **data, unsigned int nbelem)</td></tr>
+<tr class="memdesc:ga32e67481f8f82c5e27ccc1b10532173a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind an array of Vector handles.  <br /></td></tr>
+<tr class="separator:ga32e67481f8f82c5e27ccc1b10532173a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gacbe3bd7e2009234add0525bf66d7136c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#gacbe3bd7e2009234add0525bf66d7136c">OCI_BindColl</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name, <a class="el" href="group___ocilib_c_api_datatypes.html#ga5891a18e9f8ad138e4ec365b834a04d9">OCI_Coll</a> *data)</td></tr>
 <tr class="memdesc:gacbe3bd7e2009234add0525bf66d7136c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind a Collection variable.  <br /></td></tr>
 <tr class="separator:gacbe3bd7e2009234add0525bf66d7136c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -498,22 +506,22 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga80da2b4b5aea88f662d6e993d1397c6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind a Long variable.  <br /></td></tr>
 <tr class="separator:ga80da2b4b5aea88f662d6e993d1397c6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6bcb91e88f7a7570bf739cc20427ebc3"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga6bcb91e88f7a7570bf739cc20427ebc3">OCI_GetBatchError</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:ga6bcb91e88f7a7570bf739cc20427ebc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the first or next error that occurred within a DML array statement execution.  <br /></td></tr>
+<tr class="memdesc:ga6bcb91e88f7a7570bf739cc20427ebc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the first or next error that occurred within a DML array statement execution.  <br /></td></tr>
 <tr class="separator:ga6bcb91e88f7a7570bf739cc20427ebc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0a783d759ff7fcfed46aafd95312dde2"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga0a783d759ff7fcfed46aafd95312dde2">OCI_GetBatchErrorCount</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:ga0a783d759ff7fcfed46aafd95312dde2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of errors that occurred within the last DML array statement.  <br /></td></tr>
+<tr class="memdesc:ga0a783d759ff7fcfed46aafd95312dde2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of errors that occurred within the last DML array statement.  <br /></td></tr>
 <tr class="separator:ga0a783d759ff7fcfed46aafd95312dde2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8f8095c2779d7836f864c7e0db9e560a"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga8f8095c2779d7836f864c7e0db9e560a">OCI_GetBindCount</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt)</td></tr>
-<tr class="memdesc:ga8f8095c2779d7836f864c7e0db9e560a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of binds currently associated to a statement.  <br /></td></tr>
+<tr class="memdesc:ga8f8095c2779d7836f864c7e0db9e560a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of binds currently associated with a statement.  <br /></td></tr>
 <tr class="separator:ga8f8095c2779d7836f864c7e0db9e560a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga128143cf329983d720cb39c51c23e297"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga7bf7e94c3be66d0a7c8edad675133f41">OCI_Bind</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga128143cf329983d720cb39c51c23e297">OCI_GetBind</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, unsigned int index)</td></tr>
-<tr class="memdesc:ga128143cf329983d720cb39c51c23e297"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the bind handle at the given index in the internal array of bind handle.  <br /></td></tr>
+<tr class="memdesc:ga128143cf329983d720cb39c51c23e297"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the bind handle at the given index in the internal array of bind handles.  <br /></td></tr>
 <tr class="separator:ga128143cf329983d720cb39c51c23e297"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9818715301cdb6329d7ea0482f707dbe"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga7bf7e94c3be66d0a7c8edad675133f41">OCI_Bind</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga9818715301cdb6329d7ea0482f707dbe">OCI_GetBind2</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
 <tr class="memdesc:ga9818715301cdb6329d7ea0482f707dbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a bind handle from its name.  <br /></td></tr>
 <tr class="separator:ga9818715301cdb6329d7ea0482f707dbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae983030af785d5383219edaaececb109"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#gae983030af785d5383219edaaececb109">OCI_GetBindIndex</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *stmt, const otext *name)</td></tr>
-<tr class="memdesc:gae983030af785d5383219edaaececb109"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the index of the bind from its name belonging to the given statement.  <br /></td></tr>
+<tr class="memdesc:gae983030af785d5383219edaaececb109"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the index of a bind from its name.  <br /></td></tr>
 <tr class="separator:gae983030af785d5383219edaaececb109"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaedb3f28a833c877ae7b82440e51f9bf5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#gaedb3f28a833c877ae7b82440e51f9bf5">OCI_BindGetName</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7bf7e94c3be66d0a7c8edad675133f41">OCI_Bind</a> *bnd)</td></tr>
 <tr class="memdesc:gaedb3f28a833c877ae7b82440e51f9bf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the name of the given bind.  <br /></td></tr>
@@ -564,10 +572,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:gaab9becc077dd4327b9d782df51b72835"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set to NOT null the entry in the bind variable input array.  <br /></td></tr>
 <tr class="separator:gaab9becc077dd4327b9d782df51b72835"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac7976b934bca342180f077e8cc7e593c"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#gac7976b934bca342180f077e8cc7e593c">OCI_BindIsNull</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7bf7e94c3be66d0a7c8edad675133f41">OCI_Bind</a> *bnd)</td></tr>
-<tr class="memdesc:gac7976b934bca342180f077e8cc7e593c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the current value of the binded variable is marked as NULL.  <br /></td></tr>
+<tr class="memdesc:gac7976b934bca342180f077e8cc7e593c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the current value of the bound variable is marked as NULL.  <br /></td></tr>
 <tr class="separator:gac7976b934bca342180f077e8cc7e593c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0c8f47b7fb21238614dc18805b41da33"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga0c8f47b7fb21238614dc18805b41da33">OCI_BindIsNullAtPos</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7bf7e94c3be66d0a7c8edad675133f41">OCI_Bind</a> *bnd, unsigned int position)</td></tr>
-<tr class="memdesc:ga0c8f47b7fb21238614dc18805b41da33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the current entry value at the given index of the binded array is marked as NULL.  <br /></td></tr>
+<tr class="memdesc:ga0c8f47b7fb21238614dc18805b41da33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the current entry value at the given position in the bound array is marked as NULL.  <br /></td></tr>
 <tr class="separator:ga0c8f47b7fb21238614dc18805b41da33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga649407e74bca751ca2e30fb0297acd04"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_binding.html#ga649407e74bca751ca2e30fb0297acd04">OCI_BindSetCharsetForm</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga7bf7e94c3be66d0a7c8edad675133f41">OCI_Bind</a> *bnd, unsigned int csfrm)</td></tr>
 <tr class="memdesc:ga649407e74bca751ca2e30fb0297acd04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the charset form of the given character based bind variable.  <br /></td></tr>
@@ -614,10 +622,10 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Do not use <a class="el" href="group___ocilib_c_api_binding.html#gac3cc8e0c27ad2e86d5403a9711e0f240" title="Set the input array size for bulk operations.">OCI_BindArraySetSize()</a> for PL/SQL tables binding</dd></dl>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_binding.html#gac3cc8e0c27ad2e86d5403a9711e0f240" title="Set the input array size for bulk operations.">OCI_BindArraySetSize()</a> is used to set the size of input bind array when using arrays for DML statements. <a class="el" href="group___ocilib_c_api_binding.html#gac3cc8e0c27ad2e86d5403a9711e0f240" title="Set the input array size for bulk operations.">OCI_BindArraySetSize()</a> MUST be called to set the maximum size of the arrays to bind to the statement before any of its execution. This initial call must be bone AFTER <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a> and BEFORE any OCI_BindArrayOfxxx() call.</dd>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_binding.html#gac3cc8e0c27ad2e86d5403a9711e0f240" title="Set the input array size for bulk operations.">OCI_BindArraySetSize()</a> is used to set the size of the input bind array when using arrays for DML statements. It MUST be called to set the maximum array size before any statement execution. This initial call must be made AFTER <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a> and BEFORE any OCI_BindArrayOfXXX() call.</dd>
 <dd>
-<a class="el" href="group___ocilib_c_api_binding.html#gac3cc8e0c27ad2e86d5403a9711e0f240" title="Set the input array size for bulk operations.">OCI_BindArraySetSize()</a> can optionally be called before any later <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> call in order to notify the statement of the exact number of elements populating the input arrays for the next execution. The array size passed to later <a class="el" href="group___ocilib_c_api_binding.html#gac3cc8e0c27ad2e86d5403a9711e0f240" title="Set the input array size for bulk operations.">OCI_BindArraySetSize()</a> calls cannot be greater than the initial size otherwise an exception will be thrown.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<a class="el" href="group___ocilib_c_api_binding.html#gac3cc8e0c27ad2e86d5403a9711e0f240" title="Set the input array size for bulk operations.">OCI_BindArraySetSize()</a> can optionally be called before subsequent <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> calls to specify the exact number of elements populating the input arrays for the next execution. The array size passed to subsequent calls cannot exceed the initial size; otherwise, an exception will be raised.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#a77a7469b451f81fdf7493e90f0b1fc59">ocilib::Statement::SetBindArraySize()</a>.</p>
 
@@ -648,7 +656,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Array size value or 0 if <a class="el" href="group___ocilib_c_api_binding.html#gac3cc8e0c27ad2e86d5403a9711e0f240" title="Set the input array size for bulk operations.">OCI_BindArraySetSize()</a> has not been called </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The array size value, or 0 if <a class="el" href="group___ocilib_c_api_binding.html#gac3cc8e0c27ad2e86d5403a9711e0f240" title="Set the input array size for bulk operations.">OCI_BindArraySetSize()</a> has not been called. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#aae04ff511f29f6b1de135933891df76e">ocilib::Statement::GetBindArraySize()</a>.</p>
 
@@ -682,7 +690,7 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Allow different host variables to be binded using the same bind name or position between executions of a prepared statement. </p>
+<p>Allow different host variables to be bound using the same bind name or position between executions of a prepared statement. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
@@ -691,8 +699,8 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Default value is FALSE</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>When using rebinding feature, host variable re-binded to a previously allocated bind MUST be of the same data type !</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>When using rebinding feature, host variable re-bound to a previously allocated bind MUST be of the same data type !</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#a43fb95781936d17b29b1f86f4f1c2f13">ocilib::Statement::AllowRebinding()</a>.</p>
 
@@ -723,7 +731,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_binding.html#ga3e38d38b5ed615ea8d7d827a17e803fc" title="Allow different host variables to be binded using the same bind name or position between executions o...">OCI_AllowRebinding()</a> for more details</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_binding.html#ga3e38d38b5ed615ea8d7d827a17e803fc" title="Allow different host variables to be bound using the same bind name or position between executions of...">OCI_AllowRebinding()</a> for more details</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>TRUE if allowed otherwise FALSE </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#af5265f8b6f1d5cc2e2f919b6a65804db">ocilib::Statement::IsRebindingAllowed()</a>.</p>
@@ -773,13 +781,13 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd><ul>
 <li><a class="el" href="group___ocilib_c_api_binding.html#ga4741cbea45a7bc1cefbf725326a59072" title="Bind a boolean variable (PL/SQL ONLY)">OCI_BindBoolean()</a> CAN ONLY BE USED for PL/SQL boolean type when calling PL/SQL procedures/function</li>
 <li>ONLY supported by Oracle 12c and above !</li>
 </ul>
 </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -817,7 +825,7 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Bind an Number variable. </p>
+<p>Bind a Number variable. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
@@ -826,8 +834,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -877,13 +885,13 @@ Functions</h2></td></tr>
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of numbers </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -921,7 +929,7 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Bind an short variable. </p>
+<p>Bind a short variable. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
@@ -930,8 +938,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -981,13 +989,13 @@ Functions</h2></td></tr>
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of shorts </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1034,8 +1042,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1085,13 +1093,13 @@ Functions</h2></td></tr>
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of unsigned shorts </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1138,8 +1146,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1189,13 +1197,13 @@ Functions</h2></td></tr>
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of int </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1242,8 +1250,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1293,13 +1301,13 @@ Functions</h2></td></tr>
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of unsigned int </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1346,8 +1354,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1397,13 +1405,13 @@ Functions</h2></td></tr>
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of big int </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1450,8 +1458,8 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1501,13 +1509,13 @@ Functions</h2></td></tr>
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of unsigned big int </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1563,8 +1571,8 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>if len == 0, len is set to the string size</dd>
 <dd>
-parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1621,14 +1629,14 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of string </td></tr>
     <tr><td class="paramname">len</td><td>- Max length of a single string element (in character without the zero null terminal character) </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>if len &lt;= 0, it returns FALSE</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1684,8 +1692,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
 </dl>
 <dl class="section note"><dt>Note</dt><dd>if len &lt;= 0, it returns false</dd>
 <dd>
-parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1742,7 +1750,7 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of buffers </td></tr>
     <tr><td class="paramname">len</td><td>- Size in bytes on a single RAW array element </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
@@ -1751,8 +1759,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
 <dd>
 If len &lt;= 0, it returns FALSE</dd>
 <dd>
-parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1799,8 +1807,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1850,13 +1858,13 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of double </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1903,8 +1911,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -1954,13 +1962,13 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of float </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2007,8 +2015,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2058,13 +2066,13 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of date handle </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2111,8 +2119,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2169,15 +2177,15 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of Timestamp handle </td></tr>
     <tr><td class="paramname">type</td><td>- Timestamp type </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_timestamps.html#gaab6a035d8c145cdb6b4601aa9d5b7b7b" title="Create a local Timestamp instance.">OCI_TimestampCreate()</a> for possible values of parameter 'type'</dd>
 <dd>
-parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2224,8 +2232,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2282,15 +2290,15 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of Interval handle </td></tr>
     <tr><td class="paramname">type</td><td>- Interval type </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_timestamps.html#ga08d1536ed8490af186dc4805e7c513ea" title="Create a local interval object.">OCI_IntervalCreate()</a> for possible values of parameter 'type'</dd>
 <dd>
-parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2337,8 +2345,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2395,15 +2403,15 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of Lob handle </td></tr>
     <tr><td class="paramname">type</td><td>- Lob type </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_lobs.html#ga35233a7a52a28cf0e105670ee14ba4d9" title="Create a local temporary Lob instance.">OCI_LobCreate()</a> for possible values of parameter 'type'</dd>
 <dd>
-parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2450,8 +2458,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2508,15 +2516,15 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of File handle </td></tr>
     <tr><td class="paramname">type</td><td>- File type </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_files.html#ga28b7af3b3d80ee55218089e96791b120" title="Create a file object instance.">OCI_FileCreate()</a> for possible values of parameter 'type'</dd>
 <dd>
-parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2563,8 +2571,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2621,13 +2629,117 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of object handle </td></tr>
     <tr><td class="paramname">typinf</td><td>- type info handle </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
+
+</div>
+</div>
+<a id="ga2fc795d2abc5c56eac539980745650d8" name="ga2fc795d2abc5c56eac539980745650d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2fc795d2abc5c56eac539980745650d8">&#9670;&#160;</a></span>OCI_BindVector()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_BindVector </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
+          <td class="paramname"><em>stmt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const otext *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> *&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Bind a Vector variable. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
+    <tr><td class="paramname">name</td><td>- Variable name </td></tr>
+    <tr><td class="paramname">data</td><td>- Vector handle</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
+
+</div>
+</div>
+<a id="ga32e67481f8f82c5e27ccc1b10532173a" name="ga32e67481f8f82c5e27ccc1b10532173a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga32e67481f8f82c5e27ccc1b10532173a">&#9670;&#160;</a></span>OCI_BindArrayOfVectors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfVectors </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *&#160;</td>
+          <td class="paramname"><em>stmt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const otext *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group___ocilib_c_api_datatypes.html#gaffb026a0c44dfcf37f6477ecc1ba5ac9">OCI_Vector</a> **&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>nbelem</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Bind an array of Vector handles. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
+    <tr><td class="paramname">name</td><td>- Variable name </td></tr>
+    <tr><td class="paramname">data</td><td>- Array of Vector handle </td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2674,8 +2786,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#a38f0fadb5e652a6712628dbe20d47d17">ocilib::Statement::Bind()</a>.</p>
 
@@ -2734,15 +2846,15 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of Collection handle </td></tr>
     <tr><td class="paramname">typinf</td><td>- Type info handle </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_collections.html#gafe61e4584053f3203fbfd95253906ee3" title="Create a local collection instance.">OCI_CollCreate()</a> for possible values of parameter 'type'</dd>
 <dd>
-parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#a08b793cc1d8858c317066cf26e1cda78">ocilib::Statement::Bind()</a>.</p>
 
@@ -2791,8 +2903,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2849,13 +2961,13 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
     <tr><td class="paramname">name</td><td>- Variable name </td></tr>
     <tr><td class="paramname">data</td><td>- Array of Ref handle </td></tr>
     <tr><td class="paramname">typinf</td><td>- type info handle </td></tr>
-    <tr><td class="paramname">nbelem</td><td>- Number of element in the array (PL/SQL table only)</td></tr>
+    <tr><td class="paramname">nbelem</td><td>- Number of elements in the array (PL/SQL table only)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables. For regular DML array operations, pass the value 0.</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' can NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' can be NULL if the statement bind allocation mode has been set to OCI_BAM_INTERNAL.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2902,8 +3014,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>parameter 'data' CANNOT be NULL resulting OCI_BAM_INTERNAL bind allocation mode being NOT supported</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2963,8 +3075,8 @@ parameter 'data' can NULL if the statement bind allocation mode has been set to 
 </ul>
 </dd>
 <dd>
-parameter 'data' CANNOT be NULL whatever the statement bind allocation mode</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+Parameter 'data' CANNOT be NULL regardless of the statement bind allocation mode.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -2986,14 +3098,14 @@ parameter 'data' CANNOT be NULL whatever the statement bind allocation mode</dd>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Returns the first or next error that occurred within a DML array statement execution. </p>
+<p>Return the first or next error that occurred within a DML array statement execution. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">stmt</td><td>- Statement handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The first or next error handle otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The first or next error handle, or NULL when no more errors are available. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#a664bd1d260f56cbe69183f4eda523b53">ocilib::Statement::GetBatchErrors()</a>.</p>
 
@@ -3017,13 +3129,14 @@ parameter 'data' CANNOT be NULL whatever the statement bind allocation mode</dd>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Returns the number of errors that occurred within the last DML array statement. </p>
+<p>Return the number of errors that occurred within the last DML array statement. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
+    <tr><td class="paramname">stmt</td><td>- Statement handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of errors. </dd></dl>
 
 </div>
 </div>
@@ -3045,13 +3158,14 @@ parameter 'data' CANNOT be NULL whatever the statement bind allocation mode</dd>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the number of binds currently associated to a statement. </p>
+<p>Return the number of binds currently associated with a statement. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
+    <tr><td class="paramname">stmt</td><td>- Statement handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of bind variables. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#ab50bebe96caea61f7dc0ba260936ac24">ocilib::Statement::GetBindCount()</a>.</p>
 
@@ -3085,18 +3199,16 @@ parameter 'data' CANNOT be NULL whatever the statement bind allocation mode</dd>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the bind handle at the given index in the internal array of bind handle. </p>
+<p>Return the bind handle at the given index in the internal array of bind handles. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
-    <tr><td class="paramname">index</td><td>- Bind position</td></tr>
+    <tr><td class="paramname">index</td><td>- Bind position (1-based)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Index starts at 1.</dd>
-<dd>
-Bind handle are created sequentially. For example, the third call to a OCI_BindXXX() generates a bind handle of index 3.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>The bind handle or NULL if index is out of bounds </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Bind handles are created sequentially. For example, the third call to an OCI_BindXXX() function generates a bind handle at index 3.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The bind handle, or NULL if the index is out of bounds. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#a5b252757b9dd80c40dbf2426117c5df6">ocilib::Statement::GetBind()</a>.</p>
 
@@ -3138,8 +3250,8 @@ Bind handle are created sequentially. For example, the third call to a OCI_BindX
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Bind names must include a semicolon at the beginning.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>The bind handle or NULL if not found </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Bind names must include a colon at the beginning (e.g., ":name").</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The bind handle, or NULL if not found. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#a61994c8ae97cda01e194d7b838bd9387">ocilib::Statement::GetBind()</a>.</p>
 
@@ -3173,7 +3285,7 @@ Bind handle are created sequentially. For example, the third call to a OCI_BindX
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the index of the bind from its name belonging to the given statement. </p>
+<p>Return the index of a bind from its name. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">stmt</td><td>- Statement handle </td></tr>
@@ -3181,9 +3293,9 @@ Bind handle are created sequentially. For example, the third call to a OCI_BindX
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>The bind name is case insensitive</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Bind indexes start with 1 in OCILIB</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Bind index on success or zero if the bind does not exists or if statement is NULL </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>The bind name is case-insensitive.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Bind indexes are 1-based in OCILIB.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The bind index on success, or 0 if the bind does not exist or if the statement is NULL. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_statement.html#ac246a092096c1729842a21f34d93ab51">ocilib::Statement::GetBindIndex()</a>.</p>
 
@@ -3210,10 +3322,11 @@ Bind handle are created sequentially. For example, the third call to a OCI_BindX
 <p>Return the name of the given bind. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">bnd</td><td>- Bind handle </td></tr>
+    <tr><td class="paramname">bnd</td><td>- Bind handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The bind name string, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_bind_info.html#afb8482c390d55170fadb0a2a95ed4dd4">ocilib::BindInfo::GetName()</a>.</p>
 
@@ -3263,7 +3376,7 @@ Bind handle are created sequentially. For example, the third call to a OCI_BindX
 </dd>
 <dd>
 Default value is OCI_BDM_IN_OUT</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -3292,8 +3405,8 @@ Default value is OCI_BDM_IN_OUT</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="group___ocilib_c_api_binding.html#ga9797a3860499a334e710f446460d08bd" title="Set the direction mode of a bind handle.">OCI_BindSetDirection()</a> for more details</dd></dl>
-<p>return the bind direction mode on success otherwise OCI_UNKNWON </p>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_binding.html#ga9797a3860499a334e710f446460d08bd" title="Set the direction mode of a bind handle.">OCI_BindSetDirection()</a> for more details.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The bind direction mode on success, or OCI_UNKNOWN on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_bind_info.html#a47c28afccba5362f749fa988c420c63e">ocilib::BindInfo::GetDirection()</a>.</p>
 
@@ -3415,7 +3528,8 @@ Default value is OCI_BDM_IN_OUT</dd></dl>
 <li>OCI_INTERVAL_YM</li>
 <li>OCI_INTERVAL_DS</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>For all other OCILIB types, it returns OCI_UNKNOWN </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For all other OCILIB types, it returns OCI_UNKNOWN.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The bind subtype, or OCI_UNKNOWN if not applicable. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_bind_info.html#a649f2883cfe005a5cde3ed71e822ac7a">ocilib::BindInfo::GetSubType()</a>.</p>
 
@@ -3447,8 +3561,8 @@ Default value is OCI_BDM_IN_OUT</dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><ul>
-<li>For single binds, it returns 1</li>
-<li>For array binds, it returns the number of element in the array </li>
+<li>For single binds, returns 1.</li>
+<li>For array binds, returns the number of elements in the array. </li>
 </ul>
 </dd></dl>
 
@@ -3509,10 +3623,11 @@ Default value is OCI_BDM_IN_OUT</dd></dl>
 <p>Return the statement handle associated with a bind handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">bnd</td><td>- bind handle </td></tr>
+    <tr><td class="paramname">bnd</td><td>- Bind handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The statement handle, or NULL on failure. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_bind_info.html#ae210099e480d62c0df4bd14224117aad">ocilib::BindInfo::GetStatement()</a>.</p>
 
@@ -3554,11 +3669,11 @@ Default value is OCI_BDM_IN_OUT</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This call is not mandatory and should ONLY be called for RAWs binds to set the real size of the given data if different from the expected column or parameter size</dd>
+<dl class="section note"><dt>Note</dt><dd>This call is not mandatory and should ONLY be used for RAW binds to set the actual data size when it differs from the expected column or parameter size.</dd>
 <dd>
-It works as well with string based PL/SQL tables (in or in/out but NOT out) even if it's not necessary.</dd></dl>
+It also works with string-based PL/SQL tables (IN or IN/OUT, but NOT OUT), although it is not required.</dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>For binds of type OCI_CDT_TEXT (strings), the parameter 'size' is expressed in number of characters.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Data size if the bind type is listed above otherwise 0. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -3599,17 +3714,17 @@ It works as well with string based PL/SQL tables (in or in/out but NOT out) even
 <p>Set the size of the element at the given position in the bind input array. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">bnd</td><td>- bind handle </td></tr>
-    <tr><td class="paramname">position</td><td>- Position in the array </td></tr>
-    <tr><td class="paramname">size</td><td>- data size</td></tr>
+    <tr><td class="paramname">bnd</td><td>- Bind handle </td></tr>
+    <tr><td class="paramname">position</td><td>- Position in the array (1-based) </td></tr>
+    <tr><td class="paramname">size</td><td>- Data size</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_binding.html#gaf63b1fa358220da24b66da1cb95c0277" title="Set the actual size of the element held by the given bind handle.">OCI_BindSetDataSize()</a> for supported data types</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Before execution, it returns the max default size for the bind and not the real data size, unless a custom size has been set with OCI_BindSetDataSizeXXX() After execution, it returns the real data size.</dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_binding.html#gaf63b1fa358220da24b66da1cb95c0277" title="Set the actual size of the element held by the given bind handle.">OCI_BindSetDataSize()</a> for supported data types.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Before execution, returns the maximum default size for the bind, not the actual data size, unless a custom size has been set with <a class="el" href="group___ocilib_c_api_binding.html#gaf63b1fa358220da24b66da1cb95c0277" title="Set the actual size of the element held by the given bind handle.">OCI_BindSetDataSize()</a> or <a class="el" href="group___ocilib_c_api_binding.html#ga15a62397bb91a26c9b97e5075fa526cc" title="Set the size of the element at the given position in the bind input array.">OCI_BindSetDataSizeAtPos()</a>. After execution, returns the actual data size.</dd>
 <dd>
 For binds of type OCI_CDT_TEXT (strings), the parameter 'size' is expressed in number of characters.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Data size if the bind type is listed above otherwise 0. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -3634,12 +3749,13 @@ For binds of type OCI_CDT_TEXT (strings), the parameter 'size' is expressed in n
 <p>Return the actual size of the element held by the given bind handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">bnd</td><td>- bind handle</td></tr>
+    <tr><td class="paramname">bnd</td><td>- Bind handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_binding.html#gaf63b1fa358220da24b66da1cb95c0277" title="Set the actual size of the element held by the given bind handle.">OCI_BindSetDataSize()</a> for supported data types</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in number of characters. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_binding.html#gaf63b1fa358220da24b66da1cb95c0277" title="Set the actual size of the element held by the given bind handle.">OCI_BindSetDataSize()</a> for supported data types.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in number of characters.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The data size, or 0 if the bind type is not supported for this operation. </dd></dl>
 
 </div>
 </div>
@@ -3674,13 +3790,14 @@ For binds of type OCI_CDT_TEXT (strings), the parameter 'size' is expressed in n
 <p>Return the actual size of the element at the given position in the bind input array. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">bnd</td><td>- bind handle </td></tr>
-    <tr><td class="paramname">position</td><td>- Position in the array</td></tr>
+    <tr><td class="paramname">bnd</td><td>- Bind handle </td></tr>
+    <tr><td class="paramname">position</td><td>- Position in the array (1-based)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_binding.html#gaf63b1fa358220da24b66da1cb95c0277" title="Set the actual size of the element held by the given bind handle.">OCI_BindSetDataSize()</a> for supported data types</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in number of characters. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group___ocilib_c_api_binding.html#gaf63b1fa358220da24b66da1cb95c0277" title="Set the actual size of the element held by the given bind handle.">OCI_BindSetDataSize()</a> for supported data types.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in number of characters.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The data size, or 0 if the bind type is not supported for this operation. </dd></dl>
 
 </div>
 </div>
@@ -3709,10 +3826,10 @@ For binds of type OCI_CDT_TEXT (strings), the parameter 'size' is expressed in n
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>There is no notion of null value in C. It's necessary to explicitly tell Oracle that the bind has a null value. It must be done before an <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> call</dd>
+<dl class="section note"><dt>Note</dt><dd>There is no notion of null value in C. It is necessary to explicitly tell Oracle that the bind has a null value. This must be done before calling <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a>.</dd>
 <dd>
-For handled based data types (non scalar types), OCILIB performs an extra check on handles and set the bind status to null is the handle is null</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+For handle-based data types (non-scalar types), OCILIB performs an extra check on handles and sets the bind status to null if the handle is null.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -3752,10 +3869,10 @@ For handled based data types (non scalar types), OCILIB performs an extra check 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>There is no notion of null value in C. It's necessary to explicitly tell Oracle that the bind has a null value. It must be done before an <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> call</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Position starts with 1</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>For handled based data types (non scalar types), OCILIB performs an extra check on handles and set the bind status to null is the handle is null</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>There is no notion of null value in C. It is necessary to explicitly tell Oracle that the bind has a null value. This must be done before calling <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a>.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Position is 1-based.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For handle-based data types (non-scalar types), OCILIB performs an extra check on handles and sets the bind status to null if the handle is null.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_bind_info.html#afffaaaf7a39bc9e7f57a512b125b2cda">ocilib::BindInfo::SetDataNull()</a>.</p>
 
@@ -3786,10 +3903,10 @@ For handled based data types (non scalar types), OCILIB performs an extra check 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>There is no notion of null value in C. It's necessary to explicitly tell Oracle that the bind has a null value. It must be done before an <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> call</dd>
+<dl class="section note"><dt>Note</dt><dd>There is no notion of null value in C. It is necessary to explicitly tell Oracle that the bind has a non-null value. This must be done before calling <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a>.</dd>
 <dd>
-For handled based data types (non scalar types), OCILIB performs an extra check on handles and set the bind status to null is the handle is null</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+For handle-based data types (non-scalar types), OCILIB performs an extra check on handles and sets the bind status to null if the handle is null.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -3829,10 +3946,10 @@ For handled based data types (non scalar types), OCILIB performs an extra check 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>There is no notion of null value in C. It's necessary to explicitly tell Oracle that the bind has a null value. It must be done before an <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a> call</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>Position starts with 1</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>For handled based data types (non scalar types), OCILIB performs an extra check on handles and set the bind status to null is the handle is null</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>There is no notion of null value in C. It is necessary to explicitly tell Oracle that the bind has a non-null value. This must be done before calling <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a>.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Position is 1-based.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For handle-based data types (non-scalar types), OCILIB performs an extra check on handles and sets the bind status to null if the handle is null.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_bind_info.html#afffaaaf7a39bc9e7f57a512b125b2cda">ocilib::BindInfo::SetDataNull()</a>.</p>
 
@@ -3856,14 +3973,14 @@ For handled based data types (non scalar types), OCILIB performs an extra check 
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Check if the current value of the binded variable is marked as NULL. </p>
+<p>Check if the current value of the bound variable is marked as NULL. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">bnd</td><td>- Bind handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE if it's null otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if the value is null, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -3895,16 +4012,15 @@ For handled based data types (non scalar types), OCILIB performs an extra check 
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Check if the current entry value at the given index of the binded array is marked as NULL. </p>
+<p>Check if the current entry value at the given position in the bound array is marked as NULL. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">bnd</td><td>- Bind handle </td></tr>
-    <tr><td class="paramname">position</td><td>- Position in the array</td></tr>
+    <tr><td class="paramname">position</td><td>- Position in the array (1-based)</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Position starts with 1</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE if the value at the given position is null, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_bind_info.html#aba0270cfa044675ff9669b23415012a8">ocilib::BindInfo::IsDataNull()</a>.</p>
 
@@ -3946,18 +4062,18 @@ For handled based data types (non scalar types), OCILIB performs an extra check 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Possible values are :</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Possible values are:</dd></dl>
 <ul>
-<li>OCI_CSF_DEFAULT : the column has default charset</li>
-<li>OCI_CSF_NATIONAL: the column has national charset</li>
+<li>OCI_CSF_DEFAULT : The column uses the default character set.</li>
+<li>OCI_CSF_NATIONAL : The column uses the national character set.</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>This call has to be made after <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a> but before <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a></dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>This call does nothing :<ul>
-<li>if the csform is out of range</li>
-<li>if the bind type is not OCI_CFT_TEXT or OCI_CDT_LONG</li>
+<dl class="section note"><dt>Note</dt><dd>This call must be made after <a class="el" href="group___ocilib_c_api_statements.html#gaaedce0c8f66eb60445fb759900d32f04" title="Prepare a SQL statement or PL/SQL block.">OCI_Prepare()</a> but before <a class="el" href="group___ocilib_c_api_statements.html#gac4fae0835b45409e141eb1b4518fa89c" title="Execute a prepared SQL statement or PL/SQL block.">OCI_Execute()</a>.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>This call has no effect:<ul>
+<li>If the charset form value is out of range.</li>
+<li>If the bind type is not OCI_CDT_TEXT or OCI_CDT_LONG.</li>
 </ul>
 </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classocilib_1_1_bind_info.html#a12345f7ba0938c5aae24c18a912f0a3b">ocilib::BindInfo::SetCharsetForm()</a>.</p>
 
@@ -3988,12 +4104,12 @@ For handled based data types (non scalar types), OCILIB performs an extra check 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Possible values are :<ul>
-<li>OCI_BAM_EXTERNAL : bind variable is allocated by user code</li>
-<li>OCI_BAM_INTERNAL : bind variable is allocated internally</li>
+<dl class="section note"><dt>Note</dt><dd>Possible values are:<ul>
+<li>OCI_BAM_EXTERNAL : Bind variable is allocated by user code.</li>
+<li>OCI_BAM_INTERNAL : Bind variable is allocated internally by OCILIB.</li>
 </ul>
 </dd></dl>
-<p>return the allocation mode on success otherwise OCI_UNKNOWN </p>
+<dl class="section return"><dt>Returns</dt><dd>The allocation mode on success, or OCI_UNKNOWN on failure. </dd></dl>
 
 </div>
 </div>
@@ -4003,7 +4119,7 @@ For handled based data types (non scalar types), OCILIB performs an extra check 
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

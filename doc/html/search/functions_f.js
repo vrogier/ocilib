@@ -2,7 +2,7 @@ var searchData=
 [
   ['save_0',['Save',['../classocilib_1_1_direct_path.html#a002373218128ca7cd450d0066eb54b88',1,'ocilib::DirectPath']]],
   ['seek_1',['Seek',['../classocilib_1_1_lob.html#ac91ef1774762691a111af88d43ea5535',1,'ocilib::Lob::Seek()'],['../classocilib_1_1_file.html#aa3ae5973a9029f9cf53c8f15f845ee6e',1,'ocilib::File::Seek()'],['../classocilib_1_1_resultset.html#a85ea20b0392738677d2dcf36978a5df4',1,'ocilib::Resultset::Seek()']]],
-  ['set_2',['Set',['../classocilib_1_1_object.html#a08db8c47c4022b70936c99aa917548c9',1,'ocilib::Object::Set()'],['../classocilib_1_1_collection.html#aa1930c8177492ad07588ab7713697357',1,'ocilib::Collection::Set()']]],
+  ['set_2',['Set',['../classocilib_1_1_object.html#a08db8c47c4022b70936c99aa917548c9',1,'ocilib::Object::Set()'],['../classocilib_1_1_vector.html#a856677110caa2772bc1e3d9294f06d21',1,'ocilib::Vector::Set(T *values, unsigned int size)'],['../classocilib_1_1_vector.html#abce2a2dd6e8b70315308313a99713d0b',1,'ocilib::Vector::Set(const std::vector&lt; T &gt; &amp;values)'],['../classocilib_1_1_collection.html#aa1930c8177492ad07588ab7713697357',1,'ocilib::Collection::Set()']]],
   ['setaddress_3',['SetAddress',['../classocilib_1_1_agent.html#a44b3a42c020de9077c1ddeab63d0f5fd',1,'ocilib::Agent']]],
   ['setagents_4',['SetAgents',['../classocilib_1_1_dequeue.html#a53aff2d3dcf31c7fc5c28efc417e4983',1,'ocilib::Dequeue']]],
   ['setattributenull_5',['SetAttributeNull',['../classocilib_1_1_object.html#ac6c1faeb8694aaf58f3da8838d03ba23',1,'ocilib::Object']]],

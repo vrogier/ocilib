@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -103,23 +103,23 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_error_handling.ht
 <p>OCILIB provides two mechanisms for error handling:</p>
 <ul>
 <li>Global error handling through callbacks.</li>
-<li>Contextual thread error handling</li>
+<li>Thread-contextual error handling.</li>
 </ul>
-<p>Exceptions are raised:</p>
+<p>Errors are raised in the following situations:</p>
 <ul>
-<li>On Oracle OCI API call error</li>
-<li>On Oracle SQL statement error</li>
-<li>On Internal OCILIB error (type checking, memory allocations ...)</li>
-<li>On Oracle warnings (OCI API or SQL)</li>
+<li>Oracle OCI API call failure.</li>
+<li>Oracle SQL statement execution error.</li>
+<li>Internal OCILIB error (type checking, memory allocation, etc.).</li>
+<li>Oracle warnings (OCI API or SQL).</li>
 </ul>
-<p>If an error handler was provided to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>, when an error occurs, the library generates an OCI_Error handle and pass it to the error handler.</p>
-<p>In order to use the thread contextual error handling, you must call <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> with the flag OCI_ENV_CONTEXT for the mode parameter. When activated, error handles are stored per thread and the last error within a thread can be retrieved with <a class="el" href="group___ocilib_c_api_error_handling.html#ga7a49ce8b93a89f104658b293d435a0e2" title="Retrieve the last error or warning occurred within the last OCILIB call.">OCI_GetLastError()</a></p>
-<p>Exception properties are accessible through a set of functions</p>
-<dl class="section note"><dt>Note</dt><dd>The two ways to handle errors are not exclusive and can be mixed.</dd>
+<p>If an error handler was provided to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>, the library generates an OCI_Error handle and passes it to the error handler whenever an error occurs.</p>
+<p>To use thread-contextual error handling, pass the OCI_ENV_CONTEXT flag to <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>. When activated, error handles are stored per thread and the last error within a thread can be retrieved with <a class="el" href="group___ocilib_c_api_error_handling.html#ga7a49ce8b93a89f104658b293d435a0e2" title="Retrieve the last error or warning that occurred during the most recent OCILIB call.">OCI_GetLastError()</a>.</p>
+<p>Error properties are accessible through a set of dedicated functions.</p>
+<dl class="section note"><dt>Note</dt><dd>Both error handling mechanisms are not mutually exclusive and can be combined.</dd>
 <dd>
-Thread contextual error is also available for single thread based applications</dd></dl>
+Thread-contextual error handling is also available in single-threaded applications.</dd></dl>
 <dl class="section user"><dt>Oracle Warnings</dt><dd></dd></dl>
-<p>Oracle warnings are raised through OCI_Error API. Such error handles have their error type property (<a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af" title="Retrieve the type of error from error handle.">OCI_ErrorGetType()</a>) set to OCI_ERR_WARNING. Warning handing is disabled by default. To activate/deactivate it, use <a class="el" href="group___ocilib_c_api_initialization.html#ga98eb3445d035b77d2c666fc09ba9b5fa" title="Enable or disable Oracle warning notifications.">OCI_EnableWarnings()</a></p>
+<p>Oracle warnings are raised through the OCI_Error API. Such error handles have their error type property (<a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af" title="Retrieve the type of error from an error handle.">OCI_ErrorGetType()</a>) set to OCI_ERR_WARNING. Warning handling is disabled by default. To enable or disable it, use <a class="el" href="group___ocilib_c_api_initialization.html#ga98eb3445d035b77d2c666fc09ba9b5fa" title="Enable or disable Oracle warning notifications.">OCI_EnableWarnings()</a>.</p>
 <dl class="section user"><dt>Example with callbacks</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">void</span> err_handler(<a class="code hl_typedef" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</div>
@@ -152,10 +152,10 @@ Thread contextual error is also available for single thread based applications</
 <div class="line">}</div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga99fdd3a24d96ae27a9f31cae47041c27"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27">OCI_ConnectionCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Connection *OCI_API OCI_ConnectionCreate(const otext *db, const otext *user, const otext *pwd, unsigned int mode)</div><div class="ttdoc">Create a physical connection to an Oracle database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga33aceb5bd97aba516ed1494d7715fb37"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga33aceb5bd97aba516ed1494d7715fb37">OCI_ErrorGetStatement</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_ErrorGetStatement(OCI_Error *err)</div><div class="ttdoc">Retrieve statement handle within the error occurred.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_gac68b56831d0ca0a45fb8da25f97d4e07"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#gac68b56831d0ca0a45fb8da25f97d4e07">OCI_ErrorGetOCICode</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_ErrorGetOCICode(OCI_Error *err)</div><div class="ttdoc">Retrieve Oracle Error code from error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga33aceb5bd97aba516ed1494d7715fb37"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga33aceb5bd97aba516ed1494d7715fb37">OCI_ErrorGetStatement</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_ErrorGetStatement(OCI_Error *err)</div><div class="ttdoc">Retrieve the statement handle associated with the error.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_gac68b56831d0ca0a45fb8da25f97d4e07"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#gac68b56831d0ca0a45fb8da25f97d4e07">OCI_ErrorGetOCICode</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_ErrorGetOCICode(OCI_Error *err)</div><div class="ttdoc">Retrieve the Oracle error code (ORA-XXXXX) from an error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_gae0b460b30f9b0bac72eccc267ffd96d2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#gae0b460b30f9b0bac72eccc267ffd96d2">OCI_GetSql</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_GetSql(OCI_Statement *stmt)</div><div class="ttdoc">Return the last SQL or PL/SQL statement prepared or executed by the statement.</div></div>
@@ -184,7 +184,7 @@ Thread contextual error is also available for single thread based applications</
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line">}</div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga7a49ce8b93a89f104658b293d435a0e2"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga7a49ce8b93a89f104658b293d435a0e2">OCI_GetLastError</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Error *OCI_API OCI_GetLastError(void)</div><div class="ttdoc">Retrieve the last error or warning occurred within the last OCILIB call.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga7a49ce8b93a89f104658b293d435a0e2"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga7a49ce8b93a89f104658b293d435a0e2">OCI_GetLastError</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Error *OCI_API OCI_GetLastError(void)</div><div class="ttdoc">Retrieve the last error or warning that occurred during the most recent OCILIB call.</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section user"><dt>Example of warning handling</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;ocilib.h&quot;</span></div>
 <div class="line"> </div>
@@ -214,7 +214,7 @@ Thread contextual error is also available for single thread based applications</
 <div class="line">    <span class="keywordflow">return</span> EXIT_SUCCESS;</div>
 <div class="line">}</div>
 <div class="line"> </div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga5e55028f0874d30cf80d2ffed349d0af"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af">OCI_ErrorGetType</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_ErrorGetType(OCI_Error *err)</div><div class="ttdoc">Retrieve the type of error from error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga5e55028f0874d30cf80d2ffed349d0af"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af">OCI_ErrorGetType</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_ErrorGetType(OCI_Error *err)</div><div class="ttdoc">Retrieve the type of error from an error handle.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga98eb3445d035b77d2c666fc09ba9b5fa"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga98eb3445d035b77d2c666fc09ba9b5fa">OCI_EnableWarnings</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_EnableWarnings(boolean value)</div><div class="ttdoc">Enable or disable Oracle warning notifications.</div></div>
 </div><!-- fragment --> </dd></dl>
 <table class="memberdecls">
@@ -223,32 +223,35 @@ Functions</h2></td></tr>
 <tr class="memitem:ga748ca2a086c8adeb08e104e64155767e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_error_handling.html#ga748ca2a086c8adeb08e104e64155767e">OCI_SetErrorHandler</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#gac768ae2afe72e905d36e47c173032f26">POCI_ERROR</a> handler)</td></tr>
 <tr class="memdesc:ga748ca2a086c8adeb08e104e64155767e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the global error user handler.  <br /></td></tr>
 <tr class="separator:ga748ca2a086c8adeb08e104e64155767e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga361d217ae4d3cf28af2d7068bb30b4d9"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_error_handling.html#ga361d217ae4d3cf28af2d7068bb30b4d9">OCI_GetLocaleString</a> (unsigned int code)</td></tr>
+<tr class="memdesc:ga361d217ae4d3cf28af2d7068bb30b4d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the localized error message string for the given OCILIB internal error code.  <br /></td></tr>
+<tr class="separator:ga361d217ae4d3cf28af2d7068bb30b4d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7a49ce8b93a89f104658b293d435a0e2"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_error_handling.html#ga7a49ce8b93a89f104658b293d435a0e2">OCI_GetLastError</a> (void)</td></tr>
-<tr class="memdesc:ga7a49ce8b93a89f104658b293d435a0e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the last error or warning occurred within the last OCILIB call.  <br /></td></tr>
+<tr class="memdesc:ga7a49ce8b93a89f104658b293d435a0e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the last error or warning that occurred during the most recent OCILIB call.  <br /></td></tr>
 <tr class="separator:ga7a49ce8b93a89f104658b293d435a0e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6df58afd698cd1e16d6a7f38afce8027"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</td></tr>
-<tr class="memdesc:ga6df58afd698cd1e16d6a7f38afce8027"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve error message from error handle.  <br /></td></tr>
+<tr class="memdesc:ga6df58afd698cd1e16d6a7f38afce8027"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the error message string from an error handle.  <br /></td></tr>
 <tr class="separator:ga6df58afd698cd1e16d6a7f38afce8027"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5e55028f0874d30cf80d2ffed349d0af"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_error_handling.html#ga5e55028f0874d30cf80d2ffed349d0af">OCI_ErrorGetType</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</td></tr>
-<tr class="memdesc:ga5e55028f0874d30cf80d2ffed349d0af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the type of error from error handle.  <br /></td></tr>
+<tr class="memdesc:ga5e55028f0874d30cf80d2ffed349d0af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the type of error from an error handle.  <br /></td></tr>
 <tr class="separator:ga5e55028f0874d30cf80d2ffed349d0af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac68b56831d0ca0a45fb8da25f97d4e07"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_error_handling.html#gac68b56831d0ca0a45fb8da25f97d4e07">OCI_ErrorGetOCICode</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</td></tr>
-<tr class="memdesc:gac68b56831d0ca0a45fb8da25f97d4e07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve Oracle Error code from error handle.  <br /></td></tr>
+<tr class="memdesc:gac68b56831d0ca0a45fb8da25f97d4e07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the Oracle error code (ORA-XXXXX) from an error handle.  <br /></td></tr>
 <tr class="separator:gac68b56831d0ca0a45fb8da25f97d4e07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga148d833e4faf47b78cebb4cb4aebcc1e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_error_handling.html#ga148d833e4faf47b78cebb4cb4aebcc1e">OCI_ErrorGetInternalCode</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</td></tr>
-<tr class="memdesc:ga148d833e4faf47b78cebb4cb4aebcc1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve Internal Error code from error handle.  <br /></td></tr>
+<tr class="memdesc:ga148d833e4faf47b78cebb4cb4aebcc1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the OCILIB internal error code from an error handle.  <br /></td></tr>
 <tr class="separator:ga148d833e4faf47b78cebb4cb4aebcc1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3237c442184faa28a5bfb12bd635eb20"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_error_handling.html#ga3237c442184faa28a5bfb12bd635eb20">OCI_ErrorGetConnection</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</td></tr>
-<tr class="memdesc:ga3237c442184faa28a5bfb12bd635eb20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve connection handle within the error occurred.  <br /></td></tr>
+<tr class="memdesc:ga3237c442184faa28a5bfb12bd635eb20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the connection handle associated with the error.  <br /></td></tr>
 <tr class="separator:ga3237c442184faa28a5bfb12bd635eb20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga33aceb5bd97aba516ed1494d7715fb37"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC <a class="el" href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a> *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_error_handling.html#ga33aceb5bd97aba516ed1494d7715fb37">OCI_ErrorGetStatement</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</td></tr>
-<tr class="memdesc:ga33aceb5bd97aba516ed1494d7715fb37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve statement handle within the error occurred.  <br /></td></tr>
+<tr class="memdesc:ga33aceb5bd97aba516ed1494d7715fb37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the statement handle associated with the error.  <br /></td></tr>
 <tr class="separator:ga33aceb5bd97aba516ed1494d7715fb37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6f2a9404899d7365fbc51ded9bff5c8b"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC unsigned int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_error_handling.html#ga6f2a9404899d7365fbc51ded9bff5c8b">OCI_ErrorGetRow</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</td></tr>
-<tr class="memdesc:ga6f2a9404899d7365fbc51ded9bff5c8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the row index which caused an error during statement execution.  <br /></td></tr>
+<tr class="memdesc:ga6f2a9404899d7365fbc51ded9bff5c8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the row index that caused an error during array DML execution.  <br /></td></tr>
 <tr class="separator:ga6f2a9404899d7365fbc51ded9bff5c8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf27b583d2d6a9c45c77fad1921a26f2e"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_error_handling.html#gaf27b583d2d6a9c45c77fad1921a26f2e">OCI_ErrorGetLocation</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a> *err)</td></tr>
-<tr class="memdesc:gaf27b583d2d6a9c45c77fad1921a26f2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the location where the error occured.  <br /></td></tr>
+<tr class="memdesc:gaf27b583d2d6a9c45c77fad1921a26f2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the location where the error occurred.  <br /></td></tr>
 <tr class="separator:gaf27b583d2d6a9c45c77fad1921a26f2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -273,11 +276,43 @@ Functions</h2></td></tr>
 <p>Set the global error user handler. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">handler</td><td>- Pointer to error handler procedure</td></tr>
+    <tr><td class="paramname">handler</td><td>- Pointer to the error handler procedure, or NULL to remove the current handler</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Use this call to change or remove the user callback error handler installed by <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Use this function to change or remove the error handler callback initially installed by <a class="el" href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401" title="Initialize the library.">OCI_Initialize()</a>.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
+
+</div>
+</div>
+<a id="ga361d217ae4d3cf28af2d7068bb30b4d9" name="ga361d217ae4d3cf28af2d7068bb30b4d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga361d217ae4d3cf28af2d7068bb30b4d9">&#9670;&#160;</a></span>OCI_GetLocaleString()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">OCI_SYM_PUBLIC const otext *OCI_API OCI_GetLocaleString </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>code</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><code>#include &lt;api.h&gt;</code></p>
+
+<p>Return the localized error message string for the given OCILIB internal error code. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">code</td><td>- OCILIB internal error code</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The localized error message string, or NULL if the code is invalid. </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classocilib_1_1_environment.html#a988fd74359db53a03c6cd49d2e72cdb9">ocilib::Environment::GetLocaleString()</a>.</p>
 
 </div>
 </div>
@@ -299,13 +334,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Retrieve the last error or warning occurred within the last OCILIB call. </p>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_error_handling.html#ga7a49ce8b93a89f104658b293d435a0e2" title="Retrieve the last error or warning occurred within the last OCILIB call.">OCI_GetLastError()</a> is based on thread context and thus OCILIB must be initialized with the flag OCI_ENV_CONTEXT</dd></dl>
-<dl class="section warning"><dt>Warning</dt><dd>OCILIB functions that returns a boolean value to indicate their success :<ul>
-<li>return TRUE if no error occurred OR if a warning occurred</li>
-<li>return FALSE if an error occurred </li>
+<p>Retrieve the last error or warning that occurred during the most recent OCILIB call. </p>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="group___ocilib_c_api_error_handling.html#ga7a49ce8b93a89f104658b293d435a0e2" title="Retrieve the last error or warning that occurred during the most recent OCILIB call.">OCI_GetLastError()</a> relies on thread-contextual storage. OCILIB must be initialized with the OCI_ENV_CONTEXT flag for this function to work.</dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>OCILIB functions that return a boolean value to indicate their success:<ul>
+<li>Return TRUE if no error occurred OR if only a warning occurred.</li>
+<li>Return FALSE if an error occurred.</li>
 </ul>
 </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to the OCI_Error handle for the last error or warning, or NULL if none occurred. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="namespaceocilib_1_1core.html#a591f0993deea0ef65ce097c97e078543">ocilib::core::Check()</a>.</p>
 
@@ -329,13 +365,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Retrieve error message from error handle. </p>
+<p>Retrieve the error message string from an error handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">err</td><td>- Error handle </td></tr>
+    <tr><td class="paramname">err</td><td>- Error handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The error message string, or NULL if the input handle is NULL. </dd></dl>
 
 </div>
 </div>
@@ -357,20 +394,20 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Retrieve the type of error from error handle. </p>
+<p>Retrieve the type of error from an error handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">err</td><td>- Error handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Returns one of the following values:</dd></dl>
-<ul>
-<li>OCI_ERR_ORACLE</li>
-<li>OCI_ERR_OCILIB</li>
-<li>OCI_ERR_WARNING</li>
+<dl class="section return"><dt>Returns</dt><dd>One of the following values:<ul>
+<li>OCI_ERR_ORACLE : Error reported by the Oracle OCI layer.</li>
+<li>OCI_ERR_OCILIB : Internal OCILIB error.</li>
+<li>OCI_ERR_WARNING : Oracle warning.</li>
+<li>OCI_UNKNOWN : If the input handle is NULL. </li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>Object type or OCI_UNKNOWN the input handle is NULL </dd></dl>
+</dd></dl>
 
 </div>
 </div>
@@ -392,13 +429,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Retrieve Oracle Error code from error handle. </p>
+<p>Retrieve the Oracle error code (ORA-XXXXX) from an error handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">err</td><td>- Error handle </td></tr>
+    <tr><td class="paramname">err</td><td>- Error handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The Oracle error code, or 0 if the error is not Oracle-related. </dd></dl>
 
 </div>
 </div>
@@ -420,13 +458,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Retrieve Internal Error code from error handle. </p>
+<p>Retrieve the OCILIB internal error code from an error handle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">err</td><td>- Error handle </td></tr>
+    <tr><td class="paramname">err</td><td>- Error handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The OCILIB internal error code, or 0 if the error is not OCILIB-related. </dd></dl>
 
 </div>
 </div>
@@ -448,13 +487,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Retrieve connection handle within the error occurred. </p>
+<p>Retrieve the connection handle associated with the error. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">err</td><td>- Error handle </td></tr>
+    <tr><td class="paramname">err</td><td>- Error handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The connection handle, or NULL if the error did not occur within a connection context. </dd></dl>
 
 </div>
 </div>
@@ -476,14 +516,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Retrieve statement handle within the error occurred. </p>
+<p>Retrieve the statement handle associated with the error. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">err</td><td>- Error handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>If the error occurred outside of a statement context, it returns NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The statement handle, or NULL if the error did not occur within a statement context. </dd></dl>
 
 </div>
 </div>
@@ -505,15 +545,15 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the row index which caused an error during statement execution. </p>
+<p>Return the row index that caused an error during array DML execution. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">err</td><td>- Error handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Row index start at 1.</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>0 is the error is not related to array DML otherwise the index of the given row which caused the error </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Row indices start at 1.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The 1-based index of the row that caused the error, or 0 if the error is not related to an array DML operation. </dd></dl>
 
 </div>
 </div>
@@ -535,14 +575,14 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the location where the error occured. </p>
+<p>Return the location where the error occurred. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">err</td><td>- Error handle</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The method name that has generated the error </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The name of the OCILIB function in which the error was raised, or NULL if the input handle is NULL. </dd></dl>
 
 </div>
 </div>
@@ -552,7 +592,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

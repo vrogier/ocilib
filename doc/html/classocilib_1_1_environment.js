@@ -11,6 +11,7 @@ var classocilib_1_1_environment =
     [ "ShutdownMode", "classocilib_1_1_environment.html#a0821795bc064c833d5dfb561c84e36c7", null ],
     [ "ShutdownFlags", "classocilib_1_1_environment.html#a832723aa734cff579500d26a6b1ff7c8", null ],
     [ "AllocatedBytesFlags", "classocilib_1_1_environment.html#ac4a3f7074cf30c5b922541a0be375f89", null ],
+    [ "LocaleCode", "classocilib_1_1_environment.html#a3e5e824121eb2755f21b1b7fafe3676f", null ],
     [ "HAHandlerProc", "classocilib_1_1_environment.html#a3755eb4b2ee104fa249e95267260ec46", null ],
     [ "HAEventSourceValues", "classocilib_1_1_environment.html#a872e754685d391c109c4fd9701ef3ff2", [
       [ "SourceInstance", "classocilib_1_1_environment.html#a872e754685d391c109c4fd9701ef3ff2af493b3e472c1151e85b908e0eed05b75", null ],
@@ -79,6 +80,7 @@ var classocilib_1_1_environment =
       [ "OcilibBytes", "classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1a926be78565d4fc57fe7fa0c131dc0122", null ],
       [ "AllBytes", "classocilib_1_1_environment.html#a9f71b1f47ec35a84c94fcb125dc9aff1ac5933ed7ecb03f34fd13b888e6ab971f", null ]
     ] ],
+    [ "LocaleCodeValues", "classocilib_1_1_environment.html#a461f0260ebd74e17b4f3bc4161a7e83a", null ],
     [ "Initialize", "classocilib_1_1_environment.html#a83613d62908717ddf7d0ac797d63120a", null ],
     [ "Cleanup", "classocilib_1_1_environment.html#a8c21dd437c424a1f6cb63ed66441c979", null ],
     [ "GetMode", "classocilib_1_1_environment.html#a478c259fcfeca352402478913e7f3049", null ],
@@ -98,6 +100,7 @@ var classocilib_1_1_environment =
     [ "EnableWarnings", "classocilib_1_1_environment.html#a5d339bf030bab748a439a830ccb777b5", null ],
     [ "SetFormat", "classocilib_1_1_environment.html#a0a67cffd57505db4a35005b8d373f5ba", null ],
     [ "GetFormat", "classocilib_1_1_environment.html#ac7a0e01662ba92761834f7955df5d66f", null ],
+    [ "GetLocaleString", "classocilib_1_1_environment.html#a988fd74359db53a03c6cd49d2e72cdb9", null ],
     [ "StartDatabase", "classocilib_1_1_environment.html#a7165adb4dffe98f8ae5fcf5829f591b3", null ],
     [ "ShutdownDatabase", "classocilib_1_1_environment.html#a13cfb9869267de416ecf18671c7002e3", null ],
     [ "ChangeUserPassword", "classocilib_1_1_environment.html#a8f1ad7a0ab764b28f2f1c9d513b90baa", null ],

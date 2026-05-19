@@ -28,7 +28,7 @@
   <td id="projectlogo"><img alt="Logo" src="logo-160x120.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">OCILIB (C and C++ Driver for Oracle)
-   &#160;<span id="projectnumber">4.7.7</span>
+   &#160;<span id="projectnumber">4.9.0</span>
    </div>
    <div id="projectbrief">Open source and cross platform Oracle Driver delivering efficient access to Oracle databases.</div>
   </td>
@@ -101,16 +101,16 @@ $(document).ready(function(){initNavTree('group___ocilib_c_api_hash_tables.html'
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>OcilibCApiFormatting</p>
 <p>OCILIB uses hash tables internally for index/name columns mapping.</p>
-<p>OCILIB makes public its hash tables implementation public for general purpose uses.</p>
-<p>OCI_HashTable objects manage string keys / values that can be :</p>
+<p>OCILIB makes its hash table implementation public for general purpose uses.</p>
+<p>OCI_HashTable objects manage string keys / values that can be:</p>
 <ul>
 <li>integers</li>
 <li>strings</li>
 <li>pointers</li>
 </ul>
-<p>This hash table implementation :</p>
+<p>This hash table implementation:</p>
 <ul>
-<li>handle collisions</li>
+<li>handles collisions</li>
 <li>allows multiple values per key</li>
 </ul>
 <dl class="section user"><dt>Internal conception</dt><dd></dd></dl>
@@ -204,30 +204,30 @@ Collisions are handled by chaining method.</dd></dl>
 <div class="line">}</div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga375f2252640df238d927d647f6aceba9"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga375f2252640df238d927d647f6aceba9">OCI_ConnectionFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ConnectionFree(OCI_Connection *con)</div><div class="ttdoc">Close a physical connection to an Oracle database server.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_connections_html_ga99fdd3a24d96ae27a9f31cae47041c27"><div class="ttname"><a href="group___ocilib_c_api_connections.html#ga99fdd3a24d96ae27a9f31cae47041c27">OCI_ConnectionCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Connection *OCI_API OCI_ConnectionCreate(const otext *db, const otext *user, const otext *pwd, unsigned int mode)</div><div class="ttdoc">Create a physical connection to an Oracle database server.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga0bbce882abdc1a99ebf01637447c35cb"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a></div><div class="ttdeci">struct OCI_HashTable OCI_HashTable</div><div class="ttdoc">OCILIB implementation of hash tables.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00386">types.h:386</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga0bbce882abdc1a99ebf01637447c35cb"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a></div><div class="ttdeci">struct OCI_HashTable OCI_HashTable</div><div class="ttdoc">OCILIB implementation of hash tables.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00396">types.h:396</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga2135d3b5341ebbaae1f54d62873ecf77"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga2135d3b5341ebbaae1f54d62873ecf77">OCI_Connection</a></div><div class="ttdeci">struct OCI_Connection OCI_Connection</div><div class="ttdoc">Oracle physical connection.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00124">types.h:124</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4b016f1bd7de508b1a919e34b12aa83d"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4b016f1bd7de508b1a919e34b12aa83d">OCI_Statement</a></div><div class="ttdeci">struct OCI_Statement OCI_Statement</div><div class="ttdoc">Oracle SQL or PL/SQL statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00136">types.h:136</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga4d9f49c020c16dd2ac25694acde4b39f"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga4d9f49c020c16dd2ac25694acde4b39f">OCI_HashEntry</a></div><div class="ttdeci">struct OCI_HashEntry OCI_HashEntry</div><div class="ttdoc">Hash table entry.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00400">types.h:400</a></div></div>
+<div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga8234ab7e71027fd7d139288b2181d4a7"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga8234ab7e71027fd7d139288b2181d4a7">OCI_Error</a></div><div class="ttdeci">struct OCI_Error OCI_Error</div><div class="ttdoc">Encapsulates an Oracle or OCILIB exception.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00410">types.h:410</a></div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_ga9eae5234e3ca61b6dc51747bc8ce97e4"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#ga9eae5234e3ca61b6dc51747bc8ce97e4">OCI_HashValue</a></div><div class="ttdeci">struct OCI_HashValue OCI_HashValue</div><div class="ttdoc">Hash table entry value.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_datatypes_html_gae0c7aa9c507975d21ca6c261081ba753"><div class="ttname"><a href="group___ocilib_c_api_datatypes.html#gae0c7aa9c507975d21ca6c261081ba753">OCI_Resultset</a></div><div class="ttdeci">struct OCI_Resultset OCI_Resultset</div><div class="ttdoc">Collection of output columns from a select statement.</div><div class="ttdef"><b>Definition:</b> <a href="types_8h_source.html#l00163">types.h:163</a></div></div>
-<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve error message from error handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga695d33b1113b6955a5f4688830593802"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga695d33b1113b6955a5f4688830593802">OCI_GetString2</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_GetString2(OCI_Resultset *rs, const otext *name)</div><div class="ttdoc">Return the current string value of the column from its name in the resultset.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the resultset.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_error_handling_html_ga6df58afd698cd1e16d6a7f38afce8027"><div class="ttname"><a href="group___ocilib_c_api_error_handling.html#ga6df58afd698cd1e16d6a7f38afce8027">OCI_ErrorGetString</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_ErrorGetString(OCI_Error *err)</div><div class="ttdoc">Retrieve the error message string from an error handle.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga695d33b1113b6955a5f4688830593802"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga695d33b1113b6955a5f4688830593802">OCI_GetString2</a></div><div class="ttdeci">OCI_SYM_PUBLIC const otext *OCI_API OCI_GetString2(OCI_Resultset *rs, const otext *name)</div><div class="ttdoc">Return the current string value of the column from its name in the result set.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga7a6ad1f4305a10fcb5bc17de078784a3"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga7a6ad1f4305a10fcb5bc17de078784a3">OCI_FetchNext</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext(OCI_Resultset *rs)</div><div class="ttdoc">Fetch the next row of the result set.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_fetching_html_ga80b05221765bef61fc2a5a83707fc09f"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#ga80b05221765bef61fc2a5a83707fc09f">OCI_GetRowCount</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetRowCount(OCI_Resultset *rs)</div><div class="ttdoc">Retrieve the number of rows fetched so far.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the resultset handle from an executed statement.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gaf85796a64b3147bbd0f18f1a2967d31c"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gaf85796a64b3147bbd0f18f1a2967d31c">OCI_GetInt2</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_GetInt2(OCI_Resultset *rs, const otext *name)</div><div class="ttdoc">Return the current integer value of the column from its name in the resultset.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gadaf40af30cd444f7449d52c3f6cae3c0"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gadaf40af30cd444f7449d52c3f6cae3c0">OCI_GetResultset</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Resultset *OCI_API OCI_GetResultset(OCI_Statement *stmt)</div><div class="ttdoc">Retrieve the result set handle from an executed statement.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_fetching_html_gaf85796a64b3147bbd0f18f1a2967d31c"><div class="ttname"><a href="group___ocilib_c_api_fetching.html#gaf85796a64b3147bbd0f18f1a2967d31c">OCI_GetInt2</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_GetInt2(OCI_Resultset *rs, const otext *name)</div><div class="ttdoc">Return the current integer value of the column from its name in the result set.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_hash_tables_html_ga1ae59d4d1f7d3e3a26b9387deaf5c301"><div class="ttname"><a href="group___ocilib_c_api_hash_tables.html#ga1ae59d4d1f7d3e3a26b9387deaf5c301">OCI_HashGetEntry</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_HashEntry *OCI_API OCI_HashGetEntry(OCI_HashTable *table, unsigned int index)</div><div class="ttdoc">Return the entry slot of the hash table internal list at the given position.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_hash_tables_html_ga2e7dbef7a5a7dbfe2cfd16721b09e282"><div class="ttname"><a href="group___ocilib_c_api_hash_tables.html#ga2e7dbef7a5a7dbfe2cfd16721b09e282">OCI_HashGetSize</a></div><div class="ttdeci">OCI_SYM_PUBLIC unsigned int OCI_API OCI_HashGetSize(OCI_HashTable *table)</div><div class="ttdoc">Return the size of the hash table.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_hash_tables_html_ga4af2b014afd078f5e889eff9fe1cae32"><div class="ttname"><a href="group___ocilib_c_api_hash_tables.html#ga4af2b014afd078f5e889eff9fe1cae32">OCI_HashGetInt</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_HashGetInt(OCI_HashTable *table, const otext *key)</div><div class="ttdoc">Return the integer value associated to the given key.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_hash_tables_html_ga4af2b014afd078f5e889eff9fe1cae32"><div class="ttname"><a href="group___ocilib_c_api_hash_tables.html#ga4af2b014afd078f5e889eff9fe1cae32">OCI_HashGetInt</a></div><div class="ttdeci">OCI_SYM_PUBLIC int OCI_API OCI_HashGetInt(OCI_HashTable *table, const otext *key)</div><div class="ttdoc">Return the integer value associated with the given key.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_hash_tables_html_ga6d0df38b8b638efd63d088e79c076d7e"><div class="ttname"><a href="group___ocilib_c_api_hash_tables.html#ga6d0df38b8b638efd63d088e79c076d7e">OCI_HashCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_HashTable *OCI_API OCI_HashCreate(unsigned int size, unsigned int type)</div><div class="ttdoc">Create a hash table.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_hash_tables_html_gab617eedae4e32ded3ad5ee1514b88ae0"><div class="ttname"><a href="group___ocilib_c_api_hash_tables.html#gab617eedae4e32ded3ad5ee1514b88ae0">OCI_HashFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_HashFree(OCI_HashTable *table)</div><div class="ttdoc">Destroy a hash table.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_hash_tables_html_gaed6b1961449185ff518da87ea36d1fa5"><div class="ttname"><a href="group___ocilib_c_api_hash_tables.html#gaed6b1961449185ff518da87ea36d1fa5">OCI_HashAddInt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddInt(OCI_HashTable *table, const otext *key, int value)</div><div class="ttdoc">Adds a pair string key / integer value to the hash table.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_ga0395802e1f357326fe0e968c344f437c"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#ga0395802e1f357326fe0e968c344f437c">OCI_Cleanup</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup(void)</div><div class="ttdoc">Clean up all resources allocated by the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_initialization_html_gad46f4bcaec7ad58d4e82b51bf065a401"><div class="ttname"><a href="group___ocilib_c_api_initialization.html#gad46f4bcaec7ad58d4e82b51bf065a401">OCI_Initialize</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize(POCI_ERROR err_handler, const otext *lib_path, unsigned int mode)</div><div class="ttdoc">Initialize the library.</div></div>
 <div class="ttc" id="agroup___ocilib_c_api_statements_html_ga155a95c89d2e8e162acb61383a56f77d"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga155a95c89d2e8e162acb61383a56f77d">OCI_StatementCreate</a></div><div class="ttdeci">OCI_SYM_PUBLIC OCI_Statement *OCI_API OCI_StatementCreate(OCI_Connection *con)</div><div class="ttdoc">Create a statement object and return its handle.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga533ada0a945118e7e62e2357d956dcf2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare and Execute a SQL statement or PL/SQL block.</div></div>
-<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated to it (resultsets ...)</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga533ada0a945118e7e62e2357d956dcf2"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga533ada0a945118e7e62e2357d956dcf2">OCI_ExecuteStmt</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt(OCI_Statement *stmt, const otext *sql)</div><div class="ttdoc">Prepare and execute a SQL statement or PL/SQL block in a single call.</div></div>
+<div class="ttc" id="agroup___ocilib_c_api_statements_html_ga8faf400001d7132469396b67ae8894d0"><div class="ttname"><a href="group___ocilib_c_api_statements.html#ga8faf400001d7132469396b67ae8894d0">OCI_StatementFree</a></div><div class="ttdeci">OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree(OCI_Statement *stmt)</div><div class="ttdoc">Free a statement and all resources associated with it (result sets, bind variables,...</div></div>
 </div><!-- fragment --> <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -247,13 +247,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga9c961648afe95d2413415d18e968d28c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a pair string key / string value to the hash table.  <br /></td></tr>
 <tr class="separator:ga9c961648afe95d2413415d18e968d28c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga58b7965f90389b09546b8082ef0a3bcd"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC const otext *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga58b7965f90389b09546b8082ef0a3bcd">OCI_HashGetString</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key)</td></tr>
-<tr class="memdesc:ga58b7965f90389b09546b8082ef0a3bcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the string value associated to the given key.  <br /></td></tr>
+<tr class="memdesc:ga58b7965f90389b09546b8082ef0a3bcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the string value associated with the given key.  <br /></td></tr>
 <tr class="separator:ga58b7965f90389b09546b8082ef0a3bcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaed6b1961449185ff518da87ea36d1fa5"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#gaed6b1961449185ff518da87ea36d1fa5">OCI_HashAddInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key, int value)</td></tr>
 <tr class="memdesc:gaed6b1961449185ff518da87ea36d1fa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a pair string key / integer value to the hash table.  <br /></td></tr>
 <tr class="separator:gaed6b1961449185ff518da87ea36d1fa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4af2b014afd078f5e889eff9fe1cae32"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC int OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga4af2b014afd078f5e889eff9fe1cae32">OCI_HashGetInt</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key)</td></tr>
-<tr class="memdesc:ga4af2b014afd078f5e889eff9fe1cae32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the integer value associated to the given key.  <br /></td></tr>
+<tr class="memdesc:ga4af2b014afd078f5e889eff9fe1cae32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the integer value associated with the given key.  <br /></td></tr>
 <tr class="separator:ga4af2b014afd078f5e889eff9fe1cae32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga802a1450629be5c8d4f9b572271949bc"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC boolean OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga802a1450629be5c8d4f9b572271949bc">OCI_HashAddPointer</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key, void *value)</td></tr>
 <tr class="memdesc:ga802a1450629be5c8d4f9b572271949bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a pair string key / pointer value to the hash table.  <br /></td></tr>
@@ -262,7 +262,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga6d55470a8691c00170bdfbdd0aec2c4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a pointer associated with the given key.  <br /></td></tr>
 <tr class="separator:ga6d55470a8691c00170bdfbdd0aec2c4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga22718fc9ec07db6bebac4478b2b577a1"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC OCI_HashEntry *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga22718fc9ec07db6bebac4478b2b577a1">OCI_HashLookup</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key, boolean create)</td></tr>
-<tr class="memdesc:ga22718fc9ec07db6bebac4478b2b577a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lookup for an entry matching the key in the table.  <br /></td></tr>
+<tr class="memdesc:ga22718fc9ec07db6bebac4478b2b577a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Look up an entry matching the key in the table.  <br /></td></tr>
 <tr class="separator:ga22718fc9ec07db6bebac4478b2b577a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga16ab73f449ebe8aa722be6c3cc6f8085"><td class="memItemLeft" align="right" valign="top">OCI_SYM_PUBLIC OCI_HashValue *OCI_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ocilib_c_api_hash_tables.html#ga16ab73f449ebe8aa722be6c3cc6f8085">OCI_HashGetValue</a> (<a class="el" href="group___ocilib_c_api_datatypes.html#ga0bbce882abdc1a99ebf01637447c35cb">OCI_HashTable</a> *table, const otext *key)</td></tr>
 <tr class="memdesc:ga16ab73f449ebe8aa722be6c3cc6f8085"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the first hash slot that matches the key.  <br /></td></tr>
@@ -303,18 +303,18 @@ Functions</h2></td></tr>
 <p>Create a hash table. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">size</td><td>- size of the hash table </td></tr>
-    <tr><td class="paramname">type</td><td>- type of the hash table</td></tr>
+    <tr><td class="paramname">size</td><td>- Size of the hash table </td></tr>
+    <tr><td class="paramname">type</td><td>- Type of the hash table</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>Parameter can be one of the following values :</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Parameter can be one of the following values:</dd></dl>
 <ul>
-<li>OCI_HASH_STRING : string values</li>
-<li>OCI_HASH_INTEGER : integer values</li>
-<li>OCI_HASH_POINTER : pointer values</li>
+<li>OCI_HASH_STRING : string values.</li>
+<li>OCI_HASH_INTEGER : integer values.</li>
+<li>OCI_HASH_POINTER : pointer values.</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>Hash handle on success or NULL on failure </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The Hash handle on success, or NULL on failure. </dd></dl>
 
 </div>
 </div>
@@ -343,7 +343,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -368,10 +368,11 @@ Functions</h2></td></tr>
 <p>Return the size of the hash table. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">table</td><td>- Table handle </td></tr>
+    <tr><td class="paramname">table</td><td>- Table handle</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The size of the hash table, or 0 on failure. </dd></dl>
 
 </div>
 </div>
@@ -400,13 +401,13 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>the return value can be one of the following values :</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The return value can be one of the following values:</dd></dl>
 <ul>
-<li>OCI_HASH_STRING : string values</li>
-<li>OCI_HASH_INTEGER : integer values</li>
-<li>OCI_HASH_POINTER : pointer values</li>
+<li>OCI_HASH_STRING : string values.</li>
+<li>OCI_HASH_INTEGER : integer values.</li>
+<li>OCI_HASH_POINTER : pointer values.</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>Hash table data type or OCI_UNKNOWN the input handle is NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The hash table data type, or OCI_UNKNOWN if the input handle is NULL. </dd></dl>
 
 </div>
 </div>
@@ -449,11 +450,11 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">table</td><td>- Table handle </td></tr>
     <tr><td class="paramname">key</td><td>- String key </td></tr>
-    <tr><td class="paramname">value</td><td>- string value</td></tr>
+    <tr><td class="paramname">value</td><td>- String value</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -485,7 +486,7 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the string value associated to the given key. </p>
+<p>Return the string value associated with the given key. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">table</td><td>- Table handle </td></tr>
@@ -493,7 +494,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Stored string associated with the key otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The stored string associated with the key, or NULL if not found. </dd></dl>
 
 </div>
 </div>
@@ -540,7 +541,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -572,7 +573,7 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Return the integer value associated to the given key. </p>
+<p>Return the integer value associated with the given key. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">table</td><td>- Table handle </td></tr>
@@ -580,7 +581,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Stored integer associated with the key otherwise 0 </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The stored integer associated with the key, or 0 if not found. </dd></dl>
 
 </div>
 </div>
@@ -627,7 +628,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>TRUE on success otherwise FALSE </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TRUE on success, otherwise FALSE. </dd></dl>
 
 </div>
 </div>
@@ -667,7 +668,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Stored pointer associated with the key otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The stored pointer associated with the key, or NULL if not found. </dd></dl>
 
 </div>
 </div>
@@ -705,16 +706,16 @@ Functions</h2></td></tr>
 
 <p><code>#include &lt;api.h&gt;</code></p>
 
-<p>Lookup for an entry matching the key in the table. </p>
+<p>Look up an entry matching the key in the table. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">table</td><td>- Table handle </td></tr>
     <tr><td class="paramname">key</td><td>- String key </td></tr>
-    <tr><td class="paramname">create</td><td>- Do create the entry if not exists</td></tr>
+    <tr><td class="paramname">create</td><td>- Create the entry if it does not exist</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Entry handle if key found/added otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The entry handle if key found/added, or NULL otherwise. </dd></dl>
 
 </div>
 </div>
@@ -754,7 +755,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Slot handle if key found otherwise NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The value handle if key found, or NULL otherwise. </dd></dl>
 
 </div>
 </div>
@@ -790,12 +791,12 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">table</td><td>- Table handle </td></tr>
-    <tr><td class="paramname">index</td><td>- index</td></tr>
+    <tr><td class="paramname">index</td><td>- Index</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>Index start at at</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>Slot handle otherwise NULL </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Index starts at 0.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The entry handle, or NULL if index is out of bounds. </dd></dl>
 
 </div>
 </div>
@@ -805,7 +806,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Jan 14 2025 23:58:11 for OCILIB (C and C++ Driver for Oracle) by
+    <li class="footer">Generated on Wed May 20 2026 00:00:14 for OCILIB (C and C++ Driver for Oracle) by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.9.6 </li>
   </ul>

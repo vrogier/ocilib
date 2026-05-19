@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['_7eexception_0',['~Exception',['../classocilib_1_1_exception.html#aa190fa19d909203574f06513b638acd7',1,'ocilib::Exception']]]
+  ['watch_0',['Watch',['../classocilib_1_1_subscription.html#a0bbced3f0c3111880bff1d9f8b607a38',1,'ocilib::Subscription']]],
+  ['what_1',['what',['../classocilib_1_1_exception.html#a6453d51a1e16c5c563bf6e6c947edd25',1,'ocilib::Exception']]],
+  ['write_2',['Write',['../classocilib_1_1_lob.html#a133c9c17dc7bd3b2fc809d976453fc8e',1,'ocilib::Lob::Write()'],['../classocilib_1_1_long.html#a36eacb25606221605a427cb26d147a91',1,'ocilib::Long::Write()']]]
 ];
