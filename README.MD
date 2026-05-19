@@ -2,17 +2,16 @@
 
 ## 1. About
 
-OCILIB is an open source and cross platform Oracle Driver that delivers efficient access to Oracle databases.
-
+OCILIB is an open source, cross-platform Oracle driver for C and C++. It provides fast and
+reliable access to Oracle databases through a simple, consistent API.
+ 
 The OCILIB library :
-
-- offers a rich, full featured and easy to use API
-- runs on all Oracle platforms
-- is written in pure ISO C99 code with native ISO C Unicode support
-- provides also a C++ API written in standard C++03 with support for some C++11 features
-- Enables high productivity
-- encapsulates OCI (Oracle Call Interface)
-- is the most complete available OCI wrapper
+ 
+- Offers a rich, full-featured, and easy-to-use API
+- Runs on all major Oracle client platforms
+- Encapsulates OCI (Oracle Call Interface)
+- Provides a C API written in ISO C99 with native Unicode support
+- Provides a C++ API written in standard C++03 (optionally using selected C++11 features when supported)
 
 OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy it!
 
@@ -23,33 +22,33 @@ The source code is free source code licensed under **Apache License, Version 2.0
 ## 3. Features 
  
 - ISO C API
-- ISO C ++ API
-- Full ANSI and Unicode support on all platforms (ISO C wide strings or UTF8 strings)
-- Full 32/64 bits compatibility
-- Compatible with all Oracle version >= 8.0
+- ISO C++ API
+- Full ANSI and Unicode support on all platforms (ISO C wide strings or UTF-8 strings)
+- Full 32/64-bit compatibility
+- Compatible with all Oracle versions >= 8.0
 - Automatic adaptation to the runtime Oracle client version
 - Runtime loading of Oracle libraries
 - Built-in error handling (global and thread context)
 - Full support for SQL API and Object API
-- Full support for ALL Oracle SQL and PL/SQL datatypes (scalars, objects, refs, collections, ..)
-- Full support for PL/SQL (blocks, cursors, Index by Tables and Nested tables)
-- Support for non scalar datatype with trough library objects
+- Full support for Oracle SQL and PL/SQL data types (scalars, objects, refs, collections, ...)
+- Full support for PL/SQL (blocks, cursors, index-by tables, and nested tables)
+- Support for non-scalar data types through library objects
 - Oracle Pooling (connections and sessions pools)
 - Oracle XA connectivity (X/Open Distributed Transaction Processing XA interface)
-- Oracle AQ (Advanced Queues)
+- Oracle AQ (Advanced Queuing)
 - Oracle TAF (Transparent Application Failover) and HA (High availability) support
-- Binding array Interface
+- Binding array interface
 - Returning DML feature
 - Scrollable statements
 - Statement cache
 - Direct Path loading
 - Remote Instances Startup/Shutdown
-- Oracle Database Change notification / Continuous Query Notification
+- Oracle Database Change Notification / Continuous Query Notification
 - Oracle warnings support
 - Global and local transactions
 - Describe database schema objects
 - Hash tables API
-- Portable Threads and mutexes API
+- Portable threads and mutexes API
 - Partial support for XMLTYPE (fetching only as string content)
 
 ## 5. Installation

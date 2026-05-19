@@ -13,7 +13,6 @@
     * Fixes (C API)
     
         - Issue 382 : Warnings when opening a connection in password  during grace period
-        - various minor internal changes, added checks and fixes found by static analysis
       
     * Fixes (C++ API)
         - Issue 379 : Issues in creating collection of user defined type
@@ -22,9 +21,14 @@
 
     * Documentation
     
-        - Fixed all typos in the documentation (C and C++ APIs), Added some refinements
-     
+        - Fixed all typos in the documentation (C and C++ APIs)
+        - Added some refinements
+   
+    * Miscellaneous
     
+		- Updated compilers for MS Windows prebuilt binaries to VS2022 17.14.32
+        - Various minor internal changes, added checks and fixes found by static analysis
+   
 2025-05-13 Version 4.8.0 Vincent Rogier vince.rogier@ocilib.net
 
   * Enhancements (C API)
