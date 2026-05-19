@@ -1,4 +1,4 @@
-2026-05-20 Version 4.9.0 Vincent Rogier vince.rogier@ocilib.net
+2026-05-19 Version 4.9.0 Vincent Rogier vince.rogier@ocilib.net
 
     * Enhancements (C API)
    
@@ -1918,7 +1918,7 @@
           - the trailing null character was missing if the binded string had been shortened by some PL/SQL code or user
           - Internal initialization of bind array of data lengths: the length was including null terminator character and could lead to some memory corruptions
       - Fixed some demo example codes 
-      - Fixed computation of internal OCI_Object sub objects offsets in their parents’ indicator array (could have caused segfaults and/or bad indicator values)
+      - Fixed computation of internal OCI_Object sub objects offsets in their parentsâ€™ indicator array (could have caused segfaults and/or bad indicator values)
       - Fixed problems with OCI_Elem internal null indicators:
           - In some cases, a segfault caused by a null pointer could happened
           - For OCI_Object handles held by an OCI_Elem handle, the object internal indicator structure was not properly set/retrieved
