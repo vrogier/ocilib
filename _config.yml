@@ -4,8 +4,8 @@ email: vince.rogier@ocilib.net
 keywords: OCILIB, driver, Oracle, OCI, wrapper, open source, C, C++, library, API, SQL, database, access, libraries, free, Apache 2, PL/SQL, Oracle Call Interface
 description: OCILIB is an open source and cross platform Oracle Driver that delivers efficient access to Oracle databases. It offers a full featured, easy and productive API. Written in ISO C and C++ on top of OCI, OCILIB runs on all Oracle platforms.
 
-baseurl: /ocilib
-url: / #Leave this, change the baseurl.
+baseurl: ""
+url: https://ocilib.net
 
 projecturl: https://github.com/vrogier/ocilib
 meurl: https://github.com/vrogier/
