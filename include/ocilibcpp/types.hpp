@@ -4559,6 +4559,19 @@ namespace ocilib
         * the TypeInfo object must not be accessed anymore once the parent connection object gets out of scope
         *
         */
+        /**
+        * @brief
+        * Default constructor
+        *
+        * @note
+        * The type info is not usable until it is assigned from a call to
+        * TypeInfo(const Connection&, const ostring&, TypeInfoType) or
+        * TypeInfo::GetTypeInfo(). Call IsNull() to check whether it wraps a
+        * valid handle.
+        *
+        */
+        TypeInfo();
+
         TypeInfo(const Connection& connection, const ostring& name, TypeInfoType type);
 
         /**
