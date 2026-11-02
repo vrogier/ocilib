@@ -4549,18 +4549,6 @@ namespace ocilib
 
         /**
         * @brief
-        * Parametrized constructor
-        *
-        * @param connection - Parent connection
-        * @param name       - Type name
-        * @param type       - Kind of type to retrieve
-        *
-        * @note
-        * the TypeInfo object must not be accessed anymore once the parent connection object gets out of scope
-        *
-        */
-        /**
-        * @brief
         * Default constructor
         *
         * @note
@@ -4572,6 +4560,18 @@ namespace ocilib
         */
         TypeInfo();
 
+        /**
+        * @brief
+        * Parametrized constructor
+        *
+        * @param connection - Parent connection
+        * @param name       - Type name
+        * @param type       - Kind of type to retrieve
+        *
+        * @note
+        * the TypeInfo object must not be accessed anymore once the parent connection object gets out of scope
+        *
+        */
         TypeInfo(const Connection& connection, const ostring& name, TypeInfoType type);
 
         /**
