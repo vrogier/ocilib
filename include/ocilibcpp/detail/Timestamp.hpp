@@ -58,7 +58,7 @@ inline Timestamp::Timestamp(const Timestamp& other)
     *this = other;
 }
 
-inline Timestamp& Timestamp::operator= (const Timestamp& other) noexcept
+inline Timestamp& Timestamp::operator= (const Timestamp& other)
 {
     if (this != &other)
     {
