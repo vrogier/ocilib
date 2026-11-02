@@ -187,7 +187,7 @@ OCI_Interval ** OcilibIntervalCreateArray
 (
     OCI_Environment *env,
     OCI_IntervalType type,
-    OCI_UInt32     nbelem
+    OCI_UInt32       nbelem
 )
 {
     ENTER_FUNC
@@ -393,8 +393,8 @@ OCI_Boolean OcilibIntervalFromString
         /* context */ OCI_IPC_INTERVAL, itv
     );
 
-    dbtext *dbstr  = NULL;
-    OCI_Int32     dbsize = -1;
+    dbtext   *dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_INTERVAL, itv);
     CHECK_PTR(OCI_IPC_STRING,   str);
@@ -429,9 +429,9 @@ OCI_Boolean OcilibIntervalFromString
 OCI_Boolean OcilibIntervalToString
 (
     OCI_Interval *itv,
-    OCI_Int32           leading_prec,
-    OCI_Int32           fraction_prec,
-    OCI_Int32           size,
+    OCI_Int32     leading_prec,
+    OCI_Int32     fraction_prec,
+    OCI_Int32     size,
     otext        *str
 )
 {
@@ -441,8 +441,8 @@ OCI_Boolean OcilibIntervalToString
         /* context */ OCI_IPC_INTERVAL, itv
     );
 
-    dbtext *dbstr  = NULL;
-    OCI_Int32     dbsize = size * (OCI_Int32) sizeof(otext);
+    dbtext   *dbstr  = NULL;
+    OCI_Int32 dbsize = size * (OCI_Int32) sizeof(otext);
     OCI_Size  len    = 0;
 
     CHECK_PTR(OCI_IPC_INTERVAL, itv);
@@ -508,8 +508,8 @@ OCI_Boolean OcilibIntervalFromTimeZone
         /* context */ OCI_IPC_INTERVAL, itv
     );
 
-    dbtext *dbstr  = NULL;
-    OCI_Int32     dbsize = -1;
+    dbtext   *dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_INTERVAL, itv);
     CHECK_PTR(OCI_IPC_STRING,   str);
@@ -544,11 +544,11 @@ OCI_Boolean OcilibIntervalFromTimeZone
 OCI_Boolean OcilibIntervalGetDaySecond
 (
     OCI_Interval *itv,
-    OCI_Int32          *day,
-    OCI_Int32          *hour,
-    OCI_Int32          *min,
-    OCI_Int32          *sec,
-    OCI_Int32          *nsec
+    OCI_Int32    *day,
+    OCI_Int32    *hour,
+    OCI_Int32    *min,
+    OCI_Int32    *sec,
+    OCI_Int32    *nsec
 )
 {
     ENTER_FUNC
@@ -602,8 +602,8 @@ OCI_Boolean OcilibIntervalGetDaySecond
 OCI_Boolean OcilibIntervalGetYearMonth
 (
     OCI_Interval *itv,
-    OCI_Int32          *year,
-    OCI_Int32          *month
+    OCI_Int32    *year,
+    OCI_Int32    *month
 )
 {
     ENTER_FUNC
@@ -644,11 +644,11 @@ OCI_Boolean OcilibIntervalGetYearMonth
 OCI_Boolean OcilibIntervalSetDaySecond
 (
     OCI_Interval *itv,
-    OCI_Int32           day,
-    OCI_Int32           hour,
-    OCI_Int32           min,
-    OCI_Int32           sec,
-    OCI_Int32           nsec
+    OCI_Int32     day,
+    OCI_Int32     hour,
+    OCI_Int32     min,
+    OCI_Int32     sec,
+    OCI_Int32     nsec
 )
 {
     ENTER_FUNC
@@ -692,8 +692,8 @@ OCI_Boolean OcilibIntervalSetDaySecond
 OCI_Boolean OcilibIntervalSetYearMonth
 (
     OCI_Interval *itv,
-    OCI_Int32           year,
-    OCI_Int32           month
+    OCI_Int32     year,
+    OCI_Int32     month
 )
 {
     ENTER_FUNC

@@ -126,17 +126,17 @@ inline ostring Connection::GetServerVersion() const
     return core::MakeString(core::Check(OCI_GetVersionServer(*this)));
 }
 
-inline OCI_UInt32 Connection::GetServerMajorVersion() const
+inline UInt32 Connection::GetServerMajorVersion() const
 {
     return core::Check(OCI_GetServerMajorVersion(*this));
 }
 
-inline OCI_UInt32 Connection::GetServerMinorVersion() const
+inline UInt32 Connection::GetServerMinorVersion() const
 {
     return core::Check(OCI_GetServerMinorVersion(*this));
 }
 
-inline OCI_UInt32 Connection::GetServerRevisionVersion() const
+inline UInt32 Connection::GetServerRevisionVersion() const
 {
     return core::Check(OCI_GetServerRevisionVersion(*this));
 }
@@ -166,7 +166,7 @@ inline void Connection::SetTransaction(const Transaction &transaction)
     core::Check(OCI_SetTransaction(*this, transaction));
 }
 
-inline void Connection::EnableServerOutput(OCI_UInt32 bufsize, OCI_UInt32 arrsize, OCI_UInt32 lnsize)
+inline void Connection::EnableServerOutput(UInt32 bufsize, UInt32 arrsize, UInt32 lnsize)
 {
     core::Check(OCI_ServerEnableOutput(*this, bufsize, arrsize, lnsize));
 }
@@ -236,27 +236,27 @@ inline Timestamp Connection::GetInstanceStartTime() const
     return Timestamp(core::Check(OCI_GetInstanceStartTime(*this)), GetHandle());
 }
 
-inline OCI_UInt32 Connection::GetStatementCacheSize() const
+inline UInt32 Connection::GetStatementCacheSize() const
 {
     return core::Check(OCI_GetStatementCacheSize(*this));
 }
 
-inline void Connection::SetStatementCacheSize(OCI_UInt32 value)
+inline void Connection::SetStatementCacheSize(UInt32 value)
 {
     core::Check(OCI_SetStatementCacheSize(*this, value));
 }
 
-inline OCI_UInt32 Connection::GetDefaultLobPrefetchSize() const
+inline UInt32 Connection::GetDefaultLobPrefetchSize() const
 {
     return core::Check(OCI_GetDefaultLobPrefetchSize(*this));
 }
 
-inline void Connection::SetDefaultLobPrefetchSize(OCI_UInt32 value)
+inline void Connection::SetDefaultLobPrefetchSize(UInt32 value)
 {
     core::Check(OCI_SetDefaultLobPrefetchSize(*this, value));
 }
 
-inline OCI_UInt32  Connection::GetMaxCursors() const
+inline UInt32  Connection::GetMaxCursors() const
 {
     return core::Check(OCI_GetMaxCursors(*this));
 }
@@ -287,12 +287,12 @@ inline void Connection::SetUserData(AnyPointer value)
     core::Check(OCI_SetUserData(*this, value));
 }
 
-inline OCI_UInt32 Connection::GetTimeout(TimeoutType timeout)
+inline UInt32 Connection::GetTimeout(TimeoutType timeout)
 {
     return core::Check(OCI_GetTimeout(*this, timeout));
 }
 
-inline void Connection::SetTimeout(TimeoutType timeout, OCI_UInt32 value)
+inline void Connection::SetTimeout(TimeoutType timeout, UInt32 value)
 {
     core::Check(OCI_SetTimeout(*this, timeout, value));
 }

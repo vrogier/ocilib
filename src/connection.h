@@ -69,7 +69,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetMinSupportedVersion
 OCI_SYM_LOCAL OCI_Boolean OcilibConnectionIsVersionSupported
 (
     OCI_Connection *con,
-    OCI_UInt32    version
+    OCI_UInt32      version
 );
 
 OCI_SYM_LOCAL OCI_Connection* OcilibConnectionCreate
@@ -193,9 +193,9 @@ OCI_SYM_LOCAL OCI_Boolean OcilibConnectionBreak
 OCI_SYM_LOCAL OCI_Boolean OcilibConnectionEnableServerOutput
 (
     OCI_Connection* con,
-    OCI_UInt32    bufsize,
-    OCI_UInt32    arrsize,
-    OCI_UInt32    lnsize
+    OCI_UInt32      bufsize,
+    OCI_UInt32      arrsize,
+    OCI_UInt32      lnsize
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibConnectionDisableServerOutput
@@ -230,7 +230,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibConnectionSetTimeout
 (
     OCI_Connection* con,
     OCI_TimeoutType type,
-    OCI_UInt32    value
+    OCI_UInt32      value
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetTimeout
@@ -288,7 +288,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetStatementCacheSize
 OCI_SYM_LOCAL OCI_Boolean OcilibConnectionSetStatementCacheSize
 (
     OCI_Connection* con,
-    OCI_UInt32    value
+    OCI_UInt32      value
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetDefaultLobPrefetchSize
@@ -299,7 +299,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetDefaultLobPrefetchSize
 OCI_SYM_LOCAL OCI_Boolean OcilibConnectionSetDefaultLobPrefetchSize
 (
     OCI_Connection* con,
-    OCI_UInt32    value
+    OCI_UInt32      value
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetMaxCursors

@@ -64,16 +64,16 @@ OCI_SYM_LOCAL OCI_Boolean OcilibEnqueueSetSequenceDeviation
 
 OCI_SYM_LOCAL OCI_Boolean OcilibEnqueueGetRelativeMsgID
 (
-    OCI_Enqueue  *enqueue,
-    void         *id,
-    OCI_UInt32 *len
+    OCI_Enqueue *enqueue,
+    void        *id,
+    OCI_UInt32  *len
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibEnqueueSetRelativeMsgID
 (
     OCI_Enqueue *enqueue,
     const void  *id,
-    OCI_UInt32 len
+    OCI_UInt32   len
 );
 
 #endif /* OCILIB_ENQUEUE_H_INCLUDED */

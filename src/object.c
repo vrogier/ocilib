@@ -37,40 +37,40 @@
 #include "timestamp.h"
 #include "typeinfo.h"
 
-#define OBJECT_SET_VALUE(datatype, type, func, ...)                               \
-                                                                                  \
-        ENTER_FUNC(OCI_Boolean, FALSE, OCI_IPC_OBJECT, obj);                      \
-                                                                                  \
-        CHECK_PTR(OCI_IPC_OBJECT, obj);                                           \
-                                                                                  \
-        if (NULL == value)                                                        \
-        {                                                                         \
-            CHECK(OcilibObjectSetNull(obj, attr));                                \
-        }                                                                         \
-        else                                                                      \
-        {                                                                         \
+#define OBJECT_SET_VALUE(datatype, type, func, ...)                                     \
+                                                                                        \
+        ENTER_FUNC(OCI_Boolean, FALSE, OCI_IPC_OBJECT, obj);                            \
+                                                                                        \
+        CHECK_PTR(OCI_IPC_OBJECT, obj);                                                 \
+                                                                                        \
+        if (NULL == value)                                                              \
+        {                                                                               \
+            CHECK(OcilibObjectSetNull(obj, attr));                                      \
+        }                                                                               \
+        else                                                                            \
+        {                                                                               \
             OCI_Int32 index = OcilibObjectGetAttributeIndex(obj, attr, datatype, TRUE); \
-                                                                                  \
-            if (index >= 0)                                                       \
-            {                                                                     \
-                OCIInd *ind  = NULL;                                              \
-                type   *data = (type *) OcilibObjectGetAttr(obj, index, &ind);    \
-                                                                                  \
-                CHECK_OCI(obj->con->err, func, __VA_ARGS__);                      \
-                                                                                  \
-                *ind = OCI_IND_NOTNULL;                                           \
-            }                                                                     \
-        }                                                                         \
-                                                                                  \
-        SET_SUCCESS();                                                            \
-                                                                                  \
+                                                                                        \
+            if (index >= 0)                                                             \
+            {                                                                           \
+                OCIInd *ind  = NULL;                                                    \
+                type   *data = (type *) OcilibObjectGetAttr(obj, index, &ind);          \
+                                                                                        \
+                CHECK_OCI(obj->con->err, func, __VA_ARGS__);                            \
+                                                                                        \
+                *ind = OCI_IND_NOTNULL;                                                 \
+            }                                                                           \
+        }                                                                               \
+                                                                                        \
+        SET_SUCCESS();                                                                  \
+                                                                                        \
         EXIT_FUNC();
 
 #define OBJECT_GET_VALUE(datatype, object_type, type, func, ...)          \
                                                                           \
         ENTER_FUNC(object_type, NULL, OCI_IPC_OBJECT, obj);               \
                                                                           \
-        OCI_Int32 index = 0;                                                    \
+        OCI_Int32 index = 0;                                              \
                                                                           \
         CHECK_PTR(OCI_IPC_OBJECT, obj);                                   \
                                                                           \
@@ -128,9 +128,9 @@
 static OCI_Boolean OcilibObjectGetAttributeInfo
 (
     OCI_TypeInfo * typinf,
-    OCI_Int32            index,
-    OCI_Size       * p_size,
-    OCI_Size       * p_align
+    OCI_Int32      index,
+    OCI_Size     * p_size,
+    OCI_Size     * p_align
 );
 
 /* --------------------------------------------------------------------------------------------- *
@@ -279,11 +279,11 @@ static OCI_TypeInfo * ObjectGetRealTypeInfo(OCI_TypeInfo *typinf, void *object)
 static ub2 OcilibObjectGetIndOffset
 (
     OCI_TypeInfo *typinf,
-    OCI_Int32           index
+    OCI_Int32     index
 )
 {
     OCI_Int32 i = 0;
-    ub2 j = 1;
+    ub2       j = 1;
 
     if (typinf == NULL) return (0);
 
@@ -310,8 +310,8 @@ static ub2 OcilibObjectGetIndOffset
 static void OcilibObjectGetStructSize
 (
     OCI_TypeInfo *typinf,
-    OCI_Size       *p_size,
-    OCI_Size       *p_align
+    OCI_Size     *p_size,
+    OCI_Size     *p_align
 )
 {
     if (NULL == typinf || NULL == p_size || NULL == p_align)
@@ -406,8 +406,8 @@ static void OcilibObjectGetStructSize
 void OcilibObjectGetUserStructSize
 (
     OCI_TypeInfo* typinf,
-    OCI_Size      * p_size,
-    OCI_Size      * p_align
+    OCI_Size    * p_size,
+    OCI_Size    * p_align
 )
 {
     OCI_Size size1  = 0;
@@ -463,9 +463,9 @@ void OcilibObjectGetUserStructSize
 static OCI_Boolean OcilibObjectGetAttributeInfo
 (
     OCI_TypeInfo *typinf,
-    OCI_Int32           index,
-    OCI_Size       *p_size,
-    OCI_Size       *p_align
+    OCI_Int32     index,
+    OCI_Size     *p_size,
+    OCI_Size     *p_align
 )
 {
     if (typinf  == NULL) return (0);
@@ -497,12 +497,12 @@ static OCI_Boolean OcilibObjectGetAttributeInfo
             }
             else if (subtype & OCI_NUM_FLOAT)
             {
-                *p_size  = sizeof(double);
+                *p_size  = sizeof(OCI_Double);
                 *p_align = *p_size;
             }
             else if (subtype & OCI_NUM_DOUBLE)
             {
-                *p_size  = sizeof(double);
+                *p_size  = sizeof(OCI_Double);
                 *p_align = *p_size;
             }
             else
@@ -593,7 +593,7 @@ OCI_Object * OcilibObjectInitialize
     void           *handle,
     OCI_TypeInfo   *typinf,
     OCI_Object     *parent,
-    OCI_Int32             index,
+    OCI_Int32       index,
     OCI_Boolean     reset
 )
 {
@@ -706,7 +706,7 @@ static OCI_Int32 OcilibObjectGetAttributeIndex
 (
     OCI_Object  *obj,
     const otext *attr,
-    OCI_Int32          type,
+    OCI_Int32    type,
     OCI_Boolean  check
 )
 {
@@ -748,9 +748,9 @@ static OCI_Int32 OcilibObjectGetAttributeIndex
 
 static void * OcilibObjectGetAttr
 (
-    OCI_Object  *obj,
-    OCI_UInt32 index,
-    OCIInd     **pind
+    OCI_Object *obj,
+    OCI_UInt32  index,
+    OCIInd    **pind
 )
 {
     ENTER_FUNC
@@ -961,7 +961,7 @@ OCI_Boolean OcilibObjectFree
 OCI_Object ** OcilibObjectCreateArray
 (
     OCI_TypeInfo *typinf,
-    OCI_UInt32  nbelem
+    OCI_UInt32    nbelem
 )
 {
     ENTER_FUNC
@@ -1194,26 +1194,26 @@ OCI_UInt64 OcilibObjectGetUnsignedBigInt
  * OcilibObjectGetDouble
  * --------------------------------------------------------------------------------------------- */
 
-double OcilibObjectGetDouble
+OCI_Double OcilibObjectGetDouble
 (
     OCI_Object  *obj,
     const otext *attr
 )
 {
-    OBJECT_GET_NUMBER(OCI_NUM_DOUBLE, double, 0.0);
+    OBJECT_GET_NUMBER(OCI_NUM_DOUBLE, OCI_Double, 0.0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibObjectGetFloat
  * --------------------------------------------------------------------------------------------- */
 
-float OcilibObjectGetFloat
+OCI_Float OcilibObjectGetFloat
 (
     OCI_Object  *obj,
     const otext *attr
 )
 {
-    OBJECT_GET_NUMBER(OCI_NUM_FLOAT, float, 0.0f);
+    OBJECT_GET_NUMBER(OCI_NUM_FLOAT, OCI_Float, 0.0f);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1268,9 +1268,9 @@ const otext * OcilibObjectGetString
 
         if (index >= 0)
         {
-            OCI_Error   *err   = OcilibErrorGet(ocilib_call_context.env, TRUE, TRUE);
-            OCIInd      *ind   = NULL;
-            void        *value = NULL;
+            OCI_Error *err   = OcilibErrorGet(ocilib_call_context.env, TRUE, TRUE);
+            OCIInd    *ind   = NULL;
+            void      *value = NULL;
             OCI_UInt32 size  = 0;
             OCI_UInt32 len   = 0;
 
@@ -1296,14 +1296,14 @@ const otext * OcilibObjectGetString
                 CHECK(OcilibStringRequestBuffer(obj->con->env, &obj->tmpbufs[index], &obj->tmpsizes[index], len));
 
                 const OCI_UInt32 real_tmpsize = OcilibStringGetFromType
-                                                  (
-                                                      obj->con,
-                                                      &obj->typinf->cols[index],
-                                                      value, size,
-                                                      obj->tmpbufs[index],
-                                                      obj->tmpsizes[index],
-                                                      FALSE
-                                                  );
+                                                (
+                                                    obj->con,
+                                                    &obj->typinf->cols[index],
+                                                    value, size,
+                                                    obj->tmpbufs[index],
+                                                    obj->tmpsizes[index],
+                                                    FALSE
+                                                );
 
                 CHECK(NULL == err || OCI_UNKNOWN == err->type);
 
@@ -1334,7 +1334,7 @@ OCI_Int32 OcilibObjectGetRaw
     OCI_Object  *obj,
     const otext *attr,
     void        *buffer,
-    OCI_UInt32 len
+    OCI_UInt32   len
 )
 {
     ENTER_FUNC
@@ -1396,7 +1396,7 @@ OCI_UInt32 OcilibObjectGetRawSize
         /* context */ OCI_IPC_OBJECT, obj
     );
 
-    ub4 raw_len = 0;
+    ub4       raw_len = 0;
     OCI_Int32 index   = -1;
 
     CHECK_PTR(OCI_IPC_OBJECT, obj);
@@ -1713,7 +1713,7 @@ OCI_Boolean OcilibObjectSetShort
 (
     OCI_Object  *obj,
     const otext *attr,
-    OCI_Int16        value
+    OCI_Int16    value
 )
 {
     OBJECT_SET_NUMBER(OCI_NUM_SHORT, value);
@@ -1725,9 +1725,9 @@ OCI_Boolean OcilibObjectSetShort
 
 OCI_Boolean OcilibObjectSetUnsignedShort
 (
-    OCI_Object    *obj,
-    const otext   *attr,
-    OCI_UInt16 value
+    OCI_Object  *obj,
+    const otext *attr,
+    OCI_UInt16   value
 )
 {
     OBJECT_SET_NUMBER(OCI_NUM_USHORT, value);
@@ -1741,7 +1741,7 @@ OCI_Boolean OcilibObjectSetInt
 (
     OCI_Object  *obj,
     const otext *attr,
-    OCI_Int32          value
+    OCI_Int32    value
 )
 {
     OBJECT_SET_NUMBER(OCI_NUM_INT, value);
@@ -1755,7 +1755,7 @@ OCI_Boolean OcilibObjectSetUnsignedInt
 (
     OCI_Object  *obj,
     const otext *attr,
-    OCI_UInt32 value
+    OCI_UInt32   value
 )
 {
     OBJECT_SET_NUMBER(OCI_NUM_UINT, value);
@@ -1769,7 +1769,7 @@ OCI_Boolean OcilibObjectSetBigInt
 (
     OCI_Object  *obj,
     const otext *attr,
-    OCI_Int64      value
+    OCI_Int64    value
 )
 {
     OBJECT_SET_NUMBER(OCI_NUM_BIGINT, value);
@@ -1783,7 +1783,7 @@ OCI_Boolean OcilibObjectSetUnsignedBigInt
 (
     OCI_Object  *obj,
     const otext *attr,
-    OCI_UInt64     value
+    OCI_UInt64   value
 )
 {
     OBJECT_SET_NUMBER(OCI_NUM_BIGUINT, value);
@@ -1797,7 +1797,7 @@ OCI_Boolean OcilibObjectSetDouble
 (
     OCI_Object  *obj,
     const otext *attr,
-    double       value
+    OCI_Double   value
 )
 {
     OBJECT_SET_NUMBER(OCI_NUM_DOUBLE, value);
@@ -1811,7 +1811,7 @@ OCI_Boolean OcilibObjectSetFloat
 (
     OCI_Object  *obj,
     const otext *attr,
-    float        value
+    OCI_Float    value
 )
 {
     OBJECT_SET_NUMBER(OCI_NUM_FLOAT, value);
@@ -1871,7 +1871,7 @@ OCI_Boolean OcilibObjectSetRaw
     OCI_Object  *obj,
     const otext *attr,
     void       * value,
-    OCI_UInt32 len
+    OCI_UInt32   len
 )
 {
     OBJECT_SET_VALUE
@@ -2288,9 +2288,9 @@ OCI_Boolean OcilibObjectGetStruct
 
 OCI_Boolean OcilibObjectToString
 (
-    OCI_Object   *obj,
+    OCI_Object *obj,
     OCI_UInt32 *size,
-    otext        *str
+    otext      *str
 )
 {
     ENTER_FUNC
@@ -2299,10 +2299,10 @@ OCI_Boolean OcilibObjectToString
         /* context */ OCI_IPC_OBJECT, obj
     );
 
-    OCI_Error   *err   = NULL;
-    otext       *attr  = NULL;
-    OCI_Boolean  quote = TRUE;
-    OCI_UInt32 len   = 0;
+    OCI_Error  *err   = NULL;
+    otext      *attr  = NULL;
+    OCI_Boolean quote = TRUE;
+    OCI_UInt32  len   = 0;
 
     CHECK_PTR(OCI_IPC_OBJECT, obj);
     CHECK_PTR(OCI_IPC_VOID,   size);
@@ -2328,7 +2328,7 @@ OCI_Boolean OcilibObjectToString
         }
         else
         {
-            void              *data      = NULL;
+            void            *data      = NULL;
             OCI_UInt32       data_size = 0;
             const OCI_UInt32 data_type = obj->typinf->cols[i].datatype;
 

@@ -30,11 +30,11 @@ OCI_SYM_LOCAL const otext* OcilibColumnGetVectorFormatString
 
 OCI_SYM_LOCAL OCI_Boolean OcilibColumnGetAttributeInfo
 (
-    OCI_Column  *col,
-    OCI_UInt32 count,
-    OCI_UInt32 index,
-    OCI_Size      *p_size,
-    OCI_Size      *p_align
+    OCI_Column *col,
+    OCI_UInt32  count,
+    OCI_UInt32  index,
+    OCI_Size   *p_size,
+    OCI_Size   *p_align
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibColumnRetrieveInfo
@@ -43,8 +43,8 @@ OCI_SYM_LOCAL OCI_Boolean OcilibColumnRetrieveInfo
     OCI_Connection *con,
     OCI_Statement  *stmt,
     void           *handle,
-    OCI_Int32             index,
-    OCI_Int32             ptype
+    OCI_Int32       index,
+    OCI_Int32       ptype
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibColumnMapInfo
@@ -128,7 +128,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibColumnGetFullSqlType
 (
     OCI_Column * col,
     otext      * buffer,
-    OCI_UInt32 len
+    OCI_UInt32   len
 );
 
 OCI_SYM_LOCAL OCI_TypeInfo* OcilibColumnGetTypeInfo

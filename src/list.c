@@ -46,7 +46,7 @@ static OCI_Item * OcilibListCreateItem
 (
     OCI_Environment *env,
     OCI_PointerType  type,
-    OCI_Int32              size
+    OCI_Int32        size
 )
 {
     ENTER_FUNC
@@ -182,7 +182,7 @@ OCI_Boolean OcilibListFree
 void * OcilibListAppend
 (
     OCI_List *list,
-    OCI_Int32       size
+    OCI_Int32 size
 )
 {
     ENTER_FUNC
@@ -307,8 +307,8 @@ OCI_Boolean OcilibListDisposeAll
         /* context */ OCI_IPC_ENVIRONMENT, (list ? list->env : NULL)
     );
 
-    OCI_Item    *item   = NULL;
-    OCI_Item    *prev   = NULL;
+    OCI_Item  *item   = NULL;
+    OCI_Item  *prev   = NULL;
     OCI_UInt32 failed = 0;
 
     CHECK_PTR(OCI_IPC_LIST, list);

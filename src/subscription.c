@@ -157,7 +157,7 @@ OCI_Subscription * OcilibSubscriptionRegister
     const otext         *name,
     OCI_SubscriptionType type,
     POCI_NOTIFY          handler,
-    OCI_UInt32         timeout
+    OCI_UInt32           timeout
 )
 {
     ENTER_FUNC
@@ -166,9 +166,9 @@ OCI_Subscription * OcilibSubscriptionRegister
         /* context */ OCI_IPC_CONNECTION, con
     );
 
-    ub4     attr   = 0;
-    OCI_Int32     dbsize = -1;
-    dbtext *dbstr  = NULL;
+    ub4       attr   = 0;
+    OCI_Int32 dbsize = -1;
+    dbtext   *dbstr  = NULL;
 
     OCI_Subscription* sub = NULL;
 

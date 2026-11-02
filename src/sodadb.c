@@ -136,8 +136,8 @@ OCI_SodaColl * OcilibSodaDbCreateColl
     OCI_SodaColl *coll     = NULL;
     dbtext       *dbstr    = NULL;
     dbtext       *dbmta    = NULL;
-    OCI_Int32           dbsize   = -1;
-    OCI_Int32           dbmtalen = -1;
+    OCI_Int32     dbsize   = -1;
+    OCI_Int32     dbmtalen = -1;
 
     CHECK_PTR(OCI_IPC_SODA_DB, sdb);
     CHECK_PTR(OCI_IPC_STRING, name);
@@ -199,7 +199,7 @@ OCI_SodaColl * OcilibSodaDbOpenColl
 
     OCI_SodaColl *coll   = NULL;
     dbtext       *dbstr  = NULL;
-    OCI_Int32           dbsize = -1;
+    OCI_Int32     dbsize = -1;
 
     CHECK_PTR(OCI_IPC_SODA_DB, sdb);
     CHECK_PTR(OCI_IPC_STRING, name);
@@ -270,7 +270,7 @@ OCI_SodaCollCursor * OcilibSodaDbGetColls
 
     OCI_SodaCollCursor *cursor = NULL;
     dbtext             *dbstr  = NULL;
-    OCI_Int32                 dbsize = 0;
+    OCI_Int32           dbsize = 0;
 
     CHECK_PTR(OCI_IPC_SODA_DB, sdb);
     CHECK_SODA_ENABLED(sdb->con);

@@ -80,7 +80,7 @@ namespace ocilib
             (
                 *this,
                 content.c_str(),
-                static_cast<OCI_UInt32>(content.size() * sizeof(otext)),
+                static_cast<UInt32>(content.size() * sizeof(otext)),
                 key.empty() ? nullptr : key.c_str()
             )
         );

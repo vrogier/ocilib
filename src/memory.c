@@ -48,7 +48,7 @@ static void OcilibMemoryUpdateBytes
 (
     OCI_Environment *env,
     OCI_PointerType  type,
-    OCI_Int64          size
+    OCI_Int64        size
 )
 {
     (void) type;
@@ -105,8 +105,8 @@ void * OcilibMemoryAlloc
 (
     OCI_Environment *env,
     OCI_PointerType  ptr_type,
-    OCI_Size           block_size,
-    OCI_Size           block_count,
+    OCI_Size         block_size,
+    OCI_Size         block_count,
     OCI_Boolean      zero_fill
 )
 {
@@ -163,8 +163,8 @@ void * OcilibMemoryRealloc
     OCI_Environment *env,
     void            *ptr_mem,
     OCI_PointerType  ptr_type,
-    OCI_Size           block_size,
-    OCI_Size           block_count,
+    OCI_Size         block_size,
+    OCI_Size         block_count,
     OCI_Boolean      zero_fill
 )
 {
@@ -568,7 +568,7 @@ OCI_Boolean OcilibMemoryFreeObject
 
 void * OcilibMemoryAllocOracleCallback
 (
-    void  *ctxp,
+    void    *ctxp,
     OCI_Size size
 )
 {
@@ -583,8 +583,8 @@ void * OcilibMemoryAllocOracleCallback
 
 void * OcilibMemoryReallocOracleCallback
 (
-    void  *ctxp,
-    void  *memptr,
+    void    *ctxp,
+    void    *memptr,
     OCI_Size newsize
 )
 {

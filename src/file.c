@@ -247,7 +247,7 @@ OCI_File ** OcilibFileCreateArray
 (
     OCI_Connection *con,
     OCI_FileType    type,
-    OCI_UInt32    nbelem
+    OCI_UInt32      nbelem
 )
 {
     ENTER_FUNC
@@ -301,7 +301,7 @@ OCI_Boolean OcilibFileFreeArray
 OCI_Boolean OcilibFileSeek
 (
     OCI_File    *file,
-    OCI_UInt64     offset,
+    OCI_UInt64   offset,
     OCI_SeekMode mode
 )
 {
@@ -387,8 +387,8 @@ OCI_UInt64 OcilibFileGetOffset
 
 OCI_UInt32 OcilibFileRead
 (
-    OCI_File    *file,
-    void        *buffer,
+    OCI_File  *file,
+    void      *buffer,
     OCI_UInt32 len
 )
 {
@@ -573,10 +573,10 @@ OCI_Boolean OcilibFileSetName
         /* context */ OCI_IPC_FILE, file
     );
 
-    dbtext *dbstr1  = NULL;
-    dbtext *dbstr2  = NULL;
-    OCI_Int32     dbsize1 = -1;
-    OCI_Int32     dbsize2 = -1;
+    dbtext   *dbstr1  = NULL;
+    dbtext   *dbstr2  = NULL;
+    OCI_Int32 dbsize1 = -1;
+    OCI_Int32 dbsize2 = -1;
 
     CHECK_PTR(OCI_IPC_FILE, file);
 

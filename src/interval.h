@@ -47,7 +47,7 @@ OCI_SYM_LOCAL OCI_Interval ** OcilibIntervalCreateArray
 (
     OCI_Environment *env,
     OCI_IntervalType type,
-    OCI_UInt32     nbelem
+    OCI_UInt32       nbelem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibIntervalFreeArray
@@ -86,9 +86,9 @@ OCI_SYM_LOCAL OCI_Boolean OcilibIntervalFromString
 OCI_SYM_LOCAL OCI_Boolean OcilibIntervalToString
 (
     OCI_Interval *itv,
-    OCI_Int32           leading_prec,
-    OCI_Int32           fraction_prec,
-    OCI_Int32           size,
+    OCI_Int32     leading_prec,
+    OCI_Int32     fraction_prec,
+    OCI_Int32     size,
     otext        *str
 );
 
@@ -101,35 +101,35 @@ OCI_SYM_LOCAL OCI_Boolean OcilibIntervalFromTimeZone
 OCI_SYM_LOCAL OCI_Boolean OcilibIntervalGetDaySecond
 (
     OCI_Interval *itv,
-    OCI_Int32          *day,
-    OCI_Int32          *hour,
-    OCI_Int32          *min,
-    OCI_Int32          *sec,
-    OCI_Int32          *fsec
+    OCI_Int32    *day,
+    OCI_Int32    *hour,
+    OCI_Int32    *min,
+    OCI_Int32    *sec,
+    OCI_Int32    *fsec
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibIntervalGetYearMonth
 (
     OCI_Interval *itv,
-    OCI_Int32          *year,
-    OCI_Int32          *month
+    OCI_Int32    *year,
+    OCI_Int32    *month
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibIntervalSetDaySecond
 (
     OCI_Interval *itv,
-    OCI_Int32           day,
-    OCI_Int32           hour,
-    OCI_Int32           min,
-    OCI_Int32           sec,
-    OCI_Int32           fsec
+    OCI_Int32     day,
+    OCI_Int32     hour,
+    OCI_Int32     min,
+    OCI_Int32     sec,
+    OCI_Int32     fsec
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibIntervalSetYearMonth
 (
     OCI_Interval *itv,
-    OCI_Int32           year,
-    OCI_Int32           month
+    OCI_Int32     year,
+    OCI_Int32     month
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibIntervalAdd

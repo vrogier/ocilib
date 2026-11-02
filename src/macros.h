@@ -471,20 +471,20 @@ ocilib_exit_label:                  \
                                 \
         CHECK_FEATURE(con, OCI_FEATURE_SODA, OCI_18_1)
 
-#define CHECK_ENUM_VALUE(mode, values, name)                           \
-                                                                       \
-        do                                                             \
-        {                                                              \
-            OCI_Size ii = 0, nn = sizeof(values) / sizeof((values)[0]);  \
-            for (; ii < nn; ii++)                                      \
-            {                                                          \
-                if ((mode) == (values)[ii]) break;                     \
-            }                                                          \
-            if (ii >= nn)                                              \
-            {                                                          \
-                THROW(OcilibExceptionArgInvalidValue, (name), (mode)); \
-            }                                                          \
-        }                                                              \
+#define CHECK_ENUM_VALUE(mode, values, name)                            \
+                                                                        \
+        do                                                              \
+        {                                                               \
+            OCI_Size ii = 0, nn = sizeof(values) / sizeof((values)[0]); \
+            for (; ii < nn; ii++)                                       \
+            {                                                           \
+                if ((mode) == (values)[ii]) break;                      \
+            }                                                           \
+            if (ii >= nn)                                               \
+            {                                                           \
+                THROW(OcilibExceptionArgInvalidValue, (name), (mode));  \
+            }                                                           \
+        }                                                               \
         while (0)
 
 /* memory management helpers */
@@ -568,7 +568,7 @@ ocilib_exit_label:                  \
             if (!(ptr))                                                        \
             {                                                                  \
                 (ptr) = OcilibMemoryAlloc(ocilib_call_context.env, type, size, \
-                                          (OCI_Size) (count), TRUE);             \
+                                          (OCI_Size) (count), TRUE);           \
                 CHECK_NULL((ptr));                                             \
             }                                                                  \
         }                                                                      \
@@ -581,13 +581,13 @@ ocilib_exit_label:                  \
             if (!(ptr))                                                               \
             {                                                                         \
                 (ptr) = OcilibMemoryAlloc(ocilib_call_context.env, type, size,        \
-                                          (OCI_Size) (requested), TRUE);                \
+                                          (OCI_Size) (requested), TRUE);              \
                 if (ptr) (allocated) = (requested);                                   \
             }                                                                         \
             else if ((current) >= (allocated))                                        \
             {                                                                         \
                 (ptr) = OcilibMemoryRealloc(ocilib_call_context.env, ptr, type, size, \
-                                            (OCI_Size) (requested), TRUE);              \
+                                            (OCI_Size) (requested), TRUE);            \
                 if (ptr) (allocated) = (requested);                                   \
             }                                                                         \
                                                                                       \

@@ -202,7 +202,7 @@ namespace TestCApi
         ASSERT_EQ(4, dimensions);
         ASSERT_EQ(OCI_VEC_FLOAT32, format);
 
-        float values[4] = { 1.1f,2.2f,3.3f,4.4f };
+        OCI_Float values[4] = { 1.1f,2.2f,3.3f,4.4f };
         ASSERT_TRUE(OCI_VectorGetValues(vect, values));
 
         ASSERT_FLOAT_EQ(1.1f, values[0]);        
@@ -260,7 +260,7 @@ namespace TestCApi
         ASSERT_EQ(OCI_VEC_FLOAT32, format);
         ASSERT_EQ(4, dimensions);
     
-        float values2[4];
+        OCI_Float values2[4];
 
         ASSERT_TRUE(OCI_VectorGetValues(vect, values2));
     
@@ -307,7 +307,7 @@ namespace TestCApi
         ASSERT_EQ(OCI_VEC_FLOAT32, format);
         ASSERT_EQ(4, dimensions);
     
-        float values[4];
+        OCI_Float values[4];
 
         ASSERT_TRUE(OCI_VectorGetValues(vect, values));
     

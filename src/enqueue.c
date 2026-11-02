@@ -135,8 +135,8 @@ OCI_Boolean OcilibEnqueuePut
 
     sword ret = OCI_ERROR;
 
-    OCI_Int32     dbsize = -1;
-    dbtext* dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
+    dbtext  * dbstr  = NULL;
 
     char* ansi_queue_name = NULL;
 
@@ -361,9 +361,9 @@ OCI_Boolean OcilibEnqueueSetSequenceDeviation
 
 OCI_Boolean OcilibEnqueueGetRelativeMsgID
 (
-    OCI_Enqueue  *enqueue,
-    void         *id,
-    OCI_UInt32 *len
+    OCI_Enqueue *enqueue,
+    void        *id,
+    OCI_UInt32  *len
 )
 {
     ENTER_FUNC
@@ -414,7 +414,7 @@ OCI_Boolean OcilibEnqueueSetRelativeMsgID
 (
     OCI_Enqueue *enqueue,
     const void  *id,
-    OCI_UInt32 len
+    OCI_UInt32   len
 )
 {
     ENTER_FUNC

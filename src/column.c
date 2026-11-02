@@ -59,11 +59,11 @@ const otext* OcilibColumnGetVectorFormatString
 
 OCI_Boolean OcilibColumnGetAttributeInfo
 (
-    OCI_Column  *col,
-    OCI_UInt32 count,
-    OCI_UInt32 index,
-    OCI_Size      *p_size,
-    OCI_Size      *p_align
+    OCI_Column *col,
+    OCI_UInt32  count,
+    OCI_UInt32  index,
+    OCI_Size   *p_size,
+    OCI_Size   *p_align
 )
 {
     ENTER_FUNC
@@ -105,11 +105,11 @@ OCI_Boolean OcilibColumnGetAttributeInfo
             }
             else if (type & OCI_NUM_DOUBLE)
             {
-                *p_size = sizeof(double);
+                *p_size = sizeof(OCI_Double);
             }
             else if (type & OCI_NUM_FLOAT)
             {
-                *p_size = sizeof(float);
+                *p_size = sizeof(OCI_Float);
             }
             else
             {
@@ -149,8 +149,8 @@ OCI_Boolean OcilibColumnRetrieveInfo
     OCI_Connection *con,
     OCI_Statement  *stmt,
     void           *handle,
-    OCI_Int32             index,
-    OCI_Int32             ptype
+    OCI_Int32       index,
+    OCI_Int32       ptype
 )
 {
     ENTER_FUNC
@@ -471,7 +471,7 @@ OCI_Boolean OcilibColumnRetrieveInfo
 #endif
 
     {
-        OCI_Int32       dbsize   = 0;
+        OCI_Int32 dbsize   = 0;
         dbtext   *dbstr    = NULL;
         const ub4 attrname = (OCI_DESC_COLLECTION == ptype) ? OCI_ATTR_TYPE_NAME : OCI_ATTR_NAME;
 
@@ -501,12 +501,12 @@ OCI_Boolean OcilibColumnRetrieveInfo
 #endif
         )
     {
-        dbtext *dbstr_name     = NULL;
-        dbtext *dbstr_schema   = NULL;
-        dbtext *dbstr_package  = NULL;
-        OCI_Int32     dbsize_name    = 0;
-        OCI_Int32     dbsize_schema  = 0;
-        OCI_Int32     dbsize_package = 0;
+        dbtext   *dbstr_name     = NULL;
+        dbtext   *dbstr_schema   = NULL;
+        dbtext   *dbstr_package  = NULL;
+        OCI_Int32 dbsize_name    = 0;
+        OCI_Int32 dbsize_schema  = 0;
+        OCI_Int32 dbsize_package = 0;
 
         otext schema_name[OCI_SIZE_OBJ_NAME + 1]     = OTEXT("");
         otext package_name[OCI_SIZE_OBJ_NAME + 1]    = OTEXT("");
@@ -710,7 +710,7 @@ OCI_Boolean OcilibColumnMapInfo
             col->datatype = OCI_CDT_NUMERIC;
             col->subtype  = OCI_NUM_FLOAT;
             col->libcode  = SQLT_BFLOAT;
-            col->bufsize  = sizeof(float);
+            col->bufsize  = sizeof(OCI_Float);
 
             if (0 == col->size)
             {
@@ -729,7 +729,7 @@ OCI_Boolean OcilibColumnMapInfo
             col->datatype = OCI_CDT_NUMERIC;
             col->subtype  = OCI_NUM_DOUBLE;
             col->libcode  = SQLT_BDOUBLE;
-            col->bufsize  = sizeof(double);
+            col->bufsize  = sizeof(OCI_Double);
 
             if (0 == col->size)
             {
@@ -1522,9 +1522,9 @@ const otext * OcilibColumnGetSqlType
 
 OCI_UInt32 OcilibColumnGetFullSqlType
 (
-    OCI_Column  *col,
-    otext       *buffer,
-    OCI_UInt32 len
+    OCI_Column *col,
+    otext      *buffer,
+    OCI_UInt32  len
 )
 {
     ENTER_FUNC
@@ -1769,7 +1769,8 @@ OCI_UInt32 OcilibColumnGetFullSqlType
 
         case SQLT_TAB:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("%s"), col->typinf ? col->typinf->name : OTEXT("PL/SQL TABLE INDEX BY"));
+            size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("%s"),
+                                      col->typinf ? col->typinf->name : OTEXT("PL/SQL TABLE INDEX BY"));
             break;
         }
 

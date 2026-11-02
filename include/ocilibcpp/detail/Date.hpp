@@ -110,7 +110,7 @@ inline Date Date::Clone() const
     return result;
 }
 
-inline OCI_Int32 Date::Compare(const Date& other) const
+inline Int32 Date::Compare(const Date& other) const
 {
     return core::Check(OCI_DateCompare(*this, other));
 }
@@ -120,149 +120,149 @@ inline bool Date::IsValid() const
     return (core::Check(OCI_DateCheck(*this)) == 0);
 }
 
-inline OCI_Int32 Date::GetYear() const
+inline Int32 Date::GetYear() const
 {
-    OCI_Int32 year = 0, month = 0, day = 0;
+    Int32 year = 0, month = 0, day = 0;
 
     GetDate(year, month, day);
 
     return year;
 }
 
-inline void Date::SetYear(OCI_Int32 value)
+inline void Date::SetYear(Int32 value)
 {
-    OCI_Int32 year = 0, month = 0, day = 0;
+    Int32 year = 0, month = 0, day = 0;
 
     GetDate(year, month, day);
     SetDate(value, month, day);
 }
 
-inline OCI_Int32 Date::GetMonth() const
+inline Int32 Date::GetMonth() const
 {
-    OCI_Int32 year = 0, month = 0, day = 0;
+    Int32 year = 0, month = 0, day = 0;
 
     GetDate(year, month, day);
 
     return month;
 }
 
-inline void Date::SetMonth(OCI_Int32 value)
+inline void Date::SetMonth(Int32 value)
 {
-    OCI_Int32 year = 0, month = 0, day = 0;
+    Int32 year = 0, month = 0, day = 0;
 
     GetDate(year, month, day);
     SetDate(year, value, day);
 }
 
-inline OCI_Int32 Date::GetDay() const
+inline Int32 Date::GetDay() const
 {
-    OCI_Int32 year = 0, month = 0, day = 0;
+    Int32 year = 0, month = 0, day = 0;
 
     GetDate(year, month, day);
 
     return day;
 }
 
-inline void Date::SetDay(OCI_Int32 value)
+inline void Date::SetDay(Int32 value)
 {
-    OCI_Int32 year = 0, month = 0, day = 0;
+    Int32 year = 0, month = 0, day = 0;
 
     GetDate(year, month, day);
     SetDate(year, month, value);
 }
 
-inline OCI_Int32 Date::GetHours() const
+inline Int32 Date::GetHours() const
 {
-    OCI_Int32 hour = 0, minutes = 0, seconds = 0;
+    Int32 hour = 0, minutes = 0, seconds = 0;
 
     GetTime(hour, minutes, seconds);
 
     return hour;
 }
 
-inline void Date::SetHours(OCI_Int32 value)
+inline void Date::SetHours(Int32 value)
 {
-    OCI_Int32 hour = 0, minutes = 0, seconds = 0;
+    Int32 hour = 0, minutes = 0, seconds = 0;
 
     GetTime(hour, minutes, seconds);
     SetTime(value, minutes, seconds);
 }
 
-inline OCI_Int32 Date::GetMinutes() const
+inline Int32 Date::GetMinutes() const
 {
-    OCI_Int32 hour = 0, minutes = 0, seconds = 0;
+    Int32 hour = 0, minutes = 0, seconds = 0;
 
     GetTime(hour, minutes, seconds);
 
     return minutes;
 }
 
-inline void Date::SetMinutes(OCI_Int32 value)
+inline void Date::SetMinutes(Int32 value)
 {
-    OCI_Int32 hour = 0, minutes = 0, seconds = 0;
+    Int32 hour = 0, minutes = 0, seconds = 0;
 
     GetTime(hour, minutes, seconds);
     SetTime(hour, value, seconds);
 }
 
-inline OCI_Int32 Date::GetSeconds() const
+inline Int32 Date::GetSeconds() const
 {
-    OCI_Int32 hour = 0, minutes = 0, seconds = 0;
+    Int32 hour = 0, minutes = 0, seconds = 0;
 
     GetTime(hour, minutes, seconds);
 
     return seconds;
 }
 
-inline void Date::SetSeconds(OCI_Int32 value)
+inline void Date::SetSeconds(Int32 value)
 {
-    OCI_Int32 hour = 0, minutes = 0, seconds = 0;
+    Int32 hour = 0, minutes = 0, seconds = 0;
 
     GetTime(hour, minutes, seconds);
     SetTime(hour, minutes, value);
 }
 
-inline OCI_Int32 Date::DaysBetween(const Date& other) const
+inline Int32 Date::DaysBetween(const Date& other) const
 {
     return core::Check(OCI_DateDaysBetween(*this, other));
 }
 
-inline void Date::SetDate(OCI_Int32 year, OCI_Int32 month, OCI_Int32 day)
+inline void Date::SetDate(Int32 year, Int32 month, Int32 day)
 {
     core::Check(OCI_DateSetDate(*this, year, month, day));
 }
 
-inline void Date::SetTime(OCI_Int32 hour, OCI_Int32 min, OCI_Int32 sec)
+inline void Date::SetTime(Int32 hour, Int32 min, Int32 sec)
 {
     core::Check(OCI_DateSetTime(*this, hour, min , sec));
 }
 
-inline void Date::SetDateTime(OCI_Int32 year, OCI_Int32 month, OCI_Int32 day, OCI_Int32 hour, OCI_Int32 min, OCI_Int32 sec)
+inline void Date::SetDateTime(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 min, Int32 sec)
 {
     core::Check(OCI_DateSetDateTime(*this, year, month, day, hour, min , sec));
 }
 
-inline void Date::GetDate(OCI_Int32 &year, OCI_Int32 &month, OCI_Int32 &day) const
+inline void Date::GetDate(Int32 &year, Int32 &month, Int32 &day) const
 {
     core::Check(OCI_DateGetDate(*this, &year, &month, &day));
 }
 
-inline void Date::GetTime(OCI_Int32 &hour, OCI_Int32 &min, OCI_Int32 &sec) const
+inline void Date::GetTime(Int32 &hour, Int32 &min, Int32 &sec) const
 {
     core::Check(OCI_DateGetTime(*this, &hour, &min , &sec));
 }
 
-inline void Date::GetDateTime(OCI_Int32 &year, OCI_Int32 &month, OCI_Int32 &day, OCI_Int32 &hour, OCI_Int32 &min, OCI_Int32 &sec) const
+inline void Date::GetDateTime(Int32 &year, Int32 &month, Int32 &day, Int32 &hour, Int32 &min, Int32 &sec) const
 {
     core::Check(OCI_DateGetDateTime(*this, &year, &month, &day, &hour, &min , &sec));
 }
 
-inline void Date::AddDays(OCI_Int32 days)
+inline void Date::AddDays(Int32 days)
 {
     core::Check(OCI_DateAddDays(*this, days));
 }
 
-inline void Date::AddMonths(OCI_Int32 months)
+inline void Date::AddMonths(Int32 months)
 {
     OCI_DateAddMonths(*this, months);
 }
@@ -299,11 +299,11 @@ inline ostring Date::ToString(const ostring& format) const
 {
     if (!IsNull())
     {
-        const OCI_Size size = OCI_SIZE_BUFFER;
+        const Size size = OCI_SIZE_BUFFER;
 
-        std::vector<otext> buffer(static_cast<OCI_Size>(size + 1));
+        std::vector<otext> buffer(static_cast<Size>(size + 1));
 
-        core::Check(OCI_DateToText(*this, format.c_str(), static_cast<OCI_Int32>(size), buffer.data()));
+        core::Check(OCI_DateToText(*this, format.c_str(), static_cast<Int32>(size), buffer.data()));
 
         return core::MakeString(static_cast<const otext*>(buffer.data()));
     }
@@ -326,7 +326,7 @@ inline Date& Date::operator ++ ()
     return *this += 1;
 }
 
-inline Date Date::operator ++ (OCI_Int32)
+inline Date Date::operator ++ (Int32)
 {
     Date result = Clone();
 
@@ -340,7 +340,7 @@ inline Date& Date::operator -- ()
     return *this -= 1;
 }
 
-inline Date Date::operator -- (OCI_Int32)
+inline Date Date::operator -- (Int32)
 {
     Date result = Clone();
 
@@ -349,25 +349,25 @@ inline Date Date::operator -- (OCI_Int32)
     return result;
 }
 
-inline Date Date::operator + (OCI_Int32 value) const
+inline Date Date::operator + (Int32 value) const
 {
     Date result = Clone();
     return result += value;
 }
 
-inline Date Date::operator - (OCI_Int32 value) const
+inline Date Date::operator - (Int32 value) const
 {
     Date result = Clone();
     return result -= value;
 }
 
-inline Date& Date::operator += (OCI_Int32 value)
+inline Date& Date::operator += (Int32 value)
 {
     AddDays(value);
     return *this;
 }
 
-inline Date& Date::operator -= (OCI_Int32 value)
+inline Date& Date::operator -= (Int32 value)
 {
     AddDays(-value);
     return *this;
@@ -395,14 +395,14 @@ inline bool Date::operator < (const Date& other) const
 
 inline bool Date::operator >= (const Date& other) const
 {
-    const OCI_Int32 res = Compare(other);
+    const Int32 res = Compare(other);
 
     return res == 0 || res > 0;
 }
 
 inline bool Date::operator <= (const Date& other) const
 {
-    const OCI_Int32 res = Compare(other);
+    const Int32 res = Compare(other);
 
     return res == 0 || res < 0;
 }

@@ -51,8 +51,8 @@ OCI_SYM_LOCAL OCI_Boolean OcilibMessageSetObject
 
 OCI_SYM_LOCAL OCI_Boolean OcilibMessageGetRaw
 (
-    OCI_Msg     * msg,
-    void        * raw,
+    OCI_Msg   * msg,
+    void      * raw,
     OCI_UInt32* size
 );
 
@@ -60,7 +60,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibMessageSetRaw
 (
     OCI_Msg    * msg,
     const void * raw,
-    OCI_UInt32 size
+    OCI_UInt32   size
 );
 
 OCI_SYM_LOCAL OCI_Int32 OcilibMessageGetAttemptCount
@@ -75,8 +75,8 @@ OCI_SYM_LOCAL OCI_Int32 OcilibMessageGetEnqueueDelay
 
 OCI_SYM_LOCAL OCI_Boolean OcilibMessageSetEnqueueDelay
 (
-    OCI_Msg* msg,
-    OCI_Int32      value
+    OCI_Msg * msg,
+    OCI_Int32 value
 );
 
 OCI_SYM_LOCAL OCI_Date* OcilibMessageGetEnqueueTime
@@ -91,8 +91,8 @@ OCI_SYM_LOCAL OCI_Int32 OcilibMessageGetExpiration
 
 OCI_SYM_LOCAL OCI_Boolean OcilibMessageSetExpiration
 (
-    OCI_Msg* msg,
-    OCI_Int32      value
+    OCI_Msg * msg,
+    OCI_Int32 value
 );
 
 OCI_SYM_LOCAL OCI_MsgState OcilibMessageGetState
@@ -107,21 +107,21 @@ OCI_SYM_LOCAL OCI_Int32 OcilibMessageGetPriority
 
 OCI_SYM_LOCAL OCI_Boolean OcilibMessageSetPriority
 (
-    OCI_Msg* msg,
-    OCI_Int32      value
+    OCI_Msg * msg,
+    OCI_Int32 value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibMessageGetID
 (
-    OCI_Msg     * msg,
-    void        * id,
+    OCI_Msg   * msg,
+    void      * id,
     OCI_UInt32* len
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibMessageGetOriginalID
 (
-    OCI_Msg     * msg,
-    void        * id,
+    OCI_Msg   * msg,
+    void      * id,
     OCI_UInt32* len
 );
 
@@ -129,7 +129,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibMessageSetOriginalID
 (
     OCI_Msg    * msg,
     const void * id,
-    OCI_UInt32 len
+    OCI_UInt32   len
 );
 
 OCI_SYM_LOCAL const otext * OcilibMessageGetCorrelation
@@ -169,7 +169,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibMessageSetConsumers
 (
     OCI_Msg    * msg,
     OCI_Agent ** consumers,
-    OCI_UInt32 count
+    OCI_UInt32   count
 );
 
 #endif /* OCILIB_MSG_H_INCLUDED */

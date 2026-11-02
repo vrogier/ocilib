@@ -147,7 +147,7 @@ OCI_TypeInfo * OcilibTypeInfoGet
     OCIParam     *param_cols = NULL;
     OCIParam     *param_list = NULL;
     otext        *str        = NULL;
-    OCI_Int32           ptype      = 0;
+    OCI_Int32     ptype      = 0;
     ub1           desc_type  = 0;
     ub4           attr_type  = 0;
     ub4           num_type   = 0;
@@ -169,13 +169,13 @@ OCI_TypeInfo * OcilibTypeInfoGet
     otext buffer[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
     OCI_Size  max_chars = sizeof(buffer) / sizeof(otext) - 1;
-    dbtext* dbstr1    = NULL;
-    OCI_Int32     dbsize1   = -1;
-    dbtext* dbstr2    = NULL;
-    OCI_Int32     dbsize2   = -1;
-    dbtext* dbstr3    = NULL;
-    OCI_Int32     dbsize3   = -1;
-    sb4     pbsp      = 1;
+    dbtext  * dbstr1    = NULL;
+    OCI_Int32 dbsize1   = -1;
+    dbtext  * dbstr2    = NULL;
+    OCI_Int32 dbsize2   = -1;
+    dbtext  * dbstr3    = NULL;
+    OCI_Int32 dbsize3   = -1;
+    sb4       pbsp      = 1;
 
     otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
     otext obj_name[OCI_SIZE_OBJ_NAME + 1];
@@ -731,7 +731,7 @@ OCI_UInt32 OcilibTypeInfoGetColumnCount
 OCI_Column * OcilibTypeInfoGetColumn
 (
     OCI_TypeInfo *typinf,
-    OCI_UInt32  index
+    OCI_UInt32    index
 )
 {
     ENTER_FUNC

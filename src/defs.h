@@ -355,7 +355,7 @@ typedef OCI_UInt16 dbtext;
 
 #endif
 
-#define OCI_SQLCMD_COUNT                241
+#define OCI_SQLCMD_COUNT                256
 
 #define OCI_FMT_COUNT                   6
 
@@ -416,7 +416,7 @@ typedef OCI_UInt16 dbtext;
 
 #define IS_PLSQL_STMT(type)             \
                                         \
-   ((OCI_CST_BEGIN   == (type)) ||      \
+        ((OCI_CST_BEGIN   == (type)) || \
     (OCI_CST_DECLARE == (type)) ||      \
     (OCI_CST_CALL    == (type)))
 

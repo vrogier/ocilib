@@ -152,8 +152,8 @@ OCI_LongType OcilibLongGetType
 
 OCI_UInt32 OcilibLongRead
 (
-    OCI_Long    *lg,
-    void        *buffer,
+    OCI_Long  *lg,
+    void      *buffer,
     OCI_UInt32 len
 )
 {
@@ -206,8 +206,8 @@ OCI_UInt32 OcilibLongRead
 
 OCI_UInt32 OcilibLongWrite
 (
-    OCI_Long    *lg,
-    void        *buffer,
+    OCI_Long  *lg,
+    void      *buffer,
     OCI_UInt32 len
 )
 {

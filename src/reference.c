@@ -238,7 +238,7 @@ OCI_Boolean OcilibReferenceFree
 OCI_Ref ** OcilibReferenceCreateArray
 (
     OCI_TypeInfo *typinf,
-    OCI_UInt32  nbelem
+    OCI_UInt32    nbelem
 )
 {
     ENTER_FUNC
@@ -410,9 +410,9 @@ OCI_Boolean OcilibReferenceSetNull
 
 OCI_Boolean OcilibReferenceToString
 (
-    OCI_Ref     *ref,
+    OCI_Ref   *ref,
     OCI_UInt32 size,
-    otext       *str
+    otext     *str
 )
 {
     ENTER_FUNC
@@ -436,7 +436,8 @@ OCI_Boolean OcilibReferenceToString
     if (IS_WIDE_CHAR_ENV())
     {
         /* need temporary buffer in wide strings mode */
-        dbstr = (dbtext *) OcilibMemoryAlloc(ref->con->env,OCI_IPC_STRING, (OCI_Size) ((char_count + 1) * sizeof(otext)), (OCI_Size) 1, TRUE);
+        dbstr = (dbtext *) OcilibMemoryAlloc(ref->con->env,OCI_IPC_STRING, (OCI_Size) ((char_count + 1) * sizeof(otext)), (OCI_Size) 1,
+                                             TRUE);
     }
     else
     {

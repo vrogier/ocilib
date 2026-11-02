@@ -87,12 +87,12 @@ OCI_SYM_LOCAL OCI_UInt64 OcilibElementGetUnsignedBigInt
     OCI_Elem* elem
 );
 
-OCI_SYM_LOCAL double OcilibElementGetDouble
+OCI_SYM_LOCAL OCI_Double OcilibElementGetDouble
 (
     OCI_Elem* elem
 );
 
-OCI_SYM_LOCAL float OcilibElementGetFloat
+OCI_SYM_LOCAL OCI_Float OcilibElementGetFloat
 (
     OCI_Elem* elem
 );
@@ -104,8 +104,8 @@ OCI_SYM_LOCAL const otext* OcilibElementGetString
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibElementGetRaw
 (
-    OCI_Elem   * elem,
-    void       * value,
+    OCI_Elem * elem,
+    void     * value,
     OCI_UInt32 len
 );
 
@@ -169,49 +169,49 @@ OCI_SYM_LOCAL OCI_Boolean OcilibElementSetNumber
 OCI_SYM_LOCAL OCI_Boolean OcilibElementSetShort
 (
     OCI_Elem* elem,
-    OCI_Int16     value
+    OCI_Int16 value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibElementSetUnsignedShort
 (
-    OCI_Elem     * elem,
+    OCI_Elem * elem,
     OCI_UInt16 value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibElementSetInt
 (
     OCI_Elem* elem,
-    OCI_Int32       value
+    OCI_Int32 value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibElementSetUnsignedInt
 (
-    OCI_Elem   * elem,
+    OCI_Elem * elem,
     OCI_UInt32 value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibElementSetBigInt
 (
     OCI_Elem* elem,
-    OCI_Int64   value
+    OCI_Int64 value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibElementSetUnsignedBigInt
 (
-    OCI_Elem* elem,
-    OCI_UInt64  value
+    OCI_Elem * elem,
+    OCI_UInt64 value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibElementSetDouble
 (
-    OCI_Elem* elem,
-    double    value
+    OCI_Elem * elem,
+    OCI_Double value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibElementSetFloat
 (
     OCI_Elem* elem,
-    float     value
+    OCI_Float value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibElementSetString
@@ -222,8 +222,8 @@ OCI_SYM_LOCAL OCI_Boolean OcilibElementSetString
 
 OCI_SYM_LOCAL OCI_Boolean OcilibElementSetRaw
 (
-    OCI_Elem   * elem,
-    void       * value,
+    OCI_Elem * elem,
+    void     * value,
     OCI_UInt32 len
 );
 

@@ -282,8 +282,8 @@ OCI_Boolean OcilibMessageSetObject
 
 OCI_Boolean OcilibMessageGetRaw
 (
-    OCI_Msg      *msg,
-    void         *raw,
+    OCI_Msg    *msg,
+    void       *raw,
     OCI_UInt32 *size
 )
 {
@@ -331,9 +331,9 @@ OCI_Boolean OcilibMessageGetRaw
 
 OCI_Boolean OcilibMessageSetRaw
 (
-    OCI_Msg     *msg,
-    const void  *raw,
-    OCI_UInt32 size
+    OCI_Msg    *msg,
+    const void *raw,
+    OCI_UInt32  size
 )
 {
     ENTER_FUNC
@@ -434,8 +434,8 @@ OCI_Int32 OcilibMessageGetEnqueueDelay
 
 OCI_Boolean OcilibMessageSetEnqueueDelay
 (
-    OCI_Msg *msg,
-    OCI_Int32      value
+    OCI_Msg  *msg,
+    OCI_Int32 value
 )
 {
     ENTER_FUNC
@@ -529,8 +529,8 @@ OCI_Int32 OcilibMessageGetExpiration
 
 OCI_Boolean OcilibMessageSetExpiration
 (
-    OCI_Msg *msg,
-    OCI_Int32      value
+    OCI_Msg  *msg,
+    OCI_Int32 value
 )
 {
     ENTER_FUNC
@@ -625,8 +625,8 @@ OCI_Int32 OcilibMessageGetPriority
 
 OCI_Boolean OcilibMessageSetPriority
 (
-    OCI_Msg *msg,
-    OCI_Int32      value
+    OCI_Msg  *msg,
+    OCI_Int32 value
 )
 {
     ENTER_FUNC
@@ -657,8 +657,8 @@ OCI_Boolean OcilibMessageSetPriority
 
 OCI_Boolean OcilibMessageGetID
 (
-    OCI_Msg      *msg,
-    void         *id,
+    OCI_Msg    *msg,
+    void       *id,
     OCI_UInt32 *len
 )
 {
@@ -695,8 +695,8 @@ OCI_Boolean OcilibMessageGetID
 
 OCI_Boolean OcilibMessageGetOriginalID
 (
-    OCI_Msg      *msg,
-    void         *id,
+    OCI_Msg    *msg,
+    void       *id,
     OCI_UInt32 *len
 )
 {
@@ -706,7 +706,7 @@ OCI_Boolean OcilibMessageGetOriginalID
         /* context */ OCI_IPC_MSG, msg
     );
 
-    OCIRaw      *value   = NULL;
+    OCIRaw    *value   = NULL;
     OCI_UInt32 max_len = 0;
 
     CHECK_PTR(OCI_IPC_MSG,  msg);
@@ -743,9 +743,9 @@ OCI_Boolean OcilibMessageGetOriginalID
 
 OCI_Boolean OcilibMessageSetOriginalID
 (
-    OCI_Msg     *msg,
-    const void  *id,
-    OCI_UInt32 len
+    OCI_Msg    *msg,
+    const void *id,
+    OCI_UInt32  len
 )
 {
     ENTER_FUNC
@@ -980,9 +980,9 @@ OCI_Boolean OcilibMessageSetSender
 
 OCI_Boolean OcilibMessageSetConsumers
 (
-    OCI_Msg     *msg,
-    OCI_Agent  **consumers,
-    OCI_UInt32 count
+    OCI_Msg    *msg,
+    OCI_Agent **consumers,
+    OCI_UInt32  count
 )
 {
     ENTER_FUNC

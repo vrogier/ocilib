@@ -44,7 +44,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibCollectionFree
 OCI_SYM_LOCAL OCI_Coll** OcilibCollectionCreateArray
 (
     OCI_TypeInfo * typinf,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibCollectionFreeArray
@@ -60,7 +60,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibCollectionAssign
 
 OCI_SYM_LOCAL OCI_Boolean OcilibCollectionTrim
 (
-    OCI_Coll   * coll,
+    OCI_Coll * coll,
     OCI_UInt32 nb_elem
 );
 
@@ -91,15 +91,15 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibCollectionGetCount
 
 OCI_SYM_LOCAL OCI_Elem* OcilibCollectionGetElement
 (
-    OCI_Coll   * coll,
+    OCI_Coll * coll,
     OCI_UInt32 index
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibCollectionSetElement
 (
-    OCI_Coll   * coll,
+    OCI_Coll * coll,
     OCI_UInt32 index,
-    OCI_Elem   * elem
+    OCI_Elem * elem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibCollectionAddElement
@@ -110,7 +110,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibCollectionAddElement
 
 OCI_SYM_LOCAL OCI_Boolean OcilibCollectionRemoveElement
 (
-    OCI_Coll   * coll,
+    OCI_Coll * coll,
     OCI_UInt32 index
 );
 
@@ -121,9 +121,9 @@ OCI_SYM_LOCAL OCI_TypeInfo* OcilibCollectionGetTypeInfo
 
 OCI_SYM_LOCAL OCI_Boolean OcilibCollectionToString
 (
-    OCI_Coll    * coll,
+    OCI_Coll  * coll,
     OCI_UInt32* size,
-    otext       * str
+    otext     * str
 );
 
 #endif /* OCILIB_COLLECTION_H_INCLUDED */

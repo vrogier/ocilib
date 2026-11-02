@@ -50,7 +50,7 @@
 
 #define OCI_VER_MAKE(x, y, z)               ((x)*10000 + (y)*100 + (z))
 
-/* oracle OCI well known major versions (non exhaustive) */ 
+/* oracle OCI well known major versions (non exhaustive) */
 
 #define OCI_8_0                             OCI_VER_MAKE( 8,  0,  0)
 #define OCI_8_1                             OCI_VER_MAKE( 8,  1,  0)
@@ -308,14 +308,14 @@
 #ifndef __cplusplus
 
 #define OCI_ARG_OF(ptr) _Generic((ptr),                                  \
-                                 OCI_Int16           * : OCI_ARG_SHORT,      \
-                                 OCI_UInt16  * : OCI_ARG_USHORT,     \
-                                 OCI_Int32             * : OCI_ARG_INT,        \
-                                 OCI_UInt32    * : OCI_ARG_UINT,       \
-                                 OCI_Int64         * : OCI_ARG_BIGINT,     \
-                                 OCI_UInt64        * : OCI_ARG_BIGUINT,    \
-                                 double          * : OCI_ARG_DOUBLE,     \
-                                 float           * : OCI_ARG_FLOAT,      \
+                                 OCI_Int16           * : OCI_ARG_SHORT,  \
+                                 OCI_UInt16  * : OCI_ARG_USHORT,         \
+                                 OCI_Int32             * : OCI_ARG_INT,  \
+                                 OCI_UInt32    * : OCI_ARG_UINT,         \
+                                 OCI_Int64         * : OCI_ARG_BIGINT,   \
+                                 OCI_UInt64        * : OCI_ARG_BIGUINT,  \
+                                 OCI_Double          * : OCI_ARG_DOUBLE, \
+                                 OCI_Float           * : OCI_ARG_FLOAT,  \
                                  otext           * : OCI_ARG_TEXT,       \
                                  void            * : OCI_ARG_RAW,        \
                                  unsigned char   * : OCI_ARG_RAW,        \
@@ -855,6 +855,7 @@
 #define OCI_SFC_BECOME_USER                     129
 #define OCI_SFC_ALTER_MINING_MODEL              130
 #define OCI_SFC_SELECT_MINING_MODEL             131
+#define OCI_SFC_USE_EDITION                     132
 #define OCI_SFC_CREATE_MINING_MODEL             133
 #define OCI_SFC_ALTER_PUBLIC_SYNONYM            134
 #define OCI_SFC_EXECUTE_DIRECTORY               135
@@ -966,8 +967,22 @@
 #define OCI_SFC_CREATE_ANALYTIC_VIEW            249
 #define OCI_SFC_ALTER_ANALYTIC_VIEW             250
 #define OCI_SFC_DROP_ANALYTIC_VIEW              251
+#define OCI_SFC_CREATE_MLE_MODULE               266
+#define OCI_SFC_DROP_MLE_MODULE                 267
+#define OCI_SFC_CREATE_MLE_ENV                  268
+#define OCI_SFC_DROP_MLE_ENV                    269
 #define OCI_SFC_CREATE_LANGUAGE                 270
 #define OCI_SFC_DROP_LANGUAGE                   271
+#define OCI_SFC_CREATE_PROPERTY_GRAPH           275
+#define OCI_SFC_ALTER_PROPERTY_GRAPH            276
+#define OCI_SFC_DROP_PROPERTY_GRAPH             277
+#define OCI_SFC_CREATE_TRUE_CACHE               278
+#define OCI_SFC_ALTER_MLE_MODULE                279
+#define OCI_SFC_ALTER_MLE_ENV                   280
+#define OCI_SFC_CREATE_DOMAIN                   281
+#define OCI_SFC_ALTER_DOMAIN                    282
+#define OCI_SFC_DROP_DOMAIN                     283
+#define OCI_SFC_COLLECT_DEBUG_INFO              284
 #define OCI_SFC_ALTER_PUBLIC_DATABASE_LINK      305
 
 #define OCI_LSI_DAYNAME1            1

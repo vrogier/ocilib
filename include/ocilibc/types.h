@@ -819,11 +819,11 @@ typedef union OCI_Variant
     unsigned char *p_bytes;
 
     /* pointer to c natives types */
-    void  * p_void;
-    OCI_Int32   * p_int;
-    float * p_float;
-    double *p_double;
-    otext * p_text;
+    void      * p_void;
+    OCI_Int32 * p_int;
+    OCI_Float * p_float;
+    OCI_Double *p_double;
+    otext     * p_text;
 
     /* ocilib object types */
     OCI_Date     * p_date;

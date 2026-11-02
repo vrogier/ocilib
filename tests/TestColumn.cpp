@@ -591,7 +591,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_SetStructNumericType(rs, 1, OCI_NUM_INT));
 
-        struct Row { OCI_Int64 id; float fval; double dval; };
+        struct Row { OCI_Int64 id; OCI_Float fval; OCI_Double dval; };
         struct RowInd { OCI_Boolean id; OCI_Boolean fval; OCI_Boolean dval; };
 
         ASSERT_TRUE(OCI_FetchNext(rs));
@@ -628,9 +628,9 @@ namespace TestCApi
         ASSERT_TRUE(OCI_TestColumnGetAttributeInfo(1, 0, OCI_CDT_NUMERIC, OCI_NUM_BIGUINT, &size, &align));
         ASSERT_EQ(sizeof(OCI_Int64), size);
         ASSERT_TRUE(OCI_TestColumnGetAttributeInfo(1, 0, OCI_CDT_NUMERIC, OCI_NUM_DOUBLE, &size, &align));
-        ASSERT_EQ(sizeof(double), size);
+        ASSERT_EQ(sizeof(OCI_Double), size);
         ASSERT_TRUE(OCI_TestColumnGetAttributeInfo(1, 0, OCI_CDT_NUMERIC, OCI_NUM_FLOAT, &size, &align));
-        ASSERT_EQ(sizeof(float), size);
+        ASSERT_EQ(sizeof(OCI_Float), size);
 
         /* boolean attribute info */
         ASSERT_TRUE(OCI_TestColumnGetAttributeInfo(1, 0, OCI_CDT_BOOLEAN, 0, &size, &align));

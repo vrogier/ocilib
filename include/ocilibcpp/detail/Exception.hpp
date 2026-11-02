@@ -87,7 +87,7 @@ inline void Exception::CopyWhat(const char* value) noexcept
         return;
     }
 
-    const OCI_Size len = strlen(value) + 1;
+    const Size len = strlen(value) + 1;
 
     _what = new (std::nothrow) char[len];
     if (_what)
@@ -116,7 +116,7 @@ inline void Exception::SetWhat(const otext* value) noexcept
         return;
     }
 
-    const OCI_Size valueLength = wcslen(value);
+    const Size valueLength = wcslen(value);
 
     _what = new (std::nothrow) char[valueLength + 1];
     if (_what)
@@ -130,13 +130,13 @@ inline void Exception::SetWhat(const otext* value) noexcept
         __pragma(warning(disable : 4996))
     #endif
 
-        const OCI_Size convLength = wcsrtombs(_what, &ptr, valueLength, &mbs);
+        const Size convLength = wcsrtombs(_what, &ptr, valueLength, &mbs);
 
     #if defined(_MSC_VER)
         __pragma(warning(default: 4996))
     #endif   
             
-        const OCI_Size whatLength = (static_cast<OCI_Size>(-1) == convLength) ? 0 : convLength;
+        const Size whatLength = (static_cast<Size>(-1) == convLength) ? 0 : convLength;
 
         _what[whatLength] = 0;
     }
@@ -166,7 +166,7 @@ inline ostring Exception::GetMessage() const
 
 #else
 
-    const OCI_Size valueLength = strlen(str);
+    const Size valueLength = strlen(str);
 
     message.resize(valueLength);
 
@@ -180,13 +180,13 @@ inline ostring Exception::GetMessage() const
     __pragma(warning(disable : 4996))
 #endif
 
-    const OCI_Size convLength = mbsrtowcs(&message[0], &ptr, valueLength, &mbs);
+    const Size convLength = mbsrtowcs(&message[0], &ptr, valueLength, &mbs);
 
 #if defined(_MSC_VER)
     __pragma(warning(default: 4996))
 #endif 
 
-    const OCI_Size messLength = (static_cast<OCI_Size>(-1) == convLength) ? 0 : convLength;
+    const Size messLength = (static_cast<Size>(-1) == convLength) ? 0 : convLength;
 
     message.resize(messLength);
 
@@ -200,12 +200,12 @@ inline Exception::ExceptionType Exception::GetType() const
     return _type;
 }
 
-inline OCI_Int32 Exception::GetOracleErrorCode() const
+inline Int32 Exception::GetOracleErrorCode() const
 {
     return _errOracle;
 }
 
-inline OCI_Int32 Exception::GetInternalErrorCode() const
+inline Int32 Exception::GetInternalErrorCode() const
 {
     return _errLib;
 }
@@ -220,7 +220,7 @@ inline Connection Exception::GetConnection() const
     return Connection(_pConnection, nullptr, false);
 }
 
-inline OCI_UInt32 Exception::GetRow() const
+inline UInt32 Exception::GetRow() const
 {
     return _row;
 }

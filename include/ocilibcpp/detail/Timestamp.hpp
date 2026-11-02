@@ -96,7 +96,7 @@ inline Timestamp Timestamp::Clone() const
     return result;
 }
 
-inline OCI_Int32 Timestamp::Compare(const Timestamp& other) const
+inline Int32 Timestamp::Compare(const Timestamp& other) const
 {
     return core::Check(OCI_TimestampCompare(*this, other));
 }
@@ -106,7 +106,7 @@ inline Timestamp::TimestampType Timestamp::GetType() const
     return TimestampType(static_cast<TimestampType::Type>(core::Check(OCI_TimestampGetType(*this))));
 }
 
-inline void Timestamp::SetDateTime(OCI_Int32 year, OCI_Int32 month, OCI_Int32 day, OCI_Int32 hour, OCI_Int32 min, OCI_Int32 sec, OCI_Int32 fsec, const ostring& timeZone)
+inline void Timestamp::SetDateTime(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 min, Int32 sec, Int32 fsec, const ostring& timeZone)
 {
     core::Check(OCI_TimestampConstruct(*this, year, month, day, hour, min,sec, fsec, timeZone.c_str()));
 }
@@ -121,151 +121,151 @@ inline bool Timestamp::IsValid() const
     return (core::Check(OCI_TimestampCheck(*this)) == 0);
 }
 
-inline OCI_Int32 Timestamp::GetYear() const
+inline Int32 Timestamp::GetYear() const
 {
-    OCI_Int32 year, month, day;
+    Int32 year, month, day;
 
     GetDate(year, month, day);
 
     return year;
 }
 
-inline void Timestamp::SetYear(OCI_Int32 value)
+inline void Timestamp::SetYear(Int32 value)
 {
-    OCI_Int32 year, month, day;
+    Int32 year, month, day;
 
     GetDate(year, month, day);
     SetDate(value, month, day);
 }
 
-inline OCI_Int32 Timestamp::GetMonth() const
+inline Int32 Timestamp::GetMonth() const
 {
-    OCI_Int32 year, month, day;
+    Int32 year, month, day;
 
     GetDate(year, month, day);
 
     return month;
 }
 
-inline void Timestamp::SetMonth(OCI_Int32 value)
+inline void Timestamp::SetMonth(Int32 value)
 {
-    OCI_Int32 year, month, day;
+    Int32 year, month, day;
 
     GetDate(year, month, day);
     SetDate(year, value, day);
 }
 
-inline OCI_Int32 Timestamp::GetDay() const
+inline Int32 Timestamp::GetDay() const
 {
-    OCI_Int32 year, month, day;
+    Int32 year, month, day;
 
     GetDate(year, month, day);
 
     return day;
 }
 
-inline void Timestamp::SetDay(OCI_Int32 value)
+inline void Timestamp::SetDay(Int32 value)
 {
-    OCI_Int32 year, month, day;
+    Int32 year, month, day;
 
     GetDate(year, month, day);
     SetDate(year, month, value);
 }
 
-inline OCI_Int32 Timestamp::GetHours() const
+inline Int32 Timestamp::GetHours() const
 {
-    OCI_Int32 hour, minutes, seconds, milliseconds;
+    Int32 hour, minutes, seconds, milliseconds;
 
     GetTime(hour, minutes, seconds, milliseconds);
 
     return hour;
 }
 
-inline void Timestamp::SetHours(OCI_Int32 value)
+inline void Timestamp::SetHours(Int32 value)
 {
-    OCI_Int32 hour, minutes, seconds, milliseconds;
+    Int32 hour, minutes, seconds, milliseconds;
 
     GetTime(hour, minutes, seconds, milliseconds);
     SetTime(value, minutes, seconds, milliseconds);
 }
 
-inline OCI_Int32 Timestamp::GetMinutes() const
+inline Int32 Timestamp::GetMinutes() const
 {
-    OCI_Int32 hour, minutes, seconds, milliseconds;
+    Int32 hour, minutes, seconds, milliseconds;
 
     GetTime(hour, minutes, seconds, milliseconds);
 
     return minutes;
 }
 
-inline void Timestamp::SetMinutes(OCI_Int32 value)
+inline void Timestamp::SetMinutes(Int32 value)
 {
-    OCI_Int32 hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetTime(hour, minutes, seconds, milliseconds);
     SetTime(hour, value, seconds, milliseconds);
 }
 
-inline OCI_Int32 Timestamp::GetSeconds() const
+inline Int32 Timestamp::GetSeconds() const
 {
-    OCI_Int32 hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetTime(hour, minutes, seconds, milliseconds);
 
     return seconds;
 }
 
-inline void Timestamp::SetSeconds(OCI_Int32 value)
+inline void Timestamp::SetSeconds(Int32 value)
 {
-    OCI_Int32 hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetTime(hour, minutes, seconds, milliseconds);
     SetTime(hour, minutes, value, milliseconds);
 }
 
-inline OCI_Int32 Timestamp::GetMilliSeconds() const
+inline Int32 Timestamp::GetMilliSeconds() const
 {
-    OCI_Int32 hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetTime(hour, minutes, seconds, milliseconds);
 
     return milliseconds;
 }
 
-inline void Timestamp::SetMilliSeconds(OCI_Int32 value)
+inline void Timestamp::SetMilliSeconds(Int32 value)
 {
-    OCI_Int32 hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetTime(hour, minutes, seconds, milliseconds);
     SetTime(hour, minutes, seconds, value);
 }
 
-inline void Timestamp::GetDate(OCI_Int32 &year, OCI_Int32 &month, OCI_Int32 &day) const
+inline void Timestamp::GetDate(Int32 &year, Int32 &month, Int32 &day) const
 {
     core::Check(OCI_TimestampGetDate(*this, &year, &month, &day));
 }
 
-inline void Timestamp::GetTime(OCI_Int32 &hour, OCI_Int32 &min, OCI_Int32 &sec, OCI_Int32 &fsec) const
+inline void Timestamp::GetTime(Int32 &hour, Int32 &min, Int32 &sec, Int32 &fsec) const
 {
     core::Check(OCI_TimestampGetTime(*this, &hour, &min, &sec, &fsec));
 }
 
-inline void Timestamp::GetDateTime(OCI_Int32 &year, OCI_Int32 &month, OCI_Int32 &day, OCI_Int32 &hour, OCI_Int32 &min, OCI_Int32 &sec, OCI_Int32 &fsec) const
+inline void Timestamp::GetDateTime(Int32 &year, Int32 &month, Int32 &day, Int32 &hour, Int32 &min, Int32 &sec, Int32 &fsec) const
 {
     core::Check(OCI_TimestampGetDateTime(*this, &year, &month, &day, &hour, &min, &sec, &fsec));
 }
 
-inline void Timestamp::SetDate(OCI_Int32 year, OCI_Int32 month, OCI_Int32 day)
+inline void Timestamp::SetDate(Int32 year, Int32 month, Int32 day)
 {
-    OCI_Int32 tmpYear = 0, tmpMonth = 0, tempDay = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 tmpYear = 0, tmpMonth = 0, tempDay = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDateTime(tmpYear, tmpMonth, tempDay, hour, minutes, seconds, milliseconds);
     SetDateTime(year, month, day, hour, minutes, seconds, milliseconds);
 }
 
-inline void Timestamp::SetTime(OCI_Int32 hour, OCI_Int32 min, OCI_Int32 sec, OCI_Int32 fsec)
+inline void Timestamp::SetTime(Int32 hour, Int32 min, Int32 sec, Int32 fsec)
 {
-    OCI_Int32 year = 0, month = 0, day = 0, tmpHour = 0, tmpMinutes = 0, tmpSeconds = 0, tmpMilliseconds = 0;
+    Int32 year = 0, month = 0, day = 0, tmpHour = 0, tmpMinutes = 0, tmpSeconds = 0, tmpMilliseconds = 0;
 
     GetDateTime(year, month, day, tmpHour, tmpMinutes, tmpSeconds, tmpMilliseconds);
     SetDateTime(year, month, day, hour, min, sec, fsec);
@@ -275,7 +275,7 @@ inline void Timestamp::SetTimeZone(const ostring& timeZone)
 {
     if (GetType() == WithTimeZone)
     {
-        OCI_Int32 year = 0, month = 0, day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+        Int32 year = 0, month = 0, day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
         GetDateTime(year, month, day, hour, minutes, seconds, milliseconds);
         SetDateTime(year, month, day, hour, minutes, seconds, milliseconds, timeZone);
@@ -286,11 +286,11 @@ inline ostring Timestamp::GetTimeZone() const
 {
     if (GetType() != NoTimeZone)
     {
-        const OCI_Size size = OCI_SIZE_BUFFER;
+        const Size size = OCI_SIZE_BUFFER;
 
-        std::vector<otext> buffer(static_cast<OCI_Size>(size + 1));
+        std::vector<otext> buffer(static_cast<Size>(size + 1));
 
-        core::Check(OCI_TimestampGetTimeZoneName(*this, static_cast<OCI_Int32>(size), buffer.data()) == TRUE);
+        core::Check(OCI_TimestampGetTimeZoneName(*this, static_cast<Int32>(size), buffer.data()) == TRUE);
 
         return core::MakeString(static_cast<const otext*>(buffer.data()));
     }
@@ -298,7 +298,7 @@ inline ostring Timestamp::GetTimeZone() const
     return ostring();
 }
 
-inline void Timestamp::GetTimeZoneOffset(OCI_Int32 &hour, OCI_Int32 &min) const
+inline void Timestamp::GetTimeZoneOffset(Int32 &hour, Int32 &min) const
 {
     core::Check(OCI_TimestampGetTimeZoneOffset(*this, &hour, &min));
 }
@@ -322,15 +322,15 @@ inline void Timestamp::FromString(const ostring& data, const ostring& format)
     core::Check(OCI_TimestampFromText(*this, data.c_str(), format.empty() ?  core::MakeString(core::Check(OCI_GetFormat(GetEnvironment(), FormatTimestamp))).c_str() : format.c_str()));
 }
 
-inline ostring Timestamp::ToString(const ostring& format, OCI_Int32 precision = OCI_STRING_DEFAULT_PREC) const
+inline ostring Timestamp::ToString(const ostring& format, Int32 precision = OCI_STRING_DEFAULT_PREC) const
 {
     if (!IsNull())
     {
-        const OCI_Size size = OCI_SIZE_BUFFER;
+        const Size size = OCI_SIZE_BUFFER;
 
-        std::vector<otext> buffer(static_cast<OCI_Size>(size + 1));
+        std::vector<otext> buffer(static_cast<Size>(size + 1));
 
-        core::Check(OCI_TimestampToText(*this, format.c_str(), static_cast<OCI_Int32>(size), buffer.data(), precision));
+        core::Check(OCI_TimestampToText(*this, format.c_str(), static_cast<Int32>(size), buffer.data(), precision));
 
         return core::MakeString(static_cast<const otext*>(buffer.data()));
     }
@@ -353,7 +353,7 @@ inline Timestamp& Timestamp::operator ++ ()
     return *this += 1;
 }
 
-inline Timestamp Timestamp::operator ++ (OCI_Int32)
+inline Timestamp Timestamp::operator ++ (Int32)
 {
     Timestamp result = Clone();
 
@@ -367,7 +367,7 @@ inline Timestamp& Timestamp::operator -- ()
     return *this -= 1;
 }
 
-inline Timestamp Timestamp::operator -- (OCI_Int32)
+inline Timestamp Timestamp::operator -- (Int32)
 {
     Timestamp result = Clone();
 
@@ -376,7 +376,7 @@ inline Timestamp Timestamp::operator -- (OCI_Int32)
     return result;
 }
 
-inline Timestamp Timestamp::operator + (OCI_Int32 value) const
+inline Timestamp Timestamp::operator + (Int32 value) const
 {
     Timestamp result = Clone();
     Interval interval(GetEnvironment(), Interval::DaySecond);
@@ -384,7 +384,7 @@ inline Timestamp Timestamp::operator + (OCI_Int32 value) const
     return result += value;
 }
 
-inline Timestamp Timestamp::operator - (OCI_Int32 value) const
+inline Timestamp Timestamp::operator - (Int32 value) const
 {
     Timestamp result = Clone();
     Interval interval(GetEnvironment(), Interval::DaySecond);
@@ -423,14 +423,14 @@ inline Timestamp& Timestamp::operator -= (const Interval& other)
     return *this;
 }
 
-inline Timestamp& Timestamp::operator += (OCI_Int32 value)
+inline Timestamp& Timestamp::operator += (Int32 value)
 {
     Interval interval(GetEnvironment(), Interval::DaySecond);
     interval.SetDay(value);
     return *this += interval;
 }
 
-inline Timestamp& Timestamp::operator -= (OCI_Int32 value)
+inline Timestamp& Timestamp::operator -= (Int32 value)
 {
     Interval interval(GetEnvironment(), Interval::DaySecond);
     interval.SetDay(value);
@@ -459,14 +459,14 @@ inline bool Timestamp::operator < (const Timestamp& other) const
 
 inline bool Timestamp::operator >= (const Timestamp& other) const
 {
-    const OCI_Int32 res = Compare(other);
+    const Int32 res = Compare(other);
 
     return (res == 0 || res < 0);
 }
 
 inline bool Timestamp::operator <= (const Timestamp& other) const
 {
-    const OCI_Int32 res = Compare(other);
+    const Int32 res = Compare(other);
 
     return (res == 0 || res > 0);
 }

@@ -56,14 +56,14 @@ namespace ocilib
         struct BindResolverHandleType : BindResolverType<I, O, true> {};
 
         template<> struct BindResolver<bool> : BindResolverType<bool, OCI_Boolean, false> {};
-        template<> struct BindResolver<OCI_Int16> : BindResolverScalarType<OCI_Int16> {};
-        template<> struct BindResolver<OCI_UInt16> : BindResolverScalarType<OCI_UInt16> {};
-        template<> struct BindResolver<OCI_Int32> : BindResolverScalarType<OCI_Int32> {};
-        template<> struct BindResolver<OCI_UInt32> : BindResolverScalarType<OCI_UInt32> {};
-        template<> struct BindResolver<OCI_Int64> : BindResolverScalarType<OCI_Int64> {};
-        template<> struct BindResolver<OCI_UInt64> : BindResolverScalarType<OCI_UInt64> {};
-        template<> struct BindResolver<float> : BindResolverScalarType<float> {};
-        template<> struct BindResolver<double> : BindResolverScalarType<double> {};
+        template<> struct BindResolver<Int16> : BindResolverScalarType<Int16> {};
+        template<> struct BindResolver<UInt16> : BindResolverScalarType<UInt16> {};
+        template<> struct BindResolver<Int32> : BindResolverScalarType<Int32> {};
+        template<> struct BindResolver<UInt32> : BindResolverScalarType<UInt32> {};
+        template<> struct BindResolver<Int64> : BindResolverScalarType<Int64> {};
+        template<> struct BindResolver<UInt64> : BindResolverScalarType<UInt64> {};
+        template<> struct BindResolver<Float> : BindResolverScalarType<Float> {};
+        template<> struct BindResolver<Double> : BindResolverScalarType<Double> {};
         template<> struct BindResolver<ocilib::ostring> : BindResolverType<ocilib::ostring, otext, false> {};
         template<> struct BindResolver<ocilib::Raw> : BindResolverType<ocilib::ostring, unsigned char, false> {};
         template<> struct BindResolver<ocilib::Number> : BindResolverHandleType<ocilib::Number, OCI_Number*> {};

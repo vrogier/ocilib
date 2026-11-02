@@ -34,7 +34,7 @@ CollectionElement<T>::CollectionElement() : _coll(nullptr), _pos(0)
 }
 
 template<class T>
-CollectionElement<T>::CollectionElement(CollectionType *coll, OCI_UInt32 pos) : _coll(coll), _pos(pos)
+CollectionElement<T>::CollectionElement(CollectionType *coll, UInt32 pos) : _coll(coll), _pos(pos)
 {
 
 }

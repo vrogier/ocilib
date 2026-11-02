@@ -49,15 +49,15 @@ OCI_SYM_LOCAL OCI_LongType OcilibLongGetType
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibLongRead
 (
-    OCI_Long    *lg,
-    void        *buffer,
+    OCI_Long  *lg,
+    void      *buffer,
     OCI_UInt32 len
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibLongWrite
 (
-    OCI_Long    *lg,
-    void        *buffer,
+    OCI_Long  *lg,
+    void      *buffer,
     OCI_UInt32 len
 );
 

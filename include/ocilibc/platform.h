@@ -290,6 +290,8 @@ typedef wchar_t otext;
  * @typedef OCI_Int64
  * @typedef OCI_UInt64
  * @typedef OCI_Size
+ * @typedef OCI_Float
+ * @typedef OCI_Double
  *
  * @brief
  * Fixed width integer types.
@@ -297,6 +299,8 @@ typedef wchar_t otext;
  * OCI_Int32 and OCI_UInt32 are 32 bits signed / unsigned integers.
  * OCI_Int64 and OCI_UInt64 are 64 bits signed / unsigned integers.
  * OCI_Size is used for byte sizes, buffer lengths and element counts.
+ * OCI_Float and OCI_Double are the single / double precision floating
+ * point types.
  *
  * big_int and big_uint are kept as compatibility aliases for OCI_Int64
  * and OCI_UInt64 in ocilibc/compat.h; new code should use the OCI_
@@ -304,13 +308,15 @@ typedef wchar_t otext;
  *
  */
 
-typedef short              OCI_Int16;
-typedef unsigned short     OCI_UInt16;
-typedef int                OCI_Int32;
-typedef unsigned int       OCI_UInt32;
-typedef long long          OCI_Int64;
+typedef short OCI_Int16;
+typedef unsigned short OCI_UInt16;
+typedef int OCI_Int32;
+typedef unsigned int OCI_UInt32;
+typedef long long OCI_Int64;
 typedef unsigned long long OCI_UInt64;
-typedef size_t             OCI_Size;
+typedef size_t OCI_Size;
+typedef float OCI_Float;
+typedef double OCI_Double;
 
 #define OCI_BIG_UINT_ENABLED
 

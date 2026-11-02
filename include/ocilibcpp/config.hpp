@@ -31,10 +31,10 @@ extern "C" {
 #include "ocilib.h"
 }
 
-/* C++14 is the minimum supported C++ standard */
+/* C++17 is the minimum supported C++ standard */
 
-#if __cplusplus < 201402L && (!defined(_MSVC_LANG) || _MSVC_LANG < 201402L)
-#error "OCILIB C++ API requires C++14 or later"
+#if __cplusplus < 201703L && (!defined(_MSVC_LANG) || _MSVC_LANG < 201703L)
+#error "OCILIB C++ API requires C++17 or later"
 #endif
 
 #define OCILIBPP_HAS_CXX
@@ -80,6 +80,33 @@ typedef void * AnyPointer;
 */
 typedef std::vector<unsigned char> Raw;
 
+/**
+* @typedef ocilib::Int16
+* @typedef ocilib::UInt16
+* @typedef ocilib::Int32
+* @typedef ocilib::UInt32
+* @typedef ocilib::Int64
+* @typedef ocilib::UInt64
+* @typedef ocilib::Float
+* @typedef ocilib::Double
+* @typedef ocilib::Size
+*
+* @brief
+* C++ API short aliases for the C API fixed-width scalar types.
+* Same types as Int16, UInt16, Int32, UInt32,
+* Int64, UInt64, Float, Double and Size.
+*
+*/
+typedef OCI_Int16  Int16;
+typedef OCI_UInt16 UInt16;
+typedef OCI_Int32  Int32;
+typedef OCI_UInt32 UInt32;
+typedef OCI_Int64  Int64;
+typedef OCI_UInt64 UInt64;
+typedef OCI_Float  Float;
+typedef OCI_Double Double;
+typedef OCI_Size   Size;
+
 /* OCI_Environment* GetEnvironmentHandle(); */
 
 /* class forward declarations */
@@ -104,11 +131,11 @@ template<class>
 class Iterator;
 template<class>
 class Collection;
-template<class, OCI_Int32>
+template<class, Int32>
 class Lob;
 class File;
 class Pool;
-template<class, OCI_Int32>
+template<class, Int32>
 class Long;
 class Column;
 class Subscription;

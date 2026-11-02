@@ -128,7 +128,7 @@ namespace TestCApi
 
         OCI_Number* num = OCI_JsonNodeGetNumber(item2);
         ASSERT_NE(nullptr, num);
-        double val = 0.0;
+        OCI_Double val = 0.0;
         ASSERT_TRUE(OCI_NumberGetValue(num, OCI_NUM_DOUBLE, &val));
         ASSERT_DOUBLE_EQ(2.0, val);
         ASSERT_TRUE(OCI_NumberFree(num));
@@ -175,14 +175,14 @@ namespace TestCApi
 
         OCI_Number* num = OCI_NumberCreate(env);
         ASSERT_NE(nullptr, num);
-        double v = 3.14;
+        OCI_Double v = 3.14;
         ASSERT_TRUE(OCI_NumberSetValue(num, OCI_NUM_DOUBLE, &v));
         OCI_JsonNode* numNode = OCI_JsonNodeCreateNumber(json, num);
         ASSERT_EQ(OCI_JNT_NUMBER, OCI_JsonNodeGetType(numNode));
 
         OCI_Number* numOut = OCI_JsonNodeGetNumber(numNode);
         ASSERT_NE(nullptr, numOut);
-        double vOut = 0.0;
+        OCI_Double vOut = 0.0;
         ASSERT_TRUE(OCI_NumberGetValue(numOut, OCI_NUM_DOUBLE, &vOut));
         ASSERT_DOUBLE_EQ(3.14, vOut);
         ASSERT_TRUE(OCI_NumberFree(numOut));

@@ -54,7 +54,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibNumberToStringInternal
     void           * number,
     OCI_NumericType  type,
     otext          * out_value,
-    OCI_Int32              out_value_size,
+    OCI_Int32        out_value_size,
     const otext    * fmt
 );
 
@@ -71,7 +71,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibNumberFree
 OCI_SYM_LOCAL OCI_Number ** OcilibNumberCreateArray
 (
     OCI_Environment* env,
-    OCI_UInt32     nbelem
+    OCI_UInt32       nbelem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibNumberFreeArray
@@ -89,7 +89,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibNumberToString
 (
     OCI_Number * number,
     const otext* fmt,
-    OCI_Int32          size,
+    OCI_Int32    size,
     otext      * str
 );
 

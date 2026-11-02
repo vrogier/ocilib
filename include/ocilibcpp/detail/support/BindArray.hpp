@@ -28,13 +28,13 @@ namespace ocilib
 {
     namespace support
     {
-        inline BindArray::BindArray(const ocilib::Statement& statement, const ostring& name, OCI_UInt32 mode) : BindObject(statement, name, mode), _object(nullptr)
+        inline BindArray::BindArray(const ocilib::Statement& statement, const ostring& name, UInt32 mode) : BindObject(statement, name, mode), _object(nullptr)
         {
 
         }
 
         template<class T>
-        void BindArray::SetVector(std::vector<T>& vector, bool isPlSqlTable, OCI_UInt32 elemSize)
+        void BindArray::SetVector(std::vector<T>& vector, bool isPlSqlTable, UInt32 elemSize)
         {
             _object = core::OnAllocate(new BindArrayObject<T>(_statement, GetName(), vector, isPlSqlTable, GetMode(), elemSize));
         }
@@ -67,19 +67,19 @@ namespace ocilib
             }
         }
 
-        inline OCI_UInt32 BindArray::GetSize() const
+        inline UInt32 BindArray::GetSize() const
         {
             return _object ? _object->GetSize() : _statement.GetBindArraySize();
         }
 
-        inline OCI_UInt32 BindArray::GetSizeForBindCall() const
+        inline UInt32 BindArray::GetSizeForBindCall() const
         {
             return _object ? _object->GetSizeForBindCall() : 0;
         }
 
 
         template<class T>
-        BindArray::BindArrayObject<T>::BindArrayObject(const ocilib::Statement& statement, const ostring& name, ObjectVector& vector, bool isPlSqlTable, OCI_UInt32 mode, OCI_UInt32 elemSize)
+        BindArray::BindArrayObject<T>::BindArrayObject(const ocilib::Statement& statement, const ostring& name, ObjectVector& vector, bool isPlSqlTable, UInt32 mode, UInt32 elemSize)
             : _statement(statement), _name(name), _vector(vector), _data(nullptr), _isPlSqlTable(isPlSqlTable), _mode(mode), _elemCount(BindArrayObject<T>::GetSize()), _elemSize(elemSize)
         {
             AllocData();
@@ -102,7 +102,7 @@ namespace ocilib
         template<>
         inline void BindArray::BindArrayObject<ocilib::ostring>::AllocData()
         {
-            const OCI_Size count = static_cast<OCI_Size>(_elemSize * _elemCount);
+            const Size count = static_cast<Size>(_elemSize * _elemCount);
 
             _data = core::OnAllocate(new otext[count], count);
 
@@ -112,7 +112,7 @@ namespace ocilib
         template<>
         inline void BindArray::BindArrayObject<ocilib::Raw> ::AllocData()
         {
-            const OCI_Size count =  static_cast<OCI_Size>(_elemSize * _elemCount);
+            const Size count =  static_cast<Size>(_elemSize * _elemCount);
 
             _data = core::OnAllocate(new unsigned char[count], count);
 
@@ -130,8 +130,8 @@ namespace ocilib
         {
             typename ObjectVector::iterator it, it_end;
 
-            OCI_UInt32 index = 0;
-            const OCI_UInt32 currElemCount = GetSize();
+            UInt32 index = 0;
+            const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
             {
@@ -144,8 +144,8 @@ namespace ocilib
         {
             std::vector<ostring>::iterator it, it_end;
 
-            OCI_UInt32 index = 0;
-            const OCI_UInt32 currElemCount = GetSize();
+            UInt32 index = 0;
+            const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
             {
@@ -160,8 +160,8 @@ namespace ocilib
         {
             std::vector<Raw>::iterator it, it_end;
 
-            OCI_UInt32 index = 0;
-            const OCI_UInt32 currElemCount = GetSize();
+            UInt32 index = 0;
+            const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
             {
@@ -172,7 +172,7 @@ namespace ocilib
                     memcpy(_data + (_elemSize * index), &value[0], value.size());
                 }
 
-                OCI_BindSetDataSizeAtPos(OCI_GetBindByName(_statement, GetName().c_str()), index + 1, static_cast<OCI_UInt32>(value.size()));
+                OCI_BindSetDataSizeAtPos(OCI_GetBindByName(_statement, GetName().c_str()), index + 1, static_cast<UInt32>(value.size()));
             }
         }
 
@@ -181,8 +181,8 @@ namespace ocilib
         {
             typename ObjectVector::iterator it, it_end;
 
-            OCI_UInt32 index = 0;
-            const OCI_UInt32 currElemCount = GetSize();
+            UInt32 index = 0;
+            const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
             {
@@ -197,8 +197,8 @@ namespace ocilib
 
             OCI_Bind* pBind = core::Check(OCI_GetBindByName(_statement, GetName().c_str()));
 
-            OCI_UInt32 index = 0;
-            const OCI_UInt32 currElemCount = GetSize();
+            UInt32 index = 0;
+            const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
             {
@@ -215,8 +215,8 @@ namespace ocilib
 
             OCI_Bind* pBind = core::Check(OCI_GetBindByName(_statement, GetName().c_str()));
 
-            OCI_UInt32 index = 0;
-            const OCI_UInt32 currElemCount = GetSize();
+            UInt32 index = 0;
+            const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
             {
@@ -239,15 +239,15 @@ namespace ocilib
         }
 
         template<class T>
-        OCI_UInt32 BindArray::BindArrayObject<T>::GetSize() const
+        UInt32 BindArray::BindArrayObject<T>::GetSize() const
         {
-            return _isPlSqlTable ? static_cast<OCI_UInt32>(_vector.size()) : _statement.GetBindArraySize();
+            return _isPlSqlTable ? static_cast<UInt32>(_vector.size()) : _statement.GetBindArraySize();
         }
 
         template<class T>
-        OCI_UInt32 BindArray::BindArrayObject<T>::GetSizeForBindCall() const
+        UInt32 BindArray::BindArrayObject<T>::GetSizeForBindCall() const
         {
-            return _isPlSqlTable ? static_cast<OCI_UInt32>(_vector.size()) : 0;
+            return _isPlSqlTable ? static_cast<UInt32>(_vector.size()) : 0;
         }
 
         template<class T>

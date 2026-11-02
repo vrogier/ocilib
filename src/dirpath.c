@@ -305,8 +305,8 @@ OCI_DirPath * OcilibDirPathCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *partition,
-    OCI_UInt32  nb_cols,
-    OCI_UInt32  nb_rows
+    OCI_UInt32    nb_cols,
+    OCI_UInt32    nb_rows
 )
 {
     ENTER_FUNC
@@ -489,9 +489,9 @@ OCI_Boolean OcilibDirPathFree
 OCI_Boolean OcilibDirPathSetColumn
 (
     OCI_DirPath *dp,
-    OCI_UInt32 index,
+    OCI_UInt32   index,
     const otext *name,
-    OCI_UInt32 maxsize,
+    OCI_UInt32   maxsize,
     const otext *format
 )
 {
@@ -506,9 +506,9 @@ OCI_Boolean OcilibDirPathSetColumn
     OCIParam          *hattr   = NULL;
     OCIParam          *hlist   = NULL;
     dbtext            *dbstr1  = NULL;
-    OCI_Int32                dbsize1 = -1;
+    OCI_Int32          dbsize1 = -1;
     dbtext            *dbstr2  = NULL;
-    OCI_Int32                dbsize2 = -1;
+    OCI_Int32          dbsize2 = -1;
 
     ub2 i = 0;
 
@@ -855,10 +855,10 @@ OCI_Boolean OcilibDirPathPrepare
 OCI_Boolean OcilibDirPathSetEntry
 (
     OCI_DirPath *dp,
-    OCI_UInt32 row,
-    OCI_UInt32 index,
+    OCI_UInt32   row,
+    OCI_UInt32   index,
     void        *value,
-    OCI_UInt32 size,
+    OCI_UInt32   size,
     OCI_Boolean  complete
 )
 {
@@ -1285,7 +1285,7 @@ OCI_Boolean OcilibDirPathFlushRow
 OCI_Boolean OcilibDirPathSetCurrentRows
 (
     OCI_DirPath *dp,
-    OCI_UInt32 nb_rows
+    OCI_UInt32   nb_rows
 )
 {
     ENTER_FUNC
@@ -1355,8 +1355,8 @@ OCI_Boolean OcilibDirPathSetDateFormat
         /* context */ OCI_IPC_DIRPATH, dp
     );
 
-    dbtext *dbstr  = NULL;
-    OCI_Int32     dbsize = -1;
+    dbtext   *dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_DIRPATH, dp);
     CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED);
@@ -1451,7 +1451,7 @@ OCI_Boolean OcilibDirPathSetNoLog
 OCI_Boolean OcilibDirPathSetCacheSize
 (
     OCI_DirPath *dp,
-    OCI_UInt32 size
+    OCI_UInt32   size
 )
 {
     ENTER_FUNC
@@ -1501,7 +1501,7 @@ OCI_Boolean OcilibDirPathSetCacheSize
 OCI_Boolean OcilibDirPathSetBufferSize
 (
     OCI_DirPath *dp,
-    OCI_UInt32 size
+    OCI_UInt32   size
 )
 {
     ENTER_FUNC

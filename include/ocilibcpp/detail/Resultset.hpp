@@ -50,32 +50,32 @@ inline bool Resultset::Last()
     return (core::Check(OCI_FetchLast(*this)) == TRUE);
 }
 
-inline bool Resultset::Seek(SeekMode mode, OCI_Int32 offset)
+inline bool Resultset::Seek(SeekMode mode, Int32 offset)
 {
     return (core::Check(OCI_FetchSeek(*this, mode, offset)) == TRUE);
 }
 
-inline OCI_UInt32 Resultset::GetCount() const
+inline UInt32 Resultset::GetCount() const
 {
     return core::Check(OCI_GetRowCount(*this));
 }
 
-inline OCI_UInt32 Resultset::GetCurrentRow() const
+inline UInt32 Resultset::GetCurrentRow() const
 {
     return core::Check(OCI_GetCurrentRow(*this));
 }
 
-inline OCI_UInt32 Resultset::GetColumnIndex(const ostring& name) const
+inline UInt32 Resultset::GetColumnIndex(const ostring& name) const
 {
     return core::Check(OCI_GetColumnIndex(*this, name.c_str()));
 }
 
-inline OCI_UInt32 Resultset::GetColumnCount() const
+inline UInt32 Resultset::GetColumnCount() const
 {
     return core::Check(OCI_GetColumnCount(*this));
 }
 
-inline Column Resultset::GetColumn(OCI_UInt32 index) const
+inline Column Resultset::GetColumn(UInt32 index) const
 {
     return Column(core::Check(OCI_GetColumn(*this, index)), GetHandle());
 }
@@ -85,7 +85,7 @@ inline Column Resultset::GetColumn(const ostring& name) const
     return Column(core::Check(OCI_GetColumnByName(*this, name.c_str())), GetHandle());
 }
 
-inline bool Resultset::IsColumnNull(OCI_UInt32 index) const
+inline bool Resultset::IsColumnNull(UInt32 index) const
 {
     return (core::Check(OCI_IsNull(*this, index)) == TRUE);
 }
@@ -100,28 +100,28 @@ inline Statement Resultset::GetStatement() const
     return Statement( core::Check(OCI_ResultsetGetStatement(*this)), nullptr);
 }
 
-inline bool Resultset::operator ++ (OCI_Int32)
+inline bool Resultset::operator ++ (Int32)
 {
     return Next();
 }
 
-inline bool Resultset::operator -- (OCI_Int32)
+inline bool Resultset::operator -- (Int32)
 {
     return Prev();
 }
 
-inline bool Resultset::operator += (OCI_Int32 offset)
+inline bool Resultset::operator += (Int32 offset)
 {
     return Seek(SeekRelative, offset);
 }
 
-inline bool Resultset::operator -= (OCI_Int32 offset)
+inline bool Resultset::operator -= (Int32 offset)
 {
     return Seek(SeekRelative, -offset);
 }
 
 template<class T>
-void Resultset::Get(OCI_UInt32 index, T& value) const
+void Resultset::Get(UInt32 index, T& value) const
 {
     value = Get<T>(index);
 }
@@ -139,7 +139,7 @@ bool Resultset::Get(T& value, TAdapter adapter) const
 }
 
 template<class TCallback>
-OCI_UInt32 Resultset::ForEach(TCallback callback)
+UInt32 Resultset::ForEach(TCallback callback)
 {
     while (Next())
     {
@@ -153,7 +153,7 @@ OCI_UInt32 Resultset::ForEach(TCallback callback)
 }
 
 template<class T, class U>
-OCI_UInt32 Resultset::ForEach(T callback, U adapter)
+UInt32 Resultset::ForEach(T callback, U adapter)
 {
     while (Next())
     {
@@ -166,340 +166,90 @@ OCI_UInt32 Resultset::ForEach(T callback, U adapter)
     return GetCurrentRow();
 }
 
-template<>
-inline OCI_Int16 Resultset::Get<OCI_Int16>(OCI_UInt32 index) const
+template<class T>
+inline T Resultset::Get(UInt32 index) const
 {
-    return core::Check(OCI_GetShort(*this, index));
-}
+    if      constexpr (std::is_same_v<T, Int16>)  { return core::Check(OCI_GetShort(*this, index)); }
+    else if constexpr (std::is_same_v<T, UInt16>) { return core::Check(OCI_GetUnsignedShort(*this, index)); }
+    else if constexpr (std::is_same_v<T, Int32>)  { return core::Check(OCI_GetInt(*this, index)); }
+    else if constexpr (std::is_same_v<T, UInt32>) { return core::Check(OCI_GetUnsignedInt(*this, index)); }
+    else if constexpr (std::is_same_v<T, Int64>)  { return core::Check(OCI_GetBigInt(*this, index)); }
+    else if constexpr (std::is_same_v<T, UInt64>) { return core::Check(OCI_GetUnsignedBigInt(*this, index)); }
+    else if constexpr (std::is_same_v<T, Float>)      { return core::Check(OCI_GetFloat(*this, index)); }
+    else if constexpr (std::is_same_v<T, Double>)     { return core::Check(OCI_GetDouble(*this, index)); }
+    else if constexpr (std::is_same_v<T, Number>)     { return Number(core::Check(OCI_GetNumber(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, ostring>)    { return core::MakeString(core::Check(OCI_GetString(*this, index))); }
+    else if constexpr (std::is_same_v<T, Date>)       { return Date(core::Check(OCI_GetDate(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Timestamp>)  { return Timestamp(core::Check(OCI_GetTimestamp(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Interval>)   { return Interval(core::Check(OCI_GetInterval(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Object>)     { return Object(core::Check(OCI_GetObject(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Reference>)  { return Reference(core::Check(OCI_GetRef(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, XmlType>)    { return XmlType(core::Check(OCI_GetXmlType(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Vector>)     { return Vector(core::Check(OCI_GetVector(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Json>)       { return Json(core::Check(OCI_GetJson(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Statement>)  { return Statement(core::Check(OCI_GetStatement(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Clob>)       { return Clob(core::Check(OCI_GetLob(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, NClob>)      { return NClob(core::Check(OCI_GetLob(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Blob>)       { return Blob(core::Check(OCI_GetLob(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, File>)       { return File(core::Check(OCI_GetFile(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Clong>)      { return Clong(core::Check(OCI_GetLong(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Blong>)      { return Blong(core::Check(OCI_GetLong(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Raw>)
+    {
+        UInt32 size = core::Check(OCI_GetDataLength(*this, index));
 
-template<>
-inline OCI_Int16 Resultset::Get<OCI_Int16>(const ostring& name) const
-{
-    return core::Check(OCI_GetShortByName(*this, name.c_str()));
-}
+        std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
 
-template<>
-inline OCI_UInt16 Resultset::Get<OCI_UInt16>(OCI_UInt32 index) const
-{
-    return core::Check(OCI_GetUnsignedShort(*this, index));
-}
+        size = core::Check(OCI_GetRaw(*this, index, static_cast<AnyPointer>(buffer.data()), size));
 
-template<>
-inline OCI_UInt16 Resultset::Get<OCI_UInt16>(const ostring& name) const
-{
-    return core::Check(OCI_GetUnsignedShortByName(*this, name.c_str()));
-}
-
-template<>
-inline OCI_Int32 Resultset::Get<OCI_Int32>(OCI_UInt32 index) const
-{
-    return core::Check(OCI_GetInt(*this, index));
-}
-
-template<>
-inline OCI_Int32 Resultset::Get<OCI_Int32>(const ostring& name) const
-{
-    return core::Check(OCI_GetIntByName(*this, name.c_str()));
-}
-
-template<>
-inline OCI_UInt32 Resultset::Get<OCI_UInt32>(OCI_UInt32 index) const
-{
-    return core::Check(OCI_GetUnsignedInt(*this, index));
-}
-
-template<>
-inline OCI_UInt32 Resultset::Get<OCI_UInt32>(const ostring& name) const
-{
-    return core::Check(OCI_GetUnsignedIntByName(*this, name.c_str()));
-}
-
-template<>
-inline OCI_Int64 Resultset::Get<OCI_Int64>(OCI_UInt32 index) const
-{
-    return core::Check(OCI_GetBigInt(*this, index));
-}
-
-template<>
-inline OCI_Int64 Resultset::Get<OCI_Int64>(const ostring& name) const
-{
-    return core::Check(OCI_GetBigIntByName(*this, name.c_str()));
-}
-
-template<>
-inline OCI_UInt64 Resultset::Get<OCI_UInt64>(OCI_UInt32 index) const
-{
-    return core::Check(OCI_GetUnsignedBigInt(*this, index));
-}
-
-template<>
-inline OCI_UInt64 Resultset::Get<OCI_UInt64>(const ostring& name) const
-{
-    return core::Check(OCI_GetUnsignedBigIntByName(*this, name.c_str()));
-}
-
-template<>
-inline float Resultset::Get<float>(OCI_UInt32 index) const
-{
-    return core::Check(OCI_GetFloat(*this, index));
-}
-
-template<>
-inline float Resultset::Get<float>(const ostring& name) const
-{
-    return core::Check(OCI_GetFloatByName(*this, name.c_str()));
-}
-
-template<>
-inline double Resultset::Get<double>(OCI_UInt32 index) const
-{
-    return core::Check(OCI_GetDouble(*this, index));
-}
-
-template<>
-inline double Resultset::Get<double>(const ostring& name) const
-{
-    return core::Check(OCI_GetDoubleByName(*this, name.c_str()));
-}
-
-template<>
-inline Number Resultset::Get<Number>(OCI_UInt32 index) const
-{
-    return Number(core::Check(OCI_GetNumber(*this, index)), GetHandle());
-}
-
-template<>
-inline Number Resultset::Get<Number>(const ostring& name) const
-{
-    return Number(core::Check(OCI_GetNumberByName(*this, name.c_str())), GetHandle());
-}
-
-template<>
-inline ostring Resultset::Get<ostring>(OCI_UInt32 index) const
-{
-    return core::MakeString(core::Check(OCI_GetString(*this, index)));
-}
-
-template<>
-inline ostring Resultset::Get<ostring>(const ostring& name) const
-{
-    return core::MakeString(core::Check(OCI_GetStringByName(*this,name.c_str())));
-}
-
-template<>
-inline Raw Resultset::Get<Raw>(OCI_UInt32 index) const
-{
-    OCI_UInt32 size = core::Check(OCI_GetDataLength(*this,index));
-
-    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
-
-    size = core::Check(OCI_GetRaw(*this, index, static_cast<AnyPointer>(buffer.data()), size));
-
-    return core::MakeRaw(buffer.data(), size);
-}
-
-template<>
-inline Raw Resultset::Get<Raw>(const ostring& name) const
-{
-    OCI_UInt32 size = core::Check(OCI_GetDataLength(*this, core::Check(OCI_GetColumnIndex(*this, name.c_str()))));
-
-    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
-
-    size = core::Check(OCI_GetRawByName(*this, name.c_str(), static_cast<AnyPointer>(buffer.data()), size));
-
-    return core::MakeRaw(buffer.data(), size);
-}
-
-template<>
-inline Date Resultset::Get<Date>(OCI_UInt32 index) const
-{
-    return Date(core::Check(OCI_GetDate(*this, index)), GetHandle());
-}
-
-template<>
-inline Date Resultset::Get<Date>(const ostring& name) const
-{
-    return Date(core::Check(OCI_GetDateByName(*this,name.c_str())), GetHandle());
-}
-
-template<>
-inline Timestamp Resultset::Get<Timestamp>(OCI_UInt32 index) const
-{
-    return Timestamp(core::Check(OCI_GetTimestamp(*this, index)), GetHandle());
-}
-
-template<>
-inline Timestamp Resultset::Get<Timestamp>(const ostring& name) const
-{
-    return Timestamp(core::Check(OCI_GetTimestampByName(*this,name.c_str())), GetHandle());
-}
-
-template<>
-inline Interval Resultset::Get<Interval>(OCI_UInt32 index) const
-{
-    return Interval(core::Check(OCI_GetInterval(*this, index)), GetHandle());
-}
-
-template<>
-inline Interval Resultset::Get<Interval>(const ostring& name) const
-{
-    return Interval(core::Check(OCI_GetIntervalByName(*this,name.c_str())), GetHandle());
-}
-
-template<>
-inline Object Resultset::Get<Object>(OCI_UInt32 index) const
-{
-    return Object(core::Check(OCI_GetObject(*this, index)), GetHandle());
-}
-
-template<>
-inline Object Resultset::Get<Object>(const ostring& name) const
-{
-    return Object(core::Check(OCI_GetObjectByName(*this,name.c_str())), GetHandle());
-}
-
-template<>
-inline Reference Resultset::Get<Reference>(OCI_UInt32 index) const
-{
-    return Reference(core::Check(OCI_GetRef(*this, index)), GetHandle());
-}
-
-template<>
-inline Reference Resultset::Get<Reference>(const ostring& name) const
-{
-    return Reference(core::Check(OCI_GetRefByName(*this,name.c_str())), GetHandle());
-}
-
-template<>
-inline XmlType Resultset::Get<XmlType>(OCI_UInt32 index) const
-{
-    return XmlType(core::Check(OCI_GetXmlType(*this, index)), GetHandle());
-}
-
-template<>
-inline XmlType Resultset::Get<XmlType>(const ostring& name) const
-{
-    return XmlType(core::Check(OCI_GetXmlTypeByName(*this,name.c_str())), GetHandle());
-}
-
-template<>
-inline Vector Resultset::Get<Vector>(OCI_UInt32 index) const
-{
-    return Vector(core::Check(OCI_GetVector(*this, index)), GetHandle());
-}
-
-template<>
-inline Vector Resultset::Get<Vector>(const ostring& name) const
-{
-    return Vector(core::Check(OCI_GetVectorByName(*this,name.c_str())), GetHandle());
-}
-
-template<>
-inline Json Resultset::Get<Json>(OCI_UInt32 index) const
-{
-    return Json(core::Check(OCI_GetJson(*this, index)), GetHandle());
-}
-
-template<>
-inline Json Resultset::Get<Json>(const ostring& name) const
-{
-    return Json(core::Check(OCI_GetJsonByName(*this, name.c_str())), GetHandle());
-}
-
-template<>
-inline Statement Resultset::Get<Statement>(OCI_UInt32 index) const
-{
-    return Statement(core::Check(OCI_GetStatement(*this, index)), GetHandle());
-}
-
-template<>
-inline Statement Resultset::Get<Statement>(const ostring& name) const
-{
-    return Statement(core::Check(OCI_GetStatementByName(*this,name.c_str())), GetHandle());
-}
-
-template<>
-inline Clob Resultset::Get<Clob>(OCI_UInt32 index) const
-{
-    return Clob(core::Check(OCI_GetLob(*this, index)), GetHandle());
-}
-
-template<>
-inline Clob Resultset::Get<Clob>(const ostring& name) const
-{
-    return Clob(core::Check(OCI_GetLobByName(*this,name.c_str())), GetHandle());
-}
-
-template<>
-inline NClob Resultset::Get<NClob>(OCI_UInt32 index) const
-{
-    return NClob(core::Check(OCI_GetLob(*this, index)), GetHandle());
-}
-
-template<>
-inline NClob Resultset::Get<NClob>(const ostring& name) const
-{
-    return NClob(core::Check(OCI_GetLobByName(*this, name.c_str())), GetHandle());
-}
-
-template<>
-inline Blob Resultset::Get<Blob>(OCI_UInt32 index) const
-{
-    return Blob(core::Check(OCI_GetLob(*this, index)), GetHandle());
-}
-
-template<>
-inline Blob Resultset::Get<Blob>(const ostring& name) const
-{
-    return Blob(core::Check(OCI_GetLobByName(*this,name.c_str())), GetHandle());
-}
-
-template<>
-inline File Resultset::Get<File>(OCI_UInt32 index) const
-{
-    return File(core::Check(OCI_GetFile(*this, index)), GetHandle());
-}
-
-template<>
-inline File Resultset::Get<File>(const ostring& name) const
-{
-    return File(core::Check(OCI_GetFileByName(*this,name.c_str())), GetHandle());
-}
-
-template<>
-inline Clong Resultset::Get<Clong>(OCI_UInt32 index) const
-{
-    return Clong(core::Check(OCI_GetLong(*this, index)), GetHandle());
-}
-
-template<>
-inline Clong Resultset::Get<Clong>(const ostring& name) const
-{
-    return Clong(core::Check(OCI_GetLongByName(*this,name.c_str())), GetHandle());
-}
-
-template<>
-inline Blong Resultset::Get<Blong>(OCI_UInt32 index) const
-{
-    return Blong(core::Check(OCI_GetLong(*this, index)), GetHandle());
-}
-
-template<>
-inline Blong Resultset::Get<Blong>(const ostring& name) const
-{
-    return Blong(core::Check(OCI_GetLongByName(*this,name.c_str())), GetHandle());
+        return core::MakeRaw(buffer.data(), size);
+    }
+    else
+    {
+        return T(core::Check(OCI_GetColl(*this, index)), GetHandle()); }
 }
 
 template<class T>
-T Resultset::Get(OCI_UInt32 index) const
+inline T Resultset::Get(const ostring& name) const
 {
-    return T(core::Check(OCI_GetColl(*this, index)), GetHandle());
-}
+    if      constexpr (std::is_same_v<T, Int16>)  { return core::Check(OCI_GetShortByName(*this, name.c_str())); }
+    else if constexpr (std::is_same_v<T, UInt16>) { return core::Check(OCI_GetUnsignedShortByName(*this, name.c_str())); }
+    else if constexpr (std::is_same_v<T, Int32>)  { return core::Check(OCI_GetIntByName(*this, name.c_str())); }
+    else if constexpr (std::is_same_v<T, UInt32>) { return core::Check(OCI_GetUnsignedIntByName(*this, name.c_str())); }
+    else if constexpr (std::is_same_v<T, Int64>)  { return core::Check(OCI_GetBigIntByName(*this, name.c_str())); }
+    else if constexpr (std::is_same_v<T, UInt64>) { return core::Check(OCI_GetUnsignedBigIntByName(*this, name.c_str())); }
+    else if constexpr (std::is_same_v<T, Float>)      { return core::Check(OCI_GetFloatByName(*this, name.c_str())); }
+    else if constexpr (std::is_same_v<T, Double>)     { return core::Check(OCI_GetDoubleByName(*this, name.c_str())); }
+    else if constexpr (std::is_same_v<T, Number>)     { return Number(core::Check(OCI_GetNumberByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, ostring>)    { return core::MakeString(core::Check(OCI_GetStringByName(*this, name.c_str()))); }
+    else if constexpr (std::is_same_v<T, Date>)       { return Date(core::Check(OCI_GetDateByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Timestamp>)  { return Timestamp(core::Check(OCI_GetTimestampByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Interval>)   { return Interval(core::Check(OCI_GetIntervalByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Object>)     { return Object(core::Check(OCI_GetObjectByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Reference>)  { return Reference(core::Check(OCI_GetRefByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, XmlType>)    { return XmlType(core::Check(OCI_GetXmlTypeByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Vector>)     { return Vector(core::Check(OCI_GetVectorByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Json>)       { return Json(core::Check(OCI_GetJsonByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Statement>)  { return Statement(core::Check(OCI_GetStatementByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Clob>)       { return Clob(core::Check(OCI_GetLobByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, NClob>)      { return NClob(core::Check(OCI_GetLobByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Blob>)       { return Blob(core::Check(OCI_GetLobByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, File>)       { return File(core::Check(OCI_GetFileByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Clong>)      { return Clong(core::Check(OCI_GetLongByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Blong>)      { return Blong(core::Check(OCI_GetLongByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, Raw>)
+    {
+        UInt32 size = core::Check(OCI_GetDataLength(*this, core::Check(OCI_GetColumnIndex(*this, name.c_str()))));
 
-template<class T>
-T Resultset::Get(const ostring& name) const
-{
-    return T(core::Check(OCI_GetCollByName(*this, name.c_str())), GetHandle());
+        std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
+
+        size = core::Check(OCI_GetRawByName(*this, name.c_str(), static_cast<AnyPointer>(buffer.data()), size));
+
+        return core::MakeRaw(buffer.data(), size);
+    }
+    else
+    {
+        return T(core::Check(OCI_GetCollByName(*this, name.c_str())), GetHandle()); }
 }
 
 }

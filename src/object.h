@@ -26,8 +26,8 @@
 OCI_SYM_LOCAL void OcilibObjectGetUserStructSize
 (
     OCI_TypeInfo* typinf,
-    OCI_Size      * p_size,
-    OCI_Size      * p_align
+    OCI_Size    * p_size,
+    OCI_Size    * p_align
 );
 
 OCI_SYM_LOCAL OCI_Object * OcilibObjectInitialize
@@ -37,7 +37,7 @@ OCI_SYM_LOCAL OCI_Object * OcilibObjectInitialize
     void           *handle,
     OCI_TypeInfo   *typinf,
     OCI_Object     *parent,
-    OCI_Int32             index,
+    OCI_Int32       index,
     OCI_Boolean     reset
 );
 
@@ -54,7 +54,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibObjectFree
 OCI_SYM_LOCAL OCI_Object ** OcilibObjectCreateArray
 (
     OCI_TypeInfo *typinf,
-    OCI_UInt32  nbelem
+    OCI_UInt32    nbelem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectFreeArray
@@ -116,13 +116,13 @@ OCI_SYM_LOCAL OCI_UInt64 OcilibObjectGetUnsignedBigInt
     const otext *attr
 );
 
-OCI_SYM_LOCAL double OcilibObjectGetDouble
+OCI_SYM_LOCAL OCI_Double OcilibObjectGetDouble
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_SYM_LOCAL float OcilibObjectGetFloat
+OCI_SYM_LOCAL OCI_Float OcilibObjectGetFloat
 (
     OCI_Object  *obj,
     const otext *attr
@@ -139,7 +139,7 @@ OCI_SYM_LOCAL OCI_Int32 OcilibObjectGetRaw
     OCI_Object  *obj,
     const otext *attr,
     void        *buffer,
-    OCI_UInt32 len
+    OCI_UInt32   len
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibObjectGetRawSize
@@ -214,56 +214,56 @@ OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetShort
 (
     OCI_Object  *obj,
     const otext *attr,
-    OCI_Int16        value
+    OCI_Int16    value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetUnsignedShort
 (
-    OCI_Object    *obj,
-    const otext   *attr,
-    OCI_UInt16 value
+    OCI_Object  *obj,
+    const otext *attr,
+    OCI_UInt16   value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetInt
 (
     OCI_Object  *obj,
     const otext *attr,
-    OCI_Int32          value
+    OCI_Int32    value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetUnsignedInt
 (
     OCI_Object  *obj,
     const otext *attr,
-    OCI_UInt32 value
+    OCI_UInt32   value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetBigInt
 (
     OCI_Object  *obj,
     const otext *attr,
-    OCI_Int64      value
+    OCI_Int64    value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetUnsignedBigInt
 (
     OCI_Object  *obj,
     const otext *attr,
-    OCI_UInt64     value
+    OCI_UInt64   value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetDouble
 (
     OCI_Object  *obj,
     const otext *attr,
-    double       value
+    OCI_Double   value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetFloat
 (
     OCI_Object  *obj,
     const otext *attr,
-    float        value
+    OCI_Float    value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetString
@@ -278,7 +278,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetRaw
     OCI_Object  *obj,
     const otext *attr,
     void       * value,
-    OCI_UInt32 len
+    OCI_UInt32   len
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetDate
@@ -374,9 +374,9 @@ OCI_SYM_LOCAL OCI_Boolean OcilibObjectGetStruct
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectToString
 (
-    OCI_Object   *obj,
+    OCI_Object *obj,
     OCI_UInt32 *size,
-    otext        *str
+    otext      *str
 );
 
 #endif /* OCILIB_OBJECT_H_INCLUDED */

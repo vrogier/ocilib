@@ -20,12 +20,12 @@
 
 /* IMPORTANT NOTICE
  *
- * This file contains explanations about Oracle and OCI technologies. 
- * OCILIB is a wrapper around OCI and thus exposes OCI features. 
+ * This file contains explanations about Oracle and OCI technologies.
+ * OCILIB is a wrapper around OCI and thus exposes OCI features.
  * The OCILIB documentation intends to explain Oracle / OCI concepts
- * and is naturally based on the official Oracle OCI documentation. 
- * 
- * Some parts of OCILIB documentation may include some information 
+ * and is naturally based on the official Oracle OCI documentation.
+ *
+ * Some parts of OCILIB documentation may include some information
  * taken and adapted from the following Oracle documentations :
  *  - Oracle Call Interface Programmer's Guide
  *  - Oracle Streams - Advanced Queuing User's Guide
@@ -75,7 +75,7 @@
 
 #define OCI_GetFormatDate(s)                OCI_GetDefaultFormatDate(OCI_StatementGetConnection(s))
 #define OCI_SetFormatDate(s, f)             OCI_SetDefaultFormatDate(OCI_StatementGetConnection( \
-                                                                         s), f)
+    s), f)
 
 #define OCI_ERR_API                         OCI_ERR_ORACLE
 
@@ -124,8 +124,8 @@
  * TRUE on success otherwise FALSE
  */
 
-#define OCI_SetNull(stmt, index)                                               \
-    OCI_BindSetNull(OCI_GetBind(stmt, index))
+#define OCI_SetNull(stmt, index) \
+        OCI_BindSetNull(OCI_GetBind(stmt, index))
 
 /**
  * @brief
@@ -150,8 +150,8 @@
  * TRUE on success otherwise FALSE
  */
 
-#define OCI_SetNull2(stmt, name)                                               \
-    OCI_BindSetNull(OCI_GetBind2(stmt, name))
+#define OCI_SetNull2(stmt, name) \
+        OCI_BindSetNull(OCI_GetBind2(stmt, name))
 
 /**
  * @brief
@@ -181,8 +181,8 @@
  *
  */
 
-#define OCI_SetNullAtPos(stmt, index, position)                                \
-    OCI_BindSetNullAtPos(OCI_GetBind(stmt, index), position)
+#define OCI_SetNullAtPos(stmt, index, position) \
+        OCI_BindSetNullAtPos(OCI_GetBind(stmt, index), position)
 
 /**
  * @brief
@@ -212,8 +212,8 @@
  *
  */
 
-#define OCI_SetNullAtPos2(stmt, name, position)                                \
-    OCI_BindSetNullAtPos(OCI_GetBind2(stmt, name), position)
+#define OCI_SetNullAtPos2(stmt, name, position) \
+        OCI_BindSetNullAtPos(OCI_GetBind2(stmt, name), position)
 
 /* macro added in version 3.4.0 */
 
@@ -231,11 +231,11 @@
 
 #define OCI_ConnPool                OCI_Pool
 
-#define OCI_ConnPoolCreate(db, us, pw, mo, mi, ma, in)                        \
-    OCI_PoolCreate(db, us, pw, OCI_POOL_CONNECTION, mo, mi, ma, in)
+#define OCI_ConnPoolCreate(db, us, pw, mo, mi, ma, in) \
+        OCI_PoolCreate(db, us, pw, OCI_POOL_CONNECTION, mo, mi, ma, in)
 
-#define OCI_ConnPoolGetConnection(p)                                          \
-    OCI_PoolGetConnection(p, NULL)
+#define OCI_ConnPoolGetConnection(p) \
+        OCI_PoolGetConnection(p, NULL)
 
 #define OCI_ConnPoolFree            OCI_PoolFree
 #define OCI_ConnPoolGetTimeout      OCI_PoolGetConnection
@@ -303,7 +303,6 @@
 
 #define OCI_STRING_FORMAT_NUM_BIN               OCI_STRING_FORMAT_NUM_BDOUBLE
 
-
 /* macro added in version 4.7.7 */
 
 #define OCI_SIZE_LONG                           OCI_SIZE_PIECE_DYNAMIC_FETCH
@@ -312,7 +311,7 @@
 
 /* typedefs added in version 5.0.0 */
 
-typedef OCI_Int64  big_int;
+typedef OCI_Int64 big_int;
 typedef OCI_UInt64 big_uint;
 
 /**

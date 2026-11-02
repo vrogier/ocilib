@@ -68,7 +68,7 @@ int main(OCI_Int32 argc, char **argv)
     /* build ordinates collection with test values */
     for (i = 0; i < NB_ELEM; i++)
     {
-        OCI_ElemSetDouble(elem_ord, (double)i);
+        OCI_ElemSetDouble(elem_ord, (OCI_Double)i);
         OCI_CollAppend(coll_ord, elem_ord);
         OCI_CollAppend(coll_ord, elem_ord);
     }

@@ -27,7 +27,7 @@
 namespace ocilib
 {
 
-inline Transaction::Transaction(const Connection &connection, OCI_UInt32 timeout, TransactionFlags flags, OCI_XID *pxid)
+inline Transaction::Transaction(const Connection &connection, UInt32 timeout, TransactionFlags flags, OCI_XID *pxid)
 {
     AcquireAllocated
     (
@@ -71,7 +71,7 @@ inline Transaction::TransactionFlags Transaction::GetFlags() const
     return TransactionFlags(static_cast<TransactionFlags::Type>(core::Check(OCI_TransactionGetMode(*this))));
 }
 
-inline OCI_UInt32 Transaction::GetTimeout() const
+inline UInt32 Transaction::GetTimeout() const
 {
     return core::Check(OCI_TransactionGetTimeout(*this));
 }

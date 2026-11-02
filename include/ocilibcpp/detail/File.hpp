@@ -57,16 +57,16 @@ namespace ocilib
         AcquireTransient(pFile, parent);
     }
 
-    inline Raw File::Read(OCI_UInt32 size)
+    inline Raw File::Read(UInt32 size)
     {
-        std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
+        std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
 
         size = core::Check(OCI_FileRead(*this, static_cast<AnyPointer>(buffer.data()), size));
 
         return core::MakeRaw(buffer.data(), size);
     }
 
-    inline bool File::Seek(SeekMode seekMode, OCI_UInt64 offset)
+    inline bool File::Seek(SeekMode seekMode, UInt64 offset)
     {
         return (core::Check(OCI_FileSeek(*this, offset, seekMode)) == TRUE);
     }
@@ -93,12 +93,12 @@ namespace ocilib
         return (core::Check(OCI_FileIsEqual(*this, other)) == TRUE);
     }
 
-    inline OCI_UInt64 File::GetOffset() const
+    inline UInt64 File::GetOffset() const
     {
         return core::Check(OCI_FileGetOffset(*this));
     }
 
-    inline OCI_UInt64 File::GetLength() const
+    inline UInt64 File::GetLength() const
     {
         return core::Check(OCI_FileGetSize(*this));
     }

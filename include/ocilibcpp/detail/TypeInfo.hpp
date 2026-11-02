@@ -63,12 +63,12 @@ namespace ocilib
         );
     }
 
-    inline OCI_UInt32 TypeInfo::GetColumnCount() const
+    inline UInt32 TypeInfo::GetColumnCount() const
     {
         return core::Check(OCI_TypeInfoGetColumnCount(*this));
     }
 
-    inline Column TypeInfo::GetColumn(OCI_UInt32 index) const
+    inline Column TypeInfo::GetColumn(UInt32 index) const
     {
         return Column(core::Check(OCI_TypeInfoGetColumn(*this, index)), GetHandle());
     }

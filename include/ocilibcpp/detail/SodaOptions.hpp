@@ -47,12 +47,12 @@ namespace ocilib
     {
         std::vector<const otext*> ptrs(keys.size());
 
-        for (OCI_Size i = 0; i < keys.size(); ++i)
+        for (Size i = 0; i < keys.size(); ++i)
         {
             ptrs[i] = keys[i].c_str();
         }
 
-        core::Check(OCI_SodaOptionsSetKeys(*this, ptrs.data(), static_cast<OCI_UInt32>(keys.size())));
+        core::Check(OCI_SodaOptionsSetKeys(*this, ptrs.data(), static_cast<UInt32>(keys.size())));
     }
 
     inline void SodaOptions::SetVersion(const ostring& version)
@@ -65,12 +65,12 @@ namespace ocilib
         core::Check(OCI_SodaOptionsSetFilter(*this, filter.c_str()));
     }
 
-    inline void SodaOptions::SetSkip(OCI_UInt32 count)
+    inline void SodaOptions::SetSkip(UInt32 count)
     {
         core::Check(OCI_SodaOptionsSetSkip(*this, count));
     }
 
-    inline void SodaOptions::SetLimit(OCI_UInt32 count)
+    inline void SodaOptions::SetLimit(UInt32 count)
     {
         core::Check(OCI_SodaOptionsSetLimit(*this, count));
     }

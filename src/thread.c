@@ -158,7 +158,7 @@ boolean OcilibThreadFree
     {
         OcilibMemoryFreeHandle(thread->err, OCI_HTYPE_ERROR);
     }
-    
+
     /* free thread structure */
 
     OcilibErrorResetSource(NULL, thread);

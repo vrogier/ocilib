@@ -38,7 +38,7 @@ OCI_SYM_LOCAL OCI_Json * OcilibJsonCreate
 OCI_SYM_LOCAL OCI_Json ** OcilibJsonArrayCreate
 (
     OCI_Connection *con,
-    OCI_UInt32    nbelem
+    OCI_UInt32      nbelem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibJsonFree
@@ -60,31 +60,31 @@ OCI_SYM_LOCAL OCI_Boolean OcilibJsonLoadText
 (
     OCI_Json          *json,
     const otext       *text,
-    OCI_UInt32       length,
+    OCI_UInt32         length,
     OCI_JsonValidation validation,
     OCI_JsonEncoding   encoding
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibJsonLoadBinary
 (
-    OCI_Json    *json,
-    const void  *data,
-    OCI_UInt32 length
+    OCI_Json   *json,
+    const void *data,
+    OCI_UInt32  length
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibJsonToText
 (
     OCI_Json     *json,
     otext        *buffer,
-    OCI_UInt32 *length,
+    OCI_UInt32   *length,
     OCI_JsonPrint print,
     OCI_Boolean   useEnvCharset
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibJsonToBinary
 (
-    OCI_Json     *json,
-    void         *buffer,
+    OCI_Json   *json,
+    void       *buffer,
     OCI_UInt32 *length
 );
 

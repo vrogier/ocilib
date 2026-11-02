@@ -28,13 +28,13 @@ OCI_SYM_LOCAL OCI_Bind* OcilibBindCreate
     OCI_Statement* stmt,
     void         * data,
     const otext  * name,
-    OCI_UInt32   mode,
+    OCI_UInt32     mode,
     ub4            size,
     ub1            type,
     OCI_SqlType    code,
     OCI_SubType    subtype,
     OCI_TypeInfo * typinf,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibBindFree
@@ -50,9 +50,9 @@ OCI_SYM_LOCAL OCI_Int32 OcilibBindGetIndex
 
 OCI_SYM_LOCAL OCI_Boolean OcilibBindSetNullIndicator
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 position,
-    sb2          value
+    sb2        value
 );
 
 OCI_SYM_LOCAL const otext* OcilibBindGetName
@@ -87,13 +87,13 @@ OCI_SYM_LOCAL OCI_Statement* OcilibBindGetStatement
 
 OCI_SYM_LOCAL OCI_Boolean OcilibBindSetDataSize
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 size
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibBindSetDataSizeAtPos
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 position,
     OCI_UInt32 size
 );
@@ -105,13 +105,13 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibBindGetDataSize
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibBindGetDataSizeAtPos
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 position
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibBindSetNullAtPos
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 position
 );
 
@@ -122,7 +122,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibBindSetNull
 
 OCI_SYM_LOCAL OCI_Boolean OcilibBindSetNotNullAtPos
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 position
 );
 
@@ -133,7 +133,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibBindSetNotNull
 
 OCI_SYM_LOCAL OCI_Boolean OcilibBindIsNullAtPos
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 position
 );
 

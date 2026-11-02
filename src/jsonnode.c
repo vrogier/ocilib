@@ -37,8 +37,8 @@ static oratext * JsonNodeNativeToOra
 (
     OCI_Environment *env,
     const dbtext    *src,
-    OCI_Size           src_count,
-    OCI_Size          *ora_len
+    OCI_Size         src_count,
+    OCI_Size        *ora_len
 )
 {
     oratext *dst = (oratext *) OcilibMemoryAlloc(env, OCI_IPC_VOID,
@@ -60,7 +60,7 @@ static otext * JsonNodeOraToNative
 (
     OCI_Environment *env,
     const oratext   *src,
-    OCI_Size           src_count
+    OCI_Size         src_count
 )
 {
     otext *dst = (otext *) OcilibMemoryAlloc(env, OCI_IPC_VOID,
@@ -326,7 +326,7 @@ OCI_JsonType OcilibJsonNodeGetType
 const otext * OcilibJsonNodeGetString
 (
     OCI_JsonNode *node,
-    OCI_UInt32 *length
+    OCI_UInt32   *length
 )
 {
     ENTER_FUNC
@@ -459,7 +459,7 @@ OCI_UInt32 OcilibJsonNodeGetFieldCount
 const otext * OcilibJsonNodeGetFieldName
 (
     OCI_JsonNode *node,
-    OCI_UInt32  index
+    OCI_UInt32    index
 )
 {
     ENTER_FUNC
@@ -482,7 +482,8 @@ const otext * OcilibJsonNodeGetFieldName
     if (node->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     index--;
-    if (index >= JsonDomGetNumFields(node->json->jdoc, (jznDomObject *)node->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index); }
+    if (index >= JsonDomGetNumFields(node->json->jdoc, (jznDomObject *)node->handle)) { THROW(OcilibExceptionOutOfBounds,
+                                                                                              (OCI_Int32) index); }
 
     memset(&nvp, 0, sizeof(nvp));
 
@@ -538,8 +539,8 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByName
     OCI_JsonNode *field   = NULL;
     dbtext       *dbstr   = NULL;
     oratext      *orakey  = NULL;
-    OCI_Size        ora_len = 0;
-    OCI_Int32           dbsize  = -1;
+    OCI_Size      ora_len = 0;
+    OCI_Int32     dbsize  = -1;
     jznDomNode   *hnd     = NULL;
 
     CHECK_PTR(OCI_IPC_JSON_NODE, node);
@@ -602,7 +603,7 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByName
 OCI_JsonNode * OcilibJsonNodeGetFieldByIndex
 (
     OCI_JsonNode *node,
-    OCI_UInt32  index
+    OCI_UInt32    index
 )
 {
     ENTER_FUNC
@@ -623,7 +624,8 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByIndex
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
     CHECK_NULL(node->json->jdoc);
     if (node->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
-    if (index >= JsonDomGetNumFields(node->json->jdoc, (jznDomObject *)node->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index); }
+    if (index >= JsonDomGetNumFields(node->json->jdoc, (jznDomObject *)node->handle)) { THROW(OcilibExceptionOutOfBounds,
+                                                                                              (OCI_Int32) index); }
 
     memset(&nvp, 0, sizeof(nvp));
 
@@ -699,7 +701,7 @@ OCI_UInt32 OcilibJsonNodeGetItemCount
 OCI_JsonNode * OcilibJsonNodeGetItem
 (
     OCI_JsonNode *node,
-    OCI_UInt32  index
+    OCI_UInt32    index
 )
 {
     ENTER_FUNC
@@ -719,7 +721,7 @@ OCI_JsonNode * OcilibJsonNodeGetItem
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
     CHECK_NULL(node->json->jdoc);
     if (node->type != OCI_JNT_ARRAY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
-    if (index >= JsonDomGetArraySize(node->json->jdoc, (jznDomArray *)node->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index); }
+    if (index >= JsonDomGetArraySize(node->json->jdoc, (jznDomArray *)node->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index);}
 
     hnd = JsonDomGetArrayElement(node->json->jdoc,
                                  (jznDomArray*)node->handle,
@@ -819,8 +821,8 @@ OCI_Number * OcilibJsonNodeGetNumber
     else
     {
         const otext *fmt     = OcilibEnvironmentGetFormat(node->json->env, OCI_FMT_NUMERIC);
-        OCI_Int32          dbsize  = -1;
-        OCI_Int32          fmtsize = -1;
+        OCI_Int32    dbsize  = -1;
+        OCI_Int32    fmtsize = -1;
 
         CHECK_NULL(fmt);
 
@@ -933,7 +935,7 @@ OCI_Boolean OcilibJsonNodeGetBoolean
 const void * OcilibJsonNodeGetBinary
 (
     OCI_JsonNode *node,
-    OCI_UInt32 *length
+    OCI_UInt32   *length
 )
 {
     ENTER_FUNC
@@ -1103,7 +1105,7 @@ OCI_Timestamp * OcilibJsonNodeGetTimestamp
         signed char tz_minute = (signed char) aux.dt_JsonOCIVal.tzMinuteOffset_JsonDateTime;
         otext       tz[8]     = { 0 };
         OraText    *tzp       = (OraText *)NULL;
-        OCI_Size      tz_len    = 0;
+        OCI_Size    tz_len    = 0;
 
         if (OCI_TIMESTAMP_TZ == ttype)
         {
@@ -1421,7 +1423,7 @@ OCI_JsonNode * OcilibJsonNodeCreateString
 (
     OCI_Json    *json,
     const otext *value,
-    OCI_UInt32 length
+    OCI_UInt32   length
 )
 {
     ENTER_FUNC
@@ -1437,8 +1439,8 @@ OCI_JsonNode * OcilibJsonNodeCreateString
     jznScalarVal  sval;
     dbtext       *dbstr   = NULL;
     oratext      *orastr  = NULL;
-    OCI_Size        ora_len = 0;
-    OCI_Int32           dbsize  = (length == 0 ? -1 : (OCI_Int32)(length * sizeof(otext)));
+    OCI_Size      ora_len = 0;
+    OCI_Int32     dbsize  = (length == 0 ? -1 : (OCI_Int32)(length * sizeof(otext)));
 
     CHECK_PTR(OCI_IPC_JSON, json);
     CHECK_PTR(OCI_IPC_STRING, value);
@@ -1626,9 +1628,9 @@ OCI_JsonNode * OcilibJsonNodeCreateBoolean
 
 OCI_JsonNode * OcilibJsonNodeCreateBinary
 (
-    OCI_Json    *json,
-    const void  *value,
-    OCI_UInt32 length
+    OCI_Json   *json,
+    const void *value,
+    OCI_UInt32  length
 )
 {
     ENTER_FUNC
@@ -1689,7 +1691,7 @@ OCI_Boolean OcilibJsonNodeSetString
 (
     OCI_JsonNode *node,
     const otext  *value,
-    OCI_UInt32  length
+    OCI_UInt32    length
 )
 {
     ENTER_FUNC
@@ -1704,8 +1706,8 @@ OCI_Boolean OcilibJsonNodeSetString
     jznDomNode  *hnd     = NULL;
     dbtext      *dbstr   = NULL;
     oratext     *orastr  = NULL;
-    OCI_Size       ora_len = 0;
-    OCI_Int32          dbsize  = (length == 0 ? -1 : (OCI_Int32)(length * sizeof(otext)));
+    OCI_Size     ora_len = 0;
+    OCI_Int32    dbsize  = (length == 0 ? -1 : (OCI_Int32)(length * sizeof(otext)));
 
     CHECK_PTR(OCI_IPC_JSON_NODE, node);
     CHECK_PTR(OCI_IPC_STRING, value);
@@ -1875,7 +1877,7 @@ OCI_Boolean OcilibJsonNodeSetBinary
 (
     OCI_JsonNode *node,
     const void   *value,
-    OCI_UInt32  length
+    OCI_UInt32    length
 )
 {
     ENTER_FUNC
@@ -1982,10 +1984,10 @@ OCI_Boolean OcilibJsonNodeSetField
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
-    dbtext  *dbstr   = NULL;
-    oratext *orakey  = NULL;
-    OCI_Size   ora_len = 0;
-    OCI_Int32      dbsize  = -1;
+    dbtext   *dbstr   = NULL;
+    oratext  *orakey  = NULL;
+    OCI_Size  ora_len = 0;
+    OCI_Int32 dbsize  = -1;
 
     CHECK_PTR(OCI_IPC_JSON_NODE, obj);
     CHECK_PTR(OCI_IPC_STRING, name);
@@ -2038,7 +2040,7 @@ OCI_Boolean OcilibJsonNodeSetField
 OCI_Boolean OcilibJsonNodeSetItem
 (
     OCI_JsonNode *arr,
-    OCI_UInt32  index,
+    OCI_UInt32    index,
     OCI_JsonNode *value
 )
 {

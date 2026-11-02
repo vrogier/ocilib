@@ -550,9 +550,9 @@ static OCI_Boolean OcilibStatementReset
 
 static OCI_Boolean OcilibStatementBindCheck
 (
-    OCI_Bind    *bnd,
-    ub1         *src,
-    ub1         *dst,
+    OCI_Bind  *bnd,
+    ub1       *src,
+    ub1       *dst,
     OCI_UInt32 index
 )
 {
@@ -592,7 +592,7 @@ static OCI_Boolean OcilibStatementBindCheck
             }
             else if (OCI_NUM_BIGINT & bnd->subtype)
             {
-                OCI_Int64   *src_bint = OCI_BIND_GET_SCALAR(src, OCI_Int64, index);
+                OCI_Int64 *src_bint = OCI_BIND_GET_SCALAR(src, OCI_Int64, index);
                 OCINumber *dst_num  = OCI_BIND_GET_BUFFER(dst, OCINumber, index);
 
                 CHECK(OcilibNumberTranslateValue(bnd->stmt->con->env, src_bint,
@@ -623,9 +623,9 @@ static OCI_Boolean OcilibStatementBindCheck
         {
             if (bnd->stmt->con->env->use_wide_char_conv)
             {
-                const OCI_Int32    max_chars  = (OCI_Int32) (bnd->size / sizeof(dbtext));
-                const OCI_Size src_offset = index * max_chars * sizeof(otext);
-                const OCI_Size dst_offset = index * max_chars * sizeof(dbtext);
+                const OCI_Int32 max_chars  = (OCI_Int32) (bnd->size / sizeof(dbtext));
+                const OCI_Size  src_offset = index * max_chars * sizeof(otext);
+                const OCI_Size  dst_offset = index * max_chars * sizeof(dbtext);
 
                 OcilibStringUTF32ToUTF16(src + src_offset, dst + dst_offset, max_chars - 1);
             }
@@ -683,9 +683,9 @@ static OCI_Boolean OcilibStatementBindCheck
 
 static OCI_Boolean OcilibStatementBindUpdate
 (
-    OCI_Bind    *bnd,
-    ub1         *src,
-    ub1         *dst,
+    OCI_Bind  *bnd,
+    ub1       *src,
+    ub1       *dst,
     OCI_UInt32 index
 )
 {
@@ -724,7 +724,7 @@ static OCI_Boolean OcilibStatementBindUpdate
         else if (OCI_NUM_BIGINT & bnd->subtype)
         {
             OCINumber *src_number = OCI_BIND_GET_BUFFER(src, OCINumber, index);
-            OCI_Int64   *dst_bint   = OCI_BIND_GET_SCALAR(dst, OCI_Int64, index);
+            OCI_Int64 *dst_bint   = OCI_BIND_GET_SCALAR(dst, OCI_Int64, index);
 
             if (dst_bint)
             {
@@ -773,9 +773,9 @@ static OCI_Boolean OcilibStatementBindUpdate
     {
         if (bnd->stmt->con->env->use_wide_char_conv)
         {
-            const OCI_Int32    max_chars  = (OCI_Int32) (bnd->size / sizeof(dbtext));
-            const OCI_Size src_offset = index * max_chars * sizeof(dbtext);
-            const OCI_Size dst_offset = index * max_chars * sizeof(otext);
+            const OCI_Int32 max_chars  = (OCI_Int32) (bnd->size / sizeof(dbtext));
+            const OCI_Size  src_offset = index * max_chars * sizeof(dbtext);
+            const OCI_Size  dst_offset = index * max_chars * sizeof(otext);
 
             OcilibStringUTF16ToUTF32(src + src_offset, dst + dst_offset, max_chars - 1);
         }
@@ -1030,8 +1030,8 @@ OCI_Boolean OcilibStatementFetchIntoUserVariables
                 }
                 case OCI_ARG_TEXT_N:
                 {
-                    const otext       *src   = OcilibResultsetGetString(rs, i);
-                    otext             *dst   = va_arg(args, otext *);
+                    const otext     *src   = OcilibResultsetGetString(rs, i);
+                    otext           *dst   = va_arg(args, otext *);
                     const OCI_UInt32 count = va_arg(args, OCI_UInt32);
 
                     if (dst && count > 0)
@@ -1081,12 +1081,12 @@ OCI_Boolean OcilibStatementFetchIntoUserVariables
                 }
                 case OCI_ARG_DOUBLE:
                 {
-                    SET_ARG_NUM(double, OcilibResultsetGetDouble);
+                    SET_ARG_NUM(OCI_Double, OcilibResultsetGetDouble);
                     break;
                 }
                 case OCI_ARG_FLOAT:
                 {
-                    SET_ARG_NUM(float, OcilibResultsetGetFloat);
+                    SET_ARG_NUM(OCI_Float, OcilibResultsetGetFloat);
                     break;
                 }
                 case OCI_ARG_NUMBER:
@@ -1214,8 +1214,8 @@ OCI_Statement * OcilibStatementInitialize
         }
         else
         {
-            dbtext *dbstr  = NULL;
-            OCI_Int32     dbsize = 0;
+            dbtext   *dbstr  = NULL;
+            OCI_Int32 dbsize = 0;
 
             CHECK_ATTRIB_GET
             (
@@ -1414,9 +1414,9 @@ static OCI_Boolean OcilibStatementBatchErrorInit
 
             if (NULL != hndl)
             {
-                sb4   err_code = 0;
-                otext buffer[512];
-                OCI_Int32   err_size = osizeof(buffer);
+                sb4       err_code = 0;
+                otext     buffer[512];
+                OCI_Int32 err_size = osizeof(buffer);
 
                 dbtext * err_msg = OcilibStringGetDBString(stmt->con->env, buffer, &err_size);
 
@@ -1471,8 +1471,8 @@ OCI_Boolean OcilibStatementPrepareInternal
         /* context */ OCI_IPC_STATEMENT, stmt
     );
 
-    dbtext *dbstr  = NULL;
-    OCI_Int32     dbsize = -1;
+    dbtext   *dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt);
 
@@ -2340,7 +2340,7 @@ OCI_Boolean OcilibStatementDescribeFmt
 OCI_Boolean OcilibStatementSetBindArraySize
 (
     OCI_Statement *stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 )
 {
     ENTER_FUNC
@@ -2489,7 +2489,7 @@ OCI_Bind* OcilibStatementBindArrayOfNumbers
     OCI_Statement *stmt,
     const otext   *name,
     OCI_Number   **data,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2506,7 +2506,7 @@ OCI_Bind* OcilibStatementBindShort
 (
     OCI_Statement *stmt,
     const otext   *name,
-    OCI_Int16         *data
+    OCI_Int16     *data
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2523,8 +2523,8 @@ OCI_Bind* OcilibStatementBindArrayOfShorts
 (
     OCI_Statement *stmt,
     const otext   *name,
-    OCI_Int16         *data,
-    OCI_UInt32   nbelem
+    OCI_Int16     *data,
+    OCI_UInt32     nbelem
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2539,9 +2539,9 @@ OCI_Bind* OcilibStatementBindArrayOfShorts
 
 OCI_Bind* OcilibStatementBindUnsignedShort
 (
-    OCI_Statement  *stmt,
-    const otext    *name,
-    OCI_UInt16 *data
+    OCI_Statement *stmt,
+    const otext   *name,
+    OCI_UInt16    *data
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2556,10 +2556,10 @@ OCI_Bind* OcilibStatementBindUnsignedShort
 
 OCI_Bind* OcilibStatementBindArrayOfUnsignedShorts
 (
-    OCI_Statement  *stmt,
-    const otext    *name,
-    OCI_UInt16 *data,
-    OCI_UInt32    nbelem
+    OCI_Statement *stmt,
+    const otext   *name,
+    OCI_UInt16    *data,
+    OCI_UInt32     nbelem
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2576,7 +2576,7 @@ OCI_Bind* OcilibStatementBindInt
 (
     OCI_Statement *stmt,
     const otext   *name,
-    OCI_Int32           *data
+    OCI_Int32     *data
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2593,8 +2593,8 @@ OCI_Bind* OcilibStatementBindArrayOfInts
 (
     OCI_Statement *stmt,
     const otext   *name,
-    OCI_Int32           *data,
-    OCI_UInt32   nbelem
+    OCI_Int32     *data,
+    OCI_UInt32     nbelem
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2611,7 +2611,7 @@ OCI_Bind* OcilibStatementBindUnsignedInt
 (
     OCI_Statement *stmt,
     const otext   *name,
-    OCI_UInt32  *data
+    OCI_UInt32    *data
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2628,8 +2628,8 @@ OCI_Bind* OcilibStatementBindArrayOfUnsignedInts
 (
     OCI_Statement *stmt,
     const otext   *name,
-    OCI_UInt32  *data,
-    OCI_UInt32   nbelem
+    OCI_UInt32    *data,
+    OCI_UInt32     nbelem
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2646,7 +2646,7 @@ OCI_Bind* OcilibStatementBindBigInt
 (
     OCI_Statement *stmt,
     const otext   *name,
-    OCI_Int64       *data
+    OCI_Int64     *data
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2663,8 +2663,8 @@ OCI_Bind* OcilibStatementBindArrayOfBigInts
 (
     OCI_Statement *stmt,
     const otext   *name,
-    OCI_Int64       *data,
-    OCI_UInt32   nbelem
+    OCI_Int64     *data,
+    OCI_UInt32     nbelem
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2681,7 +2681,7 @@ OCI_Bind* OcilibStatementBindUnsignedBigInt
 (
     OCI_Statement *stmt,
     const otext   *name,
-    OCI_UInt64      *data
+    OCI_UInt64    *data
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2698,8 +2698,8 @@ OCI_Bind* OcilibStatementBindArrayOfUnsignedBigInts
 (
     OCI_Statement *stmt,
     const otext   *name,
-    OCI_UInt64      *data,
-    OCI_UInt32   nbelem
+    OCI_UInt64    *data,
+    OCI_UInt32     nbelem
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -2717,7 +2717,7 @@ OCI_Bind* OcilibStatementBindString
     OCI_Statement *stmt,
     const otext   *name,
     otext         *data,
-    OCI_UInt32   len
+    OCI_UInt32     len
 )
 {
     ENTER_FUNC
@@ -2762,8 +2762,8 @@ OCI_Bind* OcilibStatementBindArrayOfStrings
     OCI_Statement *stmt,
     const otext   *name,
     otext         *data,
-    OCI_UInt32   len,
-    OCI_UInt32   nbelem
+    OCI_UInt32     len,
+    OCI_UInt32     nbelem
 )
 {
     ENTER_FUNC
@@ -2791,7 +2791,7 @@ OCI_Bind* OcilibStatementBindRaw
     OCI_Statement *stmt,
     const otext   *name,
     void          *data,
-    OCI_UInt32   len
+    OCI_UInt32     len
 )
 {
     ENTER_FUNC
@@ -2825,8 +2825,8 @@ OCI_Bind* OcilibStatementBindArrayOfRaws
     OCI_Statement *stmt,
     const otext   *name,
     void          *data,
-    OCI_UInt32   len,
-    OCI_UInt32   nbelem
+    OCI_UInt32     len,
+    OCI_UInt32     nbelem
 )
 {
     ENTER_FUNC
@@ -2851,7 +2851,7 @@ OCI_Bind* OcilibStatementBindDouble
 (
     OCI_Statement *stmt,
     const otext   *name,
-    double        *data
+    OCI_Double    *data
 )
 {
     ENTER_FUNC
@@ -2873,7 +2873,7 @@ OCI_Bind* OcilibStatementBindDouble
 
 #endif
 
-    BIND_DATA(sizeof(double), OCI_CDT_NUMERIC, code, OCI_NUM_DOUBLE, NULL, 0);
+    BIND_DATA(sizeof(OCI_Double), OCI_CDT_NUMERIC, code, OCI_NUM_DOUBLE, NULL, 0);
 
     EXIT_FUNC();
 }
@@ -2886,8 +2886,8 @@ OCI_Bind* OcilibStatementBindArrayOfDoubles
 (
     OCI_Statement *stmt,
     const otext   *name,
-    double        *data,
-    OCI_UInt32   nbelem
+    OCI_Double    *data,
+    OCI_UInt32     nbelem
 )
 {
     ENTER_FUNC
@@ -2909,7 +2909,7 @@ OCI_Bind* OcilibStatementBindArrayOfDoubles
 
 #endif
 
-    BIND_DATA(sizeof(double), OCI_CDT_NUMERIC, code, OCI_NUM_DOUBLE, NULL, nbelem);
+    BIND_DATA(sizeof(OCI_Double), OCI_CDT_NUMERIC, code, OCI_NUM_DOUBLE, NULL, nbelem);
 
     EXIT_FUNC();
 }
@@ -2922,7 +2922,7 @@ OCI_Bind* OcilibStatementBindFloat
 (
     OCI_Statement *stmt,
     const otext   *name,
-    float         *data
+    OCI_Float     *data
 )
 {
     ENTER_FUNC
@@ -2944,7 +2944,7 @@ OCI_Bind* OcilibStatementBindFloat
 
 #endif
 
-    BIND_DATA(sizeof(float), OCI_CDT_NUMERIC, code, OCI_NUM_FLOAT, NULL, 0);
+    BIND_DATA(sizeof(OCI_Float), OCI_CDT_NUMERIC, code, OCI_NUM_FLOAT, NULL, 0);
 
     EXIT_FUNC();
 }
@@ -2957,8 +2957,8 @@ OCI_Bind* OcilibStatementBindArrayOfFloats
 (
     OCI_Statement *stmt,
     const otext   *name,
-    float         *data,
-    OCI_UInt32   nbelem
+    OCI_Float     *data,
+    OCI_UInt32     nbelem
 )
 {
     ENTER_FUNC
@@ -2980,7 +2980,7 @@ OCI_Bind* OcilibStatementBindArrayOfFloats
 
 #endif
 
-    BIND_DATA(sizeof(float), OCI_CDT_NUMERIC, code, OCI_NUM_FLOAT, NULL, nbelem);
+    BIND_DATA(sizeof(OCI_Float), OCI_CDT_NUMERIC, code, OCI_NUM_FLOAT, NULL, nbelem);
 
     EXIT_FUNC();
 }
@@ -3011,7 +3011,7 @@ OCI_Bind* OcilibStatementBindArrayOfDates
     OCI_Statement *stmt,
     const otext   *name,
     OCI_Date     **data,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     BIND_CALL_NULL_ALLOWED
@@ -3061,7 +3061,7 @@ OCI_Bind* OcilibStatementBindArrayOfTimestamps
     const otext      *name,
     OCI_Timestamp   **data,
     OCI_TimestampType type,
-    OCI_UInt32      nbelem
+    OCI_UInt32        nbelem
 )
 {
     ENTER_FUNC
@@ -3137,7 +3137,7 @@ OCI_Bind* OcilibStatementBindArrayOfIntervals
     const otext     *name,
     OCI_Interval   **data,
     OCI_IntervalType type,
-    OCI_UInt32     nbelem
+    OCI_UInt32       nbelem
 )
 {
     ENTER_FUNC
@@ -3195,7 +3195,7 @@ OCI_Bind* OcilibStatementBindArrayOfObjects
     const otext   *name,
     OCI_Object   **data,
     OCI_TypeInfo  *typinf,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     ENTER_FUNC
@@ -3255,7 +3255,7 @@ OCI_Bind* OcilibStatementBindArrayOfVectors
     OCI_Statement *stmt,
     const otext   *name,
     OCI_Vector   **data,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     ENTER_FUNC
@@ -3341,7 +3341,7 @@ OCI_Bind* OcilibStatementBindArrayOfJsons
     OCI_Statement *stmt,
     const otext   *name,
     OCI_Json     **data,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     ENTER_FUNC
@@ -3376,7 +3376,7 @@ OCI_Bind* OcilibStatementBindArrayOfLobs
     const otext   *name,
     OCI_Lob      **data,
     OCI_LobType    type,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     ENTER_FUNC
@@ -3426,7 +3426,7 @@ OCI_Bind* OcilibStatementBindArrayOfFiles
     const otext   *name,
     OCI_File     **data,
     OCI_FileType   type,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     ENTER_FUNC
@@ -3472,7 +3472,7 @@ OCI_Bind* OcilibStatementBindArrayOfReferences
     const otext   *name,
     OCI_Ref      **data,
     OCI_TypeInfo  *typinf,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     BIND_CALL_NULL_FORBIDDEN
@@ -3508,7 +3508,7 @@ OCI_Bind* OcilibStatementBindArrayOfCollections
     const otext   *name,
     OCI_Coll     **data,
     OCI_TypeInfo  *typinf,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     BIND_CALL_NULL_FORBIDDEN
@@ -3550,7 +3550,7 @@ OCI_Bind* OcilibStatementBindLong
     OCI_Statement *stmt,
     const otext   *name,
     OCI_Long      *data,
-    OCI_UInt32   size
+    OCI_UInt32     size
 )
 {
     BIND_CALL_NULL_FORBIDDEN
@@ -3661,7 +3661,7 @@ OCI_Boolean OcilibStatementRegisterString
 (
     OCI_Statement *stmt,
     const otext   *name,
-    OCI_UInt32   len
+    OCI_UInt32     len
 )
 {
     ENTER_FUNC
@@ -3688,7 +3688,7 @@ OCI_Boolean OcilibStatementRegisterRaw
 (
     OCI_Statement *stmt,
     const otext   *name,
-    OCI_UInt32   len
+    OCI_UInt32     len
 )
 {
     ENTER_FUNC
@@ -4147,7 +4147,7 @@ OCI_BindAllocationMode OcilibStatementGetBindAllocation
 OCI_Boolean OcilibStatementSetFetchSize
 (
     OCI_Statement *stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 )
 {
     ENTER_FUNC
@@ -4190,7 +4190,7 @@ OCI_UInt32 OcilibStatementGetFetchSize
 OCI_Boolean OcilibStatementSetPrefetchSize
 (
     OCI_Statement *stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 )
 {
     ENTER_FUNC
@@ -4249,7 +4249,7 @@ OCI_UInt32 OcilibStatementGetPrefetchSize
 OCI_Boolean OcilibStatementSetPrefetchMemory
 (
     OCI_Statement *stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 )
 {
     ENTER_FUNC
@@ -4301,7 +4301,7 @@ OCI_UInt32 OcilibStatementGetPrefetchMemory
 OCI_Boolean OcilibStatementSetPieceSize
 (
     OCI_Statement *stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 )
 {
     ENTER_FUNC
@@ -4495,7 +4495,7 @@ OCI_UInt32 OcilibStatementGetBindCount
 OCI_Bind * OcilibStatementGetBind
 (
     OCI_Statement *stmt,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     ENTER_FUNC
@@ -4730,7 +4730,7 @@ OCI_SQLCommand OcilibStatementGetSqlCommand
 OCI_SYM_LOCAL OCI_Boolean OcilibStatementGetParseBindNames
 (
     OCI_Statement* stmt,
-    OCI_UInt32 * count,
+    OCI_UInt32   * count,
     const otext*** names
 )
 {

@@ -569,8 +569,8 @@ void test_bind2(void)
     OCI_File *file;
 
     OCI_Int32 i;
-    double dbl;
-    float flt;
+    OCI_Double dbl;
+    OCI_Float flt;
     OCI_UInt32 char_count, byte_count;
 
     print_text("\n>>>>> SINGLE BINDING \n\n");
@@ -608,7 +608,7 @@ void test_bind2(void)
     /* scalar types */
     i   = 1;
     dbl = 3.14;
-    flt = (float) 3.14;
+    flt = (OCI_Float) 3.14;
     osprintf(temp, SIZE_STR+1, OTEXT("Name00"));
 
     /* bind scalar C types arrays */
@@ -1136,8 +1136,8 @@ void test_returning_array(void)
     /* arrays */
     OCI_Int32       tab_int [SIZE_TAB];
     otext     tab_str [SIZE_TAB][31];
-    float     tab_flt [SIZE_TAB];
-    double    tab_dbl [SIZE_TAB];
+    OCI_Float     tab_flt [SIZE_TAB];
+    OCI_Double    tab_dbl [SIZE_TAB];
 
     OCI_Date  **tab_date = OCI_DateArrayCreate(env, SIZE_TAB);
     OCI_Lob   **tab_lob  = OCI_LobArrayCreate(cn,  OCI_CLOB, SIZE_TAB);
@@ -1200,8 +1200,8 @@ void test_returning_array(void)
     {
         /* scalar types */
         tab_int[i] = i+1;
-        tab_dbl[i] = 3.14*(double)(i+1);
-        tab_flt[i] = (float) 3.14*(float)(i+1);
+        tab_dbl[i] = 3.14*(OCI_Double)(i+1);
+        tab_flt[i] = (OCI_Float) 3.14*(OCI_Float)(i+1);
         osprintf(tab_str[i], 31, OTEXT("Name%02i"), i+1);
 
         /* date */
@@ -1305,7 +1305,7 @@ void test_object_insert(void)
 
     OCI_ObjectSetInt(obj, OTEXT("VAL_INT"), 1);
     OCI_ObjectSetDouble(obj, OTEXT("VAL_DBL"), 3.14);
-    OCI_ObjectSetFloat(obj, OTEXT("VAL_FLT"), (float) 3.14);
+    OCI_ObjectSetFloat(obj, OTEXT("VAL_FLT"), (OCI_Float) 3.14);
     OCI_ObjectSetString(obj, OTEXT("VAL_STR"), OTEXT("USB KEY 2go"));
     OCI_ObjectSetRaw(obj, OTEXT("VAL_RAW"), rawbuf, 10);
 

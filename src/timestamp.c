@@ -200,7 +200,7 @@ OCI_Timestamp ** OcilibTimestampCreateArray
 (
     OCI_Environment  *env,
     OCI_TimestampType type,
-    OCI_UInt32      nbelem
+    OCI_UInt32        nbelem
 )
 {
     ENTER_FUNC
@@ -440,13 +440,13 @@ OCI_Int32 OcilibTimestampCompare
 OCI_Boolean OcilibTimestampConstruct
 (
     OCI_Timestamp *tmsp,
-    OCI_Int32            year,
-    OCI_Int32            month,
-    OCI_Int32            day,
-    OCI_Int32            hour,
-    OCI_Int32            min,
-    OCI_Int32            sec,
-    OCI_Int32            fsec,
+    OCI_Int32      year,
+    OCI_Int32      month,
+    OCI_Int32      day,
+    OCI_Int32      hour,
+    OCI_Int32      min,
+    OCI_Int32      sec,
+    OCI_Int32      fsec,
     const otext   *time_zone
 )
 {
@@ -545,10 +545,10 @@ OCI_Boolean OcilibTimestampFromString
         /* context */ OCI_IPC_TIMESTAMP, tmsp
     );
 
-    dbtext *dbstr1  = NULL;
-    dbtext *dbstr2  = NULL;
-    OCI_Int32     dbsize1 = -1;
-    OCI_Int32     dbsize2 = -1;
+    dbtext   *dbstr1  = NULL;
+    dbtext   *dbstr2  = NULL;
+    OCI_Int32 dbsize1 = -1;
+    OCI_Int32 dbsize2 = -1;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
     CHECK_PTR(OCI_IPC_STRING,    str);
@@ -602,9 +602,9 @@ OCI_Boolean OcilibTimestampToString
 (
     OCI_Timestamp *tmsp,
     const otext   *fmt,
-    OCI_Int32            size,
+    OCI_Int32      size,
     otext         *str,
-    OCI_Int32            precision
+    OCI_Int32      precision
 )
 {
     ENTER_FUNC
@@ -613,10 +613,10 @@ OCI_Boolean OcilibTimestampToString
         /* context */ OCI_IPC_TIMESTAMP, tmsp
     );
 
-    dbtext *dbstr1  = NULL;
-    dbtext *dbstr2  = NULL;
-    OCI_Int32     dbsize1 = size * (OCI_Int32) sizeof(otext);
-    OCI_Int32     dbsize2 = -1;
+    dbtext   *dbstr1  = NULL;
+    dbtext   *dbstr2  = NULL;
+    OCI_Int32 dbsize1 = size * (OCI_Int32) sizeof(otext);
+    OCI_Int32 dbsize2 = -1;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
     CHECK_PTR(OCI_IPC_STRING,    str);
@@ -680,9 +680,9 @@ OCI_Boolean OcilibTimestampToString
 OCI_Boolean OcilibTimestampGetDate
 (
     OCI_Timestamp *tmsp,
-    OCI_Int32           *year,
-    OCI_Int32           *month,
-    OCI_Int32           *day
+    OCI_Int32     *year,
+    OCI_Int32     *month,
+    OCI_Int32     *day
 )
 {
     ENTER_FUNC
@@ -738,10 +738,10 @@ OCI_Boolean OcilibTimestampGetDate
 OCI_Boolean OcilibTimestampGetTime
 (
     OCI_Timestamp *tmsp,
-    OCI_Int32           *hour,
-    OCI_Int32           *min,
-    OCI_Int32           *sec,
-    OCI_Int32           *fsec
+    OCI_Int32     *hour,
+    OCI_Int32     *min,
+    OCI_Int32     *sec,
+    OCI_Int32     *fsec
 )
 {
     ENTER_FUNC
@@ -807,13 +807,13 @@ OCI_Boolean OcilibTimestampGetTime
 OCI_Boolean OcilibTimestampGetDateTime
 (
     OCI_Timestamp *tmsp,
-    OCI_Int32           *year,
-    OCI_Int32           *month,
-    OCI_Int32           *day,
-    OCI_Int32           *hour,
-    OCI_Int32           *min,
-    OCI_Int32           *sec,
-    OCI_Int32           *fsec
+    OCI_Int32     *year,
+    OCI_Int32     *month,
+    OCI_Int32     *day,
+    OCI_Int32     *hour,
+    OCI_Int32     *min,
+    OCI_Int32     *sec,
+    OCI_Int32     *fsec
 )
 {
     return (OcilibTimestampGetDate(tmsp, year, month, day) &&
@@ -827,7 +827,7 @@ OCI_Boolean OcilibTimestampGetDateTime
 OCI_Boolean OcilibTimestampGetTimeZoneName
 (
     OCI_Timestamp *tmsp,
-    OCI_Int32            size,
+    OCI_Int32      size,
     otext         *str
 )
 {
@@ -837,8 +837,8 @@ OCI_Boolean OcilibTimestampGetTimeZoneName
         /* context */ OCI_IPC_TIMESTAMP, tmsp
     );
 
-    dbtext *dbstr  = NULL;
-    OCI_Int32     dbsize = size * (OCI_Int32) sizeof(otext);
+    dbtext   *dbstr  = NULL;
+    OCI_Int32 dbsize = size * (OCI_Int32) sizeof(otext);
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
     CHECK_PTR(OCI_IPC_STRING,    str);
@@ -887,8 +887,8 @@ OCI_Boolean OcilibTimestampGetTimeZoneName
 OCI_Boolean OcilibTimestampGetTimeZoneOffset
 (
     OCI_Timestamp *tmsp,
-    OCI_Int32           *hour,
-    OCI_Int32           *min
+    OCI_Int32     *hour,
+    OCI_Int32     *min
 )
 {
     ENTER_FUNC
@@ -1193,7 +1193,7 @@ OCI_Boolean OcilibTimestampToCTime
     );
 
     time_t    time = (time_t) -1;
-    OCI_Int32       msec = 0;
+    OCI_Int32 msec = 0;
     struct tm t;
 
     CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);

@@ -47,7 +47,7 @@ OCI_SYM_LOCAL OCI_Timestamp ** OcilibTimestampCreateArray
 (
     OCI_Environment  *env,
     OCI_TimestampType type,
-    OCI_UInt32      nbelem
+    OCI_UInt32        nbelem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibTimestampFreeArray
@@ -80,13 +80,13 @@ OCI_SYM_LOCAL OCI_Int32 OcilibTimestampCompare
 OCI_SYM_LOCAL OCI_Boolean OcilibTimestampConstruct
 (
     OCI_Timestamp *tmsp,
-    OCI_Int32            year,
-    OCI_Int32            month,
-    OCI_Int32            day,
-    OCI_Int32            hour,
-    OCI_Int32            min,
-    OCI_Int32            sec,
-    OCI_Int32            fsec,
+    OCI_Int32      year,
+    OCI_Int32      month,
+    OCI_Int32      day,
+    OCI_Int32      hour,
+    OCI_Int32      min,
+    OCI_Int32      sec,
+    OCI_Int32      fsec,
     const otext   *time_zone
 );
 
@@ -107,52 +107,52 @@ OCI_SYM_LOCAL OCI_Boolean OcilibTimestampToString
 (
     OCI_Timestamp *tmsp,
     const otext   *fmt,
-    OCI_Int32            size,
+    OCI_Int32      size,
     otext         *str,
-    OCI_Int32            precision
+    OCI_Int32      precision
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibTimestampGetDate
 (
     OCI_Timestamp *tmsp,
-    OCI_Int32           *year,
-    OCI_Int32           *month,
-    OCI_Int32           *day
+    OCI_Int32     *year,
+    OCI_Int32     *month,
+    OCI_Int32     *day
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibTimestampGetTime
 (
     OCI_Timestamp *tmsp,
-    OCI_Int32           *hour,
-    OCI_Int32           *min,
-    OCI_Int32           *sec,
-    OCI_Int32           *fsec
+    OCI_Int32     *hour,
+    OCI_Int32     *min,
+    OCI_Int32     *sec,
+    OCI_Int32     *fsec
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibTimestampGetDateTime
 (
     OCI_Timestamp *tmsp,
-    OCI_Int32           *year,
-    OCI_Int32           *month,
-    OCI_Int32           *day,
-    OCI_Int32           *hour,
-    OCI_Int32           *min,
-    OCI_Int32           *sec,
-    OCI_Int32           *fsec
+    OCI_Int32     *year,
+    OCI_Int32     *month,
+    OCI_Int32     *day,
+    OCI_Int32     *hour,
+    OCI_Int32     *min,
+    OCI_Int32     *sec,
+    OCI_Int32     *fsec
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibTimestampGetTimeZoneName
 (
     OCI_Timestamp *tmsp,
-    OCI_Int32            size,
+    OCI_Int32      size,
     otext         *str
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibTimestampGetTimeZoneOffset
 (
     OCI_Timestamp *tmsp,
-    OCI_Int32           *hour,
-    OCI_Int32           *min
+    OCI_Int32     *hour,
+    OCI_Int32     *min
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibTimestampIntervalAdd

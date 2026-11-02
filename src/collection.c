@@ -164,7 +164,7 @@ OCI_Boolean OcilibCollectionFree
 OCI_Coll ** OcilibCollectionCreateArray
 (
     OCI_TypeInfo *typinf,
-    OCI_UInt32  nbelem
+    OCI_UInt32    nbelem
 )
 {
     ENTER_FUNC
@@ -348,7 +348,7 @@ OCI_UInt32 OcilibCollectionGetSize
 
 OCI_Boolean OcilibCollectionTrim
 (
-    OCI_Coll    *coll,
+    OCI_Coll  *coll,
     OCI_UInt32 nb_elem
 )
 {
@@ -380,7 +380,7 @@ OCI_Boolean OcilibCollectionTrim
 
 OCI_Elem * OcilibCollectionGetElement
 (
-    OCI_Coll    *coll,
+    OCI_Coll  *coll,
     OCI_UInt32 index
 )
 {
@@ -424,9 +424,9 @@ OCI_Elem * OcilibCollectionGetElement
 
 OCI_Boolean OcilibCollectionSetElement
 (
-    OCI_Coll    *coll,
+    OCI_Coll  *coll,
     OCI_UInt32 index,
-    OCI_Elem    *elem
+    OCI_Elem  *elem
 )
 {
     ENTER_FUNC
@@ -533,7 +533,7 @@ OCI_Boolean OcilibCollectionClear
 
 OCI_Boolean OcilibCollectionRemoveElement
 (
-    OCI_Coll    *coll,
+    OCI_Coll  *coll,
     OCI_UInt32 index
 )
 {
@@ -612,9 +612,9 @@ OCI_UInt32 OcilibCollectionGetCount
 
 OCI_Boolean OcilibCollectionToString
 (
-    OCI_Coll     *coll,
+    OCI_Coll   *coll,
     OCI_UInt32 *size,
-    otext        *str
+    otext      *str
 )
 {
     ENTER_FUNC
@@ -658,7 +658,7 @@ OCI_Boolean OcilibCollectionToString
         }
         else
         {
-            void              *data      = NULL;
+            void            *data      = NULL;
             OCI_UInt32       data_size = 0;
             const OCI_UInt32 data_type = coll->typinf->cols[0].datatype;
 

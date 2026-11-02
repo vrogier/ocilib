@@ -30,7 +30,7 @@ namespace ocilib
     namespace core
     {
         template<class T>
-        static T* OnAllocate(T* address, OCI_Size count = 1)
+        static T* OnAllocate(T* address, [[maybe_unused]] Size count = 1)
         {
 #ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
             GetMemoryDebugInfo().OnAllocate(address, count);
@@ -63,23 +63,23 @@ namespace ocilib
             return result;
         }
 
-        inline ostring MakeString(const otext* result, OCI_Int32 size)
+        inline ostring MakeString(const otext* result, Int32 size)
         {
             return result ? (size >= 0 ? ostring(result, result + size) : ostring(result)) : ostring();
         }
 
-        inline Raw MakeRaw(AnyPointer result, OCI_UInt32 size)
+        inline Raw MakeRaw(AnyPointer result, UInt32 size)
         {
             unsigned char* ptr = static_cast<unsigned char*>(result);
 
             return (ptr && size > 0 ? Raw(ptr, ptr + size) : Raw());
         }
 
-        inline OCI_UInt32 ComputeCharMaxSize(Environment::CharsetMode charsetMode)
+        inline UInt32 ComputeCharMaxSize(Environment::CharsetMode charsetMode)
         {
-            const OCI_Int32 UTF8_BytesPerChar = 4;
+            const Int32 UTF8_BytesPerChar = 4;
 
-            OCI_UInt32 res = sizeof(ostring::value_type);
+            UInt32 res = sizeof(ostring::value_type);
 
             if (charsetMode == Environment::CharsetAnsi)
             {

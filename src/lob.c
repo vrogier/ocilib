@@ -220,7 +220,7 @@ OCI_Lob ** OcilibLobCreateArray
 (
     OCI_Connection *con,
     OCI_LobType     type,
-    OCI_UInt32    nbelem
+    OCI_UInt32      nbelem
 )
 {
     ENTER_FUNC
@@ -291,7 +291,7 @@ OCI_LobType OcilibLobGetType
 OCI_Boolean OcilibLobSeek
 (
     OCI_Lob     *lob,
-    OCI_UInt64     offset,
+    OCI_UInt64   offset,
     OCI_SeekMode mode
 )
 {
@@ -375,8 +375,8 @@ OCI_UInt64 OcilibLobGetOffset
 
 OCI_Boolean OcilibLobRead
 (
-    OCI_Lob      *lob,
-    void         *buffer,
+    OCI_Lob    *lob,
+    void       *buffer,
     OCI_UInt32 *char_count,
     OCI_UInt32 *byte_count
 )
@@ -507,8 +507,8 @@ OCI_Boolean OcilibLobRead
 
 OCI_Boolean OcilibLobWrite
 (
-    OCI_Lob      *lob,
-    void         *buffer,
+    OCI_Lob    *lob,
+    void       *buffer,
     OCI_UInt32 *char_count,
     OCI_UInt32 *byte_count
 )
@@ -656,7 +656,7 @@ OCI_Boolean OcilibLobWrite
 
 OCI_Boolean OcilibLobTruncate
 (
-    OCI_Lob *lob,
+    OCI_Lob   *lob,
     OCI_UInt64 size
 )
 {
@@ -710,7 +710,7 @@ OCI_Boolean OcilibLobTruncate
 
 OCI_UInt64 OcilibLobErase
 (
-    OCI_Lob *lob,
+    OCI_Lob   *lob,
     OCI_UInt64 offset,
     OCI_UInt64 size
 )
@@ -860,8 +860,8 @@ OCI_UInt32 OcilibLobGetChunkSize
 
 OCI_Boolean OcilibLobCopy
 (
-    OCI_Lob *lob,
-    OCI_Lob *lob_src,
+    OCI_Lob   *lob,
+    OCI_Lob   *lob_src,
     OCI_UInt64 offset_dst,
     OCI_UInt64 offset_src,
     OCI_UInt64 count
@@ -917,11 +917,11 @@ OCI_Boolean OcilibLobCopy
 
 OCI_Boolean OcilibLobCopyFromFile
 (
-    OCI_Lob  *lob,
-    OCI_File *file,
-    OCI_UInt64  offset_dst,
-    OCI_UInt64  offset_src,
-    OCI_UInt64  count
+    OCI_Lob   *lob,
+    OCI_File  *file,
+    OCI_UInt64 offset_dst,
+    OCI_UInt64 offset_src,
+    OCI_UInt64 count
 )
 {
     ENTER_FUNC
@@ -976,8 +976,8 @@ OCI_Boolean OcilibLobCopyFromFile
 
 OCI_Boolean OcilibLobAppend
 (
-    OCI_Lob      *lob,
-    void         *buffer,
+    OCI_Lob    *lob,
+    void       *buffer,
     OCI_UInt32 *char_count,
     OCI_UInt32 *byte_count
 )

@@ -24,7 +24,7 @@ For the C layer (`ocilib.h`), see `migration-guide-c-api.md`.
 | 5 | `Environment::GetAllocatedBytes(type)` removed; use `GetStats(OCI_UST_BYTES)` | Trivial |
 | 6 | Subscription port moved to `Environment::SetSubscriptionPort`; `Dequeue::Subscribe` is now a static batch call | Low–Medium |
 | 7 | `Statement::Bind*` returns `BindInfo` instead of `void` (`Register*` unchanged) | None (source-compatible) |
-| 8 | C++14 baseline required | None–Low |
+| 8 | C++17 baseline required | None–Low |
 | 9 | XA session mode removed | Low |
 
 **Overall estimate:** a typical app migrates in **under an hour**; the work is
@@ -352,6 +352,10 @@ Do not rely on the compiler alone — these compile fine but behave differently:
 - **`Collection<T>` accessors unchanged** — the C `OCI_CollGetElem2` was removed
   (`OCI_CollGetElem` keeps its v4 form); `Collection<T>::Get/Set/IsElementNull/
   SetElementNull` signatures and semantics are unchanged.
+- **Short scalar aliases added** (pure additions) — `ocilib::Int16`, `UInt16`,
+  `Int32`, `UInt32`, `Int64`, `UInt64`, `Float`, `Double`, `Size` alias the C
+  API types `OCI_Int16` … `OCI_Size`. Both spellings are the same type:
+  `rs.Get<ocilib::Int64>` and `rs.Get<OCI_Int64>` are identical.
 - **Internal header layout changed** (`detail/core/*`, `detail/support/*` reorganized,
   some files removed: `Mutex.hpp`, `Thread.hpp`, `ThreadKey.hpp`, `ManagedBuffer.hpp`,
   `Synchronizable.hpp`, `ConcurrentList.hpp`, `ConcurrentMap.hpp`,
@@ -378,7 +382,7 @@ Do not rely on the compiler alone — these compile fine but behave differently:
 8.  [ ] Remove Environment::SessionXA / XA usage.
 9.  [ ] env.SetSubscriptionPort(port) before subscriptions; drop `port` arg from
         Subscription::Register; convert Dequeue::Subscribe to the static batch form.
-10. [ ] Recompile with C++14+; fix remaining errors.
+10. [ ] Recompile with C++17+; fix remaining errors.
 11. [ ] Audit ChangeType::Row notification handlers for new row events.
 ```
 

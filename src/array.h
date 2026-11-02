@@ -38,12 +38,12 @@ OCI_SYM_LOCAL OCI_Array* OcilibArrayCreate
 (
     OCI_Environment* env,
     OCI_Connection * con,
-    OCI_UInt32     nb_elem,
-    OCI_UInt32     elem_type,
-    OCI_UInt32     elem_subtype,
-    OCI_UInt32     elem_size,
-    OCI_UInt32     struct_size,
-    OCI_UInt32     handle_type,
+    OCI_UInt32       nb_elem,
+    OCI_UInt32       elem_type,
+    OCI_UInt32       elem_subtype,
+    OCI_UInt32       elem_size,
+    OCI_UInt32       struct_size,
+    OCI_UInt32       handle_type,
     OCI_TypeInfo   * typinf
 );
 

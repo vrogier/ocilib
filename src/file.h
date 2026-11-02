@@ -51,7 +51,7 @@ OCI_SYM_LOCAL OCI_File ** OcilibFileCreateArray
 (
     OCI_Connection *con,
     OCI_FileType    type,
-    OCI_UInt32    nbelem
+    OCI_UInt32      nbelem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibFileFreeArray
@@ -62,7 +62,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibFileFreeArray
 OCI_SYM_LOCAL OCI_Boolean OcilibFileSeek
 (
     OCI_File    *file,
-    OCI_UInt64     offset,
+    OCI_UInt64   offset,
     OCI_SeekMode mode
 );
 
@@ -73,8 +73,8 @@ OCI_SYM_LOCAL OCI_UInt64 OcilibFileGetOffset
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibFileRead
 (
-    OCI_File    *file,
-    void        *buffer,
+    OCI_File  *file,
+    void      *buffer,
     OCI_UInt32 len
 );
 

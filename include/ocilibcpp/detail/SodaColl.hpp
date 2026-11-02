@@ -64,7 +64,7 @@ namespace ocilib
         return (core::Check(OCI_SodaCollDrop(*this)) == TRUE);
     }
 
-    inline bool SodaColl::Truncate(OCI_UInt32 mode)
+    inline bool SodaColl::Truncate()
     {
         return (core::Check(OCI_SodaCollTruncate(*this)) == TRUE);
     }
@@ -104,12 +104,12 @@ namespace ocilib
         return SodaDoc(doc, GetHandle());
     }
 
-    inline OCI_UInt64 SodaColl::GetCount(const SodaOptions& options)
+    inline UInt64 SodaColl::GetCount(const SodaOptions& options)
     {
         return OCI_SodaCollDocCount(*this, options);
     }
 
-    inline OCI_UInt64 SodaColl::GetCount(const ostring& filter)
+    inline UInt64 SodaColl::GetCount(const ostring& filter)
     {
         return OCI_SodaCollDocCountWithFilter(*this, filter.c_str());
     }
@@ -136,7 +136,7 @@ namespace ocilib
         return doc;
     }
 
-    inline bool SodaColl::Remove(const SodaOptions& options, OCI_UInt64* count)
+    inline bool SodaColl::Remove(const SodaOptions& options, UInt64* count)
     {
         return (core::Check(OCI_SodaCollRemove(*this, options, count)) == TRUE);
     }

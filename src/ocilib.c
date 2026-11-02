@@ -214,7 +214,7 @@ OCI_Statement* OCI_API OCI_BindGetStatement
 
 OCI_Boolean OCI_API OCI_BindSetDataSize
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 size
 )
 {
@@ -223,7 +223,7 @@ OCI_Boolean OCI_API OCI_BindSetDataSize
 
 OCI_Boolean OCI_API OCI_BindSetDataSizeAtPos
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 position,
     OCI_UInt32 size
 )
@@ -241,7 +241,7 @@ OCI_UInt32 OCI_API OCI_BindGetDataSize
 
 OCI_UInt32 OCI_API OCI_BindGetDataSizeAtPos
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 position
 )
 {
@@ -250,7 +250,7 @@ OCI_UInt32 OCI_API OCI_BindGetDataSizeAtPos
 
 OCI_Boolean OCI_API OCI_BindSetNullAtPos
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 position
 )
 {
@@ -267,7 +267,7 @@ OCI_Boolean OCI_API OCI_BindSetNull
 
 OCI_Boolean OCI_API OCI_BindSetNotNullAtPos
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 position
 )
 {
@@ -284,7 +284,7 @@ OCI_Boolean OCI_API OCI_BindSetNotNull
 
 OCI_Boolean OCI_API OCI_BindIsNullAtPos
 (
-    OCI_Bind   * bnd,
+    OCI_Bind * bnd,
     OCI_UInt32 position
 )
 {
@@ -356,7 +356,7 @@ OCI_Boolean OCI_API OCI_CollFree
 OCI_Coll ** OCI_API OCI_CollArrayCreate
 (
     OCI_TypeInfo *typinf,
-    OCI_UInt32  nbelem
+    OCI_UInt32    nbelem
 )
 {
     CALL_IMPL(OcilibCollectionCreateArray, typinf, nbelem);
@@ -405,7 +405,7 @@ OCI_UInt32 OCI_API OCI_CollGetSize
 
 OCI_Boolean OCI_API OCI_CollTrim
 (
-    OCI_Coll    *coll,
+    OCI_Coll  *coll,
     OCI_UInt32 nb_elem
 )
 {
@@ -414,7 +414,7 @@ OCI_Boolean OCI_API OCI_CollTrim
 
 OCI_Elem * OCI_API OCI_CollGetElem
 (
-    OCI_Coll    *coll,
+    OCI_Coll  *coll,
     OCI_UInt32 index
 )
 {
@@ -423,9 +423,9 @@ OCI_Elem * OCI_API OCI_CollGetElem
 
 OCI_Boolean OCI_API OCI_CollSetElem
 (
-    OCI_Coll    *coll,
+    OCI_Coll  *coll,
     OCI_UInt32 index,
-    OCI_Elem    *elem
+    OCI_Elem  *elem
 )
 {
     CALL_IMPL(OcilibCollectionSetElement, coll, index, elem);
@@ -458,7 +458,7 @@ OCI_Boolean OCI_API OCI_CollClear
 
 OCI_Boolean OCI_API OCI_CollDeleteElem
 (
-    OCI_Coll    *coll,
+    OCI_Coll  *coll,
     OCI_UInt32 index
 )
 {
@@ -475,9 +475,9 @@ OCI_UInt32 OCI_API OCI_CollGetCount
 
 OCI_Boolean OCI_API OCI_CollToText
 (
-    OCI_Coll     *coll,
+    OCI_Coll   *coll,
     OCI_UInt32 *size,
-    otext        *str
+    otext      *str
 )
 {
     CALL_IMPL(OcilibCollectionToString, coll, size, str);
@@ -603,7 +603,7 @@ OCI_UInt32 OCI_API OCI_ColumnGetFullSQLType
 (
     OCI_Column * col,
     otext      * buffer,
-    OCI_UInt32 len
+    OCI_UInt32   len
 )
 {
     CALL_IMPL(OcilibColumnGetFullSqlType, col, buffer, len);
@@ -833,9 +833,9 @@ OCI_Boolean OCI_API OCI_Break
 OCI_Boolean OCI_API OCI_ServerEnableOutput
 (
     OCI_Connection *con,
-    OCI_UInt32    bufsize,
-    OCI_UInt32    arrsize,
-    OCI_UInt32    lnsize
+    OCI_UInt32      bufsize,
+    OCI_UInt32      arrsize,
+    OCI_UInt32      lnsize
 )
 {
     CALL_IMPL(OcilibConnectionEnableServerOutput, con, bufsize, arrsize, lnsize);
@@ -888,7 +888,7 @@ OCI_Boolean OCI_API OCI_SetTimeout
 (
     OCI_Connection *con,
     OCI_TimeoutType type,
-    OCI_UInt32    value
+    OCI_UInt32      value
 )
 {
     CALL_IMPL(OcilibConnectionSetTimeout, con, type, value);
@@ -979,7 +979,7 @@ OCI_UInt32 OCI_API OCI_GetStatementCacheSize
 OCI_Boolean OCI_API OCI_SetStatementCacheSize
 (
     OCI_Connection *con,
-    OCI_UInt32    value
+    OCI_UInt32      value
 )
 {
     CALL_IMPL(OcilibConnectionSetStatementCacheSize, con, value);
@@ -996,7 +996,7 @@ OCI_UInt32 OCI_API OCI_GetDefaultLobPrefetchSize
 OCI_Boolean OCI_API OCI_SetDefaultLobPrefetchSize
 (
     OCI_Connection *con,
-    OCI_UInt32    value
+    OCI_UInt32      value
 )
 {
     CALL_IMPL(OcilibConnectionSetDefaultLobPrefetchSize, con, value);
@@ -1067,7 +1067,7 @@ OCI_Boolean OCI_API OCI_DateFree
 OCI_Date** OCI_API OCI_DateArrayCreate
 (
     OCI_Environment* env,
-    OCI_UInt32     nbelem
+    OCI_UInt32       nbelem
 )
 {
     CALL_IMPL_E(OcilibDateCreateArray, env, nbelem);
@@ -1084,7 +1084,7 @@ OCI_Boolean OCI_API OCI_DateArrayFree
 OCI_Boolean OCI_API OCI_DateAddDays
 (
     OCI_Date* date,
-    OCI_Int32       nb
+    OCI_Int32 nb
 )
 {
     CALL_IMPL(OcilibDateAddDays, date, nb);
@@ -1093,7 +1093,7 @@ OCI_Boolean OCI_API OCI_DateAddDays
 OCI_Boolean OCI_API OCI_DateAddMonths
 (
     OCI_Date* date,
-    OCI_Int32       nb
+    OCI_Int32 nb
 )
 {
     CALL_IMPL(OcilibDateAddMonths, date, nb);
@@ -1146,10 +1146,10 @@ OCI_Boolean OCI_API OCI_DateFromText
 
 OCI_Boolean OCI_API OCI_DateGetDate
 (
-    OCI_Date* date,
-    OCI_Int32     * year,
-    OCI_Int32     * month,
-    OCI_Int32     * day
+    OCI_Date  * date,
+    OCI_Int32 * year,
+    OCI_Int32 * month,
+    OCI_Int32 * day
 )
 {
     CALL_IMPL(OcilibDateGetDate, date, year, month, day);
@@ -1157,10 +1157,10 @@ OCI_Boolean OCI_API OCI_DateGetDate
 
 OCI_Boolean OCI_API OCI_DateGetTime
 (
-    OCI_Date* date,
-    OCI_Int32     * hour,
-    OCI_Int32     * min,
-    OCI_Int32     * sec
+    OCI_Date  * date,
+    OCI_Int32 * hour,
+    OCI_Int32 * min,
+    OCI_Int32 * sec
 )
 {
     CALL_IMPL(OcilibDateGetTime, date, hour, min, sec);
@@ -1168,13 +1168,13 @@ OCI_Boolean OCI_API OCI_DateGetTime
 
 OCI_Boolean OCI_API OCI_DateGetDateTime
 (
-    OCI_Date* date,
-    OCI_Int32     * year,
-    OCI_Int32     * month,
-    OCI_Int32     * day,
-    OCI_Int32     * hour,
-    OCI_Int32     * min,
-    OCI_Int32     * sec
+    OCI_Date  * date,
+    OCI_Int32 * year,
+    OCI_Int32 * month,
+    OCI_Int32 * day,
+    OCI_Int32 * hour,
+    OCI_Int32 * min,
+    OCI_Int32 * sec
 )
 {
     CALL_IMPL(OcilibDateGetDateTime, date, year, month, day, hour, min, sec);
@@ -1200,9 +1200,9 @@ OCI_Boolean OCI_API OCI_DateNextDay
 OCI_Boolean OCI_API OCI_DateSetDate
 (
     OCI_Date* date,
-    OCI_Int32       year,
-    OCI_Int32       month,
-    OCI_Int32       day
+    OCI_Int32 year,
+    OCI_Int32 month,
+    OCI_Int32 day
 )
 {
     CALL_IMPL(OcilibDateSetDate, date, year, month, day);
@@ -1211,9 +1211,9 @@ OCI_Boolean OCI_API OCI_DateSetDate
 OCI_Boolean OCI_API OCI_DateSetTime
 (
     OCI_Date* date,
-    OCI_Int32       hour,
-    OCI_Int32       min,
-    OCI_Int32       sec
+    OCI_Int32 hour,
+    OCI_Int32 min,
+    OCI_Int32 sec
 )
 {
     CALL_IMPL(OcilibDateSetTime, date, hour, min, sec);
@@ -1222,12 +1222,12 @@ OCI_Boolean OCI_API OCI_DateSetTime
 OCI_Boolean OCI_API OCI_DateSetDateTime
 (
     OCI_Date* date,
-    OCI_Int32       year,
-    OCI_Int32       month,
-    OCI_Int32       day,
-    OCI_Int32       hour,
-    OCI_Int32       min,
-    OCI_Int32       sec
+    OCI_Int32 year,
+    OCI_Int32 month,
+    OCI_Int32 day,
+    OCI_Int32 hour,
+    OCI_Int32 min,
+    OCI_Int32 sec
 )
 {
     CALL_IMPL(OcilibDateSetDateTime, date, year, month, day, hour, min,sec);
@@ -1245,7 +1245,7 @@ OCI_Boolean OCI_API OCI_DateToText
 (
     OCI_Date   * date,
     const otext* fmt,
-    OCI_Int32          size,
+    OCI_Int32    size,
     otext      * str
 )
 {
@@ -1314,8 +1314,8 @@ OCI_Boolean OCI_API OCI_DequeueSubscribe
 (
     OCI_Connection* con,
     OCI_Dequeue  ** dequeues,
-    OCI_UInt32    count,
-    OCI_UInt32    timeout,
+    OCI_UInt32      count,
+    OCI_UInt32      timeout,
     POCI_NOTIFY_AQ  callback
 )
 {
@@ -1368,7 +1368,7 @@ OCI_Boolean OCI_API OCI_DequeueSetRelativeMsgID
 (
     OCI_Dequeue *dequeue,
     const void  *id,
-    OCI_UInt32 len
+    OCI_UInt32   len
 )
 {
     CALL_IMPL(OcilibDequeueSetRelativeMsgID, dequeue, id, len);
@@ -1376,9 +1376,9 @@ OCI_Boolean OCI_API OCI_DequeueSetRelativeMsgID
 
 OCI_Boolean OCI_API OCI_DequeueGetRelativeMsgID
 (
-    OCI_Dequeue  *dequeue,
-    void         *id,
-    OCI_UInt32 *len
+    OCI_Dequeue *dequeue,
+    void        *id,
+    OCI_UInt32  *len
 )
 {
     CALL_IMPL(OcilibDequeueGetRelativeMsgID, dequeue, id, len);
@@ -1421,7 +1421,7 @@ OCI_DequeueMode OCI_API OCI_DequeueGetMode
 OCI_Boolean OCI_API OCI_DequeueSetNavigation
 (
     OCI_Dequeue *dequeue,
-    OCI_UInt32 position
+    OCI_UInt32   position
 )
 {
     CALL_IMPL(OcilibDequeueSetNavigation, dequeue, position);
@@ -1438,7 +1438,7 @@ OCI_DequeueNav OCI_API OCI_DequeueGetNavigation
 OCI_Boolean OCI_API OCI_DequeueSetWaitTime
 (
     OCI_Dequeue *dequeue,
-    OCI_Int32          timeout
+    OCI_Int32    timeout
 )
 {
     CALL_IMPL(OcilibDequeueSetWaitTime, dequeue, timeout);
@@ -1456,7 +1456,7 @@ OCI_Boolean OCI_API OCI_DequeueSetAgentList
 (
     OCI_Dequeue *dequeue,
     OCI_Agent  **consumers,
-    OCI_UInt32 count
+    OCI_UInt32   count
 )
 {
     CALL_IMPL(OcilibDequeueSetAgentList, dequeue, consumers, count);
@@ -1465,7 +1465,7 @@ OCI_Boolean OCI_API OCI_DequeueSetAgentList
 OCI_Agent * OCI_API OCI_DequeueListen
 (
     OCI_Dequeue *dequeue,
-    OCI_Int32          timeout
+    OCI_Int32    timeout
 )
 {
     CALL_IMPL(OcilibDequeueListen, dequeue, timeout);
@@ -1479,8 +1479,8 @@ OCI_DirPath* OCI_API OCI_DirPathCreate
 (
     OCI_TypeInfo* typinf,
     const otext * partition,
-    OCI_UInt32  nb_cols,
-    OCI_UInt32  nb_rows
+    OCI_UInt32    nb_cols,
+    OCI_UInt32    nb_rows
 )
 {
     CALL_IMPL(OcilibDirPathCreate, typinf, partition, nb_cols, nb_rows);
@@ -1497,9 +1497,9 @@ OCI_Boolean OCI_API OCI_DirPathFree
 OCI_Boolean OCI_API OCI_DirPathSetColumn
 (
     OCI_DirPath* dp,
-    OCI_UInt32 index,
+    OCI_UInt32   index,
     const otext* name,
-    OCI_UInt32 maxsize,
+    OCI_UInt32   maxsize,
     const otext* format
 )
 {
@@ -1517,8 +1517,8 @@ OCI_Boolean OCI_API OCI_DirPathPrepare
 OCI_Boolean OCI_API OCI_DirPathSetEntry
 (
     OCI_DirPath* dp,
-    OCI_UInt32 row,
-    OCI_UInt32 index,
+    OCI_UInt32   row,
+    OCI_UInt32   index,
     void       * value,
     unsigned     size,
     OCI_Boolean  complete
@@ -1586,7 +1586,7 @@ OCI_Boolean OCI_API OCI_DirPathFlushRow
 OCI_Boolean OCI_API OCI_DirPathSetCurrentRows
 (
     OCI_DirPath* dp,
-    OCI_UInt32 nb_rows
+    OCI_UInt32   nb_rows
 )
 {
     CALL_IMPL(OcilibDirPathSetCurrentRows, dp, nb_rows);
@@ -1638,7 +1638,7 @@ OCI_Boolean OCI_API OCI_DirPathSetNoLog
 OCI_Boolean OCI_API OCI_DirPathSetCacheSize
 (
     OCI_DirPath* dp,
-    OCI_UInt32 size
+    OCI_UInt32   size
 )
 {
     CALL_IMPL(OcilibDirPathSetCacheSize, dp, size);
@@ -1647,7 +1647,7 @@ OCI_Boolean OCI_API OCI_DirPathSetCacheSize
 OCI_Boolean OCI_API OCI_DirPathSetBufferSize
 (
     OCI_DirPath* dp,
-    OCI_UInt32 size
+    OCI_UInt32   size
 )
 {
     CALL_IMPL(OcilibDirPathSetBufferSize, dp, size);
@@ -1778,7 +1778,7 @@ OCI_UInt64 OCI_API OCI_ElemGetUnsignedBigInt
     CALL_IMPL(OcilibElementGetUnsignedBigInt, elem);
 }
 
-double OCI_API OCI_ElemGetDouble
+OCI_Double OCI_API OCI_ElemGetDouble
 (
     OCI_Elem* elem
 )
@@ -1786,7 +1786,7 @@ double OCI_API OCI_ElemGetDouble
     CALL_IMPL(OcilibElementGetDouble, elem);
 }
 
-float OCI_API OCI_ElemGetFloat
+OCI_Float OCI_API OCI_ElemGetFloat
 (
     OCI_Elem* elem
 )
@@ -1804,8 +1804,8 @@ const otext* OCI_API OCI_ElemGetString
 
 OCI_UInt32 OCI_API OCI_ElemGetRaw
 (
-    OCI_Elem   * elem,
-    void       * value,
+    OCI_Elem * elem,
+    void     * value,
     OCI_UInt32 len
 )
 {
@@ -1905,7 +1905,7 @@ OCI_Boolean OCI_API OCI_ElemSetNumber
 OCI_Boolean OCI_API OCI_ElemSetShort
 (
     OCI_Elem* elem,
-    OCI_Int16     value
+    OCI_Int16 value
 )
 {
     CALL_IMPL(OcilibElementSetShort, elem, value);
@@ -1913,7 +1913,7 @@ OCI_Boolean OCI_API OCI_ElemSetShort
 
 OCI_Boolean OCI_API OCI_ElemSetUnsignedShort
 (
-    OCI_Elem     * elem,
+    OCI_Elem * elem,
     OCI_UInt16 value
 )
 {
@@ -1923,7 +1923,7 @@ OCI_Boolean OCI_API OCI_ElemSetUnsignedShort
 OCI_Boolean OCI_API OCI_ElemSetInt
 (
     OCI_Elem* elem,
-    OCI_Int32       value
+    OCI_Int32 value
 )
 {
     CALL_IMPL(OcilibElementSetInt, elem, value);
@@ -1931,7 +1931,7 @@ OCI_Boolean OCI_API OCI_ElemSetInt
 
 OCI_Boolean OCI_API OCI_ElemSetUnsignedInt
 (
-    OCI_Elem   * elem,
+    OCI_Elem * elem,
     OCI_UInt32 value
 )
 {
@@ -1941,7 +1941,7 @@ OCI_Boolean OCI_API OCI_ElemSetUnsignedInt
 OCI_Boolean OCI_API OCI_ElemSetBigInt
 (
     OCI_Elem* elem,
-    OCI_Int64   value
+    OCI_Int64 value
 )
 {
     CALL_IMPL(OcilibElementSetBigInt, elem, value);
@@ -1949,8 +1949,8 @@ OCI_Boolean OCI_API OCI_ElemSetBigInt
 
 OCI_Boolean OCI_API OCI_ElemSetUnsignedBigInt
 (
-    OCI_Elem* elem,
-    OCI_UInt64  value
+    OCI_Elem * elem,
+    OCI_UInt64 value
 )
 {
     CALL_IMPL(OcilibElementSetUnsignedBigInt, elem, value);
@@ -1958,8 +1958,8 @@ OCI_Boolean OCI_API OCI_ElemSetUnsignedBigInt
 
 OCI_Boolean OCI_API OCI_ElemSetDouble
 (
-    OCI_Elem* elem,
-    double    value
+    OCI_Elem * elem,
+    OCI_Double value
 )
 {
     CALL_IMPL(OcilibElementSetDouble, elem, value);
@@ -1968,7 +1968,7 @@ OCI_Boolean OCI_API OCI_ElemSetDouble
 OCI_Boolean OCI_API OCI_ElemSetFloat
 (
     OCI_Elem* elem,
-    float     value
+    OCI_Float value
 )
 {
     CALL_IMPL(OcilibElementSetFloat, elem, value);
@@ -1985,8 +1985,8 @@ OCI_Boolean OCI_API OCI_ElemSetString
 
 OCI_Boolean OCI_API OCI_ElemSetRaw
 (
-    OCI_Elem   * elem,
-    void       * value,
+    OCI_Elem * elem,
+    void     * value,
     OCI_UInt32 len
 )
 {
@@ -2149,7 +2149,7 @@ OCI_Boolean OCI_API OCI_EnqueueSetRelativeMsgID
 (
     OCI_Enqueue* enqueue,
     const void * id,
-    OCI_UInt32 len
+    OCI_UInt32   len
 )
 {
     CALL_IMPL(OcilibEnqueueSetRelativeMsgID, enqueue, id, len);
@@ -2159,7 +2159,7 @@ OCI_Boolean OCI_API OCI_EnqueueGetRelativeMsgID
 (
     OCI_Enqueue * enqueue,
     void        * id,
-    OCI_UInt32* len
+    OCI_UInt32  * len
 )
 {
     CALL_IMPL(OcilibEnqueueGetRelativeMsgID, enqueue, id, len);
@@ -2310,7 +2310,7 @@ OCI_File** OCI_API OCI_FileArrayCreate
 (
     OCI_Connection* con,
     OCI_FileType    type,
-    OCI_UInt32    nbelem
+    OCI_UInt32      nbelem
 )
 {
     CALL_IMPL(OcilibFileCreateArray, con, type, nbelem);
@@ -2335,7 +2335,7 @@ OCI_FileType OCI_API OCI_FileGetType
 OCI_Boolean OCI_API OCI_FileSeek
 (
     OCI_File   * file,
-    OCI_UInt64     offset,
+    OCI_UInt64   offset,
     OCI_SeekMode mode
 )
 {
@@ -2352,8 +2352,8 @@ OCI_UInt64 OCI_API OCI_FileGetOffset
 
 OCI_UInt32 OCI_API OCI_FileRead
 (
-    OCI_File   * file,
-    void       * buffer,
+    OCI_File * file,
+    void     * buffer,
     OCI_UInt32 len
 )
 {
@@ -2471,7 +2471,7 @@ OCI_Environment* OCI_API OCI_HandleGetEnvironment
 OCI_HashTable* OCI_API OCI_HashCreate
 (
     OCI_Environment *env,
-    OCI_UInt32     size,
+    OCI_UInt32       size,
     OCI_HashType     type
 )
 {
@@ -2525,7 +2525,7 @@ OCI_Boolean OCI_API OCI_HashAddInt
 (
     OCI_HashTable* table,
     const otext  * key,
-    OCI_Int32            value
+    OCI_Int32      value
 )
 {
     CALL_IMPL(OcilibHashAddInt, table, key, value);
@@ -2581,7 +2581,7 @@ OCI_HashValue* OCI_API OCI_HashGetValue
 OCI_HashEntry* OCI_API OCI_HashGetEntry
 (
     OCI_HashTable* table,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibHashGetEntry, table, index);
@@ -2612,7 +2612,7 @@ OCI_Interval** OCI_API OCI_IntervalArrayCreate
 (
     OCI_Environment* env,
     OCI_IntervalType type,
-    OCI_UInt32     nbelem
+    OCI_UInt32       nbelem
 )
 {
     CALL_IMPL_E(OcilibIntervalCreateArray, env, type, nbelem);
@@ -2672,9 +2672,9 @@ OCI_Boolean OCI_API OCI_IntervalFromText
 OCI_Boolean OCI_API OCI_IntervalToText
 (
     OCI_Interval* itv,
-    OCI_Int32           leading_prec,
-    OCI_Int32           fraction_prec,
-    OCI_Int32           size,
+    OCI_Int32     leading_prec,
+    OCI_Int32     fraction_prec,
+    OCI_Int32     size,
     otext       * str
 )
 {
@@ -2693,11 +2693,11 @@ OCI_Boolean OCI_API OCI_IntervalFromTimeZone
 OCI_Boolean OCI_API OCI_IntervalGetDaySecond
 (
     OCI_Interval* itv,
-    OCI_Int32         * day,
-    OCI_Int32         * hour,
-    OCI_Int32         * min,
-    OCI_Int32         * sec,
-    OCI_Int32         * nsec
+    OCI_Int32   * day,
+    OCI_Int32   * hour,
+    OCI_Int32   * min,
+    OCI_Int32   * sec,
+    OCI_Int32   * nsec
 )
 {
     CALL_IMPL(OcilibIntervalGetDaySecond, itv, day, hour, min, sec, nsec);
@@ -2706,8 +2706,8 @@ OCI_Boolean OCI_API OCI_IntervalGetDaySecond
 OCI_Boolean OCI_API OCI_IntervalGetYearMonth
 (
     OCI_Interval* itv,
-    OCI_Int32         * year,
-    OCI_Int32         * month
+    OCI_Int32   * year,
+    OCI_Int32   * month
 )
 {
     CALL_IMPL(OcilibIntervalGetYearMonth, itv, year, month);
@@ -2716,11 +2716,11 @@ OCI_Boolean OCI_API OCI_IntervalGetYearMonth
 OCI_Boolean OCI_API OCI_IntervalSetDaySecond
 (
     OCI_Interval* itv,
-    OCI_Int32           day,
-    OCI_Int32           hour,
-    OCI_Int32           min,
-    OCI_Int32           sec,
-    OCI_Int32           nsec
+    OCI_Int32     day,
+    OCI_Int32     hour,
+    OCI_Int32     min,
+    OCI_Int32     sec,
+    OCI_Int32     nsec
 )
 {
     CALL_IMPL(OcilibIntervalSetDaySecond, itv, day, hour, min, sec, nsec);
@@ -2729,8 +2729,8 @@ OCI_Boolean OCI_API OCI_IntervalSetDaySecond
 OCI_Boolean OCI_API OCI_IntervalSetYearMonth
 (
     OCI_Interval* itv,
-    OCI_Int32           year,
-    OCI_Int32           month
+    OCI_Int32     year,
+    OCI_Int32     month
 )
 {
     CALL_IMPL(OcilibIntervalSetYearMonth, itv, year, month);
@@ -2940,7 +2940,7 @@ OCI_Boolean OCI_API OCI_SetHAHandler
 OCI_Boolean OCI_API OCI_SetSubscriptionPort
 (
     OCI_Environment *env,
-    OCI_UInt32     port
+    OCI_UInt32       port
 )
 {
     CALL_IMPL_E(OcilibEnvironmentSetSubscriptionPort, env, port);
@@ -3019,7 +3019,7 @@ OCI_Lob** OCI_API OCI_LobArrayCreate
 (
     OCI_Connection* con,
     OCI_LobType     type,
-    OCI_UInt32    nbelem
+    OCI_UInt32      nbelem
 )
 {
     CALL_IMPL(OcilibLobCreateArray, con, type, nbelem);
@@ -3044,7 +3044,7 @@ OCI_LobType OCI_API OCI_LobGetType
 OCI_Boolean OCI_API OCI_LobSeek
 (
     OCI_Lob    * lob,
-    OCI_UInt64     offset,
+    OCI_UInt64   offset,
     OCI_SeekMode mode
 )
 {
@@ -3061,8 +3061,8 @@ OCI_UInt64 OCI_API OCI_LobGetOffset
 
 OCI_Boolean OCI_API OCI_LobRead
 (
-    OCI_Lob     * lob,
-    void        * buffer,
+    OCI_Lob   * lob,
+    void      * buffer,
     OCI_UInt32* char_count,
     OCI_UInt32* byte_count
 )
@@ -3072,8 +3072,8 @@ OCI_Boolean OCI_API OCI_LobRead
 
 OCI_Boolean OCI_API OCI_LobWrite
 (
-    OCI_Lob     * lob,
-    void        * buffer,
+    OCI_Lob   * lob,
+    void      * buffer,
     OCI_UInt32* char_count,
     OCI_UInt32* byte_count
 )
@@ -3083,7 +3083,7 @@ OCI_Boolean OCI_API OCI_LobWrite
 
 OCI_Boolean OCI_API OCI_LobTruncate
 (
-    OCI_Lob* lob,
+    OCI_Lob  * lob,
     OCI_UInt64 size
 )
 {
@@ -3108,7 +3108,7 @@ OCI_UInt32 OCI_API OCI_LobGetChunkSize
 
 OCI_UInt64 OCI_API OCI_LobErase
 (
-    OCI_Lob* lob,
+    OCI_Lob  * lob,
     OCI_UInt64 offset,
     OCI_UInt64 len
 )
@@ -3118,8 +3118,8 @@ OCI_UInt64 OCI_API OCI_LobErase
 
 OCI_Boolean OCI_API OCI_LobAppend
 (
-    OCI_Lob     * lob,
-    void        * buffer,
+    OCI_Lob   * lob,
+    void      * buffer,
     OCI_UInt32* char_count,
     OCI_UInt32* byte_count
 )
@@ -3146,8 +3146,8 @@ OCI_Boolean OCI_API OCI_LobIsTemporary
 
 OCI_Boolean OCI_API OCI_LobCopy
 (
-    OCI_Lob* lob,
-    OCI_Lob* lob_src,
+    OCI_Lob  * lob,
+    OCI_Lob  * lob_src,
     OCI_UInt64 offset_dst,
     OCI_UInt64 offset_src,
     OCI_UInt64 count
@@ -3158,11 +3158,11 @@ OCI_Boolean OCI_API OCI_LobCopy
 
 OCI_Boolean OCI_API OCI_LobCopyFromFile
 (
-    OCI_Lob * lob,
-    OCI_File* file,
-    OCI_UInt64  offset_dst,
-    OCI_UInt64  offset_src,
-    OCI_UInt64  count
+    OCI_Lob  * lob,
+    OCI_File * file,
+    OCI_UInt64 offset_dst,
+    OCI_UInt64 offset_src,
+    OCI_UInt64 count
 )
 {
     CALL_IMPL(OcilibLobCopyFromFile, lob, file, offset_dst, offset_src, count);
@@ -3275,8 +3275,8 @@ OCI_LongType OCI_API OCI_LongGetType
 
 OCI_UInt32 OCI_API OCI_LongRead
 (
-    OCI_Long   * lg,
-    void       * buffer,
+    OCI_Long * lg,
+    void     * buffer,
     OCI_UInt32 len
 )
 {
@@ -3285,8 +3285,8 @@ OCI_UInt32 OCI_API OCI_LongRead
 
 OCI_UInt32 OCI_API OCI_LongWrite
 (
-    OCI_Long   * lg,
-    void       * buffer,
+    OCI_Long * lg,
+    void     * buffer,
     OCI_UInt32 len
 )
 {
@@ -3356,8 +3356,8 @@ OCI_Boolean OCI_API OCI_MsgSetObject
 
 OCI_Boolean OCI_API OCI_MsgGetRaw
 (
-    OCI_Msg     * msg,
-    void        * raw,
+    OCI_Msg   * msg,
+    void      * raw,
     OCI_UInt32* size
 )
 {
@@ -3368,7 +3368,7 @@ OCI_Boolean OCI_API OCI_MsgSetRaw
 (
     OCI_Msg    * msg,
     const void * raw,
-    OCI_UInt32 size
+    OCI_UInt32   size
 )
 {
     CALL_IMPL(OcilibMessageSetRaw, msg, raw, size);
@@ -3392,8 +3392,8 @@ OCI_Int32 OCI_API OCI_MsgGetEnqueueDelay
 
 OCI_Boolean OCI_API OCI_MsgSetEnqueueDelay
 (
-    OCI_Msg* msg,
-    OCI_Int32      value
+    OCI_Msg * msg,
+    OCI_Int32 value
 )
 {
     CALL_IMPL(OcilibMessageSetEnqueueDelay, msg, value);
@@ -3417,8 +3417,8 @@ OCI_Int32 OCI_API OCI_MsgGetExpiration
 
 OCI_Boolean OCI_API OCI_MsgSetExpiration
 (
-    OCI_Msg* msg,
-    OCI_Int32      value
+    OCI_Msg * msg,
+    OCI_Int32 value
 )
 {
     CALL_IMPL(OcilibMessageSetExpiration, msg, value);
@@ -3442,8 +3442,8 @@ OCI_Int32 OCI_API OCI_MsgGetPriority
 
 OCI_Boolean OCI_API OCI_MsgSetPriority
 (
-    OCI_Msg* msg,
-    OCI_Int32      value
+    OCI_Msg * msg,
+    OCI_Int32 value
 )
 {
     CALL_IMPL(OcilibMessageSetPriority, msg, value);
@@ -3451,8 +3451,8 @@ OCI_Boolean OCI_API OCI_MsgSetPriority
 
 OCI_Boolean OCI_API OCI_MsgGetID
 (
-    OCI_Msg     * msg,
-    void        * id,
+    OCI_Msg   * msg,
+    void      * id,
     OCI_UInt32* len
 )
 {
@@ -3461,8 +3461,8 @@ OCI_Boolean OCI_API OCI_MsgGetID
 
 OCI_Boolean OCI_API OCI_MsgGetOriginalID
 (
-    OCI_Msg     * msg,
-    void        * id,
+    OCI_Msg   * msg,
+    void      * id,
     OCI_UInt32* len
 )
 {
@@ -3473,7 +3473,7 @@ OCI_Boolean OCI_API OCI_MsgSetOriginalID
 (
     OCI_Msg    * msg,
     const void * id,
-    OCI_UInt32 len
+    OCI_UInt32   len
 )
 {
     CALL_IMPL(OcilibMessageSetOriginalID, msg, id, len);
@@ -3500,7 +3500,7 @@ OCI_Boolean OCI_API OCI_MsgSetConsumers
 (
     OCI_Msg    * msg,
     OCI_Agent ** consumers,
-    OCI_UInt32 count
+    OCI_UInt32   count
 )
 {
     CALL_IMPL(OcilibMessageSetConsumers, msg, consumers, count);
@@ -3563,7 +3563,7 @@ OCI_Boolean OCI_API OCI_NumberFree
 OCI_Number** OCI_API OCI_NumberArrayCreate
 (
     OCI_Environment* env,
-    OCI_UInt32     nbelem
+    OCI_UInt32       nbelem
 )
 {
     CALL_IMPL_E(OcilibNumberCreateArray, env, nbelem);
@@ -3590,7 +3590,7 @@ OCI_Boolean OCI_API OCI_NumberToText
 (
     OCI_Number * number,
     const otext* fmt,
-    OCI_Int32          size,
+    OCI_Int32    size,
     otext      * str
 )
 {
@@ -3716,7 +3716,7 @@ OCI_Boolean OCI_API OCI_ObjectFree
 OCI_Object** OCI_API OCI_ObjectArrayCreate
 (
     OCI_TypeInfo* typinf,
-    OCI_UInt32  nbelem
+    OCI_UInt32    nbelem
 )
 {
     CALL_IMPL(OcilibObjectCreateArray, typinf, nbelem);
@@ -3836,7 +3836,7 @@ OCI_UInt64 OCI_API OCI_ObjectGetUnsignedBigInt
     CALL_IMPL(OcilibObjectGetUnsignedBigInt, obj, attr);
 }
 
-double OCI_API OCI_ObjectGetDouble
+OCI_Double OCI_API OCI_ObjectGetDouble
 (
     OCI_Object * obj,
     const otext* attr
@@ -3845,7 +3845,7 @@ double OCI_API OCI_ObjectGetDouble
     CALL_IMPL(OcilibObjectGetDouble, obj, attr);
 }
 
-float OCI_API OCI_ObjectGetFloat
+OCI_Float OCI_API OCI_ObjectGetFloat
 (
     OCI_Object * obj,
     const otext* attr
@@ -3868,7 +3868,7 @@ OCI_Int32 OCI_API OCI_ObjectGetRaw
     OCI_Object * obj,
     const otext* attr,
     void       * value,
-    OCI_UInt32 len
+    OCI_UInt32   len
 )
 {
     CALL_IMPL(OcilibObjectGetRaw, obj, attr, value, len);
@@ -3978,7 +3978,7 @@ OCI_Boolean OCI_API OCI_ObjectSetShort
 (
     OCI_Object * obj,
     const otext* attr,
-    OCI_Int16        value
+    OCI_Int16    value
 )
 {
     CALL_IMPL(OcilibObjectSetShort, obj, attr, value);
@@ -3986,9 +3986,9 @@ OCI_Boolean OCI_API OCI_ObjectSetShort
 
 OCI_Boolean OCI_API OCI_ObjectSetUnsignedShort
 (
-    OCI_Object   * obj,
-    const otext  * attr,
-    OCI_UInt16 value
+    OCI_Object  * obj,
+    const otext * attr,
+    OCI_UInt16    value
 )
 {
     CALL_IMPL(OcilibObjectSetUnsignedShort, obj, attr, value);
@@ -3998,7 +3998,7 @@ OCI_Boolean OCI_API OCI_ObjectSetInt
 (
     OCI_Object * obj,
     const otext* attr,
-    OCI_Int32          value
+    OCI_Int32    value
 )
 {
     CALL_IMPL(OcilibObjectSetInt, obj, attr, value);
@@ -4008,7 +4008,7 @@ OCI_Boolean OCI_API OCI_ObjectSetUnsignedInt
 (
     OCI_Object * obj,
     const otext* attr,
-    OCI_UInt32 value
+    OCI_UInt32   value
 )
 {
     CALL_IMPL(OcilibObjectSetUnsignedInt, obj, attr, value);
@@ -4018,7 +4018,7 @@ OCI_Boolean OCI_API OCI_ObjectSetBigInt
 (
     OCI_Object * obj,
     const otext* attr,
-    OCI_Int64      value
+    OCI_Int64    value
 )
 {
     CALL_IMPL(OcilibObjectSetBigInt, obj, attr, value);
@@ -4028,7 +4028,7 @@ OCI_Boolean OCI_API OCI_ObjectSetUnsignedBigInt
 (
     OCI_Object * obj,
     const otext* attr,
-    OCI_UInt64     value
+    OCI_UInt64   value
 )
 {
     CALL_IMPL(OcilibObjectSetUnsignedBigInt, obj, attr, value);
@@ -4038,7 +4038,7 @@ OCI_Boolean OCI_API OCI_ObjectSetDouble
 (
     OCI_Object * obj,
     const otext* attr,
-    double       value
+    OCI_Double   value
 )
 {
     CALL_IMPL(OcilibObjectSetDouble, obj, attr, value);
@@ -4048,7 +4048,7 @@ OCI_Boolean OCI_API OCI_ObjectSetFloat
 (
     OCI_Object * obj,
     const otext* attr,
-    float        value
+    OCI_Float    value
 )
 {
     CALL_IMPL(OcilibObjectSetFloat, obj, attr, value);
@@ -4069,7 +4069,7 @@ OCI_Boolean OCI_API OCI_ObjectSetRaw
     OCI_Object * obj,
     const otext* attr,
     void       * value,
-    OCI_UInt32 len
+    OCI_UInt32   len
 )
 {
     CALL_IMPL(OcilibObjectSetRaw, obj, attr, value, len);
@@ -4185,9 +4185,9 @@ OCI_Boolean OCI_API OCI_ObjectGetStruct
 
 OCI_Boolean OCI_API OCI_ObjectToText
 (
-    OCI_Object  * obj,
-    OCI_UInt32* size,
-    otext       * str
+    OCI_Object * obj,
+    OCI_UInt32 * size,
+    otext      * str
 )
 {
     CALL_IMPL(OcilibObjectToString, obj, size, str);
@@ -4205,9 +4205,9 @@ OCI_Pool* OCI_API OCI_PoolCreate
     const otext    * pwd,
     OCI_PoolType     type,
     OCI_SessionMode  mode,
-    OCI_UInt32     min_con,
-    OCI_UInt32     max_con,
-    OCI_UInt32     incr_con
+    OCI_UInt32       min_con,
+    OCI_UInt32       max_con,
+    OCI_UInt32       incr_con
 )
 {
     CALL_IMPL_E(OcilibPoolCreate, env, db, user, pwd, type, mode, min_con, max_con, incr_con);
@@ -4242,7 +4242,7 @@ OCI_UInt32 OCI_API OCI_PoolGetTimeout
 
 OCI_Boolean OCI_API OCI_PoolSetTimeout
 (
-    OCI_Pool   * pool,
+    OCI_Pool * pool,
     OCI_UInt32 value
 )
 {
@@ -4316,7 +4316,7 @@ OCI_UInt32 OCI_API OCI_PoolGetStatementCacheSize
 
 OCI_Boolean OCI_API OCI_PoolSetStatementCacheSize
 (
-    OCI_Pool   * pool,
+    OCI_Pool * pool,
     OCI_UInt32 value
 )
 {
@@ -4333,9 +4333,9 @@ OCI_Boolean OCI_API OCI_QueueCreate
     const otext   * queue_name,
     const otext   * queue_table,
     OCI_QueueType   queue_type,
-    OCI_UInt32    max_retries,
-    OCI_UInt32    retry_delay,
-    OCI_UInt32    retention_time,
+    OCI_UInt32      max_retries,
+    OCI_UInt32      retry_delay,
+    OCI_UInt32      retention_time,
     OCI_Boolean     dependency_tracking,
     const otext   * comment
 )
@@ -4348,9 +4348,9 @@ OCI_Boolean OCI_API OCI_QueueAlter
 (
     OCI_Connection* con,
     const otext   * queue_name,
-    OCI_UInt32    max_retries,
-    OCI_UInt32    retry_delay,
-    OCI_UInt32    retention_time,
+    OCI_UInt32      max_retries,
+    OCI_UInt32      retry_delay,
+    OCI_UInt32      retention_time,
     const otext   * comment
 )
 {
@@ -4399,8 +4399,8 @@ OCI_Boolean OCI_API OCI_QueueTableCreate
     OCI_Boolean       multiple_consumers,
     OCI_QueueGrouping message_grouping,
     const otext     * comment,
-    OCI_UInt32      primary_instance,
-    OCI_UInt32      secondary_instance,
+    OCI_UInt32        primary_instance,
+    OCI_UInt32        secondary_instance,
     const otext     * compatible
 )
 {
@@ -4414,8 +4414,8 @@ OCI_Boolean OCI_API OCI_QueueTableAlter
     OCI_Connection* con,
     const otext   * queue_table,
     const otext   * comment,
-    OCI_UInt32    primary_instance,
-    OCI_UInt32    secondary_instance
+    OCI_UInt32      primary_instance,
+    OCI_UInt32      secondary_instance
 )
 {
     CALL_IMPL(OcilibQueueTableAlter, con, queue_table, comment, primary_instance, secondary_instance);
@@ -4476,7 +4476,7 @@ OCI_Boolean OCI_API OCI_RefFree
 OCI_Ref** OCI_API OCI_RefArrayCreate
 (
     OCI_TypeInfo* typinf,
-    OCI_UInt32  nbelem
+    OCI_UInt32    nbelem
 )
 {
     CALL_IMPL(OcilibReferenceCreateArray, typinf, nbelem);
@@ -4541,9 +4541,9 @@ OCI_UInt32 OCI_API OCI_RefGetHexSize
 
 OCI_Boolean OCI_API OCI_RefToText
 (
-    OCI_Ref    * ref,
+    OCI_Ref  * ref,
     OCI_UInt32 size,
-    otext      * str
+    otext    * str
 )
 {
     CALL_IMPL(OcilibReferenceToString, ref, size, str);
@@ -4592,7 +4592,7 @@ OCI_Boolean OCI_API OCI_VectorFree
 OCI_Vector** OCI_API OCI_VectorArrayCreate
 (
     OCI_Connection* con,
-    OCI_UInt32    nbelem
+    OCI_UInt32      nbelem
 )
 {
     CALL_IMPL(OcilibVectorCreateArray, con, nbelem);
@@ -4608,7 +4608,7 @@ OCI_Boolean OCI_API OCI_VectorArrayFree
 
 OCI_Boolean OCI_API OCI_VectorGetInfo
 (
-    OCI_Vector   *vect,
+    OCI_Vector *vect,
     OCI_UInt32 *format,
     OCI_UInt32 *dimensions
 )
@@ -4629,7 +4629,7 @@ OCI_Boolean OCI_API OCI_VectorSetValues
 (
     OCI_Vector      *vect,
     OCI_VectorFormat format,
-    OCI_UInt32     dimensions,
+    OCI_UInt32       dimensions,
     void            *values
 )
 {
@@ -4640,9 +4640,9 @@ OCI_Boolean OCI_API OCI_VectorFromText
 (
     OCI_Vector      *vect,
     const otext    * str,
-    OCI_UInt32     size,
+    OCI_UInt32       size,
     OCI_VectorFormat format,
-    OCI_UInt32     dimensions
+    OCI_UInt32       dimensions
 )
 {
     CALL_IMPL(OcilibVectorFromString, vect, str, size, format, dimensions);
@@ -4650,9 +4650,9 @@ OCI_Boolean OCI_API OCI_VectorFromText
 
 OCI_Boolean OCI_API OCI_VectorToText
 (
-    OCI_Vector   *vect,
+    OCI_Vector *vect,
     OCI_UInt32 *size,
-    otext        *str
+    otext      *str
 )
 {
     CALL_IMPL(OcilibVectorToString, vect, size, str);
@@ -4714,7 +4714,7 @@ OCI_Boolean OCI_API OCI_FetchSeek
 (
     OCI_Resultset   * rs,
     OCI_FetchSeekMode mode,
-    OCI_Int32               offset
+    OCI_Int32         offset
 )
 {
     CALL_IMPL(OcilibResultsetFetchSeek, rs, mode, offset);
@@ -4747,7 +4747,7 @@ OCI_UInt32 OCI_API OCI_GetColumnCount
 OCI_Column* OCI_API OCI_GetColumn
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetColumn, rs, index);
@@ -4774,7 +4774,7 @@ OCI_UInt32 OCI_API OCI_GetColumnIndex
 OCI_Boolean OCI_API OCI_SetStructNumericType
 (
     OCI_Resultset * rs,
-    OCI_UInt32    index,
+    OCI_UInt32      index,
     OCI_NumericType type
 )
 {
@@ -4804,7 +4804,7 @@ OCI_Boolean OCI_API OCI_GetStruct
 OCI_Number* OCI_API OCI_GetNumber
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetNumber, rs, index);
@@ -4822,7 +4822,7 @@ OCI_Number* OCI_API OCI_GetNumberByName
 OCI_Int16 OCI_API OCI_GetShort
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetShort, rs, index);
@@ -4840,7 +4840,7 @@ OCI_Int16 OCI_API OCI_GetShortByName
 OCI_UInt16 OCI_API OCI_GetUnsignedShort
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetUnsignedShort, rs, index);
@@ -4858,7 +4858,7 @@ OCI_UInt16 OCI_API OCI_GetUnsignedShortByName
 OCI_Int32 OCI_API OCI_GetInt
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetInt, rs, index);
@@ -4876,7 +4876,7 @@ OCI_Int32 OCI_API OCI_GetIntByName
 OCI_UInt32 OCI_API OCI_GetUnsignedInt
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetUnsignedInt, rs, index);
@@ -4894,7 +4894,7 @@ OCI_UInt32 OCI_API OCI_GetUnsignedIntByName
 OCI_Int64 OCI_API OCI_GetBigInt
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetBigInt, rs, index);
@@ -4912,7 +4912,7 @@ OCI_Int64 OCI_API OCI_GetBigIntByName
 OCI_UInt64 OCI_API OCI_GetUnsignedBigInt
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetUnsignedBigInt, rs, index);
@@ -4930,7 +4930,7 @@ OCI_UInt64 OCI_API OCI_GetUnsignedBigIntByName
 const otext* OCI_API OCI_GetString
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetString, rs, index);
@@ -4948,9 +4948,9 @@ const otext* OCI_API OCI_GetStringByName
 OCI_UInt32 OCI_API OCI_GetRaw
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index,
+    OCI_UInt32     index,
     void         * buffer,
-    OCI_UInt32   len
+    OCI_UInt32     len
 )
 {
     CALL_IMPL(OcilibResultsetGetRaw, rs, index, buffer,len);
@@ -4961,22 +4961,22 @@ OCI_UInt32 OCI_API OCI_GetRawByName
     OCI_Resultset* rs,
     const otext  * name,
     void         * buffer,
-    OCI_UInt32   len
+    OCI_UInt32     len
 )
 {
     CALL_IMPL(OcilibResultsetGetRawByName, rs, name, buffer, len);
 }
 
-double OCI_API OCI_GetDouble
+OCI_Double OCI_API OCI_GetDouble
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetDouble, rs, index);
 }
 
-double OCI_API OCI_GetDoubleByName
+OCI_Double OCI_API OCI_GetDoubleByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -4985,16 +4985,16 @@ double OCI_API OCI_GetDoubleByName
     CALL_IMPL(OcilibResultsetGetDoubleByName, rs, name);
 }
 
-float OCI_API OCI_GetFloat
+OCI_Float OCI_API OCI_GetFloat
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetFloat, rs, index);
 }
 
-float OCI_API OCI_GetFloatByName
+OCI_Float OCI_API OCI_GetFloatByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -5006,7 +5006,7 @@ float OCI_API OCI_GetFloatByName
 OCI_Date* OCI_API OCI_GetDate
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetDate, rs, index);
@@ -5024,7 +5024,7 @@ OCI_Date* OCI_API OCI_GetDateByName
 OCI_Timestamp* OCI_API OCI_GetTimestamp
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetTimestamp, rs, index);
@@ -5042,7 +5042,7 @@ OCI_Timestamp* OCI_API OCI_GetTimestampByName
 OCI_Interval* OCI_API OCI_GetInterval
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetInterval, rs, index);
@@ -5060,7 +5060,7 @@ OCI_Interval* OCI_API OCI_GetIntervalByName
 OCI_Object* OCI_API OCI_GetObject
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetObject, rs, index);
@@ -5078,7 +5078,7 @@ OCI_Object* OCI_API OCI_GetObjectByName
 OCI_Coll* OCI_API OCI_GetColl
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetColl, rs, index);
@@ -5096,7 +5096,7 @@ OCI_Coll* OCI_API OCI_GetCollByName
 OCI_Ref* OCI_API OCI_GetRef
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetReference, rs, index);
@@ -5114,7 +5114,7 @@ OCI_Ref* OCI_API OCI_GetRefByName
 OCI_XmlType* OCI_API OCI_GetXmlType
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetXmlType, rs, index);
@@ -5132,7 +5132,7 @@ OCI_XmlType* OCI_API OCI_GetXmlTypeByName
 OCI_Vector * OCI_API OCI_GetVector
 (
     OCI_Resultset *rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetVector, rs, index);
@@ -5150,7 +5150,7 @@ OCI_Vector * OCI_API OCI_GetVectorByName
 OCI_Statement* OCI_API OCI_GetStatement
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetStatement, rs, index);
@@ -5168,7 +5168,7 @@ OCI_Statement* OCI_API OCI_GetStatementByName
 OCI_Lob* OCI_API OCI_GetLob
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetLob, rs, index);
@@ -5186,7 +5186,7 @@ OCI_Lob* OCI_API OCI_GetLobByName
 OCI_Json* OCI_API OCI_GetJson
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetJson, rs, index);
@@ -5204,7 +5204,7 @@ OCI_Json* OCI_API OCI_GetJsonByName
 OCI_File* OCI_API OCI_GetFile
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetFile, rs, index);
@@ -5222,7 +5222,7 @@ OCI_File* OCI_API OCI_GetFileByName
 OCI_Long* OCI_API OCI_GetLong
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetLong, rs, index);
@@ -5240,7 +5240,7 @@ OCI_Long* OCI_API OCI_GetLongByName
 OCI_UInt32 OCI_API OCI_GetDataSize
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetDataSize, rs, index);
@@ -5258,7 +5258,7 @@ OCI_UInt32 OCI_API OCI_GetDataSizeByName
 OCI_Boolean OCI_API OCI_IsNull
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetIsNull, rs, index);
@@ -5284,7 +5284,7 @@ OCI_Statement* OCI_API OCI_ResultsetGetStatement
 OCI_UInt32 OCI_API OCI_GetDataLength
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibResultsetGetDataLength, rs, index);
@@ -5450,7 +5450,7 @@ OCI_Boolean OCI_DescribeFmt
 OCI_Boolean OCI_API OCI_BindArraySetSize
 (
     OCI_Statement* stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 )
 {
     CALL_IMPL(OcilibStatementSetBindArraySize, stmt, size);
@@ -5506,7 +5506,7 @@ OCI_Bind* OCI_API OCI_BindArrayOfNumbers
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Number  ** data,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfNumbers, stmt, name, data, nbelem);
@@ -5516,7 +5516,7 @@ OCI_Bind* OCI_API OCI_BindShort
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_Int16        * data
+    OCI_Int16    * data
 )
 {
     CALL_IMPL(OcilibStatementBindShort, stmt, name, data);
@@ -5526,8 +5526,8 @@ OCI_Bind* OCI_API OCI_BindArrayOfShorts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_Int16        * data,
-    OCI_UInt32   nbelem
+    OCI_Int16    * data,
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfShorts, stmt, name, data, nbelem);
@@ -5537,7 +5537,7 @@ OCI_Bind* OCI_API OCI_BindUnsignedShort
 (
     OCI_Statement * stmt,
     const otext   * name,
-    OCI_UInt16* data
+    OCI_UInt16    * data
 )
 {
     CALL_IMPL(OcilibStatementBindUnsignedShort, stmt, name, data);
@@ -5547,8 +5547,8 @@ OCI_Bind* OCI_API OCI_BindArrayOfUnsignedShorts
 (
     OCI_Statement * stmt,
     const otext   * name,
-    OCI_UInt16* data,
-    OCI_UInt32    nbelem
+    OCI_UInt16    * data,
+    OCI_UInt32      nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfUnsignedShorts, stmt, name, data, nbelem);
@@ -5558,7 +5558,7 @@ OCI_Bind* OCI_API OCI_BindInt
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_Int32          * data
+    OCI_Int32    * data
 )
 {
     CALL_IMPL(OcilibStatementBindInt, stmt, name, data);
@@ -5568,8 +5568,8 @@ OCI_Bind* OCI_API OCI_BindArrayOfInts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_Int32          * data,
-    OCI_UInt32   nbelem
+    OCI_Int32    * data,
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfInts, stmt, name, data, nbelem);
@@ -5579,7 +5579,7 @@ OCI_Bind* OCI_API OCI_BindUnsignedInt
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_UInt32 * data
+    OCI_UInt32   * data
 )
 {
     CALL_IMPL(OcilibStatementBindUnsignedInt, stmt, name, data);
@@ -5589,8 +5589,8 @@ OCI_Bind* OCI_API OCI_BindArrayOfUnsignedInts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_UInt32 * data,
-    OCI_UInt32   nbelem
+    OCI_UInt32   * data,
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfUnsignedInts, stmt, name, data, nbelem);
@@ -5600,7 +5600,7 @@ OCI_Bind* OCI_API OCI_BindBigInt
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_Int64      * data
+    OCI_Int64    * data
 )
 {
     CALL_IMPL(OcilibStatementBindBigInt, stmt, name, data);
@@ -5610,8 +5610,8 @@ OCI_Bind* OCI_API OCI_BindArrayOfBigInts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_Int64      * data,
-    OCI_UInt32   nbelem
+    OCI_Int64    * data,
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfBigInts, stmt, name, data, nbelem);
@@ -5621,7 +5621,7 @@ OCI_Bind* OCI_API OCI_BindUnsignedBigInt
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_UInt64     * data
+    OCI_UInt64   * data
 )
 {
     CALL_IMPL(OcilibStatementBindUnsignedBigInt, stmt, name, data);
@@ -5631,8 +5631,8 @@ OCI_Bind* OCI_API OCI_BindArrayOfUnsignedBigInts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_UInt64     * data,
-    OCI_UInt32   nbelem
+    OCI_UInt64   * data,
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfUnsignedBigInts, stmt, name, data, nbelem);
@@ -5643,7 +5643,7 @@ OCI_Bind* OCI_API OCI_BindString
     OCI_Statement* stmt,
     const otext  * name,
     otext        * data,
-    OCI_UInt32   len
+    OCI_UInt32     len
 )
 {
     CALL_IMPL(OcilibStatementBindString, stmt, name, data, len);
@@ -5654,8 +5654,8 @@ OCI_Bind* OCI_API OCI_BindArrayOfStrings
     OCI_Statement* stmt,
     const otext  * name,
     otext        * data,
-    OCI_UInt32   len,
-    OCI_UInt32   nbelem
+    OCI_UInt32     len,
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfStrings, stmt, name, data, len, nbelem);
@@ -5666,7 +5666,7 @@ OCI_Bind* OCI_API OCI_BindRaw
     OCI_Statement* stmt,
     const otext  * name,
     void         * data,
-    OCI_UInt32   len
+    OCI_UInt32     len
 )
 {
     CALL_IMPL(OcilibStatementBindRaw, stmt, name, data, len);
@@ -5677,8 +5677,8 @@ OCI_Bind* OCI_API OCI_BindArrayOfRaws
     OCI_Statement* stmt,
     const otext  * name,
     void         * data,
-    OCI_UInt32   len,
-    OCI_UInt32   nbelem
+    OCI_UInt32     len,
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfRaws, stmt, name, data, len, nbelem);
@@ -5688,7 +5688,7 @@ OCI_Bind* OCI_API OCI_BindDouble
 (
     OCI_Statement* stmt,
     const otext  * name,
-    double       * data
+    OCI_Double   * data
 )
 {
     CALL_IMPL(OcilibStatementBindDouble, stmt, name, data);
@@ -5698,8 +5698,8 @@ OCI_Bind* OCI_API OCI_BindArrayOfDoubles
 (
     OCI_Statement* stmt,
     const otext  * name,
-    double       * data,
-    OCI_UInt32   nbelem
+    OCI_Double   * data,
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfDoubles, stmt, name, data, nbelem);
@@ -5709,7 +5709,7 @@ OCI_Bind* OCI_API OCI_BindFloat
 (
     OCI_Statement* stmt,
     const otext  * name,
-    float        * data
+    OCI_Float    * data
 )
 {
     CALL_IMPL(OcilibStatementBindFloat, stmt, name, data);
@@ -5719,8 +5719,8 @@ OCI_Bind* OCI_API OCI_BindArrayOfFloats
 (
     OCI_Statement* stmt,
     const otext  * name,
-    float        * data,
-    OCI_UInt32   nbelem
+    OCI_Float    * data,
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfFloats, stmt, name, data, nbelem);
@@ -5741,7 +5741,7 @@ OCI_Bind* OCI_API OCI_BindArrayOfDates
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Date    ** data,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfDates, stmt, name, data, nbelem);
@@ -5763,7 +5763,7 @@ OCI_Bind* OCI_API OCI_BindArrayOfTimestamps
     const otext     * name,
     OCI_Timestamp  ** data,
     OCI_TimestampType type,
-    OCI_UInt32      nbelem
+    OCI_UInt32        nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfTimestamps, stmt, name, data, type, nbelem);
@@ -5785,7 +5785,7 @@ OCI_Bind* OCI_API OCI_BindArrayOfIntervals
     const otext    * name,
     OCI_Interval  ** data,
     OCI_IntervalType type,
-    OCI_UInt32     nbelem
+    OCI_UInt32       nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfIntervals, stmt, name, data, type, nbelem);
@@ -5807,7 +5807,7 @@ OCI_Bind* OCI_API OCI_BindArrayOfObjects
     const otext  * name,
     OCI_Object  ** data,
     OCI_TypeInfo * typinf,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfObjects, stmt, name, data, typinf, nbelem);
@@ -5828,7 +5828,7 @@ OCI_Bind* OCI_API OCI_BindArrayOfVectors
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Vector  ** data,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfVectors, stmt, name, data, nbelem);
@@ -5859,7 +5859,7 @@ OCI_Bind* OCI_API OCI_BindArrayOfJsons
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Json    ** data,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfJsons, stmt, name, data, nbelem);
@@ -5871,7 +5871,7 @@ OCI_Bind* OCI_API OCI_BindArrayOfLobs
     const otext  * name,
     OCI_Lob     ** data,
     OCI_LobType    type,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfLobs, stmt, name, data, type, nbelem);
@@ -5893,7 +5893,7 @@ OCI_Bind* OCI_API OCI_BindArrayOfFiles
     const otext  * name,
     OCI_File    ** data,
     OCI_FileType   type,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfFiles, stmt, name, data, type, nbelem);
@@ -5915,7 +5915,7 @@ OCI_Bind* OCI_API OCI_BindArrayOfRefs
     const otext  * name,
     OCI_Ref     ** data,
     OCI_TypeInfo * typinf,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfReferences, stmt, name, data, typinf, nbelem);
@@ -5937,7 +5937,7 @@ OCI_Bind* OCI_API OCI_BindArrayOfColls
     const otext  * name,
     OCI_Coll    ** data,
     OCI_TypeInfo * typinf,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     CALL_IMPL(OcilibStatementBindArrayOfCollections, stmt, name, data, typinf, nbelem);
@@ -5958,7 +5958,7 @@ OCI_Bind* OCI_API OCI_BindLong
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Long     * data,
-    OCI_UInt32   size
+    OCI_UInt32     size
 )
 {
     CALL_IMPL(OcilibStatementBindLong, stmt, name, data, size);
@@ -6031,7 +6031,7 @@ OCI_Boolean OCI_API OCI_RegisterString
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_UInt32   len
+    OCI_UInt32     len
 )
 {
     CALL_IMPL(OcilibStatementRegisterString, stmt, name, len);
@@ -6041,7 +6041,7 @@ OCI_Boolean OCI_API OCI_RegisterRaw
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_UInt32   len
+    OCI_UInt32     len
 )
 {
     CALL_IMPL(OcilibStatementRegisterRaw, stmt, name, len);
@@ -6214,7 +6214,7 @@ OCI_BindAllocationMode OCI_API OCI_GetBindAllocation
 OCI_Boolean OCI_API OCI_SetFetchSize
 (
     OCI_Statement* stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 )
 {
     CALL_IMPL(OcilibStatementSetFetchSize, stmt, size);
@@ -6231,7 +6231,7 @@ OCI_UInt32 OCI_API OCI_GetFetchSize
 OCI_Boolean OCI_API OCI_SetPrefetchSize
 (
     OCI_Statement* stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 )
 {
     CALL_IMPL(OcilibStatementSetPrefetchSize, stmt, size);
@@ -6248,7 +6248,7 @@ OCI_UInt32 OCI_API OCI_GetPrefetchSize
 OCI_Boolean OCI_API OCI_SetPrefetchMemory
 (
     OCI_Statement* stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 )
 {
     CALL_IMPL(OcilibStatementSetPrefetchMemory, stmt, size);
@@ -6265,7 +6265,7 @@ OCI_UInt32 OCI_API OCI_GetPrefetchMemory
 OCI_Boolean OCI_API OCI_SetPieceSize
 (
     OCI_Statement* stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 )
 {
     CALL_IMPL(OcilibStatementSetPieceSize, stmt, size);
@@ -6347,7 +6347,7 @@ OCI_UInt32 OCI_API OCI_GetBindCount
 OCI_Bind* OCI_API OCI_GetBind
 (
     OCI_Statement* stmt,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     CALL_IMPL(OcilibStatementGetBind, stmt, index);
@@ -6390,7 +6390,7 @@ const otext* OCI_API OCI_GetSQLVerb
 OCI_Boolean OCI_API OCI_GetParseBindNames
 (
     OCI_Statement* stmt,
-    OCI_UInt32 * count,
+    OCI_UInt32   * count,
     const otext*** names
 )
 {
@@ -6423,7 +6423,7 @@ OCI_Subscription* OCI_API OCI_SubscriptionRegister
     const otext        * name,
     OCI_SubscriptionType type,
     POCI_NOTIFY          handler,
-    OCI_UInt32         timeout
+    OCI_UInt32           timeout
 )
 {
     CALL_IMPL(OcilibSubscriptionRegister, con, name, type, handler, timeout);
@@ -6495,7 +6495,7 @@ OCI_Timestamp** OCI_API OCI_TimestampArrayCreate
 (
     OCI_Environment * env,
     OCI_TimestampType type,
-    OCI_UInt32      nbelem
+    OCI_UInt32        nbelem
 )
 {
     CALL_IMPL_E(OcilibTimestampCreateArray, env, type, nbelem);
@@ -6546,13 +6546,13 @@ OCI_Int32 OCI_API OCI_TimestampCompare
 OCI_Boolean OCI_API OCI_TimestampConstruct
 (
     OCI_Timestamp* tmsp,
-    OCI_Int32            year,
-    OCI_Int32            month,
-    OCI_Int32            day,
-    OCI_Int32            hour,
-    OCI_Int32            min,
-    OCI_Int32            sec,
-    OCI_Int32            fsec,
+    OCI_Int32      year,
+    OCI_Int32      month,
+    OCI_Int32      day,
+    OCI_Int32      hour,
+    OCI_Int32      min,
+    OCI_Int32      sec,
+    OCI_Int32      fsec,
     const otext  * time_zone
 )
 {
@@ -6582,9 +6582,9 @@ OCI_Boolean OCI_API OCI_TimestampToText
 (
     OCI_Timestamp* tmsp,
     const otext  * fmt,
-    OCI_Int32            size,
+    OCI_Int32      size,
     otext        * str,
-    OCI_Int32            precision
+    OCI_Int32      precision
 )
 {
     CALL_IMPL(OcilibTimestampToString, tmsp, fmt, size, str, precision);
@@ -6593,9 +6593,9 @@ OCI_Boolean OCI_API OCI_TimestampToText
 OCI_Boolean OCI_API OCI_TimestampGetDate
 (
     OCI_Timestamp* tmsp,
-    OCI_Int32          * year,
-    OCI_Int32          * month,
-    OCI_Int32          * day
+    OCI_Int32    * year,
+    OCI_Int32    * month,
+    OCI_Int32    * day
 )
 {
     CALL_IMPL(OcilibTimestampGetDate, tmsp, year, month, day);
@@ -6604,10 +6604,10 @@ OCI_Boolean OCI_API OCI_TimestampGetDate
 OCI_Boolean OCI_API OCI_TimestampGetTime
 (
     OCI_Timestamp* tmsp,
-    OCI_Int32          * hour,
-    OCI_Int32          * min,
-    OCI_Int32          * sec,
-    OCI_Int32          * fsec
+    OCI_Int32    * hour,
+    OCI_Int32    * min,
+    OCI_Int32    * sec,
+    OCI_Int32    * fsec
 )
 {
     CALL_IMPL(OcilibTimestampGetTime, tmsp, hour, min, sec, fsec);
@@ -6616,13 +6616,13 @@ OCI_Boolean OCI_API OCI_TimestampGetTime
 OCI_Boolean OCI_API OCI_TimestampGetDateTime
 (
     OCI_Timestamp* tmsp,
-    OCI_Int32          * year,
-    OCI_Int32          * month,
-    OCI_Int32          * day,
-    OCI_Int32          * hour,
-    OCI_Int32          * min,
-    OCI_Int32          * sec,
-    OCI_Int32          * fsec
+    OCI_Int32    * year,
+    OCI_Int32    * month,
+    OCI_Int32    * day,
+    OCI_Int32    * hour,
+    OCI_Int32    * min,
+    OCI_Int32    * sec,
+    OCI_Int32    * fsec
 )
 {
     CALL_IMPL(OcilibTimestampGetDateTime, tmsp, year, month, day, hour, min, sec, fsec);
@@ -6631,7 +6631,7 @@ OCI_Boolean OCI_API OCI_TimestampGetDateTime
 OCI_Boolean OCI_API OCI_TimestampGetTimeZoneName
 (
     OCI_Timestamp* tmsp,
-    OCI_Int32            size,
+    OCI_Int32      size,
     otext        * str
 )
 {
@@ -6641,8 +6641,8 @@ OCI_Boolean OCI_API OCI_TimestampGetTimeZoneName
 OCI_Boolean OCI_API OCI_TimestampGetTimeZoneOffset
 (
     OCI_Timestamp* tmsp,
-    OCI_Int32          * hour,
-    OCI_Int32          * min
+    OCI_Int32    * hour,
+    OCI_Int32    * min
 )
 {
     CALL_IMPL(OcilibTimestampGetTimeZoneOffset, tmsp, hour,min);
@@ -6711,7 +6711,7 @@ OCI_Boolean OCI_API OCI_TimestampFromCTime
 OCI_Transaction* OCI_API OCI_TransactionCreate
 (
     OCI_Connection    * con,
-    OCI_UInt32        timeout,
+    OCI_UInt32          timeout,
     OCI_TransactionMode mode,
     OCI_XID           * pxid
 )
@@ -6832,7 +6832,7 @@ OCI_UInt32 OCI_API OCI_TypeInfoGetColumnCount
 OCI_Column* OCI_API OCI_TypeInfoGetColumn
 (
     OCI_TypeInfo* typinf,
-    OCI_UInt32  index
+    OCI_UInt32    index
 )
 {
     CALL_IMPL(OcilibTypeInfoGetColumn, typinf, index);
@@ -6922,7 +6922,7 @@ OCI_SodaDoc* OCI_API OCI_SodaDocCreateFromText
 (
     OCI_SodaDb  * sdb,
     const otext * content,
-    OCI_UInt32  contentSize,
+    OCI_UInt32    contentSize,
     const otext * key
 )
 {
@@ -7088,7 +7088,7 @@ OCI_Boolean OCI_API OCI_SodaOptionsSetKeys
 (
     OCI_SodaOptions * options,
     const otext    ** keys,
-    OCI_UInt32      count
+    OCI_UInt32        count
 )
 {
     CALL_IMPL(OcilibSodaOptionsSetKeys, options, keys, count);
@@ -7115,7 +7115,7 @@ OCI_Boolean OCI_API OCI_SodaOptionsSetFilter
 OCI_Boolean OCI_API OCI_SodaOptionsSetSkip
 (
     OCI_SodaOptions * options,
-    OCI_UInt32      count
+    OCI_UInt32        count
 )
 {
     CALL_IMPL(OcilibSodaOptionsSetSkip, options, count);
@@ -7124,7 +7124,7 @@ OCI_Boolean OCI_API OCI_SodaOptionsSetSkip
 OCI_Boolean OCI_API OCI_SodaOptionsSetLimit
 (
     OCI_SodaOptions * options,
-    OCI_UInt32      count
+    OCI_UInt32        count
 )
 {
     CALL_IMPL(OcilibSodaOptionsSetLimit, options, count);
@@ -7260,7 +7260,7 @@ OCI_Boolean OCI_API OCI_SodaCollRemove
 (
     OCI_SodaColl    * coll,
     OCI_SodaOptions * options,
-    OCI_UInt64        * count
+    OCI_UInt64      * count
 )
 {
     CALL_IMPL(OcilibSodaCollRemove, coll, options, count);
@@ -7290,7 +7290,7 @@ OCI_Json * OCI_API OCI_JsonCreate
 OCI_Json ** OCI_API OCI_JsonArrayCreate
 (
     OCI_Connection *con,
-    OCI_UInt32    nbelem
+    OCI_UInt32      nbelem
 )
 {
     CALL_IMPL(OcilibJsonArrayCreate, con, nbelem);
@@ -7324,7 +7324,7 @@ OCI_Boolean OCI_API OCI_JsonLoadText
 (
     OCI_Json          *json,
     const otext       *text,
-    OCI_UInt32       length,
+    OCI_UInt32         length,
     OCI_JsonValidation validation,
     OCI_JsonEncoding   encoding
 )
@@ -7334,9 +7334,9 @@ OCI_Boolean OCI_API OCI_JsonLoadText
 
 OCI_Boolean OCI_API OCI_JsonLoadBinary
 (
-    OCI_Json    *json,
-    const void  *data,
-    OCI_UInt32 length
+    OCI_Json   *json,
+    const void *data,
+    OCI_UInt32  length
 )
 {
     CALL_IMPL(OcilibJsonLoadBinary, json, data, length);
@@ -7346,7 +7346,7 @@ OCI_Boolean OCI_API OCI_JsonToText
 (
     OCI_Json     *json,
     otext        *buffer,
-    OCI_UInt32 *length,
+    OCI_UInt32   *length,
     OCI_JsonPrint print,
     OCI_Boolean   useEnvCharset
 )
@@ -7356,8 +7356,8 @@ OCI_Boolean OCI_API OCI_JsonToText
 
 OCI_Boolean OCI_API OCI_JsonToBinary
 (
-    OCI_Json     *json,
-    void         *buffer,
+    OCI_Json   *json,
+    void       *buffer,
     OCI_UInt32 *length
 )
 {
@@ -7420,7 +7420,7 @@ OCI_JsonNode * OCI_API OCI_JsonNodeCreateString
 (
     OCI_Json    *json,
     const otext *value,
-    OCI_UInt32 length
+    OCI_UInt32   length
 )
 {
     CALL_IMPL(OcilibJsonNodeCreateString, json, value, length);
@@ -7454,9 +7454,9 @@ OCI_JsonNode * OCI_API OCI_JsonNodeCreateNull
 
 OCI_JsonNode * OCI_API OCI_JsonNodeCreateBinary
 (
-    OCI_Json    *json,
-    const void  *value,
-    OCI_UInt32 length
+    OCI_Json   *json,
+    const void *value,
+    OCI_UInt32  length
 )
 {
     CALL_IMPL(OcilibJsonNodeCreateBinary, json, value, length);
@@ -7540,7 +7540,7 @@ OCI_UInt32 OCI_API OCI_JsonNodeGetFieldCount
 const otext * OCI_API OCI_JsonNodeGetFieldName
 (
     OCI_JsonNode *node,
-    OCI_UInt32  index
+    OCI_UInt32    index
 )
 {
     CALL_IMPL(OcilibJsonNodeGetFieldName, node, index);
@@ -7558,7 +7558,7 @@ OCI_JsonNode * OCI_API OCI_JsonNodeGetFieldByName
 OCI_JsonNode * OCI_API OCI_JsonNodeGetFieldByIndex
 (
     OCI_JsonNode *node,
-    OCI_UInt32  index
+    OCI_UInt32    index
 )
 {
     CALL_IMPL(OcilibJsonNodeGetFieldByIndex, node, index);
@@ -7575,7 +7575,7 @@ OCI_UInt32 OCI_API OCI_JsonNodeGetItemCount
 OCI_JsonNode * OCI_API OCI_JsonNodeGetItem
 (
     OCI_JsonNode *node,
-    OCI_UInt32  index
+    OCI_UInt32    index
 )
 {
     CALL_IMPL(OcilibJsonNodeGetItem, node, index);
@@ -7584,7 +7584,7 @@ OCI_JsonNode * OCI_API OCI_JsonNodeGetItem
 const otext * OCI_API OCI_JsonNodeGetString
 (
     OCI_JsonNode *node,
-    OCI_UInt32 *length
+    OCI_UInt32   *length
 )
 {
     CALL_IMPL(OcilibJsonNodeGetString, node, length);
@@ -7609,7 +7609,7 @@ OCI_Boolean OCI_API OCI_JsonNodeGetBoolean
 const void * OCI_API OCI_JsonNodeGetBinary
 (
     OCI_JsonNode *node,
-    OCI_UInt32 *length
+    OCI_UInt32   *length
 )
 {
     CALL_IMPL(OcilibJsonNodeGetBinary, node, length);
@@ -7643,7 +7643,7 @@ OCI_Boolean OCI_API OCI_JsonNodeSetString
 (
     OCI_JsonNode *node,
     const otext  *value,
-    OCI_UInt32  length
+    OCI_UInt32    length
 )
 {
     CALL_IMPL(OcilibJsonNodeSetString, node, value, length);
@@ -7671,7 +7671,7 @@ OCI_Boolean OCI_API OCI_JsonNodeSetBinary
 (
     OCI_JsonNode *node,
     const void   *value,
-    OCI_UInt32  length
+    OCI_UInt32    length
 )
 {
     CALL_IMPL(OcilibJsonNodeSetBinary, node, value, length);
@@ -7725,7 +7725,7 @@ OCI_Boolean OCI_API OCI_JsonNodeSetField
 OCI_Boolean OCI_API OCI_JsonNodeSetItem
 (
     OCI_JsonNode *arr,
-    OCI_UInt32  index,
+    OCI_UInt32    index,
     OCI_JsonNode *value
 )
 {

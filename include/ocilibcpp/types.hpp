@@ -136,13 +136,13 @@ namespace ocilib
     */
     enum NumericTypeValues
     {
-        /** Signed OCI_Int16 */
+        /** Signed Int16 */
         NumericShort = OCI_NUM_SHORT,
         /** Signed Integer */
         NumericInt = OCI_NUM_INT,
         /** Signed Big Integer (Integer or Long Integer depending on the compiler )*/
         NumericBigInt = OCI_NUM_BIGINT,
-        /** Unsigned OCI_Int16 */
+        /** Unsigned Int16 */
         NumericUnsignedShort = OCI_NUM_USHORT,
         /** Unsigned Integer */
         NumericUnsignedInt = OCI_NUM_UINT,
@@ -412,14 +412,14 @@ namespace ocilib
          * Return the Oracle error code
          *
          */
-        OCI_Int32 GetOracleErrorCode() const;
+        Int32 GetOracleErrorCode() const;
 
         /**
          * @brief
          * Return the OCILIB error code
          *
          */
-        OCI_Int32 GetInternalErrorCode() const;
+        Int32 GetInternalErrorCode() const;
 
         /**
          * @brief
@@ -447,7 +447,7 @@ namespace ocilib
          *  - otherwise the index of the given row which caused the error
          *
          */
-        OCI_UInt32 GetRow() const;
+        UInt32 GetRow() const;
 
         /**
         * @brief
@@ -481,10 +481,10 @@ namespace ocilib
         char* _what;
         OCI_Statement* _pStatement;
         OCI_Connection* _pConnection;
-        OCI_UInt32 _row;
+        UInt32 _row;
         ExceptionType _type;
-        OCI_Int32 _errLib;
-        OCI_Int32 _errOracle;
+        Int32 _errLib;
+        Int32 _errOracle;
     };
 
     /**
@@ -514,7 +514,7 @@ namespace ocilib
         friend class Message;
         friend class Event;
         friend class Column;
-        template<class, OCI_Int32>
+        template<class, Int32>
         friend class Lob;
 
         friend class core::HandleStore;
@@ -960,7 +960,7 @@ namespace ocilib
          * Otherwise, it is sizeof(ostring::value_type)
          *
          */
-        OCI_UInt32 GetCharMaxSize() const;
+        UInt32 GetCharMaxSize() const;
 
         /**
         * @brief
@@ -969,7 +969,7 @@ namespace ocilib
         * @param stat : statistic to retrieve (see OCI_UST_*)
         *
         */
-        OCI_UInt64 GetStats(OCI_Stat stat) const;
+        UInt64 GetStats(OCI_Stat stat) const;
 
         /**
          * @brief
@@ -988,21 +988,21 @@ namespace ocilib
         * Return the major version number of OCI used for compiling OCILIB
         *
         */
-        OCI_UInt32 GetCompileMajorVersion() const;
+        UInt32 GetCompileMajorVersion() const;
 
         /**
         * @brief
         * Return the minor version number of OCI used for compiling OCILIB
         *
         */
-        OCI_UInt32 GetCompileMinorVersion() const;
+        UInt32 GetCompileMinorVersion() const;
 
         /**
         * @brief
         * Return the revision version number of OCI used for compiling OCILIB
         *
         */
-        OCI_UInt32 GetCompileRevisionVersion() const;
+        UInt32 GetCompileRevisionVersion() const;
 
         /**
          * @brief
@@ -1020,21 +1020,21 @@ namespace ocilib
         * Return the major version number of OCI used at runtime
         *
         */
-        OCI_UInt32 GetRuntimeMajorVersion() const;
+        UInt32 GetRuntimeMajorVersion() const;
 
         /**
         * @brief
         * Return the minor version number of OCI used at runtime
         *
         */
-        OCI_UInt32 GetRuntimeMinorVersion() const;
+        UInt32 GetRuntimeMinorVersion() const;
 
         /**
         * @brief
         * Return the revision version number of OCI used at runtime
         *
         */
-        OCI_UInt32 GetRuntimeRevisionVersion() const;
+        UInt32 GetRuntimeRevisionVersion() const;
 
         /**
          * @brief
@@ -1203,7 +1203,7 @@ namespace ocilib
          * This call is supported from Oracle 10gR2.
          *
          */
-        void SetSubscriptionPort(OCI_UInt32 port);
+        void SetSubscriptionPort(UInt32 port);
 
         /**
          * @brief
@@ -1213,7 +1213,7 @@ namespace ocilib
          * The port number, or 0 on failure.
          *
          */
-        OCI_UInt32 GetSubscriptionPort() const;
+        UInt32 GetSubscriptionPort() const;
 
     private:
 
@@ -1222,8 +1222,8 @@ namespace ocilib
             friend class Environment;
         };
 
-        static void HAHandler(OCI_Connection* pConnection, OCI_UInt32 source, OCI_UInt32 event, OCI_Timestamp* pTimestamp);
-        static OCI_UInt32 TAFHandler(OCI_Connection* pConnection, OCI_UInt32 type, OCI_UInt32 event);
+        static void HAHandler(OCI_Connection* pConnection, UInt32 source, UInt32 event, OCI_Timestamp* pTimestamp);
+        static UInt32 TAFHandler(OCI_Connection* pConnection, UInt32 type, UInt32 event);
         static void NotifyHandler(OCI_Event* pEvent);
         static void NotifyHandlerAQ(OCI_Dequeue* pDequeue);
 
@@ -1260,7 +1260,7 @@ namespace ocilib
         std::unordered_map<AnyPointer, std::unique_ptr<CallbackBase>> _callbacks;
         EnvironmentHandle _handle;
         EnvironmentFlags _mode;
-        OCI_UInt32 _charMaxSize;
+        UInt32 _charMaxSize;
         bool _initialized;
         std::shared_ptr<core::HandleStore> _store;
     };
@@ -1324,7 +1324,7 @@ namespace ocilib
          *
          */
         Pool(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Pool::PoolType poolType,
-            OCI_UInt32 minSize, OCI_UInt32 maxSize, OCI_UInt32 increment = 1,
+            UInt32 minSize, UInt32 maxSize, UInt32 increment = 1,
             Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
         /**
@@ -1346,7 +1346,7 @@ namespace ocilib
          *
          */
         void Open(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Pool::PoolType poolType,
-            OCI_UInt32 minSize, OCI_UInt32 maxSize, OCI_UInt32 increment = 1,
+            UInt32 minSize, UInt32 maxSize, UInt32 increment = 1,
             Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
         /**
@@ -1397,7 +1397,7 @@ namespace ocilib
          * Timeout is not available for internal pooling implementation (client < 9i)
          *
          */
-        OCI_UInt32 GetTimeout() const;
+        UInt32 GetTimeout() const;
 
         /**
          * @brief
@@ -1412,7 +1412,7 @@ namespace ocilib
          * This call has no effect if pooling is internally implemented (client < 9i)
          *
          */
-        void SetTimeout(OCI_UInt32 value);
+        void SetTimeout(UInt32 value);
 
         /**
          * @brief
@@ -1447,35 +1447,35 @@ namespace ocilib
          * Return the current number of busy connections/sessions
          *
          */
-        OCI_UInt32 GetBusyConnectionsCount() const;
+        UInt32 GetBusyConnectionsCount() const;
 
         /**
          * @brief
          * Return the current number of opened connections/sessions
          *
          */
-        OCI_UInt32 GetOpenedConnectionsCount() const;
+        UInt32 GetOpenedConnectionsCount() const;
 
         /**
          * @brief
          * Return the minimum number of connections/sessions that can be opened to the database
          *
          */
-        OCI_UInt32 GetMinSize() const;
+        UInt32 GetMinSize() const;
 
         /**
          * @brief
          * Return the maximum number of connections/sessions that can be opened to the database
          *
          */
-        OCI_UInt32 GetMaxSize() const;
+        UInt32 GetMaxSize() const;
 
         /**
          * @brief
          * Return the increment for connections/sessions to be opened to the database when the pool is not full
          *
          */
-        OCI_UInt32 GetIncrement() const;
+        UInt32 GetIncrement() const;
 
         /**
          * @brief
@@ -1485,7 +1485,7 @@ namespace ocilib
          * Default value is 20 (value from Oracle Documentation)
          *
          */
-        OCI_UInt32 GetStatementCacheSize() const;
+        UInt32 GetStatementCacheSize() const;
 
         /**
          * @brief
@@ -1494,7 +1494,7 @@ namespace ocilib
          * @param value - maximum number of statements in the cache
          *
          */
-        void SetStatementCacheSize(OCI_UInt32 value);
+        void SetStatementCacheSize(UInt32 value);
     };
 
     /**
@@ -1528,7 +1528,7 @@ namespace ocilib
         friend class SodaDb;
         friend class SodaColl;
 
-        template<class, OCI_Int32>
+        template<class, Int32>
         friend class Lob;
         template<class>
         friend class Collection;
@@ -1839,21 +1839,21 @@ namespace ocilib
          * Return the major version number of the connected database server
          *
          */
-        OCI_UInt32 GetServerMajorVersion() const;
+        UInt32 GetServerMajorVersion() const;
 
         /**
          * @brief
          * Return the minor version number of the connected database server
          *
          */
-        OCI_UInt32 GetServerMinorVersion() const;
+        UInt32 GetServerMinorVersion() const;
 
         /**
          * @brief
          * Return the revision version number of the connected database server
          *
          */
-        OCI_UInt32 GetServerRevisionVersion() const;
+        UInt32 GetServerRevisionVersion() const;
 
         /**
          * @brief
@@ -1928,7 +1928,7 @@ namespace ocilib
          * If EnableServerOutput() is not called, GetServerOutput() will return false
          *
          */
-        void EnableServerOutput(OCI_UInt32 bufsize, OCI_UInt32 arrsize, OCI_UInt32 lnsize);
+        void EnableServerOutput(UInt32 bufsize, UInt32 arrsize, UInt32 lnsize);
 
         /**
          * @brief
@@ -2070,7 +2070,7 @@ namespace ocilib
          * Requires Oracle Client 9.2 or above
          *
          */
-        OCI_UInt32 GetStatementCacheSize() const;
+        UInt32 GetStatementCacheSize() const;
 
         /**
          * @brief
@@ -2082,7 +2082,7 @@ namespace ocilib
          * Requires Oracle Client 9.2 or above
          *
          */
-        void SetStatementCacheSize(OCI_UInt32 value);
+        void SetStatementCacheSize(UInt32 value);
 
         /**
          * @brief
@@ -2100,7 +2100,7 @@ namespace ocilib
          * Default is 0 (pre-fetching disabled)
          *
          */
-        OCI_UInt32 GetDefaultLobPrefetchSize() const;
+        UInt32 GetDefaultLobPrefetchSize() const;
 
         /**
          * @brief
@@ -2126,7 +2126,7 @@ namespace ocilib
          * - number of characters for CLOBs (Clob / NClob).
          *
          */
-        void SetDefaultLobPrefetchSize(OCI_UInt32 value);
+        void SetDefaultLobPrefetchSize(UInt32 value);
 
         /**
         * @brief
@@ -2142,7 +2142,7 @@ namespace ocilib
         * Return 0 if the client and server version are < 12cR1
         *
         */
-        OCI_UInt32 GetMaxCursors() const;
+        UInt32 GetMaxCursors() const;
 
         /**
          * @brief
@@ -2198,7 +2198,7 @@ namespace ocilib
          * The given timeout value if supported, otherwise 0
          *
          */
-        OCI_UInt32 GetTimeout(TimeoutType timeout);
+        UInt32 GetTimeout(TimeoutType timeout);
 
         /**
          * @brief
@@ -2227,7 +2227,7 @@ namespace ocilib
          * TimeoutCall     | OCI_18_1     | ORA-03136        | inbound connection timed out   |         ---           |
          *
          */
-        void SetTimeout(TimeoutType timeout, OCI_UInt32 value);
+        void SetTimeout(TimeoutType timeout, UInt32 value);
 
     private:
 
@@ -2291,7 +2291,7 @@ namespace ocilib
          * For local transaction,  don't use the 'pxid' parameter
          *
          */
-        Transaction(const Connection& connection, OCI_UInt32 timeout, TransactionFlags flags, OCI_XID* pxid = nullptr);
+        Transaction(const Connection& connection, UInt32 timeout, TransactionFlags flags, OCI_XID* pxid = nullptr);
 
         /**
           * @brief
@@ -2343,7 +2343,7 @@ namespace ocilib
           * Return the transaction Timeout
           *
           */
-        OCI_UInt32 GetTimeout() const;
+        UInt32 GetTimeout() const;
 
     private:
 
@@ -2395,7 +2395,7 @@ namespace ocilib
         * @param value - value to assign
         *
         */
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedNumericT<T>* = nullptr>
         Number(const Environment& env, const T& value);
 
 
@@ -2498,8 +2498,8 @@ namespace ocilib
 
         Number& operator ++ ();
         Number& operator -- ();
-        Number operator ++ (OCI_Int32);
-        Number operator -- (OCI_Int32);
+        Number operator ++ (Int32);
+        Number operator -- (Int32);
 
         bool operator == (const Number& other) const;
         bool operator != (const Number& other) const;
@@ -2508,34 +2508,34 @@ namespace ocilib
         bool operator >= (const Number& other) const;
         bool operator <= (const Number& other) const;
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedNumericT<T>* = nullptr>
         Number& operator = (const T& lhs);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedNumericT<T>* = nullptr>
         operator T() const;
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedNumericT<T>* = nullptr>
         Number operator - (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedNumericT<T>* = nullptr>
         Number operator + (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedNumericT<T>* = nullptr>
         Number operator * (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedNumericT<T>* = nullptr>
         Number operator / (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedNumericT<T>* = nullptr>
         Number& operator += (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedNumericT<T>* = nullptr>
         Number& operator -= (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedNumericT<T>* = nullptr>
         Number& operator *= (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedNumericT<T>* = nullptr>
         Number& operator /= (const T& value);
 
     private:
@@ -2547,7 +2547,7 @@ namespace ocilib
 
         void Allocate(OCI_Environment* env);
 
-        OCI_Int32 Compare(const Number& other) const;
+        Int32 Compare(const Number& other) const;
 
         template<class T>
         inline T GetValue() const;
@@ -2673,84 +2673,84 @@ namespace ocilib
          * Return the date year value
          *
          */
-        OCI_Int32 GetYear() const;
+        Int32 GetYear() const;
 
         /**
          * @brief
          * Set the date year value
          *
          */
-        void SetYear(OCI_Int32 value);
+        void SetYear(Int32 value);
 
         /**
          * @brief
          * Return the date month value
          *
          */
-        OCI_Int32 GetMonth() const;
+        Int32 GetMonth() const;
 
         /**
          * @brief
          * Set the date month value
          *
          */
-        void SetMonth(OCI_Int32 value);
+        void SetMonth(Int32 value);
 
         /**
          * @brief
          * Return the date day value
          *
          */
-        OCI_Int32 GetDay() const;
+        Int32 GetDay() const;
 
         /**
          * @brief
          * Set the date day value
          *
          */
-        void SetDay(OCI_Int32 value);
+        void SetDay(Int32 value);
 
         /**
          * @brief
          * Return the date hours value
          *
          */
-        OCI_Int32 GetHours() const;
+        Int32 GetHours() const;
 
         /**
          * @brief
          * Set the date hours value
          *
          */
-        void SetHours(OCI_Int32 value);
+        void SetHours(Int32 value);
 
         /**
          * @brief
          * Return the date minutes value
          *
          */
-        OCI_Int32 GetMinutes() const;
+        Int32 GetMinutes() const;
 
         /**
          * @brief
          * Set the date minutes value
          *
          */
-        void SetMinutes(OCI_Int32 value);
+        void SetMinutes(Int32 value);
 
         /**
          * @brief
          * Return the date seconds value
          *
          */
-        OCI_Int32 GetSeconds() const;
+        Int32 GetSeconds() const;
 
         /**
          * @brief
          * Set the date seconds value
          *
          */
-        void SetSeconds(OCI_Int32 value);
+        void SetSeconds(Int32 value);
 
         /**
          * @brief
@@ -2759,7 +2759,7 @@ namespace ocilib
          * @param other - date to compare
          *
          */
-        OCI_Int32 DaysBetween(const Date& other) const;
+        Int32 DaysBetween(const Date& other) const;
 
         /**
          * @brief
@@ -2770,7 +2770,7 @@ namespace ocilib
          * @param day   - Day value
          *
          */
-        void SetDate(OCI_Int32 year, OCI_Int32 month, OCI_Int32 day);
+        void SetDate(Int32 year, Int32 month, Int32 day);
 
         /**
          * @brief
@@ -2781,7 +2781,7 @@ namespace ocilib
          * @param sec   - Second value
          *
          */
-        void SetTime(OCI_Int32 hour, OCI_Int32 min, OCI_Int32 sec);
+        void SetTime(Int32 hour, Int32 min, Int32 sec);
 
         /**
          * @brief
@@ -2795,7 +2795,7 @@ namespace ocilib
          * @param sec   - Second value
          *
          */
-        void SetDateTime(OCI_Int32 year, OCI_Int32 month, OCI_Int32 day, OCI_Int32 hour, OCI_Int32 min, OCI_Int32 sec);
+        void SetDateTime(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 min, Int32 sec);
 
         /**
          * @brief
@@ -2806,7 +2806,7 @@ namespace ocilib
          * @param day   - Place holder for day value
          *
          */
-        void GetDate(OCI_Int32& year, OCI_Int32& month, OCI_Int32& day) const;
+        void GetDate(Int32& year, Int32& month, Int32& day) const;
 
         /**
          * @brief
@@ -2817,7 +2817,7 @@ namespace ocilib
          * @param sec   - Place holder for second value
          *
          */
-        void GetTime(OCI_Int32& hour, OCI_Int32& min, OCI_Int32& sec) const;
+        void GetTime(Int32& hour, Int32& min, Int32& sec) const;
 
         /**
          * @brief
@@ -2831,7 +2831,7 @@ namespace ocilib
          * @param sec   - Place holder for second value
          *
          */
-        void GetDateTime(OCI_Int32& year, OCI_Int32& month, OCI_Int32& day, OCI_Int32& hour, OCI_Int32& min, OCI_Int32& sec) const;
+        void GetDateTime(Int32& year, Int32& month, Int32& day, Int32& hour, Int32& min, Int32& sec) const;
 
         /**
          * @brief
@@ -2840,7 +2840,7 @@ namespace ocilib
          * @param days   - Number of days to add/remove
          *
          */
-        void AddDays(OCI_Int32 days);
+        void AddDays(Int32 days);
 
         /**
          * @brief
@@ -2849,7 +2849,7 @@ namespace ocilib
          * @param months   - Number of months to add/remove
          *
          */
-        void AddMonths(OCI_Int32 months);
+        void AddMonths(Int32 months);
 
         /**
          * @brief
@@ -2934,7 +2934,7 @@ namespace ocilib
          * Increment the date by 1 day
          *
          */
-        Date operator ++ (OCI_Int32);
+        Date operator ++ (Int32);
 
         /**
          * @brief
@@ -2948,35 +2948,35 @@ namespace ocilib
          * Decrement the date by 1 day
          *
          */
-        Date operator -- (OCI_Int32);
+        Date operator -- (Int32);
 
         /**
          * @brief
          * Return a new date holding the current date value incremented by the given number of days
          *
          */
-        Date operator + (OCI_Int32 value) const;
+        Date operator + (Int32 value) const;
 
         /**
          * @brief
          * Return a new date holding the current date value decremented by the given number of days
          *
          */
-        Date operator - (OCI_Int32 value) const;
+        Date operator - (Int32 value) const;
 
         /**
          * @brief
          * Increment the date by the given number of days
          *
          */
-        Date& operator += (OCI_Int32 value);
+        Date& operator += (Int32 value);
 
         /**
          * @brief
          * Decrement the date by the given number of days
          *
          */
-        Date& operator -= (OCI_Int32 value);
+        Date& operator -= (Int32 value);
 
         /**
         * @brief
@@ -3022,7 +3022,7 @@ namespace ocilib
 
     private:
 
-        OCI_Int32 Compare(const Date& other) const;
+        Int32 Compare(const Date& other) const;
 
         Date(OCI_Date* pDate, core::Handle* parent = nullptr);
 
@@ -3143,7 +3143,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::YearMonth
         *
         */
-        OCI_Int32 GetYear() const;
+        Int32 GetYear() const;
 
         /**
         * @brief
@@ -3153,7 +3153,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::YearMonth
         *
         */
-        void SetYear(OCI_Int32 value);
+        void SetYear(Int32 value);
 
         /**
         * @brief
@@ -3163,7 +3163,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::YearMonth
         *
         */
-        OCI_Int32 GetMonth() const;
+        Int32 GetMonth() const;
 
         /**
         * @brief
@@ -3173,7 +3173,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::YearMonth
         *
         */
-        void SetMonth(OCI_Int32 value);
+        void SetMonth(Int32 value);
 
         /**
         * @brief
@@ -3183,7 +3183,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        OCI_Int32 GetDay() const;
+        Int32 GetDay() const;
 
         /**
         * @brief
@@ -3193,7 +3193,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        void SetDay(OCI_Int32 value);
+        void SetDay(Int32 value);
 
         /**
         * @brief
@@ -3203,7 +3203,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        OCI_Int32 GetHours() const;
+        Int32 GetHours() const;
 
         /**
         * @brief
@@ -3213,7 +3213,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        void SetHours(OCI_Int32 value);
+        void SetHours(Int32 value);
 
         /**
         * @brief
@@ -3223,7 +3223,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        OCI_Int32 GetMinutes() const;
+        Int32 GetMinutes() const;
 
         /**
         * @brief
@@ -3233,7 +3233,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        void SetMinutes(OCI_Int32 value);
+        void SetMinutes(Int32 value);
 
         /**
         * @brief
@@ -3243,7 +3243,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        OCI_Int32 GetSeconds() const;
+        Int32 GetSeconds() const;
 
         /**
         * @brief
@@ -3253,35 +3253,35 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        void SetSeconds(OCI_Int32 value);
+        void SetSeconds(Int32 value);
 
         /**
         * @brief
         * Return the interval seconds value
         *
         */
-        OCI_Int32 GetMilliSeconds() const;
+        Int32 GetMilliSeconds() const;
 
         /**
         * @brief
         * Set the interval milliseconds value
         *
         */
-        void SetMilliSeconds(OCI_Int32 value);
+        void SetMilliSeconds(Int32 value);
 
         /**
         * @brief
         * Return the interval nano seconds value
         *
         */
-        OCI_Int32 GetNanoSeconds() const;
+        Int32 GetNanoSeconds() const;
 
         /**
         * @brief
         * Set the interval nano seconds value
         *
         */
-        void SetNanoSeconds(OCI_Int32 value);
+        void SetNanoSeconds(Int32 value);
 
         /**
         * @brief
@@ -3297,7 +3297,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        void GetDaySecond(OCI_Int32& day, OCI_Int32& hour, OCI_Int32& min, OCI_Int32& sec, OCI_Int32& nsec) const;
+        void GetDaySecond(Int32& day, Int32& hour, Int32& min, Int32& sec, Int32& nsec) const;
 
         /**
         * @brief
@@ -3313,7 +3313,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is Interval::DaySecond
         *
         */
-        void SetDaySecond(OCI_Int32 day, OCI_Int32 hour, OCI_Int32 min, OCI_Int32 sec, OCI_Int32 nsec);
+        void SetDaySecond(Int32 day, Int32 hour, Int32 min, Int32 sec, Int32 nsec);
 
         /**
         * @brief
@@ -3326,7 +3326,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::YearMonth
         *
         */
-        void GetYearMonth(OCI_Int32& year, OCI_Int32& month) const;
+        void GetYearMonth(Int32& year, Int32& month) const;
 
         /**
         * @brief
@@ -3339,7 +3339,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::YearMonth
         *
         */
-        void SetYearMonth(OCI_Int32 year, OCI_Int32 month);
+        void SetYearMonth(Int32 year, Int32 month);
 
         /**
         * @brief
@@ -3370,7 +3370,7 @@ namespace ocilib
         * @param fractionPrecision - fraction precision
         *
         */
-        ostring ToString(OCI_Int32 leadingPrecision, OCI_Int32 fractionPrecision) const;
+        ostring ToString(Int32 leadingPrecision, Int32 fractionPrecision) const;
 
         /**
         * @brief
@@ -3458,7 +3458,7 @@ namespace ocilib
 
     private:
 
-        OCI_Int32 Compare(const Interval& other) const;
+        Int32 Compare(const Interval& other) const;
 
         void Allocate(OCI_Environment* env, IntervalTypeValues type);
 
@@ -3598,98 +3598,98 @@ namespace ocilib
         * Return the timestamp year value
         *
         */
-        OCI_Int32 GetYear() const;
+        Int32 GetYear() const;
 
         /**
         * @brief
         * Set the timestamp year value
         *
         */
-        void SetYear(OCI_Int32 value);
+        void SetYear(Int32 value);
 
         /**
         * @brief
         * Return the timestamp month value
         *
         */
-        OCI_Int32 GetMonth() const;
+        Int32 GetMonth() const;
 
         /**
         * @brief
         * Set the timestamp month value
         *
         */
-        void SetMonth(OCI_Int32 value);
+        void SetMonth(Int32 value);
 
         /**
         * @brief
         * Return the timestamp day value
         *
         */
-        OCI_Int32 GetDay() const;
+        Int32 GetDay() const;
 
         /**
         * @brief
         * Set the timestamp day value
         *
         */
-        void SetDay(OCI_Int32 value);
+        void SetDay(Int32 value);
 
         /**
         * @brief
         * Return the timestamp hours value
         *
         */
-        OCI_Int32 GetHours() const;
+        Int32 GetHours() const;
 
         /**
         * @brief
         * Set the timestamp hours value
         *
         */
-        void SetHours(OCI_Int32 value);
+        void SetHours(Int32 value);
 
         /**
         * @brief
         * Return the timestamp minutes value
         *
         */
-        OCI_Int32 GetMinutes() const;
+        Int32 GetMinutes() const;
 
         /**
         * @brief
         * Set the timestamp minutes value
         *
         */
-        void SetMinutes(OCI_Int32 value);
+        void SetMinutes(Int32 value);
 
         /**
         * @brief
         * Return the timestamp seconds value
         *
         */
-        OCI_Int32 GetSeconds() const;
+        Int32 GetSeconds() const;
 
         /**
         * @brief
         * Set the timestamp seconds value
         *
         */
-        void SetSeconds(OCI_Int32 value);
+        void SetSeconds(Int32 value);
 
         /**
         * @brief
         * Return the timestamp seconds value
         *
         */
-        OCI_Int32 GetMilliSeconds() const;
+        Int32 GetMilliSeconds() const;
 
         /**
         * @brief
         * Set the timestamp milliseconds value
         *
         */
-        void SetMilliSeconds(OCI_Int32 value);
+        void SetMilliSeconds(Int32 value);
 
         /**
         * @brief
@@ -3700,7 +3700,7 @@ namespace ocilib
         * @param day   - Place holder for day value
         *
         */
-        void GetDate(OCI_Int32& year, OCI_Int32& month, OCI_Int32& day) const;
+        void GetDate(Int32& year, Int32& month, Int32& day) const;
 
         /**
         * @brief
@@ -3712,7 +3712,7 @@ namespace ocilib
         * @param fsec  - Place holder for fractional part of the seconds
         *
         */
-        void GetTime(OCI_Int32& hour, OCI_Int32& min, OCI_Int32& sec, OCI_Int32& fsec) const;
+        void GetTime(Int32& hour, Int32& min, Int32& sec, Int32& fsec) const;
 
         /**
         * @brief
@@ -3723,7 +3723,7 @@ namespace ocilib
         * @param day   - Day value
         *
         */
-        void SetDate(OCI_Int32 year, OCI_Int32 month, OCI_Int32 day);
+        void SetDate(Int32 year, Int32 month, Int32 day);
 
         /**
         * @brief
@@ -3735,7 +3735,7 @@ namespace ocilib
         * @param fsec  - Place holder for fractional part of the seconds
         *
         */
-        void SetTime(OCI_Int32 hour, OCI_Int32 min, OCI_Int32 sec, OCI_Int32 fsec);
+        void SetTime(Int32 hour, Int32 min, Int32 sec, Int32 fsec);
 
         /**
         * @brief
@@ -3750,7 +3750,7 @@ namespace ocilib
         * @param fsec     - Place holder for fractional part of the seconds
         *
         */
-        void GetDateTime(OCI_Int32& year, OCI_Int32& month, OCI_Int32& day, OCI_Int32& hour, OCI_Int32& min, OCI_Int32& sec, OCI_Int32& fsec) const;
+        void GetDateTime(Int32& year, Int32& month, Int32& day, Int32& hour, Int32& min, Int32& sec, Int32& fsec) const;
 
         /**
         * @brief
@@ -3766,7 +3766,7 @@ namespace ocilib
         * @param timeZone   - name of a time zone to use [optional]
         *
         */
-        void SetDateTime(OCI_Int32 year, OCI_Int32 month, OCI_Int32 day, OCI_Int32 hour, OCI_Int32 min, OCI_Int32 sec, OCI_Int32 fsec, const ostring& timeZone = OTEXT(""));
+        void SetDateTime(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 min, Int32 sec, Int32 fsec, const ostring& timeZone = OTEXT(""));
 
         /**
         * @brief
@@ -3797,7 +3797,7 @@ namespace ocilib
         * @param min   - Place holder for min value
         *
         */
-        void GetTimeZoneOffset(OCI_Int32& hour, OCI_Int32& min) const;
+        void GetTimeZoneOffset(Int32& hour, Int32& min) const;
 
         /**
         * @brief
@@ -3837,7 +3837,7 @@ namespace ocilib
         * For date time / timestamp formats, refer to the Oracle SQL documentation
         *
         */
-        ostring ToString(const ostring& format, OCI_Int32 precision) const;
+        ostring ToString(const ostring& format, Int32 precision) const;
 
         /**
         * @brief
@@ -3865,7 +3865,7 @@ namespace ocilib
         * Increment the timestamp by 1 day
         *
         */
-        Timestamp operator ++ (OCI_Int32);
+        Timestamp operator ++ (Int32);
 
         /**
         * @brief
@@ -3879,21 +3879,21 @@ namespace ocilib
         * Decrement the Timestamp by 1 day
         *
         */
-        Timestamp operator -- (OCI_Int32);
+        Timestamp operator -- (Int32);
 
         /**
         * @brief
         * Return a new Timestamp holding the current Timestamp value incremented by the given number of days
         *
         */
-        Timestamp operator + (OCI_Int32 value) const;
+        Timestamp operator + (Int32 value) const;
 
         /**
         * @brief
         * Return a new Timestamp holding the current Timestamp value decremented by the given number of days
         *
         */
-        Timestamp operator - (OCI_Int32 value) const;
+        Timestamp operator - (Int32 value) const;
 
         /**
         * @brief
@@ -3907,14 +3907,14 @@ namespace ocilib
         * Increment the Timestamp by the given number of days
         *
         */
-        Timestamp& operator += (OCI_Int32 value);
+        Timestamp& operator += (Int32 value);
 
         /**
         * @brief
         * Decrement the Timestamp by the given number of days
         *
         */
-        Timestamp& operator -= (OCI_Int32 value);
+        Timestamp& operator -= (Int32 value);
 
         /**
         * @brief
@@ -3988,7 +3988,7 @@ namespace ocilib
 
     private:
 
-        OCI_Int32 Compare(const Timestamp& other) const;
+        Int32 Compare(const Timestamp& other) const;
 
         void Allocate(OCI_Environment* env, TimestampType type);
 
@@ -4002,7 +4002,7 @@ namespace ocilib
      * This class wraps the OCILIB object handle OCI_Lob and its related methods
      *
      */
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     class Lob : public core::HandleHolder<OCI_Lob*>
     {
         friend class Statement;
@@ -4043,7 +4043,7 @@ namespace ocilib
         * The content read from the lob
         *
         */
-        T Read(OCI_UInt32 length);
+        T Read(UInt32 length);
 
         /**
         * @brief
@@ -4055,7 +4055,7 @@ namespace ocilib
         * Number of character or bytes written into the lob
         *
         */
-        OCI_UInt32 Write(const T& content);
+        UInt32 Write(const T& content);
 
         /**
         * @brief
@@ -4067,7 +4067,7 @@ namespace ocilib
         * Number of character or bytes written into the lob
         *
         */
-        OCI_UInt32 Append(const T& content);
+        UInt32 Append(const T& content);
 
         /**
         * @brief
@@ -4092,7 +4092,7 @@ namespace ocilib
         * true on success otherwise false
         *
         */
-        bool Seek(SeekMode seekMode, OCI_UInt64 offset);
+        bool Seek(SeekMode seekMode, UInt64 offset);
 
         /**
         * @brief
@@ -4106,21 +4106,21 @@ namespace ocilib
         * Returns the current R/W offset within the lob
         *
         */
-        OCI_UInt64 GetOffset() const;
+        UInt64 GetOffset() const;
 
         /**
         * @brief
         * Returns the number of characters or bytes contained in the lob
         *
         */
-        OCI_UInt64 GetLength() const;
+        UInt64 GetLength() const;
 
         /**
         * @brief
         * Returns the lob maximum possible size
         *
         */
-        OCI_UInt64 GetMaxSize() const;
+        UInt64 GetMaxSize() const;
 
         /**
         * @brief
@@ -4133,7 +4133,7 @@ namespace ocilib
         * read or write requests using a multiple of this chunk size
         *
         */
-        OCI_UInt64 GetChunkSize() const;
+        UInt64 GetChunkSize() const;
 
         /**
         * @brief
@@ -4149,7 +4149,7 @@ namespace ocilib
         * @param length - New length in characters or bytes
         *
         */
-        void Truncate(OCI_UInt64 length);
+        void Truncate(UInt64 length);
 
         /**
         * @brief
@@ -4166,7 +4166,7 @@ namespace ocilib
         * Number of characters or bytes erased
         *
         */
-        OCI_UInt64 Erase(OCI_UInt64 offset, OCI_UInt64 length);
+        UInt64 Erase(UInt64 offset, UInt64 length);
 
         /**
         * @brief
@@ -4181,7 +4181,7 @@ namespace ocilib
         * Absolute position starts at 0.
         *
         */
-        void Copy(Lob& dest, OCI_UInt64 offset, OCI_UInt64 offsetDest, OCI_UInt64 length) const;
+        void Copy(Lob& dest, UInt64 offset, UInt64 offsetDest, UInt64 length) const;
 
         /**
         * @brief
@@ -4381,7 +4381,7 @@ namespace ocilib
         * The content read from the file
         *
         */
-        Raw Read(OCI_UInt32 size);
+        Raw Read(UInt32 size);
 
         /**
         * @brief
@@ -4397,7 +4397,7 @@ namespace ocilib
         * true on success otherwise false
         *
         */
-        bool Seek(SeekMode seekMode, OCI_UInt64 offset);
+        bool Seek(SeekMode seekMode, UInt64 offset);
 
         /**
         * @brief
@@ -4414,14 +4414,14 @@ namespace ocilib
         * Returns the current R/W offset within the file
         *
         */
-        OCI_UInt64 GetOffset() const;
+        UInt64 GetOffset() const;
 
         /**
         * @brief
         * Returns the number of bytes contained in the file
         *
         */
-        OCI_UInt64 GetLength() const;
+        UInt64 GetLength() const;
 
         /**
         * @brief
@@ -4591,7 +4591,7 @@ namespace ocilib
         * - For types, it is the number of member properties
         *
         */
-        OCI_UInt32 GetColumnCount() const;
+        UInt32 GetColumnCount() const;
 
         /**
         * @brief
@@ -4607,7 +4607,7 @@ namespace ocilib
         * - For types, the returned column object describes an object property
         *
         */
-        Column GetColumn(OCI_UInt32 index) const;
+        Column GetColumn(UInt32 index) const;
 
         /**
         * @brief
@@ -5004,8 +5004,8 @@ namespace ocilib
          * @param size   - number of element in the input buffer array
          *
         */
-        template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
-        void Set(T* values, OCI_UInt32 size);
+        template<class T, core::SupportedVectorNumericT<T>* = nullptr>
+        void Set(T* values, UInt32 size);
 
         /**
          * @brief
@@ -5020,12 +5020,12 @@ namespace ocilib
          * @warning
          * T Type must match the format of the Vector current content :
          * - VectorFormat::Int8 => char
-         * - VectorFormat::Float32 => float
-         * - VectorFormat::Float64 => double
+         * - VectorFormat::Float32 => Float
+         * - VectorFormat::Float64 => Double
          * - VectorFormat::Binary => unsigned char
          *
          */
-        template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedVectorNumericT<T>* = nullptr>
         void Get(T* values);
 
         /**
@@ -5035,7 +5035,7 @@ namespace ocilib
          * @param values - values to set
          *
          */
-        template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedVectorNumericT<T>* = nullptr>
         void Set(const std::vector<T>& values);
 
         /**
@@ -5045,12 +5045,12 @@ namespace ocilib
          * @warning
          * T Type must match the format of the Vector current content :
          * - VectorFormat::Int8 => char
-         * - VectorFormat::Float32 => float
-         * - VectorFormat::Float64 => double
+         * - VectorFormat::Float32 => Float
+         * - VectorFormat::Float64 => Double
          * - VectorFormat::Binary => unsigned char
          *
          */
-        template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
+        template<class T, core::SupportedVectorNumericT<T>* = nullptr>
         std::vector<T> Get();
 
         /**
@@ -5058,7 +5058,7 @@ namespace ocilib
         * Return the dimension count of the vector
         *
         */
-        OCI_UInt32 GetDimensionCount();
+        UInt32 GetDimensionCount();
 
         /**
         * @brief
@@ -5077,7 +5077,7 @@ namespace ocilib
          *
          *
          */
-        void FromString(const ostring& str, VectorFormat format, OCI_UInt32 dimensions);
+        void FromString(const ostring& str, VectorFormat format, UInt32 dimensions);
 
         /**
         * @brief
@@ -5272,7 +5272,7 @@ namespace ocilib
         * @param encoding   - Text encoding option
         *
         */
-        void LoadText(const otext* text, OCI_UInt32 length, JsonValidation validation = JsonValidation(AllowAll), JsonEncoding encoding = JsonEncoding(Detect));
+        void LoadText(const otext* text, UInt32 length, JsonValidation validation = JsonValidation(AllowAll), JsonEncoding encoding = JsonEncoding(Detect));
 
         /**
         * @brief
@@ -5282,7 +5282,7 @@ namespace ocilib
         * @param length - Buffer length in bytes
         *
         */
-        void LoadBinary(const void* data, OCI_UInt32 length);
+        void LoadBinary(const void* data, UInt32 length);
 
         /**
         * @brief
@@ -5441,7 +5441,7 @@ namespace ocilib
         * @return The new JsonNode
         *
         */
-        JsonNode CreateBinary(const void* data, OCI_UInt32 length);
+        JsonNode CreateBinary(const void* data, UInt32 length);
 
         /**
         * @brief
@@ -5554,7 +5554,7 @@ namespace ocilib
         * @return Number of fields
         *
         */
-        OCI_UInt32 GetFieldCount() const;
+        UInt32 GetFieldCount() const;
 
         /**
         * @brief
@@ -5565,7 +5565,7 @@ namespace ocilib
         * @return Field name
         *
         */
-        ostring GetFieldName(OCI_UInt32 index) const;
+        ostring GetFieldName(UInt32 index) const;
 
         /**
         * @brief
@@ -5587,7 +5587,7 @@ namespace ocilib
         * @return The field JsonNode
         *
         */
-        JsonNode GetFieldByIndex(OCI_UInt32 index) const;
+        JsonNode GetFieldByIndex(UInt32 index) const;
 
         /**
         * @brief
@@ -5595,7 +5595,7 @@ namespace ocilib
         *
         */
         JsonNode GetField(const ostring& name) const;
-        JsonNode GetField(OCI_UInt32 index) const;
+        JsonNode GetField(UInt32 index) const;
 
         /**
         * @brief
@@ -5604,7 +5604,7 @@ namespace ocilib
         * @return Number of items
         *
         */
-        OCI_UInt32 GetItemCount() const;
+        UInt32 GetItemCount() const;
 
         /**
         * @brief
@@ -5615,7 +5615,7 @@ namespace ocilib
         * @return The item JsonNode
         *
         */
-        JsonNode GetItem(OCI_UInt32 index) const;
+        JsonNode GetItem(UInt32 index) const;
 
         /**
         * @brief
@@ -5715,7 +5715,7 @@ namespace ocilib
         * @param length - Data length in bytes
         *
         */
-        void SetBinary(const void* data, OCI_UInt32 length);
+        void SetBinary(const void* data, UInt32 length);
 
         /**
         * @brief
@@ -5778,7 +5778,7 @@ namespace ocilib
         * @param value - New item value
         *
         */
-        void SetItem(OCI_UInt32 index, const JsonNode& value);
+        void SetItem(UInt32 index, const JsonNode& value);
 
         /**
         * @brief
@@ -5814,7 +5814,7 @@ namespace ocilib
         typedef Collection<ValueType> CollectionType;
 
         CollectionElement();
-        CollectionElement(CollectionType* coll, OCI_UInt32 pos);
+        CollectionElement(CollectionType* coll, UInt32 pos);
         operator T() const;
         CollectionElement& operator = (const ValueType& other);
         CollectionElement& operator = (const CollectionElement& other);
@@ -5824,7 +5824,7 @@ namespace ocilib
     private:
 
         CollectionType* _coll;
-        OCI_UInt32 _pos;
+        UInt32 _pos;
     };
 
     /**
@@ -5865,8 +5865,8 @@ namespace ocilib
         CollectionIterator& operator++();
         CollectionIterator& operator--();
 
-        CollectionIterator operator++(OCI_Int32);
-        CollectionIterator operator--(OCI_Int32);
+        CollectionIterator operator++(Int32);
+        CollectionIterator operator--(Int32);
 
         CollectionIterator operator + (difference_type value);
         CollectionIterator operator - (difference_type value);
@@ -5882,7 +5882,7 @@ namespace ocilib
 
     protected:
 
-        CollectionIterator(CollectionType* collection, OCI_UInt32 pos);
+        CollectionIterator(CollectionType* collection, UInt32 pos);
 
         T _elem;
     };
@@ -5960,14 +5960,14 @@ namespace ocilib
         * Returns the maximum number of elements for the collection
         *
         */
-        OCI_UInt32 GetMax() const;
+        UInt32 GetMax() const;
 
         /**
         * @brief
         * Returns the total number of elements in the collection
         *
         */
-        OCI_UInt32 GetSize() const;
+        UInt32 GetSize() const;
 
         /**
         * @brief
@@ -5979,7 +5979,7 @@ namespace ocilib
         *   of elements minus the total of deleted elements
         *
         */
-        OCI_UInt32 GetCount() const;
+        UInt32 GetCount() const;
 
         /**
         * @brief
@@ -5988,7 +5988,7 @@ namespace ocilib
         * @param size - Number of elements to trim
         *
         */
-        void Truncate(OCI_UInt32 size);
+        void Truncate(UInt32 size);
 
         /**
         * @brief
@@ -6008,7 +6008,7 @@ namespace ocilib
         * Collection Index start at 1
         *
         */
-        bool IsElementNull(OCI_UInt32 index) const;
+        bool IsElementNull(UInt32 index) const;
 
         /**
         * @brief
@@ -6020,7 +6020,7 @@ namespace ocilib
         * Collection Index start at 1
         *
         */
-        void SetElementNull(OCI_UInt32 index);
+        void SetElementNull(UInt32 index);
 
         /**
         * @brief
@@ -6039,7 +6039,7 @@ namespace ocilib
         * - if the input collection is a VARRAY, it always returns false
         *
         */
-        bool Delete(OCI_UInt32 index) const;
+        bool Delete(UInt32 index) const;
 
         /**
         * @brief
@@ -6048,7 +6048,7 @@ namespace ocilib
         * @param index - Index of the element
         *
         */
-        T Get(OCI_UInt32 index) const;
+        T Get(UInt32 index) const;
 
         /**
         * @brief
@@ -6058,7 +6058,7 @@ namespace ocilib
         * @param value - Value to set
         *
         */
-        void Set(OCI_UInt32 index, const T& value);
+        void Set(UInt32 index, const T& value);
 
         /**
         * @brief
@@ -6138,14 +6138,14 @@ namespace ocilib
         * Returns the element at a given position in the collection.
         *
         */
-        CollectionElement<T> operator [] (OCI_UInt32 index);
+        CollectionElement<T> operator [] (UInt32 index);
 
         /**
         * @brief
         * Returns the element at a given position in the collection.
         *
         */
-        CollectionElement<T> operator [](OCI_UInt32 index) const;
+        CollectionElement<T> operator [](UInt32 index) const;
 
     private:
 
@@ -6163,7 +6163,7 @@ namespace ocilib
      * This class wraps the OCILIB object handle OCI_LONG of type OCI_CLONG and its related methods
      *
      */
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     class Long : public core::HandleHolder<OCI_Long*>
     {
         friend class Statement;
@@ -6198,14 +6198,14 @@ namespace ocilib
         * Number of character written
         *
         */
-        OCI_UInt32 Write(const T& content);
+        UInt32 Write(const T& content);
 
         /**
         * @brief
         * Return the buffer length
         *
         */
-        OCI_UInt32 GetLength() const;
+        UInt32 GetLength() const;
 
         /**
         * @brief
@@ -6333,7 +6333,7 @@ namespace ocilib
         * - For a non valid type, it returns 0.
         *
         */
-        OCI_UInt32 GetSubType() const;
+        UInt32 GetSubType() const;
 
         /**
         * @brief
@@ -6344,7 +6344,7 @@ namespace ocilib
         * - For vector binds, it returns the number of element in the bind array
         *
         */
-        OCI_UInt32 GetDataCount() const;
+        UInt32 GetDataCount() const;
 
         /**
         * @brief
@@ -6373,7 +6373,7 @@ namespace ocilib
         * Index starts with 1
         *
         */
-        void SetDataNull(bool value, OCI_UInt32 index = 1);
+        void SetDataNull(bool value, UInt32 index = 1);
 
         /**
         * @brief
@@ -6389,7 +6389,7 @@ namespace ocilib
         * Index starts with 1
         *
         */
-        bool IsDataNull(OCI_UInt32 index = 1) const;
+        bool IsDataNull(UInt32 index = 1) const;
 
         /**
         * @brief
@@ -6441,7 +6441,7 @@ namespace ocilib
     {
         friend class Exception;
         friend class Resultset;
-        template<class, OCI_Int32>
+        template<class, Int32>
         friend class Long;
         friend class BindInfo;
         friend class BindObject;
@@ -6702,7 +6702,7 @@ namespace ocilib
         *
         */
         template<class T>
-        OCI_UInt32 ExecutePrepared(T callback);
+        UInt32 ExecutePrepared(T callback);
 
         /**
         * @brief
@@ -6725,7 +6725,7 @@ namespace ocilib
         *
         */
         template<class T, class U>
-        OCI_UInt32 ExecutePrepared(T callback, U adapter);
+        UInt32 ExecutePrepared(T callback, U adapter);
 
         /**
         * @brief
@@ -6746,7 +6746,7 @@ namespace ocilib
         *
         */
         template<class T>
-        OCI_UInt32 Execute(const ostring& sql, T callback);
+        UInt32 Execute(const ostring& sql, T callback);
 
         /**
         * @brief
@@ -6770,7 +6770,7 @@ namespace ocilib
         *
         */
         template<class T, class U>
-        OCI_UInt32 Execute(const ostring& sql, T callback, U adapter);
+        UInt32 Execute(const ostring& sql, T callback, U adapter);
 
         /**
         * @brief
@@ -6786,7 +6786,7 @@ namespace ocilib
         * For SELECTs statements, use GetRowCount() instead
         *
         */
-        OCI_UInt32 GetAffectedRows() const;
+        UInt32 GetAffectedRows() const;
 
         /**
         * @brief
@@ -6862,14 +6862,14 @@ namespace ocilib
         * otherwise an exception will be thrown.
         *
         */
-        void SetBindArraySize(OCI_UInt32 size);
+        void SetBindArraySize(UInt32 size);
 
         /**
         * @brief
         * Return the current input array size for bulk operations
         *
         */
-        OCI_UInt32 GetBindArraySize() const;
+        UInt32 GetBindArraySize() const;
 
         /**
         * @brief
@@ -6914,14 +6914,14 @@ namespace ocilib
         * Bind index on success or zero if the bind does not exists
         *
         */
-        OCI_UInt32 GetBindIndex(const ostring& name) const;
+        UInt32 GetBindIndex(const ostring& name) const;
 
         /**
         * @brief
         * Return the number of binds currently associated to a statement
         *
         */
-        OCI_UInt32 GetBindCount() const;
+        UInt32 GetBindCount() const;
 
         /**
         * @brief
@@ -6937,7 +6937,7 @@ namespace ocilib
         * Bind() call generates a bind object of index 3.
         *
         */
-        BindInfo GetBind(OCI_UInt32 index) const;
+        BindInfo GetBind(UInt32 index) const;
 
         /**
         * @brief
@@ -7179,7 +7179,7 @@ namespace ocilib
         * Positions start at 1.
         *
         */
-        OCI_UInt32 GetSqlErrorPos() const;
+        UInt32 GetSqlErrorPos() const;
 
         /**
         * @brief
@@ -7229,7 +7229,7 @@ namespace ocilib
         * @param value - number of rows to fetch
         *
         */
-        void SetFetchSize(OCI_UInt32 value);
+        void SetFetchSize(UInt32 value);
 
         /**
         * @brief
@@ -7239,7 +7239,7 @@ namespace ocilib
         * Default value is set to constant OCI_FETCH_SIZE
         *
         */
-        OCI_UInt32 GetFetchSize() const;
+        UInt32 GetFetchSize() const;
 
         /**
         * @brief
@@ -7251,7 +7251,7 @@ namespace ocilib
         * To turn off pre-fetching, set both attributes (size and memory) to 0.
         *
         */
-        void SetPrefetchSize(OCI_UInt32 value);
+        void SetPrefetchSize(UInt32 value);
 
         /**
         * @brief
@@ -7261,7 +7261,7 @@ namespace ocilib
         * Default value is set to constant OCI_PREFETCH_SIZE
         *
         */
-        OCI_UInt32 GetPrefetchSize() const;
+        UInt32 GetPrefetchSize() const;
 
         /**
         * @brief
@@ -7281,7 +7281,7 @@ namespace ocilib
         * SetPrefetchSize() to 0 to make OCI consider this attribute.
         *
         */
-        void SetPrefetchMemory(OCI_UInt32 value);
+        void SetPrefetchMemory(UInt32 value);
 
         /**
         * @brief
@@ -7291,7 +7291,7 @@ namespace ocilib
         * Default value is 0
         *
         */
-        OCI_UInt32 GetPrefetchMemory() const;
+        UInt32 GetPrefetchMemory() const;
 
         /**
         * @brief
@@ -7300,7 +7300,7 @@ namespace ocilib
         * @param value - maximum size for long buffer
         *
         */
-        void SetPieceSize(OCI_UInt32 value);
+        void SetPieceSize(UInt32 value);
 
         /**
         * @brief
@@ -7310,7 +7310,7 @@ namespace ocilib
         * Default value is set to constant OCI_SIZE_PIECE_DYNAMIC_FETCH
         *
         */
-        OCI_UInt32 GetPieceSize() const;
+        UInt32 GetPieceSize() const;
 
         /**
         * @brief
@@ -7343,7 +7343,7 @@ namespace ocilib
         * The SQL command list is available in Oracle documentations and guides
         *
         */
-        OCI_UInt32 GetSQLCommand() const;
+        UInt32 GetSQLCommand() const;
 
         /**
         * @brief
@@ -7411,10 +7411,10 @@ namespace ocilib
         BindInfo BindVector2(M& method, const ostring& name, std::vector<T>& values, BindInfo::BindDirection mode, U subType, BindInfo::VectorType type);
 
         template<typename T>
-        OCI_UInt32 Fetch(T callback);
+        UInt32 Fetch(T callback);
 
         template<typename T, typename U>
-        OCI_UInt32 Fetch(T callback, U adapter);
+        UInt32 Fetch(T callback, U adapter);
     };
 
     /**
@@ -7472,7 +7472,7 @@ namespace ocilib
         *
         */
         template<class T>
-        T Get(OCI_UInt32 index) const;
+        T Get(UInt32 index) const;
 
         /**
         * @brief
@@ -7488,7 +7488,7 @@ namespace ocilib
         *
         */
         template<class T>
-        void Get(OCI_UInt32 index, T& value) const;
+        void Get(UInt32 index, T& value) const;
 
         /**
         * @brief
@@ -7551,7 +7551,7 @@ namespace ocilib
         *
         */
         template<typename T>
-        OCI_UInt32 ForEach(T callback);
+        UInt32 ForEach(T callback);
 
         /**
         * @brief
@@ -7576,7 +7576,7 @@ namespace ocilib
         *
         */
         template<typename T, typename U>
-        OCI_UInt32 ForEach(T callback, U adapter);
+        UInt32 ForEach(T callback, U adapter);
 
         /**
         * @brief
@@ -7654,14 +7654,14 @@ namespace ocilib
         * true on success otherwise false the resultset is empty or seek offset out of bounds
         *
         */
-        bool Seek(SeekMode mode, OCI_Int32 offset);
+        bool Seek(SeekMode mode, Int32 offset);
 
         /**
         * @brief
         * Retrieve the number of rows fetched so far
         *
         */
-        OCI_UInt32 GetCount() const;
+        UInt32 GetCount() const;
 
         /**
         * @brief
@@ -7673,7 +7673,7 @@ namespace ocilib
         * - If the resultset has been fully fetched, it returns the last fetched row number
         *
         */
-        OCI_UInt32 GetCurrentRow() const;
+        UInt32 GetCurrentRow() const;
 
         /**
         * @brief
@@ -7688,14 +7688,14 @@ namespace ocilib
         * Column position starts at 1.
         *
         */
-        OCI_UInt32 GetColumnIndex(const ostring& name) const;
+        UInt32 GetColumnIndex(const ostring& name) const;
 
         /**
         * @brief
         * Return the number of columns in the resultset
         *
         */
-        OCI_UInt32 GetColumnCount() const;
+        UInt32 GetColumnCount() const;
 
         /**
         * @brief
@@ -7707,7 +7707,7 @@ namespace ocilib
         * Column position starts at 1.
         *
         */
-        Column GetColumn(OCI_UInt32 index) const;
+        Column GetColumn(UInt32 index) const;
 
         /**
         * @brief
@@ -7731,7 +7731,7 @@ namespace ocilib
         * Column position starts at 1.
         *
         */
-        bool IsColumnNull(OCI_UInt32 index) const;
+        bool IsColumnNull(UInt32 index) const;
 
         /**
         * @brief
@@ -7754,14 +7754,14 @@ namespace ocilib
         * Convenient operator overloading that performs a call to Next()
         *
         */
-        bool operator ++ (OCI_Int32);
+        bool operator ++ (Int32);
 
         /**
         * @brief
         * Convenient operator overloading that performs a call to Prev()
         *
         */
-        bool operator -- (OCI_Int32);
+        bool operator -- (Int32);
 
         /**
         * @brief
@@ -7769,7 +7769,7 @@ namespace ocilib
         * with Resultset::SeekRelative and the given offset
         *
         */
-        bool operator += (OCI_Int32 offset);
+        bool operator += (Int32 offset);
 
         /**
         * @brief
@@ -7777,7 +7777,7 @@ namespace ocilib
         * with Resultset::SeekRelative and the given offset that is internally negated
         *
         */
-        bool operator -= (OCI_Int32 offset);
+        bool operator -= (Int32 offset);
 
     private:
 
@@ -7884,7 +7884,7 @@ namespace ocilib
         * - For a non valid type, it returns 0.
         *
         */
-        OCI_UInt32 GetSubType() const;
+        UInt32 GetSubType() const;
 
         /**
         * @brief
@@ -7909,35 +7909,35 @@ namespace ocilib
         * based columns that were created with a character based size or of type NCHAR/NVARCHAR
         *
         */
-        OCI_UInt32 GetSize() const;
+        UInt32 GetSize() const;
 
         /**
         * @brief
         * Return the scale of the column for numeric columns
         *
         */
-        OCI_Int32 GetScale() const;
+        Int32 GetScale() const;
 
         /**
         * @brief
         * Return the precision of the column for numeric columns
         *
         */
-        OCI_Int32 GetPrecision() const;
+        Int32 GetPrecision() const;
 
         /**
         * @brief
         * Return the fractional precision of the column for Timestamp and Interval columns
         *
         */
-        OCI_Int32 GetFractionalPrecision() const;
+        Int32 GetFractionalPrecision() const;
 
         /**
         * @brief
         * Return the leading precision of the column for Interval columns
         *
         */
-        OCI_Int32 GetLeadingPrecision() const;
+        Int32 GetLeadingPrecision() const;
 
 
         /**
@@ -7945,7 +7945,7 @@ namespace ocilib
         * Return the dimension of the column for Vector columns
         *
         */
-        OCI_Int32 GetDimension() const;
+        Int32 GetDimension() const;
 
         /**
         * @brief
@@ -8069,7 +8069,7 @@ namespace ocilib
         * Requires Oracle Client 10gR2 or above
         *
         */
-        void Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, OCI_UInt32 timeout = 0);
+        void Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, UInt32 timeout = 0);
 
         /**
         * @brief
@@ -8106,7 +8106,7 @@ namespace ocilib
         * Return the timeout of the given registered subscription
         *
         */
-        OCI_UInt32 GetTimeout() const;
+        UInt32 GetTimeout() const;
 
         /**
         * @brief
@@ -8456,7 +8456,7 @@ namespace ocilib
         * Return the number of attempts that have been made to dequeue the message
         *
         */
-        OCI_Int32 GetAttemptCount() const;
+        Int32 GetAttemptCount() const;
 
         /**
         * @brief
@@ -8485,7 +8485,7 @@ namespace ocilib
         * see SetExpiration() for more details
         *
         */
-        OCI_Int32 GetExpiration() const;
+        Int32 GetExpiration() const;
 
         /**
         * @brief
@@ -8506,7 +8506,7 @@ namespace ocilib
         * Expiration processing requires the queue monitor to be started.
         *
         */
-        void SetExpiration(OCI_Int32 value);
+        void SetExpiration(Int32 value);
 
         /**
         * @brief
@@ -8516,7 +8516,7 @@ namespace ocilib
         * see SetEnqueueDelay() for more details
         *
         */
-        OCI_Int32 GetEnqueueDelay() const;
+        Int32 GetEnqueueDelay() const;
 
         /**
         * @brief
@@ -8540,7 +8540,7 @@ namespace ocilib
         * Delaying processing requires the queue monitor to be started.
         *
         */
-        void SetEnqueueDelay(OCI_Int32 value);
+        void SetEnqueueDelay(Int32 value);
 
         /**
         * @brief
@@ -8550,7 +8550,7 @@ namespace ocilib
         * see SetPriority() for more details
         *
         */
-        OCI_Int32 GetPriority() const;
+        Int32 GetPriority() const;
 
         /**
         * @brief
@@ -8564,7 +8564,7 @@ namespace ocilib
         *   - Default value is zero.
         *
         */
-        void SetPriority(OCI_Int32 value);
+        void SetPriority(Int32 value);
 
         /**
         * @brief
@@ -8994,7 +8994,7 @@ namespace ocilib
         * @return
         * An Agent handle for who messages are available on success otherwise an null agent object
         */
-        Agent Listen(OCI_Int32 timeout);
+        Agent Listen(Int32 timeout);
 
         /**
         * @brief
@@ -9148,7 +9148,7 @@ namespace ocilib
         * see SetWaitTime() for more details
         *
         */
-        OCI_Int32 GetWaitTime() const;
+        Int32 GetWaitTime() const;
 
         /**
         * @brief
@@ -9167,7 +9167,7 @@ namespace ocilib
         * Default value is -1 (wait for ever)
         *
         */
-        void SetWaitTime(OCI_Int32 value);
+        void SetWaitTime(Int32 value);
 
         /**
          * @brief
@@ -9203,7 +9203,7 @@ namespace ocilib
          * Requires Oracle Client 10gR2 or above
          *
          */
-        static void Subscribe(const Connection& connection, std::vector<Dequeue>& dequeues, OCI_UInt32 timeout, NotifyAQHandlerProc handler);
+        static void Subscribe(const Connection& connection, std::vector<Dequeue>& dequeues, UInt32 timeout, NotifyAQHandlerProc handler);
 
         /**
          * @brief
@@ -9278,7 +9278,7 @@ namespace ocilib
          *
          */
         static void Create(const Connection& connection, const ostring& queue, const ostring& table, QueueType type = NormalQueue,
-            OCI_UInt32 maxRetries = 0, OCI_UInt32 retryDelay = 0, OCI_UInt32 retentionTime = 0,
+            UInt32 maxRetries = 0, UInt32 retryDelay = 0, UInt32 retentionTime = 0,
             bool dependencyTracking = false, const ostring& comment = OTEXT(""));
 
         /**
@@ -9302,8 +9302,8 @@ namespace ocilib
          *
          */
         static void Alter(const Connection& connection, const ostring& queue,
-            OCI_UInt32 maxRetries = 0, OCI_UInt32 retryDelay = 0,
-            OCI_UInt32 retentionTime = 0, const ostring& comment = OTEXT(""));
+            UInt32 maxRetries = 0, UInt32 retryDelay = 0,
+            UInt32 retentionTime = 0, const ostring& comment = OTEXT(""));
 
         /**
          * @brief
@@ -9457,7 +9457,7 @@ namespace ocilib
         static void Create(const Connection& connection, const ostring& table, const ostring& payloadType, bool multipleConsumers,
             const ostring& storageClause = OTEXT(""), const ostring& sortList = OTEXT(""),
             GroupingMode groupingMode = None, const ostring& comment = OTEXT(""),
-            OCI_UInt32 primaryInstance = 0, OCI_UInt32 secondaryInstance = 0,
+            UInt32 primaryInstance = 0, UInt32 secondaryInstance = 0,
             const ostring& compatible = OTEXT(""));
 
         /**
@@ -9478,7 +9478,7 @@ namespace ocilib
         * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
         *
         */
-        static void Alter(const Connection& connection, const ostring& table, const ostring& comment, OCI_UInt32 primaryInstance = 0, OCI_UInt32 secondaryInstance = 0);
+        static void Alter(const Connection& connection, const ostring& table, const ostring& comment, UInt32 primaryInstance = 0, UInt32 secondaryInstance = 0);
 
         /**
         * @brief
@@ -9629,7 +9629,7 @@ namespace ocilib
          * of rows used for the given direct path operation.
          *
          */
-        DirectPath(const TypeInfo& typeInfo, OCI_UInt32 nbCols, OCI_UInt32  nbRows, const ostring& partition = OTEXT(""));
+        DirectPath(const TypeInfo& typeInfo, UInt32 nbCols, UInt32  nbRows, const ostring& partition = OTEXT(""));
 
         /**
          * @brief
@@ -9647,7 +9647,7 @@ namespace ocilib
          * - the index is out of bounds (= 0 or >= number of columns)
          *
          */
-        void SetColumn(OCI_UInt32 colIndex, const ostring& name, OCI_UInt32 maxSize, const ostring& format = OTEXT(""));
+        void SetColumn(UInt32 colIndex, const ostring& name, UInt32 maxSize, const ostring& format = OTEXT(""));
 
         /**
          * @brief
@@ -9680,7 +9680,7 @@ namespace ocilib
          *
          */
         template<class T>
-        void SetEntry(OCI_UInt32 rowIndex, OCI_UInt32 colIndex, const T& value, bool complete = true);
+        void SetEntry(UInt32 rowIndex, UInt32 colIndex, const T& value, bool complete = true);
 
         /**
          * @brief
@@ -9786,7 +9786,7 @@ namespace ocilib
          * rows in the internals arrays
          *
          */
-        void SetCurrentRows(OCI_UInt32 value);
+        void SetCurrentRows(UInt32 value);
 
         /**
          * @brief
@@ -9796,7 +9796,7 @@ namespace ocilib
          * Internal current array size on SUCCESS otherwise 0
          *
          */
-        OCI_UInt32 GetCurrentRows() const;
+        UInt32 GetCurrentRows() const;
 
         /**
          * @brief
@@ -9806,7 +9806,7 @@ namespace ocilib
          * Internal maximum array size on SUCCESS otherwise 0
          *
          */
-        OCI_UInt32 GetMaxRows() const;
+        UInt32 GetMaxRows() const;
 
         /**
          * @brief
@@ -9816,7 +9816,7 @@ namespace ocilib
          * Insertions are committed with Finish()
          *
          */
-        OCI_UInt32 GetRowCount() const;
+        UInt32 GetRowCount() const;
 
         /**
          * @brief
@@ -9830,7 +9830,7 @@ namespace ocilib
          * - Load(), returns the number of loaded rows
          *
          */
-        OCI_UInt32 GetAffectedRows() const;
+        UInt32 GetAffectedRows() const;
 
         /**
          * @brief
@@ -9904,7 +9904,7 @@ namespace ocilib
          * Setting the value to 0 disables the cache
          *
          */
-        void SetCacheSize(OCI_UInt32 value);
+        void SetCacheSize(UInt32 value);
 
         /**
          * @brief
@@ -9916,7 +9916,7 @@ namespace ocilib
          * Default value is 64KB.
          *
          */
-        void SetBufferSize(OCI_UInt32 value);
+        void SetBufferSize(UInt32 value);
 
         /**
          * @brief
@@ -9961,7 +9961,7 @@ namespace ocilib
          * error
          *
          */
-        OCI_UInt32 GetErrorColumn();
+        UInt32 GetErrorColumn();
 
         /**
          * @brief
@@ -9996,7 +9996,7 @@ namespace ocilib
          *
          */
 
-        OCI_UInt32 GetErrorRow();
+        UInt32 GetErrorRow();
     };
 
 
@@ -10139,14 +10139,14 @@ namespace ocilib
          * Set the number of documents to skip on the options
          *
          */
-        void SetSkip(OCI_UInt32 count);
+        void SetSkip(UInt32 count);
 
         /**
          * @brief
          * Set the maximum number of documents to return on the options
          *
          */
-        void SetLimit(OCI_UInt32 count);
+        void SetLimit(UInt32 count);
     };
 
     /**
@@ -10294,7 +10294,7 @@ namespace ocilib
          * Requires an Oracle client 20.1 or higher.
          *
          */
-        bool Truncate(OCI_UInt32 mode);
+        bool Truncate();
 
         /**
          * @brief
@@ -10329,14 +10329,14 @@ namespace ocilib
          * Return the number of documents in the collection
          *
          */
-        OCI_UInt64 GetCount(const SodaOptions& options);
+        UInt64 GetCount(const SodaOptions& options);
 
         /**
          * @brief
          * Return the number of documents matching a filter in the collection
          *
          */
-        OCI_UInt64 GetCount(const ostring& filter);
+        UInt64 GetCount(const ostring& filter);
 
         /**
          * @brief
@@ -10371,7 +10371,7 @@ namespace ocilib
          * Remove documents from the collection
          *
          */
-        bool Remove(const SodaOptions& options, OCI_UInt64* count = nullptr);
+        bool Remove(const SodaOptions& options, UInt64* count = nullptr);
 
         /**
          * @brief

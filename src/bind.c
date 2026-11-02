@@ -420,12 +420,12 @@ static OCI_Boolean OcilibBindAllocateInternalData
 
 static OCI_Boolean OcilibBindAllocateBuffers
 (
-    OCI_Bind    *bnd,
-    OCI_UInt32 mode,
-    OCI_Boolean  reused,
-    OCI_UInt32 nballoc,
-    OCI_UInt32 nbelem,
-    OCI_Boolean  plsql_table
+    OCI_Bind   *bnd,
+    OCI_UInt32  mode,
+    OCI_Boolean reused,
+    OCI_UInt32  nballoc,
+    OCI_UInt32  nbelem,
+    OCI_Boolean plsql_table
 )
 {
     ENTER_FUNC
@@ -541,7 +541,7 @@ static OCI_Boolean OcilibBindAllocateBuffers
 static OCI_Boolean OcilibBindCheckAvailability
 (
     OCI_Statement *stmt,
-    OCI_UInt32   mode,
+    OCI_UInt32     mode,
     OCI_Boolean    reused
 )
 {
@@ -604,11 +604,11 @@ static OCI_Boolean OcilibBindCheckAvailability
 
 static OCI_Boolean OcilibBindPerformBinding
 (
-    OCI_Bind    *bnd,
-    OCI_UInt32 mode,
-    OCI_UInt32 index,
-    OCI_UInt32 exec_mode,
-    OCI_Boolean  plsql_table
+    OCI_Bind   *bnd,
+    OCI_UInt32  mode,
+    OCI_UInt32  index,
+    OCI_UInt32  exec_mode,
+    OCI_Boolean plsql_table
 )
 {
     ENTER_FUNC
@@ -617,8 +617,8 @@ static OCI_Boolean OcilibBindPerformBinding
         /* context */ OCI_IPC_BIND, bnd
     );
 
-    dbtext* dbstr  = NULL;
-    OCI_Int32     dbsize = -1;
+    dbtext  * dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_BIND, bnd);
 
@@ -716,9 +716,9 @@ static OCI_Boolean OcilibBindPerformBinding
 
 static OCI_Boolean OcilibBindAddToStatement
 (
-    OCI_Bind    *bnd,
-    OCI_UInt32 mode,
-    OCI_Boolean  reused
+    OCI_Bind   *bnd,
+    OCI_UInt32  mode,
+    OCI_Boolean reused
 )
 {
     ENTER_FUNC
@@ -765,13 +765,13 @@ OCI_Bind* OcilibBindCreate
     OCI_Statement *stmt,
     void          *data,
     const otext   *name,
-    OCI_UInt32   mode,
+    OCI_UInt32     mode,
     ub4            size,
     ub1            type,
     OCI_SqlType    code,
     OCI_SubType    subtype,
     OCI_TypeInfo  *typinf,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 )
 {
     ENTER_FUNC
@@ -782,13 +782,13 @@ OCI_Bind* OcilibBindCreate
 
     OCI_Bind *bnd = NULL;
 
-    ub4          exec_mode   = OCI_DEFAULT;
-    OCI_Boolean  plsql_table = FALSE;
-    OCI_Boolean  is_array    = FALSE;
-    OCI_Boolean  reused      = FALSE;
-    OCI_Int32          index       = 0;
-    OCI_Int32          prev_index  = -1;
-    OCI_UInt32 nballoc     = nbelem;
+    ub4         exec_mode   = OCI_DEFAULT;
+    OCI_Boolean plsql_table = FALSE;
+    OCI_Boolean is_array    = FALSE;
+    OCI_Boolean reused      = FALSE;
+    OCI_Int32   index       = 0;
+    OCI_Int32   prev_index  = -1;
+    OCI_UInt32  nballoc     = nbelem;
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt);
 
@@ -1099,9 +1099,9 @@ OCI_Int32 OcilibBindGetIndex
 
 OCI_Boolean OcilibBindSetNullIndicator
 (
-    OCI_Bind    *bnd,
+    OCI_Bind  *bnd,
     OCI_UInt32 position,
-    sb2          value
+    sb2        value
 )
 {
     ENTER_FUNC
@@ -1247,7 +1247,7 @@ OCI_Statement * OcilibBindGetStatement
 
 OCI_Boolean OcilibBindSetDataSize
 (
-    OCI_Bind    *bnd,
+    OCI_Bind  *bnd,
     OCI_UInt32 size
 )
 {
@@ -1260,7 +1260,7 @@ OCI_Boolean OcilibBindSetDataSize
 
 OCI_Boolean OcilibBindSetDataSizeAtPos
 (
-    OCI_Bind    *bnd,
+    OCI_Bind  *bnd,
     OCI_UInt32 position,
     OCI_UInt32 size
 )
@@ -1312,7 +1312,7 @@ OCI_UInt32 OcilibBindGetDataSize
 
 OCI_UInt32 OcilibBindGetDataSizeAtPos
 (
-    OCI_Bind    *bnd,
+    OCI_Bind  *bnd,
     OCI_UInt32 position
 )
 {
@@ -1350,7 +1350,7 @@ OCI_UInt32 OcilibBindGetDataSizeAtPos
 
 OCI_Boolean OcilibBindSetNullAtPos
 (
-    OCI_Bind    *bnd,
+    OCI_Bind  *bnd,
     OCI_UInt32 position
 )
 {
@@ -1388,7 +1388,7 @@ OCI_Boolean OcilibBindSetNull
 
 OCI_Boolean OcilibBindSetNotNullAtPos
 (
-    OCI_Bind    *bnd,
+    OCI_Bind  *bnd,
     OCI_UInt32 position
 )
 {
@@ -1426,7 +1426,7 @@ OCI_Boolean OcilibBindSetNotNull
 
 OCI_Boolean OcilibBindIsNullAtPos
 (
-    OCI_Bind    *bnd,
+    OCI_Bind  *bnd,
     OCI_UInt32 position
 )
 {

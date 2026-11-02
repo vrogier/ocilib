@@ -25,7 +25,7 @@
 namespace ocilib
 {
     
-inline DirectPath::DirectPath(const TypeInfo &typeInfo, OCI_UInt32 nbCols, OCI_UInt32  nbRows, const ostring& partition)
+inline DirectPath::DirectPath(const TypeInfo &typeInfo, UInt32 nbCols, UInt32  nbRows, const ostring& partition)
 {
     Connection connection = typeInfo.GetConnection();
     
@@ -36,15 +36,15 @@ inline DirectPath::DirectPath(const TypeInfo &typeInfo, OCI_UInt32 nbCols, OCI_U
     );
 }
 
-inline void DirectPath::SetColumn(OCI_UInt32 colIndex, const ostring& name, OCI_UInt32 maxSize,  const ostring& format)
+inline void DirectPath::SetColumn(UInt32 colIndex, const ostring& name, UInt32 maxSize,  const ostring& format)
 {
     core::Check(OCI_DirPathSetColumn(*this, colIndex, name.c_str(), maxSize, format.c_str()));
 }
 
 template<class T>
-inline void DirectPath::SetEntry(OCI_UInt32 rowIndex, OCI_UInt32 colIndex, const T &value, bool complete)
+inline void DirectPath::SetEntry(UInt32 rowIndex, UInt32 colIndex, const T &value, bool complete)
 {
-    core::Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, static_cast<const AnyPointer>(const_cast<typename T::value_type *>(value.c_str())), static_cast<OCI_UInt32>(value.size()), complete));
+    core::Check(OCI_DirPathSetEntry(*this, rowIndex, colIndex, static_cast<const AnyPointer>(const_cast<typename T::value_type *>(value.c_str())), static_cast<UInt32>(value.size()), complete));
 }
 
 inline void DirectPath::Reset()
@@ -87,27 +87,27 @@ inline void DirectPath::FlushRow()
     core::Check(OCI_DirPathFlushRow(*this));
 }
 
-inline void DirectPath::SetCurrentRows(OCI_UInt32 value)
+inline void DirectPath::SetCurrentRows(UInt32 value)
 {
     core::Check(OCI_DirPathSetCurrentRows(*this, value));
 }
 
-inline OCI_UInt32 DirectPath::GetCurrentRows() const
+inline UInt32 DirectPath::GetCurrentRows() const
 {
     return core::Check(OCI_DirPathGetCurrentRows(*this));
 }
 
-inline OCI_UInt32 DirectPath::GetMaxRows() const
+inline UInt32 DirectPath::GetMaxRows() const
 {
     return core::Check(OCI_DirPathGetMaxRows(*this));
 }
 
-inline OCI_UInt32 DirectPath::GetRowCount() const
+inline UInt32 DirectPath::GetRowCount() const
 {
     return core::Check(OCI_DirPathGetRowCount(*this));
 }
 
-inline OCI_UInt32 DirectPath::GetAffectedRows() const
+inline UInt32 DirectPath::GetAffectedRows() const
 {
     return core::Check(OCI_DirPathGetAffectedRows(*this));
 }
@@ -127,12 +127,12 @@ inline void DirectPath::SetNoLog(bool value)
     core::Check(OCI_DirPathSetNoLog(*this, value));
 }
 
-inline void DirectPath::SetCacheSize(OCI_UInt32 value)
+inline void DirectPath::SetCacheSize(UInt32 value)
 {
     core::Check(OCI_DirPathSetCacheSize(*this, value));
 }
 
-inline void DirectPath::SetBufferSize(OCI_UInt32 value)
+inline void DirectPath::SetBufferSize(UInt32 value)
 {
     core::Check(OCI_DirPathSetBufferSize(*this, value));
 }
@@ -142,12 +142,12 @@ inline void DirectPath::SetConversionMode(ConversionMode value)
     core::Check(OCI_DirPathSetConvertMode(*this, value));
 }
 
-inline OCI_UInt32 DirectPath::GetErrorColumn()
+inline UInt32 DirectPath::GetErrorColumn()
 {
     return core::Check(OCI_DirPathGetErrorColumn(*this));
 }
 
-inline OCI_UInt32 DirectPath::GetErrorRow()
+inline UInt32 DirectPath::GetErrorRow()
 {
     return core::Check(OCI_DirPathGetErrorRow(*this));
 }

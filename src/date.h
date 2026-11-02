@@ -45,7 +45,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibDateFree
 OCI_SYM_LOCAL OCI_Date ** OcilibDateCreateArray
 (
     OCI_Environment *env,
-    OCI_UInt32     nbelem
+    OCI_UInt32       nbelem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDateFreeArray
@@ -56,13 +56,13 @@ OCI_SYM_LOCAL OCI_Boolean OcilibDateFreeArray
 OCI_SYM_LOCAL OCI_Boolean OcilibDateAddDays
 (
     OCI_Date* date,
-    OCI_Int32       nb
+    OCI_Int32 nb
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDateAddMonths
 (
     OCI_Date* date,
-    OCI_Int32       nb
+    OCI_Int32 nb
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDateAssign
@@ -99,35 +99,35 @@ OCI_SYM_LOCAL OCI_Boolean OcilibDateToString
 (
     OCI_Date   * date,
     const otext* fmt,
-    OCI_Int32          size,
+    OCI_Int32    size,
     otext      * str
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDateGetDate
 (
-    OCI_Date* date,
-    OCI_Int32     * year,
-    OCI_Int32     * month,
-    OCI_Int32     * day
+    OCI_Date  * date,
+    OCI_Int32 * year,
+    OCI_Int32 * month,
+    OCI_Int32 * day
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDateGetTime
 (
-    OCI_Date* date,
-    OCI_Int32     * hour,
-    OCI_Int32     * min,
-    OCI_Int32     * sec
+    OCI_Date  * date,
+    OCI_Int32 * hour,
+    OCI_Int32 * min,
+    OCI_Int32 * sec
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDateGetDateTime
 (
-    OCI_Date* date,
-    OCI_Int32     * year,
-    OCI_Int32     * month,
-    OCI_Int32     * day,
-    OCI_Int32     * hour,
-    OCI_Int32     * min,
-    OCI_Int32     * sec
+    OCI_Date  * date,
+    OCI_Int32 * year,
+    OCI_Int32 * month,
+    OCI_Int32 * day,
+    OCI_Int32 * hour,
+    OCI_Int32 * min,
+    OCI_Int32 * sec
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDateLastDay
@@ -144,28 +144,28 @@ OCI_SYM_LOCAL OCI_Boolean OcilibDateNextDay
 OCI_SYM_LOCAL OCI_Boolean OcilibDateSetDate
 (
     OCI_Date* date,
-    OCI_Int32       year,
-    OCI_Int32       month,
-    OCI_Int32       day
+    OCI_Int32 year,
+    OCI_Int32 month,
+    OCI_Int32 day
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDateSetTime
 (
     OCI_Date* date,
-    OCI_Int32       hour,
-    OCI_Int32       min,
-    OCI_Int32       sec
+    OCI_Int32 hour,
+    OCI_Int32 min,
+    OCI_Int32 sec
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDateSetDateTime
 (
     OCI_Date* date,
-    OCI_Int32       year,
-    OCI_Int32       month,
-    OCI_Int32       day,
-    OCI_Int32       hour,
-    OCI_Int32       min,
-    OCI_Int32       sec
+    OCI_Int32 year,
+    OCI_Int32 month,
+    OCI_Int32 day,
+    OCI_Int32 hour,
+    OCI_Int32 min,
+    OCI_Int32 sec
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDateSysDate

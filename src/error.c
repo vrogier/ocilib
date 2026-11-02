@@ -32,8 +32,8 @@
 
 static tss_t     error_tss;
 static once_flag error_tss_once      = ONCE_FLAG_INIT;
-static OCI_Int32       error_tss_status    = thrd_error;
-static OCI_Int32       error_tss_ref_count = 0;
+static OCI_Int32 error_tss_status    = thrd_error;
+static OCI_Int32 error_tss_ref_count = 0;
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibErrorTssDtor
@@ -189,7 +189,7 @@ void OcilibErrorSet
     OCI_PointerType source_type,
     const char    * location,
     otext         * message,
-    OCI_UInt32    row
+    OCI_UInt32      row
 )
 {
     err->type        = type;

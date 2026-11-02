@@ -53,9 +53,9 @@ OCI_Boolean OcilibQueueCreate
     const otext    *queue_name,
     const otext    *queue_table,
     OCI_QueueType   queue_type,
-    OCI_UInt32    max_retries,
-    OCI_UInt32    retry_delay,
-    OCI_UInt32    retention_time,
+    OCI_UInt32      max_retries,
+    OCI_UInt32      retry_delay,
+    OCI_UInt32      retention_time,
     OCI_Boolean     dependency_tracking,
     const otext    *comment
 )
@@ -132,9 +132,9 @@ OCI_Boolean OcilibQueueAlter
 (
     OCI_Connection *con,
     const otext    *queue_name,
-    OCI_UInt32    max_retries,
-    OCI_UInt32    retry_delay,
-    OCI_UInt32    retention_time,
+    OCI_UInt32      max_retries,
+    OCI_UInt32      retry_delay,
+    OCI_UInt32      retention_time,
     const otext    *comment
 )
 {
@@ -399,8 +399,8 @@ OCI_Boolean OcilibQueueTableCreate
     OCI_Boolean       multiple_consumers,
     OCI_QueueGrouping message_grouping,
     const otext      *comment,
-    OCI_UInt32      primary_instance,
-    OCI_UInt32      secondary_instance,
+    OCI_UInt32        primary_instance,
+    OCI_UInt32        secondary_instance,
     const otext      *compatible
 )
 {
@@ -481,8 +481,8 @@ OCI_Boolean OcilibQueueTableAlter
     OCI_Connection *con,
     const otext    *queue_table,
     const otext    *comment,
-    OCI_UInt32    primary_instance,
-    OCI_UInt32    secondary_instance
+    OCI_UInt32      primary_instance,
+    OCI_UInt32      secondary_instance
 )
 {
     ENTER_FUNC

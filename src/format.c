@@ -48,8 +48,8 @@ OCI_Int32 OcilibFormatParseSql
         /* context */ OCI_IPC_STATEMENT, stmt
     );
 
-    OCI_Int32          size  = 0;
-    OCI_Int32          len   = 0;
+    OCI_Int32    size  = 0;
+    OCI_Int32    len   = 0;
     OCI_Boolean  quote = FALSE;
     otext       *pb    = buf;
     const otext *pf    = format;
@@ -175,8 +175,8 @@ OCI_Int32 OcilibFormatParseSql
                 {
                     if (tmsp)
                     {
-                        otext str_ff[12];
-                        OCI_Int32   yy = 0, mm = 0, dd = 0, hh = 0, mi = 0, ss = 0, ff = 0;
+                        otext     str_ff[12];
+                        OCI_Int32 yy = 0, mm = 0, dd = 0, hh = 0, mi = 0, ss = 0, ff = 0;
 
                         CHECK(OcilibTimestampGetDateTime(tmsp, &yy, &mm, &dd,  &hh, &mi, &ss, &ff));
 
@@ -254,7 +254,7 @@ OCI_Int32 OcilibFormatParseSql
                 temp[0] = 0;
 
                 len = (OCI_Int32)OcilibStringFormat(temp, (OCI_Int32) osizeof(temp) - 1,
-                                              OTEXT("%i"), va_arg(*pargs, OCI_Int32));
+                                                    OTEXT("%i"), va_arg(*pargs, OCI_Int32));
 
                 if (buf && (len > 0))
                 {
@@ -270,7 +270,7 @@ OCI_Int32 OcilibFormatParseSql
                 temp[0] = 0;
 
                 len = (OCI_Int32)OcilibStringFormat(temp, (OCI_Int32)  osizeof(temp) - 1,
-                                              OTEXT("%u"), va_arg(*pargs, OCI_UInt32));
+                                                    OTEXT("%u"), va_arg(*pargs, OCI_UInt32));
 
                 if (buf && (len > 0))
                 {
@@ -290,12 +290,12 @@ OCI_Int32 OcilibFormatParseSql
                 if (OTEXT('i') == *pf)
                 {
                     len = (OCI_Int32)OcilibStringFormat(temp, (OCI_Int32) osizeof(temp) - 1,
-                                                  OTEXT("%lld"), va_arg(*pargs, OCI_Int64));
+                                                        OTEXT("%lld"), va_arg(*pargs, OCI_Int64));
                 }
                 else if (OTEXT('u') == *pf)
                 {
                     len = (OCI_Int32)OcilibStringFormat(temp, (OCI_Int32) osizeof(temp) - 1,
-                                                  OTEXT("%llu"), va_arg(*pargs, OCI_UInt64));
+                                                        OTEXT("%llu"), va_arg(*pargs, OCI_UInt64));
                 }
                 else
                 {
@@ -322,12 +322,12 @@ OCI_Int32 OcilibFormatParseSql
                 if (OTEXT('i') == *pf)
                 {
                     len = (OCI_Int32)OcilibStringFormat(temp, (OCI_Int32) osizeof(temp) - 1,
-                                                  OTEXT("%hd"), va_arg(*pargs, OCI_Int32));
+                                                        OTEXT("%hd"), va_arg(*pargs, OCI_Int32));
                 }
                 else if (OTEXT('u') == *pf)
                 {
                     len = (OCI_Int32)OcilibStringFormat(temp, (OCI_Int32) osizeof(temp) - 1,
-                                                  OTEXT("%hu"), va_arg(*pargs, OCI_UInt32));
+                                                        OTEXT("%hu"), va_arg(*pargs, OCI_UInt32));
                 }
                 else
                 {
@@ -348,7 +348,7 @@ OCI_Int32 OcilibFormatParseSql
                 temp[0] = 0;
 
                 len = (OCI_Int32)OcilibStringFormat(temp, (OCI_Int32) osizeof(temp) - 1,
-                                              OTEXT("%lf"), va_arg(*pargs, double));
+                                                    OTEXT("%lf"), va_arg(*pargs, OCI_Double));
 
                 if (buf && (len > 0))
                 {

@@ -46,7 +46,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFree
 
 OCI_SYM_LOCAL OCI_Boolean OcilibVectorGetInfo
 (
-    OCI_Vector   *vect,
+    OCI_Vector *vect,
     OCI_UInt32 *format,
     OCI_UInt32 *dimensions
 );
@@ -61,14 +61,14 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorSetValues
 (
     OCI_Vector      *vect,
     OCI_VectorFormat format,
-    OCI_UInt32     dimensions,
+    OCI_UInt32       dimensions,
     void            *values
 );
 
 OCI_SYM_LOCAL OCI_Vector ** OcilibVectorCreateArray
 (
     OCI_Connection *con,
-    OCI_UInt32    nbelem
+    OCI_UInt32      nbelem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibVectorFreeArray
@@ -80,16 +80,16 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
 (
     OCI_Vector      *vect,
     const otext    * str,
-    OCI_UInt32     size,
+    OCI_UInt32       size,
     OCI_VectorFormat format,
-    OCI_UInt32     dimensions
+    OCI_UInt32       dimensions
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
 (
-    OCI_Vector   *vect,
+    OCI_Vector *vect,
     OCI_UInt32 *size,
-    otext        *str
+    otext      *str
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibVectorAssign

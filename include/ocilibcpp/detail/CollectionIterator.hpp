@@ -34,7 +34,7 @@ CollectionIterator<T>::CollectionIterator() : _elem()
 }
 
 template<class T>
-CollectionIterator<T>::CollectionIterator(CollectionType *collection, OCI_UInt32 pos) : _elem(collection, pos)
+CollectionIterator<T>::CollectionIterator(CollectionType *collection, UInt32 pos) : _elem(collection, pos)
 {
 
 }
@@ -60,14 +60,14 @@ CollectionIterator<T>& CollectionIterator<T>::operator = (const CollectionIterat
 template<class T>
 CollectionIterator<T>& CollectionIterator<T>::operator += (difference_type value)
 {
-    _elem._pos += static_cast<OCI_UInt32>(value);
+    _elem._pos += static_cast<UInt32>(value);
     return *this;
 }
 
 template<class T>
 CollectionIterator<T>& CollectionIterator<T>::operator -= (difference_type value)
 {
-    _elem._pos -= static_cast<OCI_UInt32>(value);
+    _elem._pos -= static_cast<UInt32>(value);
     return *this;
 }
 
@@ -93,12 +93,12 @@ CollectionIterator<T>& CollectionIterator<T>::operator--()
 template<class T>
 CollectionIterator<T>& CollectionIterator<T>::operator++()
 {
-    ++*(const_cast<OCI_UInt32*>(&_elem._pos));
+    ++*(const_cast<UInt32*>(&_elem._pos));
     return *this;
 }
 
 template<class T>
-CollectionIterator<T> CollectionIterator<T>::operator++(OCI_Int32)
+CollectionIterator<T> CollectionIterator<T>::operator++(Int32)
 {
     CollectionIterator res(_elem._coll, _elem._pos);
     ++(*this);
@@ -106,7 +106,7 @@ CollectionIterator<T> CollectionIterator<T>::operator++(OCI_Int32)
 }
 
 template<class T>
-CollectionIterator<T> CollectionIterator<T>::operator--(OCI_Int32)
+CollectionIterator<T> CollectionIterator<T>::operator--(Int32)
 {
     CollectionIterator res(_elem);
     --(*this);
@@ -116,13 +116,13 @@ CollectionIterator<T> CollectionIterator<T>::operator--(OCI_Int32)
 template<class T>
 CollectionIterator<T>  CollectionIterator<T>::operator + (difference_type value)
 {
-    return CollectionIterator(_elem._coll, _elem._pos + static_cast<OCI_UInt32>(value));
+    return CollectionIterator(_elem._coll, _elem._pos + static_cast<UInt32>(value));
 }
 
 template<class T>
 CollectionIterator<T> CollectionIterator<T>::operator - (difference_type value)
 {
-    return CollectionIterator(_elem._coll, _elem._pos - static_cast<OCI_UInt32>(value));
+    return CollectionIterator(_elem._coll, _elem._pos - static_cast<UInt32>(value));
 }
 
 template<class T>

@@ -35,7 +35,7 @@
 static otext* OcilibSodaCollGetStringAttribute
 (
     OCI_SodaColl* coll,
-    OCI_Int32           attr,
+    OCI_Int32     attr,
     otext      ** str
 )
 {
@@ -429,7 +429,7 @@ OCI_SodaDocCursor* OcilibSodaCollFind
     OCI_SodaOptions        * tmpopts   = NULL;
     OCISodaOperationOptions* opthandle = NULL;
     OCISodaDoc             **mat_docs  = NULL;
-    OCI_UInt32             mat_count = 0;
+    OCI_UInt32               mat_count = 0;
 
 #ifdef OCI_CHARSET_WIDE
 
@@ -635,8 +635,8 @@ OCI_SodaDoc* OcilibSodaCollFindOne
     OCI_SodaOptions        * tmpopts   = NULL;
     OCISodaOperationOptions* opthandle = NULL;
     sword                    oci_ret   = 0;
-    OCI_UInt32             loops     = 1;
-    OCI_UInt32             i         = 0;
+    OCI_UInt32               loops     = 1;
+    OCI_UInt32               i         = 0;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
@@ -745,7 +745,7 @@ OCI_SodaDoc* OcilibSodaCollFindOneByKey
 
     OCI_SodaDoc* doc      = NULL;
     dbtext     * dbkey    = NULL;
-    OCI_Int32          dbkeylen = -1;
+    OCI_Int32    dbkeylen = -1;
     sword        oci_ret  = 0;
     OCISodaDoc * handle   = NULL;
 
@@ -817,8 +817,8 @@ OCI_UInt64 OcilibSodaCollDocCount
     OCI_SodaOptions        * tmpopts   = NULL;
     OCISodaOperationOptions* opthandle = NULL;
     ub8                      numdocs   = 0;
-    OCI_UInt32             loops     = 1;
-    OCI_UInt32             i         = 0;
+    OCI_UInt32               loops     = 1;
+    OCI_UInt32               i         = 0;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
@@ -902,9 +902,9 @@ OCI_UInt64 OcilibSodaCollDocCountWithFilter
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    dbtext* dbflt    = NULL;
-    OCI_Int32     dbfltlen = -1;
-    ub8     numdocs  = 0;
+    dbtext  * dbflt    = NULL;
+    OCI_Int32 dbfltlen = -1;
+    ub8       numdocs  = 0;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_STRING, filterSpec);
@@ -954,8 +954,8 @@ OCI_Boolean OcilibSodaCollReplaceOne
     boolean                  replaced  = FALSE;
     OCI_SodaOptions        * tmpopts   = NULL;
     OCISodaOperationOptions* opthandle = NULL;
-    OCI_UInt32             loops     = 1;
-    OCI_UInt32             i         = 0;
+    OCI_UInt32               loops     = 1;
+    OCI_UInt32               i         = 0;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_SODA_DOC, doc);
@@ -1042,8 +1042,8 @@ OCI_Boolean OcilibSodaCollReplaceOneAndGet
     OCI_SodaOptions        * tmpopts   = NULL;
     OCISodaOperationOptions* opthandle = NULL;
     OCISodaDoc             * reshandle = NULL;
-    OCI_UInt32             loops     = 1;
-    OCI_UInt32             i         = 0;
+    OCI_UInt32               loops     = 1;
+    OCI_UInt32               i         = 0;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_SODA_DOC, doc);
@@ -1133,9 +1133,9 @@ OCI_Boolean OcilibSodaCollReplaceOneByKey
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    boolean replaced = FALSE;
-    dbtext* dbkey    = NULL;
-    OCI_Int32     dbkeylen = -1;
+    boolean   replaced = FALSE;
+    dbtext  * dbkey    = NULL;
+    OCI_Int32 dbkeylen = -1;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_STRING, key);
@@ -1186,7 +1186,7 @@ OCI_Boolean OcilibSodaCollReplaceOneAndGetByKey
 
     boolean     replaced  = FALSE;
     dbtext    * dbkey     = NULL;
-    OCI_Int32         dbkeylen  = -1;
+    OCI_Int32   dbkeylen  = -1;
     OCISodaDoc* reshandle = NULL;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
@@ -1231,7 +1231,7 @@ OCI_Boolean OcilibSodaCollRemove
 (
     OCI_SodaColl   * coll,
     OCI_SodaOptions* options,
-    OCI_UInt64       * count
+    OCI_UInt64     * count
 )
 {
     ENTER_FUNC
@@ -1243,8 +1243,8 @@ OCI_Boolean OcilibSodaCollRemove
     ub8                      removeCount = 0;
     OCI_SodaOptions        * tmpopts     = NULL;
     OCISodaOperationOptions* opthandle   = NULL;
-    OCI_UInt32             loops       = 1;
-    OCI_UInt32             i           = 0;
+    OCI_UInt32               loops       = 1;
+    OCI_UInt32               i           = 0;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
@@ -1333,9 +1333,9 @@ OCI_Boolean OcilibSodaCollRemoveOneByKey
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    boolean removed  = FALSE;
-    dbtext* dbkey    = NULL;
-    OCI_Int32     dbkeylen = -1;
+    boolean   removed  = FALSE;
+    dbtext  * dbkey    = NULL;
+    OCI_Int32 dbkeylen = -1;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_STRING, key);

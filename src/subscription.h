@@ -34,7 +34,7 @@ OCI_SYM_LOCAL OCI_Subscription * OcilibSubscriptionRegister
     const otext         *name,
     OCI_SubscriptionType type,
     POCI_NOTIFY          handler,
-    OCI_UInt32         timeout
+    OCI_UInt32           timeout
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibSubscriptionUnregister

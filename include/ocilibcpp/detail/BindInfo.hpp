@@ -40,12 +40,12 @@ inline DataType BindInfo::GetType() const
     return DataType(static_cast<DataType::Type>(core::Check(OCI_BindGetType(*this))));
 }
 
-inline OCI_UInt32 BindInfo::GetSubType() const
+inline UInt32 BindInfo::GetSubType() const
 {
     return core::Check(OCI_BindGetSubtype(*this));
 }
 
-inline OCI_UInt32 BindInfo::GetDataCount() const
+inline UInt32 BindInfo::GetDataCount() const
 {
     return core::Check(OCI_BindGetDataCount(*this));
 }
@@ -55,7 +55,7 @@ inline Statement BindInfo::GetStatement() const
     return Statement(core::Check(OCI_BindGetStatement(*this)));
 }
 
-inline void BindInfo::SetDataNull(bool value, OCI_UInt32 index)
+inline void BindInfo::SetDataNull(bool value, UInt32 index)
 {
     if (value)
     {
@@ -67,7 +67,7 @@ inline void BindInfo::SetDataNull(bool value, OCI_UInt32 index)
     }
 }
 
-inline bool BindInfo::IsDataNull(OCI_UInt32 index) const
+inline bool BindInfo::IsDataNull(UInt32 index) const
 {
     return (core::Check(OCI_BindIsNullAtPos(*this, index)) == TRUE);
 }

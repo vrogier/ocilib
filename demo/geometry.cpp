@@ -18,7 +18,7 @@ int main()
         Statement st(con);
 
         Collection<OCI_Int32> elemInfos(TypeInfo(con, "mdsys.sdo_elem_info_array", TypeInfo::Type));
-        Collection<double> ordinates(TypeInfo(con, "mdsys.sdo_ordinate_array", TypeInfo::Type));
+        Collection<OCI_Double> ordinates(TypeInfo(con, "mdsys.sdo_ordinate_array", TypeInfo::Type));
 
         Object geometry(TypeInfo(con, "mdsys.sdo_geometry", TypeInfo::Type));
 

@@ -156,7 +156,7 @@ namespace TestCppApi
         ASSERT_EQ(4, vect.GetDimensionCount());
         ASSERT_EQ(Vector::Float32, vect.GetFormat());
 
-        auto values = vect.Get<float>();
+        auto values = vect.Get<OCI_Float>();
 
         ASSERT_FLOAT_EQ(1.1f, values[0]);        
         ASSERT_FLOAT_EQ(2.2f, values[1]);
@@ -190,7 +190,7 @@ namespace TestCppApi
         ASSERT_EQ(4, vect.GetDimensionCount());
         ASSERT_EQ(Vector::Float32, vect.GetFormat());
             
-        auto values2 = vect.Get<float>();
+        auto values2 = vect.Get<OCI_Float>();
         ASSERT_EQ(4, values2.size());
     
         ASSERT_FLOAT_EQ(values1[0], values2[0]);        
@@ -222,7 +222,7 @@ namespace TestCppApi
         ASSERT_EQ(4, vect.GetDimensionCount());
         ASSERT_EQ(Vector::Float32, vect.GetFormat());
     
-        auto values = vect.Get<float>();    
+        auto values = vect.Get<OCI_Float>();    
         ASSERT_EQ(4, values.size());
     
         ASSERT_FLOAT_EQ(1.1f, values[0]);        

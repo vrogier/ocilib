@@ -33,8 +33,8 @@ static const otext * TypeNames[OCI_IPC_COUNT] =
     OTEXT("OCI_Int16 pointer"),
     OTEXT("OCI_Int32 pointer"),
     OTEXT("OCI_Int64 pointer"),
-    OTEXT("double pointer"),
-    OTEXT("float pointer"),
+    OTEXT("OCI_Double pointer"),
+    OTEXT("OCI_Float pointer"),
     OTEXT("string pointer"),
     OTEXT("function callback"),
 
@@ -195,7 +195,7 @@ static const otext * OracleFeatures[OCI_FEATURE_COUNT] =
 
 typedef struct StatementState
 {
-    OCI_Int32          state;
+    OCI_Int32    state;
     const otext *name;
 } StatementState;
 
@@ -231,7 +231,7 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
             otext message[512];                             \
             OcilibStringFormat                              \
             (                                               \
-    message, osizeof(message) - (OCI_Size)1,                  \
+    message, osizeof(message) - (OCI_Size)1,                \
     ErrorMessages[err_code],                                \
     __VA_ARGS__                                             \
             );                                              \
@@ -240,7 +240,7 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
             (                                               \
     err,                                                    \
     OCI_ERR_OCILIB,                                         \
-    (OCI_Int32)(err_code),                                        \
+    (OCI_Int32)(err_code),                                  \
     ctx->source_ptr,                                        \
     ctx->source_type,                                       \
     ctx->location,                                          \
@@ -261,7 +261,7 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
             OcilibStringFormat                              \
             (                                               \
     message,                                                \
-    osizeof(message) - (OCI_Size)1,                           \
+    osizeof(message) - (OCI_Size)1,                         \
     OTEXT("%s"),                                            \
     ErrorMessages[err_code]                                 \
             );                                              \
@@ -270,7 +270,7 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
             (                                               \
     err,                                                    \
     OCI_ERR_OCILIB,                                         \
-    (OCI_Int32)(err_code),                                        \
+    (OCI_Int32)(err_code),                                  \
     ctx->source_ptr,                                        \
     ctx->source_type,                                       \
     ctx->location,                                          \
@@ -360,7 +360,7 @@ void OcilibExceptionOCI
     {
         sb4               err_code                = 0;
         otext             buffer[OCI_SIZE_BUFFER] = OTEXT("");
-        OCI_Int32               err_size                = (OCI_Int32)OCI_SIZE_BUFFER* (OCI_Int32)sizeof(otext);
+        OCI_Int32         err_size                = (OCI_Int32)OCI_SIZE_BUFFER* (OCI_Int32)sizeof(otext);
         const OCI_Boolean warning                 = OCI_SUCCESS_WITH_INFO == call_ret;
 
         dbtext * err_msg = OcilibStringGetDBString(ctx->env, buffer, &err_size);
@@ -498,7 +498,7 @@ void OcilibExceptionMemory
 (
     OCI_Context   * ctx,
     OCI_PointerType type,
-    OCI_Size          nb_bytes
+    OCI_Size        nb_bytes
 )
 {
     EXCEPTION_IMPL(OCI_ERR_MEMORY, TypeNames[type + 1], nb_bytes);
@@ -511,7 +511,7 @@ void OcilibExceptionMemory
 void OcilibExceptionNotAvailable
 (
     OCI_Context* ctx,
-    OCI_Int32          feature
+    OCI_Int32    feature
 )
 {
     EXCEPTION_IMPL(OCI_ERR_NOT_AVAILABLE, OracleFeatures[feature - 1]);
@@ -524,7 +524,7 @@ void OcilibExceptionNotAvailable
 void OcilibExceptionDatatypeNotSupported
 (
     OCI_Context* ctx,
-    OCI_Int32          code
+    OCI_Int32    code
 )
 {
     EXCEPTION_IMPL(OCI_ERR_DATATYPE_NOT_SUPPORTED, code);
@@ -550,7 +550,7 @@ void OcilibExceptionParsingToken
 void OcilibExceptionMappingArgument
 (
     OCI_Context* ctx,
-    OCI_Int32          arg
+    OCI_Int32    arg
 )
 {
     EXCEPTION_IMPL(OCI_ERR_MAP_ARGUMENT, arg);
@@ -563,7 +563,7 @@ void OcilibExceptionMappingArgument
 void OcilibExceptionOutOfBounds
 (
     OCI_Context* ctx,
-    OCI_Int32          value
+    OCI_Int32    value
 )
 {
     EXCEPTION_IMPL(OCI_ERR_OUT_OF_BOUNDS, value);
@@ -576,8 +576,8 @@ void OcilibExceptionOutOfBounds
 void OcilibExceptionUnfreedData
 (
     OCI_Context* ctx,
-    OCI_Int32          type_elem,
-    OCI_Int32          nb_elem
+    OCI_Int32    type_elem,
+    OCI_Int32    nb_elem
 )
 {
     EXCEPTION_IMPL(OCI_ERR_UNFREED_DATA, nb_elem, HandleNames[type_elem - 1]);
@@ -590,7 +590,7 @@ void OcilibExceptionUnfreedData
 void OcilibExceptionUnfreedBytes
 (
     OCI_Context* ctx,
-    OCI_UInt64     nb_bytes
+    OCI_UInt64   nb_bytes
 )
 {
     EXCEPTION_IMPL(OCI_ERR_UNFREED_BYTES, nb_bytes);
@@ -628,7 +628,7 @@ void OcilibExceptionAttributeNotFound
 void OcilibExceptionMinimumValue
 (
     OCI_Context* ctx,
-    OCI_Int32          min
+    OCI_Int32    min
 )
 {
     EXCEPTION_IMPL(OCI_ERR_MIN_VALUE, min);
@@ -653,7 +653,7 @@ void OcilibExceptionTypeNotCompatible
 void OcilibExceptionStatementState
 (
     OCI_Context* ctx,
-    OCI_Int32          state
+    OCI_Int32    state
 )
 {
     OCI_Int32 i = 0, index = 0;
@@ -702,9 +702,9 @@ void OcilibExceptionBindAlreadyUsed
 void OcilibExceptionBindArraySize
 (
     OCI_Context* ctx,
-    OCI_UInt32 maxsize,
-    OCI_UInt32 cursize,
-    OCI_UInt32 newsize
+    OCI_UInt32   maxsize,
+    OCI_UInt32   cursize,
+    OCI_UInt32   newsize
 )
 {
     EXCEPTION_IMPL(OCI_ERR_BIND_ARRAY_SIZE, maxsize, cursize, newsize);
@@ -731,7 +731,7 @@ void OcilibExceptionDirPathColNotFound
 void OcilibExceptionDirPathState
 (
     OCI_Context* ctx,
-    OCI_Int32          state
+    OCI_Int32    state
 )
 {
     EXCEPTION_IMPL(OCI_ERR_DIRPATH_STATE, DirPathStates[state - 1]);
@@ -797,7 +797,7 @@ void OcilibExceptionArgInvalidValue
 (
     OCI_Context* ctx,
     const otext *name,
-    OCI_UInt32 value
+    OCI_UInt32   value
 )
 {
     EXCEPTION_IMPL(OCI_ERR_ARG_INVALID_VALUE, name, value);

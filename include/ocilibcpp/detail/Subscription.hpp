@@ -38,7 +38,7 @@ namespace ocilib
         AcquireTransient(pSubscription, static_cast<core::Handle*>(nullptr));
     }
 
-    inline void Subscription::Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, OCI_UInt32 timeout)
+    inline void Subscription::Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, UInt32 timeout)
     {
         AcquireAllocated
         (
@@ -87,7 +87,7 @@ namespace ocilib
         return core::MakeString(core::Check(OCI_SubscriptionGetName(*this)));
     }
 
-    inline OCI_UInt32 Subscription::GetTimeout() const
+    inline UInt32 Subscription::GetTimeout() const
     {
         return core::Check(OCI_SubscriptionGetTimeout(*this));
     }

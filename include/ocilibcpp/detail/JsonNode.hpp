@@ -46,12 +46,12 @@ namespace ocilib
         return core::Check(OCI_JsonNodeIsNull(*this));
     }
 
-    inline OCI_UInt32 JsonNode::GetFieldCount() const
+    inline UInt32 JsonNode::GetFieldCount() const
     {
         return core::Check(OCI_JsonNodeGetFieldCount(*this));
     }
 
-    inline ostring JsonNode::GetFieldName(OCI_UInt32 index) const
+    inline ostring JsonNode::GetFieldName(UInt32 index) const
     {
         return core::MakeString(core::Check(OCI_JsonNodeGetFieldName(*this, index)));
     }
@@ -61,7 +61,7 @@ namespace ocilib
         return JsonNode(core::Check(OCI_JsonNodeGetFieldByName(*this, name.c_str())), GetHandle());
     }
 
-    inline JsonNode JsonNode::GetFieldByIndex(OCI_UInt32 index) const
+    inline JsonNode JsonNode::GetFieldByIndex(UInt32 index) const
     {
         return JsonNode(core::Check(OCI_JsonNodeGetFieldByIndex(*this, index)), GetHandle());
     }
@@ -71,26 +71,26 @@ namespace ocilib
         return GetFieldByName(name);
     }
 
-    inline JsonNode JsonNode::GetField(OCI_UInt32 index) const
+    inline JsonNode JsonNode::GetField(UInt32 index) const
     {
         return GetFieldByIndex(index);
     }
 
-    inline OCI_UInt32 JsonNode::GetItemCount() const
+    inline UInt32 JsonNode::GetItemCount() const
     {
         return core::Check(OCI_JsonNodeGetItemCount(*this));
     }
 
-    inline JsonNode JsonNode::GetItem(OCI_UInt32 index) const
+    inline JsonNode JsonNode::GetItem(UInt32 index) const
     {
         return JsonNode(core::Check(OCI_JsonNodeGetItem(*this, index)), GetHandle());
     }
 
     inline ostring JsonNode::GetString() const
     {
-        OCI_UInt32 length = 0;
+        UInt32 length = 0;
         const otext* value = core::Check(OCI_JsonNodeGetString(*this, &length));
-        return core::MakeString(value, static_cast<OCI_Int32>(length));
+        return core::MakeString(value, static_cast<Int32>(length));
     }
 
     inline Number JsonNode::GetNumber() const
@@ -107,7 +107,7 @@ namespace ocilib
 
     inline Raw JsonNode::GetBinary() const
     {
-        OCI_UInt32 length = 0;
+        UInt32 length = 0;
         const void* value = core::Check(OCI_JsonNodeGetBinary(*this, &length));
         return core::MakeRaw(const_cast<void*>(value), length);
     }
@@ -135,7 +135,7 @@ namespace ocilib
 
     inline void JsonNode::SetString(const ostring& value)
     {
-        core::Check(OCI_JsonNodeSetString(*this, value.c_str(), static_cast<OCI_UInt32>(value.size())));
+        core::Check(OCI_JsonNodeSetString(*this, value.c_str(), static_cast<UInt32>(value.size())));
     }
 
     inline void JsonNode::SetNumber(const Number& value)
@@ -148,14 +148,14 @@ namespace ocilib
         core::Check(OCI_JsonNodeSetBoolean(*this, value));
     }
 
-    inline void JsonNode::SetBinary(const void* data, OCI_UInt32 length)
+    inline void JsonNode::SetBinary(const void* data, UInt32 length)
     {
         core::Check(OCI_JsonNodeSetBinary(*this, data, length));
     }
 
     inline void JsonNode::SetBinary(const Raw& data)
     {
-        SetBinary(data.data(), static_cast<OCI_UInt32>(data.size()));
+        SetBinary(data.data(), static_cast<UInt32>(data.size()));
     }
 
     inline void JsonNode::SetNull()
@@ -183,7 +183,7 @@ namespace ocilib
         core::Check(OCI_JsonNodeSetField(*this, name.c_str(), value));
     }
 
-    inline void JsonNode::SetItem(OCI_UInt32 index, const JsonNode& value)
+    inline void JsonNode::SetItem(UInt32 index, const JsonNode& value)
     {
         core::Check(OCI_JsonNodeSetItem(*this, index, value));
     }

@@ -37,7 +37,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibListFree
 OCI_SYM_LOCAL void* OcilibListAppend
 (
     OCI_List* list,
-    OCI_Int32       size
+    OCI_Int32 size
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibListClear

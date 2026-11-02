@@ -183,8 +183,8 @@ namespace TestCApi
         OCI_UInt16 us = 4;
         OCI_Int64 bi = 5;
         OCI_UInt64 bui = 6;
-        float f = 7.5f;
-        double db = 8.5;
+        OCI_Float f = 7.5f;
+        OCI_Double db = 8.5;
         otext str[64] = OTEXT("text");
         unsigned char raw[20] = { 0x01, 0x02, 0x03 };
 
@@ -249,8 +249,8 @@ namespace TestCApi
         OCI_UInt16 us_arr[1] = { 4 };
         OCI_Int64 bi_arr[1] = { 5 };
         OCI_UInt64 bui_arr[1] = { 6 };
-        float f_arr[1] = { 7.5f };
-        double db_arr[1] = { 8.5 };
+        OCI_Float f_arr[1] = { 7.5f };
+        OCI_Double db_arr[1] = { 8.5 };
         OCI_Number* n_arr[1] = { num };
         OCI_Date* d_arr[1] = { date };
         OCI_Timestamp* ts_arr[1] = { ts };
@@ -479,8 +479,8 @@ namespace TestCApi
         OCI_UInt32 ui = 0;
         OCI_Int64  bi  = 0;
         OCI_UInt64 bui = 0;
-        double   dbl = 0.0;
-        float    flt = 0.0f;
+        OCI_Double   dbl = 0.0;
+        OCI_Float    flt = 0.0f;
         unsigned char raw[64] = {};
 
         const auto num  = OCI_NumberCreate(env);

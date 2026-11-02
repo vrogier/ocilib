@@ -36,9 +36,9 @@ OCI_SYM_LOCAL OCI_Pool * OcilibPoolCreate
     const otext     *pwd,
     OCI_PoolType     type,
     OCI_SessionMode  mode,
-    OCI_UInt32     min_con,
-    OCI_UInt32     max_con,
-    OCI_UInt32     incr_con
+    OCI_UInt32       min_con,
+    OCI_UInt32       max_con,
+    OCI_UInt32       incr_con
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibPoolFree
@@ -61,7 +61,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibPoolGetTimeout
 
 OCI_SYM_LOCAL OCI_Boolean OcilibPoolSetTimeout
 (
-    OCI_Pool    *pool,
+    OCI_Pool  *pool,
     OCI_UInt32 value
 );
 
@@ -103,7 +103,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibPoolGetIncrement
 
 OCI_SYM_LOCAL OCI_Boolean OcilibPoolSetStatementCacheSize
 (
-    OCI_Pool    *pool,
+    OCI_Pool  *pool,
     OCI_UInt32 value
 );
 

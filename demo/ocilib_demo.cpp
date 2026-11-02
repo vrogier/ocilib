@@ -122,7 +122,7 @@ struct Product
 {
     OCI_Int32 code;
     ostring action;
-    double price;
+    OCI_Double price;
     Date date;
 };
 
@@ -130,8 +130,8 @@ struct Product
 struct TestArray
 {
     OCI_Int32 val_int;
-    float val_flt;
-    double val_dbl;
+    OCI_Float val_flt;
+    OCI_Double val_dbl;
     ostring val_str;
     Date val_date;
     Clob val_lob;
@@ -299,7 +299,7 @@ bool FillProductFromQuery(const Resultset &rs, Product &p)
 {
     p.code = rs.Get<OCI_Int32>(1);
     p.action = rs.Get<ostring>(2);
-    p.price = rs.Get<double>(3);
+    p.price = rs.Get<OCI_Double>(3);
     p.date = rs.Get<Date>(4);
 
 
@@ -322,7 +322,7 @@ bool PrintProductFromQuery(const Resultset &rs)
 {
     ocout << otext("> code   : ") << rs.Get<OCI_Int32>(1);
     ocout << otext(", action : ") << rs.Get<ostring>(2);
-    ocout << otext(", price  : ") << rs.Get<double>(3);
+    ocout << otext(", price  : ") << rs.Get<OCI_Double>(3);
     ocout << otext(", date   : ") << rs.Get<Date>(4);
     ocout << oendl;
     return true;
@@ -1032,8 +1032,8 @@ void test_returning_array(void)
     ocout << otext("\n>>>>> TEST ARRAY BINDING WITH RETURNING CLAUSE \n\n");
 
     std::vector<OCI_Int32>     tab_int;
-    std::vector<double>  tab_dbl;
-    std::vector<float>   tab_flt;
+    std::vector<OCI_Double>  tab_dbl;
+    std::vector<OCI_Float>   tab_flt;
     std::vector<ostring> tab_str;
     std::vector<Date>    tab_date;
     std::vector<Clob>    tab_lob;
@@ -1043,8 +1043,8 @@ void test_returning_array(void)
     for (OCI_Int32 i = 0; i < ElemCount; ++i)
     {
         tab_int.push_back(i + 1);
-        tab_dbl.push_back(3.14*static_cast<double>(i + 1));
-        tab_flt.push_back(3.14f*static_cast<float>(i + 1));
+        tab_dbl.push_back(3.14*static_cast<OCI_Double>(i + 1));
+        tab_flt.push_back(3.14f*static_cast<OCI_Float>(i + 1));
 
         ostring str;
         str += otext("Name");
@@ -1096,8 +1096,8 @@ void test_returning_array(void)
 
     /* register output */
     st.Register<OCI_Int32    >(otext(":out_int"));
-    st.Register<double >(otext(":out_dbl"));
-    st.Register<float  >(otext(":out_flt"));
+    st.Register<OCI_Double >(otext(":out_dbl"));
+    st.Register<OCI_Float  >(otext(":out_flt"));
     st.Register<Date   >(otext(":out_date"));
     st.Register<Clob   >(otext(":out_lob"));
     st.Register<File   >(otext(":out_file"));
@@ -1116,8 +1116,8 @@ void test_returning_array(void)
             ocout << otext("Row #") << ++rowIndex << otext("---------------") << oendl;
 
             ocout << otext(".... val_int    : ") << rs.Get<OCI_Int32>(otext(":OUT_INT")) << oendl;
-            ocout << otext(".... val_dbl    : ") << rs.Get<double>(otext(":OUT_DBL")) << oendl;
-            ocout << otext(".... val_flt    : ") << rs.Get<float>(otext(":OUT_FLT")) << oendl;
+            ocout << otext(".... val_dbl    : ") << rs.Get<OCI_Double>(otext(":OUT_DBL")) << oendl;
+            ocout << otext(".... val_flt    : ") << rs.Get<OCI_Float>(otext(":OUT_FLT")) << oendl;
             ocout << otext(".... val_str    : ") << rs.Get<ostring>(otext(":OUT_STR")) << oendl;
             ocout << otext(".... val_date   : ") << rs.Get<Date>(otext(":OUT_DATE")) << oendl;
 
@@ -1156,8 +1156,8 @@ void test_object_insert(void)
     Object obj1(TypeInfo(con, otext("test_t"), TypeInfo::Type));
 
     obj1.Set<OCI_Int32>(otext("VAL_INT"), 1);
-    obj1.Set<double>(otext("VAL_DBL"), 3.14);
-    obj1.Set<float>(otext("VAL_FLT"), static_cast<float>(3.14));
+    obj1.Set<OCI_Double>(otext("VAL_DBL"), 3.14);
+    obj1.Set<OCI_Float>(otext("VAL_FLT"), static_cast<OCI_Float>(3.14));
     obj1.Set<ostring>(otext("VAL_STR"), otext("USB KEY 2go"));
     obj1.Set<Raw>(otext("VAL_RAW"), rawData);
     obj1.Set<Date>(otext("VAL_DATE"), date);
@@ -1192,8 +1192,8 @@ void test_object_fetch(void)
         Object obj = rs.Get<Object>(1);
 
         ocout << otext(".... val_int      : ") << obj.Get<OCI_Int32>(otext("VAL_INT")) << oendl;
-        ocout << otext(".... val_dbl      : ") << obj.Get<double>(otext("VAL_DBL")) << oendl;
-        ocout << otext(".... val_flt      : ") << obj.Get<float>(otext("VAL_FLT")) << oendl;
+        ocout << otext(".... val_dbl      : ") << obj.Get<OCI_Double>(otext("VAL_DBL")) << oendl;
+        ocout << otext(".... val_flt      : ") << obj.Get<OCI_Float>(otext("VAL_FLT")) << oendl;
         ocout << otext(".... val_str      : ") << obj.Get<ostring>(otext("VAL_STR")) << oendl;
         ocout << otext(".... val_date     : ") << obj.Get<Date>(otext("VAL_DATE")) << oendl;
 

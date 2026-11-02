@@ -43,7 +43,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsSetKeys
 (
     OCI_SodaOptions *options,
     const otext    **keys,
-    OCI_UInt32     count
+    OCI_UInt32       count
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsSetKeyAttr
@@ -67,13 +67,13 @@ OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsSetFilter
 OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsSetSkip
 (
     OCI_SodaOptions *options,
-    OCI_UInt32     count
+    OCI_UInt32       count
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsSetLimit
 (
     OCI_SodaOptions *options,
-    OCI_UInt32     count
+    OCI_UInt32       count
 );
 
 #endif /* OCILIB_SODAOPTIONS_H_INCLUDED */

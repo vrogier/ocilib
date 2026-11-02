@@ -6,7 +6,7 @@ using namespace ocilib;
 
 namespace
 {
-    OCI_Number* MakeDoubleNumber(OCI_Environment* env, double value)
+    OCI_Number* MakeDoubleNumber(OCI_Environment* env, OCI_Double value)
     {
         OCI_Number* num = OCI_NumberCreate(env);
         if (num)

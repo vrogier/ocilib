@@ -37,11 +37,11 @@ inline ostring XmlType::ToString() const
 {
     if (!IsNull())
     {
-        OCI_UInt32 size = core::Check(OCI_XmlTypeGetContentSize(*this));
+        UInt32 size = core::Check(OCI_XmlTypeGetContentSize(*this));
 
         if (size > 0)
         {
-            return ostring(core::Check(OCI_XmlTypeGetContent(*this)), static_cast<OCI_Size>(size));
+            return ostring(core::Check(OCI_XmlTypeGetContent(*this)), static_cast<Size>(size));
         }
 
         return {};

@@ -138,7 +138,7 @@ static OCI_Boolean OcilibHashAdd
 OCI_HashTable * OcilibHashCreate
 (
     OCI_Environment *env,
-    OCI_UInt32     size,
+    OCI_UInt32       size,
     OCI_HashType     type
 )
 {
@@ -330,7 +330,7 @@ OCI_HashValue * OcilibHashGetValue
 OCI_HashEntry * OcilibHashGetEntry
 (
     OCI_HashTable *table,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     ENTER_FUNC
@@ -468,7 +468,7 @@ OCI_Boolean OcilibHashAddInt
 (
     OCI_HashTable *table,
     const otext   *key,
-    OCI_Int32            value
+    OCI_Int32      value
 )
 {
     ENTER_FUNC

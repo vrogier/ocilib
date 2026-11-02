@@ -26,7 +26,7 @@
 OCI_SYM_LOCAL OCI_Define* OcilibDefineGet
 (
     OCI_Resultset* rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 );
 
 OCI_SYM_LOCAL OCI_Int32 OcilibDefineGetIndex
@@ -48,7 +48,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibDefineIsDataNotNull
 OCI_SYM_LOCAL OCI_Boolean OcilibDefineGetNumber
 (
     OCI_Resultset * rs,
-    OCI_UInt32    index,
+    OCI_UInt32      index,
     void          * value,
     OCI_NumericType type
 );

@@ -61,13 +61,13 @@ namespace ocilib
          * @brief Internal usage.
          * Constructs a C++ string object from the given OCILIB string pointer
          */
-        ostring MakeString(const otext* result, OCI_Int32 size = -1);
+        ostring MakeString(const otext* result, Int32 size = -1);
 
         /**
         * @brief Internal usage.
         * Constructs a C++ Raw object from the given OCILIB raw buffer
         */
-        Raw MakeRaw(AnyPointer result, OCI_UInt32 size);
+        Raw MakeRaw(AnyPointer result, UInt32 size);
 
         /**
          * @brief Internal usage.
@@ -76,18 +76,21 @@ namespace ocilib
         template<class T>
         struct SupportedNumeric
         {
-            typedef std::enable_if<
-                std::is_same<T, OCI_Int16>::value ||
-                std::is_same<T, OCI_UInt16>::value ||
-                std::is_same<T, OCI_Int32>::value ||
-                std::is_same<T, OCI_UInt32>::value ||
-                std::is_same<T, OCI_Int64>::value ||
-                std::is_same<T, OCI_UInt64>::value ||
-                std::is_same<T, float>::value ||
-                std::is_same<T, double>::value ||
-                std::is_same<T, Number>::value
-            > Type;
+            static constexpr bool value = std::disjunction_v<
+                std::is_same<T, Int16>,
+                std::is_same<T, UInt16>,
+                std::is_same<T, Int32>,
+                std::is_same<T, UInt32>,
+                std::is_same<T, Int64>,
+                std::is_same<T, UInt64>,
+                std::is_same<T, Float>,
+                std::is_same<T, Double>,
+                std::is_same<T, Number>
+            >;
         };
+
+        template<class T>
+        using SupportedNumericT = std::enable_if_t<SupportedNumeric<T>::value>;
 
         /**
          * @brief Internal usage.
@@ -96,13 +99,16 @@ namespace ocilib
         template<class T>
         struct SupportedVectorNumeric
         {
-            typedef std::enable_if<
-                std::is_same<T, unsigned char>::value ||
-                std::is_same<T, char>::value ||
-                std::is_same<T, float>::value ||
-                std::is_same<T, double>::value
-            > Type;
+            static constexpr bool value = std::disjunction_v<
+                std::is_same<T, unsigned char>,
+                std::is_same<T, char>,
+                std::is_same<T, Float>,
+                std::is_same<T, Double>
+            >;
         };
+
+        template<class T>
+        using SupportedVectorNumericT = std::enable_if_t<SupportedVectorNumeric<T>::value>;
 
         /**
          * @brief
@@ -121,7 +127,7 @@ namespace ocilib
             T GetValue();
 
             operator T ();
-            operator OCI_UInt32() const;
+            operator UInt32() const;
 
             bool operator == (const Enum& other) const;
             bool operator != (const Enum& other) const;
@@ -172,15 +178,15 @@ namespace ocilib
             bool operator == (T other) const;
             bool operator == (const Flags& other) const;
 
-            OCI_UInt32 GetValues() const;
+            UInt32 GetValues() const;
 
             bool IsSet(T other) const;
 
         private:
 
-            Flags(OCI_UInt32 flags);
+            Flags(UInt32 flags);
 
-            OCI_UInt32 _flags;
+            UInt32 _flags;
         };
 
         /* Forward declarations */

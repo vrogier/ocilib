@@ -29,7 +29,7 @@ OCI_SYM_LOCAL OCI_SodaDoc * OcilibSodaDocInitialize
     OCI_SodaDoc* doc,
     OCISodaDoc  *handle,
     const void  *content,
-    OCI_UInt32 contentSize,
+    OCI_UInt32   contentSize,
     const otext *key,
     ub4          docFlags
 );
@@ -38,7 +38,7 @@ OCI_SYM_LOCAL OCI_SodaDoc * OcilibSodaDocCreateFromText
 (
     OCI_SodaDb  *sdb,
     const otext *content,
-    OCI_UInt32 contentSize,
+    OCI_UInt32   contentSize,
     const otext *key
 );
 

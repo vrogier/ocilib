@@ -89,7 +89,7 @@ namespace TestCApi
 
             const auto num = OCI_ElemGetNumber(elem);
             ASSERT_NE(nullptr, num);
-            double d = 0.0;
+            OCI_Double d = 0.0;
             ASSERT_TRUE(OCI_NumberGetValue(num, OCI_NUM_DOUBLE, &d));
             ASSERT_DOUBLE_EQ(3.14, d);
             ASSERT_EQ(3, OCI_ElemGetInt(elem));

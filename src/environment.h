@@ -88,7 +88,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibEnvironmentSetHAHandler
 OCI_SYM_LOCAL OCI_Boolean OcilibEnvironmentSetSubscriptionPort
 (
     OCI_Environment *env,
-    OCI_UInt32     port
+    OCI_UInt32       port
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibEnvironmentGetSubscriptionPort

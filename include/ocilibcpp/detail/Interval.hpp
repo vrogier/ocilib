@@ -82,7 +82,7 @@ inline void Interval::Allocate(OCI_Environment* env, IntervalTypeValues type)
 {
     AcquireAllocated
     (
-        core::Check(OCI_IntervalCreate(env, static_cast<OCI_UInt32>(type))),
+        core::Check(OCI_IntervalCreate(env, static_cast<UInt32>(type))),
         static_cast<core::Handle*>(nullptr)
     );
 }
@@ -96,7 +96,7 @@ inline Interval Interval::Clone() const
     return result;
 }
 
-inline OCI_Int32 Interval::Compare(const Interval& other) const
+inline Int32 Interval::Compare(const Interval& other) const
 {
     return core::Check(OCI_IntervalCompare(*this, other));
 }
@@ -111,157 +111,157 @@ inline bool Interval::IsValid() const
     return (core::Check(OCI_IntervalCheck(*this)) == 0);
 }
 
-inline OCI_Int32 Interval::GetYear() const
+inline Int32 Interval::GetYear() const
 {
-    OCI_Int32 year = 0, month = 0;
+    Int32 year = 0, month = 0;
 
     GetYearMonth(year, month);
 
     return year;
 }
 
-inline void Interval::SetYear(OCI_Int32 value)
+inline void Interval::SetYear(Int32 value)
 {
-    OCI_Int32 year = 0, month = 0;
+    Int32 year = 0, month = 0;
 
     GetYearMonth(year, month);
     SetYearMonth(value, month);
 }
 
-inline OCI_Int32 Interval::GetMonth() const
+inline Int32 Interval::GetMonth() const
 {
-    OCI_Int32 year = 0, month = 0;
+    Int32 year = 0, month = 0;
 
     GetYearMonth(year, month);
 
     return month;
 }
 
-inline void Interval::SetMonth(OCI_Int32 value)
+inline void Interval::SetMonth(Int32 value)
 {
-    OCI_Int32 year = 0, month = 0;
+    Int32 year = 0, month = 0;
 
     GetYearMonth(year, month);
     SetYearMonth(year, value);
 }
 
-inline OCI_Int32 Interval::GetDay() const
+inline Int32 Interval::GetDay() const
 {
-    OCI_Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
     return day;
 }
 
-inline void Interval::SetDay(OCI_Int32 value)
+inline void Interval::SetDay(Int32 value)
 {
-    OCI_Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(value, hour, minutes, seconds, milliseconds);
 }
 
-inline OCI_Int32 Interval::GetHours() const
+inline Int32 Interval::GetHours() const
 {
-    OCI_Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
     return hour;
 }
 
-inline void Interval::SetHours(OCI_Int32 value)
+inline void Interval::SetHours(Int32 value)
 {
-    OCI_Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(day, value, minutes, seconds, milliseconds);
 }
 
-inline OCI_Int32 Interval::GetMinutes() const
+inline Int32 Interval::GetMinutes() const
 {
-    OCI_Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
     return minutes;
 }
 
-inline void Interval::SetMinutes(OCI_Int32 value)
+inline void Interval::SetMinutes(Int32 value)
 {
-    OCI_Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(day, hour, value, seconds, milliseconds);
 }
 
-inline OCI_Int32 Interval::GetSeconds() const
+inline Int32 Interval::GetSeconds() const
 {
-    OCI_Int32 day, hour, minutes, seconds, milliseconds;
+    Int32 day, hour, minutes, seconds, milliseconds;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
     return seconds;
 }
 
-inline void Interval::SetSeconds(OCI_Int32 value)
+inline void Interval::SetSeconds(Int32 value)
 {
-    OCI_Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(day, hour, minutes, value, milliseconds);
 }
 
-inline OCI_Int32 Interval::GetMilliSeconds() const
+inline Int32 Interval::GetMilliSeconds() const
 {
-    OCI_Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
 
     return milliseconds / 1000000;
 }
 
-inline void Interval::SetMilliSeconds(OCI_Int32 value)
+inline void Interval::SetMilliSeconds(Int32 value)
 {
-    OCI_Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
+    Int32 day = 0, hour = 0, minutes = 0, seconds = 0, milliseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, milliseconds);
     SetDaySecond(day, hour, minutes, seconds, value * 1000000);
 }
 
-inline OCI_Int32 Interval::GetNanoSeconds() const
+inline Int32 Interval::GetNanoSeconds() const
 {
-    OCI_Int32 day = 0, hour = 0, minutes = 0, seconds = 0, nanoseconds = 0;
+    Int32 day = 0, hour = 0, minutes = 0, seconds = 0, nanoseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, nanoseconds);
 
     return nanoseconds;
 }
 
-inline void Interval::SetNanoSeconds(OCI_Int32 value)
+inline void Interval::SetNanoSeconds(Int32 value)
 {
-    OCI_Int32 day = 0, hour = 0, minutes = 0, seconds = 0, nanoseconds = 0;
+    Int32 day = 0, hour = 0, minutes = 0, seconds = 0, nanoseconds = 0;
 
     GetDaySecond(day, hour, minutes, seconds, nanoseconds);
     SetDaySecond(day, hour, minutes, seconds, value);
 }
 
-inline void Interval::GetDaySecond(OCI_Int32 &day, OCI_Int32 &hour, OCI_Int32 &min, OCI_Int32 &sec, OCI_Int32 &nanosec) const
+inline void Interval::GetDaySecond(Int32 &day, Int32 &hour, Int32 &min, Int32 &sec, Int32 &nanosec) const
 {
     core::Check(OCI_IntervalGetDaySecond(*this, &day, &hour, &min, &sec, &nanosec));
 }
 
-inline void Interval::SetDaySecond(OCI_Int32 day, OCI_Int32 hour, OCI_Int32 min, OCI_Int32 sec, OCI_Int32 nanosec)
+inline void Interval::SetDaySecond(Int32 day, Int32 hour, Int32 min, Int32 sec, Int32 nanosec)
 {
     core::Check(OCI_IntervalSetDaySecond(*this, day, hour, min, sec, nanosec));
 }
 
-inline void Interval::GetYearMonth(OCI_Int32 &year, OCI_Int32 &month) const
+inline void Interval::GetYearMonth(Int32 &year, Int32 &month) const
 {
     core::Check(OCI_IntervalGetYearMonth(*this, &year, &month));
 }
-inline void Interval::SetYearMonth(OCI_Int32 year, OCI_Int32 month)
+inline void Interval::SetYearMonth(Int32 year, Int32 month)
 {
     core::Check(OCI_IntervalSetYearMonth(*this, year, month));
 }
@@ -276,15 +276,15 @@ inline void Interval::FromString(const ostring& data)
     core::Check(OCI_IntervalFromText(*this, data.c_str()));
 }
 
-inline ostring Interval::ToString(OCI_Int32 leadingPrecision, OCI_Int32 fractionPrecision) const
+inline ostring Interval::ToString(Int32 leadingPrecision, Int32 fractionPrecision) const
 {
     if (!IsNull())
     {
-        const OCI_Size size = OCI_SIZE_BUFFER;
+        const Size size = OCI_SIZE_BUFFER;
 
-        std::vector<otext> buffer(static_cast<OCI_Size>(size + 1));
+        std::vector<otext> buffer(static_cast<Size>(size + 1));
 
-        core::Check(OCI_IntervalToText(*this, leadingPrecision, fractionPrecision, static_cast<OCI_Int32>(size), buffer.data()));
+        core::Check(OCI_IntervalToText(*this, leadingPrecision, fractionPrecision, static_cast<Int32>(size), buffer.data()));
 
         return core::MakeString(static_cast<const otext*>(buffer.data()));
     }
@@ -343,14 +343,14 @@ inline bool Interval::operator < (const Interval& other) const
 
 inline bool Interval::operator >= (const Interval& other) const
 {
-    const OCI_Int32 res = Compare(other);
+    const Int32 res = Compare(other);
 
     return (res == 0 || res < 0);
 }
 
 inline bool Interval::operator <= (const Interval& other) const
 {
-    const OCI_Int32 res = Compare(other);
+    const Int32 res = Compare(other);
 
     return (res == 0 || res > 0);
 }

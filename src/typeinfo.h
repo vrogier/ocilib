@@ -58,7 +58,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibTypeInfoGetColumnCount
 OCI_SYM_LOCAL OCI_Column * OcilibTypeInfoGetColumn
 (
     OCI_TypeInfo *typinf,
-    OCI_UInt32  index
+    OCI_UInt32    index
 );
 
 OCI_SYM_LOCAL const otext * OcilibTypeInfoGetName

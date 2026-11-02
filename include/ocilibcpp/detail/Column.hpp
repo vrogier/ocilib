@@ -42,9 +42,9 @@ inline ostring Column::GetSQLType() const
 
 inline ostring Column::GetFullSQLType() const
 {
-    const OCI_UInt32 size = OCI_SIZE_BUFFER;
+    const UInt32 size = OCI_SIZE_BUFFER;
 
-    std::vector<otext> buffer(static_cast<OCI_Size>(size + 1));
+    std::vector<otext> buffer(static_cast<Size>(size + 1));
 
     core::Check(OCI_ColumnGetFullSQLType(*this, buffer.data(), size));
 
@@ -56,7 +56,7 @@ inline DataType Column::GetType() const
     return DataType(static_cast<DataType::Type>(core::Check(OCI_ColumnGetType(*this))));
 }
 
-inline OCI_UInt32 Column::GetSubType() const
+inline UInt32 Column::GetSubType() const
 {
     return core::Check(OCI_ColumnGetSubType(*this));
 }
@@ -71,32 +71,32 @@ inline CollationID Column::GetCollationID() const
     return CollationID(static_cast<CollationID::Type>(core::Check(OCI_ColumnGetCollationID(*this))));
 }
 
-inline OCI_UInt32 Column::GetSize() const
+inline UInt32 Column::GetSize() const
 {
     return core::Check(OCI_ColumnGetSize(*this));
 }
 
-inline OCI_Int32 Column::GetScale() const
+inline Int32 Column::GetScale() const
 {
     return core::Check(OCI_ColumnGetScale(*this));
 }
 
-inline OCI_Int32 Column::GetPrecision() const
+inline Int32 Column::GetPrecision() const
 {
     return core::Check(OCI_ColumnGetPrecision(*this));
 }
 
-inline OCI_Int32 Column::GetFractionalPrecision() const
+inline Int32 Column::GetFractionalPrecision() const
 {
     return core::Check(OCI_ColumnGetFractionalPrecision(*this));
 }
 
-inline OCI_Int32 Column::GetLeadingPrecision() const
+inline Int32 Column::GetLeadingPrecision() const
 {
     return core::Check(OCI_ColumnGetLeadingPrecision(*this));
 }
 
-inline OCI_Int32 Column::GetDimension() const
+inline Int32 Column::GetDimension() const
 {
     return core::Check(OCI_ColumnGetDimension(*this));
 }

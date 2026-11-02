@@ -75,12 +75,12 @@ inline Environment::CharsetMode Environment::GetCharset() const
     return CharsetMode(static_cast<CharsetMode::Type>(core::Check(OCI_GetCharset(GetHandle()))));
 }
 
-inline OCI_UInt32 Environment::GetCharMaxSize() const
+inline UInt32 Environment::GetCharMaxSize() const
 {
     return _charMaxSize;
 }
 
-inline OCI_UInt64 Environment::GetStats(OCI_Stat stat) const
+inline UInt64 Environment::GetStats(OCI_Stat stat) const
 {
     return core::Check(OCI_GetStats(GetHandle(), stat));
 }
@@ -95,32 +95,32 @@ inline OracleVersion Environment::GetRuntimeVersion() const
     return  OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_GetOCIRuntimeVersion(GetHandle()))));
 }
 
-inline OCI_UInt32 Environment::GetCompileMajorVersion() const
+inline UInt32 Environment::GetCompileMajorVersion() const
 {
     return OCI_VER_MAJ(core::Check(OCI_GetOCICompileVersion(GetHandle())));
 }
 
-inline OCI_UInt32 Environment::GetCompileMinorVersion() const
+inline UInt32 Environment::GetCompileMinorVersion() const
 {
     return OCI_VER_MIN(core::Check(OCI_GetOCICompileVersion(GetHandle())));
 }
 
-inline OCI_UInt32 Environment::GetCompileRevisionVersion() const
+inline UInt32 Environment::GetCompileRevisionVersion() const
 {
     return OCI_VER_REV(core::Check(OCI_GetOCICompileVersion(GetHandle())));
 }
 
-inline OCI_UInt32 Environment::GetRuntimeMajorVersion() const
+inline UInt32 Environment::GetRuntimeMajorVersion() const
 {
     return OCI_VER_MAJ(core::Check(OCI_GetOCIRuntimeVersion(GetHandle())));
 }
 
-inline OCI_UInt32 Environment::GetRuntimeMinorVersion() const
+inline UInt32 Environment::GetRuntimeMinorVersion() const
 {
     return OCI_VER_MIN(core::Check(OCI_GetOCIRuntimeVersion(GetHandle())));
 }
 
-inline OCI_UInt32 Environment::GetRuntimeRevisionVersion() const
+inline UInt32 Environment::GetRuntimeRevisionVersion() const
 {
     return OCI_VER_REV(core::Check(OCI_GetOCIRuntimeVersion(GetHandle())));
 }
@@ -171,12 +171,12 @@ inline void Environment::SetHAHandler(HAHandlerProc handler)
     SetUserCallback<HAHandlerProc>(GetEnvironmentHandle(), handler);
 }
 
-inline void Environment::SetSubscriptionPort(OCI_UInt32 port)
+inline void Environment::SetSubscriptionPort(UInt32 port)
 {
     core::Check(OCI_SetSubscriptionPort(GetHandle(), port) == TRUE);
 }
 
-inline OCI_UInt32 Environment::GetSubscriptionPort() const
+inline UInt32 Environment::GetSubscriptionPort() const
 {
     return core::Check(OCI_GetSubscriptionPort(GetHandle()));
 }
@@ -209,7 +209,7 @@ namespace core
     }
 }
 
-inline void Environment::HAHandler(OCI_Connection *pConnection, OCI_UInt32 source, OCI_UInt32 event, OCI_Timestamp  *pTimestamp)
+inline void Environment::HAHandler(OCI_Connection *pConnection, UInt32 source, UInt32 event, OCI_Timestamp  *pTimestamp)
 {
     OCI_Environment* env = pConnection ? OCI_HandleGetEnvironment(pConnection) : nullptr;
     Environment* self = GetInstance(env);
@@ -230,7 +230,7 @@ inline void Environment::HAHandler(OCI_Connection *pConnection, OCI_UInt32 sourc
     }
 }
 
-inline OCI_UInt32 Environment::TAFHandler(OCI_Connection *pConnection, OCI_UInt32 type, OCI_UInt32 event)
+inline UInt32 Environment::TAFHandler(OCI_Connection *pConnection, UInt32 type, UInt32 event)
 {
     OCI_Environment* env = pConnection ? OCI_HandleGetEnvironment(pConnection) : nullptr;
     Environment* self = GetInstance(env);
@@ -246,7 +246,7 @@ inline OCI_UInt32 Environment::TAFHandler(OCI_Connection *pConnection, OCI_UInt3
     {
         Connection con(pConnection, self->GetEnvironmentHandle(), true);
 
-        return static_cast<OCI_UInt32>(cb(con, Connection::FailoverRequest(static_cast<Connection::FailoverRequestValues>(type)), Connection::FailoverEvent(static_cast<Connection::FailoverEventValues>(event))));
+        return static_cast<UInt32>(cb(con, Connection::FailoverRequest(static_cast<Connection::FailoverRequestValues>(type)), Connection::FailoverEvent(static_cast<Connection::FailoverEventValues>(event))));
     }
 
     return OCI_FOC_OK;

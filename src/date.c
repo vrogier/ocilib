@@ -159,7 +159,7 @@ OCI_Boolean OcilibDateFree
 OCI_Date ** OcilibDateCreateArray
 (
     OCI_Environment *env,
-    OCI_UInt32     nbelem
+    OCI_UInt32       nbelem
 )
 {
     ENTER_FUNC
@@ -211,7 +211,7 @@ OCI_Boolean OcilibDateFreeArray
 OCI_Boolean OcilibDateAddDays
 (
     OCI_Date *date,
-    OCI_Int32       nb
+    OCI_Int32 nb
 )
 {
     ENTER_FUNC
@@ -242,7 +242,7 @@ OCI_Boolean OcilibDateAddDays
 OCI_Boolean OcilibDateAddMonths
 (
     OCI_Date *date,
-    OCI_Int32       nb
+    OCI_Int32 nb
 )
 {
     ENTER_FUNC
@@ -415,10 +415,10 @@ OCI_Boolean OcilibDateFromString
         /* context */ OCI_IPC_DATE, date
     );
 
-    dbtext *dbstr1  = NULL;
-    dbtext *dbstr2  = NULL;
-    OCI_Int32     dbsize1 = -1;
-    OCI_Int32     dbsize2 = -1;
+    dbtext   *dbstr1  = NULL;
+    dbtext   *dbstr2  = NULL;
+    OCI_Int32 dbsize1 = -1;
+    OCI_Int32 dbsize2 = -1;
 
     CHECK_PTR(OCI_IPC_DATE,   date);
     CHECK_PTR(OCI_IPC_STRING, str);
@@ -458,10 +458,10 @@ OCI_Boolean OcilibDateFromString
 
 OCI_Boolean OcilibDateGetDate
 (
-    OCI_Date *date,
-    OCI_Int32      *year,
-    OCI_Int32      *month,
-    OCI_Int32      *day
+    OCI_Date  *date,
+    OCI_Int32 *year,
+    OCI_Int32 *month,
+    OCI_Int32 *day
 )
 {
     ENTER_FUNC
@@ -496,10 +496,10 @@ OCI_Boolean OcilibDateGetDate
 
 OCI_Boolean OcilibDateGetTime
 (
-    OCI_Date *date,
-    OCI_Int32      *hour,
-    OCI_Int32      *min,
-    OCI_Int32      *sec
+    OCI_Date  *date,
+    OCI_Int32 *hour,
+    OCI_Int32 *min,
+    OCI_Int32 *sec
 )
 {
     ENTER_FUNC
@@ -534,13 +534,13 @@ OCI_Boolean OcilibDateGetTime
 
 OCI_Boolean OcilibDateGetDateTime
 (
-    OCI_Date *date,
-    OCI_Int32      *year,
-    OCI_Int32      *month,
-    OCI_Int32      *day,
-    OCI_Int32      *hour,
-    OCI_Int32      *min,
-    OCI_Int32      *sec
+    OCI_Date  *date,
+    OCI_Int32 *year,
+    OCI_Int32 *month,
+    OCI_Int32 *day,
+    OCI_Int32 *hour,
+    OCI_Int32 *min,
+    OCI_Int32 *sec
 )
 {
     return (OcilibDateGetDate(date, year, month, day) && OcilibDateGetTime(date, hour, min, sec));
@@ -592,8 +592,8 @@ OCI_Boolean OcilibDateNextDay
         /* context */ OCI_IPC_DATE, date
     );
 
-    dbtext *dbstr  = NULL;
-    OCI_Int32     dbsize = -1;
+    dbtext   *dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_DATE,   date);
     CHECK_PTR(OCI_IPC_STRING, day);
@@ -624,9 +624,9 @@ OCI_Boolean OcilibDateNextDay
 OCI_Boolean OcilibDateSetDate
 (
     OCI_Date *date,
-    OCI_Int32       year,
-    OCI_Int32       month,
-    OCI_Int32       day
+    OCI_Int32 year,
+    OCI_Int32 month,
+    OCI_Int32 day
 )
 {
     ENTER_FUNC
@@ -651,9 +651,9 @@ OCI_Boolean OcilibDateSetDate
 OCI_Boolean OcilibDateSetTime
 (
     OCI_Date *date,
-    OCI_Int32       hour,
-    OCI_Int32       min,
-    OCI_Int32       sec
+    OCI_Int32 hour,
+    OCI_Int32 min,
+    OCI_Int32 sec
 )
 {
     ENTER_FUNC
@@ -678,12 +678,12 @@ OCI_Boolean OcilibDateSetTime
 OCI_Boolean OcilibDateSetDateTime
 (
     OCI_Date *date,
-    OCI_Int32       year,
-    OCI_Int32       month,
-    OCI_Int32       day,
-    OCI_Int32       hour,
-    OCI_Int32       min,
-    OCI_Int32       sec
+    OCI_Int32 year,
+    OCI_Int32 month,
+    OCI_Int32 day,
+    OCI_Int32 hour,
+    OCI_Int32 min,
+    OCI_Int32 sec
 )
 {
     return (OcilibDateSetDate(date, year, month, day) && OcilibDateSetTime(date, hour, min, sec));
@@ -726,7 +726,7 @@ OCI_Boolean OcilibDateToString
 (
     OCI_Date    *date,
     const otext *fmt,
-    OCI_Int32          size,
+    OCI_Int32    size,
     otext       *str
 )
 {
@@ -736,10 +736,10 @@ OCI_Boolean OcilibDateToString
         /* context */ OCI_IPC_DATE, date
     );
 
-    dbtext *dbstr1  = NULL;
-    dbtext *dbstr2  = NULL;
-    OCI_Int32     dbsize1 = size * (OCI_Int32) sizeof(otext);
-    OCI_Int32     dbsize2 = -1;
+    dbtext   *dbstr1  = NULL;
+    dbtext   *dbstr2  = NULL;
+    OCI_Int32 dbsize1 = size * (OCI_Int32) sizeof(otext);
+    OCI_Int32 dbsize2 = -1;
 
     CHECK_PTR(OCI_IPC_DATE,   date);
     CHECK_PTR(OCI_IPC_STRING, str);
@@ -798,10 +798,10 @@ OCI_Boolean OcilibDateZoneToZone
         /* context */ OCI_IPC_DATE, date
     );
 
-    dbtext *dbstr1  = NULL;
-    dbtext *dbstr2  = NULL;
-    OCI_Int32     dbsize1 = -1;
-    OCI_Int32     dbsize2 = -1;
+    dbtext   *dbstr1  = NULL;
+    dbtext   *dbstr2  = NULL;
+    OCI_Int32 dbsize1 = -1;
+    OCI_Int32 dbsize2 = -1;
 
     CHECK_PTR(OCI_IPC_DATE,   date);
     CHECK_PTR(OCI_IPC_STRING, zone1);

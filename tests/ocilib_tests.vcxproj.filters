@@ -227,46 +227,46 @@
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonBind.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonBindCpp.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonCreate.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonCreateCpp.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonDom.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonDomCpp.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonNodeArray.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonNodeArrayCpp.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonNodeObject.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonNodeObjectCpp.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonNodeType.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonNodeTypeCpp.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonText.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonTextCpp.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Json</Filter>
     </ClCompile>
     <ClCompile Include="..\src\stringutils.c">
       <Filter>Sources</Filter>
@@ -404,10 +404,10 @@
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestSoda.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Soda</Filter>
     </ClCompile>
     <ClCompile Include="TestSodaCpp.cpp">
-      <Filter>Tests suite</Filter>
+      <Filter>Tests suite\Soda</Filter>
     </ClCompile>
     <ClCompile Include="TestStatement.cpp">
       <Filter>Tests suite</Filter>
@@ -430,16 +430,34 @@
     <ClCompile Include="TestReportedIssuesCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\sodacoll.c" />
-    <ClCompile Include="..\src\sodacollcursor.c" />
-    <ClCompile Include="..\src\sodadb.c" />
-    <ClCompile Include="..\src\sodadoc.c" />
-    <ClCompile Include="..\src\sodadoccursor.c" />
-    <ClCompile Include="..\src\sodaoptions.c" />
+    <ClCompile Include="..\src\sodacoll.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sodacollcursor.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sodadb.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sodadoc.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sodadoccursor.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sodaoptions.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Tests suite">
       <UniqueIdentifier>{a27a0a28-f04a-4730-a09e-72366b3cc3de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests suite\Json">
+      <UniqueIdentifier>{c84cb72d-125a-45eb-9cb0-e2d712fc8791}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests suite\Soda">
+      <UniqueIdentifier>{ac150fce-fd51-4d9a-9807-5a0867f2a514}</UniqueIdentifier>
     </Filter>
     <Filter Include="Include">
       <UniqueIdentifier>{90ec65d7-b4a8-48f2-97d2-6032820c7905}</UniqueIdentifier>
@@ -833,19 +851,45 @@
     <ClInclude Include="TestManager.h">
       <Filter>Tests suite</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\SodaColl.hpp" />
-    <ClInclude Include="..\include\ocilibcpp\detail\SodaCollCursor.hpp" />
-    <ClInclude Include="..\include\ocilibcpp\detail\SodaDb.hpp" />
-    <ClInclude Include="..\include\ocilibcpp\detail\SodaDoc.hpp" />
-    <ClInclude Include="..\include\ocilibcpp\detail\SodaDocCursor.hpp" />
-    <ClInclude Include="..\include\ocilibcpp\detail\SodaOptions.hpp" />
-    <ClInclude Include="..\src\oci\jsondom.h" />
-    <ClInclude Include="..\src\sodacoll.h" />
-    <ClInclude Include="..\src\sodacollcursor.h" />
-    <ClInclude Include="..\src\sodadb.h" />
-    <ClInclude Include="..\src\sodadoc.h" />
-    <ClInclude Include="..\src\sodadoccursor.h" />
-    <ClInclude Include="..\src\sodaoptions.h" />
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaColl.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaCollCursor.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaDb.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaDoc.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaDocCursor.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaOptions.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\oci\jsondom.h">
+      <Filter>Sources\oci</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sodacoll.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sodacollcursor.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sodadb.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sodadoc.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sodadoccursor.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\sodaoptions.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

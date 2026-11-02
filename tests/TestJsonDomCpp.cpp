@@ -112,7 +112,7 @@ namespace TestCppApi
 
         JsonNode item2 = items.GetItem(1);
         ASSERT_EQ(Json::NodeNumber, item2.GetType());
-        ASSERT_DOUBLE_EQ(2.0, static_cast<double>(item2.GetNumber()));
+        ASSERT_DOUBLE_EQ(2.0, static_cast<OCI_Double>(item2.GetNumber()));
     }
     TEST(TestJsonDomCpp, NodeCreationAndSetters)
     {
@@ -142,11 +142,11 @@ namespace TestCppApi
         Number num(env, 3.14);
         JsonNode numNode = json.CreateNumber(num);
         ASSERT_EQ(Json::NodeNumber, numNode.GetType());
-        ASSERT_DOUBLE_EQ(3.14, static_cast<double>(numNode.GetNumber()));
+        ASSERT_DOUBLE_EQ(3.14, static_cast<OCI_Double>(numNode.GetNumber()));
 
         num = 2.718;
         numNode.SetNumber(num);
-        ASSERT_DOUBLE_EQ(2.718, static_cast<double>(numNode.GetNumber()));
+        ASSERT_DOUBLE_EQ(2.718, static_cast<OCI_Double>(numNode.GetNumber()));
         root.SetField(OTEXT("num"), numNode);
 
         JsonNode boolean = json.CreateBoolean(true);

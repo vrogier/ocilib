@@ -31,12 +31,12 @@
 namespace ocilib
 {
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     inline Lob<T, U>::Lob()
     {
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     Lob<T, U>::Lob(const Connection& connection)
     {
         AcquireAllocated
@@ -46,69 +46,69 @@ namespace ocilib
         );
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     Lob<T, U>::Lob(OCI_Lob* pLob, core::Handle* parent)
     {
         AcquireTransient(pLob, parent);
     }
 
     template<>
-    inline ostring Lob<ostring, LobCharacter>::Read(OCI_UInt32 length)
+    inline ostring Lob<ostring, LobCharacter>::Read(UInt32 length)
     {
-        std::vector<otext> buffer(static_cast<OCI_Size>(core::ComputeCharMaxSize(Environment::CharsetMode(static_cast<Environment::CharsetMode::Type>(core::Check(OCI_GetCharset(GetEnvironment()))))) * (length + 1)));
+        std::vector<otext> buffer(static_cast<Size>(core::ComputeCharMaxSize(Environment::CharsetMode(static_cast<Environment::CharsetMode::Type>(core::Check(OCI_GetCharset(GetEnvironment()))))) * (length + 1)));
 
-        OCI_UInt32 charCount = length;
-        OCI_UInt32 byteCount = 0;
+        UInt32 charCount = length;
+        UInt32 byteCount = 0;
 
         if (core::Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer.data()), &charCount, &byteCount)))
         {
             length = byteCount / sizeof(otext);
         }
 
-        return core::MakeString(static_cast<const otext*>(buffer.data()), static_cast<OCI_Int32>(length));
+        return core::MakeString(static_cast<const otext*>(buffer.data()), static_cast<Int32>(length));
     }
 
     template<>
-    inline ostring Lob<ostring, LobNationalCharacter>::Read(OCI_UInt32 length)
+    inline ostring Lob<ostring, LobNationalCharacter>::Read(UInt32 length)
     {
-        std::vector<otext> buffer(static_cast<OCI_Size>(core::ComputeCharMaxSize(Environment::CharsetMode(static_cast<Environment::CharsetMode::Type>(core::Check(OCI_GetCharset(GetEnvironment()))))) * (length + 1)));
+        std::vector<otext> buffer(static_cast<Size>(core::ComputeCharMaxSize(Environment::CharsetMode(static_cast<Environment::CharsetMode::Type>(core::Check(OCI_GetCharset(GetEnvironment()))))) * (length + 1)));
 
-        OCI_UInt32 charCount = length;
-        OCI_UInt32 byteCount = 0;
+        UInt32 charCount = length;
+        UInt32 byteCount = 0;
 
         if (core::Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer.data()), &charCount, &byteCount)))
         {
             length = byteCount / sizeof(otext);
         }
 
-        return core::MakeString(static_cast<const otext*>(buffer.data()), static_cast<OCI_Int32>(length));
+        return core::MakeString(static_cast<const otext*>(buffer.data()), static_cast<Int32>(length));
 
     }
 
     template<>
-    inline Raw Lob<Raw, LobBinary>::Read(OCI_UInt32 length)
+    inline Raw Lob<Raw, LobBinary>::Read(UInt32 length)
     {
-        std::vector<unsigned char> buffer(static_cast<OCI_Size>(length + 1));
+        std::vector<unsigned char> buffer(static_cast<Size>(length + 1));
 
-        OCI_UInt32 charCount = 0;
-        OCI_UInt32 byteCount = length;
+        UInt32 charCount = 0;
+        UInt32 byteCount = length;
 
         core::Check(OCI_LobRead(*this, static_cast<AnyPointer>(buffer.data()), &charCount, &byteCount));
 
         return core::MakeRaw(buffer.data(), byteCount);
     }
 
-    template<class T, OCI_Int32 U>
-    OCI_UInt32 Lob<T, U>::Write(const T& content)
+    template<class T, Int32 U>
+    UInt32 Lob<T, U>::Write(const T& content)
     {
         if (content.empty())
         {
             return 0;
         }
 
-        OCI_UInt32 res = 0;
-        OCI_UInt32 charCount = 0;
-        OCI_UInt32 byteCount = static_cast<OCI_UInt32>(content.size() * sizeof(typename T::value_type));
+        UInt32 res = 0;
+        UInt32 charCount = 0;
+        UInt32 byteCount = static_cast<UInt32>(content.size() * sizeof(typename T::value_type));
         const AnyPointer buffer = static_cast<AnyPointer>(const_cast<typename T::value_type*>(&content[0]));
 
         if (core::Check(OCI_LobWrite(*this, buffer, &charCount, &byteCount)))
@@ -119,14 +119,14 @@ namespace ocilib
         return res;
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     void Lob<T, U>::Append(const Lob& other)
     {
         core::Check(OCI_LobAppendLob(*this, other));
     }
 
-    template<class T, OCI_Int32 U>
-    OCI_UInt32 Lob<T, U>::Append(const T& content)
+    template<class T, Int32 U>
+    UInt32 Lob<T, U>::Append(const T& content)
     {
         if (content.empty())
         {
@@ -135,21 +135,21 @@ namespace ocilib
 
         const AnyPointer data = static_cast<AnyPointer>(const_cast<typename T::value_type*>(&content[0]));
 
-        OCI_UInt32 charCount = 0;
-        OCI_UInt32 byteCount = static_cast<OCI_UInt32>(content.size() * sizeof(typename T::value_type));
+        UInt32 charCount = 0;
+        UInt32 byteCount = static_cast<UInt32>(content.size() * sizeof(typename T::value_type));
 
         core::Check(OCI_LobAppend(*this, data, &charCount, &byteCount));
 
         return (U == LobBinary ? byteCount : charCount);
     }
 
-    template<class T, OCI_Int32 U>
-    bool Lob<T, U>::Seek(SeekMode seekMode, OCI_UInt64 offset)
+    template<class T, Int32 U>
+    bool Lob<T, U>::Seek(SeekMode seekMode, UInt64 offset)
     {
         return (core::Check(OCI_LobSeek(*this, offset, seekMode)) == TRUE);
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     Lob<T, U> Lob<T, U>::Clone() const
     {
         Lob result;
@@ -166,43 +166,43 @@ namespace ocilib
         return result;
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     bool Lob<T, U>::Equals(const Lob& other) const
     {
         return (core::Check(OCI_LobIsEqual(*this, other)) == TRUE);
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     LobType Lob<T, U>::GetType() const
     {
         return LobType(static_cast<LobType::Type>(core::Check(OCI_LobGetType(*this))));
     }
 
-    template<class T, OCI_Int32 U>
-    OCI_UInt64 Lob<T, U>::GetOffset() const
+    template<class T, Int32 U>
+    UInt64 Lob<T, U>::GetOffset() const
     {
         return core::Check(OCI_LobGetOffset(*this));
     }
 
-    template<class T, OCI_Int32 U>
-    OCI_UInt64 Lob<T, U>::GetLength() const
+    template<class T, Int32 U>
+    UInt64 Lob<T, U>::GetLength() const
     {
         return core::Check(OCI_LobGetLength(*this));
     }
 
-    template<class T, OCI_Int32 U>
-    OCI_UInt64 Lob<T, U>::GetMaxSize() const
+    template<class T, Int32 U>
+    UInt64 Lob<T, U>::GetMaxSize() const
     {
         return core::Check(OCI_LobGetMaxSize(*this));
     }
 
-    template<class T, OCI_Int32 U>
-    OCI_UInt64 Lob<T, U>::GetChunkSize() const
+    template<class T, Int32 U>
+    UInt64 Lob<T, U>::GetChunkSize() const
     {
         return core::Check(OCI_LobGetChunkSize(*this));
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     Connection Lob<T, U>::GetConnection() const
     {
         core::Handle* selfHandle = this->GetHandle();
@@ -217,74 +217,74 @@ namespace ocilib
         );
     }
 
-    template<class T, OCI_Int32 U>
-    void Lob<T, U>::Truncate(OCI_UInt64 length)
+    template<class T, Int32 U>
+    void Lob<T, U>::Truncate(UInt64 length)
     {
         core::Check(OCI_LobTruncate(*this, length));
     }
 
-    template<class T, OCI_Int32 U>
-    OCI_UInt64 Lob<T, U>::Erase(OCI_UInt64 offset, OCI_UInt64 length)
+    template<class T, Int32 U>
+    UInt64 Lob<T, U>::Erase(UInt64 offset, UInt64 length)
     {
         return core::Check(OCI_LobErase(*this, offset, length));
     }
 
-    template<class T, OCI_Int32 U>
-    void Lob<T, U>::Copy(Lob& dest, OCI_UInt64 offset, OCI_UInt64 offsetDest, OCI_UInt64 length) const
+    template<class T, Int32 U>
+    void Lob<T, U>::Copy(Lob& dest, UInt64 offset, UInt64 offsetDest, UInt64 length) const
     {
         core::Check(OCI_LobCopy(dest, *this, offsetDest, offset, length));
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     bool Lob<T, U>::IsTemporary() const
     {
         return (core::Check(OCI_LobIsTemporary(*this)) == TRUE);
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     bool Lob<T, U>::IsRemote() const
     {
         return (core::Check(OCI_LobIsRemote(*this)) == TRUE);
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     void Lob<T, U>::Open(OpenMode mode)
     {
         core::Check(OCI_LobOpen(*this, mode));
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     void Lob<T, U>::Flush()
     {
         core::Check(OCI_LobFlush(*this));
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     void Lob<T, U>::Close()
     {
         core::Check(OCI_LobClose(*this));
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     void Lob<T, U>::EnableBuffering(bool value)
     {
         core::Check(OCI_LobEnableBuffering(*this, value));
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     Lob<T, U>& Lob<T, U>::operator += (const Lob<T, U>& other)
     {
         Append(other);
         return *this;
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     bool Lob<T, U>::operator == (const Lob<T, U>& other) const
     {
         return Equals(other);
     }
 
-    template<class T, OCI_Int32 U>
+    template<class T, Int32 U>
     bool Lob<T, U>::operator != (const Lob<T, U>& other) const
     {
         return !(*this == other);

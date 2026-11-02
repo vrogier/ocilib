@@ -33,7 +33,7 @@
 static otext* OcilibSodaDocGetStringAttribute
 (
     OCI_SodaDoc* doc,
-    OCI_Int32          attr,
+    OCI_Int32    attr,
     otext     ** str
 )
 {
@@ -143,7 +143,7 @@ OCI_SodaDoc* OcilibSodaDocInitialize
     OCI_SodaDoc* doc,
     OCISodaDoc * handle,
     const void * content,
-    OCI_UInt32 contentSize,
+    OCI_UInt32   contentSize,
     const otext* key,
     ub4          docFlags
 )
@@ -158,9 +158,9 @@ OCI_SodaDoc* OcilibSodaDocInitialize
     OCI_Json   * src            = NULL;
     OCI_Json   * dest           = NULL;
     const void * newContent     = content;
-    OCI_UInt32 newContentSize = contentSize;
+    OCI_UInt32   newContentSize = contentSize;
     dbtext     * dbkey          = NULL;
-    OCI_Int32          dbkeylen       = -1;
+    OCI_Int32    dbkeylen       = -1;
 
     OCI_Boolean alloc = FALSE;
 
@@ -299,7 +299,7 @@ OCI_SodaDoc* OcilibSodaDocCreateFromText
 (
     OCI_SodaDb * sdb,
     const otext* content,
-    OCI_UInt32 contentSize,
+    OCI_UInt32   contentSize,
     const otext* key
 )
 {

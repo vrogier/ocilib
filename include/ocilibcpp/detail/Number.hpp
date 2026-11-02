@@ -37,7 +37,7 @@ inline Number::Number(const Environment& env, bool create)
     }
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
+template<class T, core::SupportedNumericT<T>*>
 Number::Number(const Environment& env, const T &value)
 {
     Allocate(env.GetHandle());
@@ -101,11 +101,11 @@ inline ostring Number::ToString(const ostring& format) const
 {
     if (!IsNull())
     {
-       const OCI_Size size = OCI_SIZE_BUFFER;
+       const Size size = OCI_SIZE_BUFFER;
 
-        std::vector<otext> buffer(static_cast<OCI_Size>(size + 1));
+        std::vector<otext> buffer(static_cast<Size>(size + 1));
 
-        core::Check(OCI_NumberToText(*this, format.c_str(), static_cast<OCI_Int32>(size), buffer.data()));
+        core::Check(OCI_NumberToText(*this, format.c_str(), static_cast<Int32>(size), buffer.data()));
 
         return core::MakeString(static_cast<const otext*>(buffer.data()));
     }
@@ -149,7 +149,7 @@ inline AnyPointer Number::GetNativeValue(const Number& value)
     return (reinterpret_cast<OCI_Number*>(core::Check(OCI_NumberGetContent(value))));
 }
 
-inline OCI_Int32 Number::Compare(const Number& other) const
+inline Int32 Number::Compare(const Number& other) const
 {
     return core::Check(OCI_NumberCompare(*this, other));
 }
@@ -212,20 +212,20 @@ inline Number& Number::operator = (OCI_Number * &lhs)
     return *this;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
+template<class T, core::SupportedNumericT<T>*>
 Number& Number::operator = (const T &lhs)
 {
     SetValue<T>(lhs);
     return *this;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
+template<class T, core::SupportedNumericT<T>*>
 Number::operator T() const
 {
     return GetValue<T>();
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
+template<class T, core::SupportedNumericT<T>*>
 Number Number::operator + (const T &value)
 {
     Number result = Clone();
@@ -233,7 +233,7 @@ Number Number::operator + (const T &value)
     return result;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
+template<class T, core::SupportedNumericT<T>*>
 Number Number::operator - (const T &value)
 {
     Number result = Clone();
@@ -241,7 +241,7 @@ Number Number::operator - (const T &value)
     return result;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
+template<class T, core::SupportedNumericT<T>*>
 Number Number::operator * (const T &value)
 {
     Number result = Clone();
@@ -249,7 +249,7 @@ Number Number::operator * (const T &value)
     return result;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
+template<class T, core::SupportedNumericT<T>*>
 Number Number::operator / (const T &value)
 {
     Number result = Clone();
@@ -257,28 +257,28 @@ Number Number::operator / (const T &value)
     return result;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
+template<class T, core::SupportedNumericT<T>*>
 Number& Number::operator += (const T &value)
 {
     Add<T>(value);
     return *this;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
+template<class T, core::SupportedNumericT<T>*>
 Number& Number::operator -= (const T &value)
 {
     Sub<T>(value);
     return *this;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
+template<class T, core::SupportedNumericT<T>*>
 Number& Number::operator *= (const T &value)
 {
     Multiply<T>(value);
     return *this;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
+template<class T, core::SupportedNumericT<T>*>
 Number& Number::operator /= (const T &value)
 {
     Divide<T>(value);
@@ -295,12 +295,12 @@ inline Number& Number::operator -- ()
     return *this += 1;
 }
 
-inline Number Number::operator ++ (OCI_Int32)
+inline Number Number::operator ++ (Int32)
 {
     return *this + 1;
 }
 
-inline Number Number::operator -- (OCI_Int32)
+inline Number Number::operator -- (Int32)
 {
     return *this - 1;
 }
@@ -327,14 +327,14 @@ inline bool Number::operator < (const Number& other) const
 
 inline bool Number::operator >= (const Number& other) const
 {
-    const OCI_Int32 res = Compare(other);
+    const Int32 res = Compare(other);
 
     return res == 0 || res < 0;
 }
 
 inline bool Number::operator <= (const Number& other) const
 {
-    const OCI_Int32 res = Compare(other);
+    const Int32 res = Compare(other);
 
     return res == 0 || res > 0;
 }

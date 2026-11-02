@@ -165,7 +165,7 @@ OCI_Boolean OcilibDequeueFree
 OCI_Agent * OcilibDequeueListen
 (
     OCI_Dequeue *dequeue,
-    OCI_Int32          timeout
+    OCI_Int32    timeout
 )
 {
     ENTER_FUNC
@@ -243,8 +243,8 @@ OCI_Msg * OcilibDequeueGetMessage
     sword ret   = OCI_ERROR;
     void *p_ind = NULL;
 
-    OCI_Int32     dbsize = -1;
-    dbtext* dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
+    dbtext  * dbstr  = NULL;
 
     char* ansi_queue_name = NULL;
 
@@ -493,9 +493,9 @@ OCI_Boolean OcilibDequeueSetCorrelation
 
 OCI_Boolean OcilibDequeueGetRelativeMsgID
 (
-    OCI_Dequeue  *dequeue,
-    void         *id,
-    OCI_UInt32 *len
+    OCI_Dequeue *dequeue,
+    void        *id,
+    OCI_UInt32  *len
 )
 {
     ENTER_FUNC
@@ -546,7 +546,7 @@ OCI_Boolean OcilibDequeueSetRelativeMsgID
 (
     OCI_Dequeue *dequeue,
     const void  *id,
-    OCI_UInt32 len
+    OCI_UInt32   len
 )
 {
     ENTER_FUNC
@@ -809,7 +809,7 @@ OCI_Int32 OcilibDequeueGetWaitTime
 OCI_Boolean OcilibDequeueSetWaitTime
 (
     OCI_Dequeue *dequeue,
-    OCI_Int32          timeout
+    OCI_Int32    timeout
 )
 {
     ENTER_FUNC
@@ -842,7 +842,7 @@ OCI_Boolean OcilibDequeueSetAgentList
 (
     OCI_Dequeue *dequeue,
     OCI_Agent  **consumers,
-    OCI_UInt32 count
+    OCI_UInt32   count
 )
 {
     ENTER_FUNC
@@ -880,14 +880,14 @@ OCI_Boolean OcilibDequeueSubscribe
 (
     OCI_Connection* con,
     OCI_Dequeue  ** dequeues,
-    OCI_UInt32    count,
-    OCI_UInt32    timeout,
+    OCI_UInt32      count,
+    OCI_UInt32      timeout,
     POCI_NOTIFY_AQ  callback
 )
 {
     OCISubscription** subs   = NULL;
     dbtext          * dbstr  = NULL;
-    OCI_Int32               dbsize = -1;
+    OCI_Int32         dbsize = -1;
 
     ENTER_FUNC
     (

@@ -76,7 +76,7 @@ OCI_Boolean OcilibTransactionDispose
 OCI_Transaction * OcilibTransactionCreate
 (
     OCI_Connection     *con,
-    OCI_UInt32        timeout,
+    OCI_UInt32          timeout,
     OCI_TransactionMode mode,
     OCI_XID            *pxid
 )

@@ -25,13 +25,13 @@
 namespace ocilib
 {
 
-inline void Queue::Create(const Connection &connection, const ostring& queue, const ostring& table, QueueType queueType, OCI_UInt32 maxRetries,
-            OCI_UInt32 retryDelay, OCI_UInt32 retentionTime, bool dependencyTracking, const ostring& comment)
+inline void Queue::Create(const Connection &connection, const ostring& queue, const ostring& table, QueueType queueType, UInt32 maxRetries,
+            UInt32 retryDelay, UInt32 retentionTime, bool dependencyTracking, const ostring& comment)
 {
     core::Check(OCI_QueueCreate(connection, queue.c_str(), table.c_str(), queueType, maxRetries, retryDelay, retentionTime, dependencyTracking, comment.c_str()));
 }
 
-inline void Queue::Alter(const Connection &connection, const ostring& queue, OCI_UInt32 maxRetries, OCI_UInt32 retryDelay, OCI_UInt32 retentionTime, const ostring& comment)
+inline void Queue::Alter(const Connection &connection, const ostring& queue, UInt32 maxRetries, UInt32 retryDelay, UInt32 retentionTime, const ostring& comment)
 {
     core::Check(OCI_QueueAlter(connection, queue.c_str(), maxRetries, retryDelay, retentionTime, comment.c_str()));
 }

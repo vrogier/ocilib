@@ -7,7 +7,7 @@ using namespace ocilib;
 
 namespace
 {
-    OCI_Number* MakeDoubleNumber(OCI_Environment* env, double value)
+    OCI_Number* MakeDoubleNumber(OCI_Environment* env, OCI_Double value)
     {
         OCI_Number* num = OCI_NumberCreate(env);
         if (num)
@@ -428,7 +428,7 @@ namespace TestCApi
         OCI_Number* num = OCI_JsonNodeGetNumber(node);
         ASSERT_NE(nullptr, num);
 
-        double d = 0.0;
+        OCI_Double d = 0.0;
         ASSERT_TRUE(OCI_NumberGetValue(num, OCI_NUM_DOUBLE, &d));
         ASSERT_DOUBLE_EQ(42.5, d);
 
@@ -535,7 +535,7 @@ namespace TestCApi
         ASSERT_EQ(ostring(OTEXT("hello")), ostring(OCI_JsonNodeGetString(str, nullptr)));
         OCI_JsonNodeFree(str);
 
-        double v = 1.5;
+        OCI_Double v = 1.5;
         OCI_Number* num = MakeDoubleNumber(env, v);
         ASSERT_NE(nullptr, num);
         OCI_JsonNode* number = OCI_JsonNodeCreateNumber(json, num);
@@ -543,7 +543,7 @@ namespace TestCApi
 
         OCI_Number* out = OCI_JsonNodeGetNumber(number);
         ASSERT_NE(nullptr, out);
-        double value = 0.0;
+        OCI_Double value = 0.0;
         ASSERT_TRUE(OCI_NumberGetValue(out, OCI_NUM_DOUBLE, &value));
         ASSERT_DOUBLE_EQ(1.5, value);
         OCI_NumberFree(out);

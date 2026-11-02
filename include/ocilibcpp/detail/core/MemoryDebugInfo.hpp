@@ -35,8 +35,8 @@ namespace ocilib
         {
             void* Address;
             const char* Name;
-            OCI_Size Size;
-            OCI_Size Count;
+            Size Size;
+            Size Count;
         };
 
         class MemoryDebugInfo
@@ -46,7 +46,7 @@ namespace ocilib
         public:
 
             template<class T>
-            void OnAllocate(T* address, OCI_Size count)
+            void OnAllocate(T* address, Size count)
             {
                 Allocations.push_back({ address, typeid(T).name(), sizeof(T), count });
             }

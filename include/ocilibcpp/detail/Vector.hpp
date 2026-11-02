@@ -32,8 +32,8 @@ namespace ocilib
         template<class T> struct VectorFormatResolver {};
 
         template<> struct VectorFormatResolver<char> { enum { Value = Vector::Int8 }; };
-        template<> struct VectorFormatResolver<float> { enum { Value = Vector::Float32 }; };
-        template<> struct VectorFormatResolver<double> { enum { Value = Vector::Float64 }; };
+        template<> struct VectorFormatResolver<Float> { enum { Value = Vector::Float32 }; };
+        template<> struct VectorFormatResolver<Double> { enum { Value = Vector::Float64 }; };
         template<> struct VectorFormatResolver<unsigned char> { enum { Value = Vector::Binary }; };
     }
 
@@ -57,39 +57,39 @@ inline Vector::Vector(OCI_Vector *pVector, core::Handle *parent)
     AcquireTransient(pVector, parent);
 }
 
-template<class T, typename core::SupportedVectorNumeric<T>::Type::type*>
-void Vector::Set(T* values, OCI_UInt32 size)
+template<class T, core::SupportedVectorNumericT<T>*>
+void Vector::Set(T* values, UInt32 size)
 {
     core::Check(OCI_VectorSetValues(*this, support::VectorFormatResolver<T>::Value, size, reinterpret_cast<void*>(values)));
 }
 
-template<class T, typename core::SupportedVectorNumeric<T>::Type::type*>
+template<class T, core::SupportedVectorNumericT<T>*>
 void Vector::Get(T* values)
 {
     core::Check(OCI_VectorGetValues(*this, reinterpret_cast<void*>(values)));
 }
 
-template<class T, typename core::SupportedVectorNumeric<T>::Type::type*>
+template<class T, core::SupportedVectorNumericT<T>*>
 void Vector::Set(const std::vector<T>& values)
 {
-    Set(const_cast<T*>(values.data()), static_cast<OCI_UInt32>(values.size()));
+    Set(const_cast<T*>(values.data()), static_cast<UInt32>(values.size()));
 }
 
-template<class T, typename core::SupportedVectorNumeric<T>::Type::type*>
+template<class T, core::SupportedVectorNumericT<T>*>
 std::vector<T> Vector::Get()
 {
     std::vector<T> values;
-    values.resize(static_cast<OCI_Size>(GetDimensionCount()));
+    values.resize(static_cast<Size>(GetDimensionCount()));
 
     Get(const_cast<T*>(values.data()));
 
     return values;
 }
 
-inline OCI_UInt32 Vector::GetDimensionCount()
+inline UInt32 Vector::GetDimensionCount()
 {
-    OCI_UInt32 dimensions{};
-    OCI_UInt32 format{};
+    UInt32 dimensions{};
+    UInt32 format{};
 
     core::Check(OCI_VectorGetInfo(*this, &format, &dimensions));
 
@@ -98,34 +98,34 @@ inline OCI_UInt32 Vector::GetDimensionCount()
 
 inline Vector::VectorFormat Vector::GetFormat()
 {
-    OCI_UInt32 dimensions{};
-    OCI_UInt32 format{};
+    UInt32 dimensions{};
+    UInt32 format{};
 
     core::Check(OCI_VectorGetInfo(*this, &format, &dimensions));
 
     return VectorFormat(static_cast<VectorFormat::Type>(format));
 };
 
-inline void Vector::FromString(const ostring& str, VectorFormat format, OCI_UInt32 dimensions)
+inline void Vector::FromString(const ostring& str, VectorFormat format, UInt32 dimensions)
 {
-    core::Check(OCI_VectorFromText(*this, str.c_str(), static_cast<OCI_UInt32>(str.size()), format, dimensions));
+    core::Check(OCI_VectorFromText(*this, str.c_str(), static_cast<UInt32>(str.size()), format, dimensions));
 }
 
 inline ostring Vector::ToString() const
 {
     if (!IsNull())
     {       
-        OCI_UInt32 size{};
+        UInt32 size{};
         
         core::Check(OCI_VectorToText(*this, &size, nullptr));
 
         ostring result;
 
-        result.resize(static_cast<OCI_Size>(size));
+        result.resize(static_cast<Size>(size));
 
         core::Check(OCI_VectorToText(*this, &size, const_cast<otext*>(result.data())));
 
-        result.resize(static_cast<OCI_Size>(size));
+        result.resize(static_cast<Size>(size));
 
         return result;
     }

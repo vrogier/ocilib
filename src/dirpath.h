@@ -27,8 +27,8 @@ OCI_SYM_LOCAL OCI_DirPath * OcilibDirPathCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *partition,
-    OCI_UInt32  nb_cols,
-    OCI_UInt32  nb_rows
+    OCI_UInt32    nb_cols,
+    OCI_UInt32    nb_rows
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDirPathFree
@@ -39,9 +39,9 @@ OCI_SYM_LOCAL OCI_Boolean OcilibDirPathFree
 OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetColumn
 (
     OCI_DirPath *dp,
-    OCI_UInt32 index,
+    OCI_UInt32   index,
     const otext *name,
-    OCI_UInt32 maxsize,
+    OCI_UInt32   maxsize,
     const otext *format
 );
 
@@ -53,10 +53,10 @@ OCI_SYM_LOCAL OCI_Boolean OcilibDirPathPrepare
 OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetEntry
 (
     OCI_DirPath *dp,
-    OCI_UInt32 row,
-    OCI_UInt32 index,
+    OCI_UInt32   row,
+    OCI_UInt32   index,
     void        *value,
-    OCI_UInt32 size,
+    OCI_UInt32   size,
     OCI_Boolean  complete
 );
 
@@ -98,7 +98,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibDirPathFlushRow
 OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetCurrentRows
 (
     OCI_DirPath *dp,
-    OCI_UInt32 nb_rows
+    OCI_UInt32   nb_rows
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibDirPathGetCurrentRows
@@ -132,13 +132,13 @@ OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetNoLog
 OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetCacheSize
 (
     OCI_DirPath *dp,
-    OCI_UInt32 size
+    OCI_UInt32   size
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetBufferSize
 (
     OCI_DirPath *dp,
-    OCI_UInt32 size
+    OCI_UInt32   size
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetConvertMode

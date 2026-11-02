@@ -138,7 +138,7 @@ OCI_Json * OcilibJsonCreate
 OCI_Json ** OcilibJsonArrayCreate
 (
     OCI_Connection *con,
-    OCI_UInt32    nbelem
+    OCI_UInt32      nbelem
 )
 {
     ENTER_FUNC
@@ -271,7 +271,7 @@ OCI_Boolean OcilibJsonLoadText
 (
     OCI_Json          *json,
     const otext       *text,
-    OCI_UInt32       length,
+    OCI_UInt32         length,
     OCI_JsonValidation validation,
     OCI_JsonEncoding   encoding
 )
@@ -282,8 +282,8 @@ OCI_Boolean OcilibJsonLoadText
         /* context */ OCI_IPC_JSON, json
     );
 
-    dbtext *dbstr  = NULL;
-    OCI_Int32     dbsize = (length == 0 ? -1 : (OCI_Int32)(length * sizeof(otext)));
+    dbtext   *dbstr  = NULL;
+    OCI_Int32 dbsize = (length == 0 ? -1 : (OCI_Int32)(length * sizeof(otext)));
 
     CHECK_PTR(OCI_IPC_JSON, json);
     CHECK_PTR(OCI_IPC_VOID, text);
@@ -339,9 +339,9 @@ OCI_Boolean OcilibJsonLoadText
 
 OCI_Boolean OcilibJsonLoadBinary
 (
-    OCI_Json    *json,
-    const void  *data,
-    OCI_UInt32 length
+    OCI_Json   *json,
+    const void *data,
+    OCI_UInt32  length
 )
 {
     ENTER_FUNC
@@ -391,7 +391,7 @@ OCI_Boolean OcilibJsonToText
 (
     OCI_Json     *json,
     otext        *buffer,
-    OCI_UInt32 *length,
+    OCI_UInt32   *length,
     OCI_JsonPrint print,
     OCI_Boolean   useEnvCharset
 )
@@ -402,12 +402,12 @@ OCI_Boolean OcilibJsonToText
         /* context */ OCI_IPC_JSON, json
     );
 
-    dbtext   *dbstr        = NULL;
+    dbtext         *dbstr        = NULL;
     OCI_Int32       dbsize       = 0;
     OCI_Int32       attempt      = 0;
-    sword     res          = OCI_ERROR;
-    oraub8    bytes        = 0;
-    ub4       mode         = OCI_JSON_TEXT_ENV_NLS;
+    sword           res          = OCI_ERROR;
+    oraub8          bytes        = 0;
+    ub4             mode         = OCI_JSON_TEXT_ENV_NLS;
     const OCI_Int32 max_attempts = 16;
 
     CHECK_PTR(OCI_IPC_JSON, json);
@@ -515,8 +515,8 @@ OCI_Boolean OcilibJsonToText
 
 OCI_Boolean OcilibJsonToBinary
 (
-    OCI_Json     *json,
-    void         *buffer,
+    OCI_Json   *json,
+    void       *buffer,
     OCI_UInt32 *length
 )
 {

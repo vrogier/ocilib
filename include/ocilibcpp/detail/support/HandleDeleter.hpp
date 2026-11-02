@@ -34,7 +34,7 @@ namespace ocilib
         template<class T>
         struct HandleDeleter
         {
-            bool operator()(T handle, AnyPointer) const { return true; }
+            bool operator()([[maybe_unused]] T handle, AnyPointer) const { return true; }
         };
 
         template<> struct HandleDeleter<OCI_Environment*>
@@ -124,7 +124,7 @@ namespace ocilib
 
         template<> struct HandleDeleter<OCI_XmlType*>
         {
-            bool operator()(OCI_XmlType* handle, AnyPointer) const { return true; }
+            bool operator()([[maybe_unused]] OCI_XmlType* handle, AnyPointer) const { return true; }
         };
 
         template<> struct HandleDeleter<OCI_Statement*>

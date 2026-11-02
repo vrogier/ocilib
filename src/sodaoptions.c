@@ -148,7 +148,7 @@ static void OcilibSodaOptionsFreeKeysArray
     OCI_Environment *env,
     OraText        **keys,
     ub4             *lengths,
-    OCI_UInt32     count
+    OCI_UInt32       count
 )
 {
     OCI_UInt32 i;
@@ -185,8 +185,8 @@ OCI_Boolean OcilibSodaOptionsSetKeyAttr
         /* context */ OCI_IPC_SODA_OPTIONS, options
     );
 
-    dbtext *dbstr  = NULL;
-    OCI_Int32     dbsize = -1;
+    dbtext   *dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
     CHECK_PTR(OCI_IPC_STRING, key);
@@ -248,7 +248,7 @@ OCI_Boolean OcilibSodaOptionsSetKeys
 (
     OCI_SodaOptions *options,
     const otext    **keys,
-    OCI_UInt32     count
+    OCI_UInt32       count
 )
 {
     ENTER_FUNC
@@ -258,8 +258,8 @@ OCI_Boolean OcilibSodaOptionsSetKeys
     );
 
     OCI_UInt32 i         = 0;
-    OraText    **dbkeys    = NULL;
-    ub4         *dblengths = NULL;
+    OraText  **dbkeys    = NULL;
+    ub4       *dblengths = NULL;
 
     CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
     CHECK_PTR(OCI_IPC_VOID, keys);
@@ -358,8 +358,8 @@ OCI_Boolean OcilibSodaOptionsSetVersion
         /* context */ OCI_IPC_SODA_OPTIONS, options
     );
 
-    dbtext *dbstr  = NULL;
-    OCI_Int32     dbsize = -1;
+    dbtext   *dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
     CHECK_PTR(OCI_IPC_STRING, version);
@@ -402,8 +402,8 @@ OCI_Boolean OcilibSodaOptionsSetFilter
         /* context */ OCI_IPC_SODA_OPTIONS, options
     );
 
-    dbtext *dbstr  = NULL;
-    OCI_Int32     dbsize = -1;
+    dbtext   *dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
     CHECK_PTR(OCI_IPC_STRING, filterSpec);
@@ -437,7 +437,7 @@ OCI_Boolean OcilibSodaOptionsSetFilter
 OCI_Boolean OcilibSodaOptionsSetSkip
 (
     OCI_SodaOptions *options,
-    OCI_UInt32     count
+    OCI_UInt32       count
 )
 {
     ENTER_FUNC
@@ -474,7 +474,7 @@ OCI_Boolean OcilibSodaOptionsSetSkip
 OCI_Boolean OcilibSodaOptionsSetLimit
 (
     OCI_SodaOptions *options,
-    OCI_UInt32     count
+    OCI_UInt32       count
 )
 {
     ENTER_FUNC

@@ -124,12 +124,12 @@ namespace TestCApi
 
     TEST(TestNumber, SetAndGetValueFloat)
     {
-        SetAndGetValue<float, OCI_NUM_FLOAT>(3.14f);
+        SetAndGetValue<OCI_Float, OCI_NUM_FLOAT>(3.14f);
     }
 
     TEST(TestNumber, SetAndGetValueDouble)
     {
-        SetAndGetValue<double, OCI_NUM_DOUBLE>(3.14);
+        SetAndGetValue<OCI_Double, OCI_NUM_DOUBLE>(3.14);
     }
 
     TEST(TestNumber, SetAndGetValueNumber)
@@ -300,12 +300,12 @@ namespace TestCApi
 
     TEST(TestNumber, AddValueFloat)
     {
-        AddValue<float, OCI_NUM_FLOAT>(3.14f, 6.28f, 9.42f);
+        AddValue<OCI_Float, OCI_NUM_FLOAT>(3.14f, 6.28f, 9.42f);
     }
 
     TEST(TestNumber, AddValueDouble)
     {
-        AddValue<double, OCI_NUM_DOUBLE>(3.14, 6.28, 9.42);
+        AddValue<OCI_Double, OCI_NUM_DOUBLE>(3.14, 6.28, 9.42);
     }
 
     TEST(TestNumber, AddValueNumber)
@@ -361,12 +361,12 @@ namespace TestCApi
 
     TEST(TestNumber, SubValueFloat)
     {
-        SubValue<float, OCI_NUM_FLOAT>(9.42f, 3.14f, 6.28f);
+        SubValue<OCI_Float, OCI_NUM_FLOAT>(9.42f, 3.14f, 6.28f);
     }
 
     TEST(TestNumber, SubValueDouble)
     {
-        SubValue<double, OCI_NUM_DOUBLE>(9.42, 3.14, 6.28);
+        SubValue<OCI_Double, OCI_NUM_DOUBLE>(9.42, 3.14, 6.28);
     }
 
     TEST(TestNumber, SubValueNumber)
@@ -422,12 +422,12 @@ namespace TestCApi
 
     TEST(TestNumber, MultiplyValueFloat)
     {
-        MultiplyValue<float, OCI_NUM_FLOAT>(3.14f, 2.0f, 6.28f);
+        MultiplyValue<OCI_Float, OCI_NUM_FLOAT>(3.14f, 2.0f, 6.28f);
     }
 
     TEST(TestNumber, MultiplyValueDouble)
     {
-        MultiplyValue<double, OCI_NUM_DOUBLE>(3.14, 2.0, 6.28);
+        MultiplyValue<OCI_Double, OCI_NUM_DOUBLE>(3.14, 2.0, 6.28);
     }
 
     TEST(TestNumber, MultiplyValueNumber)
@@ -483,12 +483,12 @@ namespace TestCApi
 
     TEST(TestNumber, DivideValueFloat)
     {
-        DivideValue<float, OCI_NUM_FLOAT>(6.28f, 2.0f, 3.14f);
+        DivideValue<OCI_Float, OCI_NUM_FLOAT>(6.28f, 2.0f, 3.14f);
     }
 
     TEST(TestNumber, DivideValueDouble)
     {
-        DivideValue<double, OCI_NUM_DOUBLE>(6.28, 2.0, 3.14);
+        DivideValue<OCI_Double, OCI_NUM_DOUBLE>(6.28, 2.0, 3.14);
     }
 
     TEST(TestNumber, DivideValueNumber)
@@ -500,7 +500,7 @@ namespace TestCApi
         const auto number1 = OCI_NumberCreate(env);
         const auto number2 = OCI_NumberCreate(env);
         OCI_Int32 value_in_1 = 13, value_in_2 = 2;
-        float value_out = 0;
+        OCI_Float value_out = 0;
 
         ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT, &value_in_1));
         ASSERT_TRUE(OCI_NumberSetValue(number2, OCI_NUM_INT, &value_in_2));
@@ -732,10 +732,10 @@ namespace TestCApi
     {
         /* real -> OCINumber (no public API performs this direction) */
 
-        double dv = 7.5;
+        OCI_Double dv = 7.5;
         ASSERT_TRUE(OCI_TestNumberTranslate(num, &dv, OCI_NUM_DOUBLE, OCI_NumberGetContent(num), OCI_NUM_NUMBER));
 
-        double dv2 = 0.0;
+        OCI_Double dv2 = 0.0;
         ASSERT_TRUE(OCI_NumberGetValue(num, OCI_NUM_DOUBLE, &dv2));
         ASSERT_NEAR(7.5, dv2, 0.001);
     }
@@ -743,7 +743,7 @@ namespace TestCApi
     TEST_F(TestNumberConv, TranslateIntToReal)
     {
         OCI_Int16 sv = 42;
-        double dv = 0.0;
+        OCI_Double dv = 0.0;
 
         ASSERT_TRUE(OCI_TestNumberTranslate(num, &sv, OCI_NUM_SHORT, &dv, OCI_NUM_DOUBLE));
         ASSERT_NEAR(42.0, dv, 0.001);
@@ -771,9 +771,9 @@ namespace TestCApi
 
     TEST_F(TestNumberConv, TranslateRealToInt)
     {
-        /* real -> integer (double/float truncation through OCINumber) */
+        /* real -> integer (OCI_Double/OCI_Float truncation through OCINumber) */
 
-        double dv = 9.75;
+        OCI_Double dv = 9.75;
         OCI_Int32 iv = 0;
 
         ASSERT_TRUE(OCI_TestNumberTranslate(num, &dv, OCI_NUM_DOUBLE, &iv, OCI_NUM_INT));
@@ -785,7 +785,7 @@ namespace TestCApi
     struct NumToStringCase
     {
         OCI_UInt32 type;
-        double       value;
+        OCI_Double       value;
         const otext* expected;
     };
 
@@ -796,8 +796,8 @@ namespace TestCApi
     {
         OCI_Int16   sv = 0;
         OCI_Int32     iv = 0;
-        float   fv = 0.0f;
-        double  dv = 0.0;
+        OCI_Float   fv = 0.0f;
+        OCI_Double  dv = 0.0;
 
         const void* data = nullptr;
 
@@ -805,7 +805,7 @@ namespace TestCApi
         {
             case OCI_NUM_SHORT:  sv = (OCI_Int16) GetParam().value;  data = &sv; break;
             case OCI_NUM_INT:    iv = (OCI_Int32) GetParam().value;    data = &iv; break;
-            case OCI_NUM_FLOAT:  fv = (float) GetParam().value;  data = &fv; break;
+            case OCI_NUM_FLOAT:  fv = (OCI_Float) GetParam().value;  data = &fv; break;
             case OCI_NUM_DOUBLE: dv = GetParam().value;          data = &dv; break;
         }
 

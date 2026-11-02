@@ -10,7 +10,7 @@ namespace TestCppApi
 
         Number n1(env, 123);
         ASSERT_EQ(123, static_cast<OCI_Int32>(n1));
-        ASSERT_EQ(123.0, static_cast<double>(n1));
+        ASSERT_EQ(123.0, static_cast<OCI_Double>(n1));
 
         Number n2(env, true);
         n2 = 456;

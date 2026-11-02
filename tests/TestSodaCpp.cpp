@@ -284,7 +284,7 @@ namespace TestCppApi
         ASSERT_TRUE(coll.Remove(options, &removed));
         ASSERT_EQ(2u, removed);
 
-        ASSERT_TRUE(coll.Truncate(0));
+        ASSERT_TRUE(coll.Truncate());
         ASSERT_EQ(0u, coll.GetCount(SodaOptions()));
 
         con.Commit();

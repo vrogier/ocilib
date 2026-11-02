@@ -57,8 +57,8 @@ OCI_Boolean OcilibDatabaseStartup
 
     OCIAdmin* adm = NULL;
 
-    dbtext* dbstr  = NULL;
-    OCI_Int32     dbsize = -1;
+    dbtext  * dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
 
 #endif
 

@@ -82,11 +82,11 @@ static uword OcilibGetNumericTypeSize
     }
     else if (type & OCI_NUM_FLOAT)
     {
-        size = sizeof(float);
+        size = sizeof(OCI_Float);
     }
     else if (type & OCI_NUM_DOUBLE)
     {
-        size = sizeof(double);
+        size = sizeof(OCI_Double);
     }
     else if (type & OCI_NUM_NUMBER)
     {
@@ -116,9 +116,9 @@ OCI_Boolean OcilibNumberTranslateValue
     )
 
     /* translate numeric values:
-        - signed/OCI_UInt32egers (OCI_Int16, OCI_Int32, OCI_Int64) to double, float and OCINumber
-        - double, float to signed/OCI_UInt32egers and OCINumber
-        - OCINumber to signed/OCI_UInt32egers, double, and float
+        - signed/OCI_UInt32egers (OCI_Int16, OCI_Int32, OCI_Int64) to OCI_Double, OCI_Float and OCINumber
+        - OCI_Double, OCI_Float to signed/OCI_UInt32egers and OCINumber
+        - OCINumber to signed/OCI_UInt32egers, OCI_Double, and OCI_Float
     */
 
     const uword in_size = OcilibGetNumericTypeSize(in_type);
@@ -145,7 +145,7 @@ OCI_Boolean OcilibNumberTranslateValue
     {
         if (out_type & OCI_NUM_DOUBLE || out_type & OCI_NUM_FLOAT)
         {
-            /* OCINumber to double / float */
+            /* OCINumber to OCI_Double / OCI_Float */
 
             CHECK_OCI
             (
@@ -172,7 +172,7 @@ OCI_Boolean OcilibNumberTranslateValue
     {
         if (out_type == OCI_NUM_NUMBER)
         {
-            /* double / float to OCINumber */
+            /* OCI_Double / OCI_Float to OCINumber */
 
             CHECK_OCI
             (
@@ -184,7 +184,7 @@ OCI_Boolean OcilibNumberTranslateValue
         }
         else if (out_type & OCI_NUM_DOUBLE || out_type & OCI_NUM_FLOAT)
         {
-            /* double to float and float to double */
+            /* OCI_Double to OCI_Float and OCI_Float to OCI_Double */
 
 #if OCI_VERSION_COMPILE >= OCI_10_1
 
@@ -192,11 +192,11 @@ OCI_Boolean OcilibNumberTranslateValue
             {
                 if (in_type & OCI_NUM_FLOAT && (out_type & OCI_NUM_DOUBLE))
                 {
-                    *((double *)out_value) = (double) *((float *)in_value);
+                    *((OCI_Double *)out_value) = (OCI_Double) *((OCI_Float *)in_value);
                 }
                 else if (in_type & OCI_NUM_DOUBLE && (out_type & OCI_NUM_FLOAT))
                 {
-                    *((float *)out_value) = (float) *((double *)in_value);
+                    *((OCI_Float *)out_value) = (OCI_Float) *((OCI_Double *)in_value);
                 }
             }
 
@@ -205,7 +205,7 @@ OCI_Boolean OcilibNumberTranslateValue
         }
         else
         {
-            /* double / float to integers */
+            /* OCI_Double / OCI_Float to integers */
 
             CHECK_OCI
             (
@@ -241,7 +241,7 @@ OCI_Boolean OcilibNumberTranslateValue
         }
         else if (out_type & OCI_NUM_DOUBLE || out_type & OCI_NUM_FLOAT)
         {
-            /* integers to double / float */
+            /* integers to OCI_Double / OCI_Float */
 
             CHECK_OCI
             (
@@ -330,12 +330,12 @@ OCI_Boolean OcilibNumberFromStringInternal
 
             if (type & OCI_NUM_DOUBLE)
             {
-                CHECK(osscanf(in_value, tmp_fmt, (double *)out_value) == 1);
+                CHECK(osscanf(in_value, tmp_fmt, (OCI_Double *)out_value) == 1);
                 done = TRUE;
             }
             else if (type & OCI_NUM_FLOAT)
             {
-                CHECK(osscanf(in_value, tmp_fmt, (float *)out_value) == 1);
+                CHECK(osscanf(in_value, tmp_fmt, (OCI_Float *)out_value) == 1);
                 done = TRUE;
             }
         }
@@ -407,7 +407,7 @@ OCI_Boolean OcilibNumberToStringInternal
     void            *number,
     OCI_NumericType  type,
     otext           *out_value,
-    OCI_Int32              out_value_size,
+    OCI_Int32        out_value_size,
     const otext    * fmt
 )
 {
@@ -417,10 +417,10 @@ OCI_Boolean OcilibNumberToStringInternal
         /* context */ OCI_IPC_ENVIRONMENT, env
     );
 
-    dbtext* dbstr1  = NULL;
-    dbtext* dbstr2  = NULL;
-    OCI_Int32     dbsize1 = out_value_size * (OCI_Int32)sizeof(otext);
-    OCI_Int32     dbsize2 = -1;
+    dbtext  * dbstr1  = NULL;
+    dbtext  * dbstr2  = NULL;
+    OCI_Int32 dbsize1 = out_value_size * (OCI_Int32)sizeof(otext);
+    OCI_Int32 dbsize2 = -1;
 
     OCIError* err = env ? env->err : NULL;
 
@@ -466,13 +466,13 @@ OCI_Boolean OcilibNumberToStringInternal
 
             if (type & OCI_NUM_DOUBLE)
             {
-                out_value_size = OcilibStringFormat(out_value, out_value_size, tmp_fmt, *((double *)number));
+                out_value_size = OcilibStringFormat(out_value, out_value_size, tmp_fmt, *((OCI_Double *)number));
 
                 done = TRUE;
             }
             else if (type & OCI_NUM_FLOAT)
             {
-                out_value_size = OcilibStringFormat(out_value, out_value_size, tmp_fmt, *((float *)number));
+                out_value_size = OcilibStringFormat(out_value, out_value_size, tmp_fmt, *((OCI_Float *)number));
 
                 done = TRUE;
             }
@@ -670,7 +670,7 @@ OCI_Boolean OcilibNumberFree
 OCI_Number ** OcilibNumberCreateArray
 (
     OCI_Environment *env,
-    OCI_UInt32     nbelem
+    OCI_UInt32       nbelem
 )
 {
     ENTER_FUNC
@@ -755,7 +755,7 @@ OCI_Boolean OcilibNumberToString
 (
     OCI_Number  *number,
     const otext *fmt,
-    OCI_Int32          size,
+    OCI_Int32    size,
     otext       *str
 )
 {

@@ -23,7 +23,7 @@ int main()
         vendor.Set<ostring>("name", "JOHN SMITH");
 
         sale.Set<OCI_Int32>("code", 1);
-        sale.Set<double>("price", 12.99);
+        sale.Set<OCI_Double>("price", 12.99);
         sale.Set<ostring>("name", "USB KEY 2go");
         sale.Set<ostring>("ref", "A56547WSAA");
         sale.Set<Date>("date_sale", date);

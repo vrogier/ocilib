@@ -133,7 +133,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollRemove
 (
     OCI_SodaColl    *coll,
     OCI_SodaOptions *options,
-    OCI_UInt64        *count
+    OCI_UInt64      *count
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollRemoveOneByKey

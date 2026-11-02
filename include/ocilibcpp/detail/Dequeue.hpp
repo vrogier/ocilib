@@ -50,7 +50,7 @@ inline Message Dequeue::Get()
     return Message(core::Check(OCI_DequeueGet(*this)), nullptr);
 }
 
-inline Agent Dequeue::Listen(OCI_Int32 timeout)
+inline Agent Dequeue::Listen(Int32 timeout)
 {
     return Agent(core::Check(OCI_DequeueListen(*this, timeout)), nullptr);
 }
@@ -77,9 +77,9 @@ inline void Dequeue::SetCorrelation(const ostring& value)
 
 inline Raw Dequeue::GetRelativeMsgID() const
 {
-    OCI_UInt32 size = OCI_SIZE_BUFFER;
+    UInt32 size = OCI_SIZE_BUFFER;
 
-    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
+    std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
 
     core::Check(OCI_DequeueGetRelativeMsgID(*this, static_cast<AnyPointer>(buffer.data()), &size));
 
@@ -90,7 +90,7 @@ inline void Dequeue::SetRelativeMsgID(const Raw &value)
 {
     const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
 
-    core::Check(OCI_DequeueSetRelativeMsgID(*this, data, static_cast<OCI_UInt32>(value.size())));
+    core::Check(OCI_DequeueSetRelativeMsgID(*this, data, static_cast<UInt32>(value.size())));
 }
 
 inline Dequeue::DequeueVisibility Dequeue::GetVisibility() const
@@ -123,47 +123,47 @@ inline void Dequeue::SetNavigation(NavigationMode value)
     core::Check(OCI_DequeueSetNavigation(*this, value));
 }
 
-inline OCI_Int32 Dequeue::GetWaitTime() const
+inline Int32 Dequeue::GetWaitTime() const
 {
     return core::Check(OCI_DequeueGetWaitTime(*this));
 }
 
-inline void Dequeue::SetWaitTime(OCI_Int32 value)
+inline void Dequeue::SetWaitTime(Int32 value)
 {
     core::Check(OCI_DequeueSetWaitTime(*this, value));
 }
 
 inline void Dequeue::SetAgents(std::vector<Agent> &agents)
 {
-    const OCI_Size size = agents.size();
+    const Size size = agents.size();
     std::vector<OCI_Agent*> buffer(size);
 
-    for (OCI_Size i = 0; i < size; ++i)
+    for (Size i = 0; i < size; ++i)
     {
         buffer[i] = static_cast<const Agent &>(agents[i]);
     }
 
-    core::Check(OCI_DequeueSetAgentList(*this, buffer.data(), static_cast<OCI_UInt32>(size)));
+    core::Check(OCI_DequeueSetAgentList(*this, buffer.data(), static_cast<UInt32>(size)));
 }
-inline void Dequeue::Subscribe(const Connection& connection, std::vector<Dequeue>& dequeues, OCI_UInt32 timeout, NotifyAQHandlerProc handler)
+inline void Dequeue::Subscribe(const Connection& connection, std::vector<Dequeue>& dequeues, UInt32 timeout, NotifyAQHandlerProc handler)
 {
-    const OCI_Size size = dequeues.size();
+    const Size size = dequeues.size();
     std::vector<OCI_Dequeue*> handles(size);
 
-    for (OCI_Size i = 0; i < size; ++i)
+    for (Size i = 0; i < size; ++i)
     {
         handles[i] = static_cast<OCI_Dequeue*>(dequeues[i]);
     }
 
     OCI_Environment* env = connection.GetEnvironment();
 
-    core::Check(OCI_DequeueSubscribe(connection, handles.data(), static_cast<OCI_UInt32>(size), timeout,
+    core::Check(OCI_DequeueSubscribe(connection, handles.data(), static_cast<UInt32>(size), timeout,
                                           static_cast<POCI_NOTIFY_AQ>(handler != nullptr ? Environment::NotifyHandlerAQ : nullptr)));
 
     Environment* cpp_env = Environment::GetInstance(env);
     if (cpp_env)
     {
-        for (OCI_Size i = 0; i < size; ++i)
+        for (Size i = 0; i < size; ++i)
         {
             cpp_env->SetUserCallback<NotifyAQHandlerProc>(handles[i], handler);
         }

@@ -569,24 +569,24 @@ OCI_UInt64 OcilibElementGetUnsignedBigInt
  * OcilibElementGetDouble
  * --------------------------------------------------------------------------------------------- */
 
-double OcilibElementGetDouble
+OCI_Double OcilibElementGetDouble
 (
     OCI_Elem *elem
 )
 {
-    ELEM_GET_NUMBER(elem, OCI_NUM_DOUBLE, double, 0.0);
+    ELEM_GET_NUMBER(elem, OCI_NUM_DOUBLE, OCI_Double, 0.0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibElementGetFloat
  * --------------------------------------------------------------------------------------------- */
 
-float OcilibElementGetFloat
+OCI_Float OcilibElementGetFloat
 (
     OCI_Elem *elem
 )
 {
-    ELEM_GET_NUMBER(elem, OCI_NUM_FLOAT, float, 0.0f);
+    ELEM_GET_NUMBER(elem, OCI_NUM_FLOAT, OCI_Float, 0.0f);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -623,8 +623,8 @@ const otext * OcilibElementGetString
 
 OCI_UInt32 OcilibElementGetRaw
 (
-    OCI_Elem    *elem,
-    void        *value,
+    OCI_Elem  *elem,
+    void      *value,
     OCI_UInt32 len
 )
 {
@@ -917,7 +917,7 @@ OCI_Boolean OcilibElementSetNumber
 OCI_Boolean OcilibElementSetShort
 (
     OCI_Elem *elem,
-    OCI_Int16     value
+    OCI_Int16 value
 )
 {
     ELEM_SET_NUMBER(elem,value, OCI_NUM_SHORT);
@@ -929,7 +929,7 @@ OCI_Boolean OcilibElementSetShort
 
 OCI_Boolean OcilibElementSetUnsignedShort
 (
-    OCI_Elem      *elem,
+    OCI_Elem  *elem,
     OCI_UInt16 value
 )
 {
@@ -943,7 +943,7 @@ OCI_Boolean OcilibElementSetUnsignedShort
 OCI_Boolean OcilibElementSetInt
 (
     OCI_Elem *elem,
-    OCI_Int32       value
+    OCI_Int32 value
 )
 {
     ELEM_SET_NUMBER(elem, value, OCI_NUM_INT);
@@ -955,7 +955,7 @@ OCI_Boolean OcilibElementSetInt
 
 OCI_Boolean OcilibElementSetUnsignedInt
 (
-    OCI_Elem    *elem,
+    OCI_Elem  *elem,
     OCI_UInt32 value
 )
 {
@@ -969,7 +969,7 @@ OCI_Boolean OcilibElementSetUnsignedInt
 OCI_Boolean OcilibElementSetBigInt
 (
     OCI_Elem *elem,
-    OCI_Int64   value
+    OCI_Int64 value
 )
 {
     ELEM_SET_NUMBER(elem, value, OCI_NUM_BIGINT);
@@ -981,8 +981,8 @@ OCI_Boolean OcilibElementSetBigInt
 
 OCI_Boolean OcilibElementSetUnsignedBigInt
 (
-    OCI_Elem *elem,
-    OCI_UInt64  value
+    OCI_Elem  *elem,
+    OCI_UInt64 value
 )
 {
     ELEM_SET_NUMBER(elem, value, OCI_NUM_BIGUINT);
@@ -994,8 +994,8 @@ OCI_Boolean OcilibElementSetUnsignedBigInt
 
 OCI_Boolean OcilibElementSetDouble
 (
-    OCI_Elem *elem,
-    double    value
+    OCI_Elem  *elem,
+    OCI_Double value
 )
 {
     ELEM_SET_NUMBER(elem, value, OCI_NUM_DOUBLE);
@@ -1008,7 +1008,7 @@ OCI_Boolean OcilibElementSetDouble
 OCI_Boolean OcilibElementSetFloat
 (
     OCI_Elem *elem,
-    float     value
+    OCI_Float value
 )
 {
     ELEM_SET_NUMBER(elem, value, OCI_NUM_FLOAT);
@@ -1060,8 +1060,8 @@ OCI_Boolean OcilibElementSetString
 
 OCI_Boolean OcilibElementSetRaw
 (
-    OCI_Elem    *elem,
-    void       * value,
+    OCI_Elem  *elem,
+    void     * value,
     OCI_UInt32 len
 )
 {

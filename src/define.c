@@ -34,7 +34,7 @@
 OCI_Define * OcilibDefineGet
 (
     OCI_Resultset *rs,
-    OCI_UInt32   index
+    OCI_UInt32     index
 )
 {
     ENTER_FUNC
@@ -222,7 +222,7 @@ OCI_Boolean OcilibDefineIsDataNotNull
 OCI_Boolean OcilibDefineGetNumber
 (
     OCI_Resultset  *rs,
-    OCI_UInt32    index,
+    OCI_UInt32      index,
     void           *value,
     OCI_NumericType type
 )

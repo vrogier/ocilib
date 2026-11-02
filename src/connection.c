@@ -282,8 +282,8 @@ OCI_Boolean OcilibConnectionAttach
         /* context */ OCI_IPC_CONNECTION, con
     );
 
-    dbtext* dbstr  = NULL;
-    OCI_Int32     dbsize = -1;
+    dbtext  * dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con);
     CHECK_CON_STATUS(con, OCI_CONN_ALLOCATED);
@@ -613,10 +613,10 @@ static OCI_Boolean OcilibConnectionLogonSessionPool
 
     ub4         sess_mode  = OCI_SESSGET_SPOOL;
     OCI_Boolean found      = FALSE;
-    OCI_Int32         dbsize     = -1;
+    OCI_Int32   dbsize     = -1;
     dbtext     *dbstr      = NULL;
     dbtext     *dbstr_tag  = NULL;
-    OCI_Int32         dbsize_tag = 0;
+    OCI_Int32   dbsize_tag = 0;
     OraText    *dbstr_ret  = NULL;
     ub4         dbsize_ret = 0;
 
@@ -820,8 +820,8 @@ static OCI_Boolean OcilibConnectionLogoffSessionPool
         /* context */ OCI_IPC_CONNECTION, con
     );
 
-    dbtext* dbstr  = NULL;
-    OCI_Int32     dbsize = 0;
+    dbtext  * dbstr  = NULL;
+    OCI_Int32 dbsize = 0;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con);
 
@@ -1087,7 +1087,7 @@ OCI_UInt32 OcilibConnectionGetMinSupportedVersion
 OCI_Boolean OcilibConnectionIsVersionSupported
 (
     OCI_Connection *con,
-    OCI_UInt32    version
+    OCI_UInt32      version
 )
 {
     return OcilibConnectionGetMinSupportedVersion(con) >= version;
@@ -1475,8 +1475,8 @@ const otext * OcilibConnectionGetServerVersion
         /* context */ OCI_IPC_CONNECTION, con
     );
 
-    OCI_Int32     dbsize = OCI_SIZE_BUFFER * (OCI_Int32)sizeof(dbtext);
-    dbtext* dbstr  = NULL;
+    OCI_Int32 dbsize = OCI_SIZE_BUFFER * (OCI_Int32)sizeof(dbtext);
+    dbtext  * dbstr  = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con);
 
@@ -1774,9 +1774,9 @@ OCI_Boolean OcilibConnectionBreak
 OCI_Boolean OcilibConnectionEnableServerOutput
 (
     OCI_Connection *con,
-    OCI_UInt32    bufsize,
-    OCI_UInt32    arrsize,
-    OCI_UInt32    lnsize
+    OCI_UInt32      bufsize,
+    OCI_UInt32      arrsize,
+    OCI_UInt32      lnsize
 )
 {
     ENTER_FUNC
@@ -1964,8 +1964,8 @@ OCI_Boolean OcilibConnectionSetTrace
         /* context */ OCI_IPC_CONNECTION, con
     );
 
-    dbtext* dbstr  = NULL;
-    OCI_Int32     dbsize = 0;
+    dbtext  * dbstr  = NULL;
+    OCI_Int32 dbsize = 0;
 
     ub4 attrib = OCI_UNKNOWN;
 
@@ -2159,7 +2159,7 @@ OCI_Boolean OcilibConnectionSetTimeout
 (
     OCI_Connection *con,
     OCI_TimeoutType type,
-    OCI_UInt32    value
+    OCI_UInt32      value
 )
 {
     ENTER_FUNC
@@ -2651,7 +2651,7 @@ OCI_UInt32 OcilibConnectionGetStatementCacheSize
 OCI_Boolean OcilibConnectionSetStatementCacheSize
 (
     OCI_Connection *con,
-    OCI_UInt32    value
+    OCI_UInt32      value
 )
 {
     ENTER_FUNC
@@ -2732,7 +2732,7 @@ OCI_UInt32 OcilibConnectionGetDefaultLobPrefetchSize
 OCI_Boolean OcilibConnectionSetDefaultLobPrefetchSize
 (
     OCI_Connection *con,
-    OCI_UInt32    value
+    OCI_UInt32      value
 )
 {
     ENTER_FUNC

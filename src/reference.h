@@ -54,7 +54,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibReferenceFree
 OCI_SYM_LOCAL OCI_Ref ** OcilibReferenceCreateArray
 (
     OCI_TypeInfo *typinf,
-    OCI_UInt32  nbelem
+    OCI_UInt32    nbelem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibReferenceFreeArray
@@ -85,9 +85,9 @@ OCI_SYM_LOCAL OCI_Boolean OcilibReferenceSetNull
 
 OCI_SYM_LOCAL OCI_Boolean OcilibReferenceToString
 (
-    OCI_Ref     *ref,
+    OCI_Ref   *ref,
     OCI_UInt32 size,
-    otext       *str
+    otext     *str
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibReferenceGetHexSize

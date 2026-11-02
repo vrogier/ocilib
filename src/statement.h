@@ -151,7 +151,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibStatementDescribeFmt
 OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetBindArraySize
 (
     OCI_Statement* stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetBindArraySize
@@ -189,97 +189,97 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfNumbers
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Number  ** data,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindShort
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_Int16        * data
+    OCI_Int16    * data
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfShorts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_Int16        * data,
-    OCI_UInt32   nbelem
+    OCI_Int16    * data,
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindUnsignedShort
 (
     OCI_Statement * stmt,
     const otext   * name,
-    OCI_UInt16* data
+    OCI_UInt16    * data
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfUnsignedShorts
 (
     OCI_Statement * stmt,
     const otext   * name,
-    OCI_UInt16* data,
-    OCI_UInt32    nbelem
+    OCI_UInt16    * data,
+    OCI_UInt32      nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindInt
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_Int32          * data
+    OCI_Int32    * data
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfInts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_Int32          * data,
-    OCI_UInt32   nbelem
+    OCI_Int32    * data,
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindUnsignedInt
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_UInt32 * data
+    OCI_UInt32   * data
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfUnsignedInts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_UInt32 * data,
-    OCI_UInt32   nbelem
+    OCI_UInt32   * data,
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindBigInt
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_Int64      * data
+    OCI_Int64    * data
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfBigInts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_Int64      * data,
-    OCI_UInt32   nbelem
+    OCI_Int64    * data,
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindUnsignedBigInt
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_UInt64     * data
+    OCI_UInt64   * data
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfUnsignedBigInts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_UInt64     * data,
-    OCI_UInt32   nbelem
+    OCI_UInt64   * data,
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindString
@@ -287,7 +287,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindString
     OCI_Statement* stmt,
     const otext  * name,
     otext        * data,
-    OCI_UInt32   len
+    OCI_UInt32     len
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfStrings
@@ -295,8 +295,8 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfStrings
     OCI_Statement* stmt,
     const otext  * name,
     otext        * data,
-    OCI_UInt32   len,
-    OCI_UInt32   nbelem
+    OCI_UInt32     len,
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindRaw
@@ -304,7 +304,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindRaw
     OCI_Statement* stmt,
     const otext  * name,
     void         * data,
-    OCI_UInt32   len
+    OCI_UInt32     len
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfRaws
@@ -312,38 +312,38 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfRaws
     OCI_Statement* stmt,
     const otext  * name,
     void         * data,
-    OCI_UInt32   len,
-    OCI_UInt32   nbelem
+    OCI_UInt32     len,
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindDouble
 (
     OCI_Statement* stmt,
     const otext  * name,
-    double       * data
+    OCI_Double   * data
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfDoubles
 (
     OCI_Statement* stmt,
     const otext  * name,
-    double       * data,
-    OCI_UInt32   nbelem
+    OCI_Double   * data,
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindFloat
 (
     OCI_Statement* stmt,
     const otext  * name,
-    float        * data
+    OCI_Float    * data
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfFloats
 (
     OCI_Statement* stmt,
     const otext  * name,
-    float        * data,
-    OCI_UInt32   nbelem
+    OCI_Float    * data,
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindDate
@@ -358,7 +358,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfDates
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Date    ** data,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindTimestamp
@@ -374,7 +374,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfTimestamps
     const otext     * name,
     OCI_Timestamp  ** data,
     OCI_TimestampType type,
-    OCI_UInt32      nbelem
+    OCI_UInt32        nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindInterval
@@ -390,7 +390,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfIntervals
     const otext    * name,
     OCI_Interval  ** data,
     OCI_IntervalType type,
-    OCI_UInt32     nbelem
+    OCI_UInt32       nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindObject
@@ -406,7 +406,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfObjects
     const otext  * name,
     OCI_Object  ** data,
     OCI_TypeInfo * typinf,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindVector
@@ -421,7 +421,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfVectors
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Vector  ** data,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindLob
@@ -443,7 +443,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfJsons
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Json    ** data,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfLobs
@@ -452,7 +452,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfLobs
     const otext  * name,
     OCI_Lob     ** data,
     OCI_LobType    type,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindFile
@@ -468,7 +468,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfFiles
     const otext  * name,
     OCI_File    ** data,
     OCI_FileType   type,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindReference
@@ -484,7 +484,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfReferences
     const otext  * name,
     OCI_Ref     ** data,
     OCI_TypeInfo * typinf,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindCollection
@@ -500,7 +500,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfCollections
     const otext  * name,
     OCI_Coll    ** data,
     OCI_TypeInfo * typinf,
-    OCI_UInt32   nbelem
+    OCI_UInt32     nbelem
 );
 
 OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindStatement
@@ -515,7 +515,7 @@ OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindLong
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Long     * data,
-    OCI_UInt32   size
+    OCI_UInt32     size
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterNumber
@@ -564,14 +564,14 @@ OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterString
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_UInt32   len
+    OCI_UInt32     len
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterRaw
 (
     OCI_Statement* stmt,
     const otext  * name,
-    OCI_UInt32   len
+    OCI_UInt32     len
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterDouble
@@ -687,7 +687,7 @@ OCI_SYM_LOCAL OCI_BindAllocationMode OcilibStatementGetBindAllocation
 OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetFetchSize
 (
     OCI_Statement* stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetFetchSize
@@ -698,7 +698,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetFetchSize
 OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetPrefetchSize
 (
     OCI_Statement* stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetPrefetchSize
@@ -709,7 +709,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetPrefetchSize
 OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetPrefetchMemory
 (
     OCI_Statement* stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetPrefetchMemory
@@ -720,7 +720,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetPrefetchMemory
 OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetPieceSize
 (
     OCI_Statement* stmt,
-    OCI_UInt32   size
+    OCI_UInt32     size
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetPieceSize
@@ -772,7 +772,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetBindCount
 OCI_SYM_LOCAL OCI_Bind * OcilibStatementGetBind
 (
     OCI_Statement* stmt,
-    OCI_UInt32   index
+    OCI_UInt32     index
 );
 
 OCI_SYM_LOCAL OCI_Bind * OcilibStatementGetBindByName
@@ -800,7 +800,7 @@ OCI_SYM_LOCAL const otext * OcilibStatementGetSqlVerb
 OCI_SYM_LOCAL OCI_Boolean OcilibStatementGetParseBindNames
 (
     OCI_Statement* stmt,
-    OCI_UInt32 * count,
+    OCI_UInt32   * count,
     const otext*** names
 );
 

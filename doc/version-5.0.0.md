@@ -18,7 +18,7 @@ The release touches the C API, the C++ API, the internal handle/symbol architect
 ## 2. Major highlights
 
 - **`OCI_Environment` becomes a public, first-class handle.** `OCI_Initialize()` / `OCI_Cleanup()` are replaced by `OCI_EnvironmentCreate()` / `OCI_EnvironmentFree()`. Most top-level constructors now take an explicit `OCI_Environment*` parameter.
-- **C11 for the C layer and C++14 for the C++ layer.** The C implementation now uses ISO C11 `<threads.h>` for internal synchronization. The C++ header-only API now requires C++14 and uses `std::shared_ptr`, `std::mutex`, `std::unordered_map`, and `std::function` internally.
+- **C11 for the C layer and C++17 for the C++ layer.** The C implementation now uses ISO C11 `<threads.h>` for internal synchronization. The C++ header-only API now requires C++17 and uses `std::shared_ptr`, `std::mutex`, `std::unordered_map`, and `std::function` internally.
 - **Per-environment OCI symbol table.** All OCI function pointers are loaded into an `OCI_Symbols` table attached to each `OCI_Environment`, so every OCI call is dispatched through `env->api-><func>`.
 - **Unified handle polymorphism.** All internal handle structures now share a common base layout (`OCI_HANDLE` / `OCI_DATATYPE` macros in `src/types.h`). A new public helper, `OCI_HandleGetEnvironment()`, can retrieve the owning environment from any handle.
 - **Optional runtime logging.** A new logging subsystem in `src/log.c` is controlled by environment variables (`OCILIB_LOG`, `OCILIB_LOG_CATEGORIES`, `OCILIB_LOG_OUTPUT`) and instruments public API entry/exit, OCI calls, and error reporting.
@@ -43,7 +43,7 @@ The biggest user-visible change is the end of the global, static environment.
 
 ---
 
-## 4. C11 / C++14 baseline
+## 4. C11 / C++17 baseline
 
 ### C layer
 - The C implementation now targets **ISO C11**.
@@ -53,8 +53,8 @@ The biggest user-visible change is the end of the global, static environment.
 - The old `src/mutex.c`, `src/thread.c`, and `src/threadkey.c` implementation files have been deleted.
 
 ### C++ layer
-- The header-only C++ API now requires **C++14 or later** (`#error` in `include/ocilibcpp/config.hpp`).
-- Old C++03 shims (`core::EnableIf`, `core::IsSame`, manual `SmartHandle` reference lists, `CallbackPointer`, `ManagedBuffer`, `Synchronizable`, `ConcurrentList`, `ConcurrentMap`) have been replaced by standard C++14 facilities:
+- The header-only C++ API now requires **C++17 or later** (`#error` in `include/ocilibcpp/config.hpp`).
+- Old C++03 shims (`core::EnableIf`, `core::IsSame`, manual `SmartHandle` reference lists, `CallbackPointer`, `ManagedBuffer`, `Synchronizable`, `ConcurrentList`, `ConcurrentMap`) have been replaced by standard C++17 facilities:
   - `std::enable_if` / `std::is_same`
   - `std::shared_ptr` / `std::weak_ptr` handle control blocks
   - `std::mutex` + `std::lock_guard`
@@ -161,7 +161,7 @@ The following items require code changes when upgrading from v4.x to v5.0.0:
    - Other counters are available through `OCI_UST_HANDLES`, `OCI_UST_DESCRIPTORS`, and `OCI_UST_OBJECTS`.
 
 7. **C++ API**
-   - A C++14 compiler is now required.
+   - A C++17 compiler is now required.
    - `ocilib::Mutex`, `ocilib::Thread`, and `ocilib::ThreadKey` are removed.
    - `ocilib::Environment` is constructed explicitly and is not a singleton.
    - Replace `Environment::GetAllocatedBytes()` with `Environment::GetStats(OCI_UST_BYTES)`.
@@ -174,7 +174,8 @@ The following items require code changes when upgrading from v4.x to v5.0.0:
    - `boolean` remains available as a compatibility typedef (`typedef OCI_Boolean boolean`) so existing code still compiles; new code should use `OCI_Boolean`.
 
 10. **Fixed-width integer types**
-   - New public typedefs: `OCI_Int16`, `OCI_UInt16`, `OCI_Int32`, `OCI_UInt32`, `OCI_Int64`, `OCI_UInt64`, plus `OCI_Size` for byte sizes and buffer lengths.
+   - New public typedefs: `OCI_Int16`, `OCI_UInt16`, `OCI_Int32`, `OCI_UInt32`, `OCI_Int64`, `OCI_UInt64`, `OCI_Float`, `OCI_Double`, plus `OCI_Size` for byte sizes and buffer lengths.
+   - The C++ API additionally exposes short aliases in `namespace ocilib`: `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Float`, `Double`, `Size` (same types as the `OCI_` names).
    - The C API (headers, `src/`, demos, tests) uses these types in place of bare `int`, `unsigned int`, `short`, `unsigned short` and `size_t`.
    - `OCI_Int64`/`OCI_UInt64` are `long long`/`unsigned long long` — identical to the former `big_int`/`big_uint` on every platform — and now always exist (the 32-bit fallback branch is gone).
    - `big_int`/`big_uint` remain available as compatibility typedefs; new code should use `OCI_Int64`/`OCI_UInt64`.

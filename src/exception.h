@@ -39,13 +39,13 @@ OCI_SYM_LOCAL void OcilibExceptionMemory
 (
     OCI_Context   * ctx,
     OCI_PointerType type,
-    OCI_Size          nb_bytes
+    OCI_Size        nb_bytes
 );
 
 OCI_SYM_LOCAL void OcilibExceptionNotAvailable
 (
     OCI_Context* ctx,
-    OCI_Int32          feature
+    OCI_Int32    feature
 );
 
 OCI_SYM_LOCAL void OcilibExceptionNullPointer
@@ -57,7 +57,7 @@ OCI_SYM_LOCAL void OcilibExceptionNullPointer
 OCI_SYM_LOCAL void OcilibExceptionDatatypeNotSupported
 (
     OCI_Context* ctx,
-    OCI_Int32          code
+    OCI_Int32    code
 );
 
 OCI_SYM_LOCAL void OcilibExceptionParsingToken
@@ -69,7 +69,7 @@ OCI_SYM_LOCAL void OcilibExceptionParsingToken
 OCI_SYM_LOCAL void OcilibExceptionMappingArgument
 (
     OCI_Context* ctx,
-    OCI_Int32          arg
+    OCI_Int32    arg
 );
 
 OCI_SYM_LOCAL void OcilibExceptionNotInitialized
@@ -95,20 +95,20 @@ OCI_SYM_LOCAL void OcilibExceptionNotMultithreaded
 OCI_SYM_LOCAL void OcilibExceptionOutOfBounds
 (
     OCI_Context* ctx,
-    OCI_Int32          value
+    OCI_Int32    value
 );
 
 OCI_SYM_LOCAL void OcilibExceptionUnfreedData
 (
     OCI_Context* ctx,
-    OCI_Int32          type_elem,
-    OCI_Int32          nb_elem
+    OCI_Int32    type_elem,
+    OCI_Int32    nb_elem
 );
 
 OCI_SYM_LOCAL void OcilibExceptionUnfreedBytes
 (
     OCI_Context* ctx,
-    OCI_UInt64     nb_bytes
+    OCI_UInt64   nb_bytes
 );
 
 OCI_SYM_LOCAL void OcilibExceptionMaxBind
@@ -125,7 +125,7 @@ OCI_SYM_LOCAL void OcilibExceptionAttributeNotFound
 OCI_SYM_LOCAL void OcilibExceptionMinimumValue
 (
     OCI_Context* ctx,
-    OCI_Int32          min
+    OCI_Int32    min
 );
 
 OCI_SYM_LOCAL void OcilibExceptionTypeNotCompatible
@@ -136,7 +136,7 @@ OCI_SYM_LOCAL void OcilibExceptionTypeNotCompatible
 OCI_SYM_LOCAL void OcilibExceptionStatementState
 (
     OCI_Context* ctx,
-    OCI_Int32          state
+    OCI_Int32    state
 );
 
 OCI_SYM_LOCAL void OcilibExceptionStatementNotScrollable
@@ -153,9 +153,9 @@ OCI_SYM_LOCAL void OcilibExceptionBindAlreadyUsed
 OCI_SYM_LOCAL void OcilibExceptionBindArraySize
 (
     OCI_Context* ctx,
-    OCI_UInt32 maxsize,
-    OCI_UInt32 cursize,
-    OCI_UInt32 newsize
+    OCI_UInt32   maxsize,
+    OCI_UInt32   cursize,
+    OCI_UInt32   newsize
 );
 
 OCI_SYM_LOCAL void OcilibExceptionDirPathColNotFound
@@ -168,7 +168,7 @@ OCI_SYM_LOCAL void OcilibExceptionDirPathColNotFound
 OCI_SYM_LOCAL void OcilibExceptionDirPathState
 (
     OCI_Context* ctx,
-    OCI_Int32          state
+    OCI_Int32    state
 );
 
 OCI_SYM_LOCAL void OcilibExceptionOCIEnvironment
@@ -199,7 +199,7 @@ OCI_SYM_LOCAL void OcilibExceptionArgInvalidValue
 (
     OCI_Context * ctx,
     const otext * name,
-    OCI_UInt32  value
+    OCI_UInt32    value
 );
 
 OCI_SYM_LOCAL void OcilibExceptionExternalBindingNotAllowed

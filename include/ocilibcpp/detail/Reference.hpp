@@ -96,11 +96,11 @@ inline ostring Reference::ToString() const
 {
     if (!IsNull())
     {
-        const OCI_UInt32 size = core::Check(OCI_RefGetHexSize(*this));
+        const UInt32 size = core::Check(OCI_RefGetHexSize(*this));
 
         ostring result;
 
-        result.resize(static_cast<OCI_Size>(size));
+        result.resize(static_cast<Size>(size));
 
         core::Check(OCI_RefToText(*this, size, const_cast<otext*>(result.data())));
 

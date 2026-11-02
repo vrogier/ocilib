@@ -40,7 +40,7 @@ OCI_SYM_LOCAL OCI_JsonNode * OcilibJsonNodeCreateString
 (
     OCI_Json    *json,
     const otext *value,
-    OCI_UInt32 length
+    OCI_UInt32   length
 );
 
 OCI_SYM_LOCAL OCI_JsonNode * OcilibJsonNodeCreateNumber
@@ -62,9 +62,9 @@ OCI_SYM_LOCAL OCI_JsonNode * OcilibJsonNodeCreateNull
 
 OCI_SYM_LOCAL OCI_JsonNode * OcilibJsonNodeCreateBinary
 (
-    OCI_Json    *json,
-    const void  *value,
-    OCI_UInt32 length
+    OCI_Json   *json,
+    const void *value,
+    OCI_UInt32  length
 );
 
 OCI_SYM_LOCAL OCI_JsonNode * OcilibJsonNodeCreateDate
@@ -124,13 +124,13 @@ OCI_SYM_LOCAL OCI_JsonNode * OcilibJsonNodeGetFieldByName
 OCI_SYM_LOCAL OCI_JsonNode * OcilibJsonNodeGetFieldByIndex
 (
     OCI_JsonNode *node,
-    OCI_UInt32  index
+    OCI_UInt32    index
 );
 
 OCI_SYM_LOCAL const otext * OcilibJsonNodeGetFieldName
 (
     OCI_JsonNode *node,
-    OCI_UInt32  index
+    OCI_UInt32    index
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibJsonNodeGetItemCount
@@ -141,13 +141,13 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibJsonNodeGetItemCount
 OCI_SYM_LOCAL OCI_JsonNode * OcilibJsonNodeGetItem
 (
     OCI_JsonNode *node,
-    OCI_UInt32  index
+    OCI_UInt32    index
 );
 
 OCI_SYM_LOCAL const otext * OcilibJsonNodeGetString
 (
     OCI_JsonNode *node,
-    OCI_UInt32 *length
+    OCI_UInt32   *length
 );
 
 OCI_SYM_LOCAL OCI_Number * OcilibJsonNodeGetNumber
@@ -163,7 +163,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetBoolean
 OCI_SYM_LOCAL const void * OcilibJsonNodeGetBinary
 (
     OCI_JsonNode *node,
-    OCI_UInt32 *length
+    OCI_UInt32   *length
 );
 
 OCI_SYM_LOCAL OCI_Date * OcilibJsonNodeGetDate
@@ -185,7 +185,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetString
 (
     OCI_JsonNode *node,
     const otext  *value,
-    OCI_UInt32  length
+    OCI_UInt32    length
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetNumber
@@ -204,7 +204,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetBinary
 (
     OCI_JsonNode *node,
     const void   *value,
-    OCI_UInt32  length
+    OCI_UInt32    length
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetDate
@@ -246,7 +246,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeAppendItem
 OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetItem
 (
     OCI_JsonNode *arr,
-    OCI_UInt32  index,
+    OCI_UInt32    index,
     OCI_JsonNode *value
 );
 

@@ -333,6 +333,8 @@ typedef unsigned int       OCI_UInt32;
 typedef long long          OCI_Int64;
 typedef unsigned long long OCI_UInt64;
 typedef size_t             OCI_Size;
+typedef float              OCI_Float;
+typedef double             OCI_Double;
 ```
 
 `big_int` and `big_uint` remain as compatibility typedefs, now in
@@ -352,6 +354,8 @@ Notes:
 - `OCI_Int32`/`OCI_UInt32`/`OCI_Int16`/`OCI_UInt16` are used throughout the
   public API for numeric parameters and return values. `OCI_Size` covers byte
   sizes, buffer lengths and element counts in internal code.
+- `OCI_Float`/`OCI_Double` are the single/double precision floating point
+  types, used for float and double parameters and return values.
 - `char` and `unsigned char` remain `char`/`unsigned char` — they denote
   characters and raw bytes, not integer quantities.
 

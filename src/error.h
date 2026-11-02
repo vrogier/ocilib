@@ -57,7 +57,7 @@ OCI_SYM_LOCAL void OcilibErrorSet
     OCI_PointerType source_type,
     const char     *location,
     otext          *message,
-    OCI_UInt32    row
+    OCI_UInt32      row
 );
 
 OCI_SYM_LOCAL void OcilibErrorResetSource

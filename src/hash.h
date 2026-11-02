@@ -26,7 +26,7 @@
 OCI_SYM_LOCAL OCI_HashTable * OcilibHashCreate
 (
     OCI_Environment *env,
-    OCI_UInt32     size,
+    OCI_UInt32       size,
     OCI_HashType     type
 );
 
@@ -62,7 +62,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibHashAddInt
 (
     OCI_HashTable *table,
     const otext   *key,
-    OCI_Int32            value
+    OCI_Int32      value
 );
 
 OCI_SYM_LOCAL OCI_Int32 OcilibHashGetInt
@@ -100,7 +100,7 @@ OCI_SYM_LOCAL OCI_HashValue * OcilibHashGetValue
 OCI_SYM_LOCAL OCI_HashEntry * OcilibHashGetEntry
 (
     OCI_HashTable *table,
-    OCI_UInt32   index
+    OCI_UInt32     index
 );
 
 #endif /* OCILIB_HASH_H_INCLUDED */

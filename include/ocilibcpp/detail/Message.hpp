@@ -50,38 +50,48 @@ inline void Message::Reset()
     core::Check(OCI_MsgReset(*this));
 }
 
-template<>
-inline Object Message::GetPayload<Object>()
+template<class T>
+inline T Message::GetPayload()
 {
-    return Object(core::Check(OCI_MsgGetObject(*this)), nullptr);
+    if constexpr (std::is_same_v<T, Object>)
+    {
+        return Object(core::Check(OCI_MsgGetObject(*this)), nullptr);
+    }
+    else if constexpr (std::is_same_v<T, Raw>)
+    {
+        UInt32 size = 0;
+
+        core::Check(OCI_MsgGetRaw(*this, nullptr, &size));
+
+        std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
+
+        core::Check(OCI_MsgGetRaw(*this, static_cast<AnyPointer>(buffer.data()), &size));
+
+        return core::MakeRaw(buffer.data(), size);
+    }
+    else
+    {
+        static_assert(!sizeof(T), "unsupported payload type");
+    }
 }
 
-template<>
-inline void Message::SetPayload<Object>(const Object &value)
+template<class T>
+inline void Message::SetPayload(const T &value)
 {
-    core::Check(OCI_MsgSetObject(*this, value));
-}
+    if constexpr (std::is_same_v<T, Object>)
+    {
+        core::Check(OCI_MsgSetObject(*this, value));
+    }
+    else if constexpr (std::is_same_v<T, Raw>)
+    {
+        const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
 
-template<>
-inline Raw Message::GetPayload<Raw>()
-{
-    OCI_UInt32 size = 0;
-
-    core::Check(OCI_MsgGetRaw(*this, nullptr, &size));
-
-    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
-
-    core::Check(OCI_MsgGetRaw(*this, static_cast<AnyPointer>(buffer.data()), &size));
-
-    return core::MakeRaw(buffer.data(), size);
-}
-
-template<>
-inline void Message::SetPayload<Raw>(const Raw &value)
-{
-    const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
-
-    core::Check(OCI_MsgSetRaw(*this, data, static_cast<OCI_UInt32>(value.size())));
+        core::Check(OCI_MsgSetRaw(*this, data, static_cast<UInt32>(value.size())));
+    }
+    else
+    {
+        static_assert(!sizeof(T), "unsupported payload type");
+    }
 }
 
 inline Date Message::GetEnqueueTime() const
@@ -89,7 +99,7 @@ inline Date Message::GetEnqueueTime() const
     return Date(core::Check(OCI_MsgGetEnqueueTime(*this)), nullptr);
 }
 
-inline OCI_Int32 Message::GetAttemptCount() const
+inline Int32 Message::GetAttemptCount() const
 {
     return core::Check(OCI_MsgGetAttemptCount(*this));
 }
@@ -101,50 +111,50 @@ inline Message::MessageState Message::GetState() const
 
 inline Raw Message::GetID() const
 {
-    OCI_UInt32 size = OCI_SIZE_BUFFER;
+    UInt32 size = OCI_SIZE_BUFFER;
 
-    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
+    std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
 
     core::Check(OCI_MsgGetID(*this, static_cast<AnyPointer>(buffer.data()), &size));
 
     return core::MakeRaw(buffer.data(), size);
 }
 
-inline OCI_Int32 Message::GetExpiration() const
+inline Int32 Message::GetExpiration() const
 {
     return core::Check(OCI_MsgGetExpiration(*this));
 }
 
-inline void Message::SetExpiration(OCI_Int32 value)
+inline void Message::SetExpiration(Int32 value)
 {
     core::Check(OCI_MsgSetExpiration(*this, value));
 }
 
-inline OCI_Int32 Message::GetEnqueueDelay() const
+inline Int32 Message::GetEnqueueDelay() const
 {
     return core::Check(OCI_MsgGetEnqueueDelay(*this));
 }
 
-inline void Message::SetEnqueueDelay(OCI_Int32 value)
+inline void Message::SetEnqueueDelay(Int32 value)
 {
     core::Check(OCI_MsgSetEnqueueDelay(*this, value));
 }
 
-inline OCI_Int32 Message::GetPriority() const
+inline Int32 Message::GetPriority() const
 {
     return core::Check(OCI_MsgGetPriority(*this));
 }
 
-inline void Message::SetPriority(OCI_Int32 value)
+inline void Message::SetPriority(Int32 value)
 {
     core::Check(OCI_MsgSetPriority(*this, value));
 }
 
 inline Raw Message::GetOriginalID() const
 {
-    OCI_UInt32 size = OCI_SIZE_BUFFER;
+    UInt32 size = OCI_SIZE_BUFFER;
 
-    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
+    std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
 
     core::Check(OCI_MsgGetOriginalID(*this, static_cast<AnyPointer>(buffer.data()), &size));
 
@@ -155,7 +165,7 @@ inline void Message::SetOriginalID(const Raw &value)
 {
     const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
 
-    core::Check(OCI_MsgSetOriginalID(*this, data, static_cast<OCI_UInt32>(value.size())));
+    core::Check(OCI_MsgSetOriginalID(*this, data, static_cast<UInt32>(value.size())));
 }
 
 inline ostring Message::GetCorrelation() const
@@ -190,15 +200,15 @@ inline void Message::SetSender(const Agent &agent)
 
 inline void Message::SetConsumers(std::vector<Agent> &agents)
 {
-    const OCI_Size size = agents.size();
+    const Size size = agents.size();
     std::vector<OCI_Agent*> buffer(size);
 
-    for (OCI_Size i = 0; i < size; ++i)
+    for (Size i = 0; i < size; ++i)
     {
         buffer[i] = static_cast<const Agent &>(agents[i]);
     }
 
-    core::Check(OCI_MsgSetConsumers(*this, buffer.data(), static_cast<OCI_UInt32>(size)));
+    core::Check(OCI_MsgSetConsumers(*this, buffer.data(), static_cast<UInt32>(size)));
 }
 
 }

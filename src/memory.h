@@ -27,8 +27,8 @@ OCI_SYM_LOCAL void * OcilibMemoryAlloc
 (
     OCI_Environment *env,
     OCI_PointerType  ptr_type,
-    OCI_Size           block_size,
-    OCI_Size           block_count,
+    OCI_Size         block_size,
+    OCI_Size         block_count,
     OCI_Boolean      zero_fill
 );
 
@@ -37,8 +37,8 @@ OCI_SYM_LOCAL void * OcilibMemoryRealloc
     OCI_Environment *env,
     void           * ptr_mem,
     OCI_PointerType  ptr_type,
-    OCI_Size           block_size,
-    OCI_Size           block_count,
+    OCI_Size         block_size,
+    OCI_Size         block_count,
     OCI_Boolean      zero_fill
 );
 
@@ -120,14 +120,14 @@ OCI_SYM_LOCAL sword OcilibMemoryFreeObject
 
 OCI_SYM_LOCAL void * OcilibMemoryAllocOracleCallback
 (
-    void  *ctxp,
+    void    *ctxp,
     OCI_Size size
 );
 
 OCI_SYM_LOCAL void * OcilibMemoryReallocOracleCallback
 (
-    void  *ctxp,
-    void  *memptr,
+    void    *ctxp,
+    void    *memptr,
     OCI_Size newsize
 );
 

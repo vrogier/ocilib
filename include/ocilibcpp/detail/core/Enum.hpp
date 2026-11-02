@@ -49,9 +49,9 @@ namespace ocilib
         }
 
         template<class T>
-        Enum<T>::operator OCI_UInt32() const
+        Enum<T>::operator UInt32() const
         {
-            return static_cast<OCI_UInt32>(_value);
+            return static_cast<UInt32>(_value);
         }
 
         template<class T>
