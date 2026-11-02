@@ -337,11 +337,9 @@ typedef float              OCI_Float;
 typedef double             OCI_Double;
 ```
 
-`big_int` and `big_uint` remain as compatibility typedefs, now in
-`ocilibc/compat.h` (`typedef OCI_Int64 big_int; typedef OCI_UInt64 big_uint;`).
-`ocilib.h` does not include `compat.h`, so code using the old names must add
-`#include "ocilibc/compat.h"` explicitly. Rename when convenient; do not use the
-old names in new code.
+`big_int` and `big_uint` remain as compatibility typedefs in `platform.h`
+(`typedef OCI_Int64 big_int; typedef OCI_UInt64 big_uint;`). Rename when
+convenient; do not use the old names in new code.
 
 Notes:
 

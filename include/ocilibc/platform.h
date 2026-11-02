@@ -303,8 +303,7 @@ typedef wchar_t otext;
  * point types.
  *
  * big_int and big_uint are kept as compatibility aliases for OCI_Int64
- * and OCI_UInt64 in ocilibc/compat.h; new code should use the OCI_
- * prefixed names.
+ * and OCI_UInt64; new code should use the OCI_ prefixed names.
  *
  */
 
@@ -317,6 +316,11 @@ typedef unsigned long long OCI_UInt64;
 typedef size_t OCI_Size;
 typedef float OCI_Float;
 typedef double OCI_Double;
+
+/* compatibility aliases */
+
+typedef OCI_Int64  big_int;
+typedef OCI_UInt64 big_uint;
 
 #define OCI_BIG_UINT_ENABLED
 

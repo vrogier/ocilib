@@ -44,7 +44,7 @@
 
 ### Enhancements (C++ API)
 
-- Migrated the C++ wrapper baseline from C++03 to C++14
+- Migrated the C++ wrapper baseline from C++03 to C++17
   - Replaced manual `SmartHandle` reference counting with `std::shared_ptr` / `std::weak_ptr` based `HandleControl`
   - Replaced internal `ConcurrentList`, `ConcurrentMap`, `Synchronizable`, and `SynchronizationGuard` helpers with `std::mutex` and `std::unordered_map`
   - Callback storage now uses `std::function`
@@ -61,7 +61,10 @@
 ### Changes (C API)
 
 - The public boolean type is now `OCI_Boolean` (`typedef int OCI_Boolean`); the old `#define boolean int` macro has been removed. A compatibility `typedef OCI_Boolean boolean` is available for existing code.
-- Fixed-width public integer typedefs have been added: `OCI_Int16`/`OCI_UInt16`, `OCI_Int32`/`OCI_UInt32`, `OCI_Int64`/`OCI_UInt64` (the canonical C type of each width on all platforms) and `OCI_Size` for byte sizes and buffer lengths. The public API and the whole codebase now use them in place of bare `int`/`unsigned int`/`short`/`unsigned short`/`size_t`. `big_int`/`big_uint` remain available as compatibility typedefs for `OCI_Int64`/`OCI_UInt64`.
+- Fixed-width public integer typedefs have been added: `OCI_Int16`/`OCI_UInt16`, `OCI_Int32`/`OCI_UInt32`, `OCI_Int64`/`OCI_UInt64` (the canonical C type of each width on all platforms) and `OCI_Size` for byte sizes and buffer lengths. The public API and the whole codebase now use them in place of bare `int`/`unsigned int`/`short`/`unsigned short`/`size_t`.
+  - `OCI_Float`/`OCI_Double` are the single/double precision floating point types, used throughout the API in place of bare `float`/`double`.
+  - `big_int`/`big_uint` remain available as compatibility typedefs for `OCI_Int64`/`OCI_UInt64` in `platform.h`.
+  - The C++ API additionally exposes short aliases in `namespace ocilib`: `Int16`/`UInt16`, `Int32`/`UInt32`, `Int64`/`UInt64`, `Float`, `Double` and `Size`.
 - `OCI_Initialize()` and `OCI_Cleanup()` have been removed; use `OCI_EnvironmentCreate()` and `OCI_EnvironmentFree()`.
 - The following constructors and functions now take an explicit `OCI_Environment*` first argument:
   - `OCI_ConnectionCreate()`, `OCI_PoolCreate()`, `OCI_PoolGetConnection()`, `OCI_PoolFree()`
@@ -77,7 +80,7 @@
 - LOB read/write/append functions now take `unsigned int *char_count` and `unsigned int *byte_count` out-parameters; the old `*2` variants are promoted to the primary names.
 - `OCI_CollGetElem2()` has been removed; use `OCI_CollGetElem()`.
 - `OCI_GetAllocatedBytes()` has been removed; use `OCI_GetStats(env, OCI_UST_BYTES)`.
-- `include/ocilibc/compat.h` has been removed; all v3-era compatibility macros are gone.
+- `include/ocilibc/compat.h` has been removed; all v3-era compatibility macros are gone. `big_int`/`big_uint` remain available as compatibility typedefs for `OCI_Int64`/`OCI_UInt64` in `platform.h`.
 - All `OCI_HandleGet*` raw OCI handle accessors have been removed except `OCI_HandleGetEnvironment()`, which now returns the owning `OCI_Environment*`.
 - XA / distributed transaction support (`OCI_SESSION_XA`) has been removed.
 - The public threading API (`OCI_Mutex*`, `OCI_Thread*`, `OCI_ThreadKey*`) has been removed; use standard C11 `<threads.h>`, C++ `<thread>` / `<mutex>`, or platform APIs.
@@ -92,7 +95,7 @@
 - `Subscription::Register()` no longer takes a `port` argument; use `Environment::SetSubscriptionPort()`.
 - `Dequeue::Subscribe()` is now a static batch call.
 - `Environment::SessionXA` is removed.
-- C++14 is now required.
+- C++17 is now required.
 
 ### Fixes (C API)
 
@@ -104,7 +107,7 @@
 ### Fixes (C++ API)
 
 - Fixed handle ownership and reference-counting issues by rebuilding the C++ wrapper internals on `std::shared_ptr`.
-- Fixed multi-threaded C++ API issues by replacing manual synchronization with standard C++14 facilities.
+- Fixed multi-threaded C++ API issues by replacing manual synchronization with standard C++17 facilities.
 
 ### Documentation
 
@@ -114,7 +117,7 @@
 
 ### Miscellaneous
 
-- Updated build system for C11 (C sources) and C++14 (C++ headers)
+- Updated build system for C11 (C sources) and C++17 (C++ headers)
   - MSVC C sources compiled with `/std:c11`
   - GNU autotools and MSVC project files updated for the new source files (`log.c`, `json.c`, `jsonnode.c`, `sodadb.c`, `sodacoll.c`, `sodadoc.c`, `sodaoptions.c`, `sodacollcursor.c`, `sodadoccursor.c`) and removed `mutex.c` / `thread.c` / `threadkey.c`
 - Added GitHub Actions CI workflow (`.github/workflows/ci.yml`)
@@ -133,7 +136,7 @@
 
 ### Enhancements (C++ API)
 
-- Migrated C++ API from C++03 to C++14:
+- Migrated C++ API from C++03 to C++17:
   - Replaced internal HandleHolder/SmartHandle ownership with HandleControl based on std::shared_ptr
   - Removed public ocilib::Mutex and ocilib::Thread wrappers (ocilib::ThreadKey retained)
   - Modernized callback storage to use std::function
