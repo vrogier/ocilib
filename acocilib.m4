@@ -221,6 +221,16 @@ AC_DEFUN([OCILIB_ORACLE],
 	    fi
 	  fi
 
+	  # fall back to well-known instantclient include paths
+	  if test "$ac_headers_path" = NO; then
+	    for test_include_path in `ls -d /usr/include/oracle/*/client64 /usr/include/oracle/*/client /opt/oracle/instantclient*/sdk/include 2>/dev/null | sort -Vr`; do
+	      if test -f "$test_include_path/oci.h"; then
+	        ac_headers_path=$test_include_path
+	        break
+	      fi
+	    done
+	  fi
+
 	  # find out the Oracle shared lib path
 	  if test "$ac_oracle_lib_path" = NO; then
 		if test "$ac_oracle_home" != NO; then
@@ -237,6 +247,16 @@ AC_DEFUN([OCILIB_ORACLE],
 		  fi
 		  ac_oracle_lib_path=$ac_oracle_home/$ac_lib_dir
 		fi
+	  fi
+
+	  # fall back to well-known instantclient lib paths
+	  if test "$ac_oracle_lib_path" = NO; then
+	    for test_lib_path in `ls -d /usr/lib/oracle/*/client64/lib /usr/lib/oracle/*/client/lib /opt/oracle/instantclient* 2>/dev/null | sort -Vr`; do
+	      if test -f "$test_lib_path/$ac_lib_name"; then
+	        ac_oracle_lib_path=$test_lib_path
+	        break
+	      fi
+	    done
 	  fi
 
 	  AC_MSG_CHECKING([for Oracle OCI headers location])
