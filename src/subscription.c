@@ -297,7 +297,7 @@ OCI_Subscription * OcilibSubscriptionRegister
         sub->con->err,
         OCISubscriptionRegister,
         sub->con->handle, &sub->handle,
-        (ub2)1, sub->err, (ub4)OCI_DEFAULT
+        (ub2)1, sub->con->err, (ub4)OCI_DEFAULT
     );
 
 #else
