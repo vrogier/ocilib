@@ -9,14 +9,16 @@ int main(void)
 {
     OCI_Connection *cn;
     OCI_Statement  *st;
-    int res = 0;
+    OCI_Int32 res = 0;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     /* pl/sql call */
@@ -29,7 +31,7 @@ int main(void)
  
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

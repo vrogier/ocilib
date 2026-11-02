@@ -20,56 +20,59 @@
 
 #include "list.h"
 
+#include <stdlib.h>
+
 #include "macros.h"
 #include "memory.h"
-#include "mutex.h"
 
-#define LIST_FOR_EACH(exp)     \
-                               \
-    if (list)                  \
-    {                          \
-        OCI_Item *item = NULL; \
-        item = list->head;     \
-        while (item)           \
-        {                      \
-            exp;               \
-            item = item->next; \
-        }                      \
-    }
+#define LIST_FOR_EACH(exp)         \
+                                   \
+        if (list)                  \
+        {                          \
+            OCI_Item *item = NULL; \
+            item = list->head;     \
+            while (item)           \
+            {                      \
+                exp;               \
+                item = item->next; \
+            }                      \
+        }
+
 /* --------------------------------------------------------------------------------------------- *
  * OcilibListCreateItem
  * --------------------------------------------------------------------------------------------- */
 
 static OCI_Item * OcilibListCreateItem
 (
-    int type,
-    int size
+    OCI_Environment *env,
+    OCI_PointerType  type,
+    OCI_Int32              size
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_Item*, NULL,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
     OCI_Item* item = NULL;
 
-    CHECK_BOUND(size, 0, INT_MAX)
+    CHECK_BOUND(size, 0, INT_MAX);
 
     /* allocate list item entry */
 
-    item =  (OCI_Item *)OcilibMemoryAlloc(OCI_IPC_LIST_ITEM,
+    item =  (OCI_Item *)OcilibMemoryAlloc(env, OCI_IPC_LIST_ITEM,
                                           sizeof(*item),
-                                          (size_t) 1, TRUE);
+                                          (OCI_Size) 1, TRUE);
 
-    CHECK_NULL(item)
+    CHECK_NULL(item);
 
     /* allocate item data buffer */
 
-    item->data = (void *)OcilibMemoryAlloc(type, (size_t) size,
-                                           (size_t) 1, TRUE);
+    item->data = (void *)OcilibMemoryAlloc(env, type, (OCI_Size) size,
+                                           (OCI_Size) 1, TRUE);
 
-    CHECK_NULL(item->data)
+    CHECK_NULL(item->data);
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -79,15 +82,15 @@ static OCI_Item * OcilibListCreateItem
             {
                 if (NULL != item->data)
                 {
-                    FREE(item->data)
+                    FREE(item->data);
                 }
 
-                FREE(item)
+                FREE(item);
             }
         }
 
-        SET_RETVAL(item)
-    )
+        SET_RETVAL(item);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -96,74 +99,80 @@ static OCI_Item * OcilibListCreateItem
 
 OCI_List* OcilibListCreate
 (
-    int type
+    OCI_Environment *env,
+    OCI_PointerType  type
 )
 {
-    ENTER_FUNC_NO_CONTEXT
+    ENTER_FUNC
     (
-        /* returns */ OCI_List*, NULL
+        /* returns */ OCI_List*, NULL,
+        /* context */ OCI_IPC_ENVIRONMENT, env
     )
 
     /* allocate list */
 
-    OCI_List *list = (OCI_List *)OcilibMemoryAlloc(OCI_IPC_LIST,
+    OCI_List *list = (OCI_List *)OcilibMemoryAlloc(env, OCI_IPC_LIST,
                                                    sizeof(*list),
-                                                   (size_t) 1, TRUE);
+                                                   (OCI_Size) 1, TRUE);
 
-    CHECK_NULL(list)
+    CHECK_NULL(list);
 
     /* create a mutex on multi threaded environments */
 
-    list->type = type;
+    list->env   = env;
+    list->htype = OCI_IPC_LIST;
+    list->type  = type;
 
-    if (LIB_THREADED)
+    if (LIB_THREADED(env))
     {
-        list->mutex = OcilibMutexCreateInternal();
+        if (mtx_init(&list->mutex, mtx_plain) != thrd_success)
+        {
+            THROW(OcilibExceptionMemory, OCI_IPC_LIST, 0);
+        }
     }
 
     CLEANUP_AND_EXIT_FUNC
     (
         if (FAILURE)
         {
-            FREE(list)
+            FREE(list);
         }
 
-        SET_RETVAL(list)
-    )
+        SET_RETVAL(list);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibListFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibListFree
+OCI_Boolean OcilibListFree
 (
     OCI_List *list
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_LIST, list
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (list ? list->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_LIST, list)
+    CHECK_PTR(OCI_IPC_LIST, list);
 
     OcilibListClear(list);
 
-    if (NULL!= list->mutex)
+    if (LIB_THREADED(list->env))
     {
-        OcilibMutexFree(list->mutex);
-        list->mutex = NULL;
+        mtx_destroy(&list->mutex);
     }
 
     OcilibErrorResetSource(NULL, list);
 
-    FREE(list)
+    FREE(list);
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -173,22 +182,22 @@ boolean OcilibListFree
 void * OcilibListAppend
 (
     OCI_List *list,
-    int       size
+    OCI_Int32       size
 )
 {
     ENTER_FUNC
     (
         /* returns */ void*, NULL,
-        /* context */ OCI_IPC_LIST, list
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, (list ? list->env : NULL)
+    );
 
     OCI_Item *item = NULL;
     OCI_Item *temp = NULL;
 
-    CHECK_PTR(OCI_IPC_LIST, list)
+    CHECK_PTR(OCI_IPC_LIST, list);
 
-    item = OcilibListCreateItem(list->type, size);
-    CHECK_NULL(item)
+    item = OcilibListCreateItem(list->env, list->type, size);
+    CHECK_NULL(item);
 
     temp = list->head;
 
@@ -208,29 +217,29 @@ void * OcilibListAppend
 
     list->count++;
 
-    SET_RETVAL(item->data)
+    SET_RETVAL(item->data);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibListClear
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibListClear
+OCI_Boolean OcilibListClear
 (
     OCI_List *list
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_LIST, list
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (list ? list->env : NULL)
+    );
 
     OCI_Item *item = NULL;
 
-    CHECK_PTR(OCI_IPC_LIST, list)
+    CHECK_PTR(OCI_IPC_LIST, list);
 
     /* walk along the list to free item's buffer */
 
@@ -244,23 +253,23 @@ boolean OcilibListClear
 
         /* free data */
 
-        FREE(temp->data)
-        FREE(temp)
+        FREE(temp->data);
+        FREE(temp);
     }
 
     list->head  = NULL;
     list->count = 0;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibListForEach
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibListForEach
+OCI_Boolean OcilibListForEach
 (
     OCI_List          *list,
     POCI_LIST_FOR_EACH proc
@@ -268,25 +277,93 @@ boolean OcilibListForEach
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_LIST, list
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (list ? list->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_LIST, list)
-    CHECK_PTR(OCI_IPC_VOID, proc)
+    CHECK_PTR(OCI_IPC_LIST, list);
+    CHECK_PTR(OCI_IPC_VOID, proc);
 
-    LIST_FOR_EACH(proc(item->data))
+    LIST_FOR_EACH(proc(item->data));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibListDisposeAll
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibListDisposeAll
+(
+    OCI_List         *list,
+    POCI_LIST_DISPOSE proc
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (list ? list->env : NULL)
+    );
+
+    OCI_Item    *item   = NULL;
+    OCI_Item    *prev   = NULL;
+    OCI_UInt32 failed = 0;
+
+    CHECK_PTR(OCI_IPC_LIST, list);
+    CHECK_PTR(OCI_IPC_VOID, proc);
+
+    /* walk the list and dispose each item; on failure the item is kept in
+       the list (with its data) so the failure stays visible and the object
+       reference is not silently lost */
+
+    item = list->head;
+
+    while (NULL != item)
+    {
+        OCI_Item *next = item->next;
+
+        if (proc(item->data))
+        {
+            FREE(item->data);
+            FREE(item);
+
+            if (NULL != prev)
+            {
+                prev->next = next;
+            }
+            else
+            {
+                list->head = next;
+            }
+
+            list->count--;
+        }
+        else
+        {
+            failed++;
+
+            OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_WARN,
+                       OTEXT("dispose failed for item %p (list type %d); item kept in list"),
+                       item->data, (OCI_Int32)list->type);
+
+            prev = item;
+        }
+
+        item = next;
+    }
+
+    SET_RETVAL(0 == failed);
+
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
 * OcilibListForEachWithParam
 * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibListForEachWithParam
+OCI_Boolean OcilibListForEachWithParam
 (
     OCI_List                     *list,
     void                         *param,
@@ -295,25 +372,25 @@ boolean OcilibListForEachWithParam
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_LIST, list
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (list ? list->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_LIST, list)
-    CHECK_PTR(OCI_IPC_VOID, proc)
+    CHECK_PTR(OCI_IPC_LIST, list);
+    CHECK_PTR(OCI_IPC_VOID, proc);
 
-    LIST_FOR_EACH(proc(item->data, param))
+    LIST_FOR_EACH(proc(item->data, param));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibListRemove
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibListRemove
+OCI_Boolean OcilibListRemove
 (
     OCI_List *list,
     void     *data
@@ -321,19 +398,19 @@ boolean OcilibListRemove
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_LIST, list
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (list ? list->env : NULL)
+    );
 
     OCI_Item *item = NULL;
     OCI_Item *temp = NULL;
 
-    CHECK_PTR(OCI_IPC_LIST, list)
-    CHECK_PTR(OCI_IPC_VOID, data)
+    CHECK_PTR(OCI_IPC_LIST, list);
+    CHECK_PTR(OCI_IPC_VOID, data);
 
     item = list->head;
 
-    boolean found = FALSE;
+    OCI_Boolean found = FALSE;
 
     while (NULL != item)
     {
@@ -354,7 +431,7 @@ boolean OcilibListRemove
                 list->head = item->next;
             }
 
-            FREE(item)
+            FREE(item);
 
             break;
         }
@@ -368,16 +445,16 @@ boolean OcilibListRemove
         list->count--;
     }
 
-    SET_RETVAL(found)
+    SET_RETVAL(found);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
 * OcilibListExists
 * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibListExists
+OCI_Boolean OcilibListExists
 (
     OCI_List *list,
     void     *data
@@ -385,23 +462,23 @@ boolean OcilibListExists
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_LIST, list
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (list ? list->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_LIST, list)
-    CHECK_PTR(OCI_IPC_VOID, data)
+    CHECK_PTR(OCI_IPC_LIST, list);
+    CHECK_PTR(OCI_IPC_VOID, data);
 
     LIST_FOR_EACH
     (
         if (item->data == data)
         {
-            SET_SUCCESS()
+            SET_SUCCESS();
             break;
         }
-    )
+    );
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -418,11 +495,11 @@ void * OcilibListFind
     ENTER_FUNC
     (
         /* returns */ void *, NULL,
-        /* context */ OCI_IPC_LIST, list
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, (list ? list->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_LIST,  list)
-    CHECK_PTR(OCI_IPC_VOID, param)
+    CHECK_PTR(OCI_IPC_LIST,  list);
+    CHECK_PTR(OCI_IPC_VOID, param);
 
     void* data = NULL;
 
@@ -433,64 +510,69 @@ void * OcilibListFind
             data = item->data;
             break;
         }
-    )
+    );
 
-    SET_RETVAL(data)
+    SET_RETVAL(data);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
 * OcilibListLock
 * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibListLock
+OCI_Boolean OcilibListLock
 (
     OCI_List* list
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_LIST, list
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (list ? list->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_LIST, list)
+    CHECK_PTR(OCI_IPC_LIST, list);
 
-    if (NULL != list->mutex)
+    if (LIB_THREADED(list->env))
     {
-        CHECK(OcilibMutexAcquire(list->mutex))
+        if (mtx_lock(&list->mutex) != thrd_success)
+        {
+            THROW(OcilibExceptionMemory, OCI_IPC_LIST, 0);
+        }
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
 * OcilibListUnlock
 * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibListUnlock
+OCI_Boolean OcilibListUnlock
 (
     OCI_List* list
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_LIST, list
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (list ? list->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_LIST, list)
+    CHECK_PTR(OCI_IPC_LIST, list);
 
-    if (NULL != list->mutex)
-    {                                         
-        CHECK(OcilibMutexRelease(list->mutex))
+    if (LIB_THREADED(list->env))
+    {
+        if (mtx_unlock(&list->mutex) != thrd_success)
+        {
+            THROW(OcilibExceptionMemory, OCI_IPC_LIST, 0);
+        }
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
-

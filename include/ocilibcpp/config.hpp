@@ -31,75 +31,18 @@ extern "C" {
 #include "ocilib.h"
 }
 
-/* Try to guess C++ Compiler capabilities ... */
+/* C++14 is the minimum supported C++ standard */
 
-#define OCILIBPP_CPP_98 199711L
-#define OCILIBPP_CPP_11 201103L
-#define OCILIBPP_CPP_14 201402L
-
-#if __cplusplus < OCILIBPP_CPP_11
-
-    // GCC
-#if defined(__GNUC__)
-#if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#define OCILIBPP_HAS_CXX
+#if __cplusplus < 201402L && (!defined(_MSVC_LANG) || _MSVC_LANG < 201402L)
+#error "OCILIB C++ API requires C++14 or later"
 #endif
-// MSVC
-#elif defined(_MSC_VER)
-#if _MSVC_LANG >= OCILIBPP_CPP_11
-#define OCILIBPP_HAS_CXX
-#endif
-#endif
-
-#else
 
 #define OCILIBPP_HAS_CXX
-
-#endif
-
-#ifdef OCILIBPP_HAS_CXX
-
-#define OCILIBPP_HAS_ENABLEIF
-#define OCILIBPP_HAS_VARIADIC
 
 #ifdef  OCILIBCPP_DEBUG_MEMORY
 
 #include <iostream>
 #define OCILIBPP_DEBUG_MEMORY_ENABLED
-
-#endif
-
-#else
-
-#define OCILIBPP_DEFINE_CXX_KEYWORDS
-
-#endif
-
-#ifdef OCILIBPP_TEST_CPP98
-
-#ifdef OCILIBPP_DEFINE_CXX_KEYWORDS
-#undef OCILIBPP_DEFINE_CXX_KEYWORDS
-#endif
-
-#ifdef OCILIBPP_HAS_ENABLEIF
-#undef OCILIBPP_HAS_ENABLEIF
-#endif
-
-#ifdef OCILIBPP_HAS_VARIADIC
-#undef OCILIBPP_HAS_VARIADIC
-#endif
-
-#ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
-#undef OCILIBPP_DEBUG_MEMORY_ENABLED
-#endif
-
-#endif
-
-#ifdef OCILIBPP_DEFINE_CXX_KEYWORDS
-
-#define nullptr 0
-#define override
-#define noexcept
 
 #endif
 
@@ -137,41 +80,7 @@ typedef void * AnyPointer;
 */
 typedef std::vector<unsigned char> Raw;
 
-/**
- * @typedef ocilib::MutexHandle
- *
- * @brief
- * Alias for an OCI_Mutex pointer
- *
- */
-typedef OCI_Mutex *  MutexHandle;
-
-/**
- * @typedef ocilib::ThreadHandle
- *
- * @brief
- * Alias for an OCI_Thread pointer
- *
- */
-typedef OCI_Thread * ThreadHandle;
-
-/**
-* @typedef ocilib::ThreadId
-*
-* @brief
-* Thread Unique ID
-*
-*/
-typedef const void * ThreadId;
-
-/**
- * @typedef ocilib::CallbackPointer
- *
- * @brief
- * Alias used for storing user callback method pointers
- *
- */
-typedef void * CallbackPointer;
+/* OCI_Environment* GetEnvironmentHandle(); */
 
 /* class forward declarations */
 
@@ -195,11 +104,11 @@ template<class>
 class Iterator;
 template<class>
 class Collection;
-template<class, int>
+template<class, OCI_Int32>
 class Lob;
 class File;
 class Pool;
-template<class, int>
+template<class, OCI_Int32>
 class Long;
 class Column;
 class Subscription;
@@ -211,10 +120,13 @@ class Dequeue;
 class Queue;
 class QueueTable;
 class DirectPath;
-class Thread;
-class ThreadKey;
-class Mutex;
 class BindInfo;
+class SodaDb;
+class SodaColl;
+class SodaDoc;
+class SodaOptions;
+class SodaCollCursor;
+class SodaDocCursor;
 
 
 /**

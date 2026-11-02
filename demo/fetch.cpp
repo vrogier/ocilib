@@ -6,13 +6,13 @@
 
 using namespace ocilib;
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
 
-        Connection con("db", "usr", "pwd");
+        Connection con(env, "db", "usr", "pwd");
 
         Statement st(con);
         st.Execute("select * from products");
@@ -26,12 +26,9 @@ int main(void)
         std::cout << "=> Total fetched rows : " << rs.GetCount() << std::endl;
 
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
-
     return EXIT_SUCCESS;
 }

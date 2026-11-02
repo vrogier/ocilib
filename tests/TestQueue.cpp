@@ -1,9 +1,7 @@
-#include <atomic>
+﻿#include <atomic>
 
 #include "ocilib_tests.h"
-
-
-static std::atomic<int> MessageWithConsumersCount {0};
+static std::atomic<OCI_Int32> MessageWithConsumersCount {0};
 
 namespace TestCApi
 {
@@ -11,9 +9,11 @@ namespace TestCApi
     {
         ExecDML(OTEXT("create type TestQueueSingleMessageType as object(title varchar2(50), content varchar2(100))"));
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         // no check - for cleanup
@@ -24,6 +24,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestQueueSingleMessageTable"), OTEXT("TestQueueSingleMessageType"), NULL, NULL, FALSE, OCI_AGM_NONE, NULL, 0, 0, NULL));
         ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestQueueSingleMessage"), OTEXT("TestQueueSingleMessageTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
+        ASSERT_TRUE(OCI_QueueAlter(conn, OTEXT("TestQueueSingleMessage"), 0, 0, 0, OTEXT("altered comment")));
         ASSERT_TRUE(OCI_QueueStart(conn, OTEXT("TestQueueSingleMessage"), TRUE, TRUE));
 
         const auto inf = OCI_TypeInfoGet(conn, OTEXT("TestQueueSingleMessageType"), OCI_TIF_TYPE);
@@ -38,7 +39,7 @@ namespace TestCApi
         const auto msg_in = OCI_MsgCreate(inf);
         ASSERT_NE(nullptr, msg_in);
 
-        const auto obj_in = OCI_ObjectCreate(conn, inf);
+        const auto obj_in = OCI_ObjectCreate(inf);
         ASSERT_NE(nullptr, obj_in);
 
         ASSERT_TRUE(OCI_ObjectSetString(obj_in, OTEXT("title"), OTEXT("NEXT MEETING")));
@@ -66,11 +67,11 @@ namespace TestCApi
         ASSERT_TRUE(OCI_DequeueFree(deq));
 
         ASSERT_TRUE(OCI_QueueStop(conn, OTEXT("TestQueueSingleMessage"), TRUE, TRUE, FALSE));
+        ASSERT_TRUE(OCI_QueueTablePurge(conn, OTEXT("TestQueueSingleMessageTable"), NULL, FALSE, OCI_APM_PERSISTENT));
         ASSERT_TRUE(OCI_QueueDrop(conn, OTEXT("TestQueueSingleMessage")));
         ASSERT_TRUE(OCI_QueueTableDrop(conn, OTEXT("TestQueueSingleMessageTable"), TRUE));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop type TestQueueSingleMessageType"));
     }
@@ -92,10 +93,14 @@ namespace TestCApi
     {
         ExecDML(OTEXT("create type TestQueueMessageWithConsumersType as object(title varchar2(50), content varchar2(100))"));
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT | OCI_ENV_EVENTS));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
+
+  //      ASSERT_TRUE(OCI_SetSubscriptionPort(env, 9998));
 
         // no check - for cleanup
         OCI_QueueStop(conn, OTEXT("TestQueueMessageWithConsumers"), TRUE, TRUE, FALSE);
@@ -131,13 +136,13 @@ namespace TestCApi
         ASSERT_TRUE(OCI_DequeueSetConsumer(deq2, OTEXT("C2")));
         ASSERT_TRUE(OCI_DequeueSetNavigation(deq2, OCI_ADN_FIRST_MSG));
 
-        ASSERT_TRUE(OCI_DequeueSubscribe(deq1, 9998, 0, OnMessage));
-        ASSERT_TRUE(OCI_DequeueSubscribe(deq2, 9999, 0, OnMessage));
+        std::array<OCI_Dequeue*, 2> dequeues {deq1, deq2};
+        ASSERT_TRUE(OCI_DequeueSubscribe(conn, dequeues.data(), static_cast<OCI_UInt32>(dequeues.size()), 0, OnMessage));
 
         const auto msg_in = OCI_MsgCreate(inf);
         ASSERT_NE(nullptr, msg_in);
 
-        const auto obj_in = OCI_ObjectCreate(conn, inf);
+        const auto obj_in = OCI_ObjectCreate(inf);
         ASSERT_NE(nullptr, obj_in);
 
         ASSERT_TRUE(OCI_ObjectSetString(obj_in, OTEXT("title"), OTEXT("NEXT MEETING")));
@@ -155,8 +160,8 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_Commit(conn));
 
-        const int MaxRetries = 15;
-        int retry = 1;
+        const OCI_Int32 MaxRetries = 15;
+        OCI_Int32 retry = 1;
 
         while (MessageWithConsumersCount < 2 && retry <= MaxRetries)
         {
@@ -181,16 +186,17 @@ namespace TestCApi
         ASSERT_TRUE(OCI_QueueTableDrop(conn, OTEXT("TestQueueMessageWithConsumersTable"), TRUE));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop type TestQueueMessageWithConsumersType"));
     }
 
     TEST(TestQueue, SingleRawMessage)
     {
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         // no check - for cleanup
@@ -216,7 +222,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, msg_in);
 
         const auto byteBring = std::string("123456789");
-        ASSERT_TRUE(OCI_MsgSetRaw(msg_in, static_cast<const void*>(byteBring.data()), static_cast<unsigned int>(byteBring.size())));
+        ASSERT_TRUE(OCI_MsgSetRaw(msg_in, static_cast<const void*>(byteBring.data()), static_cast<OCI_UInt32>(byteBring.size())));
 
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
 
@@ -228,7 +234,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, msg_out);
 
         char buffer[100] = "";
-        unsigned int size = 100;
+        OCI_UInt32 size = 100;
         ASSERT_TRUE(OCI_MsgGetRaw(msg_out, static_cast<void*>(buffer), &size));
 
         ASSERT_EQ(byteBring, std::string(buffer));
@@ -244,14 +250,16 @@ namespace TestCApi
         ASSERT_TRUE(OCI_QueueTableDrop(conn, OTEXT("TestQueueSingleRawMessageTable"), TRUE));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
+
     }
 
     TEST(TestQueue, SingleRawMessageEmptyPayload)
     {
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         // no check - for cleanup
@@ -277,7 +285,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, msg_in);
 
         const auto byteBring = std::string("123456789");
-        ASSERT_TRUE(OCI_MsgSetOriginalID(msg_in, static_cast<const void*>(byteBring.data()), static_cast<unsigned int>(byteBring.size())));
+        ASSERT_TRUE(OCI_MsgSetOriginalID(msg_in, static_cast<const void*>(byteBring.data()), static_cast<OCI_UInt32>(byteBring.size())));
 
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
 
@@ -289,14 +297,14 @@ namespace TestCApi
         ASSERT_NE(nullptr, msg_out);
 
         char buffer[100] = "";
-        unsigned int size = 100;
+        OCI_UInt32 size = 100;
         ASSERT_TRUE(OCI_MsgGetOriginalID(msg_out, static_cast<void*>(buffer), &size));
 
         ASSERT_EQ(byteBring, std::string(buffer));
         ASSERT_EQ(byteBring.size(), size);
 
         otext payload[100] = OTEXT("");
-        unsigned int payloadSize = 100;
+        OCI_UInt32 payloadSize = 100;
         ASSERT_TRUE(OCI_MsgGetRaw(msg_out, static_cast<void*>(payload), &payloadSize));
         ASSERT_EQ(0, payloadSize);
 
@@ -310,16 +318,18 @@ namespace TestCApi
         ASSERT_TRUE(OCI_QueueTableDrop(conn, OTEXT("TestQueueSingleRawMessageEmptyPayloadTable"), TRUE));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
+
     }
 
     TEST(TestQueue, SingleMessageEmptyPayload)
     {
         ExecDML(OTEXT("create type TestQueueSingleMessageEmptyPayloadType as object(title varchar2(50), content varchar2(100))"));
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         // no check - for cleanup
@@ -345,12 +355,12 @@ namespace TestCApi
         ASSERT_NE(nullptr, msg_in);
 
         const auto byteBring = std::string("123456789");
-        ASSERT_TRUE(OCI_MsgSetOriginalID(msg_in, static_cast<const void*>(byteBring.data()), static_cast<unsigned int>(byteBring.size())));
+        ASSERT_TRUE(OCI_MsgSetOriginalID(msg_in, static_cast<const void*>(byteBring.data()), static_cast<OCI_UInt32>(byteBring.size())));
 
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
 
         otext msgIDIn[100] = OTEXT("");
-        unsigned int sizeMsgIDIn = 100;
+        OCI_UInt32 sizeMsgIDIn = 100;
         ASSERT_TRUE(OCI_MsgGetID(msg_in, static_cast<void*>(msgIDIn), &sizeMsgIDIn));
 
         ASSERT_TRUE(OCI_MsgFree(msg_in));
@@ -361,14 +371,14 @@ namespace TestCApi
         ASSERT_NE(nullptr, msg_out);
 
         char buffer[100] = "";
-        unsigned int sizeBuffer = 100;
+        OCI_UInt32 sizeBuffer = 100;
         ASSERT_TRUE(OCI_MsgGetOriginalID(msg_out, static_cast<void*>(buffer), &sizeBuffer));
 
         ASSERT_EQ(byteBring, std::string(buffer));
         ASSERT_EQ(byteBring.size(), sizeBuffer);
 
         otext msgIDOut[100] = OTEXT("");
-        unsigned int sizeMsgIDOut = 100;
+        OCI_UInt32 sizeMsgIDOut = 100;
         ASSERT_TRUE(OCI_MsgGetID(msg_out, static_cast<void*>(msgIDOut), &sizeMsgIDOut));
 
         ASSERT_EQ(ostring(msgIDIn), ostring(msgIDOut));
@@ -387,8 +397,51 @@ namespace TestCApi
         ASSERT_TRUE(OCI_QueueTableDrop(conn, OTEXT("TestQueueSingleMessageEmptyPayloadTable"), TRUE));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop type TestQueueSingleMessageEmptyPayloadType"));
+    }
+
+    class TestQueueTableAlter : public ::testing::Test
+    {
+    protected:
+
+        void SetUp() override
+        {
+            const auto env = GetEnvironment(nullptr);
+            ASSERT_NE(nullptr, env);
+
+            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+
+            // no check - for cleanup
+            OCI_QueueStop(conn, OTEXT("TestQueueAlterMigrate"), TRUE, TRUE, FALSE);
+            OCI_QueueDrop(conn, OTEXT("TestQueueAlterMigrate"));
+            OCI_QueueTableDrop(conn, OTEXT("TestQueueAlterMigrateTable"), TRUE);
+            // end no check
+
+            /* compatible '8.0' so the table can be migrated to '10.0' */
+            ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestQueueAlterMigrateTable"), OTEXT("RAW"), NULL, NULL, FALSE, OCI_AGM_NONE, NULL, 0, 0, OTEXT("8.0")));
+            ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestQueueAlterMigrate"), OTEXT("TestQueueAlterMigrateTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
+        }
+
+        void TearDown() override
+        {
+            OCI_QueueStop(conn, OTEXT("TestQueueAlterMigrate"), TRUE, TRUE, FALSE);
+            OCI_QueueDrop(conn, OTEXT("TestQueueAlterMigrate"));
+            OCI_QueueTableDrop(conn, OTEXT("TestQueueAlterMigrateTable"), TRUE);
+            OCI_ConnectionFree(conn);
+        }
+
+        OCI_Connection* conn{ nullptr };
+    };
+
+    TEST_F(TestQueueTableAlter, Alter)
+    {
+        ASSERT_TRUE(OCI_QueueTableAlter(conn, OTEXT("TestQueueAlterMigrateTable"), OTEXT("altered comment"), 0, 0));
+    }
+
+    TEST_F(TestQueueTableAlter, Migrate)
+    {
+        ASSERT_TRUE(OCI_QueueTableMigrate(conn, OTEXT("TestQueueAlterMigrateTable"), OTEXT("10.0")));
     }
 }

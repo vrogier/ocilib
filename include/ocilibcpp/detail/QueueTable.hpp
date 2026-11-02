@@ -26,14 +26,14 @@ namespace ocilib
 {
 
 inline void QueueTable::Create(const Connection &connection, const ostring& table, const ostring& payloadType, bool multipleConsumers, const ostring& storageClause, const ostring& sortList,
-                   GroupingMode groupingMode, const ostring& comment, unsigned int primaryInstance, unsigned int secondaryInstance, const ostring& compatible)
+                   GroupingMode groupingMode, const ostring& comment, OCI_UInt32 primaryInstance, OCI_UInt32 secondaryInstance, const ostring& compatible)
 
 {
     core::Check(OCI_QueueTableCreate(connection, table.c_str(), payloadType.c_str(), storageClause.c_str(), sortList.c_str(), multipleConsumers,
                                groupingMode, comment.c_str(), primaryInstance, secondaryInstance, compatible.c_str()));
 }
 
-inline void QueueTable::Alter(const Connection &connection, const ostring& table, const ostring& comment, unsigned int primaryInstance, unsigned int secondaryInstance)
+inline void QueueTable::Alter(const Connection &connection, const ostring& table, const ostring& comment, OCI_UInt32 primaryInstance, OCI_UInt32 secondaryInstance)
 {
     core::Check(OCI_QueueTableAlter(connection, table.c_str(), comment.c_str(), primaryInstance, secondaryInstance));
 }
@@ -45,7 +45,7 @@ inline void QueueTable::Drop(const Connection &connection, const ostring& table,
 
 inline void QueueTable::Purge(const Connection &connection, const ostring& table, PurgeMode mode, const ostring& condition, bool block)
 {
-    core::Check(OCI_QueueTablePurge(connection, table.c_str(), condition.c_str(), block, static_cast<unsigned int>(mode)));
+    core::Check(OCI_QueueTablePurge(connection, table.c_str(), condition.c_str(), block, static_cast<OCI_UInt32>(mode)));
 }
 
 inline void QueueTable::Migrate(const Connection &connection, const ostring& table, const ostring& compatible)

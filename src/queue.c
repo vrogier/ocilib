@@ -23,20 +23,20 @@
 #include "macros.h"
 #include "statement.h"
 
-static unsigned int DeliveryModeValues[] =
+static OCI_UInt32 DeliveryModeValues[] =
 {
     OCI_APM_BUFFERED,
     OCI_APM_PERSISTENT,
     OCI_APM_ALL
 };
 
-static unsigned int GroupingModeValues[] =
+static OCI_UInt32 GroupingModeValues[] =
 {
     OCI_AGM_NONE,
     OCI_AGM_TRANSACTIONNAL
 };
 
-static unsigned int QueueTypeValues[] =
+static OCI_UInt32 QueueTypeValues[] =
 {
     OCI_AQT_NORMAL,
     OCI_AQT_EXCEPTION,
@@ -47,34 +47,34 @@ static unsigned int QueueTypeValues[] =
    OcilibQueueCreate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibQueueCreate
+OCI_Boolean OcilibQueueCreate
 (
     OCI_Connection *con,
     const otext    *queue_name,
     const otext    *queue_table,
-    unsigned int    queue_type,
-    unsigned int    max_retries,
-    unsigned int    retry_delay,
-    unsigned int    retention_time,
-    boolean         dependency_tracking,
+    OCI_QueueType   queue_type,
+    OCI_UInt32    max_retries,
+    OCI_UInt32    retry_delay,
+    OCI_UInt32    retention_time,
+    OCI_Boolean     dependency_tracking,
     const otext    *comment
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
     OCI_Statement *st = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING,     queue_name)
-    CHECK_PTR(OCI_IPC_STRING,     queue_table)
-    CHECK_ENUM_VALUE(queue_type, QueueTypeValues, OTEXT("Queue type"))
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_STRING,     queue_name);
+    CHECK_PTR(OCI_IPC_STRING,     queue_table);
+    CHECK_ENUM_VALUE(queue_type, QueueTypeValues, OTEXT("Queue type"));
 
     st = OcilibStatementCreate(con);
-    CHECK_NULL(st)
+    CHECK_NULL(st);
 
     CHECK
     (
@@ -100,20 +100,20 @@ boolean OcilibQueueCreate
             OTEXT("    ); ")
             OTEXT("END; ")
         )
-    )
+    );
 
-    CHECK(OcilibStatementBindString(st, OTEXT(":queue_name"), (otext *) queue_name, 0))
-    CHECK(OcilibStatementBindString(st, OTEXT(":queue_table"), (otext *)  queue_table, 0))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":queue_type"),  &queue_type))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":max_retries"),  &max_retries))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":retry_delay"),  &retry_delay))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":retention_time"),  &retention_time))
-    CHECK(OcilibStatementBindInt(st, OTEXT(":dependency_tracking"),  &dependency_tracking))
-    CHECK(OcilibStatementBindString(st, OTEXT(":comment"), (otext *) (comment ? comment : OCI_STRING_EMPTY), 0))
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":queue_name"), (otext *) queue_name, 0));
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":queue_table"), (otext *)  queue_table, 0));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":queue_type"),  &queue_type));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":max_retries"),  &max_retries));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":retry_delay"),  &retry_delay));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":retention_time"),  &retention_time));
+    CHECK_NULL(OcilibStatementBindInt(st, OTEXT(":dependency_tracking"),  &dependency_tracking));
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":comment"), (otext *) (comment ? comment : OCI_STRING_EMPTY), 0));
 
-    CHECK(OcilibStatementExecute(st))
+    CHECK(OcilibStatementExecute(st));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -121,36 +121,36 @@ boolean OcilibQueueCreate
         {
             OcilibStatementFree(st);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibQueueAlter
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibQueueAlter
+OCI_Boolean OcilibQueueAlter
 (
     OCI_Connection *con,
     const otext    *queue_name,
-    unsigned int    max_retries,
-    unsigned int    retry_delay,
-    unsigned int    retention_time,
+    OCI_UInt32    max_retries,
+    OCI_UInt32    retry_delay,
+    OCI_UInt32    retention_time,
     const otext    *comment
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
     OCI_Statement *st = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING,     queue_name)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_STRING,     queue_name);
 
     st = OcilibStatementCreate(con);
-    CHECK_NULL(st)
+    CHECK_NULL(st);
 
     CHECK
     (
@@ -168,17 +168,17 @@ boolean OcilibQueueAlter
             OTEXT("    ); ")
             OTEXT("END; ")
         )
-    )
+    );
 
-    CHECK(OcilibStatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":max_retries"),  &max_retries))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":retry_delay"),  &retry_delay))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":retention_time"),  &retention_time))
-    CHECK(OcilibStatementBindString(st, OTEXT(":comment"), (otext *) (comment ? comment : OCI_STRING_EMPTY), 0))
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":max_retries"),  &max_retries));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":retry_delay"),  &retry_delay));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":retention_time"),  &retention_time));
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":comment"), (otext *) (comment ? comment : OCI_STRING_EMPTY), 0));
 
-    CHECK(OcilibStatementExecute(st))
+    CHECK(OcilibStatementExecute(st));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -186,14 +186,14 @@ boolean OcilibQueueAlter
         {
             OcilibStatementFree(st);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibQueueDrop
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibQueueDrop
+OCI_Boolean OcilibQueueDrop
 (
     OCI_Connection *con,
     const otext    *queue_name
@@ -201,17 +201,17 @@ boolean OcilibQueueDrop
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
     OCI_Statement *st = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING,     queue_name)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_STRING,     queue_name);
 
     st = OcilibStatementCreate(con);
-    CHECK_NULL(st)
+    CHECK_NULL(st);
 
     CHECK
     (
@@ -225,13 +225,13 @@ boolean OcilibQueueDrop
             OTEXT("    ); ")
             OTEXT("END; ")
         )
-    )
+    );
 
-    CHECK(OcilibStatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0))
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0));
 
-    CHECK(OcilibStatementExecute(st))
+    CHECK(OcilibStatementExecute(st));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -239,34 +239,34 @@ boolean OcilibQueueDrop
         {
             OcilibStatementFree(st);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibQueueStart
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibQueueStart
+OCI_Boolean OcilibQueueStart
 (
     OCI_Connection *con,
     const otext    *queue_name,
-    boolean         enqueue,
-    boolean         dequeue
+    OCI_Boolean     enqueue,
+    OCI_Boolean     dequeue
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
     OCI_Statement *st = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING,     queue_name)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_STRING,     queue_name);
 
     st = OcilibStatementCreate(con);
-    CHECK_NULL(st)
+    CHECK_NULL(st);
 
     CHECK
     (
@@ -291,15 +291,15 @@ boolean OcilibQueueStart
             OTEXT("   ); ")
             OTEXT("END; ")
         )
-    )
+    );
 
-    CHECK(OcilibStatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0))
-    CHECK(OcilibStatementBindInt(st, OTEXT(":enqueue"),  &enqueue))
-    CHECK(OcilibStatementBindInt(st, OTEXT(":dequeue"),  &dequeue))
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0));
+    CHECK_NULL(OcilibStatementBindInt(st, OTEXT(":enqueue"),  &enqueue));
+    CHECK_NULL(OcilibStatementBindInt(st, OTEXT(":dequeue"),  &dequeue));
 
-    CHECK(OcilibStatementExecute(st))
+    CHECK(OcilibStatementExecute(st));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -307,35 +307,35 @@ boolean OcilibQueueStart
         {
             OcilibStatementFree(st);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibQueueStop
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibQueueStop
+OCI_Boolean OcilibQueueStop
 (
     OCI_Connection *con,
     const otext    *queue_name,
-    boolean         enqueue,
-    boolean         dequeue,
-    boolean         wait
+    OCI_Boolean     enqueue,
+    OCI_Boolean     dequeue,
+    OCI_Boolean     wait
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
     OCI_Statement *st = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING,     queue_name)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_STRING,     queue_name);
 
     st = OcilibStatementCreate(con);
-    CHECK_NULL(st)
+    CHECK_NULL(st);
 
     CHECK
     (
@@ -365,16 +365,16 @@ boolean OcilibQueueStop
             OTEXT("   ); ")
             OTEXT("END; ")
         )
-    )
+    );
 
-    CHECK(OcilibStatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0))
-    CHECK(OcilibStatementBindInt(st, OTEXT(":enqueue"),  &enqueue))
-    CHECK(OcilibStatementBindInt(st, OTEXT(":dequeue"),  &dequeue))
-    CHECK(OcilibStatementBindInt(st, OTEXT(":wait"),  &wait))
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":queue_name"),  (otext *) queue_name, 0));
+    CHECK_NULL(OcilibStatementBindInt(st, OTEXT(":enqueue"),  &enqueue));
+    CHECK_NULL(OcilibStatementBindInt(st, OTEXT(":dequeue"),  &dequeue));
+    CHECK_NULL(OcilibStatementBindInt(st, OTEXT(":wait"),  &wait));
 
-    CHECK(OcilibStatementExecute(st))
+    CHECK(OcilibStatementExecute(st));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -382,43 +382,43 @@ boolean OcilibQueueStop
         {
             OcilibStatementFree(st);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibQueueTableCreate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibQueueTableCreate
+OCI_Boolean OcilibQueueTableCreate
 (
-    OCI_Connection *con,
-    const otext    *queue_table,
-    const otext    *queue_payload_type,
-    const otext    *storage_clause,
-    const otext    *sort_list,
-    boolean         multiple_consumers,
-    unsigned int    message_grouping,
-    const otext    *comment,
-    unsigned int    primary_instance,
-    unsigned int    secondary_instance,
-    const otext    *compatible
+    OCI_Connection   *con,
+    const otext      *queue_table,
+    const otext      *queue_payload_type,
+    const otext      *storage_clause,
+    const otext      *sort_list,
+    OCI_Boolean       multiple_consumers,
+    OCI_QueueGrouping message_grouping,
+    const otext      *comment,
+    OCI_UInt32      primary_instance,
+    OCI_UInt32      secondary_instance,
+    const otext      *compatible
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
     OCI_Statement *st = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING,     queue_table)
-    CHECK_PTR(OCI_IPC_STRING,     queue_payload_type)
-    CHECK_ENUM_VALUE(message_grouping, GroupingModeValues, OTEXT("Grouping mode"))
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_STRING,     queue_table);
+    CHECK_PTR(OCI_IPC_STRING,     queue_payload_type);
+    CHECK_ENUM_VALUE(message_grouping, GroupingModeValues, OTEXT("Grouping mode"));
 
     st = OcilibStatementCreate(con);
-    CHECK_NULL(st)
+    CHECK_NULL(st);
 
     CHECK
     (
@@ -446,22 +446,22 @@ boolean OcilibQueueTableCreate
             OTEXT("   ); ")
             OTEXT("END; ")
         )
-    )
+    );
 
-    CHECK(OcilibStatementBindString(st, OTEXT(":queue_table"), (otext *) queue_table, 0))
-    CHECK(OcilibStatementBindString(st, OTEXT(":queue_payload_type"), (otext *) queue_payload_type, 0))
-    CHECK(OcilibStatementBindString(st, OTEXT(":storage_clause"), (otext *) (storage_clause ? storage_clause : OCI_STRING_EMPTY), 0))
-    CHECK(OcilibStatementBindString(st, OTEXT(":sort_list"), (otext *) (sort_list ? sort_list : OCI_STRING_EMPTY), 0))
-    CHECK(OcilibStatementBindInt(st, OTEXT(":multiple_consumers"),  &multiple_consumers))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":message_grouping"),  &message_grouping))
-    CHECK(OcilibStatementBindString(st, OTEXT(":comment"), (otext *)( comment ? comment : OCI_STRING_EMPTY), 0))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":primary_instance"),  &primary_instance))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":secondary_instance"),  &secondary_instance))
-    CHECK(OcilibStatementBindString(st, OTEXT(":compatible"), (otext *) (compatible ? compatible : OCI_STRING_EMPTY), 0))
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":queue_table"), (otext *) queue_table, 0));
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":queue_payload_type"), (otext *) queue_payload_type, 0));
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":storage_clause"), (otext *) (storage_clause ? storage_clause : OCI_STRING_EMPTY), 0));
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":sort_list"), (otext *) (sort_list ? sort_list : OCI_STRING_EMPTY), 0));
+    CHECK_NULL(OcilibStatementBindInt(st, OTEXT(":multiple_consumers"),  &multiple_consumers));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":message_grouping"),  &message_grouping));
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":comment"), (otext *)( comment ? comment : OCI_STRING_EMPTY), 0));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":primary_instance"),  &primary_instance));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":secondary_instance"),  &secondary_instance));
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":compatible"), (otext *) (compatible ? compatible : OCI_STRING_EMPTY), 0));
 
-    CHECK(OcilibStatementExecute(st))
+    CHECK(OcilibStatementExecute(st));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -469,35 +469,35 @@ boolean OcilibQueueTableCreate
         {
             OcilibStatementFree(st);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibQueueTableAlter
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibQueueTableAlter
+OCI_Boolean OcilibQueueTableAlter
 (
     OCI_Connection *con,
     const otext    *queue_table,
     const otext    *comment,
-    unsigned int    primary_instance,
-    unsigned int    secondary_instance
+    OCI_UInt32    primary_instance,
+    OCI_UInt32    secondary_instance
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
     OCI_Statement *st = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING,     queue_table)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_STRING,     queue_table);
 
     st = OcilibStatementCreate(con);
-    CHECK_NULL(st)
+    CHECK_NULL(st);
 
     CHECK
     (
@@ -514,16 +514,16 @@ boolean OcilibQueueTableAlter
             OTEXT("   ); ")
             OTEXT("END; ")
         )
-    )
+    );
 
-    CHECK(OcilibStatementBindString(st, OTEXT(":queue_table"), (otext *)  queue_table, 0))
-    CHECK(OcilibStatementBindString(st, OTEXT(":comment"),  (otext *) (comment ?  comment : OCI_STRING_EMPTY), 0))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":primary_instance"),  &primary_instance))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":secondary_instance"),  &secondary_instance))
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":queue_table"), (otext *)  queue_table, 0));
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":comment"),  (otext *) (comment ?  comment : OCI_STRING_EMPTY), 0));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":primary_instance"),  &primary_instance));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":secondary_instance"),  &secondary_instance));
 
-    CHECK(OcilibStatementExecute(st))
+    CHECK(OcilibStatementExecute(st));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -531,33 +531,33 @@ boolean OcilibQueueTableAlter
         {
             OcilibStatementFree(st);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibQueueTableDrop
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibQueueTableDrop
+OCI_Boolean OcilibQueueTableDrop
 (
     OCI_Connection *con,
     const otext    *queue_table,
-    boolean         force
+    OCI_Boolean     force
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
     OCI_Statement *st = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING,     queue_table)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_STRING,     queue_table);
 
     st = OcilibStatementCreate(con);
-    CHECK_NULL(st)
+    CHECK_NULL(st);
 
     CHECK
     (
@@ -577,14 +577,14 @@ boolean OcilibQueueTableDrop
             OTEXT("   ); ")
             OTEXT("END; ")
         )
-    )
+    );
 
-    CHECK(OcilibStatementBindString(st, OTEXT(":queue_table"), (otext *)queue_table, 0))
-    CHECK(OcilibStatementBindInt(st, OTEXT(":force"), &force))
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":queue_table"), (otext *)queue_table, 0));
+    CHECK_NULL(OcilibStatementBindInt(st, OTEXT(":force"), &force));
 
-    CHECK(OcilibStatementExecute(st))
+    CHECK(OcilibStatementExecute(st));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -592,37 +592,37 @@ boolean OcilibQueueTableDrop
         {
             OcilibStatementFree(st);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibQueueTablePurge
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibQueueTablePurge
+OCI_Boolean OcilibQueueTablePurge
 (
-    OCI_Connection *con,
-    const otext    *queue_table,
-    const otext    *purge_condition,
-    boolean         block,
-    unsigned int    delivery_mode
+    OCI_Connection    *con,
+    const otext       *queue_table,
+    const otext       *purge_condition,
+    OCI_Boolean        block,
+    OCI_QueuePurgeMode delivery_mode
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
     OCI_Statement *st = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING,     queue_table)
-    CHECK_ENUM_VALUE(delivery_mode, DeliveryModeValues, OTEXT("Delivery mode"))
-    CHECK(con->ver_num >= OCI_10_1)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_STRING,     queue_table);
+    CHECK_ENUM_VALUE(delivery_mode, DeliveryModeValues, OTEXT("Delivery mode"));
+    CHECK(con->ver_num >= OCI_10_1);
 
     st = OcilibStatementCreate(con);
-    CHECK_NULL(st)
+    CHECK_NULL(st);
 
     CHECK
     (
@@ -646,16 +646,17 @@ boolean OcilibQueueTablePurge
             OTEXT("   ); ")
             OTEXT("END; ")
         )
-    )
+    );
 
-    CHECK(OcilibStatementBindString(st, OTEXT(":queue_table"), (otext *)queue_table, 0))
-    CHECK(OcilibStatementBindString(st, OTEXT(":purge_condition"), (otext *) (purge_condition ? purge_condition : OCI_STRING_EMPTY), 0))
-    CHECK(OcilibStatementBindInt(st, OTEXT(":block"), &block))
-    CHECK(OcilibStatementBindUnsignedInt(st, OTEXT(":delivery_mode"), &delivery_mode))
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":queue_table"), (otext *)queue_table, 0));
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":purge_condition"), (otext *) (purge_condition ? purge_condition : OCI_STRING_EMPTY),
+                                         0));
+    CHECK_NULL(OcilibStatementBindInt(st, OTEXT(":block"), &block));
+    CHECK_NULL(OcilibStatementBindUnsignedInt(st, OTEXT(":delivery_mode"), &delivery_mode));
 
-    CHECK(OcilibStatementExecute(st))
+    CHECK(OcilibStatementExecute(st));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -663,14 +664,14 @@ boolean OcilibQueueTablePurge
         {
             OcilibStatementFree(st);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibQueueTableMigrate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibQueueTableMigrate
+OCI_Boolean OcilibQueueTableMigrate
 (
     OCI_Connection *con,
     const otext    *queue_table,
@@ -679,18 +680,18 @@ boolean OcilibQueueTableMigrate
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
     OCI_Statement *st = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING,     queue_table)
-    CHECK_PTR(OCI_IPC_STRING,     compatible)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_STRING,     queue_table);
+    CHECK_PTR(OCI_IPC_STRING,     compatible);
 
     st = OcilibStatementCreate(con);
-    CHECK_NULL(st)
+    CHECK_NULL(st);
 
     CHECK
     (
@@ -705,14 +706,14 @@ boolean OcilibQueueTableMigrate
             OTEXT("   );")
             OTEXT("END;")
         )
-    )
+    );
 
-    CHECK(OcilibStatementBindString(st, OTEXT(":queue_table"), (otext *)queue_table, 0))
-    CHECK(OcilibStatementBindString(st, OTEXT(":compatible"), (otext *)compatible, 0))
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":queue_table"), (otext *)queue_table, 0));
+    CHECK_NULL(OcilibStatementBindString(st, OTEXT(":compatible"), (otext *)compatible, 0));
 
-    CHECK(OcilibStatementExecute(st))
+    CHECK(OcilibStatementExecute(st));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -720,5 +721,5 @@ boolean OcilibQueueTableMigrate
         {
             OcilibStatementFree(st);
         }
-    )
+    );
 }

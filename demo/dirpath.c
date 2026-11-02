@@ -24,15 +24,17 @@ int main(void)
     char val2[SIZE_COL2 + 1];
     char val3[SIZE_COL3 + 1];
 
-    int i = 0, j = 0, nb_rows = SIZE_ARRAY;
-    boolean res = TRUE;
+    OCI_Int32 i = 0, j = 0, nb_rows = SIZE_ARRAY;
+    OCI_Boolean res = TRUE;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     tbl = OCI_TypeInfoGet(cn, "dirpath_data", OCI_TIF_TABLE);
     dp = OCI_DirPathCreate(tbl, NULL, NUM_COLS, nb_rows);
 
@@ -66,16 +68,16 @@ int main(void)
             sprintf(val2, "value %05d", j + (i * 100));
             sprintf(val3, "%04d%02d%02d", (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-            OCI_DirPathSetEntry(dp, j, 1, val1, (unsigned int)strlen(val1), TRUE);
-            OCI_DirPathSetEntry(dp, j, 2, val2, (unsigned int)strlen(val2), TRUE);
-            OCI_DirPathSetEntry(dp, j, 3, val3, (unsigned int)strlen(val3), TRUE);
+            OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32)strlen(val1), TRUE);
+            OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32)strlen(val2), TRUE);
+            OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32)strlen(val3), TRUE);
         }
 
         /* load data to the server */
 
         while (res)
         {
-            int state = OCI_DirPathConvert(dp);
+            OCI_Int32 state = OCI_DirPathConvert(dp);
 
             if ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))
                 res = OCI_DirPathLoad(dp);
@@ -95,7 +97,7 @@ int main(void)
 
     OCI_DirPathFree(dp);
 
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

@@ -35,14 +35,10 @@ namespace ocilib
 
     inline Subscription::Subscription(OCI_Subscription* pSubscription)
     {
-        AcquireTransient
-        (
-            pSubscription,
-            Environment::GetEnvironmentHandle()
-        );
+        AcquireTransient(pSubscription, static_cast<core::Handle*>(nullptr));
     }
 
-    inline void Subscription::Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, unsigned int port, unsigned int timeout)
+    inline void Subscription::Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, OCI_UInt32 timeout)
     {
         AcquireAllocated
         (
@@ -52,25 +48,34 @@ namespace ocilib
                 (
                     connection, name.c_str(), changeTypes.GetValues(),
                     static_cast<POCI_NOTIFY> (handler != nullptr ? Environment::NotifyHandler : nullptr),
-                    port, timeout
+                    timeout
                 )
             ),
-            Environment::GetEnvironmentHandle()
+            connection.GetHandle()
         );
 
-        Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), handler);
+        Environment* env = Environment::GetInstance(connection.GetEnvironment());
+        if (env)
+        {
+            env->SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), handler);
+        }
     }
 
     inline void Subscription::Unregister()
     {
-        Environment::SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), nullptr);
+        Environment* env = Environment::GetInstance(GetEnvironment());
+        if (env)
+        {
+            env->SetUserCallback<Subscription::NotifyHandlerProc>(static_cast<OCI_Subscription*>(*this), nullptr);
+        }
 
         Release();
     }
 
     inline void Subscription::Watch(const ostring& sql)
     {
-        Statement st(GetConnection());
+        Connection connection = GetConnection();
+        Statement st(core::Check(OCI_StatementCreate(connection)), connection.GetHandle());
 
         st.Execute(sql);
 
@@ -82,21 +87,16 @@ namespace ocilib
         return core::MakeString(core::Check(OCI_SubscriptionGetName(*this)));
     }
 
-    inline unsigned int Subscription::GetTimeout() const
+    inline OCI_UInt32 Subscription::GetTimeout() const
     {
         return core::Check(OCI_SubscriptionGetTimeout(*this));
-    }
-
-    inline unsigned int Subscription::GetPort() const
-    {
-        return core::Check(OCI_SubscriptionGetPort(*this));
     }
 
     inline Connection Subscription::GetConnection() const
     {
         core::Handle* selfHandle = this->GetHandle();
         core::Handle* parentHandle = selfHandle ? selfHandle->GetParent() : nullptr;
-        core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : Environment::GetEnvironmentHandle();
+        core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : GetHandle();
 
         return Connection
         (

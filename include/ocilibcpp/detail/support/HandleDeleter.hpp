@@ -34,117 +34,162 @@ namespace ocilib
         template<class T>
         struct HandleDeleter
         {
-            bool operator()(T handle) const { return true; }
+            bool operator()(T handle, AnyPointer) const { return true; }
+        };
+
+        template<> struct HandleDeleter<OCI_Environment*>
+        {
+            bool operator()(OCI_Environment* handle, AnyPointer) const { return OCI_EnvironmentFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Connection*>
         {
-            bool operator()(OCI_Connection* handle) const { return OCI_ConnectionFree(handle); }
+            bool operator()(OCI_Connection* handle, AnyPointer) const { return OCI_ConnectionFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Pool*>
         {
-            bool operator()(OCI_Pool* handle) const { return OCI_PoolFree(handle); }
+            bool operator()(OCI_Pool* handle, AnyPointer env) const { return OCI_PoolFree(static_cast<OCI_Environment*>(env), handle); }
         };
 
         template<> struct HandleDeleter<OCI_Transaction*>
         {
-            bool operator()(OCI_Transaction* handle) const { return OCI_TransactionFree(handle); }
+            bool operator()(OCI_Transaction* handle, AnyPointer) const { return OCI_TransactionFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Number*>
         {
-            bool operator()(OCI_Number* handle) const { return OCI_NumberFree(handle); }
+            bool operator()(OCI_Number* handle, AnyPointer) const { return OCI_NumberFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Date*>
         {
-            bool operator()(OCI_Date* handle) const { return OCI_DateFree(handle); }
+            bool operator()(OCI_Date* handle, AnyPointer) const { return OCI_DateFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Interval*>
         {
-            bool operator()(OCI_Interval* handle) const { return OCI_IntervalFree(handle); }
+            bool operator()(OCI_Interval* handle, AnyPointer) const { return OCI_IntervalFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Timestamp*>
         {
-            bool operator()(OCI_Timestamp* handle) const { return OCI_TimestampFree(handle); }
+            bool operator()(OCI_Timestamp* handle, AnyPointer) const { return OCI_TimestampFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Lob*>
         {
-            bool operator()(OCI_Lob* handle) const { return OCI_LobFree(handle); }
+            bool operator()(OCI_Lob* handle, AnyPointer) const { return OCI_LobFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Long*>
         {
-            bool operator()(OCI_Long* handle) const { return OCI_LongFree(handle); }
+            bool operator()(OCI_Long* handle, AnyPointer) const { return OCI_LongFree(handle); }
         };
     
         template<> struct HandleDeleter<OCI_File*>
         {
-            bool operator()(OCI_File* handle) const { return OCI_FileFree(handle); }
+            bool operator()(OCI_File* handle, AnyPointer) const { return OCI_FileFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Coll*>
         {
-            bool operator()(OCI_Coll* handle) const { return OCI_CollFree(handle); }
+            bool operator()(OCI_Coll* handle, AnyPointer) const { return OCI_CollFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Object*>
         {
-            bool operator()(OCI_Object* handle) const { return OCI_ObjectFree(handle); }
+            bool operator()(OCI_Object* handle, AnyPointer) const { return OCI_ObjectFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Ref*>
         {
-            bool operator()(OCI_Ref* handle) const { return OCI_RefFree(handle); }
+            bool operator()(OCI_Ref* handle, AnyPointer) const { return OCI_RefFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Vector*>
         {
-            bool operator()(OCI_Vector* handle) const { return OCI_VectorFree(handle); }
+            bool operator()(OCI_Vector* handle, AnyPointer) const { return OCI_VectorFree(handle); }
+        };
+
+        template<> struct HandleDeleter<OCI_Json*>
+        {
+            bool operator()(OCI_Json* handle, AnyPointer) const { return OCI_JsonFree(handle); }
+        };
+
+        template<> struct HandleDeleter<OCI_JsonNode*>
+        {
+            bool operator()(OCI_JsonNode* handle, AnyPointer) const { return OCI_JsonNodeFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_XmlType*>
         {
-            bool operator()(OCI_XmlType* handle) const { return true; }
+            bool operator()(OCI_XmlType* handle, AnyPointer) const { return true; }
         };
 
         template<> struct HandleDeleter<OCI_Statement*>
         {
-            bool operator()(OCI_Statement* handle) const { return OCI_StatementFree(handle); }
+            bool operator()(OCI_Statement* handle, AnyPointer) const { return OCI_StatementFree(handle); }
         };     
 
         template<> struct HandleDeleter<OCI_Subscription*>
         {
-            bool operator()(OCI_Subscription* handle) const { return OCI_SubscriptionUnregister(handle); }
+            bool operator()(OCI_Subscription* handle, AnyPointer) const { return OCI_SubscriptionUnregister(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Agent*>
         {
-            bool operator()(OCI_Agent* handle) const { return OCI_AgentFree(handle); }
+            bool operator()(OCI_Agent* handle, AnyPointer) const { return OCI_AgentFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Msg*>
         {
-            bool operator()(OCI_Msg* handle) const { return OCI_MsgFree(handle); }
+            bool operator()(OCI_Msg* handle, AnyPointer) const { return OCI_MsgFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Enqueue*>
         {
-            bool operator()(OCI_Enqueue* handle) const { return OCI_EnqueueFree(handle); }
+            bool operator()(OCI_Enqueue* handle, AnyPointer) const { return OCI_EnqueueFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Dequeue*>
         {
-            bool operator()(OCI_Dequeue* handle) const { return OCI_DequeueFree(handle); }
+            bool operator()(OCI_Dequeue* handle, AnyPointer) const { return OCI_DequeueFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_DirPath*>
         {
-            bool operator()(OCI_DirPath* handle) const { return OCI_DirPathFree(handle); }
+            bool operator()(OCI_DirPath* handle, AnyPointer) const { return OCI_DirPathFree(handle); }
+        };
+
+        template<> struct HandleDeleter<OCI_SodaDb*>
+        {
+            bool operator()(OCI_SodaDb* handle, AnyPointer) const { return OCI_SodaDbFree(handle); }
+        };
+
+        template<> struct HandleDeleter<OCI_SodaColl*>
+        {
+            bool operator()(OCI_SodaColl* handle, AnyPointer) const { return OCI_SodaCollFree(handle); }
+        };
+
+        template<> struct HandleDeleter<OCI_SodaDoc*>
+        {
+            bool operator()(OCI_SodaDoc* handle, AnyPointer) const { return OCI_SodaDocFree(handle); }
+        };
+
+        template<> struct HandleDeleter<OCI_SodaOptions*>
+        {
+            bool operator()(OCI_SodaOptions* handle, AnyPointer) const { return OCI_SodaOptionsFree(handle); }
+        };
+
+        template<> struct HandleDeleter<OCI_SodaCollCursor*>
+        {
+            bool operator()(OCI_SodaCollCursor* handle, AnyPointer) const { return OCI_SodaCollCursorFree(handle); }
+        };
+
+        template<> struct HandleDeleter<OCI_SodaDocCursor*>
+        {
+            bool operator()(OCI_SodaDocCursor* handle, AnyPointer) const { return OCI_SodaDocCursorFree(handle); }
         };
     }
 }

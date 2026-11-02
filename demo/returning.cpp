@@ -6,24 +6,24 @@
 
 using namespace ocilib;
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
 
-        Connection con("db", "usr", "pwd");
+        Connection con(env, "db", "usr", "pwd");
 
         Statement st(con);
 
         st.Prepare("update products set name = name || ' updated' returning code into :code");
-        st.Register<int>(":code");
+        st.Register<OCI_Int32>(":code");
         st.ExecutePrepared();
         
         Resultset rs = st.GetResultset();
         while (rs++)
         {
-            std::cout << "element with code " << rs.Get<int>(1) << " has been updated" << std::endl;
+            std::cout << "element with code " << rs.Get<OCI_Int32>(1) << " has been updated" << std::endl;
         }
 
         std::cout << "=> Total updated rows : " << rs.GetCount() << std::endl;
@@ -32,15 +32,12 @@ int main(void)
         rs = st.GetResultset();
         rs++;
         
-        std::cout << rs.Get<int>(1) << " elements updated in DB" << std::endl;
+        std::cout << rs.Get<OCI_Int32>(1) << " elements updated in DB" << std::endl;
 
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
-
     return EXIT_SUCCESS;
 }

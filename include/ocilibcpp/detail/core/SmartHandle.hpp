@@ -20,181 +20,191 @@
 
 #pragma once
 
+#include <algorithm>
+
 #include "ocilibcpp/core.hpp"
-#include "ocilibcpp/detail/support/HandleStoreResolver.hpp"
+#include "ocilibcpp/detail/core/HandleStore.hpp"
 #include "ocilibcpp/detail/support/HandleDeleter.hpp"
 
 namespace ocilib
 {
     namespace core
     {
-        template<class T>
-        HandleHolder<T>::SmartHandle::SmartHandle
-        (
-            HandleHolder* holder, T handle, bool allocated,
-            SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent
-        )
-            : _guard(GetSynchronizationMode()), _handle(handle), _allocated(allocated),
-            _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store{ nullptr }
+        inline HandleControlBase::HandleControlBase(std::weak_ptr<HandleStore> store, FreeNotifyFunc freeNotify, AnyPointer extraInfo)
+            : _store(store), _freeNotify(freeNotify), _extraInfo(extraInfo)
         {
-            _holders.SetGuard(&_guard);
-            _children.SetGuard(&_guard);
+        }
 
-            if (support::HandleStoreResolver<T>::RequireStore)
+        inline void HandleControlBase::AddChild(std::shared_ptr<HandleControlBase> child)
+        {
+            child->SetParent(this);
+
+            std::lock_guard<std::mutex> lock(_childrenMutex);
+
+            _children.push_back(child);
+        }
+
+        inline void HandleControlBase::RemoveChild(HandleControlBase* child)
+        {
+            std::lock_guard<std::mutex> lock(_childrenMutex);
+
+            _children.erase(std::remove_if(_children.begin(), _children.end(),
+                [child](const std::weak_ptr<HandleControlBase>& w)
             {
-                _store = core::OnAllocate(new core::HandleStore(&_guard));
+                auto p = w.lock();
+                return !p || p.get() == child;
+            }), _children.end());
+        }
+
+        inline void HandleControlBase::FreeChildren()
+        {
+            std::vector<std::shared_ptr<HandleControlBase>> children;
+
+            {
+                std::lock_guard<std::mutex> lock(_childrenMutex);
+
+                for (auto& w : _children)
+                {
+                    auto c = w.lock();
+                    if (c)
+                    {
+                        children.push_back(c);
+                    }
+                }
+
+                _children.clear();
             }
 
-            HandleStore::GetStoreForHandle(parent).Set<SmartHandle*>(handle, this);
-
-            Acquire(holder);
-
-            if (_parent && _handle)
+            for (auto& c : children)
             {
-                _parent->GetChildren().Add(this);
+                c->Free();
+            }
+        }
+
+        inline HandleControlBase* HandleControlBase::GetParent() const
+        {
+            return _parent.lock().get();
+        }
+
+        inline std::shared_ptr<HandleStore> HandleControlBase::GetStore() const
+        {
+            return _store.lock();
+        }
+
+        inline void HandleControlBase::SetParent(HandleControlBase* parent)
+        {
+            _parent = parent ? parent->shared_from_this() : std::shared_ptr<HandleControlBase>();
+        }
+
+        template<class T>
+        inline HandleControl<T>::HandleControl(T handle, bool allocated, std::weak_ptr<HandleStore> store, FreeNotifyFunc freeNotify, AnyPointer extraInfo)
+            : HandleControlBase(store, freeNotify, extraInfo), _handle(handle), _allocated(allocated)
+        {
+        }
+
+        template<class T>
+        inline HandleControl<T>::~HandleControl() noexcept
+        {
+            try
+            {
+                FreeChildren();
+
+                if (_freeNotify)
+                {
+                    _freeNotify(this);
+                }
+
+                Free();
+            }
+            catch (...)
+            {
             }
         }
 
         template<class T>
-        HandleHolder<T>::SmartHandle::~SmartHandle() noexcept
+        inline void HandleControl<T>::Free()
         {
-            SILENT_CATCH((Destroy()))
-        }
+            T h = _handle.exchange(nullptr);
 
-        template<class T>
-        void HandleHolder<T>::SmartHandle::Destroy()
-        {
-            if (_parent && _handle)
+            if (h && _allocated)
             {
-                _parent->GetChildren().Remove(this);
-            }
-
-            _children.ForEach(DeleteHandle);
-            _children.Clear();
-
-            _holders.SetGuard(nullptr);
-            _children.SetGuard(nullptr);
-
-            if (_parent)
-            {
-                HandleStore::GetStoreForHandle(_parent).template Set<SmartHandle*>(_handle, nullptr);
-            }
-
-            if (_freeNotifyFunc)
-            {
-                _freeNotifyFunc(this);
-            }
-
-            if (_handle && _allocated)
-            {
+                OCI_Environment* env = OCI_HandleGetEnvironment(h);
                 support::HandleDeleter<T> deleter;
-                deleter(_handle);
+                deleter(h, env);
             }
 
-            if (_store)
+            if (auto store = _store.lock())
             {
-                delete core::OnDeallocate(_store);
+                store->Remove(h, this);
             }
         }
 
         template<class T>
-        void HandleHolder<T>::SmartHandle::DeleteHandle(Handle* handle)
+        inline T HandleControl<T>::GetHandle() const
         {
-            if (handle)
+            return _handle.load();
+        }
+
+        template<class T>
+        inline OCI_Environment* HandleControl<T>::GetEnvironment() const
+        {
+            T h = _handle.load();
+            return h ? OCI_HandleGetEnvironment(h) : nullptr;
+        }
+
+        template<class T>
+        inline std::shared_ptr<HandleControl<T>> HandleStore::Find(AnyPointer handle)
+        {
+            std::lock_guard<std::mutex> lock(_mutex);
+
+            auto it = _map.find(handle);
+
+            if (it == _map.end())
             {
-                handle->DetachFromParent();
-                handle->DetachFromHolders();
-
-                delete core::OnDeallocate(handle);
+                return nullptr;
             }
-        }
 
-        template<class T>
-        void HandleHolder<T>::SmartHandle::ResetHolder(HandleHolder* holder)
-        {
-            if (holder)
+            auto base = it->second.lock();
+
+            if (!base)
             {
-                holder->_smartHandle = nullptr;
+                _map.erase(it);
+                return nullptr;
             }
+
+            return std::dynamic_pointer_cast<HandleControl<T>>(base);
         }
 
-        template<class T>
-        SynchronizationMode HandleHolder<T>::SmartHandle::GetSynchronizationMode()
+        inline void HandleControlBase::FreeChildren(const std::function<bool(HandleControlBase*)>& predicate)
         {
-            if ((Environment::GetMode() & Environment::Threaded) == Environment::Threaded)
+            std::vector<std::shared_ptr<HandleControlBase>> children;
+
             {
-                return support::HandleStoreResolver<T>::SynchMode;
+                std::lock_guard<std::mutex> lock(_childrenMutex);
+
+                for (auto it = _children.begin(); it != _children.end();)
+                {
+                    auto c = it->lock();
+                    if (!c)
+                    {
+                        it = _children.erase(it);
+                    }
+                    else if (predicate(c.get()))
+                    {
+                        children.push_back(c);
+                        it = _children.erase(it);
+                    }
+                    else
+                    {
+                        ++it;
+                    }
+                }
             }
 
-            return SynchronizationMode::Unsafe;
-        }
-
-        template<class T>
-        void HandleHolder<T>::SmartHandle::Acquire(HandleHolder* holder)
-        {
-            _holders.Add(holder);
-        }
-
-        template<class T>
-        void HandleHolder<T>::SmartHandle::Release(HandleHolder* holder)
-        {
-            _holders.Remove(holder);
-
-            if (_holders.GetSize() == 0)
+            for (auto& c : children)
             {
-                delete core::OnDeallocate(this);
+                c->Free();
             }
-
-            holder->_smartHandle = nullptr;
-        }
-
-        template<class T>
-        T HandleHolder<T>::SmartHandle::GetHandle() const
-        {
-            return _handle;
-        }
-
-        template<class T>
-        AnyPointer HandleHolder<T>::SmartHandle::GetExtraInfos() const
-        {
-            return _extraInfo;
-        }
-
-        template<class T>
-        void HandleHolder<T>::SmartHandle::SetExtraInfos(AnyPointer extraInfo)
-        {
-            _extraInfo = extraInfo;
-        }
-
-        template<class T>
-        ConcurrentList<Handle*>& HandleHolder<T>::SmartHandle::GetChildren()
-        {
-            return _children;
-        }
-
-        template<class T>
-        void HandleHolder<T>::SmartHandle::DetachFromHolders()
-        {
-            _holders.ForEach(ResetHolder);
-            _holders.Clear();
-        }
-
-        template<class T>
-        void HandleHolder<T>::SmartHandle::DetachFromParent()
-        {
-            _parent = nullptr;
-        }
-
-        template<class T>
-        HandleStore* HandleHolder<T>::SmartHandle::GetStore() const
-        {
-            return _store;
-        }
-
-        template<class T>
-        Handle* HandleHolder<T>::SmartHandle::GetParent() const
-        {
-            return _parent;
         }
     }
 }

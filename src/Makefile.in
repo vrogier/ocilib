@@ -163,15 +163,15 @@ am_libocilib_la_OBJECTS = libocilib_la-agent.lo libocilib_la-array.lo \
 	libocilib_la-handle.lo libocilib_la-hash.lo \
 	libocilib_la-helpers.lo libocilib_la-interval.lo \
 	libocilib_la-iterator.lo libocilib_la-list.lo \
+	libocilib_la-log.lo \
 	libocilib_la-lob.lo libocilib_la-long.lo \
 	libocilib_la-memory.lo libocilib_la-message.lo \
-	libocilib_la-mutex.lo libocilib_la-number.lo \
+	libocilib_la-number.lo \
 	libocilib_la-object.lo libocilib_la-ocilib.lo \
 	libocilib_la-pool.lo libocilib_la-queue.lo \
 	libocilib_la-reference.lo libocilib_la-resultset.lo \
 	libocilib_la-statement.lo libocilib_la-stringutils.lo \
-	libocilib_la-subscription.lo libocilib_la-thread.lo \
-	libocilib_la-threadkey.lo libocilib_la-timestamp.lo \
+	libocilib_la-subscription.lo libocilib_la-timestamp.lo \
 	libocilib_la-transaction.lo libocilib_la-typeinfo.lo \
 	libocilib_la-xmltype.lo libocilib_la-vector.lo
 libocilib_la_OBJECTS = $(am_libocilib_la_OBJECTS)
@@ -459,11 +459,11 @@ libocilib_la_SOURCES = \
     interval.c          \
     iterator.c          \
     list.c              \
+    log.c               \
     lob.c               \
     long.c              \
     memory.c            \
     message.c           \
-    mutex.c             \
     number.c            \
     object.c            \
     ocilib.c            \
@@ -474,15 +474,13 @@ libocilib_la_SOURCES = \
     statement.c         \
     stringutils.c       \
     subscription.c      \
-    thread.c            \
-    threadkey.c         \
     timestamp.c         \
     transaction.c       \
     typeinfo.c          \
     xmltype.c           \
     vector.c
 
-libocilib_la_CFLAGS = @OCILIB_EXTRA_FLAGS@ -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
+libocilib_la_CFLAGS = -std=gnu11 @OCILIB_EXTRA_FLAGS@ -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
 libocilib_la_LDFLAGS = @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 ocilibcsubdir = $(includedir)/ocilibc
 ocilibcsub_HEADERS = $(top_srcdir)/include/ocilibc/*.h
@@ -529,11 +527,11 @@ noinst_HEADERS = \
     list.h          \
     loader.h        \
     lob.h           \
+    log.h           \
     long.h          \
     macros.h        \
     memory.h        \
     message.h       \
-    mutex.h         \
     number.h        \
     object.h        \
     pool.h          \
@@ -543,8 +541,6 @@ noinst_HEADERS = \
     statement.h     \
     stringutils.h   \
     subscription.h  \
-    thread.h        \
-    threadkey.h     \
     timestamp.h     \
     transaction.h   \
     typeinfo.h      \
@@ -891,6 +887,13 @@ libocilib_la-list.lo: list.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='list.c' object='libocilib_la-list.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-list.lo `test -f 'list.c' || echo '$(srcdir)/'`list.c
+
+libocilib_la-log.lo: log.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-log.lo -MD -MP -MF $(DEPDIR)/libocilib_la-log.Tpo -c -o libocilib_la-log.lo `test -f 'log.c' || echo '$(srcdir)/'`log.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libocilib_la-log.Tpo $(DEPDIR)/libocilib_la-log.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='log.c' object='libocilib_la-log.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-log.lo `test -f 'log.c' || echo '$(srcdir)/'`log.c
 
 libocilib_la-lob.lo: lob.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-lob.lo -MD -MP -MF $(DEPDIR)/libocilib_la-lob.Tpo -c -o libocilib_la-lob.lo `test -f 'lob.c' || echo '$(srcdir)/'`lob.c

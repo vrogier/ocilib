@@ -31,7 +31,7 @@ OCI_SYM_LOCAL OCI_File * OcilibFileInitialize
     ub4             type
 );
 
-OCI_SYM_LOCAL boolean OcilibFileGetInfo
+OCI_SYM_LOCAL OCI_Boolean OcilibFileGetInfo
 (
     OCI_File* file
 );
@@ -39,10 +39,10 @@ OCI_SYM_LOCAL boolean OcilibFileGetInfo
 OCI_SYM_LOCAL OCI_File * OcilibFileCreate
 (
     OCI_Connection *con,
-    unsigned int    type
+    OCI_FileType    type
 );
 
-OCI_SYM_LOCAL boolean OcilibFileFree
+OCI_SYM_LOCAL OCI_Boolean OcilibFileFree
 (
     OCI_File *file
 );
@@ -50,50 +50,50 @@ OCI_SYM_LOCAL boolean OcilibFileFree
 OCI_SYM_LOCAL OCI_File ** OcilibFileCreateArray
 (
     OCI_Connection *con,
-    unsigned int    type,
-    unsigned int    nbelem
+    OCI_FileType    type,
+    OCI_UInt32    nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibFileFreeArray
+OCI_SYM_LOCAL OCI_Boolean OcilibFileFreeArray
 (
     OCI_File **files
 );
 
-OCI_SYM_LOCAL boolean OcilibFileSeek
+OCI_SYM_LOCAL OCI_Boolean OcilibFileSeek
 (
     OCI_File    *file,
-    big_uint     offset,
-    unsigned int mode
+    OCI_UInt64     offset,
+    OCI_SeekMode mode
 );
 
-OCI_SYM_LOCAL big_uint OcilibFileGetOffset
+OCI_SYM_LOCAL OCI_UInt64 OcilibFileGetOffset
 (
     OCI_File *file
 );
 
-OCI_SYM_LOCAL unsigned int OcilibFileRead
+OCI_SYM_LOCAL OCI_UInt32 OcilibFileRead
 (
     OCI_File    *file,
     void        *buffer,
-    unsigned int len
+    OCI_UInt32 len
 );
 
-OCI_SYM_LOCAL unsigned int OcilibFileGetType
+OCI_SYM_LOCAL OCI_FileType OcilibFileGetType
 (
     OCI_File *file
 );
 
-OCI_SYM_LOCAL big_uint OcilibFileGetSize
+OCI_SYM_LOCAL OCI_UInt64 OcilibFileGetSize
 (
     OCI_File *file
 );
 
-OCI_SYM_LOCAL boolean OcilibFileExists
+OCI_SYM_LOCAL OCI_Boolean OcilibFileExists
 (
     OCI_File *file
 );
 
-OCI_SYM_LOCAL boolean OcilibFileSetName
+OCI_SYM_LOCAL OCI_Boolean OcilibFileSetName
 (
     OCI_File    *file,
     const otext *dir,
@@ -110,28 +110,28 @@ OCI_SYM_LOCAL const otext * OcilibFileGetName
     OCI_File *file
 );
 
-OCI_SYM_LOCAL boolean OcilibFileOpen
+OCI_SYM_LOCAL OCI_Boolean OcilibFileOpen
 (
     OCI_File *file
 );
 
-OCI_SYM_LOCAL boolean OcilibFileIsOpen
+OCI_SYM_LOCAL OCI_Boolean OcilibFileIsOpen
 (
     OCI_File *file
 );
 
-OCI_SYM_LOCAL boolean OcilibFileClose
+OCI_SYM_LOCAL OCI_Boolean OcilibFileClose
 (
     OCI_File *file
 );
 
-OCI_SYM_LOCAL boolean OcilibFileIsEqual
+OCI_SYM_LOCAL OCI_Boolean OcilibFileIsEqual
 (
     OCI_File *file,
     OCI_File *file2
 );
 
-OCI_SYM_LOCAL boolean OcilibFileAssign
+OCI_SYM_LOCAL OCI_Boolean OcilibFileAssign
 (
     OCI_File *file,
     OCI_File *file_src

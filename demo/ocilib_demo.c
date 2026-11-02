@@ -97,15 +97,16 @@ test_t tab_test[] =
  * variables
  * --------------------------------------------------------------------------------------------- */
 
-static OCI_Connection *cn = NULL;
-static OCI_Statement  *st = NULL;
-static OCI_Resultset  *rs = NULL;
+static OCI_Environment *env = NULL;
+static OCI_Connection  *cn = NULL;
+static OCI_Statement   *st = NULL;
+static OCI_Resultset   *rs = NULL;
 
 static otext str[SIZE_STR+1];
 static otext temp[SIZE_STR+1];
 
-static int nb_err  = 0;
-static int nb_warn = 0;
+static OCI_Int32 nb_err  = 0;
+static OCI_Int32 nb_warn = 0;
 
 /* --------------------------------------------------------------------------------------------- *
  * err_handler
@@ -113,7 +114,7 @@ static int nb_warn = 0;
 
 void err_handler(OCI_Error *err)
 {
-    int err_type = OCI_ErrorGetType(err);
+    OCI_Int32 err_type = OCI_ErrorGetType(err);
 
     print_text("\n");
 
@@ -136,14 +137,14 @@ void err_handler(OCI_Error *err)
  * main
  * --------------------------------------------------------------------------------------------- */
 
-int omain(int argc, oarg* argv[])
+OCI_Int32 omain(OCI_Int32 argc, oarg* argv[])
 {
     otext home[SIZE_STR+1] = OTEXT("");
     otext dbs [SIZE_STR+1] = OTEXT("");
     otext usr [SIZE_STR+1] = OTEXT("");
     otext pwd [SIZE_STR+1] = OTEXT("");
 
-    size_t i;
+    OCI_Size i;
 
     /* CHECK COMMAND LINE --------------------------------------------------- */
 
@@ -158,15 +159,21 @@ int omain(int argc, oarg* argv[])
     GET_ARG(usr, ARG_USER);
     GET_ARG(pwd, ARG_PWD);
 
-    if(argc == ARG_COUNT)
+    if (argc == ARG_COUNT)
+    {
         GET_ARG(home, ARG_HOME);
+    }
 
     /* INITIALIZE OCI ------------------------------------------------------- */
 
-    if (!OCI_Initialize(err_handler, home, OCI_ENV_DEFAULT | OCI_ENV_THREADED))
-        return EXIT_FAILURE;
+    env = OCI_EnvironmentCreate(err_handler, home, OCI_ENV_DEFAULT | OCI_ENV_THREADED);
 
-    OCI_EnableWarnings(TRUE);
+    if (!env)
+    {
+        return EXIT_FAILURE;
+    }
+
+    OCI_EnableWarnings(env, TRUE);
 
     /* CONNECTION TO SERVER ------------------------------------------------- */
 
@@ -178,7 +185,7 @@ int omain(int argc, oarg* argv[])
     print_ostr(dbs);
     print_text("\n\n");
 
-    cn = OCI_ConnectionCreate(dbs, usr, pwd, OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, dbs, usr, pwd, OCI_SESSION_DEFAULT);
 
     if (cn)
     {
@@ -217,7 +224,7 @@ int omain(int argc, oarg* argv[])
 
 void cleanup(void)
 {
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     print_frmt("\n%i errors   \n", nb_err);
     print_frmt("\n%i warnings \n\n", nb_warn);
@@ -240,12 +247,12 @@ void print_version(void)
 {
     print_text("\n>>>>> OCILIB BUILD INFORMATION \n\n");
 
-    if (OCI_GetImportMode() == OCI_IMPORT_MODE_LINKAGE)
+    if (OCI_GetImportMode(env) == OCI_IMPORT_MODE_LINKAGE)
         print_text("OCI import mode         : LINKAGE\n");
     else
         print_text("OCI import mode         : RUNTIME\n");
 
-    if (OCI_GetCharset() == OCI_CHAR_ANSI)
+    if (OCI_GetCharset(env) == OCI_CHAR_ANSI)
         print_text("char type               : ANSI\n");
     else
         print_text("char type               : WIDE\n");
@@ -257,8 +264,8 @@ void print_version(void)
     print_frmt("OCILIB revision version : %i\n\n", OCILIB_REVISION_VERSION);
 
     /* print all versions */
-    print_frmt("OCI compile     version : %u\n",   OCI_VER_MAJ(OCI_GetOCICompileVersion()));
-    print_frmt("OCI runtime     version : %u\n\n", OCI_VER_MAJ(OCI_GetOCIRuntimeVersion()));
+    print_frmt("OCI compile     version : %u\n",   OCI_VER_MAJ(OCI_GetOCICompileVersion(env)));
+    print_frmt("OCI runtime     version : %u\n\n", OCI_VER_MAJ(OCI_GetOCIRuntimeVersion(env)));
 
     print_frmt("Server major    version : %u\n",   OCI_GetServerMajorVersion(cn));
     print_frmt("Server minor    version : %u\n",   OCI_GetServerMinorVersion(cn));
@@ -424,7 +431,7 @@ void drop_tables(void)
 
 void test_format(void)
 {
-    int code = 1;
+    OCI_Int32 code = 1;
 
     print_text("\n>>>>> TEST FORMATTING \n\n");
 
@@ -451,7 +458,7 @@ void test_format(void)
 
 void test_immediate(void)
 {
-    int code = 1;
+    OCI_Int32 code = 1;
 
     print_text("\n>>>>> TEST IMMEDIATE \n\n");
 
@@ -470,7 +477,7 @@ void test_immediate(void)
 
 void test_immediate_format(void)
 {
-    int code = 1;
+    OCI_Int32 code = 1;
 
     print_text("\n>>>>> TEST IMMEDIATE FORMATTED\n\n");
 
@@ -486,7 +493,7 @@ void test_immediate_format(void)
 
 void test_fetch(void)
 {
-    int i, n;
+    OCI_Int32 i, n;
 
     print_text("\n>>>>> SIMPLE TEST FETCH WITH META DATA\n\n");
 
@@ -527,7 +534,7 @@ void test_fetch(void)
 
 void test_bind1(void)
 {
-    int code = 1;
+    OCI_Int32 code = 1;
 
     print_text("\n>>>>> TEST BINDING \n\n");
 
@@ -561,9 +568,10 @@ void test_bind2(void)
     OCI_Date *date;
     OCI_File *file;
 
-    int i;
+    OCI_Int32 i;
     double dbl;
     float flt;
+    OCI_UInt32 char_count, byte_count;
 
     print_text("\n>>>>> SINGLE BINDING \n\n");
 
@@ -583,13 +591,15 @@ void test_bind2(void)
     /* create objects and set values */
 
     /* date */
-    date = OCI_DateCreate(cn);
+    date = OCI_DateCreate(env);
     OCI_DateSysDate(date);
 
     /* lob */
     lob = OCI_LobCreate(cn, OCI_CLOB);
     osprintf(temp, SIZE_STR+1, OTEXT("lob value00"));
-    OCI_LobWrite(lob, temp, (unsigned int) ostrlen(temp));
+    char_count = (OCI_UInt32) ostrlen(temp);
+    byte_count = 0;
+    OCI_LobWrite(lob, temp, &char_count, &byte_count);
 
     /* file */
     file = OCI_FileCreate(cn, OCI_BFILE);
@@ -650,7 +660,7 @@ void test_piecewise_insert(void)
 
     if (f)
     {
-        int n;
+        OCI_Int32 n;
         OCI_Long *lg;
         unsigned char buffer[SIZE_BUF];
 
@@ -670,7 +680,7 @@ void test_piecewise_insert(void)
         OCI_Execute(st);
 
         /* write data into table by chunks of 2048 bytes */
-        while ((n = (int) fread(buffer, 1, sizeof(buffer), f)))
+        while ((n = (OCI_Int32) fread(buffer, 1, sizeof(buffer), f)))
         {
             OCI_LongWrite(lg, buffer, n);
         }
@@ -691,7 +701,7 @@ void test_piecewise_fetch(void)
 {
     OCI_Long *lg;
     unsigned char buffer[SIZE_BUF];
-    int n;
+    OCI_Int32 n;
 
     print_text("\n>>>>> TEST PIECEWISE FETCHING\n\n");
 
@@ -725,7 +735,7 @@ void test_piecewise_fetch(void)
         const otext *long_str = OCI_GetString(rs, 1);
 
         print_ostr(long_str);
-        print_frmt("\n%d bytes read\n", (int) ostrlen(long_str));
+        print_frmt("\n%d bytes read\n", (OCI_Int32) ostrlen(long_str));
     }
 
     print_frmt("\n%u row(s) fetched\n", OCI_GetRowCount(rs));
@@ -748,13 +758,23 @@ void test_lob(void)
 
     while (OCI_FetchNext(rs))
     {
+        OCI_UInt32 char_count, byte_count;
+
         lob  = OCI_GetLob(rs, 2);
 
-        OCI_LobWrite(lob, OTEXT("today, "), 7);
-        OCI_LobAppend(lob, OTEXT("i'm going to the cinema ! "), 26);
+        char_count = 7;
+        byte_count = 0;
+        OCI_LobWrite(lob, OTEXT("today, "), &char_count, &byte_count);
+
+        char_count = 26;
+        byte_count = 0;
+        OCI_LobAppend(lob, OTEXT("i'm going to the cinema ! "), &char_count, &byte_count);
         OCI_LobSeek(lob, 0, OCI_SEEK_SET);
 
-        temp[OCI_LobRead(lob, temp, SIZE_STR)] = 0;
+        char_count = SIZE_STR;
+        byte_count = 0;
+        OCI_LobRead(lob, temp, &char_count, &byte_count);
+        temp[char_count] = 0;
 
         print_frmt("> code    : %i", OCI_GetInt(rs, 1));
         print_text(", content : "); print_ostr(temp);
@@ -830,7 +850,7 @@ void test_ref_cursor(void)
 
 void test_plsql(void)
 {
-    int res = 0;
+    OCI_Int32 res = 0;
     const otext *p=NULL;
 
     print_text("\n>>>>> TEST PL/SQL OUTPUT BIND\n\n");
@@ -845,7 +865,7 @@ void test_plsql(void)
 #ifndef OCI_CHARSET_ANSI
 
     {
-        unsigned int version = OCI_GetOCIRuntimeVersion();
+        OCI_UInt32 version = OCI_GetOCIRuntimeVersion(env);
 
         /* Oracle 8i has some troubles with SERVER OUTPUT in unicode */
 
@@ -887,8 +907,8 @@ void test_dates(void)
 
     print_text("\n>>>>> TEST DATETIME MANIPULATION\n\n");
 
-    date  = OCI_DateCreate(NULL);
-    date2 = OCI_DateCreate(NULL);
+    date  = OCI_DateCreate(env);
+    date2 = OCI_DateCreate(env);
 
     OCI_DateFromText(date, OTEXT("1978-04-13 20:20:12"), OTEXT("YYYY-MM-DD HH24:MI:SS"));
     OCI_DateToText(date, OTEXT("YYYY-MM-DD HH24:MI:SS"), SIZE_STR, str);
@@ -924,7 +944,7 @@ void test_timestamp(void)
 {
 #ifndef OCI_CHARSET_ANSI
 
-    unsigned int version = OCI_GetOCIRuntimeVersion();
+    OCI_UInt32 version = OCI_GetOCIRuntimeVersion(env);
 
     /* Oracle 9i has some troubles with formatting Intervals/timestamps in
        an UTF16 context... */
@@ -933,13 +953,13 @@ void test_timestamp(void)
         return;
 #endif
 
-    if (OCI_GetOCIRuntimeVersion() >= OCI_9_0)
+    if (OCI_GetOCIRuntimeVersion(env) >= OCI_9_0)
     {
         OCI_Timestamp *tmsp;
 
         print_text("\n>>>>> TEST TIMESTAMP\n\n");
 
-        tmsp = OCI_TimestampCreate(NULL, OCI_TIMESTAMP);
+        tmsp = OCI_TimestampCreate(env, OCI_TIMESTAMP);
 
         OCI_TimestampSysTimestamp(tmsp);
 
@@ -951,13 +971,13 @@ void test_timestamp(void)
         /* intervals raw oci functions have some troubles with Oracle 9i. So let's
            use it for the demo only if we're using 10g or above */
 
-        if (OCI_GetOCIRuntimeVersion() >= OCI_10_1)
+        if (OCI_GetOCIRuntimeVersion(env) >= OCI_10_1)
         {
             OCI_Interval *itv;
 
             print_text("\n>>>>> TEST INTERVAL \n\n");
 
-            itv = OCI_IntervalCreate(NULL, OCI_INTERVAL_DS);
+            itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
 
             OCI_IntervalSetDaySecond(itv, 1,1,1,1,0);
 
@@ -988,7 +1008,7 @@ void test_describe(void)
     OCI_Column   *col;
     OCI_TypeInfo *tbl;
 
-    int i, n;
+    OCI_Int32 i, n;
 
     print_text("\n>>>>> TEST DESCRIBING TABLE \n\n");
 
@@ -1078,12 +1098,19 @@ void test_returning(void)
 
     while (OCI_FetchNext(rs))
     {
+        OCI_UInt32 char_count, byte_count;
+
         lob = OCI_GetLob(rs, 2);
 
-        OCI_LobAppend(lob, OTEXT("(modified)"), 10);
+        char_count = 10;
+        byte_count = 0;
+        OCI_LobAppend(lob, OTEXT("(modified)"), &char_count, &byte_count);
         OCI_LobSeek(lob, 0, OCI_SEEK_SET);
 
-        temp[OCI_LobRead(lob, temp, SIZE_STR)] = 0;
+        char_count = SIZE_STR;
+        byte_count = 0;
+        OCI_LobRead(lob, temp, &char_count, &byte_count);
+        temp[char_count] = 0;
 
         print_frmt("> code : %i - ", OCI_GetInt(rs, 1));
         print_ostr(temp);
@@ -1104,15 +1131,15 @@ void test_returning_array(void)
     OCI_Lob *lob;
     OCI_Date *date;
     OCI_File *file;
-    int i;
+    OCI_Int32 i;
 
     /* arrays */
-    int       tab_int [SIZE_TAB];
+    OCI_Int32       tab_int [SIZE_TAB];
     otext     tab_str [SIZE_TAB][31];
     float     tab_flt [SIZE_TAB];
     double    tab_dbl [SIZE_TAB];
 
-    OCI_Date  **tab_date = OCI_DateArrayCreate(cn, SIZE_TAB);
+    OCI_Date  **tab_date = OCI_DateArrayCreate(env, SIZE_TAB);
     OCI_Lob   **tab_lob  = OCI_LobArrayCreate(cn,  OCI_CLOB, SIZE_TAB);
     OCI_File  **tab_file = OCI_FileArrayCreate(cn, OCI_BFILE, SIZE_TAB);
 
@@ -1182,7 +1209,11 @@ void test_returning_array(void)
 
         /* lob */
         osprintf(temp, SIZE_STR+1, OTEXT("lob value%02i"), i+1);
-        OCI_LobWrite(tab_lob[i], temp, (unsigned int) ostrlen(temp));
+        {
+            OCI_UInt32 char_count = (OCI_UInt32) ostrlen(temp);
+            OCI_UInt32 byte_count = 0;
+            OCI_LobWrite(tab_lob[i], temp, &char_count, &byte_count);
+        }
 
         /* file */
         osprintf(str, SIZE_STR+1, OTEXT("file%02i.txt"), i+1);
@@ -1214,23 +1245,28 @@ void test_returning_array(void)
         {
             print_frmt("Row # %d-------------------\n", i);
 
-            print_frmt(".... val_int    : %i\n", OCI_GetInt2(rs, OTEXT(":OUT_INT")));
-            print_frmt(".... val_dbl    : %g\n", OCI_GetDouble2(rs, OTEXT(":OUT_DBL")));
-            print_frmt(".... val_flt    : %g\n", OCI_GetFloat2(rs, OTEXT(":OUT_FLT")));
-            print_text(".... val_str    : "); print_ostr(OCI_GetString2(rs, OTEXT(":OUT_STR")));
+            print_frmt(".... val_int    : %i\n", OCI_GetIntByName(rs, OTEXT(":OUT_INT")));
+            print_frmt(".... val_dbl    : %g\n", OCI_GetDoubleByName(rs, OTEXT(":OUT_DBL")));
+            print_frmt(".... val_flt    : %g\n", OCI_GetFloatByName(rs, OTEXT(":OUT_FLT")));
+            print_text(".... val_str    : "); print_ostr(OCI_GetStringByName(rs, OTEXT(":OUT_STR")));
             print_text("\n");
 
-            date = OCI_GetDate2(rs, OTEXT(":OUT_DATE"));
+            date = OCI_GetDateByName(rs, OTEXT(":OUT_DATE"));
             OCI_DateToText(date, OTEXT("YYYY-MM-DD HH24:MI:SS"), SIZE_STR, str);
             print_text(".... val_date   : "); print_ostr(str);
             print_text("\n");
 
-            lob  = OCI_GetLob2(rs, OTEXT(":OUT_LOB"));
-            temp[OCI_LobRead(lob, temp, 100)]=0;
+            lob  = OCI_GetLobByName(rs, OTEXT(":OUT_LOB"));
+            {
+                OCI_UInt32 char_count = 100;
+                OCI_UInt32 byte_count = 0;
+                OCI_LobRead(lob, temp, &char_count, &byte_count);
+                temp[char_count] = 0;
+            }
             print_text(".... val_lob    : "); print_ostr(temp);
             print_text("\n");
 
-            file = OCI_GetFile2(rs, OTEXT(":OUT_FILE"));
+            file = OCI_GetFileByName(rs, OTEXT(":OUT_FILE"));
             print_text(".... val_file   : ");
             print_ostr(OCI_FileGetDirectory(file));
             print_text("/");
@@ -1265,7 +1301,7 @@ void test_object_insert(void)
 
     /* create types for the demo */
 
-    obj  = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, OTEXT("test_t"), OCI_TIF_TYPE));
+    obj  = OCI_ObjectCreate(OCI_TypeInfoGet(cn, OTEXT("test_t"), OCI_TIF_TYPE));
 
     OCI_ObjectSetInt(obj, OTEXT("VAL_INT"), 1);
     OCI_ObjectSetDouble(obj, OTEXT("VAL_DBL"), 3.14);
@@ -1273,11 +1309,11 @@ void test_object_insert(void)
     OCI_ObjectSetString(obj, OTEXT("VAL_STR"), OTEXT("USB KEY 2go"));
     OCI_ObjectSetRaw(obj, OTEXT("VAL_RAW"), rawbuf, 10);
 
-    date = OCI_DateCreate(cn);
+    date = OCI_DateCreate(env);
     OCI_DateSysDate(date);
     OCI_ObjectSetDate(obj, OTEXT("VAL_DATE"), date);
 
-    obj2 = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, OTEXT("TYPE_T"), OCI_TIF_TYPE));
+    obj2 = OCI_ObjectCreate(OCI_TypeInfoGet(cn, OTEXT("TYPE_T"), OCI_TIF_TYPE));
     OCI_ObjectSetInt(obj2, OTEXT("ID"), 1);
 
     OCI_ObjectSetString(obj2, OTEXT("NAME"), OTEXT("USB KEY 2go"));
@@ -1346,10 +1382,19 @@ void test_object_fetch(void)
 
         lob = OCI_ObjectGetLob(obj, OTEXT("VAL_LOB"));
 
-        OCI_LobWrite(lob, OTEXT("Hello from Mars !"), 17);
+        {
+            OCI_UInt32 char_count = 17;
+            OCI_UInt32 byte_count = 0;
+            OCI_LobWrite(lob, OTEXT("Hello from Mars !"), &char_count, &byte_count);
+        }
         OCI_LobSeek(lob, 0, OCI_SEEK_SET);
 
-        temp[OCI_LobRead(lob, temp, SIZE_STR)]=0;
+        {
+            OCI_UInt32 char_count = SIZE_STR;
+            OCI_UInt32 byte_count = 0;
+            OCI_LobRead(lob, temp, &char_count, &byte_count);
+            temp[char_count] = 0;
+        }
 
         print_text("val_lob        : "); print_ostr(temp);
         print_text("\n");
@@ -1462,7 +1507,7 @@ void test_collection(void)
     OCI_Coll     *coll;
     OCI_Iter     *iter;
     OCI_Elem     *elem;
-    unsigned int i, n;
+    OCI_UInt32 i, n;
 
     print_text("\n>>>>> TEST VARRAY BINDING \n\n");
 
@@ -1595,7 +1640,7 @@ void test_ref(void)
 
     print_text("\n>>>>> TEST REF PL/SQL BINDING \n\n");
 
-    ref = OCI_RefCreate(cn, OCI_TypeInfoGet(cn, OTEXT("type_t"), OCI_TIF_TYPE));
+    ref = OCI_RefCreate(OCI_TypeInfoGet(cn, OTEXT("type_t"), OCI_TIF_TYPE));
 
     OCI_Prepare(st, OTEXT("begin ")
                     OTEXT("  select ref(e) into :r from test_table_obj e where e.id = 1; ")
@@ -1626,18 +1671,18 @@ void test_directpath(void)
       match
    */
 
-   if (OCI_VER_MAJ(OCI_GetOCIRuntimeVersion()) == OCI_GetServerMajorVersion(cn))
+   if (OCI_VER_MAJ(OCI_GetOCIRuntimeVersion(env)) == OCI_GetServerMajorVersion(cn))
    {
         OCI_DirPath *dp;
         OCI_TypeInfo *tbl;
-        boolean res = TRUE;
+        OCI_Boolean res = TRUE;
 
         otext val1[SIZE_COL1+1] = OTEXT("");
         otext val2[SIZE_COL2+1] = OTEXT("");
         otext val3[SIZE_COL3+1] = OTEXT("");
 
-        int i = 0, j = 0, nb_rows = SIZE_ARRAY;
-        int state;
+        OCI_Int32 i = 0, j = 0, nb_rows = SIZE_ARRAY;
+        OCI_Int32 state;
 
        /* commit any previous pending modifications */
 
@@ -1654,7 +1699,7 @@ void test_directpath(void)
         res = res && OCI_DirPathSetNoLog(dp, TRUE);
         res = res && OCI_DirPathSetParallel(dp, TRUE);
 
-        if(OCI_GetOCIRuntimeVersion() >= OCI_9_2)
+        if(OCI_GetOCIRuntimeVersion(env) >= OCI_9_2)
         {
             res = res && OCI_DirPathSetCacheSize(dp, 100);
         }
@@ -1687,9 +1732,9 @@ void test_directpath(void)
                                                                      (j%11)+1,
                                                                      (j%23)+1);
 
-                    res = res && OCI_DirPathSetEntry(dp, j, 1, val1, (unsigned int) ostrlen(val1), TRUE);
-                    res = res && OCI_DirPathSetEntry(dp, j, 2, val2, (unsigned int) ostrlen(val2), TRUE);
-                    res = res && OCI_DirPathSetEntry(dp, j, 3, val3, (unsigned int) ostrlen(val3), TRUE);
+                    res = res && OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32) ostrlen(val1), TRUE);
+                    res = res && OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32) ostrlen(val2), TRUE);
+                    res = res && OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32) ostrlen(val3), TRUE);
                 }
 
                /* load data to the server */
@@ -1728,7 +1773,7 @@ void test_directpath(void)
 
 void test_bigint(void)
 {
-    big_int value1 = 12345, value2 = 0;
+    OCI_Int64 value1 = 12345, value2 = 0;
 
     print_text("\n>>>>> TEST BINDING BIG INT \n\n");
 
@@ -1756,17 +1801,17 @@ void test_number()
     OCI_Number     *nt = NULL;
     OCI_Number    **ar = NULL;
 
-    unsigned int i, n;
+    OCI_UInt32 i, n;
  
     print_text("\n>>>>> TEST ORACLE NUMBER \n\n");
 
     tc = OCI_TypeInfoGet(cn, OTEXT("test_num_coll_t"), OCI_TIF_TYPE);
     to = OCI_TypeInfoGet(cn, OTEXT("test_num_t"), OCI_TIF_TYPE);
     cl = OCI_CollCreate(tc);
-    ob = OCI_ObjectCreate(cn, to);
+    ob = OCI_ObjectCreate(to);
     el = OCI_ElemCreate(tc);
-    nm = OCI_NumberCreate(cn);
-    ar = OCI_NumberArrayCreate(cn, 5);
+    nm = OCI_NumberCreate(env);
+    ar = OCI_NumberArrayCreate(env, 5);
 
     // Testing fetching numbers (as number and using implicit conversion number to string)
     OCI_Prepare(st, OTEXT("select value from test_number"));
@@ -1862,7 +1907,7 @@ void test_number()
 
     // Testing formatting
     OCI_NumberFromText(nm, OTEXT("1234.4321"), NULL);
-    OCI_ImmediateFmt(cn, OTEXT("select %n * 2 from dual"), nm, OCI_ARG_NUMBER, nm);
+    OCI_ImmediateFmt(cn, OTEXT("select %n * 2 from dual"), nm, OCI_ARG_OF(nm));
     OCI_NumberToText(nm, NULL, SIZE_STR, str);
     print_ostr(str);
     print_text("\n");

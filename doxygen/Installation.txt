@@ -8,7 +8,7 @@
  * - Platforms: Windows, HP/UX, Linux, macOS, Solaris, AIX
  * - Architectures: 32-bit and 64-bit
  * - Compilers: GCC, MinGW, MSVC, IBM XLC, vendor C compilers, LabVIEW
- * - Oracle versions: 8, 9, 10, 11, 12, 18, 19, 21
+ * - Oracle versions: 8, 9, 10, 11, 12, 18, 19, 21, 23ai
  *
  * @note
  * OCILIB is compatible with:
@@ -76,6 +76,12 @@
  *      when loading dynamically at runtime Oracle shared libs.
  *      This option must be provide if the platform does not use the default
  *      loader flag '-ldl') and the --with-oracle-import is set to 'runtime'
+ *  - --enable-warnings=(no|yes|paranoid) extra compiler diagnostics
+ *      (default is 'yes'; 'paranoid' enables audit-only warnings)
+ *  - --enable-werror treat compiler warnings as errors (CI only,
+ *      do not use for release builds)
+ *  - --enable-sanitizers[=LIST] build with the given sanitizers
+ *      (default list: address,undefined)
  *
  * @note
  *

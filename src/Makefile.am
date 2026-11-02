@@ -39,12 +39,14 @@ libocilib_la_SOURCES=   \
     helpers.c           \
     interval.c          \
     iterator.c          \
+    json.c              \
+    jsonnode.c          \
     list.c              \
+    log.c               \
     lob.c               \
     long.c              \
     memory.c            \
     message.c           \
-    mutex.c             \
     number.c            \
     object.c            \
     ocilib.c            \
@@ -52,19 +54,23 @@ libocilib_la_SOURCES=   \
     queue.c             \
     reference.c         \
     resultset.c         \
+    sodacoll.c          \
+    sodacollcursor.c    \
+    sodadb.c            \
+    sodadoc.c           \
+    sodadoccursor.c     \
+    sodaoptions.c       \
     statement.c         \
     stringutils.c       \
     subscription.c      \
-    thread.c            \
-    threadkey.c         \
     timestamp.c         \
     transaction.c       \
     typeinfo.c          \
     xmltype.c           \
     vector.c
 
-libocilib_la_CFLAGS= @OCILIB_EXTRA_FLAGS@ -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
-libocilib_la_LDFLAGS= @OCILIB_LD_FLAG@  -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+libocilib_la_CFLAGS= -std=gnu11 @OCILIB_EXTRA_FLAGS@ @OCILIB_WARN_FLAGS@ @OCILIB_SAN_CFLAGS@ -D@OCILIB_IMPORT@ -D@OCILIB_CHARSET@ @ORACLE_LIBNAME@ 
+libocilib_la_LDFLAGS= @OCILIB_LD_FLAG@ @OCILIB_SAN_LDFLAGS@ -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 
 ocilibcsubdir=$(includedir)/ocilibc
@@ -114,25 +120,31 @@ noinst_HEADERS=     \
     import.h        \
     interval.h      \
     iterator.h      \
+    json.h          \
+    jsonnode.h      \
     list.h          \
     loader.h        \
     lob.h           \
+    log.h           \
     long.h          \
     macros.h        \
     memory.h        \
     message.h       \
-    mutex.h         \
     number.h        \
     object.h        \
     pool.h          \
     queue.h         \
     reference.h     \
     resultset.h     \
+    sodacoll.h      \
+    sodacollcursor.h\
+    sodadb.h        \
+    sodadoc.h       \
+    sodadoccursor.h \
+    sodaoptions.h   \
     statement.h     \
     stringutils.h   \
     subscription.h  \
-    thread.h        \
-    threadkey.h     \
     timestamp.h     \
     transaction.h   \
     typeinfo.h      \
@@ -141,6 +153,7 @@ noinst_HEADERS=     \
     vector.h        \
     oci/types.h     \
     oci/defs.h      \
+    oci/jsondom.h   \
     oci/api.h 
 
 CLEANFILES = *~ 

@@ -25,10 +25,11 @@
 
 OCI_SYM_LOCAL OCI_List* OcilibListCreate
 (
-    int type
+    OCI_Environment *env,
+    OCI_PointerType  type
 );
 
-OCI_SYM_LOCAL boolean OcilibListFree
+OCI_SYM_LOCAL OCI_Boolean OcilibListFree
 (
     OCI_List* list
 );
@@ -36,10 +37,10 @@ OCI_SYM_LOCAL boolean OcilibListFree
 OCI_SYM_LOCAL void* OcilibListAppend
 (
     OCI_List* list,
-    int       size
+    OCI_Int32       size
 );
 
-OCI_SYM_LOCAL boolean OcilibListClear
+OCI_SYM_LOCAL OCI_Boolean OcilibListClear
 (
     OCI_List* list
 );
@@ -49,10 +50,24 @@ typedef void (*POCI_LIST_FOR_EACH)
     void* data
 );
 
-OCI_SYM_LOCAL boolean OcilibListForEach
+OCI_SYM_LOCAL OCI_Boolean OcilibListForEach
 (
     OCI_List         * list,
     POCI_LIST_FOR_EACH proc
+);
+
+/* dispose callback returning success status; unlike POCI_LIST_FOR_EACH,
+   its return value is honoured by OcilibListDisposeAll() */
+
+typedef OCI_Boolean (*POCI_LIST_DISPOSE)
+(
+    void* data
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibListDisposeAll
+(
+    OCI_List        * list,
+    POCI_LIST_DISPOSE proc
 );
 
 typedef void (*POCI_LIST_FOR_EACH_WITH_PARAM)
@@ -61,26 +76,26 @@ typedef void (*POCI_LIST_FOR_EACH_WITH_PARAM)
     void* param
 );
 
-OCI_SYM_LOCAL boolean OcilibListForEachWithParam
+OCI_SYM_LOCAL OCI_Boolean OcilibListForEachWithParam
 (
     OCI_List                    * list,
     void                        * param,
     POCI_LIST_FOR_EACH_WITH_PARAM proc
 );
 
-OCI_SYM_LOCAL boolean OcilibListRemove
+OCI_SYM_LOCAL OCI_Boolean OcilibListRemove
 (
     OCI_List* list,
     void    * data
 );
 
-OCI_SYM_LOCAL boolean OcilibListExists
+OCI_SYM_LOCAL OCI_Boolean OcilibListExists
 (
     OCI_List* list,
     void    * data
 );
 
-typedef boolean (*POCI_LIST_FIND)
+typedef OCI_Boolean (*POCI_LIST_FIND)
 (
     void* data,
     void* param
@@ -93,12 +108,12 @@ OCI_SYM_LOCAL void * OcilibListFind
     void         * param
 );
 
-OCI_SYM_LOCAL boolean OcilibListLock
+OCI_SYM_LOCAL OCI_Boolean OcilibListLock
 (
     OCI_List* list
 );
 
-OCI_SYM_LOCAL boolean OcilibListUnlock
+OCI_SYM_LOCAL OCI_Boolean OcilibListUnlock
 (
     OCI_List* list
 );

@@ -31,26 +31,20 @@
 
 OCI_Date * OcilibDateInitialize
 (
-    OCI_Connection *con,
-    OCI_Date       *date,
-    OCIDate        *buffer,
-    boolean         allocate,
-    boolean         ansi
+    OCI_Environment *env,
+    OCI_Date        *date,
+    OCIDate         *buffer,
+    OCI_Boolean      allocate,
+    OCI_Boolean      ansi
 )
 {
-    ENTER_FUNC_NO_CONTEXT
+    ENTER_FUNC
     (
-        /* returns */ OCI_Date*, NULL
-    )
+        /* returns */ OCI_Date*, NULL,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    ALLOC_DATA(OCI_IPC_DATE, date, 1);
-
-    date->con = con;
-
-    /* get the right error handle */
-
-    date->err = con ? con->err : Env.err;
-    date->env = con ? con->env : Env.env;
+    ALLOC_HANDLE(OCI_IPC_DATE, date);
 
     /* allocate buffer if needed */
 
@@ -98,8 +92,8 @@ OCI_Date * OcilibDateInitialize
             date = NULL;
         }
 
-        SET_RETVAL(date)
-    )
+        SET_RETVAL(date);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -108,55 +102,54 @@ OCI_Date * OcilibDateInitialize
 
 OCI_Date * OcilibDateCreate
 (
-    OCI_Connection *con
+    OCI_Environment *env
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_Date*, NULL,
-        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    CHECK_INITIALIZED()
+    CHECK_PTR(OCI_IPC_ENVIRONMENT, env);
+    SET_RETVAL(OcilibDateInitialize(env, NULL, NULL, TRUE, FALSE));
 
-    SET_RETVAL(OcilibDateInitialize(con, NULL, NULL, TRUE, FALSE))
-
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateFree
+OCI_Boolean OcilibDateFree
 (
     OCI_Date *date
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_OBJECT_FETCHED(date)
+    CHECK_PTR(OCI_IPC_DATE, date);
+    CHECK_OBJECT_FETCHED(date);
 
     if (date->allocated)
     {
-        FREE(date->handle)
+        FREE(date->handle);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != date->hstate)
     {
         OcilibErrorResetSource(NULL, date);
 
-        FREE(date)
+        FREE(date);
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -165,119 +158,119 @@ boolean OcilibDateFree
 
 OCI_Date ** OcilibDateCreateArray
 (
-    OCI_Connection *con,
-    unsigned int    nbelem
+    OCI_Environment *env,
+    OCI_UInt32     nbelem
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_Date**, FALSE,
-        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
     OCI_Array *arr = NULL;
 
-    CHECK_INITIALIZED()
+    CHECK_PTR(OCI_IPC_ENVIRONMENT, env);
 
-    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_DATETIME, 0,
+    arr = OcilibArrayCreate(env, NULL, nbelem, OCI_CDT_DATETIME, 0,
                             sizeof(OCIDate), sizeof(OCI_Date), 0, NULL);
 
-    CHECK_NULL(arr)
+    CHECK_NULL(arr);
 
-    SET_RETVAL((OCI_Date**)arr->tab_obj)
+    SET_RETVAL((OCI_Date**)arr->tab_obj);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateFreeArray
+OCI_Boolean OcilibDateFreeArray
 (
     OCI_Date **dates
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_VOID, NULL
+    );
 
-    CHECK_PTR(OCI_IPC_ARRAY, dates)
+    CHECK_PTR(OCI_IPC_ARRAY, dates);
 
-    SET_RETVAL(OcilibArrayFreeFromHandles((void**)dates))
+    SET_RETVAL(OcilibArrayFreeFromHandles(((OCI_Date *) dates[0])->env, (void**)dates));
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateAddDays
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateAddDays
+OCI_Boolean OcilibDateAddDays
 (
     OCI_Date *date,
-    int       nb
+    OCI_Int32       nb
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE, date);
 
     CHECK_OCI
     (
-        date->err,
+        date->env->err,
         OCIDateAddDays,
-        date->err, date->handle,
+        date->env->err, date->handle,
         (sb4)nb, date->handle
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateAddMonths
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateAddMonths
+OCI_Boolean OcilibDateAddMonths
 (
     OCI_Date *date,
-    int       nb
+    OCI_Int32       nb
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE, date);
 
     CHECK_OCI
     (
-        date->err,
+        date->env->err,
         OCIDateAddMonths,
-        date->err, date->handle,
+        date->env->err, date->handle,
         (sb4) nb, date->handle
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateAssign
+OCI_Boolean OcilibDateAssign
 (
     OCI_Date *date,
     OCI_Date *date_src
@@ -285,63 +278,63 @@ boolean OcilibDateAssign
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_DATE, date_src)
+    CHECK_PTR(OCI_IPC_DATE, date);
+    CHECK_PTR(OCI_IPC_DATE, date_src);
 
     CHECK_OCI
     (
-        date->err,
+        date->env->err,
         OCIDateAssign,
-        date->err, date_src->handle,
+        date->env->err, date_src->handle,
         date->handle
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateCheck
  * --------------------------------------------------------------------------------------------- */
 
-int OcilibDateCheck
+OCI_Int32 OcilibDateCheck
 (
     OCI_Date *date
 )
 {
     ENTER_FUNC
     (
-        /* returns */ int, OCI_ERROR,
+        /* returns */ OCI_Int32, OCI_ERROR,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
     uword valid = 0;
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE, date);
 
     CHECK_OCI
     (
-        date->err,
+        date->env->err,
         OCIDateCheck,
-        date->err, date->handle,
+        date->env->err, date->handle,
         &valid
-    )
+    );
 
-    SET_RETVAL((int) valid)
+    SET_RETVAL((OCI_Int32) valid);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateCompare
  * --------------------------------------------------------------------------------------------- */
 
-int OcilibDateCompare
+OCI_Int32 OcilibDateCompare
 (
     OCI_Date *date,
     OCI_Date *date2
@@ -349,33 +342,33 @@ int OcilibDateCompare
 {
     ENTER_FUNC
     (
-        /* returns */ int, 0,
+        /* returns */ OCI_Int32, 0,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
     sword value = OCI_ERROR;
 
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_DATE, date2)
+    CHECK_PTR(OCI_IPC_DATE, date);
+    CHECK_PTR(OCI_IPC_DATE, date2);
 
     CHECK_OCI
     (
-        date->err,
+        date->env->err,
         OCIDateCompare,
-        date->err, date->handle,
+        date->env->err, date->handle,
         date2->handle, &value
-    )
+    );
 
-    SET_RETVAL((int) value)
+    SET_RETVAL((OCI_Int32) value);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateDaysBetween
  * --------------------------------------------------------------------------------------------- */
 
-int OcilibDateDaysBetween
+OCI_Int32 OcilibDateDaysBetween
 (
     OCI_Date *date,
     OCI_Date *date2
@@ -383,9 +376,9 @@ int OcilibDateDaysBetween
 {
     ENTER_FUNC
     (
-        /* returns */ int, 0,
+        /* returns */ OCI_Int32, 0,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
     sb4 diff = 0;
 
@@ -394,22 +387,22 @@ int OcilibDateDaysBetween
 
     CHECK_OCI
     (
-        date->err,
+        date->env->err,
         OCIDateDaysBetween,
-        date->err, date->handle,
+        date->env->err, date->handle,
         date2->handle, &diff
-    )
+    );
 
-    SET_RETVAL((int) diff)
+    SET_RETVAL((OCI_Int32) diff);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateFromString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateFromString
+OCI_Boolean OcilibDateFromString
 (
     OCI_Date    *date,
     const otext *str,
@@ -418,136 +411,136 @@ boolean OcilibDateFromString
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    dbtext *dbstr1 = NULL;
+    dbtext *dbstr1  = NULL;
     dbtext *dbstr2  = NULL;
-    int     dbsize1 = -1;
-    int     dbsize2 = -1;
+    OCI_Int32     dbsize1 = -1;
+    OCI_Int32     dbsize2 = -1;
 
-    CHECK_PTR(OCI_IPC_DATE,   date)
-    CHECK_PTR(OCI_IPC_STRING, str)
+    CHECK_PTR(OCI_IPC_DATE,   date);
+    CHECK_PTR(OCI_IPC_STRING, str);
 
     if (!IS_STRING_VALID(fmt))
     {
-        fmt = OcilibEnvironmentGetFormat(date->con, OCI_FMT_DATE);
-        CHECK_NULL(fmt)
+        fmt = OcilibEnvironmentGetFormat(date->env, OCI_FMT_DATE);
+        CHECK_NULL(fmt);
     }
 
-    dbstr1 = OcilibStringGetDBString(str, &dbsize1);
-    dbstr2 = OcilibStringGetDBString(fmt, &dbsize2);
+    dbstr1 = OcilibStringGetDBString(date->env,str, &dbsize1);
+    dbstr2 = OcilibStringGetDBString(date->env,fmt, &dbsize2);
 
     CHECK_OCI
     (
-        date->err,
+        date->env->err,
         OCIDateFromText,
-        date->err,
+        date->env->err,
         (oratext *) dbstr1, (ub4) dbsize1,
         (oratext *) dbstr2, (ub1) dbsize2,
         (oratext *) NULL,  (ub4) 0,
         date->handle
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dbstr1);
-        OcilibStringReleaseDBString(dbstr2);
-    )
+        OcilibStringReleaseDBString(date->env,dbstr1);
+        OcilibStringReleaseDBString(date->env,dbstr2);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateGetDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateGetDate
+OCI_Boolean OcilibDateGetDate
 (
     OCI_Date *date,
-    int      *year,
-    int      *month,
-    int      *day
+    OCI_Int32      *year,
+    OCI_Int32      *month,
+    OCI_Int32      *day
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
     sb2 yr = 0;
     ub1 mt = 0;
     ub1 dy = 0;
 
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_INT,  year)
-    CHECK_PTR(OCI_IPC_INT,  month)
-    CHECK_PTR(OCI_IPC_INT,  day)
+    CHECK_PTR(OCI_IPC_DATE, date);
+    CHECK_PTR(OCI_IPC_INT,  year);
+    CHECK_PTR(OCI_IPC_INT,  month);
+    CHECK_PTR(OCI_IPC_INT,  day);
 
     OCIDateGetDate(date->handle, &yr, &mt, &dy);
 
-    *year  = (int) yr;
-    *month = (int) mt;
-    *day   = (int) dy;
+    *year  = (OCI_Int32) yr;
+    *month = (OCI_Int32) mt;
+    *day   = (OCI_Int32) dy;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateGetTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateGetTime
+OCI_Boolean OcilibDateGetTime
 (
     OCI_Date *date,
-    int      *hour,
-    int      *min,
-    int      *sec
+    OCI_Int32      *hour,
+    OCI_Int32      *min,
+    OCI_Int32      *sec
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
     ub1 hr = 0;
     ub1 mn = 0;
     ub1 sc = 0;
 
-    CHECK_PTR(OCI_IPC_DATE, date)
-    CHECK_PTR(OCI_IPC_INT,  hour)
-    CHECK_PTR(OCI_IPC_INT,  min)
-    CHECK_PTR(OCI_IPC_INT,  sec)
+    CHECK_PTR(OCI_IPC_DATE, date);
+    CHECK_PTR(OCI_IPC_INT,  hour);
+    CHECK_PTR(OCI_IPC_INT,  min);
+    CHECK_PTR(OCI_IPC_INT,  sec);
 
     OCIDateGetTime(date->handle, &hr, &mn, &sc);
 
-    *hour = (int) hr;
-    *min  = (int) mn;
-    *sec  = (int) sc;
+    *hour = (OCI_Int32) hr;
+    *min  = (OCI_Int32) mn;
+    *sec  = (OCI_Int32) sc;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateGetDateTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateGetDateTime
+OCI_Boolean OcilibDateGetDateTime
 (
     OCI_Date *date,
-    int      *year,
-    int      *month,
-    int      *day,
-    int      *hour,
-    int      *min,
-    int      *sec
+    OCI_Int32      *year,
+    OCI_Int32      *month,
+    OCI_Int32      *day,
+    OCI_Int32      *hour,
+    OCI_Int32      *min,
+    OCI_Int32      *sec
 )
 {
     return (OcilibDateGetDate(date, year, month, day) && OcilibDateGetTime(date, hour, min, sec));
@@ -557,37 +550,37 @@ boolean OcilibDateGetDateTime
  * OcilibDateLastDay
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateLastDay
+OCI_Boolean OcilibDateLastDay
 (
     OCI_Date *date
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE, date);
 
     CHECK_OCI
     (
-        date->err,
+        date->env->err,
         OCIDateLastDay,
-        date->err, date->handle,
+        date->env->err, date->handle,
         date->handle
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateNextDay
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateNextDay
+OCI_Boolean OcilibDateNextDay
 (
     OCI_Date    *date,
     const otext *day
@@ -595,102 +588,102 @@ boolean OcilibDateNextDay
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    dbtext *dbstr = NULL;
-    int dbsize = -1;
+    dbtext *dbstr  = NULL;
+    OCI_Int32     dbsize = -1;
 
-    CHECK_PTR(OCI_IPC_DATE,   date)
-    CHECK_PTR(OCI_IPC_STRING, day)
+    CHECK_PTR(OCI_IPC_DATE,   date);
+    CHECK_PTR(OCI_IPC_STRING, day);
 
-    dbstr = OcilibStringGetDBString(day, &dbsize);
+    dbstr = OcilibStringGetDBString(date->env,day, &dbsize);
 
     CHECK_OCI
     (
-        date->err,
+        date->env->err,
         OCIDateNextDay,
-        date->err, date->handle,
+        date->env->err, date->handle,
         (oratext *) dbstr, (ub4) dbsize,
         date->handle
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dbstr);
-    )
+        OcilibStringReleaseDBString(date->env,dbstr);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateSetDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateSetDate
+OCI_Boolean OcilibDateSetDate
 (
     OCI_Date *date,
-    int       year,
-    int       month,
-    int       day
+    OCI_Int32       year,
+    OCI_Int32       month,
+    OCI_Int32       day
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE, date);
 
     OCIDateSetDate(date->handle, (sb2) year, (ub1) month, (ub1) day);
 
-    SET_RETVAL(OcilibDateCheck(date) == 0)
+    SET_RETVAL(OcilibDateCheck(date) == 0);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateSetTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateSetTime
+OCI_Boolean OcilibDateSetTime
 (
     OCI_Date *date,
-    int       hour,
-    int       min,
-    int       sec
+    OCI_Int32       hour,
+    OCI_Int32       min,
+    OCI_Int32       sec
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE, date);
 
     OCIDateSetTime(date->handle, (ub1) hour, (ub1) min, (ub1) sec);
 
-    SET_RETVAL(OcilibDateCheck(date) == 0)
+    SET_RETVAL(OcilibDateCheck(date) == 0);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateSetDateTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateSetDateTime
+OCI_Boolean OcilibDateSetDateTime
 (
     OCI_Date *date,
-    int       year,
-    int       month,
-    int       day,
-    int       hour,
-    int       min,
-    int       sec
+    OCI_Int32       year,
+    OCI_Int32       month,
+    OCI_Int32       day,
+    OCI_Int32       hour,
+    OCI_Int32       min,
+    OCI_Int32       sec
 )
 {
     return (OcilibDateSetDate(date, year, month, day) && OcilibDateSetTime(date, hour, min, sec));
@@ -700,56 +693,56 @@ boolean OcilibDateSetDateTime
  * OcilibDateSysDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateSysDate
+OCI_Boolean OcilibDateSysDate
 (
     OCI_Date *date
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE, date);
 
     CHECK_OCI
     (
-        date->err,
+        date->env->err,
         OCIDateSysDate,
-        date->err, date->handle
-    )
+        date->env->err, date->handle
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateToString
+OCI_Boolean OcilibDateToString
 (
     OCI_Date    *date,
     const otext *fmt,
-    int          size,
+    OCI_Int32          size,
     otext       *str
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    dbtext *dbstr1 = NULL;
+    dbtext *dbstr1  = NULL;
     dbtext *dbstr2  = NULL;
-    int     dbsize1 = size * (int) sizeof(otext);
-    int     dbsize2 = -1;
+    OCI_Int32     dbsize1 = size * (OCI_Int32) sizeof(otext);
+    OCI_Int32     dbsize2 = -1;
 
-    CHECK_PTR(OCI_IPC_DATE,   date)
-    CHECK_PTR(OCI_IPC_STRING, str)
+    CHECK_PTR(OCI_IPC_DATE,   date);
+    CHECK_PTR(OCI_IPC_STRING, str);
 
     /* initialize output buffer in case of OCI failure */
 
@@ -757,42 +750,42 @@ boolean OcilibDateToString
 
     if (!IS_STRING_VALID(fmt))
     {
-        fmt = OcilibEnvironmentGetFormat(date->con, OCI_FMT_DATE);
-        CHECK_NULL(fmt)
+        fmt = OcilibEnvironmentGetFormat(date->env, OCI_FMT_DATE);
+        CHECK_NULL(fmt);
     }
 
-    dbstr1 = OcilibStringGetDBString(str, &dbsize1);
-    dbstr2 = OcilibStringGetDBString(fmt, &dbsize2);
+    dbstr1 = OcilibStringGetDBString(date->env,str, &dbsize1);
+    dbstr2 = OcilibStringGetDBString(date->env,fmt, &dbsize2);
 
     CHECK_OCI
     (
-        date->err,
+        date->env->err,
         OCIDateToText,
-        date->err, date->handle, (oratext *) dbstr2,
+        date->env->err, date->handle, (oratext *) dbstr2,
         (ub1) dbsize2, (oratext *) NULL, (ub4) 0,
         (ub4*) &dbsize1, (oratext *) dbstr1
-    )
+    );
 
-    OcilibStringCopyDBStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
+    OcilibStringCopyDBStringToNativeString(date->env, dbstr1, str, dbcharcount(dbsize1));
 
     /* set null string terminator */
 
     str[dbcharcount(dbsize1)] = 0;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dbstr1);
-        OcilibStringReleaseDBString(dbstr2);
-    )
+        OcilibStringReleaseDBString(date->env,dbstr1);
+        OcilibStringReleaseDBString(date->env,dbstr2);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateZoneToZone
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateZoneToZone
+OCI_Boolean OcilibDateZoneToZone
 (
     OCI_Date    *date,
     const otext *zone1,
@@ -801,46 +794,46 @@ boolean OcilibDateZoneToZone
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    dbtext *dbstr1 = NULL;
+    dbtext *dbstr1  = NULL;
     dbtext *dbstr2  = NULL;
-    int     dbsize1 = -1;
-    int     dbsize2 = -1;
+    OCI_Int32     dbsize1 = -1;
+    OCI_Int32     dbsize2 = -1;
 
-    CHECK_PTR(OCI_IPC_DATE,   date)
-    CHECK_PTR(OCI_IPC_STRING, zone1)
-    CHECK_PTR(OCI_IPC_STRING, zone2)
+    CHECK_PTR(OCI_IPC_DATE,   date);
+    CHECK_PTR(OCI_IPC_STRING, zone1);
+    CHECK_PTR(OCI_IPC_STRING, zone2);
 
-    dbstr1 = OcilibStringGetDBString(zone1, &dbsize1);
-    dbstr2 = OcilibStringGetDBString(zone2, &dbsize2);
+    dbstr1 = OcilibStringGetDBString(date->env,zone1, &dbsize1);
+    dbstr2 = OcilibStringGetDBString(date->env,zone2, &dbsize2);
 
     CHECK_OCI
     (
-        date->err,
+        date->env->err,
         OCIDateZoneToZone,
-        date->err, date->handle,
+        date->env->err, date->handle,
         (oratext *) dbstr1, (ub4) dbsize1,
         (oratext *) dbstr2, (ub4) dbsize2,
         date->handle
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dbstr1);
-        OcilibStringReleaseDBString(dbstr2);
-    )
+        OcilibStringReleaseDBString(date->env,dbstr1);
+        OcilibStringReleaseDBString(date->env,dbstr2);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateToCTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateToCTime
+OCI_Boolean OcilibDateToCTime
 (
     OCI_Date  *date,
     struct tm *ptm,
@@ -849,15 +842,15 @@ boolean OcilibDateToCTime
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
     time_t time = (time_t) -1;
 
     struct tm t;
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE, date);
 
     memset(&t, 0, sizeof(t));
 
@@ -885,16 +878,16 @@ boolean OcilibDateToCTime
         *pt = time;
     }
 
-    SET_RETVAL((time != (time_t)-1))
+    SET_RETVAL((time != (time_t)-1));
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDateFromCTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDateFromCTime
+OCI_Boolean OcilibDateFromCTime
 (
     OCI_Date  *date,
     struct tm *ptm,
@@ -903,15 +896,15 @@ boolean OcilibDateFromCTime
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_DATE, date)
+    CHECK_PTR(OCI_IPC_DATE, date);
 
     if (NULL == ptm && (t == (time_t) 0))
     {
-        THROW(OcilibExceptionNullPointer, OCI_IPC_TM)
+        THROW(OcilibExceptionNullPointer, OCI_IPC_TM);
     }
 
     if (NULL == ptm)
@@ -931,10 +924,10 @@ boolean OcilibDateFromCTime
     }
     else
     {
-        THROW(OcilibExceptionNullPointer, OCI_IPC_TM)
+        THROW(OcilibExceptionNullPointer, OCI_IPC_TM);
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }

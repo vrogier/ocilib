@@ -20,25 +20,28 @@
 #define NB_ERROR   2
 #define NB_TOTAL    (SIZE_ARRAY * NB_LOAD)
 
-static boolean partionning_enabled = TRUE;
+static OCI_Boolean partionning_enabled = TRUE;
+static OCI_Environment *env = NULL;
 
 void create_table(OCI_Connection *con);
 void drop_table(OCI_Connection *con);
-void do_load(OCI_Connection *con, boolean gen_conv_error, boolean gen_load_error, boolean gen_buffer_error, boolean force, char *test_name);
-void check_data(OCI_Connection *con, OCI_DirPath *dp, boolean gen_conv_error, boolean gen_load_error, boolean force);
-void check_results(OCI_Connection *con, OCI_DirPath *dp, int expected, int result, char *str);
+void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_load_error, OCI_Boolean gen_buffer_error, OCI_Boolean force, char *test_name);
+void check_data(OCI_Connection *con, OCI_DirPath *dp, OCI_Boolean gen_conv_error, OCI_Boolean gen_load_error, OCI_Boolean force);
+void check_results(OCI_Connection *con, OCI_DirPath *dp, OCI_Int32 expected, OCI_Int32 result, char *str);
 void cleanup(OCI_Connection *con, OCI_DirPath *dp);
 
 int main(void)
 {
     OCI_Connection *con = NULL;
 
-    if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT))
+    env = OCI_EnvironmentCreate(NULL, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    con = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    con = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
 
     /* Nominal test */
     do_load(con, FALSE, FALSE, FALSE, FALSE, "TEST BASE         - DEFAULT MODE");
@@ -59,7 +62,7 @@ int main(void)
     }
 
     OCI_ConnectionFree(con);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }
@@ -67,7 +70,7 @@ int main(void)
 void create_table(OCI_Connection *con)
 {
     /* create a partitioned table (for loading error) */
-    boolean res = OCI_ImmediateFmt(con, "create table %m(val_int int not null, val_str varchar2(30), val_date date) partition by range(val_int) ( partition test_dp_1 values less than (501),  partition test_dp_2 values less than (1001))", TABLE_NAME);
+    OCI_Boolean res = OCI_ImmediateFmt(con, "create table %m(val_int int not null, val_str varchar2(30), val_date date) partition by range(val_int) ( partition test_dp_1 values less than (501),  partition test_dp_2 values less than (1001))", TABLE_NAME);
 
     /* in case partitioning is not available, create a regular table and disable loading errtests */
     if (!res)
@@ -82,7 +85,7 @@ void create_table(OCI_Connection *con)
         printf("FAILED : table cannot be created\n");
         drop_table(con);
         OCI_ConnectionFree(con);
-        OCI_Cleanup();
+        OCI_EnvironmentFree(env);
         exit(EXIT_FAILURE);
     }
 }
@@ -96,10 +99,10 @@ void cleanup(OCI_Connection *con, OCI_DirPath *dp)
 {
     OCI_DirPathFree(dp);
     OCI_ConnectionFree(con);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 }
 
-void check_results(OCI_Connection *con, OCI_DirPath *dp, int expected, int result, char *str)
+void check_results(OCI_Connection *con, OCI_DirPath *dp, OCI_Int32 expected, OCI_Int32 result, char *str)
 {
     if (result != expected)
     {
@@ -107,23 +110,23 @@ void check_results(OCI_Connection *con, OCI_DirPath *dp, int expected, int resul
         OCI_DirPathFree(dp);
         drop_table(con);
         OCI_ConnectionFree(con);
-        OCI_Cleanup();
+        OCI_EnvironmentFree(env);
         exit(EXIT_FAILURE);
     }
 }
 
-void check_data(OCI_Connection *con, OCI_DirPath *dp, boolean gen_conv_error, boolean gen_load_error, boolean force)
+void check_data(OCI_Connection *con, OCI_DirPath *dp, OCI_Boolean gen_conv_error, OCI_Boolean gen_load_error, OCI_Boolean force)
 {
-    int nb_rows = 0;
+    OCI_Int32 nb_rows = 0;
 
-    OCI_ImmediateFmt(con, "select count(*) from %m", TABLE_NAME, OCI_ARG_INT, &nb_rows);
+    OCI_ImmediateFmt(con, "select count(*) from %m", TABLE_NAME, OCI_ARG_OF(&nb_rows));
     check_results(con, dp, ((gen_conv_error && force) || gen_load_error) ? (NB_TOTAL - NB_ERROR) : NB_TOTAL, nb_rows, "total rows in database");
 
-    OCI_ImmediateFmt(con, "select count(distinct val_int) from %m", TABLE_NAME, OCI_ARG_INT, &nb_rows);
+    OCI_ImmediateFmt(con, "select count(distinct val_int) from %m", TABLE_NAME, OCI_ARG_OF(&nb_rows));
     check_results(con, dp, ((gen_conv_error && force) || gen_load_error) ? (NB_TOTAL - NB_ERROR) : NB_TOTAL, nb_rows, "distinct rows in database");
 }
 
-void do_load(OCI_Connection *con, boolean gen_conv_error, boolean gen_load_error, boolean gen_buffer_error, boolean force, char *test_name)
+void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_load_error, OCI_Boolean gen_buffer_error, OCI_Boolean force, char *test_name)
 {
     OCI_DirPath    *dp;
 
@@ -131,7 +134,7 @@ void do_load(OCI_Connection *con, boolean gen_conv_error, boolean gen_load_error
     char val2[SIZE_COL2 + 1];
     char val3[SIZE_COL3 + 1];
 
-    int i = 0, j = 0, nb_rows = SIZE_ARRAY;
+    OCI_Int32 i = 0, j = 0, nb_rows = SIZE_ARRAY;
 
     printf("%s : ", test_name);
 
@@ -179,9 +182,9 @@ void do_load(OCI_Connection *con, boolean gen_conv_error, boolean gen_load_error
                 sprintf(val2, "value %05d", j + (i*SIZE_ARRAY));
                 sprintf(val3, "%04d%02d%02d", (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-                OCI_DirPathSetEntry(dp, j, 1, val1, (unsigned int)strlen(val1), TRUE);
-                OCI_DirPathSetEntry(dp, j, 2, val2, (unsigned int)strlen(val2), TRUE);
-                OCI_DirPathSetEntry(dp, j, 3, val3, (unsigned int)strlen(val3), TRUE);
+                OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32)strlen(val1), TRUE);
+                OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32)strlen(val2), TRUE);
+                OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32)strlen(val3), TRUE);
             }
             else
             {
@@ -190,20 +193,20 @@ void do_load(OCI_Connection *con, boolean gen_conv_error, boolean gen_load_error
                 sprintf(val2, "value %05d", j + (i*SIZE_ARRAY));
                 sprintf(val3, "%04d%02d%02d", (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-                OCI_DirPathSetEntry(dp, j, 1, val1, (unsigned int)strlen(val1), TRUE);
-                OCI_DirPathSetEntry(dp, j, 2, val2, (unsigned int)strlen(val2), TRUE);
-                OCI_DirPathSetEntry(dp, j, 3, val3, (unsigned int)strlen(val3), TRUE);
+                OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32)strlen(val1), TRUE);
+                OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32)strlen(val2), TRUE);
+                OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32)strlen(val3), TRUE);
             }
         }
 
         /* load data to the server */
         while (TRUE)
         {
-            int nb_conv = 0;
-            int nb_error = 0;
+            OCI_Int32 nb_conv = 0;
+            OCI_Int32 nb_error = 0;
 
             /* convert data*/
-            int state = OCI_DirPathConvert(dp);
+            OCI_Int32 state = OCI_DirPathConvert(dp);
 
             /* retrieve the number of converted rows */
             nb_conv += OCI_DirPathGetAffectedRows(dp);
@@ -214,15 +217,15 @@ void do_load(OCI_Connection *con, boolean gen_conv_error, boolean gen_load_error
                 if (gen_conv_error && !force && state == OCI_DPR_ERROR)
                 {
                     /* on conversion error in default mode, correct values for next conversion */
-                    int row = OCI_DirPathGetErrorRow(dp);
+                    OCI_Int32 row = OCI_DirPathGetErrorRow(dp);
 
                     sprintf(val1, "%04d", row);
                     sprintf(val2, "value %05d", row);
                     sprintf(val3, "%04d%02d%02d", (row % 23) + 1 + 2000, (row % 11) + 1, (row % 23) + 1);
 
-                    OCI_DirPathSetEntry(dp, row, 1, val1, (unsigned int)strlen(val1), TRUE);
-                    OCI_DirPathSetEntry(dp, row, 2, val2, (unsigned int)strlen(val2), TRUE);
-                    OCI_DirPathSetEntry(dp, row, 3, val3, (unsigned int)strlen(val3), TRUE);
+                    OCI_DirPathSetEntry(dp, row, 1, val1, (OCI_UInt32)strlen(val1), TRUE);
+                    OCI_DirPathSetEntry(dp, row, 2, val2, (OCI_UInt32)strlen(val2), TRUE);
+                    OCI_DirPathSetEntry(dp, row, 3, val3, (OCI_UInt32)strlen(val3), TRUE);
 
                     nb_conv = 0;
                 }
@@ -230,8 +233,8 @@ void do_load(OCI_Connection *con, boolean gen_conv_error, boolean gen_load_error
                 if (gen_conv_error && force && state == OCI_DPR_COMPLETE)
                 {
                     /* on conversion error in force mode, check we got the expected errors*/
-                    int err_row = OCI_DirPathGetErrorRow(dp);
-                    int err_col = OCI_DirPathGetErrorColumn(dp);
+                    OCI_Int32 err_row = OCI_DirPathGetErrorRow(dp);
+                    OCI_Int32 err_col = OCI_DirPathGetErrorColumn(dp);
 
                     while (err_row != 0)
                     {
@@ -265,9 +268,9 @@ void do_load(OCI_Connection *con, boolean gen_conv_error, boolean gen_load_error
                         sprintf(val2, "value %05d", (j + nb_conv) + (i*SIZE_ARRAY));
                         sprintf(val3, "%04d%02d%02d", ((j + nb_conv) % 23) + 1 + 2000, ((j + nb_conv) % 11) + 1, ((j + nb_conv) % 23) + 1);
 
-                        OCI_DirPathSetEntry(dp, j, 1, val1, (unsigned int)strlen(val1), TRUE);
-                        OCI_DirPathSetEntry(dp, j, 2, val2, (unsigned int)strlen(val2), TRUE);
-                        OCI_DirPathSetEntry(dp, j, 3, val3, (unsigned int)strlen(val3), TRUE);
+                        OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32)strlen(val1), TRUE);
+                        OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32)strlen(val2), TRUE);
+                        OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32)strlen(val3), TRUE);
                     }
 
                     /* convert again */
@@ -294,7 +297,7 @@ void do_load(OCI_Connection *con, boolean gen_conv_error, boolean gen_load_error
                 if (gen_load_error && i == 0)
                 {
                     /* on loading error in force mode, check we got the expected errors*/
-                    int err_row = OCI_DirPathGetErrorRow(dp);
+                    OCI_Int32 err_row = OCI_DirPathGetErrorRow(dp);
 
                     while (err_row != 0)
                     {

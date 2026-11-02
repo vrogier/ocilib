@@ -7,7 +7,7 @@ void err_handler(OCI_Error *err)
     printf("%s\n", OCI_ErrorGetString(err));
 }
 
-int main(int argc, char *argv[])
+int main(OCI_Int32 argc, char *argv[])
 {
     OCI_Connection *con;
     OCI_Enqueue    *enq;
@@ -16,12 +16,14 @@ int main(int argc, char *argv[])
     OCI_TypeInfo   *inf;
     OCI_Object     *obj;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    con = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    con = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
 
     OCI_QueueTableCreate(con, "message_queue_table", "message_t", NULL, NULL, FALSE, OCI_AGM_NONE, NULL,  0, 0, NULL);
     OCI_QueueCreate(con, "message_queue", "message_queue_table", OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL);
@@ -33,7 +35,7 @@ int main(int argc, char *argv[])
     deq = OCI_DequeueCreate(inf, "message_queue");
 
     msg = OCI_MsgCreate(inf);
-    obj = OCI_ObjectCreate(con, inf);
+    obj = OCI_ObjectCreate(inf);
 
     OCI_ObjectSetString(obj, "title", "NEXT MEETING");
     OCI_ObjectSetString(obj, "content", "12:00 PM IN STARBUCKS");
@@ -61,7 +63,7 @@ int main(int argc, char *argv[])
 
     OCI_ConnectionFree(con);
 
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

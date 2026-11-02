@@ -11,7 +11,7 @@ void err_handler(OCI_Error *err)
 
 void pool_worker(OCI_Thread *thread, void *data)
 {
-    OCI_Connection *cn = OCI_PoolGetConnection(data, NULL);
+    OCI_Connection *cn = OCI_PoolGetConnection(OCI_HandleGetEnvironment(data), data, NULL);
     char str[SIZE_STR + 1] = "";
 
     OCI_Immediate(cn, "select to_char(sysdate, 'YYYYMMDD HH24:MI:SS') from dual", OCI_ARG_TEXT, str);
@@ -26,22 +26,24 @@ int main(void)
     OCI_Thread *th[MAX_THREADS];
     OCI_ConnPool *pool;
 
-    int i;
+    OCI_Int32 i;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT | OCI_ENV_THREADED))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT | OCI_ENV_THREADED);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
     /* create pool */
 
-    pool = OCI_PoolCreate("db", "usr", "pwd", OCI_POOL_SESSION, OCI_SESSION_DEFAULT, 0, MAX_CONN, 1);
+    pool = OCI_PoolCreate(env, "db", "usr", "pwd", OCI_POOL_SESSION, OCI_SESSION_DEFAULT, 0, MAX_CONN, 1);
 
     /* create threads */
 
     for (i = 0; i < MAX_THREADS; i++)
     {
-        th[i] = OCI_ThreadCreate();
+        th[i] = OCI_ThreadCreate(env);
         OCI_ThreadRun(th[i], pool_worker, pool);
     }
 
@@ -53,9 +55,9 @@ int main(void)
         OCI_ThreadFree(th[i]);
     }
 
-    OCI_PoolFree(pool);
+    OCI_PoolFree(env, pool);
 
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

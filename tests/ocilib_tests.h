@@ -51,8 +51,8 @@ using Guard = std::lock_guard<::Mutex>;
 
 struct Error
 {
-    int LibCode;
-    int OCICode;
+    OCI_Int32 LibCode;
+    OCI_Int32 OCICode;
 };
 
 using Errors = std::vector<Error>;
@@ -70,10 +70,8 @@ struct Context
 #endif
 
 void ExecDML(ostring dml);
+ostring ToUpper(ostring str);
 
-inline ostring ToUpper(ostring str)
-{
-    std::for_each(std::begin(str), std::end(str), [](otext& c) { c = static_cast<otext>(::towupper(c)); });
+OCI_Environment * GetEnvironment(POCI_ERROR err_handler);
+ocilib::Environment& GetEnvironmentCpp();
 
-    return str;
-}

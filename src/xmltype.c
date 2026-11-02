@@ -40,15 +40,14 @@ OCI_XmlType * OcilibXmlTypeInitialize
     ENTER_FUNC
     (
         /* returns */ OCI_XmlType*, xmlType,
-        /* context */ OCI_IPC_XMLTYPE, xmlType 
-    )
+        /* context */ OCI_IPC_CONNECTION, con
+    );
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
 
-    ALLOC_DATA(OCI_IPC_XMLTYPE, xmlType, 1);
-
+    ALLOC_HANDLE(OCI_IPC_XMLTYPE, xmlType);
     xmlType->con    = con;
-    xmlType->lng    = OcilibLongInitialize(stmt, xmlType->lng, def, OCI_CLONG);
+    xmlType->handle = OcilibLongInitialize(stmt, xmlType->handle, def, OCI_CLONG);
 
     if (def)
     {
@@ -67,66 +66,44 @@ OCI_XmlType * OcilibXmlTypeInitialize
             xmlType = NULL;
         }
 
-        SET_RETVAL(xmlType)
-    )
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibXmlTypeCreate
- * --------------------------------------------------------------------------------------------- */
-
-OCI_XmlType * OcilibXmlTypeCreate
-(
-    OCI_Connection* con
-)
-{
-    ENTER_FUNC
-    (
-        /* returns */ OCI_XmlType*, NULL,
-        /* context */ OCI_IPC_CONNECTION, con
-    )
-
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-
-    SET_RETVAL(OcilibXmlTypeInitialize(con, NULL, NULL, NULL))
-
-    EXIT_FUNC()
+        SET_RETVAL(xmlType);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibXmlTypeFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibXmlTypeFree
+OCI_Boolean OcilibXmlTypeFree
 (
     OCI_XmlType *xmlType
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_XMLTYPE, xmlType
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_XMLTYPE, xmlType)
-    CHECK_OBJECT_FETCHED(xmlType)
+    CHECK_PTR(OCI_IPC_XMLTYPE, xmlType);
+    CHECK_OBJECT_FETCHED(xmlType);
 
     OcilibErrorResetSource(NULL, xmlType);
 
-    xmlType->lng->hstate = OCI_OBJECT_FETCHED_DIRTY;
+    xmlType->handle->hstate = OCI_OBJECT_FETCHED_DIRTY;
 
-    OcilibLongFree(xmlType->lng);
+    OcilibLongFree(xmlType->handle);
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != xmlType->hstate)
     {
         OcilibErrorResetSource(NULL, xmlType);
 
-        FREE(xmlType)
+        FREE(xmlType);
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -135,46 +112,46 @@ boolean OcilibXmlTypeFree
 
 OCI_SYM_LOCAL const otext * OcilibXmlTypeGetContent
 (
-    OCI_XmlType    *xmlType
+    OCI_XmlType *xmlType
 )
 {
     ENTER_FUNC
     (
         /* returns */ const otext *, NULL,
         /* context */ OCI_IPC_XMLTYPE, xmlType
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_XMLTYPE, xmlType)
+    CHECK_PTR(OCI_IPC_XMLTYPE, xmlType);
 
-    if (NULL != xmlType->lng)
+    if (NULL != xmlType->handle)
     {
-        SET_RETVAL((otext*)xmlType->lng->buffer);
+        SET_RETVAL((otext*)xmlType->handle->buffer);
     }
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibXmlTypeGetContentSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL unsigned int OcilibXmlTypeGetContentSize
+OCI_SYM_LOCAL OCI_UInt32 OcilibXmlTypeGetContentSize
 (
-    OCI_XmlType    *xmlType
+    OCI_XmlType *xmlType
 )
 {
     ENTER_FUNC
     (
-        /* returns */ unsigned int, 0,
+        /* returns */ OCI_UInt32, 0,
         /* context */ OCI_IPC_XMLTYPE, xmlType
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_XMLTYPE, xmlType)
+    CHECK_PTR(OCI_IPC_XMLTYPE, xmlType);
 
-    if (NULL != xmlType->lng)
+    if (NULL != xmlType->handle)
     {
-        SET_RETVAL(xmlType->lng->size / sizeof(otext));
+        SET_RETVAL(xmlType->handle->size / sizeof(otext));
     }
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }

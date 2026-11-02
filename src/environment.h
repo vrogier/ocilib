@@ -25,82 +25,94 @@
 
 OCI_SYM_LOCAL char* OcilibEnvironmentGetVariable
 (
-    const char* name
+    OCI_Environment *env,
+    const char      *name
 );
 
-OCI_SYM_LOCAL OCI_Error* OcilibEnvironmentGetLastError
-(
-    void
-);
-
-OCI_SYM_LOCAL boolean OcilibEnvironmentInitialize
+OCI_SYM_LOCAL OCI_Environment * OcilibEnvironmentCreate
 (
     POCI_ERROR   err_handler,
-    const otext* lib_path,
-    unsigned int mode
+    const otext *lib_path,
+    OCI_EnvMode  mode
 );
 
-OCI_SYM_LOCAL boolean OcilibEnvironmentCleanup
+OCI_SYM_LOCAL OCI_Boolean OcilibEnvironmentFree
 (
-    void
+    OCI_Environment *env
 );
 
-OCI_SYM_LOCAL unsigned int OcilibEnvironmentGetOCICompileVersion
+OCI_SYM_LOCAL OCI_UInt32 OcilibEnvironmentGetOCICompileVersion
 (
-    void
+    OCI_Environment *env
 );
 
-OCI_SYM_LOCAL unsigned int OcilibEnvironmentGetOCIRuntimeVersion
+OCI_SYM_LOCAL OCI_UInt32 OcilibEnvironmentGetOCIRuntimeVersion
 (
-    void
+    OCI_Environment *env
 );
 
-OCI_SYM_LOCAL unsigned int OcilibEnvironmentGetOCIRuntimeImportMode
+OCI_SYM_LOCAL OCI_ImportMode OcilibEnvironmentGetOCIRuntimeImportMode
 (
-    void
+    OCI_Environment *env
 );
 
-OCI_SYM_LOCAL unsigned int OcilibEnvironmentGetCharset
+OCI_SYM_LOCAL OCI_Charset OcilibEnvironmentGetCharset
 (
-    void
+    OCI_Environment *env
 );
 
-OCI_SYM_LOCAL big_uint OcilibEnvironmentGetAllocatedBytes
+OCI_SYM_LOCAL OCI_UInt64 OcilibEnvironmentGetStats
 (
-    unsigned int mem_type
+    OCI_Environment *env,
+    OCI_Stat         stat
 );
 
-OCI_SYM_LOCAL boolean OcilibEnvironmentEnableWarnings
+OCI_SYM_LOCAL OCI_Boolean OcilibEnvironmentEnableWarnings
 (
-    boolean value
+    OCI_Environment *env,
+    OCI_Boolean      value
 );
 
-OCI_SYM_LOCAL boolean OcilibEnvironmentSetErrorHandler
+OCI_SYM_LOCAL OCI_Boolean OcilibEnvironmentSetErrorHandler
 (
-    POCI_ERROR handler
+    OCI_Environment *env,
+    POCI_ERROR       handler
 );
 
-OCI_SYM_LOCAL boolean OcilibEnvironmentSetHAHandler
+OCI_SYM_LOCAL OCI_Boolean OcilibEnvironmentSetHAHandler
 (
-    POCI_HA_HANDLER handler
+    OCI_Environment *env,
+    POCI_HA_HANDLER  handler
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibEnvironmentSetSubscriptionPort
+(
+    OCI_Environment *env,
+    OCI_UInt32     port
+);
+
+OCI_SYM_LOCAL OCI_UInt32 OcilibEnvironmentGetSubscriptionPort
+(
+    OCI_Environment *env
 );
 
 OCI_SYM_LOCAL const otext * OcilibGetLocaleString
 (
-    unsigned int code
+    OCI_Environment *env,
+    OCI_LocaleCode   code
 );
 
-OCI_SYM_LOCAL boolean OcilibEnvironmentSetFormat
+OCI_SYM_LOCAL OCI_Boolean OcilibEnvironmentSetFormat
 (
-    OCI_Connection* con,
-    unsigned int    type,
-    const otext   * format
+    OCI_Environment *env,
+    OCI_FormatType   type,
+    const otext    * format
 );
 
 OCI_SYM_LOCAL const otext* OcilibEnvironmentGetFormat
 (
-    OCI_Connection* con,
-    unsigned int    type
+    OCI_Environment *env,
+    OCI_FormatType   type
 );
 
 #endif /* OCILIB_ENVIRONMENT_H_INCLUDED */

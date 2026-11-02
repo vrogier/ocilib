@@ -37,7 +37,13 @@
 #ifndef OCILIB_OCI_API_H_INCLUDED
 #define OCILIB_OCI_API_H_INCLUDED
 
+#ifndef CONST
+#define CONST const
+#endif
+
+#if !defined(OCI_IMPORT_LINKAGE)
 #include "defs.h"
+#endif
 
 /* ********************************************************************************************* *
  *                         PUBLIC OCI API PROTOTYPES
@@ -989,13 +995,13 @@ typedef sword (*OCIDATETIMECONVERT)
 
 typedef sword (*OCIDATETIMEFROMARRAY)
 (
-    dvoid             *hndl,
+    void              *hndl,
     OCIError          *err,
-    CONST ub1         *inarray,
-    ub4               *len,
+    ub1               *inarray,
+    ub4                len,
     ub1                type,
     OCIDateTime       *datetime,
-    CONST OCIInterval *reftz,
+    const OCIInterval *reftz,
     ub1                fsprec
 );
 
@@ -1700,16 +1706,6 @@ typedef sword (*OCIAQLISTEN)
     ub4          flags
 );
 
-typedef OCISvcCtx * (*XAOSVCCTX)
-(
-    OraText *dbname
-);
-
-typedef OCIEnv * (*XAOENV)
-(
-    OraText *dbname
-);
-
 typedef sword (*OCIROWIDTOCHAR)
 (
     OCIRowid *rowidDesc, 
@@ -2137,16 +2133,16 @@ typedef sword (*OCILOBWRITE2)
     oraub8          *byte_amtp,
     oraub8          *char_amtp,
     oraub8           offset,
-    dvoid           *bufp,
+    void            *bufp,
     oraub8           buflen,
     ub1              piece,
-    dvoid           *ctxp,
+    void            *ctxp,
     sb4              (*cbfp)
     (
-        dvoid       *ctxp,
-        CONST dvoid *bufp,
-        oraub8       len,
-        ub1          piece,
+        void        *ctxp,
+        void        *bufp,
+        oraub8      *lenp,
+        ub1         *piece,
         dvoid      **changed_bufpp,
         oraub8      *changed_lenp
     ),
@@ -2271,32 +2267,440 @@ typedef sword(*OCISERVERRELEASE2)
     ub4          mode
 );
 
+/* API introduced in 18.1 */
+
+typedef sword(*OCISODACOLLCREATE)
+(
+    OCISvcCtx       *svchp,
+    const OraText   *collname,
+    ub4              collnamelen,
+    OCISodaColl    **collection,
+    OCIError        *errhp,
+    ub4              mode
+);
+
+typedef sword(*OCISODAMETADATABUILD)
+(
+    OCISvcCtx             *svchp,
+    const OCISodaMetadata *mdatahp,
+    OraText               *metadata,
+    ub4                   *metadatalen,
+    OCIError              *errhp,
+    ub4                    mode
+);
+
+typedef sword(*OCISODACOLLCREATEWITHMETADATA)
+(
+    OCISvcCtx      *svchp,
+    const OraText  *collname,
+    ub4             collnamelen,
+    OraText        *metadata,
+    ub4             metadatalen,
+    OCISodaColl   **collection,
+    OCIError       *errhp,
+    ub4             mode
+);
+
+typedef sword(*OCISODACOLLOPEN)
+(
+    OCISvcCtx      *svchp,
+    const OraText  *collname,
+    ub4             collnamelen,
+    OCISodaColl   **coll,
+    OCIError       *errhp,
+    ub4             mode
+);
+
+typedef sword(*OCISODADOCCREATE)
+(
+    OCIEnv            *envhp,
+    const void        *content,
+    ub4                contentLength,
+    ub4                docFlags,
+    OCISodaDoc       **document,
+    OCIError          *errhp,
+    ub4                mode
+);
+
+typedef sword(*OCISODADOCCREATEWITHKEY)
+(
+    OCIEnv        *envhp,
+    const void    *content,
+    ub4            contentLength,
+    const OraText *key,
+    ub4            keylen,
+    ub4            docFlags,
+    OCISodaDoc   **document,
+    OCIError      *errhp,
+    ub4            mode
+);
+
+typedef sword(*OCISODADOCCREATEWITHKEYANDMTYPE)
+(
+    OCIEnv              *envhp,
+    const void          *content,
+    ub4                  contentLength,
+    const OraText       *key,
+    ub4                  keylen,
+    const OraText       *mediaType,
+    ub4                  mediaTypeLength,
+    ub4                  docFlags,
+    OCISodaDoc         **document,
+    OCIError            *errhp,
+    ub4                  mode
+);
+
+typedef sword(*OCISODAINSERT)
+(
+    OCISvcCtx   *svchp,
+    OCISodaColl *collection,
+    OCISodaDoc  *document,
+    OCIError    *errhp,
+    ub4          mode
+);
+
+typedef sword(*OCISODAINSERTANDGET)
+(
+    OCISvcCtx      *svchp,
+    OCISodaColl    *collection,
+    OCISodaDoc    **document,
+    OCIError       *errhp,
+    ub4             mode
+);
+
+typedef sword(*OCISODAINSERTWITHCTNT)
+(
+    OCISvcCtx           *svchp,
+    OCISodaColl         *collection,
+    const OraText       *key,
+    ub4                  keyLength,
+    const void          *content,
+    ub4                  contentLength,
+    ub4                  docFlags,
+    OCIError            *errhp,
+    ub4                  mode
+);
+
+typedef sword(*OCISODAINSERTANDGETWITHCTNT)
+(
+    OCISvcCtx        *svchp,
+    OCISodaColl      *collection,
+    const OraText    *key,
+    ub4               keyLength,
+    const void       *content,
+    ub4               contentLength,
+    ub4               docFlags,
+    OCISodaDoc      **document,
+    OCIError         *errhp,
+    ub4               mode
+);
+
+typedef sword(*OCISODAFIND)
+(
+    OCISvcCtx                     *svchp,
+    const OCISodaColl             *coll,
+    const OCISodaOperationOptions *findOptions,
+    ub4                            docFlags,
+    OCISodaDocCursor             **cursor,
+    OCIError                      *errhp,
+    ub4                            mode
+);
+
+typedef sword(*OCISODAFINDONE)
+(
+    OCISvcCtx                     *svchp,
+    const OCISodaColl             *coll,
+    const OCISodaOperationOptions *findOptions,
+    ub4                            docFlags,
+    OCISodaDoc                   **doc,
+    OCIError                      *errhp,
+    ub4                            mode
+);
+
+typedef sword(*OCISODAFINDONEWITHKEY)
+(
+    OCISvcCtx         *svchp,
+    const OCISodaColl *coll,
+    const OraText     *key,
+    ub4                keylen,
+    ub4                docFlags,
+    OCISodaDoc       **doc,
+    OCIError          *errhp,
+    ub4                mode
+);
+
+typedef sword(*OCISODADOCGETNEXT)
+(
+    OCISvcCtx              *svchp,
+    const OCISodaDocCursor *cursor,
+    OCISodaDoc            **doc,
+    OCIError               *errhp,
+    ub4                     mode
+);
+
+typedef sword(*OCISODACOLLLIST)
+(
+    OCISvcCtx          *svchp,
+    const OraText      *startname,
+    ub4                 stnamelen,
+    OCISodaCollCursor **cur,
+    OCIError           *errhp,
+    ub4                 mode
+);
+
+typedef sword(*OCISODACOLLGETNEXT)
+(
+    OCISvcCtx                *svchp,
+    const OCISodaCollCursor  *cur,
+    OCISodaColl             **coll,
+    OCIError                 *errhp,
+    ub4                       mode
+);
+
+typedef sword(*OCISODADOCCOUNT)
+(
+    OCISvcCtx                     *svchp,
+    const OCISodaColl             *coll,
+    const OCISodaOperationOptions *optns,
+    ub8                           *numdocs,
+    OCIError                      *errhp,
+    ub4                            mode
+);
+
+typedef sword(*OCISODADOCCOUNTWITHFILTER)
+(
+    OCISvcCtx         *svchp,
+    const OCISodaColl *coll,
+    const OraText     *filterSpec,
+    ub4                filterSpecLen,
+    ub8               *numdocs,
+    OCIError          *errhp,
+    ub4                mode
+);
+
+typedef sword(*OCISODAREPLONE)
+(
+    OCISvcCtx                      *svchp,
+    const OCISodaColl              *coll,
+    const OCISodaOperationOptions  *optns,
+    OCISodaDoc                     *document,
+    boolean                        *isReplaced,
+    OCIError                       *errhp,
+    ub4                             mode
+);
+
+typedef sword(*OCISODAREPLONEANDGET)
+(
+    OCISvcCtx                      *svchp,
+    const OCISodaColl              *coll,
+    const OCISodaOperationOptions  *optns,
+    OCISodaDoc                    **document,
+    boolean                        *isReplaced,
+    OCIError                       *errhp,
+    ub4                             mode
+);
+
+typedef sword(*OCISODAREPLONEWITHKEY)
+(
+    OCISvcCtx           *svchp,
+    const OCISodaColl   *coll,
+    const OraText       *key,
+    ub4                  keylength,
+    OCISodaDoc          *document,
+    boolean             *isReplaced,
+    OCIError            *errhp,
+    ub4                  mode
+);
+
+typedef sword(*OCISODAREPLONEANDGETWITHKEY)
+(
+    OCISvcCtx          *svchp,
+    const OCISodaColl  *coll,
+    const OraText      *key,
+    ub4                 keylength,
+    OCISodaDoc        **document,
+    boolean             *isReplaced,
+    OCIError           *errhp,
+    ub4                 mode
+);
+
+typedef sword(*OCISODAREPLONEWITHCTNT)
+(
+    OCISvcCtx                     *svchp,
+    const OCISodaColl             *coll,
+    const OCISodaOperationOptions *optns,
+    const void                    *content,
+    ub4                            contentLength,
+    ub4                            docFlags,
+    boolean                       *isReplaced,
+    OCIError                      *errhp,
+    ub4                            mode
+);
+
+typedef sword(*OCISODAREPLONEANDGETWITHCTNT)
+(
+    OCISvcCtx                       *svchp,
+    const OCISodaColl               *coll,
+    const OCISodaOperationOptions   *optns,
+    const void                      *content,
+    ub4                              contentLen,
+    ub4                              docFlags,
+    OCISodaDoc                     **document,
+    boolean                         *isReplaced,
+    OCIError                        *errhp,
+    ub4                              mode
+);
+
+typedef sword(*OCISODAREMOVE)
+(
+    OCISvcCtx                       *svchp,
+    const OCISodaColl               *coll,
+    const OCISodaOperationOptions   *optns,
+    ub8                             *removeCount,
+    OCIError                        *errhp,
+    ub4                              mode
+);
+
+typedef sword(*OCISODAREMOVEONEWITHKEY)
+(
+    OCISvcCtx          *svchp,
+    const OCISodaColl  *coll,
+    const OraText      *key,
+    ub4                 keylength,
+    boolean            *isRemoved,
+    OCIError           *errhp,
+    ub4                 mode
+);
+
+typedef sword(*OCISODACOLLDROP)
+(
+    OCISvcCtx   *svchp,
+    OCISodaColl *coll,
+    boolean     *isDropped,
+    OCIError    *errhp,
+    ub4          mode
+);
+
+typedef sword(*OCISODAINDEXCREATE)
+(
+    OCISvcCtx         *svchp,
+    const OCISodaColl *coll,
+    const OraText     *indexspec,
+    ub4                speclen,
+    OCIError          *errhp,
+    ub4                mode
+);
+
+typedef sword(*OCISODAINDEXDROP)
+(
+    OCISvcCtx   *svchp,
+    OraText     *indexname,
+    ub4          indexnamelen,
+    boolean     *isDropped,
+    OCIError    *errhp,
+    ub4          mode
+);
+
+typedef sword(*OCISODADATAGUIDEGET)
+(
+    OCISvcCtx          *svchp,
+    const OCISodaColl  *collection,
+    ub4                 docFlags,
+    OCISodaDoc        **doc,
+    OCIError           *errhp,
+    ub4                 mode
+);
+
 /* API introduced in 18.3 */
 
 typedef sword(*OCISODAOPERKEYSSET)
 (
-    const void   *operhp, // should be OCISodaOperationOptions
-    OraText     **keysArray,
-    ub4          *lengthsArray,
-    ub4           count,
-    OCIError     *errhp,
-    ub4           mode
+    const OCISodaOperationOptions *operhp,
+    OraText                       **keysArray,
+    ub4                            *lengthsArray,
+    ub4                             count,
+    OCIError                       *errhp,
+    ub4                             mode
 );
 
-/* API introduced in 19.3 */
+/* API introduced in 18.5 */
 
-typedef sword(*OCISODABULKINSERT)
+typedef sword(*OCISODABULKINSERTWITHCTNT)
 (
     OCISvcCtx            *svchp,
-    void*                *collection,
-    void*               **documentarray,
-    ub4                   arraylen,
-    void*                 opoptns,
+    OCISodaColl          *collection,
+    void                **contentStrings,
+    ub4                  *contentStringLengths,
+    OraText              **keys,
+    ub4                  *keyLengths,
+    ub4                   arrayLength,
+    ub4                   docFlags,
+    OCISodaOutputOptions *opoptns,
     OCIError             *errhp,
     ub4                   mode
 );
 
-/* API introduced in 21.3 */
+typedef sword(*OCISODABULKINSERT)
+(
+    OCISvcCtx            *svchp,
+    OCISodaColl          *collection,
+    OCISodaDoc          **documentarray,
+    ub4                   arraylen,
+    OCISodaOutputOptions *opoptns,
+    OCIError             *errhp,
+    ub4                   mode
+);
+
+typedef sword(*OCISODABULKINSERTANDGET)
+(
+    OCISvcCtx            *svchp,
+    OCISodaColl          *collection,
+    OCISodaDoc          **documentarray,
+    ub4                   arraylen,
+    OCISodaOutputOptions *opoptns,
+    OCIError             *errhp,
+    ub4                   mode
+);
+
+typedef sword(*OCISODABULKINSERTANDGETWITHCTNT)
+(
+    OCISvcCtx       *svchp,
+    OCISodaColl     *collection,
+    void           **contentStrings,
+    ub4             *contentStringLengths,
+    OraText        **keys,
+    ub4             *keyLengths,
+    ub4              arrayLength,
+    ub4              docFlags,
+    OCISodaDoc     **documents,
+    OCISodaOutputOptions *opoptns,
+    OCIError        *errhp,
+    ub4              mode
+);
+
+typedef sword(*OCISODABULKINSERTANDGETWITHOPTS)
+(
+    OCISvcCtx                 *svchp,
+    OCISodaColl               *collection,
+    OCISodaDoc               **documentarray,
+    ub4                        arraylen,
+    OCISodaOperationOptions   *oproptns,
+    OCISodaOutputOptions      *opoptns,
+    OCIError                  *errhp,
+    ub4                        mode
+);
+
+/* API introduced in 20.1 */
+
+typedef sword(*OCISODACOLLTRUNCATE)
+(
+    OCISvcCtx   *svchp,
+    OCISodaColl *collection,
+    OCIError    *errhp,
+    ub4          mode
+);
+
+/* API introduced in 19.3 */
 
 typedef sword(*OCISERVERDATALENGTHGET)
 (
@@ -2340,15 +2744,395 @@ typedef sword(*OCIVECTORTOTEXT)
 
 typedef sword(*OCIVECTORFROMTEXT)
 (
-    OCIVector *vectord, 
-    OCIError *errhp, 
+    OCIVector *vectord,
+    OCIError *errhp,
     ub1 vformat,
-    ub4 vdim, 
-    const OraText *vtext, 
+    ub4 vdim,
+    const OraText *vtext,
     ub4 vtextlen,
     ub4 mode
 );
 
+/* API introduced in 21.1 */
 
+typedef sword(*OCIJSONTEXTBUFFERPARSE)
+(
+    void     *hndlp,
+    OCIJson  *jsond,
+    void     *bufp,
+    oraub8    buf_sz,
+    ub4       validation,
+    ub4       encoding,
+    OCIError *errhp,
+    ub4       mode
+);
+
+typedef sword(*OCIJSONTOTEXTBUFFER)
+(
+    OCISvcCtx *svchp,
+    OCIJson   *jsond,
+    OraText   *bufp,
+    oraub8    *byte_amtp,
+    ub4        print,
+    OCIError  *errhp,
+    ub4        mode
+);
+
+typedef sword(*OCIJSONBINARYBUFFERLOAD)
+(
+    void     *hndlp,
+    OCIJson  *jsond,
+    ub1      *bufp,
+    oraub8   buf_sz,
+    OCIError *errhp,
+    ub4      mode
+);
+
+typedef sword(*OCIJSONTOBINARYBUFFER)
+(
+    OCISvcCtx *svchp,
+    OCIJson   *jsond,
+    ub1       *bufp,
+    oraub8    *byte_amtp,
+    OCIError  *errhp,
+    ub4        mode
+);
+
+#ifndef JSONDOM_H
+#define JSONDOM_H
+typedef struct JsonDomDoc JsonDomDoc;
+typedef struct JsonDomNode JsonDomNode;
+#endif
+
+typedef sword(*OCIJSONDOMDOCGET)
+(
+    OCISvcCtx  *svchp,
+    OCIJson    *jsond,
+    JsonDomDoc **domdoc,
+    OCIError   *errhp,
+    ub4         mode
+);
+
+typedef sword(*OCIJSONDOMDOCSET)
+(
+    void       *hndlp,
+    OCIJson    *jsond,
+    JsonDomDoc *domdoc,
+    OCIError   *errhp,
+    ub4         mode
+);
+
+typedef sword(*OCIJSONCLONE)
+(
+    void    *hndlp,
+    OCIJson *src_jsond,
+    OCIJson **dst_jsond,
+    OCIError *errhp,
+    ub4      mode
+);
+
+typedef sword(*OCIJSONBINARYLENGTHGET)
+(
+    OCISvcCtx *svchp,
+    OCIJson   *jsond,
+    oraub8    *byte_amtp,
+    OCIError  *errhp,
+    ub4        mode
+);
+
+#ifndef JSONDOM_H
+#define JSONDOM_H
+typedef struct JsonDomDoc JsonDomDoc;
+typedef struct JsonDomNode JsonDomNode;
+#endif
+
+
+
+/* per-environment OCI symbol dispatch table */
+
+typedef struct OCI_Symbols
+{
+    OCIINITIALIZE                            OCIInitialize;
+    OCIENVINIT                               OCIEnvInit;
+    OCIENVCREATE                             OCIEnvCreate;
+    OCISERVERATTACH                          OCIServerAttach;
+    OCISERVERDETACH                          OCIServerDetach;
+    OCIHANDLEALLOC                           OCIHandleAlloc;
+    OCIHANDLEFREE                            OCIHandleFree;
+    OCIDESCRIPTORALLOC                       OCIDescriptorAlloc;
+    OCIDESCRIPTORFREE                        OCIDescriptorFree;
+    OCISESSIONBEGIN                          OCISessionBegin;
+    OCISESSIONEND                            OCISessionEnd;
+    OCIPASSWORDCHANGE                        OCIPasswordChange;
+    OCIBINDBYPOS                             OCIBindByPos;
+    OCIBINDBYNAME                            OCIBindByName;
+    OCIBINDDYNAMIC                           OCIBindDynamic;
+    OCIBINDOBJECT                            OCIBindObject;
+    OCIDEFINEBYPOS                           OCIDefineByPos;
+    OCIDEFINEDYNAMIC                         OCIDefineDynamic;
+    OCIDEFINEOBJECT                          OCIDefineObject;
+    OCISTMTPREPARE                           OCIStmtPrepare;
+    OCISTMTEXECUTE                           OCIStmtExecute;
+    OCISTMTFETCH                             OCIStmtFetch;
+    OCISTMTFETCH2                            OCIStmtFetch2;
+    OCISTMTGETPIECEINFO                      OCIStmtGetPieceInfo;
+    OCISTMTSETPIECEINFO                      OCIStmtSetPieceInfo;
+    OCIPARAMGET                              OCIParamGet;
+    OCIPARAMSET                              OCIParamSet;
+    OCITRANSSTART                            OCITransStart;
+    OCITRANSDETACH                           OCITransDetach;
+    OCITRANSPREPARE                          OCITransPrepare;
+    OCITRANSFORGET                           OCITransForget;
+    OCITRANSCOMMIT                           OCITransCommit;
+    OCITRANSROLLBACK                         OCITransRollback;
+    OCIERRORGET                              OCIErrorGet;
+    OCILOBCREATETEMPORARY                    OCILobCreateTemporary;
+    OCILOBFREETEMPORARY                      OCILobFreeTemporary;
+    OCILOBISTEMPORARY                        OCILobIsTemporary;
+    OCILOBAPPEND                             OCILobAppend;
+    OCILOBCOPY                               OCILobCopy;
+    OCILOBGETLENGTH                          OCILobGetLength;
+    OCILOBGETCHUNKSIZE                       OCILobGetChunkSize;
+    OCILOBREAD                               OCILobRead;
+    OCILOBWRITE                              OCILobWrite;
+    OCILOBTRIM                               OCILobTrim;
+    OCILOBERASE                              OCILobErase;
+    OCILOBOPEN                               OCILobOpen;
+    OCILOBCLOSE                              OCILobClose;
+    OCILOBLOCATORASSIGN                      OCILobLocatorAssign;
+    OCILOBASSIGN                             OCILobAssign;
+    OCILOBISEQUAL                            OCILobIsEqual;
+    OCILOBFLUSHBUFFER                        OCILobFlushBuffer;
+    OCILOBGETSTORAGELIMIT                    OCILobGetStorageLimit;
+    OCILOBENABLEBUFFERING                    OCILobEnableBuffering;
+    OCILOBDISABLEBUFFERING                   OCILobDisableBuffering;
+    OCILOBFILEOPEN                           OCILobFileOpen;
+    OCILOBFILECLOSE                          OCILobFileClose;
+    OCILOBFILECLOSEALL                       OCILobFileCloseAll;
+    OCILOBFILEISOPEN                         OCILobFileIsOpen;
+    OCILOBFILEEXISTS                         OCILobFileExists;
+    OCILOBFIELGETNAME                        OCILobFileGetName;
+    OCILOBFILESETNAME                        OCILobFileSetName;
+    OCILOBLOADFROMFILE                       OCILobLoadFromFile;
+    OCILOBWRITEAPPEND                        OCILobWriteAppend;
+    OCISERVERVERSION                         OCIServerVersion;
+    OCIBREAK                                 OCIBreak;
+    OCIATTRGET                               OCIAttrGet;
+    OCIATTRSET                               OCIAttrSet;
+    OCIDATEASSIGN                            OCIDateAssign;
+    OCIDATETOTEXT                            OCIDateToText;
+    OCIDATEFROMTEXT                          OCIDateFromText;
+    OCIDATECOMPARE                           OCIDateCompare;
+    OCIDATEADDMONTHS                         OCIDateAddMonths;
+    OCIDATEADDDAYS                           OCIDateAddDays;
+    OCIDATELASTDAY                           OCIDateLastDay;
+    OCIDATEDAYSBETWEEN                       OCIDateDaysBetween;
+    OCIDATEZONETOZONE                        OCIDateZoneToZone;
+    OCIDATENEXTDAY                           OCIDateNextDay;
+    OCIDATECHECK                             OCIDateCheck;
+    OCIDATESYSDATE                           OCIDateSysDate;
+    OCIDESCRIBEANY                           OCIDescribeAny;
+    OCIINTERVALASSIGN                        OCIIntervalAssign;
+    OCIINTERVALCHECK                         OCIIntervalCheck;
+    OCIINTERVALCOMPARE                       OCIIntervalCompare;
+    OCIINTERVALFROMTEXT                      OCIIntervalFromText;
+    OCIINTERVALTOTEXT                        OCIIntervalToText;
+    OCIINTERVALFROMTZ                        OCIIntervalFromTZ;
+    OCIINTERVALGETDAYSECOND                  OCIIntervalGetDaySecond;
+    OCIINTERVALGETYEARMONTH                  OCIIntervalGetYearMonth;
+    OCIINTERVALSETDAYSECOND                  OCIIntervalSetDaySecond;
+    OCIINTERVALSETYEARMONTH                  OCIIntervalSetYearMonth;
+    OCIINTERVALSUBTRACT                      OCIIntervalSubtract;
+    OCIINTERVALADD                           OCIIntervalAdd;
+    OCIDATETIMEASSIGN                        OCIDateTimeAssign;
+    OCIDATETIMECHECK                         OCIDateTimeCheck;
+    OCIDATETIMECOMPARE                       OCIDateTimeCompare;
+    OCIDATETIMECONSTRUCT                     OCIDateTimeConstruct;
+    OCIDATETIMECONVERT                       OCIDateTimeConvert;
+    OCIDATETIMEFROMARRAY                     OCIDateTimeFromArray;
+    OCIDATETIMETOARRAY                       OCIDateTimeToArray;
+    OCIDATETIMEFROMTEXT                      OCIDateTimeFromText;
+    OCIDATETIMETOTEXT                        OCIDateTimeToText;
+    OCIDATETIMEGETDATE                       OCIDateTimeGetDate;
+    OCIDATETIMEGETTIME                       OCIDateTimeGetTime;
+    OCIDATETIMEGETTIMEZONENAME               OCIDateTimeGetTimeZoneName;
+    OCIDATETIMEGETTIMEZONEOFFSET             OCIDateTimeGetTimeZoneOffset;
+    OCIDATETIMEINTERVALADD                   OCIDateTimeIntervalAdd;
+    OCIDATETIMEINTERVALSUB                   OCIDateTimeIntervalSub;
+    OCIDATETIMESUBTRACT                      OCIDateTimeSubtract;
+    OCIDATETIMESYSTIMESTAMP                  OCIDateTimeSysTimeStamp;
+    OCIARRAYDESCRIPTORALLOC                  OCIArrayDescriptorAlloc;
+    OCIARRAYDESCRIPTORFREE                   OCIArrayDescriptorFree;
+    OCICLIENTVERSION                         OCIClientVersion;
+    OCITYPEBYREF                             OCITypeByRef;
+    OCITYPEBYNAME                            OCITypeByName;
+    OCINUMBERTOINT                           OCINumberToInt;
+    OCINUMBERFROMINT                         OCINumberFromInt;
+    OCINUMBERTOREAL                          OCINumberToReal;
+    OCINUMBERFROMREAL                        OCINumberFromReal;
+    OCINUMBERTOTEXT                          OCINumberToText;
+    OCINUMBERFROMTEXT                        OCINumberFromText;
+    OCINUMBERASSIGN                          OCINumberAssign;
+    OCINUMBERADD                             OCINumberAdd;
+    OCINUMBERSUB                             OCINumberSub;
+    OCINUMBERMUL                             OCINumberMul;
+    OCINUMBERDIV                             OCINumberDiv;
+    OCINUMBERCMP                             OCINumberCmp;
+    OCISTRINGPTR                             OCIStringPtr;
+    OCISTRINGSIZE                            OCIStringSize;
+    OCISTRINGASSIGNTEXT                      OCIStringAssignText;
+    OCISTRINGRESIZE                          OCIStringResize;
+    OCIRAWPTR                                OCIRawPtr;
+    OCIRAWASSIGNBYTES                        OCIRawAssignBytes;
+    OCIRAWRESIZE                             OCIRawResize;
+    OCIRAWALLOCSIZE                          OCIRawAllocSize;
+    OCIRAWSIZE                               OCIRawSize;
+    OCIOBJECTNEW                             OCIObjectNew;
+    OCIOBJECTFREE                            OCIObjectFree;
+    OCIOBJECTSETATTR                         OCIObjectSetAttr;
+    OCIOBJECTGETATTR                         OCIObjectGetAttr;
+    OCIOBJECTPIN                             OCIObjectPin;
+    OCIOBJECTUNPIN                           OCIObjectUnpin;
+    OCIOBJECTCOPY                            OCIObjectCopy;
+    OCIOBJECTGETOBJECTREF                    OCIObjectGetObjectRef;
+    OCIOBJECTGETTYPEREF                      OCIObjectGetTypeRef;
+    OCIOBJECTGETPROPERTY                     OCIObjectGetProperty;
+    OCIOBJECTGETIND                          OCIObjectGetInd;
+    OCIREFASSIGN                             OCIRefAssign;
+    OCIREFISNULL                             OCIRefIsNull;
+    OCIREFCLEAR                              OCIRefClear;
+    OCIREFTOHEX                              OCIRefToHex;
+    OCIREFHEXSIZE                            OCIRefHexSize;
+    OCITHREADPROCESSINIT                     OCIThreadProcessInit;
+    OCITHREADINIT                            OCIThreadInit;
+    OCITHREADTERM                            OCIThreadTerm;
+    OCITHREADIDINIT                          OCIThreadIdInit;
+    OCITHREADIDDESTROY                       OCIThreadIdDestroy;
+    OCITHREADHNDINIT                         OCIThreadHndInit;
+    OCITHREADHNDDESTROY                      OCIThreadHndDestroy;
+    OCITHREADCREATE                          OCIThreadCreate;
+    OCITHREADJOIN                            OCIThreadJoin;
+    OCITHREADCLOSE                           OCIThreadClose;
+    OCITHREADMUTEXINIT                       OCIThreadMutexInit;
+    OCITHREADMUTEXDESTROY                    OCIThreadMutexDestroy;
+    OCITHREADMUTEXACQUIRE                    OCIThreadMutexAcquire;
+    OCITHREADMUTEXRELEASE                    OCIThreadMutexRelease;
+    OCITHREADKEYINIT                         OCIThreadKeyInit;
+    OCITHREADKEYDESTROY                      OCIThreadKeyDestroy;
+    OCITHREADKEYSET                          OCIThreadKeySet;
+    OCITHREADKEYGET                          OCIThreadKeyGet;
+    OCICONNECTIONPOOLCREATE                  OCIConnectionPoolCreate;
+    OCICONNECTIONPOOLDESTROY                 OCIConnectionPoolDestroy;
+    OCISESSIONPOOLCREATE                     OCISessionPoolCreate;
+    OCISESSIONPOOLDESTROY                    OCISessionPoolDestroy;
+    OCISESSIONGET                            OCISessionGet;
+    OCISESSIONRELEASE                        OCISessionRelease;
+    OCICOLLSIZE                              OCICollSize;
+    OCICOLLMAX                               OCICollMax;
+    OCICOLLGETITEM                           OCICollGetElem;
+    OCICOLLASSIGNELEM                        OCICollAssignElem;
+    OCICOLLASSIGN                            OCICollAssign;
+    OCICOLLAPPEND                            OCICollAppend;
+    OCICOLLTRIM                              OCICollTrim;
+    OCITABLESIZE                             OCITableSize;
+    OCITABLEDELETE                           OCITableDelete;
+    OCIITERCREATE                            OCIIterCreate;
+    OCIITERDELETE                            OCIIterDelete;
+    OCIITERINIT                              OCIIterInit;
+    OCIITERNEXT                              OCIIterNext;
+    OCIITERPREV                              OCIIterPrev;
+    OCIDIRPATHABORT                          OCIDirPathAbort;
+    OCIDIRPATHDATASAVE                       OCIDirPathDataSave;
+    OCIDIRPATHFINISH                         OCIDirPathFinish;
+    OCIDIRPATHPREPARE                        OCIDirPathPrepare;
+    OCIDIRPATHLOADSTREAM                     OCIDirPathLoadStream;
+    OCIDIRPATHCOLARRAYENTRYSET               OCIDirPathColArrayEntrySet;
+    OCIDIRPATHCOLARRAYRESET                  OCIDirPathColArrayReset;
+    OCIDIRPATHCOLARRAYTOSTREAM               OCIDirPathColArrayToStream;
+    OCIDIRPATHSTREAMRESET                    OCIDirPathStreamReset;
+    OCIDIRPATHFLUSHROW                       OCIDirPathFlushRow;
+    OCICACHEFREE                             OCICacheFree;
+    OCIPING                                  OCIPing;
+    OCIAQENQ                                 OCIAQEnq;
+    OCIAQDEQ                                 OCIAQDeq;
+    OCIAQLISTEN                              OCIAQListen;
+    OCIDBSTARTUP                             OCIDBStartup;
+    OCIDBSHUTDOWN                            OCIDBShutdown;
+    OCIENVNLSCREATE                          OCIEnvNlsCreate;
+    OCINLSGETINFO                            OCINlsGetInfo;
+    OCISTMTPREPARE2                          OCIStmtPrepare2;
+    OCISTMTRELEASE                           OCIStmtRelease;
+    OCISUBSCRIPTIONREGISTER                  OCISubscriptionRegister;
+    OCISUBSCRIPTIONUNREGISTER                OCISubscriptionUnRegister;
+    OCILOBGETCONTENTTYPE                     OCILobGetContentType;
+    OCISTMTGETNEXTRESULT                     OCIStmtGetNextResult;
+    OCISERVERRELEASE2                        OCIServerRelease2;
+    OCISODAOPERKEYSSET                       OCISodaOperKeysSet;
+    OCIROWIDTOCHAR                           OCIRowidToChar;
+    OCISTMTGETBINDINFO                       OCIStmtGetBindInfo;
+    OCISODABULKINSERT                        OCISodaBulkInsert;
+
+    OCISODACOLLCREATE                        OCISodaCollCreate;
+    OCISODAMETADATABUILD                     OCISodaMetadataBuild;
+    OCISODACOLLCREATEWITHMETADATA            OCISodaCollCreateWithMetadata;
+    OCISODACOLLOPEN                          OCISodaCollOpen;
+    OCISODADOCCREATE                         OCISodaDocCreate;
+    OCISODADOCCREATEWITHKEY                  OCISodaDocCreateWithKey;
+    OCISODADOCCREATEWITHKEYANDMTYPE          OCISodaDocCreateWithKeyAndMType;
+    OCISODAINSERT                            OCISodaInsert;
+    OCISODAINSERTANDGET                      OCISodaInsertAndGet;
+    OCISODAINSERTWITHCTNT                    OCISodaInsertWithCtnt;
+    OCISODAINSERTANDGETWITHCTNT              OCISodaInsertAndGetWithCtnt;
+    OCISODAFIND                              OCISodaFind;
+    OCISODAFINDONE                           OCISodaFindOne;
+    OCISODAFINDONEWITHKEY                    OCISodaFindOneWithKey;
+    OCISODADOCGETNEXT                        OCISodaDocGetNext;
+    OCISODACOLLLIST                          OCISodaCollList;
+    OCISODACOLLGETNEXT                       OCISodaCollGetNext;
+    OCISODADOCCOUNT                          OCISodaDocCount;
+    OCISODADOCCOUNTWITHFILTER                OCISodaDocCountWithFilter;
+    OCISODAREPLONE                           OCISodaReplOne;
+    OCISODAREPLONEANDGET                     OCISodaReplOneAndGet;
+    OCISODAREPLONEWITHKEY                    OCISodaReplOneWithKey;
+    OCISODAREPLONEANDGETWITHKEY              OCISodaReplOneAndGetWithKey;
+    OCISODAREPLONEWITHCTNT                   OCISodaReplOneWithCtnt;
+    OCISODAREPLONEANDGETWITHCTNT             OCISodaReplOneAndGetWithCtnt;
+    OCISODAREMOVE                            OCISodaRemove;
+    OCISODAREMOVEONEWITHKEY                  OCISodaRemoveOneWithKey;
+    OCISODACOLLDROP                          OCISodaCollDrop;
+    OCISODAINDEXCREATE                       OCISodaIndexCreate;
+    OCISODAINDEXDROP                         OCISodaIndexDrop;
+    OCISODADATAGUIDEGET                      OCISodaDataGuideGet;
+    OCISODABULKINSERTWITHCTNT                OCISodaBulkInsertWithCtnt;
+    OCISODABULKINSERTANDGET                  OCISodaBulkInsertAndGet;
+    OCISODABULKINSERTANDGETWITHCTNT          OCISodaBulkInsertAndGetWithCtnt;
+    OCISODABULKINSERTANDGETWITHOPTS          OCISodaBulkInsertAndGetWithOpts;
+    OCISODACOLLTRUNCATE                      OCISodaCollTruncate;
+    OCISERVERDATALENGTHGET                   OCIServerDataLengthGet;
+    OCIVECTORTOARRAY                         OCIVectorToArray;
+    OCIVECTORFROMARRAY                       OCIVectorFromArray;
+    OCIVECTORTOTEXT                          OCIVectorToText;
+    OCIVECTORFROMTEXT                        OCIVectorFromText;
+
+    OCIJSONTEXTBUFFERPARSE                   OCIJsonTextBufferParse;
+    OCIJSONTOTEXTBUFFER                      OCIJsonToTextBuffer;
+    OCIJSONBINARYBUFFERLOAD                  OCIJsonBinaryBufferLoad;
+    OCIJSONTOBINARYBUFFER                    OCIJsonToBinaryBuffer;
+    OCIJSONDOMDOCGET                         OCIJsonDomDocGet;
+    OCIJSONDOMDOCSET                         OCIJsonDomDocSet;
+    OCIJSONCLONE                             OCIJsonClone;
+    OCIJSONBINARYLENGTHGET                   OCIJsonBinaryLengthGet;
+
+#ifdef ORAXB8_DEFINED
+    OCILOBCOPY2                              OCILobCopy2;
+    OCILOBERASE2                             OCILobErase2;
+    OCILOBGETLENGTH2                         OCILobGetLength2;
+    OCILOBLOADFROMFILE2                      OCILobLoadFromFile2;
+    OCILOBREAD2                              OCILobRead2;
+    OCILOBTRIM2                              OCILobTrim2;
+    OCILOBWRITE2                             OCILobWrite2;
+    OCILOBWRITEAPPEND2                       OCILobWriteAppend2;
+#endif
+} OCI_Symbols;
 #endif /* OCILIB_OCI_API_H_INCLUDED */
 

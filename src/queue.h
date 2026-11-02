@@ -23,93 +23,93 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL boolean OcilibQueueCreate
+OCI_SYM_LOCAL OCI_Boolean OcilibQueueCreate
 (
     OCI_Connection *con,
     const otext    *queue_name,
     const otext    *queue_table,
-    unsigned int    queue_type,
-    unsigned int    max_retries,
-    unsigned int    retry_delay,
-    unsigned int    retention_time,
-    boolean         dependency_tracking,
+    OCI_QueueType   queue_type,
+    OCI_UInt32    max_retries,
+    OCI_UInt32    retry_delay,
+    OCI_UInt32    retention_time,
+    OCI_Boolean     dependency_tracking,
     const otext    *comment
 );
 
-OCI_SYM_LOCAL boolean OcilibQueueAlter
+OCI_SYM_LOCAL OCI_Boolean OcilibQueueAlter
 (
     OCI_Connection *con,
     const otext    *queue_name,
-    unsigned int    max_retries,
-    unsigned int    retry_delay,
-    unsigned int    retention_time,
+    OCI_UInt32    max_retries,
+    OCI_UInt32    retry_delay,
+    OCI_UInt32    retention_time,
     const otext    *comment
 );
 
-OCI_SYM_LOCAL boolean OcilibQueueDrop
+OCI_SYM_LOCAL OCI_Boolean OcilibQueueDrop
 (
     OCI_Connection *con,
     const otext    *queue_name
 );
 
-OCI_SYM_LOCAL boolean OcilibQueueStart
+OCI_SYM_LOCAL OCI_Boolean OcilibQueueStart
 (
     OCI_Connection *con,
     const otext    *queue_name,
-    boolean         enqueue,
-    boolean         dequeue
+    OCI_Boolean     enqueue,
+    OCI_Boolean     dequeue
 );
 
-OCI_SYM_LOCAL boolean OcilibQueueStop
+OCI_SYM_LOCAL OCI_Boolean OcilibQueueStop
 (
     OCI_Connection *con,
     const otext    *queue_name,
-    boolean         enqueue,
-    boolean         dequeue,
-    boolean         wait
+    OCI_Boolean     enqueue,
+    OCI_Boolean     dequeue,
+    OCI_Boolean     wait
 );
 
-OCI_SYM_LOCAL boolean OcilibQueueTableCreate
+OCI_SYM_LOCAL OCI_Boolean OcilibQueueTableCreate
+(
+    OCI_Connection   *con,
+    const otext      *queue_table,
+    const otext      *queue_payload_type,
+    const otext      *storage_clause,
+    const otext      *sort_list,
+    OCI_Boolean       multiple_consumers,
+    OCI_QueueGrouping message_grouping,
+    const otext      *comment,
+    OCI_UInt32      primary_instance,
+    OCI_UInt32      secondary_instance,
+    const otext      *compatible
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibQueueTableAlter
 (
     OCI_Connection *con,
     const otext    *queue_table,
-    const otext    *queue_payload_type,
-    const otext    *storage_clause,
-    const otext    *sort_list,
-    boolean         multiple_consumers,
-    unsigned int    message_grouping,
     const otext    *comment,
-    unsigned int    primary_instance,
-    unsigned int    secondary_instance,
-    const otext    *compatible
+    OCI_UInt32    primary_instance,
+    OCI_UInt32    secondary_instance
 );
 
-OCI_SYM_LOCAL boolean OcilibQueueTableAlter
+OCI_SYM_LOCAL OCI_Boolean OcilibQueueTableDrop
 (
     OCI_Connection *con,
     const otext    *queue_table,
-    const otext    *comment,
-    unsigned int    primary_instance,
-    unsigned int    secondary_instance
+    OCI_Boolean     force
 );
 
-OCI_SYM_LOCAL boolean OcilibQueueTableDrop
+OCI_SYM_LOCAL OCI_Boolean OcilibQueueTablePurge
 (
-    OCI_Connection *con,
-    const otext    *queue_table,
-    boolean         force
+    OCI_Connection    *con,
+    const otext       *queue_table,
+    const otext       *purge_condition,
+    OCI_Boolean        block,
+    OCI_QueuePurgeMode delivery_mode
 );
 
-OCI_SYM_LOCAL boolean OcilibQueueTablePurge
-(
-    OCI_Connection *con,
-    const otext    *queue_table,
-    const otext    *purge_condition,
-    boolean         block,
-    unsigned int    delivery_mode
-);
-
-OCI_SYM_LOCAL boolean OcilibQueueTableMigrate
+OCI_SYM_LOCAL OCI_Boolean OcilibQueueTableMigrate
 (
     OCI_Connection *con,
     const otext    *queue_table,

@@ -28,30 +28,30 @@ OCI_SYM_LOCAL OCI_Bind* OcilibBindCreate
     OCI_Statement* stmt,
     void         * data,
     const otext  * name,
-    unsigned int   mode,
+    OCI_UInt32   mode,
     ub4            size,
     ub1            type,
-    unsigned int   code,
-    unsigned int   subtype,
+    OCI_SqlType    code,
+    OCI_SubType    subtype,
     OCI_TypeInfo * typinf,
-    unsigned int   nbelem
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibBindFree
+OCI_SYM_LOCAL OCI_Boolean OcilibBindFree
 (
     OCI_Bind* bnd
 );
 
-OCI_SYM_LOCAL int OcilibBindGetIndex
+OCI_SYM_LOCAL OCI_Int32 OcilibBindGetIndex
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibBindSetNullIndicator
+OCI_SYM_LOCAL OCI_Boolean OcilibBindSetNullIndicator
 (
     OCI_Bind   * bnd,
-    unsigned int position,
+    OCI_UInt32 position,
     sb2          value
 );
 
@@ -60,17 +60,17 @@ OCI_SYM_LOCAL const otext* OcilibBindGetName
     OCI_Bind* bnd
 );
 
-OCI_SYM_LOCAL unsigned int OcilibBindGetType
+OCI_SYM_LOCAL OCI_SqlType OcilibBindGetType
 (
     OCI_Bind* bnd
 );
 
-OCI_SYM_LOCAL unsigned int OcilibBindGetSubtype
+OCI_SYM_LOCAL OCI_SubType OcilibBindGetSubtype
 (
     OCI_Bind* bnd
 );
 
-OCI_SYM_LOCAL unsigned int OcilibBindGetDataCount
+OCI_SYM_LOCAL OCI_UInt32 OcilibBindGetDataCount
 (
     OCI_Bind* bnd
 );
@@ -85,81 +85,81 @@ OCI_SYM_LOCAL OCI_Statement* OcilibBindGetStatement
     OCI_Bind* bnd
 );
 
-OCI_SYM_LOCAL boolean OcilibBindSetDataSize
+OCI_SYM_LOCAL OCI_Boolean OcilibBindSetDataSize
 (
     OCI_Bind   * bnd,
-    unsigned int size
+    OCI_UInt32 size
 );
 
-OCI_SYM_LOCAL boolean OcilibBindSetDataSizeAtPos
+OCI_SYM_LOCAL OCI_Boolean OcilibBindSetDataSizeAtPos
 (
     OCI_Bind   * bnd,
-    unsigned int position,
-    unsigned int size
+    OCI_UInt32 position,
+    OCI_UInt32 size
 );
 
-OCI_SYM_LOCAL unsigned int OcilibBindGetDataSize
+OCI_SYM_LOCAL OCI_UInt32 OcilibBindGetDataSize
 (
     OCI_Bind* bnd
 );
 
-OCI_SYM_LOCAL unsigned int OcilibBindGetDataSizeAtPos
+OCI_SYM_LOCAL OCI_UInt32 OcilibBindGetDataSizeAtPos
 (
     OCI_Bind   * bnd,
-    unsigned int position
+    OCI_UInt32 position
 );
 
-OCI_SYM_LOCAL boolean OcilibBindSetNullAtPos
+OCI_SYM_LOCAL OCI_Boolean OcilibBindSetNullAtPos
 (
     OCI_Bind   * bnd,
-    unsigned int position
+    OCI_UInt32 position
 );
 
-OCI_SYM_LOCAL boolean OcilibBindSetNull
+OCI_SYM_LOCAL OCI_Boolean OcilibBindSetNull
 (
     OCI_Bind* bnd
 );
 
-OCI_SYM_LOCAL boolean OcilibBindSetNotNullAtPos
+OCI_SYM_LOCAL OCI_Boolean OcilibBindSetNotNullAtPos
 (
     OCI_Bind   * bnd,
-    unsigned int position
+    OCI_UInt32 position
 );
 
-OCI_SYM_LOCAL boolean OcilibBindSetNotNull
+OCI_SYM_LOCAL OCI_Boolean OcilibBindSetNotNull
 (
     OCI_Bind* bnd
 );
 
-OCI_SYM_LOCAL boolean OcilibBindIsNullAtPos
+OCI_SYM_LOCAL OCI_Boolean OcilibBindIsNullAtPos
 (
     OCI_Bind   * bnd,
-    unsigned int position
+    OCI_UInt32 position
 );
 
-OCI_SYM_LOCAL boolean OcilibBindIsNull
+OCI_SYM_LOCAL OCI_Boolean OcilibBindIsNull
 (
     OCI_Bind* bnd
 );
 
-OCI_SYM_LOCAL boolean OcilibBindSetCharsetForm
+OCI_SYM_LOCAL OCI_Boolean OcilibBindSetCharsetForm
 (
-    OCI_Bind    *bnd,
-    unsigned int csfrm
+    OCI_Bind       *bnd,
+    OCI_CharsetForm csfrm
 );
 
-OCI_SYM_LOCAL boolean OcilibBindSetDirection
+OCI_SYM_LOCAL OCI_Boolean OcilibBindSetDirection
 (
-    OCI_Bind    *bnd,
-    unsigned int direction
+    OCI_Bind         *bnd,
+    OCI_BindDirection direction
 );
 
-OCI_SYM_LOCAL unsigned int OcilibBindGetDirection
+OCI_SYM_LOCAL OCI_BindDirection OcilibBindGetDirection
 (
     OCI_Bind* bnd
 );
 
-OCI_SYM_LOCAL unsigned int OcilibBindGetAllocationMode
+OCI_SYM_LOCAL OCI_BindAllocationMode OcilibBindGetAllocationMode
 (
     OCI_Bind* bnd
 );

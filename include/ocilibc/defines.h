@@ -20,12 +20,12 @@
 
 /* IMPORTANT NOTICE
  *
- * This file contains explanations about Oracle and OCI technologies. 
- * OCILIB is a wrapper around OCI and thus exposes OCI features. 
+ * This file contains explanations about Oracle and OCI technologies.
+ * OCILIB is a wrapper around OCI and thus exposes OCI features.
  * The OCILIB documentation intends to explain Oracle / OCI concepts
- * and is naturally based on the official Oracle OCI documentation. 
- * 
- * Some parts of OCILIB documentation may include some information 
+ * and is naturally based on the official Oracle OCI documentation.
+ *
+ * Some parts of OCILIB documentation may include some information
  * taken and adapted from the following Oracle documentations :
  *  - Oracle Call Interface Programmer's Guide
  *  - Oracle Streams - Advanced Queuing User's Guide
@@ -44,46 +44,51 @@
 
 /* versions extract macros */
 
-#define OCI_VER_MAJ(v)                      (unsigned int) ((v)/10000)
-#define OCI_VER_MIN(v)                      (unsigned int) (((v)/100) - (((v)/10000)*100))
-#define OCI_VER_REV(v)                      (unsigned int) ((v) - (((v)/100)*100))
+#define OCI_VER_MAJ(v)                      (OCI_UInt32) ((v)/10000)
+#define OCI_VER_MIN(v)                      (OCI_UInt32) (((v)/100) - (((v)/10000)*100))
+#define OCI_VER_REV(v)                      (OCI_UInt32) ((v) - (((v)/100)*100))
 
 #define OCI_VER_MAKE(x, y, z)               ((x)*10000 + (y)*100 + (z))
 
-/* oracle OCI well known major versions (non exhaustive) */
+/* oracle OCI well known major versions (non exhaustive) */ 
 
-#define OCI_8_0                             OCI_VER_MAKE( 8, 0, 0)
-#define OCI_8_1                             OCI_VER_MAKE( 8, 1, 0)
-#define OCI_9_0                             OCI_VER_MAKE( 9, 0, 0)
-#define OCI_9_2                             OCI_VER_MAKE( 9, 2, 0)
-#define OCI_10_1                            OCI_VER_MAKE(10, 1, 0)
-#define OCI_10_2                            OCI_VER_MAKE(10, 2, 0)
-#define OCI_11_1                            OCI_VER_MAKE(11, 1, 0)
-#define OCI_11_2                            OCI_VER_MAKE(11, 2, 0)
-#define OCI_12_1                            OCI_VER_MAKE(12, 1, 0)
-#define OCI_12_2                            OCI_VER_MAKE(12, 2, 0)
-#define OCI_18_1                            OCI_VER_MAKE(18, 1, 0)
-#define OCI_18_2                            OCI_VER_MAKE(18, 2, 0)
-#define OCI_18_3                            OCI_VER_MAKE(18, 3, 0)
-#define OCI_18_4                            OCI_VER_MAKE(18, 4, 0)
-#define OCI_18_5                            OCI_VER_MAKE(18, 5, 0)
-#define OCI_19_3                            OCI_VER_MAKE(19, 3, 0)
-#define OCI_19_5                            OCI_VER_MAKE(19, 5, 0)
-#define OCI_19_12                           OCI_VER_MAKE(19, 12, 0)
-#define OCI_19_16                           OCI_VER_MAKE(19, 16, 0)
-#define OCI_19_17                           OCI_VER_MAKE(19, 17, 0)
-#define OCI_19_19                           OCI_VER_MAKE(19, 19, 0)
-#define OCI_19_21                           OCI_VER_MAKE(19, 21, 0)
-#define OCI_19_22                           OCI_VER_MAKE(19, 22, 0)
-#define OCI_19_24                           OCI_VER_MAKE(19, 24, 0)
-#define OCI_21_3                            OCI_VER_MAKE(21, 3, 0)
-#define OCI_21_12                           OCI_VER_MAKE(21, 12, 0)
-#define OCI_21_14                           OCI_VER_MAKE(21, 14, 0)
-#define OCI_21_15                           OCI_VER_MAKE(21, 15, 0)
-#define OCI_23_3                            OCI_VER_MAKE(23, 3, 0)
-#define OCI_23_4                            OCI_VER_MAKE(23, 4, 0)
-#define OCI_23_5                            OCI_VER_MAKE(23, 5, 0)
-#define OCI_23_6                            OCI_VER_MAKE(23, 6, 0)
+#define OCI_8_0                             OCI_VER_MAKE( 8,  0,  0)
+#define OCI_8_1                             OCI_VER_MAKE( 8,  1,  0)
+#define OCI_9_0                             OCI_VER_MAKE( 9,  0,  0)
+#define OCI_9_2                             OCI_VER_MAKE( 9,  2,  0)
+#define OCI_10_1                            OCI_VER_MAKE(10,  1,  0)
+#define OCI_10_2                            OCI_VER_MAKE(10,  2,  0)
+#define OCI_11_1                            OCI_VER_MAKE(11,  1,  0)
+#define OCI_11_2                            OCI_VER_MAKE(11,  2,  0)
+#define OCI_12_1                            OCI_VER_MAKE(12,  1,  0)
+#define OCI_12_2                            OCI_VER_MAKE(12,  2,  0)
+#define OCI_18_1                            OCI_VER_MAKE(18,  1,  0)
+#define OCI_18_2                            OCI_VER_MAKE(18,  2,  0)
+#define OCI_18_3                            OCI_VER_MAKE(18,  3,  0)
+#define OCI_18_4                            OCI_VER_MAKE(18,  4,  0)
+#define OCI_18_5                            OCI_VER_MAKE(18,  5,  0)
+#define OCI_19_3                            OCI_VER_MAKE(19,  3,  0)
+#define OCI_19_5                            OCI_VER_MAKE(19,  5,  0)
+#define OCI_19_9                            OCI_VER_MAKE(19,  9,  0)
+#define OCI_19_11                           OCI_VER_MAKE(19, 11,  0)
+#define OCI_19_12                           OCI_VER_MAKE(19, 12,  0)
+#define OCI_19_13                           OCI_VER_MAKE(19, 13,  0)
+#define OCI_19_16                           OCI_VER_MAKE(19, 16,  0)
+#define OCI_19_17                           OCI_VER_MAKE(19, 17,  0)
+#define OCI_19_19                           OCI_VER_MAKE(19, 19,  0)
+#define OCI_19_21                           OCI_VER_MAKE(19, 21,  0)
+#define OCI_19_22                           OCI_VER_MAKE(19, 22,  0)
+#define OCI_19_24                           OCI_VER_MAKE(19, 24,  0)
+#define OCI_20_1                            OCI_VER_MAKE(20,  1,  0)
+#define OCI_21_1                            OCI_VER_MAKE(21,  1,  0)
+#define OCI_21_3                            OCI_VER_MAKE(21,  3,  0)
+#define OCI_21_12                           OCI_VER_MAKE(21, 12,  0)
+#define OCI_21_14                           OCI_VER_MAKE(21, 14,  0)
+#define OCI_21_15                           OCI_VER_MAKE(21, 15,  0)
+#define OCI_23_3                            OCI_VER_MAKE(23,  3,  0)
+#define OCI_23_4                            OCI_VER_MAKE(23,  4,  0)
+#define OCI_23_5                            OCI_VER_MAKE(23,  5,  0)
+#define OCI_23_6                            OCI_VER_MAKE(23,  6,  0)
 
 /* OCILIB Error types */
 
@@ -121,54 +126,52 @@
 #define OCI_ERR_TYPEINFO_DATATYPE           25
 #define OCI_ERR_ITEM_NOT_FOUND              26
 #define OCI_ERR_ARG_INVALID_VALUE           27
-#define OCI_ERR_XA_ENV_FROM_STRING          28
-#define OCI_ERR_XA_CONN_FROM_STRING         29
-#define OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED   30
-#define OCI_ERR_UNFREED_BYTES               31
+#define OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED   28
+#define OCI_ERR_UNFREED_BYTES               29
 
-#define OCI_ERR_COUNT                       32
+#define OCI_ERR_COUNT                       30
 
 /* Public OCILIB handles */
 
-#define OCI_IPC_TYPE_INFO        10
-#define OCI_IPC_CONNECTION       11
-#define OCI_IPC_POOL             12
-#define OCI_IPC_TRANSACTION      13
-#define OCI_IPC_STATEMENT        14
-#define OCI_IPC_RESULTSET        15
-#define OCI_IPC_COLUMN           16
-#define OCI_IPC_DATE             17
-#define OCI_IPC_TIMESTAMP        18
-#define OCI_IPC_INTERVAL         19
-#define OCI_IPC_LOB              20
-#define OCI_IPC_FILE             21
-#define OCI_IPC_LONG             22
-#define OCI_IPC_OBJECT           23
-#define OCI_IPC_COLLECTION       24
-#define OCI_IPC_ITERATOR         25
-#define OCI_IPC_ELEMENT          26
-#define OCI_IPC_NUMBER           27
-#define OCI_IPC_HASHTABLE        28
-#define OCI_IPC_THREAD           29
-#define OCI_IPC_MUTEX            30
-#define OCI_IPC_BIND             31
-#define OCI_IPC_REF              32
-#define OCI_IPC_DIRPATH          33
-#define OCI_IPC_NOTIFY           34
-#define OCI_IPC_EVENT            35
-#define OCI_IPC_ARRAY            36
-#define OCI_IPC_MSG              37
-#define OCI_IPC_ENQUEUE          38
-#define OCI_IPC_DEQUEUE          39
-#define OCI_IPC_AGENT            40
-#define OCI_IPC_XMLTYPE          41
-#define OCI_IPC_VECTOR           42
-
-/* allocated bytes types */
-
-#define OCI_MEM_ORACLE                      1
-#define OCI_MEM_OCILIB                      2
-#define OCI_MEM_ALL                         (OCI_MEM_ORACLE | OCI_MEM_OCILIB)
+#define OCI_IPC_ERROR             9
+#define OCI_IPC_ENVIRONMENT      10
+#define OCI_IPC_TYPE_INFO        11
+#define OCI_IPC_CONNECTION       12
+#define OCI_IPC_POOL             13
+#define OCI_IPC_TRANSACTION      14
+#define OCI_IPC_STATEMENT        15
+#define OCI_IPC_RESULTSET        16
+#define OCI_IPC_COLUMN           17
+#define OCI_IPC_DATE             18
+#define OCI_IPC_TIMESTAMP        19
+#define OCI_IPC_INTERVAL         20
+#define OCI_IPC_LOB              21
+#define OCI_IPC_FILE             22
+#define OCI_IPC_LONG             23
+#define OCI_IPC_OBJECT           24
+#define OCI_IPC_COLLECTION       25
+#define OCI_IPC_ITERATOR         26
+#define OCI_IPC_ELEMENT          27
+#define OCI_IPC_NUMBER           28
+#define OCI_IPC_HASHTABLE        29
+#define OCI_IPC_BIND             30
+#define OCI_IPC_REF              31
+#define OCI_IPC_DIRPATH          32
+#define OCI_IPC_NOTIFY           33
+#define OCI_IPC_EVENT            34
+#define OCI_IPC_ARRAY            35
+#define OCI_IPC_MSG              36
+#define OCI_IPC_ENQUEUE          37
+#define OCI_IPC_DEQUEUE          38
+#define OCI_IPC_AGENT            39
+#define OCI_IPC_XMLTYPE          40
+#define OCI_IPC_VECTOR           41
+#define OCI_IPC_SODA_DB          42
+#define OCI_IPC_SODA_COLL        43
+#define OCI_IPC_SODA_DOC         44
+#define OCI_IPC_SODA_OPTIONS     45
+#define OCI_IPC_SODA_COLL_CURSOR 46
+#define OCI_IPC_SODA_DOC_CURSOR  47
 
 /* binding */
 
@@ -206,6 +209,57 @@
 #define OCI_CDT_BOOLEAN                     15
 #define OCI_CDT_XMLTYPE                     16
 #define OCI_CDT_VECTOR                      17
+#define OCI_CDT_JSON                        18
+
+/* JSON node types */
+
+#define OCI_JNT_NULL                  0
+#define OCI_JNT_OBJECT                1
+#define OCI_JNT_ARRAY                 2
+#define OCI_JNT_STRING                3
+#define OCI_JNT_NUMBER                4
+#define OCI_JNT_BOOLEAN               5
+#define OCI_JNT_BINARY                6
+#define OCI_JNT_DATE                  7
+#define OCI_JNT_TIMESTAMP             8
+#define OCI_JNT_INTERVAL              9
+
+/* JSON parsing validation flags */
+
+#define OCI_JV_ALLOW_NONE                 0x00000000
+#define OCI_JV_ALLOW_UNQUOTED_NAMES       0x00000001
+#define OCI_JV_ALLOW_SINGLE_QUOTES        0x00000002
+#define OCI_JV_ALLOW_UNQUOTED_UNICODE     0x00000004
+#define OCI_JV_ALLOW_NUMERIC_QUIRKS       0x00000008
+#define OCI_JV_ALLOW_CONTROLS_WHITESPACE  0x00000010
+#define OCI_JV_ALLOW_TRAILING_COMMAS      0x00000020
+#define OCI_JV_ALLOW_MIXEDCASE_KEYWORDS   0x00000040
+#define OCI_JV_ALLOW_SCALAR_DOCUMENTS     0x00000080
+#define OCI_JV_ALLOW_LEADING_BOM          0x00000200
+#define OCI_JV_ALLOW_ALL                  0x0000FFFF
+
+/* JSON text input encodings */
+
+#define OCI_JE_DETECT                     0
+#define OCI_JE_DIRECT                     1
+#define OCI_JE_CONVERT                    2
+#define OCI_JE_UTF16                      3
+#define OCI_JE_UTF16_SWAP                 4
+#define OCI_JE_LATIN                      5
+#define OCI_JE_WINDOWS                    6
+#define OCI_JE_UTF8                       OCI_JE_DIRECT
+
+/* JSON text printing flags */
+
+#define OCI_JP_PRETTY                     0x0001
+#define OCI_JP_ASCII                      0x0002
+#define OCI_JP_NUMFORMAT                  0x0004
+#define OCI_JP_INTERNAL_BUF               0x0008
+#define OCI_JP_NLS_CHARSET                0x0100
+#define OCI_JP_REPLACEMENT                0x0200
+#define OCI_JP_EJSON                      0x2000
+#define OCI_JP_BSON_PATTERNS              0x4000
+#define OCI_JP_TEST                       0x8000
 
 /* Data Type codes for OCI_ImmediateXXX() calls */
 
@@ -229,6 +283,56 @@
 #define OCI_ARG_FLOAT                       18
 #define OCI_ARG_NUMBER                      19
 
+/* Size-carrying variant of OCI_ARG_TEXT. Expects TWO variadic arguments,
+   'otext *buffer' followed by 'OCI_UInt32 buffer_char_count', and never
+   writes more than buffer_char_count characters including the terminating
+   null. Prefer it over OCI_ARG_TEXT, which carries no size at all. */
+
+#define OCI_ARG_TEXT_N                      20
+#define OCI_ARG_VECTOR                      21
+#define OCI_ARG_JSON                        22
+
+/* Type-checked placeholder for OCI_ImmediateXXX() variadic arguments.
+   Expands to 'tag, ptr' where the tag is deduced from the pointer type at
+   compile time (C11 _Generic), so a tag/pointer mismatch becomes a compile
+   error instead of undefined behavior.
+   Example: OCI_Immediate(con, "select c1, c2 from t",
+                          OCI_ARG_OF(&count), OCI_ARG_OF(&name));
+   Only OCI_ARG_TEXT_N is not covered: it requires a second argument (the
+   buffer capacity) - keep passing it explicitly.
+   Note: 'otext *' maps to OCI_ARG_TEXT, which carries no destination size;
+   prefer OCI_ARG_TEXT_N for bounded string copies.
+   C only - C++ callers keep explicit OCI_ARG_* tags (the C++ API does not
+   expose the variadic helpers). */
+
+#ifndef __cplusplus
+
+#define OCI_ARG_OF(ptr) _Generic((ptr),                                  \
+                                 OCI_Int16           * : OCI_ARG_SHORT,      \
+                                 OCI_UInt16  * : OCI_ARG_USHORT,     \
+                                 OCI_Int32             * : OCI_ARG_INT,        \
+                                 OCI_UInt32    * : OCI_ARG_UINT,       \
+                                 OCI_Int64         * : OCI_ARG_BIGINT,     \
+                                 OCI_UInt64        * : OCI_ARG_BIGUINT,    \
+                                 double          * : OCI_ARG_DOUBLE,     \
+                                 float           * : OCI_ARG_FLOAT,      \
+                                 otext           * : OCI_ARG_TEXT,       \
+                                 void            * : OCI_ARG_RAW,        \
+                                 unsigned char   * : OCI_ARG_RAW,        \
+                                 OCI_Number      * : OCI_ARG_NUMBER,     \
+                                 OCI_Date        * : OCI_ARG_DATETIME,   \
+                                 OCI_Lob         * : OCI_ARG_LOB,        \
+                                 OCI_File        * : OCI_ARG_FILE,       \
+                                 OCI_Timestamp   * : OCI_ARG_TIMESTAMP,  \
+                                 OCI_Interval    * : OCI_ARG_INTERVAL,   \
+                                 OCI_Object      * : OCI_ARG_OBJECT,     \
+                                 OCI_Coll        * : OCI_ARG_COLLECTION, \
+                                 OCI_Ref         * : OCI_ARG_REF,        \
+                                 OCI_Vector      * : OCI_ARG_VECTOR,     \
+                                 OCI_Json        * : OCI_ARG_JSON), (ptr)
+
+#endif
+
 /* statement types */
 
 #define OCI_CST_SELECT                      1
@@ -247,7 +351,6 @@
 
 #define OCI_ENV_DEFAULT                     0
 #define OCI_ENV_THREADED                    1
-#define OCI_ENV_CONTEXT                     2
 #define OCI_ENV_EVENTS                      4
 
 /* sessions modes */
@@ -261,7 +364,6 @@
 #define OCI_SESSION_SYSKMT                  0x00080000  /* From 12cR1  */
 #define OCI_SESSION_SYSRAC                  0x00100000  /* From 12cR2  */
 
-#define OCI_SESSION_XA                      0x00000001
 #define OCI_SESSION_PRELIM_AUTH             0x00000008
 
 /* change notification types */
@@ -594,6 +696,37 @@
 #define OCI_VEC_INT8                        4
 #define OCI_VEC_BINARY                      5  /* Oracle 23.5 */
 
+/* environment stats */
+
+#define OCI_UST_BYTES                       1
+#define OCI_UST_HANDLES                     2
+#define OCI_UST_DESCRIPTORS                 3
+#define OCI_UST_OBJECTS                     4
+
+/* log levels */
+
+#define OCI_LOG_NONE                        0
+#define OCI_LOG_ERROR                       1
+#define OCI_LOG_WARN                        2
+#define OCI_LOG_INFO                        3
+#define OCI_LOG_TRACE                       4
+#define OCI_LOG_DEBUG                       5
+
+/* log categories */
+
+#define OCI_LOG_CAT_LIB                     0x01
+#define OCI_LOG_CAT_OCI                     0x02
+#define OCI_LOG_CAT_ALL                     0x03
+
+/* soda operation modes - public names */
+
+#define OCI_SOP_ATOMIC_COMMIT                   0x00000001
+#define OCI_SOP_COLL_CREATE_MAP                 0x00010000
+#define OCI_SOP_INDEX_DROP_FORCE                0x00010000
+#define OCI_SOP_COLL_DROP_PURGE                 0x00010000
+#define OCI_SOP_COLL_DROP_MAPPED_TABLE          0x00020000
+#define OCI_SOP_TRUNCATE_REUSE_STORAGE          0x00010000
+
 /* sql function codes */
 
 #define OCI_SFC_CREATE_TABLE                    1
@@ -837,7 +970,6 @@
 #define OCI_SFC_DROP_LANGUAGE                   271
 #define OCI_SFC_ALTER_PUBLIC_DATABASE_LINK      305
 
-
 #define OCI_LSI_DAYNAME1            1
 #define OCI_LSI_DAYNAME2            2
 #define OCI_LSI_DAYNAME3            3
@@ -930,7 +1062,6 @@
 #define OCI_SIZE_NUM_VECTOR_FLOAT           16
 #define OCI_SIZE_BUFFER_LSI                100
 
-
 #define OCI_HASH_DEFAULT_SIZE               256
 
 /* string constants */
@@ -944,8 +1075,8 @@
 #define OCI_STRING_FORMAT_TIMESTAMP         OTEXT("YYYY-MM-DD HH24:MI:SS.FF")
 #define OCI_STRING_FORMAT_TIMESTAMP_TZ      OTEXT("YYYY-MM-DD HH24:MI:SS.FF TZR")
 #define OCI_STRING_DEFAULT_PREC             3
-#define OCI_STRING_FORMAT_NUM   \
-    OTEXT("FM99999999999999999999999999999999999990.999999999999999999999999")
+#define OCI_STRING_FORMAT_NUM \
+        OTEXT("FM99999999999999999999999999999999999990.999999999999999999999999")
 #define OCI_STRING_FORMAT_NUM_BDOUBLE       OTEXT("%lf")
 #define OCI_STRING_FORMAT_NUM_BFLOAT        OTEXT("%f")
 #define OCI_STRING_FORMAT_NUM_SHORT         OTEXT("%hd")
@@ -959,7 +1090,7 @@
 #ifdef _WINDOWS
 #define OCI_CHAR_SLASH                    '\\'
 #else
-  #define OCI_CHAR_SLASH                    '/'
+#define OCI_CHAR_SLASH                    '/'
 #endif
 
 #define OCI_STRING_FORMAT_NUM_BIN               OCI_STRING_FORMAT_NUM_BDOUBLE

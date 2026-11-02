@@ -85,14 +85,14 @@ OCI_SYM_LOCAL void OcilibCallbackHAEvent
 
 OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
 (
-    void          *octxp,
-    OCIDefine     *defnp,
-    ub4            iter, 
-    void         **bufpp,
-    ub4          **alenpp,
-    ub1           *piecep,
-    void         **indpp,
-    ub2          **rcodep
+    void      *octxp,
+    OCIDefine *defnp,
+    ub4        iter,
+    void     **bufpp,
+    ub4      **alenpp,
+    ub1       *piecep,
+    void     **indpp,
+    ub2      **rcodep
 );
 
 #endif /* OCILIB_CALLBACK_H_INCLUDED */

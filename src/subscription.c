@@ -32,33 +32,34 @@
  * OcilibSubscriptionDispose
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibSubscriptionDispose
+OCI_Boolean OcilibSubscriptionDispose
 (
     OCI_Subscription *sub
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_NOTIFY, sub
-    )
+    );
 
-    boolean alloc = FALSE;
+    OCI_Boolean alloc     = FALSE;
+    sword       unreg_res = OCI_SUCCESS;
 
-    CHECK_PTR(OCI_IPC_NOTIFY, sub)
+    CHECK_PTR(OCI_IPC_NOTIFY, sub);
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* unregister the subscription if connection still alive */
 
-    if (NULL != sub->subhp)
+    if (NULL != sub->handle)
     {
         if (NULL == sub->con)
         {
-            sub->con = OcilibConnectionCreate(sub->saved_db, sub->saved_user,
+            sub->con = OcilibConnectionCreate(sub->env, sub->saved_db, sub->saved_user,
                                               sub->saved_pwd, OCI_SESSION_DEFAULT);
 
-            CHECK_NULL(sub->con)
+            CHECK_NULL(sub->con);
 
             alloc = TRUE;
         }
@@ -70,29 +71,28 @@ boolean OcilibSubscriptionDispose
 
             /* Thus, if using OCI in Unicode mode, discard  error ORA-24915 */
 
+            /* a failure to unregister is not fatal: it is reported after all
+               resources are freed, otherwise every subsequent free would be
+               skipped and leaked */
+
   #if defined(OCI_CHARSET_WIDE)
 
-            const sword res = OCISubscriptionUnRegister(sub->con->cxt, sub->subhp, sub->err, (ub4)OCI_DEFAULT);
+            const sword res = sub->con->env->api->OCISubscriptionUnRegister(sub->con->handle, sub->handle, sub->err, (ub4)OCI_DEFAULT);
             if (OCI_FAILURE(res))
             {
                 sb4 code = 0;
 
-                OCIErrorGet((dvoid *)sub->err, (ub4)1, (OraText *)NULL, &code, (OraText *)NULL, (ub4)0, (ub4)OCI_HTYPE_ERROR);
+                sub->con->env->api->OCIErrorGet((dvoid *)sub->err, (ub4)1, (OraText *)NULL, &code, (OraText *)NULL, (ub4)0,
+                                                (ub4)OCI_HTYPE_ERROR);
 
                 if (OCI_ERR_SUB_BUG_OCI_UTF16 != code)
                 {
-                    THROW(OcilibExceptionOCI, sub->err, res)
+                    unreg_res = res;
                 }
             }
   #else
 
-            CHECK_OCI
-            (
-                sub->err,
-                OCISubscriptionUnRegister,
-                sub->con->cxt, sub->subhp,
-                sub->err, (ub4)OCI_DEFAULT
-            )
+            unreg_res = sub->con->env->api->OCISubscriptionUnRegister(sub->con->handle, sub->handle, sub->err, (ub4)OCI_DEFAULT);
 
   #endif
 
@@ -105,36 +105,46 @@ boolean OcilibSubscriptionDispose
 
     /* free OCI handle */
 
-    OcilibMemoryFreeHandle((dvoid*)sub->subhp, OCI_HTYPE_SUBSCRIPTION);
+    OcilibMemoryFreeHandle(sub->env, (dvoid*)sub->handle, OCI_HTYPE_SUBSCRIPTION);
+
+    /* report the deferred unregister error while the error handle is
+       still valid */
+
+    if (OCI_FAILURE(unreg_res))
+    {
+        OcilibExceptionOCI(&ocilib_call_context, sub->err, unreg_res);
+    }
 
     /* close error handle */
 
     if (NULL != sub->err)
     {
-        OcilibMemoryFreeHandle(sub->err, OCI_HTYPE_ERROR);
+        OcilibMemoryFreeHandle(sub->env, sub->err, OCI_HTYPE_ERROR);
     }
 
 #endif
 
     /* free event data */
 
-    FREE(sub->event.dbname)
-    FREE(sub->event.objname)
-    FREE(sub->event.rowid)
+    FREE(sub->event.dbname);
+    FREE(sub->event.objname);
+    FREE(sub->event.rowid);
 
     /* free strings */
 
-    FREE(sub->saved_db)
-    FREE(sub->saved_user)
-    FREE(sub->saved_pwd)
-    FREE(sub->name)
+    FREE(sub->saved_db);
+    FREE(sub->saved_user);
+    FREE(sub->saved_pwd);
+    FREE(sub->name);
 
-    SET_SUCCESS()
+    CHECK(!OCI_FAILURE(unreg_res));
+
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
         OcilibErrorResetSource(NULL, sub);
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -143,66 +153,54 @@ boolean OcilibSubscriptionDispose
 
 OCI_Subscription * OcilibSubscriptionRegister
 (
-    OCI_Connection *con,
-    const otext    *name,
-    unsigned int    type,
-    POCI_NOTIFY     handler,
-    unsigned int    port,
-    unsigned int    timeout
+    OCI_Connection      *con,
+    const otext         *name,
+    OCI_SubscriptionType type,
+    POCI_NOTIFY          handler,
+    OCI_UInt32         timeout
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_Subscription*, NULL,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
-    ub4 attr = 0;
-    int     dbsize = -1;
+    ub4     attr   = 0;
+    OCI_Int32     dbsize = -1;
     dbtext *dbstr  = NULL;
 
     OCI_Subscription* sub = NULL;
 
-    CHECK_DATABASE_NOTIFY_ENABLED()
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_PROC,       handler)
-    CHECK_PTR(OCI_IPC_STRING,     name)
+    CHECK_DATABASE_NOTIFY_ENABLED();
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_PROC,       handler);
+    CHECK_PTR(OCI_IPC_STRING,     name);
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* create subscription object */
 
-    LIST_ATOMIC_ADD(Env.subs, sub)
-    
-    CHECK_NULL(sub)
+    LIST_ATOMIC_ADD(con->env->subs, sub);
+
+    CHECK_NULL(sub);
 
     /* allocate error handle */
 
-    CHECK(OcilibMemoryAllocHandle(con->env, (dvoid **)(void *)&sub->err, OCI_HTYPE_ERROR))
+    CHECK(OcilibMemoryAllocHandle(con->env, con->env->handle, (dvoid **)(void *)&sub->err, OCI_HTYPE_ERROR));
 
     /* allocate subscription handle */
 
-    CHECK(OcilibMemoryAllocHandle(con->env, (dvoid **)(void *)&sub->subhp, OCI_HTYPE_SUBSCRIPTION))
+    CHECK(OcilibMemoryAllocHandle(con->env, con->env->handle, (dvoid **)(void *)&sub->handle, OCI_HTYPE_SUBSCRIPTION));
 
     sub->con       = con;
     sub->env       = con->env;
+    sub->htype     = OCI_IPC_NOTIFY;
     sub->timeout   = (ub4)timeout;
     sub->handler   = handler;
     sub->type      = type;
-    sub->name      = OcilibStringDuplicate(name);
+    sub->name      = OcilibStringDuplicate(sub->con->env, name);
     sub->event.sub = sub;
-
-    /* set port number */
-
-    if (port > 0)
-    {
-        CHECK_ATTRIB_SET
-        (
-            OCI_HTYPE_ENV, OCI_ATTR_SUBSCR_PORTNO,
-            sub->env, &port, sizeof(port),
-            sub->con->err
-        )
-    }
 
     /* set timeout */
 
@@ -211,22 +209,22 @@ OCI_Subscription * OcilibSubscriptionRegister
         CHECK_ATTRIB_SET
         (
             OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_TIMEOUT,
-            sub->subhp, &sub->timeout,
+            sub->handle, &sub->timeout,
             sizeof(sub->timeout),
             sub->con->err
-        )
+        );
     }
 
     /* name  */
 
-    dbstr = OcilibStringGetDBString(sub->name, &dbsize);
+    dbstr = OcilibStringGetDBString(sub->con->env, sub->name, &dbsize);
 
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME,
-        sub->subhp, dbstr, dbsize,
+        sub->handle, dbstr, dbsize,
         sub->con->err
-    )
+    );
 
     /* namespace for CDN */
 
@@ -234,9 +232,9 @@ OCI_Subscription * OcilibSubscriptionRegister
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAMESPACE,
-        sub->subhp, &attr, sizeof(attr),
+        sub->handle, &attr, sizeof(attr),
         sub->con->err
-    )
+    );
 
     /* protocol for CDN */
 
@@ -244,9 +242,9 @@ OCI_Subscription * OcilibSubscriptionRegister
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_RECPTPROTO,
-        sub->subhp, &attr, sizeof(attr),
+        sub->handle, &attr, sizeof(attr),
         sub->con->err
-    )
+    );
 
     /* On MSVC, casting a function pointer to a data pointer generates a warning.
        As there is no other way to do regarding the OCI API, let's disable this
@@ -259,13 +257,16 @@ OCI_Subscription * OcilibSubscriptionRegister
 
     CHECK_ATTRIB_SET
     (
-        OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CALLBACK,
-        sub->subhp, OcilibCallbackNotifyChanges, 0,
+        OCI_HTYPE_SUBSCRIPTION,
+        OCI_ATTR_SUBSCR_CALLBACK,
+        sub->handle,
+        OcilibCallbackNotifyChanges,
+        0,
         sub->con->err
-    )
+    );
 
     WARNING_RESTORE_CAST_FUNC_TYPE
-    WARNING_RESTORE_PEDANTIC
+        WARNING_RESTORE_PEDANTIC
 
     /* RowIds handling */
 
@@ -275,9 +276,9 @@ OCI_Subscription * OcilibSubscriptionRegister
         CHECK_ATTRIB_SET
         (
             OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_CHNF_ROWIDS,
-            sub->subhp, &attr, sizeof(attr),
+            sub->handle, &attr, sizeof(attr),
             sub->con->err
-        )
+        );
     }
 
     /* set subscription context pointer to our subscription structure */
@@ -285,9 +286,9 @@ OCI_Subscription * OcilibSubscriptionRegister
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_CTX,
-        sub->subhp, sub, 0,
+        sub->handle, sub, 0,
         sub->con->err
-    )
+    );
 
     /* all attributes set, let's register the subscription ! */
 
@@ -295,27 +296,17 @@ OCI_Subscription * OcilibSubscriptionRegister
     (
         sub->con->err,
         OCISubscriptionRegister,
-        sub->con->cxt, &sub->subhp,
+        sub->con->handle, &sub->handle,
         (ub2)1, sub->err, (ub4)OCI_DEFAULT
-    )
-
-    /* get real port number */
-
-    CHECK_ATTRIB_GET
-    (
-        OCI_HTYPE_ENV, OCI_ATTR_SUBSCR_PORTNO,
-        sub->env, &sub->port, sizeof(sub->port),
-        sub->con->err
-    )
+    );
 
 #else
 
-    OCI_NOT_USED(name)
-    OCI_NOT_USED(type)
-    OCI_NOT_USED(handler)
-    OCI_NOT_USED(port)
-    OCI_NOT_USED(timeout)
-    OCI_NOT_USED(con)
+    OCI_NOT_USED(name);
+    OCI_NOT_USED(type);
+    OCI_NOT_USED(handler);
+    OCI_NOT_USED(timeout);
+    OCI_NOT_USED(con);
 
 #endif
 
@@ -323,46 +314,46 @@ OCI_Subscription * OcilibSubscriptionRegister
     (
         if (FAILURE)
         {
-            OcilibStringReleaseDBString(dbstr);
+            OcilibStringReleaseDBString(sub->con->env, dbstr);
             OcilibSubscriptionUnregister(sub);
             sub = NULL;
         }
 
-        SET_RETVAL(sub)
-    )
+        SET_RETVAL(sub);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibSubscriptionUnregister
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibSubscriptionUnregister
+OCI_Boolean OcilibSubscriptionUnregister
 (
     OCI_Subscription *sub
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_NOTIFY, sub
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_NOTIFY, sub)
+    CHECK_PTR(OCI_IPC_NOTIFY, sub);
 
-    LIST_ATOMIC_REMOVE(Env.subs, sub, OcilibSubscriptionDispose)
+    LIST_ATOMIC_REMOVE(sub->env->subs, sub, OcilibSubscriptionDispose);
 
     FREE(sub);
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibSubscriptionAddStatement
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibSubscriptionAddStatement
+OCI_Boolean OcilibSubscriptionAddStatement
 (
     OCI_Subscription *sub,
     OCI_Statement    *stmt
@@ -370,36 +361,36 @@ boolean OcilibSubscriptionAddStatement
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_NOTIFY, sub
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_NOTIFY,    sub)
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED)
+    CHECK_PTR(OCI_IPC_NOTIFY,    sub);
+    CHECK_PTR(OCI_IPC_STATEMENT, stmt);
+    CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED);
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* register the statement query if provided */
 
-    if (sub->type & OCI_CNT_OBJECTS)
+    if (sub->type & (OCI_CNT_OBJECTS | OCI_CNT_ROWS))
     {
         CHECK_ATTRIB_SET
         (
             OCI_HTYPE_STMT, OCI_ATTR_CHNF_REGHANDLE,
-            stmt->stmt, sub->subhp, 0,
+            stmt->handle, sub->handle, 0,
             stmt->con->err
-        )
+        );
 
-        CHECK(OcilibStatementExecute(stmt))
-        CHECK_NULL(OcilibStatementGetResultset(stmt))
+        CHECK(OcilibStatementExecute(stmt));
+        CHECK_NULL(OcilibStatementGetResultset(stmt));
     }
 
 #endif
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -416,41 +407,24 @@ const otext * OcilibSubscriptionGetName
         const otext*, NULL,
         OCI_IPC_NOTIFY, sub,
         name
-    )
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibSubscriptionGetPort
- * --------------------------------------------------------------------------------------------- */
-
-unsigned int OcilibSubscriptionGetPort
-(
-    OCI_Subscription *sub
-)
-{
-    GET_PROP
-    (
-        unsigned int, 0,
-        OCI_IPC_NOTIFY, sub,
-        port
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibSubscriptionGetTimeout
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibSubscriptionGetTimeout
+OCI_UInt32 OcilibSubscriptionGetTimeout
 (
     OCI_Subscription *sub
 )
 {
     GET_PROP
     (
-        unsigned int, 0,
+        OCI_UInt32, 0,
         OCI_IPC_NOTIFY, sub,
         timeout
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -467,5 +441,5 @@ OCI_Connection * OcilibSubscriptionGetConnection
         OCI_Connection*, NULL,
         OCI_IPC_NOTIFY, sub,
         con
-    )
+    );
 }

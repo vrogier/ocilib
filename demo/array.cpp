@@ -6,17 +6,17 @@
 
 using namespace ocilib;
 
-const int ArraySize = 1000;
+const OCI_Int32 ArraySize = 1000;
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
 
-        Connection con("db", "usr", "pwd");
+        Connection con(env, "db", "usr", "pwd");
 
-        std::vector<int> ints;
+        std::vector<OCI_Int32> ints;
         std::vector<ostring> strs;
 
         Statement st(con);
@@ -25,7 +25,7 @@ int main(void)
         st.Bind(":i", ints, BindInfo::In);
         st.Bind(":s", strs, 20, BindInfo::In);
 
-        for (int i = 0; i< ArraySize; i++)
+        for (OCI_Int32 i = 0; i < ArraySize; ++i)
         {
             ostring str;
             str += "Name";
@@ -40,12 +40,9 @@ int main(void)
         std::cout << "row processed : " << st.GetAffectedRows() << std::endl;
 
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
-
     return EXIT_SUCCESS;
 }

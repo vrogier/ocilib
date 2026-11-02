@@ -9,7 +9,7 @@ void err_handler(OCI_Error *err)
 
 int main(void)
 {
-    int i, n;
+    OCI_Int32 i, n;
     OCI_Connection *cn;
     OCI_Statement  *st;
     OCI_Resultset  *rs;
@@ -17,14 +17,16 @@ int main(void)
     OCI_HashEntry  *he;
     OCI_HashValue  *hv;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
-    ht = OCI_HashCreate(256, OCI_HASH_INTEGER);
+    ht = OCI_HashCreate(env, 256, OCI_HASH_INTEGER);
 
     /* fill the hash table with data from DB */
 
@@ -33,7 +35,7 @@ int main(void)
     rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
-        OCI_HashAddInt(ht, OCI_GetString2(rs, "name"), OCI_GetInt2(rs, "code"));
+        OCI_HashAddInt(ht, OCI_GetStringByName(rs, "name"), OCI_GetIntByName(rs, "code"));
     }
 
     printf("%d row(s) fetched\n", OCI_GetRowCount(rs));
@@ -71,7 +73,7 @@ int main(void)
     OCI_HashFree(ht);
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

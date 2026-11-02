@@ -12,12 +12,14 @@ int main(void)
     OCI_Connection *cn;
     OCI_Statement  *st;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     /* prepare and execute in 2 steps */
@@ -34,7 +36,7 @@ int main(void)
     OCI_Commit(cn);
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

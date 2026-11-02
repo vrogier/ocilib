@@ -27,7 +27,7 @@
 
 #if OCI_VERSION_COMPILE >= OCI_23_4
 
-static unsigned int VectorFormatValues[] =
+static OCI_UInt32 VectorFormatValues[] =
 {
     OCI_VEC_FLOAT32,
     OCI_VEC_FLOAT64,
@@ -48,22 +48,21 @@ OCI_Vector * OcilibVectorInitialize
 #if OCI_VERSION_COMPILE >= OCI_23_4
     OCIVector      *handle
 #else
-    void           *handle
-#endif  
+    void *handle
+#endif
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_Vector*, NULL,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
 
 #if OCI_VERSION_COMPILE >= OCI_23_4
 
-    ALLOC_DATA(OCI_IPC_VECTOR, vect, 1);
-
+    ALLOC_HANDLE(OCI_IPC_VECTOR, vect);
     vect->con    = con;
     vect->handle = handle;
 
@@ -77,11 +76,12 @@ OCI_Vector * OcilibVectorInitialize
             (
                 OcilibMemoryAllocDescriptor
                 (
-                    (dvoid  *)vect->con->env,
+                    vect->con->env,
+                    (dvoid *)vect->con->env->handle,
                     (dvoid **)(void *)&vect->handle,
                     (ub4)OCI_DTYPE_VECTOR
                 )
-            )
+            );
 
             vect->hstate = OCI_OBJECT_ALLOCATED;
         }
@@ -93,10 +93,10 @@ OCI_Vector * OcilibVectorInitialize
 
 #else
 
-    OCI_NOT_USED(con)
-    OCI_NOT_USED(handle)
+    OCI_NOT_USED(con);
+    OCI_NOT_USED(handle);
 
-    CHECK(FALSE)
+    CHECK(FALSE);
 
 #endif
 
@@ -108,8 +108,8 @@ OCI_Vector * OcilibVectorInitialize
             vect = NULL;
         }
 
-        SET_RETVAL(vect)
-    )
+        SET_RETVAL(vect);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -125,46 +125,47 @@ OCI_Vector * OcilibVectorCreate
     (
         /* returns */ OCI_Vector*, NULL,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_VECTOR_ENABLED(con)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_VECTOR_ENABLED(con);
 
 #if OCI_VERSION_COMPILE >= OCI_23_4
 
-    SET_RETVAL(OcilibVectorInitialize(con, NULL, NULL))
+    SET_RETVAL(OcilibVectorInitialize(con, NULL, NULL));
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibVectorFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibVectorFree
+OCI_Boolean OcilibVectorFree
 (
     OCI_Vector *vect
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_VECTOR, vect
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_VECTOR, vect)
-    CHECK_VECTOR_ENABLED(vect->con)
+    CHECK_PTR(OCI_IPC_VECTOR, vect);
+    CHECK_VECTOR_ENABLED(vect->con);
 
 #if OCI_VERSION_COMPILE >= OCI_23_4
 
-   CHECK_OBJECT_FETCHED(vect)
+    CHECK_OBJECT_FETCHED(vect);
 
     if (OCI_OBJECT_ALLOCATED == vect->hstate)
     {
         OcilibMemoryFreeDescriptor
         (
+            vect->con->env,
             (dvoid*)vect->handle,
             OCI_DTYPE_VECTOR
         );
@@ -174,14 +175,14 @@ boolean OcilibVectorFree
     {
         OcilibErrorResetSource(NULL, vect);
 
-        FREE(vect)
+        FREE(vect);
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -191,124 +192,123 @@ boolean OcilibVectorFree
 OCI_Vector ** OcilibVectorCreateArray
 (
     OCI_Connection *con,
-    unsigned int    nbelem
+    OCI_UInt32    nbelem
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_Vector**, NULL,
-        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
-    )
+        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)NULL)
+    );
 
     OCI_Array *arr = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_VECTOR_ENABLED(con)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_VECTOR_ENABLED(con);
 
 #if OCI_VERSION_COMPILE >= OCI_23_4
 
-     arr = OcilibArrayCreate(con, nbelem, OCI_CDT_VECTOR, 0,
+    arr = OcilibArrayCreate(con->env,con, nbelem, OCI_CDT_VECTOR, 0,
                             sizeof(OCIVector *), sizeof(OCI_Vector),
                             0, NULL);
 
-    CHECK_NULL(arr)
+    CHECK_NULL(arr);
 
-    SET_RETVAL((OCI_Vector**)arr->tab_obj)
+    SET_RETVAL((OCI_Vector**)arr->tab_obj);
 
 #else
 
-    OCI_NOT_USED(arr)
-    OCI_NOT_USED(nbelem)
+    OCI_NOT_USED(arr);
+    OCI_NOT_USED(nbelem);
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibbVectorFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-
-boolean OcilibVectorFreeArray
+OCI_Boolean OcilibVectorFreeArray
 (
     OCI_Vector **vects
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_VOID, NULL
+    );
 
-    CHECK_PTR(OCI_IPC_ARRAY, vects)
+    CHECK_PTR(OCI_IPC_ARRAY, vects);
 
-    SET_RETVAL(OcilibArrayFreeFromHandles((void **) vects))
+    SET_RETVAL(OcilibArrayFreeFromHandles(((OCI_Vector *) vects[0])->con->env, (void **) vects));
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibVectorGetInfo
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibVectorGetInfo
+OCI_Boolean OcilibVectorGetInfo
 (
     OCI_Vector   *vect,
-    unsigned int *format,
-    unsigned int *dimensions
+    OCI_UInt32 *format,
+    OCI_UInt32 *dimensions
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_VECTOR, vect
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_VECTOR, vect)
-    CHECK_VECTOR_ENABLED(vect->con)
+    CHECK_PTR(OCI_IPC_VECTOR, vect);
+    CHECK_VECTOR_ENABLED(vect->con);
 
 #if OCI_VERSION_COMPILE >= OCI_23_4
 
     ub4 oci_dimensions = 0;
-    ub1 oci_format = OCI_VEC_FLEX;
+    ub1 oci_format     = OCI_VEC_FLEX;
 
     CHECK_ATTRIB_GET
     (
         OCI_DTYPE_VECTOR, OCI_ATTR_VECTOR_DIMENSION,
         vect->handle, &oci_dimensions, NULL,
         vect->con->err
-    )
+    );
 
     CHECK_ATTRIB_GET
     (
         OCI_DTYPE_VECTOR, OCI_ATTR_VECTOR_DATA_FORMAT,
         vect->handle, &oci_format, NULL,
         vect->con->err
-    )
+    );
 
-    *dimensions  = (unsigned int) oci_dimensions;
-    *format      = (unsigned int) oci_format;
+    *dimensions = (OCI_UInt32) oci_dimensions;
+    *format     = (OCI_UInt32) oci_format;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(format)
-    OCI_NOT_USED(dimensions)
+    OCI_NOT_USED(format);
+    OCI_NOT_USED(dimensions);
 
-    CHECK(FALSE)
+    CHECK(FALSE);
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibVectorGetValues
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibVectorGetValues
+OCI_Boolean OcilibVectorGetValues
 (
     OCI_Vector *vect,
     void       *values
@@ -316,20 +316,20 @@ boolean OcilibVectorGetValues
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_VECTOR, vect
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_VECTOR, vect)
-    CHECK_PTR(OCI_IPC_VOID, values)
-    CHECK_VECTOR_ENABLED(vect->con)
+    CHECK_PTR(OCI_IPC_VECTOR, vect);
+    CHECK_PTR(OCI_IPC_VOID, values);
+    CHECK_VECTOR_ENABLED(vect->con);
 
 #if OCI_VERSION_COMPILE >= OCI_23_4
 
-    unsigned int dimensions = 0;
-    unsigned int format     = OCI_VEC_FLEX;
+    OCI_UInt32     dimensions = 0;
+    OCI_VectorFormat format     = OCI_VEC_FLEX;
 
-    CHECK(OcilibVectorGetInfo(vect, &format, &dimensions))
+    CHECK(OcilibVectorGetInfo(vect, &format, &dimensions));
 
     ub4 oci_dimensions = (ub4) dimensions;
     ub1 oci_format     = (ub1) format;
@@ -340,50 +340,50 @@ boolean OcilibVectorGetValues
         OCIVectorToArray,
         vect->handle,
         vect->con->err,
-        oci_format, 
+        oci_format,
         &oci_dimensions,
         values,
         OCI_DEFAULT
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(values)
+    OCI_NOT_USED(values);
 
-    CHECK(FALSE)
+    CHECK(FALSE);
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibVectorSetValues
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibVectorSetValues
+OCI_Boolean OcilibVectorSetValues
 (
-    OCI_Vector       *vect,
-    unsigned int     format,
-    unsigned int     dimensions,
+    OCI_Vector      *vect,
+    OCI_VectorFormat format,
+    OCI_UInt32     dimensions,
     void            *values
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_VECTOR, vect
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_VECTOR, vect)
-    CHECK_PTR(OCI_IPC_VOID, values)
-    CHECK_VECTOR_ENABLED(vect->con)
+    CHECK_PTR(OCI_IPC_VECTOR, vect);
+    CHECK_PTR(OCI_IPC_VOID, values);
+    CHECK_VECTOR_ENABLED(vect->con);
 
 #if OCI_VERSION_COMPILE >= OCI_23_4
 
-    CHECK_ENUM_VALUE(format, VectorFormatValues, OTEXT("Vector format"))
+    CHECK_ENUM_VALUE(format, VectorFormatValues, OTEXT("Vector format"));
 
     CHECK_OCI
     (
@@ -391,126 +391,126 @@ boolean OcilibVectorSetValues
         OCIVectorFromArray,
         vect->handle,
         vect->con->err,
-        (ub1) format, 
+        (ub1) format,
         (ub4) dimensions,
         values,
         OCI_DEFAULT
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(format)
-    OCI_NOT_USED(dimensions)
-    OCI_NOT_USED(values)
+    OCI_NOT_USED(format);
+    OCI_NOT_USED(dimensions);
+    OCI_NOT_USED(values);
 
-    CHECK(FALSE)
+    CHECK(FALSE);
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibVectorFromString
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibVectorFromString
+OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
 (
-    OCI_Vector  *vect,
-    const otext* str,
-    unsigned int size,
-    unsigned int format,
-    unsigned int dimensions
+    OCI_Vector      *vect,
+    const otext    * str,
+    OCI_UInt32     size,
+    OCI_VectorFormat format,
+    OCI_UInt32     dimensions
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_VECTOR, vect
-    )
+    );
 
-    char *ansi_str  = NULL;
+    char *ansi_str = NULL;
 
-    CHECK_PTR(OCI_IPC_VECTOR, vect)
-    CHECK_PTR(OCI_IPC_VOID, str)
-    CHECK_VECTOR_ENABLED(vect->con)
+    CHECK_PTR(OCI_IPC_VECTOR, vect);
+    CHECK_PTR(OCI_IPC_VOID, str);
+    CHECK_VECTOR_ENABLED(vect->con);
 
     ub4 ansi_size = (ub4) (size == 0 ? ostrlen(str)  : size);
 
 #if OCI_VERSION_COMPILE >= OCI_23_4
 
-    CHECK_ENUM_VALUE(format, VectorFormatValues, OTEXT("Vector format"))
+    CHECK_ENUM_VALUE(format, VectorFormatValues, OTEXT("Vector format"));
 
     if (IS_WIDE_CHAR_ENV())
     {
-        ansi_str = OcilibMemoryAlloc(OCI_IPC_STRING, (size_t)ansi_size+1, (size_t)1, TRUE);
+        ansi_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)ansi_size+1, (OCI_Size)1, TRUE);
         OcilibStringNativeToAnsi(str, ansi_str, ansi_size);
     }
     else
     {
         ansi_str = (char*) str;
     }
-             
+
     CHECK_OCI
     (
         vect->con->err,
         OCIVectorFromText,
         vect->handle,
         vect->con->err,
-        (ub1) format, 
+        (ub1) format,
         (ub4) dimensions,
         (const OraText*) ansi_str,
         (ub4) ansi_size,
         OCI_DEFAULT
-    )
+    );
 
-     SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(str)
-    OCI_NOT_USED(size)
-    OCI_NOT_USED(format)
-    OCI_NOT_USED(dimensions)
+    OCI_NOT_USED(str);
+    OCI_NOT_USED(size);
+    OCI_NOT_USED(format);
+    OCI_NOT_USED(dimensions);
 
-    CHECK(FALSE)
+    CHECK(FALSE);
 
 #endif
 
     CLEANUP_AND_EXIT_FUNC
     (
         if (IS_WIDE_CHAR_ENV())
-        {    
-            OcilibMemoryFree(ansi_str);
+        {
+            OcilibMemoryFree(vect->con->env, ansi_str);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibVectorToString
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibVectorToString
+OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
 (
-    OCI_Vector* vect,
-    unsigned int* size,
-    otext* str
+    OCI_Vector  * vect,
+    OCI_UInt32* size,
+    otext       * str
 
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_VECTOR, vect
-    )
-  
-    char *ansi_str  = NULL;
+    );
 
-    CHECK_PTR(OCI_IPC_VECTOR, vect)
-    CHECK_PTR(OCI_IPC_VOID, size)
-    CHECK_VECTOR_ENABLED(vect->con)
+    char *ansi_str = NULL;
+
+    CHECK_PTR(OCI_IPC_VECTOR, vect);
+    CHECK_PTR(OCI_IPC_VOID, size);
+    CHECK_VECTOR_ENABLED(vect->con);
 
     ub4 ansi_size = (ub4) *size;
 
@@ -518,13 +518,13 @@ OCI_SYM_LOCAL boolean OcilibVectorToString
 
     if (str == NULL)
     {
-        unsigned int dimensions = 0;
-        unsigned int format     = OCI_VEC_FLEX;
+        OCI_UInt32     dimensions = 0;
+        OCI_VectorFormat format     = OCI_VEC_FLEX;
 
-        CHECK(OcilibVectorGetInfo(vect, &format, &dimensions))
+        CHECK(OcilibVectorGetInfo(vect, &format, &dimensions));
 
-        unsigned int elem_size = (format == OCI_VEC_FLOAT32 || format == OCI_VEC_FLOAT64) ?
-            OCI_SIZE_NUM_VECTOR_FLOAT : OCI_SIZE_NUM_VECTOR_INT;
+        OCI_UInt32 elem_size = (format == OCI_VEC_FLOAT32 || format == OCI_VEC_FLOAT64) ?
+                                 OCI_SIZE_NUM_VECTOR_FLOAT : OCI_SIZE_NUM_VECTOR_INT;
 
         ansi_size = (ub4) (2 + (elem_size + 2) * dimensions);
     }
@@ -534,7 +534,7 @@ OCI_SYM_LOCAL boolean OcilibVectorToString
 
         if (IS_WIDE_CHAR_ENV())
         {
-            ansi_str = OcilibMemoryAlloc(OCI_IPC_STRING, (size_t)ansi_size+1, (size_t)1, TRUE);
+            ansi_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)ansi_size+1, (OCI_Size)1, TRUE);
         }
         else
         {
@@ -550,11 +550,11 @@ OCI_SYM_LOCAL boolean OcilibVectorToString
             (OraText*)ansi_str,
             &ansi_size,
             OCI_DEFAULT
-        )
+        );
 
         if (IS_WIDE_CHAR_ENV())
-        {    
-            OcilibStringAnsiToNative(ansi_str ,str, ansi_size);
+        {
+            OcilibStringAnsiToNative(ansi_str,str, ansi_size);
         }
         else
         {
@@ -562,24 +562,81 @@ OCI_SYM_LOCAL boolean OcilibVectorToString
         }
     }
 
-    *size = (unsigned int)ansi_size;
+    *size = (OCI_UInt32)ansi_size;
 
 #else
 
-    OCI_NOT_USED(size)
-    OCI_NOT_USED(str)
+    OCI_NOT_USED(size);
+    OCI_NOT_USED(str);
 
-    CHECK(FALSE)
+    CHECK(FALSE);
 
 #endif
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
         if (IS_WIDE_CHAR_ENV())
-        {    
-            OcilibMemoryFree(ansi_str);
+        {
+            OcilibMemoryFree(vect->con->env, ansi_str);
         }
-    )
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibVectorAssign
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibVectorAssign
+(
+    OCI_Vector *vect,
+    OCI_Vector *vect_src
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_VECTOR, vect
+    );
+
+    otext *str = NULL;
+
+    CHECK_PTR(OCI_IPC_VECTOR, vect);
+    CHECK_PTR(OCI_IPC_VECTOR, vect_src);
+    CHECK_VECTOR_ENABLED(vect->con);
+
+#if OCI_VERSION_COMPILE >= OCI_23_4
+
+    OCI_UInt32     size       = 0;
+    OCI_UInt32     dimensions = 0;
+    OCI_VectorFormat format     = OCI_VEC_FLEX;
+
+    CHECK(OcilibVectorGetInfo(vect_src, &format, &dimensions));
+    CHECK(OcilibVectorToString(vect_src, &size, NULL));
+
+    str = (otext *) OcilibMemoryAlloc(vect->con->env, OCI_IPC_STRING,
+                                      sizeof(otext), (OCI_Size) size + 1, TRUE);
+    CHECK_NULL(str);
+
+    CHECK(OcilibVectorToString(vect_src, &size, str));
+    CHECK(OcilibVectorFromString(vect, str, size, format, dimensions));
+
+    SET_SUCCESS();
+
+#else
+
+    OCI_NOT_USED(vect_src);
+
+    CHECK(FALSE);
+
+#endif
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != str)
+        {
+            OcilibMemoryFree(vect->con->env, str);
+        }
+    );
 }

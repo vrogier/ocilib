@@ -23,9 +23,19 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL OCI_Error * OcilibErrorCreate
+OCI_SYM_LOCAL OCI_Boolean OcilibErrorInitialize
 (
     void
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibErrorCleanup
+(
+    void
+);
+
+OCI_SYM_LOCAL OCI_Error * OcilibErrorCreate
+(
+    OCI_Environment *env
 );
 
 OCI_SYM_LOCAL void OcilibErrorFree
@@ -40,26 +50,32 @@ OCI_SYM_LOCAL void OcilibErrorReset
 
 OCI_SYM_LOCAL void OcilibErrorSet
 (
-    OCI_Error   *err,
-    unsigned int type,
-    int          code,
-    void        *source_ptr,
-    unsigned int source_type,
-    const char  *location,
-    otext       *message,
-    unsigned int row
+    OCI_Error      *err,
+    OCI_ErrorType   type,
+    OCI_ErrorCode   code,
+    void           *source_ptr,
+    OCI_PointerType source_type,
+    const char     *location,
+    otext          *message,
+    OCI_UInt32    row
 );
 
 OCI_SYM_LOCAL void OcilibErrorResetSource
 (
     OCI_Error* err,
-    void* source_ptr
+    void     * source_ptr
 );
 
 OCI_SYM_LOCAL OCI_Error * OcilibErrorGet
 (
-    boolean check_state,
-    boolean reset_err
+    OCI_Environment *env,
+    OCI_Boolean      check_state,
+    OCI_Boolean      reset_err
+);
+
+OCI_SYM_LOCAL OCI_Error * OcilibErrorGetLastError
+(
+    void
 );
 
 OCI_SYM_LOCAL const otext* OcilibErrorGetString
@@ -67,17 +83,17 @@ OCI_SYM_LOCAL const otext* OcilibErrorGetString
     OCI_Error* err
 );
 
-OCI_SYM_LOCAL unsigned int OcilibErrorGetType
+OCI_SYM_LOCAL OCI_ErrorType OcilibErrorGetType
 (
     OCI_Error* err
 );
 
-OCI_SYM_LOCAL int OcilibErrorGetOCICode
+OCI_SYM_LOCAL OCI_ErrorCode OcilibErrorGetOCICode
 (
     OCI_Error* err
 );
 
-OCI_SYM_LOCAL int OcilibErrorGetInternalCode
+OCI_SYM_LOCAL OCI_ErrorCode OcilibErrorGetInternalCode
 (
     OCI_Error* err
 );
@@ -87,7 +103,7 @@ OCI_SYM_LOCAL void* OcilibErrorGetSource
     OCI_Error* err
 );
 
-OCI_SYM_LOCAL unsigned int OcilibErrorGetSourceType
+OCI_SYM_LOCAL OCI_PointerType OcilibErrorGetSourceType
 (
     OCI_Error* err
 );
@@ -107,7 +123,7 @@ OCI_SYM_LOCAL OCI_Statement* OcilibErrorGetStatement
     OCI_Error* err
 );
 
-OCI_SYM_LOCAL unsigned int OcilibErrorGetRow
+OCI_SYM_LOCAL OCI_UInt32 OcilibErrorGetRow
 (
     OCI_Error* err
 );

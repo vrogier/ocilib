@@ -30,25 +30,25 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - ANSI|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - UNICODE|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - ANSI|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -112,6 +112,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -165,6 +166,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -215,6 +217,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -268,6 +271,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -339,12 +343,14 @@
     <ClCompile Include="..\..\src\helpers.c" />
     <ClCompile Include="..\..\src\interval.c" />
     <ClCompile Include="..\..\src\iterator.c" />
+    <ClCompile Include="..\..\src\json.c" />
+    <ClCompile Include="..\..\src\jsonnode.c" />
     <ClCompile Include="..\..\src\list.c" />
+    <ClCompile Include="..\..\src\log.c" />
     <ClCompile Include="..\..\src\lob.c" />
     <ClCompile Include="..\..\src\long.c" />
     <ClCompile Include="..\..\src\memory.c" />
     <ClCompile Include="..\..\src\message.c" />
-    <ClCompile Include="..\..\src\mutex.c" />
     <ClCompile Include="..\..\src\number.c" />
     <ClCompile Include="..\..\src\object.c" />
     <ClCompile Include="..\..\src\ocilib.c" />
@@ -352,11 +358,15 @@
     <ClCompile Include="..\..\src\queue.c" />
     <ClCompile Include="..\..\src\reference.c" />
     <ClCompile Include="..\..\src\resultset.c" />
+    <ClCompile Include="..\..\src\sodacoll.c" />
+    <ClCompile Include="..\..\src\sodacollcursor.c" />
+    <ClCompile Include="..\..\src\sodadb.c" />
+    <ClCompile Include="..\..\src\sodadoc.c" />
+    <ClCompile Include="..\..\src\sodadoccursor.c" />
+    <ClCompile Include="..\..\src\sodaoptions.c" />
     <ClCompile Include="..\..\src\statement.c" />
     <ClCompile Include="..\..\src\stringutils.c" />
     <ClCompile Include="..\..\src\subscription.c" />
-    <ClCompile Include="..\..\src\thread.c" />
-    <ClCompile Include="..\..\src\threadkey.c" />
     <ClCompile Include="..\..\src\timestamp.c" />
     <ClCompile Include="..\..\src\transaction.c" />
     <ClCompile Include="..\..\src\typeinfo.c" />
@@ -396,6 +406,9 @@
     <ClInclude Include="..\..\src\import.h" />
     <ClInclude Include="..\..\src\interval.h" />
     <ClInclude Include="..\..\src\iterator.h" />
+    <ClInclude Include="..\..\src\json.h" />
+    <ClInclude Include="..\..\src\jsonnode.h" />
+    <ClInclude Include="..\..\src\oci\jsondom.h" />
     <ClInclude Include="..\..\src\list.h" />
     <ClInclude Include="..\..\src\loader.h" />
     <ClInclude Include="..\..\src\lob.h" />
@@ -403,7 +416,6 @@
     <ClInclude Include="..\..\src\macros.h" />
     <ClInclude Include="..\..\src\memory.h" />
     <ClInclude Include="..\..\src\message.h" />
-    <ClInclude Include="..\..\src\mutex.h" />
     <ClInclude Include="..\..\src\number.h" />
     <ClInclude Include="..\..\src\object.h" />
     <ClInclude Include="..\..\src\oci\api.h" />
@@ -413,11 +425,15 @@
     <ClInclude Include="..\..\src\queue.h" />
     <ClInclude Include="..\..\src\reference.h" />
     <ClInclude Include="..\..\src\resultset.h" />
+    <ClInclude Include="..\..\src\sodacoll.h" />
+    <ClInclude Include="..\..\src\sodacollcursor.h" />
+    <ClInclude Include="..\..\src\sodadb.h" />
+    <ClInclude Include="..\..\src\sodadoc.h" />
+    <ClInclude Include="..\..\src\sodadoccursor.h" />
+    <ClInclude Include="..\..\src\sodaoptions.h" />
     <ClInclude Include="..\..\src\statement.h" />
     <ClInclude Include="..\..\src\stringutils.h" />
     <ClInclude Include="..\..\src\subscription.h" />
-    <ClInclude Include="..\..\src\thread.h" />
-    <ClInclude Include="..\..\src\threadkey.h" />
     <ClInclude Include="..\..\src\timestamp.h" />
     <ClInclude Include="..\..\src\transaction.h" />
     <ClInclude Include="..\..\src\typeinfo.h" />

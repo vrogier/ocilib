@@ -23,27 +23,26 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL boolean OcilibSubscriptionDispose
+OCI_SYM_LOCAL OCI_Boolean OcilibSubscriptionDispose
 (
     OCI_Subscription *sub
 );
 
 OCI_SYM_LOCAL OCI_Subscription * OcilibSubscriptionRegister
 (
-    OCI_Connection *con,
-    const otext    *name,
-    unsigned int    type,
-    POCI_NOTIFY     handler,
-    unsigned int    port,
-    unsigned int    timeout
+    OCI_Connection      *con,
+    const otext         *name,
+    OCI_SubscriptionType type,
+    POCI_NOTIFY          handler,
+    OCI_UInt32         timeout
 );
 
-OCI_SYM_LOCAL boolean OcilibSubscriptionUnregister
+OCI_SYM_LOCAL OCI_Boolean OcilibSubscriptionUnregister
 (
     OCI_Subscription *sub
 );
 
-OCI_SYM_LOCAL boolean OcilibSubscriptionAddStatement
+OCI_SYM_LOCAL OCI_Boolean OcilibSubscriptionAddStatement
 (
     OCI_Subscription *sub,
     OCI_Statement    *stmt
@@ -54,12 +53,12 @@ OCI_SYM_LOCAL const otext * OcilibSubscriptionGetName
     OCI_Subscription *sub
 );
 
-OCI_SYM_LOCAL unsigned int OcilibSubscriptionGetPort
+OCI_SYM_LOCAL OCI_UInt32 OcilibSubscriptionGetPort
 (
     OCI_Subscription *sub
 );
 
-OCI_SYM_LOCAL unsigned int OcilibSubscriptionGetTimeout
+OCI_SYM_LOCAL OCI_UInt32 OcilibSubscriptionGetTimeout
 (
     OCI_Subscription *sub
 );

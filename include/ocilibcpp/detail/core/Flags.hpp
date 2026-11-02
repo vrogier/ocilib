@@ -44,7 +44,7 @@ namespace ocilib
         }
 
         template<class T>
-        Flags<T>::Flags(unsigned int flag) : _flags(static_cast<T>(flag))
+        Flags<T>::Flags(OCI_UInt32 flag) : _flags(static_cast<T>(flag))
         {
         }
 
@@ -146,7 +146,7 @@ namespace ocilib
         template<class T>
         bool Flags<T>::operator == (T other) const
         {
-            return _flags == static_cast<unsigned int>(other);
+            return _flags == static_cast<OCI_UInt32>(other);
         }
 
         template<class T>
@@ -162,7 +162,7 @@ namespace ocilib
         }
 
         template<class T>
-        unsigned int Flags<T>::GetValues() const
+        OCI_UInt32 Flags<T>::GetValues() const
         {
             return _flags;
         }

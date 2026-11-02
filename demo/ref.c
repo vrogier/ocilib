@@ -35,12 +35,14 @@ int main(void)
     OCI_Resultset  *rs;
     OCI_Ref       *ref;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     OCI_ExecuteStmt(st, "select ref(v) from vendors v");
@@ -55,7 +57,7 @@ int main(void)
 
     printf("\n\n=> bind a local ref object to a PL/SQL statement\n\n");
 
-    ref = OCI_RefCreate(cn, OCI_TypeInfoGet(cn, "vendor_t", OCI_TIF_TYPE));
+    ref = OCI_RefCreate(OCI_TypeInfoGet(cn, "vendor_t", OCI_TIF_TYPE));
 
     OCI_Prepare(st, "begin select ref(v) into :vendor from vendors v where v.code = 1; end; ");
 
@@ -67,7 +69,7 @@ int main(void)
     OCI_RefFree(ref);
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

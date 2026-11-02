@@ -158,14 +158,9 @@ namespace ocilib
 #include "ocilibcpp/detail/core/Utils.hpp"
 #include "ocilibcpp/detail/core/Enum.hpp"
 #include "ocilibcpp/detail/core/Flags.hpp"
-#include "ocilibcpp/detail/core/ManagedBuffer.hpp"
-#include "ocilibcpp/detail/core/HandleHolder.hpp"
 #include "ocilibcpp/detail/core/HandleStore.hpp"
-#include "ocilibcpp/detail/core/SynchronizationGuard.hpp"
-#include "ocilibcpp/detail/core/Synchronizable.hpp"
-#include "ocilibcpp/detail/core/ConcurrentMap.hpp"
-#include "ocilibcpp/detail/core/ConcurrentList.hpp"
 #include "ocilibcpp/detail/core/SmartHandle.hpp"
+#include "ocilibcpp/detail/core/HandleHolder.hpp"
 
 /* Including support implementations  */
 
@@ -176,16 +171,13 @@ namespace ocilib
 #include "ocilibcpp/detail/support/BindTypeAdaptor.hpp"
 #include "ocilibcpp/detail/support/BindsHolder.hpp"
 #include "ocilibcpp/detail/support/HandleDeleter.hpp"
-#include "ocilibcpp/detail/support/HandleStoreResolver.hpp"
 #include "ocilibcpp/detail/support/NumericTypeResolver.hpp"
 
 /* Including types implementations  */
 
 #include "ocilibcpp/detail/Exception.hpp"
 #include "ocilibcpp/detail/Environment.hpp"
-#include "ocilibcpp/detail/Mutex.hpp"
-#include "ocilibcpp/detail/Thread.hpp"
-#include "ocilibcpp/detail/ThreadKey.hpp"
+
 #include "ocilibcpp/detail/Pool.hpp"
 #include "ocilibcpp/detail/Connection.hpp"
 #include "ocilibcpp/detail/Transaction.hpp"
@@ -200,6 +192,8 @@ namespace ocilib
 #include "ocilibcpp/detail/Reference.hpp"
 #include "ocilibcpp/detail/XmlType.hpp"
 #include "ocilibcpp/detail/Vector.hpp"
+#include "ocilibcpp/detail/JsonNode.hpp"
+#include "ocilibcpp/detail/Json.hpp"
 #include "ocilibcpp/detail/Collection.hpp"
 #include "ocilibcpp/detail/CollectionIterator.hpp"
 #include "ocilibcpp/detail/CollectionElement.hpp"
@@ -217,6 +211,12 @@ namespace ocilib
 #include "ocilibcpp/detail/DirectPath.hpp"
 #include "ocilibcpp/detail/Queue.hpp"
 #include "ocilibcpp/detail/QueueTable.hpp"
+#include "ocilibcpp/detail/SodaDoc.hpp"
+#include "ocilibcpp/detail/SodaOptions.hpp"
+#include "ocilibcpp/detail/SodaDb.hpp"
+#include "ocilibcpp/detail/SodaColl.hpp"
+#include "ocilibcpp/detail/SodaCollCursor.hpp"
+#include "ocilibcpp/detail/SodaDocCursor.hpp"
 
 
 #endif

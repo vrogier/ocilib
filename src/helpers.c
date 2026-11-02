@@ -24,6 +24,8 @@
 #include "date.h"
 #include "file.h"
 #include "interval.h"
+#include "json.h"
+
 #include "lob.h"
 #include "number.h"
 #include "object.h"
@@ -35,13 +37,13 @@
   * OcilibExternalSubTypeToSQLType
   * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibExternalSubTypeToSQLType
+OCI_UInt32 OcilibExternalSubTypeToSQLType
 (
-    unsigned int type,
-    unsigned int subtype
+    OCI_SqlType type,
+    OCI_SubType subtype
 )
 {
-    unsigned int res = OCI_UNKNOWN;
+    OCI_UInt32 res = OCI_UNKNOWN;
 
     switch (type)
     {
@@ -123,13 +125,13 @@ unsigned int OcilibExternalSubTypeToSQLType
  * OcilibExternalSubTypeToHandleType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibExternalSubTypeToHandleType
+OCI_UInt32 OcilibExternalSubTypeToHandleType
 (
-    unsigned int type,
-    unsigned int subtype
+    OCI_SqlType type,
+    OCI_SubType subtype
 )
 {
-    unsigned int res = OCI_UNKNOWN;
+    OCI_UInt32 res = OCI_UNKNOWN;
 
     switch (type)
     {
@@ -171,13 +173,13 @@ unsigned int OcilibExternalSubTypeToHandleType
  * OcilibFreeObjectFromType
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibFreeObjectFromType
+OCI_Boolean OcilibFreeObjectFromType
 (
-    void       * obj,
-    unsigned int type
+    void      * obj,
+    OCI_SqlType type
 )
 {
-    boolean res = FALSE;
+    OCI_Boolean res = FALSE;
 
     switch (type)
     {
@@ -231,6 +233,11 @@ boolean OcilibFreeObjectFromType
             res = OcilibVectorFree((OCI_Vector*)obj);
             break;
         }
+        case OCI_CDT_JSON:
+        {
+            res = OcilibJsonFree((OCI_Json*)obj);
+            break;
+        }
     }
 
     return res;
@@ -253,9 +260,8 @@ OCI_Long* OcilibGetLongObjectFromDefine
     else if (OCI_CDT_XMLTYPE == def->col.datatype)
     {
         OCI_XmlType* xmlType = (OCI_XmlType*)def->buf.data[index];
-        return xmlType ? xmlType->lng : NULL;
+        return xmlType ? xmlType->handle : NULL;
     }
 
     return NULL;
 }
-

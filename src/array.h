@@ -23,32 +23,34 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL boolean OcilibArrayInitialize
+OCI_SYM_LOCAL OCI_Boolean OcilibArrayInitialize
 (
     OCI_Array    *arr,
     OCI_TypeInfo *typinf
 );
 
-OCI_SYM_LOCAL boolean OcilibArrayDispose
+OCI_SYM_LOCAL OCI_Boolean OcilibArrayDispose
 (
     OCI_Array* arr
 );
 
 OCI_SYM_LOCAL OCI_Array* OcilibArrayCreate
 (
-    OCI_Connection* con,
-    unsigned int    nb_elem,
-    unsigned int    elem_type,
-    unsigned int    elem_subtype,
-    unsigned int    elem_size,
-    unsigned int    struct_size,
-    unsigned int    handle_type,
-    OCI_TypeInfo  * typinf
+    OCI_Environment* env,
+    OCI_Connection * con,
+    OCI_UInt32     nb_elem,
+    OCI_UInt32     elem_type,
+    OCI_UInt32     elem_subtype,
+    OCI_UInt32     elem_size,
+    OCI_UInt32     struct_size,
+    OCI_UInt32     handle_type,
+    OCI_TypeInfo   * typinf
 );
 
-OCI_SYM_LOCAL boolean OcilibArrayFreeFromHandles
+OCI_SYM_LOCAL OCI_Boolean OcilibArrayFreeFromHandles
 (
-    void** handles
+    OCI_Environment* env,
+    void          ** handles
 );
 
 #endif /* OCILIB_ARRAY_H_INCLUDED */

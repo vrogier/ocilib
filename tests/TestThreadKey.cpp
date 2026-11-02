@@ -2,9 +2,9 @@
 
 #include "ocilib_tests.h"
 
-const size_t MaxThread = 10;
+const OCI_Size MaxThread = 10;
 
-static std::atomic<int> ThreadKeyFreeCount {0};
+static std::atomic<OCI_Int32> ThreadKeyFreeCount {0};
 
 static void KeyCleanup(void* str)
 {

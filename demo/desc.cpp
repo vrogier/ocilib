@@ -5,13 +5,13 @@
 
 using namespace ocilib;
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
 
-        Connection con("db", "usr", "pwd");
+        Connection con(env, "db", "usr", "pwd");
         TypeInfo table(con, "all_users", TypeInfo::View);
 
         std::cout << "Column Name         Type      Length  Prec.   Scale   Null ?" << std::endl;
@@ -19,7 +19,7 @@ int main(void)
 
         std::cout << std::setiosflags(std::ios::left);
 
-        for (int i = 1, n = table.GetColumnCount(); i <= n; i++)
+        for (OCI_Int32 i = 1, n = table.GetColumnCount(); i <= n; ++i)
         {
             Column col = table.GetColumn(i);
 
@@ -33,13 +33,10 @@ int main(void)
         }
 
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
-
     return EXIT_SUCCESS;
 }
 

@@ -6,13 +6,13 @@
 
 using namespace ocilib;
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
 
-        Connection con("db", "usr", "pwd");
+        Connection con(env, "db", "usr", "pwd");
 
         Object obj(TypeInfo(con, "racing_car_type", TypeInfo::Type));
 
@@ -30,12 +30,9 @@ int main(void)
         std::cout << "Is type '" << CarTypeTypeInfo.GetName() << "' final => " << CarTypeTypeInfo.IsFinalType() << std::endl;
         std::cout << "Is type '" << VehiculeTypeInfo.GetName() << "' final => " << VehiculeTypeInfo.IsFinalType() << std::endl;
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
-
     return EXIT_SUCCESS;
 }

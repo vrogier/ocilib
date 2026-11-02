@@ -37,7 +37,7 @@ inline Reference::Reference(const TypeInfo &typeInfo)
     Connection connection = typeInfo.GetConnection();
     AcquireAllocated
     (
-        core::Check(OCI_RefCreate(connection, typeInfo)),
+        core::Check(OCI_RefCreate(typeInfo)),
         connection.GetHandle()
     );
 }
@@ -54,7 +54,7 @@ inline TypeInfo Reference::GetTypeInfo() const
     Connection connection
     (
         core::Check(OCI_TypeInfoGetConnection(typeInfo)),
-        Environment::GetEnvironmentHandle(),
+        GetHandle(),
         false
     );
 
@@ -68,7 +68,14 @@ inline Object Reference::GetObject() const
 
 inline Reference Reference::Clone() const
 {
-    Reference result(GetTypeInfo());
+    Reference result;
+    TypeInfo typeInfo = GetTypeInfo();
+    Connection connection = typeInfo.GetConnection();
+    result.AcquireAllocated
+    (
+        core::Check(OCI_RefCreate(typeInfo)),
+        connection.GetHandle()
+    );
 
     core::Check(OCI_RefAssign(result, *this));
 
@@ -89,11 +96,11 @@ inline ostring Reference::ToString() const
 {
     if (!IsNull())
     {
-        const unsigned int size = core::Check(OCI_RefGetHexSize(*this));
+        const OCI_UInt32 size = core::Check(OCI_RefGetHexSize(*this));
 
         ostring result;
 
-        result.resize(static_cast<size_t>(size));
+        result.resize(static_cast<OCI_Size>(size));
 
         core::Check(OCI_RefToText(*this, size, const_cast<otext*>(result.data())));
 

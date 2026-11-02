@@ -15,44 +15,46 @@ namespace TestCApi
             str = nullptr;
         }
     }
-    class TestInterval : public ::testing::TestWithParam<unsigned int> {};
+    class TestInterval : public ::testing::TestWithParam<OCI_UInt32> {};
 
-    std::vector<unsigned int> IntervalTypes{ OCI_INTERVAL_DS, OCI_INTERVAL_YM };
+    static std::vector<OCI_UInt32> IntervalTypes{ OCI_INTERVAL_DS, OCI_INTERVAL_YM };
 
     TEST_P(TestInterval, CreateAndFree)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
+        ASSERT_NE(nullptr, env);
 
-        const auto itv = OCI_IntervalCreate(nullptr, GetParam());
+        const auto itv = OCI_IntervalCreate(env, GetParam());
         ASSERT_EQ(GetParam(), OCI_IntervalGetType(itv));
         ASSERT_TRUE(OCI_IntervalFree(itv));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST_P(TestInterval, ArrayCreateAndFree)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
+        ASSERT_NE(nullptr, env);
 
-        const auto itvs = OCI_IntervalArrayCreate(nullptr, GetParam(), ARRAY_SIZE);
+        const auto itvs = OCI_IntervalArrayCreate(env, GetParam(), ARRAY_SIZE);
         ASSERT_TRUE(nullptr != itvs);
 
-        for (int i = 0; i < ARRAY_SIZE; i++)
+        for (OCI_Int32 i = 0; i < ARRAY_SIZE; i++)
         {
             ASSERT_TRUE(nullptr != itvs[i]);
             ASSERT_EQ(GetParam(), OCI_IntervalGetType(itvs[i]));
         }
         ASSERT_TRUE(OCI_IntervalArrayFree(itvs));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, AssignDaySecond)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
-        const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
+        ASSERT_NE(nullptr, env);
+
+        const auto itv1 = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
+        const auto itv2 = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
 
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv1, 1, 1, 1, 1, 1));
         ASSERT_TRUE(OCI_IntervalAssign(itv2, itv1));
@@ -61,15 +63,16 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv1));
         ASSERT_TRUE(OCI_IntervalFree(itv2));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, AssignYearMonth)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
-        const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
+        ASSERT_NE(nullptr, env);
+
+        const auto itv1 = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
+        const auto itv2 = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
 
         ASSERT_TRUE(OCI_IntervalSetYearMonth(itv1, 1, 1));
         ASSERT_TRUE(OCI_IntervalAssign(itv2, itv1));
@@ -78,15 +81,16 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv1));
         ASSERT_TRUE(OCI_IntervalFree(itv2));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, CompareDaySecondInferiorSuperior)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
-        const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
+        ASSERT_NE(nullptr, env);
+
+        const auto itv1 = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
+        const auto itv2 = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
 
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv1, 1, 1, 1, 1, 1));
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv2, 2, 1, 1, 1, 1));
@@ -96,15 +100,16 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv1));
         ASSERT_TRUE(OCI_IntervalFree(itv2));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, CompareYearMonthInferiorSuperior)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
-        const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
+        ASSERT_NE(nullptr, env);
+
+        const auto itv1 = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
+        const auto itv2 = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
 
         ASSERT_TRUE(OCI_IntervalSetYearMonth(itv1, 1, 1));
         ASSERT_TRUE(OCI_IntervalSetYearMonth(itv2, 2, 1));
@@ -114,16 +119,17 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv1));
         ASSERT_TRUE(OCI_IntervalFree(itv2));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
 
     TEST(TestInterval, CompareDaySecondEqual)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
-        const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
+        ASSERT_NE(nullptr, env);
+
+        const auto itv1 = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
+        const auto itv2 = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
 
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv1, 1, 1, 1, 1, 1));
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv2, 1, 1, 1, 1, 1));
@@ -132,15 +138,16 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv1));
         ASSERT_TRUE(OCI_IntervalFree(itv2));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, CompareYearMonthEqual)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
-        const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
+        ASSERT_NE(nullptr, env);
+
+        const auto itv1 = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
+        const auto itv2 = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
 
         ASSERT_TRUE(OCI_IntervalSetYearMonth(itv1, 1, 1));
         ASSERT_TRUE(OCI_IntervalSetYearMonth(itv2, 1, 1));
@@ -149,15 +156,16 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv1));
         ASSERT_TRUE(OCI_IntervalFree(itv2));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, FromTextDaySecond)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        const auto itv = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
-        int day = 0, hour = 0, min = 0, sec = 0, msec = 0;
+        ASSERT_NE(nullptr, env);
+
+        const auto itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
+        OCI_Int32 day = 0, hour = 0, min = 0, sec = 0, msec = 0;
 
         ASSERT_TRUE(OCI_IntervalFromText(itv, OTEXT("+001 02:03:04.000000567")));
         ASSERT_TRUE(OCI_IntervalGetDaySecond(itv, &day, &hour, &min, &sec, &msec));
@@ -170,15 +178,16 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_IntervalFree(itv));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, FromTextYearMonth)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        const auto itv = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
-        int year = 0, month = 0;
+        ASSERT_NE(nullptr, env);
+
+        const auto itv = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
+        OCI_Int32 year = 0, month = 0;
 
         ASSERT_TRUE(OCI_IntervalFromText(itv, OTEXT("+101-09")));
         ASSERT_TRUE(OCI_IntervalGetYearMonth(itv, &year, &month));
@@ -188,16 +197,17 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_IntervalFree(itv));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, ToTextDaySecond)
     {
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        const auto itv = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
+        ASSERT_NE(nullptr, env);
+
+        const auto itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
 
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv, 1, 2, 3, 4, 567));
         ASSERT_TRUE(OCI_IntervalToText(itv, 3, 9, 512, buffer));
@@ -206,16 +216,17 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_IntervalFree(itv));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, ToTextDayYearMonth)
     {
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        const auto itv = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
+        ASSERT_NE(nullptr, env);
+
+        const auto itv = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
 
         ASSERT_TRUE(OCI_IntervalSetYearMonth(itv, 101, 9));
         ASSERT_TRUE(OCI_IntervalToText(itv, 3, 3, 512, buffer));
@@ -224,17 +235,18 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_IntervalFree(itv));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, AddDaySecond)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        int day = 0, hour = 0, min = 0, sec = 0, msec = 0;
+        ASSERT_NE(nullptr, env);
 
-        const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
-        const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
+        OCI_Int32 day = 0, hour = 0, min = 0, sec = 0, msec = 0;
+
+        const auto itv1 = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
+        const auto itv2 = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
 
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv1, 1, 2, 3, 4, 200));
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv2, 2, 3, 4, 5, 300));
@@ -251,17 +263,18 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv1));
         ASSERT_TRUE(OCI_IntervalFree(itv2));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, SubstractDaySecond)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        int day = 0, hour = 0, min = 0, sec = 0, msec = 0;
+        ASSERT_NE(nullptr, env);
 
-        const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
-        const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
+        OCI_Int32 day = 0, hour = 0, min = 0, sec = 0, msec = 0;
+
+        const auto itv1 = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
+        const auto itv2 = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
 
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv1, 1, 2, 3, 4, 200));
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv2, 2, 3, 4, 5, 300));
@@ -278,18 +291,19 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv1));
         ASSERT_TRUE(OCI_IntervalFree(itv2));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
 
     TEST(TestInterval, AdYearMonth)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        int year = 0, month = 0;
+        ASSERT_NE(nullptr, env);
 
-        const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
-        const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
+        OCI_Int32 year = 0, month = 0;
+
+        const auto itv1 = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
+        const auto itv2 = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
 
         ASSERT_TRUE(OCI_IntervalSetYearMonth(itv1, 1, 2));
         ASSERT_TRUE(OCI_IntervalSetYearMonth(itv2, 3, 4));
@@ -303,17 +317,18 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv1));
         ASSERT_TRUE(OCI_IntervalFree(itv2));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, SubstractYearMonth)
     {
-        ASSERT_TRUE(OCI_Initialize(AddError, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(AddError);
 
-        int year = 0, month = 0;
+        ASSERT_NE(nullptr, env);
 
-        const auto itv1 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
-        const auto itv2 = OCI_IntervalCreate(nullptr, OCI_INTERVAL_YM);
+        OCI_Int32 year = 0, month = 0;
+
+        const auto itv1 = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
+        const auto itv2 = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
 
         ASSERT_TRUE(OCI_IntervalSetYearMonth(itv1, 1, 2));
         ASSERT_TRUE(OCI_IntervalSetYearMonth(itv2, 3, 4));
@@ -327,14 +342,15 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv1));
         ASSERT_TRUE(OCI_IntervalFree(itv2));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, IntervalFetch)
     {
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
         ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select to_dsinterval('1 02:03:04') from dual")));
@@ -352,21 +368,22 @@ namespace TestCApi
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, IntervalBindInOut)
     {
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto itv = OCI_IntervalCreate(nullptr, OCI_INTERVAL_DS);
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
         ASSERT_TRUE(OCI_IntervalFromText(itv, OTEXT("+001 02:03:04.000000004")));
 
         ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("begin :itv := :itv * 2; end;")));
-        ASSERT_TRUE(OCI_BindInterval(stmt, OTEXT(":itv"), itv));
+        ASSERT_NE(nullptr, OCI_BindInterval(stmt, OTEXT(":itv"), itv));
         ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN_OUT));
         ASSERT_TRUE(OCI_Execute(stmt));
 
@@ -379,14 +396,15 @@ namespace TestCApi
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     TEST(TestInterval, IntervalBindRegister)
     {
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
         OCI_ExecuteStmt(stmt, OTEXT("drop table test_interval_register"));
@@ -411,8 +429,37 @@ namespace TestCApi
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
-        ASSERT_TRUE(OCI_Cleanup());
     }
 
     INSTANTIATE_TEST_CASE_P(TestInterval, TestInterval, ::testing::ValuesIn(IntervalTypes));
+
+    TEST(TestInterval, Check)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        const auto itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
+        ASSERT_NE(nullptr, itv);
+
+        ASSERT_EQ(0, OCI_IntervalCheck(itv));
+
+        ASSERT_TRUE(OCI_IntervalFree(itv));
+    }
+
+    TEST(TestInterval, FromTimeZone)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        const auto itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
+        ASSERT_NE(nullptr, itv);
+
+        ASSERT_TRUE(OCI_IntervalFromTimeZone(itv, OTEXT("-05:00")));
+
+        OCI_Int32 day = 0, hour = 0, minute = 0, second = 0, fsecond = 0;
+        ASSERT_TRUE(OCI_IntervalGetDaySecond(itv, &day, &hour, &minute, &second, &fsecond));
+        ASSERT_EQ(-5, hour);
+
+        ASSERT_TRUE(OCI_IntervalFree(itv));
+    }
 }

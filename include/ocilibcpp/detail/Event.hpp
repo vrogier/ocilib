@@ -27,7 +27,7 @@ namespace ocilib
 
 inline Event::Event(OCI_Event *pEvent)
 {
-    AcquireTransient(pEvent, Environment::GetEnvironmentHandle());
+    AcquireTransient(pEvent, static_cast<core::Handle*>(nullptr));
 }
 
 inline Event::EventType Event::GetType() const

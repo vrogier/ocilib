@@ -1,52 +1,48 @@
 #include <iostream>
+#include <thread>
+#include <vector>
 
 #include "ocilib.hpp"
 
 using namespace ocilib;
 
-const int MaxThreads = 50;
-const int MaxConnnections = 10;
+const OCI_Int32 MaxThreads = 50;
+const OCI_Int32 MaxConnnections = 10;
 
-void worker(ThreadHandle handle, void *data)
+Environment env(Environment::Threaded);
+Pool pool(env, "db", "usr", "pwd", Pool::ConnectionPool, 0, MaxConnnections, 1, Environment::SessionDefault);
+
+void worker(OCI_Int32 id)
 {
-    Connection con = ((Pool *)data)->GetConnection();
+    Connection con = pool.GetConnection(ostring());
     Statement st(con);
     st.Execute("select to_char(sysdate, 'YYYYMMDD HH24:MI:SS') from dual");
     Resultset rs = st.GetResultset();
     rs.Next();
-    std::cout << handle << " - " << rs.Get<ostring>(1) << std::endl;
+    std::cout << id << " - " << rs.Get<ostring>(1) << std::endl;
     con.Close();
 }
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize(Environment::Threaded);
+        std::vector<std::thread> threads;
 
-        Pool pool("db", "usr", "pwd", Pool::ConnectionPool, 0, MaxConnnections);
-
-        std::vector<ThreadHandle> threads;
-
-        for (int i = 0; i < MaxThreads; i++)
+        for (OCI_Int32 i = 0; i < MaxThreads; ++i)
         {
-            ThreadHandle th = Thread::Create();
-            threads.push_back(th);
-            Thread::Run(th, worker, &pool);
+            threads.emplace_back(worker, i);
         }
 
-        for (int i = 0; i < MaxThreads; i++)
+        for (auto& t : threads)
         {
-            Thread::Join(threads[i]);
-            Thread::Destroy(threads[i]);
+            t.join();
         }
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
 
     return EXIT_SUCCESS;
 }

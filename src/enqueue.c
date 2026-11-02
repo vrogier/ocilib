@@ -24,13 +24,13 @@
 #include "memory.h"
 #include "stringutils.h"
 
-static const unsigned int VisibilityModeValues[] =
+static const OCI_UInt32 VisibilityModeValues[] =
 {
     OCI_AMV_IMMEDIATE,
     OCI_AMV_ON_COMMIT
 };
 
-static const unsigned int EnqueueModeValues[] =
+static const OCI_UInt32 EnqueueModeValues[] =
 {
     OCI_ASD_BEFORE,
     OCI_ASD_TOP
@@ -50,25 +50,26 @@ OCI_Enqueue * OcilibEnqueueCreate
     (
         /* returns */ OCI_Enqueue*, NULL,
         /* context */ OCI_IPC_TYPE_INFO, typinf
-    )
+    );
 
     OCI_Enqueue* enqueue = NULL;
 
-    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf)
-    CHECK_PTR(OCI_IPC_STRING,    name)
+    CHECK_PTR(OCI_IPC_TYPE_INFO, typinf);
+    CHECK_PTR(OCI_IPC_STRING,    name);
 
     /* allocate enqueue structure */
 
-    ALLOC_DATA(OCI_IPC_ENQUEUE, enqueue, 1)
+    ALLOC_HANDLE(OCI_IPC_ENQUEUE, enqueue);
 
     enqueue->typinf = typinf;
-    enqueue->name   = OcilibStringDuplicate(name);
+    enqueue->name   = OcilibStringDuplicate(enqueue->typinf->con->env, name);
 
     /* allocate enqueue options descriptor */
 
-    CHECK(OcilibMemoryAllocDescriptor((dvoid * )enqueue->typinf->con->env,
-                                      (dvoid **) &enqueue->opth,
-                                      OCI_DTYPE_AQENQ_OPTIONS))
+    CHECK(OcilibMemoryAllocDescriptor(enqueue->typinf->con->env,
+                                      (dvoid *)enqueue->typinf->con->env->handle,
+                                      (dvoid **) &enqueue->handle,
+                                      OCI_DTYPE_AQENQ_OPTIONS));
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -78,46 +79,46 @@ OCI_Enqueue * OcilibEnqueueCreate
             enqueue = NULL;
         }
 
-        SET_RETVAL(enqueue)
-    )
+        SET_RETVAL(enqueue);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEnqueueFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibEnqueueFree
+OCI_Boolean OcilibEnqueueFree
 (
     OCI_Enqueue *enqueue
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_ENQUEUE, enqueue
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue);
 
     /* free OCI descriptor */
 
-    OcilibMemoryFreeDescriptor((dvoid *) enqueue->opth, OCI_DTYPE_AQENQ_OPTIONS);
+    OcilibMemoryFreeDescriptor(enqueue->typinf->con->env, (dvoid *) enqueue->handle, OCI_DTYPE_AQENQ_OPTIONS);
 
     OcilibErrorResetSource(NULL, enqueue);
 
-    FREE(enqueue->name)
-    FREE(enqueue)
+    FREE(enqueue->name);
+    FREE(enqueue);
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEnqueuePut
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibEnqueuePut
+OCI_Boolean OcilibEnqueuePut
 (
     OCI_Enqueue *enqueue,
     OCI_Msg     *msg
@@ -125,23 +126,23 @@ boolean OcilibEnqueuePut
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_ENQUEUE, enqueue
-    )
+    );
 
     void *payload = NULL;
     void *ind     = NULL;
 
     sword ret = OCI_ERROR;
 
-    int     dbsize = -1;
-    dbtext* dbstr = NULL;
+    OCI_Int32     dbsize = -1;
+    dbtext* dbstr  = NULL;
 
     char* ansi_queue_name = NULL;
 
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CHECK_PTR(OCI_IPC_MSG,     msg)
-    CHECK_COMPAT(enqueue->typinf->tdo == msg->typinf->tdo)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue);
+    CHECK_PTR(OCI_IPC_MSG,     msg);
+    CHECK_COMPAT(enqueue->typinf->handle == msg->typinf->handle);
 
     /* get payload */
 
@@ -158,7 +159,7 @@ boolean OcilibEnqueuePut
 
     /* enqueue message */
 
-    dbstr = OcilibStringGetDBString(enqueue->name, &dbsize);
+    dbstr = OcilibStringGetDBString(enqueue->typinf->con->env,enqueue->name, &dbsize);
 
     /* OCIAQEnq() parameter  'queue_name' is supposed to be either ANSI or UTF16 depending on the
     * environment. It appears that whatever mode is used, OCIAQEnq() only takes ANSI strings !
@@ -168,22 +169,21 @@ boolean OcilibEnqueuePut
     * If an error is reported let's try again using an ANSI string.
     */
 
-
 #ifdef OCI_CHARSET_WIDE
-    const size_t attempt_max = 2;
+    const OCI_Size attempt_max = 2;
 #else
-    const size_t attempt_max = 1;
+    const OCI_Size attempt_max = 1;
 #endif
 
-    size_t attempt_count = 0;
+    OCI_Size attempt_count = 0;
 
     while (OCI_ERROR == ret && ++attempt_count <= attempt_max)
     {
         void* name = attempt_count == 1 ? (void*)dbstr : (void*) ansi_queue_name;
 
-        ret = OCIAQEnq(enqueue->typinf->con->cxt, enqueue->typinf->con->err,
-                       (OraText*)name, enqueue->opth, msg->proph,
-                       enqueue->typinf->tdo, &payload, &ind, &msg->id, OCI_DEFAULT);
+        ret = enqueue->typinf->con->env->api->OCIAQEnq(enqueue->typinf->con->handle, enqueue->typinf->con->err,
+                                                       (OraText*)name, enqueue->handle, msg->handle,
+                                                       enqueue->typinf->handle, &payload, &ind, &msg->id, OCI_DEFAULT);
 
         /* check returned error code */
 
@@ -191,11 +191,11 @@ boolean OcilibEnqueuePut
         {
             sb4 code = 0;
 
-            OCIErrorGet((dvoid *)enqueue->typinf->con->err, (ub4) 1,
-                        (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
-                        (ub4) OCI_HTYPE_ERROR);
+            enqueue->typinf->con->env->api->OCIErrorGet((dvoid *)enqueue->typinf->con->err, (ub4) 1,
+                                                        (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
+                                                        (ub4) OCI_HTYPE_ERROR);
 
-        #ifdef OCI_CHARSET_WIDE
+#ifdef OCI_CHARSET_WIDE
 
             if (dbstr == name && (OCI_ERR_AQ_QUEUE_NAME_INVALID == code ||
                                   OCI_ERR_AQ_QUEUE_NOT_EXIST == code))
@@ -204,8 +204,8 @@ boolean OcilibEnqueuePut
                  * accepting only ANSI strings.* Let's try again with an ANSI string for queue name
                  */
 
-                const int len = (int)ostrlen(enqueue->name);
-                ansi_queue_name = OcilibMemoryAlloc(OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
+                const OCI_Int32 len = (OCI_Int32)ostrlen(enqueue->name);
+                ansi_queue_name = OcilibMemoryAlloc(enqueue->typinf->con->env, OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
                 OcilibStringNativeToAnsi(enqueue->name, ansi_queue_name, len);
             }
             else
@@ -214,235 +214,235 @@ boolean OcilibEnqueuePut
             /* raise error only if the call has not been timed out */
 
             {
-                THROW(OcilibExceptionOCI, enqueue->typinf->con->err, ret)
+                THROW(OcilibExceptionOCI, enqueue->typinf->con->err, ret);
             }
         }
     }
-                
-    SET_SUCCESS()
+
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(enqueue->typinf->con->env, dbstr);
 
-        FREE(ansi_queue_name)
-    )
+        FREE(ansi_queue_name);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEnqueueGetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibEnqueueGetVisibility
+OCI_QueueVisibility OcilibEnqueueGetVisibility
 (
     OCI_Enqueue *enqueue
 )
 {
     ENTER_FUNC
     (
-        /* returns */ unsigned int, OCI_UNKNOWN,
+        /* returns */ OCI_QueueVisibility, OCI_UNKNOWN,
         /* context */ OCI_IPC_ENQUEUE, enqueue
-    )
+    );
 
     ub4 ret = OCI_UNKNOWN;
 
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue);
 
     CHECK_ATTRIB_GET
     (
         OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY,
-        enqueue->opth, &ret, NULL,
+        enqueue->handle, &ret, NULL,
         enqueue->typinf->con->err
-    )
+    );
 
-    SET_RETVAL(ret)
+    SET_RETVAL(ret);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEnqueueSetVisibility
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibEnqueueSetVisibility
+OCI_Boolean OcilibEnqueueSetVisibility
 (
-    OCI_Enqueue *enqueue,
-    unsigned int visibility
+    OCI_Enqueue        *enqueue,
+    OCI_QueueVisibility visibility
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_ENQUEUE, enqueue
-    )
+    );
 
     ub4 value = (ub4) visibility;
 
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CHECK_ENUM_VALUE(visibility, VisibilityModeValues, OTEXT("Visibility Mode"))
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue);
+    CHECK_ENUM_VALUE(visibility, VisibilityModeValues, OTEXT("Visibility Mode"));
 
     CHECK_ATTRIB_SET
     (
         OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_VISIBILITY,
-        enqueue->opth, &value, 0,
+        enqueue->handle, &value, 0,
         enqueue->typinf->con->err
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEnqueueGetSequenceDeviation
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibEnqueueGetSequenceDeviation
+OCI_QueueSeqDeviation OcilibEnqueueGetSequenceDeviation
 (
     OCI_Enqueue *enqueue
 )
 {
     ENTER_FUNC
     (
-        /* returns */ unsigned int, OCI_UNKNOWN,
+        /* returns */ OCI_QueueSeqDeviation, OCI_UNKNOWN,
         /* context */ OCI_IPC_ENQUEUE, enqueue
-    )
+    );
 
     ub4 ret = OCI_UNKNOWN;
 
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue);
 
     CHECK_ATTRIB_GET
     (
         OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_SEQUENCE_DEVIATION,
-        enqueue->opth, &ret, NULL, enqueue->typinf->con->err
-    )
+        enqueue->handle, &ret, NULL, enqueue->typinf->con->err
+    );
 
-    SET_RETVAL((unsigned int) ret)
+    SET_RETVAL((OCI_UInt32) ret);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEnqueueSetDeviation
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibEnqueueSetSequenceDeviation
+OCI_Boolean OcilibEnqueueSetSequenceDeviation
 (
-    OCI_Enqueue *enqueue,
-    unsigned int sequence
+    OCI_Enqueue          *enqueue,
+    OCI_QueueSeqDeviation sequence
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_ENQUEUE, enqueue
-    )
+    );
 
     ub4 value = (ub4) sequence;
 
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
-    CHECK_ENUM_VALUE(sequence, EnqueueModeValues, OTEXT("Sequence Deviation"))
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue);
+    CHECK_ENUM_VALUE(sequence, EnqueueModeValues, OTEXT("Sequence Deviation"));
 
     CHECK_ATTRIB_SET
     (
         OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_SEQUENCE_DEVIATION,
-        enqueue->opth, &value, 0, enqueue->typinf->con->err
-    )
+        enqueue->handle, &value, 0, enqueue->typinf->con->err
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEnqueueSetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibEnqueueGetRelativeMsgID
+OCI_Boolean OcilibEnqueueGetRelativeMsgID
 (
     OCI_Enqueue  *enqueue,
     void         *id,
-    unsigned int *len
+    OCI_UInt32 *len
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_ENQUEUE, enqueue
-    )
+    );
 
     OCIRaw *value = NULL;
 
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue);
     CHECK_PTR(OCI_IPC_VOID,    id);
     CHECK_PTR(OCI_IPC_VOID,    len);
 
     CHECK_ATTRIB_GET
     (
         OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID,
-        enqueue->opth, &value, NULL,
+        enqueue->handle, &value, NULL,
         enqueue->typinf->con->err
-    )
+    );
 
     if (NULL != value)
     {
-        const ub4 raw_len = OCIRawSize(enqueue->typinf->con->env, value);
+        const ub4 raw_len = enqueue->typinf->con->env->api->OCIRawSize(enqueue->typinf->con->env->handle, value);
 
         if (*len > raw_len)
         {
             *len = raw_len;
         }
 
-        memcpy(id, OCIRawPtr(enqueue->typinf->con->env, value), (size_t) (*len));
+        memcpy(id, enqueue->typinf->con->env->api->OCIRawPtr(enqueue->typinf->con->env->handle, value), (OCI_Size) (*len));
     }
     else
     {
         *len = 0;
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEnqueueSetRelativeMsgID
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibEnqueueSetRelativeMsgID
+OCI_Boolean OcilibEnqueueSetRelativeMsgID
 (
     OCI_Enqueue *enqueue,
     const void  *id,
-    unsigned int len
+    OCI_UInt32 len
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_ENQUEUE, enqueue
-    )
+    );
 
     OCIRaw *value = NULL;
 
-    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue)
+    CHECK_PTR(OCI_IPC_ENQUEUE, enqueue);
 
     CHECK_OCI
     (
         enqueue->typinf->con->err,
         OCIRawAssignBytes,
-        enqueue->typinf->con->env, enqueue->typinf->con->err,
+        enqueue->typinf->con->env->handle, enqueue->typinf->con->err,
         (ub1*) id, (ub4) len, (OCIRaw **) &value
-    )
+    );
 
     CHECK_ATTRIB_SET
     (
         OCI_DTYPE_AQENQ_OPTIONS, OCI_ATTR_RELATIVE_MSGID,
-        enqueue->opth, &value, 0,
+        enqueue->handle, &value, 0,
         enqueue->typinf->con->err
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }

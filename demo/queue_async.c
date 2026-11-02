@@ -16,7 +16,7 @@ void on_message(OCI_Dequeue *deq)
 }
 
 
-int main(int argc, char *argv[])
+int main(OCI_Int32 argc, char *argv[])
 {
     OCI_Connection *con;
     OCI_Enqueue    *enq;
@@ -27,12 +27,14 @@ int main(int argc, char *argv[])
     OCI_Object     *obj;
     OCI_Agent      *agents[2];
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT | OCI_ENV_EVENTS))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT | OCI_ENV_EVENTS);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    con = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    con = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
 
     OCI_QueueTableCreate(con, "message_queue_table", "message_t", NULL, NULL, TRUE, OCI_AGM_NONE, NULL,  0, 0, NULL);
     OCI_QueueCreate(con, "message_queue", "message_queue_table", OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL);
@@ -52,11 +54,13 @@ int main(int argc, char *argv[])
     OCI_DequeueSetConsumer(deq2, "C2");
     OCI_DequeueSetNavigation(deq2, OCI_ADN_FIRST_MSG);
 
-    OCI_DequeueSubscribe(deq1, 9998, 0, on_message);
-    OCI_DequeueSubscribe(deq2, 9999, 0, on_message);
+    OCI_SetSubscriptionPort(env, 9998);
+
+    OCI_DequeueSubscribe(deq1, 0, on_message);
+    OCI_DequeueSubscribe(deq2, 0, on_message);
 
     msg = OCI_MsgCreate(inf);
-    obj = OCI_ObjectCreate(con, inf);
+    obj = OCI_ObjectCreate(inf);
 
     OCI_ObjectSetString(obj, "title", "NEXT MEETING");
     OCI_ObjectSetString(obj, "content", "12:00 PM IN STARBUCKS");
@@ -89,7 +93,7 @@ int main(int argc, char *argv[])
 
     OCI_ConnectionFree(con);
 
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

@@ -20,12 +20,12 @@
 
 /* IMPORTANT NOTICE
  *
- * This file contains explanations about Oracle and OCI technologies. 
- * OCILIB is a wrapper around OCI and thus exposes OCI features. 
+ * This file contains explanations about Oracle and OCI technologies.
+ * OCILIB is a wrapper around OCI and thus exposes OCI features.
  * The OCILIB documentation intends to explain Oracle / OCI concepts
- * and is naturally based on the official Oracle OCI documentation. 
- * 
- * Some parts of OCILIB documentation may include some information 
+ * and is naturally based on the official Oracle OCI documentation.
+ *
+ * Some parts of OCILIB documentation may include some information
  * taken and adapted from the following Oracle documentations :
  *  - Oracle Call Interface Programmer's Guide
  *  - Oracle Streams - Advanced Queuing User's Guide
@@ -86,7 +86,7 @@
  * @typedef OCI_Environment
  *
  * @brief
- * Environment object 
+ * Environment object
  *
  * Represents a runtime OCI executing environment
  *
@@ -376,6 +376,86 @@ typedef struct OCI_XmlType OCI_XmlType;
 typedef struct OCI_Vector OCI_Vector;
 
 /**
+ * @typedef OCI_Json
+ *
+ * @brief
+ * Oracle JSON type representation.
+ *
+ */
+
+typedef struct OCI_Json OCI_Json;
+
+/**
+ * @typedef OCI_JsonNode
+ *
+ * @brief
+ * Oracle JSON DOM node representation.
+ *
+ */
+
+typedef struct OCI_JsonNode OCI_JsonNode;
+
+/**
+ * @typedef OCI_SodaDb
+ *
+ * @brief
+ * SODA database handle.
+ *
+ */
+
+typedef struct OCI_SodaDb OCI_SodaDb;
+
+/**
+ * @typedef OCI_SodaColl
+ *
+ * @brief
+ * SODA collection handle.
+ *
+ */
+
+typedef struct OCI_SodaColl OCI_SodaColl;
+
+/**
+ * @typedef OCI_SodaDoc
+ *
+ * @brief
+ * SODA document handle.
+ *
+ */
+
+typedef struct OCI_SodaDoc OCI_SodaDoc;
+
+/**
+ * @typedef OCI_SodaOptions
+ *
+ * @brief
+ * SODA operation options handle.
+ *
+ */
+
+typedef struct OCI_SodaOptions OCI_SodaOptions;
+
+/**
+ * @typedef OCI_SodaCollCursor
+ *
+ * @brief
+ * SODA collection cursor handle.
+ *
+ */
+
+typedef struct OCI_SodaCollCursor OCI_SodaCollCursor;
+
+/**
+ * @typedef OCI_SodaDocCursor
+ *
+ * @brief
+ * SODA document cursor handle.
+ *
+ */
+
+typedef struct OCI_SodaDocCursor OCI_SodaDocCursor;
+
+/**
  * @typedef OCI_TypeInfo
  *
  * @brief
@@ -408,26 +488,6 @@ typedef struct OCI_HashTable OCI_HashTable;
  */
 
 typedef struct OCI_Error OCI_Error;
-
-/**
- * @typedef OCI_Mutex
- *
- * @brief
- * OCILIB encapsulation of OCI mutexes.
- *
- */
-
-typedef struct OCI_Mutex OCI_Mutex;
-
-/**
- * @typedef OCI_Thread
- *
- * @brief
- * OCILIB encapsulation of OCI Threads.
- *
- */
-
-typedef struct OCI_Thread OCI_Thread;
 
 /**
  * @typedef OCI_DirPath
@@ -515,38 +575,6 @@ typedef void (*POCI_ERROR)
 );
 
 /**
- * @var POCI_THREAD
- *
- * @brief
- * Thread procedure prototype
- *
- * @param thread - Thread handle
- * @param arg    - Pointer passed to OCI_ThreadRun()
- *
- */
-
-typedef void (*POCI_THREAD)
-(
-    OCI_Thread *thread,
-    void *      arg
-);
-
-/**
- * @var POCI_THREADKEYDEST
- *
- * @brief
- * Thread key destructor prototype.
- *
- * @param data - Thread Key current pointer value
- *
- */
-
-typedef void (*POCI_THREADKEYDEST)
-(
-    void *data
-);
-
-/**
  * @var POCI_NOTIFY
  *
  * @brief
@@ -575,6 +603,85 @@ typedef void (*POCI_NOTIFY_AQ)
 (
     OCI_Dequeue *dequeue
 );
+
+/* enum-like parameter and return types
+ *
+ * These are distinct typedefs over OCI_UInt32: they document which OCI_*
+ * constant family a parameter or return value expects. They are deliberately
+ * typedefs and not enums: several parameters accept combinable flags, and C
+ * enums would not be checked anyway. Runtime validation via CHECK_ENUM_VALUE
+ * still applies.
+ */
+
+typedef OCI_UInt32 OCI_EnvMode;               /* OCI_ENV_* flags, combinable          */
+typedef OCI_UInt32 OCI_SessionMode;           /* OCI_SESSION_* flags, combinable      */
+typedef OCI_UInt32 OCI_FormatType;            /* OCI_FMT_*                            */
+typedef OCI_UInt32 OCI_LocaleCode;            /* OCI_LSI_*                            */
+typedef OCI_UInt32 OCI_TraceType;             /* OCI_TRC_*                            */
+typedef OCI_UInt32 OCI_TimeoutType;           /* OCI_NTO_*                            */
+typedef OCI_UInt32 OCI_PoolType;              /* OCI_POOL_*                           */
+typedef OCI_UInt32 OCI_TransactionMode;       /* OCI_TRS_*                            */
+typedef OCI_UInt32 OCI_FetchSeekMode;         /* OCI_SFD_*                            */
+typedef OCI_UInt32 OCI_FetchMode;             /* OCI_SFM_*                            */
+typedef OCI_UInt32 OCI_BindMode;              /* OCI_BIND_BY_*                        */
+typedef OCI_UInt32 OCI_BindAllocationMode;    /* OCI_BAM_*                            */
+typedef OCI_UInt32 OCI_BindDirection;         /* OCI_BDM_*                            */
+typedef OCI_UInt32 OCI_CharsetForm;           /* OCI_CSF_*                            */
+typedef OCI_UInt32 OCI_LongMode;              /* OCI_LONG_*                           */
+typedef OCI_UInt32 OCI_SeekMode;              /* OCI_SEEK_*                           */
+typedef OCI_UInt32 OCI_LobMode;               /* OCI_LOB_*                            */
+typedef OCI_UInt32 OCI_DirPathConvertMode;    /* OCI_DCM_*                            */
+typedef OCI_UInt32 OCI_QueueSeqDeviation;     /* OCI_ASD_*                            */
+typedef OCI_UInt32 OCI_QueueVisibility;       /* OCI_AMV_*                            */
+typedef OCI_UInt32 OCI_DequeueMode;           /* OCI_ADM_*                            */
+typedef OCI_UInt32 OCI_DequeueNav;            /* OCI_ADN_*                            */
+typedef OCI_UInt32 OCI_QueueType;             /* OCI_AQT_*                            */
+typedef OCI_UInt32 OCI_QueueGrouping;         /* OCI_AGM_*                            */
+typedef OCI_UInt32 OCI_QueuePurgeMode;        /* OCI_APM_*                            */
+typedef OCI_UInt32 OCI_SubscriptionType;      /* OCI_CNT_*                            */
+typedef OCI_UInt32 OCI_DatabaseStartMode;     /* OCI_DB_SPM_*                         */
+typedef OCI_UInt32 OCI_DatabaseStartFlag;     /* OCI_DB_SPF_*                         */
+typedef OCI_UInt32 OCI_DatabaseShutdownMode;  /* OCI_DB_SDM_*                         */
+typedef OCI_UInt32 OCI_DatabaseShutdownFlag;  /* OCI_DB_SDF_*                         */
+typedef OCI_UInt32 OCI_LobType;               /* OCI_CLOB, OCI_BLOB, OCI_NCLOB        */
+typedef OCI_UInt32 OCI_FileType;              /* OCI_CFILE, OCI_BFILE                 */
+typedef OCI_UInt32 OCI_LongType;              /* OCI_CLONG, OCI_BLONG                 */
+typedef OCI_UInt32 OCI_NumericType;           /* OCI_NUM_*                            */
+typedef OCI_UInt32 OCI_TimestampType;         /* OCI_TIMESTAMP, OCI_TIMESTAMP_TZ/LTZ  */
+typedef OCI_UInt32 OCI_IntervalType;          /* OCI_INTERVAL_*                       */
+typedef OCI_UInt32 OCI_HashType;              /* OCI_HASH_*                           */
+typedef OCI_UInt32 OCI_TypeInfoType;          /* OCI_TIF_*                            */
+typedef OCI_UInt32 OCI_VectorFormat;          /* OCI_VEC_*                            */
+typedef OCI_UInt32 OCI_JsonType;              /* OCI_JNT_*                            */
+typedef OCI_UInt32 OCI_JsonValidation;        /* OCI_JV_*                             */
+typedef OCI_UInt32 OCI_JsonEncoding;          /* OCI_JE_*                             */
+typedef OCI_UInt32 OCI_JsonPrint;             /* OCI_JP_*                             */
+typedef OCI_UInt32 OCI_Stat;                  /* OCI_UST_*                            */
+typedef OCI_UInt32 OCI_ErrorType;             /* OCI_ERR_ORACLE/OCILIB/WARNING        */
+typedef OCI_UInt32 OCI_ImportMode;            /* OCI_IMPORT_MODE_*                    */
+typedef OCI_UInt32 OCI_Charset;               /* OCI_CHAR_*                           */
+typedef OCI_UInt32 OCI_SQLCommand;            /* OCI_SFC_*                            */
+typedef OCI_UInt32 OCI_StatementType;         /* OCI_CST_*                            */
+typedef OCI_UInt32 OCI_SqlType;               /* OCI_CDT_*                            */
+typedef OCI_UInt32 OCI_ColumnPropFlags;       /* OCI_CPF_* flags, combinable          */
+typedef OCI_UInt32 OCI_CollationID;           /* OCI_CCI_*                            */
+typedef OCI_UInt32 OCI_SubType;               /* OCI_NUM_*, OCI_LOB_*, OCI_FILE_*,
+                                                 * OCI_TIMESTAMP_*, OCI_INTERVAL_* subtypes */
+typedef OCI_UInt32 OCI_ObjectType;            /* OCI_OBJ_*                            */
+typedef OCI_UInt32 OCI_CollType;              /* OCI_COLL_*                           */
+typedef OCI_UInt32 OCI_MsgState;              /* OCI_AMS_*                            */
+typedef OCI_UInt32 OCI_DirPathResult;         /* OCI_DPR_*                            */
+typedef OCI_UInt32 OCI_EventType;             /* OCI_ENT_*                            */
+typedef OCI_UInt32 OCI_EventOperation;        /* OCI_ONT_*                            */
+typedef OCI_UInt32 OCI_FailoverCode;          /* OCI_FOC_*                            */
+typedef OCI_UInt32 OCI_FailoverType;          /* OCI_FOT_*                            */
+typedef OCI_UInt32 OCI_FailoverEvent;         /* OCI_FOE_*                            */
+typedef OCI_UInt32 OCI_HAEventSource;         /* OCI_HES_*                            */
+typedef OCI_UInt32 OCI_HAEventType;           /* OCI_HET_*                            */
+typedef OCI_UInt32 OCI_PointerType;           /* OCI_IPC_*                            */
+typedef OCI_UInt32 OCI_LogLevel;              /* OCI_LOG_*                            */
+typedef OCI_UInt32 OCI_LogCategory;           /* OCI_LOG_CAT_*                        */
+typedef OCI_Int32 OCI_ErrorCode;                      /* Oracle OCI / OCILIB error codes      */
 
 /**
  * @var POCI_TAF_HANDLER
@@ -607,11 +714,11 @@ typedef void (*POCI_NOTIFY_AQ)
  *
  */
 
-typedef unsigned int (*POCI_TAF_HANDLER)
+typedef OCI_FailoverCode (*POCI_TAF_HANDLER)
 (
-    OCI_Connection *con,
-    unsigned int    type,
-    unsigned int    event
+    OCI_Connection   *con,
+    OCI_FailoverType  type,
+    OCI_FailoverEvent event
 );
 
 /**
@@ -647,10 +754,31 @@ typedef unsigned int (*POCI_TAF_HANDLER)
 
 typedef void (*POCI_HA_HANDLER)
 (
-    OCI_Connection *con,
-    unsigned int    source,
-    unsigned int    event,
-    OCI_Timestamp * time
+    OCI_Connection   *con,
+    OCI_HAEventSource source,
+    OCI_HAEventType   event,
+    OCI_Timestamp   * time
+);
+
+/**
+ * @var POCI_LOG_HANDLER
+ *
+ * @brief
+ * Logging callback prototype.
+ *
+ * @param env      - Environment handle
+ * @param level    - Log level
+ * @param category - Log category
+ * @param message  - Formatted log line as an ANSI/UTF-8 string
+ *
+ */
+
+typedef void (*POCI_LOG_HANDLER)
+(
+    OCI_Environment *env,
+    OCI_LogLevel     level,
+    OCI_LogCategory  category,
+    const char      *message
 );
 
 /* public structures */
@@ -685,31 +813,31 @@ typedef struct OCI_XID
 typedef union OCI_Variant
 {
     /* integers */
-    int num;
+    OCI_Int32 num;
 
     /* raw data */
     unsigned char *p_bytes;
 
     /* pointer to c natives types */
-    void *  p_void;
-    int *   p_int;
+    void  * p_void;
+    OCI_Int32   * p_int;
     float * p_float;
     double *p_double;
     otext * p_text;
 
     /* ocilib object types */
-    OCI_Date *     p_date;
+    OCI_Date     * p_date;
     OCI_Interval * p_interval;
     OCI_Timestamp *p_timestamp;
-    OCI_Long *     p_long;
-    OCI_Lob *      p_lob;
-    OCI_File *     p_file;
+    OCI_Long     * p_long;
+    OCI_Lob      * p_lob;
+    OCI_File     * p_file;
     OCI_Statement *p_stmt;
-    OCI_Column *   p_col;
-    OCI_Object *   p_obj;
-    OCI_Coll *     p_coll;
-    OCI_Iter *     p_iter;
-    OCI_Elem *     p_elem;
+    OCI_Column   * p_col;
+    OCI_Object   * p_obj;
+    OCI_Coll     * p_coll;
+    OCI_Iter     * p_iter;
+    OCI_Elem     * p_elem;
 } OCI_Variant;
 
 /**
@@ -738,7 +866,7 @@ typedef struct OCI_HashValue
 
 typedef struct OCI_HashEntry
 {
-    otext *               key;
+    otext               * key;
     struct OCI_HashValue *values;
     struct OCI_HashEntry *next;
 } OCI_HashEntry;
@@ -746,7 +874,7 @@ typedef struct OCI_HashEntry
 /**
  * @} OcilibCApiDatatypes
  */
- 
+
 /**
  * @} OcilibCApi
  */

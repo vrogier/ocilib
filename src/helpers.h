@@ -23,22 +23,22 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL unsigned int OcilibExternalSubTypeToSQLType
+OCI_SYM_LOCAL OCI_UInt32 OcilibExternalSubTypeToSQLType
 (
-    unsigned int type,
-    unsigned int subtype
+    OCI_SqlType type,
+    OCI_SubType subtype
 );
 
-OCI_SYM_LOCAL unsigned int OcilibExternalSubTypeToHandleType
+OCI_SYM_LOCAL OCI_UInt32 OcilibExternalSubTypeToHandleType
 (
-    unsigned int type,
-    unsigned int subtype
+    OCI_SqlType type,
+    OCI_SubType subtype
 );
 
-OCI_SYM_LOCAL boolean OcilibFreeObjectFromType
+OCI_SYM_LOCAL OCI_Boolean OcilibFreeObjectFromType
 (
-    void       * obj,
-    unsigned int type
+    void      * obj,
+    OCI_SqlType type
 );
 
 OCI_SYM_LOCAL OCI_Long* OcilibGetLongObjectFromDefine
@@ -46,6 +46,5 @@ OCI_SYM_LOCAL OCI_Long* OcilibGetLongObjectFromDefine
     OCI_Define* def,
     ub4         index
 );
-
 
 #endif /* OCILIB_HELPERS_H_INCLUDED */

@@ -9,7 +9,7 @@
 void long_oracle_call(OCI_Thread *thread, void *data)
 {
     clock_t t_start = clock();
-    int err_code = 0;
+    OCI_Int32 err_code = 0;
 
     if (!OCI_ExecuteStmt((OCI_Statement *)data, "begin dbms_lock.sleep(10); end;"))
     {
@@ -30,13 +30,15 @@ int main(void)
     OCI_Statement *st;
     OCI_Thread *th;
 
-    if (!OCI_Initialize(NULL, NULL, OCI_ENV_THREADED | OCI_ENV_CONTEXT))
+    OCI_Environment *env = OCI_EnvironmentCreate(NULL, NULL, OCI_ENV_THREADED);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    th = OCI_ThreadCreate();
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    th = OCI_ThreadCreate(env);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     OCI_ThreadRun(th, long_oracle_call, st);
@@ -49,7 +51,7 @@ int main(void)
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

@@ -53,7 +53,7 @@ namespace ocilib
     {
         core::Handle* selfHandle = this->GetHandle();
         core::Handle* parentHandle = selfHandle ? selfHandle->GetParent() : nullptr;
-        core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : Environment::GetEnvironmentHandle();
+        core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : GetHandle();
 
         return Connection
         (
@@ -63,17 +63,17 @@ namespace ocilib
         );
     }
 
-    inline unsigned int TypeInfo::GetColumnCount() const
+    inline OCI_UInt32 TypeInfo::GetColumnCount() const
     {
         return core::Check(OCI_TypeInfoGetColumnCount(*this));
     }
 
-    inline Column TypeInfo::GetColumn(unsigned int index) const
+    inline Column TypeInfo::GetColumn(OCI_UInt32 index) const
     {
         return Column(core::Check(OCI_TypeInfoGetColumn(*this, index)), GetHandle());
     }
 
-    inline boolean TypeInfo::IsFinalType() const
+    inline OCI_Boolean TypeInfo::IsFinalType() const
     {
         return (core::Check(OCI_TypeInfoIsFinalType(*this)) == TRUE);
     }

@@ -3,7 +3,7 @@
 namespace TestCApi
 {
 
-    void TestRow(OCI_Resultset* rslt, unsigned int index)
+    void TestRow(OCI_Resultset* rslt, OCI_UInt32 index)
     {
         ASSERT_EQ(index, OCI_GetCurrentRow(rslt));
         ASSERT_EQ(index, OCI_GetInt(rslt, 1));
@@ -12,11 +12,13 @@ namespace TestCApi
 
     TEST(TestScrollableCursor, Fetch)
     {
-        const unsigned int RowCount = 65;
+        const OCI_UInt32 RowCount = 65;
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -36,7 +38,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_FetchFirst(rs));
         TestRow(rs, 1);
 
-        unsigned int index = 1;
+        OCI_UInt32 index = 1;
         while (OCI_FetchNext(rs))
         {
             TestRow(rs, ++index);
@@ -63,6 +65,6 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
+
     }
 }

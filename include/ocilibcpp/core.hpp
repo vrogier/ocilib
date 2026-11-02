@@ -20,17 +20,23 @@
 
 #pragma once
 
-#include <list>
-#include <map>
+#include <atomic>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <type_traits>
+#include <unordered_map>
+#include <vector>
 
 #include "ocilibcpp/config.hpp"
 
- // ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
- // ReSharper disable CppClangTidyHicppSpecialMemberFunctions
- // ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
- // ReSharper disable CppClangTidyModernizeUseNodiscard
- // ReSharper disable CppClangTidyHicppUseEqualsDefault
- // ReSharper disable CppClangTidyModernizeUseEqualsDefault
+// ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
+// ReSharper disable CppClangTidyHicppSpecialMemberFunctions
+// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
+// ReSharper disable CppClangTidyModernizeUseNodiscard
+// ReSharper disable CppClangTidyHicppUseEqualsDefault
+// ReSharper disable CppClangTidyModernizeUseEqualsDefault
 
 namespace ocilib
 {
@@ -42,34 +48,6 @@ namespace ocilib
 
     namespace core
     {
-#ifdef OCILIBPP_HAS_ENABLEIF
-
-        template<bool B, class T = void>
-        using EnableIf = std::enable_if<B, T>;
-
-        template<class T, class U>
-        using IsSame = std::is_same<T, U>;
-
-#else
-
-        template<bool B, class T = void>
-        struct EnableIf {};
-
-        template<class T>
-        struct EnableIf<true, T> { typedef T type; };
-
-        template<bool B>
-        struct BoolConstant { static const bool value = B; };
-
-        template<class T, class U>
-        struct IsSame : BoolConstant<false> {};
-
-        template<class T>
-        struct IsSame<T, T> : BoolConstant<true> {};
-
-#endif
-
-#define ARG_NOT_USED(a) (a) = (a)
 
         /**
          * @brief Internal usage.
@@ -83,13 +61,13 @@ namespace ocilib
          * @brief Internal usage.
          * Constructs a C++ string object from the given OCILIB string pointer
          */
-        ostring MakeString(const otext* result, int size = -1);
+        ostring MakeString(const otext* result, OCI_Int32 size = -1);
 
         /**
         * @brief Internal usage.
         * Constructs a C++ Raw object from the given OCILIB raw buffer
         */
-        Raw MakeRaw(AnyPointer result, unsigned int size);
+        Raw MakeRaw(AnyPointer result, OCI_UInt32 size);
 
         /**
          * @brief Internal usage.
@@ -98,15 +76,17 @@ namespace ocilib
         template<class T>
         struct SupportedNumeric
         {
-            typedef EnableIf<IsSame<T, short>::value ||
-                IsSame<T, unsigned short>::value ||
-                IsSame<T, int>::value ||
-                IsSame<T, unsigned int>::value ||
-                IsSame<T, big_int>::value ||
-                IsSame<T, big_uint>::value ||
-                IsSame<T, float>::value ||
-                IsSame<T, double>::value ||
-                IsSame<T, Number>::value> Type;
+            typedef std::enable_if<
+                std::is_same<T, OCI_Int16>::value ||
+                std::is_same<T, OCI_UInt16>::value ||
+                std::is_same<T, OCI_Int32>::value ||
+                std::is_same<T, OCI_UInt32>::value ||
+                std::is_same<T, OCI_Int64>::value ||
+                std::is_same<T, OCI_UInt64>::value ||
+                std::is_same<T, float>::value ||
+                std::is_same<T, double>::value ||
+                std::is_same<T, Number>::value
+            > Type;
         };
 
         /**
@@ -116,10 +96,12 @@ namespace ocilib
         template<class T>
         struct SupportedVectorNumeric
         {
-            typedef EnableIf<IsSame<T, unsigned char>::value ||
-                IsSame<T, char>::value ||
-                IsSame<T, float>::value ||
-                IsSame<T, double>::value> Type;
+            typedef std::enable_if<
+                std::is_same<T, unsigned char>::value ||
+                std::is_same<T, char>::value ||
+                std::is_same<T, float>::value ||
+                std::is_same<T, double>::value
+            > Type;
         };
 
         /**
@@ -139,7 +121,7 @@ namespace ocilib
             T GetValue();
 
             operator T ();
-            operator unsigned int() const;
+            operator OCI_UInt32() const;
 
             bool operator == (const Enum& other) const;
             bool operator != (const Enum& other) const;
@@ -190,160 +172,85 @@ namespace ocilib
             bool operator == (T other) const;
             bool operator == (const Flags& other) const;
 
-            unsigned int GetValues() const;
+            OCI_UInt32 GetValues() const;
 
             bool IsSet(T other) const;
 
         private:
 
-            Flags(unsigned int flags);
+            Flags(OCI_UInt32 flags);
 
-            unsigned int _flags;
+            OCI_UInt32 _flags;
         };
+
+        /* Forward declarations */
+        class HandleControlBase;
+        template<class T> class HandleControl;
+        class HandleStore;
+        template<class T> class HandleHolder;
+
+        using Handle = HandleControlBase;
 
         /**
          * @brief Internal usage.
-         * Provide a buffer class with RAII capabilities
+         * Base class for C API handle control blocks (parent/child tree, shared ownership)
          */
-        template< typename T>
-        class ManagedBuffer
-        {
-        public:
-            ManagedBuffer();
-            ManagedBuffer(size_t size);
-
-            ~ManagedBuffer() noexcept;
-
-            operator T* ();
-
-        private:
-
-            T* _buffer;
-            size_t _size;
-        };
-
-        /**
-         * @brief Internal usage.
-         * Synchronization mode enumeration
-         */
-        enum SynchronizationMode
-        {
-            Unsafe,
-            Safe
-        };
-
-        /**
-         * @brief Internal usage.
-         * SynchronizationGuard object
-         */
-        class SynchronizationGuard
+        class HandleControlBase : public std::enable_shared_from_this<HandleControlBase>
         {
         public:
 
-            SynchronizationGuard(SynchronizationMode mode);
-            virtual ~SynchronizationGuard() noexcept;
+            using FreeNotifyFunc = void(*)(HandleControlBase*);
 
-            void Acquire() const;
-            void Release() const;
+            HandleControlBase(std::weak_ptr<HandleStore> store = std::weak_ptr<HandleStore>(), FreeNotifyFunc freeNotify = nullptr, AnyPointer extraInfo = nullptr);
 
-            void SetMode(SynchronizationMode mode);
+            virtual ~HandleControlBase() = default;
 
-        private:
+            virtual void Free() = 0;
+            virtual OCI_Environment* GetEnvironment() const = 0;
 
-            MutexHandle _mutex;
+            AnyPointer GetExtraInfos() const { return _extraInfo; }
+            void SetExtraInfos(AnyPointer extraInfo) { _extraInfo = extraInfo; }
+
+            void AddChild(std::shared_ptr<HandleControlBase> child);
+            void RemoveChild(HandleControlBase* child);
+            void FreeChildren();
+            void FreeChildren(const std::function<bool(HandleControlBase*)>& predicate);
+
+            HandleControlBase* GetParent() const;
+            std::shared_ptr<HandleStore> GetStore() const;
+
+        protected:
+
+            void SetParent(HandleControlBase* parent);
+
+            std::vector<std::weak_ptr<HandleControlBase>> _children;
+            std::mutex _childrenMutex;
+            std::weak_ptr<HandleControlBase> _parent;
+            std::weak_ptr<HandleStore> _store;
+            AnyPointer _extraInfo = nullptr;
+            FreeNotifyFunc _freeNotify = nullptr;
         };
 
         /**
          * @brief Internal usage.
-         * Base class for types that can be locked
-         */
-        class Synchronizable
-        {
-        public:
-
-            Synchronizable();
-            virtual  ~Synchronizable() noexcept;
-
-            void SetGuard(SynchronizationGuard* guard);
-
-            void Acquire() const;
-            void Release() const;
-
-        private:
-
-            SynchronizationGuard* _guard;
-        };
-
-        /**
-         * @brief Internal usage.
-         * Map supporting concurrent access from multiple threads
-         */
-        template<class K, class V>
-        class ConcurrentMap : public Synchronizable
-        {
-        public:
-
-            ConcurrentMap();
-            virtual ~ConcurrentMap() noexcept;
-
-            void Remove(K key);
-            V Get(K key);
-            void Set(K key, V value);
-            void Clear();
-            size_t GetSize();
-
-        private:
-
-            std::map<K, V> _map;
-
-        };
-
-        /**
-         * @brief Internal usage.
-         * List supporting concurrent access from multiple threads
+         * Typed C API handle control block
          */
         template<class T>
-        class ConcurrentList : public Synchronizable
+        class HandleControl : public HandleControlBase
         {
         public:
 
-            ConcurrentList();
-            virtual ~ConcurrentList() noexcept;
+            HandleControl(T handle, bool allocated, std::weak_ptr<HandleStore> store, FreeNotifyFunc freeNotify = nullptr, AnyPointer extraInfo = nullptr);
+            ~HandleControl() noexcept override;
 
-            void Add(T value);
-            void Remove(T value);
-            void Clear();
-            size_t GetSize();
-            bool Exists(const T& value);
-
-            template<class P>
-            bool FindIf(P predicate, T& value);
-
-            template<class A>
-            void ForEach(A action);
+            void Free() override;
+            T GetHandle() const;
+            OCI_Environment* GetEnvironment() const override;
 
         private:
 
-            std::list<T> _list;
-        };
-
-        /* Forward declaration */
-        class HandleStore;
-
-        /**
-         * @brief Internal usage.
-         * Interface for handling ownership and relationship of a C API handle
-         */
-        class Handle
-        {
-        public:
-
-            virtual ~Handle() noexcept {}
-            virtual ConcurrentList<Handle*>& GetChildren() = 0;
-            virtual void DetachFromHolders() = 0;
-            virtual void DetachFromParent() = 0;
-            virtual HandleStore* GetStore() const = 0;
-            virtual Handle* GetParent() const = 0;
+            std::atomic<T> _handle;
+            bool _allocated;
         };
 
         /**
@@ -354,29 +261,36 @@ namespace ocilib
         {
         public:
 
-            HandleStore(SynchronizationGuard* guard);
+            HandleStore();
 
             template <class T>
-            T Get(AnyPointer ptr);
+            std::shared_ptr<HandleControl<T>> Find(AnyPointer handle);
 
-            template <class T>
-            void Set(AnyPointer ptr, T handle);
+            void Register(AnyPointer handle, std::shared_ptr<HandleControlBase> ctrl);
+            void Remove(AnyPointer handle, const HandleControlBase* ctrl);
 
-            static HandleStore& GetStoreForHandle(Handle*);
+            static std::shared_ptr<HandleStore> ResolveStore(Handle* parent, AnyPointer handle);
 
         private:
 
-            ConcurrentMap<AnyPointer, Handle*>  _handles;
+            mutable std::mutex _mutex;
+            std::unordered_map<AnyPointer, std::weak_ptr<HandleControlBase>> _map;
         };
 
         /**
         * @brief Internal usage.
-        * Smart pointer class with reference counting for managing OCILIB object handles
+        * Smart pointer class with shared ownership for managing OCILIB object handles
         */
         template<class T>
         class HandleHolder
         {
         public:
+
+            HandleHolder() = default;
+            HandleHolder(const HandleHolder& other) = default;
+            HandleHolder& operator=(const HandleHolder& other) = default;
+
+            ~HandleHolder() = default;
 
             bool IsNull() const;
 
@@ -386,71 +300,26 @@ namespace ocilib
             operator T();
             operator T() const;
 
-        protected:
-
-            class SmartHandle;
-
-            HandleHolder(const HandleHolder& other);
-            HandleHolder();
-            ~HandleHolder() noexcept;
-
-            HandleHolder& operator= (const HandleHolder& other) noexcept;
-
-            typedef void(*SmartHandleFreeNotifyFunc)(SmartHandle* smartHandle);
+            OCI_Environment* GetEnvironment() const;
 
             Handle* GetHandle() const;
+            HandleControlBase* GetHandleControl() const;
+
+        protected:
+
+            using FreeNotifyFunc = HandleControlBase::FreeNotifyFunc;
 
             void AcquireAllocated(T handle, Handle* parent);
             void AcquireTransient(T handle, Handle* parent);
-            void AcquireAllocatedWithNotification(T handle, Handle* parent, SmartHandleFreeNotifyFunc freeNotifyFunc);
+            void AcquireAllocatedWithNotification(T handle, Handle* parent, FreeNotifyFunc freeNotify);
             void Acquire(HandleHolder& other);
 
-            void Acquire(T handle, bool allocated, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent);
+            void Acquire(T handle, bool allocated, Handle* parent, std::shared_ptr<HandleStore> store, FreeNotifyFunc freeNotify = nullptr, AnyPointer extraInfo = nullptr);
             void Release();
 
-            class SmartHandle : public Handle
-            {
-            public:
+        private:
 
-                SmartHandle(HandleHolder* holder, T handle, bool allocated, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent);
-                virtual ~SmartHandle() noexcept;
-
-                void Acquire(HandleHolder* holder);
-                void Release(HandleHolder* holder);
-
-                void Destroy();
-
-                T GetHandle() const;
-
-                AnyPointer GetExtraInfos() const;
-                void  SetExtraInfos(AnyPointer extraInfo);
-
-                ConcurrentList<Handle*>& GetChildren() override;
-                void DetachFromHolders() override;
-                void DetachFromParent() override;
-                HandleStore* GetStore() const override;
-                Handle* GetParent() const override;
-
-            private:
-
-                static void DeleteHandle(Handle* handle);
-                static void ResetHolder(HandleHolder* holder);
-                static SynchronizationMode GetSynchronizationMode();
-
-                ConcurrentList<HandleHolder*> _holders;
-                ConcurrentList<Handle*>  _children;
-
-                SynchronizationGuard _guard;
-
-                T _handle;
-                bool _allocated;
-                SmartHandleFreeNotifyFunc _freeNotifyFunc;
-                Handle* _parent;
-                AnyPointer _extraInfo;
-                HandleStore* _store;
-            };
-
-            SmartHandle* _smartHandle;
+            std::shared_ptr<HandleControl<T>> _control;
         };
 
         /**

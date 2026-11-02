@@ -36,16 +36,15 @@ OCI_Iter * OcilibIteratorCreate
     (
         /* returns */ OCI_Iter*, NULL,
         /* context */ OCI_IPC_COLLECTION, coll
-    )
+    );
 
     OCI_Iter* iter = NULL;
 
-    CHECK_PTR(OCI_IPC_COLLECTION, coll)
+    CHECK_PTR(OCI_IPC_COLLECTION, coll);
 
     /* allocate iterator structure */
 
-    ALLOC_DATA(OCI_IPC_ITERATOR, iter, 1)
-
+    ALLOC_HANDLE(OCI_IPC_ITERATOR, iter);
     iter->coll  = coll;
     iter->eoc   = FALSE;
     iter->boc   = TRUE;
@@ -57,16 +56,16 @@ OCI_Iter * OcilibIteratorCreate
     (
         iter->coll->con->err,
         OCIIterCreate,
-        iter->coll->con->env,
+        iter->coll->con->env->handle,
         iter->coll->con->err,
         iter->coll->handle,
         &iter->handle
-    )
+    );
 
     /* create data element */
 
-    iter->elem = OcilibElementInitialize(coll->con, iter->elem, NULL, (OCIInd*)NULL, coll->typinf);
-    CHECK_NULL(iter->elem)
+    iter->elem = OcilibElementInitialize(iter->elem, NULL, (OCIInd*)NULL, coll->typinf);
+    CHECK_NULL(iter->elem);
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -76,26 +75,26 @@ OCI_Iter * OcilibIteratorCreate
             iter = NULL;
         }
 
-        SET_RETVAL(iter)
-    )
+        SET_RETVAL(iter);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibIteratorFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibIteratorFree
+OCI_Boolean OcilibIteratorFree
 (
     OCI_Iter *iter
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_ITERATOR, iter
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_ITERATOR, iter)
+    CHECK_PTR(OCI_IPC_ITERATOR, iter);
 
     /* close iterator handle */
 
@@ -105,10 +104,10 @@ boolean OcilibIteratorFree
         (
             iter->coll->con->err,
             OCIIterDelete,
-            iter->coll->con->env,
+            iter->coll->con->env->handle,
             iter->coll->con->err,
             &iter->handle
-        )
+        );
     }
 
     /* free data element */
@@ -124,11 +123,11 @@ boolean OcilibIteratorFree
 
     OcilibErrorResetSource(NULL, iter);
 
-    FREE(iter)
+    FREE(iter);
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -144,36 +143,36 @@ OCI_Elem * OcilibIteratorGetNext
     (
         /* returns */ OCI_Elem*, NULL,
         /* context */ OCI_IPC_ITERATOR, iter
-    )
+    );
 
-    void   *data = NULL;
+    void   *data  = NULL;
     OCIInd *p_ind = NULL;
 
-    CHECK_PTR(OCI_IPC_ITERATOR, iter)
+    CHECK_PTR(OCI_IPC_ITERATOR, iter);
 
-    CHECK(!iter->eoc)
+    CHECK(!iter->eoc);
 
     CHECK_OCI
     (
         iter->coll->con->err,
         OCIIterNext,
-        iter->coll->con->env,
+        iter->coll->con->env->handle,
         iter->coll->con->err,
         iter->handle, &data,
         (dvoid **) &p_ind,
-        &iter->eoc
-    )
+        (boolean*) &iter->eoc
+    );
 
-    CHECK(!iter->eoc)
+    CHECK(!iter->eoc);
 
-    iter->elem  = OcilibElementInitialize(iter->coll->con, iter->elem,
-                                          data, p_ind, iter->coll->typinf);
+    iter->elem = OcilibElementInitialize(iter->elem,
+                                         data, p_ind, iter->coll->typinf);
     iter->dirty = FALSE;
     iter->boc   = FALSE;
 
-    SET_RETVAL(iter->elem)
+    SET_RETVAL(iter->elem);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -189,35 +188,35 @@ OCI_Elem * OcilibIteratorGetPrev
     (
         /* returns */ OCI_Elem*, NULL,
         /* context */ OCI_IPC_ITERATOR, iter
-    )
+    );
 
-    void   *data = NULL;
+    void   *data  = NULL;
     OCIInd *p_ind = NULL;
 
-    CHECK_PTR(OCI_IPC_ITERATOR, iter)
+    CHECK_PTR(OCI_IPC_ITERATOR, iter);
 
-    CHECK(!iter->boc)
+    CHECK(!iter->boc);
 
     CHECK_OCI
     (
         iter->coll->con->err,
         OCIIterPrev,
-        iter->coll->con->env,
+        iter->coll->con->env->handle,
         iter->coll->con->err,
         iter->handle, &data,
         (dvoid **) &p_ind,
-        &iter->boc
-    )
+        (boolean*) &iter->boc
+    );
 
-    CHECK(!iter->boc)
+    CHECK(!iter->boc);
 
-    iter->elem  = OcilibElementInitialize(iter->coll->con, iter->elem, data, p_ind, iter->coll->typinf);
+    iter->elem  = OcilibElementInitialize(iter->elem, data, p_ind, iter->coll->typinf);
     iter->dirty = FALSE;
     iter->eoc   = FALSE;
 
-    SET_RETVAL(iter->elem)
+    SET_RETVAL(iter->elem);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -233,13 +232,13 @@ OCI_Elem * OcilibIteratorGetCurrent
     (
         /* returns */ OCI_Elem*, NULL,
         /* context */ OCI_IPC_ITERATOR, iter
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_ITERATOR, iter)
+    CHECK_PTR(OCI_IPC_ITERATOR, iter);
 
-    CHECK(NULL != iter->elem && !iter->boc && !iter->eoc && !iter->dirty)
+    CHECK(NULL != iter->elem && !iter->boc && !iter->eoc && !iter->dirty);
 
-    SET_RETVAL(iter->elem)
+    SET_RETVAL(iter->elem);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }

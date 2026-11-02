@@ -26,18 +26,18 @@
  * OcilibEventReset
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibEventReset
+OCI_Boolean OcilibEventReset
 (
     OCI_Event *event
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_EVENT, event
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_EVENT, event)
+    CHECK_PTR(OCI_IPC_EVENT, event);
 
     event->op   = OCI_UNKNOWN;
     event->type = OCI_UNKNOWN;
@@ -57,43 +57,43 @@ boolean OcilibEventReset
         event->rowid[0] = 0;
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEventGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibEventGetType
+OCI_EventType OcilibEventGetType
 (
     OCI_Event *event
 )
 {
     GET_PROP
     (
-        /* result */ unsigned int, OCI_UNKNOWN,
+        /* result */ OCI_EventType, OCI_UNKNOWN,
         /* handle */ OCI_IPC_EVENT, event,
         /* member */ type
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEventGetOperation
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibEventGetOperation
+OCI_EventOperation OcilibEventGetOperation
 (
     OCI_Event *event
 )
 {
     GET_PROP
     (
-        /* result */ unsigned int, OCI_UNKNOWN,
+        /* result */ OCI_EventOperation, OCI_UNKNOWN,
         /* handle */ OCI_IPC_EVENT, event,
         /* member */ op
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -110,7 +110,7 @@ const otext * OcilibEventGetDatabase
         /* result */ const otext *, NULL,
         /* handle */ OCI_IPC_EVENT, event,
         /* member */ dbname
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -127,7 +127,7 @@ const otext * OcilibEventGetObject
         /* result */ const otext *, NULL,
         /* handle */ OCI_IPC_EVENT, event,
         /* member */ objname
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -144,7 +144,7 @@ const otext * OcilibEventGetRowid
         /* result */ const otext *, NULL,
         /* handle */ OCI_IPC_EVENT, event,
         /* member */ rowid
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -161,5 +161,5 @@ OCI_Subscription * OcilibEventGetSubscription
         /* result */ OCI_Subscription *, NULL,
         /* handle */ OCI_IPC_EVENT, event,
         /* member */ sub
-    )
+    );
 }

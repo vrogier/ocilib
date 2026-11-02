@@ -14,14 +14,14 @@ void key_cleanup(void *str)
 
 void worker(OCI_Thread *thread, void *data)
 {
-    const void *id = OCI_HandleGetThreadID(thread);
+    const void *id = thread;
     char *str = malloc(50);
 
     sprintf(str, "thread %p !\n", id);
 
-    OCI_ThreadKeySetValue("ID", str);
+    OCI_ThreadKeySetValue(OCI_HandleGetEnvironment(thread), "ID", str);
 
-    str = OCI_ThreadKeyGetValue("ID");
+    str = OCI_ThreadKeyGetValue(OCI_HandleGetEnvironment(thread), "ID");
 
     printf(str);
 }
@@ -29,20 +29,22 @@ void worker(OCI_Thread *thread, void *data)
 int main(void)
 {
     OCI_Thread *th[MAX_THREADS];
-    int i;
+    OCI_Int32 i;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT | OCI_ENV_THREADED))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT | OCI_ENV_THREADED);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    OCI_ThreadKeyCreate("ID", key_cleanup);
+    OCI_ThreadKeyCreate(env, "ID", key_cleanup);
 
     /* create threads */
 
     for (i = 0; i < MAX_THREADS; i++)
     {
-        th[i] = OCI_ThreadCreate();
+        th[i] = OCI_ThreadCreate(env);
         OCI_ThreadRun(th[i], worker, NULL);
     }
 
@@ -54,7 +56,7 @@ int main(void)
         OCI_ThreadFree(th[i]);
     }
 
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

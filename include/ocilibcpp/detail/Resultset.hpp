@@ -50,49 +50,49 @@ inline bool Resultset::Last()
     return (core::Check(OCI_FetchLast(*this)) == TRUE);
 }
 
-inline bool Resultset::Seek(SeekMode mode, int offset)
+inline bool Resultset::Seek(SeekMode mode, OCI_Int32 offset)
 {
     return (core::Check(OCI_FetchSeek(*this, mode, offset)) == TRUE);
 }
 
-inline unsigned int Resultset::GetCount() const
+inline OCI_UInt32 Resultset::GetCount() const
 {
     return core::Check(OCI_GetRowCount(*this));
 }
 
-inline unsigned int Resultset::GetCurrentRow() const
+inline OCI_UInt32 Resultset::GetCurrentRow() const
 {
     return core::Check(OCI_GetCurrentRow(*this));
 }
 
-inline unsigned int Resultset::GetColumnIndex(const ostring& name) const
+inline OCI_UInt32 Resultset::GetColumnIndex(const ostring& name) const
 {
     return core::Check(OCI_GetColumnIndex(*this, name.c_str()));
 }
 
-inline unsigned int Resultset::GetColumnCount() const
+inline OCI_UInt32 Resultset::GetColumnCount() const
 {
     return core::Check(OCI_GetColumnCount(*this));
 }
 
-inline Column Resultset::GetColumn(unsigned int index) const
+inline Column Resultset::GetColumn(OCI_UInt32 index) const
 {
     return Column(core::Check(OCI_GetColumn(*this, index)), GetHandle());
 }
 
 inline Column Resultset::GetColumn(const ostring& name) const
 {
-    return Column(core::Check(OCI_GetColumn2(*this, name.c_str())), GetHandle());
+    return Column(core::Check(OCI_GetColumnByName(*this, name.c_str())), GetHandle());
 }
 
-inline bool Resultset::IsColumnNull(unsigned int index) const
+inline bool Resultset::IsColumnNull(OCI_UInt32 index) const
 {
     return (core::Check(OCI_IsNull(*this, index)) == TRUE);
 }
 
 inline bool Resultset::IsColumnNull(const ostring& name) const
 {
-    return (core::Check(OCI_IsNull2(*this, name.c_str())) == TRUE);
+    return (core::Check(OCI_IsNullByName(*this, name.c_str())) == TRUE);
 }
 
 inline Statement Resultset::GetStatement() const
@@ -100,28 +100,28 @@ inline Statement Resultset::GetStatement() const
     return Statement( core::Check(OCI_ResultsetGetStatement(*this)), nullptr);
 }
 
-inline bool Resultset::operator ++ (int)
+inline bool Resultset::operator ++ (OCI_Int32)
 {
     return Next();
 }
 
-inline bool Resultset::operator -- (int)
+inline bool Resultset::operator -- (OCI_Int32)
 {
     return Prev();
 }
 
-inline bool Resultset::operator += (int offset)
+inline bool Resultset::operator += (OCI_Int32 offset)
 {
     return Seek(SeekRelative, offset);
 }
 
-inline bool Resultset::operator -= (int offset)
+inline bool Resultset::operator -= (OCI_Int32 offset)
 {
     return Seek(SeekRelative, -offset);
 }
 
 template<class T>
-void Resultset::Get(unsigned int index, T& value) const
+void Resultset::Get(OCI_UInt32 index, T& value) const
 {
     value = Get<T>(index);
 }
@@ -139,7 +139,7 @@ bool Resultset::Get(T& value, TAdapter adapter) const
 }
 
 template<class TCallback>
-unsigned int Resultset::ForEach(TCallback callback)
+OCI_UInt32 Resultset::ForEach(TCallback callback)
 {
     while (Next())
     {
@@ -153,7 +153,7 @@ unsigned int Resultset::ForEach(TCallback callback)
 }
 
 template<class T, class U>
-unsigned int Resultset::ForEach(T callback, U adapter)
+OCI_UInt32 Resultset::ForEach(T callback, U adapter)
 {
     while (Next())
     {
@@ -167,79 +167,79 @@ unsigned int Resultset::ForEach(T callback, U adapter)
 }
 
 template<>
-inline short Resultset::Get<short>(unsigned int index) const
+inline OCI_Int16 Resultset::Get<OCI_Int16>(OCI_UInt32 index) const
 {
     return core::Check(OCI_GetShort(*this, index));
 }
 
 template<>
-inline short Resultset::Get<short>(const ostring& name) const
+inline OCI_Int16 Resultset::Get<OCI_Int16>(const ostring& name) const
 {
-    return core::Check(OCI_GetShort2(*this, name.c_str()));
+    return core::Check(OCI_GetShortByName(*this, name.c_str()));
 }
 
 template<>
-inline unsigned short Resultset::Get<unsigned short>(unsigned int index) const
+inline OCI_UInt16 Resultset::Get<OCI_UInt16>(OCI_UInt32 index) const
 {
     return core::Check(OCI_GetUnsignedShort(*this, index));
 }
 
 template<>
-inline unsigned short Resultset::Get<unsigned short>(const ostring& name) const
+inline OCI_UInt16 Resultset::Get<OCI_UInt16>(const ostring& name) const
 {
-    return core::Check(OCI_GetUnsignedShort2(*this, name.c_str()));
+    return core::Check(OCI_GetUnsignedShortByName(*this, name.c_str()));
 }
 
 template<>
-inline int Resultset::Get<int>(unsigned int index) const
+inline OCI_Int32 Resultset::Get<OCI_Int32>(OCI_UInt32 index) const
 {
     return core::Check(OCI_GetInt(*this, index));
 }
 
 template<>
-inline int Resultset::Get<int>(const ostring& name) const
+inline OCI_Int32 Resultset::Get<OCI_Int32>(const ostring& name) const
 {
-    return core::Check(OCI_GetInt2(*this, name.c_str()));
+    return core::Check(OCI_GetIntByName(*this, name.c_str()));
 }
 
 template<>
-inline unsigned int Resultset::Get<unsigned int>(unsigned int index) const
+inline OCI_UInt32 Resultset::Get<OCI_UInt32>(OCI_UInt32 index) const
 {
     return core::Check(OCI_GetUnsignedInt(*this, index));
 }
 
 template<>
-inline unsigned int Resultset::Get<unsigned int>(const ostring& name) const
+inline OCI_UInt32 Resultset::Get<OCI_UInt32>(const ostring& name) const
 {
-    return core::Check(OCI_GetUnsignedInt2(*this, name.c_str()));
+    return core::Check(OCI_GetUnsignedIntByName(*this, name.c_str()));
 }
 
 template<>
-inline big_int Resultset::Get<big_int>(unsigned int index) const
+inline OCI_Int64 Resultset::Get<OCI_Int64>(OCI_UInt32 index) const
 {
     return core::Check(OCI_GetBigInt(*this, index));
 }
 
 template<>
-inline big_int Resultset::Get<big_int>(const ostring& name) const
+inline OCI_Int64 Resultset::Get<OCI_Int64>(const ostring& name) const
 {
-    return core::Check(OCI_GetBigInt2(*this, name.c_str()));
+    return core::Check(OCI_GetBigIntByName(*this, name.c_str()));
 }
 
 template<>
-inline big_uint Resultset::Get<big_uint>(unsigned int index) const
+inline OCI_UInt64 Resultset::Get<OCI_UInt64>(OCI_UInt32 index) const
 {
     return core::Check(OCI_GetUnsignedBigInt(*this, index));
 }
 
 template<>
-inline big_uint Resultset::Get<big_uint>(const ostring& name) const
+inline OCI_UInt64 Resultset::Get<OCI_UInt64>(const ostring& name) const
 {
-    return core::Check(OCI_GetUnsignedBigInt2(*this, name.c_str()));
+    return core::Check(OCI_GetUnsignedBigIntByName(*this, name.c_str()));
 }
 
 template<>
-inline float Resultset::Get<float>(unsigned int index) const
+inline float Resultset::Get<float>(OCI_UInt32 index) const
 {
     return core::Check(OCI_GetFloat(*this, index));
 }
@@ -247,11 +247,11 @@ inline float Resultset::Get<float>(unsigned int index) const
 template<>
 inline float Resultset::Get<float>(const ostring& name) const
 {
-    return core::Check(OCI_GetFloat2(*this, name.c_str()));
+    return core::Check(OCI_GetFloatByName(*this, name.c_str()));
 }
 
 template<>
-inline double Resultset::Get<double>(unsigned int index) const
+inline double Resultset::Get<double>(OCI_UInt32 index) const
 {
     return core::Check(OCI_GetDouble(*this, index));
 }
@@ -259,11 +259,11 @@ inline double Resultset::Get<double>(unsigned int index) const
 template<>
 inline double Resultset::Get<double>(const ostring& name) const
 {
-    return core::Check(OCI_GetDouble2(*this, name.c_str()));
+    return core::Check(OCI_GetDoubleByName(*this, name.c_str()));
 }
 
 template<>
-inline Number Resultset::Get<Number>(unsigned int index) const
+inline Number Resultset::Get<Number>(OCI_UInt32 index) const
 {
     return Number(core::Check(OCI_GetNumber(*this, index)), GetHandle());
 }
@@ -271,11 +271,11 @@ inline Number Resultset::Get<Number>(unsigned int index) const
 template<>
 inline Number Resultset::Get<Number>(const ostring& name) const
 {
-    return Number(core::Check(OCI_GetNumber2(*this, name.c_str())), GetHandle());
+    return Number(core::Check(OCI_GetNumberByName(*this, name.c_str())), GetHandle());
 }
 
 template<>
-inline ostring Resultset::Get<ostring>(unsigned int index) const
+inline ostring Resultset::Get<ostring>(OCI_UInt32 index) const
 {
     return core::MakeString(core::Check(OCI_GetString(*this, index)));
 }
@@ -283,35 +283,35 @@ inline ostring Resultset::Get<ostring>(unsigned int index) const
 template<>
 inline ostring Resultset::Get<ostring>(const ostring& name) const
 {
-    return core::MakeString(core::Check(OCI_GetString2(*this,name.c_str())));
+    return core::MakeString(core::Check(OCI_GetStringByName(*this,name.c_str())));
 }
 
 template<>
-inline Raw Resultset::Get<Raw>(unsigned int index) const
+inline Raw Resultset::Get<Raw>(OCI_UInt32 index) const
 {
-    unsigned int size = core::Check(OCI_GetDataLength(*this,index));
+    OCI_UInt32 size = core::Check(OCI_GetDataLength(*this,index));
 
-    core::ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
+    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
 
-    size = core::Check(OCI_GetRaw(*this, index, static_cast<AnyPointer>(buffer), size));
+    size = core::Check(OCI_GetRaw(*this, index, static_cast<AnyPointer>(buffer.data()), size));
 
-    return core::MakeRaw(buffer, size);
+    return core::MakeRaw(buffer.data(), size);
 }
 
 template<>
 inline Raw Resultset::Get<Raw>(const ostring& name) const
 {
-    unsigned int size = core::Check(OCI_GetDataLength(*this, core::Check(OCI_GetColumnIndex(*this, name.c_str()))));
+    OCI_UInt32 size = core::Check(OCI_GetDataLength(*this, core::Check(OCI_GetColumnIndex(*this, name.c_str()))));
 
-    core::ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
+    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
 
-    size = core::Check(OCI_GetRaw2(*this, name.c_str(), static_cast<AnyPointer>(buffer), size));
+    size = core::Check(OCI_GetRawByName(*this, name.c_str(), static_cast<AnyPointer>(buffer.data()), size));
 
-    return core::MakeRaw(buffer, size);
+    return core::MakeRaw(buffer.data(), size);
 }
 
 template<>
-inline Date Resultset::Get<Date>(unsigned int index) const
+inline Date Resultset::Get<Date>(OCI_UInt32 index) const
 {
     return Date(core::Check(OCI_GetDate(*this, index)), GetHandle());
 }
@@ -319,11 +319,11 @@ inline Date Resultset::Get<Date>(unsigned int index) const
 template<>
 inline Date Resultset::Get<Date>(const ostring& name) const
 {
-    return Date(core::Check(OCI_GetDate2(*this,name.c_str())), GetHandle());
+    return Date(core::Check(OCI_GetDateByName(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Timestamp Resultset::Get<Timestamp>(unsigned int index) const
+inline Timestamp Resultset::Get<Timestamp>(OCI_UInt32 index) const
 {
     return Timestamp(core::Check(OCI_GetTimestamp(*this, index)), GetHandle());
 }
@@ -331,11 +331,11 @@ inline Timestamp Resultset::Get<Timestamp>(unsigned int index) const
 template<>
 inline Timestamp Resultset::Get<Timestamp>(const ostring& name) const
 {
-    return Timestamp(core::Check(OCI_GetTimestamp2(*this,name.c_str())), GetHandle());
+    return Timestamp(core::Check(OCI_GetTimestampByName(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Interval Resultset::Get<Interval>(unsigned int index) const
+inline Interval Resultset::Get<Interval>(OCI_UInt32 index) const
 {
     return Interval(core::Check(OCI_GetInterval(*this, index)), GetHandle());
 }
@@ -343,11 +343,11 @@ inline Interval Resultset::Get<Interval>(unsigned int index) const
 template<>
 inline Interval Resultset::Get<Interval>(const ostring& name) const
 {
-    return Interval(core::Check(OCI_GetInterval2(*this,name.c_str())), GetHandle());
+    return Interval(core::Check(OCI_GetIntervalByName(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Object Resultset::Get<Object>(unsigned int index) const
+inline Object Resultset::Get<Object>(OCI_UInt32 index) const
 {
     return Object(core::Check(OCI_GetObject(*this, index)), GetHandle());
 }
@@ -355,11 +355,11 @@ inline Object Resultset::Get<Object>(unsigned int index) const
 template<>
 inline Object Resultset::Get<Object>(const ostring& name) const
 {
-    return Object(core::Check(OCI_GetObject2(*this,name.c_str())), GetHandle());
+    return Object(core::Check(OCI_GetObjectByName(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Reference Resultset::Get<Reference>(unsigned int index) const
+inline Reference Resultset::Get<Reference>(OCI_UInt32 index) const
 {
     return Reference(core::Check(OCI_GetRef(*this, index)), GetHandle());
 }
@@ -367,11 +367,11 @@ inline Reference Resultset::Get<Reference>(unsigned int index) const
 template<>
 inline Reference Resultset::Get<Reference>(const ostring& name) const
 {
-    return Reference(core::Check(OCI_GetRef2(*this,name.c_str())), GetHandle());
+    return Reference(core::Check(OCI_GetRefByName(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline XmlType Resultset::Get<XmlType>(unsigned int index) const
+inline XmlType Resultset::Get<XmlType>(OCI_UInt32 index) const
 {
     return XmlType(core::Check(OCI_GetXmlType(*this, index)), GetHandle());
 }
@@ -379,11 +379,11 @@ inline XmlType Resultset::Get<XmlType>(unsigned int index) const
 template<>
 inline XmlType Resultset::Get<XmlType>(const ostring& name) const
 {
-    return XmlType(core::Check(OCI_GetXmlType2(*this,name.c_str())), GetHandle());
+    return XmlType(core::Check(OCI_GetXmlTypeByName(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Vector Resultset::Get<Vector>(unsigned int index) const
+inline Vector Resultset::Get<Vector>(OCI_UInt32 index) const
 {
     return Vector(core::Check(OCI_GetVector(*this, index)), GetHandle());
 }
@@ -391,11 +391,23 @@ inline Vector Resultset::Get<Vector>(unsigned int index) const
 template<>
 inline Vector Resultset::Get<Vector>(const ostring& name) const
 {
-    return Vector(core::Check(OCI_GetVector2(*this,name.c_str())), GetHandle());
+    return Vector(core::Check(OCI_GetVectorByName(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Statement Resultset::Get<Statement>(unsigned int index) const
+inline Json Resultset::Get<Json>(OCI_UInt32 index) const
+{
+    return Json(core::Check(OCI_GetJson(*this, index)), GetHandle());
+}
+
+template<>
+inline Json Resultset::Get<Json>(const ostring& name) const
+{
+    return Json(core::Check(OCI_GetJsonByName(*this, name.c_str())), GetHandle());
+}
+
+template<>
+inline Statement Resultset::Get<Statement>(OCI_UInt32 index) const
 {
     return Statement(core::Check(OCI_GetStatement(*this, index)), GetHandle());
 }
@@ -403,11 +415,11 @@ inline Statement Resultset::Get<Statement>(unsigned int index) const
 template<>
 inline Statement Resultset::Get<Statement>(const ostring& name) const
 {
-    return Statement(core::Check(OCI_GetStatement2(*this,name.c_str())), GetHandle());
+    return Statement(core::Check(OCI_GetStatementByName(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Clob Resultset::Get<Clob>(unsigned int index) const
+inline Clob Resultset::Get<Clob>(OCI_UInt32 index) const
 {
     return Clob(core::Check(OCI_GetLob(*this, index)), GetHandle());
 }
@@ -415,11 +427,11 @@ inline Clob Resultset::Get<Clob>(unsigned int index) const
 template<>
 inline Clob Resultset::Get<Clob>(const ostring& name) const
 {
-    return Clob(core::Check(OCI_GetLob2(*this,name.c_str())), GetHandle());
+    return Clob(core::Check(OCI_GetLobByName(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline NClob Resultset::Get<NClob>(unsigned int index) const
+inline NClob Resultset::Get<NClob>(OCI_UInt32 index) const
 {
     return NClob(core::Check(OCI_GetLob(*this, index)), GetHandle());
 }
@@ -427,11 +439,11 @@ inline NClob Resultset::Get<NClob>(unsigned int index) const
 template<>
 inline NClob Resultset::Get<NClob>(const ostring& name) const
 {
-    return NClob(core::Check(OCI_GetLob2(*this, name.c_str())), GetHandle());
+    return NClob(core::Check(OCI_GetLobByName(*this, name.c_str())), GetHandle());
 }
 
 template<>
-inline Blob Resultset::Get<Blob>(unsigned int index) const
+inline Blob Resultset::Get<Blob>(OCI_UInt32 index) const
 {
     return Blob(core::Check(OCI_GetLob(*this, index)), GetHandle());
 }
@@ -439,11 +451,11 @@ inline Blob Resultset::Get<Blob>(unsigned int index) const
 template<>
 inline Blob Resultset::Get<Blob>(const ostring& name) const
 {
-    return Blob(core::Check(OCI_GetLob2(*this,name.c_str())), GetHandle());
+    return Blob(core::Check(OCI_GetLobByName(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline File Resultset::Get<File>(unsigned int index) const
+inline File Resultset::Get<File>(OCI_UInt32 index) const
 {
     return File(core::Check(OCI_GetFile(*this, index)), GetHandle());
 }
@@ -451,11 +463,11 @@ inline File Resultset::Get<File>(unsigned int index) const
 template<>
 inline File Resultset::Get<File>(const ostring& name) const
 {
-    return File(core::Check(OCI_GetFile2(*this,name.c_str())), GetHandle());
+    return File(core::Check(OCI_GetFileByName(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Clong Resultset::Get<Clong>(unsigned int index) const
+inline Clong Resultset::Get<Clong>(OCI_UInt32 index) const
 {
     return Clong(core::Check(OCI_GetLong(*this, index)), GetHandle());
 }
@@ -463,11 +475,11 @@ inline Clong Resultset::Get<Clong>(unsigned int index) const
 template<>
 inline Clong Resultset::Get<Clong>(const ostring& name) const
 {
-    return Clong(core::Check(OCI_GetLong2(*this,name.c_str())), GetHandle());
+    return Clong(core::Check(OCI_GetLongByName(*this,name.c_str())), GetHandle());
 }
 
 template<>
-inline Blong Resultset::Get<Blong>(unsigned int index) const
+inline Blong Resultset::Get<Blong>(OCI_UInt32 index) const
 {
     return Blong(core::Check(OCI_GetLong(*this, index)), GetHandle());
 }
@@ -475,11 +487,11 @@ inline Blong Resultset::Get<Blong>(unsigned int index) const
 template<>
 inline Blong Resultset::Get<Blong>(const ostring& name) const
 {
-    return Blong(core::Check(OCI_GetLong2(*this,name.c_str())), GetHandle());
+    return Blong(core::Check(OCI_GetLongByName(*this,name.c_str())), GetHandle());
 }
 
 template<class T>
-T Resultset::Get(unsigned int index) const
+T Resultset::Get(OCI_UInt32 index) const
 {
     return T(core::Check(OCI_GetColl(*this, index)), GetHandle());
 }
@@ -487,7 +499,7 @@ T Resultset::Get(unsigned int index) const
 template<class T>
 T Resultset::Get(const ostring& name) const
 {
-    return T(core::Check(OCI_GetColl2(*this, name.c_str())), GetHandle());
+    return T(core::Check(OCI_GetCollByName(*this, name.c_str())), GetHandle());
 }
 
 }

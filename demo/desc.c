@@ -9,14 +9,16 @@ int main(void)
 {
     OCI_Connection *cn;
     OCI_TypeInfo *tbl;
-    int i, n;
+    OCI_Int32 i, n;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     tbl = OCI_TypeInfoGet(cn, "user_tables", OCI_TIF_VIEW);
 
     printf("Column Name                   Type      Length  Prec.   Scale   Null ?\n");
@@ -38,7 +40,7 @@ int main(void)
     }
 
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

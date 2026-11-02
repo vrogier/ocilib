@@ -4,16 +4,16 @@
 
 using namespace ocilib;
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
 
-        Timestamp tm(Timestamp::NoTimeZone);
-        Interval itv(Interval::DaySecond);
+        Timestamp tm(env, Timestamp::NoTimeZone);
+        Interval itv(env, Interval::DaySecond);
 
-        tm = Timestamp::SysTimestamp();
+        tm = Timestamp::SysTimestamp(env);
         std::cout << tm.ToString("DD/MM/YYYY HH24:MI:SS:FF3") << std::endl;
 
         itv.SetDaySecond(1, 1, 1, 1, 0);
@@ -22,13 +22,10 @@ int main(void)
         tm += itv;
         std::cout << tm.ToString("DD/MM/YYYY HH24:MI:SS:FF3") << std::endl;
     }
-    catch (Exception &ex)
+    catch (const Exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
-
     return EXIT_SUCCESS;
 }
 

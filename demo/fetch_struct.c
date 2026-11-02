@@ -4,14 +4,14 @@
 
 typedef struct product_t
 {
-    int        code;
+    OCI_Int32        code;
     char      *name;
 } product_t;
 
 typedef struct product_ind_t
 {
-    boolean    code;
-    boolean    name;
+    OCI_Boolean    code;
+    OCI_Boolean    name;
 } product_ind_t;
 
 void err_handler(OCI_Error *err)
@@ -28,14 +28,16 @@ int main(void)
     product_t     prd;
     product_ind_t ind;
 
-    int i = 0;
+    OCI_Int32 i = 0;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     OCI_ExecuteStmt(st, "select * from products");
@@ -60,7 +62,7 @@ int main(void)
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

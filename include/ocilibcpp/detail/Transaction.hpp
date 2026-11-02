@@ -27,18 +27,18 @@
 namespace ocilib
 {
 
-inline Transaction::Transaction(const Connection &connection, unsigned int timeout, TransactionFlags flags, OCI_XID *pxid)
+inline Transaction::Transaction(const Connection &connection, OCI_UInt32 timeout, TransactionFlags flags, OCI_XID *pxid)
 {
     AcquireAllocated
     (
         core::Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)), 
-        Environment::GetEnvironmentHandle()
+        connection.GetHandle()
     );
 }
 
 inline Transaction::Transaction(OCI_Transaction *trans)
 {
-    AcquireTransient(trans, Environment::GetEnvironmentHandle());
+    AcquireTransient(trans, GetHandle());
 }
 
 inline void Transaction::Prepare()
@@ -71,7 +71,7 @@ inline Transaction::TransactionFlags Transaction::GetFlags() const
     return TransactionFlags(static_cast<TransactionFlags::Type>(core::Check(OCI_TransactionGetMode(*this))));
 }
 
-inline unsigned int Transaction::GetTimeout() const
+inline OCI_UInt32 Transaction::GetTimeout() const
 {
     return core::Check(OCI_TransactionGetTimeout(*this));
 }

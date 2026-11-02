@@ -24,7 +24,7 @@
 #include "memory.h"
 #include "stringutils.h"
 
-static const unsigned int LongTypeValues[] =
+static const OCI_UInt32 LongTypeValues[] =
 {
     OCI_CLONG,
     OCI_BLONG
@@ -39,22 +39,22 @@ OCI_Long * OcilibLongInitialize
     OCI_Statement *stmt,
     OCI_Long      *lg,
     OCI_Define    *def,
-    unsigned int   type
+    OCI_LongType   type
 )
 {
-    ENTER_FUNC_NO_CONTEXT
+    ENTER_FUNC
     (
-        /* returns */ OCI_Long*, lg
-    )
+        /* returns */ OCI_Long*, lg,
+        /* context */ OCI_IPC_STATEMENT, stmt
+    );
 
-    ALLOC_DATA(OCI_IPC_LONG, lg, 1);
-
-    lg->stmt        = stmt;
-    lg->def         = def;
-    lg->type        = type;
-    lg->offset      = 0;
-    lg->piecesize   = 0;
-    lg->size        = 0;
+    ALLOC_HANDLE(OCI_IPC_LONG, lg);
+    lg->handle    = stmt;
+    lg->def       = def;
+    lg->type      = type;
+    lg->offset    = 0;
+    lg->piecesize = 0;
+    lg->size      = 0;
 
     if (def)
     {
@@ -73,8 +73,8 @@ OCI_Long * OcilibLongInitialize
             lg = NULL;
         }
 
-        SET_RETVAL(lg)
-    )
+        SET_RETVAL(lg);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -84,87 +84,87 @@ OCI_Long * OcilibLongInitialize
 OCI_Long * OcilibLongCreate
 (
     OCI_Statement *stmt,
-    unsigned int   type
+    OCI_LongType   type
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_Long*, NULL,
         /* context */ OCI_IPC_STATEMENT, stmt
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_STATEMENT, stmt)
-    CHECK_ENUM_VALUE(type, LongTypeValues, OTEXT("Long Type"))
+    CHECK_PTR(OCI_IPC_STATEMENT, stmt);
+    CHECK_ENUM_VALUE(type, LongTypeValues, OTEXT("Long Type"));
 
-    SET_RETVAL(OcilibLongInitialize(stmt, NULL, NULL, type))
+    SET_RETVAL(OcilibLongInitialize(stmt, NULL, NULL, type));
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibLongFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibLongFree
+OCI_Boolean OcilibLongFree
 (
     OCI_Long *lg
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_LONG, lg
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_LONG, lg)
-    CHECK_OBJECT_FETCHED(lg)
+    CHECK_PTR(OCI_IPC_LONG, lg);
+    CHECK_OBJECT_FETCHED(lg);
 
     OcilibErrorResetSource(NULL, lg);
 
-    FREE(lg->buffer)
-    FREE(lg)
+    FREE(lg->buffer);
+    FREE(lg);
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibLongGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibLongGetType
+OCI_LongType OcilibLongGetType
 (
     OCI_Long *lg
 )
 {
     GET_PROP
     (
-        /* result */ unsigned int, OCI_UNKNOWN,
+        /* result */ OCI_LongType, OCI_UNKNOWN,
         /* handle */ OCI_IPC_LONG, lg,
         /* member */ type
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * LongRead
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibLongRead
+OCI_UInt32 OcilibLongRead
 (
     OCI_Long    *lg,
     void        *buffer,
-    unsigned int len
+    OCI_UInt32 len
 )
 {
     ENTER_FUNC
     (
-        /* returns */ unsigned int, 0,
+        /* returns */ OCI_UInt32, 0,
         /* context */ OCI_IPC_LONG, lg
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_LONG, lg)
-    CHECK_PTR(OCI_IPC_VOID, buffer)
+    CHECK_PTR(OCI_IPC_LONG, lg);
+    CHECK_PTR(OCI_IPC_VOID, buffer);
 
     /* lg->size and lg offset are still expressed in db text units even
        if the buffer had already been expanded to otext *
@@ -172,7 +172,7 @@ unsigned int OcilibLongRead
 
     if (OCI_CLONG == lg->type)
     {
-        len *= (unsigned int) sizeof(dbtext);
+        len *= (OCI_UInt32) sizeof(dbtext);
     }
 
     /* check buffer size to read */
@@ -184,7 +184,7 @@ unsigned int OcilibLongRead
 
     /* copy buffer */
 
-    memcpy(buffer, lg->buffer + (size_t) lg->offset, (size_t) (len));
+    memcpy(buffer, lg->buffer + (OCI_Size) lg->offset, (OCI_Size) (len));
 
     lg->offset += len;
 
@@ -192,32 +192,32 @@ unsigned int OcilibLongRead
     {
         ((otext *)buffer)[len] = 0;
 
-        len /= (unsigned int) sizeof(otext);
+        len /= (OCI_UInt32) sizeof(otext);
     }
 
-    SET_RETVAL(len)
+    SET_RETVAL(len);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibLongWrite
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibLongWrite
+OCI_UInt32 OcilibLongWrite
 (
     OCI_Long    *lg,
     void        *buffer,
-    unsigned int len
+    OCI_UInt32 len
 )
 {
     ENTER_FUNC
     (
-        /* returns */ unsigned int, 0,
+        /* returns */ OCI_UInt32, 0,
         /* context */ OCI_IPC_LONG, lg
-    )
+    );
 
-    sword code = OCI_SUCCESS;
+    sword code   = OCI_SUCCESS;
     void *obuf   = NULL;
     void *handle = NULL;
     ub1   in_out = OCI_PARAM_IN;
@@ -227,13 +227,13 @@ unsigned int OcilibLongWrite
     ub4   dx     = 0;
     ub4   count  = 0;
 
-    CHECK_PTR(OCI_IPC_VOID, buffer)
-    CHECK_PTR(OCI_IPC_LONG, lg)
+    CHECK_PTR(OCI_IPC_VOID, buffer);
+    CHECK_PTR(OCI_IPC_LONG, lg);
 
     if (OCI_CLONG == lg->type)
     {
-        len *= (unsigned int) sizeof(otext);
-        obuf = OcilibStringGetDBString((const otext *) buffer, (int *) &len);
+        len *= (OCI_UInt32) sizeof(otext);
+        obuf = OcilibStringGetDBString(lg->handle->con->env, (const otext *) buffer, (OCI_Int32 *) &len);
     }
     else
     {
@@ -244,11 +244,11 @@ unsigned int OcilibLongWrite
 
     CHECK_OCI
     (
-        lg->stmt->con->err,
+        lg->handle->con->err,
         OCIStmtGetPieceInfo,
-        lg->stmt->stmt, lg->stmt->con->err,
+        lg->handle->handle, lg->handle->con->err,
         &handle, &type, &in_out, &iter, &dx, &piece
-    )
+    );
 
     /* set up piece type */
 
@@ -277,23 +277,23 @@ unsigned int OcilibLongWrite
 
     CHECK_OCI
     (
-        lg->stmt->con->err,
+        lg->handle->con->err,
         OCIStmtSetPieceInfo,
-        handle, type, lg->stmt->con->err,
+        handle, type, lg->handle->con->err,
         (dvoid *) obuf, &count,  piece,
         (dvoid *) NULL, (ub2 *) NULL
-    )
+    );
 
     /* perform write call */
 
-    code = OCIStmtExecute(lg->stmt->con->cxt, lg->stmt->stmt,
-                          lg->stmt->con->err, (ub4) 1, (ub4) 0,
-                          (OCISnapshot *) NULL, (OCISnapshot *) NULL,
-                          (ub4) 0);
+    code = lg->handle->con->env->api->OCIStmtExecute(lg->handle->con->handle, lg->handle->handle,
+                                                     lg->handle->con->err, (ub4) 1, (ub4) 0,
+                                                     (OCISnapshot *) NULL, (OCISnapshot *) NULL,
+                                                     (ub4) 0);
 
     if (OCI_FAILURE(code) && (OCI_NEED_DATA != code))
     {
-        THROW(OcilibExceptionOCI, lg->stmt->con->err, code)
+        THROW(OcilibExceptionOCI, lg->handle->con->err, code);
     }
 
     /* update size */
@@ -305,47 +305,47 @@ unsigned int OcilibLongWrite
 
     if (OCI_CLONG == lg->type)
     {
-        count /= (unsigned int) sizeof(dbtext);
+        count /= (OCI_UInt32) sizeof(dbtext);
     }
 
-    SET_RETVAL(count)
+    SET_RETVAL(count);
 
     CLEANUP_AND_EXIT_FUNC
     (
         if (NULL != lg && OCI_CLONG == lg->type)
         {
-            OcilibStringReleaseDBString((dbtext*)obuf);
+            OcilibStringReleaseDBString(lg->handle->con->env, (dbtext*)obuf);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibLongGetSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibLongGetSize
+OCI_UInt32 OcilibLongGetSize
 (
     OCI_Long *lg
 )
 {
     ENTER_FUNC
     (
-        /* returns */ unsigned int, 0,
+        /* returns */ OCI_UInt32, 0,
         /* context */ OCI_IPC_LONG, lg
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_LONG, lg)
+    CHECK_PTR(OCI_IPC_LONG, lg);
 
-    unsigned int size = lg->size;
+    OCI_UInt32 size = lg->size;
 
     if (OCI_CLONG == lg->type)
     {
-        size /= (unsigned int) sizeof(dbtext);
+        size /= (OCI_UInt32) sizeof(dbtext);
     }
 
-    SET_RETVAL(size)
+    SET_RETVAL(size);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -362,25 +362,25 @@ void * OcilibLongGetBuffer
         /* result */ void *, NULL,
         /* handle */ OCI_IPC_LONG, lg,
         /* member */ buffer
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibLongFinalizeDynamicFetch
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SYM_LOCAL boolean OcilibLongFinalizeDynamicFetch
+OCI_SYM_LOCAL OCI_Boolean OcilibLongFinalizeDynamicFetch
 (
     OCI_Long* lg
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_LONG, lg
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_LONG, lg)
+    CHECK_PTR(OCI_IPC_LONG, lg);
 
     if (lg->buffer)
     {
@@ -388,18 +388,18 @@ OCI_SYM_LOCAL boolean OcilibLongFinalizeDynamicFetch
 
         if (OCI_CLONG == lg->type)
         {
-            const int len = (int)(lg->size / sizeof(dbtext));
+            const OCI_Int32 len = (OCI_Int32)(lg->size / sizeof(dbtext));
 
             ((dbtext*)lg->buffer)[len] = 0;
 
-            if (Env.use_wide_char_conv)
+            if (lg->handle->con->env->use_wide_char_conv)
             {
                 OcilibStringUTF16ToUTF32(lg->buffer, lg->buffer, len);
             }
         }
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }

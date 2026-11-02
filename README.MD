@@ -10,8 +10,8 @@ The OCILIB library :
 - Offers a rich, full-featured, and easy-to-use API
 - Runs on all major Oracle client platforms
 - Encapsulates OCI (Oracle Call Interface)
-- Provides a C API written in ISO C99 with native Unicode support
-- Provides a C++ API written in standard C++03 (optionally using selected C++11 features when supported)
+- Provides a C API written in ISO C11 with native Unicode support
+- Provides a C++ API written in standard C++14
 
 OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy it!
 
@@ -28,13 +28,17 @@ The source code is free source code licensed under **Apache License, Version 2.0
 - Compatible with all Oracle versions >= 8.0
 - Automatic adaptation to the runtime Oracle client version
 - Runtime loading of Oracle libraries
+- Explicit environment handles (OCI_Environment) supporting multiple Oracle clients
 - Built-in error handling (global and thread context)
+- Optional runtime logging
+- Diagnostic statistics API
 - Full support for SQL API and Object API
 - Full support for Oracle SQL and PL/SQL data types (scalars, objects, refs, collections, ...)
+- Oracle JSON datatype support (requires Oracle 21c)
+- Oracle SODA (Simple Oracle Document Access) support (requires Oracle 18c)
 - Full support for PL/SQL (blocks, cursors, index-by tables, and nested tables)
 - Support for non-scalar data types through library objects
 - Oracle Pooling (connections and sessions pools)
-- Oracle XA connectivity (X/Open Distributed Transaction Processing XA interface)
 - Oracle AQ (Advanced Queuing)
 - Oracle TAF (Transparent Application Failover) and HA (High availability) support
 - Binding array interface
@@ -48,7 +52,6 @@ The source code is free source code licensed under **Apache License, Version 2.0
 - Global and local transactions
 - Describe database schema objects
 - Hash tables API
-- Portable threads and mutexes API
 - Partial support for XMLTYPE (fetching only as string content)
 
 ## 5. Installation
@@ -82,13 +85,14 @@ Example of a minimal OCILIB C application
  
 int main(int argc, char *argv[])
 {
+    OCI_Environment* env;
     OCI_Connection* cn;
     OCI_Statement* st;
     OCI_Resultset* rs;
  
-    OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT);
+    env = OCI_EnvironmentCreate(NULL, NULL, OCI_ENV_DEFAULT);
  
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
  
     OCI_ExecuteStmt(st, "select intcol, strcol from table");
@@ -100,7 +104,7 @@ int main(int argc, char *argv[])
         printf("%i - %s\n", OCI_GetInt(rs, 1), OCI_GetString(rs,2));
     }
  
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
  
     return EXIT_SUCCESS;
 }
@@ -117,9 +121,9 @@ int main(void)
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
  
-        Connection con("db", "usr", "pwd");
+        Connection con(env, "db", "usr", "pwd");
  
         Statement st(con);
         st.Execute("select intcol, strcol from table");
@@ -134,8 +138,6 @@ int main(void)
     {
          std::cout << ex.what() << std::endl;
     }
- 
-    Environment::Cleanup();
  
     return EXIT_SUCCESS;
 }

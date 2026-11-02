@@ -1,0 +1,73 @@
+#include "ocilib_tests.h"
+
+#include <cstring>
+
+using namespace ocilib;
+
+namespace
+{
+    OCI_Number* MakeDoubleNumber(OCI_Environment* env, double value)
+    {
+        OCI_Number* num = OCI_NumberCreate(env);
+        if (num)
+        {
+            OCI_NumberSetValue(num, OCI_NUM_DOUBLE, &value);
+        }
+        return num;
+    }
+}
+
+namespace TestCppApi
+{
+
+    TEST(TestJsonNodeObjectCpp, ObjectAccess)
+    {
+        Environment& env = GetEnvironmentCpp();
+        Connection con(env, DBS, USR, PWD);
+
+        Json json(con);
+        json.SetMutable(true);
+        json.LoadText(OTEXT("null"));
+
+        JsonNode oldRoot = json.GetRoot();
+        (void)oldRoot;
+
+        JsonNode root = json.CreateObject();
+
+        JsonNode field = json.CreateString(OTEXT("alpha"));
+
+        root.SetField(OTEXT("only"), field);
+
+        ASSERT_EQ(1u, root.GetFieldCount());
+
+        JsonNode a = root.GetFieldByName(OTEXT("only"));
+        ASSERT_EQ(Json::NodeString, a.GetType());
+
+        JsonNode b = root.GetFieldByIndex(0);
+        ASSERT_EQ(Json::NodeString, b.GetType());
+
+        json.SetRoot(root);
+
+        JsonNode verify = json.GetRoot();
+        ASSERT_EQ(1u, verify.GetFieldCount());
+    }
+    TEST(TestJsonNodeObjectCpp, FieldName)
+    {
+        Environment& env = GetEnvironmentCpp();
+        Connection con(env, DBS, USR, PWD);
+
+        Json json(con);
+        json.SetMutable(true);
+        json.LoadText(OTEXT("null"));
+
+        JsonNode oldRoot = json.GetRoot();
+        (void)oldRoot;
+
+        JsonNode root = json.CreateObject();
+        JsonNode field = json.CreateString(OTEXT("alpha"));
+        root.SetField(OTEXT("only"), field);
+
+        ostring name = root.GetFieldName(1);
+        ASSERT_EQ(ostring(OTEXT("only")), name);
+    }
+}

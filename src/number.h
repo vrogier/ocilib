@@ -23,77 +23,77 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL boolean OcilibNumberTranslateValue
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberTranslateValue
 (
-    OCI_Connection* con,
-    void          * in_value,
-    uword           in_type,
-    void          * out_value,
-    uword           out_type
+    OCI_Environment* env,
+    void           * in_value,
+    uword            in_type,
+    void           * out_value,
+    uword            out_type
 );
 
 OCI_SYM_LOCAL OCI_Number * OcilibNumberInitialize
 (
-    OCI_Connection* con,
-    OCI_Number    * number,
-    OCINumber     * buffer
+    OCI_Environment* env,
+    OCI_Number     * number,
+    OCINumber      * buffer
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberFromStringInternal
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberFromStringInternal
 (
-    OCI_Connection* con,
-    void          * out_value,
-    uword           type,
-    const otext   * in_value,
-    const otext   * fmt
+    OCI_Environment* env,
+    void           * out_value,
+    uword            type,
+    const otext    * in_value,
+    const otext    * fmt
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberToStringInternal
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberToStringInternal
 (
-    OCI_Connection* con,
-    void          * number,
-    unsigned int    type,
-    otext         * out_value,
-    int             out_value_size,
-    const otext   * fmt
+    OCI_Environment* env,
+    void           * number,
+    OCI_NumericType  type,
+    otext          * out_value,
+    OCI_Int32              out_value_size,
+    const otext    * fmt
 );
 
 OCI_SYM_LOCAL OCI_Number * OcilibNumberCreate
 (
-    OCI_Connection* con
+    OCI_Environment* env
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberFree
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberFree
 (
     OCI_Number* number
 );
 
 OCI_SYM_LOCAL OCI_Number ** OcilibNumberCreateArray
 (
-    OCI_Connection* con,
-    unsigned int    nbelem
+    OCI_Environment* env,
+    OCI_UInt32     nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberFreeArray
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberFreeArray
 (
     OCI_Number** numbmers
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberAssign
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberAssign
 (
     OCI_Number* number,
     OCI_Number* number_src
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberToString
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberToString
 (
     OCI_Number * number,
     const otext* fmt,
-    int          size,
+    OCI_Int32          size,
     otext      * str
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberFromString
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberFromString
 (
     OCI_Number * number,
     const otext* str,
@@ -105,55 +105,55 @@ OCI_SYM_LOCAL unsigned char * OcilibNumberGetContent
     OCI_Number* number
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberSetContent
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberSetContent
 (
     OCI_Number   * number,
     unsigned char* content
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberSetValue
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberSetValue
 (
-    OCI_Number * number,
-    unsigned int type,
-    void       * value
+    OCI_Number    * number,
+    OCI_NumericType type,
+    void          * value
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberGetValue
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberGetValue
 (
-    OCI_Number * number,
-    unsigned int type,
-    void       * value
+    OCI_Number    * number,
+    OCI_NumericType type,
+    void          * value
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberAdd
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberAdd
 (
-    OCI_Number * number,
-    unsigned int type,
-    void       * value
+    OCI_Number    * number,
+    OCI_NumericType type,
+    void          * value
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberSub
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberSub
 (
-    OCI_Number * number,
-    unsigned int type,
-    void       * value
+    OCI_Number    * number,
+    OCI_NumericType type,
+    void          * value
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberMultiply
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberMultiply
 (
-    OCI_Number * number,
-    unsigned int type,
-    void       * value
+    OCI_Number    * number,
+    OCI_NumericType type,
+    void          * value
 );
 
-OCI_SYM_LOCAL boolean OcilibNumberDivide
+OCI_SYM_LOCAL OCI_Boolean OcilibNumberDivide
 (
-    OCI_Number * number,
-    unsigned int type,
-    void       * value
+    OCI_Number    * number,
+    OCI_NumericType type,
+    void          * value
 );
 
-OCI_SYM_LOCAL int OcilibNumberCompare
+OCI_SYM_LOCAL OCI_Int32 OcilibNumberCompare
 (
     OCI_Number* number1,
     OCI_Number* number2

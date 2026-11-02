@@ -57,23 +57,31 @@ namespace ocilib
         AcquireTransient(pFile, parent);
     }
 
-    inline Raw File::Read(unsigned int size)
+    inline Raw File::Read(OCI_UInt32 size)
     {
-        core::ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
+        std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
 
-        size = core::Check(OCI_FileRead(*this, static_cast<AnyPointer>(buffer), size));
+        size = core::Check(OCI_FileRead(*this, static_cast<AnyPointer>(buffer.data()), size));
 
-        return core::MakeRaw(buffer, size);
+        return core::MakeRaw(buffer.data(), size);
     }
 
-    inline bool File::Seek(SeekMode seekMode, big_uint offset)
+    inline bool File::Seek(SeekMode seekMode, OCI_UInt64 offset)
     {
         return (core::Check(OCI_FileSeek(*this, offset, seekMode)) == TRUE);
     }
 
     inline File File::Clone() const
     {
-        File result(GetConnection());
+        Connection connection = GetConnection();
+
+        File result;
+
+        result.AcquireAllocated
+        (
+            core::Check(OCI_FileCreate(connection, OCI_BFILE)),
+            connection.GetHandle()
+        );
 
         core::Check(OCI_FileAssign(result, *this));
 
@@ -85,12 +93,12 @@ namespace ocilib
         return (core::Check(OCI_FileIsEqual(*this, other)) == TRUE);
     }
 
-    inline big_uint File::GetOffset() const
+    inline OCI_UInt64 File::GetOffset() const
     {
         return core::Check(OCI_FileGetOffset(*this));
     }
 
-    inline big_uint File::GetLength() const
+    inline OCI_UInt64 File::GetLength() const
     {
         return core::Check(OCI_FileGetSize(*this));
     }
@@ -99,7 +107,7 @@ namespace ocilib
     {
         core::Handle* selfHandle = this->GetHandle();
         core::Handle* parentHandle = selfHandle ? selfHandle->GetParent() : nullptr;
-        core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : Environment::GetEnvironmentHandle();
+        core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : GetHandle();
 
         return Connection
         (

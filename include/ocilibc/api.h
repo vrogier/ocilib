@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
- /* IMPORTANT NOTICE
+/* IMPORTANT NOTICE
   *
   * This file contains explanations about Oracle and OCI technologies.
   * OCILIB is a wrapper around OCI and thus exposes OCI features.
@@ -36,21 +36,21 @@
 
 #include "ocilibc/types.h"
 
-  /**
+/**
    * @addtogroup OcilibCApi
    * @{
    *
    */
 
-   /**
+/**
     * @defgroup OcilibCApiInitialization Initializing the library
     * @{
     *
-    * Before using any OCILIB functionality, the library must be initialized by calling OCI_Initialize().
+    * Before using any OCILIB functionality, the library must be initialized by calling OCI_EnvironmentCreate().
     *
     * Once initialized, the application can connect to Oracle databases, execute statements, fetch data, etc.
     *
-    * When the application is done, all OCILIB resources must be released by calling OCI_Cleanup().
+    * When the application is done, all OCILIB resources must be released by calling OCI_EnvironmentFree().
     *
     * @note
     *
@@ -59,16 +59,15 @@
     * - Pools
     * - Statements
     * - Type info objects
-    * - Thread keys
     *
     * @warning
     *
-    * All other standalone object instances (mutexes, threads, dates, lobs, ...) <b>ARE NOT</b> automatically freed
-    * and must be explicitly released by the application before calling OCI_Cleanup().
+    * All other standalone object instances (dates, lobs, ...) <b>ARE NOT</b> automatically freed
+    * and must be explicitly released by the application before calling OCI_EnvironmentFree().
     *
     */
 
-    /**
+/**
      * @brief
      * Initialize the library
      *
@@ -79,21 +78,19 @@
      * Possible values for parameter mode (combinable with bitwise OR):
      * - OCI_ENV_DEFAULT  : Default mode
      * - OCI_ENV_THREADED : Enable multi-threading support
-     * - OCI_ENV_CONTEXT  : Enable thread-contextual error handling
      * - OCI_ENV_EVENTS   : Enable events for subscriptions, HA events, and AQ notifications
      *
      * @note
      * This function must be called before any other OCILIB function.
      *
-     * All OCILIB functions (except OCI_GetLastError()) will fail if OCI_Initialize() has not been called.
-     * In that case, the error reported by OCI_GetLastError() is OCI_ERR_NOT_INITIALIZED.
+     * All OCILIB functions will fail if OCI_EnvironmentCreate() has not been called.
      *
      * @warning
      * - The parameter 'lib_path' is only used when OCILIB has been built with the option OCI_IMPORT_RUNTIME.
      * - If the parameter 'lib_path' is NULL, the Oracle library is loaded from system environment variables.
      *
      * @warning
-     * OCI_Initialize() should be called <b>ONCE</b> per application.
+     * OCI_EnvironmentCreate() should be called <b>ONCE</b> per application.
      *
      * @return
      * TRUE on success, otherwise FALSE.
@@ -108,43 +105,45 @@
      *
      */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_Initialize
+OCI_SYM_PUBLIC OCI_Environment* OCI_API OCI_EnvironmentCreate
 (
     POCI_ERROR   err_handler,
     const otext* lib_path,
-    unsigned int mode
+    OCI_EnvMode  mode
 );
 
 /**
  * @brief
  * Clean up all resources allocated by the library
  *
+ * @param env - Environment handle
  * @note
  * This function must be the last OCILIB function call in the application.
  * - It deallocates objects not explicitly freed by the program (connections, statements, etc.).
  * - It unloads the Oracle shared library if it was dynamically loaded.
  *
  * @warning
- * OCI_Cleanup() should be called <b>ONCE</b> per application.
+ * OCI_EnvironmentFree() should be called <b>ONCE</b> per application.
  *
  * @return
  * TRUE on success, otherwise FALSE.
  * Possible reasons for failure:
- * - OCI_Initialize() was not previously called (OCI_GetLastError() reports OCI_ERR_NOT_INITIALIZED).
- * - OCI_Cleanup() has already been called.
+ * - OCI_EnvironmentCreate() was not previously called.
+ * - OCI_EnvironmentFree() has already been called.
  * - Some OCILIB local data type handles have not been freed.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_EnvironmentFree
 (
-    void
+    OCI_Environment *env
 );
 
 /**
  * @brief
  * Return the version of OCI used for compilation
  *
+ * @param env - Environment handle
  * @note
  * - With the linkage build option, the version is determined from the oci.h header.
  * - With the runtime loading build option, the version is set to the highest OCI version
@@ -174,15 +173,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Cleanup
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCICompileVersion
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetOCICompileVersion
 (
-    void
+    OCI_Environment *env
 );
 
 /**
  * @brief
  * Return the version of OCI used at runtime
  *
+ * @param env - Environment handle
  * @note
  * - With the linkage build option, the version is determined from the oci.h header.
  * - With the runtime loading build option, the version is determined from the symbols
@@ -211,15 +211,16 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCICompileVersion
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCIRuntimeVersion
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetOCIRuntimeVersion
 (
-    void
+    OCI_Environment *env
 );
 
 /**
  * @brief
  * Return the Oracle shared library import mode
  *
+ * @param env - Environment handle
  * @return
  * The import mode used by OCILIB. Possible values are:
  * - OCI_IMPORT_MODE_LINKAGE : OCI is linked at compile time.
@@ -227,15 +228,16 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetOCIRuntimeVersion
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetImportMode
+OCI_SYM_PUBLIC OCI_ImportMode OCI_API OCI_GetImportMode
 (
-    void
+    OCI_Environment *env
 );
 
 /**
  * @brief
  * Return the character set type used by OCILIB
  *
+ * @param env - Environment handle
  * @return
  * The character set mode used by OCILIB. Possible values are:
  * - OCI_CHAR_ANSI : ANSI (single-byte or multi-byte) character set.
@@ -243,37 +245,34 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetImportMode
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetCharset
+OCI_SYM_PUBLIC OCI_Charset OCI_API OCI_GetCharset
 (
-    void
+    OCI_Environment *env
 );
 
 /**
  * @brief
- * Return the current number of bytes allocated internally by the library
+ * Return the requested internal environment statistic.
  *
- * @param mem_type - Type of memory allocation to query
- *
- * @note
- * Possible values for parameter mem_type:
- * - OCI_MEM_ORACLE : Bytes allocated by the Oracle client library.
- * - OCI_MEM_OCILIB : Bytes allocated by the OCILIB library.
- * - OCI_MEM_ALL    : Total bytes allocated by all libraries combined.
+ * @param env  - Environment handle
+ * @param stat - Statistic to retrieve (see OCI_UST_*)
  *
  * @return
- * The number of bytes currently allocated for the specified memory type.
+ * The requested value, or 0 if the statistic is not available.
  *
  */
 
-OCI_SYM_PUBLIC big_uint OCI_API OCI_GetAllocatedBytes
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_GetStats
 (
-    unsigned int mem_type
+    OCI_Environment *env,
+    OCI_Stat         stat
 );
 
 /**
  * @brief
  * Enable or disable Oracle warning notifications
  *
+ * @param env - Environment handle
  * @param value  - TRUE to enable warnings, FALSE to disable them
  *
  * @note
@@ -284,19 +283,21 @@ OCI_SYM_PUBLIC big_uint OCI_API OCI_GetAllocatedBytes
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_EnableWarnings
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_EnableWarnings
 (
-    boolean value
+    OCI_Environment *env,
+    OCI_Boolean      value
 );
 
 /**
  * @brief
  * Set the High Availability (HA) event handler
  *
+ * @param env - Environment handle
  * @param handler - Pointer to the HA handler procedure (see POCI_HA_HANDLER)
  *
  * @note
- * The OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to enable HA event notifications.
+ * The OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to enable HA event notifications.
  *
  * @warning
  * This feature requires Oracle 10gR2 or later.
@@ -307,16 +308,64 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_EnableWarnings
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetHAHandler
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetHAHandler
 (
-    POCI_HA_HANDLER handler
+    OCI_Environment *env,
+    POCI_HA_HANDLER  handler
+);
+
+/**
+ * @brief
+ * Set the port number used for all notifications in the given environment
+ *
+ * @param env  - Environment handle
+ * @param port - Port number to use (0 for automatic port assignment)
+ *
+ * @note
+ * This call must be made before the first subscription is registered.
+ * All subscriptions within the same environment share the same port.
+ *
+ * @warning
+ * This feature requires Oracle 10gR2 or later.
+ * For earlier versions, the function returns FALSE without raising an exception.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetSubscriptionPort
+(
+    OCI_Environment *env,
+    OCI_UInt32     port
+);
+
+/**
+ * @brief
+ * Return the port number used for notifications in the given environment
+ *
+ * @param env - Environment handle
+ *
+ * @note
+ * The returned value is the value configured with OCI_SetSubscriptionPort(),
+ * or the port automatically chosen by the Oracle client after the first
+ * subscription has been registered.
+ *
+ * @return
+ * The port number, or 0 on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetSubscriptionPort
+(
+    OCI_Environment *env
 );
 
 /**
  * @} OcilibCApiInitialization
  */
 
- /**
+/**
   * @defgroup OcilibCApiErrorHandling Error handling
   * @{
   *
@@ -332,11 +381,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetHAHandler
   * - Internal OCILIB error (type checking, memory allocation, etc.).
   * - Oracle warnings (OCI API or SQL).
   *
-  * If an error handler was provided to OCI_Initialize(), the library generates an OCI_Error
+  * If an error handler was provided to OCI_EnvironmentCreate(), the library generates an OCI_Error
   * handle and passes it to the error handler whenever an error occurs.
   *
-  * To use thread-contextual error handling, pass the OCI_ENV_CONTEXT flag to OCI_Initialize().
-  * When activated, error handles are stored per thread and the last error within a thread can
+  * Error handles are stored per thread and the last error raised on the calling thread can
   * be retrieved with OCI_GetLastError().
   *
   * Error properties are accessible through a set of dedicated functions.
@@ -364,39 +412,48 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetHAHandler
   *
   */
 
-  /**
+/**
    * @brief
    * Set the global error user handler
    *
+   * @param env - Environment handle
    * @param handler  - Pointer to the error handler procedure, or NULL to remove the current handler
    *
    * @note
-   * Use this function to change or remove the error handler callback initially installed by OCI_Initialize().
+   * Use this function to change or remove the error handler callback initially installed by OCI_EnvironmentCreate().
    *
    * @return
    * TRUE on success, otherwise FALSE.
    *
    */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetErrorHandler
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetErrorHandler
 (
-    POCI_ERROR handler
+    OCI_Environment *env,
+    POCI_ERROR       handler
 );
 
 /**
  * @brief
  * Return the localized error message string for the given OCILIB internal error code
  *
+ * @param env - Environment handle
  * @param code - OCILIB internal error code
  *
  * @return
  * The localized error message string, or NULL if the code is invalid.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Environment handle and remains valid until
+ * OCI_EnvironmentFree() is called on that environment.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_GetLocaleString
 (
-    unsigned int code
+    OCI_Environment *env,
+    OCI_LocaleCode   code
 );
 
 /**
@@ -404,20 +461,47 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetLocaleString
  * Retrieve the last error or warning that occurred during the most recent OCILIB call
  *
  * @note
- * OCI_GetLastError() relies on thread-contextual storage. OCILIB must be
- * initialized with the OCI_ENV_CONTEXT flag for this function to work.
+ * Errors are recorded in thread-local storage: this function returns the last error
+ * raised on the calling thread, regardless of which environment raised it. It works
+ * in all environment modes.
  *
  * @warning
- * OCILIB functions that return a boolean value to indicate their success:
+ * OCILIB functions that return a OCI_Boolean value to indicate their success:
  * - Return TRUE if no error occurred OR if only a warning occurred.
  * - Return FALSE if an error occurred.
  *
  * @return
  * A pointer to the OCI_Error handle for the last error or warning, or NULL if none occurred.
  *
+ * @par Returned object lifetime
+ * The returned handle is owned by the calling thread's error slot and remains valid
+ * until the next OCILIB call on that thread records an error, or the thread exits.
+ *
  */
 
 OCI_SYM_PUBLIC OCI_Error* OCI_API OCI_GetLastError
+(
+    void
+);
+
+/**
+ * @brief
+ * Check whether the most recent OCILIB call on this thread recorded an error
+ *
+ * @note
+ * Use this function to disambiguate return values such as NULL, 0 or FALSE that can
+ * either be a valid result or a failure sentinel.
+ *
+ * @note
+ * Warnings only count as errors when enabled via OCI_EnableWarnings() on the
+ * environment that raised them.
+ *
+ * @return
+ * TRUE if an error (or enabled warning) was recorded, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_HasError
 (
     void
 );
@@ -430,6 +514,11 @@ OCI_SYM_PUBLIC OCI_Error* OCI_API OCI_GetLastError
  *
  * @return
  * The error message string, or NULL if the input handle is NULL.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Error handle and remains valid until
+ * the next error is raised on the same error handle (or thread error slot), or the error/environment is freed.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -453,7 +542,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ErrorGetString
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ErrorGetType
+OCI_SYM_PUBLIC OCI_ErrorType OCI_API OCI_ErrorGetType
 (
     OCI_Error* err
 );
@@ -469,7 +558,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ErrorGetType
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_ErrorGetOCICode
+OCI_SYM_PUBLIC OCI_ErrorCode OCI_API OCI_ErrorGetOCICode
 (
     OCI_Error* err
 );
@@ -485,7 +574,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_ErrorGetOCICode
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_ErrorGetInternalCode
+OCI_SYM_PUBLIC OCI_ErrorCode OCI_API OCI_ErrorGetInternalCode
 (
     OCI_Error* err
 );
@@ -537,7 +626,7 @@ OCI_SYM_PUBLIC OCI_Statement* OCI_API OCI_ErrorGetStatement
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ErrorGetRow
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_ErrorGetRow
 (
     OCI_Error* err
 );
@@ -551,6 +640,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ErrorGetRow
  * @return
  * The name of the OCILIB function in which the error was raised, or NULL if the input handle is NULL.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Error handle and remains valid until
+ * the next error is raised on the same error handle (or thread error slot), or the error/environment is freed.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_ErrorGetLocation
@@ -562,7 +656,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ErrorGetLocation
  * @} OcilibCApiErrorHandling
  */
 
- /**
+/**
   * @defgroup OcilibCApiConnections Connecting to Database
   * @{
   *
@@ -577,10 +671,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ErrorGetLocation
   *
   */
 
-  /**
+/**
    * @brief
    * Create a physical connection to an Oracle database server
    *
+   * @param env - Environment handle
    * @param db   - Oracle Service Name (or NULL for the default local database)
    * @param user - Oracle user name (or NULL for external credentials)
    * @param pwd  - Oracle user password (or NULL for external credentials)
@@ -590,40 +685,15 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ErrorGetLocation
    * - OCI_SESSION_DEFAULT : Standard user session.
    * - OCI_SESSION_SYSDBA  : SYSDBA privileged session.
    * - OCI_SESSION_SYSOPER : SYSOPER privileged session.
-   * - OCI_SESSION_XA      : XA (distributed transaction) session.
    *
    * @note
    * External credentials are supported by supplying NULL for both the 'user' and 'pwd' parameters.
    * If the 'db' parameter is NULL, a connection to the default local database is established.
    *
-   * @par Oracle XA Support
-   *
-   * OCILIB supports Oracle XA connectivity. To obtain a connection through the XA interface:
-   *  - For parameter 'db': pass the value of the 'DB' parameter from the XA connection
-   *    string provided to the Transaction Processing Monitor (TPM).
-   *  - Pass NULL for the 'user' and 'pwd' parameters.
-   *  - Pass OCI_SESSION_XA for the 'mode' parameter.
-   *
-   * @par Oracle XA Connection String Requirements
-   *
-   * The XA connection string used in a transaction monitor to connect to Oracle must
-   * be compatible with OCILIB:
-   *
-   *   - The XA parameter 'Objects' MUST be set to 'true'.
-   *   - If OCI_ENV_THREADED is passed to OCI_Initialize(), the XA parameter 'Threads' must
-   *     be set to 'true'; otherwise set it to 'false'.
-   *   - If OCI_ENV_EVENTS is passed to OCI_Initialize(), the XA parameter 'Events' must
-   *     be set to 'true'; otherwise set it to 'false'.
-   *   - Oracle does not support Unicode UTF16 through the XA interface;
-   *     only OCI_CHARSET_ANSI builds of OCILIB can be used.
-   *   - UTF-8 encoding is still available if the NLS_LANG environment variable is set
-   *     to a valid UTF-8 NLS value.
-   *   - Do NOT use OCI_CHARSET_WIDE OCILIB builds with XA connections.
-   *
    * @note
    * On success, a local transaction is automatically created and started ONLY for regular
    * standalone connections and connections retrieved from connection pools.
-   * No transaction is created for XA connections or connections retrieved from session pools.
+   * No transaction is created for connections retrieved from session pools.
    *
    * @return
    * Connection handle on success, or NULL on failure.
@@ -632,10 +702,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ErrorGetLocation
 
 OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_ConnectionCreate
 (
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    unsigned int mode
+    OCI_Environment *env,
+    const otext    * db,
+    const otext    * user,
+    const otext    * pwd,
+    OCI_SessionMode  mode
 );
 
 /**
@@ -653,7 +724,7 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_ConnectionCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ConnectionFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ConnectionFree
 (
     OCI_Connection* con
 );
@@ -669,20 +740,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ConnectionFree
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IsConnected
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IsConnected
 (
     OCI_Connection* con
 );
 
 /**
  * @brief
- * Return the pointer to user data previously associated with the connection
+ * Return the pointer to user data previously associated with the given handle
  *
- * @param con - Connection handle
- *
- * @note
- * Passing NULL for the \p con parameter is valid.
- * In that case, the function returns the user data stored with global (program-wide) scope.
+ * @param handle - Handle to OCILIB object
  *
  * @return
  * The user data pointer, or NULL if none was previously set.
@@ -691,28 +758,24 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IsConnected
 
 OCI_SYM_PUBLIC void* OCI_API OCI_GetUserData
 (
-    OCI_Connection* con
+    void* handle
 );
 
 /**
  * @brief
- * Associate a pointer to user data with the given connection
+ * Associate a pointer to user data with the given handle
  *
- * @param con  - Connection handle
- * @param data - User data pointer
- *
- * @note
- * Passing NULL for the \p con parameter is valid.
- * In that case, the user data is stored with global (program-wide) scope.
+ * @param handle - Handle to OCILIB object
+ * @param data   - User data pointer
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetUserData
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetUserData
 (
-    OCI_Connection* con,
+    void* handle,
     void* data
 );
 
@@ -739,10 +802,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetUserData
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetSessionTag
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetSessionTag
 (
     OCI_Connection* con,
-    const otext* tag
+    const otext   * tag
 );
 
 /**
@@ -753,6 +816,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetSessionTag
  *
  * @return
  * The session tag string, or NULL if no tag has been set.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Connection handle and remains valid until
+ * OCI_SetSessionTag() is called on it or OCI_ConnectionFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -770,6 +838,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetSessionTag
  * @return
  * The database/service name string, or NULL on failure.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Connection handle and remains valid until
+ * OCI_ConnectionFree() is called.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_GetDatabase
@@ -786,6 +859,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetDatabase
  * @return
  * The user name string, or NULL on failure.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Connection handle and remains valid until
+ * OCI_ConnectionFree() is called.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_GetUserName
@@ -801,6 +879,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetUserName
  *
  * @return
  * The password string, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Connection handle and remains valid until
+ * OCI_SetPassword() is called on it or OCI_ConnectionFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -821,16 +904,17 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetPassword
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetPassword
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetPassword
 (
     OCI_Connection* con,
-    const otext* password
+    const otext   * password
 );
 
 /**
  * @brief
  * Change the password of the given user on the specified database
  *
+ * @param env - Environment handle
  * @param db      - Oracle Service Name
  * @param user    - Oracle user name
  * @param pwd     - Current Oracle user password
@@ -845,12 +929,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetPassword
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetUserPassword
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetUserPassword
 (
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    const otext* new_pwd
+    OCI_Environment *env,
+    const otext    * db,
+    const otext    * user,
+    const otext    * pwd,
+    const otext    * new_pwd
 );
 
 /**
@@ -864,7 +949,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetUserPassword
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSessionMode
+OCI_SYM_PUBLIC OCI_SessionMode OCI_API OCI_GetSessionMode
 (
     OCI_Connection* con
 );
@@ -877,6 +962,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSessionMode
  *
  * @return
  * The server version banner string, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Connection handle and remains valid until
+ * OCI_ConnectionFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -896,7 +986,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetVersionServer
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerMajorVersion
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetServerMajorVersion
 (
     OCI_Connection* con
 );
@@ -912,7 +1002,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerMajorVersion
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerMinorVersion
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetServerMinorVersion
 (
     OCI_Connection* con
 );
@@ -928,7 +1018,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerMinorVersion
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerRevisionVersion
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetServerRevisionVersion
 (
     OCI_Connection* con
 );
@@ -937,18 +1027,13 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerRevisionVersion
  * @brief
  * Set the format string for implicit string conversions of the given type
  *
- * @param con    - Connection handle (or NULL for library-level format)
+ * @param env    - Environment handle
  * @param type   - Type of format
  * @param format - Format string
  *
- * Formats can be set at two levels:
- * - Library level: by passing NULL for the connection handle.
- * - Connection level: by passing a valid connection handle.
- *
  * When a string conversion is needed, OCILIB searches for a valid format in the following order:
- * 1. Connection-level format.
- * 2. Library-level format.
- * 3. Built-in default format.
+ * 1. Library-level format.
+ * 2. Built-in default format.
  *
  * @note
  * Possible values for parameter 'type':
@@ -979,18 +1064,18 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetServerRevisionVersion
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetFormat
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetFormat
 (
-    OCI_Connection* con,
-    unsigned int    type,
-    const otext* format
+    OCI_Environment *env,
+    OCI_FormatType   type,
+    const otext     *format
 );
 
 /**
  * @brief
  * Return the format string for implicit string conversions of the given type
  *
- * @param con    - Connection handle (or NULL for library-level format)
+ * @param env    - Environment handle
  * @param type   - Type of format
  *
  * @note
@@ -999,12 +1084,17 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetFormat
  * @return
  * The format string for the specified type, or NULL on failure.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Environment handle and remains valid until
+ * OCI_SetFormat() is called for the same format type or OCI_EnvironmentFree() is called.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_GetFormat
 (
-    OCI_Connection* con,
-    unsigned int    type
+    OCI_Environment *env,
+    OCI_FormatType   type
 );
 
 /**
@@ -1038,16 +1128,16 @@ OCI_SYM_PUBLIC OCI_Transaction* OCI_API OCI_GetTransaction
  * transaction is not started or resumed.
  *
  * @warning
- * Do not assign a transaction object to an XA connection or a connection retrieved from a session pool.
+ * Do not assign a transaction object to a connection retrieved from a session pool.
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetTransaction
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetTransaction
 (
-    OCI_Connection* con,
+    OCI_Connection * con,
     OCI_Transaction* trans
 );
 
@@ -1066,7 +1156,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetTransaction
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetVersionConnection
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetVersionConnection
 (
     OCI_Connection* con
 );
@@ -1113,11 +1203,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetVersionConnection
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetTrace
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetTrace
 (
     OCI_Connection* con,
-    unsigned int    trace,
-    const otext* value
+    OCI_TraceType   trace,
+    const otext   * value
 );
 
 /**
@@ -1133,12 +1223,17 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetTrace
  * @return
  * The trace string value, or NULL if not set or on failure.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Connection handle and remains valid until
+ * OCI_SetTrace() is called on it or OCI_ConnectionFree() is called.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_GetTrace
 (
     OCI_Connection* con,
-    unsigned int    trace
+    OCI_TraceType   trace
 );
 
 /**
@@ -1156,7 +1251,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetTrace
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_Ping
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_Ping
 (
     OCI_Connection* con
 );
@@ -1207,11 +1302,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Ping
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetTimeout
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetTimeout
 (
     OCI_Connection* con,
-    unsigned int    type,
-    unsigned int    value
+    OCI_TimeoutType type,
+    OCI_UInt32    value
 );
 
 /**
@@ -1229,10 +1324,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetTimeout
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetTimeout
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetTimeout
 (
     OCI_Connection* con,
-    unsigned int    type
+    OCI_TimeoutType type
 );
 
 /**
@@ -1247,6 +1342,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetTimeout
  *
  * @return
  * The database name string, or NULL on failure or if not supported.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Connection handle and remains valid until
+ * OCI_ConnectionFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -1268,6 +1368,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetDBName
  * @return
  * The instance name string, or NULL on failure or if not supported.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Connection handle and remains valid until
+ * OCI_ConnectionFree() is called.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_GetInstanceName
@@ -1287,6 +1392,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetInstanceName
  *
  * @return
  * The service name string, or NULL on failure or if not supported.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Connection handle and remains valid until
+ * OCI_ConnectionFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -1308,6 +1418,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetServiceName
  * @return
  * The server machine name string, or NULL on failure or if not supported.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Connection handle and remains valid until
+ * OCI_ConnectionFree() is called.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_GetServerName
@@ -1327,6 +1442,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetServerName
  *
  * @return
  * The domain name string, or NULL on failure or if not supported.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Connection handle and remains valid until
+ * OCI_ConnectionFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -1370,7 +1490,7 @@ OCI_SYM_PUBLIC OCI_Timestamp* OCI_API OCI_GetInstanceStartTime
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IsTAFCapable
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IsTAFCapable
 (
     OCI_Connection* con
 );
@@ -1391,9 +1511,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IsTAFCapable
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetTAFHandler
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetTAFHandler
 (
-    OCI_Connection* con,
+    OCI_Connection * con,
     POCI_TAF_HANDLER handler
 );
 
@@ -1414,7 +1534,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetTAFHandler
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetStatementCacheSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetStatementCacheSize
 (
     OCI_Connection* con
 );
@@ -1434,10 +1554,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetStatementCacheSize
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetStatementCacheSize
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetStatementCacheSize
 (
     OCI_Connection* con,
-    unsigned int    value
+    OCI_UInt32    value
 );
 
 /**
@@ -1462,7 +1582,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetStatementCacheSize
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetDefaultLobPrefetchSize
 (
     OCI_Connection* con
 );
@@ -1495,10 +1615,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDefaultLobPrefetchSize
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetDefaultLobPrefetchSize
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetDefaultLobPrefetchSize
 (
     OCI_Connection* con,
-    unsigned int    value
+    OCI_UInt32    value
 );
 
 /**
@@ -1518,7 +1638,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetDefaultLobPrefetchSize
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetMaxCursors
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetMaxCursors
 (
     OCI_Connection* con
 );
@@ -1527,7 +1647,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetMaxCursors
  * @} OcilibCApiConnections
  */
 
- /**
+/**
   * @defgroup OcilibCApiPools Oracle Pools
   * @{
   *
@@ -1573,10 +1693,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetMaxCursors
   *
   */
 
-  /**
+/**
    * @brief
    * Create an Oracle pool of connections or sessions
    *
+   * @param env - Environment handle
    * @param db       - Oracle Service Name
    * @param user     - Oracle User name
    * @param pwd      - Oracle User password
@@ -1605,20 +1726,22 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetMaxCursors
 
 OCI_SYM_PUBLIC OCI_Pool* OCI_API OCI_PoolCreate
 (
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    unsigned int type,
-    unsigned int mode,
-    unsigned int min_con,
-    unsigned int max_con,
-    unsigned int incr_con
+    OCI_Environment *env,
+    const otext    * db,
+    const otext    * user,
+    const otext    * pwd,
+    OCI_PoolType     type,
+    OCI_SessionMode  mode,
+    OCI_UInt32     min_con,
+    OCI_UInt32     max_con,
+    OCI_UInt32     incr_con
 );
 
 /**
  * @brief
  * Destroy a pool object
  *
+ * @param env - Environment handle
  * @param pool - Pool handle
  *
  * @return
@@ -1626,15 +1749,17 @@ OCI_SYM_PUBLIC OCI_Pool* OCI_API OCI_PoolCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_PoolFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_PoolFree
 (
-    OCI_Pool* pool
+    OCI_Environment *env,
+    OCI_Pool       * pool
 );
 
 /**
  * @brief
  * Get a connection from the pool
  *
+ * @param env - Environment handle
  * @param pool - Pool handle
  * @param tag  - User tag string (optional, NULL for untagged session)
  *
@@ -1663,8 +1788,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_PoolFree
 
 OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_PoolGetConnection
 (
-    OCI_Pool* pool,
-    const otext* tag
+    OCI_Environment *env,
+    OCI_Pool       * pool,
+    const otext    * tag
 );
 
 /**
@@ -1684,7 +1810,7 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_PoolGetConnection
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetTimeout
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_PoolGetTimeout
 (
     OCI_Pool* pool
 );
@@ -1707,10 +1833,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetTimeout
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetTimeout
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_PoolSetTimeout
 (
-    OCI_Pool* pool,
-    unsigned int value
+    OCI_Pool   * pool,
+    OCI_UInt32 value
 );
 
 /**
@@ -1726,7 +1852,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetTimeout
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_PoolGetNoWait
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_PoolGetNoWait
 (
     OCI_Pool* pool
 );
@@ -1752,10 +1878,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_PoolGetNoWait
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetNoWait
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_PoolSetNoWait
 (
-    OCI_Pool* pool,
-    boolean   value
+    OCI_Pool  * pool,
+    OCI_Boolean value
 );
 
 /**
@@ -1769,7 +1895,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetNoWait
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetBusyCount
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_PoolGetBusyCount
 (
     OCI_Pool* pool
 );
@@ -1785,7 +1911,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetBusyCount
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetOpenedCount
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_PoolGetOpenedCount
 (
     OCI_Pool* pool
 );
@@ -1801,7 +1927,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetOpenedCount
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetMin
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_PoolGetMin
 (
     OCI_Pool* pool
 );
@@ -1817,7 +1943,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetMin
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetMax
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_PoolGetMax
 (
     OCI_Pool* pool
 );
@@ -1834,7 +1960,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetMax
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetIncrement
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_PoolGetIncrement
 (
     OCI_Pool* pool
 );
@@ -1853,7 +1979,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetIncrement
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetStatementCacheSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_PoolGetStatementCacheSize
 (
     OCI_Pool* pool
 );
@@ -1870,17 +1996,17 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_PoolGetStatementCacheSize
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetStatementCacheSize
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_PoolSetStatementCacheSize
 (
-    OCI_Pool* pool,
-    unsigned int value
+    OCI_Pool   * pool,
+    OCI_UInt32 value
 );
 
 /**
  * @} OcilibCApiPools
  */
 
- /**
+/**
   * @defgroup OcilibCApiTransactions Managing transactions
   * @{
   *
@@ -1913,7 +2039,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetStatementCacheSize
   *
   */
 
-  /**
+/**
    * @brief
    * Commit current pending changes
    *
@@ -1924,7 +2050,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_PoolSetStatementCacheSize
    *
    */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_Commit
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_Commit
 (
     OCI_Connection* con
 );
@@ -1940,7 +2066,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Commit
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_Rollback
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_Rollback
 (
     OCI_Connection* con
 );
@@ -1960,10 +2086,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Rollback
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetAutoCommit
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetAutoCommit
 (
     OCI_Connection* con,
-    boolean         enable
+    OCI_Boolean     enable
 );
 
 /**
@@ -1977,7 +2103,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetAutoCommit
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_GetAutoCommit
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_GetAutoCommit
 (
     OCI_Connection* con
 );
@@ -2014,10 +2140,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_GetAutoCommit
 
 OCI_SYM_PUBLIC OCI_Transaction* OCI_API OCI_TransactionCreate
 (
-    OCI_Connection* con,
-    unsigned int    timeout,
-    unsigned int    mode,
-    OCI_XID* pxid
+    OCI_Connection    * con,
+    OCI_UInt32        timeout,
+    OCI_TransactionMode mode,
+    OCI_XID           * pxid
 );
 
 /**
@@ -2031,7 +2157,7 @@ OCI_SYM_PUBLIC OCI_Transaction* OCI_API OCI_TransactionCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TransactionFree
 (
     OCI_Transaction* trans
 );
@@ -2047,7 +2173,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionFree
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionStart
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TransactionStart
 (
     OCI_Transaction* trans
 );
@@ -2063,7 +2189,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionStart
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionStop
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TransactionStop
 (
     OCI_Transaction* trans
 );
@@ -2079,7 +2205,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionStop
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionResume
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TransactionResume
 (
     OCI_Transaction* trans
 );
@@ -2095,7 +2221,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionResume
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionPrepare
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TransactionPrepare
 (
     OCI_Transaction* trans
 );
@@ -2111,7 +2237,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionPrepare
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionForget
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TransactionForget
 (
     OCI_Transaction* trans
 );
@@ -2130,7 +2256,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TransactionForget
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_TransactionGetMode
+OCI_SYM_PUBLIC OCI_TransactionMode OCI_API OCI_TransactionGetMode
 (
     OCI_Transaction* trans
 );
@@ -2146,7 +2272,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_TransactionGetMode
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_TransactionGetTimeout
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_TransactionGetTimeout
 (
     OCI_Transaction* trans
 );
@@ -2155,7 +2281,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_TransactionGetTimeout
  * @} OcilibCApiTransactions
  */
 
- /**
+/**
   * @defgroup OcilibCApiStatements Executing statements
   * @{
   *
@@ -2191,7 +2317,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_TransactionGetTimeout
   *
   */
 
-  /**
+/**
    * @brief
    * Create a statement object and return its handle
    *
@@ -2218,7 +2344,7 @@ OCI_SYM_PUBLIC OCI_Statement* OCI_API OCI_StatementCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_StatementFree
 (
     OCI_Statement* stmt
 );
@@ -2238,10 +2364,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_StatementFree
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_Prepare
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_Prepare
 (
     OCI_Statement* stmt,
-    const otext* sql
+    const otext  * sql
 );
 
 /**
@@ -2255,15 +2381,14 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Prepare
  * - The function still returns TRUE.
  * - The warning triggers the global error handler with an OCI_Error whose OCI_ErrorGetType()
  *   returns OCI_ERR_WARNING.
- * - If OCILIB was initialized with OCI_ENV_CONTEXT, OCI_GetLastError() returns the
- *   corresponding OCI_Error object.
+ * - OCI_GetLastError() returns the corresponding OCI_Error object.
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_Execute
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_Execute
 (
     OCI_Statement* stmt
 );
@@ -2280,18 +2405,64 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Execute
  * - The function still returns TRUE.
  * - The warning triggers the global error handler with an OCI_Error whose OCI_ErrorGetType()
  *   returns OCI_ERR_WARNING.
- * - If OCILIB was initialized with OCI_ENV_CONTEXT, OCI_GetLastError() returns the
- *   corresponding OCI_Error object.
+ * - OCI_GetLastError() returns the corresponding OCI_Error object.
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ExecuteStmt
 (
     OCI_Statement* stmt,
-    const otext* sql
+    const otext  * sql
+);
+
+/**
+ * @brief
+ * Execute the previously prepared statement and return its result set
+ *
+ * @param stmt - Statement handle
+ *
+ * @note
+ * This call is equivalent to calling OCI_Execute() followed by OCI_GetResultset().
+ *
+ * @return
+ * - The result set handle if the statement produces one.
+ * - NULL if the execution failed or if the statement does not produce a result
+ *   set. Call OCI_GetLastError() to distinguish an error from a statement
+ *   legitimately returning no result set.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Resultset* OCI_API OCI_ExecuteAndGetResultset
+(
+    OCI_Statement* stmt
+);
+
+/**
+ * @brief
+ * Prepare, execute a SQL statement or PL/SQL block and return its result set
+ *
+ * @param stmt - Statement handle
+ * @param sql  - SQL statement or PL/SQL block
+ *
+ * @note
+ * This call is equivalent to calling OCI_ExecuteStmt() followed by
+ * OCI_GetResultset().
+ *
+ * @return
+ * - The result set handle if the statement produces one.
+ * - NULL if the execution failed or if the statement does not produce a result
+ *   set. Call OCI_GetLastError() to distinguish an error from a statement
+ *   legitimately returning no result set.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Resultset* OCI_API OCI_ExecuteStmtAndGetResultset
+(
+    OCI_Statement* stmt,
+    const otext  * sql
 );
 
 /**
@@ -2321,10 +2492,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ExecuteStmt
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_Parse
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_Parse
 (
     OCI_Statement* stmt,
-    const otext* sql
+    const otext  * sql
 );
 
 /**
@@ -2356,10 +2527,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Parse
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_Describe
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_Describe
 (
     OCI_Statement* stmt,
-    const otext* sql
+    const otext  * sql
 );
 
 /**
@@ -2370,6 +2541,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Describe
  *
  * @return
  * The SQL text string, or NULL if no statement has been prepared.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Statement handle and remains valid until
+ * OCI_Prepare(), OCI_Execute() or OCI_ExecuteStmt() is called on it, or OCI_StatementFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -2394,6 +2570,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetSql
  * @return
  * The SQL_ID string, or NULL if not available.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Statement handle and remains valid until
+ * OCI_Prepare(), OCI_Execute() or OCI_ExecuteStmt() is called on it, or OCI_StatementFree() is called.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_GetSqlIdentifier
@@ -2415,7 +2596,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetSqlIdentifier
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSqlErrorPos
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetSqlErrorPos
 (
     OCI_Statement* stmt
 );
@@ -2435,12 +2616,17 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSqlErrorPos
  * @note
  * For SELECT statements, use OCI_GetRowCount() instead.
  *
+ * @warning
+ * This function returns 0 both when no rows were affected and on failure
+ * (invalid handle, OCI error). Use OCI_GetLastError() or OCI_HasError() to
+ * distinguish a legitimate 0 result from an error.
+ *
  * @return
  * The number of affected rows.
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetAffectedRows
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetAffectedRows
 (
     OCI_Statement* stmt
 );
@@ -2460,7 +2646,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetAffectedRows
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSQLCommand
+OCI_SYM_PUBLIC OCI_SQLCommand OCI_API OCI_GetSQLCommand
 (
     OCI_Statement* stmt
 );
@@ -2480,6 +2666,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetSQLCommand
  *
  * @return
  * The SQL command verb string (e.g., "SELECT", "INSERT", "UPDATE"), or NULL if not available.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is a string constant:
+ * it has static storage duration and remains valid for the lifetime of the program.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -2508,10 +2699,10 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetSQLVerb
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_GetParseBindNames
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_GetParseBindNames
 (
     OCI_Statement* stmt,
-    unsigned int* count,
+    OCI_UInt32 * count,
     const otext*** names
 );
 
@@ -2519,7 +2710,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_GetParseBindNames
  * @} OcilibCApiStatements
  */
 
- /**
+/**
   * @defgroup OcilibCApiBinding Binding variables and arrays
   * @{
   *
@@ -2532,7 +2723,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_GetParseBindNames
   *
   * OCILIB provides a set of binding functions for the following data types:
   *
-  * - Basic data types: string (char/wchar_t *), int, float, double, raw.
+  * - Basic data types: string (char/wchar_t *), OCI_Int32, float, double, raw.
   * - Object data types: LOBs, files, longs, dates, cursors, statements,
   *                      timestamps, intervals, objects.
   *
@@ -2638,7 +2829,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_GetParseBindNames
   *
   */
 
-  /**
+/**
    * @brief
    * Set the input array size for bulk operations
    *
@@ -2654,21 +2845,22 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_GetParseBindNames
    * It MUST be called to set the maximum array size before any statement execution.
    * This initial call must be made AFTER OCI_Prepare() and BEFORE any OCI_BindArrayOfXXX() call.
    *
-   * @note
-   * OCI_BindArraySetSize() can optionally be called before subsequent OCI_Execute()
-   * calls to specify the exact number of elements populating the input arrays for
-   * the next execution. The array size passed to subsequent calls cannot exceed the
-   * initial size; otherwise, an exception will be raised.
+   * @warning
+   * Once bind arrays are registered, OCI_BindArraySetSize() can only be called
+   * before subsequent OCI_Execute() calls to specify the exact number of elements
+   * populating the input arrays for the next execution, and the size passed
+   * cannot exceed the initial size set before binding - otherwise an error is
+   * raised (OCI_ERR_BIND_ARRAY_SIZE) and the function returns FALSE.
    *
    * @return
    * TRUE on success, otherwise FALSE.
    *
    */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArraySetSize
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindArraySetSize
 (
     OCI_Statement* stmt,
-    unsigned int   size
+    OCI_UInt32   size
 );
 
 /**
@@ -2682,7 +2874,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArraySetSize
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindArrayGetSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_BindArrayGetSize
 (
     OCI_Statement* stmt
 );
@@ -2706,10 +2898,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindArrayGetSize
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_AllowRebinding
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_AllowRebinding
 (
     OCI_Statement* stmt,
-    boolean        value
+    OCI_Boolean    value
 );
 
 /**
@@ -2725,35 +2917,35 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_AllowRebinding
  * TRUE if allowed otherwise FALSE
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IsRebindingAllowed
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IsRebindingAllowed
 (
     OCI_Statement* stmt
 );
 
 /**
 * @brief
-* Bind a boolean variable (PL/SQL ONLY)
+* Bind a OCI_Boolean variable (PL/SQL ONLY)
 *
 * @param stmt - Statement handle
 * @param name - Variable name
-* @param data - Pointer to boolean variable
+* @param data - Pointer to OCI_Boolean variable
 *
 * @note
 * Parameter 'data' can be NULL if the statement bind allocation mode
 * has been set to OCI_BAM_INTERNAL.
 *
 * @warning
-* - OCI_BindBoolean() CAN ONLY BE USED for PL/SQL boolean type when calling PL/SQL procedures/function
+* - OCI_BindBoolean() CAN ONLY BE USED for PL/SQL OCI_Boolean type when calling PL/SQL procedures/function
 * - ONLY supported by Oracle 12c and above !
 *
 * @return
-* TRUE on success, otherwise FALSE.
+* The bind handle on success, otherwise NULL.
 */
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindBoolean
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindBoolean
 (
     OCI_Statement* stmt,
-    const otext* name,
-    boolean* data
+    const otext  * name,
+    OCI_Boolean  * data
 );
 
 /**
@@ -2762,21 +2954,21 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindBoolean
 *
 * @param stmt - Statement handle
 * @param name - Variable name
-* @param data - Pointer to short variable
+* @param data - Pointer to OCI_Int16 variable
 *
 * @note
 * Parameter 'data' can be NULL if the statement bind allocation mode
 * has been set to OCI_BAM_INTERNAL.
 *
 * @return
-* TRUE on success, otherwise FALSE.
+* The bind handle on success, otherwise NULL.
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindNumber
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindNumber
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Number* data
+    const otext  * name,
+    OCI_Number   * data
 );
 
 /**
@@ -2797,38 +2989,38 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindNumber
 * has been set to OCI_BAM_INTERNAL.
 *
 * @return
-* TRUE on success, otherwise FALSE.
+* The bind handle on success, otherwise NULL.
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfNumbers
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfNumbers
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Number** data,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_Number  ** data,
+    OCI_UInt32   nbelem
 );
 
 /**
  * @brief
- * Bind a short variable
+ * Bind a OCI_Int16 variable
  *
  * @param stmt - Statement handle
  * @param name - Variable name
- * @param data - Pointer to short variable
+ * @param data - Pointer to OCI_Int16 variable
  *
  * @note
  * Parameter 'data' can be NULL if the statement bind allocation mode
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindShort
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindShort
 (
     OCI_Statement* stmt,
-    const otext* name,
-    short* data
+    const otext  * name,
+    OCI_Int16        * data
 );
 
 /**
@@ -2849,47 +3041,47 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindShort
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfShorts
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfShorts
 (
     OCI_Statement* stmt,
-    const otext* name,
-    short* data,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_Int16        * data,
+    OCI_UInt32   nbelem
 );
 
 /**
  * @brief
- * Bind an unsigned short variable
+ * Bind an OCI_UInt16 variable
  *
  * @param stmt - Statement handle
  * @param name - Variable name
- * @param data - Pointer to unsigned short variable
+ * @param data - Pointer to OCI_UInt16 variable
  *
  * @note
  * Parameter 'data' can be NULL if the statement bind allocation mode
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindUnsignedShort
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindUnsignedShort
 (
-    OCI_Statement* stmt,
-    const otext* name,
-    unsigned short* data
+    OCI_Statement * stmt,
+    const otext   * name,
+    OCI_UInt16* data
 );
 
 /**
  * @brief
- * Bind an array of unsigned shorts
+ * Bind an array of OCI_UInt16s
  *
  * @param stmt   - Statement handle
  * @param name   - Variable name
- * @param data   - Array of unsigned shorts
+ * @param data   - Array of OCI_UInt16s
  * @param nbelem - Number of elements in the array (PL/SQL table only)
  *
  * @warning
@@ -2901,15 +3093,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindUnsignedShort
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfUnsignedShorts
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfUnsignedShorts
 (
-    OCI_Statement* stmt,
-    const otext* name,
-    unsigned short* data,
-    unsigned int    nbelem
+    OCI_Statement * stmt,
+    const otext   * name,
+    OCI_UInt16* data,
+    OCI_UInt32    nbelem
 );
 
 /**
@@ -2918,21 +3110,21 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfUnsignedShorts
  *
  * @param stmt - Statement handle
  * @param name - Variable name
- * @param data - Pointer to int variable
+ * @param data - Pointer to OCI_Int32 variable
  *
  * @note
  * Parameter 'data' can be NULL if the statement bind allocation mode
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindInt
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindInt
 (
     OCI_Statement* stmt,
-    const otext* name,
-    int* data
+    const otext  * name,
+    OCI_Int32          * data
 );
 
 /**
@@ -2941,7 +3133,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindInt
  *
  * @param stmt   - Statement handle
  * @param name   - Variable name
- * @param data   - Array of int
+ * @param data   - Array of OCI_Int32
  * @param nbelem - Number of elements in the array (PL/SQL table only)
  *
  * @warning
@@ -2953,47 +3145,47 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindInt
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfInts
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfInts
 (
     OCI_Statement* stmt,
-    const otext* name,
-    int* data,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_Int32          * data,
+    OCI_UInt32   nbelem
 );
 
 /**
  * @brief
- * Bind an unsigned integer variable
+ * Bind an OCI_UInt32eger variable
  *
  * @param stmt - Statement handle
  * @param name - Variable name
- * @param data - Pointer to unsigned int variable
+ * @param data - Pointer to OCI_UInt32 variable
  *
  * @note
  * Parameter 'data' can be NULL if the statement bind allocation mode
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindUnsignedInt
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindUnsignedInt
 (
     OCI_Statement* stmt,
-    const otext* name,
-    unsigned int* data
+    const otext  * name,
+    OCI_UInt32 * data
 );
 
 /**
  * @brief
- * Bind an array of unsigned integers
+ * Bind an array of OCI_UInt32egers
  *
  * @param stmt   - Statement handle
  * @param name   - Variable name
- * @param data   - Array of unsigned int
+ * @param data   - Array of OCI_UInt32
  * @param nbelem - Number of elements in the array (PL/SQL table only)
  *
  * @warning
@@ -3005,15 +3197,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindUnsignedInt
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfUnsignedInts
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfUnsignedInts
 (
     OCI_Statement* stmt,
-    const otext* name,
-    unsigned int* data,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_UInt32 * data,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3022,21 +3214,21 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfUnsignedInts
  *
  * @param stmt - Statement handle
  * @param name - Variable name
- * @param data - Pointer to big int variable
+ * @param data - Pointer to OCI_Int64 variable
  *
  * @note
  * Parameter 'data' can be NULL if the statement bind allocation mode
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindBigInt
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindBigInt
 (
     OCI_Statement* stmt,
-    const otext* name,
-    big_int* data
+    const otext  * name,
+    OCI_Int64      * data
 );
 
 /**
@@ -3045,7 +3237,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindBigInt
  *
  * @param stmt   - Statement handle
  * @param name   - Variable name
- * @param data   - Array of big int
+ * @param data   - Array of OCI_Int64
  * @param nbelem - Number of elements in the array (PL/SQL table only)
  *
  * @warning
@@ -3057,15 +3249,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindBigInt
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfBigInts
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfBigInts
 (
     OCI_Statement* stmt,
-    const otext* name,
-    big_int* data,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_Int64      * data,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3074,21 +3266,21 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfBigInts
  *
  * @param stmt - Statement handle
  * @param name - Variable name
- * @param data - Pointer to unsigned big int variable
+ * @param data - Pointer to OCI_UInt64 variable
  *
  * @note
  * Parameter 'data' can be NULL if the statement bind allocation mode
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindUnsignedBigInt
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindUnsignedBigInt
 (
     OCI_Statement* stmt,
-    const otext* name,
-    big_uint* data
+    const otext  * name,
+    OCI_UInt64     * data
 );
 
 /**
@@ -3097,7 +3289,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindUnsignedBigInt
  *
  * @param stmt - Statement handle
  * @param name - Variable name
- * @param data - Array of unsigned big int
+ * @param data - Array of OCI_UInt64
  * @param nbelem - Number of elements in the array (PL/SQL table only)
  *
  * @warning
@@ -3109,15 +3301,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindUnsignedBigInt
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfUnsignedBigInts
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfUnsignedBigInts
 (
     OCI_Statement* stmt,
-    const otext* name,
-    big_uint* data,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_UInt64     * data,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3138,15 +3330,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfUnsignedBigInts
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindString
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindString
 (
     OCI_Statement* stmt,
-    const otext* name,
-    otext* data,
-    unsigned int   len
+    const otext  * name,
+    otext        * data,
+    OCI_UInt32   len
 );
 
 /**
@@ -3172,16 +3364,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindString
  * if len <= 0, it returns FALSE
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfStrings
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfStrings
 (
     OCI_Statement* stmt,
-    const otext* name,
-    otext* data,
-    unsigned int   len,
-    unsigned int   nbelem
+    const otext  * name,
+    otext        * data,
+    OCI_UInt32   len,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3201,15 +3393,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfStrings
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindRaw
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindRaw
 (
     OCI_Statement* stmt,
-    const otext* name,
-    void* data,
-    unsigned int   len
+    const otext  * name,
+    void         * data,
+    OCI_UInt32   len
 );
 
 /**
@@ -3237,16 +3429,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindRaw
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfRaws
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfRaws
 (
     OCI_Statement* stmt,
-    const otext* name,
-    void* data,
-    unsigned int   len,
-    unsigned int   nbelem
+    const otext  * name,
+    void         * data,
+    OCI_UInt32   len,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3262,14 +3454,14 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfRaws
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindDouble
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindDouble
 (
     OCI_Statement* stmt,
-    const otext* name,
-    double* data
+    const otext  * name,
+    double       * data
 );
 
 /**
@@ -3290,15 +3482,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindDouble
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfDoubles
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfDoubles
 (
     OCI_Statement* stmt,
-    const otext* name,
-    double* data,
-    unsigned int   nbelem
+    const otext  * name,
+    double       * data,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3314,14 +3506,14 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfDoubles
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindFloat
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindFloat
 (
     OCI_Statement* stmt,
-    const otext* name,
-    float* data
+    const otext  * name,
+    float        * data
 );
 
 /**
@@ -3342,15 +3534,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindFloat
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfFloats
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfFloats
 (
     OCI_Statement* stmt,
-    const otext* name,
-    float* data,
-    unsigned int   nbelem
+    const otext  * name,
+    float        * data,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3366,14 +3558,14 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfFloats
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindDate
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindDate
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Date* data
+    const otext  * name,
+    OCI_Date     * data
 );
 
 /**
@@ -3394,15 +3586,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindDate
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfDates
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfDates
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Date** data,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_Date    ** data,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3417,13 +3609,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfDates
  * Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindTimestamp
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindTimestamp
 (
     OCI_Statement* stmt,
-    const otext* name,
+    const otext  * name,
     OCI_Timestamp* data
 );
 
@@ -3449,16 +3641,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindTimestamp
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfTimestamps
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfTimestamps
 (
-    OCI_Statement* stmt,
-    const otext* name,
-    OCI_Timestamp** data,
-    unsigned int    type,
-    unsigned int    nbelem
+    OCI_Statement   * stmt,
+    const otext     * name,
+    OCI_Timestamp  ** data,
+    OCI_TimestampType type,
+    OCI_UInt32      nbelem
 );
 
 /**
@@ -3473,15 +3665,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfTimestamps
  * Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindInterval
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindInterval
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Interval* data
+    const otext  * name,
+    OCI_Interval * data
 );
 
 /**
@@ -3506,17 +3698,17 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindInterval
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfIntervals
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfIntervals
 (
-    OCI_Statement* stmt,
-    const otext* name,
-    OCI_Interval** data,
-    unsigned int   type,
-    unsigned int   nbelem
+    OCI_Statement  * stmt,
+    const otext    * name,
+    OCI_Interval  ** data,
+    OCI_IntervalType type,
+    OCI_UInt32     nbelem
 );
 
 /**
@@ -3531,14 +3723,65 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfIntervals
  * Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindLob
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindLob
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Lob* data
+    const otext  * name,
+    OCI_Lob      * data
+);
+
+/**
+ * @brief
+ * Bind a JSON handle
+ *
+ * @param stmt - Statement handle
+ * @param name - Variable name
+ * @param data - JSON handle
+ *
+ * @note
+ * Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.
+ *
+ * @return
+ * The bind handle on success, otherwise NULL.
+ */
+
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindJson
+(
+    OCI_Statement* stmt,
+    const otext  * name,
+    OCI_Json     * data
+);
+
+/**
+ * @brief
+ * Bind an array of JSON handles
+ *
+ * @param stmt   - Statement handle
+ * @param name   - Variable name
+ * @param data   - Array of JSON handle
+ * @param nbelem - Number of elements in the array (PL/SQL table only)
+ *
+ * @warning
+ * Parameter 'nbelem' SHOULD ONLY be USED for PL/SQL tables.
+ * For regular DML array operations, pass the value 0.
+ *
+ * @note
+ * Parameter 'data' can be NULL if the statement bind allocation mode
+ * has been set to OCI_BAM_INTERNAL.
+ *
+ * @return
+ * The bind handle on success, otherwise NULL.
+ */
+
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfJsons
+(
+    OCI_Statement* stmt,
+    const otext  * name,
+    OCI_Json    ** data,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3563,16 +3806,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindLob
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfLobs
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfLobs
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Lob** data,
-    unsigned int   type,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_Lob     ** data,
+    OCI_LobType    type,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3587,14 +3830,14 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfLobs
  * Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindFile
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindFile
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_File* data
+    const otext  * name,
+    OCI_File     * data
 );
 
 /**
@@ -3619,16 +3862,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindFile
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfFiles
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfFiles
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_File** data,
-    unsigned int   type,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_File    ** data,
+    OCI_FileType   type,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3643,15 +3886,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfFiles
  * Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindObject
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindObject
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Object* data
+    const otext  * name,
+    OCI_Object   * data
 );
 
 /**
@@ -3673,17 +3916,17 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindObject
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfObjects
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfObjects
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Object** data,
-    OCI_TypeInfo* typinf,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_Object  ** data,
+    OCI_TypeInfo * typinf,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3698,15 +3941,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfObjects
  * Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindVector
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindVector
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Vector* data
+    const otext  * name,
+    OCI_Vector   * data
 );
 
 /**
@@ -3727,16 +3970,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindVector
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfVectors
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfVectors
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Vector** data,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_Vector  ** data,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3751,14 +3994,14 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfVectors
  * Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindColl
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindColl
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Coll* data
+    const otext  * name,
+    OCI_Coll     * data
 );
 
 /**
@@ -3783,17 +4026,17 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindColl
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfColls
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfColls
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Coll** data,
-    OCI_TypeInfo* typinf,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_Coll    ** data,
+    OCI_TypeInfo * typinf,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3808,14 +4051,14 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfColls
  * Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindRef
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindRef
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Ref* data
+    const otext  * name,
+    OCI_Ref      * data
 );
 
 /**
@@ -3837,17 +4080,17 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindRef
  * has been set to OCI_BAM_INTERNAL.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfRefs
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindArrayOfRefs
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Ref** data,
-    OCI_TypeInfo* typinf,
-    unsigned int   nbelem
+    const otext  * name,
+    OCI_Ref     ** data,
+    OCI_TypeInfo * typinf,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -3862,13 +4105,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindArrayOfRefs
  * Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindStatement
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindStatement
 (
     OCI_Statement* stmt,
-    const otext* name,
+    const otext  * name,
     OCI_Statement* data
 );
 
@@ -3890,15 +4133,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindStatement
  * Parameter 'data' CANNOT be NULL regardless of the statement bind allocation mode.
  *
  * @return
- * TRUE on success, otherwise FALSE.
+ * The bind handle on success, otherwise NULL.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindLong
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_BindLong
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_Long* data,
-    unsigned int   size
+    const otext  * name,
+    OCI_Long     * data,
+    OCI_UInt32   size
 );
 
 /**
@@ -3928,7 +4171,7 @@ OCI_SYM_PUBLIC OCI_Error* OCI_API OCI_GetBatchError
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBatchErrorCount
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetBatchErrorCount
 (
     OCI_Statement* stmt
 );
@@ -3944,7 +4187,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBatchErrorCount
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBindCount
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetBindCount
 (
     OCI_Statement* stmt
 );
@@ -3968,7 +4211,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBindCount
 OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_GetBind
 (
     OCI_Statement* stmt,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -3986,10 +4229,10 @@ OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_GetBind
  *
  */
 
-OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_GetBind2
+OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_GetBindByName
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -4010,10 +4253,10 @@ OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_GetBind2
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBindIndex
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetBindIndex
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -4024,6 +4267,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBindIndex
  *
  * @return
  * The bind name string, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Bind handle and remains valid until
+ * the bind is freed (explicitly or through its parent OCI_Statement).
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -4053,10 +4301,10 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_BindGetName
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetDirection
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindSetDirection
 (
-    OCI_Bind* bnd,
-    unsigned int direction
+    OCI_Bind        * bnd,
+    OCI_BindDirection direction
 );
 
 /**
@@ -4073,7 +4321,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetDirection
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetDirection
+OCI_SYM_PUBLIC OCI_BindDirection OCI_API OCI_BindGetDirection
 (
     OCI_Bind* bnd
 );
@@ -4087,7 +4335,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetDirection
  * @note
  * Possible values are :
  *
- * - OCI_CDT_NUMERIC     : short, int, long long, float, double
+ * - OCI_CDT_NUMERIC     : OCI_Int16, OCI_Int32, long long, float, double
  * - OCI_CDT_DATETIME    : OCI_Date *
  * - OCI_CDT_TEXT        : otext *
  * - OCI_CDT_LONG        : OCI_Long *
@@ -4100,14 +4348,14 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetDirection
  * - OCI_CDT_OBJECT      : OCI_Object *
  * - OCI_CDT_COLLECTION  : OCI_Coll *
  * - OCI_CDT_REF         : OCI_Ref *
- * - OCI_CDT_BOOLEAN     : boolean
+ * - OCI_CDT_BOOLEAN     : OCI_Boolean
  *
  * @return
  * The column type or OCI_CDT_UNKNOWN on error
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetType
+OCI_SYM_PUBLIC OCI_SqlType OCI_API OCI_BindGetType
 (
     OCI_Bind* bnd
 );
@@ -4168,7 +4416,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetType
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetSubtype
+OCI_SYM_PUBLIC OCI_SubType OCI_API OCI_BindGetSubtype
 (
     OCI_Bind* bnd
 );
@@ -4185,7 +4433,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetSubtype
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetDataCount
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_BindGetDataCount
 (
     OCI_Bind* bnd
 );
@@ -4247,10 +4495,10 @@ OCI_SYM_PUBLIC OCI_Statement* OCI_API OCI_BindGetStatement
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetDataSize
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindSetDataSize
 (
-    OCI_Bind* bnd,
-    unsigned int size
+    OCI_Bind   * bnd,
+    OCI_UInt32 size
 );
 
 /**
@@ -4279,11 +4527,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetDataSize
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetDataSizeAtPos
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindSetDataSizeAtPos
 (
-    OCI_Bind* bnd,
-    unsigned int position,
-    unsigned int size
+    OCI_Bind   * bnd,
+    OCI_UInt32 position,
+    OCI_UInt32 size
 );
 
 /**
@@ -4304,7 +4552,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetDataSizeAtPos
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetDataSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_BindGetDataSize
 (
     OCI_Bind* bnd
 );
@@ -4329,10 +4577,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetDataSize
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetDataSizeAtPos
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_BindGetDataSizeAtPos
 (
-    OCI_Bind* bnd,
-    unsigned int position
+    OCI_Bind   * bnd,
+    OCI_UInt32 position
 );
 
 /**
@@ -4355,7 +4603,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetDataSizeAtPos
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNull
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindSetNull
 (
     OCI_Bind* bnd
 );
@@ -4384,10 +4632,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNull
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNullAtPos
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindSetNullAtPos
 (
-    OCI_Bind* bnd,
-    unsigned int position
+    OCI_Bind   * bnd,
+    OCI_UInt32 position
 );
 
 /**
@@ -4410,7 +4658,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNullAtPos
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNotNull
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindSetNotNull
 (
     OCI_Bind* bnd
 );
@@ -4439,10 +4687,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNotNull
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNotNullAtPos
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindSetNotNullAtPos
 (
-    OCI_Bind* bnd,
-    unsigned int position
+    OCI_Bind   * bnd,
+    OCI_UInt32 position
 );
 
 /**
@@ -4456,7 +4704,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetNotNullAtPos
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindIsNull
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindIsNull
 (
     OCI_Bind* bnd
 );
@@ -4474,10 +4722,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindIsNull
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindIsNullAtPos
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindIsNullAtPos
 (
-    OCI_Bind* bnd,
-    unsigned int position
+    OCI_Bind   * bnd,
+    OCI_UInt32 position
 );
 
 /**
@@ -4506,10 +4754,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindIsNullAtPos
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetCharsetForm
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindSetCharsetForm
 (
-    OCI_Bind* bnd,
-    unsigned int csfrm
+    OCI_Bind      * bnd,
+    OCI_CharsetForm csfrm
 );
 
 /**
@@ -4528,7 +4776,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_BindSetCharsetForm
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetAllocationMode
+OCI_SYM_PUBLIC OCI_BindAllocationMode OCI_API OCI_BindGetAllocationMode
 (
     OCI_Bind* bnd
 );
@@ -4537,7 +4785,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetAllocationMode
  * @} OcilibCApiBinding
  */
 
- /**
+/**
   * @defgroup OcilibCApiFetching Fetching data
   * @{
   *
@@ -4647,6 +4895,21 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetAllocationMode
   * handle the full double range of values. Therefore, OCILIB uses the
   * standard C library to convert these data types to strings.
   *
+  * @warning
+  * The conversion is performed on every call, for every row and every
+  * non-string column accessed through OCI_GetString(). On large result sets,
+  * this per-row cost adds up. On performance-critical fetch loops, prefer the
+  * typed getters (OCI_GetInt(), OCI_GetDate(), OCI_GetBigInt(), ...) and
+  * convert to text once, explicitly, only where needed.
+  *
+  * @note
+  * The produced text depends on session settings: numeric, date and timestamp
+  * formats are taken from the current connection formats (see OCI_SetFormat()
+  * and OCI_GetFormat()), and other types rely on Oracle default/NLS conversion
+  * rules. The same data can therefore stringify differently across sessions or
+  * configuration changes. Do not rely on OCI_GetString() output as a stable
+  * serialized form of a value.
+  *
   * @par Fetching Rows into User Structures
   *
   * It is possible to fetch a complete row into a user-defined structure.
@@ -4662,7 +4925,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetAllocationMode
   *   - OBJECTS, UDT             : OCI_Object *
   *   - Character columns (CHAR, VARCHAR, etc.) : otext *
   *   - All NUMERIC types:
-  *        - Default : big_int
+  *        - Default : OCI_Int64
   *        - User-defined (see OCI_SetStructNumericType())
   *
   * See OCI_GetStruct() and OCI_SetStructNumericType() for more details.
@@ -4687,7 +4950,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_BindGetAllocationMode
   *
   */
 
-  /**
+/**
    * @brief
    * Retrieve the result set handle from an executed statement
    *
@@ -4729,7 +4992,7 @@ OCI_SYM_PUBLIC OCI_Resultset* OCI_API OCI_GetResultset
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ReleaseResultsets
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ReleaseResultsets
 (
     OCI_Statement* stmt
 );
@@ -4751,7 +5014,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ReleaseResultsets
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FetchNext
 (
     OCI_Resultset* rs
 );
@@ -4773,7 +5036,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FetchNext
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FetchPrev
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FetchPrev
 (
     OCI_Resultset* rs
 );
@@ -4794,7 +5057,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FetchPrev
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FetchFirst
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FetchFirst
 (
     OCI_Resultset* rs
 );
@@ -4815,7 +5078,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FetchFirst
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FetchLast
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FetchLast
 (
     OCI_Resultset* rs
 );
@@ -4850,11 +5113,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FetchLast
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FetchSeek
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FetchSeek
 (
-    OCI_Resultset* rs,
-    unsigned int   mode,
-    int            offset
+    OCI_Resultset   * rs,
+    OCI_FetchSeekMode mode,
+    OCI_Int32               offset
 );
 
 /**
@@ -4863,12 +5126,17 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FetchSeek
  *
  * @param rs - Result set handle
  *
+ * @warning
+ * This function returns 0 both when no rows have been fetched yet and on
+ * failure (invalid handle). Use OCI_GetLastError() or OCI_HasError() to
+ * distinguish a legitimate 0 result from an error.
+ *
  * @return
  * The number of rows fetched.
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetRowCount
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetRowCount
 (
     OCI_Resultset* rs
 );
@@ -4889,7 +5157,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetRowCount
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetCurrentRow
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetCurrentRow
 (
     OCI_Resultset* rs
 );
@@ -4905,7 +5173,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetCurrentRow
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetColumnCount
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetColumnCount
 (
     OCI_Resultset* rs
 );
@@ -4925,7 +5193,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetColumnCount
 OCI_SYM_PUBLIC OCI_Column* OCI_API OCI_GetColumn
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -4943,10 +5211,10 @@ OCI_SYM_PUBLIC OCI_Column* OCI_API OCI_GetColumn
  *
  */
 
-OCI_SYM_PUBLIC OCI_Column* OCI_API OCI_GetColumn2
+OCI_SYM_PUBLIC OCI_Column* OCI_API OCI_GetColumnByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -4967,10 +5235,10 @@ OCI_SYM_PUBLIC OCI_Column* OCI_API OCI_GetColumn2
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetColumnIndex
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetColumnIndex
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -4981,6 +5249,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetColumnIndex
  *
  * @return
  * The column name string, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Column handle and remains valid until
+ * the column is freed (explicitly or through its parent describe/type-info object).
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -4998,7 +5271,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ColumnGetName
  * @note
  * Possible values are :
  *
- * - OCI_CDT_NUMERIC     : short, int, long long, float, double
+ * - OCI_CDT_NUMERIC     : OCI_Int16, OCI_Int32, long long, float, double
  * - OCI_CDT_DATETIME    : OCI_Date *
  * - OCI_CDT_TEXT        : otext *
  * - OCI_CDT_LONG        : OCI_Long *
@@ -5011,16 +5284,17 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ColumnGetName
  * - OCI_CDT_OBJECT      : OCI_Object *
  * - OCI_CDT_COLLECTION  : OCI_Coll *
  * - OCI_CDT_REF         : OCI_Ref *
- * - OCI_CDT_BOOLEAN     : boolean
+ * - OCI_CDT_BOOLEAN     : OCI_Boolean
  * - OCI_CDT_XMLTYPE     : OCI_XmlType *
  * - OCI_CDT_VECTOR      : OCI_Vector *
+ * - OCI_CDT_JSON        : OCI_Json *
  *
  * @return
  * The column type, or OCI_CDT_UNKNOWN on error.
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetType
+OCI_SYM_PUBLIC OCI_SqlType OCI_API OCI_ColumnGetType
 (
     OCI_Column* col
 );
@@ -5042,7 +5316,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetType
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetCharsetForm
+OCI_SYM_PUBLIC OCI_CharsetForm OCI_API OCI_ColumnGetCharsetForm
 (
     OCI_Column* col
 );
@@ -5058,6 +5332,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetCharsetForm
  *
  * @return
  * The SQL type name string, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is a string constant:
+ * it has static storage duration and remains valid for the lifetime of the program.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -5083,11 +5362,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ColumnGetSQLType
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetFullSQLType
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_ColumnGetFullSQLType
 (
-    OCI_Column* col,
-    otext* buffer,
-    unsigned int len
+    OCI_Column * col,
+    otext      * buffer,
+    OCI_UInt32 len
 );
 
 /**
@@ -5105,7 +5384,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetFullSQLType
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_ColumnGetSize
 (
     OCI_Column* col
 );
@@ -5121,7 +5400,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetSize
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_ColumnGetScale
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_ColumnGetScale
 (
     OCI_Column* col
 );
@@ -5137,7 +5416,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_ColumnGetScale
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_ColumnGetPrecision
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_ColumnGetPrecision
 (
     OCI_Column* col
 );
@@ -5153,7 +5432,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_ColumnGetPrecision
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_ColumnGetFractionalPrecision
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_ColumnGetFractionalPrecision
 (
     OCI_Column* col
 );
@@ -5169,7 +5448,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_ColumnGetFractionalPrecision
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_ColumnGetLeadingPrecision
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_ColumnGetLeadingPrecision
 (
     OCI_Column* col
 );
@@ -5185,7 +5464,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_ColumnGetLeadingPrecision
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ColumnGetNullable
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ColumnGetNullable
 (
     OCI_Column* col
 );
@@ -5206,7 +5485,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ColumnGetNullable
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ColumnGetCharUsed
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ColumnGetCharUsed
 (
     OCI_Column* col
 );
@@ -5237,7 +5516,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ColumnGetCharUsed
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetPropertyFlags
+OCI_SYM_PUBLIC OCI_ColumnPropFlags OCI_API OCI_ColumnGetPropertyFlags
 (
     OCI_Column* col
 );
@@ -5272,7 +5551,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetPropertyFlags
 *
 */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetCollationID
+OCI_SYM_PUBLIC OCI_CollationID OCI_API OCI_ColumnGetCollationID
 (
     OCI_Column* col
 );
@@ -5293,7 +5572,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetCollationID
 *
 */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetDimension
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_ColumnGetDimension
 (
     OCI_Column* col
 );
@@ -5375,7 +5654,7 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_ColumnGetTypeInfo
  *
  * @warning
  * For numeric columns, the value may not be accurate.
- * OCI does not provide the exact SQL type of a numeric column (int, real, etc.).
+ * OCI does not provide the exact SQL type of a numeric column (OCI_Int32, real, etc.).
  * OCI-based libraries can only infer some types in certain situations: float, binary_float, binary_double, number.
  * For example:
  * - With the statement 'SELECT 101 FROM dual', OCI reports numeric type NUMBER.
@@ -5389,7 +5668,7 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_ColumnGetTypeInfo
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetSubType
+OCI_SYM_PUBLIC OCI_SubType OCI_API OCI_ColumnGetSubType
 (
     OCI_Column* col
 );
@@ -5420,11 +5699,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ColumnGetSubType
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetStructNumericType
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetStructNumericType
 (
-    OCI_Resultset* rs,
-    unsigned int   index,
-    unsigned int   type
+    OCI_Resultset * rs,
+    OCI_UInt32    index,
+    OCI_NumericType type
 );
 
 /**
@@ -5453,11 +5732,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetStructNumericType
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetStructNumericType2
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetStructNumericTypeByName
 (
-    OCI_Resultset* rs,
-    const otext* name,
-    unsigned int   type
+    OCI_Resultset * rs,
+    const otext   * name,
+    OCI_NumericType type
 );
 
 /**
@@ -5491,14 +5770,14 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetStructNumericType2
  *   - OBJECTS, UDT             : OCI_Object *
  *   - Character columns (CHAR, VARCHAR, etc.) : otext *
  *   - All NUMERIC types:
- *        - Default : big_int
+ *        - Default : OCI_Int64
  *        - User-defined (see OCI_SetStructNumericType())
  *
  * The user structure pointer is not mandatory.
  *
  * @par User row indicator structure
  *
- * This structure must have one boolean field per column in
+ * This structure must have one OCI_Boolean field per column in
  * the result set and in the same member order.
  *
  * If the value of the given member is TRUE, it means the value in
@@ -5511,11 +5790,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetStructNumericType2
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_GetStruct
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_GetStruct
 (
     OCI_Resultset* rs,
-    void* row_struct,
-    void* row_struct_ind
+    void         * row_struct,
+    void         * row_struct_ind
 );
 
 /**
@@ -5535,7 +5814,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_GetStruct
 OCI_SYM_PUBLIC OCI_Number* OCI_API OCI_GetNumber
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -5553,15 +5832,15 @@ OCI_SYM_PUBLIC OCI_Number* OCI_API OCI_GetNumber
 *
 */
 
-OCI_SYM_PUBLIC OCI_Number* OCI_API OCI_GetNumber2
+OCI_SYM_PUBLIC OCI_Number* OCI_API OCI_GetNumberByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
  * @brief
- * Return the current short value of the column at the given index in the result set
+ * Return the current OCI_Int16 value of the column at the given index in the result set
  *
  * @param rs    - Result set handle
  * @param index - Column position
@@ -5574,15 +5853,15 @@ OCI_SYM_PUBLIC OCI_Number* OCI_API OCI_GetNumber2
  *
  */
 
-OCI_SYM_PUBLIC short OCI_API OCI_GetShort
+OCI_SYM_PUBLIC OCI_Int16 OCI_API OCI_GetShort
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
  * @brief
- * Return the current short value of the column from its name in the result set
+ * Return the current OCI_Int16 value of the column from its name in the result set
  *
  * @param rs    - Result set handle
  * @param name  - Column name
@@ -5595,15 +5874,15 @@ OCI_SYM_PUBLIC short OCI_API OCI_GetShort
  *
  */
 
-OCI_SYM_PUBLIC short OCI_API OCI_GetShort2
+OCI_SYM_PUBLIC OCI_Int16 OCI_API OCI_GetShortByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
  * @brief
- * Return the current unsigned short value of the column at the given index in the result set
+ * Return the current OCI_UInt16 value of the column at the given index in the result set
  *
  * @param rs    - Result set handle
  * @param index - Column position
@@ -5616,15 +5895,15 @@ OCI_SYM_PUBLIC short OCI_API OCI_GetShort2
  *
  */
 
-OCI_SYM_PUBLIC unsigned short OCI_API OCI_GetUnsignedShort
+OCI_SYM_PUBLIC OCI_UInt16 OCI_API OCI_GetUnsignedShort
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
  * @brief
- * Return the current unsigned short value of the column from its name in the result set
+ * Return the current OCI_UInt16 value of the column from its name in the result set
  *
  * @param rs    - Result set handle
  * @param name  - Column name
@@ -5637,10 +5916,10 @@ OCI_SYM_PUBLIC unsigned short OCI_API OCI_GetUnsignedShort
  *
  */
 
-OCI_SYM_PUBLIC unsigned short OCI_API OCI_GetUnsignedShort2
+OCI_SYM_PUBLIC OCI_UInt16 OCI_API OCI_GetUnsignedShortByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -5658,10 +5937,10 @@ OCI_SYM_PUBLIC unsigned short OCI_API OCI_GetUnsignedShort2
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_GetInt
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_GetInt
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -5679,15 +5958,15 @@ OCI_SYM_PUBLIC int OCI_API OCI_GetInt
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_GetInt2
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_GetIntByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
  * @brief
- * Return the current unsigned integer value of the column at the given index in the result set
+ * Return the current OCI_UInt32eger value of the column at the given index in the result set
  *
  * @param rs    - Result set handle
  * @param index - Column position
@@ -5700,15 +5979,15 @@ OCI_SYM_PUBLIC int OCI_API OCI_GetInt2
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetUnsignedInt
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetUnsignedInt
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
  * @brief
- * Return the current unsigned integer value of the column from its name in the result set
+ * Return the current OCI_UInt32eger value of the column from its name in the result set
  *
  * @param rs    - Result set handle
  * @param name  - Column name
@@ -5721,10 +6000,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetUnsignedInt
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetUnsignedInt2
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetUnsignedIntByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -5742,10 +6021,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetUnsignedInt2
  *
  */
 
-OCI_SYM_PUBLIC big_int OCI_API OCI_GetBigInt
+OCI_SYM_PUBLIC OCI_Int64 OCI_API OCI_GetBigInt
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -5763,10 +6042,10 @@ OCI_SYM_PUBLIC big_int OCI_API OCI_GetBigInt
  *
  */
 
-OCI_SYM_PUBLIC big_int OCI_API OCI_GetBigInt2
+OCI_SYM_PUBLIC OCI_Int64 OCI_API OCI_GetBigIntByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -5784,10 +6063,10 @@ OCI_SYM_PUBLIC big_int OCI_API OCI_GetBigInt2
  *
  */
 
-OCI_SYM_PUBLIC big_uint OCI_API OCI_GetUnsignedBigInt
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_GetUnsignedBigInt
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -5805,10 +6084,10 @@ OCI_SYM_PUBLIC big_uint OCI_API OCI_GetUnsignedBigInt
  *
  */
 
-OCI_SYM_PUBLIC big_uint OCI_API OCI_GetUnsignedBigInt2
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_GetUnsignedBigIntByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -5839,15 +6118,29 @@ OCI_SYM_PUBLIC big_uint OCI_API OCI_GetUnsignedBigInt2
  * - RAW buffer (expressed in hexadecimal).
  * - OCI_Statement (SQL statement string or cursor name).
  *
+ * @warning
+ * For non-string columns, the conversion is performed on every call, for every
+ * fetched row. On performance-critical fetch loops, prefer the typed getters
+ * (OCI_GetInt(), OCI_GetDate(), ...) and convert to text only where needed.
+ * The produced text also depends on session settings: numeric, date and
+ * timestamp formats come from the current connection formats (see
+ * OCI_SetFormat() / OCI_GetFormat()); other types follow Oracle default/NLS
+ * conversion rules. Do not rely on the output as a stable serialized form.
+ *
  * @return
  * The column current row value or NULL if index is out of bounds
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Resultset handle and remains valid until
+ * the next fetch call (OCI_FetchNext(), OCI_FetchPrev(), ...) or scroll on the resultset, or the resultset/statement is freed.
+ * It must not be freed or modified by the caller.
  *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_GetString
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -5860,15 +6153,24 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetString
  * @note
  * The column name is case-insensitive.
  *
+ * @note
+ * Same conversion rules, costs and format dependencies as OCI_GetString().
+ * See OCI_GetString() documentation for details.
+ *
  * @return
  * The column current row value or NULL if no column found with the given name
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Resultset handle and remains valid until
+ * the next fetch call (OCI_FetchNext(), OCI_FetchPrev(), ...) or scroll on the resultset, or the resultset/statement is freed.
+ * It must not be freed or modified by the caller.
+ *
  */
 
-OCI_SYM_PUBLIC const otext* OCI_API OCI_GetString2
+OCI_SYM_PUBLIC const otext* OCI_API OCI_GetStringByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -5888,12 +6190,12 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetString2
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetRaw
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetRaw
 (
     OCI_Resultset* rs,
-    unsigned int   index,
-    void* buffer,
-    unsigned int   len
+    OCI_UInt32   index,
+    void         * buffer,
+    OCI_UInt32   len
 );
 
 /**
@@ -5913,12 +6215,12 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetRaw
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetRaw2
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetRawByName
 (
     OCI_Resultset* rs,
-    const otext* name,
-    void* buffer,
-    unsigned int   len
+    const otext  * name,
+    void         * buffer,
+    OCI_UInt32   len
 );
 
 /**
@@ -5939,7 +6241,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetRaw2
 OCI_SYM_PUBLIC double OCI_API OCI_GetDouble
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -5957,10 +6259,10 @@ OCI_SYM_PUBLIC double OCI_API OCI_GetDouble
  *
  */
 
-OCI_SYM_PUBLIC double OCI_API OCI_GetDouble2
+OCI_SYM_PUBLIC double OCI_API OCI_GetDoubleByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -5981,7 +6283,7 @@ OCI_SYM_PUBLIC double OCI_API OCI_GetDouble2
 OCI_SYM_PUBLIC float OCI_API OCI_GetFloat
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -5999,10 +6301,10 @@ OCI_SYM_PUBLIC float OCI_API OCI_GetFloat
  *
  */
 
-OCI_SYM_PUBLIC float OCI_API OCI_GetFloat2
+OCI_SYM_PUBLIC float OCI_API OCI_GetFloatByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6023,7 +6325,7 @@ OCI_SYM_PUBLIC float OCI_API OCI_GetFloat2
 OCI_SYM_PUBLIC OCI_Date* OCI_API OCI_GetDate
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6038,10 +6340,10 @@ OCI_SYM_PUBLIC OCI_Date* OCI_API OCI_GetDate
  *
  */
 
-OCI_SYM_PUBLIC OCI_Date* OCI_API OCI_GetDate2
+OCI_SYM_PUBLIC OCI_Date* OCI_API OCI_GetDateByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6062,7 +6364,7 @@ OCI_SYM_PUBLIC OCI_Date* OCI_API OCI_GetDate2
 OCI_SYM_PUBLIC OCI_Timestamp* OCI_API OCI_GetTimestamp
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6077,10 +6379,10 @@ OCI_SYM_PUBLIC OCI_Timestamp* OCI_API OCI_GetTimestamp
  *
  */
 
-OCI_SYM_PUBLIC OCI_Timestamp* OCI_API OCI_GetTimestamp2
+OCI_SYM_PUBLIC OCI_Timestamp* OCI_API OCI_GetTimestampByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6101,7 +6403,7 @@ OCI_SYM_PUBLIC OCI_Timestamp* OCI_API OCI_GetTimestamp2
 OCI_SYM_PUBLIC OCI_Interval* OCI_API OCI_GetInterval
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6116,10 +6418,10 @@ OCI_SYM_PUBLIC OCI_Interval* OCI_API OCI_GetInterval
  *
  */
 
-OCI_SYM_PUBLIC OCI_Interval* OCI_API OCI_GetInterval2
+OCI_SYM_PUBLIC OCI_Interval* OCI_API OCI_GetIntervalByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6140,7 +6442,7 @@ OCI_SYM_PUBLIC OCI_Interval* OCI_API OCI_GetInterval2
 OCI_SYM_PUBLIC OCI_Statement* OCI_API OCI_GetStatement
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6155,10 +6457,10 @@ OCI_SYM_PUBLIC OCI_Statement* OCI_API OCI_GetStatement
  *
  */
 
-OCI_SYM_PUBLIC OCI_Statement* OCI_API OCI_GetStatement2
+OCI_SYM_PUBLIC OCI_Statement* OCI_API OCI_GetStatementByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6179,7 +6481,7 @@ OCI_SYM_PUBLIC OCI_Statement* OCI_API OCI_GetStatement2
 OCI_SYM_PUBLIC OCI_Lob* OCI_API OCI_GetLob
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6194,10 +6496,49 @@ OCI_SYM_PUBLIC OCI_Lob* OCI_API OCI_GetLob
  *
  */
 
-OCI_SYM_PUBLIC OCI_Lob* OCI_API OCI_GetLob2
+OCI_SYM_PUBLIC OCI_Lob* OCI_API OCI_GetLobByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
+);
+
+/**
+ * @brief
+ * Return the current JSON value of the column at the given index in the result set
+ *
+ * @param rs    - Result set handle
+ * @param index - Column position
+ *
+ * @note
+ * Column position starts at 1.
+ *
+ * @return
+ * The column current row value or NULL if index is out of bounds
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Json* OCI_API OCI_GetJson
+(
+    OCI_Resultset* rs,
+    OCI_UInt32   index
+);
+
+/**
+ * @brief
+ * Return the current JSON value of the column at the given name in the result set
+ *
+ * @param rs   - Result set handle
+ * @param name - Column name
+ *
+ * @return
+ * The column current row value or NULL if no column found with the given name
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Json* OCI_API OCI_GetJsonByName
+(
+    OCI_Resultset* rs,
+    const otext  * name
 );
 
 /**
@@ -6218,7 +6559,7 @@ OCI_SYM_PUBLIC OCI_Lob* OCI_API OCI_GetLob2
 OCI_SYM_PUBLIC OCI_File* OCI_API OCI_GetFile
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6233,10 +6574,10 @@ OCI_SYM_PUBLIC OCI_File* OCI_API OCI_GetFile
  *
  */
 
-OCI_SYM_PUBLIC OCI_File* OCI_API OCI_GetFile2
+OCI_SYM_PUBLIC OCI_File* OCI_API OCI_GetFileByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6257,7 +6598,7 @@ OCI_SYM_PUBLIC OCI_File* OCI_API OCI_GetFile2
 OCI_SYM_PUBLIC OCI_Object* OCI_API OCI_GetObject
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6272,10 +6613,10 @@ OCI_SYM_PUBLIC OCI_Object* OCI_API OCI_GetObject
  *
  */
 
-OCI_SYM_PUBLIC OCI_Object* OCI_API OCI_GetObject2
+OCI_SYM_PUBLIC OCI_Object* OCI_API OCI_GetObjectByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6296,7 +6637,7 @@ OCI_SYM_PUBLIC OCI_Object* OCI_API OCI_GetObject2
 OCI_SYM_PUBLIC OCI_Coll* OCI_API OCI_GetColl
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6311,10 +6652,10 @@ OCI_SYM_PUBLIC OCI_Coll* OCI_API OCI_GetColl
  *
  */
 
-OCI_SYM_PUBLIC OCI_Coll* OCI_API OCI_GetColl2
+OCI_SYM_PUBLIC OCI_Coll* OCI_API OCI_GetCollByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6335,7 +6676,7 @@ OCI_SYM_PUBLIC OCI_Coll* OCI_API OCI_GetColl2
 OCI_SYM_PUBLIC OCI_Ref* OCI_API OCI_GetRef
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6350,10 +6691,10 @@ OCI_SYM_PUBLIC OCI_Ref* OCI_API OCI_GetRef
  *
  */
 
-OCI_SYM_PUBLIC OCI_Ref* OCI_API OCI_GetRef2
+OCI_SYM_PUBLIC OCI_Ref* OCI_API OCI_GetRefByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6374,7 +6715,7 @@ OCI_SYM_PUBLIC OCI_Ref* OCI_API OCI_GetRef2
 OCI_SYM_PUBLIC OCI_XmlType* OCI_API OCI_GetXmlType
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6389,10 +6730,10 @@ OCI_SYM_PUBLIC OCI_XmlType* OCI_API OCI_GetXmlType
  *
  */
 
-OCI_SYM_PUBLIC OCI_XmlType* OCI_API OCI_GetXmlType2
+OCI_SYM_PUBLIC OCI_XmlType* OCI_API OCI_GetXmlTypeByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6413,7 +6754,7 @@ OCI_SYM_PUBLIC OCI_XmlType* OCI_API OCI_GetXmlType2
 OCI_SYM_PUBLIC OCI_Vector* OCI_API OCI_GetVector
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6428,10 +6769,10 @@ OCI_SYM_PUBLIC OCI_Vector* OCI_API OCI_GetVector
  *
  */
 
-OCI_SYM_PUBLIC OCI_Vector* OCI_API OCI_GetVector2
+OCI_SYM_PUBLIC OCI_Vector* OCI_API OCI_GetVectorByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6452,7 +6793,7 @@ OCI_SYM_PUBLIC OCI_Vector* OCI_API OCI_GetVector2
 OCI_SYM_PUBLIC OCI_Long* OCI_API OCI_GetLong
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6467,10 +6808,10 @@ OCI_SYM_PUBLIC OCI_Long* OCI_API OCI_GetLong
  *
  */
 
-OCI_SYM_PUBLIC OCI_Long* OCI_API OCI_GetLong2
+OCI_SYM_PUBLIC OCI_Long* OCI_API OCI_GetLongByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6488,10 +6829,10 @@ OCI_SYM_PUBLIC OCI_Long* OCI_API OCI_GetLong2
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IsNull
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IsNull
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6513,10 +6854,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IsNull
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDataSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetDataSize
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
@@ -6535,10 +6876,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDataSize
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDataSize2
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetDataSizeByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6553,10 +6894,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDataSize2
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IsNull2
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IsNullByName
 (
     OCI_Resultset* rs,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -6590,17 +6931,17 @@ OCI_SYM_PUBLIC OCI_Statement* OCI_API OCI_ResultsetGetStatement
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDataLength
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetDataLength
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
  * @} OcilibCApiFetching
  */
 
- /**
+/**
   * @defgroup OcilibCApiPlSql PL/SQL Support
   * @{
   *
@@ -6634,7 +6975,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDataLength
   *
   */
 
-  /**
+/**
    * @brief
    * Enable the server output
    *
@@ -6660,12 +7001,12 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetDataLength
    *
    */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ServerEnableOutput
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ServerEnableOutput
 (
     OCI_Connection* con,
-    unsigned int    bufsize,
-    unsigned int    arrsize,
-    unsigned int    lnsize
+    OCI_UInt32    bufsize,
+    OCI_UInt32    arrsize,
+    OCI_UInt32    lnsize
 );
 
 /**
@@ -6682,7 +7023,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ServerEnableOutput
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ServerDisableOutput
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ServerDisableOutput
 (
     OCI_Connection* con
 );
@@ -6700,6 +7041,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ServerDisableOutput
  * @return
  * A server output buffer line, or NULL if the server buffer is empty.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Connection handle and remains valid until
+ * the next OCI_ServerGetOutput() call on it, or OCI_ServerDisableOutput()/OCI_ConnectionFree() is called.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_ServerGetOutput
@@ -6711,7 +7057,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ServerGetOutput
  * @} OcilibCApiPlSql
  */
 
- /**
+/**
   * @defgroup OcilibCApiCollections Oracle collections (VARRAYS and Nested Tables)
   * @{
   *
@@ -6747,7 +7093,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ServerGetOutput
   *
   */
 
-  /**
+/**
    * @brief
    * Create a local collection instance
    *
@@ -6778,7 +7124,7 @@ OCI_SYM_PUBLIC OCI_Coll* OCI_API OCI_CollCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_CollFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollFree
 (
     OCI_Coll* coll
 );
@@ -6787,7 +7133,6 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_CollFree
  * @brief
  * Create an array of Collection objects
  *
- * @param con    - Connection handle
  * @param typinf - Object type (type info handle)
  * @param nbelem - Number of elements in the array
  *
@@ -6801,9 +7146,8 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_CollFree
 
 OCI_SYM_PUBLIC OCI_Coll** OCI_API OCI_CollArrayCreate
 (
-    OCI_Connection* con,
-    OCI_TypeInfo* typinf,
-    unsigned int    nbelem
+    OCI_TypeInfo * typinf,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -6821,7 +7165,7 @@ OCI_SYM_PUBLIC OCI_Coll** OCI_API OCI_CollArrayCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_CollArrayFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollArrayFree
 (
     OCI_Coll** colls
 );
@@ -6841,7 +7185,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_CollArrayFree
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_CollAssign
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollAssign
 (
     OCI_Coll* coll,
     OCI_Coll* coll_src
@@ -6880,7 +7224,7 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_CollGetTypeInfo
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_CollGetType
+OCI_SYM_PUBLIC OCI_CollType OCI_API OCI_CollGetType
 (
     OCI_Coll* coll
 );
@@ -6896,7 +7240,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_CollGetType
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_CollGetMax
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_CollGetMax
 (
     OCI_Coll* coll
 );
@@ -6912,7 +7256,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_CollGetMax
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_CollGetSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_CollGetSize
 (
     OCI_Coll* coll
 );
@@ -6933,7 +7277,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_CollGetSize
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_CollGetCount
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_CollGetCount
 (
     OCI_Coll* coll
 );
@@ -6950,10 +7294,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_CollGetCount
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_CollTrim
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollTrim
 (
-    OCI_Coll* coll,
-    unsigned int nb_elem
+    OCI_Coll   * coll,
+    OCI_UInt32 nb_elem
 );
 
 /**
@@ -6967,7 +7311,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_CollTrim
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_CollClear
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollClear
 (
     OCI_Coll* coll
 );
@@ -6989,31 +7333,8 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_CollClear
 
 OCI_SYM_PUBLIC OCI_Elem* OCI_API OCI_CollGetElem
 (
-    OCI_Coll* coll,
-    unsigned int index
-);
-
-/**
- * @brief
- * Return the element at the given position in the collection
- *
- * @param coll  - Collection handle
- * @param index - Index of the destination element
- * @param elem  - Element handle to hold the collection item data
- *
- * @note
- * Collection indexes start at position 1.
- *
- * @return
- * TRUE on success, otherwise FALSE.
- *
- */
-
-OCI_SYM_PUBLIC boolean OCI_API OCI_CollGetElem2
-(
-    OCI_Coll* coll,
-    unsigned int index,
-    OCI_Elem* elem
+    OCI_Coll   * coll,
+    OCI_UInt32 index
 );
 
 /**
@@ -7033,11 +7354,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_CollGetElem2
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_CollSetElem
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollSetElem
 (
-    OCI_Coll* coll,
-    unsigned int index,
-    OCI_Elem* elem
+    OCI_Coll   * coll,
+    OCI_UInt32 index,
+    OCI_Elem   * elem
 );
 
 /**
@@ -7052,7 +7373,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_CollSetElem
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_CollAppend
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollAppend
 (
     OCI_Coll* coll,
     OCI_Elem* elem
@@ -7083,11 +7404,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_CollAppend
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_CollToText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollToText
 (
-    OCI_Coll* coll,
-    unsigned int* size,
-    otext* str
+    OCI_Coll    * coll,
+    OCI_UInt32* size,
+    otext       * str
 );
 
 /**
@@ -7110,10 +7431,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_CollToText
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_CollDeleteElem
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollDeleteElem
 (
-    OCI_Coll* coll,
-    unsigned int index
+    OCI_Coll   * coll,
+    OCI_UInt32 index
 );
 
 /**
@@ -7143,7 +7464,7 @@ OCI_SYM_PUBLIC OCI_Iter* OCI_API OCI_IterCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IterFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IterFree
 (
     OCI_Iter* iter
 );
@@ -7236,26 +7557,26 @@ OCI_SYM_PUBLIC OCI_Elem* OCI_API OCI_ElemCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemFree
 (
     OCI_Elem* elem
 );
 
 /**
 * @brief
-* Return the boolean value of the given collection element
+* Return the OCI_Boolean value of the given collection element
 *
 * @param elem   - Element handle
 *
 * @warning
-* OCI_ElemGetBoolean() returns a valid value only for collection elements of PL/SQL boolean type.
+* OCI_ElemGetBoolean() returns a valid value only for collection elements of PL/SQL OCI_Boolean type.
 *
 * @return
-* The boolean value, or FALSE on failure.
+* The OCI_Boolean value, or FALSE on failure.
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemGetBoolean
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemGetBoolean
 (
     OCI_Elem* elem
 );
@@ -7278,96 +7599,96 @@ OCI_SYM_PUBLIC OCI_Number* OCI_API OCI_ElemGetNumber
 
 /**
  * @brief
- * Return the short value of the given collection element
+ * Return the OCI_Int16 value of the given collection element
  *
  * @param elem   - Element handle
  *
  * @return
- * The short value, or 0 on failure.
+ * The OCI_Int16 value, or 0 on failure.
  *
  */
 
-OCI_SYM_PUBLIC short OCI_API OCI_ElemGetShort
+OCI_SYM_PUBLIC OCI_Int16 OCI_API OCI_ElemGetShort
 (
     OCI_Elem* elem
 );
 
 /**
  * @brief
- * Return the unsigned short value of the given collection element
+ * Return the OCI_UInt16 value of the given collection element
  *
  * @param elem   - Element handle
  *
  * @return
- * The unsigned short value, or 0 on failure.
+ * The OCI_UInt16 value, or 0 on failure.
  *
  */
 
-OCI_SYM_PUBLIC unsigned short OCI_API OCI_ElemGetUnsignedShort
+OCI_SYM_PUBLIC OCI_UInt16 OCI_API OCI_ElemGetUnsignedShort
 (
     OCI_Elem* elem
 );
 
 /**
  * @brief
- * Return the int value of the given collection element
+ * Return the OCI_Int32 value of the given collection element
  *
  * @param elem   - Element handle
  *
  * @return
- * The int value, or 0 on failure.
+ * The OCI_Int32 value, or 0 on failure.
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_ElemGetInt
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_ElemGetInt
 (
     OCI_Elem* elem
 );
 
 /**
  * @brief
- * Return the unsigned int value of the given collection element
+ * Return the OCI_UInt32 value of the given collection element
  *
  * @param elem   - Element handle
  *
  * @return
- * The unsigned int value, or 0 on failure.
+ * The OCI_UInt32 value, or 0 on failure.
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ElemGetUnsignedInt
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_ElemGetUnsignedInt
 (
     OCI_Elem* elem
 );
 
 /**
  * @brief
- * Return the big int value of the given collection element
+ * Return the OCI_Int64 value of the given collection element
  *
  * @param elem   - Element handle
  *
  * @return
- * The big int value, or 0 on failure.
+ * The OCI_Int64 value, or 0 on failure.
  *
  */
 
-OCI_SYM_PUBLIC big_int OCI_API OCI_ElemGetBigInt
+OCI_SYM_PUBLIC OCI_Int64 OCI_API OCI_ElemGetBigInt
 (
     OCI_Elem* elem
 );
 
 /**
  * @brief
- * Return the unsigned big int value of the given collection element
+ * Return the OCI_UInt64 value of the given collection element
  *
  * @param elem   - Element handle
  *
  * @return
- * The unsigned big int value, or 0 on failure.
+ * The OCI_UInt64 value, or 0 on failure.
  *
  */
 
-OCI_SYM_PUBLIC big_uint OCI_API OCI_ElemGetUnsignedBigInt
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_ElemGetUnsignedBigInt
 (
     OCI_Elem* elem
 );
@@ -7413,6 +7734,11 @@ OCI_SYM_PUBLIC float OCI_API OCI_ElemGetFloat
  * @return
  * The string value, or NULL on failure.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Elem handle and remains valid until
+ * the next getter call on the same element or the element is freed.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_ElemGetString
@@ -7433,11 +7759,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ElemGetString
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ElemGetRaw
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_ElemGetRaw
 (
-    OCI_Elem* elem,
-    void* value,
-    unsigned int len
+    OCI_Elem   * elem,
+    void       * value,
+    OCI_UInt32 len
 );
 
 /**
@@ -7451,7 +7777,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ElemGetRaw
 *
 */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ElemGetRawSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_ElemGetRawSize
 (
     OCI_Elem* elem
 );
@@ -7586,23 +7912,23 @@ OCI_SYM_PUBLIC OCI_Ref* OCI_API OCI_ElemGetRef
 
 /**
 * @brief
-* Set a boolean value to a collection element
+* Set a OCI_Boolean value to a collection element
 *
 * @param elem   - Element handle
 * @param value  - Boolean value
 *
 * @warning
-* OCI_ElemSetBoolean() is only valid for collection elements of PL/SQL boolean type.
+* OCI_ElemSetBoolean() is only valid for collection elements of PL/SQL OCI_Boolean type.
 *
 * @return
 * TRUE on success, otherwise FALSE.
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetBoolean
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetBoolean
 (
-    OCI_Elem* elem,
-    boolean   value
+    OCI_Elem  * elem,
+    OCI_Boolean value
 );
 
 /**
@@ -7617,15 +7943,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetBoolean
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetNumber
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetNumber
 (
-    OCI_Elem* elem,
+    OCI_Elem  * elem,
     OCI_Number* value
 );
 
 /**
  * @brief
- * Set a short value to a collection element
+ * Set a OCI_Int16 value to a collection element
  *
  * @param elem   - Element handle
  * @param value  - Short value
@@ -7635,33 +7961,33 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetNumber
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetShort
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetShort
 (
     OCI_Elem* elem,
-    short     value
+    OCI_Int16     value
 );
 
 /**
  * @brief
- * Set an unsigned short value to a collection element
+ * Set an OCI_UInt16 value to a collection element
  *
  * @param elem   - Element handle
- * @param value  - Unsigned short value
+ * @param value  - Unsigned OCI_Int16 value
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetUnsignedShort
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetUnsignedShort
 (
-    OCI_Elem* elem,
-    unsigned short value
+    OCI_Elem     * elem,
+    OCI_UInt16 value
 );
 
 /**
  * @brief
- * Set an int value to a collection element
+ * Set an OCI_Int32 value to a collection element
  *
  * @param elem   - Element handle
  * @param value  - Int value
@@ -7671,64 +7997,64 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetUnsignedShort
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetInt
 (
     OCI_Elem* elem,
-    int       value
+    OCI_Int32       value
 );
 
 /**
  * @brief
- * Set an unsigned int value to a collection element
+ * Set an OCI_UInt32 value to a collection element
  *
  * @param elem   - Element handle
- * @param value  - Unsigned int value
+ * @param value  - Unsigned OCI_Int32 value
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetUnsignedInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetUnsignedInt
 (
-    OCI_Elem* elem,
-    unsigned int value
+    OCI_Elem   * elem,
+    OCI_UInt32 value
 );
 
 /**
  * @brief
- * Set a big int value to a collection element
+ * Set a OCI_Int64 value to a collection element
  *
  * @param elem   - Element handle
- * @param value  - Big int value
+ * @param value  - Big OCI_Int32 value
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetBigInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetBigInt
 (
     OCI_Elem* elem,
-    big_int   value
+    OCI_Int64   value
 );
 
 /**
  * @brief
- * Set an unsigned big int value to a collection element
+ * Set an OCI_UInt64 value to a collection element
  *
  * @param elem   - Element handle
- * @param value  - Unsigned big int value
+ * @param value  - Unsigned OCI_Int64 value
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetUnsignedBigInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetUnsignedBigInt
 (
     OCI_Elem* elem,
-    big_uint  value
+    OCI_UInt64  value
 );
 
 /**
@@ -7743,7 +8069,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetUnsignedBigInt
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetDouble
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetDouble
 (
     OCI_Elem* elem,
     double    value
@@ -7761,7 +8087,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetDouble
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetFloat
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetFloat
 (
     OCI_Elem* elem,
     float     value
@@ -7782,9 +8108,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetFloat
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetString
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetString
 (
-    OCI_Elem* elem,
+    OCI_Elem   * elem,
     const otext* value
 );
 
@@ -7804,11 +8130,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetString
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetRaw
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetRaw
 (
-    OCI_Elem* elem,
-    void* value,
-    unsigned int len
+    OCI_Elem   * elem,
+    void       * value,
+    OCI_UInt32 len
 );
 
 /**
@@ -7826,7 +8152,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetRaw
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetDate
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetDate
 (
     OCI_Elem* elem,
     OCI_Date* value
@@ -7847,9 +8173,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetDate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetTimestamp
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetTimestamp
 (
-    OCI_Elem* elem,
+    OCI_Elem     * elem,
     OCI_Timestamp* value
 );
 
@@ -7868,9 +8194,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetTimestamp
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetInterval
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetInterval
 (
-    OCI_Elem* elem,
+    OCI_Elem    * elem,
     OCI_Interval* value
 );
 
@@ -7889,7 +8215,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetInterval
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetColl
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetColl
 (
     OCI_Elem* elem,
     OCI_Coll* value
@@ -7915,9 +8241,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetColl
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetObject
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetObject
 (
-    OCI_Elem* elem,
+    OCI_Elem  * elem,
     OCI_Object* value
 );
 
@@ -7936,10 +8262,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetObject
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetLob
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetLob
 (
     OCI_Elem* elem,
-    OCI_Lob* value
+    OCI_Lob * value
 );
 
 /**
@@ -7957,7 +8283,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetLob
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetFile
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetFile
 (
     OCI_Elem* elem,
     OCI_File* value
@@ -7978,10 +8304,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetFile
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetRef
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetRef
 (
     OCI_Elem* elem,
-    OCI_Ref* value
+    OCI_Ref * value
 );
 
 /**
@@ -7995,7 +8321,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetRef
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemIsNull
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemIsNull
 (
     OCI_Elem* elem
 );
@@ -8011,7 +8337,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemIsNull
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetNull
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElemSetNull
 (
     OCI_Elem* elem
 );
@@ -8020,7 +8346,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetNull
  * @} OcilibCApiCollections
  */
 
- /**
+/**
   * @defgroup OcilibCApiFeatureReturningInto Oracle Returning feature
   * @{
   *
@@ -8054,7 +8380,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetNull
   * particularities:
   *
   * - Their names are the provided bind names to the DML statement
-  *   (for example, ':out1'). Any call to the OCI_GetXXX2() functions
+  *   (for example, ':out1'). Any call to the OCI_GetXXXByName() functions
   *   should be aware of this.
   * - The columns' detailed SQL attributes might not all be set or accurate. For
   *   example, the scale and precision are not set; the SQL type is the one
@@ -8066,7 +8392,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ElemSetNull
   *
   */
 
-  /**
+/**
    * @brief
    * Retrieve the next available resultset
    *
@@ -8110,15 +8436,15 @@ OCI_SYM_PUBLIC OCI_Resultset* OCI_API OCI_GetNextResultset
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterNumber
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterNumber
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 /**
  * @brief
- * Register a short output bind placeholder
+ * Register a OCI_Int16 output bind placeholder
  *
  * @param stmt - Statement handle
  * @param name - Output bind name
@@ -8128,15 +8454,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterNumber
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterShort
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterShort
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 /**
  * @brief
- * Register an unsigned short output bind placeholder
+ * Register an OCI_UInt16 output bind placeholder
  *
  * @param stmt - Statement handle
  * @param name - Output bind name
@@ -8146,10 +8472,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterShort
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterUnsignedShort
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterUnsignedShort
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -8164,15 +8490,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterUnsignedShort
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterInt
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 /**
  * @brief
- * Register an unsigned integer output bind placeholder
+ * Register an OCI_UInt32eger output bind placeholder
  *
  * @param stmt - Statement handle
  * @param name - Output bind name
@@ -8182,10 +8508,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterInt
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterUnsignedInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterUnsignedInt
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -8200,10 +8526,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterUnsignedInt
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterBigInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterBigInt
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -8218,10 +8544,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterBigInt
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterUnsignedBigInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterUnsignedBigInt
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -8237,11 +8563,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterUnsignedBigInt
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterString
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterString
 (
     OCI_Statement* stmt,
-    const otext* name,
-    unsigned int   len
+    const otext  * name,
+    OCI_UInt32   len
 );
 
 /**
@@ -8256,11 +8582,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterString
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterRaw
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterRaw
 (
     OCI_Statement* stmt,
-    const otext* name,
-    unsigned int   len
+    const otext  * name,
+    OCI_UInt32   len
 );
 
 /**
@@ -8274,10 +8600,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterRaw
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterDouble
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterDouble
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -8291,10 +8617,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterDouble
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterFloat
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterFloat
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -8308,10 +8634,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterFloat
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterDate
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterDate
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
 /**
@@ -8329,11 +8655,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterDate
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterTimestamp
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterTimestamp
 (
-    OCI_Statement* stmt,
-    const otext* name,
-    unsigned int   type
+    OCI_Statement   * stmt,
+    const otext     * name,
+    OCI_TimestampType type
 );
 
 /**
@@ -8351,11 +8677,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterTimestamp
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterInterval
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterInterval
 (
-    OCI_Statement* stmt,
-    const otext* name,
-    unsigned int   type
+    OCI_Statement  * stmt,
+    const otext    * name,
+    OCI_IntervalType type
 );
 
 /**
@@ -8370,11 +8696,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterInterval
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterObject
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterObject
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_TypeInfo* typinf
+    const otext  * name,
+    OCI_TypeInfo * typinf
 );
 
 /**
@@ -8392,11 +8718,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterObject
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterLob
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterLob
 (
     OCI_Statement* stmt,
-    const otext* name,
-    unsigned int   type
+    const otext  * name,
+    OCI_LobType    type
 );
 
 /**
@@ -8414,11 +8740,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterLob
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterFile
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterFile
 (
     OCI_Statement* stmt,
-    const otext* name,
-    unsigned int   type
+    const otext  * name,
+    OCI_FileType   type
 );
 
 /**
@@ -8433,11 +8759,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterFile
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterRef
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterRef
 (
     OCI_Statement* stmt,
-    const otext* name,
-    OCI_TypeInfo* typinf
+    const otext  * name,
+    OCI_TypeInfo * typinf
 );
 
 /**
@@ -8451,18 +8777,34 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterRef
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterVector
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterVector
 (
     OCI_Statement* stmt,
-    const otext* name
+    const otext  * name
 );
 
+/**
+ * @brief
+ * Register a JSON output bind placeholder
+ *
+ * @param stmt   - Statement handle
+ * @param name   - JSON bind name
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RegisterJson
+(
+    OCI_Statement* stmt,
+    const otext  * name
+);
 
 /**
  * @} OcilibCApiFeatureReturningInto
  */
 
- /**
+/**
   * @defgroup OcilibCApiRowIds Oracle Rowids
   * @{
   *
@@ -8479,7 +8821,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterVector
   * @} OcilibCApiRowIds
   */
 
-  /**
+/**
    * @defgroup OcilibCApiStatementControl Statements control
    * @{
    *
@@ -8487,7 +8829,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterVector
    *
    */
 
-   /**
+/**
     * @brief
     * Return the type of a SQL statement
     *
@@ -8513,7 +8855,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RegisterVector
     *
     */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetStatementType
+OCI_SYM_PUBLIC OCI_StatementType OCI_API OCI_GetStatementType
 (
     OCI_Statement* stmt
 );
@@ -8542,10 +8884,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetStatementType
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetFetchMode
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetFetchMode
 (
     OCI_Statement* stmt,
-    unsigned int   mode
+    OCI_FetchMode  mode
 );
 
 /**
@@ -8563,7 +8905,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetFetchMode
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetFetchMode
+OCI_SYM_PUBLIC OCI_FetchMode OCI_API OCI_GetFetchMode
 (
     OCI_Statement* stmt
 );
@@ -8585,10 +8927,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetFetchMode
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetBindMode
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetBindMode
 (
     OCI_Statement* stmt,
-    unsigned int   mode
+    OCI_BindMode   mode
 );
 
 /**
@@ -8609,7 +8951,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetBindMode
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBindMode
+OCI_SYM_PUBLIC OCI_BindMode OCI_API OCI_GetBindMode
 (
     OCI_Statement* stmt
 );
@@ -8637,10 +8979,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBindMode
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetBindAllocation
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetBindAllocation
 (
-    OCI_Statement* stmt,
-    unsigned int   mode
+    OCI_Statement        * stmt,
+    OCI_BindAllocationMode mode
 );
 
 /**
@@ -8664,7 +9006,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetBindAllocation
  * The bind allocation mode value.
  *
  */
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBindAllocation
+OCI_SYM_PUBLIC OCI_BindAllocationMode OCI_API OCI_GetBindAllocation
 (
     OCI_Statement* stmt
 );
@@ -8681,10 +9023,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetBindAllocation
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetFetchSize
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetFetchSize
 (
     OCI_Statement* stmt,
-    unsigned int   size
+    OCI_UInt32   size
 );
 
 /**
@@ -8701,7 +9043,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetFetchSize
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetFetchSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetFetchSize
 (
     OCI_Statement* stmt
 );
@@ -8725,10 +9067,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetFetchSize
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetPrefetchSize
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetPrefetchSize
 (
     OCI_Statement* stmt,
-    unsigned int   size
+    OCI_UInt32   size
 );
 
 /**
@@ -8745,7 +9087,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetPrefetchSize
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPrefetchSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetPrefetchSize
 (
     OCI_Statement* stmt
 );
@@ -8773,10 +9115,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPrefetchSize
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetPrefetchMemory
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetPrefetchMemory
 (
     OCI_Statement* stmt,
-    unsigned int   size
+    OCI_UInt32   size
 );
 
 /**
@@ -8793,7 +9135,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetPrefetchMemory
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPrefetchMemory
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetPrefetchMemory
 (
     OCI_Statement* stmt
 );
@@ -8810,10 +9152,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPrefetchMemory
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetPieceSize
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetPieceSize
 (
     OCI_Statement* stmt,
-    unsigned int   size
+    OCI_UInt32   size
 );
 
 /**
@@ -8830,7 +9172,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetPieceSize
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPieceSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetPieceSize
 (
     OCI_Statement* stmt
 );
@@ -8857,10 +9199,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetPieceSize
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SetLongMode
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SetLongMode
 (
     OCI_Statement* stmt,
-    unsigned int   mode
+    OCI_LongMode   mode
 );
 
 /**
@@ -8877,7 +9219,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SetLongMode
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_GetLongMode
+OCI_SYM_PUBLIC OCI_LongMode OCI_API OCI_GetLongMode
 (
     OCI_Statement* stmt
 );
@@ -8902,7 +9244,7 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_StatementGetConnection
  * @} OcilibCApiStatementControl
  */
 
- /**
+/**
   * @defgroup OcilibCApiLobs Internal Large Objects (LOBs)
   * @{
   *
@@ -8935,12 +9277,12 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_StatementGetConnection
   * OCILIB, since version 2.1.0, supports this new limit.
   * For handling sizes and offsets up to 128 TB, 64-bit integers are required.
   *
-  * A scalar integer type has been introduced: big_uint (formerly lobsize_t).
+  * A scalar integer type has been introduced: OCI_UInt64 (formerly lobsize_t).
   * This type can be a 32-bit or 64-bit integer depending on:
   * - Compiler support for 64-bit integers (C99 compiler, MS compilers).
   * - Oracle client version.
   *
-  * big_uint will be a 64-bit integer:
+  * OCI_UInt64 will be a 64-bit integer:
   * - If the compiler supports it.
   * - If OCILIB is built with option OCI_IMPORT_LINKAGE and the Oracle version is >= 10.1.
   * - Or OCILIB is built with option OCI_IMPORT_RUNTIME (Oracle version is not known at
@@ -8951,7 +9293,7 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_StatementGetConnection
   *
   */
 
-  /**
+/**
    * @brief
    * Create a local temporary Lob instance
    *
@@ -8972,7 +9314,7 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_StatementGetConnection
 OCI_SYM_PUBLIC OCI_Lob* OCI_API OCI_LobCreate
 (
     OCI_Connection* con,
-    unsigned int    type
+    OCI_LobType     type
 );
 
 /**
@@ -8989,7 +9331,7 @@ OCI_SYM_PUBLIC OCI_Lob* OCI_API OCI_LobCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobFree
 (
     OCI_Lob* lob
 );
@@ -9013,8 +9355,8 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobFree
 OCI_SYM_PUBLIC OCI_Lob** OCI_API OCI_LobArrayCreate
 (
     OCI_Connection* con,
-    unsigned int    type,
-    unsigned int    nbelem
+    OCI_LobType     type,
+    OCI_UInt32    nbelem
 );
 
 /**
@@ -9032,7 +9374,7 @@ OCI_SYM_PUBLIC OCI_Lob** OCI_API OCI_LobArrayCreate
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobArrayFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobArrayFree
 (
     OCI_Lob** lobs
 );
@@ -9051,7 +9393,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobArrayFree
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobGetType
+OCI_SYM_PUBLIC OCI_LobType OCI_API OCI_LobGetType
 (
     OCI_Lob* lob
 );
@@ -9083,11 +9425,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobGetType
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobSeek
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobSeek
 (
-    OCI_Lob* lob,
-    big_uint     offset,
-    unsigned int mode
+    OCI_Lob    * lob,
+    OCI_UInt64     offset,
+    OCI_SeekMode mode
 );
 
 /**
@@ -9101,37 +9443,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobSeek
  *
  */
 
-OCI_SYM_PUBLIC big_uint OCI_API OCI_LobGetOffset
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_LobGetOffset
 (
     OCI_Lob* lob
-);
-
-/**
- * @brief
- * [OBSOLETE] Read a portion of a lob into the given buffer
- *
- * @param lob    - Lob handle
- * @param buffer - Pointer to a buffer
- * @param len    - Length of the buffer (in bytes or characters)
- *
- * @note
- * Length is expressed in:
- * - Bytes for BLOBs.
- * - Characters for CLOBs/NCLOBs.
- *
- * @warning
- * This call is obsolete. Use OCI_LobRead2() instead.
- *
- * @return
- * The number of bytes/characters read on success, or 0 on failure.
- *
- */
-
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobRead
-(
-    OCI_Lob* lob,
-    void* buffer,
-    unsigned int len
 );
 
 /**
@@ -9159,40 +9473,12 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobRead
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobRead2
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobRead
 (
-    OCI_Lob* lob,
-    void* buffer,
-    unsigned int* char_count,
-    unsigned int* byte_count
-);
-
-/**
- * @brief
- * [OBSOLETE] Write a buffer into a LOB
- *
- * @param lob    - Lob handle
- * @param buffer - Pointer to a buffer
- * @param len    - Length of the buffer (in bytes or characters)
- *
- * @note
- * Length is expressed in:
- * - Bytes for BLOBs.
- * - Characters for CLOBs/NCLOBs.
- *
- * @warning
- * This call is obsolete. Use OCI_LobWrite2() instead.
- *
- * @return
- * The number of bytes/characters written on success, or 0 on failure.
- *
- */
-
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobWrite
-(
-    OCI_Lob* lob,
-    void* buffer,
-    unsigned int len
+    OCI_Lob     * lob,
+    void        * buffer,
+    OCI_UInt32* char_count,
+    OCI_UInt32* byte_count
 );
 
 /**
@@ -9220,12 +9506,12 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobWrite
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobWrite2
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobWrite
 (
-    OCI_Lob* lob,
-    void* buffer,
-    unsigned int* char_count,
-    unsigned int* byte_count
+    OCI_Lob     * lob,
+    void        * buffer,
+    OCI_UInt32* char_count,
+    OCI_UInt32* byte_count
 );
 
 /**
@@ -9248,10 +9534,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobWrite2
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobTruncate
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobTruncate
 (
     OCI_Lob* lob,
-    big_uint size
+    OCI_UInt64 size
 );
 
 /**
@@ -9268,7 +9554,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobTruncate
  *
  */
 
-OCI_SYM_PUBLIC big_uint OCI_API OCI_LobGetLength
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_LobGetLength
 (
     OCI_Lob* lob
 );
@@ -9293,7 +9579,7 @@ OCI_SYM_PUBLIC big_uint OCI_API OCI_LobGetLength
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobGetChunkSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_LobGetChunkSize
 (
     OCI_Lob* lob
 );
@@ -9318,36 +9604,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobGetChunkSize
  *
  */
 
-OCI_SYM_PUBLIC big_uint OCI_API OCI_LobErase
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_LobErase
 (
     OCI_Lob* lob,
-    big_uint offset,
-    big_uint len
-);
-
-/**
- * @brief
- * Append a buffer at the end of a LOB
- *
- * @param lob    - Lob handle
- * @param buffer - Pointer to a buffer
- * @param len    - Length of the buffer (in bytes or characters)
- *
- * @note
- * Length is expressed in:
- * - Bytes for BLOBs.
- * - Characters for CLOBs.
- *
- * @return
- * The number of bytes/characters written on success, or 0 on failure.
- *
- */
-
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobAppend
-(
-    OCI_Lob* lob,
-    void* buffer,
-    unsigned int len
+    OCI_UInt64 offset,
+    OCI_UInt64 len
 );
 
 /**
@@ -9375,12 +9636,12 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_LobAppend
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobAppend2
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobAppend
 (
-    OCI_Lob* lob,
-    void* buffer,
-    unsigned int* char_count,
-    unsigned int* byte_count
+    OCI_Lob     * lob,
+    void        * buffer,
+    OCI_UInt32* char_count,
+    OCI_UInt32* byte_count
 );
 
 /**
@@ -9395,7 +9656,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobAppend2
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobAppendLob
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobAppendLob
 (
     OCI_Lob* lob,
     OCI_Lob* lob_src
@@ -9412,7 +9673,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobAppendLob
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsTemporary
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobIsTemporary
 (
     OCI_Lob* lob
 );
@@ -9439,13 +9700,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsTemporary
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobCopy
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobCopy
 (
     OCI_Lob* lob,
     OCI_Lob* lob_src,
-    big_uint offset_dst,
-    big_uint offset_src,
-    big_uint count
+    OCI_UInt64 offset_dst,
+    OCI_UInt64 offset_src,
+    OCI_UInt64 count
 );
 
 /**
@@ -9471,13 +9732,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobCopy
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobCopyFromFile
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobCopyFromFile
 (
-    OCI_Lob* lob,
+    OCI_Lob * lob,
     OCI_File* file,
-    big_uint  offset_dst,
-    big_uint  offset_src,
-    big_uint  count
+    OCI_UInt64  offset_dst,
+    OCI_UInt64  offset_src,
+    OCI_UInt64  count
 );
 
 /**
@@ -9502,10 +9763,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobCopyFromFile
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobOpen
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobOpen
 (
-    OCI_Lob* lob,
-    unsigned int mode
+    OCI_Lob   * lob,
+    OCI_LobMode mode
 );
 
 /**
@@ -9522,7 +9783,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobOpen
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobClose
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobClose
 (
     OCI_Lob* lob
 );
@@ -9539,7 +9800,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobClose
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsEqual
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobIsEqual
 (
     OCI_Lob* lob,
     OCI_Lob* lob2
@@ -9557,7 +9818,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsEqual
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobAssign
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobAssign
 (
     OCI_Lob* lob,
     OCI_Lob* lob_src
@@ -9574,7 +9835,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobAssign
  *
  */
 
-OCI_SYM_PUBLIC big_uint OCI_API OCI_LobGetMaxSize
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_LobGetMaxSize
 (
     OCI_Lob* lob
 );
@@ -9590,7 +9851,7 @@ OCI_SYM_PUBLIC big_uint OCI_API OCI_LobGetMaxSize
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobFlush
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobFlush
 (
     OCI_Lob* lob
 );
@@ -9619,10 +9880,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobFlush
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobEnableBuffering
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobEnableBuffering
 (
-    OCI_Lob* lob,
-    boolean  value
+    OCI_Lob   * lob,
+    OCI_Boolean value
 );
 
 /**
@@ -9655,7 +9916,7 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_LobGetConnection
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsRemote
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LobIsRemote
 (
     OCI_Lob* lob
 );
@@ -9664,7 +9925,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsRemote
  * @} OcilibCApiLobs
  */
 
- /**
+/**
   * @defgroup OcilibCApiFiles External Large Objects (FILEs)
   * @{
   *
@@ -9702,7 +9963,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsRemote
   *
   */
 
-  /**
+/**
    * @brief
    * Create a file object instance
    *
@@ -9722,7 +9983,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LobIsRemote
 OCI_SYM_PUBLIC OCI_File* OCI_API OCI_FileCreate
 (
     OCI_Connection* con,
-    unsigned int    type
+    OCI_FileType    type
 );
 
 /**
@@ -9739,7 +10000,7 @@ OCI_SYM_PUBLIC OCI_File* OCI_API OCI_FileCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FileFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FileFree
 (
     OCI_File* file
 );
@@ -9763,8 +10024,8 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FileFree
 OCI_SYM_PUBLIC OCI_File** OCI_API OCI_FileArrayCreate
 (
     OCI_Connection* con,
-    unsigned int    type,
-    unsigned int    nbelem
+    OCI_FileType    type,
+    OCI_UInt32    nbelem
 );
 
 /**
@@ -9781,7 +10042,7 @@ OCI_SYM_PUBLIC OCI_File** OCI_API OCI_FileArrayCreate
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FileArrayFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FileArrayFree
 (
     OCI_File** files
 );
@@ -9800,7 +10061,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FileArrayFree
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_FileGetType
+OCI_SYM_PUBLIC OCI_FileType OCI_API OCI_FileGetType
 (
     OCI_File* file
 );
@@ -9828,11 +10089,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_FileGetType
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FileSeek
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FileSeek
 (
-    OCI_File* file,
-    big_uint     offset,
-    unsigned int mode
+    OCI_File   * file,
+    OCI_UInt64     offset,
+    OCI_SeekMode mode
 );
 
 /**
@@ -9846,7 +10107,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FileSeek
  *
  */
 
-OCI_SYM_PUBLIC big_uint OCI_API OCI_FileGetOffset
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_FileGetOffset
 (
     OCI_File* file
 );
@@ -9864,11 +10125,11 @@ OCI_SYM_PUBLIC big_uint OCI_API OCI_FileGetOffset
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_FileRead
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_FileRead
 (
-    OCI_File* file,
-    void* buffer,
-    unsigned int len
+    OCI_File   * file,
+    void       * buffer,
+    OCI_UInt32 len
 );
 
 /**
@@ -9882,7 +10143,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_FileRead
  *
  */
 
-OCI_SYM_PUBLIC big_uint OCI_API OCI_FileGetSize
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_FileGetSize
 (
     OCI_File* file
 );
@@ -9901,7 +10162,7 @@ OCI_SYM_PUBLIC big_uint OCI_API OCI_FileGetSize
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FileExists
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FileExists
 (
     OCI_File* file
 );
@@ -9923,9 +10184,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FileExists
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FileSetName
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FileSetName
 (
-    OCI_File* file,
+    OCI_File   * file,
     const otext* dir,
     const otext* name
 );
@@ -9938,6 +10199,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FileSetName
  *
  * @return
  * The directory name, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_File handle and remains valid until
+ * OCI_FileFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -9954,6 +10220,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_FileGetDirectory
  *
  * @return
  * The file name, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_File handle and remains valid until
+ * OCI_FileFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -9973,7 +10244,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_FileGetName
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FileOpen
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FileOpen
 (
     OCI_File* file
 );
@@ -9989,7 +10260,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FileOpen
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FileIsOpen
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FileIsOpen
 (
     OCI_File* file
 );
@@ -10005,7 +10276,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FileIsOpen
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FileClose
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FileClose
 (
     OCI_File* file
 );
@@ -10022,7 +10293,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FileClose
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FileIsEqual
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FileIsEqual
 (
     OCI_File* file,
     OCI_File* file2
@@ -10040,7 +10311,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_FileIsEqual
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_FileAssign
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_FileAssign
 (
     OCI_File* file,
     OCI_File* file_src
@@ -10066,7 +10337,7 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_FileGetConnection
  * @} OcilibCApiFiles
  */
 
- /**
+/**
   * @defgroup OcilibCApiLongs Long objects
   * @{
   *
@@ -10097,7 +10368,7 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_FileGetConnection
   *
   */
 
-  /**
+/**
    * @brief
    * Create a local temporary Long instance
    *
@@ -10117,7 +10388,7 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_FileGetConnection
 OCI_SYM_PUBLIC OCI_Long* OCI_API OCI_LongCreate
 (
     OCI_Statement* stmt,
-    unsigned int   type
+    OCI_LongType   type
 );
 
 /**
@@ -10134,7 +10405,7 @@ OCI_SYM_PUBLIC OCI_Long* OCI_API OCI_LongCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_LongFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_LongFree
 (
     OCI_Long* lg
 );
@@ -10153,7 +10424,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_LongFree
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongGetType
+OCI_SYM_PUBLIC OCI_LongType OCI_API OCI_LongGetType
 (
     OCI_Long* lg
 );
@@ -10183,11 +10454,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongGetType
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongRead
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_LongRead
 (
-    OCI_Long* lg,
-    void* buffer,
-    unsigned int len
+    OCI_Long   * lg,
+    void       * buffer,
+    OCI_UInt32 len
 );
 
 /**
@@ -10204,11 +10475,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongRead
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongWrite
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_LongWrite
 (
-    OCI_Long* lg,
-    void* buffer,
-    unsigned int len
+    OCI_Long   * lg,
+    void       * buffer,
+    OCI_UInt32 len
 );
 
 /**
@@ -10222,7 +10493,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongWrite
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_LongGetSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_LongGetSize
 (
     OCI_Long* lg
 );
@@ -10247,7 +10518,7 @@ OCI_SYM_PUBLIC void* OCI_API OCI_LongGetBuffer
  * @} OcilibCApiLongs
  */
 
- /**
+/**
  * @defgroup OcilibCApiOracleNumber Oracle NUMBER manipulation (optional)
  * @{
  *
@@ -10261,15 +10532,11 @@ OCI_SYM_PUBLIC void* OCI_API OCI_LongGetBuffer
  *
  */
 
- /**
+/**
  * @brief
  * Create a local number object
  *
- * @param con - Connection handle
- *
- * @note
- * Parameter 'con' can be NULL in order to manipulate numbers
- * independently from database connections.
+ * @param env - Environment handle
  *
  * @return
  * The Number handle on success, or NULL on failure.
@@ -10278,7 +10545,7 @@ OCI_SYM_PUBLIC void* OCI_API OCI_LongGetBuffer
 
 OCI_SYM_PUBLIC OCI_Number* OCI_API OCI_NumberCreate
 (
-    OCI_Connection* con
+    OCI_Environment* env
 );
 
 /**
@@ -10295,7 +10562,7 @@ OCI_SYM_PUBLIC OCI_Number* OCI_API OCI_NumberCreate
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_NumberFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_NumberFree
 (
     OCI_Number* number
 );
@@ -10304,7 +10571,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_NumberFree
 * @brief
 * Create an array of Number objects
 *
-* @param con    - Connection handle
+* @param env    - Environment handle
 * @param nbelem - Number of elements in the array
 *
 * @note
@@ -10317,8 +10584,8 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_NumberFree
 
 OCI_SYM_PUBLIC OCI_Number** OCI_API OCI_NumberArrayCreate
 (
-    OCI_Connection* con,
-    unsigned int    nbelem
+    OCI_Environment* env,
+    OCI_UInt32     nbelem
 );
 
 /**
@@ -10335,7 +10602,7 @@ OCI_SYM_PUBLIC OCI_Number** OCI_API OCI_NumberArrayCreate
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_NumberArrayFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_NumberArrayFree
 (
     OCI_Number** numbers
 );
@@ -10352,7 +10619,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_NumberArrayFree
 *
 */
 
-OCI_SYM_PUBLIC int OCI_API OCI_NumberAssign
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_NumberAssign
 (
     OCI_Number* number,
     OCI_Number* number_src
@@ -10377,12 +10644,12 @@ OCI_SYM_PUBLIC int OCI_API OCI_NumberAssign
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_NumberToText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_NumberToText
 (
-    OCI_Number* number,
+    OCI_Number * number,
     const otext* fmt,
-    int          size,
-    otext* str
+    OCI_Int32          size,
+    otext      * str
 );
 
 /**
@@ -10403,9 +10670,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_NumberToText
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_NumberFromText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_NumberFromText
 (
-    OCI_Number* number,
+    OCI_Number * number,
     const otext* str,
     const otext* fmt
 );
@@ -10446,9 +10713,9 @@ OCI_SYM_PUBLIC unsigned char* OCI_API OCI_NumberGetContent
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSetContent
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_NumberSetContent
 (
-    OCI_Number* number,
+    OCI_Number   * number,
     unsigned char* content
 );
 
@@ -10463,12 +10730,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSetContent
 * @note
 * Argument 'type' can be:
 *
-* - OCI_NUM_SHORT     : value is a pointer to a signed short.
-* - OCI_NUM_USHORT    : value is a pointer to an unsigned short.
-* - OCI_NUM_INT       : value is a pointer to a signed int.
-* - OCI_NUM_UINT      : value is a pointer to an unsigned int.
-* - OCI_NUM_BIGINT    : value is a pointer to a signed big_int.
-* - OCI_NUM_BIGUINT   : value is a pointer to an unsigned big_uint.
+* - OCI_NUM_SHORT     : value is a pointer to a signed OCI_Int16.
+* - OCI_NUM_USHORT    : value is a pointer to an OCI_UInt16.
+* - OCI_NUM_INT       : value is a pointer to a signed OCI_Int32.
+* - OCI_NUM_UINT      : value is a pointer to an OCI_UInt32.
+* - OCI_NUM_BIGINT    : value is a pointer to a signed OCI_Int64.
+* - OCI_NUM_BIGUINT   : value is a pointer to an OCI_UInt64.
 * - OCI_NUM_FLOAT     : value is a pointer to a float.
 * - OCI_NUM_DOUBLE    : value is a pointer to a double.
 * - OCI_NUM_NUMBER    : value is a pointer to the return value of OCI_NumberGetContent().
@@ -10478,11 +10745,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSetContent
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSetValue
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_NumberSetValue
 (
-    OCI_Number* number,
-    unsigned int type,
-    void* value
+    OCI_Number    * number,
+    OCI_NumericType type,
+    void          * value
 );
 
 /**
@@ -10501,11 +10768,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSetValue
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_NumberGetValue
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_NumberGetValue
 (
-    OCI_Number* number,
-    unsigned int type,
-    void* value
+    OCI_Number    * number,
+    OCI_NumericType type,
+    void          * value
 );
 
 /**
@@ -10524,11 +10791,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_NumberGetValue
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_NumberAdd
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_NumberAdd
 (
-    OCI_Number* number,
-    unsigned int type,
-    void* value
+    OCI_Number    * number,
+    OCI_NumericType type,
+    void          * value
 );
 
 /**
@@ -10547,11 +10814,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_NumberAdd
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSub
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_NumberSub
 (
-    OCI_Number* number,
-    unsigned int type,
-    void* value
+    OCI_Number    * number,
+    OCI_NumericType type,
+    void          * value
 );
 
 /**
@@ -10570,11 +10837,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_NumberSub
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_NumberMultiply
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_NumberMultiply
 (
-    OCI_Number* number,
-    unsigned int type,
-    void* value
+    OCI_Number    * number,
+    OCI_NumericType type,
+    void          * value
 );
 
 /**
@@ -10593,11 +10860,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_NumberMultiply
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_NumberDivide
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_NumberDivide
 (
-    OCI_Number* number,
-    unsigned int type,
-    void* value
+    OCI_Number    * number,
+    OCI_NumericType type,
+    void          * value
 );
 
 /**
@@ -10614,7 +10881,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_NumberDivide
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_NumberCompare
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_NumberCompare
 (
     OCI_Number* number1,
     OCI_Number* number2
@@ -10624,8 +10891,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_NumberCompare
  * @} OcilibCApiOracleNumber
  */
 
-
- /**
+/**
   * @defgroup OcilibCApiDatetimes Date/time manipulation
   * @{
   *
@@ -10638,15 +10904,11 @@ OCI_SYM_PUBLIC int OCI_API OCI_NumberCompare
   *
   */
 
-  /**
+/**
    * @brief
    * Create a local date object
    *
-   * @param con - Connection handle
-   *
-   * @note
-   * From version 2.5.0, parameter 'con' can be NULL in order to manipulate dates
-   * independently from database connections.
+   * @param env - Environment handle
    *
    * @return
    * The Date handle on success, or NULL on failure.
@@ -10655,7 +10917,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_NumberCompare
 
 OCI_SYM_PUBLIC OCI_Date* OCI_API OCI_DateCreate
 (
-    OCI_Connection* con
+    OCI_Environment* env
 );
 
 /**
@@ -10672,7 +10934,7 @@ OCI_SYM_PUBLIC OCI_Date* OCI_API OCI_DateCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateFree
 (
     OCI_Date* date
 );
@@ -10681,7 +10943,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateFree
  * @brief
  * Create an array of Date objects
  *
- * @param con    - Connection handle
+ * @param env    - Environment handle
  * @param nbelem - Number of elements in the array
  *
  * @note
@@ -10694,8 +10956,8 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateFree
 
 OCI_SYM_PUBLIC OCI_Date** OCI_API OCI_DateArrayCreate
 (
-    OCI_Connection* con,
-    unsigned int    nbelem
+    OCI_Environment* env,
+    OCI_UInt32     nbelem
 );
 
 /**
@@ -10712,7 +10974,7 @@ OCI_SYM_PUBLIC OCI_Date** OCI_API OCI_DateArrayCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateArrayFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateArrayFree
 (
     OCI_Date** dates
 );
@@ -10729,10 +10991,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateArrayFree
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateAddDays
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateAddDays
 (
     OCI_Date* date,
-    int       nb
+    OCI_Int32       nb
 );
 
 /**
@@ -10747,10 +11009,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateAddDays
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateAddMonths
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateAddMonths
 (
     OCI_Date* date,
-    int       nb
+    OCI_Int32       nb
 );
 
 /**
@@ -10765,7 +11027,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateAddMonths
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_DateAssign
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_DateAssign
 (
     OCI_Date* date,
     OCI_Date* date_src
@@ -10783,7 +11045,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_DateAssign
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_DateCheck
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_DateCheck
 (
     OCI_Date* date
 );
@@ -10802,7 +11064,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_DateCheck
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_DateCompare
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_DateCompare
 (
     OCI_Date* date,
     OCI_Date* date2
@@ -10822,7 +11084,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_DateCompare
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_DateDaysBetween
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_DateDaysBetween
 (
     OCI_Date* date,
     OCI_Date* date2
@@ -10841,9 +11103,9 @@ OCI_SYM_PUBLIC int OCI_API OCI_DateDaysBetween
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateFromText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateFromText
 (
-    OCI_Date* date,
+    OCI_Date   * date,
     const otext* str,
     const otext* fmt
 );
@@ -10862,12 +11124,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateFromText
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateToText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateToText
 (
-    OCI_Date* date,
+    OCI_Date   * date,
     const otext* fmt,
-    int          size,
-    otext* str
+    OCI_Int32          size,
+    otext      * str
 );
 
 /**
@@ -10884,12 +11146,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateToText
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateGetDate
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateGetDate
 (
     OCI_Date* date,
-    int* year,
-    int* month,
-    int* day
+    OCI_Int32     * year,
+    OCI_Int32     * month,
+    OCI_Int32     * day
 );
 
 /**
@@ -10906,12 +11168,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateGetDate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateGetTime
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateGetTime
 (
     OCI_Date* date,
-    int* hour,
-    int* min,
-    int* sec
+    OCI_Int32     * hour,
+    OCI_Int32     * min,
+    OCI_Int32     * sec
 );
 
 /**
@@ -10931,15 +11193,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateGetTime
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateGetDateTime
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateGetDateTime
 (
     OCI_Date* date,
-    int* year,
-    int* month,
-    int* day,
-    int* hour,
-    int* min,
-    int* sec
+    OCI_Int32     * year,
+    OCI_Int32     * month,
+    OCI_Int32     * day,
+    OCI_Int32     * hour,
+    OCI_Int32     * min,
+    OCI_Int32     * sec
 );
 
 /**
@@ -10956,12 +11218,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateGetDateTime
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateSetDate
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateSetDate
 (
     OCI_Date* date,
-    int       year,
-    int       month,
-    int       day
+    OCI_Int32       year,
+    OCI_Int32       month,
+    OCI_Int32       day
 );
 
 /**
@@ -10978,12 +11240,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateSetDate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateSetTime
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateSetTime
 (
     OCI_Date* date,
-    int       hour,
-    int       min,
-    int       sec
+    OCI_Int32       hour,
+    OCI_Int32       min,
+    OCI_Int32       sec
 );
 
 /**
@@ -11003,15 +11265,15 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateSetTime
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateSetDateTime
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateSetDateTime
 (
     OCI_Date* date,
-    int       year,
-    int       month,
-    int       day,
-    int       hour,
-    int       min,
-    int       sec
+    OCI_Int32       year,
+    OCI_Int32       month,
+    OCI_Int32       day,
+    OCI_Int32       hour,
+    OCI_Int32       min,
+    OCI_Int32       sec
 );
 
 /**
@@ -11025,7 +11287,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateSetDateTime
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateLastDay
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateLastDay
 (
     OCI_Date* date
 );
@@ -11042,9 +11304,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateLastDay
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateNextDay
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateNextDay
 (
-    OCI_Date* date,
+    OCI_Date   * date,
     const otext* day
 );
 
@@ -11059,7 +11321,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateNextDay
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateSysDate
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateSysDate
 (
     OCI_Date* date
 );
@@ -11077,9 +11339,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateSysDate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateZoneToZone
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateZoneToZone
 (
-    OCI_Date* date,
+    OCI_Date   * date,
     const otext* zone1,
     const otext* zone2
 );
@@ -11100,11 +11362,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateZoneToZone
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateToCTime
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateToCTime
 (
-    OCI_Date* date,
+    OCI_Date * date,
     struct tm* ptm,
-    time_t* pt
+    time_t   * pt
 );
 
 /**
@@ -11125,9 +11387,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateToCTime
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DateFromCTime
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DateFromCTime
 (
-    OCI_Date* date,
+    OCI_Date * date,
     struct tm* ptm,
     time_t     t
 );
@@ -11136,7 +11398,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateFromCTime
  * @} OcilibCApiDatetimes
  */
 
- /**
+/**
   * @defgroup OcilibCApiTimestamps Timestamps and intervals manipulation
   * @{
   *
@@ -11153,16 +11415,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateFromCTime
   *
   */
 
-  /**
+/**
    * @brief
    * Create a local Timestamp instance
    *
-   * @param con  - Connection handle
+   * @param env  - Environment handle
    * @param type - Timestamp type
-   *
-   * @note
-   * From version 2.5.0, parameter 'con' can be NULL in order to manipulate
-   * timestamps independently from database connections.
    *
    * @note
    * Timestamp type can be:
@@ -11178,8 +11436,8 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DateFromCTime
 
 OCI_SYM_PUBLIC OCI_Timestamp* OCI_API OCI_TimestampCreate
 (
-    OCI_Connection* con,
-    unsigned int    type
+    OCI_Environment * env,
+    OCI_TimestampType type
 );
 
 /**
@@ -11196,7 +11454,7 @@ OCI_SYM_PUBLIC OCI_Timestamp* OCI_API OCI_TimestampCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampFree
 (
     OCI_Timestamp* tmsp
 );
@@ -11205,7 +11463,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampFree
  * @brief
  * Create an array of Timestamp objects
  *
- * @param con    - Connection handle
+ * @param env    - Environment handle
  * @param type   - Timestamp type
  * @param nbelem - Number of elements in the array
  *
@@ -11219,9 +11477,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampFree
 
 OCI_SYM_PUBLIC OCI_Timestamp** OCI_API OCI_TimestampArrayCreate
 (
-    OCI_Connection* con,
-    unsigned int    type,
-    unsigned int    nbelem
+    OCI_Environment * env,
+    OCI_TimestampType type,
+    OCI_UInt32      nbelem
 );
 
 /**
@@ -11239,7 +11497,7 @@ OCI_SYM_PUBLIC OCI_Timestamp** OCI_API OCI_TimestampArrayCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampArrayFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampArrayFree
 (
     OCI_Timestamp** tmsps
 );
@@ -11258,7 +11516,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampArrayFree
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_TimestampGetType
+OCI_SYM_PUBLIC OCI_TimestampType OCI_API OCI_TimestampGetType
 (
     OCI_Timestamp* tmsp
 );
@@ -11278,7 +11536,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_TimestampGetType
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampAssign
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampAssign
 (
     OCI_Timestamp* tmsp,
     OCI_Timestamp* tmsp_src
@@ -11296,7 +11554,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampAssign
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_TimestampCheck
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_TimestampCheck
 (
     OCI_Timestamp* tmsp
 );
@@ -11315,7 +11573,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_TimestampCheck
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_TimestampCompare
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_TimestampCompare
 (
     OCI_Timestamp* tmsp,
     OCI_Timestamp* tmsp2
@@ -11340,17 +11598,17 @@ OCI_SYM_PUBLIC int OCI_API OCI_TimestampCompare
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampConstruct
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampConstruct
 (
     OCI_Timestamp* tmsp,
-    int            year,
-    int            month,
-    int            day,
-    int            hour,
-    int            min,
-    int            sec,
-    int            fsec,
-    const otext* time_zone
+    OCI_Int32            year,
+    OCI_Int32            month,
+    OCI_Int32            day,
+    OCI_Int32            hour,
+    OCI_Int32            min,
+    OCI_Int32            sec,
+    OCI_Int32            fsec,
+    const otext  * time_zone
 );
 
 /**
@@ -11365,7 +11623,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampConstruct
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampConvert
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampConvert
 (
     OCI_Timestamp* tmsp,
     OCI_Timestamp* tmsp_src
@@ -11384,11 +11642,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampConvert
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampFromText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampFromText
 (
     OCI_Timestamp* tmsp,
-    const otext* str,
-    const otext* fmt
+    const otext  * str,
+    const otext  * fmt
 );
 
 /**
@@ -11406,13 +11664,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampFromText
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampToText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampToText
 (
     OCI_Timestamp* tmsp,
-    const otext* fmt,
-    int            size,
-    otext* str,
-    int            precision
+    const otext  * fmt,
+    OCI_Int32            size,
+    otext        * str,
+    OCI_Int32            precision
 );
 
 /**
@@ -11429,12 +11687,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampToText
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetDate
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampGetDate
 (
     OCI_Timestamp* tmsp,
-    int* year,
-    int* month,
-    int* day
+    OCI_Int32          * year,
+    OCI_Int32          * month,
+    OCI_Int32          * day
 );
 
 /**
@@ -11452,13 +11710,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetDate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetTime
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampGetTime
 (
     OCI_Timestamp* tmsp,
-    int* hour,
-    int* min,
-    int* sec,
-    int* fsec
+    OCI_Int32          * hour,
+    OCI_Int32          * min,
+    OCI_Int32          * sec,
+    OCI_Int32          * fsec
 );
 
 /**
@@ -11479,16 +11737,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetTime
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetDateTime
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampGetDateTime
 (
     OCI_Timestamp* tmsp,
-    int* year,
-    int* month,
-    int* day,
-    int* hour,
-    int* min,
-    int* sec,
-    int* fsec
+    OCI_Int32          * year,
+    OCI_Int32          * month,
+    OCI_Int32          * day,
+    OCI_Int32          * hour,
+    OCI_Int32          * min,
+    OCI_Int32          * sec,
+    OCI_Int32          * fsec
 );
 
 /**
@@ -11504,11 +11762,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetDateTime
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetTimeZoneName
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampGetTimeZoneName
 (
     OCI_Timestamp* tmsp,
-    int            size,
-    otext* str
+    OCI_Int32            size,
+    otext        * str
 );
 
 /**
@@ -11524,11 +11782,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetTimeZoneName
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetTimeZoneOffset
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampGetTimeZoneOffset
 (
     OCI_Timestamp* tmsp,
-    int* hour,
-    int* min
+    OCI_Int32          * hour,
+    OCI_Int32          * min
 );
 
 /**
@@ -11543,10 +11801,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampGetTimeZoneOffset
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampIntervalAdd
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampIntervalAdd
 (
     OCI_Timestamp* tmsp,
-    OCI_Interval* itv
+    OCI_Interval * itv
 );
 
 /**
@@ -11561,10 +11819,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampIntervalAdd
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampIntervalSub
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampIntervalSub
 (
     OCI_Timestamp* tmsp,
-    OCI_Interval* itv
+    OCI_Interval * itv
 );
 
 /**
@@ -11583,11 +11841,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampIntervalSub
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampSubtract
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampSubtract
 (
     OCI_Timestamp* tmsp,
     OCI_Timestamp* tmsp2,
-    OCI_Interval* itv
+    OCI_Interval * itv
 );
 
 /**
@@ -11602,7 +11860,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampSubtract
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampSysTimestamp
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampSysTimestamp
 (
     OCI_Timestamp* tmsp
 );
@@ -11623,11 +11881,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampSysTimestamp
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampToCTime
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampToCTime
 (
     OCI_Timestamp* tmsp,
-    struct tm* ptm,
-    time_t* pt
+    struct tm    * ptm,
+    time_t       * pt
 );
 
 /**
@@ -11648,10 +11906,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampToCTime
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampFromCTime
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TimestampFromCTime
 (
     OCI_Timestamp* tmsp,
-    struct tm* ptm,
+    struct tm    * ptm,
     time_t         t
 );
 
@@ -11659,12 +11917,8 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampFromCTime
  * @brief
  * Create a local interval object
  *
- * @param con  - Connection handle
+ * @param env  - Environment handle
  * @param type - Type of Interval
- *
- * @note
- * From version 2.5.0, parameter 'con' can be NULL in order to manipulate
- * intervals independently from database connections.
  *
  * @note
  * Interval type can be:
@@ -11678,8 +11932,8 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TimestampFromCTime
 
 OCI_SYM_PUBLIC OCI_Interval* OCI_API OCI_IntervalCreate
 (
-    OCI_Connection* con,
-    unsigned int    type
+    OCI_Environment* env,
+    OCI_IntervalType type
 );
 
 /**
@@ -11697,7 +11951,7 @@ OCI_SYM_PUBLIC OCI_Interval* OCI_API OCI_IntervalCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalFree
 (
     OCI_Interval* itv
 );
@@ -11706,7 +11960,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalFree
  * @brief
  * Create an array of Interval objects
  *
- * @param con    - Connection handle
+ * @param env    - Environment handle
  * @param type   - Type of Interval
  * @param nbelem - Number of elements in the array
  *
@@ -11720,9 +11974,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalFree
 
 OCI_SYM_PUBLIC OCI_Interval** OCI_API OCI_IntervalArrayCreate
 (
-    OCI_Connection* con,
-    unsigned int    type,
-    unsigned int    nbelem
+    OCI_Environment* env,
+    OCI_IntervalType type,
+    OCI_UInt32     nbelem
 );
 
 /**
@@ -11740,7 +11994,7 @@ OCI_SYM_PUBLIC OCI_Interval** OCI_API OCI_IntervalArrayCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalArrayFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalArrayFree
 (
     OCI_Interval** itvs
 );
@@ -11759,7 +12013,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalArrayFree
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_IntervalGetType
+OCI_SYM_PUBLIC OCI_IntervalType OCI_API OCI_IntervalGetType
 (
     OCI_Interval* itv
 );
@@ -11776,7 +12030,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_IntervalGetType
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalAssign
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalAssign
 (
     OCI_Interval* itv,
     OCI_Interval* itv_src
@@ -11794,7 +12048,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalAssign
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_IntervalCheck
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_IntervalCheck
 (
     OCI_Interval* itv
 );
@@ -11813,7 +12067,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_IntervalCheck
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_IntervalCompare
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_IntervalCompare
 (
     OCI_Interval* itv,
     OCI_Interval* itv2
@@ -11831,10 +12085,10 @@ OCI_SYM_PUBLIC int OCI_API OCI_IntervalCompare
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalFromText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalFromText
 (
     OCI_Interval* itv,
-    const otext* str
+    const otext * str
 );
 
 /**
@@ -11852,13 +12106,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalFromText
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalToText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalToText
 (
     OCI_Interval* itv,
-    int           leading_prec,
-    int           fraction_prec,
-    int           size,
-    otext* str
+    OCI_Int32           leading_prec,
+    OCI_Int32           fraction_prec,
+    OCI_Int32           size,
+    otext       * str
 );
 
 /**
@@ -11873,10 +12127,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalToText
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalFromTimeZone
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalFromTimeZone
 (
     OCI_Interval* itv,
-    const otext* str
+    const otext * str
 );
 
 /**
@@ -11895,14 +12149,14 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalFromTimeZone
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalGetDaySecond
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalGetDaySecond
 (
     OCI_Interval* itv,
-    int* day,
-    int* hour,
-    int* min,
-    int* sec,
-    int* nsec
+    OCI_Int32         * day,
+    OCI_Int32         * hour,
+    OCI_Int32         * min,
+    OCI_Int32         * sec,
+    OCI_Int32         * nsec
 );
 
 /**
@@ -11918,11 +12172,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalGetDaySecond
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalGetYearMonth
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalGetYearMonth
 (
     OCI_Interval* itv,
-    int* year,
-    int* month
+    OCI_Int32         * year,
+    OCI_Int32         * month
 );
 
 /**
@@ -11941,14 +12195,14 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalGetYearMonth
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSetDaySecond
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalSetDaySecond
 (
     OCI_Interval* itv,
-    int           day,
-    int           hour,
-    int           min,
-    int           sec,
-    int           fsec
+    OCI_Int32           day,
+    OCI_Int32           hour,
+    OCI_Int32           min,
+    OCI_Int32           sec,
+    OCI_Int32           fsec
 );
 
 /**
@@ -11964,11 +12218,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSetDaySecond
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSetYearMonth
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalSetYearMonth
 (
     OCI_Interval* itv,
-    int           year,
-    int           month
+    OCI_Int32           year,
+    OCI_Int32           month
 );
 
 /**
@@ -11983,7 +12237,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSetYearMonth
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalAdd
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalAdd
 (
     OCI_Interval* itv,
     OCI_Interval* itv2
@@ -12001,7 +12255,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalAdd
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSubtract
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalSubtract
 (
     OCI_Interval* itv,
     OCI_Interval* itv2
@@ -12011,7 +12265,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSubtract
  * @} OcilibCApiTimestamps
  */
 
- /**
+/**
   * @defgroup OcilibCApiUserTypes Oracle Named Types (Oracle OBJECTs)
   * @{
   *
@@ -12054,11 +12308,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSubtract
   *
   */
 
-  /**
+/**
    * @brief
    * Create a local object instance
    *
-   * @param con    - Connection handle
    * @param typinf - Object type (type info handle)
    *
    * @return
@@ -12068,8 +12321,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_IntervalSubtract
 
 OCI_SYM_PUBLIC OCI_Object* OCI_API OCI_ObjectCreate
 (
-    OCI_Connection* con,
-    OCI_TypeInfo* typinf
+    OCI_TypeInfo * typinf
 );
 
 /**
@@ -12087,7 +12339,7 @@ OCI_SYM_PUBLIC OCI_Object* OCI_API OCI_ObjectCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectFree
 (
     OCI_Object* obj
 );
@@ -12096,7 +12348,6 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectFree
  * @brief
  * Create an array of Object objects
  *
- * @param con    - Connection handle
  * @param typinf - Object type (type info handle)
  * @param nbelem - Number of elements in the array
  *
@@ -12110,9 +12361,8 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectFree
 
 OCI_SYM_PUBLIC OCI_Object** OCI_API OCI_ObjectArrayCreate
 (
-    OCI_Connection* con,
-    OCI_TypeInfo* typinf,
-    unsigned int    nbelem
+    OCI_TypeInfo * typinf,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -12130,7 +12380,7 @@ OCI_SYM_PUBLIC OCI_Object** OCI_API OCI_ObjectArrayCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectArrayFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectArrayFree
 (
     OCI_Object** objs
 );
@@ -12153,7 +12403,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectArrayFree
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectAssign
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectAssign
 (
     OCI_Object* obj,
     OCI_Object* obj_src
@@ -12177,7 +12427,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectAssign
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ObjectGetType
+OCI_SYM_PUBLIC OCI_ObjectType OCI_API OCI_ObjectGetType
 (
     OCI_Object* obj
 );
@@ -12199,10 +12449,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ObjectGetType
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectGetSelfRef
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectGetSelfRef
 (
     OCI_Object* obj,
-    OCI_Ref* ref
+    OCI_Ref   * ref
 );
 
 /**
@@ -12223,7 +12473,7 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_ObjectGetTypeInfo
 
 /**
  * @brief
- * Return the boolean value of the given object attribute (ONLY for PL/SQL records)
+ * Return the OCI_Boolean value of the given object attribute (ONLY for PL/SQL records)
  *
  * @param obj  - Object handle
  * @param attr - Attribute name
@@ -12231,7 +12481,7 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_ObjectGetTypeInfo
  * @note
  * If the attribute is found in the object descriptor attributes list, then a
  * data type check is performed for integrity.
- * OCI_ObjectGetBoolean() returns a valid value only for PL/SQL boolean-based attributes.
+ * OCI_ObjectGetBoolean() returns a valid value only for PL/SQL OCI_Boolean-based attributes.
  *
  * @warning
  * Only supported by Oracle 12c and above.
@@ -12241,9 +12491,9 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_ObjectGetTypeInfo
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectGetBoolean
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectGetBoolean
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12266,13 +12516,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectGetBoolean
 
 OCI_SYM_PUBLIC OCI_Number* OCI_API OCI_ObjectGetNumber
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
 /**
  * @brief
- * Return the short value of the given object attribute
+ * Return the OCI_Int16 value of the given object attribute
  *
  * @param obj  - Object handle
  * @param attr - Attribute name
@@ -12287,15 +12537,15 @@ OCI_SYM_PUBLIC OCI_Number* OCI_API OCI_ObjectGetNumber
  *
  */
 
-OCI_SYM_PUBLIC short OCI_API OCI_ObjectGetShort
+OCI_SYM_PUBLIC OCI_Int16 OCI_API OCI_ObjectGetShort
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
 /**
  * @brief
- * Return the unsigned short value of the given object attribute
+ * Return the OCI_UInt16 value of the given object attribute
  *
  * @param obj  - Object handle
  * @param attr - Attribute name
@@ -12310,9 +12560,9 @@ OCI_SYM_PUBLIC short OCI_API OCI_ObjectGetShort
  *
  */
 
-OCI_SYM_PUBLIC unsigned short OCI_API OCI_ObjectGetUnsignedShort
+OCI_SYM_PUBLIC OCI_UInt16 OCI_API OCI_ObjectGetUnsignedShort
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12333,15 +12583,15 @@ OCI_SYM_PUBLIC unsigned short OCI_API OCI_ObjectGetUnsignedShort
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_ObjectGetInt
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_ObjectGetInt
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
 /**
  * @brief
- * Return the unsigned integer value of the given object attribute
+ * Return the OCI_UInt32eger value of the given object attribute
  *
  * @param obj  - Object handle
  * @param attr - Attribute name
@@ -12356,9 +12606,9 @@ OCI_SYM_PUBLIC int OCI_API OCI_ObjectGetInt
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ObjectGetUnsignedInt
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_ObjectGetUnsignedInt
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12379,9 +12629,9 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ObjectGetUnsignedInt
  *
  */
 
-OCI_SYM_PUBLIC big_int OCI_API OCI_ObjectGetBigInt
+OCI_SYM_PUBLIC OCI_Int64 OCI_API OCI_ObjectGetBigInt
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12402,9 +12652,9 @@ OCI_SYM_PUBLIC big_int OCI_API OCI_ObjectGetBigInt
  *
  */
 
-OCI_SYM_PUBLIC big_uint OCI_API OCI_ObjectGetUnsignedBigInt
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_ObjectGetUnsignedBigInt
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12427,7 +12677,7 @@ OCI_SYM_PUBLIC big_uint OCI_API OCI_ObjectGetUnsignedBigInt
 
 OCI_SYM_PUBLIC double OCI_API OCI_ObjectGetDouble
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12450,7 +12700,7 @@ OCI_SYM_PUBLIC double OCI_API OCI_ObjectGetDouble
 
 OCI_SYM_PUBLIC float OCI_API OCI_ObjectGetFloat
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12469,11 +12719,16 @@ OCI_SYM_PUBLIC float OCI_API OCI_ObjectGetFloat
  * @return
  * The attribute value, or NULL on failure.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Object handle and remains valid until
+ * the next attribute getter call for the same attribute, or OCI_ObjectFree() is called.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_ObjectGetString
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12497,12 +12752,12 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ObjectGetString
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_ObjectGetRaw
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_ObjectGetRaw
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    void* value,
-    unsigned int len
+    void       * value,
+    OCI_UInt32 len
 );
 
 /**
@@ -12522,9 +12777,9 @@ OCI_SYM_PUBLIC int OCI_API OCI_ObjectGetRaw
 *
 */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_ObjectGetRawSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_ObjectGetRawSize
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12547,7 +12802,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_ObjectGetRawSize
 
 OCI_SYM_PUBLIC OCI_Date* OCI_API OCI_ObjectGetDate
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12570,7 +12825,7 @@ OCI_SYM_PUBLIC OCI_Date* OCI_API OCI_ObjectGetDate
 
 OCI_SYM_PUBLIC OCI_Timestamp* OCI_API OCI_ObjectGetTimestamp
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12593,7 +12848,7 @@ OCI_SYM_PUBLIC OCI_Timestamp* OCI_API OCI_ObjectGetTimestamp
 
 OCI_SYM_PUBLIC OCI_Interval* OCI_API OCI_ObjectGetInterval
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12616,7 +12871,7 @@ OCI_SYM_PUBLIC OCI_Interval* OCI_API OCI_ObjectGetInterval
 
 OCI_SYM_PUBLIC OCI_Coll* OCI_API OCI_ObjectGetColl
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12639,7 +12894,7 @@ OCI_SYM_PUBLIC OCI_Coll* OCI_API OCI_ObjectGetColl
 
 OCI_SYM_PUBLIC OCI_Ref* OCI_API OCI_ObjectGetRef
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12662,7 +12917,7 @@ OCI_SYM_PUBLIC OCI_Ref* OCI_API OCI_ObjectGetRef
 
 OCI_SYM_PUBLIC OCI_Object* OCI_API OCI_ObjectGetObject
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12685,7 +12940,7 @@ OCI_SYM_PUBLIC OCI_Object* OCI_API OCI_ObjectGetObject
 
 OCI_SYM_PUBLIC OCI_Lob* OCI_API OCI_ObjectGetLob
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -12708,13 +12963,13 @@ OCI_SYM_PUBLIC OCI_Lob* OCI_API OCI_ObjectGetLob
 
 OCI_SYM_PUBLIC OCI_File* OCI_API OCI_ObjectGetFile
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
 /**
  * @brief
- * Set an object attribute of type boolean (ONLY for PL/SQL records)
+ * Set an object attribute of type OCI_Boolean (ONLY for PL/SQL records)
  *
  * @param obj    - Object handle
  * @param attr   - Attribute name
@@ -12728,11 +12983,11 @@ OCI_SYM_PUBLIC OCI_File* OCI_API OCI_ObjectGetFile
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetBoolean
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetBoolean
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    boolean      value
+    OCI_Boolean  value
 );
 
 /**
@@ -12748,16 +13003,16 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetBoolean
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetNumber
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetNumber
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    OCI_Number* value
+    OCI_Number * value
 );
 
 /**
  * @brief
- * Set an object attribute of type short
+ * Set an object attribute of type OCI_Int16
  *
  * @param obj    - Object handle
  * @param attr   - Attribute name
@@ -12768,36 +13023,36 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetNumber
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetShort
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetShort
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    short        value
+    OCI_Int16        value
 );
 
 /**
  * @brief
- * Set an object attribute of type unsigned short
+ * Set an object attribute of type OCI_UInt16
  *
  * @param obj    - Object handle
  * @param attr   - Attribute name
- * @param value  - Unsigned short value
+ * @param value  - Unsigned OCI_Int16 value
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetUnsignedShort
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetUnsignedShort
 (
-    OCI_Object* obj,
-    const otext* attr,
-    unsigned short value
+    OCI_Object   * obj,
+    const otext  * attr,
+    OCI_UInt16 value
 );
 
 /**
  * @brief
- * Set an object attribute of type int
+ * Set an object attribute of type OCI_Int32
  *
  * @param obj    - Object handle
  * @param attr   - Attribute name
@@ -12808,71 +13063,71 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetUnsignedShort
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetInt
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    int          value
+    OCI_Int32          value
 );
 
 /**
  * @brief
- * Set an object attribute of type unsigned int
+ * Set an object attribute of type OCI_UInt32
  *
  * @param obj    - Object handle
  * @param attr   - Attribute name
- * @param value  - Unsigned int value
+ * @param value  - Unsigned OCI_Int32 value
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetUnsignedInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetUnsignedInt
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    unsigned int value
+    OCI_UInt32 value
 );
 
 /**
  * @brief
- * Set an object attribute of type big int
+ * Set an object attribute of type OCI_Int64
  *
  * @param obj    - Object handle
  * @param attr   - Attribute name
- * @param value  - Big int value
+ * @param value  - Big OCI_Int32 value
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetBigInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetBigInt
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    big_int      value
+    OCI_Int64      value
 );
 
 /**
  * @brief
- * Set an object attribute of type unsigned big int
+ * Set an object attribute of type OCI_UInt64
  *
  * @param obj    - Object handle
  * @param attr   - Attribute name
- * @param value  - Unsigned big int value
+ * @param value  - Unsigned OCI_Int64 value
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetUnsignedBigInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetUnsignedBigInt
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    big_uint     value
+    OCI_UInt64     value
 );
 
 /**
@@ -12888,9 +13143,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetUnsignedBigInt
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetDouble
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetDouble
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
     double       value
 );
@@ -12908,9 +13163,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetDouble
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetFloat
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetFloat
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
     float        value
 );
@@ -12931,9 +13186,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetFloat
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetString
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetString
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
     const otext* value
 );
@@ -12955,12 +13210,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetString
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetRaw
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetRaw
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    void* value,
-    unsigned int len
+    void       * value,
+    OCI_UInt32 len
 );
 
 /**
@@ -12979,11 +13234,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetRaw
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetDate
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetDate
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    OCI_Date* value
+    OCI_Date   * value
 );
 
 /**
@@ -13002,10 +13257,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetDate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetTimestamp
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetTimestamp
 (
-    OCI_Object* obj,
-    const otext* attr,
+    OCI_Object   * obj,
+    const otext  * attr,
     OCI_Timestamp* value
 );
 
@@ -13025,10 +13280,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetTimestamp
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetInterval
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetInterval
 (
-    OCI_Object* obj,
-    const otext* attr,
+    OCI_Object  * obj,
+    const otext * attr,
     OCI_Interval* value
 );
 
@@ -13048,11 +13303,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetInterval
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetColl
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetColl
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    OCI_Coll* value
+    OCI_Coll   * value
 );
 
 /**
@@ -13076,11 +13331,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetColl
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetObject
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetObject
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    OCI_Object* value
+    OCI_Object * value
 );
 
 /**
@@ -13099,11 +13354,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetObject
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetLob
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetLob
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    OCI_Lob* value
+    OCI_Lob    * value
 );
 
 /**
@@ -13122,11 +13377,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetLob
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetFile
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetFile
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    OCI_File* value
+    OCI_File   * value
 );
 
 /**
@@ -13145,11 +13400,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetFile
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetRef
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetRef
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr,
-    OCI_Ref* value
+    OCI_Ref    * value
 );
 
 /**
@@ -13164,9 +13419,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetRef
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectIsNull
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectIsNull
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -13182,9 +13437,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectIsNull
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetNull
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectSetNull
 (
-    OCI_Object* obj,
+    OCI_Object * obj,
     const otext* attr
 );
 
@@ -13207,11 +13462,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectSetNull
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectGetStruct
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectGetStruct
 (
     OCI_Object* obj,
-    void** pp_struct,
-    void** pp_ind
+    void     ** pp_struct,
+    void     ** pp_ind
 );
 
 /**
@@ -13239,18 +13494,17 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectGetStruct
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectToText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ObjectToText
 (
-    OCI_Object* obj,
-    unsigned int* size,
-    otext* str
+    OCI_Object  * obj,
+    OCI_UInt32* size,
+    otext       * str
 );
 
 /**
  * @brief
  * Create a local Ref instance
  *
- * @param con    - Connection handle
  * @param typinf - Ref type
  *
  * @return
@@ -13260,8 +13514,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_ObjectToText
 
 OCI_SYM_PUBLIC OCI_Ref* OCI_API OCI_RefCreate
 (
-    OCI_Connection* con,
-    OCI_TypeInfo* typinf
+    OCI_TypeInfo * typinf
 );
 
 /**
@@ -13279,7 +13532,7 @@ OCI_SYM_PUBLIC OCI_Ref* OCI_API OCI_RefCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RefFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RefFree
 (
     OCI_Ref* ref
 );
@@ -13288,7 +13541,6 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RefFree
  * @brief
  * Create an array of Ref objects
  *
- * @param con    - Connection handle
  * @param typinf - Object type (type info handle)
  * @param nbelem - Number of elements in the array
  *
@@ -13302,9 +13554,8 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RefFree
 
 OCI_SYM_PUBLIC OCI_Ref** OCI_API OCI_RefArrayCreate
 (
-    OCI_Connection* con,
-    OCI_TypeInfo* typinf,
-    unsigned int    nbelem
+    OCI_TypeInfo * typinf,
+    OCI_UInt32   nbelem
 );
 
 /**
@@ -13322,7 +13573,7 @@ OCI_SYM_PUBLIC OCI_Ref** OCI_API OCI_RefArrayCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RefArrayFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RefArrayFree
 (
     OCI_Ref** refs
 );
@@ -13342,7 +13593,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RefArrayFree
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RefAssign
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RefAssign
 (
     OCI_Ref* ref,
     OCI_Ref* ref_src
@@ -13391,7 +13642,7 @@ OCI_SYM_PUBLIC OCI_Object* OCI_API OCI_RefGetObject
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RefIsNull
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RefIsNull
 (
     OCI_Ref* ref
 );
@@ -13410,7 +13661,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RefIsNull
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RefSetNull
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RefSetNull
 (
     OCI_Ref* ref
 );
@@ -13430,7 +13681,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RefSetNull
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_RefGetHexSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_RefGetHexSize
 (
     OCI_Ref* ref
 );
@@ -13448,11 +13699,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_RefGetHexSize
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_RefToText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_RefToText
 (
-    OCI_Ref* ref,
-    unsigned int size,
-    otext* str
+    OCI_Ref    * ref,
+    OCI_UInt32 size,
+    otext      * str
 );
 
 /**
@@ -13463,6 +13714,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_RefToText
  *
  * @return
  * The XML string content, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_XmlType handle and remains valid until
+ * OCI_XmlTypeFree() is called or the content is reloaded.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -13482,7 +13738,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_XmlTypeGetContent
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_XmlTypeGetContentSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_XmlTypeGetContentSize
 (
     OCI_XmlType* xmlType
 );
@@ -13524,7 +13780,7 @@ OCI_SYM_PUBLIC OCI_Vector* OCI_API OCI_VectorCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_VectorFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorFree
 (
     OCI_Vector* vect
 );
@@ -13550,7 +13806,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_VectorFree
 OCI_SYM_PUBLIC OCI_Vector** OCI_API OCI_VectorArrayCreate
 (
     OCI_Connection* con,
-    unsigned int    nbelem
+    OCI_UInt32    nbelem
 );
 
 /**
@@ -13571,7 +13827,7 @@ OCI_SYM_PUBLIC OCI_Vector** OCI_API OCI_VectorArrayCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_VectorArrayFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorArrayFree
 (
     OCI_Vector** vects
 );
@@ -13603,11 +13859,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_VectorArrayFree
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_VectorGetInfo
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorGetInfo
 (
-    OCI_Vector* vect,
-    unsigned int* format,
-    unsigned int* dimensions
+    OCI_Vector      * vect,
+    OCI_VectorFormat* format,
+    OCI_UInt32    * dimensions
 );
 
 /**
@@ -13636,10 +13892,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_VectorGetInfo
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_VectorGetValues
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorGetValues
 (
     OCI_Vector* vect,
-    void* values
+    void      * values
 );
 
 /**
@@ -13669,12 +13925,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_VectorGetValues
  * TRUE on success, otherwise FALSE.
  *
  */
-OCI_SYM_PUBLIC boolean OCI_API OCI_VectorSetValues
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorSetValues
 (
-    OCI_Vector* vect,
-    unsigned int      format,
-    unsigned int      dimensions,
-    void* values
+    OCI_Vector     * vect,
+    OCI_VectorFormat format,
+    OCI_UInt32     dimensions,
+    void           * values
 );
 
 /**
@@ -13705,13 +13961,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_VectorSetValues
  * TRUE on success, otherwise FALSE.
  *
  */
-OCI_SYM_PUBLIC boolean OCI_API OCI_VectorFromText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorFromText
 (
-    OCI_Vector* vect,
-    const otext* str,
-    unsigned int size,
-    unsigned int format,
-    unsigned int dimensions
+    OCI_Vector     * vect,
+    const otext    * str,
+    OCI_UInt32     size,
+    OCI_VectorFormat format,
+    OCI_UInt32     dimensions
 );
 
 /**
@@ -13737,18 +13993,18 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_VectorFromText
  * TRUE on success, otherwise FALSE.
  *
  */
-OCI_SYM_PUBLIC boolean OCI_API OCI_VectorToText
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorToText
 (
-    OCI_Vector* vect,
-    unsigned int* size,
-    otext* str
+    OCI_Vector  * vect,
+    OCI_UInt32* size,
+    otext       * str
 );
 
 /**
  * @} OcilibCApiUserTypes
  */
 
- /**
+/**
   * @defgroup OcilibCApiAbort Aborting long operations
   * @{
   *
@@ -13776,7 +14032,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_VectorToText
   *
   */
 
-  /**
+/**
    * @brief
    * Perform an immediate abort of any currently Oracle OCI call
    *
@@ -13790,7 +14046,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_VectorToText
    *
    */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_Break
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_Break
 (
     OCI_Connection* con
 );
@@ -13799,7 +14055,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Break
  * @} OcilibCApiAbort
  */
 
- /**
+/**
   * @defgroup OcilibCApiMetadata Describing Schema Meta data and Objects
   * @{
   *
@@ -13809,7 +14065,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Break
   *
   */
 
-  /**
+/**
    * @brief
    * Retrieve the available type info information
    *
@@ -13834,9 +14090,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_Break
 
 OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_TypeInfoGet
 (
-    OCI_Connection* con,
-    const otext* name,
-    unsigned int    type
+    OCI_Connection * con,
+    const otext    * name,
+    OCI_TypeInfoType type
 );
 
 /**
@@ -13858,7 +14114,7 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_TypeInfoGet
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_TypeInfoGetType
+OCI_SYM_PUBLIC OCI_TypeInfoType OCI_API OCI_TypeInfoGetType
 (
     OCI_TypeInfo* typinf
 );
@@ -13896,7 +14152,7 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_TypeInfoGetConnection
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TypeInfoFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TypeInfoFree
 (
     OCI_TypeInfo* typinf
 );
@@ -13912,7 +14168,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_TypeInfoFree
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_TypeInfoGetColumnCount
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_TypeInfoGetColumnCount
 (
     OCI_TypeInfo* typinf
 );
@@ -13933,7 +14189,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_TypeInfoGetColumnCount
 OCI_SYM_PUBLIC OCI_Column* OCI_API OCI_TypeInfoGetColumn
 (
     OCI_TypeInfo* typinf,
-    unsigned int  index
+    OCI_UInt32  index
 );
 
 /**
@@ -13944,6 +14200,11 @@ OCI_SYM_PUBLIC OCI_Column* OCI_API OCI_TypeInfoGetColumn
  *
  * @return
  * The type info name, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_TypeInfo handle and remains valid until
+ * OCI_TypeInfoFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -13970,7 +14231,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_TypeInfoGetName
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_TypeInfoIsFinalType
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_TypeInfoIsFinalType
 (
     OCI_TypeInfo* typinf
 );
@@ -14002,7 +14263,7 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_TypeInfoGetSuperType
  * @} OcilibCApiMetadata
  */
 
- /**
+/**
   * @defgroup OcilibCApiFormatting Formatted functions
   * @{
   *
@@ -14026,16 +14287,17 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_TypeInfoGetSuperType
   *
   * Possible values for indicating placeholder types:
   *
-  * - OCI_ARG_SHORT ------> short *
-  * - OCI_ARG_USHORT -----> unsigned short *
-  * - OCI_ARG_INT --------> int *
-  * - OCI_ARG_UINT -------> unsigned int*
-  * - OCI_ARG_BIGINT -----> big_int *
-  * - OCI_ARG_BIGUINT ----> unsigned big_int *
+  * - OCI_ARG_SHORT ------> OCI_Int16 *
+  * - OCI_ARG_USHORT -----> OCI_UInt16 *
+  * - OCI_ARG_INT --------> OCI_Int32 *
+  * - OCI_ARG_UINT -------> OCI_UInt32 *
+  * - OCI_ARG_BIGINT -----> OCI_Int64 *
+  * - OCI_ARG_BIGUINT ----> OCI_UInt64 *
   * - OCI_ARG_DOUBLE  ----> double *
   * - OCI_ARG_FLOAT ------> float *
   * - OCI_ARG_NUMBER -----> OCI_Number *
   * - OCI_ARG_TEXT -------> otext *
+  * - OCI_ARG_TEXT_N -----> otext *, OCI_UInt32
   * - OCI_ARG_RAW --------> void *
   * - OCI_ARG_DATETIME ---> OCI_Date *
   * - OCI_ARG_LOB --------> OCI_Lob *
@@ -14045,14 +14307,55 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_TypeInfoGetSuperType
   * - OCI_ARG_OBJECT -----> OCI_Object *
   * - OCI_ARG_COLLECTION -> OCI_Coll *
   * - OCI_ARG_REF --------> OCI_Ref *
+  * - OCI_ARG_VECTOR -----> OCI_Vector *
+  * - OCI_ARG_JSON -------> OCI_Json *
+  *
+  * @warning
+  * The type tag and the pointer that follows it MUST match. A mismatch
+  * (for example OCI_ARG_INT followed by a 'double *') is undefined behavior -
+  * neither the compiler nor OCILIB can detect it. The type-checked macro
+  * OCI_ARG_OF() deduces the tag from the pointer type at compile time and is
+  * the recommended way to pass output placeholders:
+  *
+  * @code
+  * OCI_Int32 count; OCI_Int64 total;
+  * OCI_Immediate(con, "select count(*), sum(amount) from t",
+  *               OCI_ARG_OF(&count), OCI_ARG_OF(&total));
+  * @endcode
+  *
+  * OCI_ARG_OF() covers all scalar and handle types, plus OCI_ARG_TEXT
+  * (otext *) and OCI_ARG_RAW (void * / unsigned char *). OCI_ARG_TEXT_N is
+  * not covered since it requires a second argument (the buffer capacity) -
+  * it remains the preferred, bounded way to fetch strings.
+  *
+  * @warning
+  * At least one (tag, pointer) pair must be provided for every column of the
+  * result set: the variadic list is consumed once per column. Passing fewer
+  * pairs than columns makes the function read past the end of the argument
+  * list (undefined behavior). Extra pairs beyond the column count are ignored.
   *
   * @note
   * For output strings and Raws, returned data is copied to the given buffer
   * instead of returning a pointer to the real data.
-  * So these buffers must be big enough to hold the column content. No size check is performed.
+  * So these buffers must be big enough to hold the column content.
   *
   * - For strings, only the real string is copied.
   * - For Raws, the number of bytes copied is the column size.
+  *
+  * @warning
+  * OCI_ARG_TEXT passes only a pointer, with no capacity, so OCILIB cannot
+  * validate it: for character columns the copy is bounded by the column's
+  * declared character width; for other types the full converted string is
+  * copied. A buffer smaller than the produced string will be overflowed. Use
+  * OCI_ARG_TEXT_N instead, which takes the buffer and its character count
+  * (terminating null included) as two consecutive arguments and is always
+  * bounded:
+  *
+  * @code
+  * otext name[32];
+  * OCI_Immediate(con, "select name from products where code = 1",
+  *               OCI_ARG_TEXT_N, name, (OCI_UInt32) 32);
+  * @endcode
   *
   * @warning
   * Input parameters for formatted functions only support a restricted set of data types.
@@ -14064,15 +14367,17 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_TypeInfoGetSuperType
   * - '%t'  : (OCI_Date *) -------> Date
   * - '%p'  : (OCI_Timestamp *) --> timestamp
   * - '%v'  : (OCI_Interval *) ---> Interval
-  * - '%i'  : (int) --------------> signed 32 bits integer
-  * - '%u'  : (unsigned int) -----> unsigned 32 bits integer
-  * - '%li' : (big_int) ----------> signed 64 bits integer
-  * - '%lu' : (big_uint) ---------> unsigned 64 bits integer
-  * - '%hi' : (short) ------------> signed 16 bits integer
-  * - '%hu' : (unsigned short) ---> unsigned 16 bits integer
+  * - '%i'  : (OCI_Int32) --------------> signed 32 bits integer
+  * - '%u'  : (OCI_UInt32) -----> unsigned 32 bits integer
+  * - '%li' : (OCI_Int64) ----------> signed 64 bits integer
+  * - '%lu' : (OCI_UInt64) ---------> unsigned 64 bits integer
+  * - '%hi' : (OCI_Int16) ------------> signed 16 bits integer
+  * - '%hu' : (OCI_UInt16) ---> unsigned 16 bits integer
   * - '%g'  : (double, float ) ---> Numerics
   * - '%n'  : (OCI_Number *) -----> Number
   * - '%r'  : (OCI_Ref *) --------> Reference
+  * - '%j'  : (OCI_Json *) -------> Json document (emitted as a quoted text literal)
+  * - '%V'  : (OCI_Vector *) -----> Vector (emitted as a quoted '[...]' literal)
   * - '%o'  : (OCI_Object *) -----> Object  (not implemented yet)
   * - '%c'  : (OCI_Coll *) -------> collection  (not implemented yet)
   *
@@ -14081,7 +14386,7 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_TypeInfoGetSuperType
   *
   */
 
-  /**
+/**
    * @brief
    * Perform 3 calls (prepare+execute+fetch) in 1 call
    *
@@ -14098,10 +14403,10 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_TypeInfoGetSuperType
    *
    */
 
-OCI_SYM_PUBLIC boolean OCI_Immediate
+OCI_SYM_PUBLIC OCI_Boolean OCI_Immediate
 (
     OCI_Connection* con,
-    const otext* sql,
+    const otext   * sql,
     ...
 );
 
@@ -14114,15 +14419,20 @@ OCI_SYM_PUBLIC boolean OCI_Immediate
  * @param ...  - List of program values to format the SQL followed by the
  *               output variables addresses for the fetch operation
  *
+ * @note
+ * The SQL string is formatted using the tokens documented in the
+ * "Supported input identifiers" list of the @ref OcilibCApiFormatting
+ * section.
+ *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_ImmediateFmt
+OCI_SYM_PUBLIC OCI_Boolean OCI_ImmediateFmt
 (
     OCI_Connection* con,
-    const otext* sql,
+    const otext   * sql,
     ...
 );
 
@@ -14134,16 +14444,21 @@ OCI_SYM_PUBLIC boolean OCI_ImmediateFmt
  * @param sql  - SQL statement
  * @param ...  - List of program values to format the SQL
  *
+ * @note
+ * The SQL string is formatted using the tokens documented in the
+ * "Supported input identifiers" list of the @ref OcilibCApiFormatting
+ * section.
+ *
  * @return
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_PrepareFmt
+OCI_SYM_PUBLIC OCI_Boolean OCI_PrepareFmt
 (
     OCI_Statement* stmt,
-    const otext* sql,
+    const otext  * sql,
     ...
-);
+) OCI_ATTR_FORMAT(2, 3);
 
 /**
  * @brief
@@ -14153,6 +14468,11 @@ OCI_SYM_PUBLIC boolean OCI_PrepareFmt
  * @param sql  - SQL statement
  * @param ...  - List of program values to format the SQL
  *
+ * @note
+ * The SQL string is formatted using the tokens documented in the
+ * "Supported input identifiers" list of the @ref OcilibCApiFormatting
+ * section.
+ *
  * @return
  * TRUE on success, otherwise FALSE.
  *
@@ -14161,17 +14481,16 @@ OCI_SYM_PUBLIC boolean OCI_PrepareFmt
  * - the function returns TRUE
  * - the SQL warning triggers the global error handler with an OCI_Error having its OCI_ErrorGetType()
  *   attribute set to OCI_ERR_WARNING
- * - If OCILIB is initialized with the OCI_ENV_CONTEXT mode, OCI_GetLastError() will return the OCI_Error
- *   object corresponding to the warning
+ * - OCI_GetLastError() will return the OCI_Error object corresponding to the warning
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_ExecuteStmtFmt
+OCI_SYM_PUBLIC OCI_Boolean OCI_ExecuteStmtFmt
 (
     OCI_Statement* stmt,
-    const otext* sql,
+    const otext  * sql,
     ...
-);
+) OCI_ATTR_FORMAT(2, 3);
 
 /**
  * @brief
@@ -14180,6 +14499,11 @@ OCI_SYM_PUBLIC boolean OCI_ExecuteStmtFmt
  * @param stmt - Statement handle
  * @param sql  - SQL statement
  * @param ...  - List of program values to format the SQL
+ *
+ * @note
+ * The SQL string is formatted using the tokens documented in the
+ * "Supported input identifiers" list of the @ref OcilibCApiFormatting
+ * section.
  *
  * @note
  * This call sends the SQL or PL/SQL command to the server for parsing only.
@@ -14202,12 +14526,12 @@ OCI_SYM_PUBLIC boolean OCI_ExecuteStmtFmt
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_ParseFmt
+OCI_SYM_PUBLIC OCI_Boolean OCI_ParseFmt
 (
     OCI_Statement* stmt,
-    const otext* sql,
+    const otext  * sql,
     ...
-);
+) OCI_ATTR_FORMAT(2, 3);
 
 /**
  * @brief
@@ -14216,6 +14540,11 @@ OCI_SYM_PUBLIC boolean OCI_ParseFmt
  * @param stmt - Statement handle
  * @param sql  - SQL statement
  * @param ...  - List of program values to format the SQL
+ *
+ * @note
+ * The SQL string is formatted using the tokens documented in the
+ * "Supported input identifiers" list of the @ref OcilibCApiFormatting
+ * section.
  *
  * @note
  * This call sends the SELECT SQL order to the server for retrieving the
@@ -14241,18 +14570,18 @@ OCI_SYM_PUBLIC boolean OCI_ParseFmt
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_DescribeFmt
+OCI_SYM_PUBLIC OCI_Boolean OCI_DescribeFmt
 (
     OCI_Statement* stmt,
-    const otext* sql,
+    const otext  * sql,
     ...
-);
+) OCI_ATTR_FORMAT(2, 3);
 
 /**
  * @} OcilibCApiFormatting
  */
 
- /**
+/**
   * @defgroup OcilibCApiHashTables Hash tables
   * @{
   *
@@ -14290,10 +14619,11 @@ OCI_SYM_PUBLIC boolean OCI_DescribeFmt
   *
   */
 
-  /**
+/**
    * @brief
    * Create a hash table
    *
+   * @param env - Environment handle
    * @param size     - Size of the hash table
    * @param type     - Type of the hash table
    *
@@ -14311,8 +14641,9 @@ OCI_SYM_PUBLIC boolean OCI_DescribeFmt
 
 OCI_SYM_PUBLIC OCI_HashTable* OCI_API OCI_HashCreate
 (
-    unsigned int size,
-    unsigned int type
+    OCI_Environment *env,
+    OCI_UInt32     size,
+    OCI_HashType     type
 );
 
 /**
@@ -14326,7 +14657,7 @@ OCI_SYM_PUBLIC OCI_HashTable* OCI_API OCI_HashCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_HashFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_HashFree
 (
     OCI_HashTable* table
 );
@@ -14342,7 +14673,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_HashFree
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_HashGetSize
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_HashGetSize
 (
     OCI_HashTable* table
 );
@@ -14365,7 +14696,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_HashGetSize
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_HashGetType
+OCI_SYM_PUBLIC OCI_HashType OCI_API OCI_HashGetType
 (
     OCI_HashTable* table
 );
@@ -14383,11 +14714,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_HashGetType
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddString
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_HashAddString
 (
     OCI_HashTable* table,
-    const otext* key,
-    const otext* value
+    const otext  * key,
+    const otext  * value
 );
 
 /**
@@ -14400,12 +14731,17 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddString
  * @return
  * The stored string associated with the key, or NULL if not found.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_HashTable handle and remains valid until
+ * the entry is removed or OCI_HashTableFree() is called.
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_HashGetString
 (
     OCI_HashTable* table,
-    const otext* key
+    const otext  * key
 );
 
 /**
@@ -14421,11 +14757,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_HashGetString
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddInt
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_HashAddInt
 (
     OCI_HashTable* table,
-    const otext* key,
-    int            value
+    const otext  * key,
+    OCI_Int32            value
 );
 
 /**
@@ -14440,10 +14776,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddInt
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_HashGetInt
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_HashGetInt
 (
     OCI_HashTable* table,
-    const otext* key
+    const otext  * key
 );
 
 /**
@@ -14459,11 +14795,11 @@ OCI_SYM_PUBLIC int OCI_API OCI_HashGetInt
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddPointer
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_HashAddPointer
 (
     OCI_HashTable* table,
-    const otext* key,
-    void* value
+    const otext  * key,
+    void         * value
 );
 
 /**
@@ -14481,7 +14817,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_HashAddPointer
 OCI_SYM_PUBLIC void* OCI_API OCI_HashGetPointer
 (
     OCI_HashTable* table,
-    const otext* key
+    const otext  * key
 );
 
 /**
@@ -14500,8 +14836,8 @@ OCI_SYM_PUBLIC void* OCI_API OCI_HashGetPointer
 OCI_SYM_PUBLIC OCI_HashEntry* OCI_API OCI_HashLookup
 (
     OCI_HashTable* table,
-    const otext* key,
-    boolean        create
+    const otext  * key,
+    OCI_Boolean    create
 );
 
 /**
@@ -14519,7 +14855,7 @@ OCI_SYM_PUBLIC OCI_HashEntry* OCI_API OCI_HashLookup
 OCI_SYM_PUBLIC OCI_HashValue* OCI_API OCI_HashGetValue
 (
     OCI_HashTable* table,
-    const otext* key
+    const otext  * key
 );
 
 /**
@@ -14540,242 +14876,14 @@ OCI_SYM_PUBLIC OCI_HashValue* OCI_API OCI_HashGetValue
 OCI_SYM_PUBLIC OCI_HashEntry* OCI_API OCI_HashGetEntry
 (
     OCI_HashTable* table,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 /**
  * @} OcilibCApiHashTables
  */
 
- /**
-  * @defgroup OcilibCApiThreading Threads and mutexes
-  * @{
-  *
-  * Oracle proposes a portable implementation of Mutex and Thread objects.
-  *
-  * OCILIB implements these OCI features for portable multi-threading support.
-  *
-  * Mutexes are designed for mutual exclusion between threads in order to lock resources temporarily.
-  *
-  * Thread keys can be seen as process-wide variables that have thread-specific
-  * values. They allow creating a unique key identified by a name (string) that
-  * can store values specific to each thread.
-  *
-  * OCILIB exposes the types OCI_Mutex and OCI_Thread.
-  *
-  * @warning
-  * OCILIB MUST be initialized with OCI_ENV_THREADED to enable thread support.
-  *
-  * @warning
-  * OCI_Thread relies on the Oracle API which uses native threading capabilities of
-  * the supported platform.
-  *
-  * @warning
-  * Using OCI_Mutex:
-  * - On Microsoft Windows, a thread can call OCI_MutexAcquire() more than once
-  *   without any blocking. Just be sure that there is an OCI_MutexRelease() for
-  *   every OCI_MutexAcquire() call.
-  * - On Unix systems, a thread MUST call OCI_MutexRelease() after every call to
-  *   OCI_MutexAcquire() in order to be able to call OCI_MutexAcquire() again. If
-  *   not, it will be blocked.
-  *
-  * @par Example
-  * @include thread.c
-  *
-  */
-
-  /**
-   * @brief
-   * Create a Mutex object
-   *
-   * @return
-   * The Mutex handle on success, or NULL on failure.
-   *
-   */
-
-OCI_SYM_PUBLIC OCI_Mutex* OCI_API OCI_MutexCreate
-(
-    void
-);
-
 /**
- * @brief
- * Destroy a mutex object
- *
- * @param mutex - Mutex handle
- *
- * @return
- * TRUE on success, otherwise FALSE.
- *
- */
-
-OCI_SYM_PUBLIC boolean OCI_API OCI_MutexFree
-(
-    OCI_Mutex* mutex
-);
-
-/**
- * @brief
- * Acquire a mutex lock
- *
- * @param mutex - Mutex handle
- *
- * @return
- * TRUE on success, otherwise FALSE.
- *
- */
-
-OCI_SYM_PUBLIC boolean OCI_API OCI_MutexAcquire
-(
-    OCI_Mutex* mutex
-);
-
-/**
- * @brief
- * Release a mutex lock
- *
- * @param mutex - Mutex handle
- *
- * @return
- * TRUE on success, otherwise FALSE.
- *
- */
-
-OCI_SYM_PUBLIC boolean OCI_API OCI_MutexRelease
-(
-    OCI_Mutex* mutex
-);
-
-/**
- * @brief
- * Create a Thread object
- *
- * @return
- * The Thread handle on success, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC OCI_Thread* OCI_API OCI_ThreadCreate
-(
-    void
-);
-
-/**
- * @brief
- * Destroy a thread object
- *
- * @param thread - Thread handle
- *
- * @return
- * TRUE on success, otherwise FALSE.
- *
- */
-
-OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadFree
-(
-    OCI_Thread* thread
-);
-
-/**
- * @brief
- * Execute the given routine within the given thread object
- *
- * @param thread - Thread handle
- * @param proc   - Routine to execute
- * @param arg    - Parameter to pass to the routine
- *
- * @return
- * TRUE on success, otherwise FALSE.
- *
- */
-
-OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadRun
-(
-    OCI_Thread* thread,
-    POCI_THREAD proc,
-    void* arg
-);
-
-/**
- * @brief
- * Join the given thread
- *
- * @param thread - Thread handle
- *
- * @note
- * This function waits for the given thread to finish.
- *
- * @return
- * TRUE on success, otherwise FALSE.
- *
- */
-
-OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadJoin
-(
-    OCI_Thread* thread
-);
-
-/**
- * @brief
- * Create a thread key object
- *
- * @param name     - Thread key name
- * @param destfunc - Thread key value destructor function
- *
- * @note
- * Parameter destfunc is optional. It is called when the thread terminates to allow
- * the program to deal with the thread-specific value of the key.
- *
- * @return
- * TRUE on success, otherwise FALSE.
- *
- */
-
-OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadKeyCreate
-(
-    const otext* name,
-    POCI_THREADKEYDEST destfunc
-);
-
-/**
- * @brief
- * Set a thread key value
- *
- * @param name  - Thread key name
- * @param value - User value to set
- *
- * @return
- * TRUE on success, otherwise FALSE.
- *
- */
-
-OCI_SYM_PUBLIC boolean OCI_API OCI_ThreadKeySetValue
-(
-    const otext* name,
-    void* value
-);
-
-/**
- * @brief
- * Get a thread key value
- *
- * @param name - Thread key name
- *
- * @return
- * The thread key value on success, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC void* OCI_API OCI_ThreadKeyGetValue
-(
-    const otext* name
-);
-
-/**
- * @} OcilibCApiThreading
- */
-
- /**
   * @defgroup OcilibCApiDirectPath Direct Path loading
   * @{
   *
@@ -14839,7 +14947,7 @@ OCI_SYM_PUBLIC void* OCI_API OCI_ThreadKeyGetValue
   *
   */
 
-  /**
+/**
    * @brief
    * Create a direct path object
    *
@@ -14868,9 +14976,9 @@ OCI_SYM_PUBLIC void* OCI_API OCI_ThreadKeyGetValue
 OCI_SYM_PUBLIC OCI_DirPath* OCI_API OCI_DirPathCreate
 (
     OCI_TypeInfo* typinf,
-    const otext* partition,
-    unsigned int  nb_cols,
-    unsigned int  nb_rows
+    const otext * partition,
+    OCI_UInt32  nb_cols,
+    OCI_UInt32  nb_rows
 );
 
 /**
@@ -14883,7 +14991,7 @@ OCI_SYM_PUBLIC OCI_DirPath* OCI_API OCI_DirPathCreate
  * TRUE on success, otherwise FALSE.
  *
  */
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathFree
 (
     OCI_DirPath* dp
 );
@@ -14909,12 +15017,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathFree
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetColumn
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathSetColumn
 (
     OCI_DirPath* dp,
-    unsigned int index,
+    OCI_UInt32 index,
     const otext* name,
-    unsigned int maxsize,
+    OCI_UInt32 maxsize,
     const otext* format
 );
 
@@ -14930,7 +15038,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetColumn
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathPrepare
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathPrepare
 (
     OCI_DirPath* dp
 );
@@ -14975,14 +15083,14 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathPrepare
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetEntry
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathSetEntry
 (
     OCI_DirPath* dp,
-    unsigned int row,
-    unsigned int index,
-    void* value,
-    unsigned     size,
-    boolean      complete
+    OCI_UInt32 row,
+    OCI_UInt32 index,
+    void       * value,
+    OCI_UInt32   size,
+    OCI_Boolean  complete
 );
 
 /**
@@ -15015,7 +15123,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetEntry
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathConvert
+OCI_SYM_PUBLIC OCI_DirPathResult OCI_API OCI_DirPathConvert
 (
     OCI_DirPath* dp
 );
@@ -15042,7 +15150,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathConvert
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathLoad
+OCI_SYM_PUBLIC OCI_DirPathResult OCI_API OCI_DirPathLoad
 (
     OCI_DirPath* dp
 );
@@ -15063,7 +15171,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathLoad
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathReset
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathReset
 (
     OCI_DirPath* dp
 );
@@ -15087,7 +15195,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathReset
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathFinish
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathFinish
 (
     OCI_DirPath* dp
 );
@@ -15111,7 +15219,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathFinish
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathAbort
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathAbort
 (
     OCI_DirPath* dp
 );
@@ -15130,7 +15238,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathAbort
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSave
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathSave
 (
     OCI_DirPath* dp
 );
@@ -15146,7 +15254,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSave
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathFlushRow
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathFlushRow
 (
     OCI_DirPath* dp
 );
@@ -15167,10 +15275,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathFlushRow
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetCurrentRows
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathSetCurrentRows
 (
     OCI_DirPath* dp,
-    unsigned int nb_rows
+    OCI_UInt32 nb_rows
 );
 
 /**
@@ -15185,7 +15293,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetCurrentRows
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetCurrentRows
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_DirPathGetCurrentRows
 (
     OCI_DirPath* dp
 );
@@ -15202,7 +15310,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetCurrentRows
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetMaxRows
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_DirPathGetMaxRows
 (
     OCI_DirPath* dp
 );
@@ -15225,7 +15333,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetMaxRows
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetDateFormat
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathSetDateFormat
 (
     OCI_DirPath* dp,
     const otext* format
@@ -15262,10 +15370,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetDateFormat
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetParallel
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathSetParallel
 (
     OCI_DirPath* dp,
-    boolean      value
+    OCI_Boolean  value
 );
 
 /**
@@ -15287,10 +15395,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetParallel
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetNoLog
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathSetNoLog
 (
     OCI_DirPath* dp,
-    boolean      value
+    OCI_Boolean  value
 );
 
 /**
@@ -15311,10 +15419,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetNoLog
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetCacheSize
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathSetCacheSize
 (
     OCI_DirPath* dp,
-    unsigned int size
+    OCI_UInt32 size
 );
 
 /**
@@ -15332,10 +15440,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetCacheSize
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetBufferSize
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathSetBufferSize
 (
     OCI_DirPath* dp,
-    unsigned int size
+    OCI_UInt32 size
 );
 
 /**
@@ -15361,10 +15469,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetBufferSize
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetConvertMode
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathSetConvertMode
 (
-    OCI_DirPath* dp,
-    unsigned int mode
+    OCI_DirPath          * dp,
+    OCI_DirPathConvertMode mode
 );
 
 /**
@@ -15381,7 +15489,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DirPathSetConvertMode
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetRowCount
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_DirPathGetRowCount
 (
     OCI_DirPath* dp
 );
@@ -15404,7 +15512,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetRowCount
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetAffectedRows
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_DirPathGetAffectedRows
 (
     OCI_DirPath* dp
 );
@@ -15438,7 +15546,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetAffectedRows
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetErrorColumn
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_DirPathGetErrorColumn
 (
     OCI_DirPath* dp
 );
@@ -15480,7 +15588,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetErrorColumn
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetErrorRow
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_DirPathGetErrorRow
 (
     OCI_DirPath* dp
 );
@@ -15489,7 +15597,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetErrorRow
  * @} OcilibCApiDirectPath
  */
 
- /**
+/**
   * @defgroup OcilibCApiAdvancedQueuing Oracle Advanced Queuing (A/Q)
   * @{
   *
@@ -15544,7 +15652,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_DirPathGetErrorRow
   *
   */
 
-  /**
+/**
    * @brief
    * Create a message object based on the given payload type
    *
@@ -15600,7 +15708,7 @@ OCI_SYM_PUBLIC OCI_Msg* OCI_API OCI_MsgCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgFree
 (
     OCI_Msg* msg
 );
@@ -15624,7 +15732,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgFree
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgReset
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgReset
 (
     OCI_Msg* msg
 );
@@ -15657,9 +15765,9 @@ OCI_SYM_PUBLIC OCI_Object* OCI_API OCI_MsgGetObject
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetObject
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgSetObject
 (
-    OCI_Msg* msg,
+    OCI_Msg   * msg,
     OCI_Object* obj
 );
 
@@ -15680,11 +15788,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetObject
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgGetRaw
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgGetRaw
 (
-    OCI_Msg* msg,
-    void* raw,
-    unsigned int* size
+    OCI_Msg     * msg,
+    void        * raw,
+    OCI_UInt32* size
 );
 
 /**
@@ -15700,11 +15808,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgGetRaw
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetRaw
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgSetRaw
 (
-    OCI_Msg* msg,
-    const void* raw,
-    unsigned int size
+    OCI_Msg    * msg,
+    const void * raw,
+    OCI_UInt32 size
 );
 
 /**
@@ -15718,7 +15826,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetRaw
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_MsgGetAttemptCount
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_MsgGetAttemptCount
 (
     OCI_Msg* msg
 );
@@ -15737,7 +15845,7 @@ OCI_SYM_PUBLIC int OCI_API OCI_MsgGetAttemptCount
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_MsgGetEnqueueDelay
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_MsgGetEnqueueDelay
 (
     OCI_Msg* msg
 );
@@ -15769,10 +15877,10 @@ OCI_SYM_PUBLIC int OCI_API OCI_MsgGetEnqueueDelay
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetEnqueueDelay
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgSetEnqueueDelay
 (
     OCI_Msg* msg,
-    int      value
+    OCI_Int32      value
 );
 
 /**
@@ -15808,7 +15916,7 @@ OCI_SYM_PUBLIC OCI_Date* OCI_API OCI_MsgGetEnqueueTime
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_MsgGetExpiration
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_MsgGetExpiration
 (
     OCI_Msg* msg
 );
@@ -15837,10 +15945,10 @@ OCI_SYM_PUBLIC int OCI_API OCI_MsgGetExpiration
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetExpiration
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgSetExpiration
 (
     OCI_Msg* msg,
-    int      value
+    OCI_Int32      value
 );
 
 /**
@@ -15858,7 +15966,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetExpiration
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_MsgGetState
+OCI_SYM_PUBLIC OCI_MsgState OCI_API OCI_MsgGetState
 (
     OCI_Msg* msg
 );
@@ -15877,7 +15985,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_MsgGetState
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_MsgGetPriority
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_MsgGetPriority
 (
     OCI_Msg* msg
 );
@@ -15899,10 +16007,10 @@ OCI_SYM_PUBLIC int OCI_API OCI_MsgGetPriority
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetPriority
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgSetPriority
 (
     OCI_Msg* msg,
-    int      value
+    OCI_Int32      value
 );
 
 /**
@@ -15926,11 +16034,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetPriority
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgGetID
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgGetID
 (
-    OCI_Msg* msg,
-    void* id,
-    unsigned int* len
+    OCI_Msg     * msg,
+    void        * id,
+    OCI_UInt32* len
 );
 
 /**
@@ -15953,11 +16061,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgGetID
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgGetOriginalID
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgGetOriginalID
 (
-    OCI_Msg* msg,
-    void* id,
-    unsigned int* len
+    OCI_Msg     * msg,
+    void        * id,
+    OCI_UInt32* len
 );
 
 /**
@@ -15977,11 +16085,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgGetOriginalID
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetOriginalID
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgSetOriginalID
 (
-    OCI_Msg* msg,
-    const void* id,
-    unsigned int len
+    OCI_Msg    * msg,
+    const void * id,
+    OCI_UInt32 len
 );
 
 /**
@@ -16012,9 +16120,9 @@ OCI_SYM_PUBLIC OCI_Agent* OCI_API OCI_MsgGetSender
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetSender
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgSetSender
 (
-    OCI_Msg* msg,
+    OCI_Msg  * msg,
     OCI_Agent* sender
 );
 
@@ -16035,11 +16143,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetSender
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetConsumers
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgSetConsumers
 (
-    OCI_Msg* msg,
-    OCI_Agent** consumers,
-    unsigned int count
+    OCI_Msg    * msg,
+    OCI_Agent ** consumers,
+    OCI_UInt32 count
 );
 
 /**
@@ -16053,6 +16161,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetConsumers
  *
  * @return
  * The correlation identifier string, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Msg handle and remains valid until
+ * OCI_MsgSetCorrelation() is called on it or OCI_MsgFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -16076,9 +16189,9 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_MsgGetCorrelation
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetCorrelation
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgSetCorrelation
 (
-    OCI_Msg* msg,
+    OCI_Msg    * msg,
     const otext* correlation
 );
 
@@ -16098,6 +16211,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetCorrelation
  *
  * @return
  * The exception queue name, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Msg handle and remains valid until
+ * OCI_MsgSetExceptionQueue() is called on it or OCI_MsgFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 OCI_SYM_PUBLIC const otext* OCI_API OCI_MsgGetExceptionQueue
@@ -16136,9 +16254,9 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_MsgGetExceptionQueue
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetExceptionQueue
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_MsgSetExceptionQueue
 (
-    OCI_Msg* msg,
+    OCI_Msg    * msg,
     const otext* queue
 );
 
@@ -16172,7 +16290,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_MsgSetExceptionQueue
 OCI_SYM_PUBLIC OCI_Enqueue* OCI_API OCI_EnqueueCreate
 (
     OCI_TypeInfo* typinf,
-    const otext* name
+    const otext * name
 );
 
 /**
@@ -16186,7 +16304,7 @@ OCI_SYM_PUBLIC OCI_Enqueue* OCI_API OCI_EnqueueCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_EnqueueFree
 (
     OCI_Enqueue* enqueue
 );
@@ -16203,10 +16321,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueFree
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueuePut
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_EnqueuePut
 (
     OCI_Enqueue* enqueue,
-    OCI_Msg* msg
+    OCI_Msg    * msg
 );
 
 /**
@@ -16237,10 +16355,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueuePut
 *
 */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueSetSequenceDeviation
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_EnqueueSetSequenceDeviation
 (
-    OCI_Enqueue* enqueue,
-    unsigned int sequence
+    OCI_Enqueue         * enqueue,
+    OCI_QueueSeqDeviation sequence
 );
 
 /**
@@ -16257,7 +16375,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueSetSequenceDeviation
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
+OCI_SYM_PUBLIC OCI_QueueSeqDeviation OCI_API OCI_EnqueueGetSequenceDeviation
 (
     OCI_Enqueue* enqueue
 );
@@ -16282,10 +16400,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_EnqueueGetSequenceDeviation
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueSetVisibility
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_EnqueueSetVisibility
 (
-    OCI_Enqueue* enqueue,
-    unsigned int visibility
+    OCI_Enqueue       * enqueue,
+    OCI_QueueVisibility visibility
 );
 
 /**
@@ -16302,7 +16420,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueSetVisibility
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_EnqueueGetVisibility
+OCI_SYM_PUBLIC OCI_QueueVisibility OCI_API OCI_EnqueueGetVisibility
 (
     OCI_Enqueue* enqueue
 );
@@ -16330,11 +16448,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_EnqueueGetVisibility
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueSetRelativeMsgID
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_EnqueueSetRelativeMsgID
 (
     OCI_Enqueue* enqueue,
-    const void* id,
-    unsigned int len
+    const void * id,
+    OCI_UInt32 len
 );
 
 /**
@@ -16357,11 +16475,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueSetRelativeMsgID
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueGetRelativeMsgID
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_EnqueueGetRelativeMsgID
 (
-    OCI_Enqueue* enqueue,
-    void* id,
-    unsigned int* len
+    OCI_Enqueue * enqueue,
+    void        * id,
+    OCI_UInt32* len
 );
 
 /**
@@ -16394,7 +16512,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_EnqueueGetRelativeMsgID
 OCI_SYM_PUBLIC OCI_Dequeue* OCI_API OCI_DequeueCreate
 (
     OCI_TypeInfo* typinf,
-    const otext* name
+    const otext * name
 );
 
 /**
@@ -16408,7 +16526,7 @@ OCI_SYM_PUBLIC OCI_Dequeue* OCI_API OCI_DequeueCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DequeueFree
 (
     OCI_Dequeue* dequeue
 );
@@ -16440,16 +16558,29 @@ OCI_SYM_PUBLIC OCI_Msg* OCI_API OCI_DequeueGet
 
 /**
  * @brief
- * Subscribe for asynchronous messages notifications
+ * Subscribe one or more dequeues for asynchronous messages notifications
  *
- * @param dequeue  - Dequeue handle
- * @param port     - Port to use for notifications
+ * @param con      - Connection handle
+ * @param dequeues - Array of dequeue handles to subscribe
+ * @param count    - Number of dequeues in the array
  * @param timeout  - Notification timeout
  * @param callback - User handler callback fired when messages are ready to be dequeued
  *
  * @note
- * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to be able to use
  * asynchronous message notifications.
+ *
+ * @note
+ * The notification port is configured on the environment by calling
+ * OCI_SetSubscriptionPort() before the first subscription is registered.
+ *
+ * @note
+ * All dequeues are registered at once. The handler will be called for
+ * any of the subscribed dequeues.
+ *
+ * @note
+ * Each subscribed dequeue can later be unsubscribed with OCI_DequeueUnsubscribe().
+ * OCI_DequeueFree() will also automatically unsubscribe a dequeue if needed.
  *
  * @note
  * Requires Oracle Client 10gR2 or above.
@@ -16459,26 +16590,31 @@ OCI_SYM_PUBLIC OCI_Msg* OCI_API OCI_DequeueGet
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSubscribe
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DequeueSubscribe
 (
-    OCI_Dequeue* dequeue,
-    unsigned int   port,
-    unsigned int   timeout,
-    POCI_NOTIFY_AQ callback
+    OCI_Connection* con,
+    OCI_Dequeue  ** dequeues,
+    OCI_UInt32    count,
+    OCI_UInt32    timeout,
+    POCI_NOTIFY_AQ  callback
 );
 
 /**
  * @brief
- * Unsubscribe for asynchronous messages notifications
+ * Unsubscribe a dequeue from asynchronous messages notifications
  *
  * @param dequeue - Dequeue handle
+ *
+ * @note
+ * OCI_DequeueFree() automatically unsubscribes the dequeue if it is still subscribed,
+ * so an explicit call to OCI_DequeueUnsubscribe() is not required before freeing.
  *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueUnsubscribe
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DequeueUnsubscribe
 (
     OCI_Dequeue* dequeue
 );
@@ -16499,7 +16635,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueUnsubscribe
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetConsumer
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DequeueSetConsumer
 (
     OCI_Dequeue* dequeue,
     const otext* consumer
@@ -16516,6 +16652,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetConsumer
  *
  * @return
  * The consumer name, or NULL if not set.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Dequeue handle and remains valid until
+ * OCI_DequeueSetConsumer() is called on it or OCI_DequeueFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -16540,7 +16681,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_DequeueGetConsumer
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetCorrelation
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DequeueSetCorrelation
 (
     OCI_Dequeue* dequeue,
     const otext* pattern
@@ -16557,6 +16698,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetCorrelation
  *
  * @return
  * The correlation identifier, or NULL if not set.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Dequeue handle and remains valid until
+ * OCI_DequeueSetCorrelation() is called on it or OCI_DequeueFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -16581,11 +16727,11 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_DequeueGetCorrelation
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetRelativeMsgID
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DequeueSetRelativeMsgID
 (
     OCI_Dequeue* dequeue,
-    const void* id,
-    unsigned int len
+    const void * id,
+    OCI_UInt32 len
 );
 
 /**
@@ -16607,11 +16753,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetRelativeMsgID
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueGetRelativeMsgID
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DequeueGetRelativeMsgID
 (
-    OCI_Dequeue* dequeue,
-    void* id,
-    unsigned int* len
+    OCI_Dequeue * dequeue,
+    void        * id,
+    OCI_UInt32* len
 );
 
 /**
@@ -16638,10 +16784,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueGetRelativeMsgID
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetVisibility
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DequeueSetVisibility
 (
-    OCI_Dequeue* dequeue,
-    unsigned int visibility
+    OCI_Dequeue       * dequeue,
+    OCI_QueueVisibility visibility
 );
 
 /**
@@ -16658,7 +16804,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetVisibility
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_DequeueGetVisibility
+OCI_SYM_PUBLIC OCI_QueueVisibility OCI_API OCI_DequeueGetVisibility
 (
     OCI_Dequeue* dequeue
 );
@@ -16686,10 +16832,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_DequeueGetVisibility
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetMode
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DequeueSetMode
 (
-    OCI_Dequeue* dequeue,
-    unsigned int mode
+    OCI_Dequeue   * dequeue,
+    OCI_DequeueMode mode
 );
 
 /**
@@ -16706,7 +16852,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetMode
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_DequeueGetMode
+OCI_SYM_PUBLIC OCI_DequeueMode OCI_API OCI_DequeueGetMode
 (
     OCI_Dequeue* dequeue
 );
@@ -16743,10 +16889,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_DequeueGetMode
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetNavigation
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DequeueSetNavigation
 (
-    OCI_Dequeue* dequeue,
-    unsigned int position
+    OCI_Dequeue  * dequeue,
+    OCI_DequeueNav position
 );
 
 /**
@@ -16763,7 +16909,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetNavigation
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_DequeueGetNavigation
+OCI_SYM_PUBLIC OCI_DequeueNav OCI_API OCI_DequeueGetNavigation
 (
     OCI_Dequeue* dequeue
 );
@@ -16791,10 +16937,10 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_DequeueGetNavigation
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetWaitTime
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DequeueSetWaitTime
 (
     OCI_Dequeue* dequeue,
-    int          timeout
+    OCI_Int32          timeout
 );
 
 /**
@@ -16811,7 +16957,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetWaitTime
  *
  */
 
-OCI_SYM_PUBLIC int OCI_API OCI_DequeueGetWaitTime
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_DequeueGetWaitTime
 (
     OCI_Dequeue* dequeue
 );
@@ -16828,11 +16974,11 @@ OCI_SYM_PUBLIC int OCI_API OCI_DequeueGetWaitTime
  * TRUE on success, otherwise FALSE.
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetAgentList
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DequeueSetAgentList
 (
     OCI_Dequeue* dequeue,
-    OCI_Agent** consumers,
-    unsigned int count
+    OCI_Agent ** consumers,
+    OCI_UInt32 count
 );
 
 /**
@@ -16861,7 +17007,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DequeueSetAgentList
 OCI_SYM_PUBLIC OCI_Agent* OCI_API OCI_DequeueListen
 (
     OCI_Dequeue* dequeue,
-    int          timeout
+    OCI_Int32          timeout
 );
 
 /**
@@ -16890,8 +17036,8 @@ OCI_SYM_PUBLIC OCI_Agent* OCI_API OCI_DequeueListen
 OCI_SYM_PUBLIC OCI_Agent* OCI_API OCI_AgentCreate
 (
     OCI_Connection* con,
-    const otext* name,
-    const otext* address
+    const otext   * name,
+    const otext   * address
 );
 
 /**
@@ -16908,7 +17054,7 @@ OCI_SYM_PUBLIC OCI_Agent* OCI_API OCI_AgentCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_AgentFree
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_AgentFree
 (
     OCI_Agent* agent
 );
@@ -16932,9 +17078,9 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_AgentFree
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_AgentSetName
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_AgentSetName
 (
-    OCI_Agent* agent,
+    OCI_Agent  * agent,
     const otext* name
 );
 
@@ -16946,6 +17092,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_AgentSetName
  *
  * @return
  * The AQ agent name on success, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Agent handle and remains valid until
+ * OCI_AgentSetName() is called on it or OCI_AgentFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -16972,9 +17123,9 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_AgentGetName
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_AgentSetAddress
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_AgentSetAddress
 (
-    OCI_Agent* agent,
+    OCI_Agent  * agent,
     const otext* address
 );
 
@@ -16989,6 +17140,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_AgentSetAddress
  *
  * @return
  * The AQ agent address on success, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Agent handle and remains valid until
+ * OCI_AgentSetAddress() is called on it or OCI_AgentFree() is called.
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -17038,17 +17194,17 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_AgentGetAddress
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_QueueCreate
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueCreate
 (
     OCI_Connection* con,
-    const otext* queue_name,
-    const otext* queue_table,
-    unsigned int    queue_type,
-    unsigned int    max_retries,
-    unsigned int    retry_delay,
-    unsigned int    retention_time,
-    boolean         dependency_tracking,
-    const otext* comment
+    const otext   * queue_name,
+    const otext   * queue_table,
+    OCI_QueueType   queue_type,
+    OCI_UInt32    max_retries,
+    OCI_UInt32    retry_delay,
+    OCI_UInt32    retention_time,
+    OCI_Boolean     dependency_tracking,
+    const otext   * comment
 );
 
 /**
@@ -17078,14 +17234,14 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_QueueAlter
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueAlter
 (
     OCI_Connection* con,
-    const otext* queue_name,
-    unsigned int    max_retries,
-    unsigned int    retry_delay,
-    unsigned int    retention_time,
-    const otext* comment
+    const otext   * queue_name,
+    OCI_UInt32    max_retries,
+    OCI_UInt32    retry_delay,
+    OCI_UInt32    retention_time,
+    const otext   * comment
 );
 
 /**
@@ -17107,10 +17263,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueAlter
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_QueueDrop
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueDrop
 (
     OCI_Connection* con,
-    const otext* queue_name
+    const otext   * queue_name
 );
 
 /**
@@ -17134,12 +17290,12 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueDrop
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_QueueStart
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueStart
 (
     OCI_Connection* con,
-    const otext* queue_name,
-    boolean         enqueue,
-    boolean         dequeue
+    const otext   * queue_name,
+    OCI_Boolean     enqueue,
+    OCI_Boolean     dequeue
 );
 
 /**
@@ -17164,13 +17320,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueStart
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_QueueStop
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueStop
 (
     OCI_Connection* con,
-    const otext* queue_name,
-    boolean         enqueue,
-    boolean         dequeue,
-    boolean         wait
+    const otext   * queue_name,
+    OCI_Boolean     enqueue,
+    OCI_Boolean     dequeue,
+    OCI_Boolean     wait
 );
 
 /**
@@ -17226,19 +17382,19 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueStop
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableCreate
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueTableCreate
 (
-    OCI_Connection* con,
-    const otext* queue_table,
-    const otext* queue_payload_type,
-    const otext* storage_clause,
-    const otext* sort_list,
-    boolean         multiple_consumers,
-    unsigned int    message_grouping,
-    const otext* comment,
-    unsigned int    primary_instance,
-    unsigned int    secondary_instance,
-    const otext* compatible
+    OCI_Connection  * con,
+    const otext     * queue_table,
+    const otext     * queue_payload_type,
+    const otext     * storage_clause,
+    const otext     * sort_list,
+    OCI_Boolean       multiple_consumers,
+    OCI_QueueGrouping message_grouping,
+    const otext     * comment,
+    OCI_UInt32      primary_instance,
+    OCI_UInt32      secondary_instance,
+    const otext     * compatible
 );
 
 /**
@@ -17263,13 +17419,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableCreate
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableAlter
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueTableAlter
 (
     OCI_Connection* con,
-    const otext* queue_table,
-    const otext* comment,
-    unsigned int    primary_instance,
-    unsigned int    secondary_instance
+    const otext   * queue_table,
+    const otext   * comment,
+    OCI_UInt32    primary_instance,
+    OCI_UInt32    secondary_instance
 );
 
 /**
@@ -17296,11 +17452,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableAlter
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableDrop
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueTableDrop
 (
     OCI_Connection* con,
-    const otext* queue_table,
-    boolean         force
+    const otext   * queue_table,
+    OCI_Boolean     force
 );
 
 /**
@@ -17336,13 +17492,13 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableDrop
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTablePurge
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueTablePurge
 (
-    OCI_Connection* con,
-    const otext* queue_table,
-    const otext* purge_condition,
-    boolean         block,
-    unsigned int    delivery_mode
+    OCI_Connection   * con,
+    const otext      * queue_table,
+    const otext      * purge_condition,
+    OCI_Boolean        block,
+    OCI_QueuePurgeMode delivery_mode
 );
 
 /**
@@ -17366,18 +17522,18 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTablePurge
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableMigrate
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueTableMigrate
 (
     OCI_Connection* con,
-    const otext* queue_table,
-    const otext* compatible
+    const otext   * queue_table,
+    const otext   * compatible
 );
 
 /**
  * @} OcilibCApiAdvancedQueuing
  */
 
- /**
+/**
   * @defgroup OcilibCApiSubscriptions Database Change notifications (DCN or CQN)
   * @{
   *
@@ -17439,7 +17595,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableMigrate
   *
   */
 
-  /**
+/**
    * @brief
    * Register a notification against the given database
    *
@@ -17459,17 +17615,18 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableMigrate
    * - OCI_CNT_ALL       : request for all changes.
    *
    * @note
-   * Parameters 'port' and 'timeout' are optional (use value 0 as optional value).
+   * Parameter 'timeout' is optional (use value 0 as optional value).
    *
    * @note
-   * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+   * OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to be able to use
    * subscriptions.
    *
    * @warning Port usage:
    * All notifications use the same port.
-   * Port number can be either:
-   *   - Determined automatically by the Oracle client once the first subscription has been created and can be retrieved using OCI_SubscriptionGetPort().
-   *   - Set by the parameter 'port' during the first call to OCI_SubscriptionRegister(). In this case, later calls can provide the same port number or 0.
+   * The port can be configured before any subscription is registered by calling
+   * OCI_SetSubscriptionPort(). If not configured, the Oracle client determines
+   * the port automatically and it can be retrieved with OCI_GetSubscriptionPort()
+   * or OCI_SubscriptionGetPort().
    *
    * @note
    * Requires Oracle Client 10gR2 or above.
@@ -17484,12 +17641,11 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_QueueTableMigrate
 
 OCI_SYM_PUBLIC OCI_Subscription* OCI_API OCI_SubscriptionRegister
 (
-    OCI_Connection* con,
-    const otext* name,
-    unsigned int    type,
-    POCI_NOTIFY     handler,
-    unsigned int    port,
-    unsigned int    timeout
+    OCI_Connection     * con,
+    const otext        * name,
+    OCI_SubscriptionType type,
+    POCI_NOTIFY          handler,
+    OCI_UInt32         timeout
 );
 
 /**
@@ -17499,7 +17655,7 @@ OCI_SYM_PUBLIC OCI_Subscription* OCI_API OCI_SubscriptionRegister
  * @param sub - Subscription handle
  *
  * @note
- * OCI_Cleanup() will automatically unregister any registered subscriptions.
+ * OCI_EnvironmentFree() will automatically unregister any registered subscriptions.
  *
  * @note
  * If the database connection passed to OCI_SubscriptionRegister()
@@ -17508,7 +17664,7 @@ OCI_SYM_PUBLIC OCI_Subscription* OCI_API OCI_SubscriptionRegister
  * to the given database, performs the unregistration and then disconnects.
  *
  * @note
- * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to be able to use
  * subscriptions.
  *
  * @return
@@ -17516,7 +17672,7 @@ OCI_SYM_PUBLIC OCI_Subscription* OCI_API OCI_SubscriptionRegister
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SubscriptionUnregister
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SubscriptionUnregister
 (
     OCI_Subscription* sub
 );
@@ -17533,7 +17689,7 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SubscriptionUnregister
  * OCI_SubscriptionAddStatement() executes the statement and registers it for notifications.
  *
  * @note
- * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to be able to use
  * subscriptions.
  *
  * @note
@@ -17544,10 +17700,10 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SubscriptionUnregister
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_SubscriptionAddStatement
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SubscriptionAddStatement
 (
     OCI_Subscription* sub,
-    OCI_Statement* stmt
+    OCI_Statement   * stmt
 );
 
 /**
@@ -17557,35 +17713,20 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_SubscriptionAddStatement
  * @param sub - Subscription handle
  *
  * @note
- * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to be able to use
  * subscriptions.
  *
  * @return
  * The subscription name, or NULL on failure.
  *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Subscription handle and remains valid until
+ * OCI_SubscriptionUnregister() is called (which frees the subscription).
+ * It must not be freed or modified by the caller.
+ *
  */
 
 OCI_SYM_PUBLIC const otext* OCI_API OCI_SubscriptionGetName
-(
-    OCI_Subscription* sub
-);
-
-/**
- * @brief
- * Return the port used by the notification
- *
- * @param sub - Subscription handle
- *
- * @note
- * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
- * subscriptions.
- *
- * @return
- * The port number, or 0 on failure.
- *
- */
-
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_SubscriptionGetPort
 (
     OCI_Subscription* sub
 );
@@ -17597,7 +17738,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_SubscriptionGetPort
  * @param sub - Subscription handle
  *
  * @note
- * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to be able to use
  * subscriptions.
  *
  * @return
@@ -17605,7 +17746,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_SubscriptionGetPort
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_SubscriptionGetTimeout
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_SubscriptionGetTimeout
 (
     OCI_Subscription* sub
 );
@@ -17649,7 +17790,7 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_SubscriptionGetConnection
  * OCI_EventGetDatabase() returns the affected database.
  *
  * @note
- * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to be able to use
  * subscriptions.
  *
  * @note
@@ -17661,7 +17802,7 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_SubscriptionGetConnection
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetType
+OCI_SYM_PUBLIC OCI_EventType OCI_API OCI_EventGetType
 (
     OCI_Event* event
 );
@@ -17693,7 +17834,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetType
  * OCI_EventGetObject() returns the affected object ('schema_name'.'object_name').
  *
  * @note
- * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to be able to use
  * subscriptions.
  *
  * @note
@@ -17705,7 +17846,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetType
  *
  */
 
-OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetOperation
+OCI_SYM_PUBLIC OCI_EventOperation OCI_API OCI_EventGetOperation
 (
     OCI_Event* event
 );
@@ -17717,7 +17858,7 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetOperation
  * @param event - Event handle
  *
  * @note
- * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to be able to use
  * subscriptions.
  *
  * @warning
@@ -17726,6 +17867,11 @@ OCI_SYM_PUBLIC unsigned int OCI_API OCI_EventGetOperation
  *
  * @return
  * The database name, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Event handle and remains valid until
+ * the notification callback returns (the event is only valid during the callback).
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -17741,11 +17887,16 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_EventGetDatabase
  * @param event - Event handle
  *
  * @note
- * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to be able to use
  * subscriptions.
  *
  * @return
  * The object name, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Event handle and remains valid until
+ * the notification callback returns (the event is only valid during the callback).
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -17761,11 +17912,16 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_EventGetObject
  * @param event - Event handle
  *
  * @note
- * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to be able to use
  * subscriptions.
  *
  * @return
  * The rowid string, or NULL on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Event handle and remains valid until
+ * the notification callback returns (the event is only valid during the callback).
+ * It must not be freed or modified by the caller.
  *
  */
 
@@ -17781,7 +17937,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_EventGetRowid
  * @param event - Event handle
  *
  * @note
- * OCI_ENV_EVENTS flag must be passed to OCI_Initialize() to be able to use
+ * OCI_ENV_EVENTS flag must be passed to OCI_EnvironmentCreate() to be able to use
  * subscriptions.
  *
  * @return
@@ -17798,7 +17954,7 @@ OCI_SYM_PUBLIC OCI_Subscription* OCI_API OCI_EventGetSubscription
  * @} OcilibCApiSubscriptions
  */
 
- /**
+/**
   * @defgroup OcilibCApiInstancesManagement Remote Instance startup/shutdown
   * @{
   *
@@ -17816,10 +17972,11 @@ OCI_SYM_PUBLIC OCI_Subscription* OCI_API OCI_EventGetSubscription
   *
   */
 
-  /**
+/**
    * @brief
    * Start a database instance
    *
+   * @param env - Environment handle
    * @param db         - Oracle Service Name
    * @param user       - Oracle User name
    * @param pwd        - Oracle User password
@@ -17857,21 +18014,23 @@ OCI_SYM_PUBLIC OCI_Subscription* OCI_API OCI_EventGetSubscription
    *
    */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DatabaseStartup
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DatabaseStartup
 (
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    unsigned int sess_mode,
-    unsigned int start_mode,
-    unsigned int start_flag,
-    const otext* spfile
+    OCI_Environment      *env,
+    const otext         * db,
+    const otext         * user,
+    const otext         * pwd,
+    OCI_SessionMode       sess_mode,
+    OCI_DatabaseStartMode start_mode,
+    OCI_DatabaseStartFlag start_flag,
+    const otext         * spfile
 );
 
 /**
  * @brief
  * Shutdown a database instance
  *
+ * @param env - Environment handle
  * @param db         - Oracle Service Name
  * @param user       - Oracle User name
  * @param pwd        - Oracle User password
@@ -17922,21 +18081,22 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DatabaseStartup
  *
  */
 
-OCI_SYM_PUBLIC boolean OCI_API OCI_DatabaseShutdown
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DatabaseShutdown
 (
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    unsigned int sess_mode,
-    unsigned int shut_mode,
-    unsigned int shut_flag
+    OCI_Environment         *env,
+    const otext            * db,
+    const otext            * user,
+    const otext            * pwd,
+    OCI_SessionMode          sess_mode,
+    OCI_DatabaseShutdownMode shut_mode,
+    OCI_DatabaseShutdownFlag shut_flag
 );
 
 /**
  * @} OcilibCApiInstancesManagement
  */
 
- /**
+/**
   * @defgroup OcilibCApiRawHandles Using OCI Handles directly
   * @{
   *
@@ -17967,361 +18127,27 @@ OCI_SYM_PUBLIC boolean OCI_API OCI_DatabaseShutdown
   *
   */
 
-  /**
+/**
    * @brief
-   * Return the OCI Environment Handle (OCIEnv *) of OCILIB library
+   * Return the OCILIB Environment Handle (OCI_Environment *) of the given OCILIB object
+   *
+   * @param handle - Handle to any OCILIB object
    *
    * @return
-   * The OCI Environment handle, or NULL on failure.
+   * The OCILIB Environment handle, or NULL on failure.
    *
    */
 
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetEnvironment
+OCI_SYM_PUBLIC OCI_Environment* OCI_API OCI_HandleGetEnvironment
 (
-    void
-);
-
-/**
- * @brief
- * Return the OCI Context Handle (OCISvcCtx *) of an OCILIB OCI_Connection object
- *
- * @param con - Connection handle
- *
- * @return
- * The OCI Context handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetContext
-(
-    OCI_Connection* con
-);
-
-/**
- * @brief
- * Return the OCI Server Handle (OCIServer *) of an OCILIB OCI_Connection object
- *
- * @param con - Connection handle
- *
- * @return
- * The OCI Server handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetServer
-(
-    OCI_Connection* con
-);
-
-/**
- * @brief
- * Return the OCI Error Handle (OCIError *) of an OCILIB OCI_Connection object
- *
- * @param con - Connection handle
- *
- * @return
- * The OCI Error handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetError
-(
-    OCI_Connection* con
-);
-
-/**
- * @brief
- * Return the OCI Session Handle (OCISession *) of an OCILIB OCI_Connection object
- *
- * @param con - Connection handle
- *
- * @return
- * The OCI Session handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetSession
-(
-    OCI_Connection* con
-);
-
-/**
- * @brief
- * Return the OCI Transaction Handle (OCITrans *) of an OCILIB OCI_Transaction object
- *
- * @param trans - Transaction handle
- *
- * @return
- * The OCI Transaction handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetTransaction
-(
-    OCI_Transaction* trans
-);
-
-/**
- * @brief
- * Return the OCI Statement Handle (OCIStmt *) of an OCILIB OCI_Statement object
- *
- * @param stmt - Statement handle
- *
- * @return
- * The OCI Statement handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetStatement
-(
-    OCI_Statement* stmt
-);
-
-/**
- * @brief
- * Return the OCI LobLocator Handle (OCILobLocator *) of an OCILIB OCI_Lob object
- *
- * @param lob - Lob handle
- *
- * @return
- * The OCI LobLocator handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetLob
-(
-    OCI_Lob* lob
-);
-
-/**
- * @brief
- * Return the OCI LobLocator Handle (OCILobLocator *) of an OCILIB OCI_File object
- *
- * @param file - File handle
- *
- * @return
- * The OCI LobLocator handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetFile
-(
-    OCI_File* file
-);
-
-/**
- * @brief
- * Return the OCI Date Handle (OCIDate *) of an OCILIB OCI_Date object
- *
- * @param date - Date handle
- *
- * @return
- * The OCI Date handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetDate
-(
-    OCI_Date* date
-);
-
-/**
- * @brief
- * Return the OCI Datetime Handle (OCIDatetime *) of an OCILIB OCI_Timestamp object
- *
- * @param tmsp - Timestamp handle
- *
- * @return
- * The OCI Datetime handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetTimestamp
-(
-    OCI_Timestamp* tmsp
-);
-
-/**
- * @brief
- * Return the OCI Interval Handle (OCIInterval *) of an OCILIB OCI_Interval object
- *
- * @param itv - Interval handle
- *
- * @return
- * The OCI Interval handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetInterval
-(
-    OCI_Interval* itv
-);
-
-/**
- * @brief
- * Return the OCI Object Handle (void *) of an OCILIB OCI_Object object
- *
- * @param obj - Object handle
- *
- * @return
- * The OCI Object handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetObject
-(
-    OCI_Object* obj
-);
-
-/**
- * @brief
- * Return the OCI Collection Handle (OCIColl *) of an OCILIB OCI_Coll object
- *
- * @param coll - Collection handle
- *
- * @return
- * The OCI Collection handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetColl
-(
-    OCI_Coll* coll
-);
-
-/**
- * @brief
- * Return the OCI Ref Handle (OCIRef *) of an OCILIB OCI_Ref object
- *
- * @param ref - Ref handle
- *
- * @return
- * The OCI Ref handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetRef
-(
-    OCI_Ref* ref
-);
-
-/**
- * @brief
- * Return the OCI Mutex handle (OCIThreadMutex *) of an OCILIB OCI_Mutex object
- *
- * @param mutex - Mutex handle
- *
- * @return
- * The OCI Mutex handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetMutex
-(
-    OCI_Mutex* mutex
-);
-
-/**
- * @brief
- * Return the OCI Thread ID (OCIThreadId *) of an OCILIB OCI_Thread object
- *
- * @param thread - Thread handle
- *
- * @return
- * The OCI Thread ID, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetThreadID
-(
-    OCI_Thread* thread
-);
-
-/**
- * @brief
- * Return the OCI Thread handle (OCIThreadHandle *) of an OCILIB OCI_Thread object
- *
- * @param thread - Thread handle
- *
- * @return
- * The OCI Thread handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetThread
-(
-    OCI_Thread* thread
-);
-
-/**
- * @brief
- * Return the OCI DirectPath Context handle (OCIDirPathCtx *) of an OCILIB OCI_DirPath object
- *
- * @param dp - DirectPath handle
- *
- * @return
- * The OCI DirectPath Context handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetDirPathCtx
-(
-    OCI_DirPath* dp
-);
-
-/**
- * @brief
- * Return the OCI DirectPath Column array handle (OCIDirPathColArray *) of an OCILIB OCI_DirPath object
- *
- * @param dp - DirectPath handle
- *
- * @return
- * The OCI DirectPath Column array handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetDirPathColArray
-(
-    OCI_DirPath* dp
-);
-
-/**
- * @brief
- * Return the OCI DirectPath Stream handle (OCIDirPathStream *) of an OCILIB OCI_DirPath object
- *
- * @param dp - DirectPath handle
- *
- * @return
- * The OCI DirectPath Stream handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetDirPathStream
-(
-    OCI_DirPath* dp
-);
-
-/**
- * @brief
- * Return the OCI Subscription handle (OCISubscription *) of an OCILIB OCI_Subscription object
- *
- * @param sub - Subscription handle
- *
- * @return
- * The OCI Subscription handle, or NULL on failure.
- *
- */
-
-OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetSubscription
-(
-    OCI_Subscription* sub
+    void* handle
 );
 
 /**
  * @} OcilibCApiRawHandles
  */
 
- /**
+/**
   * @defgroup OcilibCApiDemoApplication OCILIB main demo application code
   * @{
   *
@@ -18334,7 +18160,1780 @@ OCI_SYM_PUBLIC const void* OCI_API OCI_HandleGetSubscription
   * @} OcilibCApiDemoApplication
   */
 
-  /**
+/**
+ * @defgroup OcilibCApiSoda SODA for C (Simple Oracle Document Access)
+ * @{
+ *
+ * Oracle SODA is a set of APIs that let you create and store collections of
+ * documents (for example JSON documents) in Oracle Database and perform
+ * create, retrieve, update, and delete (CRUD) operations on them without
+ * writing SQL.
+ *
+ * @par SODA principles
+ * - A <b>collection</b> (OCI_SodaColl) is backed by a database table holding
+ *   one document per row. Collections are created with OCI_SodaDbCreateColl()
+ *   and opened with OCI_SodaDbOpenColl(); existing collections can be listed
+ *   with OCI_SodaDbGetColls(). A collection's shape is described by an
+ *   optional JSON metadata descriptor (key/content columns, versioning
+ *   method, timestamps) passed at creation time and returned later by
+ *   OCI_SodaCollGetMetadata(). The keyColumn "assignmentMethod" metadata
+ *   field selects how document keys are generated: UUID (default), GUID,
+ *   SEQUENCE, IDENTITY or CLIENT for client-assigned keys.
+ * - A <b>document</b> (OCI_SodaDoc) bundles a key, content, media type,
+ *   version and creation/last-modification timestamps. Documents are created
+ *   standalone with OCI_SodaDocCreateFromText() or OCI_SodaDocCreateFromJson()
+ *   (optionally with a client-assigned key) and inserted into a collection
+ *   with OCI_SodaCollInsertDoc() or OCI_SodaCollInsertDocAndGet(). The
+ *   "...AndGet" variants also return the document components updated by the
+ *   insert or replace operation. Document components are read with
+ *   OCI_SodaDocGetText(), OCI_SodaDocGetJson(), OCI_SodaDocGetKey(),
+ *   OCI_SodaDocGetVersion(), OCI_SodaDocGetCreatedOn(),
+ *   OCI_SodaDocGetLastModified() and OCI_SodaDocGetMediaType().
+ * - <b>Operation options</b> (OCI_SodaOptions) carry a Query-By-Example
+ *   filter (OCI_SodaOptionsSetFilter()), a single key
+ *   (OCI_SodaOptionsSetKey()) or a key list (OCI_SodaOptionsSetKeys()), a
+ *   version (OCI_SodaOptionsSetVersion()) and pagination
+ *   (OCI_SodaOptionsSetSkip() / OCI_SodaOptionsSetLimit()) used by find,
+ *   replace, remove and count operations.
+ * - Reads produce cursors: OCI_SodaDocCursor iterates documents
+ *   (OCI_SodaCollFind() / OCI_SodaDocCursorGetNext()) and OCI_SodaCollCursor
+ *   iterates collections (OCI_SodaDbGetColls() / OCI_SodaCollCursorGetNext()).
+ *
+ * @note Requires Oracle client library 18.1+ and Oracle Database 18.1+.
+ *       OCI_SodaCollTruncate() requires Oracle client 20.1+.
+ *
+ * @par Example
+ * The OCILIB SODA usage example in demo/soda.c
+ * @example soda.c
+ *
+ */
+
+/**
+ * @brief
+ * Create a SODA database handle bound to a connection
+ *
+ * @param con - Connection handle
+ *
+ * @warning
+ * SODA support has been introduced in Oracle 18.1.
+ *
+ * @return
+ * The SODA database handle on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaDb* OCI_API OCI_SodaDbCreate
+(
+    OCI_Connection* con
+);
+
+/**
+ * @brief
+ * Free a SODA database handle
+ *
+ * @param sdb - SODA database handle
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaDbFree
+(
+    OCI_SodaDb* sdb
+);
+
+/**
+ * @brief
+ * Return the connection associated with a SODA database handle
+ *
+ * @param sdb - SODA database handle
+ *
+ * @return
+ * The connection handle on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_SodaDbGetConnection
+(
+    OCI_SodaDb* sdb
+);
+
+/**
+ * @brief
+ * Create a SODA collection
+ *
+ * @param sdb      - SODA database handle
+ * @param name     - Collection name
+ * @param metadata - Collection metadata descriptor (JSON), or NULL for defaults
+ *
+ * @return
+ * The SODA collection handle on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaColl* OCI_API OCI_SodaDbCreateColl
+(
+    OCI_SodaDb  * sdb,
+    const otext * name,
+    const otext * metadata
+);
+
+/**
+ * @brief
+ * Open an existing SODA collection
+ *
+ * @param sdb  - SODA database handle
+ * @param name - Collection name
+ *
+ * @return
+ * The SODA collection handle on success, or NULL if the collection does not
+ * exist or on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaColl* OCI_API OCI_SodaDbOpenColl
+(
+    OCI_SodaDb  * sdb,
+    const otext * name
+);
+
+/**
+ * @brief
+ * Return a cursor over the SODA collections in the current schema
+ *
+ * @param sdb       - SODA database handle
+ * @param startName - Starting collection name for the cursor, or NULL to start
+ *                    from the first collection
+ *
+ * @return
+ * The SODA collection cursor handle on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaCollCursor* OCI_API OCI_SodaDbGetColls
+(
+    OCI_SodaDb  * sdb,
+    const otext * startName
+);
+
+/**
+ * @brief
+ * Create a SODA document from raw text
+ *
+ * @param sdb         - SODA database handle
+ * @param content     - Document content text
+ * @param contentSize - Size in bytes of the content text
+ * @param key         - Document key, or NULL to let the server assign it
+ *
+ * @return
+ * The SODA document handle on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaDoc* OCI_API OCI_SodaDocCreateFromText
+(
+    OCI_SodaDb  * sdb,
+    const otext * content,
+    OCI_UInt32  contentSize,
+    const otext * key
+);
+
+/**
+ * @brief
+ * Create a SODA document from an OCI JSON descriptor
+ *
+ * @param sdb   - SODA database handle
+ * @param json  - OCI JSON handle whose contents are cloned into the document
+ * @param key   - Document key, or NULL to let the server assign it
+ *
+ * @warning
+ * Requires an Oracle client 23.4 or higher.
+ *
+ * @return
+ * The SODA document handle on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaDoc* OCI_API OCI_SodaDocCreateFromJson
+(
+    OCI_SodaDb  * sdb,
+    OCI_Json    * json,
+    const otext * key
+);
+
+/**
+ * @brief
+ * Free a SODA document handle
+ *
+ * @param doc - SODA document handle
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaDocFree
+(
+    OCI_SodaDoc* doc
+);
+
+/**
+ * @brief
+ * Return the collection name
+ *
+ * @param coll - SODA collection handle
+ *
+ * @return
+ * The collection name on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC const otext* OCI_API OCI_SodaCollGetName
+(
+    OCI_SodaColl* coll
+);
+
+/**
+ * @brief
+ * Return the collection metadata descriptor (JSON)
+ *
+ * @param coll - SODA collection handle
+ *
+ * @return
+ * The metadata descriptor on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC const otext* OCI_API OCI_SodaCollGetMetadata
+(
+    OCI_SodaColl* coll
+);
+
+/**
+ * @brief
+ * Return the connection associated with a SODA collection
+ *
+ * @param coll - SODA collection handle
+ *
+ * @return
+ * The connection handle on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_SodaCollGetConnection
+(
+    OCI_SodaColl* coll
+);
+
+/**
+ * @brief
+ * Check whether a SODA collection is mapped to an existing table
+ *
+ * @param coll - SODA collection handle
+ *
+ * @warning
+ * Requires an Oracle client 23.4 or higher.
+ *
+ * @return
+ * TRUE if the collection is mapped, FALSE otherwise.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollIsMapped
+(
+    OCI_SodaColl* coll
+);
+
+/**
+ * @brief
+ * Drop a SODA collection
+ *
+ * @param coll - SODA collection handle
+ *
+ * @return
+ * TRUE if the collection was dropped, FALSE otherwise.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollDrop
+(
+    OCI_SodaColl * coll
+);
+
+/**
+ * @brief
+ * Truncate a SODA collection (delete all documents)
+ *
+ * @param coll - SODA collection handle
+ *
+ * @warning
+ * Requires an Oracle client 20.1 or higher.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollTruncate
+(
+    OCI_SodaColl * coll
+);
+
+/**
+ * @brief
+ * Free a SODA collection handle
+ *
+ * @param coll - SODA collection handle
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollFree
+(
+    OCI_SodaColl* coll
+);
+
+/**
+ * @brief
+ * Return the document key
+ *
+ * @param doc - SODA document handle
+ *
+ * @return
+ * The document key on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC const otext* OCI_API OCI_SodaDocGetKey
+(
+    OCI_SodaDoc* doc
+);
+
+/**
+ * @brief
+ * Return the document version
+ *
+ * @param doc - SODA document handle
+ *
+ * @return
+ * The document version on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC const otext* OCI_API OCI_SodaDocGetVersion
+(
+    OCI_SodaDoc* doc
+);
+
+/**
+ * @brief
+ * Return the document creation timestamp
+ *
+ * @param doc - SODA document handle
+ *
+ * @return
+ * The creation timestamp on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC const otext* OCI_API OCI_SodaDocGetCreatedOn
+(
+    OCI_SodaDoc* doc
+);
+
+/**
+ * @brief
+ * Return the document last modification timestamp
+ *
+ * @param doc - SODA document handle
+ *
+ * @return
+ * The last modification timestamp on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC const otext* OCI_API OCI_SodaDocGetLastModified
+(
+    OCI_SodaDoc* doc
+);
+
+/**
+ * @brief
+ * Return the document media type
+ *
+ * @param doc - SODA document handle
+ *
+ * @return
+ * The media type on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC const otext* OCI_API OCI_SodaDocGetMediaType
+(
+    OCI_SodaDoc* doc
+);
+
+/**
+ * @brief
+ * Return the document content converted to an otext string
+ *
+ * @param doc - SODA document handle
+ *
+ * @return
+ * The document text content on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC const otext* OCI_API OCI_SodaDocGetText
+(
+    OCI_SodaDoc* doc
+);
+
+/**
+ * @brief
+ * Return the document content as an OCI_Json descriptor
+ *
+ * @param doc - SODA document handle
+ *
+ * @warning
+ * Requires an Oracle client 23.4 or higher.
+ *
+ * @note
+ * The returned OCI_Json handle is owned by the document and must not be freed.
+ * It remains valid until the document is freed or updated by an insert or
+ * replace operation.
+ *
+ * @return
+ * The document JSON content on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Json* OCI_API OCI_SodaDocGetJson
+(
+    OCI_SodaDoc* doc
+);
+
+/**
+ * @brief
+ * Create a SODA operation options handle
+ *
+ * @param sdb - SODA database handle
+ *
+ * @return
+ * The SODA options handle on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaOptions* OCI_API OCI_SodaOptionsCreate
+(
+    OCI_SodaDb* sdb
+);
+
+/**
+ * @brief
+ * Free a SODA operation options handle
+ *
+ * @param options - SODA options handle
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaOptionsFree
+(
+    OCI_SodaOptions* options
+);
+
+/**
+ * @brief
+ * Set the single document key on a SODA options handle
+ *
+ * @param options - SODA options handle
+ * @param key     - Document key
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaOptionsSetKey
+(
+    OCI_SodaOptions * options,
+    const otext     * key
+);
+
+/**
+ * @brief
+ * Set multiple document keys on a SODA options handle
+ *
+ * @param options - SODA options handle
+ * @param keys    - Array of document keys
+ * @param count   - Number of keys in the array
+ *
+ * @warning
+ * Requires an Oracle client 18.3 or higher.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaOptionsSetKeys
+(
+    OCI_SodaOptions * options,
+    const otext    ** keys,
+    OCI_UInt32      count
+);
+
+/**
+ * @brief
+ * Set the document version on a SODA options handle
+ *
+ * @param options - SODA options handle
+ * @param version - Document version
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaOptionsSetVersion
+(
+    OCI_SodaOptions * options,
+    const otext     * version
+);
+
+/**
+ * @brief
+ * Set the query-by-example filter on a SODA options handle
+ *
+ * @param options    - SODA options handle
+ * @param filterSpec - Filter specification (JSON), or NULL to clear
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaOptionsSetFilter
+(
+    OCI_SodaOptions * options,
+    const otext     * filterSpec
+);
+
+/**
+ * @brief
+ * Set the number of documents to skip on a SODA options handle
+ *
+ * @param options - SODA options handle
+ * @param count   - Number of documents to skip
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaOptionsSetSkip
+(
+    OCI_SodaOptions * options,
+    OCI_UInt32      count
+);
+
+/**
+ * @brief
+ * Set the maximum number of documents to return on a SODA options handle
+ *
+ * @param options - SODA options handle
+ * @param count   - Maximum number of documents
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaOptionsSetLimit
+(
+    OCI_SodaOptions * options,
+    OCI_UInt32      count
+);
+
+/**
+ * @brief
+ * Return the next collection of a SODA collection cursor
+ *
+ * @param cursor - SODA collection cursor handle
+ *
+ * @return
+ * The SODA collection handle on success, or NULL when there is no more
+ * collection or on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaColl* OCI_API OCI_SodaCollCursorGetNext
+(
+    OCI_SodaCollCursor* cursor
+);
+
+/**
+ * @brief
+ * Free a SODA collection cursor handle
+ *
+ * @param cursor - SODA collection cursor handle
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollCursorFree
+(
+    OCI_SodaCollCursor* cursor
+);
+
+/**
+ * @brief
+ * Return the next document of a SODA document cursor
+ *
+ * @param cursor - SODA document cursor handle
+ *
+ * @return
+ * The SODA document handle on success, or NULL when there is no more
+ * document or on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaDoc* OCI_API OCI_SodaDocCursorGetNext
+(
+    OCI_SodaDocCursor * cursor
+);
+
+/**
+ * @brief
+ * Free a SODA document cursor handle
+ *
+ * @param cursor - SODA document cursor handle
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaDocCursorFree
+(
+    OCI_SodaDocCursor* cursor
+);
+
+/**
+ * @brief
+ * Insert a document into a SODA collection
+ *
+ * @param coll - SODA collection handle
+ * @param doc  - SODA document handle
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollInsertDoc
+(
+    OCI_SodaColl * coll,
+    OCI_SodaDoc  * doc
+);
+
+/**
+ * @brief
+ * Find documents in a SODA collection
+ *
+ * @param coll    - SODA collection handle
+ * @param options - SODA options handle (may be NULL)
+ *
+ * @return
+ * The SODA document cursor handle on success, or NULL on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaDocCursor* OCI_API OCI_SodaCollFind
+(
+    OCI_SodaColl    * coll,
+    OCI_SodaOptions * options
+);
+
+/**
+ * @brief
+ * Find one document in a SODA collection
+ *
+ * @param coll    - SODA collection handle
+ * @param options - SODA options handle (may be NULL)
+ *
+ * @return
+ * The SODA document handle on success, or NULL if no document matches or on
+ * failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaDoc* OCI_API OCI_SodaCollFindOne
+(
+    OCI_SodaColl    * coll,
+    OCI_SodaOptions * options
+);
+
+/**
+ * @brief
+ * Find one document by key in a SODA collection
+ *
+ * @param coll - SODA collection handle
+ * @param key  - Document key
+ *
+ * @return
+ * The SODA document handle on success, or NULL if the document does not
+ * exist or on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaDoc* OCI_API OCI_SodaCollFindOneByKey
+(
+    OCI_SodaColl * coll,
+    const otext  * key
+);
+
+/**
+ * @brief
+ * Return the number of documents in a SODA collection
+ *
+ * @param coll    - SODA collection handle
+ * @param options - SODA options handle (may be NULL)
+ *
+ * @return
+ * The document count on success, or 0 on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_SodaCollDocCount
+(
+    OCI_SodaColl    * coll,
+    OCI_SodaOptions * options
+);
+
+/**
+ * @brief
+ * Return the number of documents matching a filter in a SODA collection
+ *
+ * @param coll       - SODA collection handle
+ * @param filterSpec - Filter specification (JSON)
+ *
+ * @return
+ * The document count on success, or 0 on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_SodaCollDocCountWithFilter
+(
+    OCI_SodaColl * coll,
+    const otext  * filterSpec
+);
+
+/**
+ * @brief
+ * Replace one document in a SODA collection
+ *
+ * @param coll    - SODA collection handle
+ * @param options - SODA options handle identifying the document (key and/or
+ *                  version)
+ * @param doc     - SODA document handle with the new content
+ *
+ * @return
+ * TRUE if a document was replaced, FALSE otherwise.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollReplaceOne
+(
+    OCI_SodaColl    * coll,
+    OCI_SodaOptions * options,
+    OCI_SodaDoc     * doc
+);
+
+/**
+ * @brief
+ * Replace one document in a SODA collection and return the new document
+ *
+ * @param coll    - SODA collection handle
+ * @param options - SODA options handle identifying the document
+ * @param doc     - SODA document handle with the new content (the handle is
+ *                  replaced by the returned document on output)
+ *
+ * @return
+ * TRUE if a document was replaced, FALSE otherwise.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollReplaceOneAndGet
+(
+    OCI_SodaColl    * coll,
+    OCI_SodaOptions * options,
+    OCI_SodaDoc     * doc
+);
+
+/**
+ * @brief
+ * Replace one document by key in a SODA collection
+ *
+ * @param coll - SODA collection handle
+ * @param key  - Document key
+ * @param doc  - SODA document handle with the new content
+ *
+ * @return
+ * TRUE if the document was replaced, FALSE otherwise.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollReplaceOneByKey
+(
+    OCI_SodaColl * coll,
+    const otext  * key,
+    OCI_SodaDoc  * doc
+);
+
+/**
+ * @brief
+ * Replace one document by key in a SODA collection and return the new document
+ *
+ * @param coll - SODA collection handle
+ * @param key  - Document key
+ * @param doc  - SODA document handle with the new content (the handle is
+ *               replaced by the returned document on output)
+ *
+ * @return
+ * TRUE if the document was replaced, FALSE otherwise.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollReplaceOneAndGetByKey
+(
+    OCI_SodaColl * coll,
+    const otext  * key,
+    OCI_SodaDoc  * doc
+);
+
+/**
+ * @brief
+ * Remove documents from a SODA collection
+ *
+ * @param coll    - SODA collection handle
+ * @param options - SODA options handle selecting the documents to remove
+ *                  (may be NULL to remove all documents)
+ * @param count   - Optional pointer that receives the number of removed
+ *                  documents (may be NULL)
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollRemove
+(
+    OCI_SodaColl    * coll,
+    OCI_SodaOptions * options,
+    OCI_UInt64        * count
+);
+
+/**
+ * @brief
+ * Remove one document by key from a SODA collection
+ *
+ * @param coll - SODA collection handle
+ * @param key  - Document key
+ *
+ * @return
+ * TRUE if the document was removed, FALSE otherwise.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollRemoveOneByKey
+(
+    OCI_SodaColl * coll,
+    const otext  * key
+);
+
+/**
+ * @} OcilibCApiSoda
+ */
+
+/**
+ * @defgroup OcilibCApiJson JSON
+ * @ingroup OcilibCApi
+ * @{
+ *
+ * @brief
+ * SQL JSON datatype support
+ *
+ * @par Native JSON
+ * These functions allow manipulating SQL JSON values using Oracle 21c+ native JSON
+ * descriptors. They are gated by the client version and require OCI 21.1 or newer.
+ *
+ * @par JSON DOM manipulation
+ * - OCI_JsonLoadText() and OCI_JsonLoadBinary() parse JSON text or OSON
+ *   binary data into an OCI_Json document; OCI_JsonToText() and
+ *   OCI_JsonToBinary() serialize it back. OCI_JsonClone() deep-copies a
+ *   document.
+ * - OCI_JsonGetRoot() materializes the in-memory DOM tree of the document
+ *   as an OCI_JsonNode: objects, arrays and scalars (string, number,
+ *   boolean, binary, date, timestamp, interval, null). The node type is
+ *   reported by OCI_JsonNodeGetType() and OCI_JsonNodeIsNull().
+ * - Objects are navigated with OCI_JsonNodeGetFieldCount(),
+ *   OCI_JsonNodeGetFieldByName(), OCI_JsonNodeGetFieldByIndex() and
+ *   OCI_JsonNodeGetFieldName(); fields are added or replaced with
+ *   OCI_JsonNodeSetField(). Arrays are navigated with
+ *   OCI_JsonNodeGetItemCount() and OCI_JsonNodeGetItem(); items are added
+ *   or replaced with OCI_JsonNodeAppendItem() and OCI_JsonNodeSetItem().
+ * - Scalar nodes are created with the OCI_JsonNodeCreate*() family
+ *   (OCI_JsonNodeCreateString(), OCI_JsonNodeCreateNumber(),
+ *   OCI_JsonNodeCreateBoolean(), OCI_JsonNodeCreateBinary(),
+ *   OCI_JsonNodeCreateDate(), OCI_JsonNodeCreateTimestamp(),
+ *   OCI_JsonNodeCreateInterval(), OCI_JsonNodeCreateNull()) and read back
+ *   with the OCI_JsonNodeGet*() accessors; existing nodes are updated with
+ *   the OCI_JsonNodeSet*() setters.
+ * - DOM mutation requires the document to be mutable: mutability is toggled
+ *   with OCI_JsonSetMutable() and queried with OCI_JsonIsMutable(). An
+ *   immutable fetched document must be cloned or made mutable before its
+ *   tree can be edited.
+ *
+ * @par Example
+ * The OCILIB JSON/DOM usage example in demo/json.c
+ * @example json.c
+ *
+ */
+
+/**
+ * @brief
+ * Create a new empty JSON document
+ *
+ * @param con - Connection handle (or NULL for environment-owned JSON)
+ *
+ * @return New JSON document handle on success, NULL otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Json * OCI_API OCI_JsonCreate
+(
+    OCI_Connection *con
+);
+
+/**
+ * @brief
+ * Create an array of JSON document handles
+ *
+ * @param con    - Connection handle
+ * @param nbelem - Number of elements
+ *
+ * @return Array of JSON document handles on success, NULL otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Json ** OCI_API OCI_JsonArrayCreate
+(
+    OCI_Connection *con,
+    OCI_UInt32    nbelem
+);
+
+/**
+ * @brief
+ * Free a JSON document
+ *
+ * @param json - JSON document handle
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonFree
+(
+    OCI_Json *json
+);
+
+/**
+ * @brief
+ * Free an array of JSON document handles
+ *
+ * @param jsons - Array of JSON document handles
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonArrayFree
+(
+    OCI_Json **jsons
+);
+
+/**
+ * @brief
+ * Return the connection associated with a JSON document
+ *
+ * @param json - JSON document handle
+ *
+ * @return Connection handle, or NULL if environment-owned
+ */
+
+OCI_SYM_PUBLIC OCI_Connection * OCI_API OCI_JsonGetConnection
+(
+    OCI_Json *json
+);
+
+/**
+ * @brief
+ * Load a JSON document from a text buffer
+ *
+ * @param json       - JSON document handle
+ * @param text       - Text buffer
+ * @param length     - Text length in characters
+ * @param validation - Validation flags (see OCI_JV_* values)
+ * @param encoding   - Input text encoding (see OCI_JE_* values)
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonLoadText
+(
+    OCI_Json          *json,
+    const otext       *text,
+    OCI_UInt32       length,
+    OCI_JsonValidation validation,
+    OCI_JsonEncoding   encoding
+);
+
+/**
+ * @brief
+ * Load a JSON document from an OSON binary buffer
+ *
+ * @param json   - JSON document handle
+ * @param data   - Binary buffer
+ * @param length - Buffer length in bytes
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonLoadBinary
+(
+    OCI_Json    *json,
+    const void  *data,
+    OCI_UInt32 length
+);
+
+/**
+ * @brief
+ * Serialize a JSON document to text
+ *
+ * @param json         - JSON document handle
+ * @param buffer       - Output buffer (can be NULL to request length)
+ * @param length       - In: buffer size, Out: number of characters written
+ * @param print        - Print flags (see OCI_JP_* values)
+ * @param useEnvCharset - Use environment charset for output
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonToText
+(
+    OCI_Json     *json,
+    otext        *buffer,
+    OCI_UInt32 *length,
+    OCI_JsonPrint print,
+    OCI_Boolean   useEnvCharset
+);
+
+/**
+ * @brief
+ * Serialize a JSON document to OSON binary
+ *
+ * @param json   - JSON document handle
+ * @param buffer - Output buffer (can be NULL to request length)
+ * @param length - In: buffer size, Out: number of bytes written
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonToBinary
+(
+    OCI_Json     *json,
+    void         *buffer,
+    OCI_UInt32 *length
+);
+
+/**
+ * @brief
+ * Clone a JSON document
+ *
+ * @param src  - Source JSON document
+ * @param dest - Destination JSON document
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonClone
+(
+    OCI_Json *src,
+    OCI_Json *dest
+);
+
+/**
+ * @brief
+ * Set the mutability of a JSON document DOM
+ *
+ * @param json  - JSON document handle
+ * @param value - TRUE for mutable, FALSE otherwise
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonSetMutable
+(
+    OCI_Json   *json,
+    OCI_Boolean value
+);
+
+/**
+ * @brief
+ * Return the mutability of a JSON document DOM
+ *
+ * @param json - JSON document handle
+ *
+ * @return TRUE if mutable, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonIsMutable
+(
+    OCI_Json *json
+);
+
+/**
+ * @brief
+ * Return the root node of a JSON document
+ *
+ * @param json - JSON document handle
+ *
+ * @return Root JSON node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonGetRoot
+(
+    OCI_Json *json
+);
+
+/**
+ * @brief
+ * Set the root node of a JSON document
+ *
+ * @param json - JSON document handle
+ * @param node - JSON node to set as root
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonSetRoot
+(
+    OCI_Json     *json,
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Create a JSON node of a given type
+ *
+ * @param json - JSON document handle
+ * @param type - Node type
+ *
+ * @return New JSON node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeCreate
+(
+    OCI_Json    *json,
+    OCI_JsonType type
+);
+
+/**
+ * @brief
+ * Create a JSON string node
+ *
+ * @param json   - JSON document handle
+ * @param value  - String value
+ * @param length - String length in characters
+ *
+ * @return New JSON node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeCreateString
+(
+    OCI_Json    *json,
+    const otext *value,
+    OCI_UInt32 length
+);
+
+/**
+ * @brief
+ * Create a JSON number node
+ *
+ * @param json  - JSON document handle
+ * @param value - Number value
+ *
+ * @return New JSON node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeCreateNumber
+(
+    OCI_Json   *json,
+    OCI_Number *value
+);
+
+/**
+ * @brief
+ * Create a JSON boolean node
+ *
+ * @param json  - JSON document handle
+ * @param value - Boolean value
+ *
+ * @return New JSON node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeCreateBoolean
+(
+    OCI_Json   *json,
+    OCI_Boolean value
+);
+
+/**
+ * @brief
+ * Create a JSON null node
+ *
+ * @param json - JSON document handle
+ *
+ * @return New JSON node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeCreateNull
+(
+    OCI_Json *json
+);
+
+/**
+ * @brief
+ * Create a JSON binary node
+ *
+ * @param json   - JSON document handle
+ * @param value  - Binary data
+ * @param length - Data length in bytes
+ *
+ * @return New JSON node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeCreateBinary
+(
+    OCI_Json    *json,
+    const void  *value,
+    OCI_UInt32 length
+);
+
+/**
+ * @brief
+ * Create a JSON date node
+ *
+ * @param json  - JSON document handle
+ * @param value - Date value
+ *
+ * @return New JSON node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeCreateDate
+(
+    OCI_Json *json,
+    OCI_Date *value
+);
+
+/**
+ * @brief
+ * Create a JSON timestamp node
+ *
+ * @param json  - JSON document handle
+ * @param value - Timestamp value
+ *
+ * @return New JSON node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeCreateTimestamp
+(
+    OCI_Json      *json,
+    OCI_Timestamp *value
+);
+
+/**
+ * @brief
+ * Create a JSON interval node
+ *
+ * @param json  - JSON document handle
+ * @param value - Interval value
+ *
+ * @return New JSON node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeCreateInterval
+(
+    OCI_Json     *json,
+    OCI_Interval *value
+);
+
+/**
+ * @brief
+ * Create a JSON object node
+ *
+ * @param json - JSON document handle
+ *
+ * @return New JSON node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeCreateObject
+(
+    OCI_Json *json
+);
+
+/**
+ * @brief
+ * Create a JSON array node
+ *
+ * @param json - JSON document handle
+ *
+ * @return New JSON node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeCreateArray
+(
+    OCI_Json *json
+);
+
+/**
+ * @brief
+ * Free a JSON node
+ *
+ * @param node - JSON node handle
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeFree
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Return the type of a JSON node
+ *
+ * @param node - JSON node handle
+ *
+ * @return Node type
+ */
+
+OCI_SYM_PUBLIC OCI_JsonType OCI_API OCI_JsonNodeGetType
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Check if a JSON node is null
+ *
+ * @param node - JSON node handle
+ *
+ * @return TRUE if null, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeIsNull
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Return the number of fields of a JSON object node
+ *
+ * @param node - JSON object node handle
+ *
+ * @return Number of fields
+ */
+
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_JsonNodeGetFieldCount
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Return the name of a JSON object field by index
+ *
+ * @param node  - JSON object node handle
+ * @param index - Field index
+ *
+ * @return Field name, or NULL on error
+ */
+
+OCI_SYM_PUBLIC const otext * OCI_API OCI_JsonNodeGetFieldName
+(
+    OCI_JsonNode *node,
+    OCI_UInt32  index
+);
+
+/**
+ * @brief
+ * Return a JSON object field by name
+ *
+ * @param node - JSON object node handle
+ * @param name - Field name
+ *
+ * @return Field node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeGetFieldByName
+(
+    OCI_JsonNode *node,
+    const otext  *name
+);
+
+/**
+ * @brief
+ * Return a JSON object field by index
+ *
+ * @param node  - JSON object node handle
+ * @param index - Field index
+ *
+ * @return Field node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeGetFieldByIndex
+(
+    OCI_JsonNode *node,
+    OCI_UInt32  index
+);
+
+/**
+ * @brief
+ * Return the number of items of a JSON array node
+ *
+ * @param node - JSON array node handle
+ *
+ * @return Number of items
+ */
+
+OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_JsonNodeGetItemCount
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Return a JSON array item by index
+ *
+ * @param node  - JSON array node handle
+ * @param index - Item index
+ *
+ * @return Item node, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeGetItem
+(
+    OCI_JsonNode *node,
+    OCI_UInt32  index
+);
+
+/**
+ * @brief
+ * Return the string value of a JSON string node
+ *
+ * @param node   - JSON string node handle
+ * @param length - Optional output length
+ *
+ * @return String value, or NULL on error
+ */
+
+OCI_SYM_PUBLIC const otext * OCI_API OCI_JsonNodeGetString
+(
+    OCI_JsonNode *node,
+    OCI_UInt32 *length
+);
+
+/**
+ * @brief
+ * Return the number value of a JSON number node
+ *
+ * @param node - JSON number node handle
+ *
+ * @return Number value, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_Number * OCI_API OCI_JsonNodeGetNumber
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Return the boolean value of a JSON boolean node
+ *
+ * @param node - JSON boolean node handle
+ *
+ * @return Boolean value
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeGetBoolean
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Return the binary value of a JSON binary node
+ *
+ * @param node   - JSON binary node handle
+ * @param length - Optional output length
+ *
+ * @return Binary value, or NULL on error
+ */
+
+OCI_SYM_PUBLIC const void * OCI_API OCI_JsonNodeGetBinary
+(
+    OCI_JsonNode *node,
+    OCI_UInt32 *length
+);
+
+/**
+ * @brief
+ * Return the date value of a JSON date node
+ *
+ * @param node - JSON date node handle
+ *
+ * @return Date value, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_Date * OCI_API OCI_JsonNodeGetDate
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Return the timestamp value of a JSON timestamp node
+ *
+ * @param node - JSON timestamp node handle
+ *
+ * @return Timestamp value, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_Timestamp * OCI_API OCI_JsonNodeGetTimestamp
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Return the interval value of a JSON interval node
+ *
+ * @param node - JSON interval node handle
+ *
+ * @return Interval value, or NULL on error
+ */
+
+OCI_SYM_PUBLIC OCI_Interval * OCI_API OCI_JsonNodeGetInterval
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Set the string value of a JSON string node
+ *
+ * @param node   - JSON string node handle
+ * @param value  - New string value
+ * @param length - String length in characters
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetString
+(
+    OCI_JsonNode *node,
+    const otext  *value,
+    OCI_UInt32  length
+);
+
+/**
+ * @brief
+ * Set the number value of a JSON number node
+ *
+ * @param node  - JSON number node handle
+ * @param value - New number value
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetNumber
+(
+    OCI_JsonNode *node,
+    OCI_Number   *value
+);
+
+/**
+ * @brief
+ * Set the boolean value of a JSON boolean node
+ *
+ * @param node  - JSON boolean node handle
+ * @param value - New boolean value
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetBoolean
+(
+    OCI_JsonNode *node,
+    OCI_Boolean   value
+);
+
+/**
+ * @brief
+ * Set the binary value of a JSON binary node
+ *
+ * @param node   - JSON binary node handle
+ * @param value  - New binary value
+ * @param length - Data length in bytes
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetBinary
+(
+    OCI_JsonNode *node,
+    const void   *value,
+    OCI_UInt32  length
+);
+
+/**
+ * @brief
+ * Set a JSON node to null
+ *
+ * @param node - JSON node handle
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetNull
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Set the date value of a JSON date node
+ *
+ * @param node  - JSON date node handle
+ * @param value - New date value
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetDate
+(
+    OCI_JsonNode *node,
+    OCI_Date     *value
+);
+
+/**
+ * @brief
+ * Set the timestamp value of a JSON timestamp node
+ *
+ * @param node  - JSON timestamp node handle
+ * @param value - New timestamp value
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetTimestamp
+(
+    OCI_JsonNode  *node,
+    OCI_Timestamp *value
+);
+
+/**
+ * @brief
+ * Set the interval value of a JSON interval node
+ *
+ * @param node  - JSON interval node handle
+ * @param value - New interval value
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetInterval
+(
+    OCI_JsonNode *node,
+    OCI_Interval *value
+);
+
+/**
+ * @brief
+ * Set a JSON object field
+ *
+ * @param obj   - JSON object node handle
+ * @param name  - Field name
+ * @param value - Field value
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetField
+(
+    OCI_JsonNode *obj,
+    const otext  *name,
+    OCI_JsonNode *value
+);
+
+/**
+ * @brief
+ * Set a JSON array item by index
+ *
+ * @param arr   - JSON array node handle
+ * @param index - Item index
+ * @param value - Item value
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetItem
+(
+    OCI_JsonNode *arr,
+    OCI_UInt32  index,
+    OCI_JsonNode *value
+);
+
+/**
+ * @brief
+ * Append an item to a JSON array
+ *
+ * @param arr   - JSON array node handle
+ * @param value - Item value
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeAppendItem
+(
+    OCI_JsonNode *arr,
+    OCI_JsonNode *value
+);
+
+/**
+ * @} OcilibCApiJson
+ */
+
+/**
   * @} OcilibCApi
   */
 

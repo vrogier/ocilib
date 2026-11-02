@@ -59,7 +59,7 @@
 
 #ifndef _WINDOWS
   #if defined(_WIN32)|| defined(WIN32) || defined(_WIN64) || defined(WIN64) || defined(_WIN32_WINNT)
-    #define _WINDOWS
+#define _WINDOWS
   #endif
 #endif
 
@@ -77,8 +77,8 @@
  * OCILIB version information
  * --------------------------------------------------------------------------------------------- */
 
-#define OCILIB_MAJOR_VERSION     4
-#define OCILIB_MINOR_VERSION     9
+#define OCILIB_MAJOR_VERSION     5
+#define OCILIB_MINOR_VERSION     0
 #define OCILIB_REVISION_VERSION  0
 
 /* Import mode */
@@ -95,58 +95,57 @@
 #endif
 
 #if !defined(OCI_IMPORT_RUNTIME) && !defined(OCI_IMPORT_LINKAGE)
-  #define OCI_IMPORT_LINKAGE
+#define OCI_IMPORT_LINKAGE
 #endif
 
 #ifdef OCI_IMPORT_RUNTIME
-  #define OCI_IMPORT_MODE OCI_IMPORT_MODE_RUNTIME
+#define OCI_IMPORT_MODE OCI_IMPORT_MODE_RUNTIME
 #else
-  #define OCI_IMPORT_MODE OCI_IMPORT_MODE_LINKAGE
+#define OCI_IMPORT_MODE OCI_IMPORT_MODE_LINKAGE
 #endif
-
 
 /* Calling convention */
 
 #ifndef OCI_API
   #ifdef _MSC_VER
-    #define OCI_API __stdcall
+#define OCI_API __stdcall
   #else
-    #define OCI_API
+#define OCI_API
   #endif
 #endif
 
 /* Control of symbol visibility for shared libraries */
 
 #if defined _WINDOWS
-  #define OCI_SYM_PUBLIC_IMPORT     __declspec(dllimport)
-  #define OCI_SYM_PUBLIC_EXPORT     __declspec(dllexport)
-  #define OCI_SYM_LOCAL
+#define OCI_SYM_PUBLIC_IMPORT     __declspec(dllimport)
+#define OCI_SYM_PUBLIC_EXPORT     __declspec(dllexport)
+#define OCI_SYM_LOCAL
 #else
   #if __GNUC__ >= 4
-    #define OCI_SYM_PUBLIC_IMPORT   __attribute__ ((visibility ("default")))
-    #define OCI_SYM_PUBLIC_EXPORT   __attribute__ ((visibility ("default")))
-    #define OCI_SYM_LOCAL           __attribute__ ((visibility ("hidden")))
+#define OCI_SYM_PUBLIC_IMPORT   __attribute__ ((visibility ("default")))
+#define OCI_SYM_PUBLIC_EXPORT   __attribute__ ((visibility ("default")))
+#define OCI_SYM_LOCAL           __attribute__ ((visibility ("hidden")))
   #else
-    #define OCI_SYM_PUBLIC_IMPORT
-    #define OCI_SYM_PUBLIC_EXPORT
-    #define OCI_SYM_LOCAL
+#define OCI_SYM_PUBLIC_IMPORT
+#define OCI_SYM_PUBLIC_EXPORT
+#define OCI_SYM_LOCAL
   #endif
 #endif
 
 #ifdef OCI_LIB_LOCAL_COMPILE
-  #define OCI_SYM_PUBLIC
+#define OCI_SYM_PUBLIC
 #else
   #ifdef OCI_EXPORT
-    #define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_EXPORT
+#define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_EXPORT
   #else
-    #define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_IMPORT
+#define OCI_SYM_PUBLIC  OCI_SYM_PUBLIC_IMPORT
   #endif
 #endif
 
 /* Charset modes */
 
 #ifdef  OCI_CHARSET_UNICODE
-  #define OCI_CHARSET_WIDE
+#define OCI_CHARSET_WIDE
 #endif
 
 #ifdef OCI_CHARSET_WIDE
@@ -158,7 +157,20 @@
 #endif
 
 #if !defined(OCI_CHARSET_ANSI)  && !defined(OCI_CHARSET_WIDE)
-  #define OCI_CHARSET_ANSI
+#define OCI_CHARSET_ANSI
+#endif
+
+/* printf-style format checking for functions taking an otext format string
+   followed by variadic arguments. GCC and Clang check the format/argument
+   consistency at compile time; MSVC does not support __attribute__ and the
+   wide-format archetypes (wprintf/gnu_wprintf/ms_wprintf) are not consistently
+   available across GCC targets, so the macro is only enabled for ANSI builds
+   on GCC/Clang and expands to nothing otherwise. */
+
+#if (defined(__GNUC__) || defined(__clang__)) && defined(OCI_CHARSET_ANSI)
+#define OCI_ATTR_FORMAT(fmt_idx, arg_idx) __attribute__((format(printf, fmt_idx, arg_idx)))
+#else
+#define OCI_ATTR_FORMAT(fmt_idx, arg_idx)
 #endif
 
 /**
@@ -230,14 +242,21 @@
  **/
 
 #if defined(__cplusplus) && defined(_MSC_VER) && (_MSC_VER < 1300)
-extern "C++" {
+#define OCI_EXTERN_CXX_OPEN  extern "C++" {
+#define OCI_EXTERN_CXX_CLOSE }
+#else
+#define OCI_EXTERN_CXX_OPEN
+#define OCI_EXTERN_CXX_CLOSE
 #endif
+
+OCI_EXTERN_CXX_OPEN
 
 #include <wchar.h>
 
-#if defined(__cplusplus) && defined(_MSC_VER) && (_MSC_VER < 1300)
-}
-#endif
+OCI_EXTERN_CXX_CLOSE
+
+#undef OCI_EXTERN_CXX_OPEN
+#undef OCI_EXTERN_CXX_CLOSE
 
 /* Charset macros */
 
@@ -245,13 +264,13 @@ extern "C++" {
 #define OCI_CHAR_WIDE       2
 
 #ifdef OCI_CHARSET_ANSI
-  typedef char              otext;
-  #define OTEXT(x)          x
-  #define OCI_CHAR_TEXT     OCI_CHAR_ANSI
+typedef char otext;
+#define OTEXT(x)          x
+#define OCI_CHAR_TEXT     OCI_CHAR_ANSI
 #else
-  typedef wchar_t           otext;
-  #define OTEXT(x)          L ## x
-  #define OCI_CHAR_TEXT     OCI_CHAR_WIDE
+typedef wchar_t otext;
+#define OTEXT(x)          L ## x
+#define OCI_CHAR_TEXT     OCI_CHAR_WIDE
 #endif
 
 /**
@@ -264,51 +283,45 @@ extern "C++" {
 */
 
 /**
- * @typedef big_int
+ * @typedef OCI_Int16
+ * @typedef OCI_UInt16
+ * @typedef OCI_Int32
+ * @typedef OCI_UInt32
+ * @typedef OCI_Int64
+ * @typedef OCI_UInt64
+ * @typedef OCI_Size
  *
  * @brief
- * big_int is a C scalar integer (32 or 64 bits) depending on compiler support for 64bits integers.
- * big_uint is an unsigned big_int
+ * Fixed width integer types.
+ * OCI_Int16 and OCI_UInt16 are 16 bits signed / unsigned integers.
+ * OCI_Int32 and OCI_UInt32 are 32 bits signed / unsigned integers.
+ * OCI_Int64 and OCI_UInt64 are 64 bits signed / unsigned integers.
+ * OCI_Size is used for byte sizes, buffer lengths and element counts.
+ *
+ * big_int and big_uint are kept as compatibility aliases for OCI_Int64
+ * and OCI_UInt64 in ocilibc/compat.h; new code should use the OCI_
+ * prefixed names.
  *
  */
 
-/* check for long long support */
-
-#if defined(_LONGLONG) || defined(LONG_LONG_MAX) || defined(LLONG_MAX) || defined(__LONG_LONG_MAX__)
-
-/* C99 long long supported */
-
-typedef long long          big_int;
-typedef unsigned long long big_uint;
+typedef short              OCI_Int16;
+typedef unsigned short     OCI_UInt16;
+typedef int                OCI_Int32;
+typedef unsigned int       OCI_UInt32;
+typedef long long          OCI_Int64;
+typedef unsigned long long OCI_UInt64;
+typedef size_t             OCI_Size;
 
 #define OCI_BIG_UINT_ENABLED
-
-#elif defined(_WINDOWS)
-
-/* Microsoft extension supported */
-
-typedef __int64 big_int;
-typedef unsigned __int64 big_uint;
-
-  #define OCI_BIG_UINT_ENABLED
-
-#else
-
-typedef int big_int;
-typedef unsigned int big_uint;
-
-#endif
 
 /* boolean values */
 
 #ifndef TRUE
-  #define TRUE                   1
-  #define FALSE                  0
+#define TRUE                   1
+#define FALSE                  0
 #endif
 
-#ifndef boolean
-#define boolean int
-#endif
+typedef int OCI_Boolean;
 
 /**
  * @} OcilibCApiDatatypes

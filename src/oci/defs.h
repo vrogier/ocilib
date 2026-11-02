@@ -82,6 +82,7 @@
 #define SQLT_BFILEE 114                                   /* binary file lob */
 #define SQLT_CFILEE 115                                /* character file lob */
 #define SQLT_RSET 116                                     /* result set type */
+#define SQLT_JSON 119                                    /* native JSON type */
 #define SQLT_NCO  122      /* named collection type (varray or nested table) */
 #define SQLT_VEC  127                                  /* native VECTOR type */
 #define SQLT_VST  155                                      /* OCIString type */
@@ -139,6 +140,13 @@
 #define OCI_HTYPE_SPOOL         27                    /* session pool handle */
 #define OCI_HTYPE_ADMIN         28                           /* admin handle */
 #define OCI_HTYPE_EVENT         29                        /* HA event handle */
+#define OCI_HTYPE_SODA_COLLECTION      30         /* SODA: Collection handle */
+#define OCI_HTYPE_SODA_DOCUMENT        31           /* SODA: Document handle */
+#define OCI_HTYPE_SODA_COLL_CURSOR     32  /* SODA: Collection Cursor handle */
+#define OCI_HTYPE_SODA_OPER_OPTIONS    33  /* SODA: Operation options handle */
+#define OCI_HTYPE_SODA_OUTPUT_OPTIONS  34     /* SODA: Output options handle */
+#define OCI_HTYPE_SODA_METADATA        35           /* SODA: Metadata handle */
+#define OCI_HTYPE_SODA_DOC_CURSOR      36    /* SODA: Document cursor handle */
 
 /*-------------------------Descriptor Types----------------------------------*/
 
@@ -163,6 +171,7 @@
 #define OCI_DTYPE_TABLE_CHDES   78                /* Table change descriptor */
 #define OCI_DTYPE_ROW_CHDES     79                 /* Row change descriptor  */
 #define OCI_DTYPE_VECTOR        87                 /* Vector Descriptor Type */
+#define OCI_DTYPE_JSON          85                      /* JSON descriptor */
 
 /*---------------------------------------------------------------------------*/
 
@@ -373,6 +382,71 @@
 #define OCI_ATTR_LOB_REMOTE                520               /* remote lob ? */
 #define OCI_ATTR_CALL_TIMEOUT              531
 
+/* OCI SODA collection and metadata attributes */
+#define OCI_ATTR_SODA_COLL_NAME            535
+#define OCI_ATTR_SODA_DESCRIPTOR           536
+#define OCI_ATTR_SODA_SCHEMA               537
+#define OCI_ATTR_SODA_TABLE_NAME           538
+#define OCI_ATTR_SODA_VIEW_NAME            539
+#define OCI_ATTR_SODA_TABLESPACE           540
+#define OCI_ATTR_SODA_STORAGE_INIT_SIZE    541
+#define OCI_ATTR_SODA_STORAGE_INC_PCT      542
+#define OCI_ATTR_SODA_KEY_COL_NAME         543
+#define OCI_ATTR_SODA_KEY_SQL_TYPE         544
+#define OCI_ATTR_SODA_KEY_MAX_LEN          545
+#define OCI_ATTR_SODA_KEY_ASSIGN_METHOD    546
+#define OCI_ATTR_SODA_KEY_SEQ_NAME         547
+#define OCI_ATTR_SODA_CTNT_COL_NAME        548
+#define OCI_ATTR_SODA_CTNT_SQL_TYPE        549
+#define OCI_ATTR_SODA_CTNT_MAX_LEN         550
+#define OCI_ATTR_SODA_CTNT_VALIDATION      551
+#define OCI_ATTR_SODA_CTNT_COMPRESS        552
+#define OCI_ATTR_SODA_CTNT_CACHE           553
+#define OCI_ATTR_SODA_CTNT_ENCRYPT         554
+#define OCI_ATTR_SODA_CTNT_TABLESPACE      555
+#define OCI_ATTR_SODA_VERSION_COL_NAME     556
+#define OCI_ATTR_SODA_VERSION_METHOD       557
+#define OCI_ATTR_SODA_MODTIME_COL_NAME     558
+#define OCI_ATTR_SODA_MODTIME_INDEX        559
+#define OCI_ATTR_SODA_CRTIME_COL_NAME      560
+#define OCI_ATTR_SODA_MTYPE_COL_NAME       561
+#define OCI_ATTR_SODA_READONLY             562
+
+/* OCI SODA document attributes */
+#define OCI_ATTR_SODA_KEY                  563
+#define OCI_ATTR_SODA_LASTMOD_TIMESTAMP    564
+#define OCI_ATTR_SODA_CREATE_TIMESTAMP     565
+#define OCI_ATTR_SODA_VERSION              566
+#define OCI_ATTR_SODA_CONTENT              567
+#define OCI_ATTR_SODA_JSON_CHARSET_ID      568
+#define OCI_ATTR_SODA_DETECT_JSON_ENC      569
+#define OCI_ATTR_SODA_MEDIA_TYPE           571
+#define OCI_ATTR_SODA_CTNT_FORMAT          572
+
+/* OCI SODA operation options attributes */
+#define OCI_ATTR_SODA_FETCH_ARRAY_SIZE     573
+#define OCI_ATTR_SODA_AS_OF_SCN            574
+#define OCI_ATTR_SODA_AS_OF_TSTAMP         575
+#define OCI_ATTR_SODA_FILTER               576
+#define OCI_ATTR_SODA_SKIP                 577
+#define OCI_ATTR_SODA_LIMIT                578
+#define OCI_ATTR_SODA_LOCK                 579
+
+/* OCI SODA output options attributes */
+#define OCI_ATTR_SODA_DOC_COUNT            593
+
+/* OCI SODA later attributes */
+#define OCI_ATTR_SODA_METADATA_CACHE       624
+#define OCI_ATTR_SODA_HINT                 627
+#define OCI_ATTR_SODA_SAMPLE_PCT           631
+#define OCI_ATTR_SODA_SAMPLE_SEED          632
+#define OCI_ATTR_SODA_SAMPLE_METHOD        633
+#define OCI_ATTR_SODA_CLIENT_ERROR         673
+#define OCI_ATTR_SODA_DUALITY_VIEW_NAME    674
+#define OCI_ATTR_SODA_JSON_DESC            675
+#define OCI_ATTR_SODA_KEY_PATH             682
+#define OCI_ATTR_SODA_NATIVE               704
+
 #define OCI_ATTR_VECTOR_DIMENSION          695   /* Dimension of vector type */
 #define OCI_ATTR_VECTOR_DATA_FORMAT        696   /* Format of data in vector */
 #define OCI_ATTR_VECTOR_PROPERTY           697          /* vector properties */
@@ -409,6 +483,76 @@
 /*------------------------Attach Modes---------------------------------------*/
 
 #define OCI_CPOOL            0x0200  /* Attach using server handle from pool */
+
+/*------------------------------ OCI SODA Modes ------------------------------*/
+
+#define OCI_SODA_ATOMIC_COMMIT             0x00000001
+#define OCI_SODA_COLL_CREATE_MAP           0x00010000
+#define OCI_SODA_INDEX_DROP_FORCE          0x00010000
+#define OCI_SODA_COLL_DROP_PURGE           0x00010000
+#define OCI_SODA_COLL_DROP_MAPPED_TABLE    0x00020000
+#define OCI_SODA_TRUNCATE_REUSE_STORAGE    0x00010000
+
+/* OCI SODA Document flags */
+#define OCI_SODA_DETECT_JSON_ENC           0x00000001
+#define OCI_SODA_AS_STORED                 0x00000002
+#define OCI_SODA_AS_AL32UTF8               0x00000004
+#define OCI_SODA_JSON_DESC                 0x00000008
+
+/* OCI SODA key validation methods */
+#define OCI_SODA_KEY_METHOD_UUID           1
+#define OCI_SODA_KEY_METHOD_GUID           2
+#define OCI_SODA_KEY_METHOD_SEQUENCE       3
+#define OCI_SODA_KEY_METHOD_CLIENT         4
+#define OCI_SODA_KEY_METHOD_SERVER         5
+#define OCI_SODA_KEY_METHOD_EMBED_OID      6
+
+/* OCI SODA JSON content validation methods */
+#define OCI_SODA_JSON_VALIDATION_STRICT    1
+#define OCI_SODA_JSON_VALIDATION_LAX       2
+#define OCI_SODA_JSON_VALIDATION_STD       3
+
+/* OCI SODA LOB compression levels */
+#define OCI_SODA_LOB_COMPRESS_NONE         1
+#define OCI_SODA_LOB_COMPRESS_HIGH         2
+#define OCI_SODA_LOB_COMPRESS_MEDIUM       3
+#define OCI_SODA_LOB_COMPRESS_LOW          4
+
+/* OCI SODA LOB encryption mechanisms */
+#define OCI_SODA_LOB_ENCRYPT_NONE          1
+#define OCI_SODA_LOB_ENCRYPT_3DES168       2
+#define OCI_SODA_LOB_ENCRYPT_AES128        3
+#define OCI_SODA_LOB_ENCRYPT_AES192        4
+#define OCI_SODA_LOB_ENCRYPT_AES256        5
+
+/* OCI SODA version generation methods */
+#define OCI_SODA_VERSION_UUID              1
+#define OCI_SODA_VERSION_TIMESTAMP         2
+#define OCI_SODA_VERSION_MD5               3
+#define OCI_SODA_VERSION_SHA256            4
+#define OCI_SODA_VERSION_SEQUENTIAL        5
+#define OCI_SODA_VERSION_NONE              6
+
+/* OCI SODA DataGuide formats */
+#define OCI_SODA_DG_FMT_HIERARCHICAL       1
+#define OCI_SODA_DG_FMT_FLAT               2
+
+/* OCI SODA DataGuide flags */
+#define OCI_SODA_DATAGUIDE_PRETTY          0x00000001
+#define OCI_SODA_DATAGUIDE_GEOJSON         0x00000002
+#define OCI_SODA_DATAGUIDE_GATHER_STATS    0x00000004
+
+/* OCI SODA sampling method */
+#define OCI_SODA_SAMPLE_METHOD_ROW         1
+#define OCI_SODA_SAMPLE_METHOD_BLOCK       2
+#define OCI_SODA_SAMPLE_NO_SEED           -1
+
+/* OCI SODA misc */
+#define OCI_SODA_TIMESTAMP_MAXSIZE         32
+
+/* OCI JSON formats */
+#define OCI_JSON_FORMAT_JSON               0
+#define OCI_JSON_FORMAT_OSON               1
 
 /*------------------DateTime and Interval check Error codes------------------*/
 
@@ -524,6 +668,11 @@
 #define OCI_ATTR_SUB_NAME       10      /* type name if package private type */
 #define OCI_ATTR_PACKAGE_NAME   12           /* package name of package type */
 
+#define OCI_ATTR_JSON_COL            534          /* is the column JSON data */
+#define OCI_ATTR_JSON_DOM_MUTABLE    609   /* is the JSON DOM mutable */
+
+#define OCI_JSON_TEXT_ENV_NLS 0x00010000 /* Output text in envh's csid */
+
 /*------------------------Other Constants------------------------------------*/
 
 #define OCI_ERROR_MAXMSG_SIZE   1024         /* max size of an error message */
@@ -581,6 +730,26 @@ typedef struct OCIAQNfyDescriptor OCIAQNfyDescriptor;   /* AQ Nfy descriptor */
 typedef struct OCIAQSignature OCIAQSignature;                /* AQ Signature */
 typedef struct OCIAQListenOpts OCIAQListenOpts;         /* AQ listen options */
 typedef struct OCIAQLisMsgProps OCIAQLisMsgProps;     /* AQ listen msg props */
+
+/*---------------------------------------------------------------------------*/
+/* OCI SODA Handles */
+typedef struct OCISodaColl OCISodaColl;        /* OCI SODA collection handle */
+typedef struct OCISodaDoc OCISodaDoc;            /* OCI SODA document handle */
+typedef struct OCISodaDocCursor OCISodaDocCursor;/* OCI SODA document cursor */
+typedef struct OCISodaOperationOptions OCISodaOperationOptions;
+                                               /* OCI SODA operation options */
+typedef struct OCISodaOutputOptions OCISodaOutputOptions;
+                                                  /* OCI SODA output options */
+typedef struct OCISodaMetadata OCISodaMetadata;
+                                        /* OCI SODA metadata of a collection */
+typedef struct OCISodaCollCursor OCISodaCollCursor;
+                                               /* OCI SODA collection cursor */
+
+typedef struct OCIJson OCIJson;                            /* OCI JSON desc */
+
+#ifndef JSONDOM_H
+#include "jsondom.h"
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*------------------------- OCISessionPoolCreate Modes ----------------------*/

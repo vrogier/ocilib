@@ -1,51 +1,48 @@
 #include <iostream>
+#include <thread>
+#include <vector>
 
 #include "ocilib.hpp"
 
 using namespace ocilib;
 
-const int MaxThreads = 50;
+const OCI_Int32 MaxThreads = 50;
 
-void worker(ThreadHandle handle, void *data)
+Environment env(Environment::Threaded);
+
+thread_local OCI_Int32 key_id = -1;
+
+void worker(OCI_Int32 id)
 {
-    ThreadKey::SetValue("ID", const_cast<AnyPointer>(Thread::GetThreadId(handle)));
+    key_id = id;
 
     /* ... do some more processing here... */
 
-    std::cout << " Thread handle = " << handle
-        << " Key (Thread Id) = " << ThreadKey::GetValue("ID")
+    std::cout << " Thread id = " << id
+        << " Key (Thread Id) = " << key_id
         << std::endl;
 }
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize(Environment::Threaded);
+        std::vector<std::thread> threads;
 
-        ThreadKey::Create("ID");
-
-        std::vector<ThreadHandle> threads;
-
-        for (int i = 0; i < MaxThreads; i++)
+        for (OCI_Int32 i = 0; i < MaxThreads; ++i)
         {
-            ThreadHandle th = Thread::Create();
-            threads.push_back(th);
-            Thread::Run(th, worker, 0);
+            threads.emplace_back(worker, i);
         }
 
-        for (int i = 0; i < MaxThreads; i++)
+        for (auto& t : threads)
         {
-            Thread::Join(threads[i]);
-            Thread::Destroy(threads[i]);
+            t.join();
         }
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
 
     return EXIT_SUCCESS;
 }

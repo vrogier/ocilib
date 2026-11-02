@@ -38,13 +38,13 @@ OCI_Ref * OcilibReferenceInitialize
     void           *handle
 )
 {
-    ENTER_FUNC_NO_CONTEXT
+    ENTER_FUNC
     (
-        /* returns */ OCI_Ref*, ref
-    )
+        /* returns */ OCI_Ref*, ref,
+        /* context */ OCI_IPC_CONNECTION, con
+    );
 
-    ALLOC_DATA(OCI_IPC_REF, ref, 1);
-
+    ALLOC_HANDLE(OCI_IPC_REF, ref);
     ref->handle = handle;
     ref->con    = con;
     ref->typinf = typinf;
@@ -59,20 +59,21 @@ OCI_Ref * OcilibReferenceInitialize
         }
 
         CHECK(OcilibMemoryAllocateObject(ref->con->env,
+                                         ref->con->env->handle,
                                          ref->con->err,
-                                         ref->con->cxt,
+                                         ref->con->handle,
                                          (OCITypeCode) SQLT_REF,
                                          (OCIType*) NULL,
                                          (dvoid *) NULL,
                                          (OCIDuration) OCI_DURATION_SESSION,
-                                         (boolean) FALSE,
-                                         (dvoid **) &ref->handle))
+                                         (OCI_Boolean) FALSE,
+                                         (dvoid **) &ref->handle));
     }
     else
     {
         ref->hstate = OCI_OBJECT_FETCHED_CLEAN;
 
-        CHECK(OcilibReferenceUnpin(ref))
+        CHECK(OcilibReferenceUnpin(ref));
     }
 
     CLEANUP_AND_EXIT_FUNC
@@ -83,68 +84,68 @@ OCI_Ref * OcilibReferenceInitialize
             ref = NULL;
         }
 
-        SET_RETVAL(ref)
-    )
+        SET_RETVAL(ref);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibReferencePin
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibReferencePin
+OCI_Boolean OcilibReferencePin
 (
     OCI_Ref *ref
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_REF, ref
-    )
+    );
 
     void *obj_handle = NULL;
 
-    CHECK_PTR(OCI_IPC_REF, ref)
+    CHECK_PTR(OCI_IPC_REF, ref);
 
-    CHECK(OcilibReferenceUnpin(ref))
+    CHECK(OcilibReferenceUnpin(ref));
 
     CHECK_OCI
     (
         ref->con->err,
         OCIObjectPin,
-        ref->con->env, ref->con->err, ref->handle, (OCIComplexObject *) 0,
+        ref->con->env->handle, ref->con->err, ref->handle, (OCIComplexObject *) 0,
         OCI_PIN_ANY, OCI_DURATION_SESSION, OCI_LOCK_NONE, &obj_handle
-    )
+    );
 
     ref->obj = OcilibObjectInitialize(ref->con, (OCI_Object *) ref->obj,
                                       obj_handle, ref->typinf, NULL,
                                       -1, TRUE);
 
-    CHECK_NULL(ref->obj)
+    CHECK_NULL(ref->obj);
 
     ref->pinned = TRUE;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibReferenceUnpin
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibReferenceUnpin
+OCI_Boolean OcilibReferenceUnpin
 (
     OCI_Ref *ref
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_REF, ref
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_REF, ref)
+    CHECK_PTR(OCI_IPC_REF, ref);
 
     if (NULL != ref->obj)
     {
@@ -154,9 +155,9 @@ boolean OcilibReferenceUnpin
             (
                 ref->con->err,
                 OCIObjectUnpin,
-                ref->con->env, ref->con->err,
+                ref->con->env->handle, ref->con->err,
                 ref->obj->handle
-            )
+            );
 
             ref->pinned = FALSE;
         }
@@ -166,9 +167,9 @@ boolean OcilibReferenceUnpin
         ref->obj = NULL;
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -177,59 +178,57 @@ boolean OcilibReferenceUnpin
 
 OCI_Ref * OcilibReferenceCreate
 (
-    OCI_Connection *con,
-    OCI_TypeInfo   *typinf
+    OCI_TypeInfo *typinf
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_Ref*, NULL,
-        /* context */ OCI_IPC_CONNECTION, con
-    )
+        /* context */ OCI_IPC_TYPE_INFO, typinf
+    );
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_TYPE_INFO,  typinf)
+    CHECK_PTR(OCI_IPC_TYPE_INFO,  typinf);
 
-    SET_RETVAL(OcilibReferenceInitialize(con, typinf, NULL, NULL))
+    SET_RETVAL(OcilibReferenceInitialize(typinf->con, typinf, NULL, NULL));
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibReferenceFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibReferenceFree
+OCI_Boolean OcilibReferenceFree
 (
     OCI_Ref *ref
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_REF, ref
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_REF, ref)
-    CHECK_OBJECT_FETCHED(ref)
+    CHECK_PTR(OCI_IPC_REF, ref);
+    CHECK_OBJECT_FETCHED(ref);
 
-    CHECK(OcilibReferenceUnpin(ref))
+    CHECK(OcilibReferenceUnpin(ref));
 
     if ((OCI_OBJECT_ALLOCATED == ref->hstate) || (OCI_OBJECT_ALLOCATED_ARRAY == ref->hstate))
     {
-        OcilibMemoryFreeObject(ref->con->env, ref->con->err, ref->handle, OCI_DEFAULT);
+        OcilibMemoryFreeObject(ref->con->env, ref->con->env->handle, ref->con->err, ref->handle, OCI_DEFAULT);
     }
 
     if (OCI_OBJECT_ALLOCATED_ARRAY != ref->hstate)
     {
         OcilibErrorResetSource(NULL, ref);
 
-        FREE(ref)
+        FREE(ref);
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -238,53 +237,51 @@ boolean OcilibReferenceFree
 
 OCI_Ref ** OcilibReferenceCreateArray
 (
-    OCI_Connection *con,
-    OCI_TypeInfo   *typinf,
-    unsigned int    nbelem
+    OCI_TypeInfo *typinf,
+    OCI_UInt32  nbelem
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_Ref**, NULL,
-        /* context */ OCI_IPC_CONNECTION, con
-    )
+        /* context */ OCI_IPC_TYPE_INFO, typinf
+    );
 
     OCI_Array *arr = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_TYPE_INFO,  con)
+    CHECK_PTR(OCI_IPC_TYPE_INFO,  typinf);
 
-    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_REF, 0,
+    arr = OcilibArrayCreate(typinf->con->env,typinf->con, nbelem, OCI_CDT_REF, 0,
                             sizeof(OCIRef *), sizeof(OCI_Ref),
                             0, typinf);
 
-    CHECK_NULL(arr)
+    CHECK_NULL(arr);
 
-    SET_RETVAL((OCI_Ref**)arr->tab_obj)
+    SET_RETVAL((OCI_Ref**)arr->tab_obj);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibReferenceFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibReferenceFreeArray
+OCI_Boolean OcilibReferenceFreeArray
 (
     OCI_Ref **refs
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_VOID, NULL
+    );
 
-    CHECK_PTR(OCI_IPC_ARRAY, refs)
+    CHECK_PTR(OCI_IPC_ARRAY, refs);
 
-    SET_RETVAL(OcilibArrayFreeFromHandles((void **)refs))
+    SET_RETVAL(OcilibArrayFreeFromHandles(((OCI_Ref *) refs[0])->con->env, (void **)refs));
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -300,22 +297,22 @@ OCI_Object * OcilibReferenceGetObject
     (
         /* returns */ OCI_Object*, NULL,
         /* context */ OCI_IPC_REF, ref
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_REF, ref)
-    CHECK(!OcilibReferenceIsNull(ref))
-    CHECK(OcilibReferencePin(ref))
+    CHECK_PTR(OCI_IPC_REF, ref);
+    CHECK(!OcilibReferenceIsNull(ref));
+    CHECK(OcilibReferencePin(ref));
 
-    SET_RETVAL(ref->obj)
+    SET_RETVAL(ref->obj);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibReferenceAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibReferenceAssign
+OCI_Boolean OcilibReferenceAssign
 (
     OCI_Ref *ref,
     OCI_Ref *ref_src
@@ -323,21 +320,21 @@ boolean OcilibReferenceAssign
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_REF, ref
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_REF, ref)
-    CHECK_PTR(OCI_IPC_REF, ref_src)
-    CHECK_COMPAT(ref->typinf->tdo == ref_src->typinf->tdo)
+    CHECK_PTR(OCI_IPC_REF, ref);
+    CHECK_PTR(OCI_IPC_REF, ref_src);
+    CHECK_COMPAT(ref->typinf->handle == ref_src->typinf->handle);
 
     CHECK_OCI
     (
         ref->con->err,
         OCIRefAssign,
-        ref->con->env, ref->con->err,
+        ref->con->env->handle, ref->con->err,
         ref_src->handle, &ref->handle
-    )
+    );
 
     if (NULL != ref->obj)
     {
@@ -348,53 +345,53 @@ boolean OcilibReferenceAssign
     ref->typinf = ref_src->typinf;
     ref->pinned = ref_src->pinned;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibReferenceIsNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibReferenceIsNull
+OCI_Boolean OcilibReferenceIsNull
 (
     OCI_Ref *ref
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_REF, ref
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_REF, ref)
+    CHECK_PTR(OCI_IPC_REF, ref);
 
-    SET_RETVAL(OCIRefIsNull(ref->con->env, ref->handle))
+    SET_RETVAL(ref->con->env->api->OCIRefIsNull(ref->con->env->handle, ref->handle));
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibReferenceSetNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibReferenceSetNull
+OCI_Boolean OcilibReferenceSetNull
 (
     OCI_Ref *ref
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_REF, ref
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_REF, ref)
+    CHECK_PTR(OCI_IPC_REF, ref);
 
-    CHECK(OcilibReferenceUnpin(ref))
+    CHECK(OcilibReferenceUnpin(ref));
 
-    OCIRefClear(ref->con->env, ref->handle);
+    ref->con->env->api->OCIRefClear(ref->con->env->handle, ref->handle);
 
     if (NULL != ref->obj)
     {
@@ -402,35 +399,35 @@ boolean OcilibReferenceSetNull
         ref->obj = NULL;
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibReferenceToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibReferenceToString
+OCI_Boolean OcilibReferenceToString
 (
     OCI_Ref     *ref,
-    unsigned int size,
+    OCI_UInt32 size,
     otext       *str
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_REF, ref
-    )
+    );
 
     dbtext *dbstr = NULL;
 
     /* OCI hex string are always ANSI string whatever environment mode */
-    unsigned int char_count = size;
+    OCI_UInt32 char_count = size;
 
-    CHECK_PTR(OCI_IPC_REF,    ref)
-    CHECK_PTR(OCI_IPC_STRING, str)
+    CHECK_PTR(OCI_IPC_REF,    ref);
+    CHECK_PTR(OCI_IPC_STRING, str);
 
     /* initialize output buffer in case of OCI failure */
 
@@ -439,7 +436,7 @@ boolean OcilibReferenceToString
     if (IS_WIDE_CHAR_ENV())
     {
         /* need temporary buffer in wide strings mode */
-        dbstr = (dbtext *) OcilibMemoryAlloc(OCI_IPC_STRING, (size_t) ((char_count + 1) * sizeof(otext)), (size_t) 1, TRUE);
+        dbstr = (dbtext *) OcilibMemoryAlloc(ref->con->env,OCI_IPC_STRING, (OCI_Size) ((char_count + 1) * sizeof(otext)), (OCI_Size) 1, TRUE);
     }
     else
     {
@@ -450,21 +447,21 @@ boolean OcilibReferenceToString
     (
         ref->con->err,
         OCIRefToHex,
-        ref->con->env, ref->con->err, ref->handle,
+        ref->con->env->handle, ref->con->err, ref->handle,
         (OraText *) dbstr, (ub4 *) &char_count
-    )
+    );
 
     if (IS_WIDE_CHAR_ENV())
     {
         /* need to convert temporary ANSI buffer to Native in wide strings mode */
-        OcilibStringAnsiToNative(dbstr, str, size);
+        OcilibStringAnsiToNative(dbstr, str, (OCI_Int32) char_count);
     }
 
     /* set null string terminator */
 
     str[char_count] = 0;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -472,29 +469,29 @@ boolean OcilibReferenceToString
         {
             FREE(dbstr);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibReferenceGetHexSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibReferenceGetHexSize
+OCI_UInt32 OcilibReferenceGetHexSize
 (
     OCI_Ref *ref
 )
 {
     ENTER_FUNC
     (
-        /* returns */ unsigned int, 0,
+        /* returns */ OCI_UInt32, 0,
         /* context */ OCI_IPC_REF, ref
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_REF, ref)
+    CHECK_PTR(OCI_IPC_REF, ref);
 
-    SET_RETVAL((unsigned int) OCIRefHexSize(ref->con->env, (const OCIRef*)ref->handle))
+    SET_RETVAL((OCI_UInt32) ref->con->env->api->OCIRefHexSize(ref->con->env->handle, (const OCIRef*)ref->handle));
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -511,5 +508,5 @@ OCI_TypeInfo * OcilibReferenceGetTypeInfo
         OCI_TypeInfo*, NULL,
         OCI_IPC_REF, ref,
         typinf
-    )
+    );
 }

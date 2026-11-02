@@ -6,16 +6,16 @@ using namespace ocilib;
 
 const ostring format = "YYYY-MM-DD HH24:MI:SS";
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
 
-        Date date("1978-04-13 20:20:12", format);
+        Date date(env, "1978-04-13 20:20:12", format);
         std::cout << date.ToString(format) << std::endl;
 
-        date = Date::SysDate();
+        date = Date::SysDate(env);
         std::cout << date.ToString(format) << std::endl;
 
         date.AddDays(5);
@@ -27,12 +27,9 @@ int main(void)
         std::cout << "Number of days until the end of the months : " << date.LastDay().DaysBetween(date) << std::endl;
 
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
-
     return EXIT_SUCCESS;
 }

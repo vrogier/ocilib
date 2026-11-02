@@ -1,10 +1,12 @@
 #include <iostream>
+#include <map>
 
 #include "ocilib.hpp"
 
 using namespace ocilib;
 
-#if defined(_WINDOWS)
+#if defined(_WIN32)
+    #include <windows.h>
     #define sleep(x) Sleep(x*1000)
 #else
     #include <unistd.h>
@@ -14,28 +16,30 @@ using namespace ocilib;
 #define WaitForDatabase() sleep(60)
 
 
-static std::map<unsigned int, ostring> EventTypes;
-static std::map<unsigned int, ostring> ObjectEvents;
+static std::map<OCI_UInt32, ostring> EventTypes;
+static std::map<OCI_UInt32, ostring> ObjectEvents;
 
 void EventHandler(Event &evt);
 void SetupNames();
 
-int main(int argc, char* argv[])
+int main(OCI_Int32 argc, char* argv[])
 {
     SetupNames();
     try
     {
-        Environment::Initialize(Environment::Events);
+        Environment env(Environment::Events);
 
-        Connection con("db", "usr", "pwd");
+        Connection con(env, "db", "usr", "pwd");
         con.SetAutoCommit(true);
 
         Statement st(con);
         st.Execute("create table table1(code number)");
         st.Execute("create table table2(str varchar2(10))");
 
+        env.SetSubscriptionPort(5468);
+
         Subscription sub;
-        sub.Register(con, "sub-00", Subscription::AllChanges, EventHandler, 5468, 0);
+        sub.Register(con, "sub-00", Subscription::AllChanges, EventHandler, 0);
         sub.Watch("select * from table1");
         sub.Watch("select * from table2");
 
@@ -57,21 +61,19 @@ int main(int argc, char* argv[])
         con.Close();
 
         /* start remote instance */
-        Environment::StartDatabase("db", "sys_usr", "sys_pwd", Environment::StartForce, Environment::StartFull);
+        env.StartDatabase("db", "sys_usr", "sys_pwd", Environment::StartForce, Environment::StartFull);
 
         /* shutdown remote instance */
-        Environment::ShutdownDatabase("db", "sys_usr", "sys_pwd", Environment::ShutdownAbort, Environment::ShutdownFull);
+        env.ShutdownDatabase("db", "sys_usr", "sys_pwd", Environment::ShutdownAbort, Environment::ShutdownFull);
         WaitForDatabase();
 
         sub.Unregister();
 
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
 }
 
 void SetupNames()

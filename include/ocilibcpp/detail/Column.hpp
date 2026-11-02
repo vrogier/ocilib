@@ -42,13 +42,13 @@ inline ostring Column::GetSQLType() const
 
 inline ostring Column::GetFullSQLType() const
 {
-    const unsigned int size = OCI_SIZE_BUFFER;
+    const OCI_UInt32 size = OCI_SIZE_BUFFER;
 
-    core::ManagedBuffer<otext> buffer(static_cast<size_t>(size + 1));
+    std::vector<otext> buffer(static_cast<OCI_Size>(size + 1));
 
-    core::Check(OCI_ColumnGetFullSQLType(*this, buffer, size));
+    core::Check(OCI_ColumnGetFullSQLType(*this, buffer.data(), size));
 
-    return core::MakeString(static_cast<const otext *>(buffer));
+    return core::MakeString(static_cast<const otext*>(buffer.data()));
 }
 
 inline DataType Column::GetType() const
@@ -56,7 +56,7 @@ inline DataType Column::GetType() const
     return DataType(static_cast<DataType::Type>(core::Check(OCI_ColumnGetType(*this))));
 }
 
-inline unsigned int Column::GetSubType() const
+inline OCI_UInt32 Column::GetSubType() const
 {
     return core::Check(OCI_ColumnGetSubType(*this));
 }
@@ -71,32 +71,32 @@ inline CollationID Column::GetCollationID() const
     return CollationID(static_cast<CollationID::Type>(core::Check(OCI_ColumnGetCollationID(*this))));
 }
 
-inline unsigned int Column::GetSize() const
+inline OCI_UInt32 Column::GetSize() const
 {
     return core::Check(OCI_ColumnGetSize(*this));
 }
 
-inline int Column::GetScale() const
+inline OCI_Int32 Column::GetScale() const
 {
     return core::Check(OCI_ColumnGetScale(*this));
 }
 
-inline int Column::GetPrecision() const
+inline OCI_Int32 Column::GetPrecision() const
 {
     return core::Check(OCI_ColumnGetPrecision(*this));
 }
 
-inline int Column::GetFractionalPrecision() const
+inline OCI_Int32 Column::GetFractionalPrecision() const
 {
     return core::Check(OCI_ColumnGetFractionalPrecision(*this));
 }
 
-inline int Column::GetLeadingPrecision() const
+inline OCI_Int32 Column::GetLeadingPrecision() const
 {
     return core::Check(OCI_ColumnGetLeadingPrecision(*this));
 }
 
-inline int Column::GetDimension() const
+inline OCI_Int32 Column::GetDimension() const
 {
     return core::Check(OCI_ColumnGetDimension(*this));
 }
@@ -123,7 +123,7 @@ inline TypeInfo Column::GetTypeInfo() const
     Connection connection
     (
         core::Check(OCI_TypeInfoGetConnection(typeInfo)),
-        Environment::GetEnvironmentHandle(),
+        GetHandle(),
         false
     );
 

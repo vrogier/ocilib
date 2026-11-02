@@ -194,3 +194,5 @@ testlog.manifest
 *.json
 /proj/test/Win64
 **/CopilotIndices
+/proj/dll/.vs/ocilib_dll/v18
+/tests/.vs

@@ -8,22 +8,24 @@ namespace TestCApi
         ExecDML(OTEXT("create type TestObjectInheritanceCar under TestObjectInheritanceVehicule (price  number) not final"));
         ExecDML(OTEXT("create type TestObjectInheritanceRacingCar under TestObjectInheritanceCar (speed  number)"));
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
         otext buffer[512];
-        unsigned int size = sizeof(buffer) - 1;
+        OCI_UInt32 size = sizeof(buffer) - 1;
 
-        const auto racingCar = OCI_ObjectCreate(conn, OCI_TypeInfoGet(conn, OTEXT("TestObjectInheritanceRacingCar"), OCI_TIF_TYPE));
+        const auto racingCar = OCI_ObjectCreate(OCI_TypeInfoGet(conn, OTEXT("TestObjectInheritanceRacingCar"), OCI_TIF_TYPE));
         ASSERT_NE(nullptr, racingCar);
 
         ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("begin :obj := TestObjectInheritanceRacingCar(1,'Formula1', 123456789, 300); end;")));
-        ASSERT_TRUE(OCI_BindObject(stmt, OTEXT("obj"), racingCar));
+        ASSERT_NE(nullptr, OCI_BindObject(stmt, OTEXT("obj"), racingCar));
         ASSERT_TRUE(OCI_Execute(stmt));
         ASSERT_TRUE(OCI_ObjectToText(racingCar, &size, buffer));
 
@@ -47,7 +49,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ObjectFree(racingCar));
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop type TestObjectInheritanceRacingCar"));
         ExecDML(OTEXT("drop type TestObjectInheritanceCar"));

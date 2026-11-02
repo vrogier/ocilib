@@ -6,24 +6,24 @@
 
 using namespace ocilib;
 
-const int ElemCount = 50;
+const OCI_Int32 ElemCount = 50;
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
 
-        Connection con("db", "usr", "pwd");
+        Connection con(env, "db", "usr", "pwd");
         Statement st(con);
 
-        Collection<int> elemInfos(TypeInfo(con, "mdsys.sdo_elem_info_array", TypeInfo::Type));
+        Collection<OCI_Int32> elemInfos(TypeInfo(con, "mdsys.sdo_elem_info_array", TypeInfo::Type));
         Collection<double> ordinates(TypeInfo(con, "mdsys.sdo_ordinate_array", TypeInfo::Type));
 
         Object geometry(TypeInfo(con, "mdsys.sdo_geometry", TypeInfo::Type));
 
         /* build ordinates collection with test values */
-        for (int i = 0; i < ElemCount; i++)
+        for (OCI_Int32 i = 0; i < ElemCount; ++i)
         {
             ordinates.Append(i);
             ordinates.Append(i * 2);
@@ -52,12 +52,9 @@ int main(void)
 
         std::cout << st.GetAffectedRows() << " rows inserted" << std::endl;
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
-
     return EXIT_SUCCESS;
 }

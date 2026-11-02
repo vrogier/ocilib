@@ -15,18 +15,20 @@ int main(void)
 {
     OCI_Connection *cn;
     OCI_Statement *st;
-    int i;
+    OCI_Int32 i;
 
     char tab_names[SIZE_ARRAY][SIZE_NAME + 1];
     char tab_values[SIZE_ARRAY][SIZE_VALUE + 1];
     char tab_results[SIZE_ARRAY][SIZE_VALUE + 1];
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     /* set values */
@@ -63,7 +65,7 @@ int main(void)
     
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

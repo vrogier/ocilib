@@ -6,16 +6,16 @@ using namespace ocilib;
 
 void print_row(Resultset &rs)
 {
-    std::cout << rs.Get<int>(1) << " - " << rs.Get<ostring>(2) << std::endl;
+    std::cout << rs.Get<OCI_Int32>(1) << " - " << rs.Get<ostring>(2) << std::endl;
 }
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
 
-        Connection con("db", "usr", "pwd");
+        Connection con(env, "db", "usr", "pwd");
 
         Statement st(con);
 
@@ -52,12 +52,9 @@ int main(void)
         print_row(rs);
 
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
-
     return EXIT_SUCCESS;
 }

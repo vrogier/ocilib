@@ -4,9 +4,11 @@ namespace TestCApi
 {
     TEST(TestImplicitResultset, Fetch)
     {
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -26,11 +28,11 @@ namespace TestCApi
         auto rset = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rset);
 
-        std::vector<int> counts;
+        static std::vector<OCI_Int32> counts;
 
         while (rset)
         {
-            int count = 0;
+            OCI_Int32 count = 0;
 
             while (OCI_FetchNext(rset))
             {
@@ -48,6 +50,6 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
+
     }
 }

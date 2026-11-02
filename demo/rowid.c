@@ -15,18 +15,20 @@ int main(void)
 
     char rowid[OCI_SIZE_ROWID + 1] = "";
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     OCI_Immediate(cn, "select rowid from products where code = 1", OCI_ARG_TEXT, rowid);
 
     OCI_Prepare(st, "select code, name, rowid from products where rowid = :id");
-    OCI_BindString(st, ":id", rowid, (unsigned int) strlen(rowid));
+    OCI_BindString(st, ":id", rowid, (OCI_UInt32) strlen(rowid));
     OCI_Execute(st);
     rs = OCI_GetResultset(st);
     OCI_FetchNext(rs);
@@ -34,7 +36,7 @@ int main(void)
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

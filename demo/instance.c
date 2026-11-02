@@ -7,11 +7,12 @@ void err_handler(OCI_Error *err)
 
 int main(void)
 { 
-    OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT);
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
 
     /* start remote instance */
 
-    OCI_DatabaseStartup("db", 
+    OCI_DatabaseStartup(env,
+                        "db", 
                         "sys_usr", 
                         "sys_pwd", 
                         OCI_SESSION_SYSDBA, 
@@ -22,13 +23,14 @@ int main(void)
 
      /* shutdown remote instance */
 
-    OCI_DatabaseShutdown("db", 
+    OCI_DatabaseShutdown(env,
+                         "db", 
                          "sys_usr", 
                          "sys_pwd",  
                          OCI_SESSION_SYSDBA,
                          OCI_DB_SDM_FULL,
                          OCI_DB_SDF_ABORT);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
     
     return EXIT_SUCCESS;
 }   

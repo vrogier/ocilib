@@ -30,8 +30,8 @@ OCI_SYM_LOCAL OCI_Vector * OcilibVectorInitialize
 #if OCI_VERSION_COMPILE >= OCI_23_4
     OCIVector     *handle
 #else
-    void          *handle
-#endif  
+    void *handle
+#endif
 );
 
 OCI_SYM_LOCAL OCI_Vector * OcilibVectorCreate
@@ -39,57 +39,63 @@ OCI_SYM_LOCAL OCI_Vector * OcilibVectorCreate
     OCI_Connection *con
 );
 
-OCI_SYM_LOCAL boolean OcilibVectorFree
+OCI_SYM_LOCAL OCI_Boolean OcilibVectorFree
 (
     OCI_Vector *vect
 );
 
-OCI_SYM_LOCAL boolean OcilibVectorGetInfo
+OCI_SYM_LOCAL OCI_Boolean OcilibVectorGetInfo
 (
     OCI_Vector   *vect,
-    unsigned int *format,
-    unsigned int *dimensions
+    OCI_UInt32 *format,
+    OCI_UInt32 *dimensions
 );
 
-OCI_SYM_LOCAL boolean OcilibVectorGetValues
+OCI_SYM_LOCAL OCI_Boolean OcilibVectorGetValues
 (
-    OCI_Vector       *vect,
-    void             *values
+    OCI_Vector *vect,
+    void       *values
 );
 
-OCI_SYM_LOCAL boolean OcilibVectorSetValues
+OCI_SYM_LOCAL OCI_Boolean OcilibVectorSetValues
 (
     OCI_Vector      *vect,
-    unsigned int     format,
-    unsigned int     dimensions,
+    OCI_VectorFormat format,
+    OCI_UInt32     dimensions,
     void            *values
 );
 
 OCI_SYM_LOCAL OCI_Vector ** OcilibVectorCreateArray
 (
     OCI_Connection *con,
-    unsigned int    nbelem
+    OCI_UInt32    nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibVectorFreeArray
+OCI_SYM_LOCAL OCI_Boolean OcilibVectorFreeArray
 (
     OCI_Vector **vects
 );
 
-OCI_SYM_LOCAL boolean OcilibVectorFromString
+OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
 (
-    OCI_Vector  *vect,
-    const otext* str,
-    unsigned int size,
-    unsigned int format,
-    unsigned int dimensions
+    OCI_Vector      *vect,
+    const otext    * str,
+    OCI_UInt32     size,
+    OCI_VectorFormat format,
+    OCI_UInt32     dimensions
 );
 
-OCI_SYM_LOCAL boolean OcilibVectorToString
+OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
 (
-    OCI_Vector    *vect,
-    unsigned int  *size,
-    otext         *str
+    OCI_Vector   *vect,
+    OCI_UInt32 *size,
+    otext        *str
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibVectorAssign
+(
+    OCI_Vector *vect,
+    OCI_Vector *vect_src
 );
 
 #endif /* OCILIB_VECTOR_H_INCLUDED */

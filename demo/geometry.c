@@ -10,7 +10,7 @@ void error(OCI_Error *err)
     exit(EXIT_FAILURE);
 }
 
-int main(int argc, char **argv)
+int main(OCI_Int32 argc, char **argv)
 {
     OCI_Connection *cn;
     OCI_Statement  *st;
@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     OCI_Elem       *elem_inf, *elem_ord;
     OCI_TypeInfo   *tif_inf, *tif_ord, *tif_sdo;
 
-    int i;
+    OCI_Int32 i;
 
     /* check command line */
     if (argc < 4)
@@ -29,13 +29,15 @@ int main(int argc, char **argv)
     }
 
     /* initialize OCILIB */
-    if (!OCI_Initialize(error, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(error, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
     
     /* connect to oracle */
-    cn = OCI_ConnectionCreate(argv[1], argv[2], argv[3], OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, argv[1], argv[2], argv[3], OCI_SESSION_DEFAULT);
     
     if (!cn)
     {
@@ -53,7 +55,7 @@ int main(int argc, char **argv)
     tif_ord = OCI_TypeInfoGet(cn, "MDSYS.SDO_ORDINATE_ARRAY", OCI_TIF_TYPE);
 
     /* create sdo object */
-    obj_sdo = OCI_ObjectCreate(cn, tif_sdo);
+    obj_sdo = OCI_ObjectCreate(tif_sdo);
 
     /* create sub arrays */
     coll_inf = OCI_CollCreate(tif_inf);
@@ -109,7 +111,7 @@ int main(int argc, char **argv)
     OCI_ConnectionFree(cn);
 
     /* cleanup OCILIB */
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     printf("\nDisconnected from Oracle.\n");
 

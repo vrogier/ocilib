@@ -23,24 +23,24 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL boolean OcilibTypeInfoDispose
+OCI_SYM_LOCAL OCI_Boolean OcilibTypeInfoDispose
 (
     OCI_TypeInfo* typinf
 );
 
 OCI_SYM_LOCAL OCI_TypeInfo * OcilibTypeInfoGet
 (
-    OCI_Connection *con,
-    const otext    *name,
-    unsigned int    type
+    OCI_Connection  *con,
+    const otext     *name,
+    OCI_TypeInfoType type
 );
 
-OCI_SYM_LOCAL boolean OcilibTypeInfoFree
+OCI_SYM_LOCAL OCI_Boolean OcilibTypeInfoFree
 (
     OCI_TypeInfo *typinf
 );
 
-OCI_SYM_LOCAL unsigned int OcilibTypeInfoGetType
+OCI_SYM_LOCAL OCI_TypeInfoType OcilibTypeInfoGetType
 (
     OCI_TypeInfo *typinf
 );
@@ -50,7 +50,7 @@ OCI_SYM_LOCAL OCI_Connection * OcilibTypeInfoGetConnection
     OCI_TypeInfo *typinf
 );
 
-OCI_SYM_LOCAL unsigned int OcilibTypeInfoGetColumnCount
+OCI_SYM_LOCAL OCI_UInt32 OcilibTypeInfoGetColumnCount
 (
     OCI_TypeInfo *typinf
 );
@@ -58,7 +58,7 @@ OCI_SYM_LOCAL unsigned int OcilibTypeInfoGetColumnCount
 OCI_SYM_LOCAL OCI_Column * OcilibTypeInfoGetColumn
 (
     OCI_TypeInfo *typinf,
-    unsigned int  index
+    OCI_UInt32  index
 );
 
 OCI_SYM_LOCAL const otext * OcilibTypeInfoGetName
@@ -66,7 +66,7 @@ OCI_SYM_LOCAL const otext * OcilibTypeInfoGetName
     OCI_TypeInfo *typinf
 );
 
-OCI_SYM_LOCAL boolean OcilibTypeInfoIsFinalType
+OCI_SYM_LOCAL OCI_Boolean OcilibTypeInfoIsFinalType
 (
     OCI_TypeInfo* typinf
 );

@@ -27,142 +27,142 @@ OCI_SYM_LOCAL OCI_DirPath * OcilibDirPathCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *partition,
-    unsigned int  nb_cols,
-    unsigned int  nb_rows
+    OCI_UInt32  nb_cols,
+    OCI_UInt32  nb_rows
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathFree
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathFree
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetColumn
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetColumn
 (
     OCI_DirPath *dp,
-    unsigned int index,
+    OCI_UInt32 index,
     const otext *name,
-    unsigned int maxsize,
+    OCI_UInt32 maxsize,
     const otext *format
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathPrepare
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathPrepare
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetEntry
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetEntry
 (
     OCI_DirPath *dp,
-    unsigned int row,
-    unsigned int index,
+    OCI_UInt32 row,
+    OCI_UInt32 index,
     void        *value,
-    unsigned int size,
-    boolean      complete
+    OCI_UInt32 size,
+    OCI_Boolean  complete
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathReset
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathReset
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathConvert
+OCI_SYM_LOCAL OCI_DirPathResult OcilibDirPathConvert
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathLoad
+OCI_SYM_LOCAL OCI_DirPathResult OcilibDirPathLoad
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathFinish
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathFinish
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathAbort
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathAbort
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathSave
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSave
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathFlushRow
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathFlushRow
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetCurrentRows
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetCurrentRows
 (
     OCI_DirPath *dp,
-    unsigned int nb_rows
+    OCI_UInt32 nb_rows
 );
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathGetCurrentRows
+OCI_SYM_LOCAL OCI_UInt32 OcilibDirPathGetCurrentRows
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathGetMaxRows
+OCI_SYM_LOCAL OCI_UInt32 OcilibDirPathGetMaxRows
 (
     OCI_DirPath* dp
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetDateFormat
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetDateFormat
 (
     OCI_DirPath *dp,
     const otext *format
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetParallel
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetParallel
 (
     OCI_DirPath *dp,
-    boolean      value
+    OCI_Boolean  value
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetNoLog
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetNoLog
 (
     OCI_DirPath *dp,
-    boolean      value
+    OCI_Boolean  value
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetCacheSize
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetCacheSize
 (
     OCI_DirPath *dp,
-    unsigned int size
+    OCI_UInt32 size
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetBufferSize
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetBufferSize
 (
     OCI_DirPath *dp,
-    unsigned int size
+    OCI_UInt32 size
 );
 
-OCI_SYM_LOCAL boolean OcilibDirPathSetConvertMode
+OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetConvertMode
 (
-    OCI_DirPath *dp,
-    unsigned int mode
+    OCI_DirPath           *dp,
+    OCI_DirPathConvertMode mode
 );
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathGetRowCount
+OCI_SYM_LOCAL OCI_UInt32 OcilibDirPathGetRowCount
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathGetAffectedRows
+OCI_SYM_LOCAL OCI_UInt32 OcilibDirPathGetAffectedRows
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathGetErrorColumn
+OCI_SYM_LOCAL OCI_UInt32 OcilibDirPathGetErrorColumn
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL unsigned int OcilibDirPathGetErrorRow
+OCI_SYM_LOCAL OCI_UInt32 OcilibDirPathGetErrorRow
 (
     OCI_DirPath *dp
 );

@@ -29,51 +29,51 @@ OCI_SYM_LOCAL OCI_Enqueue * OcilibEnqueueCreate
     const otext  *name
 );
 
-OCI_SYM_LOCAL boolean OcilibEnqueueFree
+OCI_SYM_LOCAL OCI_Boolean OcilibEnqueueFree
 (
     OCI_Enqueue *enqueue
 );
 
-OCI_SYM_LOCAL boolean OcilibEnqueuePut
+OCI_SYM_LOCAL OCI_Boolean OcilibEnqueuePut
 (
     OCI_Enqueue *enqueue,
     OCI_Msg     *msg
 );
 
-OCI_SYM_LOCAL unsigned int OcilibEnqueueGetVisibility
+OCI_SYM_LOCAL OCI_QueueVisibility OcilibEnqueueGetVisibility
 (
     OCI_Enqueue *enqueue
 );
 
-OCI_SYM_LOCAL boolean OcilibEnqueueSetVisibility
+OCI_SYM_LOCAL OCI_Boolean OcilibEnqueueSetVisibility
 (
-    OCI_Enqueue *enqueue,
-    unsigned int visibility
+    OCI_Enqueue        *enqueue,
+    OCI_QueueVisibility visibility
 );
 
-OCI_SYM_LOCAL unsigned int OcilibEnqueueGetSequenceDeviation
+OCI_SYM_LOCAL OCI_QueueSeqDeviation OcilibEnqueueGetSequenceDeviation
 (
     OCI_Enqueue *enqueue
 );
 
-OCI_SYM_LOCAL boolean OcilibEnqueueSetSequenceDeviation
+OCI_SYM_LOCAL OCI_Boolean OcilibEnqueueSetSequenceDeviation
 (
-    OCI_Enqueue *enqueue,
-    unsigned int sequence
+    OCI_Enqueue          *enqueue,
+    OCI_QueueSeqDeviation sequence
 );
 
-OCI_SYM_LOCAL boolean OcilibEnqueueGetRelativeMsgID
+OCI_SYM_LOCAL OCI_Boolean OcilibEnqueueGetRelativeMsgID
 (
     OCI_Enqueue  *enqueue,
     void         *id,
-    unsigned int *len
+    OCI_UInt32 *len
 );
 
-OCI_SYM_LOCAL boolean OcilibEnqueueSetRelativeMsgID
+OCI_SYM_LOCAL OCI_Boolean OcilibEnqueueSetRelativeMsgID
 (
     OCI_Enqueue *enqueue,
     const void  *id,
-    unsigned int len
+    OCI_UInt32 len
 );
 
 #endif /* OCILIB_ENQUEUE_H_INCLUDED */

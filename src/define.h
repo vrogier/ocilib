@@ -26,10 +26,10 @@
 OCI_SYM_LOCAL OCI_Define* OcilibDefineGet
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL int OcilibDefineGetIndex
+OCI_SYM_LOCAL OCI_Int32 OcilibDefineGetIndex
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -40,25 +40,25 @@ OCI_SYM_LOCAL void* OcilibDefineGetData
     OCI_Define* def
 );
 
-OCI_SYM_LOCAL boolean OcilibDefineIsDataNotNull
+OCI_SYM_LOCAL OCI_Boolean OcilibDefineIsDataNotNull
 (
     OCI_Define* def
 );
 
-OCI_SYM_LOCAL boolean OcilibDefineGetNumber
+OCI_SYM_LOCAL OCI_Boolean OcilibDefineGetNumber
 (
-    OCI_Resultset* rs,
-    unsigned int   index,
-    void         * value,
-    uword          type
+    OCI_Resultset * rs,
+    OCI_UInt32    index,
+    void          * value,
+    OCI_NumericType type
 );
 
-OCI_SYM_LOCAL boolean OcilibDefineAlloc
+OCI_SYM_LOCAL OCI_Boolean OcilibDefineAlloc
 (
     OCI_Define* def
 );
 
-OCI_SYM_LOCAL boolean OcilibDefineDef
+OCI_SYM_LOCAL OCI_Boolean OcilibDefineDef
 (
     OCI_Define* def,
     ub4         position

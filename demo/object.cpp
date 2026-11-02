@@ -6,24 +6,23 @@
 
 using namespace ocilib;
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
 
-        Connection con("db", "usr", "pwd");
+        Connection con(env, "db", "usr", "pwd");
 
-        Date date;
-        date.SysDate();
+        Date date = Date::SysDate(env);
 
         Object sale(TypeInfo(con, "t_sale", TypeInfo::Type));
         Object vendor(TypeInfo(con, "t_vendor", TypeInfo::Type));
 
-        vendor.Set<int>("code", 134);
+        vendor.Set<OCI_Int32>("code", 134);
         vendor.Set<ostring>("name", "JOHN SMITH");
 
-        sale.Set<int>("code", 1);
+        sale.Set<OCI_Int32>("code", 1);
         sale.Set<double>("price", 12.99);
         sale.Set<ostring>("name", "USB KEY 2go");
         sale.Set<ostring>("ref", "A56547WSAA");
@@ -39,12 +38,9 @@ int main(void)
 
         con.Commit();
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
-
     return EXIT_SUCCESS;
 }

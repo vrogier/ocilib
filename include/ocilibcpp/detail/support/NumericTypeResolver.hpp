@@ -33,12 +33,12 @@ namespace ocilib
 
         template<> struct NumericTypeResolver<OCI_Number*> { enum { Value = NumericNumber }; };
         template<> struct NumericTypeResolver<Number> { enum { Value = NumericNumber }; };
-        template<> struct NumericTypeResolver<short> { enum { Value = NumericShort }; };
-        template<> struct NumericTypeResolver<unsigned short> { enum { Value = NumericUnsignedShort }; };
-        template<> struct NumericTypeResolver<int> { enum { Value = NumericInt }; };
-        template<> struct NumericTypeResolver<unsigned int> { enum { Value = NumericUnsignedInt }; };
-        template<> struct NumericTypeResolver<big_int> { enum { Value = NumericBigInt }; };
-        template<> struct NumericTypeResolver<big_uint> { enum { Value = NumericUnsignedBigInt }; };
+        template<> struct NumericTypeResolver<OCI_Int16> { enum { Value = NumericShort }; };
+        template<> struct NumericTypeResolver<OCI_UInt16> { enum { Value = NumericUnsignedShort }; };
+        template<> struct NumericTypeResolver<OCI_Int32> { enum { Value = NumericInt }; };
+        template<> struct NumericTypeResolver<OCI_UInt32> { enum { Value = NumericUnsignedInt }; };
+        template<> struct NumericTypeResolver<OCI_Int64> { enum { Value = NumericBigInt }; };
+        template<> struct NumericTypeResolver<OCI_UInt64> { enum { Value = NumericUnsignedBigInt }; };
         template<> struct NumericTypeResolver<double> { enum { Value = NumericDouble }; };
         template<> struct NumericTypeResolver<float> { enum { Value = NumericFloat }; };
     }

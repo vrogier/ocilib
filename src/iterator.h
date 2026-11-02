@@ -28,7 +28,7 @@ OCI_SYM_LOCAL OCI_Iter * OcilibIteratorCreate
     OCI_Coll *coll
 );
 
-OCI_SYM_LOCAL boolean OcilibIteratorFree
+OCI_SYM_LOCAL OCI_Boolean OcilibIteratorFree
 (
     OCI_Iter *iter
 );

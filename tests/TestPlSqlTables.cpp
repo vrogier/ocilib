@@ -25,12 +25,14 @@ namespace TestCApi
             OTEXT("end;")
         );
 
-        const unsigned int ArraySize = 10;
-        const unsigned int StringSize = 50;
+        const OCI_UInt32 ArraySize = 10;
+        const OCI_UInt32 StringSize = 50;
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -45,7 +47,7 @@ namespace TestCApi
 
         /* set values */
 
-        for (unsigned int i = 0; i < ArraySize; i++)
+        for (OCI_UInt32 i = 0; i < ArraySize; i++)
         {
             osprintf(tab_names[i], OTEXT("name  %03d"), i + 1);
             osprintf(tab_values[i], OTEXT("value %03d"), i + 1);
@@ -55,9 +57,9 @@ namespace TestCApi
 
         /* prepare call and bind local arrays */
 
-        ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, OTEXT(":tab_names"), reinterpret_cast<otext*>(tab_names), StringSize, ArraySize));
-        ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, OTEXT(":tab_values"), reinterpret_cast<otext*>(tab_values), StringSize, ArraySize));
-        ASSERT_TRUE(OCI_BindArrayOfStrings(stmt, OTEXT(":tab_results"), reinterpret_cast<otext*>(tab_results), StringSize, ArraySize));
+        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":tab_names"), reinterpret_cast<otext*>(tab_names), StringSize, ArraySize));
+        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":tab_values"), reinterpret_cast<otext*>(tab_values), StringSize, ArraySize));
+        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":tab_results"), reinterpret_cast<otext*>(tab_results), StringSize, ArraySize));
 
         ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN));
         ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 2), OCI_BDM_IN));
@@ -69,7 +71,7 @@ namespace TestCApi
 
         otext buffer[512];
 
-        for (unsigned int i = 0; i < ArraySize; i++)
+        for (OCI_UInt32 i = 0; i < ArraySize; i++)
         {
             osprintf(buffer, OTEXT("name  %03d - value %03d"), i + 1, i + 1);
             ASSERT_EQ(ostring(buffer), tab_results[i]);
@@ -77,7 +79,6 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop package test_plsqltables"));
     }

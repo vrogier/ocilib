@@ -39,7 +39,7 @@ OCI_SYM_LOCAL OCI_Agent* OcilibAgentCreate
     const otext   * address
 );
 
-OCI_SYM_LOCAL boolean OcilibAgentFree
+OCI_SYM_LOCAL OCI_Boolean OcilibAgentFree
 (
     OCI_Agent* agent
 );
@@ -49,7 +49,7 @@ OCI_SYM_LOCAL const otext* OcilibAgentGetName
     OCI_Agent* agent
 );
 
-OCI_SYM_LOCAL boolean OcilibAgentSetName
+OCI_SYM_LOCAL OCI_Boolean OcilibAgentSetName
 (
     OCI_Agent  * agent,
     const otext* name
@@ -60,7 +60,7 @@ OCI_SYM_LOCAL const otext* OcilibAgentGetAddress
     OCI_Agent* agent
 );
 
-OCI_SYM_LOCAL boolean OcilibAgentSetAddress
+OCI_SYM_LOCAL OCI_Boolean OcilibAgentSetAddress
 (
     OCI_Agent  * agent,
     const otext* address

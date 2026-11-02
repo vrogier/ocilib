@@ -65,20 +65,20 @@ inline void Enqueue::SetMode(EnqueueMode value)
 
 inline Raw Enqueue::GetRelativeMsgID() const
 {
-    unsigned int size = OCI_SIZE_BUFFER;
+    OCI_UInt32 size = OCI_SIZE_BUFFER;
 
-    core::ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
+    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
 
-    core::Check(OCI_EnqueueGetRelativeMsgID(*this, static_cast<AnyPointer>(buffer), &size));
+    core::Check(OCI_EnqueueGetRelativeMsgID(*this, static_cast<AnyPointer>(buffer.data()), &size));
 
-    return core::MakeRaw(buffer, size);
+    return core::MakeRaw(buffer.data(), size);
 }
 
 inline void Enqueue::SetRelativeMsgID(const Raw &value)
 {
     const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
 
-    core::Check(OCI_EnqueueSetRelativeMsgID(*this, data, static_cast<unsigned int>(value.size())));
+    core::Check(OCI_EnqueueSetRelativeMsgID(*this, data, static_cast<OCI_UInt32>(value.size())));
 }
 
 }

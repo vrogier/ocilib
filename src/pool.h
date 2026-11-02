@@ -23,88 +23,91 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL boolean OcilibPoolDispose
+OCI_SYM_LOCAL OCI_Boolean OcilibPoolDispose
 (
     OCI_Pool *pool
 );
 
 OCI_SYM_LOCAL OCI_Pool * OcilibPoolCreate
 (
-    const otext *db,
-    const otext *user,
-    const otext *pwd,
-    unsigned int type,
-    unsigned int mode,
-    unsigned int min_con,
-    unsigned int max_con,
-    unsigned int incr_con
+    OCI_Environment *env,
+    const otext     *db,
+    const otext     *user,
+    const otext     *pwd,
+    OCI_PoolType     type,
+    OCI_SessionMode  mode,
+    OCI_UInt32     min_con,
+    OCI_UInt32     max_con,
+    OCI_UInt32     incr_con
 );
 
-OCI_SYM_LOCAL boolean OcilibPoolFree
+OCI_SYM_LOCAL OCI_Boolean OcilibPoolFree
 (
-    OCI_Pool *pool
+    OCI_Environment *env,
+    OCI_Pool        *pool
 );
 
 OCI_SYM_LOCAL OCI_Connection * OcilibPoolGetConnection
 (
-    OCI_Pool    *pool,
-    const otext *tag
+    OCI_Environment *env,
+    OCI_Pool        *pool,
+    const otext     *tag
 );
 
-OCI_SYM_LOCAL unsigned int OcilibPoolGetTimeout
+OCI_SYM_LOCAL OCI_UInt32 OcilibPoolGetTimeout
 (
     OCI_Pool *pool
 );
 
-OCI_SYM_LOCAL boolean OcilibPoolSetTimeout
-(
-    OCI_Pool    *pool,
-    unsigned int value
-);
-
-OCI_SYM_LOCAL boolean OcilibPoolGetNoWait
-(
-    OCI_Pool *pool
-);
-
-OCI_SYM_LOCAL boolean OcilibPoolSetNoWait
-(
-    OCI_Pool *pool,
-    boolean   value
-);
-
-OCI_SYM_LOCAL unsigned int OcilibPoolGetBusyCount
-(
-    OCI_Pool *pool
-);
-
-OCI_SYM_LOCAL unsigned int OcilibPoolGetOpenedCount
-(
-    OCI_Pool *pool
-);
-
-OCI_SYM_LOCAL unsigned int OcilibPoolGetMin
-(
-    OCI_Pool *pool
-);
-
-OCI_SYM_LOCAL unsigned int OcilibPoolGetMax
-(
-    OCI_Pool *pool
-);
-
-OCI_SYM_LOCAL unsigned int OcilibPoolGetIncrement
-(
-    OCI_Pool *pool
-);
-
-OCI_SYM_LOCAL boolean OcilibPoolSetStatementCacheSize
+OCI_SYM_LOCAL OCI_Boolean OcilibPoolSetTimeout
 (
     OCI_Pool    *pool,
-    unsigned int value
+    OCI_UInt32 value
 );
 
-OCI_SYM_LOCAL unsigned int OcilibPoolGetStatementCacheSize
+OCI_SYM_LOCAL OCI_Boolean OcilibPoolGetNoWait
+(
+    OCI_Pool *pool
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibPoolSetNoWait
+(
+    OCI_Pool   *pool,
+    OCI_Boolean value
+);
+
+OCI_SYM_LOCAL OCI_UInt32 OcilibPoolGetBusyCount
+(
+    OCI_Pool *pool
+);
+
+OCI_SYM_LOCAL OCI_UInt32 OcilibPoolGetOpenedCount
+(
+    OCI_Pool *pool
+);
+
+OCI_SYM_LOCAL OCI_UInt32 OcilibPoolGetMin
+(
+    OCI_Pool *pool
+);
+
+OCI_SYM_LOCAL OCI_UInt32 OcilibPoolGetMax
+(
+    OCI_Pool *pool
+);
+
+OCI_SYM_LOCAL OCI_UInt32 OcilibPoolGetIncrement
+(
+    OCI_Pool *pool
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibPoolSetStatementCacheSize
+(
+    OCI_Pool    *pool,
+    OCI_UInt32 value
+);
+
+OCI_SYM_LOCAL OCI_UInt32 OcilibPoolGetStatementCacheSize
 (
     OCI_Pool *pool
 );

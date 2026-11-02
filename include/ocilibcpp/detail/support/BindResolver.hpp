@@ -31,7 +31,7 @@ namespace ocilib
         * @brief Resolve a bind input / output types
         *
         */
-        template<class I, class O, boolean B>
+        template<class I, class O, OCI_Boolean B>
         struct BindResolverType
         {
             typedef I InputType;
@@ -55,13 +55,13 @@ namespace ocilib
         template<class I, class O>
         struct BindResolverHandleType : BindResolverType<I, O, true> {};
 
-        template<> struct BindResolver<bool> : BindResolverType<bool, boolean, false> {};
-        template<> struct BindResolver<short> : BindResolverScalarType<short> {};
-        template<> struct BindResolver<unsigned short> : BindResolverScalarType<unsigned short> {};
-        template<> struct BindResolver<int> : BindResolverScalarType<int> {};
-        template<> struct BindResolver<unsigned int> : BindResolverScalarType<unsigned  int> {};
-        template<> struct BindResolver<big_int> : BindResolverScalarType<big_int> {};
-        template<> struct BindResolver<big_uint> : BindResolverScalarType<big_uint> {};
+        template<> struct BindResolver<bool> : BindResolverType<bool, OCI_Boolean, false> {};
+        template<> struct BindResolver<OCI_Int16> : BindResolverScalarType<OCI_Int16> {};
+        template<> struct BindResolver<OCI_UInt16> : BindResolverScalarType<OCI_UInt16> {};
+        template<> struct BindResolver<OCI_Int32> : BindResolverScalarType<OCI_Int32> {};
+        template<> struct BindResolver<OCI_UInt32> : BindResolverScalarType<OCI_UInt32> {};
+        template<> struct BindResolver<OCI_Int64> : BindResolverScalarType<OCI_Int64> {};
+        template<> struct BindResolver<OCI_UInt64> : BindResolverScalarType<OCI_UInt64> {};
         template<> struct BindResolver<float> : BindResolverScalarType<float> {};
         template<> struct BindResolver<double> : BindResolverScalarType<double> {};
         template<> struct BindResolver<ocilib::ostring> : BindResolverType<ocilib::ostring, otext, false> {};
@@ -79,6 +79,7 @@ namespace ocilib
         template<> struct BindResolver<ocilib::Reference> : BindResolverHandleType<ocilib::Reference, OCI_Ref*> {};
         template<> struct BindResolver<ocilib::Object> : BindResolverHandleType<ocilib::Object, OCI_Object*> {};
         template<> struct BindResolver<ocilib::Vector> : BindResolverHandleType<ocilib::Vector, OCI_Vector*> {};
+        template<> struct BindResolver<ocilib::Json> : BindResolverHandleType<ocilib::Json, OCI_Json*> {};
         template<> struct BindResolver<ocilib::Statement> : BindResolverHandleType<ocilib::Statement, OCI_Statement*> {};
    }
 }

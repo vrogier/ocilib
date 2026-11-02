@@ -40,12 +40,12 @@ inline DataType BindInfo::GetType() const
     return DataType(static_cast<DataType::Type>(core::Check(OCI_BindGetType(*this))));
 }
 
-inline unsigned int BindInfo::GetSubType() const
+inline OCI_UInt32 BindInfo::GetSubType() const
 {
     return core::Check(OCI_BindGetSubtype(*this));
 }
 
-inline unsigned int BindInfo::GetDataCount() const
+inline OCI_UInt32 BindInfo::GetDataCount() const
 {
     return core::Check(OCI_BindGetDataCount(*this));
 }
@@ -55,7 +55,7 @@ inline Statement BindInfo::GetStatement() const
     return Statement(core::Check(OCI_BindGetStatement(*this)));
 }
 
-inline void BindInfo::SetDataNull(bool value, unsigned int index)
+inline void BindInfo::SetDataNull(bool value, OCI_UInt32 index)
 {
     if (value)
     {
@@ -67,7 +67,7 @@ inline void BindInfo::SetDataNull(bool value, unsigned int index)
     }
 }
 
-inline bool BindInfo::IsDataNull(unsigned int index) const
+inline bool BindInfo::IsDataNull(OCI_UInt32 index) const
 {
     return (core::Check(OCI_BindIsNullAtPos(*this, index)) == TRUE);
 }
@@ -75,6 +75,11 @@ inline bool BindInfo::IsDataNull(unsigned int index) const
 inline void BindInfo::SetCharsetForm(CharsetForm value)
 {
     core::Check(OCI_BindSetCharsetForm(*this, value));
+}
+
+inline void BindInfo::SetDirection(BindDirection value)
+{
+    core::Check(OCI_BindSetDirection(*this, value));
 }
 
 inline BindInfo::BindDirection BindInfo::GetDirection() const

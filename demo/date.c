@@ -13,13 +13,15 @@ int main(void)
 
     char str[SIZE_STR + 1];
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    d1 = OCI_DateCreate(NULL);
-    d2 = OCI_DateCreate(NULL);
+    d1 = OCI_DateCreate(env);
+    d2 = OCI_DateCreate(env);
 
     strcpy(str, "13041978 20:20:12");
 
@@ -46,7 +48,7 @@ int main(void)
     OCI_DateFree(d1);
     OCI_DateFree(d2);
 
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

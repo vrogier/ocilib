@@ -14,13 +14,13 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        const int totalRowCount = 54;
-        const int bufferSize = 50;
+        const OCI_Int32 totalRowCount = 54;
+        const OCI_Int32 bufferSize = 50;
 
-        int offset = 0;
-        int actualRowCount = bufferSize;
+        OCI_Int32 offset = 0;
+        OCI_Int32 actualRowCount = bufferSize;
 
-        auto ints = static_cast<int*>(calloc(actualRowCount, sizeof(int)));
+        auto ints = static_cast<OCI_Int32*>(calloc(actualRowCount, sizeof(OCI_Int32)));
         auto dates = static_cast<OCI_Date**>(calloc(actualRowCount, sizeof(OCI_Date*)));
 
         ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("INSERT INTO ISSUE_216(ID, DATEVALUE) VALUES(:i, :d)")));
@@ -30,7 +30,7 @@ namespace TestCApi
 
         while (offset < totalRowCount)
         {
-            for (int i = 0; i < actualRowCount; i++)
+            for (OCI_Int32 i = 0; i < actualRowCount; i++)
             {
                 if (dates[i])
                 {
@@ -40,7 +40,7 @@ namespace TestCApi
 
             actualRowCount = totalRowCount - offset < bufferSize ? totalRowCount - offset : bufferSize;
 
-            for (int i = 0; i < actualRowCount; i++)
+            for (OCI_Int32 i = 0; i < actualRowCount; i++)
             {
                 ints[i] = i;
                 dates[i] = OCI_DateCreate(NULL);
@@ -59,7 +59,7 @@ namespace TestCApi
 
         ASSERT_EQ(totalRowCount, offset);
 
-        for (int i = 0; i < actualRowCount; i++)
+        for (OCI_Int32 i = 0; i < actualRowCount; i++)
         {
             ASSERT_TRUE(OCI_DateFree(dates[i]));
         }
@@ -115,27 +115,27 @@ namespace TestCApi
 
         std::array<OCI_Number*, 3> numbers;
 
-        for (size_t i = 0; i < numbers.size(); i++)
+        for (OCI_Size i = 0; i < numbers.size(); i++)
         {
             numbers[i] = OCI_NumberCreate(conn);
             ASSERT_NE(nullptr, numbers[i]);
             ASSERT_TRUE(OCI_NumberFromText(numbers[i], TO_STRING(i + 1).data(), nullptr));
         }
 
-        ASSERT_TRUE(OCI_BindArrayOfNumbers(stmt, OTEXT(":v"), numbers.data(), static_cast<unsigned int>(numbers.size())));
+        ASSERT_TRUE(OCI_BindArrayOfNumbers(stmt, OTEXT(":v"), numbers.data(), static_cast<OCI_UInt32>(numbers.size())));
         ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN_OUT));
         ASSERT_TRUE(OCI_Execute(stmt));
 
         ASSERT_EQ(TO_STRING(numbers.size()), ostring(OCI_ServerGetOutput(conn)));
 
-        for (size_t i = 0; i < numbers.size(); i++)
+        for (OCI_Size i = 0; i < numbers.size(); i++)
         {
             otext buffer[100];
-            osprintf(buffer, OTEXT("v(%d) = %d"), static_cast<int>(i) + 1, static_cast<int>(i) + 1 + 10);
+            osprintf(buffer, OTEXT("v(%d) = %d"), static_cast<OCI_Int32>(i) + 1, static_cast<OCI_Int32>(i) + 1 + 10);
             ASSERT_EQ(ostring(buffer), ostring(OCI_ServerGetOutput(conn)));
         }
 
-        for (size_t i = 0; i < numbers.size(); i++)
+        for (OCI_Size i = 0; i < numbers.size(); i++)
         {
             ostring expected = TO_STRING(i + 1 + 10);
             otext buffer[100];
@@ -196,9 +196,9 @@ namespace TestCApi
 
 #endif
 
-    class ReportedIssues247 : public ::testing::TestWithParam<unsigned int> {};
+    class ReportedIssues247 : public ::testing::TestWithParam<OCI_UInt32> {};
 
-    static std::vector<unsigned int> TimestampTypes{ OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
+    static std::vector<OCI_UInt32> TimestampTypes{ OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
     static Context contextIssue247NoNullPointerException;
 
     static void AddErrorIssue247NoNullPointerException(OCI_Error* err)
@@ -240,7 +240,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_FetchNext(rslt));
         const auto name = OCI_GetString(rslt, 1);
         ASSERT_NE(nullptr, name);
-        const auto length = static_cast<size_t>(OCI_GetInt(rslt, 2));
+        const auto length = static_cast<OCI_Size>(OCI_GetInt(rslt, 2));
         ASSERT_EQ(true, length > 0);
         const auto rowid = OCI_GetString(rslt, 3);
         ASSERT_NE(nullptr, rowid);
@@ -346,9 +346,9 @@ namespace TestCApi
         ASSERT_NE(nullptr, stmt);
 
 
-        big_int num = 1234;
-        big_int id = 0;
-        big_int ret = 0;
+        OCI_Int64 num = 1234;
+        OCI_Int64 id = 0;
+        OCI_Int64 ret = 0;
 
         const otext* sql =
             OTEXT("declare")
@@ -452,7 +452,7 @@ namespace TestCApi
         struct ExpectedInfo
         {
             ExpectedPayloadType Type;
-            unsigned int Size;
+            OCI_UInt32 Size;
         };
 
         std::array<ExpectedInfo, 2> expectedInfos
@@ -461,7 +461,7 @@ namespace TestCApi
             ExpectedInfo { ExpectedPayloadType::Blob, 9 }
         };
 
-        const int bufferSize = 100;
+        const OCI_Int32 bufferSize = 100;
 
         for (auto& info : expectedInfos)
         {
@@ -480,8 +480,8 @@ namespace TestCApi
             {
                 char buffer[bufferSize];
 
-                const int rawDataSize = OCI_ObjectGetRaw(jmsBytesMessage, OTEXT("BYTES_RAW"), buffer, bufferSize);
-                if ((unsigned int)rawDataSize != info.Size) return false;
+                const OCI_Int32 rawDataSize = OCI_ObjectGetRaw(jmsBytesMessage, OTEXT("BYTES_RAW"), buffer, bufferSize);
+                if ((OCI_UInt32)rawDataSize != info.Size) return false;
             }
 
             if (info.Type == ExpectedPayloadType::Blob)
@@ -489,8 +489,8 @@ namespace TestCApi
                 const auto lob = OCI_ObjectGetLob(jmsBytesMessage, OTEXT("BYTES_LOB"));
                 if (lob == nullptr) return false;
 
-                const auto lobDataSize = static_cast<int>(OCI_LobGetLength(lob));
-                if ((unsigned int)lobDataSize != info.Size * 2) return false;
+                const auto lobDataSize = static_cast<OCI_Int32>(OCI_LobGetLength(lob));
+                if ((OCI_UInt32)lobDataSize != info.Size * 2) return false;
             }
         }
 

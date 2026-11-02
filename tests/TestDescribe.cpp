@@ -4,19 +4,19 @@ namespace TestCApi
 {
     void CheckColumnType
     (
-        int index,
+        OCI_Int32 index,
         OCI_TypeInfo* typinf,
         const ostring& name,
         const ostring& typeName,
-        unsigned int type
+        OCI_UInt32 type
     )
     {
         const auto col = OCI_TypeInfoGetColumn(typinf, index);
         ASSERT_NE(nullptr, col);
 
-        ASSERT_EQ(name, ostring(OCI_GetColumnName(col)));
+        ASSERT_EQ(name, ostring(OCI_ColumnGetName(col)));
         ASSERT_EQ(typeName, ostring(OCI_ColumnGetSQLType(col)));
-        ASSERT_EQ(type, OCI_GetColumnType(col));
+        ASSERT_EQ(type, OCI_ColumnGetType(col));
     }
 
     TEST(TestDescribe, Type)
@@ -43,15 +43,17 @@ namespace TestCApi
             OTEXT(")")
         );
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestDescribeType"), OCI_TIF_TYPE);
         ASSERT_NE(nullptr, typinf);
 
-        const int typepPropCount = 10;
+        const OCI_Int32 typepPropCount = 10;
 
         ASSERT_EQ(typepPropCount, OCI_TypeInfoGetColumnCount(typinf));
 
@@ -67,7 +69,6 @@ namespace TestCApi
         CheckColumnType(10, typinf, OTEXT("VAL_OBJ"), OTEXT("TESTDESCRIBESUBTYPE"), OCI_CDT_OBJECT);
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop type TestDescribeType"));
         ExecDML(OTEXT("drop type TestDescribeSubType"));
@@ -98,15 +99,17 @@ namespace TestCApi
             OTEXT(")")
         );
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestDescribeTable"), OCI_TIF_TABLE);
         ASSERT_NE(nullptr, typinf);
 
-        const int typepPropCount = 10;
+        const OCI_Int32 typepPropCount = 10;
 
         ASSERT_EQ(typepPropCount, OCI_TypeInfoGetColumnCount(typinf));
 
@@ -130,7 +133,6 @@ namespace TestCApi
         ASSERT_EQ(TRUE, OCI_ColumnGetNullable(col2));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop type TestDescribeTableSubType"));
         ExecDML(OTEXT("drop type TestDescribeTable"));

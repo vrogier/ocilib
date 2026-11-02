@@ -26,8 +26,8 @@
 OCI_SYM_LOCAL void OcilibObjectGetUserStructSize
 (
     OCI_TypeInfo* typinf,
-    size_t      * p_size,
-    size_t      * p_align
+    OCI_Size      * p_size,
+    OCI_Size      * p_align
 );
 
 OCI_SYM_LOCAL OCI_Object * OcilibObjectInitialize
@@ -37,40 +37,38 @@ OCI_SYM_LOCAL OCI_Object * OcilibObjectInitialize
     void           *handle,
     OCI_TypeInfo   *typinf,
     OCI_Object     *parent,
-    int             index,
-    boolean         reset
+    OCI_Int32             index,
+    OCI_Boolean     reset
 );
 
 OCI_SYM_LOCAL OCI_Object * OcilibObjectCreate
 (
-    OCI_Connection *con,
-    OCI_TypeInfo   *typinf
+    OCI_TypeInfo *typinf
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectFree
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectFree
 (
     OCI_Object *obj
 );
 
 OCI_SYM_LOCAL OCI_Object ** OcilibObjectCreateArray
 (
-    OCI_Connection *con,
-    OCI_TypeInfo   *typinf,
-    unsigned int    nbelem
+    OCI_TypeInfo *typinf,
+    OCI_UInt32  nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectFreeArray
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectFreeArray
 (
     OCI_Object **objs
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectAssign
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectAssign
 (
     OCI_Object *obj,
     OCI_Object *obj_src
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectGetBoolean
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectGetBoolean
 (
     OCI_Object  *obj,
     const otext *attr
@@ -82,37 +80,37 @@ OCI_SYM_LOCAL OCI_Number * OcilibObjectGetNumber
     const otext *attr
 );
 
-OCI_SYM_LOCAL short OcilibObjectGetShort
+OCI_SYM_LOCAL OCI_Int16 OcilibObjectGetShort
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_SYM_LOCAL unsigned short OcilibObjectGetUnsignedShort
+OCI_SYM_LOCAL OCI_UInt16 OcilibObjectGetUnsignedShort
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_SYM_LOCAL int OcilibObjectGetInt
+OCI_SYM_LOCAL OCI_Int32 OcilibObjectGetInt
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_SYM_LOCAL unsigned int OcilibObjectGetUnsignedInt
+OCI_SYM_LOCAL OCI_UInt32 OcilibObjectGetUnsignedInt
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_SYM_LOCAL big_int OcilibObjectGetBigInt
+OCI_SYM_LOCAL OCI_Int64 OcilibObjectGetBigInt
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_SYM_LOCAL big_uint OcilibObjectGetUnsignedBigInt
+OCI_SYM_LOCAL OCI_UInt64 OcilibObjectGetUnsignedBigInt
 (
     OCI_Object  *obj,
     const otext *attr
@@ -136,15 +134,15 @@ OCI_SYM_LOCAL const otext * OcilibObjectGetString
     const otext *attr
 );
 
-OCI_SYM_LOCAL int OcilibObjectGetRaw
+OCI_SYM_LOCAL OCI_Int32 OcilibObjectGetRaw
 (
     OCI_Object  *obj,
     const otext *attr,
     void        *buffer,
-    unsigned int len
+    OCI_UInt32 len
 );
 
-OCI_SYM_LOCAL unsigned int OcilibObjectGetRawSize
+OCI_SYM_LOCAL OCI_UInt32 OcilibObjectGetRawSize
 (
     OCI_Object  *obj,
     const otext *attr
@@ -198,154 +196,154 @@ OCI_SYM_LOCAL OCI_Ref * OcilibObjectGetReference
     const otext *attr
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetBoolean
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetBoolean
 (
     OCI_Object  *obj,
     const otext *attr,
-    boolean      value
+    OCI_Boolean  value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetNumber
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetNumber
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Number  *value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetShort
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetShort
 (
     OCI_Object  *obj,
     const otext *attr,
-    short        value
+    OCI_Int16        value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetUnsignedShort
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetUnsignedShort
 (
     OCI_Object    *obj,
     const otext   *attr,
-    unsigned short value
+    OCI_UInt16 value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetInt
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetInt
 (
     OCI_Object  *obj,
     const otext *attr,
-    int          value
+    OCI_Int32          value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetUnsignedInt
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetUnsignedInt
 (
     OCI_Object  *obj,
     const otext *attr,
-    unsigned int value
+    OCI_UInt32 value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetBigInt
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetBigInt
 (
     OCI_Object  *obj,
     const otext *attr,
-    big_int      value
+    OCI_Int64      value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetUnsignedBigInt
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetUnsignedBigInt
 (
     OCI_Object  *obj,
     const otext *attr,
-    big_uint     value
+    OCI_UInt64     value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetDouble
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetDouble
 (
     OCI_Object  *obj,
     const otext *attr,
     double       value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetFloat
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetFloat
 (
     OCI_Object  *obj,
     const otext *attr,
     float        value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetString
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetString
 (
     OCI_Object  *obj,
     const otext *attr,
     const otext *value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetRaw
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetRaw
 (
     OCI_Object  *obj,
     const otext *attr,
     void       * value,
-    unsigned int len
+    OCI_UInt32 len
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetDate
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetDate
 (
     OCI_Object * obj,
     const otext *attr,
     OCI_Date    *value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetTimestamp
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetTimestamp
 (
     OCI_Object   * obj,
     const otext   *attr,
     OCI_Timestamp *value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetInterval
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetInterval
 (
     OCI_Object   *obj,
     const otext  *attr,
     OCI_Interval *value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetColl
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetColl
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Coll    *value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetObject
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetObject
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Object  *value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetLob
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetLob
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Lob     *value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetFile
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetFile
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_File    *value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetReference
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetReference
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Ref     *value
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectSetNull
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetNull
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectIsNull
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectIsNull
 (
     OCI_Object  *obj,
     const otext *attr
@@ -356,28 +354,28 @@ OCI_SYM_LOCAL OCI_TypeInfo * OcilibObjectGetTypeInfo
     OCI_Object *obj
 );
 
-OCI_SYM_LOCAL unsigned int OcilibObjectGetType
+OCI_SYM_LOCAL OCI_ObjectType OcilibObjectGetType
 (
     OCI_Object *obj
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectGetSelfRef
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectGetSelfRef
 (
     OCI_Object *obj,
     OCI_Ref    *ref
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectGetStruct
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectGetStruct
 (
     OCI_Object *obj,
     void      **pp_struct,
     void      **pp_ind
 );
 
-OCI_SYM_LOCAL boolean OcilibObjectToString
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectToString
 (
     OCI_Object   *obj,
-    unsigned int *size,
+    OCI_UInt32 *size,
     otext        *str
 );
 

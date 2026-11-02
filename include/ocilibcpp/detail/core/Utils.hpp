@@ -30,7 +30,7 @@ namespace ocilib
     namespace core
     {
         template<class T>
-        static T* OnAllocate(T* address, size_t count = 1)
+        static T* OnAllocate(T* address, OCI_Size count = 1)
         {
 #ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
             GetMemoryDebugInfo().OnAllocate(address, count);
@@ -52,33 +52,34 @@ namespace ocilib
         template<class T>
         T Check(T result)
         {
-            OCI_Error* err = OCI_GetLastError();
+            /* OCI_HasError() applies the warnings gate: a suppressed warning
+               records an OCI_Error but must not raise a C++ exception */
 
-            if (err)
+            if (OCI_HasError())
             {
-                throw Exception(err);
+                throw Exception(OCI_GetLastError());
             }
 
             return result;
         }
 
-        inline ostring MakeString(const otext* result, int size)
+        inline ostring MakeString(const otext* result, OCI_Int32 size)
         {
             return result ? (size >= 0 ? ostring(result, result + size) : ostring(result)) : ostring();
         }
 
-        inline Raw MakeRaw(AnyPointer result, unsigned int size)
+        inline Raw MakeRaw(AnyPointer result, OCI_UInt32 size)
         {
             unsigned char* ptr = static_cast<unsigned char*>(result);
 
             return (ptr && size > 0 ? Raw(ptr, ptr + size) : Raw());
         }
 
-        inline unsigned int ComputeCharMaxSize(Environment::CharsetMode charsetMode)
+        inline OCI_UInt32 ComputeCharMaxSize(Environment::CharsetMode charsetMode)
         {
-            const int UTF8_BytesPerChar = 4;
+            const OCI_Int32 UTF8_BytesPerChar = 4;
 
-            unsigned int res = sizeof(ostring::value_type);
+            OCI_UInt32 res = sizeof(ostring::value_type);
 
             if (charsetMode == Environment::CharsetAnsi)
             {

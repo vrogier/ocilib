@@ -9,12 +9,14 @@ int main(void)
 {
     OCI_Connection *cn;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
 
     printf("Server major    version : %i\n", OCI_GetServerMajorVersion(cn));
     printf("Server minor    version : %i\n", OCI_GetServerMinorVersion(cn));
@@ -22,7 +24,7 @@ int main(void)
     printf("Connection      version : %i\n\n", OCI_GetVersionConnection(cn));
 
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

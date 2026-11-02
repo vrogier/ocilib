@@ -27,13 +27,13 @@ namespace TestCppApi
             __pragma(warning(disable : 4996))
 #endif
 
-                const size_t convLenght = mbsrtowcs(buffer, &ptr, value.size(), &mbs);
+                const OCI_Size convLenght = mbsrtowcs(buffer, &ptr, value.size(), &mbs);
 
 #if defined(_MSC_VER)
         __pragma(warning(default: 4996))
 #endif   
 
-            const size_t whatLenght = (static_cast<size_t>(-1) == convLenght) ? 0 : convLenght;
+            const OCI_Size whatLenght = (static_cast<OCI_Size>(-1) == convLenght) ? 0 : convLenght;
 
                                 buffer[whatLenght] = 0;
         }
@@ -77,7 +77,7 @@ namespace TestCppApi
     {
         ExecDML(OTEXT("create table TestTableIssue309_1(code number, name varchar2(50))"));
 
-        int errCode{};
+        OCI_Int32 errCode{};
 
         try
         {
@@ -213,7 +213,7 @@ namespace TestCppApi
             Connection con(DBS, USR, PWD);
             Statement stmt(con);
 
-            int value = 2;
+            OCI_Int32 value = 2;
 
             stmt.Prepare(OTEXT("select * from dual where 1 > :value"));
             stmt.Bind(OTEXT(":value"), value, BindInfo::In);
@@ -256,7 +256,7 @@ namespace TestCppApi
         st.SetFetchMode(Statement::FetchScrollable);
         st.Prepare(OTEXT("select count(*) from dual connect by level<=:lvl"));
 
-        int i = 10;
+        OCI_Int32 i = 10;
         st.Bind(OTEXT(":lvl"), i, BindInfo::In);
         st.ExecutePrepared();
 
@@ -301,7 +301,7 @@ namespace TestCppApi
 
         Pool pool(DBS, USR, PWD, Pool::SessionPool, 1, 2);
 
-        for (int i = 0; i < 3; ++i)
+        for (OCI_Int32 i = 0; i < 3; ++i)
         {
             Connection connection = pool.GetConnection();
         }
@@ -339,8 +339,8 @@ namespace TestCppApi
 
         nm1 += 5;
 
-        int int1 = nm1;
-        int int2 = nm2;
+        OCI_Int32 int1 = nm1;
+        OCI_Int32 int2 = nm2;
 
         ASSERT_EQ(int1, 6);
         ASSERT_EQ(int2, 1);
@@ -393,8 +393,8 @@ namespace TestCppApi
 
     TEST(ReportedIssuesCppApi, Issue370)
     {
-        int errCode = 0;
-        int errType = 0;
+        OCI_Int32 errCode = 0;
+        OCI_Int32 errType = 0;
         try
         {
             auto inititialzed = Environment::Initialized();
@@ -414,17 +414,17 @@ namespace TestCppApi
         ExecDML(OTEXT("create table TestIssue377(value number(18))"));
 
         ostring errMessage;
-        int errCode{};
-        size_t expectedCount{ 10 };
-        size_t insertedCount{};
+        OCI_Int32 errCode{};
+        OCI_Size expectedCount{ 10 };
+        OCI_Size insertedCount{};
 
         try
         {
             Environment::Initialize(Environment::Default | Environment::Threaded);
             Connection conn(DBS, USR, PWD);
 
-            std::vector<big_int> values;
-            for (int i = 1; i <= expectedCount; ++i)
+            std::vector<OCI_Int64> values;
+            for (OCI_Int32 i = 1; i <= expectedCount; ++i)
             {
                 values.push_back(1234567890000 + i);
             }
@@ -432,7 +432,7 @@ namespace TestCppApi
             ostring sql = OTEXT("begin insert into TestIssue377(value) values (:0); end;");
             Statement stmt(conn);
             stmt.Prepare(sql);
-            stmt.SetBindArraySize(static_cast<unsigned int>(values.size()));
+            stmt.SetBindArraySize(static_cast<OCI_UInt32>(values.size()));
             stmt.Bind(OTEXT(":0"), values, BindInfo::In);
             stmt.ExecutePrepared();
 
@@ -440,7 +440,7 @@ namespace TestCppApi
             auto rs = stmt.GetResultset();
             while (rs++)
             {
-                ASSERT_EQ(values[insertedCount], rs.Get<big_int>(1));
+                ASSERT_EQ(values[insertedCount], rs.Get<OCI_Int64>(1));
                 insertedCount++;
             }
         }
@@ -589,7 +589,7 @@ namespace TestCppApi
         Sleep(2000);
 
         ostring errMessage;
-        int errCode{};
+        OCI_Int32 errCode{};
 
         try
         {

@@ -25,31 +25,32 @@
 
 OCI_SYM_LOCAL const otext* OcilibColumnGetVectorFormatString
 (
-    int format
+    OCI_VectorFormat format
 );
 
-OCI_SYM_LOCAL boolean OcilibColumnGetAttributeInfo
+OCI_SYM_LOCAL OCI_Boolean OcilibColumnGetAttributeInfo
 (
     OCI_Column  *col,
-    unsigned int count,
-    unsigned int index,
-    size_t      *p_size,
-    size_t      *p_align
+    OCI_UInt32 count,
+    OCI_UInt32 index,
+    OCI_Size      *p_size,
+    OCI_Size      *p_align
 );
 
-OCI_SYM_LOCAL boolean OcilibColumnRetrieveInfo
+OCI_SYM_LOCAL OCI_Boolean OcilibColumnRetrieveInfo
 (
     OCI_Column     *col,
     OCI_Connection *con,
     OCI_Statement  *stmt,
     void           *handle,
-    int             index,
-    int             ptype
+    OCI_Int32             index,
+    OCI_Int32             ptype
 );
 
-OCI_SYM_LOCAL boolean OcilibColumnMapInfo
+OCI_SYM_LOCAL OCI_Boolean OcilibColumnMapInfo
 (
     OCI_Column    *col,
+    OCI_Connection*con,
     OCI_Statement *stmt
 );
 
@@ -58,62 +59,62 @@ OCI_SYM_LOCAL const otext* OcilibColumnGetName
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetType
+OCI_SYM_LOCAL OCI_SqlType OcilibColumnGetType
 (
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetCharsetForm
+OCI_SYM_LOCAL OCI_CharsetForm OcilibColumnGetCharsetForm
 (
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetSize
+OCI_SYM_LOCAL OCI_UInt32 OcilibColumnGetSize
 (
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL int OcilibColumnGetScale
+OCI_SYM_LOCAL OCI_Int32 OcilibColumnGetScale
 (
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL int OcilibColumnGetPrecision
+OCI_SYM_LOCAL OCI_Int32 OcilibColumnGetPrecision
 (
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL int OcilibColumnGetFractionalPrecision
+OCI_SYM_LOCAL OCI_Int32 OcilibColumnGetFractionalPrecision
 (
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL int OcilibColumnGetLeadingPrecision
+OCI_SYM_LOCAL OCI_Int32 OcilibColumnGetLeadingPrecision
 (
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL boolean OcilibColumnGetNullable
+OCI_SYM_LOCAL OCI_Boolean OcilibColumnGetNullable
 (
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL boolean OcilibColumnGetCharUsed
+OCI_SYM_LOCAL OCI_Boolean OcilibColumnGetCharUsed
 (
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetPropertyFlags
+OCI_SYM_LOCAL OCI_ColumnPropFlags OcilibColumnGetPropertyFlags
 (
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetCollationID
+OCI_SYM_LOCAL OCI_CollationID OcilibColumnGetCollationID
 (
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetDimension
+OCI_SYM_LOCAL OCI_UInt32 OcilibColumnGetDimension
 (
     OCI_Column* col
 );
@@ -123,11 +124,11 @@ OCI_SYM_LOCAL const otext* OcilibColumnGetSqlType
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetFullSqlType
+OCI_SYM_LOCAL OCI_UInt32 OcilibColumnGetFullSqlType
 (
     OCI_Column * col,
     otext      * buffer,
-    unsigned int len
+    OCI_UInt32 len
 );
 
 OCI_SYM_LOCAL OCI_TypeInfo* OcilibColumnGetTypeInfo
@@ -135,7 +136,7 @@ OCI_SYM_LOCAL OCI_TypeInfo* OcilibColumnGetTypeInfo
     OCI_Column* col
 );
 
-OCI_SYM_LOCAL unsigned int OcilibColumnGetSubType
+OCI_SYM_LOCAL OCI_SubType OcilibColumnGetSubType
 (
     OCI_Column* col
 );

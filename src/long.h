@@ -28,40 +28,40 @@ OCI_SYM_LOCAL OCI_Long * OcilibLongInitialize
     OCI_Statement *stmt,
     OCI_Long      *lg,
     OCI_Define    *def,
-    unsigned int   type
+    OCI_LongType   type
 );
 
 OCI_SYM_LOCAL OCI_Long * OcilibLongCreate
 (
     OCI_Statement *stmt,
-    unsigned int   type
+    OCI_LongType   type
 );
 
-OCI_SYM_LOCAL boolean OcilibLongFree
+OCI_SYM_LOCAL OCI_Boolean OcilibLongFree
 (
     OCI_Long *lg
 );
 
-OCI_SYM_LOCAL unsigned int OcilibLongGetType
+OCI_SYM_LOCAL OCI_LongType OcilibLongGetType
 (
     OCI_Long *lg
 );
 
-OCI_SYM_LOCAL unsigned int OcilibLongRead
+OCI_SYM_LOCAL OCI_UInt32 OcilibLongRead
 (
     OCI_Long    *lg,
     void        *buffer,
-    unsigned int len
+    OCI_UInt32 len
 );
 
-OCI_SYM_LOCAL unsigned int OcilibLongWrite
+OCI_SYM_LOCAL OCI_UInt32 OcilibLongWrite
 (
     OCI_Long    *lg,
     void        *buffer,
-    unsigned int len
+    OCI_UInt32 len
 );
 
-OCI_SYM_LOCAL unsigned int OcilibLongGetSize
+OCI_SYM_LOCAL OCI_UInt32 OcilibLongGetSize
 (
     OCI_Long *lg
 );
@@ -71,7 +71,7 @@ OCI_SYM_LOCAL void * OcilibLongGetBuffer
     OCI_Long *lg
 );
 
-OCI_SYM_LOCAL boolean OcilibLongFinalizeDynamicFetch
+OCI_SYM_LOCAL OCI_Boolean OcilibLongFinalizeDynamicFetch
 (
     OCI_Long *lg
 );

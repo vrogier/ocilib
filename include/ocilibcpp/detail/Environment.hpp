@@ -21,6 +21,7 @@
 #pragma once
 
 #include "ocilibcpp/types.hpp"
+#include "ocilibcpp/detail/core/HandleStore.hpp"
 
 // ReSharper disable CppClangTidyPerformanceUnnecessaryValueParam
 // ReSharper disable CppClangTidyHicppUseAuto
@@ -29,271 +30,313 @@
 namespace ocilib
 {
 
-inline Environment::Environment(EnvironmentFlags mode, const ostring& libpath) : _guard(core::SynchronizationMode::Unsafe), _defaultStore(nullptr), _charMaxSize(0), _initialized(false)
+inline Environment::Environment(EnvironmentFlags mode, const ostring& libpath) : _charMaxSize(0), _initialized(false), _store(std::make_shared<core::HandleStore>())
 {
     _mode = mode;
 
-    core::Check(OCI_Initialize(nullptr, libpath.c_str(), _mode.GetValues() | OCI_ENV_CONTEXT));
-     _initialized = true;
-  
-     core::Check(OCI_SetUserData(nullptr ,this));
+    OCI_Environment* env = OCI_EnvironmentCreate(nullptr, libpath.c_str(), _mode.GetValues());
 
-    _guard.SetMode((_mode & Environment::Threaded) == Environment::Threaded ? core::SynchronizationMode::Safe : core::SynchronizationMode::Unsafe);
-    _callbacks.SetGuard(&_guard);      
-    _handle.AcquireTransient
-    (
-        /* returned value IS NOT an OCI_Environment* but OCIEnv* direct handle 
-           to be changed when C API we have public methods for OCI_Environment */
-        static_cast<OCI_Environment*>(const_cast<AnyPointer>(core::Check(OCI_HandleGetEnvironment()))),
-        nullptr
-    );
+    if (env)
+    {
+        core::Check(TRUE);
 
-    _charMaxSize = ComputeCharMaxSize(GetCharset());
+        _handle.Acquire(env, true, nullptr, _store);
+        _initialized = true;
+
+        OCI_SetUserData(env, this);
+
+        _charMaxSize = core::ComputeCharMaxSize(GetCharset());
+    }
 }
 
 inline Environment::~Environment()
 {
-    _guard.SetMode(core::SynchronizationMode::Unsafe);
-    _callbacks.SetGuard(nullptr);
+    if (GetHandle())
+    {
+        OCI_SetUserData(GetHandle(), nullptr);
+    }
+
     _handle.Release();
-
-    if (_initialized)
-    {
-       core::Check(OCI_SetUserData(nullptr ,this));
-       core::Check(OCI_Cleanup());
-    } 
+    _initialized = false;
 }
 
-inline void Environment::Initialize(EnvironmentFlags mode, const ostring& libpath)
+inline Environment::EnvironmentFlags Environment::GetMode() const
 {
-      Environment* environment = static_cast<Environment*>(OCI_GetUserData(nullptr));    
-    if (environment == nullptr)
-    {
-        // not tracking return value here as created environment will be deallocated by Environment::Cleanup
-        core::OnAllocate(new Environment(mode, libpath));
-    }
+    return _mode;
 }
 
-inline void Environment::Cleanup()
-{   
-    Environment* environment = GetInstance();
-    if (environment != nullptr)
-    {
-        delete core::OnDeallocate(environment);
-    }
-
-#ifdef OCILIBPP_DEBUG_MEMORY_ENABLED
-
-    core::GetMemoryDebugInfo().PrintAllocations();
-
-#endif
-
-}
-
-inline Environment::EnvironmentFlags Environment::GetMode()
+inline Environment::ImportMode Environment::GetImportMode() const
 {
-    return GetInstance()->_mode;
+    return ImportMode(static_cast<ImportMode::Type>(core::Check(OCI_GetImportMode(GetHandle()))));
 }
 
-inline Environment::ImportMode Environment::GetImportMode()
+inline Environment::CharsetMode Environment::GetCharset() const
 {
-    return ImportMode(static_cast<ImportMode::Type>(core::Check(OCI_GetImportMode())));
+    return CharsetMode(static_cast<CharsetMode::Type>(core::Check(OCI_GetCharset(GetHandle()))));
 }
 
-inline Environment::CharsetMode Environment::GetCharset()
+inline OCI_UInt32 Environment::GetCharMaxSize() const
 {
-    return CharsetMode(static_cast<CharsetMode::Type>(core::Check(OCI_GetCharset())));
+    return _charMaxSize;
 }
 
-inline unsigned int Environment::GetCharMaxSize()
+inline OCI_UInt64 Environment::GetStats(OCI_Stat stat) const
 {
-    return GetInstance()->_charMaxSize;
+    return core::Check(OCI_GetStats(GetHandle(), stat));
 }
 
-inline big_uint Environment::GetAllocatedBytes(AllocatedBytesFlags type)
+inline OracleVersion Environment::GetCompileVersion() const
 {
-    return core::Check(OCI_GetAllocatedBytes(type.GetValues()));
+    return OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_GetOCICompileVersion(GetHandle()))));
 }
 
-inline bool Environment::Initialized()
+inline OracleVersion Environment::GetRuntimeVersion() const
 {
-    return GetInstance()->_initialized;
+    return  OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_GetOCIRuntimeVersion(GetHandle()))));
 }
 
-inline OracleVersion Environment::GetCompileVersion()
+inline OCI_UInt32 Environment::GetCompileMajorVersion() const
 {
-    return OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_GetOCICompileVersion())));
+    return OCI_VER_MAJ(core::Check(OCI_GetOCICompileVersion(GetHandle())));
 }
 
-inline OracleVersion Environment::GetRuntimeVersion()
+inline OCI_UInt32 Environment::GetCompileMinorVersion() const
 {
-    return  OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_GetOCIRuntimeVersion())));
+    return OCI_VER_MIN(core::Check(OCI_GetOCICompileVersion(GetHandle())));
 }
 
-inline unsigned int Environment::GetCompileMajorVersion()
+inline OCI_UInt32 Environment::GetCompileRevisionVersion() const
 {
-    return OCI_VER_MAJ(core::Check(OCI_GetOCICompileVersion()));
+    return OCI_VER_REV(core::Check(OCI_GetOCICompileVersion(GetHandle())));
 }
 
-inline unsigned int Environment::GetCompileMinorVersion()
+inline OCI_UInt32 Environment::GetRuntimeMajorVersion() const
 {
-    return OCI_VER_MIN(core::Check(OCI_GetOCICompileVersion()));
+    return OCI_VER_MAJ(core::Check(OCI_GetOCIRuntimeVersion(GetHandle())));
 }
 
-inline unsigned int Environment::GetCompileRevisionVersion()
+inline OCI_UInt32 Environment::GetRuntimeMinorVersion() const
 {
-    return OCI_VER_REV(core::Check(OCI_GetOCICompileVersion()));
+    return OCI_VER_MIN(core::Check(OCI_GetOCIRuntimeVersion(GetHandle())));
 }
 
-inline unsigned int Environment::GetRuntimeMajorVersion()
+inline OCI_UInt32 Environment::GetRuntimeRevisionVersion() const
 {
-    return OCI_VER_MAJ(core::Check(OCI_GetOCIRuntimeVersion()));
-}
-
-inline unsigned int Environment::GetRuntimeMinorVersion()
-{
-    return OCI_VER_MIN(core::Check(OCI_GetOCIRuntimeVersion()));
-}
-
-inline unsigned int Environment::GetRuntimeRevisionVersion()
-{
-    return OCI_VER_REV(core::Check(OCI_GetOCIRuntimeVersion()));
+    return OCI_VER_REV(core::Check(OCI_GetOCIRuntimeVersion(GetHandle())));
 }
 
 inline void Environment::EnableWarnings(bool value)
 {
-    OCI_EnableWarnings(static_cast<boolean>(value));
+    OCI_EnableWarnings(GetHandle(), static_cast<OCI_Boolean>(value));
 }
 
 inline bool Environment::SetFormat(FormatType formatType, const ostring& format)
 {
-    return core::Check(OCI_SetFormat(nullptr, formatType, format.c_str()) == TRUE);
+    return core::Check(OCI_SetFormat(GetHandle(), formatType, format.c_str()) == TRUE);
 }
 
-inline ostring Environment::GetFormat(FormatType formatType)
+inline ostring Environment::GetFormat(FormatType formatType) const
 {
-    return core::MakeString(core::Check(OCI_GetFormat(nullptr, formatType)));
+    return core::MakeString(core::Check(OCI_GetFormat(GetHandle(), formatType)));
 }
 
-inline ostring Environment::GetLocaleString(LocaleCode code)
+inline ostring Environment::GetLocaleString(LocaleCode code) const
 {
-    return core::MakeString(core::Check(OCI_GetLocaleString(code)));
+    return core::MakeString(core::Check(OCI_GetLocaleString(GetHandle(), code)));
 }
 
 inline void Environment::StartDatabase(const ostring& db, const ostring& user, const ostring &pwd, Environment::StartFlags startFlags,
                                        Environment::StartMode startMode, Environment::SessionFlags sessionFlags, const ostring& spfile)
 {
-    core::Check(OCI_DatabaseStartup(db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues(),
+    core::Check(OCI_DatabaseStartup(GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues(),
                               startMode.GetValues(), startFlags.GetValues(), spfile.c_str() ));
 }
 
 inline void Environment::ShutdownDatabase(const ostring& db, const ostring& user, const ostring &pwd, Environment::ShutdownFlags shutdownFlags,
                                        Environment::ShutdownMode shutdownMode, Environment::SessionFlags sessionFlags)
 {
-   core::Check(OCI_DatabaseShutdown(db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues(),
+   core::Check(OCI_DatabaseShutdown(GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues(),
                               shutdownMode.GetValues(),  shutdownFlags.GetValues() ));
 }
 
 inline void Environment::ChangeUserPassword(const ostring& db, const ostring& user, const ostring& pwd, const ostring& newPwd)
 {
-    core::Check(OCI_SetUserPassword(db.c_str(), user.c_str(), pwd.c_str(), newPwd.c_str()));
+    core::Check(OCI_SetUserPassword(GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), newPwd.c_str()));
 }
 
 inline void Environment::SetHAHandler(HAHandlerProc handler)
 {
-    core::Check(OCI_SetHAHandler(static_cast<POCI_HA_HANDLER>(handler != nullptr ? Environment::HAHandler : nullptr)));
+    core::Check(OCI_SetHAHandler(GetHandle(), static_cast<POCI_HA_HANDLER>(handler != nullptr ? Environment::HAHandler : nullptr)) == TRUE);
 
     SetUserCallback<HAHandlerProc>(GetEnvironmentHandle(), handler);
 }
 
-inline void Environment::HAHandler(OCI_Connection *pConnection, unsigned int source, unsigned int event, OCI_Timestamp  *pTimestamp)
+inline void Environment::SetSubscriptionPort(OCI_UInt32 port)
 {
-    const HAHandlerProc handler = GetUserCallback<HAHandlerProc>(GetEnvironmentHandle());
+    core::Check(OCI_SetSubscriptionPort(GetHandle(), port) == TRUE);
+}
 
-    if (handler)
+inline OCI_UInt32 Environment::GetSubscriptionPort() const
+{
+    return core::Check(OCI_GetSubscriptionPort(GetHandle()));
+}
+
+inline Environment* Environment::GetInstance(OCI_Environment* env)
+{
+    return env ? static_cast<Environment*>(OCI_GetUserData(env)) : nullptr;
+}
+
+namespace core
+{
+    inline std::shared_ptr<HandleStore> HandleStore::ResolveStore(Handle* parent, AnyPointer handle)
     {
-        Connection connection(pConnection, nullptr, false);
-        Timestamp timestamp(pTimestamp, connection.GetHandle());
+        if (parent)
+        {
+            return parent->GetStore();
+        }
 
-        handler(connection,
-                HAEventSource(static_cast<HAEventSource::Type>(source)),
-                HAEventType  (static_cast<HAEventType::Type>  (event)),
-                timestamp);
+        if (handle != nullptr)
+        {
+            Environment* e = Environment::GetInstance(OCI_HandleGetEnvironment(handle));
+
+            if (e != nullptr)
+            {
+                return e->_store;
+            }
+        }
+
+        return std::shared_ptr<HandleStore>();
     }
 }
 
-inline unsigned int Environment::TAFHandler(OCI_Connection *pConnection, unsigned int type, unsigned int event)
+inline void Environment::HAHandler(OCI_Connection *pConnection, OCI_UInt32 source, OCI_UInt32 event, OCI_Timestamp  *pTimestamp)
 {
-    unsigned int res = OCI_FOC_OK;
+    OCI_Environment* env = pConnection ? OCI_HandleGetEnvironment(pConnection) : nullptr;
+    Environment* self = GetInstance(env);
 
-    const Connection::TAFHandlerProc handler = GetUserCallback<Connection::TAFHandlerProc>(core::Check(pConnection));
-
-    if (handler)
+    if (!self)
     {
-        Connection connection(pConnection, nullptr, false);
-
-        res = handler(connection,
-                      Connection::FailoverRequest( static_cast<Connection::FailoverRequest::Type> (type)),
-                      Connection::FailoverEvent  ( static_cast<Connection::FailoverEvent::Type>   (event)));
+        return;
     }
 
-    return res;
+    auto cb = self->GetUserCallback<HAHandlerProc>(self->GetEnvironmentHandle());
+
+    if (cb)
+    {
+        Connection con(pConnection, self->GetEnvironmentHandle(), true);
+        Timestamp time(pTimestamp, self->GetEnvironmentHandle());
+
+        cb(con, HAEventSource(static_cast<HAEventSourceValues>(source)), HAEventType(static_cast<HAEventTypeValues>(event)), time);
+    }
+}
+
+inline OCI_UInt32 Environment::TAFHandler(OCI_Connection *pConnection, OCI_UInt32 type, OCI_UInt32 event)
+{
+    OCI_Environment* env = pConnection ? OCI_HandleGetEnvironment(pConnection) : nullptr;
+    Environment* self = GetInstance(env);
+
+    if (!self)
+    {
+        return OCI_FOC_OK;
+    }
+
+    auto cb = self->GetUserCallback<Connection::TAFHandlerProc>(pConnection);
+
+    if (cb)
+    {
+        Connection con(pConnection, self->GetEnvironmentHandle(), true);
+
+        return static_cast<OCI_UInt32>(cb(con, Connection::FailoverRequest(static_cast<Connection::FailoverRequestValues>(type)), Connection::FailoverEvent(static_cast<Connection::FailoverEventValues>(event))));
+    }
+
+    return OCI_FOC_OK;
 }
 
 inline void Environment::NotifyHandler(OCI_Event *pEvent)
 {
-    const Subscription::NotifyHandlerProc handler = GetUserCallback<Subscription::NotifyHandlerProc>((core::Check(OCI_EventGetSubscription(pEvent))));
+    OCI_Subscription* sub = pEvent ? OCI_EventGetSubscription(pEvent) : nullptr;
+    OCI_Environment* env = pEvent ? OCI_HandleGetEnvironment(pEvent) : nullptr;
+    Environment* self = GetInstance(env);
 
-    if (handler)
+    if (!self)
+    {
+        return;
+    }
+
+    auto cb = self->GetUserCallback<Subscription::NotifyHandlerProc>(sub);
+
+    if (cb)
     {
         Event evt(pEvent);
-        handler(evt);
+
+        cb(evt);
     }
 }
 
 inline void Environment::NotifyHandlerAQ(OCI_Dequeue *pDequeue)
 {
-    const Dequeue::NotifyAQHandlerProc handler = GetUserCallback<Dequeue::NotifyAQHandlerProc>(core::Check(pDequeue));
+    OCI_Environment* env = pDequeue ? OCI_HandleGetEnvironment(pDequeue) : nullptr;
+    Environment* self = GetInstance(env);
 
-    if (handler)
+    if (!self)
     {
-        Dequeue dequeue(pDequeue, Environment::GetEnvironmentHandle());
-        handler(dequeue);
+        return;
+    }
+
+    auto cb = self->GetUserCallback<Dequeue::NotifyAQHandlerProc>(pDequeue);
+
+    if (cb)
+    {
+        Dequeue dequeue(pDequeue, self->GetEnvironmentHandle());
+
+        cb(dequeue);
     }
 }
 
 template<class T>
-T Environment::GetUserCallback(AnyPointer ptr)
+inline std::function<typename std::remove_pointer<T>::type> Environment::GetUserCallback(AnyPointer ptr)
 {
-    return reinterpret_cast<T>(GetInstance()->_callbacks.Get(ptr));
+    using Signature = typename std::remove_pointer<T>::type;
+
+    std::lock_guard<std::mutex> lock(_callbacksMutex);
+
+    auto it = _callbacks.find(ptr);
+    if (it == _callbacks.end())
+    {
+        return std::function<Signature>();
+    }
+
+    Callback<Signature>* cb = dynamic_cast<Callback<Signature>*>(it->second.get());
+    return cb ? cb->func : std::function<Signature>();
 }
 
 template<class T>
-void Environment::SetUserCallback(AnyPointer ptr, T callback)
+inline void Environment::SetUserCallback(AnyPointer ptr, T callback)
 {
+    using Signature = typename std::remove_pointer<T>::type;
+
+    std::lock_guard<std::mutex> lock(_callbacksMutex);
+
     if (callback)
     {
-        GetInstance()->_callbacks.Set(ptr, reinterpret_cast<CallbackPointer>(callback));
+        auto cb = std::make_unique<Callback<Signature>>();
+        cb->func = std::function<Signature>(callback);
+        _callbacks[ptr] = std::move(cb);
     }
     else
     {
-        GetInstance()->_callbacks.Remove(ptr);
+        _callbacks.erase(ptr);
     }
 }
 
-inline core::Handle * Environment::GetEnvironmentHandle()
+inline OCI_Environment* Environment::GetHandle() const
 {
-    return GetInstance()->_handle.GetHandle();
+    return static_cast<OCI_Environment*>(_handle);
 }
 
-inline Environment* Environment::GetInstance()
+inline core::Handle * Environment::GetEnvironmentHandle() const
 {
-    return core::Check(static_cast<Environment*>(OCI_GetUserData(nullptr)));
-}
-
-inline core::HandleStore& Environment::GetDefaultStore()
-{
-    return GetInstance()->_defaultStore;
+    return _handle.GetHandleControl();
 }
 
 }

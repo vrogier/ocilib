@@ -1,53 +1,50 @@
 #include <iostream>
+#include <thread>
 
-#include "ocilib.hpp"
-
-#if defined(_WINDOWS)
+#if defined(_WIN32)
+    #include <windows.h>
     #define sleep(x) Sleep(x*1000)
 #else
     #include <unistd.h>
 #endif
 
+#include "ocilib.hpp"
+
 using namespace ocilib;
 
-ThreadHandle thread;
+Environment env(Environment::Threaded);
 Connection con;
 
-void OracleCallProc(ThreadHandle handle, void *data)
+void OracleCallProc()
 {
     try
     {
         Statement st(con);
         st.Execute("begin dbms_lock.sleep(10); end;");
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
 }
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize(Environment::Threaded);
+        con.Open(env, "db", "usr", "pwd", Environment::SessionDefault);
 
-        con.Open("db", "usr", "pwd");
-
-        thread = Thread::Create();
-        Thread::Run(thread, OracleCallProc, 0);
+        std::thread t(OracleCallProc);
 
         sleep(1);
         con.Break();
 
-        Thread::Join(thread);
+        t.join();
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
 
     return EXIT_SUCCESS;
 }

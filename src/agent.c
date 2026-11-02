@@ -40,14 +40,14 @@ OCI_Agent * OcilibAgentInitialize
     (
         /* returns */ OCI_Agent*, agent,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
 
-    ALLOC_DATA(OCI_IPC_AGENT, agent, 1)
+    ALLOC_HANDLE(OCI_IPC_AGENT, agent);
 
-    FREE(agent->name)
-    FREE(agent->address)
+    FREE(agent->name);
+    FREE(agent->address);
 
     agent->con    = con;
     agent->handle = handle;
@@ -56,9 +56,10 @@ OCI_Agent * OcilibAgentInitialize
     {
         agent->hstate = OCI_OBJECT_ALLOCATED;
 
-        CHECK(OcilibMemoryAllocDescriptor((dvoid *)agent->con->env, 
+        CHECK(OcilibMemoryAllocDescriptor(agent->con->env,
+                                          (dvoid *)agent->con->env->handle,
                                           (dvoid **)&agent->handle,
-                                          OCI_DTYPE_AQAGENT))
+                                          OCI_DTYPE_AQAGENT));
     }
     else
     {
@@ -69,14 +70,14 @@ OCI_Agent * OcilibAgentInitialize
 
     if (IS_STRING_VALID(name))
     {
-        CHECK(OcilibAgentSetName(agent, name))
+        CHECK(OcilibAgentSetName(agent, name));
     }
 
     /* set address attribute if provided */
 
     if (IS_STRING_VALID(address))
     {
-        CHECK(OcilibAgentSetAddress(agent, address))
+        CHECK(OcilibAgentSetAddress(agent, address));
     }
 
     CLEANUP_AND_EXIT_FUNC
@@ -87,8 +88,8 @@ OCI_Agent * OcilibAgentInitialize
             agent = NULL;
         }
 
-        SET_RETVAL(agent)
-    )
+        SET_RETVAL(agent);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -106,46 +107,46 @@ OCI_Agent * OcilibAgentCreate
     (
         /* returns */ OCI_Agent*, NULL,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
 
-    SET_RETVAL(OcilibAgentInitialize(con, NULL, NULL, name, address))
+    SET_RETVAL(OcilibAgentInitialize(con, NULL, NULL, name, address));
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibAgentFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibAgentFree
+OCI_Boolean OcilibAgentFree
 (
     OCI_Agent *agent
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_AGENT, agent
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_AGENT, agent)
+    CHECK_PTR(OCI_IPC_AGENT, agent);
 
     if (OCI_OBJECT_ALLOCATED == agent->hstate)
     {
-        OcilibMemoryFreeDescriptor((dvoid*)agent->handle, OCI_DTYPE_AQAGENT);
+        OcilibMemoryFreeDescriptor(agent->con->env, (dvoid*)agent->handle, OCI_DTYPE_AQAGENT);
     }
 
     OcilibErrorResetSource(NULL, agent);
 
-    FREE(agent->address)
-    FREE(agent->name)
-    FREE(agent)
+    FREE(agent->address);
+    FREE(agent->name);
+    FREE(agent);
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -161,32 +162,32 @@ const otext * OcilibAgentGetName
     (
         /* returns */ otext*, NULL,
         /* context */ OCI_IPC_AGENT, agent
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_AGENT, agent)
+    CHECK_PTR(OCI_IPC_AGENT, agent);
 
     if (NULL == agent->name)
     {
-        unsigned int size = 0;
+        OCI_UInt32 size = 0;
 
         CHECK(OcilibStringGetAttribute(agent->con,
                                        agent->handle,
                                        OCI_DTYPE_AQAGENT,
                                        OCI_ATTR_AGENT_NAME,
                                        &agent->name,
-                                       &size))
+                                       &size));
     }
 
-    SET_RETVAL(agent->name)
+    SET_RETVAL(agent->name);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibAgentSetName
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibAgentSetName
+OCI_Boolean OcilibAgentSetName
 (
     OCI_Agent   *agent,
     const otext *name
@@ -194,22 +195,22 @@ boolean OcilibAgentSetName
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_AGENT, agent
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_AGENT, agent)
+    CHECK_PTR(OCI_IPC_AGENT, agent);
 
     CHECK(OcilibStringSetAttribute(agent->con,
                                    agent->handle,
                                    OCI_DTYPE_AQAGENT,
                                    OCI_ATTR_AGENT_NAME,
                                    &agent->name,
-                                   name))
+                                   name));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -225,32 +226,32 @@ const otext * OcilibAgentGetAddress
     (
         /* returns */ otext*, NULL,
         /* context */ OCI_IPC_AGENT, agent
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_AGENT, agent)
+    CHECK_PTR(OCI_IPC_AGENT, agent);
 
     if (NULL == agent->address)
     {
-        unsigned int size = 0;
+        OCI_UInt32 size = 0;
 
         CHECK(OcilibStringGetAttribute(agent->con,
                                        agent->handle,
                                        OCI_DTYPE_AQAGENT,
                                        OCI_ATTR_AGENT_ADDRESS,
                                        &agent->address,
-                                       &size))
+                                       &size));
     }
 
-    SET_RETVAL(agent->address)
+    SET_RETVAL(agent->address);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibAgentSetAddress
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibAgentSetAddress
+OCI_Boolean OcilibAgentSetAddress
 (
     OCI_Agent   *agent,
     const otext *address
@@ -258,20 +259,20 @@ boolean OcilibAgentSetAddress
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_AGENT, agent
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_AGENT, agent)
+    CHECK_PTR(OCI_IPC_AGENT, agent);
 
     CHECK(OcilibStringSetAttribute(agent->con,
                                    agent->handle,
                                    OCI_DTYPE_AQAGENT,
                                    OCI_ATTR_AGENT_ADDRESS,
                                    &agent->address,
-                                   address))
+                                   address));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }

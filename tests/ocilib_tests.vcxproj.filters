@@ -73,7 +73,16 @@
     <ClCompile Include="..\src\iterator.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\json.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\jsonnode.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\list.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\log.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\lob.c">
@@ -86,9 +95,6 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\message.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\mutex.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\number.c">
@@ -118,12 +124,6 @@
     <ClCompile Include="..\src\subscription.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\thread.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\threadkey.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\timestamp.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -136,25 +136,46 @@
     <ClCompile Include="TestConnection.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestConnectionCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
     <ClCompile Include="TestDate.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDateCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestLob.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestLobCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
     <ClCompile Include="TestNumber.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestNumberCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestReference.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestReferenceCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
     <ClCompile Include="TestTimestamp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTimestampCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="..\src\dirpath.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="TestCollection.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCollectionCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestArray.cpp">
@@ -172,6 +193,9 @@
     <ClCompile Include="TestQueue.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestQueueCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
     <ClCompile Include="TestObjectInheritance.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
@@ -181,16 +205,13 @@
     <ClCompile Include="TestScrollabeCursor.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
-    <ClCompile Include="TestThreadKey.cpp">
-      <Filter>Tests suite</Filter>
-    </ClCompile>
-    <ClCompile Include="TestThread.cpp">
-      <Filter>Tests suite</Filter>
-    </ClCompile>
     <ClCompile Include="TestRowId.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestPool.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPoolCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestPlSqlTables.cpp">
@@ -199,22 +220,64 @@
     <ClCompile Include="TestObject.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestObjectCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
     <ClCompile Include="TestInterval.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonBind.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonBindCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonCreate.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonCreateCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonDom.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonDomCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonNodeArray.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonNodeArrayCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonNodeObject.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonNodeObjectCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonNodeType.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonNodeTypeCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonText.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJsonTextCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="..\src\stringutils.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="TestReportedIssuesCApi.cpp">
-      <Filter>Tests suite</Filter>
-    </ClCompile>
-    <ClCompile Include="TestReportedIssuesCppApi.cpp">
-      <Filter>Tests suite</Filter>
-    </ClCompile>
     <ClCompile Include="TestNotifications.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestDirectPath.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDirectPathCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestEnvironment.cpp">
@@ -223,10 +286,16 @@
     <ClCompile Include="main.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="test_internals.c">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\xmltype.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="TestXmlType.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestXmlTypeCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestLong.cpp">
@@ -238,6 +307,135 @@
     <ClCompile Include="TestVector.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestVectorCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTypeInfo.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTypeInfoCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestAgent.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestAgentCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestBind.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestBindCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCallback.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestColumn.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestColumnCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDequeue.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDirpath.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestElement.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestEnqueue.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestError.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestEvent.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestException.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestExceptionCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFile.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFileCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFormat.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestHandle.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestHash.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestHelpers.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIterator.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestList.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLog.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMemory.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMessage.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMessageCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestResultset.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestResultsetCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSoda.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSodaCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestStatement.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestStringutils.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSubscription.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTransaction.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTransactionCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestReportedIssues.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestReportedIssuesCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\sodacoll.c" />
+    <ClCompile Include="..\src\sodacollcursor.c" />
+    <ClCompile Include="..\src\sodadb.c" />
+    <ClCompile Include="..\src\sodadoc.c" />
+    <ClCompile Include="..\src\sodadoccursor.c" />
+    <ClCompile Include="..\src\sodaoptions.c" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Tests suite">
@@ -272,10 +470,13 @@
     <ClInclude Include="ocilib_tests.h">
       <Filter>Tests suite</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ocilibc\api.h">
-      <Filter>Include\ocilibc</Filter>
+    <ClInclude Include="test_internals.h">
+      <Filter>Tests suite</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ocilibc\compat.h">
+    <ClInclude Include="LeakListener.h">
+      <Filter>Tests suite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibc\api.h">
       <Filter>Include\ocilibc</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ocilibc\defines.h">
@@ -350,6 +551,12 @@
     <ClInclude Include="..\include\ocilibcpp\detail\File.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\Json.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\JsonNode.hpp">
+      <Filter>Include\ocilibcpp\detail</Filter>
+    </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\Interval.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
@@ -360,9 +567,6 @@
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\Message.hpp">
-      <Filter>Include\ocilibcpp\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\Mutex.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\Number.hpp">
@@ -392,12 +596,6 @@
     <ClInclude Include="..\include\ocilibcpp\detail\Subscription.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\Thread.hpp">
-      <Filter>Include\ocilibcpp\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\ThreadKey.hpp">
-      <Filter>Include\ocilibcpp\detail</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\Timestamp.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
@@ -406,12 +604,6 @@
     </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\TypeInfo.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\core\ConcurrentList.hpp">
-      <Filter>Include\ocilibcpp\detail\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\core\ConcurrentMap.hpp">
-      <Filter>Include\ocilibcpp\detail\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\core\Enum.hpp">
       <Filter>Include\ocilibcpp\detail\core</Filter>
@@ -425,19 +617,10 @@
     <ClInclude Include="..\include\ocilibcpp\detail\core\HandleStore.hpp">
       <Filter>Include\ocilibcpp\detail\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\core\ManagedBuffer.hpp">
-      <Filter>Include\ocilibcpp\detail\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\core\MemoryDebugInfo.hpp">
       <Filter>Include\ocilibcpp\detail\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\core\SmartHandle.hpp">
-      <Filter>Include\ocilibcpp\detail\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\core\Synchronizable.hpp">
-      <Filter>Include\ocilibcpp\detail\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\core\SynchronizationGuard.hpp">
       <Filter>Include\ocilibcpp\detail\core</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\core\Utils.hpp">
@@ -462,9 +645,6 @@
       <Filter>Include\ocilibcpp\detail\support</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\support\HandleDeleter.hpp">
-      <Filter>Include\ocilibcpp\detail\support</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\support\HandleStoreResolver.hpp">
       <Filter>Include\ocilibcpp\detail\support</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\support\NumericTypeResolver.hpp">
@@ -549,6 +729,12 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\iterator.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\json.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\jsonnode.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\list.h">
@@ -641,6 +827,25 @@
     <ClInclude Include="..\include\ocilibcpp\detail\Vector.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
+    <ClInclude Include="EnvironmentManager.h">
+      <Filter>Tests suite</Filter>
+    </ClInclude>
+    <ClInclude Include="TestManager.h">
+      <Filter>Tests suite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaColl.hpp" />
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaCollCursor.hpp" />
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaDb.hpp" />
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaDoc.hpp" />
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaDocCursor.hpp" />
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaOptions.hpp" />
+    <ClInclude Include="..\src\oci\jsondom.h" />
+    <ClInclude Include="..\src\sodacoll.h" />
+    <ClInclude Include="..\src\sodacollcursor.h" />
+    <ClInclude Include="..\src\sodadb.h" />
+    <ClInclude Include="..\src\sodadoc.h" />
+    <ClInclude Include="..\src\sodadoccursor.h" />
+    <ClInclude Include="..\src\sodaoptions.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

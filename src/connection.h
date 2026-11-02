@@ -25,102 +25,94 @@
 
 OCI_SYM_LOCAL OCI_Connection * OcilibConnectionCreateInternal
 (
-    OCI_Pool    *pool,
-    const otext *db,
-    const otext *user,
-    const otext *pwd,
-    unsigned int mode,
-    const otext *tag
+    OCI_Environment *env,
+    OCI_Pool        *pool,
+    const otext     *db,
+    const otext     *user,
+    const otext     *pwd,
+    OCI_SessionMode  mode,
+    const otext     *tag
 );
 
 OCI_SYM_LOCAL OCI_Connection* OcilibConnectionAllocate
 (
-    OCI_Pool   * pool,
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    unsigned int mode
+    OCI_Environment* env,
+    OCI_Pool       * pool,
+    const otext    * db,
+    const otext    * user,
+    const otext    * pwd,
+    OCI_SessionMode  mode
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionAttach
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionAttach
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionLogon
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionLogon
 (
     OCI_Connection* con,
     const otext   * new_pwd,
     const otext   * tag
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionDispose
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionDispose
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetMinSupportedVersion
+OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetMinSupportedVersion
 (
     OCI_Connection *con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionIsVersionSupported
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionIsVersionSupported
 (
     OCI_Connection *con,
-    unsigned int    version
+    OCI_UInt32    version
 );
 
 OCI_SYM_LOCAL OCI_Connection* OcilibConnectionCreate
 (
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    unsigned int mode
+    OCI_Environment* env,
+    const otext    * db,
+    const otext    * user,
+    const otext    * pwd,
+    OCI_SessionMode  mode
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionFree
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionFree
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionCommit
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionCommit
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionRollback
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionRollback
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetAutoCommit
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionSetAutoCommit
 (
     OCI_Connection* con,
-    boolean         enable
+    OCI_Boolean     enable
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionGetAutoCommit
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionGetAutoCommit
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionIsConnected
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionIsConnected
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL void* OcilibConnectionGetUserData
-(
-    OCI_Connection* con
-);
-
-OCI_SYM_LOCAL boolean OcilibConnectionSetUserData
-(
-    OCI_Connection* con,
-    void          * data
-);
-
-OCI_SYM_LOCAL boolean OcilibConnectionSetSessionTag
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionSetSessionTag
 (
     OCI_Connection* con,
     const otext   * tag
@@ -146,13 +138,13 @@ OCI_SYM_LOCAL const otext* OcilibConnectionGetPassword
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetPassword
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionSetPassword
 (
     OCI_Connection* con,
     const otext   * password
 );
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetSessionMode
+OCI_SYM_LOCAL OCI_SessionMode OcilibConnectionGetSessionMode
 (
     OCI_Connection* con
 );
@@ -162,17 +154,17 @@ OCI_SYM_LOCAL const otext* OcilibConnectionGetServerVersion
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetServerMajorVersion
+OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetServerMajorVersion
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetServerMinorVersion
+OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetServerMinorVersion
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetServerRevisionVersion
+OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetServerRevisionVersion
 (
     OCI_Connection* con
 );
@@ -182,31 +174,31 @@ OCI_SYM_LOCAL OCI_Transaction* OcilibConnectionGetTransaction
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetTransaction
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionSetTransaction
 (
     OCI_Connection * con,
     OCI_Transaction* trans
 );
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetVersion
+OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetVersion
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionBreak
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionBreak
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionEnableServerOutput
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionEnableServerOutput
 (
     OCI_Connection* con,
-    unsigned int    bufsize,
-    unsigned int    arrsize,
-    unsigned int    lnsize
+    OCI_UInt32    bufsize,
+    OCI_UInt32    arrsize,
+    OCI_UInt32    lnsize
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionDisableServerOutput
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionDisableServerOutput
 (
     OCI_Connection* con
 );
@@ -216,35 +208,35 @@ OCI_SYM_LOCAL const otext* OcilibConnectionGetServerOutput
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetTrace
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionSetTrace
 (
     OCI_Connection* con,
-    unsigned int    trace,
+    OCI_TraceType   trace,
     const otext   * value
 );
 
 OCI_SYM_LOCAL const otext* OcilibConnectionGetTrace
 (
     OCI_Connection* con,
-    unsigned int    trace
+    OCI_TraceType   trace
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionPing
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionPing
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetTimeout
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionSetTimeout
 (
     OCI_Connection* con,
-    unsigned int    type,
-    unsigned int    value
+    OCI_TimeoutType type,
+    OCI_UInt32    value
 );
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetTimeout
+OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetTimeout
 (
     OCI_Connection* con,
-    unsigned int    type
+    OCI_TimeoutType type
 );
 
 OCI_SYM_LOCAL const otext* OcilibConnectionGetDatabaseName
@@ -277,52 +269,52 @@ OCI_SYM_LOCAL OCI_Timestamp* OcilibConnectionGetInstanceStartTime
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionIsTAFCapable
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionIsTAFCapable
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetTAFHandler
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionSetTAFHandler
 (
     OCI_Connection * con,
     POCI_TAF_HANDLER handler
 );
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetStatementCacheSize
+OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetStatementCacheSize
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetStatementCacheSize
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionSetStatementCacheSize
 (
     OCI_Connection* con,
-    unsigned int    value
+    OCI_UInt32    value
 );
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetDefaultLobPrefetchSize
+OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetDefaultLobPrefetchSize
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionSetDefaultLobPrefetchSize
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionSetDefaultLobPrefetchSize
 (
     OCI_Connection* con,
-    unsigned int    value
+    OCI_UInt32    value
 );
 
-OCI_SYM_LOCAL unsigned int OcilibConnectionGetMaxCursors
+OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetMaxCursors
 (
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionExecuteImmediate
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionExecuteImmediate
 (
     OCI_Connection* con,
     const otext   * sql,
     va_list         args
 );
 
-OCI_SYM_LOCAL boolean OcilibConnectionExecuteImmediateFmt
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionExecuteImmediateFmt
 (
     OCI_Connection* con,
     const otext   * sql,

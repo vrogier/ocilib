@@ -23,17 +23,17 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL boolean OcilibEventReset
+OCI_SYM_LOCAL OCI_Boolean OcilibEventReset
 (
     OCI_Event *evt
 );
 
-OCI_SYM_LOCAL unsigned int OcilibEventGetType
+OCI_SYM_LOCAL OCI_EventType OcilibEventGetType
 (
     OCI_Event * event
 );
 
-OCI_SYM_LOCAL unsigned int OcilibEventGetOperation
+OCI_SYM_LOCAL OCI_EventOperation OcilibEventGetOperation
 (
     OCI_Event * event
 );

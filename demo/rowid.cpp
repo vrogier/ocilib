@@ -6,13 +6,13 @@
 
 using namespace ocilib;
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
 
-        Connection con("db", "usr", "pwd");
+        Connection con(env, "db", "usr", "pwd");
 
         Statement st(con);
 
@@ -29,14 +29,11 @@ int main(void)
         rs = st.GetResultset();
         rs.Next();
 
-        std::cout << "code  [" << rs.Get<int>(1) << "] name [" << rs.Get<ostring>(2) << "] rowid [" << rs.Get<ostring>(3) << "]" << std::endl;
+        std::cout << "code  [" << rs.Get<OCI_Int32>(1) << "] name [" << rs.Get<ostring>(2) << "] rowid [" << rs.Get<ostring>(3) << "]" << std::endl;
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
-
     return EXIT_SUCCESS;
 }

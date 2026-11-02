@@ -1,0 +1,3678 @@
+# Change Log
+
+## 2026-09-30 - Version 5.0.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Enhancements (C API)
+
+- `OCI_Environment` is now a public, first-class handle
+  - Added `OCI_EnvironmentCreate()` and `OCI_EnvironmentFree()`
+  - Added `OCI_HandleGetEnvironment()` to retrieve the owning environment from any OCILIB handle
+  - Runtime OCI symbols are now loaded per environment, so multiple environments can use different Oracle client libraries in runtime-import builds
+
+- Added optional runtime logging
+  - Controlled by environment variables `OCILIB_LOG`, `OCILIB_LOG_CATEGORIES`, and `OCILIB_LOG_OUTPUT`
+  - Emits OCILIB entry/exit, OCI call, and error information when enabled
+
+- Added diagnostic statistics API
+  - Replaced `OCI_GetAllocatedBytes()` with `OCI_GetStats(OCI_Environment* env, OCI_Stat stat)`
+  - Added `OCI_UST_BYTES`, `OCI_UST_HANDLES`, `OCI_UST_DESCRIPTORS`, and `OCI_UST_OBJECTS`
+
+- Added convenience helpers
+  - `OCI_ExecuteAndGetResultset()` and `OCI_ExecuteStmtAndGetResultset()`
+  - `OCI_HasError()`
+  - `OCI_ARG_OF(ptr)` macro for compile-time type-checked `OCI_Immediate*` output arguments
+
+- Added typed parameter typedefs for source compatibility and clarity: `OCI_SessionMode`, `OCI_PoolType`, `OCI_LobType`, `OCI_TimestampType`, `OCI_IntervalType`, `OCI_TypeInfoType`, `OCI_EnvMode`, `OCI_ImportMode`, `OCI_Charset`, `OCI_ErrorCode`, etc.
+
+- Oracle JSON type support (requires Oracle 21c client and database)
+  - Added `OCI_Json*` data type (`OCI_CDT_JSON`)
+  - Added JSON document lifecycle and serialization APIs: `OCI_JsonCreate()`, `OCI_JsonArrayCreate()`, `OCI_JsonFree()`, `OCI_JsonArrayFree()`, `OCI_JsonLoadText()`, `OCI_JsonLoadBinary()`, `OCI_JsonToText()`, `OCI_JsonToBinary()`, `OCI_JsonClone()`, `OCI_JsonSetMutable()`, `OCI_JsonIsMutable()`
+  - Added `OCI_JsonNode*` DOM-style APIs for creating, navigating, and modifying JSON nodes
+  - Added statement integration: `OCI_GetJson()`, `OCI_GetJsonByName()`, `OCI_BindJson()`, `OCI_BindArrayOfJsons()`, and `OCI_RegisterJson()`
+  - `OCI_GetString()` returns a string representation of JSON columns
+
+- Oracle SODA (Simple Oracle Document Access) support (requires Oracle 18c client and database)
+  - Added `OCI_SodaDb*`, `OCI_SodaColl*`, `OCI_SodaDoc*`, `OCI_SodaOptions*`, `OCI_SodaCollCursor*`, and `OCI_SodaDocCursor*` opaque handle types
+  - Added SODA database context APIs: `OCI_SodaDbCreate()`, `OCI_SodaDbFree()`, `OCI_SodaDbGetConnection()`
+  - Added collection administration APIs: `OCI_SodaDbCreateColl()` (with optional collection metadata), `OCI_SodaDbOpenColl()`, `OCI_SodaDbGetColls()`, `OCI_SodaCollGetName()`, `OCI_SodaCollGetMetadata()`, `OCI_SodaCollGetConnection()`, `OCI_SodaCollIsMapped()`, `OCI_SodaCollDrop()`, `OCI_SodaCollTruncate()`, `OCI_SodaCollFree()`
+  - Added document APIs: `OCI_SodaDocCreateFromText()`, `OCI_SodaDocCreateFromJson()` (requires Oracle client 23.4+), `OCI_SodaDocFree()`, `OCI_SodaDocGetKey()`, `OCI_SodaDocGetVersion()`, `OCI_SodaDocGetCreatedOn()`, `OCI_SodaDocGetLastModified()`, `OCI_SodaDocGetMediaType()`, `OCI_SodaDocGetText()`, `OCI_SodaDocGetJson()`
+  - Added operation options APIs: `OCI_SodaOptionsCreate()`, `OCI_SodaOptionsFree()`, and setters for key(s), version, filter, skip, and limit
+  - Added cursor APIs: `OCI_SodaCollCursorGetNext()`, `OCI_SodaCollCursorFree()`, `OCI_SodaDocCursorGetNext()`, `OCI_SodaDocCursorFree()`
+  - Added CRUD APIs: `OCI_SodaCollInsertDoc()`, `OCI_SodaCollFind()`, `OCI_SodaCollFindOne()`, `OCI_SodaCollFindOneByKey()`, `OCI_SodaCollDocCount()`, `OCI_SodaCollDocCountWithFilter()`, `OCI_SodaCollReplaceOne()`, `OCI_SodaCollReplaceOneAndGet()`, `OCI_SodaCollReplaceOneByKey()`, `OCI_SodaCollReplaceOneAndGetByKey()`, `OCI_SodaCollRemove()`, `OCI_SodaCollRemoveOneByKey()`
+
+### Enhancements (C++ API)
+
+- Migrated the C++ wrapper baseline from C++03 to C++14
+  - Replaced manual `SmartHandle` reference counting with `std::shared_ptr` / `std::weak_ptr` based `HandleControl`
+  - Replaced internal `ConcurrentList`, `ConcurrentMap`, `Synchronizable`, and `SynchronizationGuard` helpers with `std::mutex` and `std::unordered_map`
+  - Callback storage now uses `std::function`
+
+- `ocilib::Environment` is now a real RAII object
+  - Replaced `Environment::Initialize()`, `Environment::Cleanup()`, and `Environment::Initialized()` with an `Environment` constructor/destructor
+  - All former static accessors (`GetMode`, `GetImportMode`, `GetCharset`, `GetCompileVersion`, `GetRuntimeVersion`, `SetFormat`, `GetFormat`, `GetLocaleString`, `StartDatabase`, `ShutdownDatabase`, etc.) are now instance methods
+
+- Added `ocilib::Json` and `ocilib::JsonNode` wrapper classes
+- Added `ocilib::SodaDb`, `ocilib::SodaColl`, `ocilib::SodaDoc`, `ocilib::SodaOptions`, `ocilib::SodaCollCursor`, and `ocilib::SodaDocCursor` wrapper classes
+- Added `Statement::ExecuteAndGetResultset()` convenience methods
+- `Statement::Bind*()` overloads now return `BindInfo` instead of `void`
+
+### Changes (C API)
+
+- The public boolean type is now `OCI_Boolean` (`typedef int OCI_Boolean`); the old `#define boolean int` macro has been removed. A compatibility `typedef OCI_Boolean boolean` is available for existing code.
+- Fixed-width public integer typedefs have been added: `OCI_Int16`/`OCI_UInt16`, `OCI_Int32`/`OCI_UInt32`, `OCI_Int64`/`OCI_UInt64` (the canonical C type of each width on all platforms) and `OCI_Size` for byte sizes and buffer lengths. The public API and the whole codebase now use them in place of bare `int`/`unsigned int`/`short`/`unsigned short`/`size_t`. `big_int`/`big_uint` remain available as compatibility typedefs for `OCI_Int64`/`OCI_UInt64`.
+- `OCI_Initialize()` and `OCI_Cleanup()` have been removed; use `OCI_EnvironmentCreate()` and `OCI_EnvironmentFree()`.
+- The following constructors and functions now take an explicit `OCI_Environment*` first argument:
+  - `OCI_ConnectionCreate()`, `OCI_PoolCreate()`, `OCI_PoolGetConnection()`, `OCI_PoolFree()`
+  - `OCI_DateCreate()` / `OCI_DateArrayCreate()`, `OCI_NumberCreate()` / `OCI_NumberArrayCreate()`, `OCI_TimestampCreate()` / `OCI_TimestampArrayCreate()`, `OCI_IntervalCreate()` / `OCI_IntervalArrayCreate()`
+  - `OCI_HashCreate()`
+  - `OCI_DatabaseStartup()`, `OCI_DatabaseShutdown()`
+  - `OCI_GetOCICompileVersion()`, `OCI_GetOCIRuntimeVersion()`, `OCI_GetImportMode()`, `OCI_GetCharset()`, `OCI_GetStats()`, `OCI_GetLocaleString()`, `OCI_EnableWarnings()`, `OCI_SetErrorHandler()`, `OCI_SetHAHandler()`
+- `OCI_GetLastError()` always returns the calling thread's `OCI_Error`; the `OCI_ENV_CONTEXT` flag has been removed.
+- `OCI_SubscriptionRegister()` no longer takes a `port` argument; configure the subscription port once with `OCI_SetSubscriptionPort()`.
+- `OCI_DequeueSubscribe()` is now a batch call taking a connection and an array of `OCI_Dequeue*`.
+- All `OCI_Bind*()` and `OCI_BindArrayOf*()` functions now return `OCI_Bind*` instead of `boolean`. `OCI_Register*` functions are unchanged.
+- The `*2` by-name resultset/getter suffixes have been renamed to `*ByName` (e.g. `OCI_GetString2()` -> `OCI_GetStringByName()`).
+- LOB read/write/append functions now take `unsigned int *char_count` and `unsigned int *byte_count` out-parameters; the old `*2` variants are promoted to the primary names.
+- `OCI_CollGetElem2()` has been removed; use `OCI_CollGetElem()`.
+- `OCI_GetAllocatedBytes()` has been removed; use `OCI_GetStats(env, OCI_UST_BYTES)`.
+- `include/ocilibc/compat.h` has been removed; all v3-era compatibility macros are gone.
+- All `OCI_HandleGet*` raw OCI handle accessors have been removed except `OCI_HandleGetEnvironment()`, which now returns the owning `OCI_Environment*`.
+- XA / distributed transaction support (`OCI_SESSION_XA`) has been removed.
+- The public threading API (`OCI_Mutex*`, `OCI_Thread*`, `OCI_ThreadKey*`) has been removed; use standard C11 `<threads.h>`, C++ `<thread>` / `<mutex>`, or platform APIs.
+
+### Changes (C++ API)
+
+- `Environment::Initialize()`, `Environment::Cleanup()`, and `Environment::Initialized()` are removed; construct an `Environment` object.
+- `Environment` static accessors are now instance methods.
+- Constructors for `Connection`, `Pool`, `Number`, `Date`, `Interval`, and `Timestamp` now take a `const Environment&` first argument.
+- `ocilib::Mutex`, `ocilib::Thread`, and `ocilib::ThreadKey` have been removed.
+- `Environment::GetAllocatedBytes()` has been removed; use `GetStats(OCI_UST_BYTES)`.
+- `Subscription::Register()` no longer takes a `port` argument; use `Environment::SetSubscriptionPort()`.
+- `Dequeue::Subscribe()` is now a static batch call.
+- `Environment::SessionXA` is removed.
+- C++14 is now required.
+
+### Fixes (C API)
+
+- Row-level change notifications (`OCI_CNT_ROWS`) now fire correctly; previously row events and rowids were silently dropped.
+- AQ dequeue registration now registers all dequeues in a single `OCISubscriptionRegister()` call, eliminating `ORA-24915` from repeated listener starts.
+- Per-environment OCI symbol loading now works correctly when multiple environments or different library paths are used.
+- Fixed several memory leaks and handle-leak tracking issues uncovered by the expanded test suite.
+
+### Fixes (C++ API)
+
+- Fixed handle ownership and reference-counting issues by rebuilding the C++ wrapper internals on `std::shared_ptr`.
+- Fixed multi-threaded C++ API issues by replacing manual synchronization with standard C++14 facilities.
+
+### Documentation
+
+- Updated C and C++ API documentation for `OCI_Environment`, JSON, SODA, logging, and the new lifecycle.
+- Added v4 to v5 migration guidance covering the breaking API changes.
+- Updated Doxygen data files, README, and VERSION for v5.0.0.
+
+### Miscellaneous
+
+- Updated build system for C11 (C sources) and C++14 (C++ headers)
+  - MSVC C sources compiled with `/std:c11`
+  - GNU autotools and MSVC project files updated for the new source files (`log.c`, `json.c`, `jsonnode.c`, `sodadb.c`, `sodacoll.c`, `sodadoc.c`, `sodaoptions.c`, `sodacollcursor.c`, `sodadoccursor.c`) and removed `mutex.c` / `thread.c` / `threadkey.c`
+- Added GitHub Actions CI workflow (`.github/workflows/ci.yml`)
+- Expanded the gtest-based test suite from 246 to 420 test cases, with new modules covering JSON, SODA, bind, statement, resultset, memory, logging, and many other areas
+- Updated all demo applications to use `OCI_EnvironmentCreate()` and standard threading primitives where applicable
+- Updated compilers for MS Windows prebuilt binaries to VS2026 18.10.0, with statically linked VC runtime updated from vc143 to vc145
+
+## 2026-05-19 - Version 4.9.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Enhancements (C API)
+
+- Issue 381: Enhancement for computing bind variables without executing statement (C API)
+  - Added OCI_GetParseBindNames()
+
+### Enhancements (C++ API)
+
+- Migrated C++ API from C++03 to C++14:
+  - Replaced internal HandleHolder/SmartHandle ownership with HandleControl based on std::shared_ptr
+  - Removed public ocilib::Mutex and ocilib::Thread wrappers (ocilib::ThreadKey retained)
+  - Modernized callback storage to use std::function
+- Issue 381: Enhancement for computing bind variables without executing statement (C++ API):
+  - Added Statement::GetParseBindNames()
+
+### Fixes (C API)
+
+- Issue 382: Warnings when opening a connection with an expired password during the grace period
+
+### Fixes (C++ API)
+- Issue 379: Issues in creating collection of user-defined type
+- Issue 383: Compilation error on macOS
+- Issue 387: Message::GetPayload<Raw>() always returns an empty Raw of size 0
+
+### Documentation
+
+- Fixed all typos in the documentation (C and C++ APIs)
+- Added some refinements
+
+### Miscellaneous
+
+- Updated compilers for MS Windows prebuilt binaries to VS2022 17.14.32
+- Various minor internal changes, added checks and fixes found by static analysis
+
+## 2025-05-13 - Version 4.8.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Enhancements (C API)
+
+- Oracle VECTOR type is now supported
+  - Requires Oracle 23.4 client and database
+  - For prior Oracle clients, VECTOR type can be bound and fetched as string
+  - Added OCI_Vector* data type (OCI_CDT_VECTOR)
+  - Added the following new APIs:
+    - OCI_VectorCreate()
+    - OCI_VectorFree()
+    - OCI_VectorArrayCreate()
+    - OCI_VectorArrayFree()
+    - OCI_VectorGetInfo()
+    - OCI_VectorGetValues()
+    - OCI_VectorSetValues()
+    - OCI_VectorFromText()
+    - OCI_VectorToText()
+    - OCI_GetVector()
+    - OCI_GetVector2()
+    - OCI_RegisterVector()
+    - OCI_BindVector()
+    - OCI_BindArrayOfVectors()
+    - OCI_ColumnGetDimension()
+  - Added Vector element types: OCI_VEC_INT8, OCI_VEC_FLOAT32, OCI_VEC_FLOAT64 and OCI_VEC_BINARY (OCI_VEC_FLEX is only used for describing column)
+  - Vector element type OCI_VEC_BINARY is only supported from 23.5
+  - OCI_ColumnGetType() reports "VECTOR" as SQL type
+  - OCI_ColumnGetFullSQLType() reports the same details as SQLPlus (e.g., VECTOR({dimension}, {type}))
+  - OCI_ColumnGetSubType() returns OCI_VEC_XXX values
+  - OCI_GetString() returns a string representation of a VECTOR object
+
+- Added the ability to retrieve localized strings from Oracle client
+  - Added OCI_LST_XXX entries
+  - Added OCI_GetLocaleString()
+
+### Enhancements (C++ API)
+
+- Oracle VECTOR type is now supported (see C API for more details)
+  - Added ocilib::Vector class wrapping OCI_Vector* handle
+  - Added ocilib::Column::GetDimension() method
+- Added the ability to retrieve localized strings from Oracle client
+  - Added ocilib::Environment::LocaleCode enum
+  - Added ocilib::Environment::GetLocaleString() method
+
+### Fixes (C API)
+- Issue 371: Build failure with gcc14
+- Issue 377: Binding arrays of non scalar types (big_int/OCI_Datetime/OCI_Timestamp/OCI_Interval) with a PL/SQL block statement provides NULL values to Oracle client
+
+### Fixes (C++ API)
+- Issue 370: Calling Environment::Initialized() before Environment::Initialize() throws an exception
+
+## 2025-01-14 - Version 4.7.7
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Enhancements (C API)
+
+- Oracle XMLTYPE is now partially supported
+  - Added OCI_XmlType* data type (OCI_CDT_XMLTYPE) that can only be fetched from resultsets in this current release
+  - OCI_ColumnGetType() reports "XMLTYPE" as SQL type
+  - OCI_TypeInfoGet() returns a valid OCI_TypeInfo handle for the type name "SYS.XMLTYPE"
+  - OCI_GetString() returns a string representation of a XMLTYPE object
+  - Added the following new APIs:
+    - OCI_GetXmlType()
+    - OCI_GetXmlType2()
+    - OCI_XmlTypeToText()
+  - In this current release, use OCI_GetString() instead of OCI_GetXmlType() as:
+    - OCI_XmlType handles can only be used to get XML content strings, which is already done by OCI_GetString()
+    - In later releases, OCI_XmlType API will evolve to support local xml object creation, DOM manipulation, SQL binding
+
+### Enhancements (C++ API)
+
+- Oracle XMLTYPE is now partially supported:
+  - Added ocilib::XmlType class (that can only be retrieved using ocilib::Resultset::Get<ocilib::XmlType>())
+  - ocilib::Resultset::Get<ostring>() returns a string representation of the XMLTYPE object
+- Added Interval::GetNanoSeconds() and Interval::SetNanoSeconds()
+
+### Fixes (C API)
+
+- Issue 329: OCI_GetSqlIdentifier() returns invalid values for Scrollable Statements when called more than once
+- Issue 332: OCI_TypeInfoGet(): since v4.7.4, in case of failure, OCI_TypeInfo object is not removed from OCI_Connection internal list of OCI_TypeInfo objects
+- Issue 331: Strange behavior with XMLTYPE
+- Issue 332: OCI_TypeInfoGet(): In case of failure, newly created OCI_TypeInfo object is not removed from OCI_Connection internal cache
+- Issue 333: OCI_GetServerMajorVersion() returns wrong values for Oracle Server version < 18.1
+- Issue 334: OCI_RefToText() returned garbage when charset is OCI_CHARSET_WIDE
+- Issue 347: OCI_MsgGetEnqueueTime() leaked DateTime handle causing OCI_Cleanup() reporting unfreed handle
+- Issue 348: OCI_EventGetObject() might return garbage character after object name
+- Issue 354: OCI_ElemSetRaw() performed wrong check on element datatype
+- Issue 361: Fixed HA event callback processing
+
+### Fixes (C++ API)
+
+- Issue 351: C++ Value types perform handle assignment instead of value assignment
+- Issue 355: Since v4.7.5, connections acquired from ocilib::Pool were not released, leading to pool exhaustion
+- Issue 362: Calling Environment::Initialize() / Environment::Cleanup() multiple times per process might lead to segfaults with latest embedded vc143 runtime
+
+### Documentation
+
+- Issue 352: Fixed documentation for OCI_PoolGetNoWait and ocilib::Pool::SetNoWait()
+- Issue 363: Fixed documentation for OCI_IntervalGetDaySecond() and OCI_IntervalSetDaySecond(), Interval::GetDaySecond() and SetDaySecond()
+
+## 2023-02-08 - Version 4.7.6
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Issue 326: OCI_GetTimeout() always returns 0 since v4.7.0
+
+### Fixes (C++ API)
+
+- Issue 325: ocilib::Lob::GetConnection() does not compile anymore since v4.7.5
+
+## 2023-02-06 - Version 4.7.5
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Changes (C API)
+
+- OCI_Cleanup() now returns FALSE if OCI_Initialize() has not been called
+- OCI_GetSQLVerb() handles some new verbs added with Oracle 21c
+- OCI_Execute() and related methods now return FALSE and report an OCI_Error for PL/SQL statements raising PL/SQL no_data_found exceptions
+  - This reverts behavior introduced in v4.3.1 for addressing issue #68
+  - Motivation is to re-align on SQL*Plus behavior
+- OCI_GetOCIRuntimeVersion() and OCI_GetOCICompileVersion() returned integer values on 6 digits instead of 4 digits
+  - Now handles the minor version using 2 digits (e.g. Oracle OCI version 19.16.0)
+  - Use macros OCI_VER_MAJ, OCI_VER_MIN, OCI_VER_REV and OCI_VER_MAKE to do computations on versions
+- Very old Oracle OCI 8.0.x is now supported
+  - Up to now, OCILIB supported all Oracle versions from 8.1
+  - Oracle 8.0 is now also supported for very old legacy systems (as Oracle 8.0 was released in the mid-90s)
+  - As OCI multi-threaded APIs were only available from 8.1, passing OCI_ENV_THREADED to OCI_Initialize() with Oracle 8.0 will generate an error:
+    - OCILIB Error code: OCI_ERR_NOT_AVAILABLE
+    - OCILIB Error message: "Feature not available (Oracle 8.1 multithreading support)"
+
+### Fixes (C API)
+
+- Issue 297: Library compilation fails with MSVC 2022 version 17.2 (error C2220)
+- Issue 298: OCI_DirPathLoad() can never return in case of internal load errors (infinite loop)
+- Issue 308: OCI_Execute() raises error OCI-22060 when binding host big_int variables with OCI_BDM_OUT in case the SQL or PL/SQL engine sets a NULL value
+- Issue 309: OCI_Execute() does not raise exceptions when executing PL/SQL statement raising no data found PL/SQL exception
+- Issue 313: OCI_GetString() returns NULL for CLOB columns if the CLOB row value was filled with empty_clob()
+- Issue 314: OCI_BindSetCharsetForm() is not accessible since v4.7.0
+- Issue 316: OCI_DequeueGet() returns messages with OCI_Object payloads that can have NULL properties while being NOT NULL when queued
+- Issue 323: OCI_SubscriptionRegister() generates a segfault on failure
+
+### Fixes (C++ API)
+
+- Issue 299: Performance issues with C++ API in multi-threaded environments
+- Issue 306: Compile error under GCC when accessing an ocilib::Collection item
+
+### Miscellaneous
+
+- Updated compilers for MS Windows prebuilt binaries to VS2022 17.4.4
+- Internal code changes / refactoring
+- Some documentation updates
+- Added more tests in tests suite
+- Fixed ocilib C demo makefile: compilation could fail on some Linux environments
+
+## 2021-11-30 - Version 4.7.4
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Issue 291: OCI_DirPathGetErrorRow() always returns 0 since v4.7.0
+- Issue 284: OCI_MsgGetID() returns a NULL ID after being queued with OCI_DequeuePut()
+- Issue 288: OCI_GetString() returns null on implicit conversion of a RAW value when it's longer than 64 bytes
+- Issue 283: OCI_DequeueGet() returns null pointer when message has empty payload
+- Issue 282: PL/SQL Server output wrong internal buffer size on some oracle versions
+- Issue 281: ORA-00931 in OCI_TypeInfoGet() when using SYS.RAW type
+
+### Fixes (C++ API)
+
+- Issue 272: AddressSanitizer reports mismatched new[] vs delete
+- Issue 278: ocilib::Object causes Segmentation fault
+
+### Miscellaneous
+
+- Updated compilers for MS Windows prebuilt binaries
+  - VS2022 17.0.1 for 32/64 bit DLLs
+  - VC runtime (statically linked) updated from vc142 to vc143
+
+## 2021-03-09 - Version 4.7.3
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Issue 251: OCI_ErrorGetMessage() returns invalid messages when OCILIB is built with OCI_CHARSET_WIDE on linux/unix platforms
+- Issue 252: Incorrect OCILIB client driver layer name in V$SESSION_CONNECT_INFO and GV$SESSION_CONNECT_INFO when OCILIB is built with OCI_CHARSET_WIDE on linux/unix platforms
+- Issue 253: Error occurred at OcilibLobFree: ORA-01403: no data found
+- Issue 258: OCI_SubscriptionRegister() always returns NULL since v4.7.0
+- Issue 264: Fetched UROWIDs (IOT Table ROWIDs) values are truncated
+- Issue 268: OCI_DirPathSetColumn() forwards parameter 'maxsize' as unsigned short to Oracle client leading to data truncation
+
+### Fixes (C++ API)
+
+- Issue 250: Exception handling when using OCI_CHARSET_WIDE
+- Issue 262: Using correct delete[] in ManagedBuffer destructor
+
+### Miscellaneous
+
+- Updated compilers for MS Windows prebuilt binaries
+  - VS2019 16.9.0 for 32/64 bit DLLs
+  - VC runtime (statically linked) updated from vc141_xp to vc142
+  - Note: Windows XP is not supported anymore due to the runtime update
+- Reduced the size of some OCILIB structures by removing some paddings (especially in 64-bit)
+- Added a makefile to build the C++ demo (Makefile_demo_cpp) that is also now installed with the C demo Makefile
+- OCILIB Test suite is now ported to Linux/Unix platforms
+  - Test suite is now provided in ocilib-x.y.z-gnu.tar.gz distribution archives and installed by 'make install' along with documentation and demos (typically in /usr/local/share/doc/ocilib/tests)
+  - To build the test suite:
+    - Modify the db credentials in ocilib_tests.h
+    - Use Makefile_tests (it depends on google test that must be installed before building the test suite)
+
+## 2020-11-10 - Version 4.7.2
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Issue 247: When using an OCI_Timestamp object created with OCI_TIMESTAMP_TZ flags, some OCILIB timestamps methods might raise an OCI_ERR_NULL_POINTER error
+- Issue 248: For Oracle client version < 11g, version 4.7.0 broke the ability to fetch data from resultset containing specific datatypes
+- Fixed some Coverity code analysis findings (hypothetical issues never encountered)
+
+### Miscellaneous
+
+- Updated C API test suite
+  - Successfully re-ran the test suite with OCILIB compiled in 8i, 9i, 10g, 11g, 12c, 18c modes (ANSI and Unicode)
+
+## 2020-10-27 - Version 4.7.1
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Enhancements (C API)
+
+- OCILIB internal and public symbols management
+  - For static library:
+    - All private symbols that can have local scope are now declared static
+    - All private non static symbols are now prefixed with "Ocilib" to avoid collisions
+  - For shared library:
+    - No change for Windows platform as __declspec(dllimport) and  __declspec(dllexport) were already handled
+    - When using GNUC compatible compiler:
+      - all public  symbols are now declared with __attribute__ ((visibility ("default")))
+      - all private symbols are now declared with __attribute__ ((visibility ("hidden")))
+      - Configure script will automatically add the compiler flag "-fvisibility=hidden"
+
+- OCILIB compiles now without any warnings when using GNUC with flags -Wall -Wextra -pedantic
+
+### Fixes (C API)
+
+- Issue 242:  Fixed a strings.h conflict with recent GCC versions
+- Issue 243: Fixed compiling ocilib directly from repository on non Windows systems (while using distribution archive was OK)
+- Issue 245: Fixed ocilib shared library symbols visibility (Linux/Unix)
+
+### Changes (C API)
+
+- Removed useless old macros for mapping lib C string functions to ANSI or wide char versions (ostrXXX)
+- Removed symbols ocisprintf(), ocistrdup(), ocistrcasecmp(), ociwcsdup(), ociwcscasecmp() from OCILIB shared library
+
+### Miscellaneous
+
+- Updated compilers for MS Windows prebuilt binaries
+  - VS2019 16.7.6 for 32/64 bit DLLs
+
+## 2020-07-16 - Version 4.7.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Enhancements (C API)
+
+- Library internal design changes (preparing v5.0.0)
+  - OCILIB code base has been layered in 2 distinct API layers:
+    - Internal API that has now its own separate design
+      - v4.7.0 internal API, while matching the public one in this version, has most of its methods renamed
+      - It will evolve differently, preparing new public APIs for future versions
+    - Public APIs exposing features to clients
+      - v4.7.0 is exposing the same public API as previous versions
+      - v5.0.0 will expose a different API
+      - Both will use same internal API
+    - Contextual error management enhancements
+      - As internal APIs cannot be called from outside the library, last error management has been simplified and improved
+    - Enhancements on internal methods implementation:
+      - Since v3.0.0 (back in 2008), OCILIB methods implementations are standardized to follow the same single exit point pattern
+      - Standardized entry point checks and exit points are based on extensive macros usage
+      - But the control flow was handled by a status variable leading to continuous and nested checks
+      - With 4.7.0, no more "if (STATUS) {...}" in the code.
+      - Instead, in case of errors, code directly jumps to exit points that can have cleanup code sections.
+      - See it as try {...} finally{...}
+      - Thus, code is now very sequential, much easier to read, with no nested error management/branching.
+
+- Public headers reorganization:
+  - Broke up ocilib.h content into multiple headers located in /include/ocilibc/
+  - Broke up C++ headers content into multiple headers located in /include/ocilibcpp/
+
+- Enhanced Error handing:
+  - Updated OCI_Cleanup(): if there are any unfreed bytes allocated by the library itself (e.g. OCILIB user objects not freed)
+    - it raises an error of type OCI_ERR_UNFREED_BYTES (with the amount of bytes in the error message)
+    - it completes cleanup and returns FALSE
+  - Added method OCI_ErrorGetLocation() to return the method name where the exception occurred
+  - Updated method OCI_ErrorGetString() to return a string using the following format "Error occurred at {Location}: {Description}"
+
+### Fixes (C API)
+
+- Issue 239: Fetching nclobs as strings return value in hexa format truncated values when nsl_lang is UTF8
+- Issue 238: Fetching clobs as strings return truncated values when nsl_lang is UTF8
+- Issue 236: Memory issue with OCI_BAM_INTERNAL and OCI_CDT_NUMERIC
+- Fixed OCI_EnqueuePut() and OCI_DequeueGet() in OCI_CHARSET_WIDE charset mode (added a workaround for a known oracle client UTF16 bug)
+- Fixed a minor memory leak when using implicit resultsets
+
+### Fixes (C++ API)
+
+- Issue 230: Memory leaks while rebinding vectors
+
+### Miscellaneous
+
+- Extended C API Test suite that has now a much wider coverage
+
+## 2020-04-18 - Version 4.6.4
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Issue #222: Allow OCI_SESSION_SYSDBA for session pools
+- Issue #225: Fixed some PL/SQL tables binding issues when the statement is an anonymous PL/SQL block
+- Issue #226: When NOT using OCI_ENV_CONTEXT environment flag, OCI_CollToText() andOCI_ObjectToText() failed if previous OCILIB call failed
+- Issue #227: Enhanced performance when fetching Clobs as strings (for Oracle 11g and above)
+
+### Miscellaneous (C API)
+
+- Some performance improvements when converting Objects and Collections to strings
+- Some performance improvements when calling OCI_GetString() on non strings columns
+- Minor changes in code for addressing some code analysis hints (clang, resharper)
+
+### Miscellaneous (C++ API)
+
+- Enhanced Number class in C++ API:
+  - Restrict arithmetic operations on supported types only
+  - Arithmetic operations are also now supported between Number objects
+- Minor changes in code for addressing code analysis hints (clang, resharper)
+- Updated C++ demo application
+
+### Miscellaneous
+
+- Updated documentation
+- Updated all files Copyright to current year (2020)
+- Updated compilers for MS Windows prebuilt binaries
+  - VS2019 16.5.3 for 32/64 bit DLLs
+  - Still targeting vc141_xp toolset for backward compatibility
+
+## 2019-11-01 - Version 4.6.3
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Issue #207: Updated Oracle command codes that were not accurate
+- Issue #213: Updated some version checks that were testing only for server version instead of testing both client and server versions
+- Issue #216: Re-calling OCI_BindArraySetSize() with a smaller value than previous assignment led to segfaults when statement has non scalar type binds
+- Issue #220: Implicit conversion Clob issue in OCI_GetString() when using UTF8 encoding
+
+### Miscellaneous (C API)
+
+- Issue #212: Added possible error codes for OCI_Initialize() in the documentation
+- Issue #215: Added a workaround to correctly retrieve environment variables set at runtime using SetEnvironmentVariable() on Windows
+
+## 2019-02-25 - Version 4.6.2
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Fixed compile and run time Oracle version detection when Oracle version is >= 18.1
+- Fixed OCI_SetTimeout() that was setting all timeouts with input value
+- Fixed OCI_GetTimeout() that was returning OCI_NTO_CALL or OCI_NTO_RECEIVE value whatever requested timeout
+- Added macro OCI_VER_MAKE to make an ocilib compliant oracle version from major, minor and revision versions (e.g. OCI_VER_MAKE(18,3,0) equals OCI_18_3)
+- Updated Oracle versions constants
+
+### Fixes (C++ API)
+
+- Issue #197: Using C++ interface in multiple DLLs
+
+## 2019-02-17 - Version 4.6.1
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Issue #188: Compile error with Oracle client 12.1 and option OCI_IMPORT_LINKAGE
+- Issue #196: Warning 4996
+- Issue #198: Compile Error with Oracle Client 12.2 and option OCI_ATTR_CALL_TIMEOUT
+- Issue #199: Compile warnings on Oracle Client 12.2
+
+### Fixes (C++ API)
+
+- Issue #182: Cannot bind a std::vector as a PL/SQL Table (v4.6.0 fixed the issue only for 1st element of the vector)
+- Issue #189: In/out bound vector<ostring> not updated after statement execution
+- Issue #191: Reassigning the same C handle to a C++ object leads to losing the content of the C handle
+- Issue #192: Vectors of non scalar types bound as pure OUT binds are not updated after execution if vector elements do not have their values set
+- Issue #200: Compiler warning 4018 with 4.6.0
+
+### Miscellaneous
+
+- Updated compilers for MS Windows prebuilt binaries
+  - VS2017 15.9.7 for 32/64 bit DLLs
+- Prebuilt static libraries built with TDM-GCC (Code::Blocks projects) are not shipped anymore
+  - Recent TDM- GCC versions produces executables that links statically against winpthreads
+  - This implies requirements and restrictions that motivated to remove prebuilt libs from ocilib releases
+  - Users can compile them using the provided Code::Blocks project
+
+## 2018-11-21 - Version 4.6.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Changes
+
+- Enhanced Oracle 18c support
+
+- Fixed Oracle minor and revision version when Oracle version  >= 18c (due to breaking in OCI API)
+
+- Added new version constants
+    - C API: added OCI_18_1, OCI_18_2, OCI_18_3
+    - C++ API: extended OracleVersionValues with Oracle18cR1, Oracle18cR2, Oracle18cR3
+
+  - Extended Column property flags:
+    - C API: extended OCI_ColumnGetPropertyFlags() with new flags OCI_CPF_IS_LPART and OCI_CPF_IS_CONID
+    - C++ API: extended PropertyFlagsValues enum with IsLogicalPartitioning and IsGeneratedByContainers
+
+  - Added the ability to retrieve the SQL_ID of an SQL statement:
+    - C API: added function OCI_GetSqlIdentifier()
+    - C++ API: added function Statement::GetSqlIdentifier()
+
+  - Added the ability to find out if a CLOB/NCLOB/BLOB is remote
+    - C API: added function OCI_LobIsRemote()
+    - C++ API: added function Lob<T, U>::IsRemote()
+
+  - Added network timeout management support
+    - C API: added functions  OCI_SetTimeout() and OCI_GetTimeout()
+    - C API: added timeout types: OCI_NTO_SEND, OCI_NTO_RECEIVE, OCI_NTO_CALL
+    - C++ API: added functions  Connection::SetTimeout() and Connection::GetTimeout()
+    - C++ API: added Connection::TimeoutTypeValues enum
+
+- C++ API
+
+  - Added Environment::GetCharMaxSize()
+
+### Fixes (C API)
+
+- Fixed compilation with OCI_IMPORT_LINKAGE when compile time OCI version is OCI_8_1 or OCI_9_1 or OCI_9_2 (e.g. on Unix based system with very old Oracle clients)
+
+### Fixes (C++ API)
+
+- Issue #170: How to write a clob using utf-8 encoding charset
+- Issue #181: Problem with utf-8 in LobNationalCharacter
+- Issue #182: Cannot bind a std::vector as a PL/SQL Table
+
+### Miscellaneous
+
+- Issue #180: Added workaround for OCI bug related to prefetching with Oracle 9i clients
+
+- Updated compilers for MS Windows prebuilt binaries
+  - VS2017 15.9.1 for 32/64 bit DLLs
+  - Code::Blocks 17.12 (TDM-GCC 5.1.0) for 32 bit MinGW static libs
+
+## 2018-09-13 - Version 4.5.2
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Issue #152: Wrong error reporting when calling OCI_Execute() on a non prepared statement
+- Issue #153: OCI_GetSqlErrorPos() not working since v4.3.0
+- Issue #158: OCI_IntervalCompare() always returns 0 (equality)
+- Issue #159 (workaround for oracle Bug): OCI_TimestampAssign() returns ORA-00932 when timestamp type is OCI_DTYPE_TIMESTAMP_LTZ
+- Issue #161: Current offset not updated when calling OCI_LobTruncate()
+- Issue #162: OCI_RegisterObject() and OCI_RegisterRef() failure
+- Issue #164: OCI_RefSetNull() fails if already null or if its underlying object has not been pinned
+- OCI_IntervalArrayCreate() and OCI_TimestampArrayCreate() did not allow to create arrays if the connection handle was null
+
+### Fixes (C++ API)
+
+- Issue #155: ocilib::Date::operator inverted operator >= and <=
+
+### Miscellaneous
+
+- Updated compilers for MS Windows prebuilt binaries
+  - VS2017 15.8.3 for 32/64 bit DLLs
+  - Code::Blocks 17.12 (TDM-GCC 5.1.0) for 32 bit MinGW static libs
+- Added Google Test suite for the C API
+  - Work In Progress
+  - VS2017 (only) project using Google test nugets
+
+## 2018-02-21 - Version 4.5.1
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Changes (C API)
+
+- Updated driver information set by OCILIB since v3.1.0 (column CLIENT_DRIVER in V$SESSION_CONNECT_INFO)
+  - it is now including OCILIB version (e.g. "OCILIB: x.y.z" instead of "OCILIB")
+- Extended OCI_SeTrace() and OCI_GetTrace():
+  - Added OCI_TRC_OPERATION: Name of the database operation set by the client application to be monitored (according Oracle docs)
+  - This value is stored the database in the column DBOP_NAME of the system view V$SQLMONITOR
+  - OCI_GetTrace() returns now NULL instead of an empty string if the given trace is not set or nullified
+- Release Windows binaries are now built using VS 2017 15.5.6 (instead of VS2017 15.3.2)
+
+### Fixes (C API)
+
+- Driver information (introduced in Oracle 11gR1: was set by OCILIB if
+  - Oracle version >= 11gR1 for standalone connections and connections retrieved from connection pools
+  - Oracle version >= 11gR2 for connections retrieved from session pools
+  - Now it sets it correctly in all cases when Oracle version >= 11gR1
+- Issue #141: OCIBindRaw() now accepts empty buffers (non null data with size = 0)
+- Issue #142: OCI_GetStruct() was filling numeric fields with garbage values since v4.5.0
+- Issue #143: OCI_SetTrace(): passing NULL values for clearing trace information leads to segfaults
+- Issue #144: OCI_SetTrace(); If called at least once, it was causing small memory leak in OCI_ConnectionFree()
+- Issue #145: Using OCI_BAM_INTERNAL for types using handles was leading to segfault when executing the statement
+  - Impacted types:OCI_Object, OCI_Lob, OCI_File, OCI_Timestamp, OCI_Interval, OCI_Ref and OCI_Collection
+
+### Fixes (C++ API)
+
+- Issue #141: ocilib::Statement::Bind<ocilib::Raw, unsigned int>() accepts now empty ocilib::Raw
+
+### Miscellaneous
+
+- OCILIB requires now C99 to be activated for compiling:
+  - When using autotools (Unixes): Enforcing C99 compiler flags using AC_PROG_CC_STDC() macro
+  - When using Visual Studio: OCILIB cannot be compiled anymore with VS2010 and earlier versions (released binaries use VS 2017)
+  - This was motivated for using variadic macros and allow variable declarations not only at beginning of blocks
+- Addressed static code analysis hints and warnings
+- Internal code refactoring and factorization
+- Reduced cyclomatic complexity of some internal functions
+  - Some methods (connection logon/logoff, bindings) were far too long and had been decomposed and split in smaller ones
+- Fixed demo and script files
+
+## 2018-02-07 - Version 4.5.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Enhancements (C and C++ API)
+
+- Extended support for non final UTDs
+  - Added OCI_TypeInfoGetSuperType() and ocilib::TypeInfo::GetSuperType()
+  - Added OCI_TypeInfoIsFinalType() and ocilib::TypeInfo::IsFinalType()
+  - Added C and C++ demos about super types and sub types
+
+### Fixes (C API)
+
+- Issue #132, #133, #135: Fixed segfault while accessing to derived UTDs members (due to wrong members offset computation)
+- Issue #134: OCI_ObjectToText() and OCI_CollToText() were mangling conversion errors leading OCI_GetLastError() to not report conversion errors
+- Issue #136: OCI_RegisterSubscription() was not correctly setting port number if provided
+- Issue #137: BINARY_DOUBLE and BINARY_FLOAT values could not be set or retrieved from OCI_Elem and OCI_Object
+- Issue #139: OCI_ErrorGetInternalCode() may report wrong OCI_ERR_* value
+
+### Miscellaneous
+
+- Refactored internal numeric types conversions
+- Removed usage of deprecated symbols
+- Some code cleanup
+
+## 2017-11-29 - Version 4.4.1
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Enhancements (C API)
+
+- Issue #116: OCI_ColumnGetFullSQLType() returns now [schema].[typename] for UDTs (instead of [typename] only)
+- Issue #122: Added default format OCI_FMT_TIMESTAMP_TZ when converting TIMESTAMP WITH TIMEZONE from/to strings
+- Added OCI_CST_MERGE statement type
+
+### Enhancements (C++ API)
+
+- Added support for new methods and constants added in C API v4.4.0:
+  - Added Column::GetCollationID()
+  - Added CollationID enumeration
+  - Extended StatementType enumeration: added TypeMerge
+  - Extended SessionFlags values: Added SessionSysAsm, SessionSysBkp SessionSysDgD, SessionSysKmt, SessionSysRac, SessionPreAuth
+
+### Fixes (C API)
+
+- Issue #117: Fixed segfault in OCI_StatementFree() when OCI_Objects were bound to a statement and nullified with OCI_BindSetNull()
+- Issue #118: Fixed OCI_NumberCompare() that was comparing the first number with itself
+- Issue #121: Updated magic numbers (positive and negative infinity) handling in OCI_NumberToString() and OCI_NumberFromString()
+- Issue #124: OCI_DirPathSetColumn() might use a buffer too small to convert datetime/timestamp/interval values
+
+### Miscellaneous
+
+- Visual studio solutions/projects updates and cleanup
+
+## 2017-10-25 - Version 4.4.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Issue #112: OCI_GetString behaves badly with empty LOBs
+- Issue #104: XA connection open failed with ORA-12154
+  - Fixed broken support for XA connections
+  - Added 2 new error codes related to XA connections management (OCI_ERR_XA_ENV_FROM_STRING, OCI_ERR_XA_CONN_FROM_STRING)
+- Issue #101: Wrong OCI_STRING_FORMAT_TIMESTAMP constant
+- Fix for Oracle bug #9838993 workaround
+  - Version 4.2.1 introduced support for an experimental workaround for Oracle bug 9838993 (memory leak when using Unicode and re-preparing/executing same statement multiple times)
+  - This support was not always working as column names were sometimes not null terminated
+
+### Enhancements (C API)
+
+- OCI_Object: Supporting now non final object types
+  - if an OCI_Object instance real type is a sub type of its column object type, OCILIB is dynamically retrieving its real and right type instead of processing it as its base type
+  - Added missing synchronized access when iterating the list of existing OCI_TypeInfo in OCI_TypeInfoGet()
+- Allocation Binding mode updates
+  - Added BindGetAllocationMode()
+  - updated OCI_GetBindAllocation() and OCI_SetBindAllocation() documentation to properly specify their usage
+- Extended 12cR2 support:
+  - Increased identifier size to 128
+  - Added OCI_ColumnGetCollationID
+  - Added more Oracle Session Mode
+- Refactored OCI_List implementation (Internal change
+  - No more access to OCI_List fields from other compilation units (encapsulation purposes)
+  - Refactored OCI_List implementation
+
+## 2017-06-07 - Version 4.3.3
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Issue #81: Fixed OCI_GetInt() on string columns
+  - Wrong implicit string to integer conversion (returning 0 whatever string value) occurred under following conditions:
+    - Column is string based
+    - Oracle client < 12gR1
+    - Using OCI_GetInt() or OCI_GetUnsignedInt()
+- Issue #86: Fixed wrong error information when statement execution failed involving 64bit integer binds
+  - It occurred under following conditions:
+    - Binding 64bit integer host variables with OCI_BDM_OUT flag set (default if OCI_BindSetDirection() has not been called)
+    - Statement execution failed on the server for any reasons (server side error, constraint violation, ..)
+  - Real server side error information was not reported by OCI_GetLastError() or error callback
+  - Instead an error "OCI-22060: argument [2] is an invalid or uninitialized number" was reported
+- Issue #88: Fixed OCI_GetString() on BLOB columns with blob size > 1024 bytes
+  - Filling the resulting string with BLOB data led to a buffer overflow
+- Issue #89: Fixed Segfault occurring in OCI_Execute()
+  - The issue was a wrong offset computation when trying to update user strings after execution.
+  - It occurred under following conditions:
+    - OCI_CHARSET_WIDE (Unicode) ocilib build
+    - Unix/Linux (wchar_t implemented as 32bit integers)
+    - Binding host string variable with OCI_BDM_OUT flag set (default if OCI_BindSetDirection() has not been called)
+
+### Fixes (C++ API)
+
+- Issue #63: (Re)Added cstddef header in ocilib_core.hpp as on some platforms/compiler versions, it was reported as needed (including <iterator> was not enough)
+
+### Enhancements (C API)
+
+- Issue #84: Add support for numeric type in OCI_ColumnGetSubType() with limitations as real numeric type cannot really be identified
+
+## 2017-02-08 - Version 4.3.2
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Issue #69: Fixed OCI_StatementGetConnection() that was returning erroneous values (regression introduced in v4.3.0)
+- Issue #70: Fixed Subscriptions issues when OCILIB charset is OCI_CHARSET_WIDE (Unicode builds)
+  - Bug with table names, objects names and rowids reported from CDN event callbacks:
+    - Up to Oracle 10g, these strings were reported as ANSI strings instead of UTF16 strings, thus OCILIB was doing a translation to UTF16 before calling user callbacks
+    - From Oracle 11g, this Oracle bug seems fixed while OCILIB is still trying to perform translation from ANSI to UTF16
+    - Thus, now OCILIB, in Unicode builds, is performing the translation to UTF16 only if reported strings seems to be ANSI
+  - Bug with Oracle call OCISubscriptonUnRegister()
+    - OCI_SubscriptionUnregister() encounters an error ora-24015 when calling OCISubscriptonUnRegister() in Unicode build but not in ANSI builds
+    - Error ORA-24915 is now discarded if returned from OCISubscriptonUnRegister() in OCI_SubscriptionUnregister()
+- Issue #71: Fixed regression introduced in v4.3.0 about binding big_uint variables (only unsigned 64bit integers)
+  - Pre and post statement execution methods were only handling big_int and not big_uint host variables
+  - Root cause was a wrong numeric sub type check (using == instead of operator &) as subtypes are handled using flags not unitary values
+- Issue #72: Fixed OCI_LobErase() return value that was wrong since v4.3.0 (1 on success and 0 on failure) instead of the number of elements erased from the LOB
+- Issue #75: Fixed OCI_ElemIsNull() that was marking the call as failed is the value was not NULL (regression introduced in v4.3.0)
+- Issue #78: Fixed usage of OCI_SetBindAllocation() when switching bind allocation mode that may result in memory leaks
+- Issue #79: Fixed issues in implicit conversion in OCI_GetString()
+  - Updated outdated OCI_GetString() documentation
+  - Reduce temporary buffer size in  OCI_GetString() conversions
+  - Fixed implicit conversions in OCI_GetString() for LONG, BLOB
+
+- Changes and Enhancements
+
+- Issue #73: Activate support for N' substitution (NCHAR replacement in SQL statement strings) when source code is Unicode (Only for Oracle Client >= 10gR2)
+- Issue #74: Added support for OCI_Number in format calls
+  - Added token '%n' for parsing OCI_Number in OCI_xxxFmt() calls
+  - Added OCI_ARG_NUMBER for fetching OCI_Number in OCI_Immediate() and OCI_ImmediateFmt() calls
+- Issue #79: Added support for OCI_Statement (cursors) in OCI_GetString()
+
+### Miscellaneous
+
+- Removed outdated unmaintained Visual Studio 2005, 2008 an 2010 projects for building OCILIB DLLs and C/C++ tests applications
+- Keeping visual Studio 2013 projects
+- Added Visual Studio 2015 projects
+- Prebuilt Windows OCILIB DLLs are now compiled using Visual Studio 2015
+
+## 2017-01-25 - Version 4.3.1
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Fixes (C API)
+
+- Issue #60: Fixed bug introduced in v4.3.0 related to binding arrays of big ints
+- Issue #64: Fixed structure size computation for Object members that are Objects
+- Issue #65: Fixed Binding null/non initialized OCI_Number
+  - Even if OCI_BindSetNullAtPos() was called, attempting to bind a non initialized or null OCI_Number led to statement execution failure
+- Issue #68: Fixed OCI_Execute() behavior with PL/SQL "select into" and no data found
+  - When executing a PL/SQL block with inner PL/SQL code like "select into:<bind_variable> from table" that does not fetch anything, Oracle call OCIStmtExecute() returns OCI_NO_DATA, which is handled by OCILIB as a failure
+  - Now OCI_Execute() considers OCI_NO_DATA as success
+  - Updated OCI_GetAffectedRows() documentation for determining if inner PL/SQL "select into" was successful
+
+### Fixes (C++ API)
+
+- Issue #63: Added cstddef header in ocilib_core.hpp as on some platforms/compiler versions, it was reported as needed
+- Issue #67: Fixed memory leak when using Number objects
+  - Removed attempt to use move semantics
+  - It is currently causing memory leaks  and does not bring that much as C API handles are already handled using smart pointers
+
+### Changes
+- Request #66: Increased value of OCI_BIND_MAX
+  - Increased value of OCI_BIND_MAX from 1024 to 65535
+  - Now Internal Arrays of OCI_Bind can grow and are reallocated by blocks of 128 binds
+
+## 2016-11-09 - Version 4.3.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- New Features:
+
+- Added NUMBER SQL type native wrapping
+
+  - Optional type as NUMBER type can still be fetched/bound using regular C native numeric types
+  - New OCI_Number type can be used when precision matters or for dealing with special values such as positive and negative infinity
+  - C API:
+    - Added OCI_NUM_NUMBER numeric type
+    - Added OCI_Number type
+    - Added OCI_NumberCreate()
+    - Added OCI_NumberFree()
+    - Added OCI_NumberArrayCreate()
+    - Added OCI_NumberArrayFree()
+    - Added OCI_NumberAssign()
+    - Added OCI_NumberGetContent()
+    - Added OCI_NumberSetContent()
+    - Added OCI_NumberSetValue()
+    - Added OCI_NumberGetValue()
+    - Added OCI_NumberAdd()
+    - Added OCI_NumberSub()
+    - Added OCI_NumberMultiply()
+    - Added OCI_NumberDivide()
+    - Added OCI_NumberCompare()
+    - Added OCI_GetNumber()
+    - Added OCI_GetNumber2()
+    - Added OCI_BindNumber()
+    - Added OCI_BindArrayOfNumbers()
+    - Added OCI_RegisterNumber()
+    - Added OCI_NumberFromText()
+    - Added OCI_NumberToText()
+    - Added OCI_ElemGetNumber()
+    - Added OCI_ElemSetNumber()
+    - Added OCI_ObjectGetNumber()
+    - Added OCI_ObjectSetNumber()
+
+  - C++ API:
+    - Added ocilib::Number type encapsulating the C API OCI_Number type
+    - This new type comes with all possible operator overloads for better usability
+
+- Fixes:
+
+- OCI_ObjectGetString(): Fixed usage of internal temporary buffers
+- OCI_FileRead(): Return value was not the correct one
+- OCI_PoolGetConnection(): was returning NULL connections for session pool using external credentials
+- OCI_StringGetFromType(): Fixed segfault when converting CLOBs (with length > to 512) to UTF8 strings in OCI_GetString() if an UTF8 charset is used
+- Fix indicators usage for collections: OCI_IsNull() always returned FALSE even if fetched collection was NULL
+- Fix compilation under C compilers not supporting the C99 feature allowing declaring variables anywhere in blocks
+
+- Miscellaneous:
+
+- C API: Major internal code re-factoring
+
+  - Code factorization
+  - Replaced verbose macros with more compact ones
+  - Code base reduced by few thousands lines of code
+  - Fixed some error handling logic
+
+- C API:
+
+  - Added OCI_GetDataSize() and OCI_GetDataSize2()
+
+- C++ API:
+
+  - Rewrote iterators for ocilib::Collection<>
+    - Collection Iterators are now random iterators allowing Collections being used with STL algorithms such as std::sort()
+    - Added Collection const_iterators
+  - Addressed various code analysis hints
+  - Added C++ compiler capabilities detection (C+11)
+
+- Updated samples in folder /demo
+
+  - Added required DDL and DML for all samples
+  - Updated some samples
+
+## 2016-03-21 - Version 4.2.1
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+### Licensing
+
+- Re-licensing OCILIB to Apache License Version 2.0 instead of LGPL 2.1: this is merely for overcoming the static linkage issue of the LGPL V2.1
+
+### Fixes
+
+- C++ API: Fixed memory leak caused by Statement::Bind() with non scalar types when Connection objects are closed before their child Statement objects get out of scope
+- C++ API: Fixed minor compilation warnings
+- C API: Compilation was broken when targeting Oracle 8i
+- C API: PL/SQL statements starting with keyword "CALL" were not identified as PL/SQL commands and thus output bind buffers were not updated accordingly
+- C API: OCI_Execute() ignored custom fetch and prefetch values with Oracle clients >= 9.2
+- C API: OCI_ElemSetString() caused memory retention when dealing repetitively with string attributes
+- C API: OCI_Cleanup() leaked of few bytes
+- C API: OCI_BindLob() caused access violation when binding CLOB/BLOB to PL/SQL OUT parameters using OCI_BDM_OUT bind direction mode
+- C API: OCI_DirPathSetEntry() may passed Wrong SQL type passed to OCI_NumberFromString() for some numeric columns
+- C API: OCI_GetLastError() was not reporting errors/warnings after the following calls: OCI_FetchPrev(), OCI_FetchNext(), OCI_FetchFirst() and OCI_FetchLast()
+- C API: OCI_MemRealloc() may manipulate dangling pointers
+- C API: Fixed some usage of OCI_BIND_CALL() macro
+- C API: OCI_ObjectGettring(): When the attribute type was not a string, the application error handler
+    was called with error code OCI_ERR_ATTR_NOT_FOUND and then the method was converting the attribute to a string without problem as expected.
+
+### Changes
+
+- Added "Environment Variables" section in the C API documentation
+- C++ API: Added silent parameter to Date::Date()
+- C API: Fetch and prefetch values are not reset any more to default values when statement is re-prepared
+- C API: Added support for specific environment variables: Now specific documented environment variables can be set for activating
+    experimental or optional behaviors mostly for implementing workaround for Oracle Bugs.
+- C API: Added experimental workaround for unsolved Oracle OCI bug #9838993 using the environment variable "OCILIB_WORKAROUND_UTF16_COLUMN_NAME"
+
+## 2015-09-21 - Version 4.2.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- New Features:
+
+- Implemented Oracle 12c extended support for PL/SQL types (PL/SQL boolean, records and index by tables)
+
+  - These types can be now used in binding calls
+  - C API: PL/SQL records can now be used using OCI_Object
+  - C API: PL/SQL Index by tables can now be used using OCI_Coll
+  - C API: PL/SQL boolean can be used using boolean C type
+  - C API: Added OCI_BindBoolean()
+  - C API: Added OCI_ElemSetBoolean(), OCI_ElemGetBoolean()
+  - C API: Added OCI_ObjectSetBoolean(), OCI_ObjectGetBoolean()
+  - C API: OCI_TypeInfoGet() supports now records these PL/SQL types
+  - C API: Added collection type OCI_COLL_INDEXED_TABLE
+  - C API: Added data type OCI_CDT_BOOLEAN
+  - C++ API: PL/SQL records can now be used using ocilib::Object
+  - C++ API: PL/SQL Index by tables can now be used using ocilib::Collection<T>
+  - C++ API: PL/SQL boolean can be used using bool C++ type
+  - C++ API: Added template specializations for supporting PL/SQL boolean using C++ bool in the following calls:
+    - ocilib::Statement::Bind()
+    - ocilib::Object::Get()
+    - ocilib::Object::Set()
+  - C++ API: Added ocilib::Collection<T> specializations for supporting bool data type
+  - C++ API: Added ocilib::TypeBoolean
+  - C++ API: Added ocilib::Collection::IndexedTable
+  - C++ API: Added internal core class ocilib::BindTypeAdaptor<T1, T2>
+
+- Added Memory usage information
+
+  - C API: Added OCI_GetAllocatedBytes
+  - C API: Added OCI_MEM_ORACLE, OCI_MEM_OCILIB and OCI_MEM_ALL
+  - C++ API: Added ocilib::Environment::GetAllocatedBytes()
+  - C++ API: Added ocilib::Environment::OracleClientBytes, ocilib::Environment::OcilibBytes, ocilib::Environment::AllBytes
+
+- Added Session Max Cursor information
+
+  - C API: Added OCI_GetMaxCursors()
+  - C++ API: Added ocilib::Connection::GetMaxCursors()
+
+- Enhancements:
+
+- C++ API:: Enhanced pre/post statement execution check for binds
+
+  - Before execution, bind buffers are only updated from host variables if Bind Direction has the ocilib::BindInfo::In flag
+  - After execution, host variables are only updated from bind buffers if Bind Direction has the ocilib::BindInfo::Out flag
+
+- Fixes:
+
+- C API: Fixed OCI_GetLastError() that returned NULL after OCI_Initialize() if OCI shared lib cannot be loaded
+- C API: Fixed OCI_ColumnGetSQLType() that has its break statements within the switch removed by mistake leading to return "?" in all cases
+- C API: Fixed OCI_ElemSetXXX() where XXX is a numeric type
+- C API: Fixed OCI_IterFree() when dealing with numbers
+- C API: Fixed Memory retention in local OCI objects cache when calling OCI_ObjectFree(): Objects indicator structures were not freed until calling OCI_Cleanup()
+- C API: Fixed OCI_ElemSetXXX() for numeric types when element is created using OCI_ElemCreate() instead of being retrieved with OCI_IterGetPrev() or OCI_IterGetNext()
+- C API: When OCI_SubscriptionRegister() failed, the input connection was freed leading the caller to hold a dangling pointer to the connection handle
+- C API: Fixed comparison call in OCI_TimestampCompare()
+- C API: Fixed alignment computation in OCI_GetStruct()
+- C API: Fixed alignment computation in OCI_ObjectGetUserStructSize()
+- C API: Fixed compilation under compilers that require variable to be declared at the beginning of blocks (example: VS2010)
+- C API: Fixed minor internal bugs and issues
+- C++ API: ocilib::HandleHolder<T>::Acquire() => Made sure that a smart handle is not allocated if the input C handle is NULL (even if it shall not happen as the C API must raise an error if it cannot return a valid handle)
+- C++ API: ocilib::HandleHolder<T>::SmartHandle::~SmartHandle() => the C API handle free function is now called only if the handle is not NULL
+- C++ API: Fixed compilation error when using OCI_CHARSET_WIDE
+- C++ API: Fixed ocilib::Raw binding when using OCI_CHARSET_WIDE
+- C++ API: Fixed ocilib::BindArray::BindArrayObject<Raw, unsigned char>::SetInData()
+- C++ API: Fixed binding array of Blobs
+- C++ API: Fixed binding array of Raw
+
+### Miscellaneous
+
+- Doxygen documentation: Added C and C++ data types mappings documentation page
+- Removed references to sourceforge.net
+- Minor internal code changes to fixing hypothetical issues found by code analysis (CppCheck)
+- Fixed some typos and formatting issues
+
+## 2015-05-05 - Version 4.1.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- C API
+
+- Major library code update:
+  - All public functions entry and exit points have been rewritten in order to satisfy requirements of the OCI_ENV_CONTEXT environment flag
+  - Fixed some functions that were not setting context result properly when using OCI_ENV_CONTEXT flag
+  - various internal code updates and minor fixes
+  - OCI_EnableWarnings() and OCI_SetErrorHandler() are now return a boolean values
+  - Factorized internal OCILIB objects clean up in various places
+
+- Enhanced implicit string conversion for Date, Timestamps and Numeric values
+  - Conversion formats can be now set at both library and connection level
+    - The library is using its own default format if none are set
+    - Program can define formats at library level
+    - Program can define formats for a specific connection
+  - It is now possible define specific conversion formats for:
+    - OCI_Date
+    - OCI_Timestamp
+    - All Numeric types
+    - Binary double
+    - Binary float
+  - Added new methods:
+    - OCI_SetFormat()
+    - OCI_GetFormat()
+  - Removed the following methods that are now defined as macros for backward compatibility reasons:
+    - OCI_SetDefaultFormatDate()
+    - OCI_GetDefaultFormatDate()
+    - OCI_SetDefaultFormatNumeric()
+    - OCI_GetDefaultFormatNumeric()
+
+- Fixes
+  - Fixed compilation under oracle 11gR1 caused by wrong oracle version checking in the file pool.c
+  - Fixed few warnings raised by Clang C compiler
+  - Fixed Binary Float implicit conversion to string when using Oracle 12g
+  - Fixed UTF8 strings bytes size computing when passing them to Oracle client
+  - Fixed binding double and float when Oracle client >= 10.1 and Oracle Server < 10.1 (usage of binary_double and binary_float supported by the client from 10gR1 but not supported by Oracle 8i and 9i)
+  - Fixed memory leak in internal method OCI_StringFromStringPtr() used in OCI_ElemGetString() and OCI_ObjectGetString()
+  - Fixed possible memory retention related to OCI Object cache (depending on the Oracle Client version)
+
+- Warning: Programs must be recompiled (with no code change needed) as some methods have been removed from the library
+
+- C++ API
+
+- Enhancements
+  - Added abstract Streamable class:
+    - It allows derived classes to be compatible with any external stream class supporting the operator << (std::(w)string)
+    - The following classes derives now from Streamable: Date, Interval, Timestamp, Collection, Object and Reference
+  - Added Support for the enhancements made to the string conversion format in the C API:
+    - Added Enum FormatType
+    - Added Environment::GetFormat() and Environment::SetFormat()
+    - Added Connection::GetFormat() and Connection::SetFormat()
+    - Removed Connection::SetDefaultDateFormat() and Connection::GetDefaultDateFormat()
+    - Removed Connection::SetDefaultNumericFormat() and Connection::GetDefaultNumericFormat()
+  - Added support for Clang C++ compiler
+  - Statement::Bind<>(): Added specializations for Collection and std::vector<Collection<T>> instead of relying on default the implementation that is now removed
+  - Added parametrized constructors for Date, Interval and Timestamp classes
+  - Made sure that translation from C raw buffer to the C++ Raw class does not fail in case of NULL buffers with non zero size parameter
+  - Modified internal access to environment singleton object instance
+  - Added enum values for Oracle Versions
+  - Added new template methods to Resultset class
+    - Get<T1, T2>(): template method allowing to return a user-defined type from a resultset current row content using a translator user-defined method/functor/lambda (e.g. return a user-defined struct/class from a select on a table)
+    - ForEach<T1>(): convenient method wrapping the while(rs.Next)) pattern and that calls a user-defined method/functor/lambda for each row fetched
+    - ForEach<T1, T2>(): version of ForEach<T1> and Get<T1, T2> combined
+    - See the updated main demo application for examples
+  - Added template methods Statement::Execute() and Statement::ExecutePrepared():
+    - these overloaded methods can take fetch callbacks and also datatype adapter callbacks
+    - It makes the code much compact as it hides the resultset fetch calls
+    - It also allows adapting resultsets returned values to user-defined types
+    - See the updated main demo application for examples
+  - Added Resultset::Get<>() overloads with input value arguments to fill instead of returning values. This allow to no specify the data type in the Get<>() call.
+    - void Get(unsigned int, TDataType &value) const
+    - void Get(const ostring &name, TDataType &value) const;
+
+- Changes:
+  - Exception class  does not derive any more from HandleHolder<>
+  - Date::SysDate() is now a static method that returns a now a Date Object with system date time
+  - Timestamp::SysTimestamp() is now a static method that returns a now a Timestamp Object with system timestamp
+  - Renamed Statement::Execute(void) to ExecutePrepared(void)
+  - Added default constructors for classes holding datatypes.
+    - Using the default constructor, we have objects holding no C handles -
+    - Their IsNull() properties return is true.
+    - They can now be stored in structures and classes without the need of passing parameters
+    - Their initialization can be deferred from declaration using function return values or using their class constructor with class name
+
+- Fixes
+  - Fixed missing  operator "|" for recently Enum promoted to Flags
+  - Fixed HandleHolder<>::operator bool
+  - Fixed Statement::Prepare() and Statement::Execute(): when called again for the same object, the internal map of binds was not cleared although bind objects were freed, leading to a segfault
+  - Fixed Statement::Bind<ostring>: strings bound to statements with Out or InOut direction mode had their content padded up to max provided size after execution
+  - Fixed C++03 standard violation: Removed usage of std::vector::data() that was introduced in C++11 in order to be compliant with C++03
+  - Fixed Timestamp::SetDate()
+  - Removed unimplemented prototype Lob<TLobObjectType>:: operator TLobObjectType()
+  - Fixed segfault when Environment::Initialize() fails to load the oci shared library
+- C++ compilers validated versions:
+  - Microsoft C++ compiler: all versions from Visual Studio 2008
+  - GCC: all versions from 4.1
+  - Clang: all versions from 3.1
+  - OCILIB++ shall also compile with older versions of these compilers and with other C++ compilers, but not tested
+- Miscellaneous
+  - Internal code clean up
+  - Updated some demo files
+
+## 2015-01-13 - Version 4.0.1
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- C API
+
+- Fixed OCI_ObjectGetXXX() and OCI_ObjectSetXXX(): internal access to some field members could cause segfaults with complex object types having deep nested objects
+- Fixed possible segfaults in OCI_Execute() when string input binds are used in Unicode build on Unix platforms if the bind direction is not explicitly set
+- Added error type OCI_ERR_ARG_INVALID_VALUE
+- Input arguments handled as unsigned int value that correspond to a set of possible value are now checked.
+- If the provided value does not fit within the set of expected values, an error is raised
+- Factorized some internal code using new methods OCI_ExternalSubTypeToSQLType() and OCI_ExternalSubTypeToSQLType()
+- Replaced some TAB occurrences with spaces
+- Internal code cleanup and refactoring
+- Internal minor code changes to remove GCC warnings with all possible paranoid options activated.
+- Fixed internal macro OCI_CHECK_STMT_STATUS that had been wrongly modified in previous some refactoring
+
+- C++ API
+
+- Some Enum<> definitions were promoted to Flags<>
+- Fixed possible race condition in internal smart pointer members access in multi-threaded applications
+- Fixed Statement::Bind<ostring>(): inadequate memory allocation parameter in BindAdaptor class constructor initialization
+- Fixed access violation in Pool object destructor when a global Pool object is not explicitly closed and destructor called after Environment::Cleanup()
+- Code refactoring and enhancements
+
+### Miscellaneous
+
+- Update Copyright to 2015
+- Fixed some typos in some files
+
+## 2014-12-10 - Version 4.0.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Introducing new C++ API
+
+- Full C API ported to C++
+- Implemented as a small set of header files, no library compilation needed
+- Based on C++ and STL paradigms (Strong typing, templates, containers, RAII, exception handling, operators, stack objects)
+- Based on design patterns (RAII, delegation, reference counting, smart pointers, proxies, singleton)
+- No user dynamic object allocation required
+- The only dependencies are: STL and OCILIB C API
+
+- Extended C API
+
+- Removed support for OCI_CHARSET_MIXED
+- This charset mode was introduced in early versions of OCILIB in order to support Unicode Data binding and fetching for Oracle8i that does not support full Unicode
+- It introduced high complexity in OCILIB code and had been source a bugs
+- This releases removes its support and now, OCILIB charset handling is much simpler
+- Thus OCILIB still support:
+  - All Oracle versions: OCI_CHARSET_ANSI => ANSI/UTF8 strings (char* )
+  - Oracle 9i and above: OCI_CHARSET_WIDE => UTF16/UTF32 strings (wchar_t *)
+
+- Added Support for some Oracle 12cR1 new features:
+- Added support for "PL/SQL Implicit Results"
+  - No API changes, internal code updates
+  - Added demo file
+- Added Support for "Identity columns":
+  - Added OCI_ColumnGetPropertyFlags()
+
+- Collections:
+- Added OCI_CollDeleteElem()
+- Added OCI_CollGetCount()
+- Added OCI_IterGetCurrent()w
+- Fixed OCI_IterGetPrev() and OCI_IterGetNext(): Last error flag for OCI_GetLastError() was wrongly set if it returned FALSE
+- Fixed OCI_ElemGetRaw(): possible segfault could happen
+- Fixed OCI_ElemSetNull(): it was not setting correctly the element indicator for collections of objects
+- Renamed some methods:
+  - OCI_CollGetAt() to OCI_CollGetElem()
+  - OCI_CollGetAt2() to OCI_CollGetElem2()
+  - OCI_CollSetAt() to OCI_CollSetElem().
+  - Note that older method names are still supported using #define for backward compatibility reasons
+
+- Connection/Session Pools:
+- Fixed OCI_PoolGetConnection() that could return NULL connection handles (particularly when program is using OCI_PoolGetOpenedCount())
+- Removed connection pooling emulation for Oracle 8i
+- Refactored Oracle pooling implementation (code is now simpler and much more robust)
+
+- Unicode builds:
+- Fixed LONG data type fetching when using Unicode builds on Unix/Linux platforms. Returned strings could have extraneous trailing characters
+- Fixed Buffer overwrite in OCI_LobRead2() in Unicode builds
+
+- Strings conversions:
+- Added OCI_ObjectToText()
+- Added OCI_CollToText()
+- Extended OCI_GetString(): supports now all types
+- Extended OCI_ObjectGetString(): supports now all types
+
+- Miscellaneous additions:
+- Added OCI_IsRebindingAllowed()
+- Added OCI_TypeInfoGetConnection()
+- Added OCI_SubscriptionGetConnection()
+- Added OCI_BindSetNotNullAtPos()
+- Added OCI_BindSetNotNull()
+- Added OCI_GetBindIndex()
+- Added OCI_ObjectGetRawSize()
+- Added OCI_ElemGetRawSize()
+- Added OCI_LobGetConnection()
+- Added OCI_FileGetConnection()
+- Added compile time (OCI_IMPORT_LINKAGE) and runtime (OCI_IMPORT_RUNTIME) detection of OCI shared library version for Oracle 12cR1
+- Added new error code OCI_ERR_ITEM_NOT_FOUND
+- Added VS 2013 solutions
+- Important code refactoring
+
+- Miscellaneous fixes:
+- Fixed OCI_ObjectGetObject() that could cause segfault when an object had 2 members of object type on a row
+- Fixed OCI_IntervalAdd() and OCI_IntervalSubstract() that were not performing OCI calls due to wrong return code initialization
+- Fixed NULL lob handle input checking in OCI_LobWrite() and OCI_LobWrite2()
+- Fixed OCI_PoolGetConnection() prototype: added const qualifier on tag argument
+- Fixed memory usage of internal arrays (for numeric, text and raw types) when using OCI_BAM_INTERNAL bind allocation mode. Memory was not freed when the statement was freed but only at OCI_Cleanup() time.
+- Fixed segfault in OCI_HashCreate() if internal memory allocation failed
+- SQL warnings occurring in OCI_ExecuteXXX() calls were not propagated correctly to the global error handler and couldn't be retrieved with OCI_GetLastError() in OCI_ENV_CONTEXT mode
+- Fixed runtime (OCI_IMPORT_RUNTIME) detection of OCI shared library version for Oracle 11gR2 that was reported as OCI 11gR1
+- Fixed segfault if a statement was executing more than once SQL statement with a "returning clause" (since statement cache support). It was due to a nice bug in the OCI client !
+- Fixed OCI_BindSetNull(): if called prior executing an insert statement that had OCI_Object handles bound to it, object content was inserted in the DB instead of NUL
+- Fixed OCI_TimestampGetTimeZoneOffset(): returned offsets may have unattended values if negative
+- Fixed OCI_TypeInfoGet() that was failing if:
+  - object had been created with case sensitivity (e.g. using quotes)
+  - object were related to the PUBLIC role
+
+## 2013-03-04 - Version 3.12.1
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Fixed Unicode support (OCI_CHARSET_WIDE and OCI_CHARSET_MIXED)
+
+- Unix platforms: Fixed OCI_LongWrite() for OCI_CLONG type: string may wrongly be inserted into DB
+- Unix platforms: Fixed OCI_LongRead()  for OCI_CLONG type: strings may contain trailing garbage data
+- Unix platforms: Fixed OCI_LobRead2()  for OCI_CLOB type: strings may contain trailing garbage data
+- Unix platforms: Fixed OCI_GetString(): strings may be truncated
+- All platforms: Fixed OCI_GetString(): when column is number based, the string resulting from number conversion may have trailing dot or comma
+
+- Miscellaneous fixes
+
+- Reduced size of buffers used to store string column data when nls_lang is UTF8
+- Fixed error variable checking in internal call OCI_DirPathArrayToStream()
+
+- Miscellaneous changes
+
+- Update all files Copyright strings to current year (2013)
+
+## 2013-02-07 - Version 3.12.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Added support for lob prefetching introduced in 11gR1
+
+- Added OCI_GetDefaultLobPrefetchSize()
+- Added OCI_SetDefaultLobPrefetchSize()
+
+- Enhanced Direct Path API
+
+- Added OCI_DirPathSetConvertMode() that gives the ability to force direct path conversions
+- Modified OCI_DirPathGetErrorRow() and OCI_DirPathGetErrorColumn() behavior that can return all erred rows/columns after a conversion or load operation
+- Added direct path demo file dirpath_complete.c
+- Updated documentation
+
+- Fixed Direct Path API
+
+- Fixed direct path logic when stream buffer are too small (OCI_DirPathConvert() returning OCI_DRP_FULL)
+- Fixed direct path logic when conversion and loading errors occur
+- Fixed OCI_DirPathConvert() that now supports resuming conversion when an error occurs by fixing values and calling OCI_DirPathConvert() again in default mode (in previous releases duplicated rows were inserted in database)
+- Fixed OCI_DirPathGetErrorRow() and OCI_DirPathGetErrorColumn() that returned zero based row/column indexes instead of being 1 based row/column indexes
+- Fixed OCI_DirPathSetEntry(): Setting NULL values on column that had decimal/date format throwed an Oracle error
+
+- Fixed Oracle Streams AQ (Advanced Queues) asynchronous notifications:
+
+- Fixed possible race condition in OCI_DequeueSubscribe() that could cause to have the internal callback called before the user callback was assigned to the dequeue object
+
+- Fixed numeric/ string conversions:
+
+- Fixed OCI_GetInt(), OCI_GetShort(), OCI_GetBigInt() and unsigned versions when the column type was string based (bug in string/number conversion introduced in v3.11.0)
+
+- Miscellaneous fixes:
+
+- Fixed wrong column buffer size computation for strings, rowids and longs when using OCI_CHARSET_WIDE or OCI_CHARSET_MIXED on Unixes platforms
+
+## 2012-12-19 - Version 3.11.1
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Fixed broken support for Oracle Database Change notifications
+
+- Fixed OCI_SubscriptionRegister(): Previous version 3.11.0 introduced a bug in subscription registration
+
+- OCILIB Thanks file was missing in 3.11.0 packages. It is reintroduced within this release.
+
+## 2012-12-12 - Version 3.11.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Extended Oracle Streams AQ (Advanced Queues) support:
+
+- Added support for asynchronous notifications (Petr Vanek proposal):
+- Added OCI_DequeueSubscribe()
+- Added OCI_DequeueUnsubscribe()
+- Added demo file queue_async.c
+
+- Fixed and enhanced support of BINARY FLOAT and BINARY DOUBLE types:
+- Updated OCI_GetDouble(), OCI_GetDouble2(), OCI_GetFloat(), OCI_GetFloat2():
+- In previous releases, BINARY FLOAT and BINARY DOUBLE were fetched as NUMBER and locally converted to native double and float types using Oracle Client API
+- With this release, BINARY FLOAT and BINARY DOUBLE are directly fetched as native double and float types
+- BINARY FLOAT and BINARY DOUBLE were not supported in Oracle Objects and Oracle Collections (TYPES, VARRAYs and NESTED TABLES)
+- In previous releases, segfaults could happen when manipulating objects with BINARY FLOAT and BINARY DOUBLE members or collections of BINARY FLOAT and BINARY DOUBLE
+- With this release, BINARY FLOAT and BINARY DOUBLE are fully supported within OCI_Elem and OCI_Object
+- Updated OCI_BindDouble(), OCI_BindArrayOfDoubles(), OCI_BindFloat(), OCI_BindArrayOfFloats()
+- If the Oracle client supports BINARY FLOAT and BINARY DOUBLE types (Oracle 10g and above), host double and float variables are binding as BINARY FLOAT and BINARY DOUBLE instead of NUMBER.
+- This prevent the Oracle client from performing internal conversions.
+- Enhanced String conversions:
+- When OCILIB has to convert BINARY DOUBLE values to/from strings, it now supports the double type full range of values.
+- OCILIB uses now the C runtime to perform BINARY DOUBLE and BINARY FLOAT conversions to/from strings as the Oracle Client API cannot handle the full double datatype within its string conversion API
+
+- Miscellaneous changes:
+
+- OCI_GetString(): Conversion from numeric types has been rewritten, much cleaner code now
+- Internal numeric types handling (conversions between numeric types, to/from strings) has been rewritten
+- Miscellaneous code updates: OCILIB source code has been tested against various code analysis tools
+- Documentation updates
+- Added pkgconfig support for Unixes/Linux platforms (thanks to Petr Vanek)
+
+- Miscellaneous fixes:
+
+- OCI_GetBatchErrorCount() always returned 0
+- OCI_FileGetDirectory() did not set error flag for OCI_GetLastError()
+- OCI_ElemGetRaw() was setting error flag to TRUE in all cases for OCI_GetLastError()
+- OCI_PoolGetStatementCacheSize() was setting error flag to FALSE in all cases for OCI_GetLastError()
+- OCI_LobRead() and OCI_LobRead2(): In OCI_CHARSET_WIDE and OCI_CHARSET_MIXED builds, values could be truncated with Oracle clients 8i and 9i only
+- OCI_LobWrite2() and OCI_LobAppend2(): returned byte count may not have been accurate for CLOB when using OCI_CHARSET_WIDE or OCI_CHARSET_MIXED builds
+- OCI_ColumnGetCharUsed(): Attribute introduced in Oracle 9.2 but OCILIB tried to retrieve it from Oracle 9.0 as well
+- OCI_ConnectionFree() could generate a segfault on a reused connection retrieved from a connection pool since version 3.10.0
+- OCI_TypeInfoGet() could generate a segfault in OCI_CHARSET_WIDE builds when a table/view column or object member was an Oracle Type (Object and Collection)
+- OCI_xxxFmt() calls: Timestamp arguments were not formatted correctly (missing quotes in the formatted SQL)
+- Scrollable Statements:
+- An Oracle error (ORA-01001 or ORA-01002) was thrown when fetching a statement (PL/SQL Cursor or Nested table) that was returned by a select statement that contained more than one column
+- This happened only if the statement was retrieved from a scrollable statement using array fetching (internal OCILIB default behavior)
+- this is an Oracle bug and a workaround has been found
+- Now, OCILIB internally sets the resultset internal array size to 1 and thus ignore any values set using OCI_SetFetchSize() for such statements
+
+- Modified Prebuilt MS Windows binaries
+
+- Official Windows OCILIB Binaries are now built using MS C compiler optimization capabilities (compiler remains MS Visual Studio 2010 Express):
+- Full optimization compiler flag (/Ox)
+- Whole program optimization flag (/GL)
+
+## 2012-08-08 - Version 3.10.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Added support for native C float datatype:
+
+- Added OCI_GetFloat()
+- Added OCI_GetFloat2()
+- Added OCI_BindFloat()
+- Added OCI_BindArrayOfFloats()
+- Added OCI_RegisterFloat()
+- Added OCI_ElemGetFloat()
+- Added OCI_ElemSetFloat()
+- Added OCI_ObjectGetFloat()
+- Added OCI_ObjectSetFloat()
+- Added constant OCI_ARG_FLOAT
+- Added constant OCI_NUM_FLOAT
+- Use the input identifier '%g' for OCI_StmtxxxxFmt() calls when passing float variables
+- Updated demo application to use float datatype
+
+- Fixed OCI_IntervalArrayCreate(): wrong internal handle type caused the function to fail to allocate the array with the right interval type
+
+## 2012-06-29 - Version 3.9.4
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Miscellaneous fixes
+
+- Connection and Session Pools: Fixed few bugs related to OCILIB automatic adaptation to runtime client versions and features that could lead OCI_PoolGetConnection() to return NULL
+- Statement cache was not properly activated when feature was available
+- OCI_PoolGetStatementCacheSize(): an error was raised as an invalid internal OCI attribute code was used
+- Fixed broken compilation support for Oracle 8i and 9i clients on Unix platforms when oracle shared lib import mode is OCI_IMPORT_LINKAGE
+- Oracle 11g: OCILIB driver name could not be properly set in the view V$SESSION_CONNECT_INFO
+- Oracle XA:
+- Unix platforms: No change, XA is supported for all Oracle Clients >= 8i
+- MS Windows Platforms:
+  - When using the DLLs provided in OCILIB releases, XA is now enabled only if the Oracle client loaded at runtime has XA symbols embedded in oci.dll (usually >= Oracle 10g)
+  - When compiling yourself OCILIB, support is enabled only with Oracle Client 10g and above as on MS Windows, for 8i and 9i, specific import libraries are used and can be missing in some installations
+  - So when XA is not enabled, using the flag OCI_SESSION_XA with OCI_ConnectionCreate() will now throw an exception
+
+- Miscellaneous changes
+
+- default transaction behavior:
+
+- Prior to v3.9.4, a default transaction object was created in OCI_ConnectionCreate() and associated to the returned connection object.
+- From v3.9.4
+  - No changes for regular standalone transactions and transactions retrieved from connection pool.
+  - For XA connections and connections retrieved from session pool, no transaction object is created anymore and thus, OCI_GetTransaction() will return NULL for newly created connections.
+  - Note that transaction objects must not be set to connections retrieved from a session pool or to XA connections
+  - For other types of connections (regular or retrieved from connection pool), transaction objects can be used as normal
+
+- Various internal minor code change
+- Note that all sources files have been updated to include year 2012 in the copyright section
+
+## 2011-12-05 - Version 3.9.3
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Miscellaneous fixes
+
+- Fixed broken support for Oracle 8i client since v3.9.0
+- Fixed OCI_ObjectSetObject(): a bug had been introduced in v3.8.1 when computing internal object structure offsets and paddings
+- Fixed OCI_LobRead(), OCI_LobRead2(): in OCI_CHARSET_WIDE charset builds only, a segfault could happen caused by an internal buffer overwrite
+- Fixed OCI_SetStatementCacheSize(), OCI_GetStatementCacheSize(): an error ORA-24315 (with no incidence) could be thrown by some versions of Oracle clients
+- Fixed OCI_BindXXX(): All binding methods returned TRUE instead of FALSE when an exception OCI_ERR_MAX_BIND occurred
+- Fixed OCI_GetString(): an error OCI-22061 was happening when the column was numeric and a user-defined numeric format was provided with OCI_SetDefaultFormatNumeric()
+- Fixed OCI_GetServerRevisionVersion(): it was returned the same value as OCI_GetServerMajorVersion() since v3.4.0
+- Fixed internal method OCI_ParseSqlFmt() used in OCI_xxxFmt() calls: Quoted strings were not properly output since v3.9.0
+- Fixed internal allocation mode:
+
+- some OCI_BindXXX() calls were not compatible with OCI_BAM_INTERNAL allocation mode and when used with it, were causing segfaults if the host variable parameter was NULL
+- now these methods raise an OCI_ERR_NULL_POINTER error if the host variable parameter is NULL and the statement bind allocation mode is set to OCI_BAM_INTERNAL
+
+- Miscellaneous changes
+
+- OCILIB library compilation
+
+- Modified compile time detection of OCI client version when using OCI_IMPORT_LINKAGE as Oracle back ported some defines introduced at version (X) in patches for version (X-1) !
+
+- OCILIB documentation
+
+- Updated Bind allocation mode description: added list of incompatible OCI_BindXXX() methods
+- Added OCI_BAM_INTERNAL compatibility information in all OCI_BindXXX calls() documentation
+- Added OCI_ENV_EVENTS requirements for subscriptions and HA methods
+- Minor changes
+
+- few code internal minor changes
+
+- Removed in each OCILIB source file, the version number and date time (updated at each new release, using diff tools was a nightmare !)
+
+## 2011-07-13 - Version 3.9.2
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Miscellaneous fixes
+
+- Detection of the 'long long' type on Unix/Linux platforms is now working as expected in all situations
+- version 3.9.0 broke support of Oracle client versions < 10g when using OCI import mode OCI_IMPORT_LINKAGE (default option on Unix/Linux platforms)
+
+## 2011-07-08 - Version 3.9.1
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Miscellaneous fixes
+
+- Fixed OCI_BindString(): version 3.9.0 introduced a memory leak when using this method
+- Fixed OCI_IsNull(): version 3.7.0 introduced a bug when OCI_IsNull() was called for OCI_CDT_OBJECT columns. It always returned FALSE
+- Fixed OCI_GetStruct(): version 3.7.0 introduced a bug (same as above) that caused the indicator array parameter filled with wrong indicator values for OCI_CDT_OBJECT columns
+- Fixed use of "Returning into" SQL clause: version 3.9.0 broke re-execution of a prepared statement that contains a "returning into" SQL clause
+
+## 2011-04-20 - Version 3.9.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Added support Oracle XA
+
+- Oracle XA integration in OCILIB is transparent by using OCI_ConnectionCreate() and requires just:
+
+- an XA db name for parameter 'db'
+- an extra flag OCI_SESSION_XA for parameter 'mode'
+- no user or password
+
+- See the OCI_ConnectionCreate() documentation for the XA open string needed by OCILIB to pass to the TMP
+
+- Added support for statement cache
+
+- Statement cache is now automatically enabled when using an Oracle client >= 9iR2
+- Added statement cache size customization when using an Oracle client >= 10gR1:
+
+- Added OCI_SetStatementCacheSize()
+- Added OCI_GetStatementCacheSize()
+- Added OCI_PoolSetStatementCacheSize()
+- Added OCI_PoolGetStatementCacheSize()
+
+- Added support for TAF (Transparent Application Failover) and HA (High Availability)
+
+- The following handler has been added when using an Oracle client >= 10gR2
+
+- Added OCI_IsTAFCapable()
+- Added OCI_SetTAFHandler()
+- Added OCI_SetHAHandler()
+
+- Added support for Connection attributes introduced in Oracle 10gR2
+
+- Added OCI_GetDBName()
+- Added OCI_GetInstanceName()
+- Added OCI_GetServiceName()
+- Added OCI_GetServerName()
+- Added OCI_GetDomainName()
+- Added OCI_GetInstanceStartTime()
+
+- Improved bind tuning. Now it is possible to set the bind direction mode (in, out, in/out) for slightly better performance
+
+- Added OCI_BindSetDirection()
+- Added OCI_BindGetDirection()
+
+- Miscellaneous new calls:
+
+- Added OCI_Describe() and OCI_DescribeFmt() to enable the retrieving of an OCI_Resultset object for 'select' statement wihtout exectuing the SQL
+
+- Miscellaneous changes:
+
+- Re-enforced checks on OCI_Statement handle related methods that checks the statement state (prepared, executed, parsed,...) that now can throw more exceptions
+- Updated layout of some internal structure to suppress unnecessary padding
+- Manual update of source code formatted with Uncrustify (wrong indentation of preprocessor directives)
+- User callbacks were not correctly documented
+- Updated Doxygen version used to generate the documentation (update in the output HTML style)
+
+- Miscellaneous fixes:
+
+- Fixed Binding call using the binding mode OCI_BAM_INTERNAL:
+
+- arrays of Lobs, Files, Intervals and timestamps: internal objects were not properly initialized
+- big_int: single bind and array bind were incorrectly implemented (allocation size wrongly computed that lead to a segfault for arrays)
+- strings:
+
+- single binds: if the length parameter was set to 0, a segfault happened
+- Wide strings: if the native Oracle Unicode used a different size than the C runtime for wchar_t (like Unix like system) translation were not performed by OCILIB
+
+- Fixed 11Gr2 compile time detection when using OCI_IMPORT_LINKAGE (default on Unix platform)
+- Fixed OCI_ImmediateFmt(): the method returned FALSE even on success
+- Fixed OCI_PoolGetConnection(): OCILIB tried to set the driver name attribute (appeared in 10gR2) on the session that is not allowed anymore in 11g
+- Fixed OCI_SetFormatDate() macro: fixed macros parameters declaration
+- Fixed OCI_ColumnGetNullable() returned value
+- Fixed OCI_ConnectionCreate(): 2 OCI handles not freed if connection failed
+- Fixed OCI_SetPrefetchSize(), OCI_SetPrefetchMemory(): the given value was not really passed to Oracle
+- Fixed OCI_TypeInfoGet() called internally when fetching object owned by a different schema
+- Fixed OCI_Parse(): the method was internally doing a describe operation instead of just a parse (which gave same results from an end user view)
+- Fixed OCI_LobAssign() that was not handling correctly Lob arrays created with OCI_LobArrayCreate()
+- Fixed OCI_BindDouble() and OCI_BindArrayOfDoubles(): internal sub numeric type OCI_NUM_DOUBLE was not set on the bind handle
+- Fixed OCI_StringGetFromAttrHandle() allocation of insufficient buffer in Unicode mode
+- Fixed OCI_ObjectSetxxx() could return true if attribute not found
+- Fixed Queues function in OCI_CHARSET_MIXED mode
+
+## 2010-12-13 - Version 3.8.1
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Miscellaneous fixes
+
+- Fixed internal computation of OCI_Object attributes null indicator offsets
+- Fixed OCI_Elem handle initialization by OCI_CollGetAt() and OCI_CollGetAt2()
+- Fixed OCI_Ping(): OCI symbol OCIPing() was not dynamically loaded if OCI_IMPORT_RUNTIME was used (default for precompiled MS Windows DLLs)
+- Fixed OCI_ConnectionCreate(): in case of an unsuccessful attempt to create a connection, an OCI internal handle was not freed since v3.7.0 (-> memory leak)
+- Fixed OCI_LongWrite()   + OCI_CHARSET_WIDE charset mode: internal length passed to internal OCI calls was expressed in chars instead of bytes
+- Fixed OCI_TypeInfoGet() + OCI_TYF_TYPE: an Oracle error was raised when passing as type name a built-in system type like "SYS.RAW"
+- Fixed OCI_GetLastError() that could return NULL when errors occurred in OCI_FetchXXX() calls (although the global error handler was correctly fired)
+- Fixed OCI_DequeueGet(): a segfault happened if the queue payload was of type RAW
+- Fixed OCI_DequeueFree(): internal structure member that hold the value set by OCI_DequeueSetConsumer() was not freed (memory leak)
+- Fixed OCI_MsgFree(): internal message ID allocated at enqueue time by OCI_EnqueuePut() was not freed (memory leak)
+- Fixed OCI_IterFree(): internal OCI_Elem handle was not freed for local collections resulting a small memory leak
+- Fixed OCI_EnqueuePut() and OCI_DequeueGet(): possible memory leak on Unix platforms + OCI_CHARSET_WIDE/OCI_CHARSET_MIXED charset mode
+- Fixed OCI_DequeueFree(): Internal OCI_Msg handle deallocation forgot to deallocate internal message ID resulting a small memory leak
+- Fixed OCI_SetPassword() and OCI_SetUserPassword(): in OCI_CHARSET_WIDE and OCI_CHARSET_MIXED builds, these functions failed to change the password
+- Fixed OCI_LobRead2() and OCI_LobWrite2() that could block when using UTF8 through NLS_LANG environment variable
+- Fixed OCI_GetStruct(): structure padding was not handled properly
+- Fixed internal allocation of ROWID and UROWID internal buffers when using UTF8 through NLS_LANG environment variable
+
+- Miscellaneous changes
+
+- Added Exception type OCI_ERR_REBIND_BAD_DATATYPE if a rebinding call attempts to bind a datatype different than the initial one
+- Updated documentation about datatypes for rebinding
+- Added support for numeric subtypes in OCI_BindGetSubtype() + documentation update
+- Manual update of source code formatted with Uncrustify (wrong indentation of witch case and some variable initialization)
+- prebuilt MS Windows 32/64-bit DLLs are now built using MS Visual Studio 2010 Express (instead of MS Visual Studio 2008 Professional)
+- A MS Visual Studio 2010 Express solution and project has been added to the Windows package to rebuild the DLLs
+
+## 2010-10-24 - Version 3.8.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Added support for Oracle Streams AQ (Advanced Queues)
+
+- See section in the documentation (page <module>, section <Oracle Advanced Queues (A/Q)>)
+- Added demo file queue.c
+- Added type OCI_Msg
+- Added type OCI_Agent
+- Added type OCI_Enqueue
+- Added type OCI_Dequeue
+- Added OCI_MsgCreate()
+- Added OCI_MsgFree()
+- Added OCI_MsgReset()
+- Added OCI_MsgSetObject()
+- Added OCI_MsgGetObject()
+- Added OCI_MsgGetRaw()
+- Added OCI_MsgSetRaw()
+- Added OCI_MsgGetAttemptCount()
+- Added OCI_MsgSetEnqueueDelay()
+- Added OCI_MsgGetEnqueueTime()
+- Added OCI_MsgGetExpiration()
+- Added OCI_MsgSetExpiration()
+- Added OCI_MsgGetState()
+- Added OCI_MsgGetPriority()
+- Added OCI_MsgSetPriority()
+- Added OCI_MsgGetID()
+- Added OCI_MsgGetOriginalID()
+- Added OCI_MsgSetOriginalID()
+- Added OCI_MsgGetSender()
+- Added OCI_MsgSetSender()
+- Added OCI_MsgSetConsumers()
+- Added OCI_MsgGetCorrelation()
+- Added OCI_MsgSetCorrelation()
+- Added OCI_MsgSetExceptionQueue()
+- Added OCI_MsgGetExceptionQueue()
+- Added OCI_EnqueueCreate()
+- Added OCI_EnqueueFree()
+- Added OCI_EnqueuePut()
+- Added OCI_EnqueueSetSequenceDeviation()
+- Added OCI_EnqueueGetSequenceDeviation()
+- Added OCI_EnqueueSetVisibility()
+- Added OCI_EnqueueGetVisibility()
+- Added OCI_EnqueueSetRelativeMsgID()
+- Added OCI_EnqueueGetRelativeMsgID()
+- Added OCI_DequeueCreate()
+- Added OCI_DequeueFree()
+- Added OCI_DequeueGet()
+- Added OCI_DequeueSetConsumer()
+- Added OCI_DequeueGetConsumer()
+- Added OCI_DequeueSetCorrelation()
+- Added OCI_DequeueGetCorrelation()
+- Added OCI_DequeueSetRelativeMsgID()
+- Added OCI_DequeueGetRelativeMsgID()
+- Added OCI_DequeueSetVisibility()
+- Added OCI_DequeueGetVisibility()
+- Added OCI_DequeueSetMode()
+- Added OCI_DequeueGetMode
+- Added OCI_DequeueSetNavigation()
+- Added OCI_DequeueGetNavigation()
+- Added OCI_DequeueSetWaitTime()
+- Added OCI_DequeueGetWaitTime()
+- Added OCI_DequeueListen()
+- Added OCI_DequeueSetAgentList()
+- Added OCI_AgentCreate()
+- Added OCI_AgentFree()
+- Added OCI_AgentSetName()
+- Added OCI_AgentGetName()
+- Added OCI_AgentSetAddress()
+- Added OCI_AgentGetAddress()
+- Added OCI_QueueCreate()
+- Added OCI_QueueAlter()
+- Added OCI_QueueDrop()
+- Added OCI_QueueStart()
+- Added OCI_QueueStop()
+- Added OCI_QueueTableCreate()
+- Added OCI_QueueTableAlter()
+- Added OCI_QueueTableDrop()
+- Added OCI_QueueTablePurge()
+- Added OCI_QueueTableMigrate()
+
+- Added support for SQL parsing only
+
+- Added OCI_Parse()
+- Added OCI_ParseFmt()
+
+- Miscellaneous changes
+
+- All OCILIB source files have been reformatted using uncrustify (best source code formatter ever tried !!)
+- Source code max line length has been modified (80 -> 100 characters)
+
+- Miscellaneous fixes
+
+- Fixed memory leak: if an OCI_Bindxxx() returned FALSE (eg. non present binds in the SQL statement), the newly internal allocated bind object was not freed
+- Fixed possible segfault in OCI_Cleanup() if OCI_SubscriptionRegister() had been previously called call unsuccessfully
+- Fixed internal array allocation when using OCI_ArraySetSize() called many times on the same prepared SQL statement
+- Fixed OCI_ElemGetTimeStamp() and OCI_ElemGetInterval() when collections are retrieved from the server
+- Fixed possible segfault in OCI_TimestampFromCTime() and OCI_TimestampFromCTime() if the libc function localtime() returns a NULL tm structure pointer
+- Fixed OCI_GetSessionTag() linkage: the function was internally named OCI_GetSessionData() instead of OCI_GetSessionTag() in connection.c
+- Fixed binding of date arrays: the introduction of OCI_XXXArrayCreate() in v3.6.0 has introduced a bug in dates array binding that would cause to pass NULL data for some elements of the array
+- Fixed some API naming inconsistency (lower/upper case)
+
+- OCI_ElemGetTimeStamp()      renamed to OCI_ElemGetTimestamp()
+- OCI_ObjectGetTimeStamp()    renamed to OCI_ObjectGetTimestamp()
+- OCI_TimestampSysTimeStamp() renamed to OCI_TimestampSysTimestamp()
+- Macros have been added for backward compatibility
+
+- Existing programs must be recompiled (in order to use this new version of ocilib) with no code change (as compatibility macros are provided)
+
+## 2010-07-26 - Version 3.7.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Added support for Session Pools
+
+- Added support for Oracle Session pools:
+
+- This features has been introduced in Oracle 9.2
+- For Oracle clients < 9.2, sessions are handled as regular connection pools
+
+- Renamed type OCI_ConnPool to OCI_Pool
+- Renamed all OCI_ConnPooXXX() calls to OCI_PoolXXX()
+- Added macros that maps old OCI_ConnPoolXXX() prototypes to OCI_PoolXXX() functions
+- Added new parameter 'type' to OCI_PoolCreate(). Possible values are
+
+- OCI_POOL_CONNECTION: creates a connection pool
+- OCI_POOL_SESSION: creates a session pool
+
+- Added support for session pool tagging:
+
+- Added OCI_GetSessionTag()
+- Added OCI_SetSessionTag()
+
+- Added new parameter 'tag' to OCI_PoolGetConnection()
+
+- Updated documentation:
+
+- Renamed page <module>, section <Connection pooling> to <Oracle pooling>
+- Added Information about session pooling
+
+- Extended fetch interface
+
+- Added OCI_GetStruct()
+- Added OCI_SetStructNumericType()
+- Added demo file fetch_struct.c
+
+- Improved Execute/Fetch performance with prepared statement
+
+- Improved by x15 fetch performance when executing and fetching prepared statements that return resultsets
+
+- Prior to v3.7.0:
+
+  - Before a prepared statement was re-executed, any previous resultset was freed
+  - Then, once the statement was re-executed, the resultset was recreated by OCI_GetResultset()
+
+- From v3.7.0:
+
+  - The resultset is created only once and is just reinitialized before re-execution
+  - Avoiding these unnecessary memory allocations/deallocations improves drastically the performances
+
+- Extended Array interface
+
+- Added OCI_SetBindAllocation()
+- Added OCI_GetBindAllocation()
+- Improved drastically performance for handle based array internally created or externally created with OCI_xxxxArrayCreate()
+- Added demo file array_internal.c
+
+- Miscellaneous changes
+
+- Modified connection internal handles allocation/deallocation:
+
+- Server handle is now allocated/deallocated when physical connection to server is created/freed
+- Session and context handles are now allocated/deallocated at logon/logoff time
+- Before these handles were all allocated/deallocated when physical connection to server was created/freed
+- The old way could cause problems with old Oracle versions
+
+- Existing programs must be recompiled (in order to use this new version of ocilib) with no code change (as compatibility macros are provided)
+
+- Miscellaneous fixes
+
+- Fixed OCI_Object binding:
+
+- Internal objects indicator structures were not bound properly
+- Even if the internal objects indicators were updated correctly, it was not seen by the server
+- Only the object itself nullity flag was sent to server
+
+- Fixed Batch error handling:
+
+- Some errors could not have be caught
+- Added checks in OCI_GetBatchErrorCount()
+
+- Fixed OCI_Element API:
+
+- Setting values with a standalone OCI_Element object associated to a standalone collection was broken
+- For collection of REFs, internal OCI_REf object was not freed by OCI_ElemFree()
+
+- Fixed OCI_Object members internal offset computation for 64bits builds
+- Fixed OCI_DirPathSave() that could not execute on a loaded stream
+- Fixed Connection pooling emulation for Oracle 8i
+- Fixed warnings when compiling OCILIB with OCI_IMPORT_LINKAGE and Oracle 8i
+- Fixed few internal return values literals in OCI_CHECK_XXX macros (like FALSE literal returned for pointer values ...)
+
+## 2010-05-18 - Version 3.6.0
+
+**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+
+- Improved Array interface
+
+- Arrays of non scalar datatypes (based on handles) previously had to be initialized element by element and could be time consuming
+- It is now possible to allocate arrays in one step and thus improve performance (especially with Oracle 11g), internal OCILIB structures and OCI handles are allocated in one step
+- Added OCI_DateArrayCreate()
+- Added OCI_DateArrayFree()
+- Added OCI_TimestampArrayCreate()
+- Added OCI_TimestampArrayFree()
+- Added OCI_IntervalArrayCreate()
+- Added OCI_IntervalArrayFree()
+- Added OCI_LobArrayCreate()
+- Added OCI_LobArrayFree()
+- Added OCI_FileArrayCreate()
+- Added OCI_FileArrayFree()
+- Added OCI_ObjectArrayCreate()
+- Added OCI_ObjectArrayFree()
+- Added OCI_RefArrayCreate()
+- Added OCI_RefArrayFree()
+- Added OCI_CollArrayCreate()
+- Added OCI_CollArrayFree()
+
+- Added proper support for UTF8 strings
+
+- Use OCI_CHARSET_ANSI mode
+- Set the environment variable NLS_LANG to value that contains the substring 'UTF8'
+- Depending on the database charset:
+
+- UTF8: UTF8 strings are used for any text based binds or retrieved columns values
+- Other charsets: UTF8 strings can be used only with national strings (NCHAR/NVARCHAR/NCLOB)
+
+- Extended String support
+
+- Added OCI_BindSetCharsetForm() to enable the use of national charset on bound strings
+
+- Extended LOB API
+
+- It is now possible to specify for CLOB/NCLOB buffer lengths in characters and/or bytes for R/W operations
+- Added OCI_LobRead2()
+- Added OCI_LobWrite2()
+- Added OCI_LobAppend2()
+
+- Modified native CHARSET modes
+
+- OCI_CHARSET_UNICODE replaced by OCI_CHARSET_WIDE
+- OCI_CHAR_UNICODE replaced by OCI_CHAR_WIDE
+- OCI_XXX_UNICODE symbols are still supported for backward compatibility
+
+- Fixed Multiple loads in Direct path mode
+
+- Fixed the API to enable multiple load
+- Updated direct path demo
+
+- Miscellaneous changes
+
+- Added OCI_HandleGetSubscription()
+- Modified OCI_Initialize(): renamed parameter 'home' to 'lib_path'
+- OCI_GetString(): when column base type is not string based, the implicit conversion uses now now dynamic memory allocation to return full data content instead of truncating to OCI_BUFFER_SIZE limit
+- Various documentation updates
+- Modified OCI_LobRead() (and thus OCI_LobRead2()) to set a trailing null character
+- Replaced few left direct malloc() calls by OCI_MemAlloc()
+
+- Miscellaneous fixes
+
+- fixed prototype of OCI_ConnPoolGetlGetNoWait() => OCI_ConnPoolGetGetNoWait()
+- fixed internal raw size retrieving in OCI_ObjectGetRaw() and OCI_ElemSetRaw()
+- fixed OCI_ObjectSetString() in OCI_CHARSET_MIXED mode that could cause a segfault
+- fixed internal string conversions in OCI_CHARSET_MIXED mode on Unix systems that could cause a segfault
+- fixed various problems of RAW and LONG handling in OCI_MIXED_CHARSET mode
+- fixed OCI_ServerGetOutput() when statements are re-prepared
+- fixed computation of objects members offsets (in the internal object opaque structure) which caused misaligned pointer and lead to segfault depending on the members datatype
+- fixed OCI_xxxFmt() functions that were badly formatting the output SQL when more than one DATE parameter was present
+- fixed OCI_BindArrayOfXXXX() documentation
+- fixed OCI_BindArraySetSize() when called many times with a new size > initial size
+- fixed endianness problem on big endian platforms when a string buffer had to be converted
+- fixed internal lengths used in implicit conversions in OCI_GetString() for some datatypes
+- Improved long long support detection
+- fixed national charset attribute detection for NCLOB binds
+- Fixed memory leak appeared in v3.5.0 when deallocating internal fetched LOBs
+
+- Modified developer and support contacts
+
+- use the following contact address for any information/question/help about OCILIB:
+
+- support and help: support@ocilib.net
+- contact and information: vince.rogier@ocilib.net
+
+## 2010-02-03 - Version 3.5.1
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Miscellaneous fixes
+
+- fixed reinitialization of OCI_Statement objects bound to other statements
+- fixed endianness problem with precision attribute of sub columns of objects retrieved with OCI_TypeInfoGet()
+- fixed compilation error with Oracle client < 10gR2 when using build mode OCI_IMPORT_LINKAGE
+- fixed returned value of OCI_GetColumnIndex()
+
+- Documentation updates / fixes
+
+## 2009-12-21 - Version 3.5.0
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Added support for Oracle Database Change notification / Continuous Query Notification
+
+- Added type OCI_Subscription
+- Added OCI_SubscriptionRegister()
+- Added OCI_SubscriptionUnregister()
+- Added OCI_SubscriptionAddStatement()
+- Added OCI_SubscriptionGetName()
+- Added OCI_SubscriptionGetPort()
+- Added OCI_SubscriptionGetTimeout()
+
+- Added type OCI_Event
+- Added OCI_EventGetType()
+- Added OCI_EventGetOperation()
+- Added OCI_EventGetDatabase()
+- Added OCI_EventGetObject()
+- Added OCI_EventGetRowid()
+- Added OCI_EventGetSubscription()
+
+- Added new environment mode OCI_ENV_EVENTS to enable events
+- Updated documentation (new page <modules> <Database Change Notification>)
+
+- Added support for Oracle warning (grace period notification, SQL truncation, etc ...)
+
+- Added OCI_EnableWarnings()
+- Added error type OCI_ERR_WARNING
+- Updated documentation (page <modules> <error handling>)
+
+- New functions
+
+- OCI_CollGetAt2()
+- OCI_SetUserPassword() to renew a user password (expired or active)
+- OCI_SetErrorHandler() to modify user error handler callback after library initialization
+
+- Major Object API internal update, rewrite and improvement
+
+- Speed improvements
+- Now works on Unicode builds (tired to wait after Oracle fixes that never come, so i have reimplemented some buggy OCI calls)
+- Smarter code
+
+- Extended Lob Support
+
+- Added OCI_LobEnableBuffering()
+- Added OCI_LobGetChunkSize()
+
+- Native 64 bits fixes
+
+- Fixed Direct Path API
+- Added casts + modified some variables types
+
+- PL/SQL support fixes
+- Segmentation fault could happen when using OCI_Date binds in PL/SQL statements
+- Bind values for OCI_Date and big_int variables were not updated after OCI_Execute for PL/SQL
+- OCI_ServerGetOutput(): output was broken if PL/SQL statement/blocks were re-executed
+- OCI_ServerGetOutput(): trash string was returned if the number of amount of output lines was greater than the value of the  <arrsize> parameter of OCI_ServerEnableOutput()
+
+- Miscellaneous fixes
+
+- OCI_ImmediateFmt(), OCI_PrepareFmt(), OCI_ExecuteStmtFmt():  trailing character of formatted string representation of dates was missing on non windows platforms
+- OCI_ObjectGetColl(): the internal OCI Collection handle of the returned OCI_Coll object was invalid and thus caused segfault when calling OCI_Coll functions afterwards for these objects
+- OCI_DateNextDay(): On Unix systems+Unicode builds -> wrong value passed to the OCI internal call
+- OCI_Immediate(): if execution failed, internal OCI_Statement (and thus server cursor) was not deallocated
+- OCI_ConnectionFree(): removed internal call to object cache cleanup routine
+- OCI_DatabaseShutdown(): a segfault happened if the connection to the server could not be done
+- fixed typos in OCILIB documentation (generated from OCILIB main header file: ocilib.h)
+
+- Miscellaneous changes
+
+- OCI_RefToText(): parameter size is now if type <unsigned int> instead of <int>
+- Modified: OCI_BIND_MAX (maximum number of binds for a statement) is now 1024 by default instead of 512
+- Added Oracle spatial demo source (demo/geometry.c)
+- Now, OCI_API is by default set to __stdcall when using MS visual studio if it is not already defined
+- If client version >= 11.1, OCILIB Resultsets allocate internal OCI descriptors array in one call (lobs, files, timestamp and interval)
+
+- Information: OCI_DatabaseStartup() fails on Unicode builds because OCI function OCIDBStartup() fails if OCI is initialized in UTF16 mode ! Another bug to report to Oracle !
+
+## 2009-07-28 - Version 3.4.0
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Added support for Oracle 11g remote instance management
+
+- Added OCI_DatabaseStartup()
+- Added OCI_DatabaseShutdown()
+- Added documentation (page <modules> <Remote Instance startup/shutdown>)
+
+- Miscellaneous fixes
+
+- Fixed String binds: since v.3.3.0, an error ORA-01480 could happened if the string length was equal to the max size passed to OCI_BindString()
+- Fixed OCI_CollGetSize() that was returning wrong size after OCI_Execute() if the collection was bound as pure out variable or retrieved as a member of fetched OCI_Object handle
+- Fixed OCI_GetColumnNullable(): since v.3.0.0, it was always returning TRUE
+- Fixed internal binds buffer lengths updates
+
+- Miscellaneous changes
+
+- Removed collection bounds / input index checking in OCI_CollGetAt() and OCI_CollSetAt()
+- Modified behavior of OCI_BindGetDataSize() and OCI_BindSetDataSize() (see documentation or function declarations for more information)
+- Modified Oracle version handling:
+- Minor versions of OCI are now also detected at compile and runtime time
+- Versions constants have changed:
+- before:
+  - OCI_8 (8), OCI_9 (9), OCI_10 (10), OCI_11 (11)
+- now:
+  - OCI_8_0  ( 800), OCI_8_1  ( 810)
+  - OCI_9_0  ( 900), OCI_9_1  ( 920)
+  - OCI_10_1 (1010), OCI_10_2 (1020)
+  - OCI_11_1 (1110), OCI_11_2 (1120)
+- Compatibility macros were added to map old versions constant:
+  - OCI_8 (=> OCI_8_0), OCI_9 (=> OCI_9_0), OCI_10 (=> OCI_10_1), OCI_11 (=> OCI_11_1)
+- All OCILIB functions returning single version number now returns the new version constants
+- Added macros to extract versions part numbers from new single version numbers:
+  - OCI_VER_MAJ(): major    version
+  - OCI_VER_MIN(): minor    version
+  - OCI_VER_REV(): revision version
+
+## 2009-06-30 - Version 3.3.0
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Added SQL command and verb retrieving
+
+- Added OCI_GetSQLVerb()
+- Added OCI_GetSQLCommand()
+- Added OCI_SFC_XXXX constants for the 124 Oracle SQL command codes
+
+- Added support for batched errors for Array DML
+
+- Added OCI_ErrorGetRow()
+- Added OCI_GetBatchError()
+- Added OCI_GetBatchErrorCount()
+- Updated array interface demo (demo/array.c)
+
+- Extended Lob Support
+
+- Added OCI_LobGetMaxSize()
+- Added OCI_LobFlush()
+
+- Extended Collection API
+
+- Added OCI_CollClear()
+- Modified OCI_CollTrim(), OCI_CollGetMax(), OCI_CollGetSize() that now take or return 'unsigned int' instead of 'int' type
+- Modified OCI_CollTrim() to accept a zero value as number of elements to trim
+
+- Modified and extended Bind API
+
+- Added OCI_BindSetNull()
+- Added OCI_BindSetNullAtPos()
+- Added OCI_BindIsNull()
+- Added OCI_BindIsNullAtPos()
+- Modified OCI_SetNullxxx() calls that are now defined as obsolete macros around OCI_BindSetxxx() calls
+
+- Extended OCI_ImmediateXXX() API
+
+- Added missing support for Objects, Collection and REF
+- Added OCI_ARG_OBJECT, OCI_ARG_COLLECTION and OCI_ARG_REF
+
+- Extended OCI_XXXFmt() API
+
+- Added support for REFs
+- Added token identifier '%r' for REFs
+
+- Miscellaneous changes
+
+- Added OCI_Ping()
+- Added Exception type OCI_ERR_CREATE_OCI_ENVIRONMENT if internal Oracle OCI environment handle cannot be allocated
+- Updated documentation (page <modules> <Installing OCILIB>)
+- Modified GNU configure script: the Oracle OCI library folder search sequence is now: lib32, lib, lib64
+
+- Miscellaneous fixes
+
+- Fixed OCI_CollAssign() that was assigning destination collection to source collection
+- Fixed missing const qualifier in some Direct Path functions prototypes
+- Fixed OCI_ElemSetXXX() for numeric types that was returning FALSE for local collection
+- Fixed PL/SQL tables binds for non scalar types (wrong values handled since v3.2.0)
+- Fixed possible infinite recursion when calling some OCI_ErrorGetXXX() calls within an error handler at OCILIB initialization
+- Fixed Error message if Oracle shared lib was not found: library name was not correct on Unicode builds
+- Fixed OCI_GetString(): in mixed charset builds, the returned string was truncated for numeric columns
+- Fixed internal function OCI_MoveString() for in-place string buffers packing/expansion
+- Fixed in/out or out string binds:
+- Bind indicator is now not reset to "not null" after an execute call if the statement is PL/SQL code
+- Wide string binds on Unixes platforms (Mixed and Unicode builds):
+- the trailing null character was missing if the bound string had been shortened by some PL/SQL code or user
+- Internal initialization of bind array of data lengths: the length was including null terminator character and could lead to some memory corruptions
+- Fixed some demo example codes
+- Fixed computation of internal OCI_Object sub objects offsets in their parents’ indicator array (could have caused segfaults and/or bad indicator values)
+- Fixed problems with OCI_Elem internal null indicators:
+- In some cases, a segfault caused by a null pointer could happened
+- For OCI_Object handles held by an OCI_Elem handle, the object internal indicator structure was not properly set/retrieved
+
+## 2009-04-20 - Version 3.2.0
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Added support for Direct Path Loading
+
+- See section in the documentation (page <module>, section <Direct Path loading>)
+- Added handle OCI_DirPath
+- Added OCI_DirPathCreate()
+- Added OCI_DirPathFree()
+- Added OCI_DirPathSetColumn()
+- Added OCI_DirPathPrepare()
+- Added OCI_DirPathSetEntry()
+- Added OCI_DirPathConvert()
+- Added OCI_DirPathLoad()
+- Added OCI_DirPathReset()
+- Added OCI_DirPathFinish()
+- Added OCI_DirPathAbort()
+- Added OCI_DirPathSave()
+- Added OCI_DirPathFlushRow()
+- Added OCI_DirPathSetCurrentRows()
+- Added OCI_DirPathGetCurrentRows()
+- Added OCI_DirPathGetMaxRows()
+- Added OCI_DirPathSetDateFormat()
+- Added OCI_DirPathSetParallel()
+- Added OCI_DirPathSetNoLog()
+- Added OCI_DirPathSetCacheSize()
+- Added OCI_DirPathSetBufferSize()
+- Added OCI_DirPathGetAffectedRows()
+- Added OCI_DirPathGetRowCount()
+- Added OCI_DirPathGetErrorColumn()
+- Added OCI_DirPathGetErrorRow()
+- added OCI_HandleGetDirPathStream()
+- added OCI_HandleGetDirPathColArray()
+- added OCI_HandleGetDirPathCtx()
+- Added Exception type OCI_ERR_COLUMN_NOT_FOUND
+- Added Exception type OCI_ERR_DIRPATH_STATE
+- updated demo application with a direct path loading example
+- Added source code of a standalone application in demo directory
+
+- Modified Database objects describe API
+
+- OCI_Schema handle has been renamed to OCI_TypeInfo
+- All OCI_SchemaXXX() functions have been renamed to OCI_TypeInfoXXX()
+- Constants OCI_SCHEMA_XXX have been renamed to OCI_TIF_XXX
+- Macro have been added to mapp old types, defines and names to new ones for backward compatibility
+
+- Extended binding possibilities
+
+- Added OCI_BindArrayGetSize()
+- Added OCI_AllowRebinding()
+- Different host variables can be bound to the same statement bind placeholder
+- It is possible the update a bind array real number of element before execution
+- Added exception type OCI_ERR_BIND_ARRAY_SIZE
+- Fixed OCI_SetNullXXX(): the upper bound of an array bind was not checked
+
+- Extended Object API
+
+- Added OCI_ObjectGetStruct()
+- Now it is possible to retrieve the underlying C (OTT style) structure of an OCI_Object handle
+
+- Fixed OCI_Element API
+
+- Modified OCI_ElemCreate() that takes now an OCI_TypeInfo handle instead of an OCI_Connection handle
+- Fixed OCI_ElemFree() that could not free underlying sub objects OCI handles
+- Fixed segfaults when using local instance of OCI_Elem objects created wit OCI_ElemCreate()
+
+- Extended UROWID support
+
+- Large UROWID hexadecimal strings were truncated to OCI_ROWID_SIZE (default 23) characters
+- Now OCILIB handles correctly UROWID columns (size up to 4000 chars)
+
+- Miscellaneous fixes
+
+- Fixed OCI_TimestampToCTime(): members tm_year and tm_mon of the tm structure passed to the function were not properly set
+- Fixed memory leak: when re-executing a prepared statement that hold a SQL 'select', internal OCI column descriptor for each column of the resultset was not freed
+- Fixed implicit conversion of numeric data to string when using OCI_GetString() in mixed and Unicode builds: Entire values had a trailing dot.
+- Fixed OCI_LongRead(): internal offset variable was not reset across OCI_FetchNext() calls causing NULL reads after some fetch sequences
+- Fixed memory leak in internal function OCI_ObjectInit()
+- Fixed configure script for GNU package to detect OCI header location of some older versions ($ORACLE_HOME/rdbms/demo)
+- Fixed internal OCI_StringCopy2to4bytes() when converting internal Oracle UTF16 strings with odd lengths to Unix UTF32 strings
+- Renamed OCI_ColumnGetFractionnalPrecision() to OCI_ColumnGetFractionalPrecision() - added macro for backward compatibility
+
+- Updated windows package
+
+- Added 2 code::blocks projects
+- ocilib_static_lib_mingw.cbp: to build OCILIB as a 32 bits static library (ANSI, mixed and Unicode builds) in ocilib/proj/mingw
+- ocilib_demo_codeblocks.cbp: to build OCILIB 32 bits demo application (ANSI, mixed and Unicode builds) in ocilib/proj/test
+- precompiled OCILIB 32 bits static libraries are now provided within the package:
+- built with Code::Block 8.03 (minGW / gcc-core-3.4.5)
+- available static libs in ocilib/lib32: libociliba.a (ANSI), libocilibm.a (mixed), libocilibw.a (Unicode)
+- OCILIB prebuilt DLLs are still compiled with Microsoft Visual Studio
+
+- Miscellaneous internal changes
+
+- The object cache is now freed when a connection is terminated
+- Internal source file schema.c has been renamed to typeinfo.c
+- Internal source file dirpath.c has been added
+- Fixed some internal calls to please GDCC and its aliasing warnings with -Wall options
+
+- Documentation updates
+
+- Added notes in OCI_ConnectionCreate() documentation for using External credentials
+- Added notes in OCI_BindArraySetSize() documentation for modifying input array number of elements between statement executions
+- All OCILIB headers and sources files (45 files - 43.000 lines) have been checked with spell checker to correct typos (my English remains not so good !)
+
+## 2009-01-23 - Version 3.1.0
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Added support for Oracle REF datatype
+
+- Added OCI_RefCreate()
+- Added OCI_RefFree()
+- Added OCI_RefGetObject()
+- Added OCI_RefAssign()
+- Added OCI_RefIsNull()
+- Added OCI_RefSetNull()
+- Added OCI_RefToText()
+- Added OCI_RefGetHexSize()
+- Added OCI_GetRef2()
+- Added OCI_GetRef()
+- Added OCI_BindRef()
+- Added OCI_BindArrayOfRefs()
+- Added OCI_RegisterRef()
+- Added OCI_ElemGetRef()
+- Added OCI_HandleGetRef()
+- Added OCI_ObjectGetRef()
+- Added OCI_ObjectGetSelfRef()
+
+- Added some tracing features
+
+- Added OCI_SetTrace()
+- Added OCI_GetTrace()
+
+- Extended Object API
+
+- Fixed internal handling of null attributes (it has been rewritten)
+- Modified local (transients) objects creation. Now:
+
+- By default, all attributes are set to NULL
+- Non scalar attributes must be set by calling new functions OCI_ObjectSetXXX()
+
+- Added setters functions for non scalar object attributes
+
+- OCI_ObjectSetDate
+- OCI_ObjectSetInterval
+- OCI_ObjectSetTimestamp
+- OCI_ObjectSetColl
+- OCI_ObjectSetObject
+- OCI_ObjectSetFile
+- OCI_ObjectSetLob
+- OCI_ObjectSetRef
+
+- Added Miscellaneous Object functions
+
+- Added OCI_ObjectIsNull()
+- Added OCI_ObjectAssign()
+- Added OCI_ObjectGetType()
+
+- Extended Collection elements API
+
+- Fixed: OCI_ElemSetNull() that was only updating null indicator
+- Fixed: some functions were not checking input element handle nullity
+- Added checks on element type in OCI_ElemGetXXX() calls that throw an exception if the element type is not the same type as the one requested
+- Added setters functions for non scalar element base datatypes
+
+- OCI_ElemSetDate()
+- OCI_ElemSetInterval()
+- OCI_ElemSetTimestamp()
+- OCI_ElemSetColl()
+- OCI_ElemSetObject()
+- OCI_ElemSetFile()
+- OCI_ElemSetLob()
+- OCI_ElemSetRef()
+
+- Extended Bind information
+
+- Modified: OCI_Bind handles are now public and can be retrieved for public information
+- Added OCI_GetBindCount()
+- Added OCI_GetBind()
+- Added OCI_GetBind2()
+- Added OCI_BindGetName()
+- Added OCI_BindGetType()
+- Added OCI_BindGetSubtype()
+- Added OCI_BindGetStatement()
+- Added OCI_BindGetData()
+- Added OCI_BindGetDataCount()
+- Added OCI_BindGetDataSize()
+- Added OCI_BindGetDataSizeAtPos()
+- Added OCI_BindSetDataSize()
+- Added OCI_BindSetDataSizeAtPos()
+- Added OCI_SetNull2()
+- Added OCI_SetNullAtPos2()
+- Extended OCIBindxxx() calls safety:
+
+- An error OCI_ERR_BIND_ALREADY_USED is now raised if the bind name or position is already bound to the statement
+- With the bind mode by position, provided bind indexes <= 0  and > OCI_BIND_MAX will cause an error OCI_ERR_OUT_OF_BOUNDS
+
+- Extended binds/registers limits:
+
+- OCI implements the SQL returning clause through binds operations
+- OCILIB wraps the result of the returning clause within OCI_Resultet object but has to use internal binds to create its resultset
+- Prior to v3.1.0, OCI_BIND_MAX (default 512) was the maximum of OCI_Bindxxx() including OCI_Registerxxx() that an OCI_Statement could handle
+- With v3.1.0, OCILIB can handle OCI_BIND_MAX user binds handle and OCI_BIND_MAX items in the returning clause
+
+- Fixed Unicode support for Unixes platforms
+
+- Unicode support for platforms with 4 bytes wchar_t was broken
+- Fixed configure script was setting bad charset macros
+- Fixed some internal buffer expansion functions
+
+- Miscellaneous public modifications
+
+- Added OCI_IsNull2()
+- Added OCI_ResultsetGetStatement()
+- Added OCI_BindArrayOfColls()
+- Added OCI_GetDataLength()
+
+- Added functions to retrieve OCI_Schema object from various OCILIB object bases on Oracle object type:
+
+- Added OCI_ObjectGetSchema()
+- Added OCI_CollGetSchema()
+- Added OCI_RefGetSchema()
+
+- Added runtime information about OCILIB builds modes:
+
+- Added OCI_GetImportMode()
+- Added OCI_GetCharsetMetaData()
+- Added OCI_GetCharsetUserData()
+
+- On Oracle versions >= 11g, OCILIB now sets the client driver layer name information
+
+- Value set to the constant OCILIB_DRIVER_NAME (by default "OCILIB")
+- It is recorded in the system views V$SESSION_CONNECT_INFO and GV$SESSION_CONNECT_INFO
+
+- Modified ocilib demo to properly support MinGw and Unix based Unicode console output
+
+- Miscellaneous internal modifications
+
+- Added internal reference counter to OCI_Schema object
+
+- Some OCILIB objects keep a pointer to some OCI_schema objects
+- If OCI_SchemaFree() was called, these objects were holding a reference to a freed block of memory and then accessing this reference could cause a segfault
+- Now OCI_SchemaFree() only frees a schema object if its reference counter is zero.
+
+- Miscellaneous fixes
+
+- OCI_FetchPrev() was returning FALSE if called directly after OCI_FetchLast() on resultsets with less then OCI_FETCH_SIZE rows (default set to 20)
+- if OCI_FetchXXX calls were returning FALSE, internal error flag was wrongly set to TRUE and OCI_GetLastError() could return a previous OCI_Error handle
+- OCI_Fetchxxx() functions could return TRUE even if the given SQL statement had some SQL conversion function that failed (like to_date(), etc..)
+- OCI_Getxxx() functions could cause a segfault called before any OCI_Fetchxxx() calls
+- OCI_IsConnected() was always returning FALSE since v3.0.0
+- OCI_SchemaGet() with OCI_SCHEMA_TABLE was causing an ORA-24328 with Oracle 8 and 9 (working fine with Oracle 10) since v3.0.0
+- OCI_Execute() could raise an ORA-01483 if an OCI_Timestamp handle of type OCI_TIMESTAMP, initialized with OCI_TimestampSysTimeStamp() only, was bound to the statement
+- Fixed OCI_TimestampIntervalAdd() and OCI_TimestampIntervalSub() that might have raised errors with OCI_Timestamp handles of type OCI_TIMESTAMP
+- Fixed some preprocessor directives in oci_loader.h
+- Fixed OCI_Object re-usability: internal sub object could not be freed when fetching next object and thus lead to memory leaks
+- Since v3.0.0, fetching LONG column with OCI_LONG_IMPLICIT mode was truncating data to its half length in Unicode and Mixed Builds
+- Fixed some preprocessor directives for MinGw support
+- Fixed runtime loading of oracle libs that might have not worked if the provided OCI library location ended with an existing slash
+- Fixed internal OCI_CopyString() that might caused some troubles in Unicode builds
+- Fixed some internal wrong arrays size used for memory allocation
+- Fixed some OCI_Date and OCI_Timestamp decode functions to work properly on big-endian platforms
+- Fixed string binding on mixed charset build with Oracle 8i
+- since v3.0.0, OCILIB source compilation was broken for oracle 8i
+- Fixed demo file output.c
+
+## 2008-10-17 - Version 3.0.1
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Miscellaneous fixes
+
+- Added checks (OCI_ERR_MIN_VALUE) on len parameter (len >=1) of OCI_LobRead(), OCI_LobApend(), OCI_LobWrite(), OCI_FileRead()
+- Compilation of ocilib source with MSCV6++ was broken (vsnprintf was not defined to _vsnprintf anymore)
+- Memory leak: internal bind data allocated for handling PL/SQL tables was never freed
+- Memory leak: internal OCI_Elem object used by OCI_Coll was never freed
+- Memory leak: since v3.0.0,  OCI_Statement internal stored SQL command string was not freed anymore
+- Scrollable cursors: executing a non select query on a scrollable statement was causing an oracle error
+
+- The library has been re-tested with various test suites under valgrind to check memory handling and it is now clean !
+
+## 2008-10-13 - Version 3.0.0
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Added support for scrollable cursors
+
+- See section in the documentation (page <module>, section <Fetching data>)
+- Added OCI_FetchPrev()
+- Added OCI_FetchLast()
+- Added OCI_FetchFirst()
+- Added OCI_FetchSeek()
+- Added OCI_SetFetchMode()
+- Added OCI_GetFetchMode()
+- Added OCI_GetCurrentRow()
+
+- Added support for Collection types: VARRAYs and NESTED TABLES
+
+- Added section in the documentation (page <module> - section <Oracle Collections (Varrays and Nested Tables)>)
+- Added type OCI_Coll
+- Added type OCI_Iter
+- Added type OCI_Elem
+- Added OCI_CollCreate()
+- Added OCI_CollFree()
+- Added OCI_CollAssign()
+- Added OCI_CollGetType()
+- Added OCI_CollGetMax()
+- Added OCI_CollGetSize()
+- Added OCI_CollTrim()
+- Added OCI_CollGetAt()
+- Added OCI_CollSetAt()
+- Added OCI_CollAppend()
+- Added OCI_BindColl()
+- Added OCI_GetColl()
+- Added OCI_GetColl2()
+- Added OCI_ObjectGetColl()
+- Added OCI_HandleGetColl()
+- Added OCI_IterCreate()
+- Added OCI_IterFree()
+- Added OCI_IterGetNext()
+- Added OCI_IterGetPrev()
+- Added OCI_ElemCreate()
+- Added OCI_ElemFree()
+- Added OCI_ElemGetShort()
+- Added OCI_ElemGetUnsignedShort()
+- Added OCI_ElemGetInt()
+- Added OCI_ElemGetUnsignedInt()
+- Added OCI_ElemGetBigInt()
+- Added OCI_ElemGetUnsignedBigInt()
+- Added OCI_ElemGetDouble()
+- Added OCI_ElemGetString()
+- Added OCI_ElemGetRaw()
+- Added OCI_ElemGetDate()
+- Added OCI_ElemGetTimeStamp()
+- Added OCI_ElemGetInterval()
+- Added OCI_ElemGetLob()
+- Added OCI_ElemGetFile()
+- Added OCI_ElemGetObject()
+- Added OCI_ElemGetColl()
+- Added OCI_ElemSetShort()
+- Added OCI_ElemSetUnsignedShort()
+- Added OCI_ElemSetInt()
+- Added OCI_ElemSetUnsignedInt()
+- Added OCI_ElemSetBigInt()
+- Added OCI_ElemSetUnsignedBigInt()
+- Added OCI_ElemSetDouble()
+- Added OCI_ElemSetString()
+- Added OCI_ElemSetRaw()
+- Added OCI_ElemSetNull()
+- Added OCI_ElemIsNull()
+
+- Massive Library rewrite:
+
+- Update OCILIB Full Name from "OCILIB (C Wrapper for Oracle OCI)" to "OCILIB - C Driver for Oracle"
+- Split OCILIB main source file into 30 source files
+- All public and internal functions have been partially / largely reorganized / rewritten
+- Miscellaneous code optimization, enhancement and cleanup
+- OCILIB source code compilation produces zero warnings with highest warning settings of GCC and Microsoft C compiler
+- Note for GCC builds:
+
+- OCILIB static/shared libs are now bigger because of the split sources and the autotools default CFLAG set to "-g -02"
+- Stripping the library (using the command strip) will make it 3 times smaller.
+
+- Standardization of functions implementation:
+
+- 1 - Checks
+- 2 - Function code
+- 3 - thread error status (optional)
+- 4 - Single exit point
+
+- OCILIB main header file (ocilib.h) moved from folder ./src to folder ./include.
+
+- For MS windows users, do not forget to update your compiler/IDE settings for include paths
+
+- Extended error handling
+
+- Updated section in the documentation (page <module>, section <Error handling>)
+- Major rewrite for the internal error handling code
+- Added support for thread contextual error handling
+
+- New Flag OCI_ENV_CONTEXT for OCI_Initialize()
+- Added OCI_GetLastError()
+
+- Enforced input parameter checking
+- Added OCI_GetSqlErrorPos() to retrieve the position error in a SQL statement
+- Now, OCILIB calls guarantees to raise an error in any situation where it should instead of just returning to caller as it was doing before
+- Added some Memory checking:
+
+- OCILIB now keeps counts of all internal allocated OCI handles, descriptors and objects
+- OCI_Cleanup() will throw an error in case of unfreed OCI object and returns FALSE
+
+- Modified return values for OCi_ErrorGetType():
+
+- OCI_ERR_ORACLE: OCI calls error, SQL errors, ...
+- OCI_ERR_OCILIB: internal OCILIB and application logic errors
+
+- New exceptions are raised:
+
+- OCI_ERR_NONE: "No error"
+- OCI_ERR_NOT_INITIALIZED: "OCILIB has not been initialized"
+- OCI_ERR_LOADING_SHARED_LIB: "Cannot load OCI shared library (%lib_name%)"
+- OCI_ERR_LOADING_SYMBOLS: "Cannot load OCI symbols from shared library"
+- OCI_ERR_MULTITHREADED: "OCILIB has not been initialized in multi-threaded mode"
+- OCI_ERR_MEMORY: "Memory allocation failure (type %type_name%, size: %block_size%)"
+- OCI_ERR_NOT_AVAILABLE: "Feature not available (%feature_name%) "
+- OCI_ERR_NULL_POINTER: "A null %type_name% has been provided"
+- OCI_ERR_NOT_SUPPORTED: "Oracle datatype not supported (SQL code %oracle_code%) " (currently only REFs are not supported)
+- OCI_ERR_PARSE_TOKEN: "Unknown identifier %token% while parsing SQL"
+- OCI_ERR_MAP_ARGUMENT: "Unknown argument %arg_code% while retrieving data"
+- OCI_ERR_OUT_OF_BOUNDS: "Index %value% out of bounds. Must be between %min% and %max%"
+- OCI_ERR_UNFREED_DATA: "Found %nb% unfreed %data_type%"
+- OCI_ERR_MAX_BIND: "Maximum number of binds (%limit%) already reached" (currently 512)
+- OCI_ERR_ATTR_NOT_FOUND: "Object attribute '%name%' not found"
+- OCI_ERR_MIN_VALUE: "The integer parameter value must be at least %min%"
+- OCI_ERR_NOT_COMPATIBLE: "Elements are not compatibles (type 1 = %typecode1%, type 2 = %typecode2%)"
+- OCI_ERR_STMT_STATE: "Unable to perform this operation on a %stmt_state% statement"
+- OCI_ERR_STMT_NOT_SCROLLABLE: "The statement is not scrollable"
+
+- The exception OCI_ERR_NOT_INITIALIZED is only available with OCI_GetLastError(), even
+    if OCI_ENV_CONTEXT is not used with OCI_Initialize(), and is raised when calling OCI_XXXXCreate()
+    to allocate OCILIB handles before any call to OCI_Initialize()
+
+- Extended implicit datatype conversions
+
+- Added OCI_SetDefaultFormatNumeric()
+- Added OCI_GetDefaultFormatNumeric()
+- Added OCI_SetDefaultFormatDate()
+- Added OCI_GetDefaultFormatDate()
+- Modified OCI_SetFormatDate() and OCI_GetFormatDate() that now are macro for compatibility with older code
+- Added support for implicit conversion:
+
+- String columns can be retrieved as numeric data
+- OCI_GetString() and OCI_GetString() can return string data whatever the real type of the column (except for Object, Collection and Cursor based columns)
+
+- Improved internal numeric datatypes handling
+
+- Modified: public OCILIB datatype OCI_CDT_INTEGER and OCI_CDT_DOUBLE has been replaced by one datatype: OCI_CDT_NUMERIC
+- Modified: Now, all fetched numeric columns are internally mapped to OCINumber OCI type and to public type OCI_CDT_NUMERIC
+- Modified: Much cleaner, compact an easier code for handling OCI_GetXXXX() calls for all numeric types
+
+- Extended Date, timestamp and interval support
+
+- Added OCI_TimestampGetDateTime()
+- Added checks for securing input integer pointer:
+
+- OCI_DateGetTime(), OCI_DateGetDate(), OCI_DateGetDateTime()
+- OCI_TimestampGetTime(), OCI_TimestampGetDate(), OCI_TimestampGetDateTime(), OCI_TimestampGetTimeZoneOffset()
+- OCI_IntervalGetDaySecond(), OCI_IntervalGetYearMonth()
+
+- Extended OCILIB documentation that has been updated and some precisions has been added:
+
+- Added: page <module> - section <PL/SQL support> with new code examples
+- Added: page <module> - section <Collections (Varrays and Nested Tables> with new code examples
+- Extended: page <module> - section <Error handling> for thread contextual error handling
+- Extended: page <module> - section <Fetching data> for scrollable cursors and string conversions
+- Extended: page <module> - section <Library objects and datatypes>) for supported datatypes
+- Updated: page <module> - section <Charset support>
+- Modified: page <module> - section <Build Options> content moved to page <module> - section <Installing OCILIB>
+- Updated: miscellaneous changes
+
+- Miscellaneous changes
+
+- Modified: up to 110 various functions prototypes have been modified to change the type of the return value or some parameters from int -> unsigned int
+- Modified: OCI_GetResultset() returns now the first resultset if it exists instead of creating a new one
+- Modified: OCI_SetNull() and OCI_SetNullAtPos(): now indexes and positions start at 1
+- Modified: OCI_BIND_MAX (maximum number of binds for a statement) is now 512 by default instead of 256
+- Modified: OCI_BindArraySetSize(): parameter nbelem type modified from 'int' to 'unsigned int'
+- Modified: OCI_HashGetEntry(): now indexes and positions start at 1
+- Modified: Rearranged internal structures to respect alignment and avoid padding
+- Modified: OCI_HashGetEntry(): now indexes and positions start at 1
+- Modified: return value in case of failure for OCI_TransactionGetMode() [OCI_ERROR->OCI_UNKNOWN] and OCI_TransactionGetTimeout() [OCI_ERROR -> 0]
+- Modified: OCI_GetColumnXXX() calls are now renamed to OCI_ColumnGetXXX() and old prototypes are maintained as macros for backward compatibility
+- Added: OCI_StatementGetConnection()
+- Added: OCI_ColumnGetSchema()
+- Added: OCI_ColumnGetSubType()
+- Added: support for MSVC6++/Unicode builds
+
+- Inclusion of wchar.h is now done in extern C++ block for MSVC6++ and cpp applications
+- swprintf() is mapped to _snwprintf() because VC6 C-library is not ISO C compliant
+
+- Fixed some Connection pools problems
+
+- Fixed: Connection pools: every call to OCI_ConnPoolGetConnection() was allocating internal data instead of using existing ones.
+- Fixed: Memory leak: internal connection transaction handle was never freed
+- Fixed: OCI_ConnPoolCreate(): parameter 'incr_con' was not used (value '1' used instead)
+
+- Fixed some PL/SQL table problems
+
+- Fixed: PL/SQL table pure IN binds was causing PL/SQL error when the table parameters was accessed by PL/SQL procedures
+- Fixed: Passing the value 1 for array size in PL/SQL tables binds caused an ORA-06550
+
+- Fixed Oracle Long fetching
+
+- Segmentation fault was happening if a select contained a LONG column + other columns
+- Unnecessary reallocation of internal LONG buffers was done at every internal fetch call (by default every 20 rows)
+- When using OCI_LONG_IMPLICIT (LONG mapped to VARCHAR), strings returned by OCI_GetString() might not have their final null character
+
+- Modified GNU configure scripts
+
+- Added: For GNU builds added configure option --with-custom-loader for platforms that are not using '-ldl' (if using option --with-oracle-linkage=runtime)
+- Fixed: Some configure options were broken
+- Modified: Added some checks and some outputs
+
+- Miscellaneous fixes
+
+- Fixed: Replaced any references of 'long' C type with 'int' C types in Unix wchar internal conversion functions (on 64bits platforms,
+        sizeof(long) is 8 bytes so it lead to some buffer bad alignment)
+- Fixed: Second parameter 'ptm' of OCI_DateToCTime() and OCI_TimestampToCTime() was not mandatory as it should have been
+- Fixed: Unicode buffer conversion: Internal OCI_StringLength() could not work properly on some architectures
+- Fixed: Binding 64bits integers was not working properly (wrong internal flags)
+- Fixed: OCI_ObjectGetShort() and OCI_ObjectGetUnsignedShort() were missing in ocilib.c
+- Fixed: the header "limits.h" was not included in ocilib.h and on some configurations the support of 'long long' could not be detected
+- Fixed: CLOBs read/writes on OCILIB Unix/Unicode builds could not work properly (wrong buffer passed to OCI)
+- Fixed: OCI_SetUserData() was not exported
+- Fixed: return value of the declaration of OCI_GetVersionConnection() was wrong (boolean instead of unsigned int)
+- Fixed: OCI_ServerEnableOutput() and OCI_ServerDisableOutput() prototypes did not have the OCI_API call convention (for MS builds)
+- Fixed: OCI_ObjectGetString() prototype was returning wrong type 'mtext *' instead of 'dtext *'
+
+- Updated main demo application
+
+- Added: Example for scrollable cursors and collections (varrays and nested tables)
+- Fixed: some bad cast could lead buffer bad filling in mixed charset build
+
+- Fixed Mixed charset builds (OCI_CHARSET_MIXED ONLY)
+
+- Fixed: OCI_ObjectGetString() and OCI_ObjectSetString() were misunderstanding string buffers
+- Fixed: OCI_ServerEnableOutput() was not allocating enough memory to hold output buffer lines
+- Info: OCILIB functions using the OCI functions OCIStringPtr() and OCIStringAssignText() have a limitation on mixed charset builds:
+
+- In mixed builds, OCILIB Strings (dtext *) used for handling user data are wchar_t strings, but the underlying OCI API
+    understands these strings as not Unicode but ANSI or other encoding
+- So, there is now, when building OCILIB with OCI_CHARSET_MIXED, an internal conversion to/from ANSI data when using:
+
+- OCI_ObjectGetString() and OCI_ObjectSetString()
+- OCI_ElemGetString() and OCI_ElemSetString()
+
+## 2008-07-24 - Version 2.5.1
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Fixed: OCILIB builds with Runtime loading of OCI shared library activated
+
+- Loading dynamically OCIMutexXXX() functions was broken with v2.5.0
+- Runtime loading of the OCI shared library on Unix-like platforms was broken with v2.5.0
+
+- Fixed Unicode builds:
+
+- Binding C Unicode strings (wchar_t *) to PL/SQL tables of char/varchar was throwing a PLS-00418 error
+- The internal buffer expansion (for Unix-like platforms where wchar_t is 4 bytes) could mess up the data for arrays of string binds
+- OCI_ConnPoolGetConnection() could return NULL with an Oracle 8i client if OCILIB was built with an OCI version >= 8 or with OCI_IMPORT_RUNTIME option
+
+## 2008-07-21 - Version 2.5.0
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Added support for PL/SQL tables (PL/SQL arrays)
+
+- Bind (input, output) C arrays to PL/SQL using OCI_BindArrayOfxxx() functions
+- All the OCI_BindArrayOfxxx() functions take now an extra parameter: the size of the array for PL/PL/SQL table
+- For regular array interface bind, pass 0 for the array size which is set by OCI_BindArraySetSize()
+
+- Extended Date, timestamp and interval support
+
+- Added OCI_DateGetDateTime()
+- Added OCI_DateSetDateTime()
+- Added support for converting C types (time_t, tm) to/from OCI_Date and OCI_Timestamp:
+
+- Added OCI_DateFromCTime()
+- Added OCI_DateToCTime()
+- Added OCI_TimestampFromCTime()
+- Added OCI_TimestampToCTime()
+
+- Date, timestamp and interval can now be create outside a database connection:
+
+- To create a connection independent object, pass a NULL OCI_Connection pointer to OCI_DateCreate(), OCI_TimestampCreate() and OCI_intervalCreate() functions
+- Keep in mind that using a connection pointer is still recommended because it is checking that the server is able to handle these datatypes
+
+- Fixed OCI_TimestampIntervalAdd(), OCI_TimestampIntervalSub():
+
+- If the timestamps type was not OCI_TIMESTAMP_TZ, an error occurred
+- Now, these functions changes the timestamps types for OCI raw call and set it back before returning
+- Possible bug OCI -> Investigating with Oracle support
+
+- Extended OCI_Connection handle attributes
+
+- Added OCI_IsConnected()
+- Added OCI_SetUserData()
+- Added OCI_GetUserData()
+
+- Added Support for retrieving server output
+
+- Added OCI_ServerEnableOutput()
+- Added OCI_ServerDisableOutput()
+- Added OCI_ServerGetOutput()
+
+- Added Support for OCI Threadkeys
+
+- Thread Keys are kind of process wide variable identified by a string identifier with thread specific values
+- See section in the documentation (page <module>, section <Threads and mutexes>)
+- Added OCI_ThreadKeyCreate()
+- Added OCI_ThreadKeyGetValue()
+- Added OCI_ThreadKeySetValue()
+
+- Extended runtime loading of Oracle shared libs on various Unix-like systems
+
+- Added support for Mac OSX (handling 'dylib' lib extension)
+- Added support for some HP/UX platforms (handling 'sl' lib extension)
+- Modified dl_open() flags for AIX and HP/UX
+- Modified configure script for Oracle shared Client library detection
+
+- Added Support for Oracle Instant Client on Unix-like systems
+
+- See section in the documentation (page <module>, section <Installation>)
+- Added configure option: --with-oracle-headers-path
+- Added configure option: --with-oracle-lib-path
+
+- Extended OCILIB documentation:
+
+- Added "Installation" page
+- All examples have been checked, updated, corrected and extended
+- All examples are now provided as full programs sources code
+
+- Added more demo source code
+
+- 26 full application sources codes are now provided in the ocilib/demo directory
+- these applications examples are now integrated in the OCILIB documentation
+
+- Misc:
+
+- Added const qualifier to return values of OCI_HandleXXX() calls
+- Fixed parameter checking in some OCI_ObjectXXX() calls
+
+## 2008-04-24 - Version 2.4.0
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Extended support for handling all integers types
+
+- Added type big_int (64bits long long if supported or int if 64bits integers not available)
+- Added support for shorts
+- Added support for unsigned integers (unsigned short, unsigned int and unsigned big_int)
+- Automatic conversion between integer types whenever possible
+- Removed lobsize_t: Lob calls are using now the type big_uint
+
+- Added public interface for short type
+
+- Added OCI_BindShort()
+- Added OCI_BindArrayOfShorts()
+- Added OCI_GetShort()
+- Added OCI_GetShort2()
+- Added OCI_RegisterShort()
+- Added OCI_ObjectGetShort()
+- Added OCI_ObjectSetShort()
+
+- Added public interface for unsigned short type
+
+- Added OCI_BindUnsignedShort()
+- Added OCI_BindArrayOfUnsignedShorts()
+- Added OCI_GetUnsignedShort()
+- Added OCI_GetUnsignedShort2()
+- Added OCI_RegisterUnsignedShort()
+- Added OCI_ObjectGetUnsignedShort()
+- Added OCI_ObjectSetUnsignedShort()
+
+- Added public interface for unsigned int type
+
+- Added OCI_BindUnsignedInt()
+- Added OCI_BindArrayOfUnsignedInts()
+- Added OCI_GetUnsignedInt()
+- Added OCI_GetUnsignedInt2()
+- Added OCI_RegisterUnsignedInt()
+- Added OCI_ObjectGetUnsignedInt()
+- Added OCI_ObjectSetUnsignedInt()
+
+- Added public interface for big_int type
+
+- Added OCI_BindBigInt()
+- Added OCI_BindArrayOfBigInts()
+- Added OCI_GetBigInt()
+- Added OCI_GetBigInt2()
+- Added OCI_RegisterBigInt()
+- Added OCI_ObjectGetBigInt()
+- Added OCI_ObjectSetBigInt()
+
+- Added public interface for big_uint type (unsigned big_int)
+
+- Added OCI_BindUnsignedBigInt()
+- Added OCI_BindArrayOfUnsignedBigInts()
+- Added OCI_GetUnsignedBigInt()
+- Added OCI_GetUnsignedBigInt2()
+- Added OCI_RegisterUnsignedBigInt()
+- Added OCI_ObjectGetUnsignedBigInt()
+- Added OCI_ObjectSetUnsignedBigInt()
+
+- Extended Object type information
+
+- Added OCI_TimestampGetType()
+- Added OCI_IntervalGetType()
+- Added constant OCI_UNKNOWN
+- Removed OCI_SCHEMA_UNKNOWN, OCI_CDT_UNKNOWN, OCI_HASH_UNKNOWN, OCI_ERR_UNKNOWN, OCI_CST_UNDEFINED
+- Use instead OCI_UNKNOWN
+
+- Added prebuilt binaries for MS Windows 64bits
+
+- Renamed package ocilib-x.y.z.win32.zip => ocilib-x.y.z.windows.zip
+- Renamed folder lib -> lib32 (for 32bits binaries)
+- Added folder lib64 (for 64 bits binaries)
+- DLL projects for VS2005 and 2008 are provided
+- DLL are compiled with C99 long long type enabled (as before, it is just a reminder)
+- Removed compiled demo binaries from the package to reduce archive size that was increased with 64bits binaries
+
+- Extended Error handling
+
+- Added: OCI_Initialize() with OCI runtime loading build option raises now an error if OCI shared library cannot be loaded
+- Added: OCI_Initialize() with OCI_CHARSET_UNICODE and Oracle client 8 raises now an error (Oracle 8i cannot handle Unicode meta-data strings)
+- Added: OCI_xxxFmt() calls raise now an error if a format identifier is invalid
+- Added: OCI_Immediatexxx() calls raise now an error if the type value is not an OCI_ARG_XXX constant
+- Modified: Internal error functions (added OCI_ErrorGeneric())
+
+- Modified OCI_Immediate() and OCI_ImmediateFmt()
+
+- Extended type safety (public interface modifications):
+
+- For output placeholders, you have to pass NOW one of the OCI_ARG_xxx constant to tell OCILIB the type the placeholder pointer
+- Every placeholder pointer has to be preceded by the type constant
+- Example: OCI_Immediate(st, "select int_col, str_col from my_table", OCI_ARG_INT, &my_int, OCI_ARG_TEXT, my_text);
+- Output placeholders: support NOW for short, unsigned short, unsigned int, big_int, big_uint
+- Updated section in the documentation (page <module>, section <Formatted functions>)
+
+- Fixed: For OCI_ImmediateFmt(), temporary Statement object was not freed (line commented in 2.3.0 with no reasons !)
+- Fixed: If internal OCI_GetString() returned NULL, a segmentation fault could happen
+- Modified: No check was done on scalar C type placeholder pointers nullity (possible source of segfault)
+- Modified: OCI_Date handling was not updated with v2.3.0 modifications
+- Modified: OCI_Long and OCI_Statement handling was not removed as stated in the change log of v2.3.0
+- Modified: Factorization of the 2 functions code
+
+- Modified OCI_xxxFmt() calls:
+
+- Added new identifiers:
+
+- '%u': unsigned int
+- '%hi': short
+- '%hu': unsigned short
+- '%li': big_int
+- '%lu': big_uint
+
+- Miscellaneous changes
+
+- Added: windows platforms (WIN32/WIN64) detection
+- Modified: added some cast to please absolute paranoid builds
+- Modified: OCI_GetRaw() was not checking if parameter 'buffer' was null
+- Modified: rewritten implicit integers and double type conversion in OCI_Getxxx() calls
+- Modified: Macro used for identifying Windows platforms from WIN32 to _WINDOWS
+- Modified: modified some expression evaluation for explicit checks (replaced some if(var) with if(var == x))
+- Modified: added some pointers reinitialization (not needed but we never known...)
+- Modified: OCI_ResultsetExpandStrings() is now included in builds only if OCI_CHECK_DATASTRINGS is defined
+- Modified: OCI_Thread and OCI_Mutex code refactoring with OCI_DIRECT, OCI_CHECK_STATUS macros
+- Removed: implicit conversion from text to integers in OCIGetxxxIntxx() calls
+
+- Miscellaneous Fixes
+
+- Fixed: OCILIB was not compiling with MSVC6 (added macro to use _vsnprintf()/_vsnwprintf with MS compilers and vsnprintf()/vsnwprintf() for all others compilers)
+- Fixed: OCI_LobAppendLob() was not updating internal current offset position
+- Fixed: OCI_ParseSqlFmt(): OCI_interval * variable was not checked for nullity
+- Fixed: OCI_Initialize() with runtime loading mode: oracle 11g detection was broken (missing 'else' keyword)
+- Fixed: OCI_GetResultset(): selecting unsupported REF datatype was throwing 2 errors instead of one.
+- Fixed: OCI_GetDate()    + client Oracle 11g + "Return into" clause: the OCILIB workaround for Oracle bug #3269146 was not working properly
+- Fixed: OCI_BindString() + client Oracle 8i  + OCI_CHARSET_MIXED build: setting internally OCI_ATTR_CHARSET_FORM (since v2.0.0) caused a crash with Oracle 8.1.7.O (OCI bug ?)
+- Normalization of few Function Names:
+
+- OCI_CreateTransaction() -> OCI_TransactionCreate()
+- OCI_FreeTransaction() -> OCI_TransactionFree()
+- OCI_CreateHashTable() -> OCI_HashCreate()
+- OCI_FreeHashTable() -> OCI_HashFree()
+- OCI_xxxTransaction() -> OCI_Transactionxxx()
+
+- Added Macro for existing code compatibility (except for OCI_xxxTransaction() functions)
+
+## 2008-03-31 - Version 2.3.0
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Added Support for OCI Connection Pools
+
+- See new section in the documentation (page <module>, section <Connection pooling>)
+- Added type OCI_ConnPool
+- Added OCI_ConnPoolCreate()
+- Added OCI_ConnPoolFree()
+- Added OCI_ConnPoolGetConnection()
+- Added OCI_ConnPoolGetTimeout()
+- Added OCI_ConnPoolSetTimeout()
+- Added OCI_ConnPoolGetlGetNoWait()
+- Added OCI_ConnPoolSetNoWait()
+- Added OCI_ConnPoolGetBusyCount()
+- Added OCI_ConnPoolGetOpenedCount()
+- Added OCI_ConnPoolGetMin()
+- Added OCI_ConnPoolGetMax()
+- Added OCI_ConnPoolGetIncrement()
+
+- Added Support for OCI Mutexes
+
+- See new section in the documentation (page <module>, section <Threads and mutexes>)
+- Added type OCI_Mutex
+- Added OCI_MutexCreate()
+- Added OCI_MutexFree()
+- Added OCI_MutexAcquire()
+- Added OCI_MutexRelease()
+
+- Added Support for OCI Threads
+
+- See new section in the documentation (page <module>, section <Threads and mutexes>)
+- Added type OCI_Thread
+- Added OCI_ThreadCreate()
+- Added OCI_ThreadFree()
+- Added OCI_ThreadRun()
+- Added OCI_ThreadJoin()
+
+- Extended support for public retrieval of internal OCI handles:
+
+- Added OCI_HandleGetMutex()
+- Added OCI_HandleGetThread()
+- Added OCI_HandleGetThreadID()
+
+- Extended Lobs support:
+
+- Added OCI_LobAssign()
+- Added OCI_FileAssign()
+
+- Extended "Formatted" functions support:
+
+- Added support for OCI_Timestamp (<%p>) and OCI_Interval(<%v>)
+
+- Public interface (IMPORTANT CHANGES)
+
+- OCI_Initialize():
+
+- New flag: OCI_ENV_THREADED
+- Up to v2.2.0, OCILIB was internally initializing OCI in threaded mode (even for non threaded applications)
+- With  v2.3.0, applications HAVE TO SET EXPLICITLY the flag OCI_ENV_THREADED for multi-threaded applications
+
+- Normalization of few Function Names:
+
+- OCI_CreateConnection() -> OCI_ConnectionCreate()
+- OCI_FreeConnection() -> OCI_ConnectionFree()
+- OCI_CreateStatement() -> OCI_StatementCreate()
+- OCI_FreeStatement() -> OCI_StatementFree()
+
+- Added Macro for existing code compatibility
+
+- Bug fixes:
+
+- OCILIB_MINOR_VERSION was not updated
+- A segmentation fault could happen when fetching Long column
+- If an OCI_Statement object or its internal handle could not be allocated, the entry was not removed from the connection statements list
+- Binding and fetching Unicode strings on national character columns: non ANSI characters (code points) were badly converted (Now, it uses national charset form for conversion)
+- OCI_LobErase(): Offset value was wrongly used (shifted by 1) and could cause an error if set to zero
+- OCI_Immediate() and OCI_ImmediateFmt():
+
+- Passing OCILIB objects for output result led to crash because of assignment of out-of-scope object pointers
+- Now, pass the OCILIB object handle, NOT the handle address
+- Now, OCI_Long, OCI_Statement are not handled
+
+### Miscellaneous
+
+- Added OCI_ReleaseResultsets(): optional call to release resultsets
+- OCI_SetPrefetchSize() and OCI_SetPrefetchMemory(): internal value is now set only is OCI call succeed
+- Internal connection rewrite for handling Connection pool
+- Renamed few function parameters + documentation updates
+- Unicode strings are now converted into database using national charset form
+- OCI environment handle:
+
+- Up to v2.2.0, every connection object holded an environment handle
+- Now, there is a unique environment handle associated to the internal OCI_Library object
+
+## 2008-03-19 - Version 2.2.0
+
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
+
+- Public interface
+
+- Added OCI_SetPrefetchMemory() (see documentation)
+- Added OCI_GetPrefetchMemory()
+- Added OCI_SetPassword()
+- Added OCI_Break()
+- See new section in the documentation (page <module>, section <Aborting long operations>)
+- Modified few functions prototypes with no parameters -> from f() to f(void) for strict ANSI C support
+- Added 'const' qualifier to nearly all string parameter and string return values
+
+- Extended OCI_GetString():
+
+- Modified: Implicit conversion from double uses now '%f' instead of '%g'.
+- Added support for OCI_Timestamp, OCI_Interval and implicit conversion
+
+### Fixes
+
+- Memory leak: If a statement that has returned a resultset is re-executed directly with OCI_Execute() (without any parse step), the previous resultset was not freed
+- Some statement attributes (fetch size, pre-fetched size, bind mode, long mode, long size) were reinitialized at every SQL parsing. Now they are persistent.
+- Constants OCI_FETCH_SIZE, OCI_PREFETCH_SIZE values were set to Oracle default values and were not assigned at statement creation time.
+    So, if the library was rebuilt with different values, the modified values were not applied! Now, these attributes are set internally when a statement is created
+- Now server version is initialized when the connection object is created (some tests for some features support could failed)
+
+- Modifications
+
+- Added support for OS authentication by passing NULL user and NULL password to OCI_CreateConnection()
+- Modified default date format for implicit conversion (DD/MM/YYYY -> YYYY-MM-DD)
+- Modified OCI_BindXX() calls: if bind mode is OCI_BIND_POS, the position used is now the given bind name (:1, :2, ...) instead of the internal bind object index
+- Modified OCI_CreateConnection(): it returns now NULL id OCI_Initialize() has not been called
+- Reintroduced support for native C++ compilation of OCILIB
+
+### Miscellaneous
+
+- Validation of LabWindow/LabView compilers
+- change email -> vince.rogier@gmail.com
+- Modified demo application: tests are now grouped in series of functions
+- Object support in Unicode builds: Oracle confirmed the bug when setting objects attributes (bug #6885036 on Metalink)
+
+## 2008-03-04 - Version 2.1.0
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Added public retrieval of internal OCI handles:
+
+- See new section in the documentation (page <module>, section <Using OCI Handles directly>)
+- OCI_HandleGetEnvironment()
+- OCI_HandleGetContext()
+- OCI_HandleGetServer()
+- OCI_HandleGetError()
+- OCI_HandleGetSession()
+- OCI_HandleGetTransaction()
+- OCI_HandleGetStatement()
+- OCI_HandleGetLob()
+- OCI_HandleGetFile()
+- OCI_HandleGetDate()
+- OCI_HandleGetTimestamp()
+- OCI_HandleGetInterval()
+- OCI_HandleGetObject()
+
+- Extended Hash Tables support:
+
+- See updated example in the documentation (page <module>, section <Hash tables>)
+- Added OCI_HashGetEntry() to browse an OCILIB Hash Tables
+- Added OCI_HashGetType()
+- Added OCI_HashGetSize()
+
+- Added support for Lobs larger > 4 Go (Oracle 10g)
+
+- See updated section in the documentation (page <module>, section <Internal Large Objects (LOBs)>)
+- Added type lobsize_t (unsigned int or unsigned long long depending platform and compiler)
+- Modified OCI_Lob and OCI_File APIs to change lob size and offset type from unsigned int to lobsize_t
+
+- Extended Oracle versions support
+
+- Added OCI_GetVersionConnection()
+- Building OCILIB with versions of Oracle < 10g and OCI_IMPORT_LINKAGE option could fail because:
+
+- BINARY FLOAT and BINARY DOUBLE (introduced in 10g) type references were not excluded from 8i and 9i builds
+- Some Timestamp and Interval (introduced in 9i) code portions were not excluded from 8i builds
+
+- Modified Oracle version detection
+- Rewritten conditional code compilation directives for handling correctly all versions of Oracle (8i -> 11g)
+- The library has been put through a series of tests on the following environments:
+
+- Servers: 10.2.0.1.0,  8.1.7.0.0
+- Clients: 11.1.0.6.0, 10.2.0.1.0, 9.2.0.1.0, 9.0.1.0.1
+
+- few errors were encountered but always linked to Oracle known bugs identified on Metalink: nclobs on 8i, intervals on 9i, Full Unicode handling on 9i
+- Known issues that are currently being investigated:
+
+- Oracle 8i only + "mixed charset" build: read/write on a CLOB fetched from a "return into" inserts '\0' between characters (looks like double Unicode expansion..)
+
+- Modified Error handling
+
+- Added OCI_ErrorGetType()
+- Removed error messages prefixes "(OCI_xxx) - "
+
+- Fixed:
+
+- OCI_RegisterDate() caused OCI_Execute() to crash with Oracle < 10g. It is a known Oracle bug (metalink id #3269146: OCIBindDynamic() with SQL_ODT).
+- OCI_RegisterDate() works now on version < 10g (using SQLT_ODT for 10g and SQLT_DAT for 8i and 9i)
+- OCI_LobAppendLob() caused an ORA-24805 on Oracle 8.1.x only
+- OCI_xxxxToText() functions now initialize output buffers even on failure
+
+## 2008-02-16 - Version 2.0.0
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Added Support for Unicode build on Unix-like systems
+
+- Now, Unicode is correctly handled on Unix systems (4 bytes wchar_t)
+
+- Added support for Oracle Named types (Oracles Objects)
+
+- OCI_ObjectCreate()
+- OCI_ObjectFree()
+- OCI_ObjectGetDate()
+- OCI_ObjectGetDouble()
+- OCI_ObjectGetFile()
+- OCI_ObjectGetInt()
+- OCI_ObjectGetInterval()
+- OCI_ObjectGetLob()
+- OCI_ObjectGetObject()
+- OCI_ObjectGetRaw()
+- OCI_ObjectGetString()
+- OCI_ObjectGetTimeStamp()
+- OCI_ObjectSetDouble()
+- OCI_ObjectSetInt()
+- OCI_ObjectSetRaw()
+- OCI_ObjectSetString()
+- OCI_ObjectSetNull()
+- OCI_BindObject()
+- OCI_BindArrayOfObjects()
+- OCI_RegisterObject()
+- OCI_GetObject()
+- OCI_GetObject2()
+- Known issue: OCI function internally used to set attributes values is causes a crash on Unicode Build
+- So, DO NOT USE OCILIB Object API in Unicode build until i have sorted that with Oracle support
+
+- Added National attribute (charsetform) support
+
+- added OCI_GetColumnCharsetForm()
+- added OCI_Lob type OCI_NCLOB
+- added national charset support for binding, defining and lob manipulation
+
+- Extended column information
+
+- added OCI_GetColumnFullSQLType() that gives the same and exact output than SQL*Plus
+- added OCI_GetColumnFractionnalPrecision() for timestamp/interval
+- added OCI_GetColumnLeadingPrecision() for interval
+- modified OCI_GetColumnPrecision() return non zero only for numeric/float
+
+- Added support for SYSDBA, SYSOPER session modes
+
+- modified OCI_CreateConnection() that takes a new extra parameter to manage the session mode
+- added OCI_GetSessionMode()
+
+- Added support for BINARY FLOAT and BINARY DOUBLE (introduced with Oracle 10g)
+
+- Modified Input string buffer length parameters:
+
+- Parameter 'len' of OCI_LobRead(), OCI_LobWrite(), OCI_LobAppend(), OCI_LongRead(), OCI_LongWrite() is now:
+
+- Number of bytes for OCI_BLOB and OCI_BLONG
+- Number of characters for OCI_CLOB/OCI_NCLOB and OCI_CLONG
+
+- OCI_LobGetLength(), OCI_LobGetOffset() and OCI_LongGetSize() return now the length/offset expressed:
+
+- In bytes for OCI_BLOB and OCI_BLONG
+- In characters for OCI_CLOB/OCI_NCLOB and OCI_CLONG
+
+- Parameter 'size' of OCI_DateToText(), OCI_TimestampToText(), OCI_TimestampGetTimeZoneName(), OCI_IntervalToText is now:
+
+- Number of characters
+
+- Modified OCI_Long objects
+
+- Added OCI_LongGetBuffer()
+- Modified: Long columns are completely read internally during fetch sequence
+- Modified: OCILIB can handle more than one OCI_Long object in select resultset
+- OCI_LongRead() still supported but obsolete, use instead OCI_LongGetBuffer()
+- Fixed: insert statement with OCI_Long bind variable that have inserted 0 bytes caused a crash when
+    the statement was freed
+
+- Modified OCI_Schema public interface
+
+- Extended support for describing Named types
+- Renamed OCI_SchemaGetTable() to OCI_SchemaGet()
+- Renamed OCI_SchemaGetTableColumn() to OCI_SchemaGetColumn()
+- Renamed OCI_SchemaGetTableColumnCount() to OCI_SchemaGetColumnCount()
+- Added OCI_SchemaGetType()
+- Added OCI_SchemaGetName()
+
+- Miscellaneous bugs fixes:
+
+- Fixed: OCI_FetchNext() could return FALSE before the real end of the resultset
+- Fixed: Simple bind of OCILIB objects could lead OCI to crash
+- Fixed: OCI_VERSION_REVISION was wrongly defined.
+- Fixed: OCI_VERSION_xxx were not up to date
+- Fixed: Modified few internal variables types (size and sign) to conform to Oracle Doc and to make
+    AIX "Strict" C Compiler happy !
+- Fixed: Modified configure script for install options on GNU package
+- Fixed: OCI_RegisterString(): the buffer size was wrongly calculated in mixed charset builds
+- Fixed: Corrected spelling of OCI_LobGetLenght() -> OCI_LobGetLength()
+- Fixed: If OCI_RegisterXXX() calls were made in a different order than the variable list in the returning
+    clause, resultset columns were created in the wrong order and leaded to type mismatch
+
+- Miscellaneous modifications:
+
+- OCI_Initialize() takes a new parameter for future environment options and extra modes (by default OCI_ENV_DEFAULT)
+- Sometimes, OCI client describes FLOAT as NUMBER... Added extra checks to correct that!
+- Modification of configure script for 32 bits detection on 32/64-bit systems
+- Rewrote the demo application for keeping a unique source demo for all platforms and builds
+- Added OCI_Object and RAWs output support for OCI_Immediate() and OCI_ImmediateFmt()
+- Added OCILIB own transaction types for OCI_CreateTransaction() and OCI_TransactionGetMode()
+- Removed lots of typos in the source code comments and documentation!
+
+## 2008-01-28 - Version 1.6.0
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Extended Oracle version information
+
+- OCI_GetServerMajorVersion()
+- OCI_GetServerMinorVersion()
+- OCI_GetServerRevisionVersion()
+
+- Added support for "SQL returning clause"
+
+- OCI_GetNextResultset()
+- OCI_RegisterInt()
+- OCI_RegisterString()
+- OCI_RegisterRaw()
+- OCI_RegisterDouble()
+- OCI_RegisterDate()
+- OCI_RegisterLob()
+- OCI_RegisterFile()
+- OCI_RegisterTimestamp()
+- OCI_RegisterInterval()
+
+- Miscellaneous added functions
+
+- OCI_BindArrayGetSize()
+- OCI_GetColumnCharUsed()
+- OCI_SchemaGetTableName()
+
+- Important modifications
+
+- OCI_BindString() and OCI_BindArrayOfStrings(): the parameter len which is the max length of the buffer
+    (or array element) is NOW:
+
+- UNDERSTOOD WITHOUT the zero terminal terminator.
+- EXPRESSED in CHARACTERS
+
+- So, for OCI_BindString():
+
+- if the string is char    str[31], pass 30 as len instead of 31 in earlier version
+- if the string is wchar_t str[31], pass 30 as len instead of 62 in earlier version
+
+- So, for OCI_BindArrayOfStrings():
+
+- if the string is char    str[10][31], pass 30 as len instead of 31 in earlier version
+- if the string is wchar_t str[10][31], pass 30 as len instead of 62 in earlier version
+
+- OCI_GetColumnSize(): return the size in characters for string column created with the qualifier CHAR for
+    indicating the size in character and not in bytes
+
+- Prototypes for OCI_BindArrayOfInts(), OCI_BindArrayOfDoubles(), OCI_BindArrayOfStrings() changed:
+
+- For scalar C types (int, double and char*), the 'data' parameter was changed from type** to type* in
+    order to avoid compiler warnings and casts
+
+- Miscellaneous modifications
+
+- Updated documentation (returning features and rowids, ...)
+- Extended source code comments
+- OCI_IsNull() was returning FALSE with a NULL handle, now returns TRUE
+- Added few cast and corrected few variable cast to compile nicely with highest warning level (on MS VS2005)
+- Some static were missing from internal function prototypes declaration
+- OCI_FreeResultset() => removed from public interface
+- Updated input parameter checking macros return values of few functions
+- OCI_SchemaGetTable() -> input parameter checking was missing
+- Updated demo application to make it fully portable (charset and platform)
+- Added comments on internal structure members
+- Call to OCI_GetXXXX2(): added checking on the internal map object allocation on failure
+- OCI_BindRaw(): now returns FALSE if len <= 0
+- OCI_ALLOC(): removed type casting
+
+- Miscellaneous fixes
+
+- OCI_Immediate() and OCI_ImmediateFmt(): timestamp and interval parameters ARE STILL NOT parsed from
+    formatted query
+- Some NUMBER columns were wrongly mapped to the C int type instead of double
+- OCI_Long internal structure could not be freed for a standalone instance
+- Demo application for handling string in Unicode and mixed mode
+- OCI_LobErase: added size checking (oracle error with size = 0 on an empty lob)
+- OCI_BindArrayOfStrings: the allocated size was done with sizeof(mtext) instead of sizeof(dtext)
+
+## 2008-01-10 - Version 1.5.4
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Miscellaneous modifications and fixes
+
+- Added: OCI_REVISION_VERSION constant
+- Fixed: Statement handle on a statement bind call() was allocated again and not always freed and could
+        lead to an ORA-1000 error (since version 1.3.0)
+- Fixed: OCI_Date * Array binding: wrong memory allocation size
+- Fixed: Strings Array binding did not adjust the buffer size depending on the sizeof(dtext) and could
+        make OCI_execute failed on an Unicode build
+- Fixed: OCI_Long * Type (CLONG or BLONG) was wrongly set
+- Modified: Refactoring of internal datatypes allocation, binding and defining for better performances,
+        more compact and safer code
+- Modified: Object datatypes defining from query (User types and Refs) generates now an error
+- Modified: Extended demo application with array binding support, ref cursor, nested tables,
+        timestamps and intervals
+- Removed: internal structure OCI_Data
+
+## 2008-01-07 - Version 1.5.3
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Fixed: Array binding support introduced in version 1.5.0 caused troubled for single objects bindings
+      (lobs, files, dates, intervals, timestamps)
+
+## 2008-01-06 - Version 1.5.2
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Fixed: First OCI_FetchNext() call on an EMPTY resultset was returning TRUE
+
+## 2008-01-04 - Version 1.5.1
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Fixed: OCI_Execute() crashed with a ref cursor bind variable (since v1.5.0, arghhh !! )
+- Fixed: OCI_ExecuteStmtFmt() was returning FALSE even on success
+
+## 2008-01-04 - Version 1.5.0
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Added proper RAW support
+
+- OCI_GetRaw()
+- OCI_GetRaw2()
+- OCI_BindRaw()
+- OCI_BindArrayOfRaws()
+
+- Added Array interface support for fast bulk operations
+
+- OCI_BindArraySetSize()
+- OCI_BindArrayOfInts()
+- OCI_BindArrayOfStrings()
+- OCI_BindArrayOfDoubles()
+- OCI_BindArrayOfDates()
+- OCI_BindArrayOfTimestamps()
+- OCI_BindArrayOfIntervals()
+- OCI_BindArrayOfLobs()
+- OCI_BindArrayOfFiles()
+
+- Timestamps and intervals
+
+- Added support in OCI_Immediate() and OCI_ImmediateFmt()
+- Added support in OCI_GetColumnSQLType()
+
+- Added OCILIB versioning constants
+
+- OCILIB_MAJOR_VERSION
+- OCILIB_MINOR_VERSION
+
+- Miscellaneous modifications and fixes
+
+- Modified: Resetting bind indicators to not null after each execute call
+- Fixed: Column retrieving from name is NOW case insensitive
+- Modified: Hash table key comparison is NOW case insensitive
+- Added: ChangeLog content to HTML documentation Main page
+
+## 2007-12-29 - Version 1.4.0
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Resultset values can be retrieved now by column names
+
+- OCI_GetInt2()
+- OCI_GetString2()
+- OCI_GetDouble2()
+- OCI_GetDate2()
+- OCI_GetStatement2()
+- OCI_GetLob2()
+- OCI_GetLong2()
+- OCI_GetTimestamp2()
+- OCI_GetInterval2()
+- OCI_GetColumn2()
+- OCI_GetColumnIndex()
+
+- Added OCI version detection
+
+- Now, OCI versions are detected at compile and runtime
+- OCI_GetOCICompileVersion()
+- OCI_GetOCIRuntimeVersion()
+
+- Added Timestamp datatype support
+
+- Type OCI_Timestamp
+- OCI_TimestampAssign()
+- OCI_TimestampCheck()
+- OCI_TimestampCompare()
+- OCI_TimestampConstruct()
+- OCI_TimestampConvert()
+- OCI_TimestampFromText()
+- OCI_TimestampGetDate()
+- OCI_TimestampGetTime()
+- OCI_TimestampGetTimeZoneName()
+- OCI_TimestampGetTimeZoneOffset()
+- OCI_TimestampIntervalAdd()
+- OCI_TimestampIntervalSub()
+- OCI_TimestampSubtract()
+- OCI_TimestampSysTimeStamp()
+- OCI_TimestampToText()
+- OCI_BindTimestamp()
+- OCI_GetTimestamp()
+
+- Added Interval datatype support
+
+- Type OCI_Interval
+- OCI_IntervalCreate()
+- OCI_IntervalFree()
+- OCI_IntervalAssign()
+- OCI_IntervalCheck()
+- OCI_IntervalCompare()
+- OCI_IntervalFromText()
+- OCI_IntervalToText()
+- OCI_IntervalFromTimeZone()
+- OCI_IntervalGetDaySecond()
+- OCI_IntervalGetYearMonth()
+- OCI_IntervalSetDaySecond()
+- OCI_IntervalSetYearMonth()
+- OCI_IntervalAdd()
+- OCI_IntervalSubtract()
+- OCI_BindInterval()
+- OCI_GetInterval()
+
+- Added Hash tables support
+
+- type OCI_HashTable
+- OCI_CreateHashTable()
+- OCI_FreeHashTable()
+- OCI_HashGetValue()
+- OCI_HashGetInt()
+- OCI_HashGetPointer()
+- OCI_HashAddString()
+- OCI_HashAddInt()
+- OCI_HashAddPointer()
+- OCI_HashLookup()
+- OCI_HashGetString()
+
+- Added OCILIB C source compatibility for C++
+
+- Modified OCI_ALLOC() macro to add cast to malloc
+- Added few cast required the C++
+- Modified internal OCI_ErrorHandler() in order to call handler after reset of connection
+    status for C++ exceptions
+- Modified: now, OCILIB C source perfectly compiles with a C++ compiler
+
+- Miscellaneous modifications and fixes
+
+- Modified OCI_Variant type (from private to public scope)
+- Modified: Every call to execute frees previous resultsets
+- Fixed: OCI_FileIsEqual() was not exported
+- Fixed: implicit conversion to int and double (OCI_GetInt() and OCI_GetDouble()) from a text value
+    column (OCI_CDT_TEXT) was not implemented in Unicode
+- Modified OCILIB descriptors ( OCI_XXXFree() ) to correct some leaks and for compatibility with C++
+    destructors (for OCILIB++ that coming soon)
+- Modified: Mapping text macros scope moved from private to public for OCILIB++
+- Changed the statement types from OCI_STMT_XXX to OCI_CST_XXX
+- OCI_DateAssign(): the two handles were not in good order
+
+## 2007-12-18 - Version 1.3.1
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Fixed sourceforge bug #1853369
+
+- Committed updates from others transactions were not seen until the next OCI_Commit() call due
+    to the default transaction object mode.
+- Mode changed from OCI_TRANS_SERIALIZABLE to OCI_TRANS_READWRITE
+
+- Fixed missing Unicode _T() macros in demo source file on Microsoft Windows platform
+- Fixed demo project on Microsoft Windows platform && Visual Studio (ocilib source was linked to exe
+    instead of using DLLs)
+
+## 2007-12-06 - Version 1.3.0
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Added Full BFILE support
+
+- Added Type OCI_File
+- Added OCI_FileCreate()
+- Added OCI_FileFree()
+- Added OCI_FileSeek()
+- Added OCI_FileGetOffset()
+- Added OCI_FileRead()
+- Added OCI_FileGetType()
+- Added OCI_FileGetSize()
+- Added OCI_FileExists()
+- Added OCI_FileSetName()
+- Added OCI_FileGetDirectory()
+- Added OCI_FileGetName()
+- Added OCI_FileOpen()
+- Added OCI_FileIsOpen()
+- Added OCI_FileClose()
+- Added OCI_FileIsEqual()
+
+- Extended Lob support
+
+- Added OCI_LobCopyFromFile()
+- Added OCI_LobAppend()
+- Added OCI_LobOpen()
+- Added OCI_LobClose()
+- Added OCI_LobIsEqual()
+- Modified OCI_LobGetLength()
+- Modified OCI_LobAppend()
+
+- Added Pre-fetch support
+
+- OCI_SetPrefetchSize()
+- OCI_GetPrefetchSize()
+
+- Added Support for describing database objects (currently only table support)
+
+- Added Type OCI_Schema
+- Added OCI_SchemaGetTable()
+- Added OCI_SchemaGetTableColumnCount()
+- Added OCI_SchemaGetTableColumn()
+- Added OCI_SchemaFreeTable()
+
+- Modified and extended Column info API
+
+- Modified type OCI_Column from private to public handle
+- Added OCI_GetColumn()
+- Added OCI_GetColumnSQLType()
+- Added OCI_GetColumnPrecision()
+- Added OCI_GetColumnScale()
+- Added OCI_GetColumnNullable()
+- Modified OCI_GetColumnType()
+- Modified OCI_GetColumnName()
+- Modified OCI_GetColumnSize()
+
+- Extended support for formatted functions
+
+- OCI_SqlImmediate() supports now output for OCI_Date*, OCI_Long*, OCI_Lob*, OCI_File*, OCI_Statement*
+
+- Fixed OCILIB Objects binding:
+
+- for LOB, FILE and REF Cursors handles
+- corrected SQL type for CLOB
+
+- Miscellaneous internal fixes
+
+- Fixed dsizeof() macro
+- OCI_Cleanup(): fixed memory leak if object not explicitly freed (since internal version 0.9)
+- OCIEnvCreate() call: OCI_THREADED was missing (since internal version 0.9)
+- OCIEnvCreate() call: OCI_OJBECT was missing in Unicode mode (since internal version 0.9)
+- Fixed memory leak when fetching OCI_Statement * Resultset columns
+
+- Miscellaneous internal modifications
+
+- Modification of column buffer internal implementation (use of unions)
+- Modified ocistrdup()
+- Modified scope of few local functions (static where missing)
+- Redefinition of local structure members from type 'int' to 'boolean'
+- Updated logical tests to TRUE/FALSE for clarity
+- Now, Statement handle fetched from a cursor column MUST not be released as in earlier versions
+
+- Performances improvement
+
+- Statement handle is now allocated at on Statement creation and not at every prepare call
+
+- Updated Documentation
+
+## 2007-12-01 - Version 1.2.1
+
+**Author:** Vincent Rogier (vince_rogier@fsinet.fr)
+
+- Updated Documentation
+
+- Regeneration from source without macro expansion to make it cleaner
+- Update of Charset support section
+
+- Fixed sourceforge bug #1841998
+
+- For string based output columns, the last character was truncated because not enough memory was
+    allocated (due to a bad copy/paste operation !)
+
+## 2007-11-25 - Version 1.2.0
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Added Documentation
+
+- Full API documentation
+- Html help
+- Embedded documentation in source code
+
+- Added Global Transaction support
+
+- Added OCI_Transaction structure and handle
+- Added OCI_XID structure and handle
+- Added OCI_CreateTransaction()
+- Added OCI_FreeTransaction()
+- Added OCI_PrepareTransaction()
+- Added OCI_ForgetTransaction()
+- Added OCI_ResumeTransaction()
+- Added OCI_TransactionGetMode()
+- Added OCI_TransactionGetTimeout()
+- Added OCI_GetTransaction()
+- Added OCI_SetTransaction()
+- Modified OCI_StartTransaction()
+
+- Modified Lob support
+
+- Removed OCI_LobGetCacheMode()
+- Modified OCI_LobInit() (deleted cache parameter)
+- Modified OCI_Lob (deleted cache member)
+- Added OCI_LobErase()
+
+- Modified Error Handling
+
+- Removed OCI_GetErrorCode()
+- Added OCI_ErrorGetOCICode()
+- Added OCI_ErrorGetInternalCode()
+
+## 2007-11-12 - Version 1.1.0
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Modified: the library comes with 2 archives: GNU et Win32
+- Modified: interfaces and some functions calls
+- Added: use of GNU install tools
+- Added: options for building the library
+- Fixed: Unicode support
+
+## 2007-10-19 - Version 1.0.0
+
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
+
+- Added: First public release.

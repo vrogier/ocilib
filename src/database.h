@@ -23,33 +23,36 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL boolean OcilibDatabaseSetUserPassword
+OCI_SYM_LOCAL OCI_Boolean OcilibDatabaseSetUserPassword
 (
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    const otext* new_pwd
+    OCI_Environment *env,
+    const otext    * db,
+    const otext    * user,
+    const otext    * pwd,
+    const otext    * new_pwd
 );
 
-OCI_SYM_LOCAL boolean OcilibDatabaseStartup
+OCI_SYM_LOCAL OCI_Boolean OcilibDatabaseStartup
 (
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    unsigned int sess_mode,
-    unsigned int start_mode,
-    unsigned int start_flag,
-    const otext* spfile
+    OCI_Environment      *env,
+    const otext         * db,
+    const otext         * user,
+    const otext         * pwd,
+    OCI_SessionMode       sess_mode,
+    OCI_DatabaseStartMode start_mode,
+    OCI_DatabaseStartFlag start_flag,
+    const otext         * spfile
 );
 
-OCI_SYM_LOCAL boolean OcilibDatabaseShutdown
+OCI_SYM_LOCAL OCI_Boolean OcilibDatabaseShutdown
 (
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    unsigned int sess_mode,
-    unsigned int shut_mode,
-    unsigned int shut_flag
+    OCI_Environment         *env,
+    const otext            * db,
+    const otext            * user,
+    const otext            * pwd,
+    OCI_SessionMode          sess_mode,
+    OCI_DatabaseShutdownMode shut_mode,
+    OCI_DatabaseShutdownFlag shut_flag
 );
 
 #endif /* OCILIB_DATABASE_H_INCLUDED */

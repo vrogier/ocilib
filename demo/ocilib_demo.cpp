@@ -41,22 +41,22 @@ using namespace ocilib;
 * CONSTANTS
 * --------------------------------------------------------------------------------------------- */
 
-const int ArgDatabase = 1;
-const int ArgUser = 2;
-const int ArgPassword = 3;
-const int ArgHome = 4;
-const int ArgCount = 5;
-const int SizeString = 260;
-const int SizeBuffer = 2048;
-const int ElemCount = 5;
+const OCI_Int32 ArgDatabase = 1;
+const OCI_Int32 ArgUser = 2;
+const OCI_Int32 ArgPassword = 3;
+const OCI_Int32 ArgHome = 4;
+const OCI_Int32 ArgCount = 5;
+const OCI_Int32 SizeString = 260;
+const OCI_Int32 SizeBuffer = 2048;
+const OCI_Int32 ElemCount = 5;
 
-const int DirPathBufferSize = 64000;
-const int DirPathLoadSize = 100;
-const int DirPathLoadCount = 10;
-const int DirPathSizeColumn1 = 20;
-const int DirPathSizeColumn2 = 30;
-const int DirPathSizeColumn3 = 8;
-const int DirPathColumnCount = 3;
+const OCI_Int32 DirPathBufferSize = 64000;
+const OCI_Int32 DirPathLoadSize = 100;
+const OCI_Int32 DirPathLoadCount = 10;
+const OCI_Int32 DirPathSizeColumn1 = 20;
+const OCI_Int32 DirPathSizeColumn2 = 30;
+const OCI_Int32 DirPathSizeColumn3 = 8;
+const OCI_Int32 DirPathColumnCount = 3;
 
 /* --------------------------------------------------------------------------------------------- *
 * DEFINES
@@ -120,7 +120,7 @@ struct Test
 // User translation of the test_table SQL tables rows
 struct Product
 {
-    int code;
+    OCI_Int32 code;
     ostring action;
     double price;
     Date date;
@@ -129,7 +129,7 @@ struct Product
 // User translation of the test_array SQL table rows
 struct TestArray
 {
-    int val_int;
+    OCI_Int32 val_int;
     float val_flt;
     double val_dbl;
     ostring val_str;
@@ -184,7 +184,7 @@ bool PrintProductFromObject(const Product &p);
 
 /* ocilib test functions array */
 
-Test tab_test[] =
+const Test tab_test[] =
 {
     { test_fetch, true },
     { test_fetch_translate, true },
@@ -221,32 +221,20 @@ static Connection con;
 
 inline ostring GetArg(oarg *arg)
 {
-    ostring res;
-
-    if (arg)
-    {
-        size_t i = 0, size = oarglen(arg);
-
-        res.resize(size);
-
-        while (i < size) { res[i] = static_cast<char>(arg[i]); i++; }
-    }
-
-    return res;
+    return arg ? ostring(arg, arg + oarglen(arg)) : ostring();
 }
 
 /* --------------------------------------------------------------------------------------------- *
 * main
 * --------------------------------------------------------------------------------------------- */
 
-int omain(int argc, oarg* argv[])
+Environment env(Environment::Default | Environment::Threaded);
+
+OCI_Int32 omain(OCI_Int32 argc, oarg* argv[])
 {
-    ostring home;
     ostring dbs;
     ostring usr;
     ostring pwd;
-
-    size_t i;
 
     /* CHECK COMMAND LINE --------------------------------------------------- */
 
@@ -261,36 +249,31 @@ int omain(int argc, oarg* argv[])
     usr = GetArg(argv[ArgUser]);
     pwd = GetArg(argv[ArgPassword]);
 
-    if (argc == ArgCount)
-    {
-        home = GetArg(argv[ArgHome]);
-    }
-
     try
     {
-        Environment::Initialize(Environment::Default | Environment::Threaded, home);
-
-        Environment::EnableWarnings(true);
+        env.EnableWarnings(true);
 
         ocout << otext("Connecting to ") << usr << otext("/") << pwd << otext("@") << dbs << oendl << oendl;
 
-        con.Open(dbs, usr, pwd, Environment::SessionDefault);
+        con.Open(env, dbs, usr, pwd, Environment::SessionDefault);
 
         print_version();
         create_tables();
 
         /* execute tests */
 
-        for (i = 0; i < ARRAY_COUNT(tab_test); i++)
+        for (const auto& test : tab_test)
         {
-            if (tab_test[i].execute)
-                tab_test[i].proc();
+            if (test.execute)
+            {
+                test.proc();
+            }
         }
         
         drop_tables();
         con.Close();
     }
-    catch (Exception &ex)
+    catch (const Exception &ex)
     {
         ocout << ex.GetMessage() << oendl;
     }
@@ -300,10 +283,7 @@ int omain(int argc, oarg* argv[])
         drop_tables();
         con.Close();
     }
-
-    Environment::Cleanup();
-
-    ocout << otext("\nPress any key to exit...");
+ocout << otext("\nPress any key to exit...");
 
     getchar();
 
@@ -317,7 +297,7 @@ int omain(int argc, oarg* argv[])
 
 bool FillProductFromQuery(const Resultset &rs, Product &p)
 {
-    p.code = rs.Get<int>(1);
+    p.code = rs.Get<OCI_Int32>(1);
     p.action = rs.Get<ostring>(2);
     p.price = rs.Get<double>(3);
     p.date = rs.Get<Date>(4);
@@ -340,7 +320,7 @@ Product CreateProductFromQuery(const Resultset &rs)
 
 bool PrintProductFromQuery(const Resultset &rs)
 {
-    ocout << otext("> code   : ") << rs.Get<int>(1);
+    ocout << otext("> code   : ") << rs.Get<OCI_Int32>(1);
     ocout << otext(", action : ") << rs.Get<ostring>(2);
     ocout << otext(", price  : ") << rs.Get<double>(3);
     ocout << otext(", date   : ") << rs.Get<Date>(4);
@@ -367,12 +347,12 @@ void print_version(void)
 {
     ocout << otext("\n>>>>> OCILIB BUILD INFORMATION \n\n");
 
-    if (Environment::GetImportMode() == Environment::ImportLinkage)
+    if (env.GetImportMode() == Environment::ImportLinkage)
         ocout << otext("OCI import mode         : LINKAGE\n");
     else
         ocout << otext("OCI import mode         : RUNTIME\n");
 
-    if (Environment::GetCharset() == Environment::CharsetAnsi)
+    if (env.GetCharset() == Environment::CharsetAnsi)
         ocout << otext("Charset type            : ANSI\n");
     else
         ocout << otext("Charset type            : WIDE\n");
@@ -381,12 +361,12 @@ void print_version(void)
     ocout << otext("OCILIB major    version : ") << OCILIB_MAJOR_VERSION << oendl;
     ocout << otext("OCILIB minor    version : ") << OCILIB_MINOR_VERSION << oendl;
     ocout << otext("OCILIB revision version : ") << OCILIB_REVISION_VERSION << oendl;
-    ocout << otext("OCI compile     version : ") << Environment::GetCompileMajorVersion() << oendl;
-    ocout << otext("OCI runtime     version : ") << Environment::GetRuntimeMajorVersion() << oendl;
+    ocout << otext("OCI compile     version : ") << env.GetCompileMajorVersion() << oendl;
+    ocout << otext("OCI runtime     version : ") << env.GetRuntimeMajorVersion() << oendl;
     ocout << otext("Server major    version : ") << con.GetServerMajorVersion() << oendl;
     ocout << otext("Server minor    version : ") << con.GetServerMinorVersion() << oendl;
     ocout << otext("Server revision version : ") << con.GetServerRevisionVersion() << oendl;
-    ocout << otext("Connection      version : ") << static_cast<unsigned int>(con.GetVersion()) << oendl;
+    ocout << otext("Connection      version : ") << static_cast<OCI_UInt32>(con.GetVersion()) << oendl;
 
     ocout << otext("\n>>>>> SERVER VERSION BANNER \n\n");
     ocout << con.GetServerVersion() << oendl << oendl;
@@ -403,7 +383,7 @@ void execute_ddl(ostring sql)
         Statement st(con);
         st.Execute(sql);
     }
-    catch (Exception &ex)
+    catch (const Exception &ex)
     {
         switch (ex.GetType().GetValue())
         {
@@ -580,7 +560,7 @@ void test_fetch(void)
     st.Execute(otext("select * from test_fetch"));
 
     Resultset rs = st.GetResultset();
-    for (int i = 1, n = rs.GetColumnCount(); i <= n; i++)
+    for (OCI_Int32 i = 1, n = rs.GetColumnCount(); i <= n; ++i)
     {
         ocout << otext("> Field : #") << i << otext(" - Name : ") << rs.GetColumn(i).GetName() << oendl;
     }
@@ -653,7 +633,7 @@ void test_foreach_translate(void)
 
 void test_bind1(void)
 {
-    unsigned int code = 1, count = 0;
+    OCI_UInt32 code = 1, count = 0;
 
     ocout << otext("\n>>>>> TEST BINDING \n\n");
 
@@ -689,7 +669,7 @@ void test_bind2(void)
 
     TestArray t;
 
-    t.val_date = Date::SysDate();
+    t.val_date = Date::SysDate(env);
     t.val_int = 1;
     t.val_dbl = 3.14;
     t.val_flt = 3.14f;
@@ -705,7 +685,7 @@ void test_bind2(void)
     st.Bind(otext(":val_int"), t.val_int, BindInfo::In);
     st.Bind(otext(":val_dbl"), t.val_dbl, BindInfo::In);
     st.Bind(otext(":val_flt"), t.val_flt, BindInfo::In);
-    st.Bind(otext(":val_str"), t.val_str, static_cast<unsigned int>(t.val_str.size()), BindInfo::In);
+    st.Bind(otext(":val_str"), t.val_str, static_cast<OCI_UInt32>(t.val_str.size()), BindInfo::In);
 
     /* bind oracle types arrays */
 
@@ -732,15 +712,15 @@ void test_piecewise_insert(void)
     std::ifstream file(OCI_SHARED_LIB, std::ios::in | std::ios::binary | std::ios::ate);
     if (file.is_open())
     {
-        size_t size = static_cast<size_t>(file.tellg());
+        OCI_Size size = static_cast<OCI_Size>(file.tellg());
         file.seekg(0, std::ios::beg);
         ocout << oendl << size << otext(" bytes to write") << oendl;
 
         Statement st(con);
         Blong lg(st);
         st.Prepare(otext("insert into test_long_raw(code, content) values (1, :data)"));
-        st.SetPieceSize(static_cast<unsigned int>(size));
-        st.Bind(otext(":data"), lg, static_cast<unsigned int>(size), BindInfo::In);
+        st.SetPieceSize(static_cast<OCI_UInt32>(size));
+        st.Bind(otext(":data"), lg, static_cast<OCI_UInt32>(size), BindInfo::In);
         st.ExecutePrepared();
 
         unsigned char *strBuffer = new unsigned char[size];
@@ -813,7 +793,7 @@ void test_lob(void)
         clob.Append(otext("i'm going to the cinema ! "));
         clob.Seek(SeekSet, 0);
 
-        ocout << otext("> code : ") << rs.Get<int>(1) << otext(", content : ") << clob.Read(SizeString) << oendl;
+        ocout << otext("> code : ") << rs.Get<OCI_Int32>(1) << otext(", content : ") << clob.Read(SizeString) << oendl;
     }
 
     con.Commit();
@@ -876,7 +856,7 @@ void test_plsql(void)
 {
     ocout << otext("\n>>>>> TEST PL/SQL OUTPUT BIND\n\n");
 
-    int res = 0;
+    OCI_Int32 res = 0;
     Statement st(con);
 
     st.Prepare(otext("begin :res := trunc(sysdate+1)-trunc(sysdate-1); end;"));
@@ -887,7 +867,7 @@ void test_plsql(void)
 
 #ifndef OCI_CHARSET_ANSI
     /* Oracle 8i has some troubles with SERVER OUTPUT in unicode */
-    if (Environment::GetRuntimeVersion() < Oracle9iR1)
+    if (env.GetRuntimeVersion() < Oracle9iR1)
         return;
 #endif
 
@@ -921,10 +901,10 @@ void test_dates(void)
 {
     ocout << otext("\n>>>>> TEST DATETIME MANIPULATION\n\n");
 
-    Date date(otext("1978-04-13"));
+    Date date(env, otext("1978-04-13"));
     ocout << date << oendl;
 
-    ocout << date.SysDate() << oendl;
+    ocout << Date::SysDate(env) << oendl;
 
     date.AddDays(5);
     date.AddMonths(2);
@@ -940,7 +920,7 @@ void test_dates(void)
 
 void test_timestamp(void)
 {
-    unsigned int version = Environment::GetRuntimeVersion();
+    OCI_UInt32 version = env.GetRuntimeVersion();
 
 #ifndef OCI_CHARSET_ANSI
     /* Oracle 9i has some troubles with formatting Intervals/timestamps in
@@ -954,7 +934,7 @@ void test_timestamp(void)
     {
         ocout << otext("\n>>>>> TEST TIMESTAMP\n\n");
 
-        Timestamp tm = Timestamp::SysTimestamp();
+        Timestamp tm = Timestamp::SysTimestamp(env);
 
         ocout << otext("Current timestamp: ") << tm << oendl;
 
@@ -965,7 +945,7 @@ void test_timestamp(void)
         {
             ocout << otext("\n>>>>> TEST INTERVAL \n\n");
 
-            Interval itv(Interval::DaySecond);
+            Interval itv(env, Interval::DaySecond);
             itv.SetDaySecond(1, 1, 1, 1, 0);
             tm += itv;
             ocout << otext("Current timestamp + Interval: ") << tm << oendl;
@@ -986,7 +966,7 @@ void test_describe(void)
 
     TypeInfo table(con, otext("test_fetch"), TypeInfo::Table);
 
-    for (int i = 1, n = table.GetColumnCount(); i <= n; i++)
+    for (OCI_Int32 i = 1, n = table.GetColumnCount(); i <= n; ++i)
     {
         Column col = table.GetColumn(i);
 
@@ -1004,7 +984,7 @@ void test_describe(void)
 
     TypeInfo type(con, otext("test_t"), TypeInfo::Type);
 
-    for (int i = 1, n = type.GetColumnCount(); i <= n; i++)
+    for (OCI_Int32 i = 1, n = type.GetColumnCount(); i <= n; ++i)
     {
         Column col = type.GetColumn(i);
 
@@ -1024,7 +1004,7 @@ void test_returning(void)
 
     Statement st(con);
     st.Prepare(otext("update test_lob set code = code + 1 returning code, content into :i, :l"));
-    st.Register<int>(otext(":i"));
+    st.Register<OCI_Int32>(otext(":i"));
     st.Register<Clob>(otext(":l"));
     st.ExecutePrepared();
 
@@ -1035,7 +1015,7 @@ void test_returning(void)
         clob.Append(otext("(modified)"));
         clob.Seek(SeekSet, 0);
 
-        ocout << otext("> code : ") << rs.Get<int>(1) << otext(" - ") << clob.Read(static_cast<unsigned int>(clob.GetLength())) << oendl;
+        ocout << otext("> code : ") << rs.Get<OCI_Int32>(1) << otext(" - ") << clob.Read(static_cast<OCI_UInt32>(clob.GetLength())) << oendl;
     }
 
     con.Commit();
@@ -1051,7 +1031,7 @@ void test_returning_array(void)
 {
     ocout << otext("\n>>>>> TEST ARRAY BINDING WITH RETURNING CLAUSE \n\n");
 
-    std::vector<int>     tab_int;
+    std::vector<OCI_Int32>     tab_int;
     std::vector<double>  tab_dbl;
     std::vector<float>   tab_flt;
     std::vector<ostring> tab_str;
@@ -1060,7 +1040,7 @@ void test_returning_array(void)
     std::vector<File>    tab_file;
 
 
-    for (int i = 0; i < ElemCount; i++)
+    for (OCI_Int32 i = 0; i < ElemCount; ++i)
     {
         tab_int.push_back(i + 1);
         tab_dbl.push_back(3.14*static_cast<double>(i + 1));
@@ -1071,7 +1051,7 @@ void test_returning_array(void)
         str += static_cast<ostring::value_type>((i + 1) + '0');
         tab_str.push_back(str);
 
-        tab_date.push_back(Date::SysDate());
+        tab_date.push_back(Date::SysDate(env));
 
         Clob clob(con);
         clob.Write(otext("Lob value ") + str);
@@ -1115,7 +1095,7 @@ void test_returning_array(void)
     st.Bind(otext(":val_str"), tab_str, 30, BindInfo::In);
 
     /* register output */
-    st.Register<int    >(otext(":out_int"));
+    st.Register<OCI_Int32    >(otext(":out_int"));
     st.Register<double >(otext(":out_dbl"));
     st.Register<float  >(otext(":out_flt"));
     st.Register<Date   >(otext(":out_date"));
@@ -1126,7 +1106,7 @@ void test_returning_array(void)
     st.ExecutePrepared();
     ocout << oendl << st.GetAffectedRows() << otext(" row(s) inserted") << oendl;
 
-    int rowIndex = 0;
+    OCI_Int32 rowIndex = 0;
 
     Resultset rs = st.GetResultset();
     while (!rs.IsNull())
@@ -1135,7 +1115,7 @@ void test_returning_array(void)
         {
             ocout << otext("Row #") << ++rowIndex << otext("---------------") << oendl;
 
-            ocout << otext(".... val_int    : ") << rs.Get<int>(otext(":OUT_INT")) << oendl;
+            ocout << otext(".... val_int    : ") << rs.Get<OCI_Int32>(otext(":OUT_INT")) << oendl;
             ocout << otext(".... val_dbl    : ") << rs.Get<double>(otext(":OUT_DBL")) << oendl;
             ocout << otext(".... val_flt    : ") << rs.Get<float>(otext(":OUT_FLT")) << oendl;
             ocout << otext(".... val_str    : ") << rs.Get<ostring>(otext(":OUT_STR")) << oendl;
@@ -1166,16 +1146,16 @@ void test_object_insert(void)
     Clob clob(con);
     clob.Write(otext("Lob Value"));
     File file(con, otext("mydir"), otext("myfile"));
-    Date date = Date::SysDate();
+    Date date = Date::SysDate(env);
 
     Object obj2(TypeInfo(con, otext("type_t"), TypeInfo::Type));
 
-    obj2.Set<int>(otext("ID"), 1);
+    obj2.Set<OCI_Int32>(otext("ID"), 1);
     obj2.Set<ostring>(otext("NAME"), otext("USB KEY 2go"));
 
     Object obj1(TypeInfo(con, otext("test_t"), TypeInfo::Type));
 
-    obj1.Set<int>(otext("VAL_INT"), 1);
+    obj1.Set<OCI_Int32>(otext("VAL_INT"), 1);
     obj1.Set<double>(otext("VAL_DBL"), 3.14);
     obj1.Set<float>(otext("VAL_FLT"), static_cast<float>(3.14));
     obj1.Set<ostring>(otext("VAL_STR"), otext("USB KEY 2go"));
@@ -1211,7 +1191,7 @@ void test_object_fetch(void)
     {
         Object obj = rs.Get<Object>(1);
 
-        ocout << otext(".... val_int      : ") << obj.Get<int>(otext("VAL_INT")) << oendl;
+        ocout << otext(".... val_int      : ") << obj.Get<OCI_Int32>(otext("VAL_INT")) << oendl;
         ocout << otext(".... val_dbl      : ") << obj.Get<double>(otext("VAL_DBL")) << oendl;
         ocout << otext(".... val_flt      : ") << obj.Get<float>(otext("VAL_FLT")) << oendl;
         ocout << otext(".... val_str      : ") << obj.Get<ostring>(otext("VAL_STR")) << oendl;
@@ -1228,7 +1208,7 @@ void test_object_fetch(void)
         ocout << otext(".... val_raw      : ") << reinterpret_cast<char*>(raw.data()) << oendl;
 
         Object obj2 = obj.Get<Object>(otext("VAL_OBJ"));
-        ocout << otext(".... val_obj.code : ") << obj2.Get<int>(otext("ID")) << oendl;
+        ocout << otext(".... val_obj.code : ") << obj2.Get<OCI_Int32>(otext("ID")) << oendl;
         ocout << otext(".... val_obj.name : ") << obj2.Get<ostring>(otext("NAME")) << oendl;
     }
 
@@ -1251,7 +1231,7 @@ void test_object_fetch(void)
 
 void test_scrollable_cursor(void)
 {
-    if (Environment::GetRuntimeVersion() > Oracle9iR1)
+    if (env.GetRuntimeVersion() > Oracle9iR1)
     {
         ocout << otext("\n>>>>> TEST SCROLLABLE CURSORS \n\n");
 
@@ -1301,7 +1281,7 @@ void test_collection(void)
 {
     ocout << otext("\n>>>>> TEST VARRAY BINDING WITH ITERATOR \n\n");
 
-    int i = 1;
+    OCI_Int32 i = 1;
 
     Statement st(con);
     TypeInfo type(con, otext("T_TAB1_EMP"), TypeInfo::Type);
@@ -1337,7 +1317,7 @@ void test_collection(void)
     Resultset rs = st.GetResultset();
     while (rs++)
     {
-        ocout << otext("Department ID #") << rs.Get<int>(1) << oendl;
+        ocout << otext("Department ID #") << rs.Get<OCI_Int32>(1) << oendl;
 
         coll = rs.Get<Collection<ostring> >(2);
 
@@ -1357,10 +1337,10 @@ void test_collection(void)
     rs = st.GetResultset();
     while (rs++)
     {
-        ocout << otext("Department ID #") << rs.Get<int>(1) << oendl;
+        ocout << otext("Department ID #") << rs.Get<OCI_Int32>(1) << oendl;
 
         coll = rs.Get<Collection<ostring> >(2);
-        for (unsigned int index = 1, n = coll.GetSize(); index <= n; index++)
+        for (OCI_UInt32 index = 1, n = coll.GetSize(); index <= n; ++index)
         {
             ocout << otext("... Employee : ") << static_cast<ostring>(coll[index]) << oendl;
         }
@@ -1384,7 +1364,7 @@ void test_ref(void)
         Reference ref = rs.Get<Reference>(1);
         Object   obj = ref.GetObject();
 
-        ocout << obj.Get<int>(otext("ID")) << otext(" - ") << obj.Get<ostring>(otext("NAME")) << oendl;
+        ocout << obj.Get<OCI_Int32>(otext("ID")) << otext(" - ") << obj.Get<ostring>(otext("NAME")) << oendl;
     }
 
     ocout << otext("\n>>>>> TEST REF PL/SQL BINDING \n\n");
@@ -1399,7 +1379,7 @@ void test_ref(void)
     st.ExecutePrepared();
 
     Object obj = ref.GetObject();
-    ocout << obj.Get<int>(otext("ID")) << otext(" - ") << obj.Get<ostring>(otext("NAME")) << oendl;
+    ocout << obj.Get<OCI_Int32>(otext("ID")) << otext(" - ") << obj.Get<ostring>(otext("NAME")) << oendl;
 }
 
 
@@ -1416,7 +1396,7 @@ void test_directpath(void)
     Anyway, we run this test case only if the major versions of client and server
     match
     */
-    // if (Environment::GetRuntimeMajorVersion() == con.GetServerMajorVersion())
+    // if (env.GetRuntimeMajorVersion() == con.GetServerMajorVersion())
     {
         /* commit any previous pending modifications */
 
@@ -1424,7 +1404,7 @@ void test_directpath(void)
 
         ocout << otext("\n>>>>> TEST DIRECT PATH (10 loads of 100 rows) \n\n");
 
-        int i = 0, j = 0, n = DirPathLoadSize;
+        OCI_Int32 n = DirPathLoadSize;
 
         DirectPath dp(TypeInfo(con, otext("test_directpath"), TypeInfo::Table), DirPathColumnCount, n);
 
@@ -1446,11 +1426,11 @@ void test_directpath(void)
 
         n = dp.GetMaxRows();
 
-        for (i = 0; i < DirPathLoadCount; i++)
+        for (OCI_Int32 i = 0; i < DirPathLoadCount; ++i)
         {
             dp.Reset();
 
-            for (j = 1; j <= n; j++)
+            for (OCI_Int32 j = 1; j <= n; ++j)
             {
                 oostringstream val1, val2, val3;
 
@@ -1484,7 +1464,7 @@ void test_directpath(void)
 
 void test_bigint(void)
 {
-    big_int value1 = 12345, value2 = 0;
+    OCI_Int64 value1 = 12345, value2 = 0;
 
     ocout << otext("\n>>>>> TEST BINDING BIG INT \n\n");
 
@@ -1526,7 +1506,7 @@ void test_number()
     }
 
     // Testing binding external single number
-    nm = otext("1234.4321");
+    nm = Number(env, otext("1234.4321"));
     st.Prepare(otext("begin :1 := :1 *2 ; end;"));
     st.Bind(otext(":1"), nm, BindInfo::InOut);
     st.ExecutePrepared();
@@ -1543,8 +1523,8 @@ void test_number()
     }
 
     // testing Collections
-    cl.Append(otext("1111.2222"));
-    cl.Append(otext("3333.4444"));
+    cl.Append(Number(env, otext("1111.2222")));
+    cl.Append(Number(env, otext("3333.4444")));
 
     Collection<Number>::iterator it1 = cl.begin();
     Collection<Number>::iterator it2 = cl.end();
@@ -1555,7 +1535,7 @@ void test_number()
     }
 
     // Testing objects
-    nm = otext("5555.6666");
+    nm = Number(env, otext("5555.6666"));
     ocout << nm << oendl;
     ob.Set(otext("value"), nm);
     ocout << ob.Get<Number>(otext("value")) << oendl;

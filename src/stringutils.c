@@ -23,6 +23,8 @@
 #include "collection.h"
 #include "date.h"
 #include "environment.h"
+#include "error.h"
+#include "json.h"
 #include "file.h"
 #include "interval.h"
 #include "lob.h"
@@ -36,30 +38,32 @@
 #include "vector.h"
 #include "xmltype.h"
 
-#define COMPUTE_LENGTH(type, ptr, size)   \
-    const type *s = (const type *) (ptr); \
-    const type *e = (const type *) (ptr); \
-    while (*e++);                         \
-    (size) = (int) (e - s - (size_t) 1);  \
+#include <limits.h>
+
+#define COMPUTE_LENGTH(type, ptr, size)       \
+        const type *s = (const type *) (ptr); \
+        const type *e = (const type *) (ptr); \
+        while (*e++);                         \
+        (size) = (OCI_Int32) (e - s - (OCI_Size) 1);  \
 
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibStringLength
- * --------------------------------------------------------------------------------------------- */
+  * OcilibStringLength
+  * --------------------------------------------------------------------------------------------- */
 
-size_t OcilibStringLength
+OCI_Size OcilibStringLength
 (
-    const void *ptr,
-    size_t      size_elem
+    const void* ptr,
+    OCI_Size      size_elem
 )
 {
-    int size = 0;
+    OCI_Int32 size = 0;
 
-    CHECK_FALSE(NULL == ptr, 0);
+    if (NULL == ptr) return (0);
 
-    if (IS_UTF8_ENV())
+    if (FALSE)
     {
-        const char *s = (char *) ptr;
+        const char* s = (char*)ptr;
         while (*s)
         {
             if ((*s & 0xc0) != 0x80) size++;
@@ -68,15 +72,15 @@ size_t OcilibStringLength
     }
     else if (sizeof(char) == size_elem)
     {
-        COMPUTE_LENGTH(char, ptr, size)
+        COMPUTE_LENGTH(char, ptr, size);
     }
-    else if (sizeof(short) == size_elem)
+    else if (sizeof(OCI_Int16) == size_elem)
     {
-        COMPUTE_LENGTH(short, ptr, size)
+        COMPUTE_LENGTH(OCI_Int16, ptr, size);
     }
-    else if (sizeof(int) == size_elem)
+    else if (sizeof(OCI_Int32) == size_elem)
     {
-        COMPUTE_LENGTH(int, ptr, size)
+        COMPUTE_LENGTH(OCI_Int32, ptr, size);
     }
 
     return size;
@@ -86,22 +90,30 @@ size_t OcilibStringLength
  * OcilibStringBinaryToString
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibStringBinaryToString
+OCI_UInt32 OcilibStringBinaryToString
 (
-    const unsigned char *binary,
-    unsigned int         binary_size,
-    otext               *buffer
+    const unsigned char* binary,
+    OCI_UInt32         binary_size,
+    otext              * buffer
 )
 {
     char hex_str[] = "0123456789ABCDEF";
 
-    const unsigned int len = binary_size * 2;
+    /* Each input byte produces two hex characters, so anything above
+       UINT_MAX / 2 would wrap and make `buffer[len] = 0' write out of bounds. */
+
+    if (binary_size > (UINT_MAX - 1) / 2)
+    {
+        binary_size = (UINT_MAX - 1) / 2;
+    }
+
+    const OCI_UInt32 len = binary_size * 2;
 
     if (buffer)
     {
-        for (unsigned int i = 0; i < binary_size; i++)
+        for (OCI_UInt32 i = 0; i < binary_size; i++)
         {
-            buffer[i * 2 + 0] = hex_str[binary[i] >> 4  ];
+            buffer[i * 2 + 0] = hex_str[binary[i] >> 4];
             buffer[i * 2 + 1] = hex_str[binary[i] & 0x0F];
         }
 
@@ -115,33 +127,47 @@ unsigned int OcilibStringBinaryToString
  * OcilibStringRequestBuffer
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibStringRequestBuffer
+OCI_Boolean OcilibStringRequestBuffer
 (
-    otext       **buffer,
-    unsigned int *buffer_size,
-    unsigned int  request_size
+    OCI_Environment* env,
+    otext         ** buffer,
+    OCI_UInt32   * buffer_size,
+    OCI_UInt32     request_size
 )
 {
-    boolean res = FALSE;
+    OCI_Boolean res = FALSE;
 
     if (!buffer || !buffer_size)
     {
         return FALSE;
     }
 
-    request_size++;
+    const OCI_Size char_size = (env && (TRUE == env->charset))
+        ? (OCI_Size)OCI_UTF8_BYTES_PER_CHAR
+        : sizeof(otext);
 
-    request_size *= IS_UTF8_ENV() ? OCI_UTF8_BYTES_PER_CHAR : sizeof(otext);
+    /* Computed in OCI_Size: doing this in OCI_UInt32 wrapped for large requests
+       and produced a buffer far smaller than *buffer_size claimed, which the
+       callers then overran. */
+
+    const OCI_Size needed = ((OCI_Size)request_size + 1) * char_size;
+
+    if (needed > (OCI_Size)UINT_MAX)
+    {
+        return FALSE;
+    }
+
+    request_size = (OCI_UInt32)needed;
 
     if (!*buffer)
     {
-        *buffer = (otext *)OcilibMemoryAlloc(OCI_IPC_STRING, (size_t) request_size,
-                                             (size_t) 1, TRUE);
+        *buffer = (otext*)OcilibMemoryAlloc(env, OCI_IPC_STRING, (OCI_Size)request_size,
+                                            (OCI_Size)1, TRUE);
     }
     else if (*buffer_size < request_size)
     {
-        *buffer = (otext *)OcilibMemoryRealloc(*buffer, OCI_IPC_STRING, (size_t) request_size,
-                                               (size_t) 1, TRUE);
+        *buffer = (otext*)OcilibMemoryRealloc(env, *buffer, OCI_IPC_STRING, (OCI_Size)request_size,
+                                              (OCI_Size)1, TRUE);
     }
 
     if (*buffer)
@@ -158,52 +184,51 @@ boolean OcilibStringRequestBuffer
  * OcilibStringTranslate
  * --------------------------------------------------------------------------------------------- */
 
-#define STRING_CVT_EXPAND(type_src, type_dst, char_count)       \
-                                                                \
-    const int len = char_count;                                 \
-    unsigned type_src* str1 = (unsigned type_src*)src;          \
-    unsigned type_dst* str2 = (unsigned type_dst*)dst;          \
-                                                                \
-    if (*str1 == 0)                                             \
-    {                                                           \
-        return;                                                 \
-    }                                                           \
-                                                                \
-    while (char_count--)                                        \
-    {                                                           \
-        str2[char_count] = (unsigned type_dst)str1[char_count]; \
-    }                                                           \
-                                                                \
-    str2[len] = 0;                                              \
+#define STRING_CVT_EXPAND(type_src, type_dst, char_count)           \
+                                                                    \
+        const OCI_Int32 len = char_count;                                 \
+        unsigned type_src* str1 = (unsigned type_src*)src;          \
+        unsigned type_dst* str2 = (unsigned type_dst*)dst;          \
+                                                                    \
+        if (*str1 == 0)                                             \
+        {                                                           \
+            return;                                                 \
+        }                                                           \
+                                                                    \
+        while (char_count--)                                        \
+        {                                                           \
+            str2[char_count] = (unsigned type_dst)str1[char_count]; \
+        }                                                           \
+                                                                    \
+        str2[len] = 0;                                              \
 
-#define STRING_CVT_PACK(type_src, type_dst, char_count)         \
-                                                                \
-    const int len = char_count;                                 \
-    unsigned type_src* str1 = (unsigned type_src*)src;          \
-    unsigned type_dst* str2 = (unsigned type_dst*)dst;          \
-    int i = 0;                                                  \
-                                                                \
-   if (*str1 == 0)                                              \
-    {                                                           \
-        return;                                                 \
-    }                                                           \
-                                                                \
-    while (i < char_count)                                      \
-    {                                                           \
-        str2[i] = (unsigned type_dst)str1[i];                   \
-        i++;                                                    \
-    }                                                           \
-                                                                \
-    str2[len] = 0;    
-
+#define STRING_CVT_PACK(type_src, type_dst, char_count)    \
+                                                           \
+        const OCI_Int32 len = char_count;                        \
+        unsigned type_src* str1 = (unsigned type_src*)src; \
+        unsigned type_dst* str2 = (unsigned type_dst*)dst; \
+        OCI_Int32                i    = 0;                       \
+                                                           \
+        if (*str1 == 0)                                    \
+        {                                                  \
+            return;                                        \
+        }                                                  \
+                                                           \
+        while (i < char_count)                             \
+        {                                                  \
+            str2[i] = (unsigned type_dst)str1[i];          \
+            i++;                                           \
+        }                                                  \
+                                                           \
+        str2[len] = 0;
 
 void OcilibStringTranslate
 (
-    void  *src,
-    void  *dst,
-    int    char_count,
-    size_t size_char_in,
-    size_t size_char_out
+    void * src,
+    void * dst,
+    OCI_Int32    char_count,
+    OCI_Size size_char_in,
+    OCI_Size size_char_out
 )
 {
     if (!src || !dst)
@@ -217,47 +242,47 @@ void OcilibStringTranslate
     {
         /* expand string */
 
-        if ((size_char_in == sizeof(short)) && (size_char_out == sizeof(int)))
+        if ((size_char_in == sizeof(OCI_Int16)) && (size_char_out == sizeof(OCI_Int32)))
         {
             /* 2 => 4 bytes */
 
-            STRING_CVT_EXPAND(short, int, char_count)
+            STRING_CVT_EXPAND(short, int, char_count);
         }
-        else if ((size_char_in == sizeof(char)) && (size_char_out == sizeof(short)))
+        else if ((size_char_in == sizeof(char)) && (size_char_out == sizeof(OCI_Int16)))
         {
             /* 1 => 2 bytes */
 
-            STRING_CVT_EXPAND(char, short, char_count)
+            STRING_CVT_EXPAND(char, short, char_count);
         }
-        else if ((size_char_in == sizeof(char)) && (size_char_out == sizeof(int)))
+        else if ((size_char_in == sizeof(char)) && (size_char_out == sizeof(OCI_Int32)))
         {
             /* 1 => 4 bytes */
 
-            STRING_CVT_EXPAND(char, int, char_count)
+            STRING_CVT_EXPAND(char, int, char_count);
         }
     }
     else if (size_char_out < size_char_in)
     {
         /* pack string */
 
-        if ((size_char_in == sizeof(int)) && (size_char_out == sizeof(short)))
+        if ((size_char_in == sizeof(OCI_Int32)) && (size_char_out == sizeof(OCI_Int16)))
         {
             /* 4 => 2 bytes */
 
-            STRING_CVT_PACK(int, short, char_count)
+            STRING_CVT_PACK(int, short, char_count);
         }
-        else if ((size_char_in == sizeof(short)) && (size_char_out == sizeof(char)))
+        else if ((size_char_in == sizeof(OCI_Int16)) && (size_char_out == sizeof(char)))
         {
             /* 2 => 1 bytes */
 
-            STRING_CVT_PACK(short, char, char_count)
-            
+            STRING_CVT_PACK(short, char, char_count);
+
         }
-        else if ((size_char_in == sizeof(int)) &&  (size_char_out == sizeof(char)))
+        else if ((size_char_in == sizeof(OCI_Int32)) && (size_char_out == sizeof(char)))
         {
             /* 4 => 1 bytes */
 
-            STRING_CVT_PACK(int, char, char_count)
+            STRING_CVT_PACK(int, char, char_count);
         }
     }
     else if (src != dst)
@@ -268,13 +293,13 @@ void OcilibStringTranslate
         {
             ((char*)dst)[char_count] = 0;
         }
-        else if (size_char_out == sizeof(short))
+        else if (size_char_out == sizeof(OCI_Int16))
         {
-            ((short*)dst)[char_count] = 0;
+            ((OCI_Int16*)dst)[char_count] = 0;
         }
-        else if (size_char_out == sizeof(int))
+        else if (size_char_out == sizeof(OCI_Int32))
         {
-            ((int*)dst)[char_count] = 0;
+            ((OCI_Int32*)dst)[char_count] = 0;
         }
     }
 }
@@ -283,14 +308,15 @@ void OcilibStringTranslate
  * OcilibStringGetDBString
  * --------------------------------------------------------------------------------------------- */
 
-dbtext * OcilibStringGetDBString
+dbtext* OcilibStringGetDBString
 (
-    const otext *src,
-    int         *size
+    OCI_Environment* env,
+    const otext    * src,
+    OCI_Int32            * size
 )
 {
-    dbtext *dst = NULL;
-    int     len = 0;
+    dbtext* dst = NULL;
+    OCI_Int32     len = 0;
 
     if (!src)
     {
@@ -300,29 +326,29 @@ dbtext * OcilibStringGetDBString
 
     if (*size == -1)
     {
-        COMPUTE_LENGTH(otext, src, len)
+        COMPUTE_LENGTH(otext, src, len);
     }
     else
     {
-        len = (int) ((*size) / sizeof(otext));
+        len = (OCI_Int32)((*size) / sizeof(otext));
     }
 
-    if (Env.use_wide_char_conv)
+    if (env && env->use_wide_char_conv)
     {
-        dst = (dbtext *)OcilibMemoryAlloc(OCI_IPC_STRING, sizeof(dbtext),
-                                          len + 1, FALSE);
+        dst = (dbtext*)OcilibMemoryAlloc(env, OCI_IPC_STRING, sizeof(dbtext),
+                                         len + 1, FALSE);
 
         if (NULL != dst)
         {
-            OcilibStringUTF32ToUTF16( src, dst, len );
+            OcilibStringUTF32ToUTF16(src, dst, len);
         }
     }
     else
     {
-        dst = (dbtext *) src;
+        dst = (dbtext*)src;
     }
 
-    *size = (int) (len * sizeof(dbtext));
+    *size = (OCI_Int32)(len * sizeof(dbtext));
 
     return dst;
 }
@@ -333,12 +359,13 @@ dbtext * OcilibStringGetDBString
 
 void OcilibStringReleaseDBString
 (
-    dbtext *str
+    OCI_Environment* env,
+    dbtext         * str
 )
 {
-    if (Env.use_wide_char_conv && NULL != str)
+    if (env && env->use_wide_char_conv && NULL != str)
     {
-        OcilibMemoryFree(str);
+        OcilibMemoryFree(env, str);
     }
 }
 
@@ -346,16 +373,17 @@ void OcilibStringReleaseDBString
  * OcilibStringCopyDBStringToNativeString
  * --------------------------------------------------------------------------------------------- */
 
-int OcilibStringCopyDBStringToNativeString
+OCI_Int32 OcilibStringCopyDBStringToNativeString
 (
-    const dbtext *src,
-    otext        *dst,
-    int           len
+    OCI_Environment* env,
+    const dbtext   * src,
+    otext          * dst,
+    OCI_Int32              len
 )
 {
-    if (Env.use_wide_char_conv)
+    if (env && env->use_wide_char_conv)
     {
-        OcilibStringUTF16ToUTF32((void *) src, (void *) dst, len);
+        OcilibStringUTF16ToUTF32((void*)src, (void*)dst, len);
     }
 
     return len;
@@ -367,23 +395,26 @@ int OcilibStringCopyDBStringToNativeString
 
 otext* OcilibStringDuplicateFromDBString
 (
-    const dbtext *src,
-    int           len
+    OCI_Environment* env,
+    const dbtext   * src,
+    OCI_Int32              len
 )
 {
-    otext *dst = (otext *)OcilibMemoryAlloc(OCI_IPC_STRING, sizeof(otext), len + 1, FALSE);
+    otext* dst = (otext*)OcilibMemoryAlloc(env, OCI_IPC_STRING, sizeof(otext), len + 1, FALSE);
 
     if (NULL != dst)
     {
-        if (Env.use_wide_char_conv)
+        if (env->use_wide_char_conv)
         {
-            OcilibStringUTF16ToUTF32((void *) src, (void *) dst, len);
+            OcilibStringUTF16ToUTF32((void*)src, (void*)dst, len);
         }
         else
         {
-            OcilibStringRawCopy((void *) src, (void *) dst, len);
+            OcilibStringRawCopy((void*)src, (void*)dst, len);
         }
     }
+
+    dst[len] = 0;
 
     return dst;
 }
@@ -392,46 +423,47 @@ otext* OcilibStringDuplicateFromDBString
  * OcilibStringFromStringPtr
  * --------------------------------------------------------------------------------------------- */
 
-otext * OcilibStringFromStringPtr
+otext* OcilibStringFromStringPtr
 (
-    OCIEnv       *env,
-    OCIString    *str,
-    otext       **buffer,
-    unsigned int *buffer_size
+    OCI_Environment* libenv,
+    OCIEnv         * envh,
+    OCIString      * str,
+    otext         ** buffer,
+    OCI_UInt32   * buffer_size
 )
 {
-    dbtext *tmp = NULL;
+    dbtext* tmp = NULL;
 
-    CHECK_FALSE(NULL == buffer, NULL);
+    if (NULL == buffer) return (NULL);
 
-    tmp = (dbtext *) OCIStringPtr(env, str);
+    tmp = (dbtext*)libenv->api->OCIStringPtr(envh, str);
 
     if (tmp)
     {
-        const size_t length = OCIStringSize(Env.env, str) / sizeof(dbtext);
+        const OCI_Size length = libenv->api->OCIStringSize(envh, str) / sizeof(dbtext);
 
         if (NULL == *buffer)
         {
-            *buffer = OcilibMemoryAlloc(OCI_IPC_STRING, sizeof(otext),
+            *buffer = OcilibMemoryAlloc(libenv, OCI_IPC_STRING, sizeof(otext),
                                         length + 1, FALSE);
         }
         else if ((*buffer_size) < ((length + 1) * sizeof(otext)))
         {
-            *buffer = OcilibMemoryRealloc((void*)  *buffer, OCI_IPC_STRING, sizeof(otext),
+            *buffer = OcilibMemoryRealloc(libenv, (void*)*buffer, OCI_IPC_STRING, sizeof(otext),
                                           length + 1, FALSE);
         }
 
         if (NULL != *buffer)
         {
-            *buffer_size = (unsigned int) ( (length + 1) * sizeof(otext));
+            *buffer_size = (OCI_UInt32)((length + 1) * sizeof(otext));
 
-            if (Env.use_wide_char_conv)
+            if (libenv && libenv->use_wide_char_conv)
             {
-                OcilibStringUTF16ToUTF32((void *)tmp, (void *)*buffer, (int) length);
+                OcilibStringUTF16ToUTF32((void*)tmp, (void*)*buffer, (OCI_Int32)length);
             }
             else
             {
-                OcilibStringRawCopy((void *)tmp, (void *)*buffer, (int) length);
+                OcilibStringRawCopy((void*)tmp, (void*)*buffer, (OCI_Int32)length);
             }
         }
     }
@@ -443,109 +475,111 @@ otext * OcilibStringFromStringPtr
  * OcilibStringToStringPtr
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibStringToStringPtr
+OCI_Boolean OcilibStringToStringPtr
 (
-    OCIEnv      *env,
-    OCIString  **str,
-    OCIError    *err,
-    const otext *value
+    OCI_Environment* libenv,
+    OCIEnv         * envh,
+    OCIString     ** str,
+    OCIError       * err,
+    const otext    * value
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, libenv
+    );
 
-    dbtext *dbstr = NULL;
-    int dbsize = -1;
+    dbtext* dbstr  = NULL;
+    OCI_Int32     dbsize = -1;
 
-    CHECK_PTR(OCI_IPC_STRING, value)
+    CHECK_PTR(OCI_IPC_STRING, value);
 
-    dbstr = OcilibStringGetDBString(value, &dbsize);
+    dbstr = OcilibStringGetDBString(libenv, value, &dbsize);
 
     CHECK_OCI
     (
         err,
         OCIStringAssignText,
-        env, err, (oratext*)dbstr, (ub4)dbsize, str
-    )
+        envh, err, (oratext*)dbstr, (ub4)dbsize, str
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dbstr);
-    )
+        OcilibStringReleaseDBString(libenv, dbstr);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
 * OcilibStringFreeStringPtr
 * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibStringFreeStringPtr
+OCI_Boolean OcilibStringFreeStringPtr
 (
-    OCIEnv     *env,
-    OCIString **str,
-    OCIError   *err
+    OCI_Environment* libenv,
+    OCIEnv         * envh,
+    OCIString     ** str,
+    OCIError       * err
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, libenv
+    );
 
-    CHECK_PTR(OCI_IPC_STRING, str)
+    CHECK_PTR(OCI_IPC_STRING, str);
 
     CHECK_OCI
     (
         err,
         OCIStringResize,
-        env, err, (ub4)0, str
-    )
+        envh, err, (ub4)0, str
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibStringGetAttribute
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibStringGetAttribute
+OCI_Boolean OcilibStringGetAttribute
 (
-    OCI_Connection *con,
-    void           *handle,
-    unsigned int    type,
-    unsigned int    attr,
-    otext         **str,
-    unsigned int   *size
+    OCI_Connection* con,
+    void          * handle,
+    OCI_UInt32    type,
+    OCI_UInt32    attr,
+    otext        ** str,
+    OCI_UInt32  * size
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
-    CHECK_PTR(OCI_IPC_STRING,     str)
-    CHECK_PTR(OCI_IPC_INT,       size)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_STRING, str);
+    CHECK_PTR(OCI_IPC_INT, size);
 
-    dbtext *dbstr = NULL;
-    int dbsize = -1;
-    int len    = 0;
+    dbtext* dbstr  = NULL;
+    OCI_Int32     dbsize = -1;
+    OCI_Int32     len    = 0;
 
     CHECK_ATTRIB_GET
     (
         type, attr, handle, &dbstr, &dbsize, con->err
-    )
+    );
 
-    if (NULL !=  dbstr)
+    if (NULL != dbstr)
     {
-        boolean is_ansi = FALSE;
+        OCI_Boolean is_ansi = FALSE;
 
         /*  Oracle BUG using OCI in Unicode mode (once again...)
             Some attributes are returned as ANSI buffer even when OCI is initialized in UTF16 mode
@@ -554,7 +588,7 @@ boolean OcilibStringGetAttribute
 
         if (IS_WIDE_CHAR_ENV() && dbsize > 1)
         {
-            char *ptr = (char*) dbstr;
+            char* ptr = (char*)dbstr;
 
             if (ptr[0] != 0 && ptr[1] != 0)
             {
@@ -571,51 +605,51 @@ boolean OcilibStringGetAttribute
             len = dbcharcount(dbsize);
         }
 
-        if (OcilibStringRequestBuffer(str, size, len))
+        if (OcilibStringRequestBuffer(con->env, str, size, len))
         {
-            OcilibStringTranslate(dbstr, *str, len, 
+            OcilibStringTranslate(dbstr, *str, len,
                                   is_ansi ? sizeof(char) : sizeof(dbtext),
                                   sizeof(otext));
         }
 
-        CHECK_NULL(*str)
+        CHECK_NULL(*str);
 
         /* Ensure that the string value will be NULL terminated */
 
         (*str)[len] = 0;
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibStringSetAttribute
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibStringSetAttribute
+OCI_Boolean OcilibStringSetAttribute
 (
-    OCI_Connection *con,
-    void           *handle,
-    unsigned int    type,
-    unsigned int    attr,
-    otext         **str,
-    const otext    *value
+    OCI_Connection* con,
+    void          * handle,
+    OCI_UInt32    type,
+    OCI_UInt32    attr,
+    otext        ** str,
+    const otext   * value
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
-    dbtext *dbstr = NULL;
-    int dbsize = -1;
+    dbtext* dbstr  = NULL;
+    OCI_Int32     dbsize = -1;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
 
-    dbstr = OcilibStringGetDBString(value, &dbsize);
+    dbstr = OcilibStringGetDBString(con->env, value, &dbsize);
 
     if (dbsize == -1)
     {
@@ -625,48 +659,48 @@ boolean OcilibStringSetAttribute
     CHECK_ATTRIB_SET
     (
         type, attr, handle, dbstr, dbsize, con->err
-    )
+    );
 
     if (NULL != str)
     {
-        FREE(*str)
+        FREE(*str);
 
         if (NULL != value)
         {
-            *str = OcilibStringDuplicate(value);
+            *str = OcilibStringDuplicate(con->env, value);
         }
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dbstr);
-    )
+        OcilibStringReleaseDBString(con->env, dbstr);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibStringGetFromType 
+ * OcilibStringGetFromType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibStringGetFromType
+OCI_UInt32 OcilibStringGetFromType
 (
-    OCI_Connection *con,
-    OCI_Column     *col,
-    void           *data,
-    unsigned int    data_size,
-    otext          *buffer,
-    unsigned int    buffer_size,
-    boolean         quote
+    OCI_Connection* con,
+    OCI_Column    * col,
+    void          * data,
+    OCI_UInt32    data_size,
+    otext         * buffer,
+    OCI_UInt32    buffer_size,
+    OCI_Boolean     quote
 )
 {
-    boolean      res   = TRUE;
-    boolean      check = FALSE;
-    unsigned int len   = 0;
+    OCI_Boolean  res   = TRUE;
+    OCI_Boolean  check = FALSE;
+    OCI_UInt32 len   = 0;
 
     /* if buffer is not null, then buffer_size must the > 0 */
 
-    otext *ptr = buffer;
+    otext* ptr = buffer;
 
     if (quote && NULL != data)
     {
@@ -682,7 +716,7 @@ unsigned int OcilibStringGetFromType
     {
         case OCI_CDT_TEXT:
         {
-            len += OcilibStringAddToBuffer(buffer, len, (otext *) data, dbcharcount(data_size), quote);
+            len += OcilibStringAddToBuffer(buffer, len, (otext*)data, dbcharcount(data_size), quote);
             break;
         }
         case OCI_CDT_BOOLEAN:
@@ -691,9 +725,9 @@ unsigned int OcilibStringGetFromType
             {
                 if (data)
                 {
-                    otext * str_value = *(boolean*)data ? OCI_STRING_TRUE : OCI_STRING_FALSE;
+                    otext* str_value = *(OCI_Boolean*)data ? OCI_STRING_TRUE : OCI_STRING_FALSE;
 
-                    const unsigned int str_length = (*(boolean*)data) ? OCI_STRING_TRUE_SIZE : OCI_STRING_FALSE_SIZE;
+                    const OCI_UInt32 str_length = (*(OCI_Boolean*)data) ? OCI_STRING_TRUE_SIZE : OCI_STRING_FALSE_SIZE;
 
                     len += OcilibStringAddToBuffer(buffer, len, str_value, str_length, quote);
                 }
@@ -715,7 +749,7 @@ unsigned int OcilibStringGetFromType
 
             if (NULL != ptr)
             {
-                res = OcilibNumberToStringInternal(con, data, col->subtype, ptr, (int) buffer_size, NULL);
+                res = OcilibNumberToStringInternal(con->env, data, col->subtype, ptr, (OCI_Int32)buffer_size, NULL);
             }
             else
             {
@@ -729,10 +763,10 @@ unsigned int OcilibStringGetFromType
 
             if (ptr)
             {
-                OCI_Date    *date = (OCI_Date*) data;
-                const otext *fmt  = OcilibEnvironmentGetFormat(con, OCI_FMT_DATE);
+                OCI_Date   * date = (OCI_Date*)data;
+                const otext* fmt  = date ? OcilibEnvironmentGetFormat(date->env, OCI_FMT_DATE) : NULL;
 
-                res = date ? OcilibDateToString(date, fmt, (int) buffer_size, ptr) : FALSE;
+                res = date ? OcilibDateToString(date, fmt, (OCI_Int32)buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -746,12 +780,12 @@ unsigned int OcilibStringGetFromType
 
             if (ptr)
             {
-                OCI_Timestamp *tmsp = (OCI_Timestamp *) data;
-                const int fmt_type = tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP;
+                OCI_Timestamp* tmsp     = (OCI_Timestamp*)data;
+                const OCI_Int32      fmt_type = tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP;
 
-                const otext *fmt = OcilibEnvironmentGetFormat(con, fmt_type);
+                const otext* fmt = tmsp ? OcilibEnvironmentGetFormat(tmsp->env, fmt_type) : NULL;
 
-                res = tmsp ? OcilibTimestampToString(tmsp, fmt, (int) buffer_size, ptr, 0) : FALSE;
+                res = tmsp ? OcilibTimestampToString(tmsp, fmt, (OCI_Int32)buffer_size, ptr, 0) : FALSE;
             }
             else
             {
@@ -765,11 +799,11 @@ unsigned int OcilibStringGetFromType
 
             if (NULL != ptr)
             {
-                OCI_Interval *itv = (OCI_Interval * ) data;
+                OCI_Interval* itv = (OCI_Interval*)data;
 
                 res = itv ? OcilibIntervalToString(itv, OCI_STRING_DEFAULT_PREC,
                                                    OCI_STRING_DEFAULT_PREC,
-                                                   (int) buffer_size, ptr) : FALSE;
+                                                   (OCI_Int32)buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -779,19 +813,23 @@ unsigned int OcilibStringGetFromType
         }
         case OCI_CDT_LONG:
         {
-            OCI_Long *lg = (OCI_Long *) data;
+            OCI_Long* lg = (OCI_Long*)data;
 
             if (NULL != lg)
             {
                 if (OCI_CLONG == col->subtype)
                 {
-                    len = OcilibStringAddToBuffer(buffer, len, 
+                    len = OcilibStringAddToBuffer(buffer, len,
                                                   (otext*)OcilibLongGetBuffer(lg),
                                                   OcilibLongGetSize(lg), quote);
                 }
                 else
                 {
-                    len = OcilibStringBinaryToString((unsigned char *) data, buffer_size, ptr);
+                    /* must hex-encode the LONG payload, not the OCI_Long handle
+                       itself, and must be bounded by the payload size */
+
+                    len = OcilibStringBinaryToString((unsigned char*)OcilibLongGetBuffer(lg),
+                                                     OcilibLongGetSize(lg), ptr);
                 }
             }
             else
@@ -805,50 +843,65 @@ unsigned int OcilibStringGetFromType
         {
             if (NULL != data)
             {
-                len = OcilibStringBinaryToString((unsigned char *) data, data_size, ptr);
+                len = OcilibStringBinaryToString((unsigned char*)data, data_size, ptr);
             }
             break;
         }
         case OCI_CDT_LOB:
         {
-            OCI_Lob *lob = (OCI_Lob *) data;
+            OCI_Lob* lob = (OCI_Lob*)data;
 
             if (NULL != lob)
             {
                 if (NULL != ptr)
                 {
-                    unsigned char lob_buf[OCI_SIZE_LARGE_BUFFER];
-
-                    while (res)
+                    if (0 == OcilibLobGetLength(lob))
                     {
-                        const unsigned int bytes_requested = sizeof(lob_buf) - sizeof(otext);
+                        /* empty lobs (e.g. EMPTY_CLOB() collection elements) report
+                           ORA-1403 in OcilibLobGetLength() - render them as empty */
 
-                        unsigned int bytes_count = bytes_requested;
-                        unsigned int char_count  = 0;
-
-                        res = OcilibLobRead2(lob, lob_buf, &char_count, &bytes_count);
-
-                        if (bytes_count == 0)
-                        {
-                            break;
-                        }
-
-                        if (OCI_BLOB == lob->type)
-                        {
-                            len += OcilibStringBinaryToString(lob_buf, bytes_count, ptr + len);
-                        }
-                        else
-                        {
-                            len += OcilibStringAddToBuffer(buffer, len, (otext*)lob_buf,
-                                                           ocharcount(bytes_count), quote);
-                        }
+                        OcilibErrorReset(OcilibErrorGet(con->env, FALSE, FALSE));
                     }
+                    else
+                    {
+                        unsigned char lob_buf[OCI_SIZE_LARGE_BUFFER];
 
-                    OcilibLobSeek(lob, 0, OCI_SEEK_SET);
+                        while (res)
+                        {
+                            const OCI_UInt32 bytes_requested = sizeof(lob_buf) - sizeof(otext);
+
+                            OCI_UInt32 bytes_count = bytes_requested;
+                            OCI_UInt32 char_count  = (OCI_UInt32) (bytes_requested / sizeof(dbtext));
+
+                            res = OcilibLobRead(lob, lob_buf, &char_count, &bytes_count);
+
+                            if (!res || bytes_count == 0)
+                            {
+                                break;
+                            }
+
+                            if (OCI_BLOB == lob->type)
+                            {
+                                len += OcilibStringBinaryToString(lob_buf, bytes_count, ptr + len);
+                            }
+                            else
+                            {
+                                len += OcilibStringAddToBuffer(buffer, len, (otext*)lob_buf,
+                                                               ocharcount(bytes_count), quote);
+                            }
+                        }
+
+                        OcilibLobSeek(lob, 0, OCI_SEEK_SET);
+                    }
                 }
                 else
                 {
-                    len = (unsigned int)OcilibLobGetLength(lob);
+                    len = (OCI_UInt32)OcilibLobGetLength(lob);
+
+                    if (0 == len)
+                    {
+                        OcilibErrorReset(OcilibErrorGet(con->env, FALSE, FALSE));
+                    }
 
                     if (OCI_BLOB == lob->type)
                     {
@@ -867,16 +920,16 @@ unsigned int OcilibStringGetFromType
         }
         case OCI_CDT_FILE:
         {
-            OCI_File *file = (OCI_File *) data;
+            OCI_File* file = (OCI_File*)data;
 
             if (NULL != file)
             {
-                const otext * dir  = OcilibFileGetDirectory(file);
-                const otext * name = OcilibFileGetName(file);
+                const otext* dir  = OcilibFileGetDirectory(file);
+                const otext* name = OcilibFileGetName(file);
 
-                len += OcilibStringAddToBuffer(buffer, len, dir, (unsigned int) ostrlen(dir), TRUE);
+                len += OcilibStringAddToBuffer(buffer, len, dir, (OCI_UInt32)ostrlen(dir), TRUE);
                 len += OcilibStringAddToBuffer(buffer, len, OTEXT("/"), 1, TRUE);
-                len += OcilibStringAddToBuffer(buffer, len, name, (unsigned int) ostrlen(name), TRUE);
+                len += OcilibStringAddToBuffer(buffer, len, name, (OCI_UInt32)ostrlen(name), TRUE);
             }
             else
             {
@@ -892,7 +945,7 @@ unsigned int OcilibStringGetFromType
 
             if (NULL != ptr)
             {
-                OCI_Ref *ref = (OCI_Ref *) data;
+                OCI_Ref* ref = (OCI_Ref*)data;
                 res = ref ? OcilibReferenceToString(ref, buffer_size, ptr) : FALSE;
             }
             else
@@ -903,9 +956,9 @@ unsigned int OcilibStringGetFromType
         }
         case OCI_CDT_OBJECT:
         {
-            OCI_Object *obj = (OCI_Object *) data;
+            OCI_Object* obj = (OCI_Object*)data;
 
-            unsigned int real_size = buffer_size;
+            OCI_UInt32 real_size = buffer_size;
 
             quote = FALSE;
             res   = obj ? OcilibObjectToString(obj, &real_size, ptr) : FALSE;
@@ -914,9 +967,9 @@ unsigned int OcilibStringGetFromType
         }
         case OCI_CDT_VECTOR:
         {
-            OCI_Vector *vect = (OCI_Vector *) data;
+            OCI_Vector* vect = (OCI_Vector*)data;
 
-            unsigned int real_size = buffer_size;
+            OCI_UInt32 real_size = buffer_size;
 
             quote = FALSE;
             res   = vect ? OcilibVectorToString(vect, &real_size, ptr) : FALSE;
@@ -925,9 +978,9 @@ unsigned int OcilibStringGetFromType
         }
         case OCI_CDT_COLLECTION:
         {
-            OCI_Coll *coll = (OCI_Coll *) data;
+            OCI_Coll* coll = (OCI_Coll*)data;
 
-            unsigned int real_size = buffer_size;
+            OCI_UInt32 real_size = buffer_size;
 
             quote = FALSE;
             res   = coll ? OcilibCollectionToString(coll, &real_size, ptr) : FALSE;
@@ -936,19 +989,30 @@ unsigned int OcilibStringGetFromType
         }
         case OCI_CDT_CURSOR:
         {
-            OCI_Statement *stmt = (OCI_Statement *)data;
+            OCI_Statement* stmt = (OCI_Statement*)data;
 
             quote = TRUE;
 
             if (NULL != stmt)
             {
                 len = OcilibStringAddToBuffer(buffer, len, stmt->sql,
-                                              (unsigned int) ostrlen(stmt->sql), quote);
+                                              (OCI_UInt32)ostrlen(stmt->sql), quote);
             }
             else
             {
                 res = FALSE;
             }
+            break;
+        }
+        case OCI_CDT_JSON:
+        {
+            OCI_Json* json = (OCI_Json*)data;
+
+            OCI_UInt32 real_size = (OCI_UInt32)(buffer_size / sizeof(otext));
+
+            quote = FALSE;
+            res   = json ? OcilibJsonToText(json, ptr, &real_size, 0, FALSE) : FALSE;
+            len   = real_size;
             break;
         }
         default:
@@ -963,7 +1027,7 @@ unsigned int OcilibStringGetFromType
         if (NULL != buffer && check && buffer_size > len)
         {
             /* the resulting string shall be computed as it was not known in advance */
-            len = (unsigned int) ostrlen(buffer);
+            len = (OCI_UInt32)ostrlen(buffer);
         }
 
         if (quote && NULL != data)
@@ -995,18 +1059,18 @@ unsigned int OcilibStringGetFromType
  * OcilibStringAddToBuffer
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibStringAddToBuffer
+OCI_UInt32 OcilibStringAddToBuffer
 (
-    otext       *buffer,
-    unsigned int offset,
-    const otext *str,
-    unsigned int length,
-    boolean      check_quote
+    otext      * buffer,
+    OCI_UInt32 offset,
+    const otext* str,
+    OCI_UInt32 length,
+    OCI_Boolean  check_quote
 )
 {
-    const unsigned int len_in = length;
+    const OCI_UInt32 len_in = length;
 
-    unsigned int len_out = 0;
+    OCI_UInt32 len_out = 0;
 
     if (NULL == str)
     {
@@ -1017,11 +1081,11 @@ unsigned int OcilibStringAddToBuffer
     {
         if (NULL != buffer)
         {
-            const otext *src = str;
+            const otext* src = str;
 
-            otext *dst = buffer + offset;
+            otext* dst = buffer + offset;
 
-            unsigned int src_len = len_in;
+            OCI_UInt32 src_len = len_in;
 
             while (NULL != src && *src && src_len)
             {
@@ -1044,7 +1108,7 @@ unsigned int OcilibStringAddToBuffer
         }
         else
         {
-            const otext *s = str;
+            const otext* s = str;
             len_out = len_in;
 
             while (NULL != s && *s)
@@ -1070,18 +1134,74 @@ unsigned int OcilibStringAddToBuffer
 }
 
 /* --------------------------------------------------------------------------------------------- *
+* OcilibStringAppendChecked
+* --------------------------------------------------------------------------------------------- */
+
+/* Appends at most 'count' characters of 'src' to 'dest' at 'offset'.
+ *
+ * 'limit' is the maximum number of characters that may be written to 'dest',
+ * excluding the terminating NUL: 'dest' must therefore have room for
+ * 'limit' + 1 elements, which is the convention used by every caller of
+ * OcilibStringGetTypeName() / OcilibStringGetFullTypeName().
+ *
+ * The result is always NUL terminated, the write is always clamped to 'limit',
+ * and the returned offset is always <= 'limit'. Used instead of ostrncpy()
+ * because ostrncpy() is strncpy()/wcsncpy(), which does not terminate when the
+ * source is longer than the bound.
+ */
+
+static OCI_UInt32 OcilibStringAppendChecked
+(
+    otext      * dest,
+    OCI_UInt32 limit,
+    OCI_UInt32 offset,
+    const otext* src,
+    OCI_Size       count
+)
+{
+    if (NULL == dest)
+    {
+        return offset;
+    }
+
+    if (offset > limit)
+    {
+        offset = limit;
+    }
+
+    {
+        const OCI_Size avail = (OCI_Size)(limit - offset);
+
+        if (count > avail)
+        {
+            count = avail;
+        }
+
+        if (NULL != src && count > 0)
+        {
+            memcpy(dest + offset, src, count * sizeof(otext));
+            offset += (OCI_UInt32)count;
+        }
+    }
+
+    dest[offset] = 0;
+
+    return offset;
+}
+
+/* --------------------------------------------------------------------------------------------- *
 * OcilibStringGetTypeName
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibStringGetTypeName
+OCI_UInt32 OcilibStringGetTypeName
 (
-    const otext *source,
-    otext       *dest,
-    unsigned int length
+    const otext* source,
+    otext      * dest,
+    OCI_UInt32 length
 )
 {
-    boolean      quote  = FALSE;
-    unsigned int offset = 0;
+    OCI_Boolean  quote  = FALSE;
+    OCI_UInt32 offset = 0;
 
     if (!IS_STRING_VALID(source) || NULL == dest)
     {
@@ -1092,11 +1212,11 @@ unsigned int OcilibStringGetTypeName
 
     if (source[0] != OTEXT('"'))
     {
-        const otext *str = NULL;
+        const otext* str = NULL;
 
         for (str = source; *str; str++)
         {
-            if ((*str) != otoupper(*str))
+            if ((*str) != (otext)otoupper(*str))
             {
                 quote = TRUE;
                 break;
@@ -1104,21 +1224,18 @@ unsigned int OcilibStringGetTypeName
         }
     }
 
-    /* Fill destination string */
+    /* Fill destination string, clamped to 'length' characters */
 
     if (quote)
     {
-        ostrncpy(dest + offset, OTEXT("\""), length - offset);
-        offset++;
+        offset = OcilibStringAppendChecked(dest, length, offset, OTEXT("\""), 1);
     }
 
-    ostrncpy(dest + offset, source, length - offset);
-    offset += (unsigned int)ostrlen(source);
+    offset = OcilibStringAppendChecked(dest, length, offset, source, ostrlen(source));
 
     if (quote)
     {
-        ostrncpy(dest + offset, OTEXT("\""), length - offset);
-        offset++;
+        offset = OcilibStringAppendChecked(dest, length, offset, OTEXT("\""), 1);
     }
 
     return offset;
@@ -1128,50 +1245,61 @@ unsigned int OcilibStringGetTypeName
 * OcilibStringGetFullTypeName
 * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibStringGetFullTypeName
+OCI_UInt32 OcilibStringGetFullTypeName
 (
-    const otext *schema,
-    const otext *package,
-    const otext *type,
-    const otext *link,
-    otext       *name,
-    unsigned int length
+    const otext* schema,
+    const otext* package,
+    const otext* type,
+    const otext* link,
+    otext      * name,
+    OCI_UInt32 length
 )
 {
-    unsigned int offset = 0;
+    OCI_UInt32 offset = 0;
 
-    if (IS_STRING_VALID(schema))
+    if (NULL == name)
+    {
+        return 0;
+    }
+
+    name[0] = 0;
+
+    /* Every step is guarded on 'offset < length' so that the sub-calls never
+       receive an underflowed (length - offset) as their own capacity. */
+
+    if (IS_STRING_VALID(schema) && offset < length)
     {
         offset += OcilibStringGetTypeName(schema, name + offset, length - offset);
 
         if (offset)
         {
-            ostrncpy(name + offset, OTEXT("."), length - offset);
-            offset++;
+            offset = OcilibStringAppendChecked(name, length, offset, OTEXT("."), 1);
         }
     }
 
-    if (IS_STRING_VALID(package))
+    if (IS_STRING_VALID(package) && offset < length)
     {
         offset += OcilibStringGetTypeName(package, name + offset, length - offset);
 
         if (offset)
         {
-            ostrncpy(name + offset, OTEXT("."), length - offset);
-            offset++;
+            offset = OcilibStringAppendChecked(name, length, offset, OTEXT("."), 1);
         }
     }
 
-    if (IS_STRING_VALID(type))
+    if (IS_STRING_VALID(type) && offset < length)
     {
         offset += OcilibStringGetTypeName(type, name + offset, length - offset);
     }
 
-    if (IS_STRING_VALID(link))
+    if (IS_STRING_VALID(link) && offset < length)
     {
-        ostrncpy(name + offset, OTEXT("@"), length - offset);
-        offset++;
-        offset += OcilibStringGetTypeName(link, name + offset, length - offset);
+        offset = OcilibStringAppendChecked(name, length, offset, OTEXT("@"), 1);
+
+        if (offset < length)
+        {
+            offset += OcilibStringGetTypeName(link, name + offset, length - offset);
+        }
     }
 
     return offset;
@@ -1183,18 +1311,19 @@ unsigned int OcilibStringGetFullTypeName
 
 otext* OcilibStringDuplicate
 (
-    const otext* src
+    OCI_Environment* env,
+    const otext    * src
 )
 {
-    CHECK_FALSE(NULL == src, NULL)
+    if (NULL == src) return (NULL);
 
-    otext *dst = (otext*)OcilibMemoryAlloc
-    (
-        OCI_IPC_STRING, 
-        sizeof(otext), 
-        ostrlen(src) + 1,
-        0
-    );
+    otext* dst = (otext*)OcilibMemoryAlloc
+                 (
+                     env,
+                     OCI_IPC_STRING,
+                     sizeof(otext),
+                     ostrlen(src) + 1,
+                     0);
 
     if (NULL != dst)
     {
@@ -1210,18 +1339,19 @@ otext* OcilibStringDuplicate
 
 char* OcilibStringAnsiDuplicate
 (
-    const char* src
+    OCI_Environment* env,
+    const char     * src
 )
 {
-    CHECK_FALSE(NULL == src, NULL)
+    if (NULL == src) return (NULL);
 
     char* dst = (char*)OcilibMemoryAlloc
-    (
-        OCI_IPC_STRING,
-        sizeof(char),
-        strlen(src) + 1,
-        0
-    );
+                (
+                    env,
+                    OCI_IPC_STRING,
+                    sizeof(char),
+                    strlen(src) + 1,
+                    0);
 
     if (NULL != dst)
     {
@@ -1235,7 +1365,7 @@ char* OcilibStringAnsiDuplicate
  * OcilibStringCaseCompare
  * --------------------------------------------------------------------------------------------- */
 
-int OcilibStringCaseCompare
+OCI_Int32 OcilibStringCaseCompare
 (
     const otext* str1,
     const otext* str2
@@ -1269,7 +1399,7 @@ int OcilibStringCaseCompare
  * OcilibStringAnsiCaseCompare
  * --------------------------------------------------------------------------------------------- */
 
-int OcilibStringAnsiCaseCompare
+OCI_Int32 OcilibStringAnsiCaseCompare
 (
     const char* str1,
     const char* str2
@@ -1303,21 +1433,22 @@ int OcilibStringAnsiCaseCompare
  * OcilibStringFormat
  * --------------------------------------------------------------------------------------------- */
 
-int OcilibStringFormat
+OCI_Int32 OcilibStringFormat
 (
-    otext       * str,
-    int           size,
-    const otext * format,
+    otext      * str,
+    OCI_Int32          size,
+    const otext* format,
     ...
 )
 {
-    /* size is the number of character that can fit in str variable without including last null char */
+    /* size is the number of character that can fit in str variable without including last null char
+    */
 
     va_list args;
 
     va_start(args, format);
 
-    const int n = (int)ovsprintf(str, (size_t)(size + 1), format, args);
+    const OCI_Int32 n = (OCI_Int32)ovsprintf(str, (OCI_Size)(size + 1), format, args);
 
     va_end(args);
 

@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL boolean OcilibResultsetInitialize
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetInitialize
 (
     OCI_Resultset* rs
 );
@@ -31,52 +31,52 @@ OCI_SYM_LOCAL boolean OcilibResultsetInitialize
 OCI_SYM_LOCAL OCI_Resultset* OcilibResultsetCreate
 (
     OCI_Statement * stmt,
-    int             size
+    OCI_Int32             size
 );
 
-OCI_SYM_LOCAL boolean OcilibResultsetFree
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetFree
 (
     OCI_Resultset* rs
 );
 
-OCI_SYM_LOCAL boolean OcilibResultsetFetchPrev
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetFetchPrev
 (
     OCI_Resultset* rs
 );
 
-OCI_SYM_LOCAL boolean OcilibResultsetFetchNext
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetFetchNext
 (
     OCI_Resultset* rs
 );
 
-OCI_SYM_LOCAL boolean OcilibResultsetFetchFirst
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetFetchFirst
 (
     OCI_Resultset* rs
 );
 
-OCI_SYM_LOCAL boolean OcilibResultsetFetchLast
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetFetchLast
 (
     OCI_Resultset* rs
 );
 
-OCI_SYM_LOCAL boolean OcilibResultsetFetchSeek
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetFetchSeek
 (
-    OCI_Resultset* rs,
-    unsigned int   mode,
-    int            offset
+    OCI_Resultset   * rs,
+    OCI_FetchSeekMode mode,
+    OCI_Int32               offset
 );
 
-OCI_SYM_LOCAL unsigned int OcilibResultsetGetRowCount
-(
-    OCI_Resultset* rs
-);
-
-OCI_SYM_LOCAL unsigned int OcilibResultsetGetCurrentRow
+OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetRowCount
 (
     OCI_Resultset* rs
 );
 
-OCI_SYM_LOCAL unsigned int OcilibResultsetGetColumnCount
+OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetCurrentRow
+(
+    OCI_Resultset* rs
+);
+
+OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetColumnCount
 (
     OCI_Resultset* rs
 );
@@ -84,36 +84,36 @@ OCI_SYM_LOCAL unsigned int OcilibResultsetGetColumnCount
 OCI_SYM_LOCAL OCI_Column* OcilibResultsetGetColumn
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Column* OcilibResultsetGetColumn2
+OCI_SYM_LOCAL OCI_Column* OcilibResultsetGetColumnByName
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_SYM_LOCAL unsigned int OcilibResultsetGetColumnIndex
+OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetColumnIndex
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibResultsetSetStructNumericType
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetSetStructNumericType
 (
-    OCI_Resultset* rs,
-    unsigned int   index,
-    unsigned int   type
+    OCI_Resultset * rs,
+    OCI_UInt32    index,
+    OCI_NumericType type
 );
 
-OCI_SYM_LOCAL boolean OcilibResultsetSetStructNumericType2
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetSetStructNumericTypeByName
 (
-    OCI_Resultset* rs,
-    const otext  * name,
-    unsigned int   type
+    OCI_Resultset * rs,
+    const otext   * name,
+    OCI_NumericType type
 );
 
-OCI_SYM_LOCAL boolean OcilibResultsetGetStruct
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetGetStruct
 (
     OCI_Resultset* rs,
     void         * row_struct,
@@ -123,82 +123,82 @@ OCI_SYM_LOCAL boolean OcilibResultsetGetStruct
 OCI_SYM_LOCAL OCI_Number* OcilibResultsetGetNumber
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Number* OcilibResultsetGetNumber2
+OCI_SYM_LOCAL OCI_Number* OcilibResultsetGetNumberByName
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_SYM_LOCAL short OcilibResultsetGetShort
+OCI_SYM_LOCAL OCI_Int16 OcilibResultsetGetShort
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL short OcilibResultsetGetShort2
-(
-    OCI_Resultset* rs,
-    const otext  * name
-);
-
-OCI_SYM_LOCAL unsigned short OcilibResultsetGetUnsignedShort
-(
-    OCI_Resultset* rs,
-    unsigned int   index
-);
-
-OCI_SYM_LOCAL unsigned short OcilibResultsetGetUnsignedShort2
+OCI_SYM_LOCAL OCI_Int16 OcilibResultsetGetShortByName
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_SYM_LOCAL int OcilibResultsetGetInt
+OCI_SYM_LOCAL OCI_UInt16 OcilibResultsetGetUnsignedShort
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL int OcilibResultsetGetInt2
-(
-    OCI_Resultset* rs,
-    const otext  * name
-);
-
-OCI_SYM_LOCAL unsigned int OcilibResultsetGetUnsignedInt
-(
-    OCI_Resultset* rs,
-    unsigned int   index
-);
-
-OCI_SYM_LOCAL unsigned int OcilibResultsetGetUnsignedInt2
+OCI_SYM_LOCAL OCI_UInt16 OcilibResultsetGetUnsignedShortByName
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_SYM_LOCAL big_int OcilibResultsetGetBigInt
+OCI_SYM_LOCAL OCI_Int32 OcilibResultsetGetInt
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL big_int OcilibResultsetGetBigInt2
+OCI_SYM_LOCAL OCI_Int32 OcilibResultsetGetIntByName
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_SYM_LOCAL big_uint OcilibResultsetGetUnsignedBigInt
+OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetUnsignedInt
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL big_uint OcilibResultsetGetUnsignedBigInt2
+OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetUnsignedIntByName
+(
+    OCI_Resultset* rs,
+    const otext  * name
+);
+
+OCI_SYM_LOCAL OCI_Int64 OcilibResultsetGetBigInt
+(
+    OCI_Resultset* rs,
+    OCI_UInt32   index
+);
+
+OCI_SYM_LOCAL OCI_Int64 OcilibResultsetGetBigIntByName
+(
+    OCI_Resultset* rs,
+    const otext  * name
+);
+
+OCI_SYM_LOCAL OCI_UInt64 OcilibResultsetGetUnsignedBigInt
+(
+    OCI_Resultset* rs,
+    OCI_UInt32   index
+);
+
+OCI_SYM_LOCAL OCI_UInt64 OcilibResultsetGetUnsignedBigIntByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -207,38 +207,38 @@ OCI_SYM_LOCAL big_uint OcilibResultsetGetUnsignedBigInt2
 OCI_SYM_LOCAL const otext * OcilibResultsetGetString
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL const otext * OcilibResultsetGetString2
+OCI_SYM_LOCAL const otext * OcilibResultsetGetStringByName
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_SYM_LOCAL unsigned int OcilibResultsetGetRaw
+OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetRaw
 (
     OCI_Resultset* rs,
-    unsigned int   index,
+    OCI_UInt32   index,
     void         * buffer,
-    unsigned int   len
+    OCI_UInt32   len
 );
 
-OCI_SYM_LOCAL unsigned int OcilibResultsetGetRaw2
+OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetRawByName
 (
     OCI_Resultset* rs,
     const otext  * name,
     void         * buffer,
-    unsigned int   len
+    OCI_UInt32   len
 );
 
 OCI_SYM_LOCAL double OcilibResultsetGetDouble
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL double OcilibResultsetGetDouble2
+OCI_SYM_LOCAL double OcilibResultsetGetDoubleByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -247,10 +247,10 @@ OCI_SYM_LOCAL double OcilibResultsetGetDouble2
 OCI_SYM_LOCAL float OcilibResultsetGetFloat
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL float OcilibResultsetGetFloat2
+OCI_SYM_LOCAL float OcilibResultsetGetFloatByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -259,10 +259,10 @@ OCI_SYM_LOCAL float OcilibResultsetGetFloat2
 OCI_SYM_LOCAL OCI_Date * OcilibResultsetGetDate
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Date * OcilibResultsetGetDate2
+OCI_SYM_LOCAL OCI_Date * OcilibResultsetGetDateByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -271,10 +271,10 @@ OCI_SYM_LOCAL OCI_Date * OcilibResultsetGetDate2
 OCI_SYM_LOCAL OCI_Timestamp * OcilibResultsetGetTimestamp
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Timestamp * OcilibResultsetGetTimestamp2
+OCI_SYM_LOCAL OCI_Timestamp * OcilibResultsetGetTimestampByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -283,10 +283,10 @@ OCI_SYM_LOCAL OCI_Timestamp * OcilibResultsetGetTimestamp2
 OCI_SYM_LOCAL OCI_Interval * OcilibResultsetGetInterval
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Interval * OcilibResultsetGetInterval2
+OCI_SYM_LOCAL OCI_Interval * OcilibResultsetGetIntervalByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -295,10 +295,10 @@ OCI_SYM_LOCAL OCI_Interval * OcilibResultsetGetInterval2
 OCI_SYM_LOCAL OCI_Object * OcilibResultsetGetObject
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Object * OcilibResultsetGetObject2
+OCI_SYM_LOCAL OCI_Object * OcilibResultsetGetObjectByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -307,10 +307,10 @@ OCI_SYM_LOCAL OCI_Object * OcilibResultsetGetObject2
 OCI_SYM_LOCAL OCI_Coll * OcilibResultsetGetColl
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Coll * OcilibResultsetGetColl2
+OCI_SYM_LOCAL OCI_Coll * OcilibResultsetGetCollByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -319,10 +319,10 @@ OCI_SYM_LOCAL OCI_Coll * OcilibResultsetGetColl2
 OCI_SYM_LOCAL OCI_Ref * OcilibResultsetGetReference
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Ref * OcilibResultsetGetReference2
+OCI_SYM_LOCAL OCI_Ref * OcilibResultsetGetReferenceByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -331,10 +331,10 @@ OCI_SYM_LOCAL OCI_Ref * OcilibResultsetGetReference2
 OCI_SYM_LOCAL OCI_XmlType * OcilibResultsetGetXmlType
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_XmlType * OcilibResultsetGetXmlType2
+OCI_SYM_LOCAL OCI_XmlType * OcilibResultsetGetXmlTypeByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -343,10 +343,10 @@ OCI_SYM_LOCAL OCI_XmlType * OcilibResultsetGetXmlType2
 OCI_SYM_LOCAL OCI_Vector * OcilibResultsetGetVector
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Vector * OcilibResultsetGetVector2
+OCI_SYM_LOCAL OCI_Vector * OcilibResultsetGetVectorByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -355,10 +355,10 @@ OCI_SYM_LOCAL OCI_Vector * OcilibResultsetGetVector2
 OCI_SYM_LOCAL OCI_Statement * OcilibResultsetGetStatement
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Statement * OcilibResultsetGetStatement2
+OCI_SYM_LOCAL OCI_Statement * OcilibResultsetGetStatementByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -367,10 +367,22 @@ OCI_SYM_LOCAL OCI_Statement * OcilibResultsetGetStatement2
 OCI_SYM_LOCAL OCI_Lob * OcilibResultsetGetLob
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Lob * OcilibResultsetGetLob2
+OCI_SYM_LOCAL OCI_Lob * OcilibResultsetGetLobByName
+(
+    OCI_Resultset* rs,
+    const otext  * name
+);
+
+OCI_SYM_LOCAL OCI_Json * OcilibResultsetGetJson
+(
+    OCI_Resultset* rs,
+    OCI_UInt32   index
+);
+
+OCI_SYM_LOCAL OCI_Json * OcilibResultsetGetJsonByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -379,10 +391,10 @@ OCI_SYM_LOCAL OCI_Lob * OcilibResultsetGetLob2
 OCI_SYM_LOCAL OCI_File * OcilibResultsetGetFile
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_File * OcilibResultsetGetFile2
+OCI_SYM_LOCAL OCI_File * OcilibResultsetGetFileByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -391,34 +403,34 @@ OCI_SYM_LOCAL OCI_File * OcilibResultsetGetFile2
 OCI_SYM_LOCAL OCI_Long * OcilibResultsetGetLong
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Long * OcilibResultsetGetLong2
+OCI_SYM_LOCAL OCI_Long * OcilibResultsetGetLongByName
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_SYM_LOCAL unsigned int OcilibResultsetGetDataSize
+OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetDataSize
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL unsigned int OcilibResultsetGetDataSize2
+OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetDataSizeByName
 (
     OCI_Resultset* rs,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibResultsetIsNull
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetIsNull
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL boolean OcilibResultsetIsNull2
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetIsNullByName
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -429,10 +441,10 @@ OCI_SYM_LOCAL OCI_Statement * OcilibResultsetResultsetGetStatement
     OCI_Resultset* rs
 );
 
-OCI_SYM_LOCAL unsigned int OcilibResultsetGetDataLength
+OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetDataLength
 (
     OCI_Resultset* rs,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
 #endif /* OCILIB_RESULTSET_H_INCLUDED */

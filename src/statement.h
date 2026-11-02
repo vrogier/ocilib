@@ -23,13 +23,13 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL boolean OcilibStatementFetchIntoUserVariables
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementFetchIntoUserVariables
 (
     OCI_Statement* stmt,
     va_list        args
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementDispose
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementDispose
 (
     OCI_Statement* stmt
 );
@@ -39,17 +39,17 @@ OCI_SYM_LOCAL OCI_Statement * OcilibStatementInitialize
     OCI_Connection* con,
     OCI_Statement * stmt,
     OCIStmt       * handle,
-    boolean         is_desc,
+    OCI_Boolean     is_desc,
     const otext   * sql
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementPrepareInternal
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementPrepareInternal
 (
     OCI_Statement* stmt,
     const otext  * sql
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementExecuteInternal
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementExecuteInternal
 (
     OCI_Statement* stmt,
     ub4            mode
@@ -60,7 +60,7 @@ OCI_SYM_LOCAL OCI_Statement * OcilibStatementCreate
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementFree
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementFree
 (
     OCI_Statement* stmt
 );
@@ -75,634 +75,666 @@ OCI_SYM_LOCAL OCI_Resultset * OcilibStatementGetNextResultset
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementReleaseResultsets
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementReleaseResultsets
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementPrepare
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementPrepare
 (
     OCI_Statement* stmt,
     const otext  * sql
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementExecute
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementExecute
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementExecuteStmt
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementExecuteStmt
 (
     OCI_Statement* stmt,
     const otext  * sql
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementParse
+OCI_SYM_LOCAL OCI_Resultset* OcilibStatementExecuteAndGetResultset
+(
+    OCI_Statement* stmt
+);
+
+OCI_SYM_LOCAL OCI_Resultset* OcilibStatementExecuteStmtAndGetResultset
 (
     OCI_Statement* stmt,
     const otext  * sql
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementDescribe
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementParse
 (
     OCI_Statement* stmt,
     const otext  * sql
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementPrepareFmt
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementDescribe
+(
+    OCI_Statement* stmt,
+    const otext  * sql
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementPrepareFmt
 (
     OCI_Statement* stmt,
     const otext  * sql,
     va_list        args
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementExecuteStmtFmt
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementExecuteStmtFmt
 (
     OCI_Statement* stmt,
     const otext  * sql,
     va_list        args
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementParseFmt
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementParseFmt
 (
     OCI_Statement* stmt,
     const otext  * sql,
     va_list        args
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementDescribeFmt
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementDescribeFmt
 (
     OCI_Statement* stmt,
     const otext  * sql,
     va_list        args
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementSetBindArraySize
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetBindArraySize
 (
     OCI_Statement* stmt,
-    unsigned int   size
+    OCI_UInt32   size
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetBindArraySize
+OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetBindArraySize
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementAllowRebinding
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementAllowRebinding
 (
     OCI_Statement* stmt,
-    boolean        value
+    OCI_Boolean    value
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementIsRebindingAllowed
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementIsRebindingAllowed
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindBoolean
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindBoolean
 (
     OCI_Statement* stmt,
     const otext  * name,
-    boolean      * data
+    OCI_Boolean  * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindNumber
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindNumber
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Number   * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfNumbers
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfNumbers
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Number  ** data,
-    unsigned int   nbelem
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindShort
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindShort
 (
     OCI_Statement* stmt,
     const otext  * name,
-    short        * data
+    OCI_Int16        * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfShorts
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfShorts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    short        * data,
-    unsigned int   nbelem
+    OCI_Int16        * data,
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindUnsignedShort
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindUnsignedShort
 (
     OCI_Statement * stmt,
     const otext   * name,
-    unsigned short* data
+    OCI_UInt16* data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfUnsignedShorts
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfUnsignedShorts
 (
     OCI_Statement * stmt,
     const otext   * name,
-    unsigned short* data,
-    unsigned int    nbelem
+    OCI_UInt16* data,
+    OCI_UInt32    nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindInt
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindInt
 (
     OCI_Statement* stmt,
     const otext  * name,
-    int          * data
+    OCI_Int32          * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfInts
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfInts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    int          * data,
-    unsigned int   nbelem
+    OCI_Int32          * data,
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindUnsignedInt
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindUnsignedInt
 (
     OCI_Statement* stmt,
     const otext  * name,
-    unsigned int * data
+    OCI_UInt32 * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfUnsignedInts
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfUnsignedInts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    unsigned int * data,
-    unsigned int   nbelem
+    OCI_UInt32 * data,
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindBigInt
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindBigInt
 (
     OCI_Statement* stmt,
     const otext  * name,
-    big_int      * data
+    OCI_Int64      * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfBigInts
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfBigInts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    big_int      * data,
-    unsigned int   nbelem
+    OCI_Int64      * data,
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindUnsignedBigInt
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindUnsignedBigInt
 (
     OCI_Statement* stmt,
     const otext  * name,
-    big_uint     * data
+    OCI_UInt64     * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfUnsignedBigInts
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfUnsignedBigInts
 (
     OCI_Statement* stmt,
     const otext  * name,
-    big_uint     * data,
-    unsigned int   nbelem
+    OCI_UInt64     * data,
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindString
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindString
 (
     OCI_Statement* stmt,
     const otext  * name,
     otext        * data,
-    unsigned int   len
+    OCI_UInt32   len
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfStrings
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfStrings
 (
     OCI_Statement* stmt,
     const otext  * name,
     otext        * data,
-    unsigned int   len,
-    unsigned int   nbelem
+    OCI_UInt32   len,
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindRaw
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindRaw
 (
     OCI_Statement* stmt,
     const otext  * name,
     void         * data,
-    unsigned int   len
+    OCI_UInt32   len
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfRaws
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfRaws
 (
     OCI_Statement* stmt,
     const otext  * name,
     void         * data,
-    unsigned int   len,
-    unsigned int   nbelem
+    OCI_UInt32   len,
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindDouble
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindDouble
 (
     OCI_Statement* stmt,
     const otext  * name,
     double       * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfDoubles
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfDoubles
 (
     OCI_Statement* stmt,
     const otext  * name,
     double       * data,
-    unsigned int   nbelem
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindFloat
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindFloat
 (
     OCI_Statement* stmt,
     const otext  * name,
     float        * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfFloats
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfFloats
 (
     OCI_Statement* stmt,
     const otext  * name,
     float        * data,
-    unsigned int   nbelem
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindDate
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindDate
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Date     * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfDates
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfDates
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Date    ** data,
-    unsigned int   nbelem
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindTimestamp
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindTimestamp
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Timestamp* data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfTimestamps
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfTimestamps
 (
-    OCI_Statement * stmt,
-    const otext   * name,
-    OCI_Timestamp** data,
-    unsigned int    type,
-    unsigned int    nbelem
+    OCI_Statement   * stmt,
+    const otext     * name,
+    OCI_Timestamp  ** data,
+    OCI_TimestampType type,
+    OCI_UInt32      nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindInterval
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindInterval
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Interval * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfIntervals
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfIntervals
 (
-    OCI_Statement* stmt,
-    const otext  * name,
-    OCI_Interval** data,
-    unsigned int   type,
-    unsigned int   nbelem
+    OCI_Statement  * stmt,
+    const otext    * name,
+    OCI_Interval  ** data,
+    OCI_IntervalType type,
+    OCI_UInt32     nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindObject
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindObject
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Object   * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfObjects
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfObjects
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Object  ** data,
     OCI_TypeInfo * typinf,
-    unsigned int   nbelem
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindVector
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindVector
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Vector   * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfVectors
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfVectors
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Vector  ** data,
-    unsigned int   nbelem
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindLob
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindLob
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Lob      * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfLobs
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindJson
+(
+    OCI_Statement* stmt,
+    const otext  * name,
+    OCI_Json     * data
+);
+
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfJsons
+(
+    OCI_Statement* stmt,
+    const otext  * name,
+    OCI_Json    ** data,
+    OCI_UInt32   nbelem
+);
+
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfLobs
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Lob     ** data,
-    unsigned int   type,
-    unsigned int   nbelem
+    OCI_LobType    type,
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindFile
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindFile
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_File     * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfFiles
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfFiles
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_File    ** data,
-    unsigned int   type,
-    unsigned int   nbelem
+    OCI_FileType   type,
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindReference
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindReference
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Ref      * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfReferences
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfReferences
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Ref     ** data,
     OCI_TypeInfo * typinf,
-    unsigned int   nbelem
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindCollection
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindCollection
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Coll     * data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindArrayOfCollections
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindArrayOfCollections
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Coll    ** data,
     OCI_TypeInfo * typinf,
-    unsigned int   nbelem
+    OCI_UInt32   nbelem
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindStatement
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindStatement
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Statement* data
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementBindLong
+OCI_SYM_LOCAL OCI_Bind* OcilibStatementBindLong
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_Long     * data,
-    unsigned int   size
+    OCI_UInt32   size
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterNumber
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterNumber
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterShort
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterShort
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterUnsignedShort
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterUnsignedShort
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterInt
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterInt
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterUnsignedInt
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterUnsignedInt
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterBigInt
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterBigInt
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterUnsignedBigInt
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterUnsignedBigInt
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterString
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterString
 (
     OCI_Statement* stmt,
     const otext  * name,
-    unsigned int   len
+    OCI_UInt32   len
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterRaw
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterRaw
 (
     OCI_Statement* stmt,
     const otext  * name,
-    unsigned int   len
+    OCI_UInt32   len
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterDouble
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterDouble
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterFloat
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterFloat
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterDate
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterDate
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterTimestamp
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterTimestamp
 (
-    OCI_Statement* stmt,
-    const otext  * name,
-    unsigned int   type
+    OCI_Statement   * stmt,
+    const otext     * name,
+    OCI_TimestampType type
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterInterval
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterInterval
 (
-    OCI_Statement* stmt,
-    const otext  * name,
-    unsigned int   type
+    OCI_Statement  * stmt,
+    const otext    * name,
+    OCI_IntervalType type
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterObject
-(
-    OCI_Statement* stmt,
-    const otext  * name,
-    OCI_TypeInfo * typinf
-);
-
-OCI_SYM_LOCAL boolean OcilibStatementRegisterLob
-(
-    OCI_Statement* stmt,
-    const otext  * name,
-    unsigned int   type
-);
-
-OCI_SYM_LOCAL boolean OcilibStatementRegisterFile
-(
-    OCI_Statement* stmt,
-    const otext  * name,
-    unsigned int   type
-);
-
-OCI_SYM_LOCAL boolean OcilibStatementRegisterReference
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterObject
 (
     OCI_Statement* stmt,
     const otext  * name,
     OCI_TypeInfo * typinf
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementRegisterVector
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterLob
+(
+    OCI_Statement* stmt,
+    const otext  * name,
+    OCI_LobType    type
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterFile
+(
+    OCI_Statement* stmt,
+    const otext  * name,
+    OCI_FileType   type
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterReference
+(
+    OCI_Statement* stmt,
+    const otext  * name,
+    OCI_TypeInfo * typinf
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterVector
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetStatementType
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterJson
+(
+    OCI_Statement* stmt,
+    const otext  * name
+);
+
+OCI_SYM_LOCAL OCI_StatementType OcilibStatementGetStatementType
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementSetFetchMode
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetFetchMode
 (
     OCI_Statement* stmt,
-    unsigned int   mode
+    OCI_FetchMode  mode
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetFetchMode
+OCI_SYM_LOCAL OCI_FetchMode OcilibStatementGetFetchMode
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementSetBindMode
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetBindMode
 (
     OCI_Statement* stmt,
-    unsigned int   mode
+    OCI_BindMode   mode
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetBindMode
+OCI_SYM_LOCAL OCI_BindMode OcilibStatementGetBindMode
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementSetBindAllocation
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetBindAllocation
 (
-    OCI_Statement* stmt,
-    unsigned int   mode
+    OCI_Statement        * stmt,
+    OCI_BindAllocationMode mode
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetBindAllocation
-(
-    OCI_Statement* stmt
-);
-
-OCI_SYM_LOCAL boolean OcilibStatementSetFetchSize
-(
-    OCI_Statement* stmt,
-    unsigned int   size
-);
-
-OCI_SYM_LOCAL unsigned int OcilibStatementGetFetchSize
+OCI_SYM_LOCAL OCI_BindAllocationMode OcilibStatementGetBindAllocation
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementSetPrefetchSize
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetFetchSize
 (
     OCI_Statement* stmt,
-    unsigned int   size
+    OCI_UInt32   size
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetPrefetchSize
+OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetFetchSize
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementSetPrefetchMemory
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetPrefetchSize
 (
     OCI_Statement* stmt,
-    unsigned int   size
+    OCI_UInt32   size
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetPrefetchMemory
+OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetPrefetchSize
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementSetPieceSize
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetPrefetchMemory
 (
     OCI_Statement* stmt,
-    unsigned int   size
+    OCI_UInt32   size
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetPieceSize
+OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetPrefetchMemory
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementSetLongMode
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetPieceSize
 (
     OCI_Statement* stmt,
-    unsigned int   mode
+    OCI_UInt32   size
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetLongMode
+OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetPieceSize
+(
+    OCI_Statement* stmt
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementSetLongMode
+(
+    OCI_Statement* stmt,
+    OCI_LongMode   mode
+);
+
+OCI_SYM_LOCAL OCI_LongMode OcilibStatementGetLongMode
 (
     OCI_Statement* stmt
 );
@@ -722,17 +754,17 @@ OCI_SYM_LOCAL const otext * OcilibStatementGetSqlIdentifier
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetSqlErrorPos
+OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetSqlErrorPos
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetAffectedRows
+OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetAffectedRows
 (
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetBindCount
+OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetBindCount
 (
     OCI_Statement* stmt
 );
@@ -740,22 +772,22 @@ OCI_SYM_LOCAL unsigned int OcilibStatementGetBindCount
 OCI_SYM_LOCAL OCI_Bind * OcilibStatementGetBind
 (
     OCI_Statement* stmt,
-    unsigned int   index
+    OCI_UInt32   index
 );
 
-OCI_SYM_LOCAL OCI_Bind * OcilibStatementGetBind2
+OCI_SYM_LOCAL OCI_Bind * OcilibStatementGetBindByName
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetBindIndex
+OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetBindIndex
 (
     OCI_Statement* stmt,
     const otext  * name
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetSqlCommand
+OCI_SYM_LOCAL OCI_SQLCommand OcilibStatementGetSqlCommand
 (
     OCI_Statement* stmt
 );
@@ -765,10 +797,10 @@ OCI_SYM_LOCAL const otext * OcilibStatementGetSqlVerb
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL boolean OcilibStatementGetParseBindNames
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementGetParseBindNames
 (
     OCI_Statement* stmt,
-    unsigned int * count,
+    OCI_UInt32 * count,
     const otext*** names
 );
 
@@ -777,7 +809,7 @@ OCI_SYM_LOCAL OCI_Error * OcilibStatementGetBatchError
     OCI_Statement* stmt
 );
 
-OCI_SYM_LOCAL unsigned int OcilibStatementGetBatchErrorCount
+OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetBatchErrorCount
 (
     OCI_Statement* stmt
 );

@@ -16,22 +16,24 @@ int main(void)
     OCI_Statement  *st;
     OCI_Error      *err;
 
-    int tab_int[ARRAY_SIZE];
+    OCI_Int32 tab_int[ARRAY_SIZE];
     char tab_str[ARRAY_SIZE][STRING_SIZE+1];
 
-    int i;
+    OCI_Int32 i;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT | OCI_ENV_CONTEXT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     OCI_Prepare(st, "insert into products values(:i, :s)");
     OCI_BindArraySetSize(st, ARRAY_SIZE);
-    OCI_BindArrayOfInts(st, ":i", (int*)tab_int, 0);
+    OCI_BindArrayOfInts(st, ":i", (OCI_Int32*)tab_int, 0);
     OCI_BindArrayOfStrings(st, ":s", (char*)tab_str, STRING_SIZE, 0);
 
     for (i = 0; i < ARRAY_SIZE; i++)
@@ -58,7 +60,7 @@ int main(void)
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

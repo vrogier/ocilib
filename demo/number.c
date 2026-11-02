@@ -22,24 +22,26 @@ int main(void)
     OCI_Number     *nt = NULL;
     OCI_Number    **ar = NULL;
 
-    unsigned int i, n;
+    OCI_UInt32 i, n;
     otext buf[128] = "";
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     tc = OCI_TypeInfoGet(cn, "test_num_coll_t", OCI_TIF_TYPE);
     to = OCI_TypeInfoGet(cn, "test_num_t", OCI_TIF_TYPE);
     cl = OCI_CollCreate(tc);
-    ob = OCI_ObjectCreate(cn, to);
+    ob = OCI_ObjectCreate(to);
     el = OCI_ElemCreate(tc);
-    nm = OCI_NumberCreate(cn);
-    ar = OCI_NumberArrayCreate(cn, 5);
+    nm = OCI_NumberCreate(env);
+    ar = OCI_NumberArrayCreate(env, 5);
 
     // Testing fetching numbers (as number and using implicit conversion number to string)
     OCI_Prepare(st, "select value from test_number");
@@ -146,7 +148,7 @@ int main(void)
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

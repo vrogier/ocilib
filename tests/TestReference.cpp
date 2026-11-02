@@ -1,4 +1,4 @@
-#include "ocilib_tests.h"
+﻿#include "ocilib_tests.h"
 
 using namespace ocilib;
 
@@ -19,17 +19,18 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref = OCI_RefCreate(conn, tif);
+        const auto ref = OCI_RefCreate(tif);
 
         ASSERT_TRUE(nullptr != ref);
         ASSERT_TRUE(OCI_RefFree(ref));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -38,21 +39,22 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto refs = OCI_RefArrayCreate(conn, tif, ARRAY_SIZE);
+        const auto refs = OCI_RefArrayCreate(tif, ARRAY_SIZE);
         ASSERT_TRUE(nullptr != refs);
 
-        for (int i = 0; i < ARRAY_SIZE; i++)
+        for (OCI_Int32 i = 0; i < ARRAY_SIZE; i++)
         {
             ASSERT_TRUE(nullptr != refs[i]);
         }
         ASSERT_TRUE(OCI_RefArrayFree(refs));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -61,12 +63,14 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref2 = OCI_RefCreate(conn, tif);
+        const auto ref2 = OCI_RefCreate(tif);
 
         OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
         const auto rslt = OCI_GetResultset(stmt);
@@ -79,7 +83,6 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_RefFree(ref2));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -88,16 +91,17 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref = OCI_RefCreate(conn, tif);
+        const auto ref = OCI_RefCreate(tif);
 
         ASSERT_EQ(OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE), OCI_RefGetTypeInfo((ref)));
         ASSERT_TRUE(OCI_RefFree(ref));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -106,9 +110,11 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
         OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
@@ -122,7 +128,6 @@ namespace TestCApi
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -131,18 +136,19 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref = OCI_RefCreate(conn, tif);
+        const auto ref = OCI_RefCreate(tif);
 
         ASSERT_TRUE(nullptr != ref);
         ASSERT_TRUE(nullptr == OCI_RefGetObject(ref));
         ASSERT_TRUE(OCI_RefFree(ref));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -151,18 +157,19 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref = OCI_RefCreate(conn, tif);
+        const auto ref = OCI_RefCreate(tif);
 
         ASSERT_TRUE(nullptr != ref);
         ASSERT_TRUE(OCI_RefIsNull(ref));
         ASSERT_TRUE(OCI_RefFree(ref));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -171,9 +178,11 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
         OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
@@ -186,7 +195,6 @@ namespace TestCApi
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -195,9 +203,11 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
         OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
@@ -215,7 +225,6 @@ namespace TestCApi
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -224,11 +233,13 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref = OCI_RefCreate(conn, tif);
+        const auto ref = OCI_RefCreate(tif);
         const auto length = OCI_RefGetHexSize(ref);
         ASSERT_TRUE(length == 0);
         otext buffer[128] = {};
@@ -238,7 +249,6 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_RefFree(ref));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -247,9 +257,11 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
         OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
@@ -264,7 +276,6 @@ namespace TestCApi
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -273,9 +284,11 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
         OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
@@ -288,7 +301,6 @@ namespace TestCApi
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -297,9 +309,11 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
         OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
@@ -312,7 +326,7 @@ namespace TestCApi
 
             const auto stmt2 = OCI_StatementCreate(conn);
             ASSERT_TRUE(OCI_Prepare(stmt2, OTEXT("select count(*) from vendors v where ref(v) = :ref")));
-            ASSERT_TRUE(OCI_BindRef(stmt2, OTEXT(":ref"), ref));
+            ASSERT_NE(nullptr, OCI_BindRef(stmt2, OTEXT(":ref"), ref));
             ASSERT_TRUE(OCI_Execute(stmt2));
             const auto rslt2 = OCI_GetResultset(stmt2);
             ASSERT_TRUE(OCI_FetchNext(rslt2));
@@ -320,7 +334,6 @@ namespace TestCApi
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -329,9 +342,11 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
         OCI_ExecuteStmt(stmt, OTEXT("drop table test_ref_register"));
@@ -357,8 +372,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
-        ASSERT_TRUE(OCI_Cleanup());
-
         CleanupTestRef();
     }
 
@@ -366,9 +379,11 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
         OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
@@ -385,7 +400,6 @@ namespace TestCApi
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         CleanupTestRef();
     }
@@ -394,11 +408,13 @@ namespace TestCApi
     {
         IniTestRef();
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref = OCI_RefCreate(conn, tif);
+        const auto ref = OCI_RefCreate(tif);
 
         ASSERT_TRUE(OCI_RefIsNull(ref));
         ASSERT_TRUE(OCI_RefSetNull(ref));
@@ -406,34 +422,6 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_RefFree(ref));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
-
-        CleanupTestRef();
-    }
-}
-
-namespace TestCppApi
-{
-    TEST(TestRef, ToStringCpp)
-    {
-        IniTestRef();
-
-        Environment::Initialize();
-
-        Connection conn(DBS, USR, PWD);
-        Statement stmt(conn);
-
-        stmt.Execute(OTEXT("select ref(v) from vendors v"));
-        auto rst = stmt.GetResultset();
-
-        while (rst.Next())
-        {
-            auto ref = rst.Get<Reference>(1);
-            auto s = ref.ToString();
-            ASSERT_TRUE(s.size() > 0);
-        }
-
-        Environment::Cleanup();
 
         CleanupTestRef();
     }

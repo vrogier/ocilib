@@ -2,23 +2,23 @@
 
 namespace TestCApi
 {
-    constexpr size_t SingleDDL1ExpectedEventsCount{ 1 };
-    constexpr size_t SingleDDL2ExpectedEventsCount{ 2 };
-    constexpr size_t MultipleDDLExpectedEventsCount{ 2 };
-    constexpr size_t MultipleDMLExpectedEventsCount{ 5 };
+    constexpr OCI_Size SingleDDL1ExpectedEventsCount{ 1 };
+    constexpr OCI_Size SingleDDL2ExpectedEventsCount{ 2 };
+    constexpr OCI_Size MultipleDDLExpectedEventsCount{ 2 };
+    constexpr OCI_Size MultipleDMLExpectedEventsCount{ 5 };
 
-    static std::atomic<size_t> SingleDDL1EventCount{ 0 };
-    static std::atomic<size_t> SingleDDL2EventCount{ 0 };
-    static std::atomic<size_t> MultipleDDLEventCount{ 0 };
-    static std::atomic<size_t> MultipleDMLEventCount{ 0 };
+    static std::atomic<OCI_Size> SingleDDL1EventCount{ 0 };
+    static std::atomic<OCI_Size> SingleDDL2EventCount{ 0 };
+    static std::atomic<OCI_Size> MultipleDDLEventCount{ 0 };
+    static std::atomic<OCI_Size> MultipleDMLEventCount{ 0 };
 
     struct Event
     {
         ostring SubName;
         ostring DatabaseName;
         ostring ObjectName;
-        unsigned int Type;
-        unsigned int Operation;
+        OCI_UInt32 Type;
+        OCI_UInt32 Operation;
     };
 
     static std::array< Event, SingleDDL1ExpectedEventsCount> SingleDDL1ExpectedEvents
@@ -171,12 +171,14 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestTableSingleDDL1"));
         ExecDML(OTEXT("create table TestTableSingleDDL1(code number)"));
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_EVENTS));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-1"), OCI_CNT_ALL, SingleDDL1EventEventHandler, 0, 0);
+        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-1"), OCI_CNT_ALL, SingleDDL1EventEventHandler, 0);
         ASSERT_NE(nullptr, sub);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -194,7 +196,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop table TestTableSingleDDL1"));
     }
@@ -204,12 +205,14 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestTableSingleDDL2"));
         ExecDML(OTEXT("create table TestTableSingleDDL2(code number)"));
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_EVENTS));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-2"), OCI_CNT_ALL, SingleDDL2EventEventHandler, 0, 0);
+        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-2"), OCI_CNT_ALL, SingleDDL2EventEventHandler, 0);
         ASSERT_NE(nullptr, sub);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -228,7 +231,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop table TestTableSingleDDL2"));
     }
@@ -240,12 +242,14 @@ namespace TestCApi
         ExecDML(OTEXT("create table TestTableMultipleDDLTable1(code number)"));
         ExecDML(OTEXT("create table TestTableMultipleDDLTable2(code number)"));
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_EVENTS));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-3"), OCI_CNT_ALL, MultipleDDLEventEventHandler, 0, 0);
+        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-3"), OCI_CNT_ALL, MultipleDDLEventEventHandler, 0);
         ASSERT_NE(nullptr, sub);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -268,7 +272,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop table TestTableMultipleDDLTable1"));
         ExecDML(OTEXT("drop table TestTableMultipleDDLTable2"));
@@ -279,12 +282,14 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestTableMultipleDML"));
         ExecDML(OTEXT("create table TestTableMultipleDML(code number)"));
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_EVENTS));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-4"), OCI_CNT_ALL, MultipleDMLEventEventHandler, 0, 0);
+        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-4"), OCI_CNT_ALL, MultipleDMLEventEventHandler, 0);
         ASSERT_NE(nullptr, sub);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -310,7 +315,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop table TestTableMultipleDML"));
     }

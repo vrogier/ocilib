@@ -4,9 +4,11 @@ namespace TestCApi
 {
     TEST(TestCursor, Fetch)
     {
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -17,7 +19,7 @@ namespace TestCApi
         const auto rset = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rset);
 
-        int index = 0;
+        OCI_Int32 index = 0;
 
         while (OCI_FetchNext(rset))
         {
@@ -45,6 +47,64 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
+
+    }
+
+    TEST(TestCursor, FetchInfo)
+    {
+        auto env = GetEnvironment(nullptr);
+
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+
+        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select rownum as rn, cast(null as int) as nullable, HEXTORAW('ABCD') as raw_col, 'text' as text_col, 12345 as num_col from dual connect by level <= 3")));
+
+        const auto rset = OCI_GetResultset(stmt);
+        ASSERT_NE(nullptr, rset);
+
+        ASSERT_EQ(5, OCI_GetColumnCount(rset));
+
+        ASSERT_NE(nullptr, OCI_GetColumn(rset, 1));
+        ASSERT_NE(nullptr, OCI_GetColumnByName(rset, OTEXT("RN")));
+        ASSERT_EQ(1, OCI_GetColumnIndex(rset, OTEXT("RN")));
+        ASSERT_EQ(0, OCI_GetColumnIndex(rset, OTEXT("NOT_A_COLUMN")));
+
+        OCI_Int32 row = 0;
+        while (OCI_FetchNext(rset))
+        {
+            row++;
+
+            ASSERT_EQ(row, OCI_GetInt(rset, 1));
+            ASSERT_EQ(ostring(TO_STRING(row)), ostring(OCI_GetString(rset, 1)));
+
+            ASSERT_TRUE(OCI_IsNull(rset, 2));
+            ASSERT_TRUE(OCI_IsNullByName(rset, OTEXT("NULLABLE")));
+            ASSERT_EQ(0, OCI_GetDataSize(rset, 2));
+            ASSERT_EQ(0, OCI_GetDataSizeByName(rset, OTEXT("NULLABLE")));
+
+            ASSERT_FALSE(OCI_IsNull(rset, 3));
+            ASSERT_EQ(2, OCI_GetDataSize(rset, 3));
+            ASSERT_EQ(2, OCI_GetDataLength(rset, 3));
+
+            unsigned char rawBuf[16] = { 0 };
+            ASSERT_EQ(2, OCI_GetRaw(rset, 3, rawBuf, sizeof(rawBuf)));
+            ASSERT_EQ(2, OCI_GetRawByName(rset, OTEXT("RAW_COL"), rawBuf, sizeof(rawBuf)));
+            ASSERT_EQ(0xAB, rawBuf[0]);
+            ASSERT_EQ(0xCD, rawBuf[1]);
+
+            ASSERT_EQ(ostring(OTEXT("text")), ostring(OCI_GetString(rset, 4)));
+            ASSERT_EQ(ostring(OTEXT("12345")), ostring(OCI_GetString(rset, 5)));
+        }
+
+        ASSERT_EQ(3, row);
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+
     }
 }

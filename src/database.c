@@ -32,36 +32,38 @@
  * OcilibDatabaseStartup
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDatabaseStartup
+OCI_Boolean OcilibDatabaseStartup
 (
-    const otext *db,
-    const otext *user,
-    const otext *pwd,
-    unsigned int sess_mode,
-    unsigned int start_mode,
-    unsigned int start_flag,
-    const otext *spfile
+    OCI_Environment      *env,
+    const otext          *db,
+    const otext          *user,
+    const otext          *pwd,
+    OCI_SessionMode       sess_mode,
+    OCI_DatabaseStartMode start_mode,
+    OCI_DatabaseStartFlag start_flag,
+    const otext          *spfile
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    OCI_Connection *con = NULL;
-    OCI_Statement *stmt = NULL;
+    OCI_Connection *con  = NULL;
+    OCI_Statement  *stmt = NULL;
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     OCIAdmin* adm = NULL;
 
     dbtext* dbstr  = NULL;
-    int     dbsize = -1;
+    OCI_Int32     dbsize = -1;
 
 #endif
 
-    CHECK_REMOTE_DBS_CONTROL_ENABLED()
+    CHECK_PTR(OCI_IPC_ENVIRONMENT, env);
+    CHECK_REMOTE_DBS_CONTROL_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
@@ -69,70 +71,70 @@ boolean OcilibDatabaseStartup
     {
         /* connect with preliminary authentication mode */
 
-        con = OcilibConnectionCreate(db, user, pwd, sess_mode | OCI_PRELIM_AUTH);
-        CHECK_NULL(con)
+        con = OcilibConnectionCreate(env, db, user, pwd, sess_mode | OCI_PRELIM_AUTH);
+        CHECK_NULL(con);
 
         if (IS_STRING_VALID(spfile))
         {
             /* allocate administration handle */
 
-            CHECK(OcilibMemoryAllocHandle((dvoid *)Env.env,  (dvoid **) (void *) &adm, OCI_HTYPE_ADMIN))
+            CHECK(OcilibMemoryAllocHandle(env, env->handle, (dvoid **) (void *) &adm, OCI_HTYPE_ADMIN));
 
             /* set client file if provided */
 
-            dbstr = OcilibStringGetDBString(spfile, &dbsize);
+            dbstr = OcilibStringGetDBString(env, spfile, &dbsize);
 
             CHECK_ATTRIB_SET
             (
                 OCI_HTYPE_ADMIN, OCI_ATTR_ADMIN_PFILE,
                 adm, dbstr, dbsize,
-                Env.err
-            )
+                env->err
+            );
         }
 
         /* startup DB */
 
         CHECK_OCI
         (
-            Env.err,
+            env->err,
             OCIDBStartup,
-            con->cxt, con->err,
+            con->handle, con->err,
             (OCIAdmin *) adm, OCI_DEFAULT,
             start_flag
-        )
+        );
 
         OcilibConnectionFree(con);
     }
 
     /* connect without preliminary mode */
 
-    con = OcilibConnectionCreate(db, user, pwd, sess_mode);
-    CHECK_NULL(con)
+    con = OcilibConnectionCreate(env, db, user, pwd, sess_mode);
+    CHECK_NULL(con);
 
     /* alter database */
 
     stmt = OcilibStatementCreate(con);
-    CHECK_NULL(stmt)
+    CHECK_NULL(stmt);
 
     /* mount database */
 
     if (start_mode & OCI_DB_SPM_MOUNT)
     {
-        CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE MOUNT")))
+        CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE MOUNT")));
     }
 
     /* open database */
 
     if (start_mode & OCI_DB_SPM_OPEN)
     {
-        CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE OPEN")))
+        CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE OPEN")));
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dbstr);
+        OcilibStringReleaseDBString(env, dbstr);
 
         if (NULL != stmt)
         {
@@ -146,25 +148,26 @@ boolean OcilibDatabaseStartup
 
         if (NULL != adm)
         {
-            OcilibMemoryFreeHandle(Env.err, OCI_HTYPE_ADMIN);
+            OcilibMemoryFreeHandle(env, adm, OCI_HTYPE_ADMIN);
         }
-    )
+    );
 
 #else
 
-    OCI_NOT_USED(db)
-    OCI_NOT_USED(user)
-    OCI_NOT_USED(pwd)
-    OCI_NOT_USED(sess_mode)
-    OCI_NOT_USED(start_mode)
-    OCI_NOT_USED(start_flag)
-    OCI_NOT_USED(spfile)
-    OCI_NOT_USED(con)
-    OCI_NOT_USED(stmt)
+    OCI_NOT_USED(env);
+    OCI_NOT_USED(db);
+    OCI_NOT_USED(user);
+    OCI_NOT_USED(pwd);
+    OCI_NOT_USED(sess_mode);
+    OCI_NOT_USED(start_mode);
+    OCI_NOT_USED(start_flag);
+    OCI_NOT_USED(spfile);
+    OCI_NOT_USED(con);
+    OCI_NOT_USED(stmt);
 
-    CHECK(FALSE)
+    CHECK(FALSE);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 
 #endif
 
@@ -174,33 +177,35 @@ boolean OcilibDatabaseStartup
  * OcilibDatabaseShutdown
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDatabaseShutdown
+OCI_Boolean OcilibDatabaseShutdown
 (
-    const otext *db,
-    const otext *user,
-    const otext *pwd,
-    unsigned int sess_mode,
-    unsigned int shut_mode,
-    unsigned int shut_flag
+    OCI_Environment         *env,
+    const otext             *db,
+    const otext             *user,
+    const otext             *pwd,
+    OCI_SessionMode          sess_mode,
+    OCI_DatabaseShutdownMode shut_mode,
+    OCI_DatabaseShutdownFlag shut_flag
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    OCI_Connection *con = NULL;
-    OCI_Statement *stmt = NULL;
+    OCI_Connection *con  = NULL;
+    OCI_Statement  *stmt = NULL;
 
-    CHECK_REMOTE_DBS_CONTROL_ENABLED()
+    CHECK_PTR(OCI_IPC_ENVIRONMENT, env);
+    CHECK_REMOTE_DBS_CONTROL_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* connect to server */
 
-    con = OcilibConnectionCreate(db, user, pwd, sess_mode);
-    CHECK_NULL(con)
+    con = OcilibConnectionCreate(env, db, user, pwd, sess_mode);
+    CHECK_NULL(con);
 
     /* delete current transaction before the abort */
 
@@ -218,12 +223,12 @@ boolean OcilibDatabaseShutdown
 
         CHECK_OCI
         (
-            Env.err,
+            env->err,
             OCIDBShutdown,
-            con->cxt, con->err,
+            con->handle, con->err,
             (OCIAdmin *) NULL,
             shut_flag
-        )
+        );
     }
 
     /* alter database if we are not in abort mode */
@@ -231,20 +236,20 @@ boolean OcilibDatabaseShutdown
     if (OCI_DB_SDF_ABORT != shut_flag)
     {
         stmt = OcilibStatementCreate(con);
-        CHECK_NULL(stmt)
+        CHECK_NULL(stmt);
 
         /* close database */
 
         if (shut_mode & OCI_DB_SDM_CLOSE)
         {
-            CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE CLOSE NORMAL")))
+            CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE CLOSE NORMAL")));
         }
 
         /* unmount database */
 
         if (shut_mode & OCI_DB_SDM_DISMOUNT)
         {
-            CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE DISMOUNT")))
+            CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE DISMOUNT")));
         }
 
         OcilibStatementFree(stmt);
@@ -262,28 +267,29 @@ boolean OcilibDatabaseShutdown
 
         CHECK_OCI
         (
-            Env.err,
+            env->err,
             OCIDBShutdown,
-            con->cxt, con->err,
+            con->handle, con->err,
             (OCIAdmin *) 0,
             OCI_DBSHUTDOWN_FINAL
-        )
+        );
 
         OcilibConnectionFree(con);
         con = NULL;
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(db)
-    OCI_NOT_USED(user)
-    OCI_NOT_USED(pwd)
-    OCI_NOT_USED(sess_mode)
-    OCI_NOT_USED(shut_mode)
-    OCI_NOT_USED(shut_flag)
-    OCI_NOT_USED(con)
+    OCI_NOT_USED(env);
+    OCI_NOT_USED(db);
+    OCI_NOT_USED(user);
+    OCI_NOT_USED(pwd);
+    OCI_NOT_USED(sess_mode);
+    OCI_NOT_USED(shut_mode);
+    OCI_NOT_USED(shut_flag);
+    OCI_NOT_USED(con);
 
 #endif
 
@@ -298,52 +304,51 @@ boolean OcilibDatabaseShutdown
         {
             OcilibConnectionFree(con);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDatabaseSetUserPassword
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDatabaseSetUserPassword
+OCI_Boolean OcilibDatabaseSetUserPassword
 (
-    const otext* db,
-    const otext* user,
-    const otext* pwd,
-    const otext* new_pwd
+    OCI_Environment *env,
+    const otext    * db,
+    const otext    * user,
+    const otext    * pwd,
+    const otext    * new_pwd
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
     OCI_Connection* con = NULL;
 
-    /* let's be sure OCI_Initialize() has been called */
-
-    CHECK_INITIALIZED()
-    CHECK_PTR(OCI_IPC_STRING, pwd)
-    CHECK_PTR(OCI_IPC_STRING, new_pwd)
+    CHECK_PTR(OCI_IPC_ENVIRONMENT, env);
+    CHECK_PTR(OCI_IPC_STRING, pwd);
+    CHECK_PTR(OCI_IPC_STRING, new_pwd);
 
     /* create a connection in auth mode */
 
-    con = OcilibConnectionAllocate( NULL, db, user, pwd, OCI_AUTH);
-    CHECK_NULL(con)
+    con = OcilibConnectionAllocate(env, NULL, db, user, pwd, OCI_AUTH);
+    CHECK_NULL(con);
 
     /* ConnectionLogon() will reset the password  */
 
-    CHECK(OcilibConnectionAttach(con))
-    CHECK(OcilibConnectionLogon(con, new_pwd, NULL))
+    CHECK(OcilibConnectionAttach(con));
+    CHECK(OcilibConnectionLogon(con, new_pwd, NULL));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE && NULL != con)
+        if (NULL != con)
         {
             OcilibConnectionFree(con);
         }
-    )
+    );
 }

@@ -9,9 +9,11 @@ namespace TestCApi
         ExecDML(OTEXT("insert into TestReturningIntoRegisterInt values (1, 'name 1')"));
         ExecDML(OTEXT("insert into TestReturningIntoRegisterInt values (2, 'name 2')"));
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -24,7 +26,7 @@ namespace TestCApi
         auto rslt = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rslt);
 
-        int index = 0;
+        OCI_Int32 index = 0;
         while (OCI_FetchNext(rslt))
         {
             index++;
@@ -43,7 +45,6 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop table TestReturningIntoRegisterInt"));
     }

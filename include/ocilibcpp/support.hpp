@@ -52,7 +52,7 @@ namespace ocilib
         {
         public:
 
-            BindObject(const ocilib::Statement& statement, const ostring& name, unsigned int mode);
+            BindObject(const ocilib::Statement& statement, const ostring& name, OCI_UInt32 mode);
 
             virtual ~BindObject() noexcept;
 
@@ -60,7 +60,7 @@ namespace ocilib
 
             ocilib::Statement GetStatement() const;
 
-            unsigned int GetMode() const;
+            OCI_UInt32 GetMode() const;
 
             virtual void SetInData() = 0;
             virtual void SetOutData() = 0;
@@ -69,7 +69,7 @@ namespace ocilib
 
             const ocilib::Statement& _statement;
             ostring _name;
-            unsigned int _mode;
+            OCI_UInt32 _mode;
         };
 
        /**
@@ -80,11 +80,11 @@ namespace ocilib
         {
         public:
 
-            BindArray(const ocilib::Statement& statement, const ostring& name, unsigned int mode);
+            BindArray(const ocilib::Statement& statement, const ostring& name, OCI_UInt32 mode);
             virtual ~BindArray() noexcept;
 
             template<class T>
-            void SetVector(std::vector<T>& vector, bool isPlSqlTable, unsigned int elemSize);
+            void SetVector(std::vector<T>& vector, bool isPlSqlTable, OCI_UInt32 elemSize);
 
             template<class T>
             typename BindResolver<T>::OutputType* GetData() const;
@@ -92,8 +92,8 @@ namespace ocilib
             void SetInData() override;
             void SetOutData() override;
 
-            unsigned int GetSize() const;
-            unsigned int GetSizeForBindCall() const;
+            OCI_UInt32 GetSize() const;
+            OCI_UInt32 GetSizeForBindCall() const;
 
         private:
 
@@ -105,8 +105,8 @@ namespace ocilib
                 virtual void SetOutData() = 0;
                 virtual ostring GetName() const = 0;
                 virtual bool IsHandleObject() const = 0;
-                virtual unsigned int GetSize() const = 0;
-                virtual unsigned int GetSizeForBindCall() const = 0;
+                virtual OCI_UInt32 GetSize() const = 0;
+                virtual OCI_UInt32 GetSizeForBindCall() const = 0;
             };
 
             template<class T>
@@ -118,14 +118,14 @@ namespace ocilib
                 typedef std::vector<ObjectType> ObjectVector;
                 typedef typename BindResolver<ObjectType>::OutputType NativeType;
 
-                BindArrayObject(const ocilib::Statement& statement, const ostring& name, ObjectVector& vector, bool isPlSqlTable, unsigned int mode, unsigned int elemSize);
+                BindArrayObject(const ocilib::Statement& statement, const ostring& name, ObjectVector& vector, bool isPlSqlTable, OCI_UInt32 mode, OCI_UInt32 elemSize);
                 virtual ~BindArrayObject() noexcept;
                 void SetInData() override;
                 void SetOutData() override;
                 ostring GetName()const  override;
                 bool IsHandleObject() const override;
-                unsigned int GetSize() const override;
-                unsigned int GetSizeForBindCall() const override;
+                OCI_UInt32 GetSize() const override;
+                OCI_UInt32 GetSizeForBindCall() const override;
 
                 operator ObjectVector& () const;
                 operator NativeType* () const;
@@ -140,9 +140,9 @@ namespace ocilib
                 ObjectVector& _vector;
                 NativeType* _data;
                 bool _isPlSqlTable;
-                unsigned int _mode;
-                unsigned int _elemCount;
-                unsigned int _elemSize;
+                OCI_UInt32 _mode;
+                OCI_UInt32 _elemCount;
+                OCI_UInt32 _elemSize;
             };
 
             AbstractBindArrayObject* _object;
@@ -167,14 +167,14 @@ namespace ocilib
             void SetInData() override;
             void SetOutData() override;
 
-            BindObjectAdaptor(const ocilib::Statement& statement, const ostring& name, unsigned int mode, ObjectType& object, unsigned int size);
+            BindObjectAdaptor(const ocilib::Statement& statement, const ostring& name, OCI_UInt32 mode, ObjectType& object, OCI_UInt32 size);
             virtual ~BindObjectAdaptor() noexcept;
 
         private:
 
             ObjectType& _object;
             NativeType* _data;
-            unsigned int   _size;
+            OCI_UInt32   _size;
         };
         
        /**
@@ -196,7 +196,7 @@ namespace ocilib
             void SetInData() override;
             void SetOutData() override;
 
-            BindTypeAdaptor(const Statement& statement, const ostring& name, unsigned int mode, ObjectType& object);
+            BindTypeAdaptor(const Statement& statement, const ostring& name, OCI_UInt32 mode, ObjectType& object);
             virtual ~BindTypeAdaptor() noexcept;
 
         private:

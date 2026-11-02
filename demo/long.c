@@ -19,14 +19,16 @@ int main(void)
     OCI_Long *lg;
     FILE *f;
     char buffer[SIZE_BUF];
-    int i, n;
+    OCI_Int32 i, n;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     /* create the data file */
@@ -63,7 +65,7 @@ int main(void)
 
         /* write data into table by chunks of SIZE_BUF bytes */
 
-        while ((n = (int) fread(buffer, 1, sizeof(buffer), f)))
+        while ((n = (OCI_Int32) fread(buffer, 1, sizeof(buffer), f)))
         {
             OCI_LongWrite(lg, buffer, n);
         }
@@ -95,7 +97,7 @@ int main(void)
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

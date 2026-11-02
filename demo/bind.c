@@ -4,14 +4,14 @@
 
 OCI_Connection *cn;
 OCI_Statement *st;
-int code;
+OCI_Int32 code;
 
 void err_handler(OCI_Error *err)
 {
     printf("%s\n", OCI_ErrorGetString(err));
 }
 
-void get_product_name(int requested_code)
+void get_product_name(OCI_Int32 requested_code)
 {
     OCI_Resultset *rs;
     code = requested_code;
@@ -23,12 +23,14 @@ void get_product_name(int requested_code)
 
 int main(void)
 {
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     OCI_Prepare(st, "select name from products where code  = :code");
@@ -39,7 +41,7 @@ int main(void)
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

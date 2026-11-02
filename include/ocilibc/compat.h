@@ -310,6 +310,11 @@
 #define OCI_SetLongMaxSize(st, sz)              OCI_SetPieceSize(st, sz)
 #define OCI_GetLongMaxSize(st)                  OCI_GetPieceSize(st)
 
+/* typedefs added in version 5.0.0 */
+
+typedef OCI_Int64  big_int;
+typedef OCI_UInt64 big_uint;
+
 /**
  * @}
  */

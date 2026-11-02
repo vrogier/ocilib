@@ -19,14 +19,16 @@ int main(void)
 
     printf("=> Initializing OCILIB in event mode...\n\n");
 
-    if (!OCI_Initialize(error_handler, NULL, OCI_ENV_EVENTS))
+    OCI_Environment *env = OCI_EnvironmentCreate(error_handler, NULL, OCI_ENV_EVENTS);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
     printf("=> Connecting to usr@db...\n\n");
 
-    con = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    con = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
 
     OCI_SetAutoCommit(con, TRUE);
 
@@ -41,7 +43,9 @@ int main(void)
 
     printf("=> Registering subscription...\n\n");
 
-    sub = OCI_SubscriptionRegister(con, "sub-00", OCI_CNT_ALL, event_handler, 5468, 0);
+    OCI_SetSubscriptionPort(env, 5468);
+
+    sub = OCI_SubscriptionRegister(con, "sub-00", OCI_CNT_ALL, event_handler, 0);
 
     printf("=> Adding queries to be notified...\n\n");
 
@@ -84,7 +88,7 @@ int main(void)
 
     printf("=> Cleaning up OCILIB resources...\n\n");
 
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     printf("=> Done...\n\n");
 
@@ -93,7 +97,7 @@ int main(void)
 
 void error_handler(OCI_Error *err)
 {
-    int         err_type = OCI_ErrorGetType(err);
+    OCI_Int32         err_type = OCI_ErrorGetType(err);
     const char *err_msg = OCI_ErrorGetString(err);
 
     printf("** %s - %s\n", err_type == OCI_ERR_WARNING ? "Warning" : "Error", err_msg);
@@ -101,8 +105,8 @@ void error_handler(OCI_Error *err)
 
 void event_handler(OCI_Event *event)
 {
-    unsigned int type = OCI_EventGetType(event);
-    unsigned int op = OCI_EventGetOperation(event);
+    OCI_UInt32 type = OCI_EventGetType(event);
+    OCI_UInt32 op = OCI_EventGetOperation(event);
     OCI_Subscription *sub = OCI_EventGetSubscription(event);
 
     printf("** Notification      : %s\n\n", OCI_SubscriptionGetName(sub));

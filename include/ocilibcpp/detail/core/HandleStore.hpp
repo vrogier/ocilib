@@ -26,37 +26,33 @@ namespace ocilib
 {
     namespace core
     {
-        inline HandleStore::HandleStore(SynchronizationGuard* guard)
+        inline HandleStore::HandleStore()
         {
-            _handles.SetGuard(guard);
         }
 
-        template <class T>
-        T HandleStore::Get(AnyPointer ptr)
+        inline void HandleStore::Register(AnyPointer handle, std::shared_ptr<HandleControlBase> ctrl)
         {
-            return reinterpret_cast<T>(_handles.Get(ptr));
+            std::lock_guard<std::mutex> lock(_mutex);
+
+            _map[handle] = ctrl;
         }
 
-        template <class T>
-        void HandleStore::Set(AnyPointer ptr, T handle)
+        inline void HandleStore::Remove(AnyPointer handle, const HandleControlBase* ctrl)
         {
-            if (handle)
+            std::lock_guard<std::mutex> lock(_mutex);
+
+            auto it = _map.find(handle);
+
+            if (it != _map.end())
             {
-                _handles.Set(ptr, handle);
-            }
-            else
-            {
-                _handles.Remove(ptr);
+                auto base = it->second.lock();
+
+                if (base.get() == ctrl)
+                {
+                    _map.erase(it);
+                }
             }
         }
-
-        inline HandleStore& HandleStore::GetStoreForHandle(Handle* handle)
-        {
-            HandleStore* store = handle ? handle->GetStore() : nullptr;
-            
-            return store ? *store : Environment::GetInstance()->GetDefaultStore();
-        }
-
 
     }
 }

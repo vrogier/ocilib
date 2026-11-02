@@ -24,7 +24,7 @@
 #include "memory.h"
 #include "stringutils.h"
 
-static const unsigned int HashTypeValues[] =
+static const OCI_UInt32 HashTypeValues[] =
 {
     OCI_HASH_STRING,
     OCI_HASH_INTEGER,
@@ -35,18 +35,18 @@ static const unsigned int HashTypeValues[] =
  * OcilibHashCompute
  * --------------------------------------------------------------------------------------------- */
 
-static unsigned int OcilibHashCompute
+static OCI_UInt32 OcilibHashCompute
 (
     OCI_HashTable *table,
     const otext   *str
 )
 {
-    unsigned int h;
+    OCI_UInt32 h;
 
     otext *p;
 
-    CHECK_FALSE(NULL == table, 0);
-    CHECK_FALSE(NULL == str,   0);
+    if (NULL == table) return (0);
+    if (NULL == str) return (0);
 
     for(h = 0, p = (otext *) str; (*p) != 0; p++)
     {
@@ -60,41 +60,41 @@ static unsigned int OcilibHashCompute
 * OcilibHashAdd
 * --------------------------------------------------------------------------------------------- */
 
-static boolean OcilibHashAdd
+static OCI_Boolean OcilibHashAdd
 (
     OCI_HashTable *table,
     const otext   *key,
     OCI_Variant    value,
-    unsigned int   type
+    OCI_HashType   type
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
     OCI_HashEntry * e = NULL;
     OCI_HashValue * v = NULL, *v1 = NULL, *v2 = NULL;
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_PTR(OCI_IPC_STRING,      key)
-    CHECK_COMPAT(table->type == type)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
+    CHECK_PTR(OCI_IPC_STRING,      key);
+    CHECK_COMPAT(table->type == type);
 
-    boolean success = FALSE;
+    OCI_Boolean success = FALSE;
 
     e = OcilibHashLookup(table, key, TRUE);
 
     if (NULL != e)
     {
-        v = (OCI_HashValue *)OcilibMemoryAlloc(OCI_IPC_HASHVALUE, sizeof(*v),
-                                               (size_t)1, TRUE);
+        v = (OCI_HashValue *)OcilibMemoryAlloc(table->env, OCI_IPC_HASHVALUE, sizeof(*v),
+                                               (OCI_Size)1, TRUE);
 
         if (NULL != v)
         {
             if (OCI_HASH_STRING == table->type && value.p_text)
             {
-                v->value.p_text = OcilibStringDuplicate(value.p_text);
+                v->value.p_text = OcilibStringDuplicate(table->env, value.p_text);
             }
             else if (OCI_HASH_INTEGER == table->type)
             {
@@ -126,9 +126,9 @@ static boolean OcilibHashAdd
         }
     }
 
-    SET_RETVAL(success)
+    SET_RETVAL(success);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -137,15 +137,16 @@ static boolean OcilibHashAdd
 
 OCI_HashTable * OcilibHashCreate
 (
-    unsigned int size,
-    unsigned int type
+    OCI_Environment *env,
+    OCI_UInt32     size,
+    OCI_HashType     type
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_HashTable*, NULL,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
     OCI_HashTable* table = NULL;
 
@@ -153,20 +154,22 @@ OCI_HashTable * OcilibHashCreate
 
     /* allocate table structure */
 
-    table = (OCI_HashTable *)OcilibMemoryAlloc(OCI_IPC_HASHTABLE,
+    table = (OCI_HashTable *)OcilibMemoryAlloc(env, OCI_IPC_HASHTABLE,
                                                sizeof(*table),
-                                               (size_t) 1, TRUE);
-    CHECK_NULL(table)
+                                               (OCI_Size) 1, TRUE);
+    CHECK_NULL(table);
 
     /* set up attributes and allocate internal array of hash entry pointers */
 
+    table->env   = env;
+    table->htype = OCI_IPC_HASHTABLE;
     table->type  = type;
     table->size  = 0;
     table->count = 0;
 
-    table->items = (OCI_HashEntry **)OcilibMemoryAlloc(OCI_IPC_HASHENTRY_ARRAY,
+    table->items = (OCI_HashEntry **)OcilibMemoryAlloc(env, OCI_IPC_HASHENTRY_ARRAY,
                                                        sizeof(*table->items),
-                                                       (size_t) size, TRUE);
+                                                       (OCI_Size) size, TRUE);
     CHECK_NULL(table->items);
 
     table->size = size;
@@ -179,33 +182,33 @@ OCI_HashTable * OcilibHashCreate
             table = NULL;
         }
 
-        SET_RETVAL(table)
-    )
+        SET_RETVAL(table);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibHashFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibHashFree
+OCI_Boolean OcilibHashFree
 (
     OCI_HashTable *table
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
     OCI_HashEntry *e1 = NULL, *e2 = NULL;
     OCI_HashValue *v1 = NULL, *v2 = NULL;
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
 
     if (NULL != table->items)
     {
-        for (unsigned int i = 0; i < table->size; i++)
+        for (OCI_UInt32 i = 0; i < table->size; i++)
         {
             e1 = table->items[i];
 
@@ -223,75 +226,75 @@ boolean OcilibHashFree
 
                     if (OCI_HASH_STRING == table->type)
                     {
-                        FREE(v2->value.p_text)
+                        FREE(v2->value.p_text);
                     }
 
-                    FREE(v2)
+                    FREE(v2);
                 }
 
                 if (NULL != e2->key)
                 {
-                    FREE(e2->key)
+                    FREE(e2->key);
                 }
 
-                FREE(e2)
+                FREE(e2);
             }
         }
 
-        FREE(table->items)
+        FREE(table->items);
     }
 
     OcilibErrorResetSource(NULL, table);
 
-    FREE(table)
+    FREE(table);
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * HashGetSize
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibHashGetSize
+OCI_UInt32 OcilibHashGetSize
 (
     OCI_HashTable *table
 )
 {
     ENTER_FUNC
     (
-        /* returns */ unsigned int, 0,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* returns */ OCI_UInt32, 0,
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
 
-    SET_RETVAL(table->size)
+    SET_RETVAL(table->size);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibHashGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibHashGetType
+OCI_HashType OcilibHashGetType
 (
     OCI_HashTable *table
 )
 {
     ENTER_FUNC
     (
-        /* returns */ unsigned int, OCI_UNKNOWN,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* returns */ OCI_HashType, OCI_UNKNOWN,
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
 
-    SET_RETVAL(table->type)
+    SET_RETVAL(table->type);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -307,17 +310,17 @@ OCI_HashValue * OcilibHashGetValue
     ENTER_FUNC
     (
         /* returns */ OCI_HashValue*, NULL,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
 
     OCI_HashEntry* e = OcilibHashLookup(table, key, FALSE);
-    CHECK_NULL(e)
+    CHECK_NULL(e);
 
-    SET_RETVAL(e->values)
+    SET_RETVAL(e->values);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -327,22 +330,22 @@ OCI_HashValue * OcilibHashGetValue
 OCI_HashEntry * OcilibHashGetEntry
 (
     OCI_HashTable *table,
-    unsigned int   index
+    OCI_UInt32   index
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_HashEntry*, NULL,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
 
-    CHECK(index < table->size)
+    CHECK(index < table->size);
 
-    SET_RETVAL(table->items[index])
+    SET_RETVAL(table->items[index]);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -358,25 +361,25 @@ const otext * OcilibHashGetString
     ENTER_FUNC
     (
         /* returns */ const otext*, NULL,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_COMPAT(table->type == OCI_HASH_STRING)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
+    CHECK_COMPAT(table->type == OCI_HASH_STRING);
 
     OCI_HashValue *v = OcilibHashGetValue(table, key);
-    CHECK_NULL(v)
+    CHECK_NULL(v);
 
-    SET_RETVAL(v->value.p_text)
+    SET_RETVAL(v->value.p_text);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibHashGetInt
  * --------------------------------------------------------------------------------------------- */
 
-int OcilibHashGetInt
+OCI_Int32 OcilibHashGetInt
 (
     OCI_HashTable *table,
     const otext   *key
@@ -384,19 +387,19 @@ int OcilibHashGetInt
 {
     ENTER_FUNC
     (
-        /* returns */ int, 0,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* returns */ OCI_Int32, 0,
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_COMPAT(table->type == OCI_HASH_INTEGER)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
+    CHECK_COMPAT(table->type == OCI_HASH_INTEGER);
 
     OCI_HashValue * v = OcilibHashGetValue(table, key);
-    CHECK_NULL(v)
+    CHECK_NULL(v);
 
-    SET_RETVAL(v->value.num)
+    SET_RETVAL(v->value.num);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -412,25 +415,25 @@ void * OcilibHashGetPointer
     ENTER_FUNC
     (
         /* returns */ void*, NULL,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_COMPAT(table->type == OCI_HASH_POINTER)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
+    CHECK_COMPAT(table->type == OCI_HASH_POINTER);
 
     OCI_HashValue *v = OcilibHashGetValue(table, key);
-    CHECK_NULL(v)
+    CHECK_NULL(v);
 
-    SET_RETVAL(v->value.p_void)
+    SET_RETVAL(v->value.p_void);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibHashAddString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibHashAddString
+OCI_Boolean OcilibHashAddString
 (
     OCI_HashTable *table,
     const otext   *key,
@@ -439,60 +442,60 @@ boolean OcilibHashAddString
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
     OCI_Variant v;
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_COMPAT(table->type == OCI_HASH_STRING)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
+    CHECK_COMPAT(table->type == OCI_HASH_STRING);
 
     v.p_text = (otext *) value;
 
-    CHECK(OcilibHashAdd(table, key, v, OCI_HASH_STRING))
+    CHECK(OcilibHashAdd(table, key, v, OCI_HASH_STRING));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibHashAddInt
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibHashAddInt
+OCI_Boolean OcilibHashAddInt
 (
     OCI_HashTable *table,
     const otext   *key,
-    int            value
+    OCI_Int32            value
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
     OCI_Variant v;
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_COMPAT(table->type == OCI_HASH_INTEGER)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
+    CHECK_COMPAT(table->type == OCI_HASH_INTEGER);
 
     v.num = value;
 
-    CHECK(OcilibHashAdd(table, key, v, OCI_HASH_INTEGER))
+    CHECK(OcilibHashAdd(table, key, v, OCI_HASH_INTEGER));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibHashAddPointer
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibHashAddPointer
+OCI_Boolean OcilibHashAddPointer
 (
     OCI_HashTable *table,
     const otext   *key,
@@ -501,22 +504,22 @@ boolean OcilibHashAddPointer
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
     OCI_Variant v;
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_COMPAT(table->type == OCI_HASH_POINTER)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
+    CHECK_COMPAT(table->type == OCI_HASH_POINTER);
 
     v.p_void = value;
 
-    CHECK(OcilibHashAdd(table, key, v, OCI_HASH_POINTER))
+    CHECK(OcilibHashAdd(table, key, v, OCI_HASH_POINTER));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -527,21 +530,21 @@ OCI_HashEntry * OcilibHashLookup
 (
     OCI_HashTable *table,
     const otext   *key,
-    boolean        create
+    OCI_Boolean    create
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_HashEntry*, NULL,
-        /* context */ OCI_IPC_HASHTABLE, table
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, (table ? table->env : NULL)
+    );
 
     OCI_HashEntry *e = NULL, *e1 = NULL, *e2 = NULL;
 
-    CHECK_PTR(OCI_IPC_HASHTABLE, table)
-    CHECK_PTR(OCI_IPC_STRING,      key)
+    CHECK_PTR(OCI_IPC_HASHTABLE, table);
+    CHECK_PTR(OCI_IPC_STRING,      key);
 
-    const unsigned int i = OcilibHashCompute(table, key);
+    const OCI_UInt32 i = OcilibHashCompute(table, key);
 
     if (i < table->size)
     {
@@ -555,14 +558,14 @@ OCI_HashEntry * OcilibHashLookup
 
         if (NULL == e && create)
         {
-            e = (OCI_HashEntry *)OcilibMemoryAlloc(OCI_IPC_HASHENTRY,
+            e = (OCI_HashEntry *)OcilibMemoryAlloc(table->env, OCI_IPC_HASHENTRY,
                                                    sizeof(*e),
-                                                   (size_t) 1,
+                                                   (OCI_Size) 1,
                                                    TRUE);
-            CHECK_NULL(e)
+            CHECK_NULL(e);
 
-            e->key = OcilibStringDuplicate(key);
-            CHECK_NULL(e->key)
+            e->key = OcilibStringDuplicate(table->env, key);
+            CHECK_NULL(e->key);
 
             e1 = e2 = table->items[i];
 
@@ -587,9 +590,9 @@ OCI_HashEntry * OcilibHashLookup
     (
         if (FAILURE && create)
         {
-            FREE(e)
+            FREE(e);
         }
 
-        SET_RETVAL(e)
-    )
+        SET_RETVAL(e);
+    );
 }

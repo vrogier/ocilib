@@ -35,9 +35,9 @@ inline Connection::Connection()
 
 }
 
-inline Connection::Connection(const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)
+inline Connection::Connection(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)
 {
-    Open(db, user, pwd, sessionFlags);
+    Open(env, db, user, pwd, sessionFlags);
 }
 
 inline Connection::Connection(OCI_Connection *con,  core::Handle *parent, bool allocated)
@@ -52,12 +52,12 @@ inline Connection::Connection(OCI_Connection *con,  core::Handle *parent, bool a
     }
 }
 
-inline void Connection::Open(const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)
+inline void Connection::Open(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)
 {
     AcquireAllocated
     (
-        core::Check(OCI_ConnectionCreate(db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues())),
-        Environment::GetEnvironmentHandle()
+        core::Check(OCI_ConnectionCreate(env.GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues())),
+        env.GetEnvironmentHandle()
     );
 }
 
@@ -126,17 +126,17 @@ inline ostring Connection::GetServerVersion() const
     return core::MakeString(core::Check(OCI_GetVersionServer(*this)));
 }
 
-inline unsigned int Connection::GetServerMajorVersion() const
+inline OCI_UInt32 Connection::GetServerMajorVersion() const
 {
     return core::Check(OCI_GetServerMajorVersion(*this));
 }
 
-inline unsigned int Connection::GetServerMinorVersion() const
+inline OCI_UInt32 Connection::GetServerMinorVersion() const
 {
     return core::Check(OCI_GetServerMinorVersion(*this));
 }
 
-inline unsigned int Connection::GetServerRevisionVersion() const
+inline OCI_UInt32 Connection::GetServerRevisionVersion() const
 {
     return core::Check(OCI_GetServerRevisionVersion(*this));
 }
@@ -166,17 +166,7 @@ inline void Connection::SetTransaction(const Transaction &transaction)
     core::Check(OCI_SetTransaction(*this, transaction));
 }
 
-inline bool Connection::SetFormat(FormatType formatType, const ostring& format)
-{
-    return core::Check(OCI_SetFormat(*this, formatType, format.c_str()) == TRUE);
-}
-
-inline ostring Connection::GetFormat(FormatType formatType)
-{
-    return core::MakeString(core::Check(OCI_GetFormat(*this, formatType)));
-}
-
-inline void Connection::EnableServerOutput(unsigned int bufsize, unsigned int arrsize, unsigned int lnsize)
+inline void Connection::EnableServerOutput(OCI_UInt32 bufsize, OCI_UInt32 arrsize, OCI_UInt32 lnsize)
 {
     core::Check(OCI_ServerEnableOutput(*this, bufsize, arrsize, lnsize));
 }
@@ -246,27 +236,27 @@ inline Timestamp Connection::GetInstanceStartTime() const
     return Timestamp(core::Check(OCI_GetInstanceStartTime(*this)), GetHandle());
 }
 
-inline unsigned int Connection::GetStatementCacheSize() const
+inline OCI_UInt32 Connection::GetStatementCacheSize() const
 {
     return core::Check(OCI_GetStatementCacheSize(*this));
 }
 
-inline void Connection::SetStatementCacheSize(unsigned int value)
+inline void Connection::SetStatementCacheSize(OCI_UInt32 value)
 {
     core::Check(OCI_SetStatementCacheSize(*this, value));
 }
 
-inline unsigned int Connection::GetDefaultLobPrefetchSize() const
+inline OCI_UInt32 Connection::GetDefaultLobPrefetchSize() const
 {
     return core::Check(OCI_GetDefaultLobPrefetchSize(*this));
 }
 
-inline void Connection::SetDefaultLobPrefetchSize(unsigned int value)
+inline void Connection::SetDefaultLobPrefetchSize(OCI_UInt32 value)
 {
     core::Check(OCI_SetDefaultLobPrefetchSize(*this, value));
 }
 
-inline unsigned int  Connection::GetMaxCursors() const
+inline OCI_UInt32  Connection::GetMaxCursors() const
 {
     return core::Check(OCI_GetMaxCursors(*this));
 }
@@ -280,7 +270,11 @@ inline void Connection::SetTAFHandler(TAFHandlerProc handler)
 {
     core::Check(OCI_SetTAFHandler(*this, static_cast<POCI_TAF_HANDLER>(handler != nullptr ? Environment::TAFHandler : nullptr)));
 
-    Environment::SetUserCallback<Connection::TAFHandlerProc>(static_cast<OCI_Connection*>(*this), handler);
+    Environment* env = Environment::GetInstance(GetEnvironment());
+    if (env)
+    {
+        env->SetUserCallback<Connection::TAFHandlerProc>(static_cast<OCI_Connection*>(*this), handler);
+    }
 }
 
 inline AnyPointer Connection::GetUserData()
@@ -293,12 +287,12 @@ inline void Connection::SetUserData(AnyPointer value)
     core::Check(OCI_SetUserData(*this, value));
 }
 
-inline unsigned int Connection::GetTimeout(TimeoutType timeout)
+inline OCI_UInt32 Connection::GetTimeout(TimeoutType timeout)
 {
     return core::Check(OCI_GetTimeout(*this, timeout));
 }
 
-inline void Connection::SetTimeout(TimeoutType timeout, unsigned int value)
+inline void Connection::SetTimeout(TimeoutType timeout, OCI_UInt32 value)
 {
     core::Check(OCI_SetTimeout(*this, timeout, value));
 }

@@ -58,22 +58,22 @@ sb4 OcilibCallbackInBind
     (
         /* returns */ sb4, OCI_ERROR,
         /* context */ OCI_IPC_BIND, ictxp
-    )
+    );
 
     OCI_Bind * bnd = (OCI_Bind *) ictxp;
-    sb2 *ind = (sb2 *) bnd ? bnd->buffer.inds : NULL;
-    ub4  i   = 0;
+    sb2       *ind = (sb2 *) bnd ? bnd->buffer.inds : NULL;
+    ub4        i   = 0;
 
     /* these checks may not be necessary but they keep compiler warnings
        away if the warning level is set to maximum !
     */
 
-    OCI_NOT_USED(index)
+    OCI_NOT_USED(index);
     OCI_NOT_USED(bindp)
 
     /* check objects and bounds */
 
-    CHECK_PTR(OCI_IPC_BIND, bnd)
+    CHECK_PTR(OCI_IPC_BIND, bnd);
 
     /* indicators must be set to -1 depending on data type,
        so let's do it for all */
@@ -98,9 +98,9 @@ sb4 OcilibCallbackInBind
     *indp   = (dvoid *) bnd->buffer.inds;
     *piecep = (ub1    ) OCI_ONE_PIECE;
 
-    SET_RETVAL(OCI_CONTINUE)
+    SET_RETVAL(OCI_CONTINUE);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -124,9 +124,9 @@ sb4 OcilibCallbackOutBind
     (
         /* returns */ sb4, OCI_ERROR,
         /* context */ OCI_IPC_BIND, octxp
-    )
+    );
 
-    OCI_Bind      *bnd = (OCI_Bind *)octxp;
+    OCI_Bind      *bnd  = (OCI_Bind *)octxp;
     OCI_Define    *def  = NULL;
     OCI_Resultset *rs   = NULL;
     ub4            rows = 0;
@@ -139,7 +139,7 @@ sb4 OcilibCallbackOutBind
 
     /* check objects  */
 
-    CHECK_PTR(OCI_IPC_BIND, bnd)
+    CHECK_PTR(OCI_IPC_BIND, bnd);
 
     /* update statement status */
 
@@ -154,7 +154,7 @@ sb4 OcilibCallbackOutBind
 
         /* allocate resultset handles array */
 
-        ALLOC_DATA(OCI_IPC_RESULTSET_ARRAY, bnd->stmt->rsts, bnd->stmt->nb_rs)
+        ALLOC_DATA(OCI_IPC_RESULTSET_ARRAY, bnd->stmt->rsts, bnd->stmt->nb_rs);
 
         /* create resultset as needed */
 
@@ -165,21 +165,21 @@ sb4 OcilibCallbackOutBind
                 OCI_HTYPE_BIND, OCI_ATTR_ROWS_RETURNED,
                 bnd->buffer.handle, &rows, NULL,
                 bnd->stmt->con->err
-            )
+            );
 
             bnd->stmt->rsts[iter] = OcilibResultsetCreate(bnd->stmt, rows);
 
-            CHECK_NULL(bnd->stmt->rsts[iter])
+            CHECK_NULL(bnd->stmt->rsts[iter]);
 
             bnd->stmt->rsts[iter]->row_count = rows;
         }
     }
 
-    CHECK_NULL(bnd->stmt->rsts)
+    CHECK_NULL(bnd->stmt->rsts);
 
     rs = bnd->stmt->rsts[iter];
 
-    CHECK_NULL(rs)
+    CHECK_NULL(rs);
 
     /* Let's Oracle update its buffers */
 
@@ -193,25 +193,26 @@ sb4 OcilibCallbackOutBind
         case OCI_CDT_LOB:
         case OCI_CDT_FILE:
         case OCI_CDT_VECTOR:
+        case OCI_CDT_JSON:
         {
             *bufpp = def->buf.data[index];
             break;
         }
         default:
         {
-            *bufpp = (((ub1*)def->buf.data) + (size_t) (def->col.bufsize * index));
+            *bufpp = (((ub1*)def->buf.data) + (OCI_Size) (def->col.bufsize * index));
             break;
         }
     }
 
-    *alenp  = (ub4   *) (((ub1 *) def->buf.lens) + (size_t) ((ub4) def->buf.sizelen * index));
-    *indp   = (dvoid *) (((ub1 *) def->buf.inds) + (size_t) ((ub4) sizeof(sb2)      * index));
+    *alenp  = (ub4   *) (((ub1 *) def->buf.lens) + (OCI_Size) ((ub4) def->buf.sizelen * index));
+    *indp   = (dvoid *) (((ub1 *) def->buf.inds) + (OCI_Size) ((ub4) sizeof(sb2)      * index));
     *piecep = (ub1    ) OCI_ONE_PIECE;
     *rcodep = (ub2   *) NULL;
 
-    SET_RETVAL(OCI_CONTINUE)
+    SET_RETVAL(OCI_CONTINUE);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -232,23 +233,26 @@ ub4 OcilibCallbackNotifyMessages
     (
         /* returns */ ub4, OCI_SUCCESS,
         /* context */ OCI_IPC_DEQUEUE, oci_ctx
-    )
+    );
 
     OCI_Dequeue *dequeue = (OCI_Dequeue *)oci_ctx;
 
-    OCI_NOT_USED(paylen)
-    OCI_NOT_USED(payload)
-    OCI_NOT_USED(mode)
-    OCI_NOT_USED(subscrhp)
-    OCI_NOT_USED(desc)
+    OCI_NOT_USED(paylen);
+    OCI_NOT_USED(payload);
+    OCI_NOT_USED(mode);
+    OCI_NOT_USED(subscrhp);
+    OCI_NOT_USED(desc);
 
-    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue)
+    CHECK_PTR(OCI_IPC_DEQUEUE, dequeue);
 
-    dequeue->callback(dequeue);
+    if (NULL != dequeue->callback)
+    {
+        dequeue->callback(dequeue);
+    }
 
-    SET_RETVAL(OCI_SUCCESS)
+    SET_RETVAL(OCI_SUCCESS);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -269,27 +273,27 @@ ub4 OcilibCallbackNotifyChanges
     (
         /* returns */ ub4, OCI_SUCCESS,
         /* context */ OCI_IPC_NOTIFY, oci_ctx
-    )
+    );
 
     OCI_Subscription* sub = (OCI_Subscription*)oci_ctx;
 
     ub4 type = 0;
 
-    OCI_NOT_USED(paylen)
-    OCI_NOT_USED(payload)
-    OCI_NOT_USED(mode)
-    OCI_NOT_USED(subscrhp)
+    OCI_NOT_USED(paylen);
+    OCI_NOT_USED(payload);
+    OCI_NOT_USED(mode);
+    OCI_NOT_USED(subscrhp);
 
-    CHECK_PTR(OCI_IPC_VOID, sub)
+    CHECK_PTR(OCI_IPC_VOID, sub);
 
-    CHECK(OcilibEventReset(&sub->event))
+    CHECK(OcilibEventReset(&sub->event));
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
     /* get database that generated the notification */
 
     CHECK(OcilibStringGetAttribute(sub->con, desc, OCI_DTYPE_CHDES, OCI_ATTR_CHDES_DBNAME,
-                                   &sub->event.dbname, &sub->event.dbname_size))
+                                   &sub->event.dbname, &sub->event.dbname_size));
 
     /* get notification type */
 
@@ -298,7 +302,7 @@ ub4 OcilibCallbackNotifyChanges
         OCI_DTYPE_CHDES, OCI_ATTR_CHDES_NFYTYPE,
         desc, &type, NULL,
         sub->err
-    )
+    );
 
     switch(type)
     {
@@ -319,7 +323,7 @@ ub4 OcilibCallbackNotifyChanges
         }
         case OCI_EVENT_OBJCHANGE:
         {
-            if (sub->type & OCI_CNT_OBJECTS)
+            if (sub->type & (OCI_CNT_OBJECTS | OCI_CNT_ROWS))
             {
                 sub->event.type = type;
             }
@@ -344,19 +348,19 @@ ub4 OcilibCallbackNotifyChanges
             OCI_DTYPE_CHDES, OCI_ATTR_CHDES_TABLE_CHANGES,
             desc, &tables, NULL,
             sub->err
-        )
+        );
 
         if (tables)
         {
-            dvoid **tbl_elem  = NULL;
-            dvoid  *tbl_ind   = NULL;
-            boolean tbl_exist = FALSE;
-            sb4     nb_tables = 0;
-            sb4     nb_rows   = 0;
+            dvoid     **tbl_elem  = NULL;
+            dvoid      *tbl_ind   = NULL;
+            OCI_Boolean tbl_exist = FALSE;
+            sb4         nb_tables = 0;
+            sb4         nb_rows   = 0;
 
             /* get number of tables in the collection */
 
-            CHECK_OCI(sub->err, OCICollSize, sub->env, sub->err, tables, &nb_tables)
+            CHECK_OCI(sub->err, OCICollSize, sub->env->handle, sub->err, tables, &nb_tables);
 
             for (sb4 i = 0; i < nb_tables; i++)
             {
@@ -380,15 +384,15 @@ ub4 OcilibCallbackNotifyChanges
                 (
                     sub->err,
                     OCICollGetElem,
-                    sub->env, sub->err,  tables, i, &tbl_exist,
+                    sub->env->handle, sub->err,  tables, i, (boolean*) &tbl_exist,
                     (dvoid**) (dvoid*) &tbl_elem, (dvoid**) &tbl_ind
-                )
+                );
 
                 /* get table name */
 
                 CHECK(OcilibStringGetAttribute(sub->con, *tbl_elem, OCI_DTYPE_TABLE_CHDES,
                                                OCI_ATTR_CHDES_TABLE_NAME, &sub->event.objname,
-                                               &sub->event.objname_size))
+                                               &sub->event.objname_size));
 
                 /* get table modification type */
 
@@ -397,7 +401,7 @@ ub4 OcilibCallbackNotifyChanges
                     OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_OPFLAGS,
                     *tbl_elem, &sub->event.op, NULL,
                     sub->err
-                )
+                );
 
                 sub->event.op = sub->event.op & (~OCI_OPCODE_ALLROWS);
                 sub->event.op = sub->event.op & (~OCI_OPCODE_ALLOPS);
@@ -415,13 +419,13 @@ ub4 OcilibCallbackNotifyChanges
                         OCI_DTYPE_TABLE_CHDES, OCI_ATTR_CHDES_TABLE_ROW_CHANGES,
                         *tbl_elem, &rows, NULL,
                         sub->err
-                    )
+                    );
 
                     if (rows)
                     {
-                        dvoid **row_elem  = NULL;
-                        dvoid  *row_ind   = NULL;
-                        boolean row_exist = FALSE;
+                        dvoid     **row_elem  = NULL;
+                        dvoid      *row_ind   = NULL;
+                        OCI_Boolean row_exist = FALSE;
 
                         /* get number of rows */
 
@@ -429,9 +433,9 @@ ub4 OcilibCallbackNotifyChanges
                         (
                             sub->err,
                             OCICollSize,
-                            sub->env, sub->err,
+                            sub->env->handle, sub->err,
                             rows, &nb_rows
-                        )
+                        );
 
                         for (sb4 j = 0; j < nb_rows; j++)
                         {
@@ -448,15 +452,15 @@ ub4 OcilibCallbackNotifyChanges
                             (
                                 sub->err,
                                 OCICollGetElem,
-                                sub->env, sub->err, rows, j, &row_exist,
+                                sub->env->handle, sub->err, rows, j, (boolean*) &row_exist,
                                 (dvoid**) (dvoid*) &row_elem, (dvoid**) &row_ind
-                            )
+                            );
 
                             /* get rowid  */
 
                             CHECK(OcilibStringGetAttribute(sub->con, *row_elem, OCI_DTYPE_ROW_CHDES,
                                                            OCI_ATTR_CHDES_ROW_ROWID, &sub->event.rowid,
-                                                           &sub->event.rowid_size))
+                                                           &sub->event.rowid_size));
 
                             /* get opcode  */
 
@@ -465,36 +469,45 @@ ub4 OcilibCallbackNotifyChanges
                                 OCI_DTYPE_ROW_CHDES, OCI_ATTR_CHDES_ROW_OPFLAGS,
                                 *row_elem, &sub->event.op, NULL,
                                 sub->err
-                            )
+                            );
 
-                            sub->handler(&sub->event);
+                            if (NULL != sub->handler)
+                            {
+                                sub->handler(&sub->event);
+                            }
                         }
                     }
                 }
 
                 if (0 == nb_rows)
                 {
-                    sub->handler(&sub->event);
+                    if (NULL != sub->handler)
+                    {
+                        sub->handler(&sub->event);
+                    }
                 }
             }
         }
     }
     else if (sub->event.type > 0)
     {
-        sub->handler(&sub->event);
+        if (NULL != sub->handler)
+        {
+            sub->handler(&sub->event);
+        }
     }
 
-    SET_RETVAL(OCI_SUCCESS)
+    SET_RETVAL(OCI_SUCCESS);
 
 #else
 
-    OCI_NOT_USED(desc)
-    OCI_NOT_USED(subscrhp)
-    OCI_NOT_USED(type)
+    OCI_NOT_USED(desc);
+    OCI_NOT_USED(subscrhp);
+    OCI_NOT_USED(type);
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -514,20 +527,20 @@ sb4 OcilibCallbackFailOver
     (
         /* returns */ sb4, OCI_FOC_OK,
         /* context */ OCI_IPC_CONNECTION, fo_ctx
-    )
+    );
 
     OCI_Connection* con = (OCI_Connection*)fo_ctx;
 
-    OCI_NOT_USED(envhp)
-    OCI_NOT_USED(svchp)
+    OCI_NOT_USED(envhp);
+    OCI_NOT_USED(svchp);
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
 
-    CHECK_NULL(con->taf_handler)
+    CHECK_NULL(con->taf_handler);
 
-    SET_RETVAL((sb4)con->taf_handler(con, fo_type, fo_event))
+    SET_RETVAL((sb4)con->taf_handler(con, fo_type, fo_event));
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -543,19 +556,22 @@ static void OcilibProcHAEventInvoke
     ENTER_VOID
     (
         /* context */ OCI_IPC_CONNECTION, con
-    )
+    );
 
     OCI_Timestamp* tmsp = NULL;
 
-    CHECK_PTR(OCI_IPC_CONNECTION, con)
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
 
     if (NULL != con && con->svr == ha_params->srvhp)
     {
-        tmsp = OcilibTimestampInitialize(NULL, tmsp, ha_params->dthp, OCI_TIMESTAMP);
+        tmsp = OcilibTimestampInitialize(con->env, con, tmsp, ha_params->dthp, OCI_TIMESTAMP);
 
-        CHECK_NULL(tmsp)
+        CHECK_NULL(tmsp);
 
-        Env.ha_handler(con, (unsigned int)ha_params->source, (unsigned int)ha_params->event, tmsp);
+        if (NULL != con->env->ha_handler)
+        {
+            con->env->ha_handler(con, (OCI_UInt32)ha_params->source, (OCI_UInt32)ha_params->event, tmsp);
+        }
     }
 
     if (NULL != tmsp)
@@ -564,7 +580,7 @@ static void OcilibProcHAEventInvoke
         OcilibTimestampFree(tmsp);
     }
 
-    EXIT_VOID()
+    EXIT_VOID();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -577,18 +593,20 @@ void OcilibCallbackHAEvent
     dvoid *eventptr
 )
 {
+    OCI_Environment *env = (OCI_Environment *)evtctx;
+
     ENTER_VOID
     (
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    CHECK_PTR(OCI_IPC_VOID, evtctx)
+    CHECK_PTR(OCI_IPC_VOID, evtctx);
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
-    CHECK_PTR(OCI_IPC_VOID, Env.ha_handler)
+    CHECK_PTR(OCI_IPC_VOID, env->ha_handler);
 
-    if (Env.version_runtime >= OCI_10_2)
+    if (env->version_runtime >= OCI_10_2)
     {
         OCIEvent* evt = (OCIEvent*)eventptr;
 
@@ -605,8 +623,8 @@ void OcilibCallbackHAEvent
         (
             OCI_HTYPE_EVENT, OCI_ATTR_HA_TIMESTAMP,
             evt, &params.dthp, NULL,
-            Env.err
-        )
+            env->err
+        );
 
         /* get status */
 
@@ -614,8 +632,8 @@ void OcilibCallbackHAEvent
         (
             OCI_HTYPE_EVENT, OCI_ATTR_HA_STATUS,
             evt, &params.event, NULL,
-            Env.err
-        )
+            env->err
+        );
 
         /* get source */
 
@@ -623,23 +641,23 @@ void OcilibCallbackHAEvent
         (
             OCI_HTYPE_EVENT, OCI_ATTR_HA_SOURCE,
             evt, &params.source, NULL,
-            Env.err
-        )
+            env->err
+        );
 
         /* get first server */
-    
+
         CHECK_ATTRIB_GET
         (
             OCI_HTYPE_EVENT, OCI_ATTR_HA_SRVFIRST,
             evt, &params.srvhp, NULL,
-            Env.err
-        )
+            env->err
+        );
 
         while (params.srvhp)
         {
             /* notify all related connections */
 
-            LIST_ATOMIC_FOREACH_WITH_PARAM(Env.cons, &params, OcilibProcHAEventInvoke)
+            LIST_ATOMIC_FOREACH_WITH_PARAM(env->cons, &params, OcilibProcHAEventInvoke);
 
             params.srvhp = NULL;
 
@@ -649,18 +667,18 @@ void OcilibCallbackHAEvent
             (
                 OCI_HTYPE_EVENT, OCI_ATTR_HA_SRVNEXT,
                 evt, &params.srvhp, NULL,
-                Env.err
-            )
+                env->err
+            );
         }
     }
 
 #else
 
-    OCI_NOT_USED(eventptr)
+    OCI_NOT_USED(eventptr);
 
 #endif
 
-    EXIT_VOID()
+    EXIT_VOID();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -669,21 +687,21 @@ void OcilibCallbackHAEvent
 
 OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
 (
-    void          *octxp,
-    OCIDefine     *defnp,
-    ub4            iter, 
-    void         **bufpp,
-    ub4          **alenpp,
-    ub1           *piecep,
-    void         **indpp,
-    ub2          **rcodep
+    void      *octxp,
+    OCIDefine *defnp,
+    ub4        iter,
+    void     **bufpp,
+    ub4      **alenpp,
+    ub1       *piecep,
+    void     **indpp,
+    ub2      **rcodep
 )
 {
     ENTER_FUNC
     (
         /* returns */ sb4, OCI_ERROR,
         /* context */ OCI_IPC_DEFINE, octxp
-    )
+    );
 
     OCI_Define * def = (OCI_Define *) octxp;
 
@@ -691,12 +709,12 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
        away if the warning level is set to maximum !
     */
 
-    OCI_NOT_USED(defnp)
+    OCI_NOT_USED(defnp);
     OCI_NOT_USED(indpp)
 
     /* check objects and bounds */
 
-    CHECK_PTR(OCI_IPC_DEFINE, def)
+    CHECK_PTR(OCI_IPC_DEFINE, def);
 
     /* get the long object for the given internal row */
 
@@ -712,7 +730,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
                                                        def, def->col.subtype);
         }
         else if (OCI_CDT_XMLTYPE == def->col.datatype)
-        {       
+        {
             def->buf.data[iter] = OcilibXmlTypeInitialize(def->rs->stmt->con, def->rs->stmt,
                                                           (OCI_XmlType *)def->buf.data[iter], def);
         }
@@ -725,7 +743,7 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
 
         lg->size += (**alenpp);
     }
-                
+
     ub4 char_fact     = (OCI_CLONG == lg->type) ? max(1, sizeof(otext) / sizeof(dbtext)) : 1;
     ub4 trailing_size = (OCI_CLONG == lg->type) ? sizeof(dbtext) * char_fact : 0;
 
@@ -733,22 +751,26 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
 
     ub4 bufsize = def->rs->stmt->piece_size;
 
+    /* always keep trailing_size bytes of spare capacity so that the
+       terminating null character can be appended past the last piece in
+       OcilibLongFinalizeDynamicFetch() without overflowing the buffer */
+
     if (!lg->buffer)
     {
-        lg->maxsize = bufsize;
+        lg->maxsize = bufsize + trailing_size;
 
-        ALLOC_DATA(OCI_IPC_LONG_BUFFER, lg->buffer, lg->maxsize)
+        ALLOC_DATA(OCI_IPC_LONG_BUFFER, lg->buffer, lg->maxsize);
     }
-    else if ((lg->size + bufsize) >= lg->maxsize)
+    else if ((lg->size + bufsize + trailing_size) >= lg->maxsize)
     {
-        lg->maxsize *= ((lg->size + bufsize) / lg->maxsize) + 1;
+        lg->maxsize *= ((lg->size + bufsize + trailing_size) / lg->maxsize) + 1;
 
-        lg->buffer = (ub1 *)OcilibMemoryRealloc(lg->buffer, (size_t) OCI_IPC_LONG_BUFFER,
-                                                (size_t) lg->maxsize, 1, TRUE);
+        lg->buffer = (ub1 *)OcilibMemoryRealloc(lg->handle->con->env, lg->buffer, (OCI_Size) OCI_IPC_LONG_BUFFER,
+                                                (OCI_Size) lg->maxsize, 1, TRUE);
     }
-   
+
     /* update piece info */
- 
+
     if (*piecep == OCI_ONE_PIECE)
     {
         *piecep = OCI_ONE_PIECE;
@@ -764,11 +786,11 @@ OCI_SYM_LOCAL sb4 OcilibCallbackDynamicDefine
 
     lg->piecesize =(bufsize / char_fact) - trailing_size;
 
-    *bufpp   = (lg->buffer + (size_t) lg->size);
-    *alenpp  = (ub4   *) &lg->piecesize;
-    *rcodep  = (ub2   *) NULL;
+    *bufpp  = (lg->buffer + (OCI_Size) lg->size);
+    *alenpp = (ub4   *) &lg->piecesize;
+    *rcodep = (ub2   *) NULL;
 
-    SET_RETVAL(OCI_CONTINUE)
+    SET_RETVAL(OCI_CONTINUE);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }

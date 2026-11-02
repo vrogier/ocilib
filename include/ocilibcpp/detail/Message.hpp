@@ -65,15 +65,15 @@ inline void Message::SetPayload<Object>(const Object &value)
 template<>
 inline Raw Message::GetPayload<Raw>()
 {
-    unsigned int size = 0;
+    OCI_UInt32 size = 0;
 
     core::Check(OCI_MsgGetRaw(*this, nullptr, &size));
-    
-    core::ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
 
-    core::Check(OCI_MsgGetRaw(*this, static_cast<AnyPointer>(buffer), &size));
+    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
 
-    return core::MakeRaw(buffer, size);
+    core::Check(OCI_MsgGetRaw(*this, static_cast<AnyPointer>(buffer.data()), &size));
+
+    return core::MakeRaw(buffer.data(), size);
 }
 
 template<>
@@ -81,7 +81,7 @@ inline void Message::SetPayload<Raw>(const Raw &value)
 {
     const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
 
-    core::Check(OCI_MsgSetRaw(*this, data, static_cast<unsigned int>(value.size())));
+    core::Check(OCI_MsgSetRaw(*this, data, static_cast<OCI_UInt32>(value.size())));
 }
 
 inline Date Message::GetEnqueueTime() const
@@ -89,7 +89,7 @@ inline Date Message::GetEnqueueTime() const
     return Date(core::Check(OCI_MsgGetEnqueueTime(*this)), nullptr);
 }
 
-inline int Message::GetAttemptCount() const
+inline OCI_Int32 Message::GetAttemptCount() const
 {
     return core::Check(OCI_MsgGetAttemptCount(*this));
 }
@@ -101,61 +101,61 @@ inline Message::MessageState Message::GetState() const
 
 inline Raw Message::GetID() const
 {
-    unsigned int size = OCI_SIZE_BUFFER;
+    OCI_UInt32 size = OCI_SIZE_BUFFER;
 
-    core::ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
+    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
 
-    core::Check(OCI_MsgGetID(*this, static_cast<AnyPointer>(buffer), &size));
+    core::Check(OCI_MsgGetID(*this, static_cast<AnyPointer>(buffer.data()), &size));
 
-    return core::MakeRaw(buffer, size);
+    return core::MakeRaw(buffer.data(), size);
 }
 
-inline int Message::GetExpiration() const
+inline OCI_Int32 Message::GetExpiration() const
 {
     return core::Check(OCI_MsgGetExpiration(*this));
 }
 
-inline void Message::SetExpiration(int value)
+inline void Message::SetExpiration(OCI_Int32 value)
 {
     core::Check(OCI_MsgSetExpiration(*this, value));
 }
 
-inline int Message::GetEnqueueDelay() const
+inline OCI_Int32 Message::GetEnqueueDelay() const
 {
     return core::Check(OCI_MsgGetEnqueueDelay(*this));
 }
 
-inline void Message::SetEnqueueDelay(int value)
+inline void Message::SetEnqueueDelay(OCI_Int32 value)
 {
     core::Check(OCI_MsgSetEnqueueDelay(*this, value));
 }
 
-inline int Message::GetPriority() const
+inline OCI_Int32 Message::GetPriority() const
 {
     return core::Check(OCI_MsgGetPriority(*this));
 }
 
-inline void Message::SetPriority(int value)
+inline void Message::SetPriority(OCI_Int32 value)
 {
     core::Check(OCI_MsgSetPriority(*this, value));
 }
 
 inline Raw Message::GetOriginalID() const
 {
-    unsigned int size = OCI_SIZE_BUFFER;
+    OCI_UInt32 size = OCI_SIZE_BUFFER;
 
-    core::ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
+    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
 
-    core::Check(OCI_MsgGetOriginalID(*this, static_cast<AnyPointer>(buffer), &size));
+    core::Check(OCI_MsgGetOriginalID(*this, static_cast<AnyPointer>(buffer.data()), &size));
 
-    return core::MakeRaw(buffer, size);
+    return core::MakeRaw(buffer.data(), size);
 }
 
 inline void Message::SetOriginalID(const Raw &value)
 {
     const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
 
-    core::Check(OCI_MsgSetOriginalID(*this, data, static_cast<unsigned int>(value.size())));
+    core::Check(OCI_MsgSetOriginalID(*this, data, static_cast<OCI_UInt32>(value.size())));
 }
 
 inline ostring Message::GetCorrelation() const
@@ -190,17 +190,15 @@ inline void Message::SetSender(const Agent &agent)
 
 inline void Message::SetConsumers(std::vector<Agent> &agents)
 {
-    const size_t size = agents.size();
-    core::ManagedBuffer<OCI_Agent*> buffer(size);
+    const OCI_Size size = agents.size();
+    std::vector<OCI_Agent*> buffer(size);
 
-    OCI_Agent ** pAgents = static_cast<OCI_Agent **>(buffer);
-
-    for (size_t i = 0; i < size; ++i)
+    for (OCI_Size i = 0; i < size; ++i)
     {
-        pAgents[i] = static_cast<const Agent &>(agents[i]);
+        buffer[i] = static_cast<const Agent &>(agents[i]);
     }
 
-    core::Check(OCI_MsgSetConsumers(*this, pAgents, static_cast<unsigned int>(size)));
+    core::Check(OCI_MsgSetConsumers(*this, buffer.data(), static_cast<OCI_UInt32>(size)));
 }
 
 }

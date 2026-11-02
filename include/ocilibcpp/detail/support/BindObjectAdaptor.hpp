@@ -31,7 +31,7 @@ namespace ocilib
         {
             if (GetMode() & OCI_BDM_IN)
             {
-                size_t size = _object.size();
+                OCI_Size size = _object.size();
 
                 if (size > _size)
                 {
@@ -52,15 +52,15 @@ namespace ocilib
         {
             if (GetMode() & OCI_BDM_OUT)
             {
-                OCI_Bind* bnd = core::Check(OCI_GetBind2(_statement, _name.c_str()));
-                size_t size = core::Check(OCI_BindGetDataSize(bnd));
+                OCI_Bind* bnd = core::Check(OCI_GetBindByName(_statement, _name.c_str()));
+                OCI_Size size = core::Check(OCI_BindGetDataSize(bnd));
 
                 _object.assign(_data, _data + size);
             }
         }
 
         template<class T>
-        BindObjectAdaptor<T>::BindObjectAdaptor(const ocilib::Statement& statement, const ostring& name, unsigned int mode, ObjectType& object, unsigned int size) :
+        BindObjectAdaptor<T>::BindObjectAdaptor(const ocilib::Statement& statement, const ostring& name, OCI_UInt32 mode, ObjectType& object, OCI_UInt32 size) :
             BindObject(statement, name, mode),
             _object(object),
             _data(core::OnAllocate(new NativeType[size + 1], size + 1)),

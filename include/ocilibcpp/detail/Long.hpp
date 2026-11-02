@@ -25,12 +25,12 @@
 namespace ocilib
 {
 
-template<class T, int U>
+template<class T, OCI_Int32 U>
 Long<T, U>::Long()
 {
 }
 
-template<class T, int U>
+template<class T, OCI_Int32 U>
 Long<T, U>::Long(const Statement &statement)
 {
     AcquireAllocated
@@ -40,25 +40,25 @@ Long<T, U>::Long(const Statement &statement)
     );
 }
 
-template<class T, int U>
+template<class T, OCI_Int32 U>
 Long<T, U>::Long(OCI_Long *pLong, core::Handle* parent)
 {
     AcquireTransient(pLong, parent);
 }
 
-template<class T, int U>
-unsigned int Long<T, U>::Write(const T& content)
+template<class T, OCI_Int32 U>
+OCI_UInt32 Long<T, U>::Write(const T& content)
 {
     if (content.empty())
     {
         return 0;
     }
 
-    return core::Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<typename T::value_type*>(&content[0])), static_cast<unsigned int>(content.size())));
+    return core::Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<typename T::value_type*>(&content[0])), static_cast<OCI_UInt32>(content.size())));
 }
 
-template<class T, int U>
-unsigned int Long<T, U>::GetLength() const
+template<class T, OCI_Int32 U>
+OCI_UInt32 Long<T, U>::GetLength() const
 {
     return core::Check(OCI_LongGetSize(*this));
 }

@@ -8,19 +8,16 @@ using namespace ocilib;
 
 void print_product(const Object &product)
 {
-    std::cout << "...product: " << product.Get<int>("code") << " - " << product.Get<ostring>("name") << std::endl;
+    std::cout << "...product: " << product.Get<OCI_Int32>("code") << " - " << product.Get<ostring>("name") << std::endl;
 }
 
 void print_coll_by_iterator(Collection<Object> &coll)
 {
     std::cout << "fetch using iterators" << std::endl;
 
-    Collection<Object>::Iterator it1 = coll.begin();
-    Collection<Object>::Iterator it2 = coll.end();
-
-    for (; it1 != it2; ++it1)
+    for (auto& item : coll)
     {
-        print_product(static_cast<Object>(*it1));
+        print_product(item);
     }
 }
 
@@ -28,11 +25,11 @@ void print_coll_by_index(Collection<Object> &coll)
 {
     std::cout << "fetch using index access" << std::endl;
 
-    unsigned int i = 1, n = coll.GetCount();
+    const OCI_UInt32 n = coll.GetCount();
 
-    for (; i <= n; i++)
+    for (OCI_UInt32 i = 1; i <= n; ++i)
     {
-        print_product(static_cast<Object>(coll[i]));
+        print_product(coll[i]);
     }
 }
 
@@ -41,12 +38,9 @@ void print_const_coll_by_iterator(const Collection<Object> &coll)
 {
     std::cout << "fetch using const iterators" << std::endl;
 
-    Collection<Object>::ConstIterator it1 = coll.begin();
-    Collection<Object>::ConstIterator it2 = coll.end();
-
-    for (; it1 != it2; ++it1)
+    for (const auto& item : coll)
     {
-        print_product(static_cast<Object>(*it1));
+        print_product(item);
     }
 }
 
@@ -54,15 +48,15 @@ void print_const_coll_by_index(const Collection<Object> &coll)
 {
     std::cout << "fetch using const index access" << std::endl;
 
-    unsigned int i = 1, n = coll.GetCount();
+    const OCI_UInt32 n = coll.GetCount();
 
-    for (; i <=n ; i++)
+    for (OCI_UInt32 i = 1; i <= n; ++i)
     {
-        print_product(static_cast<Object>(coll[i]));
+        print_product(coll[i]);
     }
 }
 
-void bind_coll(Connection &con)
+void bind_coll(Connection &con, Environment &env)
 {
     Statement st(con);
 
@@ -77,7 +71,7 @@ void bind_coll(Connection &con)
 }
 
 template <class T>
-void fetch_coll(Connection &con, ostring table_name, T func)
+void fetch_coll(Connection &con, ostring table_name, T func, Environment &env)
 {
     Statement st(con);
 
@@ -87,29 +81,26 @@ void fetch_coll(Connection &con, ostring table_name, T func)
     {
         std::cout << "#" << rs.Get<ostring>(1) << std::endl;
 
-        func(rs.Get<Collection<Object> >(2));
+        func(rs.Get<Collection<Object>>(2));
     }
 }
 
-int main(void)
+int main()
 {
     try
     {
-        Environment::Initialize();
+        Environment env;
 
-        Connection con("db", "usr", "pwd");
+        Connection con(env, "db", "usr", "pwd");
 
-        bind_coll(con);
+        bind_coll(con, env);
 
-        fetch_coll(con, "products_varray", print_const_coll_by_iterator);
-        fetch_coll(con, "products_nested_table", print_const_coll_by_index);
+        fetch_coll(con, "products_varray", print_const_coll_by_iterator, env);
+        fetch_coll(con, "products_nested_table", print_const_coll_by_index, env);
     }
-    catch (std::exception &ex)
+    catch (const std::exception &ex)
     {
         std::cout << ex.what() << std::endl;
     }
-
-    Environment::Cleanup();
-
     return EXIT_SUCCESS;
 }

@@ -38,7 +38,7 @@ inline Object::Object(const TypeInfo &typeInfo)
     Connection connection = typeInfo.GetConnection();
     AcquireAllocated
     (
-        core::Check(OCI_ObjectCreate(connection, typeInfo)),
+        core::Check(OCI_ObjectCreate(typeInfo)),
         connection.GetHandle()
     );
 }
@@ -50,7 +50,14 @@ inline Object::Object(OCI_Object *pObject, core::Handle *parent)
 
 inline Object Object::Clone() const
 {
-    Object result(GetTypeInfo());
+    Object result;
+    TypeInfo typeInfo = GetTypeInfo();
+    Connection connection = typeInfo.GetConnection();
+    result.AcquireAllocated
+    (
+        core::Check(OCI_ObjectCreate(typeInfo)),
+        connection.GetHandle()
+    );
 
     core::Check(OCI_ObjectAssign(result, *this));
 
@@ -74,7 +81,7 @@ inline TypeInfo Object::GetTypeInfo() const
     Connection connection
     (
         core::Check(OCI_TypeInfoGetConnection(typeInfo)),
-        Environment::GetEnvironmentHandle(),
+        GetHandle(),
         false
     );
 
@@ -84,9 +91,8 @@ inline TypeInfo Object::GetTypeInfo() const
 inline Reference Object::GetReference() const
 {
     TypeInfo typeInfo = GetTypeInfo();
-    Connection connection = typeInfo.GetConnection();
 
-    OCI_Ref *pRef = OCI_RefCreate(connection, typeInfo);
+    OCI_Ref *pRef = OCI_RefCreate(typeInfo);
 
     core::Check(OCI_ObjectGetSelfRef(*this, pRef));
 
@@ -105,37 +111,37 @@ inline bool Object::Get<bool>(const ostring& name) const
 }
 
 template<>
-inline short Object::Get<short>(const ostring& name) const
+inline OCI_Int16 Object::Get<OCI_Int16>(const ostring& name) const
 {
     return core::Check(OCI_ObjectGetShort(*this, name.c_str()));
 }
 
 template<>
-inline unsigned short Object::Get<unsigned short>(const ostring& name) const
+inline OCI_UInt16 Object::Get<OCI_UInt16>(const ostring& name) const
 {
     return core::Check(OCI_ObjectGetUnsignedShort(*this, name.c_str()));
 }
 
 template<>
-inline int Object::Get<int>(const ostring& name) const
+inline OCI_Int32 Object::Get<OCI_Int32>(const ostring& name) const
 {
     return core::Check(OCI_ObjectGetInt(*this, name.c_str()));
 }
 
 template<>
-inline unsigned int Object::Get<unsigned int>(const ostring& name) const
+inline OCI_UInt32 Object::Get<OCI_UInt32>(const ostring& name) const
 {
     return core::Check(OCI_ObjectGetUnsignedInt(*this, name.c_str()));
 }
 
 template<>
-inline big_int Object::Get<big_int>(const ostring& name) const
+inline OCI_Int64 Object::Get<OCI_Int64>(const ostring& name) const
 {
     return core::Check(OCI_ObjectGetBigInt(*this, name.c_str()));
 }
 
 template<>
-inline big_uint Object::Get<big_uint>(const ostring& name) const
+inline OCI_UInt64 Object::Get<OCI_UInt64>(const ostring& name) const
 {
     return core::Check(OCI_ObjectGetUnsignedBigInt(*this, name.c_str()));
 }
@@ -221,13 +227,13 @@ inline File Object::Get<File>(const ostring& name) const
 template<>
 inline Raw Object::Get<Raw>(const ostring& name) const
 {
-    unsigned int size = core::Check(OCI_ObjectGetRawSize(*this, name.c_str()));
+    OCI_UInt32 size = core::Check(OCI_ObjectGetRawSize(*this, name.c_str()));
 
-    core::ManagedBuffer<unsigned char> buffer(static_cast<size_t>(size + 1));
+    std::vector<unsigned char> buffer(static_cast<OCI_Size>(size + 1));
 
-    size = static_cast<unsigned int>(core::Check(OCI_ObjectGetRaw(*this, name.c_str(), static_cast<AnyPointer>(buffer), size)));
+    size = static_cast<OCI_UInt32>(core::Check(OCI_ObjectGetRaw(*this, name.c_str(), static_cast<AnyPointer>(buffer.data()), size)));
 
-    return core::MakeRaw(buffer, size);
+    return core::MakeRaw(buffer.data(), size);
 }
 
 template<class T>
@@ -239,41 +245,41 @@ T Object::Get(const ostring& name) const
 template<>
 inline void Object::Set<bool>(const ostring& name, const bool &value)
 {
-    core::Check(OCI_ObjectSetBoolean(*this, name.c_str(), static_cast<boolean>(value)));
+    core::Check(OCI_ObjectSetBoolean(*this, name.c_str(), static_cast<OCI_Boolean>(value)));
 }
 
 template<>
-inline void Object::Set<short>(const ostring& name, const short &value)
+inline void Object::Set<OCI_Int16>(const ostring& name, const OCI_Int16 &value)
 {
     core::Check(OCI_ObjectSetShort(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<unsigned short>(const ostring& name, const unsigned short &value)
+inline void Object::Set<OCI_UInt16>(const ostring& name, const OCI_UInt16 &value)
 {
     core::Check(OCI_ObjectSetUnsignedShort(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<int>(const ostring& name, const int &value)
+inline void Object::Set<OCI_Int32>(const ostring& name, const OCI_Int32 &value)
 {
     core::Check(OCI_ObjectSetInt(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<unsigned int>(const ostring& name, const unsigned int &value)
+inline void Object::Set<OCI_UInt32>(const ostring& name, const OCI_UInt32 &value)
 {
     core::Check(OCI_ObjectSetUnsignedInt(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<big_int>(const ostring& name, const big_int &value)
+inline void Object::Set<OCI_Int64>(const ostring& name, const OCI_Int64 &value)
 {
     core::Check(OCI_ObjectSetBigInt(*this, name.c_str(), value));
 }
 
 template<>
-inline void Object::Set<big_uint>(const ostring& name, const big_uint &value)
+inline void Object::Set<OCI_UInt64>(const ostring& name, const OCI_UInt64 &value)
 {
     core::Check(OCI_ObjectSetUnsignedBigInt(*this, name.c_str(), value));
 }
@@ -361,7 +367,7 @@ inline void Object::Set<Raw>(const ostring& name, const Raw &value)
 {
     const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
 
-    core::Check(OCI_ObjectSetRaw(*this, name.c_str(), data, static_cast<unsigned int>(value.size())));
+    core::Check(OCI_ObjectSetRaw(*this, name.c_str(), data, static_cast<OCI_UInt32>(value.size())));
 
 }
 
@@ -375,17 +381,17 @@ inline ostring Object::ToString() const
 {
     if (!IsNull())
     {       
-        unsigned int size{};
+        OCI_UInt32 size{};
         
         core::Check(OCI_ObjectToText(*this, &size, nullptr));
 
         ostring result;
 
-        result.resize(static_cast<size_t>(size));
+        result.resize(static_cast<OCI_Size>(size));
 
         core::Check(OCI_ObjectToText(*this, &size, const_cast<otext*>(result.data())));
 
-        result.resize(static_cast<size_t>(size));
+        result.resize(static_cast<OCI_Size>(size));
 
         return result;
     }

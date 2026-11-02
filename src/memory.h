@@ -25,69 +25,79 @@
 
 OCI_SYM_LOCAL void * OcilibMemoryAlloc
 (
-    int     ptr_type,
-    size_t  block_size,
-    size_t  block_count,
-    boolean zero_fill
+    OCI_Environment *env,
+    OCI_PointerType  ptr_type,
+    OCI_Size           block_size,
+    OCI_Size           block_count,
+    OCI_Boolean      zero_fill
 );
 
 OCI_SYM_LOCAL void * OcilibMemoryRealloc
 (
-    void  * ptr_mem,
-    int     ptr_type,
-    size_t  block_size,
-    size_t  block_count,
-    boolean zero_fill
+    OCI_Environment *env,
+    void           * ptr_mem,
+    OCI_PointerType  ptr_type,
+    OCI_Size           block_size,
+    OCI_Size           block_count,
+    OCI_Boolean      zero_fill
 );
 
 OCI_SYM_LOCAL void OcilibMemoryFree
 (
-    void * ptr_mem
+    OCI_Environment *env,
+    void           * ptr_mem
 );
 
-OCI_SYM_LOCAL boolean OcilibMemoryAllocHandle
+OCI_SYM_LOCAL OCI_Boolean OcilibMemoryAllocHandle
 (
-    CONST dvoid *parenth,
-    dvoid      **hndlpp,
-    ub4          type
+    OCI_Environment *env,
+    CONST dvoid     *parenth,
+    dvoid          **hndlpp,
+    ub4              type
 );
 
-OCI_SYM_LOCAL boolean OcilibMemoryFreeHandle
+OCI_SYM_LOCAL OCI_Boolean OcilibMemoryFreeHandle
 (
-    dvoid* hndlp,
-    ub4    type
+    OCI_Environment *env,
+    dvoid           *hndlp,
+    ub4              type
 );
 
-OCI_SYM_LOCAL boolean OcilibMemoryAllocDescriptor
+OCI_SYM_LOCAL OCI_Boolean OcilibMemoryAllocDescriptor
 (
-    CONST dvoid *parenth,
-    dvoid      **descpp,
-    ub4          type
+    OCI_Environment *env,
+    CONST dvoid     *parenth,
+    dvoid          **descpp,
+    ub4              type
 );
 
-OCI_SYM_LOCAL boolean OcilibMemoryAllocDescriptorArray
+OCI_SYM_LOCAL OCI_Boolean OcilibMemoryAllocDescriptorArray
 (
-    CONST dvoid *parenth,
-    dvoid      **descpp,
-    ub4          type,
-    ub4          nb_elem
+    OCI_Environment *env,
+    CONST dvoid     *parenth,
+    dvoid          **descpp,
+    ub4              type,
+    ub4              nb_elem
 );
 
-OCI_SYM_LOCAL boolean OcilibMemoryFreeDescriptor
+OCI_SYM_LOCAL OCI_Boolean OcilibMemoryFreeDescriptor
 (
-    dvoid *descp,
-    ub4    type
+    OCI_Environment *env,
+    dvoid           *descp,
+    ub4              type
 );
 
-OCI_SYM_LOCAL boolean OcilibMemoryFreeDescriptorArray
+OCI_SYM_LOCAL OCI_Boolean OcilibMemoryFreeDescriptorArray
 (
-    dvoid **descp,
-    ub4     type,
-    ub4     nb_elem
+    OCI_Environment *env,
+    dvoid          **descp,
+    ub4              type,
+    ub4              nb_elem
 );
 
 OCI_SYM_LOCAL sword OcilibMemoryAllocateObject
 (
+    OCI_Environment *libenv,
     OCIEnv          *env,
     OCIError        *err,
     CONST OCISvcCtx *svc,
@@ -95,29 +105,30 @@ OCI_SYM_LOCAL sword OcilibMemoryAllocateObject
     OCIType         *tdo,
     dvoid           *table,
     OCIDuration      duration,
-    boolean          value,
+    OCI_Boolean      value,
     dvoid          **instance
 );
 
 OCI_SYM_LOCAL sword OcilibMemoryFreeObject
 (
-    OCIEnv  * env,
-    OCIError* err,
-    dvoid   * instance,
-    ub2       flags
+    OCI_Environment *libenv,
+    OCIEnv          *env,
+    OCIError        *err,
+    dvoid           *instance,
+    ub2              flags
 );
 
 OCI_SYM_LOCAL void * OcilibMemoryAllocOracleCallback
 (
     void  *ctxp,
-    size_t size
+    OCI_Size size
 );
 
 OCI_SYM_LOCAL void * OcilibMemoryReallocOracleCallback
 (
     void  *ctxp,
     void  *memptr,
-    size_t newsize
+    OCI_Size newsize
 );
 
 OCI_SYM_LOCAL void OcilibMemoryFreeOracleCallback

@@ -58,7 +58,7 @@ inline Vector::Vector(OCI_Vector *pVector, core::Handle *parent)
 }
 
 template<class T, typename core::SupportedVectorNumeric<T>::Type::type*>
-void Vector::Set(T* values, unsigned int size)
+void Vector::Set(T* values, OCI_UInt32 size)
 {
     core::Check(OCI_VectorSetValues(*this, support::VectorFormatResolver<T>::Value, size, reinterpret_cast<void*>(values)));
 }
@@ -72,24 +72,24 @@ void Vector::Get(T* values)
 template<class T, typename core::SupportedVectorNumeric<T>::Type::type*>
 void Vector::Set(const std::vector<T>& values)
 {
-    Set(const_cast<T*>(values.data()), static_cast<unsigned int>(values.size()));
+    Set(const_cast<T*>(values.data()), static_cast<OCI_UInt32>(values.size()));
 }
 
 template<class T, typename core::SupportedVectorNumeric<T>::Type::type*>
 std::vector<T> Vector::Get()
 {
     std::vector<T> values;
-    values.resize(static_cast<size_t>(GetDimensionCount()));
+    values.resize(static_cast<OCI_Size>(GetDimensionCount()));
 
     Get(const_cast<T*>(values.data()));
 
     return values;
 }
 
-inline unsigned int Vector::GetDimensionCount()
+inline OCI_UInt32 Vector::GetDimensionCount()
 {
-    unsigned int dimensions{};
-    unsigned int format{};
+    OCI_UInt32 dimensions{};
+    OCI_UInt32 format{};
 
     core::Check(OCI_VectorGetInfo(*this, &format, &dimensions));
 
@@ -98,34 +98,34 @@ inline unsigned int Vector::GetDimensionCount()
 
 inline Vector::VectorFormat Vector::GetFormat()
 {
-    unsigned int dimensions{};
-    unsigned int format{};
+    OCI_UInt32 dimensions{};
+    OCI_UInt32 format{};
 
     core::Check(OCI_VectorGetInfo(*this, &format, &dimensions));
 
     return VectorFormat(static_cast<VectorFormat::Type>(format));
 };
 
-inline void Vector::FromString(const ostring& str, VectorFormat format, unsigned int dimensions)
+inline void Vector::FromString(const ostring& str, VectorFormat format, OCI_UInt32 dimensions)
 {
-    core::Check(OCI_VectorFromText(*this, str.c_str(), static_cast<unsigned int>(str.size()), format, dimensions));
+    core::Check(OCI_VectorFromText(*this, str.c_str(), static_cast<OCI_UInt32>(str.size()), format, dimensions));
 }
 
 inline ostring Vector::ToString() const
 {
     if (!IsNull())
     {       
-        unsigned int size{};
+        OCI_UInt32 size{};
         
         core::Check(OCI_VectorToText(*this, &size, nullptr));
 
         ostring result;
 
-        result.resize(static_cast<size_t>(size));
+        result.resize(static_cast<OCI_Size>(size));
 
         core::Check(OCI_VectorToText(*this, &size, const_cast<otext*>(result.data())));
 
-        result.resize(static_cast<size_t>(size));
+        result.resize(static_cast<OCI_Size>(size));
 
         return result;
     }

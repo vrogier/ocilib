@@ -89,7 +89,16 @@
     <ClCompile Include="..\..\src\iterator.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\json.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\jsonnode.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\list.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\log.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\lob.c">
@@ -99,9 +108,6 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\memory.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\mutex.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\number.c">
@@ -126,12 +132,6 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\subscription.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\thread.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\threadkey.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\timestamp.c">
@@ -170,6 +170,12 @@
     <ClCompile Include="..\..\src\vector.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\sodacoll.c" />
+    <ClCompile Include="..\..\src\sodacollcursor.c" />
+    <ClCompile Include="..\..\src\sodadb.c" />
+    <ClCompile Include="..\..\src\sodadoc.c" />
+    <ClCompile Include="..\..\src\sodadoccursor.c" />
+    <ClCompile Include="..\..\src\sodaoptions.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\agent.h">
@@ -238,6 +244,15 @@
     <ClInclude Include="..\..\src\iterator.h">
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\json.h">
+      <Filter>Headers %28Private%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\jsonnode.h">
+      <Filter>Headers %28Private%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\oci\jsondom.h">
+      <Filter>Headers %28Private%29</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\list.h">
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
@@ -248,9 +263,6 @@
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\memory.h">
-      <Filter>Headers %28Private%29</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\mutex.h">
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\number.h">
@@ -272,12 +284,6 @@
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\subscription.h">
-      <Filter>Headers %28Private%29</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\thread.h">
-      <Filter>Headers %28Private%29</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\threadkey.h">
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\timestamp.h">
@@ -352,5 +358,11 @@
     <ClInclude Include="..\..\src\vector.h">
       <Filter>Headers %28Private%29</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\sodacoll.h" />
+    <ClInclude Include="..\..\src\sodacollcursor.h" />
+    <ClInclude Include="..\..\src\sodadb.h" />
+    <ClInclude Include="..\..\src\sodadoc.h" />
+    <ClInclude Include="..\..\src\sodadoccursor.h" />
+    <ClInclude Include="..\..\src\sodaoptions.h" />
   </ItemGroup>
 </Project>

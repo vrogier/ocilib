@@ -9,9 +9,11 @@ namespace TestCApi
         ExecDML(OTEXT("insert into TestRowIdFetch values (1, 'name 1')"));
         ExecDML(OTEXT("insert into TestRowIdFetch values (2, 'name 2')"));
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         otext rowid1[OCI_SIZE_ROWID + 1] = OTEXT("");
@@ -26,7 +28,6 @@ namespace TestCApi
         ASSERT_NE(ostring(rowid1), ostring(rowid2));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop table TestRowIdFetch"));
     }
@@ -38,9 +39,11 @@ namespace TestCApi
         ExecDML(OTEXT("insert into TestRowIdBind values (1, 'name 1')"));
         ExecDML(OTEXT("insert into TestRowIdBind values (2, 'name 2')"));
 
-        ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
+        auto env = GetEnvironment(nullptr);
 
-        const auto conn = OCI_ConnectionCreate(DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -53,7 +56,7 @@ namespace TestCApi
         ASSERT_TRUE(ostring(rowid).length() > 0);
 
         ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select code, name, rowid from TestRowIdBind where rowid = :id")));
-        ASSERT_TRUE(OCI_BindString(stmt, OTEXT(":id"), rowid, OCI_SIZE_ROWID));
+        ASSERT_NE(nullptr, OCI_BindString(stmt, OTEXT(":id"), rowid, OCI_SIZE_ROWID));
         ASSERT_TRUE(OCI_Execute(stmt));
 
         const auto rs = OCI_GetResultset(stmt);
@@ -66,7 +69,6 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
-        ASSERT_TRUE(OCI_Cleanup());
 
         ExecDML(OTEXT("drop table TestRowIdBind"));
     }

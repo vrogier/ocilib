@@ -23,22 +23,22 @@
 #include "defs.h"
 #include "exception.h"
 #include "macros.h"
-#include "mutex.h"
 
-#define MUTEXED_CALL(exp)                   \
-                                            \
-    if (Env.mem_mutex)                      \
-    {                                       \
-        OcilibMutexAcquire(Env.mem_mutex);  \
-    }                                       \
-                                            \
-    (exp);                                  \
-                                            \
-    if (Env.mem_mutex)                      \
-    {                                       \
-        OcilibMutexRelease(Env.mem_mutex);  \
-    }                                       \
+#include <stdint.h>
 
+#define MUTEXED_CALL(env, exp)         \
+                                       \
+        if (LIB_THREADED(env))         \
+        {                              \
+            mtx_lock(&(env)->mutex);   \
+        }                              \
+                                       \
+        exp;                           \
+                                       \
+        if (LIB_THREADED(env))         \
+        {                              \
+            mtx_unlock(&(env)->mutex); \
+        }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibMemoryUpdateBytes
@@ -46,18 +46,55 @@
 
 static void OcilibMemoryUpdateBytes
 (
-    int     type,
-    big_int size
+    OCI_Environment *env,
+    OCI_PointerType  type,
+    OCI_Int64          size
 )
 {
-    if (OCI_IPC_ORACLE == type)
+    (void) type;
+
+    MUTEXED_CALL(env, env->mem_bytes_lib += size);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibMemoryComputeSize
+ * --------------------------------------------------------------------------------------------- */
+
+/* Computes sizeof(OCI_MemoryBlock) + block_size * block_count with overflow
+ * detection, returning FALSE if the result is not representable in a OCI_Size.
+ *
+ * Without this check a wrapped product makes malloc() hand back a block far
+ * smaller than the caller believes it obtained, turning every subsequent write
+ * into a heap overflow. Callers pass sizes derived from column widths, string
+ * lengths and bind array counts, so the inputs are not all trusted.
+ */
+
+static OCI_Boolean OcilibMemoryComputeSize
+(
+    OCI_Size  block_size,
+    OCI_Size  block_count,
+    OCI_Size *size
+)
+{
+    *size = 0;
+
+    if (block_size != 0 && block_count > (SIZE_MAX / block_size))
     {
-        MUTEXED_CALL(Env.mem_bytes_oci += size)
+        return FALSE;
     }
-    else
+
     {
-        MUTEXED_CALL(Env.mem_bytes_lib += size)
+        const OCI_Size requested = block_size * block_count;
+
+        if (requested > (SIZE_MAX - sizeof(OCI_MemoryBlock)))
+        {
+            return FALSE;
+        }
+
+        *size = sizeof(OCI_MemoryBlock) + requested;
     }
+
+    return TRUE;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -66,25 +103,38 @@ static void OcilibMemoryUpdateBytes
 
 void * OcilibMemoryAlloc
 (
-    int     ptr_type,
-    size_t  block_size,
-    size_t  block_count,
-    boolean zero_fill
+    OCI_Environment *env,
+    OCI_PointerType  ptr_type,
+    OCI_Size           block_size,
+    OCI_Size           block_count,
+    OCI_Boolean      zero_fill
 )
 {
     ENTER_FUNC
     (
         /* returns */ void*, NULL,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    const size_t size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
+    OCI_Size size = 0;
+
+    if (!OcilibMemoryComputeSize(block_size, block_count, &size))
+    {
+        THROW(OcilibExceptionMemory, ptr_type, SIZE_MAX);
+    }
+
+    if (size == sizeof(OCI_MemoryBlock))
+    {
+        OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_WARN,
+                   OTEXT("zero-size allocation requested for type %d"),
+                   (OCI_Int32) ptr_type);
+    }
 
     OCI_MemoryBlock* block = (OCI_MemoryBlock *)malloc(size);
 
     if (NULL == block)
     {
-        THROW(OcilibExceptionMemory, ptr_type, size)
+        THROW(OcilibExceptionMemory, ptr_type, size);
     }
 
     if (zero_fill)
@@ -93,13 +143,15 @@ void * OcilibMemoryAlloc
     }
 
     block->type = ptr_type;
-    block->size = (unsigned int) size;
+    block->size = size;
 
-    OcilibMemoryUpdateBytes(block->type, block->size);
+    OcilibMemoryUpdateBytes(env, block->type, (OCI_Int64) block->size);
 
-    SET_RETVAL(((unsigned char*)block) + sizeof(*block))
+    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("allocated %zu bytes for type %d"), size, (OCI_Int32) block->type);
 
-    EXIT_FUNC()
+    SET_RETVAL(((unsigned char*)block) + sizeof(*block));
+
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -108,60 +160,72 @@ void * OcilibMemoryAlloc
 
 void * OcilibMemoryRealloc
 (
-    void  * ptr_mem,
-    int     ptr_type,
-    size_t  block_size,
-    size_t  block_count,
-    boolean zero_fill
+    OCI_Environment *env,
+    void            *ptr_mem,
+    OCI_PointerType  ptr_type,
+    OCI_Size           block_size,
+    OCI_Size           block_count,
+    OCI_Boolean      zero_fill
 )
 {
     ENTER_FUNC
     (
         /* returns */ void*, NULL,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
     if (ptr_mem != NULL)
     {
         OCI_MemoryBlock* block = (OCI_MemoryBlock*)(((unsigned char*)ptr_mem) - sizeof(*block));
 
-        const size_t size = sizeof(OCI_MemoryBlock) + (block_size * block_count);
+        OCI_Size size = 0;
+
+        if (!OcilibMemoryComputeSize(block_size, block_count, &size))
+        {
+            OcilibMemoryFree(env, ptr_mem);
+            THROW(OcilibExceptionMemory, ptr_type, SIZE_MAX);
+        }
 
         if (block->size < size)
         {
+            const OCI_Size old_size = block->size;
+
             void* ptr_new = realloc(block, size);
 
             if (NULL == ptr_new)
             {
-                OcilibMemoryFree(ptr_mem);
+                /* Contract: on failure the original block is released and NULL
+                   is returned, so the caller must not keep using its previous
+                   pointer. REALLOC_BUFFER() overwrites it with the NULL return,
+                   so releasing here is what avoids a guaranteed leak. */
+
+                OcilibMemoryFree(env, ptr_mem);
                 THROW(OcilibExceptionMemory, ptr_type, size);
             }
 
             block = (OCI_MemoryBlock*)ptr_new;
 
-            const size_t size_diff = (big_int)size - block->size;
-
             block->type = ptr_type;
-            block->size = (unsigned int)size;
+            block->size = size;
 
             if (zero_fill)
             {
-                memset(((unsigned char*)block) + (size - size_diff), 0, size_diff);
+                memset(((unsigned char*)block) + old_size, 0, size - old_size);
             }
 
-            OcilibMemoryUpdateBytes(block->type, size_diff);
+            OcilibMemoryUpdateBytes(env, block->type, (OCI_Int64) (size - old_size));
         }
 
         ptr_mem = ((unsigned char*)block) + sizeof(*block);
     }
     else
     {
-        ptr_mem = OcilibMemoryAlloc(ptr_type, block_size, block_count, zero_fill);
+        ptr_mem = OcilibMemoryAlloc(env, ptr_type, block_size, block_count, zero_fill);
     }
 
-    SET_RETVAL(ptr_mem)
+    SET_RETVAL(ptr_mem);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -170,19 +234,32 @@ void * OcilibMemoryRealloc
 
 void OcilibMemoryFree
 (
-    void * ptr_mem
+    OCI_Environment *env,
+    void            *ptr_mem
 )
 {
-    if (ptr_mem)
+    if (ptr_mem && env)
     {
         OCI_MemoryBlock *block = (OCI_MemoryBlock *)(((unsigned char*)ptr_mem) - sizeof(*block));
 
         if (block)
         {
-            OcilibMemoryUpdateBytes(block->type, (big_int) 0 - block->size);
+            /* Must negate after the cast: block->size is a OCI_Size, so
+               `(OCI_Int64) 0 - block->size' would promote both operands to
+               unsigned and add a huge positive value to the counter. */
+
+            OcilibMemoryUpdateBytes(env, block->type, -(OCI_Int64) block->size);
+
+            OCILIB_LOG_WITH_ENV(env, OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, __func__,
+                                OTEXT("freed %zu bytes of type %d"),
+                                block->size, (OCI_Int32) block->type);
 
             free(block);
         }
+    }
+    else if (ptr_mem)
+    {
+        free(ptr_mem);
     }
 }
 
@@ -190,113 +267,123 @@ void OcilibMemoryFree
  * OcilibMemoryAllocHandle
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibMemoryAllocHandle
+OCI_Boolean OcilibMemoryAllocHandle
 (
-    CONST dvoid *parenth,
-    dvoid      **hndlpp,
-    ub4          type
+    OCI_Environment *env,
+    CONST dvoid     *parenth,
+    dvoid          **hndlpp,
+    ub4              type
 )
 {
-    ENTER_FUNC_NO_CONTEXT
+    ENTER_FUNC
     (
-        /* returns */ boolean, FALSE
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    CHECK_NULL(hndlpp)
+    CHECK_NULL(hndlpp);
 
-    const sword ret = OCIHandleAlloc(parenth, hndlpp, type, 0, NULL);
+    const sword ret = env->api->OCIHandleAlloc(parenth, hndlpp, type, 0, NULL);
 
     if (OCI_SUCCESSFUL(ret))
     {
-        MUTEXED_CALL(Env.nb_hndlp++)
-        SET_SUCCESS()
+        MUTEXED_CALL(env, env->nb_hndlp++);
+        OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("OCI handle allocated (type=%u)"), (OCI_UInt32) type);
+        SET_SUCCESS();
     }
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibMemoryFreeHandle
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibMemoryFreeHandle
+OCI_Boolean OcilibMemoryFreeHandle
 (
-    dvoid *hndlp,
-    ub4    type
+    OCI_Environment *env,
+    dvoid           *hndlp,
+    ub4              type
 )
 {
-    ENTER_FUNC_NO_CONTEXT
+    ENTER_FUNC
     (
-        /* returns */ boolean, FALSE
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    CHECK_NULL(hndlp)
-    const sword ret = OCIHandleFree(hndlp, type);
+    CHECK_NULL(hndlp);
+    const sword ret = env->api->OCIHandleFree(hndlp, type);
 
     if (OCI_SUCCESSFUL(ret))
     {
-        MUTEXED_CALL(Env.nb_hndlp--)
-        SET_SUCCESS()
+        MUTEXED_CALL(env, { if (env->nb_hndlp > 0) env->nb_hndlp--;});
+        OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("OCI handle freed (type=%u)"), (OCI_UInt32) type);
+        SET_SUCCESS();
     }
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibMemoryAllocDescriptor
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibMemoryAllocDescriptor
+OCI_Boolean OcilibMemoryAllocDescriptor
 (
-    CONST dvoid *parenth,
-    dvoid      **descpp,
-    ub4          type
+    OCI_Environment *env,
+    CONST dvoid     *parenth,
+    dvoid          **descpp,
+    ub4              type
 )
 {
-    ENTER_FUNC_NO_CONTEXT
+    ENTER_FUNC
     (
-        /* returns */ boolean, FALSE
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    CHECK_NULL(descpp)
+    CHECK_NULL(descpp);
 
-    const sword ret = OCIDescriptorAlloc(parenth, descpp, type, 0, NULL);
+    const sword ret = env->api->OCIDescriptorAlloc(parenth, descpp, type, 0, NULL);
 
     if (OCI_SUCCESSFUL(ret))
     {
-        MUTEXED_CALL(Env.nb_descp++)
-        SET_SUCCESS()
+        MUTEXED_CALL(env, {env->nb_descp++;});
+        SET_SUCCESS();
     }
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibMemoryAllocDescriptorArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibMemoryAllocDescriptorArray
+OCI_Boolean OcilibMemoryAllocDescriptorArray
 (
-    CONST dvoid *parenth,
-    dvoid      **descpp,
-    ub4          type,
-    ub4          nb_elem
+    OCI_Environment *env,
+    CONST dvoid     *parenth,
+    dvoid          **descpp,
+    ub4              type,
+    ub4              nb_elem
 )
 {
-    ENTER_FUNC_NO_CONTEXT
+    ENTER_FUNC
     (
-        /* returns */ boolean, FALSE
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    CHECK_NULL(descpp)
+    CHECK_NULL(descpp);
 
     sword ret = OCI_SUCCESS;
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
-    if (Env.version_runtime >= OCI_11_1)
+    if (env->version_runtime >= OCI_11_1)
     {
-        ret = OCIArrayDescriptorAlloc(parenth, descpp, type, nb_elem, 0, NULL);
+        ret = env->api->OCIArrayDescriptorAlloc(parenth, descpp, type, nb_elem, 0, NULL);
 
     }
     else
@@ -306,64 +393,68 @@ boolean OcilibMemoryAllocDescriptorArray
     {
         for (ub4 i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
         {
-            ret = OCIDescriptorAlloc(parenth, &descpp[i], type, 0, NULL);
+            ret = env->api->OCIDescriptorAlloc(parenth, &descpp[i], type, 0, NULL);
         }
     }
 
     if (OCI_SUCCESSFUL(ret))
     {
-        MUTEXED_CALL(Env.nb_descp += nb_elem)
-        SET_SUCCESS()
+        MUTEXED_CALL(env, env->nb_descp += nb_elem);
+        SET_SUCCESS();
     }
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibMemoryFreeDescriptor
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibMemoryFreeDescriptor
+OCI_Boolean OcilibMemoryFreeDescriptor
 (
-    dvoid *descp,
-    ub4    type
+    OCI_Environment *env,
+    dvoid           *descp,
+    ub4              type
 )
 {
-    ENTER_FUNC_NO_CONTEXT
+    ENTER_FUNC
     (
-        /* returns */ boolean, FALSE
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    CHECK_NULL(descp)
+    CHECK_NULL(descp);
 
-    const sword ret = OCIDescriptorFree(descp, type);
+    const sword ret = env->api->OCIDescriptorFree(descp, type);
 
     if (OCI_SUCCESSFUL(ret))
     {
-        MUTEXED_CALL(Env.nb_descp--)
-        SET_SUCCESS()
+        MUTEXED_CALL(env, { if (env->nb_descp > 0) env->nb_descp--;});
+        SET_SUCCESS();
     }
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibMemoryFreeDescriptor
+ * OcilibMemoryFreeDescriptorArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibMemoryFreeDescriptorArray
+OCI_Boolean OcilibMemoryFreeDescriptorArray
 (
-    dvoid **descp,
-    ub4     type,
-    ub4     nb_elem
+    OCI_Environment *env,
+    dvoid          **descp,
+    ub4              type,
+    ub4              nb_elem
 )
 {
-    ENTER_FUNC_NO_CONTEXT
+    ENTER_FUNC
     (
-        /* returns */ boolean, FALSE
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    CHECK_NULL(descp)
+    CHECK_NULL(descp);
 
     sword ret = OCI_SUCCESS;
 
@@ -372,9 +463,9 @@ boolean OcilibMemoryFreeDescriptorArray
 
 #if OCI_VERSION_COMPILE >= OCI_11_1
 
-        if (Env.version_runtime >= OCI_11_1)
+        if (env->version_runtime >= OCI_11_1)
         {
-            ret = OCIArrayDescriptorFree(descp, type);
+            ret = env->api->OCIArrayDescriptorFree(descp, type);
         }
         else
 
@@ -383,90 +474,92 @@ boolean OcilibMemoryFreeDescriptorArray
         {
             for (ub4 i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
             {
-                ret = OCIDescriptorFree(descp[i], type);
+                ret = env->api->OCIDescriptorFree(descp[i], type);
             }
         }
     }
 
     if (OCI_SUCCESSFUL(ret))
     {
-        MUTEXED_CALL(Env.nb_descp -= nb_elem)
-        SET_SUCCESS()
+        MUTEXED_CALL(env, { if (env->nb_descp >= nb_elem) env->nb_descp -= nb_elem;});
+        SET_SUCCESS();
     }
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibMemoryAllocateObject
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibMemoryAllocateObject
+OCI_Boolean OcilibMemoryAllocateObject
 (
-    OCIEnv          *env,
+    OCI_Environment *libenv,
+    OCIEnv          *envh,
     OCIError        *err,
     CONST OCISvcCtx *svc,
     OCITypeCode      typecode,
     OCIType         *tdo,
     dvoid           *table,
     OCIDuration      duration,
-    boolean          value,
+    OCI_Boolean      value,
     dvoid          **instance
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, libenv
+    );
 
     CHECK_OCI
     (
         err,
         OCIObjectNew,
-        env, err, svc, typecode, tdo, table,
-        duration, value, instance
-    )
+        envh, err, svc, typecode, tdo, table,
+        duration, (boolean) value, instance
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    MUTEXED_CALL(Env.nb_objinst++)
+    MUTEXED_CALL(libenv, libenv->nb_objinst++);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibMemoryFreeObject
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibMemoryFreeObject
+OCI_Boolean OcilibMemoryFreeObject
 (
-    OCIEnv   *env,
-    OCIError *err,
-    dvoid    *instance,
-    ub2       flags
+    OCI_Environment *libenv,
+    OCIEnv          *envh,
+    OCIError        *err,
+    dvoid           *instance,
+    ub2              flags
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, libenv
+    );
 
-    CHECK_PTR(OCI_IPC_VOID, instance)
+    CHECK_PTR(OCI_IPC_VOID, instance);
 
     CHECK_OCI
     (
         err,
         OCIObjectFree,
-        env, err, instance, flags
-    )
+        envh, err, instance, flags
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    MUTEXED_CALL(Env.nb_objinst--)
+    MUTEXED_CALL(libenv, libenv->nb_objinst--);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -476,12 +569,12 @@ boolean OcilibMemoryFreeObject
 void * OcilibMemoryAllocOracleCallback
 (
     void  *ctxp,
-    size_t size
+    OCI_Size size
 )
 {
-    OCI_NOT_USED(ctxp)
+    OCI_NOT_USED(ctxp);
 
-    return OcilibMemoryAlloc(OCI_IPC_ORACLE, size, 1, FALSE);
+    return malloc(size);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -492,12 +585,12 @@ void * OcilibMemoryReallocOracleCallback
 (
     void  *ctxp,
     void  *memptr,
-    size_t newsize
+    OCI_Size newsize
 )
 {
-    OCI_NOT_USED(ctxp)
+    OCI_NOT_USED(ctxp);
 
-    return OcilibMemoryRealloc(memptr, OCI_IPC_ORACLE, newsize, 1, FALSE);
+    return realloc(memptr, newsize);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -510,7 +603,7 @@ void OcilibMemoryFreeOracleCallback
     void *memptr
 )
 {
-    OCI_NOT_USED(ctxp)
+    OCI_NOT_USED(ctxp);
 
-    OcilibMemoryFree(memptr);
+    free(memptr);
 }

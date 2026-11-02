@@ -26,262 +26,57 @@
  * OcilibHandleGetEnvironment
  * --------------------------------------------------------------------------------------------- */
 
-const void * OcilibHandleGetEnvironment
+OCI_Environment * OcilibHandleGetEnvironment
 (
-    void
+    void *handle
 )
 {
-    GET_LIB_PROP(const void*, NULL, Env.env)
+    return ((OCI_Handle *) handle)->env;
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetContext
+ * OcilibHandleGetUserData
  * --------------------------------------------------------------------------------------------- */
 
-const void * OcilibHandleGetContext
+void * OcilibHandleGetUserData
 (
-    OCI_Connection *con
+    void *handle
 )
 {
-    GET_PROP(const void*, NULL, OCI_IPC_CONNECTION, con, cxt)
+    ENTER_FUNC
+    (
+        /* returns */ void*, NULL,
+        /* context */ OCI_IPC_VOID, handle
+    );
+
+    CHECK_NULL(handle);
+
+    SET_RETVAL(((OCI_Handle *) handle)->usrdata);
+
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetServer
+ * OcilibHandleSetUserData
  * --------------------------------------------------------------------------------------------- */
 
-const void * OcilibHandleGetServer
+OCI_Boolean OcilibHandleSetUserData
 (
-    OCI_Connection *con
+    void *handle,
+    void *data
 )
 {
-    GET_PROP(const void *, NULL, OCI_IPC_CONNECTION, con, svr)
-}
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_VOID, handle
+    );
 
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetError
- * --------------------------------------------------------------------------------------------- */
+    CHECK_NULL(handle);
 
-const void * OcilibHandleGetError
-(
-    OCI_Connection *con
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_CONNECTION, con, err)
-}
+    ((OCI_Handle *) handle)->usrdata = data;
 
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetSession
- * --------------------------------------------------------------------------------------------- */
+    SET_SUCCESS();
 
-const void * OcilibHandleGetSession
-(
-    OCI_Connection *con
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_CONNECTION, con, ses)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetTransaction
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetTransaction
-(
-    OCI_Transaction *trans
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_TRANSACTION, trans, htr)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetStatement
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetStatement
-(
-    OCI_Statement *stmt
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_STATEMENT, stmt, stmt)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetLob
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetLob
-(
-    OCI_Lob *lob
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_LOB, lob, handle)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetFile
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetFile
-(
-    OCI_File *file
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_FILE, file, handle)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetDate
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetDate
-(
-    OCI_Date *date
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_DATE, date, handle)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetTimestamp
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetTimestamp
-(
-    OCI_Timestamp *tmsp
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_TIMESTAMP, tmsp, handle)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetInterval
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetInterval
-(
-    OCI_Interval *itv
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_INTERVAL, itv, handle)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetObject
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetObject
-(
-    OCI_Object *obj
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_OBJECT, obj, handle)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetCollection
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetColl
-(
-    OCI_Coll *coll
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_COLLECTION, coll, handle)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetReference
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetReference
-(
-    OCI_Ref *ref
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_REF, ref, handle)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetMutex
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetMutex
-(
-    OCI_Mutex *mutex
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_MUTEX, mutex, handle)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetThreadID
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetThreadID
-(
-    OCI_Thread *thread
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_THREAD, thread, id)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetThread
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetThread
-(
-    OCI_Thread *thread
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_THREAD, thread, handle)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetDirPathCtx
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetDirPathCtx
-(
-    OCI_DirPath *dp
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_DIRPATH, dp, ctx)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetDirPathColArray
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetDirPathColArray
-(
-    OCI_DirPath *dp
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_DIRPATH, dp, arr)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetDirPathStream
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetDirPathStream
-(
-    OCI_DirPath *dp
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_DIRPATH, dp, strm)
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibHandleGetSubscription
- * --------------------------------------------------------------------------------------------- */
-
-const void * OcilibHandleGetSubscription
-(
-    OCI_Subscription *sub
-)
-{
-    GET_PROP(const void *, NULL, OCI_IPC_NOTIFY, sub, subhp)
+    EXIT_FUNC();
 }

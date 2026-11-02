@@ -31,85 +31,85 @@
 
 #ifdef OCI_IMPORT_RUNTIME
 
-  /* for runtime loading, set compile time version to the highest known OCI version */
+/* for runtime loading, set compile time version to the highest known OCI version */
 
-  #define OCI_VERSION_COMPILE OCI_23_6
+#define OCI_VERSION_COMPILE OCI_23_6
 
-  /* set runtime version to unknown, it will be guessed from symbols loading */
+/* set runtime version to unknown, it will be guessed from symbols loading */
 
-  #define OCI_VERSION_RUNTIME OCI_UNKNOWN
+#define OCI_VERSION_RUNTIME OCI_UNKNOWN
 
 #else
 
   #if defined(OCI_MAJOR_VERSION)
 
-    #define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
+#define OCI_VERSION_COMPILE OCI_VER_MAKE(OCI_MAJOR_VERSION, OCI_MINOR_VERSION, 0)
 
     #if OCI_VERSION_COMPILE == OCI_VER_MAKE(18, 0, 0)
 
-      /* Oracle headers not updated for Windows 18.3 release ! */
+/* Oracle headers not updated for Windows 18.3 release ! */
 
       #undef  OCI_VERSION_COMPILE
 
-      #define OCI_VERSION_COMPILE OCI_18_3
+#define OCI_VERSION_COMPILE OCI_18_3
 
     #endif
 
   #elif defined(OCI_FNCODE_SODAOPERKEYSSET)     /* = OCI_18_3 */
 
-    #define OCI_VERSION_COMPILE OCI_18_3
+#define OCI_VERSION_COMPILE OCI_18_3
 
   #elif defined(OCI_FNCODE_SERVERRELEASE2)      /* = OCI_18_1 */
 
-    #define OCI_VERSION_COMPILE OCI_18_1
+#define OCI_VERSION_COMPILE OCI_18_1
 
   #elif defined(OCI_FNCODE_LOBGETCHUNKSIZE)     /* = OCI_12_2 */
 
-    #define OCI_VERSION_COMPILE OCI_12_2
+#define OCI_VERSION_COMPILE OCI_12_2
 
   #elif defined(OCI_FNCODE_BINDBYPOS2)          /* = OCI_12_1 */
 
-    #define OCI_VERSION_COMPILE OCI_12_1
+#define OCI_VERSION_COMPILE OCI_12_1
 
   #elif defined(OCI_FNCODE_LOBGETCONTENTTYPE)   /* = OCI_11_2 */
 
-    #define OCI_VERSION_COMPILE OCI_11_2
-    
+#define OCI_VERSION_COMPILE OCI_11_2
+
   #elif defined(OCI_FNCODE_LOBGETOPT)           /* = OCI_11_1 */
 
-    #define OCI_VERSION_COMPILE OCI_11_1
+#define OCI_VERSION_COMPILE OCI_11_1
 
   #elif defined(OCI_FNCODE_DBSHUTDOWN)          /* = OCI_10_2 */
 
-    #define OCI_VERSION_COMPILE OCI_10_2
+#define OCI_VERSION_COMPILE OCI_10_2
 
   #elif defined(OCI_FNCODE_LOBREAD2)            /* = OCI_10_1 */
 
-    #define OCI_VERSION_COMPILE OCI_10_1
+#define OCI_VERSION_COMPILE OCI_10_1
 
   #elif defined(OCI_FNCODE_STMTPREPARE2)        /* = OCI_9_2 */
 
-    #define OCI_VERSION_COMPILE OCI_9_2
+#define OCI_VERSION_COMPILE OCI_9_2
 
   #elif defined(OCI_FNCODE_CPOOLCREATE)         /* = OCI_9_0 */
 
-    #define OCI_VERSION_COMPILE OCI_9_0
+#define OCI_VERSION_COMPILE OCI_9_0
 
   #elif defined(OCIThreadHandle)                /* = OCI_8_1 */
 
-    #define OCI_VERSION_COMPILE OCI_8_1
+#define OCI_VERSION_COMPILE OCI_8_1
 
   #elif defined(OCIEnv)                         /* = OCI_8_0 */
 
-    #define OCI_VERSION_COMPILE OCI_8_0
+#define OCI_VERSION_COMPILE OCI_8_0
 
   #else                                         /* OCI_UNKNOWN */
 
-    #define OCI_VERSION_COMPILE OCI_UNKNOWN
+#define OCI_VERSION_COMPILE OCI_UNKNOWN
 
   #endif
 
-  #define OCI_VERSION_RUNTIME OCI_VERSION_COMPILE
+#define OCI_VERSION_RUNTIME OCI_VERSION_COMPILE
 
 #endif
 
@@ -117,7 +117,7 @@
 
 #if defined(OCI_BIG_UINT_ENABLED) && defined(ORAXB8_DEFINED)
 
-  #define OCI_LOB2_API_ENABLED
+#define OCI_LOB2_API_ENABLED
 
 #endif
 
@@ -142,7 +142,7 @@ typedef otext dbtext;
 
 #else
 
-typedef unsigned short dbtext;
+typedef OCI_UInt16 dbtext;
 
 #endif
 
@@ -170,7 +170,6 @@ typedef unsigned short dbtext;
 
 /* -- external C pointers ---- */
 
-#define OCI_IPC_ORACLE          (-1)
 #define OCI_IPC_BOOLEAN          0
 #define OCI_IPC_VOID             1
 #define OCI_IPC_SHORT            2
@@ -181,37 +180,35 @@ typedef unsigned short dbtext;
 #define OCI_IPC_STRING           7
 #define OCI_IPC_PROC             8
 
-/* internal OCILIB handles - */
-
-#define OCI_IPC_ERROR            9
-
 /* ---- Internal pointers ----- */
 
-#define OCI_IPC_LIST             43
-#define OCI_IPC_LIST_ITEM        44
-#define OCI_IPC_BIND_ARRAY       45
-#define OCI_IPC_DEFINE           46
-#define OCI_IPC_DEFINE_ARRAY     47
-#define OCI_IPC_HASHENTRY        48
-#define OCI_IPC_HASHENTRY_ARRAY  49
-#define OCI_IPC_HASHVALUE        50
-#define OCI_IPC_THREADKEY        51
-#define OCI_IPC_OCIDATE          52
-#define OCI_IPC_TM               53
-#define OCI_IPC_RESULTSET_ARRAY  54
-#define OCI_IPC_PLS_SIZE_ARRAY   55
-#define OCI_IPC_PLS_RCODE_ARRAY  56
-#define OCI_IPC_SERVER_OUPUT     57
-#define OCI_IPC_INDICATOR_ARRAY  58
-#define OCI_IPC_LEN_ARRAY        59
-#define OCI_IPC_BUFF_ARRAY       60
-#define OCI_IPC_LONG_BUFFER      61
-#define OCI_IPC_TRACE_INFO       62
-#define OCI_IPC_DP_COL_ARRAY     63
-#define OCI_IPC_BATCH_ERRORS     64
-#define OCI_IPC_STATEMENT_ARRAY  65
+#define OCI_IPC_LIST             48
+#define OCI_IPC_LIST_ITEM        49
+#define OCI_IPC_BIND_ARRAY       50
+#define OCI_IPC_DEFINE           51
+#define OCI_IPC_DEFINE_ARRAY     52
+#define OCI_IPC_HASHENTRY        53
+#define OCI_IPC_HASHENTRY_ARRAY  54
+#define OCI_IPC_HASHVALUE        55
+#define OCI_IPC_THREADKEY        56
+#define OCI_IPC_OCIDATE          57
+#define OCI_IPC_TM               58
+#define OCI_IPC_RESULTSET_ARRAY  59
+#define OCI_IPC_PLS_SIZE_ARRAY   60
+#define OCI_IPC_PLS_RCODE_ARRAY  61
+#define OCI_IPC_SERVER_OUPUT     62
+#define OCI_IPC_INDICATOR_ARRAY  63
+#define OCI_IPC_LEN_ARRAY        64
+#define OCI_IPC_BUFF_ARRAY       65
+#define OCI_IPC_LONG_BUFFER      66
+#define OCI_IPC_TRACE_INFO       67
+#define OCI_IPC_DP_COL_ARRAY     68
+#define OCI_IPC_BATCH_ERRORS     69
+#define OCI_IPC_STATEMENT_ARRAY  70
+#define OCI_IPC_JSON             71
+#define OCI_IPC_JSON_NODE        72
 
-#define OCI_IPC_COUNT            (OCI_IPC_STATEMENT_ARRAY + 2)
+#define OCI_IPC_COUNT            (OCI_IPC_JSON_NODE + 1)
 
 /* --------------------------------------------------------------------------------------------- *
  * Oracle conditional features
@@ -225,12 +222,13 @@ typedef unsigned short dbtext;
 #define OCI_FEATURE_DATABASE_NOTIFY      6
 #define OCI_FEATURE_REMOTE_DBS_CONTROL   7
 #define OCI_FEATURE_HIGH_AVAILABILITY    8
-#define OCI_FEATURE_XA                   9
-#define OCI_FEATURE_EXTENDED_PLSQLTYPES 10
-#define OCI_FEATURE_MULTITHREADING      11
-#define OCI_FEATURE_VECTOR              12
+#define OCI_FEATURE_EXTENDED_PLSQLTYPES  9
+#define OCI_FEATURE_MULTITHREADING      10
+#define OCI_FEATURE_VECTOR              11
+#define OCI_FEATURE_SODA                12
+#define OCI_FEATURE_JSON                13
 
-#define OCI_FEATURE_COUNT               OCI_FEATURE_VECTOR
+#define OCI_FEATURE_COUNT               OCI_FEATURE_JSON
 
 /* --------------------------------------------------------------------------------------------- *
  * handle types
@@ -367,7 +365,7 @@ typedef unsigned short dbtext;
 
 #define ROUNDUP(amount, align) \
                                \
-    (((unsigned long)(amount)+((align)-1))&~((align)-1))
+        (((OCI_Size)(amount)+((align)-1))&~((align)-1))
 
 #define osizeof(s) (sizeof(s) / sizeof(otext))
 
@@ -414,44 +412,44 @@ typedef unsigned short dbtext;
 
 #define NB_ARG_VERSION                  3
 
-#define LIB_THREADED                    ((Env.env_mode & OCI_ENV_THREADED) && (Env.version_runtime> OCI_8_0))
+#define LIB_THREADED(env)               ((env) && ((env)->env_mode & OCI_ENV_THREADED) && ((env)->version_runtime > OCI_8_0))
 
-#define IS_PLSQL_STMT(type)         \
-                                    \
-    ((OCI_CST_BEGIN   == (type)) || \
-     (OCI_CST_DECLARE == (type)) || \
-     (OCI_CST_CALL    == (type)))
+#define IS_PLSQL_STMT(type)             \
+                                        \
+   ((OCI_CST_BEGIN   == (type)) ||      \
+    (OCI_CST_DECLARE == (type)) ||      \
+    (OCI_CST_CALL    == (type)))
 
 #define IS_OCI_NUMBER(type, subtype) \
                                      \
-    (OCI_CDT_NUMERIC == (type) && OCI_NUM_NUMBER == (subtype))
+        (OCI_CDT_NUMERIC == (type) && OCI_NUM_NUMBER == (subtype))
 
 #define IS_ROWID_COL(col) \
-                                     \
-    (OCI_CDT_TEXT == (col)->datatype && SQLT_RDD == (col)->libcode)
+                          \
+        (OCI_CDT_TEXT == (col)->datatype && SQLT_RDD == (col)->libcode)
 
-#define IS_OCILIB_OBJECT(type, subtype) \
-                                        \
-    ( (IS_OCI_NUMBER(type, subtype)) || \
-      (OCI_CDT_TEXT    != (type) &&     \
-       OCI_CDT_NUMERIC != (type) &&     \
-       OCI_CDT_RAW     != (type) &&     \
-       OCI_CDT_BOOLEAN != (type)))
+#define IS_OCILIB_OBJECT(type, subtype)    \
+                                           \
+        ((IS_OCI_NUMBER(type, subtype)) || \
+    (OCI_CDT_TEXT    != (type) &&          \
+    OCI_CDT_NUMERIC != (type) &&           \
+    OCI_CDT_RAW     != (type) &&           \
+    OCI_CDT_BOOLEAN != (type)))
 
-#define IS_XMLTYPE(typinf)                                  \
-      ( NULL != (typinf) &&                                 \
-        NULL != (typinf)->name &&                           \
-        SQLT_OPAQUE_TYPE == (typinf)->typecode &&           \
-        0 == ostrcmp((typinf)->name, OTEXT("XMLTYPE")) )    \
+#define IS_XMLTYPE(typinf)                          \
+        ( NULL != (typinf) &&                       \
+    NULL != (typinf)->name &&                       \
+    SQLT_OPAQUE_TYPE == (typinf)->typecode &&       \
+    0 == ostrcmp((typinf)->name, OTEXT("XMLTYPE"))) \
 
-#define IS_XMLTYPE_COL(col)                                 \
-     ( NULL != (col) &&                                     \
-       (col)->sqlcode ==  SQLT_OPAQUE_TYPE &&               \
-       IS_XMLTYPE((col)->typinf) )
+#define IS_XMLTYPE_COL(col)                \
+        ( NULL != (col) &&                 \
+    (col)->sqlcode ==  SQLT_OPAQUE_TYPE && \
+    IS_XMLTYPE((col)->typinf))
 
-#define IS_DYNAMIC_FETCH_COLUMN(col)                        \
-    ( OCI_CDT_LONG    == (col)->datatype ||                 \
-      OCI_CDT_XMLTYPE == (col)->datatype )
+#define IS_DYNAMIC_FETCH_COLUMN(col)            \
+        ( OCI_CDT_LONG    == (col)->datatype || \
+    OCI_CDT_XMLTYPE == (col)->datatype )
 
 #define OCI_MAX(a,b) ((a) > (b) ? (a) : (b))
 #define OCI_MIN(a,b) ((a) < (b) ? (a) : (b))
@@ -462,42 +460,47 @@ typedef unsigned short dbtext;
 
 #ifdef OCI_CHARSET_ANSI
 
-  #define ostrcpy            strcpy
-  #define ostrncpy           strncpy
-  #define ostrcat            strcat
-  #define ostrncat           strncat
-  #define ostrlen            strlen
-  #define ostrcmp            strcmp
-  #define ostrtol            strtol
-  #define osscanf            sscanf
-  #define otoupper           toupper
-  #define oisdigit           isdigit
+#define ostrcpy            strcpy
+#define ostrncpy           strncpy
+#define ostrcat            strcat
+#define ostrncat           strncat
+#define ostrlen            strlen
+#define ostrcmp            strcmp
+#define ostrtol            strtol
+#define osscanf            sscanf
+#define otoupper           toupper
+#define oisdigit           isdigit
 
   #ifdef _WINDOWS
-    #define ovsprintf       _vsnprintf
+#define ovsprintf       _vsnprintf
   #else
-    #define ovsprintf       vsnprintf
+#define ovsprintf       vsnprintf
 
   #endif
 
 #else
 
-  #define ostrcpy           wcscpy
-  #define ostrncpy          wcsncpy
-  #define ostrcat           wcscat
-  #define ostrncat          wcsncat
-  #define ostrlen           wcslen
-  #define ostrcmp           wcscmp
-  #define ostrtol           wcstol
-  #define osscanf           swscanf
-  #define otoupper          towupper
-  #define oisdigit          iswdigit
-  #define ovsprintf         vswprintf
+#define ostrcpy           wcscpy
+#define ostrncpy          wcsncpy
+#define ostrcat           wcscat
+#define ostrncat          wcsncat
+#define ostrlen           wcslen
+#define ostrcmp           wcscmp
+#define ostrtol           wcstol
+#define osscanf           swscanf
+#define otoupper          towupper
+#define oisdigit          iswdigit
+#define ovsprintf         vswprintf
 
 #endif
 
 /* string size macros */
 
 #define otextsize(s) (ostrlen(s) * sizeof(otext))
+
+/* SODA document creation/fetch flags */
+
+#define OCILIB_SODA_DOC_FLAGS(sdb) \
+        (((sdb)->con->env->version_runtime >= OCI_23_4) ? OCI_SODA_AS_STORED : OCI_DEFAULT)
 
 #endif    /* OCILIB_DEFS_H_INCLUDED */

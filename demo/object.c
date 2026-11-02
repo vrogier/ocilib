@@ -15,22 +15,24 @@ int main(void)
     OCI_Object *sale, *vendor;
     OCI_Date *date;
 
-    if (!OCI_Initialize(err_handler, NULL, OCI_ENV_DEFAULT))
+    OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
+
+    if (!env)
     {
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
-    date = OCI_DateCreate(NULL);
+    date = OCI_DateCreate(env);
 
     OCI_DateSysDate(date);
 
-    vendor = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, "t_vendor", OCI_TIF_TYPE));
+    vendor = OCI_ObjectCreate(OCI_TypeInfoGet(cn, "t_vendor", OCI_TIF_TYPE));
     OCI_ObjectSetInt(vendor, "CODE", 134);
     OCI_ObjectSetString(vendor, "NAME", "JOHN SMITH");
 
-    sale = OCI_ObjectCreate(cn, OCI_TypeInfoGet(cn, "t_sale", OCI_TIF_TYPE));
+    sale = OCI_ObjectCreate(OCI_TypeInfoGet(cn, "t_sale", OCI_TIF_TYPE));
 
     OCI_ObjectSetInt(sale, "CODE", 1);
     OCI_ObjectSetDouble(sale, "PRICE", 12.99);
@@ -60,7 +62,7 @@ int main(void)
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
-    OCI_Cleanup();
+    OCI_EnvironmentFree(env);
 
     return EXIT_SUCCESS;
 }

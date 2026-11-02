@@ -20,7 +20,8 @@
 
 #pragma once
 
-#include "ocilibcpp/core.hpp"
+#include "ocilibcpp/detail/core/HandleStore.hpp"
+#include "ocilibcpp/detail/core/SmartHandle.hpp"
 
 // ReSharper disable CppClangTidyBugproneUnhandledSelfAssignment
 
@@ -29,49 +30,21 @@ namespace ocilib
     namespace core
     {
         template<class T>
-        HandleHolder<T>::HandleHolder() : _smartHandle(nullptr)
-        {
-        }
-
-        template<class T>
-        HandleHolder<T>::HandleHolder(const HandleHolder& other) : _smartHandle(nullptr)
-        {
-            AcquireTransient(other, other._smartHandle ? other._smartHandle->GetParent() : nullptr);
-        }
-
-        template<class T>
-        HandleHolder<T>::~HandleHolder() noexcept
-        {
-            SILENT_CATCH(Release())
-        }
-
-        template<class T>
-        HandleHolder<T>& HandleHolder<T>::operator= (const HandleHolder<T>& other) noexcept
-        {
-            if (this != &other)
-            {
-                Handle* parent = other._smartHandle ? other._smartHandle->GetParent() : nullptr;
-                SILENT_CATCH(AcquireTransient(other, parent))
-            }
-            return *this;
-        }
-
-        template<class T>
         bool HandleHolder<T>::IsNull() const
         {
-            return (static_cast<T>(*this) == 0);
+            return !_control || _control->GetHandle() == nullptr;
         }
 
         template<class T>
         HandleHolder<T>::operator T()
         {
-            return _smartHandle ? _smartHandle->GetHandle() : nullptr;
+            return _control ? _control->GetHandle() : nullptr;
         }
 
         template<class T>
         HandleHolder<T>::operator T() const
         {
-            return _smartHandle ? _smartHandle->GetHandle() : nullptr;
+            return _control ? _control->GetHandle() : nullptr;
         }
 
         template<class T>
@@ -87,33 +60,62 @@ namespace ocilib
         }
 
         template<class T>
-        Handle* HandleHolder<T>::GetHandle() const
+        OCI_Environment* HandleHolder<T>::GetEnvironment() const
         {
-            return static_cast<Handle*>(_smartHandle);
+            return _control ? _control->GetEnvironment() : nullptr;
+        }
+
+        template<class T>
+        HandleControlBase* HandleHolder<T>::GetHandle() const
+        {
+            return _control.get();
+        }
+
+        template<class T>
+        HandleControlBase* HandleHolder<T>::GetHandleControl() const
+        {
+            return _control.get();
         }
 
         template<class T>
         void HandleHolder<T>::AcquireAllocated(T handle, Handle* parent)
         {
-            Acquire(handle, true, nullptr, parent);
-        }
-  
-        template<class T>
-        void HandleHolder<T>::AcquireTransient(T handle, Handle* parent)
-        {
-            Acquire(handle, false, nullptr, parent);
-        }
-  
-        template<class T>
-        void HandleHolder<T>::AcquireAllocatedWithNotification(T handle, Handle* parent, SmartHandleFreeNotifyFunc freeNotifyFunc)
-        {
-            Acquire(handle, true, freeNotifyFunc, parent);
+            std::shared_ptr<HandleStore> store = HandleStore::ResolveStore(parent, static_cast<AnyPointer>(handle));
+
+            Acquire(handle, true, parent, store);
         }
 
         template<class T>
-        void HandleHolder<T>::Acquire(T handle, bool allocated, SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent)
+        void HandleHolder<T>::AcquireTransient(T handle, Handle* parent)
         {
-            if (_smartHandle && _smartHandle->GetHandle() == handle)
+            std::shared_ptr<HandleStore> store = HandleStore::ResolveStore(parent, static_cast<AnyPointer>(handle));
+
+            Acquire(handle, false, parent, store);
+        }
+
+        template<class T>
+        void HandleHolder<T>::AcquireAllocatedWithNotification(T handle, Handle* parent, FreeNotifyFunc freeNotify)
+        {
+            std::shared_ptr<HandleStore> store = HandleStore::ResolveStore(parent, static_cast<AnyPointer>(handle));
+
+            Acquire(handle, true, parent, store, freeNotify);
+        }
+
+        template<class T>
+        void HandleHolder<T>::Acquire(HandleHolder<T>& other)
+        {
+            if (&other != this)
+            {
+                Release();
+
+                _control = other._control;
+            }
+        }
+
+        template<class T>
+        void HandleHolder<T>::Acquire(T handle, bool allocated, Handle* parent, std::shared_ptr<HandleStore> store, FreeNotifyFunc freeNotify, AnyPointer extraInfo)
+        {
+            if (_control && _control->GetHandle() == handle)
             {
                 return;
             }
@@ -122,30 +124,17 @@ namespace ocilib
 
             if (handle)
             {
-                _smartHandle = HandleStore::GetStoreForHandle(parent).Get<SmartHandle*>(handle);
+                _control = store->Find<T>(handle);
 
-                if (!_smartHandle)
+                if (!_control)
                 {
-                    _smartHandle = OnAllocate(new SmartHandle(this, handle, allocated, freeNotifyFunc, parent));
-                }
-                else
-                {
-                    _smartHandle->Acquire(this);
-                }
-            }
-        }
+                    _control = std::make_shared<HandleControl<T>>(handle, allocated, std::weak_ptr<HandleStore>(store), freeNotify, extraInfo);
+                    store->Register(handle, _control);
 
-        template<class T>
-        void HandleHolder<T>::Acquire(HandleHolder<T>& other)
-        {
-            if (&other != this && _smartHandle != other._smartHandle)
-            {
-                Release();
-
-                if (other._smartHandle)
-                {
-                    other._smartHandle->Acquire(this);
-                    _smartHandle = other._smartHandle;
+                    if (parent)
+                    {
+                        parent->AddChild(_control);
+                    }
                 }
             }
         }
@@ -153,12 +142,7 @@ namespace ocilib
         template<class T>
         void HandleHolder<T>::Release()
         {
-            if (_smartHandle)
-            {
-                _smartHandle->Release(this);
-            }
-
-            _smartHandle = nullptr;
+            _control.reset();
         }
     }
 }

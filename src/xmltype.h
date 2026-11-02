@@ -31,24 +31,19 @@ OCI_SYM_LOCAL OCI_XmlType * OcilibXmlTypeInitialize
     OCI_Define     *def
 );
 
-OCI_SYM_LOCAL OCI_XmlType * OcilibXmlTypeCreate
-(
-    OCI_Connection *con
-);
-
-OCI_SYM_LOCAL boolean OcilibXmlTypeFree
+OCI_SYM_LOCAL OCI_Boolean OcilibXmlTypeFree
 (
     OCI_XmlType *xmlType
 );
 
 OCI_SYM_LOCAL const otext * OcilibXmlTypeGetContent
 (
-    OCI_XmlType    *xmlType
+    OCI_XmlType *xmlType
 );
 
-OCI_SYM_LOCAL unsigned int OcilibXmlTypeGetContentSize
+OCI_SYM_LOCAL OCI_UInt32 OcilibXmlTypeGetContentSize
 (
-    OCI_XmlType    *xmlType
+    OCI_XmlType *xmlType
 );
 
 #endif /* OCILIB_XMLTYPE_H_INCLUDED */

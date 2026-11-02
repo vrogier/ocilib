@@ -30,7 +30,7 @@ namespace ocilib
 {
     namespace support
     {
-        inline BindObject::BindObject(const ocilib::Statement& statement, const ostring& name, unsigned int mode) : _statement(statement), _name(name), _mode(mode)
+        inline BindObject::BindObject(const ocilib::Statement& statement, const ostring& name, OCI_UInt32 mode) : _statement(statement), _name(name), _mode(mode)
         {
         }
 
@@ -48,7 +48,7 @@ namespace ocilib
             return _statement;
         }
 
-        inline unsigned int BindObject::GetMode() const
+        inline OCI_UInt32 BindObject::GetMode() const
         {
             return _mode;
         }

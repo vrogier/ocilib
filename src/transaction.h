@@ -23,55 +23,55 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL boolean OcilibTransactionDispose
+OCI_SYM_LOCAL OCI_Boolean OcilibTransactionDispose
 (
     OCI_Transaction * trans
 );
 
 OCI_SYM_LOCAL OCI_Transaction * OcilibTransactionCreate
 (
-    OCI_Connection *con,
-    unsigned int    timeout,
-    unsigned int    mode,
-    OCI_XID        *pxid
+    OCI_Connection     *con,
+    OCI_UInt32        timeout,
+    OCI_TransactionMode mode,
+    OCI_XID            *pxid
 );
 
-OCI_SYM_LOCAL boolean OcilibTransactionFree
+OCI_SYM_LOCAL OCI_Boolean OcilibTransactionFree
 (
     OCI_Transaction * trans
 );
 
-OCI_SYM_LOCAL boolean OcilibTransactionStart
+OCI_SYM_LOCAL OCI_Boolean OcilibTransactionStart
 (
     OCI_Transaction * trans
 );
 
-OCI_SYM_LOCAL boolean OcilibTransactionStop
+OCI_SYM_LOCAL OCI_Boolean OcilibTransactionStop
 (
     OCI_Transaction * trans
 );
 
-OCI_SYM_LOCAL boolean OcilibTransactionResume
+OCI_SYM_LOCAL OCI_Boolean OcilibTransactionResume
 (
     OCI_Transaction * trans
 );
 
-OCI_SYM_LOCAL boolean OcilibTransactionPrepare
+OCI_SYM_LOCAL OCI_Boolean OcilibTransactionPrepare
 (
     OCI_Transaction * trans
 );
 
-OCI_SYM_LOCAL boolean OcilibTransactionForget
+OCI_SYM_LOCAL OCI_Boolean OcilibTransactionForget
 (
     OCI_Transaction * trans
 );
 
-OCI_SYM_LOCAL unsigned int OcilibTransactionGetMode
+OCI_SYM_LOCAL OCI_TransactionMode OcilibTransactionGetMode
 (
     OCI_Transaction * trans
 );
 
-OCI_SYM_LOCAL unsigned int OcilibTransactionGetTimeout
+OCI_SYM_LOCAL OCI_UInt32 OcilibTransactionGetTimeout
 (
     OCI_Transaction * trans
 );

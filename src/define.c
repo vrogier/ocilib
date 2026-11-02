@@ -34,16 +34,16 @@
 OCI_Define * OcilibDefineGet
 (
     OCI_Resultset *rs,
-    unsigned int   index
+    OCI_UInt32   index
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_Define*, NULL,
         /* context */ OCI_IPC_RESULTSET, rs
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs);
 
     OCI_Define *def = NULL;
 
@@ -52,16 +52,16 @@ OCI_Define * OcilibDefineGet
         def =  &rs->defs[index-1];
     }
 
-    SET_RETVAL(def)
+    SET_RETVAL(def);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDefineGetIndex
  * --------------------------------------------------------------------------------------------- */
 
-int OcilibDefineGetIndex
+OCI_Int32 OcilibDefineGetIndex
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -69,28 +69,28 @@ int OcilibDefineGetIndex
 {
     ENTER_FUNC
     (
-        /* returns */ int, -1,
+        /* returns */ OCI_Int32, -1,
         /* context */ OCI_IPC_RESULTSET, rs
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs);
 
     if (NULL == rs->map)
     {
         /* create the map at the first call to save time and memory when it's not needed */
 
-        rs->map = OcilibHashCreate(OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
-        CHECK_NULL(rs->map)
+        rs->map = OcilibHashCreate(rs->stmt->con->env, OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
+        CHECK_NULL(rs->map);
 
         for (ub4 i = 0; i < rs->nb_defs; i++)
         {
-            CHECK(OcilibHashAddInt(rs->map, rs->defs[i].col.name, (int)(i + 1)))
+            CHECK(OcilibHashAddInt(rs->map, rs->defs[i].col.name, (OCI_Int32)(i + 1)));
         }
     }
 
     /* check out we got our map object */
 
-    int index = -1;
+    OCI_Int32 index = -1;
 
     OCI_HashEntry *he = OcilibHashLookup(rs->map, name, FALSE);
 
@@ -109,12 +109,12 @@ int OcilibDefineGetIndex
 
     if (index < 0)
     {
-        THROW(OcilibExceptionItemNotFound, name, OCI_IPC_COLUMN)
+        THROW(OcilibExceptionItemNotFound, name, OCI_IPC_COLUMN);
     }
 
-    SET_RETVAL(index)
+    SET_RETVAL(index);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -130,9 +130,9 @@ void * OcilibDefineGetData
     (
         /* returns */ void*, NULL,
         /* context */ OCI_IPC_DEFINE, def
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_DEFINE, def)
+    CHECK_PTR(OCI_IPC_DEFINE, def);
 
     void* data = NULL;
 
@@ -149,7 +149,8 @@ void * OcilibDefineGetData
         case OCI_CDT_REF:
         case OCI_CDT_XMLTYPE:
         case OCI_CDT_VECTOR:
-       {
+        case OCI_CDT_JSON:
+        {
             /* handle based types */
 
             data =  def->buf.data[def->rs->row_cur-1];
@@ -157,7 +158,8 @@ void * OcilibDefineGetData
         }
         default:
         {
-            /* special case for ROWIDs exposed as strings but internally handled as rowid descriptors */
+            /* special case for ROWIDs exposed as strings but internally handled as rowid
+             * descriptors */
 
             if (IS_ROWID_COL(&def->col))
             {
@@ -167,32 +169,32 @@ void * OcilibDefineGetData
             {
                 /* scalar types */
 
-                data = (((ub1 *) (def->buf.data)) + (size_t) (def->col.bufsize * (def->rs->row_cur-1)));
+                data = (((ub1 *) (def->buf.data)) + (OCI_Size) (def->col.bufsize * (def->rs->row_cur-1)));
             }
         }
     }
 
-    SET_RETVAL(data)
+    SET_RETVAL(data);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDefineIsDataNotNull
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDefineIsDataNotNull
+OCI_Boolean OcilibDefineIsDataNotNull
 (
     OCI_Define *def
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DEFINE, def
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_DEFINE, def)
+    CHECK_PTR(OCI_IPC_DEFINE, def);
 
     OCIInd ind = OCI_IND_NULL;
 
@@ -208,35 +210,35 @@ boolean OcilibDefineIsDataNotNull
         }
     }
 
-    SET_RETVAL(ind != OCI_IND_NULL)
+    SET_RETVAL(ind != OCI_IND_NULL);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDefineGetNumber
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDefineGetNumber
+OCI_Boolean OcilibDefineGetNumber
 (
-    OCI_Resultset *rs,
-    unsigned int   index,
-    void          *value,
-    uword          type
+    OCI_Resultset  *rs,
+    OCI_UInt32    index,
+    void           *value,
+    OCI_NumericType type
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_RESULTSET, rs
-    )
+    );
 
     OCI_Define* def = NULL;
 
-    CHECK_PTR(OCI_IPC_RESULTSET, rs)
+    CHECK_PTR(OCI_IPC_RESULTSET, rs);
 
     def = OcilibDefineGet(rs, index);
-    CHECK_NULL(def)
+    CHECK_NULL(def);
 
     if (OcilibDefineIsDataNotNull(def))
     {
@@ -246,81 +248,81 @@ boolean OcilibDefineGetNumber
         {
             case OCI_CDT_NUMERIC:
             {
-                CHECK(OcilibNumberTranslateValue(rs->stmt->con, data,
+                CHECK(OcilibNumberTranslateValue(rs->stmt->con->env, data,
                                                  def->col.subtype, value,
-                                                 type))
+                                                 type));
                 break;
             }
             case OCI_CDT_TEXT:
             {
-                CHECK(OcilibNumberFromStringInternal(rs->stmt->con, value, type,
-                                                     (const otext*)data, NULL))
+                CHECK(OcilibNumberFromStringInternal(rs->stmt->con->env, value, type,
+                                                     (const otext*)data, NULL));
                 break;
             }
         }
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDefineAlloc
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDefineAlloc
+OCI_Boolean OcilibDefineAlloc
 (
     OCI_Define *def
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DEFINE, def
-    )
+    );
 
     ub4 i;
 
-    CHECK_PTR(OCI_IPC_DEFINE, def)
+    CHECK_PTR(OCI_IPC_DEFINE, def);
 
     /* Allocate indicators */
 
-    ALLOC_DATA(OCI_IPC_INDICATOR_ARRAY, def->buf.inds, def->buf.count)
+    ALLOC_DATA(OCI_IPC_INDICATOR_ARRAY, def->buf.inds, def->buf.count);
 
     if (SQLT_NTY == def->col.sqlcode)
     {
-        ALLOC_DATA(OCI_IPC_INDICATOR_ARRAY, def->buf.obj_inds, def->buf.count)
+        ALLOC_DATA(OCI_IPC_INDICATOR_ARRAY, def->buf.obj_inds, def->buf.count);
     }
 
     /* Allocate row data sizes array */
 
-    ALLOC_BUFFER(OCI_IPC_LEN_ARRAY, def->buf.lens, def->buf.sizelen, def->buf.count)
+    ALLOC_BUFFER(OCI_IPC_LEN_ARRAY, def->buf.lens, def->buf.sizelen, def->buf.count);
 
     /* initialize length array with buffer default size.
         But, Oracle uses different sizes for static fetch and callback fetch....*/
 
     /* Allocate buffer array */
-    
+
     ub4 bufsize = (ub4) def->col.bufsize;
     if (IS_DYNAMIC_FETCH_COLUMN(&def->col))
     {
         bufsize = sizeof(void*);
     }
 
-    ALLOC_BUFFER(OCI_IPC_BUFF_ARRAY, def->buf.data, bufsize, def->buf.count)
+    ALLOC_BUFFER(OCI_IPC_BUFF_ARRAY, def->buf.data, bufsize, def->buf.count);
 
     /* Allocate buffer length array */
 
     for (i = 0; i < def->buf.count; i++)
     {
-        if (def->buf.sizelen == (int) sizeof(ub2))
+        if (def->buf.sizelen == (OCI_Int32) sizeof(ub2))
         {
-            ARRAY_SET_AT(def->buf.lens, ub2, i, def->col.bufsize)
+            ARRAY_SET_AT(def->buf.lens, ub2, i, def->col.bufsize);
         }
-        else if (def->buf.sizelen == (int) sizeof(ub4))
+        else if (def->buf.sizelen == (OCI_Int32) sizeof(ub4))
         {
-            ARRAY_SET_AT(def->buf.lens, ub4, i, def->col.bufsize)
+            ARRAY_SET_AT(def->buf.lens, ub4, i, def->col.bufsize);
         }
     }
 
@@ -332,16 +334,18 @@ boolean OcilibDefineAlloc
         {
             for (i = 0; i < def->buf.count; i++)
             {
-                CHECK(OcilibMemoryAllocHandle((dvoid  *)def->rs->stmt->con->env,
+                CHECK(OcilibMemoryAllocHandle(def->rs->stmt->con->env,
+                                              def->rs->stmt->con->env->handle,
                                               (dvoid **) &(def->buf.data[i]),
-                                              (ub4) def->col.handletype))
+                                              (ub4) def->col.handletype));
             }
         }
         else
         {
-            CHECK(OcilibMemoryAllocDescriptorArray((dvoid  *)def->rs->stmt->con->env,
+            CHECK(OcilibMemoryAllocDescriptorArray(def->rs->stmt->con->env,
+                                                   (dvoid *)def->rs->stmt->con->env->handle,
                                                    (dvoid **)def->buf.data, (ub4)def->col.handletype,
-                                                   (ub4)def->buf.count))
+                                                   (ub4)def->buf.count));
 
             if (OCI_CDT_LOB == def->col.datatype)
             {
@@ -354,22 +358,22 @@ boolean OcilibDefineAlloc
                         def->col.handletype, OCI_ATTR_LOBEMPTY,
                         def->buf.data[i], &empty, sizeof(empty),
                         def->rs->stmt->con->err
-                    )
+                    );
                 }
             }
         }
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibDefineDef
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibDefineDef
+OCI_Boolean OcilibDefineDef
 (
     OCI_Define *def,
     ub4         position
@@ -377,13 +381,13 @@ boolean OcilibDefineDef
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DEFINE, def
-    )
+    );
 
     ub2 mode = OCI_DEFAULT;
 
-    CHECK_PTR(OCI_IPC_DEFINE, def)
+    CHECK_PTR(OCI_IPC_DEFINE, def);
 
     /*check define mode for long columns */
 
@@ -398,7 +402,7 @@ boolean OcilibDefineDef
     (
         def->rs->stmt->con->err,
         OCIDefineByPos,
-        def->rs->stmt->stmt,
+        def->rs->stmt->handle,
         (OCIDefine **) &def->buf.handle,
         def->rs->stmt->con->err,
         position,
@@ -409,7 +413,7 @@ boolean OcilibDefineDef
         (ub2  *) def->buf.lens,
         (ub2  *) NULL,
         (ub4   ) mode
-    )
+    );
 
     if (IS_DYNAMIC_FETCH_COLUMN(&def->col))
     {
@@ -421,7 +425,7 @@ boolean OcilibDefineDef
             def->rs->stmt->con->err,
             def,
             OcilibCallbackDynamicDefine
-        )
+        );
     }
 
     if (SQLT_NTY == def->col.sqlcode || SQLT_REF == def->col.sqlcode)
@@ -432,12 +436,12 @@ boolean OcilibDefineDef
             OCIDefineObject,
             (OCIDefine *)def->buf.handle,
             def->rs->stmt->con->err,
-            def->col.typinf->tdo,
+            def->col.typinf->handle,
             (void **) def->buf.data,
             (ub4   *) NULL,
             (void **) def->buf.obj_inds,
             (ub4   *) NULL
-        )
+        );
     }
 
     if(((OCI_CDT_TEXT == def->col.datatype))  ||
@@ -455,7 +459,7 @@ boolean OcilibDefineDef
                 OCI_HTYPE_DEFINE, OCI_ATTR_CHARSET_FORM,
                 def->buf.handle, &csfrm, sizeof(csfrm),
                 def->rs->stmt->con->err
-            )
+            );
         }
     }
 
@@ -472,13 +476,13 @@ boolean OcilibDefineDef
                 OCI_HTYPE_DEFINE, OCI_ATTR_LOBPREFETCH_LENGTH,
                 def->buf.handle, &value, sizeof(value),
                 def->rs->stmt->con->err
-            )
+            );
         }
     }
 
 #endif
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }

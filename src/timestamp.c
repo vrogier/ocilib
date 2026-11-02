@@ -28,7 +28,7 @@
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-static unsigned int TimestampTypeValues[] =
+static OCI_UInt32 TimestampTypeValues[] =
 {
     OCI_TIMESTAMP,
     OCI_TIMESTAMP_TZ,
@@ -43,37 +43,26 @@ static unsigned int TimestampTypeValues[] =
 
 OCI_Timestamp * OcilibTimestampInitialize
 (
-    OCI_Connection *con,
-    OCI_Timestamp  *tmsp,
-    OCIDateTime    *buffer,
-    ub4             type
+    OCI_Environment *env,
+    OCI_Connection  *con,
+    OCI_Timestamp   *tmsp,
+    OCIDateTime     *buffer,
+    ub4              type
 )
 {
-    ENTER_FUNC_NO_CONTEXT
+    ENTER_FUNC
     (
-        /* returns */ OCI_Timestamp*, tmsp
-    )
+        /* returns */ OCI_Timestamp*, tmsp,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    ALLOC_DATA(OCI_IPC_TIMESTAMP, tmsp, 1);
-
-    tmsp->con    = con;
+    ALLOC_HANDLE(OCI_IPC_TIMESTAMP, tmsp);
     tmsp->handle = buffer;
     tmsp->type   = type;
 
-    /* get the right error handle */
-
-    if (con)
-    {
-        tmsp->err = con->err;
-        tmsp->env = con->env;
-    }
-    else
-    {
-        tmsp->err = Env.err;
-        tmsp->env = Env.env;
-    }
+    OCI_NOT_USED(con)
 
     /* allocate buffer if needed */
 
@@ -85,11 +74,12 @@ OCI_Timestamp * OcilibTimestampInitialize
             (
                 OcilibMemoryAllocDescriptor
                 (
-                    (dvoid  *)tmsp->env,
+                    env,
+                    (dvoid  *)env->handle,
                     (dvoid **)(void *)&tmsp->handle,
                     (ub4)OcilibExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type)
                 )
-            )
+            );
 
             tmsp->hstate = OCI_OBJECT_ALLOCATED;
         }
@@ -101,11 +91,11 @@ OCI_Timestamp * OcilibTimestampInitialize
 
 #else
 
-    OCI_NOT_USED(con)
-    OCI_NOT_USED(type)
-    OCI_NOT_USED(buffer)
+    OCI_NOT_USED(con);
+    OCI_NOT_USED(type);
+    OCI_NOT_USED(buffer);
 
-    CHECK(FALSE)
+    CHECK(FALSE);
 
 #endif
 
@@ -117,8 +107,8 @@ OCI_Timestamp * OcilibTimestampInitialize
             tmsp = NULL;
         }
 
-        SET_RETVAL(tmsp)
-    )
+        SET_RETVAL(tmsp);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -127,60 +117,62 @@ OCI_Timestamp * OcilibTimestampInitialize
 
 OCI_Timestamp * OcilibTimestampCreate
 (
-    OCI_Connection *con,
-    unsigned int    type
+    OCI_Environment  *env,
+    OCI_TimestampType type
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_Timestamp*, NULL,
-        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
-    CHECK_INITIALIZED()
-    CHECK_TIMESTAMP_ENABLED(con)
+    CHECK_PTR(OCI_IPC_ENVIRONMENT, env);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    CHECK_ENUM_VALUE(type, TimestampTypeValues, OTEXT("Timestamp type"))
+    CHECK_ENUM_VALUE(type, TimestampTypeValues, OTEXT("Timestamp type"));
 
-    SET_RETVAL(OcilibTimestampInitialize(con, NULL, NULL, type))
+    SET_RETVAL(OcilibTimestampInitialize(env, NULL, NULL, NULL, type));
 
 #else
 
-    OCI_NOT_USED(type)
+    OCI_NOT_USED(env);
+    OCI_NOT_USED(type);
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampFree
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampFree
+OCI_Boolean OcilibTimestampFree
 (
     OCI_Timestamp *tmsp
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    CHECK_OBJECT_FETCHED(tmsp)
+    CHECK_OBJECT_FETCHED(tmsp);
 
     if (OCI_OBJECT_ALLOCATED == tmsp->hstate)
     {
         OcilibMemoryFreeDescriptor
         (
+            tmsp->env,
             (dvoid*)tmsp->handle,
             OcilibExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, tmsp->type)
         );
@@ -190,14 +182,14 @@ boolean OcilibTimestampFree
     {
         OcilibErrorResetSource(NULL, tmsp);
 
-        FREE(tmsp)
+        FREE(tmsp);
     }
 
 #endif
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -206,88 +198,90 @@ boolean OcilibTimestampFree
 
 OCI_Timestamp ** OcilibTimestampCreateArray
 (
-    OCI_Connection *con,
-    unsigned int    type,
-    unsigned int    nbelem
+    OCI_Environment  *env,
+    OCI_TimestampType type,
+    OCI_UInt32      nbelem
 )
 {
     ENTER_FUNC
     (
         /* returns */ OCI_Timestamp**, NULL,
-        /* context */ (con ? OCI_IPC_CONNECTION : OCI_IPC_VOID), (con ? (void*)con : (void*)&Env)
-    )
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
 
     OCI_Array *arr = NULL;
 
-    CHECK_TIMESTAMP_ENABLED(con)
+    CHECK_PTR(OCI_IPC_ENVIRONMENT, env);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    CHECK_ENUM_VALUE(type, TimestampTypeValues, OTEXT("Timestamp type"))
+    CHECK_ENUM_VALUE(type, TimestampTypeValues, OTEXT("Timestamp type"));
 
-    arr = OcilibArrayCreate(con, nbelem, OCI_CDT_TIMESTAMP, type,
+    arr = OcilibArrayCreate(env, NULL, nbelem, OCI_CDT_TIMESTAMP, type,
                             sizeof(OCIDateTime*), sizeof(OCI_Timestamp),
                             OcilibExternalSubTypeToHandleType(OCI_CDT_TIMESTAMP, type), NULL);
 
-    CHECK_NULL(arr)
+    CHECK_NULL(arr);
 
-    SET_RETVAL((OCI_Timestamp**)arr->tab_obj)
+    SET_RETVAL((OCI_Timestamp**)arr->tab_obj);
 
 #else
 
-    OCI_NOT_USED(arr)
-    OCI_NOT_USED(type)
-    OCI_NOT_USED(nbelem)
+    OCI_NOT_USED(env);
+    OCI_NOT_USED(arr);
+    OCI_NOT_USED(type);
+    OCI_NOT_USED(nbelem);
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampFreeArray
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampFreeArray
+OCI_Boolean OcilibTimestampFreeArray
 (
     OCI_Timestamp **tmsps
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
-        /* context */ OCI_IPC_VOID, &Env
-    )
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_VOID, NULL
+    );
 
-    CHECK_PTR(OCI_IPC_ARRAY, tmsps)
+    CHECK_PTR(OCI_IPC_ARRAY, tmsps);
 
-    SET_RETVAL(OcilibArrayFreeFromHandles((void **) tmsps))
+    SET_RETVAL(OcilibArrayFreeFromHandles(tmsps[0] ? tmsps[0]->env : NULL, (void **) tmsps));
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampGetType
  * --------------------------------------------------------------------------------------------- */
 
-unsigned int OcilibTimestampGetType
+OCI_TimestampType OcilibTimestampGetType
 (
     OCI_Timestamp *tmsp
 )
 {
     GET_PROP
     (
-        unsigned int, OCI_UNKNOWN,
+        OCI_TimestampType, OCI_UNKNOWN,
         OCI_IPC_TIMESTAMP, tmsp,
         type
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampAssign
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampAssign
+OCI_Boolean OcilibTimestampAssign
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp_src
@@ -295,17 +289,17 @@ boolean OcilibTimestampAssign
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
-    OCI_Timestamp *tmp_tmsp = NULL;
+    OCI_Timestamp *tmp_tmsp     = NULL;
     OCI_Timestamp *tmp_tmsp_src = NULL;
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp_src)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
-    CHECK_COMPAT(tmsp->type == tmsp_src->type)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp_src);
+    CHECK_TIMESTAMP_ENABLED();
+    CHECK_COMPAT(tmsp->type == tmsp_src->type);
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -313,14 +307,14 @@ boolean OcilibTimestampAssign
 
     if (OCI_TIMESTAMP_LTZ == tmsp_src->type)
     {
-        tmp_tmsp_src = OcilibTimestampCreate(tmsp_src->con, OCI_TIMESTAMP_TZ);
-        CHECK_NULL(tmp_tmsp_src)
+        tmp_tmsp_src = OcilibTimestampCreate(tmsp_src->env, OCI_TIMESTAMP_TZ);
+        CHECK_NULL(tmp_tmsp_src);
 
-        tmp_tmsp = OcilibTimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
-        CHECK_NULL(tmp_tmsp)
+        tmp_tmsp = OcilibTimestampCreate(tmsp->env, OCI_TIMESTAMP_TZ);
+        CHECK_NULL(tmp_tmsp);
 
-        CHECK(OcilibTimestampConvert(tmp_tmsp_src, tmsp_src))
-        CHECK(OcilibTimestampConvert(tmp_tmsp, tmsp))
+        CHECK(OcilibTimestampConvert(tmp_tmsp_src, tmsp_src));
+        CHECK(OcilibTimestampConvert(tmp_tmsp, tmsp));
     }
     else
     {
@@ -330,21 +324,21 @@ boolean OcilibTimestampAssign
 
     CHECK_OCI
     (
-        tmp_tmsp->err,
+        tmp_tmsp->env->err,
         OCIDateTimeAssign,
-        (dvoid *)tmp_tmsp->env, tmp_tmsp->err,
+        (dvoid *)tmp_tmsp->env->handle, tmp_tmsp->env->err,
         tmp_tmsp_src->handle, tmp_tmsp->handle
-    )
+    );
 
     /* converting back */
 
     if (OCI_TIMESTAMP_LTZ == tmsp_src->type)
     {
-        CHECK(OcilibTimestampConvert(tmsp_src, tmp_tmsp_src))
-        CHECK(OcilibTimestampConvert(tmsp, tmp_tmsp))
+        CHECK(OcilibTimestampConvert(tmsp_src, tmp_tmsp_src));
+        CHECK(OcilibTimestampConvert(tmsp, tmp_tmsp));
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #endif
 
@@ -359,51 +353,51 @@ boolean OcilibTimestampAssign
         {
             OcilibTimestampFree(tmp_tmsp_src);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampCheck
  * --------------------------------------------------------------------------------------------- */
 
-int OcilibTimestampCheck
+OCI_Int32 OcilibTimestampCheck
 (
     OCI_Timestamp *tmsp
 )
 {
     ENTER_FUNC
     (
-        /* returns */ int, 0,
+        /* returns */ OCI_Int32, 0,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
     ub4 value = 0;
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeCheck,
-        (dvoid *)tmsp->env, tmsp->err,
+        (dvoid *)tmsp->env->handle, tmsp->env->err,
         tmsp->handle, &value
-    )
+    );
 
 #endif
 
-    SET_RETVAL(value)
+    SET_RETVAL(value);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampCompare
  * --------------------------------------------------------------------------------------------- */
 
-int OcilibTimestampCompare
+OCI_Int32 OcilibTimestampCompare
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp2
@@ -411,97 +405,97 @@ int OcilibTimestampCompare
 {
     ENTER_FUNC
     (
-        /* returns */ int, OCI_ERROR,
+        /* returns */ OCI_Int32, OCI_ERROR,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
     sword value = OCI_ERROR;
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp2)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp2);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeCompare,
-        (dvoid *)tmsp->env, tmsp->err,
+        (dvoid *)tmsp->env->handle, tmsp->env->err,
         tmsp->handle, tmsp2->handle,
         &value
-    )
+    );
 
 #endif
 
-    SET_RETVAL(value)
+    SET_RETVAL(value);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampConstruct
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampConstruct
+OCI_Boolean OcilibTimestampConstruct
 (
     OCI_Timestamp *tmsp,
-    int            year,
-    int            month,
-    int            day,
-    int            hour,
-    int            min,
-    int            sec,
-    int            fsec,
+    OCI_Int32            year,
+    OCI_Int32            month,
+    OCI_Int32            day,
+    OCI_Int32            hour,
+    OCI_Int32            min,
+    OCI_Int32            sec,
+    OCI_Int32            fsec,
     const otext   *time_zone
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeConstruct,
-        (dvoid *) tmsp->env, tmsp->err,
+        (dvoid *) tmsp->env->handle, tmsp->env->err,
         tmsp->handle,
         (sb2) year, (ub1) month, (ub1) day,
         (ub1) hour, (ub1) min,(ub1) sec,
         (ub4) fsec, (OraText *) time_zone,
-        (size_t) (time_zone ? otextsize(time_zone) : 0)
-    )
+        (OCI_Size) (time_zone ? otextsize(time_zone) : 0)
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(year)
-    OCI_NOT_USED(month)
-    OCI_NOT_USED(day)
-    OCI_NOT_USED(hour)
-    OCI_NOT_USED(min)
-    OCI_NOT_USED(sec)
-    OCI_NOT_USED(fsec)
-    OCI_NOT_USED(time_zone)
+    OCI_NOT_USED(year);
+    OCI_NOT_USED(month);
+    OCI_NOT_USED(day);
+    OCI_NOT_USED(hour);
+    OCI_NOT_USED(min);
+    OCI_NOT_USED(sec);
+    OCI_NOT_USED(fsec);
+    OCI_NOT_USED(time_zone);
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampConvert
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampConvert
+OCI_Boolean OcilibTimestampConvert
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp_src
@@ -509,36 +503,36 @@ boolean OcilibTimestampConvert
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp_src)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp_src);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeConvert,
-        (dvoid *)tmsp->env, tmsp->err,
+        (dvoid *)tmsp->env->handle, tmsp->env->err,
         tmsp_src->handle, tmsp->handle
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampFromString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampFromString
+OCI_Boolean OcilibTimestampFromString
 (
     OCI_Timestamp *tmsp,
     const otext   *str,
@@ -547,226 +541,226 @@ boolean OcilibTimestampFromString
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
-    dbtext *dbstr1 = NULL;
+    dbtext *dbstr1  = NULL;
     dbtext *dbstr2  = NULL;
-    int     dbsize1 = -1;
-    int     dbsize2 = -1;
+    OCI_Int32     dbsize1 = -1;
+    OCI_Int32     dbsize2 = -1;
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_STRING,    str)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_PTR(OCI_IPC_STRING,    str);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     if (!IS_STRING_VALID(fmt))
     {
-        fmt = OcilibEnvironmentGetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
-        CHECK_NULL(fmt)
+        fmt = OcilibEnvironmentGetFormat(tmsp->env, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
+        CHECK_NULL(fmt);
     }
 
-    dbstr1 = OcilibStringGetDBString(str, &dbsize1);
-    dbstr2 = OcilibStringGetDBString(fmt, &dbsize2);
+    dbstr1 = OcilibStringGetDBString(tmsp->env, str, &dbsize1);
+    dbstr2 = OcilibStringGetDBString(tmsp->env, fmt, &dbsize2);
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeFromText,
-        (dvoid *) tmsp->env, tmsp->err,
-        (OraText *) dbstr1, (size_t) dbsize1,
+        (dvoid *) tmsp->env->handle, tmsp->env->err,
+        (OraText *) dbstr1, (OCI_Size) dbsize1,
         (OraText *) dbstr2, (ub1) dbsize2,
-        (OraText *) NULL, (size_t) 0,
+        (OraText *) NULL, (OCI_Size) 0,
         tmsp->handle
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(dbstr1)
-    OCI_NOT_USED(dbstr2)
-    OCI_NOT_USED(dbsize1)
-    OCI_NOT_USED(dbsize2)
+    OCI_NOT_USED(dbstr1);
+    OCI_NOT_USED(dbstr2);
+    OCI_NOT_USED(dbsize1);
+    OCI_NOT_USED(dbsize2);
 
 #endif
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dbstr1);
-        OcilibStringReleaseDBString(dbstr2);
-    )
+        OcilibStringReleaseDBString(tmsp->env, dbstr1);
+        OcilibStringReleaseDBString(tmsp->env, dbstr2);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampToString
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampToString
+OCI_Boolean OcilibTimestampToString
 (
     OCI_Timestamp *tmsp,
     const otext   *fmt,
-    int            size,
+    OCI_Int32            size,
     otext         *str,
-    int            precision
+    OCI_Int32            precision
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
-    dbtext *dbstr1 = NULL;
+    dbtext *dbstr1  = NULL;
     dbtext *dbstr2  = NULL;
-    int     dbsize1 = size * (int) sizeof(otext);
-    int     dbsize2 = -1;
+    OCI_Int32     dbsize1 = size * (OCI_Int32) sizeof(otext);
+    OCI_Int32     dbsize2 = -1;
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_STRING,    str)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_PTR(OCI_IPC_STRING,    str);
 
     /* initialize output buffer in case of OCI failure */
 
     str[0] = 0;
 
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     if (!IS_STRING_VALID(fmt))
     {
-        fmt = OcilibEnvironmentGetFormat(tmsp->con, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
+        fmt = OcilibEnvironmentGetFormat(tmsp->env, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
-    dbstr1 = OcilibStringGetDBString(str, &dbsize1);
-    dbstr2 = OcilibStringGetDBString(fmt, &dbsize2);
+    dbstr1 = OcilibStringGetDBString(tmsp->env, str, &dbsize1);
+    dbstr2 = OcilibStringGetDBString(tmsp->env, fmt, &dbsize2);
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeToText,
-        (dvoid *) tmsp->env, tmsp->err,
+        (dvoid *) tmsp->env->handle, tmsp->env->err,
         tmsp->handle, (OraText *) dbstr2,
         (ub1) dbsize2, (ub1) precision,
-        (OraText *) NULL, (size_t) 0,
+        (OraText *) NULL, (OCI_Size) 0,
         (ub4*) &dbsize1, (OraText *) dbstr1
-    )
+    );
 
-    OcilibStringCopyDBStringToNativeString(dbstr1, str, dbcharcount(dbsize1));
+    OcilibStringCopyDBStringToNativeString(tmsp->env, dbstr1, str, dbcharcount(dbsize1));
 
     /* set null string terminator */
 
     str[dbcharcount(dbsize1)] = 0;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(dbstr1)
-    OCI_NOT_USED(dbstr2)
-    OCI_NOT_USED(dbsize1)
-    OCI_NOT_USED(dbsize2)
-    OCI_NOT_USED(precision)
+    OCI_NOT_USED(dbstr1);
+    OCI_NOT_USED(dbstr2);
+    OCI_NOT_USED(dbsize1);
+    OCI_NOT_USED(dbsize2);
+    OCI_NOT_USED(precision);
 
 #endif
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dbstr1);
-        OcilibStringReleaseDBString(dbstr2);
-    )
+        OcilibStringReleaseDBString(tmsp->env, dbstr1);
+        OcilibStringReleaseDBString(tmsp->env, dbstr2);
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampGetDate
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampGetDate
+OCI_Boolean OcilibTimestampGetDate
 (
     OCI_Timestamp *tmsp,
-    int           *year,
-    int           *month,
-    int           *day
+    OCI_Int32           *year,
+    OCI_Int32           *month,
+    OCI_Int32           *day
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
     sb2 yr = 0;
     ub1 mt = 0;
     ub1 dy = 0;
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_INT,       year)
-    CHECK_PTR(OCI_IPC_INT,       month)
-    CHECK_PTR(OCI_IPC_INT,       day)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_PTR(OCI_IPC_INT,       year);
+    CHECK_PTR(OCI_IPC_INT,       month);
+    CHECK_PTR(OCI_IPC_INT,       day);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeGetDate,
-        (dvoid *)tmsp->env, tmsp->err,
+        (dvoid *)tmsp->env->handle, tmsp->env->err,
         tmsp->handle, &yr, &mt, &dy
-    )
+    );
 
-    *year  = (int) yr;
-    *month = (int) mt;
-    *day   = (int) dy;
+    *year  = (OCI_Int32) yr;
+    *month = (OCI_Int32) mt;
+    *day   = (OCI_Int32) dy;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(year)
-    OCI_NOT_USED(month)
-    OCI_NOT_USED(day)
-    OCI_NOT_USED(yr)
-    OCI_NOT_USED(mt)
-    OCI_NOT_USED(dy)
+    OCI_NOT_USED(year);
+    OCI_NOT_USED(month);
+    OCI_NOT_USED(day);
+    OCI_NOT_USED(yr);
+    OCI_NOT_USED(mt);
+    OCI_NOT_USED(dy);
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampGetTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampGetTime
+OCI_Boolean OcilibTimestampGetTime
 (
     OCI_Timestamp *tmsp,
-    int           *hour,
-    int           *min,
-    int           *sec,
-    int           *fsec
+    OCI_Int32           *hour,
+    OCI_Int32           *min,
+    OCI_Int32           *sec,
+    OCI_Int32           *fsec
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
     ub1 hr = 0;
     ub1 mn = 0;
     ub1 sc = 0;
     ub4 fs = 0;
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_INT,       hour)
-    CHECK_PTR(OCI_IPC_INT,       min)
-    CHECK_PTR(OCI_IPC_INT,       sec)
-    CHECK_PTR(OCI_IPC_INT,       fsec)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_PTR(OCI_IPC_INT,       hour);
+    CHECK_PTR(OCI_IPC_INT,       min);
+    CHECK_PTR(OCI_IPC_INT,       sec);
+    CHECK_PTR(OCI_IPC_INT,       fsec);
+    CHECK_TIMESTAMP_ENABLED();
 
     *hour = 0;
     *min  = 0;
@@ -777,169 +771,169 @@ boolean OcilibTimestampGetTime
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeGetTime,
-        (dvoid *)tmsp->env, tmsp->err,
+        (dvoid *)tmsp->env->handle, tmsp->env->err,
         tmsp->handle, &hr, &mn, &sc, &fs
-    )
+    );
 
-    *hour = (int) hr;
-    *min  = (int) mn;
-    *sec  = (int) sc;
-    *fsec = (int) fs;
+    *hour = (OCI_Int32) hr;
+    *min  = (OCI_Int32) mn;
+    *sec  = (OCI_Int32) sc;
+    *fsec = (OCI_Int32) fs;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(hour)
-    OCI_NOT_USED(min)
-    OCI_NOT_USED(sec)
-    OCI_NOT_USED(fsec)
-    OCI_NOT_USED(hr)
-    OCI_NOT_USED(mn)
-    OCI_NOT_USED(sc)
-    OCI_NOT_USED(fs)
+    OCI_NOT_USED(hour);
+    OCI_NOT_USED(min);
+    OCI_NOT_USED(sec);
+    OCI_NOT_USED(fsec);
+    OCI_NOT_USED(hr);
+    OCI_NOT_USED(mn);
+    OCI_NOT_USED(sc);
+    OCI_NOT_USED(fs);
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampGetDateTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampGetDateTime
+OCI_Boolean OcilibTimestampGetDateTime
 (
     OCI_Timestamp *tmsp,
-    int           *year,
-    int           *month,
-    int           *day,
-    int           *hour,
-    int           *min,
-    int           *sec,
-    int           *fsec
+    OCI_Int32           *year,
+    OCI_Int32           *month,
+    OCI_Int32           *day,
+    OCI_Int32           *hour,
+    OCI_Int32           *min,
+    OCI_Int32           *sec,
+    OCI_Int32           *fsec
 )
 {
     return (OcilibTimestampGetDate(tmsp, year, month, day) &&
-            OcilibTimestampGetTime(tmsp, hour, min, sec, fsec));
+        OcilibTimestampGetTime(tmsp, hour, min, sec, fsec));
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampGetTimeZoneName
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampGetTimeZoneName
+OCI_Boolean OcilibTimestampGetTimeZoneName
 (
     OCI_Timestamp *tmsp,
-    int            size,
+    OCI_Int32            size,
     otext         *str
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
-    dbtext *dbstr = NULL;
-    int dbsize = size * (int) sizeof(otext);
+    dbtext *dbstr  = NULL;
+    OCI_Int32     dbsize = size * (OCI_Int32) sizeof(otext);
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_STRING,    str)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_PTR(OCI_IPC_STRING,    str);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    dbstr = OcilibStringGetDBString(str, &dbsize);
+    dbstr = OcilibStringGetDBString(tmsp->env, str, &dbsize);
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeGetTimeZoneName,
-        (dvoid *)tmsp->env, tmsp->err,
+        (dvoid *)tmsp->env->handle, tmsp->env->err,
         tmsp->handle, (ub1*) dbstr,
         (ub4*) &dbsize
-    )
+    );
 
-    OcilibStringCopyDBStringToNativeString(dbstr, str, dbcharcount(dbsize));
+    OcilibStringCopyDBStringToNativeString(tmsp->env, dbstr, str, dbcharcount(dbsize));
 
     /* set null string terminator */
 
     str[dbcharcount(dbsize)] = 0;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(str)
-    OCI_NOT_USED(size)
-    OCI_NOT_USED(dbstr)
-    OCI_NOT_USED(dbsize)
+    OCI_NOT_USED(str);
+    OCI_NOT_USED(size);
+    OCI_NOT_USED(dbstr);
+    OCI_NOT_USED(dbsize);
 
 #endif
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dbstr)
-    )
+        OcilibStringReleaseDBString(tmsp->env, dbstr)
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampGetTimeZoneOffset
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampGetTimeZoneOffset
+OCI_Boolean OcilibTimestampGetTimeZoneOffset
 (
     OCI_Timestamp *tmsp,
-    int           *hour,
-    int           *min
+    OCI_Int32           *hour,
+    OCI_Int32           *min
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
     sb1 sb_hour = 0, sb_min = 0;
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_INT,       hour)
-    CHECK_PTR(OCI_IPC_INT,       min)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_PTR(OCI_IPC_INT,       hour);
+    CHECK_PTR(OCI_IPC_INT,       min);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeGetTimeZoneOffset,
-        (dvoid *)tmsp->env, tmsp->err,
+        (dvoid *)tmsp->env->handle, tmsp->env->err,
         tmsp->handle, &sb_hour, &sb_min
-    )
+    );
 
     *hour = sb_hour;
     *min  = sb_min;
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(hour)
-    OCI_NOT_USED(min)
+    OCI_NOT_USED(hour);
+    OCI_NOT_USED(min);
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampIntervalAdd
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampIntervalAdd
+OCI_Boolean OcilibTimestampIntervalAdd
 (
     OCI_Timestamp *tmsp,
     OCI_Interval  *itv
@@ -947,15 +941,15 @@ boolean OcilibTimestampIntervalAdd
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
     OCI_Timestamp *tmp = NULL;
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_INTERVAL,  itv)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_PTR(OCI_IPC_INTERVAL,  itv);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -963,10 +957,10 @@ boolean OcilibTimestampIntervalAdd
 
     if (OCI_TIMESTAMP_TZ != tmsp->type)
     {
-        tmp = OcilibTimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
+        tmp = OcilibTimestampCreate(tmsp->env, OCI_TIMESTAMP_TZ);
         CHECK_NULL(tmp);
 
-        CHECK(OcilibTimestampConvert(tmp, tmsp))
+        CHECK(OcilibTimestampConvert(tmp, tmsp));
     }
     else
     {
@@ -975,25 +969,25 @@ boolean OcilibTimestampIntervalAdd
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeIntervalAdd,
-        (dvoid *)tmp->env, tmp->err,
+        (dvoid *)tmp->env->handle, tmp->env->err,
         tmp->handle, itv->handle,
         tmp->handle
-    )
+    );
 
     /* converting back */
 
     if (OCI_TIMESTAMP_TZ != tmsp->type)
     {
-        CHECK(OcilibTimestampConvert(tmsp, tmp))
+        CHECK(OcilibTimestampConvert(tmsp, tmp));
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(tmp)
+    OCI_NOT_USED(tmp);
 
 #endif
 
@@ -1003,14 +997,14 @@ boolean OcilibTimestampIntervalAdd
         {
             OcilibTimestampFree(tmp);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampIntervalSub
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampIntervalSub
+OCI_Boolean OcilibTimestampIntervalSub
 (
     OCI_Timestamp *tmsp,
     OCI_Interval  *itv
@@ -1018,15 +1012,15 @@ boolean OcilibTimestampIntervalSub
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
     OCI_Timestamp *tmp = NULL;
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_INTERVAL,  itv)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_PTR(OCI_IPC_INTERVAL,  itv);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -1034,10 +1028,10 @@ boolean OcilibTimestampIntervalSub
 
     if (OCI_TIMESTAMP_TZ != tmsp->type)
     {
-        tmp = OcilibTimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
-        CHECK_NULL(tmp)
+        tmp = OcilibTimestampCreate(tmsp->env, OCI_TIMESTAMP_TZ);
+        CHECK_NULL(tmp);
 
-        CHECK(OcilibTimestampConvert(tmp, tmsp))
+        CHECK(OcilibTimestampConvert(tmp, tmsp));
     }
     else
     {
@@ -1046,25 +1040,25 @@ boolean OcilibTimestampIntervalSub
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeIntervalSub,
-        (dvoid *)tmp->env, tmp->err,
+        (dvoid *)tmp->env->handle, tmp->env->err,
         tmp->handle, itv->handle,
         tmp->handle
-    )
+    );
 
     /* converting back */
 
     if (OCI_TIMESTAMP_TZ != tmsp->type)
     {
-        CHECK(OcilibTimestampConvert(tmsp, tmp))
+        CHECK(OcilibTimestampConvert(tmsp, tmp));
     }
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(tmp)
+    OCI_NOT_USED(tmp);
 
 #endif
 
@@ -1074,14 +1068,14 @@ boolean OcilibTimestampIntervalSub
         {
             OcilibTimestampFree(tmp);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampSubtract
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampSubtract
+OCI_Boolean OcilibTimestampSubtract
 (
     OCI_Timestamp *tmsp,
     OCI_Timestamp *tmsp2,
@@ -1090,55 +1084,55 @@ boolean OcilibTimestampSubtract
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp2)
-    CHECK_PTR(OCI_IPC_INTERVAL,  itv)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp2);
+    CHECK_PTR(OCI_IPC_INTERVAL,  itv);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
     CHECK_OCI
     (
-        tmsp->err,
+        tmsp->env->err,
         OCIDateTimeSubtract,
-        (dvoid *)tmsp->env, tmsp->err,
+        (dvoid *)tmsp->env->handle, tmsp->env->err,
         tmsp->handle, tmsp2->handle,
         itv->handle
-    )
+    );
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
 #endif
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampSysTimestamp
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampSysTimestamp
+OCI_Boolean OcilibTimestampSysTimestamp
 (
     OCI_Timestamp *tmsp
 )
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
     OCI_Timestamp *tmp_tmsp = tmsp;
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_TIMESTAMP_ENABLED();
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
-           
+
     /* Filling a timestamp handle of type OCI_TIMESTAMP with
        OCIDateTimeSysTimestamp() can lead later to an error ORA-01483 when
        binding the given timestamp to some SQL Statement (Oracle BUG).
@@ -1149,26 +1143,26 @@ boolean OcilibTimestampSysTimestamp
 
     if (OCI_TIMESTAMP == tmsp->type)
     {
-        tmp_tmsp = OcilibTimestampCreate(tmsp->con, OCI_TIMESTAMP_TZ);
+        tmp_tmsp = OcilibTimestampCreate(tmsp->env, OCI_TIMESTAMP_TZ);
     }
 
     CHECK_OCI
     (
-        tmp_tmsp->err,
+        tmp_tmsp->env->err,
         OCIDateTimeSysTimeStamp,
-        (dvoid *)tmp_tmsp->env, tmp_tmsp->err, tmp_tmsp->handle
-    )
+        (dvoid *)tmp_tmsp->env->handle, tmp_tmsp->env->err, tmp_tmsp->handle
+    );
 
     if (OCI_TIMESTAMP == tmsp->type)
     {
-        CHECK(OcilibTimestampConvert(tmsp, tmp_tmsp))
+        CHECK(OcilibTimestampConvert(tmsp, tmp_tmsp));
     }
-    
-    SET_SUCCESS()
+
+    SET_SUCCESS();
 
 #else
 
-    OCI_NOT_USED(tmp_tmsp)
+    OCI_NOT_USED(tmp_tmsp);
 
 #endif
 
@@ -1178,14 +1172,14 @@ boolean OcilibTimestampSysTimestamp
         {
             OcilibTimestampFree(tmp_tmsp);
         }
-    )
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampToCTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampToCTime
+OCI_Boolean OcilibTimestampToCTime
 (
     OCI_Timestamp *tmsp,
     struct tm     *ptm,
@@ -1194,21 +1188,21 @@ boolean OcilibTimestampToCTime
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
-    time_t time = (time_t) -1;
-    int       msec = 0;
+    time_t    time = (time_t) -1;
+    OCI_Int32       msec = 0;
     struct tm t;
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_TIMESTAMP_ENABLED();
 
     memset(&t, 0, sizeof(t));
 
     CHECK(OcilibTimestampGetDateTime(tmsp, &t.tm_year, &t.tm_mon, &t.tm_mday,
-                                     &t.tm_hour, &t.tm_min, &t.tm_sec, &msec))
+                                     &t.tm_hour, &t.tm_min, &t.tm_sec, &msec));
 
     t.tm_year -= 1900;
     t.tm_mon  -= 1;
@@ -1228,16 +1222,16 @@ boolean OcilibTimestampToCTime
         *pt = time;
     }
 
-    SET_RETVAL(time != (time_t)-1)
+    SET_RETVAL(time != (time_t)-1);
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibTimestampFromCTime
  * --------------------------------------------------------------------------------------------- */
 
-boolean OcilibTimestampFromCTime
+OCI_Boolean OcilibTimestampFromCTime
 (
     OCI_Timestamp *tmsp,
     struct tm     *ptm,
@@ -1246,16 +1240,16 @@ boolean OcilibTimestampFromCTime
 {
     ENTER_FUNC
     (
-        /* returns */ boolean, FALSE,
+        /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_TIMESTAMP, tmsp
-    )
+    );
 
-    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp)
-    CHECK_TIMESTAMP_ENABLED(tmsp->con)
+    CHECK_PTR(OCI_IPC_TIMESTAMP, tmsp);
+    CHECK_TIMESTAMP_ENABLED();
 
     if (NULL == ptm && (t == (time_t)0))
     {
-        THROW(OcilibExceptionNullPointer, OCI_IPC_TM)
+        THROW(OcilibExceptionNullPointer, OCI_IPC_TM);
     }
 
     if (NULL == ptm)
@@ -1265,9 +1259,9 @@ boolean OcilibTimestampFromCTime
 
     CHECK(OcilibTimestampConstruct(tmsp, ptm->tm_year + 1900,  ptm->tm_mon  + 1,
                                    ptm->tm_mday,  ptm->tm_hour,  ptm->tm_min,
-                                   ptm->tm_sec, (int) 0, (const otext *) NULL))
+                                   ptm->tm_sec, (OCI_Int32) 0, (const otext *) NULL));
 
-    SET_SUCCESS()
+    SET_SUCCESS();
 
-    EXIT_FUNC()
+    EXIT_FUNC();
 }

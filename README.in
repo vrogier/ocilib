@@ -19,8 +19,8 @@ The OCILIB library :
 - Offers a rich, full-featured, and easy-to-use API
 - Runs on all major Oracle client platforms
 - Encapsulates OCI (Oracle Call Interface)
-- Provides a C API written in ISO C99 with native Unicode support
-- Provides a C++ API written in standard C++03 (optionally using selected C++11 features when supported)
+- Provides a C API written in ISO C11 with native Unicode support
+- Provides a C++ API written in standard C++14
  
 ===========================================================================
 VERSION 
@@ -39,13 +39,17 @@ FEATURES
 - Compatible with all Oracle versions >= 8.0
 - Automatic adaptation to the runtime Oracle client version
 - Runtime loading of Oracle libraries
+- Explicit environment handles (OCI_Environment) supporting multiple Oracle clients
 - Built-in error handling (global and thread context)
+- Optional runtime logging
+- Diagnostic statistics API
 - Full support for SQL API and Object API
 - Full support for Oracle SQL and PL/SQL data types (scalars, objects, refs, collections, ...)
+- Oracle JSON datatype support (requires Oracle 21c)
+- Oracle SODA (Simple Oracle Document Access) support (requires Oracle 18c)
 - Full support for PL/SQL (blocks, cursors, index-by tables, and nested tables)
 - Support for non-scalar data types through library objects
 - Oracle Pooling (connections and sessions pools)
-- Oracle XA connectivity (X/Open Distributed Transaction Processing XA interface)
 - Oracle AQ (Advanced Queuing)
 - Oracle TAF (Transparent Application Failover) and HA (High availability) support
 - Binding array interface
@@ -59,7 +63,6 @@ FEATURES
 - Global and local transactions
 - Describe database schema objects
 - Hash tables API
-- Portable threads and mutexes API
 - Partial support for XMLTYPE (fetching only as string content)
     
 ===========================================================================
@@ -82,8 +85,8 @@ The source code is free source code licensed under the Apache License, Version 2
 COMPATIBILITY
 ===========================================================================
 
-This current source is pure ISO C and should compile with any C90 Compliant compiler
-for ANSI version and C99 for Unicode versions.
+This current source is pure ISO C and should compile with any C11 compliant compiler
+for ANSI and Unicode versions.
  
  Validated Platforms (32/64bits): 
  
@@ -110,6 +113,10 @@ for ANSI version and C99 for Unicode versions.
  - Oracle 10g 
  - Oracle 11g 
  - Oracle 12c
+ - Oracle 18c
+ - Oracle 19c
+ - Oracle 21c
+ - Oracle 23ai
 
 
 ===========================================================================
@@ -187,9 +194,9 @@ Defines :
 if no charset mode is set, the library sets the default to no value
 
 
-To rebuild the dynamic libraries (MS Visual Studio) :
+To rebuild the dynamic libraries (MS Visual Studio 2026) :
 
-      - open the dll project ocilib\proj\dll\ocilib_dll_vs200x.sln
+      - open the dll project ocilib\proj\dll\ocilib_dll.sln
       - do a batch build
 
 To rebuild the static libraries (Code::blocks) :
@@ -205,7 +212,7 @@ To rebuild the static libraries (Code::blocks) :
 
 2/ build a demo 
 
-     - open the test project ocilib\proj\test\ocilib_demo_vs200x.sln or ocilib_demo_codeblocks.cbp
+     - open the test project ocilib\proj\test\ocilib_demo.sln or ocilib_demo_codeblocks.cbp
      - choose an configuration
      - build
 

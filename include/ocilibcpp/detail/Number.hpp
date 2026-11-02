@@ -25,17 +25,22 @@
 namespace ocilib
 {
 
-inline Number::Number(bool create)
+inline Number::Number()
+{
+}
+
+inline Number::Number(const Environment& env, bool create)
 {
     if (create)
     {
-        Allocate();
+        Allocate(env.GetHandle());
     }
 }
 
 template<class T, typename core::SupportedNumeric<T>::Type::type*>
-Number::Number(const T &value)
+Number::Number(const Environment& env, const T &value)
 {
+    Allocate(env.GetHandle());
     *this = value;
 }
 
@@ -50,7 +55,7 @@ inline Number& Number::operator= (const Number& other) noexcept
     {
         if (IsNull())
         {
-            Allocate();
+            Allocate(other.GetEnvironment());
         }
 
         core::Check(OCI_NumberAssign(*this, other));
@@ -64,45 +69,45 @@ inline Number::Number(OCI_Number *pNumber, core::Handle *parent)
     AcquireTransient(pNumber, parent);
 }
 
-inline Number::Number(const ostring& str, const ostring& format)
+inline Number::Number(const Environment& env, const ostring& str, const ostring& format)
 {
-    Allocate();
+    Allocate(env.GetHandle());
 
     FromString(str, format);
 }
 
-inline Number::Number(const otext* str, const otext* format)
+inline Number::Number(const Environment& env, const otext* str, const otext* format)
 {
-    Allocate();
+    Allocate(env.GetHandle());
 
-    FromString(str, format);
+    FromString(ostring(str), ostring(format ? format : OTEXT("")));
 }
 
-inline void Number::Allocate()
+inline void Number::Allocate(OCI_Environment* env)
 {
     AcquireAllocated
     (
-        core::Check(OCI_NumberCreate(nullptr)),
-        Environment::GetEnvironmentHandle()
+        core::Check(OCI_NumberCreate(env)),
+        static_cast<core::Handle*>(nullptr)
     );
 }
 
 inline void Number::FromString(const ostring& str, const ostring& format) const
 {
-    core::Check(OCI_NumberFromText(*this, str.c_str(), format.empty() ? Environment::GetFormat(FormatNumeric).c_str() : format.c_str()));
+    core::Check(OCI_NumberFromText(*this, str.c_str(), format.empty() ? core::MakeString(core::Check(OCI_GetFormat(GetEnvironment(), FormatNumeric))).c_str() : format.c_str()));
 }
 
 inline ostring Number::ToString(const ostring& format) const
 {
     if (!IsNull())
     {
-       const  size_t size = OCI_SIZE_BUFFER;
+       const OCI_Size size = OCI_SIZE_BUFFER;
 
-        core::ManagedBuffer<otext> buffer(static_cast<size_t>(size + 1));
+        std::vector<otext> buffer(static_cast<OCI_Size>(size + 1));
 
-        core::Check(OCI_NumberToText(*this, format.c_str(), static_cast<int>(size), buffer));
+        core::Check(OCI_NumberToText(*this, format.c_str(), static_cast<OCI_Int32>(size), buffer.data()));
 
-        return core::MakeString(static_cast<const otext *>(buffer));
+        return core::MakeString(static_cast<const otext*>(buffer.data()));
     }
 
     return OCI_STRING_NULL;
@@ -110,14 +115,22 @@ inline ostring Number::ToString(const ostring& format) const
 
 inline ostring Number::ToString() const
 {
-    return ToString(Environment::GetFormat(FormatNumeric));
+    if (IsNull())
+    {
+        return OCI_STRING_NULL;
+    }
+
+    return ToString(core::MakeString(core::Check(OCI_GetFormat(GetEnvironment(), FormatNumeric))));
 }
 
 inline Number Number::Clone() const
 {
     Number result;
-
-    result.Allocate();
+    result.AcquireAllocated
+    (
+        core::Check(OCI_NumberCreate(GetEnvironment())),
+        static_cast<core::Handle*>(nullptr)
+    );
 
     core::Check(OCI_NumberAssign(result, *this));
 
@@ -136,7 +149,7 @@ inline AnyPointer Number::GetNativeValue(const Number& value)
     return (reinterpret_cast<OCI_Number*>(core::Check(OCI_NumberGetContent(value))));
 }
 
-inline int Number::Compare(const Number& other) const
+inline OCI_Int32 Number::Compare(const Number& other) const
 {
     return core::Check(OCI_NumberCompare(*this, other));
 }
@@ -156,7 +169,7 @@ Number& Number::SetValue(const T &value)
 {
     if (IsNull())
     {
-        Allocate();
+        Allocate(GetEnvironment());
     }
 
     core::Check(OCI_NumberSetValue(*this, support::NumericTypeResolver<T>::Value, GetNativeValue(value)));
@@ -192,8 +205,8 @@ inline Number& Number::operator = (OCI_Number * &lhs)
 {
     AcquireAllocated
     (
-        lhs, 
-        Environment::GetEnvironmentHandle()
+        lhs,
+        static_cast<core::Handle*>(nullptr)
     );
 
     return *this;
@@ -282,12 +295,12 @@ inline Number& Number::operator -- ()
     return *this += 1;
 }
 
-inline Number Number::operator ++ (int)
+inline Number Number::operator ++ (OCI_Int32)
 {
     return *this + 1;
 }
 
-inline Number Number::operator -- (int)
+inline Number Number::operator -- (OCI_Int32)
 {
     return *this - 1;
 }
@@ -314,14 +327,14 @@ inline bool Number::operator < (const Number& other) const
 
 inline bool Number::operator >= (const Number& other) const
 {
-    const int res = Compare(other);
+    const OCI_Int32 res = Compare(other);
 
     return res == 0 || res < 0;
 }
 
 inline bool Number::operator <= (const Number& other) const
 {
-    const int res = Compare(other);
+    const OCI_Int32 res = Compare(other);
 
     return res == 0 || res > 0;
 }
