@@ -33,14 +33,14 @@ inline Number::Number(const Environment& env, bool create)
 {
     if (create)
     {
-        Allocate(env.GetHandle());
+        Allocate(env.GetHandle(), env.GetEnvironmentHandle());
     }
 }
 
 template<class T, core::SupportedNumericT<T>*>
 Number::Number(const Environment& env, const T &value)
 {
-    Allocate(env.GetHandle());
+    Allocate(env.GetHandle(), env.GetEnvironmentHandle());
     *this = value;
 }
 
@@ -55,7 +55,7 @@ inline Number& Number::operator= (const Number& other)
     {
         if (IsNull())
         {
-            Allocate(other.GetEnvironment());
+            Allocate(other.GetEnvironment(), other.GetParent());
         }
 
         core::Check(OCI_NumberAssign(*this, other));
@@ -71,24 +71,24 @@ inline Number::Number(OCI_Number *pNumber, core::Handle *parent)
 
 inline Number::Number(const Environment& env, const ostring& str, const ostring& format)
 {
-    Allocate(env.GetHandle());
+    Allocate(env.GetHandle(), env.GetEnvironmentHandle());
 
     FromString(str, format);
 }
 
 inline Number::Number(const Environment& env, const otext* str, const otext* format)
 {
-    Allocate(env.GetHandle());
+    Allocate(env.GetHandle(), env.GetEnvironmentHandle());
 
     FromString(ostring(str), ostring(format ? format : OTEXT("")));
 }
 
-inline void Number::Allocate(OCI_Environment* env)
+inline void Number::Allocate(OCI_Environment* env, core::Handle* parent)
 {
     AcquireAllocated
     (
         core::Check(OCI_NumberCreate(env)),
-        static_cast<core::Handle*>(nullptr)
+        parent
     );
 }
 
@@ -129,7 +129,7 @@ inline Number Number::Clone() const
     result.AcquireAllocated
     (
         core::Check(OCI_NumberCreate(GetEnvironment())),
-        static_cast<core::Handle*>(nullptr)
+        GetParent()
     );
 
     core::Check(OCI_NumberAssign(result, *this));
@@ -169,7 +169,7 @@ Number& Number::SetValue(const T &value)
 {
     if (IsNull())
     {
-        Allocate(GetEnvironment());
+        Allocate(GetEnvironment(), GetParent());
     }
 
     core::Check(OCI_NumberSetValue(*this, support::NumericTypeResolver<T>::Value, GetNativeValue(value)));
@@ -206,7 +206,7 @@ inline Number& Number::operator = (OCI_Number * &lhs)
     AcquireAllocated
     (
         lhs,
-        static_cast<core::Handle*>(nullptr)
+        GetParent()
     );
 
     return *this;

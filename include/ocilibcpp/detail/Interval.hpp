@@ -34,13 +34,9 @@ inline Interval::Interval()
 
 inline Interval::Interval(const Environment& env, IntervalType type)
 {
-    Allocate(env.GetHandle(), static_cast<IntervalTypeValues>(type));
+    Allocate(env.GetHandle(), static_cast<IntervalTypeValues>(type), env.GetEnvironmentHandle());
 }
 
-inline Interval::Interval(OCI_Environment* env, IntervalTypeValues type)
-{
-    Allocate(env, type);
-}
 
 inline Interval::Interval(const Interval& other)
 {
@@ -53,7 +49,7 @@ inline Interval& Interval::operator= (const Interval& other)
     {
         if (IsNull())
         {
-            Allocate(other.GetEnvironment(), static_cast<IntervalTypeValues>(other.GetType()));
+            Allocate(other.GetEnvironment(), static_cast<IntervalTypeValues>(other.GetType()), other.GetParent());
         }
 
         core::Check(OCI_IntervalAssign(*this, other));
@@ -78,18 +74,23 @@ inline Interval::Interval(OCI_Interval *pInterval, core::Handle *parent)
     AcquireTransient(pInterval, parent);
 }
 
-inline void Interval::Allocate(OCI_Environment* env, IntervalTypeValues type)
+inline void Interval::Allocate(OCI_Environment* env, IntervalTypeValues type, core::Handle* parent)
 {
     AcquireAllocated
     (
         core::Check(OCI_IntervalCreate(env, static_cast<UInt32>(type))),
-        static_cast<core::Handle*>(nullptr)
+        parent
     );
 }
 
 inline Interval Interval::Clone() const
 {
-    Interval result(GetEnvironment(), static_cast<IntervalTypeValues>(GetType()));
+    Interval result;
+    result.AcquireAllocated
+    (
+        core::Check(OCI_IntervalCreate(GetEnvironment(), static_cast<UInt32>(GetType()))),
+        GetParent()
+    );
 
     core::Check(OCI_IntervalAssign(result, *this));
 

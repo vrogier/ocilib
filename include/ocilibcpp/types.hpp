@@ -2545,7 +2545,7 @@ namespace ocilib
 
         Number(OCI_Number* pNumber, core::Handle* parent = nullptr);
 
-        void Allocate(OCI_Environment* env);
+        void Allocate(OCI_Environment* env, core::Handle* parent);
 
         Int32 Compare(const Number& other) const;
 
@@ -3026,7 +3026,7 @@ namespace ocilib
 
         Date(OCI_Date* pDate, core::Handle* parent = nullptr);
 
-        void Allocate(OCI_Environment* env);
+        void Allocate(OCI_Environment* env, core::Handle* parent);
     };
 
     /**
@@ -3460,7 +3460,7 @@ namespace ocilib
 
         Int32 Compare(const Interval& other) const;
 
-        void Allocate(OCI_Environment* env, IntervalTypeValues type);
+        void Allocate(OCI_Environment* env, IntervalTypeValues type, core::Handle* parent);
 
         Interval(OCI_Interval* pInterval, core::Handle* parent = nullptr);
     };
@@ -3990,7 +3990,7 @@ namespace ocilib
 
         Int32 Compare(const Timestamp& other) const;
 
-        void Allocate(OCI_Environment* env, TimestampType type);
+        void Allocate(OCI_Environment* env, TimestampType type, core::Handle* parent);
 
         Timestamp(OCI_Timestamp* pTimestamp, core::Handle* parent = nullptr);
     };
@@ -7450,6 +7450,18 @@ namespace ocilib
         *
         */
         typedef core::Enum<SeekModeValues> SeekMode;
+ 
+        /**
+        * @brief
+        * Default constructor
+        *
+        * @note
+        * The resultset is not usable until it is assigned from a call to
+        * Statement::GetResultset() or Statement::ExecuteAndGetResultset().
+        * Call IsNull() to check whether it wraps a valid handle.
+        *
+        */
+        Resultset();
 
         /**
         * @brief

@@ -43,7 +43,7 @@ namespace ocilib
 
     inline Json& Json::operator=(OCI_Json*& lhs)
     {
-        AcquireAllocated(lhs, static_cast<core::Handle*>(nullptr));
+        AcquireAllocated(lhs, GetParent());
         return *this;
     }
 

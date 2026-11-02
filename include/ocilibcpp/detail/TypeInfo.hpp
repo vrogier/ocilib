@@ -25,6 +25,10 @@
 namespace ocilib
 {
 
+    inline TypeInfo::TypeInfo()
+    {
+    }
+
     inline TypeInfo::TypeInfo(const Connection& connection, const ostring& name, TypeInfoType type)
     {
         AcquireTransient

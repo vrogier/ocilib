@@ -194,6 +194,7 @@
     <ClCompile Include="TestFileCpp.cpp" />
     <ClCompile Include="TestFormat.cpp" />
     <ClCompile Include="TestHandle.cpp" />
+    <ClCompile Include="TestHandleCpp.cpp" />
     <ClCompile Include="TestHelpers.cpp" />
     <ClCompile Include="TestIterator.cpp" />
     <ClCompile Include="TestList.cpp" />

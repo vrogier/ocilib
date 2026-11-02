@@ -140,6 +140,12 @@ namespace ocilib
         }
 
         template<class T>
+        inline HandleControlBase* HandleHolder<T>::GetParent() const
+        {
+            return _control ? _control->GetParent() : nullptr;
+        }
+
+        template<class T>
         void HandleHolder<T>::Release()
         {
             _control.reset();

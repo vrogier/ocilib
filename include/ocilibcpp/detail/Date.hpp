@@ -33,7 +33,7 @@ inline Date::Date(const Environment& env, bool create)
 {
     if (create)
     {
-        Allocate(env.GetHandle());
+        Allocate(env.GetHandle(), env.GetEnvironmentHandle());
     }
 }
 
@@ -48,7 +48,7 @@ inline Date& Date::operator= (const Date& other)
     {
         if (IsNull())
         {
-            Allocate(other.GetEnvironment());
+            Allocate(other.GetEnvironment(), other.GetParent());
         }
 
         core::Check(OCI_DateAssign(*this, other));
@@ -59,14 +59,14 @@ inline Date& Date::operator= (const Date& other)
 
 inline Date::Date(const Environment& env, const ostring& str, const ostring& format)
 {
-    Allocate(env.GetHandle());
+    Allocate(env.GetHandle(), env.GetEnvironmentHandle());
 
     FromString(str, format);
 }
 
 inline Date::Date(const Environment& env, const otext* str, const otext* format)
 {
-    Allocate(env.GetHandle());
+    Allocate(env.GetHandle(), env.GetEnvironmentHandle());
 
     FromString(ostring(str), ostring(format ? format : OTEXT("")));
 }
@@ -76,12 +76,12 @@ inline Date::Date(OCI_Date *pDate, core::Handle *parent)
     AcquireTransient(pDate, parent);
 }
 
-inline void Date::Allocate(OCI_Environment* env)
+inline void Date::Allocate(OCI_Environment* env, core::Handle* parent)
 {
     AcquireAllocated
     (
         core::Check(OCI_DateCreate(env)),
-        static_cast<core::Handle*>(nullptr)
+        parent
     );
 }
 
@@ -89,7 +89,7 @@ inline Date Date::SysDate(const Environment& env)
 {
     Date result;
 
-    result.Allocate(env.GetHandle());
+    result.Allocate(env.GetHandle(), env.GetEnvironmentHandle());
 
     core::Check(OCI_DateSysDate(result));
 
@@ -102,7 +102,7 @@ inline Date Date::Clone() const
     result.AcquireAllocated
     (
         core::Check(OCI_DateCreate(GetEnvironment())),
-        static_cast<core::Handle*>(nullptr)
+        GetParent()
     );
 
     core::Check(OCI_DateAssign(result, *this));

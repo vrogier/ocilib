@@ -373,6 +373,9 @@
     <ClCompile Include="TestHandle.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestHandleCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
     <ClCompile Include="TestHash.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>

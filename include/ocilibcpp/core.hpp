@@ -310,6 +310,7 @@ namespace ocilib
 
             Handle* GetHandle() const;
             HandleControlBase* GetHandleControl() const;
+            HandleControlBase* GetParent() const;
 
         protected:
 

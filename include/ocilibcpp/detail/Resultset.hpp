@@ -25,6 +25,10 @@
 namespace ocilib
 {
 
+inline Resultset::Resultset()
+{
+}
+
 inline Resultset::Resultset(OCI_Resultset *resultset, core::Handle *parent)
 {
     AcquireTransient(resultset, parent);

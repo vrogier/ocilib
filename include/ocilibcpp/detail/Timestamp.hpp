@@ -34,7 +34,7 @@ inline Timestamp::Timestamp()
 
 inline Timestamp::Timestamp(const Environment& env, TimestampType type)
 {
-    Allocate(env.GetHandle(), type);
+    Allocate(env.GetHandle(), type, env.GetEnvironmentHandle());
 }
 
 inline Timestamp::Timestamp(const Environment& env, TimestampType type, const ostring& data, const ostring& format)
@@ -42,7 +42,7 @@ inline Timestamp::Timestamp(const Environment& env, TimestampType type, const os
     AcquireAllocated
     (
         core::Check(OCI_TimestampCreate(env.GetHandle(), type)),
-        static_cast<core::Handle*>(nullptr)
+        env.GetEnvironmentHandle()
     );
 
     FromString(data, format);
@@ -64,7 +64,7 @@ inline Timestamp& Timestamp::operator= (const Timestamp& other)
     {
         if (IsNull())
         {
-            Allocate(other.GetEnvironment(), other.GetType());
+            Allocate(other.GetEnvironment(), other.GetType(), other.GetParent());
         }
 
         core::Check(OCI_TimestampAssign(*this, other));
@@ -73,12 +73,12 @@ inline Timestamp& Timestamp::operator= (const Timestamp& other)
     return *this;
 }
 
-inline void Timestamp::Allocate(OCI_Environment* env, TimestampType type)
+inline void Timestamp::Allocate(OCI_Environment* env, TimestampType type, core::Handle* parent)
 {
     AcquireAllocated
     (
         core::Check(OCI_TimestampCreate(env, type)),
-        static_cast<core::Handle*>(nullptr)
+        parent
     );
 }
 
@@ -88,7 +88,7 @@ inline Timestamp Timestamp::Clone() const
     result.AcquireAllocated
     (
         core::Check(OCI_TimestampCreate(GetEnvironment(), GetType())),
-        static_cast<core::Handle*>(nullptr)
+        GetParent()
     );
 
     core::Check(OCI_TimestampAssign(result, *this));

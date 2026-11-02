@@ -119,6 +119,8 @@ namespace ocilib
         template<class T>
         inline void HandleControl<T>::Free()
         {
+            FreeChildren();
+
             T h = _handle.exchange(nullptr);
 
             if (h && _allocated)

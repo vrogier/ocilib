@@ -35,7 +35,7 @@ namespace ocilib
         {
             void* Address;
             const char* Name;
-            Size Size;
+            Size ByteSize;
             Size Count;
         };
 
@@ -74,7 +74,7 @@ namespace ocilib
                 {
                     std::cout << "=> Address " << alloc.Address
                         << " - Size " << alloc.Count
-                        << " - Count " << alloc.Size
+                        << " - Count " << alloc.ByteSize
                         << " - Type " << alloc.Name
                         << std::endl;
                 }
