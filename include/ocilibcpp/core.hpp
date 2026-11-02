@@ -229,7 +229,7 @@ namespace ocilib
 
             void SetParent(HandleControlBase* parent);
 
-            std::vector<std::weak_ptr<HandleControlBase>> _children;
+            std::unordered_map<HandleControlBase*, std::weak_ptr<HandleControlBase>> _children;
             std::mutex _childrenMutex;
             std::weak_ptr<HandleControlBase> _parent;
             std::weak_ptr<HandleStore> _store;

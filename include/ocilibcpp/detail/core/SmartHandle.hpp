@@ -41,19 +41,14 @@ namespace ocilib
 
             std::lock_guard<std::mutex> lock(_childrenMutex);
 
-            _children.push_back(child);
+            _children.insert_or_assign(child.get(), child);
         }
 
         inline void HandleControlBase::RemoveChild(HandleControlBase* child)
         {
             std::lock_guard<std::mutex> lock(_childrenMutex);
 
-            _children.erase(std::remove_if(_children.begin(), _children.end(),
-                [child](const std::weak_ptr<HandleControlBase>& w)
-            {
-                auto p = w.lock();
-                return !p || p.get() == child;
-            }), _children.end());
+            _children.erase(child);
         }
 
         inline void HandleControlBase::FreeChildren()
@@ -63,9 +58,9 @@ namespace ocilib
             {
                 std::lock_guard<std::mutex> lock(_childrenMutex);
 
-                for (auto& w : _children)
+                for (auto& kv : _children)
                 {
-                    auto c = w.lock();
+                    auto c = kv.second.lock();
                     if (c)
                     {
                         children.push_back(c);
@@ -184,7 +179,7 @@ namespace ocilib
 
                 for (auto it = _children.begin(); it != _children.end();)
                 {
-                    auto c = it->lock();
+                    auto c = it->second.lock();
                     if (!c)
                     {
                         it = _children.erase(it);
