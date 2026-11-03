@@ -409,7 +409,7 @@ namespace TestCppApi
             Connection conn(env, DBS, USR, PWD);
 
             static std::vector<OCI_Int64> values;
-            for (OCI_Int32 i = 1; i <= expectedCount; ++i)
+            for (OCI_Size i = 1; i <= expectedCount; ++i)
             {
                 values.push_back(1234567890000 + i);
             }

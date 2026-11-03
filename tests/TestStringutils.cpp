@@ -545,8 +545,8 @@ namespace TestCApi
     {
         const otext* str;
         OCI_UInt32 len;
-        boolean      quote;
-        boolean      withBuffer;
+        OCI_Boolean      quote;
+        OCI_Boolean      withBuffer;
         OCI_UInt32 expectedLen;
         const otext* expected;   /* nullptr -> length only */
     };
@@ -569,14 +569,14 @@ namespace TestCApi
 
     INSTANTIATE_TEST_CASE_P(Inputs, TestStringAddToBuffer,
         ::testing::Values(
-            StrAddToBufferCase{ nullptr,      3, FALSE, TRUE,  0, nullptr },
-            StrAddToBufferCase{ OTEXT("abc"), 3, FALSE, TRUE,  3, OTEXT("abc") },
+            StrAddToBufferCase{ nullptr,      3, 0, 1,  0, nullptr },
+            StrAddToBufferCase{ OTEXT("abc"), 3, 0, 1,  3, OTEXT("abc") },
             /* quote doubling: "a'b" -> "a''b" (+1 char) */
-            StrAddToBufferCase{ OTEXT("a'b"), 3, TRUE,  TRUE,  4, OTEXT("a''b") },
+            StrAddToBufferCase{ OTEXT("a'b"), 3, 1,  1,  4, OTEXT("a''b") },
             /* sizing pass without a buffer still counts the extra quote */
-            StrAddToBufferCase{ OTEXT("a'b"), 3, TRUE,  FALSE, 4, nullptr },
-            StrAddToBufferCase{ OTEXT("abc"), 3, TRUE,  FALSE, 3, nullptr },
-            StrAddToBufferCase{ OTEXT("abc"), 3, FALSE, FALSE, 3, nullptr }));
+            StrAddToBufferCase{ OTEXT("a'b"), 3, 1,  0, 4, nullptr },
+            StrAddToBufferCase{ OTEXT("abc"), 3, 1,  0, 3, nullptr },
+            StrAddToBufferCase{ OTEXT("abc"), 3, 0, 0, 3, nullptr }));
 
     /* --- OcilibStringGetFromType edge cases --- */
 
@@ -616,7 +616,7 @@ namespace TestCApi
 
         otext buf[256] = {};
         ASSERT_EQ(0u, OCI_TestStringGetFromType(conn, GetParam().datatype, GetParam().subtype,
-                                                nullptr, 0, buf, sizeof(buf), FALSE));
+                                                nullptr, 0, buf, sizeof(buf), 0));
     }
 
     INSTANTIATE_TEST_CASE_P(Types, TestStringFromTypeNull,
@@ -633,33 +633,33 @@ namespace TestCApi
         /* unsupported datatype -> default arm */
 
         otext buf[256] = {};
-        ASSERT_EQ(0u, OCI_TestStringGetFromType(conn, 9999, 0, buf, 4, buf, sizeof(buf), FALSE));
+        ASSERT_EQ(0u, OCI_TestStringGetFromType(conn, 9999, 0, buf, 4, buf, sizeof(buf), 0));
     }
 
     TEST_F(TestStringGetFromType, BooleanTrue)
     {
-        OCI_Boolean flag = TRUE;
+        OCI_Boolean flag = 1;
         otext buf[256] = {};
 
-        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_BOOLEAN, 0, &flag, sizeof(flag), buf, sizeof(buf), FALSE), 0u);
-        ASSERT_EQ(ostring(OTEXT("TRUE")), ostring(buf));
+        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_BOOLEAN, 0, &flag, sizeof(flag), buf, sizeof(buf), 0), 0u);
+        ASSERT_EQ(ostring(OTEXT("1")), ostring(buf));
     }
 
     TEST_F(TestStringGetFromType, BooleanFalse)
     {
-        OCI_Boolean flag = FALSE;
+        OCI_Boolean flag = 0;
         otext buf[256] = {};
 
-        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_BOOLEAN, 0, &flag, sizeof(flag), buf, sizeof(buf), FALSE), 0u);
-        ASSERT_EQ(ostring(OTEXT("FALSE")), ostring(buf));
+        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_BOOLEAN, 0, &flag, sizeof(flag), buf, sizeof(buf), 0), 0u);
+        ASSERT_EQ(ostring(OTEXT("0")), ostring(buf));
     }
 
     TEST_F(TestStringGetFromType, BooleanSizeQuery)
     {
         /* sizing call for a BOOLEAN without a buffer */
 
-        OCI_Boolean flag = FALSE;
-        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_BOOLEAN, 0, &flag, sizeof(flag), nullptr, 0, FALSE), 0u);
+        OCI_Boolean flag = 0;
+        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_BOOLEAN, 0, &flag, sizeof(flag), nullptr, 0, 0), 0u);
     }
 
     TEST_F(TestStringGetFromType, TextQuoting)
@@ -670,7 +670,7 @@ namespace TestCApi
         otext txt[] = OTEXT("it's");
         const auto dbsz = OCI_TestBindDbTextSize();
 
-        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_TEXT, 0, txt, 4 * dbsz, buf, sizeof(buf), TRUE), 0u);
+        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_TEXT, 0, txt, 4 * dbsz, buf, sizeof(buf), 1), 0u);
         ASSERT_EQ(OTEXT('\''), buf[0]);
     }
 
@@ -683,7 +683,7 @@ namespace TestCApi
         unsigned char raw[] = { 0x01, 0xAB };
         otext buf[256] = {};
 
-        ASSERT_EQ(0u, OCI_TestStringGetFromType(conn, OCI_CDT_RAW, 0, raw, sizeof(raw), buf, 2, FALSE));
+        ASSERT_EQ(0u, OCI_TestStringGetFromType(conn, OCI_CDT_RAW, 0, raw, sizeof(raw), buf, 2, 0));
     }
 
     TEST_F(TestStringGetFromType, CursorFromStatement)
@@ -695,7 +695,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select 1 from dual")));
 
         otext buf[256] = {};
-        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_CURSOR, 0, stmt, 0, buf, sizeof(buf), FALSE), 0u);
+        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_CURSOR, 0, stmt, 0, buf, sizeof(buf), 0), 0u);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
     }
@@ -762,7 +762,7 @@ namespace TestCApi
         const auto blob = OCI_GetLob(rs, 2);
         ASSERT_NE(nullptr, blob);
 
-        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_LOB, OCI_BLOB, blob, 0, nullptr, 0, FALSE), 0u);
+        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_LOB, OCI_BLOB, blob, 0, nullptr, 0, 0), 0u);
     }
 
     TEST_F(TestStringFromTypeData, LobConverts)
@@ -774,7 +774,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, blob);
 
         otext out[512] = {};
-        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_LOB, OCI_BLOB, blob, 0, out, sizeof(out), FALSE), 0u);
+        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_LOB, OCI_BLOB, blob, 0, out, sizeof(out), 0), 0u);
     }
 
     TEST_F(TestStringFromTypeData, LongConverts)
@@ -788,7 +788,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, lg);
 
         otext out[512] = {};
-        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_LONG, OCI_CLONG, lg, 0, out, sizeof(out), FALSE), 0u);
+        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_LONG, OCI_CLONG, lg, 0, out, sizeof(out), 0), 0u);
     }
 
     TEST_F(TestStringFromTypeData, RawConverts)
@@ -796,7 +796,7 @@ namespace TestCApi
         unsigned char raw[] = { 0x01, 0xAB };
         otext out[512] = {};
 
-        ASSERT_EQ(4u, OCI_TestStringGetFromType(conn, OCI_CDT_RAW, 0, raw, sizeof(raw), out, sizeof(out), FALSE));
+        ASSERT_EQ(4u, OCI_TestStringGetFromType(conn, OCI_CDT_RAW, 0, raw, sizeof(raw), out, sizeof(out), 0));
         ASSERT_EQ(ostring(OTEXT("01AB")), ostring(out));
     }
 
@@ -807,7 +807,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_FileSetName(file, OTEXT("SOME_DIR"), OTEXT("file.bin")));
 
         otext out[512] = {};
-        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_FILE, OCI_BFILE, file, 0, out, sizeof(out), FALSE), 0u);
+        ASSERT_GT(OCI_TestStringGetFromType(conn, OCI_CDT_FILE, OCI_BFILE, file, 0, out, sizeof(out), 0), 0u);
 
         ASSERT_TRUE(OCI_FileFree(file));
     }
