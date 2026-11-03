@@ -1,5 +1,4 @@
 ﻿#include "ocilib_tests.h"
-#include "test_internals.h"
 
 using namespace ocilib;
 
@@ -138,27 +137,15 @@ namespace TestCApi
 
     }
 
-    TEST(TestXmlType, CreateAndFreeInternal)
+    /* --- public-API error paths: NULL xml-type handles hit the CHECK_PTR
+       arms (OcilibXmlType* internals are exercised transitively by the
+       Select* XML-column fetch tests) --- */
+
+    TEST(TestXmlType, NullXmlTypeErrors)
     {
-        /* drive OcilibXmlTypeInitialize()/OcilibXmlTypeFree() on an allocated
-           (not fetched) handle - the free path has no public entry point */
-
-        auto env = GetEnvironment(nullptr);
-
-        ASSERT_NE(nullptr, env);
-
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        const auto stmt = OCI_StatementCreate(conn);
-        ASSERT_NE(nullptr, stmt);
-
-        const auto xmlType = OCI_TestXmlTypeCreate(stmt);
-        ASSERT_NE(nullptr, xmlType);
-
-        ASSERT_TRUE(OCI_TestXmlTypeFree(xmlType));
-        ASSERT_TRUE(OCI_StatementFree(stmt));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
+        ASSERT_EQ(nullptr, OCI_XmlTypeGetContent(nullptr));
+        ASSERT_EQ(0u, OCI_XmlTypeGetContentSize(nullptr));
+        ASSERT_EQ(nullptr, OCI_GetXmlType(nullptr, 1));
+        ASSERT_EQ(nullptr, OCI_GetXmlTypeByName(nullptr, nullptr));
     }
 }

@@ -38,8 +38,8 @@ namespace TestCppApi
         JsonNode number = json.CreateNumber(num);
         ASSERT_EQ(Json::NodeNumber, number.GetType());
 
-        JsonNode boolean = json.CreateBoolean(true);
-        ASSERT_EQ(Json::NodeBoolean, boolean.GetType());
+        JsonNode OCI_Boolean = json.CreateBoolean(true);
+        ASSERT_EQ(Json::NodeBoolean, OCI_Boolean.GetType());
 
         Raw bin = { 0xAB, 0xCD };
         JsonNode binary = json.CreateBinary(bin);
@@ -78,8 +78,8 @@ namespace TestCppApi
         Number num(env, 1.5);
         JsonNode number = json.CreateNumber(num);
 
-        JsonNode boolean = json.CreateBoolean(false);
-        ASSERT_FALSE(boolean.GetBoolean());
+        JsonNode OCI_Boolean = json.CreateBoolean(false);
+        ASSERT_FALSE(OCI_Boolean.GetBoolean());
 
         Raw bin1 = { 0xAB, 0xCD };
         Raw bin2 = { 0x12 };

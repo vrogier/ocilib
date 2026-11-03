@@ -1,5 +1,4 @@
 #include "ocilib_tests.h"
-#include "test_internals.h"
 
 namespace TestCApi
 {
@@ -725,55 +724,67 @@ namespace TestCApi
         ASSERT_FALSE(OCI_FetchSeek(rs, OCI_SFD_RELATIVE, -10));
     }
 
-    /* --- legacy fetch path and internal initialize --- */
+    /* --- public-API coverage of the dropped OcilibResultset* /
+       OcilibEnvSetScrollableCursors internals: OCI_SetFetchMode /
+       OCI_GetFetchMode / OCI_FetchSeek / OCI_FetchPrev / OCI_FetchFirst /
+       OCI_FetchLast / OCI_GetRowCount --- */
 
-    class TestResultsetLegacy : public ::testing::Test
+    TEST(TestResultset, FetchModeGetSet)
     {
-    protected:
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
 
-        void SetUp() override
-        {
-            const auto env = GetEnvironment(nullptr);
-            ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
 
-            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-            ASSERT_NE(nullptr, conn);
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select 1 as n from dual")));
 
-            stmt = OCI_StatementCreate(conn);
-            ASSERT_NE(nullptr, stmt);
+        /* OcilibStatement* fetch-mode internal path via OCI_SetFetchMode /
+           OCI_GetFetchMode */
+        ASSERT_TRUE(OCI_SetFetchMode(stmt, OCI_SFM_SCROLLABLE));
+        ASSERT_EQ((OCI_FetchMode)OCI_SFM_SCROLLABLE, OCI_GetFetchMode(stmt));
+        ASSERT_TRUE(OCI_SetFetchMode(stmt, OCI_SFM_DEFAULT));
+        ASSERT_EQ((OCI_FetchMode)OCI_SFM_DEFAULT, OCI_GetFetchMode(stmt));
 
-            ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select 1 as n from dual union all select 2 from dual order by n")));
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
 
-            rs = OCI_GetResultset(stmt);
-            ASSERT_NE(nullptr, rs);
-        }
-
-        void TearDown() override
-        {
-            OCI_StatementFree(stmt);
-            OCI_ConnectionFree(conn);
-        }
-
-        OCI_Connection* conn{ nullptr };
-        OCI_Statement*  stmt{ nullptr };
-        OCI_Resultset*  rs{ nullptr };
-    };
-
-    TEST_F(TestResultsetLegacy, FetchViaOciStmtFetch)
+    TEST(TestResultset, FetchSeekRoundtrip)
     {
-        // force the legacy OCIStmtFetch() call instead of OCIStmtFetch2()
-        const auto old_scroll = OCI_TestEnvSetScrollableCursors(conn, FALSE);
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+        ASSERT_TRUE(OCI_SetFetchMode(stmt, OCI_SFM_SCROLLABLE));
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select 1 as n from dual union all select 2 from dual order by 1")));
+        ASSERT_TRUE(OCI_Execute(stmt));
+
+        const auto rs = OCI_GetResultset(stmt);
+        ASSERT_NE(nullptr, rs);
+
+        /* OcilibResultset* fetch/seek internals via public fetch API */
         ASSERT_TRUE(OCI_FetchNext(rs));
         ASSERT_EQ(1, OCI_GetInt(rs, 1));
         ASSERT_TRUE(OCI_FetchNext(rs));
         ASSERT_EQ(2, OCI_GetInt(rs, 1));
-        OCI_TestEnvSetScrollableCursors(conn, old_scroll);
-    }
+        ASSERT_TRUE(OCI_GetRowCount(rs) >= 2u);
+        ASSERT_TRUE(OCI_FetchPrev(rs));
+        ASSERT_EQ(1, OCI_GetInt(rs, 1));
+        ASSERT_TRUE(OCI_FetchLast(rs));
+        ASSERT_EQ(2, OCI_GetInt(rs, 1));
+        ASSERT_TRUE(OCI_FetchFirst(rs));
+        ASSERT_EQ(1, OCI_GetInt(rs, 1));
+        ASSERT_TRUE(OCI_FetchSeek(rs, OCI_SFD_RELATIVE, 1));
+        ASSERT_EQ(2, OCI_GetInt(rs, 1));
 
-    TEST_F(TestResultsetLegacy, ResultsetInitialize)
-    {
-        // internal entry point (dead public path)
-        ASSERT_TRUE(OCI_TestResultsetInitialize(rs));
-        ASSERT_EQ(0u, OCI_GetCurrentRow(rs));
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 }

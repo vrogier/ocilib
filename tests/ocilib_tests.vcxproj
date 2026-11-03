@@ -151,7 +151,6 @@
     <ClCompile Include="TestLob.cpp" />
     <ClCompile Include="TestLobCpp.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="test_internals.c" />
     <ClCompile Include="TestLong.cpp" />
     <ClCompile Include="TestNotifications.cpp" />
     <ClCompile Include="TestNumber.cpp" />
@@ -351,7 +350,6 @@
     <ClInclude Include="EnvironmentManager.h" />
     <ClInclude Include="ocilib_tests.h" />
     <ClInclude Include="LeakListener.h" />
-    <ClInclude Include="test_internals.h" />
     <ClInclude Include="TestManager.h" />
   </ItemGroup>
   <ItemGroup>

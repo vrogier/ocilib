@@ -1,5 +1,4 @@
     #include "ocilib_tests.h"
-#include "test_internals.h"
 
 namespace TestCppApi
 {

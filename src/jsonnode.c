@@ -1954,6 +1954,7 @@ OCI_Boolean OcilibJsonNodeSetNull
     CHECK_NULL(hnd);
 
     node->handle = hnd;
+    node->type   = OCI_JNT_NULL;
 
     SET_SUCCESS();
 

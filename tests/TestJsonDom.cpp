@@ -180,12 +180,12 @@ namespace TestCApi
         OCI_JsonNodeSetField(root, OTEXT("num"), numNode);
         OCI_JsonNodeFree(numNode);
 
-        OCI_JsonNode* boolean = OCI_JsonNodeCreateBoolean(json, TRUE);
-        ASSERT_TRUE(OCI_JsonNodeGetBoolean(boolean));
-        ASSERT_TRUE(OCI_JsonNodeSetBoolean(boolean, FALSE));
-        ASSERT_FALSE(OCI_JsonNodeGetBoolean(boolean));
-        OCI_JsonNodeSetField(root, OTEXT("bool"), boolean);
-        OCI_JsonNodeFree(boolean);
+        OCI_JsonNode* OCI_Boolean = OCI_JsonNodeCreateBoolean(json, TRUE);
+        ASSERT_TRUE(OCI_JsonNodeGetBoolean(OCI_Boolean));
+        ASSERT_TRUE(OCI_JsonNodeSetBoolean(OCI_Boolean, FALSE));
+        ASSERT_FALSE(OCI_JsonNodeGetBoolean(OCI_Boolean));
+        OCI_JsonNodeSetField(root, OTEXT("bool"), OCI_Boolean);
+        OCI_JsonNodeFree(OCI_Boolean);
 
         OCI_JsonNode* nullNode = OCI_JsonNodeCreateNull(json);
         ASSERT_TRUE(OCI_JsonNodeIsNull(nullNode));

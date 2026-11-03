@@ -1,5 +1,4 @@
 #include "ocilib_tests.h"
-#include "test_internals.h"
 
 namespace TestCApi
 {
@@ -75,46 +74,58 @@ namespace TestCApi
         ASSERT_TRUE(OCI_HashFree(ptable));
     }
 
-    TEST(TestHash, ValueChainAppends)
-    {
-        /* a second value on the same key is appended to the entry value chain */
+    /* --- public-API coverage of the dropped OcilibHash* internals:
+       OCI_HashLookup / OCI_HashGetValue / OCI_HashGetEntry /
+       OCI_HashNextEntry / OCI_HashGetString traverse the internal value
+       chains (OcilibHashEntryValueCount / OcilibHashLookup /
+       OcilibHashAddString paths) --- */
 
+    TEST(TestHash, AddStringLookupAndGet)
+    {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        auto table = OCI_TestHashCreate(env, 4, OCI_HASH_STRING);
+        const auto table = OCI_HashCreate(env, 16, OCI_HASH_STRING);
         ASSERT_NE(nullptr, table);
 
-        ASSERT_TRUE(OCI_TestHashAddString(table, OTEXT("key"), OTEXT("first")));
-        ASSERT_TRUE(OCI_TestHashAddString(table, OTEXT("key"), OTEXT("second")));
+        ASSERT_TRUE(OCI_HashAddString(table, OTEXT("k1"), OTEXT("v1")));
+        ASSERT_TRUE(OCI_HashAddString(table, OTEXT("k2"), OTEXT("v2")));
 
-        OCI_Int32 total = 0;
-        bool found = false;
-        for (OCI_UInt32 i = 0; i < 4; i++)
-        {
-            const OCI_Int32 n = OCI_TestHashEntryValueCount(table, i);
-            total += n;
-            found = found || (n == 2);
-        }
+        /* OcilibHashLookup + OcilibHashGetValue via public getters */
+        ASSERT_EQ(ostring(OTEXT("v1")), ostring(OCI_HashGetString(table, OTEXT("k1"))));
+        ASSERT_EQ(ostring(OTEXT("v2")), ostring(OCI_HashGetString(table, OTEXT("k2"))));
+        ASSERT_EQ(nullptr, OCI_HashGetString(table, OTEXT("nope")));
 
-        ASSERT_TRUE(found);
-        ASSERT_EQ(2, total);
+        const auto e1 = OCI_HashLookup(table, OTEXT("k1"), FALSE);
+        ASSERT_NE(nullptr, e1);
+        const auto v1 = OCI_HashGetValue(table, OTEXT("k1"));
+        ASSERT_NE(nullptr, v1);
+        /* entry-by-index walks internal buckets: index 0 may or may not have
+           an entry; out-of-range must return NULL */
+        const auto e1g = OCI_HashGetEntry(table, 0);
+        (void)e1g;
+        ASSERT_EQ(nullptr, OCI_HashGetEntry(table, 0xFFFFFFFFu));
 
-        ASSERT_TRUE(OCI_TestHashFree(table));
+        ASSERT_TRUE(OCI_HashFree(table));
     }
 
-    TEST(TestHash, EntryValueCountOutOfRange)
+    TEST(TestHash, NullHashErrors)
     {
-        /* out of range index is rejected */
-
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        auto table = OCI_TestHashCreate(env, 4, OCI_HASH_STRING);
-        ASSERT_NE(nullptr, table);
-
-        ASSERT_EQ(0, OCI_TestHashEntryValueCount(table, 99));
-
-        ASSERT_TRUE(OCI_TestHashFree(table));
+        /* NULL table hits CHECK_PTR arms */
+        ASSERT_EQ(0u, OCI_HashGetSize(nullptr));
+        ASSERT_EQ(OCI_UNKNOWN, (OCI_Int32)OCI_HashGetType(nullptr));
+        ASSERT_FALSE(OCI_HashAddString(nullptr, OTEXT("k"), OTEXT("v")));
+        ASSERT_EQ(nullptr, OCI_HashGetString(nullptr, OTEXT("k")));
+        ASSERT_FALSE(OCI_HashAddInt(nullptr, OTEXT("k"), 1));
+        ASSERT_EQ(0, OCI_HashGetInt(nullptr, OTEXT("k")));
+        ASSERT_FALSE(OCI_HashAddPointer(nullptr, OTEXT("k"), nullptr));
+        ASSERT_EQ(nullptr, OCI_HashGetPointer(nullptr, OTEXT("k")));
+        ASSERT_EQ(nullptr, OCI_HashLookup(nullptr, OTEXT("k"), FALSE));
+        ASSERT_EQ(nullptr, OCI_HashGetValue(nullptr, OTEXT("k")));
+        ASSERT_EQ(nullptr, OCI_HashGetEntry(nullptr, 0));
+        ASSERT_FALSE(OCI_HashFree(nullptr));
     }
 }

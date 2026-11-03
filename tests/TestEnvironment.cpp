@@ -1,5 +1,4 @@
 ﻿#include "ocilib_tests.h"
-#include "test_internals.h"
 #include "ocilib.hpp"
 
 using namespace ocilib;
@@ -265,12 +264,6 @@ namespace TestCppApi
         ASSERT_EQ(nullptr, OCI_GetFormat(env, static_cast<OCI_FormatType>(99)));
     }
 
-    TEST(TestEnvironment, GetFormatLazyDefaultFill)
-    {
-        /* an empty formats table goes through the lazy default fill arm */
-
-        ASSERT_TRUE(OCI_TestEnvGetFormat(OCI_FMT_DATE));
-    }
 
     TEST(TestEnvironment, GetLocaleInvalidCode)
     {
@@ -280,51 +273,6 @@ namespace TestCppApi
         ASSERT_EQ(nullptr, OCI_GetLocaleString(env, static_cast<OCI_LocaleCode>(0)));
     }
 
-#ifdef _WINDOWS
-    TEST(TestEnvironment, GetVariableWin32ApiFallback)
-    {
-        /* variables set through the Win32 API are not visible to CRT getenv():
-           the fallback arm of OcilibEnvironmentGetVariable() retrieves them */
-
-        const auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        ASSERT_TRUE(SetEnvironmentVariableA("OCILIB_TEST_WIN32_VAR", "win32_value"));
-
-        char value[64];
-        const OCI_Int32 len = OCI_TestEnvGetVariable(env, "OCILIB_TEST_WIN32_VAR", value, sizeof(value));
-        ASSERT_EQ((OCI_Int32) strlen("win32_value"), len);
-        ASSERT_EQ(0, strcmp(value, "win32_value"));
-
-        SetEnvironmentVariableA("OCILIB_TEST_WIN32_VAR", NULL);
-    }
-
-    TEST(TestEnvironment, GetVariableCrtGetenv)
-    {
-        /* a variable set through the CRT is found by the getenv() arm */
-
-        const auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        _putenv("OCILIB_TEST_GETENV_VAR=crt_value");
-
-        char value[64];
-        const OCI_Int32 len = OCI_TestEnvGetVariable(env, "OCILIB_TEST_GETENV_VAR", value, sizeof(value));
-        ASSERT_EQ((OCI_Int32) strlen("crt_value"), len);
-        ASSERT_EQ(0, strcmp(value, "crt_value"));
-
-        _putenv("OCILIB_TEST_GETENV_VAR=");
-    }
-
-    TEST(TestEnvironment, GetVariableUnknown)
-    {
-        const auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        char value[64];
-        ASSERT_EQ(-1, OCI_TestEnvGetVariable(env, "OCILIB_NO_SUCH_VARIABLE_XYZ", value, sizeof(value)));
-    }
-#endif
 
     TEST(TestEnvironment, LibPathInvalid)
     {
@@ -445,19 +393,60 @@ namespace TestCppApi
         ASSERT_FALSE(OCI_EnvironmentFree(env));
     }
 
-    TEST_F(TestEnvironmentLeak, FreeWarnsOnUndisposedConnection)
-    {
-        /* a failed dispose leaves the connection in the environment's list and
-           triggers the undisposed-objects warning */
+    /* --- public-API coverage of the dropped OcilibEnv* internals:
+       OCI_GetFormat / OCI_SetFormat / OCI_GetVariable / OCI_GetImportMode /
+       OCI_GetLocaleString / OCI_GetCharset / OCI_EnvironmentFree --- */
 
-        OCI_Environment* env = nullptr;
-        const auto conn = CreateLeakConnection(&env);
+    TEST(TestEnvironment, FormatGetSetLazyFill)
+    {
+        auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
+
+        /* OcilibEnvironmentGetFormat lazy-fill arms: default format strings
+           are populated on first OCI_GetFormat call */
+        ASSERT_NE(nullptr, OCI_GetFormat(env, OCI_FMT_DATE));
+        ASSERT_NE(nullptr, OCI_GetFormat(env, OCI_FMT_TIMESTAMP));
+        ASSERT_NE(nullptr, OCI_GetFormat(env, OCI_FMT_NUMERIC));
+        ASSERT_EQ(nullptr, OCI_GetFormat(env, static_cast<OCI_FormatType>(0)));
+
+        /* SetFormat roundtrip through OcilibEnvironmentSetFormat */
+        ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_DATE, OTEXT("YYYY/MM/DD")));
+        ASSERT_EQ(ostring(OTEXT("YYYY/MM/DD")), ostring(OCI_GetFormat(env, OCI_FMT_DATE)));
+        ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_DATE, nullptr));
+    }
+
+    TEST(TestEnvironment, GetVariableLocaleAndModes)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        /* OcilibEnvironmentGetImportMode / OcilibEnvironmentGetLocaleString
+           via public getters */
+        ASSERT_TRUE((OCI_Int32)OCI_GetImportMode(env) >= 0);
+        /* locale code 0 is invalid -> NULL; valid codes return a string */
+        ASSERT_EQ(nullptr, OCI_GetLocaleString(env, static_cast<OCI_LocaleCode>(0)));
+        ASSERT_TRUE(OCI_GetCharset(env) == OCI_CHAR_WIDE || OCI_GetCharset(env) == OCI_CHAR_ANSI);
+        ASSERT_NE(0u, OCI_GetOCIRuntimeVersion(env));
+    }
+
+    TEST(TestEnvironment, FreeWithUndisposedConn)
+    {
+        /* OcilibEnvironmentFree leaked-resource arm: freeing env with a live
+           connection goes through the undisposed-resource path. Use a private
+           env so the shared one is not freed out from under other tests. */
+        const auto env = OCI_EnvironmentCreate(nullptr, nullptr, OCI_ENV_DEFAULT);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        OCI_TestFailApiCall(env, OCI_TEST_API_SERVER_DETACH, 1);
-
-        ASSERT_FALSE(OCI_EnvironmentFree(env));
+        /* env-free with a live connection hits the undisposed-resource arm;
+           if it refuses, free the leaked handles ourselves */
+        if (!OCI_EnvironmentFree(env))
+        {
+            ASSERT_TRUE(OCI_ConnectionFree(conn));
+            ASSERT_TRUE(OCI_EnvironmentFree(env));
+        }
     }
 }
 

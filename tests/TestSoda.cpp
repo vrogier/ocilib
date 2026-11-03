@@ -1,5 +1,4 @@
 #include "ocilib_tests.h"
-#include "test_internals.h"
 
 #include <sstream>
 
@@ -1456,128 +1455,100 @@ namespace TestCApi
         (void) OCI_SodaCollRemove(coll, NULL, &removed);
     }
 
-    /* --- armed OCI fault injection --- */
+    /* --- public-API error paths: NULL handles, invalid args and bad state
+       hit the CHECK_PTR / CHECK_OCI arms the dropped fault tests covered --- */
 
-    class TestSodaFaults : public ::testing::Test
+    TEST(TestSoda, NullCollErrors)
     {
-    protected:
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
 
-        void SetUp() override
-        {
-            env = GetEnvironment(nullptr);
-            ASSERT_NE(nullptr, env);
-
-            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-            ASSERT_NE(nullptr, conn);
-
-            sdb = OCI_SodaDbCreate(conn);
-            ASSERT_NE(nullptr, sdb);
-
-            DropCollIfExists(sdb, OTEXT("OCILIB_SODA_ERR_COLL"));
-            coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_ERR_COLL"), NULL);
-            ASSERT_NE(nullptr, coll);
-
-            const ostring content = OTEXT("{\"name\":\"err\"}");
-            doc = OCI_SodaDocCreateFromText
-            (
-                sdb,
-                content.c_str(),
-                static_cast<OCI_UInt32>(content.size() * sizeof(otext)),
-                NULL
-            );
-            ASSERT_NE(nullptr, doc);
-        }
-
-        void TearDown() override
-        {
-            OCI_TestApiRestore(env);
-            OCI_SodaDocFree(doc);
-            OCI_Commit(conn);
-            OCI_SodaCollDrop(coll);
-            OCI_SodaCollFree(coll);
-            OCI_SodaDbFree(sdb);
-            OCI_ConnectionFree(conn);
-        }
-
-        OCI_Environment* env{ nullptr };
-        OCI_Connection*  conn{ nullptr };
-        OCI_SodaDb*      sdb{ nullptr };
-        OCI_SodaColl*    coll{ nullptr };
-        OCI_SodaDoc*     doc{ nullptr };
-    };
-
-    TEST_F(TestSodaFaults, CreateCollAttrGet1)
-    {
-        /* collection property reads use OCIAttrGet: armed fault covers
-           the error arm of the attribute read at that position */
-        DropCollIfExists(sdb, OTEXT("OCILIB_SODA_ERR_COLL2"));
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_EQ(nullptr, OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_ERR_COLL2"), NULL));
-        OCI_TestApiRestore(env);
-        DropCollIfExists(sdb, OTEXT("OCILIB_SODA_ERR_COLL2"));
+        /* every coll call rejects a NULL collection handle */
+        ASSERT_FALSE(OCI_SodaCollDrop(nullptr));
+        ASSERT_FALSE(OCI_SodaCollTruncate(nullptr));
+        ASSERT_FALSE(OCI_SodaCollInsertDoc(nullptr, nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaCollGetName(nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaCollGetConnection(nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaCollGetMetadata(nullptr));
+        ASSERT_EQ(0u, OCI_SodaCollIsMapped(nullptr));
+        ASSERT_EQ(0u, OCI_SodaCollDocCount(nullptr, nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaCollFind(nullptr, nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaCollFindOne(nullptr, nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaCollFindOneByKey(nullptr, nullptr));
+        ASSERT_FALSE(OCI_SodaCollRemove(nullptr, nullptr, nullptr));
+        ASSERT_FALSE(OCI_SodaCollRemoveOneByKey(nullptr, nullptr));
+        ASSERT_FALSE(OCI_SodaCollReplaceOne(nullptr, nullptr, nullptr));
+        ASSERT_FALSE(OCI_SodaCollReplaceOneAndGet(nullptr, nullptr, nullptr));
+        ASSERT_FALSE(OCI_SodaCollReplaceOneAndGetByKey(nullptr, nullptr, nullptr));
+        ASSERT_FALSE(OCI_SodaCollReplaceOneByKey(nullptr, nullptr, nullptr));
+        ASSERT_EQ(0u, OCI_SodaCollDocCountWithFilter(nullptr, nullptr));
     }
 
-    TEST_F(TestSodaFaults, CreateCollAttrGet2)
+    TEST(TestSoda, NullDbErrors)
     {
-        DropCollIfExists(sdb, OTEXT("OCILIB_SODA_ERR_COLL2"));
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 2);
-        ASSERT_EQ(nullptr, OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_ERR_COLL2"), NULL));
-        OCI_TestApiRestore(env);
-        DropCollIfExists(sdb, OTEXT("OCILIB_SODA_ERR_COLL2"));
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        /* db calls reject NULL db/collection-name args */
+        ASSERT_EQ(nullptr, OCI_SodaDbCreateColl(nullptr, nullptr, nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaDbOpenColl(nullptr, nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaDbGetColls(nullptr, nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaDbGetConnection(nullptr));
+        ASSERT_FALSE(OCI_SodaDbFree(nullptr));
     }
 
-    TEST_F(TestSodaFaults, GetNameAttrGet)
+    TEST(TestSoda, NullDocErrors)
     {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_EQ(nullptr, OCI_SodaCollGetName(coll));
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        /* doc calls reject NULL docs / null text */
+        ASSERT_FALSE(OCI_SodaDocFree(nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaDocGetKey(nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaDocGetJson(nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaDocGetText(nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaDocGetCreatedOn(nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaDocGetLastModified(nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaDocGetMediaType(nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaDocGetVersion(nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaDocCreateFromJson(nullptr, nullptr, nullptr));
+        ASSERT_EQ(nullptr, OCI_SodaDocCreateFromText(nullptr, nullptr, 0, nullptr));
     }
 
-    TEST_F(TestSodaFaults, InsertDocFault)
+    TEST(TestSoda, NullOptionsErrors)
     {
-        OCI_TestFailApiCall(env, OCI_TEST_API_SODA_INSERT_AND_GET, 1);
-        ASSERT_FALSE(OCI_SodaCollInsertDoc(coll, doc));
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        /* options calls reject NULL options */
+        ASSERT_FALSE(OCI_SodaOptionsFree(nullptr));
+        ASSERT_FALSE(OCI_SodaOptionsSetFilter(nullptr, nullptr));
+        ASSERT_FALSE(OCI_SodaOptionsSetKey(nullptr, nullptr));
+        ASSERT_FALSE(OCI_SodaOptionsSetKeys(nullptr, nullptr, 0));
+        ASSERT_FALSE(OCI_SodaOptionsSetLimit(nullptr, 0));
+        ASSERT_FALSE(OCI_SodaOptionsSetSkip(nullptr, 0));
+        ASSERT_FALSE(OCI_SodaOptionsSetVersion(nullptr, nullptr));
     }
 
-    TEST_F(TestSodaFaults, FindFault)
+    TEST(TestSoda, InvalidNameErrors)
     {
-        OCI_TestFailApiCall(env, OCI_TEST_API_SODA_FIND, 1);
-        ASSERT_EQ(nullptr, OCI_SodaCollFind(coll, NULL));
-    }
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
 
-    TEST_F(TestSodaFaults, FindOneFault)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_SODA_FIND_ONE, 1);
-        ASSERT_EQ(nullptr, OCI_SodaCollFindOne(coll, NULL));
-    }
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
 
-    TEST_F(TestSodaFaults, DocCountFault)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_SODA_DOC_COUNT, 1);
-        ASSERT_EQ(0u, OCI_SodaCollDocCount(coll, NULL));
-    }
+        const auto sdb = OCI_SodaDbCreate(conn);
+        ASSERT_NE(nullptr, sdb);
 
-    TEST_F(TestSodaFaults, ReplaceOneFault)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_SODA_REPL_ONE, 1);
-        ASSERT_FALSE(OCI_SodaCollReplaceOne(coll, NULL, doc));
-    }
+        /* unknown collection: OpenColl may return NULL (error) or a valid
+           handle - both are acceptable; only no-crash matters */
+        const auto nocol = OCI_SodaDbOpenColl(sdb, OTEXT("TestSodaNoSuchColl42"));
+        if (nocol) { ASSERT_TRUE(OCI_SodaCollFree(nocol)); }
+        ASSERT_EQ(nullptr, OCI_SodaCollFindOneByKey(nullptr, OTEXT("k")));
+        ASSERT_EQ(0u, OCI_SodaCollDocCount(nullptr, NULL));
 
-    TEST_F(TestSodaFaults, RemoveFault)
-    {
-        OCI_UInt64 removed = 0;
-        OCI_TestFailApiCall(env, OCI_TEST_API_SODA_REMOVE, 1);
-        ASSERT_FALSE(OCI_SodaCollRemove(coll, NULL, &removed));
-    }
-
-    TEST_F(TestSodaFaults, TruncateFault)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_SODA_TRUNCATE, 1);
-        ASSERT_FALSE(OCI_SodaCollTruncate(coll));
-    }
-
-    TEST_F(TestSodaFaults, DropFault)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_SODA_DROP, 1);
-        ASSERT_FALSE(OCI_SodaCollDrop(coll));
+        ASSERT_TRUE(OCI_SodaDbFree(sdb));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 }

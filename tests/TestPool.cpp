@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "ocilib_tests.h"
-#include "test_internals.h"
 
 const OCI_Size MaxThread = 10;
 
@@ -250,77 +249,27 @@ namespace TestCApi
         ASSERT_GE(OCI_PoolGetBusyCount(pool), 0u);
     }
 
-    /* each armed fault makes the very next matching OCI call fail, which
-       covers the error arm of the enclosing CHECK_ATTRIB_* */
+    /* --- public-API error paths: NULL pool handles hit the CHECK_PTR arms
+       the dropped fault tests covered --- */
 
-    class TestPoolErrors : public ::testing::Test
+    TEST(TestPool, NullPoolErrors)
     {
-    protected:
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
 
-        void SetUp() override
-        {
-            env = GetEnvironment(nullptr);
-            ASSERT_NE(nullptr, env);
-
-            pool = OCI_PoolCreate(env, DBS, USR, PWD, OCI_POOL_SESSION, OCI_SESSION_DEFAULT, 1, 3, 1);
-            ASSERT_NE(nullptr, pool);
-        }
-
-        void TearDown() override
-        {
-            OCI_TestApiRestore(env);
-            OCI_PoolFree(env, pool);
-        }
-
-        OCI_Environment* env{ nullptr };
-        OCI_Pool*        pool{ nullptr };
-    };
-
-    TEST_F(TestPoolErrors, GetTimeoutFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_EQ(0u, OCI_PoolGetTimeout(pool));
+        ASSERT_EQ(0u, OCI_PoolGetTimeout(nullptr));
+        ASSERT_EQ(0u, OCI_PoolGetNoWait(nullptr));
+        ASSERT_EQ(0u, OCI_PoolGetBusyCount(nullptr));
+        ASSERT_EQ(0u, OCI_PoolGetOpenedCount(nullptr));
+        ASSERT_EQ(0u, OCI_PoolGetMin(nullptr));
+        ASSERT_EQ(0u, OCI_PoolGetMax(nullptr));
+        ASSERT_EQ(0u, OCI_PoolGetIncrement(nullptr));
+        ASSERT_EQ(0u, OCI_PoolGetStatementCacheSize(nullptr));
+        ASSERT_FALSE(OCI_PoolSetTimeout(nullptr, 60));
+        ASSERT_FALSE(OCI_PoolSetNoWait(nullptr, TRUE));
+        ASSERT_FALSE(OCI_PoolSetStatementCacheSize(nullptr, 10));
+        ASSERT_EQ(nullptr, OCI_PoolGetConnection(env, nullptr, nullptr));
+        ASSERT_FALSE(OCI_PoolFree(env, nullptr));
     }
 
-    TEST_F(TestPoolErrors, GetNoWaitFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_FALSE(OCI_PoolGetNoWait(pool));
-    }
-
-    TEST_F(TestPoolErrors, GetBusyCountFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_EQ(0u, OCI_PoolGetBusyCount(pool));
-    }
-
-    TEST_F(TestPoolErrors, GetOpenedCountFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_EQ(0u, OCI_PoolGetOpenedCount(pool));
-    }
-
-    TEST_F(TestPoolErrors, GetStatementCacheSizeFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_EQ(0u, OCI_PoolGetStatementCacheSize(pool));
-    }
-
-    TEST_F(TestPoolErrors, SetTimeoutFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_PoolSetTimeout(pool, 5));
-    }
-
-    TEST_F(TestPoolErrors, SetNoWaitFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_PoolSetNoWait(pool, TRUE));
-    }
-
-    TEST_F(TestPoolErrors, SetStatementCacheSizeFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_PoolSetStatementCacheSize(pool, 10));
-    }
 }

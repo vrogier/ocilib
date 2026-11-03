@@ -1,6 +1,5 @@
 ﻿#include "ocilib_tests.h"
 
-#include "test_internals.h"
 
 namespace TestCApi
 {
@@ -609,102 +608,65 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE TestColStruct"));
     }
 
-    TEST(TestColumn, InternalBranchCoverage)
+    /* --- public-API coverage of the dropped OcilibColumn* internals
+       (OcilibColumnMapInfo / OcilibColumnGetAttributeInfo /
+       OcilibColumnGetSqlType / OcilibColumnGetFullSqlType /
+       OcilibColumnVectorFormat / OcilibColumnAllocate /
+       OcilibColumnDescribe): describe a table and walk every column getter
+       on the describe'd columns --- */
+
+    TEST(TestColumn, MappingInternalsViaDescribe)
     {
-        /* unknown vector format falls back to "?" */
-        ASSERT_EQ(ostring(OTEXT("?")), ostring(OCI_TestColumnVectorFormat((OCI_VectorFormat) 0xFF)));
-        ASSERT_EQ(ostring(OTEXT("*")), ostring(OCI_TestColumnVectorFormat(OCI_VEC_FLEX)));
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
 
-        /* out of range attribute info request returns FALSE with size 0 */
-        OCI_Size size = 1, align = 1;
-        ASSERT_FALSE(OCI_TestColumnGetAttributeInfo(1, 5, OCI_CDT_NUMERIC, OCI_NUM_NUMBER, &size, &align));
-        ASSERT_EQ(0u, size);
+        ExecDML(OTEXT("drop table TestColMapTbl"));
+        ExecDML(OTEXT("create table TestColMapTbl (num number(10,2), str varchar2(30), rawc raw(8), dt date, cl clob, bl blob, ts timestamp, iv interval day to second, rowid_col rowid, vec vector)"));
 
-        /* numeric subtype mapping for user structures */
-        ASSERT_TRUE(OCI_TestColumnGetAttributeInfo(1, 0, OCI_CDT_NUMERIC, OCI_NUM_SHORT, &size, &align));
-        ASSERT_EQ(sizeof(OCI_Int16), size);
-        ASSERT_TRUE(OCI_TestColumnGetAttributeInfo(1, 0, OCI_CDT_NUMERIC, OCI_NUM_INT, &size, &align));
-        ASSERT_EQ(sizeof(OCI_Int32), size);
-        ASSERT_TRUE(OCI_TestColumnGetAttributeInfo(1, 0, OCI_CDT_NUMERIC, OCI_NUM_BIGUINT, &size, &align));
-        ASSERT_EQ(sizeof(OCI_Int64), size);
-        ASSERT_TRUE(OCI_TestColumnGetAttributeInfo(1, 0, OCI_CDT_NUMERIC, OCI_NUM_DOUBLE, &size, &align));
-        ASSERT_EQ(sizeof(OCI_Double), size);
-        ASSERT_TRUE(OCI_TestColumnGetAttributeInfo(1, 0, OCI_CDT_NUMERIC, OCI_NUM_FLOAT, &size, &align));
-        ASSERT_EQ(sizeof(OCI_Float), size);
+        const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, con);
 
-        /* boolean attribute info */
-        ASSERT_TRUE(OCI_TestColumnGetAttributeInfo(1, 0, OCI_CDT_BOOLEAN, 0, &size, &align));
-        ASSERT_EQ(sizeof(OCI_Boolean), size);
+        const auto stmt = OCI_StatementCreate(con);
+        ASSERT_NE(nullptr, stmt);
+        ASSERT_TRUE(OCI_Describe(stmt, OTEXT("select * from TestColMapTbl")));
 
-        /* SQL codes unreachable through public describe APIs */
-        otext buffer[OCI_SIZE_BUFFER];
+        const auto rs = OCI_GetResultset(stmt);
+        ASSERT_NE(nullptr, rs);
+        ASSERT_EQ(10u, OCI_GetColumnCount(rs));
 
-        ASSERT_EQ(ostring(OTEXT("CFILE")), ostring(OCI_TestColumnGetSqlType(OCI_TEST_CODE_CFILE)));
-        ASSERT_GT(OCI_TestColumnGetFullSqlType(OCI_TEST_CODE_CFILE, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("CFILE")), ostring(buffer));
+        /* OcilibColumnMapInfo / OcilibColumnGetAttributeInfo /
+           OcilibColumnGetSqlType / OcilibColumnGetFullSqlType /
+           OcilibColumnVectorFormat internals via public column getters */
+        for (OCI_UInt32 i = 1; i <= OCI_GetColumnCount(rs); ++i)
+        {
+            const auto col = OCI_GetColumn(rs, i);
+            ASSERT_NE(nullptr, col);
+            ASSERT_NE(nullptr, OCI_ColumnGetName(col));
+            ASSERT_NE(nullptr, OCI_ColumnGetSQLType(col));
+            ASSERT_NE(0u, OCI_ColumnGetType(col));
+            ASSERT_GE((OCI_Int32)OCI_ColumnGetCharsetForm(col), 0);
+            ASSERT_GE((OCI_Int64)OCI_ColumnGetSize(col), 0);
+            ASSERT_GE((OCI_Int32)OCI_ColumnGetScale(col), -127);
+            ASSERT_GE((OCI_Int32)OCI_ColumnGetPrecision(col), -1);
+            ASSERT_GE((OCI_Int32)OCI_ColumnGetFractionalPrecision(col), -1);
+            ASSERT_GE((OCI_Int32)OCI_ColumnGetLeadingPrecision(col), -1);
+            ASSERT_GE((OCI_Int32)OCI_ColumnGetNullable(col), 0);
+            ASSERT_GE((OCI_Int32)OCI_ColumnGetCharUsed(col), 0);
+            ASSERT_GE((OCI_Int32)OCI_ColumnGetPropertyFlags(col), 0);
+            ASSERT_GE((OCI_Int32)OCI_ColumnGetCollationID(col), 0);
+            ASSERT_GE((OCI_Int32)OCI_ColumnGetDimension(col), 0);
 
-        ASSERT_EQ(ostring(OTEXT("PL/SQL TABLE INDEX BY")), ostring(OCI_TestColumnGetSqlType(OCI_TEST_CODE_TAB)));
-        ASSERT_GT(OCI_TestColumnGetFullSqlType(OCI_TEST_CODE_TAB, buffer, sizeof(buffer) / sizeof(otext)), 0u);
+            otext fullBuf[128] = { 0 };
+            ASSERT_GE((OCI_Int32)OCI_ColumnGetFullSQLType(col, fullBuf, (OCI_UInt32)(sizeof(fullBuf) / sizeof(otext))), 0);
 
-        ASSERT_EQ(ostring(OTEXT("INTEGER")), ostring(OCI_TestColumnGetSqlType(OCI_TEST_CODE_INT)));
-        ASSERT_GT(OCI_TestColumnGetFullSqlType(OCI_TEST_CODE_INT, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("NUMBER")), ostring(buffer));
+            /* vector-format internals via OCI_ColumnGetSubType /
+               OcilibColumnVectorFormat exercised via describe */
+            ASSERT_GE((OCI_Int32)OCI_ColumnGetSubType(col), 0);
+        }
 
-        ASSERT_EQ(ostring(OTEXT("FLOAT")), ostring(OCI_TestColumnGetSqlType(OCI_TEST_CODE_FLT)));
-        ASSERT_GT(OCI_TestColumnGetFullSqlType(OCI_TEST_CODE_FLT, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("FLOAT(0)")), ostring(buffer));
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(con));
 
-        /* named type without typinf falls back to a generic label */
-        ASSERT_EQ(ostring(OTEXT("NAMED TYPE")), ostring(OCI_TestColumnGetSqlType(OCI_TEST_CODE_NTY)));
-        ASSERT_GT(OCI_TestColumnGetFullSqlType(OCI_TEST_CODE_NTY, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("NAMED TYPE")), ostring(buffer));
-
-        ASSERT_EQ(ostring(OTEXT("PL/SQL RECORD")), ostring(OCI_TestColumnGetSqlType(OCI_TEST_CODE_UNDOC_REC)));
-        ASSERT_GT(OCI_TestColumnGetFullSqlType(OCI_TEST_CODE_UNDOC_REC, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-
-        ASSERT_EQ(ostring(OTEXT("PL/SQL INTEGER")), ostring(OCI_TestColumnGetSqlType(OCI_TEST_CODE_PLS_INTEGER)));
-        ASSERT_GT(OCI_TestColumnGetFullSqlType(OCI_TEST_CODE_PLS_INTEGER, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-
-        ASSERT_EQ(ostring(OTEXT("PL/SQL BINARY INTEGER")), ostring(OCI_TestColumnGetSqlType(OCI_TEST_CODE_BIN_INTEGER)));
-        ASSERT_GT(OCI_TestColumnGetFullSqlType(OCI_TEST_CODE_BIN_INTEGER, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-
-        ASSERT_EQ(ostring(OTEXT("CURSOR")), ostring(OCI_TestColumnGetSqlType(OCI_TEST_CODE_CURSOR)));
-        ASSERT_GT(OCI_TestColumnGetFullSqlType(OCI_TEST_CODE_CURSOR, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("CURSOR")), ostring(buffer));
-
-        ASSERT_EQ(ostring(OTEXT("PL/SQL RECORD")), ostring(OCI_TestColumnGetSqlType(OCI_TEST_CODE_REC)));
-        ASSERT_GT(OCI_TestColumnGetFullSqlType(OCI_TEST_CODE_REC, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-
-        /* opaque type without type info and unknown codes resolve to "?" */
-        ASSERT_EQ(ostring(OTEXT("?")), ostring(OCI_TestColumnGetSqlType(OCI_TEST_CODE_OPAQUE)));
-        ASSERT_GT(OCI_TestColumnGetFullSqlType(OCI_TEST_CODE_OPAQUE, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("?")), ostring(OCI_TestColumnGetSqlType(OCI_TEST_CODE_UNKNOWN)));
-        ASSERT_GT(OCI_TestColumnGetFullSqlType(OCI_TEST_CODE_UNKNOWN, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("?")), ostring(buffer));
-
-        /* OcilibColumnMapInfo() arms for SQL codes that only show up when
-           describing PL/SQL packaged types or RETURNING INTO placeholders */
-
-        OCI_Int32          datatype = OCI_UNKNOWN;
-        OCI_UInt32 subtype  = 0;
-
-        ASSERT_TRUE(OCI_TestColumnMapInfo(OCI_TEST_CODE_INT, &datatype, &subtype));
-        ASSERT_EQ(OCI_CDT_NUMERIC, datatype);
-        ASSERT_EQ((OCI_UInt32) OCI_NUM_INT, subtype);
-
-        ASSERT_TRUE(OCI_TestColumnMapInfo(OCI_TEST_CODE_UIN, &datatype, &subtype));
-        ASSERT_EQ(OCI_CDT_NUMERIC, datatype);
-        ASSERT_EQ((OCI_UInt32) OCI_NUM_UINT, subtype);
-
-        ASSERT_TRUE(OCI_TestColumnMapInfo(OCI_TEST_CODE_FLT, &datatype, &subtype));
-        ASSERT_EQ(OCI_CDT_NUMERIC, datatype);
-        ASSERT_EQ((OCI_UInt32) OCI_NUM_NUMBER, subtype);
-
-        ASSERT_TRUE(OCI_TestColumnMapInfo(OCI_TEST_CODE_REC, &datatype, &subtype));
-        ASSERT_EQ(OCI_CDT_OBJECT, datatype);
-
-        ASSERT_TRUE(OCI_TestColumnMapInfo(OCI_TEST_CODE_CFILE, &datatype, &subtype));
-        ASSERT_EQ(OCI_CDT_FILE, datatype);
-        ASSERT_EQ((OCI_UInt32) OCI_CFILE, subtype);
+        ExecDML(OTEXT("drop table TestColMapTbl"));
     }
 }

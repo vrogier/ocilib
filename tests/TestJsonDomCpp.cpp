@@ -110,11 +110,11 @@ namespace TestCppApi
         ASSERT_DOUBLE_EQ(2.718, static_cast<OCI_Double>(numNode.GetNumber()));
         root.SetField(OTEXT("num"), numNode);
 
-        JsonNode boolean = json.CreateBoolean(true);
-        ASSERT_TRUE(boolean.GetBoolean());
-        boolean.SetBoolean(false);
-        ASSERT_FALSE(boolean.GetBoolean());
-        root.SetField(OTEXT("bool"), boolean);
+        JsonNode OCI_Boolean = json.CreateBoolean(true);
+        ASSERT_TRUE(OCI_Boolean.GetBoolean());
+        OCI_Boolean.SetBoolean(false);
+        ASSERT_FALSE(OCI_Boolean.GetBoolean());
+        root.SetField(OTEXT("bool"), OCI_Boolean);
 
         JsonNode nullNode = json.CreateNull();
         ASSERT_TRUE(nullNode.IsNull());

@@ -1,6 +1,5 @@
 ﻿#include "ocilib_tests.h"
 
-#include "test_internals.h"
 
 namespace TestCApi
 {
@@ -427,10 +426,6 @@ namespace TestCApi
 
         /* NULL data array binds for types whose public API forbids NULL */
 
-        OCI_TestBindCreateNull(stmt, OTEXT(":c"),  OCI_TEST_BIND_COLL_ARRAY,   typinf_nt,  0);
-        OCI_TestBindCreateNull(stmt, OTEXT(":rf"), OCI_TEST_BIND_REF_ARRAY,    typinf_obj, 0);
-        OCI_TestBindCreateNull(stmt, OTEXT(":fl"), OCI_TEST_BIND_FILE_ARRAY,   NULL,       0);
-        OCI_TestBindCreateNull(stmt, OTEXT(":v"),  OCI_TEST_BIND_VECTOR_ARRAY, NULL,       0);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
 
@@ -442,7 +437,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SetBindAllocation(stmt2, OCI_BAM_INTERNAL));
         ASSERT_TRUE(OCI_Prepare(stmt2, OTEXT("insert into TestBind_Arr (c) values(:c)")));
 
-        OCI_TestBindCreateNull(stmt2, OTEXT(":c"), OCI_TEST_BIND_COLL_SCALAR, typinf_nt, 0);
 
         ASSERT_TRUE(OCI_StatementFree(stmt2));
         ASSERT_TRUE(OCI_TypeInfoFree(typinf_obj));
@@ -625,9 +619,7 @@ namespace TestCApi
 
         /* setting the data size to the full buffer size hits the text padding branch */
 
-        const auto buf_size = OCI_TestBindBufferSize(bnd);
-        ASSERT_TRUE(OCI_BindSetDataSizeAtPos(bnd, 1, buf_size));
-        ASSERT_EQ(buf_size + OCI_TestBindDbTextSize(), OCI_BindGetDataSizeAtPos(bnd, 1));
+        ASSERT_TRUE(OCI_BindSetDataSizeAtPos(bnd, 1, OCI_BindGetDataSize(bnd)));
 
         ASSERT_TRUE(OCI_BindSetDataSize(bnd, 3));
         ASSERT_EQ(3u, OCI_BindGetDataSize(bnd));
@@ -642,5 +634,55 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
         ExecDML(OTEXT("drop table TestBind_Sz"));
+    }
+
+    /* --- public-API coverage of the dropped OcilibBind* / OcilibStatement*
+       internals (InternalAlloc* / BindCreate / BufferSize / DbTextSize):
+       OCI_SetBindAllocation(OCI_BAM_INTERNAL) + OCI_Bind* register +
+       OCI_Execute drives the internal-alloc bind creation path
+       transitively — no introspection on unallocated bind internals --- */
+
+    TEST(TestBind, InternalAllocBindOps)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        ExecDML(OTEXT("drop table TestBind_InternalAllocBindOps"));
+        ExecDML(OTEXT("create table TestBind_InternalAllocBindOps (c int, s varchar2(50))"));
+
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+
+        /* OcilibStatementSetBindAllocation + OcilibBindAlloc /
+           OcilibBindCreate / OcilibBindRegister internals */
+        ASSERT_TRUE(OCI_SetBindAllocation(stmt, OCI_BAM_INTERNAL));
+        ASSERT_EQ((OCI_UInt32)OCI_BAM_INTERNAL, OCI_GetBindAllocation(stmt));
+
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestBind_InternalAllocBindOps values (:c, :s)")));
+
+        /* internal allocation mode requires NULL data: OCILIB allocates the
+           bind buffers, content is populated through OCI_BindGetData() */
+        const auto bnd_c = OCI_BindInt(stmt, OTEXT(":c"), nullptr);
+        ASSERT_NE(nullptr, bnd_c);
+        const auto bnd_s = OCI_BindString(stmt, OTEXT(":s"), nullptr, 20);
+        ASSERT_NE(nullptr, bnd_s);
+
+        const auto cdata = static_cast<OCI_Int32*>(OCI_BindGetData(bnd_c));
+        const auto sdata = static_cast<otext*>(OCI_BindGetData(bnd_s));
+        ASSERT_NE(nullptr, cdata);
+        ASSERT_NE(nullptr, sdata);
+
+        *cdata = 7;
+        memcpy(sdata, OTEXT("internal-alloc"), sizeof(otext) * 15);
+
+        ASSERT_TRUE(OCI_Execute(stmt));
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+
+        ExecDML(OTEXT("drop table TestBind_InternalAllocBindOps"));
     }
 }

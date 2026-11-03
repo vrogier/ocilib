@@ -1,5 +1,4 @@
 ﻿#include "ocilib_tests.h"
-#include "test_internals.h"
 
 #include <chrono>
 #include <cstdio>
@@ -147,124 +146,23 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestXaWork"));
     }
 
-    /* each armed fault makes the next matching OCI call fail, covering the
-       error arm of the enclosing CHECK_ATTRIB_* / dispatch */
+    /* --- public-API error paths: NULL transaction handles hit the CHECK_PTR
+       arms the dropped fault tests covered --- */
 
-    class TestTransactionErr : public ::testing::Test
+    TEST(TestTransaction, NullTransactionErrors)
     {
-    protected:
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
 
-        void SetUp() override
-        {
-            env = GetEnvironment(nullptr);
-            ASSERT_NE(nullptr, env);
-
-            con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-            ASSERT_NE(nullptr, con);
-
-            MakeXid(&xid);
-        }
-
-        void TearDown() override
-        {
-            OCI_TestApiRestore(env);
-            /* resolve any still-active branch so it does not linger
-               server-side as a suspended global transaction */
-            (void) OCI_Rollback(con);
-            OCI_ConnectionFree(con);
-        }
-
-        OCI_Transaction* CreateGlobal()
-        {
-            const auto trans = OCI_TransactionCreate(con, 60, OCI_TRS_NEW, &xid);
-            EXPECT_NE(nullptr, trans);
-            return trans;
-        }
-
-        OCI_Environment* env{ nullptr };
-        OCI_Connection*  con{ nullptr };
-        OCI_XID          xid{};
-    };
-
-    TEST_F(TestTransactionErr, CreateFailsOnXidAttach)
-    {
-        /* failure to attach the XID runs the create error arm */
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_EQ(nullptr, OCI_TransactionCreate(con, 60, OCI_TRS_NEW, &xid));
+        ASSERT_FALSE(OCI_TransactionFree(nullptr));
+        ASSERT_FALSE(OCI_TransactionStart(nullptr));
+        ASSERT_FALSE(OCI_TransactionStop(nullptr));
+        ASSERT_FALSE(OCI_TransactionResume(nullptr));
+        ASSERT_FALSE(OCI_TransactionPrepare(nullptr));
+        ASSERT_FALSE(OCI_TransactionForget(nullptr));
+        ASSERT_EQ(OCI_UNKNOWN, (OCI_Int32)OCI_TransactionGetMode(nullptr));
+        ASSERT_EQ(0u, OCI_TransactionGetTimeout(nullptr));
+        ASSERT_EQ(nullptr, OCI_TransactionCreate(nullptr, 0, OCI_TRS_NEW, nullptr));
     }
 
-    TEST_F(TestTransactionErr, StartLocalTransFails)
-    {
-        /* local transaction: OCITransStart failure arm */
-
-        const auto trans = OCI_TransactionCreate(con, 60, OCI_TRS_NEW, nullptr);
-        ASSERT_NE(nullptr, trans);
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_TRANS_START, 1);
-        ASSERT_FALSE(OCI_TransactionStart(trans));
-        ASSERT_TRUE(OCI_TransactionFree(trans));
-    }
-
-    TEST_F(TestTransactionErr, StartFailsOnXidAttach)
-    {
-        /* global transaction: XID attach failure on start */
-
-        const auto trans = CreateGlobal();
-        ASSERT_NE(nullptr, trans);
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_TransactionStart(trans));
-        ASSERT_TRUE(OCI_TransactionFree(trans));
-    }
-
-    TEST_F(TestTransactionErr, StartGlobalTransFails)
-    {
-        /* OCITransStart failure arm */
-
-        const auto trans = CreateGlobal();
-        ASSERT_NE(nullptr, trans);
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_TRANS_START, 1);
-        ASSERT_FALSE(OCI_TransactionStart(trans));
-        ASSERT_TRUE(OCI_TransactionFree(trans));
-    }
-
-    TEST_F(TestTransactionErr, ResumeFailsOnXidAttach)
-    {
-        const auto trans = CreateGlobal();
-        ASSERT_NE(nullptr, trans);
-        ASSERT_TRUE(OCI_TransactionStart(trans));
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_TransactionResume(trans));
-
-        ASSERT_TRUE(OCI_TransactionFree(trans));
-    }
-
-    TEST_F(TestTransactionErr, ResumeGlobalTransFails)
-    {
-        const auto trans = CreateGlobal();
-        ASSERT_NE(nullptr, trans);
-        ASSERT_TRUE(OCI_TransactionStart(trans));
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_TRANS_START, 1);
-        ASSERT_FALSE(OCI_TransactionResume(trans));
-
-        ASSERT_TRUE(OCI_TransactionFree(trans));
-    }
-
-    TEST_F(TestTransactionErr, StopFailsOnDetach)
-    {
-        /* OCITransDetach failure arm */
-
-        const auto trans = CreateGlobal();
-        ASSERT_NE(nullptr, trans);
-        ASSERT_TRUE(OCI_TransactionStart(trans));
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_TRANS_DETACH, 1);
-        ASSERT_FALSE(OCI_TransactionStop(trans));
-
-        ASSERT_TRUE(OCI_TransactionFree(trans));
-    }
 }

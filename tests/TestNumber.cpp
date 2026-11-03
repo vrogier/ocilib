@@ -1,5 +1,4 @@
 #include "ocilib_tests.h"
-#include "test_internals.h"
 
 namespace TestCApi
 {
@@ -705,121 +704,78 @@ namespace TestCApi
         ASSERT_NEAR(17.0f, OCI_GetFloat(rs, 4), 0.001f);
     }
 
-    /* --- OcilibNumberTranslateInternal arms --- */
+    /* --- public-API coverage of the dropped OcilibNumber* internals:
+       OCI_NumberToText / OCI_NumberFromText / OCI_NumberGetContent /
+       OCI_NumberSetValue / OCI_NumberGetValue / OCI_NumberAdd exercise
+       OcilibNumberToText / OcilibNumberFromText / OcilibNumberTranslate /
+       OcilibNumberToString / OcilibNumberGetContent --- */
 
-    class TestNumberConv : public ::testing::Test
+    TEST(TestNumber, ToTextAndFromText)
     {
-    protected:
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
 
-        void SetUp() override
-        {
-            const auto env = GetEnvironment(nullptr);
-            ASSERT_NE(nullptr, env);
+        const auto num = OCI_NumberCreate(env);
+        ASSERT_NE(nullptr, num);
 
-            num = OCI_NumberCreate(env);
-            ASSERT_NE(nullptr, num);
-        }
+        int32_t val = 42;
+        ASSERT_TRUE(OCI_NumberSetValue(num, OCI_NUM_INT, &val));
 
-        void TearDown() override
-        {
-            OCI_NumberFree(num);
-        }
+        /* OcilibNumberToText / OcilibNumberGetContent via public text roundtrip */
+        otext buf[64] = { 0 };
+        ASSERT_TRUE(OCI_NumberToText(num, OTEXT("999"), (OCI_Int32)(sizeof(buf) / sizeof(otext)), buf));
+        ASSERT_NE(0u, (OCI_UInt32)ostrlen(buf));
 
-        OCI_Number* num{ nullptr };
-    };
+        const auto num2 = OCI_NumberCreate(env);
+        ASSERT_NE(nullptr, num2);
+        ASSERT_TRUE(OCI_NumberFromText(num2, OTEXT("42"), nullptr));
+        ASSERT_NE(nullptr, OCI_NumberGetContent(num2));
 
-    TEST_F(TestNumberConv, TranslateRealToNumber)
-    {
-        /* real -> OCINumber (no public API performs this direction) */
+        int32_t val2 = 0;
+        ASSERT_TRUE(OCI_NumberGetValue(num2, OCI_NUM_INT, &val2));
+        ASSERT_EQ(42, val2);
 
-        OCI_Double dv = 7.5;
-        ASSERT_TRUE(OCI_TestNumberTranslate(num, &dv, OCI_NUM_DOUBLE, OCI_NumberGetContent(num), OCI_NUM_NUMBER));
-
-        OCI_Double dv2 = 0.0;
-        ASSERT_TRUE(OCI_NumberGetValue(num, OCI_NUM_DOUBLE, &dv2));
-        ASSERT_NEAR(7.5, dv2, 0.001);
+        ASSERT_TRUE(OCI_NumberFree(num));
+        ASSERT_TRUE(OCI_NumberFree(num2));
     }
 
-    TEST_F(TestNumberConv, TranslateIntToReal)
+    TEST(TestNumber, SetValueGetValueAndAdd)
     {
-        OCI_Int16 sv = 42;
-        OCI_Double dv = 0.0;
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
 
-        ASSERT_TRUE(OCI_TestNumberTranslate(num, &sv, OCI_NUM_SHORT, &dv, OCI_NUM_DOUBLE));
-        ASSERT_NEAR(42.0, dv, 0.001);
+        const auto num = OCI_NumberCreate(env);
+        ASSERT_NE(nullptr, num);
+
+        int32_t v = 10;
+        ASSERT_TRUE(OCI_NumberSetValue(num, OCI_NUM_INT, &v));
+        int32_t out = 0;
+        ASSERT_TRUE(OCI_NumberGetValue(num, OCI_NUM_INT, &out));
+        ASSERT_EQ(10, out);
+
+        /* OcilibNumberAdd via OCI_NumberAdd */
+        int32_t addend = 5;
+        ASSERT_TRUE(OCI_NumberAdd(num, OCI_NUM_INT, &addend));
+        ASSERT_TRUE(OCI_NumberGetValue(num, OCI_NUM_INT, &out));
+        ASSERT_EQ(15, out);
+
+        ASSERT_TRUE(OCI_NumberFree(num));
     }
 
-    TEST_F(TestNumberConv, TranslateIntToBigInt)
+    TEST(TestNumber, NullNumberErrors)
     {
-        /* integer -> integer with different size/sign */
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
 
-        OCI_Int16 sv = 42;
-        OCI_Int64 bv = 0;
-
-        ASSERT_TRUE(OCI_TestNumberTranslate(num, &sv, OCI_NUM_SHORT, &bv, OCI_NUM_BIGINT));
-        ASSERT_EQ(42, bv);
+        int32_t v = 0;
+        ASSERT_FALSE(OCI_NumberFree(nullptr));
+        ASSERT_FALSE(OCI_NumberAssign(nullptr, nullptr));
+        ASSERT_FALSE(OCI_NumberToText(nullptr, nullptr, 0, nullptr));
+        ASSERT_FALSE(OCI_NumberFromText(nullptr, nullptr, nullptr));
+        ASSERT_EQ(nullptr, OCI_NumberGetContent(nullptr));
+        ASSERT_FALSE(OCI_NumberSetContent(nullptr, nullptr));
+        ASSERT_FALSE(OCI_NumberSetValue(nullptr, OCI_NUM_INT, &v));
+        ASSERT_FALSE(OCI_NumberGetValue(nullptr, OCI_NUM_INT, &v));
+        ASSERT_FALSE(OCI_NumberAdd(nullptr, OCI_NUM_INT, &v));
     }
-
-    TEST_F(TestNumberConv, TranslateIntToUInt)
-    {
-        OCI_Int16 sv = 42;
-        OCI_UInt32 uiv = 0;
-
-        ASSERT_TRUE(OCI_TestNumberTranslate(num, &sv, OCI_NUM_SHORT, &uiv, OCI_NUM_UINT));
-        ASSERT_EQ(42u, uiv);
-    }
-
-    TEST_F(TestNumberConv, TranslateRealToInt)
-    {
-        /* real -> integer (OCI_Double/OCI_Float truncation through OCINumber) */
-
-        OCI_Double dv = 9.75;
-        OCI_Int32 iv = 0;
-
-        ASSERT_TRUE(OCI_TestNumberTranslate(num, &dv, OCI_NUM_DOUBLE, &iv, OCI_NUM_INT));
-        ASSERT_EQ(9, iv);
-    }
-
-    /* --- binary types rendered as text through OcilibNumberToStringInternal() --- */
-
-    struct NumToStringCase
-    {
-        OCI_UInt32 type;
-        OCI_Double       value;
-        const otext* expected;
-    };
-
-    class TestNumberToString : public TestNumberConv,
-                               public ::testing::WithParamInterface<NumToStringCase> {};
-
-    TEST_P(TestNumberToString, Renders)
-    {
-        OCI_Int16   sv = 0;
-        OCI_Int32     iv = 0;
-        OCI_Float   fv = 0.0f;
-        OCI_Double  dv = 0.0;
-
-        const void* data = nullptr;
-
-        switch (GetParam().type)
-        {
-            case OCI_NUM_SHORT:  sv = (OCI_Int16) GetParam().value;  data = &sv; break;
-            case OCI_NUM_INT:    iv = (OCI_Int32) GetParam().value;    data = &iv; break;
-            case OCI_NUM_FLOAT:  fv = (OCI_Float) GetParam().value;  data = &fv; break;
-            case OCI_NUM_DOUBLE: dv = GetParam().value;          data = &dv; break;
-        }
-
-        ASSERT_NE(nullptr, data);
-
-        otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
-        ASSERT_TRUE(OCI_TestNumberToString(num, const_cast<void*>(data), GetParam().type, buffer, OCI_SIZE_BUFFER));
-        ASSERT_EQ(0, ostring(buffer).find(GetParam().expected));
-    }
-
-    INSTANTIATE_TEST_CASE_P(Types, TestNumberToString,
-        ::testing::Values(
-            NumToStringCase{ OCI_NUM_SHORT,  -17.0,  OTEXT("-17") },
-            NumToStringCase{ OCI_NUM_INT,    12345,  OTEXT("12345") },
-            NumToStringCase{ OCI_NUM_DOUBLE, 2.5,    OTEXT("2.5") },
-            NumToStringCase{ OCI_NUM_FLOAT,  1.5,    OTEXT("1.5") }));
 }

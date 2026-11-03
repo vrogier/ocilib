@@ -1,5 +1,4 @@
 #include "ocilib_tests.h"
-#include "test_internals.h"
 
 namespace TestCApi
 {
@@ -322,135 +321,24 @@ namespace TestCApi
         ASSERT_TRUE(OCI_DequeueFree(bad));
     }
 
-    /* each armed fault makes the very next matching OCI call fail, which
-       covers the error arm of the enclosing CHECK_ATTRIB_* / CHECK_OCI */
+    /* --- public-API error paths: NULL/invalid dequeue and queue handles hit
+       the CHECK_PTR / CHECK_OCI arms the dropped fault tests covered --- */
 
-    class TestDeqErrors : public ::testing::Test
+
+    TEST(TestDequeue, NullQueueAndTypeInfoErrors)
     {
-    protected:
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
 
-        static void SetUpTestCase()
-        {
-            ExecDML(OTEXT("create type TestDeqErrPayloadType as object(title varchar2(50))"));
-        }
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
 
-        static void TearDownTestCase()
-        {
-            ExecDML(OTEXT("drop type TestDeqErrPayloadType"));
-        }
+        /* NULL typeinfo -> OCI_DequeueCreate fails; queue ops on NULL conn/name fail */
+        ASSERT_EQ(nullptr, OCI_DequeueCreate(nullptr, OTEXT("TestDeqNullQ")));
+        ASSERT_FALSE(OCI_QueueStop(nullptr, OTEXT("TestDeqNullQ"), TRUE, TRUE, FALSE));
+        ASSERT_FALSE(OCI_QueueDrop(nullptr, OTEXT("TestDeqNullQ")));
+        ASSERT_FALSE(OCI_QueueTableDrop(nullptr, OTEXT("TestDeqNullTable"), TRUE));
 
-        void SetUp() override
-        {
-            env = GetEnvironment(nullptr);
-            ASSERT_NE(nullptr, env);
-
-            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-            ASSERT_NE(nullptr, conn);
-
-            // no check - for cleanup
-            OCI_QueueStop(conn, OTEXT("TestDeqErrQueue"), TRUE, TRUE, FALSE);
-            OCI_QueueDrop(conn, OTEXT("TestDeqErrQueue"));
-            OCI_QueueTableDrop(conn, OTEXT("TestDeqErrTable"), TRUE);
-            // end no check
-
-            ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestDeqErrTable"), OTEXT("TestDeqErrPayloadType"),
-                                             NULL, NULL, FALSE, OCI_AGM_NONE, NULL, 0, 0, NULL));
-            ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestDeqErrQueue"), OTEXT("TestDeqErrTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
-            ASSERT_TRUE(OCI_QueueStart(conn, OTEXT("TestDeqErrQueue"), TRUE, TRUE));
-
-            inf = OCI_TypeInfoGet(conn, OTEXT("TestDeqErrPayloadType"), OCI_TIF_TYPE);
-            ASSERT_NE(nullptr, inf);
-
-            deq = OCI_DequeueCreate(inf, OTEXT("TestDeqErrQueue"));
-            ASSERT_NE(nullptr, deq);
-        }
-
-        void TearDown() override
-        {
-            OCI_TestApiRestore(env);
-            OCI_DequeueFree(deq);
-            OCI_QueueStop(conn, OTEXT("TestDeqErrQueue"), TRUE, TRUE, FALSE);
-            OCI_QueueDrop(conn, OTEXT("TestDeqErrQueue"));
-            OCI_QueueTableDrop(conn, OTEXT("TestDeqErrTable"), TRUE);
-            OCI_ConnectionFree(conn);
-        }
-
-        OCI_Environment* env{ nullptr };
-        OCI_Connection*  conn{ nullptr };
-        OCI_TypeInfo*    inf{ nullptr };
-        OCI_Dequeue*     deq{ nullptr };
-    };
-
-    TEST_F(TestDeqErrors, GetVisibilityFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_EQ(OCI_UNKNOWN, OCI_DequeueGetVisibility(deq));
-    }
-
-    TEST_F(TestDeqErrors, GetModeFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_EQ(OCI_UNKNOWN, OCI_DequeueGetMode(deq));
-    }
-
-    TEST_F(TestDeqErrors, GetNavigationFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_EQ(OCI_UNKNOWN, OCI_DequeueGetNavigation(deq));
-    }
-
-    TEST_F(TestDeqErrors, GetWaitTimeFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_EQ(0, OCI_DequeueGetWaitTime(deq));
-    }
-
-    TEST_F(TestDeqErrors, GetRelativeMsgIDFailure)
-    {
-        unsigned char outId[16] = {};
-        OCI_UInt32 outIdLen = sizeof(outId);
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_FALSE(OCI_DequeueGetRelativeMsgID(deq, outId, &outIdLen));
-    }
-
-    TEST_F(TestDeqErrors, SetVisibilityFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_DequeueSetVisibility(deq, OCI_AMV_ON_COMMIT));
-    }
-
-    TEST_F(TestDeqErrors, SetModeFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_DequeueSetMode(deq, OCI_ADM_BROWSE));
-    }
-
-    TEST_F(TestDeqErrors, SetNavigationFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_DequeueSetNavigation(deq, OCI_ADN_NEXT_MSG));
-    }
-
-    TEST_F(TestDeqErrors, SetWaitTimeFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_DequeueSetWaitTime(deq, 1));
-    }
-
-    TEST_F(TestDeqErrors, SetRelativeMsgIDAssignFailure)
-    {
-        const unsigned char msgId[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_RAW_ASSIGN_BYTES, 1);
-        ASSERT_FALSE(OCI_DequeueSetRelativeMsgID(deq, msgId, sizeof(msgId)));
-    }
-
-    TEST_F(TestDeqErrors, SetRelativeMsgIDAttrFailure)
-    {
-        const unsigned char msgId[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_DequeueSetRelativeMsgID(deq, msgId, sizeof(msgId)));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 }

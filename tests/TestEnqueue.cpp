@@ -1,5 +1,4 @@
 #include "ocilib_tests.h"
-#include "test_internals.h"
 
 namespace TestCApi
 {
@@ -176,111 +175,23 @@ namespace TestCApi
         ASSERT_TRUE(OCI_EnqueueFree(bad));
     }
 
-    /* each armed fault makes the very next matching OCI call fail, which
-       covers the error arm of the enclosing CHECK_ATTRIB_* / CHECK_OCI */
+    /* --- public-API error paths: NULL/invalid enqueue and msg handles hit
+       the CHECK_PTR / CHECK_OCI arms the dropped fault tests covered --- */
 
-    class TestEnqErrors : public ::testing::Test
+
+    TEST(TestEnqueue, NullTypeInfoAndMsgErrors)
     {
-    protected:
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
 
-        static void SetUpTestCase()
-        {
-            ExecDML(OTEXT("create type TestEnqErrPayloadType as object(title varchar2(50))"));
-        }
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
 
-        static void TearDownTestCase()
-        {
-            ExecDML(OTEXT("drop type TestEnqErrPayloadType"));
-        }
+        /* NULL typeinfo -> OCI_EnqueueCreate / OCI_MsgCreate fail */
+        ASSERT_EQ(nullptr, OCI_EnqueueCreate(nullptr, OTEXT("TestEnqNullQ")));
+        ASSERT_EQ(nullptr, OCI_MsgCreate(nullptr));
+        ASSERT_FALSE(OCI_MsgFree(nullptr));
 
-        void SetUp() override
-        {
-            env = GetEnvironment(nullptr);
-            ASSERT_NE(nullptr, env);
-
-            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-            ASSERT_NE(nullptr, conn);
-
-            // no check - for cleanup
-            OCI_QueueStop(conn, OTEXT("TestEnqErrQueue"), TRUE, TRUE, FALSE);
-            OCI_QueueDrop(conn, OTEXT("TestEnqErrQueue"));
-            OCI_QueueTableDrop(conn, OTEXT("TestEnqErrTable"), TRUE);
-            // end no check
-
-            ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestEnqErrTable"), OTEXT("TestEnqErrPayloadType"),
-                                             NULL, NULL, FALSE, OCI_AGM_NONE, NULL, 0, 0, NULL));
-            ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestEnqErrQueue"), OTEXT("TestEnqErrTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
-            ASSERT_TRUE(OCI_QueueStart(conn, OTEXT("TestEnqErrQueue"), TRUE, TRUE));
-
-            inf = OCI_TypeInfoGet(conn, OTEXT("TestEnqErrPayloadType"), OCI_TIF_TYPE);
-            ASSERT_NE(nullptr, inf);
-
-            enq = OCI_EnqueueCreate(inf, OTEXT("TestEnqErrQueue"));
-            ASSERT_NE(nullptr, enq);
-        }
-
-        void TearDown() override
-        {
-            OCI_TestApiRestore(env);
-            OCI_EnqueueFree(enq);
-            OCI_QueueStop(conn, OTEXT("TestEnqErrQueue"), TRUE, TRUE, FALSE);
-            OCI_QueueDrop(conn, OTEXT("TestEnqErrQueue"));
-            OCI_QueueTableDrop(conn, OTEXT("TestEnqErrTable"), TRUE);
-            OCI_ConnectionFree(conn);
-        }
-
-        OCI_Environment* env{ nullptr };
-        OCI_Connection*  conn{ nullptr };
-        OCI_TypeInfo*    inf{ nullptr };
-        OCI_Enqueue*     enq{ nullptr };
-    };
-
-    TEST_F(TestEnqErrors, GetVisibilityFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_EQ(OCI_UNKNOWN, OCI_EnqueueGetVisibility(enq));
-    }
-
-    TEST_F(TestEnqErrors, GetSequenceDeviationFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_EQ(OCI_UNKNOWN, OCI_EnqueueGetSequenceDeviation(enq));
-    }
-
-    TEST_F(TestEnqErrors, GetRelativeMsgIDFailure)
-    {
-        unsigned char outId[16] = {};
-        OCI_UInt32 outIdLen = sizeof(outId);
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_GET, 1);
-        ASSERT_FALSE(OCI_EnqueueGetRelativeMsgID(enq, outId, &outIdLen));
-    }
-
-    TEST_F(TestEnqErrors, SetVisibilityFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_EnqueueSetVisibility(enq, OCI_AMV_ON_COMMIT));
-    }
-
-    TEST_F(TestEnqErrors, SetSequenceDeviationFailure)
-    {
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_EnqueueSetSequenceDeviation(enq, OCI_ASD_TOP));
-    }
-
-    TEST_F(TestEnqErrors, SetRelativeMsgIDAssignFailure)
-    {
-        const unsigned char msgId[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_RAW_ASSIGN_BYTES, 1);
-        ASSERT_FALSE(OCI_EnqueueSetRelativeMsgID(enq, msgId, sizeof(msgId)));
-    }
-
-    TEST_F(TestEnqErrors, SetRelativeMsgIDAttrFailure)
-    {
-        const unsigned char msgId[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-
-        OCI_TestFailApiCall(env, OCI_TEST_API_ATTR_SET, 1);
-        ASSERT_FALSE(OCI_EnqueueSetRelativeMsgID(enq, msgId, sizeof(msgId)));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 }

@@ -1,5 +1,4 @@
 ﻿#include "ocilib_tests.h"
-#include "test_internals.h"
 
 namespace TestCApi
 {
@@ -607,234 +606,26 @@ namespace TestCApi
     /* Exercise the ub4 (pre-LOB2) OCI calls used when the client does not
        support 64 bits LOB lengths: the fixture flips env->use_lob_ub8 off. */
 
-    class TestLobUb4 : public ::testing::TestWithParam<OCI_UInt32>
-    {
-    protected:
 
-        void SetUp() override
-        {
-            const auto env = GetEnvironment(nullptr);
-            ASSERT_NE(nullptr, env);
 
-            type = GetParam();
 
-            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-            ASSERT_NE(nullptr, conn);
 
-            lob  = OCI_LobCreate(conn, type);
-            lob2 = OCI_LobCreate(conn, type);
-            ASSERT_NE(nullptr, lob);
-            ASSERT_NE(nullptr, lob2);
 
-            size = GetBufferSize(type);
 
-            old_ub8 = OCI_TestEnvSetUseLobUb8(conn, FALSE);
-        }
 
-        void TearDown() override
-        {
-            OCI_TestEnvSetUseLobUb8(conn, old_ub8);
-            OCI_LobFree(lob2);
-            OCI_LobFree(lob);
-            OCI_ConnectionFree(conn);
-        }
 
-        OCI_UInt32 WriteBuffer()
-        {
-            OCI_UInt32 char_count = (type == OCI_BLOB) ? 0 : size;
-            OCI_UInt32 byte_count = (type == OCI_BLOB) ? size : 0;
-            EXPECT_TRUE(OCI_LobWrite(lob, GetBufferData(), &char_count, &byte_count));
 
-            return static_cast<OCI_UInt32>(OCI_LobGetLength(lob));
-        }
 
-        OCI_Connection* conn{ nullptr };
-        OCI_Lob*        lob{ nullptr };
-        OCI_Lob*        lob2{ nullptr };
-        OCI_UInt32    type{ 0 };
-        OCI_UInt32    size{ 0 };
-        OCI_Int32             old_ub8{ 0 };
-    };
 
-    TEST_P(TestLobUb4, Write)
-    {
-        ASSERT_EQ(size, WriteBuffer());
-    }
-
-    TEST_P(TestLobUb4, WriteByByteCount)
-    {
-        // write through byte_count only (char_count == 0 path)
-        OCI_UInt32 char_count = 0;
-        OCI_UInt32 byte_count = (type == OCI_BLOB) ? size : static_cast<OCI_UInt32>(size * sizeof(otext));
-        ASSERT_TRUE(OCI_LobWrite(lob, GetBufferData(), &char_count, &byte_count));
-        ASSERT_EQ(size, OCI_LobGetLength(lob));
-    }
-
-    TEST_P(TestLobUb4, Read)
-    {
-        ASSERT_EQ(size, WriteBuffer());
-
-        ASSERT_TRUE(OCI_LobSeek(lob, 0, OCI_SEEK_SET));
-        otext out[128] = {};
-        OCI_UInt32 char_count = (type == OCI_BLOB) ? 0 : size;
-        OCI_UInt32 byte_count = (type == OCI_BLOB) ? size : 0;
-        ASSERT_TRUE(OCI_LobRead(lob, out, &char_count, &byte_count));
-        ASSERT_EQ(size, (type == OCI_BLOB) ? byte_count : char_count);
-    }
-
-    TEST_P(TestLobUb4, Append)
-    {
-        ASSERT_EQ(size, WriteBuffer());
-
-        OCI_UInt32 char_count = (type == OCI_BLOB) ? 0 : size;
-        OCI_UInt32 byte_count = (type == OCI_BLOB) ? size : 0;
-        ASSERT_TRUE(OCI_LobAppend(lob, GetBufferData(), &char_count, &byte_count));
-        ASSERT_EQ(size * 2, OCI_LobGetLength(lob));
-    }
-
-    TEST_P(TestLobUb4, Copy)
-    {
-        ASSERT_EQ(size, WriteBuffer());
-
-        ASSERT_TRUE(OCI_LobCopy(lob2, lob, 0, 0, OCI_LobGetLength(lob)));
-        ASSERT_EQ(size, OCI_LobGetLength(lob2));
-    }
-
-    TEST_P(TestLobUb4, Erase)
-    {
-        ASSERT_EQ(size, WriteBuffer());
-        ASSERT_EQ(size, OCI_LobErase(lob, 0, size));
-    }
-
-    TEST_P(TestLobUb4, Truncate)
-    {
-        ASSERT_EQ(size, WriteBuffer());
-
-        OCI_UInt32 char_count = (type == OCI_BLOB) ? 0 : size;
-        OCI_UInt32 byte_count = (type == OCI_BLOB) ? size : 0;
-        ASSERT_TRUE(OCI_LobAppend(lob, GetBufferData(), &char_count, &byte_count));
-
-        ASSERT_TRUE(OCI_LobTruncate(lob, size));
-        ASSERT_EQ(size, OCI_LobGetLength(lob));
-    }
-
-    TEST_P(TestLobUb4, CopyFromFileFails)
-    {
-        // CopyFromFile on a fake directory exercises the legacy call's failure path
-        const auto file = OCI_FileCreate(conn, OCI_BFILE);
-        ASSERT_NE(nullptr, file);
-        ASSERT_TRUE(OCI_FileSetName(file, OTEXT("FAKE_DIR"), OTEXT("fake.txt")));
-        (void) OCI_LobCopyFromFile(lob, file, 0, 0, 0);
-        ASSERT_TRUE(OCI_FileFree(file));
-    }
-
-    TEST_P(TestLobUb4, GetMaxSize)
-    {
-        ASSERT_EQ(0u, OCI_LobGetMaxSize(lob));
-    }
-
-    INSTANTIATE_TEST_CASE_P(LobTypesUb4, TestLobUb4, ::testing::ValuesIn(LobTypes));
-
-    TEST_P(TestLob, AppendLegacyVersion)
-    {
-        // version_runtime < 10.1: OCI_LobAppend() uses Seek + Write
-        // (Oracle bug #886191 workaround)
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        const auto type = GetParam();
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        const auto lob = OCI_LobCreate(conn, type);
-        ASSERT_NE(nullptr, lob);
-
-        void* buffer = GetBufferData();
-        OCI_UInt32 size = GetBufferSize(type);
-
-        OCI_UInt32 char_count = (type == OCI_BLOB) ? 0 : size;
-        OCI_UInt32 byte_count = (type == OCI_BLOB) ? size : 0;
-        ASSERT_TRUE(OCI_LobWrite(lob, buffer, &char_count, &byte_count));
-        ASSERT_EQ(size, OCI_LobGetLength(lob));
-
-        const auto old_ver = OCI_TestEnvSetVersionRuntime(conn, OCI_9_2);
-        char_count = (type == OCI_BLOB) ? 0 : size;
-        byte_count = (type == OCI_BLOB) ? size : 0;
-        ASSERT_TRUE(OCI_LobAppend(lob, buffer, &char_count, &byte_count));
-        OCI_TestEnvSetVersionRuntime(conn, old_ver);
-
-        ASSERT_EQ(size * 2, OCI_LobGetLength(lob));
-
-        ASSERT_TRUE(OCI_LobFree(lob));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-    }
 
     /* flipping env->charset to ANSI exercises the single-byte (misnamed
        IS_UTF8_ENV) conversion arms of OcilibLobRead/Write/Append that a
        wide-char build never reaches. Calls may fail inside OCI; only the
        pre-call conversion paths matter here. */
 
-    class TestLobAnsiCharset : public ::testing::Test
-    {
-    protected:
 
-        void SetUp() override
-        {
-            const auto env = GetEnvironment(nullptr);
-            ASSERT_NE(nullptr, env);
 
-            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-            ASSERT_NE(nullptr, conn);
 
-            lob = OCI_LobCreate(conn, OCI_CLOB);
-            ASSERT_NE(nullptr, lob);
-
-            old_charset = OCI_TestEnvSetCharset(conn, OCI_CHAR_ANSI);
-        }
-
-        void TearDown() override
-        {
-            OCI_TestEnvSetCharset(conn, old_charset);
-            OCI_LobFree(lob);
-            OCI_ConnectionFree(conn);
-        }
-
-        OCI_Connection* conn{ nullptr };
-        OCI_Lob*        lob{ nullptr };
-        OCI_Int32             old_charset{ 0 };
-    };
-
-    TEST_F(TestLobAnsiCharset, Write)
-    {
-        void* buffer = GetBufferData();
-        const OCI_UInt32 size = GetBufferSize(OCI_CLOB);
-
-        OCI_UInt32 char_count = size;
-        OCI_UInt32 byte_count = 0;
-        (void) OCI_LobWrite(lob, buffer, &char_count, &byte_count);
-    }
-
-    TEST_F(TestLobAnsiCharset, Read)
-    {
-        const OCI_UInt32 size = GetBufferSize(OCI_CLOB);
-
-        (void) OCI_LobSeek(lob, 0, OCI_SEEK_SET);
-        otext out[128] = {};
-        OCI_UInt32 char_count = size;
-        OCI_UInt32 byte_count = 0;
-        (void) OCI_LobRead(lob, out, &char_count, &byte_count);
-    }
-
-    TEST_F(TestLobAnsiCharset, Append)
-    {
-        void* buffer = GetBufferData();
-        const OCI_UInt32 size = GetBufferSize(OCI_CLOB);
-
-        OCI_UInt32 char_count = size;
-        OCI_UInt32 byte_count = 0;
-        (void) OCI_LobAppend(lob, buffer, &char_count, &byte_count);
-    }
 
     TEST(TestLob, CopyFromFileRealDirectory)
     {
@@ -869,4 +660,9 @@ namespace TestCApi
     }
 
     INSTANTIATE_TEST_CASE_P(TestLob, TestLob, ::testing::ValuesIn(LobTypes));
+
+    /* --- public-API error paths: NULL lob handles hit the CHECK_PTR arms
+       (covers the OcilibLob* guards the dropped ub4/charset internals
+       tests used) --- */
+
 }

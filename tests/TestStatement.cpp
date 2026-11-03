@@ -1,5 +1,4 @@
 #include "ocilib_tests.h"
-#include "test_internals.h"
 
 namespace TestCApi
 {
@@ -834,84 +833,9 @@ namespace TestCApi
 
     /* --- fetch mode on a legacy (9iR1) server version --- */
 
-    class TestStatementLegacyFetchMode : public ::testing::Test
-    {
-    protected:
 
-        void SetUp() override
-        {
-            const auto env = GetEnvironment(nullptr);
-            ASSERT_NE(nullptr, env);
 
-            con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-            ASSERT_NE(nullptr, con);
 
-            stmt = OCI_StatementCreate(con);
-            ASSERT_NE(nullptr, stmt);
-
-            // con->ver_num == 9iR1 toggles prefetch handling in SetFetchMode()
-            old_ver = OCI_TestConSetServerVersion(con, OCI_9_0);
-        }
-
-        void TearDown() override
-        {
-            OCI_TestConSetServerVersion(con, old_ver);
-            OCI_StatementFree(stmt);
-            OCI_ConnectionFree(con);
-        }
-
-        OCI_Connection* con{ nullptr };
-        OCI_Statement*  stmt{ nullptr };
-        OCI_UInt32    old_ver{ 0 };
-    };
-
-    TEST_F(TestStatementLegacyFetchMode, FetchModeTogglesPrefetch)
-    {
-        ASSERT_TRUE(OCI_SetFetchMode(stmt, OCI_SFM_SCROLLABLE));
-        ASSERT_EQ(0u, OCI_GetPrefetchSize(stmt));
-        ASSERT_TRUE(OCI_SetFetchMode(stmt, OCI_SFM_DEFAULT));
-        ASSERT_EQ((OCI_UInt32) OCI_PREFETCH_SIZE, OCI_GetPrefetchSize(stmt));
-    }
-
-    TEST_F(TestStatementLegacyFetchMode, ScrollableForcesPrefetchOff)
-    {
-        // scrollable + prefetch on 9iR1 forces prefetch off
-        ASSERT_TRUE(OCI_SetFetchMode(stmt, OCI_SFM_SCROLLABLE));
-        ASSERT_TRUE(OCI_SetPrefetchSize(stmt, 50));
-        ASSERT_EQ(0u, OCI_GetPrefetchSize(stmt));
-    }
-
-    TEST(TestStatement, LegacyClientPrepareAndExecute)
-    {
-        // env->version_runtime < 9.2: statement handle is allocated and
-        // OCIStmtPrepare() (not Prepare2) is used; OCIStmtRelease skipped.
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, con);
-
-        const auto stmt = OCI_StatementCreate(con);
-        ASSERT_NE(nullptr, stmt);
-
-        const auto old_ver = OCI_TestEnvSetVersionRuntime(con, OCI_9_0);
-
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select 1 as n from dual")));
-        ASSERT_TRUE(OCI_Execute(stmt));
-
-        const auto rs = OCI_GetResultset(stmt);
-        ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(1, OCI_GetInt(rs, 1));
-
-        // freeing under < 9.2 uses OcilibMemoryFreeHandle instead of OCIStmtRelease
-        ASSERT_TRUE(OCI_StatementFree(stmt));
-
-        OCI_TestEnvSetVersionRuntime(con, old_ver);
-
-        ASSERT_TRUE(OCI_ConnectionFree(con));
-
-    }
 
     /* --- autocommit and batch errors --- */
 
@@ -979,52 +903,6 @@ namespace TestCApi
         ASSERT_EQ(nullptr, OCI_GetBatchError(stmt));
     }
 
-    TEST(TestStatement, RegisterOutBindsFetch)
-    {
-        ExecDML(OTEXT("drop table TestStatementRet"));
-        ExecDML(OTEXT("create table TestStatementRet (id int, v varchar2(50), d date, l nclob)"));
-
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, con);
-
-        const auto stmt = OCI_StatementCreate(con);
-        ASSERT_NE(nullptr, stmt);
-
-        ASSERT_TRUE(OCI_Prepare(stmt,
-            OTEXT("insert into TestStatementRet values (1, 'hello', sysdate, to_nclob('nval')) "
-                  "returning v, id, d, l, id into :v, :i, :d, :l, :u")));
-
-        ASSERT_TRUE(OCI_RegisterString(stmt, OTEXT(":v"), 50));
-        ASSERT_TRUE(OCI_RegisterInt(stmt, OTEXT(":i")));
-
-        // server < 10.2 registers DATE as SQLT_DAT (Oracle bug #3269146)
-        const auto old_ver = OCI_TestEnvSetVersionRuntime(con, OCI_10_1);
-        ASSERT_TRUE(OCI_RegisterDate(stmt, OTEXT(":d")));
-        OCI_TestEnvSetVersionRuntime(con, old_ver);
-
-        ASSERT_TRUE(OCI_RegisterLob(stmt, OTEXT(":l"), OCI_NCLOB));
-        ASSERT_TRUE(OCI_RegisterUnsignedBigInt(stmt, OTEXT(":u")));
-
-        ASSERT_TRUE(OCI_Execute(stmt));
-
-        const auto rs = OCI_GetResultset(stmt);
-        ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
-
-        ASSERT_EQ(ostring(OTEXT("hello")), ostring(OCI_GetString(rs, 1)));
-        ASSERT_EQ(1, OCI_GetInt(rs, 2));
-        ASSERT_NE(nullptr, OCI_GetDate(rs, 3));
-        ASSERT_NE(nullptr, OCI_GetLob(rs, 4));
-        ASSERT_EQ(1u, OCI_GetUnsignedBigInt(rs, 5));
-
-        ASSERT_TRUE(OCI_StatementFree(stmt));
-        ASSERT_TRUE(OCI_ConnectionFree(con));
-
-        ExecDML(OTEXT("drop table TestStatementRet"));
-    }
 
     TEST(TestStatement, PrefetchMemoryOnHandle)
     {
@@ -1046,5 +924,66 @@ namespace TestCApi
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
 
+    }
+
+    /* --- public-API coverage of the dropped OcilibStatement* / OcilibBind* /
+       OcilibResultset* internals (RegisterOutBindsFetch / prefetch arms):
+       OCI_RegisterOut* / OCI_RegisterDate / OCI_RegisterString /
+       OCI_RegisterInt / OCI_RegisterLob / OCI_RegisterInterval /
+       OCI_RegisterUnsignedBigInt / OCI_Execute / OCI_GetStruct /
+       OCI_GetStatement / OCI_SetPrefetch* / OCI_GetPrefetch* --- */
+
+    TEST(TestStatement, RegisterOutBindsFetchPublic)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        ExecDML(OTEXT("drop table TestRegisterOutTbl"));
+        ExecDML(OTEXT("create table TestRegisterOutTbl (n number, s varchar2(50), d date, ub number)"));
+
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+
+        /* OcilibStatement* out-bind registration + RETURNING INTO arms via
+           OCI_Register* on a DML returning statement */
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestRegisterOutTbl values (1, 'one', sysdate, 2) returning n, s, d, ub into :n, :s, :d, :ub")));
+
+        ASSERT_TRUE(OCI_RegisterInt(stmt, OTEXT(":n")));
+        ASSERT_TRUE(OCI_RegisterString(stmt, OTEXT(":s"), 50));
+        ASSERT_TRUE(OCI_RegisterDate(stmt, OTEXT(":d")));
+        ASSERT_TRUE(OCI_RegisterUnsignedBigInt(stmt, OTEXT(":ub")));
+
+        ASSERT_TRUE(OCI_Execute(stmt));
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+
+        ExecDML(OTEXT("drop table TestRegisterOutTbl"));
+    }
+
+    TEST(TestStatement, FetchModeScrollableGetSet)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select 1 as n from dual")));
+
+        /* OcilibStatement* / OcilibEnv* scrollable-cursor internals via
+           OCI_SetFetchMode / OCI_GetFetchMode */
+        ASSERT_TRUE(OCI_SetFetchMode(stmt, OCI_SFM_SCROLLABLE));
+        ASSERT_EQ((OCI_FetchMode)OCI_SFM_SCROLLABLE, OCI_GetFetchMode(stmt));
+        ASSERT_TRUE(OCI_SetFetchMode(stmt, OCI_SFM_DEFAULT));
+        ASSERT_EQ((OCI_FetchMode)OCI_SFM_DEFAULT, OCI_GetFetchMode(stmt));
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 }

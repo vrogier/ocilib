@@ -85,10 +85,11 @@ namespace TestCppApi
         std::array<char, 4> values1 = { 1, 3, 2, 4 };
         std::array<char, 4> values2 = { 0, 0, 0, 0 };
 
-        OCI_UInt32 dimensions1 = 4;
-        Vector::VectorFormat format1 = Vector::Int8;
 
         vect.Set(values1.data(), static_cast<OCI_UInt32>(values1.size()));
+
+        const OCI_UInt32 dimensions1 = 4;
+        const Vector::VectorFormat format1 = Vector::Int8;
 
         ASSERT_EQ(dimensions1, vect.GetDimensionCount());
         ASSERT_EQ(format1, vect.GetFormat());
@@ -112,8 +113,6 @@ namespace TestCppApi
 
         static std::vector<char> values1 = { 1, 3, 2, 4 };
 
-        OCI_UInt32 dimensions1 = 4;
-        Vector::VectorFormat format1 = Vector::Int8;
 
         vect.Set(values1);
 

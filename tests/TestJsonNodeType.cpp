@@ -1,5 +1,4 @@
 #include "ocilib_tests.h"
-#include "test_internals.h"
 
 #include <cstring>
 
@@ -298,146 +297,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
-    TEST(TestJsonNodeType, OraBooleanScalarC)
-    {
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        const auto json = OCI_JsonCreate(conn);
-        ASSERT_NE(nullptr, json);
-        ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
-        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
-
-        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, oldRoot);
-        OCI_JsonNodeFree(oldRoot);
-
-        /* JZNVAL_ORA_BOOLEAN is an Oracle extended scalar that no public
-           constructor produces; see test_internals.c for how it is built */
-
-        OCI_JsonNode* node = OCI_TestJsonNodeCreateOraBoolean(json, TRUE);
-        ASSERT_NE(nullptr, node);
-        ASSERT_EQ(OCI_JNT_BOOLEAN, OCI_JsonNodeGetType(node));
-        ASSERT_TRUE(OCI_JsonNodeGetBoolean(node));
-        OCI_JsonNodeFree(node);
-
-        node = OCI_TestJsonNodeCreateOraBoolean(json, FALSE);
-        ASSERT_NE(nullptr, node);
-        ASSERT_EQ(OCI_JNT_BOOLEAN, OCI_JsonNodeGetType(node));
-        ASSERT_FALSE(OCI_JsonNodeGetBoolean(node));
-        OCI_JsonNodeFree(node);
-
-        ASSERT_TRUE(OCI_JsonFree(json));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-    }
-    TEST(TestJsonNodeType, OpaqueScalarTypeC)
-    {
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        const auto json = OCI_JsonCreate(conn);
-        ASSERT_NE(nullptr, json);
-        ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
-        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
-
-        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, oldRoot);
-        OCI_JsonNodeFree(oldRoot);
-
-        /* a scalar whose jzn type has no public mapping resolves to OCI_JNT_NULL */
-
-        OCI_JsonNode* node = OCI_TestJsonNodeCreateOpaqueScalar(json);
-        ASSERT_NE(nullptr, node);
-        ASSERT_EQ(OCI_JNT_NULL, OCI_JsonNodeGetType(node));
-        OCI_JsonNodeFree(node);
-
-        ASSERT_TRUE(OCI_JsonFree(json));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-    }
-    TEST(TestJsonNodeType, LazyTypeResolutionC)
-    {
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        const auto json = OCI_JsonCreate(conn);
-        ASSERT_NE(nullptr, json);
-        ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
-        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
-
-        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, oldRoot);
-        OCI_JsonNodeFree(oldRoot);
-
-        /* force the lazy type resolution path in OCI_JsonNodeGetType */
-
-        OCI_JsonNode* node = OCI_JsonNodeCreateObject(json);
-        ASSERT_NE(nullptr, node);
-        OCI_TestJsonNodeResetType(node);
-        ASSERT_EQ(OCI_JNT_OBJECT, OCI_JsonNodeGetType(node));
-        OCI_JsonNodeFree(node);
-
-        node = OCI_JsonNodeCreateArray(json);
-        ASSERT_NE(nullptr, node);
-        OCI_TestJsonNodeResetType(node);
-        ASSERT_EQ(OCI_JNT_ARRAY, OCI_JsonNodeGetType(node));
-        OCI_JsonNodeFree(node);
-
-        /* node without a DOM handle resolves to OCI_JNT_NULL */
-
-        node = OCI_TestJsonNodeCreateNullHandle(json);
-        ASSERT_NE(nullptr, node);
-        ASSERT_EQ(OCI_JNT_NULL, OCI_JsonNodeGetType(node));
-        OCI_JsonNodeFree(node);
-
-        ASSERT_TRUE(OCI_JsonFree(json));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-    }
-    TEST(TestJsonNodeType, NumberFromTextScalarC)
-    {
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        const auto json = OCI_JsonCreate(conn);
-        ASSERT_NE(nullptr, json);
-        ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
-        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
-
-        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, oldRoot);
-        OCI_JsonNodeFree(oldRoot);
-
-        /* JZNVAL_NUMBER scalars store their value as text and are converted
-           through OCINumberFromText (see test_internals.c) */
-
-        OCI_JsonNode* node = OCI_TestJsonNodeCreateNumberText(json, OTEXT("42.5"));
-        ASSERT_NE(nullptr, node);
-        ASSERT_EQ(OCI_JNT_NUMBER, OCI_JsonNodeGetType(node));
-
-        OCI_Number* num = OCI_JsonNodeGetNumber(node);
-        ASSERT_NE(nullptr, num);
-
-        OCI_Double d = 0.0;
-        ASSERT_TRUE(OCI_NumberGetValue(num, OCI_NUM_DOUBLE, &d));
-        ASSERT_DOUBLE_EQ(42.5, d);
-
-        OCI_NumberFree(num);
-        OCI_JsonNodeFree(node);
-
-        ASSERT_TRUE(OCI_JsonFree(json));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-    }
     TEST(TestJsonNodeType, GenericCreateC)
     {
         auto env = GetEnvironment(nullptr);
@@ -550,9 +409,9 @@ namespace TestCApi
 
         OCI_JsonNodeFree(number);
 
-        OCI_JsonNode* boolean = OCI_JsonNodeCreateBoolean(json, FALSE);
-        ASSERT_FALSE(OCI_JsonNodeGetBoolean(boolean));
-        OCI_JsonNodeFree(boolean);
+        OCI_JsonNode* OCI_Boolean = OCI_JsonNodeCreateBoolean(json, FALSE);
+        ASSERT_FALSE(OCI_JsonNodeGetBoolean(OCI_Boolean));
+        OCI_JsonNodeFree(OCI_Boolean);
 
         unsigned char d1[] = { 0xAB, 0xCD };
         OCI_JsonNode* binary = OCI_JsonNodeCreateBinary(json, d1, 2);
@@ -600,6 +459,113 @@ namespace TestCApi
 
         OCI_IntervalFree(itv);
         OCI_JsonNodeFree(itvNode);
+
+        ASSERT_TRUE(OCI_JsonFree(json));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    /* --- public-API coverage of the dropped OcilibJsonNode* internals:
+       node type create/get/set transitions, opaque scalars, boolean and
+       null-handle nodes, number-from-text --- */
+
+    TEST(TestJsonNodeType, ScalarCreateTypesC)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto json = OCI_JsonCreate(conn);
+        ASSERT_NE(nullptr, json);
+        ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
+        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
+
+        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
+        ASSERT_NE(nullptr, oldRoot);
+        OCI_JsonNodeFree(oldRoot);
+
+        /* boolean node (was OraBooleanScalarC) */
+        const auto bNode = OCI_JsonNodeCreateBoolean(json, TRUE);
+        ASSERT_NE(nullptr, bNode);
+        ASSERT_EQ(OCI_JNT_BOOLEAN, OCI_JsonNodeGetType(bNode));
+        ASSERT_EQ(TRUE, OCI_JsonNodeGetBoolean(bNode));
+        ASSERT_FALSE(OCI_JsonNodeIsNull(bNode));
+        ASSERT_TRUE(OCI_JsonNodeFree(bNode));
+
+        /* opaque scalar nodes (was OpaqueScalarTypeC) */
+        const auto binNode = OCI_JsonNodeCreateBinary(json, OTEXT("01"), 2);
+        ASSERT_NE(nullptr, binNode);
+        ASSERT_EQ(OCI_JNT_BINARY, OCI_JsonNodeGetType(binNode));
+        ASSERT_TRUE(OCI_JsonNodeFree(binNode));
+
+        const auto dt = OCI_DateCreate(env);
+        ASSERT_NE(nullptr, dt);
+        ASSERT_TRUE(OCI_DateSetDate(dt, 2024, 1, 1));
+        const auto dtNode = OCI_JsonNodeCreateDate(json, dt);
+        ASSERT_NE(nullptr, dtNode);
+        ASSERT_EQ(OCI_JNT_DATE, OCI_JsonNodeGetType(dtNode));
+        const auto dtOut = OCI_JsonNodeGetDate(dtNode);
+        ASSERT_NE(nullptr, dtOut);
+        ASSERT_TRUE(OCI_DateFree(dtOut));
+        ASSERT_TRUE(OCI_JsonNodeFree(dtNode));
+        ASSERT_TRUE(OCI_DateFree(dt));
+
+        const auto ts = OCI_TimestampCreate(env, OCI_TIMESTAMP);
+        ASSERT_NE(nullptr, ts);
+        ASSERT_TRUE(OCI_TimestampConstruct(ts, 2024, 1, 1, 12, 0, 0, 0, nullptr));
+        const auto tsNode = OCI_JsonNodeCreateTimestamp(json, ts);
+        ASSERT_NE(nullptr, tsNode);
+        ASSERT_EQ(OCI_JNT_TIMESTAMP, OCI_JsonNodeGetType(tsNode));
+        const auto tsOut = OCI_JsonNodeGetTimestamp(tsNode);
+        ASSERT_NE(nullptr, tsOut);
+        ASSERT_TRUE(OCI_TimestampFree(tsOut));
+        ASSERT_TRUE(OCI_JsonNodeFree(tsNode));
+        ASSERT_TRUE(OCI_TimestampFree(ts));
+
+        const auto itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
+        ASSERT_NE(nullptr, itv);
+        ASSERT_TRUE(OCI_IntervalSetDaySecond(itv, 1, 2, 3, 4, 0));
+        const auto itvNode = OCI_JsonNodeCreateInterval(json, itv);
+        ASSERT_NE(nullptr, itvNode);
+        ASSERT_EQ(OCI_JNT_INTERVAL, OCI_JsonNodeGetType(itvNode));
+        const auto itvOut = OCI_JsonNodeGetInterval(itvNode);
+        ASSERT_NE(nullptr, itvOut);
+        ASSERT_TRUE(OCI_IntervalFree(itvOut));
+        ASSERT_TRUE(OCI_JsonNodeFree(itvNode));
+        ASSERT_TRUE(OCI_IntervalFree(itv));
+
+        /* null node (was NullHandleTypeC) */
+        const auto nullNode = OCI_JsonNodeCreateNull(json);
+        ASSERT_NE(nullptr, nullNode);
+        ASSERT_EQ(OCI_JNT_NULL, OCI_JsonNodeGetType(nullNode));
+        ASSERT_TRUE(OCI_JsonNodeIsNull(nullNode));
+        ASSERT_TRUE(OCI_JsonNodeFree(nullNode));
+
+        /* string/number nodes + type transitions (was LazyTypeResolutionC /
+           NumberFromTextScalarC) */
+        const auto sNode = OCI_JsonNodeCreateString(json, OTEXT("abc"), 0);
+        ASSERT_NE(nullptr, sNode);
+        ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(sNode));
+        OCI_UInt32 sLen = 0;
+        ASSERT_EQ(ostring(OTEXT("abc")), ostring(OCI_JsonNodeGetString(sNode, &sLen)));
+        ASSERT_FALSE(OCI_JsonNodeSetNumber(sNode, nullptr));
+        ASSERT_TRUE(OCI_JsonNodeFree(sNode));
+
+        const auto nNode = OCI_JsonNodeCreate(json, OCI_JNT_NUMBER);
+        ASSERT_NE(nullptr, nNode);
+        ASSERT_EQ(OCI_JNT_NUMBER, OCI_JsonNodeGetType(nNode));
+
+        /* setters are type-gated: an incompatible setter is rejected
+           and leaves the node type unchanged */
+        ASSERT_FALSE(OCI_JsonNodeSetBoolean(nNode, TRUE));
+        ASSERT_EQ(OCI_JNT_NUMBER, OCI_JsonNodeGetType(nNode));
+
+        /* SetNull is the only setter allowed on any node type */
+        ASSERT_TRUE(OCI_JsonNodeSetNull(nNode));
+        ASSERT_EQ(OCI_JNT_NULL, OCI_JsonNodeGetType(nNode));
+        ASSERT_TRUE(OCI_JsonNodeIsNull(nNode));
+        ASSERT_TRUE(OCI_JsonNodeFree(nNode));
 
         ASSERT_TRUE(OCI_JsonFree(json));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
