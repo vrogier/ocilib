@@ -57,26 +57,26 @@ inline Vector::Vector(OCI_Vector *pVector, core::Handle *parent)
     AcquireTransient(pVector, parent);
 }
 
-template<class T, typename core::SupportedVectorNumeric<T>::Type::type*>
-void Vector::Set(T* values, unsigned int size)
+template<class T>
+void Vector::Set(T* values, unsigned int size, typename core::SupportedVectorNumeric<T>::Type::type*)
 {
     core::Check(OCI_VectorSetValues(*this, support::VectorFormatResolver<T>::Value, size, reinterpret_cast<void*>(values)));
 }
 
-template<class T, typename core::SupportedVectorNumeric<T>::Type::type*>
-void Vector::Get(T* values)
+template<class T>
+void Vector::Get(T* values, typename core::SupportedVectorNumeric<T>::Type::type*)
 {
     core::Check(OCI_VectorGetValues(*this, reinterpret_cast<void*>(values)));
 }
 
-template<class T, typename core::SupportedVectorNumeric<T>::Type::type*>
-void Vector::Set(const std::vector<T>& values)
+template<class T>
+void Vector::Set(const std::vector<T>& values, typename core::SupportedVectorNumeric<T>::Type::type*)
 {
     Set(const_cast<T*>(values.data()), static_cast<unsigned int>(values.size()));
 }
 
-template<class T, typename core::SupportedVectorNumeric<T>::Type::type*>
-std::vector<T> Vector::Get()
+template<class T>
+std::vector<T> Vector::Get(typename core::SupportedVectorNumeric<T>::Type::type*)
 {
     std::vector<T> values;
     values.resize(static_cast<size_t>(GetDimensionCount()));
@@ -88,8 +88,8 @@ std::vector<T> Vector::Get()
 
 inline unsigned int Vector::GetDimensionCount()
 {
-    unsigned int dimensions{};
-    unsigned int format{};
+    unsigned int dimensions = 0;
+    unsigned int format = 0;
 
     core::Check(OCI_VectorGetInfo(*this, &format, &dimensions));
 
@@ -98,8 +98,8 @@ inline unsigned int Vector::GetDimensionCount()
 
 inline Vector::VectorFormat Vector::GetFormat()
 {
-    unsigned int dimensions{};
-    unsigned int format{};
+    unsigned int dimensions = 0;
+    unsigned int format = 0;
 
     core::Check(OCI_VectorGetInfo(*this, &format, &dimensions));
 
@@ -115,7 +115,7 @@ inline ostring Vector::ToString() const
 {
     if (!IsNull())
     {       
-        unsigned int size{};
+        unsigned int size = 0;
         
         core::Check(OCI_VectorToText(*this, &size, nullptr));
 

@@ -104,7 +104,7 @@ namespace ocilib
         template<class T>
         struct SupportedNumeric
         {
-            typedef EnableIf<IsSame<T, short>::value ||
+            static const bool value = IsSame<T, short>::value ||
                 IsSame<T, unsigned short>::value ||
                 IsSame<T, int>::value ||
                 IsSame<T, unsigned int>::value ||
@@ -112,7 +112,9 @@ namespace ocilib
                 IsSame<T, big_uint>::value ||
                 IsSame<T, float>::value ||
                 IsSame<T, double>::value ||
-                IsSame<T, Number>::value> Type;
+                IsSame<T, Number>::value;
+
+            typedef EnableIf<value, void> Type;
         };
 
         /**
@@ -125,7 +127,7 @@ namespace ocilib
             typedef EnableIf<IsSame<T, unsigned char>::value ||
                 IsSame<T, char>::value ||
                 IsSame<T, float>::value ||
-                IsSame<T, double>::value> Type;
+                IsSame<T, double>::value, void> Type;
         };
 
         /**

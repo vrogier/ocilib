@@ -33,8 +33,8 @@ inline Number::Number(bool create)
     }
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
-Number::Number(const T &value)
+template<class T>
+Number::Number(const T &value, typename core::SupportedNumeric<T>::Type::type*)
 {
     *this = value;
 }
@@ -199,74 +199,74 @@ inline Number& Number::operator = (OCI_Number * &lhs)
     return *this;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
-Number& Number::operator = (const T &lhs)
+template<class T>
+typename core::EnableIf<core::SupportedNumeric<T>::value, Number&>::type Number::operator = (const T &lhs)
 {
     SetValue<T>(lhs);
     return *this;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
-Number::operator T() const
+template<class T>
+Number::operator typename core::EnableIf<core::SupportedNumeric<T>::value, T>::type() const
 {
     return GetValue<T>();
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
-Number Number::operator + (const T &value)
+template<class T>
+typename core::EnableIf<core::SupportedNumeric<T>::value, Number>::type Number::operator + (const T &value)
 {
     Number result = Clone();
     result.Add(value);
     return result;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
-Number Number::operator - (const T &value)
+template<class T>
+typename core::EnableIf<core::SupportedNumeric<T>::value, Number>::type Number::operator - (const T &value)
 {
     Number result = Clone();
     result.Sub(value);
     return result;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
-Number Number::operator * (const T &value)
+template<class T>
+typename core::EnableIf<core::SupportedNumeric<T>::value, Number>::type Number::operator * (const T &value)
 {
     Number result = Clone();
     result.Multiply(value);
     return result;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
-Number Number::operator / (const T &value)
+template<class T>
+typename core::EnableIf<core::SupportedNumeric<T>::value, Number>::type Number::operator / (const T &value)
 {
     Number result = Clone();
     result.Divide(value);
     return result;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
-Number& Number::operator += (const T &value)
+template<class T>
+typename core::EnableIf<core::SupportedNumeric<T>::value, Number&>::type Number::operator += (const T &value)
 {
     Add<T>(value);
     return *this;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
-Number& Number::operator -= (const T &value)
+template<class T>
+typename core::EnableIf<core::SupportedNumeric<T>::value, Number&>::type Number::operator -= (const T &value)
 {
     Sub<T>(value);
     return *this;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
-Number& Number::operator *= (const T &value)
+template<class T>
+typename core::EnableIf<core::SupportedNumeric<T>::value, Number&>::type Number::operator *= (const T &value)
 {
     Multiply<T>(value);
     return *this;
 }
 
-template<class T, typename core::SupportedNumeric<T>::Type::type*>
-Number& Number::operator /= (const T &value)
+template<class T>
+typename core::EnableIf<core::SupportedNumeric<T>::value, Number&>::type Number::operator /= (const T &value)
 {
     Divide<T>(value);
     return *this;

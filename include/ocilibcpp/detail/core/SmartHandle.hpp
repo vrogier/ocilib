@@ -35,7 +35,7 @@ namespace ocilib
             SmartHandleFreeNotifyFunc freeNotifyFunc, Handle* parent
         )
             : _guard(GetSynchronizationMode()), _handle(handle), _allocated(allocated),
-            _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store{ nullptr }
+            _freeNotifyFunc(freeNotifyFunc), _parent(parent), _extraInfo(nullptr), _store(nullptr)
         {
             _holders.SetGuard(&_guard);
             _children.SetGuard(&_guard);
@@ -126,7 +126,7 @@ namespace ocilib
                 return support::HandleStoreResolver<T>::SynchMode;
             }
 
-            return SynchronizationMode::Unsafe;
+            return Unsafe;
         }
 
         template<class T>

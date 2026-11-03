@@ -2629,8 +2629,8 @@ namespace ocilib
         * @param value - value to assign
         *
         */
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
-        Number(const T& value);
+        template<class T>
+        Number(const T& value, typename core::SupportedNumeric<T>::Type::type* = nullptr);
 
 
         /**
@@ -2742,35 +2742,35 @@ namespace ocilib
         bool operator >= (const Number& other) const;
         bool operator <= (const Number& other) const;
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
-        Number& operator = (const T& lhs);
+        template<class T>
+        typename core::EnableIf<core::SupportedNumeric<T>::value, Number&>::type operator= (const T& lhs);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
-        operator T() const;
+        template<class T>
+        operator typename core::EnableIf<core::SupportedNumeric<T>::value, T>::type() const;
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
-        Number operator - (const T& value);
+        template<class T>
+        typename core::EnableIf<core::SupportedNumeric<T>::value, Number>::type operator - (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
-        Number operator + (const T& value);
+        template<class T>
+        typename core::EnableIf<core::SupportedNumeric<T>::value, Number>::type operator + (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
-        Number operator * (const T& value);
+        template<class T>
+        typename core::EnableIf<core::SupportedNumeric<T>::value, Number>::type operator * (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
-        Number operator / (const T& value);
+        template<class T>
+        typename core::EnableIf<core::SupportedNumeric<T>::value, Number>::type operator / (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
-        Number& operator += (const T& value);
+        template<class T>
+        typename core::EnableIf<core::SupportedNumeric<T>::value, Number&>::type operator += (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
-        Number& operator -= (const T& value);
+        template<class T>
+        typename core::EnableIf<core::SupportedNumeric<T>::value, Number&>::type operator -= (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
-        Number& operator *= (const T& value);
+        template<class T>
+        typename core::EnableIf<core::SupportedNumeric<T>::value, Number&>::type operator *= (const T& value);
 
-        template<class T, typename core::SupportedNumeric<T>::Type::type* = nullptr>
-        Number& operator /= (const T& value);
+        template<class T>
+        typename core::EnableIf<core::SupportedNumeric<T>::value, Number&>::type operator /= (const T& value);
 
     private:
 
@@ -5232,8 +5232,8 @@ namespace ocilib
          * @param size   - number of element in the input buffer array
          *
         */
-        template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
-        void Set(T* values, unsigned int size);
+        template<class T>
+        void Set(T* values, unsigned int size, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr);
 
         /**
          * @brief
@@ -5253,8 +5253,8 @@ namespace ocilib
          * - VectorFormat::Binary => unsigned char
          *
          */
-        template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
-        void Get(T* values);
+        template<class T>
+        void Get(T* values, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr);
 
         /**
          * @brief
@@ -5263,8 +5263,8 @@ namespace ocilib
          * @param values - values to set
          *
          */
-        template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
-        void Set(const std::vector<T>& values);
+        template<class T>
+        void Set(const std::vector<T>& values, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr);
 
         /**
          * @brief
@@ -5278,8 +5278,8 @@ namespace ocilib
          * - VectorFormat::Binary => unsigned char
          *
          */
-        template<class T, typename core::SupportedVectorNumeric<T>::Type::type* = nullptr>
-        std::vector<T> Get();
+        template<class T>
+        std::vector<T> Get(typename core::SupportedVectorNumeric<T>::Type::type* = nullptr);
 
         /**
         * @brief

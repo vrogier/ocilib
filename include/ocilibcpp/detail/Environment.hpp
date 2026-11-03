@@ -29,7 +29,7 @@
 namespace ocilib
 {
 
-inline Environment::Environment(EnvironmentFlags mode, const ostring& libpath) : _guard(core::SynchronizationMode::Unsafe), _defaultStore(&_guard), _charMaxSize(0), _initialized(false)
+inline Environment::Environment(EnvironmentFlags mode, const ostring& libpath) : _guard(core::Unsafe), _defaultStore(&_guard), _charMaxSize(0), _initialized(false)
 {
     _mode = mode;
 
@@ -38,7 +38,7 @@ inline Environment::Environment(EnvironmentFlags mode, const ostring& libpath) :
   
      core::Check(OCI_SetUserData(nullptr ,this));
 
-    _guard.SetMode((_mode & Environment::Threaded) == Environment::Threaded ? core::SynchronizationMode::Safe : core::SynchronizationMode::Unsafe);
+    _guard.SetMode((_mode & Environment::Threaded) == Environment::Threaded ? core::Safe : core::Unsafe);
     _callbacks.SetGuard(&_guard);      
     _handle.AcquireTransient
     (
@@ -53,7 +53,7 @@ inline Environment::Environment(EnvironmentFlags mode, const ostring& libpath) :
 
 inline Environment::~Environment()
 {
-    _guard.SetMode(core::SynchronizationMode::Unsafe);
+    _guard.SetMode(core::Unsafe);
     _callbacks.SetGuard(nullptr);
     _handle.Release();
 

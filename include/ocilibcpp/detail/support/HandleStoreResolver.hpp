@@ -42,14 +42,14 @@ namespace ocilib
         * Allow resolving information required creating a handle store for a given C Handle
         */
         template<class T>
-        struct HandleStoreResolver : HandleStoreResolverType<false, core::SynchronizationMode::Unsafe> {};
+        struct HandleStoreResolver : HandleStoreResolverType<false, core::Unsafe> {};
 
-        template<> struct HandleStoreResolver<OCI_Environment*> : HandleStoreResolverType<true, core::SynchronizationMode::Safe> {};
-        template<> struct HandleStoreResolver<OCI_Pool*> : HandleStoreResolverType<true, core::SynchronizationMode::Safe> {};
-        template<> struct HandleStoreResolver<OCI_Connection*> : HandleStoreResolverType<true, core::SynchronizationMode::Unsafe> {};
-        template<> struct HandleStoreResolver<OCI_Statement*> : HandleStoreResolverType<true, core::SynchronizationMode::Unsafe> {};
-        template<> struct HandleStoreResolver<OCI_Resultset*> : HandleStoreResolverType<true, core::SynchronizationMode::Unsafe> {};
-        template<> struct HandleStoreResolver<OCI_TypeInfo*> : HandleStoreResolverType<true, core::SynchronizationMode::Unsafe> {};
-        template<> struct HandleStoreResolver<OCI_Object*> : HandleStoreResolverType<true, core::SynchronizationMode::Unsafe> {};
+        template<> struct HandleStoreResolver<OCI_Environment*> : HandleStoreResolverType<true, core::Safe> {};
+        template<> struct HandleStoreResolver<OCI_Pool*> : HandleStoreResolverType<true, core::Safe> {};
+        template<> struct HandleStoreResolver<OCI_Connection*> : HandleStoreResolverType<true, core::Unsafe> {};
+        template<> struct HandleStoreResolver<OCI_Statement*> : HandleStoreResolverType<true, core::Unsafe> {};
+        template<> struct HandleStoreResolver<OCI_Resultset*> : HandleStoreResolverType<true, core::Unsafe> {};
+        template<> struct HandleStoreResolver<OCI_TypeInfo*> : HandleStoreResolverType<true, core::Unsafe> {};
+        template<> struct HandleStoreResolver<OCI_Object*> : HandleStoreResolverType<true, core::Unsafe> {};
     }
 }

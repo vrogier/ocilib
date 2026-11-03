@@ -375,7 +375,7 @@ inline ostring Object::ToString() const
 {
     if (!IsNull())
     {       
-        unsigned int size{};
+        unsigned int size = 0;
         
         core::Check(OCI_ObjectToText(*this, &size, nullptr));
 

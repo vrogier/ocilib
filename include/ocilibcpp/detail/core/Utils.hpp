@@ -96,9 +96,9 @@ namespace ocilib
                 {
                     std::string nlsLang = str;
 
-                    for (char &i :nlsLang)
+                    for (std::string::iterator it = nlsLang.begin(); it != nlsLang.end(); ++it)
                     {
-                        i = static_cast<std::string::value_type>(toupper(i));
+                        *it = static_cast<std::string::value_type>(toupper(*it));
                     }
 
                     if (ostring::npos != nlsLang.find("UTF8"))

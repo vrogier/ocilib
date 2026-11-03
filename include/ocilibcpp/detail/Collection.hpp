@@ -469,7 +469,7 @@ ostring Collection<T>::ToString() const
 {
     if (!IsNull())
     {
-        unsigned int size{};
+        unsigned int size = 0;
         
         core::Check(OCI_CollToText(*this, &size, nullptr));
 

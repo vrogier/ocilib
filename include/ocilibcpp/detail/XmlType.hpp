@@ -44,7 +44,7 @@ inline ostring XmlType::ToString() const
             return ostring(core::Check(OCI_XmlTypeGetContent(*this)), static_cast<size_t>(size));
         }
 
-        return {};
+        return ostring();
     }
 
     return OCI_STRING_NULL;

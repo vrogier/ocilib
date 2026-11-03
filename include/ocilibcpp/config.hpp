@@ -99,7 +99,7 @@ extern "C" {
 
 #define nullptr 0
 #define override
-#define noexcept
+#define noexcept throw()
 
 #endif
 

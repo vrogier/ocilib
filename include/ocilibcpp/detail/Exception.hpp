@@ -48,7 +48,14 @@ inline Exception::Exception(OCI_Error *err) noexcept
     SetWhat(OCI_ErrorGetString(err));
 }
 
-inline Exception::Exception(const Exception& other) noexcept : Exception()
+inline Exception::Exception(const Exception& other) noexcept
+    : _what(nullptr),
+    _pStatement(nullptr),
+    _pConnection(nullptr),
+    _row(0),
+    _type(static_cast<ExceptionType::Type>(0)),
+    _errLib(0),
+    _errOracle(0)
 {
     *this = other;
 }
@@ -155,7 +162,7 @@ inline ostring Exception::GetMessage() const
 
     if (!str)
     {
-        return ostring{};
+        return ostring();
     }
 
     ostring message;

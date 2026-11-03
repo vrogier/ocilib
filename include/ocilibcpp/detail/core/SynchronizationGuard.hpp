@@ -33,16 +33,16 @@ namespace ocilib
 
         inline SynchronizationGuard::~SynchronizationGuard() noexcept
         {
-            SILENT_CATCH(SetMode(SynchronizationMode::Unsafe));
+            SILENT_CATCH(SetMode(Unsafe));
         }
 
         inline void SynchronizationGuard::SetMode(SynchronizationMode mode)
         {
-            if (SynchronizationMode::Safe == mode && !_mutex)
+            if (Safe == mode && !_mutex)
             {
                 _mutex = Mutex::Create();
             }
-            else if (SynchronizationMode::Unsafe == mode && _mutex)
+            else if (Unsafe == mode && _mutex)
             {
                 Mutex::Destroy(_mutex);
                 _mutex = nullptr;
