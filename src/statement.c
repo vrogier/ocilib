@@ -623,9 +623,9 @@ static OCI_Boolean OcilibStatementBindCheck
         {
             if (bnd->stmt->con->env->use_wide_char_conv)
             {
-                const OCI_Int32 max_chars  = (OCI_Int32) (bnd->size / sizeof(dbtext));
-                const OCI_Size  src_offset = index * max_chars * sizeof(otext);
-                const OCI_Size  dst_offset = index * max_chars * sizeof(dbtext);
+                const OCI_Int32 max_chars  = dbcharcount(bnd->size);
+                const OCI_Size  src_offset = (OCI_Size) index * (OCI_Size) max_chars * sizeof(otext);
+                const OCI_Size  dst_offset = (OCI_Size) index * (OCI_Size) max_chars * sizeof(dbtext);
 
                 OcilibStringUTF32ToUTF16(src + src_offset, dst + dst_offset, max_chars - 1);
             }
@@ -773,9 +773,9 @@ static OCI_Boolean OcilibStatementBindUpdate
     {
         if (bnd->stmt->con->env->use_wide_char_conv)
         {
-            const OCI_Int32 max_chars  = (OCI_Int32) (bnd->size / sizeof(dbtext));
-            const OCI_Size  src_offset = index * max_chars * sizeof(dbtext);
-            const OCI_Size  dst_offset = index * max_chars * sizeof(otext);
+            const OCI_Int32 max_chars  = dbcharcount(bnd->size);
+            const OCI_Size  src_offset = (OCI_Size) index * (OCI_Size) max_chars * sizeof(dbtext);
+            const OCI_Size  dst_offset = (OCI_Size) index * (OCI_Size) max_chars * sizeof(otext);
 
             OcilibStringUTF16ToUTF32(src + src_offset, dst + dst_offset, max_chars - 1);
         }
@@ -1226,7 +1226,7 @@ OCI_Statement * OcilibStatementInitialize
 
             if (NULL !=  dbstr)
             {
-                stmt->sql = OcilibStringDuplicateFromDBString(stmt->con->env, dbstr, dbcharcount(dbsize));
+                stmt->sql = OcilibStringDuplicateFromDBString(stmt->con->env, dbstr, (OCI_Size) dbcharcount(dbsize));
                 CHECK_NULL(stmt->sql);
             }
         }
@@ -1331,7 +1331,7 @@ static OCI_Boolean OcilibStatementCheckImplicitResultsets
 
                     CHECK_NULL(stmt->stmts[i]);
 
-                    stmt->rsts[i] = OcilibResultsetCreate(stmt->stmts[i], stmt->stmts[i]->fetch_size);
+                    stmt->rsts[i] = OcilibResultsetCreate(stmt->stmts[i], (OCI_Int32) stmt->stmts[i]->fetch_size);
 
                     CHECK_NULL(stmt->rsts[i]);
 
@@ -1436,7 +1436,7 @@ static OCI_Boolean OcilibStatementBatchErrorInit
                     ocilib_call_context.source_type,
                     ocilib_call_context.location,
                     buffer,
-                    row + 1
+                    (OCI_UInt32)(row + 1)
                 );
 
                 OcilibStringReleaseDBString(stmt->con->env, err_msg);
@@ -1832,7 +1832,7 @@ OCI_Resultset * OcilibStatementGetResultset
 
             /* create resultset object */
 
-            rs = stmt->rsts[0] = OcilibResultsetCreate(stmt, stmt->fetch_size);
+            rs = stmt->rsts[0] = OcilibResultsetCreate(stmt, (OCI_Int32) stmt->fetch_size);
         }
 
         CHECK_NULL(rs);
@@ -3673,9 +3673,9 @@ OCI_Boolean OcilibStatementRegisterString
     CHECK_REGISTER(stmt, name);
     CHECK_MIN(len, 1);
 
-    const OCI_Int32 size = (len + 1) * (ub4) sizeof(dbtext);
+    const OCI_Int32 size = (OCI_Int32)((len + 1) * sizeof(dbtext));
 
-    REGISTER_DATA(size, OCI_CDT_TEXT, SQLT_STR, 0, NULL, 0);
+    REGISTER_DATA((OCI_UInt32) size, OCI_CDT_TEXT, SQLT_STR, 0, NULL, 0);
 
     EXIT_FUNC();
 }
@@ -4451,7 +4451,7 @@ OCI_UInt32 OcilibStatementGetAffectedRows
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Boolean, FALSE,
+        /* returns */ OCI_UInt32, 0,
         /* context */ OCI_IPC_STATEMENT, stmt
     );
 
@@ -4466,7 +4466,7 @@ OCI_UInt32 OcilibStatementGetAffectedRows
         stmt->con->err
     );
 
-    SET_RETVAL(count);
+    SET_RETVAL((OCI_UInt32) count);
 
     EXIT_FUNC();
 }
@@ -4568,7 +4568,7 @@ OCI_UInt32 OcilibStatementGetBindIndex
     index = OcilibBindGetIndex(stmt, name);
     CHECK(index >= 0);
 
-    SET_RETVAL(index);
+    SET_RETVAL((OCI_UInt32) index);
 
     EXIT_FUNC();
 }
@@ -4832,7 +4832,7 @@ OCI_UInt32 OcilibStatementGetBatchErrorCount
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Boolean, FALSE,
+        /* returns */ OCI_UInt32, 0,
         /* context */ OCI_IPC_STATEMENT, stmt
     );
 

@@ -370,8 +370,8 @@ typedef OCI_UInt16 dbtext;
 
 #define osizeof(s) (sizeof(s) / sizeof(otext))
 
-#define ocharcount(l)  ((l) / sizeof(otext))
-#define dbcharcount(l) ((l) / sizeof(dbtext))
+#define ocharcount(l)  ((OCI_Int32)(l) / (OCI_Int32)sizeof(otext))
+#define dbcharcount(l) ((OCI_Int32)(l) / (OCI_Int32)sizeof(dbtext))
 
 #define OCI_ERR_AQ_LISTEN_TIMEOUT      25254
 #define OCI_ERR_AQ_DEQUEUE_TIMEOUT     25228

@@ -18,9 +18,9 @@ namespace TestCppApi
         ASSERT_TRUE(conn.IsServerAlive());
         ASSERT_TRUE(conn.PingServer());
 
-        ASSERT_EQ(ostring(OTEXT("FREE_DEV")), conn.GetConnectionString());
-        ASSERT_EQ(ostring(OTEXT("usr")), conn.GetUserName());
-        ASSERT_EQ(ostring(OTEXT("pwd")), conn.GetPassword());
+        ASSERT_EQ(DBS, conn.GetConnectionString());
+        ASSERT_EQ(USR, conn.GetUserName());
+        ASSERT_EQ(PWD, conn.GetPassword());
 
         ASSERT_FALSE(conn.GetServerVersion().empty());
         ASSERT_NE(OracleVersion(), conn.GetVersion());

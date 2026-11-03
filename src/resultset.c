@@ -146,7 +146,7 @@ OCI_Resultset * OcilibResultsetCreate
     rs->stmt         = stmt;
     rs->bof          = TRUE;
     rs->eof          = FALSE;
-    rs->fetch_size   = size;
+    rs->fetch_size   = (ub4) size;
     rs->fetch_status = OCI_SUCCESS;
     rs->row_count    = 0;
     rs->row_cur      = 0;
@@ -185,7 +185,7 @@ OCI_Resultset * OcilibResultsetCreate
             def->env   = stmt->con->env;
             def->htype = OCI_IPC_DEFINE;
 
-            def->buf.count   = size;
+            def->buf.count   = (OCI_UInt32) size;
             def->buf.sizelen = sizeof(ub2);
 
             def->rs = rs;
@@ -196,7 +196,7 @@ OCI_Resultset * OcilibResultsetCreate
 
             CHECK(OcilibColumnRetrieveInfo(&def->col, rs->stmt->con,
                                            rs->stmt, rs->stmt->handle,
-                                           i + 1, OCI_DESC_RESULTSET));
+                                           (OCI_Int32)(i + 1), OCI_DESC_RESULTSET));
 
             /* mapping to OCILIB internal types */
 
@@ -246,7 +246,7 @@ OCI_Resultset * OcilibResultsetCreate
             def->env   = stmt->con->env;
             def->htype = OCI_IPC_DEFINE;
 
-            def->buf.count   = size;
+            def->buf.count   = (OCI_UInt32) size;
             def->buf.sizelen = sizeof(ub4);
 
             def->rs = rs;
@@ -344,9 +344,9 @@ static OCI_Boolean OcilibResultsetExpandStrings
         {
             for (OCI_Int32 j = (OCI_Int32) (def->buf.count-1); j >= 0; j--)
             {
-                ub1 * tmpbuf = ((ub1*) def->buf.data) + (def->col.bufsize * j);
+                ub1 * tmpbuf = ((ub1*) def->buf.data) + ((OCI_Size) def->col.bufsize * (OCI_Size) j);
 
-                OcilibStringUTF16ToUTF32(tmpbuf, tmpbuf, (def->col.bufsize / sizeof(otext)) -1);
+                OcilibStringUTF16ToUTF32(tmpbuf, tmpbuf, (OCI_Int32)(def->col.bufsize / sizeof(otext)) - 1);
             }
         }
     }
@@ -602,7 +602,7 @@ static OCI_Boolean OcilibResultsetFetchCustom
 
             CHECK(isOutOfBound == FALSE);
 
-            offset += rs->row_abs;
+            offset += (OCI_Int32) rs->row_abs;
             break;
         }
         case OCI_SFD_ABSOLUTE:
@@ -622,7 +622,7 @@ static OCI_Boolean OcilibResultsetFetchCustom
 
     CHECK(OcilibResultsetFetchData(rs, OCI_SFD_ABSOLUTE, offset));
 
-    rs->row_abs = offset;
+    rs->row_abs = (ub4) offset;
 
     rs->bof = FALSE;
     rs->eof = FALSE;
@@ -1972,7 +1972,7 @@ OCI_UInt32 OcilibResultsetGetRaw
     CHECK_PTR(OCI_IPC_VOID,      buffer);
     CHECK_BOUND(index, 1, rs->nb_defs);
 
-    OCI_Define* def = OcilibDefineGet(rs, index);
+    OCI_Define* def = OcilibDefineGet(rs, (OCI_UInt32) index);
     CHECK_NULL(def);
 
     OCI_UInt32 result = 0;
@@ -2019,7 +2019,7 @@ OCI_UInt32 OcilibResultsetGetRawByName
     const OCI_Int32 index = OcilibDefineGetIndex(rs, name);
     CHECK(index >= 0);
 
-    OCI_Define* def = OcilibDefineGet(rs, index);
+    OCI_Define* def = OcilibDefineGet(rs, (OCI_UInt32) index);
     CHECK_NULL(def);
 
     OCI_UInt32 result = 0;
@@ -2512,7 +2512,7 @@ OCI_UInt32 OcilibResultsetGetDataSize
     CHECK_PTR(OCI_IPC_RESULTSET, rs);
     CHECK_BOUND(index, 1, rs->nb_defs);
 
-    OCI_Define* def = OcilibDefineGet(rs, index);
+    OCI_Define* def = OcilibDefineGet(rs, (OCI_UInt32) index);
     CHECK_NULL(def);
 
     OCI_UInt32 size = 0;

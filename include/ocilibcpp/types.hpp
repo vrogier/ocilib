@@ -10352,6 +10352,13 @@ namespace ocilib
 
         /**
          * @brief
+         * Find all documents in the collection
+         *
+         */
+        SodaDocCursor Find();
+
+        /**
+         * @brief
          * Find documents in the collection
          *
          */

@@ -133,6 +133,7 @@
     <ClCompile Include="TestEnvironment.cpp" />
     <ClCompile Include="TestImplicitResultset.cpp" />
     <ClCompile Include="TestInterval.cpp" />
+    <ClCompile Include="TestintervalCpp.cpp" />
     <ClCompile Include="TestJsonBind.cpp" />
     <ClCompile Include="TestJsonBindCpp.cpp" />
     <ClCompile Include="TestJsonCreate.cpp" />

@@ -333,7 +333,7 @@ OCI_Int32 OcilibIntervalCheck
 
 #endif
 
-    SET_RETVAL(value);
+    SET_RETVAL((OCI_Int32) value);
 
     EXIT_FUNC();
 }
@@ -372,7 +372,7 @@ OCI_Int32 OcilibIntervalCompare
 
 #endif
 
-    SET_RETVAL(value);
+    SET_RETVAL((OCI_Int32) value);
 
     EXIT_FUNC();
 }

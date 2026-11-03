@@ -124,10 +124,10 @@ namespace ocilib
             Enum();
             Enum(T value);
 
-            T GetValue();
+            T GetValue() const;
 
-            operator T ();
-            operator UInt32() const;
+            operator T () const;
+            explicit operator UInt32() const;
 
             bool operator == (const Enum& other) const;
             bool operator != (const Enum& other) const;

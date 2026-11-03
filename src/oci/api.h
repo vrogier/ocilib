@@ -1878,7 +1878,7 @@ typedef sword (*OCITHREADKEYSET)
     dvoid        *hndl,
     OCIError     *err,
     OCIThreadKey *key,
-    dvoid       **pValue
+    dvoid        *value
 );
 
 typedef sword (*OCITHREADKEYGET)
@@ -1886,7 +1886,7 @@ typedef sword (*OCITHREADKEYGET)
     dvoid        *hndl,
     OCIError     *err,
     OCIThreadKey *key,
-    dvoid        *value
+    dvoid       **pValue
 );
 
 typedef sword (*OCIDIRPATHABORT)
@@ -2694,10 +2694,10 @@ typedef sword(*OCISODABULKINSERTANDGETWITHOPTS)
 
 typedef sword(*OCISODACOLLTRUNCATE)
 (
-    OCISvcCtx   *svchp,
-    OCISodaColl *collection,
-    OCIError    *errhp,
-    ub4          mode
+    OCISvcCtx         *svchp,
+    const OCISodaColl *collection,
+    OCIError          *errhp,
+    ub4                mode
 );
 
 /* API introduced in 19.3 */
@@ -2762,7 +2762,7 @@ typedef sword(*OCIJSONTEXTBUFFERPARSE)
     void     *bufp,
     oraub8    buf_sz,
     ub4       validation,
-    ub4       encoding,
+    ub2       encoding,
     OCIError *errhp,
     ub4       mode
 );
@@ -2824,11 +2824,11 @@ typedef sword(*OCIJSONDOMDOCSET)
 
 typedef sword(*OCIJSONCLONE)
 (
-    void    *hndlp,
-    OCIJson *src_jsond,
-    OCIJson **dst_jsond,
-    OCIError *errhp,
-    ub4      mode
+    OCISvcCtx *svchp,
+    OCIJson   *src_jsond,
+    OCIJson   *dst_jsond,
+    OCIError  *errhp,
+    ub4        mode
 );
 
 typedef sword(*OCIJSONBINARYLENGTHGET)

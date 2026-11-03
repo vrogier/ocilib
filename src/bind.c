@@ -88,7 +88,7 @@ static OCI_Boolean OcilibBindAllocateInternalData
                 }
                 else
                 {
-                    struct_size = bnd->size;
+                    struct_size = (OCI_UInt32) bnd->size;
                 }
                 break;
             }
@@ -100,11 +100,11 @@ static OCI_Boolean OcilibBindAllocateInternalData
             }
             case OCI_CDT_TEXT:
             {
-                struct_size = bnd->size;
+                struct_size = (OCI_UInt32) bnd->size;
 
                 if (bnd->stmt->con->env->use_wide_char_conv)
                 {
-                    elem_size = bnd->size * (sizeof(otext) / sizeof(dbtext));
+                    elem_size = (OCI_UInt32) bnd->size * (OCI_UInt32)(sizeof(otext) / sizeof(dbtext));
                 }
                 break;
             }
@@ -138,7 +138,7 @@ static OCI_Boolean OcilibBindAllocateInternalData
             }
             case OCI_CDT_RAW:
             {
-                struct_size = bnd->size;
+                struct_size = (OCI_UInt32) bnd->size;
                 break;
             }
             case OCI_CDT_OBJECT:
@@ -267,7 +267,7 @@ static OCI_Boolean OcilibBindAllocateInternalData
                 }
                 else
                 {
-                    bnd->input       = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_VOID, bnd->size, 1, TRUE);
+                    bnd->input       = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_VOID, (OCI_Size) bnd->size, 1, TRUE);
                     bnd->buffer.data = (void**)bnd->input;
                 }
                 break;
@@ -288,13 +288,13 @@ static OCI_Boolean OcilibBindAllocateInternalData
                 if (bnd->stmt->con->env->use_wide_char_conv)
                 {
                     bnd->buffer.data = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_STRING,
-                                                                 bnd->size * (sizeof(otext) / sizeof(dbtext)), 1, TRUE);
-                    bnd->input = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_STRING, bnd->size, 1, TRUE);
+                                                                 (OCI_Size) bnd->size * (sizeof(otext) / sizeof(dbtext)), 1, TRUE);
+                    bnd->input = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_STRING, (OCI_Size) bnd->size, 1, TRUE);
                     bnd->alloc = TRUE;
                 }
                 else
                 {
-                    bnd->buffer.data = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_STRING, bnd->size, 1, TRUE);
+                    bnd->buffer.data = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_STRING, (OCI_Size) bnd->size, 1, TRUE);
                     bnd->input       = (void**)bnd->buffer.data;
                 }
                 break;
@@ -345,7 +345,7 @@ static OCI_Boolean OcilibBindAllocateInternalData
             }
             case OCI_CDT_RAW:
             {
-                bnd->input       = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_VOID, bnd->size, 1, TRUE);
+                bnd->input       = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_VOID, (OCI_Size) bnd->size, 1, TRUE);
                 bnd->buffer.data = (void**)bnd->input;
                 break;
             }
@@ -483,7 +483,7 @@ static OCI_Boolean OcilibBindAllocateBuffers
                     FREE(bnd->buffer.data);
                 }
 
-                ALLOC_BUFFER(OCI_IPC_BUFF_ARRAY, bnd->buffer.data, bnd->size, nballoc);
+                ALLOC_BUFFER(OCI_IPC_BUFF_ARRAY, bnd->buffer.data, (OCI_Size) bnd->size, nballoc);
             }
             else if (OCI_CDT_JSON == bnd->type && !bnd->is_array)
             {
@@ -880,7 +880,7 @@ OCI_Bind* OcilibBindCreate
     bnd->stmt      = stmt;
     bnd->input     = (void **) data;
     bnd->type      = type;
-    bnd->size      = size;
+    bnd->size      = (sb4) size;
     bnd->code      = (ub2) code;
     bnd->subtype   = (ub1) subtype;
     bnd->is_array  = is_array;
@@ -923,7 +923,7 @@ OCI_Bind* OcilibBindCreate
 
     /* OCI binding */
 
-    CHECK(OcilibBindPerformBinding(bnd, mode, index, exec_mode, plsql_table));
+    CHECK(OcilibBindPerformBinding(bnd, mode, (OCI_UInt32) index, exec_mode, plsql_table));
 
     /* set charset form */
 

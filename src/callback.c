@@ -167,7 +167,7 @@ sb4 OcilibCallbackOutBind
                 bnd->stmt->con->err
             );
 
-            bnd->stmt->rsts[iter] = OcilibResultsetCreate(bnd->stmt, rows);
+            bnd->stmt->rsts[iter] = OcilibResultsetCreate(bnd->stmt, (OCI_Int32) rows);
 
             CHECK_NULL(bnd->stmt->rsts[iter]);
 
@@ -403,8 +403,8 @@ ub4 OcilibCallbackNotifyChanges
                     sub->err
                 );
 
-                sub->event.op = sub->event.op & (~OCI_OPCODE_ALLROWS);
-                sub->event.op = sub->event.op & (~OCI_OPCODE_ALLOPS);
+                sub->event.op &= (ub4) ~OCI_OPCODE_ALLROWS;
+                sub->event.op &= (ub4) ~OCI_OPCODE_ALLOPS;
 
                 /* if requested, get row details */
 

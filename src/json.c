@@ -270,7 +270,7 @@ OCI_Connection * OcilibJsonGetConnection
 OCI_Boolean OcilibJsonLoadText
 (
     OCI_Json          *json,
-    const otext       *text,
+    const otext       *json_text,
     OCI_UInt32         length,
     OCI_JsonValidation validation,
     OCI_JsonEncoding   encoding
@@ -286,13 +286,13 @@ OCI_Boolean OcilibJsonLoadText
     OCI_Int32 dbsize = (length == 0 ? -1 : (OCI_Int32)(length * sizeof(otext)));
 
     CHECK_PTR(OCI_IPC_JSON, json);
-    CHECK_PTR(OCI_IPC_VOID, text);
+    CHECK_PTR(OCI_IPC_VOID, json_text);
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
-    dbstr = OcilibStringGetDBString(json->con->env, text, &dbsize);
+    dbstr = OcilibStringGetDBString(json->con->env, json_text, &dbsize);
 
     CHECK_NULL(dbstr);
 
@@ -305,7 +305,7 @@ OCI_Boolean OcilibJsonLoadText
         dbstr,
         (oraub8) dbsize,
         (ub4) validation,
-        (ub4) encoding,
+        (ub2) encoding,
         json->con->env->err,
         OCI_DEFAULT
     );
@@ -316,7 +316,7 @@ OCI_Boolean OcilibJsonLoadText
 
 #else
 
-    OCI_NOT_USED(text);
+    OCI_NOT_USED(json_text);
     OCI_NOT_USED(length);
     OCI_NOT_USED(validation);
     OCI_NOT_USED(encoding);
@@ -433,7 +433,7 @@ OCI_Boolean OcilibJsonToText
                                              sizeof(dbtext), (OCI_Size) dbsize + 1, FALSE);
         CHECK_NULL(dbstr);
 
-        bytes = (oraub8) ((dbsize + 1) * sizeof(dbtext));
+        bytes = (oraub8) ((OCI_Size)(dbsize + 1) * sizeof(dbtext));
 
         res = json->con->env->api->OCIJsonToTextBuffer
               (

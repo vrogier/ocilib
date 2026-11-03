@@ -443,7 +443,7 @@ namespace TestCApi
     struct ServerVersionGetterCase
     {
         OCI_UInt32 (*getter)(OCI_Connection*);
-        boolean positive;
+        OCI_Boolean positive;
     };
 
     class TestConnectionLegacyVersion : public ::testing::TestWithParam<ServerVersionGetterCase>
@@ -489,7 +489,7 @@ namespace TestCApi
 
     INSTANTIATE_TEST_CASE_P(Components, TestConnectionLegacyVersion,
         ::testing::Values(
-            ServerVersionGetterCase{ OCI_GetServerMajorVersion,    TRUE },
-            ServerVersionGetterCase{ OCI_GetServerMinorVersion,    FALSE },
-            ServerVersionGetterCase{ OCI_GetServerRevisionVersion, FALSE }));
+            ServerVersionGetterCase{ OCI_GetServerMajorVersion,    true },
+            ServerVersionGetterCase{ OCI_GetServerMinorVersion,    false },
+            ServerVersionGetterCase{ OCI_GetServerRevisionVersion, false }));
 }

@@ -266,7 +266,7 @@ ocilib_exit_label:                  \
         {                                               \
             if (((v) < (b1)) || ((v) > (b2)))           \
             {                                           \
-                THROW(OcilibExceptionOutOfBounds, (v)); \
+                THROW(OcilibExceptionOutOfBounds, (OCI_Int32)(v)); \
             }                                           \
         }                                               \
         while (0)
@@ -346,7 +346,7 @@ ocilib_exit_label:                  \
         {                                                         \
             if ((dp)->status != (v))                              \
             {                                                     \
-                THROW(OcilibExceptionDirPathState, (dp)->status); \
+                THROW(OcilibExceptionDirPathState, (OCI_Int32)((dp)->status)); \
             }                                                     \
         }                                                         \
         while (0)

@@ -195,7 +195,7 @@ OCI_TypeInfo * OcilibTypeInfoGet
     {
         if (*str == OTEXT('.'))
         {
-            ostrncat(obj_schema, name,  str-name);
+            ostrncat(obj_schema, name,  (OCI_Size)(str - name));
             ostrncat(obj_name,   ++str, (OCI_Size) OCI_SIZE_OBJ_NAME);
             break;
         }
@@ -298,8 +298,8 @@ OCI_TypeInfo * OcilibTypeInfoGet
                 con->err,
                 OCITypeByName,
                 con->env->handle, con->err, con->handle,
-                (CONST text*) dbstr2, dbsize2,
-                (CONST text*) dbstr3, dbsize3,
+                (CONST text*) dbstr2, (ub4) dbsize2,
+                (CONST text*) dbstr3, (ub4) dbsize3,
                 (text*)0, 0,
                 OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
                 &tdo

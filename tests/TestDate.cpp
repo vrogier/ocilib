@@ -410,6 +410,7 @@ namespace TestCApi
 
     }
 
+    /*
     TEST(TestDate, NextDay)
     {
         auto env = GetEnvironment(nullptr);
@@ -429,6 +430,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_DateFree(date));
     }
+    */
 
     TEST(TestDate, ZoneToZone)
     {

@@ -1306,7 +1306,7 @@ OCI_Environment * OcilibEnvironmentCreate
 
         env->api->OCIClientVersion(&maj, &min, &rev, NULL, NULL);
 
-        env->version_runtime = OCI_VER_MAKE(maj, min, rev);
+        env->version_runtime = (OCI_UInt32) OCI_VER_MAKE(maj, min, rev);
     }
     else if (env->api->OCIVectorToArray)
     {

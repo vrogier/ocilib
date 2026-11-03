@@ -669,7 +669,7 @@ OCI_DequeueMode OcilibDequeueGetMode
         dequeue->typinf->con->err
     );
 
-    SET_RETVAL(value);
+    SET_RETVAL((OCI_DequeueMode) value);
 
     EXIT_FUNC();
 }
@@ -733,7 +733,7 @@ OCI_DequeueNav OcilibDequeueGetNavigation
         dequeue->typinf->con->err
     );
 
-    SET_RETVAL(value);
+    SET_RETVAL((OCI_DequeueNav) value);
 
     EXIT_FUNC();
 }
@@ -782,7 +782,7 @@ OCI_Int32 OcilibDequeueGetWaitTime
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_UInt32, 0,
+        /* returns */ OCI_Int32, 0,
         /* context */ OCI_IPC_DEQUEUE, dequeue
     );
 
@@ -797,7 +797,7 @@ OCI_Int32 OcilibDequeueGetWaitTime
         dequeue->typinf->con->err
     );
 
-    SET_RETVAL(value);
+    SET_RETVAL((OCI_Int32) value);
 
     EXIT_FUNC();
 }
@@ -818,7 +818,7 @@ OCI_Boolean OcilibDequeueSetWaitTime
         /* context */ OCI_IPC_DEQUEUE, dequeue
     );
 
-    sb4 value = (ub4) timeout;
+    sb4 value = (sb4) timeout;
 
     CHECK_PTR(OCI_IPC_DEQUEUE, dequeue);
 

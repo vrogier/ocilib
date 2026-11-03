@@ -572,7 +572,7 @@ OCI_UInt32 OcilibCollectionGetCount
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Boolean, FALSE,
+        /* returns */ OCI_UInt32, 0,
         /* context */ OCI_IPC_COLLECTION, coll
     );
 

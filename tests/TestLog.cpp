@@ -331,8 +331,10 @@ namespace TestCApi
 
     TEST(TestLog, NativeToUTF8UndersizedBuffer)
     {
+        /* dst_size=1 fits neither a char + NUL (ANSI) nor a max-width UTF8
+         * char (WIDE): both paths return 0 */
         char dst[8];
-        ASSERT_EQ(0, OCI_TestLogNativeToUTF8(OTEXT("abc"), dst, 2));
+        ASSERT_EQ(0, OCI_TestLogNativeToUTF8(OTEXT("abc"), dst, 1));
     }
 
     TEST(TestLog, NativeToUTF8Roundtrip)

@@ -583,7 +583,7 @@ OCI_MsgState OcilibMessageGetState
 
     /* increment value to handle return code OCI_UNKNOWN on failure */
 
-    SET_RETVAL(++value);
+    SET_RETVAL((OCI_MsgState)(++value));
 
     EXIT_FUNC();
 }

@@ -273,6 +273,11 @@ OCI_Boolean OcilibNumberTranslateValue
  * OcilibNumberFromStringInternal
  * --------------------------------------------------------------------------------------------- */
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
+
 OCI_Boolean OcilibNumberFromStringInternal
 (
     OCI_Environment *env,
@@ -397,9 +402,18 @@ OCI_Boolean OcilibNumberFromStringInternal
     );
 }
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
+
 /* --------------------------------------------------------------------------------------------- *
  * OcilibNumberToStringInternal
  * --------------------------------------------------------------------------------------------- */
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
 
 OCI_Boolean OcilibNumberToStringInternal
 (
@@ -556,6 +570,10 @@ OCI_Boolean OcilibNumberToStringInternal
         OcilibStringReleaseDBString(env, dbstr1);
     );
 }
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 /* --------------------------------------------------------------------------------------------- *
  *Ocilib NumberInitialize

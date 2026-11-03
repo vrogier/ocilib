@@ -53,7 +53,7 @@ static void OcilibMemoryUpdateBytes
 {
     (void) type;
 
-    MUTEXED_CALL(env, env->mem_bytes_lib += size);
+    MUTEXED_CALL(env, env->mem_bytes_lib += (OCI_UInt64) size);
 }
 
 /* --------------------------------------------------------------------------------------------- *

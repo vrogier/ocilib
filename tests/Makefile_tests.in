@@ -9,11 +9,11 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 CC = g++
-CFLAGS =  -Wall -D@OCILIB_CHARSET@
+CFLAGS =  -Wall -D@OCILIB_CHARSET@ -DOCI_IMPORT_LINKAGE
 EXEC_NAME = ocilib_tests
-INCLUDES = -I/usr/local/include -I@OCILIB_PREFIX@/include
-LIBS = @ORACLE_LIBADD@  -L@OCILIB_PREFIX@/lib -locilib -lgtest -lgtest_main -lpthread
-SOURCES := $(wildcard *.cpp) 
+INCLUDES = -I../src -I/usr/local/include -I@OCILIB_PREFIX@/include @ORACLE_INCLUDES@
+LIBS = @OCILIB_PREFIX@/lib/libocilib.a @ORACLE_LIBADD@ -lgtest -lgtest_main -lpthread
+SOURCES := $(wildcard *.cpp *.c) 
 OBJS := $(addsuffix .o, $(basename $(notdir $(SOURCES))))
 
 all: $(EXEC_NAME)
@@ -22,6 +22,9 @@ $(EXEC_NAME): $(OBJS)
 	$(CC) -o $(EXEC_NAME) $(OBJS) $(LIBS)
 
 %.o: %.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+
+%.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
 clean: 

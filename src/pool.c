@@ -316,11 +316,11 @@ OCI_Pool * OcilibPoolCreate
                 pool->env->handle, pool->err, (OCISPool *)pool->handle,
                 (OraText **) (dvoid *) &dbstr_name,
                 (ub4*) &dbsize_name,
-                (OraText *) dbstr_db, (sb4) dbsize_db,
+                (OraText *) dbstr_db, (ub4) dbsize_db,
                 (ub4)pool->min, (ub4)pool->max,
                 (ub4)pool->incr, (OraText *) dbstr_user,
-                (sb4) dbsize_user, (OraText *) dbstr_pwd,
-                (sb4) dbsize_pwd,  (ub4) sess_mode
+                (ub4) dbsize_user, (OraText *) dbstr_pwd,
+                (ub4) dbsize_pwd,  (ub4) sess_mode
             );
         }
 

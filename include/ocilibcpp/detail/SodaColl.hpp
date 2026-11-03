@@ -74,6 +74,16 @@ namespace ocilib
         core::Check(OCI_SodaCollInsertDoc(*this, doc));
     }
 
+    inline SodaDocCursor SodaColl::Find()
+    {
+        OCI_SodaDocCursor* cursor = core::Check
+        (
+            OCI_SodaCollFind(*this, nullptr)
+        );
+
+        return SodaDocCursor(cursor, GetHandle());
+    }
+
     inline SodaDocCursor SodaColl::Find(const SodaOptions& options)
     {
         OCI_SodaDocCursor* cursor = core::Check

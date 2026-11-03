@@ -652,7 +652,7 @@ static OCI_Boolean OcilibConnectionLogonSessionPool
         OCISessionGet,
         con->env->handle, con->err, &con->handle, NULL,
         (OraText  *)dbstr, (ub4)dbsize,
-        (OraText *)dbstr_tag, dbsize_tag,
+        (OraText *)dbstr_tag, (ub4) dbsize_tag,
         (OraText **)&dbstr_ret, &dbsize_ret,
         (boolean*) &found, sess_mode
     );
@@ -1531,7 +1531,7 @@ const otext * OcilibConnectionGetServerVersion
             ver_min = OCI_SERVER_RELEASE_REL_UPD(version);
             ver_rev = OCI_SERVER_RELEASE_REL_UPD_REV(version);
 
-            con->ver_num = OCI_VER_MAKE(ver_maj, ver_min, ver_rev);
+            con->ver_num = (OCI_UInt32) OCI_VER_MAKE(ver_maj, ver_min, ver_rev);
         }
         else
 
@@ -1540,7 +1540,7 @@ const otext * OcilibConnectionGetServerVersion
         {
             otext* p = NULL;
 
-            con->ver_str[ocharcount(dbsize)] = 0;
+            con->ver_str[(OCI_Size) ocharcount(dbsize)] = 0;
 
             /* parse server version string to find the version information
                 **/
@@ -1556,7 +1556,7 @@ const otext * OcilibConnectionGetServerVersion
                                                   (OCI_Int32*)&ver_min,
                                                   (OCI_Int32*)&ver_rev))
                     {
-                        con->ver_num = OCI_VER_MAKE(ver_maj, ver_min, ver_rev);
+                        con->ver_num = (OCI_UInt32) OCI_VER_MAKE(ver_maj, ver_min, ver_rev);
                     }
 
                     break;

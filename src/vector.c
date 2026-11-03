@@ -446,7 +446,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
     if (IS_WIDE_CHAR_ENV())
     {
         ansi_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)ansi_size+1, (OCI_Size)1, TRUE);
-        OcilibStringNativeToAnsi(str, ansi_str, ansi_size);
+        OcilibStringNativeToAnsi(str, ansi_str, (OCI_Int32) ansi_size);
     }
     else
     {
@@ -554,7 +554,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
 
         if (IS_WIDE_CHAR_ENV())
         {
-            OcilibStringAnsiToNative(ansi_str,str, ansi_size);
+            OcilibStringAnsiToNative(ansi_str, str, (OCI_Int32) ansi_size);
         }
         else
         {

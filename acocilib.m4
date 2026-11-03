@@ -51,7 +51,7 @@ AC_DEFUN([OCILIB_PATH],
   demo_sources_files=`(cd ${srcdir:-.}/demo && ls -1 *.c *.h *.cpp *.sql)`
   OCILIB_DEMO_SOURCES=`echo $demo_sources_files | sed 's,$, ,g'`
 
-  tests_files=`(cd ${srcdir:-.}/tests && ls -1 *.h *.cpp)`
+  tests_files=`(cd ${srcdir:-.}/tests && ls -1 *.h *.cpp *.c)`
   OCILIB_TESTS=`echo $tests_files | sed 's,$, ,g'`
 
   AC_SUBST(OCILIB_PREFIX)

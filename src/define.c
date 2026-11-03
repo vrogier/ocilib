@@ -297,7 +297,7 @@ OCI_Boolean OcilibDefineAlloc
 
     /* Allocate row data sizes array */
 
-    ALLOC_BUFFER(OCI_IPC_LEN_ARRAY, def->buf.lens, def->buf.sizelen, def->buf.count);
+    ALLOC_BUFFER(OCI_IPC_LEN_ARRAY, def->buf.lens, (OCI_Size) def->buf.sizelen, def->buf.count);
 
     /* initialize length array with buffer default size.
         But, Oracle uses different sizes for static fetch and callback fetch....*/

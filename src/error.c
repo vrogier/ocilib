@@ -180,6 +180,11 @@ void OcilibErrorReset
  * OcilibErrorGet
  * --------------------------------------------------------------------------------------------- */
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
+
 void OcilibErrorSet
 (
     OCI_Error     * err,
@@ -255,7 +260,7 @@ void OcilibErrorSet
 
         if (location_len > 0)
         {
-            OcilibStringAnsiToNative(location, err->location, (OCI_UInt32)location_len);
+            OcilibStringAnsiToNative(location, err->location, (OCI_Int32)location_len);
         }
         else
         {
@@ -296,6 +301,11 @@ void OcilibErrorSet
 
     err->message_len = (OCI_UInt32)message_capacity;
 }
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
+
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibErrorResetSource

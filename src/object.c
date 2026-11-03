@@ -749,7 +749,7 @@ static OCI_Int32 OcilibObjectGetAttributeIndex
 static void * OcilibObjectGetAttr
 (
     OCI_Object *obj,
-    OCI_UInt32  index,
+    OCI_Int32   index,
     OCIInd    **pind
 )
 {
@@ -775,7 +775,7 @@ static void * OcilibObjectGetAttr
 
     if (pind)
     {
-        const OCI_Int32 ind_index = obj->idx_ind + OcilibObjectGetIndOffset(obj->typinf, (OCI_Int32) index);
+        const OCI_Int32 ind_index = obj->idx_ind + OcilibObjectGetIndOffset(obj->typinf, index);
 
         *pind = &obj->tab_ind[ind_index];
     }
@@ -1392,7 +1392,7 @@ OCI_UInt32 OcilibObjectGetRawSize
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Boolean, FALSE,
+        /* returns */ OCI_UInt32, 0,
         /* context */ OCI_IPC_OBJECT, obj
     );
 

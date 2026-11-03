@@ -431,13 +431,11 @@ OCI_SodaDocCursor* OcilibSodaCollFind
     OCISodaDoc             **mat_docs  = NULL;
     OCI_UInt32               mat_count = 0;
 
-#ifdef OCI_CHARSET_WIDE
 
     OCI_UInt32 mat_cap   = 0;
     OCI_UInt32 key_count = 0;
     OCI_UInt32 k         = 0;
 
-#endif
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
@@ -450,7 +448,6 @@ OCI_SodaDocCursor* OcilibSodaCollFind
     {
         opthandle = options->handle;
 
-#ifdef OCI_CHARSET_WIDE
 
         /* multi-key emulation (OCISodaOperKeysSet is unusable in UTF-16
            environments): materialize matching documents now, then the
@@ -458,7 +455,6 @@ OCI_SodaDocCursor* OcilibSodaCollFind
 
         key_count = options->key_count;
 
-#endif
     }
     else
     {
@@ -468,7 +464,6 @@ OCI_SodaDocCursor* OcilibSodaCollFind
         opthandle = tmpopts->handle;
     }
 
-#ifdef OCI_CHARSET_WIDE
 
     if (key_count > 0)
     {
@@ -555,7 +550,6 @@ OCI_SodaDocCursor* OcilibSodaCollFind
     }
     else
 
-#endif
 
     {
         CHECK_OCI
@@ -646,7 +640,6 @@ OCI_SodaDoc* OcilibSodaCollFindOne
     {
         opthandle = options->handle;
 
-#ifdef OCI_CHARSET_WIDE
 
         /* multi-key emulation: try each cached key until one matches */
 
@@ -655,7 +648,6 @@ OCI_SodaDoc* OcilibSodaCollFindOne
             loops = options->key_count;
         }
 
-#endif
     }
     else
     {
@@ -672,14 +664,12 @@ OCI_SodaDoc* OcilibSodaCollFindOne
     {
         doc->handle = NULL;
 
-#ifdef OCI_CHARSET_WIDE
 
         if (NULL != options && options->key_count > 0)
         {
             CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
         }
 
-#endif
 
         oci_ret = coll->sdb->con->env->api->OCISodaFindOne
                   (
@@ -828,7 +818,6 @@ OCI_UInt64 OcilibSodaCollDocCount
     {
         opthandle = options->handle;
 
-#ifdef OCI_CHARSET_WIDE
 
         /* multi-key emulation: sum per-key counts */
 
@@ -837,7 +826,6 @@ OCI_UInt64 OcilibSodaCollDocCount
             loops = options->key_count;
         }
 
-#endif
     }
     else
     {
@@ -851,14 +839,12 @@ OCI_UInt64 OcilibSodaCollDocCount
     {
         ub8 keydocs = 0;
 
-#ifdef OCI_CHARSET_WIDE
 
         if (NULL != options && options->key_count > 0)
         {
             CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
         }
 
-#endif
 
         CHECK_OCI
         (
@@ -966,7 +952,6 @@ OCI_Boolean OcilibSodaCollReplaceOne
     {
         opthandle = options->handle;
 
-#ifdef OCI_CHARSET_WIDE
 
         /* multi-key emulation: replace on the first matching key */
 
@@ -975,7 +960,6 @@ OCI_Boolean OcilibSodaCollReplaceOne
             loops = options->key_count;
         }
 
-#endif
     }
     else
     {
@@ -987,14 +971,12 @@ OCI_Boolean OcilibSodaCollReplaceOne
 
     for (i = 0; i < loops && FALSE == replaced; i++)
     {
-#ifdef OCI_CHARSET_WIDE
 
         if (NULL != options && options->key_count > 0)
         {
             CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
         }
 
-#endif
 
         CHECK_OCI
         (
@@ -1054,7 +1036,6 @@ OCI_Boolean OcilibSodaCollReplaceOneAndGet
     {
         opthandle = options->handle;
 
-#ifdef OCI_CHARSET_WIDE
 
         /* multi-key emulation: replace on the first matching key */
 
@@ -1063,7 +1044,6 @@ OCI_Boolean OcilibSodaCollReplaceOneAndGet
             loops = options->key_count;
         }
 
-#endif
     }
     else
     {
@@ -1075,14 +1055,12 @@ OCI_Boolean OcilibSodaCollReplaceOneAndGet
 
     for (i = 0; i < loops && FALSE == replaced; i++)
     {
-#ifdef OCI_CHARSET_WIDE
 
         if (NULL != options && options->key_count > 0)
         {
             CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
         }
 
-#endif
 
         reshandle = doc->handle;
 
@@ -1254,7 +1232,6 @@ OCI_Boolean OcilibSodaCollRemove
     {
         opthandle = options->handle;
 
-#ifdef OCI_CHARSET_WIDE
 
         /* multi-key emulation: remove per key and sum counts */
 
@@ -1263,7 +1240,6 @@ OCI_Boolean OcilibSodaCollRemove
             loops = options->key_count;
         }
 
-#endif
     }
     else
     {
@@ -1277,14 +1253,12 @@ OCI_Boolean OcilibSodaCollRemove
     {
         ub8 keyCount = 0;
 
-#ifdef OCI_CHARSET_WIDE
 
         if (NULL != options && options->key_count > 0)
         {
             CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
         }
 
-#endif
 
         CHECK_OCI
         (

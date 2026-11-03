@@ -41,6 +41,24 @@ OCI_EXTERN_C_OPEN
   #include <orid.h>
   #include <oci8dp.h>
 
+  #if defined(OCI_MAJOR_VERSION) && (OCI_MAJOR_VERSION >= 21)
+    #include <ocijson.h>
+    #include <jzntypes.h>
+    #include <jzndom.h>
+  #endif
+
+  /* the Json DOM API public names changed between OCI versions:
+     map the legacy names used in the code to the newer ones      */
+  #if defined(JsonDomCreateObject) && !defined(JsonDomNewObject)
+    #define JsonDomNewObject(jd, sz)        JsonDomCreateObject(jd)
+    #define JsonDomNewArray(jd, sz)         JsonDomCreateArray(jd)
+    #define JsonDomNewScalar(jd, sv)        JsonDomCreateScalar(jd, sv)
+    #define JsonDomNewScalarVal             JsonDomCreateScalarVal
+    #define JsonDomPutFieldValue            JsonDomSetField
+    #define JsonDomAppendItem               JsonDomAppendElement
+    #define JsonDomPutItem(jd, ar, ix, nd)  JsonDomAddElement(jd, ar, nd, ix)
+  #endif
+
 OCI_EXTERN_C_CLOSE
 
   #undef OCI_EXTERN_C_OPEN

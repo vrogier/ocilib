@@ -1520,6 +1520,11 @@ const otext * OcilibColumnGetSqlType
  * OcilibColumnGetFullSQLType
  * --------------------------------------------------------------------------------------------- */
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
+
 OCI_UInt32 OcilibColumnGetFullSqlType
 (
     OCI_Column *col,
@@ -1558,7 +1563,7 @@ OCI_UInt32 OcilibColumnGetFullSqlType
 #else
             const otext *fmt = OTEXT("%sCHAR(%i%s)");
 #endif
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, fmt,
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, fmt,
                                       SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
                                       (OCI_Int32) (col->charused ? col->charsize : col->size),
                                       col->charused && SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
@@ -1574,7 +1579,7 @@ OCI_UInt32 OcilibColumnGetFullSqlType
             const otext *fmt = OTEXT("%sVARCHAR(%i%s)");
 #endif
 
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, fmt, SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, fmt, SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
                                       (OCI_Int32) (col->charused ? col->charsize : col->size),
                                       col->charused &&  SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
             break;
@@ -1583,31 +1588,31 @@ OCI_UInt32 OcilibColumnGetFullSqlType
         {
             if (SCALE_FLOAT == col->scale && col->prec > 0)
             {
-                size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("FLOAT(%i)"), col->prec);
+                size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("FLOAT(%i)"), col->prec);
             }
             else if (col->scale > 0 && col->prec > 0)
             {
-                size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("NUMBER(%i,%i)"), (OCI_Int32) col->prec, (OCI_Int32) col->scale);
+                size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("NUMBER(%i,%i)"), (OCI_Int32) col->prec, (OCI_Int32) col->scale);
             }
             else if (col->prec > 0)
             {
-                size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("NUMBER(%i)"), (OCI_Int32) col->prec);
+                size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("NUMBER(%i)"), (OCI_Int32) col->prec);
             }
             else
             {
-                size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("NUMBER"));
+                size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("NUMBER"));
             }
 
             break;
         }
         case SQLT_INT:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("NUMBER"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("NUMBER"));
             break;
         }
         case SQLT_FLT:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("FLOAT(%i)"), (OCI_Int32) col->prec);
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("FLOAT(%i)"), (OCI_Int32) col->prec);
             break;
         }
 
@@ -1616,13 +1621,13 @@ OCI_UInt32 OcilibColumnGetFullSqlType
         case SQLT_BFLOAT:
         case SQLT_IBFLOAT:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("BINARY FLOAT"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("BINARY FLOAT"));
             break;
         }
         case SQLT_BDOUBLE:
         case SQLT_IBDOUBLE:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("BINARY DOUBLE"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("BINARY DOUBLE"));
             break;
         }
 
@@ -1631,62 +1636,62 @@ OCI_UInt32 OcilibColumnGetFullSqlType
         case SQLT_LNG:
         case SQLT_LVC:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("LONG"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("LONG"));
             break;
         }
         case SQLT_DAT:
         case SQLT_ODT:
         case SQLT_DATE:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("DATE"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("DATE"));
             break;
         }
         case SQLT_RDD:
         case SQLT_RID:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("ROWID"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("ROWID"));
             break;
         }
         case SQLT_BIN:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("RAW(%i)"), (OCI_Int32) col->size);
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("RAW(%i)"), (OCI_Int32) col->size);
             break;
         }
         case SQLT_LBI:
         case SQLT_LVB:
         case SQLT_VBI:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("LONG RAW(%i)"), (OCI_Int32) col->size);
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("LONG RAW(%i)"), (OCI_Int32) col->size);
             break;
         }
         case SQLT_RSET:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("RESULTSET"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("RESULTSET"));
             break;
         }
         case SQLT_CUR:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("CURSOR"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("CURSOR"));
             break;
         }
         case SQLT_CLOB:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, (col->subtype == OCI_NCLOB) ? OTEXT("NCLOB") : OTEXT("CLOB"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, (col->subtype == OCI_NCLOB) ? OTEXT("NCLOB") : OTEXT("CLOB"));
             break;
         }
         case SQLT_BLOB:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("BLOB"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("BLOB"));
             break;
         }
         case SQLT_BFILE:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("BINARY FILE LOB"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("BINARY FILE LOB"));
             break;
         }
         case SQLT_CFILE:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("CFILE"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("CFILE"));
             break;
         }
 
@@ -1694,28 +1699,28 @@ OCI_UInt32 OcilibColumnGetFullSqlType
 
         case SQLT_TIMESTAMP:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("TIMESTAMP(%i)"), (OCI_Int32) col->prec);
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("TIMESTAMP(%i)"), (OCI_Int32) col->prec);
             break;
         }
         case SQLT_TIMESTAMP_TZ:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("TIMESTAMP(%i) WITH TIME ZONE"), (OCI_Int32) col->prec);
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("TIMESTAMP(%i) WITH TIME ZONE"), (OCI_Int32) col->prec);
             break;
         }
         case SQLT_TIMESTAMP_LTZ:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("TIMESTAMP(%i) WITH LOCAL TIME ZONE"), (OCI_Int32) col->prec);
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("TIMESTAMP(%i) WITH LOCAL TIME ZONE"), (OCI_Int32) col->prec);
             break;
         }
         case SQLT_INTERVAL_YM:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("INTERVAL(%i) YEAR TO MONTH(%i)"),
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("INTERVAL(%i) YEAR TO MONTH(%i)"),
                                       (OCI_Int32) col->prec, (OCI_Int32) col->prec2);
             break;
         }
         case SQLT_INTERVAL_DS:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("INTERVAL(%i) DAY TO SECOND(%i)"),
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("INTERVAL(%i) DAY TO SECOND(%i)"),
                                       (OCI_Int32) col->prec, (OCI_Int32) col->prec2);
             break;
         }
@@ -1724,7 +1729,7 @@ OCI_UInt32 OcilibColumnGetFullSqlType
 
         case SQLT_REF:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("REF"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("REF"));
             break;
         }
 
@@ -1743,11 +1748,11 @@ OCI_UInt32 OcilibColumnGetFullSqlType
                 OcilibStringGetFullTypeName(col->typinf->schema, NULL, col->typinf->name, NULL,
                                             fullname, (sizeof(fullname) / sizeof(otext)) - 1);
 
-                size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("%s"), fullname);
+                size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("%s"), fullname);
             }
             else
             {
-                size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("NAMED TYPE"));
+                size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("NAMED TYPE"));
             }
             break;
         }
@@ -1756,33 +1761,33 @@ OCI_UInt32 OcilibColumnGetFullSqlType
 
         case SQLT_BOL:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("PL/SQL BOOLEAN"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("PL/SQL BOOLEAN"));
             break;
         }
 
         case SQLT_REC:
         case SQLT_UNDOCUMENTED_REC:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("%s"), col->typinf ? col->typinf->name : OTEXT("PL/SQL RECORD"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("%s"), col->typinf ? col->typinf->name : OTEXT("PL/SQL RECORD"));
             break;
         }
 
         case SQLT_TAB:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("%s"),
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("%s"),
                                       col->typinf ? col->typinf->name : OTEXT("PL/SQL TABLE INDEX BY"));
             break;
         }
 
         case SQLT_UNDOCUMENTED_BIN_INTEGER:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("PL/SQL BINARY INTEGER"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("PL/SQL BINARY INTEGER"));
             break;
         }
 
         case OCI_TYPECODE_PLS_INTEGER:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("PL/SQL INTEGER"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("PL/SQL INTEGER"));
             break;
         }
 
@@ -1790,7 +1795,7 @@ OCI_UInt32 OcilibColumnGetFullSqlType
 
         case SQLT_OPAQUE_TYPE:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len,
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,
                                       IS_XMLTYPE_COL(col) ? OTEXT("XMLTYPE") : OTEXT("?"));
             break;
         }
@@ -1813,7 +1818,7 @@ OCI_UInt32 OcilibColumnGetFullSqlType
             const otext *fmt = OTEXT("VECTOR(%s, %s)");
   #endif
 
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, fmt, str_dim, str_fmt);
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, fmt, str_dim, str_fmt);
 
             break;
         }
@@ -1822,7 +1827,7 @@ OCI_UInt32 OcilibColumnGetFullSqlType
 
         default:
         {
-            size = OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("?"));
+            size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("?"));
             break;
         }
     }
@@ -1831,6 +1836,10 @@ OCI_UInt32 OcilibColumnGetFullSqlType
 
     EXIT_FUNC();
 }
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibColumnGetTypeInfo

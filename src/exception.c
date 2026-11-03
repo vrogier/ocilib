@@ -423,6 +423,11 @@ void OcilibExceptionOCI
     }
 }
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
+
 /* --------------------------------------------------------------------------------------------- *
  * OcilibExceptionNotInitialized
  * --------------------------------------------------------------------------------------------- */
@@ -816,3 +821,7 @@ void OcilibExceptionExternalBindingNotAllowed
 {
     EXCEPTION_IMPL(OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED, bind);
 }
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif

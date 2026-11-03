@@ -39,6 +39,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestSubscriptionData"));
     }
 
+#ifdef OCI_CHARSET_ANSI
     TEST(TestSubscription, RegisterSecureMode)
     {
         ExecDML(OTEXT("drop table TestSubscriptionData"));
@@ -65,6 +66,9 @@ namespace TestCApi
 
         ExecDML(OTEXT("drop table TestSubscriptionData"));
     }
+
+#endif
+
 }
 
 namespace TestCppApi
@@ -73,6 +77,8 @@ namespace TestCppApi
     {
         (void) event;
     }
+
+#ifdef OCI_CHARSET_ANSI
 
     TEST(TestSubscription, RegisterWithSecureNotification)
     {
@@ -98,6 +104,9 @@ namespace TestCppApi
 
         ExecDML(OTEXT("drop table TestSubscriptionData"));
     }
+
+#endif
+
 }
 
 namespace TestCApi

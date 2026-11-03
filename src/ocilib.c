@@ -7324,13 +7324,13 @@ OCI_Connection * OCI_API OCI_JsonGetConnection
 OCI_Boolean OCI_API OCI_JsonLoadText
 (
     OCI_Json          *json,
-    const otext       *text,
+    const otext       *json_text,
     OCI_UInt32         length,
     OCI_JsonValidation validation,
     OCI_JsonEncoding   encoding
 )
 {
-    CALL_IMPL(OcilibJsonLoadText, json, text, length, validation, encoding);
+    CALL_IMPL(OcilibJsonLoadText, json, json_text, length, validation, encoding);
 }
 
 OCI_Boolean OCI_API OCI_JsonLoadBinary

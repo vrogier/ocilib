@@ -50,10 +50,10 @@ static OCI_UInt32 OcilibHashCompute
 
     for(h = 0, p = (otext *) str; (*p) != 0; p++)
     {
-        h = 31 * h + otoupper(*p);
+        h = 31 * h + (OCI_UInt32) otoupper(*p);
     }
 
-    return (h % table->size);
+    return ((OCI_UInt32) h % (OCI_UInt32) table->size);
 }
 
 /* --------------------------------------------------------------------------------------------- *

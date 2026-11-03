@@ -266,15 +266,11 @@ OCI_Boolean OcilibSodaOptionsSetKeys
     CHECK_PTR(OCI_IPC_SODA_DB, options->sdb);
     CHECK_SODA_ENABLED(options->sdb->con);
 
-#ifdef OCI_CHARSET_WIDE
-
-    /* OCISodaOperKeysSet() crashes under an OCI environment created with a
-     * UTF-16 client charset (observed with Oracle client 23.6): the function
-     * raises an access violation before processing its arguments. Multiple
-     * key operations are therefore emulated in OCILIB by caching the keys and
-     * iterating over them in the consuming calls (find, count, remove,
-     * replace), which use the OCI_ATTR_SODA_KEY attribute that works fine
-     * in UTF-16 environments.
+    /* OCISodaOperKeysSet() is unreliable on the client: it crashes under a
+     * UTF-16 environment (access violation on 23.6) and fails under ANSI
+     * on 23ai. Multiple key operations are therefore emulated in OCILIB by
+     * caching the keys and iterating over them in the consuming calls (find,
+     * count, remove, replace), which use the OCI_ATTR_SODA_KEY attribute.
      */
 
     OcilibSodaOptionsClearKeys(options);
@@ -293,35 +289,6 @@ OCI_Boolean OcilibSodaOptionsSetKeys
 
         options->key_count = count;
     }
-
-#else
-
-    ALLOC_DATA(OCI_IPC_VOID, dbkeys, count);
-    ALLOC_DATA(OCI_IPC_VOID, dblengths, count);
-
-    for (i = 0; i < count; i++)
-    {
-        OCI_Int32 dbsize = -1;
-
-        CHECK_PTR(OCI_IPC_STRING, keys[i]);
-
-        dbkeys[i]    = (OraText*)OcilibStringGetDBString(options->sdb->env, keys[i], &dbsize);
-        dblengths[i] = (ub4)dbsize;
-    }
-
-    CHECK_OCI
-    (
-        options->sdb->con->err,
-        OCISodaOperKeysSet,
-        options->handle,
-        dbkeys,
-        dblengths,
-        (ub4)count,
-        options->sdb->con->err,
-        OCI_DEFAULT
-    );
-
-#endif
 
     SET_SUCCESS();
 

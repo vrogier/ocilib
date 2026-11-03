@@ -44,7 +44,7 @@
         const type *s = (const type *) (ptr);        \
         const type *e = (const type *) (ptr);        \
         while (*e++);                                \
-        (size) = (OCI_Int32) (e - s - (OCI_Size) 1); \
+        (size) = (OCI_Int32)(e - s) - 1;             \
 
 
 /* --------------------------------------------------------------------------------------------- *
@@ -83,7 +83,7 @@ OCI_Size OcilibStringLength
         COMPUTE_LENGTH(OCI_Int32, ptr, size);
     }
 
-    return size;
+    return (OCI_Size) size;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -287,7 +287,7 @@ void OcilibStringTranslate
     }
     else if (src != dst)
     {
-        memcpy(dst, src, char_count * size_char_out);
+        memcpy(dst, src, (OCI_Size) char_count * size_char_out);
 
         if (size_char_out == sizeof(char))
         {
@@ -330,13 +330,13 @@ dbtext* OcilibStringGetDBString
     }
     else
     {
-        len = (OCI_Int32)((*size) / sizeof(otext));
+        len = (OCI_Int32)((OCI_Int32)(*size) / (OCI_Int32)sizeof(otext));
     }
 
     if (env && env->use_wide_char_conv)
     {
         dst = (dbtext*)OcilibMemoryAlloc(env, OCI_IPC_STRING, sizeof(dbtext),
-                                         len + 1, FALSE);
+                                         (OCI_Size)(len + 1), FALSE);
 
         if (NULL != dst)
         {
@@ -348,7 +348,7 @@ dbtext* OcilibStringGetDBString
         dst = (dbtext*)src;
     }
 
-    *size = (OCI_Int32)(len * sizeof(dbtext));
+    *size = (OCI_Size)len * sizeof(dbtext);
 
     return dst;
 }
@@ -400,7 +400,7 @@ otext* OcilibStringDuplicateFromDBString
     OCI_Int32        len
 )
 {
-    otext* dst = (otext*)OcilibMemoryAlloc(env, OCI_IPC_STRING, sizeof(otext), len + 1, FALSE);
+    otext* dst = (otext*)OcilibMemoryAlloc(env, OCI_IPC_STRING, sizeof(otext), (OCI_Size)(len + 1), FALSE);
 
     if (NULL != dst)
     {
@@ -602,12 +602,12 @@ OCI_Boolean OcilibStringGetAttribute
          * from returned buffer size */
         if (len == 0)
         {
-            len = dbcharcount(dbsize);
+            len = (OCI_Int32) dbcharcount(dbsize);
         }
 
-        if (OcilibStringRequestBuffer(con->env, str, size, len))
+        if (OcilibStringRequestBuffer(con->env, str, size, (OCI_UInt32) len))
         {
-            OcilibStringTranslate(dbstr, *str, len,
+            OcilibStringTranslate(dbstr, *str, (OCI_Int32) len,
                                   is_ansi ? sizeof(char) : sizeof(dbtext),
                                   sizeof(otext));
         }
@@ -716,7 +716,7 @@ OCI_UInt32 OcilibStringGetFromType
     {
         case OCI_CDT_TEXT:
         {
-            len += OcilibStringAddToBuffer(buffer, len, (otext*)data, dbcharcount(data_size), quote);
+            len += OcilibStringAddToBuffer(buffer, len, (otext*)data, (OCI_UInt32) dbcharcount(data_size), quote);
             break;
         }
         case OCI_CDT_BOOLEAN:
@@ -725,11 +725,11 @@ OCI_UInt32 OcilibStringGetFromType
             {
                 if (data)
                 {
-                    otext* str_value = *(OCI_Boolean*)data ? OCI_STRING_TRUE : OCI_STRING_FALSE;
+                    const otext* str_value = *(OCI_Boolean*)data ? OCI_STRING_TRUE : OCI_STRING_FALSE;
 
-                    const OCI_UInt32 str_length = (*(OCI_Boolean*)data) ? OCI_STRING_TRUE_SIZE : OCI_STRING_FALSE_SIZE;
+                    const OCI_UInt32 str_length = (OCI_UInt32)((*(OCI_Boolean*)data) ? OCI_STRING_TRUE_SIZE : OCI_STRING_FALSE_SIZE);
 
-                    len += OcilibStringAddToBuffer(buffer, len, str_value, str_length, quote);
+                    len += (OCI_UInt32) OcilibStringAddToBuffer(buffer, len, str_value, str_length, quote);
                 }
                 else
                 {
@@ -783,7 +783,7 @@ OCI_UInt32 OcilibStringGetFromType
                 OCI_Timestamp * tmsp     = (OCI_Timestamp*)data;
                 const OCI_Int32 fmt_type = tmsp && tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP;
 
-                const otext* fmt = tmsp ? OcilibEnvironmentGetFormat(tmsp->env, fmt_type) : NULL;
+                const otext* fmt = tmsp ? OcilibEnvironmentGetFormat(tmsp->env, (OCI_FormatType) fmt_type) : NULL;
 
                 res = tmsp ? OcilibTimestampToString(tmsp, fmt, (OCI_Int32)buffer_size, ptr, 0) : FALSE;
             }
@@ -887,7 +887,7 @@ OCI_UInt32 OcilibStringGetFromType
                             else
                             {
                                 len += OcilibStringAddToBuffer(buffer, len, (otext*)lob_buf,
-                                                               ocharcount(bytes_count), quote);
+                                                               (OCI_UInt32) ocharcount(bytes_count), quote);
                             }
                         }
 

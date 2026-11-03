@@ -37,13 +37,13 @@ namespace ocilib
         }
 
         template<class T>
-        T Enum<T>::GetValue()
+        T Enum<T>::GetValue() const
         {
             return _value;
         }
 
         template<class T>
-        Enum<T>::operator T ()
+        Enum<T>::operator T () const
         {
             return GetValue();
         }

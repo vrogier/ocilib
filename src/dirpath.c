@@ -922,16 +922,16 @@ OCI_Boolean OcilibDirPathSetEntry
 
         if (OCI_DDT_TEXT == dpcol->type && dp->con->env->use_wide_char_conv)
         {
-            size = ocharcount(size);
-            OcilibStringUTF32ToUTF16(value, data, size);
+            size = (OCI_UInt32) ocharcount(size);
+            OcilibStringUTF32ToUTF16(value, data, (OCI_Int32) size);
         }
         else if (OCI_DDT_OTHERS == dpcol->type && IS_WIDE_CHAR_ENV())
         {
             /* input Unicode numeric values causes oracle conversion error.
                so, let's convert them to ANSI */
 
-            size = ocharcount(size);
-            OcilibStringNativeToAnsi(value, data, size);
+            size = (OCI_UInt32) ocharcount(size);
+            OcilibStringNativeToAnsi(value, data, (OCI_Int32) size);
         }
         else if (OCI_DDT_NUMBER == dpcol->type)
         {

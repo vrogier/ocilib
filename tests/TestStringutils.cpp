@@ -339,9 +339,11 @@ namespace TestCApi
     {
         /* smaller request keeps the allocation and shrinks the tracked size */
 
+        const auto old_charset = OCI_TestEnvSetCharset(conn, 0);
         ASSERT_TRUE(OCI_TestStringRequestBuffer(conn, &buf, &size, 64));
         ASSERT_TRUE(OCI_TestStringRequestBuffer(conn, &buf, &size, 8));
         ASSERT_EQ(9u * sizeof(otext), size);
+        OCI_TestEnvSetCharset(conn, old_charset);
     }
 
     TEST_F(TestStringBuffer, RequestBufferOverflow)
