@@ -105,8 +105,7 @@ static OCI_UInt32 LongModeValues[] =
         CHECK_STMT_STATUS(stmt, OCI_STMT_PREPARED);                              \
         {                                                                        \
             const OCI_Boolean ext_only_value = (ext_only);                       \
-            if ((ext_only_value) &&                                              \
-                (OCI_BAM_INTERNAL == (stmt)->bind_alloc_mode) &&                 \
+            if ((OCI_BAM_INTERNAL == (stmt)->bind_alloc_mode) &&                 \
                 ((data) != NULL))                                                \
             {                                                                    \
                 THROW(OcilibExceptionExternalBindingNotAllowed, (name));         \

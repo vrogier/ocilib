@@ -129,10 +129,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
         ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
 
-        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, oldRoot);
-        OCI_JsonNodeFree(oldRoot);
-
         OCI_JsonNode* root = OCI_JsonNodeCreateObject(json);
         ASSERT_NE(nullptr, root);
 

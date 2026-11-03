@@ -756,6 +756,56 @@ OCI_Boolean OcilibJsonIsMutable
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonEnsureDoc
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonEnsureDoc
+(
+    OCI_Json *json
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_JSON, json
+    );
+
+    CHECK_PTR(OCI_IPC_JSON, json);
+    CHECK_PTR(OCI_IPC_CONNECTION, json->con);
+    CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    if (NULL == json->jdoc)
+    {
+        CHECK_OCI
+        (
+            json->con->env->err,
+            OCIJsonDomDocGet,
+            json->con->handle,
+            json->handle,
+            (JsonDomDoc**) &json->jdoc,
+            json->con->env->err,
+            OCI_DEFAULT
+        );
+    }
+
+    CHECK_NULL(json->jdoc);
+
+    SET_SUCCESS();
+
+#else
+
+    OCI_NOT_USED(json);
+
+    CHECK(FALSE);
+
+#endif
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OcilibJsonGetRoot
  * --------------------------------------------------------------------------------------------- */
 
@@ -778,21 +828,7 @@ OCI_JsonNode * OcilibJsonGetRoot
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
-    if (NULL == json->jdoc)
-    {
-        CHECK_OCI
-        (
-            json->con->env->err,
-            OCIJsonDomDocGet,
-            json->con->handle,
-            json->handle,
-            (JsonDomDoc**) &json->jdoc,
-            json->con->env->err,
-            OCI_DEFAULT
-        );
-
-        CHECK_NULL(json->jdoc);
-    }
+    CHECK_JSON_DOC(json);
 
     {
         jznDomNode *root = JsonDomGetRoot(json->jdoc);
@@ -840,21 +876,7 @@ OCI_Boolean OcilibJsonSetRoot
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
-    if (NULL == json->jdoc)
-    {
-        CHECK_OCI
-        (
-            json->con->env->err,
-            OCIJsonDomDocGet,
-            json->con->handle,
-            json->handle,
-            (JsonDomDoc**) &json->jdoc,
-            json->con->env->err,
-            OCI_DEFAULT
-        );
-
-        CHECK_NULL(json->jdoc);
-    }
+    CHECK_JSON_DOC(json);
 
     {
         sword res = 0;

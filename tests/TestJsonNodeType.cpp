@@ -32,10 +32,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
         ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
 
-        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, oldRoot);
-        OCI_JsonNodeFree(oldRoot);
-
         OCI_JsonNode* node = nullptr;
 
         node = OCI_JsonNodeCreateObject(json);
@@ -113,10 +109,6 @@ namespace TestCApi
         ASSERT_NE(nullptr, json);
         ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
         ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
-
-        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, oldRoot);
-        OCI_JsonNodeFree(oldRoot);
 
         /* positive offset */
 
@@ -229,10 +221,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
         ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
 
-        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, oldRoot);
-        OCI_JsonNodeFree(oldRoot);
-
         OCI_Interval* itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
         ASSERT_NE(nullptr, itv);
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv, 2, 3, 4, 5, 0));
@@ -310,10 +298,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
         ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
 
-        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, oldRoot);
-        OCI_JsonNodeFree(oldRoot);
-
         const OCI_JsonType types[] =
         {
             OCI_JNT_NULL, OCI_JNT_OBJECT, OCI_JNT_ARRAY, OCI_JNT_STRING,
@@ -346,10 +330,6 @@ namespace TestCApi
         ASSERT_NE(nullptr, json);
         ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
         ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
-
-        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, oldRoot);
-        OCI_JsonNodeFree(oldRoot);
 
         /* repeated GetString releases the previously cached string */
 
@@ -385,10 +365,6 @@ namespace TestCApi
         ASSERT_NE(nullptr, json);
         ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
         ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
-
-        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, oldRoot);
-        OCI_JsonNodeFree(oldRoot);
 
         OCI_JsonNode* str = OCI_JsonNodeCreateString(json, OTEXT("hello"), 0);
         ASSERT_EQ(ostring(OTEXT("hello")), ostring(OCI_JsonNodeGetString(str, nullptr)));
@@ -480,10 +456,6 @@ namespace TestCApi
         ASSERT_NE(nullptr, json);
         ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
         ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
-
-        OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, oldRoot);
-        OCI_JsonNodeFree(oldRoot);
 
         /* boolean node (was OraBooleanScalarC) */
         const auto bNode = OCI_JsonNodeCreateBoolean(json, TRUE);

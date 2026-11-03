@@ -16,9 +16,6 @@ namespace TestCppApi
         json.SetMutable(true);
         json.LoadText(OTEXT("null"));
 
-        JsonNode oldRoot = json.GetRoot();
-        (void)oldRoot;
-
         JsonNode arr = json.CreateArray();
 
         JsonNode item1 = json.CreateString(OTEXT("first"));
@@ -54,9 +51,6 @@ namespace TestCppApi
         Json json(con);
         json.SetMutable(true);
         json.LoadText(OTEXT("null"));
-
-        JsonNode oldRoot = json.GetRoot();
-        (void)oldRoot;
 
         JsonNode scalar = json.CreateString(OTEXT("hello"));
         JsonNode obj = json.CreateObject();

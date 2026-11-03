@@ -23,6 +23,17 @@
 
 #include "types.h"
 
+/* lazily materialize the cached DOM document (json->jdoc) on first access */
+
+#define CHECK_JSON_DOC(json)    \
+                                \
+    CHECK(OcilibJsonEnsureDoc(json))
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonEnsureDoc
+(
+    OCI_Json *json
+);
+
 OCI_SYM_LOCAL OCI_Json * OcilibJsonInitialize
 (
     OCI_Connection *con,

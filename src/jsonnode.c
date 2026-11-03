@@ -286,7 +286,7 @@ OCI_JsonType OcilibJsonNodeGetType
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
 
     if (OCI_JNT_NULL == node->type)
     {
@@ -344,7 +344,7 @@ const otext * OcilibJsonNodeGetString
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_STRING) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     res = JsonDomGetScalarInfo(node->json->jdoc, (jznDomScalar*)node->handle, &sval);
@@ -438,7 +438,7 @@ OCI_UInt32 OcilibJsonNodeGetFieldCount
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
 
     count = JsonDomGetNumFields(node->json->jdoc, (jznDomObject*)node->handle);
 
@@ -477,7 +477,7 @@ const otext * OcilibJsonNodeGetFieldName
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     CHECK_MIN(index, 1);
     if (node->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
@@ -548,7 +548,7 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByName
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     dbstr = OcilibStringGetDBString(node->json->env, name, &dbsize);
@@ -622,7 +622,7 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByIndex
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
     if (index >= JsonDomGetNumFields(node->json->jdoc, (jznDomObject *)node->handle)) { THROW(OcilibExceptionOutOfBounds,
                                                                                               (OCI_Int32) index); }
@@ -680,7 +680,7 @@ OCI_UInt32 OcilibJsonNodeGetItemCount
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
 
     count = JsonDomGetArraySize(node->json->jdoc, (jznDomArray*)node->handle);
 
@@ -719,7 +719,7 @@ OCI_JsonNode * OcilibJsonNodeGetItem
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_ARRAY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
     if (index >= JsonDomGetArraySize(node->json->jdoc, (jznDomArray *)node->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index);}
 
@@ -780,7 +780,7 @@ OCI_Number * OcilibJsonNodeGetNumber
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_NUMBER) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     memset(&sval, 0, sizeof(sval));
@@ -895,7 +895,7 @@ OCI_Boolean OcilibJsonNodeGetBoolean
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_BOOLEAN) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     res = JsonDomGetScalarInfo(node->json->jdoc, (jznDomScalar*)node->handle, &sval);
@@ -954,7 +954,7 @@ const void * OcilibJsonNodeGetBinary
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_BINARY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     res = JsonDomGetScalarInfo(node->json->jdoc, (jznDomScalar*)node->handle, &sval);
@@ -1006,7 +1006,7 @@ OCI_Date * OcilibJsonNodeGetDate
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_DATE) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     memset(&sval, 0, sizeof(sval));
@@ -1074,7 +1074,7 @@ OCI_Timestamp * OcilibJsonNodeGetTimestamp
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_TIMESTAMP) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     memset(&sval, 0, sizeof(sval));
@@ -1189,7 +1189,7 @@ OCI_Interval * OcilibJsonNodeGetInterval
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_INTERVAL) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     memset(&sval, 0, sizeof(sval));
@@ -1284,7 +1284,7 @@ OCI_JsonNode * OcilibJsonNodeCreateObject
     CHECK_PTR(OCI_IPC_JSON, json);
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(json->jdoc);
+    CHECK_JSON_DOC(json);
 
     hnd = (jznDomNode *) JsonDomNewObject(json->jdoc, 0);
 
@@ -1334,7 +1334,7 @@ OCI_JsonNode * OcilibJsonNodeCreateArray
     CHECK_PTR(OCI_IPC_JSON, json);
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(json->jdoc);
+    CHECK_JSON_DOC(json);
 
     hnd = (jznDomNode *) JsonDomNewArray(json->jdoc, 0);
 
@@ -1385,7 +1385,7 @@ OCI_JsonNode * OcilibJsonNodeCreateNull
     CHECK_PTR(OCI_IPC_JSON, json);
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(json->jdoc);
+    CHECK_JSON_DOC(json);
 
     memset(&sval, 0, sizeof(sval));
     sval.type_jznScalarVal = JZNVAL_NULL;
@@ -1446,7 +1446,7 @@ OCI_JsonNode * OcilibJsonNodeCreateString
     CHECK_PTR(OCI_IPC_STRING, value);
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(json->jdoc);
+    CHECK_JSON_DOC(json);
 
     dbstr = OcilibStringGetDBString(json->env, value, &dbsize);
 
@@ -1525,7 +1525,7 @@ OCI_JsonNode * OcilibJsonNodeCreateNumber
     CHECK_PTR(OCI_IPC_NUMBER, value);
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(json->jdoc);
+    CHECK_JSON_DOC(json);
 
     numbuf = (ub1 *) malloc(OCI_NUMBER_SIZE);
 
@@ -1591,7 +1591,7 @@ OCI_JsonNode * OcilibJsonNodeCreateBoolean
     CHECK_PTR(OCI_IPC_JSON, json);
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(json->jdoc);
+    CHECK_JSON_DOC(json);
 
     memset(&sval, 0, sizeof(sval));
     sval.type_jznScalarVal = (0 != value) ? JZNVAL_TRUE : JZNVAL_FALSE;
@@ -1649,7 +1649,7 @@ OCI_JsonNode * OcilibJsonNodeCreateBinary
     CHECK(0 == length || NULL != value);
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(json->jdoc);
+    CHECK_JSON_DOC(json);
 
     memset(&sval, 0, sizeof(sval));
     sval.type_jznScalarVal   = JZNVAL_BINARY;
@@ -1714,7 +1714,7 @@ OCI_Boolean OcilibJsonNodeSetString
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_STRING) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     dbstr = OcilibStringGetDBString(node->json->env, value, &dbsize);
@@ -1785,7 +1785,7 @@ OCI_Boolean OcilibJsonNodeSetNumber
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_NUMBER) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     numbuf = (ub1 *) malloc((OCI_Size) OCI_NUMBER_SIZE);
@@ -1847,7 +1847,7 @@ OCI_Boolean OcilibJsonNodeSetBoolean
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_BOOLEAN) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     memset(&sval, 0, sizeof(sval));
@@ -1896,7 +1896,7 @@ OCI_Boolean OcilibJsonNodeSetBinary
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_BINARY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     memset(&sval, 0, sizeof(sval));
@@ -1945,7 +1945,7 @@ OCI_Boolean OcilibJsonNodeSetNull
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
 
     memset(&sval, 0, sizeof(sval));
     sval.type_jznScalarVal = JZNVAL_NULL;
@@ -1996,7 +1996,7 @@ OCI_Boolean OcilibJsonNodeSetField
     CHECK_PTR(OCI_IPC_JSON, obj->json);
     CHECK_PTR(OCI_IPC_CONNECTION, obj->json->con);
     CHECK_FEATURE(obj->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(obj->json->jdoc);
+    CHECK_JSON_DOC(obj->json);
     if (obj->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
     CHECK_COMPAT(value->json == obj->json);
 
@@ -2058,7 +2058,7 @@ OCI_Boolean OcilibJsonNodeSetItem
     CHECK_PTR(OCI_IPC_JSON, arr->json);
     CHECK_PTR(OCI_IPC_CONNECTION, arr->json->con);
     CHECK_FEATURE(arr->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(arr->json->jdoc);
+    CHECK_JSON_DOC(arr->json);
     if (arr->type != OCI_JNT_ARRAY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
     CHECK_COMPAT(value->json == arr->json);
 
@@ -2102,7 +2102,7 @@ OCI_Boolean OcilibJsonNodeAppendItem
     CHECK_PTR(OCI_IPC_JSON, arr->json);
     CHECK_PTR(OCI_IPC_CONNECTION, arr->json->con);
     CHECK_FEATURE(arr->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(arr->json->jdoc);
+    CHECK_JSON_DOC(arr->json);
     if (arr->type != OCI_JNT_ARRAY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
     CHECK_COMPAT(value->json == arr->json);
 
@@ -2144,7 +2144,7 @@ OCI_JsonNode * OcilibJsonNodeCreateDate
     CHECK_PTR(OCI_IPC_DATE, value);
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(json->jdoc);
+    CHECK_JSON_DOC(json);
 
     hnd = (jznDomNode *) JsonDomNewScalarVal(json->jdoc, JZNVAL_OCI_DATE, value->handle);
 
@@ -2197,7 +2197,7 @@ OCI_JsonNode * OcilibJsonNodeCreateTimestamp
     CHECK_PTR(OCI_IPC_TIMESTAMP, value);
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(json->jdoc);
+    CHECK_JSON_DOC(json);
 
     hnd = (jznDomNode *) JsonDomNewScalarVal(json->jdoc, JZNVAL_OCI_DATETIME, value->handle);
 
@@ -2250,7 +2250,7 @@ OCI_JsonNode * OcilibJsonNodeCreateInterval
     CHECK_PTR(OCI_IPC_INTERVAL, value);
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(json->jdoc);
+    CHECK_JSON_DOC(json);
 
     hnd = (jznDomNode *) JsonDomNewScalarVal(json->jdoc, JZNVAL_OCI_INTERVAL, value->handle);
 
@@ -2338,7 +2338,7 @@ OCI_Boolean OcilibJsonNodeSetDate
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_DATE) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     if (OcilibJsonNodeSetTemporal(node, JZNVAL_OCI_DATE, value->handle))
@@ -2378,7 +2378,7 @@ OCI_Boolean OcilibJsonNodeSetTimestamp
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_TIMESTAMP) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     if (OcilibJsonNodeSetTemporal(node, JZNVAL_OCI_DATETIME, value->handle))
@@ -2418,7 +2418,7 @@ OCI_Boolean OcilibJsonNodeSetInterval
     CHECK_PTR(OCI_IPC_JSON, node->json);
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(node->json->jdoc);
+    CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_INTERVAL) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     if (OcilibJsonNodeSetTemporal(node, JZNVAL_OCI_INTERVAL, value->handle))
@@ -2458,7 +2458,7 @@ OCI_JsonNode * OcilibJsonNodeCreate
     CHECK_PTR(OCI_IPC_JSON, json);
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
-    CHECK_NULL(json->jdoc);
+    CHECK_JSON_DOC(json);
 
     switch (type)
     {

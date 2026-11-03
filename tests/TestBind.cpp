@@ -3,6 +3,13 @@
 
 namespace TestCApi
 {
+    static Context context;
+
+    static inline void AddError(OCI_Error* err)
+    {
+        context.Errs.emplace_back(Error{ OCI_ErrorGetInternalCode(err), OCI_ErrorGetOCICode(err) });
+    }
+
     TEST(TestBind, BasicBind)
     {
         ExecDML(OTEXT("create table TestBind_Table (id int, name varchar2(50))"));
@@ -684,5 +691,40 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
         ExecDML(OTEXT("drop table TestBind_InternalAllocBindOps"));
+    }
+
+    TEST(TestBind, InternalAllocRejectsExternalData)
+    {
+        Guard guard(context.Lock);
+        context.Errs.clear();
+
+        auto env = GetEnvironment(AddError);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+
+        /* passing user data to a bind in internal allocation mode must be
+           rejected, not accepted and later freed as library memory */
+        ASSERT_TRUE(OCI_SetBindAllocation(stmt, OCI_BAM_INTERNAL));
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select :c, :s from dual")));
+
+        OCI_Int32 cval = 7;
+        otext sval[20] = OTEXT("external");
+
+        ASSERT_EQ(nullptr, OCI_BindInt(stmt, OTEXT(":c"), &cval));
+        ASSERT_EQ(nullptr, OCI_BindString(stmt, OTEXT(":s"), sval, 20));
+
+        ASSERT_EQ(2, context.Errs.size());
+        ASSERT_EQ(OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED, context.Errs[0].LibCode);
+        ASSERT_EQ(0, context.Errs[0].OCICode);
+        ASSERT_EQ(OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED, context.Errs[1].LibCode);
+        ASSERT_EQ(0, context.Errs[1].OCICode);
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 }

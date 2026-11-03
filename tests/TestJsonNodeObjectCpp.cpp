@@ -16,9 +16,6 @@ namespace TestCppApi
         json.SetMutable(true);
         json.LoadText(OTEXT("null"));
 
-        JsonNode oldRoot = json.GetRoot();
-        (void)oldRoot;
-
         JsonNode root = json.CreateObject();
 
         JsonNode field = json.CreateString(OTEXT("alpha"));
@@ -46,9 +43,6 @@ namespace TestCppApi
         Json json(con);
         json.SetMutable(true);
         json.LoadText(OTEXT("null"));
-
-        JsonNode oldRoot = json.GetRoot();
-        (void)oldRoot;
 
         JsonNode root = json.CreateObject();
         JsonNode field = json.CreateString(OTEXT("alpha"));
