@@ -614,6 +614,7 @@ static void OcilibEnvironmentLoadSymbols
     env->api->OCIPasswordChange            = OCIPasswordChange;
     env->api->OCIRawAllocSize              = OCIRawAllocSize;
     env->api->OCIRawAssignBytes            = OCIRawAssignBytes;
+    env->api->OCIRawPtr                    = OCIRawPtr;
     env->api->OCIRawResize                 = OCIRawResize;
     env->api->OCIRawSize                   = OCIRawSize;
     env->api->OCIRefAssign                 = OCIRefAssign;
@@ -638,6 +639,7 @@ static void OcilibEnvironmentLoadSymbols
     env->api->OCIStmtPrepare               = OCIStmtPrepare;
     env->api->OCIStmtSetPieceInfo          = OCIStmtSetPieceInfo;
     env->api->OCIStringAssignText          = OCIStringAssignText;
+    env->api->OCIStringPtr                 = OCIStringPtr;
     env->api->OCIStringResize              = OCIStringResize;
     env->api->OCIStringSize                = OCIStringSize;
     env->api->OCITableDelete               = OCITableDelete;
@@ -666,24 +668,6 @@ static void OcilibEnvironmentLoadSymbols
     env->api->OCIEnvCreate               = OCIEnvCreate;
     env->api->OCISubscriptionRegister    = OCISubscriptionRegister;
     env->api->OCISubscriptionUnRegister  = OCISubscriptionUnRegister;
-    env->api->OCIThreadClose             = OCIThreadClose;
-    env->api->OCIThreadCreate            = OCIThreadCreate;
-    env->api->OCIThreadHndDestroy        = OCIThreadHndDestroy;
-    env->api->OCIThreadHndInit           = OCIThreadHndInit;
-    env->api->OCIThreadIdDestroy         = OCIThreadIdDestroy;
-    env->api->OCIThreadIdInit            = OCIThreadIdInit;
-    env->api->OCIThreadInit              = OCIThreadInit;
-    env->api->OCIThreadJoin              = OCIThreadJoin;
-    env->api->OCIThreadKeyDestroy        = OCIThreadKeyDestroy;
-    env->api->OCIThreadKeyGet            = OCIThreadKeyGet;
-    env->api->OCIThreadKeyInit           = OCIThreadKeyInit;
-    env->api->OCIThreadKeySet            = OCIThreadKeySet;
-    env->api->OCIThreadMutexAcquire      = OCIThreadMutexAcquire;
-    env->api->OCIThreadMutexDestroy      = OCIThreadMutexDestroy;
-    env->api->OCIThreadMutexInit         = OCIThreadMutexInit;
-    env->api->OCIThreadMutexRelease      = OCIThreadMutexRelease;
-    env->api->OCIThreadProcessInit       = OCIThreadProcessInit;
-    env->api->OCIThreadTerm              = OCIThreadTerm;
 #endif
 #if OCI_VERSION_COMPILE >= OCI_9_2
     env->api->OCIStmtFetch2   = OCIStmtFetch2;
@@ -1359,10 +1343,6 @@ OCI_Environment * OcilibEnvironmentCreate
     else if (env->api->OCIDateTimeGetTimeZoneName)
     {
         env->version_runtime = OCI_9_0;
-    }
-    else if (env->api->OCIThreadCreate)
-    {
-        env->version_runtime = OCI_8_1;
     }
     else if (env->api->OCIEnvInit)
     {
