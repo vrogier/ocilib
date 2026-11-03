@@ -2745,8 +2745,14 @@ namespace ocilib
         template<class T>
         typename core::EnableIf<core::SupportedNumeric<T>::value, Number&>::type operator= (const T& lhs);
 
-        template<class T>
-        operator typename core::EnableIf<core::SupportedNumeric<T>::value, T>::type() const;
+        operator short() const;
+        operator unsigned short() const;
+        operator int() const;
+        operator unsigned int() const;
+        operator big_int() const;
+        operator big_uint() const;
+        operator float() const;
+        operator double() const;
 
         template<class T>
         typename core::EnableIf<core::SupportedNumeric<T>::value, Number>::type operator - (const T& value);

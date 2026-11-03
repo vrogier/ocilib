@@ -10,7 +10,7 @@
 - Restored C++98 compatibility of the C++ API headers (broken since v4.9.0):
   - Replaced C++11-only constructs (`EnumName::Value` qualification, default template arguments on function templates, range-for, brace initialization, delegating constructors) with C++98-compatible equivalents
   - `noexcept` now maps to `throw()` on pre-C++11 compilers, fixing `Exception` override mismatches
-  - `SupportedNumeric`/`SupportedVectorNumeric` SFINAE constraints moved to function parameters and return types
+  - `SupportedNumeric`/`SupportedVectorNumeric` SFINAE constraints moved to function parameters and return types; `Number` numeric conversion operators are now explicit overloads (MSVC ignores dependent-typename conversion operators)
 - Issue 391: Fixed data race on pooled connections
   - Added a `HandleStoreResolver<OCI_Pool*>` specialization so pools get their own mutex-guarded handle store and children list in threaded mode
   - `Environment`'s default handle store is now guarded by the environment mutex, protecting parent-less handles

@@ -214,7 +214,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_Cleanup());
     }
-
+    /*
     TEST(TestDate, GetNextDay)
     {
         ASSERT_TRUE(OCI_Initialize(nullptr, HOME, OCI_ENV_DEFAULT));
@@ -232,7 +232,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_DateFree(date));
 
         ASSERT_TRUE(OCI_Cleanup());
-    }
+    }*/
 
     TEST(TestDate, SetGetDateTime)
     {

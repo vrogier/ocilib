@@ -206,10 +206,44 @@ typename core::EnableIf<core::SupportedNumeric<T>::value, Number&>::type Number:
     return *this;
 }
 
-template<class T>
-Number::operator typename core::EnableIf<core::SupportedNumeric<T>::value, T>::type() const
+inline Number::operator short() const
 {
-    return GetValue<T>();
+    return GetValue<short>();
+}
+
+inline Number::operator unsigned short() const
+{
+    return GetValue<unsigned short>();
+}
+
+inline Number::operator int() const
+{
+    return GetValue<int>();
+}
+
+inline Number::operator unsigned int() const
+{
+    return GetValue<unsigned int>();
+}
+
+inline Number::operator big_int() const
+{
+    return GetValue<big_int>();
+}
+
+inline Number::operator big_uint() const
+{
+    return GetValue<big_uint>();
+}
+
+inline Number::operator float() const
+{
+    return GetValue<float>();
+}
+
+inline Number::operator double() const
+{
+    return GetValue<double>();
 }
 
 template<class T>
