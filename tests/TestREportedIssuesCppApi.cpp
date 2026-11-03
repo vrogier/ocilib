@@ -1,3 +1,5 @@
+#include <type_traits>
+
 #include "ocilib_tests.h"
 #include "ocilib.hpp"
 
@@ -645,6 +647,96 @@ namespace TestCppApi
         auto validRaw = msgRaw.GetPayload<Raw>();
         ASSERT_EQ(3, validRaw.size());
 
+        Environment::Cleanup();
+    }
+
+    // Issue 388 : copy assignment operators of value types were declared noexcept
+    // while their implementations can throw (OCI calls), leading to std::terminate
+
+    TEST(ReportedIssuesCppApi, Issue388)
+    {
+        static_assert(!std::is_nothrow_assignable<Number&, const Number&>::value,
+            "Number copy assignment must not be declared noexcept (issue #388)");
+        static_assert(!std::is_nothrow_assignable<Date&, const Date&>::value,
+            "Date copy assignment must not be declared noexcept (issue #388)");
+        static_assert(!std::is_nothrow_assignable<Interval&, const Interval&>::value,
+            "Interval copy assignment must not be declared noexcept (issue #388)");
+        static_assert(!std::is_nothrow_assignable<Timestamp&, const Timestamp&>::value,
+            "Timestamp copy assignment must not be declared noexcept (issue #388)");
+    }
+
+    TEST(ReportedIssuesCppApi, Issue388_Number)
+    {
+        Environment::Initialize();
+
+        Number nm1 = 1;
+        Number nm2;
+
+        ASSERT_THROW(nm1 = nm2, Exception);
+
+        Environment::Cleanup();
+    }
+
+    TEST(ReportedIssuesCppApi, Issue388_Date)
+    {
+        Environment::Initialize();
+
+        Date dt1(true);
+        Date dt2;
+
+        ASSERT_THROW(dt1 = dt2, Exception);
+
+        Environment::Cleanup();
+    }
+
+    // Issue 391 : data race on pooled connections - OCI_Pool had no thread-safe
+    // HandleStore (SIGSEGV in ConcurrentMap::Remove under concurrent load)
+
+    const size_t Issue391MaxThreads = 10;
+    const int Issue391IterationCount = 50;
+
+    static std::atomic<int> Issue391ErrorCount{ 0 };
+
+    static void Issue391WorkerProc(OCI_Thread* thread, void* data)
+    {
+        Pool* pool = static_cast<Pool*>(data);
+
+        for (int i = 0; i < Issue391IterationCount; ++i)
+        {
+            try
+            {
+                Connection con = pool->GetConnection();
+                con.Close();
+            }
+            catch (const Exception&)
+            {
+                ++Issue391ErrorCount;
+            }
+        }
+    }
+
+    TEST(ReportedIssuesCppApi, Issue391)
+    {
+        Environment::Initialize(Environment::Threaded);
+
+        Pool pool(DBS, USR, PWD, Pool::SessionPool, 0, static_cast<unsigned int>(Issue391MaxThreads));
+
+        std::array<ThreadHandle, Issue391MaxThreads> threads{};
+
+        for (auto& thread : threads)
+        {
+            thread = Thread::Create();
+            ASSERT_NE(nullptr, thread);
+            Thread::Run(thread, Issue391WorkerProc, &pool);
+        }
+
+        for (auto& thread : threads)
+        {
+            Thread::Join(thread);
+            Thread::Destroy(thread);
+        }
+
+        pool.Close();
         Environment::Cleanup();
     }
 }
