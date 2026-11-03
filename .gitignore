@@ -196,3 +196,4 @@ testlog.manifest
 **/CopilotIndices
 /proj/dll/.vs/ocilib_dll/v18
 /tests/.vs
+/CoverageReport

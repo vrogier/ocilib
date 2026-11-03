@@ -12188,7 +12188,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IntervalGetYearMonth
  * @param hour  - Hour value
  * @param min   - Minute value
  * @param sec   - Second value
- * @param nsec  - Nanoseconds value
+ * @param fsec  - Fractional seconds value
  *
  * @return
  * TRUE on success, otherwise FALSE.

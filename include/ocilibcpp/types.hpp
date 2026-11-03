@@ -1310,6 +1310,7 @@ namespace ocilib
          * @brief
          * Constructor that creates an underlying pool with the given information
          *
+         * @param env          - Environment instance
          * @param db           - Oracle Service Name
          * @param user         - Oracle User name
          * @param pwd          - Oracle User password
@@ -1331,6 +1332,7 @@ namespace ocilib
          * @brief
          * Create an Oracle pool of connections or sessions
          *
+         * @param env          - Environment instance
          * @param db           - Oracle Service Name
          * @param user         - Oracle User name
          * @param pwd          - Oracle User password
@@ -1685,6 +1687,7 @@ namespace ocilib
          * @brief
          * Constructor that creates an opens an underlying DB connection with the given information
          *
+         * @param env          - Environment instance
          * @param db           - Oracle Service Name
          * @param user         - Oracle User name
          * @param pwd          - Oracle User password
@@ -1700,6 +1703,7 @@ namespace ocilib
          * @brief
          * Create a physical connection to an Oracle database server
          *
+         * @param env          - Environment instance
          * @param db           - Oracle Service Name
          * @param user         - Oracle User name
          * @param pwd          - Oracle User password
@@ -2376,6 +2380,7 @@ namespace ocilib
         * @brief
         * Create an empty null number object
         *
+        * @param env    - Environment instance
         * @param create - Indicates if a Oracle Number object must be must be created
         *
         */
@@ -2392,6 +2397,7 @@ namespace ocilib
         * @brief
         * Create a number object initialized with given numerical value
         *
+        * @param env   - Environment instance
         * @param value - value to assign
         *
         */
@@ -2423,6 +2429,7 @@ namespace ocilib
         * @brief
         * Create a Number object with the value provided by the input Number string
         *
+        * @param env    - Environment instance
         * @param str    - String Number
         * @param format - format of the Number provided in parameter 'data'
         *
@@ -2439,6 +2446,7 @@ namespace ocilib
         * @brief
         * Create a Number object with the value provided by the input Number string
         *
+        * @param env    - Environment instance
         * @param str    - String Number
         * @param format - format of the Number provided in parameter 'data'
         *
@@ -2603,6 +2611,7 @@ namespace ocilib
          * @brief
          * Create an empty null Date object
          *
+         * @param env    - Environment instance
          * @param create - Indicates if a Oracle Date object must be must be created
          *
          */
@@ -2632,6 +2641,7 @@ namespace ocilib
         * @brief
         * Create a date object with the value provided by the input date time string
         *
+        * @param env    - Environment instance
         * @param str    - String date time
         * @param format - format of the date time provided in parameter 'data'
         *
@@ -2648,6 +2658,7 @@ namespace ocilib
         * @brief
         * Create a date object with the value provided by the input date time string
         *
+        * @param env    - Environment instance
         * @param str    - String date time
         * @param format - format of the date time provided in parameter 'data'
         *
@@ -3082,6 +3093,7 @@ namespace ocilib
         * @brief
         * Create a new instance of the given type
         *
+        * @param env  - Environment instance
         * @param type - Interval type to create
         *
         */
@@ -3112,6 +3124,7 @@ namespace ocilib
         * @brief
         * Create an interval object with the value provided by the input interval string
         *
+        * @param env  - Environment instance
         * @param type - Interval type to create
         * @param data - String interval
         *
@@ -3515,6 +3528,7 @@ namespace ocilib
         * @brief
         * return the current system timestamp
         *
+        * @param env  - Environment instance
         * @param type - Timestamp type to create
         *
         */
@@ -3551,6 +3565,7 @@ namespace ocilib
         * @brief
         * Create a new instance of the given type
         *
+        * @param env  - Environment instance
         * @param type - Timestamp type to create
         *
         */
@@ -3560,6 +3575,7 @@ namespace ocilib
         * @brief
         * Creates a timestamp object with the value provided by the input date time string
         *
+        * @param env    - Environment instance
         * @param type   - Timestamp type to create
         * @param data   - String date time
         * @param format - format of the date time provided in parameter 'data'
@@ -8106,6 +8122,7 @@ namespace ocilib
         * @param name        - Notification name
         * @param changeTypes - Subscription type
         * @param handler     - User handler callback
+        * @param mode        - Subscription mode
         * @param timeout     - notification timeout
         *
         * @note
