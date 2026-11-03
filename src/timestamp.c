@@ -388,7 +388,7 @@ OCI_Int32 OcilibTimestampCheck
 
 #endif
 
-    SET_RETVAL(value);
+    SET_RETVAL((OCI_Int32) value);
 
     EXIT_FUNC();
 }

@@ -496,7 +496,7 @@ AC_DEFUN([OCILIB_ORACLE],
 		AC_MSG_ERROR([file not found])
 	  fi
 
-	  ORACLE_INCLUDES="-I$ac_headers_path"
+	  ORACLE_INCLUDES="-isystem $ac_headers_path"
 	  ORACLE_LIBADD="-L$ac_oracle_lib_path -l$ac_lib_flag"
 	  ORACLE_LIBNAME=""
 
