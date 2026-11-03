@@ -18,29 +18,6 @@ namespace
         return json;
     }
 
-    ostring GetJsonText(OCI_Json* json)
-    {
-        OCI_UInt32 len = 0;
-        if (!OCI_JsonToText(json, nullptr, &len, 0, TRUE))
-        {
-            ADD_FAILURE() << "OCI_JsonToText size query failed";
-            return ostring();
-        }
-
-        otext* buffer = new otext[len + 1];
-        OCI_UInt32 len2 = len + 1;
-        if (!OCI_JsonToText(json, buffer, &len2, 0, TRUE))
-        {
-            delete[] buffer;
-            ADD_FAILURE() << "OCI_JsonToText failed";
-            return ostring();
-        }
-        buffer[len2] = 0;
-
-        ostring result(buffer);
-        delete[] buffer;
-        return result;
-    }
 }
 
 namespace TestCApi

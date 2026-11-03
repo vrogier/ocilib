@@ -108,8 +108,8 @@ namespace TestCApi
     struct LogCategoryCase
     {
         const char* categories;
-        boolean     libEnabled;
-        boolean     ociEnabled;
+        OCI_Boolean libEnabled;
+        OCI_Boolean ociEnabled;
     };
 
     class TestLogCategories : public ::testing::TestWithParam<LogCategoryCase>
@@ -129,14 +129,14 @@ namespace TestCApi
 
     TEST_P(TestLogCategories, GatesEnabled)
     {
-        ASSERT_EQ(GetParam().libEnabled != FALSE, OCI_TestLogIsEnabled(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG));
-        ASSERT_EQ(GetParam().ociEnabled != FALSE, OCI_TestLogIsEnabled(OCI_LOG_CAT_OCI, OCI_LOG_DEBUG));
+        ASSERT_EQ(GetParam().libEnabled != 0, OCI_TestLogIsEnabled(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG));
+        ASSERT_EQ(GetParam().ociEnabled != 0, OCI_TestLogIsEnabled(OCI_LOG_CAT_OCI, OCI_LOG_DEBUG));
     }
 
     INSTANTIATE_TEST_CASE_P(Categories, TestLogCategories,
         ::testing::Values(
-            LogCategoryCase{ "LIB", TRUE,  FALSE },
-            LogCategoryCase{ "OCI", FALSE, TRUE  }));
+            LogCategoryCase{ "LIB", 1,  0 },
+            LogCategoryCase{ "OCI", 0, 1  }));
 
     /* --- output parsing --- */
 
@@ -350,23 +350,23 @@ namespace TestCApi
     {
         const char* left;
         const char* right;
-        boolean     expected;
+        OCI_Boolean expected;
     };
 
     class TestLogStrEquals : public ::testing::TestWithParam<LogStrEqualsCase> {};
 
     TEST_P(TestLogStrEquals, Compares)
     {
-        ASSERT_EQ(GetParam().expected != FALSE, OCI_TestLogStrEquals(GetParam().left, GetParam().right));
+        ASSERT_EQ(GetParam().expected != 0, OCI_TestLogStrEquals(GetParam().left, GetParam().right));
     }
 
     INSTANTIATE_TEST_CASE_P(Pairs, TestLogStrEquals,
         ::testing::Values(
-            LogStrEqualsCase{ nullptr,   "DEBUG", FALSE },
-            LogStrEqualsCase{ "DEBUG",   nullptr, FALSE },
-            LogStrEqualsCase{ "debug",   "DEBUG", TRUE  },
-            LogStrEqualsCase{ "DEB",     "DEBUG", FALSE },
-            LogStrEqualsCase{ "DEBUGGER", "DEBUG", FALSE }));
+            LogStrEqualsCase{ nullptr,   "DEBUG", 0 },
+            LogStrEqualsCase{ "DEBUG",   nullptr, 0 },
+            LogStrEqualsCase{ "debug",   "DEBUG", 1  },
+            LogStrEqualsCase{ "DEB",     "DEBUG", 0 },
+            LogStrEqualsCase{ "DEBUGGER", "DEBUG", 0 }));
 
     /* --- name lookups, including the fallback arms --- */
 

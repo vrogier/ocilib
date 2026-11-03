@@ -555,7 +555,6 @@ namespace TestCApi
         OCI_JsonNodeFree(boolean);
 
         unsigned char d1[] = { 0xAB, 0xCD };
-        unsigned char d2[] = { 0x12 };
         OCI_JsonNode* binary = OCI_JsonNodeCreateBinary(json, d1, 2);
         OCI_UInt32 len = 0;
         const void* data = OCI_JsonNodeGetBinary(binary, &len);

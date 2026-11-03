@@ -1,5 +1,12 @@
 #include "ocilib_tests.h"
 
+/* OCILIB uses its own %i %s %t %n %m ... format tokens, not printf — silence GCC */
+#if defined(__GNUC__)
+    #pragma GCC diagnostic ignored "-Wformat"
+    #pragma GCC diagnostic ignored "-Wformat-extra-args"
+    #pragma GCC diagnostic ignored "-Wformat-overflow"
+#endif
+
 namespace TestCApi
 {
     struct FormatSetGetCase

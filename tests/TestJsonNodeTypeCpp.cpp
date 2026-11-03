@@ -4,19 +4,6 @@
 
 using namespace ocilib;
 
-namespace
-{
-    OCI_Number* MakeDoubleNumber(OCI_Environment* env, OCI_Double value)
-    {
-        OCI_Number* num = OCI_NumberCreate(env);
-        if (num)
-        {
-            OCI_NumberSetValue(num, OCI_NUM_DOUBLE, &value);
-        }
-        return num;
-    }
-}
-
 namespace TestCppApi
 {
 

@@ -17,7 +17,7 @@ namespace TestCppApi
             stmt.ExecutePrepared();
             FAIL() << "Expected an exception";
         }
-        catch (Exception ex)
+        catch (const Exception& ex)
         {
             ASSERT_NE(nullptr, ex.what());
             ASSERT_EQ(Exception::OracleError, ex.GetType());
