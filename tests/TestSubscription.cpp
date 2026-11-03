@@ -7,42 +7,11 @@ namespace TestCApi
         (void) event;
     }
 
-    TEST(TestSubscription, RegisterAndGet)
-    {
-        ExecDML(OTEXT("drop table TestSubscriptionData"));
-        ExecDML(OTEXT("create table TestSubscriptionData (id number)"));
-
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        const auto stmt = OCI_StatementCreate(conn);
-        ASSERT_NE(nullptr, stmt);
-
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("TestSubscriptionSub"), OCI_CNT_ALL, OnSubscriptionEvent, OCI_SRM_DEFAULT, 120);
-        ASSERT_NE(nullptr, sub);
-
-        ASSERT_EQ(ostring(OTEXT("TestSubscriptionSub")), ostring(OCI_SubscriptionGetName(sub)));
-        ASSERT_EQ(conn, OCI_SubscriptionGetConnection(sub));
-        ASSERT_EQ(120u, OCI_SubscriptionGetTimeout(sub));
-
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestSubscriptionData")));
-        ASSERT_TRUE(OCI_SubscriptionAddStatement(sub, stmt));
-
-        ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
-        ASSERT_TRUE(OCI_StatementFree(stmt));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop table TestSubscriptionData"));
-    }
-
 #ifdef OCI_CHARSET_ANSI
     TEST(TestSubscription, RegisterSecureMode)
     {
-        ExecDML(OTEXT("drop table TestSubscriptionData"));
-        ExecDML(OTEXT("create table TestSubscriptionData (id number)"));
+        ExecDML(OTEXT("drop table TestRegisterSecureMode"));
+        ExecDML(OTEXT("create table TestRegisterSecureMode(id number)"));
 
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -53,17 +22,21 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("TestSubscriptionSecureSub"), OCI_CNT_ALL, OnSubscriptionEvent, OCI_SRM_SECURE_NOTIFICATION, 0);
+        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("TestRegisterSecureModeId"), OCI_CNT_ALL, OnSubscriptionEvent, OCI_SRM_SECURE_NOTIFICATION, 120);
         ASSERT_NE(nullptr, sub);
+    
+        ASSERT_EQ(ostring(OTEXT("TestRegisterSecureModeId")), ostring(OCI_SubscriptionGetName(sub)));
+        ASSERT_EQ(conn, OCI_SubscriptionGetConnection(sub));
+        ASSERT_EQ(120u, OCI_SubscriptionGetTimeout(sub));
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestSubscriptionData")));
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestRegisterSecureMode")));
         ASSERT_TRUE(OCI_SubscriptionAddStatement(sub, stmt));
 
         ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
-        ExecDML(OTEXT("drop table TestSubscriptionData"));
+        ExecDML(OTEXT("drop table TestRegisterSecureMode"));
     }
 
 #endif

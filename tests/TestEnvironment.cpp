@@ -276,10 +276,17 @@ namespace TestCppApi
 
     TEST(TestEnvironment, LibPathInvalid)
     {
-        /* an invalid runtime library path fails with LoadingSharedLib */
+        /* an invalid runtime library path fails with LoadingSharedLib,
+           but lib_path is ignored entirely in OCI_IMPORT_LINKAGE builds */
 
         const auto env = OCI_EnvironmentCreate(nullptr, OTEXT("Z:\\no_such_dir_42"), OCI_ENV_DEFAULT);
-        ASSERT_EQ(nullptr, env);
+
+        if (env)
+        {
+            /* path ignored: only possible in a linkage build */
+            ASSERT_EQ(OCI_IMPORT_MODE_LINKAGE, OCI_GetImportMode(env));
+            ASSERT_TRUE(OCI_EnvironmentFree(env));
+        }
     }
 
     TEST(TestEnvironment, LibPathValid)
