@@ -106,7 +106,6 @@ private:
 
         /* pre-populate common locale strings */
 
-        const OCI_Size localeCount = 90;
         static const OCI_UInt32 locale_codes[] =
         {
             OCI_LSI_DAYNAME1, OCI_LSI_DAYNAME2, OCI_LSI_DAYNAME3, OCI_LSI_DAYNAME4,

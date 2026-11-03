@@ -142,8 +142,6 @@ namespace TestCApi
             OCI_DirPathSave(dp);
             OCI_DirPathFlushRow(dp);
 
-            unsigned char raw[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
-
             for (OCI_UInt32 r = 1; r <= 16; r++)
             {
                 otext vnum[16];

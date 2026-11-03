@@ -1519,7 +1519,7 @@ OCI_Boolean OCI_API OCI_DirPathSetEntry
     OCI_DirPath* dp,
     OCI_UInt32   row,
     OCI_UInt32   index,
-    void       * value,
+    const void * value,
     unsigned     size,
     OCI_Boolean  complete
 )

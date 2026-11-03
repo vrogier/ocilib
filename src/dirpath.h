@@ -55,7 +55,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibDirPathSetEntry
     OCI_DirPath *dp,
     OCI_UInt32   row,
     OCI_UInt32   index,
-    void        *value,
+    const void  *value,
     OCI_UInt32   size,
     OCI_Boolean  complete
 );
