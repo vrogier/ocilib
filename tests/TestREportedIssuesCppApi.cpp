@@ -399,7 +399,7 @@ namespace TestCppApi
         int errType = 0;
         try
         {
-            auto inititialzed = Environment::Initialized();
+            Environment::Initialized();
         }
         catch (const Exception& ex)
         {
@@ -426,7 +426,7 @@ namespace TestCppApi
             Connection conn(DBS, USR, PWD);
 
             std::vector<big_int> values;
-            for (int i = 1; i <= expectedCount; ++i)
+            for (size_t i = 1; i <= expectedCount; ++i)
             {
                 values.push_back(1234567890000 + i);
             }
@@ -472,11 +472,11 @@ namespace TestCppApi
         auto type = TypeInfo(conn, OTEXT("Issue379Type"), ocilib::TypeInfo::Type);
         auto coll = Collection<ostring>(type);
         
-        ASSERT_EQ(0, coll.GetSize());
+        ASSERT_EQ(0u, coll.GetSize());
 
         coll.Append(OTEXT("Value1"));
 
-        ASSERT_EQ(1, coll.GetSize());
+        ASSERT_EQ(1u, coll.GetSize());
 
         Environment::Cleanup();
     
@@ -551,7 +551,7 @@ namespace TestCppApi
 
         auto bindInfo = stmt.GetParseBindNames();
 
-        ASSERT_EQ(2, bindInfo.size());
+        ASSERT_EQ(2u, bindInfo.size());
         ASSERT_EQ(ostring(OTEXT("ABC")), bindInfo[0]);
         ASSERT_EQ(ostring(OTEXT("DEF")), bindInfo[1]);
 
@@ -570,7 +570,7 @@ namespace TestCppApi
 
         auto bindInfo = stmt.GetParseBindNames();
 
-        ASSERT_EQ(3, bindInfo.size());
+        ASSERT_EQ(3u, bindInfo.size());
         ASSERT_EQ(ostring(OTEXT("ABC")), bindInfo[0]);
         ASSERT_EQ(ostring(OTEXT("DEF")), bindInfo[1]);
         ASSERT_EQ(ostring(OTEXT("DEF")), bindInfo[2]);
@@ -640,12 +640,12 @@ namespace TestCppApi
         auto msgRaw = Message(msgType);
       
         auto emptyRaw = msgRaw.GetPayload<Raw>();
-        ASSERT_EQ(0, emptyRaw.size());
+        ASSERT_EQ(0u, emptyRaw.size());
 
         msgRaw.SetPayload(Raw{ 0x01, 0x02, 0x03 });
 
         auto validRaw = msgRaw.GetPayload<Raw>();
-        ASSERT_EQ(3, validRaw.size());
+        ASSERT_EQ(3u, validRaw.size());
 
         Environment::Cleanup();
     }

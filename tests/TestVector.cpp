@@ -187,8 +187,8 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_VectorGetInfo(vect, &format, &dimensions));
 
-        ASSERT_EQ(4, dimensions);
-        ASSERT_EQ(OCI_VEC_FLOAT32, format);
+        ASSERT_EQ(4u, dimensions);
+        ASSERT_EQ(static_cast<unsigned int>(OCI_VEC_FLOAT32), format);
 
         float values[4] = { 1.1f,2.2f,3.3f,4.4f };
         ASSERT_TRUE(OCI_VectorGetValues(vect, values));
@@ -243,8 +243,8 @@ namespace TestCApi
         unsigned int format = OCI_VEC_FLEX;
 
         ASSERT_TRUE(OCI_VectorGetInfo(vect, &format, &dimensions));
-        ASSERT_EQ(OCI_VEC_FLOAT32, format);
-        ASSERT_EQ(4, dimensions);
+        ASSERT_EQ(static_cast<unsigned int>(OCI_VEC_FLOAT32), format);
+        ASSERT_EQ(4u, dimensions);
     
         float values2[4];
 
@@ -287,8 +287,8 @@ namespace TestCApi
         unsigned int format = OCI_VEC_FLEX;
 
         ASSERT_TRUE(OCI_VectorGetInfo(vect, &format, &dimensions));
-        ASSERT_EQ(OCI_VEC_FLOAT32, format);
-        ASSERT_EQ(4, dimensions);
+        ASSERT_EQ(static_cast<unsigned int>(OCI_VEC_FLOAT32), format);
+        ASSERT_EQ(4u, dimensions);
     
         float values[4];
 
@@ -450,9 +450,6 @@ namespace TestCppApi
 
         std::vector<char> values1 = { 1, 3, 2, 4 };
 
-        unsigned int dimensions1 = 4;
-        Vector::VectorFormat format1 = Vector::Int8;
-
         vect.Set(values1);
 
         auto values2 = vect.Get<char>();
@@ -491,7 +488,7 @@ namespace TestCppApi
 
         vect.FromString(OTEXT("[1.1,2.2,3.3,4.4]"), Vector::Float32, 4);
 
-        ASSERT_EQ(4, vect.GetDimensionCount());
+        ASSERT_EQ(4u, vect.GetDimensionCount());
         ASSERT_EQ(Vector::Float32, vect.GetFormat());
 
         auto values = vect.Get<float>();
@@ -527,11 +524,11 @@ namespace TestCppApi
         rs.Next();
         vect = rs.Get<Vector>(1);
 
-        ASSERT_EQ(4, vect.GetDimensionCount());
+        ASSERT_EQ(4u, vect.GetDimensionCount());
         ASSERT_EQ(Vector::Float32, vect.GetFormat());
             
         auto values2 = vect.Get<float>();
-        ASSERT_EQ(4, values2.size());
+        ASSERT_EQ(4u, values2.size());
     
         ASSERT_FLOAT_EQ(values1[0], values2[0]);        
         ASSERT_FLOAT_EQ(values1[1], values2[1]);
@@ -561,11 +558,11 @@ namespace TestCppApi
         rs.Next();
         auto vect = rs.Get<Vector>(1);
 
-        ASSERT_EQ(4, vect.GetDimensionCount());
+        ASSERT_EQ(4u, vect.GetDimensionCount());
         ASSERT_EQ(Vector::Float32, vect.GetFormat());
     
         auto values = vect.Get<float>();    
-        ASSERT_EQ(4, values.size());
+        ASSERT_EQ(4u, values.size());
     
         ASSERT_FLOAT_EQ(1.1f, values[0]);        
         ASSERT_FLOAT_EQ(2.2f, values[1]);
