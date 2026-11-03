@@ -86,7 +86,7 @@ int main(void)
 
     OCI_JsonLoadText(json,
                      "{\"employee\":{\"name\":\"Fred\",\"skills\":[\"sql\",\"c\"]}}",
-                     0, OCI_JV_ALLOW_NONE, OCI_JE_UTF8);
+                     0, OCI_JTV_ALLOW_NONE, OCI_JTE_UTF8);
 
     /* navigate the DOM tree */
 

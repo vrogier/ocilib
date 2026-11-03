@@ -227,40 +227,40 @@
 
 /* JSON parsing validation flags */
 
-#define OCI_JV_ALLOW_NONE                 0x00000000
-#define OCI_JV_ALLOW_UNQUOTED_NAMES       0x00000001
-#define OCI_JV_ALLOW_SINGLE_QUOTES        0x00000002
-#define OCI_JV_ALLOW_UNQUOTED_UNICODE     0x00000004
-#define OCI_JV_ALLOW_NUMERIC_QUIRKS       0x00000008
-#define OCI_JV_ALLOW_CONTROLS_WHITESPACE  0x00000010
-#define OCI_JV_ALLOW_TRAILING_COMMAS      0x00000020
-#define OCI_JV_ALLOW_MIXEDCASE_KEYWORDS   0x00000040
-#define OCI_JV_ALLOW_SCALAR_DOCUMENTS     0x00000080
-#define OCI_JV_ALLOW_LEADING_BOM          0x00000200
-#define OCI_JV_ALLOW_ALL                  0x0000FFFF
+#define OCI_JTV_ALLOW_NONE                 0x00000000
+#define OCI_JTV_ALLOW_UNQUOTED_NAMES       0x00000001
+#define OCI_JTV_ALLOW_SINGLE_QUOTES        0x00000002
+#define OCI_JTV_ALLOW_UNQUOTED_UNICODE     0x00000004
+#define OCI_JTV_ALLOW_NUMERIC_QUIRKS       0x00000008
+#define OCI_JTV_ALLOW_CONTROLS_WHITESPACE  0x00000010
+#define OCI_JTV_ALLOW_TRAILING_COMMAS      0x00000020
+#define OCI_JTV_ALLOW_MIXEDCASE_KEYWORDS   0x00000040
+#define OCI_JTV_ALLOW_SCALAR_DOCUMENTS     0x00000080
+#define OCI_JTV_ALLOW_LEADING_BOM          0x00000200
+#define OCI_JTV_ALLOW_ALL                  0x0000FFFF
 
 /* JSON text input encodings */
 
-#define OCI_JE_DETECT                     0
-#define OCI_JE_DIRECT                     1
-#define OCI_JE_CONVERT                    2
-#define OCI_JE_UTF16                      3
-#define OCI_JE_UTF16_SWAP                 4
-#define OCI_JE_LATIN                      5
-#define OCI_JE_WINDOWS                    6
-#define OCI_JE_UTF8                       OCI_JE_DIRECT
+#define OCI_JTE_DETECT                     0
+#define OCI_JTE_DIRECT                     1
+#define OCI_JTE_CONVERT                    2
+#define OCI_JTE_UTF16                      3
+#define OCI_JTE_UTF16_SWAP                 4
+#define OCI_JTE_LATIN                      5
+#define OCI_JTE_WINDOWS                    6
+#define OCI_JTE_UTF8                       OCI_JTE_DIRECT
 
 /* JSON text printing flags */
 
-#define OCI_JP_PRETTY                     0x0001
-#define OCI_JP_ASCII                      0x0002
-#define OCI_JP_NUMFORMAT                  0x0004
-#define OCI_JP_INTERNAL_BUF               0x0008
-#define OCI_JP_NLS_CHARSET                0x0100
-#define OCI_JP_REPLACEMENT                0x0200
-#define OCI_JP_EJSON                      0x2000
-#define OCI_JP_BSON_PATTERNS              0x4000
-#define OCI_JP_TEST                       0x8000
+#define OCI_JTP_PRETTY                     0x0001
+#define OCI_JTP_ASCII                      0x0002
+#define OCI_JTP_NUMFORMAT                  0x0004
+#define OCI_JTP_INTERNAL_BUF               0x0008
+#define OCI_JTP_NLS_CHARSET                0x0100
+#define OCI_JTP_REPLACEMENT                0x0200
+#define OCI_JTP_EJSON                      0x2000
+#define OCI_JTP_BSON_PATTERNS              0x4000
+#define OCI_JTP_TEST                       0x8000
 
 /* Data Type codes for OCI_ImmediateXXX() calls */
 

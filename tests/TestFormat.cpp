@@ -375,7 +375,7 @@ namespace TestCApi
         const auto json = OCI_JsonCreate(con);
         ASSERT_NE(nullptr, json);
 
-        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("{\"a\":1}"), 0, OCI_JV_ALLOW_NONE, OCI_JE_DETECT));
+        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("{\"a\":1}"), 0, OCI_JTV_ALLOW_NONE, OCI_JTE_DETECT));
 
         ASSERT_TRUE(OCI_ExecuteStmtFmt(stmt, OTEXT("select %j from dual"), json));
 

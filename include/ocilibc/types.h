@@ -654,9 +654,9 @@ typedef OCI_UInt32 OCI_HashType;              /* OCI_HASH_*                     
 typedef OCI_UInt32 OCI_TypeInfoType;          /* OCI_TIF_*                            */
 typedef OCI_UInt32 OCI_VectorFormat;          /* OCI_VEC_*                            */
 typedef OCI_UInt32 OCI_JsonType;              /* OCI_JNT_*                            */
-typedef OCI_UInt32 OCI_JsonValidation;        /* OCI_JV_*                             */
-typedef OCI_UInt32 OCI_JsonEncoding;          /* OCI_JE_*                             */
-typedef OCI_UInt32 OCI_JsonPrint;             /* OCI_JP_*                             */
+typedef OCI_UInt32 OCI_JsonValidation;        /* OCI_JTV_**/
+typedef OCI_UInt32 OCI_JsonEncoding;          /* OCI_JTE_**/
+typedef OCI_UInt32 OCI_JsonPrint;             /* OCI_JTP_**/
 typedef OCI_UInt32 OCI_Stat;                  /* OCI_UST_*                            */
 typedef OCI_UInt32 OCI_ErrorType;             /* OCI_ERR_ORACLE/OCILIB/WARNING        */
 typedef OCI_UInt32 OCI_ImportMode;            /* OCI_IMPORT_MODE_*                    */

@@ -10,7 +10,7 @@ namespace
     {
         OCI_Json* json = OCI_JsonCreate(conn);
         if (!json) return nullptr;
-        if (!OCI_JsonLoadText(json, text, 0, OCI_JV_ALLOW_ALL, OCI_JE_DETECT))
+        if (!OCI_JsonLoadText(json, text, 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT))
         {
             OCI_JsonFree(json);
             return nullptr;
@@ -107,8 +107,8 @@ namespace TestCApi
         OCI_Json** jsons = OCI_JsonArrayCreate(conn, 2);
         ASSERT_NE(nullptr, jsons);
 
-        ASSERT_TRUE(OCI_JsonLoadText(jsons[0], OTEXT("{\"a\":1}"), 0, OCI_JV_ALLOW_ALL, OCI_JE_DETECT));
-        ASSERT_TRUE(OCI_JsonLoadText(jsons[1], OTEXT("{\"a\":2}"), 0, OCI_JV_ALLOW_ALL, OCI_JE_DETECT));
+        ASSERT_TRUE(OCI_JsonLoadText(jsons[0], OTEXT("{\"a\":1}"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
+        ASSERT_TRUE(OCI_JsonLoadText(jsons[1], OTEXT("{\"a\":2}"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
 
         ASSERT_TRUE(OCI_BindArraySetSize(stmt, 2));
         ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":id"), ids, 0));

@@ -5173,17 +5173,17 @@ namespace ocilib
         */
         enum JsonValidationValues
         {
-            AllowNone = OCI_JV_ALLOW_NONE,
-            AllowUnquotedNames = OCI_JV_ALLOW_UNQUOTED_NAMES,
-            AllowSingleQuotes = OCI_JV_ALLOW_SINGLE_QUOTES,
-            AllowUnquotedUnicode = OCI_JV_ALLOW_UNQUOTED_UNICODE,
-            AllowNumericQuirks = OCI_JV_ALLOW_NUMERIC_QUIRKS,
-            AllowControlsWhitespace = OCI_JV_ALLOW_CONTROLS_WHITESPACE,
-            AllowTrailingCommas = OCI_JV_ALLOW_TRAILING_COMMAS,
-            AllowMixedcaseKeywords = OCI_JV_ALLOW_MIXEDCASE_KEYWORDS,
-            AllowScalarDocuments = OCI_JV_ALLOW_SCALAR_DOCUMENTS,
-            AllowLeadingBom = OCI_JV_ALLOW_LEADING_BOM,
-            AllowAll = OCI_JV_ALLOW_ALL
+            AllowNone = OCI_JTV_ALLOW_NONE,
+            AllowUnquotedNames = OCI_JTV_ALLOW_UNQUOTED_NAMES,
+            AllowSingleQuotes = OCI_JTV_ALLOW_SINGLE_QUOTES,
+            AllowUnquotedUnicode = OCI_JTV_ALLOW_UNQUOTED_UNICODE,
+            AllowNumericQuirks = OCI_JTV_ALLOW_NUMERIC_QUIRKS,
+            AllowControlsWhitespace = OCI_JTV_ALLOW_CONTROLS_WHITESPACE,
+            AllowTrailingCommas = OCI_JTV_ALLOW_TRAILING_COMMAS,
+            AllowMixedcaseKeywords = OCI_JTV_ALLOW_MIXEDCASE_KEYWORDS,
+            AllowScalarDocuments = OCI_JTV_ALLOW_SCALAR_DOCUMENTS,
+            AllowLeadingBom = OCI_JTV_ALLOW_LEADING_BOM,
+            AllowAll = OCI_JTV_ALLOW_ALL
         };
 
         /**
@@ -5202,14 +5202,14 @@ namespace ocilib
         */
         enum JsonEncodingValues
         {
-            Detect = OCI_JE_DETECT,
-            Direct = OCI_JE_DIRECT,
-            Convert = OCI_JE_CONVERT,
-            Utf16 = OCI_JE_UTF16,
-            Utf16Swap = OCI_JE_UTF16_SWAP,
-            Latin = OCI_JE_LATIN,
-            Windows = OCI_JE_WINDOWS,
-            Utf8 = OCI_JE_UTF8
+            Detect = OCI_JTE_DETECT,
+            Direct = OCI_JTE_DIRECT,
+            Convert = OCI_JTE_CONVERT,
+            Utf16 = OCI_JTE_UTF16,
+            Utf16Swap = OCI_JTE_UTF16_SWAP,
+            Latin = OCI_JTE_LATIN,
+            Windows = OCI_JTE_WINDOWS,
+            Utf8 = OCI_JTE_UTF8
         };
 
         /**
@@ -5228,15 +5228,15 @@ namespace ocilib
         */
         enum JsonPrintValues
         {
-            Pretty = OCI_JP_PRETTY,
-            Ascii = OCI_JP_ASCII,
-            NumFormat = OCI_JP_NUMFORMAT,
-            InternalBuf = OCI_JP_INTERNAL_BUF,
-            NlsCharset = OCI_JP_NLS_CHARSET,
-            Replacement = OCI_JP_REPLACEMENT,
-            Ejson = OCI_JP_EJSON,
-            BsonPatterns = OCI_JP_BSON_PATTERNS,
-            Test = OCI_JP_TEST
+            Pretty = OCI_JTP_PRETTY,
+            Ascii = OCI_JTP_ASCII,
+            NumFormat = OCI_JTP_NUMFORMAT,
+            InternalBuf = OCI_JTP_INTERNAL_BUF,
+            NlsCharset = OCI_JTP_NLS_CHARSET,
+            Replacement = OCI_JTP_REPLACEMENT,
+            Ejson = OCI_JTP_EJSON,
+            BsonPatterns = OCI_JTP_BSON_PATTERNS,
+            Test = OCI_JTP_TEST
         };
 
         /**

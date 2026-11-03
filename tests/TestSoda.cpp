@@ -430,7 +430,7 @@ namespace TestCApi
         {
             const auto json = OCI_JsonCreate(conn);
             ASSERT_NE(nullptr, json);
-            ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("{\"name\":\"from json\"}"), 0, OCI_JV_ALLOW_ALL, OCI_JE_DETECT));
+            ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("{\"name\":\"from json\"}"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
 
             const auto doc = OCI_SodaDocCreateFromJson(sdb, json, NULL);
             ASSERT_NE(nullptr, doc);

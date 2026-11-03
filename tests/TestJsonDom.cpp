@@ -10,7 +10,7 @@ namespace
     {
         OCI_Json* json = OCI_JsonCreate(conn);
         if (!json) return nullptr;
-        if (!OCI_JsonLoadText(json, text, 0, OCI_JV_ALLOW_ALL, OCI_JE_DETECT))
+        if (!OCI_JsonLoadText(json, text, 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT))
         {
             OCI_JsonFree(json);
             return nullptr;
@@ -33,7 +33,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
         ASSERT_TRUE(OCI_JsonIsMutable(json));
 
-        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JV_ALLOW_ALL, OCI_JE_DETECT));
+        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
 
         OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
         ASSERT_NE(nullptr, oldRoot);
@@ -127,7 +127,7 @@ namespace TestCApi
         const auto json = OCI_JsonCreate(conn);
         ASSERT_NE(nullptr, json);
         ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
-        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JV_ALLOW_ALL, OCI_JE_DETECT));
+        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
 
         OCI_JsonNode* oldRoot = OCI_JsonGetRoot(json);
         ASSERT_NE(nullptr, oldRoot);

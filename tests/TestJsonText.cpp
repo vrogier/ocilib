@@ -10,7 +10,7 @@ namespace
     {
         OCI_Json* json = OCI_JsonCreate(conn);
         if (!json) return nullptr;
-        if (!OCI_JsonLoadText(json, text, 0, OCI_JV_ALLOW_ALL, OCI_JE_DETECT))
+        if (!OCI_JsonLoadText(json, text, 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT))
         {
             OCI_JsonFree(json);
             return nullptr;
@@ -61,7 +61,7 @@ namespace TestCApi
         ASSERT_NE(ostring::npos, text.find(OTEXT("42")));
 
         OCI_UInt32 prettyLen = 0;
-        ASSERT_TRUE(OCI_JsonToText(json, nullptr, &prettyLen, OCI_JP_PRETTY, TRUE));
+        ASSERT_TRUE(OCI_JsonToText(json, nullptr, &prettyLen, OCI_JTP_PRETTY, TRUE));
         ASSERT_GT(prettyLen, 0u);
 
         ASSERT_TRUE(OCI_JsonFree(json));

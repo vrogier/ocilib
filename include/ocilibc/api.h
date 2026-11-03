@@ -19196,8 +19196,8 @@ OCI_SYM_PUBLIC OCI_Connection * OCI_API OCI_JsonGetConnection
  * @param json       - JSON document handle
  * @param text       - Text buffer
  * @param length     - Text length in characters
- * @param validation - Validation flags (see OCI_JV_* values)
- * @param encoding   - Input text encoding (see OCI_JE_* values)
+ * @param validation - Validation flags (see OCI_JTV_* values)
+ * @param encoding   - Input text encoding (see OCI_JTE_* values)
  *
  * @return TRUE on success, FALSE otherwise
  */
@@ -19236,7 +19236,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonLoadBinary
  * @param json         - JSON document handle
  * @param buffer       - Output buffer (can be NULL to request length)
  * @param length       - In: buffer size, Out: number of characters written
- * @param print        - Print flags (see OCI_JP_* values)
+ * @param print        - Print flags (see OCI_JTP_* values)
  * @param useEnvCharset - Use environment charset for output
  *
  * @return TRUE on success, FALSE otherwise
