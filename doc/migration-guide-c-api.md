@@ -247,15 +247,20 @@ OCI_Boolean  OCI_SetSubscriptionPort(OCI_Environment *env, unsigned int port);
 unsigned int OCI_GetSubscriptionPort(OCI_Environment *env);
 ```
 
-### 6.2 `OCI_SubscriptionRegister` lost its `port` parameter
+### 6.2 `OCI_SubscriptionRegister` lost its `port` parameter, gained `mode`
 
 ```c
 /* v4 */
 OCI_SubscriptionRegister(con, name, type, handler, port, timeout);
 
 /* v5 */
-OCI_SubscriptionRegister(con, name, type, handler, timeout);
+OCI_SubscriptionRegister(con, name, type, handler, mode, timeout);
 ```
+
+`mode` is an `OCI_SubscriptionMode` (typed `OCI_UInt32` typedef): `OCI_SRM_DEFAULT`
+(server initiates the notification listener connection — same as v4) or
+`OCI_SRM_SECURE_NOTIFICATION` (client initiates it; requires Oracle client 12c+).
+Use `OCI_SRM_DEFAULT` to keep v4 behavior.
 
 ### 6.3 `OCI_DequeueSubscribe` is now a batch call
 

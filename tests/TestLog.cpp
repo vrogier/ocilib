@@ -239,10 +239,21 @@ namespace TestCApi
     TEST_F(TestLogWrite, WritesNonAsciiContent)
     {
         /* non ASCII content exercises the native -> UTF-8 conversion,
-           including a surrogate pair (non BMP code point) */
+           including a surrogate pair (non BMP code point).
+           In ANSI builds otext is char based: only single byte escapes
+           are allowed and the conversion is a plain copy. */
+
+#ifdef OCI_CHARSET_ANSI
+
+        OCI_TestLogWrite(env, OCI_LOG_CAT_LIB, OCI_LOG_INFO, "TestLogWrite",
+                         OTEXT("accent \xe9\xe8 \xa7\xa5"));
+
+#else
 
         OCI_TestLogWrite(env, OCI_LOG_CAT_LIB, OCI_LOG_INFO, "TestLogWrite",
                          OTEXT("accent e\x0301 \x00e9\x00e8 \x4e2d\x6587 \xd83d\xde00"));
+
+#endif
     }
 
     TEST_F(TestLogWrite, WritesTruncatedMessage)

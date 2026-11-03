@@ -227,8 +227,9 @@ typedef OCI_UInt16 dbtext;
 #define OCI_FEATURE_VECTOR              11
 #define OCI_FEATURE_SODA                12
 #define OCI_FEATURE_JSON                13
+#define OCI_FEATURE_SECURE_NOTIFICATION 14
 
-#define OCI_FEATURE_COUNT               OCI_FEATURE_JSON
+#define OCI_FEATURE_COUNT               OCI_FEATURE_SECURE_NOTIFICATION
 
 /* --------------------------------------------------------------------------------------------- *
  * handle types

@@ -17603,7 +17603,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueTableMigrate
    * @param name     - Notification name
    * @param type     - Subscription type
    * @param handler  - User handler callback
-   * @param port     - Port to use for notifications
+   * @param mode     - Subscription registration mode
    * @param timeout  - Notification timeout
    *
    * @note
@@ -17613,6 +17613,13 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueTableMigrate
    * - OCI_CNT_ROWS      : request for changes at row level (DML).
    * - OCI_CNT_DATABASES : request for changes at database level (startup, shutdown).
    * - OCI_CNT_ALL       : request for all changes.
+   *
+   * @note
+   * Parameter 'mode' can be one of the following values:
+   *
+   * - OCI_SRM_DEFAULT             : server initiates the notification listener connection.
+   * - OCI_SRM_SECURE_NOTIFICATION : client initiates the notification listener connection
+   *                                 (Oracle client 12c and above only).
    *
    * @note
    * Parameter 'timeout' is optional (use value 0 as optional value).
@@ -17645,6 +17652,7 @@ OCI_SYM_PUBLIC OCI_Subscription* OCI_API OCI_SubscriptionRegister
     const otext        * name,
     OCI_SubscriptionType type,
     POCI_NOTIFY          handler,
+    OCI_SubscriptionMode mode,
     OCI_UInt32           timeout
 );
 

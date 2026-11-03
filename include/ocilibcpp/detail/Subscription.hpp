@@ -38,7 +38,7 @@ namespace ocilib
         AcquireTransient(pSubscription, static_cast<core::Handle*>(nullptr));
     }
 
-    inline void Subscription::Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, UInt32 timeout)
+    inline void Subscription::Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, SubscriptionMode mode, UInt32 timeout)
     {
         AcquireAllocated
         (
@@ -48,7 +48,7 @@ namespace ocilib
                 (
                     connection, name.c_str(), changeTypes.GetValues(),
                     static_cast<POCI_NOTIFY> (handler != nullptr ? Environment::NotifyHandler : nullptr),
-                    timeout
+                    mode.GetValue(), timeout
                 )
             ),
             connection.GetHandle()

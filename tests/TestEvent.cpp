@@ -40,7 +40,7 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("TestEventSub"), OCI_CNT_ROWS, TestEventHandler, 0);
+        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("TestEventSub"), OCI_CNT_ROWS, TestEventHandler, OCI_SRM_DEFAULT, 0);
         ASSERT_NE(nullptr, sub);
 
         TestEventSub = sub;

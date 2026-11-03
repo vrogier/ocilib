@@ -391,7 +391,7 @@ namespace TestCApi
         const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, con);
 
-        const auto sub = OCI_SubscriptionRegister(con, OTEXT("TestConnSub"), OCI_CNT_ALL, TestConnSubHandler, 0);
+        const auto sub = OCI_SubscriptionRegister(con, OTEXT("TestConnSub"), OCI_CNT_ALL, TestConnSubHandler, OCI_SRM_DEFAULT, 0);
         ASSERT_NE(nullptr, sub);
 
         /* freeing the connection first detaches the subscription, which keeps

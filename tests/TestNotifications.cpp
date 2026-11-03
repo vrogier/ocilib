@@ -178,7 +178,7 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-1"), OCI_CNT_ALL, SingleDDL1EventEventHandler, 0);
+        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-1"), OCI_CNT_ALL, SingleDDL1EventEventHandler, OCI_SRM_DEFAULT, 0);
         ASSERT_NE(nullptr, sub);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -212,7 +212,7 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-2"), OCI_CNT_ALL, SingleDDL2EventEventHandler, 0);
+        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-2"), OCI_CNT_ALL, SingleDDL2EventEventHandler, OCI_SRM_DEFAULT, 0);
         ASSERT_NE(nullptr, sub);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -249,7 +249,7 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-3"), OCI_CNT_ALL, MultipleDDLEventEventHandler, 0);
+        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-3"), OCI_CNT_ALL, MultipleDDLEventEventHandler, OCI_SRM_DEFAULT, 0);
         ASSERT_NE(nullptr, sub);
 
         const auto stmt = OCI_StatementCreate(conn);
@@ -289,7 +289,7 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-4"), OCI_CNT_ALL, MultipleDMLEventEventHandler, 0);
+        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-4"), OCI_CNT_ALL, MultipleDMLEventEventHandler, OCI_SRM_DEFAULT, 0);
         ASSERT_NE(nullptr, sub);
 
         const auto stmt = OCI_StatementCreate(conn);

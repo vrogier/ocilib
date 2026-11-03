@@ -34,7 +34,7 @@
 #include "../include/ocilib.h"
 
 #define DBSNAME OTEXT("FREE")
-#define DBS OTEXT("FREE_DEV")
+#define DBS OTEXT("192.168.0.11:1522/FREEPDB1")
 #define USR OTEXT("usr")
 #define PWD OTEXT("pwd")
 #define SYS_USR OTEXT("sys")

@@ -639,6 +639,7 @@ typedef OCI_UInt32 OCI_QueueType;             /* OCI_AQT_*                      
 typedef OCI_UInt32 OCI_QueueGrouping;         /* OCI_AGM_*                            */
 typedef OCI_UInt32 OCI_QueuePurgeMode;        /* OCI_APM_*                            */
 typedef OCI_UInt32 OCI_SubscriptionType;      /* OCI_CNT_*                            */
+typedef OCI_UInt32 OCI_SubscriptionMode;      /* OCI_SRM_*                            */
 typedef OCI_UInt32 OCI_DatabaseStartMode;     /* OCI_DB_SPM_*                         */
 typedef OCI_UInt32 OCI_DatabaseStartFlag;     /* OCI_DB_SPF_*                         */
 typedef OCI_UInt32 OCI_DatabaseShutdownMode;  /* OCI_DB_SDM_*                         */

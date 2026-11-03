@@ -6423,10 +6423,11 @@ OCI_Subscription* OCI_API OCI_SubscriptionRegister
     const otext        * name,
     OCI_SubscriptionType type,
     POCI_NOTIFY          handler,
+    OCI_SubscriptionMode mode,
     OCI_UInt32           timeout
 )
 {
-    CALL_IMPL(OcilibSubscriptionRegister, con, name, type, handler, timeout);
+    CALL_IMPL(OcilibSubscriptionRegister, con, name, type, handler, mode, timeout);
 }
 
 OCI_Boolean OCI_API OCI_SubscriptionUnregister

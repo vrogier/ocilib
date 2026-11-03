@@ -8071,6 +8071,28 @@ namespace ocilib
 
         /**
         * @brief
+        * Subscription registration mode values
+        *
+        */
+        enum ModeValues
+        {
+            /** Server initiates the notification listener connection */
+            ModeDefault = OCI_SRM_DEFAULT,
+            /** Client initiates the notification listener connection (Oracle client 12c and above) */
+            ModeSecureNotification = OCI_SRM_SECURE_NOTIFICATION
+        };
+
+        /**
+        * @brief
+        * Subscription registration mode
+        *
+        * Possible values are Subscription::ModeValues
+        *
+        */
+        typedef core::Enum<ModeValues> SubscriptionMode;
+
+        /**
+        * @brief
         * Default constructor
         *
         */
@@ -8094,7 +8116,7 @@ namespace ocilib
         * Requires Oracle Client 10gR2 or above
         *
         */
-        void Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, UInt32 timeout = 0);
+        void Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, SubscriptionMode mode = ModeValues::ModeDefault, UInt32 timeout = 0);
 
         /**
         * @brief

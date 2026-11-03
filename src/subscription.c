@@ -77,7 +77,7 @@ OCI_Boolean OcilibSubscriptionDispose
 
   #if defined(OCI_CHARSET_WIDE)
 
-            const sword res = sub->con->env->api->OCISubscriptionUnRegister(sub->con->handle, sub->handle, sub->err, (ub4)OCI_DEFAULT);
+            const sword res = sub->con->env->api->OCISubscriptionUnRegister(sub->con->handle, sub->handle, sub->err, (ub4)sub->mode);
             if (OCI_FAILURE(res))
             {
                 sb4 code = 0;
@@ -92,7 +92,7 @@ OCI_Boolean OcilibSubscriptionDispose
             }
   #else
 
-            unreg_res = sub->con->env->api->OCISubscriptionUnRegister(sub->con->handle, sub->handle, sub->err, (ub4)OCI_DEFAULT);
+            unreg_res = sub->con->env->api->OCISubscriptionUnRegister(sub->con->handle, sub->handle, sub->err, (ub4)sub->mode);
 
   #endif
 
@@ -157,6 +157,7 @@ OCI_Subscription * OcilibSubscriptionRegister
     const otext         *name,
     OCI_SubscriptionType type,
     POCI_NOTIFY          handler,
+    OCI_SubscriptionMode mode,
     OCI_UInt32           timeout
 )
 {
@@ -179,6 +180,13 @@ OCI_Subscription * OcilibSubscriptionRegister
 
 #if OCI_VERSION_COMPILE >= OCI_10_2
 
+    /* OCI_SRM_SECURE_NOTIFICATION requires an Oracle client and database 19.4 or above */
+
+    if (mode & OCI_SRM_SECURE_NOTIFICATION && !OcilibConnectionIsVersionSupported(con, OCI_19_4))
+    {
+        THROW(OcilibExceptionNotAvailable, OCI_FEATURE_SECURE_NOTIFICATION);
+    }
+
     /* create subscription object */
 
     LIST_ATOMIC_ADD(con->env->subs, sub);
@@ -199,6 +207,7 @@ OCI_Subscription * OcilibSubscriptionRegister
     sub->timeout   = (ub4)timeout;
     sub->handler   = handler;
     sub->type      = type;
+    sub->mode      = mode;
     sub->name      = OcilibStringDuplicate(sub->con->env, name);
     sub->event.sub = sub;
 
@@ -297,7 +306,7 @@ OCI_Subscription * OcilibSubscriptionRegister
         sub->con->err,
         OCISubscriptionRegister,
         sub->con->handle, &sub->handle,
-        (ub2)1, sub->con->err, (ub4)OCI_DEFAULT
+        (ub2)1, sub->err, (ub4)mode
     );
 
 #else
@@ -306,6 +315,7 @@ OCI_Subscription * OcilibSubscriptionRegister
     OCI_NOT_USED(type);
     OCI_NOT_USED(handler);
     OCI_NOT_USED(timeout);
+    OCI_NOT_USED(mode);
     OCI_NOT_USED(con);
 
 #endif

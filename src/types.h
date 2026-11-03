@@ -888,6 +888,7 @@ struct OCI_Subscription
     POCI_NOTIFY          handler;    /* user callback */
     OCI_Event            event;      /* event object for user callback */
     OCI_SubscriptionType type;     /* notification type */
+    OCI_SubscriptionMode mode;     /* registration mode (OCI_SRM_*) */
     ub4                  timeout;    /* notification timeout */
 };
 

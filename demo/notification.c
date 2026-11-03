@@ -45,7 +45,7 @@ int main(void)
 
     OCI_SetSubscriptionPort(env, 5468);
 
-    sub = OCI_SubscriptionRegister(con, "sub-00", OCI_CNT_ALL, event_handler, 0);
+    sub = OCI_SubscriptionRegister(con, "sub-00", OCI_CNT_ALL, event_handler, OCI_SRM_DEFAULT, 0);
 
     printf("=> Adding queries to be notified...\n\n");
 

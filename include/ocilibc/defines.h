@@ -68,6 +68,7 @@
 #define OCI_18_4                            OCI_VER_MAKE(18,  4,  0)
 #define OCI_18_5                            OCI_VER_MAKE(18,  5,  0)
 #define OCI_19_3                            OCI_VER_MAKE(19,  3,  0)
+#define OCI_19_4                            OCI_VER_MAKE(19,  4,  0)
 #define OCI_19_5                            OCI_VER_MAKE(19,  5,  0)
 #define OCI_19_9                            OCI_VER_MAKE(19,  9,  0)
 #define OCI_19_11                           OCI_VER_MAKE(19, 11,  0)
@@ -372,6 +373,12 @@
 #define OCI_CNT_ROWS                        2
 #define OCI_CNT_DATABASES                   4
 #define OCI_CNT_ALL                         (OCI_CNT_OBJECTS | OCI_CNT_ROWS | OCI_CNT_DATABASES)
+
+/* subscription registration modes */
+
+#define OCI_SRM_DEFAULT                     0x00000000
+#define OCI_SRM_SECURE_NOTIFICATION         0x20000000 /* from 19.4: client initiated notification
+                                                          listener connections */
 
 /* event notification types */
 

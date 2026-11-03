@@ -118,6 +118,7 @@
 ### Miscellaneous
 
 - Updated build system for C11 (C sources) and C++17 (C++ headers)
+- `OCI_SubscriptionRegister()` gains an `OCI_SubscriptionMode mode` parameter (`OCI_SRM_DEFAULT` / `OCI_SRM_SECURE_NOTIFICATION`) letting the client initiate the notification listener connection on Oracle client 12c+ (fixes #383)
 - `configure` now falls back to well-known Oracle instantclient locations (`/usr/include/oracle/*/client64`, `/usr/lib/oracle/*/client64/lib`, `/opt/oracle/instantclient*`) when `ORACLE_HOME` is unset, instead of only probing `$ORACLE_HOME/rdbms/{public,demo}` (fixes #318)
   - MSVC C sources compiled with `/std:c11`
   - GNU autotools and MSVC project files updated for the new source files (`log.c`, `json.c`, `jsonnode.c`, `sodadb.c`, `sodacoll.c`, `sodadoc.c`, `sodaoptions.c`, `sodacollcursor.c`, `sodadoccursor.c`) and removed `mutex.c` / `thread.c` / `threadkey.c`

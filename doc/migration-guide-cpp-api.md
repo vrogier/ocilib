@@ -255,14 +255,20 @@ env.SetSubscriptionPort(port);
 unsigned int port = env.GetSubscriptionPort();   // read back / auto-assigned
 ```
 
-### 6.2 `Subscription::Register` lost its `port` parameter
+### 6.2 `Subscription::Register` lost its `port` parameter, gained `mode`
 
 ```cpp
 /* v4 */ void Register(const Connection&, const ostring& name, ChangeTypes,
                        NotifyHandlerProc, unsigned int port = 0, unsigned int timeout = 0);
 /* v5 */ void Register(const Connection&, const ostring& name, ChangeTypes,
-                       NotifyHandlerProc, unsigned int timeout = 0);
+                       NotifyHandlerProc,
+                       SubscriptionMode mode = Subscription::ModeDefault,
+                       unsigned int timeout = 0);
 ```
+
+`mode` is a `Subscription::SubscriptionMode` enum (`Subscription::ModeDefault` /
+`Subscription::ModeSecureNotification`, i.e. `OCI_SRM_*`). Keep the default to
+preserve v4 behavior; `ModeSecureNotification` requires Oracle client 12c+.
 
 ### 6.3 `Dequeue::Subscribe` is now a static batch call
 
