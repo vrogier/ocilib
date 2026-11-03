@@ -398,7 +398,6 @@ namespace ocilib
 
             bool IsNull() const;
 
-            operator bool();
             operator bool() const;
 
             operator T();

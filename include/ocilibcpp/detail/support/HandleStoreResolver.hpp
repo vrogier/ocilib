@@ -46,7 +46,7 @@ namespace ocilib
 
         template<> struct HandleStoreResolver<OCI_Environment*> : HandleStoreResolverType<true, core::Safe> {};
         template<> struct HandleStoreResolver<OCI_Pool*> : HandleStoreResolverType<true, core::Safe> {};
-        template<> struct HandleStoreResolver<OCI_Connection*> : HandleStoreResolverType<true, core::Unsafe> {};
+        template<> struct HandleStoreResolver<OCI_Connection*> : HandleStoreResolverType<true, core::Safe> {};
         template<> struct HandleStoreResolver<OCI_Statement*> : HandleStoreResolverType<true, core::Unsafe> {};
         template<> struct HandleStoreResolver<OCI_Resultset*> : HandleStoreResolverType<true, core::Unsafe> {};
         template<> struct HandleStoreResolver<OCI_TypeInfo*> : HandleStoreResolverType<true, core::Unsafe> {};

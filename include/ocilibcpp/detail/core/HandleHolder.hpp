@@ -75,12 +75,6 @@ namespace ocilib
         }
 
         template<class T>
-        HandleHolder<T>::operator bool()
-        {
-            return !IsNull();
-        }
-
-        template<class T>
         HandleHolder<T>::operator bool() const
         {
             return !IsNull();
