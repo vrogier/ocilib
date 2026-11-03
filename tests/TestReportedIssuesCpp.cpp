@@ -1,4 +1,9 @@
-﻿#include "ocilib_tests.h"
+﻿#include <type_traits>
+#include <atomic>
+#include <thread>
+#include <vector>
+
+#include "ocilib_tests.h"
 
 namespace TestCppApi
 {
@@ -626,6 +631,85 @@ namespace TestCppApi
         ASSERT_EQ(3, validRaw.size());
 
         
+    }
+
+    // Issue 388 : copy assignment operators of value types were declared noexcept
+    // while their implementations can throw (OCI calls), leading to std::terminate
+
+    TEST(ReportedIssuesCpp, Issue388)
+    {
+        static_assert(!std::is_nothrow_assignable<Number&, const Number&>::value,
+            "Number copy assignment must not be declared noexcept (issue #388)");
+        static_assert(!std::is_nothrow_assignable<Date&, const Date&>::value,
+            "Date copy assignment must not be declared noexcept (issue #388)");
+        static_assert(!std::is_nothrow_assignable<Interval&, const Interval&>::value,
+            "Interval copy assignment must not be declared noexcept (issue #388)");
+        static_assert(!std::is_nothrow_assignable<Timestamp&, const Timestamp&>::value,
+            "Timestamp copy assignment must not be declared noexcept (issue #388)");
+    }
+
+    TEST(ReportedIssuesCpp, Issue388_Number)
+    {
+        Environment& env = GetEnvironmentCpp();
+
+        Number nm1(env, 1);
+        Number nm2;
+
+        ASSERT_THROW(nm1 = nm2, Exception);
+    }
+
+    TEST(ReportedIssuesCpp, Issue388_Date)
+    {
+        Environment& env = GetEnvironmentCpp();
+
+        Date dt1(env, true);
+        Date dt2;
+
+        ASSERT_THROW(dt1 = dt2, Exception);
+    }
+
+    // Issue 391 : data race on pooled connections - OCI_Pool had no thread-safe
+    // HandleStore (SIGSEGV in ConcurrentMap::Remove under concurrent load)
+
+    const size_t Issue391MaxThreads = 10;
+    const int Issue391IterationCount = 50;
+
+    static std::atomic<int> Issue391ErrorCount{ 0 };
+
+    TEST(ReportedIssuesCpp, Issue391)
+    {
+        Environment env(Environment::Threaded);
+
+        Pool pool(env, DBS, USR, PWD, Pool::SessionPool, 0, static_cast<unsigned int>(Issue391MaxThreads));
+
+        std::vector<std::thread> threads;
+        threads.reserve(Issue391MaxThreads);
+
+        for (size_t i = 0; i < Issue391MaxThreads; ++i)
+        {
+            threads.emplace_back([&pool]()
+            {
+                for (int j = 0; j < Issue391IterationCount; ++j)
+                {
+                    try
+                    {
+                        auto con = pool.GetConnection();
+                        con.Close();
+                    }
+                    catch (const Exception&)
+                    {
+                        ++Issue391ErrorCount;
+                    }
+                }
+            });
+        }
+
+        for (auto& thread : threads)
+        {
+            thread.join();
+        }
+
+        pool.Close();
     }
 }
 

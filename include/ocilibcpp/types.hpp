@@ -902,7 +902,7 @@ namespace ocilib
          * @param libpath      - Oracle shared library path (optional)
          *
          * @note
-         * This function must be called before any other OCILIB library function.
+         * An Environment instance must be created before any other OCILIB library function.
          *
          * @warning
          * - It should be called <b>ONCE</b> per application
@@ -932,7 +932,7 @@ namespace ocilib
          * Return the Environment mode flags
          *
          * @note
-         * It returns the value of the parameter 'mode' passed to Initialize()
+         * It returns the value of the parameter 'mode' passed to the constructor
          *
          */
         Environment::EnvironmentFlags GetMode() const;
@@ -1181,7 +1181,7 @@ namespace ocilib
          * See HAHandlerProc documentation for more details
          *
          * @note
-         * EnvMode::Events flag must be passed to Initialize() to be able to use HA events
+         * EnvMode::Events flag must be passed to the Environment constructor to be able to use HA events
          *
          * @warning
          * This call is supported from Oracle 10gR2.
@@ -8025,7 +8025,7 @@ namespace ocilib
     * This class wraps the OCILIB object handle OCI_Subscription and its related methods
     *
     * @warning
-    * Environment::Events flag must be passed to Environment::Initialize() to be able to use subscriptions
+    * Environment::Events flag must be passed to the Environment constructor to be able to use subscriptions
 
     */
     class Subscription : public core::HandleHolder<OCI_Subscription*>
@@ -8177,7 +8177,7 @@ namespace ocilib
     * This class wraps the OCILIB object handle OCI_Event and its related methods
     *
     * @warning
-    * Environment::Events flag must be passed to Environment::Initialize() to be able to use subscriptions
+    * Environment::Events flag must be passed to the Environment constructor to be able to use subscriptions
     *
     */
     class Event : public core::HandleHolder<OCI_Event*>
@@ -9239,7 +9239,7 @@ namespace ocilib
          * Environment::SetSubscriptionPort() before the first subscription is registered.
          *
          * @note
-         * Environment::Events flag must be passed to Environment::Initialize() to be able to use
+         * Environment::Events flag must be passed to the Environment constructor to be able to use
          * asynchronous messages notifications
          *
          * @note
