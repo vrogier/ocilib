@@ -44,7 +44,7 @@ inline Number::Number(const Number& other)
     *this = other;
 }
 
-inline Number& Number::operator= (const Number& other) noexcept
+inline Number& Number::operator= (const Number& other)
 {
     if (this != &other)
     {

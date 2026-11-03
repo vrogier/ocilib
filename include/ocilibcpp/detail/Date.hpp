@@ -38,7 +38,7 @@ inline Date::Date(const Date& other)
     *this = other;
 }
 
-inline Date& Date::operator= (const Date& other) noexcept
+inline Date& Date::operator= (const Date& other)
 {
     if (this != &other)
     {

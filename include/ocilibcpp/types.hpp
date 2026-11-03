@@ -2651,7 +2651,7 @@ namespace ocilib
          * @param other - value to assign
          *
          */
-        Number& operator= (const Number& other) noexcept;
+        Number& operator= (const Number& other);
 
         /**
         * @brief
@@ -2857,7 +2857,7 @@ namespace ocilib
         * @param other - value to assign
         *
         */
-        Date& operator= (const Date& other) noexcept;
+        Date& operator= (const Date& other);
 
         /**
         * @brief
@@ -3335,7 +3335,7 @@ namespace ocilib
          * @param other - value to assign
          *
          */
-        Interval& operator= (const Interval& other) noexcept;
+        Interval& operator= (const Interval& other);
 
         /**
         * @brief
@@ -3773,7 +3773,7 @@ namespace ocilib
          * @param other - value to assign
          *
          */
-        Timestamp& operator= (const Timestamp& other) noexcept;
+        Timestamp& operator= (const Timestamp& other);
 
         /**
         * @brief

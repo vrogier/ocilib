@@ -4,6 +4,10 @@
 
 **Author:** Vincent Rogier (vince.rogier@ocilib.net)
 
+### Fixes (C++ API)
+
+- Issue 388: Removed `noexcept` from `Number`, `Date`, `Interval` and `Timestamp` copy assignment operators (their implementations can throw)
+
 ### Miscellaneous
 
 - `configure` now falls back to well-known Oracle instantclient locations (`/usr/include/oracle/*/client64`, `/usr/lib/oracle/*/client64/lib`, `/opt/oracle/instantclient*`) when `ORACLE_HOME` is unset, instead of only probing `$ORACLE_HOME/rdbms/{public,demo}` (fixes #318)

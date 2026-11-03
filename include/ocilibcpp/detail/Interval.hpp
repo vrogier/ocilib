@@ -42,7 +42,7 @@ inline Interval::Interval(const Interval& other)
     *this = other;
 }
 
-inline Interval& Interval::operator= (const Interval& other) noexcept
+inline Interval& Interval::operator= (const Interval& other)
 {
     if (this != &other)
     {
