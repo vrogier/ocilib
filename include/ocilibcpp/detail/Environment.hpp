@@ -29,7 +29,7 @@
 namespace ocilib
 {
 
-inline Environment::Environment(EnvironmentFlags mode, const ostring& libpath) : _guard(core::SynchronizationMode::Unsafe), _defaultStore(nullptr), _charMaxSize(0), _initialized(false)
+inline Environment::Environment(EnvironmentFlags mode, const ostring& libpath) : _guard(core::SynchronizationMode::Unsafe), _defaultStore(&_guard), _charMaxSize(0), _initialized(false)
 {
     _mode = mode;
 

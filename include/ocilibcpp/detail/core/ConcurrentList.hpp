@@ -49,7 +49,7 @@ namespace ocilib
         void ConcurrentList<T>::Add(T value)
         {
             Acquire();
-            _list.push_back(value);
+            _list.insert(value);
             Release();
         }
 
@@ -57,7 +57,7 @@ namespace ocilib
         void ConcurrentList<T>::Remove(T value)
         {
             Acquire();
-            _list.remove(value);
+            _list.erase(value);
             Release();
         }
 
@@ -99,7 +99,7 @@ namespace ocilib
 
             Acquire();
 
-            typename std::list<T>::iterator it = std::find_if(_list.begin(), _list.end(), predicate);
+            typename ConcurrentList<T>::ListType::iterator it = std::find_if(_list.begin(), _list.end(), predicate);
 
             if (it != _list.end())
             {

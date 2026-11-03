@@ -45,6 +45,7 @@ namespace ocilib
         struct HandleStoreResolver : HandleStoreResolverType<false, core::SynchronizationMode::Unsafe> {};
 
         template<> struct HandleStoreResolver<OCI_Environment*> : HandleStoreResolverType<true, core::SynchronizationMode::Safe> {};
+        template<> struct HandleStoreResolver<OCI_Pool*> : HandleStoreResolverType<true, core::SynchronizationMode::Safe> {};
         template<> struct HandleStoreResolver<OCI_Connection*> : HandleStoreResolverType<true, core::SynchronizationMode::Unsafe> {};
         template<> struct HandleStoreResolver<OCI_Statement*> : HandleStoreResolverType<true, core::SynchronizationMode::Unsafe> {};
         template<> struct HandleStoreResolver<OCI_Resultset*> : HandleStoreResolverType<true, core::SynchronizationMode::Unsafe> {};

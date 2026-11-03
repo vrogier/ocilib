@@ -20,10 +20,16 @@
 
 #pragma once
 
-#include <list>
 #include <map>
+#include <set>
 
 #include "ocilibcpp/config.hpp"
+
+#if defined(OCILIBPP_HAS_CXX) && !defined(OCILIBPP_TEST_CPP98)
+
+#include <unordered_set>
+
+#endif
 
  // ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
  // ReSharper disable CppClangTidyHicppSpecialMemberFunctions
@@ -324,7 +330,17 @@ namespace ocilib
 
         private:
 
-            std::list<T> _list;
+#if defined(OCILIBPP_HAS_CXX) && !defined(OCILIBPP_TEST_CPP98)
+
+            typedef std::unordered_set<T> ListType;
+
+#else
+
+            typedef std::set<T> ListType;
+
+#endif
+
+            ListType _list;
         };
 
         /* Forward declaration */
