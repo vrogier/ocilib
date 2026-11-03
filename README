@@ -108,16 +108,17 @@ for ANSI and Unicode versions.
 
  Validated Oracle versions : 
  
- - Oracle 8 
- - Oracle 9
- - Oracle 10
- - Oracle 11
- - Oracle 12
- - Oracle 18
- - Oracle 19
- - Oracle 21
+ - Oracle 8i 
+ - Oracle 9i 
+ - Oracle 10g 
+ - Oracle 11g 
+ - Oracle 12c
+ - Oracle 18c
+ - Oracle 19c
+ - Oracle 21c
  - Oracle 23ai
-  
+
+
 ===========================================================================
 INSTALLATION AND LIBRARY BUILDS ON MS WINDOWS
 ===========================================================================

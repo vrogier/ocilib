@@ -10,7 +10,7 @@
 
 INCS =  -I/usr/local/include
 CFLAGS = -DOCI_IMPORT_LINKAGE -DOCI_CHARSET_ANSI
-LDFLAGS= -L/home/vincent/dev/oracle/instantclient_19_9/ -lclntsh  -L/usr/local/lib -locilib
+LDFLAGS= -L/opt/oracle/instantclient_23_26 -lclntsh  -L/usr/local/lib -locilib
 CC = gcc
 SRCS = ocilib_demo.c
 OBJS = $(SRCS:.c=.o)
@@ -18,7 +18,7 @@ OBJS = $(SRCS:.c=.o)
 all: ocilib_demo
 
 ocilib_demo: $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS)
+	$(CC) -o $@ $(OBJS) $(LDFLAGS)
 
 .c.o:
 	$(CC) $(INCS) $(CFLAGS) -c -o $@ $<
