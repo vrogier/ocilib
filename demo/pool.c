@@ -1,4 +1,5 @@
 #include "ocilib.h"
+#include <threads.h>
 
 #define MAX_THREADS 50
 #define MAX_CONN    10
@@ -9,7 +10,7 @@ void err_handler(OCI_Error *err)
     printf("%s\n", OCI_ErrorGetString(err));
 }
 
-void pool_worker(OCI_Thread *thread, void *data)
+int pool_worker(void *data)
 {
     OCI_Connection *cn = OCI_PoolGetConnection(OCI_HandleGetEnvironment(data), data, NULL);
     char str[SIZE_STR + 1] = "";
@@ -19,12 +20,14 @@ void pool_worker(OCI_Thread *thread, void *data)
     printf("%s\n", str);
 
     OCI_ConnectionFree(cn);
+
+    return 0;
 }
 
 int main(void)
 {
-    OCI_Thread *th[MAX_THREADS];
-    OCI_ConnPool *pool;
+    thrd_t th[MAX_THREADS];
+    OCI_Pool *pool;
 
     OCI_Int32 i;
 
@@ -43,16 +46,14 @@ int main(void)
 
     for (i = 0; i < MAX_THREADS; i++)
     {
-        th[i] = OCI_ThreadCreate(env);
-        OCI_ThreadRun(th[i], pool_worker, pool);
+        thrd_create(&th[i], pool_worker, pool);
     }
 
     /* wait for threads and cleanup */
 
     for (i = 0; i < MAX_THREADS; i++)
     {
-        OCI_ThreadJoin(th[i]);
-        OCI_ThreadFree(th[i]);
+        thrd_join(th[i], NULL);
     }
 
     OCI_PoolFree(env, pool);

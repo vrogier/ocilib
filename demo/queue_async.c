@@ -56,8 +56,10 @@ int main(OCI_Int32 argc, char *argv[])
 
     OCI_SetSubscriptionPort(env, 9998);
 
-    OCI_DequeueSubscribe(deq1, 0, on_message);
-    OCI_DequeueSubscribe(deq2, 0, on_message);
+    {
+        OCI_Dequeue *deqs[2] = { deq1, deq2 };
+        OCI_DequeueSubscribe(con, deqs, 2, 0, on_message);
+    }
 
     msg = OCI_MsgCreate(inf);
     obj = OCI_ObjectCreate(inf);

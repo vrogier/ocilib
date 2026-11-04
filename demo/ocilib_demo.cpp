@@ -385,13 +385,13 @@ void execute_ddl(ostring sql)
     }
     catch (const Exception &ex)
     {
-        switch (ex.GetType().GetValue())
+        switch (ex.GetCategory().GetValue())
         {
         case Exception::OracleError:
             ocout << otext("Oracle Error => ");
             break;
-        case Exception::OracleWarning:
-            ocout << otext("Oracle Error => ");
+        case Exception::JsonError:
+            ocout << otext("JSON Error => ");
             break;
         case Exception::OcilibError:
             ocout << otext("OCILIB Error => ");

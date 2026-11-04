@@ -17,7 +17,7 @@ int main(void)
     {
         OCI_Error *err = OCI_GetLastError();
 
-        printf("errcode %d, errmsg %s", OCI_ErrorGetOCICode(err), OCI_ErrorGetString(err));
+        printf("errcode %d, errmsg %s", OCI_ErrorGetCode(err), OCI_ErrorGetString(err));
     }
 
     OCI_EnvironmentFree(env);

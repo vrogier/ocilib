@@ -5,7 +5,7 @@ void err_handler(OCI_Error *err)
     OCI_Int32   err_type = OCI_ErrorGetType(err);
     char *err_msg  = OCI_ErrorGetString(err);
 
-    printf("%s - %s\n", err_type == OCI_ERR_WARNING ? "warning" : "error", err_msg);
+    printf("%s - %s\n", err_type == OCI_ERR_TYPE_WARNING ? "warning" : "error", err_msg);
 }
 
 int main(void)

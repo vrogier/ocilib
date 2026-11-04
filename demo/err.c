@@ -7,7 +7,7 @@ void err_handler(OCI_Error *err)
         "code  : ORA-%05i\n"
         "msg   : %s\n"
         "sql   : %s\n",
-        OCI_ErrorGetOCICode(err),
+        OCI_ErrorGetCode(err),
         OCI_ErrorGetString(err),
         OCI_GetSql(OCI_ErrorGetStatement(err))
     );

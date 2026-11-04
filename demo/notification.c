@@ -100,7 +100,7 @@ void error_handler(OCI_Error *err)
     OCI_Int32         err_type = OCI_ErrorGetType(err);
     const char *err_msg = OCI_ErrorGetString(err);
 
-    printf("** %s - %s\n", err_type == OCI_ERR_WARNING ? "Warning" : "Error", err_msg);
+    printf("** %s - %s\n", err_type == OCI_ERR_TYPE_WARNING ? "Warning" : "Error", err_msg);
 }
 
 void event_handler(OCI_Event *event)

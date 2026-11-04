@@ -118,7 +118,7 @@ void err_handler(OCI_Error *err)
 
     print_text("\n");
 
-    if (err_type == OCI_ERR_WARNING)
+    if (err_type == OCI_ERR_TYPE_WARNING)
     {
          print_text("> WARNING : ");
          nb_warn++;

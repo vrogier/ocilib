@@ -39,7 +39,7 @@ int main(OCI_Int32 argc, char* argv[])
         env.SetSubscriptionPort(5468);
 
         Subscription sub;
-        sub.Register(con, "sub-00", Subscription::AllChanges, EventHandler, 0);
+        sub.Register(con, "sub-00", Subscription::AllChanges, EventHandler);
         sub.Watch("select * from table1");
         sub.Watch("select * from table2");
 
