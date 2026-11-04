@@ -632,3 +632,34 @@ OCI_Json* OcilibSodaDocGetJson
 
     EXIT_FUNC();
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaDocGetIsJson
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibSodaDocGetIsJson
+(
+    OCI_SodaDoc *doc
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_SODA_DOC, doc
+    );
+
+    const otext *media_type = NULL;
+
+    CHECK_PTR(OCI_IPC_SODA_DOC, doc);
+
+    media_type = OcilibSodaDocGetMediaType(doc);
+
+    /* documents with no explicit media type are JSON by default in SODA */
+
+    if (NULL == media_type || 0 == ostrcmp(media_type, OTEXT("application/json")))
+    {
+        SET_SUCCESS();
+    }
+
+    CLEANUP_AND_EXIT_FUNC();
+}

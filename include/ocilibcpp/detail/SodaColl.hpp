@@ -156,4 +156,65 @@ namespace ocilib
         return (core::Check(OCI_SodaCollRemoveOneByKey(*this, key.c_str())) == TRUE);
     }
 
+    inline void SodaColl::InsertMany(std::vector<SodaDoc>& docs)
+    {
+        std::vector<OCI_SodaDoc*> handles(docs.size());
+        for (size_t i = 0; i < docs.size(); i++) { handles[i] = docs[i]; }
+        core::Check(OCI_SodaCollInsertMany(*this, handles.data(), static_cast<OCI_UInt32>(docs.size())));
+    }
+
+    inline void SodaColl::InsertManyAndGet(std::vector<SodaDoc>& docs)
+    {
+        std::vector<OCI_SodaDoc*> handles(docs.size());
+        for (size_t i = 0; i < docs.size(); i++) { handles[i] = docs[i]; }
+        core::Check(OCI_SodaCollInsertManyAndGet(*this, handles.data(), static_cast<OCI_UInt32>(docs.size())));
+    }
+
+    inline void SodaColl::CreateIndex(const ostring& indexSpec)
+    {
+        core::Check(OCI_SodaCollCreateIndex(*this, indexSpec.c_str()));
+    }
+
+    inline bool SodaColl::DropIndex(const ostring& name)
+    {
+        return (core::Check(OCI_SodaCollDropIndex(*this, name.c_str())) == TRUE);
+    }
+
+    inline SodaDoc SodaColl::GetDataGuide()
+    {
+        return SodaDoc(core::Check(OCI_SodaCollGetDataGuide(*this)), GetHandle());
+    }
+
+    inline std::vector<ostring> SodaColl::ListIndexes()
+    {
+        UInt32 count = 0;
+        otext** names = core::Check(OCI_SodaCollListIndexes(*this, &count));
+
+        std::vector<ostring> result;
+
+        if (names)
+        {
+            for (UInt32 i = 0; i < count; i++)
+            {
+                if (names[i])
+                {
+                    result.push_back(core::MakeString(names[i]));
+                }
+            }
+            OCI_SodaCollFreeIndexNames(*this, names, count);
+        }
+
+        return result;
+    }
+
+    inline void SodaColl::Save(SodaDoc& doc)
+    {
+        core::Check(OCI_SodaCollSave(*this, doc));
+    }
+
+    inline void SodaColl::SaveAndGet(SodaDoc& doc)
+    {
+        core::Check(OCI_SodaCollSaveAndGet(*this, doc));
+    }
+
 }

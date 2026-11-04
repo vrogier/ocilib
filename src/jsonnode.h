@@ -243,6 +243,157 @@ OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeAppendItem
     OCI_JsonNode *value
 );
 
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeInsertItem
+(
+    OCI_JsonNode *arr,
+    OCI_UInt32    index,
+    OCI_JsonNode *value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeRemoveItem
+(
+    OCI_JsonNode *arr,
+    OCI_UInt32    index
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeHasField
+(
+    OCI_JsonNode *node,
+    const otext  *name
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeRemoveField
+(
+    OCI_JsonNode *node,
+    const otext  *name
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeClear
+(
+    OCI_JsonNode *node
+);
+
+OCI_SYM_LOCAL OCI_JsonNode * OcilibJsonNodeGetByPath
+(
+    OCI_JsonNode *node,
+    const otext  *path
+);
+
+OCI_SYM_LOCAL OCI_JsonNode * OcilibJsonNodeGetParent
+(
+    OCI_JsonNode *node
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetValue
+(
+    OCI_JsonNode   *node,
+    OCI_NumericType type,
+    void           *value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetShort
+(
+    OCI_JsonNode *node,
+    OCI_Int16    *value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetUShort
+(
+    OCI_JsonNode *node,
+    OCI_UInt16   *value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetInt
+(
+    OCI_JsonNode *node,
+    OCI_Int32    *value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt32   *value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetBigInt
+(
+    OCI_JsonNode *node,
+    OCI_Int64    *value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetBigUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt64   *value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetFloat
+(
+    OCI_JsonNode *node,
+    OCI_Float    *value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetDouble
+(
+    OCI_JsonNode *node,
+    OCI_Double   *value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetValue
+(
+    OCI_JsonNode   *node,
+    OCI_NumericType type,
+    void           *value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetShort
+(
+    OCI_JsonNode *node,
+    OCI_Int16     value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetUShort
+(
+    OCI_JsonNode *node,
+    OCI_UInt16    value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetInt
+(
+    OCI_JsonNode *node,
+    OCI_Int32     value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt32    value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetBigInt
+(
+    OCI_JsonNode *node,
+    OCI_Int64     value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetBigUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt64    value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetFloat
+(
+    OCI_JsonNode *node,
+    OCI_Float     value
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetDouble
+(
+    OCI_JsonNode *node,
+    OCI_Double    value
+);
+
 OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetItem
 (
     OCI_JsonNode *arr,

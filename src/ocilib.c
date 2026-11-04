@@ -2185,20 +2185,20 @@ OCI_ErrorType OCI_API OCI_ErrorGetType
     return OcilibErrorGetType(err);
 }
 
-OCI_ErrorCode OCI_API OCI_ErrorGetOCICode
+OCI_ErrorCategory OCI_API OCI_ErrorGetCategory
 (
     OCI_Error* err
 )
 {
-    return OcilibErrorGetOCICode(err);
+    return OcilibErrorGetCategory(err);
 }
 
-OCI_ErrorCode OCI_API OCI_ErrorGetInternalCode
+OCI_ErrorCode OCI_API OCI_ErrorGetCode
 (
     OCI_Error* err
 )
 {
-    return OcilibErrorGetInternalCode(err);
+    return OcilibErrorGetCode(err);
 }
 
 OCI_Connection* OCI_API OCI_ErrorGetConnection
@@ -6919,6 +6919,33 @@ OCI_SodaCollCursor* OCI_API OCI_SodaDbGetColls
     CALL_IMPL(OcilibSodaDbGetColls, sdb, startName);
 }
 
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_SodaDbGetCollectionNames
+ * --------------------------------------------------------------------------------------------- */
+
+otext** OCI_API OCI_SodaDbGetCollectionNames
+(
+    OCI_SodaDb *sdb,
+    OCI_UInt32 *count
+)
+{
+    CALL_IMPL(OcilibSodaDbGetCollectionNames, sdb, count);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_SodaDbFreeCollectionNames
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OCI_API OCI_SodaDbFreeCollectionNames
+(
+    OCI_SodaDb *sdb,
+    otext     **names,
+    OCI_UInt32  count
+)
+{
+    CALL_IMPL(OcilibSodaDbFreeCollectionNames, sdb, names, count);
+}
+
 OCI_SodaDoc* OCI_API OCI_SodaDocCreateFromText
 (
     OCI_SodaDb  * sdb,
@@ -7044,6 +7071,14 @@ const otext* OCI_API OCI_SodaDocGetMediaType
     CALL_IMPL(OcilibSodaDocGetMediaType, doc);
 }
 
+OCI_Boolean OCI_API OCI_SodaDocGetIsJson
+(
+    OCI_SodaDoc* doc
+)
+{
+    CALL_IMPL(OcilibSodaDocGetIsJson, doc);
+}
+
 const otext* OCI_API OCI_SodaDocGetText
 (
     OCI_SodaDoc* doc
@@ -7129,6 +7164,33 @@ OCI_Boolean OCI_API OCI_SodaOptionsSetLimit
 )
 {
     CALL_IMPL(OcilibSodaOptionsSetLimit, options, count);
+}
+
+OCI_Boolean OCI_API OCI_SodaOptionsSetFetchArraySize
+(
+    OCI_SodaOptions * options,
+    OCI_UInt32        count
+)
+{
+    CALL_IMPL(OcilibSodaOptionsSetFetchArraySize, options, count);
+}
+
+OCI_Boolean OCI_API OCI_SodaOptionsSetHint
+(
+    OCI_SodaOptions * options,
+    const otext     * hint
+)
+{
+    CALL_IMPL(OcilibSodaOptionsSetHint, options, hint);
+}
+
+OCI_Boolean OCI_API OCI_SodaOptionsSetLock
+(
+    OCI_SodaOptions * options,
+    OCI_Boolean       lock
+)
+{
+    CALL_IMPL(OcilibSodaOptionsSetLock, options, lock);
 }
 
 OCI_SodaColl* OCI_API OCI_SodaCollCursorGetNext
@@ -7274,6 +7336,97 @@ OCI_Boolean OCI_API OCI_SodaCollRemoveOneByKey
 )
 {
     CALL_IMPL(OcilibSodaCollRemoveOneByKey, coll, key);
+}
+
+OCI_Boolean OCI_API OCI_SodaCollInsertMany
+(
+    OCI_SodaColl *coll,
+    OCI_SodaDoc **docs,
+    OCI_UInt32    count
+)
+{
+    CALL_IMPL(OcilibSodaCollInsertMany, coll, docs, count);
+}
+
+OCI_Boolean OCI_API OCI_SodaCollInsertManyAndGet
+(
+    OCI_SodaColl *coll,
+    OCI_SodaDoc **docs,
+    OCI_UInt32    count
+)
+{
+    CALL_IMPL(OcilibSodaCollInsertManyAndGet, coll, docs, count);
+}
+
+OCI_Boolean OCI_API OCI_SodaCollCreateIndex
+(
+    OCI_SodaColl *coll,
+    const otext  *indexSpec
+)
+{
+    CALL_IMPL(OcilibSodaCollCreateIndex, coll, indexSpec);
+}
+
+OCI_Boolean OCI_API OCI_SodaCollDropIndex
+(
+    OCI_SodaColl *coll,
+    const otext  *name
+)
+{
+    CALL_IMPL(OcilibSodaCollDropIndex, coll, name);
+}
+
+OCI_SodaDoc* OCI_API OCI_SodaCollGetDataGuide
+(
+    OCI_SodaColl *coll
+)
+{
+    CALL_IMPL(OcilibSodaCollGetDataGuide, coll);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_SodaCollListIndexes
+ * --------------------------------------------------------------------------------------------- */
+
+otext** OCI_API OCI_SodaCollListIndexes
+(
+    OCI_SodaColl *coll,
+    OCI_UInt32   *count
+)
+{
+    CALL_IMPL(OcilibSodaCollListIndexes, coll, count);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OCI_SodaCollFreeIndexNames
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OCI_API OCI_SodaCollFreeIndexNames
+(
+    OCI_SodaColl *coll,
+    otext       **names,
+    OCI_UInt32    count
+)
+{
+    CALL_IMPL(OcilibSodaCollFreeIndexNames, coll, names, count);
+}
+
+OCI_Boolean OCI_API OCI_SodaCollSave
+(
+    OCI_SodaColl *coll,
+    OCI_SodaDoc  *doc
+)
+{
+    CALL_IMPL(OcilibSodaCollSave, coll, doc);
+}
+
+OCI_Boolean OCI_API OCI_SodaCollSaveAndGet
+(
+    OCI_SodaColl *coll,
+    OCI_SodaDoc  *doc
+)
+{
+    CALL_IMPL(OcilibSodaCollSaveAndGet, coll, doc);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -7740,4 +7893,211 @@ OCI_Boolean OCI_API OCI_JsonNodeAppendItem
 )
 {
     CALL_IMPL(OcilibJsonNodeAppendItem, arr, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeInsertItem
+(
+    OCI_JsonNode *arr,
+    OCI_UInt32    index,
+    OCI_JsonNode *value
+)
+{
+    CALL_IMPL(OcilibJsonNodeInsertItem, arr, index, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeRemoveItem
+(
+    OCI_JsonNode *arr,
+    OCI_UInt32    index
+)
+{
+    CALL_IMPL(OcilibJsonNodeRemoveItem, arr, index);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeHasField
+(
+    OCI_JsonNode *node,
+    const otext  *name
+)
+{
+    CALL_IMPL(OcilibJsonNodeHasField, node, name);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeRemoveField
+(
+    OCI_JsonNode *node,
+    const otext  *name
+)
+{
+    CALL_IMPL(OcilibJsonNodeRemoveField, node, name);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeClear
+(
+    OCI_JsonNode *node
+)
+{
+    CALL_IMPL(OcilibJsonNodeClear, node);
+}
+
+OCI_JsonNode * OCI_API OCI_JsonNodeGetParent
+(
+    OCI_JsonNode *node
+)
+{
+    CALL_IMPL(OcilibJsonNodeGetParent, node);
+}
+
+OCI_JsonNode * OCI_API OCI_JsonNodeGetByPath
+(
+    OCI_JsonNode *node,
+    const otext  *path
+)
+{
+    CALL_IMPL(OcilibJsonNodeGetByPath, node, path);
+}
+
+
+OCI_Boolean OCI_API OCI_JsonNodeGetShort
+(
+    OCI_JsonNode *node,
+    OCI_Int16    *value
+)
+{
+    CALL_IMPL(OcilibJsonNodeGetShort, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeGetUShort
+(
+    OCI_JsonNode *node,
+    OCI_UInt16   *value
+)
+{
+    CALL_IMPL(OcilibJsonNodeGetUShort, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeGetInt
+(
+    OCI_JsonNode *node,
+    OCI_Int32    *value
+)
+{
+    CALL_IMPL(OcilibJsonNodeGetInt, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeGetUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt32   *value
+)
+{
+    CALL_IMPL(OcilibJsonNodeGetUInt, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeGetBigInt
+(
+    OCI_JsonNode *node,
+    OCI_Int64    *value
+)
+{
+    CALL_IMPL(OcilibJsonNodeGetBigInt, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeGetBigUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt64   *value
+)
+{
+    CALL_IMPL(OcilibJsonNodeGetBigUInt, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeGetFloat
+(
+    OCI_JsonNode *node,
+    OCI_Float    *value
+)
+{
+    CALL_IMPL(OcilibJsonNodeGetFloat, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeGetDouble
+(
+    OCI_JsonNode *node,
+    OCI_Double   *value
+)
+{
+    CALL_IMPL(OcilibJsonNodeGetDouble, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeSetShort
+(
+    OCI_JsonNode *node,
+    OCI_Int16     value
+)
+{
+    CALL_IMPL(OcilibJsonNodeSetShort, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeSetUShort
+(
+    OCI_JsonNode *node,
+    OCI_UInt16    value
+)
+{
+    CALL_IMPL(OcilibJsonNodeSetUShort, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeSetInt
+(
+    OCI_JsonNode *node,
+    OCI_Int32     value
+)
+{
+    CALL_IMPL(OcilibJsonNodeSetInt, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeSetUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt32    value
+)
+{
+    CALL_IMPL(OcilibJsonNodeSetUInt, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeSetBigInt
+(
+    OCI_JsonNode *node,
+    OCI_Int64     value
+)
+{
+    CALL_IMPL(OcilibJsonNodeSetBigInt, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeSetBigUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt64    value
+)
+{
+    CALL_IMPL(OcilibJsonNodeSetBigUInt, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeSetFloat
+(
+    OCI_JsonNode *node,
+    OCI_Float     value
+)
+{
+    CALL_IMPL(OcilibJsonNodeSetFloat, node, value);
+}
+
+OCI_Boolean OCI_API OCI_JsonNodeSetDouble
+(
+    OCI_JsonNode *node,
+    OCI_Double    value
+)
+{
+    CALL_IMPL(OcilibJsonNodeSetDouble, node, value);
 }

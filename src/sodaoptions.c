@@ -470,3 +470,129 @@ OCI_Boolean OcilibSodaOptionsSetLimit
 
     EXIT_FUNC();
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaOptionsSetFetchArraySize
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibSodaOptionsSetFetchArraySize
+(
+    OCI_SodaOptions *options,
+    OCI_UInt32       count
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_SODA_OPTIONS, options
+    );
+
+    ub4 val = (ub4)count;
+
+    CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
+    CHECK_PTR(OCI_IPC_SODA_DB, options->sdb);
+    CHECK_SODA_ENABLED(options->sdb->con);
+
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SODA_OPER_OPTIONS,
+        OCI_ATTR_SODA_FETCH_ARRAY_SIZE,
+        options->handle,
+        &val,
+        sizeof(val),
+        options->sdb->con->err
+    );
+
+    SET_SUCCESS();
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaOptionsSetHint
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibSodaOptionsSetHint
+(
+    OCI_SodaOptions *options,
+    const otext     *hint
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_SODA_OPTIONS, options
+    );
+
+    dbtext   *dbstr  = NULL;
+    OCI_Int32 dbsize = -1;
+
+    CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
+    CHECK_PTR(OCI_IPC_STRING, hint);
+    CHECK_PTR(OCI_IPC_SODA_DB, options->sdb);
+    CHECK_SODA_ENABLED(options->sdb->con);
+
+    /* OCI_ATTR_SODA_HINT only available on client 19.11+/21.3+ (mirrors ODPI) */
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    CHECK_FEATURE(options->sdb->con, OCI_FEATURE_SODA, OCI_21_3);
+
+#endif
+
+    dbstr = OcilibStringGetDBString(options->sdb->env, hint, &dbsize);
+
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SODA_OPER_OPTIONS,
+        OCI_ATTR_SODA_HINT,
+        options->handle,
+        (void*)dbstr,
+        (ub4)dbsize,
+        options->sdb->con->err
+    );
+
+    SET_SUCCESS();
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        OcilibStringReleaseDBString(NULL != options && NULL != options->sdb ? options->sdb->env : NULL, dbstr);
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaOptionsSetLock
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibSodaOptionsSetLock
+(
+    OCI_SodaOptions *options,
+    OCI_Boolean      lock
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_SODA_OPTIONS, options
+    );
+
+    ub4 val = (ub4)(lock ? 1 : 0);
+
+    CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
+    CHECK_PTR(OCI_IPC_SODA_DB, options->sdb);
+    CHECK_SODA_ENABLED(options->sdb->con);
+
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_SODA_OPER_OPTIONS,
+        OCI_ATTR_SODA_LOCK,
+        options->handle,
+        &val,
+        sizeof(val),
+        options->sdb->con->err
+    );
+
+    SET_SUCCESS();
+
+    EXIT_FUNC();
+}

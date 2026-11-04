@@ -274,12 +274,14 @@ typedef struct jznDomAPI
     boolean     (*jznDomAppendItem)(jznDomDoc *jdoc,
                                    jznDomArray *arr, jznDomNode *node);
     void        (*jznDomReplaceItem)(void);
-    void        (*jznDomDeleteField)(void);
+    boolean     (*jznDomDeleteField)(jznDomDoc *jdoc, jznDomObject *obj,
+                                     jznDomObjFieldName *nmkey);
     void        (*jznDomUnlinkField)(void);
     void        (*jznDomRenameField)(void);
-    void        (*jznDomDeleteItem)(void);
+    boolean     (*jznDomDeleteItem)(jznDomDoc *jdoc, jznDomArray *arr, ub4 idx);
     void        (*jznDomUnlinkItem)(void);
-    void        (*jznDomDeleteItemBatch)(void);
+    ub4         (*jznDomDeleteItemBatch)(jznDomDoc *jdoc, jznDomArray *arr,
+                                         ub4 start, ub4 deleteSz);
 
     jznDomObject *(*jznDomNewObject)(jznDomDoc *jdoc, ub4 sz);
     jznDomArray  *(*jznDomNewArray)(jznDomDoc *jdoc, ub4 sz);
@@ -294,29 +296,21 @@ typedef struct jznDomAPI
     void          (*jznDomPrintNode)(void);
     void          (*jznDomNodeVisitor)(void);
     jznDomScalar *(*jznDomNewScalarVal)(jznDomDoc *jdoc, jznvaltype typ, ...);
-    void          (*jznDomDeleteFieldByName)(void);
+    boolean       (*jznDomDeleteFieldByName)(jznDomDoc *jdoc, jznDomObject *obj,
+                                             oratext *name, ub2 namelen);
     void          (*jznDomUnlinkFieldByName)(void);
     void          (*jznDomFreeNode)(jznDomDoc *jdoc, jznDomNode *node);
     sword         (*jznDomGetScalarInfoOci)(jznDomDoc *jdoc, jznDomScalar *nd,
                                             jznScalarVal *val,
                                             JsonOCIVal *aux);
+    oratext      *(*jznDomGetError)(jznDomDoc *jdoc,
+                                    sword *err, boolean clear);
     void          (*jznDomReplaceRootNode)(void);
     void          (*jznDomImportFromEventSrc)(void);
-    void          (*jznDomGetParent)(void);
+    jznDomNode   *(*jznDomGetParent)(jznDomDoc *jdoc, jznDomNode *node);
     void          (*jznDomSetNodeProperties)(void);
     void          (*jznDomLoad)(void);
     void          (*jznDomSerialize)(void);
-    void          (*jznDomGetFieldPos)(void);
-    void          (*jznDomUnlinkElems)(void);
-    void          (*jznDomInsertItems)(void);
-    void          (*jznDomSortArray)(void);
-    void          (*jznDomCastValue)(void);
-    void          (*jznDomDupScalar)(void);
-    sword         (*jznDomSetScalar)(jznDomDoc *jdoc, jznDomScalar *snode,
-                                     jznScalarVal *val);
-    void          (*jznDomReplaceField)(void);
-    void          (*jznDomDocResetWF)(void);
-    void          (*jznDomDocDecodeOSONBytesIntoNode)(void);
 } jznDomAPI;
 
 /* DOM document container */
@@ -378,9 +372,6 @@ struct jznDomDoc
 #define JsonDomFreeNode(jdoc, nd) \
     ((jdoc)->mthds_jznDomDoc->jznDomFreeNode((jdoc), (nd)))
 
-#define JsonDomSetScalar(jdoc, snode, val) \
-    ((jdoc)->mthds_jznDomDoc->jznDomSetScalar((jdoc), (snode), (val)))
-
 #define JsonDomPutFieldValue(jdoc, obj, key, keylen, val) \
     ((jdoc)->mthds_jznDomDoc->jznDomPutFieldValue((jdoc),(obj),(key),(keylen),(val)))
 
@@ -392,5 +383,29 @@ struct jznDomDoc
 
 #define JsonDomAppendItem(jdoc, ary, val) \
     ((jdoc)->mthds_jznDomDoc->jznDomAppendItem((jdoc),(ary),(val)))
+
+#define JsonDomDeleteField(jdoc, obj, nmkey) \
+    ((jdoc)->mthds_jznDomDoc->jznDomDeleteField((jdoc),(obj),(nmkey)))
+
+#define JsonDomDeleteFieldByName(jdoc, obj, fname, fnlen) \
+    ((jdoc)->mthds_jznDomDoc->jznDomDeleteFieldByName((jdoc),(obj),(fname),(fnlen)))
+
+#define JsonDomDeleteItem(jdoc, ary, index) \
+    ((jdoc)->mthds_jznDomDoc->jznDomDeleteItem((jdoc),(ary),(index)))
+
+#define JsonDomDeleteItems(jdoc, ary, start, cnt) \
+    ((jdoc)->mthds_jznDomDoc->jznDomDeleteItemBatch((jdoc),(ary),(start),(cnt)))
+
+#define JsonDomInsertElements(jdoc, ary, pos, node) \
+    ((jdoc)->mthds_jznDomDoc->jznDomPutItem((jdoc),(ary),(node),(pos)))
+
+#define JsonDomGetError(jdoc, jerr, clear) \
+    ((jdoc)->mthds_jznDomDoc->jznDomGetError((jdoc), (jerr), (clear)))
+
+#define JsonDomGetParent(jdoc, node) \
+    ((jdoc)->mthds_jznDomDoc->jznDomGetParent((jdoc),(node)))
+
+#define JsonDomGetFieldPos(jdoc, obj, fname, fnlen) \
+    ((jdoc)->mthds_jznDomDoc->jznDomGetFieldByName((jdoc),(obj),(fname),(fnlen)))
 
 #endif /* OCILIB_OCI_JZNDOM_H_INCLUDED */

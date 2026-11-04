@@ -8,6 +8,7 @@ namespace TestCApi
     }
 
 #ifdef OCI_CHARSET_ANSI
+
     TEST(TestSubscription, RegisterSecureMode)
     {
         ExecDML(OTEXT("drop table TestRegisterSecureMode"));

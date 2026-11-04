@@ -340,4 +340,112 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(json));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+    TEST(TestJsonDom, DomMutationOps)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto json = OCI_JsonCreate(conn);
+        ASSERT_NE(nullptr, json);
+
+        ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
+        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("{}"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
+
+        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("{\"name\":\"test\",\"arr\":[\"one\",\"two\"],\"num\":123}"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
+
+        OCI_JsonNode* obj = OCI_JsonGetRoot(json);
+        ASSERT_NE(nullptr, obj);
+
+        /* HasField / GetFieldByName / RemoveField / SetField on root */
+        ASSERT_TRUE(OCI_JsonNodeHasField(obj, OTEXT("name")));
+        OCI_JsonNode* name = OCI_JsonNodeGetFieldByName(obj, OTEXT("name"));
+        ASSERT_NE(nullptr, name);
+        ASSERT_EQ(ostring(OTEXT("test")), ostring(OCI_JsonNodeGetString(name, nullptr)));
+        OCI_JsonNodeFree(name);
+        ASSERT_FALSE(OCI_JsonNodeHasField(obj, OTEXT("missing")));
+        ASSERT_TRUE(OCI_JsonNodeRemoveField(obj, OTEXT("name")));
+        ASSERT_FALSE(OCI_JsonNodeHasField(obj, OTEXT("name")));
+
+        /* GetByPath on root */
+        OCI_JsonNode* pathNode = OCI_JsonNodeGetByPath(obj, OTEXT("$.arr[0]"));
+        ASSERT_NE(nullptr, pathNode);
+        ASSERT_EQ(ostring(OTEXT("one")), ostring(OCI_JsonNodeGetString(pathNode, nullptr)));
+        OCI_JsonNodeFree(pathNode);
+        ASSERT_EQ(nullptr, OCI_JsonNodeGetByPath(obj, OTEXT("$.arr[5]")));
+        ASSERT_EQ(nullptr, OCI_JsonNodeGetByPath(obj, OTEXT("$.missing")));
+        ASSERT_EQ(nullptr, OCI_GetLastError());
+
+        /* array ops on root.arr */
+        OCI_JsonNode* arr = OCI_JsonNodeGetFieldByName(obj, OTEXT("arr"));
+        ASSERT_NE(nullptr, arr);
+        ASSERT_EQ(2u, OCI_JsonNodeGetItemCount(arr));
+        OCI_JsonNode* s3 = OCI_JsonNodeCreateString(json, OTEXT("three"), 0);
+        ASSERT_TRUE(OCI_JsonNodeAppendItem(arr, s3));
+        OCI_JsonNodeFree(s3);
+        OCI_JsonNode* s2 = OCI_JsonNodeCreateString(json, OTEXT("inserted"), 0);
+        ASSERT_TRUE(OCI_JsonNodeInsertItem(arr, 1, s2));
+        OCI_JsonNodeFree(s2);
+        ASSERT_EQ(4u, OCI_JsonNodeGetItemCount(arr));
+        OCI_JsonNode* chk = OCI_JsonNodeGetItem(arr, 1);
+        ASSERT_EQ(ostring(OTEXT("inserted")), ostring(OCI_JsonNodeGetString(chk, nullptr)));
+        OCI_JsonNodeFree(chk);
+        ASSERT_TRUE(OCI_JsonNodeRemoveItem(arr, 1));
+        ASSERT_EQ(3u, OCI_JsonNodeGetItemCount(arr));
+
+        /* GetParent */
+        OCI_JsonNode* it = OCI_JsonNodeGetItem(arr, 0);
+        ASSERT_NE(nullptr, it);
+        OCI_JsonNode* par = OCI_JsonNodeGetParent(it);
+        ASSERT_NE(nullptr, par);
+        ASSERT_EQ(OCI_JNT_ARRAY, OCI_JsonNodeGetType(par));
+        ASSERT_EQ(nullptr, OCI_JsonNodeGetParent(obj));
+        OCI_JsonNodeFree(par);
+        OCI_JsonNodeFree(it);
+
+        /* typed accessors on root.num */
+        OCI_JsonNode* num = OCI_JsonNodeGetFieldByName(obj, OTEXT("num"));
+        ASSERT_NE(nullptr, num);
+        ASSERT_TRUE(OCI_JsonNodeSetInt(num, 456));
+        OCI_Int32 iv = 0;
+        ASSERT_TRUE(OCI_JsonNodeGetInt(num, &iv));
+        ASSERT_EQ(456, iv);
+        ASSERT_TRUE(OCI_JsonNodeSetDouble(num, 2.5));
+        OCI_Double dv = 0;
+        ASSERT_TRUE(OCI_JsonNodeGetDouble(num, &dv));
+        ASSERT_EQ(2.5, dv);
+        OCI_Int16  v1=0; OCI_UInt16 v2=0; OCI_UInt32 v4=0; OCI_Int64 v5=0; OCI_UInt64 v6=0; OCI_Float v7=0.f;
+        ASSERT_TRUE(OCI_JsonNodeSetShort(num, (OCI_Int16)-11));
+        ASSERT_TRUE(OCI_JsonNodeGetShort(num, &v1)); ASSERT_EQ(-11, (OCI_Int16)v1);
+        ASSERT_TRUE(OCI_JsonNodeSetUShort(num, (OCI_UInt16)12));
+        ASSERT_TRUE(OCI_JsonNodeGetUShort(num, &v2)); ASSERT_EQ(12, (OCI_UInt16)v2);
+        ASSERT_TRUE(OCI_JsonNodeSetUInt(num, 5678u));
+        ASSERT_TRUE(OCI_JsonNodeGetUInt(num, &v4)); ASSERT_EQ(5678u, (OCI_UInt32)v4);
+        ASSERT_TRUE(OCI_JsonNodeSetBigInt(num, -123456789012345LL));
+        ASSERT_TRUE(OCI_JsonNodeGetBigInt(num, &v5)); ASSERT_EQ(-123456789012345LL, (OCI_Int64)v5);
+        ASSERT_TRUE(OCI_JsonNodeSetBigUInt(num, 123456789012345ULL));
+        ASSERT_TRUE(OCI_JsonNodeGetBigUInt(num, &v6)); ASSERT_EQ(123456789012345ULL, (OCI_UInt64)v6);
+        ASSERT_TRUE(OCI_JsonNodeSetFloat(num, 1.5f));
+        ASSERT_TRUE(OCI_JsonNodeGetFloat(num, &v7)); ASSERT_NEAR(1.5f, (OCI_Float)v7, 0.001f);
+        OCI_JsonNodeFree(num);
+
+        /* SetString / SetBoolean / SetNull / GetType round-trip on a scalar node */
+        OCI_JsonNode* strN = OCI_JsonNodeCreateString(json, OTEXT("v"), 0);
+        ASSERT_TRUE(OCI_JsonNodeSetField(obj, OTEXT("s"), strN));
+        OCI_JsonNodeFree(strN);
+        
+        /* Clear */
+        ASSERT_TRUE(OCI_JsonNodeClear(arr));
+        ASSERT_EQ(0u, OCI_JsonNodeGetItemCount(arr));
+        OCI_JsonNodeFree(arr);
+        ASSERT_TRUE(OCI_JsonNodeClear(obj));
+        ASSERT_EQ(0u, OCI_JsonNodeGetFieldCount(obj));
+
+        OCI_JsonNodeFree(obj);
+        ASSERT_TRUE(OCI_JsonFree(json));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
 }

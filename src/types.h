@@ -238,17 +238,18 @@ typedef struct OCI_LocaleStringInfo OCI_LocaleStringInfo;
 struct OCI_Error
 {
     OCI_HANDLE(void);
-    void           *source_ptr;     /* pointer to source ptr */
-    otext          *location;       /* location (method) */
-    otext          *message;        /* error message */
-    OCI_ErrorType   type;           /* OCILIB error type */
-    OCI_PointerType source_type;    /* source type */
-    OCI_ErrorCode   code;           /* Oracle OCI or OCILIB internal error code */
-    OCI_UInt32      location_len; /* length of error location */
-    OCI_UInt32      message_len;  /* length of error message */
-    ub4             row;            /* Error row offset (array DML) */
-    OCI_Boolean     active;             /* to avoid recursive exceptions */
-    OCI_Boolean     warnings_on;        /* snapshot of the raising env's warnings flag --
+    void             *source_ptr;   /* pointer to source ptr */
+    otext            *location;     /* location (method) */
+    otext            *message;      /* error message */
+    OCI_ErrorType     type;         /* OCI_ERR_TYPE_ERROR / OCI_ERR_TYPE_WARNING */
+    OCI_ErrorCategory category;     /* OCI_ERR_CAT_LIB / OCI_ERR_CAT_OCI / OCI_ERR_CAT_JZN */
+    OCI_PointerType   source_type;  /* source type */
+    OCI_ErrorCode     code;         /* error code in the category's namespace (OCI/OCILIB/JZN) */
+    OCI_UInt32        location_len; /* length of error location */
+    OCI_UInt32        message_len;  /* length of error message */
+    ub4               row;          /* Error row offset (array DML) */
+    OCI_Boolean       active;       /* to avoid recursive exceptions */
+    OCI_Boolean       warnings_on;  /* snapshot of the raising env's warnings flag --
                                            OCI_Error may outlive its environment */
 };
 

@@ -91,11 +91,16 @@
 #define OCI_23_5                            OCI_VER_MAKE(23,  5,  0)
 #define OCI_23_6                            OCI_VER_MAKE(23,  6,  0)
 
-/* OCILIB Error types */
+/* OCILIB Error type (OCI_ErrorGetType) */
 
-#define OCI_ERR_ORACLE                      1
-#define OCI_ERR_OCILIB                      2
-#define OCI_ERR_WARNING                     3
+#define OCI_ERR_TYPE_ERROR                  1
+#define OCI_ERR_TYPE_WARNING                2
+
+/* OCILIB Error category / origin (OCI_ErrorGetCategory) */
+
+#define OCI_ERR_CAT_LIB                     1
+#define OCI_ERR_CAT_OCI                     2
+#define OCI_ERR_CAT_JZN                     3
 
 /* OCILIB Error codes */
 

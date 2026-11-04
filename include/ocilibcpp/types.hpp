@@ -375,12 +375,25 @@ namespace ocilib
         */
         enum ExceptionTypeValues
         {
-            /** Exception caused by an Oracle error */
-            OracleError = OCI_ERR_ORACLE,
-            /** Exception caused by an Ocilib error */
-            OcilibError = OCI_ERR_OCILIB,
-            /** Exception caused by an Oracle Warning */
-            OracleWarning = OCI_ERR_WARNING
+            /** Exception type: error */
+            Error   = OCI_ERR_TYPE_ERROR,
+            /** Exception type: warning */
+            Warning = OCI_ERR_TYPE_WARNING
+        };
+
+        /**
+        * @brief
+        * Exception category enumerated values
+        *
+        */
+        enum ExceptionCategoryValues
+        {
+            /** Exception caused by an Oracle OCI layer error */
+            OracleError   = OCI_ERR_CAT_OCI,
+            /** Exception caused by an Ocilib internal error */
+            OcilibError   = OCI_ERR_CAT_LIB,
+            /** Exception caused by an Oracle JSON DOM (JZN) error */
+            JsonError     = OCI_ERR_CAT_JZN
         };
 
         /**
@@ -390,7 +403,16 @@ namespace ocilib
         * Possible values are Exception::ExceptionTypeValues
         *
         */
-        typedef core::Enum<ExceptionTypeValues>  ExceptionType;
+        typedef core::Enum<ExceptionTypeValues> ExceptionType;
+
+        /**
+        * @brief
+        * Category of Exception — which subsystem raised it
+        *
+        * Possible values are Exception::ExceptionCategoryValues
+        *
+        */
+        typedef core::Enum<ExceptionCategoryValues> ExceptionCategory;
 
         /**
          * @brief
@@ -409,17 +431,17 @@ namespace ocilib
 
         /**
          * @brief
-         * Return the Oracle error code
+         * Return the Exception category — which subsystem raised it
          *
          */
-        Int32 GetOracleErrorCode() const;
+        ExceptionCategory GetCategory() const;
 
         /**
          * @brief
-         * Return the OCILIB error code
+         * Return the error code (in the category's namespace)
          *
          */
-        Int32 GetInternalErrorCode() const;
+        UInt32 GetCode() const;
 
         /**
          * @brief
@@ -483,8 +505,8 @@ namespace ocilib
         OCI_Connection* _pConnection;
         UInt32 _row;
         ExceptionType _type;
-        Int32 _errLib;
-        Int32 _errOracle;
+        ExceptionCategory _category;
+        UInt32 _code;
     };
 
     /**
@@ -5648,21 +5670,45 @@ namespace ocilib
 
         /**
         * @brief
+        * Return a JSON object field by name (equivalent to GetField)
+        *
+        * @param name - Field name
+        *
+        * @return The field JsonNode
+        *
+        */
+        JsonNode operator[](const ostring& name) const;
+
+        /**
+        * @brief
+        * Return a JSON array item by index (equivalent to GetItem)
+        *
+        * @param index - Item index
+        *
+        * @return The item JsonNode
+        *
+        */
+        JsonNode operator[](UInt32 index) const;
+
+        /**
+        * @brief
+        * Return a JSON array item by index (equivalent to GetItem)
+        *
+        * @param index - Item index
+        *
+        * @return The item JsonNode
+        *
+        */
+        JsonNode operator[](Int32 index) const;
+
+        /**
+        * @brief
         * Return the string value of a JSON string node
         *
         * @return The string value
         *
         */
         ostring GetString() const;
-
-        /**
-        * @brief
-        * Return the number value of a JSON number node
-        *
-        * @return The number value
-        *
-        */
-        Number GetNumber() const;
 
         /**
         * @brief
@@ -5725,7 +5771,8 @@ namespace ocilib
         * @param value - New number value
         *
         */
-        void SetNumber(const Number& value);
+        template<class T, core::SupportedNumericT<T>* = nullptr>
+        void SetNumeric(const T& value);
 
         /**
         * @brief
@@ -5817,6 +5864,78 @@ namespace ocilib
         *
         */
         void AppendItem(const JsonNode& value);
+
+        /**
+        * @brief
+        * Insert an item into a JSON array node at a given position
+        *
+        * @param index - Item index (starts at 0, may be equal to the item count to append)
+        * @param value - Item value to insert
+        *
+        */
+        void InsertItem(UInt32 index, const JsonNode& value);
+
+        /**
+        * @brief
+        * Remove an item from a JSON array node
+        *
+        * @param index - Item index (starts at 0)
+        *
+        */
+        void RemoveItem(UInt32 index);
+
+        /**
+        * @brief
+        * Check if a JSON object node has a field with the given name
+        *
+        * @param name - Field name
+        *
+        * @return true if the field exists, false otherwise
+        */
+        bool HasField(const ostring& name) const;
+
+        /**
+        * @brief
+        * Remove a field from a JSON object node
+        *
+        * @param name - Field name to remove
+        *
+        */
+        void RemoveField(const ostring& name);
+
+        /**
+        * @brief
+        * Remove all fields of a JSON object node or all items of a JSON array node
+        *
+        */
+        void Clear();
+
+        /**
+        * @brief
+        * Return the parent of a JSON DOM node
+        *
+        * @return The parent node, or a null JsonNode if the node is the document root
+        */
+        JsonNode GetParent() const;
+
+        /**
+        * @brief
+        * Return the JSON node matching a JSON path expression (e.g. "$.a.b[0]")
+        *
+        * @return The matching node, or a null JsonNode if the path matches nothing
+        */
+        JsonNode GetByPath(const ostring& path) const;
+
+        /**
+        * @brief
+        * Return the numeric value of a JSON number node as a C++ scalar type
+        *
+        * @tparam T - One of Int16, UInt16, Int32, UInt32, Int64, UInt64, Float, Double, Number
+        *
+        * @return The node numeric value
+        */
+        template<class T, core::SupportedNumericT<T>* = nullptr>
+        T GetNumeric() const;
 
     private:
 
@@ -8094,7 +8213,10 @@ namespace ocilib
         {
             /** Server initiates the notification listener connection */
             ModeDefault = OCI_SRM_DEFAULT,
-            /** Client initiates the notification listener connection (Oracle client 12c and above) */
+            /** Client initiates the notification listener connection (Oracle client 12c and above).
+                Warning: Oracle client bug (not an OCILIB bug) — fails inside the Oracle client in
+                UNICODE (OCI_CHARSET_WIDE) builds; ANSI builds work. Verified with Oracle 23ai;
+                a future client release may fix this */
             ModeSecureNotification = OCI_SRM_SECURE_NOTIFICATION
         };
 
@@ -10123,6 +10245,14 @@ namespace ocilib
         ostring GetMediaType() const;
 
         /**
+        * @brief
+        * Check if the document is a JSON document
+        *
+        * @return true if the document is a JSON document
+        */
+        bool IsJson() const;
+
+        /**
          * @brief
          * Document content as an otext string
          *
@@ -10211,6 +10341,28 @@ namespace ocilib
          *
          */
         void SetLimit(UInt32 count);
+
+        /**
+         * @brief
+         * Set the maximum number of documents to retrieve per server round-trip
+         * on the options
+         *
+         */
+        void SetFetchArraySize(UInt32 count);
+
+        /**
+         * @brief
+         * Set a SQL hint on the options
+         *
+         */
+        void SetHint(const ostring& hint);
+
+        /**
+         * @brief
+         * Set pessimistic locking (select for update) on the options
+         *
+         */
+        void SetLock(bool lock = true);
     };
 
     /**
@@ -10271,6 +10423,14 @@ namespace ocilib
          *
          */
         SodaCollCursor GetCollections(const ostring& startName = OTEXT(""));
+
+        /**
+         * @brief
+         * Return the names of all SODA collections in the database
+         *
+         * @return The list of collection names
+         */
+        std::vector<ostring> GetCollectionNames();
 
         /**
          * @brief
@@ -10450,6 +10610,82 @@ namespace ocilib
          *
          */
         bool RemoveOne(const ostring& key);
+
+        /**
+         * @brief
+         * Insert multiple documents into the collection in a single request
+         *
+         */
+        void InsertMany(std::vector<SodaDoc>& docs);
+
+        /**
+         * @brief
+         * Insert multiple documents and refresh their server-assigned attributes
+         *
+         */
+        void InsertManyAndGet(std::vector<SodaDoc>& docs);
+
+        /**
+         * @brief
+         * Create an index on the collection from a JSON index specification
+         *
+         * @warning
+         * Oracle client bug (not an OCILIB bug): fails inside the Oracle
+         * client in UNICODE (OCI_CHARSET_WIDE) builds — ORA-40671; ANSI
+         * builds work. Verified with Oracle 23ai; a future client release
+         * may fix this.
+         */
+        void CreateIndex(const ostring& indexSpec);
+
+        /**
+         * @brief
+         * Drop an index on the collection
+         *
+         * @warning
+         * Oracle client bug (not an OCILIB bug): fails inside the Oracle
+         * client in UNICODE (OCI_CHARSET_WIDE) builds — can even crash the
+         * process; ANSI builds work. Verified with Oracle 23ai; a future
+         * client release may fix this.
+         *
+         * @return true if the index was dropped
+         */
+        bool DropIndex(const ostring& name);
+
+        /**
+         * @brief
+         * Return the JSON data guide document of the collection
+         *
+         * @return The data guide document, or a null SodaDoc if none exists
+         */
+        SodaDoc GetDataGuide();
+
+        /**
+         * @brief
+         * Return the names of the indexes defined on the collection
+         *
+         * @warning
+         * Oracle client bug (not an OCILIB bug): fails inside the Oracle
+         * client in UNICODE (OCI_CHARSET_WIDE) builds — OCI-22303; ANSI
+         * builds work. Verified with Oracle 23ai; a future client release
+         * may fix this.
+         *
+         * @return The list of index names
+         */
+        std::vector<ostring> ListIndexes();
+
+        /**
+         * @brief
+         * Save a document into the collection (insert or replace by key)
+         *
+         */
+        void Save(SodaDoc& doc);
+
+        /**
+         * @brief
+         * Save a document and refresh its server-assigned attributes
+         *
+         */
+        void SaveAndGet(SodaDoc& doc);
     };
 
     /**
@@ -10479,6 +10715,53 @@ namespace ocilib
          *
          */
         SodaColl GetNext();
+
+        /**
+         * @brief
+         * Input iterator over the remaining cursor collections
+         *
+         * @warning forward-only; a consumed iterator compares equal to end()
+         *
+         */
+        class iterator
+        {
+            friend class SodaCollCursor;
+
+            SodaCollCursor* _cursor;
+            SodaColl        _coll;
+
+            explicit iterator(SodaCollCursor* cursor) : _cursor(cursor) { ++(*this); }
+
+        public:
+
+            typedef std::input_iterator_tag iterator_category;
+            typedef SodaColl                value_type;
+            typedef std::ptrdiff_t          difference_type;
+            typedef SodaColl*               pointer;
+            typedef SodaColl&               reference;
+
+            iterator() : _cursor(NULL) {}
+            iterator& operator++();
+            iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+            reference operator*()  { return _coll; }
+            pointer   operator->() { return &_coll; }
+            bool operator==(const iterator& rhs) const { return _cursor == rhs._cursor; }
+            bool operator!=(const iterator& rhs) const { return !(*this == rhs); }
+        };
+
+        /**
+         * @brief
+         * Return an input iterator over the remaining cursor collections
+         *
+         */
+        iterator begin();
+
+        /**
+         * @brief
+         * Return the past-the-end iterator
+         *
+         */
+        iterator end()   { return iterator(); }
     };
 
     /**
@@ -10508,6 +10791,53 @@ namespace ocilib
          *
          */
         SodaDoc GetNext();
+
+        /**
+         * @brief
+         * Input iterator over the remaining cursor documents
+         *
+         * @warning forward-only; a consumed iterator compares equal to end()
+         *
+         */
+        class iterator
+        {
+            friend class SodaDocCursor;
+
+            SodaDocCursor* _cursor;
+            SodaDoc        _doc;
+
+            explicit iterator(SodaDocCursor* cursor) : _cursor(cursor) { ++(*this); }
+
+        public:
+
+            typedef std::input_iterator_tag iterator_category;
+            typedef SodaDoc                 value_type;
+            typedef std::ptrdiff_t          difference_type;
+            typedef SodaDoc*                pointer;
+            typedef SodaDoc&                reference;
+
+            iterator() : _cursor(NULL) {}
+            iterator& operator++();
+            iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+            reference operator*()  { return _doc; }
+            pointer   operator->() { return &_doc; }
+            bool operator==(const iterator& rhs) const { return _cursor == rhs._cursor; }
+            bool operator!=(const iterator& rhs) const { return !(*this == rhs); }
+        };
+
+        /**
+         * @brief
+         * Return an input iterator over the remaining cursor documents
+         *
+         */
+        iterator begin();
+
+        /**
+         * @brief
+         * Return the past-the-end iterator
+         *
+         */
+        iterator end()   { return iterator(); }
     };
 
 

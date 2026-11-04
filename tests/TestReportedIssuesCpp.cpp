@@ -105,7 +105,7 @@ namespace TestCppApi
         }
         catch (const Exception& e)
         {
-            errCode = e.GetOracleErrorCode();
+            errCode = e.GetCode();
         }
 
         ASSERT_EQ(1403, errCode);
@@ -432,7 +432,7 @@ namespace TestCppApi
         catch (const Exception& ex)
         {
             errMessage = ex.GetMessage();
-            errCode = ex.GetOracleErrorCode();
+            errCode = ex.GetCode();
         }
 
         ASSERT_EQ(true, errMessage.empty());
@@ -584,7 +584,7 @@ namespace TestCppApi
         catch (const Exception& ex)
         {
             errMessage = ex.GetMessage();
-            errCode = ex.GetOracleErrorCode();
+            errCode = ex.GetCode();
         }
 
         ASSERT_EQ(true, errMessage.empty());
@@ -599,7 +599,7 @@ namespace TestCppApi
         catch (const Exception& ex)
         {
             errMessage = ex.GetMessage();
-            errCode = ex.GetOracleErrorCode();
+            errCode = ex.GetCode();
         }
 
         ASSERT_EQ(false, errMessage.empty());

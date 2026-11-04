@@ -6,7 +6,7 @@ namespace TestCApi
 
     static inline void AddError(OCI_Error* err)
     {
-        context.Errs.emplace_back(Error{ OCI_ErrorGetInternalCode(err), OCI_ErrorGetOCICode(err) });
+        context.Errs.emplace_back(Error{ OCI_ErrorGetCode(err), OCI_ErrorGetCategory(err) });
 
         auto str = OCI_ErrorGetString(err);
 

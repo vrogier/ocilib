@@ -494,6 +494,17 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaOptionsSetFilter(options, OTEXT("{\"parity\":\"even\"}")));
         ASSERT_TRUE(OCI_SodaOptionsSetSkip(options, 0));
         ASSERT_TRUE(OCI_SodaOptionsSetLimit(options, 10));
+        ASSERT_TRUE(OCI_SodaOptionsSetFetchArraySize(options, 32));
+        ASSERT_TRUE(OCI_SodaOptionsSetLock(options, FALSE));
+
+        /* SODA hints reject the '/*'+'* /' comment markers (ORA-40856) —
+           pass the bare hint text */
+        {
+            auto* opt2 = OCI_SodaOptionsCreate(sdb);
+            ASSERT_NE(nullptr, opt2);
+            ASSERT_TRUE(OCI_SodaOptionsSetHint(opt2, OTEXT("index(OCILIB_SODA_OPT_COLL)")));
+            ASSERT_TRUE(OCI_SodaOptionsFree(opt2));
+        }
 
         auto* cursor = OCI_SodaCollFind(coll, options);
         ASSERT_NE(nullptr, cursor);
@@ -1551,4 +1562,157 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaDbFree(sdb));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+    TEST(TestSoda, BulkSaveIndexAndMeta)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto sdb = OCI_SodaDbCreate(conn);
+        ASSERT_NE(nullptr, sdb);
+
+        DropCollIfExists(sdb, OTEXT("OCILIB_SODA_TEST_COLL"));
+        const ostring collMeta = OTEXT("{\"keyColumn\":{\"name\":\"ID\",\"sqlType\":\"VARCHAR2\",\"maxLength\":255,\"assignmentMethod\":\"CLIENT\"}}");
+        const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_TEST_COLL"), collMeta.c_str());
+        ASSERT_NE(nullptr, coll);
+
+        const ostring c1 = OTEXT("{\"a\":1}");
+        const ostring c2 = OTEXT("{\"a\":2}");
+        const ostring c3 = OTEXT("{\"a\":3}");
+
+        /* bulk insert */
+        OCI_SodaDoc* d1 = OCI_SodaDocCreateFromText(sdb, c1.c_str(), static_cast<OCI_UInt32>(c1.size() * sizeof(otext)), OTEXT("k1"));
+        OCI_SodaDoc* d2 = OCI_SodaDocCreateFromText(sdb, c2.c_str(), static_cast<OCI_UInt32>(c2.size() * sizeof(otext)), OTEXT("k2"));
+        OCI_SodaDoc* d3 = OCI_SodaDocCreateFromText(sdb, c3.c_str(), static_cast<OCI_UInt32>(c3.size() * sizeof(otext)), OTEXT("k3"));
+        ASSERT_NE(nullptr, d1);
+        ASSERT_NE(nullptr, d2);
+        ASSERT_NE(nullptr, d3);
+
+        OCI_SodaDoc* docs[3] = { d1, d2, d3 };
+        const OCI_Boolean ins = OCI_SodaCollInsertMany(coll, docs, 3);
+        OCI_Error* ier = OCI_GetLastError();
+        EXPECT_TRUE(ins) << "oci_code=" << (ier ? (int)OCI_ErrorGetCode(ier) : -1)
+                         << " msg=" << (ier && OCI_ErrorGetString(ier) ? ostring(OCI_ErrorGetString(ier)) : ostring()) ;
+
+        /* isJson discriminator */
+        ASSERT_TRUE(OCI_SodaDocGetIsJson(d1));
+
+        /* bulk insert and get metadata */
+        OCI_SodaDoc* e1 = OCI_SodaDocCreateFromText(sdb, c1.c_str(), static_cast<OCI_UInt32>(c1.size() * sizeof(otext)), OTEXT("k4"));
+        ASSERT_NE(nullptr, e1);
+        OCI_SodaDoc* edocs[1] = { e1 };
+        ASSERT_TRUE(OCI_SodaCollInsertManyAndGet(coll, edocs, 1));
+        ASSERT_NE(nullptr, OCI_SodaDocGetVersion(e1));
+
+        /* save (upsert) */
+        const ostring newc = OTEXT("{\"a\":99}");
+        OCI_SodaDoc* sv = OCI_SodaDocCreateFromText(sdb, newc.c_str(), static_cast<OCI_UInt32>(newc.size() * sizeof(otext)), OTEXT("k1"));
+        ASSERT_NE(nullptr, sv);
+        ASSERT_TRUE(OCI_SodaCollSave(coll, sv));
+        ASSERT_NE(nullptr, OCI_SodaDocGetVersion(sv));
+
+        /* index management on a default (UUID) collection */
+        DropCollIfExists(sdb, OTEXT("OCILIB_SODA_IDX_COLL"));
+        OCI_SodaColl* coll2 = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_IDX_COLL"), NULL);
+        ASSERT_NE(nullptr, coll2);
+        /* materialize the backing table: empty colls may not exist server-side */
+        OCI_SodaDoc* seed = OCI_SodaDocCreateFromText(sdb, c1.c_str(), static_cast<OCI_UInt32>(c1.size() * sizeof(otext)), NULL);
+        ASSERT_TRUE(OCI_SodaCollInsertDoc(coll2, seed));
+        ASSERT_TRUE(OCI_SodaDocFree(seed));
+        ASSERT_TRUE(OCI_Commit(conn));
+        const ostring spec = OTEXT("{\"name\":\"OCILIB_SODA_TEST_IDX\"}");
+        /* OCISodaIndexCreate fails inside the OCI call itself in UNICODE
+           builds (ORA-40671, collection-name resolution is charset-broken in
+           the 23ai client under OCI_UTF16ID) — works in ANSI; diagnostic only */
+        const OCI_Boolean cix = OCI_SodaCollCreateIndex(coll2, spec.c_str());
+        if (cix)
+        {
+            ASSERT_TRUE(OCI_SodaCollDropIndex(coll2, OTEXT("OCILIB_SODA_TEST_IDX")));
+        }
+        ASSERT_TRUE(OCI_SodaCollDrop(coll2));
+        ASSERT_TRUE(OCI_SodaCollFree(coll2));
+
+        /* data guide: NULL without error when none exists */
+        OCI_SodaDoc* dg = OCI_SodaCollGetDataGuide(coll);
+        if (NULL != dg)
+        {
+            ASSERT_TRUE(OCI_SodaDocFree(dg));
+        }
+
+        /* collection names list */
+        {
+            OCI_UInt32 ncount = 0;
+            otext** collNames = OCI_SodaDbGetCollectionNames(sdb, &ncount);
+            ASSERT_NE(nullptr, collNames);
+            ASSERT_TRUE(OCI_SodaDbFreeCollectionNames(sdb, collNames, ncount));
+
+            /* OCISodaIndexList fails inside the OCI call itself in UNICODE
+               builds (OCI-22303, client-side type resolution) — tolerant */
+            otext** idxNames = OCI_SodaCollListIndexes(coll, &ncount);
+            if (NULL != idxNames)
+            {
+                ASSERT_TRUE(OCI_SodaCollFreeIndexNames(coll, idxNames, ncount));
+            }
+        }
+
+        ASSERT_TRUE(OCI_SodaDocFree(sv));
+        ASSERT_TRUE(OCI_SodaDocFree(e1));
+        ASSERT_TRUE(OCI_SodaDocFree(d1));
+        ASSERT_TRUE(OCI_SodaDocFree(d2));
+        ASSERT_TRUE(OCI_SodaDocFree(d3));
+        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_SodaCollDrop(coll));
+        ASSERT_TRUE(OCI_SodaCollFree(coll));
+        ASSERT_TRUE(OCI_SodaDbFree(sdb));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+#ifdef OCI_CHARSET_ANSI
+
+    /* The OCISodaIndex* calls work in ANSI builds; in UNICODE builds they fail
+       inside the Oracle client (ORA-40671 / OCI-22303, IndexDrop even SEGVs) —
+       the real assertions live here, BulkSaveIndexAndMeta keeps diagnostic-only
+       calls that run in both modes */
+    TEST(TestSoda, IndexCreateDropList)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        OCI_SodaDb* sdb = OCI_SodaDbCreate(conn);
+        ASSERT_NE(nullptr, sdb);
+
+        DropCollIfExists(sdb, OTEXT("OCILIB_SODA_IDX"));
+
+        OCI_SodaColl* coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_IDX"), NULL);
+        ASSERT_NE(nullptr, coll);
+
+        const ostring content = OTEXT("{\"a\":1}");
+        OCI_SodaDoc* seed = OCI_SodaDocCreateFromText(sdb, content.c_str(), static_cast<OCI_UInt32>(content.size() * sizeof(otext)), NULL);
+        ASSERT_NE(nullptr, seed);
+        ASSERT_TRUE(OCI_SodaCollInsertDoc(coll, seed));
+        ASSERT_TRUE(OCI_SodaDocFree(seed));
+        ASSERT_TRUE(OCI_Commit(conn));
+
+        ASSERT_TRUE(OCI_SodaCollCreateIndex(coll, OTEXT("{\"name\":\"OCILIB_SODA_IDX_NAME\"}")));
+
+        OCI_UInt32 ncount = 0;
+        otext** names = OCI_SodaCollListIndexes(coll, &ncount);
+        ASSERT_NE(nullptr, names);
+        ASSERT_GE(ncount, 1u);
+        ASSERT_TRUE(OCI_SodaCollFreeIndexNames(coll, names, ncount));
+
+        ASSERT_TRUE(OCI_SodaCollDropIndex(coll, OTEXT("OCILIB_SODA_IDX_NAME")));
+        ASSERT_TRUE(OCI_SodaCollDrop(coll));
+        ASSERT_TRUE(OCI_SodaCollFree(coll));
+        ASSERT_TRUE(OCI_SodaDbFree(sdb));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+#endif
 }

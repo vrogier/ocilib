@@ -160,7 +160,8 @@ void OcilibErrorReset
         err->active      = FALSE;
         err->source_ptr  = NULL;
         err->source_type = OCI_UNKNOWN;
-        err->type        = OCI_UNKNOWN;
+        err->type    = OCI_UNKNOWN;
+        err->category    = OCI_UNKNOWN;
         err->code        = 0;
         err->row         = 0;
 
@@ -187,17 +188,19 @@ void OcilibErrorReset
 
 void OcilibErrorSet
 (
-    OCI_Error     * err,
-    OCI_ErrorType   type,
-    OCI_ErrorCode   code,
-    void          * source_ptr,
-    OCI_PointerType source_type,
-    const char    * location,
-    otext         * message,
-    OCI_UInt32      row
+    OCI_Error        * err,
+    OCI_ErrorType      type,
+    OCI_ErrorCategory  category,
+    OCI_ErrorCode      code,
+    void             * source_ptr,
+    OCI_PointerType    source_type,
+    const char       * location,
+    otext            * message,
+    OCI_UInt32         row
 )
 {
-    err->type        = type;
+    err->type    = type;
+    err->category    = category;
     err->code        = code;
     err->source_ptr  = source_ptr;
     err->source_type = source_type;
@@ -413,7 +416,7 @@ OCI_ErrorType OcilibErrorGetType
        that raised the error (snapshotted at raise time -- the environment may
        have been freed since) */
 
-    if (OCI_ERR_WARNING == err->type && !err->warnings_on)
+    if (OCI_ERR_TYPE_WARNING == err->type && !err->warnings_on)
     {
         return OCI_UNKNOWN;
     }
@@ -425,29 +428,30 @@ OCI_ErrorType OcilibErrorGetType
  * OcilibErrorGetOCICode
  * --------------------------------------------------------------------------------------------- */
 
-OCI_ErrorCode OcilibErrorGetOCICode
+OCI_ErrorCategory OcilibErrorGetCategory
 (
     OCI_Error* err
 )
 {
     if (NULL == err) return (OCI_UNKNOWN);
 
-    return err->type == OCI_ERR_OCILIB ? 0 : err->code;
+    return err->category;
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibErrorGetInternalCode
  * --------------------------------------------------------------------------------------------- */
 
-OCI_ErrorCode OcilibErrorGetInternalCode
+OCI_ErrorCode OcilibErrorGetCode
 (
     OCI_Error* err
 )
 {
     if (NULL == err) return (0);
 
-    return err->type == OCI_ERR_OCILIB ? err->code : 0;
+    return err->code;
 }
+
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibErrorGetSource

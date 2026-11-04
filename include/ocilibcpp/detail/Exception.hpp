@@ -30,8 +30,8 @@ inline Exception::Exception() noexcept
     _pConnection(nullptr),
     _row(0),
     _type(static_cast<ExceptionType::Type>(0)),
-    _errLib(0),
-    _errOracle(0)
+    _category(static_cast<ExceptionCategory::Type>(0)),
+    _code(0)
 {
 
 }
@@ -42,8 +42,8 @@ inline Exception::Exception(OCI_Error *err) noexcept
     _pConnection(OCI_ErrorGetConnection(err)),
     _row(OCI_ErrorGetRow(err)),
     _type(static_cast<ExceptionType::Type>(OCI_ErrorGetType(err))),
-    _errLib(OCI_ErrorGetInternalCode(err)),
-    _errOracle(OCI_ErrorGetOCICode(err))
+    _category(static_cast<ExceptionCategory::Type>(OCI_ErrorGetCategory(err))),
+    _code(OCI_ErrorGetCode(err))
 {
     SetWhat(OCI_ErrorGetString(err));
 }
@@ -66,8 +66,8 @@ inline Exception& Exception::operator = (const Exception& other) noexcept
         _pConnection = other._pConnection;
         _row = other._row;
         _type = other._type;
-        _errLib = other._errLib;
-        _errOracle = other._errOracle;
+        _category = other._category;
+        _code = other._code;
 
         CopyWhat(other._what);
     }
@@ -200,14 +200,14 @@ inline Exception::ExceptionType Exception::GetType() const
     return _type;
 }
 
-inline Int32 Exception::GetOracleErrorCode() const
+inline Exception::ExceptionCategory Exception::GetCategory() const
 {
-    return _errOracle;
+    return _category;
 }
 
-inline Int32 Exception::GetInternalErrorCode() const
+inline UInt32 Exception::GetCode() const
 {
-    return _errLib;
+    return _code;
 }
 
 inline Statement Exception::GetStatement() const

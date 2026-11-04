@@ -28,6 +28,12 @@ OCI_SYM_LOCAL OCI_Error* OcilibExceptionGetError
     OCI_Environment *env
 );
 
+OCI_SYM_LOCAL void OcilibExceptionJson
+(
+    OCI_Context *ctx,
+    JsonDomDoc  *jdoc
+);
+
 OCI_SYM_LOCAL void OcilibExceptionOCI
 (
     OCI_Context* ctx,

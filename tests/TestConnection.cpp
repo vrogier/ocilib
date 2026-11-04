@@ -9,7 +9,7 @@ namespace TestCApi
 
     static inline void AddError(OCI_Error* err)
     {
-        context.Errs.emplace_back(Error{ OCI_ErrorGetInternalCode(err), OCI_ErrorGetOCICode(err) });
+        context.Errs.emplace_back(Error{ OCI_ErrorGetCode(err), OCI_ErrorGetCategory(err) });
     }
 
     TEST(TestConnection, ValidCredentials)
@@ -40,8 +40,8 @@ namespace TestCApi
         ASSERT_EQ(nullptr, conn);
 
         ASSERT_EQ(1, context.Errs.size());
-        ASSERT_EQ(0, context.Errs[0].LibCode);
-        ASSERT_EQ(1017, context.Errs[0].OCICode);
+         ASSERT_EQ(1017, context.Errs[0].Code);
+        ASSERT_EQ(OCI_ERR_CAT_OCI, context.Errs[0].Category);
 
         ASSERT_FALSE(OCI_ConnectionFree(conn));
 
@@ -60,8 +60,8 @@ namespace TestCApi
         ASSERT_EQ(nullptr, conn);
 
         ASSERT_EQ(1, context.Errs.size());
-        ASSERT_EQ(0, context.Errs[0].LibCode);
-        ASSERT_EQ(1017, context.Errs[0].OCICode);
+        ASSERT_EQ(1017, context.Errs[0].Code);
+        ASSERT_EQ(OCI_ERR_CAT_OCI, context.Errs[0].Category);
 
         ASSERT_FALSE(OCI_ConnectionFree(conn));
 
@@ -97,8 +97,8 @@ namespace TestCApi
         ASSERT_FALSE(threadResult);
 
         ASSERT_EQ(1, context.Errs.size());
-        ASSERT_EQ(0, context.Errs[0].LibCode);
-        ASSERT_EQ(1013, context.Errs[0].OCICode);
+        ASSERT_EQ(1013, context.Errs[0].Code);
+        ASSERT_EQ(OCI_ERR_CAT_OCI, context.Errs[0].Category);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

@@ -60,6 +60,19 @@ OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollTruncate
     OCI_SodaColl *coll
 );
 
+OCI_SYM_LOCAL otext ** OcilibSodaCollListIndexes
+(
+    OCI_SodaColl * coll,
+    OCI_UInt32   * count
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollFreeIndexNames
+(
+    OCI_SodaColl * coll,
+    otext       ** names,
+    OCI_UInt32     count
+);
+
 OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollFree
 (
     OCI_SodaColl *coll
@@ -140,6 +153,49 @@ OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollRemoveOneByKey
 (
     OCI_SodaColl *coll,
     const otext  *key
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollInsertMany
+(
+    OCI_SodaColl *coll,
+    OCI_SodaDoc **docs,
+    OCI_UInt32    count
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollInsertManyAndGet
+(
+    OCI_SodaColl *coll,
+    OCI_SodaDoc **docs,
+    OCI_UInt32    count
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollCreateIndex
+(
+    OCI_SodaColl *coll,
+    const otext  *indexSpec
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollDropIndex
+(
+    OCI_SodaColl *coll,
+    const otext  *name
+);
+
+OCI_SYM_LOCAL OCI_SodaDoc * OcilibSodaCollGetDataGuide
+(
+    OCI_SodaColl *coll
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollSave
+(
+    OCI_SodaColl *coll,
+    OCI_SodaDoc  *doc
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollSaveAndGet
+(
+    OCI_SodaColl *coll,
+    OCI_SodaDoc  *doc
 );
 
 #endif /* OCILIB_SODACOLL_H_INCLUDED */

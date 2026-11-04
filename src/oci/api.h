@@ -2467,6 +2467,34 @@ typedef sword(*OCISODAINDEXDROP)
     ub4          mode
 );
 
+typedef sword(*OCISODASAVE)
+(
+    OCISvcCtx    *svchp,
+    OCISodaColl  *coll,
+    OCISodaDoc   *document,
+    OCIError     *errhp,
+    ub4           mode
+);
+
+typedef sword(*OCISODASAVEANDGET)
+(
+    OCISvcCtx    *svchp,
+    OCISodaColl  *coll,
+    OCISodaDoc  **document,
+    OCIError     *errhp,
+    ub4           mode
+);
+
+typedef sword(*OCISODAINDEXLIST)
+(
+    OCISvcCtx          *svchp,
+    const OCISodaColl  *coll,
+    ub4                 flags,
+    OCIColl           **indexList,
+    OCIError           *errhp,
+    ub4                 mode
+);
+
 typedef sword(*OCISODADATAGUIDEGET)
 (
     OCISvcCtx          *svchp,
@@ -2950,6 +2978,9 @@ typedef struct OCI_Symbols
     OCISODACOLLDROP                          OCISodaCollDrop;
     OCISODAINDEXCREATE                       OCISodaIndexCreate;
     OCISODAINDEXDROP                         OCISodaIndexDrop;
+    OCISODASAVE                              OCISodaSave;
+    OCISODASAVEANDGET                        OCISodaSaveAndGet;
+    OCISODAINDEXLIST                         OCISodaIndexList;
     OCISODADATAGUIDEGET                      OCISodaDataGuideGet;
     OCISODABULKINSERTWITHCTNT                OCISodaBulkInsertWithCtnt;
     OCISODABULKINSERTANDGET                  OCISodaBulkInsertAndGet;

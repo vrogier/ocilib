@@ -63,6 +63,11 @@ namespace ocilib
         return core::MakeString(core::Check(OCI_SodaDocGetMediaType(*this)));
     }
 
+    inline bool SodaDoc::IsJson() const
+    {
+        return TRUE == core::Check(OCI_SodaDocGetIsJson(*this));
+    }
+
     inline ostring SodaDoc::GetText() const
     {
         return core::MakeString(core::Check(OCI_SodaDocGetText(*this)));

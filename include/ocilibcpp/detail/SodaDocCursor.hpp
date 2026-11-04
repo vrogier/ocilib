@@ -47,4 +47,19 @@ namespace ocilib
         return SodaDoc(doc, GetHandle());
     }
 
+
+    inline SodaDocCursor::iterator& SodaDocCursor::iterator::operator++()
+    {
+        _doc = _cursor->GetNext();
+        if (!_doc)
+        {
+            _cursor = NULL;
+        }
+        return *this;
+    }
+
+    inline SodaDocCursor::iterator SodaDocCursor::begin()
+    {
+        return iterator(this);
+    }
 }

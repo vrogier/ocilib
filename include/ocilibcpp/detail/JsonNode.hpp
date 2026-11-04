@@ -86,18 +86,26 @@ namespace ocilib
         return JsonNode(core::Check(OCI_JsonNodeGetItem(*this, index)), GetHandle());
     }
 
+    inline JsonNode JsonNode::operator[](const ostring& name) const
+    {
+        return GetField(name);
+    }
+
+    inline JsonNode JsonNode::operator[](UInt32 index) const
+    {
+        return GetItem(index);
+    }
+
+    inline JsonNode JsonNode::operator[](Int32 index) const
+    {
+        return GetItem((UInt32)index);
+    }
+
     inline ostring JsonNode::GetString() const
     {
         UInt32 length = 0;
         const otext* value = core::Check(OCI_JsonNodeGetString(*this, &length));
         return core::MakeString(value, static_cast<Int32>(length));
-    }
-
-    inline Number JsonNode::GetNumber() const
-    {
-        Number number;
-        number.AcquireAllocated(core::Check(OCI_JsonNodeGetNumber(*this)), GetHandle());
-        return number;
     }
 
     inline bool JsonNode::GetBoolean() const
@@ -136,11 +144,6 @@ namespace ocilib
     inline void JsonNode::SetString(const ostring& value)
     {
         core::Check(OCI_JsonNodeSetString(*this, value.c_str(), static_cast<UInt32>(value.size())));
-    }
-
-    inline void JsonNode::SetNumber(const Number& value)
-    {
-        core::Check(OCI_JsonNodeSetNumber(*this, value));
     }
 
     inline void JsonNode::SetBoolean(bool value)
@@ -191,5 +194,87 @@ namespace ocilib
     inline void JsonNode::AppendItem(const JsonNode& value)
     {
         core::Check(OCI_JsonNodeAppendItem(*this, value));
+    }
+
+    inline void JsonNode::InsertItem(UInt32 index, const JsonNode& value)
+    {
+        core::Check(OCI_JsonNodeInsertItem(*this, index, value));
+    }
+
+    inline void JsonNode::RemoveItem(UInt32 index)
+    {
+        core::Check(OCI_JsonNodeRemoveItem(*this, index));
+    }
+
+    inline bool JsonNode::HasField(const ostring& name) const
+    {
+        return TRUE == core::Check(OCI_JsonNodeHasField(*this, name.c_str()));
+    }
+
+    inline void JsonNode::RemoveField(const ostring& name)
+    {
+        core::Check(OCI_JsonNodeRemoveField(*this, name.c_str()));
+    }
+
+    inline void JsonNode::Clear()
+    {
+        core::Check(OCI_JsonNodeClear(*this));
+    }
+
+    inline JsonNode JsonNode::GetParent() const
+    {
+        return JsonNode(core::Check(OCI_JsonNodeGetParent(*this)), GetHandle());
+    }
+
+    inline JsonNode JsonNode::GetByPath(const ostring& path) const
+    {
+        return JsonNode(core::Check(OCI_JsonNodeGetByPath(*this, path.c_str())), GetHandle());
+    }
+
+    template<class T, core::SupportedNumericT<T>*>
+    T JsonNode::GetNumeric() const
+    {
+        using U = std::decay_t<T>;
+
+        if constexpr (std::is_same_v<U, Number>)
+        {
+            Number number;
+            number.AcquireAllocated(core::Check(OCI_JsonNodeGetNumber(*this)), GetHandle());
+            return number;
+        }
+        else
+        {
+            T value{};
+            OCI_Boolean res = FALSE;
+
+            if constexpr      (std::is_same_v<U, Int16>)   res = OCI_JsonNodeGetShort(*this, reinterpret_cast<OCI_Int16*>(&value));
+            else if constexpr (std::is_same_v<U, UInt16>)  res = OCI_JsonNodeGetUShort(*this, reinterpret_cast<OCI_UInt16*>(&value));
+            else if constexpr (std::is_same_v<U, Int32>)   res = OCI_JsonNodeGetInt(*this, reinterpret_cast<OCI_Int32*>(&value));
+            else if constexpr (std::is_same_v<U, UInt32>)  res = OCI_JsonNodeGetUInt(*this, reinterpret_cast<OCI_UInt32*>(&value));
+            else if constexpr (std::is_same_v<U, Int64>)   res = OCI_JsonNodeGetBigInt(*this, reinterpret_cast<OCI_Int64*>(&value));
+            else if constexpr (std::is_same_v<U, UInt64>)  res = OCI_JsonNodeGetBigUInt(*this, reinterpret_cast<OCI_UInt64*>(&value));
+            else if constexpr (std::is_same_v<U, Float>)   res = OCI_JsonNodeGetFloat(*this, reinterpret_cast<OCI_Float*>(&value));
+            else if constexpr (std::is_same_v<U, Double>)  res = OCI_JsonNodeGetDouble(*this, reinterpret_cast<OCI_Double*>(&value));
+
+            core::Check(res);
+
+            return value;
+        }
+    }
+
+    template<class T, core::SupportedNumericT<T>*>
+    void JsonNode::SetNumeric(const T& value)
+    {
+        using U = std::decay_t<T>;
+
+        if constexpr      (std::is_same_v<U, Number>)   core::Check(OCI_JsonNodeSetNumber(*this, value));
+        else if constexpr (std::is_same_v<U, Int16>)    core::Check(OCI_JsonNodeSetShort(*this, static_cast<OCI_Int16>(value)));
+        else if constexpr (std::is_same_v<U, UInt16>)   core::Check(OCI_JsonNodeSetUShort(*this, static_cast<OCI_UInt16>(value)));
+        else if constexpr (std::is_same_v<U, Int32>)    core::Check(OCI_JsonNodeSetInt(*this, static_cast<OCI_Int32>(value)));
+        else if constexpr (std::is_same_v<U, UInt32>)   core::Check(OCI_JsonNodeSetUInt(*this, static_cast<OCI_UInt32>(value)));
+        else if constexpr (std::is_same_v<U, Int64>)    core::Check(OCI_JsonNodeSetBigInt(*this, static_cast<OCI_Int64>(value)));
+        else if constexpr (std::is_same_v<U, UInt64>)   core::Check(OCI_JsonNodeSetBigUInt(*this, static_cast<OCI_UInt64>(value)));
+        else if constexpr (std::is_same_v<U, Float>)    core::Check(OCI_JsonNodeSetFloat(*this, static_cast<OCI_Float>(value)));
+        else if constexpr (std::is_same_v<U, Double>)   core::Check(OCI_JsonNodeSetDouble(*this, static_cast<OCI_Double>(value)));
     }
 }

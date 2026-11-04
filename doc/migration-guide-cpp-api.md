@@ -26,6 +26,7 @@ For the C layer (`ocilib.h`), see `migration-guide-c-api.md`.
 | 7 | `Statement::Bind*` returns `BindInfo` instead of `void` (`Register*` unchanged) | None (source-compatible) |
 | 8 | C++17 baseline required | None–Low |
 | 9 | XA session mode removed | Low |
+| 10 | `Exception` model split: `GetType()` = error type, new `GetCategory()`, code getters → `GetCode()` | Low |
 
 **Overall estimate:** a typical app migrates in **under an hour**; the work is
 mechanical and compiler-driven. Heavy users of `ocilib::Thread`/`Mutex` or apps that
@@ -308,6 +309,61 @@ through the returned `BindInfo` (new `BindInfo::SetDirection`).
 > `Statement`'s scope the identifier `Bind` would resolve to the member function and
 > collide with the type name. `BindInfo` stays.
 
+## 6c. Step 5c — `Exception`: type, category and unified error code
+
+v4's `Exception::ExceptionType` conflated the **error type** (error vs warning)
+with the **origin** (Oracle vs OCILIB) in a single enum, and split the error code
+across two getters. v5 separates the three axes:
+
+| Axis | v4 | v5 |
+|------|----|----|
+| Type | `GetType()` → `Exception::OracleWarning` | `GetType()` → `Exception::Error` / `Exception::Warning` |
+| Origin | `GetType()` → `Exception::OracleError` / `Exception::OcilibError` | `GetCategory()` → `Exception::OracleError` / `Exception::OcilibError` / `Exception::JsonError` |
+| Code | `GetOracleErrorCode()` / `GetInternalErrorCode()` | `GetCode()` — code in the category's namespace |
+
+### Exact rules
+
+| v4 | v5 |
+|----|----|
+| `e.GetType() == Exception::OracleError` | `e.GetCategory() == Exception::OracleError` |
+| `e.GetType() == Exception::OcilibError` | `e.GetCategory() == Exception::OcilibError` |
+| `e.GetType() == Exception::OracleWarning` | `e.GetType() == Exception::Warning` |
+| `e.GetOracleErrorCode()` | `e.GetCode()` |
+| `e.GetInternalErrorCode()` | `e.GetCode()` |
+
+- `Exception::GetType()` keeps its name but now returns the **error type** only —
+  an `ExceptionType` (`Exception::Error` = `OCI_ERR_TYPE_ERROR`,
+  `Exception::Warning` = `OCI_ERR_TYPE_WARNING`).
+- **New** `Exception::GetCategory()` returns an `ExceptionCategory` — which
+  subsystem raised the error: `Exception::OracleError` (`OCI_ERR_CAT_OCI`),
+  `Exception::OcilibError` (`OCI_ERR_CAT_LIB`), `Exception::JsonError`
+  (`OCI_ERR_CAT_JZN`).
+- **Removed** `Exception::GetOracleErrorCode()` and
+  `Exception::GetInternalErrorCode()` — use `UInt32 Exception::GetCode()`,
+  whose namespace is given by `GetCategory()` (ORA-XXXXX for `OracleError`,
+  an `OCI_ERR_*` code for `OcilibError`, a JZN `jsonerr` for `JsonError`).
+- `Exception::OracleError` / `Exception::OcilibError` keep their names but moved
+  from `ExceptionTypeValues` to `ExceptionCategoryValues`; `OracleWarning` was
+  replaced by the type value `Exception::Warning`. Comparing `GetType()`
+  against a category value no longer compiles (`core::Enum` only compares
+  against its own enum type) — the compiler catches every stale site.
+
+```cpp
+/* v4 */
+catch (Exception& e)
+{
+    if (e.GetType() == Exception::OracleError)
+        cout << "ORA-" << e.GetOracleErrorCode() << ": " << e.GetMessage();
+}
+
+/* v5 */
+catch (Exception& e)
+{
+    if (e.GetCategory() == Exception::OracleError)
+        cout << "ORA-" << e.GetCode() << ": " << e.GetMessage();
+}
+```
+
 ## 7. Step 6 — XA removal
 
 `Environment::SessionXA` / `OCI_SESSION_XA` is gone. Remove it from session flags; XA
@@ -342,7 +398,8 @@ Do not rely on the compiler alone — these compile fine but behave differently:
 ## 9. Non-breaking details
 
 - **`ocilib::Exception`** still derives from `std::exception` and is thrown on C API
-  failures — error-handling code is unchanged.
+  failures — `try`/`catch` structure is unchanged, but the error accessors were
+  reworked (`GetType`/`GetCategory`/`GetCode` — see §6c).
 - **Stack-object / RAII model unchanged** — objects are still created on the stack,
   handles freed by the last reference going out of scope.
 - **`IsNull()` / default-constructed objects** — same contract.
@@ -388,8 +445,12 @@ Do not rely on the compiler alone — these compile fine but behave differently:
 8.  [ ] Remove Environment::SessionXA / XA usage.
 9.  [ ] env.SetSubscriptionPort(port) before subscriptions; drop `port` arg from
         Subscription::Register; convert Dequeue::Subscribe to the static batch form.
-10. [ ] Recompile with C++17+; fix remaining errors.
-11. [ ] Audit ChangeType::Row notification handlers for new row events.
+10. [ ] Exception handling (see §6c): GetType() comparisons against
+        OracleError/OcilibError → GetCategory(); OracleWarning →
+        GetType() == Exception::Warning; GetOracleErrorCode() /
+        GetInternalErrorCode() → GetCode().
+11. [ ] Recompile with C++17+; fix remaining errors.
+12. [ ] Audit ChangeType::Row notification handlers for new row events.
 ```
 
 ---

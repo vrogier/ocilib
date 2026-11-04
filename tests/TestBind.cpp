@@ -7,7 +7,7 @@ namespace TestCApi
 
     static inline void AddError(OCI_Error* err)
     {
-        context.Errs.emplace_back(Error{ OCI_ErrorGetInternalCode(err), OCI_ErrorGetOCICode(err) });
+        context.Errs.emplace_back(Error{ OCI_ErrorGetCode(err), OCI_ErrorGetCategory(err) });
     }
 
     TEST(TestBind, BasicBind)
@@ -719,10 +719,10 @@ namespace TestCApi
         ASSERT_EQ(nullptr, OCI_BindString(stmt, OTEXT(":s"), sval, 20));
 
         ASSERT_EQ(2, context.Errs.size());
-        ASSERT_EQ(OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED, context.Errs[0].LibCode);
-        ASSERT_EQ(0, context.Errs[0].OCICode);
-        ASSERT_EQ(OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED, context.Errs[1].LibCode);
-        ASSERT_EQ(0, context.Errs[1].OCICode);
+        ASSERT_EQ(OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED, context.Errs[0].Code);
+        ASSERT_EQ(OCI_ERR_CAT_LIB, context.Errs[0].Category);
+        ASSERT_EQ(OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED, context.Errs[1].Code);
+        ASSERT_EQ(OCI_ERR_CAT_LIB, context.Errs[1].Category);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

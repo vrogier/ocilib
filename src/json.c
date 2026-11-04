@@ -832,7 +832,7 @@ OCI_JsonNode * OcilibJsonGetRoot
 
     {
         jznDomNode *root = JsonDomGetRoot(json->jdoc);
-        CHECK_NULL(root);
+        CHECK_JSON(json->jdoc, NULL != root);
 
         node = OcilibJsonNodeInitialize(json, root, OCI_JNT_NULL);
         CHECK_NULL(node);
@@ -883,7 +883,7 @@ OCI_Boolean OcilibJsonSetRoot
 
         res = JsonDomSetRoot(json->jdoc, node->handle);
 
-        CHECK(res == 0);
+        CHECK_JSON(json->jdoc, res == 0);
     }
 
     SET_SUCCESS();

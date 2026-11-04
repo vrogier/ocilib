@@ -95,9 +95,9 @@
      * @return
      * TRUE on success, otherwise FALSE.
      * Possible reasons for failure:
-     *  - When OCI_ErrorGetType() returns OCI_ERR_ORACLE, OCI_ErrorGetOCICode() returns:
+     *  - When OCI_ErrorGetCategory() returns OCI_ERR_CAT_OCI, OCI_ErrorGetCode() returns:
      *    - Any ORA-XXXXXX error code. Refer to Oracle documentation.
-     *  - When OCI_ErrorGetType() returns OCI_ERR_OCILIB, OCI_ErrorGetInternalCode() may return:
+     *  - When OCI_ErrorGetCategory() returns OCI_ERR_CAT_LIB, OCI_ErrorGetCode() may return:
      *    - OCI_ERR_LOADING_SHARED_LIB : OCILIB could not load the Oracle shared library at runtime (32/64-bit mismatch, invalid \p lib_path, or missing MSVC runtime required by oci.dll on Windows).
      *    - OCI_ERR_LOADING_SYMBOLS : The loaded shared library does not contain the expected OCI symbols.
      *    - OCI_ERR_NOT_AVAILABLE : OCILIB was built with OCI_CHARSET_WIDE and the Oracle shared library does not support UTF16 (Oracle 8i).
@@ -398,7 +398,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetSubscriptionPort
   * @par Oracle Warnings
   *
   * Oracle warnings are raised through the OCI_Error API.
-  * Such error handles have their error type property (OCI_ErrorGetType()) set to OCI_ERR_WARNING.
+  * Such error handles have their error type property (OCI_ErrorGetType()) set to OCI_ERR_TYPE_WARNING.
   * Warning handling is disabled by default. To enable or disable it, use OCI_EnableWarnings().
   *
   * @par Example with callbacks
@@ -529,16 +529,15 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ErrorGetString
 
 /**
  * @brief
- * Retrieve the type of error from an error handle
+ * Retrieve the error type (error vs warning) from an error handle
  *
  * @param err - Error handle
  *
  * @return
  * One of the following values:
- * - OCI_ERR_ORACLE  : Error reported by the Oracle OCI layer.
- * - OCI_ERR_OCILIB  : Internal OCILIB error.
- * - OCI_ERR_WARNING : Oracle warning.
- * - OCI_UNKNOWN     : If the input handle is NULL.
+ * - OCI_ERR_TYPE_ERROR    : An error (OCI, OCILIB or JZN).
+ * - OCI_ERR_TYPE_WARNING  : A warning.
+ * - OCI_UNKNOWN           : If the input handle is NULL.
  *
  */
 
@@ -558,23 +557,39 @@ OCI_SYM_PUBLIC OCI_ErrorType OCI_API OCI_ErrorGetType
  *
  */
 
-OCI_SYM_PUBLIC OCI_ErrorCode OCI_API OCI_ErrorGetOCICode
+/**
+ * @brief
+ * Retrieve the error origin/category from an error handle
+ *
+ * @param err - Error handle
+ *
+ * @return
+ * - OCI_ERR_CAT_LIB   : OCILIB internal error.
+ * - OCI_ERR_CAT_OCI   : Oracle OCI layer error.
+ * - OCI_ERR_CAT_JZN   : Oracle JSON DOM (JZN) error.
+ * - OCI_UNKNOWN       : If the input handle is NULL.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_ErrorCategory OCI_API OCI_ErrorGetCategory
 (
     OCI_Error* err
 );
 
 /**
  * @brief
- * Retrieve the OCILIB internal error code from an error handle
+ * Retrieve the error code from an error handle, in the category's namespace
+ * (ORA-XXXXX for OCI_ERR_CAT_OCI, OCILIB internal for OCI_ERR_CAT_LIB,
+ *  JZN jsonerr for OCI_ERR_CAT_JZN)
  *
  * @param err - Error handle
  *
  * @return
- * The OCILIB internal error code, or 0 if the error is not OCILIB-related.
+ * The error code for the category's namespace, or 0 if the input handle is NULL.
  *
  */
 
-OCI_SYM_PUBLIC OCI_ErrorCode OCI_API OCI_ErrorGetInternalCode
+OCI_SYM_PUBLIC OCI_ErrorCode OCI_API OCI_ErrorGetCode
 (
     OCI_Error* err
 );
@@ -2380,7 +2395,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_Prepare
  * If a SQL warning occurs:
  * - The function still returns TRUE.
  * - The warning triggers the global error handler with an OCI_Error whose OCI_ErrorGetType()
- *   returns OCI_ERR_WARNING.
+ *   returns OCI_ERR_TYPE_WARNING.
  * - OCI_GetLastError() returns the corresponding OCI_Error object.
  *
  * @return
@@ -2404,7 +2419,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_Execute
  * If a SQL warning occurs:
  * - The function still returns TRUE.
  * - The warning triggers the global error handler with an OCI_Error whose OCI_ErrorGetType()
- *   returns OCI_ERR_WARNING.
+ *   returns OCI_ERR_TYPE_WARNING.
  * - OCI_GetLastError() returns the corresponding OCI_Error object.
  *
  * @return
@@ -14480,7 +14495,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_PrepareFmt
  * If a SQL warning occurs:
  * - the function returns TRUE
  * - the SQL warning triggers the global error handler with an OCI_Error having its OCI_ErrorGetType()
- *   attribute set to OCI_ERR_WARNING
+ *   attribute set to OCI_ERR_TYPE_WARNING
  * - OCI_GetLastError() will return the OCI_Error object corresponding to the warning
  *
  */
@@ -17621,6 +17636,13 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueTableMigrate
    * - OCI_SRM_SECURE_NOTIFICATION : client initiates the notification listener connection
    *                                 (Oracle client 12c and above only).
    *
+   * @warning
+   * Oracle client bug (not an OCILIB bug): the mode
+   * OCI_SRM_SECURE_NOTIFICATION currently fails inside the Oracle client
+   * itself when the library is built in OCI_CHARSET_WIDE mode (UNICODE
+   * builds). ANSI builds work correctly. Verified with Oracle 23ai; a future
+   * Oracle client release may fix this.
+   *
    * @note
    * Parameter 'timeout' is optional (use value 0 as optional value).
    *
@@ -18191,9 +18213,8 @@ OCI_SYM_PUBLIC OCI_Environment* OCI_API OCI_HandleGetEnvironment
  *   version and creation/last-modification timestamps. Documents are created
  *   standalone with OCI_SodaDocCreateFromText() or OCI_SodaDocCreateFromJson()
  *   (optionally with a client-assigned key) and inserted into a collection
- *   with OCI_SodaCollInsertDoc() or OCI_SodaCollInsertDocAndGet(). The
- *   "...AndGet" variants also return the document components updated by the
- *   insert or replace operation. Document components are read with
+ *   with OCI_SodaCollInsertDoc() which also refreshes the document components
+ *   updated by the server on insert. Document components are read with
  *   OCI_SodaDocGetText(), OCI_SodaDocGetJson(), OCI_SodaDocGetKey(),
  *   OCI_SodaDocGetVersion(), OCI_SodaDocGetCreatedOn(),
  *   OCI_SodaDocGetLastModified() and OCI_SodaDocGetMediaType().
@@ -18323,6 +18344,46 @@ OCI_SYM_PUBLIC OCI_SodaCollCursor* OCI_API OCI_SodaDbGetColls
 (
     OCI_SodaDb  * sdb,
     const otext * startName
+);
+
+/**
+ * @brief
+ * List the names of all SODA collections in the database
+ *
+ * @param sdb   - SODA database handle
+ * @param count - filled with the number of returned collection names on success
+ *
+ * @return
+ * An array of `count` collection name strings on success, NULL on failure.
+ * Each returned string and the array itself are allocated by the library and
+ * must be freed by the caller using OCI_SodaDbFreeCollectionNames().
+ *
+ */
+
+OCI_SYM_PUBLIC otext** OCI_API OCI_SodaDbGetCollectionNames
+(
+    OCI_SodaDb * sdb,
+    OCI_UInt32 * count
+);
+
+/**
+ * @brief
+ * Free the collection name list returned by OCI_SodaDbGetCollectionNames()
+ *
+ * @param sdb   - SODA database handle
+ * @param names - collection name array returned by OCI_SodaDbGetCollectionNames()
+ * @param count - number of elements in the array
+ *
+ * @return
+ * TRUE on success, FALSE on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaDbFreeCollectionNames
+(
+    OCI_SodaDb * sdb,
+    otext     ** names,
+    OCI_UInt32   count
 );
 
 /**
@@ -18586,6 +18647,27 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_SodaDocGetMediaType
 
 /**
  * @brief
+ * Check if a SODA document is a JSON document
+ *
+ * @param doc - SODA document handle
+ *
+ * @note
+ * Documents without an explicit media type are JSON documents (JSON is the
+ * SODA default). Otherwise the document is considered JSON if its media
+ * type is "application/json".
+ *
+ * @return
+ * TRUE if the document is a JSON document, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaDocGetIsJson
+(
+    OCI_SodaDoc* doc
+);
+
+/**
+ * @brief
  * Return the document content converted to an otext string
  *
  * @param doc - SODA document handle
@@ -18771,6 +18853,61 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaOptionsSetLimit
 
 /**
  * @brief
+ * Set the fetch array size of a SODA find operation
+ *
+ * @param options - SODA options handle
+ * @param count   - Maximum number of documents to retrieve per server
+ *                  round-trip when iterating a find result cursor
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaOptionsSetFetchArraySize
+(
+    OCI_SodaOptions * options,
+    OCI_UInt32        count
+);
+
+/**
+ * @brief
+ * Set a SQL hint for a SODA operation
+ *
+ * @param options - SODA options handle
+ * @param hint    - SQL hint text (without the comment delimiters)
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaOptionsSetHint
+(
+    OCI_SodaOptions * options,
+    const otext     * hint
+);
+
+/**
+ * @brief
+ * Set pessimistic locking for a SODA operation
+ *
+ * @param options - SODA options handle
+ * @param lock    - TRUE to lock the selected documents for update
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaOptionsSetLock
+(
+    OCI_SodaOptions * options,
+    OCI_Boolean       lock
+);
+
+/**
+ * @brief
  * Return the next collection of a SODA collection cursor
  *
  * @param cursor - SODA collection cursor handle
@@ -18841,6 +18978,12 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaDocCursorFree
  *
  * @param coll - SODA collection handle
  * @param doc  - SODA document handle
+ *
+ * @note
+ * On success, the document handle is refreshed with the attributes assigned
+ * by the server (key, version, creation and last-modification timestamps),
+ * which can then be read with OCI_SodaDocGetKey(), OCI_SodaDocGetVersion(),
+ * OCI_SodaDocGetCreatedOn() and OCI_SodaDocGetLastModified().
  *
  * @return
  * TRUE on success, otherwise FALSE.
@@ -19066,6 +19209,216 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollRemoveOneByKey
 (
     OCI_SodaColl * coll,
     const otext  * key
+);
+
+/**
+ * @brief
+ * Insert multiple documents into a SODA collection in a single request
+ *
+ * @param coll  - SODA collection handle
+ * @param docs  - Array of SODA document handles to insert
+ * @param count - Number of documents in the array
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollInsertMany
+(
+    OCI_SodaColl * coll,
+    OCI_SodaDoc ** docs,
+    OCI_UInt32     count
+);
+
+/**
+ * @brief
+ * Insert multiple documents into a SODA collection and refresh their
+ * server-assigned attributes
+ *
+ * @param coll  - SODA collection handle
+ * @param docs  - Array of SODA document handles to insert
+ * @param count - Number of documents in the array
+ *
+ * @note
+ * On success, each document handle is refreshed with the attributes
+ * assigned by the server (key, version, timestamps) as with
+ * OCI_SodaCollInsertDoc().
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollInsertManyAndGet
+(
+    OCI_SodaColl * coll,
+    OCI_SodaDoc ** docs,
+    OCI_UInt32     count
+);
+
+/**
+ * @brief
+ * Create an index on a SODA collection
+ *
+ * @param coll      - SODA collection handle
+ * @param indexSpec - JSON index specification
+ *
+ * @warning
+ * Oracle client bug (not an OCILIB bug): the OCISodaIndexCreate() OCI call
+ * fails inside the Oracle client itself when the library is built in
+ * OCI_CHARSET_WIDE mode (UNICODE builds) — ORA-40671 is returned. ANSI
+ * builds work correctly. Verified with Oracle 23ai; a future Oracle client
+ * release may fix this.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollCreateIndex
+(
+    OCI_SodaColl * coll,
+    const otext  * indexSpec
+);
+
+/**
+ * @brief
+ * Drop an index on a SODA collection
+ *
+ * @param coll - SODA collection handle
+ * @param name - Index name
+ *
+ * @warning
+ * Oracle client bug (not an OCILIB bug): the OCISodaIndexDrop() OCI call
+ * fails inside the Oracle client itself when the library is built in
+ * OCI_CHARSET_WIDE mode (UNICODE builds) — it can even crash the process.
+ * ANSI builds work correctly. Verified with Oracle 23ai; a future Oracle
+ * client release may fix this.
+ *
+ * @return
+ * TRUE if the index was dropped, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollDropIndex
+(
+    OCI_SodaColl * coll,
+    const otext  * name
+);
+
+/**
+ * @brief
+ * Return the JSON data guide of a SODA collection
+ *
+ * @param coll - SODA collection handle
+ *
+ * @note
+ * A data guide must have been created on the collection (JSON search index
+ * with data guide support). The returned document handle must be freed with
+ * OCI_SodaDocFree().
+ *
+ * @return
+ * The SODA document handle containing the data guide on success, or NULL if
+ * the collection has no data guide or on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_SodaDoc* OCI_API OCI_SodaCollGetDataGuide
+(
+    OCI_SodaColl * coll
+);
+
+/**
+ * @brief
+ * List the index names defined on a SODA collection
+ *
+ * @param coll  - SODA collection handle
+ * @param count - filled with the number of returned index names on success
+ *
+ * @warning
+ * Oracle client bug (not an OCILIB bug): the OCISodaIndexList() OCI call
+ * fails inside the Oracle client itself when the library is built in
+ * OCI_CHARSET_WIDE mode (UNICODE builds) — OCI-22303 is returned. ANSI
+ * builds work correctly. Verified with Oracle 23ai; a future Oracle client
+ * release may fix this.
+ *
+ * @return
+ * An array of `count` index name strings on success, NULL on failure.
+ * Each returned string and the array itself are allocated by the library and
+ * must be freed by the caller using OCI_SodaCollFreeIndexNames().
+ *
+ */
+
+OCI_SYM_PUBLIC otext** OCI_API OCI_SodaCollListIndexes
+(
+    OCI_SodaColl * coll,
+    OCI_UInt32   * count
+);
+
+/**
+ * @brief
+ * Free the index name list returned by OCI_SodaCollListIndexes()
+ *
+ * @param coll  - SODA collection handle
+ * @param names - index name array returned by OCI_SodaCollListIndexes()
+ * @param count - number of elements in the array
+ *
+ * @return
+ * TRUE on success, FALSE on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollFreeIndexNames
+(
+    OCI_SodaColl * coll,
+    otext       ** names,
+    OCI_UInt32     count
+);
+
+/**
+ * @brief
+ * Save a document into a SODA collection (insert or replace by key)
+ *
+ * @param coll - SODA collection handle
+ * @param doc  - SODA document handle
+ *
+ * @note
+ * If the document has a key already present in the collection, its content
+ * is replaced; otherwise it is inserted.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollSave
+(
+    OCI_SodaColl * coll,
+    OCI_SodaDoc  * doc
+);
+
+/**
+ * @brief
+ * Save a document into a SODA collection and refresh its server-assigned
+ * attributes
+ *
+ * @param coll - SODA collection handle
+ * @param doc  - SODA document handle
+ *
+ * @note
+ * On success, the document handle is refreshed with the attributes assigned
+ * by the server (key, version, timestamps) as with OCI_SodaCollInsertDoc().
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollSaveAndGet
+(
+    OCI_SodaColl * coll,
+    OCI_SodaDoc  * doc
 );
 
 /**
@@ -19598,7 +19951,12 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_JsonNodeGetFieldName
  * @param node - JSON object node handle
  * @param name - Field name
  *
- * @return Field node, or NULL on error
+ * @note
+ * If the field does not exist, the function returns NULL and raises an
+ * error. Use OCI_JsonNodeHasField() first to test for the presence of a
+ * field without raising an error.
+ *
+ * @return Field node, or NULL on error or if the field does not exist
  */
 
 OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeGetFieldByName
@@ -19675,6 +20033,9 @@ OCI_SYM_PUBLIC const otext * OCI_API OCI_JsonNodeGetString
  *
  * @param node - JSON number node handle
  *
+ * @note
+ * The returned OCI_Number handle is allocated by the call and must be freed with OCI_NumberFree().
+ *
  * @return Number value, or NULL on error
  */
 
@@ -19719,6 +20080,9 @@ OCI_SYM_PUBLIC const void * OCI_API OCI_JsonNodeGetBinary
  *
  * @param node - JSON date node handle
  *
+ * @note
+ * The returned OCI_Date handle is allocated by the call and must be freed with OCI_DateFree().
+ *
  * @return Date value, or NULL on error
  */
 
@@ -19733,6 +20097,9 @@ OCI_SYM_PUBLIC OCI_Date * OCI_API OCI_JsonNodeGetDate
  *
  * @param node - JSON timestamp node handle
  *
+ * @note
+ * The returned OCI_Timestamp handle is allocated by the call and must be freed with OCI_TimestampFree().
+ *
  * @return Timestamp value, or NULL on error
  */
 
@@ -19746,6 +20113,9 @@ OCI_SYM_PUBLIC OCI_Timestamp * OCI_API OCI_JsonNodeGetTimestamp
  * Return the interval value of a JSON interval node
  *
  * @param node - JSON interval node handle
+ *
+ * @note
+ * The returned OCI_Interval handle is allocated by the call and must be freed with OCI_IntervalFree().
  *
  * @return Interval value, or NULL on error
  */
@@ -19935,6 +20305,325 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeAppendItem
 (
     OCI_JsonNode *arr,
     OCI_JsonNode *value
+);
+
+/**
+ * @brief
+ * Insert a JSON node at a given position in a JSON array node
+ *
+ * @param arr   - JSON array node handle
+ * @param index - Position at which to insert the item (0-based). Index may
+ *                be equal to the item count to append at the end
+ * @param value - JSON node handle to insert; it must belong to the same
+ *                JSON document and must not already be linked to a parent
+ *
+ * @note
+ * All items at and after the given index are shifted by one position.
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeInsertItem
+(
+    OCI_JsonNode *arr,
+    OCI_UInt32    index,
+    OCI_JsonNode *value
+);
+
+/**
+ * @brief
+ * Remove an item from a JSON array node
+ *
+ * @param arr   - JSON array node handle
+ * @param index - Index of the item to remove (0-based)
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeRemoveItem
+(
+    OCI_JsonNode *arr,
+    OCI_UInt32    index
+);
+
+/**
+ * @brief
+ * Check if a JSON object node has a field with the given name
+ *
+ * @param node - JSON object node handle
+ * @param name - Field name
+ *
+ * @note
+ * Use this function to test for the presence of a field without triggering
+ * an error when it does not exist, unlike OCI_JsonNodeGetFieldByName().
+ *
+ * @return TRUE if the field exists, FALSE if it does not exist or on error.
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeHasField
+(
+    OCI_JsonNode *node,
+    const otext  *name
+);
+
+/**
+ * @brief
+ * Remove a field from a JSON object node
+ *
+ * @param node - JSON object node handle
+ * @param name - Field name to remove
+ *
+ * @note
+ * If the field does not exist, the function returns FALSE and an error is
+ * raised. Use OCI_JsonNodeHasField() to check for presence beforehand.
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeRemoveField
+(
+    OCI_JsonNode *node,
+    const otext  *name
+);
+
+/**
+ * @brief
+ * Remove all fields of a JSON object node or all items of a JSON array node
+ *
+ * @param node - JSON object or array node handle
+ *
+ * @note
+ * For scalar nodes, the function fails with a type compatibility error.
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeClear
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Return the parent of a JSON DOM node
+ *
+ * @param node - JSON node handle
+ *
+ * @note
+ * The returned node handle must be freed with OCI_JsonNodeFree().
+ *
+ * @return
+ * The parent node handle on success, or NULL on error or if the node is the
+ * document root (which has no parent).
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeGetParent
+(
+    OCI_JsonNode *node
+);
+
+/**
+ * @brief
+ * Return the JSON node matching a JSON path expression
+ *
+ * @param node - JSON node handle to start the navigation from
+ * @param path - JSON path expression (e.g. OTEXT("$.a.b[0]")); the leading
+ *               '$' is optional and object fields and array indexes are
+ *               separated with '.' and '[n]'
+ *
+ * @note
+ * The path is resolved client-side by walking the DOM. A missing field or
+ * an out-of-range index is not an error: NULL is returned without error in
+ * that case.
+ *
+ * @return The node handle on success, or NULL if the path does not match
+ *         any node or on failure.
+ */
+
+OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeGetByPath
+(
+    OCI_JsonNode *node,
+    const otext  *path
+);
+
+/**
+ * @brief
+ * Return the numeric value of a JSON number node
+ *
+ * @param node  - JSON node handle
+ * @param value - Pointer to a variable receiving the value
+ *
+ * @note
+ * Typed convenience wrappers over OCI_JsonNodeGetNumber() +
+ * OCI_NumberGetValue().
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeGetShort
+(
+    OCI_JsonNode *node,
+    OCI_Int16    *value
+);
+
+/**
+ * @copydoc OCI_JsonNodeGetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeGetUShort
+(
+    OCI_JsonNode *node,
+    OCI_UInt16   *value
+);
+
+/**
+ * @copydoc OCI_JsonNodeGetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeGetInt
+(
+    OCI_JsonNode *node,
+    OCI_Int32    *value
+);
+
+/**
+ * @copydoc OCI_JsonNodeGetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeGetUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt32   *value
+);
+
+/**
+ * @copydoc OCI_JsonNodeGetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeGetBigInt
+(
+    OCI_JsonNode *node,
+    OCI_Int64    *value
+);
+
+/**
+ * @copydoc OCI_JsonNodeGetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeGetBigUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt64   *value
+);
+
+/**
+ * @copydoc OCI_JsonNodeGetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeGetFloat
+(
+    OCI_JsonNode *node,
+    OCI_Float    *value
+);
+
+/**
+ * @copydoc OCI_JsonNodeGetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeGetDouble
+(
+    OCI_JsonNode *node,
+    OCI_Double   *value
+);
+
+/**
+ * @brief
+ * Set the numeric value of a JSON node
+ *
+ * @param node  - JSON node handle
+ * @param value - Numeric value
+ *
+ * @note
+ * Typed convenience wrappers over OCI_NumberSetValue() +
+ * OCI_JsonNodeSetNumber().
+ *
+ * @return TRUE on success, FALSE otherwise
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetShort
+(
+    OCI_JsonNode *node,
+    OCI_Int16     value
+);
+
+/**
+ * @copydoc OCI_JsonNodeSetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetUShort
+(
+    OCI_JsonNode *node,
+    OCI_UInt16    value
+);
+
+/**
+ * @copydoc OCI_JsonNodeSetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetInt
+(
+    OCI_JsonNode *node,
+    OCI_Int32     value
+);
+
+/**
+ * @copydoc OCI_JsonNodeSetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt32    value
+);
+
+/**
+ * @copydoc OCI_JsonNodeSetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetBigInt
+(
+    OCI_JsonNode *node,
+    OCI_Int64     value
+);
+
+/**
+ * @copydoc OCI_JsonNodeSetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetBigUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt64    value
+);
+
+/**
+ * @copydoc OCI_JsonNodeSetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetFloat
+(
+    OCI_JsonNode *node,
+    OCI_Float     value
+);
+
+/**
+ * @copydoc OCI_JsonNodeSetShort
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetDouble
+(
+    OCI_JsonNode *node,
+    OCI_Double    value
 );
 
 /**

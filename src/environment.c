@@ -729,6 +729,9 @@ static void OcilibEnvironmentLoadSymbols
     env->api->OCISodaInsertAndGet             = OCISodaInsertAndGet;
     env->api->OCISodaInsertAndGetWithCtnt     = OCISodaInsertAndGetWithCtnt;
     env->api->OCISodaInsertWithCtnt           = OCISodaInsertWithCtnt;
+    env->api->OCISodaSave                     = OCISodaSave;
+    env->api->OCISodaSaveAndGet               = OCISodaSaveAndGet;
+    env->api->OCISodaIndexList                = OCISodaIndexList;
     env->api->OCISodaMetadataBuild            = OCISodaMetadataBuild;
     env->api->OCISodaRemove                   = OCISodaRemove;
     env->api->OCISodaRemoveOneWithKey         = OCISodaRemoveOneWithKey;
@@ -1008,6 +1011,9 @@ static void OcilibEnvironmentLoadSymbols
     LIB_SYMBOL(env->lib_handle, "OCISodaReplOneAndGetWithCtnt", env->api->OCISodaReplOneAndGetWithCtnt, OCISODAREPLONEANDGETWITHCTNT);
     LIB_SYMBOL(env->lib_handle, "OCISodaRemove", env->api->OCISodaRemove, OCISODAREMOVE);
     LIB_SYMBOL(env->lib_handle, "OCISodaRemoveOneWithKey", env->api->OCISodaRemoveOneWithKey, OCISODAREMOVEONEWITHKEY);
+    LIB_SYMBOL(env->lib_handle, "OCISodaSave", env->api->OCISodaSave, OCISODASAVE);
+    LIB_SYMBOL(env->lib_handle, "OCISodaSaveAndGet", env->api->OCISodaSaveAndGet, OCISODASAVEANDGET);
+    LIB_SYMBOL(env->lib_handle, "OCISodaIndexList", env->api->OCISodaIndexList, OCISODAINDEXLIST);
     LIB_SYMBOL(env->lib_handle, "OCISodaCollDrop", env->api->OCISodaCollDrop, OCISODACOLLDROP);
     LIB_SYMBOL(env->lib_handle, "OCISodaIndexCreate", env->api->OCISodaIndexCreate, OCISODAINDEXCREATE);
     LIB_SYMBOL(env->lib_handle, "OCISodaIndexDrop", env->api->OCISodaIndexDrop, OCISODAINDEXDROP);

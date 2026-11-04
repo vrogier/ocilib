@@ -50,14 +50,15 @@ OCI_SYM_LOCAL void OcilibErrorReset
 
 OCI_SYM_LOCAL void OcilibErrorSet
 (
-    OCI_Error      *err,
-    OCI_ErrorType   type,
-    OCI_ErrorCode   code,
-    void           *source_ptr,
-    OCI_PointerType source_type,
-    const char     *location,
-    otext          *message,
-    OCI_UInt32      row
+    OCI_Error        *err,
+    OCI_ErrorType    type,
+    OCI_ErrorCategory category,
+    OCI_ErrorCode     code,
+    void             *source_ptr,
+    OCI_PointerType   source_type,
+    const char       *location,
+    otext            *message,
+    OCI_UInt32        row
 );
 
 OCI_SYM_LOCAL void OcilibErrorResetSource
@@ -88,12 +89,12 @@ OCI_SYM_LOCAL OCI_ErrorType OcilibErrorGetType
     OCI_Error* err
 );
 
-OCI_SYM_LOCAL OCI_ErrorCode OcilibErrorGetOCICode
+OCI_SYM_LOCAL OCI_ErrorCategory OcilibErrorGetCategory
 (
     OCI_Error* err
 );
 
-OCI_SYM_LOCAL OCI_ErrorCode OcilibErrorGetInternalCode
+OCI_SYM_LOCAL OCI_ErrorCode OcilibErrorGetCode
 (
     OCI_Error* err
 );

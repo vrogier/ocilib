@@ -47,4 +47,19 @@ namespace ocilib
         return SodaColl(coll, GetHandle());
     }
 
+
+    inline SodaCollCursor::iterator& SodaCollCursor::iterator::operator++()
+    {
+        _coll = _cursor->GetNext();
+        if (!_coll)
+        {
+            _cursor = NULL;
+        }
+        return *this;
+    }
+
+    inline SodaCollCursor::iterator SodaCollCursor::begin()
+    {
+        return iterator(this);
+    }
 }

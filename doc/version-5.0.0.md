@@ -1,15 +1,16 @@
 # OCILIB v5.0.0 — Change Summary
 
-This document is a high-level synthesis of the v5.0.0 development work. It is based on the `*-PLAN.md` files at the repository root and a `git diff` against `master` (excluding the plan documents themselves and the unit-test tree).
-
+This document is a high-level synthesis of the v5.0.0 development work. 
 ---
 
 ## 1. Scope at a glance
 
 | Area | Files touched | Insertions | Deletions |
 |------|---------------|-----------:|----------:|
-| Library + demos + build (excl. tests/plans) | ~208 | ~7,100 | ~9,300 |
-| Unit tests | 60 | ~8,150 | ~1,450 |
+| `src/` + `include/` (library) | 192 | 57,817 | 45,389 |
+| `tests/` (unit tests) | 106 | 18,596 | 1,706 |
+| demos, docs, build, misc | 100 | 8,123 | 4,474 |
+| **Total** | **398** | **84,536** | **51,569** |
 
 The release touches the C API, the C++ API, the internal handle/symbol architecture, the build system, the demos, and the test suite.
 
@@ -24,7 +25,11 @@ The release touches the C API, the C++ API, the internal handle/symbol architect
 - **Optional runtime logging.** A new logging subsystem in `src/log.c` is controlled by environment variables (`OCILIB_LOG`, `OCILIB_LOG_CATEGORIES`, `OCILIB_LOG_OUTPUT`) and instruments public API entry/exit, OCI calls, and error reporting.
 - **Removal of legacy public APIs.** XA/distributed transactions, the public `OCI_Mutex` / `OCI_Thread` / `OCI_ThreadKey` C APIs, and the matching C++ wrappers are gone. Internal synchronization has been replaced with native C11 primitives.
 - **Bug fixes in notification and AQ dequeue registration.** Row-level change notifications now work correctly, and AQ dequeue registration now registers all dequeues in a single call.
-- **Large test-suite expansion.** The gtest suite grew from **246 to 420 test cases** (`TEST`/`TEST_P`), with many new test modules for previously uncovered areas.
+- **Error model split into type, category and code.** `OCI_ErrorGetType()` now reports the error type only (`OCI_ERR_TYPE_ERROR`/`OCI_ERR_TYPE_WARNING`); the new `OCI_ErrorGetCategory()` reports the originating subsystem (`OCI_ERR_CAT_LIB`/`OCI_ERR_CAT_OCI`/`OCI_ERR_CAT_JZN`); and `OCI_ErrorGetOCICode()`/`OCI_ErrorGetInternalCode()` are unified into a single `OCI_ErrorGetCode()`. The C++ `ocilib::Exception` mirrors this with `GetType()` (error type), `GetCategory()`, and `GetCode()`. JSON DOM (`jzn*`) failures are reported through `OCI_Error` with the `OCI_ERR_CAT_JZN` category and reach the user error handler and the logging subsystem like every other error.
+- **JSON DOM API.** Full document-object-model support over Oracle's native JSON DOM (`jzn*`): `OCI_Json` documents (create from text/binary, mutable/immutable, root access) and `OCI_JsonNode` handles — scalar/object/array typed getters and setters, number accessors for every C numeric type plus `OCI_Number`, date/timestamp/interval/binary/string/boolean/null nodes, object field ops (`SetField`/`GetField`/`HasField`/`RemoveField`/`GetFieldCount`/`GetFieldByIndex`/`GetFieldName`), array ops (`GetItem`/`SetItem`/`AppendItem`/`InsertItem`/`RemoveItem`/`GetItemCount`), `GetParent`, `GetByPath`, `Clear`. C++ `Json`/`JsonNode` mirrors it, including `node["key"]`/`node[i]` indexing and the generic `GetNumeric<T>`/`SetNumeric` templates covering all supported numeric types (`Number` included).
+- **SODA API.** Complete Simple Oracle Document Access surface: `OCI_SodaDb` (create/open/drop collections, collection-name list, document factories), `OCI_SodaColl` (insert/replace/save single docs, bulk `InsertMany`/`InsertManyAndGet`, `Find`/`FindOne`/`FindOneWithKey`, `Count`, `Truncate`, data guide, index management `CreateIndex`/`DropIndex`/`ListIndexes`), `OCI_SodaDoc` (content/key/media-type/created-on/last-modified/version attributes), `OCI_SodaOptions` (fetch-array-size, limit, skip, lock, hint, filter), and document/collection cursors. C++ mirrors: `SodaDb`, `SodaColl`, `SodaDoc`, `SodaOptions`, `SodaDocCursor`, `SodaCollCursor` (input-iterator `begin()`/`end()` for range-for).
+- **Known Oracle client limitation (UNICODE builds).** `OCISodaIndexCreate`/`IndexDrop`/`IndexList` and `OCI_SRM_SECURE_NOTIFICATION` fail **inside the Oracle client itself** under `OCI_CHARSET_WIDE` (verified on 23ai); ANSI builds are unaffected. Public API docs carry `@warning` notes and the affected tests are `#ifdef OCI_CHARSET_ANSI`-guarded.
+- **Large test-suite expansion.** The gtest suite grew from **219 to 822 test cases** (`TEST`/`TEST_P`; 855 registered gtest instances at run time), with many new test modules for previously uncovered areas.
 
 ---
 
@@ -114,6 +119,12 @@ A new, opt-in logging subsystem is introduced in `src/log.c` / `src/log.h`.
 - The global/static `HandleStore` default instance is gone; each `ocilib::Environment` owns its own `HandleStore`.
 - `Environment` is no longer a process-wide singleton in the C++ layer; users create `ocilib::Environment` instances explicitly.
 
+### Error API
+- Removed constants: `OCI_ERR_ORACLE`, `OCI_ERR_OCILIB`, `OCI_ERR_WARNING` — replaced by error-type constants `OCI_ERR_TYPE_ERROR`/`OCI_ERR_TYPE_WARNING` and category constants `OCI_ERR_CAT_LIB`/`OCI_ERR_CAT_OCI`/`OCI_ERR_CAT_JZN`.
+- Removed functions: `OCI_ErrorGetOCICode()` and `OCI_ErrorGetInternalCode()` — unified into `OCI_ErrorGetCode()`, whose code namespace is given by `OCI_ErrorGetCategory()`.
+- Removed C++ methods: `Exception::GetOracleErrorCode()` and `Exception::GetInternalErrorCode()` — use `Exception::GetCode()`.
+- C++ `ExceptionTypeValues` `OracleError`/`OcilibError`/`OracleWarning` were replaced by error-type values `Exception::Error`/`Exception::Warning` plus the new `ExceptionCategoryValues` `Exception::OracleError`/`OcilibError`/`JsonError`.
+
 ---
 
 ## 7. Notable bug fixes
@@ -166,8 +177,11 @@ The following items require code changes when upgrading from v4.x to v5.0.0:
    - `ocilib::Environment` is constructed explicitly and is not a singleton.
    - Replace `Environment::GetAllocatedBytes()` with `Environment::GetStats(OCI_UST_BYTES)`.
 
-8. **Error retrieval**
-   - `OCI_GetLastError()` now requires an `OCI_Environment*` argument.
+8. **Error model**
+   - `OCI_GetLastError()` takes no argument and always returns the calling thread's `OCI_Error` (thread-local storage is no longer opt-in).
+   - `OCI_ErrorGetType()` now returns the error type only (`OCI_ERR_TYPE_ERROR`/`OCI_ERR_TYPE_WARNING`); `OCI_ERR_ORACLE`/`OCI_ERR_OCILIB`/`OCI_ERR_WARNING` are removed — use `OCI_ErrorGetCategory()` (`OCI_ERR_CAT_LIB`/`OCI_ERR_CAT_OCI`/`OCI_ERR_CAT_JZN`) to identify the originating subsystem.
+   - `OCI_ErrorGetOCICode()`/`OCI_ErrorGetInternalCode()` are removed — use `OCI_ErrorGetCode()`.
+   - C++: `Exception::GetType()` returns the error type (`Exception::Error`/`Warning`), new `Exception::GetCategory()` returns the origin, and `GetOracleErrorCode()`/`GetInternalErrorCode()` are replaced by `Exception::GetCode()`.
 
 9. **Boolean type**
    - The public boolean type is now `OCI_Boolean` (`typedef int OCI_Boolean`), replacing the `#define boolean int` macro that polluted every consumer translation unit.
@@ -186,11 +200,12 @@ The following items require code changes when upgrading from v4.x to v5.0.0:
 
 The gtest-based suite was heavily expanded and updated for the v5.0 APIs.
 
-- **Test case count:** from **246** in `master` to **420** in v5.0.0 (`TEST` + `TEST_P` macros).
+- **Test case count:** from **219** `TEST`/`TEST_P` cases in `master` (30 test files) to **822** in v5.0.0 (95 test files) — 855 registered gtest instances at run time.
 - **New test modules** were added for previously untested or lightly tested areas such as Agent, Bind, Callback, Column, Dequeue, Element, Enqueue, Error, Event, Exception, File, Format, Handle, Hash, Helpers, Iterator, List, Log, Memory, Message, ReportedIssues, Resultset, Statement, Stringutils, Transaction, and TypeInfo.
 - **Removed test modules:** `TestThread.cpp` and `TestThreadKey.cpp` (APIs removed).
 - `TestConnection`, `TestPool`, `TestQueue`, `TestSubscription`, `TestNotifications`, and other existing modules were updated to use `OCI_EnvironmentCreate`, `std::thread`, the new subscription port API, and the new dequeue registration signature.
 - The Visual Studio test project (`tests/ocilib_tests.vcxproj`) and filters were updated to reflect the new file set.
+- **Code coverage (OpenCppCoverage, ANSI build): ~93% line coverage** across `src\*.c` (see `doc/test-coverage.md`). Coverage is measured with `Release - ANSI|x64` because the SODA index and secure-notification paths cannot run in UNICODE builds (Oracle client bug). Most of the remaining ~7% consists of error-handling paths for legacy Oracle versions (`#if OCI_VERSION_COMPILE < OCI_x_y` compatibility branches and pre-12c error paths) that cannot be exercised against a modern server.
 
 ---
 

@@ -13,9 +13,8 @@ namespace TestCApi
         auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
 
-        ASSERT_EQ(OCI_ERR_ORACLE, OCI_ErrorGetType(err));
-        ASSERT_EQ(1017, OCI_ErrorGetOCICode(err));
-        ASSERT_GE(OCI_ErrorGetInternalCode(err), 0);
+        ASSERT_EQ(OCI_ERR_CAT_OCI, OCI_ErrorGetCategory(err));
+        ASSERT_EQ(1017, OCI_ErrorGetCode(err));
         ASSERT_NE(nullptr, OCI_ErrorGetString(err));
         ASSERT_NE(nullptr, OCI_ErrorGetLocation(err));
         ASSERT_NE(nullptr, OCI_ErrorGetConnection(err));
@@ -40,7 +39,7 @@ namespace TestCApi
         auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
 
-        ASSERT_EQ(OCI_ERR_ORACLE, OCI_ErrorGetType(err));
+        ASSERT_EQ(OCI_ERR_CAT_OCI, OCI_ErrorGetCategory(err));
         ASSERT_NE(nullptr, OCI_ErrorGetString(err));
         ASSERT_EQ(con, OCI_ErrorGetConnection(err));
         ASSERT_EQ(stmt, OCI_ErrorGetStatement(err));
@@ -69,7 +68,7 @@ namespace TestCApi
         auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
 
-        ASSERT_EQ(OCI_ERR_ORACLE, OCI_ErrorGetType(err));
+        ASSERT_EQ(OCI_ERR_CAT_OCI, OCI_ErrorGetCategory(err));
         ASSERT_NE(nullptr, OCI_ErrorGetString(err));
         ASSERT_EQ(con, OCI_ErrorGetConnection(err));
         ASSERT_EQ(stmt, OCI_ErrorGetStatement(err));
@@ -95,8 +94,8 @@ namespace TestCApi
         auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
 
-        ASSERT_EQ(OCI_ERR_ORACLE, OCI_ErrorGetType(err));
-        ASSERT_EQ(1017, OCI_ErrorGetOCICode(err));
+        ASSERT_EQ(OCI_ERR_CAT_OCI, OCI_ErrorGetCategory(err));
+        ASSERT_EQ(1017, OCI_ErrorGetCode(err));
         ASSERT_NE(nullptr, OCI_ErrorGetString(err));
         ASSERT_NE(nullptr, OCI_ErrorGetConnection(err));
         ASSERT_EQ(nullptr, OCI_ErrorGetStatement(err));
@@ -122,9 +121,8 @@ namespace TestCApi
         auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
 
-        ASSERT_EQ(OCI_ERR_OCILIB, OCI_ErrorGetType(err));
-        ASSERT_EQ(0, OCI_ErrorGetOCICode(err));
-        ASSERT_GT(OCI_ErrorGetInternalCode(err), 0);
+        ASSERT_EQ(OCI_ERR_CAT_LIB, OCI_ErrorGetCategory(err));
+        ASSERT_EQ(OCI_ERR_ARG_INVALID_VALUE, OCI_ErrorGetCode(err));
         ASSERT_NE(nullptr, OCI_ErrorGetString(err));
         ASSERT_EQ(stmt, OCI_ErrorGetStatement(err));
 

@@ -25,6 +25,7 @@
 #include "error.h"
 #include "macros.h"
 #include "stringutils.h"
+#include "oci/jsondom.h"
 
 static const otext * TypeNames[OCI_IPC_COUNT] =
 {
@@ -240,7 +241,8 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
             OcilibErrorSet                                  \
             (                                               \
     err,                                                    \
-    OCI_ERR_OCILIB,                                         \
+    OCI_ERR_TYPE_ERROR,                                     \
+    OCI_ERR_CAT_LIB,                                        \
     (OCI_Int32)(err_code),                                  \
     ctx->source_ptr,                                        \
     ctx->source_type,                                       \
@@ -270,7 +272,8 @@ static const otext * HandleNames[OCI_HDLE_COUNT] =
             OcilibErrorSet                                  \
             (                                               \
     err,                                                    \
-    OCI_ERR_OCILIB,                                         \
+    OCI_ERR_TYPE_ERROR,                                     \
+    OCI_ERR_CAT_LIB,                                        \
     (OCI_Int32)(err_code),                                  \
     ctx->source_ptr,                                        \
     ctx->source_type,                                       \
@@ -306,33 +309,47 @@ static void OcilibExceptionCallHandler
 {
     if (err)
     {
-        if (err->type == OCI_ERR_ORACLE)
+        OCI_LogCategory log_cat  = OCI_LOG_CAT_LIB;
+        OCI_LogLevel    level    = OCI_LOG_ERROR;
+        const otext    *label    = OTEXT("OCILIB");
+        const otext    *type     = OTEXT("error");
+
+        switch (err->category)
         {
-            OCILIB_LOG_WITH_ENV(err->env, OCI_LOG_CAT_OCI, OCI_LOG_ERROR,
-                                __func__,
-                                OTEXT("%s: OCI error %d: %s"),
-                                err->location ? err->location : OTEXT(""),
-                                (OCI_Int32) err->code,
-                                err->message ? err->message : OTEXT(""));
+            case OCI_ERR_CAT_OCI:
+            {
+                log_cat = OCI_LOG_CAT_OCI;
+                label   = OTEXT("OCI");
+                break;
+            }
+            case OCI_ERR_CAT_JZN:
+            {
+                log_cat = OCI_LOG_CAT_LIB;
+                label   = OTEXT("JZN");
+                break;
+            }
+            case OCI_ERR_CAT_LIB:
+            default:
+            {
+                log_cat = OCI_LOG_CAT_LIB;
+                label   = OTEXT("OCILIB");
+                break;
+            }
         }
-        else if (err->type == OCI_ERR_WARNING)
+
+        if (OCI_ERR_TYPE_WARNING == err->type)
         {
-            OCILIB_LOG_WITH_ENV(err->env, OCI_LOG_CAT_OCI, OCI_LOG_WARN,
-                                __func__,
-                                OTEXT("%s: OCI warning %d: %s"),
-                                err->location ? err->location : OTEXT(""),
-                                (OCI_Int32) err->code,
-                                err->message ? err->message : OTEXT(""));
+            level    = OCI_LOG_WARN;
+            type     = OTEXT("warning");
         }
-        else if (err->type == OCI_ERR_OCILIB)
-        {
-            OCILIB_LOG_WITH_ENV(err->env, OCI_LOG_CAT_LIB, OCI_LOG_ERROR,
-                                __func__,
-                                OTEXT("%s: OCILIB error %d: %s"),
-                                err->location ? err->location : OTEXT(""),
-                                (OCI_Int32) err->code,
-                                err->message ? err->message : OTEXT(""));
-        }
+
+        OCILIB_LOG_WITH_ENV(err->env, log_cat, level,
+                            __func__,
+                            OTEXT("%s: %s %s %d: %s"),
+                            err->location ? err->location : OTEXT(""),
+                            label, type,
+                            (OCI_Int32) err->code,
+                            err->message ? err->message : OTEXT(""));
 
         err->active = TRUE;
 
@@ -348,6 +365,43 @@ static void OcilibExceptionCallHandler
 /* --------------------------------------------------------------------------------------------- *
  * OcilibExceptionOCI
  * --------------------------------------------------------------------------------------------- */
+
+void OcilibExceptionJson
+(
+    OCI_Context *ctx,
+    JsonDomDoc  *jdoc
+)
+{
+    OCI_Error *err = OcilibExceptionGetError(ctx->env);
+    if (err && jdoc)
+    {
+        sword  jerr   = jdoc->errcode_jznDomDoc;
+        char   *msg   = NULL;
+        otext    buffer[OCI_SIZE_BUFFER] = OTEXT("");
+
+        if (jdoc->mthds_jznDomDoc && jdoc->mthds_jznDomDoc->jznDomGetError)
+        {
+            msg = (char*) jdoc->mthds_jznDomDoc->jznDomGetError(jdoc, &jerr, TRUE);
+        }
+
+        if (NULL != msg && 0 != *msg)
+        {
+            OCI_Int32 len = min((OCI_Int32)strlen(msg), (OCI_Int32)OCI_SIZE_BUFFER - 1);
+            OcilibStringAnsiToNative((const char *)msg, buffer, len);
+        }
+        else
+        {
+            OcilibStringFormat(buffer, osizeof(buffer) - (OCI_Size)1,
+                               OTEXT("JSON DOM error [%d]"), (OCI_Int32)jerr);
+        }
+
+        OcilibErrorSet(err, OCI_ERR_TYPE_ERROR, OCI_ERR_CAT_JZN, (OCI_Int32)jerr,
+                       ctx->source_ptr, ctx->source_type, ctx->location,
+                       buffer, (OCI_UInt32)0);
+
+        OcilibExceptionCallHandler(err);
+    }
+}
 
 void OcilibExceptionOCI
 (
@@ -408,7 +462,8 @@ void OcilibExceptionOCI
         OcilibErrorSet
         (
             err,
-            (warning ? OCI_ERR_WARNING : OCI_ERR_ORACLE),
+            (warning ? OCI_ERR_TYPE_WARNING : OCI_ERR_TYPE_ERROR),
+            OCI_ERR_CAT_OCI,
             (OCI_Int32)err_code,
             ctx->source_ptr,
             ctx->source_type,

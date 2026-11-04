@@ -75,4 +75,19 @@ namespace ocilib
         core::Check(OCI_SodaOptionsSetLimit(*this, count));
     }
 
+    inline void SodaOptions::SetFetchArraySize(UInt32 count)
+    {
+        core::Check(OCI_SodaOptionsSetFetchArraySize(*this, count));
+    }
+
+    inline void SodaOptions::SetHint(const ostring& hint)
+    {
+        core::Check(OCI_SodaOptionsSetHint(*this, hint.c_str()));
+    }
+
+    inline void SodaOptions::SetLock(bool lock)
+    {
+        core::Check(OCI_SodaOptionsSetLock(*this, lock ? TRUE : FALSE));
+    }
+
 }

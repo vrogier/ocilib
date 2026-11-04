@@ -20,9 +20,8 @@ namespace TestCppApi
         catch (const Exception& ex)
         {
             ASSERT_NE(nullptr, ex.what());
-            ASSERT_EQ(Exception::OracleError, ex.GetType());
-            ASSERT_EQ(942, ex.GetOracleErrorCode());
-            ASSERT_EQ(0, ex.GetInternalErrorCode());
+            ASSERT_EQ(Exception::OracleError, ex.GetCategory());
+            ASSERT_EQ(942, ex.GetCode());
             ASSERT_FALSE(ex.GetStatement().IsNull());
             ASSERT_FALSE(ex.GetConnection().IsNull());
             ASSERT_EQ(0u, ex.GetRow());
@@ -32,8 +31,8 @@ namespace TestCppApi
             Exception ex3 = ex;
             ex2 = ex3;
             ASSERT_EQ(ex.GetMessage(), ex2.GetMessage());
-            ASSERT_EQ(ex.GetType(), ex2.GetType());
-            ASSERT_EQ(ex.GetOracleErrorCode(), ex2.GetOracleErrorCode());
+            ASSERT_EQ(ex.GetCategory(), ex2.GetCategory());
+            ASSERT_EQ(ex.GetCode(), ex2.GetCode());
         }
     }
 }

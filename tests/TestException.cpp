@@ -14,8 +14,8 @@ namespace TestCApi
         ASSERT_NE(nullptr, err);
 
         ASSERT_NE(nullptr, OCI_ErrorGetString(err));
-        ASSERT_NE(0u, (OCI_UInt32) OCI_ErrorGetType(err));
-        ASSERT_NE(0, OCI_ErrorGetOCICode(err));
+        ASSERT_NE(0u, (OCI_UInt32) OCI_ErrorGetCategory(err));
+        ASSERT_NE(0, OCI_ErrorGetCode(err));
 
     }
 

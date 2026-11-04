@@ -51,8 +51,8 @@ using Guard = std::lock_guard<::Mutex>;
 
 struct Error
 {
-    OCI_Int32 LibCode;
-    OCI_Int32 OCICode;
+    OCI_ErrorCode Code;
+    OCI_ErrorCategory Category;
 };
 
 using Errors = std::vector<Error>;

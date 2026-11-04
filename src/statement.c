@@ -1429,8 +1429,9 @@ static OCI_Boolean OcilibStatementBatchErrorInit
                 OcilibErrorSet
                 (
                     err,
-                    OCI_ERR_ORACLE,
-                    (OCI_Int32)err_code,
+                    OCI_ERR_TYPE_ERROR,
+                    OCI_ERR_CAT_OCI,
+                    (OCI_UInt32)err_code,
                     ocilib_call_context.source_ptr,
                     ocilib_call_context.source_type,
                     ocilib_call_context.location,

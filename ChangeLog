@@ -30,6 +30,11 @@
   - Added `OCI_Json*` data type (`OCI_CDT_JSON`)
   - Added JSON document lifecycle and serialization APIs: `OCI_JsonCreate()`, `OCI_JsonArrayCreate()`, `OCI_JsonFree()`, `OCI_JsonArrayFree()`, `OCI_JsonLoadText()`, `OCI_JsonLoadBinary()`, `OCI_JsonToText()`, `OCI_JsonToBinary()`, `OCI_JsonClone()`, `OCI_JsonSetMutable()`, `OCI_JsonIsMutable()`
   - Added `OCI_JsonNode*` DOM-style APIs for creating, navigating, and modifying JSON nodes
+    - Typed scalar getters/setters for every C numeric type plus `OCI_Number`, string, boolean, binary, date, timestamp, interval, and null
+    - Object field operations: `OCI_JsonNodeSetField()`, `OCI_JsonNodeGetFieldByName()`, `OCI_JsonNodeGetFieldByIndex()`, `OCI_JsonNodeGetFieldName()`, `OCI_JsonNodeGetFieldCount()`, `OCI_JsonNodeHasField()`, `OCI_JsonNodeRemoveField()`
+    - Array operations: `OCI_JsonNodeGetItem()`, `OCI_JsonNodeSetItem()`, `OCI_JsonNodeAppendItem()`, `OCI_JsonNodeInsertItem()`, `OCI_JsonNodeRemoveItem()`, `OCI_JsonNodeGetItemCount()`
+    - `OCI_JsonNodeGetParent()`, `OCI_JsonNodeGetByPath()` (JSON path expressions), `OCI_JsonNodeGetType()`, `OCI_JsonNodeClear()`
+    - JSON DOM errors are reported through `OCI_Error` with the `OCI_ERR_CAT_JZN` category
   - Added statement integration: `OCI_GetJson()`, `OCI_GetJsonByName()`, `OCI_BindJson()`, `OCI_BindArrayOfJsons()`, and `OCI_RegisterJson()`
   - `OCI_GetString()` returns a string representation of JSON columns
 
@@ -38,9 +43,14 @@
   - Added SODA database context APIs: `OCI_SodaDbCreate()`, `OCI_SodaDbFree()`, `OCI_SodaDbGetConnection()`
   - Added collection administration APIs: `OCI_SodaDbCreateColl()` (with optional collection metadata), `OCI_SodaDbOpenColl()`, `OCI_SodaDbGetColls()`, `OCI_SodaCollGetName()`, `OCI_SodaCollGetMetadata()`, `OCI_SodaCollGetConnection()`, `OCI_SodaCollIsMapped()`, `OCI_SodaCollDrop()`, `OCI_SodaCollTruncate()`, `OCI_SodaCollFree()`
   - Added document APIs: `OCI_SodaDocCreateFromText()`, `OCI_SodaDocCreateFromJson()` (requires Oracle client 23.4+), `OCI_SodaDocFree()`, `OCI_SodaDocGetKey()`, `OCI_SodaDocGetVersion()`, `OCI_SodaDocGetCreatedOn()`, `OCI_SodaDocGetLastModified()`, `OCI_SodaDocGetMediaType()`, `OCI_SodaDocGetText()`, `OCI_SodaDocGetJson()`
-  - Added operation options APIs: `OCI_SodaOptionsCreate()`, `OCI_SodaOptionsFree()`, and setters for key(s), version, filter, skip, and limit
+  - Added operation options APIs: `OCI_SodaOptionsCreate()`, `OCI_SodaOptionsFree()`, and setters for key(s), version, filter, skip, limit, fetch array size, lock, and hint
   - Added cursor APIs: `OCI_SodaCollCursorGetNext()`, `OCI_SodaCollCursorFree()`, `OCI_SodaDocCursorGetNext()`, `OCI_SodaDocCursorFree()`
   - Added CRUD APIs: `OCI_SodaCollInsertDoc()`, `OCI_SodaCollFind()`, `OCI_SodaCollFindOne()`, `OCI_SodaCollFindOneByKey()`, `OCI_SodaCollDocCount()`, `OCI_SodaCollDocCountWithFilter()`, `OCI_SodaCollReplaceOne()`, `OCI_SodaCollReplaceOneAndGet()`, `OCI_SodaCollReplaceOneByKey()`, `OCI_SodaCollReplaceOneAndGetByKey()`, `OCI_SodaCollRemove()`, `OCI_SodaCollRemoveOneByKey()`
+  - Added bulk insert APIs: `OCI_SodaCollInsertMany()`, `OCI_SodaCollInsertManyAndGet()`
+  - Added save (upsert) APIs: `OCI_SodaCollSave()`, `OCI_SodaCollSaveAndGet()`
+  - Added metadata APIs: `OCI_SodaCollGetDataGuide()`, `OCI_SodaDbGetCollectionNames()`, `OCI_SodaDbFreeCollectionNames()`
+  - Added index management APIs: `OCI_SodaCollCreateIndex()`, `OCI_SodaCollDropIndex()`, `OCI_SodaCollListIndexes()`, `OCI_SodaCollFreeIndexNames()`
+    - Note: the underlying `OCISodaIndex*` OCI calls currently fail inside the Oracle client itself under `OCI_CHARSET_WIDE` (UNICODE builds), verified on Oracle 23ai — an Oracle client bug, not an OCILIB bug; ANSI builds work correctly
 
 ### Enhancements (C++ API)
 
@@ -73,6 +83,10 @@
   - `OCI_DatabaseStartup()`, `OCI_DatabaseShutdown()`
   - `OCI_GetOCICompileVersion()`, `OCI_GetOCIRuntimeVersion()`, `OCI_GetImportMode()`, `OCI_GetCharset()`, `OCI_GetStats()`, `OCI_GetLocaleString()`, `OCI_EnableWarnings()`, `OCI_SetErrorHandler()`, `OCI_SetHAHandler()`
 - `OCI_GetLastError()` always returns the calling thread's `OCI_Error`; the `OCI_ENV_CONTEXT` flag has been removed.
+- The error model now separates error type, origin category, and code:
+  - `OCI_ErrorGetType()` reports the error type only: `OCI_ERR_TYPE_ERROR` or `OCI_ERR_TYPE_WARNING` (the `OCI_ERR_ORACLE`, `OCI_ERR_OCILIB`, and `OCI_ERR_WARNING` type constants are removed)
+  - Added `OCI_ErrorGetCategory()` reporting the originating subsystem: `OCI_ERR_CAT_LIB`, `OCI_ERR_CAT_OCI`, or `OCI_ERR_CAT_JZN` (JSON DOM errors)
+  - `OCI_ErrorGetCode()` returns the code in the category's namespace; `OCI_ErrorGetOCICode()` and `OCI_ErrorGetInternalCode()` are removed
 - `OCI_SubscriptionRegister()` no longer takes a `port` argument; configure the subscription port once with `OCI_SetSubscriptionPort()`.
 - `OCI_DequeueSubscribe()` is now a batch call taking a connection and an array of `OCI_Dequeue*`.
 - All `OCI_Bind*()` and `OCI_BindArrayOf*()` functions now return `OCI_Bind*` instead of `boolean`. `OCI_Register*` functions are unchanged.
@@ -91,6 +105,7 @@
 - `Environment` static accessors are now instance methods.
 - Constructors for `Connection`, `Pool`, `Number`, `Date`, `Interval`, and `Timestamp` now take a `const Environment&` first argument.
 - `ocilib::Mutex`, `ocilib::Thread`, and `ocilib::ThreadKey` have been removed.
+- `ocilib::Exception` follows the new error model: `GetType()` returns `Exception::Error`/`Exception::Warning`, `GetCategory()` returns `Exception::OracleError`/`OcilibError`/`JsonError`, and `GetCode()` returns the unified category-specific code; `GetOracleErrorCode()` and `GetInternalErrorCode()` are removed.
 - `Environment::GetAllocatedBytes()` has been removed; use `GetStats(OCI_UST_BYTES)`.
 - `Subscription::Register()` no longer takes a `port` argument; use `Environment::SetSubscriptionPort()`.
 - `Dequeue::Subscribe()` is now a static batch call.
@@ -123,7 +138,8 @@
   - MSVC C sources compiled with `/std:c11`
   - GNU autotools and MSVC project files updated for the new source files (`log.c`, `json.c`, `jsonnode.c`, `sodadb.c`, `sodacoll.c`, `sodadoc.c`, `sodaoptions.c`, `sodacollcursor.c`, `sodadoccursor.c`) and removed `mutex.c` / `thread.c` / `threadkey.c`
 - Added GitHub Actions CI workflow (`.github/workflows/ci.yml`)
-- Expanded the gtest-based test suite from 246 to 420 test cases, with new modules covering JSON, SODA, bind, statement, resultset, memory, logging, and many other areas
+- Expanded the gtest-based test suite from 219 to 822 test cases (855 registered gtest instances), with new modules covering JSON, SODA, bind, statement, resultset, memory, logging, and many other areas
+- Line coverage of `src\*.c` is ~93% under OpenCppCoverage (see `doc/test-coverage.md`), measured on the ANSI build since some SODA index and secure-notification paths cannot run under UNICODE builds (Oracle client bug); most of the remaining ~7% is legacy-Oracle-version error handling that cannot be exercised against a modern server
 - Updated all demo applications to use `OCI_EnvironmentCreate()` and standard threading primitives where applicable
 - Updated compilers for MS Windows prebuilt binaries to VS2026 18.10.0, with statically linked VC runtime updated from vc143 to vc145
 

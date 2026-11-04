@@ -742,7 +742,7 @@ OCI_Boolean OcilibConnectionLogon
         OCI_Error *err = OcilibErrorGet(con->env, FALSE, FALSE);
 
         if (NULL != err &&  OCI_UNKNOWN != err->code &&
-            (OCI_ERR_WARNING != err->type || err->warnings_on))
+            (OCI_ERR_TYPE_WARNING != err->type || err->warnings_on))
         {
             CHECK(FALSE);
         }

@@ -666,6 +666,18 @@ ocilib_exit_label:                  \
     (ub4) (size), (ub4) (atype), err                                   \
         )                                                              \
 
+#define CHECK_JSON(jdoc, expr)                                                \
+                                                                              \
+        do                                                                    \
+        {                                                                     \
+            ocilib_call_status = (expr);                                      \
+            if (!ocilib_call_status)                                          \
+            {                                                                 \
+                OcilibExceptionJson(&ocilib_call_context, jdoc);              \
+                JUMP_CLEANUP();                                               \
+            }                                                                 \
+        } while (0)
+
 #define LIST_ATOMIC_OPERATION(list, exp)       \
                                                \
         do                                     \

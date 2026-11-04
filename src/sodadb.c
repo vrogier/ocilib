@@ -312,3 +312,139 @@ OCI_SodaCollCursor * OcilibSodaDbGetColls
         }
     );
 }
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaDbGetCollectionNames
+ * --------------------------------------------------------------------------------------------- */
+
+otext** OcilibSodaDbGetCollectionNames
+(
+    OCI_SodaDb * sdb,
+    OCI_UInt32 * count
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ otext**, NULL,
+        /* context */ OCI_IPC_SODA_DB, sdb
+    );
+
+    OCI_SodaCollCursor *cursor = NULL;
+    OCI_SodaColl       *coll   = NULL;
+    otext             **names  = NULL;
+    OCI_UInt32          cap    = 8;
+    OCI_UInt32          found  = 0;
+
+    CHECK_PTR(OCI_IPC_SODA_DB, sdb);
+    CHECK_PTR(OCI_IPC_VOID, count);
+    CHECK_SODA_ENABLED(sdb->con);
+
+    *count = 0;
+
+    names = OcilibMemoryAlloc(sdb->env, OCI_IPC_VOID, sizeof(*names), cap, TRUE);
+
+    CHECK_NULL(names);
+
+    cursor = OcilibSodaDbGetColls(sdb, NULL);
+
+    CHECK_NULL(cursor);
+
+    while (NULL != (coll = OcilibSodaCollCursorGetNext(cursor)))
+    {
+        const otext *name = OcilibSodaCollGetName(coll);
+
+        if (NULL != name)
+        {
+            if (found == cap)
+            {
+                otext **grown = OcilibMemoryAlloc(sdb->env, OCI_IPC_VOID,
+                                                sizeof(*grown), cap * 2, TRUE);
+                CHECK_NULL(grown);
+
+                memcpy(grown, names, cap * sizeof(*names));
+                OcilibMemoryFree(sdb->env, names);
+
+                names = grown;
+                cap  *= 2;
+            }
+
+            names[found] = OcilibStringDuplicate(sdb->env, name);
+            CHECK_NULL(names[found]);
+            found++;
+        }
+
+        OcilibSodaCollFree(coll);
+        coll = NULL;
+    }
+
+    CHECK(OcilibSodaCollCursorFree(cursor));
+    cursor = NULL;
+
+    *count = found;
+
+    SET_RETVAL(names);
+    names = NULL;
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != coll)
+        {
+            OcilibSodaCollFree(coll);
+        }
+        if (NULL != cursor)
+        {
+            OcilibSodaCollCursorFree(cursor);
+        }
+        if (NULL != names)
+        {
+            OCI_UInt32 j;
+            for (j = 0; j < found; j++)
+            {
+                if (NULL != names[j])
+                {
+                    OcilibMemoryFree(sdb->env, names[j]);
+                }
+            }
+            OcilibMemoryFree(sdb->env, names);
+        }
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaDbFreeCollectionNames
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibSodaDbFreeCollectionNames
+(
+    OCI_SodaDb * sdb,
+    otext     ** names,
+    OCI_UInt32   count
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_SODA_DB, sdb
+    );
+
+    OCI_UInt32 i = 0;
+
+    CHECK_PTR(OCI_IPC_SODA_DB, sdb);
+
+    if (NULL != names)
+    {
+        for (i = 0; i < count; i++)
+        {
+            if (NULL != names[i])
+            {
+                OcilibMemoryFree(sdb->env, names[i]);
+            }
+        }
+
+        OcilibMemoryFree(sdb->env, names);
+    }
+
+    SET_SUCCESS();
+
+    EXIT_FUNC();
+}
+

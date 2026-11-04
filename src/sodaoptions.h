@@ -70,6 +70,24 @@ OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsSetSkip
     OCI_UInt32       count
 );
 
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsSetFetchArraySize
+(
+    OCI_SodaOptions *options,
+    OCI_UInt32       count
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsSetHint
+(
+    OCI_SodaOptions *options,
+    const otext     *hint
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsSetLock
+(
+    OCI_SodaOptions *options,
+    OCI_Boolean      lock
+);
+
 OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsSetLimit
 (
     OCI_SodaOptions *options,

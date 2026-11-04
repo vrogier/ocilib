@@ -103,4 +103,26 @@ namespace ocilib
         return SodaDoc(doc, GetHandle());
     }
 
+
+    inline std::vector<ostring> SodaDb::GetCollectionNames()
+    {
+        UInt32 count = 0;
+        otext** names = core::Check(OCI_SodaDbGetCollectionNames(*this, &count));
+
+        std::vector<ostring> result;
+
+        if (names)
+        {
+            for (UInt32 i = 0; i < count; i++)
+            {
+                if (names[i])
+                {
+                    result.push_back(core::MakeString(names[i]));
+                }
+            }
+            OCI_SodaDbFreeCollectionNames(*this, names, count);
+        }
+
+        return result;
+    }
 }

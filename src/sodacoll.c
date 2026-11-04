@@ -1338,3 +1338,558 @@ OCI_Boolean OcilibSodaCollRemoveOneByKey
         OcilibStringReleaseDBString(NULL != coll && NULL != coll->sdb ? coll->sdb->env : NULL, dbkey);
     );
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaCollInsertMany
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibSodaCollInsertMany
+(
+    OCI_SodaColl * coll,
+    OCI_SodaDoc ** docs,
+    OCI_UInt32     count
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_SODA_COLL, coll
+    );
+
+    OCISodaDoc          **handles = NULL;
+    OCISodaOutputOptions *outopts = NULL;
+    OCI_UInt32            i       = 0;
+
+    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
+    CHECK(NULL != docs);
+    CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
+    CHECK_SODA_ENABLED(coll->sdb->con);
+    CHECK(count > 0);
+
+    handles = OcilibMemoryAlloc(coll->sdb->env, OCI_IPC_VOID, sizeof(*handles), count, TRUE);
+
+    CHECK_NULL(handles);
+
+    CHECK
+    (
+        OcilibMemoryAllocHandle
+        (
+            coll->sdb->env,
+            (dvoid *)coll->sdb->env->handle,
+            (dvoid **)&outopts,
+            OCI_HTYPE_SODA_OUTPUT_OPTIONS
+        )
+    );
+
+    for (i = 0; i < count; i++)
+    {
+        CHECK_PTR(OCI_IPC_SODA_DOC, docs[i]);
+        handles[i] = docs[i]->handle;
+    }
+
+    CHECK_OCI
+    (
+        coll->sdb->con->err,
+        OCISodaBulkInsert,
+        coll->sdb->con->handle,
+        coll->handle,
+        handles,
+        (ub4)count,
+        outopts,
+        coll->sdb->con->err,
+        OCI_DEFAULT
+    );
+
+    SET_SUCCESS();
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != outopts)
+        {
+            OcilibMemoryFreeHandle(coll->sdb->env, (dvoid *)outopts, OCI_HTYPE_SODA_OUTPUT_OPTIONS);
+        }
+        if (NULL != handles)
+        {
+            OcilibMemoryFree(coll->sdb->env, handles);
+        }
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaCollInsertManyAndGet
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibSodaCollInsertManyAndGet
+(
+    OCI_SodaColl * coll,
+    OCI_SodaDoc ** docs,
+    OCI_UInt32     count
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_SODA_COLL, coll
+    );
+
+    OCISodaDoc          **handles = NULL;
+    OCISodaOutputOptions *outopts = NULL;
+    OCI_UInt32            i       = 0;
+
+    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
+    CHECK(NULL != docs);
+    CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
+    CHECK_SODA_ENABLED(coll->sdb->con);
+    CHECK(count > 0);
+
+    handles = OcilibMemoryAlloc(coll->sdb->env, OCI_IPC_VOID, sizeof(*handles), count, TRUE);
+
+    CHECK_NULL(handles);
+
+    CHECK
+    (
+        OcilibMemoryAllocHandle
+        (
+            coll->sdb->env,
+            (dvoid *)coll->sdb->env->handle,
+            (dvoid **)&outopts,
+            OCI_HTYPE_SODA_OUTPUT_OPTIONS
+        )
+    );
+
+    for (i = 0; i < count; i++)
+    {
+        CHECK_PTR(OCI_IPC_SODA_DOC, docs[i]);
+        handles[i] = docs[i]->handle;
+    }
+
+    CHECK_OCI
+    (
+        coll->sdb->con->err,
+        OCISodaBulkInsertAndGet,
+        coll->sdb->con->handle,
+        coll->handle,
+        handles,
+        (ub4)count,
+        outopts,
+        coll->sdb->con->err,
+        OCI_DEFAULT
+    );
+
+    for (i = 0; i < count; i++)
+    {
+        CHECK(OcilibSodaDocRefreshMetadata(docs[i], handles[i]));
+    }
+
+    SET_SUCCESS();
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != outopts)
+        {
+            OcilibMemoryFreeHandle(coll->sdb->env, (dvoid *)outopts, OCI_HTYPE_SODA_OUTPUT_OPTIONS);
+        }
+        if (NULL != handles)
+        {
+            OcilibMemoryFree(coll->sdb->env, handles);
+        }
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaCollCreateIndex
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibSodaCollCreateIndex
+(
+    OCI_SodaColl * coll,
+    const otext  * indexSpec
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_SODA_COLL, coll
+    );
+
+    dbtext   *dbspec = NULL;
+    OCI_Int32 dbsize = -1;
+
+    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
+    CHECK_PTR(OCI_IPC_STRING, indexSpec);
+    CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
+    CHECK_SODA_ENABLED(coll->sdb->con);
+
+    dbspec = OcilibStringGetDBString(coll->sdb->env, indexSpec, &dbsize);
+
+    CHECK_OCI
+    (
+        coll->sdb->con->err,
+        OCISodaIndexCreate,
+        coll->sdb->con->handle,
+        coll->handle,
+        (const OraText*)dbspec,
+        (ub4)dbsize,
+        coll->sdb->con->err,
+        OCI_SODA_ATOMIC_COMMIT
+    );
+
+    SET_SUCCESS();
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        OcilibStringReleaseDBString(NULL != coll && NULL != coll->sdb ? coll->sdb->env : NULL, dbspec);
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaCollDropIndex
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibSodaCollDropIndex
+(
+    OCI_SodaColl * coll,
+    const otext  * name
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_SODA_COLL, coll
+    );
+
+    dbtext   *dbkey    = NULL;
+    OCI_Int32 dbkeylen = -1;
+    boolean   dropped  = FALSE;
+
+    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
+    CHECK_PTR(OCI_IPC_STRING, name);
+    CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
+    CHECK_SODA_ENABLED(coll->sdb->con);
+
+    dbkey = OcilibStringGetDBString(coll->sdb->env, name, &dbkeylen);
+
+    CHECK_OCI
+    (
+        coll->sdb->con->err,
+        OCISodaIndexDrop,
+        coll->sdb->con->handle,
+        (OraText*)dbkey,
+        (ub4)dbkeylen,
+        &dropped,
+        coll->sdb->con->err,
+        OCI_SODA_ATOMIC_COMMIT
+    );
+
+    SET_RETVAL((OCI_Boolean)dropped);
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        OcilibStringReleaseDBString(NULL != coll && NULL != coll->sdb ? coll->sdb->env : NULL, dbkey);
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaCollGetDataGuide
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_SodaDoc * OcilibSodaCollGetDataGuide
+(
+    OCI_SodaColl * coll
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_SodaDoc*, NULL,
+        /* context */ OCI_IPC_SODA_COLL, coll
+    );
+
+    OCI_SodaDoc *doc    = NULL;
+    OCISodaDoc  *handle = NULL;
+    sword        oci_ret = 0;
+
+    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
+    CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
+    CHECK_SODA_ENABLED(coll->sdb->con);
+
+    oci_ret = coll->sdb->con->env->api->OCISodaDataGuideGet
+              (
+                  coll->sdb->con->handle,
+                  coll->handle,
+                  0,
+                  &handle,
+                  coll->sdb->con->err,
+                  OCI_DEFAULT
+              );
+
+    if (OCI_NO_DATA == oci_ret)
+    {
+        OcilibErrorResetSource(NULL, coll);
+        SET_RETVAL(NULL);
+    }
+    else if (OCI_FAILURE(oci_ret))
+    {
+        THROW(OcilibExceptionOCI, coll->sdb->con->err, oci_ret);
+    }
+    else
+    {
+        doc = OcilibSodaDocInitialize(coll->sdb, NULL, handle, NULL, 0, NULL, 0);
+
+        SET_RETVAL(doc);
+    }
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaCollSave
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibSodaCollSave
+(
+    OCI_SodaColl * coll,
+    OCI_SodaDoc  * doc
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_SODA_COLL, coll
+    );
+
+    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
+    CHECK_PTR(OCI_IPC_SODA_DOC, doc);
+    CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
+    CHECK_SODA_ENABLED(coll->sdb->con);
+
+    CHECK_OCI
+    (
+        coll->sdb->con->err,
+        OCISodaSave,
+        coll->sdb->con->handle,
+        coll->handle,
+        doc->handle,
+        coll->sdb->con->err,
+        OCI_DEFAULT
+    );
+
+    SET_SUCCESS();
+
+    CLEANUP_AND_EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaCollSaveAndGet
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibSodaCollSaveAndGet
+(
+    OCI_SodaColl * coll,
+    OCI_SodaDoc  * doc
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_SODA_COLL, coll
+    );
+
+    const otext *key   = NULL;
+    OCI_SodaDoc *found = NULL;
+    OCISodaDoc  *fresh = NULL;
+
+    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
+    CHECK_PTR(OCI_IPC_SODA_DOC, doc);
+    CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
+    CHECK_SODA_ENABLED(coll->sdb->con);
+
+    /* OCISodaSaveAndGet() crashes on some client/server combinations; emulate
+       it with a save followed by a lookup to refresh the document metadata */
+
+    CHECK(OcilibSodaCollSave(coll, doc));
+
+    key = OcilibSodaDocGetKey(doc);
+
+    CHECK(NULL != key);
+
+    found = OcilibSodaCollFindOneByKey(coll, key);
+
+    CHECK_NULL(found);
+
+    fresh         = found->handle;
+    found->handle = NULL;    /* the handle is consumed by RefreshMetadata */
+
+    CHECK(OcilibSodaDocRefreshMetadata(doc, fresh));
+
+    CHECK(OcilibSodaDocFree(found));
+
+    found = NULL;
+
+    SET_SUCCESS();
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != found)
+        {
+            OcilibSodaDocFree(found);
+            found = NULL;
+        }
+    );
+}
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaCollListIndexes
+ * --------------------------------------------------------------------------------------------- */
+
+otext** OcilibSodaCollListIndexes
+(
+    OCI_SodaColl * coll,
+    OCI_UInt32   * count
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ otext**, NULL,
+        /* context */ OCI_IPC_SODA_COLL, coll
+    );
+
+    OCIColl   *list  = NULL;
+    otext    **names = NULL;
+    sb4        size  = 0;
+    sb4        i     = 0;
+    OCI_UInt32 found = 0;
+
+    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
+    CHECK_PTR(OCI_IPC_VOID, count);
+    CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
+    CHECK_SODA_ENABLED(coll->sdb->con);
+
+    *count = 0;
+
+    CHECK_OCI
+    (
+        coll->sdb->con->err,
+        OCISodaIndexList,
+        coll->sdb->con->handle,
+        coll->handle,
+        (ub4)0,
+        &list,
+        coll->sdb->con->err,
+        OCI_DEFAULT
+    );
+
+    CHECK_OCI
+    (
+        coll->sdb->con->err,
+        OCICollSize,
+        coll->sdb->env->handle,
+        coll->sdb->con->err,
+        list,
+        &size
+    );
+
+    names = OcilibMemoryAlloc(coll->sdb->env, OCI_IPC_VOID, sizeof(*names),
+                              (OCI_UInt32)(size > 0 ? size : 1), TRUE);
+
+    CHECK_NULL(names);
+
+    for (i = 0; i < size; i++)
+    {
+        dvoid    *elem     = NULL;
+        dvoid    *elemind  = NULL;
+        boolean   exists   = FALSE;
+        OCI_UInt32 bufsize = 0;
+
+        CHECK_OCI
+        (
+            coll->sdb->con->err,
+            OCICollGetElem,
+            coll->sdb->env->handle,
+            coll->sdb->con->err,
+            list,
+            i,
+            &exists,
+            &elem,
+            &elemind
+        );
+
+        if (exists && NULL != elem)
+        {
+            /* elem is the element address — for this collection the elements
+               are OCIString*, so *elem is the OCIString handle itself */
+            names[found] = OcilibStringFromStringPtr(coll->sdb->env,
+                                                   coll->sdb->env->handle,
+                                                   *(OCIString **)elem,
+                                                   &names[found],
+                                                   &bufsize);
+            CHECK_NULL(names[found]);
+            found++;
+        }
+    }
+
+    *count = found;
+
+    SET_RETVAL(names);
+    names = NULL;
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != list)
+        {
+            coll->sdb->env->api->OCIObjectFree(coll->sdb->env->handle,
+                                               coll->sdb->con->err,
+                                               (dvoid *)list, (ub2)0);
+        }
+        if (NULL != names)
+        {
+            OCI_UInt32 j;
+            for (j = 0; j < found; j++)
+            {
+                if (NULL != names[j])
+                {
+                    OcilibMemoryFree(coll->sdb->env, names[j]);
+                }
+            }
+            OcilibMemoryFree(coll->sdb->env, names);
+        }
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibSodaCollFreeIndexNames
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibSodaCollFreeIndexNames
+(
+    OCI_SodaColl * coll,
+    otext       ** names,
+    OCI_UInt32     count
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_SODA_COLL, coll
+    );
+
+    OCI_UInt32 i = 0;
+
+    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
+
+    if (NULL != names)
+    {
+        for (i = 0; i < count; i++)
+        {
+            if (NULL != names[i])
+            {
+                OcilibMemoryFree(coll->sdb->env, names[i]);
+            }
+        }
+
+        OcilibMemoryFree(coll->sdb->env, names);
+    }
+
+    SET_SUCCESS();
+
+    EXIT_FUNC();
+}
+

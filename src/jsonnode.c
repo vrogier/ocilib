@@ -27,6 +27,31 @@
 #include "timestamp.h"
 #include "interval.h"
 
+
+#define OCL_JSON_NODE_NUMBER_SETTER(otype)              \
+    ENTER_FUNC                                          \
+    (                                                   \
+        /* returns */ OCI_Boolean, FALSE,               \
+        /* context */ OCI_IPC_JSON_NODE, node           \
+    );                                                  \
+                                                        \
+    CHECK(OcilibJsonNodeSetValue(node, otype, &value)); \
+    SET_SUCCESS();                                      \
+    CLEANUP_AND_EXIT_FUNC();                            \
+
+
+#define OCL_JSON_NODE_NUMBER_GETTER(otype)              \
+    ENTER_FUNC                                          \
+    (                                                   \
+        /* returns */ OCI_Boolean, FALSE,               \
+        /* context */ OCI_IPC_JSON_NODE, node           \
+    );                                                  \
+                                                        \
+    CHECK_PTR(OCI_IPC_VOID, value);                     \
+    CHECK(OcilibJsonNodeGetValue(node, otype, value));  \
+    SET_SUCCESS();                                      \
+    CLEANUP_AND_EXIT_FUNC();                            \
+
 /* --------------------------------------------------------------------------------------------- *
  * Local helpers: the JSON DOM expects/returns single-byte oratext, while OCILIB public strings
  * are otext (ANSI char or wide wchar_t). These helpers do a 1-to-1 unit conversion suitable for
@@ -76,6 +101,29 @@ static otext * JsonNodeOraToNative
     }
     return dst;
 }
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+/* jzn calls whose NULL/absent result is legitimate (missing field, node without
+   parent) still record an error in the DOM document. Left in place, that stale
+   error makes the next mutating JZN call fail spuriously. */
+
+static void JsonNodeDrainDomError
+(
+    JsonDomDoc *jdoc
+)
+{
+    if (NULL != jdoc && 
+        NULL != jdoc->mthds_jznDomDoc &&
+        NULL != jdoc->mthds_jznDomDoc->jznDomGetError)
+    {
+        sword jerr = 0;
+
+        JsonDomGetError(jdoc, &jerr, TRUE);
+    }
+}
+
+#endif
 
 static OCI_JsonType OcilibJsonNodeGetScalarType
 (
@@ -311,12 +359,12 @@ OCI_JsonType OcilibJsonNodeGetType
 
     SET_RETVAL(node->type);
 
-    CLEANUP_AND_EXIT_FUNC();
 #else
     OCI_NOT_USED(node);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -349,7 +397,7 @@ const otext * OcilibJsonNodeGetString
 
     res = JsonDomGetScalarInfo(node->json->jdoc, (jznDomScalar*)node->handle, &sval);
 
-    CHECK(res == 0);
+    CHECK_JSON(node->json->jdoc, res == 0);
     CHECK(sval.type_jznScalarVal == JZNVAL_STRING);
 
     if (NULL != node->str)
@@ -369,17 +417,15 @@ const otext * OcilibJsonNodeGetString
     }
 
     SET_RETVAL((const otext *) node->str);
+#else
+    OCI_NOT_USED(node);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
         ;
     );
-#else
-    OCI_NOT_USED(node);
-    OCI_NOT_USED(length);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -407,12 +453,12 @@ OCI_Boolean OcilibJsonNodeIsNull
 
     SET_RETVAL((OCI_Boolean)(OCI_JNT_NULL == type));
 
-    CLEANUP_AND_EXIT_FUNC();
 #else
     OCI_NOT_USED(node);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -444,12 +490,12 @@ OCI_UInt32 OcilibJsonNodeGetFieldCount
 
     SET_RETVAL((OCI_UInt32) count);
 
-    CLEANUP_AND_EXIT_FUNC();
 #else
     OCI_NOT_USED(node);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -490,7 +536,7 @@ const otext * OcilibJsonNodeGetFieldName
     count = JsonDomGetFields(node->json->jdoc, (jznDomObject*)node->handle,
                              (ub4)index, 1, &nvp);
 
-    CHECK(count > 0);
+    CHECK_JSON(node->json->jdoc, count > 0);
     CHECK(nvp.name_jznDomNameValuePair.fnm_jznDomObjFieldName != NULL);
 
     if (NULL != node->str)
@@ -506,16 +552,16 @@ const otext * OcilibJsonNodeGetFieldName
 
     SET_RETVAL((const otext *) node->str);
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        ;
-    );
 #else
     OCI_NOT_USED(node);
     OCI_NOT_USED(index);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        ;
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -562,13 +608,19 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByName
     hnd = JsonDomGetFieldByName(node->json->jdoc, (jznDomObject*)node->handle,
                                 orakey, (ub2) ora_len);
 
-    CHECK_NULL(hnd);
+    CHECK_JSON(node->json->jdoc, NULL != hnd);
 
     field = OcilibJsonNodeInitialize(node->json, hnd, OCI_JNT_NULL);
 
     CHECK_NULL(field);
 
     SET_RETVAL(field);
+
+#else
+    OCI_NOT_USED(node);
+    OCI_NOT_USED(name);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -588,12 +640,6 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByName
             field = NULL;
         }
     );
-#else
-    OCI_NOT_USED(node);
-    OCI_NOT_USED(name);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -632,7 +678,7 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByIndex
     count = JsonDomGetFields(node->json->jdoc, (jznDomObject*)node->handle,
                              (ub4)index, 1, &nvp);
 
-    CHECK(count > 0);
+    CHECK_JSON(node->json->jdoc, count > 0);
     CHECK(nvp.node_jznDomNameValuePair != NULL);
 
     field = OcilibJsonNodeInitialize(node->json, nvp.node_jznDomNameValuePair, OCI_JNT_NULL);
@@ -640,6 +686,12 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByIndex
     CHECK_NULL(field);
 
     SET_RETVAL(field);
+
+#else
+    OCI_NOT_USED(node);
+    OCI_NOT_USED(index);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -649,12 +701,6 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByIndex
             field = NULL;
         }
     );
-#else
-    OCI_NOT_USED(node);
-    OCI_NOT_USED(index);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -686,12 +732,12 @@ OCI_UInt32 OcilibJsonNodeGetItemCount
 
     SET_RETVAL((OCI_UInt32) count);
 
-    CLEANUP_AND_EXIT_FUNC();
 #else
     OCI_NOT_USED(node);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -727,13 +773,19 @@ OCI_JsonNode * OcilibJsonNodeGetItem
                                  (jznDomArray*)node->handle,
                                  (ub4)index);
 
-    CHECK_NULL(hnd);
+    CHECK_JSON(node->json->jdoc, NULL != hnd);
 
     item = OcilibJsonNodeInitialize(node->json, hnd, OCI_JNT_NULL);
 
     CHECK_NULL(item);
 
     SET_RETVAL(item);
+
+#else
+    OCI_NOT_USED(node);
+    OCI_NOT_USED(index);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -743,12 +795,6 @@ OCI_JsonNode * OcilibJsonNodeGetItem
             item = NULL;
         }
     );
-#else
-    OCI_NOT_USED(node);
-    OCI_NOT_USED(index);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -789,7 +835,7 @@ OCI_Number * OcilibJsonNodeGetNumber
     res = JsonDomGetScalarInfoOci(node->json->jdoc, (jznDomScalar*)node->handle,
                                   &sval, &aux);
 
-    CHECK(res == 0);
+    CHECK_JSON(node->json->jdoc, res == 0);
     CHECK((sval.type_jznScalarVal == JZNVAL_ORA_NUMBER) ||
           (sval.type_jznScalarVal == JZNVAL_OCI_NUMBER) ||
           (sval.type_jznScalarVal == JZNVAL_NUMBER) ||
@@ -851,6 +897,11 @@ OCI_Number * OcilibJsonNodeGetNumber
 
     SET_RETVAL(value);
 
+#else
+    OCI_NOT_USED(node);
+    CHECK(FALSE);
+#endif
+
     CLEANUP_AND_EXIT_FUNC
     (
         FREE(otstr);
@@ -863,11 +914,6 @@ OCI_Number * OcilibJsonNodeGetNumber
             value = NULL;
         }
     );
-#else
-    OCI_NOT_USED(node);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -900,7 +946,7 @@ OCI_Boolean OcilibJsonNodeGetBoolean
 
     res = JsonDomGetScalarInfo(node->json->jdoc, (jznDomScalar*)node->handle, &sval);
 
-    CHECK(res == 0);
+    CHECK_JSON(node->json->jdoc, res == 0);
     CHECK((sval.type_jznScalarVal == JZNVAL_TRUE) ||
           (sval.type_jznScalarVal == JZNVAL_FALSE) ||
           (sval.type_jznScalarVal == JZNVAL_ORA_BOOLEAN));
@@ -920,12 +966,12 @@ OCI_Boolean OcilibJsonNodeGetBoolean
 
     SET_RETVAL(value);
 
-    CLEANUP_AND_EXIT_FUNC();
 #else
     OCI_NOT_USED(node);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -959,7 +1005,7 @@ const void * OcilibJsonNodeGetBinary
 
     res = JsonDomGetScalarInfo(node->json->jdoc, (jznDomScalar*)node->handle, &sval);
 
-    CHECK(res == 0);
+    CHECK_JSON(node->json->jdoc, res == 0);
     CHECK(sval.type_jznScalarVal == JZNVAL_BINARY);
 
     value = (const void *) sval.binval_jznScalarVal;
@@ -971,13 +1017,13 @@ const void * OcilibJsonNodeGetBinary
 
     SET_RETVAL(value);
 
-    CLEANUP_AND_EXIT_FUNC();
 #else
     OCI_NOT_USED(node);
     OCI_NOT_USED(length);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1015,7 +1061,7 @@ OCI_Date * OcilibJsonNodeGetDate
     res = JsonDomGetScalarInfoOci(node->json->jdoc, (jznDomScalar*)node->handle,
                                   &sval, &aux);
 
-    CHECK(res == 0);
+    CHECK_JSON(node->json->jdoc, res == 0);
     CHECK((sval.type_jznScalarVal == JZNVAL_ORA_DATE) ||
           (sval.type_jznScalarVal == JZNVAL_OCI_DATE));
 
@@ -1032,6 +1078,11 @@ OCI_Date * OcilibJsonNodeGetDate
 
     SET_RETVAL(value);
 
+#else
+    OCI_NOT_USED(node);
+    CHECK(FALSE);
+#endif
+
     CLEANUP_AND_EXIT_FUNC
     (
         if (FAILURE && NULL != value)
@@ -1040,11 +1091,6 @@ OCI_Date * OcilibJsonNodeGetDate
             value = NULL;
         }
     );
-#else
-    OCI_NOT_USED(node);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1083,7 +1129,7 @@ OCI_Timestamp * OcilibJsonNodeGetTimestamp
     res = JsonDomGetScalarInfoOci(node->json->jdoc, (jznDomScalar*)node->handle,
                                   &sval, &aux);
 
-    CHECK(res == 0);
+    CHECK_JSON(node->json->jdoc, res == 0);
     CHECK((sval.type_jznScalarVal == JZNVAL_ORA_TIMESTAMP) ||
           (sval.type_jznScalarVal == JZNVAL_ORA_TIMESTAMPTZ) ||
           (sval.type_jznScalarVal == JZNVAL_OCI_DATETIME));
@@ -1147,6 +1193,11 @@ OCI_Timestamp * OcilibJsonNodeGetTimestamp
 
     SET_RETVAL(value);
 
+#else
+    OCI_NOT_USED(node);
+    CHECK(FALSE);
+#endif
+
     CLEANUP_AND_EXIT_FUNC
     (
         if (FAILURE && NULL != value)
@@ -1155,11 +1206,6 @@ OCI_Timestamp * OcilibJsonNodeGetTimestamp
             value = NULL;
         }
     );
-#else
-    OCI_NOT_USED(node);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1198,7 +1244,7 @@ OCI_Interval * OcilibJsonNodeGetInterval
     res = JsonDomGetScalarInfoOci(node->json->jdoc, (jznDomScalar*)node->handle,
                                   &sval, &aux);
 
-    CHECK(res == 0);
+    CHECK_JSON(node->json->jdoc, res == 0);
     CHECK((sval.type_jznScalarVal == JZNVAL_ORA_YEARMONTH_DUR) ||
           (sval.type_jznScalarVal == JZNVAL_ORA_DAYSECOND_DUR) ||
           (sval.type_jznScalarVal == JZNVAL_OCI_INTERVAL));
@@ -1246,6 +1292,11 @@ OCI_Interval * OcilibJsonNodeGetInterval
 
     SET_RETVAL(value);
 
+#else
+    OCI_NOT_USED(node);
+    CHECK(FALSE);
+#endif
+
     CLEANUP_AND_EXIT_FUNC
     (
         if (FAILURE && NULL != value)
@@ -1254,11 +1305,6 @@ OCI_Interval * OcilibJsonNodeGetInterval
             value = NULL;
         }
     );
-#else
-    OCI_NOT_USED(node);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1288,13 +1334,18 @@ OCI_JsonNode * OcilibJsonNodeCreateObject
 
     hnd = (jznDomNode *) JsonDomNewObject(json->jdoc, 0);
 
-    CHECK_NULL(hnd);
+    CHECK_JSON(json->jdoc, NULL != hnd);
 
     node = OcilibJsonNodeInitialize(json, hnd, OCI_JNT_OBJECT);
 
     CHECK_NULL(node);
 
     SET_RETVAL(node);
+
+#else
+    OCI_NOT_USED(json);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1304,11 +1355,6 @@ OCI_JsonNode * OcilibJsonNodeCreateObject
             node = NULL;
         }
     );
-#else
-    OCI_NOT_USED(json);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1338,13 +1384,18 @@ OCI_JsonNode * OcilibJsonNodeCreateArray
 
     hnd = (jznDomNode *) JsonDomNewArray(json->jdoc, 0);
 
-    CHECK_NULL(hnd);
+    CHECK_JSON(json->jdoc, NULL != hnd);
 
     node = OcilibJsonNodeInitialize(json, hnd, OCI_JNT_ARRAY);
 
     CHECK_NULL(node);
 
     SET_RETVAL(node);
+
+#else
+    OCI_NOT_USED(json);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1354,11 +1405,6 @@ OCI_JsonNode * OcilibJsonNodeCreateArray
             node = NULL;
         }
     );
-#else
-    OCI_NOT_USED(json);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1392,13 +1438,18 @@ OCI_JsonNode * OcilibJsonNodeCreateNull
 
     hnd = (jznDomNode *) JsonDomNewScalar(json->jdoc, &sval);
 
-    CHECK_NULL(hnd);
+    CHECK_JSON(json->jdoc, NULL != hnd);
 
     node = OcilibJsonNodeInitialize(json, hnd, OCI_JNT_NULL);
 
     CHECK_NULL(node);
 
     SET_RETVAL(node);
+
+#else
+    OCI_NOT_USED(json);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1408,11 +1459,6 @@ OCI_JsonNode * OcilibJsonNodeCreateNull
             node = NULL;
         }
     );
-#else
-    OCI_NOT_USED(json);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1463,13 +1509,20 @@ OCI_JsonNode * OcilibJsonNodeCreateString
 
     hnd = (jznDomNode *) JsonDomNewScalar(json->jdoc, &sval);
 
-    CHECK_NULL(hnd);
+    CHECK_JSON(json->jdoc, NULL != hnd);
 
     node = OcilibJsonNodeInitialize(json, hnd, OCI_JNT_STRING);
 
     CHECK_NULL(node);
 
     SET_RETVAL(node);
+
+#else
+    OCI_NOT_USED(json);
+    OCI_NOT_USED(value);
+    OCI_NOT_USED(length);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1489,13 +1542,6 @@ OCI_JsonNode * OcilibJsonNodeCreateString
             node = NULL;
         }
     );
-#else
-    OCI_NOT_USED(json);
-    OCI_NOT_USED(value);
-    OCI_NOT_USED(length);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1540,13 +1586,19 @@ OCI_JsonNode * OcilibJsonNodeCreateNumber
 
     hnd = (jznDomNode *) JsonDomNewScalar(json->jdoc, &sval);
 
-    CHECK_NULL(hnd);
+    CHECK_JSON(json->jdoc, NULL != hnd);
 
     node = OcilibJsonNodeInitialize(json, hnd, OCI_JNT_NUMBER);
 
     CHECK_NULL(node);
 
     SET_RETVAL(node);
+
+#else
+    OCI_NOT_USED(json);
+    OCI_NOT_USED(value);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1558,12 +1610,6 @@ OCI_JsonNode * OcilibJsonNodeCreateNumber
             node = NULL;
         }
     );
-#else
-    OCI_NOT_USED(json);
-    OCI_NOT_USED(value);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1598,13 +1644,19 @@ OCI_JsonNode * OcilibJsonNodeCreateBoolean
 
     hnd = (jznDomNode *) JsonDomNewScalar(json->jdoc, &sval);
 
-    CHECK_NULL(hnd);
+    CHECK_JSON(json->jdoc, NULL != hnd);
 
     node = OcilibJsonNodeInitialize(json, hnd, OCI_JNT_BOOLEAN);
 
     CHECK_NULL(node);
 
     SET_RETVAL(node);
+
+#else
+    OCI_NOT_USED(json);
+    OCI_NOT_USED(value);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1614,12 +1666,6 @@ OCI_JsonNode * OcilibJsonNodeCreateBoolean
             node = NULL;
         }
     );
-#else
-    OCI_NOT_USED(json);
-    OCI_NOT_USED(value);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1658,13 +1704,20 @@ OCI_JsonNode * OcilibJsonNodeCreateBinary
 
     hnd = (jznDomNode *) JsonDomNewScalar(json->jdoc, &sval);
 
-    CHECK_NULL(hnd);
+    CHECK_JSON(json->jdoc, NULL != hnd);
 
     node = OcilibJsonNodeInitialize(json, hnd, OCI_JNT_BINARY);
 
     CHECK_NULL(node);
 
     SET_RETVAL(node);
+
+#else
+    OCI_NOT_USED(json);
+    OCI_NOT_USED(value);
+    OCI_NOT_USED(length);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1674,13 +1727,6 @@ OCI_JsonNode * OcilibJsonNodeCreateBinary
             node = NULL;
         }
     );
-#else
-    OCI_NOT_USED(json);
-    OCI_NOT_USED(value);
-    OCI_NOT_USED(length);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1731,11 +1777,18 @@ OCI_Boolean OcilibJsonNodeSetString
     sval.len_jznScalarVal  = (ub4) ora_len;
 
     hnd = (jznDomNode *) JsonDomNewScalar(node->json->jdoc, &sval);
-    CHECK_NULL(hnd);
+    CHECK_JSON(node->json->jdoc, NULL != hnd);
 
     node->handle = hnd;
 
     SET_SUCCESS();
+
+#else
+    OCI_NOT_USED(node);
+    OCI_NOT_USED(value);
+    OCI_NOT_USED(length);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1749,13 +1802,6 @@ OCI_Boolean OcilibJsonNodeSetString
             OcilibMemoryFree(node->json->env, orastr);
         }
     );
-#else
-    OCI_NOT_USED(node);
-    OCI_NOT_USED(value);
-    OCI_NOT_USED(length);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1800,11 +1846,17 @@ OCI_Boolean OcilibJsonNodeSetNumber
     sval.oranumlen_jznScalarVal = (ub4) OCI_NUMBER_SIZE;
 
     hnd = (jznDomNode *) JsonDomNewScalar(node->json->jdoc, &sval);
-    CHECK_NULL(hnd);
+    CHECK_JSON(node->json->jdoc, NULL != hnd);
 
     node->handle = hnd;
 
     SET_SUCCESS();
+
+#else
+    OCI_NOT_USED(node);
+    OCI_NOT_USED(value);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1814,12 +1866,6 @@ OCI_Boolean OcilibJsonNodeSetNumber
             numbuf = NULL;
         }
     );
-#else
-    OCI_NOT_USED(node);
-    OCI_NOT_USED(value);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1854,19 +1900,19 @@ OCI_Boolean OcilibJsonNodeSetBoolean
     sval.type_jznScalarVal = (0 != value) ? JZNVAL_TRUE : JZNVAL_FALSE;
 
     hnd = (jznDomNode *) JsonDomNewScalar(node->json->jdoc, &sval);
-    CHECK_NULL(hnd);
+    CHECK_JSON(node->json->jdoc, NULL != hnd);
 
     node->handle = hnd;
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC();
 #else
     OCI_NOT_USED(node);
     OCI_NOT_USED(value);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1905,20 +1951,20 @@ OCI_Boolean OcilibJsonNodeSetBinary
     sval.binlen_jznScalarVal = (ub4) length;
 
     hnd = (jznDomNode *) JsonDomNewScalar(node->json->jdoc, &sval);
-    CHECK_NULL(hnd);
+    CHECK_JSON(node->json->jdoc, NULL != hnd);
 
     node->handle = hnd;
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC();
 #else
     OCI_NOT_USED(node);
     OCI_NOT_USED(value);
     OCI_NOT_USED(length);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1951,19 +1997,19 @@ OCI_Boolean OcilibJsonNodeSetNull
     sval.type_jznScalarVal = JZNVAL_NULL;
 
     hnd = (jznDomNode *) JsonDomNewScalar(node->json->jdoc, &sval);
-    CHECK_NULL(hnd);
+    CHECK_JSON(node->json->jdoc, NULL != hnd);
 
     node->handle = hnd;
     node->type   = OCI_JNT_NULL;
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC();
 #else
     OCI_NOT_USED(node);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2008,10 +2054,18 @@ OCI_Boolean OcilibJsonNodeSetField
                                  (OCI_Size) dbsize / sizeof(dbtext), &ora_len);
     CHECK_NULL(orakey);
 
-    CHECK(JsonDomPutFieldValue(obj->json->jdoc, (jznDomObject *)obj->handle,
-                               orakey, (ub2) ora_len, value->handle) == 0);
+    CHECK_JSON(obj->json->jdoc,
+               JsonDomPutFieldValue(obj->json->jdoc, (jznDomObject *)obj->handle,
+                                    orakey, (ub2) ora_len, value->handle) == 0);
 
     SET_SUCCESS();
+
+#else
+    OCI_NOT_USED(obj);
+    OCI_NOT_USED(name);
+    OCI_NOT_USED(value);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -2025,13 +2079,6 @@ OCI_Boolean OcilibJsonNodeSetField
             OcilibMemoryFree(obj->json->env, orakey);
         }
     );
-#else
-    OCI_NOT_USED(obj);
-    OCI_NOT_USED(name);
-    OCI_NOT_USED(value);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2064,19 +2111,20 @@ OCI_Boolean OcilibJsonNodeSetItem
 
     if (index >= JsonDomGetArraySize(arr->json->jdoc, (jznDomArray *)arr->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index); }
 
-    CHECK(JsonDomPutItem(arr->json->jdoc, (jznDomArray *)arr->handle,
-                         (ub4)(index + 1), value->handle) != 0);
+    CHECK_JSON(arr->json->jdoc,
+               JsonDomPutItem(arr->json->jdoc, (jznDomArray *)arr->handle,
+                              (ub4)(index + 1), value->handle) != 0);
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC();
 #else
     OCI_NOT_USED(arr);
     OCI_NOT_USED(index);
     OCI_NOT_USED(value);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2106,17 +2154,18 @@ OCI_Boolean OcilibJsonNodeAppendItem
     if (arr->type != OCI_JNT_ARRAY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
     CHECK_COMPAT(value->json == arr->json);
 
-    CHECK(JsonDomAppendItem(arr->json->jdoc, (jznDomArray *)arr->handle, value->handle) != 0);
+    CHECK_JSON(arr->json->jdoc,
+               JsonDomAppendItem(arr->json->jdoc, (jznDomArray *)arr->handle, value->handle) != 0);
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC();
 #else
     OCI_NOT_USED(arr);
     OCI_NOT_USED(value);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2148,13 +2197,19 @@ OCI_JsonNode * OcilibJsonNodeCreateDate
 
     hnd = (jznDomNode *) JsonDomNewScalarVal(json->jdoc, JZNVAL_OCI_DATE, value->handle);
 
-    CHECK_NULL(hnd);
+    CHECK_JSON(json->jdoc, NULL != hnd);
 
     node = OcilibJsonNodeInitialize(json, hnd, OCI_JNT_DATE);
 
     CHECK_NULL(node);
 
     SET_RETVAL(node);
+
+#else
+    OCI_NOT_USED(json);
+    OCI_NOT_USED(value);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -2164,12 +2219,6 @@ OCI_JsonNode * OcilibJsonNodeCreateDate
             node = NULL;
         }
     );
-#else
-    OCI_NOT_USED(json);
-    OCI_NOT_USED(value);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2201,13 +2250,19 @@ OCI_JsonNode * OcilibJsonNodeCreateTimestamp
 
     hnd = (jznDomNode *) JsonDomNewScalarVal(json->jdoc, JZNVAL_OCI_DATETIME, value->handle);
 
-    CHECK_NULL(hnd);
+    CHECK_JSON(json->jdoc, NULL != hnd);
 
     node = OcilibJsonNodeInitialize(json, hnd, OCI_JNT_TIMESTAMP);
 
     CHECK_NULL(node);
 
     SET_RETVAL(node);
+
+#else
+    OCI_NOT_USED(json);
+    OCI_NOT_USED(value);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -2217,12 +2272,6 @@ OCI_JsonNode * OcilibJsonNodeCreateTimestamp
             node = NULL;
         }
     );
-#else
-    OCI_NOT_USED(json);
-    OCI_NOT_USED(value);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2254,13 +2303,19 @@ OCI_JsonNode * OcilibJsonNodeCreateInterval
 
     hnd = (jznDomNode *) JsonDomNewScalarVal(json->jdoc, JZNVAL_OCI_INTERVAL, value->handle);
 
-    CHECK_NULL(hnd);
+    CHECK_JSON(json->jdoc, NULL != hnd);
 
     node = OcilibJsonNodeInitialize(json, hnd, OCI_JNT_INTERVAL);
 
     CHECK_NULL(node);
 
     SET_RETVAL(node);
+
+#else
+    OCI_NOT_USED(json);
+    OCI_NOT_USED(value);
+    CHECK(FALSE);
+#endif
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -2270,12 +2325,6 @@ OCI_JsonNode * OcilibJsonNodeCreateInterval
             node = NULL;
         }
     );
-#else
-    OCI_NOT_USED(json);
-    OCI_NOT_USED(value);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2341,18 +2390,18 @@ OCI_Boolean OcilibJsonNodeSetDate
     CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_DATE) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
-    if (OcilibJsonNodeSetTemporal(node, JZNVAL_OCI_DATE, value->handle))
-    {
-        SET_SUCCESS();
-    }
+    CHECK_JSON(node->json->jdoc,
+               OcilibJsonNodeSetTemporal(node, JZNVAL_OCI_DATE, value->handle));
 
-    CLEANUP_AND_EXIT_FUNC();
+    SET_SUCCESS();
+
 #else
     OCI_NOT_USED(node);
     OCI_NOT_USED(value);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2381,18 +2430,18 @@ OCI_Boolean OcilibJsonNodeSetTimestamp
     CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_TIMESTAMP) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
-    if (OcilibJsonNodeSetTemporal(node, JZNVAL_OCI_DATETIME, value->handle))
-    {
-        SET_SUCCESS();
-    }
+    CHECK_JSON(node->json->jdoc,
+               OcilibJsonNodeSetTemporal(node, JZNVAL_OCI_DATETIME, value->handle));
 
-    CLEANUP_AND_EXIT_FUNC();
+    SET_SUCCESS();
+
 #else
     OCI_NOT_USED(node);
     OCI_NOT_USED(value);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2421,18 +2470,845 @@ OCI_Boolean OcilibJsonNodeSetInterval
     CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_INTERVAL) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
-    if (OcilibJsonNodeSetTemporal(node, JZNVAL_OCI_INTERVAL, value->handle))
-    {
-        SET_SUCCESS();
-    }
+    CHECK_JSON(node->json->jdoc,
+               OcilibJsonNodeSetTemporal(node, JZNVAL_OCI_INTERVAL, value->handle));
 
-    CLEANUP_AND_EXIT_FUNC();
+    SET_SUCCESS();
+
 #else
     OCI_NOT_USED(node);
     OCI_NOT_USED(value);
     CHECK(FALSE);
-    EXIT_FUNC();
 #endif
+
+    CLEANUP_AND_EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeInsertItem
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeInsertItem
+(
+    OCI_JsonNode *arr,
+    OCI_UInt32    index,
+    OCI_JsonNode *value
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_JSON_NODE, arr
+    );
+
+    jznDomNode *hnd = NULL;
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    CHECK_PTR(OCI_IPC_JSON_NODE, arr);
+    CHECK_PTR(OCI_IPC_JSON_NODE, value);
+    CHECK_PTR(OCI_IPC_JSON, arr->json);
+    CHECK_PTR(OCI_IPC_CONNECTION, arr->json->con);
+    CHECK_FEATURE(arr->json->con, OCI_FEATURE_JSON, OCI_21_1);
+    CHECK_JSON_DOC(arr->json);
+    if (arr->type != OCI_JNT_ARRAY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
+    CHECK_COMPAT(value->json == arr->json);
+
+    if (index > JsonDomGetArraySize(arr->json->jdoc, (jznDomArray *)arr->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index); }
+
+    hnd = value->handle;
+
+    CHECK_JSON(arr->json->jdoc,
+               JsonDomInsertElements(arr->json->jdoc, (jznDomArray *)arr->handle,
+                                     (ub4) index, hnd) != 0);
+
+    SET_SUCCESS();
+#else
+    OCI_NOT_USED(arr);
+    OCI_NOT_USED(index);
+    OCI_NOT_USED(value);
+    CHECK(FALSE);
+#endif
+
+    CLEANUP_AND_EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeRemoveItem
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeRemoveItem
+(
+    OCI_JsonNode *arr,
+    OCI_UInt32    index
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_JSON_NODE, arr
+    );
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    CHECK_PTR(OCI_IPC_JSON_NODE, arr);
+    CHECK_PTR(OCI_IPC_JSON, arr->json);
+    CHECK_PTR(OCI_IPC_CONNECTION, arr->json->con);
+    CHECK_FEATURE(arr->json->con, OCI_FEATURE_JSON, OCI_21_1);
+    CHECK_JSON_DOC(arr->json);
+    if (arr->type != OCI_JNT_ARRAY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
+
+    if (index >= JsonDomGetArraySize(arr->json->jdoc, (jznDomArray *)arr->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index); }
+
+    CHECK_JSON(arr->json->jdoc,
+               JsonDomDeleteItem(arr->json->jdoc, (jznDomArray *)arr->handle, (ub4) index) != 0);
+
+    SET_SUCCESS();
+#else
+    OCI_NOT_USED(arr);
+    OCI_NOT_USED(index);
+    CHECK(FALSE);
+#endif
+
+    CLEANUP_AND_EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeHasField
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeHasField
+(
+    OCI_JsonNode *node,
+    const otext  *name
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_JSON_NODE, node
+    );
+
+    dbtext   *dbstr   = NULL;
+    oratext  *orakey  = NULL;
+    OCI_Size  ora_len = 0;
+    OCI_Int32 dbsize  = -1;
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    CHECK_PTR(OCI_IPC_JSON_NODE, node);
+    CHECK_PTR(OCI_IPC_STRING, name);
+    CHECK_PTR(OCI_IPC_JSON, node->json);
+    CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
+    CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
+    CHECK_JSON_DOC(node->json);
+    if (node->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
+
+    dbstr = OcilibStringGetDBString(node->json->env, name, &dbsize);
+
+    CHECK_NULL(dbstr);
+
+    orakey = JsonNodeNativeToOra(node->json->env, dbstr,
+                                 (OCI_Size) dbsize / sizeof(dbtext), &ora_len);
+    CHECK_NULL(orakey);
+
+    if (NULL != JsonDomGetFieldPos(node->json->jdoc, (jznDomObject *)node->handle,
+                                   orakey, (ub2) ora_len))
+    {
+        SET_SUCCESS();
+    }
+    else
+    {
+        JsonNodeDrainDomError(node->json->jdoc);
+    }
+#else
+    OCI_NOT_USED(node);
+    OCI_NOT_USED(name);
+    CHECK(FALSE);
+#endif
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != dbstr)
+        {
+            OcilibStringReleaseDBString(node->json->env, dbstr);
+        }
+
+        if (NULL != orakey)
+        {
+            OcilibMemoryFree(node->json->env, orakey);
+        }
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeRemoveField
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeRemoveField
+(
+    OCI_JsonNode *node,
+    const otext  *name
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_JSON_NODE, node
+    );
+
+    dbtext   *dbstr   = NULL;
+    oratext  *orakey  = NULL;
+    OCI_Size  ora_len = 0;
+    OCI_Int32 dbsize  = -1;
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    CHECK_PTR(OCI_IPC_JSON_NODE, node);
+    CHECK_PTR(OCI_IPC_STRING, name);
+    CHECK_PTR(OCI_IPC_JSON, node->json);
+    CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
+    CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
+    CHECK_JSON_DOC(node->json);
+    if (node->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
+
+    dbstr = OcilibStringGetDBString(node->json->env, name, &dbsize);
+
+    CHECK_NULL(dbstr);
+
+    orakey = JsonNodeNativeToOra(node->json->env, dbstr,
+                                 (OCI_Size) dbsize / sizeof(dbtext), &ora_len);
+    CHECK_NULL(orakey);
+
+    CHECK_JSON(node->json->jdoc,
+               JsonDomDeleteFieldByName(node->json->jdoc, (jznDomObject *)node->handle,
+                                        orakey, (ub2) ora_len) != 0);
+
+    SET_SUCCESS();
+#else
+    OCI_NOT_USED(node);
+    OCI_NOT_USED(name);
+    CHECK(FALSE);
+#endif
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != dbstr)
+        {
+            OcilibStringReleaseDBString(node->json->env, dbstr);
+        }
+
+        if (NULL != orakey)
+        {
+            OcilibMemoryFree(node->json->env, orakey);
+        }
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeClear
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeClear
+(
+    OCI_JsonNode *node
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_JSON_NODE, node
+    );
+
+    jznDomNameValuePair *nvps  = NULL;
+    ub4                  count = 0;
+    ub4                  i     = 0;
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    CHECK_PTR(OCI_IPC_JSON_NODE, node);
+    CHECK_PTR(OCI_IPC_JSON, node->json);
+    CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
+    CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
+    CHECK_JSON_DOC(node->json);
+
+    if (node->type == OCI_JNT_ARRAY)
+    {
+        count = JsonDomGetArraySize(node->json->jdoc, (jznDomArray *)node->handle);
+
+        CHECK_JSON(node->json->jdoc,
+                   JsonDomDeleteItems(node->json->jdoc, (jznDomArray *)node->handle,
+                                      0, count) == count);
+    }
+    else if (node->type == OCI_JNT_OBJECT)
+    {
+        count = JsonDomGetNumFields(node->json->jdoc, (jznDomObject *)node->handle);
+
+        if (count > 0)
+        {
+            nvps = OcilibMemoryAlloc(node->json->env, OCI_IPC_VOID, sizeof(*nvps), count, TRUE);
+
+            CHECK_NULL(nvps);
+
+            CHECK_JSON(node->json->jdoc,
+                       count == JsonDomGetFields(node->json->jdoc, (jznDomObject *)node->handle,
+                                                 0, count, nvps));
+
+            for (i = 0; i < count; i++)
+            {
+                CHECK_JSON(node->json->jdoc,
+                           JsonDomDeleteField(node->json->jdoc, (jznDomObject *)node->handle,
+                                              &nvps[i].name_jznDomNameValuePair) != 0);
+            }
+        }
+    }
+    else
+    {
+        THROW_NO_ARGS(OcilibExceptionTypeNotCompatible);
+    }
+
+    SET_SUCCESS();
+#else
+    OCI_NOT_USED(node);
+    CHECK(FALSE);
+#endif
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != nvps)
+        {
+            OcilibMemoryFree(node->json->env, nvps);
+        }
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeGetParent
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_JsonNode * OcilibJsonNodeGetParent
+(
+    OCI_JsonNode *node
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_JsonNode *, NULL,
+        /* context */ OCI_IPC_JSON_NODE, node
+    );
+
+    OCI_JsonNode *parent = NULL;
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    jznDomNode *hnd = NULL;
+
+    CHECK_PTR(OCI_IPC_JSON_NODE, node);
+    CHECK_PTR(OCI_IPC_JSON, node->json);
+    CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
+    CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
+    CHECK_JSON_DOC(node->json);
+
+    hnd = JsonDomGetParent(node->json->jdoc, (jznDomNode *)node->handle);
+
+    if (NULL != hnd)
+    {
+        parent = OcilibJsonNodeInitialize(node->json, hnd, OCI_JNT_NULL);
+
+        CHECK_NULL(parent);
+    }
+    else
+    {
+        JsonNodeDrainDomError(node->json->jdoc);
+    }
+
+    SET_RETVAL(parent);
+#else
+    OCI_NOT_USED(node);
+    CHECK(FALSE);
+#endif
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (FAILURE && NULL != parent)
+        {
+            OcilibJsonNodeFree(parent);
+            parent = NULL;
+        }
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeGetValue
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeGetValue
+(
+    OCI_JsonNode   *node,
+    OCI_NumericType type,
+    void           *value
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_JSON_NODE, node
+    );
+
+    OCI_Number *num = NULL;
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    CHECK_PTR(OCI_IPC_JSON_NODE, node);
+    CHECK_PTR(OCI_IPC_VOID, value);
+
+    num = OcilibJsonNodeGetNumber(node);
+
+    CHECK_NULL(num);
+
+    CHECK(OcilibNumberGetValue(num, type, value));
+
+    SET_SUCCESS();
+#else
+    OCI_NOT_USED(node);
+    OCI_NOT_USED(type);
+    OCI_NOT_USED(value);
+    CHECK(FALSE);
+#endif
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != num)
+        {
+            OcilibNumberFree(num);
+        }
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeSetValue
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeSetValue
+(
+    OCI_JsonNode   *node,
+    OCI_NumericType type,
+    void           *value
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_JSON_NODE, node
+    );
+
+    OCI_Number *num = NULL;
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    CHECK_PTR(OCI_IPC_JSON_NODE, node);
+    CHECK_PTR(OCI_IPC_VOID, value);
+    CHECK_PTR(OCI_IPC_JSON, node->json);
+    CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
+    CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
+    CHECK_JSON_DOC(node->json);
+
+    num = OcilibNumberCreate(node->json->env);
+
+    CHECK_NULL(num);
+
+    CHECK(OcilibNumberSetValue(num, type, value));
+
+    CHECK(OcilibJsonNodeSetNumber(node, num));
+
+    SET_SUCCESS();
+#else
+    OCI_NOT_USED(node);
+    OCI_NOT_USED(type);
+    OCI_NOT_USED(value);
+    CHECK(FALSE);
+#endif
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != num)
+        {
+            OcilibNumberFree(num);
+        }
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeGetByPath
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_JsonNode * OcilibJsonNodeGetByPath
+(
+    OCI_JsonNode *node,
+    const otext  *path
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_JsonNode *, NULL,
+        /* context */ OCI_IPC_JSON_NODE, node
+    );
+
+    OCI_JsonNode *cur   = NULL;
+    OCI_JsonNode *next  = NULL;
+    otext        *seg   = NULL;
+    OCI_Boolean   found = FALSE;
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    const otext *p = path;
+
+    CHECK_PTR(OCI_IPC_JSON_NODE, node);
+    CHECK_PTR(OCI_IPC_STRING, path);
+    CHECK_PTR(OCI_IPC_JSON, node->json);
+    CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
+    CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
+    CHECK_JSON_DOC(node->json);
+
+    if (OTEXT('$') == *p)
+    {
+        p++;
+    }
+
+    cur = node;
+
+    while (0 != *p)
+    {
+        OCI_Size seglen = 0;
+
+        if (OTEXT('.') == *p)
+        {
+            p++;
+        }
+
+        if (OTEXT('[') == *p)
+        {
+            OCI_UInt32 idx = 0;
+
+            p++;
+
+            while (*p >= OTEXT('0') && *p <= OTEXT('9'))
+            {
+                idx = idx * 10 + (OCI_UInt32)(*p - OTEXT('0'));
+                p++;
+            }
+
+            if (OTEXT(']') != *p) { THROW(OcilibExceptionParsingToken, *p); }
+            p++;
+
+            if (cur->type != OCI_JNT_ARRAY ||
+                idx >= OcilibJsonNodeGetItemCount(cur))
+            {
+                goto not_found;
+            }
+
+            next = OcilibJsonNodeGetItem(cur, idx);
+
+            CHECK_NULL(next);
+        }
+        else
+        {
+            const otext *start = p;
+
+            while (0 != *p && OTEXT('.') != *p && OTEXT('[') != *p)
+            {
+                p++;
+            }
+
+            seglen = (OCI_Size)(p - start);
+
+            if (0 == seglen) { THROW(OcilibExceptionParsingToken, *p); }
+
+            seg = OcilibMemoryAlloc(node->json->env, OCI_IPC_VOID, sizeof(otext), seglen + 1, TRUE);
+
+            CHECK_NULL(seg);
+
+            memcpy(seg, start, sizeof(otext) * seglen);
+            seg[seglen] = 0;
+
+            if (cur->type != OCI_JNT_OBJECT ||
+                FALSE == OcilibJsonNodeHasField(cur, seg))
+            {
+                goto not_found;
+            }
+
+            next = OcilibJsonNodeGetFieldByName(cur, seg);
+
+            CHECK_NULL(next);
+
+            FREE(seg);
+        }
+
+        if (cur != node)
+        {
+            OcilibJsonNodeFree(cur);
+        }
+
+        cur  = next;
+        next = NULL;
+    }
+
+    if (cur != node)
+    {
+        found = TRUE;
+        SET_RETVAL(cur);
+        cur = NULL;
+    }
+    else if (0 == *p)
+    {
+        /* path resolved to the node itself ("$" or empty path) */
+        cur = OcilibJsonNodeInitialize(node->json, (JsonDomNode *) node->handle, node->type);
+
+        CHECK_NULL(cur);
+
+        found = TRUE;
+        SET_RETVAL(cur);
+        cur = NULL;
+    }
+
+    (void)found;
+
+not_found:
+    /* call_retval stays at its ENTER_FUNC default (NULL); do NOT SET_RETVAL here —
+       the success path above falls through to this label and must keep `cur`. */
+    ;
+
+#else
+    OCI_NOT_USED(node);
+    OCI_NOT_USED(path);
+    CHECK(FALSE);
+#endif
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != seg)
+        {
+            FREE(seg);
+        }
+        if (NULL != cur && cur != node)
+        {
+            OcilibJsonNodeFree(cur);
+            cur = NULL;
+        }
+        if (NULL != next)
+        {
+            OcilibJsonNodeFree(next);
+            next = NULL;
+        }
+    );
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeGetShort
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeGetShort
+(
+    OCI_JsonNode *node,
+    OCI_Int16 *value
+)
+{
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_SHORT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeGetUShort
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeGetUShort
+(
+    OCI_JsonNode *node,
+    OCI_UInt16 *value
+)
+{
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_USHORT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeGetInt
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeGetInt
+(
+    OCI_JsonNode *node,
+    OCI_Int32 *value
+)
+{
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_INT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeGetUInt
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeGetUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt32 *value
+)
+{
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_UINT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeGetBigInt
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeGetBigInt
+(
+    OCI_JsonNode *node,
+    OCI_Int64 *value
+)
+{
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_BIGINT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeGetBigUInt
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeGetBigUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt64 *value
+)
+{
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_BIGUINT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeGetFloat
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeGetFloat
+(
+    OCI_JsonNode *node,
+    OCI_Float *value
+)
+{
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_FLOAT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeGetDouble
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeGetDouble
+(
+    OCI_JsonNode *node,
+    OCI_Double *value
+)
+{
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_DOUBLE);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeSetShort
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeSetShort
+(
+    OCI_JsonNode *node,
+    OCI_Int16    value
+)
+{
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_SHORT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeSetUShort
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeSetUShort
+(
+    OCI_JsonNode *node,
+    OCI_UInt16    value
+)
+{
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_USHORT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeSetInt
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeSetInt
+(
+    OCI_JsonNode *node,
+    OCI_Int32    value
+)
+{
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_INT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeSetUInt
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeSetUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt32    value
+)
+{
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_UINT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeSetBigInt
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeSetBigInt
+(
+    OCI_JsonNode *node,
+    OCI_Int64    value
+)
+{
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_BIGINT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeSetBigUInt
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeSetBigUInt
+(
+    OCI_JsonNode *node,
+    OCI_UInt64    value
+)
+{
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_BIGUINT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeSetFloat
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeSetFloat
+(
+    OCI_JsonNode *node,
+    OCI_Float    value
+)
+{
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_FLOAT);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeSetDouble
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonNodeSetDouble
+(
+    OCI_JsonNode *node,
+    OCI_Double    value
+)
+{
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_DOUBLE);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2529,6 +3405,12 @@ OCI_JsonNode * OcilibJsonNodeCreate
 
     SET_RETVAL(node);
 
+#else
+    OCI_NOT_USED(json);
+    OCI_NOT_USED(type);
+    CHECK(FALSE);
+#endif
+
     CLEANUP_AND_EXIT_FUNC
     (
         if (FAILURE && NULL != node)
@@ -2537,10 +3419,4 @@ OCI_JsonNode * OcilibJsonNodeCreate
             node = NULL;
         }
     );
-#else
-    OCI_NOT_USED(json);
-    OCI_NOT_USED(type);
-    CHECK(FALSE);
-    EXIT_FUNC();
-#endif
 }

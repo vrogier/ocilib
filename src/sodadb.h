@@ -51,6 +51,19 @@ OCI_SYM_LOCAL OCI_SodaColl * OcilibSodaDbOpenColl
     const otext *name
 );
 
+OCI_SYM_LOCAL otext ** OcilibSodaDbGetCollectionNames
+(
+    OCI_SodaDb * sdb,
+    OCI_UInt32 * count
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaDbFreeCollectionNames
+(
+    OCI_SodaDb * sdb,
+    otext     ** names,
+    OCI_UInt32   count
+);
+
 OCI_SYM_LOCAL OCI_SodaCollCursor * OcilibSodaDbGetColls
 (
     OCI_SodaDb  *sdb,

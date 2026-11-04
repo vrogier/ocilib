@@ -85,7 +85,7 @@ namespace TestCppApi
         }
         catch (const ocilib::Exception& e)
         {
-            const std::string msg = "OCILIB Exception: " + std::string(e.what() ? e.what() : "<null>") + " Oracle=" + std::to_string(e.GetOracleErrorCode()) + " Lib=" + std::to_string(e.GetInternalErrorCode());
+            const std::string msg = "OCILIB Exception: " + std::string(e.what() ? e.what() : "<null>") + " Oracle=" + std::to_string(e.GetCode()) + " Lib=" + std::to_string(e.GetCode());
             FAIL() << msg;
         }
         catch (const std::exception& e)

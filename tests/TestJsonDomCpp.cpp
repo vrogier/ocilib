@@ -67,13 +67,19 @@ namespace TestCppApi
         JsonNode name2 = root.GetField(OTEXT("name"));
         ASSERT_EQ(ostring(OTEXT("test")), name2.GetString());
 
+        JsonNode name3 = root[OTEXT("name")];
+        ASSERT_EQ(ostring(OTEXT("test")), name3.GetString());
+
         JsonNode items = root.GetFieldByIndex(1);
         ASSERT_EQ(Json::NodeArray, items.GetType());
         ASSERT_EQ(3u, items.GetItemCount());
 
         JsonNode item2 = items.GetItem(1);
         ASSERT_EQ(Json::NodeNumber, item2.GetType());
-        ASSERT_DOUBLE_EQ(2.0, static_cast<OCI_Double>(item2.GetNumber()));
+        ASSERT_DOUBLE_EQ(2.0, static_cast<OCI_Double>(item2.GetNumeric<Number>()));
+
+        JsonNode item3 = items[2];
+        ASSERT_EQ(Json::NodeNumber, item3.GetType());
     }
     TEST(TestJsonDomCpp, NodeCreationAndSetters)
     {
@@ -100,11 +106,11 @@ namespace TestCppApi
         Number num(env, 3.14);
         JsonNode numNode = json.CreateNumber(num);
         ASSERT_EQ(Json::NodeNumber, numNode.GetType());
-        ASSERT_DOUBLE_EQ(3.14, static_cast<OCI_Double>(numNode.GetNumber()));
+        ASSERT_DOUBLE_EQ(3.14, static_cast<OCI_Double>(numNode.GetNumeric<Number>()));
 
         num = 2.718;
-        numNode.SetNumber(num);
-        ASSERT_DOUBLE_EQ(2.718, static_cast<OCI_Double>(numNode.GetNumber()));
+        numNode.SetNumeric(num);
+        ASSERT_DOUBLE_EQ(2.718, static_cast<OCI_Double>(numNode.GetNumeric<Number>()));
         root.SetField(OTEXT("num"), numNode);
 
         JsonNode OCI_Boolean = json.CreateBoolean(true);
@@ -231,5 +237,53 @@ namespace TestCppApi
 
         JsonNode verify = json.GetRoot();
         ASSERT_EQ(3u, verify.GetFieldByName(OTEXT("arr")).GetItemCount());
+    }
+
+    TEST(TestJsonDomCpp, DomMutationOps)
+    {
+        Environment& env = GetEnvironmentCpp();
+        Connection con(env, DBS, USR, PWD);
+
+        Json json(con);
+        json.SetMutable(true);
+        json.LoadText(OTEXT("{}"));
+
+        /* object ops on a detached node */
+        JsonNode obj = json.CreateObject();
+        JsonNode name = json.CreateString(OTEXT("test"));
+        obj.SetField(OTEXT("name"), name);
+        ASSERT_EQ(1u, obj.GetFieldCount());
+        JsonNode back = obj.GetField(OTEXT("name"));
+        ASSERT_EQ(ostring(OTEXT("test")), back.GetString());
+        obj.RemoveField(OTEXT("name"));
+        ASSERT_EQ(0u, obj.GetFieldCount());
+
+        /* array ops on a detached node */
+        JsonNode arr = json.CreateArray();
+        JsonNode s1  = json.CreateString(OTEXT("one"));
+        JsonNode s3  = json.CreateString(OTEXT("three"));
+        arr.AppendItem(s1);
+        arr.AppendItem(s3);
+        ASSERT_EQ(2u, arr.GetItemCount());
+
+        JsonNode s2 = json.CreateString(OTEXT("two"));
+        arr.InsertItem(1, s2);
+        ASSERT_EQ(3u, arr.GetItemCount());
+        ASSERT_EQ(ostring(OTEXT("two")), arr.GetItem(1).GetString());
+        arr.RemoveItem(1);
+        ASSERT_EQ(2u, arr.GetItemCount());
+
+        /* typed accessors */
+        JsonNode num = json.CreateNode(Json::NodeNumber);
+        num.SetNumeric(Int32(-7));
+        ASSERT_EQ(-7, num.GetNumeric<Int32>());
+        num.SetNumeric(2.5);
+        ASSERT_DOUBLE_EQ(2.5, num.GetNumeric<Double>());
+
+        /* Clear */
+        arr.Clear();
+        ASSERT_EQ(0u, arr.GetItemCount());
+        obj.Clear();
+        ASSERT_EQ(0u, obj.GetFieldCount());
     }
 }

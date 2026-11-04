@@ -80,6 +80,11 @@ OCI_SYM_LOCAL const otext * OcilibSodaDocGetLastModified
     OCI_SodaDoc *doc
 );
 
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaDocGetIsJson
+(
+    OCI_SodaDoc *doc
+);
+
 OCI_SYM_LOCAL const otext * OcilibSodaDocGetMediaType
 (
     OCI_SodaDoc *doc

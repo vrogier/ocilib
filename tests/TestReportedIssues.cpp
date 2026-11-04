@@ -211,7 +211,7 @@ namespace TestCApi
 
     static void AddErrorIssue247NoNullPointerException(OCI_Error* err)
     {
-        contextIssue247NoNullPointerException.Errs.emplace_back(Error{ OCI_ErrorGetInternalCode(err), OCI_ErrorGetOCICode(err) });
+        contextIssue247NoNullPointerException.Errs.emplace_back(Error{ OCI_ErrorGetCode(err), OCI_ErrorGetCategory(err) });
     }
 
     TEST_P(ReportedIssues247, NoNullPointerException)
@@ -749,8 +749,8 @@ namespace TestCApi
         const auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
 
-        ASSERT_EQ(OCI_ERR_NOT_INITIALIZED, OCI_ErrorGetInternalCode(err));
-        ASSERT_EQ(OCI_ERR_OCILIB, OCI_ErrorGetType(err));
+        ASSERT_EQ(OCI_ERR_TYPE_ERROR, OCI_ErrorGetCode(err));
+        ASSERT_EQ(OCI_ERR_CAT_LIB, OCI_ErrorGetCategory(err));
     }
     */
 

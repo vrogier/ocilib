@@ -72,7 +72,7 @@ namespace TestCppApi
 
         JsonNode number = json.CreateNumber(Number(env, 1.0));
         ASSERT_THROW(number.GetString(), Exception);
-        ASSERT_THROW(scalar.GetNumber(), Exception);
+        ASSERT_THROW(scalar.GetNumeric<Number>(), Exception);
         ASSERT_THROW(number.GetBoolean(), Exception);
         ASSERT_THROW(number.GetBinary(), Exception);
         ASSERT_THROW(number.GetDate(), Exception);

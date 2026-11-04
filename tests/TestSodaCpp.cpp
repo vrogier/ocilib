@@ -86,6 +86,30 @@ namespace TestCppApi
 
         ASSERT_TRUE(found);
 
+        /* range-for over a fresh cursor */
+        SodaCollCursor cursor2 = sdb.GetCollections(OTEXT("OCILIB_SODA_CPP"));
+        bool found2 = false;
+        for (SodaColl& item : cursor2)
+        {
+            if (item.GetName() == ostring(OTEXT("OCILIB_SODA_CPP_OPEN")))
+            {
+                found2 = true;
+            }
+        }
+        ASSERT_TRUE(found2);
+
+        /* collection name list */
+        std::vector<ostring> names = sdb.GetCollectionNames();
+        bool foundName = false;
+        for (const ostring& n : names)
+        {
+            if (n == ostring(OTEXT("OCILIB_SODA_CPP_OPEN")))
+            {
+                foundName = true;
+            }
+        }
+        ASSERT_TRUE(foundName);
+
         con.Commit();
         ASSERT_TRUE(coll.Drop());
     }
@@ -330,4 +354,86 @@ namespace TestCppApi
         ASSERT_THROW(SodaCollCursor().GetNext(), Exception);
         ASSERT_THROW(SodaDocCursor().GetNext(), Exception);
     }
+
+    TEST(TestSodaCpp, BulkSaveIndexAndMeta)
+        {
+        Environment& env = GetEnvironmentCpp();
+        Connection con(env, DBS, USR, PWD);
+
+        SodaDb sdb(con);
+
+        DropCollIfExistsCpp(sdb, OTEXT("OCILIB_SODA_CPP_BULK"));
+
+        SodaColl coll = sdb.CreateCollection
+        (
+            OTEXT("OCILIB_SODA_CPP_BULK"),
+            OTEXT("{\"keyColumn\":{\"name\":\"ID\",\"sqlType\":\"VARCHAR2\",\"maxLength\":255,\"assignmentMethod\":\"CLIENT\"}}")
+        );
+        ASSERT_FALSE(coll.IsNull());
+
+        /* bulk insert */
+        std::vector<SodaDoc> docs;
+        docs.push_back(sdb.CreateDocumentFromText(OTEXT("{\"a\":1}"), OTEXT("k1")));
+        docs.push_back(sdb.CreateDocumentFromText(OTEXT("{\"a\":2}"), OTEXT("k2")));
+        try { coll.InsertMany(docs); } catch (const Exception&) { FAIL() << "InsertMany"; }
+
+        try { ASSERT_TRUE(docs[0].IsJson()); } catch (const Exception&) { FAIL() << "IsJson"; }
+
+        /* bulk insert and get metadata */
+        std::vector<SodaDoc> docs2;
+        docs2.push_back(sdb.CreateDocumentFromText(OTEXT("{\"a\":3}"), OTEXT("k3")));
+        try { coll.InsertManyAndGet(docs2); } catch (const Exception&) { FAIL() << "InsertManyAndGet"; }
+        ASSERT_EQ(ostring(OTEXT("k3")), docs2[0].GetKey());
+
+        /* save (upsert) and save-and-get */
+        SodaDoc sv = sdb.CreateDocumentFromText(OTEXT("{\"a\":99}"), OTEXT("k1"));
+        try { coll.Save(sv); } catch (const Exception&) { FAIL() << "Save"; }
+        try { coll.SaveAndGet(sv); } catch (const Exception&) { FAIL() << "SaveAndGet"; }
+        ASSERT_EQ(ostring(OTEXT("k1")), sv.GetKey());
+
+        /* option setters */
+        SodaOptions options(sdb);
+        try { options.SetFetchArraySize(16); } catch (const Exception&) { FAIL() << "fetchsize"; }
+        try { options.SetLock(); }             catch (const Exception&) { FAIL() << "lock"; }
+        /* SODA hints reject the '/*'+'* /' comment markers (ORA-40856) */
+        try { options.SetHint(OTEXT("index(OCILIB_SODA_CPP_BULK)")); } catch (const Exception&) {}
+
+        /* ListIndexes / GetDataGuide covered in the C BulkSaveIndexAndMeta and
+           the ANSI-guarded IndexCreateDropList tests — index ops aren't
+           callable here: CreateIndex errors (ORA-40671) and IndexDrop SEGVs
+           inside the Oracle client in UNICODE builds */
+
+        con.Commit();
+        ASSERT_TRUE(coll.Drop());
+    }
+
+#ifdef OCI_CHARSET_ANSI
+
+    /* The OCISodaIndex* calls work in ANSI builds; in UNICODE builds they fail
+       inside the Oracle client (ORA-40671 / OCI-22303, IndexDrop even SEGVs) —
+       the real assertions live here */
+    TEST(TestSodaCpp, IndexCreateDropList)
+    {
+        Environment& env = GetEnvironmentCpp();
+        Connection con(env, DBS, USR, PWD);
+
+        SodaDb sdb(con);
+        DropCollIfExistsCpp(sdb, OTEXT("OCILIB_SODA_CPP_IDX"));
+
+        SodaColl coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_IDX"), ostring());
+        ASSERT_FALSE(coll.IsNull());
+
+        SodaDoc sd = sdb.CreateDocumentFromText(OTEXT("{\"a\":1}"), ostring());
+        coll.Insert(sd);
+        con.Commit();
+
+        coll.CreateIndex(OTEXT("{\"name\":\"OCILIB_SODA_CPP_IDX_NAME\"}"));
+
+        ASSERT_GE(coll.ListIndexes().size(), 1u);
+
+        ASSERT_TRUE(coll.DropIndex(OTEXT("OCILIB_SODA_CPP_IDX_NAME")));
+        ASSERT_TRUE(coll.Drop());
+    }
+
+#endif
 }

@@ -28,6 +28,7 @@ For the C++ layer (`ocilib.hpp`), see `migration-guide-cpp-api.md`.
 | 10 | `OCI_Bind{Type}` / `OCI_BindArrayOf{Type}` return `OCI_Bind*` instead of `OCI_Boolean` | Low |
 | 11 | New typed typedefs replace bare `unsigned int` parameters | None (source-compatible) |
 | 12 | `big_int`/`big_uint` → `OCI_Int64`/`OCI_UInt64` (aliases kept) | None (source-compatible) |
+| 13 | Error model split into error type + category + unified code | Low |
 
 **Overall estimate:** a typical application (connect → statement → fetch) migrates in
 **under an hour** — mostly mechanical edits caught by the compiler. Applications that
@@ -402,7 +403,7 @@ rename each usage to its modern equivalent:
 | `OCI_CreateHashTable` / `OCI_FreeHashTable` | `OCI_HashCreate` / `OCI_HashFree` |
 | `OCI_GetColumn*` (`Name`, `Type`, `CharsetForm`, `SQLType`, `FullSQLType`, `Size`, `Scale`, `Precision`, `FractionnalPrecision`, `LeadingPrecision`, `Nullable`, `CharUsed`) | `OCI_ColumnGet<…>` (same suffix; note `Fractionnal` → `Fractional` spelling fix) |
 | `OCI_GetFormatDate(s)` / `OCI_SetFormatDate(s,f)` | `OCI_GetFormat(OCI_HandleGetEnvironment(OCI_StatementGetConnection(s)), OCI_FMT_DATE)` / `OCI_SetFormat(…, OCI_FMT_DATE, f)` |
-| `OCI_ERR_API` | `OCI_ERR_ORACLE` |
+| `OCI_ERR_API` | `OCI_ERR_CAT_OCI` (tested via `OCI_ErrorGetCategory` — see §10d) |
 | `OCI_ERR_NOT_SUPPORTED` | `OCI_ERR_DATATYPE_NOT_SUPPORTED` |
 | `OCI_SCHEMA_TABLE` / `OCI_SCHEMA_VIEW` / `OCI_SCHEMA_TYPE` | `OCI_TIF_TABLE` / `OCI_TIF_VIEW` / `OCI_TIF_TYPE` |
 | `OCI_Schema`, `OCI_SchemaGet`, `OCI_SchemaFree`, `OCI_SchemaGetColumnCount`, `OCI_SchemaGetColumn`, `OCI_SchemaGetName` | `OCI_TypeInfo`, `OCI_TypeInfoGet`, `OCI_TypeInfoFree`, `OCI_TypeInfoGetColumnCount`, `OCI_TypeInfoGetColumn`, `OCI_TypeInfoGetName` |
@@ -493,6 +494,74 @@ n = OCI_LobRead(lob, buf, SIZE);            →   OCI_LobRead(lob, buf, &cc, &bc
 collection-owned slot). The redundant `OCI_CollGetElem2` was simply deleted —
 if you used it, call `OCI_CollGetElem` instead.
 
+## 10d. Step 12 — Error model: type, category and code are now separate
+
+v4 conflated the **error type** (error vs warning) and the **origin** (Oracle vs
+OCILIB) in the single `OCI_ErrorGetType()` result, and split the error code
+across two getters. v5 exposes three independent axes:
+
+| Axis | v4 | v5 |
+|------|----|----|
+| Type | `OCI_ErrorGetType()` → `OCI_ERR_WARNING` | `OCI_ErrorGetType()` → `OCI_ERR_TYPE_ERROR` / `OCI_ERR_TYPE_WARNING` |
+| Origin | `OCI_ErrorGetType()` → `OCI_ERR_ORACLE` / `OCI_ERR_OCILIB` | `OCI_ErrorGetCategory()` → `OCI_ERR_CAT_LIB` / `OCI_ERR_CAT_OCI` / `OCI_ERR_CAT_JZN` |
+| Code | `OCI_ErrorGetOCICode()` / `OCI_ErrorGetInternalCode()` | `OCI_ErrorGetCode()` — code in the category's namespace |
+
+### Exact rules
+
+| v4 | v5 |
+|----|----|
+| `OCI_ErrorGetType(e) == OCI_ERR_ORACLE` | `OCI_ErrorGetCategory(e) == OCI_ERR_CAT_OCI` |
+| `OCI_ErrorGetType(e) == OCI_ERR_OCILIB` | `OCI_ErrorGetCategory(e) == OCI_ERR_CAT_LIB` |
+| `OCI_ErrorGetType(e) == OCI_ERR_WARNING` | `OCI_ErrorGetType(e) == OCI_ERR_TYPE_WARNING` |
+| `OCI_ErrorGetOCICode(e)` | `OCI_ErrorGetCode(e)` (category `OCI_ERR_CAT_OCI`) |
+| `OCI_ErrorGetInternalCode(e)` | `OCI_ErrorGetCode(e)` (category `OCI_ERR_CAT_LIB`) |
+
+- **Removed constants:** `OCI_ERR_ORACLE`, `OCI_ERR_OCILIB`, `OCI_ERR_WARNING`.
+- **Removed functions:** `OCI_ErrorGetOCICode()`, `OCI_ErrorGetInternalCode()`.
+- **New functions:**
+  `OCI_ErrorCategory OCI_ErrorGetCategory(OCI_Error *err)` and
+  `OCI_ErrorCode OCI_ErrorGetCode(OCI_Error *err)`.
+- `OCI_ErrorGetType()` keeps its name but now returns an `OCI_ErrorType`
+  (a `OCI_UInt32` typedef) holding only the error type: `OCI_ERR_TYPE_ERROR` or
+  `OCI_ERR_TYPE_WARNING`.
+- **New typedefs:** `OCI_ErrorType` (error type), `OCI_ErrorCategory` (origin),
+  `OCI_ErrorCode` (unified code) — all `OCI_UInt32` aliases.
+- **New category:** `OCI_ERR_CAT_JZN` — errors raised by the Oracle JSON DOM
+  (JZN) layer; `OCI_ErrorGetCode()` then returns the JZN `jsonerr` code.
+- `OCI_ErrorGetCode()` returns a single code whose namespace is given by the
+  category: ORA-XXXXX for `OCI_ERR_CAT_OCI`, an `OCI_ERR_*` internal code for
+  `OCI_ERR_CAT_LIB`, a JZN `jsonerr` for `OCI_ERR_CAT_JZN`.
+
+### Error handler example
+
+```c
+/* v4 */
+void err_handler(OCI_Error *err)
+{
+    if (OCI_ErrorGetType(err) == OCI_ERR_ORACLE)
+        printf("ORA-%d: %s\n", OCI_ErrorGetOCICode(err), OCI_ErrorGetString(err));
+    else if (OCI_ErrorGetType(err) == OCI_ERR_OCILIB)
+        printf("OCILIB-%d: %s\n", OCI_ErrorGetInternalCode(err), OCI_ErrorGetString(err));
+}
+
+/* v5 */
+void err_handler(OCI_Error *err)
+{
+    if (OCI_ErrorGetType(err) == OCI_ERR_TYPE_WARNING)
+        return; /* warning — OCI_ErrorGetCategory() still identifies the origin */
+
+    if (OCI_ErrorGetCategory(err) == OCI_ERR_CAT_OCI)
+        printf("ORA-%u: %s\n", OCI_ErrorGetCode(err), OCI_ErrorGetString(err));
+    else
+        printf("OCILIB-%u: %s\n", OCI_ErrorGetCode(err), OCI_ErrorGetString(err));
+}
+```
+
+> All old type constants and both old code getters are gone, so every affected
+> call site fails to compile — the compiler will find them all. Just beware
+> code that hard-coded the *numeric* values (`OCI_ERR_WARNING` was `3`;
+> `OCI_ERR_TYPE_WARNING` is `2`).
+
 ## 11. Unchanged signatures — changed behaviour
 
 > **Warning:** a migration is not only about signatures. Several functions kept
@@ -538,7 +607,8 @@ if you used it, call `OCI_CollGetElem` instead.
   `OCI_TypeInfoType`, `OCI_SubscriptionType`, `OCI_HashType`, `OCI_EnvMode`,
   `OCI_ImportMode`, `OCI_Charset`, `OCI_LocaleCode`, `OCI_ErrorCode`,
   `OCI_FailoverType/Event/Code`, `OCI_HAEventSource/Type`,
-  `OCI_DatabaseStartMode/Flag`, `OCI_DatabaseShutdownMode/Flag`, `OCI_SqlType`, etc.
+  `OCI_DatabaseStartMode/Flag`, `OCI_DatabaseShutdownMode/Flag`, `OCI_SqlType`,
+  `OCI_ErrorType`, `OCI_ErrorCategory`, `OCI_ErrorCode`, etc.
   All are `unsigned int` (or `int`) aliases — **source-compatible**; passing literals
   or `unsigned int` still compiles. Exception: **callback typedefs must match
   exactly** — update your `POCI_TAF_HANDLER` / `POCI_HA_HANDLER` implementations to
@@ -549,7 +619,8 @@ if you used it, call `OCI_CollGetElem` instead.
   void my_ha(OCI_Connection *con, OCI_HAEventSource src, OCI_HAEventType evt, OCI_Timestamp *t);
   ```
 
-- **`OCI_ErrorCode`** (`typedef int`) for error codes — cosmetic.
+- **`OCI_ErrorType` / `OCI_ErrorCategory` / `OCI_ErrorCode`** (`OCI_UInt32`
+  typedefs) — see §10d for the error-model split they support.
 
 - **New convenience helpers** (pure additions, adopt if useful):
 
@@ -597,11 +668,15 @@ if you used it, call `OCI_CollGetElem` instead.
 11. [ ] Remove all OCI_HandleGet* except OCI_HandleGetEnvironment(handle)
         (return type is now OCI_Environment*).
 12. [ ] Update POCI_TAF_HANDLER / POCI_HA_HANDLER signatures to typed params.
-13. [ ] Recompile; fix remaining errors (all remaining breaks are compile-time).
-14. [ ] Replace any v3-era compat macros (OCI_ConnPool*, OCI_Schema*,
+13. [ ] Error handling (see §10d): OCI_ERR_ORACLE/OCI_ERR_OCILIB checks →
+        OCI_ErrorGetCategory() == OCI_ERR_CAT_OCI / OCI_ERR_CAT_LIB;
+        OCI_ERR_WARNING checks → OCI_ErrorGetType() == OCI_ERR_TYPE_WARNING;
+        OCI_ErrorGetOCICode / OCI_ErrorGetInternalCode → OCI_ErrorGetCode.
+14. [ ] Recompile; fix remaining errors (all remaining breaks are compile-time).
+15. [ ] Replace any v3-era compat macros (OCI_ConnPool*, OCI_Schema*,
         OCI_GetColumn*, OCI_SetNull*, mts*/dts* string helpers, MT/DT, …)
         with the modern names — see §10.
-15. [ ] Audit OCI_CNT_ROWS notification handlers for the new row events.
+16. [ ] Audit OCI_CNT_ROWS notification handlers for the new row events.
 ```
 
 ---
