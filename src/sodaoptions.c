@@ -532,13 +532,14 @@ OCI_Boolean OcilibSodaOptionsSetHint
     CHECK_PTR(OCI_IPC_SODA_DB, options->sdb);
     CHECK_SODA_ENABLED(options->sdb->con);
 
-    /* OCI_ATTR_SODA_HINT only available on client 19.11+/21.3+ (mirrors ODPI) */
+    /* OCI_ATTR_SODA_HINT is only available on client 19.11+ or 21.3+ */
+  
+    const OCI_UInt32 ver = options->sdb->env->version_runtime;
 
-#if OCI_VERSION_COMPILE >= OCI_21_1
-
-    CHECK_FEATURE(options->sdb->con, OCI_FEATURE_SODA, OCI_21_3);
-
-#endif
+    if ((ver < OCI_19_11) || (ver >= OCI_21_1 && ver < OCI_21_3))
+    {
+        THROW(OcilibExceptionNotAvailable, OCI_FEATURE_SODA);
+    }
 
     dbstr = OcilibStringGetDBString(options->sdb->env, hint, &dbsize);
 
