@@ -32,8 +32,7 @@ int main(void)
 
     /* insert documents - keys are server-assigned (UUID) by default */
 
-    OCI_SodaDoc *doc = OCI_SodaDocCreateFromText(sdb, "{\"name\":\"Fred\",\"age\":42}",
-                                                 (OCI_UInt32) strlen("{\"name\":\"Fred\",\"age\":42}"), NULL);
+    OCI_SodaDoc *doc = OCI_SodaDocCreateFromText(sdb, "{\"name\":\"Fred\",\"age\":42}", 0, NULL);
     OCI_SodaCollInsertDoc(coll, doc);
 
     printf("inserted doc key='%s' version='%s' created='%s'\n",
@@ -41,8 +40,7 @@ int main(void)
 
     OCI_SodaDocFree(doc);
 
-    doc = OCI_SodaDocCreateFromText(sdb, "{\"name\":\"Jane\",\"age\":35}",
-                                    (OCI_UInt32) strlen("{\"name\":\"Jane\",\"age\":35}"), NULL);
+    doc = OCI_SodaDocCreateFromText(sdb, "{\"name\":\"Jane\",\"age\":35}", 0, NULL);
     OCI_SodaCollInsertDoc(coll, doc);
     OCI_SodaDocFree(doc);
 

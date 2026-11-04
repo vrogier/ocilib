@@ -176,6 +176,11 @@ OCI_SodaDoc* OcilibSodaDocInitialize
         newContentSize = 0;
     }
 
+    if (NULL != newContent && 0 == newContentSize)
+    {
+        newContentSize = (OCI_UInt32) ostrlen((const otext *) newContent);
+    }
+
     if (NULL == newHandle)
     {
         if (NULL != key)

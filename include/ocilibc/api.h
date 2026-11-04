@@ -18496,7 +18496,8 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaDbFreeCollectionNames
  *
  * @param sdb         - SODA database handle
  * @param content     - Document content text
- * @param contentSize - Size in bytes of the content text
+ * @param contentSize - Length of the content text (0 = length computed
+ *                      internally for a NUL-terminated string)
  * @param key         - Document key, or NULL to let the server assign it
  *
  * @return
