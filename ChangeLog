@@ -52,6 +52,14 @@
   - Added index management APIs: `OCI_SodaCollCreateIndex()`, `OCI_SodaCollDropIndex()`, `OCI_SodaCollListIndexes()`, `OCI_SodaCollFreeIndexNames()`
     - Note: the underlying `OCISodaIndex*` OCI calls currently fail inside the Oracle client itself under `OCI_CHARSET_WIDE` (UNICODE builds), verified on Oracle 23ai — an Oracle client bug, not an OCILIB bug; ANSI builds work correctly
 
+- Oracle Sharding support (requires Oracle 12cR2 client and database)
+  - Added `OCI_ShardingKey` opaque handle type
+  - Added key lifecycle APIs: `OCI_ShardingKeyCreate()`, `OCI_ShardingKeyFree()`, `OCI_ShardingKeyReset()`
+  - Added key column APIs: `OCI_ShardingKeyAddString()`, `OCI_ShardingKeyAddNumber()`, `OCI_ShardingKeyAddDate()`, `OCI_ShardingKeyAddTimestamp()`, `OCI_ShardingKeyAddRaw()`
+  - Added diagnostics API: `OCI_ShardingKeyToText()` (base64 representation of the key)
+  - Added sharded connection APIs: `OCI_ConnectionCreateSharded()`, `OCI_PoolGetConnectionSharded()`
+  - Added C++ API: `ocilib::ShardingKey` (templated `AddColumn<T>` for `ostring`, `Number`, `Date`, `Timestamp`, and `std::vector<unsigned char>`), sharded `Connection` constructor and `Connection::Open()` overload, sharded `Pool::GetConnection()` overload
+
 ### Enhancements (C++ API)
 
 - Migrated the C++ wrapper baseline from C++03 to C++17

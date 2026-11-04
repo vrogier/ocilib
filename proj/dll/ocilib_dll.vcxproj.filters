@@ -175,6 +175,7 @@
     <ClCompile Include="..\..\src\sodadb.c" />
     <ClCompile Include="..\..\src\sodadoc.c" />
     <ClCompile Include="..\..\src\sodadoccursor.c" />
+    <ClCompile Include="..\..\src\shardingkey.c" />
     <ClCompile Include="..\..\src\sodaoptions.c" />
   </ItemGroup>
   <ItemGroup>
@@ -363,6 +364,7 @@
     <ClInclude Include="..\..\src\sodadb.h" />
     <ClInclude Include="..\..\src\sodadoc.h" />
     <ClInclude Include="..\..\src\sodadoccursor.h" />
+    <ClInclude Include="..\..\src\shardingkey.h" />
     <ClInclude Include="..\..\src\sodaoptions.h" />
   </ItemGroup>
 </Project>

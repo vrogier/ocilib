@@ -57,6 +57,7 @@
 #include "subscription.h"
 #include "sodacoll.h"
 #include "sodacollcursor.h"
+#include "shardingkey.h"
 #include "sodadb.h"
 #include "sodadoc.h"
 #include "sodadoccursor.h"
@@ -626,6 +627,88 @@ OCI_SubType OCI_API OCI_ColumnGetSubType
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * sharding key
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_ShardingKey* OCI_API OCI_ShardingKeyCreate
+(
+    OCI_Environment* env
+)
+{
+    CALL_IMPL_NO_ARGS_E(OcilibShardingKeyCreate, env);
+}
+
+OCI_Boolean OCI_API OCI_ShardingKeyFree
+(
+    OCI_ShardingKey* skey
+)
+{
+    CALL_IMPL(OcilibShardingKeyFree, skey);
+}
+
+OCI_Boolean OCI_API OCI_ShardingKeyReset
+(
+    OCI_ShardingKey* skey
+)
+{
+    CALL_IMPL(OcilibShardingKeyReset, skey);
+}
+
+OCI_Boolean OCI_API OCI_ShardingKeyAddString
+(
+    OCI_ShardingKey* skey,
+    const otext* value
+)
+{
+    CALL_IMPL(OcilibShardingKeyAddString, skey, value);
+}
+
+OCI_Boolean OCI_API OCI_ShardingKeyAddNumber
+(
+    OCI_ShardingKey* skey,
+    OCI_Number* value
+)
+{
+    CALL_IMPL(OcilibShardingKeyAddNumber, skey, value);
+}
+
+OCI_Boolean OCI_API OCI_ShardingKeyAddDate
+(
+    OCI_ShardingKey* skey,
+    OCI_Date* value
+)
+{
+    CALL_IMPL(OcilibShardingKeyAddDate, skey, value);
+}
+
+OCI_Boolean OCI_API OCI_ShardingKeyAddTimestamp
+(
+    OCI_ShardingKey* skey,
+    OCI_Timestamp* value
+)
+{
+    CALL_IMPL(OcilibShardingKeyAddTimestamp, skey, value);
+}
+
+OCI_Boolean OCI_API OCI_ShardingKeyAddRaw
+(
+    OCI_ShardingKey* skey,
+    const void* value,
+    OCI_UInt32       size
+)
+{
+    CALL_IMPL(OcilibShardingKeyAddRaw, skey, value, size);
+}
+
+const otext* OCI_API OCI_ShardingKeyToText
+(
+    OCI_ShardingKey* skey
+)
+{
+    CALL_IMPL(OcilibShardingKeyToText, skey);
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * connection
  * --------------------------------------------------------------------------------------------- */
 
@@ -639,6 +722,20 @@ OCI_Connection * OCI_API OCI_ConnectionCreate
 )
 {
     CALL_IMPL_E(OcilibConnectionCreate, env, db, user, pwd, mode);
+}
+
+OCI_Connection * OCI_API OCI_ConnectionCreateSharded
+(
+    OCI_Environment *env,
+    const otext     *db,
+    const otext     *user,
+    const otext     *pwd,
+    OCI_SessionMode  mode,
+    OCI_ShardingKey *skey,
+    OCI_ShardingKey *sskey
+)
+{
+    CALL_IMPL_E(OcilibConnectionCreateSharded, env, db, user, pwd, mode, skey, sskey);
 }
 
 OCI_Boolean OCI_API OCI_ConnectionFree
@@ -4229,7 +4326,19 @@ OCI_Connection* OCI_API OCI_PoolGetConnection
     const otext    * tag
 )
 {
-    CALL_IMPL_E(OcilibPoolGetConnection, env, pool, tag);
+    CALL_IMPL_E(OcilibPoolGetConnection, env, pool, tag, NULL, NULL);
+}
+
+OCI_Connection* OCI_API OCI_PoolGetConnectionSharded
+(
+    OCI_Environment *env,
+    OCI_Pool       * pool,
+    const otext    * tag,
+    OCI_ShardingKey* skey,
+    OCI_ShardingKey* sskey
+)
+{
+    CALL_IMPL_E(OcilibPoolGetConnection, env, pool, tag, skey, sskey);
 }
 
 OCI_UInt32 OCI_API OCI_PoolGetTimeout

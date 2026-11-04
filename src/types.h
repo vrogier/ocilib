@@ -182,6 +182,12 @@ typedef struct OCI_DataType OCI_DataType;
 #define OCI_JSN_HANDLE void
 #endif
 
+#if OCI_VERSION_COMPILE >= OCI_12_2
+#define OCI_SK_HANDLE OCIShardingKey
+#else
+#define OCI_SK_HANDLE void
+#endif
+
 /*
  * Server output object used to retrieve server dbms.output buffers
  *
@@ -1047,6 +1053,17 @@ struct OCI_SodaDocCursor
     OCISodaDoc  **docs;               /* materialized documents (multi-key emulation) */
     OCI_UInt32    doc_count;        /* number of materialized documents */
     OCI_UInt32    doc_pos;          /* current position in materialized documents */
+};
+
+/*
+ * Oracle sharding key descriptor
+ *
+ */
+
+struct OCI_ShardingKey
+{
+    OCI_HANDLE(OCI_SK_HANDLE);
+    otext *str;                 /* cached base64 text of the key */
 };
 
 /*

@@ -118,6 +118,9 @@
     <ClCompile Include="..\src\resultset.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\shardingkey.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\statement.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -224,6 +227,15 @@
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestInterval.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIntervalCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSharding.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestShardingCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestJsonBind.cpp">
@@ -798,6 +810,9 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\resultset.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\shardingkey.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\statement.h">

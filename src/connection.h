@@ -31,7 +31,9 @@ OCI_SYM_LOCAL OCI_Connection * OcilibConnectionCreateInternal
     const otext     *user,
     const otext     *pwd,
     OCI_SessionMode  mode,
-    const otext     *tag
+    const otext     *tag,
+    OCI_ShardingKey *skey,
+    OCI_ShardingKey *sskey
 );
 
 OCI_SYM_LOCAL OCI_Connection* OcilibConnectionAllocate
@@ -53,7 +55,9 @@ OCI_SYM_LOCAL OCI_Boolean OcilibConnectionLogon
 (
     OCI_Connection* con,
     const otext   * new_pwd,
-    const otext   * tag
+    const otext   * tag,
+    OCI_ShardingKey* skey,
+    OCI_ShardingKey* sskey
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibConnectionDispose
@@ -79,6 +83,17 @@ OCI_SYM_LOCAL OCI_Connection* OcilibConnectionCreate
     const otext    * user,
     const otext    * pwd,
     OCI_SessionMode  mode
+);
+
+OCI_SYM_LOCAL OCI_Connection* OcilibConnectionCreateSharded
+(
+    OCI_Environment* env,
+    const otext    * db,
+    const otext    * user,
+    const otext    * pwd,
+    OCI_SessionMode  mode,
+    OCI_ShardingKey* skey,
+    OCI_ShardingKey* sskey
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibConnectionFree

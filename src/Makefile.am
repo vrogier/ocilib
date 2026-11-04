@@ -60,6 +60,7 @@ libocilib_la_SOURCES=   \
     sodadoc.c           \
     sodadoccursor.c     \
     sodaoptions.c       \
+    shardingkey.c       \
     statement.c         \
     stringutils.c       \
     subscription.c      \
@@ -142,6 +143,7 @@ noinst_HEADERS=     \
     sodadoc.h       \
     sodadoccursor.h \
     sodaoptions.h   \
+    shardingkey.h   \
     statement.h     \
     stringutils.h   \
     subscription.h  \

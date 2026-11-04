@@ -154,6 +154,7 @@ class SodaDoc;
 class SodaOptions;
 class SodaCollCursor;
 class SodaDocCursor;
+class ShardingKey;
 
 
 /**

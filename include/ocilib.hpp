@@ -185,6 +185,7 @@ namespace ocilib
 #include "ocilibcpp/detail/Date.hpp"
 #include "ocilibcpp/detail/Interval.hpp"
 #include "ocilibcpp/detail/Timestamp.hpp"
+#include "ocilibcpp/detail/ShardingKey.hpp"
 #include "ocilibcpp/detail/Lob.hpp"
 #include "ocilibcpp/detail/File.hpp"
 #include "ocilibcpp/detail/TypeInfo.hpp"

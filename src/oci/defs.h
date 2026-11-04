@@ -170,6 +170,8 @@
 #define OCI_DTYPE_CHDES 77             /* Top level change notification desc */
 #define OCI_DTYPE_TABLE_CHDES   78                /* Table change descriptor */
 #define OCI_DTYPE_ROW_CHDES     79                 /* Row change descriptor  */
+#define OCI_DTYPE_SHARDING_KEY  83 /* Sharding/Super Sharding Key Descriptor */
+#define OCI_DTYPE_SHARD_INST    84              /* Shard Instance Descriptor */
 #define OCI_DTYPE_VECTOR        87                 /* Vector Descriptor Type */
 #define OCI_DTYPE_JSON          85                      /* JSON descriptor */
 
@@ -376,6 +378,14 @@
 
 /* add attribute for DBOP: DataBase OPeration */
 #define OCI_ATTR_DBOP                      485
+
+#define OCI_ATTR_SHARDING_KEY              496
+           /* Sharding Key (OCIShardingKey *) attribute of OCIAuth/OCISvcCtx */
+#define OCI_ATTR_SUPER_SHARDING_KEY        497
+     /* Super Sharding Key (OCIShardingKey *) attribute of OCIAuth/OCISvcCtx */
+#define OCI_ATTR_SHARDING_KEY_B64          498
+               /* Base64 Sharding Key: read only attribute of OCIShardingKey */
+#define OCI_ATTR_SHARD_HAS_WRITABLECHUNK   505
 
 #define OCI_ATTR_COLLATION_ID              499               /* Collation ID */
 #define OCI_ATTR_SQL_ID                    504        /* SQL ID in text form */
@@ -747,6 +757,9 @@ typedef struct OCISodaCollCursor OCISodaCollCursor;
 
 typedef struct OCIJson OCIJson;                            /* OCI JSON desc */
 
+typedef struct OCIShardingKey OCIShardingKey; /* sharding key descriptor */
+typedef struct OCIShardInst    OCIShardInst;   /* shard instance descriptor */
+
 #ifndef JSONDOM_H
 #include "jsondom.h"
 #endif
@@ -768,6 +781,8 @@ typedef struct OCIJson OCIJson;                            /* OCI JSON desc */
 #define OCI_SESSGET_CREDEXT    0x0010
 #define OCI_SESSGET_SPOOL_MATCHANY 0x0020
 #define OCI_SESSGET_SYSDBA     0x0100    /* SessionGet with SYSDBA privileges */
+#define OCI_SESSGET_MULTIPROPERTY_TAG 0x0400           /* multi property tag */
+#define OCI_SESSGET_CUSTOM_POOL       0x0800             /* Custom Pool Mode */
 
 /*---------------------------------------------------------------------------*/
 /*------------------------ATTR Values for Session Pool-----------------------*/
@@ -1325,6 +1340,23 @@ typedef uword OCIObjectMarkStatus;
 
 
 #define OCI_NLS_MAXBUFSZ   100 /* Max buffer size may need for OCINlsGetInfo */
+
+/*---------------------------------------------------------------------------*/
+/*------------------------------ OCI Sharding -------------------------------*/
+/*---------------------------------------------------------------------------*/
+
+#define OCI_DTYPE_SHARDING_KEY  83     /* Sharding/Super Sharding Key Descriptor */
+#define OCI_DTYPE_SHARD_INST    84              /* Shard Instance Descriptor */
+
+#define OCI_ATTR_SHARDING_KEY        496      /* Sharding Key (OCIShardingKey *) */
+                                            /* attribute of OCIAuth/OCISvcCtx */
+#define OCI_ATTR_SUPER_SHARDING_KEY  497  /* Super Sharding Key (OCIShardingKey *) */
+                                            /* attribute of OCIAuth/OCISvcCtx */
+#define OCI_ATTR_SHARDING_KEY_B64    498     /* Base64 Sharding Key: read only */
+                                                   /* attribute of OCIShardingKey */
+
+typedef struct OCIShardingKey   OCIShardingKey;
+typedef struct OCIShardInst     OCIShardInst;
 
 #endif /* OCILIB_OCI_DEFS_H_INCLUDED */
 

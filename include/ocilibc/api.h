@@ -2017,6 +2017,318 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_PoolSetStatementCacheSize
  */
 
 /**
+ * @defgroup OcilibCApiSharding Oracle Sharding
+ * @{
+ *
+ * Oracle Sharding (Oracle 12cR2 and later) is a database scaling technique
+ * based on horizontal partitioning of data across multiple databases
+ * (shards). Each shard holds a portion of the data and the set of shards
+ * appears to the application as a single logical database.
+ *
+ * When connecting to a sharded database, an application can supply a
+ * sharding key (and an optional super sharding key) so that the OCI client
+ * routes the connection request to the shard(s) holding the data matching
+ * the key values.
+ *
+ * A sharding key is built using an OCI_ShardingKey object:
+ *
+ * - Create it with OCI_ShardingKeyCreate()
+ * - Append key column values, in key declaration order, using the
+ *   OCI_ShardingKeyAdd*() functions
+ * - Pass it to OCI_ConnectionCreateSharded() or
+ *   OCI_PoolGetConnectionSharded()
+ * - Release it with OCI_ShardingKeyFree()
+ *
+ * The routing itself is performed by Oracle during connection establishment;
+ * OCILIB only supplies the key values.
+ *
+ * @note
+ * Sharding key objects are independent from connections: they are created
+ * against an environment handle, can be reused across multiple connections
+ * and reset with OCI_ShardingKeyReset().
+ *
+ * @note
+ * The OCI_ShardingKey handle is caller-owned; release it with
+ * OCI_ShardingKeyFree() when no longer needed.
+ *
+ */
+
+/**
+ * @brief
+ * Create a sharding key object
+ *
+ * @param env - Environment handle
+ *
+ * @note
+ * The returned object must be freed with OCI_ShardingKeyFree().
+ *
+ * @return
+ * A new sharding key handle on success, or NULL on failure.
+ *
+ * The returned handle is caller-owned; release it with the matching
+ * OCI_*Free() function when no longer needed.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_ShardingKey* OCI_API OCI_ShardingKeyCreate
+(
+    OCI_Environment *env
+);
+
+/**
+ * @brief
+ * Free a sharding key object
+ *
+ * @param skey - Sharding key handle
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ShardingKeyFree
+(
+    OCI_ShardingKey *skey
+);
+
+/**
+ * @brief
+ * Reset a sharding key object
+ *
+ * @param skey - Sharding key handle
+ *
+ * @note
+ * All column values previously added to the key are discarded.
+ * The key object can then be populated again and reused across
+ * subsequent sharded connections.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ShardingKeyReset
+(
+    OCI_ShardingKey *skey
+);
+
+/**
+ * @brief
+ * Add a string column value to a sharding key
+ *
+ * @param skey  - Sharding key handle
+ * @param value - String value
+ *
+ * @note
+ * Columns must be added in the declaration order of the sharding key.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ShardingKeyAddString
+(
+    OCI_ShardingKey *skey,
+    const otext     *value
+);
+
+/**
+ * @brief
+ * Add a NUMBER column value to a sharding key
+ *
+ * @param skey  - Sharding key handle
+ * @param value - OCI_Number value
+ *
+ * @note
+ * Columns must be added in the declaration order of the sharding key.
+ * All numeric key column types (NUMBER, INTEGER, FLOAT, ...) are mapped
+ * to Oracle NUMBER values.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ShardingKeyAddNumber
+(
+    OCI_ShardingKey *skey,
+    OCI_Number      *value
+);
+
+/**
+ * @brief
+ * Add a DATE column value to a sharding key
+ *
+ * @param skey  - Sharding key handle
+ * @param value - OCI_Date value
+ *
+ * @note
+ * Columns must be added in the declaration order of the sharding key.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ShardingKeyAddDate
+(
+    OCI_ShardingKey *skey,
+    OCI_Date        *value
+);
+
+/**
+ * @brief
+ * Add a TIMESTAMP column value to a sharding key
+ *
+ * @param skey  - Sharding key handle
+ * @param value - OCI_Timestamp value
+ *
+ * @note
+ * Columns must be added in the declaration order of the sharding key.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ShardingKeyAddTimestamp
+(
+    OCI_ShardingKey *skey,
+    OCI_Timestamp   *value
+);
+
+/**
+ * @brief
+ * Add a RAW column value to a sharding key
+ *
+ * @param skey  - Sharding key handle
+ * @param value - Buffer containing the raw value
+ * @param size  - Size in bytes of the buffer
+ *
+ * @note
+ * Columns must be added in the declaration order of the sharding key.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ShardingKeyAddRaw
+(
+    OCI_ShardingKey *skey,
+    const void      *value,
+    OCI_UInt32       size
+);
+
+/**
+ * @brief
+ * Return the base64 representation of a sharding key
+ *
+ * @param skey - Sharding key handle
+ *
+ * @return
+ * The base64 encoded representation of the sharding key values, or NULL
+ * on failure.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_ShardingKey handle and remains
+ * valid until the next OCI_ShardingKeyToText(), OCI_ShardingKeyReset() or
+ * OCI_ShardingKeyFree() call on the same handle.
+ * It must not be freed or modified by the caller.
+ *
+ */
+
+OCI_SYM_PUBLIC const otext* OCI_API OCI_ShardingKeyToText
+(
+    OCI_ShardingKey *skey
+);
+
+/**
+ * @brief
+ * Create a physical connection to an Oracle database server, possibly routed
+ * to a specific shard through sharding keys
+ *
+ * @param env   - Environment handle
+ * @param db    - Oracle Service Name (or NULL for the default local database)
+ * @param user  - Oracle user name (or NULL for external credentials)
+ * @param pwd   - Oracle user password (or NULL for external credentials)
+ * @param mode  - Session mode (see OCI_ConnectionCreate())
+ * @param skey  - Sharding key handle (NULL allowed)
+ * @param sskey - Super sharding key handle (NULL allowed)
+ *
+ * @note
+ * When both skey and sskey are NULL, this function is equivalent to
+ * OCI_ConnectionCreate().
+ *
+ * @note
+ * On a non sharded database, the sharding keys are accepted and the
+ * connection is established normally.
+ *
+ * @return
+ * Connection handle on success, or NULL on failure.
+ *
+ * The returned handle is caller-owned; release it with the matching
+ * OCI_*Free() function when no longer needed.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_ConnectionCreateSharded
+(
+    OCI_Environment *env,
+    const otext     *db,
+    const otext     *user,
+    const otext     *pwd,
+    OCI_SessionMode  mode,
+    OCI_ShardingKey *skey,
+    OCI_ShardingKey *sskey
+);
+
+/**
+ * @brief
+ * Get a connection from the pool, possibly routed to a specific shard
+ * through sharding keys
+ *
+ * @param env   - Environment handle
+ * @param pool  - Pool handle
+ * @param tag   - Session user tag (NULL allowed)
+ * @param skey  - Sharding key handle (NULL allowed)
+ * @param sskey - Super sharding key handle (NULL allowed)
+ *
+ * @note
+ * When both skey and sskey are NULL, this function is equivalent to
+ * OCI_PoolGetConnection().
+ *
+ * @note
+ * Session tagging is only supported by session pools. See
+ * OCI_PoolGetConnection() for more details.
+ *
+ * @return
+ * Connection handle on success, or NULL on failure.
+ *
+ * The returned handle is caller-owned; release it with the matching
+ * OCI_*Free() function when no longer needed.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_PoolGetConnectionSharded
+(
+    OCI_Environment *env,
+    OCI_Pool        *pool,
+    const otext     *tag,
+    OCI_ShardingKey *skey,
+    OCI_ShardingKey *sskey
+);
+
+
+
+
+
+/**
+ * @} OcilibCApiSharding
+ */
+
+/**
   * @defgroup OcilibCApiTransactions Managing transactions
   * @{
   *

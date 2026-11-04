@@ -2120,6 +2120,38 @@ typedef sword (*OCISTMTGETNEXTRESULT)
     ub4          mode
 );
 
+/* API introduced in 12.2 */
+
+typedef sword(*OCISHARDINGKEYCOLUMNADD)
+(
+    OCIShardingKey *shardingKey,
+    OCIError       *errhp,
+    void           *col,
+    ub4             colLen,
+    ub2             colType,
+    ub4             mode
+);
+
+typedef sword(*OCISHARDINGKEYRESET)
+(
+    OCIShardingKey *shardingKey,
+    OCIError       *errhp,
+    ub4             mode
+);
+
+typedef sword(*OCISHARDINSTANCESGET)
+(
+    void            **shTopoCtx,
+    OCIError         *errhp,
+    const OraText    *connstr,
+    ub4               connstrl,
+    OCIShardingKey   *shardingKey,
+    OCIShardingKey   *superShardingKey,
+    OCIShardInst   ***shardInsts,
+    ub4              *numShardInsts,
+    ub4               mode
+);
+
 /* API introduced in 18.1 */
 
 typedef sword(*OCISERVERRELEASE2)
@@ -3001,6 +3033,10 @@ typedef struct OCI_Symbols
     OCIJSONDOMDOCSET                         OCIJsonDomDocSet;
     OCIJSONCLONE                             OCIJsonClone;
     OCIJSONBINARYLENGTHGET                   OCIJsonBinaryLengthGet;
+
+    OCISHARDINGKEYCOLUMNADD                  OCIShardingKeyColumnAdd;
+    OCISHARDINGKEYRESET                      OCIShardingKeyReset;
+    OCISHARDINSTANCESGET                     OCIShardInstancesGet;
 
 #ifdef ORAXB8_DEFINED
     OCILOBCOPY2                              OCILobCopy2;

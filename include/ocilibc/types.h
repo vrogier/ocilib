@@ -456,6 +456,16 @@ typedef struct OCI_SodaCollCursor OCI_SodaCollCursor;
 typedef struct OCI_SodaDocCursor OCI_SodaDocCursor;
 
 /**
+ * @typedef OCI_ShardingKey
+ *
+ * @brief
+ * Oracle sharding key descriptor handle.
+ *
+ */
+
+typedef struct OCI_ShardingKey OCI_ShardingKey;
+
+/**
  * @typedef OCI_TypeInfo
  *
  * @brief

@@ -705,6 +705,11 @@ static void OcilibEnvironmentLoadSymbols
 #if OCI_VERSION_COMPILE >= OCI_12_1
     env->api->OCIStmtGetNextResult = OCIStmtGetNextResult;
 #endif
+#if OCI_VERSION_COMPILE >= OCI_12_2
+    env->api->OCIShardingKeyColumnAdd = OCIShardingKeyColumnAdd;
+    env->api->OCIShardingKeyReset     = OCIShardingKeyReset;
+    env->api->OCIShardInstancesGet    = OCIShardInstancesGet;
+#endif
 #if OCI_VERSION_COMPILE >= OCI_18_1
     env->api->OCIServerRelease2               = OCIServerRelease2;
     env->api->OCISodaCollCreate               = OCISodaCollCreate;
@@ -1040,6 +1045,10 @@ static void OcilibEnvironmentLoadSymbols
     LIB_SYMBOL(env->lib_handle, "OCIJsonDomDocSet",       env->api->OCIJsonDomDocSet,       OCIJSONDOMDOCSET);
     LIB_SYMBOL(env->lib_handle, "OCIJsonClone",           env->api->OCIJsonClone,           OCIJSONCLONE);
     LIB_SYMBOL(env->lib_handle, "OCIJsonBinaryLengthGet", env->api->OCIJsonBinaryLengthGet, OCIJSONBINARYLENGTHGET);
+
+    LIB_SYMBOL(env->lib_handle, "OCIShardingKeyColumnAdd", env->api->OCIShardingKeyColumnAdd, OCISHARDINGKEYCOLUMNADD);
+    LIB_SYMBOL(env->lib_handle, "OCIShardingKeyReset",     env->api->OCIShardingKeyReset,     OCISHARDINGKEYRESET);
+    LIB_SYMBOL(env->lib_handle, "OCIShardInstancesGet",    env->api->OCIShardInstancesGet,    OCISHARDINSTANCESGET);
 
   #ifdef ORAXB8_DEFINED
     LIB_SYMBOL(env->lib_handle, "OCILobCopy2", env->api->OCILobCopy2, OCILOBCOPY2);

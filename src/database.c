@@ -340,7 +340,7 @@ OCI_Boolean OcilibDatabaseSetUserPassword
     /* ConnectionLogon() will reset the password  */
 
     CHECK(OcilibConnectionAttach(con));
-    CHECK(OcilibConnectionLogon(con, new_pwd, NULL));
+    CHECK(OcilibConnectionLogon(con, new_pwd, NULL, NULL, NULL));
 
     SET_SUCCESS();
 

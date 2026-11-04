@@ -65,6 +65,11 @@ inline Connection Pool::GetConnection(const ostring& sessionTag)
     return Connection(core::Check(OCI_PoolGetConnection(GetEnvironment(), *this, sessionTag.c_str())), GetHandle(), true);
 }
 
+inline Connection Pool::GetConnection(const ostring& sessionTag, const ShardingKey& skey, const ShardingKey& sskey)
+{
+    return Connection(core::Check(OCI_PoolGetConnectionSharded(GetEnvironment(), *this, sessionTag.c_str(), skey, sskey)), GetHandle(), true);
+}
+
 inline UInt32 Pool::GetTimeout() const
 {
     return core::Check(OCI_PoolGetTimeout(*this));

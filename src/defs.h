@@ -207,8 +207,9 @@ typedef OCI_UInt16 dbtext;
 #define OCI_IPC_STATEMENT_ARRAY  70
 #define OCI_IPC_JSON             71
 #define OCI_IPC_JSON_NODE        72
+#define OCI_IPC_SHARDING_KEY     73
 
-#define OCI_IPC_COUNT            (OCI_IPC_JSON_NODE + 1)
+#define OCI_IPC_COUNT            (OCI_IPC_SHARDING_KEY + 1)
 
 /* --------------------------------------------------------------------------------------------- *
  * Oracle conditional features
@@ -228,8 +229,9 @@ typedef OCI_UInt16 dbtext;
 #define OCI_FEATURE_SODA                12
 #define OCI_FEATURE_JSON                13
 #define OCI_FEATURE_SECURE_NOTIFICATION 14
+#define OCI_FEATURE_SHARDING            15
 
-#define OCI_FEATURE_COUNT               OCI_FEATURE_SECURE_NOTIFICATION
+#define OCI_FEATURE_COUNT               OCI_FEATURE_SHARDING
 
 /* --------------------------------------------------------------------------------------------- *
  * handle types

@@ -51,7 +51,9 @@ OCI_SYM_LOCAL OCI_Connection * OcilibPoolGetConnection
 (
     OCI_Environment *env,
     OCI_Pool        *pool,
-    const otext     *tag
+    const otext     *tag,
+    OCI_ShardingKey *skey,
+    OCI_ShardingKey *sskey
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibPoolGetTimeout

@@ -418,7 +418,9 @@ OCI_Connection * OcilibPoolGetConnection
 (
     OCI_Environment *env,
     OCI_Pool        *pool,
-    const otext     *tag
+    const otext     *tag,
+    OCI_ShardingKey *skey,
+    OCI_ShardingKey *sskey
 )
 {
     ENTER_FUNC
@@ -432,7 +434,7 @@ OCI_Connection * OcilibPoolGetConnection
     (void) env;
 
     OCI_Connection *con = OcilibConnectionCreateInternal(pool->env, pool, pool->db, pool->user,
-                                                         pool->pwd, pool->mode, tag);
+                                                         pool->pwd, pool->mode, tag, skey, sskey);
     CHECK_NULL(con);
 
     /* for regular connection pool, set the statement cache size to

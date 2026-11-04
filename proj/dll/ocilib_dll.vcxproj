@@ -364,6 +364,7 @@
     <ClCompile Include="..\..\src\sodadoc.c" />
     <ClCompile Include="..\..\src\sodadoccursor.c" />
     <ClCompile Include="..\..\src\sodaoptions.c" />
+    <ClCompile Include="..\..\src\shardingkey.c" />
     <ClCompile Include="..\..\src\statement.c" />
     <ClCompile Include="..\..\src\stringutils.c" />
     <ClCompile Include="..\..\src\subscription.c" />
@@ -430,6 +431,7 @@
     <ClInclude Include="..\..\src\sodadb.h" />
     <ClInclude Include="..\..\src\sodadoc.h" />
     <ClInclude Include="..\..\src\sodadoccursor.h" />
+    <ClInclude Include="..\..\src\shardingkey.h" />
     <ClInclude Include="..\..\src\sodaoptions.h" />
     <ClInclude Include="..\..\src\statement.h" />
     <ClInclude Include="..\..\src\stringutils.h" />

@@ -35,6 +35,11 @@ inline Connection::Connection()
 
 }
 
+inline Connection::Connection(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey)
+{
+    Open(env, db, user, pwd, sessionFlags, skey, sskey);
+}
+
 inline Connection::Connection(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)
 {
     Open(env, db, user, pwd, sessionFlags);
@@ -57,6 +62,15 @@ inline void Connection::Open(const Environment& env, const ostring& db, const os
     AcquireAllocated
     (
         core::Check(OCI_ConnectionCreate(env.GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues())),
+        env.GetEnvironmentHandle()
+    );
+}
+
+inline void Connection::Open(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey)
+{
+    AcquireAllocated
+    (
+        core::Check(OCI_ConnectionCreateSharded(env.GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues(), skey, sskey)),
         env.GetEnvironmentHandle()
     );
 }
@@ -100,6 +114,8 @@ inline bool Connection::PingServer() const
 {
     return( core::Check(OCI_Ping(*this)) == TRUE);
 }
+
+
 
 inline ostring Connection::GetConnectionString() const
 {

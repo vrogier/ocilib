@@ -26,6 +26,7 @@
 #include "format.h"
 #include "list.h"
 #include "macros.h"
+#include "shardingkey.h"
 #include "statement.h"
 #include "stringutils.h"
 #include "timestamp.h"
@@ -596,12 +597,31 @@ static OCI_Boolean OcilibConnectionLogonRegular
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibConnectionLogonSessionPool
+ * OcilibConnectionLogonSessionGet
+ *
+ * Establish a connection through OCISessionGet().
+ *
+ * Applies to all kinds of connections:
+ *
+ *  - standalone connections   : OCI_SESSGET_CUSTOM_POOL + connect string
+ *  - session pool connections : OCI_SESSGET_SPOOL + pool name
+ *  - connection pool entries  : OCI_SESSGET_CPOOL  + pool name
+ *
+ * When sharding keys are provided (sharded connections), an OCIAuthInfo
+ * handle is allocated to carry them (keys must be set on the authp before
+ * OCISessionGet()); otherwise authp stays NULL and the call is the regular
+ * session pool logon.
+ *
+ * Sessions obtained through OCISessionGet() are released through
+ * OCISessionRelease(), hence con->alloc_handles is set to FALSE so that
+ * the regular session pool logoff path is used.
  * --------------------------------------------------------------------------------------------- */
 
-static OCI_Boolean OcilibConnectionLogonSessionPool
+static OCI_Boolean OcilibConnectionLogonSessionGet
 (
     OCI_Connection *con,
+    OCI_ShardingKey *skey,
+    OCI_ShardingKey *sskey,
     const otext    *tag
 )
 {
@@ -611,49 +631,136 @@ static OCI_Boolean OcilibConnectionLogonSessionPool
         /* context */ OCI_IPC_CONNECTION, con
     );
 
-    ub4         sess_mode  = OCI_SESSGET_SPOOL;
-    OCI_Boolean found      = FALSE;
+    void       *authp      = NULL;
+    ub4         sess_mode  = OCI_DEFAULT;
     OCI_Int32   dbsize     = -1;
     dbtext     *dbstr      = NULL;
-    dbtext     *dbstr_tag  = NULL;
-    OCI_Int32   dbsize_tag = 0;
-    OraText    *dbstr_ret  = NULL;
-    ub4         dbsize_ret = 0;
+    OCI_Int32   dbusrsize  = -1;
+    dbtext     *dbusr      = NULL;
+    OCI_Int32   dbpwdsize  = -1;
+    dbtext     *dbpwd      = NULL;
+    OCI_Int32   dbtagsize  = 0;
+    dbtext     *dbtag      = NULL;
+    OraText    *dbret      = NULL;
+    ub4         dbretsize  = 0;
+    boolean     found      = FALSE;
 
-#if OCI_VERSION_COMPILE >= OCI_10_2
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+
+#if OCI_VERSION_COMPILE >= OCI_12_2
+
+    /* allocate authentication handle only when needed (sharding keys or
+       standalone credentials); NULL authp is the regular pool logon     */
+
+    if (NULL != skey || NULL != sskey || NULL == con->pool)
+    {
+        CHECK(OcilibMemoryAllocHandle(con->env, con->env->handle, (dvoid **)(void *)&authp, OCI_HTYPE_AUTHINFO));
+    }
+
+    if (NULL != skey)
+    {
+        CHECK_ATTRIB_SET
+        (
+            OCI_HTYPE_AUTHINFO, OCI_ATTR_SHARDING_KEY,
+            authp, skey->handle, 0,
+            con->err
+        );
+    }
+
+    if (NULL != sskey)
+    {
+        CHECK_ATTRIB_SET
+        (
+            OCI_HTYPE_AUTHINFO, OCI_ATTR_SUPER_SHARDING_KEY,
+            authp, sskey->handle, 0,
+            con->err
+        );
+    }
+
+    /* set credentials on the authentication handle for standalone
+       connections (session/connection pools supply their own) */
+
+    if (NULL == con->pool)
+    {
+        if (IS_STRING_VALID(con->user))
+        {
+            dbusr = OcilibStringGetDBString(con->env, con->user, &dbusrsize);
+
+            CHECK_ATTRIB_SET
+            (
+                OCI_HTYPE_AUTHINFO, OCI_ATTR_USERNAME,
+                authp, dbusr, dbusrsize,
+                con->err
+            );
+        }
+
+        if (IS_STRING_VALID(con->pwd))
+        {
+            dbpwd = OcilibStringGetDBString(con->env, con->pwd, &dbpwdsize);
+
+            CHECK_ATTRIB_SET
+            (
+                OCI_HTYPE_AUTHINFO, OCI_ATTR_PASSWORD,
+                authp, dbpwd, dbpwdsize,
+                con->err
+            );
+        }
+    }
+
+    /* session get mode and connect string */
 
     if (con->mode & OCI_SESSION_SYSDBA)
     {
         sess_mode |= OCI_SESSGET_SYSDBA;
     }
 
-#endif
-
-    if (!IS_STRING_VALID(con->pool->user) && !IS_STRING_VALID(con->pool->pwd))
+    if (!IS_STRING_VALID(con->user) && !IS_STRING_VALID(con->pwd))
     {
         sess_mode |= OCI_SESSGET_CREDEXT;
     }
 
-    if (IS_STRING_VALID(con->pool->name))
+    if (con->env->version_runtime >= OCI_9_2)
+    {
+        sess_mode |= OCI_SESSGET_STMTCACHE;
+    }
+
+    if (NULL != con->pool)
     {
         dbsize = -1;
         dbstr  = OcilibStringGetDBString(con->env, con->pool->name, &dbsize);
-    }
 
-    if (IS_STRING_VALID(tag))
+        if (OCI_HTYPE_SPOOL == con->pool->kind)
+        {
+            sess_mode |= OCI_SESSGET_SPOOL;
+
+            if (IS_STRING_VALID(tag))
+            {
+                dbtagsize = -1;
+                dbtag     = OcilibStringGetDBString(con->env, tag, &dbtagsize);
+            }
+        }
+        else
+        {
+            sess_mode |= OCI_SESSGET_CPOOL;
+        }
+    }
+    else
     {
-        dbsize_tag = -1;
-        dbstr_tag  = OcilibStringGetDBString(con->env, tag, &dbsize_tag);
+        sess_mode |= OCI_SESSGET_CUSTOM_POOL;
+
+        dbsize = -1;
+        dbstr  = OcilibStringGetDBString(con->env, con->db, &dbsize);
     }
 
     CHECK_OCI
     (
         con->err,
         OCISessionGet,
-        con->env->handle, con->err, &con->handle, NULL,
+        con->env->handle, con->err, &con->handle,
+        authp,
         (OraText  *)dbstr, (ub4)dbsize,
-        (OraText *)dbstr_tag, (ub4) dbsize_tag,
-        (OraText **)&dbstr_ret, &dbsize_ret,
+        (OraText  *)dbtag, (ub4)dbtagsize,
+        (OraText **)&dbret, &dbretsize,
         (boolean*) &found, sess_mode
     );
 
@@ -671,6 +778,11 @@ static OCI_Boolean OcilibConnectionLogonSessionPool
         con->err
     );
 
+    /* the underlying OCI handles are owned by the service context:
+       they are released through OCISessionRelease() */
+
+    con->alloc_handles = FALSE;
+
     if (found)
     {
         CHECK(OcilibConnectionSetSessionTag(con, tag));
@@ -678,10 +790,27 @@ static OCI_Boolean OcilibConnectionLogonSessionPool
 
     SET_SUCCESS();
 
+#else
+
+    OCI_NOT_USED(skey);
+    OCI_NOT_USED(sskey);
+    OCI_NOT_USED(tag);
+
+    CHECK(FALSE);
+
+#endif
+
     CLEANUP_AND_EXIT_FUNC
     (
         OcilibStringReleaseDBString(con->env, dbstr);
-        OcilibStringReleaseDBString(con->env, dbstr_tag);
+        OcilibStringReleaseDBString(con->env, dbusr);
+        OcilibStringReleaseDBString(con->env, dbpwd);
+        OcilibStringReleaseDBString(con->env, dbtag);
+
+        if (NULL != authp)
+        {
+            OcilibMemoryFreeHandle(con->env, (dvoid *)authp, OCI_HTYPE_AUTHINFO);
+        }
     );
 }
 
@@ -693,7 +822,9 @@ OCI_Boolean OcilibConnectionLogon
 (
     OCI_Connection *con,
     const otext    *new_pwd,
-    const otext    *tag
+    const otext    *tag,
+    OCI_ShardingKey *skey,
+    OCI_ShardingKey *sskey
 )
 {
     ENTER_FUNC
@@ -714,16 +845,25 @@ OCI_Boolean OcilibConnectionLogon
 
     if (con->alloc_handles)
     {
-        CHECK(OcilibConnectionLogonRegular(con, new_pwd));
+        if (NULL != skey || NULL != sskey)
+        {
+            /* sharded connections must be established through OCISessionGet() with an authp carrying the keys */
+
+            CHECK(OcilibConnectionLogonSessionGet(con, skey, sskey, tag));
+        }
+        else
+        {
+            CHECK(OcilibConnectionLogonRegular(con, new_pwd));
+        }
     }
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
-    /* 3 - connection from session pool */
+    /* 2 - connection from session pool */
 
     else if (con->env->version_runtime >= OCI_9_2)
     {
-        CHECK(OcilibConnectionLogonSessionPool(con, tag));
+        CHECK(OcilibConnectionLogonSessionGet(con, skey, sskey, tag));
     }
 
 #endif
@@ -1023,7 +1163,9 @@ OCI_Connection * OcilibConnectionCreateInternal
     const otext     *user,
     const otext     *pwd,
     OCI_SessionMode  mode,
-    const otext     *tag
+    const otext     *tag,
+    OCI_ShardingKey *skey,
+    OCI_ShardingKey *sskey
 )
 {
     ENTER_FUNC
@@ -1037,8 +1179,18 @@ OCI_Connection * OcilibConnectionCreateInternal
     OCI_Connection *con = OcilibConnectionAllocate(env, pool, db, user, pwd, mode);
     CHECK_NULL(con);
 
-    CHECK(OcilibConnectionAttach(con));
-    CHECK(OcilibConnectionLogon(con, NULL, tag));
+    if (NULL != skey || NULL != sskey)
+    {
+        /* for sharded connections, OCISessionGet() performs the server
+           attach itself via the authp carrying the keys                 */
+
+        if (NULL == skey && NULL == sskey)
+        {
+            CHECK(OcilibConnectionAttach(con));
+        }
+
+        CHECK(OcilibConnectionLogon(con, NULL, tag, skey, sskey));
+    }
 
     OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO,
                OTEXT("connection created: %s/%s (tag=%s)"),
@@ -1114,7 +1266,35 @@ OCI_Connection * OcilibConnectionCreate
 
     CHECK_PTR(OCI_IPC_ENVIRONMENT, env);
 
-    SET_RETVAL(OcilibConnectionCreateInternal(env, NULL, db, user, pwd, mode, NULL));
+    SET_RETVAL(OcilibConnectionCreateInternal(env, NULL, db, user, pwd, mode, NULL, NULL, NULL));
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibConnectionCreateSharded
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Connection * OcilibConnectionCreateSharded
+(
+    OCI_Environment *env,
+    const otext     *db,
+    const otext     *user,
+    const otext     *pwd,
+    OCI_SessionMode  mode,
+    OCI_ShardingKey *skey,
+    OCI_ShardingKey *sskey
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Connection*, NULL,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
+
+    CHECK_PTR(OCI_IPC_ENVIRONMENT, env);
+
+    SET_RETVAL(OcilibConnectionCreateInternal(env, NULL, db, user, pwd, mode, NULL, skey, sskey));
 
     EXIT_FUNC();
 }
@@ -1412,7 +1592,7 @@ OCI_Boolean OcilibConnectionSetPassword
 
     if (OCI_CONN_LOGGED != con->cstate)
     {
-        CHECK(OcilibConnectionLogon(con, password, NULL));
+        CHECK(OcilibConnectionLogon(con, password, NULL, NULL, NULL));
     }
     else
     {

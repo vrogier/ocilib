@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -60,60 +60,173 @@
     <IncludePath>..\src;..\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\agent.c" />
-    <ClCompile Include="..\src\array.c" />
-    <ClCompile Include="..\src\bind.c" />
-    <ClCompile Include="..\src\callback.c" />
-    <ClCompile Include="..\src\collection.c" />
-    <ClCompile Include="..\src\column.c" />
-    <ClCompile Include="..\src\connection.c" />
-    <ClCompile Include="..\src\database.c" />
-    <ClCompile Include="..\src\date.c" />
-    <ClCompile Include="..\src\define.c" />
-    <ClCompile Include="..\src\dequeue.c" />
-    <ClCompile Include="..\src\dirpath.c" />
-    <ClCompile Include="..\src\element.c" />
-    <ClCompile Include="..\src\enqueue.c" />
-    <ClCompile Include="..\src\environment.c" />
-    <ClCompile Include="..\src\error.c" />
-    <ClCompile Include="..\src\event.c" />
-    <ClCompile Include="..\src\exception.c" />
-    <ClCompile Include="..\src\file.c" />
-    <ClCompile Include="..\src\format.c" />
-    <ClCompile Include="..\src\handle.c" />
-    <ClCompile Include="..\src\hash.c" />
-    <ClCompile Include="..\src\helpers.c" />
-    <ClCompile Include="..\src\interval.c" />
-    <ClCompile Include="..\src\iterator.c" />
-    <ClCompile Include="..\src\json.c" />
-    <ClCompile Include="..\src\jsonnode.c" />
-    <ClCompile Include="..\src\list.c" />
-    <ClCompile Include="..\src\log.c" />
-    <ClCompile Include="..\src\lob.c" />
-    <ClCompile Include="..\src\long.c" />
-    <ClCompile Include="..\src\memory.c" />
-    <ClCompile Include="..\src\message.c" />
-    <ClCompile Include="..\src\number.c" />
-    <ClCompile Include="..\src\object.c" />
-    <ClCompile Include="..\src\ocilib.c" />
-    <ClCompile Include="..\src\pool.c" />
-    <ClCompile Include="..\src\queue.c" />
-    <ClCompile Include="..\src\reference.c" />
-    <ClCompile Include="..\src\resultset.c" />
-    <ClCompile Include="..\src\sodacoll.c" />
-    <ClCompile Include="..\src\sodacollcursor.c" />
-    <ClCompile Include="..\src\sodadb.c" />
-    <ClCompile Include="..\src\sodadoc.c" />
-    <ClCompile Include="..\src\sodadoccursor.c" />
-    <ClCompile Include="..\src\sodaoptions.c" />
-    <ClCompile Include="..\src\statement.c" />
-    <ClCompile Include="..\src\stringutils.c" />
-    <ClCompile Include="..\src\subscription.c" />
-    <ClCompile Include="..\src\timestamp.c" />
-    <ClCompile Include="..\src\transaction.c" />
-    <ClCompile Include="..\src\typeinfo.c" />
-    <ClCompile Include="..\src\vector.c" />
-    <ClCompile Include="..\src\xmltype.c" />
+    <ClCompile Include="..\src\agent.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\array.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\bind.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\callback.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\collection.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\column.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\connection.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\database.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\date.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\define.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\dequeue.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\dirpath.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\element.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\enqueue.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\environment.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\error.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\event.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\exception.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\file.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\format.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\handle.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\hash.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\helpers.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\interval.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\iterator.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\json.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\jsonnode.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\list.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\log.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\lob.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\long.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\memory.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\message.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\number.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\object.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\ocilib.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\pool.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\queue.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\reference.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\resultset.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\shardingkey.c" />
+    <ClCompile Include="..\src\sodacoll.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\sodacollcursor.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\sodadb.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\sodadoc.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\sodadoccursor.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\sodaoptions.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\statement.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\stringutils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\subscription.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\timestamp.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\transaction.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\typeinfo.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\vector.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\xmltype.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>ocilib_tests.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="TestCursor.cpp" />
     <ClCompile Include="TestArray.cpp" />
     <ClCompile Include="TestCollection.cpp" />
@@ -171,6 +284,8 @@
     <ClCompile Include="TestColumnCpp.cpp" />
     <ClCompile Include="TestError.cpp" />
     <ClCompile Include="TestHash.cpp" />
+    <ClCompile Include="TestSharding.cpp" />
+    <ClCompile Include="TestShardingCpp.cpp" />
     <ClCompile Include="TestSoda.cpp" />
     <ClCompile Include="TestSodaCpp.cpp" />
     <ClCompile Include="TestStatement.cpp" />
@@ -330,6 +445,7 @@
     <ClInclude Include="..\src\queue.h" />
     <ClInclude Include="..\src\reference.h" />
     <ClInclude Include="..\src\resultset.h" />
+    <ClInclude Include="..\src\shardingkey.h" />
     <ClInclude Include="..\src\sodacoll.h" />
     <ClInclude Include="..\src\sodacollcursor.h" />
     <ClInclude Include="..\src\sodadb.h" />
@@ -359,6 +475,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>ocilib_tests.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;OCI_IMPORT_RUNTIME;OCI_LIB_LOCAL_COMPILE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -376,6 +494,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>ocilib_tests.h</PrecompiledHeaderFile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>Disabled</Optimization>
@@ -397,6 +517,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - UNICODE|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>ocilib_tests.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE; OCI_IMPORT_RUNTIME;OCI_LIB_LOCAL_COMPILE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -416,6 +538,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - ANSI|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>ocilib_tests.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE; OCI_IMPORT_RUNTIME;OCI_LIB_LOCAL_COMPILE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -434,6 +558,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - UNICODE|x64'">
     <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>ocilib_tests.h</PrecompiledHeaderFile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>X64;NDEBUG;_CONSOLE;OCI_CHARSET_WIDE;OCI_IMPORT_RUNTIME;OCI_LIB_LOCAL_COMPILE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -453,6 +579,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - ANSI|x64'">
     <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>ocilib_tests.h</PrecompiledHeaderFile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>X64;NDEBUG;_CONSOLE;OCI_CHARSET_ANSI;OCI_IMPORT_RUNTIME;OCI_LIB_LOCAL_COMPILE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>

@@ -518,6 +518,7 @@ namespace ocilib
     {
         friend class Connection;
         friend class Pool;
+        friend class ShardingKey;
         friend class TypeInfo;
         friend class Subscription;
         friend class Dequeue;
@@ -1412,6 +1413,21 @@ namespace ocilib
 
         /**
          * @brief
+         * Get a connection from the pool, routed to a specific shard through
+         * the given sharding keys
+         *
+         * @param sessionTag - Session user tag string
+         * @param skey       - Sharding key
+         * @param sskey      - Super sharding key
+         *
+         * @note
+         * Requires Oracle 12cR2 or above.
+         *
+         */
+        Connection GetConnection(const ostring& sessionTag, const ShardingKey& skey, const ShardingKey& sskey);
+
+        /**
+         * @brief
          * Get the idle timeout for connections/sessions in the pool
          *
          * @note
@@ -1723,6 +1739,28 @@ namespace ocilib
 
         /**
          * @brief
+         * Constructor that creates and opens an underlying DB connection with the given
+         * information, routed to a specific shard through the given sharding keys
+         *
+         * @param env    - Environment instance
+         * @param db     - Oracle Service Name
+         * @param user   - Oracle User name
+         * @param pwd    - Oracle User password
+         * @param sessionFlags - Session Flags
+         * @param skey   - Sharding key
+         * @param sskey  - Super sharding key
+         *
+         * @note
+         * Requires Oracle 12cR2 or above.
+         *
+         */
+        Connection(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd,
+            Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey);
+
+        
+        
+        /**
+         * @brief
          * Create a physical connection to an Oracle database server
          *
          * @param env          - Environment instance
@@ -1742,6 +1780,22 @@ namespace ocilib
          *
          */
         void Open(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags = Environment::SessionDefault);
+
+        /**
+         * @brief
+         * Create a physical connection to an Oracle database server, routed to a
+         * shard via the given sharding key and optional super sharding key
+         *
+         * @param env          - Environment instance
+         * @param db           - Oracle Service name or TNS alias
+         * @param user         - User name
+         * @param pwd          - User password
+         * @param sessionFlags - Session flags
+         * @param skey         - Sharding key
+         * @param sskey        - Super sharding key
+         *
+         */
+        void Open(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey);
 
         /**
          * @brief
@@ -10904,6 +10958,64 @@ namespace ocilib
          *
          */
         iterator end()   { return iterator(); }
+    };
+
+    /**
+     * @brief
+     * Oracle Sharding key object.
+     *
+     * This class wraps the OCILIB object handle OCI_ShardingKey and its related methods.
+     *
+     * A sharding key is a set of key column values used to route connection
+     * requests to specific shards of an Oracle sharded database.
+     * Supported column value types are ostring, Number, Date, Timestamp and
+     * std::vector<unsigned char> (RAW).
+     *
+     */
+    class ShardingKey : public core::HandleHolder<OCI_ShardingKey*>
+    {
+    public:
+
+        /**
+         * @brief
+         * Create a sharding key object on the given environment
+         *
+         * @param env - Environment instance
+         *
+         */
+        explicit ShardingKey(Environment& env);
+
+        /**
+         * @brief
+         * Add a column value to the sharding key
+         *
+         * @param value - Column value
+         *
+         * @note
+         * Columns must be added in the declaration order of the sharding key.
+         * Supported types are ostring, Number, Date, Timestamp and
+         * std::vector<unsigned char>.
+         *
+         */
+        template<class T>
+        void AddColumn(const T& value);
+
+        /**
+         * @brief
+         * Clear all column values previously added to the sharding key
+         *
+         * @note
+         * The key object can be populated again and reused.
+         *
+         */
+        void Reset();
+
+        /**
+         * @brief
+         * Return the base64 encoded representation of the sharding key values
+         *
+         */
+        ostring ToString() const;
     };
 
 

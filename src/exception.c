@@ -100,7 +100,11 @@ static const otext * TypeNames[OCI_IPC_COUNT] =
     OTEXT("Internal Long handle data buffer"),
     OTEXT("Internal trace info structure"),
     OTEXT("Internal array of direct path columns"),
-    OTEXT("Internal array of batch error objects")
+    OTEXT("Internal array of batch error objects"),
+    OTEXT("Internal statement array"),
+    OTEXT("JSON handle"),
+    OTEXT("JSON node handle"),
+    OTEXT("Sharding key handle")
 };
 
 #if defined(OCI_CHARSET_WIDE) && !defined(_MSC_VER)
@@ -192,7 +196,8 @@ static const otext * OracleFeatures[OCI_FEATURE_COUNT] =
     OTEXT("Oracle 23ai Vectors support"),
     OTEXT("Oracle 18.1 SODA support"),
     OTEXT("Oracle 21.1 JSON support"),
-    OTEXT("Oracle 19.4 client-side secure notification mode")
+    OTEXT("Oracle 19.4 client-side secure notification mode"),
+    OTEXT("Oracle 12c R2 sharding support")
 };
 
 typedef struct StatementState
