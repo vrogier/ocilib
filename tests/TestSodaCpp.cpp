@@ -395,7 +395,7 @@ namespace TestCppApi
         SodaOptions options(sdb);
         try { options.SetFetchArraySize(16); } catch (const Exception&) { FAIL() << "fetchsize"; }
         try { options.SetLock(); }             catch (const Exception&) { FAIL() << "lock"; }
-        /* SODA hints reject the '/*'+'* /' comment markers (ORA-40856) */
+        /* SODA hints reject enclosing comment markers (ORA-40856) */
         try { options.SetHint(OTEXT("index(OCILIB_SODA_CPP_BULK)")); } catch (const Exception&) {}
 
         /* ListIndexes / GetDataGuide covered in the C BulkSaveIndexAndMeta and

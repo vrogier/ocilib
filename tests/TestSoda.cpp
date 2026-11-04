@@ -497,7 +497,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaOptionsSetFetchArraySize(options, 32));
         ASSERT_TRUE(OCI_SodaOptionsSetLock(options, FALSE));
 
-        /* SODA hints reject the '/*'+'* /' comment markers (ORA-40856) —
+        /* SODA hints reject enclosing comment markers (ORA-40856) —
            pass the bare hint text */
         {
             auto* opt2 = OCI_SodaOptionsCreate(sdb);
