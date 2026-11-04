@@ -81,6 +81,45 @@ namespace TestCppApi
         JsonNode item3 = items[2];
         ASSERT_EQ(Json::NodeNumber, item3.GetType());
     }
+    TEST(TestJsonDomCpp, JsonNodeIterator)
+    {
+        Environment& env = GetEnvironmentCpp();
+        Connection con(env, DBS, USR, PWD);
+
+        Json json = MakeJson(con, OTEXT("{\"name\":\"test\",\"items\":[1,2,3]}"));
+        json.SetMutable(true);
+
+        JsonNode root = json.GetRoot();
+
+        /* iterating an object node yields its fields in order */
+
+        std::vector<ostring> fieldNames;
+        OCI_UInt32 index = 1;
+        for (const JsonNode& field : root)
+        {
+            fieldNames.push_back(root.GetFieldName(index++));
+        }
+        ASSERT_EQ(2u, fieldNames.size());
+        ASSERT_EQ(ostring(OTEXT("name")), fieldNames[0]);
+        ASSERT_EQ(ostring(OTEXT("items")), fieldNames[1]);
+
+        /* iterating an array node yields its items in order */
+
+        JsonNode items = root.GetFieldByName(OTEXT("items"));
+        std::vector<Json::JsonType> itemTypes;
+        for (const JsonNode& item : items)
+        {
+            itemTypes.push_back(item.GetType());
+        }
+        ASSERT_EQ(3u, itemTypes.size());
+        ASSERT_TRUE(std::all_of(itemTypes.begin(), itemTypes.end(),
+                                [](Json::JsonType t) { return t == Json::NodeNumber; }));
+
+        /* scalar and null nodes produce an empty range */
+
+        ASSERT_EQ(0u, std::distance(root.GetFieldByName(OTEXT("name")).begin(),
+                                    root.GetFieldByName(OTEXT("name")).end()));
+    }
     TEST(TestJsonDomCpp, NodeCreationAndSetters)
     {
         Environment& env = GetEnvironmentCpp();

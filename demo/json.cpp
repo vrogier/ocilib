@@ -32,11 +32,10 @@ void PrintNode(const JsonNode& node, OCI_Int32 depth)
         {
             std::cout << "[\n";
 
-            const OCI_UInt32 n = node.GetItemCount();
-            for (OCI_UInt32 i = 0; i < n; ++i)
+            for (const JsonNode& item : node)
             {
                 std::cout << indent << "  ";
-                PrintNode(node.GetItem(i + 1), depth + 2);
+                PrintNode(item, depth + 2);
             }
 
             std::cout << indent << "]\n";

@@ -5148,6 +5148,7 @@ namespace ocilib
     *
     */
     class JsonNode;
+    class JsonNodeIterator;
 
     /**
     * @brief
@@ -5869,7 +5870,7 @@ namespace ocilib
         * @brief
         * Insert an item into a JSON array node at a given position
         *
-        * @param index - Item index (starts at 0, may be equal to the item count to append)
+        * @param index - Item index (starts at 1, may be equal to the item count + 1 to append)
         * @param value - Item value to insert
         *
         */
@@ -5879,7 +5880,7 @@ namespace ocilib
         * @brief
         * Remove an item from a JSON array node
         *
-        * @param index - Item index (starts at 0)
+        * @param index - Item index (starts at 1)
         *
         */
         void RemoveItem(UInt32 index);
@@ -5937,9 +5938,61 @@ namespace ocilib
         template<class T, core::SupportedNumericT<T>* = nullptr>
         T GetNumeric() const;
 
+        /**
+        * @brief
+        * STL compliant forward iterator over a JSON container node's items/fields
+        *
+        */
+        /**
+        * @brief
+        * Return an iterator to the first item (array node) or field (object node);
+        * for other node types returns the end iterator
+        *
+        */
+        JsonNodeIterator begin() const;
+
+        /**
+        * @brief
+        * Return an iterator past the last item/field of the node
+        *
+        */
+        JsonNodeIterator end() const;
+
     private:
 
         JsonNode(OCI_JsonNode* pNode, core::Handle* parent = nullptr);
+    };
+
+    /**
+    * @brief
+    * STL compliant forward iterator over a JSON container node's items (array
+    * node) or fields (object node)
+    *
+    */
+    class JsonNodeIterator
+    {
+    public:
+
+        typedef std::forward_iterator_tag iterator_category;
+        typedef JsonNode value_type;
+        typedef ptrdiff_t difference_type;
+        typedef JsonNode* pointer;
+        typedef JsonNode& reference;
+
+        JsonNodeIterator(const JsonNode& node, UInt32 index);
+
+        JsonNode operator*() const;
+
+        JsonNodeIterator& operator++();
+        JsonNodeIterator operator++(Int32);
+
+        bool operator == (const JsonNodeIterator& other) const;
+        bool operator != (const JsonNodeIterator& other) const;
+
+    private:
+
+        const JsonNode* _node;
+        UInt32          _index;
     };
 
     /**

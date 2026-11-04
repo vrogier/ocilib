@@ -193,6 +193,7 @@ namespace ocilib
 #include "ocilibcpp/detail/XmlType.hpp"
 #include "ocilibcpp/detail/Vector.hpp"
 #include "ocilibcpp/detail/JsonNode.hpp"
+#include "ocilibcpp/detail/JsonNodeIterator.hpp"
 #include "ocilibcpp/detail/Json.hpp"
 #include "ocilibcpp/detail/Collection.hpp"
 #include "ocilibcpp/detail/CollectionIterator.hpp"
