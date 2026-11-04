@@ -26,15 +26,15 @@ namespace TestCppApi
 
         ASSERT_EQ(2u, arr.GetItemCount());
 
-        JsonNode i1 = arr.GetItem(0);
+        JsonNode i1 = arr.GetItem(1);
         ASSERT_EQ(Json::NodeString, i1.GetType());
         ASSERT_EQ(ostring(OTEXT("first")), i1.GetString());
 
-        JsonNode i2 = arr.GetItem(1);
+        JsonNode i2 = arr.GetItem(2);
         ASSERT_EQ(Json::NodeString, i2.GetType());
         ASSERT_EQ(ostring(OTEXT("second")), i2.GetString());
 
-        JsonNode v1 = arr.GetItem(0);
+        JsonNode v1 = arr.GetItem(1);
         ASSERT_EQ(Json::NodeString, v1.GetType());
         ASSERT_EQ(ostring(OTEXT("first")), v1.GetString());
 

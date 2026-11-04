@@ -312,6 +312,7 @@ OCI_SodaCollCursor * OcilibSodaDbGetColls
         }
     );
 }
+
 /* --------------------------------------------------------------------------------------------- *
  * OcilibSodaDbGetCollectionNames
  * --------------------------------------------------------------------------------------------- */
@@ -357,7 +358,7 @@ otext** OcilibSodaDbGetCollectionNames
             if (found == cap)
             {
                 otext **grown = OcilibMemoryAlloc(sdb->env, OCI_IPC_VOID,
-                                                sizeof(*grown), cap * 2, TRUE);
+                                                  sizeof(*grown), cap * 2, TRUE);
                 CHECK_NULL(grown);
 
                 memcpy(grown, names, cap * sizeof(*names));
@@ -447,4 +448,3 @@ OCI_Boolean OcilibSodaDbFreeCollectionNames
 
     EXIT_FUNC();
 }
-

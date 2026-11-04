@@ -35,7 +35,7 @@ namespace TestCApi
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(a));
         OCI_JsonNodeFree(a);
 
-        OCI_JsonNode* b = OCI_JsonNodeGetFieldByIndex(root, 0);
+        OCI_JsonNode* b = OCI_JsonNodeGetFieldByIndex(root, 1);
         ASSERT_NE(nullptr, b);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(b));
         OCI_JsonNodeFree(b);

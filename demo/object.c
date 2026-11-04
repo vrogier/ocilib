@@ -60,9 +60,6 @@ int main(void)
         vendor = OCI_ObjectGetObject(sale, "VENDOR");
 
         printf("Sale %d - %s vendor %s\n", OCI_ObjectGetInt(sale, "CODE"), OCI_ObjectGetString(sale, "NAME"), OCI_ObjectGetString(vendor, "NAME"));
-
-        OCI_ObjectFree(vendor);
-        OCI_ObjectFree(sale);
     }
 
     OCI_StatementFree(st);

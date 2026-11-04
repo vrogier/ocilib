@@ -70,11 +70,11 @@ namespace TestCppApi
         JsonNode name3 = root[OTEXT("name")];
         ASSERT_EQ(ostring(OTEXT("test")), name3.GetString());
 
-        JsonNode items = root.GetFieldByIndex(1);
+        JsonNode items = root.GetFieldByIndex(2);
         ASSERT_EQ(Json::NodeArray, items.GetType());
         ASSERT_EQ(3u, items.GetItemCount());
 
-        JsonNode item2 = items.GetItem(1);
+        JsonNode item2 = items.GetItem(2);
         ASSERT_EQ(Json::NodeNumber, item2.GetType());
         ASSERT_DOUBLE_EQ(2.0, static_cast<OCI_Double>(item2.GetNumeric<Number>()));
 
@@ -308,7 +308,7 @@ namespace TestCppApi
         JsonNode s2 = json.CreateString(OTEXT("two"));
         arr.InsertItem(1, s2);
         ASSERT_EQ(3u, arr.GetItemCount());
-        ASSERT_EQ(ostring(OTEXT("two")), arr.GetItem(1).GetString());
+        ASSERT_EQ(ostring(OTEXT("two")), arr.GetItem(2).GetString());
         arr.RemoveItem(1);
         ASSERT_EQ(2u, arr.GetItemCount());
 

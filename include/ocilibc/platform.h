@@ -319,7 +319,7 @@ typedef double OCI_Double;
 
 /* compatibility aliases */
 
-typedef OCI_Int64  big_int;
+typedef OCI_Int64 big_int;
 typedef OCI_UInt64 big_uint;
 
 #define OCI_BIG_UINT_ENABLED

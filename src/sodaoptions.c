@@ -533,7 +533,7 @@ OCI_Boolean OcilibSodaOptionsSetHint
     CHECK_SODA_ENABLED(options->sdb->con);
 
     /* OCI_ATTR_SODA_HINT is only available on client 19.11+ or 21.3+ */
-  
+
     const OCI_UInt32 ver = options->sdb->env->version_runtime;
 
     if ((ver < OCI_19_11) || (ver >= OCI_21_1 && ver < OCI_21_3))

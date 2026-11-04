@@ -5923,6 +5923,13 @@ namespace ocilib
         * @brief
         * Return the JSON node matching a JSON path expression (e.g. "$.a.b[0]")
         *
+        * @warning
+        * Array indices inside the path string are 0-BASED, following the
+        * JSONPath convention used by Oracle's JSON_VALUE()/json_query() —
+        * '$.arr[0]' is the FIRST item of 'arr'. This differs from the
+        * programmatic index arguments of GetItem()/SetItem()/InsertItem()/
+        * RemoveItem(), which are 1-BASED API indices.
+        *
         * @return The matching node, or a null JsonNode if the path matches nothing
         */
         JsonNode GetByPath(const ostring& path) const;

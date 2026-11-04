@@ -27,30 +27,30 @@
 #include "timestamp.h"
 #include "interval.h"
 
+#define OCL_JSON_NODE_NUMBER_SETTER(otype)                  \
+        ENTER_FUNC                                          \
+        (                                                   \
+    /* returns */ OCI_Boolean, FALSE,                       \
+    /* context */ OCI_IPC_JSON_NODE, node                   \
+        );                                                  \
+                                                            \
+        CHECK(OcilibJsonNodeSetValue(node, otype, &value)); \
+        SET_SUCCESS();                                      \
+        CLEANUP_AND_EXIT_FUNC();                            \
 
-#define OCL_JSON_NODE_NUMBER_SETTER(otype)              \
-    ENTER_FUNC                                          \
-    (                                                   \
-        /* returns */ OCI_Boolean, FALSE,               \
-        /* context */ OCI_IPC_JSON_NODE, node           \
-    );                                                  \
-                                                        \
-    CHECK(OcilibJsonNodeSetValue(node, otype, &value)); \
-    SET_SUCCESS();                                      \
-    CLEANUP_AND_EXIT_FUNC();                            \
 
+#define OCL_JSON_NODE_NUMBER_GETTER(otype)                 \
+        ENTER_FUNC                                         \
+        (                                                  \
+    /* returns */ OCI_Boolean, FALSE,                      \
+    /* context */ OCI_IPC_JSON_NODE, node                  \
+        );                                                 \
+                                                           \
+        CHECK_PTR(OCI_IPC_VOID, value);                    \
+        CHECK(OcilibJsonNodeGetValue(node, otype, value)); \
+        SET_SUCCESS();                                     \
+        CLEANUP_AND_EXIT_FUNC();                           \
 
-#define OCL_JSON_NODE_NUMBER_GETTER(otype)              \
-    ENTER_FUNC                                          \
-    (                                                   \
-        /* returns */ OCI_Boolean, FALSE,               \
-        /* context */ OCI_IPC_JSON_NODE, node           \
-    );                                                  \
-                                                        \
-    CHECK_PTR(OCI_IPC_VOID, value);                     \
-    CHECK(OcilibJsonNodeGetValue(node, otype, value));  \
-    SET_SUCCESS();                                      \
-    CLEANUP_AND_EXIT_FUNC();                            \
 
 /* --------------------------------------------------------------------------------------------- *
  * Local helpers: the JSON DOM expects/returns single-byte oratext, while OCILIB public strings
@@ -113,7 +113,7 @@ static void JsonNodeDrainDomError
     JsonDomDoc *jdoc
 )
 {
-    if (NULL != jdoc && 
+    if (NULL != jdoc &&
         NULL != jdoc->mthds_jznDomDoc &&
         NULL != jdoc->mthds_jznDomDoc->jznDomGetError)
     {
@@ -3016,7 +3016,8 @@ OCI_JsonNode * OcilibJsonNodeGetByPath
                 goto not_found;
             }
 
-            next = OcilibJsonNodeGetItem(cur, idx);
+            next = OcilibJsonNodeGetItem(cur, idx + 1);   /* JSONPath-style indices in path strings
+                                                           * are 0-based */
 
             CHECK_NULL(next);
         }
@@ -3083,6 +3084,7 @@ OCI_JsonNode * OcilibJsonNodeGetByPath
     (void)found;
 
 not_found:
+
     /* call_retval stays at its ENTER_FUNC default (NULL); do NOT SET_RETVAL here —
        the success path above falls through to this label and must keep `cur`. */
     ;
@@ -3119,7 +3121,7 @@ not_found:
 OCI_Boolean OcilibJsonNodeGetShort
 (
     OCI_JsonNode *node,
-    OCI_Int16 *value
+    OCI_Int16    *value
 )
 {
     OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_SHORT);
@@ -3132,7 +3134,7 @@ OCI_Boolean OcilibJsonNodeGetShort
 OCI_Boolean OcilibJsonNodeGetUShort
 (
     OCI_JsonNode *node,
-    OCI_UInt16 *value
+    OCI_UInt16   *value
 )
 {
     OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_USHORT);
@@ -3145,7 +3147,7 @@ OCI_Boolean OcilibJsonNodeGetUShort
 OCI_Boolean OcilibJsonNodeGetInt
 (
     OCI_JsonNode *node,
-    OCI_Int32 *value
+    OCI_Int32    *value
 )
 {
     OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_INT);
@@ -3158,7 +3160,7 @@ OCI_Boolean OcilibJsonNodeGetInt
 OCI_Boolean OcilibJsonNodeGetUInt
 (
     OCI_JsonNode *node,
-    OCI_UInt32 *value
+    OCI_UInt32   *value
 )
 {
     OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_UINT);
@@ -3171,7 +3173,7 @@ OCI_Boolean OcilibJsonNodeGetUInt
 OCI_Boolean OcilibJsonNodeGetBigInt
 (
     OCI_JsonNode *node,
-    OCI_Int64 *value
+    OCI_Int64    *value
 )
 {
     OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_BIGINT);
@@ -3184,7 +3186,7 @@ OCI_Boolean OcilibJsonNodeGetBigInt
 OCI_Boolean OcilibJsonNodeGetBigUInt
 (
     OCI_JsonNode *node,
-    OCI_UInt64 *value
+    OCI_UInt64   *value
 )
 {
     OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_BIGUINT);
@@ -3197,7 +3199,7 @@ OCI_Boolean OcilibJsonNodeGetBigUInt
 OCI_Boolean OcilibJsonNodeGetFloat
 (
     OCI_JsonNode *node,
-    OCI_Float *value
+    OCI_Float    *value
 )
 {
     OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_FLOAT);
@@ -3210,7 +3212,7 @@ OCI_Boolean OcilibJsonNodeGetFloat
 OCI_Boolean OcilibJsonNodeGetDouble
 (
     OCI_JsonNode *node,
-    OCI_Double *value
+    OCI_Double   *value
 )
 {
     OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_DOUBLE);
@@ -3223,7 +3225,7 @@ OCI_Boolean OcilibJsonNodeGetDouble
 OCI_Boolean OcilibJsonNodeSetShort
 (
     OCI_JsonNode *node,
-    OCI_Int16    value
+    OCI_Int16     value
 )
 {
     OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_SHORT);
@@ -3249,7 +3251,7 @@ OCI_Boolean OcilibJsonNodeSetUShort
 OCI_Boolean OcilibJsonNodeSetInt
 (
     OCI_JsonNode *node,
-    OCI_Int32    value
+    OCI_Int32     value
 )
 {
     OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_INT);
@@ -3275,7 +3277,7 @@ OCI_Boolean OcilibJsonNodeSetUInt
 OCI_Boolean OcilibJsonNodeSetBigInt
 (
     OCI_JsonNode *node,
-    OCI_Int64    value
+    OCI_Int64     value
 )
 {
     OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_BIGINT);
@@ -3301,7 +3303,7 @@ OCI_Boolean OcilibJsonNodeSetBigUInt
 OCI_Boolean OcilibJsonNodeSetFloat
 (
     OCI_JsonNode *node,
-    OCI_Float    value
+    OCI_Float     value
 )
 {
     OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_FLOAT);

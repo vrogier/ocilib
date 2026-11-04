@@ -320,7 +320,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonNodeSetItem(arr, 1, item3str));
         ASSERT_EQ(3u, OCI_JsonNodeGetItemCount(arr));
 
-        OCI_JsonNode* verifyItem = OCI_JsonNodeGetItem(arr, 3);
+        OCI_JsonNode* verifyItem = OCI_JsonNodeGetItem(arr, 2);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(verifyItem));
         ASSERT_EQ(ostring(OTEXT("three")), ostring(OCI_JsonNodeGetString(verifyItem, nullptr)));
         OCI_JsonNodeFree(verifyItem);

@@ -160,7 +160,7 @@ void OcilibErrorReset
         err->active      = FALSE;
         err->source_ptr  = NULL;
         err->source_type = OCI_UNKNOWN;
-        err->type    = OCI_UNKNOWN;
+        err->type        = OCI_UNKNOWN;
         err->category    = OCI_UNKNOWN;
         err->code        = 0;
         err->row         = 0;
@@ -188,18 +188,18 @@ void OcilibErrorReset
 
 void OcilibErrorSet
 (
-    OCI_Error        * err,
-    OCI_ErrorType      type,
-    OCI_ErrorCategory  category,
-    OCI_ErrorCode      code,
-    void             * source_ptr,
-    OCI_PointerType    source_type,
-    const char       * location,
-    otext            * message,
-    OCI_UInt32         row
+    OCI_Error       * err,
+    OCI_ErrorType     type,
+    OCI_ErrorCategory category,
+    OCI_ErrorCode     code,
+    void            * source_ptr,
+    OCI_PointerType   source_type,
+    const char      * location,
+    otext           * message,
+    OCI_UInt32        row
 )
 {
-    err->type    = type;
+    err->type        = type;
     err->category    = category;
     err->code        = code;
     err->source_ptr  = source_ptr;
@@ -308,7 +308,6 @@ void OcilibErrorSet
 #if defined(__GNUC__)
 #pragma GCC diagnostic pop
 #endif
-
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibErrorResetSource
@@ -451,7 +450,6 @@ OCI_ErrorCode OcilibErrorGetCode
 
     return err->code;
 }
-
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibErrorGetSource

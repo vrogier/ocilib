@@ -260,15 +260,15 @@ ocilib_exit_label:                  \
         }                                                  \
         while (0)
 
-#define CHECK_BOUND(v, b1, b2)                          \
-                                                        \
-        do                                              \
-        {                                               \
-            if (((v) < (b1)) || ((v) > (b2)))           \
-            {                                           \
+#define CHECK_BOUND(v, b1, b2)                                     \
+                                                                   \
+        do                                                         \
+        {                                                          \
+            if (((v) < (b1)) || ((v) > (b2)))                      \
+            {                                                      \
                 THROW(OcilibExceptionOutOfBounds, (OCI_Int32)(v)); \
-            }                                           \
-        }                                               \
+            }                                                      \
+        }                                                          \
         while (0)
 
 #define CHECK_MIN(v, m)                                  \
@@ -340,15 +340,15 @@ ocilib_exit_label:                  \
         }                                                             \
         while (0)
 
-#define CHECK_DIRPATH_STATUS(dp, v)                               \
-                                                                  \
-        do                                                        \
-        {                                                         \
-            if ((dp)->status != (v))                              \
-            {                                                     \
+#define CHECK_DIRPATH_STATUS(dp, v)                                            \
+                                                                               \
+        do                                                                     \
+        {                                                                      \
+            if ((dp)->status != (v))                                           \
+            {                                                                  \
                 THROW(OcilibExceptionDirPathState, (OCI_Int32)((dp)->status)); \
-            }                                                     \
-        }                                                         \
+            }                                                                  \
+        }                                                                      \
         while (0)
 
 #define CHECK_ENV_FEATURE(feat, ver)                              \
@@ -666,16 +666,16 @@ ocilib_exit_label:                  \
     (ub4) (size), (ub4) (atype), err                                   \
         )                                                              \
 
-#define CHECK_JSON(jdoc, expr)                                                \
-                                                                              \
-        do                                                                    \
-        {                                                                     \
-            ocilib_call_status = (expr);                                      \
-            if (!ocilib_call_status)                                          \
-            {                                                                 \
-                OcilibExceptionJson(&ocilib_call_context, jdoc);              \
-                JUMP_CLEANUP();                                               \
-            }                                                                 \
+#define CHECK_JSON(jdoc, expr)                                   \
+                                                                 \
+        do                                                       \
+        {                                                        \
+            ocilib_call_status = (expr);                         \
+            if (!ocilib_call_status)                             \
+            {                                                    \
+                OcilibExceptionJson(&ocilib_call_context, jdoc); \
+                JUMP_CLEANUP();                                  \
+            }                                                    \
         } while (0)
 
 #define LIST_ATOMIC_OPERATION(list, exp)       \

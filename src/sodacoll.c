@@ -431,11 +431,9 @@ OCI_SodaDocCursor* OcilibSodaCollFind
     OCISodaDoc             **mat_docs  = NULL;
     OCI_UInt32               mat_count = 0;
 
-
     OCI_UInt32 mat_cap   = 0;
     OCI_UInt32 key_count = 0;
     OCI_UInt32 k         = 0;
-
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
@@ -447,7 +445,6 @@ OCI_SodaDocCursor* OcilibSodaCollFind
     if (NULL != options)
     {
         opthandle = options->handle;
-
 
         /* multi-key emulation (OCISodaOperKeysSet is unusable in UTF-16
            environments): materialize matching documents now, then the
@@ -463,7 +460,6 @@ OCI_SodaDocCursor* OcilibSodaCollFind
 
         opthandle = tmpopts->handle;
     }
-
 
     if (key_count > 0)
     {
@@ -549,7 +545,6 @@ OCI_SodaDocCursor* OcilibSodaCollFind
         SET_RETVAL(cursor);
     }
     else
-
 
     {
         CHECK_OCI
@@ -640,7 +635,6 @@ OCI_SodaDoc* OcilibSodaCollFindOne
     {
         opthandle = options->handle;
 
-
         /* multi-key emulation: try each cached key until one matches */
 
         if (options->key_count > 0)
@@ -664,12 +658,10 @@ OCI_SodaDoc* OcilibSodaCollFindOne
     {
         doc->handle = NULL;
 
-
         if (NULL != options && options->key_count > 0)
         {
             CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
         }
-
 
         oci_ret = coll->sdb->con->env->api->OCISodaFindOne
                   (
@@ -818,7 +810,6 @@ OCI_UInt64 OcilibSodaCollDocCount
     {
         opthandle = options->handle;
 
-
         /* multi-key emulation: sum per-key counts */
 
         if (options->key_count > 0)
@@ -839,12 +830,10 @@ OCI_UInt64 OcilibSodaCollDocCount
     {
         ub8 keydocs = 0;
 
-
         if (NULL != options && options->key_count > 0)
         {
             CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
         }
-
 
         CHECK_OCI
         (
@@ -952,7 +941,6 @@ OCI_Boolean OcilibSodaCollReplaceOne
     {
         opthandle = options->handle;
 
-
         /* multi-key emulation: replace on the first matching key */
 
         if (options->key_count > 0)
@@ -976,7 +964,6 @@ OCI_Boolean OcilibSodaCollReplaceOne
         {
             CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
         }
-
 
         CHECK_OCI
         (
@@ -1036,7 +1023,6 @@ OCI_Boolean OcilibSodaCollReplaceOneAndGet
     {
         opthandle = options->handle;
 
-
         /* multi-key emulation: replace on the first matching key */
 
         if (options->key_count > 0)
@@ -1060,7 +1046,6 @@ OCI_Boolean OcilibSodaCollReplaceOneAndGet
         {
             CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
         }
-
 
         reshandle = doc->handle;
 
@@ -1232,7 +1217,6 @@ OCI_Boolean OcilibSodaCollRemove
     {
         opthandle = options->handle;
 
-
         /* multi-key emulation: remove per key and sum counts */
 
         if (options->key_count > 0)
@@ -1253,12 +1237,10 @@ OCI_Boolean OcilibSodaCollRemove
     {
         ub8 keyCount = 0;
 
-
         if (NULL != options && options->key_count > 0)
         {
             CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
         }
-
 
         CHECK_OCI
         (
@@ -1604,8 +1586,8 @@ OCI_SodaDoc * OcilibSodaCollGetDataGuide
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    OCI_SodaDoc *doc    = NULL;
-    OCISodaDoc  *handle = NULL;
+    OCI_SodaDoc *doc     = NULL;
+    OCISodaDoc  *handle  = NULL;
     sword        oci_ret = 0;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
@@ -1736,6 +1718,7 @@ OCI_Boolean OcilibSodaCollSaveAndGet
         }
     );
 }
+
 /* --------------------------------------------------------------------------------------------- *
  * OcilibSodaCollListIndexes
  * --------------------------------------------------------------------------------------------- */
@@ -1794,9 +1777,9 @@ otext** OcilibSodaCollListIndexes
 
     for (i = 0; i < size; i++)
     {
-        dvoid    *elem     = NULL;
-        dvoid    *elemind  = NULL;
-        boolean   exists   = FALSE;
+        dvoid     *elem    = NULL;
+        dvoid     *elemind = NULL;
+        boolean    exists  = FALSE;
         OCI_UInt32 bufsize = 0;
 
         CHECK_OCI
@@ -1817,10 +1800,10 @@ otext** OcilibSodaCollListIndexes
             /* elem is the element address — for this collection the elements
                are OCIString*, so *elem is the OCIString handle itself */
             names[found] = OcilibStringFromStringPtr(coll->sdb->env,
-                                                   coll->sdb->env->handle,
-                                                   *(OCIString **)elem,
-                                                   &names[found],
-                                                   &bufsize);
+                                                     coll->sdb->env->handle,
+                                                     *(OCIString **)elem,
+                                                     &names[found],
+                                                     &bufsize);
             CHECK_NULL(names[found]);
             found++;
         }
@@ -1892,4 +1875,3 @@ OCI_Boolean OcilibSodaCollFreeIndexNames
 
     EXIT_FUNC();
 }
-

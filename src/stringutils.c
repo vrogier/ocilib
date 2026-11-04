@@ -40,11 +40,11 @@
 
 #include <limits.h>
 
-#define COMPUTE_LENGTH(type, ptr, size)              \
-        const type *s = (const type *) (ptr);        \
-        const type *e = (const type *) (ptr);        \
-        while (*e++);                                \
-        (size) = (OCI_Int32)(e - s) - 1;             \
+#define COMPUTE_LENGTH(type, ptr, size)       \
+        const type *s = (const type *) (ptr); \
+        const type *e = (const type *) (ptr); \
+        while (*e++);                         \
+        (size) = (OCI_Int32)(e - s) - 1;      \
 
 
 /* --------------------------------------------------------------------------------------------- *

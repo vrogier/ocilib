@@ -51,7 +51,7 @@ OCI_SYM_LOCAL void OcilibErrorReset
 OCI_SYM_LOCAL void OcilibErrorSet
 (
     OCI_Error        *err,
-    OCI_ErrorType    type,
+    OCI_ErrorType     type,
     OCI_ErrorCategory category,
     OCI_ErrorCode     code,
     void             *source_ptr,

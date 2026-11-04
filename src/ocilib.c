@@ -7957,7 +7957,6 @@ OCI_JsonNode * OCI_API OCI_JsonNodeGetByPath
     CALL_IMPL(OcilibJsonNodeGetByPath, node, path);
 }
 
-
 OCI_Boolean OCI_API OCI_JsonNodeGetShort
 (
     OCI_JsonNode *node,

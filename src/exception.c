@@ -309,10 +309,10 @@ static void OcilibExceptionCallHandler
 {
     if (err)
     {
-        OCI_LogCategory log_cat  = OCI_LOG_CAT_LIB;
-        OCI_LogLevel    level    = OCI_LOG_ERROR;
-        const otext    *label    = OTEXT("OCILIB");
-        const otext    *type     = OTEXT("error");
+        OCI_LogCategory log_cat = OCI_LOG_CAT_LIB;
+        OCI_LogLevel    level   = OCI_LOG_ERROR;
+        const otext    *label   = OTEXT("OCILIB");
+        const otext    *type    = OTEXT("error");
 
         switch (err->category)
         {
@@ -339,8 +339,8 @@ static void OcilibExceptionCallHandler
 
         if (OCI_ERR_TYPE_WARNING == err->type)
         {
-            level    = OCI_LOG_WARN;
-            type     = OTEXT("warning");
+            level = OCI_LOG_WARN;
+            type  = OTEXT("warning");
         }
 
         OCILIB_LOG_WITH_ENV(err->env, log_cat, level,
@@ -375,9 +375,9 @@ void OcilibExceptionJson
     OCI_Error *err = OcilibExceptionGetError(ctx->env);
     if (err && jdoc)
     {
-        sword  jerr   = jdoc->errcode_jznDomDoc;
-        char   *msg   = NULL;
-        otext    buffer[OCI_SIZE_BUFFER] = OTEXT("");
+        sword jerr                    = jdoc->errcode_jznDomDoc;
+        char *msg                     = NULL;
+        otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
         if (jdoc->mthds_jznDomDoc && jdoc->mthds_jznDomDoc->jznDomGetError)
         {

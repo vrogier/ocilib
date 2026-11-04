@@ -683,7 +683,8 @@ typedef OCI_UInt32 OCI_HAEventType;           /* OCI_HET_*                      
 typedef OCI_UInt32 OCI_PointerType;           /* OCI_IPC_*                            */
 typedef OCI_UInt32 OCI_LogLevel;              /* OCI_LOG_*                            */
 typedef OCI_UInt32 OCI_LogCategory;           /* OCI_LOG_CAT_*                        */
-typedef OCI_UInt32 OCI_ErrorCode;             /* error code in the category's namespace (OCI/OCILIB/JZN) */
+typedef OCI_UInt32 OCI_ErrorCode;             /* error code in the category's namespace
+                                               * (OCI/OCILIB/JZN) */
 
 /**
  * @var POCI_TAF_HANDLER

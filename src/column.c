@@ -1564,9 +1564,9 @@ OCI_UInt32 OcilibColumnGetFullSqlType
             const otext *fmt = OTEXT("%sCHAR(%i%s)");
 #endif
             size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, fmt,
-                                      SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
-                                      (OCI_Int32) (col->charused ? col->charsize : col->size),
-                                      col->charused && SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
+                                                   SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
+                                                   (OCI_Int32) (col->charused ? col->charsize : col->size),
+                                                   col->charused && SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
             break;
         }
         case SQLT_AVC:
@@ -1580,8 +1580,8 @@ OCI_UInt32 OcilibColumnGetFullSqlType
 #endif
 
             size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, fmt, SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
-                                      (OCI_Int32) (col->charused ? col->charsize : col->size),
-                                      col->charused &&  SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
+                                                   (OCI_Int32) (col->charused ? col->charsize : col->size),
+                                                   col->charused &&  SQLCS_NCHAR != col->csfrm ? OTEXT(" CHAR") : OTEXT(""));
             break;
         }
         case SQLT_NUM:
@@ -1715,13 +1715,13 @@ OCI_UInt32 OcilibColumnGetFullSqlType
         case SQLT_INTERVAL_YM:
         {
             size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("INTERVAL(%i) YEAR TO MONTH(%i)"),
-                                      (OCI_Int32) col->prec, (OCI_Int32) col->prec2);
+                                                   (OCI_Int32) col->prec, (OCI_Int32) col->prec2);
             break;
         }
         case SQLT_INTERVAL_DS:
         {
             size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,  OTEXT("INTERVAL(%i) DAY TO SECOND(%i)"),
-                                      (OCI_Int32) col->prec, (OCI_Int32) col->prec2);
+                                                   (OCI_Int32) col->prec, (OCI_Int32) col->prec2);
             break;
         }
 
@@ -1775,7 +1775,7 @@ OCI_UInt32 OcilibColumnGetFullSqlType
         case SQLT_TAB:
         {
             size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, OTEXT("%s"),
-                                      col->typinf ? col->typinf->name : OTEXT("PL/SQL TABLE INDEX BY"));
+                                                   col->typinf ? col->typinf->name : OTEXT("PL/SQL TABLE INDEX BY"));
             break;
         }
 
@@ -1796,7 +1796,7 @@ OCI_UInt32 OcilibColumnGetFullSqlType
         case SQLT_OPAQUE_TYPE:
         {
             size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len,
-                                      IS_XMLTYPE_COL(col) ? OTEXT("XMLTYPE") : OTEXT("?"));
+                                                   IS_XMLTYPE_COL(col) ? OTEXT("XMLTYPE") : OTEXT("?"));
             break;
         }
 
