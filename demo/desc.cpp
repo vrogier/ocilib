@@ -11,7 +11,11 @@ int main()
     {
         Environment env;
 
-        Connection con(env, "db", "usr", "pwd");
+        const char *db  = getenv("OCILIB_DEMO_DB");
+        const char *usr = getenv("OCILIB_DEMO_USR");
+        const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+        Connection con(env, db, usr, pwd);
         TypeInfo table(con, "all_users", TypeInfo::View);
 
         std::cout << "Column Name         Type      Length  Prec.   Scale   Null ?" << std::endl;

@@ -21,8 +21,8 @@ void PrintNode(const JsonNode& node, OCI_Int32 depth)
             const OCI_UInt32 n = node.GetFieldCount();
             for (OCI_UInt32 i = 0; i < n; ++i)
             {
-                std::cout << indent << "  \"" << node.GetFieldName(i) << "\": ";
-                PrintNode(node.GetFieldByIndex(i), depth + 2);
+                std::cout << indent << "  \"" << node.GetFieldName(i + 1) << "\": ";
+                PrintNode(node.GetFieldByIndex(i + 1), depth + 2);
             }
 
             std::cout << indent << "}\n";
@@ -36,7 +36,7 @@ void PrintNode(const JsonNode& node, OCI_Int32 depth)
             for (OCI_UInt32 i = 0; i < n; ++i)
             {
                 std::cout << indent << "  ";
-                PrintNode(node.GetItem(i), depth + 2);
+                PrintNode(node.GetItem(i + 1), depth + 2);
             }
 
             std::cout << indent << "]\n";
@@ -66,12 +66,17 @@ int main()
     {
         Environment env;
 
-        Connection con(env, "db", "usr", "pwd");
+        const char *db  = getenv("OCILIB_DEMO_DB");
+        const char *usr = getenv("OCILIB_DEMO_USR");
+        const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+        Connection con(env, db, usr, pwd);
 
         /* parse a JSON text into a descriptor */
 
         Json json(con);
         json.LoadText("{\"employee\":{\"name\":\"Fred\",\"skills\":[\"sql\",\"c\"]}}");
+        json.SetMutable(true);
 
         /* navigate the DOM tree */
 
@@ -82,8 +87,6 @@ int main()
         std::cout << "employee.name = " << emp.GetFieldByName("name").GetString() << std::endl;
 
         /* mutate the DOM : append an item to the skills array */
-
-        json.SetMutable(true);
 
         skills.AppendItem(json.CreateString("plsql"));
 

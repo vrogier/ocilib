@@ -10,7 +10,11 @@ const OCI_Int32 MaxThreads = 50;
 const OCI_Int32 MaxConnnections = 10;
 
 Environment env(Environment::Threaded);
-Pool pool(env, "db", "usr", "pwd", Pool::ConnectionPool, 0, MaxConnnections, 1, Environment::SessionDefault);
+const char *db  = getenv("OCILIB_DEMO_DB");
+const char *usr = getenv("OCILIB_DEMO_USR");
+const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+Pool pool(env, db, usr, pwd, Pool::ConnectionPool, 0, MaxConnnections, 1, Environment::SessionDefault);
 
 void worker(OCI_Int32 id)
 {

@@ -43,19 +43,19 @@ namespace TestCApi
 
         ASSERT_EQ(2u, OCI_JsonNodeGetItemCount(arr));
 
-        OCI_JsonNode* it1 = OCI_JsonNodeGetItem(arr, 0);
+        OCI_JsonNode* it1 = OCI_JsonNodeGetItem(arr, 1);
         ASSERT_NE(nullptr, it1);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(it1));
         ASSERT_EQ(ostring(OTEXT("first")), ostring(OCI_JsonNodeGetString(it1, nullptr)));
         OCI_JsonNodeFree(it1);
 
-        OCI_JsonNode* it2 = OCI_JsonNodeGetItem(arr, 1);
+        OCI_JsonNode* it2 = OCI_JsonNodeGetItem(arr, 2);
         ASSERT_NE(nullptr, it2);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(it2));
         ASSERT_EQ(ostring(OTEXT("second")), ostring(OCI_JsonNodeGetString(it2, nullptr)));
         OCI_JsonNodeFree(it2);
 
-        OCI_JsonNode* v1 = OCI_JsonNodeGetItem(arr, 0);
+        OCI_JsonNode* v1 = OCI_JsonNodeGetItem(arr, 1);
         ASSERT_NE(nullptr, v1);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(v1));
         ASSERT_EQ(ostring(OTEXT("first")), ostring(OCI_JsonNodeGetString(v1, nullptr)));
@@ -94,17 +94,17 @@ namespace TestCApi
         OCI_JsonNode* child = OCI_JsonNodeCreateString(json, OTEXT("child"), 5);
 
         ASSERT_EQ(nullptr, OCI_JsonNodeGetFieldByName(scalar, OTEXT("x")));
-        ASSERT_EQ(nullptr, OCI_JsonNodeGetFieldByIndex(scalar, 1));
+        ASSERT_EQ(nullptr, OCI_JsonNodeGetFieldByIndex(scalar, 2));
         ASSERT_EQ(nullptr, OCI_JsonNodeGetFieldName(scalar, 1));
         ASSERT_FALSE(OCI_JsonNodeSetField(scalar, OTEXT("x"), child));
 
-        ASSERT_EQ(nullptr, OCI_JsonNodeGetItem(obj, 1));
+        ASSERT_EQ(nullptr, OCI_JsonNodeGetItem(obj, 2));
         ASSERT_FALSE(OCI_JsonNodeAppendItem(obj, child));
         ASSERT_FALSE(OCI_JsonNodeSetItem(obj, 1, child));
 
         ASSERT_FALSE(OCI_JsonNodeSetField(arr, OTEXT("x"), child));
         ASSERT_EQ(nullptr, OCI_JsonNodeGetFieldByName(arr, OTEXT("x")));
-        ASSERT_EQ(nullptr, OCI_JsonNodeGetFieldByIndex(arr, 1));
+        ASSERT_EQ(nullptr, OCI_JsonNodeGetFieldByIndex(arr, 2));
 
         OCI_Double v = 1.0;
         OCI_Number* num = MakeDoubleNumber(env, v);
@@ -119,9 +119,9 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_JsonNodeSetField(obj, OTEXT("f"), child));
 
-        ASSERT_EQ(nullptr, OCI_JsonNodeGetItem(arr, 100));
+        ASSERT_EQ(nullptr, OCI_JsonNodeGetItem(arr, 101));
         ASSERT_FALSE(OCI_JsonNodeSetItem(arr, 100, child));
-        ASSERT_EQ(nullptr, OCI_JsonNodeGetFieldByIndex(obj, 100));
+        ASSERT_EQ(nullptr, OCI_JsonNodeGetFieldByIndex(obj, 101));
         ASSERT_EQ(nullptr, OCI_JsonNodeGetFieldName(obj, 100));
 
         OCI_JsonNodeFree(number);

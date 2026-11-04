@@ -32,7 +32,11 @@ int main()
 {
     try
     {
-        con.Open(env, "db", "usr", "pwd", Environment::SessionDefault);
+        const char *db  = getenv("OCILIB_DEMO_DB");
+        const char *usr = getenv("OCILIB_DEMO_USR");
+        const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+        con.Open(env, db, usr, pwd, Environment::SessionDefault);
 
         std::thread t(OracleCallProc);
 

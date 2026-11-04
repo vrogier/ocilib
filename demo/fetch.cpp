@@ -12,7 +12,11 @@ int main()
     {
         Environment env;
 
-        Connection con(env, "db", "usr", "pwd");
+        const char *db  = getenv("OCILIB_DEMO_DB");
+        const char *usr = getenv("OCILIB_DEMO_USR");
+        const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+        Connection con(env, db, usr, pwd);
 
         Statement st(con);
         st.Execute("select * from products");

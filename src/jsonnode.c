@@ -669,7 +669,10 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByIndex
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
     CHECK_JSON_DOC(node->json);
+    CHECK_MIN(index, 1);
     if (node->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
+
+    index--;
     if (index >= JsonDomGetNumFields(node->json->jdoc, (jznDomObject *)node->handle)) { THROW(OcilibExceptionOutOfBounds,
                                                                                               (OCI_Int32) index); }
 
@@ -766,7 +769,10 @@ OCI_JsonNode * OcilibJsonNodeGetItem
     CHECK_PTR(OCI_IPC_CONNECTION, node->json->con);
     CHECK_FEATURE(node->json->con, OCI_FEATURE_JSON, OCI_21_1);
     CHECK_JSON_DOC(node->json);
+    CHECK_MIN(index, 1);
     if (node->type != OCI_JNT_ARRAY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
+
+    index--;
     if (index >= JsonDomGetArraySize(node->json->jdoc, (jznDomArray *)node->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index);}
 
     hnd = JsonDomGetArrayElement(node->json->jdoc,
@@ -2109,11 +2115,12 @@ OCI_Boolean OcilibJsonNodeSetItem
     if (arr->type != OCI_JNT_ARRAY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
     CHECK_COMPAT(value->json == arr->json);
 
-    if (index >= JsonDomGetArraySize(arr->json->jdoc, (jznDomArray *)arr->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index); }
+    CHECK_MIN(index, 1);
+    if (index > JsonDomGetArraySize(arr->json->jdoc, (jznDomArray *)arr->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index); }
 
     CHECK_JSON(arr->json->jdoc,
                JsonDomPutItem(arr->json->jdoc, (jznDomArray *)arr->handle,
-                              (ub4)(index + 1), value->handle) != 0);
+                              (ub4)index, value->handle) != 0);
 
     SET_SUCCESS();
 
@@ -2514,7 +2521,8 @@ OCI_Boolean OcilibJsonNodeInsertItem
     if (arr->type != OCI_JNT_ARRAY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
     CHECK_COMPAT(value->json == arr->json);
 
-    if (index > JsonDomGetArraySize(arr->json->jdoc, (jznDomArray *)arr->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index); }
+    CHECK_MIN(index, 1);
+    if (index > JsonDomGetArraySize(arr->json->jdoc, (jznDomArray *)arr->handle) + 1) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index); }
 
     hnd = value->handle;
 
@@ -2558,7 +2566,8 @@ OCI_Boolean OcilibJsonNodeRemoveItem
     CHECK_JSON_DOC(arr->json);
     if (arr->type != OCI_JNT_ARRAY) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
-    if (index >= JsonDomGetArraySize(arr->json->jdoc, (jznDomArray *)arr->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index); }
+    CHECK_MIN(index, 1);
+    if (index > JsonDomGetArraySize(arr->json->jdoc, (jznDomArray *)arr->handle)) { THROW(OcilibExceptionOutOfBounds, (OCI_Int32) index); }
 
     CHECK_JSON(arr->json->jdoc,
                JsonDomDeleteItem(arr->json->jdoc, (jznDomArray *)arr->handle, (ub4) index) != 0);

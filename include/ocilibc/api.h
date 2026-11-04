@@ -19928,7 +19928,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_JsonNodeGetFieldCount
  * Return the name of a JSON object field by index
  *
  * @param node  - JSON object node handle
- * @param index - Field index
+ * @param index - Field index (1-based)
  *
  * @return Field name, or NULL on error
  */
@@ -19965,7 +19965,7 @@ OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeGetFieldByName
  * Return a JSON object field by index
  *
  * @param node  - JSON object node handle
- * @param index - Field index
+ * @param index - Field index (1-based)
  *
  * @return Field node, or NULL on error
  */
@@ -19995,7 +19995,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_JsonNodeGetItemCount
  * Return a JSON array item by index
  *
  * @param node  - JSON array node handle
- * @param index - Item index
+ * @param index - Item index (1-based)
  *
  * @return Item node, or NULL on error
  */
@@ -20273,7 +20273,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetField
  * Set a JSON array item by index
  *
  * @param arr   - JSON array node handle
- * @param index - Item index
+ * @param index - Item index (1-based)
  * @param value - Item value
  *
  * @return TRUE on success, FALSE otherwise
@@ -20307,8 +20307,8 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeAppendItem
  * Insert a JSON node at a given position in a JSON array node
  *
  * @param arr   - JSON array node handle
- * @param index - Position at which to insert the item (0-based). Index may
- *                be equal to the item count to append at the end
+ * @param index - Position at which to insert the item (1-based). Index may
+ *                be equal to item count + 1 to append at the end
  * @param value - JSON node handle to insert; it must belong to the same
  *                JSON document and must not already be linked to a parent
  *
@@ -20330,7 +20330,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeInsertItem
  * Remove an item from a JSON array node
  *
  * @param arr   - JSON array node handle
- * @param index - Index of the item to remove (0-based)
+ * @param index - Index of the item to remove (1-based)
  *
  * @return TRUE on success, FALSE otherwise
  */

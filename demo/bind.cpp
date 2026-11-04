@@ -10,11 +10,15 @@ int main()
     {
         Environment env;
 
-        Connection con(env, "db", "usr", "pwd");
+        const char *db  = getenv("OCILIB_DEMO_DB");
+        const char *usr = getenv("OCILIB_DEMO_USR");
+        const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+        Connection con(env, db, usr, pwd);
         Statement st(con);
         OCI_Int32 code;
 
-        st.Prepare("delete from test_fetch where code = :code");
+        st.Prepare("delete from products where code = :code");
         st.Bind(":code", code, BindInfo::In);
         code = 5;
         st.ExecutePrepared();

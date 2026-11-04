@@ -21,9 +21,9 @@ void print_node(OCI_JsonNode *node, OCI_Int32 depth)
             n = OCI_JsonNodeGetFieldCount(node);
             for (i = 0; i < n; i++)
             {
-                OCI_JsonNode *field = OCI_JsonNodeGetFieldByIndex(node, i);
+                OCI_JsonNode *field = OCI_JsonNodeGetFieldByIndex(node, i + 1);
 
-                printf("%*s\"%s\": ", depth + 2, "", OCI_JsonNodeGetFieldName(node, i));
+                printf("%*s\"%s\": ", depth + 2, "", OCI_JsonNodeGetFieldName(node, i + 1));
                 print_node(field, depth + 2);
                 OCI_JsonNodeFree(field);
             }
@@ -36,7 +36,7 @@ void print_node(OCI_JsonNode *node, OCI_Int32 depth)
             n = OCI_JsonNodeGetItemCount(node);
             for (i = 0; i < n; i++)
             {
-                OCI_JsonNode *item = OCI_JsonNodeGetItem(node, i);
+                OCI_JsonNode *item = OCI_JsonNodeGetItem(node, i + 1);
 
                 printf("%*s", depth + 2, "");
                 print_node(item, depth + 2);
@@ -90,6 +90,8 @@ int main(void)
                      "{\"employee\":{\"name\":\"Fred\",\"skills\":[\"sql\",\"c\"]}}",
                      0, OCI_JTV_ALLOW_NONE, OCI_JTE_UTF8);
 
+    OCI_JsonSetMutable(json, TRUE);
+
     /* navigate the DOM tree */
 
     root   = OCI_JsonGetRoot(json);
@@ -101,8 +103,6 @@ int main(void)
     OCI_JsonNodeFree(item);
 
     /* mutate the DOM : append an item to the skills array */
-
-    OCI_JsonSetMutable(json, TRUE);
 
     item = OCI_JsonNodeCreateString(json, "plsql", 0);
     OCI_JsonNodeAppendItem(skills, item);
