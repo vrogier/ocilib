@@ -568,9 +568,6 @@ void test_bind2(void)
     OCI_Date *date;
     OCI_File *file;
 
-    OCI_Int32 i;
-    OCI_Double dbl;
-    OCI_Float flt;
     OCI_UInt32 char_count, byte_count;
 
     print_text("\n>>>>> SINGLE BINDING \n\n");
@@ -606,9 +603,9 @@ void test_bind2(void)
     OCI_FileSetName(file, OTEXT("mydir"), OTEXT("file00.txt"));
 
     /* scalar types */
-    i   = 1;
-    dbl = 3.14;
-    flt = (OCI_Float) 3.14;
+    OCI_Int32 i = 1;
+    OCI_Double dbl = 3.14;
+    OCI_Float flt = (OCI_Float) 3.14;
     osprintf(temp, SIZE_STR+1, OTEXT("Name00"));
 
     /* bind scalar C types arrays */
@@ -647,7 +644,6 @@ void test_bind2(void)
 
 void test_piecewise_insert(void)
 {
-    FILE *f;
 
     print_text("\n>>>>> TEST PIECEWISE INSERTING\n\n");
 
@@ -656,21 +652,19 @@ void test_piecewise_insert(void)
 
     /* open the app file in for reading*/
 
-    f = fopen(OCI_SHARED_LIB, "rb");
+    FILE * f = fopen(OCI_SHARED_LIB, "rb");
 
     if (f)
     {
-        OCI_Int32 n;
-        OCI_Long *lg;
         unsigned char buffer[SIZE_BUF];
 
         fseek (f , 0 , SEEK_END);
-        n = ftell(f);
+        OCI_Int32 n = ftell(f);
         rewind (f);
 
         print_frmt("\n%d bytes to write\n", n);
 
-        lg = OCI_LongCreate(st, OCI_BLONG);
+        OCI_Long * lg = OCI_LongCreate(st, OCI_BLONG);
 
         /* execute query in three steps */
         OCI_Prepare(st,  OTEXT("insert into test_long_raw(code, content) ")
@@ -699,7 +693,6 @@ void test_piecewise_insert(void)
 
 void test_piecewise_fetch(void)
 {
-    OCI_Long *lg;
     unsigned char buffer[SIZE_BUF];
     OCI_Int32 n;
 
@@ -714,7 +707,7 @@ void test_piecewise_fetch(void)
     /* read data by chunks of 2048 bytes*/
     while (OCI_FetchNext(rs))
     {
-        lg = OCI_GetLong(rs, 1);
+        OCI_Long * lg = OCI_GetLong(rs, 1);
 
         while ((n = OCI_LongRead(lg, buffer, sizeof(buffer)))) {}
 
@@ -747,7 +740,6 @@ void test_piecewise_fetch(void)
 
 void test_lob(void)
 {
-    OCI_Lob *lob;
 
     print_text("\n>>>>> TEST LOB MANIPULATION\n\n");
 
@@ -760,7 +752,7 @@ void test_lob(void)
     {
         OCI_UInt32 char_count, byte_count;
 
-        lob  = OCI_GetLob(rs, 2);
+        OCI_Lob *lob  = OCI_GetLob(rs, 2);
 
         char_count = 7;
         byte_count = 0;
@@ -955,11 +947,10 @@ void test_timestamp(void)
 
     if (OCI_GetOCIRuntimeVersion(env) >= OCI_9_0)
     {
-        OCI_Timestamp *tmsp;
 
         print_text("\n>>>>> TEST TIMESTAMP\n\n");
 
-        tmsp = OCI_TimestampCreate(env, OCI_TIMESTAMP);
+        OCI_Timestamp * tmsp = OCI_TimestampCreate(env, OCI_TIMESTAMP);
 
         OCI_TimestampSysTimestamp(tmsp);
 
@@ -973,11 +964,10 @@ void test_timestamp(void)
 
         if (OCI_GetOCIRuntimeVersion(env) >= OCI_10_1)
         {
-            OCI_Interval *itv;
 
             print_text("\n>>>>> TEST INTERVAL \n\n");
 
-            itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
+            OCI_Interval * itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
 
             OCI_IntervalSetDaySecond(itv, 1,1,1,1,0);
 
@@ -1005,14 +995,12 @@ void test_timestamp(void)
 
 void test_describe(void)
 {
-    OCI_Column   *col;
-    OCI_TypeInfo *tbl;
 
     OCI_Int32 i, n;
 
     print_text("\n>>>>> TEST DESCRIBING TABLE \n\n");
 
-    tbl = OCI_TypeInfoGet(cn, OTEXT("test_fetch"), OCI_TIF_TABLE);
+    OCI_TypeInfo * tbl = OCI_TypeInfoGet(cn, OTEXT("test_fetch"), OCI_TIF_TABLE);
 
     if (tbl)
     {
@@ -1023,7 +1011,7 @@ void test_describe(void)
 
         for(i = 1; i <= n; i++)
         {
-            col = OCI_TypeInfoGetColumn(tbl, i);
+            OCI_Column   * col = OCI_TypeInfoGetColumn(tbl, i);
 
             OCI_ColumnGetFullSQLType(col, str, SIZE_STR);
 
@@ -1059,7 +1047,7 @@ void test_describe(void)
 
         for(i = 1; i <= n; i++)
         {
-            col = OCI_TypeInfoGetColumn(tbl, i);
+            OCI_Column *col = OCI_TypeInfoGetColumn(tbl, i);
 
             OCI_ColumnGetFullSQLType(col, str, SIZE_STR);
 
@@ -1085,7 +1073,6 @@ void test_describe(void)
 
 void test_returning(void)
 {
-    OCI_Lob *lob;
 
     print_text("\n>>>>> TEST RETURNING CLAUSE \n\n");
 
@@ -1100,7 +1087,7 @@ void test_returning(void)
     {
         OCI_UInt32 char_count, byte_count;
 
-        lob = OCI_GetLob(rs, 2);
+        OCI_Lob * lob = OCI_GetLob(rs, 2);
 
         char_count = 10;
         byte_count = 0;
@@ -1287,11 +1274,6 @@ void test_returning_array(void)
 
 void test_object_insert(void)
 {
-    OCI_Date *date;
-    OCI_File *file;
-    OCI_Lob  *lob;
-    OCI_Object *obj;
-    OCI_Object *obj2;
 
     char rawbuf[11];
 
@@ -1301,7 +1283,7 @@ void test_object_insert(void)
 
     /* create types for the demo */
 
-    obj  = OCI_ObjectCreate(OCI_TypeInfoGet(cn, OTEXT("test_t"), OCI_TIF_TYPE));
+    OCI_Object *obj  = OCI_ObjectCreate(OCI_TypeInfoGet(cn, OTEXT("test_t"), OCI_TIF_TYPE));
 
     OCI_ObjectSetInt(obj, OTEXT("VAL_INT"), 1);
     OCI_ObjectSetDouble(obj, OTEXT("VAL_DBL"), 3.14);
@@ -1309,20 +1291,20 @@ void test_object_insert(void)
     OCI_ObjectSetString(obj, OTEXT("VAL_STR"), OTEXT("USB KEY 2go"));
     OCI_ObjectSetRaw(obj, OTEXT("VAL_RAW"), rawbuf, 10);
 
-    date = OCI_DateCreate(env);
+    OCI_Date * date = OCI_DateCreate(env);
     OCI_DateSysDate(date);
     OCI_ObjectSetDate(obj, OTEXT("VAL_DATE"), date);
 
-    obj2 = OCI_ObjectCreate(OCI_TypeInfoGet(cn, OTEXT("TYPE_T"), OCI_TIF_TYPE));
+    OCI_Object * obj2 = OCI_ObjectCreate(OCI_TypeInfoGet(cn, OTEXT("TYPE_T"), OCI_TIF_TYPE));
     OCI_ObjectSetInt(obj2, OTEXT("ID"), 1);
 
     OCI_ObjectSetString(obj2, OTEXT("NAME"), OTEXT("USB KEY 2go"));
     OCI_ObjectSetObject(obj, OTEXT("VAL_OBJ"), obj2);
 
-    lob = OCI_LobCreate(cn, OCI_CLOB);
+    OCI_Lob  * lob = OCI_LobCreate(cn, OCI_CLOB);
     OCI_ObjectSetLob(obj, OTEXT("VAL_LOB"), lob);
 
-    file = OCI_FileCreate(cn, OCI_BFILE);
+    OCI_File * file = OCI_FileCreate(cn, OCI_BFILE);
     OCI_FileSetName(file, OTEXT("mydir"), OTEXT("myfile"));
     OCI_ObjectSetFile(obj, OTEXT("VAL_FILE"), file);
 
@@ -1347,11 +1329,6 @@ void test_object_insert(void)
 
 void test_object_fetch(void)
 {
-    OCI_Lob *lob;
-    OCI_Date *date;
-    OCI_File *file;
-    OCI_Object *obj;
-    OCI_Object *obj2;
     char rawbuf[11] = "";
 
     print_text("\n>>>>> TEST OBJECT FETCHING \n\n");
@@ -1363,7 +1340,7 @@ void test_object_fetch(void)
     /* print resultset content */
     while (OCI_FetchNext(rs))
     {
-        obj  = OCI_GetObject(rs, 1);
+        OCI_Object *obj  = OCI_GetObject(rs, 1);
 
         print_frmt("val_int        : %i\n",  OCI_ObjectGetInt(obj, OTEXT("VAL_INT")));
         print_frmt("val_dbl        : %g\n",  OCI_ObjectGetFloat(obj, OTEXT("VAL_DBL")));
@@ -1375,12 +1352,12 @@ void test_object_fetch(void)
         print_text("val_raw        : "); print_frmt("%s", rawbuf);
         print_text("\n");
 
-        date = OCI_ObjectGetDate(obj, OTEXT("VAL_DATE"));
+        OCI_Date * date = OCI_ObjectGetDate(obj, OTEXT("VAL_DATE"));
         OCI_DateToText(date, OTEXT("YYYY-MM-DD HH24:MI:SS"), SIZE_STR, str);
         print_text("val_date       : "); print_ostr(str);
         print_text("\n");
 
-        lob = OCI_ObjectGetLob(obj, OTEXT("VAL_LOB"));
+        OCI_Lob * lob = OCI_ObjectGetLob(obj, OTEXT("VAL_LOB"));
 
         {
             OCI_UInt32 char_count = 17;
@@ -1399,13 +1376,13 @@ void test_object_fetch(void)
         print_text("val_lob        : "); print_ostr(temp);
         print_text("\n");
 
-        file = OCI_ObjectGetFile(obj, OTEXT("VAL_FILE"));
+        OCI_File * file = OCI_ObjectGetFile(obj, OTEXT("VAL_FILE"));
         print_text("val_file.dir   : "); print_ostr(OCI_FileGetDirectory(file));
         print_text("\n");
         print_text("val_file.name  : "); print_ostr(OCI_FileGetName(file));
         print_text("\n");
 
-        obj2 = OCI_ObjectGetObject(obj, OTEXT("VAL_OBJ"));
+        OCI_Object * obj2 = OCI_ObjectGetObject(obj, OTEXT("VAL_OBJ"));
         print_frmt("val_obj.code   : %i\n", OCI_ObjectGetInt(obj2, OTEXT("ID")));
         print_text("val_obj.name   : "); print_ostr(OCI_ObjectGetString(obj2, OTEXT("NAME")));
         print_text("\n");
@@ -1503,16 +1480,12 @@ void test_scrollable_cursor(void)
 
 void test_collection(void)
 {
-    OCI_TypeInfo *type;
-    OCI_Coll     *coll;
-    OCI_Iter     *iter;
-    OCI_Elem     *elem;
     OCI_UInt32 i, n;
 
     print_text("\n>>>>> TEST VARRAY BINDING \n\n");
 
-    type = OCI_TypeInfoGet(cn, OTEXT("T_TAB1_EMP"), OCI_TIF_TYPE);
-    coll = OCI_CollCreate(type);
+    OCI_TypeInfo * type = OCI_TypeInfoGet(cn, OTEXT("T_TAB1_EMP"), OCI_TIF_TYPE);
+    OCI_Coll     * coll = OCI_CollCreate(type);
 
     OCI_Prepare(st, OTEXT("begin")
                     OTEXT("    select employees into :tab_emp ")
@@ -1527,8 +1500,8 @@ void test_collection(void)
 
     OCI_Execute(st);
 
-    iter = OCI_IterCreate(coll);
-    elem = OCI_IterGetNext(iter);
+    OCI_Iter     * iter = OCI_IterCreate(coll);
+    OCI_Elem     * elem = OCI_IterGetNext(iter);
 
     print_frmt("Department ID #%u\n\n", i);
 
@@ -1620,7 +1593,6 @@ void test_collection(void)
 void test_ref(void)
 {
     OCI_Ref    *ref;
-    OCI_Object *obj;
 
     print_text("\n>>>>> TEST REF FETCHING \n\n");
 
@@ -1631,7 +1603,7 @@ void test_ref(void)
     {
         ref = OCI_GetRef(rs, 1);
 
-        obj = OCI_RefGetObject(ref);
+        OCI_Object * obj = OCI_RefGetObject(ref);
 
         print_frmt("%i - ", OCI_ObjectGetInt(obj, OTEXT("ID")));
         print_ostr(OCI_ObjectGetString(obj, OTEXT("NAME")));
@@ -1649,7 +1621,7 @@ void test_ref(void)
     OCI_BindRef(st, OTEXT(":r"), ref);
     OCI_Execute(st);
 
-    obj = OCI_RefGetObject(ref);
+    OCI_Object *obj = OCI_RefGetObject(ref);
     print_frmt("%i - ", OCI_ObjectGetInt(obj, OTEXT("ID")));
     print_ostr(OCI_ObjectGetString(obj, OTEXT("NAME")));
     print_text("\n");
@@ -1673,8 +1645,6 @@ void test_directpath(void)
 
    if (OCI_VER_MAJ(OCI_GetOCIRuntimeVersion(env)) == OCI_GetServerMajorVersion(cn))
    {
-        OCI_DirPath *dp;
-        OCI_TypeInfo *tbl;
         OCI_Boolean res = TRUE;
 
         otext val1[SIZE_COL1+1] = OTEXT("");
@@ -1690,8 +1660,8 @@ void test_directpath(void)
 
         print_text("\n>>>>> TEST DIRECT PATH (10 loads of 100 rows) \n\n");
 
-        tbl = OCI_TypeInfoGet(cn, OTEXT("test_directpath"), OCI_TIF_TABLE);
-        dp  = OCI_DirPathCreate(tbl, NULL, NUM_COLS, nb_rows);
+        OCI_TypeInfo * tbl = OCI_TypeInfoGet(cn, OTEXT("test_directpath"), OCI_TIF_TABLE);
+        OCI_DirPath *dp  = OCI_DirPathCreate(tbl, NULL, NUM_COLS, nb_rows);
 
         /* optional attributes to set */
 

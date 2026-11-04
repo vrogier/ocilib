@@ -46,7 +46,9 @@ void fetch_coll(OCI_Connection *cn, otext * table_name)
     OCI_Statement *st = OCI_StatementCreate(cn);
     OCI_Resultset *rs = NULL;
 
-    OCI_ExecuteStmtFmt(st, "SELECT * from %m", table_name);
+    otext sql[64];
+    snprintf(sql, sizeof(sql), "SELECT * from %s", table_name);
+    OCI_ExecuteStmt(st, sql);
 
     rs = OCI_GetResultset(st);
 
@@ -62,7 +64,6 @@ void fetch_coll(OCI_Connection *cn, otext * table_name)
 
 int main(void)
 {
-    OCI_Connection *cn;
 
     OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
 
@@ -71,7 +72,11 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
 
     bind_coll(cn);
 

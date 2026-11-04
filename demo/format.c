@@ -9,11 +9,7 @@ void err_handler(OCI_Error *err)
 
 int main(void)
 {
-    OCI_Connection *cn;
-    OCI_Statement  *st;
-    OCI_Resultset  *rs;
 
-    OCI_Int32 code;
     char name[50];
 
     OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
@@ -23,15 +19,19 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    st = OCI_StatementCreate(cn);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
+    OCI_Statement  * st = OCI_StatementCreate(cn);
 
     /* sql format with params ----------------------------------------------- */
 
-    code = 1;
+    OCI_Int32 code = 1;
     OCI_ExecuteStmtFmt(st, "select name from products where code = %i", code);
 
-    rs = OCI_GetResultset(st);
+    OCI_Resultset  * rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
         printf("article : %s\n", OCI_GetString(rs, 1));

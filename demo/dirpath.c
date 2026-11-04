@@ -16,9 +16,6 @@ void err_handler(OCI_Error *err)
 
 int main(void)
 {
-    OCI_Connection *cn;
-    OCI_DirPath    *dp;
-    OCI_TypeInfo   *tbl;
 
     char val1[SIZE_COL1 + 1];
     char val2[SIZE_COL2 + 1];
@@ -34,9 +31,13 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    tbl = OCI_TypeInfoGet(cn, "dirpath_data", OCI_TIF_TABLE);
-    dp = OCI_DirPathCreate(tbl, NULL, NUM_COLS, nb_rows);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
+    OCI_TypeInfo   * tbl = OCI_TypeInfoGet(cn, "dirpath_data", OCI_TIF_TABLE);
+    OCI_DirPath    * dp = OCI_DirPathCreate(tbl, NULL, NUM_COLS, nb_rows);
 
     /* optional attributes to set */
 

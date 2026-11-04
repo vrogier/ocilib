@@ -65,8 +65,6 @@ void print_node(OCI_JsonNode *node, OCI_Int32 depth)
 
 int main(void)
 {
-    OCI_Connection  *cn;
-    OCI_Json        *json;
     OCI_JsonNode    *root, *emp, *skills, *item;
     otext           *text;
     OCI_UInt32     len;
@@ -78,11 +76,15 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection  * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
 
     /* parse a JSON text into a descriptor */
 
-    json = OCI_JsonCreate(cn);
+    OCI_Json        * json = OCI_JsonCreate(cn);
 
     OCI_JsonLoadText(json,
                      "{\"employee\":{\"name\":\"Fred\",\"skills\":[\"sql\",\"c\"]}}",

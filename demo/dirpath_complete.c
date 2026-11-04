@@ -41,7 +41,11 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    con = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    con = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
 
     /* Nominal test */
     do_load(con, FALSE, FALSE, FALSE, FALSE, "TEST BASE         - DEFAULT MODE");
@@ -128,7 +132,6 @@ void check_data(OCI_Connection *con, OCI_DirPath *dp, OCI_Boolean gen_conv_error
 
 void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_load_error, OCI_Boolean gen_buffer_error, OCI_Boolean force, char *test_name)
 {
-    OCI_DirPath    *dp;
 
     char val1[SIZE_COL1 + 1];
     char val2[SIZE_COL2 + 1];
@@ -142,7 +145,7 @@ void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_lo
     create_table(con);
 
     /* create direct object */
-    dp = OCI_DirPathCreate(OCI_TypeInfoGet(con, TABLE_NAME, OCI_TIF_TABLE), NULL, NUM_COLS, nb_rows);
+    OCI_DirPath    * dp = OCI_DirPathCreate(OCI_TypeInfoGet(con, TABLE_NAME, OCI_TIF_TABLE), NULL, NUM_COLS, nb_rows);
 
     /* optional attributes to set */
     OCI_DirPathSetBufferSize(dp, gen_buffer_error ? 100 : 64000);

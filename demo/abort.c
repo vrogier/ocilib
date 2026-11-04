@@ -29,8 +29,6 @@ int long_oracle_call(void *data)
 
 int main(void)
 {
-    OCI_Connection *cn;
-    OCI_Statement *st;
     thrd_t th;
 
     OCI_Environment *env = OCI_EnvironmentCreate(NULL, NULL, OCI_ENV_THREADED);
@@ -40,8 +38,12 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    st = OCI_StatementCreate(cn);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
+    OCI_Statement * st = OCI_StatementCreate(cn);
 
     thrd_create(&th, long_oracle_call, st);
 

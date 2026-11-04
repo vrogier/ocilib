@@ -9,10 +9,6 @@ void err_handler(OCI_Error *err)
 
 int main(void)
 {
-    OCI_Connection *cn;
-    OCI_Statement *st;
-    OCI_Resultset *rs;
-    OCI_File *file;
     char buffer[256];
     OCI_Int32 n;
 
@@ -23,10 +19,14 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    st = OCI_StatementCreate(cn);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
 
-    file = OCI_FileCreate(cn, OCI_BFILE);
+    OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
+    OCI_Statement * st = OCI_StatementCreate(cn);
+
+    OCI_File * file = OCI_FileCreate(cn, OCI_BFILE);
 
     /* replace 'test.txt' with any existing file on the 'test_folder' folder */
     
@@ -36,7 +36,7 @@ int main(void)
 
     if (OCI_FileExists(file))
     {
-        printf("file size : %d\n", OCI_FileGetSize(file));
+        printf("file size : %llu\n", (unsigned long long) OCI_FileGetSize(file));
         printf("file dir  : %s\n", OCI_FileGetDirectory(file));
         printf("file name : %s\n", OCI_FileGetName(file));
     }
@@ -55,7 +55,7 @@ int main(void)
 
     OCI_ExecuteStmt(st, "select * from files");
 
-    rs = OCI_GetResultset(st);
+    OCI_Resultset * rs = OCI_GetResultset(st);
 
     while (OCI_FetchNext(rs))
     {
@@ -63,14 +63,14 @@ int main(void)
 
         OCI_FileOpen(file);
 
-        printf("file size  %d\n", OCI_FileGetSize(file));
+        printf("file size  %llu\n", (unsigned long long) OCI_FileGetSize(file));
         printf("file dir   %s\n", OCI_FileGetDirectory(file));
         printf("file name  %s\n", OCI_FileGetName(file));
 
-        while (n = OCI_FileRead(file, buffer, sizeof(buffer) - 1))
+        while ((n = OCI_FileRead(file, buffer, sizeof(buffer) - 1)))
         {
             buffer[n] = 0;
-            printf(buffer);
+            printf("%s", buffer);
         }
 
         OCI_FileClose(file);

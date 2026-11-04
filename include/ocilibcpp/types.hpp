@@ -10507,6 +10507,12 @@ namespace ocilib
          * @brief
          * Drop the collection
          *
+         * @warning
+         * The underlying OCISodaCollDrop() call does not implicitly commit.
+         * Any pending uncommitted changes to the collection must be committed
+         * (Connection::Commit()) or rolled back (Connection::Rollback()) before
+         * dropping it, otherwise the drop fails with ORA-40626.
+         *
          */
         bool Drop();
 

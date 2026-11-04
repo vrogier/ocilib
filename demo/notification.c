@@ -13,9 +13,6 @@ void error_handler(OCI_Error *err);
 
 int main(void)
 {
-    OCI_Connection   *con;
-    OCI_Subscription *sub;
-    OCI_Statement    *st;
 
     printf("=> Initializing OCILIB in event mode...\n\n");
 
@@ -28,13 +25,17 @@ int main(void)
 
     printf("=> Connecting to usr@db...\n\n");
 
-    con = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection   * con = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
 
     OCI_SetAutoCommit(con, TRUE);
 
     printf("=> Creating statement...\n\n");
 
-    st = OCI_StatementCreate(con);
+    OCI_Statement    * st = OCI_StatementCreate(con);
 
     printf("=> Creating tables...\n\n");
 
@@ -45,7 +46,7 @@ int main(void)
 
     OCI_SetSubscriptionPort(env, 5468);
 
-    sub = OCI_SubscriptionRegister(con, "sub-00", OCI_CNT_ALL, event_handler, OCI_SRM_DEFAULT, 0);
+    OCI_Subscription * sub = OCI_SubscriptionRegister(con, "sub-00", OCI_CNT_ALL, event_handler, OCI_SRM_DEFAULT, 0);
 
     printf("=> Adding queries to be notified...\n\n");
 

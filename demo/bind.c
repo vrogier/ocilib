@@ -13,10 +13,9 @@ void err_handler(OCI_Error *err)
 
 void get_product_name(OCI_Int32 requested_code)
 {
-    OCI_Resultset *rs;
     code = requested_code;
     OCI_Execute(st);
-    rs = OCI_GetResultset(st);
+    OCI_Resultset * rs = OCI_GetResultset(st);
     OCI_FetchNext(rs);
     printf("product name for product code %d is %s\n", code, OCI_GetString(rs, 1));
 }
@@ -30,7 +29,11 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
     OCI_Prepare(st, "select name from products where code  = :code");

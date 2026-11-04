@@ -9,9 +9,6 @@ void err_handler(OCI_Error *err)
 
 int main(void)
 {
-    OCI_Connection *cn;
-    OCI_Statement *st;
-    OCI_Resultset *rs;
 
     char rowid[OCI_SIZE_ROWID + 1] = "";
 
@@ -22,15 +19,19 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    st = OCI_StatementCreate(cn);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
+    OCI_Statement * st = OCI_StatementCreate(cn);
 
     OCI_Immediate(cn, "select rowid from products where code = 1", OCI_ARG_TEXT, rowid);
 
     OCI_Prepare(st, "select code, name, rowid from products where rowid = :id");
     OCI_BindString(st, ":id", rowid, (OCI_UInt32) strlen(rowid));
     OCI_Execute(st);
-    rs = OCI_GetResultset(st);
+    OCI_Resultset * rs = OCI_GetResultset(st);
     OCI_FetchNext(rs);
     printf("code [%d], name [%s], rowid [%s]", OCI_GetInt(rs, 1), OCI_GetString(rs, 2), OCI_GetString(rs, 3));
 

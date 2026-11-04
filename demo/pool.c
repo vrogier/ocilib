@@ -40,7 +40,11 @@ int main(void)
 
     /* create pool */
 
-    pool = OCI_PoolCreate(env, "db", "usr", "pwd", OCI_POOL_SESSION, OCI_SESSION_DEFAULT, 0, MAX_CONN, 1);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    pool = OCI_PoolCreate(env, db, usr, pwd, OCI_POOL_SESSION, OCI_SESSION_DEFAULT, 0, MAX_CONN, 1);
 
     /* create threads */
 

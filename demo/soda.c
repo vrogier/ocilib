@@ -9,13 +9,6 @@ void err_handler(OCI_Error *err)
 
 int main(void)
 {
-    OCI_Connection    *cn;
-    OCI_SodaDb        *sdb;
-    OCI_SodaColl      *coll;
-    OCI_SodaDoc       *doc;
-    OCI_SodaDocCursor *cur;
-    OCI_SodaOptions   *opt;
-
     OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
 
     if (!env)
@@ -23,20 +16,24 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn  = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    sdb = OCI_SodaDbCreate(cn);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection *cn  = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
+    OCI_SodaDb     *sdb = OCI_SodaDbCreate(cn);
 
     /* create a collection backed by a new table (default metadata) */
 
-    coll = OCI_SodaDbCreateColl(sdb, "soda_employees", NULL);
+    OCI_SodaColl *coll = OCI_SodaDbCreateColl(sdb, "soda_employees", NULL);
 
     printf("collection '%s' created\n", OCI_SodaCollGetName(coll));
     printf("metadata: %s\n", OCI_SodaCollGetMetadata(coll));
 
     /* insert documents - keys are server-assigned (UUID) by default */
 
-    doc = OCI_SodaDocCreateFromText(sdb, "{\"name\":\"Fred\",\"age\":42}",
-                                    (OCI_UInt32) strlen("{\"name\":\"Fred\",\"age\":42}"), NULL);
+    OCI_SodaDoc *doc = OCI_SodaDocCreateFromText(sdb, "{\"name\":\"Fred\",\"age\":42}",
+                                                 (OCI_UInt32) strlen("{\"name\":\"Fred\",\"age\":42}"), NULL);
     OCI_SodaCollInsertDoc(coll, doc);
 
     printf("inserted doc key='%s' version='%s' created='%s'\n",
@@ -51,7 +48,7 @@ int main(void)
 
     /* fetch all documents through a cursor */
 
-    cur = OCI_SodaCollFind(coll, NULL);
+    OCI_SodaDocCursor *cur = OCI_SodaCollFind(coll, NULL);
 
     while ((doc = OCI_SodaDocCursorGetNext(cur)) != NULL)
     {
@@ -63,7 +60,7 @@ int main(void)
 
     /* query by example : count documents matching a JSON filter spec */
 
-    opt = OCI_SodaOptionsCreate(sdb);
+    OCI_SodaOptions *opt = OCI_SodaOptionsCreate(sdb);
     OCI_SodaOptionsSetFilter(opt, "{\"name\":\"Jane\"}");
 
     printf("%llu doc(s) match QBE '{\"name\":\"Jane\"}'\n",
@@ -73,6 +70,7 @@ int main(void)
 
     /* drop the collection and its backing table */
 
+    OCI_Commit(cn);
     OCI_SodaCollDrop(coll);
     OCI_SodaCollFree(coll);
 

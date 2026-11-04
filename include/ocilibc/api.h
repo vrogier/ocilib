@@ -18509,6 +18509,12 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollIsMapped
  *
  * @param coll - SODA collection handle
  *
+ * @warning
+ * OCISodaCollDrop() does not implicitly commit. Any pending uncommitted
+ * changes to the collection must be committed (OCI_Commit()) or rolled back
+ * (OCI_Rollback()) before dropping it, otherwise the drop fails with
+ * ORA-40626.
+ *
  * @return
  * TRUE if the collection was dropped, FALSE otherwise.
  *

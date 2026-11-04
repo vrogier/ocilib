@@ -2,7 +2,6 @@
 
 int main(void)
 {
-    OCI_Connection *cn;
 
     OCI_Environment *env = OCI_EnvironmentCreate(NULL, NULL, OCI_ENV_DEFAULT);
 
@@ -11,7 +10,7 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "wrong_usr", "wrong_pwd", OCI_SESSION_DEFAULT);
+    OCI_Connection * cn = OCI_ConnectionCreate(env, "db", "wrong_usr", "wrong_pwd", OCI_SESSION_DEFAULT);
 
     if (cn == NULL)
     {

@@ -9,8 +9,6 @@ void err_handler(OCI_Error *err)
 
 int main(void)
 {
-    OCI_Timestamp *tm;
-    OCI_Interval *itv;
 
     char str[SIZE_STR + 1];
 
@@ -21,10 +19,10 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    tm = OCI_TimestampCreate(env, OCI_TIMESTAMP);
-    itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
+    OCI_Timestamp * tm = OCI_TimestampCreate(env, OCI_TIMESTAMP);
+    OCI_Interval * itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
 
-    OCI_TimestampSysTimeStamp(tm);
+    OCI_TimestampSysTimestamp(tm);
     OCI_TimestampToText(tm, "DD/MM/YYYY HH24:MI:SS:FF3", SIZE_STR, str, 3);
     printf("%s\n", str);
 

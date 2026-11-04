@@ -10,23 +10,13 @@ void error(OCI_Error *err)
     exit(EXIT_FAILURE);
 }
 
-int main(OCI_Int32 argc, char **argv)
+int main(void)
 {
-    OCI_Connection *cn;
-    OCI_Statement  *st;
-    OCI_Object     *obj_sdo;
     OCI_Coll       *coll_inf, *coll_ord;
     OCI_Elem       *elem_inf, *elem_ord;
     OCI_TypeInfo   *tif_inf, *tif_ord, *tif_sdo;
 
     OCI_Int32 i;
-
-    /* check command line */
-    if (argc < 4)
-    {
-        fprintf(stderr, "Usage: %s database user password\n", argv[0]);
-        return EXIT_FAILURE;
-    }
 
     /* initialize OCILIB */
     OCI_Environment *env = OCI_EnvironmentCreate(error, NULL, OCI_ENV_DEFAULT);
@@ -35,9 +25,13 @@ int main(OCI_Int32 argc, char **argv)
     {
         return EXIT_FAILURE;
     }
-    
+
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
     /* connect to oracle */
-    cn = OCI_ConnectionCreate(env, argv[1], argv[2], argv[3], OCI_SESSION_DEFAULT);
+    OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
     
     if (!cn)
     {
@@ -47,7 +41,7 @@ int main(OCI_Int32 argc, char **argv)
     printf("\nConnected to Oracle.\n");
 
     /*create statement object */
-    st = OCI_StatementCreate(cn);
+    OCI_Statement  * st = OCI_StatementCreate(cn);
 
     /* retrieve type info */
     tif_sdo = OCI_TypeInfoGet(cn, "MDSYS.SDO_GEOMETRY", OCI_TIF_TYPE);
@@ -55,7 +49,7 @@ int main(OCI_Int32 argc, char **argv)
     tif_ord = OCI_TypeInfoGet(cn, "MDSYS.SDO_ORDINATE_ARRAY", OCI_TIF_TYPE);
 
     /* create sdo object */
-    obj_sdo = OCI_ObjectCreate(tif_sdo);
+    OCI_Object     * obj_sdo = OCI_ObjectCreate(tif_sdo);
 
     /* create sub arrays */
     coll_inf = OCI_CollCreate(tif_inf);

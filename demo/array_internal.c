@@ -11,8 +11,6 @@ void err_handler(OCI_Error *err)
 
 int main(void)
 {
-    OCI_Connection *cn;
-    OCI_Statement *st;
     OCI_Date ** tab;
     OCI_Int32 i;
 
@@ -23,8 +21,14 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    st = OCI_StatementCreate(cn);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
+    OCI_Statement * st = OCI_StatementCreate(cn);
+
+    OCI_ExecuteStmt(st, "create table dates (value date)");
 
     OCI_SetBindAllocation(st, OCI_BAM_INTERNAL);
     OCI_Prepare(st, "insert into dates values (:tab)");
@@ -41,6 +45,8 @@ int main(void)
     OCI_Execute(st);
 
     printf("row inserted : %d\n", OCI_GetAffectedRows(st));
+
+    OCI_ExecuteStmt(st, "drop table dates");
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);

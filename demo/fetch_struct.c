@@ -21,9 +21,6 @@ void err_handler(OCI_Error *err)
 
 int main(void)
 {
-    OCI_Connection *cn;
-    OCI_Statement  *st;
-    OCI_Resultset  *rs;
 
     product_t     prd;
     product_ind_t ind;
@@ -37,12 +34,16 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    st = OCI_StatementCreate(cn);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
+    OCI_Statement  * st = OCI_StatementCreate(cn);
 
     OCI_ExecuteStmt(st, "select * from products");
 
-    rs = OCI_GetResultset(st);
+    OCI_Resultset  * rs = OCI_GetResultset(st);
 
     OCI_SetStructNumericType(rs, 1, OCI_NUM_INT);
 

@@ -9,9 +9,6 @@ void err_handler(OCI_Error *err)
 
 int main(void)
 {
-    OCI_Connection *cn;
-    OCI_Statement *st;
-    OCI_Resultset *rs;
     OCI_Object *sale, *vendor;
     OCI_Date *date;
 
@@ -22,8 +19,12 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    st = OCI_StatementCreate(cn);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
+    OCI_Statement * st = OCI_StatementCreate(cn);
     date = OCI_DateCreate(env);
 
     OCI_DateSysDate(date);
@@ -40,6 +41,7 @@ int main(void)
     OCI_ObjectSetString(sale, "REF", "A56547WSAA");
     OCI_ObjectSetObject(sale, "VENDOR", vendor);
     OCI_ObjectSetDate(sale, "DATE_SALE", date);
+    OCI_DateFree(date);
 
     OCI_Prepare(st, "insert into sales values(:sale)");
     OCI_BindObject(st, ":sale", sale);
@@ -51,13 +53,16 @@ int main(void)
     OCI_ObjectFree(vendor);
 
     OCI_ExecuteStmt(st, "select * from sales");
-    rs = OCI_GetResultset(st);
+    OCI_Resultset * rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
         sale = OCI_GetObject(rs, 1);
         vendor = OCI_ObjectGetObject(sale, "VENDOR");
 
         printf("Sale %d - %s vendor %s\n", OCI_ObjectGetInt(sale, "CODE"), OCI_ObjectGetString(sale, "NAME"), OCI_ObjectGetString(vendor, "NAME"));
+
+        OCI_ObjectFree(vendor);
+        OCI_ObjectFree(sale);
     }
 
     OCI_StatementFree(st);

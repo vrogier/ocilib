@@ -11,7 +11,6 @@ void err_handler(OCI_Error *err)
 
 void dump_ref(OCI_Ref *ref)
 {
-    OCI_Object *vendor;
     char data[SIZE_STR + 1];
 
     /* print ref hexadecimal value */
@@ -21,7 +20,7 @@ void dump_ref(OCI_Ref *ref)
 
     /* get object from ref */
 
-    vendor = OCI_RefGetObject(ref);
+    OCI_Object * vendor = OCI_RefGetObject(ref);
 
     /* print object values */
 
@@ -30,9 +29,6 @@ void dump_ref(OCI_Ref *ref)
 
 int main(void)
 {
-    OCI_Connection *cn;
-    OCI_Statement  *st;
-    OCI_Resultset  *rs;
     OCI_Ref       *ref;
 
     OCI_Environment *env = OCI_EnvironmentCreate(err_handler, NULL, OCI_ENV_DEFAULT);
@@ -42,11 +38,15 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    st = OCI_StatementCreate(cn);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
+    OCI_Statement  * st = OCI_StatementCreate(cn);
 
     OCI_ExecuteStmt(st, "select ref(v) from vendors v");
-    rs = OCI_GetResultset(st);
+    OCI_Resultset  * rs = OCI_GetResultset(st);
 
     printf("\n\n=> fetch refs from object table\n\n");
 

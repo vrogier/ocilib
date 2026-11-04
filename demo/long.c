@@ -13,11 +13,6 @@ void err_handler(OCI_Error *err)
 
 int main(void)
 {
-    OCI_Connection *cn;
-    OCI_Statement *st;
-    OCI_Resultset *rs;
-    OCI_Long *lg;
-    FILE *f;
     char buffer[SIZE_BUF];
     OCI_Int32 i, n;
 
@@ -28,12 +23,16 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    st = OCI_StatementCreate(cn);
+    const char *db  = getenv("OCILIB_DEMO_DB");
+    const char *usr = getenv("OCILIB_DEMO_USR");
+    const char *pwd = getenv("OCILIB_DEMO_PWD");
+
+    OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
+    OCI_Statement * st = OCI_StatementCreate(cn);
 
     /* create the data file */
 
-    f = fopen(FILENAME, "wb");
+    FILE * f = fopen(FILENAME, "wb");
 
     if (f)
     {
@@ -57,7 +56,7 @@ int main(void)
 
         printf("\n%d bytes to write\n", n);
 
-        lg = OCI_LongCreate(st, OCI_BLONG);
+        OCI_Long * lg = OCI_LongCreate(st, OCI_BLONG);
 
         OCI_Prepare(st, "insert into test_long_raw(code, content) values (1, :data)");
         OCI_BindLong(st, ":data", lg, n);
@@ -83,12 +82,12 @@ int main(void)
     OCI_ExecuteStmt(st, "select content from test_long_raw where code = 1");
     OCI_SetPieceSize(st, 10000);
 
-    rs = OCI_GetResultset(st);
+    OCI_Resultset * rs = OCI_GetResultset(st);
 
     /* read data by chunks of 2048 bytes*/
     while (OCI_FetchNext(rs))
     {
-        lg = OCI_GetLong(rs, 1);
+        OCI_Long *lg = OCI_GetLong(rs, 1);
 
         while ((n = OCI_LongRead(lg, buffer, sizeof(buffer)))) {}
 
