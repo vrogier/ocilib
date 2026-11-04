@@ -43,6 +43,8 @@ OCI_SYM_LOCAL OCI_Connection* OcilibConnectionAllocate
     const otext    * db,
     const otext    * user,
     const otext    * pwd,
+    OCI_ShardingKey* skey,
+    OCI_ShardingKey* sskey,
     OCI_SessionMode  mode
 );
 

@@ -120,6 +120,8 @@ OCI_Connection * OcilibConnectionAllocate
     const otext     *db,
     const otext     *user,
     const otext     *pwd,
+    OCI_ShardingKey* skey,
+    OCI_ShardingKey* sskey,
     OCI_SessionMode  mode
 )
 {
@@ -139,7 +141,7 @@ OCI_Connection * OcilibConnectionAllocate
 
     con->env           = env;
     con->htype         = OCI_IPC_CONNECTION;
-    con->alloc_handles = TRUE;
+    con->alloc_handles = (NULL == skey && NULL == sskey);
 
     /* create internal lists */
 
@@ -719,11 +721,6 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
         sess_mode |= OCI_SESSGET_CREDEXT;
     }
 
-    if (con->env->version_runtime >= OCI_9_2)
-    {
-        sess_mode |= OCI_SESSGET_STMTCACHE;
-    }
-
     if (NULL != con->pool)
     {
         dbsize = -1;
@@ -747,6 +744,11 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
     else
     {
         sess_mode |= OCI_SESSGET_CUSTOM_POOL;
+
+        if (con->env->version_runtime >= OCI_9_2)
+        {
+            sess_mode |= OCI_SESSGET_STMTCACHE;
+        }
 
         dbsize = -1;
         dbstr  = OcilibStringGetDBString(con->env, con->db, &dbsize);
@@ -777,11 +779,6 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
         con->handle, &con->ses, NULL,
         con->err
     );
-
-    /* the underlying OCI handles are owned by the service context:
-       they are released through OCISessionRelease() */
-
-    con->alloc_handles = FALSE;
 
     if (found)
     {
@@ -837,6 +834,8 @@ OCI_Boolean OcilibConnectionLogon
 
 #if OCI_VERSION_COMPILE < OCI_9_2
 
+    OCI_NOT_USED(skey);
+    OCI_NOT_USED(sskey);
     OCI_NOT_USED(tag);
 
 #endif
@@ -845,21 +844,13 @@ OCI_Boolean OcilibConnectionLogon
 
     if (con->alloc_handles)
     {
-        if (NULL != skey || NULL != sskey)
-        {
-            /* sharded connections must be established through OCISessionGet() with an authp carrying the keys */
-
-            CHECK(OcilibConnectionLogonSessionGet(con, skey, sskey, tag));
-        }
-        else
-        {
-            CHECK(OcilibConnectionLogonRegular(con, new_pwd));
-        }
+        CHECK(OcilibConnectionLogonRegular(con, new_pwd));
     }
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
 
-    /* 2 - connection from session pool */
+    /* 2 - connection from session pool or sharded connection
+           (sharding keys provided: con->alloc_handles is FALSE)          */
 
     else if (con->env->version_runtime >= OCI_9_2)
     {
@@ -1176,21 +1167,11 @@ OCI_Connection * OcilibConnectionCreateInternal
 
     /* create Connection */
 
-    OCI_Connection *con = OcilibConnectionAllocate(env, pool, db, user, pwd, mode);
+    OCI_Connection *con = OcilibConnectionAllocate(env, pool, db, user, pwd, skey, sskey, mode);
     CHECK_NULL(con);
 
-    if (NULL != skey || NULL != sskey)
-    {
-        /* for sharded connections, OCISessionGet() performs the server
-           attach itself via the authp carrying the keys                 */
-
-        if (NULL == skey && NULL == sskey)
-        {
-            CHECK(OcilibConnectionAttach(con));
-        }
-
-        CHECK(OcilibConnectionLogon(con, NULL, tag, skey, sskey));
-    }
+    CHECK(OcilibConnectionAttach(con));
+    CHECK(OcilibConnectionLogon(con, NULL, tag, skey, sskey));
 
     OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO,
                OTEXT("connection created: %s/%s (tag=%s)"),

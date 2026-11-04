@@ -334,7 +334,7 @@ OCI_Boolean OcilibDatabaseSetUserPassword
 
     /* create a connection in auth mode */
 
-    con = OcilibConnectionAllocate(env, NULL, db, user, pwd, OCI_AUTH);
+    con = OcilibConnectionAllocate(env, NULL, db, user, pwd, NULL, NULL, OCI_AUTH);
     CHECK_NULL(con);
 
     /* ConnectionLogon() will reset the password  */
