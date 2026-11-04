@@ -167,6 +167,11 @@ namespace ocilib
             bool operator()(OCI_SodaDb* handle, AnyPointer) const { return OCI_SodaDbFree(handle); }
         };
 
+        template<> struct HandleDeleter<OCI_ShardingKey*>
+        {
+            bool operator()(OCI_ShardingKey* handle, AnyPointer) const { return OCI_ShardingKeyFree(handle); }
+        };
+
         template<> struct HandleDeleter<OCI_SodaColl*>
         {
             bool operator()(OCI_SodaColl* handle, AnyPointer) const { return OCI_SodaCollFree(handle); }
