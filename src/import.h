@@ -69,7 +69,7 @@ OCI_EXTERN_C_OPEN
         ((jd)->mthds_jznDomDoc->jznDomGetError((jd), (jerr), (clr)))
     #undef JsonDomInsertElements
     #define JsonDomInsertElements(jd, ary, pos, node) \
-        ((jd)->mthds_jznDomDoc->jznDomPutItem((jd), (ary), (pos), (node)))
+        ((jd)->mthds_jznDomDoc->jznDomPutItem((jd), (ary), (node), (pos)))
     #if !defined(JsonDomDeleteItem)
       #define JsonDomDeleteItem(jd, ary, pos) \
           ((jd)->mthds_jznDomDoc->jznDomDeleteItem((jd), (ary), (pos)))
