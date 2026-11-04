@@ -395,7 +395,7 @@ void OcilibExceptionJson
                                OTEXT("JSON DOM error [%d]"), (OCI_Int32)jerr);
         }
 
-        OcilibErrorSet(err, OCI_ERR_TYPE_ERROR, OCI_ERR_CAT_JZN, (OCI_Int32)jerr,
+        OcilibErrorSet(err, OCI_ERR_TYPE_ERROR, OCI_ERR_CAT_JZN, (OCI_ErrorCode)jerr,
                        ctx->source_ptr, ctx->source_type, ctx->location,
                        buffer, (OCI_UInt32)0);
 
@@ -464,7 +464,7 @@ void OcilibExceptionOCI
             err,
             (warning ? OCI_ERR_TYPE_WARNING : OCI_ERR_TYPE_ERROR),
             OCI_ERR_CAT_OCI,
-            (OCI_Int32)err_code,
+            (OCI_ErrorCode)err_code,
             ctx->source_ptr,
             ctx->source_type,
             ctx->location,

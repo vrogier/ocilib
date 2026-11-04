@@ -38,6 +38,14 @@
 
 #include "types.h"
 
+/* In OCI_IMPORT_LINKAGE builds against Oracle 21c+ SDKs, the real jzntypes.h
+   and jzndom.h are already included via import.h — skip the vendored
+   declarations below to avoid duplicate/conflicting definitions.
+   JsonDomGetFields is a macro defined by the real jzndom.h, so its presence
+   is a reliable marker that the real header was seen.                       */
+
+#if !defined(JsonDomGetFields)
+
 /* JSON value types */
 typedef enum jznvaltype
 {
@@ -407,5 +415,7 @@ struct jznDomDoc
 
 #define JsonDomGetFieldPos(jdoc, obj, fname, fnlen) \
     ((jdoc)->mthds_jznDomDoc->jznDomGetFieldByName((jdoc),(obj),(fname),(fnlen)))
+
+#endif /* !JsonDomGetFields */
 
 #endif /* OCILIB_OCI_JZNDOM_H_INCLUDED */

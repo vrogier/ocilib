@@ -37,6 +37,13 @@
 #ifndef OCILIB_OCI_TYPES_H_INCLUDED
 #define OCILIB_OCI_TYPES_H_INCLUDED
 
+/* In OCI_IMPORT_LINKAGE builds the real Oracle headers (oratypes.h, ...) are
+   already included via import.h — skip the vendored declarations below to
+   avoid duplicate/conflicting definitions. In OCI_IMPORT_RUNTIME builds no
+   Oracle headers are available, so the vendored content is compiled.      */
+
+#if !defined(ORATYPES)
+
 # define ORATYPES
 # define SX_ORACLE
 # define SX3_ORACLE
@@ -304,6 +311,8 @@ typedef unsigned short utext;
 #else
   #define utext  unsigned short
 #endif
+
+#endif /* !ORATYPES */
 
 #endif /* OCILIB_OCI_TYPES_H_INCLUDED */
 

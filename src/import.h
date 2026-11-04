@@ -59,6 +59,31 @@ OCI_EXTERN_C_OPEN
     #define JsonDomPutItem(jd, ar, ix, nd)  JsonDomAddElement(jd, ar, nd, ix)
   #endif
 
+  /* the real jzndom.h exposes the same jznDomDoc method table but with
+     different public macro names/arity than the vendored oci/jsondom.h.
+     Map the helper forms used by OCILIB onto the underlying jznDomAPI
+     methods so the same call sites compile in both import modes.       */
+  #if defined(JsonDomGetFields)
+    #undef JsonDomGetError
+    #define JsonDomGetError(jd, jerr, clr) \
+        ((jd)->mthds_jznDomDoc->jznDomGetError((jd), (jerr), (clr)))
+    #undef JsonDomInsertElements
+    #define JsonDomInsertElements(jd, ary, pos, node) \
+        ((jd)->mthds_jznDomDoc->jznDomPutItem((jd), (ary), (pos), (node)))
+    #if !defined(JsonDomDeleteItem)
+      #define JsonDomDeleteItem(jd, ary, pos) \
+          ((jd)->mthds_jznDomDoc->jznDomDeleteItem((jd), (ary), (pos)))
+    #endif
+    #if !defined(JsonDomDeleteItems)
+      #define JsonDomDeleteItems(jd, ary, pos, num) \
+          ((jd)->mthds_jznDomDoc->jznDomDeleteItemBatch((jd), (ary), (pos), (num)))
+    #endif
+    #if !defined(JsonDomGetFieldPos)
+      #define JsonDomGetFieldPos(jd, obj, fname, fnlen) \
+          ((jd)->mthds_jznDomDoc->jznDomGetFieldByName((jd), (obj), (fname), (fnlen)))
+    #endif
+  #endif
+
 OCI_EXTERN_C_CLOSE
 
   #undef OCI_EXTERN_C_OPEN
