@@ -548,17 +548,6 @@ OCI_SYM_PUBLIC OCI_ErrorType OCI_API OCI_ErrorGetType
 
 /**
  * @brief
- * Retrieve the Oracle error code (ORA-XXXXX) from an error handle
- *
- * @param err - Error handle
- *
- * @return
- * The Oracle error code, or 0 if the error is not Oracle-related.
- *
- */
-
-/**
- * @brief
  * Retrieve the error origin/category from an error handle
  *
  * @param err - Error handle
