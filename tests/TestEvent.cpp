@@ -16,9 +16,9 @@ namespace TestCApi
         EXPECT_EQ(TestEventSub, sub);
 
         EXPECT_NE(nullptr, OCI_EventGetDatabase(event));
-        EXPECT_EQ(ToUpper(ostring(DBSNAME)), ToUpper(OCI_EventGetDatabase(event)));
+        EXPECT_EQ(ToUpper(String(DBSNAME)), ToUpper(OCI_EventGetDatabase(event)));
 
-        const ostring expectedObject = ostring(USR) + OTEXT(".TestEventTable");
+        const String expectedObject = String(USR) + OTEXT(".TestEventTable");
         EXPECT_NE(nullptr, OCI_EventGetObject(event));
         EXPECT_EQ(ToUpper(expectedObject), ToUpper(OCI_EventGetObject(event)));
 

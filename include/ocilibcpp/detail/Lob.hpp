@@ -53,7 +53,7 @@ namespace ocilib
     }
 
     template<>
-    inline ostring Lob<ostring, LobCharacter>::Read(UInt32 length)
+    inline String Lob<String, LobCharacter>::Read(UInt32 length)
     {
         std::vector<otext> buffer(static_cast<Size>(core::ComputeCharMaxSize(Environment::CharsetMode(static_cast<Environment::CharsetMode::Type>(core::Check(OCI_GetCharset(GetEnvironment()))))) * (length + 1)));
 
@@ -69,7 +69,7 @@ namespace ocilib
     }
 
     template<>
-    inline ostring Lob<ostring, LobNationalCharacter>::Read(UInt32 length)
+    inline String Lob<String, LobNationalCharacter>::Read(UInt32 length)
     {
         std::vector<otext> buffer(static_cast<Size>(core::ComputeCharMaxSize(Environment::CharsetMode(static_cast<Environment::CharsetMode::Type>(core::Check(OCI_GetCharset(GetEnvironment()))))) * (length + 1)));
 

@@ -205,12 +205,12 @@ namespace TestCppApi
     TEST(TestHandle, ConnectionDestroyedFreesCollection)
     {
         Environment& env = GetEnvironmentCpp();
-        Collection<ostring> coll;
+        Collection<String> coll;
 
         {
             Connection con(env, DBS, USR, PWD);
             TypeInfo ti(con, OTEXT("SYS.ODCIVARCHAR2LIST"), TypeInfo::Type);
-            coll = Collection<ostring>(ti);
+            coll = Collection<String>(ti);
             ASSERT_FALSE(coll.IsNull());
         }
 

@@ -20,7 +20,7 @@ namespace TestCApi
 
         const otext* gotSql = OCI_GetSql(stmt);
         ASSERT_NE(nullptr, gotSql);
-        ASSERT_EQ(ostring(sql), ostring(gotSql));
+        ASSERT_EQ(String(sql), String(gotSql));
 
         ASSERT_EQ(OCI_CST_INSERT, OCI_GetStatementType(stmt));
         ASSERT_EQ(1u, OCI_GetAffectedRows(stmt));
@@ -379,7 +379,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
         ASSERT_EQ(7, OCI_GetInt(rs, 1));
-        ASSERT_EQ(ostring(OTEXT("txt")), ostring(OCI_GetString(rs, 2)));
+        ASSERT_EQ(String(OTEXT("txt")), String(OCI_GetString(rs, 2)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
@@ -402,20 +402,20 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select 1 from dual")));
         ASSERT_EQ(OCI_SFC_SELECT, OCI_GetSQLCommand(stmt));
-        ASSERT_EQ(ostring(OTEXT("SELECT")), ostring(OCI_GetSQLVerb(stmt)));
+        ASSERT_EQ(String(OTEXT("SELECT")), String(OCI_GetSQLVerb(stmt)));
 
         ExecDML(OTEXT("drop table TestStatementCmd"));
         ExecDML(OTEXT("create table TestStatementCmd (id int)"));
 
         ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("insert into TestStatementCmd values (1)")));
         ASSERT_EQ(OCI_SFC_INSERT, OCI_GetSQLCommand(stmt));
-        ASSERT_EQ(ostring(OTEXT("INSERT")), ostring(OCI_GetSQLVerb(stmt)));
+        ASSERT_EQ(String(OTEXT("INSERT")), String(OCI_GetSQLVerb(stmt)));
 
         ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("update TestStatementCmd set id = 2")));
-        ASSERT_EQ(ostring(OTEXT("UPDATE")), ostring(OCI_GetSQLVerb(stmt)));
+        ASSERT_EQ(String(OTEXT("UPDATE")), String(OCI_GetSQLVerb(stmt)));
 
         ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("drop table TestStatementCmd")));
-        ASSERT_EQ(ostring(OTEXT("DROP TABLE")), ostring(OCI_GetSQLVerb(stmt)));
+        ASSERT_EQ(String(OTEXT("DROP TABLE")), String(OCI_GetSQLVerb(stmt)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
@@ -531,7 +531,7 @@ namespace TestCApi
             OCI_ARG_COLLECTION, coll,
             OCI_ARG_REF, ref));
 
-        ASSERT_EQ(ostring(OTEXT("abc")), ostring(txt));
+        ASSERT_EQ(String(OTEXT("abc")), String(txt));
         ASSERT_EQ(1, sh);
         ASSERT_EQ(2, ush);
         ASSERT_EQ(3, i);
@@ -560,7 +560,7 @@ namespace TestCApi
         // size-carrying text arg
         ASSERT_TRUE(OCI_Immediate(con, OTEXT("select 'bounded' from dual"),
                                   OCI_ARG_TEXT_N, txtn, (OCI_UInt32) 8));
-        ASSERT_EQ(ostring(OTEXT("bounded")), ostring(txtn));
+        ASSERT_EQ(String(OTEXT("bounded")), String(txtn));
     }
 
     TEST_F(TestStatementImmediate, JsonArg)

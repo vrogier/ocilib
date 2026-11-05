@@ -194,8 +194,8 @@ namespace TestCApi
         }
 
         ASSERT_EQ(12u, total);
-        ASSERT_EQ(ostring(OTEXT("0123456789ab")),
-                  ostring(static_cast<const otext*>(OCI_LongGetBuffer(lg)), 12));
+        ASSERT_EQ(String(OTEXT("0123456789ab")),
+                  String(static_cast<const otext*>(OCI_LongGetBuffer(lg)), 12));
     }
 }
 

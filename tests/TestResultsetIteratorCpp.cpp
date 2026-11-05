@@ -42,7 +42,7 @@ namespace TestCppApi
         for (auto&& row : rs)
         {
             ++count;
-            ASSERT_EQ(ostring(OTEXT("Row ")) + TO_STRING(count), row.Get<ostring>(OTEXT("name")));
+            ASSERT_EQ(String(OTEXT("Row ")) + TO_STRING(count), row.Get<String>(OTEXT("name")));
             ASSERT_EQ(static_cast<int>(count), row.Get<int>(OTEXT("num")));
         }
 
@@ -158,7 +158,7 @@ namespace TestCppApi
 
         auto it = rs.begin();
         ++it;
-        ASSERT_THROW(--it, Exception);
+        ASSERT_THROW((void) --it, Exception);
     }
 
     TEST(TestResultsetIterator, NonScrollableSeekThrows)
@@ -170,7 +170,7 @@ namespace TestCppApi
         auto rs = GetRowsResultset(st, 5);
 
         auto it = rs.begin();
-        ASSERT_THROW(it += 2, Exception);
+        ASSERT_THROW((void) it += 2, Exception);
     }
 
     TEST(TestResultsetIterator, NonScrollableSubscriptThrows)
@@ -182,7 +182,7 @@ namespace TestCppApi
         auto rs = GetRowsResultset(st, 5);
 
         auto it = rs.begin();
-        ASSERT_THROW(it[2], Exception);
+        ASSERT_THROW((void) it[2], Exception);
     }
 
 }

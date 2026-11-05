@@ -63,9 +63,9 @@ namespace ocilib
             return result;
         }
 
-        inline ostring MakeString(const otext* result, Int32 size)
+        inline String MakeString(const otext* result, Int32 size)
         {
-            return result ? (size >= 0 ? ostring(result, result + size) : ostring(result)) : ostring();
+            return result ? (size >= 0 ? String(result, result + size) : String(result)) : String();
         }
 
         inline Raw MakeRaw(AnyPointer result, UInt32 size)
@@ -79,7 +79,7 @@ namespace ocilib
         {
             const Int32 UTF8_BytesPerChar = 4;
 
-            UInt32 res = sizeof(ostring::value_type);
+            UInt32 res = sizeof(String::value_type);
 
             if (charsetMode == Environment::CharsetAnsi)
             {
@@ -102,7 +102,7 @@ namespace ocilib
                         i = static_cast<std::string::value_type>(toupper(i));
                     }
 
-                    if (ostring::npos != nlsLang.find("UTF8"))
+                    if (String::npos != nlsLang.find("UTF8"))
                     {
                         res = UTF8_BytesPerChar;
                     }

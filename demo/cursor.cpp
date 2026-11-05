@@ -29,7 +29,7 @@ int main()
 
             while (rs2++)
             {
-                std::cout << "Table : " << rs.Get<ostring>(1) << ", Date : " << rs2.Get<ostring>(1) << std::endl;
+                std::cout << "Table : " << rs.Get<String>(1) << ", Date : " << rs2.Get<String>(1) << std::endl;
             }
         }
 

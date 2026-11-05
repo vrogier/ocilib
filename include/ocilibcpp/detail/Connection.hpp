@@ -35,12 +35,12 @@ inline Connection::Connection()
 
 }
 
-inline Connection::Connection(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey)
+inline Connection::Connection(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey)
 {
     Open(env, db, user, pwd, sessionFlags, skey, sskey);
 }
 
-inline Connection::Connection(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)
+inline Connection::Connection(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags)
 {
     Open(env, db, user, pwd, sessionFlags);
 }
@@ -57,7 +57,7 @@ inline Connection::Connection(OCI_Connection *con,  core::Handle *parent, bool a
     }
 }
 
-inline void Connection::Open(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags)
+inline void Connection::Open(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags)
 {
     AcquireAllocated
     (
@@ -66,7 +66,7 @@ inline void Connection::Open(const Environment& env, const ostring& db, const os
     );
 }
 
-inline void Connection::Open(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey)
+inline void Connection::Open(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey)
 {
     AcquireAllocated
     (
@@ -117,17 +117,17 @@ inline bool Connection::PingServer() const
 
 
 
-inline ostring Connection::GetConnectionString() const
+inline String Connection::GetConnectionString() const
 {
     return core::MakeString(core::Check(OCI_GetDatabase(*this)));
 }
 
-inline ostring Connection::GetUserName() const
+inline String Connection::GetUserName() const
 {
     return core::MakeString(core::Check(OCI_GetUserName(*this)));
 }
 
-inline ostring Connection::GetPassword() const
+inline String Connection::GetPassword() const
 {
     return core::MakeString(core::Check(OCI_GetPassword(*this)));
 }
@@ -137,7 +137,7 @@ inline OracleVersion Connection::GetVersion() const
     return OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_GetVersionConnection(*this))));
 }
 
-inline ostring Connection::GetServerVersion() const
+inline String Connection::GetServerVersion() const
 {
     return core::MakeString(core::Check(OCI_GetVersionServer(*this)));
 }
@@ -157,17 +157,17 @@ inline UInt32 Connection::GetServerRevisionVersion() const
     return core::Check(OCI_GetServerRevisionVersion(*this));
 }
 
-inline void Connection::ChangePassword(const ostring& newPwd)
+inline void Connection::ChangePassword(const String& newPwd)
 {
     core::Check(OCI_SetPassword(*this, newPwd.c_str()));
 }
 
-inline ostring Connection::GetSessionTag() const
+inline String Connection::GetSessionTag() const
 {
     return core::MakeString(core::Check(OCI_GetSessionTag(*this)));
 }
 
-inline void Connection::SetSessionTag(const ostring& tag)
+inline void Connection::SetSessionTag(const String& tag)
 {
     core::Check(OCI_SetSessionTag(*this, tag.c_str()));
 }
@@ -192,7 +192,7 @@ inline void Connection::DisableServerOutput()
     core::Check(OCI_ServerDisableOutput(*this));
 }
 
-inline bool Connection::GetServerOutput(ostring &line) const
+inline bool Connection::GetServerOutput(String &line) const
 {
     const otext * str = core::Check(OCI_ServerGetOutput(*this));
 
@@ -201,7 +201,7 @@ inline bool Connection::GetServerOutput(ostring &line) const
     return (str != nullptr);
 }
 
-inline void Connection::GetServerOutput(std::vector<ostring> &lines) const
+inline void Connection::GetServerOutput(std::vector<String> &lines) const
 {
     const otext * str = core::Check(OCI_ServerGetOutput(*this));
 
@@ -212,37 +212,37 @@ inline void Connection::GetServerOutput(std::vector<ostring> &lines) const
     }
 }
 
-inline void Connection::SetTrace(SessionTrace trace, const ostring& value)
+inline void Connection::SetTrace(SessionTrace trace, const String& value)
 {
     core::Check(OCI_SetTrace(*this, trace, value.c_str()));
 }
 
-inline ostring Connection::GetTrace(SessionTrace trace) const
+inline String Connection::GetTrace(SessionTrace trace) const
 {
     return core::MakeString(core::Check(OCI_GetTrace(*this, trace)));
 }
 
-inline ostring Connection::GetDatabase() const
+inline String Connection::GetDatabase() const
 {
     return core::MakeString(core::Check(OCI_GetDBName(*this)));
 }
 
-inline ostring Connection::GetInstance() const
+inline String Connection::GetInstance() const
 {
     return core::Check(OCI_GetInstanceName(*this));
 }
 
-inline ostring Connection::GetService() const
+inline String Connection::GetService() const
 {
     return core::MakeString(core::Check(OCI_GetServiceName(*this)));
 }
 
-inline ostring Connection::GetServer() const
+inline String Connection::GetServer() const
 {
     return core::Check(OCI_GetServerName(*this));
 }
 
-inline ostring Connection::GetDomain() const
+inline String Connection::GetDomain() const
 {
     return core::MakeString(core::Check(OCI_GetDomainName(*this)));
 }

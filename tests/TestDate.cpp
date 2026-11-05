@@ -201,7 +201,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_DateSetDateTime(date, year, month, day, hour, min, sec));
         ASSERT_TRUE(OCI_DateToText(date, OCI_STRING_FORMAT_DATETIME, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("1978-04-13 20:30:15")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("1978-04-13 20:30:15")), String(buffer));
 
         ASSERT_TRUE(OCI_DateFree(date));
 
@@ -295,7 +295,7 @@ namespace TestCApi
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_DateToText(date, OCI_STRING_FORMAT_DATETIME, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("1978-04-13 20:30:15")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("1978-04-13 20:30:15")), String(buffer));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -321,7 +321,7 @@ namespace TestCApi
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_DateToText(date, OCI_STRING_FORMAT_DATETIME, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("1978-04-13 20:30:15")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("1978-04-13 20:30:15")), String(buffer));
 
         ASSERT_TRUE(OCI_DateFree(date));
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -353,7 +353,7 @@ namespace TestCApi
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_DateToText(date, OCI_STRING_FORMAT_DATETIME, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("1978-04-13 20:30:15")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("1978-04-13 20:30:15")), String(buffer));
 
         OCI_ExecuteStmt(stmt, OTEXT("drop table test_date_register"));
 
@@ -371,7 +371,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, con);
 
         ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_DATE, OTEXT("DD/MM/YYYY")));
-        ASSERT_EQ(ostring(OTEXT("DD/MM/YYYY")), ostring(OCI_GetFormat(env, OCI_FMT_DATE)));
+        ASSERT_EQ(String(OTEXT("DD/MM/YYYY")), String(OCI_GetFormat(env, OCI_FMT_DATE)));
 
         auto date = OCI_DateCreate(env);
         ASSERT_NE(nullptr, date);
@@ -379,7 +379,7 @@ namespace TestCApi
 
         otext buffer[64];
         ASSERT_TRUE(OCI_DateToText(date, OTEXT("DD/MM/YYYY"), 64, buffer));
-        ASSERT_EQ(ostring(OTEXT("12/05/2020")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("12/05/2020")), String(buffer));
 
         ASSERT_TRUE(OCI_DateFree(date));
         ASSERT_TRUE(OCI_ConnectionFree(con));

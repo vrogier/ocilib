@@ -37,14 +37,14 @@ namespace TestCApi
 
         ASSERT_EQ(1, OCI_ObjectGetInt(sale, OTEXT("CODE")));
         ASSERT_EQ(12.99, OCI_ObjectGetDouble(sale, OTEXT("PRICE")));
-        ASSERT_EQ(ostring(OTEXT("USB KEY 2go")), ostring(OCI_ObjectGetString(sale, OTEXT("NAME"))));
-        ASSERT_EQ(ostring(OTEXT("A56547WSAA")), ostring(OCI_ObjectGetString(sale, OTEXT("REF"))));
+        ASSERT_EQ(String(OTEXT("USB KEY 2go")), String(OCI_ObjectGetString(sale, OTEXT("NAME"))));
+        ASSERT_EQ(String(OTEXT("A56547WSAA")), String(OCI_ObjectGetString(sale, OTEXT("REF"))));
 
         const auto vendor2 = OCI_ObjectGetObject(sale, OTEXT("VENDOR"));
         ASSERT_NE(nullptr, vendor2);
 
         ASSERT_EQ(134, OCI_ObjectGetInt(vendor2, OTEXT("CODE")));
-        ASSERT_EQ(ostring(OTEXT("JOHN SMITH")), ostring(OCI_ObjectGetString(vendor2, OTEXT("NAME"))));
+        ASSERT_EQ(String(OTEXT("JOHN SMITH")), String(OCI_ObjectGetString(vendor2, OTEXT("NAME"))));
 
         const auto date2 = OCI_ObjectGetDate(sale, OTEXT("DATE_SALE"));
         ASSERT_NE(nullptr, date2);
@@ -96,7 +96,7 @@ namespace TestCApi
         ASSERT_EQ(99, OCI_ObjectGetInt(obj, OTEXT("I")));
 
         ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("S"), OTEXT("full")));
-        ASSERT_EQ(ostring(OTEXT("full")), ostring(OCI_ObjectGetString(obj, OTEXT("S"))));
+        ASSERT_EQ(String(OTEXT("full")), String(OCI_ObjectGetString(obj, OTEXT("S"))));
 
         unsigned char raw[] = { 0x00, 0x01, 0x02, 0x03, 0x04 };
         ASSERT_TRUE(OCI_ObjectSetRaw(obj, OTEXT("R"), raw, sizeof(raw)));
@@ -163,7 +163,7 @@ namespace TestCApi
         const auto nested2 = OCI_ObjectGetObject(obj, OTEXT("NESTED"));
         ASSERT_NE(nullptr, nested2);
         ASSERT_EQ(7, OCI_ObjectGetInt(nested2, OTEXT("CODE")));
-        ASSERT_EQ(ostring(OTEXT("nested")), ostring(OCI_ObjectGetString(nested2, OTEXT("NAME"))));
+        ASSERT_EQ(String(OTEXT("nested")), String(OCI_ObjectGetString(nested2, OTEXT("NAME"))));
 
         OCI_UInt32 size = 0;
         ASSERT_TRUE(OCI_ObjectToText(obj, &size, nullptr));
@@ -336,16 +336,16 @@ namespace TestCApi
         const auto typinf = OCI_ObjectGetTypeInfo(obj);
         ASSERT_NE(nullptr, typinf);
 
-        ASSERT_EQ(ostring(OTEXT("TESTOBJECT_SUBNF")), ostring(OCI_TypeInfoGetName(typinf)));
+        ASSERT_EQ(String(OTEXT("TESTOBJECT_SUBNF")), String(OCI_TypeInfoGetName(typinf)));
 
         ASSERT_EQ(1, OCI_ObjectGetInt(obj, OTEXT("CODE")));
-        ASSERT_EQ(ostring(OTEXT("subvalue")), ostring(OCI_ObjectGetString(obj, OTEXT("NAME"))));
+        ASSERT_EQ(String(OTEXT("subvalue")), String(OCI_ObjectGetString(obj, OTEXT("NAME"))));
 
         OCI_UInt32 size = 0;
         ASSERT_TRUE(OCI_ObjectToText(obj, &size, nullptr));
         static std::vector<otext> text(size + 1);
         ASSERT_TRUE(OCI_ObjectToText(obj, &size, text.data()));
-        ASSERT_NE(ostring::npos, ostring(text.data()).find(OTEXT("TESTOBJECT_SUBNF")));
+        ASSERT_NE(String::npos, String(text.data()).find(OTEXT("TESTOBJECT_SUBNF")));
 
         unsigned char buffer[256] = {};
         OCI_Int32 inds[2] = {};
@@ -485,8 +485,8 @@ namespace TestCApi
 
         const auto file2 = OCI_ObjectGetFile(obj, OTEXT("F"));
         ASSERT_NE(nullptr, file2);
-        ASSERT_EQ(ostring(OTEXT("FAKE_DIR")), ostring(OCI_FileGetDirectory(file2)));
-        ASSERT_EQ(ostring(OTEXT("file.txt")), ostring(OCI_FileGetName(file2)));
+        ASSERT_EQ(String(OTEXT("FAKE_DIR")), String(OCI_FileGetDirectory(file2)));
+        ASSERT_EQ(String(OTEXT("file.txt")), String(OCI_FileGetName(file2)));
 
         ASSERT_TRUE(OCI_ObjectSetRef(obj, OTEXT("R"), ref));
         const auto ref2 = OCI_ObjectGetRef(obj, OTEXT("R"));
@@ -529,7 +529,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ObjectSetDouble(obj, OTEXT("N"), 3.14));
         const otext* numStr = OCI_ObjectGetString(obj, OTEXT("N"));
         ASSERT_NE(nullptr, numStr);
-        ASSERT_NE(ostring::npos, ostring(numStr).find(OTEXT("3.14")));
+        ASSERT_NE(String::npos, String(numStr).find(OTEXT("3.14")));
 
         unsigned char raw[] = { 0x01, 0x02, 0x03 };
         ASSERT_TRUE(OCI_ObjectSetRaw(obj, OTEXT("R"), raw, sizeof(raw)));
@@ -538,7 +538,7 @@ namespace TestCApi
         ASSERT_GT(ostrlen(rawStr), (OCI_Size) 0);
 
         ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("S"), OTEXT("text")));
-        ASSERT_EQ(ostring(OTEXT("text")), ostring(OCI_ObjectGetString(obj, OTEXT("S"))));
+        ASSERT_EQ(String(OTEXT("text")), String(OCI_ObjectGetString(obj, OTEXT("S"))));
 
         ASSERT_TRUE(OCI_ObjectFree(obj));
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));

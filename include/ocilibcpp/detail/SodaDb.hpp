@@ -42,7 +42,7 @@ namespace ocilib
         return Connection(core::Check(OCI_SodaDbGetConnection(*this)), GetHandle(), false);
     }
 
-    inline SodaColl SodaDb::CreateCollection(const ostring& name, const ostring& metadata)
+    inline SodaColl SodaDb::CreateCollection(const String& name, const String& metadata)
     {
         OCI_SodaColl* coll = core::Check
         (
@@ -52,7 +52,7 @@ namespace ocilib
         return SodaColl(coll, GetHandle());
     }
 
-    inline SodaColl SodaDb::OpenCollection(const ostring& name)
+    inline SodaColl SodaDb::OpenCollection(const String& name)
     {
         OCI_SodaColl* coll = core::Check
         (
@@ -62,7 +62,7 @@ namespace ocilib
         return SodaColl(coll, GetHandle());
     }
 
-    inline SodaCollCursor SodaDb::GetCollections(const ostring& startName)
+    inline SodaCollCursor SodaDb::GetCollections(const String& startName)
     {
         OCI_SodaCollCursor* cursor = core::Check
         (
@@ -72,7 +72,7 @@ namespace ocilib
         return SodaCollCursor(cursor, GetHandle());
     }
 
-    inline SodaDoc SodaDb::CreateDocumentFromText(const ostring& content, const ostring& key)
+    inline SodaDoc SodaDb::CreateDocumentFromText(const String& content, const String& key)
     {
         OCI_SodaDoc* doc = core::Check
         (
@@ -88,7 +88,7 @@ namespace ocilib
         return SodaDoc(doc, GetHandle());
     }
 
-    inline SodaDoc SodaDb::CreateDocumentFromJson(const Json& json, const ostring& key)
+    inline SodaDoc SodaDb::CreateDocumentFromJson(const Json& json, const String& key)
     {
         OCI_SodaDoc* doc = core::Check
         (
@@ -104,12 +104,12 @@ namespace ocilib
     }
 
 
-    inline std::vector<ostring> SodaDb::GetCollectionNames()
+    inline std::vector<String> SodaDb::GetCollectionNames()
     {
         UInt32 count = 0;
         otext** names = core::Check(OCI_SodaDbGetCollectionNames(*this, &count));
 
-        std::vector<ostring> result;
+        std::vector<String> result;
 
         if (names)
         {

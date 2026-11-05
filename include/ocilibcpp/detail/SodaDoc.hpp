@@ -38,27 +38,27 @@ namespace ocilib
         AcquireAllocated(doc, parent);
     }
 
-    inline ostring SodaDoc::GetKey() const
+    inline String SodaDoc::GetKey() const
     {
         return core::MakeString(core::Check(OCI_SodaDocGetKey(*this)));
     }
 
-    inline ostring SodaDoc::GetVersion() const
+    inline String SodaDoc::GetVersion() const
     {
         return core::MakeString(core::Check(OCI_SodaDocGetVersion(*this)));
     }
 
-    inline ostring SodaDoc::GetCreatedOn() const
+    inline String SodaDoc::GetCreatedOn() const
     {
         return core::MakeString(core::Check(OCI_SodaDocGetCreatedOn(*this)));
     }
 
-    inline ostring SodaDoc::GetLastModified() const
+    inline String SodaDoc::GetLastModified() const
     {
         return core::MakeString(core::Check(OCI_SodaDocGetLastModified(*this)));
     }
 
-    inline ostring SodaDoc::GetMediaType() const
+    inline String SodaDoc::GetMediaType() const
     {
         return core::MakeString(core::Check(OCI_SodaDocGetMediaType(*this)));
     }
@@ -68,7 +68,7 @@ namespace ocilib
         return TRUE == core::Check(OCI_SodaDocGetIsJson(*this));
     }
 
-    inline ostring SodaDoc::GetText() const
+    inline String SodaDoc::GetText() const
     {
         return core::MakeString(core::Check(OCI_SodaDocGetText(*this)));
     }

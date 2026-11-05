@@ -73,7 +73,7 @@ namespace TestCApi
         const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_TEST_COLL"), NULL);
         ASSERT_NE(nullptr, coll);
 
-        const ostring content = OTEXT("{\"name\":\"soda test\"}");
+        const String content = OTEXT("{\"name\":\"soda test\"}");
 
         const auto doc = OCI_SodaDocCreateFromText
         (
@@ -93,7 +93,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, foundDoc);
 
         const auto foundKey = OCI_SodaDocGetKey(foundDoc);
-        ASSERT_EQ(ostring(docKey), ostring(foundKey));
+        ASSERT_EQ(String(docKey), String(foundKey));
 
         const auto foundContent = OCI_SodaDocGetText(foundDoc);
        ASSERT_NE(nullptr, foundContent);
@@ -125,7 +125,7 @@ namespace TestCApi
         const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_TEST_JSON_COLL"), NULL);
         ASSERT_NE(nullptr, coll);
 
-        const ostring content = OTEXT("{\"name\":\"soda json test\"}");
+        const String content = OTEXT("{\"name\":\"soda json test\"}");
 
         const auto doc = OCI_SodaDocCreateFromText
         (
@@ -206,11 +206,11 @@ namespace TestCApi
 
         const auto name = OCI_SodaCollGetName(coll);
         ASSERT_NE(nullptr, name);
-        ASSERT_EQ(ostring(OTEXT("OCILIB_SODA_PROPS_COLL")), ostring(name));
+        ASSERT_EQ(String(OTEXT("OCILIB_SODA_PROPS_COLL")), String(name));
 
         const auto metadata = OCI_SodaCollGetMetadata(coll);
         ASSERT_NE(nullptr, metadata);
-        ASSERT_FALSE(ostring(metadata).empty());
+        ASSERT_FALSE(String(metadata).empty());
 
         ASSERT_EQ(conn, OCI_SodaCollGetConnection(coll));
 
@@ -235,7 +235,7 @@ namespace TestCApi
         const auto sdb = OCI_SodaDbCreate(conn);
         ASSERT_NE(nullptr, sdb);
 
-        const ostring metadata = OTEXT("{\"keyColumn\":{\"name\":\"ID\",\"assignmentMethod\":\"CLIENT\",\"sqlType\":\"VARCHAR2\",\"maxLength\":255}}");
+        const String metadata = OTEXT("{\"keyColumn\":{\"name\":\"ID\",\"assignmentMethod\":\"CLIENT\",\"sqlType\":\"VARCHAR2\",\"maxLength\":255}}");
 
         DropCollIfExists(sdb, OTEXT("OCILIB_SODA_META_COLL"));
         const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_META_COLL"), metadata.c_str());
@@ -243,11 +243,11 @@ namespace TestCApi
 
         const auto actual = OCI_SodaCollGetMetadata(coll);
         ASSERT_NE(nullptr, actual);
-        ASSERT_NE(ostring::npos, ostring(actual).find(OTEXT("CLIENT")));
+        ASSERT_NE(String::npos, String(actual).find(OTEXT("CLIENT")));
 
         /* client-assigned keys : the key supplied at creation is used as is */
 
-        const ostring content = OTEXT("{\"value\":1}");
+        const String content = OTEXT("{\"value\":1}");
 
         const auto doc = OCI_SodaDocCreateFromText
         (
@@ -295,7 +295,7 @@ namespace TestCApi
 
         const auto name = OCI_SodaCollGetName(opened);
         ASSERT_NE(nullptr, name);
-        ASSERT_EQ(ostring(OTEXT("OCILIB_SODA_OPEN_COLL")), ostring(name));
+        ASSERT_EQ(String(OTEXT("OCILIB_SODA_OPEN_COLL")), String(name));
 
         ASSERT_TRUE(OCI_Commit(conn));
         ASSERT_TRUE(OCI_SodaCollDrop(opened));
@@ -334,7 +334,7 @@ namespace TestCApi
             const auto name = OCI_SodaCollGetName(item);
             ASSERT_NE(nullptr, name);
 
-            if (ostring(name).find(OTEXT("OCILIB_SODA_CUR_COLL")) != ostring::npos)
+            if (String(name).find(OTEXT("OCILIB_SODA_CUR_COLL")) != String::npos)
             {
                 found++;
             }
@@ -370,7 +370,7 @@ namespace TestCApi
         const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_DOCMETA_COLL"), NULL);
         ASSERT_NE(nullptr, coll);
 
-        const ostring content = OTEXT("{\"name\":\"meta test\"}");
+        const String content = OTEXT("{\"name\":\"meta test\"}");
 
         const auto doc = OCI_SodaDocCreateFromText
         (
@@ -438,7 +438,7 @@ namespace TestCApi
 
             const auto text = OCI_SodaDocGetText(doc);
             ASSERT_NE(nullptr, text);
-            ASSERT_NE(ostring::npos, ostring(text).find(OTEXT("from json")));
+            ASSERT_NE(String::npos, String(text).find(OTEXT("from json")));
 
             ASSERT_TRUE(OCI_SodaDocFree(doc));
             ASSERT_TRUE(OCI_JsonFree(json));
@@ -472,7 +472,7 @@ namespace TestCApi
             std::basic_ostringstream<otext> oss;
             oss << OTEXT("{\"seq\":") << i << OTEXT(",\"parity\":")
                 << ((i % 2) ? OTEXT("\"odd\"") : OTEXT("\"even\"")) << OTEXT("}");
-            const ostring content = oss.str();
+            const String content = oss.str();
 
             const auto doc = OCI_SodaDocCreateFromText
             (
@@ -545,7 +545,7 @@ namespace TestCApi
         const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_FINDONE_COLL"), NULL);
         ASSERT_NE(nullptr, coll);
 
-        const ostring content = OTEXT("{\"tag\":\"findone\"}");
+        const String content = OTEXT("{\"tag\":\"findone\"}");
 
         const auto doc = OCI_SodaDocCreateFromText
         (
@@ -569,7 +569,7 @@ namespace TestCApi
         auto* foundDoc = OCI_SodaCollFindOne(coll, options);
         ASSERT_NE(nullptr, foundDoc);
         const auto foundKey = OCI_SodaDocGetKey(foundDoc);
-        ASSERT_EQ(ostring(key), ostring(foundKey));
+        ASSERT_EQ(String(key), String(foundKey));
 
         ASSERT_TRUE(OCI_SodaDocFree(foundDoc));
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
@@ -615,7 +615,7 @@ namespace TestCApi
 
         for (OCI_Int32 i = 0; i < 3; i++)
         {
-            const ostring content = (i % 2) ? OTEXT("{\"grp\":1}") : OTEXT("{\"grp\":0}");
+            const String content = (i % 2) ? OTEXT("{\"grp\":1}") : OTEXT("{\"grp\":0}");
 
             const auto doc = OCI_SodaDocCreateFromText
             (
@@ -668,7 +668,7 @@ namespace TestCApi
         const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_REPLKEY_COLL"), NULL);
         ASSERT_NE(nullptr, coll);
 
-        const ostring content = OTEXT("{\"v\":1}");
+        const String content = OTEXT("{\"v\":1}");
 
         const auto doc = OCI_SodaDocCreateFromText
         (
@@ -680,10 +680,10 @@ namespace TestCApi
         ASSERT_NE(nullptr, doc);
         ASSERT_TRUE(OCI_SodaCollInsertDoc(coll, doc));
 
-        const ostring key = OCI_SodaDocGetKey(doc);
+        const String key = OCI_SodaDocGetKey(doc);
         ASSERT_FALSE(key.empty());
 
-        const ostring newContent = OTEXT("{\"v\":2}");
+        const String newContent = OTEXT("{\"v\":2}");
 
         const auto newDoc = OCI_SodaDocCreateFromText
         (
@@ -701,13 +701,13 @@ namespace TestCApi
 
         const auto text = OCI_SodaDocGetText(foundDoc);
         ASSERT_NE(nullptr, text);
-        ASSERT_NE(ostring::npos, ostring(text).find(OTEXT("\"v\":2")));
+        ASSERT_NE(String::npos, String(text).find(OTEXT("\"v\":2")));
 
         ASSERT_TRUE(OCI_SodaDocFree(foundDoc));
 
         /* replace-and-get updates the passed document metadata */
 
-        const ostring newContent2 = OTEXT("{\"v\":3}");
+        const String newContent2 = OTEXT("{\"v\":3}");
         const auto newDoc2 = OCI_SodaDocCreateFromText
         (
             sdb,
@@ -747,7 +747,7 @@ namespace TestCApi
         const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_REPLOPT_COLL"), NULL);
         ASSERT_NE(nullptr, coll);
 
-        const ostring content = OTEXT("{\"v\":10}");
+        const String content = OTEXT("{\"v\":10}");
 
         const auto doc = OCI_SodaDocCreateFromText
         (
@@ -759,10 +759,10 @@ namespace TestCApi
         ASSERT_NE(nullptr, doc);
         ASSERT_TRUE(OCI_SodaCollInsertDoc(coll, doc));
 
-        const ostring key = OCI_SodaDocGetKey(doc);
+        const String key = OCI_SodaDocGetKey(doc);
         ASSERT_FALSE(key.empty());
 
-        const ostring newContent = OTEXT("{\"v\":20}");
+        const String newContent = OTEXT("{\"v\":20}");
         const auto newDoc = OCI_SodaDocCreateFromText
         (
             sdb,
@@ -784,9 +784,9 @@ namespace TestCApi
 
         const auto text = OCI_SodaDocGetText(foundDoc);
         ASSERT_NE(nullptr, text);
-        ASSERT_NE(ostring::npos, ostring(text).find(OTEXT("\"v\":20")));
+        ASSERT_NE(String::npos, String(text).find(OTEXT("\"v\":20")));
 
-        const ostring version = OCI_SodaDocGetVersion(foundDoc);
+        const String version = OCI_SodaDocGetVersion(foundDoc);
         ASSERT_TRUE(OCI_SodaDocFree(foundDoc));
 
         /* replace-and-get with key + version options */
@@ -796,7 +796,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaOptionsSetKey(options, key.c_str()));
         ASSERT_TRUE(OCI_SodaOptionsSetVersion(options, version.c_str()));
 
-        const ostring newContent2 = OTEXT("{\"v\":30}");
+        const String newContent2 = OTEXT("{\"v\":30}");
         const auto newDoc2 = OCI_SodaDocCreateFromText
         (
             sdb,
@@ -837,7 +837,7 @@ namespace TestCApi
         const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_REMKEY_COLL"), NULL);
         ASSERT_NE(nullptr, coll);
 
-        const ostring content = OTEXT("{\"r\":1}");
+        const String content = OTEXT("{\"r\":1}");
 
         const auto doc = OCI_SodaDocCreateFromText
         (
@@ -849,7 +849,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, doc);
         ASSERT_TRUE(OCI_SodaCollInsertDoc(coll, doc));
 
-        const ostring key = OCI_SodaDocGetKey(doc);
+        const String key = OCI_SodaDocGetKey(doc);
         ASSERT_FALSE(key.empty());
         ASSERT_TRUE(OCI_SodaDocFree(doc));
 
@@ -882,7 +882,7 @@ namespace TestCApi
 
         for (OCI_Int32 i = 0; i < 4; i++)
         {
-            const ostring content = (i % 2) ? OTEXT("{\"del\":1}") : OTEXT("{\"del\":0}");
+            const String content = (i % 2) ? OTEXT("{\"del\":1}") : OTEXT("{\"del\":0}");
 
             const auto doc = OCI_SodaDocCreateFromText
             (
@@ -930,7 +930,7 @@ namespace TestCApi
         const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_TRUNC_COLL"), NULL);
         ASSERT_NE(nullptr, coll);
 
-        const ostring content = OTEXT("{\"t\":1}");
+        const String content = OTEXT("{\"t\":1}");
 
         const auto doc = OCI_SodaDocCreateFromText
         (
@@ -1111,7 +1111,7 @@ namespace TestCApi
                 keystr[i] = kss.str();
                 keys[i]   = keystr[i].c_str();
 
-                const ostring content = OTEXT("{\"idx\":1}");
+                const String content = OTEXT("{\"idx\":1}");
 
                 const auto doc = OCI_SodaDocCreateFromText
                 (
@@ -1176,11 +1176,11 @@ namespace TestCApi
         OCI_SodaDb*     sdb{ nullptr };
         OCI_SodaColl*   coll{ nullptr };
 
-        static ostring      keystr[DocCount];
+        static String      keystr[DocCount];
         static const otext* keys[DocCount];
     };
 
-    ostring      TestSodaMultiKey::keystr[DocCount];
+    String      TestSodaMultiKey::keystr[DocCount];
     const otext* TestSodaMultiKey::keys[DocCount];
 
     TEST_F(TestSodaMultiKey, FindWithKeyList)
@@ -1218,7 +1218,7 @@ namespace TestCApi
 
         auto* found = OCI_SodaCollFindOne(coll, options);
         ASSERT_NE(nullptr, found);
-        ASSERT_EQ(ostring(keys[2]), ostring(OCI_SodaDocGetKey(found)));
+        ASSERT_EQ(String(keys[2]), String(OCI_SodaDocGetKey(found)));
         ASSERT_TRUE(OCI_SodaDocFree(found));
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
     }
@@ -1250,7 +1250,7 @@ namespace TestCApi
 
     TEST_F(TestSodaMultiKey, ReplaceOneWithKeyList)
     {
-        const ostring repl = OTEXT("{\"idx\":2}");
+        const String repl = OTEXT("{\"idx\":2}");
         auto* replDoc = OCI_SodaDocCreateFromText
         (
             sdb, repl.c_str(),
@@ -1271,7 +1271,7 @@ namespace TestCApi
 
     TEST_F(TestSodaMultiKey, ReplaceOneAndGetWithKeyList)
     {
-        const ostring repl = OTEXT("{\"idx\":2}");
+        const String repl = OTEXT("{\"idx\":2}");
         auto* replDoc = OCI_SodaDocCreateFromText
         (
             sdb, repl.c_str(),
@@ -1326,7 +1326,7 @@ namespace TestCApi
             const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_NOPTS_COLL"), NULL);
             ASSERT_NE(nullptr, coll);
 
-            const ostring content = OTEXT("{\"name\":\"nopts\"}");
+            const String content = OTEXT("{\"name\":\"nopts\"}");
 
             const auto doc = OCI_SodaDocCreateFromText
             (
@@ -1430,7 +1430,7 @@ namespace TestCApi
     {
         /* NULL options exercises the temporary-options arm; an empty
            filter does not replace the doc, so only the call matters */
-        const ostring repl = OTEXT("{\"name\":\"nopts2\"}");
+        const String repl = OTEXT("{\"name\":\"nopts2\"}");
 
         auto* replDoc = OCI_SodaDocCreateFromText
         (
@@ -1446,7 +1446,7 @@ namespace TestCApi
 
     TEST_F(TestSodaNullOptions, ReplaceOneAndGetWithNullOptions)
     {
-        const ostring repl = OTEXT("{\"name\":\"nopts2\"}");
+        const String repl = OTEXT("{\"name\":\"nopts2\"}");
 
         auto* replDoc = OCI_SodaDocCreateFromText
         (
@@ -1575,13 +1575,13 @@ namespace TestCApi
         ASSERT_NE(nullptr, sdb);
 
         DropCollIfExists(sdb, OTEXT("OCILIB_SODA_TEST_COLL"));
-        const ostring collMeta = OTEXT("{\"keyColumn\":{\"name\":\"ID\",\"sqlType\":\"VARCHAR2\",\"maxLength\":255,\"assignmentMethod\":\"CLIENT\"}}");
+        const String collMeta = OTEXT("{\"keyColumn\":{\"name\":\"ID\",\"sqlType\":\"VARCHAR2\",\"maxLength\":255,\"assignmentMethod\":\"CLIENT\"}}");
         const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_TEST_COLL"), collMeta.c_str());
         ASSERT_NE(nullptr, coll);
 
-        const ostring c1 = OTEXT("{\"a\":1}");
-        const ostring c2 = OTEXT("{\"a\":2}");
-        const ostring c3 = OTEXT("{\"a\":3}");
+        const String c1 = OTEXT("{\"a\":1}");
+        const String c2 = OTEXT("{\"a\":2}");
+        const String c3 = OTEXT("{\"a\":3}");
 
         /* bulk insert */
         OCI_SodaDoc* d1 = OCI_SodaDocCreateFromText(sdb, c1.c_str(), static_cast<OCI_UInt32>(c1.size() * sizeof(otext)), OTEXT("k1"));
@@ -1595,7 +1595,7 @@ namespace TestCApi
         const OCI_Boolean ins = OCI_SodaCollInsertMany(coll, docs, 3);
         OCI_Error* ier = OCI_GetLastError();
         EXPECT_TRUE(ins) << "oci_code=" << (ier ? (int)OCI_ErrorGetCode(ier) : -1)
-                         << " msg=" << (ier && OCI_ErrorGetString(ier) ? ostring(OCI_ErrorGetString(ier)) : ostring()) ;
+                         << " msg=" << (ier && OCI_ErrorGetString(ier) ? String(OCI_ErrorGetString(ier)) : String()) ;
 
         /* isJson discriminator */
         ASSERT_TRUE(OCI_SodaDocGetIsJson(d1));
@@ -1608,7 +1608,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, OCI_SodaDocGetVersion(e1));
 
         /* save (upsert) */
-        const ostring newc = OTEXT("{\"a\":99}");
+        const String newc = OTEXT("{\"a\":99}");
         OCI_SodaDoc* sv = OCI_SodaDocCreateFromText(sdb, newc.c_str(), static_cast<OCI_UInt32>(newc.size() * sizeof(otext)), OTEXT("k1"));
         ASSERT_NE(nullptr, sv);
         ASSERT_TRUE(OCI_SodaCollSave(coll, sv));
@@ -1623,7 +1623,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaCollInsertDoc(coll2, seed));
         ASSERT_TRUE(OCI_SodaDocFree(seed));
         ASSERT_TRUE(OCI_Commit(conn));
-        const ostring spec = OTEXT("{\"name\":\"OCILIB_SODA_TEST_IDX\"}");
+        const String spec = OTEXT("{\"name\":\"OCILIB_SODA_TEST_IDX\"}");
         /* OCISodaIndexCreate fails inside the OCI call itself in UNICODE
            builds (ORA-40671, collection-name resolution is charset-broken in
            the 23ai client under OCI_UTF16ID) — works in ANSI; diagnostic only */
@@ -1692,7 +1692,7 @@ namespace TestCApi
         OCI_SodaColl* coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_IDX"), NULL);
         ASSERT_NE(nullptr, coll);
 
-        const ostring content = OTEXT("{\"a\":1}");
+        const String content = OTEXT("{\"a\":1}");
         OCI_SodaDoc* seed = OCI_SodaDocCreateFromText(sdb, content.c_str(), static_cast<OCI_UInt32>(content.size() * sizeof(otext)), NULL);
         ASSERT_NE(nullptr, seed);
         ASSERT_TRUE(OCI_SodaCollInsertDoc(coll, seed));

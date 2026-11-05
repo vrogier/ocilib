@@ -6,16 +6,16 @@ namespace TestCApi
     (
         OCI_Int32 index,
         OCI_TypeInfo* typinf,
-        const ostring& name,
-        const ostring& typeName,
+        const String& name,
+        const String& typeName,
         OCI_UInt32 type
     )
     {
         const auto col = OCI_TypeInfoGetColumn(typinf, index);
         ASSERT_NE(nullptr, col);
 
-        ASSERT_EQ(name, ostring(OCI_ColumnGetName(col)));
-        ASSERT_EQ(typeName, ostring(OCI_ColumnGetSQLType(col)));
+        ASSERT_EQ(name, String(OCI_ColumnGetName(col)));
+        ASSERT_EQ(typeName, String(OCI_ColumnGetSQLType(col)));
         ASSERT_EQ(type, OCI_ColumnGetType(col));
     }
 

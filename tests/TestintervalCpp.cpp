@@ -7,6 +7,6 @@ namespace TestCppApi
     TEST(TestIntervalCpp, NullToString)
     {
         Interval iv;
-        ASSERT_EQ(ostring(OTEXT("NULL")), iv.ToString());
+        ASSERT_EQ(String(OTEXT("NULL")), iv.ToString());
     }
 }

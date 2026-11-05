@@ -18,12 +18,12 @@ Pool pool(env, db, usr, pwd, Pool::ConnectionPool, 0, MaxConnnections, 1, Enviro
 
 void worker(OCI_Int32 id)
 {
-    Connection con = pool.GetConnection(ostring());
+    Connection con = pool.GetConnection(String());
     Statement st(con);
     st.Execute("select to_char(sysdate, 'YYYYMMDD HH24:MI:SS') from dual");
     Resultset rs = st.GetResultset();
     rs.Next();
-    std::cout << id << " - " << rs.Get<ostring>(1) << std::endl;
+    std::cout << id << " - " << rs.Get<String>(1) << std::endl;
     con.Close();
 }
 

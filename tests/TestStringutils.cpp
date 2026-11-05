@@ -21,11 +21,11 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        ASSERT_EQ(ostring(OTEXT("hello")), ostring(OCI_GetString(rs, 1)));
-        ASSERT_EQ(ostring(OTEXT("hello")), ostring(OCI_GetStringByName(rs, OTEXT("STR"))));
+        ASSERT_EQ(String(OTEXT("hello")), String(OCI_GetString(rs, 1)));
+        ASSERT_EQ(String(OTEXT("hello")), String(OCI_GetStringByName(rs, OTEXT("STR"))));
 
-        ASSERT_EQ(ostring(OTEXT("123")), ostring(OCI_GetString(rs, 2)));
-        ASSERT_EQ(ostring(OTEXT("123")), ostring(OCI_GetStringByName(rs, OTEXT("NUM"))));
+        ASSERT_EQ(String(OTEXT("123")), String(OCI_GetString(rs, 2)));
+        ASSERT_EQ(String(OTEXT("123")), String(OCI_GetStringByName(rs, OTEXT("NUM"))));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -49,8 +49,8 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        ASSERT_EQ(ostring(OTEXT("123456")), ostring(OCI_GetString(rs, 1)));
-        ASSERT_EQ(ostring(OTEXT("2020-05-12")), ostring(OCI_GetString(rs, 2)));
+        ASSERT_EQ(String(OTEXT("123456")), String(OCI_GetString(rs, 1)));
+        ASSERT_EQ(String(OTEXT("2020-05-12")), String(OCI_GetString(rs, 2)));
         ASSERT_NE(nullptr, OCI_GetString(rs, 3));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -75,9 +75,9 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        ASSERT_EQ(ostring(OTEXT("hello")), ostring(OCI_GetString(rs, 1)));
+        ASSERT_EQ(String(OTEXT("hello")), String(OCI_GetString(rs, 1)));
         ASSERT_TRUE(nullptr != OCI_GetString(rs, 2));
-        ASSERT_EQ(ostring(OTEXT("test")), ostring(OCI_GetString(rs, 3)));
+        ASSERT_EQ(String(OTEXT("test")), String(OCI_GetString(rs, 3)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -101,8 +101,8 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        ASSERT_EQ(ostring(OTEXT("12")), ostring(OCI_GetString(rs, 1)));
-        ASSERT_EQ(ostring(OTEXT("12345")), ostring(OCI_GetString(rs, 2)));
+        ASSERT_EQ(String(OTEXT("12")), String(OCI_GetString(rs, 1)));
+        ASSERT_EQ(String(OTEXT("12345")), String(OCI_GetString(rs, 2)));
         ASSERT_NE(nullptr, OCI_GetString(rs, 3));
         ASSERT_NE(nullptr, OCI_GetString(rs, 4));
 
@@ -141,7 +141,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        ASSERT_EQ(ostring(OTEXT("bound value")), ostring(OCI_GetString(rs, 1)));
+        ASSERT_EQ(String(OTEXT("bound value")), String(OCI_GetString(rs, 1)));
 
         ASSERT_TRUE(OCI_StatementFree(selectStmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -176,7 +176,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
         ASSERT_EQ(42, OCI_GetInt(rs, 1));
-        ASSERT_EQ(ostring(OTEXT("test")), ostring(OCI_GetString(rs, 2)));
+        ASSERT_EQ(String(OTEXT("test")), String(OCI_GetString(rs, 2)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

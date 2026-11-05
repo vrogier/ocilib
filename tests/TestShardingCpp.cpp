@@ -11,9 +11,9 @@ namespace TestCppApi
         auto& env = GetEnvironmentCpp();
 
         ShardingKey skey(env);
-        skey.AddColumn(ostring(OTEXT("GOLD")));
+        skey.AddColumn(String(OTEXT("GOLD")));
         skey.Reset();
-        skey.AddColumn(ostring(OTEXT("SILVER")));
+        skey.AddColumn(String(OTEXT("SILVER")));
 
         ASSERT_FALSE(skey.ToString().empty());
     }
@@ -31,7 +31,7 @@ namespace TestCppApi
         skey.AddColumn(num);
         skey.AddColumn(date);
         skey.AddColumn(tmsp);
-        skey.AddColumn(ostring(OTEXT("GOLD")));
+        skey.AddColumn(String(OTEXT("GOLD")));
         skey.AddColumn(std::vector<unsigned char>{ 0x01, 0x02 });
 
         ASSERT_FALSE(skey.ToString().empty());
@@ -42,10 +42,10 @@ namespace TestCppApi
         auto& env = GetEnvironmentCpp();
 
         ShardingKey skey(env);
-        skey.AddColumn(ostring(OTEXT("GOLD")));
+        skey.AddColumn(String(OTEXT("GOLD")));
 
         ShardingKey sskey(env);
-        sskey.AddColumn(ostring(OTEXT("EUROPE")));
+        sskey.AddColumn(String(OTEXT("EUROPE")));
 
         Connection con(env, DBS, USR, PWD, Environment::SessionDefault, skey, sskey);
         ASSERT_TRUE(con.IsServerAlive());
@@ -59,9 +59,9 @@ namespace TestCppApi
         Pool pool(env, DBS, USR, PWD, Pool::SessionPool, 1, 4, 1);
 
         ShardingKey skey(env);
-        skey.AddColumn(ostring(OTEXT("GOLD")));
+        skey.AddColumn(String(OTEXT("GOLD")));
         ShardingKey sskey(env);
-        sskey.AddColumn(ostring(OTEXT("EUROPE")));
+        sskey.AddColumn(String(OTEXT("EUROPE")));
 
         Connection con = pool.GetConnection(OTEXT(""), skey, sskey);
         ASSERT_TRUE(con.IsServerAlive());

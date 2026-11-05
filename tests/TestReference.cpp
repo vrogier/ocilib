@@ -220,7 +220,7 @@ namespace TestCApi
             ASSERT_TRUE(length > 0);
             otext buffer[128] = {};
             OCI_RefToText(ref, length, buffer);
-            ostring value = buffer;
+            String value = buffer;
             ASSERT_EQ(length, value.size());
         }
 
@@ -244,7 +244,7 @@ namespace TestCApi
         ASSERT_TRUE(length == 0);
         otext buffer[128] = {};
         OCI_RefToText(ref, length, buffer);
-        ostring value = buffer;
+        String value = buffer;
         ASSERT_EQ(length, value.size());
 
         ASSERT_TRUE(OCI_RefFree(ref));
@@ -365,7 +365,7 @@ namespace TestCApi
         ASSERT_TRUE(nullptr != obj);
 
         ASSERT_EQ(1, OCI_ObjectGetInt(obj, OTEXT("code")));
-        ASSERT_EQ(ostring(OTEXT("Earth")), ostring(OCI_ObjectGetString(obj, OTEXT("name"))));
+        ASSERT_EQ(String(OTEXT("Earth")), String(OCI_ObjectGetString(obj, OTEXT("name"))));
 
         OCI_ExecuteStmt(stmt, OTEXT("drop table test_ref_register"));
 

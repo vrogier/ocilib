@@ -28,7 +28,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, elem1);
         const otext* str = OCI_ElemGetString(elem1);
         ASSERT_NE(nullptr, str);
-        ASSERT_EQ(ostring(OTEXT("alpha")), ostring(str));
+        ASSERT_EQ(String(OTEXT("alpha")), String(str));
         ASSERT_FALSE(OCI_ElemIsNull(elem1));
 
         const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestElement_StrVarray"), OCI_TIF_TYPE);
@@ -38,7 +38,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, local);
 
         ASSERT_TRUE(OCI_ElemSetString(local, OTEXT("local value")));
-        ASSERT_EQ(ostring(OTEXT("local value")), ostring(OCI_ElemGetString(local)));
+        ASSERT_EQ(String(OTEXT("local value")), String(OCI_ElemGetString(local)));
 
         ASSERT_TRUE(OCI_ElemSetNull(local));
         ASSERT_TRUE(OCI_ElemIsNull(local));
@@ -122,11 +122,11 @@ namespace TestCApi
 
             const auto coll = OCI_GetColl(rs, 1);
             const auto elem = OCI_CollGetElem(coll, 1);
-            ASSERT_EQ(ostring(OTEXT("alpha")), ostring(OCI_ElemGetString(elem)));
+            ASSERT_EQ(String(OTEXT("alpha")), String(OCI_ElemGetString(elem)));
 
             const auto local = OCI_ElemCreate(OCI_CollGetTypeInfo(coll));
             ASSERT_TRUE(OCI_ElemSetString(local, OTEXT("local value")));
-            ASSERT_EQ(ostring(OTEXT("local value")), ostring(OCI_ElemGetString(local)));
+            ASSERT_EQ(String(OTEXT("local value")), String(OCI_ElemGetString(local)));
             ASSERT_TRUE(OCI_ElemSetString(local, nullptr));
             ASSERT_TRUE(OCI_ElemIsNull(local));
             ASSERT_TRUE(OCI_ElemFree(local));
@@ -462,8 +462,8 @@ namespace TestCApi
 
         const auto file = OCI_ElemGetFile(elem);
         ASSERT_NE(nullptr, file);
-        ASSERT_EQ(ostring(OTEXT("FAKE_DIR")), ostring(OCI_FileGetDirectory(file)));
-        ASSERT_EQ(ostring(OTEXT("a.txt")), ostring(OCI_FileGetName(file)));
+        ASSERT_EQ(String(OTEXT("FAKE_DIR")), String(OCI_FileGetDirectory(file)));
+        ASSERT_EQ(String(OTEXT("a.txt")), String(OCI_FileGetName(file)));
 
         typinf = OCI_CollGetTypeInfo(coll);
         ASSERT_NE(nullptr, typinf);
@@ -478,7 +478,7 @@ namespace TestCApi
 
         const auto file3 = OCI_ElemGetFile(local);
         ASSERT_NE(nullptr, file3);
-        ASSERT_EQ(ostring(OTEXT("b.txt")), ostring(OCI_FileGetName(file3)));
+        ASSERT_EQ(String(OTEXT("b.txt")), String(OCI_FileGetName(file3)));
 
         ASSERT_TRUE(OCI_ElemSetFile(local, nullptr));
         ASSERT_TRUE(OCI_ElemIsNull(local));

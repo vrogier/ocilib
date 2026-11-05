@@ -27,7 +27,7 @@
 namespace ocilib
 {
 
-inline Enqueue::Enqueue(const TypeInfo &typeInfo, const ostring& queueName)
+inline Enqueue::Enqueue(const TypeInfo &typeInfo, const String& queueName)
 {
     Connection connection = typeInfo.GetConnection();
     

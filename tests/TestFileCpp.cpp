@@ -14,8 +14,8 @@ namespace TestCppApi
         ASSERT_EQ(0u, file.GetOffset());
 
         file.SetInfos(OTEXT("TEST_DIR"), OTEXT("test.txt"));
-        ASSERT_EQ(ostring(OTEXT("TEST_DIR")), file.GetDirectory());
-        ASSERT_EQ(ostring(OTEXT("test.txt")), file.GetName());
+        ASSERT_EQ(String(OTEXT("TEST_DIR")), file.GetDirectory());
+        ASSERT_EQ(String(OTEXT("test.txt")), file.GetName());
 
         File file2(conn, OTEXT("TEST_DIR"), OTEXT("test.txt"));
         ASSERT_TRUE(file == file2);
@@ -23,6 +23,6 @@ namespace TestCppApi
 
         File file3 = file2.Clone();
         ASSERT_TRUE(file3 == file2);
-        ASSERT_EQ(ostring(OTEXT("test.txt")), file3.GetName());
+        ASSERT_EQ(String(OTEXT("test.txt")), file3.GetName());
     }
 }

@@ -40,17 +40,17 @@ inline Event::ObjectEvent Event::GetObjectEvent() const
     return ObjectEvent(static_cast<ObjectEvent::Type>(core::Check(OCI_EventGetOperation(*this))));
 }
 
-inline ostring Event::GetDatabaseName() const
+inline String Event::GetDatabaseName() const
 {
     return core::MakeString(core::Check(OCI_EventGetDatabase(*this)));
 }
 
-inline ostring Event::GetObjectName() const
+inline String Event::GetObjectName() const
 {
     return core::MakeString(core::Check(OCI_EventGetObject(*this)));
 }
 
-inline ostring Event::GetRowID() const
+inline String Event::GetRowID() const
 {
     return core::MakeString(core::Check(OCI_EventGetRowid(*this)));
 }

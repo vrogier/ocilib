@@ -33,7 +33,7 @@ int main()
         {
             while (rs++)
             {
-                std::cout << "Fetch column name:" << rs.GetColumn(1).GetName() << ", Value:" << rs.Get<ostring>(1) << std::endl;
+                std::cout << "Fetch column name:" << rs.GetColumn(1).GetName() << ", Value:" << rs.Get<String>(1) << std::endl;
             }
 
             std::cout << "=> Total fetched rows : " << rs.GetCount() << std::endl;

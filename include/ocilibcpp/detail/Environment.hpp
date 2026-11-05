@@ -30,7 +30,7 @@
 namespace ocilib
 {
 
-inline Environment::Environment(EnvironmentFlags mode, const ostring& libpath) : _charMaxSize(0), _initialized(false), _store(std::make_shared<core::HandleStore>())
+inline Environment::Environment(EnvironmentFlags mode, const String& libpath) : _charMaxSize(0), _initialized(false), _store(std::make_shared<core::HandleStore>())
 {
     _mode = mode;
 
@@ -130,36 +130,36 @@ inline void Environment::EnableWarnings(bool value)
     OCI_EnableWarnings(GetHandle(), static_cast<OCI_Boolean>(value));
 }
 
-inline bool Environment::SetFormat(FormatType formatType, const ostring& format)
+inline bool Environment::SetFormat(FormatType formatType, const String& format)
 {
     return core::Check(OCI_SetFormat(GetHandle(), formatType, format.c_str()) == TRUE);
 }
 
-inline ostring Environment::GetFormat(FormatType formatType) const
+inline String Environment::GetFormat(FormatType formatType) const
 {
     return core::MakeString(core::Check(OCI_GetFormat(GetHandle(), formatType)));
 }
 
-inline ostring Environment::GetLocaleString(LocaleCode code) const
+inline String Environment::GetLocaleString(LocaleCode code) const
 {
     return core::MakeString(core::Check(OCI_GetLocaleString(GetHandle(), code)));
 }
 
-inline void Environment::StartDatabase(const ostring& db, const ostring& user, const ostring &pwd, Environment::StartFlags startFlags,
-                                       Environment::StartMode startMode, Environment::SessionFlags sessionFlags, const ostring& spfile)
+inline void Environment::StartDatabase(const String& db, const String& user, const String &pwd, Environment::StartFlags startFlags,
+                                       Environment::StartMode startMode, Environment::SessionFlags sessionFlags, const String& spfile)
 {
     core::Check(OCI_DatabaseStartup(GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues(),
                               startMode.GetValues(), startFlags.GetValues(), spfile.c_str() ));
 }
 
-inline void Environment::ShutdownDatabase(const ostring& db, const ostring& user, const ostring &pwd, Environment::ShutdownFlags shutdownFlags,
+inline void Environment::ShutdownDatabase(const String& db, const String& user, const String &pwd, Environment::ShutdownFlags shutdownFlags,
                                        Environment::ShutdownMode shutdownMode, Environment::SessionFlags sessionFlags)
 {
    core::Check(OCI_DatabaseShutdown(GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues(),
                               shutdownMode.GetValues(),  shutdownFlags.GetValues() ));
 }
 
-inline void Environment::ChangeUserPassword(const ostring& db, const ostring& user, const ostring& pwd, const ostring& newPwd)
+inline void Environment::ChangeUserPassword(const String& db, const String& user, const String& pwd, const String& newPwd)
 {
     core::Check(OCI_SetUserPassword(GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), newPwd.c_str()));
 }

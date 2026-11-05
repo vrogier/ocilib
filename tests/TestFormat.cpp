@@ -23,7 +23,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, env);
 
         ASSERT_TRUE(OCI_SetFormat(env, GetParam().type, GetParam().format));
-        ASSERT_EQ(ostring(GetParam().format), ostring(OCI_GetFormat(env, GetParam().type)));
+        ASSERT_EQ(String(GetParam().format), String(OCI_GetFormat(env, GetParam().type)));
     }
 
     INSTANTIATE_TEST_CASE_P(FormatTypes, TestFormatSetGet,
@@ -161,7 +161,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(ostring(OTEXT("hello")), ostring(OCI_GetString(rs, 1)));
+        ASSERT_EQ(String(OTEXT("hello")), String(OCI_GetString(rs, 1)));
     }
 
     TEST_F(TestFormatTokens, TokenRawMode)
@@ -197,7 +197,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(ostring(OTEXT("x%y")), ostring(OCI_GetString(rs, 1)));
+        ASSERT_EQ(String(OTEXT("x%y")), String(OCI_GetString(rs, 1)));
     }
 
     /* --- handle tokens --- */

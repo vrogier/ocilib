@@ -25,7 +25,7 @@
 namespace ocilib
 {
     
-inline DirectPath::DirectPath(const TypeInfo &typeInfo, UInt32 nbCols, UInt32  nbRows, const ostring& partition)
+inline DirectPath::DirectPath(const TypeInfo &typeInfo, UInt32 nbCols, UInt32  nbRows, const String& partition)
 {
     Connection connection = typeInfo.GetConnection();
     
@@ -36,7 +36,7 @@ inline DirectPath::DirectPath(const TypeInfo &typeInfo, UInt32 nbCols, UInt32  n
     );
 }
 
-inline void DirectPath::SetColumn(UInt32 colIndex, const ostring& name, UInt32 maxSize,  const ostring& format)
+inline void DirectPath::SetColumn(UInt32 colIndex, const String& name, UInt32 maxSize,  const String& format)
 {
     core::Check(OCI_DirPathSetColumn(*this, colIndex, name.c_str(), maxSize, format.c_str()));
 }
@@ -112,7 +112,7 @@ inline UInt32 DirectPath::GetAffectedRows() const
     return core::Check(OCI_DirPathGetAffectedRows(*this));
 }
 
-inline void DirectPath::SetDateFormat(const ostring& format)
+inline void DirectPath::SetDateFormat(const String& format)
 {
     core::Check(OCI_DirPathSetDateFormat(*this, format.c_str()));
 }

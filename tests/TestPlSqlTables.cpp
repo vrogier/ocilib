@@ -74,7 +74,7 @@ namespace TestCApi
         for (OCI_UInt32 i = 0; i < ArraySize; i++)
         {
             osprintf(buffer, OTEXT("name  %03d - value %03d"), i + 1, i + 1);
-            ASSERT_EQ(ostring(buffer), tab_results[i]);
+            ASSERT_EQ(String(buffer), tab_results[i]);
         }
 
         ASSERT_TRUE(OCI_StatementFree(stmt));

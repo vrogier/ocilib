@@ -69,7 +69,7 @@ inline UInt32 Resultset::GetCurrentRow() const
     return core::Check(OCI_GetCurrentRow(*this));
 }
 
-inline UInt32 Resultset::GetColumnIndex(const ostring& name) const
+inline UInt32 Resultset::GetColumnIndex(const String& name) const
 {
     return core::Check(OCI_GetColumnIndex(*this, name.c_str()));
 }
@@ -84,7 +84,7 @@ inline Column Resultset::GetColumn(UInt32 index) const
     return Column(core::Check(OCI_GetColumn(*this, index)), GetHandle());
 }
 
-inline Column Resultset::GetColumn(const ostring& name) const
+inline Column Resultset::GetColumn(const String& name) const
 {
     return Column(core::Check(OCI_GetColumnByName(*this, name.c_str())), GetHandle());
 }
@@ -94,7 +94,7 @@ inline bool Resultset::IsColumnNull(UInt32 index) const
     return (core::Check(OCI_IsNull(*this, index)) == TRUE);
 }
 
-inline bool Resultset::IsColumnNull(const ostring& name) const
+inline bool Resultset::IsColumnNull(const String& name) const
 {
     return (core::Check(OCI_IsNullByName(*this, name.c_str())) == TRUE);
 }
@@ -141,7 +141,7 @@ void Resultset::Get(UInt32 index, T& value) const
 }
 
 template<class T>
-void Resultset::Get(const ostring &name, T& value) const
+void Resultset::Get(const String &name, T& value) const
 {
     value = Get<T>(name);
 }
@@ -180,6 +180,19 @@ UInt32 Resultset::ForEach(T callback, U adapter)
     return GetCurrentRow();
 }
 
+
+template<class T>
+inline std::optional<T> Resultset::GetOptional(UInt32 index) const
+{
+    return IsColumnNull(index) ? std::nullopt : std::optional<T>(Get<T>(index));
+}
+
+template<class T>
+inline std::optional<T> Resultset::GetOptional(const String& name) const
+{
+    return IsColumnNull(name) ? std::nullopt : std::optional<T>(Get<T>(name));
+}
+
 template<class T>
 inline T Resultset::Get(UInt32 index) const
 {
@@ -192,7 +205,7 @@ inline T Resultset::Get(UInt32 index) const
     else if constexpr (std::is_same_v<T, Float>)      { return core::Check(OCI_GetFloat(*this, index)); }
     else if constexpr (std::is_same_v<T, Double>)     { return core::Check(OCI_GetDouble(*this, index)); }
     else if constexpr (std::is_same_v<T, Number>)     { return Number(core::Check(OCI_GetNumber(*this, index)), GetHandle()); }
-    else if constexpr (std::is_same_v<T, ostring>)    { return core::MakeString(core::Check(OCI_GetString(*this, index))); }
+    else if constexpr (std::is_same_v<T, String>)    { return core::MakeString(core::Check(OCI_GetString(*this, index))); }
     else if constexpr (std::is_same_v<T, Date>)       { return Date(core::Check(OCI_GetDate(*this, index)), GetHandle()); }
     else if constexpr (std::is_same_v<T, Timestamp>)  { return Timestamp(core::Check(OCI_GetTimestamp(*this, index)), GetHandle()); }
     else if constexpr (std::is_same_v<T, Interval>)   { return Interval(core::Check(OCI_GetInterval(*this, index)), GetHandle()); }
@@ -212,19 +225,22 @@ inline T Resultset::Get(UInt32 index) const
     {
         UInt32 size = core::Check(OCI_GetDataLength(*this, index));
 
-        std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
+        Raw value(static_cast<Size>(size + 1));
 
-        size = core::Check(OCI_GetRaw(*this, index, static_cast<AnyPointer>(buffer.data()), size));
+        size = core::Check(OCI_GetRaw(*this, index, static_cast<AnyPointer>(value.data()), size));
+        value.resize(size);
 
-        return core::MakeRaw(buffer.data(), size);
+        return value;
     }
     else
     {
+        static_assert(core::IsCollectionV<T>, "Resultset::Get<T> only supports scalar types, Oracle object types and Collection<U>");
+
         return T(core::Check(OCI_GetColl(*this, index)), GetHandle()); }
 }
 
 template<class T>
-inline T Resultset::Get(const ostring& name) const
+inline T Resultset::Get(const String& name) const
 {
     if      constexpr (std::is_same_v<T, Int16>)  { return core::Check(OCI_GetShortByName(*this, name.c_str())); }
     else if constexpr (std::is_same_v<T, UInt16>) { return core::Check(OCI_GetUnsignedShortByName(*this, name.c_str())); }
@@ -235,7 +251,7 @@ inline T Resultset::Get(const ostring& name) const
     else if constexpr (std::is_same_v<T, Float>)      { return core::Check(OCI_GetFloatByName(*this, name.c_str())); }
     else if constexpr (std::is_same_v<T, Double>)     { return core::Check(OCI_GetDoubleByName(*this, name.c_str())); }
     else if constexpr (std::is_same_v<T, Number>)     { return Number(core::Check(OCI_GetNumberByName(*this, name.c_str())), GetHandle()); }
-    else if constexpr (std::is_same_v<T, ostring>)    { return core::MakeString(core::Check(OCI_GetStringByName(*this, name.c_str()))); }
+    else if constexpr (std::is_same_v<T, String>)    { return core::MakeString(core::Check(OCI_GetStringByName(*this, name.c_str()))); }
     else if constexpr (std::is_same_v<T, Date>)       { return Date(core::Check(OCI_GetDateByName(*this, name.c_str())), GetHandle()); }
     else if constexpr (std::is_same_v<T, Timestamp>)  { return Timestamp(core::Check(OCI_GetTimestampByName(*this, name.c_str())), GetHandle()); }
     else if constexpr (std::is_same_v<T, Interval>)   { return Interval(core::Check(OCI_GetIntervalByName(*this, name.c_str())), GetHandle()); }
@@ -255,14 +271,17 @@ inline T Resultset::Get(const ostring& name) const
     {
         UInt32 size = core::Check(OCI_GetDataLength(*this, core::Check(OCI_GetColumnIndex(*this, name.c_str()))));
 
-        std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
+        Raw value(static_cast<Size>(size + 1));
 
-        size = core::Check(OCI_GetRawByName(*this, name.c_str(), static_cast<AnyPointer>(buffer.data()), size));
+        size = core::Check(OCI_GetRawByName(*this, name.c_str(), static_cast<AnyPointer>(value.data()), size));
+        value.resize(size);
 
-        return core::MakeRaw(buffer.data(), size);
+        return value;
     }
     else
     {
+        static_assert(core::IsCollectionV<T>, "Resultset::Get<T> only supports scalar types, Oracle object types and Collection<U>");
+
         return T(core::Check(OCI_GetCollByName(*this, name.c_str())), GetHandle()); }
 }
 

@@ -17,12 +17,12 @@
 
 #ifdef OCI_CHARSET_WIDE
     #define TO_STRING std::to_wstring
-    using ostring = std::wstring;
+    using String = std::wstring;
     #define osprintf wsprintf
     #define ostrlen wcslen
 #else
     #define TO_STRING std::to_string
-    using ostring = std::string;
+    using String = std::string;
     #define osprintf sprintf
     #define ostrlen strlen
 #endif
@@ -69,8 +69,8 @@ struct Context
 #define Sleep(x) usleep(x * 1000);
 #endif
 
-void ExecDML(ostring dml);
-ostring ToUpper(ostring str);
+void ExecDML(String dml);
+String ToUpper(String str);
 
 OCI_Environment * GetEnvironment(POCI_ERROR err_handler);
 ocilib::Environment& GetEnvironmentCpp();

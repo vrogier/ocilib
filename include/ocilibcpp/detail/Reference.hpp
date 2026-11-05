@@ -92,13 +92,13 @@ inline void Reference::SetReferenceNull()
     core::Check(OCI_RefSetNull(*this));
 }
 
-inline ostring Reference::ToString() const
+inline String Reference::ToString() const
 {
     if (!IsNull())
     {
         const UInt32 size = core::Check(OCI_RefGetHexSize(*this));
 
-        ostring result;
+        String result;
 
         result.resize(static_cast<Size>(size));
 

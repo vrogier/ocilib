@@ -29,7 +29,7 @@ namespace ocilib
     {
     }
 
-    inline TypeInfo::TypeInfo(const Connection& connection, const ostring& name, TypeInfoType type)
+    inline TypeInfo::TypeInfo(const Connection& connection, const String& name, TypeInfoType type)
     {
         AcquireTransient
         (
@@ -48,7 +48,7 @@ namespace ocilib
         return TypeInfoType(static_cast<TypeInfoType::Type>(core::Check(OCI_TypeInfoGetType(*this))));
     }
 
-    inline ostring TypeInfo::GetName() const
+    inline String TypeInfo::GetName() const
     {
         return core::Check(OCI_TypeInfoGetName(*this));
     }

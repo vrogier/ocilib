@@ -69,7 +69,7 @@ inline Number::Number(OCI_Number *pNumber, core::Handle *parent)
     AcquireTransient(pNumber, parent);
 }
 
-inline Number::Number(const Environment& env, const ostring& str, const ostring& format)
+inline Number::Number(const Environment& env, const String& str, const String& format)
 {
     Allocate(env.GetHandle(), env.GetEnvironmentHandle());
 
@@ -80,7 +80,7 @@ inline Number::Number(const Environment& env, const otext* str, const otext* for
 {
     Allocate(env.GetHandle(), env.GetEnvironmentHandle());
 
-    FromString(ostring(str), ostring(format ? format : OTEXT("")));
+    FromString(String(str), String(format ? format : OTEXT("")));
 }
 
 inline void Number::Allocate(OCI_Environment* env, core::Handle* parent)
@@ -92,12 +92,12 @@ inline void Number::Allocate(OCI_Environment* env, core::Handle* parent)
     );
 }
 
-inline void Number::FromString(const ostring& str, const ostring& format) const
+inline void Number::FromString(const String& str, const String& format) const
 {
     core::Check(OCI_NumberFromText(*this, str.c_str(), format.empty() ? core::MakeString(core::Check(OCI_GetFormat(GetEnvironment(), FormatNumeric))).c_str() : format.c_str()));
 }
 
-inline ostring Number::ToString(const ostring& format) const
+inline String Number::ToString(const String& format) const
 {
     if (!IsNull())
     {
@@ -113,7 +113,7 @@ inline ostring Number::ToString(const ostring& format) const
     return OCI_STRING_NULL;
 }
 
-inline ostring Number::ToString() const
+inline String Number::ToString() const
 {
     if (IsNull())
     {

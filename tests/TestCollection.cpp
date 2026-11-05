@@ -4,7 +4,7 @@ using namespace ocilib;
 
 namespace TestCApi
 {
-    void SelectCollection(ostring sql)
+    void SelectCollection(String sql)
     {
         const OCI_Int32 expectedRows = 2;
         const OCI_Int32 expectedItems = 2;
@@ -31,8 +31,8 @@ namespace TestCApi
         {
             nbRows++;
 
-            ostring category = OTEXT("category ") + TO_STRING(nbRows);
-            ASSERT_EQ(category, ostring(OCI_GetString(rset, 1)));
+            String category = OTEXT("category ") + TO_STRING(nbRows);
+            ASSERT_EQ(category, String(OCI_GetString(rset, 1)));
 
             const auto coll = OCI_GetColl(rset, 2);
             ASSERT_NE(nullptr, coll);
@@ -53,7 +53,7 @@ namespace TestCApi
                 const auto obj = OCI_ElemGetObject(elem);
                 ASSERT_NE(nullptr, obj);
 
-                ostring itemName = OTEXT("name ") + TO_STRING(itemIndex);
+                String itemName = OTEXT("name ") + TO_STRING(itemIndex);
 
                 ASSERT_EQ(itemIndex, OCI_ObjectGetInt(obj, OTEXT("code")));
                 ASSERT_EQ(itemName, OCI_ObjectGetString(obj, OTEXT("name")));
@@ -71,7 +71,7 @@ namespace TestCApi
 
     }
 
-    void BindOutCollection(ostring type, ostring sql)
+    void BindOutCollection(String type, String sql)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -109,7 +109,7 @@ namespace TestCApi
             const auto obj = OCI_ElemGetObject(elem);
             ASSERT_NE(nullptr, obj);
 
-            ostring itemName = OTEXT("name ") + TO_STRING(itemIndex);
+            String itemName = OTEXT("name ") + TO_STRING(itemIndex);
 
             ASSERT_EQ(itemIndex, OCI_ObjectGetInt(obj, OTEXT("code")));
             ASSERT_EQ(itemName, OCI_ObjectGetString(obj, OTEXT("name")));
@@ -284,14 +284,14 @@ namespace TestCApi
         ASSERT_NE(nullptr, elem);
         const otext* str = OCI_ElemGetString(elem);
         ASSERT_NE(nullptr, str);
-        ASSERT_EQ(ostring(OTEXT("first")), ostring(str));
+        ASSERT_EQ(String(OTEXT("first")), String(str));
 
         auto typinf = OCI_TypeInfoGet(con, OTEXT("TestCApiCovStrVarray"), OCI_TIF_TYPE);
         ASSERT_NE(nullptr, typinf);
         auto local = OCI_ElemCreate(typinf);
         ASSERT_NE(nullptr, local);
         ASSERT_TRUE(OCI_ElemSetString(local, OTEXT("local value")));
-        ASSERT_EQ(ostring(OTEXT("local value")), ostring(OCI_ElemGetString(local)));
+        ASSERT_EQ(String(OTEXT("local value")), String(OCI_ElemGetString(local)));
         ASSERT_TRUE(OCI_ElemSetNull(local));
         ASSERT_TRUE(OCI_ElemIsNull(local));
         ASSERT_TRUE(OCI_ElemFree(local));
@@ -464,7 +464,7 @@ namespace TestCApi
         OCI_UInt32 size = 512;
         ASSERT_TRUE(OCI_CollToText(coll, &size, text));
         ASSERT_GT(size, 0u);
-        ASSERT_NE(ostring::npos, ostring(text).find(OTEXT("NULL")));
+        ASSERT_NE(String::npos, String(text).find(OTEXT("NULL")));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
@@ -498,7 +498,7 @@ namespace TestCApi
         OCI_UInt32 size = 512;
         ASSERT_TRUE(OCI_CollToText(coll, &size, text));
         ASSERT_GT(size, 0u);
-        ASSERT_NE(ostring::npos, ostring(text).find(OTEXT("NULL")));
+        ASSERT_NE(String::npos, String(text).find(OTEXT("NULL")));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
@@ -741,7 +741,7 @@ namespace TestCApi
         otext text[512];
         OCI_UInt32 size = sizeof(text) / sizeof(otext);
         ASSERT_TRUE(OCI_CollToText(coll, &size, text));
-        ASSERT_NE(ostring(text).find(OTEXT("NULL")), ostring::npos);
+        ASSERT_NE(String(text).find(OTEXT("NULL")), String::npos);
 
         ASSERT_TRUE(OCI_ElemFree(elem));
         ASSERT_TRUE(OCI_CollFree(coll));

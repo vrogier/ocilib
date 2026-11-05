@@ -48,7 +48,7 @@ namespace TestCppApi
         TypeInfo tif(conn, OTEXT("vendor_t"), TypeInfo::Type);
 
         Reference ref(tif);
-        ASSERT_EQ(ostring(OTEXT("")), ref.ToString());
+        ASSERT_EQ(String(OTEXT("")), ref.ToString());
 
         CleanupTestRef();
     }
@@ -56,6 +56,6 @@ namespace TestCppApi
     TEST(TestRefCpp, NullReferenceToString)
     {
         Reference ref;
-        ASSERT_EQ(ostring(OTEXT("NULL")), ref.ToString());
+        ASSERT_EQ(String(OTEXT("NULL")), ref.ToString());
     }
 }

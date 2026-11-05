@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -50,17 +51,34 @@ namespace ocilib
 {
 
 /**
- * @typedef ocilib::ostring
+ * @typedef ocilib::String
  *
  * @brief
  * string class wrapping the OCILIB otext * type and OTEXT() macros ( see @ref OcilibCApiSupportedCharsets )
  *
  * @note
- * - for ANSI builds, ocilib::ostring is equivalent to std::string
- * - for UNICODE builds, ocilib::ostring is equivalent to std::wstring
+ * - for ANSI builds, String is equivalent to std::string
+ * - for UNICODE builds, String is equivalent to std::wstring
  *
  */
-typedef std::basic_string<otext, std::char_traits<otext>, std::allocator<otext> > ostring;
+typedef std::basic_string<otext, std::char_traits<otext>, std::allocator<otext> > String;
+
+/**
+ * @typedef ocilib::ostring
+ * @brief
+ * Alias for String (kept for backward compatibility)
+ *
+ */
+typedef String ostring;
+
+/**
+ * @typedef ocilib::StringView
+ * @brief
+ * A non-owning reference to a sequence of otext characters (std::basic_string_view<otext>)
+ * Accepts String, const otext*, string literals and spans without allocation
+ *
+ */
+typedef std::basic_string_view<otext> StringView;
 
 /**
  * @typedef ocilib::AnyPointer

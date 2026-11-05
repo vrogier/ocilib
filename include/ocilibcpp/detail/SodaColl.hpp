@@ -44,12 +44,12 @@ namespace ocilib
         return Connection(core::Check(OCI_SodaCollGetConnection(*this)), GetHandle(), false);
     }
 
-    inline ostring SodaColl::GetName() const
+    inline String SodaColl::GetName() const
     {
         return core::MakeString(core::Check(OCI_SodaCollGetName(*this)));
     }
 
-    inline ostring SodaColl::GetMetadata() const
+    inline String SodaColl::GetMetadata() const
     {
         return core::MakeString(core::Check(OCI_SodaCollGetMetadata(*this)));
     }
@@ -104,7 +104,7 @@ namespace ocilib
         return SodaDoc(doc, GetHandle());
     }
 
-    inline SodaDoc SodaColl::FindOne(const ostring& key)
+    inline SodaDoc SodaColl::FindOne(const String& key)
     {
         OCI_SodaDoc* doc = core::Check
         (
@@ -119,7 +119,7 @@ namespace ocilib
         return OCI_SodaCollDocCount(*this, options);
     }
 
-    inline UInt64 SodaColl::GetCount(const ostring& filter)
+    inline UInt64 SodaColl::GetCount(const String& filter)
     {
         return OCI_SodaCollDocCountWithFilter(*this, filter.c_str());
     }
@@ -135,12 +135,12 @@ namespace ocilib
         return doc;
     }
 
-    inline bool SodaColl::ReplaceOne(const ostring& key, const SodaDoc& doc)
+    inline bool SodaColl::ReplaceOne(const String& key, const SodaDoc& doc)
     {
         return (core::Check(OCI_SodaCollReplaceOneByKey(*this, key.c_str(), doc)) == TRUE);
     }
 
-    inline SodaDoc SodaColl::ReplaceOneAndGet(const ostring& key, SodaDoc& doc)
+    inline SodaDoc SodaColl::ReplaceOneAndGet(const String& key, SodaDoc& doc)
     {
         core::Check(OCI_SodaCollReplaceOneAndGetByKey(*this, key.c_str(), doc));
         return doc;
@@ -151,7 +151,7 @@ namespace ocilib
         return (core::Check(OCI_SodaCollRemove(*this, options, count)) == TRUE);
     }
 
-    inline bool SodaColl::RemoveOne(const ostring& key)
+    inline bool SodaColl::RemoveOne(const String& key)
     {
         return (core::Check(OCI_SodaCollRemoveOneByKey(*this, key.c_str())) == TRUE);
     }
@@ -170,12 +170,12 @@ namespace ocilib
         core::Check(OCI_SodaCollInsertManyAndGet(*this, handles.data(), static_cast<OCI_UInt32>(docs.size())));
     }
 
-    inline void SodaColl::CreateIndex(const ostring& indexSpec)
+    inline void SodaColl::CreateIndex(const String& indexSpec)
     {
         core::Check(OCI_SodaCollCreateIndex(*this, indexSpec.c_str()));
     }
 
-    inline bool SodaColl::DropIndex(const ostring& name)
+    inline bool SodaColl::DropIndex(const String& name)
     {
         return (core::Check(OCI_SodaCollDropIndex(*this, name.c_str())) == TRUE);
     }
@@ -185,12 +185,12 @@ namespace ocilib
         return SodaDoc(core::Check(OCI_SodaCollGetDataGuide(*this)), GetHandle());
     }
 
-    inline std::vector<ostring> SodaColl::ListIndexes()
+    inline std::vector<String> SodaColl::ListIndexes()
     {
         UInt32 count = 0;
         otext** names = core::Check(OCI_SodaCollListIndexes(*this, &count));
 
-        std::vector<ostring> result;
+        std::vector<String> result;
 
         if (names)
         {

@@ -42,7 +42,7 @@ inline void ShardingKey::AddColumn(const T& value)
 {
     using U = std::decay_t<T>;
 
-    if constexpr      (std::is_same_v<U, ostring>)
+    if constexpr      (std::is_same_v<U, String>)
     {
         core::Check(OCI_ShardingKeyAddString(*this, value.c_str()));
     }
@@ -73,7 +73,7 @@ inline void ShardingKey::Reset()
     core::Check(OCI_ShardingKeyReset(*this));
 }
 
-inline ostring ShardingKey::ToString() const
+inline String ShardingKey::ToString() const
 {
     return core::MakeString(core::Check(OCI_ShardingKeyToText(*this)));
 }

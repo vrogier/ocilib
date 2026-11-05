@@ -6,8 +6,8 @@ static void CheckColumnFullType
 (
     OCI_Int32 index,
     OCI_TypeInfo* typinf,
-    const ostring& name,
-    const ostring& typeName,
+    const String& name,
+    const String& typeName,
     OCI_UInt32 type,
     OCI_UInt32 subtype,
     OCI_UInt32 dimension
@@ -17,7 +17,7 @@ static void CheckColumnFullType
     ASSERT_NE(nullptr, col);
 
     ASSERT_EQ(type, OCI_ColumnGetType(col));
-    ASSERT_EQ(name, ostring(OCI_ColumnGetName(col)));
+    ASSERT_EQ(name, String(OCI_ColumnGetName(col)));
     ASSERT_EQ(subtype, OCI_ColumnGetSubType(col));
     ASSERT_EQ(dimension, OCI_ColumnGetDimension(col));
 
@@ -25,7 +25,7 @@ static void CheckColumnFullType
 
     OCI_ColumnGetFullSQLType(col, buffer, 256);
 
-    ASSERT_EQ(typeName, ostring(buffer));  
+    ASSERT_EQ(typeName, String(buffer));  
 }
 
 namespace TestCApi
@@ -171,7 +171,7 @@ namespace TestCApi
         auto buffer = new otext[size+1];
         ASSERT_TRUE(OCI_VectorToText(vect, &size, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("[1,3,2,4]")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("[1,3,2,4]")), String(buffer));
 
         delete[] buffer;
     
@@ -346,7 +346,7 @@ namespace TestCApi
 
         auto str = OCI_GetString(rs, 1);
 
-        ASSERT_EQ(ostring(OTEXT("[1,2,3,4]")), ostring(str));
+        ASSERT_EQ(String(OTEXT("[1,2,3,4]")), String(str));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -381,7 +381,7 @@ namespace TestCApi
 
         auto str = OCI_GetString(rslt, 1);
 
-        ASSERT_EQ(ostring(OTEXT("[1,2,3,4]")), str);
+        ASSERT_EQ(String(OTEXT("[1,2,3,4]")), str);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

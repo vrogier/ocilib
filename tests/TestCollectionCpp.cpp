@@ -18,15 +18,15 @@ namespace TestCppApi
 
         Object obj1(typinfObj);
         obj1.Set<OCI_Int32>(OTEXT("code"), 1);
-        obj1.Set<ostring>(OTEXT("name"), OTEXT("computer"));
+        obj1.Set<String>(OTEXT("name"), OTEXT("computer"));
         coll.Append(obj1);
 
         Object obj2(typinfObj);
         obj2.Set<OCI_Int32>(OTEXT("code"), 2);
-        obj2.Set<ostring>(OTEXT("name"), OTEXT("book"));
+        obj2.Set<String>(OTEXT("name"), OTEXT("book"));
         coll.Append(obj2);
 
-        ostring expected = OTEXT("CollToStringCpp_Coll(CollToStringCpp_Type(1, 'computer'), CollToStringCpp_Type(2, 'book'))");
+        String expected = OTEXT("CollToStringCpp_Coll(CollToStringCpp_Type(1, 'computer'), CollToStringCpp_Type(2, 'book'))");
 
         ASSERT_EQ(ToUpper(expected), ToUpper(coll.ToString()));
 
@@ -38,8 +38,8 @@ namespace TestCppApi
 
     TEST(TestCollectionCpp, NullToString)
     {
-        Collection<ostring> coll;
-        ASSERT_EQ(ostring(OTEXT("NULL")), coll.ToString());
+        Collection<String> coll;
+        ASSERT_EQ(String(OTEXT("NULL")), coll.ToString());
     }
 }
 

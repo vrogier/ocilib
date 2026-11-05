@@ -11,7 +11,7 @@ namespace TestCppApi
 
 #ifdef OCI_CHARSET_WIDE
 
-    ostring ConverStringToAnsi(std::string value) noexcept
+    String ConverStringToAnsi(std::string value) noexcept
     {
         if (value.empty())
         {
@@ -41,7 +41,7 @@ namespace TestCppApi
                                 buffer[whatLenght] = 0;
         }
 
-        ostring result = buffer;
+        String result = buffer;
 
         delete[] buffer;
 
@@ -89,7 +89,7 @@ namespace TestCppApi
             Connection con(env, DBS, USR, PWD);
             Statement stmt(con);
 
-            const ostring cmd =
+            const String cmd =
                 OTEXT
                 (
                     R"(
@@ -278,7 +278,7 @@ namespace TestCppApi
 
     TEST(ReportedIssuesCpp, Issue331)
     {
-        auto expectedString = ToUpper(ostring(OTEXT("<element name=\"name\" type=\"str\"></element>")));
+        auto expectedString = ToUpper(String(OTEXT("<element name=\"name\" type=\"str\"></element>")));
         Environment& env = GetEnvironmentCpp();
         env.EnableWarnings(true);
 
@@ -291,8 +291,8 @@ namespace TestCppApi
         auto rs = st.GetResultset();
 
         auto col = rs.GetColumn(1);
-        ASSERT_EQ(ostring(OTEXT("XMLTYPE")), col.GetSQLType());
-        ASSERT_EQ(ostring(OTEXT("XMLTYPE")), col.GetFullSQLType());
+        ASSERT_EQ(String(OTEXT("XMLTYPE")), col.GetSQLType());
+        ASSERT_EQ(String(OTEXT("XMLTYPE")), col.GetFullSQLType());
         ASSERT_EQ(DataTypeValues::TypeXmlType, col.GetType());
 
         
@@ -398,7 +398,7 @@ namespace TestCppApi
     {
         ExecDML(OTEXT("create table TestIssue377(value number(18))"));
 
-        ostring errMessage;
+        String errMessage;
         OCI_Int32 errCode{};
         OCI_Size expectedCount{ 10 };
         OCI_Size insertedCount{};
@@ -414,7 +414,7 @@ namespace TestCppApi
                 values.push_back(1234567890000 + i);
             }
 
-            ostring sql = OTEXT("begin insert into TestIssue377(value) values (:0); end;");
+            String sql = OTEXT("begin insert into TestIssue377(value) values (:0); end;");
             Statement stmt(conn);
             stmt.Prepare(sql);
             stmt.SetBindArraySize(static_cast<OCI_UInt32>(values.size()));
@@ -453,7 +453,7 @@ namespace TestCppApi
         auto pool = Pool(env, DBS, USR, PWD, Pool::ConnectionPool, 0, 1);
         auto conn = pool.GetConnection();
         auto type = TypeInfo(conn, OTEXT("Issue379Type"), ocilib::TypeInfo::Type);
-        auto coll = Collection<ostring>(type);
+        auto coll = Collection<String>(type);
         
         ASSERT_EQ(0, coll.GetSize());
 
@@ -535,8 +535,8 @@ namespace TestCppApi
         auto bindInfo = stmt.GetParseBindNames();
 
         ASSERT_EQ(2, bindInfo.size());
-        ASSERT_EQ(ostring(OTEXT("ABC")), bindInfo[0]);
-        ASSERT_EQ(ostring(OTEXT("DEF")), bindInfo[1]);
+        ASSERT_EQ(String(OTEXT("ABC")), bindInfo[0]);
+        ASSERT_EQ(String(OTEXT("DEF")), bindInfo[1]);
 
         
     }
@@ -554,9 +554,9 @@ namespace TestCppApi
         auto bindInfo = stmt.GetParseBindNames();
 
         ASSERT_EQ(3, bindInfo.size());
-        ASSERT_EQ(ostring(OTEXT("ABC")), bindInfo[0]);
-        ASSERT_EQ(ostring(OTEXT("DEF")), bindInfo[1]);
-        ASSERT_EQ(ostring(OTEXT("DEF")), bindInfo[2]);
+        ASSERT_EQ(String(OTEXT("ABC")), bindInfo[0]);
+        ASSERT_EQ(String(OTEXT("DEF")), bindInfo[1]);
+        ASSERT_EQ(String(OTEXT("DEF")), bindInfo[2]);
 
         
     }
@@ -573,7 +573,7 @@ namespace TestCppApi
 
         Sleep(2000);
 
-        ostring errMessage;
+        String errMessage;
         OCI_Int32 errCode{};
 
         try
@@ -655,7 +655,7 @@ namespace TestCppApi
         Number nm1(env, 1);
         Number nm2;
 
-        ASSERT_THROW(nm1 = nm2, Exception);
+        ASSERT_THROW((void) nm1 = nm2, Exception);
     }
 
     TEST(ReportedIssuesCpp, Issue388_Date)
@@ -665,7 +665,7 @@ namespace TestCppApi
         Date dt1(env, true);
         Date dt2;
 
-        ASSERT_THROW(dt1 = dt2, Exception);
+        ASSERT_THROW((void) dt1 = dt2, Exception);
     }
 
     // Issue 391 : data race on pooled connections - OCI_Pool had no thread-safe

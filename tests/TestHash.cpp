@@ -26,7 +26,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_HashAddString(table, OTEXT("key"), OTEXT("value")));
         const otext* str = OCI_HashGetString(table, OTEXT("key"));
         ASSERT_NE(nullptr, str);
-        ASSERT_EQ(ostring(OTEXT("value")), ostring(str));
+        ASSERT_EQ(String(OTEXT("value")), String(str));
 
         ASSERT_TRUE(OCI_HashFree(table));
     }
@@ -92,8 +92,8 @@ namespace TestCApi
         ASSERT_TRUE(OCI_HashAddString(table, OTEXT("k2"), OTEXT("v2")));
 
         /* OcilibHashLookup + OcilibHashGetValue via public getters */
-        ASSERT_EQ(ostring(OTEXT("v1")), ostring(OCI_HashGetString(table, OTEXT("k1"))));
-        ASSERT_EQ(ostring(OTEXT("v2")), ostring(OCI_HashGetString(table, OTEXT("k2"))));
+        ASSERT_EQ(String(OTEXT("v1")), String(OCI_HashGetString(table, OTEXT("k1"))));
+        ASSERT_EQ(String(OTEXT("v2")), String(OCI_HashGetString(table, OTEXT("k2"))));
         ASSERT_EQ(nullptr, OCI_HashGetString(table, OTEXT("nope")));
 
         const auto e1 = OCI_HashLookup(table, OTEXT("k1"), FALSE);

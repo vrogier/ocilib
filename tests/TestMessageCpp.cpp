@@ -29,10 +29,10 @@ namespace TestCppApi
         ASSERT_EQ(60, msg.GetExpiration());
 
         msg.SetCorrelation(OTEXT("corr"));
-        ASSERT_EQ(ostring(OTEXT("corr")), msg.GetCorrelation());
+        ASSERT_EQ(String(OTEXT("corr")), msg.GetCorrelation());
 
         msg.SetExceptionQueue(OTEXT("exception_queue"));
-        ASSERT_EQ(ostring(OTEXT("exception_queue")), msg.GetExceptionQueue());
+        ASSERT_EQ(String(OTEXT("exception_queue")), msg.GetExceptionQueue());
 
         Raw originalID{ 0xAA, 0xBB };
         msg.SetOriginalID(originalID);

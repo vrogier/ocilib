@@ -75,20 +75,20 @@ namespace TestCppApi
         Statement stmt(conn);
         stmt.Execute(OTEXT("begin dbms_output.put_line('hello'); end;"));
 
-        ostring line;
+        String line;
         ASSERT_TRUE(conn.GetServerOutput(line));
-        ASSERT_EQ(ostring(OTEXT("hello")), line);
+        ASSERT_EQ(String(OTEXT("hello")), line);
 
         stmt.Execute(OTEXT("begin dbms_output.put_line('world'); end;"));
-        static std::vector<ostring> lines;
+        static std::vector<String> lines;
         conn.GetServerOutput(lines);
         ASSERT_EQ(1u, lines.size());
-        ASSERT_EQ(ostring(OTEXT("world")), lines[0]);
+        ASSERT_EQ(String(OTEXT("world")), lines[0]);
 
         conn.DisableServerOutput();
 
         conn.SetTrace(Connection::TraceModule, OTEXT("TestModule"));
-        ASSERT_EQ(ostring(OTEXT("TestModule")), conn.GetTrace(Connection::TraceModule));
+        ASSERT_EQ(String(OTEXT("TestModule")), conn.GetTrace(Connection::TraceModule));
     }
 
     TEST(TestConnectionCpp, FormatAndSessionSettings)
@@ -97,7 +97,7 @@ namespace TestCppApi
         Connection conn(env, DBS, USR, PWD);
 
         ASSERT_TRUE(env.SetFormat(FormatTypeValues::FormatDate, OTEXT("YYYY-MM-DD")));
-        ASSERT_EQ(ostring(OTEXT("YYYY-MM-DD")), env.GetFormat(FormatTypeValues::FormatDate));
+        ASSERT_EQ(String(OTEXT("YYYY-MM-DD")), env.GetFormat(FormatTypeValues::FormatDate));
 
         conn.SetStatementCacheSize(42);
         ASSERT_EQ(42u, conn.GetStatementCacheSize());

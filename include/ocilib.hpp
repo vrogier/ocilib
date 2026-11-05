@@ -79,7 +79,7 @@ namespace ocilib
  * In the later case, the value can be provided by a function return value or using the object class constructor
  *
  * @par Exception model
- * - Any failure occurring within an OCILIB C API call will throw a ocilib::Exception
+ * - Any failure occurring within an OCILIB C API call will throw a Exception
  * - For conformance reasons, this class derives from std::Exception
  *
  * @warning

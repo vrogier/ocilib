@@ -125,7 +125,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_TimestampFromText(tmsp, OTEXT("1978-04-13 20:30:15.000000300"), OCI_STRING_FORMAT_TIMESTAMP));
         ASSERT_TRUE(OCI_TimestampToText(tmsp, OCI_STRING_FORMAT_TIMESTAMP, 512, buffer, 9));
 
-        ASSERT_EQ(ostring(OTEXT("1978-04-13 20:30:15.000000300")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("1978-04-13 20:30:15.000000300")), String(buffer));
 
         ASSERT_TRUE(OCI_TimestampFree(tmsp));
 
@@ -204,7 +204,7 @@ namespace TestCApi
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_TimestampToText(tmsp, OCI_STRING_FORMAT_TIMESTAMP, 512, buffer, 9));
 
-        ASSERT_EQ(ostring(OTEXT("1978-04-13 20:30:15.000000300")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("1978-04-13 20:30:15.000000300")), String(buffer));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -230,7 +230,7 @@ namespace TestCApi
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_TimestampToText(tmsp, OCI_STRING_FORMAT_TIMESTAMP, 512, buffer, 9));
 
-        ASSERT_EQ(ostring(OTEXT("1978-04-14 20:30:15.000000300")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("1978-04-14 20:30:15.000000300")), String(buffer));
 
         ASSERT_TRUE(OCI_TimestampFree(tmsp));
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -262,7 +262,7 @@ namespace TestCApi
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_TimestampToText(tmsp, OCI_STRING_FORMAT_TIMESTAMP, 512, buffer, 6));
 
-        ASSERT_EQ(ostring(OTEXT("1978-04-13 20:30:15.000300")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("1978-04-13 20:30:15.000300")), String(buffer));
 
         OCI_ExecuteStmt(stmt, OTEXT("drop table test_tmsp_register"));
 
@@ -280,7 +280,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, con);
 
         ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_TIMESTAMP, OTEXT("YYYY-MM-DD HH24:MI:SS")));
-        ASSERT_EQ(ostring(OTEXT("YYYY-MM-DD HH24:MI:SS")), ostring(OCI_GetFormat(env, OCI_FMT_TIMESTAMP)));
+        ASSERT_EQ(String(OTEXT("YYYY-MM-DD HH24:MI:SS")), String(OCI_GetFormat(env, OCI_FMT_TIMESTAMP)));
 
         auto ts = OCI_TimestampCreate(env, OCI_TIMESTAMP);
         ASSERT_NE(nullptr, ts);
@@ -288,7 +288,7 @@ namespace TestCApi
 
         otext buffer[64];
         ASSERT_TRUE(OCI_TimestampToText(ts, OTEXT("YYYY-MM-DD HH24:MI:SS"), 64, buffer, 0));
-        ASSERT_EQ(ostring(OTEXT("2020-05-12 10:30:00")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("2020-05-12 10:30:00")), String(buffer));
 
         ASSERT_TRUE(OCI_TimestampFree(ts));
         ASSERT_TRUE(OCI_ConnectionFree(con));

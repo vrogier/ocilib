@@ -47,7 +47,7 @@ namespace ocilib
         return *this;
     }
 
-    inline void Json::LoadText(const ostring& text, JsonValidation validation, JsonEncoding encoding)
+    inline void Json::LoadText(const String& text, JsonValidation validation, JsonEncoding encoding)
     {
         LoadText(text.c_str(), static_cast<UInt32>(text.size()), validation, encoding);
     }
@@ -69,7 +69,7 @@ namespace ocilib
         LoadBinary(data.data(), static_cast<UInt32>(data.size()));
     }
 
-    inline ostring Json::ToText(JsonPrint print) const
+    inline String Json::ToText(JsonPrint print) const
     {
         UInt32 size = 0;
 
@@ -77,7 +77,7 @@ namespace ocilib
             static_cast<UInt32>(print.GetValues()), TRUE));
 
         UInt32 maxSize = size + 1;
-        ostring result;
+        String result;
         result.resize(static_cast<Size>(maxSize));
 
         core::Check(OCI_JsonToText(*this, &result[0], &maxSize,
@@ -152,7 +152,7 @@ namespace ocilib
         return JsonNode(core::Check(OCI_JsonNodeCreateNull(*this)), GetHandle());
     }
 
-    inline JsonNode Json::CreateString(const ostring& value)
+    inline JsonNode Json::CreateString(const String& value)
     {
         return JsonNode(core::Check(OCI_JsonNodeCreateString(*this, value.c_str(), static_cast<UInt32>(value.size()))), GetHandle());
     }
@@ -192,7 +192,7 @@ namespace ocilib
         return JsonNode(core::Check(OCI_JsonNodeCreateInterval(*this, value)), GetHandle());
     }
 
-    inline ostring Json::ToString() const
+    inline String Json::ToString() const
     {
         return ToText();
     }

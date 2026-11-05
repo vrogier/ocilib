@@ -37,9 +37,21 @@ namespace ocilib
     }
 
     template<class T>
-    inline T Row::Get(const ostring& name) const
+    inline T Row::Get(const String& name) const
     {
         return _rs->Get<T>(name);
+    }
+
+    template<class T>
+    inline std::optional<T> Row::GetOptional(UInt32 index) const
+    {
+        return _rs->GetOptional<T>(index);
+    }
+
+    template<class T>
+    inline std::optional<T> Row::GetOptional(const String& name) const
+    {
+        return _rs->GetOptional<T>(name);
     }
 
 }

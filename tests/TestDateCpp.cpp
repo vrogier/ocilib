@@ -7,6 +7,6 @@ namespace TestCppApi
     TEST(TestDateCpp, NullToString)
     {
         Date d;
-        ASSERT_EQ(ostring(OTEXT("NULL")), d.ToString());
+        ASSERT_EQ(String(OTEXT("NULL")), d.ToString());
     }
 }

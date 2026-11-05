@@ -18,8 +18,8 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_FileSetName(file, OTEXT("TEST_DIR"), OTEXT("test.txt")));
 
-        ASSERT_EQ(ostring(OTEXT("TEST_DIR")), ostring(OCI_FileGetDirectory(file)));
-        ASSERT_EQ(ostring(OTEXT("test.txt")), ostring(OCI_FileGetName(file)));
+        ASSERT_EQ(String(OTEXT("TEST_DIR")), String(OCI_FileGetDirectory(file)));
+        ASSERT_EQ(String(OTEXT("test.txt")), String(OCI_FileGetName(file)));
 
         ASSERT_EQ(0u, OCI_FileGetOffset(file));
 
@@ -72,7 +72,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_FileIsEqual(file1, file2));
 
         ASSERT_TRUE(OCI_FileAssign(file3, file1));
-        ASSERT_EQ(ostring(OTEXT("test.txt")), ostring(OCI_FileGetName(file3)));
+        ASSERT_EQ(String(OTEXT("test.txt")), String(OCI_FileGetName(file3)));
         ASSERT_TRUE(OCI_FileIsEqual(file1, file3));
 
         ASSERT_TRUE(OCI_FileFree(file1));

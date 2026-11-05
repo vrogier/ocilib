@@ -11,7 +11,7 @@ namespace TestCppApi
         Connection conn(env, DBS, USR, PWD);
         TypeInfo typinf(conn, OTEXT("SYS.XMLTYPE"), TypeInfo::Type);
 
-        ASSERT_EQ(ostring(OTEXT("XMLTYPE")), typinf.GetName());
+        ASSERT_EQ(String(OTEXT("XMLTYPE")), typinf.GetName());
         ASSERT_EQ(0, typinf.GetColumnCount());
 
         
@@ -29,14 +29,14 @@ namespace TestCppApi
         auto rst = stmt.GetResultset();
         auto col = rst.GetColumn(1);
 
-        ASSERT_EQ(ostring(OTEXT("XML")), col.GetName());
-        ASSERT_EQ(ostring(OTEXT("XMLTYPE")), col.GetSQLType());
+        ASSERT_EQ(String(OTEXT("XML")), col.GetName());
+        ASSERT_EQ(String(OTEXT("XMLTYPE")), col.GetSQLType());
         ASSERT_EQ(DataTypeValues::TypeXmlType, col.GetType());
         ASSERT_EQ(0, col.GetSubType());
         ASSERT_EQ(sizeof(OCI_XmlType*), col.GetSize());
 
         auto typinf = col.GetTypeInfo();
-        ASSERT_EQ(ostring(OTEXT("XMLTYPE")), typinf.GetName());
+        ASSERT_EQ(String(OTEXT("XMLTYPE")), typinf.GetName());
         ASSERT_EQ(0, typinf.GetColumnCount());
 
         
@@ -56,16 +56,16 @@ namespace TestCppApi
 
         ASSERT_TRUE(rst.Next());
 
-        auto expected1 = ostring(OTEXT("<person firstname=\"john\" lastname=\"doe\"></person>"));
-        auto expected2 = ostring(OTEXT("<person firstname=\"vince\" lastname=\"rogier\"></person>"));
+        auto expected1 = String(OTEXT("<person firstname=\"john\" lastname=\"doe\"></person>"));
+        auto expected2 = String(OTEXT("<person firstname=\"vince\" lastname=\"rogier\"></person>"));
 
         auto xmlType1 = rst.Get<XmlType>(1);
         ASSERT_EQ(expected1, xmlType1.ToString());
-        ASSERT_EQ(expected1, rst.Get<ostring>(1));
+        ASSERT_EQ(expected1, rst.Get<String>(1));
 
         auto xmlType2 = rst.Get<XmlType>(2);
         ASSERT_EQ(expected2, xmlType2.ToString());
-        ASSERT_EQ(expected2, rst.Get<ostring>(2));
+        ASSERT_EQ(expected2, rst.Get<String>(2));
 
         
     }
@@ -73,7 +73,7 @@ namespace TestCppApi
     struct XmlRow
     {
         OCI_Int32 Level;
-        ostring Xml;
+        String Xml;
     };
 
     void TestXmlTypeFetchCustom
@@ -101,7 +101,7 @@ namespace TestCppApi
         auto rs = st.GetResultset();
         while (rs++)
         {
-            xmlRowValues.push_back({ rs.Get<OCI_Int32>(1), ToUpper(rs.Get<ostring>(2)) });
+            xmlRowValues.push_back({ rs.Get<OCI_Int32>(1), ToUpper(rs.Get<String>(2)) });
         }
 
         const auto expectedRows = 100u;
@@ -114,7 +114,7 @@ namespace TestCppApi
         for (auto& row : xmlRowValues)
         {
             ASSERT_EQ(i, row.Level);
-            auto expectedString = ToUpper(ostring(OTEXT("<element name=\"")) + TO_STRING(i) + ostring(OTEXT("\"></element>")));
+            auto expectedString = ToUpper(String(OTEXT("<element name=\"")) + TO_STRING(i) + String(OTEXT("\"></element>")));
             ASSERT_EQ(expectedString, row.Xml);
             i++;
         }
@@ -176,18 +176,18 @@ namespace TestCppApi
 
         auto rst = stmt.GetResultset();
 
-        auto expectedFirst = ostring(OTEXT("<person index=\"1\"></person>"));
-        auto expectedLast = ostring(OTEXT("<person index=\"2\"></person>"));
+        auto expectedFirst = String(OTEXT("<person index=\"1\"></person>"));
+        auto expectedLast = String(OTEXT("<person index=\"2\"></person>"));
 
         rst.Last();
         auto xmlType1 = rst.Get<XmlType>(1);
         ASSERT_EQ(expectedLast, xmlType1.ToString());
-        ASSERT_EQ(expectedLast, rst.Get<ostring>(1));
+        ASSERT_EQ(expectedLast, rst.Get<String>(1));
 
         rst.First();
         auto xmlType2 = rst.Get<XmlType>(1);
         ASSERT_EQ(expectedFirst, xmlType2.ToString());
-        ASSERT_EQ(expectedFirst, rst.Get<ostring>(1));
+        ASSERT_EQ(expectedFirst, rst.Get<String>(1));
 
 
         
@@ -208,7 +208,7 @@ namespace TestCppApi
         ASSERT_TRUE(rst.Next());
 
         XmlType xml = rst.Get<XmlType>(1);
-        ASSERT_EQ(ostring(), xml.ToString());
+        ASSERT_EQ(String(), xml.ToString());
 
         ExecDML(OTEXT("DROP TABLE TestXmlTypeNull"));
     }

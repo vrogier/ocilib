@@ -29,7 +29,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_Execute(stmt));
         ASSERT_TRUE(OCI_ObjectToText(racingCar, &size, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("TESTOBJECTINHERITANCERACINGCAR(1, 'Formula1', 123456789, 300)")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("TESTOBJECTINHERITANCERACINGCAR(1, 'Formula1', 123456789, 300)")), String(buffer));
 
         const auto typinfRacingCar = OCI_ObjectGetTypeInfo(racingCar);
         ASSERT_NE(nullptr, typinfRacingCar);
@@ -38,9 +38,9 @@ namespace TestCApi
         const auto typinfVehicule = OCI_TypeInfoGetSuperType(typinfCar);
         ASSERT_NE(nullptr, typinfVehicule);
 
-        ASSERT_EQ(ostring(OTEXT("TESTOBJECTINHERITANCERACINGCAR")), ostring(OCI_TypeInfoGetName(typinfRacingCar)));
-        ASSERT_EQ(ostring(OTEXT("TESTOBJECTINHERITANCECAR")), ostring(OCI_TypeInfoGetName(typinfCar)));
-        ASSERT_EQ(ostring(OTEXT("TESTOBJECTINHERITANCEVEHICULE")), ostring(OCI_TypeInfoGetName(typinfVehicule)));
+        ASSERT_EQ(String(OTEXT("TESTOBJECTINHERITANCERACINGCAR")), String(OCI_TypeInfoGetName(typinfRacingCar)));
+        ASSERT_EQ(String(OTEXT("TESTOBJECTINHERITANCECAR")), String(OCI_TypeInfoGetName(typinfCar)));
+        ASSERT_EQ(String(OTEXT("TESTOBJECTINHERITANCEVEHICULE")), String(OCI_TypeInfoGetName(typinfVehicule)));
 
         ASSERT_EQ(TRUE, OCI_TypeInfoIsFinalType(typinfRacingCar));
         ASSERT_EQ(FALSE, OCI_TypeInfoIsFinalType(typinfCar));

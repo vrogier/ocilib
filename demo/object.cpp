@@ -24,12 +24,12 @@ int main()
         Object vendor(TypeInfo(con, "t_vendor", TypeInfo::Type));
 
         vendor.Set<OCI_Int32>("code", 134);
-        vendor.Set<ostring>("name", "JOHN SMITH");
+        vendor.Set<String>("name", "JOHN SMITH");
 
         sale.Set<OCI_Int32>("code", 1);
         sale.Set<OCI_Double>("price", 12.99);
-        sale.Set<ostring>("name", "USB KEY 2go");
-        sale.Set<ostring>("ref", "A56547WSAA");
+        sale.Set<String>("name", "USB KEY 2go");
+        sale.Set<String>("ref", "A56547WSAA");
         sale.Set<Date>("date_sale", date);
         sale.Set<Object>("vendor", vendor);
 

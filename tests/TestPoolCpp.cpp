@@ -50,12 +50,12 @@ namespace TestCppApi
         Connection conn = pool.GetConnection(OTEXT("mytag"));
         ASSERT_FALSE(conn.IsNull());
         conn.SetSessionTag(OTEXT("mytag"));
-        ASSERT_EQ(ostring(OTEXT("mytag")), conn.GetSessionTag());
+        ASSERT_EQ(String(OTEXT("mytag")), conn.GetSessionTag());
         conn.Close();
 
         Connection conn2 = pool.GetConnection(OTEXT("mytag"));
         ASSERT_FALSE(conn2.IsNull());
-        ASSERT_EQ(ostring(OTEXT("mytag")), conn2.GetSessionTag());
+        ASSERT_EQ(String(OTEXT("mytag")), conn2.GetSessionTag());
     }
 
     TEST(TestPoolCpp, OpenCloseCpp)

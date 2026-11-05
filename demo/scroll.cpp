@@ -6,7 +6,7 @@ using namespace ocilib;
 
 void print_row(Resultset &rs)
 {
-    std::cout << rs.Get<OCI_Int32>(1) << " - " << rs.Get<ostring>(2) << std::endl;
+    std::cout << rs.Get<OCI_Int32>(1) << " - " << rs.Get<String>(2) << std::endl;
 }
 
 int main()

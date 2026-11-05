@@ -59,7 +59,7 @@ namespace TestCppApi
         ASSERT_TRUE(lob.IsTemporary());
         ASSERT_FALSE(lob.IsRemote());
 
-        ostring content = OTEXT("abc");
+        String content = OTEXT("abc");
         ASSERT_EQ(static_cast<OCI_UInt32>(content.size()), lob.Write(content));
         ASSERT_EQ(content.size(), lob.GetLength());
         ASSERT_GT(lob.GetMaxSize(), 0u);
@@ -68,7 +68,7 @@ namespace TestCppApi
         ASSERT_TRUE(lob.Seek(SeekMode(SeekSet), 0));
         ASSERT_EQ(0u, lob.GetOffset());
 
-        ostring read = lob.Read(static_cast<OCI_UInt32>(content.size()));
+        String read = lob.Read(static_cast<OCI_UInt32>(content.size()));
         ASSERT_EQ(content, read);
 
         Clob lob2 = lob.Clone();

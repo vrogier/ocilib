@@ -64,12 +64,12 @@ inline Object Object::Clone() const
     return result;
 }
 
-inline bool Object::IsAttributeNull(const ostring& name) const
+inline bool Object::IsAttributeNull(const String& name) const
 {
     return (core::Check(OCI_ObjectIsNull(*this, name.c_str())) == TRUE);
 }
 
-inline void Object::SetAttributeNull(const ostring& name)
+inline void Object::SetAttributeNull(const String& name)
 {
     core::Check(OCI_ObjectSetNull(*this, name.c_str()));
 }
@@ -105,7 +105,13 @@ inline Object::ObjectType Object::GetType() const
 }
 
 template<class T>
-inline T Object::Get(const ostring& name) const
+inline std::optional<T> Object::GetOptional(const String& name) const
+{
+    return IsAttributeNull(name) ? std::nullopt : std::optional<T>(Get<T>(name));
+}
+
+template<class T>
+inline T Object::Get(const String& name) const
 {
     if      constexpr (std::is_same_v<T, bool>)      { return (core::Check(OCI_ObjectGetBoolean(*this, name.c_str())) == TRUE); }
     else if constexpr (std::is_same_v<T, Int16>)  { return core::Check(OCI_ObjectGetShort(*this, name.c_str())); }
@@ -117,7 +123,7 @@ inline T Object::Get(const ostring& name) const
     else if constexpr (std::is_same_v<T, Float>)      { return core::Check(OCI_ObjectGetFloat(*this, name.c_str())); }
     else if constexpr (std::is_same_v<T, Double>)     { return core::Check(OCI_ObjectGetDouble(*this, name.c_str())); }
     else if constexpr (std::is_same_v<T, Number>)     { return Number(core::Check(OCI_ObjectGetNumber(*this, name.c_str())), GetHandle()); }
-    else if constexpr (std::is_same_v<T, ostring>)    { return core::MakeString(core::Check(OCI_ObjectGetString(*this, name.c_str()))); }
+    else if constexpr (std::is_same_v<T, String>)    { return core::MakeString(core::Check(OCI_ObjectGetString(*this, name.c_str()))); }
     else if constexpr (std::is_same_v<T, Date>)       { return Date(core::Check(OCI_ObjectGetDate(*this, name.c_str())), GetHandle()); }
     else if constexpr (std::is_same_v<T, Timestamp>)  { return Timestamp(core::Check(OCI_ObjectGetTimestamp(*this, name.c_str())), GetHandle()); }
     else if constexpr (std::is_same_v<T, Interval>)   { return Interval(core::Check(OCI_ObjectGetInterval(*this, name.c_str())), GetHandle()); }
@@ -131,19 +137,22 @@ inline T Object::Get(const ostring& name) const
     {
         UInt32 size = core::Check(OCI_ObjectGetRawSize(*this, name.c_str()));
 
-        std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
+        Raw value(static_cast<Size>(size + 1));
 
-        size = static_cast<UInt32>(core::Check(OCI_ObjectGetRaw(*this, name.c_str(), static_cast<AnyPointer>(buffer.data()), size)));
+        size = static_cast<UInt32>(core::Check(OCI_ObjectGetRaw(*this, name.c_str(), static_cast<AnyPointer>(value.data()), size)));
+        value.resize(size);
 
-        return core::MakeRaw(buffer.data(), size);
+        return value;
     }
     else
     {
+        static_assert(core::IsCollectionV<T>, "Object::Get<T> only supports scalar types, Oracle object types and Collection<U>");
+
         return T(core::Check(OCI_ObjectGetColl(*this, name.c_str())), GetHandle()); }
 }
 
 template<class T>
-inline void Object::Set(const ostring& name, const T &value)
+inline void Object::Set(const String& name, const T &value)
 {
     if      constexpr (std::is_same_v<T, bool>)      { core::Check(OCI_ObjectSetBoolean(*this, name.c_str(), static_cast<OCI_Boolean>(value))); }
     else if constexpr (std::is_same_v<T, Int16>)  { core::Check(OCI_ObjectSetShort(*this, name.c_str(), value)); }
@@ -155,7 +164,7 @@ inline void Object::Set(const ostring& name, const T &value)
     else if constexpr (std::is_same_v<T, Float>)      { core::Check(OCI_ObjectSetFloat(*this, name.c_str(), value)); }
     else if constexpr (std::is_same_v<T, Double>)     { core::Check(OCI_ObjectSetDouble(*this, name.c_str(), value)); }
     else if constexpr (std::is_same_v<T, Number>)     { core::Check(OCI_ObjectSetNumber(*this, name.c_str(), value)); }
-    else if constexpr (std::is_same_v<T, ostring>)    { core::Check(OCI_ObjectSetString(*this, name.c_str(), value.c_str())); }
+    else if constexpr (std::is_same_v<T, String>)    { core::Check(OCI_ObjectSetString(*this, name.c_str(), value.c_str())); }
     else if constexpr (std::is_same_v<T, Date>)       { core::Check(OCI_ObjectSetDate(*this, name.c_str(), value)); }
     else if constexpr (std::is_same_v<T, Timestamp>)  { core::Check(OCI_ObjectSetTimestamp(*this, name.c_str(), value)); }
     else if constexpr (std::is_same_v<T, Interval>)   { core::Check(OCI_ObjectSetInterval(*this, name.c_str(), value)); }
@@ -176,7 +185,7 @@ inline void Object::Set(const ostring& name, const T &value)
         core::Check(OCI_ObjectSetColl(*this, name.c_str(), value)); }
 }
 
-inline ostring Object::ToString() const
+inline String Object::ToString() const
 {
     if (!IsNull())
     {       
@@ -184,7 +193,7 @@ inline ostring Object::ToString() const
         
         core::Check(OCI_ObjectToText(*this, &size, nullptr));
 
-        ostring result;
+        String result;
 
         result.resize(static_cast<Size>(size));
 

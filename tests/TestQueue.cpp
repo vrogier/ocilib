@@ -60,8 +60,8 @@ namespace TestCApi
         const auto obj_out = OCI_MsgGetObject(msg_out);
         ASSERT_NE(nullptr, obj_out);
 
-        ASSERT_EQ(ostring(OTEXT("NEXT MEETING")), ostring(OCI_ObjectGetString(obj_out, OTEXT("title"))));
-        ASSERT_EQ(ostring(OTEXT("12:00 PM IN STARBUCKS")), ostring(OCI_ObjectGetString(obj_out, OTEXT("content"))));
+        ASSERT_EQ(String(OTEXT("NEXT MEETING")), String(OCI_ObjectGetString(obj_out, OTEXT("title"))));
+        ASSERT_EQ(String(OTEXT("12:00 PM IN STARBUCKS")), String(OCI_ObjectGetString(obj_out, OTEXT("content"))));
 
         ASSERT_TRUE(OCI_EnqueueFree(enq));
         ASSERT_TRUE(OCI_DequeueFree(deq));
@@ -85,8 +85,8 @@ namespace TestCApi
         const auto obj_out = OCI_MsgGetObject(msg_out);
         ASSERT_NE(nullptr, obj_out);
 
-        ASSERT_EQ(ostring(OTEXT("NEXT MEETING")), ostring(OCI_ObjectGetString(obj_out, OTEXT("title"))));
-        ASSERT_EQ(ostring(OTEXT("12:00 PM IN STARBUCKS")), ostring(OCI_ObjectGetString(obj_out, OTEXT("content"))));
+        ASSERT_EQ(String(OTEXT("NEXT MEETING")), String(OCI_ObjectGetString(obj_out, OTEXT("title"))));
+        ASSERT_EQ(String(OTEXT("12:00 PM IN STARBUCKS")), String(OCI_ObjectGetString(obj_out, OTEXT("content"))));
     }
 
     TEST(TestQueue, MessageWithConsumers)
@@ -381,7 +381,7 @@ namespace TestCApi
         OCI_UInt32 sizeMsgIDOut = 100;
         ASSERT_TRUE(OCI_MsgGetID(msg_out, static_cast<void*>(msgIDOut), &sizeMsgIDOut));
 
-        ASSERT_EQ(ostring(msgIDIn), ostring(msgIDOut));
+        ASSERT_EQ(String(msgIDIn), String(msgIDOut));
         ASSERT_EQ(sizeMsgIDIn, sizeMsgIDOut);
 
         const auto obj_out = OCI_MsgGetObject(msg_out);

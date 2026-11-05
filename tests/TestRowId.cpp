@@ -22,10 +22,10 @@ namespace TestCApi
         ASSERT_TRUE(OCI_Immediate(conn, OTEXT("select rowid from TestRowIdFetch where code = 1"), OCI_ARG_TEXT, rowid1));
         ASSERT_TRUE(OCI_Immediate(conn, OTEXT("select rowid from TestRowIdFetch where code = 2"), OCI_ARG_TEXT, rowid2));
 
-        ASSERT_TRUE(ostring(rowid1).length() > 0);
-        ASSERT_TRUE(ostring(rowid2).length() > 0);
+        ASSERT_TRUE(String(rowid1).length() > 0);
+        ASSERT_TRUE(String(rowid2).length() > 0);
 
-        ASSERT_NE(ostring(rowid1), ostring(rowid2));
+        ASSERT_NE(String(rowid1), String(rowid2));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
@@ -53,7 +53,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_Immediate(conn, OTEXT("select rowid from TestRowIdBind where code = 2"), OCI_ARG_TEXT, rowid));
 
-        ASSERT_TRUE(ostring(rowid).length() > 0);
+        ASSERT_TRUE(String(rowid).length() > 0);
 
         ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select code, name, rowid from TestRowIdBind where rowid = :id")));
         ASSERT_NE(nullptr, OCI_BindString(stmt, OTEXT(":id"), rowid, OCI_SIZE_ROWID));
@@ -65,7 +65,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_FetchNext(rs));
 
         ASSERT_EQ(2, OCI_GetInt(rs, 1));
-        ASSERT_EQ(ostring(OTEXT("name 2")), OCI_GetString(rs, 2));
+        ASSERT_EQ(String(OTEXT("name 2")), OCI_GetString(rs, 2));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

@@ -67,7 +67,7 @@ namespace TestCppApi
         json.LoadText(OTEXT("null"));
 
         JsonNode str = json.CreateString(OTEXT("hello"));
-        ASSERT_EQ(ostring(OTEXT("hello")), str.GetString());
+        ASSERT_EQ(String(OTEXT("hello")), str.GetString());
 
         Number num(env, 1.5);
         JsonNode number = json.CreateNumber(num);

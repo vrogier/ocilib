@@ -149,13 +149,13 @@ namespace TestCApi
         const auto conn = OCI_PoolGetConnection(env, pool, OTEXT("mytag"));
         ASSERT_NE(nullptr, conn);
         ASSERT_TRUE(OCI_SetSessionTag(conn, OTEXT("mytag")));
-        ASSERT_EQ(ostring(OTEXT("mytag")), ostring(OCI_GetSessionTag(conn)));
+        ASSERT_EQ(String(OTEXT("mytag")), String(OCI_GetSessionTag(conn)));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
         const auto conn2 = OCI_PoolGetConnection(env, pool, OTEXT("mytag"));
         ASSERT_NE(nullptr, conn2);
-        ASSERT_EQ(ostring(OTEXT("mytag")), ostring(OCI_GetSessionTag(conn2)));
+        ASSERT_EQ(String(OTEXT("mytag")), String(OCI_GetSessionTag(conn2)));
         ASSERT_TRUE(OCI_ConnectionFree(conn2));
 
         ASSERT_TRUE(OCI_PoolFree(env, pool));

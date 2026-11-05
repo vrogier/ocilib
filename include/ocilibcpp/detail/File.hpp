@@ -41,7 +41,7 @@ namespace ocilib
         );
     }
 
-    inline File::File(const Connection& connection, const ostring& directory, const ostring& name)
+    inline File::File(const Connection& connection, const String& directory, const String& name)
     {
         AcquireAllocated
         (
@@ -122,17 +122,17 @@ namespace ocilib
         return (core::Check(OCI_FileExists(*this)) == TRUE);
     }
 
-    inline void File::SetInfos(const ostring& directory, const ostring& name)
+    inline void File::SetInfos(const String& directory, const String& name)
     {
         core::Check(OCI_FileSetName(*this, directory.c_str(), name.c_str()));
     }
 
-    inline ostring File::GetName() const
+    inline String File::GetName() const
     {
         return core::MakeString(core::Check(OCI_FileGetName(*this)));
     }
 
-    inline ostring File::GetDirectory() const
+    inline String File::GetDirectory() const
     {
         return core::MakeString(core::Check(OCI_FileGetDirectory(*this)));
     }

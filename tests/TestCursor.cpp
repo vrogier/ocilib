@@ -39,7 +39,7 @@ namespace TestCApi
                 otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
                 ASSERT_TRUE(OCI_DateToText(date, OTEXT("yyyymmdd"), OCI_SIZE_BUFFER, buffer));
 
-                ASSERT_EQ(ostring(OTEXT("19780430")), ostring(buffer));
+                ASSERT_EQ(String(OTEXT("19780430")), String(buffer));
             }
         }
 
@@ -80,7 +80,7 @@ namespace TestCApi
             row++;
 
             ASSERT_EQ(row, OCI_GetInt(rset, 1));
-            ASSERT_EQ(ostring(TO_STRING(row)), ostring(OCI_GetString(rset, 1)));
+            ASSERT_EQ(String(TO_STRING(row)), String(OCI_GetString(rset, 1)));
 
             ASSERT_TRUE(OCI_IsNull(rset, 2));
             ASSERT_TRUE(OCI_IsNullByName(rset, OTEXT("NULLABLE")));
@@ -97,8 +97,8 @@ namespace TestCApi
             ASSERT_EQ(0xAB, rawBuf[0]);
             ASSERT_EQ(0xCD, rawBuf[1]);
 
-            ASSERT_EQ(ostring(OTEXT("text")), ostring(OCI_GetString(rset, 4)));
-            ASSERT_EQ(ostring(OTEXT("12345")), ostring(OCI_GetString(rset, 5)));
+            ASSERT_EQ(String(OTEXT("text")), String(OCI_GetString(rset, 4)));
+            ASSERT_EQ(String(OTEXT("12345")), String(OCI_GetString(rset, 5)));
         }
 
         ASSERT_EQ(3, row);

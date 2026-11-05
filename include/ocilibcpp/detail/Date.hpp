@@ -57,7 +57,7 @@ inline Date& Date::operator= (const Date& other)
     return *this;
 }
 
-inline Date::Date(const Environment& env, const ostring& str, const ostring& format)
+inline Date::Date(const Environment& env, const String& str, const String& format)
 {
     Allocate(env.GetHandle(), env.GetEnvironmentHandle());
 
@@ -68,7 +68,7 @@ inline Date::Date(const Environment& env, const otext* str, const otext* format)
 {
     Allocate(env.GetHandle(), env.GetEnvironmentHandle());
 
-    FromString(ostring(str), ostring(format ? format : OTEXT("")));
+    FromString(String(str), String(format ? format : OTEXT("")));
 }
 
 inline Date::Date(OCI_Date *pDate, core::Handle *parent)
@@ -267,7 +267,7 @@ inline void Date::AddMonths(Int32 months)
     OCI_DateAddMonths(*this, months);
 }
 
-inline Date Date::NextDay(const ostring& day) const
+inline Date Date::NextDay(const String& day) const
 {
     Date result = Clone();
 
@@ -285,17 +285,17 @@ inline Date Date::LastDay() const
     return result;
 }
 
-inline void Date::ChangeTimeZone(const ostring& tzSrc, const ostring& tzDst)
+inline void Date::ChangeTimeZone(const String& tzSrc, const String& tzDst)
 {
     core::Check(OCI_DateZoneToZone(*this, tzSrc.c_str(), tzDst.c_str()));
 }
 
-inline void Date::FromString(const ostring& str, const ostring& format)
+inline void Date::FromString(const String& str, const String& format)
 {
     core::Check(OCI_DateFromText(*this, str.c_str(), format.empty() ?  core::MakeString(core::Check(OCI_GetFormat(GetEnvironment(), FormatDate))).c_str() : format.c_str()));
 }
 
-inline ostring Date::ToString(const ostring& format) const
+inline String Date::ToString(const String& format) const
 {
     if (!IsNull())
     {
@@ -311,7 +311,7 @@ inline ostring Date::ToString(const ostring& format) const
     return OCI_STRING_NULL;
 }
 
-inline ostring Date::ToString() const
+inline String Date::ToString() const
 {
     if (IsNull())
     {

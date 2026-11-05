@@ -18,13 +18,13 @@ namespace
         return json;
     }
 
-    ostring GetJsonText(OCI_Json* json)
+    String GetJsonText(OCI_Json* json)
     {
         OCI_UInt32 len = 0;
         if (!OCI_JsonToText(json, nullptr, &len, 0, TRUE))
         {
             ADD_FAILURE() << "OCI_JsonToText size query failed";
-            return ostring();
+            return String();
         }
 
         otext* buffer = new otext[len + 1];
@@ -33,11 +33,11 @@ namespace
         {
             delete[] buffer;
             ADD_FAILURE() << "OCI_JsonToText failed";
-            return ostring();
+            return String();
         }
         buffer[len2] = 0;
 
-        ostring result(buffer);
+        String result(buffer);
         delete[] buffer;
         return result;
     }
@@ -81,8 +81,8 @@ namespace TestCApi
         const auto fetchedByName = OCI_GetJsonByName(rs, OTEXT("VALUE"));
         ASSERT_NE(nullptr, fetchedByName);
 
-        ostring text = GetJsonText(fetched);
-        ASSERT_NE(ostring::npos, text.find(OTEXT("bound")));
+        String text = GetJsonText(fetched);
+        ASSERT_NE(String::npos, text.find(OTEXT("bound")));
 
         ASSERT_TRUE(OCI_StatementFree(stmt2));
         ASSERT_TRUE(OCI_JsonFree(json));
@@ -150,8 +150,8 @@ namespace TestCApi
         const auto out = OCI_GetJson(rs, 1);
         ASSERT_NE(nullptr, out);
 
-        ostring text = GetJsonText(out);
-        ASSERT_NE(ostring::npos, text.find(OTEXT("updated")));
+        String text = GetJsonText(out);
+        ASSERT_NE(String::npos, text.find(OTEXT("updated")));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_JsonFree(json));

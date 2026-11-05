@@ -117,7 +117,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SetTrace(con, OCI_TRC_MODULE, module));
         const otext* value = OCI_GetTrace(con, OCI_TRC_MODULE);
         ASSERT_NE(nullptr, value);
-        ASSERT_EQ(ostring(module), ostring(value));
+        ASSERT_EQ(String(module), String(value));
 
         ASSERT_TRUE(OCI_ConnectionFree(con));
 
@@ -275,7 +275,7 @@ namespace TestCApi
     TEST_P(TestConnectionTrace, SetAndGet)
     {
         ASSERT_TRUE(OCI_SetTrace(con, GetParam().type, GetParam().value));
-        ASSERT_EQ(ostring(GetParam().value), ostring(OCI_GetTrace(con, GetParam().type)));
+        ASSERT_EQ(String(GetParam().value), String(OCI_GetTrace(con, GetParam().type)));
     }
 
     INSTANTIATE_TEST_CASE_P(TraceTypes, TestConnectionTrace,

@@ -25,7 +25,7 @@ namespace TestCppApi
             ASSERT_FALSE(ex.GetStatement().IsNull());
             ASSERT_FALSE(ex.GetConnection().IsNull());
             ASSERT_EQ(0u, ex.GetRow());
-            ASSERT_TRUE(ex.GetMessage().find(OTEXT("ORA-00942")) != ostring::npos);
+            ASSERT_TRUE(ex.GetMessage().find(OTEXT("ORA-00942")) != String::npos);
 
             Exception ex2 = ex;
             Exception ex3 = ex;

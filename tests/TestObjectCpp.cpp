@@ -15,9 +15,9 @@ namespace TestCppApi
         Object obj(typinf);
 
         obj.Set<OCI_Int32>(OTEXT("code"), 1);
-        obj.Set<ostring>(OTEXT("name"), OTEXT("computer"));
+        obj.Set<String>(OTEXT("name"), OTEXT("computer"));
 
-        ostring expected = OTEXT("TestObjectToStringCpp(1, 'computer')");
+        String expected = OTEXT("TestObjectToStringCpp(1, 'computer')");
 
         ASSERT_EQ(ToUpper(expected), ToUpper(obj.ToString()));
 
@@ -29,6 +29,6 @@ namespace TestCppApi
     TEST(TestObjectCpp, NullToString)
     {
         Object obj;
-        ASSERT_EQ(ostring(OTEXT("NULL")), obj.ToString());
+        ASSERT_EQ(String(OTEXT("NULL")), obj.ToString());
     }
 }

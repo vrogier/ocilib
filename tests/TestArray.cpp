@@ -146,7 +146,7 @@ namespace TestCApi
         while (OCI_FetchNext(rslt))
         {
             count++;
-            ostring str = OTEXT("Name ") + TO_STRING(count);
+            String str = OTEXT("Name ") + TO_STRING(count);
             ASSERT_EQ(count, OCI_GetInt(rslt, 1));
             ASSERT_EQ(str, OCI_GetString(rslt, 2));
             ASSERT_EQ(0, OCI_DateCompare(sysdate, OCI_GetDate(rslt, 3)));

@@ -77,10 +77,10 @@ namespace TestCApi
         ASSERT_EQ(60, OCI_MsgGetExpiration(msg));
 
         ASSERT_TRUE(OCI_MsgSetCorrelation(msg, OTEXT("TestCorrelation")));
-        ASSERT_EQ(ostring(OTEXT("TestCorrelation")), ostring(OCI_MsgGetCorrelation(msg)));
+        ASSERT_EQ(String(OTEXT("TestCorrelation")), String(OCI_MsgGetCorrelation(msg)));
 
         ASSERT_TRUE(OCI_MsgSetExceptionQueue(msg, OTEXT("TestExceptionQueue")));
-        ASSERT_EQ(ostring(OTEXT("TestExceptionQueue")), ostring(OCI_MsgGetExceptionQueue(msg)));
+        ASSERT_EQ(String(OTEXT("TestExceptionQueue")), String(OCI_MsgGetExceptionQueue(msg)));
 
         ASSERT_TRUE(OCI_MsgReset(msg));
         ASSERT_TRUE(OCI_MsgFree(msg));
@@ -170,7 +170,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, sender);
 
         ASSERT_TRUE(OCI_MsgSetSender(msg, sender));
-        ASSERT_EQ(ostring(OTEXT("TestSender")), ostring(OCI_AgentGetName(OCI_MsgGetSender(msg))));
+        ASSERT_EQ(String(OTEXT("TestSender")), String(OCI_AgentGetName(OCI_MsgGetSender(msg))));
 
         ASSERT_TRUE(OCI_AgentFree(sender));
         ASSERT_TRUE(OCI_MsgFree(msg));

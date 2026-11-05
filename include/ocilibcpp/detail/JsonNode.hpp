@@ -51,12 +51,12 @@ namespace ocilib
         return core::Check(OCI_JsonNodeGetFieldCount(*this));
     }
 
-    inline ostring JsonNode::GetFieldName(UInt32 index) const
+    inline String JsonNode::GetFieldName(UInt32 index) const
     {
         return core::MakeString(core::Check(OCI_JsonNodeGetFieldName(*this, index)));
     }
 
-    inline JsonNode JsonNode::GetFieldByName(const ostring& name) const
+    inline JsonNode JsonNode::GetFieldByName(const String& name) const
     {
         return JsonNode(core::Check(OCI_JsonNodeGetFieldByName(*this, name.c_str())), GetHandle());
     }
@@ -66,7 +66,7 @@ namespace ocilib
         return JsonNode(core::Check(OCI_JsonNodeGetFieldByIndex(*this, index)), GetHandle());
     }
 
-    inline JsonNode JsonNode::GetField(const ostring& name) const
+    inline JsonNode JsonNode::GetField(const String& name) const
     {
         return GetFieldByName(name);
     }
@@ -86,7 +86,7 @@ namespace ocilib
         return JsonNode(core::Check(OCI_JsonNodeGetItem(*this, index)), GetHandle());
     }
 
-    inline JsonNode JsonNode::operator[](const ostring& name) const
+    inline JsonNode JsonNode::operator[](const String& name) const
     {
         return GetField(name);
     }
@@ -101,7 +101,7 @@ namespace ocilib
         return GetItem((UInt32)index);
     }
 
-    inline ostring JsonNode::GetString() const
+    inline String JsonNode::GetString() const
     {
         UInt32 length = 0;
         const otext* value = core::Check(OCI_JsonNodeGetString(*this, &length));
@@ -141,7 +141,7 @@ namespace ocilib
         return iv;
     }
 
-    inline void JsonNode::SetString(const ostring& value)
+    inline void JsonNode::SetString(const String& value)
     {
         core::Check(OCI_JsonNodeSetString(*this, value.c_str(), static_cast<UInt32>(value.size())));
     }
@@ -181,7 +181,7 @@ namespace ocilib
         core::Check(OCI_JsonNodeSetInterval(*this, value));
     }
 
-    inline void JsonNode::SetField(const ostring& name, const JsonNode& value)
+    inline void JsonNode::SetField(const String& name, const JsonNode& value)
     {
         core::Check(OCI_JsonNodeSetField(*this, name.c_str(), value));
     }
@@ -206,12 +206,12 @@ namespace ocilib
         core::Check(OCI_JsonNodeRemoveItem(*this, index));
     }
 
-    inline bool JsonNode::HasField(const ostring& name) const
+    inline bool JsonNode::HasField(const String& name) const
     {
         return TRUE == core::Check(OCI_JsonNodeHasField(*this, name.c_str()));
     }
 
-    inline void JsonNode::RemoveField(const ostring& name)
+    inline void JsonNode::RemoveField(const String& name)
     {
         core::Check(OCI_JsonNodeRemoveField(*this, name.c_str()));
     }
@@ -226,7 +226,7 @@ namespace ocilib
         return JsonNode(core::Check(OCI_JsonNodeGetParent(*this)), GetHandle());
     }
 
-    inline JsonNode JsonNode::GetByPath(const ostring& path) const
+    inline JsonNode JsonNode::GetByPath(const String& path) const
     {
         return JsonNode(core::Check(OCI_JsonNodeGetByPath(*this, path.c_str())), GetHandle());
     }

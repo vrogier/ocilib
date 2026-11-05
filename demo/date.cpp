@@ -4,7 +4,7 @@
 
 using namespace ocilib;
 
-const ostring format = "YYYY-MM-DD HH24:MI:SS";
+const String format = "YYYY-MM-DD HH24:MI:SS";
 
 int main()
 {

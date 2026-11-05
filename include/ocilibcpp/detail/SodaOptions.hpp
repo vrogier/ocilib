@@ -38,12 +38,12 @@ namespace ocilib
         AcquireAllocated(core::Check(OCI_SodaOptionsCreate(sdb)), sdb.GetHandle());
     }
 
-    inline void SodaOptions::SetKey(const ostring& key)
+    inline void SodaOptions::SetKey(const String& key)
     {
         core::Check(OCI_SodaOptionsSetKey(*this, key.c_str()));
     }
 
-    inline void SodaOptions::SetKeys(const std::vector<ostring>& keys)
+    inline void SodaOptions::SetKeys(const std::vector<String>& keys)
     {
         std::vector<const otext*> ptrs(keys.size());
 
@@ -55,12 +55,12 @@ namespace ocilib
         core::Check(OCI_SodaOptionsSetKeys(*this, ptrs.data(), static_cast<UInt32>(keys.size())));
     }
 
-    inline void SodaOptions::SetVersion(const ostring& version)
+    inline void SodaOptions::SetVersion(const String& version)
     {
         core::Check(OCI_SodaOptionsSetVersion(*this, version.c_str()));
     }
 
-    inline void SodaOptions::SetFilter(const ostring& filter)
+    inline void SodaOptions::SetFilter(const String& filter)
     {
         core::Check(OCI_SodaOptionsSetFilter(*this, filter.c_str()));
     }
@@ -80,7 +80,7 @@ namespace ocilib
         core::Check(OCI_SodaOptionsSetFetchArraySize(*this, count));
     }
 
-    inline void SodaOptions::SetHint(const ostring& hint)
+    inline void SodaOptions::SetHint(const String& hint)
     {
         core::Check(OCI_SodaOptionsSetHint(*this, hint.c_str()));
     }

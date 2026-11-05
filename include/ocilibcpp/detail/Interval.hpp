@@ -58,7 +58,7 @@ inline Interval& Interval::operator= (const Interval& other)
     return *this;
 }
 
-inline Interval::Interval(const Environment& env, IntervalType type, const ostring& data)
+inline Interval::Interval(const Environment& env, IntervalType type, const String& data)
 {
     AcquireAllocated
     (
@@ -267,17 +267,17 @@ inline void Interval::SetYearMonth(Int32 year, Int32 month)
     core::Check(OCI_IntervalSetYearMonth(*this, year, month));
 }
 
-inline void Interval::UpdateTimeZone(const ostring& timeZone)
+inline void Interval::UpdateTimeZone(const String& timeZone)
 {
     core::Check(OCI_IntervalFromTimeZone(*this, timeZone.c_str()));
 }
 
-inline void Interval::FromString(const ostring& data)
+inline void Interval::FromString(const String& data)
 {
     core::Check(OCI_IntervalFromText(*this, data.c_str()));
 }
 
-inline ostring Interval::ToString(Int32 leadingPrecision, Int32 fractionPrecision) const
+inline String Interval::ToString(Int32 leadingPrecision, Int32 fractionPrecision) const
 {
     if (!IsNull())
     {
@@ -293,7 +293,7 @@ inline ostring Interval::ToString(Int32 leadingPrecision, Int32 fractionPrecisio
     return OCI_STRING_NULL;
 }
 
-inline ostring Interval::ToString() const
+inline String Interval::ToString() const
 {
     return ToString(OCI_STRING_DEFAULT_PREC, OCI_STRING_DEFAULT_PREC);
 }

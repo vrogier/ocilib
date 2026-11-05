@@ -26,7 +26,7 @@ namespace TestCApi
         const auto sub = OCI_SubscriptionRegister(conn, OTEXT("TestRegisterSecureModeId"), OCI_CNT_ALL, OnSubscriptionEvent, OCI_SRM_SECURE_NOTIFICATION, 120);
         ASSERT_NE(nullptr, sub);
     
-        ASSERT_EQ(ostring(OTEXT("TestRegisterSecureModeId")), ostring(OCI_SubscriptionGetName(sub)));
+        ASSERT_EQ(String(OTEXT("TestRegisterSecureModeId")), String(OCI_SubscriptionGetName(sub)));
         ASSERT_EQ(conn, OCI_SubscriptionGetConnection(sub));
         ASSERT_EQ(120u, OCI_SubscriptionGetTimeout(sub));
 
@@ -68,7 +68,7 @@ namespace TestCppApi
             OnSubscriptionEventCpp, ocilib::Subscription::ModeSecureNotification);
 
         ASSERT_FALSE(sub.IsNull());
-        ASSERT_TRUE(sub.GetName() == ostring(OTEXT("TestSubscriptionSecureSubCpp")));
+        ASSERT_TRUE(sub.GetName() == String(OTEXT("TestSubscriptionSecureSubCpp")));
 
         ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestSubscriptionData")));
         ASSERT_TRUE(OCI_SubscriptionAddStatement(sub, stmt));

@@ -8,7 +8,7 @@ using namespace ocilib;
 
 void print_product(const Object &product)
 {
-    std::cout << "...product: " << product.Get<OCI_Int32>("code") << " - " << product.Get<ostring>("name") << std::endl;
+    std::cout << "...product: " << product.Get<OCI_Int32>("code") << " - " << product.Get<String>("name") << std::endl;
 }
 
 void print_coll_by_iterator(Collection<Object> &coll)
@@ -71,7 +71,7 @@ void bind_coll(Connection &con, Environment &env)
 }
 
 template <class T>
-void fetch_coll(Connection &con, ostring table_name, T func, Environment &env)
+void fetch_coll(Connection &con, String table_name, T func, Environment &env)
 {
     Statement st(con);
 
@@ -79,7 +79,7 @@ void fetch_coll(Connection &con, ostring table_name, T func, Environment &env)
     Resultset rs = st.GetResultset();
     while (rs++)
     {
-        std::cout << "#" << rs.Get<ostring>(1) << std::endl;
+        std::cout << "#" << rs.Get<String>(1) << std::endl;
 
         func(rs.Get<Collection<Object>>(2));
     }

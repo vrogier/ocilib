@@ -106,12 +106,12 @@ inline Vector::VectorFormat Vector::GetFormat()
     return VectorFormat(static_cast<VectorFormat::Type>(format));
 };
 
-inline void Vector::FromString(const ostring& str, VectorFormat format, UInt32 dimensions)
+inline void Vector::FromString(const String& str, VectorFormat format, UInt32 dimensions)
 {
     core::Check(OCI_VectorFromText(*this, str.c_str(), static_cast<UInt32>(str.size()), format, dimensions));
 }
 
-inline ostring Vector::ToString() const
+inline String Vector::ToString() const
 {
     if (!IsNull())
     {       
@@ -119,7 +119,7 @@ inline ostring Vector::ToString() const
         
         core::Check(OCI_VectorToText(*this, &size, nullptr));
 
-        ostring result;
+        String result;
 
         result.resize(static_cast<Size>(size));
 

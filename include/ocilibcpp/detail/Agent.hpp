@@ -25,7 +25,7 @@
 namespace ocilib
 {
 
-inline Agent::Agent(const Connection &connection, const ostring& name, const ostring& address)
+inline Agent::Agent(const Connection &connection, const String& name, const String& address)
 {
     AcquireAllocated
     (
@@ -39,22 +39,22 @@ inline Agent::Agent(OCI_Agent *pAgent, core::Handle *parent)
     AcquireTransient(pAgent, parent);
 }
 
-inline ostring Agent::GetName() const
+inline String Agent::GetName() const
 {
     return core::MakeString(core::Check(OCI_AgentGetName(*this)));
 }
 
-inline void Agent::SetName(const ostring& value)
+inline void Agent::SetName(const String& value)
 {
     core::Check(OCI_AgentSetName(*this, value.c_str()));
 }
 
-inline ostring Agent::GetAddress() const
+inline String Agent::GetAddress() const
 {
     return core::MakeString(core::Check(OCI_AgentGetAddress(*this)));
 }
 
-inline void Agent::SetAddress(const ostring& value)
+inline void Agent::SetAddress(const String& value)
 {
     core::Check(OCI_AgentSetAddress(*this, value.c_str()));
 }

@@ -7,7 +7,7 @@ namespace TestCApi
     {
         ASSERT_EQ(index, OCI_GetCurrentRow(rslt));
         ASSERT_EQ(index, OCI_GetInt(rslt, 1));
-        ASSERT_EQ(ostring(OTEXT("Row ")) + TO_STRING(index), ostring(OCI_GetString(rslt, 2)));
+        ASSERT_EQ(String(OTEXT("Row ")) + TO_STRING(index), String(OCI_GetString(rslt, 2)));
     }
 
     TEST(TestScrollableCursor, Fetch)

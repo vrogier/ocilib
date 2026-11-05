@@ -60,7 +60,7 @@ namespace TestCApi
         ASSERT_EQ(5, OCI_DequeueGetWaitTime(deq));
 
         ASSERT_TRUE(OCI_DequeueSetConsumer(deq, OTEXT("test_consumer")));
-        ASSERT_EQ(ostring(OTEXT("test_consumer")), ostring(OCI_DequeueGetConsumer(deq)));
+        ASSERT_EQ(String(OTEXT("test_consumer")), String(OCI_DequeueGetConsumer(deq)));
         ASSERT_TRUE(OCI_DequeueSetConsumer(deq, nullptr));
 
         const unsigned char msgId[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10 };
@@ -79,7 +79,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_AgentFree(agent));
 
         ASSERT_TRUE(OCI_DequeueSetCorrelation(deq, OTEXT("test_corr")));
-        ASSERT_EQ(ostring(OTEXT("test_corr")), ostring(OCI_DequeueGetCorrelation(deq)));
+        ASSERT_EQ(String(OTEXT("test_corr")), String(OCI_DequeueGetCorrelation(deq)));
 
         // Reset correlation so that the previously enqueued message can be dequeued
         ASSERT_TRUE(OCI_DequeueSetCorrelation(deq, NULL));
@@ -102,8 +102,8 @@ namespace TestCApi
         const auto obj_out = OCI_MsgGetObject(msg_out);
         ASSERT_NE(nullptr, obj_out);
 
-        ASSERT_EQ(ostring(OTEXT("Dequeue test")), ostring(OCI_ObjectGetString(obj_out, OTEXT("title"))));
-        ASSERT_EQ(ostring(OTEXT("world")), ostring(OCI_ObjectGetString(obj_out, OTEXT("content"))));
+        ASSERT_EQ(String(OTEXT("Dequeue test")), String(OCI_ObjectGetString(obj_out, OTEXT("title"))));
+        ASSERT_EQ(String(OTEXT("world")), String(OCI_ObjectGetString(obj_out, OTEXT("content"))));
 
         ASSERT_TRUE(OCI_DequeueFree(deq));
 
@@ -189,7 +189,7 @@ namespace TestCApi
         const auto heard = OCI_DequeueListen(deq, 10);
         if (heard)
         {
-            ASSERT_EQ(ostring(OTEXT("SUB_CONSUMER")), ostring(OCI_AgentGetName(heard)));
+            ASSERT_EQ(String(OTEXT("SUB_CONSUMER")), String(OCI_AgentGetName(heard)));
         }
 
         ASSERT_TRUE(OCI_DequeueFree(deq));

@@ -50,13 +50,13 @@ namespace TestCppApi
         ++n8;
         ASSERT_EQ(124, static_cast<OCI_Int32>(n8));
 
-        ostring str = n1.ToString();
+        String str = n1.ToString();
         ASSERT_FALSE(str.empty());
 
-        ostring str2 = n1.ToString(OTEXT("999"));
-        ASSERT_EQ(ostring(OTEXT(" 123")), str2);
+        String str2 = n1.ToString(OTEXT("999"));
+        ASSERT_EQ(String(OTEXT(" 123")), str2);
 
-        Number n10(env, ostring(OTEXT("789")), ostring(OTEXT("999")));
+        Number n10(env, String(OTEXT("789")), String(OTEXT("999")));
         ASSERT_EQ(789, static_cast<OCI_Int32>(n10));
 
         Number n11(env, OTEXT("-42"), OTEXT("S999"));
@@ -66,6 +66,6 @@ namespace TestCppApi
     TEST(TestNumberCpp, NullToString)
     {
         Number n;
-        ASSERT_EQ(ostring(OTEXT("NULL")), n.ToString());
+        ASSERT_EQ(String(OTEXT("NULL")), n.ToString());
     }
 }

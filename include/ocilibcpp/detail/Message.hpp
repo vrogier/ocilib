@@ -168,22 +168,22 @@ inline void Message::SetOriginalID(const Raw &value)
     core::Check(OCI_MsgSetOriginalID(*this, data, static_cast<UInt32>(value.size())));
 }
 
-inline ostring Message::GetCorrelation() const
+inline String Message::GetCorrelation() const
 {
     return core::MakeString(core::Check(OCI_MsgGetCorrelation(*this)));
 }
 
-inline void Message::SetCorrelation(const ostring& value)
+inline void Message::SetCorrelation(const String& value)
 {
     core::Check(OCI_MsgSetCorrelation(*this, value.c_str()));
 }
 
-inline ostring Message::GetExceptionQueue() const
+inline String Message::GetExceptionQueue() const
 {
     return core::MakeString(core::Check(OCI_MsgGetExceptionQueue(*this)));
 }
 
-inline void Message::SetExceptionQueue(const ostring& value)
+inline void Message::SetExceptionQueue(const String& value)
 {
     core::Check(OCI_MsgSetExceptionQueue(*this, value.c_str()));
 }

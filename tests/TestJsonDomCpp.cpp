@@ -7,7 +7,7 @@ using namespace ocilib;
 namespace TestCppApi
 {
 
-    static Json MakeJson(const Connection& con, const ostring& text)
+    static Json MakeJson(const Connection& con, const String& text)
     {
         Json json(con);
         json.LoadText(text);
@@ -36,14 +36,14 @@ namespace TestCppApi
         JsonNode verify = json.GetRoot();
         ASSERT_EQ(Json::NodeObject, verify.GetType());
         ASSERT_EQ(1u, verify.GetFieldCount());
-        ASSERT_EQ(ostring(OTEXT("name")), verify.GetFieldName(1));
+        ASSERT_EQ(String(OTEXT("name")), verify.GetFieldName(1));
 
         JsonNode nameField = verify.GetFieldByName(OTEXT("name"));
         ASSERT_EQ(Json::NodeString, nameField.GetType());
-        ASSERT_EQ(ostring(OTEXT("test")), nameField.GetString());
+        ASSERT_EQ(String(OTEXT("test")), nameField.GetString());
 
         JsonNode nameField2 = verify.GetField(OTEXT("name"));
-        ASSERT_EQ(ostring(OTEXT("test")), nameField2.GetString());
+        ASSERT_EQ(String(OTEXT("test")), nameField2.GetString());
     }
     TEST(TestJsonDomCpp, DomNavigation)
     {
@@ -57,18 +57,18 @@ namespace TestCppApi
         ASSERT_EQ(Json::NodeObject, root.GetType());
         ASSERT_EQ(2u, root.GetFieldCount());
 
-        ostring fieldName = root.GetFieldName(1);
+        String fieldName = root.GetFieldName(1);
         ASSERT_FALSE(fieldName.empty());
 
         JsonNode name = root.GetFieldByName(OTEXT("name"));
         ASSERT_EQ(Json::NodeString, name.GetType());
-        ASSERT_EQ(ostring(OTEXT("test")), name.GetString());
+        ASSERT_EQ(String(OTEXT("test")), name.GetString());
 
         JsonNode name2 = root.GetField(OTEXT("name"));
-        ASSERT_EQ(ostring(OTEXT("test")), name2.GetString());
+        ASSERT_EQ(String(OTEXT("test")), name2.GetString());
 
         JsonNode name3 = root[OTEXT("name")];
-        ASSERT_EQ(ostring(OTEXT("test")), name3.GetString());
+        ASSERT_EQ(String(OTEXT("test")), name3.GetString());
 
         JsonNode items = root.GetFieldByIndex(2);
         ASSERT_EQ(Json::NodeArray, items.GetType());
@@ -93,15 +93,15 @@ namespace TestCppApi
 
         /* iterating an object node yields its fields in order */
 
-        std::vector<ostring> fieldNames;
+        std::vector<String> fieldNames;
         OCI_UInt32 index = 1;
         for (const JsonNode& field : root)
         {
             fieldNames.push_back(root.GetFieldName(index++));
         }
         ASSERT_EQ(2u, fieldNames.size());
-        ASSERT_EQ(ostring(OTEXT("name")), fieldNames[0]);
-        ASSERT_EQ(ostring(OTEXT("items")), fieldNames[1]);
+        ASSERT_EQ(String(OTEXT("name")), fieldNames[0]);
+        ASSERT_EQ(String(OTEXT("items")), fieldNames[1]);
 
         /* iterating an array node yields its items in order */
 
@@ -134,12 +134,12 @@ namespace TestCppApi
         JsonNode generic = json.CreateNode(Json::NodeString);
         ASSERT_EQ(Json::NodeString, generic.GetType());
         generic.SetString(OTEXT("generic"));
-        ASSERT_EQ(ostring(OTEXT("generic")), generic.GetString());
+        ASSERT_EQ(String(OTEXT("generic")), generic.GetString());
         root.SetField(OTEXT("generic"), generic);
 
         JsonNode str = json.CreateString(OTEXT("old"));
         str.SetString(OTEXT("new"));
-        ASSERT_EQ(ostring(OTEXT("new")), str.GetString());
+        ASSERT_EQ(String(OTEXT("new")), str.GetString());
         root.SetField(OTEXT("str"), str);
 
         Number num(env, 3.14);
@@ -266,7 +266,7 @@ namespace TestCppApi
 
         JsonNode verifyItem = arr.GetItem(2);
         ASSERT_EQ(Json::NodeString, verifyItem.GetType());
-        ASSERT_EQ(ostring(OTEXT("three")), verifyItem.GetString());
+        ASSERT_EQ(String(OTEXT("three")), verifyItem.GetString());
 
         root.SetField(OTEXT("arr"), arr);
 
@@ -293,7 +293,7 @@ namespace TestCppApi
         obj.SetField(OTEXT("name"), name);
         ASSERT_EQ(1u, obj.GetFieldCount());
         JsonNode back = obj.GetField(OTEXT("name"));
-        ASSERT_EQ(ostring(OTEXT("test")), back.GetString());
+        ASSERT_EQ(String(OTEXT("test")), back.GetString());
         obj.RemoveField(OTEXT("name"));
         ASSERT_EQ(0u, obj.GetFieldCount());
 
@@ -308,7 +308,7 @@ namespace TestCppApi
         JsonNode s2 = json.CreateString(OTEXT("two"));
         arr.InsertItem(1, s2);
         ASSERT_EQ(3u, arr.GetItemCount());
-        ASSERT_EQ(ostring(OTEXT("two")), arr.GetItem(2).GetString());
+        ASSERT_EQ(String(OTEXT("two")), arr.GetItem(2).GetString());
         arr.RemoveItem(1);
         ASSERT_EQ(2u, arr.GetItemCount());
 

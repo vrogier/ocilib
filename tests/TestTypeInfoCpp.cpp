@@ -14,7 +14,7 @@ namespace TestCppApi
         TypeInfo typeInfo(conn, OTEXT("TestTypeInfoCovType"), TypeInfo::TypeInfoType(TypeInfo::Type));
 
         ASSERT_TRUE(typeInfo.GetType() == TypeInfo::Type);
-        ASSERT_EQ(ostring(OTEXT("TESTTYPEINFOCOVTYPE")), ToUpper(typeInfo.GetName()));
+        ASSERT_EQ(String(OTEXT("TESTTYPEINFOCOVTYPE")), ToUpper(typeInfo.GetName()));
         ASSERT_TRUE(typeInfo.GetConnection());
         ASSERT_EQ(2u, typeInfo.GetColumnCount());
         ASSERT_TRUE(typeInfo.IsFinalType());

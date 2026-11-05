@@ -33,7 +33,7 @@ inline XmlType::XmlType(OCI_XmlType *pXmlType, core::Handle *parent)
     AcquireTransient(pXmlType, parent);
 }
 
-inline ostring XmlType::ToString() const
+inline String XmlType::ToString() const
 {
     if (!IsNull())
     {
@@ -41,7 +41,7 @@ inline ostring XmlType::ToString() const
 
         if (size > 0)
         {
-            return ostring(core::Check(OCI_XmlTypeGetContent(*this)), static_cast<Size>(size));
+            return String(core::Check(OCI_XmlTypeGetContent(*this)), static_cast<Size>(size));
         }
 
         return {};

@@ -37,7 +37,7 @@ inline Timestamp::Timestamp(const Environment& env, TimestampType type)
     Allocate(env.GetHandle(), type, env.GetEnvironmentHandle());
 }
 
-inline Timestamp::Timestamp(const Environment& env, TimestampType type, const ostring& data, const ostring& format)
+inline Timestamp::Timestamp(const Environment& env, TimestampType type, const String& data, const String& format)
 {
     AcquireAllocated
     (
@@ -106,7 +106,7 @@ inline Timestamp::TimestampType Timestamp::GetType() const
     return TimestampType(static_cast<TimestampType::Type>(core::Check(OCI_TimestampGetType(*this))));
 }
 
-inline void Timestamp::SetDateTime(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 min, Int32 sec, Int32 fsec, const ostring& timeZone)
+inline void Timestamp::SetDateTime(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 min, Int32 sec, Int32 fsec, const String& timeZone)
 {
     core::Check(OCI_TimestampConstruct(*this, year, month, day, hour, min,sec, fsec, timeZone.c_str()));
 }
@@ -271,7 +271,7 @@ inline void Timestamp::SetTime(Int32 hour, Int32 min, Int32 sec, Int32 fsec)
     SetDateTime(year, month, day, hour, min, sec, fsec);
 }
 
-inline void Timestamp::SetTimeZone(const ostring& timeZone)
+inline void Timestamp::SetTimeZone(const String& timeZone)
 {
     if (GetType() == WithTimeZone)
     {
@@ -282,7 +282,7 @@ inline void Timestamp::SetTimeZone(const ostring& timeZone)
     }
 }
 
-inline ostring Timestamp::GetTimeZone() const
+inline String Timestamp::GetTimeZone() const
 {
     if (GetType() != NoTimeZone)
     {
@@ -295,7 +295,7 @@ inline ostring Timestamp::GetTimeZone() const
         return core::MakeString(static_cast<const otext*>(buffer.data()));
     }
 
-    return ostring();
+    return String();
 }
 
 inline void Timestamp::GetTimeZoneOffset(Int32 &hour, Int32 &min) const
@@ -317,12 +317,12 @@ inline Timestamp Timestamp::SysTimestamp(const Environment& env, TimestampType t
     return result;
 }
 
-inline void Timestamp::FromString(const ostring& data, const ostring& format)
+inline void Timestamp::FromString(const String& data, const String& format)
 {
     core::Check(OCI_TimestampFromText(*this, data.c_str(), format.empty() ?  core::MakeString(core::Check(OCI_GetFormat(GetEnvironment(), FormatTimestamp))).c_str() : format.c_str()));
 }
 
-inline ostring Timestamp::ToString(const ostring& format, Int32 precision = OCI_STRING_DEFAULT_PREC) const
+inline String Timestamp::ToString(const String& format, Int32 precision = OCI_STRING_DEFAULT_PREC) const
 {
     if (!IsNull())
     {
@@ -338,7 +338,7 @@ inline ostring Timestamp::ToString(const ostring& format, Int32 precision = OCI_
     return OCI_STRING_NULL;
 }
 
-inline ostring Timestamp::ToString() const
+inline String Timestamp::ToString() const
 {
     if (IsNull())
     {

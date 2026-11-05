@@ -34,13 +34,13 @@ inline Pool::Pool()
 
 }
 
-inline Pool::Pool(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Pool::PoolType poolType,
+inline Pool::Pool(const Environment& env, const String& db, const String& user, const String& pwd, Pool::PoolType poolType,
         UInt32 minSize, UInt32 maxSize, UInt32 increment, Environment::SessionFlags sessionFlags)
 {
     Open(env, db, user, pwd, poolType, minSize, maxSize, increment, sessionFlags);
 }
 
-inline void Pool::Open(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Pool::PoolType poolType,
+inline void Pool::Open(const Environment& env, const String& db, const String& user, const String& pwd, Pool::PoolType poolType,
             UInt32 minSize, UInt32 maxSize, UInt32 increment, Environment::SessionFlags sessionFlags)
 {
     Release();
@@ -60,12 +60,12 @@ inline void Pool::Close()
     Release();
 }
 
-inline Connection Pool::GetConnection(const ostring& sessionTag)
+inline Connection Pool::GetConnection(const String& sessionTag)
 {
     return Connection(core::Check(OCI_PoolGetConnection(GetEnvironment(), *this, sessionTag.c_str())), GetHandle(), true);
 }
 
-inline Connection Pool::GetConnection(const ostring& sessionTag, const ShardingKey& skey, const ShardingKey& sskey)
+inline Connection Pool::GetConnection(const String& sessionTag, const ShardingKey& skey, const ShardingKey& sskey)
 {
     return Connection(core::Check(OCI_PoolGetConnectionSharded(GetEnvironment(), *this, sessionTag.c_str(), skey, sskey)), GetHandle(), true);
 }

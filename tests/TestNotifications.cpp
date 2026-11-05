@@ -14,9 +14,9 @@ namespace TestCApi
 
     struct Event
     {
-        ostring SubName;
-        ostring DatabaseName;
-        ostring ObjectName;
+        String SubName;
+        String DatabaseName;
+        String ObjectName;
         OCI_UInt32 Type;
         OCI_UInt32 Operation;
     };
@@ -27,7 +27,7 @@ namespace TestCApi
         {
             OTEXT("sub-1"),
             DBSNAME,
-            ostring(USR) + OTEXT(".TestTableSingleDDL1"),
+            String(USR) + OTEXT(".TestTableSingleDDL1"),
             OCI_ENT_OBJECT_CHANGED,
             OCI_ONT_ALTER
         }
@@ -39,7 +39,7 @@ namespace TestCApi
         {
             OTEXT("sub-2"),
             DBSNAME,
-            ostring(USR) + OTEXT(".TestTableSingleDDL2"),
+            String(USR) + OTEXT(".TestTableSingleDDL2"),
             OCI_ENT_OBJECT_CHANGED,
             OCI_ONT_ALTER
         },
@@ -47,7 +47,7 @@ namespace TestCApi
         {
             OTEXT("sub-2"),
             DBSNAME,
-            ostring(USR) + OTEXT(".TestTableSingleDDL2"),
+            String(USR) + OTEXT(".TestTableSingleDDL2"),
             OCI_ENT_OBJECT_CHANGED,
             OCI_ONT_ALTER
         }
@@ -59,7 +59,7 @@ namespace TestCApi
         {
             OTEXT("sub-3"),
             DBSNAME,
-            ostring(USR) + OTEXT(".TestTableMultipleDDLTable1"),
+            String(USR) + OTEXT(".TestTableMultipleDDLTable1"),
             OCI_ENT_OBJECT_CHANGED,
             OCI_ONT_ALTER
         },
@@ -67,7 +67,7 @@ namespace TestCApi
         {
             OTEXT("sub-3"),
             DBSNAME,
-            ostring(USR) + OTEXT(".TestTableMultipleDDLTable2"),
+            String(USR) + OTEXT(".TestTableMultipleDDLTable2"),
             OCI_ENT_OBJECT_CHANGED,
             OCI_ONT_ALTER
         }
@@ -79,7 +79,7 @@ namespace TestCApi
         {
             OTEXT("sub-4"),
             DBSNAME,
-            ostring(USR) + OTEXT(".TestTableMultipleDML"),
+            String(USR) + OTEXT(".TestTableMultipleDML"),
             OCI_ENT_OBJECT_CHANGED,
             OCI_ONT_INSERT
         },
@@ -87,7 +87,7 @@ namespace TestCApi
         {
             OTEXT("sub-4"),
             DBSNAME,
-            ostring(USR) + OTEXT(".TestTableMultipleDML"),
+            String(USR) + OTEXT(".TestTableMultipleDML"),
             OCI_ENT_OBJECT_CHANGED,
             OCI_ONT_INSERT
         },
@@ -95,7 +95,7 @@ namespace TestCApi
         {
             OTEXT("sub-4"),
             DBSNAME,
-            ostring(USR) + OTEXT(".TestTableMultipleDML"),
+            String(USR) + OTEXT(".TestTableMultipleDML"),
             OCI_ENT_OBJECT_CHANGED,
             OCI_ONT_UPDATE
         },
@@ -103,7 +103,7 @@ namespace TestCApi
         {
             OTEXT("sub-4"),
             DBSNAME,
-            ostring(USR) + OTEXT(".TestTableMultipleDML"),
+            String(USR) + OTEXT(".TestTableMultipleDML"),
             OCI_ENT_OBJECT_CHANGED,
             OCI_ONT_DELETE
         },
@@ -111,7 +111,7 @@ namespace TestCApi
         {
             OTEXT("sub-4"),
             DBSNAME,
-            ostring(USR) + OTEXT(".TestTableMultipleDML"),
+            String(USR) + OTEXT(".TestTableMultipleDML"),
             OCI_ENT_OBJECT_CHANGED,
             OCI_ONT_DELETE
         }

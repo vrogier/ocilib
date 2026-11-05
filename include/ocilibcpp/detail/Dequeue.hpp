@@ -29,7 +29,7 @@
 namespace ocilib
 {
     
-inline Dequeue::Dequeue(const TypeInfo &typeInfo, const ostring& queueName)
+inline Dequeue::Dequeue(const TypeInfo &typeInfo, const String& queueName)
 {
     Connection connection = typeInfo.GetConnection();
 
@@ -55,22 +55,22 @@ inline Agent Dequeue::Listen(Int32 timeout)
     return Agent(core::Check(OCI_DequeueListen(*this, timeout)), nullptr);
 }
 
-inline ostring Dequeue::GetConsumer() const
+inline String Dequeue::GetConsumer() const
 {
     return core::MakeString(core::Check(OCI_DequeueGetConsumer(*this)));
 }
 
-inline void Dequeue::SetConsumer(const ostring& value)
+inline void Dequeue::SetConsumer(const String& value)
 {
     core::Check(OCI_DequeueSetConsumer(*this, value.c_str()));
 }
 
-inline ostring Dequeue::GetCorrelation() const
+inline String Dequeue::GetCorrelation() const
 {
     return core::MakeString(core::Check(OCI_DequeueGetCorrelation(*this)));
 }
 
-inline void Dequeue::SetCorrelation(const ostring& value)
+inline void Dequeue::SetCorrelation(const String& value)
 {
     core::Check(OCI_DequeueSetCorrelation(*this, value.c_str()));
 }

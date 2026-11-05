@@ -58,7 +58,7 @@ namespace TestCApi
         {
             const auto col = OCI_GetColumn(rs, spec.index);
             ASSERT_NE(nullptr, col);
-            ASSERT_EQ(ostring(spec.sqlType), ostring(OCI_ColumnGetSQLType(col)));
+            ASSERT_EQ(String(spec.sqlType), String(OCI_ColumnGetSQLType(col)));
             ASSERT_EQ(spec.datatype, OCI_ColumnGetType(col));
             ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
         }
@@ -314,11 +314,11 @@ namespace TestCApi
         const auto col = OCI_GetColumn(rs, 1);
         ASSERT_NE(nullptr, col);
         ASSERT_EQ(OCI_CDT_XMLTYPE, OCI_ColumnGetType(col));
-        ASSERT_EQ(ostring(OTEXT("XMLTYPE")), ostring(OCI_ColumnGetSQLType(col)));
+        ASSERT_EQ(String(OTEXT("XMLTYPE")), String(OCI_ColumnGetSQLType(col)));
 
         otext buffer[OCI_SIZE_BUFFER];
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("XMLTYPE")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("XMLTYPE")), String(buffer));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
@@ -394,11 +394,11 @@ namespace TestCApi
         ASSERT_NE(nullptr, col);
         ASSERT_EQ(OCI_CDT_LONG, OCI_ColumnGetType(col));
         ASSERT_EQ(OCI_CLONG, OCI_ColumnGetSubType(col));
-        ASSERT_EQ(ostring(OTEXT("LONG")), ostring(OCI_ColumnGetSQLType(col)));
+        ASSERT_EQ(String(OTEXT("LONG")), String(OCI_ColumnGetSQLType(col)));
 
         otext buffer[OCI_SIZE_BUFFER];
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("LONG")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("LONG")), String(buffer));
 
         /* implicit mode maps LONG to OCI_CDT_TEXT */
 
@@ -437,11 +437,11 @@ namespace TestCApi
         const auto col = OCI_GetColumn(rs, 1);
         ASSERT_NE(nullptr, col);
         ASSERT_EQ(OCI_CDT_CURSOR, OCI_ColumnGetType(col));
-        ASSERT_EQ(ostring(OTEXT("RESULTSET")), ostring(OCI_ColumnGetSQLType(col)));
+        ASSERT_EQ(String(OTEXT("RESULTSET")), String(OCI_ColumnGetSQLType(col)));
 
         otext buffer[OCI_SIZE_BUFFER];
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("RESULTSET")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("RESULTSET")), String(buffer));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
@@ -472,19 +472,19 @@ namespace TestCApi
 
         auto col = OCI_GetColumn(rs, 1);
         ASSERT_EQ(OCI_CDT_OBJECT, OCI_ColumnGetType(col));
-        ASSERT_EQ(ToUpper(ostring(OTEXT("TestColObj"))), ToUpper(ostring(OCI_ColumnGetSQLType(col))));
+        ASSERT_EQ(ToUpper(String(OTEXT("TestColObj"))), ToUpper(String(OCI_ColumnGetSQLType(col))));
         ASSERT_NE(nullptr, OCI_ColumnGetTypeInfo(col));
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
 
         col = OCI_GetColumn(rs, 2);
         ASSERT_EQ(OCI_CDT_REF, OCI_ColumnGetType(col));
-        ASSERT_EQ(ostring(OTEXT("REF")), ostring(OCI_ColumnGetSQLType(col)));
+        ASSERT_EQ(String(OTEXT("REF")), String(OCI_ColumnGetSQLType(col)));
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
         ASSERT_NE(nullptr, OCI_ColumnGetTypeInfo(col));
 
         col = OCI_GetColumn(rs, 3);
         ASSERT_EQ(OCI_CDT_COLLECTION, OCI_ColumnGetType(col));
-        ASSERT_EQ(ToUpper(ostring(OTEXT("TestColObjTab"))), ToUpper(ostring(OCI_ColumnGetSQLType(col))));
+        ASSERT_EQ(ToUpper(String(OTEXT("TestColObjTab"))), ToUpper(String(OCI_ColumnGetSQLType(col))));
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -542,20 +542,20 @@ namespace TestCApi
 
         auto col = OCI_GetColumn(rs, 3);
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("VECTOR(4, FLOAT32)")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("VECTOR(4, FLOAT32)")), String(buffer));
         ASSERT_EQ(4u, OCI_ColumnGetDimension(col));
 
         col = OCI_GetColumn(rs, 4);
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("VECTOR(8, FLOAT64)")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("VECTOR(8, FLOAT64)")), String(buffer));
 
         col = OCI_GetColumn(rs, 5);
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("VECTOR(16, INT8)")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("VECTOR(16, INT8)")), String(buffer));
 
         col = OCI_GetColumn(rs, 6);
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
-        ASSERT_EQ(ostring(OTEXT("VECTOR(*, *)")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("VECTOR(*, *)")), String(buffer));
         ASSERT_EQ(0u, OCI_ColumnGetDimension(col));
 
         col = OCI_GetColumn(rs, 7);

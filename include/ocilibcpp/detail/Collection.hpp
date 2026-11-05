@@ -232,7 +232,7 @@ inline T Collection<T>::GetElem(OCI_Elem *elem, [[maybe_unused]] core::Handle *p
 
     return Number(core::Check(OCI_ElemGetNumber(elem)), parent);
     }
-    else if constexpr (std::is_same_v<T, ostring>)
+    else if constexpr (std::is_same_v<T, String>)
     {
 
     return core::MakeString(core::Check(OCI_ElemGetString(elem)));
@@ -287,14 +287,16 @@ inline T Collection<T>::GetElem(OCI_Elem *elem, [[maybe_unused]] core::Handle *p
 
     UInt32 size = core::Check(OCI_ElemGetRawSize(elem));
 
-    std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
+    Raw value(static_cast<Size>(size + 1));
 
-    size = core::Check(OCI_ElemGetRaw(elem, static_cast<AnyPointer>(buffer.data()), size));
+    size = core::Check(OCI_ElemGetRaw(elem, static_cast<AnyPointer>(value.data()), size));
+    value.resize(size);
 
-    return core::MakeRaw(buffer.data(), size);
+    return value;
     }
     else
     {
+        static_assert(core::IsCollectionV<T>, "Collection::Get<T> only supports scalar types, Oracle object types and Collection<U>");
 
     return T(core::Check(OCI_ElemGetColl(elem)), parent);
     }
@@ -353,7 +355,7 @@ inline void Collection<T>::SetElem(OCI_Elem *elem, const T &value, [[maybe_unuse
 
     core::Check(OCI_ElemSetNumber(elem, value));
     }
-    else if constexpr (std::is_same_v<T, ostring>)
+    else if constexpr (std::is_same_v<T, String>)
     {
 
     core::Check(OCI_ElemSetString(elem, value.c_str()));
@@ -461,7 +463,7 @@ inline void Collection<T>::SetElem(OCI_Elem *elem, const T &value, [[maybe_unuse
 
 
 template<class T>
-ostring Collection<T>::ToString() const
+String Collection<T>::ToString() const
 {
     if (!IsNull())
     {
@@ -469,7 +471,7 @@ ostring Collection<T>::ToString() const
         
         core::Check(OCI_CollToText(*this, &size, nullptr));
 
-        ostring result;
+        String result;
 
         result.resize(static_cast<Size>(size));
 

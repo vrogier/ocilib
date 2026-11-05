@@ -9,8 +9,8 @@ namespace TestCppApi
 
     TEST(TestQueueCpp, SingleRawMessageCpp)
     {
-        const ostring queueTableName = OTEXT("TestQueueCppRawTable");
-        const ostring queueName = OTEXT("TestQueueCppRaw");
+        const String queueTableName = OTEXT("TestQueueCppRawTable");
+        const String queueName = OTEXT("TestQueueCppRaw");
 
         try
         {
@@ -66,7 +66,7 @@ namespace TestCppApi
             ASSERT_TRUE(out);
             ASSERT_EQ(payload, out.GetPayload<Raw>());
             ASSERT_EQ(5, out.GetPriority());
-            ASSERT_EQ(ostring(OTEXT("cpp_corr")), out.GetCorrelation());
+            ASSERT_EQ(String(OTEXT("cpp_corr")), out.GetCorrelation());
             ASSERT_TRUE(out.GetState() == Message::Ready);
 
             ASSERT_EQ(Enqueue::OnTop, enq.GetMode());

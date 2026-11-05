@@ -16,7 +16,7 @@ ocilib::Environment& GetEnvironmentCpp()
     return environmentManager.GetEnvironmentCppApi();
 }
 
-void ExecDML(ostring dml)
+void ExecDML(String dml)
 {
     const auto env = environmentManager.GetEnvironmentCApi();
     const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -25,7 +25,7 @@ void ExecDML(ostring dml)
     OCI_ConnectionFree(con);
 }
 
-ostring ToUpper(ostring str)
+String ToUpper(String str)
 {
     std::for_each(std::begin(str), std::end(str), [](otext& c) { c = static_cast<otext>(::towupper(c)); });
 

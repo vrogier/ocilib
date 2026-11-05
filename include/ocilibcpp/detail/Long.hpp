@@ -64,7 +64,7 @@ UInt32 Long<T, U>::GetLength() const
 }
 
 template<>
-inline ostring Long<ostring, LongCharacter>::GetContent() const
+inline String Long<String, LongCharacter>::GetContent() const
 {
     return core::MakeString(static_cast<const otext *>(core::Check(OCI_LongGetBuffer(*this))));
 }

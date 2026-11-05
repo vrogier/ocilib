@@ -37,8 +37,8 @@ namespace TestCApi
         ASSERT_NE(nullptr, bnd_id);
         ASSERT_NE(nullptr, bnd_name);
 
-        ASSERT_EQ(ostring(OTEXT(":id")), ostring(OCI_BindGetName(bnd_id)));
-        ASSERT_EQ(ostring(OTEXT(":name")), ostring(OCI_BindGetName(bnd_name)));
+        ASSERT_EQ(String(OTEXT(":id")), String(OCI_BindGetName(bnd_id)));
+        ASSERT_EQ(String(OTEXT(":name")), String(OCI_BindGetName(bnd_name)));
         ASSERT_EQ(stmt, OCI_BindGetStatement(bnd_id));
 
         ASSERT_EQ((OCI_UInt32) OCI_BDM_IN_OUT, OCI_BindGetDirection(bnd_id));
@@ -49,7 +49,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, OCI_BindGetData(bnd_id));
         ASSERT_NE(nullptr, OCI_BindGetData(bnd_name));
         ASSERT_EQ(id, *static_cast<OCI_Int32*>(OCI_BindGetData(bnd_id)));
-        ASSERT_EQ(ostring(name), ostring(static_cast<otext*>(OCI_BindGetData(bnd_name))));
+        ASSERT_EQ(String(name), String(static_cast<otext*>(OCI_BindGetData(bnd_name))));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
 
@@ -60,7 +60,7 @@ namespace TestCApi
         const auto rset = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rset);
         ASSERT_TRUE(OCI_FetchNext(rset));
-        ASSERT_EQ(ostring(OTEXT("hello")), ostring(OCI_GetString(rset, 1)));
+        ASSERT_EQ(String(OTEXT("hello")), String(OCI_GetString(rset, 1)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -112,7 +112,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_Execute(stmt));
 
         ASSERT_EQ(123, iout);
-        ASSERT_EQ(ostring(OTEXT("hello")), ostring(sout));
+        ASSERT_EQ(String(OTEXT("hello")), String(sout));
 
         OCI_Int32 year = 0, month = 0, day = 0;
         ASSERT_TRUE(OCI_DateGetDate(dout, &year, &month, &day));

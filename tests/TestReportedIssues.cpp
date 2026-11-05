@@ -131,21 +131,21 @@ namespace TestCApi
         ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN_OUT));
         ASSERT_TRUE(OCI_Execute(stmt));
 
-        ASSERT_EQ(TO_STRING(numbers.size()), ostring(OCI_ServerGetOutput(conn)));
+        ASSERT_EQ(TO_STRING(numbers.size()), String(OCI_ServerGetOutput(conn)));
 
         for (OCI_Size i = 0; i < numbers.size(); i++)
         {
             otext buffer[100];
             osprintf(buffer, OTEXT("v(%d) = %d"), static_cast<OCI_Int32>(i) + 1, static_cast<OCI_Int32>(i) + 1 + 10);
-            ASSERT_EQ(ostring(buffer), ostring(OCI_ServerGetOutput(conn)));
+            ASSERT_EQ(String(buffer), String(OCI_ServerGetOutput(conn)));
         }
 
         for (OCI_Size i = 0; i < numbers.size(); i++)
         {
-            ostring expected = TO_STRING(i + 1 + 10);
+            String expected = TO_STRING(i + 1 + 10);
             otext buffer[100];
             ASSERT_NE(0, OCI_NumberToText(numbers[i], NULL, 100, buffer));
-            ASSERT_EQ(expected, ostring(buffer));
+            ASSERT_EQ(expected, String(buffer));
             ASSERT_TRUE(OCI_NumberFree(numbers[i]));
         }
 

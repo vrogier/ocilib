@@ -12,6 +12,6 @@ namespace TestCppApi
     TEST(TestTimestampCpp, NullToString)
     {
         Timestamp tmsp;
-        ASSERT_EQ(ostring(OTEXT("NULL")), tmsp.ToString());
+        ASSERT_EQ(String(OTEXT("NULL")), tmsp.ToString());
     }
 }

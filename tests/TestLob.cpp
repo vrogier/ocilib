@@ -318,7 +318,7 @@ namespace TestCApi
         byte_count = 0;
         ASSERT_TRUE(OCI_LobRead(lob, read, &char_count, &byte_count));
         ASSERT_EQ(len, char_count);
-        ASSERT_EQ(ostring(text), ostring(read));
+        ASSERT_EQ(String(text), String(read));
 
         ASSERT_TRUE(OCI_LobFree(lob));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -385,7 +385,7 @@ namespace TestCApi
 
         if (type != OCI_BLOB)
         {
-            ASSERT_EQ(ostring(static_cast<otext*>(buffer)), ostring(out));
+            ASSERT_EQ(String(static_cast<otext*>(buffer)), String(out));
         }
         else
         {
@@ -439,7 +439,7 @@ namespace TestCApi
         {
             otext expected[64] = {};
             BuildExpectedText(buffer, size, 3, expected, type);
-            ASSERT_EQ(ostring(expected), ostring(out));
+            ASSERT_EQ(String(expected), String(out));
         }
         else
         {
@@ -494,7 +494,7 @@ namespace TestCApi
         {
             otext expected[64] = {};
             BuildExpectedText(buffer, size, 2, expected, type);
-            ASSERT_EQ(ostring(expected), ostring(out));
+            ASSERT_EQ(String(expected), String(out));
         }
         else
         {

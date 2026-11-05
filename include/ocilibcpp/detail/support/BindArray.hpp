@@ -28,7 +28,7 @@ namespace ocilib
 {
     namespace support
     {
-        inline BindArray::BindArray(const ocilib::Statement& statement, const ostring& name, UInt32 mode) : BindObject(statement, name, mode), _object(nullptr)
+        inline BindArray::BindArray(const Statement& statement, const String& name, UInt32 mode) : BindObject(statement, name, mode), _object(nullptr)
         {
 
         }
@@ -79,7 +79,7 @@ namespace ocilib
 
 
         template<class T>
-        BindArray::BindArrayObject<T>::BindArrayObject(const ocilib::Statement& statement, const ostring& name, ObjectVector& vector, bool isPlSqlTable, UInt32 mode, UInt32 elemSize)
+        BindArray::BindArrayObject<T>::BindArrayObject(const Statement& statement, const String& name, ObjectVector& vector, bool isPlSqlTable, UInt32 mode, UInt32 elemSize)
             : _statement(statement), _name(name), _vector(vector), _data(nullptr), _isPlSqlTable(isPlSqlTable), _mode(mode), _elemCount(BindArrayObject<T>::GetSize()), _elemSize(elemSize)
         {
             AllocData();
@@ -100,7 +100,7 @@ namespace ocilib
         }
 
         template<>
-        inline void BindArray::BindArrayObject<ocilib::ostring>::AllocData()
+        inline void BindArray::BindArrayObject<String>::AllocData()
         {
             const Size count = static_cast<Size>(_elemSize * _elemCount);
 
@@ -110,7 +110,7 @@ namespace ocilib
         }
 
         template<>
-        inline void BindArray::BindArrayObject<ocilib::Raw> ::AllocData()
+        inline void BindArray::BindArrayObject<Raw> ::AllocData()
         {
             const Size count =  static_cast<Size>(_elemSize * _elemCount);
 
@@ -140,23 +140,23 @@ namespace ocilib
         }
 
         template<>
-        inline void BindArray::BindArrayObject<ocilib::ostring>::SetInData()
+        inline void BindArray::BindArrayObject<String>::SetInData()
         {
-            std::vector<ostring>::iterator it, it_end;
+            std::vector<String>::iterator it, it_end;
 
             UInt32 index = 0;
             const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
             {
-                const ostring& value = *it;
+                const String& value = *it;
 
                 memcpy(_data + (_elemSize * index), value.c_str(), (value.size() + 1) * sizeof(otext));
             }
         }
 
         template<>
-        inline void BindArray::BindArrayObject<ocilib::Raw>::SetInData()
+        inline void BindArray::BindArrayObject<Raw>::SetInData()
         {
             std::vector<Raw>::iterator it, it_end;
 
@@ -191,9 +191,9 @@ namespace ocilib
         }
 
         template<>
-        inline void BindArray::BindArrayObject<ocilib::ostring>::SetOutData()
+        inline void BindArray::BindArrayObject<String>::SetOutData()
         {
-            std::vector<ostring>::iterator it, it_end;
+            std::vector<String>::iterator it, it_end;
 
             OCI_Bind* pBind = core::Check(OCI_GetBindByName(_statement, GetName().c_str()));
 
@@ -209,7 +209,7 @@ namespace ocilib
         }
 
         template<>
-        inline void BindArray::BindArrayObject<ocilib::Raw>::SetOutData()
+        inline void BindArray::BindArrayObject<Raw>::SetOutData()
         {
             std::vector<Raw>::iterator it, it_end;
 
@@ -227,7 +227,7 @@ namespace ocilib
         }
 
         template<class T>
-        ostring BindArray::BindArrayObject<T>::GetName() const
+        String BindArray::BindArrayObject<T>::GetName() const
         {
             return _name;
         }

@@ -16,7 +16,7 @@ namespace TestCApi
         const auto typinf = OCI_TypeInfoGet(conn, OTEXT("SYS.XMLTYPE"), OCI_TIF_TYPE);
         ASSERT_NE(nullptr, typinf);
 
-        ASSERT_EQ(ostring(OTEXT("XMLTYPE")), ostring(OCI_TypeInfoGetName(typinf)));
+        ASSERT_EQ(String(OTEXT("XMLTYPE")), String(OCI_TypeInfoGetName(typinf)));
         ASSERT_EQ(0, OCI_TypeInfoGetColumnCount(typinf));
 
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
@@ -44,8 +44,8 @@ namespace TestCApi
         const auto col = OCI_GetColumn(rst, 1);
         ASSERT_NE(nullptr, col);
 
-        ASSERT_EQ(ostring(OTEXT("XML")), ostring(OCI_ColumnGetName(col)));
-        ASSERT_EQ(ostring(OTEXT("XMLTYPE")), ostring(OCI_ColumnGetSQLType(col)));
+        ASSERT_EQ(String(OTEXT("XML")), String(OCI_ColumnGetName(col)));
+        ASSERT_EQ(String(OTEXT("XMLTYPE")), String(OCI_ColumnGetSQLType(col)));
         ASSERT_EQ(OCI_CDT_XMLTYPE, OCI_ColumnGetType(col));
         ASSERT_EQ(0, OCI_ColumnGetSubType(col));
         ASSERT_EQ(sizeof(OCI_XmlType*), OCI_ColumnGetSize(col));
@@ -53,7 +53,7 @@ namespace TestCApi
         const auto typinf = OCI_ColumnGetTypeInfo(col);
         ASSERT_NE(nullptr, typinf);
 
-        ASSERT_EQ(ostring(OTEXT("XMLTYPE")), ostring(OCI_TypeInfoGetName(typinf)));
+        ASSERT_EQ(String(OTEXT("XMLTYPE")), String(OCI_TypeInfoGetName(typinf)));
         ASSERT_EQ(0, OCI_TypeInfoGetColumnCount(typinf));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -80,24 +80,24 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_FetchNext(rst));
 
-        auto expected1 = ostring(OTEXT("<person firstname=\"john\" lastname=\"doe\"></person>"));
-        auto expected2 = ostring(OTEXT("<person firstname=\"vince\" lastname=\"rogier\"></person>"));
+        auto expected1 = String(OTEXT("<person firstname=\"john\" lastname=\"doe\"></person>"));
+        auto expected2 = String(OTEXT("<person firstname=\"vince\" lastname=\"rogier\"></person>"));
 
         auto xmlType1 = OCI_GetXmlType(rst, 1);
         ASSERT_NE(nullptr, xmlType1);
 
         ASSERT_EQ(expected1.size(), OCI_XmlTypeGetContentSize(xmlType1));
-        ASSERT_EQ(expected1, ostring(OCI_XmlTypeGetContent(xmlType1)));
+        ASSERT_EQ(expected1, String(OCI_XmlTypeGetContent(xmlType1)));
 
-        ASSERT_EQ(expected1, ostring(OCI_GetString(rst, 1)));
+        ASSERT_EQ(expected1, String(OCI_GetString(rst, 1)));
 
         auto xmlType2 = OCI_GetXmlType(rst, 2);
         ASSERT_NE(nullptr, xmlType2);
 
         ASSERT_EQ(expected2.size(), OCI_XmlTypeGetContentSize(xmlType2));
-        ASSERT_EQ(expected2, ostring(OCI_XmlTypeGetContent(xmlType2)));
+        ASSERT_EQ(expected2, String(OCI_XmlTypeGetContent(xmlType2)));
 
-        ASSERT_EQ(expected2, ostring(OCI_GetString(rst, 2)));
+        ASSERT_EQ(expected2, String(OCI_GetString(rst, 2)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -123,14 +123,14 @@ namespace TestCApi
         const auto rst = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rst);
 
-        auto expectedFirst = ostring(OTEXT("<person index=\"1\"></person>"));
-        auto expectedLast = ostring(OTEXT("<person index=\"2\"></person>"));
+        auto expectedFirst = String(OTEXT("<person index=\"1\"></person>"));
+        auto expectedLast = String(OTEXT("<person index=\"2\"></person>"));
 
         ASSERT_TRUE(OCI_FetchLast(rst));
-        ASSERT_EQ(expectedLast, ostring(OCI_GetString(rst, 1)));
+        ASSERT_EQ(expectedLast, String(OCI_GetString(rst, 1)));
 
         ASSERT_TRUE(OCI_FetchFirst(rst));
-        ASSERT_EQ(expectedFirst, ostring(OCI_GetString(rst, 1)));
+        ASSERT_EQ(expectedFirst, String(OCI_GetString(rst, 1)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

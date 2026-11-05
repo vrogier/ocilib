@@ -419,7 +419,7 @@ namespace ocilib
          * Retrieve the error message
          *
          */
-        ostring GetMessage() const;
+        [[nodiscard]] String GetMessage() const;
 
         /**
          *
@@ -427,35 +427,35 @@ namespace ocilib
          * Return the Exception type
          *
          */
-        ExceptionType GetType() const;
+        [[nodiscard]] ExceptionType GetType() const;
 
         /**
          * @brief
          * Return the Exception category — which subsystem raised it
          *
          */
-        ExceptionCategory GetCategory() const;
+        [[nodiscard]] ExceptionCategory GetCategory() const;
 
         /**
          * @brief
          * Return the error code (in the category's namespace)
          *
          */
-        UInt32 GetCode() const;
+        [[nodiscard]] UInt32 GetCode() const;
 
         /**
          * @brief
          * Return the statement within the error occurred
          *
          */
-        Statement GetStatement() const;
+        [[nodiscard]] Statement GetStatement() const;
 
         /**
          * @brief
          * Return the connection within the error occurred
          *
          */
-        Connection GetConnection() const;
+        [[nodiscard]] Connection GetConnection() const;
 
         /**
          * @brief
@@ -469,7 +469,7 @@ namespace ocilib
          *  - otherwise the index of the given row which caused the error
          *
          */
-        UInt32 GetRow() const;
+        [[nodiscard]] UInt32 GetRow() const;
 
         /**
         * @brief
@@ -570,7 +570,7 @@ namespace ocilib
 
 
 
-        Environment(EnvironmentFlags mode = Environment::Default, const ostring& libpath = OTEXT(""));
+        Environment(EnvironmentFlags mode = Environment::Default, const String& libpath = OTEXT(""));
         ~Environment();
 
 
@@ -909,7 +909,7 @@ namespace ocilib
         */
         typedef core::Enum<LocaleCodeValues> LocaleCode;
         /**
-        * @typedef HAHandlerProc
+        * @typedef ocilib::HAHandlerProc
         *
         * @brief
         * User callback for HA event notifications
@@ -958,21 +958,21 @@ namespace ocilib
          * It returns the value of the parameter 'mode' passed to the constructor
          *
          */
-        Environment::EnvironmentFlags GetMode() const;
+        [[nodiscard]] Environment::EnvironmentFlags GetMode() const;
 
         /**
          * @brief
          * Return the Oracle shared library import mode
          *
          */
-        Environment::ImportMode GetImportMode() const;
+        [[nodiscard]] Environment::ImportMode GetImportMode() const;
 
         /**
          * @brief
          * Return the OCILIB charset type
          *
          */
-        Environment::CharsetMode GetCharset() const;
+        [[nodiscard]] Environment::CharsetMode GetCharset() const;
 
         /**
          * @brief
@@ -980,10 +980,10 @@ namespace ocilib
          *
          * @note
          * When Charset is Environment::CharsetAnsi and NLS_LANG is UTF8 based, return value is 4
-         * Otherwise, it is sizeof(ostring::value_type)
+         * Otherwise, it is sizeof(String::value_type)
          *
          */
-        UInt32 GetCharMaxSize() const;
+        [[nodiscard]] UInt32 GetCharMaxSize() const;
 
         /**
         * @brief
@@ -992,7 +992,7 @@ namespace ocilib
         * @param stat : statistic to retrieve (see OCI_UST_*)
         *
         */
-        UInt64 GetStats(OCI_Stat stat) const;
+        [[nodiscard]] UInt64 GetStats(OCI_Stat stat) const;
 
         /**
          * @brief
@@ -1004,28 +1004,28 @@ namespace ocilib
          *   of OCI needed by OCILIB, not necessarily the real OCI version
          *
          */
-        OracleVersion GetCompileVersion() const;
+        [[nodiscard]] OracleVersion GetCompileVersion() const;
 
         /**
         * @brief
         * Return the major version number of OCI used for compiling OCILIB
         *
         */
-        UInt32 GetCompileMajorVersion() const;
+        [[nodiscard]] UInt32 GetCompileMajorVersion() const;
 
         /**
         * @brief
         * Return the minor version number of OCI used for compiling OCILIB
         *
         */
-        UInt32 GetCompileMinorVersion() const;
+        [[nodiscard]] UInt32 GetCompileMinorVersion() const;
 
         /**
         * @brief
         * Return the revision version number of OCI used for compiling OCILIB
         *
         */
-        UInt32 GetCompileRevisionVersion() const;
+        [[nodiscard]] UInt32 GetCompileRevisionVersion() const;
 
         /**
          * @brief
@@ -1036,28 +1036,28 @@ namespace ocilib
          * - with runtime loading build option, the version determined from the symbols dynamically loaded.
          *
          */
-        OracleVersion GetRuntimeVersion() const;
+        [[nodiscard]] OracleVersion GetRuntimeVersion() const;
 
         /**
         * @brief
         * Return the major version number of OCI used at runtime
         *
         */
-        UInt32 GetRuntimeMajorVersion() const;
+        [[nodiscard]] UInt32 GetRuntimeMajorVersion() const;
 
         /**
         * @brief
         * Return the minor version number of OCI used at runtime
         *
         */
-        UInt32 GetRuntimeMinorVersion() const;
+        [[nodiscard]] UInt32 GetRuntimeMinorVersion() const;
 
         /**
         * @brief
         * Return the revision version number of OCI used at runtime
         *
         */
-        UInt32 GetRuntimeRevisionVersion() const;
+        [[nodiscard]] UInt32 GetRuntimeRevisionVersion() const;
 
         /**
          * @brief
@@ -1097,7 +1097,7 @@ namespace ocilib
         * For BINARY_DOUBLE and BINARY_FLOAT, refer to the C Standard Library printf() family documentation
         *
         */
-        bool SetFormat(FormatType formatType, const ostring& format);
+        bool SetFormat(FormatType formatType, const String& format);
 
         /**
         * @brief
@@ -1109,7 +1109,7 @@ namespace ocilib
         *  See SetFormat() for possible values
         *
         */
-        ostring GetFormat(FormatType formatType) const;
+        [[nodiscard]] String GetFormat(FormatType formatType) const;
 
         /**
         * @brief
@@ -1118,7 +1118,7 @@ namespace ocilib
         * @param code - Locale Code
         *
         */
-        ostring GetLocaleString(LocaleCode code) const;
+        [[nodiscard]] String GetLocaleString(LocaleCode code) const;
 
         /**
          * @brief
@@ -1146,11 +1146,11 @@ namespace ocilib
          * If the client side spfile is not provided, the database is started with its server-side spfile.
          *
          */
-        void StartDatabase(const ostring& db, const ostring& user, const ostring& pwd,
+        void StartDatabase(const String& db, const String& user, const String& pwd,
             Environment::StartFlags startFlags,
             Environment::StartMode startMode,
             Environment::SessionFlags sessionFlags = SessionSysDba,
-            const ostring& spfile = OTEXT(""));
+            const String& spfile = OTEXT(""));
 
         /**
          * @brief
@@ -1177,7 +1177,7 @@ namespace ocilib
          * If the param 'db' is empty then a connection to the default local DB is done.
          *
          */
-        void ShutdownDatabase(const ostring& db, const ostring& user, const ostring& pwd,
+        void ShutdownDatabase(const String& db, const String& user, const String& pwd,
             Environment::ShutdownFlags shutdownFlags,
             Environment::ShutdownMode shutdownMode,
             Environment::SessionFlags sessionFlags = SessionSysDba);
@@ -1192,7 +1192,7 @@ namespace ocilib
          * @param newPwd  - Oracle User New password
          *
          */
-        void ChangeUserPassword(const ostring& db, const ostring& user, const ostring& pwd, const ostring& newPwd);
+        void ChangeUserPassword(const String& db, const String& user, const String& pwd, const String& newPwd);
 
         /**
          * @brief
@@ -1236,7 +1236,7 @@ namespace ocilib
          * The port number, or 0 on failure.
          *
          */
-        UInt32 GetSubscriptionPort() const;
+        [[nodiscard]] UInt32 GetSubscriptionPort() const;
 
     private:
 
@@ -1250,7 +1250,7 @@ namespace ocilib
         static void NotifyHandler(OCI_Event* pEvent);
         static void NotifyHandlerAQ(OCI_Dequeue* pDequeue);
 
-        static Environment* GetInstance(OCI_Environment* env);
+        [[nodiscard]] static Environment* GetInstance(OCI_Environment* env);
 
         class CallbackBase
         {
@@ -1273,11 +1273,11 @@ namespace ocilib
 
     public:
 
-        OCI_Environment* GetHandle() const;
+        [[nodiscard]] OCI_Environment* GetHandle() const;
 
     private:
 
-        core::Handle* GetEnvironmentHandle() const;
+        [[nodiscard]] core::Handle* GetEnvironmentHandle() const;
 
         std::mutex _callbacksMutex;
         std::unordered_map<AnyPointer, std::unique_ptr<CallbackBase>> _callbacks;
@@ -1347,7 +1347,7 @@ namespace ocilib
          * it calls Open() with the given parameters
          *
          */
-        Pool(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Pool::PoolType poolType,
+        Pool(const Environment& env, const String& db, const String& user, const String& pwd, Pool::PoolType poolType,
             UInt32 minSize, UInt32 maxSize, UInt32 increment = 1,
             Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
@@ -1370,7 +1370,7 @@ namespace ocilib
          * If the param 'db' is empty then a connection to the default local DB is done
          *
          */
-        void Open(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Pool::PoolType poolType,
+        void Open(const Environment& env, const String& db, const String& user, const String& pwd, Pool::PoolType poolType,
             UInt32 minSize, UInt32 maxSize, UInt32 increment = 1,
             Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
@@ -1409,7 +1409,7 @@ namespace ocilib
          *   session with the same attributes"
          *
          */
-        Connection GetConnection(const ostring& sessionTag = OTEXT(""));
+        [[nodiscard]] Connection GetConnection(const String& sessionTag = OTEXT(""));
 
         /**
          * @brief
@@ -1424,7 +1424,7 @@ namespace ocilib
          * Requires Oracle 12cR2 or above.
          *
          */
-        Connection GetConnection(const ostring& sessionTag, const ShardingKey& skey, const ShardingKey& sskey);
+        [[nodiscard]] Connection GetConnection(const String& sessionTag, const ShardingKey& skey, const ShardingKey& sskey);
 
         /**
          * @brief
@@ -1437,7 +1437,7 @@ namespace ocilib
          * Timeout is not available for internal pooling implementation (client < 9i)
          *
          */
-        UInt32 GetTimeout() const;
+        [[nodiscard]] UInt32 GetTimeout() const;
 
         /**
          * @brief
@@ -1463,7 +1463,7 @@ namespace ocilib
          * - false to not wait for an available object
          *
          */
-        bool GetNoWait() const;
+        [[nodiscard]] bool GetNoWait() const;
 
         /**
          * @brief
@@ -1487,35 +1487,35 @@ namespace ocilib
          * Return the current number of busy connections/sessions
          *
          */
-        UInt32 GetBusyConnectionsCount() const;
+        [[nodiscard]] UInt32 GetBusyConnectionsCount() const;
 
         /**
          * @brief
          * Return the current number of opened connections/sessions
          *
          */
-        UInt32 GetOpenedConnectionsCount() const;
+        [[nodiscard]] UInt32 GetOpenedConnectionsCount() const;
 
         /**
          * @brief
          * Return the minimum number of connections/sessions that can be opened to the database
          *
          */
-        UInt32 GetMinSize() const;
+        [[nodiscard]] UInt32 GetMinSize() const;
 
         /**
          * @brief
          * Return the maximum number of connections/sessions that can be opened to the database
          *
          */
-        UInt32 GetMaxSize() const;
+        [[nodiscard]] UInt32 GetMaxSize() const;
 
         /**
          * @brief
          * Return the increment for connections/sessions to be opened to the database when the pool is not full
          *
          */
-        UInt32 GetIncrement() const;
+        [[nodiscard]] UInt32 GetIncrement() const;
 
         /**
          * @brief
@@ -1525,7 +1525,7 @@ namespace ocilib
          * Default value is 20 (value from Oracle Documentation)
          *
          */
-        UInt32 GetStatementCacheSize() const;
+        [[nodiscard]] UInt32 GetStatementCacheSize() const;
 
         /**
          * @brief
@@ -1706,7 +1706,7 @@ namespace ocilib
         typedef core::Enum<SessionTraceValues> SessionTrace;
 
         /**
-        * @typedef TAFHandlerProc
+        * @typedef ocilib::TAFHandlerProc
         *
         * @brief
         * User callback for TAF event notifications
@@ -1735,7 +1735,7 @@ namespace ocilib
          * it calls Open() with the given parameters
          *
          */
-        Connection(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags = Environment::SessionDefault);
+        Connection(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
         /**
          * @brief
@@ -1754,7 +1754,7 @@ namespace ocilib
          * Requires Oracle 12cR2 or above.
          *
          */
-        Connection(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd,
+        Connection(const Environment& env, const String& db, const String& user, const String& pwd,
             Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey);
 
         
@@ -1779,7 +1779,7 @@ namespace ocilib
          * No transaction is created for connections retrieved from session pools.
          *
          */
-        void Open(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags = Environment::SessionDefault);
+        void Open(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
         /**
          * @brief
@@ -1795,7 +1795,7 @@ namespace ocilib
          * @param sskey        - Super sharding key
          *
          */
-        void Open(const Environment& env, const ostring& db, const ostring& user, const ostring& pwd, Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey);
+        void Open(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey);
 
         /**
          * @brief
@@ -1842,7 +1842,7 @@ namespace ocilib
          * Indicates if auto commit is currently activated
          *
          */
-        bool GetAutoCommit() const;
+        [[nodiscard]] bool GetAutoCommit() const;
 
         /**
         * @brief
@@ -1852,7 +1852,7 @@ namespace ocilib
         * the returned value is not real-time and is  based on client library last heart beat status
         *
         */
-        bool IsServerAlive() const;
+        [[nodiscard]] bool IsServerAlive() const;
 
         /**
          * @brief
@@ -1872,7 +1872,7 @@ namespace ocilib
          * The returned value is the value of the 'db' parameter of the Open() method
          *
          */
-        ostring GetConnectionString() const;
+        [[nodiscard]] String GetConnectionString() const;
 
         /**
          * @brief
@@ -1882,7 +1882,7 @@ namespace ocilib
          * The returned value is the value of the 'user' parameter of the Open() method
          *
          */
-        ostring GetUserName() const;
+        [[nodiscard]] String GetUserName() const;
 
         /**
          * @brief
@@ -1892,7 +1892,7 @@ namespace ocilib
          * The returned value is the value of the 'pwd' parameter of the Open() method
          *
          */
-        ostring GetPassword() const;
+        [[nodiscard]] String GetPassword() const;
 
         /**
          * @brief
@@ -1902,7 +1902,7 @@ namespace ocilib
          * The returned value is the server version banner displayed by SQL*PLUS when connected to a DB server
          *
          */
-        ostring GetServerVersion() const;
+        [[nodiscard]] String GetServerVersion() const;
 
         /**
          * @brief
@@ -1912,28 +1912,28 @@ namespace ocilib
          * The supported version is the lower version between client and server:
          *
          */
-        OracleVersion GetVersion() const;
+        [[nodiscard]] OracleVersion GetVersion() const;
 
         /**
          * @brief
          * Return the major version number of the connected database server
          *
          */
-        UInt32 GetServerMajorVersion() const;
+        [[nodiscard]] UInt32 GetServerMajorVersion() const;
 
         /**
          * @brief
          * Return the minor version number of the connected database server
          *
          */
-        UInt32 GetServerMinorVersion() const;
+        [[nodiscard]] UInt32 GetServerMinorVersion() const;
 
         /**
          * @brief
          * Return the revision version number of the connected database server
          *
          */
-        UInt32 GetServerRevisionVersion() const;
+        [[nodiscard]] UInt32 GetServerRevisionVersion() const;
 
         /**
          * @brief
@@ -1942,14 +1942,14 @@ namespace ocilib
          * @param newPwd - New password
          *
          */
-        void ChangePassword(const ostring& newPwd);
+        void ChangePassword(const String& newPwd);
 
         /**
          * @brief
          * Return the tag associated with the given connection
          *
          */
-        ostring GetSessionTag() const;
+        [[nodiscard]] String GetSessionTag() const;
 
         /**
          * @brief
@@ -1965,14 +1965,14 @@ namespace ocilib
          * To untag a session, call SetSessionTag() with an empty 'tag' parameter
          *
          */
-        void SetSessionTag(const ostring& tag);
+        void SetSessionTag(const String& tag);
 
         /**
          * @brief
          * Return the current transaction of the connection
          *
          */
-        Transaction GetTransaction() const;
+        [[nodiscard]] Transaction GetTransaction() const;
 
         /**
          * @brief
@@ -2028,14 +2028,14 @@ namespace ocilib
          * true if a line has been retrieved otherwise false (server buffer is empty or all lines have been retrieved)
          *
          */
-        bool GetServerOutput(ostring& line) const;
+        [[nodiscard]] bool GetServerOutput(String& line) const;
 
         /**
          * @brief
          * Retrieve all remaining lines of the server buffer
          *
          */
-        void GetServerOutput(std::vector<ostring>& lines) const;
+        void GetServerOutput(std::vector<String>& lines) const;
 
         /**
          * @brief
@@ -2065,7 +2065,7 @@ namespace ocilib
          * - TraceDetail   : 64 bytes
          *
          */
-        void SetTrace(SessionTrace trace, const ostring& value);
+        void SetTrace(SessionTrace trace, const String& value);
 
         /**
          * @brief
@@ -2077,7 +2077,7 @@ namespace ocilib
          * See SetTrace() for more details.
          *
          */
-        ostring GetTrace(SessionTrace trace) const;
+        [[nodiscard]] String GetTrace(SessionTrace trace) const;
 
         /**
          * @brief
@@ -2087,7 +2087,7 @@ namespace ocilib
          * This call is supported from Oracle 10gR2.
          *
          */
-        ostring GetDatabase() const;
+        [[nodiscard]] String GetDatabase() const;
 
         /**
          * @brief
@@ -2097,7 +2097,7 @@ namespace ocilib
          * This call is supported from Oracle 10gR2.
          *
          */
-        ostring GetInstance() const;
+        [[nodiscard]] String GetInstance() const;
 
         /**
          * @brief
@@ -2107,7 +2107,7 @@ namespace ocilib
          * This call is supported from Oracle 10gR2.
          *
          */
-        ostring GetService() const;
+        [[nodiscard]] String GetService() const;
 
         /**
          * @brief
@@ -2117,7 +2117,7 @@ namespace ocilib
          * This call is supported from Oracle 10gR2.
          *
          */
-        ostring GetServer() const;
+        [[nodiscard]] String GetServer() const;
 
         /**
          * @brief
@@ -2127,7 +2127,7 @@ namespace ocilib
          * This call is supported from Oracle 10gR2.
          *
          */
-        ostring GetDomain() const;
+        [[nodiscard]] String GetDomain() const;
 
         /**
          * @brief
@@ -2137,7 +2137,7 @@ namespace ocilib
          * This call is supported from Oracle 10gR2.
          *
          */
-        Timestamp GetInstanceStartTime() const;
+        [[nodiscard]] Timestamp GetInstanceStartTime() const;
 
         /**
          * @brief
@@ -2150,7 +2150,7 @@ namespace ocilib
          * Requires Oracle Client 9.2 or above
          *
          */
-        UInt32 GetStatementCacheSize() const;
+        [[nodiscard]] UInt32 GetStatementCacheSize() const;
 
         /**
          * @brief
@@ -2180,7 +2180,7 @@ namespace ocilib
          * Default is 0 (pre-fetching disabled)
          *
          */
-        UInt32 GetDefaultLobPrefetchSize() const;
+        [[nodiscard]] UInt32 GetDefaultLobPrefetchSize() const;
 
         /**
          * @brief
@@ -2222,7 +2222,7 @@ namespace ocilib
         * Return 0 if the client and server version are < 12cR1
         *
         */
-        UInt32 GetMaxCursors() const;
+        [[nodiscard]] UInt32 GetMaxCursors() const;
 
         /**
          * @brief
@@ -2232,7 +2232,7 @@ namespace ocilib
          * This call is supported from Oracle 10gR2.
          *
          */
-        bool IsTAFCapable() const;
+        [[nodiscard]] bool IsTAFCapable() const;
 
         /**
          * @brief
@@ -2254,7 +2254,7 @@ namespace ocilib
          * Return the pointer to user data previously associated with the connection
          *
          */
-        AnyPointer GetUserData();
+        [[nodiscard]] AnyPointer GetUserData();
 
         /**
          * @brief
@@ -2278,7 +2278,7 @@ namespace ocilib
          * The given timeout value if supported, otherwise 0
          *
          */
-        UInt32 GetTimeout(TimeoutType timeout);
+        [[nodiscard]] UInt32 GetTimeout(TimeoutType timeout);
 
         /**
          * @brief
@@ -2416,14 +2416,14 @@ namespace ocilib
          * see Transaction() for possible values
          *
          */
-        TransactionFlags GetFlags() const;
+        [[nodiscard]] TransactionFlags GetFlags() const;
 
         /**
           * @brief
           * Return the transaction Timeout
           *
           */
-        UInt32 GetTimeout() const;
+        [[nodiscard]] UInt32 GetTimeout() const;
 
     private:
 
@@ -2533,7 +2533,7 @@ namespace ocilib
         * Default connection Number format is computed from Environment::GetFormat()
         *
         */
-        Number(const Environment& env, const ostring& str, const ostring& format = OTEXT(""));
+        Number(const Environment& env, const String& str, const String& format = OTEXT(""));
 
         /**
         * @brief
@@ -2549,7 +2549,7 @@ namespace ocilib
         * Default connection number format is computed from Environment::GetFormat()
         *
         */
-        void FromString(const ostring& str, const ostring& format = OTEXT("")) const;
+        void FromString(const String& str, const String& format = OTEXT("")) const;
 
         /**
         * @brief
@@ -2561,7 +2561,7 @@ namespace ocilib
         * For number formats, refer to the Oracle SQL documentation
         *
         */
-        ostring ToString(const ostring& format) const;
+        [[nodiscard]] String ToString(const String& format) const;
 
         /**
         * @brief
@@ -2571,7 +2571,7 @@ namespace ocilib
         * For number formats, refer to the Oracle SQL documentation
         *
         */
-        ostring ToString() const override;
+        String ToString() const override;
 
         /**
         * @brief
@@ -2625,7 +2625,7 @@ namespace ocilib
     private:
 
         template<class T>
-        static AnyPointer GetNativeValue(const T& value);
+        [[nodiscard]] static AnyPointer GetNativeValue(const T& value);
 
         Number(OCI_Number* pNumber, core::Handle* parent = nullptr);
 
@@ -2746,21 +2746,21 @@ namespace ocilib
         *
         */
 
-        Date(const Environment& env, const ostring& str, const ostring& format = OTEXT(""));
+        Date(const Environment& env, const String& str, const String& format = OTEXT(""));
 
         /**
          * @brief
          * Check if the given date is valid
          *
          */
-        bool IsValid() const;
+        [[nodiscard]] bool IsValid() const;
 
         /**
          * @brief
          * Return the date year value
          *
          */
-        Int32 GetYear() const;
+        [[nodiscard]] Int32 GetYear() const;
 
         /**
          * @brief
@@ -2774,7 +2774,7 @@ namespace ocilib
          * Return the date month value
          *
          */
-        Int32 GetMonth() const;
+        [[nodiscard]] Int32 GetMonth() const;
 
         /**
          * @brief
@@ -2788,7 +2788,7 @@ namespace ocilib
          * Return the date day value
          *
          */
-        Int32 GetDay() const;
+        [[nodiscard]] Int32 GetDay() const;
 
         /**
          * @brief
@@ -2802,7 +2802,7 @@ namespace ocilib
          * Return the date hours value
          *
          */
-        Int32 GetHours() const;
+        [[nodiscard]] Int32 GetHours() const;
 
         /**
          * @brief
@@ -2816,7 +2816,7 @@ namespace ocilib
          * Return the date minutes value
          *
          */
-        Int32 GetMinutes() const;
+        [[nodiscard]] Int32 GetMinutes() const;
 
         /**
          * @brief
@@ -2830,7 +2830,7 @@ namespace ocilib
          * Return the date seconds value
          *
          */
-        Int32 GetSeconds() const;
+        [[nodiscard]] Int32 GetSeconds() const;
 
         /**
          * @brief
@@ -2945,7 +2945,7 @@ namespace ocilib
          * @param day - Day of the week
          *
          */
-        Date NextDay(const ostring& day) const;
+        Date NextDay(const String& day) const;
 
         /**
          * @brief
@@ -2962,7 +2962,7 @@ namespace ocilib
          * @param tzDst - Destination zone
          *
          */
-        void ChangeTimeZone(const ostring& tzSrc, const ostring& tzDst);
+        void ChangeTimeZone(const String& tzSrc, const String& tzDst);
 
         /**
         * @brief
@@ -2978,7 +2978,7 @@ namespace ocilib
         * Default connection date format is computed from Environment::GetFormat()
         *
         */
-        void FromString(const ostring& str, const ostring& format = OTEXT(""));
+        void FromString(const String& str, const String& format = OTEXT(""));
 
         /**
         * @brief
@@ -2990,7 +2990,7 @@ namespace ocilib
         * For date time formats, refer to the Oracle SQL documentation
         *
         */
-        ostring ToString(const ostring& format) const;
+        [[nodiscard]] String ToString(const String& format) const;
 
         /**
         * @brief
@@ -3000,7 +3000,7 @@ namespace ocilib
         * For date time formats, refer to the Oracle SQL documentation
         *
         */
-        ostring ToString() const override;
+        String ToString() const override;
 
         /**
         * @brief
@@ -3208,21 +3208,21 @@ namespace ocilib
         * For interval format, refer to the Oracle SQL documentation
         *
         */
-        Interval(const Environment& env, IntervalType type, const ostring& data);
+        Interval(const Environment& env, IntervalType type, const String& data);
 
         /**
         * @brief
         * Return the type of the given interval object
         *
         */
-        IntervalType GetType() const;
+        [[nodiscard]] IntervalType GetType() const;
 
         /**
         * @brief
         * Check if the given interval is valid
         *
         */
-        bool IsValid() const;
+        [[nodiscard]] bool IsValid() const;
 
         /**
         * @brief
@@ -3232,7 +3232,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::YearMonth
         *
         */
-        Int32 GetYear() const;
+        [[nodiscard]] Int32 GetYear() const;
 
         /**
         * @brief
@@ -3252,7 +3252,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::YearMonth
         *
         */
-        Int32 GetMonth() const;
+        [[nodiscard]] Int32 GetMonth() const;
 
         /**
         * @brief
@@ -3272,7 +3272,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        Int32 GetDay() const;
+        [[nodiscard]] Int32 GetDay() const;
 
         /**
         * @brief
@@ -3292,7 +3292,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        Int32 GetHours() const;
+        [[nodiscard]] Int32 GetHours() const;
 
         /**
         * @brief
@@ -3312,7 +3312,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        Int32 GetMinutes() const;
+        [[nodiscard]] Int32 GetMinutes() const;
 
         /**
         * @brief
@@ -3332,7 +3332,7 @@ namespace ocilib
         * this call is only permitted if the current interval type is  Interval::DaySecond
         *
         */
-        Int32 GetSeconds() const;
+        [[nodiscard]] Int32 GetSeconds() const;
 
         /**
         * @brief
@@ -3349,7 +3349,7 @@ namespace ocilib
         * Return the interval seconds value
         *
         */
-        Int32 GetMilliSeconds() const;
+        [[nodiscard]] Int32 GetMilliSeconds() const;
 
         /**
         * @brief
@@ -3363,7 +3363,7 @@ namespace ocilib
         * Return the interval nano seconds value
         *
         */
-        Int32 GetNanoSeconds() const;
+        [[nodiscard]] Int32 GetNanoSeconds() const;
 
         /**
         * @brief
@@ -3437,7 +3437,7 @@ namespace ocilib
         * @param timeZone - Time zone name
         *
         */
-        void UpdateTimeZone(const ostring& timeZone);
+        void UpdateTimeZone(const String& timeZone);
 
         /**
         * @brief
@@ -3449,7 +3449,7 @@ namespace ocilib
         * For interval format, refer to the Oracle SQL documentation
         *
         */
-        void FromString(const ostring& data);
+        void FromString(const String& data);
 
         /**
         * @brief
@@ -3459,14 +3459,14 @@ namespace ocilib
         * @param fractionPrecision - fraction precision
         *
         */
-        ostring ToString(Int32 leadingPrecision, Int32 fractionPrecision) const;
+        [[nodiscard]] String ToString(Int32 leadingPrecision, Int32 fractionPrecision) const;
 
         /**
         * @brief
         * Convert the interval value to a string using the default precisions of 10
         *
         */
-        ostring ToString() const override;
+        String ToString() const override;
 
         /**
         * @brief
@@ -3660,14 +3660,14 @@ namespace ocilib
         * For date time formats, refer to the Oracle SQL documentation
         *
         */
-        Timestamp(const Environment& env, TimestampType type, const ostring& data, const ostring& format = OTEXT(""));
+        Timestamp(const Environment& env, TimestampType type, const String& data, const String& format = OTEXT(""));
 
         /**
         * @brief
         * Return the type of the given timestamp object
         *
         */
-        TimestampType GetType() const;
+        [[nodiscard]] TimestampType GetType() const;
 
         /**
         * @brief
@@ -3683,14 +3683,14 @@ namespace ocilib
         * Check if the given timestamp is valid
         *
         */
-        bool IsValid() const;
+        [[nodiscard]] bool IsValid() const;
 
         /**
         * @brief
         * Return the timestamp year value
         *
         */
-        Int32 GetYear() const;
+        [[nodiscard]] Int32 GetYear() const;
 
         /**
         * @brief
@@ -3704,7 +3704,7 @@ namespace ocilib
         * Return the timestamp month value
         *
         */
-        Int32 GetMonth() const;
+        [[nodiscard]] Int32 GetMonth() const;
 
         /**
         * @brief
@@ -3718,7 +3718,7 @@ namespace ocilib
         * Return the timestamp day value
         *
         */
-        Int32 GetDay() const;
+        [[nodiscard]] Int32 GetDay() const;
 
         /**
         * @brief
@@ -3732,7 +3732,7 @@ namespace ocilib
         * Return the timestamp hours value
         *
         */
-        Int32 GetHours() const;
+        [[nodiscard]] Int32 GetHours() const;
 
         /**
         * @brief
@@ -3746,7 +3746,7 @@ namespace ocilib
         * Return the timestamp minutes value
         *
         */
-        Int32 GetMinutes() const;
+        [[nodiscard]] Int32 GetMinutes() const;
 
         /**
         * @brief
@@ -3760,7 +3760,7 @@ namespace ocilib
         * Return the timestamp seconds value
         *
         */
-        Int32 GetSeconds() const;
+        [[nodiscard]] Int32 GetSeconds() const;
 
         /**
         * @brief
@@ -3774,7 +3774,7 @@ namespace ocilib
         * Return the timestamp seconds value
         *
         */
-        Int32 GetMilliSeconds() const;
+        [[nodiscard]] Int32 GetMilliSeconds() const;
 
         /**
         * @brief
@@ -3858,7 +3858,7 @@ namespace ocilib
         * @param timeZone   - name of a time zone to use [optional]
         *
         */
-        void SetDateTime(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 min, Int32 sec, Int32 fsec, const ostring& timeZone = OTEXT(""));
+        void SetDateTime(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 min, Int32 sec, Int32 fsec, const String& timeZone = OTEXT(""));
 
         /**
         * @brief
@@ -3868,7 +3868,7 @@ namespace ocilib
         * Returns an empty string if the timestamp type is TimeStamp::NoTimeZone
         *
         */
-        ostring GetTimeZone() const;
+        [[nodiscard]] String GetTimeZone() const;
 
         /**
         * @brief
@@ -3879,7 +3879,7 @@ namespace ocilib
         * - Applies to TimeStamp::WithTimeZone only
         *
         */
-        void SetTimeZone(const ostring& timeZone);
+        void SetTimeZone(const String& timeZone);
 
         /**
         * @brief
@@ -3916,7 +3916,7 @@ namespace ocilib
         * For date time formats, refer to the Oracle SQL documentation
         *
         */
-        void FromString(const ostring& data, const ostring& format = OCI_STRING_FORMAT_DATE);
+        void FromString(const String& data, const String& format = OCI_STRING_FORMAT_DATE);
 
         /**
         * @brief
@@ -3929,14 +3929,14 @@ namespace ocilib
         * For date time / timestamp formats, refer to the Oracle SQL documentation
         *
         */
-        ostring ToString(const ostring& format, Int32 precision) const;
+        [[nodiscard]] String ToString(const String& format, Int32 precision) const;
 
         /**
         * @brief
         * Convert the timestamp value to a string using default date format and no precision
         *
         */
-        ostring ToString() const override;
+        String ToString() const override;
 
         /**
         * @brief
@@ -4191,28 +4191,28 @@ namespace ocilib
         * return the type of lob
         *
         */
-        LobType GetType() const;
+        [[nodiscard]] LobType GetType() const;
 
         /**
         * @brief
         * Returns the current R/W offset within the lob
         *
         */
-        UInt64 GetOffset() const;
+        [[nodiscard]] UInt64 GetOffset() const;
 
         /**
         * @brief
         * Returns the number of characters or bytes contained in the lob
         *
         */
-        UInt64 GetLength() const;
+        [[nodiscard]] UInt64 GetLength() const;
 
         /**
         * @brief
         * Returns the lob maximum possible size
         *
         */
-        UInt64 GetMaxSize() const;
+        [[nodiscard]] UInt64 GetMaxSize() const;
 
         /**
         * @brief
@@ -4225,14 +4225,14 @@ namespace ocilib
         * read or write requests using a multiple of this chunk size
         *
         */
-        UInt64 GetChunkSize() const;
+        [[nodiscard]] UInt64 GetChunkSize() const;
 
         /**
         * @brief
         * Return the lob parent connection
         *
         */
-        Connection GetConnection() const;
+        [[nodiscard]] Connection GetConnection() const;
 
         /**
         * @brief
@@ -4280,14 +4280,14 @@ namespace ocilib
         * Check if the given lob is a temporary lob
         *
         */
-        bool IsTemporary() const;
+        [[nodiscard]] bool IsTemporary() const;
 
         /**
         * @brief
         * Check if the given lob is a remote lob
         *
         */
-        bool IsRemote() const;
+        [[nodiscard]] bool IsRemote() const;
 
         /**
         * @brief
@@ -4385,7 +4385,7 @@ namespace ocilib
     * Length and size arguments / returned values are expressed in number of characters
     *
     */
-    typedef Lob<ostring, LobCharacter> Clob;
+    typedef Lob<String, LobCharacter> Clob;
 
     /**
     *
@@ -4396,7 +4396,7 @@ namespace ocilib
     * Length and size arguments / returned values are expressed in number of characters
     *
     */
-    typedef Lob<ostring, LobNationalCharacter> NClob;
+    typedef Lob<String, LobNationalCharacter> NClob;
 
     /**
     *
@@ -4461,7 +4461,7 @@ namespace ocilib
         * the file object must not be accessed anymore once the parent connection object gets out of scope
         *
         */
-        File(const Connection& connection, const ostring& directory, const ostring& name);
+        File(const Connection& connection, const String& directory, const String& name);
 
         /**
         * @brief
@@ -4506,21 +4506,21 @@ namespace ocilib
         * Returns the current R/W offset within the file
         *
         */
-        UInt64 GetOffset() const;
+        [[nodiscard]] UInt64 GetOffset() const;
 
         /**
         * @brief
         * Returns the number of bytes contained in the file
         *
         */
-        UInt64 GetLength() const;
+        [[nodiscard]] UInt64 GetLength() const;
 
         /**
         * @brief
         * Return the file parent connection
         *
         */
-        Connection GetConnection() const;
+        [[nodiscard]] Connection GetConnection() const;
 
         /**
         * @brief
@@ -4534,21 +4534,21 @@ namespace ocilib
         * - Files fetched from resultset can't be assigned a new directory and name
         *
         */
-        void SetInfos(const ostring& directory, const ostring& name);
+        void SetInfos(const String& directory, const String& name);
 
         /**
         * @brief
         * Return the file name
         *
         */
-        ostring GetName() const;
+        [[nodiscard]] String GetName() const;
 
         /**
         * @brief
         * Return the file directory
         *
         */
-        ostring GetDirectory() const;
+        [[nodiscard]] String GetDirectory() const;
 
         /**
         * @brief
@@ -4569,7 +4569,7 @@ namespace ocilib
         * Check if the specified file is currently opened on the server by our object
         *
         */
-        bool IsOpened() const;
+        [[nodiscard]] bool IsOpened() const;
 
         /**
         * @brief
@@ -4645,7 +4645,7 @@ namespace ocilib
         *
         * @note
         * The type info is not usable until it is assigned from a call to
-        * TypeInfo(const Connection&, const ostring&, TypeInfoType) or
+        * TypeInfo(const Connection&, const String&, TypeInfoType) or
         * TypeInfo::GetTypeInfo(). Call IsNull() to check whether it wraps a
         * valid handle.
         *
@@ -4664,28 +4664,28 @@ namespace ocilib
         * the TypeInfo object must not be accessed anymore once the parent connection object gets out of scope
         *
         */
-        TypeInfo(const Connection& connection, const ostring& name, TypeInfoType type);
+        TypeInfo(const Connection& connection, const String& name, TypeInfoType type);
 
         /**
         * @brief
         * Return the type of the given TypeInfo object
         *
         */
-        TypeInfoType GetType() const;
+        [[nodiscard]] TypeInfoType GetType() const;
 
         /**
         * @brief
         * Return the type info name
         *
         */
-        ostring GetName() const;
+        [[nodiscard]] String GetName() const;
 
         /**
         * @brief
         * Return the connection associated with a statement
         *
         */
-        Connection GetConnection() const;
+        [[nodiscard]] Connection GetConnection() const;
 
         /**
         * @brief
@@ -4696,7 +4696,7 @@ namespace ocilib
         * - For types, it is the number of member properties
         *
         */
-        UInt32 GetColumnCount() const;
+        [[nodiscard]] UInt32 GetColumnCount() const;
 
         /**
         * @brief
@@ -4712,7 +4712,7 @@ namespace ocilib
         * - For types, the returned column object describes an object property
         *
         */
-        Column GetColumn(UInt32 index) const;
+        [[nodiscard]] Column GetColumn(UInt32 index) const;
 
         /**
         * @brief
@@ -4726,7 +4726,7 @@ namespace ocilib
         * - For types, it returns true if the type is final and false if it is virtual
         *
         */
-        OCI_Boolean IsFinalType() const;
+        [[nodiscard]] OCI_Boolean IsFinalType() const;
 
         /**
         * @brief
@@ -4742,7 +4742,7 @@ namespace ocilib
         *       - returns a null TypeInfo object if the given type is NOT deriving from a base type
         *
         */
-        TypeInfo GetSuperType() const;
+        [[nodiscard]] TypeInfo GetSuperType() const;
 
     private:
 
@@ -4815,7 +4815,7 @@ namespace ocilib
         * @param name - Attribute name
         *
         */
-        bool IsAttributeNull(const ostring& name) const;
+        [[nodiscard]] bool IsAttributeNull(const String& name) const;
 
         /**
         * @brief
@@ -4824,28 +4824,28 @@ namespace ocilib
         * @param name - Attribute name
         *
         */
-        void SetAttributeNull(const ostring& name);
+        void SetAttributeNull(const String& name);
 
         /**
         * @brief
         * Return the TypeInfo object describing the object
         *
         */
-        TypeInfo GetTypeInfo() const;
+        [[nodiscard]] TypeInfo GetTypeInfo() const;
 
         /**
         * @brief
         * Creates a reference on the current object
         *
         */
-        Reference GetReference() const;
+        [[nodiscard]] Reference GetReference() const;
 
         /**
         * @brief
         * Return the type of the given object
         *
         */
-        ObjectType GetType() const;
+        [[nodiscard]] ObjectType GetType() const;
 
         /**
         * @brief
@@ -4860,7 +4860,27 @@ namespace ocilib
         *
         */
         template<class T>
-        T Get(const ostring& name) const;
+        [[nodiscard]] T Get(const String& name) const;
+
+        /**
+        * @brief
+        * Get the given object attribute value as an optional
+        *
+        * @tparam T - C++ object type to retrieve
+        * @param name - Attribute name
+        *
+        * @note
+        * Returns std::nullopt when the attribute is SQL NULL; otherwise the
+        * Get<T> value.
+        *
+        * std::nullopt expresses SQL NULL — it does not mean an empty handle.
+        * For handle types, a returned engaged optional always holds a valid,
+        * non-null handle; HandleHolder::IsNull() (an empty/unassigned handle
+        * object) is a different, unrelated state.
+        *
+        */
+        template<class T>
+        [[nodiscard]] std::optional<T> GetOptional(const String& name) const;
 
         /**
         * @brief
@@ -4876,7 +4896,7 @@ namespace ocilib
         *
         */
         template<class T>
-        void Get(const ostring& name, T& value) const;
+        void Get(const String& name, T& value) const;
 
         /**
         * @brief
@@ -4892,7 +4912,7 @@ namespace ocilib
         *
         */
         template<class T>
-        void Get(const ostring& name, Collection<T>& value) const;
+        void Get(const String& name, Collection<T>& value) const;
 
         /**
         * @brief
@@ -4908,7 +4928,7 @@ namespace ocilib
         *
         */
         template<class T>
-        void Set(const ostring& name, const T& value);
+        void Set(const String& name, const T& value);
 
         /**
         * @brief
@@ -4922,7 +4942,7 @@ namespace ocilib
         * return a string representation of the current object
         *
         */
-        ostring ToString() const override;
+        String ToString() const override;
 
     private:
 
@@ -4968,7 +4988,7 @@ namespace ocilib
         * Return the TypeInfo object describing the referenced object
         *
         */
-        TypeInfo GetTypeInfo() const;
+        [[nodiscard]] TypeInfo GetTypeInfo() const;
 
         /**
         * @brief
@@ -4978,14 +4998,14 @@ namespace ocilib
         * The object may be null if the current reference value is null
         *
         */
-        Object GetObject() const;
+        [[nodiscard]] Object GetObject() const;
 
         /**
         * @brief
         * Check if the reference points to an object or not.
         *
         */
-        bool IsReferenceNull() const;
+        [[nodiscard]] bool IsReferenceNull() const;
 
         /**
         * @brief
@@ -5009,7 +5029,7 @@ namespace ocilib
         * return a string representation of the current reference
         *
         */
-        ostring ToString() const override;
+        String ToString() const override;
 
     private:
 
@@ -5034,7 +5054,7 @@ namespace ocilib
         * return a string representation of the current XmlType
         *
         */
-        ostring ToString() const override;
+        String ToString() const override;
 
     private:
 
@@ -5156,21 +5176,21 @@ namespace ocilib
          *
          */
         template<class T, core::SupportedVectorNumericT<T>* = nullptr>
-        std::vector<T> Get();
+        [[nodiscard]] std::vector<T> Get();
 
         /**
         * @brief
         * Return the dimension count of the vector
         *
         */
-        UInt32 GetDimensionCount();
+        [[nodiscard]] UInt32 GetDimensionCount();
 
         /**
         * @brief
         * Return the format of the vector
         *
         */
-        VectorFormat GetFormat();
+        [[nodiscard]] VectorFormat GetFormat();
 
         /**
          * @brief
@@ -5182,14 +5202,14 @@ namespace ocilib
          *
          *
          */
-        void FromString(const ostring& str, VectorFormat format, UInt32 dimensions);
+        void FromString(const String& str, VectorFormat format, UInt32 dimensions);
 
         /**
         * @brief
         * return a string representation of the current Vector
         *
         */
-        ostring ToString() const override;
+        String ToString() const override;
 
     private:
 
@@ -5366,7 +5386,7 @@ namespace ocilib
         * @param encoding   - Text encoding option
         *
         */
-        void LoadText(const ostring& text, JsonValidation validation = JsonValidation(AllowAll), JsonEncoding encoding = JsonEncoding(Detect));
+        void LoadText(const String& text, JsonValidation validation = JsonValidation(AllowAll), JsonEncoding encoding = JsonEncoding(Detect));
 
         /**
         * @brief
@@ -5408,7 +5428,7 @@ namespace ocilib
         * @return The serialized JSON text
         *
         */
-        ostring ToText(JsonPrint print = JsonPrint()) const;
+        [[nodiscard]] String ToText(JsonPrint print = JsonPrint()) const;
 
         /**
         * @brief
@@ -5417,7 +5437,7 @@ namespace ocilib
         * @return The serialized OSON binary data
         *
         */
-        Raw ToBinary() const;
+        [[nodiscard]] Raw ToBinary() const;
 
         /**
         * @brief
@@ -5446,7 +5466,7 @@ namespace ocilib
         * @return TRUE if mutable, FALSE otherwise
         *
         */
-        bool IsMutable() const;
+        [[nodiscard]] bool IsMutable() const;
 
         /**
         * @brief
@@ -5455,7 +5475,7 @@ namespace ocilib
         * @return The root JsonNode
         *
         */
-        JsonNode GetRoot();
+        [[nodiscard]] JsonNode GetRoot();
 
         /**
         * @brief
@@ -5513,7 +5533,7 @@ namespace ocilib
         * @return The new JsonNode
         *
         */
-        JsonNode CreateString(const ostring& value);
+        JsonNode CreateString(const String& value);
 
         /**
         * @brief
@@ -5600,7 +5620,7 @@ namespace ocilib
         * @return The serialized JSON text
         *
         */
-        ostring ToString() const override;
+        String ToString() const override;
 
     private:
 
@@ -5674,7 +5694,7 @@ namespace ocilib
         * @return The node type
         *
         */
-        JsonType GetType() const;
+        [[nodiscard]] JsonType GetType() const;
 
         /**
         * @brief
@@ -5683,7 +5703,7 @@ namespace ocilib
         * @return TRUE if the node is null, FALSE otherwise
         *
         */
-        bool IsNull() const;
+        [[nodiscard]] bool IsNull() const;
 
         /**
         * @brief
@@ -5692,7 +5712,7 @@ namespace ocilib
         * @return Number of fields
         *
         */
-        UInt32 GetFieldCount() const;
+        [[nodiscard]] UInt32 GetFieldCount() const;
 
         /**
         * @brief
@@ -5703,7 +5723,7 @@ namespace ocilib
         * @return Field name
         *
         */
-        ostring GetFieldName(UInt32 index) const;
+        [[nodiscard]] String GetFieldName(UInt32 index) const;
 
         /**
         * @brief
@@ -5714,7 +5734,7 @@ namespace ocilib
         * @return The field JsonNode
         *
         */
-        JsonNode GetFieldByName(const ostring& name) const;
+        [[nodiscard]] JsonNode GetFieldByName(const String& name) const;
 
         /**
         * @brief
@@ -5725,15 +5745,15 @@ namespace ocilib
         * @return The field JsonNode
         *
         */
-        JsonNode GetFieldByIndex(UInt32 index) const;
+        [[nodiscard]] JsonNode GetFieldByIndex(UInt32 index) const;
 
         /**
         * @brief
         * Return a JSON object field by name or index
         *
         */
-        JsonNode GetField(const ostring& name) const;
-        JsonNode GetField(UInt32 index) const;
+        [[nodiscard]] JsonNode GetField(const String& name) const;
+        [[nodiscard]] JsonNode GetField(UInt32 index) const;
 
         /**
         * @brief
@@ -5742,7 +5762,7 @@ namespace ocilib
         * @return Number of items
         *
         */
-        UInt32 GetItemCount() const;
+        [[nodiscard]] UInt32 GetItemCount() const;
 
         /**
         * @brief
@@ -5753,7 +5773,7 @@ namespace ocilib
         * @return The item JsonNode
         *
         */
-        JsonNode GetItem(UInt32 index) const;
+        [[nodiscard]] JsonNode GetItem(UInt32 index) const;
 
         /**
         * @brief
@@ -5764,7 +5784,7 @@ namespace ocilib
         * @return The field JsonNode
         *
         */
-        JsonNode operator[](const ostring& name) const;
+        JsonNode operator[](const String& name) const;
 
         /**
         * @brief
@@ -5795,7 +5815,7 @@ namespace ocilib
         * @return The string value
         *
         */
-        ostring GetString() const;
+        [[nodiscard]] String GetString() const;
 
         /**
         * @brief
@@ -5804,7 +5824,7 @@ namespace ocilib
         * @return The boolean value
         *
         */
-        bool GetBoolean() const;
+        [[nodiscard]] bool GetBoolean() const;
 
         /**
         * @brief
@@ -5813,7 +5833,7 @@ namespace ocilib
         * @return The binary value
         *
         */
-        Raw GetBinary() const;
+        [[nodiscard]] Raw GetBinary() const;
 
         /**
         * @brief
@@ -5822,7 +5842,7 @@ namespace ocilib
         * @return The date value
         *
         */
-        Date GetDate() const;
+        [[nodiscard]] Date GetDate() const;
 
         /**
         * @brief
@@ -5831,7 +5851,7 @@ namespace ocilib
         * @return The timestamp value
         *
         */
-        Timestamp GetTimestamp() const;
+        [[nodiscard]] Timestamp GetTimestamp() const;
 
         /**
         * @brief
@@ -5840,7 +5860,7 @@ namespace ocilib
         * @return The interval value
         *
         */
-        Interval GetInterval() const;
+        [[nodiscard]] Interval GetInterval() const;
 
         /**
         * @brief
@@ -5849,7 +5869,7 @@ namespace ocilib
         * @param value - New string value
         *
         */
-        void SetString(const ostring& value);
+        void SetString(const String& value);
 
         /**
         * @brief
@@ -5931,7 +5951,7 @@ namespace ocilib
         * @param value - Field value
         *
         */
-        void SetField(const ostring& name, const JsonNode& value);
+        void SetField(const String& name, const JsonNode& value);
 
         /**
         * @brief
@@ -5979,7 +5999,7 @@ namespace ocilib
         *
         * @return true if the field exists, false otherwise
         */
-        bool HasField(const ostring& name) const;
+        [[nodiscard]] bool HasField(const String& name) const;
 
         /**
         * @brief
@@ -5988,7 +6008,7 @@ namespace ocilib
         * @param name - Field name to remove
         *
         */
-        void RemoveField(const ostring& name);
+        void RemoveField(const String& name);
 
         /**
         * @brief
@@ -6003,7 +6023,7 @@ namespace ocilib
         *
         * @return The parent node, or a null JsonNode if the node is the document root
         */
-        JsonNode GetParent() const;
+        [[nodiscard]] JsonNode GetParent() const;
 
         /**
         * @brief
@@ -6018,7 +6038,7 @@ namespace ocilib
         *
         * @return The matching node, or a null JsonNode if the path matches nothing
         */
-        JsonNode GetByPath(const ostring& path) const;
+        [[nodiscard]] JsonNode GetByPath(const String& path) const;
 
         /**
         * @brief
@@ -6029,7 +6049,7 @@ namespace ocilib
         * @return The node numeric value
         */
         template<class T, core::SupportedNumericT<T>* = nullptr>
-        T GetNumeric() const;
+        [[nodiscard]] T GetNumeric() const;
 
         /**
         * @brief
@@ -6081,7 +6101,7 @@ namespace ocilib
         operator T() const;
         CollectionElement& operator = (const ValueType& other);
         CollectionElement& operator = (const CollectionElement& other);
-        bool IsNull() const;
+        [[nodiscard]] bool IsNull() const;
         void SetNull();
 
     private:
@@ -6216,21 +6236,21 @@ namespace ocilib
         * Return the type of the collection
         *
         */
-        CollectionType GetType() const;
+        [[nodiscard]] CollectionType GetType() const;
 
         /**
         * @brief
         * Returns the maximum number of elements for the collection
         *
         */
-        UInt32 GetMax() const;
+        [[nodiscard]] UInt32 GetMax() const;
 
         /**
         * @brief
         * Returns the total number of elements in the collection
         *
         */
-        UInt32 GetSize() const;
+        [[nodiscard]] UInt32 GetSize() const;
 
         /**
         * @brief
@@ -6242,7 +6262,7 @@ namespace ocilib
         *   of elements minus the total of deleted elements
         *
         */
-        UInt32 GetCount() const;
+        [[nodiscard]] UInt32 GetCount() const;
 
         /**
         * @brief
@@ -6271,7 +6291,7 @@ namespace ocilib
         * Collection Index start at 1
         *
         */
-        bool IsElementNull(UInt32 index) const;
+        [[nodiscard]] bool IsElementNull(UInt32 index) const;
 
         /**
         * @brief
@@ -6311,7 +6331,7 @@ namespace ocilib
         * @param index - Index of the element
         *
         */
-        T Get(UInt32 index) const;
+        [[nodiscard]] T Get(UInt32 index) const;
 
         /**
         * @brief
@@ -6338,7 +6358,7 @@ namespace ocilib
         * Return the type information object associated to the collection
         *
         */
-        TypeInfo GetTypeInfo() const;
+        [[nodiscard]] TypeInfo GetTypeInfo() const;
 
         /**
         * @brief
@@ -6352,7 +6372,7 @@ namespace ocilib
         * return a string representation of the current collection
         *
         */
-        ostring ToString() const override;
+        String ToString() const override;
 
         /**
         * @brief
@@ -6412,7 +6432,7 @@ namespace ocilib
 
     private:
 
-        static T GetElem(OCI_Elem* elem, core::Handle* parent);
+        [[nodiscard]] static T GetElem(OCI_Elem* elem, core::Handle* parent);
 
         static void SetElem(OCI_Elem* elem, const T& value, core::Handle* parent);
 
@@ -6468,14 +6488,14 @@ namespace ocilib
         * Return the buffer length
         *
         */
-        UInt32 GetLength() const;
+        [[nodiscard]] UInt32 GetLength() const;
 
         /**
         * @brief
         * Return the string read from a fetch sequence
         *
         */
-        T GetContent() const;
+        [[nodiscard]] T GetContent() const;
 
     private:
 
@@ -6491,7 +6511,7 @@ namespace ocilib
     * Length and size arguments / returned values are expressed in number of characters
     *
     */
-    typedef Long<ostring, LongCharacter> Clong;
+    typedef Long<String, LongCharacter> Clong;
 
     /**
     *
@@ -6568,14 +6588,14 @@ namespace ocilib
         * Return the name of the bind object
         *
         */
-        ostring GetName() const;
+        [[nodiscard]] String GetName() const;
 
         /**
         * @brief
         * Return the OCILIB type of the data associated with the bind object
         *
         */
-        DataType GetType() const;
+        [[nodiscard]] DataType GetType() const;
 
         /**
         * @brief
@@ -6592,11 +6612,11 @@ namespace ocilib
         *
         * @warning
         * - Cast returned values to the matching C++ class GetType() property type.
-        * - For scalar numeric types, cast returned value to ocilib::NumericType values.
+        * - For scalar numeric types, cast returned value to NumericType values.
         * - For a non valid type, it returns 0.
         *
         */
-        UInt32 GetSubType() const;
+        [[nodiscard]] UInt32 GetSubType() const;
 
         /**
         * @brief
@@ -6607,14 +6627,14 @@ namespace ocilib
         * - For vector binds, it returns the number of element in the bind array
         *
         */
-        UInt32 GetDataCount() const;
+        [[nodiscard]] UInt32 GetDataCount() const;
 
         /**
         * @brief
         * Return the statement associated with the bind object
         *
         */
-        Statement GetStatement() const;
+        [[nodiscard]] Statement GetStatement() const;
 
         /**
         * @brief
@@ -6652,7 +6672,7 @@ namespace ocilib
         * Index starts with 1
         *
         */
-        bool IsDataNull(UInt32 index = 1) const;
+        [[nodiscard]] bool IsDataNull(UInt32 index = 1) const;
 
         /**
         * @brief
@@ -6664,7 +6684,7 @@ namespace ocilib
         * This call has to be made after Statement::Prepare() but before Statement::Execute()
         *
         * @warning
-        * This call does nothing the bind data type is not ocilib::TypeString or ocilib::TypeLong
+        * This call does nothing the bind data type is not TypeString or TypeLong
         *
         */
         void SetCharsetForm(CharsetForm value);
@@ -6686,7 +6706,7 @@ namespace ocilib
         * Get the direction mode
           *
         */
-        BindDirection GetDirection() const;
+        [[nodiscard]] BindDirection GetDirection() const;
 
     private:
 
@@ -6805,7 +6825,7 @@ namespace ocilib
         {
             /** LONG and LONG RAW are mapped to Long objects */
             LongExplicit = OCI_LONG_EXPLICIT,
-            /** LONG and LONG RAW are mapped to ostring objects */
+            /** LONG and LONG RAW are mapped to String objects */
             LongImplicit = OCI_LONG_IMPLICIT
         };
 
@@ -6842,7 +6862,7 @@ namespace ocilib
         * Return the connection associated with a statement
         *
         */
-        Connection GetConnection() const;
+        [[nodiscard]] Connection GetConnection() const;
 
         /**
         * @brief
@@ -6870,7 +6890,7 @@ namespace ocilib
         * leading to unnecessary server round trips and less performance
         *
         */
-        void Describe(const ostring& sql);
+        void Describe(const String& sql);
 
         /**
         * @brief
@@ -6895,7 +6915,7 @@ namespace ocilib
         * unnecessary server round trips and less performance
         *
         */
-        void Parse(const ostring& sql);
+        void Parse(const String& sql);
 
         /**
         * @brief
@@ -6907,7 +6927,7 @@ namespace ocilib
         * With version 1.3.0 and above, do not call this function for fetched statements (REF cursors)
         *
         */
-        void Prepare(const ostring& sql);
+        void Prepare(const String& sql);
 
         /**
         * @brief
@@ -6923,7 +6943,7 @@ namespace ocilib
         * @param sql  - SQL order - PL/SQL block
         *
         */
-        void Execute(const ostring& sql);
+        void Execute(const String& sql);
 
         /**
         * @brief
@@ -6933,7 +6953,7 @@ namespace ocilib
         * This call is equivalent to calling ExecutePrepared() followed by GetResultset().
         *
         */
-        Resultset ExecuteAndGetResultset();
+        [[nodiscard]] Resultset ExecuteAndGetResultset();
 
         /**
         * @brief
@@ -6945,7 +6965,7 @@ namespace ocilib
         * This call is equivalent to calling Execute() followed by GetResultset().
         *
         */
-        Resultset ExecuteAndGetResultset(const ostring& sql);
+        [[nodiscard]] Resultset ExecuteAndGetResultset(const String& sql);
 
         /**
         * @brief
@@ -7009,7 +7029,7 @@ namespace ocilib
         *
         */
         template<class T>
-        UInt32 Execute(const ostring& sql, T callback);
+        UInt32 Execute(const String& sql, T callback);
 
         /**
         * @brief
@@ -7033,7 +7053,7 @@ namespace ocilib
         *
         */
         template<class T, class U>
-        UInt32 Execute(const ostring& sql, T callback, U adapter);
+        UInt32 Execute(const String& sql, T callback, U adapter);
 
         /**
         * @brief
@@ -7049,21 +7069,21 @@ namespace ocilib
         * For SELECTs statements, use GetRowCount() instead
         *
         */
-        UInt32 GetAffectedRows() const;
+        [[nodiscard]] UInt32 GetAffectedRows() const;
 
         /**
         * @brief
         * Return the last SQL or PL/SQL statement prepared or executed by the statement
         *
         */
-        ostring GetSql()  const;
+        [[nodiscard]] String GetSql()  const;
 
         /**
         * @brief
         * Return the server SQL_ID of the last SQL or PL/SQL statement prepared or executed by the statement
         *
         */
-        ostring GetSqlIdentifier()  const;
+        [[nodiscard]] String GetSqlIdentifier()  const;
 
         /**
         * @brief
@@ -7076,7 +7096,7 @@ namespace ocilib
         * If the statement has not been prepared and executed, null resultset object will be returned
         *
         */
-        Resultset GetResultset();
+        [[nodiscard]] Resultset GetResultset();
 
         /**
         * @brief
@@ -7099,7 +7119,7 @@ namespace ocilib
         * Refer to  Oracle documentation for more information.
         *
         */
-        Resultset GetNextResultset();
+        [[nodiscard]] Resultset GetNextResultset();
 
         /**
         * @brief
@@ -7132,7 +7152,7 @@ namespace ocilib
         * Return the current input array size for bulk operations
         *
         */
-        UInt32 GetBindArraySize() const;
+        [[nodiscard]] UInt32 GetBindArraySize() const;
 
         /**
         * @brief
@@ -7159,7 +7179,7 @@ namespace ocilib
         * See AllowRebinding() for more details
         *
         */
-        bool IsRebindingAllowed() const;
+        [[nodiscard]] bool IsRebindingAllowed() const;
 
         /**
         * @brief
@@ -7177,14 +7197,14 @@ namespace ocilib
         * Bind index on success or zero if the bind does not exists
         *
         */
-        UInt32 GetBindIndex(const ostring& name) const;
+        [[nodiscard]] UInt32 GetBindIndex(const String& name) const;
 
         /**
         * @brief
         * Return the number of binds currently associated to a statement
         *
         */
-        UInt32 GetBindCount() const;
+        [[nodiscard]] UInt32 GetBindCount() const;
 
         /**
         * @brief
@@ -7200,7 +7220,7 @@ namespace ocilib
         * Bind() call generates a bind object of index 3.
         *
         */
-        BindInfo GetBind(UInt32 index) const;
+        [[nodiscard]] BindInfo GetBind(UInt32 index) const;
 
         /**
         * @brief
@@ -7212,7 +7232,7 @@ namespace ocilib
         * Bind names must include a semicolon at the beginning.
         *
         */
-        BindInfo GetBind(const ostring& name) const;
+        [[nodiscard]] BindInfo GetBind(const String& name) const;
 
         /**
         * @brief
@@ -7225,8 +7245,8 @@ namespace ocilib
         * @param mode  - bind direction mode
         *
         * @warning
-        * This method has built-in specialized versions for all supported types except ostring, Clong and Blong variables.
-        * For binding ostring, Clong and Blong variables, use the version with an extra parameter.
+        * This method has built-in specialized versions for all supported types except String, Clong and Blong variables.
+        * For binding String, Clong and Blong variables, use the version with an extra parameter.
         *
         * @note
         * It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
@@ -7234,7 +7254,7 @@ namespace ocilib
         *
         */
         template<class T>
-        BindInfo Bind(const ostring& name, T& value, BindInfo::BindDirection mode);
+        BindInfo Bind(const String& name, T& value, BindInfo::BindDirection mode);
 
         /**
         * @brief
@@ -7249,7 +7269,7 @@ namespace ocilib
         * @param mode      - bind direction mode
         *
         * @warning
-        * This method has built-in specialized versions for ostring, Clong and Blong variables.
+        * This method has built-in specialized versions for String, Clong and Blong variables.
         * Pass the maximum length/size of the variable in the parameter extraInfo
         *
         * @note
@@ -7258,7 +7278,7 @@ namespace ocilib
         *
         */
         template<class T, class U>
-        BindInfo Bind(const ostring& name, T& value, U extraInfo, BindInfo::BindDirection mode);
+        BindInfo Bind(const String& name, T& value, U extraInfo, BindInfo::BindDirection mode);
 
         /**
         * @brief
@@ -7272,7 +7292,7 @@ namespace ocilib
         *
         */
         template<class T>
-        BindInfo Bind(const ostring& name, Collection<T>& value, BindInfo::BindDirection mode);
+        BindInfo Bind(const String& name, Collection<T>& value, BindInfo::BindDirection mode);
 
         /**
         * @brief
@@ -7287,7 +7307,7 @@ namespace ocilib
         *
         * @warning
         * This method has built-in specialized versions for all C++ native scalar types, Date time and Statement objects.
-        * For others types (ostring, Clong, Blong, Raw, Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
+        * For others types (String, Clong, Blong, Raw, Object, Reference, Collection, Timestamp, Interval), use versions with extra parameters.
         *
         * @note
         * It is not necessary to specify the template data type in the bind call as all possible specializations can be resolved
@@ -7295,7 +7315,7 @@ namespace ocilib
         *
         */
         template<class T>
-        BindInfo Bind(const ostring& name, std::vector<T>& values, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
+        BindInfo Bind(const String& name, std::vector<T>& values, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
 
         /**
         * @brief
@@ -7318,7 +7338,7 @@ namespace ocilib
         *
         */
         template<class T>
-        BindInfo Bind(const ostring& name, std::vector<T>& values, TypeInfo& typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
+        BindInfo Bind(const String& name, std::vector<T>& values, TypeInfo& typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
 
         /**
         * @brief
@@ -7334,7 +7354,7 @@ namespace ocilib
         *
         */
         template<class T>
-        BindInfo Bind(const ostring& name, std::vector<Collection<T> >& values, TypeInfo& typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
+        BindInfo Bind(const String& name, std::vector<Collection<T> >& values, TypeInfo& typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
 
         /**
         * @brief
@@ -7350,8 +7370,8 @@ namespace ocilib
         * @param type      - vector type (regular array or PL/SQL table)
         *
         * @warning
-        * This method has built-in specialized versions for ostring, Raw , Clong, Blong, Timestamp, Interval variables.
-        * - For ostring, Clong, Blong, Raw : Pass the maximum length/size of variables in the parameter extraInfo
+        * This method has built-in specialized versions for String, Raw , Clong, Blong, Timestamp, Interval variables.
+        * - For String, Clong, Blong, Raw : Pass the maximum length/size of variables in the parameter extraInfo
         * - For Timestamp, Interval : Pass a value of the matching C++ class GetType() property type OR the underlying enumeration type.
         *
         * @note
@@ -7360,7 +7380,7 @@ namespace ocilib
         *
         */
         template<class T, class U>
-        BindInfo Bind(const ostring& name, std::vector<T>& values, U extraInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
+        BindInfo Bind(const String& name, std::vector<T>& values, U extraInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
 
         /**
         * @brief
@@ -7373,7 +7393,7 @@ namespace ocilib
         * @warning
         * This method has built-in specialized versions for all supported types except:
         * - Timestamp and Interval, Object and Reference : use the version that takes a TypeInfo parameter
-        * - ostring and Raw : use the version that takes an extraInfo parameter
+        * - String and Raw : use the version that takes an extraInfo parameter
         *
         * @note
         * Statement, Blong and Clong are not supported for register calls
@@ -7383,7 +7403,7 @@ namespace ocilib
         *
         */
         template<class T>
-        void Register(const ostring& name);
+        void Register(const String& name);
 
         /**
         * @brief
@@ -7403,7 +7423,7 @@ namespace ocilib
         *
         */
         template<class T, class U>
-        void Register(const ostring& name, U& extraInfo);
+        void Register(const String& name, U& extraInfo);
 
         /**
         * @brief
@@ -7416,7 +7436,7 @@ namespace ocilib
         * @param extraInfo - Extra information needed for the bind call
         *
         * @warning
-        * This method has built-in specialized versions for ostring and Raw variables.
+        * This method has built-in specialized versions for String and Raw variables.
         *  Pass the maximum length/size of variables in the parameter extraInfo
         *
         * @note
@@ -7424,14 +7444,14 @@ namespace ocilib
         *
         */
         template<class T, class U>
-        void Register(const ostring& name, U extraInfo);
+        void Register(const String& name, U extraInfo);
 
         /**
         * @brief
         * Return the type of a SQL statement
         *
         */
-        StatementType GetStatementType() const;
+        [[nodiscard]] StatementType GetStatementType() const;
 
         /**
         * @brief
@@ -7442,7 +7462,7 @@ namespace ocilib
         * Positions start at 1.
         *
         */
-        UInt32 GetSqlErrorPos() const;
+        [[nodiscard]] UInt32 GetSqlErrorPos() const;
 
         /**
         * @brief
@@ -7464,7 +7484,7 @@ namespace ocilib
         * Default value is Statement::FetchForward
         *
         */
-        FetchMode GetFetchMode() const;
+        [[nodiscard]] FetchMode GetFetchMode() const;
 
         /**
         * @brief
@@ -7483,7 +7503,7 @@ namespace ocilib
         * Default value is Statement::BindByName
         *
         */
-        BindMode GetBindMode() const;
+        [[nodiscard]] BindMode GetBindMode() const;
 
         /**
         * @brief
@@ -7502,7 +7522,7 @@ namespace ocilib
         * Default value is set to constant OCI_FETCH_SIZE
         *
         */
-        UInt32 GetFetchSize() const;
+        [[nodiscard]] UInt32 GetFetchSize() const;
 
         /**
         * @brief
@@ -7524,7 +7544,7 @@ namespace ocilib
         * Default value is set to constant OCI_PREFETCH_SIZE
         *
         */
-        UInt32 GetPrefetchSize() const;
+        [[nodiscard]] UInt32 GetPrefetchSize() const;
 
         /**
         * @brief
@@ -7554,7 +7574,7 @@ namespace ocilib
         * Default value is 0
         *
         */
-        UInt32 GetPrefetchMemory() const;
+        [[nodiscard]] UInt32 GetPrefetchMemory() const;
 
         /**
         * @brief
@@ -7573,7 +7593,7 @@ namespace ocilib
         * Default value is set to constant OCI_SIZE_PIECE_DYNAMIC_FETCH
         *
         */
-        UInt32 GetPieceSize() const;
+        [[nodiscard]] UInt32 GetPieceSize() const;
 
         /**
         * @brief
@@ -7592,7 +7612,7 @@ namespace ocilib
         * Return the long data type handling mode of a SQL statement
         *
         */
-        LongMode GetLongMode() const;
+        [[nodiscard]] LongMode GetLongMode() const;
 
         /**
         * @brief
@@ -7606,7 +7626,7 @@ namespace ocilib
         * The SQL command list is available in Oracle documentations and guides
         *
         */
-        UInt32 GetSQLCommand() const;
+        [[nodiscard]] UInt32 GetSQLCommand() const;
 
         /**
         * @brief
@@ -7620,7 +7640,7 @@ namespace ocilib
         * The SQL verb list is available in Oracle documentations and guides
         *
         */
-        ostring GetSQLVerb() const;
+        [[nodiscard]] String GetSQLVerb() const;
 
         /**
         * @brief
@@ -7638,7 +7658,7 @@ namespace ocilib
         *
         */
 
-        std::vector<ostring> GetParseBindNames() const;
+        [[nodiscard]] std::vector<String> GetParseBindNames() const;
 
         /**
         * @brief
@@ -7653,7 +7673,7 @@ namespace ocilib
 
         Statement(OCI_Statement* stmt, core::Handle* parent = nullptr);
 
-        support::BindsHolder* GetBindsHolder(bool create) const;
+        [[nodiscard]] support::BindsHolder* GetBindsHolder(bool create) const;
 
         void ReleaseResultsets() const;
 
@@ -7662,16 +7682,16 @@ namespace ocilib
         void ClearBinds() const;
 
         template<typename M, class T>
-        BindInfo Bind1(M& method, const ostring& name, T& value, BindInfo::BindDirection mode);
+        BindInfo Bind1(M& method, const String& name, T& value, BindInfo::BindDirection mode);
 
         template<typename M, class T>
-        BindInfo Bind2(M& method, const ostring& name, T& value, BindInfo::BindDirection mode);
+        BindInfo Bind2(M& method, const String& name, T& value, BindInfo::BindDirection mode);
 
         template<typename M, class T>
-        BindInfo BindVector1(M& method, const ostring& name, std::vector<T>& values, BindInfo::BindDirection mode, BindInfo::VectorType type);
+        BindInfo BindVector1(M& method, const String& name, std::vector<T>& values, BindInfo::BindDirection mode, BindInfo::VectorType type);
 
         template<typename M, class T, class U>
-        BindInfo BindVector2(M& method, const ostring& name, std::vector<T>& values, BindInfo::BindDirection mode, U subType, BindInfo::VectorType type);
+        BindInfo BindVector2(M& method, const String& name, std::vector<T>& values, BindInfo::BindDirection mode, U subType, BindInfo::VectorType type);
 
         template<typename T>
         UInt32 Fetch(T callback);
@@ -7692,8 +7712,14 @@ namespace ocilib
      * Proxy object representing the current row of a Resultset during iteration
      *
      * A Row forwards Get<T> calls to the underlying Resultset.
-     * It is only valid while the cursor sits on that row - the column data is
-     * released on the next fetch call.
+     *
+     * @warning
+     * A Row is a lightweight proxy into the Resultset's current cursor
+     * position - not an independent row value. It is only valid while the
+     * cursor sits on that row; the next fetch (Next()/Prev()/Seek()/operator++)
+     * releases the column data and advances the position. Do not retain Row
+     * objects past the iteration step that produced them - copy out the
+     * column values you need with Get<T>() instead.
      *
      */
     class Row
@@ -7708,7 +7734,7 @@ namespace ocilib
         *
         */
         template<class T>
-        T Get(UInt32 index) const;
+        [[nodiscard]] T Get(UInt32 index) const;
 
         /**
         * @brief
@@ -7718,7 +7744,33 @@ namespace ocilib
         *
         */
         template<class T>
-        T Get(const ostring& name) const;
+        [[nodiscard]] T Get(const String& name) const;
+
+        /**
+        * @brief
+        * Return the value of the column at the given index as an optional
+        *
+        * @param index - Column index
+        *
+        * @note
+        * Returns std::nullopt if the column is SQL NULL; otherwise the Get<T> value
+        *
+        */
+        template<class T>
+        [[nodiscard]] std::optional<T> GetOptional(UInt32 index) const;
+
+        /**
+        * @brief
+        * Return the value of the column with the given name as an optional
+        *
+        * @param name - Column name
+        *
+        * @note
+        * Returns std::nullopt if the column is SQL NULL; otherwise the Get<T> value
+        *
+        */
+        template<class T>
+        [[nodiscard]] std::optional<T> GetOptional(const String& name) const;
 
     private:
 
@@ -7740,7 +7792,11 @@ namespace ocilib
      *
      * @note
      * The iteration position is shared state on the Resultset: copying an
-     * iterator does not create an independent cursor.
+     * iterator does not create an independent cursor. Two iterators over the
+     * same Resultset advance the same position - the iterator is therefore a
+     * single-pass input iterator, not a forward iterator: re-iterating a
+     * consumed forward-only resultset yields no rows, and dereferencing two
+     * copies at the same position always yields the same Row.
      *
      * @warning
      * operator--(), operator+=(), operator-=() and operator[]() require a
@@ -7909,7 +7965,7 @@ namespace ocilib
         * Column position starts at 1.
         *
         * @note
-        * Get<ostring> performs an implicit text conversion for non-string columns
+        * Get<String> performs an implicit text conversion for non-string columns
         * on every call, for every fetched row. On performance-critical fetch loops,
         * prefer the typed overloads and convert to text only where needed. The
         * produced text also depends on the session connection formats (see
@@ -7918,7 +7974,7 @@ namespace ocilib
         *
         */
         template<class T>
-        T Get(UInt32 index) const;
+        [[nodiscard]] T Get(UInt32 index) const;
 
         /**
         * @brief
@@ -7949,7 +8005,47 @@ namespace ocilib
         *
         */
         template<class T>
-        T Get(const ostring& name) const;
+        [[nodiscard]] T Get(const String& name) const;
+
+        /**
+        * @brief
+        * Return the current value of the column at the given index as an optional
+        *
+        * @tparam T - C++ type of the value to retrieve
+        *
+        * @param index - Column index
+        *
+        * @note
+        * Returns std::nullopt when the column is SQL NULL; otherwise the Get<T> value.
+        *
+        * std::nullopt expresses SQL NULL — it does not mean an empty handle.
+        * For handle types, a returned engaged optional always holds a valid,
+        * non-null handle; HandleHolder::IsNull() (an empty/unassigned handle
+        * object) is a different, unrelated state.
+        *
+        */
+        template<class T>
+        [[nodiscard]] std::optional<T> GetOptional(UInt32 index) const;
+
+        /**
+        * @brief
+        * Return the current value of the column from its name as an optional
+        *
+        * @tparam T - C++ type of the value to retrieve
+        *
+        * @param name  - Column name
+        *
+        * @note
+        * Returns std::nullopt when the column is SQL NULL; otherwise the Get<T> value.
+        *
+        * std::nullopt expresses SQL NULL — it does not mean an empty handle.
+        * For handle types, a returned engaged optional always holds a valid,
+        * non-null handle; HandleHolder::IsNull() (an empty/unassigned handle
+        * object) is a different, unrelated state.
+        *
+        */
+        template<class T>
+        [[nodiscard]] std::optional<T> GetOptional(const String& name) const;
 
         /**
         * @brief
@@ -7962,7 +8058,7 @@ namespace ocilib
         *
         */
         template<class T>
-        void Get(const ostring& name, T& value) const;
+        void Get(const String& name, T& value) const;
 
         /**
         * @brief
@@ -7979,7 +8075,7 @@ namespace ocilib
         *
         */
         template<class T, class U>
-        bool Get(T& value, U adapter) const;
+        [[nodiscard]] bool Get(T& value, U adapter) const;
 
         /**
         * @brief
@@ -8107,7 +8203,7 @@ namespace ocilib
         * Retrieve the number of rows fetched so far
         *
         */
-        UInt32 GetCount() const;
+        [[nodiscard]] UInt32 GetCount() const;
 
         /**
         * @brief
@@ -8119,7 +8215,7 @@ namespace ocilib
         * - If the resultset has been fully fetched, it returns the last fetched row number
         *
         */
-        UInt32 GetCurrentRow() const;
+        [[nodiscard]] UInt32 GetCurrentRow() const;
 
         /**
         * @brief
@@ -8134,14 +8230,14 @@ namespace ocilib
         * Column position starts at 1.
         *
         */
-        UInt32 GetColumnIndex(const ostring& name) const;
+        [[nodiscard]] UInt32 GetColumnIndex(const String& name) const;
 
         /**
         * @brief
         * Return the number of columns in the resultset
         *
         */
-        UInt32 GetColumnCount() const;
+        [[nodiscard]] UInt32 GetColumnCount() const;
 
         /**
         * @brief
@@ -8153,7 +8249,7 @@ namespace ocilib
         * Column position starts at 1.
         *
         */
-        Column GetColumn(UInt32 index) const;
+        [[nodiscard]] Column GetColumn(UInt32 index) const;
 
         /**
         * @brief
@@ -8165,7 +8261,7 @@ namespace ocilib
         * The column name is case insensitive
         *
         */
-        Column GetColumn(const ostring& name) const;
+        [[nodiscard]] Column GetColumn(const String& name) const;
 
         /**
         * @brief
@@ -8177,7 +8273,7 @@ namespace ocilib
         * Column position starts at 1.
         *
         */
-        bool IsColumnNull(UInt32 index) const;
+        [[nodiscard]] bool IsColumnNull(UInt32 index) const;
 
         /**
         * @brief
@@ -8186,14 +8282,14 @@ namespace ocilib
         * @param name  - Column name
         *
         */
-        bool IsColumnNull(const ostring& name) const;
+        [[nodiscard]] bool IsColumnNull(const String& name) const;
 
         /**
         * @brief
         * Return the statement associated with the resultset
         *
         */
-        Statement GetStatement() const;
+        [[nodiscard]] Statement GetStatement() const;
 
         /**
         * @brief
@@ -8303,7 +8399,7 @@ namespace ocilib
         * Return the Column name
         *
         */
-        ostring GetName() const;
+        [[nodiscard]] String GetName() const;
 
         /**
         * @brief
@@ -8313,7 +8409,7 @@ namespace ocilib
         * For possible values, consults Oracle Documentation
         *
         */
-        ostring GetSQLType() const;
+        [[nodiscard]] String GetSQLType() const;
 
         /**
         * @brief
@@ -8324,14 +8420,14 @@ namespace ocilib
         * This function returns a description that matches the one given by SQL*Plus
         *
         */
-        ostring GetFullSQLType() const;
+        [[nodiscard]] String GetFullSQLType() const;
 
         /**
         * @brief
         * Return the type of the given column
         *
         */
-        DataType GetType() const;
+        [[nodiscard]] DataType GetType() const;
 
         /**
         * @brief
@@ -8350,21 +8446,21 @@ namespace ocilib
         * - For a non valid type, it returns 0.
         *
         */
-        UInt32 GetSubType() const;
+        [[nodiscard]] UInt32 GetSubType() const;
 
         /**
         * @brief
         * Return the charset form of the given column
         *
         */
-        CharsetForm GetCharsetForm() const;
+        [[nodiscard]] CharsetForm GetCharsetForm() const;
 
         /**
         * @brief
         * Return the collation ID of the given column
         *
         */
-        CollationID GetCollationID() const;
+        [[nodiscard]] CollationID GetCollationID() const;
 
         /**
         * @brief
@@ -8375,35 +8471,35 @@ namespace ocilib
         * based columns that were created with a character based size or of type NCHAR/NVARCHAR
         *
         */
-        UInt32 GetSize() const;
+        [[nodiscard]] UInt32 GetSize() const;
 
         /**
         * @brief
         * Return the scale of the column for numeric columns
         *
         */
-        Int32 GetScale() const;
+        [[nodiscard]] Int32 GetScale() const;
 
         /**
         * @brief
         * Return the precision of the column for numeric columns
         *
         */
-        Int32 GetPrecision() const;
+        [[nodiscard]] Int32 GetPrecision() const;
 
         /**
         * @brief
         * Return the fractional precision of the column for Timestamp and Interval columns
         *
         */
-        Int32 GetFractionalPrecision() const;
+        [[nodiscard]] Int32 GetFractionalPrecision() const;
 
         /**
         * @brief
         * Return the leading precision of the column for Interval columns
         *
         */
-        Int32 GetLeadingPrecision() const;
+        [[nodiscard]] Int32 GetLeadingPrecision() const;
 
 
         /**
@@ -8411,7 +8507,7 @@ namespace ocilib
         * Return the dimension of the column for Vector columns
         *
         */
-        Int32 GetDimension() const;
+        [[nodiscard]] Int32 GetDimension() const;
 
         /**
         * @brief
@@ -8423,14 +8519,14 @@ namespace ocilib
         * For earlier versions, it always return Columns::NoFlags
         *
         */
-        PropertyFlags GetPropertyFlags() const;
+        [[nodiscard]] PropertyFlags GetPropertyFlags() const;
 
         /**
         * @brief
         * Return true if the column is nullable otherwise false
         *
         */
-        bool IsNullable() const;
+        [[nodiscard]] bool IsNullable() const;
 
         /**
         * @brief
@@ -8441,7 +8537,7 @@ namespace ocilib
         * property, it always return false
         *
         */
-        bool IsCharSemanticUsed() const;
+        [[nodiscard]] bool IsCharSemanticUsed() const;
 
         /**
         * @brief
@@ -8452,7 +8548,7 @@ namespace ocilib
         * It returns a null object if the column is not a Named Object or a collection.
         *
         */
-        TypeInfo GetTypeInfo() const;
+        [[nodiscard]] TypeInfo GetTypeInfo() const;
 
     private:
 
@@ -8476,7 +8572,7 @@ namespace ocilib
     public:
 
         /**
-         * @typedef NotifyHandlerProc
+         * @typedef ocilib::NotifyHandlerProc
          *
          * @brief
          * User callback for subscriptions event notifications
@@ -8561,7 +8657,7 @@ namespace ocilib
         * Requires Oracle Client 10gR2 or above
         *
         */
-        void Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, SubscriptionMode mode = ModeValues::ModeDefault, UInt32 timeout = 0);
+        void Register(const Connection& connection, const String& name, ChangeTypes changeTypes, NotifyHandlerProc handler, SubscriptionMode mode = ModeValues::ModeDefault, UInt32 timeout = 0);
 
         /**
         * @brief
@@ -8584,21 +8680,21 @@ namespace ocilib
         * Add a SQL query to monitor
         *
         */
-        void Watch(const ostring& sql);
+        void Watch(const String& sql);
 
         /**
         * @brief
         * Return the name of the given registered subscription
         *
         */
-        ostring GetName() const;
+        [[nodiscard]] String GetName() const;
 
         /**
         * @brief
         * Return the timeout of the given registered subscription
         *
         */
-        UInt32 GetTimeout() const;
+        [[nodiscard]] UInt32 GetTimeout() const;
 
         /**
         * @brief
@@ -8608,7 +8704,7 @@ namespace ocilib
         * It may return a null connection object if the connection used at Register() time has been closed
         *
         */
-        Connection GetConnection() const;
+        [[nodiscard]] Connection GetConnection() const;
 
     private:
 
@@ -8697,7 +8793,7 @@ namespace ocilib
         * Return the type of event reported by a notification
         *
         */
-        EventType GetType() const;
+        [[nodiscard]] EventType GetType() const;
 
         /**
         * @brief
@@ -8707,14 +8803,14 @@ namespace ocilib
         * This call is only valid when GetType() reports the event type Event::ObjectChanged
         *
         */
-        ObjectEvent GetObjectEvent() const;
+        [[nodiscard]] ObjectEvent GetObjectEvent() const;
 
         /**
         * @brief
         * Return the name of the database that generated the event
         *
         */
-        ostring GetDatabaseName() const;
+        [[nodiscard]] String GetDatabaseName() const;
 
         /**
         * @brief
@@ -8724,21 +8820,21 @@ namespace ocilib
         * Database object name follows the pattern "[schema_name].object_name"
         *
         */
-        ostring GetObjectName() const;
+        [[nodiscard]] String GetObjectName() const;
 
         /**
         * @brief
         * Return the rowid of the altered database object row
         *
         */
-        ostring GetRowID() const;
+        [[nodiscard]] String GetRowID() const;
 
         /**
         * @brief
         * Return the subscription that generated this event
         *
         */
-        Subscription GetSubscription() const;
+        [[nodiscard]] Subscription GetSubscription() const;
 
     private:
 
@@ -8781,14 +8877,14 @@ namespace ocilib
         * the Agent object must not be accessed anymore once the parent connection object gets out of scope
         *
         */
-        Agent(const Connection& connection, const ostring& name = OTEXT(""), const ostring& address = OTEXT(""));
+        Agent(const Connection& connection, const String& name = OTEXT(""), const String& address = OTEXT(""));
 
         /**
         * @brief
         * Get the given AQ agent name
         *
         */
-        ostring GetName() const;
+        [[nodiscard]] String GetName() const;
 
         /**
         * @brief
@@ -8803,7 +8899,7 @@ namespace ocilib
         * the AQ agent name can be any Oracle identifier, up to 30 bytes.
         *
         */
-        void SetName(const ostring& value);
+        void SetName(const String& value);
 
         /**
         * @brief
@@ -8813,7 +8909,7 @@ namespace ocilib
         * See SetAddress() for more details
         *
         */
-        ostring GetAddress() const;
+        [[nodiscard]] String GetAddress() const;
 
         /**
         * @brief
@@ -8828,7 +8924,7 @@ namespace ocilib
         * the AQ agent address can be any Oracle identifier, up to 128 bytes.
         *
         */
-        void SetAddress(const ostring& value);
+        void SetAddress(const String& value);
 
     private:
 
@@ -8921,7 +9017,7 @@ namespace ocilib
         *
         */
         template<class T>
-        T GetPayload();
+        [[nodiscard]] T GetPayload();
 
         /**
         * @brief
@@ -8941,21 +9037,21 @@ namespace ocilib
         * Only use this function for message dequeued from queues
         *
         */
-        Date GetEnqueueTime() const;
+        [[nodiscard]] Date GetEnqueueTime() const;
 
         /**
         * @brief
         * Return the number of attempts that have been made to dequeue the message
         *
         */
-        Int32 GetAttemptCount() const;
+        [[nodiscard]] Int32 GetAttemptCount() const;
 
         /**
         * @brief
         * Return the state of the message at the time of the dequeue
         *
         */
-        MessageState GetState() const;
+        [[nodiscard]] MessageState GetState() const;
 
         /**
         * @brief
@@ -8967,7 +9063,7 @@ namespace ocilib
         *  - retrieved when the message is dequeued from the queue
         *
         */
-        Raw GetID() const;
+        [[nodiscard]] Raw GetID() const;
 
         /**
         * @brief
@@ -8977,7 +9073,7 @@ namespace ocilib
         * see SetExpiration() for more details
         *
         */
-        Int32 GetExpiration() const;
+        [[nodiscard]] Int32 GetExpiration() const;
 
         /**
         * @brief
@@ -9008,7 +9104,7 @@ namespace ocilib
         * see SetEnqueueDelay() for more details
         *
         */
-        Int32 GetEnqueueDelay() const;
+        [[nodiscard]] Int32 GetEnqueueDelay() const;
 
         /**
         * @brief
@@ -9042,7 +9138,7 @@ namespace ocilib
         * see SetPriority() for more details
         *
         */
-        Int32 GetPriority() const;
+        [[nodiscard]] Int32 GetPriority() const;
 
         /**
         * @brief
@@ -9067,7 +9163,7 @@ namespace ocilib
         * message in the previous queue.
         *
         */
-        Raw GetOriginalID() const;
+        [[nodiscard]] Raw GetOriginalID() const;
 
         /**
         * @brief
@@ -9090,7 +9186,7 @@ namespace ocilib
         * see SetCorrelation() for more details
         *
         */
-        ostring GetCorrelation() const;
+        [[nodiscard]] String GetCorrelation() const;
 
         /**
         * @brief
@@ -9102,7 +9198,7 @@ namespace ocilib
         * see Dequeue::SetCorrelation() for more details
         *
         */
-        void SetCorrelation(const ostring& value);
+        void SetCorrelation(const String& value);
 
         /**
         * @brief
@@ -9117,7 +9213,7 @@ namespace ocilib
         * see SetExceptionQueue() for more details
         *
         */
-        ostring GetExceptionQueue() const;
+        [[nodiscard]] String GetExceptionQueue() const;
 
         /**
         * @brief
@@ -9145,7 +9241,7 @@ namespace ocilib
         * This attribute must refer to a valid queue name."
         *
         */
-        void SetExceptionQueue(const ostring& value);
+        void SetExceptionQueue(const String& value);
 
         /**
         * @brief
@@ -9155,7 +9251,7 @@ namespace ocilib
         * Valid agent object if set at enqueue time otherwise a null agent object
         *
         */
-        Agent GetSender() const;
+        [[nodiscard]] Agent GetSender() const;
 
         /**
         * @brief
@@ -9260,7 +9356,7 @@ namespace ocilib
         * - For RAW payload, you MUST pass the object type information object from the type name "SYS.RAW" as object type name
         *
         */
-        Enqueue(const TypeInfo& typeInfo, const ostring& queueName);
+        Enqueue(const TypeInfo& typeInfo, const String& queueName);
 
         /**
         * @brief
@@ -9279,7 +9375,7 @@ namespace ocilib
         * see SetVisibility() for more details
         *
         */
-        EnqueueVisibility GetVisibility() const;
+        [[nodiscard]] EnqueueVisibility GetVisibility() const;
 
         /**
         * @brief
@@ -9301,7 +9397,7 @@ namespace ocilib
         * see SetMode() for more details
         *
         */
-        EnqueueMode GetMode() const;
+        [[nodiscard]] EnqueueMode GetMode() const;
 
         /**
         * @brief
@@ -9333,7 +9429,7 @@ namespace ocilib
         *
         */
 
-        Raw GetRelativeMsgID() const;
+        [[nodiscard]] Raw GetRelativeMsgID() const;
 
         /**
         * @brief
@@ -9365,7 +9461,7 @@ namespace ocilib
     public:
 
         /**
-         * @typedef NotifyAQHandlerProc
+         * @typedef ocilib::NotifyAQHandlerProc
          *
          * @brief
          * User callback for dequeue event notifications
@@ -9454,7 +9550,7 @@ namespace ocilib
         * @param queueName - Queue name
         *
         */
-        Dequeue(const TypeInfo& typeInfo, const ostring& queueName);
+        Dequeue(const TypeInfo& typeInfo, const String& queueName);
 
         /**
         * @brief
@@ -9469,7 +9565,7 @@ namespace ocilib
         * A valid Message handle on success otherwise a null Message on timeout
         *
         */
-        Message Get();
+        [[nodiscard]] Message Get();
 
         /**
         * @brief
@@ -9486,7 +9582,7 @@ namespace ocilib
         * @return
         * An Agent handle for who messages are available on success otherwise an null agent object
         */
-        Agent Listen(Int32 timeout);
+        [[nodiscard]] Agent Listen(Int32 timeout);
 
         /**
         * @brief
@@ -9496,7 +9592,7 @@ namespace ocilib
         * see SetConsumer() for more details
         *
         */
-        ostring GetConsumer() const;
+        [[nodiscard]] String GetConsumer() const;
 
         /**
         * @brief
@@ -9509,7 +9605,7 @@ namespace ocilib
         * should not be called or called with an empty value
         *
         */
-        void SetConsumer(const ostring& value);
+        void SetConsumer(const String& value);
 
         /**
         * @brief
@@ -9519,7 +9615,7 @@ namespace ocilib
         * see SetCorrelation() for more details
         *
         */
-        ostring GetCorrelation() const;
+        [[nodiscard]] String GetCorrelation() const;
 
         /**
         * @brief
@@ -9532,7 +9628,7 @@ namespace ocilib
         * If more than one message satisfies the pattern, the order of dequeuing is undetermined.
         *
         */
-        void SetCorrelation(const ostring& value);
+        void SetCorrelation(const String& value);
 
         /**
         * @brief
@@ -9542,7 +9638,7 @@ namespace ocilib
         * see SetRelativeMsgID() for more details
         *
         */
-        Raw GetRelativeMsgID() const;
+        [[nodiscard]] Raw GetRelativeMsgID() const;
 
         /**
         * @brief
@@ -9561,7 +9657,7 @@ namespace ocilib
         * see SetVisibility() for more details
         *
         */
-        DequeueVisibility GetVisibility() const;
+        [[nodiscard]] DequeueVisibility GetVisibility() const;
 
         /**
         * @brief
@@ -9587,7 +9683,7 @@ namespace ocilib
         * see SetMode() for more details
         *
         */
-        DequeueMode GetMode() const;
+        [[nodiscard]] DequeueMode GetMode() const;
 
         /**
         * @brief
@@ -9609,7 +9705,7 @@ namespace ocilib
         * see SetNavigation() for more details
         *
         */
-        NavigationMode GetNavigation() const;
+        [[nodiscard]] NavigationMode GetNavigation() const;
 
         /**
         * @brief
@@ -9640,7 +9736,7 @@ namespace ocilib
         * see SetWaitTime() for more details
         *
         */
-        Int32 GetWaitTime() const;
+        [[nodiscard]] Int32 GetWaitTime() const;
 
         /**
         * @brief
@@ -9769,9 +9865,9 @@ namespace ocilib
          * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
          *
          */
-        static void Create(const Connection& connection, const ostring& queue, const ostring& table, QueueType type = NormalQueue,
+        static void Create(const Connection& connection, const String& queue, const String& table, QueueType type = NormalQueue,
             UInt32 maxRetries = 0, UInt32 retryDelay = 0, UInt32 retentionTime = 0,
-            bool dependencyTracking = false, const ostring& comment = OTEXT(""));
+            bool dependencyTracking = false, const String& comment = OTEXT(""));
 
         /**
          * @brief
@@ -9793,9 +9889,9 @@ namespace ocilib
          * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
          *
          */
-        static void Alter(const Connection& connection, const ostring& queue,
+        static void Alter(const Connection& connection, const String& queue,
             UInt32 maxRetries = 0, UInt32 retryDelay = 0,
-            UInt32 retentionTime = 0, const ostring& comment = OTEXT(""));
+            UInt32 retentionTime = 0, const String& comment = OTEXT(""));
 
         /**
          * @brief
@@ -9812,7 +9908,7 @@ namespace ocilib
          * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
          *
          */
-        static void Drop(const Connection& connection, const ostring& queue);
+        static void Drop(const Connection& connection, const String& queue);
 
         /**
          * @brief
@@ -9831,7 +9927,7 @@ namespace ocilib
          * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
          *
          */
-        static void Start(const Connection& connection, const ostring& queue, bool enableEnqueue = true, bool enableDequeue = true);
+        static void Start(const Connection& connection, const String& queue, bool enableEnqueue = true, bool enableDequeue = true);
 
         /**
         * @brief
@@ -9851,7 +9947,7 @@ namespace ocilib
         * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
         *
         */
-        static void Stop(const Connection& connection, const ostring& queue, bool stopEnqueue = true, bool stopDequeue = true, bool wait = true);
+        static void Stop(const Connection& connection, const String& queue, bool stopEnqueue = true, bool stopDequeue = true, bool wait = true);
     };
 
     /**
@@ -9946,11 +10042,11 @@ namespace ocilib
          * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
          *
          */
-        static void Create(const Connection& connection, const ostring& table, const ostring& payloadType, bool multipleConsumers,
-            const ostring& storageClause = OTEXT(""), const ostring& sortList = OTEXT(""),
-            GroupingMode groupingMode = None, const ostring& comment = OTEXT(""),
+        static void Create(const Connection& connection, const String& table, const String& payloadType, bool multipleConsumers,
+            const String& storageClause = OTEXT(""), const String& sortList = OTEXT(""),
+            GroupingMode groupingMode = None, const String& comment = OTEXT(""),
             UInt32 primaryInstance = 0, UInt32 secondaryInstance = 0,
-            const ostring& compatible = OTEXT(""));
+            const String& compatible = OTEXT(""));
 
         /**
         * @brief
@@ -9970,7 +10066,7 @@ namespace ocilib
         * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
         *
         */
-        static void Alter(const Connection& connection, const ostring& table, const ostring& comment, UInt32 primaryInstance = 0, UInt32 secondaryInstance = 0);
+        static void Alter(const Connection& connection, const String& table, const String& comment, UInt32 primaryInstance = 0, UInt32 secondaryInstance = 0);
 
         /**
         * @brief
@@ -9992,7 +10088,7 @@ namespace ocilib
         * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
         *
         */
-        static void Drop(const Connection& connection, const ostring& table, bool force = true);
+        static void Drop(const Connection& connection, const String& table, bool force = true);
 
         /**
          * @brief
@@ -10017,7 +10113,7 @@ namespace ocilib
          * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
          *
          */
-        static void Purge(const Connection& connection, const ostring& table, PurgeMode mode, const ostring& condition = OTEXT(""), bool block = true);
+        static void Purge(const Connection& connection, const String& table, PurgeMode mode, const String& condition = OTEXT(""), bool block = true);
 
         /**
          * @brief
@@ -10036,7 +10132,7 @@ namespace ocilib
          * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
          *
          */
-        static void Migrate(const Connection& connection, const ostring& table, const ostring& compatible = OTEXT(""));
+        static void Migrate(const Connection& connection, const String& table, const String& compatible = OTEXT(""));
     };
 
     /**
@@ -10121,7 +10217,7 @@ namespace ocilib
          * of rows used for the given direct path operation.
          *
          */
-        DirectPath(const TypeInfo& typeInfo, UInt32 nbCols, UInt32  nbRows, const ostring& partition = OTEXT(""));
+        DirectPath(const TypeInfo& typeInfo, UInt32 nbCols, UInt32  nbRows, const String& partition = OTEXT(""));
 
         /**
          * @brief
@@ -10139,13 +10235,13 @@ namespace ocilib
          * - the index is out of bounds (= 0 or >= number of columns)
          *
          */
-        void SetColumn(UInt32 colIndex, const ostring& name, UInt32 maxSize, const ostring& format = OTEXT(""));
+        void SetColumn(UInt32 colIndex, const String& name, UInt32 maxSize, const String& format = OTEXT(""));
 
         /**
          * @brief
          * Set the value of the given row/column array entry from the given string
          *
-         * @tparam T - type of data to set (only supported types are ostring and Raw)
+         * @tparam T - type of data to set (only supported types are String and Raw)
          *
          * @param rowIndex  - Row index
          * @param colIndex  - Column index
@@ -10288,7 +10384,7 @@ namespace ocilib
          * Internal current array size on SUCCESS otherwise 0
          *
          */
-        UInt32 GetCurrentRows() const;
+        [[nodiscard]] UInt32 GetCurrentRows() const;
 
         /**
          * @brief
@@ -10298,7 +10394,7 @@ namespace ocilib
          * Internal maximum array size on SUCCESS otherwise 0
          *
          */
-        UInt32 GetMaxRows() const;
+        [[nodiscard]] UInt32 GetMaxRows() const;
 
         /**
          * @brief
@@ -10308,7 +10404,7 @@ namespace ocilib
          * Insertions are committed with Finish()
          *
          */
-        UInt32 GetRowCount() const;
+        [[nodiscard]] UInt32 GetRowCount() const;
 
         /**
          * @brief
@@ -10322,7 +10418,7 @@ namespace ocilib
          * - Load(), returns the number of loaded rows
          *
          */
-        UInt32 GetAffectedRows() const;
+        [[nodiscard]] UInt32 GetAffectedRows() const;
 
         /**
          * @brief
@@ -10337,7 +10433,7 @@ namespace ocilib
          * - Default global support environment setting
          *
          */
-        void SetDateFormat(const ostring& format);
+        void SetDateFormat(const String& format);
 
         /**
          * @brief
@@ -10453,7 +10549,7 @@ namespace ocilib
          * error
          *
          */
-        UInt32 GetErrorColumn();
+        [[nodiscard]] UInt32 GetErrorColumn();
 
         /**
          * @brief
@@ -10488,7 +10584,7 @@ namespace ocilib
          *
          */
 
-        UInt32 GetErrorRow();
+        [[nodiscard]] UInt32 GetErrorRow();
     };
 
 
@@ -10520,35 +10616,35 @@ namespace ocilib
          * Document key
          *
          */
-        ostring GetKey() const;
+        [[nodiscard]] String GetKey() const;
 
         /**
          * @brief
          * Document version
          *
          */
-        ostring GetVersion() const;
+        [[nodiscard]] String GetVersion() const;
 
         /**
          * @brief
          * Document creation timestamp
          *
          */
-        ostring GetCreatedOn() const;
+        [[nodiscard]] String GetCreatedOn() const;
 
         /**
          * @brief
          * Document last modification timestamp
          *
          */
-        ostring GetLastModified() const;
+        [[nodiscard]] String GetLastModified() const;
 
         /**
          * @brief
          * Document media type
          *
          */
-        ostring GetMediaType() const;
+        [[nodiscard]] String GetMediaType() const;
 
         /**
         * @brief
@@ -10556,14 +10652,14 @@ namespace ocilib
         *
         * @return true if the document is a JSON document
         */
-        bool IsJson() const;
+        [[nodiscard]] bool IsJson() const;
 
         /**
          * @brief
          * Document content as an otext string
          *
          */
-        ostring GetText() const;
+        [[nodiscard]] String GetText() const;
 
         /**
          * @brief
@@ -10573,7 +10669,7 @@ namespace ocilib
          * Requires an Oracle client 23.4 or higher.
          *
          */
-        Json GetJson() const;
+        [[nodiscard]] Json GetJson() const;
     };
 
     /**
@@ -10608,7 +10704,7 @@ namespace ocilib
          * Set a single document key on the options
          *
          */
-        void SetKey(const ostring& key);
+        void SetKey(const String& key);
 
         /**
          * @brief
@@ -10618,21 +10714,21 @@ namespace ocilib
          * Requires an Oracle client 18.3 or higher.
          *
          */
-        void SetKeys(const std::vector<ostring>& keys);
+        void SetKeys(const std::vector<String>& keys);
 
         /**
          * @brief
          * Set a document version on the options
          *
          */
-        void SetVersion(const ostring& version);
+        void SetVersion(const String& version);
 
         /**
          * @brief
          * Set a query-by-example filter on the options
          *
          */
-        void SetFilter(const ostring& filter);
+        void SetFilter(const String& filter);
 
         /**
          * @brief
@@ -10661,7 +10757,7 @@ namespace ocilib
          * Set a SQL hint on the options
          *
          */
-        void SetHint(const ostring& hint);
+        void SetHint(const String& hint);
 
         /**
          * @brief
@@ -10707,28 +10803,28 @@ namespace ocilib
          * Return the connection associated with the SODA database
          *
          */
-        Connection GetConnection() const;
+        [[nodiscard]] Connection GetConnection() const;
 
         /**
          * @brief
          * Create a SODA collection
          *
          */
-        SodaColl CreateCollection(const ostring& name, const ostring& metadata = ostring());
+        SodaColl CreateCollection(const String& name, const String& metadata = String());
 
         /**
          * @brief
          * Open an existing SODA collection
          *
          */
-        SodaColl OpenCollection(const ostring& name);
+        SodaColl OpenCollection(const String& name);
 
         /**
          * @brief
          * Return a cursor over the SODA collections in the current schema
          *
          */
-        SodaCollCursor GetCollections(const ostring& startName = OTEXT(""));
+        [[nodiscard]] SodaCollCursor GetCollections(const String& startName = OTEXT(""));
 
         /**
          * @brief
@@ -10736,14 +10832,14 @@ namespace ocilib
          *
          * @return The list of collection names
          */
-        std::vector<ostring> GetCollectionNames();
+        [[nodiscard]] std::vector<String> GetCollectionNames();
 
         /**
          * @brief
          * Create a SODA document from raw text
          *
          */
-        SodaDoc CreateDocumentFromText(const ostring& content, const ostring& key = OTEXT(""));
+        SodaDoc CreateDocumentFromText(const String& content, const String& key = OTEXT(""));
 
         /**
          * @brief
@@ -10753,7 +10849,7 @@ namespace ocilib
          * Requires an Oracle client 23.4 or higher.
          *
          */
-        SodaDoc CreateDocumentFromJson(const Json& json, const ostring& key = OTEXT(""));
+        SodaDoc CreateDocumentFromJson(const Json& json, const String& key = OTEXT(""));
     };
 
     /**
@@ -10783,21 +10879,21 @@ namespace ocilib
          * Return the connection associated with the SODA collection
          *
          */
-        Connection GetConnection() const;
+        [[nodiscard]] Connection GetConnection() const;
 
         /**
          * @brief
          * Collection name
          *
          */
-        ostring GetName() const;
+        [[nodiscard]] String GetName() const;
 
         /**
          * @brief
          * Collection metadata descriptor (JSON)
          *
          */
-        ostring GetMetadata() const;
+        [[nodiscard]] String GetMetadata() const;
 
         /**
          * @brief
@@ -10807,7 +10903,7 @@ namespace ocilib
          * Requires an Oracle client 23.4 or higher.
          *
          */
-        bool IsMapped() const;
+        [[nodiscard]] bool IsMapped() const;
 
         /**
          * @brief
@@ -10844,42 +10940,42 @@ namespace ocilib
          * Find all documents in the collection
          *
          */
-        SodaDocCursor Find();
+        [[nodiscard]] SodaDocCursor Find();
 
         /**
          * @brief
          * Find documents in the collection
          *
          */
-        SodaDocCursor Find(const SodaOptions& options);
+        [[nodiscard]] SodaDocCursor Find(const SodaOptions& options);
 
         /**
          * @brief
          * Find one document in the collection
          *
          */
-        SodaDoc FindOne(const SodaOptions& options);
+        [[nodiscard]] SodaDoc FindOne(const SodaOptions& options);
 
         /**
          * @brief
          * Find one document by key in the collection
          *
          */
-        SodaDoc FindOne(const ostring& key);
+        [[nodiscard]] SodaDoc FindOne(const String& key);
 
         /**
          * @brief
          * Return the number of documents in the collection
          *
          */
-        UInt64 GetCount(const SodaOptions& options);
+        [[nodiscard]] UInt64 GetCount(const SodaOptions& options);
 
         /**
          * @brief
          * Return the number of documents matching a filter in the collection
          *
          */
-        UInt64 GetCount(const ostring& filter);
+        [[nodiscard]] UInt64 GetCount(const String& filter);
 
         /**
          * @brief
@@ -10900,14 +10996,14 @@ namespace ocilib
          * Replace one document by key in the collection
          *
          */
-        bool ReplaceOne(const ostring& key, const SodaDoc& doc);
+        bool ReplaceOne(const String& key, const SodaDoc& doc);
 
         /**
          * @brief
          * Replace one document by key in the collection and return the new document
          *
          */
-        SodaDoc ReplaceOneAndGet(const ostring& key, SodaDoc& doc);
+        SodaDoc ReplaceOneAndGet(const String& key, SodaDoc& doc);
 
         /**
          * @brief
@@ -10921,7 +11017,7 @@ namespace ocilib
          * Remove one document by key from the collection
          *
          */
-        bool RemoveOne(const ostring& key);
+        bool RemoveOne(const String& key);
 
         /**
          * @brief
@@ -10947,7 +11043,7 @@ namespace ocilib
          * builds work. Verified with Oracle 23ai; a future client release
          * may fix this.
          */
-        void CreateIndex(const ostring& indexSpec);
+        void CreateIndex(const String& indexSpec);
 
         /**
          * @brief
@@ -10961,7 +11057,7 @@ namespace ocilib
          *
          * @return true if the index was dropped
          */
-        bool DropIndex(const ostring& name);
+        bool DropIndex(const String& name);
 
         /**
          * @brief
@@ -10969,7 +11065,7 @@ namespace ocilib
          *
          * @return The data guide document, or a null SodaDoc if none exists
          */
-        SodaDoc GetDataGuide();
+        [[nodiscard]] SodaDoc GetDataGuide();
 
         /**
          * @brief
@@ -10983,7 +11079,7 @@ namespace ocilib
          *
          * @return The list of index names
          */
-        std::vector<ostring> ListIndexes();
+        [[nodiscard]] std::vector<String> ListIndexes();
 
         /**
          * @brief
@@ -11026,7 +11122,7 @@ namespace ocilib
          * Return the next collection of the cursor
          *
          */
-        SodaColl GetNext();
+        [[nodiscard]] SodaColl GetNext();
 
         /**
          * @brief
@@ -11102,7 +11198,7 @@ namespace ocilib
          * Return the next document of the cursor
          *
          */
-        SodaDoc GetNext();
+        [[nodiscard]] SodaDoc GetNext();
 
         /**
          * @brief
@@ -11160,7 +11256,7 @@ namespace ocilib
      *
      * A sharding key is a set of key column values used to route connection
      * requests to specific shards of an Oracle sharded database.
-     * Supported column value types are ostring, Number, Date, Timestamp and
+     * Supported column value types are String, Number, Date, Timestamp and
      * std::vector<unsigned char> (RAW).
      *
      */
@@ -11185,7 +11281,7 @@ namespace ocilib
          *
          * @note
          * Columns must be added in the declaration order of the sharding key.
-         * Supported types are ostring, Number, Date, Timestamp and
+         * Supported types are String, Number, Date, Timestamp and
          * std::vector<unsigned char>.
          *
          */
@@ -11207,7 +11303,7 @@ namespace ocilib
          * Return the base64 encoded representation of the sharding key values
          *
          */
-        ostring ToString() const;
+        [[nodiscard]] String ToString() const;
     };
 
 

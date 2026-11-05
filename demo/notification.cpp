@@ -16,8 +16,8 @@ using namespace ocilib;
 #define WaitForDatabase() sleep(60)
 
 
-static std::map<OCI_UInt32, ostring> EventTypes;
-static std::map<OCI_UInt32, ostring> ObjectEvents;
+static std::map<OCI_UInt32, String> EventTypes;
+static std::map<OCI_UInt32, String> ObjectEvents;
 
 void EventHandler(Event &evt);
 void SetupNames();

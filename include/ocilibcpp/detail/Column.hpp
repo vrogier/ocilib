@@ -30,17 +30,17 @@ inline Column::Column(OCI_Column *pColumn, core::Handle *parent)
     AcquireTransient(pColumn, parent);
 }
 
-inline ostring Column::GetName() const
+inline String Column::GetName() const
 {
     return core::MakeString(core::Check(OCI_ColumnGetName(*this)));
 }
 
-inline ostring Column::GetSQLType() const
+inline String Column::GetSQLType() const
 {
     return core::MakeString(core::Check(OCI_ColumnGetSQLType(*this)));
 }
 
-inline ostring Column::GetFullSQLType() const
+inline String Column::GetFullSQLType() const
 {
     const UInt32 size = OCI_SIZE_BUFFER;
 

@@ -73,9 +73,9 @@ namespace TestCppApi
                 osprintf(val2, OTEXT("value %05d"), j + (i * 100));
                 osprintf(val3, OTEXT("%04d%02d%02d"), (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-                dp.SetEntry(j, 1, ostring(val1));
-                dp.SetEntry(j, 2, ostring(val2));
-                dp.SetEntry(j, 3, ostring(val3));
+                dp.SetEntry(j, 1, String(val1));
+                dp.SetEntry(j, 2, String(val2));
+                dp.SetEntry(j, 3, String(val3));
             }
 
             DirectPath::Result res = dp.Convert();

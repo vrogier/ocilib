@@ -149,16 +149,16 @@ inline const char * Exception::what() const noexcept
     return _what;
 }
 
-inline ostring Exception::GetMessage() const
+inline String Exception::GetMessage() const
 {
     const char* str = what();
 
     if (!str)
     {
-        return ostring{};
+        return String{};
     }
 
-    ostring message;
+    String message;
 
 #if defined(OCI_CHARSET_ANSI)
 

@@ -223,7 +223,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_NumberSetValue(number, OCI_NUM_INT, &value_test));
         ASSERT_TRUE(OCI_NumberToText(number, OCI_STRING_FORMAT_NUM, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("123456789")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("123456789")), String(buffer));
 
         ASSERT_TRUE(OCI_NumberFree(number));
 
@@ -243,7 +243,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_NumberSetValue(number, OCI_NUM_INT, &value_test));
         ASSERT_TRUE(OCI_NumberToText(number, nullptr, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("123456789")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("123456789")), String(buffer));
 
         ASSERT_TRUE(OCI_NumberFree(number));
 
@@ -525,7 +525,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_NumberFromText(number, OTEXT("~"), OCI_STRING_FORMAT_NUM));
         ASSERT_TRUE(OCI_NumberToText(number, OCI_STRING_FORMAT_NUM, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("~")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("~")), String(buffer));
 
         ASSERT_TRUE(OCI_NumberFree(number));
 
@@ -544,7 +544,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_NumberFromText(number, OTEXT("-~"), OCI_STRING_FORMAT_NUM));
         ASSERT_TRUE(OCI_NumberToText(number, OCI_STRING_FORMAT_NUM, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("-~")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("-~")), String(buffer));
 
         ASSERT_TRUE(OCI_NumberFree(number));
 
@@ -561,7 +561,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_NUMERIC, OTEXT("999999")));
         const otext* fmt = OCI_GetFormat(env, OCI_FMT_NUMERIC);
         ASSERT_NE(nullptr, fmt);
-        ASSERT_EQ(ostring(OTEXT("999999")), ostring(fmt));
+        ASSERT_EQ(String(OTEXT("999999")), String(fmt));
 
         auto num = OCI_NumberCreate(env);
         ASSERT_NE(nullptr, num);
@@ -573,13 +573,13 @@ namespace TestCApi
         ASSERT_TRUE(OCI_NumberToText(num, OTEXT("999999"), 64, buffer));
         const otext* trimmed = buffer;
         while (*trimmed == OTEXT(' ')) ++trimmed;
-        ASSERT_EQ(ostring(OTEXT("12345")), ostring(trimmed));
+        ASSERT_EQ(String(OTEXT("12345")), String(trimmed));
 
         ASSERT_TRUE(OCI_NumberFromText(num, OTEXT("42"), OTEXT("99")));
         ASSERT_TRUE(OCI_NumberToText(num, OTEXT("999"), 64, buffer));
         trimmed = buffer;
         while (*trimmed == OTEXT(' ')) ++trimmed;
-        ASSERT_EQ(ostring(OTEXT("42")), ostring(trimmed));
+        ASSERT_EQ(String(OTEXT("42")), String(trimmed));
 
         ASSERT_TRUE(OCI_NumberFree(num));
         ASSERT_TRUE(OCI_ConnectionFree(con));

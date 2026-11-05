@@ -39,7 +39,7 @@ namespace TestCppApi
         Statement stmt(con);
 
         static std::vector<OCI_Int32> ids = { 1, 2, 3 };
-        static std::vector<ostring> names = { ostring(OTEXT("alice")), ostring(OTEXT("bob")), ostring(OTEXT("charlie")) };
+        static std::vector<String> names = { String(OTEXT("alice")), String(OTEXT("bob")), String(OTEXT("charlie")) };
 
         stmt.Prepare(OTEXT("insert into TestBindCpp_ArrayString values (:id, :name)"));
         stmt.SetBindArraySize(static_cast<OCI_UInt32>(ids.size()));
@@ -99,14 +99,14 @@ namespace TestCppApi
         Connection con(env, DBS, USR, PWD);
         Statement stmt(con);
 
-        static std::vector<ostring> out(2);
+        static std::vector<String> out(2);
 
         stmt.Prepare(OTEXT("DECLARE TYPE str_tab IS TABLE OF VARCHAR2(50) INDEX BY BINARY_INTEGER; v str_tab; BEGIN v(1) := 'alice'; v(2) := 'bob'; :names := v; END;"));
         stmt.Bind(OTEXT(":names"), out, 50u, BindInfo::Out, BindInfo::AsPlSqlTable);
         stmt.ExecutePrepared();
 
-        ASSERT_EQ(ostring(OTEXT("alice")), out[0]);
-        ASSERT_EQ(ostring(OTEXT("bob")), out[1]);
+        ASSERT_EQ(String(OTEXT("alice")), out[0]);
+        ASSERT_EQ(String(OTEXT("bob")), out[1]);
     }
 
     TEST(TestBindCpp, BindInfoUsage)
@@ -120,7 +120,7 @@ namespace TestCppApi
         stmt.Bind(OTEXT(":value"), value, BindInfo::Out);
 
         BindInfo bind = stmt.GetBind(OTEXT(":value"));
-        ASSERT_EQ(ostring(OTEXT(":value")), bind.GetName());
+        ASSERT_EQ(String(OTEXT(":value")), bind.GetName());
 
         stmt.ExecutePrepared();
         ASSERT_EQ(456, value);
@@ -140,7 +140,7 @@ namespace TestCppApi
         stmt.SetBindArraySize(static_cast<OCI_UInt32>(ids.size()));
         stmt.Bind(OTEXT(":id"), ids, BindInfo::In);
 
-        ASSERT_THROW(stmt.Bind(OTEXT(":id"), ids, BindInfo::In), Exception);
+        ASSERT_THROW((void) stmt.Bind(OTEXT(":id"), ids, BindInfo::In), Exception);
 
         ExecDML(OTEXT("drop table TestBind_Dup"));
     }
@@ -153,13 +153,13 @@ namespace TestCppApi
         Connection con(env, DBS, USR, PWD);
         Statement stmt(con);
 
-        static std::vector<ostring> names(1, OTEXT("a"));
+        static std::vector<String> names(1, OTEXT("a"));
 
         stmt.Prepare(OTEXT("insert into TestBind_DupStr values (:name)"));
         stmt.SetBindArraySize(static_cast<OCI_UInt32>(names.size()));
         stmt.Bind(OTEXT(":name"), names, 50u, BindInfo::In);
 
-        ASSERT_THROW(stmt.Bind(OTEXT(":name"), names, 50u, BindInfo::In), Exception);
+        ASSERT_THROW((void) stmt.Bind(OTEXT(":name"), names, 50u, BindInfo::In), Exception);
 
         ExecDML(OTEXT("drop table TestBind_DupStr"));
     }

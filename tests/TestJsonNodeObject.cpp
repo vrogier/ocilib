@@ -73,7 +73,7 @@ namespace TestCApi
 
         const otext* name = OCI_JsonNodeGetFieldName(root, 1);
         ASSERT_NE(nullptr, name);
-        ASSERT_EQ(ostring(OTEXT("only")), ostring(name));
+        ASSERT_EQ(String(OTEXT("only")), String(name));
 
         OCI_JsonNodeFree(root);
 

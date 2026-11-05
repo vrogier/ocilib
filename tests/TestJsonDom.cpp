@@ -61,7 +61,7 @@ namespace TestCApi
         OCI_JsonNode* nameField = OCI_JsonNodeGetFieldByName(verify, OTEXT("name"));
         ASSERT_NE(nullptr, nameField);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(nameField));
-        ASSERT_EQ(ostring(OTEXT("test")), ostring(OCI_JsonNodeGetString(nameField, nullptr)));
+        ASSERT_EQ(String(OTEXT("test")), String(OCI_JsonNodeGetString(nameField, nullptr)));
 
         OCI_JsonNodeFree(nameField);
         OCI_JsonNodeFree(verify);
@@ -87,12 +87,12 @@ namespace TestCApi
 
         const otext* fieldName = OCI_JsonNodeGetFieldName(root, 1);
         ASSERT_NE(nullptr, fieldName);
-        ASSERT_FALSE(ostring(fieldName).empty());
+        ASSERT_FALSE(String(fieldName).empty());
 
         OCI_JsonNode* name = OCI_JsonNodeGetFieldByName(root, OTEXT("name"));
         ASSERT_NE(nullptr, name);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(name));
-        ASSERT_EQ(ostring(OTEXT("test")), ostring(OCI_JsonNodeGetString(name, nullptr)));
+        ASSERT_EQ(String(OTEXT("test")), String(OCI_JsonNodeGetString(name, nullptr)));
 
         OCI_JsonNode* items = OCI_JsonNodeGetFieldByIndex(root, 2);
         ASSERT_NE(nullptr, items);
@@ -136,13 +136,13 @@ namespace TestCApi
         ASSERT_NE(nullptr, generic);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(generic));
         ASSERT_TRUE(OCI_JsonNodeSetString(generic, OTEXT("generic"), 0));
-        ASSERT_EQ(ostring(OTEXT("generic")), ostring(OCI_JsonNodeGetString(generic, nullptr)));
+        ASSERT_EQ(String(OTEXT("generic")), String(OCI_JsonNodeGetString(generic, nullptr)));
         OCI_JsonNodeSetField(root, OTEXT("generic"), generic);
         OCI_JsonNodeFree(generic);
 
         OCI_JsonNode* str = OCI_JsonNodeCreateString(json, OTEXT("old"), 0);
         ASSERT_TRUE(OCI_JsonNodeSetString(str, OTEXT("new"), 0));
-        ASSERT_EQ(ostring(OTEXT("new")), ostring(OCI_JsonNodeGetString(str, nullptr)));
+        ASSERT_EQ(String(OTEXT("new")), String(OCI_JsonNodeGetString(str, nullptr)));
         OCI_JsonNodeSetField(root, OTEXT("str"), str);
         OCI_JsonNodeFree(str);
 
@@ -322,7 +322,7 @@ namespace TestCApi
 
         OCI_JsonNode* verifyItem = OCI_JsonNodeGetItem(arr, 2);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(verifyItem));
-        ASSERT_EQ(ostring(OTEXT("three")), ostring(OCI_JsonNodeGetString(verifyItem, nullptr)));
+        ASSERT_EQ(String(OTEXT("three")), String(OCI_JsonNodeGetString(verifyItem, nullptr)));
         OCI_JsonNodeFree(verifyItem);
 
         OCI_JsonNodeFree(item1);
@@ -364,7 +364,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonNodeHasField(obj, OTEXT("name")));
         OCI_JsonNode* name = OCI_JsonNodeGetFieldByName(obj, OTEXT("name"));
         ASSERT_NE(nullptr, name);
-        ASSERT_EQ(ostring(OTEXT("test")), ostring(OCI_JsonNodeGetString(name, nullptr)));
+        ASSERT_EQ(String(OTEXT("test")), String(OCI_JsonNodeGetString(name, nullptr)));
         OCI_JsonNodeFree(name);
         ASSERT_FALSE(OCI_JsonNodeHasField(obj, OTEXT("missing")));
         ASSERT_TRUE(OCI_JsonNodeRemoveField(obj, OTEXT("name")));
@@ -373,7 +373,7 @@ namespace TestCApi
         /* GetByPath on root */
         OCI_JsonNode* pathNode = OCI_JsonNodeGetByPath(obj, OTEXT("$.arr[0]"));
         ASSERT_NE(nullptr, pathNode);
-        ASSERT_EQ(ostring(OTEXT("one")), ostring(OCI_JsonNodeGetString(pathNode, nullptr)));
+        ASSERT_EQ(String(OTEXT("one")), String(OCI_JsonNodeGetString(pathNode, nullptr)));
         OCI_JsonNodeFree(pathNode);
         ASSERT_EQ(nullptr, OCI_JsonNodeGetByPath(obj, OTEXT("$.arr[5]")));
         ASSERT_EQ(nullptr, OCI_JsonNodeGetByPath(obj, OTEXT("$.missing")));
@@ -391,7 +391,7 @@ namespace TestCApi
         OCI_JsonNodeFree(s2);
         ASSERT_EQ(4u, OCI_JsonNodeGetItemCount(arr));
         OCI_JsonNode* chk = OCI_JsonNodeGetItem(arr, 2);
-        ASSERT_EQ(ostring(OTEXT("inserted")), ostring(OCI_JsonNodeGetString(chk, nullptr)));
+        ASSERT_EQ(String(OTEXT("inserted")), String(OCI_JsonNodeGetString(chk, nullptr)));
         OCI_JsonNodeFree(chk);
         ASSERT_TRUE(OCI_JsonNodeRemoveItem(arr, 2));
         ASSERT_EQ(3u, OCI_JsonNodeGetItemCount(arr));

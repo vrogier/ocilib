@@ -30,7 +30,7 @@ namespace ocilib
 {
     namespace support
     {
-        inline BindObject::BindObject(const ocilib::Statement& statement, const ostring& name, UInt32 mode) : _statement(statement), _name(name), _mode(mode)
+        inline BindObject::BindObject(const Statement& statement, const String& name, UInt32 mode) : _statement(statement), _name(name), _mode(mode)
         {
         }
 
@@ -38,12 +38,12 @@ namespace ocilib
         {
         }
 
-        inline ostring BindObject::GetName() const
+        inline String BindObject::GetName() const
         {
             return _name;
         }
 
-        inline ocilib::Statement BindObject::GetStatement() const
+        inline Statement BindObject::GetStatement() const
         {
             return _statement;
         }

@@ -46,19 +46,19 @@ namespace TestCApi
         OCI_JsonNode* it1 = OCI_JsonNodeGetItem(arr, 1);
         ASSERT_NE(nullptr, it1);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(it1));
-        ASSERT_EQ(ostring(OTEXT("first")), ostring(OCI_JsonNodeGetString(it1, nullptr)));
+        ASSERT_EQ(String(OTEXT("first")), String(OCI_JsonNodeGetString(it1, nullptr)));
         OCI_JsonNodeFree(it1);
 
         OCI_JsonNode* it2 = OCI_JsonNodeGetItem(arr, 2);
         ASSERT_NE(nullptr, it2);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(it2));
-        ASSERT_EQ(ostring(OTEXT("second")), ostring(OCI_JsonNodeGetString(it2, nullptr)));
+        ASSERT_EQ(String(OTEXT("second")), String(OCI_JsonNodeGetString(it2, nullptr)));
         OCI_JsonNodeFree(it2);
 
         OCI_JsonNode* v1 = OCI_JsonNodeGetItem(arr, 1);
         ASSERT_NE(nullptr, v1);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(v1));
-        ASSERT_EQ(ostring(OTEXT("first")), ostring(OCI_JsonNodeGetString(v1, nullptr)));
+        ASSERT_EQ(String(OTEXT("first")), String(OCI_JsonNodeGetString(v1, nullptr)));
         OCI_JsonNodeFree(v1);
 
         OCI_JsonNodeFree(item1);

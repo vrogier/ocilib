@@ -38,7 +38,7 @@ namespace ocilib
         AcquireTransient(pSubscription, static_cast<core::Handle*>(nullptr));
     }
 
-    inline void Subscription::Register(const Connection& connection, const ostring& name, ChangeTypes changeTypes, NotifyHandlerProc handler, SubscriptionMode mode, UInt32 timeout)
+    inline void Subscription::Register(const Connection& connection, const String& name, ChangeTypes changeTypes, NotifyHandlerProc handler, SubscriptionMode mode, UInt32 timeout)
     {
         AcquireAllocated
         (
@@ -72,7 +72,7 @@ namespace ocilib
         Release();
     }
 
-    inline void Subscription::Watch(const ostring& sql)
+    inline void Subscription::Watch(const String& sql)
     {
         Connection connection = GetConnection();
         Statement st(core::Check(OCI_StatementCreate(connection)), connection.GetHandle());
@@ -82,7 +82,7 @@ namespace ocilib
         core::Check(OCI_SubscriptionAddStatement(*this, st));
     }
 
-    inline ostring Subscription::GetName() const
+    inline String Subscription::GetName() const
     {
         return core::MakeString(core::Check(OCI_SubscriptionGetName(*this)));
     }

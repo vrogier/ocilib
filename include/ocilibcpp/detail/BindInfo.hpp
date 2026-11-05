@@ -30,7 +30,7 @@ inline BindInfo::BindInfo(OCI_Bind *pBind, core::Handle *parent)
     AcquireTransient(pBind, parent);
 }
 
-inline ostring BindInfo::GetName() const
+inline String BindInfo::GetName() const
 {
     return core::MakeString(core::Check(OCI_BindGetName(*this)));
 }

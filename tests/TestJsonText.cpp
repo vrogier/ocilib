@@ -18,13 +18,13 @@ namespace
         return json;
     }
 
-    ostring GetJsonText(OCI_Json* json)
+    String GetJsonText(OCI_Json* json)
     {
         OCI_UInt32 len = 0;
         if (!OCI_JsonToText(json, nullptr, &len, 0, TRUE))
         {
             ADD_FAILURE() << "OCI_JsonToText size query failed";
-            return ostring();
+            return String();
         }
 
         otext* buffer = new otext[len + 1];
@@ -33,11 +33,11 @@ namespace
         {
             delete[] buffer;
             ADD_FAILURE() << "OCI_JsonToText failed";
-            return ostring();
+            return String();
         }
         buffer[len2] = 0;
 
-        ostring result(buffer);
+        String result(buffer);
         delete[] buffer;
         return result;
     }
@@ -54,11 +54,11 @@ namespace TestCApi
         const auto json = JsonFromText(conn, OTEXT("{\"name\":\"test\",\"value\":42}"));
         ASSERT_NE(nullptr, json);
 
-        ostring text = GetJsonText(json);
-        ASSERT_NE(ostring::npos, text.find(OTEXT("name")));
-        ASSERT_NE(ostring::npos, text.find(OTEXT("test")));
-        ASSERT_NE(ostring::npos, text.find(OTEXT("value")));
-        ASSERT_NE(ostring::npos, text.find(OTEXT("42")));
+        String text = GetJsonText(json);
+        ASSERT_NE(String::npos, text.find(OTEXT("name")));
+        ASSERT_NE(String::npos, text.find(OTEXT("test")));
+        ASSERT_NE(String::npos, text.find(OTEXT("value")));
+        ASSERT_NE(String::npos, text.find(OTEXT("42")));
 
         OCI_UInt32 prettyLen = 0;
         ASSERT_TRUE(OCI_JsonToText(json, nullptr, &prettyLen, OCI_JTP_PRETTY, TRUE));
@@ -88,8 +88,8 @@ namespace TestCApi
         ASSERT_NE(nullptr, json2);
         ASSERT_TRUE(OCI_JsonLoadBinary(json2, buffer, binLen2));
 
-        ostring text1 = GetJsonText(json1);
-        ostring text2 = GetJsonText(json2);
+        String text1 = GetJsonText(json1);
+        String text2 = GetJsonText(json2);
         ASSERT_EQ(text1, text2);
 
         delete[] buffer;

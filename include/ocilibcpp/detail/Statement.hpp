@@ -71,21 +71,21 @@ namespace ocilib
         return Connection(core::Check(OCI_StatementGetConnection(*this)), connectionParent, false);
     }
 
-    inline void Statement::Describe(const ostring& sql)
+    inline void Statement::Describe(const String& sql)
     {
         ClearBinds();
         ReleaseResultsets();
         core::Check(OCI_Describe(*this, sql.c_str()));
     }
 
-    inline void Statement::Parse(const ostring& sql)
+    inline void Statement::Parse(const String& sql)
     {
         ClearBinds();
         ReleaseResultsets();
         core::Check(OCI_Parse(*this, sql.c_str()));
     }
 
-    inline void Statement::Prepare(const ostring& sql)
+    inline void Statement::Prepare(const String& sql)
     {
         ClearBinds();
         ReleaseResultsets();
@@ -116,7 +116,7 @@ namespace ocilib
         return Fetch(callback, adapter);
     }
 
-    inline void Statement::Execute(const ostring& sql)
+    inline void Statement::Execute(const String& sql)
     {
         ClearBinds();
         ReleaseResultsets();
@@ -130,7 +130,7 @@ namespace ocilib
         return GetResultset();
     }
 
-    inline Resultset Statement::ExecuteAndGetResultset(const ostring& sql)
+    inline Resultset Statement::ExecuteAndGetResultset(const String& sql)
     {
         Execute(sql);
 
@@ -138,7 +138,7 @@ namespace ocilib
     }
 
     template<class T>
-    UInt32 Statement::Execute(const ostring& sql, T callback)
+    UInt32 Statement::Execute(const String& sql, T callback)
     {
         Execute(sql);
 
@@ -146,7 +146,7 @@ namespace ocilib
     }
 
     template<class T, class U>
-    UInt32 Statement::Execute(const ostring& sql, T callback, U adapter)
+    UInt32 Statement::Execute(const String& sql, T callback, U adapter)
     {
         Execute(sql);
 
@@ -190,12 +190,12 @@ namespace ocilib
         return core::Check(OCI_GetAffectedRows(*this));
     }
 
-    inline ostring Statement::GetSql() const
+    inline String Statement::GetSql() const
     {
         return core::MakeString(core::Check(OCI_GetSql(*this)));
     }
 
-    inline ostring Statement::GetSqlIdentifier() const
+    inline String Statement::GetSqlIdentifier() const
     {
         return core::MakeString(core::Check(OCI_GetSqlIdentifier(*this)));
     }
@@ -230,7 +230,7 @@ namespace ocilib
         return (core::Check(OCI_IsRebindingAllowed(*this)) == TRUE);
     }
 
-    inline UInt32 Statement::GetBindIndex(const ostring& name) const
+    inline UInt32 Statement::GetBindIndex(const String& name) const
     {
         return core::Check(OCI_GetBindIndex(*this, name.c_str()));
     }
@@ -245,13 +245,13 @@ namespace ocilib
         return BindInfo(core::Check(OCI_GetBind(*this, index)), GetHandle());
     }
 
-    inline BindInfo Statement::GetBind(const ostring& name) const
+    inline BindInfo Statement::GetBind(const String& name) const
     {
         return BindInfo(core::Check(OCI_GetBindByName(*this, name.c_str())), GetHandle());
     }
 
     template<typename M, class T>
-    BindInfo Statement::Bind1(M& method, const ostring& name, T& value, BindInfo::BindDirection mode)
+    BindInfo Statement::Bind1(M& method, const String& name, T& value, BindInfo::BindDirection mode)
     {
         BindInfo info(core::Check(method(*this, name.c_str(), &value)), GetHandle());
         if (!info.IsNull())
@@ -262,7 +262,7 @@ namespace ocilib
     }
 
     template<typename M, class T>
-    BindInfo Statement::Bind2(M& method, const ostring& name, T& value, BindInfo::BindDirection mode)
+    BindInfo Statement::Bind2(M& method, const String& name, T& value, BindInfo::BindDirection mode)
     {
         BindInfo info(core::Check(method(*this, name.c_str(), static_cast<typename support::BindResolver<T>::OutputType>(value))), GetHandle());
         if (!info.IsNull())
@@ -273,7 +273,7 @@ namespace ocilib
     }
 
     template<typename M, class T>
-    BindInfo Statement::BindVector1(M& method, const ostring& name, std::vector<T>& values, BindInfo::BindDirection mode, BindInfo::VectorType type)
+    BindInfo Statement::BindVector1(M& method, const String& name, std::vector<T>& values, BindInfo::BindDirection mode, BindInfo::VectorType type)
     {
         support::BindArray* bnd = core::OnAllocate(new support::BindArray(*this, name, mode));
         bnd->SetVector<T>(values, type == BindInfo::AsPlSqlTable, sizeof(typename support::BindResolver<T>::OutputType));
@@ -295,7 +295,7 @@ namespace ocilib
     }
 
     template<typename M, class T, class U>
-    BindInfo Statement::BindVector2(M& method, const ostring& name, std::vector<T>& values, BindInfo::BindDirection mode, U subType, BindInfo::VectorType type)
+    BindInfo Statement::BindVector2(M& method, const String& name, std::vector<T>& values, BindInfo::BindDirection mode, U subType, BindInfo::VectorType type)
     {
         support::BindArray* bnd = core::OnAllocate(new support::BindArray(*this, name, mode));
         bnd->SetVector<T>(values, type == BindInfo::AsPlSqlTable, sizeof(typename support::BindResolver<T>::OutputType));
@@ -317,7 +317,7 @@ namespace ocilib
     }
 
     template<class T>
-    inline BindInfo Statement::Bind(const ostring& name, T& value, BindInfo::BindDirection mode)
+    inline BindInfo Statement::Bind(const String& name, T& value, BindInfo::BindDirection mode)
     {
         if constexpr (std::is_same_v<T, bool>)
         {
@@ -429,7 +429,7 @@ namespace ocilib
     }
 
     template<class T, class U>
-    inline BindInfo Statement::Bind(const ostring& name, T& value, U maxSize, BindInfo::BindDirection mode)
+    inline BindInfo Statement::Bind(const String& name, T& value, U maxSize, BindInfo::BindDirection mode)
     {
         if constexpr (std::is_same_v<T, Clong> && std::is_same_v<U, UInt32>)
         {
@@ -457,7 +457,7 @@ namespace ocilib
         {
         return Bind<Blong, UInt32>(name, value, static_cast<UInt32>(maxSize), mode);
         }
-        else if constexpr (std::is_same_v<T, ostring> && std::is_same_v<U, UInt32>)
+        else if constexpr (std::is_same_v<T, String> && std::is_same_v<U, UInt32>)
         {
         if (maxSize == 0)
         {
@@ -466,7 +466,7 @@ namespace ocilib
 
         value.reserve(maxSize);
 
-        support::BindObjectAdaptor<ostring>* bnd = core::OnAllocate(new support::BindObjectAdaptor<ostring>(*this, name, mode, value, maxSize + 1));
+        support::BindObjectAdaptor<String>* bnd = core::OnAllocate(new support::BindObjectAdaptor<String>(*this, name, mode, value, maxSize + 1));
 
         OCI_Bind* res = OCI_BindString(*this, name.c_str(), static_cast<otext*>(*bnd), maxSize);
 
@@ -483,9 +483,9 @@ namespace ocilib
 
         return BindInfo(core::Check(res), GetHandle());
         }
-        else if constexpr (std::is_same_v<T, ostring> && std::is_same_v<U, Int32>)
+        else if constexpr (std::is_same_v<T, String> && std::is_same_v<U, Int32>)
         {
-        return Bind<ostring, UInt32>(name, value, static_cast<UInt32>(maxSize), mode);
+        return Bind<String, UInt32>(name, value, static_cast<UInt32>(maxSize), mode);
         }
         else if constexpr (std::is_same_v<T, Raw> && std::is_same_v<U, UInt32>)
         {
@@ -524,7 +524,7 @@ namespace ocilib
     }
 
     template<class T>
-    inline BindInfo Statement::Bind(const ostring& name, std::vector<T>& values, BindInfo::BindDirection mode, BindInfo::VectorType type)
+    inline BindInfo Statement::Bind(const String& name, std::vector<T>& values, BindInfo::BindDirection mode, BindInfo::VectorType type)
     {
         if constexpr (std::is_same_v<T, Int16>)
         {
@@ -593,7 +593,7 @@ namespace ocilib
     }
 
     template<class T>
-    inline BindInfo Statement::Bind(const ostring& name, std::vector<T>& values, TypeInfo& typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type)
+    inline BindInfo Statement::Bind(const String& name, std::vector<T>& values, TypeInfo& typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type)
     {
         if constexpr (std::is_same_v<T, Object>)
         {
@@ -610,7 +610,7 @@ namespace ocilib
     }
 
     template<class T, class U>
-    inline BindInfo Statement::Bind(const ostring& name, std::vector<T>& values, U extraInfo, BindInfo::BindDirection mode, BindInfo::VectorType type)
+    inline BindInfo Statement::Bind(const String& name, std::vector<T>& values, U extraInfo, BindInfo::BindDirection mode, BindInfo::VectorType type)
     {
         if constexpr (std::is_same_v<T, Timestamp> && std::is_same_v<U, Timestamp::TimestampTypeValues>)
         {
@@ -628,12 +628,12 @@ namespace ocilib
         {
         return Bind<Interval, Interval::IntervalTypeValues>(name, values, extraInfo.GetValue(), mode, type);
         }
-        else if constexpr (std::is_same_v<T, ostring> && std::is_same_v<U, UInt32>)
+        else if constexpr (std::is_same_v<T, String> && std::is_same_v<U, UInt32>)
         {
         support::BindArray* bnd = core::OnAllocate(new support::BindArray(*this, name, mode));
-        bnd->SetVector<ostring>(values, type == BindInfo::AsPlSqlTable, extraInfo + 1);
+        bnd->SetVector<String>(values, type == BindInfo::AsPlSqlTable, extraInfo + 1);
 
-        OCI_Bind* res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<ostring>(), extraInfo, bnd->GetSizeForBindCall());
+        OCI_Bind* res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<String>(), extraInfo, bnd->GetSizeForBindCall());
 
         if (res)
         {
@@ -648,9 +648,9 @@ namespace ocilib
 
         return BindInfo(core::Check(res), GetHandle());
         }
-        else if constexpr (std::is_same_v<T, ostring> && std::is_same_v<U, Int32>)
+        else if constexpr (std::is_same_v<T, String> && std::is_same_v<U, Int32>)
         {
-        return Bind<ostring, UInt32>(name, values, static_cast<UInt32>(extraInfo), mode, type);
+        return Bind<String, UInt32>(name, values, static_cast<UInt32>(extraInfo), mode, type);
         }
         else if constexpr (std::is_same_v<T, Raw> && std::is_same_v<U, UInt32>)
         {
@@ -679,7 +679,7 @@ namespace ocilib
     }
 
     template<class T>
-    inline void Statement::Register(const ostring& name)
+    inline void Statement::Register(const String& name)
     {
         if constexpr (std::is_same_v<T, UInt16>)
         {
@@ -752,7 +752,7 @@ namespace ocilib
     }
 
     template<class T, class U>
-    inline void Statement::Register(const ostring& name, U& extraInfo)
+    inline void Statement::Register(const String& name, U& extraInfo)
     {
         if constexpr (std::is_same_v<T, Object> && std::is_same_v<U, TypeInfo>)
         {
@@ -769,7 +769,7 @@ namespace ocilib
     }
 
     template<class T, class U>
-    inline void Statement::Register(const ostring& name, U extraInfo)
+    inline void Statement::Register(const String& name, U extraInfo)
     {
         if constexpr (std::is_same_v<T, Timestamp> && std::is_same_v<U, Timestamp::TimestampTypeValues>)
         {
@@ -787,13 +787,13 @@ namespace ocilib
         {
         Register<Interval, Interval::IntervalTypeValues>(name, extraInfo.GetValue());
         }
-        else if constexpr (std::is_same_v<T, ostring> && std::is_same_v<U, UInt32>)
+        else if constexpr (std::is_same_v<T, String> && std::is_same_v<U, UInt32>)
         {
         core::Check(OCI_RegisterString(*this, name.c_str(), extraInfo));
         }
-        else if constexpr (std::is_same_v<T, ostring> && std::is_same_v<U, Int32>)
+        else if constexpr (std::is_same_v<T, String> && std::is_same_v<U, Int32>)
         {
-        Register<ostring, UInt32>(name, static_cast<UInt32>(extraInfo));
+        Register<String, UInt32>(name, static_cast<UInt32>(extraInfo));
         }
         else if constexpr (std::is_same_v<T, Raw> && std::is_same_v<U, UInt32>)
         {
@@ -851,7 +851,7 @@ namespace ocilib
 
 
     template<class T>
-    BindInfo Statement::Bind(const ostring& name, Collection<T>& value, BindInfo::BindDirection mode)
+    BindInfo Statement::Bind(const String& name, Collection<T>& value, BindInfo::BindDirection mode)
     {
         BindInfo info(core::Check(OCI_BindColl(*this, name.c_str(), value)), GetHandle());
         if (!info.IsNull())
@@ -872,7 +872,7 @@ namespace ocilib
 
 
     template<class T>
-    BindInfo Statement::Bind(const ostring& name, std::vector<Collection<T> >& values, TypeInfo& typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type)
+    BindInfo Statement::Bind(const String& name, std::vector<Collection<T> >& values, TypeInfo& typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type)
     {
         return BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo*>(typeInfo), type);
     }
@@ -992,19 +992,19 @@ namespace ocilib
         return core::Check(OCI_GetSQLCommand(*this));
     }
 
-    inline ostring Statement::GetSQLVerb() const
+    inline String Statement::GetSQLVerb() const
     {
         return core::MakeString(core::Check(OCI_GetSQLVerb(*this)));
     }
     
-    inline std::vector<ostring> Statement::GetParseBindNames() const
+    inline std::vector<String> Statement::GetParseBindNames() const
     {
         UInt32 count = 0;
         const otext** names = nullptr;
 
         core::Check(OCI_GetParseBindNames(*this, &count, &names));
 
-        std::vector<ostring> result;
+        std::vector<String> result;
 
         result.reserve(count);
 

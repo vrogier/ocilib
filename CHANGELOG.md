@@ -77,6 +77,14 @@
   - `ocilib::Resultset` exposes `begin()`/`end()` input iterators yielding `ocilib::Row` proxies (typed `Get<T>(index)`/`Get<T>(name)`), usable in range-for loops and `std::ranges` algorithms; scrollable resultsets additionally support `operator--`, `operator+=`, `operator-=` and `operator[]` (seek) navigation
   - `ocilib::JsonNode` exposes `begin()`/`end()` input iterators over array items and object fields
   - SODA cursors (`SodaCollCursor`/`SodaDocCursor`) expose `begin()`/`end()` for range-for
+- C++17 API modernization
+  - Added `std::optional` support: `Resultset::GetOptional<T>(index|name)`, `Object::GetOptional<T>(name)` and `Row::GetOptional<T>(index|name)` return `std::nullopt` on SQL NULL
+  - Added `[[nodiscard]]` to all value-returning getters and factories
+  - `ocilib::core::HandleHolder` now has `noexcept` move constructor and move-assignment — handle types are movable (refcount-free returns, container moves)
+  - Renamed `ocilib::ostring` typedef to `ocilib::String` (an `ostring` alias is kept for compatibility); added `ocilib::StringView` (`std::basic_string_view<otext>`)
+  - `Resultset::Get<T>`/`Object::Get<T>`/`Collection::Get<T>` now `static_assert` on unsupported types instead of silently treating them as collections
+  - RAW getters (`Resultset`/`Object`/`Collection`) fill the returned `Raw` buffer directly, removing a temporary vector and copy
+  - Removed redundant `ocilib::` namespace qualification throughout the headers
 - Added `Statement::ExecuteAndGetResultset()` convenience methods
 - `Statement::Bind*()` overloads now return `BindInfo` instead of `void`
 

@@ -212,7 +212,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv, 1, 2, 3, 4, 567));
         ASSERT_TRUE(OCI_IntervalToText(itv, 3, 9, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("+001 02:03:04.000000567")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("+001 02:03:04.000000567")), String(buffer));
 
         ASSERT_TRUE(OCI_IntervalFree(itv));
 
@@ -231,7 +231,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalSetYearMonth(itv, 101, 9));
         ASSERT_TRUE(OCI_IntervalToText(itv, 3, 3, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("+101-09")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("+101-09")), String(buffer));
 
         ASSERT_TRUE(OCI_IntervalFree(itv));
 
@@ -363,7 +363,7 @@ namespace TestCApi
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_IntervalToText(itv, 3, 9, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("+001 02:03:04.000000000")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("+001 02:03:04.000000000")), String(buffer));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -390,7 +390,7 @@ namespace TestCApi
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_IntervalToText(itv, 3, 9, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("+002 04:06:08.000000008")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("+002 04:06:08.000000008")), String(buffer));
 
         ASSERT_TRUE(OCI_IntervalFree(itv));
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -422,7 +422,7 @@ namespace TestCApi
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_IntervalToText(itv, 3, 9, 512, buffer));
 
-        ASSERT_EQ(ostring(OTEXT("+001 02:03:04.000000000")), ostring(buffer));
+        ASSERT_EQ(String(OTEXT("+001 02:03:04.000000000")), String(buffer));
 
         OCI_ExecuteStmt(stmt, OTEXT("drop table test_interval_register"));
 

@@ -61,7 +61,7 @@ namespace ocilib
          * @brief Internal usage.
          * Constructs a C++ string object from the given OCILIB string pointer
          */
-        ostring MakeString(const otext* result, Int32 size = -1);
+        String MakeString(const otext* result, Int32 size = -1);
 
         /**
         * @brief Internal usage.
@@ -109,6 +109,19 @@ namespace ocilib
 
         template<class T>
         using SupportedVectorNumericT = std::enable_if_t<SupportedVectorNumeric<T>::value>;
+
+        /**
+         * @brief Internal usage.
+         * Determine if the given type is an ocilib::Collection<> instantiation
+         */
+        template<class T>
+        struct IsCollection : std::false_type {};
+
+        template<class T>
+        struct IsCollection<Collection<T>> : std::true_type {};
+
+        template<class T>
+        inline constexpr bool IsCollectionV = IsCollection<T>::value;
 
         /**
          * @brief
@@ -295,6 +308,8 @@ namespace ocilib
             HandleHolder() = default;
             HandleHolder(const HandleHolder& other) = default;
             HandleHolder& operator=(const HandleHolder& other) = default;
+            HandleHolder(HandleHolder&& other) noexcept = default;
+            HandleHolder& operator=(HandleHolder&& other) noexcept = default;
 
             ~HandleHolder() = default;
 
@@ -332,7 +347,7 @@ namespace ocilib
         /**
         * @brief
         * Abstract class allowing derived classes to be compatible
-        * with any type supporting the operator << ocilib::ostring
+        * with any type supporting the operator << String
         */
         class Streamable
         {
@@ -340,17 +355,17 @@ namespace ocilib
 
             virtual ~Streamable() noexcept {}
 
-            operator ostring() const
+            operator String() const
             {
                 return ToString();
             }
 
-            virtual ostring ToString() const = 0;
+            virtual String ToString() const = 0;
 
             template<class T>
             friend T& operator << (T& lhs, const Streamable& rhs)
             {
-                lhs << static_cast<ostring>(rhs);
+                lhs << static_cast<String>(rhs);
                 return lhs;
             }
         };

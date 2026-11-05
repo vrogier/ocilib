@@ -48,7 +48,7 @@ namespace TestCppApi
         JsonNode field = json.CreateString(OTEXT("alpha"));
         root.SetField(OTEXT("only"), field);
 
-        ostring name = root.GetFieldName(1);
-        ASSERT_EQ(ostring(OTEXT("only")), name);
+        String name = root.GetFieldName(1);
+        ASSERT_EQ(String(OTEXT("only")), name);
     }
 }

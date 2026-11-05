@@ -82,7 +82,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         auto str = env.GetLocaleString(Environment::LocaleCode(Environment::LocaleDayname1));
-        ASSERT_NE(ostring(), str);        
+        ASSERT_NE(String(), str);        
     }
 
     TEST(TestEnvironment, ModeAndVersionInfoCpp)
@@ -123,7 +123,7 @@ namespace TestCppApi
         env.EnableWarnings(false);
 
         ASSERT_TRUE(env.SetFormat(FormatTypeValues::FormatDate, OTEXT("YYYY-MM-DD")));
-        ASSERT_EQ(ostring(OTEXT("YYYY-MM-DD")), env.GetFormat(FormatTypeValues::FormatDate));
+        ASSERT_EQ(String(OTEXT("YYYY-MM-DD")), env.GetFormat(FormatTypeValues::FormatDate));
     }
 
     TEST(TestEnvironment, SubscriptionAndHACpp)
@@ -140,7 +140,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
 
-        ASSERT_THROW(env.GetLocaleString(Environment::LocaleCode(static_cast<Environment::LocaleCodeValues>(999))), ocilib::Exception);
+        ASSERT_THROW((void) env.GetLocaleString(Environment::LocaleCode(static_cast<Environment::LocaleCodeValues>(999))), ocilib::Exception);
     }
     */
     TEST(TestEnvironment, GetOCICompileVersion)
@@ -236,7 +236,7 @@ namespace TestCppApi
         ASSERT_NE(nullptr, env);
 
         ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_DATE, OTEXT("YYYY/MM/DD")));
-        ASSERT_EQ(ostring(OTEXT("YYYY/MM/DD")), ostring(OCI_GetFormat(env, OCI_FMT_DATE)));
+        ASSERT_EQ(String(OTEXT("YYYY/MM/DD")), String(OCI_GetFormat(env, OCI_FMT_DATE)));
     }
 
     TEST(TestEnvironment, SetFormatNullRestoresDefault)
@@ -418,7 +418,7 @@ namespace TestCppApi
 
         /* SetFormat roundtrip through OcilibEnvironmentSetFormat */
         ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_DATE, OTEXT("YYYY/MM/DD")));
-        ASSERT_EQ(ostring(OTEXT("YYYY/MM/DD")), ostring(OCI_GetFormat(env, OCI_FMT_DATE)));
+        ASSERT_EQ(String(OTEXT("YYYY/MM/DD")), String(OCI_GetFormat(env, OCI_FMT_DATE)));
         ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_DATE, nullptr));
     }
 

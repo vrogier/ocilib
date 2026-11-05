@@ -336,7 +336,7 @@ namespace TestCApi
         OCI_JsonNode* str = OCI_JsonNodeCreateString(json, OTEXT("hello"), 0);
         ASSERT_NE(nullptr, str);
         ASSERT_NE(nullptr, OCI_JsonNodeGetString(str, nullptr));
-        ASSERT_EQ(ostring(OTEXT("hello")), ostring(OCI_JsonNodeGetString(str, nullptr)));
+        ASSERT_EQ(String(OTEXT("hello")), String(OCI_JsonNodeGetString(str, nullptr)));
 
         /* repeated GetFieldName releases the previously cached field name */
 
@@ -344,8 +344,8 @@ namespace TestCApi
         ASSERT_NE(nullptr, root);
         ASSERT_TRUE(OCI_JsonNodeSetField(root, OTEXT("name"), str));
 
-        ASSERT_EQ(ostring(OTEXT("name")), ostring(OCI_JsonNodeGetFieldName(root, 1)));
-        ASSERT_EQ(ostring(OTEXT("name")), ostring(OCI_JsonNodeGetFieldName(root, 1)));
+        ASSERT_EQ(String(OTEXT("name")), String(OCI_JsonNodeGetFieldName(root, 1)));
+        ASSERT_EQ(String(OTEXT("name")), String(OCI_JsonNodeGetFieldName(root, 1)));
 
         OCI_JsonNodeFree(str);
         OCI_JsonNodeFree(root);
@@ -367,7 +367,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
 
         OCI_JsonNode* str = OCI_JsonNodeCreateString(json, OTEXT("hello"), 0);
-        ASSERT_EQ(ostring(OTEXT("hello")), ostring(OCI_JsonNodeGetString(str, nullptr)));
+        ASSERT_EQ(String(OTEXT("hello")), String(OCI_JsonNodeGetString(str, nullptr)));
         OCI_JsonNodeFree(str);
 
         OCI_Double v = 1.5;
@@ -520,7 +520,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, sNode);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(sNode));
         OCI_UInt32 sLen = 0;
-        ASSERT_EQ(ostring(OTEXT("abc")), ostring(OCI_JsonNodeGetString(sNode, &sLen)));
+        ASSERT_EQ(String(OTEXT("abc")), String(OCI_JsonNodeGetString(sNode, &sLen)));
         ASSERT_FALSE(OCI_JsonNodeSetNumber(sNode, nullptr));
         ASSERT_TRUE(OCI_JsonNodeFree(sNode));
 

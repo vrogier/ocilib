@@ -21,7 +21,7 @@ int main()
         Connection con(env, db, usr, pwd);
 
         std::vector<OCI_Int32> ints;
-        std::vector<ostring> strs;
+        std::vector<String> strs;
 
         Statement st(con);
         st.Prepare("insert into products values(:i, :s)");
@@ -31,7 +31,7 @@ int main()
 
         for (OCI_Int32 i = 0; i < ArraySize; ++i)
         {
-            ostring str;
+            String str;
             str += "Name";
             str += ((i + 1) + '0');
 
