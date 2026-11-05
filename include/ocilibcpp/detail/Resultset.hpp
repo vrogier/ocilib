@@ -221,6 +221,12 @@ inline T Resultset::Get(UInt32 index) const
     else if constexpr (std::is_same_v<T, File>)       { return File(core::Check(OCI_GetFile(*this, index)), GetHandle()); }
     else if constexpr (std::is_same_v<T, Clong>)      { return Clong(core::Check(OCI_GetLong(*this, index)), GetHandle()); }
     else if constexpr (std::is_same_v<T, Blong>)      { return Blong(core::Check(OCI_GetLong(*this, index)), GetHandle()); }
+    else if constexpr (std::is_same_v<T, StringView>)
+    {
+        const otext* value = core::Check(OCI_GetString(*this, index));
+
+        return value ? StringView(value) : StringView();
+    }
     else if constexpr (std::is_same_v<T, Raw>)
     {
         UInt32 size = core::Check(OCI_GetDataLength(*this, index));
@@ -267,6 +273,12 @@ inline T Resultset::Get(const String& name) const
     else if constexpr (std::is_same_v<T, File>)       { return File(core::Check(OCI_GetFileByName(*this, name.c_str())), GetHandle()); }
     else if constexpr (std::is_same_v<T, Clong>)      { return Clong(core::Check(OCI_GetLongByName(*this, name.c_str())), GetHandle()); }
     else if constexpr (std::is_same_v<T, Blong>)      { return Blong(core::Check(OCI_GetLongByName(*this, name.c_str())), GetHandle()); }
+    else if constexpr (std::is_same_v<T, StringView>)
+    {
+        const otext* value = core::Check(OCI_GetStringByName(*this, name.c_str()));
+
+        return value ? StringView(value) : StringView();
+    }
     else if constexpr (std::is_same_v<T, Raw>)
     {
         UInt32 size = core::Check(OCI_GetDataLength(*this, core::Check(OCI_GetColumnIndex(*this, name.c_str()))));

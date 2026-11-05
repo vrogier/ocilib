@@ -655,7 +655,7 @@ namespace TestCppApi
         Number nm1(env, 1);
         Number nm2;
 
-        ASSERT_THROW((void) nm1 = nm2, Exception);
+        ASSERT_THROW((void)(nm1 = nm2), Exception);
     }
 
     TEST(ReportedIssuesCpp, Issue388_Date)
@@ -665,7 +665,7 @@ namespace TestCppApi
         Date dt1(env, true);
         Date dt2;
 
-        ASSERT_THROW((void) dt1 = dt2, Exception);
+        ASSERT_THROW((void)(dt1 = dt2), Exception);
     }
 
     // Issue 391 : data race on pooled connections - OCI_Pool had no thread-safe

@@ -140,7 +140,7 @@ namespace TestCppApi
         stmt.SetBindArraySize(static_cast<OCI_UInt32>(ids.size()));
         stmt.Bind(OTEXT(":id"), ids, BindInfo::In);
 
-        ASSERT_THROW((void) stmt.Bind(OTEXT(":id"), ids, BindInfo::In), Exception);
+        ASSERT_THROW((void)(stmt.Bind(OTEXT(":id"), ids, BindInfo::In)), Exception);
 
         ExecDML(OTEXT("drop table TestBind_Dup"));
     }
@@ -159,7 +159,7 @@ namespace TestCppApi
         stmt.SetBindArraySize(static_cast<OCI_UInt32>(names.size()));
         stmt.Bind(OTEXT(":name"), names, 50u, BindInfo::In);
 
-        ASSERT_THROW((void) stmt.Bind(OTEXT(":name"), names, 50u, BindInfo::In), Exception);
+        ASSERT_THROW((void)(stmt.Bind(OTEXT(":name"), names, 50u, BindInfo::In)), Exception);
 
         ExecDML(OTEXT("drop table TestBind_DupStr"));
     }

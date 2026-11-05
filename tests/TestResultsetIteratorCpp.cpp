@@ -158,7 +158,7 @@ namespace TestCppApi
 
         auto it = rs.begin();
         ++it;
-        ASSERT_THROW((void) --it, Exception);
+        ASSERT_THROW((void)(--it), Exception);
     }
 
     TEST(TestResultsetIterator, NonScrollableSeekThrows)
@@ -170,7 +170,7 @@ namespace TestCppApi
         auto rs = GetRowsResultset(st, 5);
 
         auto it = rs.begin();
-        ASSERT_THROW((void) it += 2, Exception);
+        ASSERT_THROW((void)(it += 2), Exception);
     }
 
     TEST(TestResultsetIterator, NonScrollableSubscriptThrows)
@@ -182,7 +182,52 @@ namespace TestCppApi
         auto rs = GetRowsResultset(st, 5);
 
         auto it = rs.begin();
-        ASSERT_THROW((void) it[2], Exception);
+        ASSERT_THROW((void)(it[2]), Exception);
+    }
+
+    TEST(TestResultsetIterator, GetStringViewByIndex)
+    {
+        auto& env = GetEnvironmentCpp();
+
+        Connection con(env, DBS, USR, PWD);
+        Statement st(con);
+        auto rs = GetRowsResultset(st, 3);
+
+        UInt32 count = 0;
+        for (auto&& row : rs)
+        {
+            ++count;
+            auto sv = row.Get<StringView>(2);
+            ASSERT_EQ(ostring(OTEXT("Row ")) + TO_STRING(count), ostring(sv));
+        }
+    }
+
+    TEST(TestResultsetIterator, GetStringViewByName)
+    {
+        auto& env = GetEnvironmentCpp();
+
+        Connection con(env, DBS, USR, PWD);
+        Statement st(con);
+        st.Execute(OTEXT("select 'abc' as name from dual"));
+        auto rs = st.GetResultset();
+
+        auto it = rs.begin();
+        ASSERT_TRUE(it != rs.end());
+        ASSERT_EQ(OTEXT("abc"), (*it).Get<StringView>(OTEXT("name")));
+    }
+
+    TEST(TestResultsetIterator, GetStringViewNull)
+    {
+        auto& env = GetEnvironmentCpp();
+
+        Connection con(env, DBS, USR, PWD);
+        Statement st(con);
+        st.Execute(OTEXT("select null as name from dual"));
+        auto rs = st.GetResultset();
+
+        auto it = rs.begin();
+        ASSERT_TRUE(it != rs.end());
+        ASSERT_TRUE((*it).Get<StringView>(OTEXT("name")).empty());
     }
 
 }

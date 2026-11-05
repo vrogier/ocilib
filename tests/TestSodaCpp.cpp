@@ -345,14 +345,14 @@ namespace TestCppApi
 
     TEST(TestSodaCpp, ErrorPaths)
     {
-        ASSERT_THROW((void) SodaColl().GetName(), Exception);
-        ASSERT_THROW((void) SodaColl().Drop(), Exception);
-        ASSERT_THROW((void) SodaDb().GetConnection(), Exception);
-        ASSERT_THROW((void) SodaDoc().GetKey(), Exception);
-        ASSERT_THROW((void) SodaDoc().GetText(), Exception);
-        ASSERT_THROW((void) SodaOptions().SetSkip(0), Exception);
-        ASSERT_THROW((void) SodaCollCursor().GetNext(), Exception);
-        ASSERT_THROW((void) SodaDocCursor().GetNext(), Exception);
+        ASSERT_THROW((void)(SodaColl().GetName()), Exception);
+        ASSERT_THROW((void)(SodaColl().Drop()), Exception);
+        ASSERT_THROW((void)(SodaDb().GetConnection()), Exception);
+        ASSERT_THROW((void)(SodaDoc().GetKey()), Exception);
+        ASSERT_THROW((void)(SodaDoc().GetText()), Exception);
+        ASSERT_THROW((void)(SodaOptions().SetSkip(0)), Exception);
+        ASSERT_THROW((void)(SodaCollCursor().GetNext()), Exception);
+        ASSERT_THROW((void)(SodaDocCursor().GetNext()), Exception);
     }
 
     TEST(TestSodaCpp, BulkSaveIndexAndMeta)

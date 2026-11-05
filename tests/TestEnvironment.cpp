@@ -140,7 +140,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
 
-        ASSERT_THROW((void) env.GetLocaleString(Environment::LocaleCode(static_cast<Environment::LocaleCodeValues>(999))), ocilib::Exception);
+        ASSERT_THROW((void)(env.GetLocaleString(Environment::LocaleCode(static_cast<Environment::LocaleCodeValues>(999)))), ocilib::Exception);
     }
     */
     TEST(TestEnvironment, GetOCICompileVersion)
