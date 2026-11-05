@@ -1,0 +1,4 @@
+/**
+@page changelog ChangeLog
+@include{doc} CHANGELOG.md
+*/

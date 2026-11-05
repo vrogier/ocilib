@@ -3,54 +3,49 @@
  
  @section Intro Description
  
- OCILIB is an open source, cross-platform Oracle driver for C and C++. It provides fast and
- reliable access to Oracle databases through a simple, consistent API.
- 
- The OCILIB library :
- 
- - Offers a rich, full-featured, and easy-to-use API
- - Runs on all major Oracle client platforms
- - Encapsulates OCI (Oracle Call Interface)
- - Provides a C API written in ISO C11 with native Unicode support
- - Provides a C++ API written in standard C++14
- 
+OCILIB is an open-source, cross-platform library offering the most complete and advanced Oracle database drivers for C and C++.
+
+Built on Oracle Call Interface (OCI), it combines broad feature coverage with fast, reliable database access and a consistent programming experience.
+
+Use its modern C and C++ APIs to build applications ranging from everyday SQL clients to systems that rely on Oracle's advanced data and availability features.
+
+OCILIB supports ANSI and Unicode applications, adapts to the Oracle client available at runtime, and runs across major platforms.
+
  @section Version Version information
  
  Current version: <b>5.0.0</b>
  
  @section Features Main features
- 
- - ISO C API
- - ISO C++ API
- - Full ANSI and Unicode support on all platforms (ISO C wide strings or UTF-8 strings)
- - Full 32/64-bit compatibility
- - Compatible with all Oracle versions >= 8.0
+
+Core:
+
+ - Cross-platform C API (ISO C11), with 32-bit and 64-bit support
+ - Modern C++ API (C++17), header-only, with iterators usable with standard algorithms
+ - ANSI and Unicode builds, including wide-character and UTF-8 strings
  - Automatic adaptation to the runtime Oracle client version
- - Runtime loading of Oracle libraries (supporting  multiple concurrent Oracle clients)
- - Built-in error handling (global and thread context)
- - Full support for SQL API and Object API
- - Full support for Oracle SQL and PL/SQL data types (scalars, objects, refs, collections, ...)
- - Oracle JSON datatype support (requires Oracle 21c)
- - Oracle SODA (Simple Oracle Document Access) support (requires Oracle 18c)
- - Full support for PL/SQL (blocks, cursors, index-by tables, and nested tables)
- - Support for non-scalar data types through library objects
- - Partial support for XMLTYPE (fetching only as string content)
- - Oracle Pooling (connections and sessions pools)
- - Oracle AQ (Advanced Queuing)
- - Oracle TAF (Transparent Application Failover) and HA (High availability) support
- - Binding array interface
- - Returning DML feature
- - Scrollable statements
- - Statement cache
- - Direct Path loading
- - Remote Instances Startup/Shutdown
- - Oracle Database Change Notification / Continuous Query Notification
- - Oracle warnings support
- - Global and local transactions
- - Describe database schema objects
- - Hash tables API
- - Optional runtime logging
- - Diagnostic statistics API
+ - Runtime loading of Oracle client libraries
+ - SQL and PL/SQL, including blocks, cursors, index-by tables, and nested tables
+ - Connections, sessions, transactions, and connection pooling
+ - Statement execution, binding, fetching, bulk operations, and DML returning
+ - Oracle types: scalars, dates, timestamps, intervals, LOBs, LONGs, RAWs, ROWIDs, cursors, objects, REFs, and collections
+ - Error handling, Oracle warnings, optional logging, and diagnostic statistics
+ - SQL and Object APIs, schema description, multiple-client environments, and hash tables
+ - Transparent Application Failover (TAF) and high availability
+ - Oracle Direct Path loading
+
+Advanced (minimum Oracle release noted):
+
+ - Scrollable statements and result sets (9i)
+ - Advanced Queuing - AQ (9i)
+ - Statement caching (9.2)
+ - Database Change Notification / Continuous Query Notification (10.2)
+ - Remote database startup and shutdown (10.2)
+ - Oracle Sharding, including sharded connections and session pools (12.2)
+ - Oracle SODA - Simple Oracle Document Access (18c)
+ - Oracle JSON data type support, including DOM and serialized JSON operations (21c)
+ - Oracle VECTOR data type support (23ai)
+
+Feature availability also depends on the Oracle client version used by the application.
 
  @section Download Download
  
@@ -58,13 +53,13 @@
  
  @section Author Author
  
- OCILIB is developed by <a href="mailto:vince.rogier@ocilib.net">Vincent Rogier</a>
+ OCILIB is developed by <a href="mailto:vince.rogier@gmail.com">Vincent Rogier</a>
  
  @section License License 
  The source code is licensed under the Apache License, Version 2.0 (see the file LICENSE).
  
  @section Changelog Changelog
  
- @include CHANGELOG.md
+See the \subpage changelog page.
  
  */

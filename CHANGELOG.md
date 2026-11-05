@@ -1,6 +1,6 @@
 # Change Log
 
-## 2026-09-30 - Version 5.0.0
+## 2026-12-23 - Version 5.0.0
 
 **Author:** Vincent Rogier (vince.rogier@ocilib.net)
 

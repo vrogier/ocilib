@@ -1,4 +1,4 @@
-# Doxyfile 1.9.5
+# Doxyfile 1.9.6
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project.
@@ -61,7 +61,7 @@ PROJECT_BRIEF          = "Open source and cross platform Oracle Driver deliverin
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = ../images/logo-160x120.png
+PROJECT_LOGO           =../images/ocilib-logo-small.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -86,7 +86,7 @@ CREATE_SUBDIRS         = NO
 # level increment doubles the number of directories, resulting in 4096
 # directories at level 8 which is the default and also the maximum value. The
 # sub-directories are organized in 2 levels, the first level always has a fixed
-# numer of 16 directories.
+# number of 16 directories.
 # Minimum value: 0, maximum value: 8, default value: 8.
 # This tag requires that the tag CREATE_SUBDIRS is set to YES.
 
@@ -140,9 +140,9 @@ REPEAT_BRIEF           = YES
 # the entity):The $name class, The $name widget, The $name file, is, provides,
 # specifies, contains, represents, a, an and the.
 
-ABBREVIATE_BRIEF       = "The $name class                                         " \
-                         "The $name widget                                         " \
-                         "The $name file                                         " \
+ABBREVIATE_BRIEF       = "The $name class                                        " \
+                         "The $name widget                                        " \
+                         "The $name file                                        " \
                          is \
                          provides \
                          specifies \
@@ -184,7 +184,7 @@ FULL_PATH_NAMES        = NO
 # will be relative from the directory where doxygen is started.
 # This tag requires that the tag FULL_PATH_NAMES is set to YES.
 
-STRIP_FROM_PATH        = "C:/Program Files/doxygen/bin/                                         "
+STRIP_FROM_PATH        = "C:/Program Files/doxygen/bin/                                        "
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of the
 # path mentioned in the documentation of a class, which tells the reader which
@@ -568,7 +568,8 @@ HIDE_UNDOC_MEMBERS     = YES
 # If the HIDE_UNDOC_CLASSES tag is set to YES, doxygen will hide all
 # undocumented classes that are normally visible in the class hierarchy. If set
 # to NO, these classes will be included in the various overviews. This option
-# has no effect if EXTRACT_ALL is enabled.
+# will also hide undocumented C++ concepts if enabled. This option has no effect
+# if EXTRACT_ALL is enabled.
 # The default value is: NO.
 
 HIDE_UNDOC_CLASSES     = YES
@@ -859,6 +860,14 @@ WARN_IF_INCOMPLETE_DOC = YES
 
 WARN_NO_PARAMDOC       = NO
 
+# If WARN_IF_UNDOC_ENUM_VAL option is set to YES, doxygen will warn about
+# undocumented enumeration values. If set to NO, doxygen will accept
+# undocumented enumeration values. If EXTRACT_ALL is set to YES then this flag
+# will automatically be disabled.
+# The default value is: NO.
+
+WARN_IF_UNDOC_ENUM_VAL = NO
+
 # If the WARN_AS_ERROR tag is set to YES then doxygen will immediately stop when
 # a warning is encountered. If the WARN_AS_ERROR tag is set to FAIL_ON_WARNINGS
 # then doxygen will continue running as if WARN_AS_ERROR tag is set to NO, but
@@ -910,6 +919,8 @@ WARN_LOGFILE           =
 
 INPUT                  = Introduction.txt \
                          Installation.txt \
+                         Changelog.dox \
+                         ../CHANGELOG.md \
                          DataTypes.txt \
                          ../ \
                          ../include \
@@ -960,7 +971,8 @@ INPUT_FILE_ENCODING    =
 FILE_PATTERNS          = *.c \
                          *.cpp \
                          *.h \
-                         *.hpp
+                         *.hpp \
+                         *.md
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -1241,10 +1253,11 @@ CLANG_DATABASE_PATH    =
 
 ALPHABETICAL_INDEX     = NO
 
-# In case all classes in a project start with a common prefix, all classes will
-# be put under the same header in the alphabetical index. The IGNORE_PREFIX tag
-# can be used to specify a prefix (or a list of prefixes) that should be ignored
-# while generating the index headers.
+# The IGNORE_PREFIX tag can be used to specify a prefix (or a list of prefixes)
+# that should be ignored while generating the index headers. The IGNORE_PREFIX
+# tag works for classes, function and member names. The entity will be placed in
+# the alphabetical list under the first letter of the entity name that remains
+# after removing the prefix.
 # This tag requires that the tag ALPHABETICAL_INDEX is set to YES.
 
 IGNORE_PREFIX          =
@@ -1323,7 +1336,12 @@ HTML_STYLESHEET        = customdoxygen.css
 # Doxygen will copy the style sheet files to the output directory.
 # Note: The order of the extra style sheet files is of importance (e.g. the last
 # style sheet in the list overrules the setting of the previous ones in the
-# list). For an example see the documentation.
+# list).
+# Note: Since the styling of scrollbars can currently not be overruled in
+# Webkit/Chromium, the styling will be left out of the default doxygen.css if
+# one or more extra stylesheets have been specified. So if scrollbar
+# customization is desired it has to be added explicitly. For an example see the
+# documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
 HTML_EXTRA_STYLESHEET  =
@@ -1339,17 +1357,13 @@ HTML_EXTRA_STYLESHEET  =
 HTML_EXTRA_FILES       =
 
 # The HTML_COLORSTYLE tag can be used to specify if the generated HTML output
-# should be rendered with a dark or light theme. Default setting AUTO_LIGHT
-# enables light output unless the user preference is dark output. Other options
-# are DARK to always use dark mode, LIGHT to always use light mode, AUTO_DARK to
-# default to dark mode unless the user prefers light mode, and TOGGLE to let the
-# user toggle between dark and light mode via a button.
-# Possible values are: LIGHT Always generate light output., DARK Always generate
-# dark output., AUTO_LIGHT Automatically set the mode according to the user
-# preference, use light mode if no preference is set (the default)., AUTO_DARK
-# Automatically set the mode according to the user preference, use dark mode if
-# no preference is set. and TOGGLE Allow to user to switch between light and
-# dark mode via a button..
+# should be rendered with a dark or light theme.
+# Possible values are: LIGHT always generate light mode output, DARK always
+# generate dark mode output, AUTO_LIGHT automatically set the mode according to
+# the user preference, use light mode if no preference is set (the default),
+# AUTO_DARK automatically set the mode according to the user preference, use
+# dark mode if no preference is set and TOGGLE allow to user to switch between
+# light and dark mode via a button.
 # The default value is: AUTO_LIGHT.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
@@ -2233,6 +2247,10 @@ DOCBOOK_OUTPUT         = docbook
 # The default value is: NO.
 
 GENERATE_AUTOGEN_DEF   = NO
+
+#---------------------------------------------------------------------------
+# Configuration options related to Sqlite3 output
+#---------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------
 # Configuration options related to the Perl module output

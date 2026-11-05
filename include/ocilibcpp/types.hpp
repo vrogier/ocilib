@@ -568,9 +568,40 @@ namespace ocilib
         */
         typedef core::Flags<EnvironmentFlagsValues> EnvironmentFlags;
 
-
-
+        /**
+         * @brief
+         * Initialize the OCILIB environment
+         *
+         * @param mode         - Environment mode
+         * @param libpath      - Oracle shared library path (optional)
+         *
+         * @note
+         * An Environment instance must be created before any other OCILIB library function.
+         *
+         * @warning
+         * - It should be called <b>ONCE</b> per application
+         * - It is not thread safe
+         *
+         * @note
+         * - The parameter 'libpath' is only used if OCILIB has been built with the option OCI_IMPORT_RUNTIME
+         * - If the parameter 'lib_path' is NULL, the Oracle library is loaded from system environment variables
+         *
+         */
         Environment(EnvironmentFlags mode = Environment::Default, const String& libpath = OTEXT(""));
+  
+        /**
+        * @brief
+        * Clean up all resources allocated by the environment
+        *
+        * @note
+        * - It deallocates library managed objects not explicitly freed by the program (connections, statements, ...)
+        * - It unloads the Oracle shared library if it has been dynamically loaded
+        *
+        * @warning
+        * - It should be called <b>ONCE</b> per application
+        * - It is not thread safe
+        *
+        */
         ~Environment();
 
 
@@ -908,8 +939,9 @@ namespace ocilib
         *
         */
         typedef core::Enum<LocaleCodeValues> LocaleCode;
+        
         /**
-        * @typedef ocilib::HAHandlerProc
+        * @typedef HAHandlerProc
         *
         * @brief
         * User callback for HA event notifications
@@ -918,39 +950,6 @@ namespace ocilib
         typedef void(*HAHandlerProc) (Connection& con, HAEventSource eventSource, HAEventType eventType, Timestamp& time);
 
         /**
-         * @brief
-         * Initialize the OCILIB environment
-         *
-         * @param mode         - Environment mode
-         * @param libpath      - Oracle shared library path (optional)
-         *
-         * @note
-         * An Environment instance must be created before any other OCILIB library function.
-         *
-         * @warning
-         * - It should be called <b>ONCE</b> per application
-         * - It is not thread safe
-         *
-         * @note
-         * - The parameter 'libpath' is only used if OCILIB has been built with the option OCI_IMPORT_RUNTIME
-         * - If the parameter 'lib_path' is NULL, the Oracle library is loaded from system environment variables
-         *
-         */
-/**
-         * @brief
-         * Clean up all resources allocated by the environment
-         *
-         * @note
-         * This function must be the last OCILIB library function call.
-         * - It deallocates library managed objects not explicitly freed by the program (connections, statements, ...)
-         * - It unloads the Oracle shared library if it has been dynamically loaded
-         *
-         * @warning
-         * - It should be called <b>ONCE</b> per application
-         * - It is not thread safe
-         *
-         */
-/**
          * @brief
          * Return the Environment mode flags
          *
@@ -1288,7 +1287,6 @@ namespace ocilib
         std::shared_ptr<core::HandleStore> _store;
     };
 
-    /**
     /**
       * @brief
       * A connection or session Pool.
@@ -1706,7 +1704,7 @@ namespace ocilib
         typedef core::Enum<SessionTraceValues> SessionTrace;
 
         /**
-        * @typedef ocilib::TAFHandlerProc
+        * @typedef TAFHandlerProc
         *
         * @brief
         * User callback for TAF event notifications
@@ -8572,7 +8570,7 @@ namespace ocilib
     public:
 
         /**
-         * @typedef ocilib::NotifyHandlerProc
+         * @typedef NotifyHandlerProc
          *
          * @brief
          * User callback for subscriptions event notifications
@@ -9461,7 +9459,7 @@ namespace ocilib
     public:
 
         /**
-         * @typedef ocilib::NotifyAQHandlerProc
+         * @typedef NotifyAQHandlerProc
          *
          * @brief
          * User callback for dequeue event notifications
