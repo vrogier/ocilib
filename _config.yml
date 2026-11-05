@@ -10,7 +10,7 @@ projecturl: https://github.com/vrogier/ocilib
 meurl: https://github.com/vrogier/
 
 header: yes
-header_img: images/ocilib-logo-with-text-details.png
+header_img: images/ocilib-logo-with-text-details-small.png
 
 exclude: [.bundle, bin, vendor, Gemfile, Gemfile.lock, Rakefile, s3_website.yml, .last_optimized]
  
