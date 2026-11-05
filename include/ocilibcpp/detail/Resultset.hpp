@@ -124,6 +124,16 @@ inline bool Resultset::operator -= (Int32 offset)
     return Seek(SeekRelative, -offset);
 }
 
+inline ResultsetIterator Resultset::begin()
+{
+    return ResultsetIterator(this, !Next());
+}
+
+inline ResultsetIterator Resultset::end()
+{
+    return ResultsetIterator(this, true);
+}
+
 template<class T>
 void Resultset::Get(UInt32 index, T& value) const
 {

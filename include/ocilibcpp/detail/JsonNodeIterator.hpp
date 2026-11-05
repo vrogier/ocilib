@@ -57,16 +57,4 @@ namespace ocilib
     {
         return !(*this == other);
     }
-
-    inline JsonNodeIterator JsonNode::begin() const
-    {
-        const Json::JsonType type = GetType();
-        return (type == Json::NodeArray || type == Json::NodeObject) ? JsonNodeIterator(*this, 1) : end();
-    }
-
-    inline JsonNodeIterator JsonNode::end() const
-    {
-        const Json::JsonType type = GetType();
-        return JsonNodeIterator(*this, (type == Json::NodeArray ? GetItemCount() : type == Json::NodeObject ? GetFieldCount() : 0) + 1);
-    }
 }

@@ -277,4 +277,16 @@ namespace ocilib
         else if constexpr (std::is_same_v<U, Float>)    core::Check(OCI_JsonNodeSetFloat(*this, static_cast<OCI_Float>(value)));
         else if constexpr (std::is_same_v<U, Double>)   core::Check(OCI_JsonNodeSetDouble(*this, static_cast<OCI_Double>(value)));
     }
+
+    inline JsonNodeIterator JsonNode::begin() const
+    {
+        const Json::JsonType type = GetType();
+        return (type == Json::NodeArray || type == Json::NodeObject) ? JsonNodeIterator(*this, 1) : end();
+    }
+
+    inline JsonNodeIterator JsonNode::end() const
+    {
+        const Json::JsonType type = GetType();
+        return JsonNodeIterator(*this, (type == Json::NodeArray ? GetItemCount() : type == Json::NodeObject ? GetFieldCount() : 0) + 1);
+    }
 }

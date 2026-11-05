@@ -5610,6 +5610,38 @@ namespace ocilib
 
     /**
     * @brief
+    * STL compliant forward iterator over a JSON container node's items (array
+    * node) or fields (object node)
+    *
+    */
+    class JsonNodeIterator
+    {
+    public:
+
+        typedef std::forward_iterator_tag iterator_category;
+        typedef JsonNode value_type;
+        typedef ptrdiff_t difference_type;
+        typedef JsonNode* pointer;
+        typedef JsonNode& reference;
+
+        JsonNodeIterator(const JsonNode& node, UInt32 index);
+
+        JsonNode operator*() const;
+
+        JsonNodeIterator& operator++();
+        JsonNodeIterator operator++(Int32);
+
+        bool operator == (const JsonNodeIterator& other) const;
+        bool operator != (const JsonNodeIterator& other) const;
+
+    private:
+
+        const JsonNode* _node;
+        UInt32          _index;
+    };
+
+    /**
+    * @brief
     * Object identifying a node within a JSON document.
     *
     * This class wraps the OCILIB object handle OCI_JsonNode and its related methods
@@ -6024,37 +6056,6 @@ namespace ocilib
         JsonNode(OCI_JsonNode* pNode, core::Handle* parent = nullptr);
     };
 
-    /**
-    * @brief
-    * STL compliant forward iterator over a JSON container node's items (array
-    * node) or fields (object node)
-    *
-    */
-    class JsonNodeIterator
-    {
-    public:
-
-        typedef std::forward_iterator_tag iterator_category;
-        typedef JsonNode value_type;
-        typedef ptrdiff_t difference_type;
-        typedef JsonNode* pointer;
-        typedef JsonNode& reference;
-
-        JsonNodeIterator(const JsonNode& node, UInt32 index);
-
-        JsonNode operator*() const;
-
-        JsonNodeIterator& operator++();
-        JsonNodeIterator operator++(Int32);
-
-        bool operator == (const JsonNodeIterator& other) const;
-        bool operator != (const JsonNodeIterator& other) const;
-
-    private:
-
-        const JsonNode* _node;
-        UInt32          _index;
-    };
 
     /**
     * @brief
@@ -7686,6 +7687,177 @@ namespace ocilib
      * This class wraps the OCILIB object handle OCI_Resultset and its related methods
      *
      */
+        /**
+     * @brief
+     * Proxy object representing the current row of a Resultset during iteration
+     *
+     * A Row forwards Get<T> calls to the underlying Resultset.
+     * It is only valid while the cursor sits on that row - the column data is
+     * released on the next fetch call.
+     *
+     */
+    class Row
+    {
+    public:
+
+        /**
+        * @brief
+        * Return the value of the column at the given index
+        *
+        * @param index - Column index
+        *
+        */
+        template<class T>
+        T Get(UInt32 index) const;
+
+        /**
+        * @brief
+        * Return the value of the column with the given name
+        *
+        * @param name - Column name
+        *
+        */
+        template<class T>
+        T Get(const ostring& name) const;
+
+    private:
+
+        explicit Row(Resultset* resultset);
+
+        Resultset* _rs;
+
+        friend class ResultsetIterator;
+    };
+
+    /**
+     * @brief
+     * Input iterator over the rows of a Resultset
+     *
+     * operator++() calls Resultset::Next().
+     * On scrollable resultsets, operator--()/+=/-=/[] also work, backed by
+     * Resultset::Prev() and Resultset::Seek() - they fail with an OCI error on
+     * forward-only resultsets.
+     *
+     * @note
+     * The iteration position is shared state on the Resultset: copying an
+     * iterator does not create an independent cursor.
+     *
+     * @warning
+     * operator--(), operator+=(), operator-=() and operator[]() require a
+     * scrollable resultset (Statement::SetFetchMode(FetchScrollable) before
+     * Execute()); on a forward-only resultset they throw an Exception
+     * (OCI-10002).
+     *
+     */
+    class ResultsetIterator
+    {
+    public:
+
+        typedef std::input_iterator_tag iterator_category;
+        typedef Row                   value_type;
+        typedef std::ptrdiff_t        difference_type;
+        typedef void                  pointer;
+        typedef Row                   reference;
+
+        /**
+        * @brief
+        * Return a Row proxy for the current row
+        *
+        */
+        Row operator * () const;
+
+        /**
+        * @brief
+        * Fetch the next row
+        *
+        */
+        ResultsetIterator& operator ++ ();
+
+        /**
+        * @brief
+        * Fetch the next row (postfix)
+        *
+        */
+        ResultsetIterator operator ++ (Int32);
+
+        /**
+        * @brief
+        * Fetch the previous row (scrollable resultsets only)
+        *
+        */
+        ResultsetIterator& operator -- ();
+
+        /**
+        * @brief
+        * Fetch the previous row (postfix)        *
+        * @warning
+        * Scrollable resultsets only - throws Exception (OCI-10002) on
+        * forward-only resultsets
+        *
+        */
+        ResultsetIterator operator -- (Int32);
+
+        /**
+        * @brief
+        * Seek relative by the given offset        *
+        * @warning
+        * Scrollable resultsets only - throws Exception (OCI-10002) on
+        * forward-only resultsets
+        *
+        */
+        ResultsetIterator& operator += (Int32 offset);
+
+        /**
+        * @brief
+        * Seek relative by the negated offset        *
+        * @warning
+        * Scrollable resultsets only - throws Exception (OCI-10002) on
+        * forward-only resultsets
+        *
+        */
+        ResultsetIterator& operator -= (Int32 offset);
+
+        /**
+        * @brief
+        * Seek relative by the given offset and return the row there        *
+        * @warning
+        * Scrollable resultsets only - throws Exception (OCI-10002) on
+        * forward-only resultsets
+        *
+        */
+        Row operator [] (Int32 offset) const;
+
+        /**
+        * @brief
+        * Compare two iterators - past-the-end iterators compare equal
+        *
+        */
+        bool operator == (const ResultsetIterator& other) const;
+
+        /**
+        * @brief
+        * Inequality test
+        *
+        */
+        bool operator != (const ResultsetIterator& other) const;
+
+    private:
+
+        ResultsetIterator(Resultset* resultset, bool eof);
+
+        Resultset* _rs;
+        bool       _eof;
+
+        friend class Resultset;
+    };
+
+    /**
+     * @brief
+     * Encapsulate a resultset returned by the execution of a SELECT statement
+     *
+     * This class wraps the OCILIB object handle OCI_Resultset and its related methods
+     *
+     */
     class Resultset : public core::HandleHolder<OCI_Resultset*>
     {
         friend class Statement;
@@ -8053,10 +8225,30 @@ namespace ocilib
         */
         bool operator -= (Int32 offset);
 
+        /**
+        * @brief
+        * Return an input iterator positioned on the first row of the resultset
+        *
+        * @note
+        * begin() performs the first Next() call; the range-for is then
+        * equivalent to while (Next()).
+        * On forward-only resultsets the iteration is single-pass.
+        *
+        */
+        ResultsetIterator begin();
+
+        /**
+        * @brief
+        * Return the past-the-end iterator sentinel
+        *
+        */
+        ResultsetIterator end();
+
     private:
 
         Resultset(OCI_Resultset* resultset, core::Handle* parent);
     };
+
 
     /**
      * @brief

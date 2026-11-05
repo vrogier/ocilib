@@ -418,6 +418,9 @@
     <ClCompile Include="TestResultsetCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestResultsetIteratorCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
     <ClCompile Include="TestSoda.cpp">
       <Filter>Tests suite\Soda</Filter>
     </ClCompile>

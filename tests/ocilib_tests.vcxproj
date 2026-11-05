@@ -319,6 +319,7 @@
     <ClCompile Include="TestMessageCpp.cpp" />
     <ClCompile Include="TestResultset.cpp" />
     <ClCompile Include="TestResultsetCpp.cpp" />
+    <ClCompile Include="TestResultsetIteratorCpp.cpp" />
     <ClCompile Include="TestStringutils.cpp" />
     <ClCompile Include="TestSubscription.cpp" />
     <ClCompile Include="TestReturningInto.cpp" />

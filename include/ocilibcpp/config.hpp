@@ -155,6 +155,8 @@ class SodaOptions;
 class SodaCollCursor;
 class SodaDocCursor;
 class ShardingKey;
+class Row;
+class ResultsetIterator;
 
 
 /**

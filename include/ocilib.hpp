@@ -203,6 +203,8 @@ namespace ocilib
 #include "ocilibcpp/detail/BindInfo.hpp"
 #include "ocilibcpp/detail/Statement.hpp"
 #include "ocilibcpp/detail/Resultset.hpp"
+#include "ocilibcpp/detail/Row.hpp"
+#include "ocilibcpp/detail/ResultsetIterator.hpp"
 #include "ocilibcpp/detail/Column.hpp"
 #include "ocilibcpp/detail/Subscription.hpp"
 #include "ocilibcpp/detail/Event.hpp"

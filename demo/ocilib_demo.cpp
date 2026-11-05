@@ -1497,10 +1497,10 @@ void test_number()
     // Testing fetching numbers (as number and using implicit conversion number to string)
     st.Execute(otext("select value from test_number"));
     Resultset rs = st.GetResultset();
-    while (rs.Next())
+    for (auto&& row : rs)
     {
-        Number num = rs.Get<Number>(1);
-        ostring str = rs.Get<ostring>(1);
+        Number num = row.Get<Number>(1);
+        ostring str = row.Get<ostring>(1);
 
         ocout << str << " - " << num << oendl;
     }
@@ -1517,9 +1517,9 @@ void test_number()
     st.Register<Number>(otext(":1"));
     st.ExecutePrepared();
     rs = st.GetResultset();
-    while (rs.Next())
+    for (auto&& row : rs)
     {
-        ocout << rs.Get<ostring>(1) << oendl;
+        ocout << row.Get<ostring>(1) << oendl;
     }
 
     // testing Collections
@@ -1543,9 +1543,9 @@ void test_number()
     // Testing fetching infinite values to string
     st.Execute(otext("SELECT utl_raw.cast_to_number('FF65'), utl_raw.cast_to_number('00') from dual"));
     rs = st.GetResultset();
-    while (rs.Next())
+    for (auto&& row : rs)
     {
-        ocout << otext("pos infinite = ") << rs.Get<ostring>(1) << oendl;
-        ocout << otext("neg infinite = ") << rs.Get<ostring>(2) << oendl;
+        ocout << otext("pos infinite = ") << row.Get<ostring>(1) << oendl;
+        ocout << otext("neg infinite = ") << row.Get<ostring>(2) << oendl;
     }
 }

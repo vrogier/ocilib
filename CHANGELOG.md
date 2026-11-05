@@ -73,6 +73,10 @@
 
 - Added `ocilib::Json` and `ocilib::JsonNode` wrapper classes
 - Added `ocilib::SodaDb`, `ocilib::SodaColl`, `ocilib::SodaDoc`, `ocilib::SodaOptions`, `ocilib::SodaCollCursor`, and `ocilib::SodaDocCursor` wrapper classes
+- Added iterator capabilities across the C++ API
+  - `ocilib::Resultset` exposes `begin()`/`end()` input iterators yielding `ocilib::Row` proxies (typed `Get<T>(index)`/`Get<T>(name)`), usable in range-for loops and `std::ranges` algorithms; scrollable resultsets additionally support `operator--`, `operator+=`, `operator-=` and `operator[]` (seek) navigation
+  - `ocilib::JsonNode` exposes `begin()`/`end()` input iterators over array items and object fields
+  - SODA cursors (`SodaCollCursor`/`SodaDocCursor`) expose `begin()`/`end()` for range-for
 - Added `Statement::ExecuteAndGetResultset()` convenience methods
 - `Statement::Bind*()` overloads now return `BindInfo` instead of `void`
 

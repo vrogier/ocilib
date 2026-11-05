@@ -44,11 +44,11 @@ int main()
         st.Execute(OTEXT("select cust_id, name, region from customers where rownum <= 5"));
 
         Resultset rs = st.GetResultset();
-        while (rs.Next())
+        for (auto&& row : rs)
         {
-            std::cout << "cust_id=" << rs.Get<ostring>(1)
-                      << " name=" << rs.Get<ostring>(2)
-                      << " region=" << rs.Get<ostring>(3) << std::endl;
+            std::cout << "cust_id=" << row.Get<ostring>(1)
+                      << " name=" << row.Get<ostring>(2)
+                      << " region=" << row.Get<ostring>(3) << std::endl;
         }
     }
     catch (const Exception& ex)
