@@ -1,64 +1,135 @@
 ﻿# OCILIB - C and C++ Drivers for Oracle 
 
+[![Docs](https://img.shields.io/badge/docs-latest-green.svg)](https://ocilib.net/doc/html/)
+[![Releases](https://img.shields.io/github/release/vrogier/ocilib/all.svg?style=flat-square)](https://github.com/vrogier/ocilib/releases)
+[![License](https://img.shields.io/github/license/vrogier/ocilib.svg?style=flat-square)](https://github.com/vrogier/ocilib/blob/main/LICENSE)
+
+<picture>
+  <img alt="ocilib logo" src="https://raw.githubusercontent.com/vrogier/ocilib/develop-v5.0.0/images/ocilib-logo-with-text.png"  width=400 />
+</picture>
+
 ## 1. About
 
-OCILIB is an open source, cross-platform Oracle driver for C and C++. It provides fast and
-reliable access to Oracle databases through a simple, consistent API.
- 
-The OCILIB library :
- 
-- Offers a rich, full-featured, and easy-to-use API
-- Runs on all major Oracle client platforms
-- Encapsulates OCI (Oracle Call Interface)
-- Provides a C API written in ISO C11 with native Unicode support
-- Provides a C++ API written in standard C++14
+OCILIB is an open-source, cross-platform library offering the most complete and advanced Oracle
+database drivers for C and C++. Built on Oracle Call Interface (OCI), it combines broad feature
+coverage with fast, reliable database access and a consistent programming experience.
 
-OCILIB is developed by Vincent Rogier. Get the latest package, install and enjoy it!
+Use its modern C and C++ APIs to build applications ranging from everyday SQL clients to systems
+that rely on Oracle's advanced data and availability features.
+
+OCILIB supports ANSI and Unicode applications, adapts to the Oracle client available at runtime, and runs across major platforms.
 
 ## 2. License
 
 The source code is free source code licensed under **Apache License, Version 2.0** - see [LICENSE file](LICENSE)
 
-## 3. Features 
+## 3. Features
+
+OCILIB covers the capabilities used by almost all Oracle applications, while also supporting
+specialized Oracle services and advanced data types such as SODA and the VECTOR data type.
+
+| Feature | Minimum Oracle release |
+|---|---|
+| Cross-platform C API (ISO C11), with 32-bit and 64-bit support | 8.0 |
+| Modern C++ API (C++17), header-only, with iterators usable with standard algorithms | 8.0 |
+| ANSI and Unicode builds, including wide-character and UTF-8 strings | 8.0 |
+| Automatic adaptation to the runtime Oracle client version | 8.0 |
+| Runtime loading of Oracle client libraries | 8.0 |
+| SQL and PL/SQL, including blocks, cursors, index-by tables, and nested tables | 8.0 |
+| Connections, sessions, transactions, and connection pooling | 8.0 |
+| Statement execution, binding, fetching, bulk operations, and DML returning | 8.0 |
+| Oracle types: scalars, dates, timestamps, intervals, LOBs, LONGs, RAWs, ROWIDs, cursors, objects, REFs, and collections | 8.0 |
+| Error handling, Oracle warnings, optional logging, and diagnostic statistics | 8.0 |
+| SQL and Object APIs, schema description, multiple-client environments, and hash tables | 8.0 |
+| Transparent Application Failover (TAF) and high availability | 8.0 |
+| Oracle Direct Path loading | 8.0 |
+| Scrollable statements and result sets | 9i |
+| Advanced Queuing (AQ) | 9i |
+| Statement caching | 9.2 |
+| Database Change Notification / Continuous Query Notification | 10.2 |
+| Remote database startup and shutdown | 10.2 |
+| Oracle Sharding, including sharded connections and session pools | 12.2 |
+| Oracle SODA (Simple Oracle Document Access; NoSQL API) | 18c |
+| Oracle JSON data type support, including DOM and serialized JSON operations | 21c |
+| Oracle VECTOR data type support | 23ai |
+
+Feature availability also depends on the Oracle client version used by the application.
+
+## 4. Requirements
+
+- **Oracle versions** — OCILIB is compatible with all Oracle versions from 8.0 and adapts automatically to the Oracle client available at runtime, including future versions
+- **C API** — requires a C11 or later compiler
+- **C++ API** — requires a C++17 or later compiler
+- **Platforms** — Windows, Linux, HP/UX, Solaris, AIX, Mac OS X, OpenVMS
+
+## 5. Examples
+
+#### Minimal OCILIB C application
+
+```C
+#include "ocilib.h"
  
-- ISO C API
-- ISO C++ API
-- Full ANSI and Unicode support on all platforms (ISO C wide strings or UTF-8 strings)
-- Full 32/64-bit compatibility
-- Compatible with all Oracle versions >= 8.0
-- Automatic adaptation to the runtime Oracle client version
-- Runtime loading of Oracle libraries
-- Explicit environment handles (OCI_Environment) supporting multiple Oracle clients
-- Built-in error handling (global and thread context)
-- Optional runtime logging
-- Diagnostic statistics API
-- Full support for SQL API and Object API
-- Full support for Oracle SQL and PL/SQL data types (scalars, objects, refs, collections, ...)
-- Oracle JSON datatype support (requires Oracle 21c)
-- Oracle SODA (Simple Oracle Document Access) support (requires Oracle 18c)
-- Full support for PL/SQL (blocks, cursors, index-by tables, and nested tables)
-- Support for non-scalar data types through library objects
-- Oracle Pooling (connections and sessions pools)
-- Oracle AQ (Advanced Queuing)
-- Oracle TAF (Transparent Application Failover) and HA (High availability) support
-- Binding array interface
-- Returning DML feature
-- Scrollable statements
-- Statement cache
-- Direct Path loading
-- Remote Instances Startup/Shutdown
-- Oracle Database Change Notification / Continuous Query Notification
-- Oracle warnings support
-- Global and local transactions
-- Describe database schema objects
-- Hash tables API
-- Partial support for XMLTYPE (fetching only as string content)
+int main(int argc, char *argv[])
+{
+    OCI_Environment* env = OCI_EnvironmentCreate(NULL, NULL, OCI_ENV_DEFAULT);
+    OCI_Connection*  cn  = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
+    OCI_Statement*   st  = OCI_StatementCreate(cn);
+ 
+    OCI_ExecuteStmt(st, "select intcol, strcol from table");
+ 
+    OCI_Resultset* rs = OCI_GetResultset(st);
+ 
+    while (OCI_FetchNext(rs))
+    {
+        printf("%i - %s\n", OCI_GetInt(rs, 1), OCI_GetString(rs,2));
+    }
+ 
+    OCI_EnvironmentFree(env);
+ 
+    return EXIT_SUCCESS;
+}
+```
 
-## 5. Installation
+#### Minimal OCILIB C++ application
 
-You can either use OCILIB release packages or reference OCILIB packages from your favourite package manager (conan, xmake, vcpkg, nuget, ..).
+
+```C++
+#include "ocilib.hpp"
+ 
+int main(void)
+{
+    try
+    {
+        ocilib::Environment env;
+        ocilib::Connection  con(env, "db", "usr", "pwd");
+        ocilib::Statement   st(con);
+
+        st.Execute("select intcol, strcol from table");
+ 
+        ocilib::Resultset rs = st.GetResultset();
+        for (auto&& row : rs)
+        {
+            std::cout << row.Get<int>(1) << " - " << row.Get<ocilib::ostring>(2) << std::endl;
+        }
+    }
+    catch(ocilib::Exception &ex)
+    {
+         std::cout << ex.what() << std::endl;
+    }
+ 
+    return EXIT_SUCCESS;
+}
+```
+
+## 6. Installation
+
+You can either use OCILIB release packages or reference OCILIB packages from your favourite package manager if latest version is available.
 
 ### Windows platforms
+
+The easiest way is to install the `ocilib` NuGet package (available on nuget.org and GitHub Packages) directly into your Visual Studio project — it brings the headers, libraries and DLLs automatically.
+
+Alternatively, using the zip release archive:
 
 - unzip the archive
 - copy ocilib\include\ocilib.h to any place located in your include’s path
@@ -73,72 +144,67 @@ You can either use OCILIB release packages or reference OCILIB packages from you
 - $ make
 - $ make install (you might need to `su` to make install)
 
-Make sure Oracle and OCILIB libraries paths are defined in your shared library environment variable
-You need to provide extra configure parameters when using Instant Clients – see Installation section)
+Make sure Oracle and OCILIB libraries paths are defined in your shared library environment variable.
 
-## 6. Examples
+#### OCILIB specific configure options
 
-Example of a minimal OCILIB C application
+| Option | Values | Default | Description |
+|---|---|---|---|
+| `--with-oracle-import` | `linkage`, `runtime` | `linkage` | `linkage` links directly against `libclntsh`; `runtime` loads the OCI library dynamically at runtime |
+| `--with-oracle-charset` | `ansi`, `wide`/`unicode` | `ansi` | ANSI vs UNICODE (`OCI_CHARSET_WIDE`) build |
+| `--with-oracle-home` | path | - | Oracle installation root (sets headers and library paths) |
+| `--with-oracle-headers-path` | path | - | Location of OCI public headers (instant client `sdk/include`) |
+| `--with-oracle-lib-path` | path | - | Location of the OCI shared library (instant client lib dir) |
+| `--with-custom-loader` | flag | - | Custom runtime loader flag |
+| `--enable-warnings` | `no`, `yes`, `paranoid` | `yes` | Compiler diagnostics level |
+| `--enable-werror` | flag | `no` | Treat compiler warnings as errors (CI only) |
+| `--enable-sanitizers` | `=LIST` | `no` | Build with sanitizers (default LIST: `address,undefined`) |
 
-```C
-#include "ocilib.h"
- 
-int main(int argc, char *argv[])
-{
-    OCI_Environment* env;
-    OCI_Connection* cn;
-    OCI_Statement* st;
-    OCI_Resultset* rs;
- 
-    env = OCI_EnvironmentCreate(NULL, NULL, OCI_ENV_DEFAULT);
- 
-    cn = OCI_ConnectionCreate(env, "db", "usr", "pwd", OCI_SESSION_DEFAULT);
-    st = OCI_StatementCreate(cn);
- 
-    OCI_ExecuteStmt(st, "select intcol, strcol from table");
- 
-    rs = OCI_GetResultset(st);
- 
-    while (OCI_FetchNext(rs))
-    {
-        printf("%i - %s\n", OCI_GetInt(rs, 1), OCI_GetString(rs,2));
-    }
- 
-    OCI_EnvironmentFree(env);
- 
-    return EXIT_SUCCESS;
-}
-```
-Example of a minimal OCILIB C++ application
+Example using an Oracle Instant Client:
 
+- $ ./configure --with-oracle-headers-path=/opt/oracle/instantclient_23_26/sdk/include \
+                --with-oracle-lib-path=/opt/oracle/instantclient_23_26
 
-```C++
-#include "ocilib.hpp"
- 
-using namespace ocilib;
- 
-int main(void)
-{
-    try
-    {
-        Environment env;
- 
-        Connection con(env, "db", "usr", "pwd");
- 
-        Statement st(con);
-        st.Execute("select intcol, strcol from table");
- 
-        Resultset rs = st.GetResultset();
-        while (rs.Next())
-        {
-            std::cout << rs.Get<int>(1) << " - " <<  rs.Get<ostring>(2) << std::endl;
-        }
-    }
-    catch(std::exception &ex)
-    {
-         std::cout << ex.what() << std::endl;
-    }
- 
-    return EXIT_SUCCESS;
-}
-```
+## 7. Building from source
+
+### Windows
+
+Visual Studio projects are provided under `proj/`:
+
+- `proj/dll` — OCILIB library (DLL) project
+- `proj/test` — unit test project (`tests/ocilib_tests.vcxproj`)
+- demo projects under `proj/` for each `demo/*.c` / `demo/*.cpp` sample
+
+Open the project or solution matching your Visual Studio version and build the desired configuration (`Release - ANSI` / `Release - UNICODE`).
+
+### GNU (Unix / Linux)
+
+- $ ./reconf          (regenerates the autotools build files, needed after cloning)
+- $ ./configure       (see OCILIB specific configure options above)
+- $ make
+- $ make install
+
+## 8. Testing
+
+The unit test suite (`tests/`, gtest-based, ~850 tests covering the C and C++ APIs) requires a reachable Oracle database; connection parameters come from environment variables:
+
+- `OCILIB_DEMO_DB` — connection string (e.g. `localhost:1521/FREEPDB1`)
+- `OCILIB_DEMO_USR` — user name
+- `OCILIB_DEMO_PWD` — password
+
+Build the test project (or `make check` under autotools) and run `ocilib_tests`.
+
+## 9. Documentation
+
+The complete OCILIB API reference is available online at https://ocilib.net/doc/html/.
+
+Migration guides for moving from OCILIB 4.x to 5.0 live in `doc/`:
+
+- `doc/migration-guide-c-api.md` — migrating the C API
+- `doc/migration-guide-cpp-api.md` — migrating the C++ API
+
+## 10. Support
+
+- Website: http://www.ocilib.net
+- Issues: https://github.com/vrogier/ocilib/issues
+- Changelog: [CHANGELOG.md](CHANGELOG.md)
