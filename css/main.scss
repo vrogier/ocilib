@@ -701,6 +701,11 @@ body
     line-height: 1.6;
 }
 
+.navbar #nav .primary-nav > li > a
+{
+    font-size: 13px;
+}
+
 .post-content
 {
     color: #1b1b1b;
@@ -726,7 +731,7 @@ body
 .post-content h2 { font-size: 1.5rem; }
 .post-content h3 { font-size: 1.2rem; }
 .post-content h4 { font-size: 1.05rem; }
-.post-header h2 { font-size: 1.8rem; margin: 0 0 0.65em; }
+.post-header h2 { font-size: 1.8rem; margin: 0 0 0.65em; text-align: left; }
 
 .post-content p,
 .post-content ul,
@@ -751,6 +756,12 @@ body
 .post-content a:visited
 {
     color: #326ce5;
+}
+
+.post-content .post-link
+{
+    font-family: inherit;
+    font-size: inherit;
 }
 
 .post-content a:hover
