@@ -1,11 +1,9 @@
-﻿# OCILIB - C and C++ Drivers for Oracle 
-
-[![Docs](https://img.shields.io/badge/docs-latest-green.svg)](https://ocilib.net/doc/html/)
+﻿[![Docs](https://img.shields.io/badge/docs-latest-green.svg)](https://ocilib.net/doc/html/)
 [![Releases](https://img.shields.io/github/release/vrogier/ocilib/all.svg?style=flat-square)](https://github.com/vrogier/ocilib/releases)
 [![License](https://img.shields.io/github/license/vrogier/ocilib.svg?style=flat-square)](https://github.com/vrogier/ocilib/blob/main/LICENSE)
 
 <picture>
-  <img alt="ocilib logo" src="https://raw.githubusercontent.com/vrogier/ocilib/develop-v5.0.0/images/ocilib-logo-with-text.png"  width=400 />
+  <img alt="ocilib logo" src="https://raw.githubusercontent.com/vrogier/ocilib/develop-v5.0.0/images/ocilib-logo-with-text-details.png"  width=400 />
 </picture>
 
 ## 1. About
