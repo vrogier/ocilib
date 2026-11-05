@@ -650,6 +650,7 @@ li.odd
     font-size: 13px;
     line-height: 1.55;
     margin: 0;
+    overflow: visible;
     padding: 0;
     white-space: pre;
     word-wrap: normal;
@@ -717,22 +718,22 @@ body
     font-family: inherit;
     font-weight: 600;
     letter-spacing: normal;
-    line-height: 1.25;
-    margin: 1.6em 0 0.65em;
+    line-height: 1.3;
+    margin: 1.15em 0 0.45em;
 }
 
-.post-content h1 { font-size: 2.25rem; }
-.post-content h2 { font-size: 1.75rem; }
-.post-content h3 { font-size: 1.35rem; }
-.post-content h4 { font-size: 1.1rem; }
-.post-header h2 { font-size: 2.25rem; }
+.post-content h1 { font-size: 1.9rem; }
+.post-content h2 { font-size: 1.5rem; }
+.post-content h3 { font-size: 1.2rem; }
+.post-content h4 { font-size: 1.05rem; }
+.post-header h2 { font-size: 1.8rem; margin: 0 0 0.65em; }
 
 .post-content p,
 .post-content ul,
 .post-content ol,
 .post-content blockquote
 {
-    margin-bottom: 1.1em;
+    margin-bottom: 0.75em;
 }
 
 .post-content ul,
@@ -743,7 +744,8 @@ body
 
 .post-content ul li { list-style: disc; }
 .post-content ol li { list-style: decimal; }
-.post-content li { margin: 0.25em 0; }
+.post-content li { line-height: 1.45; margin: 0.08em 0; }
+.post-content li p { margin: 0; }
 
 .post-content a,
 .post-content a:visited
@@ -780,6 +782,7 @@ body
 @media screen and (max-width: 768px)
 {
     .post-content { padding-left: 20px; padding-right: 20px; }
-    .post-content h1 { font-size: 1.9rem; }
-    .post-content h2 { font-size: 1.55rem; }
+    .post-content h1 { font-size: 1.7rem; }
+    .post-content h2 { font-size: 1.4rem; }
+    .post-header h2 { font-size: 1.6rem; }
 }

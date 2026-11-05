@@ -44,7 +44,7 @@
 
 	/* Typography */
 	font-family: $navbar-font-family;
-//	font-size: $navbar-font-size;
+	font-size: $navbar-font-size;
 	font-weight: 200;
 	color: $secondary-color;
 	text-transform: uppercase;
@@ -272,4 +272,4 @@
 	#nav>.right.primary-nav  {
 	  background-color: lighten($navbar-color, 10%);
 	}
-} 
+}
