@@ -63,8 +63,8 @@
  @section License License 
  The source code is licensed under the Apache License, Version 2.0 (see the file LICENSE).
  
- @section Changelog ChangeLog
+ @section Changelog Changelog
  
- @include ChangeLog
+ @include CHANGELOG.md
  
  */
