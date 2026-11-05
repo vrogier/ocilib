@@ -18,7 +18,7 @@ AC_CONFIG_SRCDIR([src/ocilib.c])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([nostdinc])
+AM_INIT_AUTOMAKE([nostdinc foreign])
 
 LT_INIT([dlopen])
 
@@ -34,7 +34,6 @@ OCILIB_OPTIONS()
 OCILIB_ORACLE()
 
 AC_CONFIG_FILES([
-   README
    ocilib.pc
    Makefile
    src/Makefile
