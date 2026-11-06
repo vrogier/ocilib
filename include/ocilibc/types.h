@@ -691,6 +691,28 @@ typedef OCI_UInt32 OCI_FailoverEvent;         /* OCI_FOE_*                      
 typedef OCI_UInt32 OCI_HAEventSource;         /* OCI_HES_*                            */
 typedef OCI_UInt32 OCI_HAEventType;           /* OCI_HET_*                            */
 typedef OCI_UInt32 OCI_PointerType;           /* OCI_IPC_*                            */
+/*
+ * Logging — level + category are configured via environment variables:
+ *   OCILIB_LOG            = ERROR | WARN | INFO | DEBUG | TRACE  (default: off)
+ *   OCILIB_LOG_CATEGORIES = LIB | MEM | OCI | ALL, comma list    (default: ALL)
+ *   OCILIB_LOG_OUTPUT     = file path | STDERR | STDOUT          (default: stderr)
+ *
+ * Levels are cumulative — a level shows itself plus every lower level.
+ *   NONE  = logging disabled
+ *   ERROR = ocilib exceptions, memory leaks
+ *   WARN  = OCI exception warnings
+ *   INFO  = connect / disconnect, statement prepared / executed,
+ *           OcilibDatabaseXXX() successful operations
+ *   DEBUG = other non-critical diagnostics (execute results, etc.)
+ *   TRACE = ENTER / LEAVE call tracing + the deepest diagnostics
+ *
+ * Categories (bitmask):
+ *   LIB = OCILIB diagnostics, exceptions, connect / prepare / execute,
+ *         API ENTER / LEAVE call trace
+ *   MEM = OcilibMemory* alloc / free, OCI handle alloc / free, leak reports
+ *   OCI = ENTER / LEAVE trace of raw env->api->Xxx OCI calls
+ *   ALL = LIB | MEM | OCI
+ */
 typedef OCI_UInt32 OCI_LogLevel;              /* OCI_LOG_*                            */
 typedef OCI_UInt32 OCI_LogCategory;           /* OCI_LOG_CAT_*                        */
 typedef OCI_UInt32 OCI_ErrorCode;             /* error code in the category's namespace

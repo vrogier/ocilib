@@ -1049,7 +1049,7 @@ static OCI_Boolean OcilibConnectionLogOff
 
     if (con->alloc_handles)
     {
-        CONN_DISPOSE_STEP(OcilibConnectionLogoffRegular(con), OTEXT("LogoffRegular"));
+        CONN_DISPOSE_STEP(OcilibConnectionLogoffRegular(con), OTEXT("Regular"));
     }
 
 #if OCI_VERSION_COMPILE >= OCI_9_2
@@ -1058,7 +1058,7 @@ static OCI_Boolean OcilibConnectionLogOff
 
     else if (con->env->version_runtime >= OCI_9_0)
     {
-        CONN_DISPOSE_STEP(OcilibConnectionLogoffSessionPool(con), OTEXT("LogoffSessionPool"));
+        CONN_DISPOSE_STEP(OcilibConnectionLogoffSessionPool(con), OTEXT("SessionPool"));
     }
 
 #endif
@@ -1066,6 +1066,9 @@ static OCI_Boolean OcilibConnectionLogOff
     /* update internal status */
 
     con->cstate = OCI_CONN_ATTACHED;
+
+
+    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO, OTEXT("handle=[%p] disconnected"), con);
 
     SET_RETVAL(res);
 
@@ -1176,10 +1179,11 @@ OCI_Connection * OcilibConnectionCreateInternal
     CHECK(OcilibConnectionLogon(con, NULL, tag, skey, sskey));
 
     OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO,
-               OTEXT("connection created: %s/%s (tag=%s)"),
-               user ? user : OTEXT(""),
-               db ? db : OTEXT(""),
-               tag ? tag : OTEXT(""));
+               OTEXT("handle=[%p] connected db=[%s] user=[%s] tag =[%s]"),
+                con,
+                db ? db : OTEXT(""),
+                user ? user : OTEXT(""),   
+                tag ? tag : OTEXT(""));
 
     CLEANUP_AND_EXIT_FUNC
     (
@@ -1303,8 +1307,6 @@ OCI_Boolean OcilibConnectionFree
 
     FREE(con);
 
-    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO, OTEXT("connection freed"));
-
     SET_SUCCESS();
 
     EXIT_FUNC();
@@ -1334,7 +1336,7 @@ OCI_Boolean OcilibConnectionCommit
         con->handle, con->err, (ub4)OCI_DEFAULT
     );
 
-    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("transaction committed"));
+    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("handle=[%p] Commit"), con);
 
     SET_SUCCESS();
 
@@ -1365,7 +1367,7 @@ OCI_Boolean OcilibConnectionRollback
         con->handle, con->err, (ub4)OCI_DEFAULT
     );
 
-    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("transaction rolled back"));
+    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("handle=[%p] Rollback"), con);
 
     SET_SUCCESS();
 

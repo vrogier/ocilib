@@ -1582,8 +1582,7 @@ OCI_Boolean OcilibEnvironmentFree
         success = FALSE;
 
         OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_WARN,
-                   OTEXT("environment teardown: %u array(s), %u subscription(s), "
-                         "%u connection(s), %u pool(s) could not be disposed"),
+                   OTEXT("Memory Leak: arrays=%u, subscriptions=%u, connections=%u, pools=%u"),
                    (OCI_UInt32)env->arrs->count, (OCI_UInt32)env->subs->count,
                    (OCI_UInt32)env->cons->count, (OCI_UInt32)env->pools->count);
     }

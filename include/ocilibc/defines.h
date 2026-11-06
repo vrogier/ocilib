@@ -715,20 +715,33 @@
 #define OCI_UST_DESCRIPTORS                 3
 #define OCI_UST_OBJECTS                     4
 
-/* log levels */
+/* log levels — cumulative severity; a level shows itself and every lower level */
+/*   NONE  = logging disabled                                                   */
+/*   ERROR = ocilib exceptions, memory leaks                                    */
+/*   WARN  = OCI exception warnings                                             */
+/*   INFO  = connect / disconnect, statement prepared / executed,               */
+/*           OcilibDatabaseXXX() successful operations                          */
+/*   DEBUG = other non-critical diagnostics (statement execute results, etc.)   */
+/*   TRACE = ENTER / LEAVE call tracing + the deepest diagnostics               */
 
 #define OCI_LOG_NONE                        0
 #define OCI_LOG_ERROR                       1
 #define OCI_LOG_WARN                        2
 #define OCI_LOG_INFO                        3
-#define OCI_LOG_TRACE                       4
-#define OCI_LOG_DEBUG                       5
+#define OCI_LOG_DEBUG                       4
+#define OCI_LOG_TRACE                       5
 
-/* log categories */
+/* log categories — bitmask; OCILIB_LOG_CATEGORIES accepts a comma list         */
+/*   LIB = OCILIB diagnostics, exceptions, connect / prepare / execute,          */
+/*         API ENTER / LEAVE call trace                                         */
+/*   MEM = OcilibMemory* alloc / free, OCI handle alloc / free, leak reports    */
+/*   OCI = ENTER / LEAVE trace of raw env->api->Xxx OCI calls                   */
+/*   ALL = LIB | MEM | OCI                                                     */
 
 #define OCI_LOG_CAT_LIB                     0x01
-#define OCI_LOG_CAT_OCI                     0x02
-#define OCI_LOG_CAT_ALL                     0x03
+#define OCI_LOG_CAT_MEM                     0x02
+#define OCI_LOG_CAT_OCI                     0x04
+#define OCI_LOG_CAT_ALL                     0x07
 
 /* soda operation modes - public names */
 

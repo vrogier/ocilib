@@ -937,7 +937,8 @@ OCI_Boolean OcilibResultsetFetchNext
     SET_SUCCESS();
 
     OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG,
-               OTEXT("resultset row fetched (abs=%lld, count=%lld)"),
+               OTEXT("handle=[%p] row fetched (abs=%lld, count=%lld)"),
+               rs->stmt,
                (long long) rs->row_abs,
                (long long) rs->row_count);
 

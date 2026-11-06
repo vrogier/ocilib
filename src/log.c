@@ -89,12 +89,12 @@ const char * OcilibLogGetLevelName
 {
     switch (level)
     {
-        case OCI_LOG_ERROR: return "ERROR";
-        case OCI_LOG_WARN:  return "WARN";
-        case OCI_LOG_INFO:  return "INFO";
-        case OCI_LOG_TRACE: return "TRACE";
-        case OCI_LOG_DEBUG: return "DEBUG";
-        case OCI_LOG_NONE: return "NONE";
+        case OCI_LOG_ERROR: return "ERR";
+        case OCI_LOG_WARN:  return "WRN";
+        case OCI_LOG_INFO:  return "INF";
+        case OCI_LOG_TRACE: return "TRC";
+        case OCI_LOG_DEBUG: return "DBG";
+        case OCI_LOG_NONE: return "NIL";
         default:            return "?";
     }
 }
@@ -111,6 +111,7 @@ const char * OcilibLogGetCategoryName
     switch (category)
     {
         case OCI_LOG_CAT_LIB: return "LIB";
+        case OCI_LOG_CAT_MEM: return "MEM";
         case OCI_LOG_CAT_OCI: return "OCI";
         case OCI_LOG_CAT_ALL: return "ALL";
         default:              return "?";
@@ -483,8 +484,22 @@ static OCI_Boolean OcilibLogInitializeUnlocked(void)
 
         if (cat_str)
         {
-            if      (OcilibLogStrEquals(cat_str, "LIB")) OcilibLogger.categories = OCI_LOG_CAT_LIB;
-            else if (OcilibLogStrEquals(cat_str, "OCI")) OcilibLogger.categories = OCI_LOG_CAT_OCI;
+            char cat_buf[128];
+            char *token, *next;
+
+            snprintf(cat_buf, sizeof(cat_buf), "%s", cat_str);
+            OcilibLogger.categories = 0;
+
+            for (token = cat_buf; token && *token; token = next)
+            {
+                next = strchr(token, ',');
+                if (next) { *next = 0; next++; }
+                while (*token == ' ') token++;
+                if      (OcilibLogStrEquals(token, "LIB")) OcilibLogger.categories |= OCI_LOG_CAT_LIB;
+                else if (OcilibLogStrEquals(token, "MEM")) OcilibLogger.categories |= OCI_LOG_CAT_MEM;
+                else if (OcilibLogStrEquals(token, "OCI")) OcilibLogger.categories |= OCI_LOG_CAT_OCI;
+                else if (OcilibLogStrEquals(token, "ALL")) OcilibLogger.categories |= OCI_LOG_CAT_ALL;
+            }
         }
 
         if (output_str && output_str[0])
@@ -593,6 +608,7 @@ void OcilibLogWrite
     OCI_Environment *env,
     OCI_LogCategory  category,
     OCI_LogLevel     level,
+    const char      *step,
     const char      *function,
     const otext     *format,
     ...
@@ -606,6 +622,7 @@ void OcilibLogWrite
 
     otext level_text[16];
     otext cat_text[16];
+    otext step_text[32];
     otext func_text[256];
 
     OCI_Int32 year = 0, month = 0, day = 0;
@@ -626,12 +643,24 @@ void OcilibLogWrite
 
     OcilibLogAnsiToNative(OcilibLogGetLevelName(level),        level_text, OCILIB_LOG_COUNT(level_text));
     OcilibLogAnsiToNative(OcilibLogGetCategoryName(category),  cat_text,   OCILIB_LOG_COUNT(cat_text));
+    if (step && step[0])
+    {
+        char step_buf[32];
+
+        snprintf(step_buf, sizeof(step_buf), "%s ", step);
+        OcilibLogAnsiToNative(step_buf, step_text, OCILIB_LOG_COUNT(step_text));
+    }
+    else
+    {
+        step_text[0] = 0;
+    }
     OcilibLogAnsiToNative(function ? function : "",            func_text,  OCILIB_LOG_COUNT(func_text));
 
     OcilibLogSnprintf(prefix, OCILIB_LOG_COUNT(prefix),
-                      OTEXT("%04d-%02d-%02d %02d:%02d:%02d.%03d [%s] [%s] %s: "),
+                      OTEXT("%04d-%02d-%02d %02d:%02d:%02d.%03d [%s] [%s] %s%s%s"),
                       year, month, day, hour, min, sec, msec,
-                      level_text, cat_text, func_text);
+                      level_text, cat_text, step_text, func_text,
+                      (step && step[0]) ? OTEXT(" ") : OTEXT(": "));
 
     va_start(args, format);
     chars = OcilibLogVsnprintf(message, OCILIB_LOG_COUNT(message), format, args);

@@ -46,10 +46,11 @@ OCI_SYM_LOCAL void OcilibLogWrite
     OCI_Environment *env,
     OCI_LogCategory  category,
     OCI_LogLevel     level,
+    const char      *step,
     const char      *function,
     const otext     *format,
     ...
-) OCI_ATTR_FORMAT(5, 6);
+) OCI_ATTR_FORMAT(6, 7);
 
 OCI_SYM_LOCAL void OcilibLogSetHandler
 (

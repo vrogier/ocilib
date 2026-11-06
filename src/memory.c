@@ -125,7 +125,7 @@ void * OcilibMemoryAlloc
 
     if (size == sizeof(OCI_MemoryBlock))
     {
-        OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_WARN,
+        OCILIB_LOG(OCI_LOG_CAT_MEM, OCI_LOG_WARN,
                    OTEXT("zero-size allocation requested for type %d"),
                    (OCI_Int32) ptr_type);
     }
@@ -147,7 +147,7 @@ void * OcilibMemoryAlloc
 
     OcilibMemoryUpdateBytes(env, block->type, (OCI_Int64) block->size);
 
-    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("allocated %zu bytes for type %d"), size, (OCI_Int32) block->type);
+    OCILIB_LOG(OCI_LOG_CAT_MEM, OCI_LOG_DEBUG, OTEXT("bytes=%zu type=%d"), size, (OCI_Int32) block->type);
 
     SET_RETVAL(((unsigned char*)block) + sizeof(*block));
 
@@ -250,7 +250,7 @@ void OcilibMemoryFree
 
             OcilibMemoryUpdateBytes(env, block->type, -(OCI_Int64) block->size);
 
-            OCILIB_LOG_WITH_ENV(env, OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, __func__,
+            OCILIB_LOG_WITH_ENV(env, OCI_LOG_CAT_MEM, OCI_LOG_DEBUG, __func__,
                                 OTEXT("freed %zu bytes of type %d"),
                                 block->size, (OCI_Int32) block->type);
 
@@ -290,7 +290,7 @@ OCI_Boolean OcilibMemoryAllocHandle
     if (OCI_SUCCESSFUL(ret))
     {
         MUTEXED_CALL(env, env->nb_hndlp++);
-        OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("OCI handle allocated (type=%u)"), (OCI_UInt32) type);
+        OCILIB_LOG(OCI_LOG_CAT_MEM, OCI_LOG_DEBUG, OTEXT("OCI handle allocated (type=%u)"), (OCI_UInt32) type);
         SET_SUCCESS();
     }
 
@@ -323,7 +323,7 @@ OCI_Boolean OcilibMemoryFreeHandle
     if (OCI_SUCCESSFUL(ret))
     {
         MUTEXED_CALL(env, { if (env->nb_hndlp > 0) env->nb_hndlp--;});
-        OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("OCI handle freed (type=%u)"), (OCI_UInt32) type);
+        OCILIB_LOG(OCI_LOG_CAT_MEM, OCI_LOG_DEBUG, OTEXT("OCI handle freed (type=%u)"), (OCI_UInt32) type);
         SET_SUCCESS();
     }
 

@@ -323,7 +323,7 @@ static void OcilibExceptionCallHandler
         {
             case OCI_ERR_CAT_OCI:
             {
-                log_cat = OCI_LOG_CAT_OCI;
+                log_cat = OCI_LOG_CAT_LIB;
                 label   = OTEXT("OCI");
                 break;
             }

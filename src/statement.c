@@ -1495,7 +1495,7 @@ OCI_Boolean OcilibStatementPrepareInternal
 
     stmt->sql = OcilibStringDuplicate(stmt->con->env, sql);
 
-    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO, OTEXT("preparing statement: %s"), sql ? sql : OTEXT(""));
+    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO, OTEXT("handle=[%p]sql=[%s]"), stmt, sql ? sql : OTEXT(""));
 
     dbstr = OcilibStringGetDBString(stmt->con->env, stmt->sql, &dbsize);
 
@@ -1731,10 +1731,7 @@ OCI_Boolean OcilibStatementExecuteInternal
         THROW(OcilibExceptionOCI, stmt->con->err, ret);
     }
 
-    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO,
-               OTEXT("statement executed: %s (type=%d)"),
-               stmt->sql ? stmt->sql : OTEXT(""),
-               (OCI_Int32) stmt->type);
+    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("handle=[%p] type=[%d]"), stmt , (OCI_Int32) stmt->type);
 
     SET_SUCCESS();
 
@@ -1792,8 +1789,6 @@ OCI_Boolean OcilibStatementFree
     LIST_ATOMIC_REMOVE(stmt->con->stmts, stmt, OcilibStatementDispose);
 
     FREE(stmt);
-
-    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO, OTEXT("statement freed"));
 
     SET_SUCCESS();
 

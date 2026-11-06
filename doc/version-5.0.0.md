@@ -77,16 +77,47 @@ The biggest user-visible change is the end of the global, static environment.
 A new, opt-in logging subsystem is introduced in `src/log.c` / `src/log.h`.
 
 - **Activation via environment variables** (read during `OCI_EnvironmentCreate`):
-  - `OCILIB_LOG` — level: `NONE` (default), `ERROR`, `WARN`, `INFO`, `TRACE`, `DEBUG`
-  - `OCILIB_LOG_CATEGORIES` — `LIB`, `OCI`, or `ALL` (default)
+  - `OCILIB_LOG` — level: `NONE` (default), `ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE`
+  - `OCILIB_LOG_CATEGORIES` — `LIB`, `MEM`, `OCI`, `ALL`, comma-separated (default `ALL`)
   - `OCILIB_LOG_OUTPUT` — `STDERR` (default), `STDOUT`, or a file path
 - A single global `OCI_Logger` instance is initialized before any OCI call; it is reference-counted across environments.
 - The log sink uses a platform-native lock (`CRITICAL_SECTION` on Windows, `pthread_mutex_t` elsewhere) so it can safely trace the OCI calls that create OCI mutexes.
-- `CHECK_OCI` automatically emits `[TRACE] [OCI]` lines for every OCI call.
-- `ENTER_FUNC` / `EXIT_FUNC` macros emit `[TRACE] [LIB]` entry/exit lines for internal implementations.
-- `OcilibExceptionCallHandler()` emits `[ERROR]`/`[WARN]` lines for Oracle and OCILIB errors.
+- `OCI_CALL` emits `[TRC] [OCI]` `ENTER`/`LEAVE` lines for every `env->api->Xxx` OCI call.
+- `OCILIB_LOG_API_*` macros emit `[TRC] [LIB]` `ENTER`/`LEAVE` lines for `OcilibXxx` impl functions and public `OCI_Xxx` proxies.
+- `OcilibExceptionCallHandler()` emits `[ERR]`/`[WRN]` lines for Oracle and OCILIB errors.
+- `OCIErrorGet` is deliberately untraced — it runs inside error handling.
 - Log files are plain text; `otext` messages are converted to UTF-8 before writing.
 - The public programmatic control API (`OCI_GetLogLevel` / `OCI_SetLogLevel` / etc.) is documented as a future Phase-6 addition; the initial release is environment-variable driven.
+
+### Levels and categories
+
+Each log line: `YYYY-MM-DD HH:MM:SS.mmm [LVL] [CAT] [step] fn: message` — 3-char level (`ERR` `WRN` `INF` `DBG` `TRC`), category (`LIB` `MEM` `OCI`), optional `ENTER`/`LEAVE` step for call traces, `fn` + `message`.
+
+| Level | Semantics |
+|---|---|
+| `NONE` | Logging disabled |
+| `ERROR` | OCILIB exceptions, memory leaks |
+| `WARN` | OCI exception warnings |
+| `INFO` | Connect / disconnect, statement prepared, statement executed, `OcilibDatabaseXXX()` success ops |
+| `DEBUG` | Other non-critical diagnostics |
+| `TRACE` | `ENTER`/`LEAVE` call tracing + deepest diagnostics (most verbose — shows everything) |
+
+| Category | Contents |
+|---|---|
+| `LIB` | OCILIB diagnostics, exceptions, connect/prepare/execute, API `ENTER`/`LEAVE` |
+| `MEM` | `OcilibMemory*` alloc/free, OCI handle alloc/free, leak reports |
+| `OCI` | `ENTER`/`LEAVE` of raw `env->api->Xxx` OCI calls |
+| `ALL` | `LIB \| MEM \| OCI` |
+
+Typical lines:
+
+```
+[TRC] [LIB] ENTER OcilibConnectionCreate
+[TRC] [LIB] LEAVE OcilibConnectionCreate (ret=0000000000484510)
+[DBG] [MEM] OcilibMemoryAlloc: bytes=27 type=7
+[INF] [LIB] OcilibConnectionCreateInternal: handle=[...] connected db=[...] user=[usr]
+[TRC] [OCI] LEAVE OCIServerAttach (ret=0000000000000000)
+```
 
 ---
 

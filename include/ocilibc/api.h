@@ -21156,6 +21156,65 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetDouble
  */
 
 /**
+ * @defgroup OcilibCApiLogging Logging
+ * @{
+ *
+ * OCILIB emits structured, opt-in logging configured through environment
+ * variables at `OCI_EnvironmentCreate()` time — no code changes needed.
+ *
+ * Configuration:
+ *
+ *   OCILIB_LOG            = ERROR | WARN | INFO | DEBUG | TRACE  (default: off)
+ *   OCILIB_LOG_CATEGORIES = LIB | MEM | OCI | ALL, comma list    (default: ALL)
+ *   OCILIB_LOG_OUTPUT     = file path | STDERR | STDOUT          (default: stderr)
+ *
+ * Every line carries a severity + category + function + message:
+ *   `YYYY-MM-DD HH:MM:SS.mmm [LVL] [CAT] [step] fn: message`
+ *   `[LVL]` 3 chars — `ERR` `WRN` `INF` `DBG` `TRC`; `[step]` is `ENTER`/`LEAVE`
+ *   on call-trace lines only.
+ *
+ * Levels are cumulative — a level shows itself plus every lower level:
+ *
+ *   OCI_LOG_NONE    — logging disabled
+ *   OCI_LOG_ERROR   — ocilib exceptions, memory leaks
+ *   OCI_LOG_WARN    — OCI exception warnings
+ *   OCI_LOG_INFO    — connect / disconnect, statement prepared / executed,
+ *                     OcilibDatabaseXXX() successful operations
+ *   OCI_LOG_DEBUG   — other non-critical diagnostics (execute results, etc.)
+ *   OCI_LOG_TRACE   — ENTER / LEAVE call tracing + the deepest diagnostics
+ *                     (most verbose — shows everything)
+ *
+ * Categories (bitmask, `OCILIB_LOG_CATEGORIES` accepts a comma list):
+ *
+ *   OCI_LOG_CAT_LIB — OCILIB diagnostics, exceptions, connect / prepare /
+ *                     execute, API ENTER / LEAVE call trace
+ *   OCI_LOG_CAT_MEM — OcilibMemory* alloc / free, OCI handle alloc / free,
+ *                     memory-leak reports
+ *   OCI_LOG_CAT_OCI — ENTER / LEAVE trace of raw `env->api->Xxx` OCI calls
+ *   OCI_LOG_CAT_ALL — LIB | MEM | OCI
+ *
+ * `OCIErrorGet` is deliberately untraced — it runs inside error handling.
+ *
+ * Typical lines:
+ *   `[TRC] [LIB] ENTER OcilibConnectionCreate`
+ *   `[TRC] [LIB] LEAVE OcilibConnectionCreate (ret=0000000000484510)`
+ *   `[DBG] [MEM] OcilibMemoryAlloc: bytes=27 type=7`
+ *   `[INF] [LIB] OcilibConnectionCreateInternal: handle=[...] connected ...`
+ *   `[TRC] [OCI] LEAVE OCIServerAttach (ret=0000000000000000)`
+ *
+ * @note The public programmatic control API (`OCI_GetLogLevel`,
+ *       `OCI_SetLogLevel`, `OCI_SetLogHandler`) is planned for a later phase;
+ *       the initial release is environment-variable driven.
+ *
+ * @see POCI_LOG_HANDLER
+ *
+ */
+
+/**
+ * @} OcilibCApiLogging
+ */
+
+/**
   * @} OcilibCApi
  */
 
