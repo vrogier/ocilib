@@ -185,7 +185,7 @@ OCI_Agent * OcilibDequeueListen
 
     OCIAQAgent *handle = NULL;
 
-    ret =  dequeue->typinf->con->env->api->OCIAQListen(dequeue->typinf->con->handle, dequeue->typinf->con->err,
+    OCI_CALL(ret, OCIAQListen, dequeue->typinf->con->handle, dequeue->typinf->con->err,
                                                        dequeue->agent_list, (ub4) dequeue->agent_count,
                                                        (sb4) timeout, &handle, OCI_DEFAULT);
 
@@ -193,12 +193,10 @@ OCI_Agent * OcilibDequeueListen
 
     if (OCI_ERROR == ret)
     {
-        dequeue->typinf->con->env->api->OCIErrorGet((dvoid *) dequeue->typinf->con->err, (ub4) 1,
-                                                    (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
-                                                    (ub4) OCI_HTYPE_ERROR);
+        OCI_ERROR_GET(dequeue->typinf->con->err, &code, NULL, 0);
 
         /* raise error only if the call has not been timed out */
-
+            
         if (OCI_ERR_AQ_LISTEN_TIMEOUT != code)
         {
             THROW(OcilibExceptionOCI, dequeue->typinf->con->err, ret);
@@ -287,7 +285,7 @@ OCI_Msg * OcilibDequeueGetMessage
     {
         void* name = attempt_count == 1 ? (void*)dbstr : (void*) ansi_queue_name;
 
-        ret = dequeue->typinf->con->env->api->OCIAQDeq(dequeue->typinf->con->handle, dequeue->typinf->con->err,
+        OCI_CALL(ret, OCIAQDeq, dequeue->typinf->con->handle, dequeue->typinf->con->err,
                                                        (OraText *)name, dequeue->handle, dequeue->msg->handle,
                                                        dequeue->typinf->handle, &dequeue->msg->payload,
                                                        (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
@@ -298,9 +296,7 @@ OCI_Msg * OcilibDequeueGetMessage
         {
             sb4 code = 0;
 
-            dequeue->typinf->con->env->api->OCIErrorGet((dvoid *) dequeue->typinf->con->err, (ub4) 1,
-                                                        (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
-                                                        (ub4) OCI_HTYPE_ERROR);
+            OCI_ERROR_GET(dequeue->typinf->con->err, &code, NULL, 0);
 
 #ifdef OCI_CHARSET_WIDE
 
@@ -519,14 +515,24 @@ OCI_Boolean OcilibDequeueGetRelativeMsgID
 
     if (NULL != value)
     {
-        const ub4 raw_len = dequeue->typinf->con->env->api->OCIRawSize(dequeue->typinf->con->env->handle, value);
+        ub4 raw_len;
+
+        OCI_CALL(raw_len, OCIRawSize, dequeue->typinf->con->env->handle, value);
 
         if (*len > raw_len)
         {
             *len = raw_len;
         }
 
-        memcpy(id, dequeue->typinf->con->env->api->OCIRawPtr(dequeue->typinf->con->env->handle, value), (OCI_Size) (*len));
+        oratext *rawptr;
+
+        OCI_CALL(rawptr, OCIRawPtr, dequeue->typinf->con->env->handle, value);
+
+        
+        CHECK_NULL(rawptr);
+
+        
+        memcpy(id, rawptr, (OCI_Size) (*len));
     }
     else
     {

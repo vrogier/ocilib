@@ -125,7 +125,7 @@ static OCI_DirPathResult OcilibDirPathArrayToStream
 
     /* convert the array to a stream */
 
-    ret = dp->con->env->api->OCIDirPathColArrayToStream(dp->arr, dp->handle, dp->strm, dp->con->err, dp->nb_entries, (ub4) 0);
+    OCI_CALL(ret, OCIDirPathColArrayToStream, dp->arr, dp->handle, dp->strm, dp->con->err, dp->nb_entries, (ub4) 0);
 
     switch (ret)
     {
@@ -234,7 +234,7 @@ static OCI_DirPathResult OcilibDirPathLoadStream
 
     /* load the stream */
 
-    ret = dp->con->env->api->OCIDirPathLoadStream(dp->handle, dp->strm, dp->con->err);
+    OCI_CALL(ret, OCIDirPathLoadStream, dp->handle, dp->strm, dp->con->err);
 
     switch (ret)
     {
@@ -748,7 +748,9 @@ OCI_Boolean OcilibDirPathSetColumn
 
         if (NULL != hattr)
         {
-            dp->con->env->api->OCIDescriptorFree(hattr, OCI_DTYPE_PARAM);
+            sword ret;
+
+            OCI_CALL(ret, OCIDescriptorFree, hattr, OCI_DTYPE_PARAM);
         }
     );
 }

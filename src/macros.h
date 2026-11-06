@@ -627,25 +627,36 @@ ocilib_exit_label:                  \
 
 #define IS_STRING_VALID(s) ((s) && ((s)[0]))
 
+#define OCI_CALL(ret, func, ...)                                                \
+                                                                                \
+        do                                                                      \
+        {                                                                       \
+            CHECK_NULL(ocilib_call_context.env);                                \
+            CHECK_NULL(ocilib_call_context.env->api);                           \
+            OCILIB_LOG_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,       \
+                                OCI_LOG_TRACE, #func, OTEXT("calling"));        \
+            (ret) = ocilib_call_context.env->api->func(__VA_ARGS__);            \
+            OCILIB_LOG_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,       \
+                                OCI_LOG_TRACE, #func,                           \
+                                OTEXT("returned %p"), (void *)(size_t)(ret));   \
+        }                                                                       \
+        while (0)
+
+#define OCI_ERROR_GET(errhp, code, buf, buflen)                                    \
+        (ocilib_call_context.env->api->OCIErrorGet((dvoid *) (errhp), (ub4) 1,     \
+            (OraText *) NULL, (sb4 *) (code), (OraText *) (buf), (ub4) (buflen),   \
+            (ub4) OCI_HTYPE_ERROR))
+
 #define CHECK_OCI(oci_err, func, ...)                                           \
                                                                                 \
         do                                                                      \
         {                                                                       \
             sword oci_retcall;                                                  \
-            CHECK_NULL(ocilib_call_context.env);                                \
-            CHECK_NULL(ocilib_call_context.env->api);                           \
-            OCILIB_LOG_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,       \
-                                OCI_LOG_TRACE, #func, OTEXT("calling"));        \
-            oci_retcall = ocilib_call_context.env->api->func(__VA_ARGS__);      \
+            OCI_CALL(oci_retcall, func, __VA_ARGS__);                           \
             if (OCI_FAILURE(oci_retcall))                                       \
             {                                                                   \
                 OcilibExceptionOCI(&ocilib_call_context, oci_err, oci_retcall); \
                 CHECK(OCI_SUCCESS_WITH_INFO == oci_retcall);                    \
-            }                                                                   \
-            else                                                                \
-            {                                                                   \
-                OCILIB_LOG_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,   \
-                                    OCI_LOG_TRACE, #func, OTEXT("OK"));         \
             }                                                                   \
         }                                                                       \
         while (0)

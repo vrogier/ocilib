@@ -299,7 +299,9 @@ OCI_Boolean OcilibMessageGetRaw
 
     if ((msg->payload) && (OCI_IND_NULL != msg->ind))
     {
-        const OCI_UInt32 raw_size = msg->typinf->con->env->api->OCIRawSize(msg->typinf->con->env->handle, (OCIRaw *) msg->payload);
+        OCI_UInt32 raw_size = 0;
+
+        OCI_CALL(raw_size, OCIRawSize, msg->typinf->con->env->handle, (OCIRaw *) msg->payload);
 
         if (raw == NULL)
         {
@@ -312,7 +314,13 @@ OCI_Boolean OcilibMessageGetRaw
                 *size = raw_size;
             }
 
-            memcpy(raw, msg->typinf->con->env->api->OCIRawPtr(msg->typinf->con->env->handle, msg->payload), (OCI_Size)(*size));
+            oratext *rawptr = NULL;
+
+            OCI_CALL(rawptr, OCIRawPtr, msg->typinf->con->env->handle, msg->payload);
+
+            CHECK_NULL(rawptr);
+
+            memcpy(raw, rawptr, (OCI_Size)(*size));
         }
     }
     else
@@ -677,11 +685,19 @@ OCI_Boolean OcilibMessageGetID
 
     if (msg->id)
     {
-        const ub4 raw_len = msg->typinf->con->env->api->OCIRawSize(msg->typinf->con->env->handle, msg->id);
+        ub4 raw_len = 0;
+
+        OCI_CALL(raw_len, OCIRawSize, msg->typinf->con->env->handle, msg->id);
 
         *len = min(max_len, raw_len);
 
-        memcpy(id, msg->typinf->con->env->api->OCIRawPtr(msg->typinf->con->env->handle, msg->id), (OCI_Size) (*len));
+        oratext *rawptr = NULL;
+
+        OCI_CALL(rawptr, OCIRawPtr, msg->typinf->con->env->handle, msg->id);
+
+        CHECK_NULL(rawptr);
+
+        memcpy(id, rawptr, (OCI_Size) (*len));
     }
 
     SET_SUCCESS();
@@ -725,11 +741,19 @@ OCI_Boolean OcilibMessageGetOriginalID
 
     if (NULL != value)
     {
-        const ub4 raw_len = msg->typinf->con->env->api->OCIRawSize(msg->typinf->con->env->handle, value);
+        ub4 raw_len = 0;
+
+        OCI_CALL(raw_len, OCIRawSize, msg->typinf->con->env->handle, value);
 
         *len = min(max_len, raw_len);
 
-        memcpy(id, msg->typinf->con->env->api->OCIRawPtr(msg->typinf->con->env->handle, value), (OCI_Size) (*len));
+        oratext *rawptr;
+
+        OCI_CALL(rawptr, OCIRawPtr, msg->typinf->con->env->handle, value);
+
+        CHECK_NULL(rawptr);
+
+        memcpy(id, rawptr, (OCI_Size) (*len));
     }
 
     SET_SUCCESS();

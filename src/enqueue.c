@@ -181,7 +181,7 @@ OCI_Boolean OcilibEnqueuePut
     {
         void* name = attempt_count == 1 ? (void*)dbstr : (void*) ansi_queue_name;
 
-        ret = enqueue->typinf->con->env->api->OCIAQEnq(enqueue->typinf->con->handle, enqueue->typinf->con->err,
+        OCI_CALL(ret, OCIAQEnq, enqueue->typinf->con->handle, enqueue->typinf->con->err,
                                                        (OraText*)name, enqueue->handle, msg->handle,
                                                        enqueue->typinf->handle, &payload, &ind, &msg->id, OCI_DEFAULT);
 
@@ -191,9 +191,7 @@ OCI_Boolean OcilibEnqueuePut
         {
             sb4 code = 0;
 
-            enqueue->typinf->con->env->api->OCIErrorGet((dvoid *)enqueue->typinf->con->err, (ub4) 1,
-                                                        (OraText *) NULL, &code, (OraText *) NULL, (ub4) 0,
-                                                        (ub4) OCI_HTYPE_ERROR);
+            OCI_ERROR_GET(enqueue->typinf->con->err, &code, NULL, 0);
 
 #ifdef OCI_CHARSET_WIDE
 
@@ -387,14 +385,22 @@ OCI_Boolean OcilibEnqueueGetRelativeMsgID
 
     if (NULL != value)
     {
-        const ub4 raw_len = enqueue->typinf->con->env->api->OCIRawSize(enqueue->typinf->con->env->handle, value);
+        ub4 raw_len;
+
+        OCI_CALL(raw_len, OCIRawSize, enqueue->typinf->con->env->handle, value);
 
         if (*len > raw_len)
         {
             *len = raw_len;
         }
 
-        memcpy(id, enqueue->typinf->con->env->api->OCIRawPtr(enqueue->typinf->con->env->handle, value), (OCI_Size) (*len));
+        oratext *rawptr;
+
+        OCI_CALL(rawptr, OCIRawPtr, enqueue->typinf->con->env->handle, value);
+
+        CHECK_NULL(rawptr);
+
+        memcpy(id, rawptr, (OCI_Size) (*len));
     }
     else
     {

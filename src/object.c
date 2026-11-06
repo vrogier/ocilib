@@ -655,7 +655,9 @@ OCI_Object * OcilibObjectInitialize
 
         if (NULL == parent)
         {
-            obj->con->env->api->OCIObjectGetProperty(obj->con->env->handle, obj->con->err,
+            sword ret;
+
+            OCI_CALL(ret, OCIObjectGetProperty, obj->con->env->handle, obj->con->err,
                                                      obj->handle,
                                                      (OCIObjectPropId) OCI_OBJECTPROP_LIFETIME,
                                                      (void *) &obj->type, &size);
@@ -1258,7 +1260,10 @@ const otext * OcilibObjectGetString
             }
             else
             {
-                str = (otext *)obj->con->env->api->OCIStringPtr(obj->con->env->handle, *value);
+                oratext *ocistr;
+
+                OCI_CALL(ocistr, OCIStringPtr, obj->con->env->handle, *value);
+                str = (otext *) ocistr;
             }
         }
     }
@@ -1281,8 +1286,8 @@ const otext * OcilibObjectGetString
             {
                 if (value && ind && (OCI_IND_NULL != *ind))
                 {
-                    size  = obj->con->env->api->OCIRawSize(obj->con->env->handle, (*(OCIRaw **) value));
-                    value = obj->con->env->api->OCIRawPtr(obj->con->env->handle,  (*(OCIRaw **) value));
+                    OCI_CALL(size, OCIRawSize, obj->con->env->handle, (*(OCIRaw **) value));
+                    OCI_CALL(value, OCIRawPtr, obj->con->env->handle,  (*(OCIRaw **) value));
                 }
             }
 
@@ -1363,14 +1368,22 @@ OCI_Int32 OcilibObjectGetRaw
 
     if (value && ind && (OCI_IND_NULL != *ind))
     {
-        const ub4 raw_len = obj->con->env->api->OCIRawSize(obj->con->env->handle, *value);
+        ub4 raw_len = 0;
+
+        OCI_CALL(raw_len, OCIRawSize, obj->con->env->handle, *value);
 
         if (len > raw_len)
         {
             len = raw_len;
         }
 
-        memcpy(buffer, obj->con->env->api->OCIRawPtr(obj->con->env->handle, *value), (OCI_Size) len);
+        oratext *rawptr = NULL;
+
+        OCI_CALL(rawptr, OCIRawPtr, obj->con->env->handle, *value);
+
+        CHECK_NULL(rawptr);
+
+        memcpy(buffer, rawptr, (OCI_Size) len);
 
         size = (OCI_Int32) len;
     }
@@ -1416,7 +1429,7 @@ OCI_UInt32 OcilibObjectGetRawSize
 
     if (value && ind && (OCI_IND_NULL != *ind))
     {
-        raw_len = obj->con->env->api->OCIRawSize(obj->con->env->handle, *value);
+        OCI_CALL(raw_len, OCIRawSize, obj->con->env->handle, *value);
     }
 
     SET_RETVAL(raw_len);
@@ -2341,7 +2354,7 @@ OCI_Boolean OcilibObjectToString
 
                     if (data && ind && (OCI_IND_NULL != *ind))
                     {
-                        data_size = obj->typinf->con->env->api->OCIStringSize(obj->typinf->con->env->handle, (*(OCIString **)data));
+                        OCI_CALL(data_size, OCIStringSize, obj->typinf->con->env->handle, (*(OCIString **)data));
                         data      = (void *)OcilibObjectGetString(obj, attr);
                     }
                     else
@@ -2371,8 +2384,8 @@ OCI_Boolean OcilibObjectToString
 
                     if (data && ind && (OCI_IND_NULL != *ind))
                     {
-                        data_size = obj->con->env->api->OCIRawSize(obj->con->env->handle, (*(OCIRaw **) data));
-                        data      = obj->con->env->api->OCIRawPtr(obj->con->env->handle,  (*(OCIRaw **) data));
+                        OCI_CALL(data_size, OCIRawSize, obj->con->env->handle, (*(OCIRaw **) data));
+                        OCI_CALL(data, OCIRawPtr, obj->con->env->handle,  (*(OCIRaw **) data));
                     }
                     else
                     {

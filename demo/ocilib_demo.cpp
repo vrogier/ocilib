@@ -283,10 +283,6 @@ OCI_Int32 omain(OCI_Int32 argc, oarg* argv[])
         drop_tables();
         con.Close();
     }
-ocout << otext("\nPress any key to exit...");
-
-    getchar();
-
     return EXIT_SUCCESS;
 }
 

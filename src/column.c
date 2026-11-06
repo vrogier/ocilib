@@ -597,7 +597,9 @@ OCI_Boolean OcilibColumnRetrieveInfo
     (
         if (NULL != param)
         {
-            con->env->api->OCIDescriptorFree(param, OCI_DTYPE_PARAM);
+            sword ret;
+
+            OCI_CALL(ret, OCIDescriptorFree, param, OCI_DTYPE_PARAM);
         }
     );
 }

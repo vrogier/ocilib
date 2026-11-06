@@ -640,14 +640,22 @@ OCI_UInt32 OcilibElementGetRaw
     CHECK_NULL(elem->handle);
 
     OCIRaw   *raw     = (OCIRaw *) elem->handle;
-    const ub4 raw_len = elem->typinf->con->env->api->OCIRawSize(elem->typinf->con->env->handle, raw);
+    ub4 raw_len;
+
+    OCI_CALL(raw_len, OCIRawSize, elem->typinf->con->env->handle, raw);
 
     if (len > raw_len)
     {
         len = raw_len;
     }
 
-    memcpy(value, elem->typinf->con->env->api->OCIRawPtr(elem->typinf->con->env->handle, raw), (OCI_Size) len);
+    oratext *rawptr;
+
+    OCI_CALL(rawptr, OCIRawPtr, elem->typinf->con->env->handle, raw);
+
+    CHECK_NULL(rawptr);
+
+    memcpy(value, rawptr, (OCI_Size) len);
 
     SET_RETVAL(raw_len);
 
@@ -674,7 +682,14 @@ OCI_UInt32 OcilibElementGetRawSize
 
     CHECK_NULL(elem->handle);
 
-    SET_RETVAL(elem->typinf->con->env->api->OCIRawSize(elem->typinf->con->env->handle, (OCIRaw*)elem->handle));
+    ub4 rawsize;
+
+
+
+    OCI_CALL(rawsize, OCIRawSize, elem->typinf->con->env->handle, (OCIRaw*)elem->handle);
+
+
+    SET_RETVAL(rawsize);
 
     EXIT_FUNC();
 }

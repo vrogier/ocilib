@@ -286,7 +286,7 @@ OCI_UInt32 OcilibLongWrite
 
     /* perform write call */
 
-    code = lg->handle->con->env->api->OCIStmtExecute(lg->handle->con->handle, lg->handle->handle,
+    OCI_CALL(code, OCIStmtExecute, lg->handle->con->handle, lg->handle->handle,
                                                      lg->handle->con->err, (ub4) 1, (ub4) 0,
                                                      (OCISnapshot *) NULL, (OCISnapshot *) NULL,
                                                      (ub4) 0);

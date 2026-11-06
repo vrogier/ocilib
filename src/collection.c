@@ -305,7 +305,11 @@ OCI_UInt32 OcilibCollectionGetMax
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll);
 
-    SET_RETVAL((OCI_UInt32) coll->con->env->api->OCICollMax(coll->con->env->handle, coll->handle));
+    OCI_UInt32 coll_max = 0;
+
+    OCI_CALL(coll_max, OCICollMax, coll->con->env->handle, coll->handle);
+
+    SET_RETVAL(coll_max);
 
     EXIT_FUNC();
 }
@@ -668,7 +672,7 @@ OCI_Boolean OcilibCollectionToString
             {
                 case OCI_CDT_TEXT:
                 {
-                    data_size = coll->con->env->api->OCIStringSize(coll->con->env->handle, elem->handle);
+                    OCI_CALL(data_size, OCIStringSize, coll->con->env->handle, elem->handle);
                     data      = (void*)OcilibElementGetString(elem);
                     break;
                 }
@@ -689,8 +693,8 @@ OCI_Boolean OcilibCollectionToString
                     data = elem->handle;
                     if (data)
                     {
-                        data_size = coll->con->env->api->OCIRawSize(coll->con->env->handle, (OCIRaw *) data);
-                        data      = coll->con->env->api->OCIRawPtr(coll->con->env->handle, (OCIRaw *) data);
+                        OCI_CALL(data_size, OCIRawSize, coll->con->env->handle, (OCIRaw *) data);
+                        OCI_CALL(data, OCIRawPtr, coll->con->env->handle, (OCIRaw *) data);
                     }
                     break;
                 }

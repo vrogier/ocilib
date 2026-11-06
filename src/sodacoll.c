@@ -486,8 +486,9 @@ OCI_SodaDocCursor* OcilibSodaCollFind
             for (;;)
             {
                 OCISodaDoc *dh      = NULL;
-                sword       oci_ret = coll->sdb->env->api->OCISodaDocGetNext
-                                      (
+                sword       oci_ret;
+
+                OCI_CALL(oci_ret, OCISodaDocGetNext,
                                           coll->sdb->con->handle,
                                           oci_cur,
                                           &dh,
@@ -664,9 +665,7 @@ OCI_SodaDoc* OcilibSodaCollFindOne
             CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
         }
 
-        oci_ret = coll->sdb->con->env->api->OCISodaFindOne
-                  (
-                      coll->sdb->con->handle,
+        OCI_CALL(oci_ret, OCISodaFindOne, coll->sdb->con->handle,
                       coll->handle,
                       opthandle,
                       (ub4)OCILIB_SODA_DOC_FLAGS(coll->sdb),
@@ -739,9 +738,7 @@ OCI_SodaDoc* OcilibSodaCollFindOneByKey
 
     dbkey = OcilibStringGetDBString(coll->sdb->env, key, &dbkeylen);
 
-    oci_ret = coll->sdb->con->env->api->OCISodaFindOneWithKey
-              (
-                  coll->sdb->con->handle,
+    OCI_CALL(oci_ret, OCISodaFindOneWithKey, coll->sdb->con->handle,
                   coll->handle,
                   (const OraText*)dbkey,
                   (ub4)dbkeylen,
@@ -1457,9 +1454,7 @@ OCI_SodaDoc * OcilibSodaCollGetDataGuide
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
     CHECK_SODA_ENABLED(coll->sdb->con);
 
-    oci_ret = coll->sdb->con->env->api->OCISodaDataGuideGet
-              (
-                  coll->sdb->con->handle,
+    OCI_CALL(oci_ret, OCISodaDataGuideGet, coll->sdb->con->handle,
                   coll->handle,
                   0,
                   &handle,
@@ -1646,7 +1641,9 @@ otext** OcilibSodaCollListIndexes
     (
         if (NULL != list)
         {
-            coll->sdb->env->api->OCIObjectFree(coll->sdb->env->handle,
+            sword ret;
+
+            OCI_CALL(ret, OCIObjectFree, coll->sdb->env->handle,
                                                coll->sdb->con->err,
                                                (dvoid *)list, (ub2)0);
         }

@@ -448,14 +448,7 @@ OCI_Boolean OcilibJsonToText
         {
             sb4 err_code = 0;
 
-            json->con->env->api->OCIErrorGet(
-                (dvoid *) json->con->env->err,
-                (ub4) 1,
-                (OraText *) NULL,
-                &err_code,
-                (OraText *) NULL,
-                (ub4) 0,
-                (ub4) OCI_HTYPE_ERROR);
+            OCI_ERROR_GET(json->con->env->err, &err_code, NULL, 0);
 
             if ((40781 == err_code) && (attempt < max_attempts))
             {

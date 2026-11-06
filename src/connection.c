@@ -1030,7 +1030,9 @@ static OCI_Boolean OcilibConnectionLogOff
 
     if (con->nb_files > 0)
     {
-        con->env->api->OCILobFileCloseAll(con->handle, con->err);
+        sword ret;
+
+        OCI_CALL(ret, OCILobFileCloseAll, con->handle, con->err);
     }
 
     /* dissociate connection from existing subscriptions */

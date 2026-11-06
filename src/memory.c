@@ -283,7 +283,9 @@ OCI_Boolean OcilibMemoryAllocHandle
 
     CHECK_NULL(hndlpp);
 
-    const sword ret = env->api->OCIHandleAlloc(parenth, hndlpp, type, 0, NULL);
+    sword ret;
+
+    OCI_CALL(ret, OCIHandleAlloc, parenth, hndlpp, type, 0, NULL);
 
     if (OCI_SUCCESSFUL(ret))
     {
@@ -313,7 +315,10 @@ OCI_Boolean OcilibMemoryFreeHandle
     );
 
     CHECK_NULL(hndlp);
-    const sword ret = env->api->OCIHandleFree(hndlp, type);
+   
+    sword ret;
+
+    OCI_CALL(ret, OCIHandleFree, hndlp, type);
 
     if (OCI_SUCCESSFUL(ret))
     {
@@ -345,7 +350,9 @@ OCI_Boolean OcilibMemoryAllocDescriptor
 
     CHECK_NULL(descpp);
 
-    const sword ret = env->api->OCIDescriptorAlloc(parenth, descpp, type, 0, NULL);
+    sword ret;
+
+    OCI_CALL(ret, OCIDescriptorAlloc, parenth, descpp, type, 0, NULL);
 
     if (OCI_SUCCESSFUL(ret))
     {
@@ -383,7 +390,7 @@ OCI_Boolean OcilibMemoryAllocDescriptorArray
 
     if (env->version_runtime >= OCI_11_1)
     {
-        ret = env->api->OCIArrayDescriptorAlloc(parenth, descpp, type, nb_elem, 0, NULL);
+        OCI_CALL(ret, OCIArrayDescriptorAlloc, parenth, descpp, type, nb_elem, 0, NULL);
 
     }
     else
@@ -393,7 +400,7 @@ OCI_Boolean OcilibMemoryAllocDescriptorArray
     {
         for (ub4 i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
         {
-            ret = env->api->OCIDescriptorAlloc(parenth, &descpp[i], type, 0, NULL);
+            OCI_CALL(ret, OCIDescriptorAlloc, parenth, &descpp[i], type, 0, NULL);
         }
     }
 
@@ -425,7 +432,9 @@ OCI_Boolean OcilibMemoryFreeDescriptor
 
     CHECK_NULL(descp);
 
-    const sword ret = env->api->OCIDescriptorFree(descp, type);
+    sword ret;
+
+    OCI_CALL(ret, OCIDescriptorFree, descp, type);
 
     if (OCI_SUCCESSFUL(ret))
     {
@@ -465,7 +474,7 @@ OCI_Boolean OcilibMemoryFreeDescriptorArray
 
         if (env->version_runtime >= OCI_11_1)
         {
-            ret = env->api->OCIArrayDescriptorFree(descp, type);
+            OCI_CALL(ret, OCIArrayDescriptorFree, descp, type);
         }
         else
 
@@ -474,7 +483,7 @@ OCI_Boolean OcilibMemoryFreeDescriptorArray
         {
             for (ub4 i = 0; (i < nb_elem) && (OCI_SUCCESS == ret); i++)
             {
-                ret = env->api->OCIDescriptorFree(descp[i], type);
+                OCI_CALL(ret, OCIDescriptorFree, descp[i], type);
             }
         }
     }

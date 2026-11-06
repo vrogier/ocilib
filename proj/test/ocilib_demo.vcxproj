@@ -156,6 +156,7 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <PreprocessorDefinitions>_WIN32;NDEBUG;_WINDOWS;OCI_API=__stdcall;OCI_CHARSET_ANSI;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -211,6 +212,7 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <PreprocessorDefinitions>_WIN64;NDEBUG;_WINDOWS;OCI_API=__stdcall;OCI_CHARSET_ANSI;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -263,6 +265,7 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN32;_DEBUG;_WINDOWS;OCI_CHARSET_ANSI;OCI_API=__stdcall;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -316,6 +319,7 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN64;_DEBUG;_WINDOWS;OCI_CHARSET_ANSI;OCI_API= __stdcall;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -369,6 +373,7 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <PreprocessorDefinitions>_WIN32;NDEBUG;_WINDOWS;OCI_API=__stdcall;OCI_CHARSET_WIDE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -421,6 +426,7 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <PreprocessorDefinitions>_WIN64;NDEBUG;_WINDOWS;OCI_API= __stdcall;OCI_CHARSET_WIDE;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>

@@ -1321,9 +1321,17 @@ static OCI_Boolean OcilibStatementCheckImplicitResultsets
             ALLOC_DATA(OCI_IPC_STATEMENT_ARRAY, stmt->stmts, stmt->nb_stmt);
             ALLOC_DATA(OCI_IPC_RESULTSET_ARRAY, stmt->rsts,  stmt->nb_stmt);
 
-            while (OCI_SUCCESS == stmt->env->api->OCIStmtGetNextResult(stmt->handle, stmt->con->err, (dvoid  **)&result, &rs_type,
-                                                                       OCI_DEFAULT))
+            for (;;)
             {
+                sword rs_next;
+
+                OCI_CALL(rs_next, OCIStmtGetNextResult, stmt->handle, stmt->con->err, (dvoid  **)&result, &rs_type, OCI_DEFAULT);
+
+                if (OCI_SUCCESS != rs_next)
+                {
+                    break;
+                }
+
                 if (OCI_RESULT_TYPE_SELECT == rs_type)
                 {
                     stmt->stmts[i] = OcilibStatementInitialize(stmt->con, NULL, result, TRUE, NULL);
@@ -1408,7 +1416,9 @@ static OCI_Boolean OcilibStatementBatchErrorInit
             err->env   = stmt->con->env;
             err->htype = OCI_IPC_ERROR;
 
-            stmt->con->env->api->OCIParamGet((dvoid *) stmt->con->err, OCI_HTYPE_ERROR,
+            sword ret;
+
+            OCI_CALL(ret, OCIParamGet, (dvoid *) stmt->con->err, OCI_HTYPE_ERROR,
                                              stmt->con->err, (dvoid **) (void *) &hndl, i);
 
             if (NULL != hndl)
@@ -1419,12 +1429,13 @@ static OCI_Boolean OcilibStatementBatchErrorInit
 
                 dbtext * err_msg = OcilibStringGetDBString(stmt->con->env, buffer, &err_size);
 
-                stmt->con->env->api->OCIAttrGet((dvoid *)hndl, (ub4)OCI_HTYPE_ERROR,
+                sword rethndl;
+
+                OCI_CALL(rethndl, OCIAttrGet, (dvoid *)hndl, (ub4)OCI_HTYPE_ERROR,
                                                 (void *)&row, (ub4 *)NULL,
                                                 (ub4)OCI_ATTR_DML_ROW_OFFSET, stmt->con->err);
 
-                stmt->con->env->api->OCIErrorGet((dvoid *)hndl, (ub4)1, (OraText *)NULL, &err_code,
-                                                 (OraText *)err_msg, (ub4)err_size, (ub4)OCI_HTYPE_ERROR);
+                OCI_ERROR_GET(hndl, &err_code, err_msg, err_size);
 
                 OcilibErrorSet
                 (
@@ -1617,7 +1628,9 @@ OCI_Boolean OcilibStatementExecuteInternal
 
     /* Oracle execute call */
 
-    const sword ret = stmt->con->env->api->OCIStmtExecute(stmt->con->handle, stmt->handle, stmt->con->err,
+    sword ret;
+
+    OCI_CALL(ret, OCIStmtExecute, stmt->con->handle, stmt->handle, stmt->con->err,
                                                           iters, (ub4)0, (OCISnapshot *)NULL,
                                                           (OCISnapshot *)NULL, mode);
 
@@ -1707,7 +1720,9 @@ OCI_Boolean OcilibStatementExecuteInternal
 
         /* (one of the rare OCI call not enclosed with a OCI_CALL macro ...) */
 
-        stmt->env->api->OCIAttrGet((dvoid *)stmt->handle, (ub4)OCI_HTYPE_STMT,
+        sword ret2;
+
+        OCI_CALL(ret2, OCIAttrGet, (dvoid *)stmt->handle, (ub4)OCI_HTYPE_STMT,
                                    (dvoid *)&stmt->err_pos, (ub4 *)NULL,
                                    (ub4)OCI_ATTR_PARSE_ERROR_OFFSET, stmt->con->err);
 

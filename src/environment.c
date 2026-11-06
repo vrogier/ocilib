@@ -1436,7 +1436,7 @@ OCI_Environment * OcilibEnvironmentCreate
 
 #endif
 
-        ret = env->api->OCIEnvNlsCreate(&env->handle, nls_mode,
+        OCI_CALL(ret, OCIEnvNlsCreate, &env->handle, nls_mode,
                                         (dvoid *) env,
                                         OcilibMemoryAllocOracleCallback,
                                         OcilibMemoryReallocOracleCallback,
@@ -1448,7 +1448,7 @@ OCI_Environment * OcilibEnvironmentCreate
     }
     else if (env->version_runtime >= OCI_8_1)
     {
-        ret = env->api->OCIEnvCreate(&env->handle, oci_mode,
+        OCI_CALL(ret, OCIEnvCreate, &env->handle, oci_mode,
                                      (dvoid *) env,
                                      OcilibMemoryAllocOracleCallback,
                                      OcilibMemoryReallocOracleCallback,
@@ -1457,7 +1457,7 @@ OCI_Environment * OcilibEnvironmentCreate
     }
     else if (env->version_runtime == OCI_8_0)
     {
-        ret = env->api->OCIInitialize(oci_mode,
+        OCI_CALL(ret, OCIInitialize, oci_mode,
                                       (dvoid *) env,
                                       OcilibMemoryAllocOracleCallback,
                                       OcilibMemoryReallocOracleCallback,
@@ -1465,7 +1465,7 @@ OCI_Environment * OcilibEnvironmentCreate
 
         if (OCI_SUCCESSFUL(ret))
         {
-            ret = env->api->OCIEnvInit(&env->handle, OCI_DEFAULT, (OCI_Size)0, (dvoid**)NULL);
+            OCI_CALL(ret, OCIEnvInit, &env->handle, OCI_DEFAULT, (OCI_Size)0, (dvoid**)NULL);
         }
     }
     else

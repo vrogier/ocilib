@@ -77,13 +77,14 @@ OCI_Boolean OcilibSubscriptionDispose
 
   #if defined(OCI_CHARSET_WIDE)
 
-            const sword res = sub->con->env->api->OCISubscriptionUnRegister(sub->con->handle, sub->handle, sub->err, (ub4)sub->mode);
+            sword res;
+
+            OCI_CALL(res, OCISubscriptionUnRegister, sub->con->handle, sub->handle, sub->err, (ub4)sub->mode);
             if (OCI_FAILURE(res))
             {
                 sb4 code = 0;
 
-                sub->con->env->api->OCIErrorGet((dvoid *)sub->err, (ub4)1, (OraText *)NULL, &code, (OraText *)NULL, (ub4)0,
-                                                (ub4)OCI_HTYPE_ERROR);
+                OCI_ERROR_GET(sub->err, &code, NULL, 0);
 
                 if (OCI_ERR_SUB_BUG_OCI_UTF16 != code)
                 {
@@ -92,7 +93,7 @@ OCI_Boolean OcilibSubscriptionDispose
             }
   #else
 
-            unreg_res = sub->con->env->api->OCISubscriptionUnRegister(sub->con->handle, sub->handle, sub->err, (ub4)sub->mode);
+            OCI_CALL(unreg_res, OCISubscriptionUnRegister, sub->con->handle, sub->handle, sub->err, (ub4)sub->mode);
 
   #endif
 

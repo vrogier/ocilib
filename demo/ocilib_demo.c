@@ -213,9 +213,7 @@ OCI_Int32 omain(OCI_Int32 argc, oarg* argv[])
 
     cleanup();
 
-    print_text("\npress any key to exit...");
-
-   return  getchar() != 0;
+    return EXIT_SUCCESS;
 }
 
 /* --------------------------------------------------------------------------------------------- *

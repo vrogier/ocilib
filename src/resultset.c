@@ -424,7 +424,10 @@ static OCI_Boolean OcilibResultsetClearFetchedObjectInstances(OCI_Resultset *rs)
             {
                 if (def->buf.data[j] != NULL)
                 {
-                    rs->stmt->con->env->api->OCIObjectFree(rs->stmt->con->env->handle, rs->stmt->con->err, def->buf.data[j], OCI_DEFAULT);
+                    sword ret;
+
+                    OCI_CALL(ret, OCIObjectFree, rs->stmt->con->env->handle, rs->stmt->con->err, def->buf.data[j], OCI_DEFAULT);
+                    
                     def->buf.data[j] = NULL;
                 }
             }
@@ -482,7 +485,7 @@ static OCI_Boolean OcilibResultsetFetchData
 #endif
 
     {
-        rs->fetch_status = rs->stmt->env->api->OCIStmtFetch(rs->stmt->handle, rs->stmt->con->err,
+        OCI_CALL(rs->fetch_status, OCIStmtFetch, rs->stmt->handle, rs->stmt->con->err,
                                                             rs->fetch_size, (ub2) OCI_FETCH_NEXT,
                                                             (ub4) OCI_DEFAULT);
     }
@@ -1659,7 +1662,9 @@ const otext * OcilibResultsetGetString
 
                 /* retrieve the size - no error checking */
 
-                def->rs->stmt->con->env->api->OCIRowidToChar(rowid, NULL, &rowid_length, def->rs->stmt->con->err);
+                sword ret;
+
+                OCI_CALL(ret, OCIRowidToChar, rowid, NULL, &rowid_length, def->rs->stmt->con->err);
 
                 if (rowid_length > 0)
                 {

@@ -367,7 +367,11 @@ OCI_Boolean OcilibReferenceIsNull
 
     CHECK_PTR(OCI_IPC_REF, ref);
 
-    SET_RETVAL(ref->con->env->api->OCIRefIsNull(ref->con->env->handle, ref->handle));
+    OCI_Boolean is_null;
+
+    OCI_CALL(is_null, OCIRefIsNull, ref->con->env->handle, ref->handle);
+
+    SET_RETVAL(is_null);
 
     EXIT_FUNC();
 }
@@ -490,7 +494,11 @@ OCI_UInt32 OcilibReferenceGetHexSize
 
     CHECK_PTR(OCI_IPC_REF, ref);
 
-    SET_RETVAL((OCI_UInt32) ref->con->env->api->OCIRefHexSize(ref->con->env->handle, (const OCIRef*)ref->handle));
+    OCI_UInt32 hexsize;
+
+    OCI_CALL(hexsize, OCIRefHexSize, ref->con->env->handle, (const OCIRef*)ref->handle);
+
+    SET_RETVAL(hexsize);
 
     EXIT_FUNC();
 }

@@ -99,6 +99,8 @@ static void JsonNodeCacheStr
 
 #else
 
+    OCI_NOT_USED(src_len);
+
     /* ANSI: oratext is already otext — borrow the DOM pointer directly */
     node->str = (otext *) src;
 
