@@ -414,7 +414,7 @@ OCI_Int32 OcilibFormatParseSql
 
                     OCI_UInt32 json_size = 0;
 
-                    CHECK(OcilibJsonToText(json, NULL, &json_size, 0, FALSE));
+                    CHECK(OcilibJsonToText(json, NULL, &json_size, 0));
 
                     len = (OCI_Int32) json_size + 2;
 
@@ -424,7 +424,7 @@ OCI_Int32 OcilibFormatParseSql
 
                         pb[0] = OTEXT('\'');
 
-                        CHECK(OcilibJsonToText(json, pb + 1, &out_size, 0, FALSE));
+                        CHECK(OcilibJsonToText(json, pb + 1, &out_size, 0));
 
                         pb[out_size + 1] = OTEXT('\'');
 

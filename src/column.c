@@ -421,6 +421,13 @@ OCI_Boolean OcilibColumnRetrieveInfo
             );
 
             col->dimension = vec_dim;
+
+            CHECK_ATTRIB_GET
+            (
+                OCI_DTYPE_PARAM, OCI_ATTR_HAS_JSON_SCHEMA,
+                param, &col->json_schema, NULL,
+                con->err
+            );
         }
     }
 
@@ -1891,4 +1898,21 @@ OCI_SubType OcilibColumnGetSubType
     SET_RETVAL(subtype);
 
     EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibColumnHasJsonSchema
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibColumnHasJsonSchema
+(
+    OCI_Column *col
+)
+{
+    GET_PROP
+    (
+        /* result */ OCI_Boolean, FALSE,
+        /* handle */ OCI_IPC_COLUMN, col,
+        /* member */ json_schema
+    );
 }

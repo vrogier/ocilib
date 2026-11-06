@@ -256,6 +256,37 @@ OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeRemoveItem
     OCI_UInt32    index
 );
 
+OCI_SYM_LOCAL OCI_UInt32 OcilibJsonNodeRemoveItems
+(
+    OCI_JsonNode * arr,
+    OCI_UInt32     start,
+    OCI_UInt32     count
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeRenameField
+(
+    OCI_JsonNode * node,
+    const otext  * old_name,
+    const otext  * new_name
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeEquals
+(
+    OCI_JsonNode * node1,
+    OCI_JsonNode * node2
+);
+
+OCI_SYM_LOCAL OCI_Json * OcilibJsonNodeGetJson
+(
+    OCI_JsonNode * node
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeAssign
+(
+    OCI_JsonNode * node,
+    OCI_JsonNode * src
+);
+
 OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeHasField
 (
     OCI_JsonNode *node,

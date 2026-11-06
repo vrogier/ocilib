@@ -5419,6 +5419,34 @@ namespace ocilib
 
         /**
         * @brief
+        * Validate this JSON document instance against a JSON schema (23ai)
+        *
+        * @param schema - JSON schema document
+        * @param errors - Out: the validation report document ("errors" array
+        *                 lists each validation error); always populated
+        *
+        * @note
+        * Returns TRUE when the document validates cleanly; FALSE when invalid
+        * (the @errors report explains why). Requires Oracle client 23ai+.
+        *
+        */
+        [[nodiscard]] bool Validate(const Json& schema, Json& errors) const;
+
+        /**
+        * @brief
+        * Validate this JSON document instance against a JSON schema (23ai)
+        *
+        * @param schema - JSON schema document
+        *
+        * @note
+        * Returns TRUE when the document validates cleanly; FALSE when invalid.
+        * Requires Oracle client 23ai+.
+        *
+        */
+        [[nodiscard]] bool Validate(const Json& schema) const;
+
+        /**
+        * @brief
         * Serialize the Json object to a JSON text string
         *
         * @param print - Printing options
@@ -5426,7 +5454,7 @@ namespace ocilib
         * @return The serialized JSON text
         *
         */
-        [[nodiscard]] String ToText(JsonPrint print = JsonPrint()) const;
+        [[nodiscard]] String ToString(JsonPrint print) const;
 
         /**
         * @brief
@@ -5747,10 +5775,16 @@ namespace ocilib
 
         /**
         * @brief
-        * Return a JSON object field by name or index
+        * Return a JSON object field by name
         *
         */
         [[nodiscard]] JsonNode GetField(const String& name) const;
+      
+        /**
+        * @brief
+        * Return a JSON object field by index
+        *
+        */
         [[nodiscard]] JsonNode GetField(UInt32 index) const;
 
         /**
@@ -5988,6 +6022,62 @@ namespace ocilib
         *
         */
         void RemoveItem(UInt32 index);
+
+        /**
+        * @brief
+        * Remove a range of items from a JSON array node
+        *
+        * @param start - Index of the first item to remove (1-based)
+        * @param count - Number of items to remove
+        *
+        * @return The number of items actually removed
+        */
+        UInt32 RemoveItems(UInt32 start, UInt32 count);
+
+        /**
+        * @brief
+        * Rename a field of a JSON object node
+        *
+        * @param oldName - Current field name
+        * @param newName - New field name
+        */
+        void RenameField(const String& oldName, const String& newName);
+
+        /**
+        * @brief
+        * Compare this node with another for deep equality
+        *
+        * @param other - Node to compare with (may belong to a different Json)
+        */
+        [[nodiscard]] bool Equals(const JsonNode& other) const;
+
+        /**
+        * @brief
+        * Deep-copy this node within the same document
+        *
+        * @return A JsonNode holding the deep copy; owned by the same Json
+        */
+        /**
+        * @brief
+        * Assign another node's content to this node (deep copy)
+        *
+        * @param src - Node to copy content from (may belong to another Json)
+        */
+        void Assign(const JsonNode& src);
+
+        /**
+        * @brief
+        * Deep-copy this node within its document
+        *
+        * @return A JsonNode holding the deep copy
+        */
+        [[nodiscard]] JsonNode Clone() const;
+
+        /**
+        * @brief
+        * Return the document owning this node (borrowed handle)
+        */
+        [[nodiscard]] Json GetJson() const;
 
         /**
         * @brief
@@ -8528,6 +8618,16 @@ namespace ocilib
 
         /**
         * @brief
+        * Check whether the column has a JSON schema constraint (23ai)
+        *
+        * @note
+        * Requires Oracle client 23ai+.
+        *
+        */
+        [[nodiscard]] bool HasJsonSchema() const;
+
+        /**
+        * @brief
         * Return true if the length of the column is character-length or  false if it is byte-length
         *
         * @note
@@ -10979,30 +11079,28 @@ namespace ocilib
          * @brief
          * Replace one document in the collection
          *
+         * @param options - Options identifying the document (key and/or version)
+         * @param doc     - Document with the new content
+         * @param refresh - true to refresh @a doc in place with the server-assigned
+         *                  attributes (key, version, timestamps) of the replaced
+         *                  document
          */
-        bool ReplaceOne(const SodaOptions& options, const SodaDoc& doc);
+        void ReplaceOne(const SodaOptions& options, SodaDoc& doc, bool refresh = false);
 
-        /**
-         * @brief
-         * Replace one document in the collection and return the new document
-         *
-         */
-        SodaDoc ReplaceOneAndGet(const SodaOptions& options, SodaDoc& doc);
-
+        
         /**
          * @brief
          * Replace one document by key in the collection
          *
+         * @param key     - Document key
+         * @param doc     - Document with the new content
+         * @param refresh - true to refresh @a doc in place with the server-assigned
+         *                  attributes (key, version, timestamps) of the replaced
+         *                  document
          */
-        bool ReplaceOne(const String& key, const SodaDoc& doc);
+        void ReplaceOneByKey(const String& key, SodaDoc& doc, bool refresh = false);
 
-        /**
-         * @brief
-         * Replace one document by key in the collection and return the new document
-         *
-         */
-        SodaDoc ReplaceOneAndGet(const String& key, SodaDoc& doc);
-
+        
         /**
          * @brief
          * Remove documents from the collection
@@ -11021,16 +11119,12 @@ namespace ocilib
          * @brief
          * Insert multiple documents into the collection in a single request
          *
+         * @param docs    - Documents to insert
+         * @param refresh - true to refresh each document in @a docs in place with
+         *                  its server-assigned attributes (key, version, timestamps)
          */
-        void InsertMany(std::vector<SodaDoc>& docs);
-
-        /**
-         * @brief
-         * Insert multiple documents and refresh their server-assigned attributes
-         *
-         */
-        void InsertManyAndGet(std::vector<SodaDoc>& docs);
-
+        void InsertMany(std::vector<SodaDoc>& docs, bool refresh = false);
+        
         /**
          * @brief
          * Create an index on the collection from a JSON index specification
@@ -11084,14 +11178,8 @@ namespace ocilib
          * Save a document into the collection (insert or replace by key)
          *
          */
-        void Save(SodaDoc& doc);
-
-        /**
-         * @brief
-         * Save a document and refresh its server-assigned attributes
-         *
-         */
-        void SaveAndGet(SodaDoc& doc);
+        void Save(SodaDoc& doc, bool refresh = false);
+        
     };
 
     /**

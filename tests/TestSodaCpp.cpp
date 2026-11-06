@@ -235,7 +235,7 @@ namespace TestCppApi
         /* replace by key */
 
         SodaDoc newDoc = sdb.CreateDocumentFromText(OTEXT("{\"v\":2}"), String());
-        ASSERT_TRUE(coll.ReplaceOne(key, newDoc));
+        coll.ReplaceOneByKey(key, newDoc);
 
         SodaDoc found = coll.FindOne(key);
         ASSERT_NE(String::npos, found.GetText().find(OTEXT("\"v\":2")));
@@ -243,8 +243,8 @@ namespace TestCppApi
         /* replace-and-get by key */
 
         SodaDoc newDoc2 = sdb.CreateDocumentFromText(OTEXT("{\"v\":3}"), String());
-        SodaDoc updated = coll.ReplaceOneAndGet(key, newDoc2);
-        ASSERT_FALSE(updated.IsNull());
+        coll.ReplaceOneByKey(key, newDoc2, true);
+        ASSERT_FALSE(newDoc2.GetKey().empty());
 
         /* replace with key options */
 
@@ -252,15 +252,16 @@ namespace TestCppApi
         options.SetKey(key);
 
         SodaDoc newDoc3 = sdb.CreateDocumentFromText(OTEXT("{\"v\":4}"), String());
-        ASSERT_TRUE(coll.ReplaceOne(options, newDoc3));
+        coll.ReplaceOne(options, newDoc3);
 
-        /* replace-and-get with key + version options */
+        /* replace-and-get with key + version options — fetch the current
+           version (newDoc3's replace already bumped it past newDoc2's) */
 
-        options.SetVersion(updated.GetVersion());
+        options.SetVersion(coll.FindOne(key).GetVersion());
 
         SodaDoc newDoc4 = sdb.CreateDocumentFromText(OTEXT("{\"v\":5}"), String());
-        SodaDoc updated2 = coll.ReplaceOneAndGet(options, newDoc4);
-        ASSERT_FALSE(updated2.IsNull());
+        coll.ReplaceOne(options, newDoc4, true);
+        ASSERT_FALSE(newDoc4.GetKey().empty());
 
         /* keys option */
 
@@ -382,13 +383,13 @@ namespace TestCppApi
         /* bulk insert and get metadata */
         std::vector<SodaDoc> docs2;
         docs2.push_back(sdb.CreateDocumentFromText(OTEXT("{\"a\":3}"), OTEXT("k3")));
-        try { coll.InsertManyAndGet(docs2); } catch (const Exception&) { FAIL() << "InsertManyAndGet"; }
+        try { coll.InsertMany(docs2, true); } catch (const Exception&) { FAIL() << "InsertManyAndGet"; }
         ASSERT_EQ(String(OTEXT("k3")), docs2[0].GetKey());
 
         /* save (upsert) and save-and-get */
         SodaDoc sv = sdb.CreateDocumentFromText(OTEXT("{\"a\":99}"), OTEXT("k1"));
         try { coll.Save(sv); } catch (const Exception&) { FAIL() << "Save"; }
-        try { coll.SaveAndGet(sv); } catch (const Exception&) { FAIL() << "SaveAndGet"; }
+        try { coll.Save(sv, true); } catch (const Exception&) { FAIL() << "SaveAndGet"; }
         ASSERT_EQ(String(OTEXT("k1")), sv.GetKey());
 
         /* option setters */

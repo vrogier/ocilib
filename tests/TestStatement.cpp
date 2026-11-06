@@ -573,7 +573,7 @@ namespace TestCApi
             OCI_ARG_JSON, json));
 
         OCI_UInt32 jsize = 0;
-        ASSERT_TRUE(OCI_JsonToText(json, nullptr, &jsize, 0, FALSE));
+        ASSERT_TRUE(OCI_JsonToText(json, nullptr, &jsize, 0));
         ASSERT_GT(jsize, 0u);
 
         ASSERT_TRUE(OCI_JsonFree(json));

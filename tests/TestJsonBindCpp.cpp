@@ -39,7 +39,7 @@ namespace TestCppApi
 
         Json fetched = rs.Get<Json>(1);
         ASSERT_FALSE(fetched.IsNull());
-        ASSERT_NE(String::npos, fetched.ToText().find(OTEXT("cpp")));
+        ASSERT_NE(String::npos, fetched.ToString().find(OTEXT("cpp")));
 
         Json fetchedByName = rs.Get<Json>(OTEXT("VALUE"));
         ASSERT_FALSE(fetchedByName.IsNull());
@@ -92,7 +92,7 @@ namespace TestCppApi
 
         Json out = rs.Get<Json>(1);
         ASSERT_FALSE(out.IsNull());
-        ASSERT_NE(String::npos, out.ToText().find(OTEXT("updated")));
+        ASSERT_NE(String::npos, out.ToString().find(OTEXT("updated")));
 
         ExecDML(OTEXT("DROP TABLE TestJson_CppRegister"));
     }

@@ -370,6 +370,71 @@ void OcilibStringReleaseDBString
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OcilibStringGetDBAnsiString
+ * --------------------------------------------------------------------------------------------- */
+
+dbtext* OcilibStringGetDBAnsiString
+(
+    OCI_Environment* env,
+    const otext* src,
+    OCI_Int32* size
+)
+{
+    dbtext* dst = NULL;
+    OCI_Int32 len = 0;
+
+    if (!src)
+    {
+        *size = 0;
+        return dst;
+    }
+
+    if (*size == -1)
+    {
+        COMPUTE_LENGTH(otext, src, len);
+    }
+    else
+    {
+        len = (OCI_Int32)((OCI_Int32)(*size) / (OCI_Int32)sizeof(otext));
+    }
+
+    if (env && env->charset == OCI_CHAR_WIDE)
+    {
+        dst = (dbtext*)OcilibMemoryAlloc(env, OCI_IPC_STRING, sizeof(dbtext),
+            (OCI_Size)(len + 1), FALSE);
+
+        if (NULL != dst)
+        {
+            OcilibStringNativeToAnsi(src, dst, len);
+        }
+    }
+    else
+    {
+        dst = (dbtext*)src;
+    }
+
+    *size = (OCI_Size)len * sizeof(dbtext);
+
+    return dst;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStringReleaseDBAnsiString
+ * --------------------------------------------------------------------------------------------- */
+
+void OcilibStringReleaseDBAnsiString
+(
+    OCI_Environment* env,
+    dbtext* str
+)
+{
+    if (env && env->charset == OCI_CHAR_WIDE && NULL != str)
+    {
+        OcilibMemoryFree(env, str);
+    }
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OcilibStringCopyDBStringToNativeString
  * --------------------------------------------------------------------------------------------- */
 
@@ -1011,7 +1076,7 @@ OCI_UInt32 OcilibStringGetFromType
             OCI_UInt32 real_size = (OCI_UInt32)(buffer_size / sizeof(otext));
 
             quote = FALSE;
-            res   = json ? OcilibJsonToText(json, ptr, &real_size, 0, FALSE) : FALSE;
+            res   = json ? OcilibJsonToText(json, ptr, &real_size, 0) : FALSE;
             len   = real_size;
             break;
         }

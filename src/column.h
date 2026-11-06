@@ -141,4 +141,9 @@ OCI_SYM_LOCAL OCI_SubType OcilibColumnGetSubType
     OCI_Column* col
 );
 
+OCI_SYM_LOCAL OCI_Boolean OcilibColumnHasJsonSchema
+(
+    OCI_Column * col
+);
+
 #endif /* OCILIB_COLUMN_H_INCLUDED */

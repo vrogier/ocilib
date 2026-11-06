@@ -392,8 +392,7 @@ OCI_Boolean OcilibJsonToText
     OCI_Json     *json,
     otext        *buffer,
     OCI_UInt32   *length,
-    OCI_JsonPrint print,
-    OCI_Boolean   useEnvCharset
+    OCI_JsonPrint print
 )
 {
     ENTER_FUNC
@@ -415,7 +414,6 @@ OCI_Boolean OcilibJsonToText
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
 
-    OCI_NOT_USED(useEnvCharset);
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
@@ -891,4 +889,83 @@ OCI_Boolean OcilibJsonSetRoot
 #endif
 
     CLEANUP_AND_EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonValidate
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibJsonValidate
+(
+    OCI_Json  * json,
+    OCI_Json  * schema,
+    OCI_Json ** errors
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_JSON, json
+    );
+
+    OCI_Json *errdoc = NULL;
+
+    CHECK_PTR(OCI_IPC_JSON, json);
+    CHECK_PTR(OCI_IPC_JSON, schema);
+    CHECK_PTR(OCI_IPC_CONNECTION, json->con);
+    CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_23_4);
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    errdoc = OcilibJsonInitialize(json->con, NULL, NULL);
+    CHECK_NULL(errdoc);
+
+    CHECK_OCI
+    (
+        json->con->env->err,
+        OCIJsonSchemaValidate,
+        json->con->handle,
+        json->handle,
+        schema->handle,
+        0,
+        errdoc->handle,
+        OCI_JSON_SCHEMA_ERROR_BASIC,
+        json->con->err,
+        OCI_DEFAULT
+    );
+
+
+    OCI_JsonNode *root  = OcilibJsonGetRoot(errdoc);
+    OCI_JsonNode *vflag = (NULL == root)  ? NULL : OcilibJsonNodeGetFieldByName(root, OTEXT("valid"));
+
+    if (NULL != vflag)
+    {
+        SET_RETVAL(OcilibJsonNodeGetBoolean(vflag));
+        OcilibJsonNodeFree(vflag);
+    }
+
+    if (NULL != root)
+    {
+        OcilibJsonNodeFree(root);
+    }
+
+    if (NULL != errors)
+    {
+        *errors = errdoc;
+        errdoc  = NULL;
+    }
+
+#else
+
+    OCI_NOT_USED(errors);
+
+#endif
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != errdoc)
+        {
+            OcilibJsonFree(errdoc);
+        }
+    );
 }

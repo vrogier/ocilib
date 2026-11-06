@@ -111,6 +111,11 @@ inline bool Column::IsNullable() const
     return (core::Check(OCI_ColumnGetNullable(*this)) == TRUE);
 }
 
+inline bool Column::HasJsonSchema() const
+{
+    return (core::Check(OCI_ColumnHasJsonSchema(*this)) == TRUE);
+}
+
 inline bool Column::IsCharSemanticUsed() const
 {
     return (core::Check(OCI_ColumnGetCharUsed(*this)) == TRUE);

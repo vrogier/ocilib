@@ -389,29 +389,30 @@ struct OCI_Column
 {
     /* OCILIB infos */
     OCI_HANDLE(void);
-    OCI_TypeInfo   *typinf;         /* user type descriptor */
-    OCI_Connection *con;            /* owning connection */
-    ub4             bufsize;        /* element size */
-    OCI_SubType     subtype;        /* Ocilib sub type */
-    OCI_NumericType struct_subtype; /* Ocilib numeric sub type for OCI_GetStruct() :( */
+    OCI_TypeInfo   *typinf;           /* user type descriptor */
+    OCI_Connection *con;              /* owning connection */
+    ub4             bufsize;          /* element size */
+    OCI_SubType     subtype;          /* Ocilib sub type */
+    OCI_NumericType struct_subtype;   /* Ocilib numeric sub type for OCI_GetStruct() :( */
     /* Oracle infos */
-    otext              *name;       /* column name */
-    ub2                 sqlcode;    /* Oracle SQL code */
-    ub2                 typecode;   /* Oracle type code */
-    ub2                 libcode;    /* Internal translated Oracle SQL code */
-    ub2                 size;       /* SQL Size */
-    sb2                 prec;       /* SQL precision 1 (number prec, leading prec) */
-    sb2                 prec2;      /* SQL precision 2 (fractional prec) */
-    sb1                 scale;      /* SQL scale */
-    OCI_SqlType         datatype;   /* internal datatype */
-    ub1                 nullable;   /* is nullable */
-    ub1                 charused;   /* is column size expressed in characters */
-    ub2                 charsize;   /* SQL Size in character */
-    OCI_CharsetForm     csfrm;      /* charset form */
-    ub1                 handletype; /* oracle handle type */
-    OCI_ColumnPropFlags props;      /* column properties */
+    otext              *name;         /* column name */
+    ub2                 sqlcode;      /* Oracle SQL code */
+    ub2                 typecode;     /* Oracle type code */
+    ub2                 libcode;      /* Internal translated Oracle SQL code */
+    ub2                 size;         /* SQL Size */
+    sb2                 prec;         /* SQL precision 1 (number prec, leading prec) */
+    sb2                 prec2;        /* SQL precision 2 (fractional prec) */
+    sb1                 scale;        /* SQL scale */
+    OCI_SqlType         datatype;     /* internal datatype */
+    ub1                 nullable;     /* is nullable */
+    ub1                 charused;     /* is column size expressed in characters */
+    ub2                 charsize;     /* SQL Size in character */
+    OCI_CharsetForm     csfrm;        /* charset form */
+    ub1                 handletype;   /* oracle handle type */
+    OCI_ColumnPropFlags props;        /* column properties */
     ub4                 collation_id; /* collation id */
-    ub4                 dimension;  /* dimension */
+    ub4                 dimension;    /* dimension */
+    ub1                 json_schema;  /* column has a JSON schema constraint (23ai) */
 };
 
 /*
@@ -428,8 +429,8 @@ struct OCI_Buffer
     OCIInd    *inds;               /* indicators */
     void     **obj_inds;           /* object indicators */
     ub4        count;              /* number of elements in the buffer */
-    OCI_Int32  sizelen;                  /* size of an element in the lens array */
-    OCI_UInt32 tmpsize;          /* temporary buffer size */
+    OCI_Int32  sizelen;            /* size of an element in the lens array */
+    OCI_UInt32 tmpsize;            /* temporary buffer size */
 };
 
 typedef struct OCI_Buffer OCI_Buffer;

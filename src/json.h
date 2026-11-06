@@ -88,8 +88,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibJsonToText
     OCI_Json     *json,
     otext        *buffer,
     OCI_UInt32   *length,
-    OCI_JsonPrint print,
-    OCI_Boolean   useEnvCharset
+    OCI_JsonPrint print
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibJsonToBinary
@@ -120,6 +119,13 @@ OCI_SYM_LOCAL OCI_Boolean OcilibJsonSetMutable
 OCI_SYM_LOCAL OCI_Boolean OcilibJsonIsMutable
 (
     OCI_Json *json
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonValidate
+(
+    OCI_Json  * json,
+    OCI_Json  * schema,
+    OCI_Json ** errors
 );
 
 OCI_SYM_LOCAL OCI_JsonNode * OcilibJsonGetRoot

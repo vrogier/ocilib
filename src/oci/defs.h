@@ -680,6 +680,12 @@
 
 #define OCI_ATTR_JSON_COL            534          /* is the column JSON data */
 #define OCI_ATTR_JSON_DOM_MUTABLE    609   /* is the JSON DOM mutable */
+#define OCI_ATTR_HAS_JSON_SCHEMA     642   /* column has a JSON schema constraint */
+
+/* OCIJsonSchemaValidate error-reporting modes */
+#define OCI_JSON_SCHEMA_ERROR_NONE    0    /* No error messages requested  */
+#define OCI_JSON_SCHEMA_ERROR_SIMPLE  1    /* Simplest, boolean field only */
+#define OCI_JSON_SCHEMA_ERROR_BASIC   2    /* Flat list of error output units */
 
 #define OCI_JSON_TEXT_ENV_NLS 0x00010000 /* Output text in envh's csid */
 

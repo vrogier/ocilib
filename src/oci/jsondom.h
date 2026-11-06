@@ -284,10 +284,13 @@ typedef struct jznDomAPI
     void        (*jznDomReplaceItem)(void);
     boolean     (*jznDomDeleteField)(jznDomDoc *jdoc, jznDomObject *obj,
                                      jznDomObjFieldName *nmkey);
-    void        (*jznDomUnlinkField)(void);
-    void        (*jznDomRenameField)(void);
+    jznDomNode *(*jznDomUnlinkField)(jznDomDoc *jdoc, jznDomObject *obj,
+                                     jznDomObjFieldName *nmkey);
+    ub4         (*jznDomRenameField)(jznDomDoc *jdoc, jznDomObject *obj,
+                                     oratext *oldName, ub2 oldNameLen,
+                                     oratext *newName, ub2 newNameLen);
     boolean     (*jznDomDeleteItem)(jznDomDoc *jdoc, jznDomArray *arr, ub4 idx);
-    void        (*jznDomUnlinkItem)(void);
+    jznDomNode *(*jznDomUnlinkItem)(jznDomDoc *jdoc, jznDomArray *arr, ub4 idx);
     ub4         (*jznDomDeleteItemBatch)(jznDomDoc *jdoc, jznDomArray *arr,
                                          ub4 start, ub4 deleteSz);
 
@@ -297,8 +300,10 @@ typedef struct jznDomAPI
     void          (*jznDomDocReset)(void);
     void          (*jznDomDocFree)(void);
     void          (*jznDomGetOutputEventSrc)(void);
-    void          (*jznDomEquals)(void);
-    void          (*jznDomCopy)(void);
+    boolean       (*jznDomEquals)(jznDomDoc *jdoc1, jznDomNode *nd1,
+                                  jznDomDoc *jdoc2, jznDomNode *nd2);
+    jznDomNode   *(*jznDomCopy)(jznDomDoc *srcdoc, jznDomNode *srcnode,
+                                jznDomDoc *destdoc);
     void          (*jznDomValidFid)(void);
     void          (*jznDomStoreField)(void);
     void          (*jznDomPrintNode)(void);
@@ -403,6 +408,12 @@ struct jznDomDoc
 
 #define JsonDomDeleteItems(jdoc, ary, start, cnt) \
     ((jdoc)->mthds_jznDomDoc->jznDomDeleteItemBatch((jdoc),(ary),(start),(cnt)))
+
+#define JsonDomRenameField(jdoc, obj, oldName, oldNameLen, newName, newNameLen)     ((jdoc)->mthds_jznDomDoc->jznDomRenameField((jdoc),(obj),(oldName),(oldNameLen),(newName),(newNameLen)))
+
+#define JsonDomEquals(jdoc1, nd1, jdoc2, nd2)     ((jdoc1)->mthds_jznDomDoc->jznDomEquals((jdoc1),(nd1),(jdoc2),(nd2)))
+
+#define JsonDomCopy(srcdoc, srcnode, destdoc)     ((srcdoc)->mthds_jznDomDoc->jznDomCopy((srcdoc),(srcnode),(destdoc)))
 
 #define JsonDomInsertElements(jdoc, ary, pos, node) \
     ((jdoc)->mthds_jznDomDoc->jznDomPutItem((jdoc),(ary),(node),(pos)))

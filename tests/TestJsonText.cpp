@@ -21,7 +21,7 @@ namespace
     String GetJsonText(OCI_Json* json)
     {
         OCI_UInt32 len = 0;
-        if (!OCI_JsonToText(json, nullptr, &len, 0, TRUE))
+        if (!OCI_JsonToText(json, nullptr, &len, 0))
         {
             ADD_FAILURE() << "OCI_JsonToText size query failed";
             return String();
@@ -29,7 +29,7 @@ namespace
 
         otext* buffer = new otext[len + 1];
         OCI_UInt32 len2 = len + 1;
-        if (!OCI_JsonToText(json, buffer, &len2, 0, TRUE))
+        if (!OCI_JsonToText(json, buffer, &len2, 0))
         {
             delete[] buffer;
             ADD_FAILURE() << "OCI_JsonToText failed";
@@ -61,7 +61,7 @@ namespace TestCApi
         ASSERT_NE(String::npos, text.find(OTEXT("42")));
 
         OCI_UInt32 prettyLen = 0;
-        ASSERT_TRUE(OCI_JsonToText(json, nullptr, &prettyLen, OCI_JTP_PRETTY, TRUE));
+        ASSERT_TRUE(OCI_JsonToText(json, nullptr, &prettyLen, OCI_JTP_PRETTY));
         ASSERT_GT(prettyLen, 0u);
 
         ASSERT_TRUE(OCI_JsonFree(json));

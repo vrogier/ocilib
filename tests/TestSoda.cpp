@@ -694,7 +694,7 @@ namespace TestCApi
         );
         ASSERT_NE(nullptr, newDoc);
 
-        ASSERT_TRUE(OCI_SodaCollReplaceOneByKey(coll, key.c_str(), newDoc));
+        ASSERT_TRUE(OCI_SodaCollReplaceOneByKey(coll, key.c_str(), newDoc, FALSE));
 
         const auto foundDoc = OCI_SodaCollFindOneByKey(coll, key.c_str());
         ASSERT_NE(nullptr, foundDoc);
@@ -717,7 +717,7 @@ namespace TestCApi
         );
         ASSERT_NE(nullptr, newDoc2);
 
-        ASSERT_TRUE(OCI_SodaCollReplaceOneAndGetByKey(coll, key.c_str(), newDoc2));
+        ASSERT_TRUE(OCI_SodaCollReplaceOneByKey(coll, key.c_str(), newDoc2, TRUE));
         ASSERT_NE(nullptr, OCI_SodaDocGetVersion(newDoc2));
 
         ASSERT_TRUE(OCI_SodaDocFree(newDoc2));
@@ -776,7 +776,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, options);
         ASSERT_TRUE(OCI_SodaOptionsSetKey(options, key.c_str()));
 
-        ASSERT_TRUE(OCI_SodaCollReplaceOne(coll, options, newDoc));
+        ASSERT_TRUE(OCI_SodaCollReplaceOne(coll, options, newDoc, FALSE));
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
 
         const auto foundDoc = OCI_SodaCollFindOneByKey(coll, key.c_str());
@@ -806,7 +806,7 @@ namespace TestCApi
         );
         ASSERT_NE(nullptr, newDoc2);
 
-        ASSERT_TRUE(OCI_SodaCollReplaceOneAndGet(coll, options, newDoc2));
+        ASSERT_TRUE(OCI_SodaCollReplaceOne(coll, options, newDoc2, TRUE));
         ASSERT_NE(nullptr, OCI_SodaDocGetVersion(newDoc2));
 
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
@@ -1067,10 +1067,10 @@ namespace TestCApi
         ASSERT_EQ(nullptr, OCI_SodaCollFindOneByKey(coll, NULL));
         ASSERT_EQ(0u, OCI_SodaCollDocCount(NULL, NULL));
         ASSERT_EQ(0u, OCI_SodaCollDocCountWithFilter(NULL, OTEXT("{}")));
-        ASSERT_FALSE(OCI_SodaCollReplaceOne(NULL, NULL, NULL));
-        ASSERT_FALSE(OCI_SodaCollReplaceOneAndGet(NULL, NULL, NULL));
-        ASSERT_FALSE(OCI_SodaCollReplaceOneByKey(NULL, NULL, NULL));
-        ASSERT_FALSE(OCI_SodaCollReplaceOneAndGetByKey(NULL, NULL, NULL));
+        ASSERT_FALSE(OCI_SodaCollReplaceOne(NULL, NULL, NULL, FALSE));
+        ASSERT_FALSE(OCI_SodaCollReplaceOne(NULL, NULL, NULL, TRUE));
+        ASSERT_FALSE(OCI_SodaCollReplaceOneByKey(NULL, NULL, NULL, FALSE));
+        ASSERT_FALSE(OCI_SodaCollReplaceOneByKey(NULL, NULL, NULL, TRUE));
         ASSERT_FALSE(OCI_SodaCollRemove(NULL, NULL, NULL));
         ASSERT_FALSE(OCI_SodaCollRemoveOneByKey(NULL, NULL));
     }
@@ -1264,7 +1264,7 @@ namespace TestCApi
 
         const otext* replKeys[] = { OTEXT("nope"), keys[3] };
         ASSERT_TRUE(OCI_SodaOptionsSetKeys(options, replKeys, 2));
-        ASSERT_TRUE(OCI_SodaCollReplaceOne(coll, options, replDoc));
+        ASSERT_TRUE(OCI_SodaCollReplaceOne(coll, options, replDoc, FALSE));
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
         ASSERT_TRUE(OCI_SodaDocFree(replDoc));
     }
@@ -1285,7 +1285,7 @@ namespace TestCApi
 
         const otext* replKeys[] = { OTEXT("nope"), keys[4] };
         ASSERT_TRUE(OCI_SodaOptionsSetKeys(options, replKeys, 2));
-        ASSERT_TRUE(OCI_SodaCollReplaceOneAndGet(coll, options, replDoc));
+        ASSERT_TRUE(OCI_SodaCollReplaceOne(coll, options, replDoc, TRUE));
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
         ASSERT_TRUE(OCI_SodaDocFree(replDoc));
     }
@@ -1440,7 +1440,7 @@ namespace TestCApi
         );
         ASSERT_NE(nullptr, replDoc);
 
-        (void) OCI_SodaCollReplaceOne(coll, NULL, replDoc);
+        (void) OCI_SodaCollReplaceOne(coll, NULL, replDoc, FALSE);
         ASSERT_TRUE(OCI_SodaDocFree(replDoc));
     }
 
@@ -1456,7 +1456,7 @@ namespace TestCApi
         );
         ASSERT_NE(nullptr, replDoc);
 
-        (void) OCI_SodaCollReplaceOneAndGet(coll, NULL, replDoc);
+        (void) OCI_SodaCollReplaceOne(coll, NULL, replDoc, TRUE);
         ASSERT_TRUE(OCI_SodaDocFree(replDoc));
     }
 
@@ -1488,10 +1488,10 @@ namespace TestCApi
         ASSERT_EQ(nullptr, OCI_SodaCollFindOneByKey(nullptr, nullptr));
         ASSERT_FALSE(OCI_SodaCollRemove(nullptr, nullptr, nullptr));
         ASSERT_FALSE(OCI_SodaCollRemoveOneByKey(nullptr, nullptr));
-        ASSERT_FALSE(OCI_SodaCollReplaceOne(nullptr, nullptr, nullptr));
-        ASSERT_FALSE(OCI_SodaCollReplaceOneAndGet(nullptr, nullptr, nullptr));
-        ASSERT_FALSE(OCI_SodaCollReplaceOneAndGetByKey(nullptr, nullptr, nullptr));
-        ASSERT_FALSE(OCI_SodaCollReplaceOneByKey(nullptr, nullptr, nullptr));
+        ASSERT_FALSE(OCI_SodaCollReplaceOne(nullptr, nullptr, nullptr, FALSE));
+        ASSERT_FALSE(OCI_SodaCollReplaceOne(nullptr, nullptr, nullptr, TRUE));
+        ASSERT_FALSE(OCI_SodaCollReplaceOneByKey(nullptr, nullptr, nullptr, TRUE));
+        ASSERT_FALSE(OCI_SodaCollReplaceOneByKey(nullptr, nullptr, nullptr, FALSE));
         ASSERT_EQ(0u, OCI_SodaCollDocCountWithFilter(nullptr, nullptr));
     }
 
@@ -1592,7 +1592,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, d3);
 
         OCI_SodaDoc* docs[3] = { d1, d2, d3 };
-        const OCI_Boolean ins = OCI_SodaCollInsertMany(coll, docs, 3);
+        const OCI_Boolean ins = OCI_SodaCollInsertMany(coll, docs, 3, FALSE);
         OCI_Error* ier = OCI_GetLastError();
         EXPECT_TRUE(ins) << "oci_code=" << (ier ? (int)OCI_ErrorGetCode(ier) : -1)
                          << " msg=" << (ier && OCI_ErrorGetString(ier) ? String(OCI_ErrorGetString(ier)) : String()) ;
@@ -1604,14 +1604,14 @@ namespace TestCApi
         OCI_SodaDoc* e1 = OCI_SodaDocCreateFromText(sdb, c1.c_str(), static_cast<OCI_UInt32>(c1.size() * sizeof(otext)), OTEXT("k4"));
         ASSERT_NE(nullptr, e1);
         OCI_SodaDoc* edocs[1] = { e1 };
-        ASSERT_TRUE(OCI_SodaCollInsertManyAndGet(coll, edocs, 1));
+        ASSERT_TRUE(OCI_SodaCollInsertMany(coll, edocs, 1, TRUE));
         ASSERT_NE(nullptr, OCI_SodaDocGetVersion(e1));
 
         /* save (upsert) */
         const String newc = OTEXT("{\"a\":99}");
         OCI_SodaDoc* sv = OCI_SodaDocCreateFromText(sdb, newc.c_str(), static_cast<OCI_UInt32>(newc.size() * sizeof(otext)), OTEXT("k1"));
         ASSERT_NE(nullptr, sv);
-        ASSERT_TRUE(OCI_SodaCollSave(coll, sv));
+        ASSERT_TRUE(OCI_SodaCollSave(coll, sv, FALSE));
         ASSERT_NE(nullptr, OCI_SodaDocGetVersion(sv));
 
         /* index management on a default (UUID) collection */

@@ -1872,7 +1872,7 @@ const otext * OcilibResultsetGetString
 
                     if (json)
                     {
-                        CHECK(OcilibJsonToText(json, NULL, &buffer_size, 0, FALSE));
+                        CHECK(OcilibJsonToText(json, NULL, &buffer_size, 0));
                     }
 
                     data = json;

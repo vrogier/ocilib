@@ -78,6 +78,19 @@ OCI_SYM_LOCAL dbtext * OcilibStringGetDBString
     OCI_Int32       *size
 );
 
+OCI_SYM_LOCAL dbtext* OcilibStringGetDBAnsiString
+(
+    OCI_Environment* env,
+    const otext    * src,
+    OCI_Int32      * size
+);
+
+OCI_SYM_LOCAL void OcilibStringReleaseDBAnsiString
+(
+    OCI_Environment* env,
+    dbtext         * str
+);
+
 OCI_SYM_LOCAL void OcilibStringReleaseDBString
 (
     OCI_Environment *env,

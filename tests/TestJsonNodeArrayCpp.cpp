@@ -93,4 +93,57 @@ namespace TestCppApi
         ASSERT_THROW((void)(obj2.GetFieldByIndex(100)), Exception);
         ASSERT_THROW((void)(obj2.GetFieldName(100)), Exception);
     }
+
+    TEST(TestJsonNodeArrayCpp, RemoveItems)
+    {
+        Environment& env = GetEnvironmentCpp();
+        Connection con(env, DBS, USR, PWD);
+
+        Json json(con);
+        json.SetMutable(true);
+        json.LoadText(OTEXT("null"));
+
+        JsonNode arr = json.CreateArray();
+
+        arr.AppendItem(json.CreateString(OTEXT("a")));
+        arr.AppendItem(json.CreateString(OTEXT("b")));
+        arr.AppendItem(json.CreateString(OTEXT("c")));
+        arr.AppendItem(json.CreateString(OTEXT("d")));
+        ASSERT_EQ(4u, arr.GetItemCount());
+
+        UInt32 removed = arr.RemoveItems(2, 2);
+        ASSERT_EQ(2u, removed);
+        ASSERT_EQ(2u, arr.GetItemCount());
+        ASSERT_EQ(String(OTEXT("a")), arr.GetItem(1).GetString());
+        ASSERT_EQ(String(OTEXT("d")), arr.GetItem(2).GetString());
+    }
+
+    TEST(TestJsonNodeArrayCpp, RemoveItemsOutOfRange)
+    {
+        Environment& env = GetEnvironmentCpp();
+        Connection con(env, DBS, USR, PWD);
+
+        Json json(con);
+        json.SetMutable(true);
+        json.LoadText(OTEXT("null"));
+
+        JsonNode arr = json.CreateArray();
+
+        arr.AppendItem(json.CreateString(OTEXT("a")));
+        arr.AppendItem(json.CreateString(OTEXT("b")));
+        arr.AppendItem(json.CreateString(OTEXT("c")));
+
+        /* start past the end */
+        ASSERT_THROW((void)(arr.RemoveItems(4, 1)), Exception);
+
+        /* count overruns the end */
+        ASSERT_THROW((void)(arr.RemoveItems(2, 3)), Exception);
+
+        /* zero start / zero count */
+        ASSERT_THROW((void)(arr.RemoveItems(0, 1)), Exception);
+        ASSERT_THROW((void)(arr.RemoveItems(1, 0)), Exception);
+
+        /* the array is unchanged after the failures */
+        ASSERT_EQ(3u, arr.GetItemCount());
+    }
 }

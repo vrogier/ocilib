@@ -45,9 +45,9 @@
   - Added document APIs: `OCI_SodaDocCreateFromText()`, `OCI_SodaDocCreateFromJson()` (requires Oracle client 23.4+), `OCI_SodaDocFree()`, `OCI_SodaDocGetKey()`, `OCI_SodaDocGetVersion()`, `OCI_SodaDocGetCreatedOn()`, `OCI_SodaDocGetLastModified()`, `OCI_SodaDocGetMediaType()`, `OCI_SodaDocGetText()`, `OCI_SodaDocGetJson()`
   - Added operation options APIs: `OCI_SodaOptionsCreate()`, `OCI_SodaOptionsFree()`, and setters for key(s), version, filter, skip, limit, fetch array size, lock, and hint
   - Added cursor APIs: `OCI_SodaCollCursorGetNext()`, `OCI_SodaCollCursorFree()`, `OCI_SodaDocCursorGetNext()`, `OCI_SodaDocCursorFree()`
-  - Added CRUD APIs: `OCI_SodaCollInsertDoc()`, `OCI_SodaCollFind()`, `OCI_SodaCollFindOne()`, `OCI_SodaCollFindOneByKey()`, `OCI_SodaCollDocCount()`, `OCI_SodaCollDocCountWithFilter()`, `OCI_SodaCollReplaceOne()`, `OCI_SodaCollReplaceOneAndGet()`, `OCI_SodaCollReplaceOneByKey()`, `OCI_SodaCollReplaceOneAndGetByKey()`, `OCI_SodaCollRemove()`, `OCI_SodaCollRemoveOneByKey()`
-  - Added bulk insert APIs: `OCI_SodaCollInsertMany()`, `OCI_SodaCollInsertManyAndGet()`
-  - Added save (upsert) APIs: `OCI_SodaCollSave()`, `OCI_SodaCollSaveAndGet()`
+  - Added CRUD APIs: `OCI_SodaCollInsertDoc()`, `OCI_SodaCollFind()`, `OCI_SodaCollFindOne()`, `OCI_SodaCollFindOneByKey()`, `OCI_SodaCollDocCount()`, `OCI_SodaCollDocCountWithFilter()`, `OCI_SodaCollReplaceOne()`, `OCI_SodaCollReplaceOneByKey()`, `OCI_SodaCollRemove()`, `OCI_SodaCollRemoveOneByKey()`
+  - Added bulk insert APIs: `OCI_SodaCollInsertMany()`
+  - Added save (upsert) APIs: `OCI_SodaCollSave()`
   - Added metadata APIs: `OCI_SodaCollGetDataGuide()`, `OCI_SodaDbGetCollectionNames()`, `OCI_SodaDbFreeCollectionNames()`
   - Added index management APIs: `OCI_SodaCollCreateIndex()`, `OCI_SodaCollDropIndex()`, `OCI_SodaCollListIndexes()`, `OCI_SodaCollFreeIndexNames()`
     - Note: the underlying `OCISodaIndex*` OCI calls currently fail inside the Oracle client itself under `OCI_CHARSET_WIDE` (UNICODE builds), verified on Oracle 23ai — an Oracle client bug, not an OCILIB bug; ANSI builds work correctly
@@ -59,6 +59,12 @@
   - Added diagnostics API: `OCI_ShardingKeyToText()` (base64 representation of the key)
   - Added sharded connection APIs: `OCI_ConnectionCreateSharded()`, `OCI_PoolGetConnectionSharded()`
   - Added C++ API: `ocilib::ShardingKey` (templated `AddColumn<T>` for `ostring`, `Number`, `Date`, `Timestamp`, and `std::vector<unsigned char>`), sharded `Connection` constructor and `Connection::Open()` overload, sharded `Pool::GetConnection()` overload
+
+- Oracle 23ai JSON/SODA additions
+  - `OCI_JsonValidate()` — validate a JSON document against a JSON schema, returning an error-report document
+  - `OCI_ColumnHasJsonSchema()` — report whether a column has a JSON schema constraint
+  - New `OCI_JsonNode` operations: `OCI_JsonNodeRemoveItems()` (range delete), `OCI_JsonNodeRenameField()`, `OCI_JsonNodeEquals()` (deep compare), `OCI_JsonNodeAssign()` (deep copy into a node), `OCI_JsonNodeGetJson()` (owning document)
+  - `OCI_SodaCollFind()` uses the native `OCISodaOperKeysSet` multi-key path when the client supports it
 
 ### Enhancements (C++ API)
 
@@ -119,6 +125,13 @@
 - XA / distributed transaction support (`OCI_SESSION_XA`) has been removed.
 - The public threading API (`OCI_Mutex*`, `OCI_Thread*`, `OCI_ThreadKey*`) has been removed; use standard C11 `<threads.h>`, C++ `<thread>` / `<mutex>`, or platform APIs.
 
+- SODA `*AndGet` functions have been collapsed into `refresh` parameters: `OCI_SodaCollReplaceOne()`, `OCI_SodaCollReplaceOneByKey()`, `OCI_SodaCollInsertMany()` and `OCI_SodaCollSave()` each take a trailing `OCI_Boolean refresh` that refreshes the caller's document in place with server-assigned attributes. `OCI_SodaColl*AndGet` names are removed.
+
+- Oracle 23ai JSON/SODA additions
+  - `Json::Validate()` — validate against a JSON schema; returns `std::nullopt` on success, the error-report `Json` on failure
+  - `Column::HasJsonSchema()` — JSON schema constraint check
+  - New `JsonNode` operations: `RemoveItems()` (range delete), `RenameField()`, `Equals()` (deep compare), `Assign()` (deep copy into a node), `Clone()` (same-doc copy), `GetJson()` (owning document)
+
 ### Changes (C++ API)
 
 - `Environment::Initialize()`, `Environment::Cleanup()`, and `Environment::Initialized()` are removed; construct an `Environment` object.
@@ -131,6 +144,8 @@
 - `Dequeue::Subscribe()` is now a static batch call.
 - `Environment::SessionXA` is removed.
 - C++17 is now required.
+
+- `SodaColl::ReplaceOne()`, `SodaColl::ReplaceOneByKey()`, `SodaColl::InsertMany()` and `SodaColl::Save()` take a trailing `bool refresh = false` that refreshes the caller's document in place with server-assigned attributes. The `*AndGet` methods are removed; `ReplaceOne(key, ...)` is renamed `ReplaceOneByKey(key, ...)`.
 
 ### Fixes (C API)
 

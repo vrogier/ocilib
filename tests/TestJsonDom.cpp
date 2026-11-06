@@ -448,4 +448,125 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(json));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+    TEST(TestJsonDom, ValidateSchema)
+    {
+        auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+
+        if (OCI_GetOCIRuntimeVersion(env) < OCI_VER_MAKE(23, 4, 0))
+        {
+            return; /* OCIJsonSchemaValidate requires 23ai+ */
+        }
+
+        auto schema = JsonFromText(conn, OTEXT("{\"type\":\"object\",\"properties\":{\"a\":{\"type\":\"number\"}},\"required\":[\"a\"]}"));
+        ASSERT_TRUE(NULL != schema);
+
+        auto ok = JsonFromText(conn, OTEXT("{\"a\":1}"));
+        ASSERT_TRUE(NULL != ok);
+
+        OCI_Json* errors = NULL;
+
+        EXPECT_TRUE(OCI_JsonValidate(ok, schema, NULL));
+        EXPECT_TRUE(OCI_JsonValidate(ok, schema, &errors));
+
+        OCI_JsonFree(errors);
+        errors = NULL;
+
+        auto bad = JsonFromText(conn, OTEXT("{\"a\":\"notanum\"}"));
+        ASSERT_TRUE(NULL != bad);
+
+        EXPECT_FALSE(OCI_JsonValidate(bad, schema, NULL));
+
+        EXPECT_FALSE(OCI_JsonValidate(bad, schema, &errors));
+        ASSERT_TRUE(NULL != errors);
+        {
+            OCI_UInt32 errlen = 0;
+            ASSERT_TRUE(OCI_JsonToText(errors, NULL, &errlen, 0));
+            ASSERT_TRUE(errlen > 0); /* error doc populated */
+        }
+        OCI_JsonFree(errors);
+        errors = NULL;
+
+        /* invalid schema — parses as JSON but isn't a valid JSON Schema */
+        auto badschema = JsonFromText(conn, OTEXT("{\"type\":\"bogus\"}"));
+        ASSERT_TRUE(NULL != badschema);
+
+        EXPECT_FALSE(OCI_JsonValidate(ok, badschema, &errors));
+
+        if (NULL != errors) { OCI_JsonFree(errors); errors = NULL; }
+        OCI_JsonFree(badschema);
+
+        if (NULL != errors) { OCI_JsonFree(errors); }
+        if (NULL != bad)    { OCI_JsonFree(bad); }
+        if (NULL != ok)     { OCI_JsonFree(ok); }
+        OCI_JsonFree(schema);
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestJsonDom, NodeOps)
+    {
+        auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+
+        auto json = JsonFromText(conn, OTEXT("{\"a\":1,\"b\":2,\"arr\":[10,20,30,40]}"));
+        ASSERT_TRUE(NULL != json);
+        ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
+
+        OCI_JsonNode* root = OCI_JsonGetRoot(json);
+        ASSERT_TRUE(NULL != root);
+        ASSERT_EQ(OCI_JsonNodeGetJson(root), json);
+
+        ASSERT_TRUE(OCI_JsonNodeRenameField(root, OTEXT("a"), OTEXT("c")));
+        ASSERT_TRUE(OCI_JsonNodeHasField(root, OTEXT("c")));
+        ASSERT_FALSE(OCI_JsonNodeHasField(root, OTEXT("a")));
+
+        OCI_JsonNode* copy = OCI_JsonNodeCreate(json, OCI_JNT_OBJECT);
+        ASSERT_TRUE(NULL != copy);
+        ASSERT_TRUE(OCI_JsonNodeAssign(copy, root));
+        ASSERT_TRUE(OCI_JsonNodeEquals(copy, root));
+
+        OCI_JsonNode* arr = OCI_JsonNodeGetFieldByName(root, OTEXT("arr"));
+        ASSERT_TRUE(NULL != arr);
+        ASSERT_EQ(4u, OCI_JsonNodeGetItemCount(arr));
+        ASSERT_EQ(2u, OCI_JsonNodeRemoveItems(arr, 2, 2));
+        ASSERT_EQ(2u, OCI_JsonNodeGetItemCount(arr));
+
+        OCI_JsonNodeFree(arr);
+        OCI_JsonNodeFree(copy);
+        OCI_JsonNodeFree(root);
+        OCI_JsonFree(json);
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestJsonDom, NodeRemoveItemsOutOfRange)
+    {
+        auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+
+        auto json = JsonFromText(conn, OTEXT("[10,20,30]"));
+        ASSERT_TRUE(NULL != json);
+        ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
+
+        OCI_JsonNode* root = OCI_JsonGetRoot(json);
+        ASSERT_TRUE(NULL != root);
+        ASSERT_EQ(3u, OCI_JsonNodeGetItemCount(root));
+
+        /* start past the end */
+        ASSERT_EQ(0u, OCI_JsonNodeRemoveItems(root, 4, 1));
+
+        /* count overruns the end */
+        ASSERT_EQ(0u, OCI_JsonNodeRemoveItems(root, 2, 3));
+
+        /* zero start / zero count */
+        ASSERT_EQ(0u, OCI_JsonNodeRemoveItems(root, 0, 1));
+        ASSERT_EQ(0u, OCI_JsonNodeRemoveItems(root, 1, 0));
+
+        /* the array is unchanged after the failures */
+        ASSERT_EQ(3u, OCI_JsonNodeGetItemCount(root));
+
+        OCI_JsonNodeFree(root);
+        OCI_JsonFree(json);
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
 }

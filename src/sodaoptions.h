@@ -52,6 +52,8 @@ OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsSetKeyAttr
     const otext     *key
 );
 
+
+
 OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsSetVersion
 (
     OCI_SodaOptions *options,

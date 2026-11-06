@@ -124,26 +124,14 @@ namespace ocilib
         return OCI_SodaCollDocCountWithFilter(*this, filter.c_str());
     }
 
-    inline bool SodaColl::ReplaceOne(const SodaOptions& options, const SodaDoc& doc)
+    inline void SodaColl::ReplaceOne(const SodaOptions& options, SodaDoc& doc, bool refresh)
     {
-        return (core::Check(OCI_SodaCollReplaceOne(*this, options, doc)) == TRUE);
+        core::Check(OCI_SodaCollReplaceOne(*this, options, doc, refresh ? TRUE : FALSE));
     }
 
-    inline SodaDoc SodaColl::ReplaceOneAndGet(const SodaOptions& options, SodaDoc& doc)
+    inline void SodaColl::ReplaceOneByKey(const String& key, SodaDoc& doc, bool refresh)
     {
-        core::Check(OCI_SodaCollReplaceOneAndGet(*this, options, doc));
-        return doc;
-    }
-
-    inline bool SodaColl::ReplaceOne(const String& key, const SodaDoc& doc)
-    {
-        return (core::Check(OCI_SodaCollReplaceOneByKey(*this, key.c_str(), doc)) == TRUE);
-    }
-
-    inline SodaDoc SodaColl::ReplaceOneAndGet(const String& key, SodaDoc& doc)
-    {
-        core::Check(OCI_SodaCollReplaceOneAndGetByKey(*this, key.c_str(), doc));
-        return doc;
+        core::Check(OCI_SodaCollReplaceOneByKey(*this, key.c_str(), doc, refresh ? TRUE : FALSE));
     }
 
     inline bool SodaColl::Remove(const SodaOptions& options, UInt64* count)
@@ -156,18 +144,16 @@ namespace ocilib
         return (core::Check(OCI_SodaCollRemoveOneByKey(*this, key.c_str())) == TRUE);
     }
 
-    inline void SodaColl::InsertMany(std::vector<SodaDoc>& docs)
+    inline void SodaColl::InsertMany(std::vector<SodaDoc>& docs, bool refresh)
     {
         std::vector<OCI_SodaDoc*> handles(docs.size());
-        for (size_t i = 0; i < docs.size(); i++) { handles[i] = docs[i]; }
-        core::Check(OCI_SodaCollInsertMany(*this, handles.data(), static_cast<OCI_UInt32>(docs.size())));
-    }
 
-    inline void SodaColl::InsertManyAndGet(std::vector<SodaDoc>& docs)
-    {
-        std::vector<OCI_SodaDoc*> handles(docs.size());
-        for (size_t i = 0; i < docs.size(); i++) { handles[i] = docs[i]; }
-        core::Check(OCI_SodaCollInsertManyAndGet(*this, handles.data(), static_cast<OCI_UInt32>(docs.size())));
+        for (size_t i = 0; i < docs.size(); i++)
+        {
+            handles[i] = docs[i];
+        }
+
+        core::Check(OCI_SodaCollInsertMany(*this, handles.data(), static_cast<OCI_UInt32>(docs.size()), refresh ? TRUE : FALSE));
     }
 
     inline void SodaColl::CreateIndex(const String& indexSpec)
@@ -207,14 +193,9 @@ namespace ocilib
         return result;
     }
 
-    inline void SodaColl::Save(SodaDoc& doc)
+    inline void SodaColl::Save(SodaDoc& doc, bool refresh)
     {
-        core::Check(OCI_SodaCollSave(*this, doc));
-    }
-
-    inline void SodaColl::SaveAndGet(SodaDoc& doc)
-    {
-        core::Check(OCI_SodaCollSaveAndGet(*this, doc));
+        core::Check(OCI_SodaCollSave(*this, doc, refresh ? TRUE : FALSE));
     }
 
 }

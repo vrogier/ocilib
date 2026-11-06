@@ -774,10 +774,11 @@ static void OcilibEnvironmentLoadSymbols
     env->api->OCIJsonToTextBuffer     = OCIJsonToTextBuffer;
 #endif
 #if OCI_VERSION_COMPILE >= OCI_23_4
-    env->api->OCIVectorFromArray = OCIVectorFromArray;
-    env->api->OCIVectorFromText  = OCIVectorFromText;
-    env->api->OCIVectorToArray   = OCIVectorToArray;
-    env->api->OCIVectorToText    = OCIVectorToText;
+    env->api->OCIVectorFromArray    = OCIVectorFromArray;
+    env->api->OCIVectorFromText     = OCIVectorFromText;
+    env->api->OCIVectorToArray      = OCIVectorToArray;
+    env->api->OCIVectorToText       = OCIVectorToText;
+    env->api->OCIJsonSchemaValidate = OCIJsonSchemaValidate;
 #endif
 #else /* OCI_IMPORT_RUNTIME */
 
@@ -1036,6 +1037,7 @@ static void OcilibEnvironmentLoadSymbols
     LIB_SYMBOL(env->lib_handle, "OCIVectorFromArray", env->api->OCIVectorFromArray, OCIVECTORFROMARRAY);
     LIB_SYMBOL(env->lib_handle, "OCIVectorToText", env->api->OCIVectorToText, OCIVECTORTOTEXT);
     LIB_SYMBOL(env->lib_handle, "OCIVectorFromText", env->api->OCIVectorFromText, OCIVECTORFROMTEXT);
+    LIB_SYMBOL(env->lib_handle, "OCIJsonSchemaValidate", env->api->OCIJsonSchemaValidate, OCIJSONSCHEMAVALIDATE);
 
     LIB_SYMBOL(env->lib_handle, "OCIJsonTextBufferParse", env->api->OCIJsonTextBufferParse, OCIJSONTEXTBUFFERPARSE);
     LIB_SYMBOL(env->lib_handle, "OCIJsonToTextBuffer",    env->api->OCIJsonToTextBuffer,    OCIJSONTOTEXTBUFFER);

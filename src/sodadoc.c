@@ -477,7 +477,7 @@ OCI_Boolean OcilibSodaDocRefreshMetadata
     CHECK_PTR(OCI_IPC_SODA_DOC, doc);
     CHECK_PTR(OCI_IPC_SODA_DB, doc->sdb);
 
-    if (NULL != reshandle && reshandle != doc->handle)
+    if (NULL != reshandle)
     {
         OCISodaDoc* dochandle = doc->handle;
 
@@ -536,14 +536,14 @@ const otext* OcilibSodaDocGetText
 
             doc->content_text_size = 0;
 
-            CHECK(OcilibJsonToText(json, NULL, &doc->content_text_size, 0, TRUE));
+            CHECK(OcilibJsonToText(json, NULL, &doc->content_text_size, 0));
 
             ALLOC_DATA(OCI_IPC_STRING, doc->content_text, doc->content_text_size + 1);
 
             {
                 OCI_UInt32 len = doc->content_text_size + 1;
 
-                CHECK(OcilibJsonToText(json, doc->content_text, &len, 0, TRUE));
+                CHECK(OcilibJsonToText(json, doc->content_text, &len, 0));
             }
 
             OcilibJsonFree(json);

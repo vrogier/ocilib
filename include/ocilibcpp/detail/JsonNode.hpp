@@ -206,6 +206,38 @@ namespace ocilib
         core::Check(OCI_JsonNodeRemoveItem(*this, index));
     }
 
+    inline UInt32 JsonNode::RemoveItems(UInt32 start, UInt32 count)
+    {
+        return core::Check(OCI_JsonNodeRemoveItems(*this, start, count));
+    }
+
+    inline void JsonNode::RenameField(const String& oldName, const String& newName)
+    {
+        core::Check(OCI_JsonNodeRenameField(*this, oldName.c_str(), newName.c_str()));
+    }
+
+    inline bool JsonNode::Equals(const JsonNode& other) const
+    {
+        return (core::Check(OCI_JsonNodeEquals(*this, other)) == TRUE);
+    }
+
+    inline void JsonNode::Assign(const JsonNode& src)
+    {
+        core::Check(OCI_JsonNodeAssign(*this, src));
+    }
+
+    inline JsonNode JsonNode::Clone() const
+    {
+        JsonNode n(GetJson().CreateNull(), GetJson().GetHandle());
+        n.Assign(*this);
+        return n;
+    }
+
+    inline Json JsonNode::GetJson() const
+    {
+        return Json(core::Check(OCI_JsonNodeGetJson(*this)), GetHandle());
+    }
+
     inline bool JsonNode::HasField(const String& name) const
     {
         return TRUE == core::Check(OCI_JsonNodeHasField(*this, name.c_str()));

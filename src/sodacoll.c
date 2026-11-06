@@ -446,9 +446,10 @@ OCI_SodaDocCursor* OcilibSodaCollFind
     {
         opthandle = options->handle;
 
-        /* multi-key emulation (OCISodaOperKeysSet is unusable in UTF-16
-           environments): materialize matching documents now, then the
-           cursor simply iterates them */
+        /* multi-key: OCISodaOperKeysSet (ANSI only — OraText** is unusable
+           in UTF-16) pushes the key array onto the options handle for a
+           single server-side op; wide builds keep the client-side per-key
+           emulation below */
 
         key_count = options->key_count;
 
@@ -917,7 +918,8 @@ OCI_Boolean OcilibSodaCollReplaceOne
 (
     OCI_SodaColl   * coll,
     OCI_SodaOptions* options,
-    OCI_SodaDoc    * doc
+    OCI_SodaDoc    * doc,
+    OCI_Boolean      refresh
 )
 {
     ENTER_FUNC
@@ -965,107 +967,51 @@ OCI_Boolean OcilibSodaCollReplaceOne
             CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
         }
 
-        CHECK_OCI
-        (
-            coll->sdb->con->err,
-            OCISodaReplOne,
-            coll->sdb->con->handle,
-            coll->handle,
-            opthandle,
-            doc->handle,
-            &replaced,
-            coll->sdb->con->err,
-            OCI_DEFAULT
-        );
-    }
-
-    SET_RETVAL((OCI_Boolean)replaced);
-
-    CLEANUP_AND_EXIT_FUNC
-    (
-        if (NULL != tmpopts)
+        if (refresh)
         {
-            OcilibSodaOptionsFree(tmpopts);
+            OCISodaDoc *reshandle = doc->handle;
+
+            CHECK_OCI
+            (
+                coll->sdb->con->err,
+                OCISodaReplOneAndGet,
+                coll->sdb->con->handle,
+                coll->handle,
+                opthandle,
+                &reshandle,
+                &replaced,
+                coll->sdb->con->err,
+                OCI_DEFAULT
+            );
+
+            if (replaced)
+            {
+                CHECK(OcilibSodaDocRefreshMetadata(doc, reshandle));
+
+                /* OCI does not populate the doc's key — the storage key comes
+                   from the options, not the document */
+
+                if (NULL != options && NULL != options->keys && NULL == doc->key)
+                {
+                    doc->key = OcilibStringDuplicate(coll->sdb->con->env, options->keys[i]);
+                }
+            }
         }
-    );
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollReplaceOneAndGet
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Boolean OcilibSodaCollReplaceOneAndGet
-(
-    OCI_SodaColl   * coll,
-    OCI_SodaOptions* options,
-    OCI_SodaDoc    * doc
-)
-{
-    ENTER_FUNC
-    (
-        /* returns */ OCI_Boolean, FALSE,
-        /* context */ OCI_IPC_SODA_COLL, coll
-    );
-
-    boolean                  replaced  = FALSE;
-    OCI_SodaOptions        * tmpopts   = NULL;
-    OCISodaOperationOptions* opthandle = NULL;
-    OCISodaDoc             * reshandle = NULL;
-    OCI_UInt32               loops     = 1;
-    OCI_UInt32               i         = 0;
-
-    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
-    CHECK_PTR(OCI_IPC_SODA_DOC, doc);
-    CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
-    CHECK_SODA_ENABLED(coll->sdb->con);
-
-    if (NULL != options)
-    {
-        opthandle = options->handle;
-
-        /* multi-key emulation: replace on the first matching key */
-
-        if (options->key_count > 0)
+        else
         {
-            loops = options->key_count;
+            CHECK_OCI
+            (
+                coll->sdb->con->err,
+                OCISodaReplOne,
+                coll->sdb->con->handle,
+                coll->handle,
+                opthandle,
+                doc->handle,
+                &replaced,
+                coll->sdb->con->err,
+                OCI_DEFAULT
+            );
         }
-
-    }
-    else
-    {
-        tmpopts = OcilibSodaOptionsCreate(coll->sdb);
-        CHECK_NULL(tmpopts);
-
-        opthandle = tmpopts->handle;
-    }
-
-    for (i = 0; i < loops && FALSE == replaced; i++)
-    {
-
-        if (NULL != options && options->key_count > 0)
-        {
-            CHECK(OcilibSodaOptionsSetKeyAttr(options, options->keys[i]));
-        }
-
-        reshandle = doc->handle;
-
-        CHECK_OCI
-        (
-            coll->sdb->con->err,
-            OCISodaReplOneAndGet,
-            coll->sdb->con->handle,
-            coll->handle,
-            opthandle,
-            &reshandle,
-            &replaced,
-            coll->sdb->con->err,
-            OCI_DEFAULT
-        );
-    }
-
-    if (replaced)
-    {
-        CHECK(OcilibSodaDocRefreshMetadata(doc, reshandle));
     }
 
     SET_RETVAL((OCI_Boolean)replaced);
@@ -1087,7 +1033,8 @@ OCI_Boolean OcilibSodaCollReplaceOneByKey
 (
     OCI_SodaColl* coll,
     const otext * key,
-    OCI_SodaDoc * doc
+    OCI_SodaDoc * doc,
+    OCI_Boolean   refresh
 )
 {
     ENTER_FUNC
@@ -1108,75 +1055,45 @@ OCI_Boolean OcilibSodaCollReplaceOneByKey
 
     dbkey = OcilibStringGetDBString(coll->sdb->env, key, &dbkeylen);
 
-    CHECK_OCI
-    (
-        coll->sdb->con->err,
-        OCISodaReplOneWithKey,
-        coll->sdb->con->handle,
-        coll->handle,
-        (const OraText*)dbkey,
-        (ub4)dbkeylen,
-        doc->handle,
-        &replaced,
-        coll->sdb->con->err,
-        OCI_DEFAULT
-    );
+    if (refresh)
+    {
+        OCISodaDoc *reshandle = doc->handle;
 
-    SET_RETVAL((OCI_Boolean)replaced);
+        CHECK_OCI
+        (
+            coll->sdb->con->err,
+            OCISodaReplOneAndGetWithKey,
+            coll->sdb->con->handle,
+            coll->handle,
+            (const OraText*)dbkey,
+            (ub4)dbkeylen,
+            &reshandle,
+            &replaced,
+            coll->sdb->con->err,
+            OCI_DEFAULT
+        );
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(NULL != coll && NULL != coll->sdb ? coll->sdb->env : NULL, dbkey);
-    );
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollReplaceOneAndGetByKey
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Boolean OcilibSodaCollReplaceOneAndGetByKey
-(
-    OCI_SodaColl* coll,
-    const otext * key,
-    OCI_SodaDoc * doc
-)
-{
-    ENTER_FUNC
-    (
-        /* returns */ OCI_Boolean, FALSE,
-        /* context */ OCI_IPC_SODA_COLL, coll
-    );
-
-    boolean     replaced  = FALSE;
-    dbtext    * dbkey     = NULL;
-    OCI_Int32   dbkeylen  = -1;
-    OCISodaDoc* reshandle = NULL;
-
-    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
-    CHECK_PTR(OCI_IPC_STRING, key);
-    CHECK_PTR(OCI_IPC_SODA_DOC, doc);
-    CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
-    CHECK_SODA_ENABLED(coll->sdb->con);
-
-    dbkey = OcilibStringGetDBString(coll->sdb->env, key, &dbkeylen);
-
-    reshandle = doc->handle;
-
-    CHECK_OCI
-    (
-        coll->sdb->con->err,
-        OCISodaReplOneAndGetWithKey,
-        coll->sdb->con->handle,
-        coll->handle,
-        (const OraText*)dbkey,
-        (ub4)dbkeylen,
-        &reshandle,
-        &replaced,
-        coll->sdb->con->err,
-        OCI_DEFAULT
-    );
-
-    CHECK(OcilibSodaDocRefreshMetadata(doc, reshandle));
+        if (replaced)
+        {
+            CHECK(OcilibSodaDocRefreshMetadata(doc, reshandle));
+        }
+    }
+    else
+    {
+        CHECK_OCI
+        (
+            coll->sdb->con->err,
+            OCISodaReplOneWithKey,
+            coll->sdb->con->handle,
+            coll->handle,
+            (const OraText*)dbkey,
+            (ub4)dbkeylen,
+            doc->handle,
+            &replaced,
+            coll->sdb->con->err,
+            OCI_DEFAULT
+        );
+    }
 
     SET_RETVAL((OCI_Boolean)replaced);
 
@@ -1329,7 +1246,8 @@ OCI_Boolean OcilibSodaCollInsertMany
 (
     OCI_SodaColl * coll,
     OCI_SodaDoc ** docs,
-    OCI_UInt32     count
+    OCI_UInt32     count,
+    OCI_Boolean    refresh
 )
 {
     ENTER_FUNC
@@ -1369,98 +1287,43 @@ OCI_Boolean OcilibSodaCollInsertMany
         handles[i] = docs[i]->handle;
     }
 
-    CHECK_OCI
-    (
-        coll->sdb->con->err,
-        OCISodaBulkInsert,
-        coll->sdb->con->handle,
-        coll->handle,
-        handles,
-        (ub4)count,
-        outopts,
-        coll->sdb->con->err,
-        OCI_DEFAULT
-    );
-
-    SET_SUCCESS();
-
-    CLEANUP_AND_EXIT_FUNC
-    (
-        if (NULL != outopts)
-        {
-            OcilibMemoryFreeHandle(coll->sdb->env, (dvoid *)outopts, OCI_HTYPE_SODA_OUTPUT_OPTIONS);
-        }
-        if (NULL != handles)
-        {
-            OcilibMemoryFree(coll->sdb->env, handles);
-        }
-    );
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollInsertManyAndGet
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Boolean OcilibSodaCollInsertManyAndGet
-(
-    OCI_SodaColl * coll,
-    OCI_SodaDoc ** docs,
-    OCI_UInt32     count
-)
-{
-    ENTER_FUNC
-    (
-        /* returns */ OCI_Boolean, FALSE,
-        /* context */ OCI_IPC_SODA_COLL, coll
-    );
-
-    OCISodaDoc          **handles = NULL;
-    OCISodaOutputOptions *outopts = NULL;
-    OCI_UInt32            i       = 0;
-
-    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
-    CHECK(NULL != docs);
-    CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
-    CHECK_SODA_ENABLED(coll->sdb->con);
-    CHECK(count > 0);
-
-    handles = OcilibMemoryAlloc(coll->sdb->env, OCI_IPC_VOID, sizeof(*handles), count, TRUE);
-
-    CHECK_NULL(handles);
-
-    CHECK
-    (
-        OcilibMemoryAllocHandle
-        (
-            coll->sdb->env,
-            (dvoid *)coll->sdb->env->handle,
-            (dvoid **)&outopts,
-            OCI_HTYPE_SODA_OUTPUT_OPTIONS
-        )
-    );
-
-    for (i = 0; i < count; i++)
+    if (refresh)
     {
-        CHECK_PTR(OCI_IPC_SODA_DOC, docs[i]);
-        handles[i] = docs[i]->handle;
+        CHECK_OCI
+        (
+            coll->sdb->con->err,
+            OCISodaBulkInsertAndGet,
+            coll->sdb->con->handle,
+            coll->handle,
+            handles,
+            (ub4)count,
+            outopts,
+            coll->sdb->con->err,
+            OCI_DEFAULT
+        );
+    }
+    else
+    {
+        CHECK_OCI
+        (
+            coll->sdb->con->err,
+            OCISodaBulkInsert,
+            coll->sdb->con->handle,
+            coll->handle,
+            handles,
+            (ub4)count,
+            outopts,
+            coll->sdb->con->err,
+            OCI_DEFAULT
+        );
     }
 
-    CHECK_OCI
-    (
-        coll->sdb->con->err,
-        OCISodaBulkInsertAndGet,
-        coll->sdb->con->handle,
-        coll->handle,
-        handles,
-        (ub4)count,
-        outopts,
-        coll->sdb->con->err,
-        OCI_DEFAULT
-    );
-
-    for (i = 0; i < count; i++)
+    if (refresh)
     {
-        CHECK(OcilibSodaDocRefreshMetadata(docs[i], handles[i]));
+        for (i = 0; i < count; i++)
+        {
+            CHECK(OcilibSodaDocRefreshMetadata(docs[i], handles[i]));
+        }
     }
 
     SET_SUCCESS();
@@ -1630,7 +1493,8 @@ OCI_SodaDoc * OcilibSodaCollGetDataGuide
 OCI_Boolean OcilibSodaCollSave
 (
     OCI_SodaColl * coll,
-    OCI_SodaDoc  * doc
+    OCI_SodaDoc  * doc,
+    OCI_Boolean    refresh
 )
 {
     ENTER_FUNC
@@ -1655,68 +1519,32 @@ OCI_Boolean OcilibSodaCollSave
         OCI_DEFAULT
     );
 
+    if (refresh)
+    {
+        /* OCISodaSaveAndGet() crashes on some client/server combinations;
+           emulate with a lookup to refresh the document metadata in place */
+
+        const otext *key = OcilibSodaDocGetKey(doc);
+        OCI_SodaDoc *found = NULL;
+
+        CHECK(NULL != key);
+
+        found = OcilibSodaCollFindOneByKey(coll, key);
+        CHECK_NULL(found);
+
+        {
+            OCISodaDoc *fresh = found->handle;
+            found->handle = NULL;    /* consumed by RefreshMetadata */
+
+            CHECK(OcilibSodaDocRefreshMetadata(doc, fresh));
+        }
+
+        OcilibSodaDocFree(found);
+    }
+
     SET_SUCCESS();
 
     CLEANUP_AND_EXIT_FUNC();
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollSaveAndGet
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Boolean OcilibSodaCollSaveAndGet
-(
-    OCI_SodaColl * coll,
-    OCI_SodaDoc  * doc
-)
-{
-    ENTER_FUNC
-    (
-        /* returns */ OCI_Boolean, FALSE,
-        /* context */ OCI_IPC_SODA_COLL, coll
-    );
-
-    const otext *key   = NULL;
-    OCI_SodaDoc *found = NULL;
-    OCISodaDoc  *fresh = NULL;
-
-    CHECK_PTR(OCI_IPC_SODA_COLL, coll);
-    CHECK_PTR(OCI_IPC_SODA_DOC, doc);
-    CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
-    CHECK_SODA_ENABLED(coll->sdb->con);
-
-    /* OCISodaSaveAndGet() crashes on some client/server combinations; emulate
-       it with a save followed by a lookup to refresh the document metadata */
-
-    CHECK(OcilibSodaCollSave(coll, doc));
-
-    key = OcilibSodaDocGetKey(doc);
-
-    CHECK(NULL != key);
-
-    found = OcilibSodaCollFindOneByKey(coll, key);
-
-    CHECK_NULL(found);
-
-    fresh         = found->handle;
-    found->handle = NULL;    /* the handle is consumed by RefreshMetadata */
-
-    CHECK(OcilibSodaDocRefreshMetadata(doc, fresh));
-
-    CHECK(OcilibSodaDocFree(found));
-
-    found = NULL;
-
-    SET_SUCCESS();
-
-    CLEANUP_AND_EXIT_FUNC
-    (
-        if (NULL != found)
-        {
-            OcilibSodaDocFree(found);
-            found = NULL;
-        }
-    );
 }
 
 /* --------------------------------------------------------------------------------------------- *

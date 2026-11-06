@@ -69,19 +69,33 @@ namespace ocilib
         LoadBinary(data.data(), static_cast<UInt32>(data.size()));
     }
 
-    inline String Json::ToText(JsonPrint print) const
+    inline bool Json::Validate(const Json& schema, Json& errors) const
+    {
+        OCI_Json* errdoc = NULL;
+        const bool valid = core::Check(OCI_JsonValidate(*this, schema, &errdoc));
+
+        errors = errdoc;
+        return valid;
+    }
+
+    inline bool Json::Validate(const Json& schema) const
+    {
+        return core::Check(OCI_JsonValidate(*this, schema, NULL));
+    }
+
+    inline String Json::ToString(JsonPrint print) const
     {
         UInt32 size = 0;
 
         core::Check(OCI_JsonToText(*this, NULL, &size,
-            static_cast<UInt32>(print.GetValues()), TRUE));
+            static_cast<UInt32>(print.GetValues())));
 
         UInt32 maxSize = size + 1;
         String result;
         result.resize(static_cast<Size>(maxSize));
 
         core::Check(OCI_JsonToText(*this, &result[0], &maxSize,
-            static_cast<UInt32>(print.GetValues()), TRUE));
+            static_cast<UInt32>(print.GetValues())));
 
         result.resize(static_cast<Size>(maxSize));
 
@@ -194,6 +208,6 @@ namespace ocilib
 
     inline String Json::ToString() const
     {
-        return ToText();
+        return ToString(Json::Pretty);
     }
 }

@@ -325,4 +325,28 @@ namespace TestCppApi
         obj.Clear();
         ASSERT_EQ(0u, obj.GetFieldCount());
     }
+
+    TEST(TestJsonDomCpp, Validate)
+    {
+        Environment& env = GetEnvironmentCpp();
+        Connection con(env, DBS, USR, PWD);
+
+        Json schema(con);
+        schema.LoadText(OTEXT("{\"type\":\"object\",\"properties\":{\"a\":{\"type\":\"number\"}},\"required\":[\"a\"]}"));
+
+        Json ok(con);
+        ok.LoadText(OTEXT("{\"a\":1}"));
+
+        ASSERT_TRUE(ok.Validate(schema));
+
+        Json errors;
+        ASSERT_TRUE(ok.Validate(schema, errors));
+
+        Json bad(con);
+        bad.LoadText(OTEXT("{\"a\":\"notanum\"}"));
+
+        ASSERT_FALSE(bad.Validate(schema));
+        ASSERT_FALSE(bad.Validate(schema, errors));
+        ASSERT_FALSE(errors.ToString().empty());
+    }
 }

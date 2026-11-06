@@ -120,11 +120,11 @@ int main(void)
 
     /* serialize the document back to text */
 
-    OCI_JsonToText(json, NULL, &len, 0, TRUE);
+    OCI_JsonToText(json, NULL, &len, 0);
     text = (otext *) malloc((len + 1) * sizeof(otext));
 
     len++;
-    OCI_JsonToText(json, text, &len, 0, TRUE);
+    OCI_JsonToText(json, text, &len, 0);
 
     printf("serialized: %s\n", text);
     free(text);
